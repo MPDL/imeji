@@ -2,7 +2,6 @@ package de.mpg.imeji.test.rest.resources.test.integration;
 
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
 import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_STORAGE;
-import static net.java.dev.webdav.jaxrs.ResponseStatus.UNPROCESSABLE_ENTITY;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -16,6 +15,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 // import org.apache.tika.metadata.Metadata;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -43,7 +43,7 @@ import util.JenaUtil;
  */
 public class ItemTestBase extends ImejiTestBase {
 
-  private static Logger logger = Logger.getLogger(ItemTestBase.class);
+  private static Logger LOGGER = Logger.getLogger(ItemTestBase.class);
 
   public static MetadataProfile profile;
   public static Item item;
@@ -75,7 +75,7 @@ public class ItemTestBase extends ImejiTestBase {
       collectionId = ObjectHelper.getId(cc.create(ci, profile, JenaUtil.testUser,
           CollectionController.MetadataProfileCreationMethod.REFERENCE, null));
     } catch (Exception e) {
-      logger.error("Cannot init Collection", e);
+      LOGGER.error("Cannot init Collection", e);
     }
 
   }
@@ -181,11 +181,6 @@ public class ItemTestBase extends ImejiTestBase {
         }
       }
     }
-
-    for (Statement st1 : statements) {
-      System.out.println("LABEL= " + st1.getLabel());
-    }
-
     return statements;
   }
 
@@ -276,61 +271,61 @@ public class ItemTestBase extends ImejiTestBase {
     multiPart
         .bodyPart(new FileDataBodyPart("file", new File(STATIC_CONTEXT_STORAGE + "/test.jpg")));
 
-    logger.info("Checking textual values ... ");
+    LOGGER.info("Checking textual values ... ");
     // Put Number Value to a String metadata
     multiPart.field("json", replaceWithNumberValueNotLastField(jSon, "text"));
     Response response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking number values ... ");
+    LOGGER.info("Checking number values ... ");
     // Put String to Number Value metadata
     multiPart.getField("json").setValue(replaceWithStringValueNotLastField(jSon, "number"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking date values ... ");
+    LOGGER.info("Checking date values ... ");
     // Put "sometext" String to Date Value metadata
     multiPart.getField("json").setValue(replaceWithStringValueNotLastField(jSon, "date"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking longitude values with text ... ");
+    LOGGER.info("Checking longitude values with text ... ");
     // Put "sometext" String to Longitude Value metadata
     multiPart.getField("json").setValue(replaceWithStringValueNotLastField(jSon, "longitude"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking latitude values with text... ");
+    LOGGER.info("Checking latitude values with text... ");
     // Put "sometext" String to Latitude (last) Value metadata
     multiPart.getField("json").setValue(replaceWithStringValueLastField(jSon, "latitude"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking longitude values with wrong value... ");
+    LOGGER.info("Checking longitude values with wrong value... ");
     // Put bad Value to Longitude Value metadata
     multiPart.getField("json").setValue(replaceWithNumberValueNotLastField(jSon, "longitude"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking latitude values with wrong value... ");
+    LOGGER.info("Checking latitude values with wrong value... ");
     // Put bad Value to Longitude Value metadata
     multiPart.getField("json").setValue(replaceWithNumberValueLastField(jSon, "latitude"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
 
@@ -341,155 +336,155 @@ public class ItemTestBase extends ImejiTestBase {
     multiPart
         .bodyPart(new FileDataBodyPart("file", new File(STATIC_CONTEXT_STORAGE + "/test.jpg")));
 
-    logger.info("Checking text field label  ");
+    LOGGER.info("Checking text field label  ");
     multiPart.field("json", replaceFieldName(jSon, "text"));
     Response response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking geolocation field label  ");
+    LOGGER.info("Checking geolocation field label  ");
     // Put Number Value to a String metadata
     multiPart.field("json", replaceFieldName(jSon, "geolocation"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking name field label  ");
+    LOGGER.info("Checking name field label  ");
     multiPart.field("json", replaceFieldName(jSon, "name"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking latitude field label  ");
+    LOGGER.info("Checking latitude field label  ");
     multiPart.field("json", replaceFieldName(jSon, "latitude"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
 
-    logger.info("Checking longitude field label  ");
+    LOGGER.info("Checking longitude field label  ");
     multiPart.field("json", replaceFieldName(jSon, "longitude"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking number field label  ");
+    LOGGER.info("Checking number field label  ");
     multiPart.field("json", replaceFieldName(jSon, "number"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
 
-    logger.info("Checking conePerson field label  ");
+    LOGGER.info("Checking conePerson field label  ");
     multiPart.field("json", replaceFieldName(jSon, "conePerson"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking familyName field label  ");
+    LOGGER.info("Checking familyName field label  ");
     multiPart.field("json", replaceFieldName(jSon, "familyName"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking completeName field label  ");
+    LOGGER.info("Checking completeName field label  ");
     multiPart.field("json", replaceFieldName(jSon, "completeName"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking alternativeName field label  ");
+    LOGGER.info("Checking alternativeName field label  ");
     multiPart.field("json", replaceFieldName(jSon, "alternativeName"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking role field label  ");
+    LOGGER.info("Checking role field label  ");
     multiPart.field("json", replaceFieldName(jSon, "role"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking organizations field label  ");
+    LOGGER.info("Checking organizations field label  ");
     multiPart.field("json", replaceFieldName(jSon, "organizations"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking description field label  ");
+    LOGGER.info("Checking description field label  ");
     multiPart.field("json", replaceFieldName(jSon, "description"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking city field label  ");
+    LOGGER.info("Checking city field label  ");
     multiPart.field("json", replaceFieldName(jSon, "city"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking country field label  ");
+    LOGGER.info("Checking country field label  ");
     multiPart.field("json", replaceFieldName(jSon, "country"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking date field label  ");
+    LOGGER.info("Checking date field label  ");
     multiPart.field("json", replaceFieldName(jSon, "date"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking license field label  ");
+    LOGGER.info("Checking license field label  ");
     multiPart.field("json", replaceFieldName(jSon, "license"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking url field label  ");
+    LOGGER.info("Checking url field label  ");
     multiPart.field("json", replaceFieldName(jSon, "url"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking link field label  ");
+    LOGGER.info("Checking link field label  ");
     multiPart.field("json", replaceFieldName(jSon, "link"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking publication field label  ");
+    LOGGER.info("Checking publication field label  ");
     multiPart.field("json", replaceFieldName(jSon, "publication"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
-    logger.info("Checking citation field label  ");
+    LOGGER.info("Checking citation field label  ");
     multiPart.field("json", replaceFieldName(jSon, "citation"));
     response = itemId.equals("")
         ? getCreateTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()))
         : getUpdateTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
 

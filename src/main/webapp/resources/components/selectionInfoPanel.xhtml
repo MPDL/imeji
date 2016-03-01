@@ -2,6 +2,7 @@
 	  xmlns:ui="http://java.sun.com/jsf/facelets"
 	  xmlns:h="http://java.sun.com/jsf/html"
 	  xmlns:composite="http://java.sun.com/jsf/composite"
+	  xmlns:f="http://java.sun.com/jsf/core"
 		>
 	<composite:interface>
 		<composite:attribute name="fSession" required="false"/>
@@ -45,18 +46,6 @@
 											<h:outputLink value="#{Navigation.albumsUrl}?q=grant=%22upload%22&amp;add_selected=1" title="#{lbl.activate}">
 												<h:outputText value="#{lbl.no_album_selected}" title="#{lbl.album_please_activate}"/>
 											</h:outputLink>
-											<!-- No active album selected -->
-											<ui:remove>TODO: select the album from here
-												<ul class="imj_menuBody" style="position: absolute; left: 100%; top:0; width:100%">
-													<ui:repeat var="album" value="">
-														<li >
-															<h:commandLink action="#{cc.attrs.facetBean.albumMenu}">
-																<h:outputText value="#{album.name}"/>
-															</h:commandLink>
-														</li>
-													</ui:repeat>	
-												</ul>
-											</ui:remove>
 										</li>
 									</ui:fragment>
 									
@@ -113,13 +102,19 @@
 					
 					<h:form>
 						<h:outputText value="#{lbl.sort_by}: " styleClass="imj_active"/>
-						<h:commandLink id="lnkSortAsc" value="&#160;" styleClass="fa fa-sort-asc fa-pull-right" action="#{cc.attrs.facetBean.toggleSortOrder}" rendered="#{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING'}"/>
-						<h:commandLink id="lnkSortDesc" value="&#160;" styleClass="fa fa-sort-desc fa-pull-right" action="#{cc.attrs.facetBean.toggleSortOrder}" rendered="#{cc.attrs.facetBean.selectedSortOrder != 'ASCENDING'}"/>
+						<h:commandLink id="lnkSortAsc" value="&#160;" styleClass="fa fa-sort-asc fa-pull-right fa-size-3" action="#{cc.attrs.facetBean.toggleSortOrder}" rendered="#{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING'}" onclick="setContentLoadingStatus();">
+							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+						</h:commandLink>
+						<h:commandLink id="lnkSortDesc" value="&#160;" styleClass="fa fa-sort-desc fa-pull-right fa-size-3" action="#{cc.attrs.facetBean.toggleSortOrder}" rendered="#{cc.attrs.facetBean.selectedSortOrder != 'ASCENDING'}" onclick="setContentLoadingStatus();">
+							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+						</h:commandLink>
 						
 						<ul>
 							<ui:repeat var="sortItem" value="#{cc.attrs.facetBean.sortMenu}" varStatus="spos">
 								<li>
-									<h:commandLink action="#{cc.attrs.facetBean.setSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" styleClass="#{(cc.attrs.facetBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}"/>
+									<h:commandLink action="#{cc.attrs.facetBean.setSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" styleClass="#{(cc.attrs.facetBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}" onclick="setContentLoadingStatus();">
+										<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+									</h:commandLink>
 								</li>
 							</ui:repeat>
 						</ul>

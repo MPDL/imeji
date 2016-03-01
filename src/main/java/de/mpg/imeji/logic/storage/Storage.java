@@ -114,4 +114,12 @@ public interface Storage extends Serializable {
    */
   public String readFileStringContent(String url);
 
+  /**
+   * Return the Storage id
+   * 
+   * @param url
+   * @return
+   */
+  public String getStorageId(String url);
+
 }

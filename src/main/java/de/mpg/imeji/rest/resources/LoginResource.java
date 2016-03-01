@@ -1,4 +1,4 @@
-package de.mpg.imeji.rest.resources;
+/*package de.mpg.imeji.rest.resources;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -13,12 +13,12 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import de.mpg.imeji.rest.process.AdminProcess;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 
-/**
+*//**
  * API Method to login
  * 
  * @author bastiens
  *
- */
+ *//*
 @Path("/login")
 @Api(value = "rest/login", description = "Login to the API")
 public class LoginResource {
@@ -32,3 +32,4 @@ public class LoginResource {
     return RestProcessUtils.buildJSONResponse(AdminProcess.login(authHeader));
   }
 }
+*/

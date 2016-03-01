@@ -31,18 +31,17 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 public class SPARQLEndpointServlet extends HttpServlet {
 
-  private static Logger logger = Logger.getLogger(SPARQLEndpointServlet.class);
+  private static final Logger LOGGER = Logger.getLogger(SPARQLEndpointServlet.class);
 
   /**
-	 * 
-	 */
+   * 
+   */
   private static final long serialVersionUID = 2718460776590689258L;
 
   @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-      IOException {
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+      throws ServletException, IOException {
     String q = req.getParameter("q");
-    // TODO allow more formats
     String format = req.getParameter("format");
     String model = req.getParameter("model");
     SessionBean session =
@@ -54,19 +53,18 @@ public class SPARQLEndpointServlet extends HttpServlet {
         QueryExecution exec = initQueryExecution(sparql, model);
         exec.getContext().set(TDB.symUnionDefaultGraph, true);
         ResultSet result = exec.execSelect();
-        if ("table".equals(format))
+        if ("table".equals(format)) {
           ResultSetFormatter.out(resp.getOutputStream(), result);
-        else
+        } else {
           ResultSetFormatter.output(resp.getOutputStream(), result, getFormat(format));
-
+        }
       } catch (Exception e) {
-        logger.error("spraql error: ", e);
+        LOGGER.error("spraql error: ", e);
         Imeji.dataset.abort();
       } finally {
         Imeji.dataset.commit();
         Imeji.dataset.end();
       }
-
     } else if (session.getUser() == null) {
       resp.sendError(HttpServletResponse.SC_FORBIDDEN,
           "imeji security: You need administration priviliges");
@@ -100,16 +98,17 @@ public class SPARQLEndpointServlet extends HttpServlet {
   }
 
   private ResultsFormat getFormat(String format) {
-    if ("csv".equals(format))
+    if ("csv".equals(format)) {
       return ResultsFormat.FMT_RS_CSV;
-    else if ("json".equals(format))
+    } else if ("json".equals(format)) {
       return ResultsFormat.FMT_RS_JSON;
-    else if ("tsv".equals(format))
+    } else if ("tsv".equals(format)) {
       return ResultsFormat.FMT_RS_TSV;
-    else if ("ttl".equals(format))
+    } else if ("ttl".equals(format)) {
       return ResultsFormat.FMT_RDF_TTL;
-    else if ("bio".equals(format))
+    } else if ("bio".equals(format)) {
       return ResultsFormat.FMT_RS_BIO;
+    }
     return ResultsFormat.FMT_RDF_XML;
   }
 }

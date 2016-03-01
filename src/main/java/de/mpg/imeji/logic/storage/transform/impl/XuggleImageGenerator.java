@@ -47,9 +47,9 @@ public class XuggleImageGenerator implements ImageGenerator {
    * @see de.mpg.imeji.logic.storage.transform.ImageGenerator#generateJPG(byte[], java.lang.String)
    */
   @Override
-  public byte[] generateJPG(File file, String extension) throws FileNotFoundException, IOException {
+  public File generateJPG(File file, String extension) throws FileNotFoundException, IOException {
     if (StorageUtils.getMimeType(extension).contains("video")) {
-      return VideoUtils.videoToImageBytes(file);
+      return StorageUtils.toFile(VideoUtils.videoToImageBytes(file));
     }
     return null;
   }

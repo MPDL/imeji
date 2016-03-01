@@ -33,7 +33,7 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  *        ListRetriever, eg. sorting of PubItems.
  */
 public abstract class BasePaginatorListSessionBean<ListElementType> {
-  protected static Logger logger = Logger.getLogger(BasePaginatorListSessionBean.class);
+  protected static Logger LOGGER = Logger.getLogger(BasePaginatorListSessionBean.class);
   /**
    * A list that contains the menu entries of the elements per page menu.
    */
@@ -126,7 +126,7 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
         setCurrentPageNumber(1);
       }
       setGoToPage(Integer.toString(currentPageNumber));
-      currentPartList = new ArrayList<>();
+      currentPartList.clear();
       currentPartList = retrieveList(getOffset(), elementsPerPage);
       totalNumberOfElements = getTotalNumberOfRecords();
       paginatorPageList.clear();
@@ -135,7 +135,7 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
       }
     } catch (Exception e) {
       BeanHelper.error(e.getMessage());
-      logger.error("Error paginator list update ", e);
+      LOGGER.error("Error paginator list update ", e);
     }
   }
 

@@ -28,6 +28,7 @@ public class ImejiNamespaces {
   public static final String REGISTRATION_TOKEN = "http://imeji.org/terms/registrationToken";
   public static final String SPACE = "http://imeji.org/terms/space";
   public static final String CHECKSUM = "http://imeji.org/terms/checksum";
+  public static final String STORAGE_ID = "http://imeji.org/terms/storageId";
 
 
   /*

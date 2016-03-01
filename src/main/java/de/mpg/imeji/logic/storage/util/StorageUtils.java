@@ -26,10 +26,10 @@ package de.mpg.imeji.logic.storage.util;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,6 +51,7 @@ import org.apache.tools.ant.taskdefs.Get;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**
  * Util class fore the storage package
@@ -60,14 +61,14 @@ import de.mpg.imeji.exceptions.UnprocessableError;
  * @version $Revision$ $LastChangedDate$
  */
 public class StorageUtils {
-  private static Logger logger = Logger.getLogger(StorageUtils.class);
+  private static final Logger LOGGER = Logger.getLogger(StorageUtils.class);
   /**
    * The generic mime-type, when no mime-type is known
    */
-  public final static String DEFAULT_MIME_TYPE = "application/octet-stream";
-  public final static String BAD_FORMAT = "bad-extension/other";
+  public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
+  public static final String BAD_FORMAT = "bad-extension/other";
   private static Tika tika = new Tika();
-  public final static MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+  public static final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
 
   /**
    * Transform an {@link InputStream} to a {@link Byte} array
@@ -76,9 +77,29 @@ public class StorageUtils {
    * @return
    */
   public static byte[] toBytes(InputStream stream) {
-    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    writeInOut(stream, bos, true);
-    return bos.toByteArray();
+    try {
+      return IOUtils.toByteArray(stream);
+    } catch (IOException e) {
+      LOGGER.error("Error writing stream to byte array", e);
+      return new byte[0];
+    }
+  }
+
+  /**
+   * Write a byte array into a File
+   * 
+   * @param bytes
+   * @return
+   */
+  public static File toFile(byte[] bytes) {
+    try {
+      File f = TempFileUtil.createTempFile("storageUtils_toFile", null);
+      IOUtils.write(bytes, new FileOutputStream(f));
+      return f;
+    } catch (IOException e) {
+      LOGGER.error("Error creating a temp File", e);
+    }
+    return null;
   }
 
   /**
@@ -174,7 +195,7 @@ public class StorageUtils {
         }
       }
     } catch (Exception e) {
-      logger.error("Error guessing file format", e);
+      LOGGER.error("Error guessing file format", e);
     }
 
     return BAD_FORMAT;
@@ -305,8 +326,8 @@ public class StorageUtils {
    */
   public static String calculateChecksum(File file) throws ImejiException {
     try {
-      return DigestUtils.md5Hex(toBytes(new FileInputStream(file)));
-    } catch (IOException e) {
+      return DigestUtils.md5Hex(new FileInputStream(file));
+    } catch (Exception e) {
       throw new UnprocessableError("Error calculating the cheksum of the file: ", e);
     }
   }

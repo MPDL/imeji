@@ -3,6 +3,7 @@
  */
 package de.mpg.imeji.presentation.album;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,12 +44,11 @@ public class AlbumItemBean extends ItemBean {
   @Override
   public void initBrowsing() throws Exception {
     try {
-      String tempId =
-          (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
-              .get("AlbumItemsBean.id");
-      setBrowse(new SingleItemBrowse(
-          (AlbumItemsBean) BeanHelper.getSessionBean(AlbumItemsBean.class), getImage(), "album",
-          tempId));
+      String tempId = (String) FacesContext.getCurrentInstance().getExternalContext()
+          .getSessionMap().get("AlbumItemsBean.id");
+      setBrowse(
+          new SingleItemBrowse((AlbumItemsBean) BeanHelper.getSessionBean(AlbumItemsBean.class),
+              getImage(), "album", tempId));
       // Should redirect to the Item if user can not see the Album, but
       // can see the Item (this is by default)
       Album alb = this.loadAlbum();
@@ -111,6 +111,12 @@ public class AlbumItemBean extends ItemBean {
   @Override
   public String getNavigationString() {
     return session.getPrettySpacePage("pretty:albumItem");
+  }
+
+  @Override
+  public void redirectToBrowsePage() throws IOException {
+    FacesContext.getCurrentInstance().getExternalContext()
+        .redirect(navigation.getAlbumUrl() + albumId + "/" + navigation.getBrowsePath());
   }
 
   public Album getAlbum() {

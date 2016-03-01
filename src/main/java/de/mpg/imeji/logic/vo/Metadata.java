@@ -50,7 +50,7 @@ public abstract class Metadata implements Comparable<Metadata>, Serializable {
   private static final long serialVersionUID = -6967620655990351430L;
   // Metadata should have a universal id to avoid overwriting
   private URI id = IdentifierUtil.newURI(Metadata.class, "universal");
-  private static Logger logger = Logger.getLogger(Metadata.class);
+  private static final Logger LOGGER = Logger.getLogger(Metadata.class);
   @j2jLiteral("http://imeji.org/terms/position")
   private int pos = 0;
 
@@ -159,7 +159,7 @@ public abstract class Metadata implements Comparable<Metadata>, Serializable {
       ret = method.invoke(this);
     } catch (SecurityException | NoSuchMethodException | IllegalArgumentException
         | IllegalAccessException | InvocationTargetException e) {
-      logger.error("Some problems in Metadata getting values from Method ", e);
+      LOGGER.error("Some problems in Metadata getting values from Method ", e);
     }
     return ret;
   }

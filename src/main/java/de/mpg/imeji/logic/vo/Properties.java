@@ -54,7 +54,7 @@ public class Properties implements Serializable {
   @j2jLiteral(ImejiNamespaces.DISCARD_COMMENT)
   private String discardComment;
 
-  private static Logger logger = Logger.getLogger(Properties.class);
+  private static final Logger LOGGER = Logger.getLogger(Properties.class);
 
   @XmlEnum(String.class)
   public enum Status {
@@ -77,7 +77,7 @@ public class Properties implements Serializable {
   }
 
   public Properties() {
-    // TODO Auto-generated constructor stub
+    
   }
 
   public void setCreatedBy(URI createdBy) {
@@ -187,7 +187,7 @@ public class Properties implements Serializable {
       ret = method.invoke(this);
     } catch (SecurityException | NoSuchMethodException | IllegalArgumentException
         | IllegalAccessException | InvocationTargetException e) {
-      logger.error("Some issues with getValueFromMethod ", e);
+      LOGGER.error("Some issues with getValueFromMethod ", e);
     }
     return ret;
   }

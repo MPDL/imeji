@@ -18,7 +18,7 @@ public class Locks {
   // Life time for a lock. After that limit, the lock is destroyed.
   private static final long LOCK_MAX_TIME = 900000;// 900s = 15min
   // private static final long LOCK_MAX_TIME = 60000;// 60s = 1min
-  private static Logger logger = Logger.getLogger(Locks.class);
+  private static final Logger LOGGER = Logger.getLogger(Locks.class);
   private static boolean writeLock = false;
   private static boolean counterLock = false;
 
@@ -67,10 +67,10 @@ public class Locks {
   public static void lock(Lock lock) {
     if (!isLocked(lock.getUri(), lock.getEmail())) {
       if (lock.getEmail() == null) {
-        logger.debug(lock.getUri() + " locked by system");
+        LOGGER.debug(lock.getUri() + " locked by system");
         getSystemLocks().put(lock.getUri(), lock);
       } else {
-        logger.debug(lock.getUri() + " locked by " + lock.getEmail());
+        LOGGER.debug(lock.getUri() + " locked by " + lock.getEmail());
         getUserLocks().put(lock.getUri(), lock);
       }
     } else {
@@ -86,10 +86,10 @@ public class Locks {
    */
   public static void unLock(Lock lock) {
     if (lock.getEmail() == null && getSystemLocks().get(lock.getUri()) != null) {
-      logger.debug(lock.getUri() + " unlocked by system");
+      LOGGER.debug(lock.getUri() + " unlocked by system");
       getSystemLocks().remove(lock.getUri());
     } else if (lock.getEmail() != null && getUserLocks().get(lock.getUri()) != null) {
-      logger.debug(lock.getUri() + " unlocked by " + lock.getEmail());
+      LOGGER.debug(lock.getUri() + " unlocked by " + lock.getEmail());
       getUserLocks().remove(lock.getUri());
     }
   }

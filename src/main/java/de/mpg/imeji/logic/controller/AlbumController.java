@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +38,6 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.writer.WriterFacade;
-import de.mpg.j2j.helper.DateHelper;
 import de.mpg.j2j.helper.J2JHelper;
 
 /**
@@ -68,7 +68,7 @@ public class AlbumController extends ImejiController {
    */
   public URI create(Album album, User user) throws ImejiException {
     isLoggedInUser(user);
-    writeCreateProperties(album, user);
+    prepareCreate(album, user);
     ShareController shareController = new ShareController();
     shareController.shareToCreator(user, album.getId().toString());
     writer.create(WriterFacade.toList(album), null, user);
@@ -85,9 +85,7 @@ public class AlbumController extends ImejiController {
    * @throws ImejiException
    */
   public Album retrieve(URI albumUri, User user) throws ImejiException {
-    List<String> uri = new ArrayList<>();
-    uri.add(albumUri.toString());
-    return retrieveBatch(uri, user, 0, -1).get(0);
+    return retrieveBatch(Arrays.asList(albumUri.toString()), user, 0, -1).get(0);
   }
 
   /**
@@ -99,9 +97,7 @@ public class AlbumController extends ImejiController {
    * @throws ImejiException
    */
   public Album retrieveLazy(URI albumUri, User user) throws ImejiException {
-    List<String> uri = new ArrayList<>();
-    uri.add(albumUri.toString());
-    return retrieveBatchLazy(uri, user, -1, 0).get(0);
+    return retrieveBatchLazy(Arrays.asList(albumUri.toString()), user, -1, 0).get(0);
   }
 
   /**
@@ -149,7 +145,7 @@ public class AlbumController extends ImejiController {
    * @throws ImejiException
    */
   public Album update(Album album, User user) throws ImejiException {
-    writeUpdateProperties(album, user);
+    prepareUpdate(album, user);
     writer.update(WriterFacade.toList(album), null, user, true);
     return retrieve(album.getId(), user);
   }
@@ -178,11 +174,8 @@ public class AlbumController extends ImejiController {
     album = (Album) ic.searchAndSetContainerItems(album, user, -1, 0);
     if (album.getImages().isEmpty()) {
       throw new UnprocessableError("An empty album can not be released!");
-    } else if (album.getStatus().equals(Status.RELEASED)) {
-      throw new UnprocessableError(
-          "The status of album is " + album.getStatus() + " and can not be released again!");
     } else {
-      writeReleaseProperty(album, user);
+      prepareRelease(album, user);
       update(album, user);
     }
   }
@@ -198,11 +191,7 @@ public class AlbumController extends ImejiController {
     if (album == null) {
       throw new NotFoundException("Album does not exists");
     }
-    if (!Status.RELEASED.equals(album.getStatus())) {
-      throw new UnprocessableError("Withdraw album: Album must be released");
-    }
-    album.setStatus(Status.WITHDRAWN);
-    album.setVersionDate(DateHelper.getCurrentDate());
+    prepareWithdraw(album, album.getDiscardComment());
     album.getImages().clear();
     update(album, user);
   }
@@ -240,10 +229,12 @@ public class AlbumController extends ImejiController {
     for (String uri : albumItemsSet) {
       album.getImages().add(URI.create(uri));
     }
+    
     // save the album
     update(album, user);
     // Update the new items, to add the relation item -> album in the index
-    itemController.updateBatch(items, Imeji.adminUser);
+    // We do not update Items of the Album!!!
+    //itemController.updateBatch(items, Imeji.adminUser);
     // return all items of the album
     return itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0)
         .getResults();
@@ -279,7 +270,8 @@ public class AlbumController extends ImejiController {
     // save the album
     update(album, user);
     // Update the removed items, to remove the relation item -> album in the index
-    itemController.updateBatch(items, Imeji.adminUser);
+    //We do not update items of the album
+    //itemController.updateBatch(items, Imeji.adminUser);
     // Get the new size of the album
     int afterSize = itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0)
         .getNumberOfRecords();
@@ -312,16 +304,14 @@ public class AlbumController extends ImejiController {
    */
   public List<Album> searchAndretrieveLazy(User user, String q, String spaceId, int offset,
       int size) throws ImejiException {
-    List<Album> aList = new ArrayList<>();
     try {
       List<String> results =
           search(!isNullOrEmptyTrim(q) ? SearchQueryParser.parseStringQuery(q) : null, user, null,
               size, offset, spaceId).getResults();
-      aList = (List<Album>) retrieveBatchLazy(results, user, -1, 0);
+      return (List<Album>) retrieveBatchLazy(results, user, -1, 0);
     } catch (Exception e) {
       throw new UnprocessableError("Cannot retrieve albums:", e);
     }
-    return aList;
   }
 
 
@@ -385,6 +375,28 @@ public class AlbumController extends ImejiController {
           getContainerLogoTriples(album.getId().toString(), album, album.getLogoUrl().toString());
       patch(triples, u, true);
     }
+  }
+  
+  
+  /**
+   * Remove a all items from an Album
+   * 
+   * @param album
+   * @param toDelete
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public int removeAllFromAlbum(Album album, User user) throws ImejiException {
+    if (album.getStatus() == Status.RELEASED) {
+      throw new UnprocessableError("A released album can not be empty! ");
+    }
+    int beforeSize = album.getImages().size();
+    album.setImages(new ArrayList<URI>());
+    // save the album
+    update(album, user);
+    //Return how many items have been removed from album
+    return beforeSize;
   }
 
 }

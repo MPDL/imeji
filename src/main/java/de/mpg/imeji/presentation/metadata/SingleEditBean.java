@@ -16,7 +16,6 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.metadata.editors.SimpleImageEditor;
 import de.mpg.imeji.presentation.metadata.util.SuggestBean;
@@ -36,7 +35,6 @@ public class SingleEditBean {
   private SimpleImageEditor editor = null;
   private String toggleState = "displayMd";
   private int mdPosition = 0;
-  private String pageUrl = "";
   private List<SuperMetadataBean> metadataList;
 
   /**
@@ -46,10 +44,9 @@ public class SingleEditBean {
    * @param profile
    * @param pageUrl
    */
-  public SingleEditBean(Item im, MetadataProfile profile, String pageUrl) {
+  public SingleEditBean(Item im, MetadataProfile profile) {
     item = im;
     this.profile = profile;
-    this.pageUrl = pageUrl;
     init();
   }
 
@@ -82,13 +79,14 @@ public class SingleEditBean {
    * @return
    * @throws Exception
    */
-  public String save() throws Exception {
+  public void save() throws Exception {
+    HistorySession hs = (HistorySession) BeanHelper.getSessionBean(HistorySession.class);
     if (editor.save()) {
-      HistorySession hs = (HistorySession) BeanHelper.getSessionBean(HistorySession.class);
+      FacesContext.getCurrentInstance().getExternalContext().redirect(hs.getCurrentPage().getUrl());
+    } else {
       FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(hs.getCurrentPage().getUrl());
+          .redirect(hs.getCurrentPage().getCompleteUrl());
     }
-    return "";
   }
 
   /**
@@ -115,7 +113,6 @@ public class SingleEditBean {
     try {
       item = itemController.retrieve(item.getId(), sessionBean.getUser());
     } catch (Exception e) {
-      // TODO
       BeanHelper.error("Error reload item" + e.getMessage());
     }
   }
@@ -134,7 +131,6 @@ public class SingleEditBean {
       } catch (Exception e) {
         BeanHelper.error(sb.getMessage("error_editor_image_locked"));
       }
-      // init();
     } else {
       BeanHelper.error(sb.getMessage("error_editor_not_allowed"));
     }

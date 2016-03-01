@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -82,6 +83,7 @@ public class ItemBean {
   private String newFilename;
   private String stringContent = null;
   private String imageUploader;
+  private String discardComment;
 
   /**
    * Construct a default {@link ItemBean}
@@ -170,6 +172,7 @@ public class ItemBean {
    */
   public void initViewMetadataTab() throws Exception {
     if (item != null) {
+      this.discardComment = null;
       User user = sessionBean.getUser();
       if (AuthUtil.canReadItemButNotCollection(user, item)) {
         // User has right to read the item, but not collection and the
@@ -179,9 +182,9 @@ public class ItemBean {
       loadCollection(user);
       loadProfile(user);
       labels.init(profile);
-      edit = new SingleEditBean(item, profile, getPageUrl());
+      edit = new SingleEditBean(item, profile);
       if (profile != null) {
-        edit = new SingleEditBean(item, profile, getPageUrl());
+        edit = new SingleEditBean(item, profile);
         mds = edit.getEditor().getItems().get(0).getMds();
       }
     }
@@ -344,17 +347,15 @@ public class ItemBean {
     this.sessionBean = sessionBean;
   }
 
-  @SuppressWarnings("unchecked")
-  public void makePublic() throws Exception {
+  public void makePublic() throws ImejiException {
     ItemController c = new ItemController();
-    c.release((List<Item>) c.toList(item), sessionBean.getUser());
+    c.release(Arrays.asList(item), sessionBean.getUser());
     item = c.retrieve(item.getId(), sessionBean.getUser());
   }
 
-  @SuppressWarnings("unchecked")
-  public void makePrivate() throws Exception {
+  public void makePrivate() throws ImejiException {
     ItemController c = new ItemController();
-    c.unRelease((List<Item>) c.toList(item), sessionBean.getUser());
+    c.unRelease(Arrays.asList(item), sessionBean.getUser());
     item = c.retrieve(item.getId(), sessionBean.getUser());
   }
 
@@ -397,15 +398,34 @@ public class ItemBean {
     if (getIsInActiveAlbum()) {
       removeFromActiveAlbum();
     }
-    ItemController ic = new ItemController();
-    List<Item> l = new ArrayList<Item>();
-    l.add(item);
-    ic.delete(l, sessionBean.getUser());
-    SessionObjectsController soc = new SessionObjectsController();
-    soc.unselectItem(item.getId().toString());
+    new ItemController().delete(Arrays.asList(item), sessionBean.getUser());
+    new SessionObjectsController().unselectItem(item.getId().toString());
     BeanHelper.info(sessionBean.getLabel("image") + " " + item.getFilename() + " "
         + sessionBean.getMessage("success_collection_remove_from"));
     redirectToBrowsePage();
+  }
+
+  /**
+   * Discard the Item
+   * 
+   * @throws ImejiException
+   * @throws IOException
+   */
+  public void withdraw() throws ImejiException, IOException {
+    new ItemController().withdraw(Arrays.asList(item), getDiscardComment(), sessionBean.getUser());
+    new SessionObjectsController().unselectItem(item.getId().toString());
+    BeanHelper.info(sessionBean.getLabel("image") + " " + item.getFilename() + " "
+        + sessionBean.getMessage("success_item_withdraw"));
+    redirectToBrowsePage();
+  }
+
+  /**
+   * Listener for the discard comment
+   * 
+   * @param event
+   */
+  public void discardCommentListener(ValueChangeEvent event) {
+    this.discardComment = event.getNewValue().toString();
   }
 
   /**
@@ -415,10 +435,7 @@ public class ItemBean {
    * @throws Exception
    */
   public String removeFromActiveAlbum() throws Exception {
-    SessionObjectsController soc = new SessionObjectsController();
-    List<String> l = new ArrayList<String>();
-    l.add(item.getId().toString());
-    soc.removeFromActiveAlbum(l);
+    new SessionObjectsController().removeFromActiveAlbum(Arrays.asList(item.getId().toString()));
     BeanHelper.info(sessionBean.getLabel("image") + " " + item.getFilename() + " "
         + sessionBean.getMessage("success_album_remove_from"));
     return "pretty:";
@@ -703,5 +720,19 @@ public class ItemBean {
   public void setNewFilename(String newFilename) {
     if (!"".equals(newFilename))
       getImage().setFilename(newFilename);
+  }
+
+  /**
+   * @return the discardComment
+   */
+  public String getDiscardComment() {
+    return discardComment;
+  }
+
+  /**
+   * @param discardComment the discardComment to set
+   */
+  public void setDiscardComment(String discardComment) {
+    this.discardComment = discardComment;
   }
 }

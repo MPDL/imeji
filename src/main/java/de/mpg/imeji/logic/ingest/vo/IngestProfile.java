@@ -18,7 +18,7 @@ public class IngestProfile {
 	 * 
 	 */
   public IngestProfile() {
-    // TODO Auto-generated constructor stub
+    
   }
 
   /**

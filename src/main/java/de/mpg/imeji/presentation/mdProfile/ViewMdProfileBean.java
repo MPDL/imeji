@@ -19,7 +19,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  */
 public class ViewMdProfileBean extends MdProfileBean {
   private SessionBean session;
-  private static Logger logger = Logger.getLogger(ViewMdProfileBean.class);
+  private static final Logger LOGGER = Logger.getLogger(ViewMdProfileBean.class);
 
   /**
    * Bean constructor
@@ -68,7 +68,7 @@ public class ViewMdProfileBean extends MdProfileBean {
       BeanHelper.info(session.getMessage("success_profile_save"));
     } catch (Exception e) {
       BeanHelper.error(session.getMessage("error_profile_save"));
-      logger.error(session.getMessage("error_profile_save"), e);
+      LOGGER.error(session.getMessage("error_profile_save"), e);
     }
     return "pretty:";
   }

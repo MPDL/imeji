@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -25,6 +27,7 @@ import javax.imageio.stream.ImageInputStream;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
+import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.presentation.util.PropertyReader;
 
 /**
@@ -34,12 +37,16 @@ import de.mpg.imeji.presentation.util.PropertyReader;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class ImageUtils {
-  private static Logger logger = Logger.getLogger(ImageUtils.class);
+public final class ImageUtils {
+  private static final Logger LOGGER = Logger.getLogger(ImageUtils.class);
   /**
    * If true, the rescale will keep the better quality of the images
    */
-  private static boolean RESCALE_HIGH_QUALITY = true;
+  private static final boolean RESCALE_HIGH_QUALITY = true;
+
+  private ImageUtils() {
+    // private constructor
+  }
 
   /**
    * Resize an image (only for jpeg) to the given {@link FileResolution}
@@ -50,14 +57,14 @@ public class ImageUtils {
    * @throws IOException
    * @throws Exception
    */
-  public static byte[] resizeJPEG(byte[] bytes, FileResolution resolution) throws IOException,
-      Exception {
+  public static File resizeJPEG(File file, FileResolution resolution)
+      throws IOException, Exception {
     // If it is original resolution, don't touch the file, otherwise resize
     if (!FileResolution.ORIGINAL.equals(resolution)) {
-      BufferedImage image = JpegUtils.readJpeg(bytes);
-      bytes = toBytes(scaleImage(image, resolution), StorageUtils.getMimeType("jpg"));
+      BufferedImage image = JpegUtils.readJpeg(file);
+      return toFile(scaleImage(image, resolution), StorageUtils.getMimeType("jpg"));
     }
-    return bytes;
+    return file;
   }
 
   /**
@@ -78,7 +85,23 @@ public class ImageUtils {
         return image2Jpeg(bytes);
       }
     } catch (Exception e) {
-      logger.info("Image could not be transformed to jpeg: ", e);
+      LOGGER.info("Image could not be transformed to jpeg: ", e);
+    }
+    return new byte[0];
+  }
+
+  public static File toJpeg(File file, String mimeType) {
+    try {
+      if (mimeType.equals(StorageUtils.getMimeType("jpg"))) {
+        return file;
+      } else if (mimeType.equals(StorageUtils.getMimeType("gif"))) {
+        return StorageUtils
+            .toFile(GifUtils.toJPEG(StorageUtils.toBytes(new FileInputStream(file))));
+      } else {
+        return image2Jpeg(file);
+      }
+    } catch (Exception e) {
+      LOGGER.info("Image could not be transformed to jpeg: ", e);
     }
     return null;
   }
@@ -106,31 +129,31 @@ public class ImageUtils {
         newImg = new BufferedImage(height, height, colorSpace);
         Graphics g1 = newImg.createGraphics();
         g1.drawImage(image, (height - width) / 2, 0, null);
-        if (height > size)
-          rescaledImage =
-              getScaledInstance(newImg, size, size, RenderingHints.VALUE_INTERPOLATION_BILINEAR,
-                  RESCALE_HIGH_QUALITY);
-        else
+        if (height > size) {
+          rescaledImage = getScaledInstance(newImg, size, size,
+              RenderingHints.VALUE_INTERPOLATION_BILINEAR, RESCALE_HIGH_QUALITY);
+        } else {
           rescaledImage = newImg;
-      } else
-        rescaledImage =
-            getScaledInstance(image, size, height * size / width,
-                RenderingHints.VALUE_INTERPOLATION_BILINEAR, RESCALE_HIGH_QUALITY);
+        }
+      } else {
+        rescaledImage = getScaledInstance(image, size, height * size / width,
+            RenderingHints.VALUE_INTERPOLATION_BILINEAR, RESCALE_HIGH_QUALITY);
+      }
     } else {
       if (FileResolution.THUMBNAIL.equals(resolution)) {
         newImg = new BufferedImage(width, width, colorSpace);
         Graphics g1 = newImg.createGraphics();
         g1.drawImage(image, 0, (width - height) / 2, null);
-        if (width > size)
-          rescaledImage =
-              getScaledInstance(newImg, size, size, RenderingHints.VALUE_INTERPOLATION_BILINEAR,
-                  RESCALE_HIGH_QUALITY);
-        else
+        if (width > size) {
+          rescaledImage = getScaledInstance(newImg, size, size,
+              RenderingHints.VALUE_INTERPOLATION_BILINEAR, RESCALE_HIGH_QUALITY);
+        } else {
           rescaledImage = newImg;
-      } else
-        rescaledImage =
-            getScaledInstance(image, width * size / height, size,
-                RenderingHints.VALUE_INTERPOLATION_BILINEAR, RESCALE_HIGH_QUALITY);
+        }
+      } else {
+        rescaledImage = getScaledInstance(image, width * size / height, size,
+            RenderingHints.VALUE_INTERPOLATION_BILINEAR, RESCALE_HIGH_QUALITY);
+      }
     }
     BufferedImage rescaledBufferedImage =
         new BufferedImage(rescaledImage.getWidth(null), rescaledImage.getHeight(null), colorSpace);
@@ -158,9 +181,8 @@ public class ImageUtils {
    */
   private static BufferedImage getScaledInstance(BufferedImage img, int targetWidth,
       int targetHeight, Object hint, boolean higherQuality) {
-    int type =
-        (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
-            : BufferedImage.TYPE_INT_ARGB;
+    int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
+        : BufferedImage.TYPE_INT_ARGB;
     BufferedImage ret = img;
     int w, h;
     if (higherQuality) {
@@ -204,17 +226,28 @@ public class ImageUtils {
    * 
    * @param bytes
    * @return
+   * @throws IOException
    */
-  private static byte[] image2Jpeg(byte[] bytes) {
-    try {
-      InputStream ins = new ByteArrayInputStream(bytes);
-      BufferedImage image = ImageIO.read(ins);
-      ByteArrayOutputStream ous = new ByteArrayOutputStream();
-      ImageIO.write(image, "jpg", ous);
-      return ous.toByteArray();
-    } catch (Exception e) {
-      throw new RuntimeException("Error transforming image to jpeg", e);
-    }
+  private static byte[] image2Jpeg(byte[] bytes) throws IOException {
+    InputStream ins = new ByteArrayInputStream(bytes);
+    BufferedImage image = ImageIO.read(ins);
+    ByteArrayOutputStream ous = new ByteArrayOutputStream();
+    ImageIO.write(image, "jpg", ous);
+    return ous.toByteArray();
+  }
+
+
+  /**
+   * Transform a image to a jpeg image. The input image must have a format supported by
+   * {@link ImageIO}
+   * 
+   * @param File
+   * @return
+   * @throws IOException
+   */
+  private static File image2Jpeg(File file) throws IOException {
+    BufferedImage image = ImageIO.read(new FileInputStream(file));
+    return toFile(image, StorageUtils.getMimeType("jpg"));
   }
 
   /**
@@ -240,9 +273,23 @@ public class ImageUtils {
    */
   public static byte[] toBytes(BufferedImage image, String mimeType) throws IOException {
     ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
-    // use imageIO.write to encode the image back into a byte[]
     ImageIO.write(image, ImageUtils.getImageFormat(mimeType), byteOutput);
     return byteOutput.toByteArray();
+  }
+
+  /**
+   * Wrinte a {@link BufferedImage} into a File
+   * 
+   * @param image
+   * @param mimeType
+   * @return
+   * @throws IOException
+   */
+  public static File toFile(BufferedImage image, String mimeType) throws IOException {
+    File file = TempFileUtil.createTempFile("ImageUtils_toFile", null);
+    FileOutputStream fos = new FileOutputStream(file);
+    ImageIO.write(image, ImageUtils.getImageFormat(mimeType), fos);
+    return file;
   }
 
   /**
@@ -262,7 +309,6 @@ public class ImageUtils {
     } else {
       size = image.getWidth() > image.getHeight() ? image.getWidth() : image.getHeight();
       bufferedImage = scaleImageFast(image, size, resolution);
-      // bufferedImage = image;
     }
     return bufferedImage;
   }
@@ -276,8 +322,8 @@ public class ImageUtils {
    * @throws IOException
    * @throws URISyntaxException
    */
-  private static int getResolution(FileResolution resolution) throws IOException,
-      URISyntaxException {
+  private static int getResolution(FileResolution resolution)
+      throws IOException, URISyntaxException {
     switch (resolution) {
       case THUMBNAIL:
         return Integer.parseInt(PropertyReader.getProperty("xsd.resolution.thumbnail"));
@@ -334,7 +380,7 @@ public class ImageUtils {
         }
       }
     } catch (Exception e) {
-      logger.error("Error reading image dimension: ", e);
+      LOGGER.error("Error reading image dimension: ", e);
     }
     return null;
   }

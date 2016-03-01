@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -30,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
-import net.java.dev.webdav.jaxrs.ResponseStatus;
 
 /**
  * Created by vlad on 09.12.14.
@@ -191,7 +191,7 @@ public class ItemDefaultMdCreateHierarchical extends ItemTestBase {
             .replaceAll("\"" + "text" + "\"\\s*:", "\"" + "textChild" + "\":"));
     Response response = getTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
 
@@ -228,7 +228,7 @@ public class ItemDefaultMdCreateHierarchical extends ItemTestBase {
             .replaceAll("\"text\": \"TitleOfItem\",", ""));
     Response response = getTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
 
@@ -247,7 +247,7 @@ public class ItemDefaultMdCreateHierarchical extends ItemTestBase {
             .replaceAll("\"" + "textChild" + "\"\\s*:", "\"" + "textChildNewLabel" + "\":"));
     Response response = getTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
   @Test
@@ -284,7 +284,7 @@ public class ItemDefaultMdCreateHierarchical extends ItemTestBase {
     Response response = getTargetAuth().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
     // LOGGER.info(response.readEntity(String.class));
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
   private Invocation.Builder getTargetAuth() {

@@ -65,7 +65,7 @@ public class InternalStorageManager implements Serializable {
   /**
    * The directory path where files are stored
    */
-  private final String storagePath;
+  private String storagePath;
   /**
    * The URL used to access the storage (this is a dummy url, used by the internal storage to parse
    * file location)
@@ -75,7 +75,7 @@ public class InternalStorageManager implements Serializable {
    * The {@link InternalStorageAdministrator}
    */
   private InternalStorageAdministrator administrator;
-  private static Logger logger = Logger.getLogger(InternalStorageManager.class);
+  private static final Logger LOGGER = Logger.getLogger(InternalStorageManager.class);
 
   /**
    * Constructor for a specific path and url
@@ -87,11 +87,9 @@ public class InternalStorageManager implements Serializable {
       storagePath = StringHelper.normalizePath(storageDir.getAbsolutePath());
       storageUrl = StringHelper.normalizeURI(PropertyReader.getProperty("imeji.instance.url"))
           + "file" + StringHelper.urlSeparator;
-      // storageUrl = StringHelper.normalizeURI(PropertyBean.baseURI()) +
-      // "file" + StringHelper.urlSeparator;
       administrator = new InternalStorageAdministrator(storagePath);
     } catch (Exception e) {
-      throw new RuntimeException("Internal storage couldn't be initialized!!!!!", e);
+      LOGGER.error("Internal storage couldn't be initialized!!!!!", e);
     }
   }
 
@@ -173,10 +171,23 @@ public class InternalStorageManager implements Serializable {
    * @return
    */
   public String transformUrlToPath(String url) {
-    // String filename = getFileName(url, StringHelper.urlSeparator);
     return URI.create(url).getPath().replace(URI.create(storageUrl).getPath(), storagePath)
         .replace(StringHelper.urlSeparator, StringHelper.fileSeparator);
-    // .replace(filename, StringHelper.normalizeFilename(filename));
+  }
+
+  /**
+   * Get the Storage Id according to the url
+   * 
+   * @param url
+   * @return
+   */
+  public String getStorageId(String url) {
+    return transformUrlToPath(url).replace(storagePath, "")
+        .replace(getFileName(url, StringHelper.urlSeparator), "")
+        .replace(StringHelper.fileSeparator + "web" + StringHelper.fileSeparator, "")
+        .replace(StringHelper.fileSeparator + "thumbnail" + StringHelper.fileSeparator, "")
+        .replace(StringHelper.fileSeparator + "original" + StringHelper.fileSeparator, "")
+        .replace(StringHelper.fileSeparator, StringHelper.urlSeparator);
   }
 
   /**
@@ -199,8 +210,9 @@ public class InternalStorageManager implements Serializable {
    * @return
    */
   public String getFileName(String pathOrUrl, String separator) {
-    if (pathOrUrl.endsWith(separator))
+    if (pathOrUrl.endsWith(separator)) {
       pathOrUrl = pathOrUrl.substring(0, pathOrUrl.lastIndexOf(separator));
+    }
     return pathOrUrl.substring(pathOrUrl.lastIndexOf(separator) + 1);
   }
 
@@ -359,12 +371,12 @@ public class InternalStorageManager implements Serializable {
    * @return
    * @throws IOException
    */
-  private String write(byte[] bytes, String path) throws IOException {
+  private String write(File srcFile, String path) throws IOException {
     File file = new File(path);
     if (!file.exists()) {
       file.getParentFile().mkdirs();
       file.createNewFile();
-      FileUtils.writeByteArrayToFile(file, bytes);
+      FileUtils.copyFile(srcFile, file);
       return file.getAbsolutePath();
     } else {
       throw new RuntimeException("File " + path + " already exists in internal storage!");

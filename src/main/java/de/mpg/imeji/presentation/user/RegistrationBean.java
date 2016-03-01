@@ -1,5 +1,20 @@
 package de.mpg.imeji.presentation.user;
 
+import static de.mpg.imeji.logic.util.StringHelper.isNullOrEmptyTrim;
+import static de.mpg.imeji.presentation.beans.ConfigurationBean.getContactEmailStatic;
+import static de.mpg.imeji.presentation.beans.ConfigurationBean.getEmailServerSenderStatic;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.UserController;
@@ -14,21 +29,6 @@ import de.mpg.imeji.presentation.user.util.EmailMessages;
 import de.mpg.imeji.presentation.user.util.PasswordGenerator;
 import de.mpg.imeji.presentation.util.BeanHelper;
 
-import org.apache.log4j.Logger;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
-
-import static de.mpg.imeji.logic.util.StringHelper.isNullOrEmptyTrim;
-import static de.mpg.imeji.presentation.beans.ConfigurationBean.getContactEmailStatic;
-import static de.mpg.imeji.presentation.beans.ConfigurationBean.getEmailServerSenderStatic;
-
 /**
  * Bean for registration workflow
  *
@@ -39,24 +39,21 @@ import static de.mpg.imeji.presentation.beans.ConfigurationBean.getEmailServerSe
 @ManagedBean(name = "RegistrationBean")
 @ViewScoped
 public class RegistrationBean {
-
-  private static Logger logger = Logger.getLogger(RegistrationBean.class);
-
+  private static final Logger LOGGER = Logger.getLogger(RegistrationBean.class);
   private UserController uc = new UserController(Imeji.adminUser);
 
   private SessionBean sb;
   private Navigation nb;
   private User user = new User();
 
-
   private String token = null;
   private boolean registration_submitted = false;
-
 
   private boolean registration_success = false;
   private boolean activation_submitted = false;
   private boolean activation_success = false;
   private String activation_message;
+  private String redirect;
 
 
   @PostConstruct
@@ -98,18 +95,18 @@ public class RegistrationBean {
         BeanHelper.error(sb.getMessage(errorM));
       }
     }
-    
+
     if (this.registration_success) {
-        
+      BeanHelper.cleanMessages();
+      BeanHelper.info("Sending registration email and new password.");
+      sendRegistrationNotification(password);
+      if (FacesContext.getCurrentInstance().getMessageList().size() > 1) {
         BeanHelper.cleanMessages();
-        BeanHelper.info("Sending registration email and new password.");
-        sendRegistrationNotification(password);
-        if (FacesContext.getCurrentInstance().getMessageList().size() > 1) {
-          BeanHelper.cleanMessages();
-          BeanHelper.info("User account has been registered, but verification email could not be sent! Please contact service administrators!");
-        }
+        BeanHelper.info(
+            "User account has been registered, but verification email could not be sent! Please contact service administrators!");
+      }
     }
-    
+
   }
 
   private void activate() {
@@ -122,6 +119,7 @@ public class RegistrationBean {
       this.activation_message = sb.getMessage("activation_success");
       LoginBean loginBean = (LoginBean) BeanHelper.getRequestBean(LoginBean.class);
       loginBean.setLogin(user.getEmail());
+      this.redirect = nb.getHomeUrl();
     } catch (ImejiException e) {
       this.activation_success = false;
       this.activation_message = e.getLocalizedMessage();
@@ -136,13 +134,12 @@ public class RegistrationBean {
     EmailMessages emailMessages = new EmailMessages();
     try {
       // send to requester
-      // TODO: send plain text password
-      emailClient.sendMail(getUser().getEmail(), getEmailServerSenderStatic(), emailMessages
-          .getEmailOnRegistrationRequest_Subject(sb), emailMessages
-          .getEmailOnRegistrationRequest_Body(getUser(), password, getContactEmailStatic(), sb,
-              nb.getRegistrationUrl()));
+      emailClient.sendMail(getUser().getEmail(), getEmailServerSenderStatic(),
+          emailMessages.getEmailOnRegistrationRequest_Subject(sb),
+          emailMessages.getEmailOnRegistrationRequest_Body(getUser(), password,
+              getContactEmailStatic(), sb, nb.getRegistrationUrl()));
     } catch (Exception e) {
-      logger.error("Error sending email", e);
+      LOGGER.error("Error sending email", e);
       BeanHelper.error(sb.getMessage("error") + ": Email not sent");
     }
   }
@@ -151,9 +148,7 @@ public class RegistrationBean {
    * Send account activation email
    */
   private void sendActivationNotification() {
-    
     NotificationUtils.sendActivationNotification(user, sb);
-
   }
 
   public boolean isRegistration_submitted() {
@@ -204,4 +199,7 @@ public class RegistrationBean {
     this.registration_success = registration_success;
   }
 
+  public String getRedirect() {
+    return redirect;
+  }
 }

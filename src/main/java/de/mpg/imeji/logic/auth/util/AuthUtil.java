@@ -29,10 +29,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import com.sun.org.apache.bcel.internal.generic.ReturnaddressType;
 
-import de.mpg.imeji.logic.auth.Authorization;
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.auth.authorization.Authorization;
 import de.mpg.imeji.logic.controller.ItemController;
+import de.mpg.imeji.logic.controller.SpaceController;
+import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
@@ -53,8 +56,9 @@ import de.mpg.imeji.presentation.util.ObjectLoader;
  * @version $Revision$ $LastChangedDate$
  */
 public class AuthUtil {
-  private static Authorization authorization = new Authorization();
-  private static final Logger logger = Logger.getLogger(AuthUtil.class);
+  private static final Authorization authorization = new Authorization();
+  private static final StorageController STORAGE_CONTROLLER = new StorageController();
+
 
   /**
    * Return the {@link Authorization} as static
@@ -64,6 +68,38 @@ public class AuthUtil {
   public static Authorization staticAuth() {
     return authorization;
   }
+
+  /**
+   * True if the user is allowed to view this file
+   * 
+   * @param fileUrl
+   * @param user
+   * @return
+   */
+  public static boolean isAllowedToViewFile(String fileUrl, User user) {
+    if (isSpaceUrl(fileUrl)) {
+      // For space Logos do not check any security (spaces are always public)
+      return true;
+    }
+    try {
+      new ItemController()
+          .retrieveLazyForFile(STORAGE_CONTROLLER.getStorage().getStorageId(fileUrl), user);
+      return true;
+    } catch (ImejiException e) {
+      return false;
+    }
+  }
+
+  /**
+   * True if the file is the logo of a space
+   * 
+   * @param url
+   * @return
+   */
+  public static boolean isSpaceUrl(String url) {
+    return new SpaceController().isSpaceLogoURL(url);
+  }
+
 
   /**
    * True if the user is Administrator of Imeji
@@ -109,8 +145,10 @@ public class AuthUtil {
     List<String> uris = new ArrayList<>();
     for (Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/collection/")
-          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ)))
+          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
+      }
+
     }
     return uris;
   }
@@ -126,8 +164,10 @@ public class AuthUtil {
     List<String> uris = new ArrayList<>();
     for (Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/metadataProfile/")
-          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ)))
+          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
+      }
+
     }
     return uris;
   }
@@ -143,8 +183,9 @@ public class AuthUtil {
     List<String> uris = new ArrayList<>();
     for (Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/item/")
-          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ)))
+          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
+      }
     }
     return uris;
   }
@@ -159,8 +200,9 @@ public class AuthUtil {
     List<String> uris = new ArrayList<>();
     for (Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/album/")
-          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ)))
+          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
+      }
     }
     return uris;
   }
@@ -175,8 +217,9 @@ public class AuthUtil {
   public static List<Grant> getAllGrantsOfUser(User user) {
     if (user != null) {
       List<Grant> l = new ArrayList<>(filterUnvalidGrants(user.getGrants()));
-      for (UserGroup ug : user.getGroups())
+      for (UserGroup ug : user.getGroups()) {
         l.addAll(filterUnvalidGrants(ug.getGrants()));
+      }
       return l;
     }
     return new ArrayList<>();
@@ -192,8 +235,9 @@ public class AuthUtil {
   public static List<Grant> extractGrantsFor(List<Grant> grants, String grantForUri) {
     List<Grant> l = new ArrayList<Grant>();
     for (Grant g : filterUnvalidGrants(grants)) {
-      if (g.getGrantFor().toString().equals(grantForUri))
+      if (g.getGrantFor().toString().equals(grantForUri)) {
         l.add(g);
+      }
     }
     return l;
   }
@@ -209,9 +253,11 @@ public class AuthUtil {
    * @return
    */
   public static Grant extractGrant(List<Grant> grants, String grantForUri, GrantType type) {
-    for (Grant g : AuthUtil.extractGrantsFor(grants, PropertyBean.baseURI()))
-      if (g.getGrantType().compareTo(AuthUtil.toGrantTypeURI(type)) == 0)
+    for (Grant g : AuthUtil.extractGrantsFor(grants, PropertyBean.baseURI())) {
+      if (g.getGrantType().compareTo(AuthUtil.toGrantTypeURI(type)) == 0) {
         return g;
+      }
+    }
     return null;
   }
 
@@ -223,9 +269,11 @@ public class AuthUtil {
    */
   private static Collection<Grant> filterUnvalidGrants(Collection<Grant> l) {
     Collection<Grant> nl = new ArrayList<Grant>();
-    for (Grant g : l)
-      if (g.getGrantFor() != null && g.getGrantType() != null)
+    for (Grant g : l) {
+      if (g.getGrantFor() != null && g.getGrantType() != null) {
         nl.add(g);
+      }
+    }
     return nl;
   }
 
@@ -249,8 +297,9 @@ public class AuthUtil {
     List<String> shareToList = new ArrayList<String>();
     for (Grant g : user.getGrants()) {
       if (g.getGrantFor() != null) {
-        if (!shareToList.contains(g.getGrantFor().toString()))
+        if (!shareToList.contains(g.getGrantFor().toString())) {
           shareToList.add(g.getGrantFor().toString());
+        }
       }
     }
     List<SharedHistory> roles = new ArrayList<SharedHistory>();
@@ -259,7 +308,8 @@ public class AuthUtil {
         CollectionImeji c = ObjectLoader.loadCollectionLazy(URI.create(sharedWith), sessionUser);
         if (c != null) {
           roles.add(new SharedHistory(user, SharedObjectType.COLLECTION, sharedWith,
-              c.getProfile() != null ? c.getProfile().toString() : null, c.getMetadata().getTitle()));
+              c.getProfile() != null ? c.getProfile().toString() : null,
+              c.getMetadata().getTitle()));
         }
       } else if (sharedWith.contains("/album/")) {
         Album a = ObjectLoader.loadAlbumLazy(URI.create(sharedWith), sessionUser);
@@ -289,8 +339,9 @@ public class AuthUtil {
       throws Exception {
     List<String> shareToList = new ArrayList<String>();
     for (Grant g : group.getGrants()) {
-      if (!shareToList.contains(g.getGrantFor().toString()))
+      if (!shareToList.contains(g.getGrantFor().toString())) {
         shareToList.add(g.getGrantFor().toString());
+      }
     }
     List<SharedHistory> roles = new ArrayList<SharedHistory>();
     for (String sharedWith : shareToList) {

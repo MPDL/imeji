@@ -26,7 +26,7 @@ import de.mpg.imeji.logic.vo.User;
  */
 public class ImportFileFromEscidocToInternalStorageJob implements Callable<Integer> {
 
-  private static Logger logger = Logger.getLogger(ImportFileFromEscidocToInternalStorageJob.class);
+  private static final Logger LOGGER = Logger.getLogger(ImportFileFromEscidocToInternalStorageJob.class);
   private User user;
 
   public ImportFileFromEscidocToInternalStorageJob(User user) {
@@ -43,7 +43,7 @@ public class ImportFileFromEscidocToInternalStorageJob implements Callable<Integ
       try {
         // Get escidoc url for all files
         URI escidocUrl = item.getFullImageUrl();
-        logger.info("Importing file " + escidocUrl + " for item " + item.getId());
+        LOGGER.info("Importing file " + escidocUrl + " for item " + item.getId());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         // Read the file in a stream
         escidoc.read(escidocUrl.toString(), out, true);
@@ -65,10 +65,10 @@ public class ImportFileFromEscidocToInternalStorageJob implements Callable<Integ
           // Update the item with the new values
           ic.update(item, user);
         } else {
-          logger.error("File not found: " + escidocUrl + " for item " + item.getId());
+          LOGGER.error("File not found: " + escidocUrl + " for item " + item.getId());
         }
       } catch (Exception e) {
-        logger.error("Error importing item " + item.getId(), e);
+        LOGGER.error("Error importing item " + item.getId(), e);
       } finally {
         FileUtils.deleteQuietly(tmp);
       }

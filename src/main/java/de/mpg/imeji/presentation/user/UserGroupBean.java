@@ -70,7 +70,7 @@ public class UserGroupBean implements Serializable {
   private Collection<User> users;
   @ManagedProperty(value = "#{SessionBean.user}")
   private User sessionUser;
-  private static Logger logger = Logger.getLogger(UserGroupsBean.class);
+  private static final Logger LOGGER = Logger.getLogger(UserGroupsBean.class);
   private List<SharedHistory> roles = new ArrayList<SharedHistory>();
 
   @PostConstruct
@@ -85,7 +85,7 @@ public class UserGroupBean implements Serializable {
         this.roles = AuthUtil.getAllRoles(userGroup, sessionUser);
       } catch (Exception e) {
         BeanHelper.error("Error reading user group " + groupId);
-        logger.error(e);
+        LOGGER.error(e);
       }
     }
   }
@@ -106,7 +106,7 @@ public class UserGroupBean implements Serializable {
       try {
         users.add(c.retrieve(uri));
       } catch (ImejiException e) {
-        logger.error("Error reading user: ", e);
+        LOGGER.error("Error reading user: ", e);
       }
     }
     return users;
@@ -160,11 +160,11 @@ public class UserGroupBean implements Serializable {
         return "";
       } else
         c.create(userGroup, sessionUser);
+        reload();
     } catch (Exception e) {
       BeanHelper.error("Error creating user group");
     }
-    return ((SessionBean) BeanHelper.getSessionBean(SessionBean.class))
-        .getPrettySpacePage("pretty:userGroups");
+    return "";
   }
 
   /**

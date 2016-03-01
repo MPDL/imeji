@@ -54,10 +54,6 @@ public class StringHelper {
     return sBuilder.toString();
   }
 
-  public static void main(String[] args) throws Exception {
-    System.out.println(convertToMD5("123456789"));
-  }
-
   /**
    * Format a uri (URL): add a / if the uri doesn't end with it
    * 

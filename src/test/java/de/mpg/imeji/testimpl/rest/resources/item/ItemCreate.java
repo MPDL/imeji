@@ -39,7 +39,6 @@ import de.mpg.imeji.rest.api.CollectionService;
 import de.mpg.imeji.rest.api.DefaultItemService;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
-import net.java.dev.webdav.jaxrs.ResponseStatus;
 import util.JenaUtil;
 
 /**
@@ -154,7 +153,7 @@ public class ItemCreate extends ItemTestBase {
 
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
   @Test
@@ -181,7 +180,7 @@ public class ItemCreate extends ItemTestBase {
 
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
   @Test
@@ -347,7 +346,7 @@ public class ItemCreate extends ItemTestBase {
 
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
   }
 
@@ -363,7 +362,7 @@ public class ItemCreate extends ItemTestBase {
 
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
   }
 
@@ -382,7 +381,7 @@ public class ItemCreate extends ItemTestBase {
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
     if (Imeji.isValidateChecksumInCollection()) {
-      assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+      assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
     } else {
       assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
     }
@@ -402,7 +401,7 @@ public class ItemCreate extends ItemTestBase {
 
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
   // Default Authorized Target with imeji syntax
@@ -426,7 +425,7 @@ public class ItemCreate extends ItemTestBase {
   }
 
   /**
-   * @return the logger
+   * @return the LOGGER
    */
   public static Logger getLogger() {
     return LOGGER;

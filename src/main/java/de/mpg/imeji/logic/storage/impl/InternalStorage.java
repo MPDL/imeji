@@ -182,4 +182,9 @@ public class InternalStorage implements Storage {
     }
     return stringFromFile;
   }
+
+  @Override
+  public String getStorageId(String url) {
+    return manager.getStorageId(url);
+  }
 }

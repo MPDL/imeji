@@ -53,7 +53,7 @@ public class MetadataSetBean implements Serializable {
   private MetadataProfile profile = null;
   private SuperMetadataTree metadataTree = null;
   private SuperMetadataTree uncutTree = null;
-  private static final Logger logger = Logger.getLogger(MetadataSetBean.class);
+  private static final Logger LOGGER = Logger.getLogger(MetadataSetBean.class);
 
   /**
    * Constructor for a {@link MetadataSet}
@@ -129,7 +129,7 @@ public class MetadataSetBean implements Serializable {
         SuperMetadataBean smd = new SuperMetadataBean(md, st);
         flat.add(smd);
       } else {
-        logger.error("A metadata " + md.getId()
+        LOGGER.error("A metadata " + md.getId()
             + " is defined with a non existing statement in profile " + this.profile.getId());
       }
     }

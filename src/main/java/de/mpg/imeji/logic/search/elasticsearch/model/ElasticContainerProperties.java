@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.elasticsearch.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.mpg.imeji.logic.vo.Album;
@@ -15,12 +16,11 @@ import de.mpg.imeji.logic.vo.Person;
  * 
  */
 public class ElasticContainerProperties extends ElasticProperties {
-
-  private String name;
-  private String description;
-  private String space;
-  private List<String> pid;
-  private List<ElasticPerson> author = new ArrayList<>();
+  private final String name;
+  private final String description;
+  private final String space;
+  private final List<String> pid;
+  private final List<ElasticPerson> author = new ArrayList<>();
 
   /**
    * Default Constructor
@@ -29,12 +29,10 @@ public class ElasticContainerProperties extends ElasticProperties {
    */
   public ElasticContainerProperties(Container c) {
     super(c);
-    this.setName(c.getMetadata().getTitle());
-    this.setDescription(c.getMetadata().getDescription());
-    if (c.getDoi() != null) {
-      this.pid = new ArrayList<>();
-      this.pid.add(c.getDoi());
-    }
+    this.name = c.getMetadata().getTitle();
+    this.description = c.getMetadata().getDescription();
+    this.space = c instanceof CollectionImeji ? c.getDoi() : null;
+    this.pid = c.getDoi() != null ? Arrays.asList(c.getDoi()) : new ArrayList<String>();
     for (Person p : c.getMetadata().getPersons()) {
       author.add(new ElasticPerson(p));
     }
@@ -48,32 +46,14 @@ public class ElasticContainerProperties extends ElasticProperties {
   }
 
   /**
-   * @param name the name to set
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  /**
    * @return the description
    */
   public String getDescription() {
     return description;
   }
 
-  /**
-   * @param description the description to set
-   */
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
   public List<ElasticPerson> getAuthor() {
     return author;
-  }
-
-  public void setAuthor(List<ElasticPerson> author) {
-    this.author = author;
   }
 
   /**
@@ -83,18 +63,7 @@ public class ElasticContainerProperties extends ElasticProperties {
     return space;
   }
 
-  /**
-   * @param space the space to set
-   */
-  public void setSpace(String space) {
-    this.space = space;
-  }
-
   public List<String> getPid() {
     return pid;
-  }
-
-  public void setPid(List<String> pid) {
-    this.pid = pid;
   }
 }

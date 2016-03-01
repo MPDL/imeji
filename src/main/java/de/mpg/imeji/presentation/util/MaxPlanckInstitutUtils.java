@@ -46,9 +46,14 @@ public class MaxPlanckInstitutUtils {
    */
   public static String getInstituteNameForIP(String userIP) {
     if (MPINameMap != null) {
-      for (String ipRange : MPINameMap.keySet()) {
-        if (IPUtils.isInRange(ipRange, userIP))
-          return MPINameMap.get(ipRange);
+      try {
+        for (String ipRange : MPINameMap.keySet()) {
+          if (IPUtils.isInRange(ipRange, userIP)) {
+            return MPINameMap.get(ipRange);
+          }
+        }
+      } catch (Exception e) {
+        LOGGER.error("Error reading the institute name", e);
       }
     }
     return null;
@@ -62,9 +67,14 @@ public class MaxPlanckInstitutUtils {
    */
   public static String getInstituteIdForIP(String userIP) {
     if (IdMap != null) {
-      for (String ipRange : IdMap.keySet()) {
-        if (IPUtils.isInRange(ipRange, userIP))
-          return IdMap.get(ipRange);
+      try {
+        for (String ipRange : IdMap.keySet()) {
+          if (IPUtils.isInRange(ipRange, userIP)) {
+            return IdMap.get(ipRange);
+          }
+        }
+      } catch (Exception e) {
+        LOGGER.error("Error reading the institute Id", e);
       }
     }
     return null;

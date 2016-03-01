@@ -13,16 +13,18 @@ import de.mpg.imeji.logic.vo.Person;
  * 
  */
 public class ElasticPerson {
-  private String familyname;
-  private String givenname;
-  private String completename;
-  private String identifier;
-  private List<ElasticOrganization> organization = new ArrayList<>();
+  private final String familyname;
+  private final String givenname;
+  private final String completename;
+  private final String identifier;
+  private final List<ElasticOrganization> organization = new ArrayList<>();
 
-  /**
-   * Default Constructor;
-   */
-  public ElasticPerson() {}
+  public ElasticPerson() {
+    this.familyname = null;
+    this.givenname = null;
+    this.identifier = null;
+    this.completename = null;
+  }
 
   /**
    * Constructor for a {@link Person}
@@ -30,15 +32,6 @@ public class ElasticPerson {
    * @param p
    */
   public ElasticPerson(Person p) {
-    setPerson(p);
-  }
-
-  /**
-   * Set the {@link Person} to this {@link ElasticPerson}
-   * 
-   * @param p
-   */
-  public void setPerson(Person p) {
     this.familyname = p.getFamilyName();
     this.givenname = p.getGivenName();
     this.identifier = p.getIdentifier();
@@ -56,30 +49,12 @@ public class ElasticPerson {
     return familyname;
   }
 
-
-  /**
-   * @param familyname the familyname to set
-   */
-  public void setFamilyname(String familyname) {
-    this.familyname = familyname;
-  }
-
-
   /**
    * @return the givenname
    */
   public String getGivenname() {
     return givenname;
   }
-
-
-  /**
-   * @param givenname the givenname to set
-   */
-  public void setGivenname(String givenname) {
-    this.givenname = givenname;
-  }
-
 
   /**
    * @return the completename
@@ -88,15 +63,6 @@ public class ElasticPerson {
     return completename;
   }
 
-
-  /**
-   * @param completename the completename to set
-   */
-  public void setCompletename(String completename) {
-    this.completename = completename;
-  }
-
-
   /**
    * @return the identifier
    */
@@ -104,29 +70,11 @@ public class ElasticPerson {
     return identifier;
   }
 
-
-  /**
-   * @param identifier the identifier to set
-   */
-  public void setIdentifier(String identifier) {
-    this.identifier = identifier;
-  }
-
-
   /**
    * @return the organisation
    */
   public List<ElasticOrganization> getOrganization() {
     return organization;
   }
-
-
-  /**
-   * @param organisation the organisation to set
-   */
-  public void setOrganization(List<ElasticOrganization> organization) {
-    this.organization = organization;
-  }
-
 
 }

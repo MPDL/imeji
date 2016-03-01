@@ -44,7 +44,6 @@ public class MdProfileBean {
   private Map<URI, Integer> levels;
   private String id = null;
   private List<SelectItem> profilesMenu = null;
-  private SessionBean sessionBean;
   // private String template;
   private int statementPosition = 0;
   /**
@@ -65,7 +64,6 @@ public class MdProfileBean {
   public MdProfileBean() {
     collectionSession =
         (CollectionSessionBean) BeanHelper.getSessionBean(CollectionSessionBean.class);
-    sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     if (collectionSession.getProfile() == null) {
       collectionSession.setProfile(new MetadataProfile());
     }
@@ -90,7 +88,6 @@ public class MdProfileBean {
       reset();
     }
     if (UrlHelper.getParameterBoolean("init") && profile != null) {
-
       initStatementWrappers(profile);
       if (profile.getStatements().isEmpty()) {
         addFirstStatement();
@@ -125,9 +122,10 @@ public class MdProfileBean {
    */
   public String getTypeLabel(String uri) {
     for (Metadata.Types t : Metadata.Types.values()) {
-      if (t.getClazzNamespace().equals(uri))
+      if (t.getClazzNamespace().equals(uri)) {
         return ((SessionBean) BeanHelper.getSessionBean(SessionBean.class))
             .getLabel("facet_" + t.name().toLowerCase());
+      }
     }
     return uri;
   }
@@ -172,8 +170,9 @@ public class MdProfileBean {
   public String getEncodedId() throws UnsupportedEncodingException {
     if (profile != null && profile.getId() != null) {
       return URLEncoder.encode(profile.getId().toString(), "UTF-8");
-    } else
+    } else {
       return "";
+    }
   }
 
   protected String getNavigationString() {
@@ -269,9 +268,10 @@ public class MdProfileBean {
    * @return
    */
   public boolean hasChild(int position) {
-    if (position < wrappers.size() && wrappers.get(position).getStatement().getParent() != null)
+    if (position < wrappers.size() && wrappers.get(position).getStatement().getParent() != null) {
       return wrappers.get(position).getStatement().getParent()
           .compareTo(wrappers.get(position - 1).getStatement().getId()) == 0;
+    }
     return false;
   }
 
@@ -369,8 +369,9 @@ public class MdProfileBean {
       if (wrapper.getStatement().getParent() != null
           && wrapper.getStatement().getParent().compareTo(parent.getStatement().getId()) == 0) {
         l.add(wrapper);
-        if (!firstOnly)
+        if (!firstOnly) {
           l.addAll(getChilds(wrapper, false));
+        }
       }
     }
     return l;
@@ -715,26 +716,6 @@ public class MdProfileBean {
     this.profilesMenu = profilesMenu;
   }
 
-  // /**
-  // * getter
-  // *
-  // * @return
-  // */
-  // public String getTemplate()
-  // {
-  // return template;
-  // }
-  //
-  // /**
-  // * setter
-  // *
-  // * @param template
-  // */
-  // public void setTemplate(String template)
-  // {
-  // this.template = template;
-  // }
-  //
   /**
    * getter
    * 
@@ -769,8 +750,9 @@ public class MdProfileBean {
 
   public String getMdTypesMenuAsString() {
     String s = "";
-    for (SelectItem si : mdTypesMenu)
+    for (SelectItem si : mdTypesMenu) {
       s += si.getValue() + "," + si.getLabel() + "|";
+    }
     return s;
   }
 }

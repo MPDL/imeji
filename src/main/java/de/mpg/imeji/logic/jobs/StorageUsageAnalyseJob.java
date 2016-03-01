@@ -24,7 +24,7 @@ import de.mpg.imeji.presentation.util.PropertyReader;
  *
  */
 public class StorageUsageAnalyseJob implements Callable<Integer> {
-  private static Logger logger = Logger.getLogger(StorageUsageAnalyseJob.class);
+  private static final Logger LOGGER = Logger.getLogger(StorageUsageAnalyseJob.class);
 
   public enum StorageUsage {
     NUMBER_OF_FILES, STORAGE_USED, FREE_SPACE, LAST_UPDATE_DATE;
@@ -47,13 +47,13 @@ public class StorageUsageAnalyseJob implements Callable<Integer> {
     try {
       storageProperties.loadFromXML(new FileInputStream(STORAGE_USAGE_STATS_FILE_NAME));
     } catch (Exception e) {
-      logger.info("Can not read " + STORAGE_USAGE_STATS_FILE_NAME + " (Probably empty)");
+      LOGGER.info("Can not read " + STORAGE_USAGE_STATS_FILE_NAME + " (Probably empty)");
     }
   }
 
   @Override
   public Integer call() throws Exception {
-    logger.info("Analysing the storage...");
+    LOGGER.info("Analysing the storage...");
     StorageController sc = new StorageController();
     storageProperties.setProperty(StorageUsage.NUMBER_OF_FILES.name(),
         Long.toString(sc.getAdministrator().getNumberOfFiles()));
@@ -64,7 +64,7 @@ public class StorageUsageAnalyseJob implements Callable<Integer> {
     storageProperties.setProperty(StorageUsage.LAST_UPDATE_DATE.name(), getCurrentDate());
     storageProperties
         .storeToXML(new FileOutputStream(STORAGE_USAGE_STATS_FILE_NAME), null, "UTF-8");
-    logger.info("...done");
+    LOGGER.info("...done");
     return 1;
   }
 

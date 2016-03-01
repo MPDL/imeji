@@ -3,18 +3,22 @@
  */
 package de.mpg.imeji.presentation.user;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
+
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.controller.UserController;
 import de.mpg.imeji.logic.controller.UserController.USER_TYPE;
+import de.mpg.imeji.logic.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.ConfigurationBean;
+import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.user.util.EmailClient;
 import de.mpg.imeji.presentation.user.util.EmailMessages;
@@ -29,21 +33,21 @@ import de.mpg.imeji.presentation.util.ImejiFactory;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class UserCreationBean {
+public class UserCreationBean extends QuotaSuperBean {
   private User user;
   private SessionBean sb;
   private boolean sendEmail = false;
-  private static Logger logger = Logger.getLogger(UserCreationBean.class);
+  private static final Logger LOGGER = Logger.getLogger(UserCreationBean.class);
   private boolean allowedToCreateCollection = true;
-  private long quota = ConfigurationBean.getDefaultDiskSpaceQuotaStatic();
+
 
   /**
    * Construct new bean
    */
   public UserCreationBean() {
+    super();
     sb = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     this.setUser(new User());
-    this.user.setQuota(ConfigurationBean.getDefaultDiskSpaceQuotaStatic());
   }
 
   /**
@@ -53,23 +57,24 @@ public class UserCreationBean {
    * @throws Exception
    */
   public String create() {
-
     try {
       String password = createNewUser();
       if (sendEmail) {
         sendNewAccountEmail(password);
       }
       BeanHelper.info(sb.getMessage("success_user_create"));
-      return sb.getPrettySpacePage("pretty:users");
-    } catch (Exception e) {
+      reloadUserPage();
+    } catch (UnprocessableError e) {
       BeanHelper.cleanMessages();
       BeanHelper.error(sb.getMessage("error_during_user_create"));
-      List<String> listOfErrors = Arrays.asList(e.getMessage().split(";"));
-      for (String errorM : listOfErrors) {
+      for (String errorM : e.getMessages()) {
         BeanHelper.error(sb.getMessage(errorM));
       }
+    } catch (Exception e) {
+      LOGGER.error("Error creating user:", e);
+      BeanHelper.error(sb.getMessage(e.getMessage()));
     }
-    return "pretty:";
+    return "";
   }
 
   /**
@@ -82,9 +87,8 @@ public class UserCreationBean {
     PasswordGenerator generator = new PasswordGenerator();
     String password = generator.generatePassword();
     user.setEncryptedPassword(StringHelper.convertToMD5(password));
-    User newUser = uc.create(user, allowedToCreateCollection ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED);
-    newUser.setQuota(getQuota());    
-    uc.update(newUser, user);
+    user.setQuota(QuotaUtil.getQuotaInBytes(getQuota()));
+    uc.create(user, allowedToCreateCollection ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED);
     return password;
   }
 
@@ -103,7 +107,7 @@ public class UserCreationBean {
       uc.retrieve(user.getEmail());
       return true;
     } catch (NotFoundException e) {
-      logger.info("User not found: " + user.getEmail());
+      LOGGER.info("User not found: " + user.getEmail());
       return false;
     }
   }
@@ -121,7 +125,7 @@ public class UserCreationBean {
           emailMessages.getEmailOnAccountAction_Subject(true), emailMessages
               .getNewAccountMessage(password, user.getEmail(), user.getPerson().getCompleteName()));
     } catch (Exception e) {
-      logger.error("Error sending email", e);
+      LOGGER.error("Error sending email", e);
       BeanHelper.error(sb.getMessage("error") + ": Email not sent");
     }
   }
@@ -143,8 +147,9 @@ public class UserCreationBean {
    */
   public void removeOrganization(int index) {
     List<Organization> orgas = (List<Organization>) this.user.getPerson().getOrganizations();
-    if (orgas.size() > 1)
+    if (orgas.size() > 1) {
       orgas.remove(index);
+    }
   }
 
   /**
@@ -196,12 +201,18 @@ public class UserCreationBean {
   public void setAllowedToCreateCollection(boolean allowedToCreateCollection) {
     this.allowedToCreateCollection = allowedToCreateCollection;
   }
-
-  public long getQuota() {
-    return quota;
+  
+  
+  private void reloadUserPage() {
+    try {
+      Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+      FacesContext.getCurrentInstance().getExternalContext().redirect(navigation.getUserUrl() + "?id=" + user.getEmail());
+    } catch (IOException e) {
+      Logger.getLogger(UserBean.class).info("Some reloadPage exception", e);
+    }
   }
+ 
 
-  public void setQuota(long quota) {
-    this.quota = quota;
-  }
 }
+
+

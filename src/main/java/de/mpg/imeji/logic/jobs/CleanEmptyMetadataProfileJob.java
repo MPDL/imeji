@@ -21,11 +21,11 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
  *
  */
 public class CleanEmptyMetadataProfileJob implements Callable<Integer> {
-  private static final Logger logger = Logger.getLogger(CleanEmptyMetadataProfileJob.class);
+  private static final Logger LOGGER = Logger.getLogger(CleanEmptyMetadataProfileJob.class);
 
   @Override
   public Integer call() throws Exception {
-    logger.info("Cleaning not referenced empty profiles...");
+    LOGGER.info("Cleaning not referenced empty profiles...");
     Search s = new JenaSearch(SearchObjectTypes.ALL, null);
     List<String> r = s.searchString(JenaCustomQueries.selectUnusedMetadataProfiles(), null,
         Imeji.adminUser, 0, -1).getResults();
@@ -36,7 +36,7 @@ public class CleanEmptyMetadataProfileJob implements Callable<Integer> {
         pc.delete(mdp, Imeji.adminUser);
       }
     }
-    logger.info("...done!");
+    LOGGER.info("...done!");
     return 1;
   }
 }

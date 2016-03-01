@@ -29,7 +29,7 @@ import util.JenaUtil;
  */
 public class ShareControllerTestClass extends ControllerTest {
 
-  private static final Logger logger = Logger.getLogger(ShareControllerTestClass.class);
+  private static final Logger LOGGER = Logger.getLogger(ShareControllerTestClass.class);
 
   @BeforeClass
   public static void specificSetup() {
@@ -38,7 +38,7 @@ public class ShareControllerTestClass extends ControllerTest {
       createCollection();
       createItem();
     } catch (ImejiException e) {
-      logger.error("Error initializing collection or item", e);
+      LOGGER.error("Error initializing collection or item", e);
     }
 
   }

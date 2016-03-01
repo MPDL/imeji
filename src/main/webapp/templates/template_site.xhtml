@@ -22,24 +22,25 @@
             <div class="#{siteWrapperClass}">
                 <ui:insert name="init"/>
                 <ui:include src="component/header/header_default.xhtml"/>
-                
-                 <!-- headline -->
-                <h:panelGroup rendered="#{!displayQuery}" layout="block" styleClass="imj_siteContentHeadline #{headline.toString().trim().length() == 0 ? 'imj_invisible' : ''}">
-                    <h1>
-                        #{headline.toString().trim()}
-                        <h:outputText value="imeji" rendered="#{headline.toString().trim().length() == 0}"/>
-                        <ui:fragment rendered="#{headlineSecondRow != null and headlineSecondRow.toString().trim().length() > 0}">
-                            <br/>
-                            #{headlineSecondRow.toString().trim()}"
-                        </ui:fragment>
-                    </h1>
-                </h:panelGroup>
-                <!-- Search Query -->
-                <ui:insert name="searchQuery"/>
-                <!-- Actions Menu -->
-                <div id="actionsMenuArea">
-               		<ui:insert name="actionsMenu"/>  
-                </div>
+                <ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
+	                 <!-- headline -->
+	                <h:panelGroup rendered="#{!displayQuery}" layout="block" styleClass="imj_siteContentHeadline #{headline.toString().trim().length() == 0 ? 'imj_invisible' : ''}">
+	                    <h1>
+	                        #{headline.toString().trim()}
+	                        <h:outputText value="imeji" rendered="#{headline.toString().trim().length() == 0}"/>
+	                        <ui:fragment rendered="#{headlineSecondRow != null and headlineSecondRow.toString().trim().length() > 0}">
+	                            <br/>
+	                            #{headlineSecondRow.toString().trim()}
+	                        </ui:fragment>
+	                    </h1>
+	                </h:panelGroup>
+	                <!-- Search Query -->
+	                <ui:insert name="searchQuery"/>
+	                <!-- Actions Menu -->
+	                <div id="actionsMenuArea">
+	               		<ui:insert name="actionsMenu"/>  
+	                </div>
+                </ui:fragment>
                 <!-- Message area -->
                 <div id="imj_pageMessageArea">
                     <h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{MessagesBean.hasMessages}">

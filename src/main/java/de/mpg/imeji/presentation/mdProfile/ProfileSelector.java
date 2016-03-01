@@ -30,7 +30,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  */
 public class ProfileSelector implements Serializable {
   private static final long serialVersionUID = -6341938350166184007L;
-  private static Logger logger = Logger.getLogger(ProfileSelector.class);
+  private static final Logger LOGGER = Logger.getLogger(ProfileSelector.class);
   private MetadataProfile profile;
   private User user;
   private String space;
@@ -63,7 +63,7 @@ public class ProfileSelector implements Serializable {
       initStatementWrapperList();
     } catch (ImejiException e) {
       BeanHelper.error(e.getMessage());
-      logger.error("Error Initialization", e);
+      LOGGER.error("Error Initialization", e);
     }
   }
 

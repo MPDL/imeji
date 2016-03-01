@@ -22,17 +22,14 @@
 	
 	
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" isUserLoggedIn="#{Auth.loggedIn}" 
+		<menu:context_actionMenu id="action" 
 									curMainMenu="#{currentMainMenu}" 
 									downloadEnabled="false" 
-									filterBean="#{paginatorListSessionBean}" 
-									sortBean="#{paginatorListSessionBean}" 
-									navBean="#{Navigation}"
+									filterBean="#{paginatorListSessionBean}"
 									actionEnabled="false"/>
 	</ui:define>
 	
 	<ui:define name="searchQuery">
-		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}" navBean="#{Navigation}" 
-									 rendered="#{paginatorListSessionBean.simpleQuery != ''}"/>
+		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}" navBean="#{Navigation}"  rendered="#{paginatorListSessionBean.simpleQuery != ''}"/>
 	</ui:define>
 </ui:composition>

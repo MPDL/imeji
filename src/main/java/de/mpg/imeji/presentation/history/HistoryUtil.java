@@ -60,23 +60,11 @@ public class HistoryUtil {
     }
 
     m = findProfileId.matcher(url);
-    if (m.find() ) {
+    if (m.find()) {
       return ObjectHelper.getURI(MetadataProfile.class, UrlHelper.decode(m.group(2)));
     }
 
     return null;
-  }
-
-  public static void main(String[] args) {
-
-//    Matcher m = Pattern.compile(".*/collection/([a-zA-Z_0-9-]+).*")
-//        .matcher("http://localhost:8080/imeji/collection/2F1kdy1E2zP2xAk-test");
-//    
-    Matcher m = Pattern.compile(".*/(profile|metadataProfile)/([a-zA-Z_0-9-]+).*")
-        .matcher("http://localhost:8080/imeji/metadataProfile/AymO1Dd7gfykbrU ");
-    
-    
-    System.out.println(m.find() + m.group(1));
   }
 
   /**

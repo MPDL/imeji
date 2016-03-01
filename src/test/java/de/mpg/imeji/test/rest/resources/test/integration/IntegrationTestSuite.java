@@ -3,9 +3,6 @@ package de.mpg.imeji.test.rest.resources.test.integration;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import de.mpg.imeji.testimpl.rest.resources.AlbumIntegration;
-import de.mpg.imeji.testimpl.rest.resources.CollectionIntegration;
-import de.mpg.imeji.testimpl.rest.resources.ProfileIntegration;
 import de.mpg.imeji.testimpl.rest.resources.StorageIntegration;
 import de.mpg.imeji.testimpl.rest.resources.VersionManagerTest;
 import de.mpg.imeji.testimpl.rest.resources.item.ItemCreate;
@@ -31,8 +28,7 @@ import util.SuperTestSuite;
     ItemDefaultMdCreateHierarchical.class, ItemUpdate.class, ItemDefaultMdUpdateHierarchical.class,
     ItemEasyPatchMetadata.class, ItemDefaultUpdate.class,
 
-    // Other Tests
-    AlbumIntegration.class, CollectionIntegration.class,ProfileIntegration.class,
+    // Other Tests AlbumIntegration.class, CollectionIntegration.class,ProfileIntegration.class,
     StorageIntegration.class, VersionManagerTest.class})
 
 public class IntegrationTestSuite extends SuperTestSuite {

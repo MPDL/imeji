@@ -16,6 +16,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -28,90 +29,89 @@ import de.mpg.imeji.logic.doi.models.DOITitle;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Person;
 
+/**
+ * Utility Class for DOI Service
+ * 
+ * @author bastiens
+ *
+ */
 public class DOIUtil {
-  
-  private static Client client = ClientBuilder.newClient();
+  private static final Client client = ClientBuilder.newClient();
+  /**
+   * The DOI service needs an URL to first create a DOI
+   */
+  private static final String DUMMY_OBJECT_URL = "http://imeji.org/dummyDOI";
 
-  public static DOICollection transformToDO(CollectionImeji col){
+  private DOIUtil() {
+    // private controller
+  }
+
+  public static DOICollection transformToDO(CollectionImeji col) {
     DOICollection dcol = new DOICollection();
     DOITitle title = new DOITitle(col.getMetadata().getTitle());
     List<DOICreators> creators = new ArrayList<DOICreators>();
-    for(Person author : col.getMetadata().getPersons()){
+    for (Person author : col.getMetadata().getPersons()) {
       creators.add(new DOICreators(author.getCompleteName()));
     }
-   
+
     dcol.setIdentifier(new DOIIdentifier());
     dcol.getTitles().add(title);
     dcol.setPublisher("MPG");
     dcol.setCreators(creators);
     dcol.setPublicationYear(String.valueOf(col.getCreated().get(Calendar.YEAR)));
-    
+
     return dcol;
   }
-  
-  public static String convertToXML(DOICollection dcol) throws ImejiException{
+
+  public static String convertToXML(DOICollection dcol) throws ImejiException {
     StringWriter sw = new StringWriter();
 
     try {
-      JAXBContext context = JAXBContext.newInstance(DOICollection.class );
+      JAXBContext context = JAXBContext.newInstance(DOICollection.class);
       Marshaller m;
       m = context.createMarshaller();
-      m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
-      m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd");
-      m.marshal(dcol, sw );
+      m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+      m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
+          "http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd");
+      m.marshal(dcol, sw);
     } catch (JAXBException e) {
-        throw new ImejiException(
-            "Error occured, when contacting DOxI.");    
+      throw new ImejiException("Error occured, when contacting DOxI.");
     }
 
     String xml = sw.toString().trim();
     return xml;
-    
+
   }
-  
-  public static String makeDOIRequest(String doiServiceUrl, String doiUser, String doiPassword, String xml) throws ImejiException{
-    
-    String dummyServiceUrl = "https://test.doi.mpdl.mpg.de/doxi/rest/doi";
-    String dummyUrl = "https://dev-faces.mpdl.mpg.de/collection/8Sk5SYmjw2CxtNn";
-    
-    try {
-      validateURL(doiServiceUrl);
-    } catch (Exception e) {
-        throw new ImejiException(e.getMessage());            
-    }
-    
-    Response response = client.target(doiServiceUrl)
-        .queryParam("url", dummyUrl)
-//        .queryParam("url", col.getId())
+
+  public static String makeDOIRequest(String doiServiceUrl, String doiUser, String doiPassword,
+      String xml) throws ImejiException {
+
+    // Trim to avoid errors due to unwanted spaces
+    doiServiceUrl = doiServiceUrl.trim();
+    validateURL(doiServiceUrl);
+
+    Response response = client.target(doiServiceUrl).queryParam("url", DUMMY_OBJECT_URL)
         .register(HttpAuthenticationFeature.basic(doiUser, doiPassword))
-        .register(MultiPartFeature.class)
-        .register(JacksonFeature.class)
-        .request(MediaType.TEXT_PLAIN)
-        .put(Entity.entity(xml, "text/xml"));
-      
-      
-      int statusCode = response.getStatus();
+        .register(MultiPartFeature.class).register(JacksonFeature.class)
+        .request(MediaType.TEXT_PLAIN).put(Entity.entity(xml, "text/xml"));
 
-      // throw Exception if the DOI service request fails
-      if (statusCode != 201) {
-          String responseBody = response.readEntity(String.class);
-          if(statusCode == 401){
-            throw new ImejiException("Error occured, when contacting DOxI. StatusCode="
-                + statusCode + "\nServer responded with: "
-                + responseBody + ". Please contact your admin");
-          }else{
-            throw new ImejiException(
-                "Error occured, when contacting DOxI. StatusCode="
-                        + statusCode + "\nServer responded with: "
-                        + responseBody);
-          }
-      }   
-      
-      return response.readEntity(String.class);
+    int statusCode = response.getStatus();
+
+    // throw Exception if the DOI service request fails
+    if (statusCode != HttpStatus.SC_CREATED) {
+      throw new ImejiException("Error occured, when contacting DOxI. StatusCode=" + statusCode
+          + " - " + HttpStatus.getStatusText(statusCode) + ". Please contact your admin");
+    }
+
+    return response.readEntity(String.class);
   }
 
-  private static void validateURL(String doiServiceUrl) throws Exception {
-    new URL(doiServiceUrl);    
+  private static void validateURL(String doiServiceUrl) throws ImejiException {
+    try {
+      new URL(doiServiceUrl);
+    } catch (MalformedURLException e) {
+      throw new ImejiException("DOI Service: Invalid Service URL: " + e.getMessage());
+    }
   }
-  
+
 }

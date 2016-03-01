@@ -8,11 +8,11 @@ import de.mpg.imeji.logic.vo.Organization;
  * @author bastiens
  * 
  */
-public class ElasticOrganization {
-  private String name;
-  private String city;
-  private String country;
-  private String description;
+public final class ElasticOrganization {
+  private final String name;
+  private final String city;
+  private final String country;
+  private final String description;
 
   /**
    * Constructor for a {@link Organization}
@@ -34,24 +34,10 @@ public class ElasticOrganization {
   }
 
   /**
-   * @param name the name to set
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  /**
    * @return the city
    */
   public String getCity() {
     return city;
-  }
-
-  /**
-   * @param city the city to set
-   */
-  public void setCity(String city) {
-    this.city = city;
   }
 
   /**
@@ -61,12 +47,6 @@ public class ElasticOrganization {
     return country;
   }
 
-  /**
-   * @param country the country to set
-   */
-  public void setCountry(String country) {
-    this.country = country;
-  }
 
   /**
    * @return the description
@@ -74,12 +54,4 @@ public class ElasticOrganization {
   public String getDescription() {
     return description;
   }
-
-  /**
-   * @param description the description to set
-   */
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
 }

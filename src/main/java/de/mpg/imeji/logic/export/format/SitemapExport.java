@@ -22,7 +22,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  */
 public class SitemapExport extends Export {
   private double priority = 0.5;
-  private static Logger logger = Logger.getLogger(SitemapExport.class);
+  private static final Logger LOGGER = Logger.getLogger(SitemapExport.class);
 
   @Override
   public void init() {
@@ -42,7 +42,7 @@ public class SitemapExport extends Export {
     try {
       out.write(writer.getBuffer().toString().getBytes());
     } catch (IOException e) {
-      logger.info("Some problems with exporting Sitemap!", e);
+      LOGGER.info("Some problems with exporting Sitemap!", e);
     }
   }
 

@@ -29,17 +29,11 @@
 									navBean="#{Navigation}" 
 									activeMenu="metadata" />
 		
-			<menu:context_actionMenu id="action"  	isUserLoggedIn="#{Auth.loggedIn}" 
-									curMainMenu="#{currentMainMenu}" 
-									navBean="#{Navigation}" 
-									collectionStatus="#{metadataContextBean.status}" 
-									contextId="#{metadataBean.id}" 
-									isDeletable="#{Auth.delete(metadataBean.album)}" 
-									isEditable="#{Auth.update(metadataBean.album)}" 
-									isAdmin="#{Auth.admin(metadataBean.album)}"
+			<menu:context_actionMenu id="action"  
+									curMainMenu="#{currentMainMenu}"
+									vo="#{metadataBean.album}"
 									hasContent="#{metadataBean.size > 0}" 
 									downloadEnabled="#{metadataBean.size > 0}"
-									allowedToShare="#{metadataContextBean.status!='WITHDRAWN' and Auth.admin(metadataBean.album)}"
 									contextDownloadParam="&amp;album=#{metadataBean.id}"/>
 		</ui:fragment>
 	</ui:define>

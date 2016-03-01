@@ -80,11 +80,7 @@ public class J2JHelper {
    * @return
    */
   public static List<Object> cast2ObjectList(List<?> l) {
-    List<Object> list = new ArrayList<Object>();
-    for (int i = 0; i < l.size(); i++) {
-      list.add(l.get(i));
-    }
-    return list;
+    return Arrays.asList(l.toArray());
   }
 
   /**

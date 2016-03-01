@@ -31,7 +31,7 @@ public class ElasticService {
   private static boolean CLUSTER_DATA = true;
   private static String CLUSTER_DIR = "null";
   public static ElasticAnalysers ANALYSER;
-  private static final Logger logger = Logger.getLogger(ElasticService.class);
+  private static final Logger LOGGER = Logger.getLogger(ElasticService.class);
   private static final String SETTINGS = "elasticsearch/Settings.json";
 
   /**
@@ -63,7 +63,7 @@ public class ElasticService {
     CLUSTER_LOCAL = Boolean.parseBoolean(PropertyReader.getProperty("elastic.cluster.local"));
     CLUSTER_DIR = PropertyReader.getProperty("elastic.cluster.home");
     ANALYSER = ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
-    logger.info("Connecting Node to " + CLUSTER_NAME + " (local=" + CLUSTER_LOCAL + ", data="
+    LOGGER.info("Connecting Node to " + CLUSTER_NAME + " (local=" + CLUSTER_LOCAL + ", data="
         + CLUSTER_DATA + ")");
     node =
         NodeBuilder.nodeBuilder().data(CLUSTER_DATA).local(CLUSTER_LOCAL).clusterName(CLUSTER_NAME)
@@ -84,10 +84,10 @@ public class ElasticService {
    * @return
    */
   public synchronized static String initializeIndex() {
-    logger.info("Initializing ElasticSearch index.");
+    LOGGER.info("Initializing ElasticSearch index.");
     String indexName = getIndexNameFromAliasName(DATA_ALIAS);
     if (indexName != null) {
-      logger.info("Using existing index: " + indexName);
+      LOGGER.info("Using existing index: " + indexName);
       return indexName;
     } else {
       return createIndexWithAlias();
@@ -106,7 +106,7 @@ public class ElasticService {
     ImmutableOpenMap<String, List<AliasMetaData>> map = client.admin().indices()
         .getAliases(new GetAliasesRequest(aliasName)).actionGet().getAliases();
     if (map.keys().size() > 1) {
-      logger.error("Alias " + aliasName
+      LOGGER.error("Alias " + aliasName
           + " has more than one index. This is forbidden: All indexes will be removed, please reindex!!!");
       reset();
       return null;
@@ -125,12 +125,12 @@ public class ElasticService {
   public static String createIndexWithAlias() {
     try {
       String indexName = createIndex();
-      logger.info("Adding Alias to index " + indexName);
+      LOGGER.info("Adding Alias to index " + indexName);
       ElasticService.client.admin().indices().prepareAliases().addAlias(indexName, DATA_ALIAS)
           .execute().actionGet();
       return indexName;
     } catch (Exception e) {
-      logger.info("Index +" + "+ already existing");
+      LOGGER.info("Index +" + "+ already existing");
     }
     return null;
   }
@@ -143,7 +143,7 @@ public class ElasticService {
   public static String createIndex() {
     try {
       String indexName = DATA_ALIAS + "-" + System.currentTimeMillis();
-      logger.info("Creating a new index " + indexName);
+      LOGGER.info("Creating a new index " + indexName);
       String settingsJson = ANALYSER == ElasticAnalysers.ducet_sort ? new String(
           Files.readAllBytes(
               Paths.get(ElasticIndexer.class.getClassLoader().getResource(SETTINGS).toURI())),
@@ -152,7 +152,7 @@ public class ElasticService {
           .execute().actionGet();
       return indexName;
     } catch (Exception e) {
-      logger.info("Error creating index", e);
+      LOGGER.info("Error creating index", e);
     }
     return null;
   }
@@ -181,7 +181,7 @@ public class ElasticService {
    * DANGER: delete all data from elasticsearch. A new reindex will be necessary
    */
   public static void reset() {
-    logger.warn("Resetting ElasticSearch!!!");
+    LOGGER.warn("Resetting ElasticSearch!!!");
     clear();
     initializeIndex();
     new ElasticIndexer(DATA_ALIAS, ElasticTypes.items, ANALYSER).addMapping();
@@ -194,9 +194,9 @@ public class ElasticService {
    * Remove everything from ES
    */
   public static void clear() {
-    logger.warn("Deleting all indexes...");
+    LOGGER.warn("Deleting all indexes...");
     ElasticService.client.admin().indices().prepareDelete(DATA_ALIAS).execute().actionGet();
-    logger.warn("...done!");
+    LOGGER.warn("...done!");
   }
 
   public static void shutdown() {

@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -34,16 +35,16 @@ import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.rest.to.HTTPError;
 import de.mpg.imeji.rest.to.JSONException;
 import de.mpg.imeji.rest.to.JSONResponse;
 import de.mpg.imeji.rest.to.SearchResultTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
-import net.java.dev.webdav.jaxrs.ResponseStatus;
 
 public class RestProcessUtils {
 
-  private static Logger logger = Logger.getLogger(RestProcessUtils.class);
+  private static final Logger LOGGER = Logger.getLogger(RestProcessUtils.class);
 
   /**
    * Parse a json file and construct a new Object of type T
@@ -120,7 +121,7 @@ public class RestProcessUtils {
       }
 
     } catch (Exception e) {
-      logger.error(e.getMessage());
+      LOGGER.error(e.getMessage());
     }
     return easyTO;
 
@@ -173,7 +174,7 @@ public class RestProcessUtils {
     try {
       json = ow.writeValueAsString(resp.getObject());
     } catch (JsonProcessingException e) {
-      logger.error("Have a JSON Processing Exception during building JSON Response", e);
+      LOGGER.error("Have a JSON Processing Exception during building JSON Response", e);
     }
     return Response.status(resp.getStatus()).entity(json).type(MediaType.APPLICATION_JSON).build();
   }
@@ -188,8 +189,8 @@ public class RestProcessUtils {
     if (localStatus != null) {
       errorTitleLocal = localStatus.getReasonPhrase();
     } else {
-      if (errorCode == ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode()) {
-        errorTitleLocal = ResponseStatus.UNPROCESSABLE_ENTITY.getReasonPhrase();
+      if (errorCode == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
+        errorTitleLocal = "Unprocessable entity";
       } else {
         errorTitleLocal = Status.INTERNAL_SERVER_ERROR.getReasonPhrase();
       }
@@ -256,13 +257,15 @@ public class RestProcessUtils {
     } else if (eX instanceof NotAllowedError) {
       resp = RestProcessUtils.buildJSONAndExceptionResponse(Status.FORBIDDEN.getStatusCode(),
           localMessage);
-
     } else if (eX instanceof NotFoundException) {
       resp = RestProcessUtils.buildJSONAndExceptionResponse(Status.NOT_FOUND.getStatusCode(),
           localMessage);
     } else if (eX instanceof UnprocessableError) {
-      resp = RestProcessUtils.buildJSONAndExceptionResponse(
-          ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), localMessage);
+      resp = RestProcessUtils.buildJSONAndExceptionResponse(HttpStatus.SC_UNPROCESSABLE_ENTITY,
+          localMessage);
+    } else if (eX instanceof WorkflowException) {
+      resp = RestProcessUtils.buildJSONAndExceptionResponse(HttpStatus.SC_UNPROCESSABLE_ENTITY,
+          localMessage);
     } else if (eX instanceof InternalServerErrorException) {
       resp = RestProcessUtils.buildJSONAndExceptionResponse(
           Status.INTERNAL_SERVER_ERROR.getStatusCode(), localMessage);

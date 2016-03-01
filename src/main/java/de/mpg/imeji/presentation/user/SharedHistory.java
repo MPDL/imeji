@@ -14,7 +14,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
 
 public class SharedHistory implements Serializable {
   private static final long serialVersionUID = -1637916656299359982L;
-  private static Logger logger = Logger.getLogger(SharedHistory.class);
+  private static final Logger LOGGER = Logger.getLogger(SharedHistory.class);
   private User user;
   private UserGroup group;
   private String shareToUri;
@@ -92,7 +92,7 @@ public class SharedHistory implements Serializable {
     try {
       ShareBean.share(session.getUser(), user, group, shareToUri, profileUri, sharedType);
     } catch (Exception e) {
-      logger.error(e);
+      LOGGER.error(e);
     }
     // TODO: CHECK PRETTY PAGE
     return ((SessionBean) BeanHelper.getSessionBean(SessionBean.class))

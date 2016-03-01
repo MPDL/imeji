@@ -1,6 +1,6 @@
 package de.mpg.imeji.logic;
 
-import de.mpg.imeji.logic.auth.Authorization;
+import de.mpg.imeji.logic.auth.authorization.Authorization;
 
 /**
  * An RDF Triple, which can be Checked by the {@link Authorization}

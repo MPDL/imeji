@@ -49,8 +49,9 @@ public class TechnicalFacets extends Facets {
    * 
    * @param searchQuery
    */
-  public TechnicalFacets(SearchQuery searchQuery) {
+  public TechnicalFacets(SearchQuery searchQuery, SearchResult allImages) {
     this.searchQuery = searchQuery;
+    this.allImages = allImages;
   }
 
   /*

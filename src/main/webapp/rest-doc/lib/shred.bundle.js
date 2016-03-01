@@ -347,20 +347,20 @@ require.define("/shred.js", function (require, module, exports, __dirname, __fil
 // 
 // See the [examples](./examples.html) for more details.
 
-// Ax is a nice logging library we wrote. You can use any logger, providing it
+// Ax is a nice logging library we wrote. You can use any LOGGER, providing it
 // has `info`, `warn`, `debug`, and `error` methods that take a string.
 var Ax = require("ax")
   , CookieJarLib = require( "cookiejar" )
   , CookieJar = CookieJarLib.CookieJar
 ;
 
-// Shred takes some options, including a logger and request defaults.
+// Shred takes some options, including a LOGGER and request defaults.
 
 var Shred = function(options) {
   options = (options||{});
   this.agent = options.agent;
   this.defaults = options.defaults||{};
-  this.log = options.logger||(new Ax({ level: "info" }));
+  this.log = options.LOGGER||(new Ax({ level: "info" }));
   this._sharedCookieJar = new CookieJar();
   this.logCurl = options.logCurl || false;
 };
@@ -375,7 +375,7 @@ Shred.Response = require("./shred/response");
 
 Shred.prototype = {
   request: function(options) {
-    options.logger = this.log;
+    options.LOGGER = this.log;
     options.logCurl = options.logCurl || this.logCurl;
     options.cookieJar = ( 'cookieJar' in options ) ? options.cookieJar : this._sharedCookieJar; // let them set cookieJar = null
     options.agent = options.agent || this.agent;
@@ -414,9 +414,9 @@ require.define("/node_modules/ax/lib/ax.js", function (require, module, exports,
 ;
 
 
-// this is a quick-and-dirty logger. there are other nicer loggers out there
+// this is a quick-and-dirty LOGGER. there are other nicer LOGGERs out there
 // but the ones i found were also somewhat involved. this one has a Ruby
-// logger type interface
+// LOGGER type interface
 //
 // we can easily replace this, provide the info, debug, etc. methods are the
 // same. or, we can change Haiku to use a more standard node.js interface
@@ -444,61 +444,61 @@ var makeLogger = function(level,fn) {
 };
 
 var Logger = function(options) {
-  var logger = this;
+  var LOGGER = this;
   var options = options||{};
 
   // Default options
   options.level = options.level || "info";
   options.timestamp = options.timestamp || true;
   options.prefix = options.prefix || "";
-  logger.options = options;
+  LOGGER.options = options;
 
   // Allows a prefix to be added to the message.
   //
-  //    var logger = new Ax({ module: 'Haiku' })
-  //    logger.warn('this is going to be awesome!');
+  //    var LOGGER = new Ax({ module: 'Haiku' })
+  //    LOGGER.warn('this is going to be awesome!');
   //    //=> Haiku: this is going to be awesome!
   //
-  if (logger.options.module){
-    logger.options.prefix = logger.options.module;
+  if (LOGGER.options.module){
+    LOGGER.options.prefix = LOGGER.options.module;
   }
 
   // Write to stderr or a file
-  if (logger.options.file){
-    logger.stream = fs.createWriteStream(logger.options.file, {"flags": "a"});
+  if (LOGGER.options.file){
+    LOGGER.stream = fs.createWriteStream(LOGGER.options.file, {"flags": "a"});
   } else {
       if(process.title === "node")
-    logger.stream = process.stderr;
+    LOGGER.stream = process.stderr;
       else if(process.title === "browser")
-    logger.stream = function () {
+    LOGGER.stream = function () {
       // Work around weird console context issue: http://code.google.com/p/chromium/issues/detail?id=48662
-      return console[logger.options.level].apply(console, arguments);
+      return console[LOGGER.options.level].apply(console, arguments);
     };
   }
 
-  switch(logger.options.level){
+  switch(LOGGER.options.level){
     case 'debug':
       ['debug', 'info', 'warn'].forEach(function (level) {
-        logger[level] = Logger.writer(level);
+        LOGGER[level] = Logger.writer(level);
       });
     case 'info':
       ['info', 'warn'].forEach(function (level) {
-        logger[level] = Logger.writer(level);
+        LOGGER[level] = Logger.writer(level);
       });
     case 'warn':
-      logger.warn = Logger.writer('warn');
+      LOGGER.warn = Logger.writer('warn');
   }
 }
 
-// Used to define logger methods
+// Used to define LOGGER methods
 Logger.writer = function(level){
   return function(message){
-    var logger = this;
+    var LOGGER = this;
 
     if(process.title === "node")
-  logger.stream.write(logger.format(level, message) + '\n');
+  LOGGER.stream.write(LOGGER.format(level, message) + '\n');
     else if(process.title === "browser")
-  logger.stream(logger.format(level, message) + '\n');
+  LOGGER.stream(LOGGER.format(level, message) + '\n');
 
   };
 }
@@ -512,9 +512,9 @@ Logger.prototype = {
   format: function(level, message){
     if (! message) return '';
 
-    var logger = this
-      , prefix = logger.options.prefix
-      , timestamp = logger.options.timestamp ? " " + (new Date().toISOString()) : ""
+    var LOGGER = this
+      , prefix = LOGGER.options.prefix
+      , timestamp = LOGGER.options.timestamp ? " " + (new Date().toISOString()) : ""
     ;
 
     return (prefix + timestamp + ": " + message);
@@ -839,7 +839,7 @@ var STATUS_CODES = HTTP.STATUS_CODES || {
 // need to do this directly.
 
 var Request = function(options) {
-  this.log = options.logger;
+  this.log = options.LOGGER;
   this.cookieJar = options.cookieJar;
   this.encoding = options.encoding;
   this.logCurl = options.logCurl;

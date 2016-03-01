@@ -34,7 +34,7 @@ import de.mpg.j2j.misc.LocalizedString;
 public class Jena2Java {
   private Model model;
   private boolean lazy = false;
-  private static Logger logger = Logger.getLogger(Jena2Java.class);
+  private static Logger LOGGER = Logger.getLogger(Jena2Java.class);
 
   public Jena2Java(Model model, boolean lazy) {
     this.model = model;
@@ -277,7 +277,7 @@ public class Jena2Java {
       J2JHelper.setId(o, URI.create(r.getURI()));
       return o;
     } catch (Exception e) {
-      logger.info("Error initializing resource with a datatype: ", e);
+      LOGGER.info("Error initializing resource with a datatype: ", e);
     }
     return null;
   }

@@ -159,4 +159,9 @@ public class ExternalStorage implements Storage {
   public String readFileStringContent(String url) {
     return null;
   }
+
+  @Override
+  public String getStorageId(String url) {
+    return url;
+  }
 }

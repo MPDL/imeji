@@ -23,10 +23,10 @@
 		<div class="imj_paginator">
 			<h:form>
 				<h:panelGroup rendered="#{cc.attrs.showSwitchListView}" class="imj_rangeSelector">
-				 	<h:commandLink id="switchListView" title="thumbnail list" styleClass="fa fa-th fa-size-2" value="&#160;" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}">
+				 	<h:commandLink id="switchListView" onclick="setContentLoadingStatus();" title="thumbnail list" styleClass="fa fa-th fa-size-2" value="&#160;" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}">
                     	<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
                     </h:commandLink>
-                	<h:commandLink title="detail list" styleClass="fa fa-list-alt fa-size-2" value="&#160;" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'LIST'}">
+                	<h:commandLink title="detail list" onclick="setContentLoadingStatus();" styleClass="fa fa-list-alt fa-size-2" value="&#160;" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'LIST'}">
                 	    <f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
                 	</h:commandLink>
                 	&#160;

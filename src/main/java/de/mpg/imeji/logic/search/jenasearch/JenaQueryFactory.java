@@ -56,20 +56,20 @@ public class JenaQueryFactory {
       SortCriterion sortCriterion, User user, boolean isCollection, String specificQuery,
       String spaceId) {
     // PATTERN_SELECT =
-    // "PREFIX fn: <http://www.w3.org/2005/xpath-functions#> SELECT DISTINCT ?s ?sort0 XXX_MODEL_NAMES_XXX WHERE {XXX_SPACE_FILTER_XXX XXX_SECURITY_FILTER_XXX XXX_SEARCH_ELEMENT_XXX XXX_SPECIFIC_QUERY_XXX XXX_SEARCH_TYPE_ELEMENT_XXX  ?s <"
+    // "PREFIX fn: <http://www.w3.org/2005/xpath-functions#> SELECT DISTINCT ?s ?sort0
+    // XXX_MODEL_NAMES_XXX WHERE {XXX_SPACE_FILTER_XXX XXX_SECURITY_FILTER_XXX
+    // XXX_SEARCH_ELEMENT_XXX XXX_SPECIFIC_QUERY_XXX XXX_SEARCH_TYPE_ELEMENT_XXX ?s <"
     // + ImejiNamespaces.STATUS + "> ?status XXX_SORT_ELEMENT_XXX}";
     PATTERN_SELECT =
         "PREFIX fn: <http://www.w3.org/2005/xpath-functions#> SELECT DISTINCT ?s ?sort0 WHERE {XXX_SPACE_FILTER_XXX XXX_SEARCH_ELEMENT_XXX XXX_SPECIFIC_QUERY_XXX XXX_SEARCH_TYPE_ELEMENT_XXX  ?s <"
             + ImejiNamespaces.STATUS + "> ?status XXX_SORT_ELEMENT_XXX XXX_SECURITY_FILTER_XXX }";
 
     return PATTERN_SELECT
-        .replace(
-            "XXX_MODEL_NAMES_XXX",
+        .replace("XXX_MODEL_NAMES_XXX",
             getModelNames(modelName, pair, specificQuery,
                 !"".equals(getSpaceRestriction(spaceId, modelName))))
         .replace("XXX_SPACE_FILTER_XXX", getSpaceRestriction(spaceId, modelName))
-        .replace(
-            "XXX_SECURITY_FILTER_XXX",
+        .replace("XXX_SECURITY_FILTER_XXX",
             JenaSecurityQuery.queryFactory(user, rdfType, getFilterStatus(pair),
                 isUserSearchPair(pair)))
         .replace("XXX_SEARCH_ELEMENT_XXX", getSearchElement(pair, rdfType, user))
@@ -86,8 +86,9 @@ public class JenaQueryFactory {
    * @return
    */
   private static String getRdfType(String rdfType) {
-    if (rdfType == null || rdfType.equals(""))
+    if (rdfType == null || rdfType.equals("")) {
       return "";
+    }
     return "?s a <" + rdfType + "> .";
   }
 
@@ -100,8 +101,9 @@ public class JenaQueryFactory {
    * @return
    */
   private static String getSpaceRestriction(String spaceUri, String modelName) {
-    if (spaceUri == null || spaceUri.equals(""))
+    if (spaceUri == null || spaceUri.equals("")) {
       return "";
+    }
     if (modelName == null || modelName.equals("")) {
       return "";
     }
@@ -111,12 +113,15 @@ public class JenaQueryFactory {
     boolean isProfile = modelName.equals(Imeji.profileModel);
     // boolean isAlbum = modelName.equals(Imeji.albumModel);
 
-    if (!isCollection && !isImage && !isProfile)
+    if (!isCollection && !isImage && !isProfile) {
       return "";
+    }
 
-    if (isProfile)
+    if (isProfile) {
       return "?c <http://imeji.org/terms/mdprofile> ?s . ?c <http://imeji.org/terms/space> <"
           + spaceUri + "> .";
+    }
+
     return isCollection ? "?s <http://imeji.org/terms/space> <" + spaceUri + "> ."
         : "?s <http://imeji.org/terms/collection> ?coll . ?coll  <http://imeji.org/terms/space>  <"
             + spaceUri + "> .";
@@ -130,13 +135,13 @@ public class JenaQueryFactory {
    */
   private static String getModelNames(String modelName, SearchPair pair, String specificQuery,
       boolean isInSpace) {
-    if (specificQuery != null && !specificQuery.equals(""))
+    if (specificQuery != null && !specificQuery.equals("")) {
       return "";
+    }
     String names = "";
     if (modelName != null && !modelName.equals("")) {
-      names =
-          "FROM <" + modelName + "> FROM <" + Imeji.userModel + "> FROM <" + Imeji.collectionModel
-              + ">";
+      names = "FROM <" + modelName + "> FROM <" + Imeji.userModel + "> FROM <"
+          + Imeji.collectionModel + ">";
       if (pair != null && SearchIndex.SearchFields.member == pair.getField()
           && !Imeji.imageModel.equals(modelName)) {
         names += " FROM <" + Imeji.imageModel + ">";
@@ -162,15 +167,20 @@ public class JenaQueryFactory {
     SearchFields index = pair.getField();
     switch (index) {
       case all:// Simple Search
+        break;
       case created:// search for date created
+        break;
       case filename:// Search for filename
+        break;
       case modified: // search for date modified
+        break;
       case checksum: // Search for checksum
         searchQuery = "?s <" + ImejiNamespaces.CHECKSUM + "> ?el";
         break;
       case citation:
         break;
       case alb: // search for an album
+        break;
       case col: // search for a collection
         // If not logged in, add the the path to collection/album
         if (user == null && J2JHelper.getResourceNamespace(new Item()).equals(rdfType))
@@ -337,11 +347,9 @@ public class JenaQueryFactory {
     if ("".equals(searchQuery)) {
       // Search for a metadata value
       // TODO: not working anymore. Is replaced by elasticsearch
-      searchQuery =
-          "?s <http://imeji.org/terms/metadataSet> ?mds . OPTIONAL_FOR_NOT { ?mds <"
-              + ImejiNamespaces.METADATA + "> ?md  . ?md "
-              + getSearchElementsParent(pair.getIndex(), 0) + " <" + pair.getIndex().getNamespace()
-              + "> ?el ";
+      searchQuery = "?s <http://imeji.org/terms/metadataSet> ?mds . OPTIONAL_FOR_NOT { ?mds <"
+          + ImejiNamespaces.METADATA + "> ?md  . ?md " + getSearchElementsParent(pair.getIndex(), 0)
+          + " <" + pair.getIndex().getNamespace() + "> ?el ";
     }
 
     if (pair instanceof SearchMetadata) {
@@ -363,9 +371,8 @@ public class JenaQueryFactory {
   private static String getSearchElementsParent(SearchIndex index, int parentNumber) {
     String q = "";
     if (index.getParent() != null) {
-      q +=
-          getSearchElementsParent(index.getParent(), parentNumber + 1) + " <"
-              + index.getParent().getNamespace() + "> ?p" + parentNumber + " . ?p" + parentNumber;
+      q += getSearchElementsParent(index.getParent(), parentNumber + 1) + " <"
+          + index.getParent().getNamespace() + "> ?p" + parentNumber + " . ?p" + parentNumber;
     }
     return q;
   }
@@ -464,19 +471,16 @@ public class JenaQueryFactory {
           filter += (pair.isNot() ? "!" : "") + getTextSearchFilter(pair, variable);
           break;
         case EQUALS:
-          filter +=
-              "?" + variable + (pair.isNot() ? "!" : "") + "="
-                  + getSearchValueInSPARQL(pair.getValue(), isRDFDate(pair));
+          filter += "?" + variable + (pair.isNot() ? "!" : "") + "="
+              + getSearchValueInSPARQL(pair.getValue(), isRDFDate(pair));
           break;
         case GREATER:
-          filter +=
-              "?" + variable + (pair.isNot() ? "<" : ">=")
-                  + getSearchValueInSPARQL(pair.getValue(), isRDFDate(pair));
+          filter += "?" + variable + (pair.isNot() ? "<" : ">=")
+              + getSearchValueInSPARQL(pair.getValue(), isRDFDate(pair));
           break;
         case LESSER:
-          filter +=
-              "?" + variable + (pair.isNot() ? ">" : "<=")
-                  + getSearchValueInSPARQL(pair.getValue(), isRDFDate(pair));
+          filter += "?" + variable + (pair.isNot() ? ">" : "<=")
+              + getSearchValueInSPARQL(pair.getValue(), isRDFDate(pair));
           break;
         default:
           if (pair.getValue().startsWith("\"") && pair.getValue().endsWith("\"")) {
@@ -504,11 +508,12 @@ public class JenaQueryFactory {
     if (isURL(str)) {
       return "<" + URI.create(str) + ">";
     } else if (isDate(str)) {
-      if (dateAsTime)
+      if (dateAsTime) {
         return "'" + DateFormatter.getTime(str) + "'^^<http://www.w3.org/2001/XMLSchema#double>";
-      else
+      } else {
         return "'" + DateFormatter.formatToSparqlDateTime(str)
             + "'^^<http://www.w3.org/2001/XMLSchema#dateTime>";
+      }
     } else if (isNumber(str)) {
       return "'" + Double.valueOf(str) + "'^^<http://www.w3.org/2001/XMLSchema#double>";
     }

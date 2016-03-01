@@ -39,7 +39,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.auth.authentication.HttpAuthentication;
+import de.mpg.imeji.logic.auth.authentication.impl.HttpAuthentication;
 import de.mpg.imeji.logic.controller.UserController;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -54,7 +54,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 public class AuthenticationFilter implements Filter {
   private FilterConfig filterConfig = null;
   private Pattern jsfPattern = Pattern.compile(".*\\/jsf\\/.*\\.xhtml");
-  private static Logger logger = Logger.getLogger(AuthenticationFilter.class);
+  private static final Logger LOGGER = Logger.getLogger(AuthenticationFilter.class);
 
   /*
    * (non-Javadoc)
@@ -89,7 +89,7 @@ public class AuthenticationFilter implements Filter {
         }
       }
     } catch (Exception e) {
-      logger.info("We had some exception in Authentication filter", e);
+      LOGGER.info("We had some exception in Authentication filter", e);
     } finally {
       chain.doFilter(serv, resp);
     }
@@ -138,15 +138,6 @@ public class AuthenticationFilter implements Filter {
     return "partial/ajax".equals(req.getHeader("Faces-Request"));
   }
 
-  /**
-   * True if the method is a POST request
-   * 
-   * @param req
-   * @return
-   */
-  private boolean isPostRequest(HttpServletRequest req) {
-    return "POST".equals(req.getMethod());
-  }
 
   /*
    * (non-Javadoc)

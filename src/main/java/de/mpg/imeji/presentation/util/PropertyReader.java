@@ -23,7 +23,7 @@ public class PropertyReader {
   private static final String DEFAULT_PROPERTY_FILE = "imeji.properties";
   private static URL solution;
   private static String version = null;
-  private static final Logger logger = Logger.getLogger(PropertyReader.class);
+  private static final Logger LOGGER = Logger.getLogger(PropertyReader.class);
 
   /**
    * private constructor
@@ -127,7 +127,7 @@ public class PropertyReader {
       } else {
         serverConfDirectory = "/src/test/resources";
       }
-      logger.info("loading properties from " + serverConfDirectory + "/" + filepath);
+      LOGGER.info("loading properties from " + serverConfDirectory + "/" + filepath);
       instream = new FileInputStream(serverConfDirectory + "/" + filepath);
     } catch (Exception e) {
       // try to get resource from classpath

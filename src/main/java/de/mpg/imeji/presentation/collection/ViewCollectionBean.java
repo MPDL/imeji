@@ -3,7 +3,6 @@
  */
 package de.mpg.imeji.presentation.collection;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,12 +11,12 @@ import javax.faces.bean.RequestScoped;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.controller.CollectionController;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.util.ObjectLoader;
 
 /**
  * Bean for the pages "CollectionEntryPage" and "ViewCollection"
@@ -30,8 +29,8 @@ import de.mpg.imeji.presentation.util.ObjectLoader;
 @RequestScoped
 public class ViewCollectionBean extends CollectionBean {
   private static final long serialVersionUID = 6473181109648137472L;
-  private List<Person> persons = null;
-  private static Logger logger = Logger.getLogger(ViewCollectionBean.class);
+  private List<Person> persons;
+  private static final Logger LOGGER = Logger.getLogger(ViewCollectionBean.class);
   /**
    * Maximum number of items displayed on collection start page
    */
@@ -49,31 +48,23 @@ public class ViewCollectionBean extends CollectionBean {
    * 
    * @throws Exception
    */
-  public void init() throws Exception {
+  public void init() {
     try {
-      User user = super.sessionBean.getUser();
-      String id = getId();
-      CollectionImeji requestedCollection = null;
-      URI uRIID = ObjectHelper.getURI(CollectionImeji.class, id);
-      requestedCollection = ObjectLoader.loadCollectionLazy(uRIID, user);
-      setCollection(requestedCollection);
-      if (getCollection() != null && getCollection().getId() != null) {
-        findItems(user, MAX_ITEM_NUM_VIEW);
-        loadItems(user, MAX_ITEM_NUM_VIEW);
+      setCollection(new CollectionController().retrieveLazy(
+          ObjectHelper.getURI(CollectionImeji.class, getId()), sessionBean.getUser()));
+      if (getCollection() != null) {
+        findItems(sessionBean.getUser(), MAX_ITEM_NUM_VIEW);
+        loadItems(sessionBean.getUser(), MAX_ITEM_NUM_VIEW);
         countItems();
       }
       if (sessionBean.getUser() != null) {
-        setSendEmailNotification(sessionBean.getUser().getObservedCollections().contains(id));
+        setSendEmailNotification(sessionBean.getUser().getObservedCollections().contains(getId()));
       }
       if (getCollection() != null) {
-        if (getCollection().getProfile() != null ){
-          setProfile(ObjectLoader.loadProfile(getCollection().getProfile(), user));
-          setProfileId(ObjectHelper.getId(getProfile().getId()));
-        }
-        // super.setTab(TabType.COLLECTION);
-        persons = new ArrayList<Person>();
-        for (Person p : super.getCollection().getMetadata().getPersons()) {
-          List<Organization> orgs = new ArrayList<Organization>();
+        initCollectionProfile();
+        persons = new ArrayList<Person>(getCollection().getMetadata().getPersons().size());
+        for (Person p : getCollection().getMetadata().getPersons()) {
+          List<Organization> orgs = new ArrayList<Organization>(p.getOrganizations().size());
           for (Organization o : p.getOrganizations()) {
             orgs.add(o);
           }
@@ -82,13 +73,9 @@ public class ViewCollectionBean extends CollectionBean {
         }
         getCollection().getMetadata().setPersons(persons);
       }
-    } catch (Exception e) {
-      logger.error("", e);
-      // Has to be in try/catch block, otherwise redirect from
-      // HistoryFilter will not work.
-      // Here simply do nothing
+    } catch (ImejiException e) {
+      LOGGER.error("Error initializing Bean", e);
     }
-
   }
 
   public List<Person> getPersons() {
@@ -105,8 +92,10 @@ public class ViewCollectionBean extends CollectionBean {
   }
 
   public String getSmallDescription() {
-    if (this.getCollection() == null || this.getCollection().getMetadata().getDescription() == null)
+    if (this.getCollection() == null
+        || this.getCollection().getMetadata().getDescription() == null) {
       return "No Description";
+    }
     if (this.getCollection().getMetadata().getDescription().length() > 100) {
       return this.getCollection().getMetadata().getDescription().substring(0, 100) + "...";
     } else {
@@ -118,8 +107,9 @@ public class ViewCollectionBean extends CollectionBean {
    * @return
    */
   public String getFormattedDescription() {
-    if (this.getCollection() == null || this.getCollection().getMetadata().getDescription() == null)
+    if (getCollection() == null || getCollection().getMetadata().getDescription() == null) {
       return "";
+    }
     return this.getCollection().getMetadata().getDescription().replaceAll("\n", "<br/>");
   }
 
@@ -130,8 +120,6 @@ public class ViewCollectionBean extends CollectionBean {
     String title = super.getCollection().getMetadata().getTitle();
     String author = this.getPersonString();
     String url = super.getPageUrl();
-    String citation =
-        title + " " + sessionBean.getLabel("from") + " <i>" + author + "</i></br>" + url;
-    return citation;
+    return title + " " + sessionBean.getLabel("from") + " <i>" + author + "</i></br>" + url;
   }
 }

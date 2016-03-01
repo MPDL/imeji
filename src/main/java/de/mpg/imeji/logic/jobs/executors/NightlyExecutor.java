@@ -17,7 +17,7 @@ import de.mpg.imeji.logic.jobs.NightlyJob;
  */
 public class NightlyExecutor {
 
-  private static Logger logger = Logger.getLogger(NightlyExecutor.class);
+  private static final Logger LOGGER = Logger.getLogger(NightlyExecutor.class);
   /**
    * The Hour the executor will be executate at
    */
@@ -40,7 +40,7 @@ public class NightlyExecutor {
     executor.execute(new NightlyJob());
     // Schedule the next executions
     executor.scheduleAtFixedRate(new NightlyJob(), getDelay(), 1, TimeUnit.DAYS);
-    logger.info(
+    LOGGER.info(
         "Nightly Executor started. First job planned at " + NEXT_JOB_DATE.getTime().toString());
 
   }
@@ -49,10 +49,10 @@ public class NightlyExecutor {
    * Stop the nightly jobs
    */
   public void stop() {
-    logger.info("Shutting down nightly Job");
+    LOGGER.info("Shutting down nightly Job");
     executor.purge();
     executor.shutdown();
-    logger.info("Nightly Job stopped");
+    LOGGER.info("Nightly Job stopped");
   }
 
   /**

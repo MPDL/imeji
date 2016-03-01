@@ -1,0 +1,54 @@
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+###
+## MIGRATION OF subjects and objects of triples for model ITEM
+###
+##Item MODEL
+
+#insert all subjects with old.uri.com
+WITH<http://imeji.org/item>
+INSERT
+{
+?snew ?p ?o
+}
+USING <http://imeji.org/item>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?s), "old.uri.com", "i")).
+LET(?snew:=uri(REPLACE(str(?s), "old.uri.com", "new.uri.com", "i")))
+};
+
+#delete all subjects with old.uri.com
+WITH<http://imeji.org/item>
+DELETE {?s ?p ?o}
+USING <http://imeji.org/item>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?s), "old.uri.com", "i"))};
+
+#insert all objects with old.uri.com
+WITH<http://imeji.org/item>
+INSERT
+{
+?s ?p ?onew
+}
+USING <http://imeji.org/item>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?o), "old.uri.com", "i")).
+LET(?onew:=uri(REPLACE(str(?o), "old.uri.com", "new.uri.com", "i")))
+};
+
+#delete all objects with old.uri.com
+WITH<http://imeji.org/item>
+DELETE {?s ?p ?o}
+USING <http://imeji.org/item>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?o), "old.uri.com", "i"))
+};
+

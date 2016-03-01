@@ -37,10 +37,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.auth.Authorization;
+import de.mpg.imeji.logic.auth.authorization.Authorization;
 import de.mpg.imeji.logic.controller.ItemController;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchFactory;
@@ -51,6 +52,7 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.presentation.beans.ConfigurationBean;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.beans.PropertyBean;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -67,9 +69,7 @@ import digilib.servlet.Scaler;
  * @version $Revision$ $LastChangedDate$
  */
 public class DigilibServlet extends Scaler {
-  /**
-     * 
-     */
+  private static final Logger LOGGER = Logger.getLogger(DigilibServlet.class);
   private static final long serialVersionUID = 1271326569919483929L;
   /**
    * imeji authentification and authorization
@@ -107,9 +107,9 @@ public class DigilibServlet extends Scaler {
       // Force Digilib to use the correct path
       super.dirCache.getBaseDirNames()[0] =
           FilenameUtils.normalizeNoEndSeparator(filePath.replace(internalStorageBase, ""));
-      logger.info("digilib started for directory: " + super.dirCache.getBaseDirNames()[0]);
+      LOGGER.info("digilib started for directory: " + super.dirCache.getBaseDirNames()[0]);
     } else {
-      logger.info("Digilib Viewer is disabled.");
+      LOGGER.info("Digilib Viewer is disabled.");
     }
   }
 
@@ -141,7 +141,7 @@ public class DigilibServlet extends Scaler {
         }
       }
     } catch (Exception e) {
-      logger.error(e);
+      LOGGER.error(e);
       throw new RuntimeException(e);
     }
   }
@@ -200,7 +200,7 @@ public class DigilibServlet extends Scaler {
   private Item loadItem(String url, SessionBean session) throws ImejiException {
     Search s = SearchFactory.create();
     List<String> r =
-        s.searchString(JenaCustomQueries.selectItemIdOfFile(url), null, null, 0, -1).getResults();
+        s.searchString(JenaCustomQueries.selectItemIdOfFileUrl(url), null, null, 0, -1).getResults();
     if (!r.isEmpty() && r.get(0) != null) {
       ItemController c = new ItemController();
       return c.retrieveLazy(URI.create(r.get(0)), session.getUser());
@@ -252,6 +252,11 @@ public class DigilibServlet extends Scaler {
    */
   private SessionBean getSession(HttpServletRequest req) {
     return (SessionBean) req.getSession(false).getAttribute(SessionBean.class.getSimpleName());
+  }
+
+  private ConfigurationBean getConfiguration(HttpServletRequest req) {
+    return (ConfigurationBean) req.getSession(true)
+        .getAttribute(ConfigurationBean.class.getSimpleName());
   }
 
   /*

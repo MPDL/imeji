@@ -37,7 +37,6 @@ public class SearchResult {
   public SearchResult(List<String> unsortedResults, SortCriterion sort) {
     numberOfRecords = unsortedResults.size();
     if (sort != null) {
-      // ???
       if (sort.getIndex() != null
           && sort.getIndex().getName().equals(SearchIndex.SearchFields.title.name())) {
         sort.toggle();

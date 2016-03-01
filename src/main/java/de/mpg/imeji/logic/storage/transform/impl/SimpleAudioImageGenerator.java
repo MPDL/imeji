@@ -28,9 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-
 import de.mpg.imeji.logic.storage.transform.ImageGenerator;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 
@@ -42,7 +39,6 @@ import de.mpg.imeji.logic.storage.util.StorageUtils;
  * @version $Revision$ $LastChangedDate$
  */
 public class SimpleAudioImageGenerator implements ImageGenerator {
-  private static Logger logger = Logger.getLogger(SimpleAudioImageGenerator.class);
   private static String PATH_TO_AUDIO_ICON = "images/audio_file_icon.jpg";
 
   /*
@@ -51,10 +47,10 @@ public class SimpleAudioImageGenerator implements ImageGenerator {
    * @see de.mpg.imeji.logic.storage.transform.ImageGenerator#generateJPG(byte[], java.lang.String)
    */
   @Override
-  public byte[] generateJPG(File file, String extension) throws IOException, URISyntaxException {
+  public File generateJPG(File file, String extension) throws IOException, URISyntaxException {
     if (StorageUtils.getMimeType(extension).contains("audio")) {
-      return FileUtils.readFileToByteArray(new File(XuggleImageGenerator.class.getClassLoader()
-          .getResource(PATH_TO_AUDIO_ICON).toURI()));
+      return new File(
+          SimpleAudioImageGenerator.class.getClassLoader().getResource(PATH_TO_AUDIO_ICON).toURI());
     }
     return null;
   }

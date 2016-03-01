@@ -1,5 +1,6 @@
 package de.mpg.imeji.test.logic.controller;
 
+import java.io.File;
 import java.net.URI;
 
 import org.junit.AfterClass;
@@ -7,9 +8,9 @@ import org.junit.BeforeClass;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.CollectionController;
+import de.mpg.imeji.logic.controller.CollectionController.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.controller.ItemController;
 import de.mpg.imeji.logic.controller.ProfileController;
-import de.mpg.imeji.logic.controller.CollectionController.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata.Types;
@@ -25,6 +26,8 @@ public class ControllerTest {
   protected static CollectionImeji collection = null;
   protected static MetadataProfile profile = null;
   protected static Item item = null;
+  protected static final File originalFile = new File("src/test/resources/storage/test.jpg");
+  protected static final File thumbnailFile = new File("src/test/resources/storage/test.png");
 
   @BeforeClass
   public static void setup() {
@@ -36,6 +39,12 @@ public class ControllerTest {
     JenaUtil.closeJena();
   }
 
+  /**
+   * Create collection with JenaUtil.testUser
+   * 
+   * @return
+   * @throws ImejiException
+   */
   protected static CollectionImeji createCollection() throws ImejiException {
     CollectionController controller = new CollectionController();
     collection = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
@@ -45,6 +54,12 @@ public class ControllerTest {
     return collection;
   }
 
+  /**
+   * Create Profile for current collection with JenaUtil.testUser
+   * 
+   * @return
+   * @throws ImejiException
+   */
   protected static MetadataProfile createProfile() throws ImejiException {
     ProfileController controller = new ProfileController();
     profile = new MetadataProfile();
@@ -54,6 +69,12 @@ public class ControllerTest {
     return profile;
   }
 
+  /**
+   * Create Item in current collection with JenaUtil.testUser
+   * 
+   * @return
+   * @throws ImejiException
+   */
   protected static Item createItem() throws ImejiException {
     ItemController controller = new ItemController();
     item =
@@ -61,4 +82,13 @@ public class ControllerTest {
     return item;
   }
 
+  protected static Item createItemWithFile() throws ImejiException {
+    ItemController controller = new ItemController();
+    if (collection == null) {
+      createCollection();
+    }
+    item = ImejiFactory.newItem(collection);
+    item = controller.createWithFile(item, originalFile, "test.jpg", collection, JenaUtil.testUser);
+    return item;
+  }
 }

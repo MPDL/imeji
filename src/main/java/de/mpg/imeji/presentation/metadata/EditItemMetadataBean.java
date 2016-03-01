@@ -70,7 +70,7 @@ public class EditItemMetadataBean {
   private int lockedImages = 0;
   private boolean initialized = false;
   private SessionBean session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-  private static Logger logger = Logger.getLogger(EditItemMetadataBean.class);
+  private static final Logger LOGGER = Logger.getLogger(EditItemMetadataBean.class);
   // url parameters
   private String type = "all";
   private String query = "";
@@ -119,7 +119,7 @@ public class EditItemMetadataBean {
       redirectToView();
       BeanHelper.error(
           ((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getLabel("error") + " " + e);
-      logger.error("Error init Edit page", e);
+      LOGGER.error("Error init Edit page", e);
     }
   }
 
@@ -200,7 +200,7 @@ public class EditItemMetadataBean {
         editor = new MetadataMultipleEditor(items, profile, getSelectedStatement());
         ((SuggestBean) BeanHelper.getSessionBean(SuggestBean.class)).init(profile);
       } else {
-        logger.error("No statement found");
+        LOGGER.error("No statement found");
         isProfileWithStatements = false;
         BeanHelper.error(
             ((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getLabel("profile_empty"));
@@ -208,7 +208,7 @@ public class EditItemMetadataBean {
     } catch (Exception e) {
       BeanHelper.error(
           ((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getLabel("error") + " " + e);
-      logger.error("Error init Edit page", e);
+      LOGGER.error("Error init Edit page", e);
     }
   }
 
@@ -361,8 +361,11 @@ public class EditItemMetadataBean {
    * @throws IOException
    */
   public void saveAndRedirect() throws IOException {
-    editor.save();
-    redirectToView();
+    if (editor.save()) {
+      redirectToView();
+    } else {
+      reload();
+    }
   }
 
   /**

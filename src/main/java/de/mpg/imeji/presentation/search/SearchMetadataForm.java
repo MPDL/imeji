@@ -131,7 +131,6 @@ public class SearchMetadataForm {
    * @throws UnprocessableError
    */
   public void validate() throws UnprocessableError {
-
     if (namespace != null) {
       switch (MetadataTypesHelper.getTypesForNamespace(statement.getType().toString())) {
         case DATE:
@@ -241,9 +240,10 @@ public class SearchMetadataForm {
         statement = st;
       }
     }
-    if (statement == null)
+    if (statement == null) {
       throw new RuntimeException(
           "Statement with namespace \"" + namespace + "\" not found in profile " + p.getId());
+    }
     initPredefinedValues();
   }
 
@@ -257,8 +257,9 @@ public class SearchMetadataForm {
       for (String s : statement.getLiteralConstraints()) {
         predefinedValues.add(new SelectItem(s, s));
       }
-    } else
+    } else {
       predefinedValues = null;
+    }
   }
 
   /**
@@ -321,25 +322,29 @@ public class SearchMetadataForm {
                   searchValue, ns, false));
             }
             if (!isEmtpyValue(familyName)) {
-              if (!group.isEmpty())
+              if (!group.isEmpty()) {
                 group.addLogicalRelation(LOGICAL_RELATIONS.AND);
+              }
               group.addPair(
                   new SearchMetadata(SearchFields.person_family, operator, familyName, ns, false));
             }
             if (!isEmtpyValue(givenName)) {
-              if (!group.isEmpty())
+              if (!group.isEmpty()) {
                 group.addLogicalRelation(LOGICAL_RELATIONS.AND);
+              }
               group.addPair(
                   new SearchMetadata(SearchFields.person_given, operator, givenName, ns, false));
             }
             if (!isEmtpyValue(uri)) {
-              if (!group.isEmpty())
+              if (!group.isEmpty()) {
                 group.addLogicalRelation(LOGICAL_RELATIONS.AND);
+              }
               group.addPair(new SearchMetadata(SearchFields.person_id, operator, uri, ns, false));
             }
             if (!isEmtpyValue(orgName)) {
-              if (!group.isEmpty())
+              if (!group.isEmpty()) {
                 group.addLogicalRelation(LOGICAL_RELATIONS.AND);
+              }
               group.addPair(
                   new SearchMetadata(SearchFields.person_org_name, operator, orgName, ns, false));
             }
@@ -362,8 +367,9 @@ public class SearchMetadataForm {
               group.addPair(new SearchMetadata(SearchFields.label, operator, searchValue, ns, not));
             }
             if (!isEmtpyValue(uri)) {
-              if (!group.isEmpty())
+              if (!group.isEmpty()) {
                 group.addLogicalRelation(LOGICAL_RELATIONS.AND);
+              }
               group.addPair(new SearchMetadata(SearchFields.url, operator, uri, ns, not));
             }
           }

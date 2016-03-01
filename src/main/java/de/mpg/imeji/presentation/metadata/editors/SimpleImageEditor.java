@@ -55,10 +55,4 @@ public class SimpleImageEditor extends MetadataEditor {
     return true;
   }
 
-  @Override
-  public boolean validateMetadataofImages() {
-    // TODO Auto-generated method stub
-    return true;
-  }
-
 }

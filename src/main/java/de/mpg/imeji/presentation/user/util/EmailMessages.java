@@ -26,7 +26,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  */
 public class EmailMessages {
 
-  private static Logger LOGGER = Logger.getLogger(EmailMessages.class);
+  private static final Logger LOGGER = Logger.getLogger(EmailMessages.class);
 
   /**
    * Email content when a new Account is sent
@@ -286,6 +286,23 @@ public class EmailMessages {
    */
   public String getEmailOnZipDownload_Subject(SessionBean session) {
     return session.getMessage("email_zip_images_downloaded_subject");
+  }
+  
+  /**
+   * Email content when a collection has been shared with the addressee by the sender
+   * 
+   * @param sender
+   * @param dest
+   * @param collectionName
+   * @param collectionLink
+   * @return
+   */
+  public String getUnshareMessage(String sender, String dest, String title,
+      String collectionLink) {
+    String message = getBundle("email_unshared_object");
+    message = message.replace("XXX_USER_NAME_XXX,", dest).replace("XXX_NAME_XXX", title)
+        .replace("XXX_LINK_XXX", collectionLink).replace("XXX_SENDER_NAME_XXX", sender);
+    return message;
   }
 
 }

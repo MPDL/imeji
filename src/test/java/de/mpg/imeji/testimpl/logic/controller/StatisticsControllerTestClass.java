@@ -64,7 +64,7 @@ public class StatisticsControllerTestClass extends ImejiTestBase {
       itemTO = service.create(to, JenaUtil.testUser2); // +3
       itemId = itemTO.getId();
     } catch (Exception e) {
-      System.out.println("Fail");
+      // Do nothing
     }
 
     StatisticsController controller = new StatisticsController();

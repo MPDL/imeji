@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.logic.search.SearchResult;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -24,6 +26,7 @@ public class FacetsBean implements Callable<Boolean> {
   private List<List<Facet>> facets = new ArrayList<List<Facet>>();
   private boolean running = false;
   private Facets facetsClass;
+  private static final Logger LOGGER = Logger.getLogger(FacetsBean.class);
 
   /*
    * (non-Javadoc)
@@ -31,11 +34,16 @@ public class FacetsBean implements Callable<Boolean> {
    * @see java.util.concurrent.Callable#call()
    */
   @Override
-  public Boolean call() throws Exception {
-    running = true;
-    facetsClass.init();
-    facets = facetsClass.getFacets();
-    running = false;
+  public Boolean call() {
+    try {
+      running = true;
+      facetsClass.init();
+      facets = facetsClass.getFacets();
+    } catch (Exception e) {
+      LOGGER.error("Error initializing facets", e);
+    } finally {
+      running = false;
+    }
     return running;
   }
 
@@ -44,12 +52,13 @@ public class FacetsBean implements Callable<Boolean> {
    * 
    * @param searchQuery
    */
-  public FacetsBean(SearchQuery searchQuery) {
+  public FacetsBean(SearchQuery searchQuery, SearchResult searchRes) {
     try {
-      facetsClass = new TechnicalFacets(searchQuery);
+      facetsClass = new TechnicalFacets(searchQuery, searchRes);
     } catch (Exception e) {
-      BeanHelper.error(((SessionBean) BeanHelper.getSessionBean(SessionBean.class))
-          .getLabel("error") + ", Technical Facets intialization: " + e.getMessage());
+      BeanHelper
+          .error(((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getLabel("error")
+              + ", Technical Facets intialization: " + e.getMessage());
     }
   }
 
@@ -63,8 +72,9 @@ public class FacetsBean implements Callable<Boolean> {
     try {
       facetsClass = new CollectionFacets(col, searchQuery, searchRes);
     } catch (Exception e) {
-      BeanHelper.error(((SessionBean) BeanHelper.getSessionBean(SessionBean.class))
-          .getLabel("error") + ", Collection Facets intialization : " + e.getMessage());
+      BeanHelper
+          .error(((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getLabel("error")
+              + ", Collection Facets intialization : " + e.getMessage());
     }
   }
 

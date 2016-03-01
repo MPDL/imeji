@@ -6,7 +6,6 @@ package de.mpg.imeji.presentation.beans;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
@@ -49,7 +48,7 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
   protected SessionBean sb;
   private List<SelectItem> sortMenu = new ArrayList<SelectItem>();
   protected List<SelectItem> filterMenu = new ArrayList<SelectItem>();
-  private static Logger logger = Logger.getLogger(SuperContainerBean.class);
+  private static final Logger LOGGER = Logger.getLogger(SuperContainerBean.class);
   // private SearchQuery searchQuery ;
   protected SearchPair selectedFilterSearch;
   protected SearchQuery searchQuery = new SearchQuery();
@@ -61,7 +60,6 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
    */
   public SuperContainerBean() {
     sb = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-
     initMenus();
     selectedSortCriterion = SearchIndex.SearchFields.modified.name();
     selectedSortOrder = SortOrder.DESCENDING.name();
@@ -72,7 +70,7 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
         getElementsPerPageSelectItems().add(new SelectItem(option));
       }
     } catch (Exception e) {
-      logger.error("Error reading property imeji.container.list.size.options", e);
+      LOGGER.error("Error reading property imeji.container.list.size.options", e);
     }
   }
 
@@ -95,23 +93,17 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
   public String getInit() {
     setSelectedFilterSearch(null);
     setSearchQuery(null);
-    if (UrlHelper.getParameterValue("f") != null && !UrlHelper.getParameterValue("f").equals("")) {
+    if (UrlHelper.hasParameter("f") && !UrlHelper.getParameterValue("f").isEmpty()) {
       selectedFilter = UrlHelper.getParameterValue("f");
     }
-    if (UrlHelper.getParameterValue("tab") != null
-        && !UrlHelper.getParameterValue("tab").equals("")) {
+    if (UrlHelper.hasParameter("tab") && !UrlHelper.getParameterValue("tab").isEmpty()) {
       selectedMenu = UrlHelper.getParameterValue("tab");
     }
-    if (FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .containsKey("q")) {
+    if (UrlHelper.hasParameter("q")) {
       query = UrlHelper.getParameterValue("q");
     }
-    if (selectedFilter == null || UrlHelper.getParameterBoolean("login") || sb.getUser() == null) {
-      if (sb.getUser() != null) {
-        selectedFilter = "my";
-      } else {
-        selectedFilter = "all";
-      }
+    if (selectedFilter == null) {
+      selectedFilter = "all";
     }
     if (selectedMenu == null) {
       selectedMenu = "SORTING";

@@ -13,15 +13,20 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
+import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiSPARQL;
@@ -64,7 +69,7 @@ import de.mpg.j2j.helper.J2JHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class ItemController extends ImejiController {
-  private static final Logger logger = Logger.getLogger(ItemController.class);
+  private static final Logger LOGGER = Logger.getLogger(ItemController.class);
   private static final ReaderFacade reader = new ReaderFacade(Imeji.imageModel);
   private static final WriterFacade writer = new WriterFacade(Imeji.imageModel);
   public static final String NO_THUMBNAIL_URL = "NO_THUMBNAIL_URL";
@@ -88,9 +93,7 @@ public class ItemController extends ImejiController {
    * @return
    */
   public Item create(Item item, URI coll, User user) throws ImejiException {
-    Collection<Item> l = new ArrayList<Item>();
-    l.add(item);
-    create(l, coll, user);
+    create(Arrays.asList(item), coll, user);
     return item;
   }
 
@@ -128,8 +131,7 @@ public class ItemController extends ImejiController {
 
     String guessedNotAllowedFormat = sc.guessNotAllowedFormat(f);
     if (StorageUtils.BAD_FORMAT.equals(guessedNotAllowedFormat)) {
-      throw new UnprocessableError(
-          "upload_format_not_allowed: " + " (" + guessedNotAllowedFormat + ")");
+      throw new UnprocessableError("upload_format_not_allowed");
     }
 
     String mimeType = StorageUtils.getMimeType(guessedNotAllowedFormat);
@@ -204,7 +206,7 @@ public class ItemController extends ImejiController {
     CollectionController cc = new CollectionController();
     CollectionImeji ic = cc.retrieveLazy(coll, user);
     for (Item img : items) {
-      writeCreateProperties(img, user);
+      prepareCreate(img, user);
       if (Status.PENDING.equals(ic.getStatus())) {
         img.setVisibility(Visibility.PRIVATE);
       } else {
@@ -218,7 +220,7 @@ public class ItemController extends ImejiController {
     }
     cleanMetadata(items);
     ProfileController pc = new ProfileController();
-    writer.create(J2JHelper.cast2ObjectList(new ArrayList<Item>(items)),
+    writer.create(J2JHelper.cast2ObjectList((List<?>) items),
         pc.retrieve(items.iterator().next().getMetadataSet().getProfile(), user), user);
     List<ImejiTriple> triples = getUpdateTriples(coll.toString(), user, items.iterator().next());
     // Update the collection
@@ -254,10 +256,6 @@ public class ItemController extends ImejiController {
     CollectionImeji collection;
     try {
       collection = cc.retrieve(item.getCollection(), u);
-      // if (collection.getStatus().equals(Status.WITHDRAWN)) {
-      // throw new UnprocessableError(
-      // "Collection is withdrawn, you can not create an item.");
-      // }
     } catch (Exception e) {
       throw new UnprocessableError(
           "There was a problem with specified collection: " + e.getLocalizedMessage());
@@ -300,7 +298,26 @@ public class ItemController extends ImejiController {
 
   public Item retrieveLazy(URI imgUri, User user) throws ImejiException {
     return (Item) reader.readLazy(imgUri.toString(), user, new Item());
+  }
 
+  /**
+   * Lazy Retrieve the Item containing the file with the passed storageid
+   * 
+   * @param storageId
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public Item retrieveLazyForFile(String storageId, User user) throws ImejiException {
+    Search s = SearchFactory.create(SEARCH_IMPLEMENTATIONS.JENA);
+    List<String> r =
+        s.searchString(JenaCustomQueries.selectItemOfFile(storageId), null, null, 0, -1)
+            .getResults();
+    if (!r.isEmpty() && r.get(0) != null) {
+      return retrieveLazy(URI.create(r.get(0)), user);
+    } else {
+      throw new NotFoundException("Can not find the resource requested");
+    }
   }
 
   /**
@@ -379,9 +396,7 @@ public class ItemController extends ImejiController {
    * @throws ImejiException
    */
   public Item update(Item item, User user) throws ImejiException {
-    Collection<Item> l = new ArrayList<Item>();
-    l.add(item);
-    updateBatch(l, user);
+    updateBatch(Arrays.asList(item), user);
     return retrieve(item.getId(), user);
   }
 
@@ -393,16 +408,19 @@ public class ItemController extends ImejiController {
    * @throws ImejiException
    */
   public void updateBatch(Collection<Item> items, User user) throws ImejiException {
-    List<Object> imBeans = new ArrayList<Object>();
-    for (Item item : items) {
-      writeUpdateProperties(item, user);
-      item.setFilename(FilenameUtils.getName(item.getFilename()));
-      imBeans.add(createFulltextForMetadata(item));
+    if (items != null && !items.isEmpty()) {
+      List<Object> imBeans = new ArrayList<Object>();
+      for (Item item : items) {
+        prepareUpdate(item, user);
+        item.setFilename(FilenameUtils.getName(item.getFilename()));
+        imBeans.add(createFulltextForMetadata(item));
+      }
+      cleanMetadata(items);
+      ProfileController pc = new ProfileController();
+      writer.update(imBeans,
+          pc.retrieve(items.iterator().next().getMetadataSet().getProfile(), user), user, true);
+
     }
-    cleanMetadata(items);
-    ProfileController pc = new ProfileController();
-    writer.update(imBeans, pc.retrieve(items.iterator().next().getMetadataSet().getProfile(), user),
-        user, true);
   }
 
   /**
@@ -441,8 +459,9 @@ public class ItemController extends ImejiController {
       item.setWidth(uploadResult.getWidth());
       item.setHeight(uploadResult.getHeight());
     }
-    if (filename != null)
+    if (filename != null) {
       item.setFilename(filename);
+    }
 
     return update(item, user);
   }
@@ -507,21 +526,11 @@ public class ItemController extends ImejiController {
    * @return
    * @throws ImejiException
    */
-  public int delete(List<Item> items, User user) throws ImejiException {
-    int count = 0;
-    List<Object> toDelete = new ArrayList<Object>();
+  public void delete(List<Item> items, User user) throws ImejiException {
+    writer.delete(new ArrayList<Object>(items), user);
     for (Item item : items) {
-      if (item != null) {
-        if (!Status.PENDING.equals(item.getStatus())) {
-          throw new UnprocessableError("Item status must be PENDING.");
-        }
-        removeFileFromStorage(item.getStorageId());
-        toDelete.add(item);
-        count++;
-      }
+      removeFileFromStorage(item.getStorageId());
     }
-    writer.delete(toDelete, user);
-    return count;
   }
 
   /**
@@ -532,11 +541,9 @@ public class ItemController extends ImejiController {
    * @return
    * @throws ImejiException
    */
-  public int delete(String itemId, User u) throws ImejiException {
+  public void delete(String itemId, User u) throws ImejiException {
     Item item = retrieve(ObjectHelper.getURI(Item.class, itemId), u);
-    List<Item> items = new ArrayList<Item>();
-    items.add(item);
-    return delete(items, u);
+    delete(Arrays.asList(item), u);
   }
 
   /**
@@ -601,16 +608,11 @@ public class ItemController extends ImejiController {
    * @throws ImejiException
    */
   public void release(List<Item> l, User user) throws ImejiException {
-    List<ImejiTriple> triples = new ArrayList<ImejiTriple>();
-    for (Item item : l) {
-      if (Status.PENDING.equals(item.getStatus())) {
-        triples.addAll(getReleaseTriples(item.getId().toString(), item));
-        triples.addAll(getUpdateTriples(item.getId().toString(), user, item));
-        writeReleaseProperty(item, user);
-      }
+    Collection<Item> items = filterItemsByStatus(l, Status.PENDING);
+    for (Item item : items) {
+      prepareRelease(item, user);
     }
-    // patch(triples, user); //TODO faster but doesnt work with indexer
-    updateBatch(l, user);
+    updateBatch(items, user);
   }
 
   /**
@@ -621,39 +623,46 @@ public class ItemController extends ImejiController {
    * @throws ImejiException
    */
   public void unRelease(List<Item> l, User user) throws ImejiException {
-    for (Item item : l) {
+    Collection<Item> items = filterItemsByStatus(l, Status.RELEASED);
+    for (Item item : items) {
       item.setStatus(Status.PENDING);
     }
-    updateBatch(l, user);
+    updateBatch(items, user);
   }
 
   /**
    * Set the status of a {@link List} of {@link Item} to withdraw and delete its files from the
    * {@link Storage}
    * 
-   * @param items
+   * @param l
    * @param comment
    * @throws ImejiException
    */
-  public void withdraw(List<Item> items, String comment, User user) throws ImejiException {
-    List<ImejiTriple> triples = new ArrayList<ImejiTriple>();
+  public void withdraw(List<Item> l, String comment, User user) throws ImejiException {
+    Collection<Item> items = filterItemsByStatus(l, Status.RELEASED);
     for (Item item : items) {
-      if (!item.getStatus().equals(Status.RELEASED)) {
-        throw new RuntimeException(
-            "Error discard " + item.getId() + " must be release (found: " + item.getStatus() + ")");
-      } else {
-        triples.addAll(getWithdrawTriples(item.getId().toString(), item, comment));
-        triples.addAll(getUpdateTriples(item.getId().toString(), user, item));
-        writeWithdrawProperties(item, comment);
-        item.setVisibility(Visibility.PUBLIC);
-        if (item.getEscidocId() != null) {
-          removeFileFromStorage(item.getStorageId());
-          item.setEscidocId(null);
-        }
-      }
+      prepareWithdraw(item, comment);
     }
-    // patch(triples, user);//TODO faster but doesnt work with indexer
     updateBatch(items, user);
+    for (Item item : items) {
+      removeFileFromStorage(item.getStorageId());
+    }
+  }
+
+  /**
+   * Return a new filtered List of only item with the requested {@link Status}
+   * 
+   * @param items
+   * @param status
+   * @return
+   */
+  private Collection<Item> filterItemsByStatus(List<Item> items, Status status) {
+    return new ArrayList<>(Collections2.filter(items, new Predicate<Item>() {
+      @Override
+      public boolean apply(Item item) {
+        return item.getStatus() == status;
+      }
+    }));
   }
 
   /**
@@ -666,7 +675,7 @@ public class ItemController extends ImejiController {
     try {
       storageController.delete(id);
     } catch (Exception e) {
-      logger.error("error deleting file", e);
+      LOGGER.error("error deleting file", e);
     }
   }
 
@@ -697,11 +706,14 @@ public class ItemController extends ImejiController {
   }
 
   private String firstNonNullOrEmtpy(String... strs) {
-    if (strs == null)
+    if (strs == null) {
       return null;
-    for (String str : strs)
-      if (str != null && !"".equals(str.trim()))
+    }
+    for (String str : strs) {
+      if (str != null && !"".equals(str.trim())) {
         return str;
+      }
+    }
     return null;
   }
 
@@ -747,7 +759,7 @@ public class ItemController extends ImejiController {
     try {
       return new ImejiTriple(itemUri, profileProperty, new URI(profileUri), permissionObject);
     } catch (URISyntaxException e) {
-      logger.error(e.getMessage());
+      LOGGER.error(e.getMessage());
     }
     return null;
   }
@@ -761,7 +773,7 @@ public class ItemController extends ImejiController {
    */
   private void validateChecksum(URI collectionURI, File file, Boolean isUpdate)
       throws UnprocessableError, ImejiException {
-    if (isValidateChecksumInCollection()) {
+    if (Imeji.isValidateChecksumInCollection()) {
       if (checksumExistsInCollection(collectionURI, StorageUtils.calculateChecksum(file))) {
         throw new UnprocessableError((!isUpdate)
             ? "Same file already exists in the collection (with same checksum). Please choose another file."
@@ -782,16 +794,6 @@ public class ItemController extends ImejiController {
         null, 0, -1).getNumberOfRecords() > 0;
   }
 
-  private boolean isValidateChecksumInCollection() {
-    return Imeji.isValidateChecksumInCollection();
-  }
-
-  public void validateCollectionStatus(Status st) throws UnprocessableError {
-
-    if (Status.WITHDRAWN.equals(st))
-      throw new UnprocessableError(
-          "Collection status does not allow item upload! The collection is discarded!");
-  }
 
   /**
    * Clean the values of all {@link Metadata} of an {@link Item}

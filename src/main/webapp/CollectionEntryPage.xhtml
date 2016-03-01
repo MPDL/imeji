@@ -24,19 +24,14 @@
 										navBean="#{Navigation}" 
 										activeMenu="start"/>
 
-			<menu:context_actionMenu id="action"  	isUserLoggedIn="#{Auth.loggedIn}" 
+			<menu:context_actionMenu id="action" 
 										curMainMenu="#{currentMainMenu}" 
-										navBean="#{Navigation}" 
-										collectionStatus="#{logicBean.collection.status}" 
-										contextId="#{logicBean.id}" 
-										isDeletable="#{Auth.delete(logicBean.collection)}" 
-										isEditable="#{Auth.update(logicBean.collection)}" 
-										isAdmin="#{Auth.admin(logicBean.collection)}"
 										hasContent="#{logicBean.size > 0}" 
 										downloadEnabled="#{logicBean.size > 0}"
 										contextDownloadParam="&amp;col=#{logicBean.id}"
-										allowedToShare="#{logicBean.collection.status != 'WITHDRAWN' and Auth.admin(logicBean.collection)}"
-										hasDoi="#{logicBean.collection.doi != null and logicBean.collection.doi !=''}"/>
+										hasDoi="#{logicBean.collection.doi != null and logicBean.collection.doi !=''}"
+										vo="#{logicBean.collection}"
+										profile="#{logicBean.profile}"/>
 		</ui:fragment>
 	</ui:define>
 	

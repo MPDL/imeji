@@ -57,7 +57,7 @@ import de.mpg.imeji.presentation.servlet.ExportServlet;
  */
 public class ContentNegotiationFilter implements Filter {
   private FilterConfig filterConfig = null;
-  private static Logger logger = Logger.getLogger(ContentNegotiationFilter.class);
+  private static final Logger LOGGER = Logger.getLogger(ContentNegotiationFilter.class);
 
   /*
    * (non-Javadoc)
@@ -92,7 +92,7 @@ public class ContentNegotiationFilter implements Filter {
         }
       }
     } catch (Exception e) {
-      logger.error("Filtering error in content negotiation filter", e);
+      LOGGER.error("Filtering error in content negotiation filter", e);
     } finally {
       chain.doFilter(serv, resp);
     }
@@ -104,17 +104,20 @@ public class ContentNegotiationFilter implements Filter {
    * @param request
    * @return
    */
-  // TODO NAVI
   private String getType(HttpServletRequest request) {
     String path = request.getServletPath();
-    if ("/browse".equals(path) || path.startsWith("/item/"))
+    if ("/browse".equals(path) || path.startsWith("/item/")) {
       return "image";
-    if ("/collections".equals(path) || path.startsWith("/collection/"))
+    }
+    if ("/collections".equals(path) || path.startsWith("/collection/")) {
       return "collection";
-    if ("/albums".equals(path) || path.startsWith("/album/"))
+    }
+    if ("/albums".equals(path) || path.startsWith("/album/")) {
       return "album";
-    if ("/profile".equals(path) || path.startsWith("/profile/"))
+    }
+    if ("/profile".equals(path) || path.startsWith("/profile/")) {
       return "profile";
+    }
     return null;
   }
 
@@ -127,23 +130,24 @@ public class ContentNegotiationFilter implements Filter {
    */
   private String getQuery(HttpServletRequest request) throws UnsupportedEncodingException {
     String path = request.getServletPath();
-    if (path.startsWith("/item/"))
+    if (path.startsWith("/item/")) {
       return "q=" + SearchIndex.SearchFields.member.name() + "==\""
           + URLEncoder.encode(ObjectHelper.getURI(Item.class, getID(path)).toString(), "UTF-8")
           + "\"";
-    if (path.startsWith("/collection/"))
+    }
+    if (path.startsWith("/collection/")) {
       return "q=" + SearchIndex.SearchFields.col.name() + "==\""
           + ObjectHelper.getURI(CollectionImeji.class, getID(path)) + "\"";
-    if (path.startsWith("/album/"))
+    }
+    if (path.startsWith("/album/")) {
       return "q=" + SearchIndex.SearchFields.alb.name() + "==\""
           + URLEncoder.encode(ObjectHelper.getURI(Album.class, getID(path)).toString(), "UTF-8")
           + "\"";
-    if (path.startsWith("/profile/"))
-      return "q="
-          + SearchIndex.SearchFields.prof.name()
-          + "==\""
-          + URLEncoder.encode(ObjectHelper.getURI(MetadataProfile.class, getID(path)).toString(),
-              "UTF-8") + "\"";
+    }
+    if (path.startsWith("/profile/")) {
+      return "q=" + SearchIndex.SearchFields.prof.name() + "==\"" + URLEncoder.encode(
+          ObjectHelper.getURI(MetadataProfile.class, getID(path)).toString(), "UTF-8") + "\"";
+    }
     return request.getQueryString();
   }
 
@@ -158,8 +162,9 @@ public class ContentNegotiationFilter implements Filter {
    * @return
    */
   private boolean rdfNegotiated(HttpServletRequest request) {
-    if (request != null && request.getHeader("Accept") != null)
+    if (request != null && request.getHeader("Accept") != null) {
       return request.getHeader("Accept").startsWith("application/rdf+xml");
+    }
     return false;
   }
 
@@ -185,7 +190,7 @@ public class ContentNegotiationFilter implements Filter {
    */
   @Override
   public void init(FilterConfig arg0) throws ServletException {
-    // TODO Auto-generated method stub
+
   }
 
   public FilterConfig getFilterConfig() {

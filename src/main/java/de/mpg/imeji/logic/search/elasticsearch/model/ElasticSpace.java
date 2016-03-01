@@ -14,12 +14,11 @@ import de.mpg.imeji.logic.vo.Space;
  * @author bastiens
  * 
  */
-public class ElasticSpace extends ElasticProperties {
-
-  private List<String> folder;
-  private String slug;
-  private String name;
-  private String description;
+public final class ElasticSpace extends ElasticProperties {
+  private final List<String> folder;
+  private final String slug;
+  private final String name;
+  private final String description;
 
   /**
    * Constructor with an {@link Item}
@@ -28,7 +27,7 @@ public class ElasticSpace extends ElasticProperties {
    */
   public ElasticSpace(Space space) {
     super(space);
-    folder = new ArrayList<>(space.getSpaceCollections());
+    this.folder = new ArrayList<>(space.getSpaceCollections());
     this.slug = space.getSlug();
     this.name = space.getTitle();
     this.description = space.getDescription();
@@ -42,40 +41,17 @@ public class ElasticSpace extends ElasticProperties {
   }
 
   /**
-   * @param slug the slug to set
-   */
-  public void setSlug(String slug) {
-    this.slug = slug;
-  }
-
-  /**
    * @return the description
    */
   public String getDescription() {
     return description;
   }
 
-  /**
-   * @param description the description to set
-   */
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
   public List<String> getFolder() {
     return folder;
-  }
-
-  public void setFolder(List<String> folder) {
-    this.folder = folder;
   }
 
   public String getName() {
     return name;
   }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
 }

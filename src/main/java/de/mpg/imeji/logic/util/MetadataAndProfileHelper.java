@@ -45,7 +45,6 @@ public class MetadataAndProfileHelper {
         Person newP = new Person();
         newP.setFamilyName("Family name");
         newP.setGivenName("Given name");
-
         Organization org = new Organization();
         org.setName("Organization name");
         org.setDescription("Organization description");
@@ -91,8 +90,9 @@ public class MetadataAndProfileHelper {
 
   public static Statement getStatement(URI uri, MetadataProfile profile) {
     for (Statement st : profile.getStatements()) {
-      if (st.getId().toString().equals(uri.toString()))
+      if (st.getId().toString().equals(uri.toString())) {
         return st;
+      }
     }
     return null;
   }
@@ -107,34 +107,41 @@ public class MetadataAndProfileHelper {
    */
   public static boolean isEmpty(Metadata md) {
     if (md instanceof Text) {
-      if (((Text) md).getText() == null || "".equals(((Text) md).getText().trim()))
+      if (((Text) md).getText() == null || "".equals(((Text) md).getText().trim())) {
         return true;
+      }
     } else if (md instanceof Date) {
       if (((Date) md).getDate() == null || "".equals(((Date) md).getDate())
-          || Double.isNaN(((Date) md).getTime()))
+          || Double.isNaN(((Date) md).getTime())) {
         return true;
+      }
     } else if (md instanceof Geolocation) {
       return (((Geolocation) md).getName() == null
           || ((Geolocation) md).getName().trim().equals(""))
-          && (Double.isNaN(((Geolocation) md).getLatitude())
-              || Double.isNaN(((Geolocation) md).getLongitude()));
+          && Double.isNaN(((Geolocation) md).getLatitude())
+          && Double.isNaN(((Geolocation) md).getLongitude());
     } else if (md instanceof License) {
       if ((((License) md).getLicense() == null || "".equals(((License) md).getLicense().trim()))
-          && ((License) md).getExternalUri() == null)
+          && ((License) md).getExternalUri() == null) {
         return true;
+      }
     } else if (md instanceof Publication) {
-      if (((Publication) md).getUri() == null || "".equals(((Publication) md).getUri().toString()))
+      if (((Publication) md).getUri() == null
+          || "".equals(((Publication) md).getUri().toString())) {
         return true;
+      }
     } else if (md instanceof Number) {
       return Double.isNaN(((Number) md).getNumber());
     } else if (md instanceof ConePerson) {
       if (((ConePerson) md).getPerson() == null
           || ((ConePerson) md).getPerson().getFamilyName() == null
-          || "".equals(((ConePerson) md).getPerson().getFamilyName()))
+          || "".equals(((ConePerson) md).getPerson().getFamilyName())) {
         return true;
+      }
     } else if (md instanceof Link) {
-      if (((Link) md).getUri() == null || "".equals(((Link) md).getUri().toString()))
+      if (((Link) md).getUri() == null || "".equals(((Link) md).getUri().toString())) {
         return true;
+      }
     }
     return false;
   }
@@ -160,8 +167,9 @@ public class MetadataAndProfileHelper {
       throws BadRequestException {
     for (Statement st : profile.getStatements()) {
       for (LocalizedString l : st.getLabels()) {
-        if (l.getValue().equals(label))
+        if (l.getValue().equals(label)) {
           return st;
+        }
       }
     }
     throw new BadRequestException("Metadata \"" + label + "\" not found!");

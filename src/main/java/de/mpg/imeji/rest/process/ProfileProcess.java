@@ -5,10 +5,8 @@ import static javax.ws.rs.core.Response.Status.OK;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response.Status;
 
-import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.rest.api.CollectionService;
 import de.mpg.imeji.rest.api.ProfileService;
 import de.mpg.imeji.rest.to.JSONResponse;
 
@@ -43,14 +41,13 @@ public class ProfileProcess {
 
   }
 
-  public static JSONResponse readAll(HttpServletRequest req, String q) {
+  public static JSONResponse readAll(HttpServletRequest req, String q, int offset, int size) {
     JSONResponse resp;
-
 
     ProfileService ccrud = new ProfileService();
     try {
       User u = BasicAuthentication.auth(req);
-      resp = RestProcessUtils.buildResponse(OK.getStatusCode(), ccrud.readAll(u, q));
+      resp = RestProcessUtils.buildResponse(OK.getStatusCode(), ccrud.search(q, offset, size, u));
     } catch (Exception e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }

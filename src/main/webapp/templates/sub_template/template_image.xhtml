@@ -3,7 +3,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
-	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
 	
 	
 	<ui:param name="headline" value="#{itemBean.image != null ? itemBean.image.filename: ''}"/>
@@ -16,16 +17,11 @@
 	
 	<ui:define name="actionsMenu">
 
-		<menu:context_actionMenu id="action"  isUserLoggedIn="#{Auth.loggedIn}" 
+		<menu:context_actionMenu id="action" 
 									curMainMenu="#{currentMainMenu}" 
-									navBean="#{Navigation}" 
-									isDeletable="#{Auth.delete(itemBean.image)}" 
-									isEditable="#{Auth.update(itemBean.image)}" 
-									isAdmin="#{Auth.admin(itemBean.image) }"
+									vo="#{itemBean.image}"
 									downloadEnabled="true"
 									contextDownloadParam="&amp;col=#{logicBean.id}"
-									isContentDeletable="#{isContentDeletable}"
-									allowedToShare="#{logicBean.collection.status != 'WITHDRAWN' and Auth.admin(logicBean.collection)}"
 									activeMenu="item"/>
 	</ui:define>
 	
@@ -78,7 +74,10 @@
 					<ui:include src="../component/images/image_details.xhtml"/>
 				</ui:fragment>
 			</h:panelGroup>
-			
+		
+		<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete(itemBean.image)}"/>
+		<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" rendered="#{Auth.admin(itemBean.image) and WorkflowBean.withdraw(itemBean.image)}"/>
+		
 		</ui:fragment>
 		
 		 <ui:fragment rendered="#{itemBean.image == null}">

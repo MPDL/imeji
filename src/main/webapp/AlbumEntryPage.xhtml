@@ -24,18 +24,12 @@
 									navBean="#{Navigation}" 
 									activeMenu="start"/>
 		
-			<menu:context_actionMenu id="action"  	isUserLoggedIn="#{Auth.loggedIn}" 
+			<menu:context_actionMenu id="action" 
 									curMainMenu="#{currentMainMenu}" 
-									navBean="#{Navigation}" 
-									collectionStatus="#{logicBean.album.status}" 
-									contextId="#{logicBean.id}" 
-									isDeletable="#{Auth.delete(logicBean.album)}" 
-									isEditable="#{Auth.update(logicBean.album)}" 
-									isAdmin="#{Auth.admin(logicBean.album)}"
-									hasContent="#{logicBean.size > 0}" 
+									vo="#{logicBean.album}"
 									downloadEnabled="#{logicBean.size > 0}"
 									contextDownloadParam="&amp;album=#{logicBean.id}"
-									allowedToShare="#{logicBean.album.status!='WITHDRAWN' and Auth.admin(logicBean.album)}"/>
+									hasContent="#{logicBean.size > 0}"/>
 		</ui:fragment>
 	</ui:define>
 	

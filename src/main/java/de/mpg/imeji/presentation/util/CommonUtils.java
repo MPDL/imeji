@@ -77,8 +77,9 @@ public class CommonUtils {
       p = Pattern.compile("\\b" + field + ":" + ".*\\b", Pattern.CASE_INSENSITIVE);
       r = executeAndReturnFirstResult(p, s);
     }
-    if (r != null)
+    if (r != null) {
       return r.replace(field + ":", "");
+    }
     return null;
   }
 
@@ -91,8 +92,9 @@ public class CommonUtils {
    */
   public static String executeAndReturnFirstResult(Pattern p, String s) {
     Matcher m = p.matcher(s);
-    if (m.find())
+    if (m.find()) {
       return m.group();
+    }
     return null;
   }
 }

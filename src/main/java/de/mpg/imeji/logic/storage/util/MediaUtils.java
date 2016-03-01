@@ -26,7 +26,7 @@ import de.mpg.imeji.presentation.util.PropertyReader;
  * @version $Revision$ $LastChangedDate$
  */
 public class MediaUtils {
-  private static Logger logger = Logger.getLogger(MediaUtils.class);
+  private static final Logger LOGGER = Logger.getLogger(MediaUtils.class);
 
   /**
    * Return true if imagemagick is installed on the current system<br/>
@@ -46,7 +46,7 @@ public class MediaUtils {
     try {
       cmd.run(op);
     } catch (Exception e) {
-      logger.error("imagemagick not installed", e);
+      LOGGER.error("imagemagick not installed", e);
       return false;
     }
     return true;
@@ -62,8 +62,8 @@ public class MediaUtils {
    * @throws InterruptedException
    * @throws IM4JavaException
    */
-  public static byte[] convertToJPEG(File tmp, String extension) throws IOException,
-      URISyntaxException, InterruptedException, IM4JavaException {
+  public static File convertToJPEG(File tmp, String extension)
+      throws IOException, URISyntaxException, InterruptedException, IM4JavaException {
     // In case the file is made of many frames, (for instance videos), generate only the frames from
     // 0 to 48 to
     // avoid high memory consumption
@@ -83,12 +83,11 @@ public class MediaUtils {
       cmd.run(op);
       int frame = getNonBlankFrame(jpeg.getAbsolutePath());
       if (frame >= 0) {
-        File f =
-            new File(FilenameUtils.getFullPath(jpeg.getAbsolutePath())
-                + FilenameUtils.getBaseName(jpeg.getAbsolutePath()) + "-" + frame + ".jpg");
-        return FileUtils.readFileToByteArray(f);
+        File f = new File(FilenameUtils.getFullPath(jpeg.getAbsolutePath())
+            + FilenameUtils.getBaseName(jpeg.getAbsolutePath()) + "-" + frame + ".jpg");
+        return f;
       }
-      return FileUtils.readFileToByteArray(jpeg);
+      return jpeg;
     } finally {
       removeFilesCreatedByImageMagick(jpeg.getAbsolutePath());
       FileUtils.deleteQuietly(jpeg);
@@ -126,7 +125,7 @@ public class MediaUtils {
       if (cs != null)
         return cs;
     } catch (Exception e) {
-      logger.error("No color space found!", e);
+      LOGGER.error("No color space found!", e);
     }
     return "RGB";
   }
@@ -142,8 +141,8 @@ public class MediaUtils {
    * @throws InterruptedException
    * @throws IM4JavaException
    */
-  private static int getNonBlankFrame(String path) throws IOException, URISyntaxException,
-      InterruptedException, IM4JavaException {
+  private static int getNonBlankFrame(String path)
+      throws IOException, URISyntaxException, InterruptedException, IM4JavaException {
     ConvertCmd cmd = getConvert();
     int count = 0;
     String dir = FilenameUtils.getFullPath(path);
@@ -163,7 +162,7 @@ public class MediaUtils {
         if (!info.getImageGeometry().contains("1x1"))
           return count;
       } catch (Exception e) {
-        logger.info("Some problems with getting non blank frame!", e);
+        LOGGER.info("Some problems with getting non blank frame!", e);
       } finally {
         String newPath = f.getAbsolutePath().replace("-" + count, "-" + Integer.valueOf(count + 1));
         f = new File(newPath);

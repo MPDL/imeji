@@ -16,9 +16,12 @@ import de.mpg.imeji.rest.api.UserService;
  */
 public class UserNameCache {
   private Map<String, String> userNameMap = new HashMap<>();
-  private static final Logger logger = Logger.getLogger(UserNameCache.class);
+  private static final Logger LOGGER = Logger.getLogger(UserNameCache.class);
 
   public String getUserName(URI userId) {
+    if (userId == null) {
+      return null;
+    }
     if (userNameMap.containsKey(userId.toString())) {
       return userNameMap.get(userId.toString());
     } else {
@@ -28,7 +31,7 @@ public class UserNameCache {
         userNameMap.put(userId.toString(), name);
         return name;
       } catch (Exception e) {
-        logger.error("Cannot read user: " + userId, e);
+        LOGGER.error("Cannot read user: " + userId, e);
         return null;
       }
     }

@@ -12,11 +12,7 @@
 	<ui:param name="currentMainMenu" value="admin"/>
 	
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action"  isUserLoggedIn="#{Auth.loggedIn}" 
-								 curMainMenu="#{currentMainMenu}" 
-								 downloadEnabled="false"
-								 actionEnabled="false"
-								 navBean="#{Navigation}"  />
+		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}" downloadEnabled="false" actionEnabled="false"/>
 	</ui:define>
 	<ui:define name="mainContent">
 		<h:outputText value="#{UserBean.init}"/>
@@ -114,8 +110,8 @@
 													<h:outputText value="#{UserBean.user.getQuotaHumanReadable()}"/>
 												</h:panelGroup>
 												<h:panelGroup class="imj_admindataSetEdit" rendered="#{UserBean.edit and SessionBean.user.admin}" >
-													<h:selectOneMenu value="#{UserBean.user.quota}" >
-														<f:selectItems value="#{ConfigurationBean.getQuotaLimitsStatic()}"/>
+													<h:selectOneMenu value="#{UserBean.quota}" >
+														<f:selectItems value="#{UserBean.quotaMenu}"/>
 													</h:selectOneMenu>
 												</h:panelGroup>
 											</div>

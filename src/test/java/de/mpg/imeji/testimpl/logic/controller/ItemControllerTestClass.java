@@ -1,22 +1,19 @@
 package de.mpg.imeji.testimpl.logic.controller;
 
-import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.ItemController;
-import de.mpg.imeji.logic.storage.StorageController;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.presentation.util.ImejiFactory;
-import de.mpg.imeji.test.logic.controller.ControllerTest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.controller.ItemController;
+import de.mpg.imeji.logic.storage.StorageController;
+import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.test.logic.controller.ControllerTest;
 import util.JenaUtil;
 
 /**
@@ -26,18 +23,16 @@ import util.JenaUtil;
  * 
  */
 public class ItemControllerTestClass extends ControllerTest {
-  private static Item item;
-  private static final Logger logger = Logger.getLogger(ItemControllerTestClass.class);
-  private static File originalFile = new File("src/test/resources/storage/test.jpg");
-  private static File thumbnailFile = new File("src/test/resources/storage/test.png");
+  private static final Logger LOGGER = Logger.getLogger(ItemControllerTestClass.class);
+
 
   @BeforeClass
   public static void specificSetup() {
     try {
       createCollection();
-      createItem();
+      createItemWithFile();
     } catch (ImejiException e) {
-      logger.error("Error initializing collection or item", e);
+      LOGGER.error("Error initializing collection or item", e);
     }
 
   }
@@ -78,18 +73,6 @@ public class ItemControllerTestClass extends ControllerTest {
         StorageUtils.calculateChecksum(storedFile));
     Assert.assertEquals(StorageUtils.calculateChecksum(thumbnailFile), item.getChecksum());
 
-  }
-
-
-
-  protected static Item createItem() throws ImejiException {
-    ItemController controller = new ItemController();
-    if (collection == null) {
-      createCollection();
-    }
-    item = ImejiFactory.newItem(collection);
-    item = controller.createWithFile(item, originalFile, "test.jpg", collection, JenaUtil.testUser);
-    return item;
   }
 
 }

@@ -42,7 +42,7 @@ import de.mpg.imeji.logic.vo.UserGroup;
  * 
  */
 public class ElasticQueryFactory {
-  private static final Logger logger = Logger.getLogger(ElasticQueryFactory.class);
+  private static final Logger LOGGER = Logger.getLogger(ElasticQueryFactory.class);
 
   /**
    * Build a {@link QueryBuilder} from a {@link SearchQuery}
@@ -475,7 +475,7 @@ public class ElasticQueryFactory {
               Long.toString(SearchUtils.parseDateAsTime(md.getValue())), md.getOperator(),
               md.getStatement(), md.isNot());
         } catch (UnprocessableError e) {
-          logger.error("Wrong date format (can not be search): " + md.getValue());
+          LOGGER.error("Wrong date format (can not be search): " + md.getValue());
           return QueryBuilders.matchAllQuery();
         }
       default:

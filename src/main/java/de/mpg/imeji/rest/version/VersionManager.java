@@ -21,7 +21,7 @@ public class VersionManager {
   private Pattern p = Pattern.compile(".*/rest/v([0-9]+)/.*");
   private String path;
   private boolean hasVersion = false;
-  private static Logger logger = Logger.getLogger(VersionManager.class);
+  private static final Logger LOGGER = Logger.getLogger(VersionManager.class);
 
   /**
    * Default constructor
@@ -56,7 +56,7 @@ public class VersionManager {
       Navigation navigation = new Navigation();
       return navigation.getApplicationUrl() + "rest-doc/index.html";
     } catch (Exception e) {
-      logger.error(e.getMessage());
+      LOGGER.error(e.getMessage());
     }
     return "http://imeji.org/development/technical-specification/api";
 

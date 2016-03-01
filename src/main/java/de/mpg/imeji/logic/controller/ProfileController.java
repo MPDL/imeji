@@ -67,7 +67,7 @@ public class ProfileController extends ImejiController {
   private static final WriterFacade writer = new WriterFacade(Imeji.profileModel);
   public static final String DEFAULT_METADATA_PROFILE_PATH_PROPERTY =
       "default-metadata-profile.json";
-  private static Logger logger = Logger.getLogger(ProfileController.class);
+  private static final Logger LOGGER = Logger.getLogger(ProfileController.class);
 
   /**
    * Default Constructor
@@ -85,7 +85,7 @@ public class ProfileController extends ImejiController {
    * @throws ImejiException
    */
   public MetadataProfile create(MetadataProfile p, User user) throws ImejiException {
-    writeCreateProperties(p, user);
+    prepareCreate(p, user);
     p.setStatus(Status.PENDING);
     writer.create(WriterFacade.toList(p), null, user);
     ShareController shareController = new ShareController();
@@ -138,10 +138,9 @@ public class ProfileController extends ImejiController {
     CollectionImeji c;
     try {
       c = cc.retrieve(collectionId, user);
-
-      if (c.getProfile() == null)
+      if (c.getProfile() == null) {
         return null;
-
+      }
       return retrieve(c.getProfile(), user);
     } catch (NotFoundException e) {
       throw new UnprocessableError("Invalid collection: " + e.getLocalizedMessage());
@@ -177,7 +176,7 @@ public class ProfileController extends ImejiController {
    */
   public void update(MetadataProfile mdp, User user) throws ImejiException {
     isLoggedInUser(user);
-    writeUpdateProperties(mdp, user);
+    prepareUpdate(mdp, user);
     writer.update(WriterFacade.toList(mdp), null, user, true);
     Imeji.executor.submit(new CleanMetadataJob(mdp));
   }
@@ -190,7 +189,7 @@ public class ProfileController extends ImejiController {
    * @throws ImejiException
    */
   public void release(MetadataProfile mdp, User user) throws ImejiException {
-    writeReleaseProperty(mdp, user);
+    prepareRelease(mdp, user);
     update(mdp, user);
   }
 
@@ -245,7 +244,6 @@ public class ProfileController extends ImejiController {
    * @throws ImejiException
    */
   public void withdraw(MetadataProfile mdp, User user) throws ImejiException {
-
     if (mdp.getDefault()) {
       throw new UnprocessableError("error_profile_is_default_cannot_be_withdrawn");
     }
@@ -283,7 +281,7 @@ public class ProfileController extends ImejiController {
       return (List<MetadataProfile>) retrieveLazy(result.getResults(),
           getMin(result.getResults().size(), 500), 0, user);
     } catch (Exception e) {
-      logger.error("Cannot retrieve profiles:", e);
+      LOGGER.error("Cannot retrieve profiles:", e);
     }
     return null;
   }
@@ -316,7 +314,7 @@ public class ProfileController extends ImejiController {
       throw new ImejiException(
           "Data inconsistency: " + uris.size() + " + default metadata profile have been found.");
     } else {
-      logger.info("Cannot find default metadata profile...");
+      LOGGER.info("Cannot find default metadata profile...");
     }
     return null;
   }
@@ -329,7 +327,6 @@ public class ProfileController extends ImejiController {
    */
 
   public MetadataProfile initDefaultMetadataProfile() throws ImejiException {
-
     MetadataProfile mdpVO = retrieveDefaultProfile();
 
     if (mdpVO == null) {
@@ -340,7 +337,7 @@ public class ProfileController extends ImejiController {
         path = new File(this.getClass().getClassLoader()
             .getResource(DEFAULT_METADATA_PROFILE_PATH_PROPERTY).toURI()).getAbsolutePath();
         if (isNullOrEmpty(path)) {
-          logger.info(
+          LOGGER.info(
               "There is no default metadata profile defined! This is not an error, Imeji will still work. Default metadata profile is a convenience for quick start!"
                   + "Check more about it at the IMEJI Documentation.");
           return null;
@@ -432,7 +429,6 @@ public class ProfileController extends ImejiController {
     }
 
     for (String s : retrieveUris) {
-
       cols.add((MetadataProfile) J2JHelper.setId(new MetadataProfile(), URI.create(s)));
     }
 
@@ -440,7 +436,7 @@ public class ProfileController extends ImejiController {
       reader.readLazy(J2JHelper.cast2ObjectList(cols), user);
       return cols;
     } catch (ImejiException e) {
-      logger.error("Error loading metadataProfiles: " + e.getMessage(), e);
+      LOGGER.error("Error loading metadataProfiles: " + e.getMessage(), e);
       return null;
     }
   }

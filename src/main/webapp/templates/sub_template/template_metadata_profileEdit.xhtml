@@ -48,7 +48,6 @@
 									<script type="text/javascript">dragAndDrop(); highlighter();</script>
 									<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/datepicker.js"></script>
 									
-									
 									<h:panelGroup layout="block" id="dropMetadata" styleClass="dropMetadata imj_dropArea">
 										<h:outputText value="#{lbl.add_metadata}" style="visibility:hidden;" styleClass="imj_orderInfo"/>
 										<h:commandButton id="dropMetadataButton" type="submit" value="Insert metadata" action="#{metadataBean.insertMetadata}" styleClass="imj_invisible imj_dropButton">
@@ -61,7 +60,7 @@
 										
 										<ui:param name="itemLevel" value="#{(wrapper.level > 0) ? (wrapper.level / 30) : 0}"/>
 										
-										<h:panelGroup id="statement" layout="block" styleClass="imj_metadataListItem statement_area  statement_area_parent_#{wrapper.parentId} statement_area_id_#{wrapper.statementId}">
+										<div id="statement" class="imj_metadataListItem statement_area  statement_area_parent_#{wrapper.parentId} statement_area_id_#{wrapper.statementId}">
 												
 											<h:panelGroup layout="block" id="metadata" style="margin-left:#{wrapper.level}px; margin-top:0.5em;" styleClass="draggable dropChild id_#{wrapper.statementId} parent_#{wrapper.parentId} highlight_area">
 												
@@ -74,7 +73,7 @@
 													<f:ajax execute="@form" render=":profileForm:ajaxArea"/>
 												</h:commandButton>
 												
-												<h:panelGroup layout="block" styleClass="imj_itemHeader">
+												<div class="imj_itemHeader">
 													<span class="imj_inlineButtonGroup">
 														<!-- Buttons to add new or remove current metadata statement -->
 														<h:commandLink styleClass="fa fa-plus-square-o"  title="#{lbl.add_metadata}" type="submit" action="#{metadataBean.addStatement}">
@@ -104,11 +103,11 @@
 															<h:outputLabel styleClass="imj_optionLabel" value="#{lbl.preview}" for="useForPreview"/>
 														</li>
 													</ul>
-												</h:panelGroup> <!-- END imj_itemHeader -->
+												</div> <!-- END imj_itemHeader -->
 												
-												<h:panelGroup layout="block" styleClass="imj_itemBody imj_metadataSetGroup">
-													<h:panelGroup class="imj_metadataSet">
-														<h:panelGroup layout="block" styleClass="imj_metadataLabel">
+												<div class="imj_itemBody imj_metadataSetGroup">
+													<div class="imj_metadataSet">
+														<div class="imj_metadataLabel">
 															<label for="mdProfileType"><h:outputText value="#{lbl.type}"/></label>
 															<select id="mdProfileType" title="#{wrapper.used ? lbl.statement_used : lbl.statement_change_type}" onfocus="write_metadata_type_options(this, this.value)" disabled="#{wrapper.used ? 'disabled' : ''}" class="imj_metadataTypeSelection"  
 																onchange="document.getElementById('profileForm:profile:#{position.index}:inHiddenStatement').value = this.value; $(this).parents('.imj_metadataLabel').find('.imj_ajaxButton').click();">
@@ -118,20 +117,16 @@
 																<f:ajax execute="@this inHiddenStatement" render="vocabularyAndConstraintsArea"/>
 															</h:commandButton>
 															<h:inputHidden id="inHiddenStatement" value="#{wrapper.statement.type}" converter="URIConverter" valueChangeListener="#{wrapper.typeListener}"/>
-														</h:panelGroup>
+														</div>
 														
 														
 														<div class="imj_metadataValue">
 															<div class="imj_metadataSet">
 																<!-- START Label - Language Parsing -->
-																<div class="imj_metadataLabel">
-																	<h:outputText value="#{lbl.label}"/>
-																	<h:outputText value=": " styleClass="imj_noDisplay"/>
-																</div>
-																
+																<span class="imj_metadataLabel">#{lbl.label}</span>
 																<div class="imj_metadataValue">
 																	<ui:repeat id="labels" var="label" value="#{wrapper.statement.labels}" varStatus="labelPosition">
-																		<h:panelGroup styleClass="imj_metadataSet">
+																		<div class="imj_metadataSet">
 																			<h:inputText id="inputLabel" value="#{label.value}"/>
 																			<ui:fragment rendered="#{Internationalization.languages.size() > 1}">
 																				<select onfocus="write_language_options(this, this.value);" class="imj_metadataLanguageSelection" 
@@ -156,7 +151,7 @@
 																					<f:ajax execute="@form" render=":profileForm:ajaxArea"/>
                                                                                 </h:commandLink>
 																			</span>
-																		</h:panelGroup>
+																		</div>
 																	</ui:repeat>
 																</div>
 															</div> <!-- END Label - Language Paring -->
@@ -262,16 +257,15 @@
 																	</div>
 																</div>
 															</ui:fragment>
-															
-															<h:panelGroup layout="block" styleClass="imj_submitPanel">
-																<h:commandButton styleClass="imj_submitButton" title="#{lbl.add_child}" type="submit" action="#{metadataBean.addStatementChild}" id="addChildMetadata" value="#{lbl.statement_add_child}">
-																	<f:setPropertyActionListener value="#{position.index}" target="#{metadataBean.statementPosition}"/>
-																	<f:ajax execute="@form" render=":profileForm:ajaxArea"/>
-																</h:commandButton>
-															</h:panelGroup>
 														</div>
-													</h:panelGroup>
-												</h:panelGroup> <!-- END of imj_metadataSetGroup -->
+														<div class="imj_itemHeader imj_submitPanel">
+															<h:commandButton styleClass="imj_submitButton" title="#{lbl.add_child}" type="submit" action="#{metadataBean.addStatementChild}" id="addChildMetadata" value="#{lbl.statement_add_child}">
+																<f:setPropertyActionListener value="#{position.index}" target="#{metadataBean.statementPosition}"/>
+																<f:ajax execute="@form" render=":profileForm:ajaxArea"/>
+															</h:commandButton>
+														</div>
+													</div>
+												</div> <!-- END of imj_metadataSetGroup -->
 											</h:panelGroup> <!-- END of draggable dropChild -->
 											
 											<ui:fragment rendered="#{!metadataBean.hasChild(position.index +1)}">
@@ -291,7 +285,7 @@
 													<h:outputText value="#{lbl.add_metadata}" styleClass="imj_invisible"/>
 												</h:panelGroup>
 											</ui:fragment>
-										</h:panelGroup> 
+										</div> 
 										
 										<!-- END of imj_metadataListItem -->
 									</ui:repeat>

@@ -14,9 +14,14 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import de.mpg.imeji.logic.auth.Authentication;
-import de.mpg.imeji.logic.auth.AuthenticationFactory;
+import org.apache.log4j.Logger;
+
+import de.mpg.imeji.exceptions.AuthenticationError;
+import de.mpg.imeji.exceptions.InactiveAuthenticationError;
+import de.mpg.imeji.logic.auth.authentication.Authentication;
+import de.mpg.imeji.logic.auth.authentication.AuthenticationFactory;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.ConfigurationBean;
@@ -40,6 +45,7 @@ public class LoginBean {
   private String passwd;
   private SessionBean sb;
   private String redirect;
+  private static final Logger LOGGER = Logger.getLogger(LoginBean.class);
 
   /**
    * Constructor
@@ -59,10 +65,11 @@ public class LoginBean {
       if (!isNullOrEmptyTrim(login)) {
         setLogin(login);
       }
-      if (UrlHelper.getParameterValue("redirect") != null)
+      if (UrlHelper.getParameterValue("redirect") != null) {
         this.redirect = URLDecoder.decode(UrlHelper.getParameterValue("redirect"), "UTF-8");
+      }
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      LOGGER.error("Error initializing LoginBean", e);
     }
   }
 
@@ -86,40 +93,37 @@ public class LoginBean {
     sb.setShowLogin(true);
   }
 
-  public void doLogin() throws Exception {
+  public void doLogin() throws IOException {
+    String instanceName =
+        ((ConfigurationBean) BeanHelper.getApplicationBean(ConfigurationBean.class))
+            .getInstanceName();
+    if (StringHelper.isNullOrEmptyTrim(getLogin())) {
+      return;
+    }
     Authentication auth = AuthenticationFactory.factory(getLogin(), getPasswd());
-    
     try {
-    User user = auth.doLogin();
-     sb.setUser(user);
+      User user = auth.doLogin();
+      sb.setUser(user);
       BeanHelper.cleanMessages();
       BeanHelper.info(sb.getMessage("success_log_in"));
-    } 
-    
-    catch (Exception e) {
-      String name =
-          ((ConfigurationBean) BeanHelper.getApplicationBean(ConfigurationBean.class))
-              .getInstanceName();
-      BeanHelper.error(sb.getMessage("error_log_in").replace("XXX_INSTANCE_NAME_XXX", name));
-      BeanHelper.error(sb.getMessage("error_log_in_description").replace("XXX_INSTANCE_NAME_XXX",
-          name));
+    } catch (InactiveAuthenticationError e) {
+      BeanHelper.error(sb.getMessage("error_log_in_inactive"));
+    } catch (AuthenticationError e) {
+      BeanHelper
+          .error(sb.getMessage("error_log_in").replace("XXX_INSTANCE_NAME_XXX", instanceName));
     }
     if (isNullOrEmptyTrim(redirect)) {
       HistoryPage current =
           ((HistorySession) BeanHelper.getSessionBean(HistorySession.class)).getCurrentPage();
-      if (current != null) {
+      Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+      if (current != null && !current.getUrl().equals(navigation.getRegistrationUrl())) {
         redirect = current.getCompleteUrl();
+      } else {
+        redirect = navigation.getHomeUrl();
       }
     }
+
     FacesContext.getCurrentInstance().getExternalContext().redirect(redirect);
-  }
-
-  public boolean loginWithEscidocAccount() {
-    return false;
-  }
-
-  public boolean loginWithImejiAccount() {
-    return false;
   }
 
   /**
@@ -141,6 +145,5 @@ public class LoginBean {
     fc = FacesContext.getCurrentInstance();
     Navigation nav = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     FacesContext.getCurrentInstance().getExternalContext().redirect(nav.getHomeUrl());
-
   }
 }

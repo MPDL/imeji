@@ -45,7 +45,7 @@ public class StartPageBean implements Serializable {
   private static final long serialVersionUID = 5267521759370584976L;
   private List<ThumbnailBean> carousselImages = new ArrayList<ThumbnailBean>();
   private SessionBean session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-  private final static int CAROUSSEL_SIZE = 6;
+  private static final int CAROUSSEL_SIZE = 6;
   // in hours
   private int searchforItemCreatedForLessThan = 0;
   private boolean carouselEnabled = ConfigurationBean.getStartPageCarouselEnabledStatic();

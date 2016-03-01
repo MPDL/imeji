@@ -32,7 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -51,9 +51,9 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.storage.util.MediaUtils;
 import de.mpg.imeji.presentation.lang.InternationalizationBean;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.PropertyReader;
 
@@ -76,32 +76,32 @@ public class ConfigurationBean {
    * @version $Revision$ $LastChangedDate$
    */
   private enum CONFIGURATION {
-    SNIPPET, CSS_DEFAULT, CSS_ALT, MAX_FILE_SIZE, FILE_TYPES, STARTPAGE_HTML, DATA_VIEWER_FORMATS, DATA_VIEWER_URL, AUTOSUGGEST_USERS, AUTOSUGGEST_ORGAS, STARTPAGE_FOOTER_LOGOS, META_DESCRIPTION, INSTANCE_NAME, CONTACT_EMAIL, EMAIL_SERVER, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD, EMAIL_SERVER_ENABLE_AUTHENTICATION, EMAIL_SERVER_SENDER, EMAIL_SERVER_PORT, STARTPAGE_CAROUSEL_ENABLED, STARTPAGE_CAROUSEL_QUERY, STARTPAGE_CAROUSEL_QUERY_ORDER, UPLOAD_WHITE_LIST, UPLOAD_BLACK_LIST, LANGUAGES, IMPRESSUM_URL, IMPRESSUM_TEXT, FAVICON_URL, LOGO, REGISTRATION_TOKEN_EXPIRY, REGISTRATION_ENABLED, DEFAULT_DISK_SPACE_QUOTA, RSA_PUBLIC_KEY, RSA_PRIVATE_KEY, BROWSE_DEFAULT_VIEW, DOI_SERVICE_URL, DOI_USER, DOI_PASSWORD, QUOTA_LIMITS;
+    SNIPPET, CSS_DEFAULT, CSS_ALT, MAX_FILE_SIZE, FILE_TYPES, STARTPAGE_HTML, DATA_VIEWER_FORMATS, DATA_VIEWER_URL, AUTOSUGGEST_USERS, AUTOSUGGEST_ORGAS, STARTPAGE_FOOTER_LOGOS, META_DESCRIPTION, INSTANCE_NAME, CONTACT_EMAIL, EMAIL_SERVER, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD, EMAIL_SERVER_ENABLE_AUTHENTICATION, EMAIL_SERVER_SENDER, EMAIL_SERVER_PORT, STARTPAGE_CAROUSEL_ENABLED, STARTPAGE_CAROUSEL_QUERY, STARTPAGE_CAROUSEL_QUERY_ORDER, UPLOAD_WHITE_LIST, UPLOAD_BLACK_LIST, LANGUAGES, IMPRESSUM_URL, IMPRESSUM_TEXT, FAVICON_URL, LOGO, REGISTRATION_TOKEN_EXPIRY, REGISTRATION_ENABLED, DEFAULT_QUOTA, RSA_PUBLIC_KEY, RSA_PRIVATE_KEY, BROWSE_DEFAULT_VIEW, DOI_SERVICE_URL, DOI_USER, DOI_PASSWORD, QUOTA_LIMITS, PRIVATE_MODUS;
   }
 
   private static Properties config;
-  private File configFile;
+  private static File configFile;
   private static FileTypes fileTypes;
-  private String lang = "en";
-  private final static Logger logger = Logger.getLogger(ConfigurationBean.class);
+  private static String lang = "en";
+  private static final Logger LOGGER = Logger.getLogger(ConfigurationBean.class);
   // A list of predefined file types, which is set when imeji is initialized
-  private final static String predefinedFileTypes =
+  private static final String DEFAULT_SEARCH_FILE_TYPE_LIST =
       "[Image@en,Bilder@de=jpg,jpeg,tiff,tiff,jp2,pbm,gif,png,psd][Video@en,Video@de=wmv,swf,rm,mp4,mpg,m4v,avi,mov.asf,flv,srt,vob][Audio@en,Ton@de=aif,iff,m3u,m4a,mid,mpa,mp3,ra,wav,wma][Document@en,Dokument@de=doc,docx,odt,pages,rtf,tex,rtf,bib,csv,ppt,pps,pptx,key,xls,xlr,xlsx,gsheet,nb,numbers,ods,indd,pdf,dtx]";
-  private final static String predefinedUploadBlackList =
-      "386,aru,atm,aut,bat,bin,bkd,blf,bll,bmw,boo,bqf,buk,bxz,cc,ce0,ceo,cfxxe,chm,cih,cla,class,cmd,com,cpl,cxq,cyw,dbd,dev,dlb,dli,dll,dllx,dom,drv,dx,dxz,dyv,dyz,eml,exe,exe1,exe_renamed,ezt,fag,fjl,fnr,fuj,hlp,hlw,hsq,hts,ini,iva,iws,jar,js,kcd,let,lik,lkh,lnk,lok,mfu,mjz,nls,oar,ocx,osa,ozd,pcx,pgm,php2,php3,pid,pif,plc,pr,qit,rhk,rna,rsc_tmp,s7p,scr,scr,shs,ska,smm,smtmp,sop,spam,ssy,swf,sys,tko,tps,tsa,tti,txs,upa,uzy,vb,vba,vbe,vbs,vbx,vexe,vsd,vxd,vzr,wlpginstall,wmf,ws,wsc,wsf,wsh,wss,xdu,xir,xlm,xlv,xnt,zix,zvz";
-  private final static String predefinedLanguages = "en,de,ja,es";
-  private final static String predefinedRegistrationTokenExpirationDays = "1";
-  private final static String predefinedCarouselConfig = "true";
-  // default quota is 25GB
-  private final static String predefinedDefaultDiskSpaceQuota =
-      Long.toString(25l * 1024l * 1024l * 1024l);
+  private static final String DEFAULT_FILE_BLACKLIST =
+      "386,aru,atm,aut,bat,bin,bkd,blf,bll,bmw,boo,bqf,buk,bxz,cc,ce0,ceo,cfxxe,chm,cih,cla,class,cmd,com,cpl,cxq,cyw,dbd,dev,dlb,dli,dll,dllx,dom,drv,dx,dxz,dyv,dyz,eml,exe,exe1,exe_renamed,ezt,fag,fjl,fnr,fuj,hlp,hlw,hsq,hts,ini,iva,iws,jar,js,kcd,let,lik,lkh,lnk,lok,mfu,mjz,nls,oar,ocx,osa,ozd,pcx,pgm,php2,php3,pid,pif,plc,pr,qit,rhk,rna,rsc_tmp,s7p,scr,scr,shs,ska,smm,smtmp,sop,spam,ssy,swf,sys,tko,tps,tsa,tti,txs,upa,uzy,vb,vba,vbe,vbs,vbx,vexe,vsd,vxd,vzr,wlpginstall,wmf,ws,wsc,wsf,wsh,wss,xdu,xir,xlv,xnt,zix,zvz";
+  private static final String DEFAULT_LANGUAGE_LIST = "en,de,ja,es";
+  private static final String DEFAULT_REGISTRATION_TOKEN_EXPIRATION_IN_DAYS = "1";
+  private static final String DEFAULT_CAROUSEL_SHOW = "true";
+  private static final String DEFAULT_USER_QUOTA = "1";
+  private static final String DEFAULT_USER_QUOTA_LIST = "1, 10, 20";
+  public static final String QUOTA_UNLIMITED = "unlimited";
   private String dataViewerUrl;
 
   public enum BROWSE_VIEW {
     LIST, THUMBNAIL;
   }
 
-  private final static BROWSE_VIEW predefinedBrowseView = BROWSE_VIEW.THUMBNAIL;
+  private static final BROWSE_VIEW predefinedBrowseView = BROWSE_VIEW.THUMBNAIL;
 
 
   /**
@@ -109,13 +109,44 @@ public class ConfigurationBean {
    * 
    * @throws URISyntaxException
    * @throws IOException
+   * @throws ImejiException
    */
-  public ConfigurationBean() throws IOException, URISyntaxException {
+  public ConfigurationBean() throws IOException, URISyntaxException, ImejiException {
+    getConfigurationFile();
+    readConfig();
+  }
+
+  /**
+   * IGet the Configuration File from the filesystem. If not existing, create a new one with default
+   * values
+   * 
+   * @throws IOException
+   * @throws URISyntaxException
+   */
+  private synchronized void getConfigurationFile() throws IOException, URISyntaxException {
     configFile = new File(PropertyReader.getProperty("imeji.tdb.path") + "/conf.xml");
     if (!configFile.exists()) {
       configFile.createNewFile();
+      setDefaultConfig();
     }
-    readConfig();
+  }
+
+
+  /**
+   * Write the Default Configuration to the Disk. This should be called when the Configuration is
+   * initialized for the first time.
+   */
+  private synchronized void setDefaultConfig() {
+    config = new Properties();
+    fileTypes = new FileTypes(DEFAULT_SEARCH_FILE_TYPE_LIST);
+    initPropertyWithDefaultValue(CONFIGURATION.FILE_TYPES, fileTypes.toString());
+    initPropertyWithDefaultValue(CONFIGURATION.UPLOAD_BLACK_LIST, DEFAULT_FILE_BLACKLIST);
+    initPropertyWithDefaultValue(CONFIGURATION.LANGUAGES, DEFAULT_LANGUAGE_LIST);
+    initPropertyWithDefaultValue(CONFIGURATION.BROWSE_DEFAULT_VIEW, predefinedBrowseView.name());
+    initPropertyWithDefaultValue(CONFIGURATION.STARTPAGE_CAROUSEL_ENABLED, DEFAULT_CAROUSEL_SHOW);
+    initPropertyWithDefaultValue(CONFIGURATION.DEFAULT_QUOTA, DEFAULT_USER_QUOTA);
+    initPropertyWithDefaultValue(CONFIGURATION.QUOTA_LIMITS, DEFAULT_USER_QUOTA_LIST);
+    saveConfig();
   }
 
   /**
@@ -123,36 +154,29 @@ public class ConfigurationBean {
    * 
    * @param f
    * @throws IOException
+   * @throws ImejiException
    */
-  private String readConfig() {
+  private synchronized void readConfig() throws IOException, ImejiException {
+    config = new Properties();
     try {
-      config = new Properties();
       FileInputStream in = new FileInputStream(configFile);
       config.loadFromXML(in);
     } catch (Exception e) {
-      logger.info("conf.xml can not be read, probably emtpy");
+      throw new ImejiException(
+          "conf.xml could not be read. Please check in tdb directory if exsting and not empty. If Emtpy, remove it.");
+      // LOGGER.info("conf.xml can not be read, probably emtpy");
+      // return;
     }
-    this.dataViewerUrl = (String) config.get(CONFIGURATION.DATA_VIEWER_URL.name());
-    Object ft = config.get(CONFIGURATION.FILE_TYPES.name());
-    if (ft == null) {
-      fileTypes = new FileTypes(predefinedFileTypes);
-    } else {
-      fileTypes = new FileTypes((String) ft);
-    }
-
-    Object o = config.get(CONFIGURATION.DEFAULT_DISK_SPACE_QUOTA.name());
-    if (o == null)
-      initPropertyWithDefaultValue(CONFIGURATION.DEFAULT_DISK_SPACE_QUOTA,
-          predefinedDefaultDiskSpaceQuota);
-
-    initPropertyWithDefaultValue(CONFIGURATION.UPLOAD_BLACK_LIST, predefinedUploadBlackList);
-    initPropertyWithDefaultValue(CONFIGURATION.LANGUAGES, predefinedLanguages);
+    dataViewerUrl = (String) config.get(CONFIGURATION.DATA_VIEWER_URL.name());
+    fileTypes = new FileTypes((String) config.get(CONFIGURATION.FILE_TYPES.name()));
+    initPropertyWithDefaultValue(CONFIGURATION.DEFAULT_QUOTA, DEFAULT_USER_QUOTA);
+    initPropertyWithDefaultValue(CONFIGURATION.UPLOAD_BLACK_LIST, DEFAULT_FILE_BLACKLIST);
+    initPropertyWithDefaultValue(CONFIGURATION.LANGUAGES, DEFAULT_LANGUAGE_LIST);
     initPropertyWithDefaultValue(CONFIGURATION.BROWSE_DEFAULT_VIEW, predefinedBrowseView.name());
-    initPropertyWithDefaultValue(CONFIGURATION.STARTPAGE_CAROUSEL_ENABLED,
-        predefinedCarouselConfig);
-    saveConfig();
-    return "";
+    initPropertyWithDefaultValue(CONFIGURATION.STARTPAGE_CAROUSEL_ENABLED, DEFAULT_CAROUSEL_SHOW);
+    initPropertyWithDefaultValue(CONFIGURATION.QUOTA_LIMITS, DEFAULT_USER_QUOTA_LIST);
   }
+
 
   /**
    * Init a property with its default value if null or empty
@@ -175,14 +199,16 @@ public class ConfigurationBean {
    */
   public void saveConfig() {
     try {
+      if (fileTypes != null) {
+        setProperty(CONFIGURATION.FILE_TYPES.name(), fileTypes.toString());
+      }
       if (dataViewerUrl != null) {
         setProperty(CONFIGURATION.DATA_VIEWER_URL.name(), dataViewerUrl);
       }
       config.storeToXML(new FileOutputStream(configFile), "imeji configuration File", "UTF-8");
-      logger.info("saving imeji config");
-      // BeanHelper.removeBeanFromMap(this.getClass());
+      LOGGER.info("saving imeji config");
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      LOGGER.error("Error saving configuration:", e);
     }
   }
 
@@ -331,7 +357,8 @@ public class ConfigurationBean {
   }
 
   public static boolean getStartPageCarouselEnabledStatic() {
-    return Boolean.valueOf(config.getProperty(CONFIGURATION.STARTPAGE_CAROUSEL_ENABLED.name()));
+    return Boolean.valueOf(config.getProperty(CONFIGURATION.STARTPAGE_CAROUSEL_ENABLED.name()))
+        && !getPrivateModusStatic();
   }
 
   public void setStartPageCarouselEnabled(boolean input) {
@@ -339,7 +366,8 @@ public class ConfigurationBean {
   }
 
   public boolean getStartPageCarouselEnabled() {
-    return Boolean.valueOf(config.getProperty(CONFIGURATION.STARTPAGE_CAROUSEL_ENABLED.name()));
+    return Boolean.valueOf(config.getProperty(CONFIGURATION.STARTPAGE_CAROUSEL_ENABLED.name()))
+        && !getPrivateModus();
   }
 
   /**
@@ -435,8 +463,8 @@ public class ConfigurationBean {
   /**
    * @param lang the lang to set
    */
-  public void setLang(String lang) {
-    this.lang = lang;
+  public void setLang(String s) {
+    lang = s;
   }
 
   /**
@@ -520,25 +548,15 @@ public class ConfigurationBean {
         }
       }
     } catch (ClientProtocolException e) {
-      logger.error(e.getMessage(), e.fillInStackTrace());
+      LOGGER.error(e.getMessage(), e.fillInStackTrace());
     } catch (IOException e) {
-      logger.error(e.getMessage(), e.fillInStackTrace());
+      LOGGER.error(e.getMessage(), e.fillInStackTrace());
     } catch (IllegalStateException e) {
-      logger.error(e.getMessage(), e.fillInStackTrace());
+      LOGGER.error(e.getMessage(), e.fillInStackTrace());
     }
     setDataViewerFormatListString(str);
     return "";
   }
-
-  // public boolean isEnableAutosuggestForUsers() {
-  // return Boolean.parseBoolean(config
-  // .getProperty(CONFIGURATION.AUTOSUGGEST_USERS.name()));
-  // }
-  //
-  // public void setEnableAutosuggestForUsers(boolean b) {
-  // config.setProperty(CONFIGURATION.AUTOSUGGEST_USERS.name(),
-  // Boolean.toString(b));
-  // }
 
   public String getAutosuggestForOrganizations() {
     return config.getProperty(CONFIGURATION.AUTOSUGGEST_ORGAS.name());
@@ -669,6 +687,18 @@ public class ConfigurationBean {
         .parseBoolean((String) config.get(CONFIGURATION.EMAIL_SERVER_ENABLE_AUTHENTICATION.name()));
   }
 
+  public void setPrivateModus(boolean b) {
+    setProperty(CONFIGURATION.PRIVATE_MODUS.name(), Boolean.toString(b));
+  }
+
+  public boolean getPrivateModus() {
+    return Boolean.parseBoolean((String) config.get(CONFIGURATION.PRIVATE_MODUS.name()));
+  }
+
+  public static boolean getPrivateModusStatic() {
+    return Boolean.parseBoolean((String) config.get(CONFIGURATION.PRIVATE_MODUS.name()));
+  }
+
   public void setEmailServerSender(String s) {
     setProperty(CONFIGURATION.EMAIL_SERVER_SENDER.name(), s);
   }
@@ -747,12 +777,6 @@ public class ConfigurationBean {
 
   public void setLanguages(String value) {
     setProperty(CONFIGURATION.LANGUAGES.name(), value);
-    // InternationalizationBean internationalizationBean =
-    // (InternationalizationBean) BeanHelper
-    // .getApplicationBean(InternationalizationBean.class);
-    // internationalizationBean.init();
-    // // internationalizationBean.readSupportedLanguagesProperty();
-    // // internationalizationBean.initLanguagesMenu();
   }
 
   public static String getDoiUserStatic() {
@@ -815,10 +839,10 @@ public class ConfigurationBean {
     try {
       Integer.valueOf(s);
     } catch (NumberFormatException e) {
-      logger.info(
+      LOGGER.info(
           "Could not understand the Registration Token Expiry Setting, setting it to default ("
-              + predefinedRegistrationTokenExpirationDays + " day).");
-      s = predefinedRegistrationTokenExpirationDays;
+              + DEFAULT_REGISTRATION_TOKEN_EXPIRATION_IN_DAYS + " day).");
+      s = DEFAULT_REGISTRATION_TOKEN_EXPIRATION_IN_DAYS;
     }
 
     setProperty(CONFIGURATION.REGISTRATION_TOKEN_EXPIRY.name(), s);
@@ -840,31 +864,7 @@ public class ConfigurationBean {
     config.setProperty(CONFIGURATION.REGISTRATION_ENABLED.name(), Boolean.toString(enabled));
   }
 
-  public void setDefaultDiskSpaceQuota(String s) {
-    try {
-      Long.parseLong(s);
-    } catch (NumberFormatException e) {
-      logger.info(
-          "Could not understand the Default Disk Space Quota property, setting it to default ("
-              + predefinedDefaultDiskSpaceQuota + " bytes).");
-      s = predefinedDefaultDiskSpaceQuota;
-    }
-    setProperty(CONFIGURATION.DEFAULT_DISK_SPACE_QUOTA.name(), s);
-  }
 
-  public static long getDefaultDiskSpaceQuotaStatic() {
-    return Long.valueOf(calculateDefaultDiskSpaceQuota());
-  }
-
-  public String getDefaultDiskSpaceQuota() {
-    return calculateDefaultDiskSpaceQuota();
-  }
-
-  public static String calculateDefaultDiskSpaceQuota() {
-    String quota =
-        config != null ? (String) config.get(CONFIGURATION.DEFAULT_DISK_SPACE_QUOTA.name()) : null;
-    return isNullOrEmptyTrim(quota) ? predefinedDefaultDiskSpaceQuota : quota;
-  }
 
   /**
    * Return the url of the favicon
@@ -896,14 +896,14 @@ public class ConfigurationBean {
 
   private static String registrationTokenCompute() {
     String myToken = (String) config.get(CONFIGURATION.REGISTRATION_TOKEN_EXPIRY.name());
-    return isNullOrEmptyTrim(myToken) ? predefinedRegistrationTokenExpirationDays : myToken;
+    return isNullOrEmptyTrim(myToken) ? DEFAULT_REGISTRATION_TOKEN_EXPIRATION_IN_DAYS : myToken;
   }
 
   public static String getRsaPublicKey() {
     return (String) config.get(CONFIGURATION.RSA_PUBLIC_KEY.name());
   }
 
-  public static void setRsaPublicKey(String string) {
+  public void setRsaPublicKey(String string) {
     config.put(CONFIGURATION.RSA_PUBLIC_KEY.name(), string);
   }
 
@@ -911,16 +911,16 @@ public class ConfigurationBean {
     return (String) config.get(CONFIGURATION.RSA_PRIVATE_KEY.name());
   }
 
-  public static void setRsaPrivateKey(String string) {
+  public void setRsaPrivateKey(String string) {
     config.put(CONFIGURATION.RSA_PRIVATE_KEY.name(), string);
   }
 
   public String getDefaultBrowseView() {
-    return (String) config.get(CONFIGURATION.BROWSE_DEFAULT_VIEW.name());
+    return getPropertyAsNonNullString(CONFIGURATION.BROWSE_DEFAULT_VIEW.name());
   }
 
   public void setDefaultBrowseView(String string) {
-    config.put(CONFIGURATION.BROWSE_DEFAULT_VIEW, BROWSE_VIEW.valueOf(string).name());
+    setProperty(CONFIGURATION.BROWSE_DEFAULT_VIEW.name(), BROWSE_VIEW.valueOf(string).name());
   }
 
   public void setQuotaLimits(String limits) {
@@ -931,31 +931,32 @@ public class ConfigurationBean {
       }
       setProperty(CONFIGURATION.QUOTA_LIMITS.name(), limits);
     } catch (NumberFormatException e) {
-      logger.info("Wrong format for quota definition! Has to be comma separated list");
+      LOGGER.info("Wrong format for quota definition! Has to be comma separated list");
       BeanHelper.error("Wrong format for quota definition! Has to be comma separated list. "
           + "Wrong input " + e.getMessage());
     }
+  }
+
+  public String getDefaultQuota() {
+    return getPropertyAsNonNullString(CONFIGURATION.DEFAULT_QUOTA.name());
+  }
+
+  public void setdefaultQuota(String defaultQuota) {
+    setProperty(CONFIGURATION.DEFAULT_QUOTA.name(), defaultQuota);
+  }
+
+  public static String getDefaultQuotaStatic() {
+    return getPropertyAsNonNullStringStatic(CONFIGURATION.DEFAULT_QUOTA.name());
   }
 
   public String getQuotaLimits() {
     return (String) config.get(CONFIGURATION.QUOTA_LIMITS.name());
   }
 
-  public static LinkedHashMap<String, Long> getQuotaLimitsStatic() {
-    SessionBean sb = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    int bytesPerGigabyte = 1073741824;
-
-    String limits = (String) config.get(CONFIGURATION.QUOTA_LIMITS.name());
-    String[] limitArray = limits != null ? limits.split(",") : new String[0];
-
-    LinkedHashMap<String, Long> quotaLimits = new LinkedHashMap<String, Long>();
-    quotaLimits.put(sb.getLabel("unlimited"), Long.MAX_VALUE);
-    for (int i = 0; i < limitArray.length; i++) {
-      quotaLimits.put(limitArray[i],
-          (long) ((Double.parseDouble(limitArray[i])) * bytesPerGigabyte));
-    }
-    return quotaLimits;
-
+  public static List<String> getQuotaLimitsStaticAsList() {
+    String limitString =
+        (String) config.get(CONFIGURATION.QUOTA_LIMITS.name()) + "," + QUOTA_UNLIMITED;
+    return Arrays.asList(limitString.split(","));
   }
 
 }

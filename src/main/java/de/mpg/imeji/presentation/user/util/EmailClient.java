@@ -42,7 +42,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class EmailClient {
-  private static Logger logger = Logger.getLogger(EmailClient.class);
+  private static final Logger LOGGER = Logger.getLogger(EmailClient.class);
 
   /**
    * Is true if the Email is valid
@@ -95,7 +95,7 @@ public class EmailClient {
   public String sendMail(String smtpHost, String port, String withAuth, String usr, String pwd,
       String senderAddress, String[] recipientsAddresses, String[] recipientsCCAddresses,
       String[] recipientsBCCAddresses, String[] replytoAddresses, String subject, String text) {
-    logger.debug("EmailHandlingBean sendMail...");
+    LOGGER.debug("EmailHandlingBean sendMail...");
     String status = "not sent";
     String to = "";
     try {
@@ -116,7 +116,7 @@ public class EmailClient {
         if (ra != null && !ra.trim().equals("")) {
           message.addRecipient(Message.RecipientType.TO, new InternetAddress(ra));
           to = ra;
-          logger.debug(">>> recipientTO: " + ra);
+          LOGGER.debug(">>> recipientTO: " + ra);
         }
       }
       // add CC recipients
@@ -124,7 +124,7 @@ public class EmailClient {
         for (String racc : recipientsCCAddresses) {
           if (racc != null && !racc.trim().equals("")) {
             message.addRecipient(Message.RecipientType.CC, new InternetAddress(racc));
-            logger.debug(">>> recipientCC  " + racc);
+            LOGGER.debug(">>> recipientCC  " + racc);
           }
         }
       // add BCC recipients
@@ -132,7 +132,7 @@ public class EmailClient {
         for (String rabcc : recipientsBCCAddresses) {
           if (rabcc != null && !rabcc.trim().equals("")) {
             message.addRecipient(Message.RecipientType.BCC, new InternetAddress(rabcc));
-            logger.debug(">>> recipientBCC  " + rabcc);
+            LOGGER.debug(">>> recipientBCC  " + rabcc);
           }
         }
       // add replyTo
@@ -143,7 +143,7 @@ public class EmailClient {
           if (a != null && !a.trim().equals("")) {
             adresses[i] = new InternetAddress(a);
             i++;
-            logger.debug(">>> replyToaddress  " + a);
+            LOGGER.debug(">>> replyToaddress  " + a);
           }
         }
         if (i > 0)
@@ -161,16 +161,16 @@ public class EmailClient {
       multipart.addBodyPart(messageBodyPart);
       // Put all message parts in the message
       message.setContent(multipart);
-      logger.debug("Transport will send now....  ");
+      LOGGER.debug("Transport will send now....  ");
       // Send the message
       Transport.send(message);
       status = "sent";
-      logger.debug("Email sent!");
+      LOGGER.debug("Email sent!");
     } catch (MessagingException e) {
       SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
       BeanHelper.error(sessionBean.getMessage("email_error").replace("XXX_USER_EMAIL_XXX", to)
           + ": " + e);
-      logger.error("Error in sendMail(...)", e);
+      LOGGER.error("Error in sendMail(...)", e);
     }
     return status;
   }

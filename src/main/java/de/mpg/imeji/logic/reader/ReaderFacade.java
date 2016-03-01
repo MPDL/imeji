@@ -24,14 +24,14 @@
  */
 package de.mpg.imeji.logic.reader;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.auth.Authorization;
+import de.mpg.imeji.logic.auth.authorization.Authorization;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.j2j.helper.J2JHelper;
@@ -62,8 +62,7 @@ public class ReaderFacade implements Reader {
   @Override
   public Object read(String uri, User user, Object o) throws ImejiException {
     o = reader.read(uri, user, o);
-    checkSecurity(toList(o), user);
-
+    checkSecurity(Arrays.asList(o), user);
     return o;
   }
 
@@ -76,11 +75,10 @@ public class ReaderFacade implements Reader {
   @Override
   public Object readLazy(String uri, User user, Object o) throws ImejiException {
     o = reader.readLazy(uri, user, o);
-
     if (o == null) {
       throw new NotFoundException("Object is not found or authentication is required.");
     }
-    checkSecurity(toList(o), user);
+    checkSecurity(Arrays.asList(o), user);
     return o;
   }
 
@@ -123,21 +121,11 @@ public class ReaderFacade implements Reader {
           email = user.getEmail();
           throw new NotAllowedError(email + " not allowed to read " + id);
         } else if (user == null) {
-          throw new AuthenticationError("Authentication is required.");
+          throw new AuthenticationError("Authentication is required for " + id);
         }
       }
     }
   }
 
-  /**
-   * Transform a single object to a {@link List} with this one object
-   * 
-   * @param o
-   * @return
-   */
-  private List<Object> toList(Object o) {
-    List<Object> l = new ArrayList<Object>();
-    l.add(o);
-    return l;
-  }
+
 }

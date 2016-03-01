@@ -87,8 +87,6 @@ public abstract class ContainerBean implements Serializable {
   private IngestImage ingestImage;
   private int sizeDiscarded;
 
-  // protected SessionBean sessionBean;
-
   /**
    * Types of containers
    * 
@@ -164,7 +162,7 @@ public abstract class ContainerBean implements Serializable {
         uris.add(uri.toString());
       }
       ItemController ic = new ItemController();
-      setItems((List<Item>) ic.retrieveBatch(uris, size, 0, user));
+      setItems((List<Item>) ic.retrieveBatchLazy(uris, size, 0, user));
     }
   }
 
@@ -193,8 +191,9 @@ public abstract class ContainerBean implements Serializable {
   public String getPersonString() {
     String personString = "";
     for (Person p : getContainer().getMetadata().getPersons()) {
-      if (!"".equalsIgnoreCase(personString))
+      if (!"".equalsIgnoreCase(personString)) {
         personString += ", ";
+      }
       personString += p.getFamilyName() + " " + p.getGivenName() + " ";
     }
     return personString;
@@ -206,11 +205,13 @@ public abstract class ContainerBean implements Serializable {
   public String getAuthorsWithOrg() {
     String personString = "";
     for (Person p : getContainer().getMetadata().getPersons()) {
-      if (!"".equalsIgnoreCase(personString))
+      if (!"".equalsIgnoreCase(personString)) {
         personString += ", ";
+      }
       personString += p.getCompleteName();
-      if (!p.getOrganizationString().equals(""))
+      if (!p.getOrganizationString().equals("")) {
         personString += " (" + p.getOrganizationString() + ")";
+      }
     }
     return personString;
   }
@@ -236,10 +237,11 @@ public abstract class ContainerBean implements Serializable {
    */
   public String removeAuthor(int authorPosition) {
     List<Person> c = (List<Person>) getContainer().getMetadata().getPersons();
-    if (c.size() > 1)
+    if (c.size() > 1) {
       c.remove(authorPosition);
-    else
+    } else {
       BeanHelper.error(getErrorMessageNoAuthor());
+    }
     return "";
   }
 
@@ -267,11 +269,12 @@ public abstract class ContainerBean implements Serializable {
   public String removeOrganization(int authorPosition, int organizationPosition) {
     List<Person> persons = (List<Person>) getContainer().getMetadata().getPersons();
     List<Organization> orgs = (List<Organization>) persons.get(authorPosition).getOrganizations();
-    if (orgs.size() > 1)
+    if (orgs.size() > 1) {
       orgs.remove(organizationPosition);
-    else
+    } else {
       BeanHelper.error(((SessionBean) BeanHelper.getSessionBean(SessionBean.class))
           .getMessage("error_author_need_one_organization"));
+    }
     return "";
   }
 
@@ -419,8 +422,9 @@ public abstract class ContainerBean implements Serializable {
                     .getMessage("Logo_single_upload_invalid_content_format"));
           }
           FileOutputStream fos = new FileOutputStream(tmp);
-          if (fis.getName() != null)
+          if (fis.getName() != null) {
             ii.setName(fis.getName());
+          }
           if (!fis.isFormField()) {
             try {
               IOUtils.copy(in, fos);

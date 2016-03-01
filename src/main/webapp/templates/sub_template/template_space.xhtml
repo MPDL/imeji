@@ -9,11 +9,10 @@
 	<ui:param name="currentMainMenu" value="admin"/>
 	
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" isUserLoggedIn="#{Auth.loggedIn}" 
+		<menu:context_actionMenu id="action" 
 								 curMainMenu="#{currentMainMenu}" 
 								 downloadEnabled="false"
-								 actionEnabled="false"
-								 navBean="#{Navigation}"/>
+								 actionEnabled="false"/>
 	</ui:define>
 
 	<ui:define name="additonalFooterScripts">

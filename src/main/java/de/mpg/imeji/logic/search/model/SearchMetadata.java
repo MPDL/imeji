@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.model;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
@@ -20,7 +21,7 @@ public class SearchMetadata extends SearchPair {
    * Default Constructor
    */
   public SearchMetadata() {
-    // TODO Auto-generated constructor stub
+
   }
 
   public SearchMetadata(SearchFields field, SearchOperators operator, String value, URI statement,
@@ -36,7 +37,7 @@ public class SearchMetadata extends SearchPair {
 
   @Override
   public List<SearchElement> getElements() {
-    return null;
+    return new ArrayList<>();
   }
 
   public URI getStatement() {

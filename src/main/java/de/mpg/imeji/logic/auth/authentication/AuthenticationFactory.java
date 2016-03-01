@@ -22,41 +22,44 @@
  * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
  * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
  */
-package de.mpg.imeji.logic.auth;
+package de.mpg.imeji.logic.auth.authentication;
 
-import de.mpg.imeji.exceptions.AuthenticationError;
-import de.mpg.imeji.logic.vo.User;
+import javax.servlet.http.HttpServletRequest;
+
+import de.mpg.imeji.logic.auth.authentication.impl.HttpAuthentication;
+import de.mpg.imeji.logic.auth.authentication.impl.DefaultAuthentication;
 
 /**
- * Authentication abstract class
+ * Factory for Authentication
  * 
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public interface Authentication {
+public class AuthenticationFactory {
 
   /**
-   * Log in a user with a login (email or user name) and password
+   * Factory with a login and a password
    * 
    * @param login
    * @param pwd
    * @return
-   * @throws AuthenticationError
    */
-  public User doLogin() throws AuthenticationError;
+  public static Authentication factory(String login, String pwd) {
+    return new DefaultAuthentication(login, pwd);
+  }
 
   /**
-   * Get the user Login
+   * Factory for http authentication
    * 
+   * @param request
    * @return
    */
-  public String getUserLogin();
+  public static Authentication factory(HttpServletRequest request) {
+    return new HttpAuthentication(request);
+  }
 
-  /**
-   * Get the user password
-   * 
-   * @return
-   */
-  public String getUserPassword();
+  public static Authentication factory(String authorizationHeader) {
+    return new HttpAuthentication(authorizationHeader);
+  }
 }

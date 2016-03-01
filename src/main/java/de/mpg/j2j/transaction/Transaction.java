@@ -20,7 +20,7 @@ public abstract class Transaction {
   private String modelURI;
   private boolean isException;
   private ImejiException exception;
-  private static Logger logger = Logger.getLogger(Transaction.class);
+  private static Logger LOGGER = Logger.getLogger(Transaction.class);
 
   /**
    * Construct a {@link Transaction} for one model defined by its uri
@@ -52,7 +52,7 @@ public abstract class Transaction {
       dataset.abort();
       isException = true;
       exception = e;
-      logger.warn("Exception in a transaction: has been aborted", e);
+      LOGGER.warn("Exception in a transaction: has been aborted", e);
     } finally {
       dataset.end();
     }

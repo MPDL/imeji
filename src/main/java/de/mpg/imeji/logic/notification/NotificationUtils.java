@@ -31,7 +31,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  */
 public class NotificationUtils {
 
-  private static Logger LOGGER = Logger.getLogger(NotificationUtils.class);
+  private static final Logger LOGGER = Logger.getLogger(NotificationUtils.class);
 
   private static EmailMessages msgs = new EmailMessages();
   private static final EmailClient emailClient = new EmailClient();

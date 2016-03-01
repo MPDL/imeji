@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
  *
  */
 public class IPUtils {
-  private static final Logger logger = Logger.getLogger(IPUtils.class);
+  private static final Logger LOGGER = Logger.getLogger(IPUtils.class);
 
   /**
    * Private Constructor
@@ -37,7 +37,7 @@ public class IPUtils {
       return ipToLong(InetAddress.getByName(ip)) >= ipToLong(getMinIP(ipRange))
           && ipToLong(InetAddress.getByName(ip)) <= ipToLong(getMaxIP(ipRange));
     } catch (UnknownHostException e) {
-      logger.error(e.getMessage());
+      LOGGER.error(e.getMessage());
     }
     return false;
   }

@@ -60,7 +60,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
 public class ZIPExport extends Export {
   protected List<String> filteredResources = new ArrayList<String>();
   protected String modelURI;
-  private static Logger logger = Logger.getLogger(ZIPExport.class);
+  private static final Logger LOGGER = Logger.getLogger(ZIPExport.class);
 
 
 
@@ -93,7 +93,7 @@ public class ZIPExport extends Export {
       exportAllImages(sr, out);
     } catch (Exception e) {
       // TODO Auto-generated catch block
-      logger.info("Some problems with ZIP Export", e);
+      LOGGER.info("Some problems with ZIP Export", e);
     }
   }
 
@@ -146,20 +146,20 @@ public class ZIPExport extends Export {
             zip.closeEntry();
           }
         } catch (ImejiException e) {
-          logger.info("Could not retrieve Item for export!");
+          LOGGER.info("Could not retrieve Item for export!");
         } catch (URISyntaxException eui) {
-          logger.info("Could not create URI during retrieval and export! ");
+          LOGGER.info("Could not create URI during retrieval and export! ");
         }
       }
     } catch (IOException e) {
-      logger.info("Some IO Exception when exporting all images!", e);
+      LOGGER.info("Some IO Exception when exporting all images!", e);
     }
 
     try {
       // Complete the ZIP file
       zip.close();
     } catch (IOException ioe) {
-      logger.info("Could not close the ZIP File!");
+      LOGGER.info("Could not close the ZIP File!");
     }
   }
 

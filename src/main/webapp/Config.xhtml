@@ -8,11 +8,7 @@
 	<ui:param name="headline" value="#{lbl.configuration}" />
 	
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action"  isUserLoggedIn="#{Auth.loggedIn}" 
-								 curMainMenu="#{currentMainMenu}" 
-								 downloadEnabled="false"
-								 actionEnabled="false"
-								 navBean="#{Navigation}"/>
+		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"  downloadEnabled="false" actionEnabled="false"/>
 	</ui:define>
 
 	<ui:define name="additonalFooterScripts">
@@ -155,16 +151,18 @@
 											<h:inputText value="#{Configuration.registrationTokenExpiry}" styleClass="imj_admindataEdit"/>
 										</div>
 										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
-									</div>
+									</div>								
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.default_disk_space_quota}"/>
+											<h:outputText value="#{lbl.privateModus_enable}"/>
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.defaultDiskSpaceQuota}" styleClass="imj_admindataEdit"/>
+											<h:selectOneRadio value="#{Configuration.privateModus}">
+												<f:selectItem itemLabel="#{lbl.no}" itemValue="false"/>
+												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true"/>
+											</h:selectOneRadio>
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
 									</div>
 									
 									
@@ -598,15 +596,29 @@
 								<div class="imj_content">
 									<h3 class="imj_sectionHeadline">
 										<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
-										<h:outputText value="#{lbl.define_quotaLimits}"/><span class="imj_noDisplay">: </span>
 									</h3>
-									<!-- Admin - Snippet Insert -->	
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataSet imj_fileTypeConfig">
+					
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.define_quotaLimits}"/>
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
 											<h:inputText value="#{Configuration.quotaLimits}" styleClass="imj_admindataEdit"/>
 										</div>
-									</h:panelGroup>											
-								</div>
+										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+									</div>				
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.quota}"/>
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputText value="#{Configuration.defaultQuota}" styleClass="imj_admindataEdit"/>
+										</div>
+										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+									</div>									
+								</div>						
 							</div>
 														
 								

@@ -5,9 +5,8 @@ import javax.ws.rs.core.Response.Status;
 import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.auth.authentication.APIKeyAuthentication;
-import de.mpg.imeji.logic.controller.UserController;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.rest.api.UserService;
 import de.mpg.imeji.rest.to.JSONResponse;
 import de.mpg.imeji.rest.to.UserTO;
 
@@ -21,14 +20,16 @@ public class AdminProcess {
    */
   public static JSONResponse login(String authorizationHeader) {
     try {
+      //Authenticate user and update the key if successfull authentication
+      
       User userVO = BasicAuthentication.auth(authorizationHeader);
-      if (userVO.getApiKey() == null || "".equals(userVO.getApiKey())) {
-        updateUserKey(userVO, generateNewKey(userVO));
-      }
+      UserService service = new UserService();
+      service.updateUserKey(userVO, true);
+      //Return user object in the response
       UserTO userTO = new UserTO();
       TransferObjectFactory.transferUser(userVO, userTO);
       return RestProcessUtils.buildResponse(Status.OK.getStatusCode(), userTO);
-    } catch (ImejiException | JoseException e) {
+    } catch (ImejiException | JoseException e ) {
       return RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
   }
@@ -41,8 +42,11 @@ public class AdminProcess {
    */
   public static JSONResponse logout(String authorizationHeader) {
     try {
+      //Authenticate user and update the key if successfull authentication
+      //key will only be updated if the key already existed
       User userVO = BasicAuthentication.auth(authorizationHeader);
-      updateUserKey(userVO, generateNewKey(userVO));
+      UserService service = new UserService();
+      service.updateUserKey(userVO, false);
       return RestProcessUtils.buildResponse(Status.OK.getStatusCode(), null);
     } catch (ImejiException | JoseException e) {
       return RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
@@ -50,30 +54,17 @@ public class AdminProcess {
   }
 
   /**
-   * Update the key of a user in the database
-   * 
-   * @param user
-   * @param key
-   * @throws ImejiException
+   *
    */
-  private static void updateUserKey(User user, String key) throws ImejiException {
-    user.setApiKey(key);
-    new UserController(user).update(user, user);
+  public static JSONResponse invalidMethod() {
+      return RestProcessUtils.buildResponse(Status.METHOD_NOT_ALLOWED.getStatusCode(), null);
   }
 
   /**
-   * Generate a new Key for the {@link User}. Key is saved in the database
-   * 
-   * @param user
-   * @return
-   * @throws JoseException
-   * @throws ImejiException
-   */
-  private static String generateNewKey(User user) throws JoseException, ImejiException {
-    if (user != null) {
-      return APIKeyAuthentication.generateKey(user.getId(), Integer.MAX_VALUE);
-    }
-    return null;
-  }
+  *
+  */
+ public static JSONResponse invalidResource() {
+     return RestProcessUtils.buildResponse(Status.NOT_FOUND.getStatusCode(), null);
+ }
 
 }

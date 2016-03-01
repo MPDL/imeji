@@ -29,7 +29,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
  */
 public class ShareController extends ImejiController {
   private static final WriterFacade writer = new WriterFacade(Imeji.userModel);
-  private static Logger logger = Logger.getLogger(ShareController.class);
+  private static final Logger LOGGER = Logger.getLogger(ShareController.class);
 
   /**
    * The Roles which can be shared to every object
@@ -279,7 +279,7 @@ public class ShareController extends ImejiController {
       c.update(toUser, Imeji.adminUser);
       writer.delete(new ArrayList<Object>(removedGrants), Imeji.adminUser);
     } catch (Exception e) {
-      logger.error(e);
+      LOGGER.error(e);
     }
   }
 
@@ -307,7 +307,7 @@ public class ShareController extends ImejiController {
       c.update(toGroup, fromUser);
       writer.delete(new ArrayList<Object>(removedGrants), fromUser);
     } catch (Exception e) {
-      logger.error(e);
+      LOGGER.error(e);
     }
   }
 
@@ -342,7 +342,7 @@ public class ShareController extends ImejiController {
       user = c.update(user, currentUser);
       writer.delete(new ArrayList<Object>(toRemove), currentUser);
     } catch (Exception e) {
-      logger.error(e);
+      LOGGER.error(e);
     }
     return user;
   }
@@ -376,7 +376,7 @@ public class ShareController extends ImejiController {
       if (!current.contains(g) && !newGrants.contains(g) && isAllowedToAddGrant(user, g)) {
         newGrants.add(g);
       } else if (!current.contains(g) && !newGrants.contains(g) && !isAllowedToAddGrant(user, g)) {
-        logger
+        LOGGER
             .error(user.getPerson().getCompleteName() + " NOT ALLOWED TO share " + g.getGrantFor());
       }
     }

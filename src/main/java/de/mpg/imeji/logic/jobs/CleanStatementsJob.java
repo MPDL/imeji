@@ -25,21 +25,21 @@ import de.mpg.j2j.annotations.j2jId;
  *
  */
 public class CleanStatementsJob implements Callable<Integer> {
-  private static final Logger logger = Logger.getLogger(CleanStatementsJob.class);
+  private static final Logger LOGGER = Logger.getLogger(CleanStatementsJob.class);
 
   @Override
   public Integer call() {
     try {
-      logger.info("Cleaning statements...");
+      LOGGER.info("Cleaning statements...");
       Search search = SearchFactory.create();
       List<String> uris = search
           .searchString(JenaCustomQueries.selectStatementUnbounded(), null, Imeji.adminUser, 0, -1)
           .getResults();
       removeResources(uris, Imeji.profileModel, new Statement());
     } catch (Exception e) {
-      logger.error("Error cleaning statements: " + e.getMessage());
+      LOGGER.error("Error cleaning statements: " + e.getMessage());
     }
-    logger.info("...done!");
+    LOGGER.info("...done!");
     return 1;
   }
 
@@ -84,7 +84,7 @@ public class CleanStatementsJob implements Callable<Integer> {
       try {
         l.add(reader.read(uri, Imeji.adminUser, obj.getClass().newInstance()));
       } catch (Exception e) {
-        logger.error("ERROR LOADING RESOURCE " + uri + " !!!!!", e);
+        LOGGER.error("ERROR LOADING RESOURCE " + uri + " !!!!!", e);
       }
     }
     return l;

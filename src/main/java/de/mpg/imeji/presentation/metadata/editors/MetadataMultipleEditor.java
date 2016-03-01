@@ -53,12 +53,4 @@ public class MetadataMultipleEditor extends MetadataEditor {
     }
     return true;
   }
-
-  @Override
-  public boolean validateMetadataofImages() {
-    // Validate only first image since all images get the same metadata
-    // validator = new Validator(images.get(0).getMetadata(), profile);
-    // return validator.valid();
-    return true;
-  }
 }

@@ -43,7 +43,6 @@
                                       numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}"
                                       containerId="#{containerId}" showSortMenu="true" objectLabel="#{lbl.images}"/>
 
-           
             <!-- Media List -->
             <imjc:tiledMediaList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
             <list:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>

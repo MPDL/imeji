@@ -13,16 +13,16 @@ import de.mpg.imeji.logic.jobs.executors.NightlyExecutor;
  * 
  */
 public class NightlyJob implements Runnable {
-  private static final Logger logger = Logger.getLogger(NightlyJob.class);
+  private static final Logger LOGGER = Logger.getLogger(NightlyJob.class);
 
   @Override
   public void run() {
-    logger.info("Running Nightly Jobs");
+    LOGGER.info("Running Nightly Jobs");
     Imeji.executor.submit(new CleanTempFilesJob());
     try {
       Imeji.executor.submit(new StorageUsageAnalyseJob());
     } catch (Exception e) {
-      logger.error("Error: " + e.getMessage());
+      LOGGER.error("Error: " + e.getMessage());
     }
     Imeji.executor.submit(new CleanInactiveUsersJob());
     Imeji.executor.submit(new ReadMaxPlanckIPMappingJob());

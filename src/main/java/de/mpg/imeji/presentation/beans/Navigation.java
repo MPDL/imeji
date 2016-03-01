@@ -7,6 +7,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
@@ -21,6 +23,7 @@ import de.mpg.imeji.presentation.util.PropertyReader;
  * @version $Revision$ $LastChangedDate$
  */
 public class Navigation implements Serializable {
+  private static final Logger LOGGER = Logger.getLogger(Navigation.class);
   private static final long serialVersionUID = -4318697194892200726L;
   // Url of the FW
   public static String frameworkUrl;
@@ -50,8 +53,7 @@ public class Navigation implements Serializable {
   public static final Page DIGILIB = new Page("Digilib", "digilib");
   public static final Page SINGLEUPLOAD = new Page("Single upload", "singleupload");
   public static final Page REGISTRATION = new Page("Registration", "register");
-  // session
-
+  public static final Page IMPRINT = new Page("IMPRINT", "imprint");
   public static final String spaceCommonSlug = "space/";
   public static final String spacesAllSlug = "spaces";
 
@@ -61,14 +63,17 @@ public class Navigation implements Serializable {
    * 
    * @throws Exception
    */
-  public Navigation() throws Exception {
-    frameworkUrl = PropertyReader.getProperty("escidoc.framework_access.framework.url");
-    if (frameworkUrl != null)
-      frameworkUrl = StringHelper.normalizeURI(frameworkUrl);
-    applicationUrl = StringHelper.normalizeURI(PropertyReader.getProperty("imeji.instance.url"));
-    externalDigilibUrl = PropertyReader.getProperty("digilib.imeji.instance.url");
-    // sessionBean =
-    // (SessionBean)BeanHelper.getSessionBean(SessionBean.class);
+  public Navigation() {
+    try {
+      frameworkUrl = PropertyReader.getProperty("escidoc.framework_access.framework.url");
+      if (frameworkUrl != null) {
+        frameworkUrl = StringHelper.normalizeURI(frameworkUrl);
+      }
+      applicationUrl = StringHelper.normalizeURI(PropertyReader.getProperty("imeji.instance.url"));
+      externalDigilibUrl = PropertyReader.getProperty("digilib.imeji.instance.url");
+    } catch (Exception e) {
+      LOGGER.error(e);
+    }
   }
 
   public String getApplicationUrl() {
@@ -134,6 +139,10 @@ public class Navigation implements Serializable {
   public String getSpacesUrl() {
     // No need to getSpacePath() Space Path HERE
     return applicationUrl + "spaces";
+  }
+
+  public String getImprintUrl() {
+    return applicationUrl + getSpacePath() + IMPRINT.getPath();
   }
 
   public String getSingleUploadUrl() {
@@ -298,6 +307,11 @@ public class Navigation implements Serializable {
 
     public void setPath(String file) {
       this.path = file;
+    }
+
+    public boolean hasSamePath(String path) {
+      return this.path.equals(path) || (this.path + "/").equals(path)
+          || ("/" + this.path).equals(path) || ("/" + this.path + "/").equals(path);
     }
 
   }

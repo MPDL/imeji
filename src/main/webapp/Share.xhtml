@@ -13,11 +13,11 @@
 	
 		
 	<ui:define name="mainContent">
-		<h:panelGroup layout="block" styleClass="imj_backPanel">
+		<div class="imj_backPanel">
 			<h:outputLink value="#{HistorySession.previousPage.completeUrl}">
 				<h:outputText value="#{lbl.back_to}: #{ShareBean.title}"/>
 			</h:outputLink>
-		</h:panelGroup>		
+		</div>		
 		<!-- ID must not be changed. The share page would not work anymore -->
 		<imjc:share id="share" roles="#{ShareBean.type == 'COLLECTION' ? ShareBean.shareCollectionGrantItems : ShareBean.shareAlbumGrantItems}"/>
 	</ui:define>

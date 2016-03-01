@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.search.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
@@ -24,21 +25,8 @@ public class SearchPair extends SearchElement {
    * Default constructor
    */
   public SearchPair() {
-    // TODO Auto-generated constructor stub
+
   }
-
-
-  // public SearchPair(SearchIndex index, SearchOperators operator, String value) {
-  // this(index, operator, value, false);
-  // }
-  //
-  // public SearchPair(SearchIndex index, SearchOperators operator, String value, boolean not) {
-  // this.index = index;
-  // this.operator = operator;
-  // this.value = value;
-  // this.not = not;
-  // this.field = index.getField();
-  // }
 
   public SearchPair(SearchFields field, SearchOperators operator, String value, boolean not) {
     this.operator = operator;
@@ -78,7 +66,7 @@ public class SearchPair extends SearchElement {
 
   @Override
   public List<SearchElement> getElements() {
-    return null;
+    return new ArrayList<SearchElement>();
   }
 
   public void setNot(boolean not) {

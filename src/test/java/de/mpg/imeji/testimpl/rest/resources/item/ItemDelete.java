@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -16,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import de.mpg.imeji.rest.api.CollectionService;
 import de.mpg.imeji.rest.api.DefaultItemService;
 import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
-import net.java.dev.webdav.jaxrs.ResponseStatus;
 import util.JenaUtil;
 
 public class ItemDelete extends ImejiTestBase {
@@ -97,7 +97,7 @@ public class ItemDelete extends ImejiTestBase {
     Response response = target(pathPrefix).register(authAsUser).path("/" + itemId)
         .request(MediaType.APPLICATION_JSON_TYPE).delete();
 
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
   @Test
@@ -118,7 +118,7 @@ public class ItemDelete extends ImejiTestBase {
     Response response = target(pathPrefix).register(authAsUser).path("/" + itemId)
         .request(MediaType.APPLICATION_JSON_TYPE).delete();
 
-    assertEquals(ResponseStatus.UNPROCESSABLE_ENTITY.getStatusCode(), response.getStatus());
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
   @Test

@@ -16,14 +16,14 @@ import de.mpg.imeji.logic.vo.Item;
  *
  */
 public class CleanInactiveUsersJob implements Callable<Integer> {
-  private static Logger logger = Logger.getLogger(CleanInactiveUsersJob.class);
+  private static final Logger LOGGER = Logger.getLogger(CleanInactiveUsersJob.class);
 
   @Override
   public Integer call() {
-    logger.info(" Cleaning of Inactive Users...");
+    LOGGER.info(" Cleaning of Inactive Users...");
     UserController userController = new UserController(Imeji.adminUser);
     int numCleaned = userController.cleanInactiveUsers();
-    logger.info("...done ! " + numCleaned + " inactive users have been deleted!");
+    LOGGER.info("...done ! " + numCleaned + " inactive users have been deleted!");
     return 1;
   }
 }

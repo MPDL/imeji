@@ -11,11 +11,7 @@
 	<ui:param name="currentMainMenu" value="admin" />
 	
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action"  isUserLoggedIn="#{Auth.loggedIn}" 
-								 curMainMenu="#{currentMainMenu}" 
-								 downloadEnabled="false"
-								 actionEnabled="false"
-								 navBean="#{Navigation}"  />
+		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}" downloadEnabled="false" actionEnabled="false"/>
 	</ui:define>
 
 
@@ -82,7 +78,7 @@
 										<div class="imj_admindataValue">
 											<div class="imj_admindataValueEntry">
 												<h:selectOneMenu value="#{UserCreationBean.quota}" >
-													<f:selectItems value="#{ConfigurationBean.getQuotaLimitsStatic()}"/>
+													<f:selectItems value="#{UserCreationBean.quotaMenu}"/>
 												</h:selectOneMenu>
 										   </div>
 										</div>

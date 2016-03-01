@@ -42,6 +42,7 @@ import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.writer.WriterFacade;
+import de.mpg.imeji.presentation.servlet.FileServlet;
 import de.mpg.imeji.presentation.util.PropertyReader;
 
 /**
@@ -53,7 +54,6 @@ import de.mpg.imeji.presentation.util.PropertyReader;
  */
 public class SpaceController extends ImejiController {
   private static final Logger LOGGER = LoggerFactory.getLogger(SpaceController.class);
-
   private static final ReaderFacade reader = new ReaderFacade(Imeji.spaceModel);
   private static final WriterFacade writer = new WriterFacade(Imeji.spaceModel);
   public static final String SPACES_STORAGE_SUBDIRECTORY = "/spaces";
@@ -91,7 +91,7 @@ public class SpaceController extends ImejiController {
    */
   public Space create(Space space, User user) throws ImejiException {
     space.setStatus(Properties.Status.RELEASED);
-    writeCreateProperties(space, user);
+    prepareCreate(space, user);
     // TODO: here is future grants definitions
     /*
      * GrantController gc = new GrantController(); gc.addGrants(user,
@@ -166,7 +166,7 @@ public class SpaceController extends ImejiController {
    * @throws ImejiException
    */
   public Space update(Space space, User user) throws ImejiException {
-    writeUpdateProperties(space, user);
+    prepareUpdate(space, user);
     writer.update(WriterFacade.toList(space), null, user, true);
     return retrieve(space.getId(), user);
   }
@@ -181,10 +181,8 @@ public class SpaceController extends ImejiController {
    * @throws ImejiException
    */
   public Space updateFile(Space space, File f, User user) throws ImejiException, IOException {
-
     space.setLogoUrl(URI.create(generateUrl(ObjectHelper.getId(space.getId()), f.getName())));
     update(f, transformUrlToPath(space.getLogoUrl().toURL().toString()));
-
     return update(space, user);
   }
 
@@ -197,7 +195,6 @@ public class SpaceController extends ImejiController {
    * @throws IOException
    */
   private String update(File toCopy, String path) throws IOException {
-
     File f = new File(path);
     if (f.getParentFile().exists()) {
       // clean space dir
@@ -271,7 +268,7 @@ public class SpaceController extends ImejiController {
    * @throws ImejiException
    */
   public void updateLazy(Space space, User user) throws ImejiException {
-    writeUpdateProperties(space, user);
+    prepareUpdate(space, user);
     writer.updateLazy(WriterFacade.toList(space), null, user);
   }
 
@@ -510,6 +507,14 @@ public class SpaceController extends ImejiController {
       return true;
     }
     return false;
+  }
+
+  /**
+   * @param url
+   * @return Checks if the URL provided is URL for Space Logo
+   */
+  public boolean isSpaceLogoURL(String url) {
+    return url.contains(FileServlet.SERVLET_PATH + SPACES_STORAGE_SUBDIRECTORY);
   }
 
 }

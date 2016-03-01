@@ -43,7 +43,6 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.writer.WriterFacade;
-import de.mpg.imeji.presentation.beans.ConfigurationBean;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.j2j.helper.J2JHelper;
@@ -59,7 +58,7 @@ import de.mpg.j2j.helper.J2JHelper;
 public class CollectionController extends ImejiController {
   private static final ReaderFacade reader = new ReaderFacade(Imeji.collectionModel);
   private static final WriterFacade writer = new WriterFacade(Imeji.collectionModel);
-  private static Logger logger = Logger.getLogger(CollectionController.class);
+  private static final Logger LOGGER = Logger.getLogger(CollectionController.class);
   private Search search =
       SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.ELASTIC);
 
@@ -115,7 +114,7 @@ public class CollectionController extends ImejiController {
       }
     }
 
-    writeCreateProperties(c, user);
+    prepareCreate(c, user);
 
     if (p != null) {
       c.setProfile(p.getId());
@@ -217,7 +216,7 @@ public class CollectionController extends ImejiController {
    * @throws ImejiException
    */
   public CollectionImeji update(CollectionImeji ic, User user) throws ImejiException {
-    writeUpdateProperties(ic, user);
+    prepareUpdate(ic, user);
     writer.update(WriterFacade.toList(ic), null, user, true);
     return retrieve(ic.getId(), user);
   }
@@ -233,7 +232,7 @@ public class CollectionController extends ImejiController {
   public CollectionImeji updateWithProfile(CollectionImeji ic, MetadataProfile mp, User user,
       MetadataProfileCreationMethod method) throws ImejiException {
     updateCollectionProfile(ic, mp, user, method);
-    writeUpdateProperties(ic, user);
+    prepareUpdate(ic, user);
     return update(ic, user);
   }
 
@@ -267,7 +266,7 @@ public class CollectionController extends ImejiController {
    * @throws ImejiException
    */
   public CollectionImeji updateLazy(CollectionImeji ic, User user) throws ImejiException {
-    writeUpdateProperties(ic, user);
+    prepareUpdate(ic, user);
     writer.updateLazy(WriterFacade.toList(ic), null, user);
     return retrieveLazy(ic.getId(), user);
   }
@@ -316,7 +315,7 @@ public class CollectionController extends ImejiController {
   public CollectionImeji updateLazyWithProfile(CollectionImeji ic, MetadataProfile mp, User user,
       MetadataProfileCreationMethod method) throws ImejiException {
     updateCollectionProfile(ic, mp, user, method);
-    writeUpdateProperties(ic, user);
+    prepareUpdate(ic, user);
     return updateLazy(ic, user);
   }
 
@@ -337,10 +336,15 @@ public class CollectionController extends ImejiController {
           .getMessage("collection_locked"));
     } else {
       if (collection.getStatus() != Status.PENDING && !user.isAdmin()) {
-        throw new UnprocessableError("Collection is not pending and can not be deleted!");
+        throw new UnprocessableError("collection_is_not_pending");
       }
       // Delete images
       List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
+      for (Item it : items) {
+        if (it.getStatus().equals(Status.RELEASED)) {
+          throw new UnprocessableError("collection_has_released_items");
+        }
+      }
 
       itemController.delete(items, user);
 
@@ -354,16 +358,16 @@ public class CollectionController extends ImejiController {
               collection.getId().toString()))
               || (!AuthUtil.staticAuth().delete(user, collectionMdp.getId().toString()))
               || collectionMdp.getDefault()) {
-            logger.info(
+            LOGGER.info(
                 "Metadata profile related to this collection is referenced elsewhere, or user does not have permission to delete this profile."
                     + "Profile <" + collectionMdp.getId().toString() + "> will not be deleted!");
           } else {
-            logger.info("Metadata profile <" + collectionMdp.getId().toString()
+            LOGGER.info("Metadata profile <" + collectionMdp.getId().toString()
                 + "> is not referenced elsewhere, will be deleted!");
             pc.delete(collectionMdp, user, collection.getId().toString());
           }
         } catch (NotFoundException e) {
-          logger.info("Collection profile does not exist, could not be deleted.");
+          LOGGER.info("Collection profile does not exist, could not be deleted.");
         }
       }
 
@@ -390,66 +394,28 @@ public class CollectionController extends ImejiController {
     List<String> itemUris =
         itemController.search(collection.getId(), null, null, user, null, -1, 0).getResults();
 
-
     if (hasImageLocked(itemUris, user)) {
       throw new UnprocessableError(((SessionBean) BeanHelper.getSessionBean(SessionBean.class))
           .getMessage("collection_locked"));
     } else if (itemUris.isEmpty()) {
       throw new UnprocessableError("An empty collection can not be released!");
-    } else if (collection.getStatus().equals(Status.RELEASED)) {
-      throw new UnprocessableError("The status of collection is " + collection.getStatus()
-          + " and can not be released again!");
     } else {
-      writeReleaseProperty(collection, user);
       List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
       itemController.release(items, user);
+      prepareRelease(collection, user);
       update(collection, user);
-
       if (collection.getProfile() != null
           && AuthUtil.staticAuth().administrate(user, collection.getProfile().toString())) {
         ProfileController pc = new ProfileController();
-        pc.release(pc.retrieve(collection.getProfile(), user), user);
+        MetadataProfile profile = pc.retrieve(collection.getProfile(), user);
+        if (profile.getStatus() == Status.PENDING) {
+          pc.release(profile, user);
+        }
       }
     }
   }
 
-  public void createDOI(CollectionImeji coll, User user) throws ImejiException {
-    isLoggedInUser(user);
-    if (coll == null) {
-      throw new NotFoundException("Collection does not exists");
-    }
 
-    if (!Status.RELEASED.equals(coll.getStatus())) {
-      throw new ImejiException("Collection has to be released to create a DOI");
-    }
-
-    DoiController doicontr = new DoiController();
-
-    String doiServiceUrl = ConfigurationBean.getDoiServiceUrlStatic();
-    String doiUser = ConfigurationBean.getDoiUserStatic();
-    String doiPassword = ConfigurationBean.getDoiPasswordStatic();
-
-    String doi = doicontr.getNewDoi(coll, doiServiceUrl, doiUser, doiPassword);
-    coll.setDoi(doi);
-    update(coll, user);
-  }
-
-  public void createDOIManually(String doi, CollectionImeji collection, User user)
-      throws ImejiException {
-    isLoggedInUser(user);
-
-    if (collection == null) {
-      throw new NotFoundException("Collection does not exists");
-    }
-
-    if (!Status.RELEASED.equals(collection.getStatus())) {
-      throw new ImejiException("Collection has to be released to create a DOI");
-    }
-
-    collection.setDoi(doi);
-    update(collection, user);
-
-  }
 
   /**
    * Withdraw a {@link CollectionImeji} and all its {@link Item}
@@ -475,7 +441,7 @@ public class CollectionController extends ImejiController {
     } else {
       List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
       itemController.withdraw(items, coll.getDiscardComment(), user);
-      writeWithdrawProperties(coll, null);
+      prepareWithdraw(coll, null);
       update(coll, user);
       if (coll.getProfile() != null
           && !coll.getProfile().equals(Imeji.defaultMetadataProfile.getId())
@@ -552,7 +518,7 @@ public class CollectionController extends ImejiController {
             try {
               return retrieve(URI.create(id), u);
             } catch (ImejiException e) {
-              logger.info("Cannot retrieve collection: " + id);
+              LOGGER.info("Cannot retrieve collection: " + id);
             }
             return null;
           }

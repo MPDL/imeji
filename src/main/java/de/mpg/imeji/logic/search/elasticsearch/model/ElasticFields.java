@@ -23,18 +23,19 @@ public enum ElasticFields {
   /**
    * The field which must be used to search in elasticsearch
    */
-  private String field;
+  private final String field;
   /**
    * If this field has the subfield "exact": important for fields which should be both analyzed and
    * not analyzed
    */
-  private boolean exact = false;
+  private final boolean exact;
 
   /**
    * The index will be the same than the enum value
    */
   private ElasticFields() {
     this.field = name().toLowerCase();
+    exact = false;
   }
 
   /**
@@ -44,6 +45,7 @@ public enum ElasticFields {
    */
   private ElasticFields(String index) {
     this.field = index;
+    exact = false;
   }
 
   /**

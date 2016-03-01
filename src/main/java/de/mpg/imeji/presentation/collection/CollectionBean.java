@@ -6,7 +6,6 @@ package de.mpg.imeji.presentation.collection;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static de.mpg.imeji.logic.notification.CommonMessages.getSuccessCollectionDeleteMessage;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
 import org.apache.log4j.Logger;
@@ -15,6 +14,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.controller.CollectionController;
 import de.mpg.imeji.logic.controller.ProfileController;
+import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
@@ -39,7 +39,7 @@ public abstract class CollectionBean extends ContainerBean {
     COLLECTION, PROFILE, HOME, UTIL;
   }
 
-  private static Logger logger = Logger.getLogger(CollectionBean.class);
+  private static final Logger LOGGER = Logger.getLogger(CollectionBean.class);
   private TabType tab = TabType.HOME;
 
   protected SessionBean sessionBean;
@@ -66,6 +66,17 @@ public abstract class CollectionBean extends ContainerBean {
     collection = new CollectionImeji();
     sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+  }
+
+  /**
+   * Read the profile of the current collection
+   * 
+   * @param user
+   * @throws ImejiException
+   */
+  protected void initCollectionProfile() throws ImejiException {
+    this.profile = new ProfileController().retrieve(collection.getProfile(), sessionBean.getUser());
+    this.profileId = profile != null ? profile.getIdString() : null;
   }
 
   @Override
@@ -137,10 +148,11 @@ public abstract class CollectionBean extends ContainerBean {
    * @return the selected
    */
   public boolean getSelected() {
-    if (sessionBean.getSelectedCollections().contains(collection.getId()))
+    if (sessionBean.getSelectedCollections().contains(collection.getId())) {
       selected = true;
-    else
+    } else {
       selected = false;
+    }
     return selected;
   }
 
@@ -149,10 +161,12 @@ public abstract class CollectionBean extends ContainerBean {
    */
   public void setSelected(boolean selected) {
     if (selected) {
-      if (!(sessionBean.getSelectedCollections().contains(collection.getId())))
+      if (!(sessionBean.getSelectedCollections().contains(collection.getId()))) {
         sessionBean.getSelectedCollections().add(collection.getId());
-    } else
+      }
+    } else {
       sessionBean.getSelectedCollections().remove(collection.getId());
+    }
     this.selected = selected;
   }
 
@@ -168,25 +182,24 @@ public abstract class CollectionBean extends ContainerBean {
       BeanHelper.info(sessionBean.getMessage("success_collection_release"));
     } catch (Exception e) {
       BeanHelper.error(sessionBean.getMessage("error_collection_release: " + e.getMessage()));
-      logger.error("Error during collection release", e);
+      LOGGER.error("Error during collection release", e);
     }
     return "pretty:";
   }
 
   public String createDOI() {
-    String doi =
-        FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("doi");
-    CollectionController cc = new CollectionController();
     try {
+      String doi = UrlHelper.getParameterValue("doi");
+      DoiService doiService = new DoiService();
       if (doi != null) {
-        cc.createDOIManually(doi, collection, sessionBean.getUser());
+        doiService.addDoiToCollection(doi, collection, sessionBean.getUser());
       } else {
-        cc.createDOI(collection, sessionBean.getUser());
+        doiService.addDoiToCollection(collection, sessionBean.getUser());
       }
       BeanHelper.info(sessionBean.getMessage("success_doi_creation"));
     } catch (ImejiException e) {
-      BeanHelper.error(sessionBean.getMessage("error_doi_creation_" + e.getMessage()));
-      logger.error("Error during doi creation", e);
+      BeanHelper.error(sessionBean.getMessage("error_doi_creation") + " " + e.getMessage());
+      LOGGER.error("Error during doi creation", e);
     }
     return "pretty:";
   }
@@ -203,8 +216,8 @@ public abstract class CollectionBean extends ContainerBean {
       BeanHelper.info(
           getSuccessCollectionDeleteMessage(this.collection.getMetadata().getTitle(), sessionBean));
     } catch (Exception e) {
-      BeanHelper.error(sessionBean.getMessage("error_collection_delete"));
-      logger.error("Error delete collection", e);
+      BeanHelper.error(sessionBean.getMessage(e.getLocalizedMessage()));
+      LOGGER.error("Error delete collection", e);
     }
     return sessionBean.getPrettySpacePage("pretty:collections");
   }
@@ -223,7 +236,7 @@ public abstract class CollectionBean extends ContainerBean {
     } catch (Exception e) {
       BeanHelper.error(sessionBean.getMessage("error_collection_withdraw"));
       BeanHelper.error(e.getMessage());
-      logger.error("Error discarding collection:", e);
+      LOGGER.error("Error discarding collection:", e);
     }
     return "pretty:";
   }
@@ -350,10 +363,7 @@ public abstract class CollectionBean extends ContainerBean {
       } catch (ImejiException e) {
         BeanHelper.error(sessionBean.getMessage("error_retrieving_metadata_profile"));
       }
-      if (collectionProfile.getStatements().isEmpty())
-        return true;
-      else
-        return false;
+      return collectionProfile.getStatements().isEmpty();
     }
   }
 }

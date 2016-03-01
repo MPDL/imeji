@@ -78,31 +78,6 @@
             <param-name>javax.ws.rs.Application</param-name>
             <param-value>de.mpg.imeji.rest.MyApplication</param-value>
         </init-param>
-
-        <!--
-                <init-param>
-                    <param-name>jersey.config.server.provider.classnames</param-name>
-                    <param-value>org.glassfish.jersey.filter.LoggingFilter;org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
-                </init-param>
-        -->
-
-
-        <!--
-        <init-param>
-            <param-name>javax.ws.rs.Application</param-name>
-            <param-value>de.mpg.imeji.rest.MyApplication</param-value>
-        </init-param>
-
-
-        <init-param>
-            <param-name>org.glassfish.jersey.spi.container.ContainerRequestFilters</param-name>
-            <param-value>org.glassfish.jersey.api.container.filter.GZIPContentEncodingFilter</param-value>
-        </init-param>
-        <init-param>
-            <param-name>org.glassfish.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>org.glassfish.api.container.filter.GZIPContentEncodingFilter</param-value>
-        </init-param>
-         -->
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
@@ -125,6 +100,11 @@
     <filter>
         <filter-name>Encoder Filter</filter-name>
         <filter-class>de.mpg.imeji.presentation.util.EncoderFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+     <filter>
+        <filter-name>Modus Filter</filter-name>
+        <filter-class>de.mpg.imeji.presentation.modus.ModusFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
     <filter>
@@ -169,6 +149,12 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
+     <filter-mapping>
+        <filter-name>Modus Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
     <filter-mapping>
 		<filter-name>API Version Filter</filter-name>
 		<url-pattern>/rest/*</url-pattern>
@@ -205,8 +191,6 @@
         <servlet-name>imeji SPARQL End Point</servlet-name>
         <url-pattern>/sparql</url-pattern>
     </servlet-mapping>
-
-
     <filter-mapping>
         <filter-name>History Filter</filter-name>
         <url-pattern>/*</url-pattern>

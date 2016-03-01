@@ -58,7 +58,7 @@ import de.mpg.j2j.annotations.j2jId;
  */
 public class AdminBean {
   private SessionBean sb;
-  private static Logger logger = Logger.getLogger(AdminBean.class);
+  private static final Logger LOGGER = Logger.getLogger(AdminBean.class);
   private boolean clean = false;
   private String numberOfFilesInStorage;
   private String sizeOfFilesinStorage;
@@ -210,7 +210,7 @@ public class AdminBean {
    * Find all {@link Metadata} which are not related to a {@link Statement}
    */
   private void cleanMetadata() {
-    logger.info("Cleaning Metadata");
+    LOGGER.info("Cleaning Metadata");
     if (clean == false) {
       Search search = SearchFactory.create();
 
@@ -229,11 +229,11 @@ public class AdminBean {
    * @throws Exception
    */
   private void cleanStatement() throws Exception {
-    logger.info("Searching for statement without profile...");
+    LOGGER.info("Searching for statement without profile...");
     Search search = SearchFactory.create();
     List<String> uris = search
         .searchString(JenaCustomQueries.selectStatementUnbounded(), null, null, 0, -1).getResults();
-    logger.info("...found " + uris.size());
+    LOGGER.info("...found " + uris.size());
     cleanDatabaseReport += "Statement without any profile " + uris.size() + " found  <br/> ";
     removeResources(uris, Imeji.profileModel, new Statement());
   }
@@ -250,7 +250,7 @@ public class AdminBean {
       ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutUser());
       ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantEmtpy());
     }
-    logger.info("Searching for problematic grants...");
+    LOGGER.info("Searching for problematic grants...");
     Search search = SearchFactory.create();
     List<String> uris = search
         .searchString(JenaCustomQueries.selectGrantWithoutUser(), null, null, 0, -1).getResults();
@@ -261,7 +261,7 @@ public class AdminBean {
     uris =
         search.searchString(JenaCustomQueries.selectGrantEmtpy(), null, null, 0, -1).getResults();
     cleanDatabaseReport += "Empty Grants: " + uris.size() + " found  <br/>";
-    logger.info("...done");
+    LOGGER.info("...done");
   }
 
   /**
@@ -293,10 +293,10 @@ public class AdminBean {
     List<Object> l = new ArrayList<Object>();
     for (String uri : uris) {
       try {
-        logger.info("Resource to be removed: " + uri);
+        LOGGER.info("Resource to be removed: " + uri);
         l.add(reader.read(uri, sb.getUser(), obj.getClass().newInstance()));
       } catch (Exception e) {
-        logger.error("ERROR LOADING RESOURCE " + uri + " !!!!!", e);
+        LOGGER.error("ERROR LOADING RESOURCE " + uri + " !!!!!", e);
       }
     }
     return l;

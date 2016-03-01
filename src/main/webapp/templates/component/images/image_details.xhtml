@@ -4,7 +4,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
-	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	
 	xmlns:list="http://java.sun.com/jsf/composite/components/list">
 
 	<!-- MediaDisplayContainer - START -->
@@ -50,17 +50,15 @@
 			<h:outputLink id="lnkOriginalData" value="#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDigilib and !itemBean.viewInDataViewer}" >
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
-		</div>
-		
-		<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete(itemBean.image)}"/>
-		
+		</div>	
 	</h:panelGroup> <!-- Media Display Container - END -->
 	
+	
+		
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status == 'WITHDRAWN'}">
 		<h:outputLink id="lnkPicFullResolution_Withdrawn" value="#">
 				<h:graphicImage id="picWebResolution_Withdrawn" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.applicationUrl}resources/icon/discarded.png"/>
 		</h:outputLink>
-		<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete(itemBean.image)}"/>
 	</h:panelGroup>
 
 		
@@ -388,7 +386,7 @@
 								<h:outputText value="#{lbl['item_public']}" rendered="#{itemBean.image.status == 'RELEASED'}"/>
 								<span class="imj_noDisplay">: </span>
 								<ui:fragment rendered="#{Auth.admin(itemBean.image)}">
-									<h:form rendered="#{itemBean.image.status == 'PENDING'}">
+									<h:form rendered="#{WorkflowBean.release(itemBean.image)}">
 										<h:commandButton value="#{lbl.make_public}" action="#{itemBean.makePublic}" styleClass="imj_submitButton">
 											<f:ajax render=":sharePanel"/>
 										</h:commandButton>

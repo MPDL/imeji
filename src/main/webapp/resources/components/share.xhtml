@@ -18,12 +18,11 @@
 			<div class="imj_shareForm">
 				<ui:fragment rendered="#{ShareBean.userGroup == null}">
 					<div id="shareButtons" class="imj_submitPanel">
-						<h:commandButton value="#{lbl.share_new}" action="#" styleClass="imj_submitButton" type="button" onclick="$('#share').show();$('#shareGroup').hide();"/>
+						<h:commandButton value="#{lbl.share_new}" action="#" styleClass="imj_submitButton" type="button" onclick="$('#share').show();$('#shareGroup').hide();" id="userShare"/>
 						<h:outputText value="#{lbl.or_big}" styleClass="imj_submitPanelSeparator"/>
-						<h:commandButton value="#{lbl.share_with_group}" action="#" styleClass="imj_submitButton" type="button" onclick="$('#shareGroup').show();$('#share').hide();"/>
+						<h:commandButton value="#{lbl.share_with_group}" action="#" styleClass="imj_submitButton" type="button" onclick="$('#shareGroup').show();$('#share').hide();" id="userGroupShare"/>
 					</div>
 				</ui:fragment>
-				
 				<div id="shareGroup" class="imj_noDisplay">
 					<h2 class="imj_sectionHeadline">
 						<h:outputText value="#{lbl.admin_userGroups}"/>
@@ -47,12 +46,12 @@
 				</div>
 				<ui:fragment rendered="#{ShareBean.userGroup != null}">
 					<h2 class="imj_sectionHeadline">
-						<h:outputText value="#{lbl.share_with}"/>
+						<h:outputText value="#{lbl.share_with}: "/>
 					</h2>
 					<div class="imj_metadataSet">
-					<div class="imj_metadataLabel">
-						<h:outputText value="#{lbl.admin_userGroup}: #{ShareBean.userGroup.name}"/>
-					</div>
+						<div class="imj_metadataLabel">
+							#{ShareBean.userGroup.name}
+						</div>
 					<h:form prependId="false">
 						<h:panelGroup layout="block" styleClass="imj_metadataValue">
 							<div class="imj_metadataSet">
@@ -95,7 +94,7 @@
 										<f:selectItems value="#{cc.attrs.roles}"/>
 									</h:selectManyCheckbox>
 									<h:commandButton id="checkGrants" value="Check Grants" action="#{ShareBean.checkGrants(ShareBean.selectedGrants)}" styleClass="imj_noDisplay">
-										<f:ajax execute="@form" render="@form"/>
+										<f:ajax execute="@form" render="shareOptions"/>
 									</h:commandButton>
 								</h:panelGroup>
 							</div>
@@ -160,6 +159,11 @@
 						</table>
 						
 						<div class="imj_submitPanel">
+								<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmailUpdate"/>
+								<h:outputLabel for="selSendEmailUpdate" value="#{lbl.user_send_mail}"/>
+						</div>
+						
+						<div class="imj_submitPanel">
 							<h:outputLink value="#{Navigation.applicationUri}#{ShareBean.pageUrl}" styleClass="imj_cancelButton" title="#{lbl.reset}" rendered="#{cc.attrs.type != 'item'}">
 								<h:outputText value="#{lbl.reset}"/>
 							</h:outputLink>
@@ -169,6 +173,19 @@
 				</div>
 				</ui:fragment>
 			</div>
+		</ui:fragment>
+		<ui:fragment rendered="#{!ShareBean.emptyErrorList}">
+				<script type="text/javascript">
+						if ( #{ShareBean.userGroup == null} ) {
+							$("#share").show();
+							$("#shareGroup").hide();
+						}
+						else
+						{
+							$("#share").hide();
+							$("#shareGroup").show();
+						}
+				</script>
 		</ui:fragment>
 	</composite:implementation>
 </html>

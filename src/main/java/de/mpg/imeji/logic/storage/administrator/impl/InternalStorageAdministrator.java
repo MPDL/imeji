@@ -29,6 +29,7 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -46,6 +47,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class InternalStorageAdministrator implements StorageAdministrator {
   private static final long serialVersionUID = -2854550843193929384L;
+  private static final Logger LOGGER = Logger.getLogger(InternalStorageAdministrator.class);
   /**
    * The directory in file system of the {@link InternalStorage}
    */
@@ -75,8 +77,8 @@ public class InternalStorageAdministrator implements StorageAdministrator {
    * @return
    */
   public long getNumberOfFilesOfCollection(String collectionId) {
-    return getNumberOfFiles(storageDir.getAbsolutePath() + StringHelper.fileSeparator
-        + collectionId);
+    return getNumberOfFiles(
+        storageDir.getAbsolutePath() + StringHelper.fileSeparator + collectionId);
   }
 
   /**
@@ -118,12 +120,12 @@ public class InternalStorageAdministrator implements StorageAdministrator {
   @Override
   public int clean() {
     int deleted = 0;
-    System.out.println("Start cleaning...");
+    LOGGER.info("Start cleaning...");
     for (File f : FileUtils.listFiles(storageDir, null, true)) {
       if (f.isFile()) {
         InternalStorageManager m = new InternalStorageManager();
         String url = m.transformPathToUrl(f.getPath());
-        if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFile(url), null).size() == 0
+        if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFileUrl(url), null).size() == 0
             && ImejiSPARQL.exec(JenaCustomQueries.selectSpaceIdOfFileOrCollection(url), null)
                 .size() == 0) {
           // file doesn't exist, remove it
@@ -132,7 +134,7 @@ public class InternalStorageAdministrator implements StorageAdministrator {
         }
       }
     }
-    System.out.println("...done: " + deleted + " files deleted");
+    LOGGER.info("...done: " + deleted + " files deleted");
     return deleted;
   }
 }

@@ -69,7 +69,7 @@
   <!-- location of XML mapping file -->
   <parameter name="mapping-file" value="digilib-map.xml"/>
 
-  <!-- location of logger config file -->
+  <!-- location of LOGGER config file -->
   <parameter name="log-config-file" value="log4j-config.xml"/>
 
   <!-- is the image toolkit allowed to use a disk cache -->

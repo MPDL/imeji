@@ -41,12 +41,12 @@ import de.mpg.imeji.presentation.session.SessionBean;
 public class DataViewerServlet extends HttpServlet {
 
   private static final long serialVersionUID = -4602021617386831403L;
-  private static Logger logger = Logger.getLogger(DataViewerServlet.class);
+  private static final Logger LOGGER = Logger.getLogger(DataViewerServlet.class);
 
   @Override
   public void init() throws ServletException {
     super.init();
-    logger.info("Data Viewer Servlet initialized");
+    LOGGER.info("Data Viewer Servlet initialized");
   }
 
   @Override
@@ -86,7 +86,7 @@ public class DataViewerServlet extends HttpServlet {
     } catch (HttpResponseException he) {
       resp.sendError(he.getStatusCode(), he.getMessage());
     } catch (Exception e) {
-      logger.error(e.getMessage(), e);
+      LOGGER.error(e.getMessage(), e);
       resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
           "Requested resource could not be visualized!");
     }
@@ -128,7 +128,6 @@ public class DataViewerServlet extends HttpServlet {
   private String viewGenericUrl(String originalUrl, String fileType,
       String dataViewerServiceTargetURL)
           throws FileNotFoundException, IOException, URISyntaxException {
-    // System.out.println(dataViewerServiceTargetURL+"?"+"mimetype="+fileType+"&url="+originalUrl);
     return dataViewerServiceTargetURL + "?" + "mimetype=" + fileType + "&url=" + originalUrl;
   }
 

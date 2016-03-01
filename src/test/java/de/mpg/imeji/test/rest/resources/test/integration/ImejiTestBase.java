@@ -27,9 +27,6 @@ import org.junit.runner.Description;
 
 import de.mpg.imeji.logic.controller.ProfileController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata.Types;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
@@ -38,11 +35,7 @@ import de.mpg.imeji.rest.api.AlbumService;
 import de.mpg.imeji.rest.api.CollectionService;
 import de.mpg.imeji.rest.api.DefaultItemService;
 import de.mpg.imeji.rest.process.RestProcessUtils;
-import de.mpg.imeji.rest.process.ReverseTransferObjectFactory;
-import de.mpg.imeji.rest.process.ReverseTransferObjectFactory.TRANSFER_MODE;
-import de.mpg.imeji.rest.process.TransferObjectFactory;
 import de.mpg.imeji.rest.to.AlbumTO;
-import de.mpg.imeji.rest.to.CollectionProfileTO;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
@@ -69,8 +62,7 @@ public class ImejiTestBase extends JerseyTest {
   protected static CollectionTO collectionTO;
   protected static AlbumTO albumTO;
   protected static DefaultItemTO itemTO;
-  protected static DefaultItemTO defaultItemTO;
-  private static Logger logger = Logger.getLogger(ImejiTestBase.class);
+  private static final Logger LOGGER = Logger.getLogger(ImejiTestBase.class);
 
   private static MyApplication app = null;
 
@@ -106,7 +98,7 @@ public class ImejiTestBase extends JerseyTest {
   @Rule
   public TestRule watcher = new TestWatcher() {
     protected void starting(Description description) {
-      System.out.println("Starting test: " + description.getMethodName());
+      LOGGER.info("Starting test: " + description.getMethodName());
     }
   };
 
@@ -124,7 +116,7 @@ public class ImejiTestBase extends JerseyTest {
       p.getStatements().add(s);
       profileId = pc.create(p, JenaUtil.testUser).getIdString();
     } catch (Exception e) {
-      logger.error("Cannot init profile", e);
+      LOGGER.error("Cannot init profile", e);
     }
   }
 
@@ -145,23 +137,23 @@ public class ImejiTestBase extends JerseyTest {
       collectionTO = s.create(collectionTO, JenaUtil.testUser);
       collectionId = collectionTO.getId();
     } catch (Exception e) {
-      logger.error("Cannot init Collection", e);
+      LOGGER.error("Cannot init Collection", e);
     }
     return collectionId;
   }
-  
-  public static String initCollectionWithProfile(String profileId)  {
+
+  public static String initCollectionWithProfile(String profileId) {
     CollectionService s = new CollectionService();
     try {
-      collectionTO = (CollectionTO) RestProcessUtils.buildTOFromJSON(getStringFromPath(STATIC_CONTEXT_REST + "/createCollectionWithProfile.json")
-                                                                     .replace("___PROFILE_ID___", profileId)
-                                                                     .replace("___METHOD___", "copy"), 
-                                                                     CollectionTO.class);
+      collectionTO = (CollectionTO) RestProcessUtils.buildTOFromJSON(
+          getStringFromPath(STATIC_CONTEXT_REST + "/createCollectionWithProfile.json")
+              .replace("___PROFILE_ID___", profileId).replace("___METHOD___", "copy"),
+          CollectionTO.class);
 
       collectionTO = s.create(collectionTO, JenaUtil.testUser);
       collectionId = collectionTO.getId();
     } catch (Exception e) {
-      logger.error("Cannot init Collection", e);
+      LOGGER.error("Cannot init Collection", e);
     }
     return collectionId;
   }
@@ -183,7 +175,7 @@ public class ImejiTestBase extends JerseyTest {
       albumId = albumTO.getId();
 
     } catch (Exception e) {
-      logger.error("Cannot init Album", e);
+      LOGGER.error("Cannot init Album", e);
     }
   }
 
@@ -209,18 +201,8 @@ public class ImejiTestBase extends JerseyTest {
     try {
       itemTO = s.create(to, JenaUtil.testUser);
       itemId = itemTO.getId();
-      defaultItemTO = new DefaultItemTO();
-      MetadataProfile profile = new ProfileController().retrieveByCollectionId(
-          ObjectHelper.getURI(CollectionImeji.class, collectionId), JenaUtil.testUser);
-      Item itemVo = new Item();
-      ReverseTransferObjectFactory.transferDefaultItem(itemTO, itemVo, profile, JenaUtil.testUser,
-          TRANSFER_MODE.UPDATE);
-      defaultItemTO.setCollectionId(collectionId);
-      TransferObjectFactory.transferDefaultItem(itemVo, defaultItemTO, profile);
-      
-
     } catch (Exception e) {
-      logger.error("Cannot init Item", e);
+      LOGGER.error("Cannot init Item", e);
     }
   }
 

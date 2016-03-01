@@ -57,13 +57,14 @@ All rights reserved. Use is subject to license terms.
 				</h:panelGroup>
 
 			</h:outputLink>
-
-			<div class="imj_siteHeaderMenuSearchSection">
-				<!-- place main menu here -->
-				<menu:mainMenu id="mainMenu" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.admin}"/>			
-				<!-- import search here-->
-				<ui:include src="../menu/searchmenu_default.xhtml"/>
-			</div>
+			<ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
+				<div class="imj_siteHeaderMenuSearchSection">
+					<!-- place main menu here -->
+					<menu:mainMenu id="mainMenu" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.admin}"/>			
+					<!-- import search here-->
+					<ui:include src="../menu/searchmenu_default.xhtml"/>
+				</div>
+			</ui:fragment>
 		</h:panelGroup>
 	</f:subview>
 </ui:composition>

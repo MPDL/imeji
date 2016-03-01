@@ -30,7 +30,7 @@ public class SpacesBean implements Serializable {
   private static final long serialVersionUID = 909531319532057427L;
 
   private List<Space> spaces;
-  private static Logger logger = Logger.getLogger(SpacesBean.class);
+  private static final Logger LOGGER = Logger.getLogger(SpacesBean.class);
   private SessionBean sessionBean;
   private Navigation navigation;
 
@@ -47,7 +47,7 @@ public class SpacesBean implements Serializable {
     try {
       spaces = sc.retrieveAll();
     } catch (ImejiException e) {
-      logger.error("Error retrieving all spaces", e);
+      LOGGER.error("Error retrieving all spaces", e);
     }
   }
 

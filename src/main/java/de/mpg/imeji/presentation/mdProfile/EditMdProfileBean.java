@@ -35,7 +35,7 @@ public class EditMdProfileBean extends MdProfileBean {
   private SessionBean session;
   private boolean init = false;
   private String colId = null;
-  private static Logger logger = Logger.getLogger(EditMdProfileBean.class);
+  private static final Logger LOGGER = Logger.getLogger(EditMdProfileBean.class);
   private VocabularyHelper vocabularyHelper;
   private CollectionImeji collection;
 
@@ -155,7 +155,7 @@ public class EditMdProfileBean extends MdProfileBean {
       BeanHelper.error(session.getMessage(e.getMessage()));
     } catch (Exception e) {
       BeanHelper.error(session.getMessage("error_profile_save"), e.getMessage());
-      logger.error(session.getMessage("error_profile_save"), e);
+      LOGGER.error(session.getMessage("error_profile_save"), e);
     }
     return "";
   }

@@ -137,7 +137,7 @@ public class UrlHelper {
    */
   public static Boolean hasParameter(String parameterName) {
     return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .get(parameterName) != null;
+        .containsKey(parameterName);
   }
 
 }

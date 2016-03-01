@@ -15,15 +15,15 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
  *
  */
 public class CleanGrantsJob implements Callable<Integer> {
-  private static final Logger logger = Logger.getLogger(CleanGrantsJob.class);
+  private static final Logger LOGGER = Logger.getLogger(CleanGrantsJob.class);
 
   @Override
   public Integer call() throws Exception {
-    logger.info("Cleaning grants...");
+    LOGGER.info("Cleaning grants...");
     ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutObject());
     ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutUser());
     ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantEmtpy());
-    logger.info("...done!");
+    LOGGER.info("...done!");
     return 1;
   }
 }

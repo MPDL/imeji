@@ -19,16 +19,12 @@
 									activeMenu="ingest" 
 									hasContent="#{IngestBean.collectionSize > 0}"/>
 		
-		<menu:context_actionMenu id="action"  	isUserLoggedIn="#{Auth.loggedIn}" 
+		<menu:context_actionMenu id="action" 
+									vo="#{IngestBean.collection}"
 									curMainMenu="#{currentMainMenu}" 
 									navBean="#{Navigation}" 
-									collectionStatus="#{IngestBean.collection.status}" 
-									contextId="#{IngestBean.collectionId}" 
 									hasContent="#{IngestBean.collectionSize > 0}" 
 									downloadEnabled="#{IngestBean.collectionSize > 0}"
-									isEditable="false" 
-									isDeletable="false" 
-									isAdmin="false"
 									contextDownloadParam="&amp;col=#{IngestBean.collectionId}"/>
 	</ui:define>
 	

@@ -103,15 +103,15 @@ Handlebars.createFrame = Object.create || function(object) {
   return obj;
 };
 
-Handlebars.logger = {
+Handlebars.LOGGER = {
   DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3, level: 3,
 
   methodMap: {0: 'debug', 1: 'info', 2: 'warn', 3: 'error'},
 
   // can be overridden in the host environment
   log: function(level, obj) {
-    if (Handlebars.logger.level <= level) {
-      var method = Handlebars.logger.methodMap[level];
+    if (Handlebars.LOGGER.level <= level) {
+      var method = Handlebars.LOGGER.methodMap[level];
       if (typeof console !== 'undefined' && console[method]) {
         console[method].call(console, obj);
       }
@@ -119,7 +119,7 @@ Handlebars.logger = {
   }
 };
 
-Handlebars.log = function(level, obj) { Handlebars.logger.log(level, obj); };
+Handlebars.log = function(level, obj) { Handlebars.LOGGER.log(level, obj); };
 
 Handlebars.registerHelper('each', function(context, options) {
   var fn = options.fn, inverse = options.inverse;
@@ -1335,7 +1335,7 @@ JavaScriptCompiler.prototype = {
     this.environment = environment;
     this.options = options || {};
 
-    Handlebars.log(Handlebars.logger.DEBUG, this.environment.disassemble() + "\n\n");
+    Handlebars.log(Handlebars.LOGGER.DEBUG, this.environment.disassemble() + "\n\n");
 
     this.name = this.environment.name;
     this.isChild = !!context;
@@ -1457,7 +1457,7 @@ JavaScriptCompiler.prototype = {
       return Function.apply(this, params);
     } else {
       var functionSource = 'function ' + (this.name || '') + '(' + params.join(',') + ') {\n  ' + source + '}';
-      Handlebars.log(Handlebars.logger.DEBUG, functionSource + "\n\n");
+      Handlebars.log(Handlebars.LOGGER.DEBUG, functionSource + "\n\n");
       return functionSource;
     }
   },

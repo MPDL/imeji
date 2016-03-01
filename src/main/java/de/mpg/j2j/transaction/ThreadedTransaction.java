@@ -24,7 +24,7 @@ import de.mpg.imeji.logic.Imeji;
  */
 public class ThreadedTransaction implements Callable<Integer> {
   private Transaction transaction;
-  protected static Logger logger = Logger.getLogger(ThreadedTransaction.class);
+  protected static Logger LOGGER = Logger.getLogger(ThreadedTransaction.class);
 
   /**
    * Construct a new {@link ThreadedTransaction} for one {@link Transaction}
@@ -74,7 +74,7 @@ public class ThreadedTransaction implements Callable<Integer> {
     try {
       f.get();
     } catch (Exception e) {
-      logger.info("An exception happened in run method ", e);
+      LOGGER.info("An exception happened in run method ", e);
     }
     t.throwException();
   }

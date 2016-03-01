@@ -28,14 +28,17 @@ public class DateFormatter {
    */
   public static long getTime(String str) {
     Date d = parseDate(str, "yyyy-MM-dd");
-    if (d == null)
+    if (d == null) {
       d = parseDate(str, "yyyy-MM");
-    if (d == null)
+    }
+    if (d == null) {
       d = parseDate(str, "yyyy");
-    if (d != null)
+    }
+    if (d != null) {
       return d.getTime();
-    else
+    } else {
       return Long.MIN_VALUE;
+    }
   }
 
   /**
@@ -62,15 +65,18 @@ public class DateFormatter {
    */
   public static String format(String str) {
     Date d = parseDate(str, "yyyy-MM-dd");
-    if (d == null)
+    if (d == null) {
       d = parseDate(str, "yyyy-MM");
-    if (d == null)
+    }
+    if (d == null) {
       d = parseDate(str, "yyyy");
+    }
     if (d != null) {
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
       return sdf.format(d);
-    } else
+    } else {
       throw new RuntimeException("Wrong date format");
+    }
   }
 
   /**
@@ -81,12 +87,15 @@ public class DateFormatter {
    */
   public static String formatToSparqlDateTime(String str) {
     Date d = parseDate(str, "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-    if (d == null)
+    if (d == null) {
       d = parseDate(str, "yyyy-MM-dd'T'HH:mm:ss.SSS");
-    if (d == null)
+    }
+    if (d == null) {
       d = parseDate(str, "yyyy-MM-dd'T'HH:mm:ss");
-    if (d == null)
+    }
+    if (d == null) {
       d = new Date(getTime(str));
+    }
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     return sdf.format(d);
   }

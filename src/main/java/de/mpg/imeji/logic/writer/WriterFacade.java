@@ -27,15 +27,17 @@ package de.mpg.imeji.logic.writer;
 import java.net.URI;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiTriple;
-import de.mpg.imeji.logic.auth.Authorization;
+import de.mpg.imeji.logic.auth.authorization.Authorization;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchFactory;
@@ -48,9 +50,11 @@ import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
+import de.mpg.imeji.logic.workflow.WorkflowValidator;
 
 /**
  * Facade implementing Writer {@link Authorization}
@@ -62,6 +66,7 @@ import de.mpg.imeji.logic.vo.UserGroup;
 public class WriterFacade {
   private Writer writer;
   private SearchIndexer indexer;
+  private WorkflowValidator workflowManager = new WorkflowValidator();
 
   /**
    * Constructor for one model
@@ -112,6 +117,7 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return;
     }
+    checkWorkflowForDelete(objects);
     checkSecurity(objects, user, GrantType.DELETE);
     validate(objects, null, Validator.Method.DELETE);
     writer.delete(objects, user);
@@ -184,6 +190,14 @@ public class WriterFacade {
         (Validator<Object>) ValidatorFactory.newValidator(list.get(0), method);
     for (Object o : list) {
       validator.validate(o, profile, method);
+    }
+  }
+
+  private void checkWorkflowForDelete(List<Object> objects) throws WorkflowException {
+    for (Object o : objects) {
+      if (o instanceof Properties) {
+        workflowManager.isDeleteAllowed((Properties) o);
+      }
     }
   }
 
@@ -284,9 +298,7 @@ public class WriterFacade {
    * @return
    */
   public static List<Object> toList(Object o) {
-    List<Object> list = new ArrayList<Object>();
-    list.add(o);
-    return list;
+    return Arrays.asList(o);
   }
 
 }

@@ -48,7 +48,7 @@ public class UsersBean implements Serializable {
   private String query;
   @ManagedProperty(value = "#{SessionBean.user}")
   private User sessionUser;
-  private static Logger logger = Logger.getLogger(UserBean.class);
+  private static final Logger LOGGER = Logger.getLogger(UserBean.class);
 
   /**
    * Initialize the bean
@@ -71,7 +71,7 @@ public class UsersBean implements Serializable {
           + "users?q=" + query + (group != null ? "&group=" + group.getId() : ""));
     } catch (IOException e) {
       BeanHelper.error(e.getMessage());
-      logger.error(e);
+      LOGGER.error(e);
     }
   }
 
@@ -98,7 +98,7 @@ public class UsersBean implements Serializable {
         setGroup(c.read(UrlHelper.getParameterValue("group"), sessionUser));
       } catch (Exception e) {
         BeanHelper.error("error loading user group " + UrlHelper.getParameterValue("group"));
-        logger.error(e);
+        LOGGER.error(e);
       }
     }
   }
@@ -122,7 +122,7 @@ public class UsersBean implements Serializable {
       sendEmail(email, newPassword, userBean.getUser().getPerson().getCompleteName());
     } catch (Exception e) {
       BeanHelper.error("Could not update or send new password!");
-      logger.error("Could not update or send new password", e);
+      LOGGER.error("Could not update or send new password", e);
     }
     BeanHelper.info(session.getMessage("success_email"));
     return "";
@@ -145,7 +145,7 @@ public class UsersBean implements Serializable {
           emailMessages.getNewPasswordMessage(password, email, username));
     } catch (Exception e) {
       BeanHelper.info("Error: Password Email not sent");
-      logger.error("Error sending password email", e);
+      LOGGER.error("Error sending password email", e);
     }
   }
 
@@ -162,7 +162,7 @@ public class UsersBean implements Serializable {
       controller.delete(ObjectLoader.loadUser(email, sessionUser));
     } catch (Exception e) {
       BeanHelper.error("Error Deleting user");
-      logger.error("Error Deleting user", e);
+      LOGGER.error("Error Deleting user", e);
     }
     doSearch();
     return "";
@@ -189,7 +189,7 @@ public class UsersBean implements Serializable {
       controller.update(toActivateUser, sessionUser);
     } catch (Exception e) {
       BeanHelper.error("Error during activation of the user ");
-      logger.error("Error during activation of the user", e);
+      LOGGER.error("Error during activation of the user", e);
     }
 
     BeanHelper.cleanMessages();

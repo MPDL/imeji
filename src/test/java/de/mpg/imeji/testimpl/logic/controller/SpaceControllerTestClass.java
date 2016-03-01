@@ -1,44 +1,32 @@
 package de.mpg.imeji.testimpl.logic.controller;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
-import de.mpg.imeji.logic.ImejiNamespaces;
-import de.mpg.imeji.logic.ImejiSPARQL;
-import de.mpg.imeji.logic.controller.CollectionController;
-import de.mpg.imeji.logic.controller.SpaceController;
-import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Space;
-import de.mpg.imeji.presentation.util.ImejiFactory;
-import de.mpg.imeji.rest.api.CollectionService;
-import de.mpg.imeji.rest.process.RestProcessUtils;
-import de.mpg.imeji.rest.to.CollectionTO;
-import de.mpg.imeji.test.logic.controller.ControllerTest;
-import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import util.JenaUtil;
+import static de.mpg.imeji.logic.Imeji.adminUser;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 
-import static de.mpg.imeji.logic.Imeji.adminUser;
-import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_REST;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.io.FileUtils;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
+import de.mpg.imeji.logic.controller.CollectionController;
+import de.mpg.imeji.logic.controller.SpaceController;
+import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.Space;
+import de.mpg.imeji.presentation.util.ImejiFactory;
+import de.mpg.imeji.test.logic.controller.ControllerTest;
 
 /**
  * Created by vlad on 15.04.15.
@@ -46,7 +34,6 @@ import static org.junit.Assert.assertTrue;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SpaceControllerTestClass extends ControllerTest {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SpaceControllerTestClass.class);
   public static final int COL_NUM = 100;
 
   private static SpaceController sc;
@@ -63,7 +50,6 @@ public class SpaceControllerTestClass extends ControllerTest {
 
   @Test
   public void test_1_Create() throws Exception {
-
     Space sp1 = ImejiFactory.newSpace();
     sp1.setTitle("Space 1");
     sp1.setDescription("Space 1 Description");
@@ -132,7 +118,8 @@ public class SpaceControllerTestClass extends ControllerTest {
     space.setSpaceCollections(sc.retrieveCollections(space));
     assertThat(
         cc.retrieve(URI.create(Iterables.getFirst(space.getSpaceCollections(), null)), adminUser)
-            .getSpace(), equalTo(spaceId));
+            .getSpace(),
+        equalTo(spaceId));
   }
 
 
@@ -163,15 +150,14 @@ public class SpaceControllerTestClass extends ControllerTest {
     assertTrue(FileUtils.contentEquals(uploadFile,
         new File(sc.transformUrlToPath(space.getLogoUrl().toURL().toString()))));
   }
-
-  @Test
-  public void test_8_Delete() throws Exception {
-    for (Space s : sc.retrieveAll()) {
-      sc.delete(s, adminUser);
-    }
-    assertThat(sc.retrieveAll(), empty());
-  }
-
+  //
+  // @Test
+  // public void test_8_Delete() throws Exception {
+  // for (Space s : sc.retrieveAll()) {
+  // sc.delete(s, adminUser);
+  // }
+  // assertThat(sc.retrieveAll(), empty());
+  // }
 
 
   @Test
@@ -190,30 +176,4 @@ public class SpaceControllerTestClass extends ControllerTest {
     assertThat(cc.retrieveCollectionsNotInSpace(adminUser), hasSize(collectionsOutOfSpace));
   }
 
-  /*
-   * @Ignore
-   * 
-   * @Test public void test_999_Performance() throws Exception {
-   * 
-   * 
-   * //create space Space sp1 = ImejiFactory.newSpace(); sp1.setTitle("Space 1");
-   * sp1.setSlug("space_1"); space = sc.create(sp1, adminUser); spaceId = space.getId();
-   * assertThat(sp1.getTitle(), equalTo(space.getTitle()));
-   * 
-   * List<String> results = ImejiSPARQL.exec(SPARQLQueries.countTriplesAll(), null);
-   * 
-   * //create COL_NUM collections String[] colIds = new String[COL_NUM]; collectionTO=
-   * (CollectionTO) RestProcessUtils.buildTOFromJSON( getStringFromPath(STATIC_CONTEXT_REST +
-   * "/createCollection.json"), CollectionTO.class); CollectionService cs = new CollectionService();
-   * long startTime = System.currentTimeMillis(); for (int i = 0; i < COL_NUM; i++) {
-   * collectionTO.setTitle("Collection " + i); colIds[i] = cs.create(collectionTO,
-   * JenaUtil.testUser).getId(); } LOGGER.info("creation time: " + (System.currentTimeMillis() -
-   * startTime ) + "ms");
-   * 
-   * startTime = System.currentTimeMillis(); //add collections to space for (int i = 0; i < COL_NUM;
-   * i++) { sc.addCollection(space, colIds[i], adminUser); } LOGGER.info("addition time:" +
-   * (System.currentTimeMillis() - startTime ) + "ms");
-   * 
-   * }
-   */
 }

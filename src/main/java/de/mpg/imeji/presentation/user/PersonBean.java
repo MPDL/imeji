@@ -36,9 +36,6 @@ import de.mpg.imeji.presentation.util.ImejiFactory;
 @ManagedBean(name = "PersonBean")
 @ViewScoped
 public class PersonBean implements Serializable {
-  /**
-	 * 
-	 */
   private static final long serialVersionUID = 2066560191381597873L;
 
   private SessionBean sb;
@@ -141,16 +138,13 @@ public class PersonBean implements Serializable {
       p.setFamilyName((String) ((JSONObject) json).get("http_xmlns_com_foaf_0_1_family_name"));
       p.setGivenName((String) ((JSONObject) json).get("http_xmlns_com_foaf_0_1_givenname"));
       p.setIdentifier((String) ((JSONObject) json).get("id"));
-      p.setAlternativeName(writeJsonArrayToOneString(
-          ((JSONObject) json).get("http_purl_org_dc_terms_alternative"),
-          "http_purl_org_dc_terms_alternative"));
-      p.setOrganizations(parseConeOrgnanizationJson(((JSONObject) json).get(
-          "http_purl_org_escidoc_metadata_terms_0_1_position").toString()));
+      p.setAlternativeName(
+          writeJsonArrayToOneString(((JSONObject) json).get("http_purl_org_dc_terms_alternative"),
+              "http_purl_org_dc_terms_alternative"));
+      p.setOrganizations(parseConeOrgnanizationJson(
+          ((JSONObject) json).get("http_purl_org_escidoc_metadata_terms_0_1_position").toString()));
       return p;
     }
-    // else {
-    // System.out.println(json);
-    // }
     return null;
   }
 
@@ -169,8 +163,8 @@ public class PersonBean implements Serializable {
       }
     } else if (json instanceof JSONObject) {
       Organization o = ImejiFactory.newOrganization();
-      o.setName((String) ((JSONObject) json)
-          .get("http_purl_org_eprint_terms_affiliatedInstitution"));
+      o.setName(
+          (String) ((JSONObject) json).get("http_purl_org_eprint_terms_affiliatedInstitution"));
       o.setIdentifier((String) ((JSONObject) json).get("http_purl_org_dc_elements_1_1_identifier"));
       l.add(o);
     }
@@ -220,9 +214,8 @@ public class PersonBean implements Serializable {
   private Person getPersonFromParentBean() {
     FacesContext facesContext = FacesContext.getCurrentInstance();
     ELContext elContext = facesContext.getELContext();
-    ValueExpression valueExpression =
-        facesContext.getApplication().getExpressionFactory()
-            .createValueExpression(elContext, "#{cc.attrs.person}", Person.class);
+    ValueExpression valueExpression = facesContext.getApplication().getExpressionFactory()
+        .createValueExpression(elContext, "#{cc.attrs.person}", Person.class);
 
     return (Person) valueExpression.getValue(elContext);
   }

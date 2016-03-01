@@ -31,7 +31,7 @@ import de.mpg.j2j.annotations.j2jResource;
  */
 public class ObjectHelper {
 
-  private static final Logger logger = Logger.getLogger(ObjectHelper.class);
+  private static final Logger LOGGER = Logger.getLogger(ObjectHelper.class);
 
   /**
    * Private constructor
@@ -134,7 +134,7 @@ public class ObjectHelper {
           }
         }
       } catch (Exception e) {
-        logger.error("CopyFields issue", e);
+        LOGGER.error("CopyFields issue", e);
       }
     }
   }
@@ -158,7 +158,7 @@ public class ObjectHelper {
           }
         }
       } catch (Exception e) {
-        logger.error("copyAllFields issue", e);
+        LOGGER.error("copyAllFields issue", e);
       }
     }
   }
@@ -201,9 +201,9 @@ public class ObjectHelper {
         }
       }
     } catch (InvocationTargetException e) {
-      logger.error("Invocation Target in transfer Fields", e);
+      LOGGER.error("Invocation Target in transfer Fields", e);
     } catch (IllegalAccessException e) {
-      logger.error("Illegal Access in transfer fields", e);
+      LOGGER.error("Illegal Access in transfer fields", e);
     }
 
   }

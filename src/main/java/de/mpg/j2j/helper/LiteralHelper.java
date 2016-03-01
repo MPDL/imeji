@@ -18,7 +18,7 @@ import com.hp.hpl.jena.rdf.model.Model;
  */
 public class LiteralHelper {
   private Model model;
-  private static Logger logger = Logger.getLogger(LiteralHelper.class);
+  private static Logger LOGGER = Logger.getLogger(LiteralHelper.class);
 
   /**
    * Cosntructor for one model
@@ -39,7 +39,7 @@ public class LiteralHelper {
     if (o instanceof XSDDateTime) {
       return ((XSDDateTime) o).asCalendar();
     } else if (o instanceof BaseDatatype.TypedValue) {
-      logger.error(" BaseDatatype.TypedValue found, check what's happening: " + o);
+      LOGGER.error(" BaseDatatype.TypedValue found, check what's happening: " + o);
       return o;
     }
     return o;
@@ -60,7 +60,7 @@ public class LiteralHelper {
           || o instanceof Double) {
         l = model.createTypedLiteral(o);
       } else {
-        logger.error("Unknown literal type " + o.toString()
+        LOGGER.error("Unknown literal type " + o.toString()
             + ", parsing it to String... Might be problematic");
         model.createLiteral(o.toString());
       }

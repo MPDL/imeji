@@ -54,7 +54,7 @@ import org.apache.sanselan.formats.jpeg.segments.UnknownSegment;
 import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**
- * Utiliy class to read Jpeg images. This allow to read CMYK images
+ * Utility class to read Jpeg images. This allow to read CMYK images
  * 
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
@@ -77,7 +77,7 @@ public class JpegUtils {
    * @throws ImageReadException
    */
   public static BufferedImage readJpeg(byte[] bytes) throws IOException, ImageReadException {
-    File f = TempFileUtil.createTempFile("uploadReadJpeg", ".jpg");
+    File f = TempFileUtil.createTempFile("JpegUtils_readjpg", ".jpg");
     try {
       StorageUtils.writeInOut(new ByteArrayInputStream(bytes), new FileOutputStream(f), true);
       BufferedImage bi = readJpeg(f);
@@ -147,8 +147,9 @@ public class JpegUtils {
           && data[4] == 'e') {
         hasAdobeMarker = true;
         int transform = app14Segment.bytes[11] & 0xff;
-        if (transform == 2)
+        if (transform == 2) {
           colorType = COLOR_TYPE_YCCK;
+        }
       }
     }
   }
@@ -170,18 +171,21 @@ public class JpegUtils {
         int c = (int) (y + 1.402 * cr - 178.956);
         int m = (int) (y - 0.34414 * cb - 0.71414 * cr + 135.95984);
         y = (int) (y + 1.772 * cb - 226.316);
-        if (c < 0)
+        if (c < 0) {
           c = 0;
-        else if (c > 255)
+        } else if (c > 255) {
           c = 255;
-        if (m < 0)
+        }
+        if (m < 0) {
           m = 0;
-        else if (m > 255)
+        } else if (m > 255) {
           m = 255;
-        if (y < 0)
+        }
+        if (y < 0) {
           y = 0;
-        else if (y > 255)
+        } else if (y > 255) {
           y = 255;
+        }
         pixelRow[x] = 255 - c;
         pixelRow[x + 1] = 255 - m;
         pixelRow[x + 2] = 255 - y;
@@ -200,8 +204,9 @@ public class JpegUtils {
     int[] pixelRow = new int[stride];
     for (int h = 0; h < height; h++) {
       raster.getPixels(0, h, width, 1, pixelRow);
-      for (int x = 0; x < stride; x++)
+      for (int x = 0; x < stride; x++) {
         pixelRow[x] = 255 - pixelRow[x];
+      }
       raster.setPixels(0, h, width, 1, pixelRow);
     }
   }
@@ -214,15 +219,14 @@ public class JpegUtils {
    */
   private static BufferedImage convertCmykToRgb(Raster cmykRaster, ICC_Profile cmykProfile)
       throws IOException {
-    if (cmykProfile == null)
+    if (cmykProfile == null) {
       cmykProfile =
           ICC_Profile.getInstance(JpegUtils.class.getResourceAsStream("/ISOcoated_v2_300_eci.icc"));
+    }
     if (cmykProfile.getProfileClass() != ICC_Profile.CLASS_DISPLAY) {
       byte[] profileData = cmykProfile.getData();
       if (profileData[ICC_Profile.icHdrRenderingIntent] == ICC_Profile.icPerceptual) {
-        intToBigEndian(ICC_Profile.icSigDisplayClass, profileData, ICC_Profile.icHdrDeviceClass); // Header
-                                                                                                  // is
-                                                                                                  // first
+        intToBigEndian(ICC_Profile.icSigDisplayClass, profileData, ICC_Profile.icHdrDeviceClass);
         cmykProfile = ICC_Profile.getInstance(profileData);
       }
     }

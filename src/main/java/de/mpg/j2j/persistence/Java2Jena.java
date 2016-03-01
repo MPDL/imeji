@@ -31,7 +31,7 @@ import de.mpg.j2j.misc.LocalizedString;
 public class Java2Jena {
   private Model model;
   private LiteralHelper literalHelper;
-  private static Logger logger = Logger.getLogger(Java2Jena.class);
+  private static Logger LOGGER = Logger.getLogger(Java2Jena.class);
   private boolean lazy = false;
 
   /**
@@ -278,7 +278,7 @@ public class Java2Jena {
       model.add(s, p, o);
       addProperties2Resource(o, resourceObject);
     } else {
-      logger.warn("Can not create resource " + resourceObject + " because of id null");
+      LOGGER.warn("Can not create resource " + resourceObject + " because of id null");
     }
   }
 

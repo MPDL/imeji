@@ -15,208 +15,204 @@
     </composite:interface>
 
     <composite:implementation>
-        <h:panelGroup layout="block" class="imj_mediaContainerEditMD">
-            <h:form id="mediaContainerForm">
-                <div class="imj_headline">
-                    <br/>
-                </div>
-                <div class="imj_descriptionArea">
-                    <c:if test="#{cc.attrs.formularBean.albumType or cc.attrs.formularBean.collectionType and !cc.attrs.formularBean.profileSelectMode}"> 
-                        <!-- Title -->
-                        <div class="imj_metadataSet">
-                            <label class="imj_metadataLabel"> <h:outputText
-                                    value="#{lbl.title} *" /> <span class="imj_noDisplay">: </span>
-                            </label>
-                            <h:inputText id="inputTitleText" styleClass="imj_metadataValue"
-                                         value="#{cc.attrs.formularContextBean.metadata.title}" />
-                        </div>
+        <h:form id="mediaContainerForm">
+            <div class="imj_headline">
+                <br/>
+            </div>
+            <div class="imj_descriptionArea">
+                <c:if test="#{cc.attrs.formularBean.albumType or cc.attrs.formularBean.collectionType and !cc.attrs.formularBean.profileSelectMode}"> 
+                    <!-- Title -->
+                    <div class="imj_metadataSet">
+                        <label class="imj_metadataLabel"> <h:outputText
+                                value="#{lbl.title} *" /> <span class="imj_noDisplay">: </span>
+                        </label>
+                        <h:inputText id="inputTitleText" styleClass="imj_metadataValue"
+                                     value="#{cc.attrs.formularContextBean.metadata.title}" />
+                    </div>
 
 
-                        <!-- Description -->
-                        <div class="imj_metadataSet">
-                            <label class="imj_metadataLabel">
-                                <h:outputText value="#{lbl.description}" /> <span class="imj_noDisplay">:
-                                </span>
-                            </label>
-                            <h:inputTextarea id="inputDescription"
-                                             styleClass="imj_metadataValue"
-                                             value="#{cc.attrs.formularContextBean.metadata.description}" />
-                        </div>
+                    <!-- Description -->
+                    <div class="imj_metadataSet">
+                        <label class="imj_metadataLabel">
+                            <h:outputText value="#{lbl.description}" /> <span class="imj_noDisplay">:
+                            </span>
+                        </label>
+                        <h:inputTextarea id="inputDescription"
+                                         styleClass="imj_metadataValue"
+                                         value="#{cc.attrs.formularContextBean.metadata.description}" />
+                    </div>
 
-                        <h:outputText value="* #{lbl.mandatory}" />
+                    <h:outputText value="* #{lbl.mandatory}" />
 
-						<h:panelGroup id="authors">
-                        <!-- Author data -->
-                        <ui:repeat id="persons" var="creator" value="#{cc.attrs.formularContextBean.metadata.persons}" varStatus="indexA">
-                            <h:panelGroup layout="block" styleClass="imj_authorMetadataSet">
-                                <div class="imj_sectionHeadline">
-                                    <h4> <!-- TODO NB: sectionHeadlines please not additionally style with h4, this should be in the class definition -->
-                                        <!-- Add/Remove Author buttons -->
-                                        <span class="imj_inlineButtonGroup"> 
-                                            <h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAuthor(indexA.index)}">
-                                                <f:ajax execute="@this" render="editContainer:mediaContainerForm:authors" />
-                                            </h:commandLink>
-                                            <h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_author}" action="#{cc.attrs.formularBean.removeAuthor(indexA.index)}">
-                                                <f:ajax execute="@this" render="editContainer:mediaContainerForm:authors" />
-                                            </h:commandLink>
-                                        </span>
-                                        <h:outputText value=" #{lbl.authors}" />
-                                        <span class="imj_noDisplay">: </span>
-                                    </h4>
-                                </div>
+					<h:panelGroup id="authors">
+	                    <!-- Author data -->
+	                    <ui:repeat id="persons" var="creator" value="#{cc.attrs.formularContextBean.metadata.persons}" varStatus="indexA">
+	                        <div class="imj_authorMetadataSet">
+	                            <div class="imj_sectionHeadline">
+	                                <h4> <!-- TODO NB: sectionHeadlines please not additionally style with h4, this should be in the class definition -->
+	                                    <!-- Add/Remove Author buttons -->
+	                                    <span class="imj_inlineButtonGroup">
+	                                        <h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAuthor(indexA.index)}">
+	                                            <f:ajax execute="@this" render="editContainer:mediaContainerForm:authors" />
+	                                        </h:commandLink>
+	                                        <h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_author}" action="#{cc.attrs.formularBean.removeAuthor(indexA.index)}">
+	                                            <f:ajax execute="@this" render="editContainer:mediaContainerForm:authors" />
+	                                        </h:commandLink>
+	                                    </span>
+	                                    <h:outputText value=" #{lbl.authors}" />
+	                                    <span class="imj_noDisplay">: </span>
+	                                </h4>
+	                            </div>
+	
+	                            <!-- The user of the person -->
+	                            <imjc:person id="collectionAuthor" person="#{creator}" bean="#{cc.attrs.formularBean}" position="#{indexA.index}" />
+	
+	                        </div>
+	                    </ui:repeat>
+              		</h:panelGroup>
 
-                                <!-- The user of the person -->
-                                <imjc:person id="collectionAuthor" person="#{creator}" bean="#{cc.attrs.formularBean}" position="#{indexA.index}" />
 
-                            </h:panelGroup>
-                        </ui:repeat>
-                        </h:panelGroup>
-
-
-                        <!-- Notifications -->
-                        <ui:fragment rendered="#{cc.attrs.formularBean.collectionType}">                
-                            <h:panelGroup layout="block" styleClass="imj_collectionNotifications">
-                                <div class="imj_sectionHeadline">
-                                    <h4>
-                                        <h:outputText value=" #{lbl.notifications}" />
-                                        <span class="imj_noDisplay">: </span>
-                                    </h4>
-                                </div>
-                                <h:selectBooleanCheckbox  id="notificationCheckBox" value="#{cc.attrs.formularBean.sendEmailNotification}" />
-                                <h:outputLabel styleClass="imj_metadataLabel" for="notificationCheckBox">
-                                    <h:outputText value="#{lbl.send_email_on_download}"/>
+                    <!-- Notifications -->
+                    <ui:fragment rendered="#{cc.attrs.formularBean.collectionType}">                
+                        <div class="imj_collectionNotifications">
+                            <div class="imj_sectionHeadline">
+                                <h4>
+                                    <h:outputText value=" #{lbl.notifications}" />
                                     <span class="imj_noDisplay">: </span>
-                                </h:outputLabel>
-                            </h:panelGroup>
-                        </ui:fragment>
-                        <!-- Logo upload -->
+                                </h4>
+                            </div>
+                            <h:selectBooleanCheckbox  id="notificationCheckBox" value="#{cc.attrs.formularBean.sendEmailNotification}" />
+                            <h:outputLabel styleClass="imj_metadataLabel" for="notificationCheckBox">
+                                <h:outputText value="#{lbl.send_email_on_download}"/>
+                                <span class="imj_noDisplay">: </span>
+                            </h:outputLabel>
+                        </div>
+                    </ui:fragment>
+                    <!-- Logo upload -->
 
-                        <ui:fragment rendered="#{cc.attrs.formularBean.id != null}">
-                            <h:panelGroup layout="block" styleClass="imj_collectionLogoUpload">
-                                <div class="imj_sectionHeadline">
-                                    <h4>
-                                        <h:outputText value=" #{lbl.logo}" />
-                                        <span class="imj_noDisplay">: </span>
-                                    </h4>
-                                </div>
-                                <div class="imj_metadataSet">
-                                    <div class="imj_metadataValue">
-                                        <div id="uploader" class="imj_fileUploadContainer imj_singleUpload">
-                                            <div id="filelist">Your browser doesn't have Flash, Silverlight or HTML5 support.</div>
-                                            <div class="imj_messageError" id="console"></div>
-                                            <div id="container">
-                                                <a id="pickfiles" href="javascript:;">[#{lbl.uploadLogo}]</a>
-                                            </div>
-
-                                            <script type="text/javascript" src="#{Navigation.applicationUrl}resources/plupload/2.1.2/js/plupload.full.min.js"></script>
-                                            <script type="text/javascript">
-                                                var uploader = new plupload.Uploader({
-                                                    runtimes: 'html5,flash,silverlight,html4',
-                                                    browse_button: 'pickfiles', // you can pass in id...
-                                                    container: document.getElementById('container'), // ... or DOM Element itself
-                                                    url: location.pathname + "?start=1",
-                                                    max_file_size: '#{Configuration.uploadMaxFileSize}kb',
-                                                    multi_selection: false,
-                                                    init: {
-                                                        PostInit: function () {
-                                                            document.getElementById('filelist').innerHTML = '';
-                                                        },
-                                                        FilesAdded: function (up, files) {
-                                                            plupload.each(files, function (file) {
-                                                                if (up.files.length > 1)
-                                                                {
-                                                                    up.removeFile(file);
-                                                                }
-
-                                                                document.getElementById('filelist').innerHTML = '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
-                                                            });
-                                                            document.getElementById('console').innerHTML = "";
-                                                            uploader.bind('Error', function (up, err) {
-                                                                document.getElementById('console').innerHTML = "\nError " + err.code + ": " + err.message;
-
-                                                            });
-                                                            uploader.bind('FileUploaded', function (up, file, response) {
-
-                                                                response = jQuery.parseJSON(response.response);
-
-                                                                if (response.error.code) {
-                                                                    uploader.trigger('Error', {
-                                                                        code: response.error.code,
-                                                                        message: response.error.message,
-                                                                        details: response.details,
-                                                                        file: file
-                                                                    });
-                                                                }
-
-                                                            });
-                                                            uploader.start();
-
-                                                        },
-                                                        UploadProgress: function (up, file) {
-                                                            document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
-                                                        },
-                                                        StateChanged: function (up) {
-                                                            // Called when the state of the queue is changed
-                                                            if (up.state == plupload.STOPPED)
-                                                                report();
-                                                        },
-                                                    }
-                                                });
-
-                                                uploader.init();
-
-
-                                                function report() {
-                                                    //window.location.href = location.pathname ;
-
-                                                    //reset uploader 
-                                                    uploader.splice();
-                                                }
-                                            </script>
+                    <ui:fragment rendered="#{cc.attrs.formularBean.id != null}">
+                        <div class="imj_collectionLogoUpload">
+                            <div class="imj_sectionHeadline">
+                                <h4>
+                                    <h:outputText value=" #{lbl.logo}" />
+                                    <span class="imj_noDisplay">: </span>
+                                </h4>
+                            </div>
+                            <div class="imj_metadataSet">
+                                <div class="imj_metadataValue">
+                                    <div id="uploader" class="imj_fileUploadContainer imj_singleUpload">
+                                        <div id="filelist">Your browser doesn't have Flash, Silverlight or HTML5 support.</div>
+                                        <div class="imj_messageError" id="console"></div>
+                                        <div id="container">
+                                            <a id="pickfiles" href="javascript:;">[#{lbl.uploadLogo}]</a>
                                         </div>
+
+                                        <script type="text/javascript" src="#{Navigation.applicationUrl}resources/plupload/2.1.2/js/plupload.full.min.js"></script>
+                                        <script type="text/javascript">
+                                            var uploader = new plupload.Uploader({
+                                                runtimes: 'html5,flash,silverlight,html4',
+                                                browse_button: 'pickfiles', // you can pass in id...
+                                                container: document.getElementById('container'), // ... or DOM Element itself
+                                                url: location.pathname + "?start=1",
+                                                max_file_size: '#{Configuration.uploadMaxFileSize}kb',
+                                                multi_selection: false,
+                                                init: {
+                                                    PostInit: function () {
+                                                        document.getElementById('filelist').innerHTML = '';
+                                                    },
+                                                    FilesAdded: function (up, files) {
+                                                        plupload.each(files, function (file) {
+                                                            if (up.files.length > 1)
+                                                            {
+                                                                up.removeFile(file);
+                                                            }
+
+                                                            document.getElementById('filelist').innerHTML = '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                                                        });
+                                                        document.getElementById('console').innerHTML = "";
+                                                        uploader.bind('Error', function (up, err) {
+                                                            document.getElementById('console').innerHTML = "\nError " + err.code + ": " + err.message;
+
+                                                        });
+                                                        uploader.bind('FileUploaded', function (up, file, response) {
+
+                                                            response = jQuery.parseJSON(response.response);
+
+                                                            if (response.error.code) {
+                                                                uploader.trigger('Error', {
+                                                                    code: response.error.code,
+                                                                    message: response.error.message,
+                                                                    details: response.details,
+                                                                    file: file
+                                                                });
+                                                            }
+
+                                                        });
+                                                        uploader.start();
+
+                                                    },
+                                                    UploadProgress: function (up, file) {
+                                                        document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+                                                    },
+                                                    StateChanged: function (up) {
+                                                        // Called when the state of the queue is changed
+                                                        if (up.state == plupload.STOPPED)
+                                                            report();
+                                                    },
+                                                }
+                                            });
+
+                                            uploader.init();
+
+
+                                            function report() {
+                                                //window.location.href = location.pathname ;
+
+                                                //reset uploader 
+                                                uploader.splice();
+                                            }
+                                        </script>
                                     </div>
                                 </div>
-                                <ui:fragment rendered= "#{cc.attrs.formularBean.container.logoUrl!=null}">
-                                    <div class="imj_metadataValue">
-                                        <img alt="Logo" src="#{cc.attrs.formularBean.container.logoUrl}" height="50em" class="imj_community_logo"/>
-                                        <span class="imj_inlineButtonGroup"> 
-                                            <h:outputText value="#{lbl.removeLogo}"/>
-                                            <h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.removeLogo}" action="#{cc.attrs.formularBean.removeContainerLogo}">
-                                                <f:ajax execute="@form" render="@form" />
-                                            </h:commandLink>
-                                        </span>
-                                    </div>
-                                </ui:fragment>
-
-
-                            </h:panelGroup>
-                        </ui:fragment>
-                        <br/>
-                    </c:if> 
-                    <!-- END profileSelectMode, basicInfoAria -->
-                    <!-- Select Profile-->
-                    <c:if test="#{cc.attrs.showProfileSelector}">
-                        <h:selectOneRadio value="#{cc.attrs.formularBean.createProfile}">
-                            <f:ajax execute="@this" render="editContainer:mediaContainerForm:profileSelectorArea" />
-                            <f:selectItem itemLabel="#{lbl.skip_create_profile}" itemValue="false" />
-                            <f:selectItem itemLabel="#{lbl.profile_select_existing_profile}" itemValue="true" />
-                        </h:selectOneRadio>
-                        <h:panelGroup id="profileSelectorArea" layout="block">
-                            <ui:fragment rendered="#{cc.attrs.formularBean.createProfile}">
-                                <mdprofile:profileSelector profileSelector="#{cc.attrs.formularBean.profileSelector}"/>
+                            </div>
+                            <ui:fragment rendered= "#{cc.attrs.formularBean.container.logoUrl!=null}">
+                                <div class="imj_metadataValue">
+                                    <img alt="Logo" src="#{cc.attrs.formularBean.container.logoUrl}" height="50em" class="imj_community_logo"/>
+                                    <span class="imj_inlineButtonGroup"> 
+                                        <h:outputText value="#{lbl.removeLogo}"/>
+                                        <h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.removeLogo}" action="#{cc.attrs.formularBean.removeContainerLogo}">
+                                            <f:ajax execute="@form" render="@form" />
+                                        </h:commandLink>
+                                    </span>
+                                </div>
                             </ui:fragment>
-                        </h:panelGroup>
-                    </c:if>
-
-                    <h:panelGroup layout="block" id="submitButtonPanel" class="imj_submitPanel">
-                        <h:outputLink value="#{HistorySession.previousPage.completeUrlWithHistory}" styleClass="imj_cancelButton">
-                            <h:outputText value="#{lbl.cancel}"/>
-                        </h:outputLink>
-                        <h:commandButton action="#{cc.attrs.formularBean.saveAndEditProfile()}" value="#{lbl.save_and_edit_profile}" styleClass="imj_submitButton" onclick="openDialog('dialogWait');" rendered="#{cc.attrs.formularBean.collectionType and cc.attrs.showProfileSelector and cc.attrs.formularBean.createProfile and cc.attrs.formularBean.profileSelector.copyProfile}"/>
-                        <h:commandButton action="#{cc.attrs.formularBean.save()}" value="#{lbl.save}" styleClass="imj_submitButton" onclick="openDialog('dialogWait');"/>
+                        </div>
+                    </ui:fragment>
+                    <br/>
+                </c:if> 
+                <!-- END profileSelectMode, basicInfoAria -->
+                <!-- Select Profile-->
+                <c:if test="#{cc.attrs.showProfileSelector}">
+                    <h:selectOneRadio value="#{cc.attrs.formularBean.createProfile}">
+                        <f:ajax execute="@this" render="editContainer:mediaContainerForm:profileSelectorArea" />
+                        <f:selectItem itemLabel="#{lbl.skip_create_profile}" itemValue="false" />
+                        <f:selectItem itemLabel="#{lbl.profile_select_existing_profile}" itemValue="true" />
+                    </h:selectOneRadio>
+                    <h:panelGroup id="profileSelectorArea" layout="block">
+                        <ui:fragment rendered="#{cc.attrs.formularBean.createProfile}">
+                            <mdprofile:profileSelector profileSelector="#{cc.attrs.formularBean.profileSelector}"/>
+                        </ui:fragment>
                     </h:panelGroup>
+                </c:if>
+
+                <div id="submitButtonPanel" class="imj_submitPanel">
+                    <h:outputLink value="#{HistorySession.previousPage.completeUrlWithHistory}" styleClass="imj_cancelButton">
+                        <h:outputText value="#{lbl.cancel}"/>
+                    </h:outputLink>
+                    <h:commandButton action="#{cc.attrs.formularBean.saveAndEditProfile()}" value="#{lbl.save_and_edit_profile}" styleClass="imj_submitButton" onclick="openDialog('dialogWait');" rendered="#{cc.attrs.formularBean.collectionType and cc.attrs.showProfileSelector and cc.attrs.formularBean.createProfile and cc.attrs.formularBean.profileSelector.copyProfile}"/>
+                    <h:commandButton action="#{cc.attrs.formularBean.save()}" value="#{lbl.save}" styleClass="imj_submitButton" onclick="openDialog('dialogWait');"/>
                 </div>
-            </h:form>
-        </h:panelGroup>
+            </div>
+        </h:form>
     </composite:implementation>
 </html>

@@ -6,7 +6,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 public class MyApplication extends ResourceConfig {
-  Logger logger = Logger.getLogger(MyApplication.class);
+  Logger LOGGER = Logger.getLogger(MyApplication.class);
 
   public static final int CURRENT_VERSION = 1;
 
@@ -14,7 +14,7 @@ public class MyApplication extends ResourceConfig {
     packages("de.mpg.imeji.rest.resources");
     // Uncomment loggingFilter registration below to start logging your
     // service requests
-    if (logger.isDebugEnabled()) {
+    if (LOGGER.isDebugEnabled()) {
       register(LoggingFilter.class);
     }
     register(MultiPartFeature.class);

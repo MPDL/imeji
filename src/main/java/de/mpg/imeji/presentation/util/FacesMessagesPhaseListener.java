@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  * @version $Revision: 1891 $ $LastChangedDate: 2008-12-23 11:13:59 +0100 (Di, 23 Dez 2008) $
  */
 public class FacesMessagesPhaseListener implements PhaseListener {
-  private static Logger logger = Logger.getLogger(FacesMessagesPhaseListener.class);
+  private static final Logger LOGGER = Logger.getLogger(FacesMessagesPhaseListener.class);
   private static final String sessionToken = "REDIRECT_MESSAGES_SUPPORT";
 
   // private Map<String, Collection<FacesMessage>> messageCache = Collections.synchronizedMap(new
@@ -39,7 +39,7 @@ public class FacesMessagesPhaseListener implements PhaseListener {
    */
   @Override
   public synchronized void afterPhase(PhaseEvent event) {
-    logger.trace(event.getPhaseId().toString() + " - After Phase");
+    LOGGER.trace(event.getPhaseId().toString() + " - After Phase");
     if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
       cacheMessages(event.getFacesContext());
     } else if (event.getPhaseId() == PhaseId.RENDER_RESPONSE) {
@@ -52,7 +52,7 @@ public class FacesMessagesPhaseListener implements PhaseListener {
    */
   @Override
   public synchronized void beforePhase(PhaseEvent event) {
-    logger.trace(event.getPhaseId().toString() + " - Before Phase");
+    LOGGER.trace(event.getPhaseId().toString() + " - Before Phase");
     if (event.getPhaseId() == PhaseId.RESTORE_VIEW) {
       restoreMessages(event.getFacesContext());
     }
@@ -65,7 +65,7 @@ public class FacesMessagesPhaseListener implements PhaseListener {
    */
   private void removeFromCache(FacesContext context) {
     getMessageCache(context).clear();
-    logger.trace("Message Cache cleared");
+    LOGGER.trace("Message Cache cleared");
   }
 
   /**
@@ -93,7 +93,7 @@ public class FacesMessagesPhaseListener implements PhaseListener {
         }
       }
     }
-    logger.trace("Saved " + cachedCount + " messages in cache");
+    LOGGER.trace("Saved " + cachedCount + " messages in cache");
     return cachedCount;
   }
 
@@ -109,7 +109,7 @@ public class FacesMessagesPhaseListener implements PhaseListener {
           context.addMessage(clientId, message);
         }
       }
-      logger.trace("Restored Messages from Cache");
+      LOGGER.trace("Restored Messages from Cache");
     }
   }
 

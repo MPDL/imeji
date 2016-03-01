@@ -1,0 +1,158 @@
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+
+####
+## Migration of subjects and objects of triples for models: USER, ALBUM, COLLECTION
+####
+##USER MODEL
+#insert all objects with old.uri.com
+WITH<http://imeji.org/user>
+INSERT
+{
+?s ?p ?onew
+}
+USING <http://imeji.org/user>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?o), "old.uri.com", "i")).
+LET(?onew:=uri(REPLACE(str(?o), "old.uri.com", "new.uri.com", "i")))
+};
+
+#delete all objects with old.uri.com
+WITH<http://imeji.org/user>
+DELETE {?s ?p ?o}
+USING <http://imeji.org/user>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?o), "old.uri.com", "i"))
+};
+
+#insert all subjects with old.uri.com
+WITH<http://imeji.org/user>
+INSERT
+{
+?snew ?p ?o
+}
+USING<http://imeji.org/user>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?s), "old.uri.com", "i")).
+LET(?snew:=uri(REPLACE(str(?s), "old.uri.com", "new.uri.com", "i")))
+};
+
+#delete all subjects with old.uri.com
+WITH<http://imeji.org/user>
+DELETE {?s ?p ?o}
+USING<http://imeji.org/user>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?s), "old.uri.com", "i"))
+};
+
+
+
+##ALBUM MODEL
+#insert all objects with old.uri.com
+WITH<http://imeji.org/album>
+INSERT
+{
+?s ?p ?onew
+}
+USING<http://imeji.org/album>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?o), "old.uri.com", "i")).
+LET(?onew:=uri(REPLACE(str(?o), "old.uri.com", "new.uri.com", "i")))
+};
+
+#delete all objects with old.uri.com
+WITH<http://imeji.org/album>
+DELETE {?s ?p ?o}
+USING<http://imeji.org/album>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?o), "old.uri.com", "i")).
+};
+
+#insert all subjects with old.uri.com
+WITH<http://imeji.org/album>
+INSERT
+{
+?snew ?p ?o
+}
+USING<http://imeji.org/album>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?s), "old.uri.com", "i")).
+LET(?snew:=uri(REPLACE(str(?s), "old.uri.com", "new.uri.com", "i")))
+};
+
+#delete all subjects with old.uri.com
+WITH<http://imeji.org/album>
+DELETE {?s ?p ?o}
+USING<http://imeji.org/album>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?s), "old.uri.com", "i")).
+};
+
+
+
+##COLLECTION MODEL
+#insert all objects with old.uri.com
+WITH<http://imeji.org/collection>
+INSERT
+{
+?s ?p ?onew
+}
+USING <http://imeji.org/collection>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?o), "old.uri.com", "i")).
+LET(?onew:=uri(REPLACE(str(?o), "old.uri.com", "new.uri.com", "i")))
+};
+
+#delete all objects with old.uri.com
+WITH<http://imeji.org/collection>
+DELETE {?s ?p ?o}
+USING <http://imeji.org/collection>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?o), "old.uri.com", "i")).
+};
+
+
+#insert all subjects with old.uri.com
+WITH<http://imeji.org/collection>
+INSERT
+{
+?snew ?p ?o
+}
+USING <http://imeji.org/collection>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?s), "old.uri.com", "i")).
+LET(?snew:=uri(REPLACE(str(?s), "old.uri.com", "new.uri.com", "i")))
+};
+
+#delete all subjects with old.uri.com
+WITH<http://imeji.org/collection>
+DELETE {?s ?p ?o}
+USING <http://imeji.org/collection>
+WHERE
+{
+?s ?p ?o.
+FILTER(REGEX(str(?s), "old.uri.com", "i")).
+};
+

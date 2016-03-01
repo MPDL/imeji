@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -16,14 +15,16 @@ import org.apache.log4j.Logger;
 import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiSPARQL;
-import de.mpg.imeji.logic.auth.authentication.APIKeyAuthentication;
+import de.mpg.imeji.logic.auth.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.controller.ShareController;
 import de.mpg.imeji.logic.controller.ShareController.ShareRoles;
 import de.mpg.imeji.logic.controller.UserController;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.User;
@@ -35,7 +36,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.ImejiFactory;
 import de.mpg.imeji.presentation.util.ObjectLoader;
 
-public class UserBean {
+public class UserBean extends QuotaSuperBean {
   private User user;
   private String newPassword = null;
   private String repeatedPassword = null;
@@ -44,14 +45,17 @@ public class UserBean {
   private List<SharedHistory> roles = new ArrayList<SharedHistory>();
   private boolean edit = false;
 
-  public UserBean() {}
+  public UserBean() {
+    super();
+  }
 
   public UserBean(String email) {
+    super();
     init(email);
   }
 
   /**
-   * Method called from the htmal page
+   * Method called from the html page
    * 
    * @return
    */
@@ -144,8 +148,9 @@ public class UserBean {
    */
   public void removeOrganization(int index) {
     List<Organization> orgas = (List<Organization>) this.user.getPerson().getOrganizations();
-    if (orgas.size() > 1)
+    if (!orgas.isEmpty()) {
       orgas.remove(index);
+    }
   }
 
   /**
@@ -194,14 +199,14 @@ public class UserBean {
   public void updateUser() throws ImejiException {
     if (user != null) {
       UserController controller = new UserController(session.getUser());
+      user.setQuota(QuotaUtil.getQuotaInBytes(getQuota()));
       try {
         controller.update(user, session.getUser());
         reloadPage();
-      } catch (Exception e) {
+      } catch (UnprocessableError e) {
         BeanHelper.cleanMessages();
         BeanHelper.error(session.getMessage("error_during_user_update"));
-        List<String> listOfErrors = Arrays.asList(e.getMessage().split(";"));
-        for (String errorM : listOfErrors) {
+        for (String errorM : e.getMessages()) {
           BeanHelper.error(session.getMessage(errorM));
         }
       }

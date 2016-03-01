@@ -709,12 +709,9 @@ public class SuperMetadataBean implements Comparable<SuperMetadataBean>, Seriali
    * @param customField the customField to set
    */
   public void setCustomField(String customField) {
-    if (!toNull)
+    if (!toNull) {
       this.customField = customField;
-  }
-
-  public void writePersonFromJson(String json) {
-    System.out.println(json);
+    }
   }
 
   /**

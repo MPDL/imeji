@@ -24,26 +24,26 @@ import de.mpg.imeji.logic.vo.Item;
  * 
  */
 public class RefreshFileSizeJob implements Callable<Integer> {
-  private static Logger logger = Logger.getLogger(RefreshFileSizeJob.class);
+  private static final Logger LOGGER = Logger.getLogger(RefreshFileSizeJob.class);
 
   @Override
   public Integer call() throws ImejiException {
-    logger.info("Starting refreshing the file size of all Items");
-    logger.info("Deleting all sizes...");
+    LOGGER.info("Starting refreshing the file size of all Items");
+    LOGGER.info("Deleting all sizes...");
     ImejiSPARQL.execUpdate(JenaCustomQueries.deleteAllFileSize());
-    logger.info("...done!");
-    logger.info("Retrieving all items...");
+    LOGGER.info("...done!");
+    LOGGER.info("Retrieving all items...");
     ItemController itemController = new ItemController();
     InternalStorageManager storageManager = new InternalStorageManager();
     Collection<Item> items = itemController.retrieveAll(Imeji.adminUser);
-    logger.info("...done (found  " + items.size() + ")");
-    logger.info("Reading the original file size of each item and update size");
+    LOGGER.info("...done (found  " + items.size() + ")");
+    LOGGER.info("Reading the original file size of each item and update size");
     int count = 1;
     File f;
     String path;
     for (Item item : items) {
       try {
-        logger.info(count + "/" + items.size());
+        LOGGER.info(count + "/" + items.size());
         path = storageManager.transformUrlToPath(item.getFullImageUrl().toString());
         f = new File(path);
         Dimension d = ImageUtils.getImageDimension(f);
@@ -57,13 +57,13 @@ public class RefreshFileSizeJob implements Callable<Integer> {
         }
 
       } catch (Exception e) {
-        logger.error("Error updating file size and dimension of item " + item.getIdString() + " : "
+        LOGGER.error("Error updating file size and dimension of item " + item.getIdString() + " : "
             + e.getMessage());
       } finally {
         count++;
       }
     }
-    logger.info("File sizes successfully refreshed!");
+    LOGGER.info("File sizes successfully refreshed!");
     return 1;
   }
 }

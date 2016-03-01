@@ -25,7 +25,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  */
 public class XMLMdProfileExport extends XMLExport {
 
-  private static Logger logger = Logger.getLogger(XMLMdProfileExport.class);
+  private static final Logger LOGGER = Logger.getLogger(XMLMdProfileExport.class);
 
   @Override
   public void init() {
@@ -43,10 +43,10 @@ public class XMLMdProfileExport extends XMLExport {
       } catch (JAXBException e) {
         throw new RuntimeException(e);
       } catch (ImejiException iie) {
-        logger.error("Could not retrieve any statements for exporting!");
+        LOGGER.error("Could not retrieve any statements for exporting!");
       }
     } else {
-      logger.error("Problems during XMLMDProfile Export: " + sr.getNumberOfRecords()
+      LOGGER.error("Problems during XMLMDProfile Export: " + sr.getNumberOfRecords()
           + " profile(s) found. Only 1 profile should be found");
     }
   }

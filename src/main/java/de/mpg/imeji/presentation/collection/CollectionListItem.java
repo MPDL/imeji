@@ -8,7 +8,6 @@ import static de.mpg.imeji.logic.notification.CommonMessages.getSuccessCollectio
 import java.net.URI;
 import java.util.Collection;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
 import org.apache.log4j.Logger;
@@ -17,7 +16,9 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.CollectionController;
 import de.mpg.imeji.logic.controller.ItemController;
+import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Person;
@@ -50,7 +51,7 @@ public class CollectionListItem {
   private String creationDate = null;
   private String lastModificationDate = null;
   private String versionDate = null;
-  private static Logger logger = Logger.getLogger(CollectionListItem.class);
+  private static final Logger LOGGER = Logger.getLogger(CollectionListItem.class);
   private ThumbnailBean thumbnail = null;
   private String selectedGrant;
   private URI profileURI;
@@ -99,8 +100,7 @@ public class CollectionListItem {
         isOwner = collection.getCreatedBy().equals(user.getId());
       }
     } catch (Exception e) {
-      System.out.println(uri);
-      logger.error("Error creating collectionListItem", e);
+      LOGGER.error("Error creating collectionListItem", e);
     }
   }
 
@@ -166,7 +166,7 @@ public class CollectionListItem {
     } catch (Exception e) {
       BeanHelper.error(sessionBean.getMessage("error_collection_release"));
       BeanHelper.error(sessionBean.getMessage(e.getMessage()));
-      logger.error(sessionBean.getMessage("error_collection_release"), e);
+      LOGGER.error(sessionBean.getMessage("error_collection_release"), e);
     }
     return "pretty:";
   }
@@ -185,7 +185,7 @@ public class CollectionListItem {
       BeanHelper.info(getSuccessCollectionDeleteMessage(c.getMetadata().getTitle(), sessionBean));
     } catch (Exception e) {
       BeanHelper.error(sessionBean.getMessage("error_collection_delete") + ":" + e.getMessage());
-      logger.error(sessionBean.getMessage("error_collection_delete"), e);
+      LOGGER.error(sessionBean.getMessage("error_collection_delete"), e);
     }
     return ((SessionBean) BeanHelper.getSessionBean(SessionBean.class))
         .getPrettySpacePage("pretty:collections");
@@ -193,21 +193,19 @@ public class CollectionListItem {
 
   public String createDOI() {
     SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    String doi =
-        FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("doi");
-    CollectionController cc = new CollectionController();
-
     try {
-      CollectionImeji collection = cc.retrieve(uri, sessionBean.getUser());
+      String doi = UrlHelper.getParameterValue("doi");
+      CollectionImeji collection = new CollectionController().retrieve(uri, sessionBean.getUser());
+      DoiService doiService = new DoiService();
       if (doi != null) {
-        cc.createDOIManually(doi, collection, sessionBean.getUser());
+        doiService.addDoiToCollection(doi, collection, sessionBean.getUser());
       } else {
-        cc.createDOI(collection, sessionBean.getUser());
+        doiService.addDoiToCollection(collection, sessionBean.getUser());
       }
       BeanHelper.info(sessionBean.getMessage("success_doi_creation"));
     } catch (ImejiException e) {
-      BeanHelper.error(sessionBean.getMessage("error_doi_creation_" + e.getMessage()));
-      logger.error("Error during doi creation", e);
+      BeanHelper.error(sessionBean.getMessage("error_doi_creation") + " " + e.getMessage());
+      LOGGER.error("Error during doi creation", e);
     }
     return "pretty:";
   }
@@ -228,7 +226,7 @@ public class CollectionListItem {
     } catch (Exception e) {
       BeanHelper.error(sessionBean.getMessage("error_collection_withdraw"));
       BeanHelper.error(e.getMessage());
-      logger.error(sessionBean.getMessage("error_collection_withdraw"), e);
+      LOGGER.error(sessionBean.getMessage("error_collection_withdraw"), e);
     }
     return "pretty:";
   }

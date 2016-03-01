@@ -6,21 +6,12 @@
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
 	
 	<ui:param name="metadataBean" value="#{EditMdProfileBean}"/>
-	
 	<ui:param name="headline" value="#{metadataBean.profile.title}"/>
 	<ui:param name="currentMainMenu" value="collection"/>
 	
-	<ui:define name="actionsMenu">
-		
-		<ui:fragment>
-		
-											
-			<menu:context_actionMenu id="action"  isUserLoggedIn="#{Auth.loggedIn}" 
-									 curMainMenu="#{currentMainMenu}" 
-									 downloadEnabled="false"
-									 actionEnabled="false"
-									 navBean="#{Navigation}"/>
+	<ui:define name="actionsMenu">	
+		<ui:fragment>									
+			<menu:context_actionMenu id="action"  curMainMenu="#{currentMainMenu}" downloadEnabled="false" actionEnabled="false"/>
 		</ui:fragment>
 	</ui:define>
-	
 </ui:composition>

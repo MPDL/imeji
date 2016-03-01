@@ -23,7 +23,6 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.ConfigurationBean;
 import de.mpg.imeji.presentation.beans.PropertyBean;
 import de.mpg.imeji.presentation.util.PropertyReader;
 
@@ -59,7 +58,7 @@ import de.mpg.imeji.presentation.util.PropertyReader;
  * @version $Revision$ $LastChangedDate$
  */
 public class JenaUtil {
-  private static Logger logger = Logger.getLogger(JenaUtil.class);
+  private static Logger LOGGER = Logger.getLogger(JenaUtil.class);
   public static User testUser;
   public static User testUser2;
   public static String TEST_USER_EMAIL = "test@imeji.org";
@@ -86,10 +85,6 @@ public class JenaUtil {
       // Create new tdb
       Imeji.init(TDB_PATH);
       initTestUser();
-      // init imeji configuration
-      new ConfigurationBean();
-      // ElasticService.start();
-
     } catch (Exception e) {
       throw new RuntimeException("Error initialiting Jena for testing: ", e);
     }
@@ -98,16 +93,16 @@ public class JenaUtil {
 
   public static void closeJena() throws InterruptedException {
     // Imeji.executor.shutdownNow();
-    logger.info("Closing Jena:");
+    LOGGER.info("Closing Jena:");
     TDB.sync(Imeji.dataset);
-    logger.info("Jena Sync done! ");
+    LOGGER.info("Jena Sync done! ");
     TDBFactory.reset();
-    logger.info("Reset internal state, releasing all datasets done! ");
+    LOGGER.info("Reset internal state, releasing all datasets done! ");
     Imeji.dataset.close();
-    logger.info("Dataset closed!");
+    LOGGER.info("Dataset closed!");
     TDB.closedown();
     TDBMaker.releaseLocation(new Location(TDB_PATH));
-    logger.info("TDB Location released!");
+    LOGGER.info("TDB Location released!");
     deleteTDBDirectory();
     ElasticService.reset();
   }
@@ -125,7 +120,7 @@ public class JenaUtil {
       UserController c = new UserController(Imeji.adminUser);
       c.create(u, USER_TYPE.DEFAULT);
     } catch (Exception e) {
-      logger.info(u.getEmail() + " already exists. Must not be created");
+      LOGGER.info(u.getEmail() + " already exists. Must not be created");
     }
   }
 
@@ -148,7 +143,7 @@ public class JenaUtil {
     orgCol.add(org);
     userPerson.setOrganizations(orgCol);
     user.setPerson(userPerson);
-
+    user.setQuota(Long.MAX_VALUE);
     user.setEncryptedPassword(StringHelper.convertToMD5(pwd));
     user.setGrants(AuthorizationPredefinedRoles.defaultUser(user.getId().toString()));
     return user;
@@ -157,7 +152,7 @@ public class JenaUtil {
   private static void deleteTDBDirectory() {
     File f = new File(TDB_PATH);
     if (f.exists()) {
-      logger.info("TDB directory deleted: " + FileUtils.deleteQuietly(f));
+      LOGGER.info("TDB directory deleted: " + FileUtils.deleteQuietly(f));
     }
   }
 }

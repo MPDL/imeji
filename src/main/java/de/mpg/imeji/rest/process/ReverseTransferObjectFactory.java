@@ -116,7 +116,7 @@ public class ReverseTransferObjectFactory {
   public static void transferDefaultItem(DefaultItemTO to, Item vo, MetadataProfile profile, User u,
       TRANSFER_MODE mode) throws ImejiException {
     if (mode == TRANSFER_MODE.CREATE) {
-      
+
       if (!isNullOrEmpty(to.getCollectionId())) {
         vo.setCollection(ObjectHelper.getURI(CollectionImeji.class, to.getCollectionId()));
       }
@@ -141,33 +141,10 @@ public class ReverseTransferObjectFactory {
   public static void transferItemMetadata(ItemTO to, Item vo, MetadataProfile mp, User u,
       TRANSFER_MODE mode) throws ImejiException {
     List<Metadata> voMDs = (List<Metadata>) vo.getMetadataSet().getMetadata();
-    // Collection<Metadata> copyOfvoMDs = ImmutableList.copyOf(voMDs);
     voMDs.clear();
-
-
-    //MetadataProfile mp = getMetadataProfile(vo.getCollection(), u);
-
-    if (mp != null )
+    if (mp != null) {
       validateMetadata(to, mp);
-
-    // for (Statement st : mp.getStatements()) {
-    // final URI stURI = st.getId();
-    //
-    // Collection<MetadataSetTO> mdsList = lookUpMetadata(to, st);
-    // // Metadata mdVOPrev = lookUpMetadata(copyOfvoMDs, stURI,
-    // // st.getType());
-    // if (mdsList.isEmpty()) {
-    // {
-    // final String message =
-    // "Statement { type: \"" + st.getType() + "\", id: \"" + stURI
-    // + "\" } has not been found for item id: \"" + vo.getId() + "\"";
-    // // throw new RuntimeException(message);
-    // LOGGER.debug(message);
-    // }
-    // } /*else if (mdsList.size() > 1 && "1".equals(st.getMaxOccurs())) {
-    // throw new BadRequestException("Statement { type: \"" + st.getType() + "\", id: \"" + stURI
-    // + "\" } for item id: \"" + vo.getId() + "\" occurs more then once");
-    // } */else
+    }
     int i = 0;
     for (MetadataSetTO mds : to.getMetadata()) {
       switch (mds.getTypeUri().toString()) {
@@ -273,7 +250,6 @@ public class ReverseTransferObjectFactory {
           break;
       }
     }
-    // }
   }
 
   /**
@@ -299,10 +275,9 @@ public class ReverseTransferObjectFactory {
         }
         stVO.setMinOccurs(stTO.getMinOccurs());
         stVO.setMaxOccurs(stTO.getMaxOccurs());
-        // TODO: check namespace
-        // stVO.setNamespace(???);
-        if (!isNullOrEmpty(stTO.getParentStatementId()))
+        if (!isNullOrEmpty(stTO.getParentStatementId())) {
           stVO.setParent(URI.create(stTO.getParentStatementId()));
+        }
         vo.getStatements().add(stVO);
       }
     }
@@ -380,17 +355,14 @@ public class ReverseTransferObjectFactory {
       person.setCompleteName(pTO.getCompleteName());
       person.setAlternativeName(pTO.getAlternativeName());
       person.setRole(URI.create(pTO.getRole()));
-      // person.setPos(pTO.getPosition());
-
       if (pTO.getIdentifiers().size() == 1) {
         // set the identifier of current person
         IdentifierTO ito = new IdentifierTO();
         ito.setValue(pTO.getIdentifiers().get(0).getValue());
         person.setIdentifier(ito.getValue());
       } else if (pTO.getIdentifiers().size() > 1) {
-        System.out.println("I have more identifiers than needed for Person");
+        LOGGER.warn("Multiple identifiers found for Person: " + pTO.getId());
       }
-
       // set organizations
       transferContributorOrganizations(pTO.getOrganizations(), person, mode);
       metadata.getPersons().add(person);
@@ -457,8 +429,8 @@ public class ReverseTransferObjectFactory {
    */
   public static void transferDefaultMetadata(DefaultItemTO defaultTO, Item item,
       MetadataProfile profile, User u, TRANSFER_MODE mode) throws ImejiException {
-    
-    if (profile == null )
+
+    if (profile == null)
       return;
     ItemTO itemTO = new ItemTO();
     MetadataProfileTO profileTO = new MetadataProfileTO();

@@ -34,7 +34,7 @@ public class IngestBean {
   private SessionBean session = null;
   private String collectionId;
   private CollectionImeji collection;
-  private static Logger logger = Logger.getLogger(IngestBean.class);
+  private static final Logger LOGGER = Logger.getLogger(IngestBean.class);
   private boolean error = false;
   private boolean success = false;
   private String msg = "";
@@ -67,10 +67,10 @@ public class IngestBean {
         ic.ingest(upload(), null);
         this.success = true;
       } catch (JAXBException e) {
-        logger.error("Error parsing item metadata. ", e);
+        LOGGER.error("Error parsing item metadata. ", e);
         error = true;
         if (e.getLinkedException() != null) {
-          logger.error("Error parsing item metadata. ", e);
+          LOGGER.error("Error parsing item metadata. ", e);
           error = true;
           SAXParseException se = (SAXParseException) e.getLinkedException();
           this.msg = se.getMessage();
@@ -78,16 +78,16 @@ public class IngestBean {
           this.msg = e.getMessage();
         }
       } catch (SAXParseException e) {
-        logger.error("Error parsing item metadata. ", e);
+        LOGGER.error("Error parsing item metadata. ", e);
         error = true;
         this.msg = e.getMessage();
       } catch (ClassCastException e) {
-        logger.error("Item metadata not valid. ", e);
+        LOGGER.error("Item metadata not valid. ", e);
         error = true;
         this.msg =
             "The metadata of the items are not valid. System failed to convert them to imeji objects.";
       } catch (Exception e) {
-        logger.error("Error during the ingest of item metadata. ", e);
+        LOGGER.error("Error during the ingest of item metadata. ", e);
         error = true;
         this.msg = e.getMessage();
       }
@@ -100,10 +100,10 @@ public class IngestBean {
         ic.ingest(null, upload());
         this.success = true;
       } catch (JAXBException e) {
-        logger.error("Error parsing profile. ", e);
+        LOGGER.error("Error parsing profile. ", e);
         error = true;
         if (e.getLinkedException() != null) {
-          logger.error("Error parsing profile. ", e);
+          LOGGER.error("Error parsing profile. ", e);
           error = true;
           SAXParseException se = (SAXParseException) e.getLinkedException();
           this.msg = se.getMessage();
@@ -111,11 +111,11 @@ public class IngestBean {
           this.msg = e.getMessage();
         }
       } catch (SAXParseException e) {
-        logger.error("Error parsing profile. ", e);
+        LOGGER.error("Error parsing profile. ", e);
         error = true;
         this.msg = e.getMessage();
       } catch (Exception e) {
-        logger.error("Error during ingest. ", e);
+        LOGGER.error("Error during ingest. ", e);
         error = true;
         this.msg = e.getMessage();
       }
@@ -123,7 +123,7 @@ public class IngestBean {
       try {
         session.getProfileCached().clear();
       } catch (Exception e) {
-        logger.error("Error during ingest. ", e);
+        LOGGER.error("Error during ingest. ", e);
         error = true;
         this.msg = e.getMessage();
       }
@@ -166,7 +166,7 @@ public class IngestBean {
         }
       }
     } catch (Exception e) {
-      logger.error("Error during ingest. ", e);
+      LOGGER.error("Error during ingest. ", e);
       error = true;
       this.msg = e.getMessage();
     }

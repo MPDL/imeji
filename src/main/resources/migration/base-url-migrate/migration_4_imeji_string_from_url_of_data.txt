@@ -1,0 +1,80 @@
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+
+######Changing storage paths instead of file/imeji/path to file/path
+
+WITH <http://imeji.org/item>
+INSERT
+{
+  ?s <http://imeji.org/terms/thumbnailImageUrl> ?newurl .
+}
+USING <http://imeji.org/item>
+WHERE
+{
+  ?s <http://imeji.org/terms/thumbnailImageUrl> ?o.
+  FILTER(REGEX(str(?o), "/imeji/", "i")).
+  LET(?newurl := uri(REPLACE(str(?o), "/imeji/", "/", "i"))) 
+};
+
+WITH <http://imeji.org/item>
+DELETE
+{
+  ?s <http://imeji.org/terms/thumbnailImageUrl> ?o .
+}
+USING <http://imeji.org/item>
+WHERE
+{
+  ?s <http://imeji.org/terms/thumbnailImageUrl> ?o.
+  FILTER(REGEX(str(?o), "/imeji/", "i"))
+};
+
+WITH <http://imeji.org/item>
+INSERT
+{
+  ?s <http://imeji.org/terms/fullImageUrl> ?newurl .
+}
+USING <http://imeji.org/item>
+WHERE
+{
+  ?s <http://imeji.org/terms/fullImageUrl> ?o.
+  FILTER(REGEX(str(?o), "/imeji/", "i")).
+  LET(?newurl := uri(REPLACE(str(?o), "/imeji/", "/", "i"))) 
+};
+
+WITH <http://imeji.org/item>
+DELETE
+{
+  ?s <http://imeji.org/terms/fullImageUrl> ?o .
+}
+USING <http://imeji.org/item>
+WHERE
+{
+  ?s <http://imeji.org/terms/fullImageUrl> ?o.
+  FILTER(REGEX(str(?o), "/imeji/", "i"))
+};
+
+
+WITH <http://imeji.org/item>
+INSERT
+{
+  ?s <http://imeji.org/terms/webImageUrl> ?newurl .
+}
+USING <http://imeji.org/item>
+WHERE
+{
+  ?s <http://imeji.org/terms/webImageUrl> ?o.
+  FILTER(REGEX(str(?o), "/imeji/", "i")).
+  LET(?newurl := uri(REPLACE(str(?o), "/imeji/", "/", "i"))) 
+};
+
+WITH <http://imeji.org/item>
+DELETE
+{
+  ?s <http://imeji.org/terms/webImageUrl> ?o .
+}
+USING <http://imeji.org/item>
+WHERE
+{
+  ?s <http://imeji.org/terms/webImageUrl> ?o.
+  FILTER(REGEX(str(?o), "/imeji/", "i"))
+};

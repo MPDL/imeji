@@ -26,7 +26,7 @@ import de.mpg.imeji.presentation.util.ProxyHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class Iso639_1Helper {
-  private static Logger logger = Logger.getLogger(Iso639_1Helper.class);
+  private static final Logger LOGGER = Logger.getLogger(Iso639_1Helper.class);
   private List<SelectItem> list = null;
 
   /**
@@ -60,7 +60,7 @@ public class Iso639_1Helper {
       HttpClient client = new HttpClient();
       String coneVocabularyPath = PropertyReader.getProperty("cone.isos639_1.all");
       if (isNullOrEmpty(coneVocabularyPath)) {
-        logger.info(
+        LOGGER.info(
             "CONE Service Property for Language Vocabularies has not been set-up. Will use default vocabulary for languages."
                 + "NOTE: This is not an error: for more information on setting cone, check http://imeji.org/?s=cone.isos639_1.all ");
         return null;
@@ -70,7 +70,7 @@ public class Iso639_1Helper {
       ProxyHelper.executeMethod(client, getMethod);
       return IOUtils.toString(getMethod.getResponseBodyAsStream());
     } catch (Exception e) {
-      logger.error("Couldn't read ISO639_1 vocabulary, will use default one! Error: " + e);
+      LOGGER.error("Couldn't read ISO639_1 vocabulary, will use default one! Error: " + e);
       return null;
     }
   }

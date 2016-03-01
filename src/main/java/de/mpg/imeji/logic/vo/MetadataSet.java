@@ -46,7 +46,7 @@ public class MetadataSet implements Serializable {
   private URI profile;
   private URI id;
 
-  private static Logger logger = Logger.getLogger(MetadataSet.class);
+  private static final Logger LOGGER = Logger.getLogger(MetadataSet.class);
 
   public MetadataSet() {}
 
@@ -93,7 +93,7 @@ public class MetadataSet implements Serializable {
       ret = method.invoke(this);
     } catch (SecurityException | NoSuchMethodException | IllegalArgumentException
         | IllegalAccessException | InvocationTargetException e) {
-      logger.error("Some issues with getValueFromMethod ", e);
+      LOGGER.error("Some issues with getValueFromMethod ", e);
     }
     return ret;
   }

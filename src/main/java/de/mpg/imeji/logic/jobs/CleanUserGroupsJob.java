@@ -25,17 +25,17 @@ import de.mpg.imeji.logic.vo.UserGroup;
  *
  */
 public class CleanUserGroupsJob implements Callable<Integer> {
-  private static final Logger logger = Logger.getLogger(CleanUserGroupsJob.class);
+  private static final Logger LOGGER = Logger.getLogger(CleanUserGroupsJob.class);
 
   @Override
   public Integer call() {
-    logger.info("Cleaning User Groups...");
+    LOGGER.info("Cleaning User Groups...");
     try {
       cleanZombieMember();
     } catch (ImejiException e) {
-      logger.error("Error cleaning user groups: " + e.getMessage());
+      LOGGER.error("Error cleaning user groups: " + e.getMessage());
     }
-    logger.info("...done!");
+    LOGGER.info("...done!");
     return 1;
   }
 
@@ -78,7 +78,7 @@ public class CleanUserGroupsJob implements Callable<Integer> {
     } catch (NotFoundException e) {
       return false;
     } catch (ImejiException e) {
-      logger.error("Erro reading user: ", e);
+      LOGGER.error("Erro reading user: ", e);
       return true;
     }
   }

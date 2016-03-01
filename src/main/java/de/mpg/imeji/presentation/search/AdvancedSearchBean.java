@@ -54,7 +54,7 @@ public class AdvancedSearchBean {
    */
   private boolean errorQuery = false;
   private SessionBean session;
-  private static Logger logger = Logger.getLogger(AdvancedSearchBean.class);
+  private static final Logger LOGGER = Logger.getLogger(AdvancedSearchBean.class);
 
   /**
    * Constructor for the {@link AdvancedSearchBean}
@@ -79,7 +79,7 @@ public class AdvancedSearchBean {
         initForm(SearchQueryParser.parseStringQuery(query));
       }
     } catch (Exception e) {
-      logger.error("Error initializing advanced search", e);
+      LOGGER.error("Error initializing advanced search", e);
       BeanHelper.error("Error initializing advanced search");
     }
     return "";

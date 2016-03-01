@@ -228,7 +228,7 @@ public class AlbumItemsBean extends ItemsBean {
     try {
       ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).initView();
     } catch (IOException e) {
-      logger.error("Error during release album items", e);
+      LOGGER.error("Error during release album items", e);
     }
     ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).release();
     return "pretty:";
@@ -246,7 +246,7 @@ public class AlbumItemsBean extends ItemsBean {
       ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).initView();
     } catch (IOException e) {
       // TODO Auto-generated catch block
-      logger.error("Error during delete album items ", e);
+      LOGGER.error("Error during delete album items ", e);
     }
     ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).delete();
     return sb.getPrettySpacePage("pretty:albums");

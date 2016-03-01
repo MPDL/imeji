@@ -37,7 +37,7 @@ import de.mpg.j2j.misc.LocalizedString;
  * @version $Revision$ $LastChangedDate$
  */
 public class ImejiFactory {
-  private static Logger logger = Logger.getLogger(ImejiFactory.class);
+  private static final Logger LOGGER = Logger.getLogger(ImejiFactory.class);
 
   /**
    * Private Constructor
@@ -272,7 +272,7 @@ public class ImejiFactory {
       try {
         beanList.add(new ThumbnailBean(img, true));
       } catch (Exception e) {
-        logger.error("Error creating ThumbnailBean list", e);
+        LOGGER.error("Error creating ThumbnailBean list", e);
       }
     }
     return beanList;

@@ -14,11 +14,13 @@ import javax.faces.context.FacesContext;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.CollectionController;
 import de.mpg.imeji.logic.controller.ItemController;
+import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.SearchResult;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
@@ -93,13 +95,13 @@ public class CollectionItemsBean extends ItemsBean {
   public void initFacets() {
     try {
       searchQuery = SearchQueryParser.parseStringQuery(getQuery());
-      SearchResult searchRes = search(getSearchQuery(), sortCriterion, 0, -1);
+      SearchResult searchRes = search(getSearchQuery(), null, 0, -1);
       setFacets(new FacetsBean(collection, searchQuery, searchRes));
       ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
       executor.submit(getFacets());
       executor.shutdown();
     } catch (Exception e) {
-      logger.error("Error initialising the facets", e);
+      LOGGER.error("Error initialising the facets", e);
     }
   }
 
@@ -154,25 +156,24 @@ public class CollectionItemsBean extends ItemsBean {
     } catch (Exception e) {
       BeanHelper.error(sb.getMessage("error_collection_release"));
       BeanHelper.error(e.getMessage());
-      logger.error("Error releasing collection", e);
+      LOGGER.error("Error releasing collection", e);
     }
     return "pretty:";
   }
 
   public String createDOI() {
-    String doi =
-        FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("doi");
-    CollectionController cc = new CollectionController();
     try {
+      String doi = UrlHelper.getParameterValue("doi");
+      DoiService doiService = new DoiService();
       if (doi != null) {
-        cc.createDOIManually(doi, collection, sb.getUser());
+        doiService.addDoiToCollection(doi, collection, sb.getUser());
       } else {
-        cc.createDOI(collection, sb.getUser());
+        doiService.addDoiToCollection(collection, sb.getUser());
       }
       BeanHelper.info(sb.getMessage("success_doi_creation"));
     } catch (ImejiException e) {
-      BeanHelper.error(sb.getMessage("error_doi_creation_" + e.getMessage()));
-      logger.error("Error during doi creation", e);
+      BeanHelper.error(sb.getMessage("error_doi_creation") + " " + e.getMessage());
+      LOGGER.error("Error during doi creation", e);
     }
     return "pretty:";
   }
@@ -190,7 +191,7 @@ public class CollectionItemsBean extends ItemsBean {
     } catch (Exception e) {
       BeanHelper.error(getSuccessCollectionDeleteMessage(collection.getMetadata().getTitle(), sb));
       BeanHelper.error(e.getMessage());
-      logger.error("Error deleting collection", e);
+      LOGGER.error("Error deleting collection", e);
     }
     return sb.getPrettySpacePage("pretty:collections");
   }
@@ -210,7 +211,7 @@ public class CollectionItemsBean extends ItemsBean {
     } catch (Exception e) {
       BeanHelper.error(sb.getMessage("error_collection_withdraw"));
       BeanHelper.error(e.getMessage());
-      logger.error("Error discarding collection", e);
+      LOGGER.error("Error discarding collection", e);
     }
     return "pretty:";
   }

@@ -28,7 +28,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,8 +46,6 @@ import de.mpg.imeji.logic.util.MetadataAndProfileHelper;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.presentation.metadata.SuperMetadataBean;
-import de.mpg.imeji.presentation.metadata.SuperMetadataTree;
 import de.mpg.imeji.rest.helper.MetadataTransferHelper;
 
 @JsonInclude(Include.NON_NULL)
@@ -66,7 +63,7 @@ public class SuperMetadataTreeTO implements Serializable {
   private Map<String, JsonNode> oMap = new LinkedHashMap<String, JsonNode>();
   private MetadataProfile profile;
   private ObjectMapper mapper = new ObjectMapper();
-  private static final Logger logger = Logger.getLogger(SuperMetadataTreeTO.class);
+  private static final Logger LOGGER = Logger.getLogger(SuperMetadataTreeTO.class);
 
   /**
    * Default Constructor
@@ -100,10 +97,11 @@ public class SuperMetadataTreeTO implements Serializable {
 
     for (SuperMetadataBeanTO smb : list) {
       setJsonFieldParent(smb);
-      if (!smb.getTreeIndex().contains(","))
+      if (!smb.getTreeIndex().contains(",")) {
         addOMap(smb.getLabel(),
             mapper.valueToTree(smb.isMultiple() ? smb.getJsonField() : smb.getJsonFieldSingle()),
             smb.isMultiple());
+      }
     }
   }
 
@@ -130,7 +128,7 @@ public class SuperMetadataTreeTO implements Serializable {
         mdC.add(md);
         i++;
       } catch (Exception e) {
-        logger.error("Error generating default value for metadata", e);
+        LOGGER.error("Error generating default value for metadata", e);
       }
     }
     return mdC;
@@ -283,10 +281,11 @@ public class SuperMetadataTreeTO implements Serializable {
    * @return
    */
   private boolean isChild(SuperMetadataBeanTO smb, SuperMetadataBeanTO parent) {
-    if (parent == null || smb.getParent() == null)
+    if (parent == null || smb.getParent() == null) {
       return false;
-    else
+    } else {
       return smb.getParent().getMetadata().getId().compareTo(parent.getMetadata().getId()) == 0;
+    }
   }
 
   /**
@@ -344,8 +343,9 @@ public class SuperMetadataTreeTO implements Serializable {
     String[] indexes = index.split(",");
     int i = Integer.parseInt(indexes[indexes.length - 1]) + 1;
     int endIndex = index.lastIndexOf(",");
-    if (endIndex > 0)
+    if (endIndex > 0) {
       return addIndex(index.substring(0, endIndex), Integer.toString(i));
+    }
     return Integer.toString(i);
   }
 
@@ -438,40 +438,4 @@ public class SuperMetadataTreeTO implements Serializable {
   public void setProfile(MetadataProfile profile) {
     this.profile = profile;
   }
-
-  /**
-   * {@link Comparator} to sort the {@link SuperMetadataBean} in the {@link SuperMetadataTree}
-   * 
-   * @author saquet (initial creation)
-   * @author $Author$ (last modification)
-   * @version $Revision$ $LastChangedDate$
-   */
-  private class TreeComparator implements Comparator<SuperMetadataBeanTO> {
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
-    @Override
-    public int compare(SuperMetadataBeanTO md1, SuperMetadataBeanTO md2) {
-      String[] index1 = md1.getTreeIndex().split(",");
-      String[] index2 = md2.getTreeIndex().split(",");
-      int minLength = (index1.length < index2.length ? index1.length : index2.length);
-      for (int i = 0; i < minLength; i++) {
-        int v1 = Integer.parseInt(index1[i]);
-        int v2 = Integer.parseInt(index2[i]);
-        if (v1 > v2)
-          return 1;
-        else if (v1 < v2)
-          return -1;
-      }
-      if (index1.length > index2.length)
-        return 1;
-      else if (index1.length < index2.length)
-        return -1;
-      return 0;
-    }
-  }
-
-
 }

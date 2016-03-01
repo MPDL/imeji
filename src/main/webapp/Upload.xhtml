@@ -19,18 +19,12 @@
                                     activeMenu="upload" 
                                     hasContent="#{UploadBean.collectionSize > 0}"/>
 
-        <menu:context_actionMenu id="action"  	isUserLoggedIn="#{Auth.loggedIn}" 
+        <menu:context_actionMenu id="action"
+        						  vo="#{UploadBean.collection}"
                                   curMainMenu="#{currentMainMenu}" 
-                                  navBean="#{Navigation}" 
-                                  collectionStatus="#{UploadBean.collection.status}" 
-                                  contextId="#{UploadBean.id}" 
-                                  hasContent="#{UploadBean.collectionSize > 0}" 
-                                  isEditable="#{Auth.update(UploadBean.collection)}" 
-                                  isDeletable="#{Auth.delete(UploadBean.collection)}" 
-                                  isAdmin="#{Auth.admin(UploadBean.collection)}" 
+                                  hasContent="#{UploadBean.collectionSize > 0}"
                                   contextDownloadParam="&amp;col=#{UploadBean.id}"
                                   downloadEnabled="#{UploadBean.collectionSize > 0}"
-                                  allowedToShare="#{UploadBean.collection.status !='WITHDRAWN'}"
                                   hasDoi="#{UploadBean.collection.doi != null and UploadBean.collection.doi !=''}"/>
     </ui:define>
 

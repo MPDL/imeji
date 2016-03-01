@@ -51,7 +51,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
 public class UserGroupController {
   private static final ReaderFacade reader = new ReaderFacade(Imeji.userModel);
   private static final WriterFacade writer = new WriterFacade(Imeji.userModel);
-  static Logger logger = Logger.getLogger(UserGroupController.class);
+  static Logger LOGGER = Logger.getLogger(UserGroupController.class);
 
   /**
    * Create a {@link UserGroup}
@@ -150,7 +150,7 @@ public class UserGroupController {
       try {
         userGroups.add((UserGroup) reader.read(uri, user, new UserGroup()));
       } catch (ImejiException e) {
-        logger.info("User group with uri " + uri + " not found.");
+        LOGGER.info("User group with uri " + uri + " not found.");
       }
     }
     return userGroups;
@@ -167,7 +167,7 @@ public class UserGroupController {
         memberIn.getUsers().remove(userToRemove.getId());
         update(memberIn, userRemover);
         //Write to log to inform
-        logger.info("User "+userToRemove.getId()+" ("+userToRemove.getEmail()+") has been removed from group "+memberIn.getName());
+        LOGGER.info("User "+userToRemove.getId()+" ("+userToRemove.getEmail()+") has been removed from group "+memberIn.getName());
     }
   }
 }

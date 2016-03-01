@@ -50,7 +50,7 @@ import de.mpg.imeji.presentation.util.ObjectLoader;
  */
 public class MetadataExplainExport extends ExplainExport {
 
-  private static Logger logger = Logger.getLogger(MetadataExplainExport.class);
+  private static final Logger LOGGER = Logger.getLogger(MetadataExplainExport.class);
 
   /*
    * (non-Javadoc)
@@ -76,7 +76,7 @@ public class MetadataExplainExport extends ExplainExport {
             }
           }
         } catch (ImejiException iec) {
-          logger.info("Could not export the Collection with URI=" + colURI);
+          LOGGER.info("Could not export the Collection with URI=" + colURI);
         }
       }
       writer.append(getRDFTagClose());

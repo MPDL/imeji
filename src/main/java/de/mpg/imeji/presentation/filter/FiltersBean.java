@@ -30,7 +30,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
 public class FiltersBean {
   private FiltersSession fs = (FiltersSession) BeanHelper.getSessionBean(FiltersSession.class);
   private int count = 0;
-  private static Logger logger = Logger.getLogger(FiltersBean.class);
+  private static final Logger LOGGER = Logger.getLogger(FiltersBean.class);
 
   /**
    * Default constructor
@@ -177,7 +177,7 @@ public class FiltersBean {
    */
   private String removeFilterQueryFromQuery(String q, Filter filter) {
     if (!q.contains(filter.getQuery())) {
-      logger.error("Query: " + q + " . Error: non removable filter: " + filter.getQuery());
+      LOGGER.error("Query: " + q + " . Error: non removable filter: " + filter.getQuery());
     }
     return q.replace(filter.getQuery(), "").replace("  ", " ").trim();
   }

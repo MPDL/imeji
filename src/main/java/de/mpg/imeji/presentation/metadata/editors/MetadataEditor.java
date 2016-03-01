@@ -91,7 +91,7 @@ public abstract class MetadataEditor {
       return true;
 
     } catch (Exception e) {
-      for(EditorItemBean eib: this.items){
+      for (EditorItemBean eib : this.items) {
         eib.getMds().setTree(eib.getMds().getUncutTree());
       }
       BeanHelper.cleanMessages();
@@ -113,23 +113,20 @@ public abstract class MetadataEditor {
     List<Item> itemList = new ArrayList<Item>();
     SessionBean sb = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
 
-    if (validateMetadataofImages()) {
-      if (prepareUpdate()) {
-        try {
-          addPositionToMetadata();
-          for (EditorItemBean eib : items) {
-            itemList.add(eib.asItem());
-          }
-        } catch (Exception e) {
-          BeanHelper.error(sb.getMessage("error_metadata_edit") + ": " + e.getLocalizedMessage());
+    if (prepareUpdate()) {
+      try {
+        addPositionToMetadata();
+        for (EditorItemBean eib : items) {
+          itemList.add(eib.asItem());
         }
-      } else {
-        BeanHelper.error(sb.getMessage("error_metadata_edit_no_images"));
+      } catch (Exception e) {
+        BeanHelper.error(sb.getMessage("error_metadata_edit") + ": " + e.getLocalizedMessage());
       }
     } else {
-      BeanHelper.error(sb.getMessage("error_metadata_validation"));
+      BeanHelper.error(sb.getMessage("error_metadata_edit_no_images"));
     }
     return itemList;
+
   }
 
   /**
@@ -148,8 +145,6 @@ public abstract class MetadataEditor {
   public abstract void initialize();
 
   public abstract boolean prepareUpdate();
-
-  public abstract boolean validateMetadataofImages();
 
   /**
    * Create a new Metadata according to current Editor configuration.

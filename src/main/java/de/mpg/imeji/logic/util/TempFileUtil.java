@@ -18,7 +18,9 @@ public class TempFileUtil {
   /**
    * Private Constructor
    */
-  private TempFileUtil() {}
+  private TempFileUtil() {
+    // private constructor
+  }
 
   /**
    * Create a temp {@link File}. This method should be used to ensure that all temp files are

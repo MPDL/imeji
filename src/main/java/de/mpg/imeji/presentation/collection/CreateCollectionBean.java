@@ -3,6 +3,7 @@
  */
 package de.mpg.imeji.presentation.collection;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -11,6 +12,9 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.apache.log4j.Logger;
+
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.controller.CollectionController;
 import de.mpg.imeji.logic.controller.UserController;
@@ -33,8 +37,9 @@ import de.mpg.imeji.presentation.util.VocabularyHelper;
 @ManagedBean(name = "CreateCollectionBean")
 @ViewScoped
 public class CreateCollectionBean extends CollectionBean {
+  private static final Logger LOGGER = Logger.getLogger(CreateCollectionBean.class);
   private static final long serialVersionUID = 1257698224590957642L;
-  private VocabularyHelper vocabularyHelper;
+  private final VocabularyHelper vocabularyHelper = new VocabularyHelper();;
   private ProfileSelector profileSelector;
   private boolean createProfile = false;
 
@@ -53,7 +58,6 @@ public class CreateCollectionBean extends CollectionBean {
     setCollection(ImejiFactory.newCollection());
     ((List<Person>) getCollection().getMetadata().getPersons()).set(0,
         sessionBean.getUser().getPerson().clone());
-    vocabularyHelper = new VocabularyHelper();
     profileSelector =
         new ProfileSelector(null, sessionBean.getUser(), sessionBean.getSelectedSpaceString());
 
@@ -65,10 +69,14 @@ public class CreateCollectionBean extends CollectionBean {
    * @return
    * @throws Exception
    */
-  public String save() throws Exception {
+  public String save() {
     if (createCollection()) {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(navigation.getCollectionUrl() + getCollection().getIdString());
+      try {
+        FacesContext.getCurrentInstance().getExternalContext()
+            .redirect(navigation.getCollectionUrl() + getCollection().getIdString());
+      } catch (IOException e) {
+        LOGGER.error("Error redirecting after saving collection", e);
+      }
     }
     return "";
   }
@@ -94,7 +102,7 @@ public class CreateCollectionBean extends CollectionBean {
    * @return
    * @throws Exception
    */
-  public boolean createCollection() throws Exception {
+  public boolean createCollection() {
     try {
       CollectionController collectionController = new CollectionController();
       int pos = 0;
@@ -116,7 +124,6 @@ public class CreateCollectionBean extends CollectionBean {
           sessionBean.getSelectedSpaceString());
       setCollection(collectionController.retrieve(id, sessionBean.getUser()));
       setId(ObjectHelper.getId(id));
-      // TODO: Refactor; Setting user email notification for the collection downloads
       setSendEmailNotification(isSendEmailNotification());
       UserController uc = new UserController(sessionBean.getUser());
       uc.update(sessionBean.getUser(), sessionBean.getUser());
@@ -127,8 +134,11 @@ public class CreateCollectionBean extends CollectionBean {
       for (String m : e.getMessages()) {
         BeanHelper.error(sessionBean.getMessage(m));
       }
-      return false;
+    } catch (ImejiException e) {
+      BeanHelper.cleanMessages();
+      BeanHelper.error(sessionBean.getMessage(e.getLocalizedMessage()));
     }
+    return false;
   }
 
   public static String extractIDFromURI(URI uri) {

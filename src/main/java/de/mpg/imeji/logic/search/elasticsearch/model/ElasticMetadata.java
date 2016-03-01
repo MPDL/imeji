@@ -18,14 +18,23 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Text;
  * @author bastiens
  * 
  */
-public class ElasticMetadata extends ElasticPerson {
-  private String statement;
-  private String text;
-  private double number;
-  private String uri;
-  private String type;
-  private String location;
+public final class ElasticMetadata extends ElasticPerson {
+  private final String statement;
+  private final String text;
+  private final double number;
+  private final String uri;
+  private final String type;
+  private final String location;
 
+  public ElasticMetadata(ConePerson p) {
+    super(p.getPerson());
+    this.statement = ObjectHelper.getId(p.getStatement());
+    this.type = p.getTypeNamespace();
+    this.text = null;
+    this.number = Double.NaN;
+    this.uri = null;
+    this.location = null;
+  }
 
   /**
    * Constructor with a {@link Metadata}
@@ -38,27 +47,51 @@ public class ElasticMetadata extends ElasticPerson {
     this.type = md.getTypeNamespace();
     if (md instanceof Text) {
       this.text = ((Text) md).getText();
+      this.number = Double.NaN;
+      this.uri = null;
+      this.location = null;
     } else if (md instanceof de.mpg.imeji.logic.vo.predefinedMetadata.Number) {
       this.number = ((de.mpg.imeji.logic.vo.predefinedMetadata.Number) md).getNumber();
+      this.text = null;
+      this.uri = null;
+      this.location = null;
     } else if (md instanceof Date) {
       this.text = ((Date) md).getDate();
       this.number = ((Date) md).getTime();
+      this.uri = null;
+      this.location = null;
     } else if (md instanceof Link) {
       this.text = ((Link) md).getLabel();
+      this.number = Double.NaN;
       this.uri = ((Link) md).getUri().toString();
+      this.location = null;
     } else if (md instanceof ConePerson) {
-      setPerson(((ConePerson) md).getPerson());
+      this.text = null;
+      this.number = Double.NaN;
+      this.uri = null;
+      this.location = null;
     } else if (md instanceof Geolocation) {
       this.text = ((Geolocation) md).getName();
+      this.number = Double.NaN;
+      this.uri = null;
       this.location = ((Geolocation) md).getLatitude() + "," + ((Geolocation) md).getLongitude();
     } else if (md instanceof License) {
       this.text = ((License) md).getLicense();
+      this.number = Double.NaN;
       this.uri = ((License) md).getExternalUri() == null ? null
           : ((License) md).getExternalUri().toString();
+      this.location = null;
     } else if (md instanceof Publication) {
       this.text = ((Publication) md).getCitation();
+      this.number = Double.NaN;
       this.uri =
           ((Publication) md).getUri() == null ? null : ((Publication) md).getUri().toString();
+      this.location = null;
+    } else {
+      text = null;
+      this.number = Double.NaN;
+      this.uri = null;
+      this.location = null;
     }
   }
 
@@ -71,28 +104,11 @@ public class ElasticMetadata extends ElasticPerson {
 
 
   /**
-   * @param statement the statement to set
-   */
-  public void setStatement(String statement) {
-    this.statement = statement;
-  }
-
-
-  /**
    * @return the text
    */
   public String getText() {
     return text;
   }
-
-
-  /**
-   * @param text the text to set
-   */
-  public void setText(String text) {
-    this.text = text;
-  }
-
 
   /**
    * @return the number
@@ -101,13 +117,6 @@ public class ElasticMetadata extends ElasticPerson {
     return number;
   }
 
-
-  /**
-   * @param number the number to set
-   */
-  public void setNumber(double number) {
-    this.number = number;
-  }
 
 
   /**
@@ -119,26 +128,12 @@ public class ElasticMetadata extends ElasticPerson {
 
 
   /**
-   * @param uri the uri to set
-   */
-  public void setUri(String uri) {
-    this.uri = uri;
-  }
-
-
-  /**
    * @return the type
    */
   public String getType() {
     return type;
   }
 
-  /**
-   * @param type the type to set
-   */
-  public void setType(String type) {
-    this.type = type;
-  }
 
   /**
    * @return the location
@@ -147,11 +142,5 @@ public class ElasticMetadata extends ElasticPerson {
     return location;
   }
 
-  /**
-   * @param location the location to set
-   */
-  public void setLocation(String location) {
-    this.location = location;
-  }
 
 }

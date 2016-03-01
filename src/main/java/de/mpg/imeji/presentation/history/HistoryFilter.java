@@ -14,7 +14,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
-import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -29,6 +28,7 @@ import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.ocpsoft.pretty.PrettyContext;
 import com.ocpsoft.pretty.faces.config.PrettyConfig;
@@ -42,6 +42,7 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.controller.SpaceController;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.session.SessionBean;
+import de.mpg.imeji.presentation.util.ServletUtil;
 
 /**
  * {@link Filter} for the imeji history
@@ -52,7 +53,8 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 public class HistoryFilter implements Filter {
   private FilterConfig filterConfig = null;
-  private ServletContext servletContext;
+  private static final Logger LOGGER = Logger.getLogger(HistoryFilter.class);
+  private static final Navigation navigation = new Navigation();
 
   @Override
   public void destroy() {
@@ -65,36 +67,26 @@ public class HistoryFilter implements Filter {
     try {
       // Limit the case to filter: dispachertype only forward, and only
       // HTTP GET method
-      if (DispatcherType.FORWARD.compareTo(serv.getDispatcherType()) == 0) {
-        HttpServletRequest request = (HttpServletRequest) serv;
-        servletContext = request.getSession().getServletContext();
-        if ("GET".equals(request.getMethod())) {
-          dofilterImpl(request, resp);
-        }
+      if (ServletUtil.isGetRequest(serv)) {
+        dofilterImpl((HttpServletRequest) serv, resp);
       }
-
-    } catch (Exception e) {
-      if (e instanceof NotFoundException || e instanceof NullPointerException) {
-        if ("SPACE_NOT_FOUND".equals(e.getMessage())) {
-          ((HttpServletResponse) resp)
-              .sendRedirect(getNavigation((HttpServletRequest) serv, resp).getApplicationUrl());
-        } else {
-          ((HttpServletResponse) resp).sendError(Status.NOT_FOUND.getStatusCode(),
-              "RESOURCE_NOT_FOUND");
-        }
-
-      } else if (e instanceof AuthenticationError) {
-        redirectToLoginPage(serv, resp);
-      } else if (e instanceof NotAllowedError || e instanceof NotAllowedException) {
-        ((HttpServletResponse) resp).sendError(Status.FORBIDDEN.getStatusCode(), "FORBIDDEN");
-      } else if (e instanceof BadRequestException) {
-        ((HttpServletResponse) resp).sendError(Status.BAD_REQUEST.getStatusCode(), "BAD_REQUEST");
+    } catch (NotFoundException | NullPointerException e) {
+      if ("SPACE_NOT_FOUND".equals(e.getMessage())) {
+        ((HttpServletResponse) resp).sendRedirect(navigation.getApplicationUrl());
       } else {
-
-        ((HttpServletResponse) resp).sendError(Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-            "INTERNAL_SERVER_ERROR");
+        ((HttpServletResponse) resp).sendError(Status.NOT_FOUND.getStatusCode(),
+            "RESOURCE_NOT_FOUND");
       }
-
+    } catch (AuthenticationError e) {
+      redirectToLoginPage(serv, resp);
+    } catch (NotAllowedException | NotAllowedError e) {
+      ((HttpServletResponse) resp).sendError(Status.FORBIDDEN.getStatusCode(), "FORBIDDEN");
+    } catch (BadRequestException e) {
+      ((HttpServletResponse) resp).sendError(Status.BAD_REQUEST.getStatusCode(), "BAD_REQUEST");
+    } catch (Exception e) {
+      ((HttpServletResponse) resp).sendError(Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+          "INTERNAL_SERVER_ERROR");
+      LOGGER.error(e);
     } finally {
       chain.doFilter(serv, resp);
     }
@@ -111,9 +103,8 @@ public class HistoryFilter implements Filter {
   private void redirectToLoginPage(ServletRequest serv, ServletResponse resp)
       throws UnsupportedEncodingException, IOException {
     HttpServletRequest request = (HttpServletRequest) serv;
-    Navigation nav = getNavigation(request, resp);
-    String url =
-        nav.getApplicationUri() + PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
+    String url = navigation.getApplicationUri()
+        + PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
     Map<String, String[]> params =
         PrettyContext.getCurrentInstance(request).getRequestQueryString().getParameterMap();
     ((HttpServletResponse) resp)
@@ -130,13 +121,12 @@ public class HistoryFilter implements Filter {
    * @throws Exception
    */
   private void dofilterImpl(HttpServletRequest request, ServletResponse resp) throws Exception {
-    HistorySession hs = getHistorySession(request, resp);
-    Navigation nav = getNavigation(request, resp);
+    getFacesContext(request, resp);
     SessionBean session = getSessionBean(request, resp);
-    if (session != null) {
+    HistorySession hs = getHistorySession(request, resp);
+    if (session != null && hs != null) {
       checkSpaceMatching(request, session, hs);
-      String h = request.getParameter("h");
-      String url = nav.getApplicationUri()
+      String url = navigation.getApplicationUri()
           + PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
       Map<String, String[]> params =
           PrettyContext.getCurrentInstance(request).getRequestQueryString().getParameterMap();
@@ -146,11 +136,56 @@ public class HistoryFilter implements Filter {
       HistoryPage p = new HistoryPage(url, params, session.getUser());
       hs.addPage(p);
     }
+
   }
 
   @Override
   public void init(FilterConfig arg0) throws ServletException {
     this.setFilterConfig(arg0);
+  }
+
+  public FilterConfig getFilterConfig() {
+    return filterConfig;
+  }
+
+  public void setFilterConfig(FilterConfig filterConfig) {
+    this.filterConfig = filterConfig;
+  }
+
+
+
+  private void checkSpaceMatching(HttpServletRequest request, SessionBean session,
+      HistorySession hs) throws NotFoundException, ImejiException {
+    // TODO CHANGE ME
+    String spaceHome = "space_home";
+    String matchingUrl = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
+    PrettyConfig pc =
+        PrettyContext.getCurrentInstance(FacesContext.getCurrentInstance()).getConfig();
+
+    if (pc.isURLMapped(new URL(matchingUrl))) {
+      UrlMapping myMap =
+          pc.getMappingForUrl(PrettyContext.getCurrentInstance(request).getRequestURL());
+      if (myMap.getId().startsWith("space_")) {
+        String mySpaceId = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
+        mySpaceId = spaceHome.equals(myMap.getId())
+            ? StringUtils.substringAfter(matchingUrl, "/space/")
+            : StringUtils.substringBefore(StringUtils.substringAfter(matchingUrl, "/space/"), "/");
+        if (!mySpaceId.equals(session.getSpaceId())) {
+          hs.getPages().clear();
+          SpaceController sc = new SpaceController();
+          if (!sc.isSpaceByLabel(mySpaceId)) {
+            session.setSpaceId("");
+            throw new NotFoundException("SPACE_NOT_FOUND");
+          }
+        }
+      } else {
+        if (!("".equals(session.getSpaceId()))) {
+          // Clean old history pages when switching to a new space
+          hs.getPages().clear();
+          session.setSpaceId("");
+        }
+      }
+    }
   }
 
   /**
@@ -175,16 +210,6 @@ public class HistoryFilter implements Filter {
     return (HistorySession) getBean(HistorySession.class, req, resp);
   }
 
-  /**
-   * return the current {@link Navigation}
-   * 
-   * @param request
-   * @param resp
-   * @return
-   */
-  private Navigation getNavigation(HttpServletRequest req, ServletResponse resp) {
-    return (Navigation) getBean(Navigation.class, req, resp);
-  }
 
   private Object getBean(Class<?> c, ServletRequest request, ServletResponse resp) {
     String name = c.getSimpleName();
@@ -204,6 +229,18 @@ public class HistoryFilter implements Filter {
   }
 
   /**
+   * Used to initialized FacesContext
+   * 
+   * @author bastiens
+   *
+   */
+  public abstract static class InnerFacesContext extends FacesContext {
+    protected static void setFacesContextAsCurrentInstance(FacesContext facesContext) {
+      FacesContext.setCurrentInstance(facesContext);
+    }
+  }
+
+  /**
    * Get {@link FacesContext} from Filter
    * 
    * @param request
@@ -211,6 +248,7 @@ public class HistoryFilter implements Filter {
    * @return
    */
   private FacesContext getFacesContext(ServletRequest request, ServletResponse response) {
+    ServletContext servletContext = ((HttpServletRequest) request).getSession().getServletContext();
     // Try to get it first
     FacesContext facesContext = FacesContext.getCurrentInstance();
     // if (facesContext != null) return facesContext;
@@ -226,66 +264,7 @@ public class HistoryFilter implements Filter {
     UIViewRoot view =
         facesContext.getApplication().getViewHandler().createView(facesContext, "imeji");
     facesContext.setViewRoot(view);
-
     return facesContext;
   }
 
-  public FilterConfig getFilterConfig() {
-    return filterConfig;
-  }
-
-  public void setFilterConfig(FilterConfig filterConfig) {
-    this.filterConfig = filterConfig;
-  }
-
-  public abstract static class InnerFacesContext extends FacesContext {
-    protected static void setFacesContextAsCurrentInstance(FacesContext facesContext) {
-      FacesContext.setCurrentInstance(facesContext);
-    }
-  }
-
-  private void checkSpaceMatching(HttpServletRequest request, SessionBean session,
-      HistorySession hs) throws NotFoundException, ImejiException {
-    // TODO CHANGE ME
-    String spaceHome = "space_home";
-
-    String matchingUrl = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
-
-    PrettyConfig pc =
-        PrettyContext.getCurrentInstance(FacesContext.getCurrentInstance()).getConfig();
-
-    if (pc.isURLMapped(new URL(matchingUrl))) {
-      // System.out.println("URL IS MAPPED "+matchingUrl);
-      UrlMapping myMap =
-          pc.getMappingForUrl(PrettyContext.getCurrentInstance(request).getRequestURL());
-      // System.out.println("URL IS MAPPED with pattern "+myMap.getPattern()+" and id
-      // "+myMap.getId());
-
-      if (myMap.getId().startsWith("space_")) {
-        String mySpaceId = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
-        // System.out.println("PreCalculated mySpaceId= "+mySpaceId+" 2");
-        // System.out.println(StringUtils.substringAfter(matchingUrl,
-        // "/space/"));
-        mySpaceId = spaceHome.equals(myMap.getId())
-            ? StringUtils.substringAfter(matchingUrl, "/space/")
-            : StringUtils.substringBefore(StringUtils.substringAfter(matchingUrl, "/space/"), "/");
-        // System.out.println("Calculated mySpaceId= "+mySpaceId+
-        // " sessopmSüace= "+session.getSpaceId());
-        if (!mySpaceId.equals(session.getSpaceId())) {
-          hs.getPages().clear();
-          SpaceController sc = new SpaceController();
-          if (!sc.isSpaceByLabel(mySpaceId)) {
-            session.setSpaceId("");
-            throw new NotFoundException("SPACE_NOT_FOUND");
-          }
-        }
-      } else {
-        if (!("".equals(session.getSpaceId()))) {
-          // Clean old history pages when switching to a new space
-          hs.getPages().clear();
-          session.setSpaceId("");
-        }
-      }
-    }
-  }
 }

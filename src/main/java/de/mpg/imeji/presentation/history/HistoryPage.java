@@ -87,13 +87,13 @@ public class HistoryPage {
    * @return
    */
   public boolean isSame(HistoryPage page) {
-    if (isNull() || page == null || page.isNull())
+    if (isNull() || page == null || page.isNull()) {
       return false;
-    else if (isNull() && page.isNull())
+    } else if (isNull() && page.isNull()) {
       return true;
-    else
+    } else {
       return url.equals(page.url);
-    // return page.imejiPage.equals(imejiPage);
+    }
   }
 
   public boolean isNull() {
@@ -152,5 +152,7 @@ public class HistoryPage {
     this.title = title;
   }
 
-
+  public ImejiPages getImejiPage() {
+    return imejiPage;
+  }
 }

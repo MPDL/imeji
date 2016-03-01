@@ -55,7 +55,7 @@ public abstract class SpaceBean implements Serializable {
 
   private static final long serialVersionUID = -3164518799136292492L;
 
-  private static Logger logger = Logger.getLogger(SpaceBean.class);
+  private static final Logger LOGGER = Logger.getLogger(SpaceBean.class);
 
   protected SessionBean sessionBean;
   protected Navigation navigation;
@@ -105,7 +105,7 @@ public abstract class SpaceBean implements Serializable {
       BeanHelper.info(sessionBean.getMessage("space_successfully_deleted"));
     } catch (Exception e) {
       BeanHelper.error(sessionBean.getMessage("error_space_delete"));
-      logger.error("Error delete space", e);
+      LOGGER.error("Error delete space", e);
     }
 
     return "";

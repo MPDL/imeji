@@ -40,8 +40,6 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
-import org.w3c.dom.NamedNodeMap;
-
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
 
 /**
@@ -74,9 +72,8 @@ public class GifUtils {
   private static byte[] convert(byte[] bytes, Color backgroundColor) throws Exception {
     ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
     BufferedImage bufferedImage = ImageIO.read(inputStream);
-    BufferedImage newBi =
-        new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(),
-            BufferedImage.TYPE_INT_RGB);
+    BufferedImage newBi = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(),
+        BufferedImage.TYPE_INT_RGB);
     Graphics2D g2d = (Graphics2D) newBi.getGraphics();
     g2d.drawImage(bufferedImage, 0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(),
         backgroundColor, null);
@@ -166,10 +163,6 @@ public class GifUtils {
     }
     IIOMetadataNode gce =
         (IIOMetadataNode) imgRootNode.getElementsByTagName("GraphicControlExtension").item(0);
-    NamedNodeMap map = gce.getAttributes();
-    for (int i = 0; i < map.getLength(); i++) {
-      // System.out.println(map.item(i).getNodeName() + " , " + map.item(i).getNodeValue());
-    }
     return Integer.parseInt(gce.getAttribute("delayTime"));
   }
 }

@@ -66,9 +66,8 @@ public class PropertyBean {
     try {
       this.digilibEnabled =
           Boolean.parseBoolean(PropertyReader.getProperty("imeji.digilib.enable"));
-      this.internalStorageBase =
-          FilenameUtils.getBaseName(FilenameUtils.normalizeNoEndSeparator(PropertyReader
-              .getProperty("imeji.storage.path")));
+      this.internalStorageBase = FilenameUtils.getBaseName(
+          FilenameUtils.normalizeNoEndSeparator(PropertyReader.getProperty("imeji.storage.path")));
       applicationURL = StringHelper.normalizeURI(PropertyReader.getProperty("imeji.instance.url"));
       readBaseUri();
     } catch (Exception e) {
@@ -122,9 +121,8 @@ public class PropertyBean {
    * @throws IOException
    */
   public String getInternalStorageBase() throws IOException, URISyntaxException {
-    this.internalStorageBase =
-        FilenameUtils.getBaseName(FilenameUtils.normalizeNoEndSeparator(PropertyReader
-            .getProperty("imeji.storage.path")));
+    this.internalStorageBase = FilenameUtils.getBaseName(
+        FilenameUtils.normalizeNoEndSeparator(PropertyReader.getProperty("imeji.storage.path")));
     return internalStorageBase;
   }
 

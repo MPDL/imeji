@@ -67,7 +67,7 @@
 				*/
 				function displayFacetsWhenReady() {
 					var facetsLoading = document.getElementById('facets:form:running').checked;
-					if (! facetsLoading) {
+					if (!facetsLoading) {
 						clearInterval(facetsLoadingInterval);
 					}
 					document.getElementById('facets:form:refresh').click();

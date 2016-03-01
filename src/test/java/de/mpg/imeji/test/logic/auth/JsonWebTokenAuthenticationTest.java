@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.mpg.imeji.logic.auth.ImejiRsaKeys;
-import de.mpg.imeji.logic.auth.authentication.APIKeyAuthentication;
+import de.mpg.imeji.logic.auth.authentication.impl.APIKeyAuthentication;
 
 public class JsonWebTokenAuthenticationTest {
   private static String privateKeyString;

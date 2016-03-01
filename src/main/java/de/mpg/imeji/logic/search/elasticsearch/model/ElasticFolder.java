@@ -8,22 +8,16 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
  * @author bastiens
  * 
  */
-public class ElasticFolder extends ElasticContainerProperties {
-
-  private String profile;
+public final class ElasticFolder extends ElasticContainerProperties {
+  private final String profile;
 
   public ElasticFolder(CollectionImeji c) {
     super(c);
-
-    if (c.getProfile() != null ) {
-      this.setProfile(c.getProfile().toString());
+    if (c.getProfile() != null) {
+      profile = c.getProfile().toString();
+    } else {
+      profile = null;
     }
-    else
-    {
-      this.setProfile("");
-    }
-
-    this.setSpace(String.valueOf(c.getSpace()));
   }
 
   /**
@@ -31,13 +25,6 @@ public class ElasticFolder extends ElasticContainerProperties {
    */
   public String getProfile() {
     return profile;
-  }
-
-  /**
-   * @param profile the profile to set
-   */
-  public void setProfile(String profile) {
-    this.profile = profile;
   }
 
 }

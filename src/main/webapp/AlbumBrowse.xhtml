@@ -24,21 +24,14 @@
 									navBean="#{Navigation}" 
 									activeMenu="content"/>
 		
-			<menu:context_actionMenu id="action"  isUserLoggedIn="#{Auth.loggedIn}" 
+			<menu:context_actionMenu id="action"
 									sortBean="#{paginatorListSessionBean}" 
 									curMainMenu="#{currentMainMenu}" 
-									navBean="#{Navigation}" 
-									exportQuery="#{paginatorListSessionBean.query}" 
-									collectionStatus="#{paginatorListSessionBean.album.status}" 
-									contextId="#{paginatorListSessionBean.id}" 
-									isDeletable="#{Auth.delete(paginatorListSessionBean.album)}" 
-									isEditable="#{Auth.update(paginatorListSessionBean.album)}"
-									isContentEditable="#{Auth.updateContent(paginatorListSessionBean.album)}"
-									isContentDeletable="#{Auth.deleteContent(paginatorListSessionBean.album)}"
-									isAdmin="#{Auth.admin(paginatorListSessionBean.album)}"
+									exportQuery="#{paginatorListSessionBean.query}"  
+									contextId="#{paginatorListSessionBean.id}"
+									vo="#{paginatorListSessionBean.album}"
 									hasContent="#{paginatorListSessionBean.totalNumberOfRecords > 0}"
-									contextDownloadParam="&amp;album=#{paginatorListSessionBean.id}"
-									allowedToShare="#{AlbumItemsBean.album.status!='WITHDRAWN' and Auth.admin(paginatorListSessionBean.album)}"/>
+									contextDownloadParam="&amp;album=#{paginatorListSessionBean.id}"/>
 		</ui:fragment>
 	</ui:define>
 	

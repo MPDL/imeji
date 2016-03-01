@@ -16,7 +16,7 @@ import de.mpg.imeji.logic.vo.Statement;
  *
  */
 public class CleanMetadataJob implements Callable<Integer> {
-  private static final Logger logger = Logger.getLogger(CleanMetadataJob.class);
+  private static final Logger LOGGER = Logger.getLogger(CleanMetadataJob.class);
 
   private MetadataProfile p;
 
@@ -26,10 +26,10 @@ public class CleanMetadataJob implements Callable<Integer> {
 
   @Override
   public Integer call() throws Exception {
-    logger.info("Cleaning Metadata...");
+    LOGGER.info("Cleaning Metadata...");
     ProfileController pc = new ProfileController();
     pc.removeMetadataWithoutStatement(p);
-    logger.info("...done!");
+    LOGGER.info("...done!");
     return 1;
   }
 

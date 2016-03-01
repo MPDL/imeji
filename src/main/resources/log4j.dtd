@@ -25,8 +25,8 @@ elements,appender elements, categories and an optional root
 element. -->
 
 <!ELEMENT log4j:configuration (renderer*, throwableRenderer?,
-                               appender*,plugin*, (category|logger)*,root?,
-                               (categoryFactory|loggerFactory)?)>
+                               appender*,plugin*, (category|LOGGER)*,root?,
+                               (categoryFactory|LOGGERFactory)?)>
 
 <!-- The "threshold" attribute takes a level value below which -->
 <!-- all logging statements are disabled. -->
@@ -89,15 +89,15 @@ element. -->
 <!-- ErrorHandlers can be of any class. They can admit any number of -->
 <!-- parameters. -->
 
-<!ELEMENT errorHandler (param*, root-ref?, logger-ref*,  appender-ref?)> 
+<!ELEMENT errorHandler (param*, root-ref?, LOGGER-ref*,  appender-ref?)> 
 <!ATTLIST errorHandler
    class        CDATA   #REQUIRED 
 >
 
 <!ELEMENT root-ref EMPTY>
 
-<!ELEMENT logger-ref EMPTY>
-<!ATTLIST logger-ref
+<!ELEMENT LOGGER-ref EMPTY>
+<!ATTLIST LOGGER-ref
   ref CDATA #REQUIRED
 >
 
@@ -133,9 +133,9 @@ element. -->
 >
 
 <!-- If no level element is specified, then the configurator MUST not -->
-<!-- touch the level of the named logger. -->
-<!ELEMENT logger (param*,level?,appender-ref*)>
-<!ATTLIST logger
+<!-- touch the level of the named LOGGER. -->
+<!ELEMENT LOGGER (param*,level?,appender-ref*)>
+<!ATTLIST LOGGER
   class         CDATA   #IMPLIED
   name		CDATA	#REQUIRED
   additivity	(true|false) "true"  
@@ -146,8 +146,8 @@ element. -->
 <!ATTLIST categoryFactory 
    class        CDATA #REQUIRED>
 
-<!ELEMENT loggerFactory (param*)>
-<!ATTLIST loggerFactory
+<!ELEMENT LOGGERFactory (param*)>
+<!ATTLIST LOGGERFactory
    class        CDATA #REQUIRED>
 
 <!ELEMENT appender-ref EMPTY>
@@ -208,7 +208,7 @@ element. -->
 
 <!-- The timestamp format is application dependent. -->
 <!ATTLIST log4j:event
-    logger     CDATA #REQUIRED
+    LOGGER     CDATA #REQUIRED
     level      CDATA #REQUIRED
     thread     CDATA #REQUIRED
     timestamp  CDATA #REQUIRED

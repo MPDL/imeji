@@ -61,7 +61,7 @@ public class UserGroupsBean implements Serializable {
   @ManagedProperty(value = "#{SessionBean.user}")
   private User sessionUser;
   private String query;
-  private static Logger logger = Logger.getLogger(UserGroupsBean.class);
+  private static final Logger LOGGER = Logger.getLogger(UserGroupsBean.class);
   private String backContainerUrl;
 
   @PostConstruct
@@ -99,7 +99,7 @@ public class UserGroupsBean implements Serializable {
       FacesContext.getCurrentInstance().getExternalContext().redirect(redirectTo);
     } catch (IOException e) {
       BeanHelper.error(e.getMessage());
-      logger.error(e);
+      LOGGER.error(e);
     }
   }
 
@@ -129,7 +129,7 @@ public class UserGroupsBean implements Serializable {
       }
     }catch(Exception e){
       BeanHelper.error("Error removing group");
-      logger.error(e);
+      LOGGER.error(e);
     }
     return "pretty:";
   }

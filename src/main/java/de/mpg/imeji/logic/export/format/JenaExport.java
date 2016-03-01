@@ -25,7 +25,7 @@ import de.mpg.imeji.logic.search.SearchResult;
  */
 public class JenaExport extends Export {
 
-  private static Logger logger = Logger.getLogger(JenaExport.class);
+  private static final Logger LOGGER = Logger.getLogger(JenaExport.class);
 
   @Override
   public void init() {
@@ -60,7 +60,7 @@ public class JenaExport extends Export {
         Imeji.dataset.commit();
       } catch (Exception e) {
         Imeji.dataset.abort();
-        logger.info("Some problems with Exporting of Imeji data", e);
+        LOGGER.info("Some problems with Exporting of Imeji data", e);
       } finally {
         Imeji.dataset.end();
       }

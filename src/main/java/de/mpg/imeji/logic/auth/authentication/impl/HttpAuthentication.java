@@ -22,14 +22,14 @@
  * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
  * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
  */
-package de.mpg.imeji.logic.auth.authentication;
+package de.mpg.imeji.logic.auth.authentication.impl;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
-import de.mpg.imeji.logic.auth.Authentication;
+import de.mpg.imeji.logic.auth.authentication.Authentication;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -75,9 +75,7 @@ public class HttpAuthentication implements Authentication {
     } else if (usernamePassword != null) {
       int p = usernamePassword.indexOf(":");
       if (p != -1) {
-        SimpleAuthentication simpleAuthentification =
-            new SimpleAuthentication(getUserLogin(), getUserPassword());
-        return simpleAuthentification.doLogin();
+        return new DefaultAuthentication(getUserLogin(), getUserPassword()).doLogin();
       }
     }
     // not logged in

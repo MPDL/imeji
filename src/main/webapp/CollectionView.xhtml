@@ -27,19 +27,13 @@
 										navBean="#{Navigation}" 
 										activeMenu="metadata" />
 			
-			<menu:context_actionMenu id="action"  isUserLoggedIn="#{Auth.loggedIn}" 
-										curMainMenu="#{currentMainMenu}" 
-										navBean="#{Navigation}" 
-										collectionStatus="#{metadataContextBean.status}" 
-										contextId="#{metadataBean.id}" 
-										isDeletable="#{Auth.delete(metadataBean.collection)}" 
-										isEditable="#{Auth.update(metadataBean.collection)}" 
-										isAdmin="#{Auth.admin(metadataBean.collection)}" 
+			<menu:context_actionMenu id="action" 
+										vo="#{metadataBean.collection}"
+										curMainMenu="#{currentMainMenu}"
 										hasContent="#{metadataBean.size > 0}" 
 										downloadEnabled="true"
-										contextDownloadParam="&amp;col=#{metadataBean.id}" 
-										allowedToShare="false"
-										profileEditable="#{Auth.update(metadataBean.profile) and metadataContextBean.status != 'WITHDRAWN'}"
+										contextDownloadParam="&amp;col=#{metadataBean.id}"
+										profile="#{metadataBean.profile}"
 										activeMenu="metadata"
 										hasDoi="#{metadataBean.collection.doi != null and metadataBean.collection.doi !=''}"/>
 		</ui:fragment>

@@ -19,7 +19,7 @@ public class ProfileCache {
 
   private Map<String, MetadataProfile> profiles = new HashMap<>();
   private ProfileService profileService = new ProfileService();
-  private static final Logger logger = Logger.getLogger(ProfileCache.class);
+  private static final Logger LOGGER = Logger.getLogger(ProfileCache.class);
 
   /**
    * If the profile is cached, read it from cache, else, read it from the database and cache it
@@ -48,7 +48,7 @@ public class ProfileCache {
     try {
       return profileService.read(uri);
     } catch (Exception e) {
-      logger.info("Something nasty happend after reading the profile", e);
+      LOGGER.info("Something nasty happend after reading the profile", e);
       return null;
     }
   }

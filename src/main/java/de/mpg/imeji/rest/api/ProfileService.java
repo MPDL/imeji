@@ -1,6 +1,7 @@
 package de.mpg.imeji.rest.api;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -9,6 +10,8 @@ import com.google.common.collect.Lists;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.ProfileController;
+import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.SearchResult;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
@@ -116,7 +119,20 @@ public class ProfileService implements API<MetadataProfileTO> {
   @Override
   public SearchResultTO<MetadataProfileTO> search(String q, int offset, int size, User u)
       throws ImejiException {
-    return null;
+    ProfileController controller = new ProfileController();
+
+    SearchResult result = controller.search(SearchQueryParser.parseStringQuery(q), u, null);
+
+    List<MetadataProfileTO> tos = new ArrayList<>();
+    for (MetadataProfile vo : controller.retrieveLazy(result.getResults(), -1, 0, u)) {
+      MetadataProfileTO to = new MetadataProfileTO();
+      TransferObjectFactory.transferMetadataProfile(vo, to);
+      tos.add(to);
+    }
+
+    return new SearchResultTO.Builder<MetadataProfileTO>()
+        .numberOfRecords(result.getResults().size()).offset(offset).results(tos).query(q).size(size)
+        .totalNumberOfRecords(result.getNumberOfRecords()).build();
   }
 
 }

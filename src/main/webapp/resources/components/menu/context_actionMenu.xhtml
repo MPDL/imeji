@@ -4,41 +4,34 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:composite="http://java.sun.com/jsf/composite">
 	
-	<composite:interface shortDescription="Menu for context interactions as sorting, filter, download, etc. / @require attributes: isUserLoggedIn, navBean">
-		
-		<composite:attribute name="isUserLoggedIn" type="java.lang.Boolean" default="false" required="true" shortDescription="@type: Boolean"/>
-		<composite:attribute name="navBean" type="java.lang.Object" required="true" shortDescription="@type: Object, used for several URL paths"/>
-		
-		<composite:attribute name="sortBean" type="java.lang.Object" required="false" shortDescription="@type: Object, used for sorting elements (e.g. in bibliographic list - order elements ascending)"/>
+	<composite:interface shortDescription="Menu for context interactions as sorting, filter, download, etc. / @require attributes: isUserLoggedIn, navBean">		
 		<composite:attribute name="filterBean" type="java.lang.Object" required="false" shortDescription="@type: Object, used for filtering elements (e.g. in bibliographic list - my items without withdrawed items)"/>
 		
 		<composite:attribute name="menuClass" type="java.lang.String" default="imj_contentSubMenu" required="false" shortDescription="@type: String, used for the component and will be extended with 'Item' for every menu entry, @default: imj_contentSubMenu"/>
-		<composite:attribute name="contextId" type="java.lang.String" default="" required="false" shortDescription="@type: String, required for Download"/>
-		<composite:attribute name="exportQuery" type="java.lang.String" default="" required="false" shortDescription="@type: String, @dependencies: contextId and navBean for Download"/>
-		<composite:attribute name="collectionStatus" type="java.lang.String" default="PENDING" required="false" shortDescription="@type: String, for menu handling in case of withdraw, release, delete, ..."/>
+		<composite:attribute name="exportQuery" type="java.lang.String" default="" required="false" shortDescription="@type: String, @dependencies: vo.idString and navBean for Download"/>
 		<composite:attribute name="curMainMenu" type="java.lang.String" default="" required="false" shortDescription="@type String, required to get the right download"/>
-		<composite:attribute name="contextDownloadParam" type="java.lang.String" default="" required="false" shortDescription="@type String, e.g. &amp;col=abcdefghi"/>
+		<composite:attribute name="contextDownloadParam" type="java.lang.String" default="" required="false" shortDescription="@type String, e.g. &amp;col=abcdefghi"/>		
 		
-		<composite:attribute name="isEditable" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean, required to release, delete, withdraw item"/>
-		<composite:attribute name="isDeletable" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean, required to check if item is deletable"/>
-		<composite:attribute name="isContentEditable" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean, required to check if item are editable"/>
-		<composite:attribute name="isContentDeletable" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean, required to check if item are deletable"/>
-		<composite:attribute name="isAdmin" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean, required to check if user is admin of container"/>
-		<composite:attribute name="hasContent" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean, required to show menus (e.g. start page, content page)"/>
-		<composite:attribute name="downloadEnabled" type="java.lang.Boolean" default="true" required="false" shortDescription="@type: Boolean, param to disable the download menu on special pages (e.g. on collection overview, ...))"/>
-		<composite:attribute name="allowedToShare" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean: depends on logged in status"/>
-		<composite:attribute name="profileEditable" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean: true if the profile ca be iedted on this page"/>
-		
+		<composite:attribute name="downloadEnabled" type="java.lang.Boolean" default="true" required="false" shortDescription="@type: Boolean, param to disable the download menu on special pages (e.g. on collection overview, ...))"/>		
 		<composite:attribute name="actionEnabled" type="java.lang.Boolean" default="true" required="false" shortDescription="@type: Boolean: check if action menu should be displayed"/>
 		<composite:attribute name="activeMenu" type="java.lang.String" default="" required="false" shortDescription="@type String, e.g. active sub navigation Menu"/>
-		<composite:attribute name="hasDoi" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean: check if the container has already a doi"/>		
+			
+		<composite:attribute name="vo" type="java.lang.Object" required="false" shortDescription="@type: the VO on the current page (collection, item, album, profile)"/>
+		<composite:attribute name="profile" type="java.lang.Object" required="false" shortDescription="@type: The profile of the current VO"/>
+		<composite:attribute name="hasContent" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: True if the current VO is a not empty container"/>
+		<composite:attribute name="hasDoi" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean: check if the container has already a doi"/>
+							
 	</composite:interface>
 	
 	<composite:implementation>
-
-		<div class="#{cc.attrs.menuClass.trim()}">
-			
-			<ui:fragment rendered="#{cc.attrs.isUserLoggedIn}">
+		<ui:param name="adminVO" value="#{Auth.admin(cc.attrs.vo)}"/>
+		<ui:param name="deleteContentVO" value="#{Auth.deleteContent(cc.attrs.vo)}"/>
+		<ui:param name="deleteVO" value="#{Auth.delete(cc.attrs.vo)}"/>
+		<ui:param name="updateVO" value="#{Auth.update(cc.attrs.vo)}"/>
+		<ui:param name="updateContentVO" value="#{Auth.updateContent(cc.attrs.vo)}"/>
+		
+		<div class="#{cc.attrs.menuClass.trim()}">		
+			<ui:fragment rendered="#{Auth.loggedIn}">
 				<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item">
 					<div class="imj_menuHeader">
                         <span class="fa fa-plus">&#160;</span>
@@ -48,13 +41,13 @@
 						<ul class="imj_overlayMenuList">
 							<ui:fragment rendered="#{Auth.sessionUser.allowedToCreateCollection}">
 								<li>
-									<h:outputLink value="#{cc.attrs.navBean.createCollectionUrl}?reset=1" title="#{lbl.collection_create}">
+									<h:outputLink value="#{Navigation.createCollectionUrl}?reset=1" title="#{lbl.collection_create}">
 										<h:outputText value="#{lbl.collection_create}"/>
 									</h:outputLink>
 								</li>
 							</ui:fragment>
 							<li>
-								<h:outputLink value="#{cc.attrs.navBean.createAlbumUrl}" title="#{lbl.album_create}">
+								<h:outputLink value="#{Navigation.createAlbumUrl}" title="#{lbl.album_create}">
 									<h:outputText value="#{lbl.album_create}"/>
 								</h:outputLink>
 							</li>
@@ -75,7 +68,7 @@
 				</div>
 			</ui:fragment>
 			
-			<ui:fragment rendered="#{cc.attrs.navBean != null and cc.attrs.downloadEnabled}">					
+			<ui:fragment rendered="#{Navigation != null and cc.attrs.downloadEnabled}">					
 					<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item">
 						<div class="imj_menuHeader">
                             <span class="fa fa-download">&#160;</span>
@@ -85,17 +78,17 @@
 							<ul class="imj_overlayMenuList">
 								<ui:fragment rendered="#{cc.attrs.activeMenu != 'metadata' and cc.attrs.activeMenu != 'item'}">
 									<li>
-										<h:outputLink title="#{lbl.export_zip}" value="#{cc.attrs.navBean.applicationUrl}export?format=zip&amp;type=image&amp;n=10000&amp;space=#{SessionBean.selectedSpace}#{cc.attrs.contextDownloadParam.trim()}&amp;q=#{cc.attrs.exportQuery.trim()}" target="_blank">
+										<h:outputLink title="#{lbl.export_zip}" value="#{Navigation.applicationUrl}export?format=zip&amp;type=image&amp;n=10000&amp;space=#{SessionBean.selectedSpace}#{cc.attrs.contextDownloadParam.trim()}&amp;q=#{cc.attrs.exportQuery.trim()}" target="_blank">
 											<h:outputText value="#{lbl.export_zip}"/>
 										</h:outputLink>
 									</li>
 									<li>
-										<h:outputLink title="#{lbl.export_rdf}" value="#{cc.attrs.navBean.applicationUrl}export?format=rdf&amp;type=image&amp;n=10000&amp;space=#{SessionBean.selectedSpace}#{cc.attrs.contextDownloadParam.trim()}&amp;q=#{cc.attrs.exportQuery.trim()}" target="_blank">
+										<h:outputLink title="#{lbl.export_rdf}" value="#{Navigation.applicationUrl}export?format=rdf&amp;type=image&amp;n=10000&amp;space=#{SessionBean.selectedSpace}#{cc.attrs.contextDownloadParam.trim()}&amp;q=#{cc.attrs.exportQuery.trim()}" target="_blank">
 											<h:outputText value="#{lbl.export_rdf}"/>
 										</h:outputLink>
 									</li>
 									<li>
-										<h:outputLink title="#{lbl.export_native}" value="#{cc.attrs.navBean.applicationUrl}export?format=xml&amp;type=image&amp;n=10000&amp;space=#{SessionBean.selectedSpace}#{cc.attrs.contextDownloadParam.trim()}&amp;q=#{cc.attrs.exportQuery.trim()}" target="_blank">
+										<h:outputLink title="#{lbl.export_native}" value="#{Navigation.applicationUrl}export?format=xml&amp;type=image&amp;n=10000&amp;space=#{SessionBean.selectedSpace}#{cc.attrs.contextDownloadParam.trim()}&amp;q=#{cc.attrs.exportQuery.trim()}" target="_blank">
 											<h:outputText value="#{lbl.export_native}"/>
 										</h:outputLink>
 									</li>
@@ -119,7 +112,7 @@
 					</div>
 				</ui:fragment>
 			
-			<ui:fragment rendered="#{cc.attrs.isUserLoggedIn}">
+			<ui:fragment rendered="#{Auth.loggedIn}">
 				
 				<h:panelGroup layout="block" styleClass="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item" rendered="#{cc.attrs.filterBean != null}">
 					<div class="imj_menuHeader">
@@ -139,9 +132,9 @@
 						</h:form>
 					</div>
 				</h:panelGroup>
-				<ui:fragment  rendered="#{cc.attrs.actionEnabled and cc.attrs.collectionStatus.trim().toUpperCase() != 'WITHDRAWN'}">
+				<ui:fragment  rendered="#{cc.attrs.actionEnabled and cc.attrs.vo.status != 'WITHDRAWN'}">
 					<!-- SHARE MENU -->
-					<ui:fragment rendered="#{cc.attrs.isAdmin}">
+					<ui:fragment rendered="#{adminVO}">
 						<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item" id="sharingMenu">
 							<div class="imj_menuHeader" >
 	                            <span class="fa fa-share">&#160;</span>
@@ -150,10 +143,10 @@
 							<div class="imj_menuBody">
 								<ul class="imj_overlayMenuList">							
 									<li class="#{curMenuClass}Item">
-										<h:outputLink  id="actionMenuShareAlbum" rendered="#{cc.attrs.curMainMenu == 'album' and cc.attrs.activeMenu != 'item'}" value="#{cc.attrs.navBean.albumUrl}#{cc.attrs.contextId}/share" >
+										<h:outputLink  id="actionMenuShareAlbum" rendered="#{cc.attrs.curMainMenu == 'album' and cc.attrs.activeMenu != 'item'}" value="#{Navigation.albumUrl}#{cc.attrs.vo.idString}/share" >
 											<h:outputText value="#{lbl.album_share}" rendered="#{cc.attrs.curMainMenu == 'album'}"/>
 										</h:outputLink>
-										<h:outputLink   id="actionMenuShareCollection" rendered="#{cc.attrs.curMainMenu == 'collection' and cc.attrs.activeMenu != 'item'}" value="#{cc.attrs.navBean.collectionUrl}#{cc.attrs.contextId}/share">
+										<h:outputLink   id="actionMenuShareCollection" rendered="#{cc.attrs.curMainMenu == 'collection' and cc.attrs.activeMenu != 'item'}" value="#{Navigation.collectionUrl}#{cc.attrs.vo.idString}/share">
 											<h:outputText value="#{lbl.collection_share}"/>
 										</h:outputLink>
 										<h:outputLink   id="actionMenuShareItem" rendered="#{cc.attrs.activeMenu == 'item' and itemBean.image.status!='WITHDRAWN'}" value="?tab=share#itemMetadata">
@@ -165,7 +158,7 @@
 						</div>
 					</ui:fragment>
 					<!-- EDIT MENU -->
-					<ui:fragment  rendered="#{cc.attrs.actionEnabled and (cc.attrs.isAdmin or cc.attrs.isContentEditable or cc.attrs.isEditable or cc.attrs.profileEditable) and cc.attrs.collectionStatus.trim().toUpperCase() != 'WITHDRAWN'}">
+					<ui:fragment  rendered="#{(adminVO or updateContentVO or updateVO or Auth.update(cc.attrs.profile)) and cc.attrs.vo.status != 'WITHDRAWN'}">
 						<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item" id="editMenu">
 							<div class="imj_menuHeader" >
 	                            <span class="fa fa-pencil">&#160;</span>
@@ -173,12 +166,12 @@
 							</div>
 							<div class="imj_menuBody">
 								<ul class="imj_overlayMenuList">	
-									<ui:fragment rendered="#{cc.attrs.isEditable}">						
+									<ui:fragment rendered="#{updateVO}">						
 										<li class="#{curMenuClass}Item">
-											<h:outputLink  id="actionMenuEditCollection" rendered="#{cc.attrs.curMainMenu == 'collection' and cc.attrs.activeMenu != 'item' and cc.attrs.isEditable}" value="#{cc.attrs.navBean.collectionUrl}#{cc.attrs.contextId}/edit?init=1">
+											<h:outputLink  id="actionMenuEditCollection" rendered="#{cc.attrs.curMainMenu == 'collection' and cc.attrs.activeMenu != 'item' and updateVO}" value="#{Navigation.collectionUrl}#{cc.attrs.vo.idString}/edit?init=1">
 												<h:outputText value="#{lbl.collection_edit_metadata}"/>
 											</h:outputLink>
-											<h:outputLink  id="actionMenuEditAlbum" rendered="#{cc.attrs.curMainMenu == 'album' and cc.attrs.activeMenu != 'item'}" value="#{cc.attrs.navBean.albumUrl}#{cc.attrs.contextId}/edit?init=1">
+											<h:outputLink  id="actionMenuEditAlbum" rendered="#{cc.attrs.curMainMenu == 'album' and cc.attrs.activeMenu != 'item'}" value="#{Navigation.albumUrl}#{cc.attrs.vo.idString}/edit?init=1">
 												<h:outputText value="#{lbl.album_share_album_edit}"/>
 											</h:outputLink>
 											<h:outputLink rendered="#{cc.attrs.activeMenu == 'item'}" value="?edit=1#itemMetadata">
@@ -186,16 +179,16 @@
 											</h:outputLink>
 										</li>
 									</ui:fragment>
-									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and cc.attrs.profileEditable and !(metadataBean.profile == null or metadataBean.profile.statements.size() == 0)}">	
+									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and Auth.update(cc.attrs.profile) and !(cc.attrs.profile == null or cc.attrs.profile.statements.size() == 0)}">	
 										<li class="#{curMenuClass}Item">
-											<h:outputLink  value="#{Navigation.profileUrl}#{metadataBean.profileId}/#{Navigation.editPath}?init=1&amp;col=#{metadataBean.id}" id="lnkSelectEdit3">
+											<h:outputLink  value="#{Navigation.profileUrl}#{cc.attrs.profile.idString}/#{Navigation.editPath}?init=1&amp;col=#{cc.attrs.vo.idString}" id="lnkSelectEdit3">
 												<h:outputText value="#{lbl.profile_edit}"/>
 											</h:outputLink>
 										</li>
 									</ui:fragment>
-									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and  cc.attrs.hasContent and cc.attrs.isContentEditable and !(paginatorListSessionBean.profile == null or paginatorListSessionBean.profile.statements.size() == 0)}">	
+									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and paginatorListSessionBean!= null and cc.attrs.hasContent and updateContentVO and !(cc.attrs.profile == null or cc.attrs.profile.statements.size() == 0)}">	
 										<li class="#{curMenuClass}Item">
-											<h:outputLink  value="#{Navigation.applicationSpaceUrl}edit?type=all&amp;c=#{paginatorListSessionBean.collection.id}&amp;q=#{paginatorListSessionBean.query}" id="lnkSelectEdit2">
+											<h:outputLink  value="#{Navigation.applicationSpaceUrl}edit?type=all&amp;c=#{cc.attrs.vo.id}&amp;q=#{paginatorListSessionBean.query}" id="lnkSelectEdit2">
 												<h:outputText value="#{lbl.edit_all}"/>
 											</h:outputLink>
 										</li>
@@ -204,8 +197,41 @@
 							</div>
 						</div>
 					</ui:fragment>
-					<!-- ACTION MENU -->
-					<ui:fragment  rendered="#{cc.attrs.actionEnabled and (cc.attrs.isAdmin or cc.attrs.isContentDeletable or cc.attrs.isDeletable) and cc.attrs.collectionStatus.trim().toUpperCase() != 'WITHDRAWN'}">
+					
+					<!-- Action Menu for item page WITHOUT an album-->
+					<ui:fragment rendered="#{cc.attrs.activeMenu == 'item' and cc.attrs.curMainMenu != 'album'}">
+						<ui:param name="deleteSingleItem" value="#{deleteVO and WorkflowBean.delete(cc.attrs.vo)}" />
+						<ui:param name="withdrawSingleItem" value="#{adminVO and WorkflowBean.withdraw(cc.attrs.vo)}" />
+						
+						<ui:fragment rendered="#{deleteSingleItem or withdrawSingleItem}">
+							<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item" id="actionMenu">
+								<div class="imj_menuHeader" >
+		                            <span class="fa fa-bars">&#160;</span>
+									<h:outputText value="#{lbl.actions}" styleClass="imj_headerEntry"/>
+								</div>
+								<div class="imj_menuBody">
+									<ul class="imj_overlayMenuList">
+										<ui:fragment rendered="#{deleteSingleItem}">
+											<li>
+												<h:outputLink id="actionMenuDeleteItem" value="#" onclick="openDialog('deleteMenuItemDialog');">
+													<h:outputText value="#{lbl.delete_item}"/>
+												</h:outputLink>
+											</li>
+										</ui:fragment>
+										<ui:fragment rendered="#{withdrawSingleItem}">
+											<li>
+												<h:outputLink id="actionMenuDiscardItem" value="#" onclick="openDialog('withdrawMenuItemDialog');" title="#{lbl.withdraw}">
+													<h:outputText value="#{lbl.item_withdraw}"/>
+												</h:outputLink>
+											</li>
+										</ui:fragment>
+									</ul>
+								</div>
+							</div>
+						</ui:fragment>
+					</ui:fragment>
+					<!-- Action Menu for item page WITHIN album -->
+					<ui:fragment rendered="#{cc.attrs.activeMenu == 'item' and cc.attrs.curMainMenu == 'album' and Auth.create(itemBean.album)}">
 						<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item" id="actionMenu">
 							<div class="imj_menuHeader" >
 	                            <span class="fa fa-bars">&#160;</span>
@@ -213,78 +239,103 @@
 							</div>
 							<div class="imj_menuBody">
 								<ul class="imj_overlayMenuList">
-									<ui:fragment rendered="#{cc.attrs.isAdmin and cc.attrs.collectionStatus.trim().toUpperCase() == 'PENDING' and cc.attrs.hasContent}">
-										<li>
-											<h:outputLink id="actionMenuRelease" value="#" onclick="openDialog('releaseMenuItemDialog');" title="#{lbl.collection_release}">
-												<h:outputText value="#{lbl.collection_release}" rendered="#{cc.attrs.curMainMenu == 'collection'}"/>
-												<h:outputText value="#{lbl.album_release}" rendered="#{cc.attrs.curMainMenu == 'album'}"/>
-											</h:outputLink>
-										</li>
-									</ui:fragment>
-									
-									<ui:fragment rendered="#{cc.attrs.isAdmin and cc.attrs.collectionStatus.trim().toUpperCase() == 'RELEASED'}">
-										<li>
-											<h:outputLink id="actionMenuDiscard" value="#" onclick="openDialog('withdrawMenuItemDialog');" title="#{lbl.withdraw}">
-												<h:outputText value="#{lbl.collection_withdraw}" rendered="#{cc.attrs.curMainMenu == 'collection'}"/>
-												<h:outputText value="#{lbl.album_withdraw}" rendered="#{cc.attrs.curMainMenu == 'album'}"/>
-											</h:outputLink>
-										</li>
-										
-										<ui:fragment rendered ="#{cc.attrs.curMainMenu == 'collection'}">
-										<li>
-											<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{ConfigurationBean.doiServiceUrl != null and ConfigurationBean.doiServiceUrl != '' and cc.attrs.hasDoi}">
-												<h:outputText value="#{lbl.change_doi}"/>
-											</h:outputLink>
-											<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog('createDOIDialog');" title="#{lbl.createDOI}" rendered="#{ConfigurationBean.doiServiceUrl != null and ConfigurationBean.doiServiceUrl != ''}">
-												<h:outputText value="#{lbl.createDOI}" rendered="#{!cc.attrs.hasDoi}"/>
-											</h:outputLink>
-											<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{ConfigurationBean.doiServiceUrl == null or ConfigurationBean.doiServiceUrl == ''}">
-												<h:outputText value="#{lbl.createDOI}" rendered="#{!cc.attrs.hasDoi}"/>
-												<h:outputText value="#{lbl.change_doi}" rendered="#{cc.attrs.hasDoi}"/>
-											</h:outputLink>
-										</li>
-										</ui:fragment>
-									</ui:fragment>
-									
-									<ui:fragment rendered="#{cc.attrs.isDeletable}">
-										<li>
-											<h:outputLink id="actionMenuDelete" value="#" onclick="openDialog('deleteMenuItemDialog');">
-												<h:outputText value="#{lbl.collection_delete}" rendered="#{cc.attrs.curMainMenu == 'collection' and cc.attrs.activeMenu != 'item'}"/>
-												<h:outputText value="#{lbl.album_delete}" rendered="#{cc.attrs.curMainMenu == 'album' and cc.attrs.activeMenu != 'item'}"/>
-												<h:outputText value="#{lbl.delete_item}" rendered="#{cc.attrs.activeMenu == 'item'}"/>
-											</h:outputLink>
-										</li>
-									</ui:fragment>
-									<ui:fragment rendered="#{cc.attrs.isContentDeletable}">
-										<li>
-											<h:outputLink  value="#" onclick="openDialog('dialogDeleteAll')" 
-																rendered="#{cc.attrs.collectionStatus.trim().toUpperCase() == 'PENDING' and itemBean.navigationString != 'pretty:albumItem'}">
-												<h:outputText value="#{lbl.delete_all}"/>
-											</h:outputLink>
-											<h:outputLink value="#" onclick="openDialog('dialogWithdrawAll')"
-															rendered="#{cc.attrs.collectionStatus.trim().toUpperCase() == 'RELEASED' and itemBean.navigationString != 'pretty:albumItem'}" >
-												<h:outputText value="#{lbl.withdraw_all}"/>
-											</h:outputLink>
-											<h:form>
-											<h:commandLink id="lnkPicRemoveFromAlbum" action="#{itemBean.removeFromAlbum}" rendered="#{itemBean.navigationString == 'pretty:albumItem'}">
-													<h:outputText value="#{lbl.remove_from_album}"/>
+									<li>
+										<h:form>
+											<h:commandLink id="lnkRemoveFromAlbum" action="#{itemBean.removeFromAlbum}">
+												<h:outputText value="#{lbl.remove_from_album}"/>
 											</h:commandLink>
-											</h:form>
-										</li>
-									</ui:fragment>
-									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection'  and cc.attrs.isAdmin and metadataBean.profile != null}">
-										<li>
-											<h:outputLink rendered="#{metadataBean.profile.statements.size() == 0}" value="#{Navigation.applicationUrl}createprofile?warn=0&amp;col=#{metadataBean.collection.idString}&amp;redirect=view" title="#{lbl.add_profile}">
-												<h:outputText value="#{lbl.add_profile}"/>
-											</h:outputLink>
-											<h:outputLink rendered="#{metadataBean.profile.statements.size() > 0}" value="#{Navigation.applicationUrl}createprofile?warn=1&amp;col=#{metadataBean.collection.idString}&amp;redirect=view" title="#{lbl.profile_change}" >
-												<h:outputText value="#{lbl.profile_change}"/>
-											</h:outputLink>
-										</li>
-									</ui:fragment>
+										</h:form>
+									</li>					
 								</ul>
 							</div>
 						</div>
+					</ui:fragment>
+					
+					<!-- ACTION MENU for all other pages -->
+					<ui:fragment rendered="#{cc.attrs.activeMenu != 'item'}">
+
+						<ui:fragment rendered="#{(adminVO or deleteContentVO or deleteVO and WorkflowBean.delete(cc.attrs.vo)) and cc.attrs.vo.status != 'WITHDRAWN'}">
+							<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item" id="actionMenu">
+								<div class="imj_menuHeader" >
+		                            <span class="fa fa-bars">&#160;</span>
+									<h:outputText value="#{lbl.actions}" styleClass="imj_headerEntry"/>
+								</div>
+								<div class="imj_menuBody">
+									<ul class="imj_overlayMenuList">
+										<ui:fragment rendered="#{deleteVO and WorkflowBean.delete(cc.attrs.vo)}">
+											<li>
+												<h:outputLink id="actionMenuDelete" value="#" onclick="openDialog('deleteMenuItemDialog');">
+													<h:outputText value="#{lbl.collection_delete}" rendered="#{cc.attrs.curMainMenu == 'collection' and cc.attrs.activeMenu != 'item'}"/>
+													<h:outputText value="#{lbl.album_delete}" rendered="#{cc.attrs.curMainMenu == 'album' and cc.attrs.activeMenu != 'item'}"/>
+												</h:outputLink>
+											</li>
+										</ui:fragment>
+										<ui:fragment rendered="#{adminVO and WorkflowBean.release(cc.attrs.vo) and cc.attrs.hasContent}">
+											<li>
+												<h:outputLink id="actionMenuRelease" value="#" onclick="openDialog('releaseMenuItemDialog');" title="#{lbl.collection_release}">
+													<h:outputText value="#{lbl.collection_release}" rendered="#{cc.attrs.curMainMenu == 'collection'}"/>
+													<h:outputText value="#{lbl.album_release}" rendered="#{cc.attrs.curMainMenu == 'album'}"/>
+												</h:outputLink>
+											</li>
+										</ui:fragment>
+										<ui:fragment rendered="#{adminVO and WorkflowBean.withdraw(cc.attrs.vo)}">
+											<li>
+												<h:outputLink id="actionMenuDiscard" value="#" onclick="openDialog('withdrawMenuItemDialog');" title="#{lbl.withdraw}">
+													<h:outputText value="#{lbl.collection_withdraw}" rendered="#{cc.attrs.curMainMenu == 'collection' and cc.attrs.activeMenu != 'item'}"/>
+													<h:outputText value="#{lbl.album_withdraw}" rendered="#{cc.attrs.curMainMenu == 'album' and cc.attrs.activeMenu != 'item'}"/>
+												</h:outputLink>
+											</li>
+											
+										<ui:fragment rendered ="#{adminVO and cc.attrs.curMainMenu == 'collection'}">
+											<li>
+												<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{ConfigurationBean.doiServiceUrl != null and ConfigurationBean.doiServiceUrl != '' and cc.attrs.hasDoi}">
+													<h:outputText value="#{lbl.change_doi}"/>
+												</h:outputLink>
+												<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog('createDOIDialog');" title="#{lbl.createDOI}" rendered="#{ConfigurationBean.doiServiceUrl != null and ConfigurationBean.doiServiceUrl != ''}">
+													<h:outputText value="#{lbl.createDOI}" rendered="#{!cc.attrs.hasDoi}"/>
+												</h:outputLink>
+												<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{ConfigurationBean.doiServiceUrl == null or ConfigurationBean.doiServiceUrl == ''}">
+													<h:outputText value="#{lbl.createDOI}" rendered="#{!cc.attrs.hasDoi}"/>
+													<h:outputText value="#{lbl.change_doi}" rendered="#{cc.attrs.hasDoi}"/>
+												</h:outputLink>
+											</li>
+											</ui:fragment>
+										</ui:fragment>							
+										<ui:fragment rendered="#{deleteContentVO and cc.attrs.curMainMenu == 'collection' and paginatorListSessionBean!=null}">
+											<li>
+												<h:outputLink value="#" onclick="openDialog('dialogDeleteAll')" rendered="#{cc.attrs.vo.status == 'PENDING'}">
+													<h:outputText value="#{lbl.delete_all}"/>
+												</h:outputLink>
+												<h:outputLink value="#" onclick="openDialog('dialogWithdrawAll')" rendered="#{cc.attrs.vo.status == 'RELEASED'}" >
+													<h:outputText value="#{lbl.withdraw_all}"/>
+												</h:outputLink>
+											</li>
+										</ui:fragment>
+										
+										<ui:fragment rendered="#{deleteContentVO and cc.attrs.curMainMenu == 'album' and paginatorListSessionBean != null}">
+											<li>
+												<h:form>
+													<h:commandLink id="lnkRemoveAllFromAlbum" action="#{paginatorListSessionBean.removeAllFromAlbum}">
+														<h:outputText value="#{lbl.remove_from_album_all}"/>
+													</h:commandLink>
+												</h:form>
+											</li>
+										</ui:fragment>							
+										
+										<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and adminVO and cc.attrs.profile != null}">
+											<li>
+												<h:outputLink rendered="#{metadataBean.profile.statements.size() == 0}" value="#{Navigation.applicationUrl}createprofile?warn=0&amp;col=#{metadataBean.collection.idString}&amp;redirect=view" title="#{lbl.add_profile}">
+													<h:outputText value="#{lbl.add_profile}"/>
+												</h:outputLink>
+												<h:outputLink rendered="#{metadataBean.profile.statements.size() > 0}" value="#{Navigation.applicationUrl}createprofile?warn=1&amp;col=#{metadataBean.collection.idString}&amp;redirect=view" title="#{lbl.profile_change}" >
+													<h:outputText value="#{lbl.profile_change}"/>
+												</h:outputLink>
+											</li>
+										</ui:fragment>
+									</ul>
+								</div>
+							</div>
+						</ui:fragment>
 					</ui:fragment>
 				</ui:fragment>
 				<!-- ACTIVE ALBUM MENU -->

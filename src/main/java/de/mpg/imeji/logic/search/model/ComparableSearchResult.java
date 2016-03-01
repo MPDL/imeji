@@ -12,10 +12,10 @@ import de.mpg.j2j.helper.SortHelper;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class ComparableSearchResult implements Comparable<ComparableSearchResult> {
-  private String value = null;
-  private String sortValue = "";
-  private SortOrder order = SortOrder.DESCENDING;
+public final class ComparableSearchResult implements Comparable<ComparableSearchResult> {
+  private final String value;
+  private final String sortValue;
+  private final SortOrder order;
 
   public ComparableSearchResult(String s, SortOrder order) {
     this.value = SortHelper.removeSortValue(s);
@@ -27,16 +27,8 @@ public class ComparableSearchResult implements Comparable<ComparableSearchResult
     return value;
   }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
-
   public String getSortValue() {
     return sortValue;
-  }
-
-  public void setSortValue(String sortValue) {
-    this.sortValue = sortValue;
   }
 
   @Override
@@ -44,25 +36,11 @@ public class ComparableSearchResult implements Comparable<ComparableSearchResult
     return o.getSortValue().compareToIgnoreCase(sortValue) * orderAsInteger();
   }
 
-  // @Override
-  // public boolean equals(Object obj) {
-  // if (obj instanceof ComparableSearchResult) {
-  // return compareTo((ComparableSearchResult) obj) == 0;
-  // }
-  // return false;
-  // }
-  //
-
-
   private int orderAsInteger() {
     if (SortOrder.DESCENDING.equals(order)) {
       return 1;
     }
     return -1;
-  }
-
-  public void setOrder(SortOrder order) {
-    this.order = order;
   }
 
   public SortOrder getOrder() {

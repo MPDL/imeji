@@ -12,11 +12,4 @@
 	<ui:param name="containerHeadline" value="#{lbl.collection_info}"/>
 	<ui:param name="showProfileSelector" value="true"/>
 	
-	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action"  isUserLoggedIn="#{Auth.loggedIn}" 
-								 curMainMenu="#{currentMainMenu}" 
-								 downloadEnabled="false"
-								 actionEnabled="false"
-								 navBean="#{Navigation}"/>
-	</ui:define>
 </ui:composition>

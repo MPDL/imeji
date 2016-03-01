@@ -39,6 +39,7 @@ import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.ConfigurationBean;
 import de.mpg.imeji.presentation.beans.ConfigurationBean.BROWSE_VIEW;
 import de.mpg.imeji.presentation.beans.Navigation.Page;
+import de.mpg.imeji.presentation.lang.InternationalizationBean;
 import de.mpg.imeji.presentation.upload.IngestImage;
 import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.CookieUtils;
@@ -66,9 +67,7 @@ public class SessionBean implements Serializable {
   public static final String LABEL_BUNDLE = "labels";
   public static final String MESSAGES_BUNDLE = "messages";
   public static final String METADATA_BUNDLE = "metadata";
-  // imeji locale
-  private final Locale defaultLocale = new Locale("en");
-  private Locale locale = defaultLocale;
+  private Locale locale;
   private Page currentPage;
   private List<String> selected;
   private List<URI> selectedCollections;
@@ -91,11 +90,11 @@ public class SessionBean implements Serializable {
   /*
    * Cookies name
    */
-  public final static String styleCookieName = "IMEJI_STYLE";
-  public final static String langCookieName = "IMEJI_LANG";
-  public final static String numberOfItemsPerPageCookieName = "IMEJI_ITEMS_PER_PAGE";
-  public final static String numberOfContainersPerPageCookieName = "IMEJI_CONTAINERS_PER_PAGE";
-  public final static String browseViewCookieName = "IMEJI_BROWSE_VIEW";
+  public static final String styleCookieName = "IMEJI_STYLE";
+  public static final String langCookieName = "IMEJI_LANG";
+  public static final String numberOfItemsPerPageCookieName = "IMEJI_ITEMS_PER_PAGE";
+  public static final String numberOfContainersPerPageCookieName = "IMEJI_CONTAINERS_PER_PAGE";
+  public static final String browseViewCookieName = "IMEJI_BROWSE_VIEW";
 
   /*
    * Specific variables for the May Planck Inistute
@@ -117,7 +116,7 @@ public class SessionBean implements Serializable {
     selectedAlbums = new ArrayList<URI>();
     profileCached = new HashMap<URI, MetadataProfile>();
     collectionCached = new HashMap<URI, CollectionImeji>();
-    initLocale();
+    this.locale = InternationalizationBean.getRequestedLocale();
     initCssWithCookie();
     initApplicationUrl();
     initNumberOfItemsPerPageWithCookieOrProperties();
@@ -245,7 +244,7 @@ public class SessionBean implements Serializable {
    * @return
    */
   private String getDefaultLabelBundle() {
-    return LABEL_BUNDLE + "_" + defaultLocale.getLanguage();
+    return LABEL_BUNDLE + "_" + Locale.ENGLISH.getLanguage();
   }
 
   /**
@@ -263,13 +262,9 @@ public class SessionBean implements Serializable {
    * @return
    */
   private String getDefaultMessagesBundle() {
-    return MESSAGES_BUNDLE + "_" + defaultLocale.getLanguage();
+    return MESSAGES_BUNDLE + "_" + Locale.ENGLISH.getLanguage();
   }
 
-  // public String getSelectedMetadataBundle()
-  // {
-  // return METADATA_BUNDLE + "_" + locale.getLanguage();
-  // }
   /**
    * Return the version of the software
    * 
@@ -308,21 +303,6 @@ public class SessionBean implements Serializable {
 
   public String getApplicationUrl() {
     return applicationUrl;
-  }
-
-  /**
-   * First read the {@link Locale} in the request. This is the default value.Then read the cookie.
-   * If the cookie is null, it is set to the default value, else the cookie value is used
-   */
-  private void initLocale() {
-    FacesContext fc = FacesContext.getCurrentInstance();
-    HttpServletRequest req = (HttpServletRequest) fc.getExternalContext().getRequest();
-    if (req.getLocale() != null) {
-      locale = req.getLocale();
-    } else {
-      locale = defaultLocale;
-    }
-    locale = new Locale(CookieUtils.readNonNull(langCookieName, locale.getLanguage()));
   }
 
   /**
@@ -506,7 +486,6 @@ public class SessionBean implements Serializable {
    * @return
    */
   public Album getActiveAlbum() {
-    //
     if (activeAlbum != null && (!AuthUtil.staticAuth().read(getUser(), activeAlbum.getId())
         || !AuthUtil.staticAuth().create(getUser(), activeAlbum.getId()))) {
       setActiveAlbum(null);
@@ -652,8 +631,9 @@ public class SessionBean implements Serializable {
    * @return
    */
   public String getInstituteNameByIP() {
-    if (StringUtils.isEmpty(institute))
+    if (StringUtils.isEmpty(institute)) {
       return "unknown";
+    }
     return institute;
   }
 
@@ -664,8 +644,9 @@ public class SessionBean implements Serializable {
    * @return
    */
   public String getInstituteIdByIP() {
-    if (StringUtils.isEmpty(institute))
+    if (StringUtils.isEmpty(institute)) {
       return "unknown";
+    }
     return instituteId;
   }
 
@@ -675,8 +656,9 @@ public class SessionBean implements Serializable {
    * @return
    */
   public String getInstituteByUser() {
-    if (user != null)
+    if (user != null) {
       return user.getEmail().split("@")[1];
+    }
     return "";
   }
 
@@ -712,8 +694,9 @@ public class SessionBean implements Serializable {
     if (ipAddress == null) {
       ipAddress = request.getRemoteAddr();
     }
-    if (ipAddress != null && ipAddress.split(",").length > 1)
+    if (ipAddress != null && ipAddress.split(",").length > 1) {
       ipAddress = ipAddress.split(",")[0];
+    }
     return ipAddress;
   }
 
@@ -771,8 +754,9 @@ public class SessionBean implements Serializable {
   }
 
   public String getPrettySpacePage(String prettyPage) {
-    if (isNullOrEmpty(this.spaceId))
+    if (isNullOrEmpty(this.spaceId)) {
       return prettyPage;
+    }
     return prettyPage.replace("pretty:", "pretty:space_");
 
   }

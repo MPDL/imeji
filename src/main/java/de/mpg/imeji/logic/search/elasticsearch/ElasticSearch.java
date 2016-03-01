@@ -114,7 +114,7 @@ public class ElasticSearch implements Search {
    * @return
    */
   private SearchResult toSearchResult(SearchResponse resp) {
-    List<String> ids = new ArrayList<>();
+    List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
     for (SearchHit hit : resp.getHits()) {
       ids.add(hit.getId());
     }

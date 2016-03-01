@@ -22,13 +22,15 @@
  * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
  * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
  */
-package de.mpg.imeji.logic.auth.authentication;
+package de.mpg.imeji.logic.auth.authentication.impl;
 
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.InactiveAuthenticationError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.Authentication;
+import de.mpg.imeji.logic.auth.authentication.Authentication;
 import de.mpg.imeji.logic.controller.UserController;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.User;
@@ -40,15 +42,15 @@ import de.mpg.imeji.logic.vo.User;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class SimpleAuthentication implements Authentication {
-  private static final Logger LOGGER = Logger.getLogger(SimpleAuthentication.class);
-  private String login = null;
-  private String pwd = null;
+public final class DefaultAuthentication implements Authentication {
+  private static final Logger LOGGER = Logger.getLogger(DefaultAuthentication.class);
+  private final String login;
+  private final String pwd;
 
   /**
    * Constructor
    */
-  public SimpleAuthentication(String login, String pwd) {
+  public DefaultAuthentication(String login, String pwd) {
     this.login = login;
     this.pwd = pwd;
   }
@@ -60,22 +62,28 @@ public class SimpleAuthentication implements Authentication {
    */
   @Override
   public User doLogin() throws AuthenticationError {
-    if (StringHelper.isNullOrEmptyTrim(login) && StringHelper.isNullOrEmptyTrim(pwd)) {
+    if (StringHelper.isNullOrEmptyTrim(getUserLogin())
+        && StringHelper.isNullOrEmptyTrim(getUserPassword())) {
       return null;
     }
-
-    UserController uc = new UserController(Imeji.adminUser);
-
+    User user;
     try {
-      User user = uc.retrieve(login);
-      if (user.getEncryptedPassword().equals(StringHelper.convertToMD5(pwd))) {
+      user = new UserController(Imeji.adminUser).retrieve(getUserLogin(), Imeji.adminUser);
+    } catch (ImejiException e) {
+      throw new AuthenticationError("User could not be authenticated with provided credentials!");
+    }
+    if (!user.isActive()) {
+      throw new InactiveAuthenticationError(
+          "Not active user: please activate your account with the limk sent after your registration");
+    }
+    try {
+      if (user.getEncryptedPassword().equals(StringHelper.convertToMD5(getUserPassword()))) {
         return user;
       }
     } catch (Exception e) {
-      LOGGER.error(
-          "Error SimpleAuthentification user could not be authenticated with provided credentials");
-      throw new AuthenticationError("User could not be authenticated with provided credentials!");
+      LOGGER.error("Error checking user password", e);
     }
+
     throw new AuthenticationError("User could not be authenticated with provided credentials!");
   }
 
@@ -86,8 +94,7 @@ public class SimpleAuthentication implements Authentication {
    */
   @Override
   public String getUserLogin() {
-    // TODO Auto-generated method stub
-    return null;
+    return this.login;
   }
 
   /*
@@ -97,7 +104,6 @@ public class SimpleAuthentication implements Authentication {
    */
   @Override
   public String getUserPassword() {
-    // TODO Auto-generated method stub
-    return null;
+    return this.pwd;
   }
 }
