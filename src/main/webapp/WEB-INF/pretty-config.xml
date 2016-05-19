@@ -48,12 +48,6 @@
 		<pattern value="/singleupload" />
 		<view-id>/jsf/SingleUpload.xhtml</view-id>
 	</url-mapping>
-	
-	<url-mapping id="ingest">
-		<pattern value="/collection/#{IngestBean.collectionId}/ingest" />
-		<view-id>/jsf/Ingest.xhtml</view-id>
-		<action onPostback="false">#{IngestBean.status}</action>
-	</url-mapping>
 	<!-- Collection pages -->
 	<url-mapping id="collection">
 		<pattern value="/collection/#{ id }" />
@@ -268,12 +262,6 @@
 	<url-mapping id="space_singleupload">
 		<pattern value="/space/#{SessionBean.spaceId}/singleupload" />
 		<view-id>/jsf/SingleUpload.xhtml</view-id>
-	</url-mapping>
-	
-	<url-mapping id="space_ingest">
-		<pattern value="/space/#{SessionBean.spaceId}/collection/#{IngestBean.collectionId}/ingest" />
-		<view-id>/jsf/Ingest.xhtml</view-id>
-		<action onPostback="false">#{IngestBean.status}</action>
 	</url-mapping>
 	<!-- Collection pages -->
 	<url-mapping id="space_collection">

@@ -35,11 +35,11 @@
 					<h2 class="imj_entryPageTitle">
 						<h:outputText value="#{cc.attrs.infoLogicBean.container.metadata.title}"/>
 					</h2>
-					<h:outputText value="#{lbl.by}: #{cc.attrs.infoLogicBean.authorsWithOrg}" styleClass="imj_itemAuthorPanel"/>
 					<p class="imj_entryPageDescription"></p>
 					<pre>
 						<h:outputText escape="false" value="#{cc.attrs.infoLogicBean.container.metadata.description}"/>
-					</pre>	
+					</pre>
+					<h:outputText value="#{lbl.by}: #{cc.attrs.infoLogicBean.authorsWithOrg}" styleClass="imj_itemAuthorPanel"/>
 				</div>
 				<div class="imj_metadataSubPanel">
 					<h:outputText id="lblViewColFull_lblUtil" value="#{lbl.colUtil}" styleClass="imj_metadataSubPanelItem"/>

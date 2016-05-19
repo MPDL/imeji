@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema version="1.0" targetNamespace="http://purl.org/escidoc/metadata/profiles/0.1/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:import schemaLocation="ingest.xsd"/>
-
-  <xs:element name="organizationalunit" type="organization"/>
-
-</xs:schema>
-

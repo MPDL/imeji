@@ -29,11 +29,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>IngestBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.ingest.IngestBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
 		<managed-bean-name>CollectionItemsBean</managed-bean-name>
 		<managed-bean-class>de.mpg.imeji.presentation.collection.CollectionItemsBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>

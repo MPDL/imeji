@@ -12,7 +12,7 @@
 	
 	<composite:implementation>
 		<ui:param name="gotoLabel" value="#{cc.attrs.mediaLogicBean.type == 'COLLECTION' ? cc.attrs.lbl.collection_view_all_images : cc.attrs.lbl.album_view_all_images}"/>
-		
+
 		<div class="imj_entryPagePreviewTiledList">
 			<ui:fragment rendered="#{cc.attrs.mediaLogicBean.container.status != 'WITHDRAWN'}">
 					<!-- MEDIA - Link to Collection -->

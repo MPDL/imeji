@@ -39,7 +39,6 @@ import de.mpg.imeji.logic.storage.transform.generator.PdfImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.RawFileImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.SimpleAudioImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.SimpleImageGenerator;
-import de.mpg.imeji.logic.storage.transform.generator.XuggleImageGenerator;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.logic.storage.util.ImageUtils;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
@@ -63,7 +62,6 @@ public final class ImageGeneratorManager {
     generators.add(new PdfImageGenerator());
     generators.add(new SimpleAudioImageGenerator());
     generators.add(new MagickImageGenerator());
-    generators.add(new XuggleImageGenerator());
     generators.add(new SimpleImageGenerator());
     generators.add(new RawFileImageGenerator());
   }

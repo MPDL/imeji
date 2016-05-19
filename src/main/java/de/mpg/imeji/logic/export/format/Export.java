@@ -11,7 +11,6 @@ import org.apache.http.client.HttpResponseException;
 
 import de.mpg.imeji.logic.export.format.explain.ExplainExport;
 import de.mpg.imeji.logic.export.format.rdf.RDFExport;
-import de.mpg.imeji.logic.export.format.xml.XMLExport;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.vo.User;
 
@@ -72,8 +71,6 @@ public abstract class Export {
       export = new JenaExport();
     } else if ("sitemap".equals(format)) {
       export = new SitemapExport();
-    } else if ("xml".equals(format)) {
-      export = XMLExport.factory(type);
     } else if ("zip".equals(format)) {
       export = new ZIPExport(type);
     } else if ("explain".equals(format)) {

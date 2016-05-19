@@ -56,14 +56,6 @@
 								</h:outputLink>
 							</li>
 						</ui:fragment>
-						
-						<ui:fragment rendered="#{Auth.admin and cc.attrs.userHasUploadRights}">
-							<li class="#{curMenuClass}Item #{(activeMenuValue == 'ingest') ? 'imj_active' : ''}">
-								<h:outputLink value="#{curContextUrl}/ingest?init=1" title="#{lbl.ingest}" styleClass="">
-									<h:outputText value="#{lbl.ingest}"/>
-								</h:outputLink>
-							</li>
-						</ui:fragment>
 					</ui:fragment>
 				</ul>
 			</div>
