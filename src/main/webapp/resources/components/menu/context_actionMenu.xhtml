@@ -396,27 +396,28 @@
 			</ui:fragment> <!-- END if user logged in -->
 			
 			<!-- Right side -->
-						
-			<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item">
-				<div class="imj_menuHeader">
-                       <span class="fa fa-history">&#160;</span>
-					<h:outputText id="txtHistory" value="#{lbl.history}" styleClass="imj_headerEntry"/>
+			<ui:fragment rendered="#{!(Configuration.privateModus and SessionBean.user == null)}">
+				<div class="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item">
+					<div class="imj_menuHeader">
+	                       <span class="fa fa-history">&#160;</span>
+						<h:outputText id="txtHistory" value="#{lbl.history}" styleClass="imj_headerEntry"/>
+					</div>
+					<div class="imj_menuBody">
+						<ul class="imj_overlayMenuList">
+							<ui:repeat var="page" value="#{HistorySession.pages}" rows="0" varStatus="pos">
+								<ui:fragment rendered="#{pos.index + 10 &gt; HistorySession.historySize}">
+									<li class="#{curMenuClass}Item">
+										<h:outputText value="#{pos.index}. "/>
+										<h:outputLink value="#{page.completeUrlWithHistory}" title="#{page.internationalizedName.trim()}">
+											<h:outputText value="#{page.internationalizedName}"/>
+										</h:outputLink>
+									</li>
+								</ui:fragment>
+							</ui:repeat>
+						</ul>
+					</div>
 				</div>
-				<div class="imj_menuBody">
-					<ul class="imj_overlayMenuList">
-						<ui:repeat var="page" value="#{HistorySession.pages}" rows="0" varStatus="pos">
-							<ui:fragment rendered="#{pos.index + 10 &gt; HistorySession.historySize}">
-								<li class="#{curMenuClass}Item">
-									<h:outputText value="#{pos.index}. "/>
-									<h:outputLink value="#{page.completeUrlWithHistory}" title="#{page.internationalizedName.trim()}">
-										<h:outputText value="#{page.internationalizedName}"/>
-									</h:outputLink>
-								</li>
-							</ui:fragment>
-						</ui:repeat>
-					</ul>
-				</div>
-			</h:panelGroup>
+			</ui:fragment>
 			
 		</div>
 	</composite:implementation>
