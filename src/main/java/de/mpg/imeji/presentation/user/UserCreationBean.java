@@ -51,6 +51,7 @@ public class UserCreationBean extends SuperBean {
   public UserCreationBean() {
     super();
     this.setUser(new User());
+    user.getPerson().getOrganizations().add(new Organization());
   }
 
   @PostConstruct
