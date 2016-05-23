@@ -160,7 +160,11 @@ public class ItemController extends ImejiController {
     String origName = FilenameUtils.getName(externalFileUrl);
     if ("".equals(filename) || filename == null) {
       filename = origName;
-    } else {
+    } 
+    //Filename extension will be added if not provided.
+    //Will not be appended if it is the same value from original external reference again
+    //Original external reference will be appended to the provided extension in addition 
+    else if ( FilenameUtils.getExtension(filename).equals("") || !FilenameUtils.getExtension(filename).equals(FilenameUtils.getExtension(origName)) )  {
       filename = filename + "." + FilenameUtils.getExtension(origName);
     }
 
