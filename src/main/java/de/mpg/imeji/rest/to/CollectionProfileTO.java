@@ -2,9 +2,12 @@ package de.mpg.imeji.rest.to;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Created by vlad on 25.11.14.
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CollectionProfileTO implements Serializable {
 
   private static final long serialVersionUID = -5210147403244095642L;

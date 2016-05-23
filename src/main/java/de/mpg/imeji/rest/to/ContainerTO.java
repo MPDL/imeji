@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+
 public class ContainerTO extends PropertiesTO implements Serializable {
   private static final long serialVersionUID = -3159018504356059712L;
   private String title;
@@ -45,6 +48,7 @@ public class ContainerTO extends PropertiesTO implements Serializable {
   /**
    * @param additionalInformations the additionalInformations to set
    */
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public void setAdditionalInfos(List<ContainerAdditionalInformationTO> additionalInformations) {
     this.additionalInfos = additionalInformations;
   }

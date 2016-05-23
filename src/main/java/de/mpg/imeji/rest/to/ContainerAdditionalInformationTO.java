@@ -2,12 +2,15 @@ package de.mpg.imeji.rest.to;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * TO for ContainerAdditionalInfo
  *
  * @author bastiens
  *
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContainerAdditionalInformationTO implements Serializable {
   private static final long serialVersionUID = 8886559024173872540L;
   private String label;
