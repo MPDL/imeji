@@ -1,0 +1,90 @@
+{
+  "title": "TestCollection",
+  "description": "some description",
+  "additionalInfos": [
+        {
+          "label": "Label1",
+          "text": "This is the text of Label 1",
+          "url": "http://example.org"
+        },
+        {
+          "label": "Label2",
+          "text": "This is the text of Label2",
+          "url": ""
+        },
+        {
+          "label": "Label3",
+          "text": "",
+          "url": "http://example3.org"
+        }
+      ],
+  "contributors": [
+    {
+      "familyName": "Makarenko",
+      "givenName": "Vlad",
+      "completeName": "Vladislav Makarenko",
+      "alternativeName": "Vladislav Evgenjevich Makarenko",
+      "role": "http://author",
+      "identifiers": [
+        {
+          "type": "other",
+          "value": "very_specific_other_id_1"
+        }
+      ],
+      "organizations": [
+        {
+          "name": "Max-Planck Digital Library(MPDL)",
+          "description": "MPDL Description ",
+          "identifiers": [
+            {
+              "type": "other",
+              "value": "very_specific_other_id_2"
+            }
+          ],
+          "city": "München",
+          "country": "Deutschland"
+        },
+        {
+          "name": "Organization 2",
+          "description": "Organization 2 description",
+          "identifiers": [
+            {
+              "type": "other",
+              "value": "very_specific_other_id_3"
+            }
+          ],
+          "city": "Москва",
+          "country": "Россия"
+        }
+      ]
+    },
+    {
+      "familyName": "Bulatovic",
+      "givenName": "Natasa",
+      "completeName": "Natasa Bulatovic",
+      "alternativeName": "Alternative name for Natasa",
+      "role": "http://author",
+      "identifiers": [
+        {
+          "type": "imeji",
+          "value": "H9cWmDZQTBM2ON2"
+        }
+      ],
+      "organizations": [
+        {
+          "id": "yoKdu0PjrJKWLXRN",
+          "name": "MPDL",
+          "description": "Description 4",
+          "identifiers": [
+            {
+              "type": "imeji",
+              "value": "yoKdu0PjrJKWLXRN"
+            }
+          ],
+          "city": "London",
+          "country": "UK"
+        }
+      ]
+    }
+  ]
+}

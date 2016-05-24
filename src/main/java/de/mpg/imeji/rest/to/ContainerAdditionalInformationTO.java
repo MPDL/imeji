@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * @author bastiens
  *
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ContainerAdditionalInformationTO implements Serializable {
   private static final long serialVersionUID = 8886559024173872540L;
   private String label;
@@ -21,6 +21,9 @@ public class ContainerAdditionalInformationTO implements Serializable {
     this.setLabel(label);
     this.setText(text);
     this.setUrl(url);
+  }
+  
+  public ContainerAdditionalInformationTO() {
   }
 
   /**
@@ -64,6 +67,5 @@ public class ContainerAdditionalInformationTO implements Serializable {
   public void setUrl(String url) {
     this.url = url;
   }
-
 
 }

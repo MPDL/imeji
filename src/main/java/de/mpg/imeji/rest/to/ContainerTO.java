@@ -41,6 +41,7 @@ public class ContainerTO extends PropertiesTO implements Serializable {
   /**
    * @return the additionalInformations
    */
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public List<ContainerAdditionalInformationTO> getAdditionalInfos() {
     return additionalInfos;
   }
@@ -48,7 +49,6 @@ public class ContainerTO extends PropertiesTO implements Serializable {
   /**
    * @param additionalInformations the additionalInformations to set
    */
-  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public void setAdditionalInfos(List<ContainerAdditionalInformationTO> additionalInformations) {
     this.additionalInfos = additionalInformations;
   }

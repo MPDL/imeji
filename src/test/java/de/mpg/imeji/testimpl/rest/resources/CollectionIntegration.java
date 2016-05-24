@@ -736,7 +736,87 @@ public class CollectionIntegration extends ImejiTestBase {
 
   }
 
+ 
+  @Test
+  public void test_6_CreateCollection_1_AdditionalInfos()
+      throws ImejiException, UnsupportedEncodingException, IOException {
+    String originalJsonString = 
+        getStringFromPath(STATIC_CONTEXT_REST + "/createCollectionAdditionalInfos.json");
 
+    String jsonString = originalJsonString;
+    jsonString = jsonString.replace("\"label\": \"Label1\",", "");
+
+    //Additional info without label
+    Response response = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .post(Entity.entity(jsonString, MediaType.APPLICATION_JSON_TYPE));
+    assertEquals( HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
+
+    //Additional info without label and text 
+    jsonString = jsonString.replace("\"text\": \"This is the text of Label 1\",", "");
+    Response response1 = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .post(Entity.entity(jsonString, MediaType.APPLICATION_JSON_TYPE));
+    assertEquals( HttpStatus.SC_UNPROCESSABLE_ENTITY, response1.getStatus());
+
+    //Additional info with label, no text and no value
+    jsonString = originalJsonString.replace("Label1\",", "Label1\"").replace("\"text\": \"This is the text of Label 1\",", "").replace("\"url\": \"http://example.org\"", "");
+    Response response2 = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .post(Entity.entity(jsonString, MediaType.APPLICATION_JSON_TYPE));
+    assertEquals( HttpStatus.SC_UNPROCESSABLE_ENTITY, response2.getStatus());
+  }
+  
+  @Test
+  public void test_6_UpdateCollection_1_AdditionalInfos()
+      throws ImejiException, UnsupportedEncodingException, IOException {
+    String originalJsonString = 
+        getStringFromPath(STATIC_CONTEXT_REST + "/createCollectionAdditionalInfos.json");
+    
+    //Create the collection
+    Response response = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .post(Entity.entity(originalJsonString, MediaType.APPLICATION_JSON_TYPE));
+
+    assertEquals(CREATED.getStatusCode(), response.getStatus());
+    
+    Map<String, Object> collData = jsonToPOJO(response);
+    assertNotNull("Created collection is null", collData);
+    collectionId = (String) collData.get("id");
+    
+    originalJsonString=originalJsonString.replaceFirst("\\{", "{ \"id\": \""+collectionId+"\",");
+    
+    //Update the collection
+    String jsonString = originalJsonString;
+    
+    //Additional info without label
+    jsonString = jsonString.replace("\"label\": \"Label1\",", "");
+
+    Response response1 = target(pathPrefix).path("/" + collectionId).register(authAsUser).register(MultiPartFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .put(Entity.entity(jsonString, MediaType.APPLICATION_JSON_TYPE));
+    assertEquals( HttpStatus.SC_UNPROCESSABLE_ENTITY, response1.getStatus());
+
+
+    //Additional info without label and text 
+    jsonString = jsonString.replace("\"text\": \"This is the text of Label 1\",", "");
+    Response response2 = target(pathPrefix).path("/" + collectionId).register(authAsUser).register(MultiPartFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .put(Entity.entity(jsonString, MediaType.APPLICATION_JSON_TYPE));
+
+    assertEquals( HttpStatus.SC_UNPROCESSABLE_ENTITY, response2.getStatus());
+
+    //Additional info with label, no text and no value
+    jsonString = originalJsonString.replace("Label1\",", "Label1\"").replace("\"text\": \"This is the text of Label 1\",", "").replace("\"url\": \"http://example.org\"", "");
+    Response response3 = target(pathPrefix).path("/" + collectionId).register(authAsUser).register(MultiPartFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .put(Entity.entity(jsonString, MediaType.APPLICATION_JSON_TYPE));
+
+    assertEquals( HttpStatus.SC_UNPROCESSABLE_ENTITY, response3.getStatus());
+  }
+
+
+  
   private static Response getResponse(Builder request, CollectionTO collTO)
       throws BadRequestException {
     return request.put(Entity.entity(buildJSONFromObject(collTO), MediaType.APPLICATION_JSON));
