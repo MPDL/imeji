@@ -49,7 +49,7 @@ public class ProfileProcess {
     ProfileService pcrud = new ProfileService();
     try {
       User u = BasicAuthentication.auth(req);
-      resp = RestProcessUtils.buildResponse(Status.OK.getStatusCode(), pcrud.delete(id, u));
+      resp = RestProcessUtils.buildResponse(Status.NO_CONTENT.getStatusCode(), pcrud.delete(id, u));
     } catch (Exception e) {
 
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());

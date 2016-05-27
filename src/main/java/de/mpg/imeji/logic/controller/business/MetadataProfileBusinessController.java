@@ -40,6 +40,7 @@ public class MetadataProfileBusinessController {
     try {
       MetadataProfile mdpVO = retrieveDefaultProfile();
       if (mdpVO == null) {
+        Imeji.defaultMetadataProfile=null;
         LOGGER.info("Creating default metadata profile...");
         MetadataProfile defaultProfile = new MetadataProfile();
         defaultProfile.setTitle(DEFAULT_METADATA_TITLE);
@@ -82,8 +83,8 @@ public class MetadataProfileBusinessController {
     if (uris.size() == 1) {
       return metadataProfileController.retrieve(URI.create(uris.get(0)), Imeji.adminUser);
     } else if (uris.size() > 1) {
-      throw new ImejiException(
-          "Data inconsistency: " + uris.size() + " + default metadata profile have been found.");
+      LOGGER.warn("Data inconsistency: " + uris.size() + " + default metadata profile have been found.");
+      return metadataProfileController.retrieve(URI.create(uris.get(0)), Imeji.adminUser);
     } else {
       LOGGER.info("Cannot find default metadata profile...");
     }

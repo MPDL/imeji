@@ -96,6 +96,7 @@ public class TransferObjectFactory {
    * @param to
    */
   private static void transferStatements(Collection<Statement> stats, MetadataProfileTO to) {
+    to.getStatements().clear();
     for (Statement t : stats) {
       StatementTO sto = new StatementTO();
       sto.setId(CommonUtils.extractIDFromURI(t.getId()));

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
@@ -27,6 +28,10 @@ public class ProfileValidator extends ObjectValidator implements Validator<Metad
     setValidateForMethod(m);
     if (isDelete()) {
       return;
+    }
+    
+    if ( profile.getDefault() && Imeji.defaultMetadataProfile != null && profile.getId() != Imeji.defaultMetadataProfile.getId()) {
+      throw new UnprocessableError("default_metadata_profile_already_exists" + profile.getId()+" - "+Imeji.defaultMetadataProfile.getId());
     }
 
     if (isNullOrEmpty(profile.getTitle())) {

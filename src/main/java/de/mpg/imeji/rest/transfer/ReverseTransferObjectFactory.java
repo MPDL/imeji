@@ -5,7 +5,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
@@ -292,11 +294,20 @@ public class ReverseTransferObjectFactory {
       vo.setTitle(to.getTitle());
       vo.setDescription(to.getDescription());
       vo.setDefault(to.getDefault());
+      vo.getStatements().clear();
+
+      Map<String, String> statementsIdMap = new HashMap<String, String>();
+      boolean hasParents = false;
+
       for (StatementTO stTO : to.getStatements()) {
         Statement stVO = new Statement();
+        //Put Old Statement (as Key) and new Statement(as Value) in a Map
+        
+        statementsIdMap.put(stTO.getId(), stVO.getId().toString());
         stVO.setType(stTO.getType());
         stVO.setLabels(stTO.getLabels());
         stVO.setVocabulary(stTO.getVocabulary());
+        
         for (LiteralConstraintTO lc : stTO.getLiteralConstraints()) {
           stVO.getLiteralConstraints().add(lc.getValue());
         }
@@ -304,8 +315,18 @@ public class ReverseTransferObjectFactory {
         stVO.setMaxOccurs(stTO.getMaxOccurs());
         if (!isNullOrEmpty(stTO.getParentStatementId())) {
           stVO.setParent(URI.create(stTO.getParentStatementId()));
+          hasParents = true;
         }
         vo.getStatements().add(stVO);
+      }
+      
+      if (hasParents) {
+          for (Statement s:vo.getStatements()){
+                //Set the new parent statement ID, taken from the Map
+                if ( (s.getParent()!=null ) )  {
+                    vo.getStatement(s.getId().toString()).setParent(URI.create(statementsIdMap.get(s.getParent().toString())));
+                }
+          }
       }
     }
 

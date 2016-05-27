@@ -42,7 +42,7 @@ public class ProfileService implements API<MetadataProfileTO> {
   public MetadataProfileTO create(MetadataProfileTO to, User u) throws ImejiException {
     MetadataProfile vo = new MetadataProfile();
     ReverseTransferObjectFactory.transferMetadataProfile(to, vo, TRANSFER_MODE.CREATE);
-    vo = profileController.create(vo, u);
+    vo = profileController.retrieve(profileController.create(vo, u).getId(), u);
     TransferObjectFactory.transferMetadataProfile(vo, to);
     return to;
   }
