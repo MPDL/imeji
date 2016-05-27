@@ -94,7 +94,7 @@ public class ProfileResource implements ImejiResource {
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @ApiOperation(value = "Discard a metadata profile by id, with mandatory discard comment")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response withdraw(@Context HttpServletRequest req, @FormParam("id") String id,
+  public Response withdraw(@Context HttpServletRequest req, @PathParam("id") String id,
       @FormParam("discardComment") String discardComment) throws Exception {
     JSONResponse resp = ProfileProcess.withdrawProfile(req, id, discardComment);
     return buildJSONResponse(resp);

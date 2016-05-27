@@ -110,6 +110,7 @@ public class ImejiTestBase extends JerseyTest {
       ProfileController pc = new ProfileController();
       MetadataProfile p = new MetadataProfile();
       p.setTitle("Test");
+      p.setDefault(false);
       Statement s = new Statement();
       s.getLabels().add(new LocalizedString("Test", null));
       s.setType(URI.create(Types.TEXT.getClazzNamespace()));

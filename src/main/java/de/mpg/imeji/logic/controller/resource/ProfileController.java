@@ -236,6 +236,9 @@ public class ProfileController extends ImejiController {
     if (mdp.getDefault()) {
       throw new UnprocessableError("error_profile_is_default_cannot_be_withdrawn");
     }
+
+    prepareWithdraw(mdp, mdp.getDiscardComment());
+    //TODO: check if these two setters are needed. 
     mdp.setStatus(Status.WITHDRAWN);
     mdp.setVersionDate(DateHelper.getCurrentDate());
     update(mdp, user);

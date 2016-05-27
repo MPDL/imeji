@@ -70,7 +70,7 @@ public class WorkflowValidator implements Serializable {
    */
   public void isWithdrawAllowed(Properties p) throws WorkflowException {
     if (p.getStatus() != Status.RELEASED) {
-      throw new WorkflowException("Only WITHDRAWN objects can be released");
+      throw new WorkflowException("Only RELEASED objects can be withdrawn");
     }
   }
 }

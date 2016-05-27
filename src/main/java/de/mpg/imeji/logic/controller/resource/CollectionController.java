@@ -436,7 +436,9 @@ public class CollectionController extends ImejiController {
         ProfileController pc = new ProfileController();
         if (!pc.isReferencedByOtherResources(coll.getProfile().toString(),
             coll.getId().toString())) {
-          pc.withdraw(pc.retrieve(coll.getProfile(), user), user);
+          MetadataProfile delMp = pc.retrieve(coll.getProfile(), user);
+          delMp.setDiscardComment(coll.getDiscardComment());
+          pc.withdraw(delMp, user);
         }
       }
     }
