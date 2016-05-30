@@ -5,20 +5,13 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
-
-
-
-
-
-
-
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
@@ -26,27 +19,26 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.lang3.ArrayUtils;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import util.JenaUtil;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.rest.api.CollectionService;
 import de.mpg.imeji.rest.api.ProfileService;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.MetadataProfileTO;
 import de.mpg.imeji.rest.to.StatementTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
-import util.JenaUtil;
+import de.mpg.j2j.misc.LocalizedString;
 
 public class ProfileIntegration extends ImejiTestBase {
 
@@ -431,59 +423,130 @@ public class ProfileIntegration extends ImejiTestBase {
   }
   
 
-
-  @Ignore
   @Test
   public void test_8_ConsistentStatements_when_copy() throws ImejiException {
     String profileId = ProfileService.DEFAULT_METADATA_PROFILE_ID;
     Response response = target(pathPrefix).path(profileId).register(authAsUser2)
         .request(MediaType.APPLICATION_JSON).get();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-
-    MetadataProfileTO profile = response.readEntity(MetadataProfileTO.class);
+    String stringJson = response.readEntity(String.class);
+    
+    MetadataProfileTO profile = (MetadataProfileTO) RestProcessUtils.buildTOFromJSON(stringJson, MetadataProfileTO.class);
+    MetadataProfileTO testProfile = (MetadataProfileTO) RestProcessUtils.buildTOFromJSON(stringJson, MetadataProfileTO.class);
+    
     assertThat(profile.getId(), equalTo(ObjectHelper.getId(Imeji.defaultMetadataProfile.getId())));
-
-    MetadataProfileTO copiedProfile=profile;
-    copiedProfile.setTitle(profile.getTitle()+" A COPY OF DEFAULT PROFILE AS A NEW ONE");
-    copiedProfile.setDefault(false);
-    MetadataProfileTO testProfile = profile;
     
-    String jSonProfile = RestProcessUtils.buildJSONFromObject(copiedProfile); 
+    String copyJson= stringJson.replace(profile.getTitle(), " A COPY OF DEFAULT PROFILE AS A NEW ONE")
+           .replace("\"default\" : true", "\"default\" : false");
     
+    //FLAT PROFILES TEST
     Response response1 = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
         .request(MediaType.APPLICATION_JSON_TYPE)
-        .post(Entity.entity(jSonProfile, MediaType.APPLICATION_JSON_TYPE));
-    
+        .post(Entity.entity(copyJson, MediaType.APPLICATION_JSON_TYPE));
     assertEquals(Status.CREATED.getStatusCode(), response1.getStatus());
-    
+
+    MetadataProfileTO copiedProfile = response1.readEntity(MetadataProfileTO.class);
+
+    assertFalse(copiedProfile.getId().equals(profile.getId()));
     assertEquals(copiedProfile.getStatements().size(), profile.getStatements().size());
+    assertEquals(testProfile.getStatements().size(), profile.getStatements().size());
     
-/*    String[] profileStats = new String[profile.getStatements().size()];
-    for (StatementTO s: profile.getStatements()) {
-      ArrayUtils.add(profileStats, s.getId().toString());
-    }
-    Arrays.sort(profileStats);
+    List<String> copiedProfileStatements =
+        copiedProfile.getStatements().stream()
+          .map((StatementTO statement) -> statement.getId())
+          .collect(Collectors.toList());
     
-    String[] copiedProfileStats = new String[copiedProfile.getStatements().size()];
-    for (StatementTO s: copiedProfile.getStatements()) {
-      ArrayUtils.add(copiedProfileStats, s.getId().toString());
-    }
-    Arrays.sort(copiedProfileStats);
-        
-    String[] testProfileStats = new String[testProfile.getStatements().size()];
-    for (StatementTO s: testProfile.getStatements()) {
-      ArrayUtils.add(testProfileStats, s.getId().toString());
-    }
-    Arrays.sort(testProfileStats);
-    */
-    assertThat (profile.getStatements(), not(equalTo(copiedProfile.getStatements().toArray())));
-    assertThat (profile.getStatements(), equalTo(testProfile.getStatements().toArray()));
+    List<String> profileStatements =
+        profile.getStatements().stream()
+          .map((StatementTO statement) -> statement.getId())
+          .collect(Collectors.toList());
 
-//    assertThat (profileStats, not(equalTo(copiedProfileStats)));
-//    assertThat (profileStats, equalTo(testProfileStats));
+    List<String> testProfileStatements =
+        testProfile.getStatements().stream()
+          .map((StatementTO statement) -> statement.getId())
+          .collect(Collectors.toList());
+    
+    //Test profile here checked just in case to ensure other assertions are fine
+    assertEquals(CollectionUtils.disjunction(testProfileStatements, profileStatements).size(), 0);
+    assertEquals(CollectionUtils.disjunction(copiedProfileStatements, profileStatements).size(), 
+          copiedProfileStatements.size()+ profileStatements.size());
+    assertFalse(CollectionUtils.isEqualCollection(copiedProfileStatements, profileStatements));
+    assertTrue(CollectionUtils.isEqualCollection(testProfileStatements, profileStatements));
+    
+    //Hierarchy Profiles Test
+    StatementTO child = new StatementTO();
+    child.setType(copiedProfile.getStatements().get(0).getType());
+    child.setId(copiedProfile.getStatements().get(0).getId()+"-child");
 
-    //assertArray  (profile.getStatements(), not(equalTo(copiedProfile.getStatements().toArray())));
-    //assertThat (profile.getStatements(), equalTo(testProfile.getStatements().toArray()));
+    
+    //Map Labels
+    child.setLabels(copiedProfile.getStatements().get(0).getLabels().stream()
+          .map(label->new LocalizedString(label.getValue()+"-child", label.getLang()))
+          .collect(Collectors.toList()));
 
+    child.setParentStatementId(copiedProfile.getStatements().get(0).getId());
+    child.setPos(0);
+
+    copiedProfile.getStatements().add(child);
+    
+    String jSonNew = RestProcessUtils.buildJSONFromObject(copiedProfile);
+    
+    //Create the new Hierarchical Profile
+    Response response2 = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .post(Entity.entity(jSonNew, MediaType.APPLICATION_JSON_TYPE));
+    assertEquals(Status.CREATED.getStatusCode(), response2.getStatus());
+    copiedProfile = response2.readEntity(MetadataProfileTO.class);
+    
+    //Create another new Hierarchical Profile to compare to previous one (make no other changes)
+    //Create the new Hierarchical Profile
+    Response response3 = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .post(Entity.entity(jSonNew, MediaType.APPLICATION_JSON_TYPE));
+    assertEquals(Status.CREATED.getStatusCode(), response3.getStatus());
+    MetadataProfileTO newCopiedProfile = response3.readEntity(MetadataProfileTO.class);
+    
+    //Check if profiles have all different Ids
+    List<String> copiedHProfileStatements =
+        copiedProfile.getStatements().stream()
+          .map((StatementTO statement) -> statement.getId()).collect(Collectors.toList());
+
+    List<String> newCopiedHProfileStatements =
+        newCopiedProfile.getStatements().stream()
+          .map((StatementTO statement) -> statement.getId()).collect(Collectors.toList());
+    
+    assertFalse(CollectionUtils.isEqualCollection(copiedHProfileStatements, newCopiedHProfileStatements));
+    assertEquals(CollectionUtils.disjunction(copiedHProfileStatements, newCopiedHProfileStatements).size(), 
+                  copiedHProfileStatements.size()+ newCopiedHProfileStatements.size());
+    
+    //Now Check that Parent-Child Nodes are with correct id (i.e. all with different Ids, but same Labels)
+    StatementTO childStatementCopiedProfile = copiedProfile.getStatements().stream()
+          .filter( s-> s.getLabels().get(0).getValue().contains("-child"))
+          .findFirst()
+          .get();
+    
+    StatementTO childStatementNewCopiedProfile = newCopiedProfile.getStatements().stream()
+          .filter( s-> s.getLabels().get(0).getValue().contains("-child"))
+          .findFirst()
+          .get();
+    
+    assertFalse(childStatementCopiedProfile.getId().equals(childStatementNewCopiedProfile.getId()));
+    assertFalse(childStatementCopiedProfile.getParentStatementId().equals(childStatementNewCopiedProfile.getParentStatementId()));
+    
+    StatementTO parentStatementCopiedProfile = copiedProfile.getStatements().stream()
+          .filter( s-> s.getId().equals(childStatementCopiedProfile.getParentStatementId()))
+          .findFirst()
+          .get();
+    
+    StatementTO parentStatementNewCopiedProfile = newCopiedProfile.getStatements().stream()
+          .filter( s-> s.getId().equals(childStatementNewCopiedProfile.getParentStatementId()))
+          .findFirst()
+          .get();
+    
+    assertTrue(parentStatementCopiedProfile != null);
+    assertTrue(parentStatementNewCopiedProfile != null);
+    assertTrue(!parentStatementCopiedProfile.getId().equals(parentStatementNewCopiedProfile.getId()));
+
+    
   }
 }

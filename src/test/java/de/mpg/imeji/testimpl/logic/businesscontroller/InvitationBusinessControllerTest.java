@@ -79,10 +79,8 @@ public class InvitationBusinessControllerTest extends ControllerTest {
     List<String> roles =
         ShareBusinessController.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
     Invitation invitation = new Invitation(UNKNOWN_EMAIL, collection.getId().toString(), roles);
-    System.out.println("Invite " + invitation.getId());
     invitationBC.invite(invitation);
     List<Invitation> invitationsBefore = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
-    System.out.println("Restart store");
     KeyValueStoreBusinessController.stopAllStores();
     KeyValueStoreBusinessController.startAllStores();
     invitationBC = new InvitationBusinessController();
