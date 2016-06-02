@@ -12,6 +12,7 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
 import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.vo.Properties.Status;
 
 /**
  * Clean unused {@link MetadataProfile}
@@ -40,6 +41,9 @@ public class CleanMetadataProfileJob implements Callable<Integer> {
     }
     if (delete) {
       for (MetadataProfile mdp : profiles) {
+        //NB.02.06. A Hack to allow purging released metadata profiles which are not used, 
+        //Default metadata profile will never be deleted (Profile controller adds exception) 
+        mdp.setStatus(Status.PENDING);
         pc.delete(mdp, Imeji.adminUser);
       }
     }
