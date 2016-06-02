@@ -350,9 +350,18 @@ public class CollectionController extends ImejiController {
                 "Metadata profile related to this collection is referenced elsewhere, or user does not have permission to delete this profile."
                     + "Profile <" + collectionMdp.getId().toString() + "> will not be deleted!");
           } else {
-            LOGGER.info("Metadata profile <" + collectionMdp.getId().toString()
-                + "> is not referenced elsewhere, will be deleted!");
-            pc.delete(collectionMdp, user, collection.getId().toString());
+            if (collectionMdp.getStatus().equals(Status.PENDING)) {
+              LOGGER.info("Metadata profile <" + collectionMdp.getId().toString()
+                  + "> is not referenced elsewhere, will be deleted!");
+              pc.delete(collectionMdp, user, collection.getId().toString());
+            }
+            else
+            {
+              LOGGER.info("Metadata profile <" + collectionMdp.getId().toString()
+                  + "> is not referenced elsewhere, could be deleted, "
+                  + "but it is not, as it has status "
+                  + collectionMdp.getStatus().name()+"!");
+            }
           }
         } catch (NotFoundException e) {
           LOGGER.info("Collection profile does not exist, could not be deleted.");

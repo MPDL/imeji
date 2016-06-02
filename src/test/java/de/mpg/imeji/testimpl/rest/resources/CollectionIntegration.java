@@ -50,10 +50,12 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.rest.api.CollectionService;
 import de.mpg.imeji.rest.api.DefaultItemService;
+import de.mpg.imeji.rest.api.ProfileService;
 import de.mpg.imeji.rest.to.CollectionProfileTO;
 import de.mpg.imeji.rest.to.CollectionProfileTO.METHOD;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.IdentifierTO;
+import de.mpg.imeji.rest.to.MetadataProfileTO;
 import de.mpg.imeji.rest.to.OrganizationTO;
 import de.mpg.imeji.rest.to.PersonTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
@@ -512,6 +514,7 @@ public class CollectionIntegration extends ImejiTestBase {
     assertEquals(NOT_FOUND.getStatusCode(), response.getStatus());
 
   }
+  
 
   @Test
   public void test_5_DeleteCollection_2_WithUnauth() throws ImejiException {
@@ -577,6 +580,27 @@ public class CollectionIntegration extends ImejiTestBase {
     assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
   }
 
+  @Test
+  public void test_5_DeleteCollection_5_WithReleasedSingleProfile() throws ImejiException {
+    initProfile();
+    initCollectionWithProfile(profileId);
+    ProfileService ps = new ProfileService();
+    MetadataProfileTO mdpR = ps.release(profileId, JenaUtil.testUser);
+
+    Response response = target(pathPrefix).path("/" + collectionId).register(authAsUser)
+        .request(MediaType.APPLICATION_JSON_TYPE).delete();
+
+    assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
+
+    response = target(pathPrefix).path(collectionId).register(authAsUser)
+        .request(MediaType.APPLICATION_JSON).get();
+
+    assertEquals(NOT_FOUND.getStatusCode(), response.getStatus());
+    
+    mdpR = ps.read(profileId, JenaUtil.testUser2);
+    assertEquals(mdpR.getStatus(), "RELEASED");
+
+  }
 
   @Test
   public void test_6_UpdateCollection_1_Metadata_AllowedChanges()
