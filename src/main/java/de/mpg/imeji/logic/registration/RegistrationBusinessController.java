@@ -18,6 +18,8 @@ import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
 import de.mpg.imeji.logic.keyValueStore.stores.HTreeMapStore;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.validation.impl.UserValidator;
+import de.mpg.imeji.logic.validation.impl.Validator.Method;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.j2j.helper.DateHelper;
 
@@ -74,6 +76,7 @@ public class RegistrationBusinessController {
    * @throws Exception
    */
   public Registration register(User user) throws ImejiException {
+    new UserValidator().validate(user, Method.CREATE);
     if (hasPendingRegistration(user.getEmail())) {
       throw new UnprocessableError("User has already a pending registration");
     }

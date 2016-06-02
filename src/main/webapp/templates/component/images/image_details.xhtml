@@ -247,130 +247,120 @@
 				</h:form>
 				<script type="text/javascript">$(function(){highlighter();});</script>
 			</ui:fragment>
-	
-	
-			<!-- Tech Data List Body - tech data list - show media tech data entries -->		
-			<ui:fragment rendered="#{itemBean.tab == 'techmd' and itemBean.image.status!='WITHDRAWN'}">
-				<h:panelGroup layout="block" styleClass="imj_metadataSubPanel">
-						<!-- <h:outputText id="" styleClass="imj_metadataSubPanelItem" value=""/>  - - - new label for value="#{lbl.techMD}" and id="lblViewItemFull_lbltechMD needed here! -->
-				</h:panelGroup>	
-					<h:panelGroup id="techmetadata" layout="block" styleClass="imj_techdataList">
-						<ui:repeat id="techMd" var="techMd" value="#{itemBean.techMd}">
-							<h:outputText value="#{techMd}" styleClass="imj_techdataEntry"/>
-						</ui:repeat>
-					</h:panelGroup>
-			</ui:fragment>	
 		
-		
-			<!-- Utilities List Body - info data list - show MD5, album name, QR-Tag, link to image versions in blank page -->		
-			<ui:fragment rendered="#{itemBean.tab == 'util' and itemBean.image.status!='WITHDRAWN'}">
-				<h:panelGroup id="util" layout="block" styleClass="imj_infodataWrapper">			
-					<br/>
-					<!-- InfoDataList - MD5 -->
-					<h:panelGroup styleClass="imj_infodataSet">
-						<span class="imj_infodataLabel">
-							<h:outputText value="#{lbl.checksum} (MD5)"/>
-							<span class="imj_invisible">: </span>
-						</span>							
-						<span class="imj_infodataValue">
-							<h:outputText value="#{itemBean.image.checksum} "/><h:outputLink value="#{Navigation.browseUrl}?q=checksum=%22#{itemBean.image.checksum}%22">
-								<h:outputText value="  [#{lbl.search_for_duplicate}]"/>
-							</h:outputLink>
-						</span>
-					</h:panelGroup>
-					
-					<!-- InfoDataList - Uploader / File-Author -->
-					<h:panelGroup styleClass="imj_infodataSet">
-						<span class="imj_infodataLabel">
-							<h:outputText value="#{lbl.imageUploader}"/>
-							<span class="imj_invisible">: </span>
-						</span>
-						<span class="imj_infodataValue">
-							<h:outputText value="#{itemBean.imageUploader}"/>
-						</span>
-					</h:panelGroup>
-					
-					<h:panelGroup styleClass="imj_infodataSet">
-						<span class="imj_infodataLabel">
-							<h:outputText value="#{lbl.imageUploadDate}"/>
-							<span class="imj_invisible">: </span>
-						</span>
-						<span class="imj_infodataValue">
-							<h:outputText value="#{itemBean.image.created.time.toString()}"/>
-						</span>
-					</h:panelGroup>
-					
-					<!-- InfoDataList - Images File Sizes -->						
+			<div id="util" class="imj_infodataWrapper">			
+				<br/>
+				<!-- InfoDataList - MD5 -->
+				<h:panelGroup styleClass="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.checksum} (MD5)"/>
+						<span class="imj_invisible">: </span>
+					</span>							
+					<span class="imj_infodataValue">
+						<h:outputText value="#{itemBean.image.checksum} "/><h:outputLink value="#{Navigation.browseUrl}?q=checksum=%22#{itemBean.image.checksum}%22">
+							<h:outputText value="  [#{lbl.search_for_duplicate}]"/>
+						</h:outputLink>
+					</span>
+				</h:panelGroup>
+				
+				<!-- InfoDataList - Uploader / File-Author -->
+				<div class="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.imageUploader}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<h:outputText value="#{itemBean.imageUploader}"/>
+					</span>
+				</div>
+				
+				<div class="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.imageUploadDate}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<h:outputText value="#{itemBean.image.created.time.toString()}"/>
+					</span>
+				</div>
+				
+				<!-- InfoDataList - Images File Sizes -->						
+				<div class="imj_infodataSet">
+					<div class="imj_infodataLabel">
+						<h:outputText value="#{lbl.imageSizes}"/>
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_infodataValue">
+						<ul class="imj_optionList">
+							<li>
+								<h:outputLink value="#{itemBean.image.thumbnailImageUrl}" target="_blank">
+									<h:outputText value="#{lbl.imageSizesThumb}"/>
+								</h:outputLink>
+							</li>
+							<li>
+								<h:outputLink value="#{itemBean.image.webImageUrl}" target="_blank">
+									<h:outputText value="#{lbl.imageSizesWeb}"/>
+								</h:outputLink>
+							</li>
+							<li>
+								<h:outputLink value="#{itemBean.image.fullImageUrl}" target="_blank">
+									<h:outputText value="#{lbl.imageSizesOrg}"/>
+								</h:outputLink>
+							</li>
+						</ul>
+					</div>
+				</div>				
+				
+				<!-- InfoDataList -  Image Album Info -->
+				<ui:fragment rendered="#{itemBean.relatedAlbums != null and !empty itemBean.relatedAlbums and Configuration.albumsEnabled}">
 					<div class="imj_infodataSet">
-						<div class="imj_infodataLabel">
-							<h:outputText value="#{lbl.imageSizes}"/>
-							<span class="imj_invisible">: </span>
-						</div>
-						<div class="imj_infodataValue">
-							<ul class="imj_optionList">
-								<li>
-									<h:outputLink value="#{itemBean.image.thumbnailImageUrl}" target="_blank">
-										<h:outputText value="#{lbl.imageSizesThumb}"/>
-									</h:outputLink>
-								</li>
-								<li>
-									<h:outputLink value="#{itemBean.image.webImageUrl}" target="_blank">
-										<h:outputText value="#{lbl.imageSizesWeb}"/>
-									</h:outputLink>
-								</li>
-								<li>
-									<h:outputLink value="#{itemBean.image.fullImageUrl}" target="_blank">
-										<h:outputText value="#{lbl.imageSizesOrg}"/>
-									</h:outputLink>
-								</li>
-							</ul>
-						</div>
-					</div>				
-					
-					<!-- InfoDataList -  Image Album Info -->
-					<ui:fragment rendered="#{itemBean.relatedAlbums != null and !empty itemBean.relatedAlbums and Configuration.albumsEnabled}">
-						<h:panelGroup styleClass="imj_infodataSet">
-							<span class="imj_infodataLabel">
-								<h:outputText value="#{lbl.relatedAlbum}"/>
-									<span class="imj_invisible">: </span>
-							</span>
-							<span class="imj_infodataValue">
-								<ui:repeat var="albums" value="#{itemBean.relatedAlbums}">
-									<ul class="imj_optionList">
-										<li>
-											<h:outputLink value="#{Navigation.albumUrl}#{albums.idString}">
-												<h:outputText value="#{albums.metadata.title}"/>
-											</h:outputLink>
-										</li>
-									</ul>
-								</ui:repeat>
-							</span>
-						</h:panelGroup>
-					</ui:fragment>
-										
-					<!-- InfoDataList - embed Link + Image-->
-					<h:panelGroup styleClass="imj_infodataSet">
 						<span class="imj_infodataLabel">
-							<h:outputText value="#{lbl.embed}"/>
+							<h:outputText value="#{lbl.relatedAlbum}"/>
 								<span class="imj_invisible">: </span>
 						</span>
 						<span class="imj_infodataValue">
-							<h:inputTextarea styleClass="imj_infodataValueEntryEmbed" value="&lt;a href='#{itemBean.pageUrl}' title='#{itemBean.image.filename}'&gt; &lt;img src='#{itemBean.image.webImageUrl}' alt='#{itemBean.image.filename}' title='#{itemBean.image.filename}'&gt;&lt;/a&gt;" onclick="this.select();" escape="false"/>
+							<ui:repeat var="albums" value="#{itemBean.relatedAlbums}">
+								<ul class="imj_optionList">
+									<li>
+										<h:outputLink value="#{Navigation.albumUrl}#{albums.idString}">
+											<h:outputText value="#{albums.metadata.title}"/>
+										</h:outputLink>
+									</li>
+								</ul>
+							</ui:repeat>
 						</span>
-					</h:panelGroup>
-															
-					<!-- InfoDataList - QR-Tag <div id="qr"></div> --> 						
-					<h:panelGroup styleClass="imj_infodataSet">
-						<span class="imj_infodataLabel">
-							<h:outputText value="#{lbl.qrcode}"/>
+					</div>
+				</ui:fragment>
+									
+				<!-- InfoDataList - embed Link + Image-->
+				<div class="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.embed}"/>
 							<span class="imj_invisible">: </span>
-						</span>
-						<span class="imj_infodataValue" id="qr"> </span>
-					</h:panelGroup>
-					
-					
-				</h:panelGroup>
-			</ui:fragment>
+					</span>
+					<span class="imj_infodataValue">
+						<h:inputTextarea styleClass="imj_infodataValueEntryEmbed" value="&lt;a href='#{itemBean.pageUrl}' title='#{itemBean.image.filename}'&gt; &lt;img src='#{itemBean.image.webImageUrl}' alt='#{itemBean.image.filename}' title='#{itemBean.image.filename}'&gt;&lt;/a&gt;" onclick="this.select();" escape="false"/>
+					</span>
+				</div>
+														
+				<!-- InfoDataList - QR-Tag <div id="qr"></div> --> 						
+				<div class="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.qrcode}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue" id="qr"> </span>
+				</div>	
+			</div>
+			
+			<!-- Tech Data List Body - tech data list - show media tech data entries -->		
+			<div class="imj_metadataSubPanel">
+			</div>	
+			<div id="techmetadata" class="imj_techdataList">
+				<ui:repeat id="techMd" var="techMd" value="#{itemBean.techMd}">
+					<h:outputText value="#{techMd}" styleClass="imj_techdataEntry"/>
+				</ui:repeat>
+			</div>
 			
 			<ui:fragment rendered="#{itemBean.tab == 'share' and itemBean.image.status!='WITHDRAWN'}">
 				<h:panelGroup layout="block" id="sharePanel">
