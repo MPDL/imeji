@@ -11,6 +11,7 @@ import java.util.List;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
@@ -77,8 +78,9 @@ public abstract class ImejiController {
    * @param properties
    * @param user
    * @throws WorkflowException
+   * @throws NotSupportedMethodException 
    */
-  protected void prepareRelease(Properties properties, User user) throws WorkflowException {
+  protected void prepareRelease(Properties properties, User user) throws WorkflowException, NotSupportedMethodException {
     WORKFLOW_MANAGER.prepareRelease(properties);
   }
 
@@ -88,9 +90,10 @@ public abstract class ImejiController {
    * @param properties
    * @param comment
    * @throws WorkflowException
+   * @throws NotSupportedMethodException 
    * @throws UnprocessableError
    */
-  protected void prepareWithdraw(Properties properties, String comment) throws WorkflowException {
+  protected void prepareWithdraw(Properties properties, String comment) throws WorkflowException, NotSupportedMethodException {
     if (comment != null && !"".equals(comment)) {
       properties.setDiscardComment(comment);
     }

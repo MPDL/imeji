@@ -2,6 +2,7 @@ package de.mpg.imeji.presentation.workflow;
 
 import javax.faces.bean.ManagedBean;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
@@ -28,7 +29,7 @@ public class WorkflowBean implements Serializable {
     try {
       validator.isReleaseAllowed(p);
       return true;
-    } catch (WorkflowException e) {
+    } catch (ImejiException e) {
       return false;
     }
   }
@@ -43,7 +44,7 @@ public class WorkflowBean implements Serializable {
     try {
       validator.isWithdrawAllowed(p);
       return true;
-    } catch (WorkflowException e) {
+    } catch (ImejiException e) {
       return false;
     }
   }

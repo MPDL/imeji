@@ -32,6 +32,7 @@ import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.rest.to.HTTPError;
@@ -243,6 +244,9 @@ public class RestProcessUtils {
           localMessage);
     } else if (eX instanceof ClassCastException) {
       resp = RestProcessUtils.buildJSONAndExceptionResponse(Status.BAD_REQUEST.getStatusCode(),
+          localMessage);
+    } else if (eX instanceof NotSupportedMethodException) {
+      resp = RestProcessUtils.buildJSONAndExceptionResponse(Status.METHOD_NOT_ALLOWED.getStatusCode(),
           localMessage);
     } else {
       resp = RestProcessUtils.buildJSONAndExceptionResponse(

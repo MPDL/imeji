@@ -388,6 +388,7 @@ public class CollectionController extends ImejiController {
       throw new NotFoundException("collection object does not exists");
     }
 
+    prepareRelease(collection, user);
     List<String> itemUris =
         itemController.search(collection.getId(), null, null, user, null, -1, 0).getResults();
 
@@ -398,7 +399,6 @@ public class CollectionController extends ImejiController {
     } else {
       List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
       itemController.release(items, user);
-      prepareRelease(collection, user);
       update(collection, user);
       if (collection.getProfile() != null
           && AuthUtil.staticAuth().administrate(user, collection.getProfile().toString())) {
@@ -427,16 +427,15 @@ public class CollectionController extends ImejiController {
       throw new NotFoundException("Collection does not exists");
     }
 
+    prepareWithdraw(coll, null);
+
     List<String> itemUris =
         itemController.search(coll.getId(), null, null, user, null, -1, 0).getResults();
     if (hasImageLocked(itemUris, user)) {
       throw new UnprocessableError("Collection has locked images: can not be withdrawn");
-    } else if (!Status.RELEASED.equals(coll.getStatus())) {
-      throw new UnprocessableError("Withdraw collection: Collection must be released");
     } else {
       List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
       itemController.withdraw(items, coll.getDiscardComment(), user);
-      prepareWithdraw(coll, null);
       update(coll, user);
       if (coll.getProfile() != null
           && !coll.getProfile().equals(Imeji.defaultMetadataProfile.getId())

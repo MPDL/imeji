@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.workflow;
 
+import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.vo.Properties;
@@ -51,10 +52,11 @@ public class WorkflowValidator implements Serializable {
    * @param p
    * @return
    * @throws WorkflowException
+   * @throws NotSupportedMethodException 
    */
-  public void isReleaseAllowed(Properties p) throws WorkflowException {
+  public void isReleaseAllowed(Properties p) throws WorkflowException, NotSupportedMethodException {
     if (Imeji.CONFIG.getPrivateModus()) {
-      throw new WorkflowException("Object publication is disabled!");
+      throw new NotSupportedMethodException("Object publication is disabled!");
     }
     if (p.getStatus() != Status.PENDING) {
       throw new WorkflowException("Only PENDING objects can be released");
@@ -67,8 +69,13 @@ public class WorkflowValidator implements Serializable {
    *
    * @param p
    * @throws WorkflowException
+   * @throws NotSupportedMethodException 
    */
-  public void isWithdrawAllowed(Properties p) throws WorkflowException {
+  public void isWithdrawAllowed(Properties p) throws WorkflowException, NotSupportedMethodException {
+    if (Imeji.CONFIG.getPrivateModus()) {
+      throw new NotSupportedMethodException("Object withdrawal is disabled!");
+    }
+    
     if (p.getStatus() != Status.RELEASED) {
       throw new WorkflowException("Only RELEASED objects can be withdrawn");
     }

@@ -174,12 +174,12 @@ public class AlbumController extends ImejiController {
    * @throws ImejiException
    */
   public void release(Album album, User user) throws ImejiException {
+    prepareRelease(album, user);
     ItemController ic = new ItemController();
     album = (Album) ic.searchAndSetContainerItems(album, user, -1, 0);
     if (album.getImages().isEmpty()) {
       throw new UnprocessableError("An empty album can not be released!");
     } else {
-      prepareRelease(album, user);
       update(album, user);
     }
   }
