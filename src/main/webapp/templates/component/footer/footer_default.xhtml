@@ -16,16 +16,17 @@
 					</h:outputLink>
 				</div>
 			</div>
-			<div class="imj_poweredby_imprint">
+			<div id="poweredBy" class="imj_poweredby_imprint">
 	 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Configuration.impressumUrl}" rendered="#{Configuration.impressumText==''}">
 	 		    	<h:outputText value="#{lbl.imprint}" />
 	 		    </h:outputLink>
 	 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Navigation.imprintUrl}" rendered="#{Configuration.impressumText!=''}">
 	 		    	<h:outputText value="#{lbl.imprint}" />
 	 		    </h:outputLink>
-				<h:outputText value=" - #{SessionBean.version} "/>
 			</div>
-
+			<div id="imejiVersion" class="imj_poweredby_imprint">
+				#{SessionBean.version}
+			</div>
 			<div class="imj_poweredby_institution">
 				<ui:fragment rendered="#{Configuration.startPageFooterLogos != ''}">
 							<h:outputText value="#{Configuration.startPageFooterLogos}" escape="false"/>
