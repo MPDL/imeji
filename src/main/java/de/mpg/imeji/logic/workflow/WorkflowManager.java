@@ -2,6 +2,7 @@ package de.mpg.imeji.logic.workflow;
 
 import java.util.Calendar;
 
+import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.vo.Item;
@@ -60,8 +61,9 @@ public class WorkflowManager {
    *
    * @param p
    * @throws WorkflowException
+   * @throws NotSupportedMethodException 
    */
-  public void prepareRelease(Properties p) throws WorkflowException {
+  public void prepareRelease(Properties p) throws NotSupportedMethodException, WorkflowException {
     workflowValidator.isReleaseAllowed(p);
     p.setVersion(p.getVersion() + 1);
     p.setVersionDate(DateHelper.getCurrentDate());
@@ -76,8 +78,9 @@ public class WorkflowManager {
    *
    * @param p
    * @throws WorkflowException
+   * @throws NotSupportedMethodException 
    */
-  public void prepareWithdraw(Properties p) throws WorkflowException {
+  public void prepareWithdraw(Properties p) throws WorkflowException, NotSupportedMethodException {
     workflowValidator.isWithdrawAllowed(p);
     if (p.getDiscardComment() == null || "".equals(p.getDiscardComment())) {
       throw new WorkflowException("Discard error: A Discard comment is needed");
