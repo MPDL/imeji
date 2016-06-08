@@ -231,7 +231,7 @@ public class ElasticIndexer implements SearchIndexer {
           new String(
               Files.readAllBytes(Paths
                   .get(ElasticIndexer.class.getClassLoader().getResource(mappingFile).toURI())),
-          "UTF-8").replace("XXX_ANALYSER_XXX", analyser.name());
+              "UTF-8").replace("XXX_ANALYSER_XXX", analyser.name());
       ElasticService.client.admin().indices().preparePutMapping(this.index).setType(dataType)
           .setSource(jsonMapping).execute().actionGet();
     } catch (Exception e) {

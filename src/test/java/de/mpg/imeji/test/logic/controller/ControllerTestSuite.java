@@ -14,16 +14,10 @@ import util.SuperTestSuite;
 
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses(
-    {
-    InvitationBusinessControllerTest.class,
-    ItemControllerTestClass.class,
-    ShareControllerTestClass.class,
-    SpaceControllerTestClass.class,
-    StatisticsControllerTestClass.class,
-    UserControllerTestClass.class,
-    RegistrationBusinessControllerTest.class
-    })
+@Suite.SuiteClasses({InvitationBusinessControllerTest.class, ItemControllerTestClass.class,
+    ShareControllerTestClass.class, SpaceControllerTestClass.class,
+    StatisticsControllerTestClass.class, UserControllerTestClass.class,
+    RegistrationBusinessControllerTest.class})
 public class ControllerTestSuite extends SuperTestSuite {
 
 }

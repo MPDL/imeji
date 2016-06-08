@@ -18,6 +18,7 @@
       },
       "filename":{
         "type":"string",
+        "analyzer":"ngram_analyzer",
         "fields":{
           "sort":{
             "type":"string",

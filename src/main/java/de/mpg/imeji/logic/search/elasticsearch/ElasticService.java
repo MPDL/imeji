@@ -32,7 +32,8 @@ public class ElasticService {
   private static String CLUSTER_DIR = "null";
   public static ElasticAnalysers ANALYSER;
   private static final Logger LOGGER = Logger.getLogger(ElasticService.class);
-  private static final String SETTINGS = "elasticsearch/Settings.json";
+  private static final String SETTINGS_DEFAULT = "elasticsearch/Settings_default.json";
+  private static final String SETTINGS_DUCET = "elasticsearch/Settings_ducet.json";
 
   /**
    * The Index where all data are indexed
@@ -71,10 +72,12 @@ public class ElasticService {
 
     client = node.client();
     initializeIndex();
+    LOGGER.info("Add elasticsearch mappings...");
     new ElasticIndexer(DATA_ALIAS, ElasticTypes.items, ANALYSER).addMapping();
     new ElasticIndexer(DATA_ALIAS, ElasticTypes.folders, ANALYSER).addMapping();
     new ElasticIndexer(DATA_ALIAS, ElasticTypes.albums, ANALYSER).addMapping();
     new ElasticIndexer(DATA_ALIAS, ElasticTypes.spaces, ANALYSER).addMapping();
+    LOGGER.info("...done!");
   }
 
   /**
@@ -144,10 +147,12 @@ public class ElasticService {
     try {
       String indexName = DATA_ALIAS + "-" + System.currentTimeMillis();
       LOGGER.info("Creating a new index " + indexName);
-      String settingsJson = ANALYSER == ElasticAnalysers.ducet_sort ? new String(
+      String settingsName =
+          ANALYSER == ElasticAnalysers.ducet_sort ? SETTINGS_DUCET : SETTINGS_DEFAULT;
+      String settingsJson = new String(
           Files.readAllBytes(
-              Paths.get(ElasticIndexer.class.getClassLoader().getResource(SETTINGS).toURI())),
-          "UTF-8") : "";
+              Paths.get(ElasticIndexer.class.getClassLoader().getResource(settingsName).toURI())),
+          "UTF-8");
       ElasticService.client.admin().indices().prepareCreate(indexName).setSettings(settingsJson)
           .execute().actionGet();
       return indexName;
