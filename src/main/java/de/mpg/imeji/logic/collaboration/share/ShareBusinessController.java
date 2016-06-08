@@ -270,7 +270,8 @@ public class ShareBusinessController {
     List<Grant> removedGrants = new ArrayList<Grant>();
     List<String> grantFor = getGrantFor(grants);
     for (Grant g : toUser.getGrants()) {
-      if (grantFor.contains(g.getGrantFor().toString()) || uri.equals(g.getGrantFor().toString())) {
+      if (g.getGrantFor() == null || grantFor.contains(g.getGrantFor().toString())
+          || uri.equals(g.getGrantFor().toString())) {
         removedGrants.add(g);
       } else {
         notRemovedGrants.add(g);
