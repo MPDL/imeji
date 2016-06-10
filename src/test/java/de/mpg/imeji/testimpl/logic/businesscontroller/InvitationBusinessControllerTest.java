@@ -139,11 +139,14 @@ public class InvitationBusinessControllerTest extends ControllerTest {
     Assert.assertEquals(numberOfInvitations, invitations.size());
   }
 
+
   private User getRegisteredUser() {
     User user = new User();
     user.setEmail(UNKNOWN_EMAIL);
     user.setPerson(ImejiFactory.newPerson("Unknown", "person", "somewhere"));
     return user;
   }
+
+
 
 }

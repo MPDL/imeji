@@ -6,7 +6,9 @@ import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.collaboration.invitation.Invitation;
@@ -224,5 +226,37 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     // Register
     registrationBC.register(user);
     registrationBC.activate(registrationBC.retrieveByEmail(user.getEmail()));
+  }
+
+  /**
+   * Register with an email which have an expired registration (still not removed by clear job)
+   * <br/>
+   * Sess issue: https://github.com/MPDL-Innovations/spot/issues/534
+   * 
+   * @throws ImejiException
+   */
+  @Test
+  public void registerAfterExpiration() throws ImejiException {
+    User user = new User();
+    user.setEmail("clear-expired-registration-user@example.org");
+    user.setPerson(ImejiFactory.newPerson("test", "user", "orga"));
+    // allow all users to register
+    Imeji.CONFIG.setRegistrationWhiteList("");
+    Imeji.CONFIG.setRegistrationTokenExpiry("0");
+    // Register
+    Registration registration = registrationBC.register(user);
+    Assert.assertNotNull(registrationBC.retrieveByToken(registration.getToken()));
+    try {
+      registrationBC.activate(registration);
+      Assert.fail("The registration shouldn't be activable since expired");
+    } catch (UnprocessableError e) {
+      // registration is expired -> ok
+    }
+    registration = registrationBC.register(user);
+    Assert.assertNotNull(registrationBC.retrieveByToken(registration.getToken()));
+    Imeji.CONFIG.setRegistrationTokenExpiry("1");
+    registrationBC.activate(registration);
+    // check if the user exists
+    Assert.assertNotNull(new UserController(Imeji.adminUser).retrieve(user.getEmail()));
   }
 }
