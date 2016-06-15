@@ -304,13 +304,13 @@
 											
 										<ui:fragment rendered ="#{adminVO and cc.attrs.curMainMenu == 'collection'}">
 											<li>
-												<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{ConfigurationBean.doiServiceUrl != null and ConfigurationBean.doiServiceUrl != '' and cc.attrs.hasDoi}">
+												<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and cc.attrs.hasDoi}">
 													<h:outputText value="#{lbl.change_doi}"/>
 												</h:outputLink>
-												<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog('createDOIDialog');" title="#{lbl.createDOI}" rendered="#{ConfigurationBean.doiServiceUrl != null and ConfigurationBean.doiServiceUrl != ''}">
+												<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog('createDOIDialog');" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != ''}">
 													<h:outputText value="#{lbl.createDOI}" rendered="#{!cc.attrs.hasDoi}"/>
 												</h:outputLink>
-												<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{ConfigurationBean.doiServiceUrl == null or ConfigurationBean.doiServiceUrl == ''}">
+												<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl == null or Configuration.doiServiceUrl == ''}">
 													<h:outputText value="#{lbl.createDOI}" rendered="#{!cc.attrs.hasDoi}"/>
 													<h:outputText value="#{lbl.change_doi}" rendered="#{cc.attrs.hasDoi}"/>
 												</h:outputLink>

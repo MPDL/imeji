@@ -251,31 +251,44 @@ public class Imeji {
           .addAll(AuthorizationPredefinedRoles.imejiAdministrator(adminUser.getId().toString()));
       adminUser.setApiKey(APIKeyAuthentication.generateKey(adminUser.getId(), Integer.MAX_VALUE));
       // create
-      UserController uc = new UserController(Imeji.adminUser);
+      LOGGER.info("Checking admin users..");
+      UserController uc = new UserController(adminUser);
       List<User> admins = uc.retrieveAllAdmins();
       if (admins.size() == 0) {
         try {
-          uc.retrieve(Imeji.adminUser.getEmail());
+          LOGGER.info("... No admin found! Creating one.");
+          User admin = uc.retrieve(adminUser.getEmail());
+          LOGGER.warn(admin.getEmail() + " already exists: " + admin.getId());
+          LOGGER.error(
+              "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+          LOGGER.error(
+              "!!!! Something went wrong: No users with admin rights found, but default admin user found !!!!!");
+          LOGGER.warn("Creating a new sysadmin");
+          LOGGER.warn("Use this user to recover your system");
+          String newEmail = System.currentTimeMillis() + adminUser.getEmail();
+          LOGGER.warn("EMAIL: " + newEmail);
+          LOGGER.warn("PASSWORD: " + ADMIN_PASSWORD_INIT);
+          LOGGER.error(
+              "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+          adminUser.setEmail(System.currentTimeMillis() + "@admin.org");
+          adminUser.setEncryptedPassword(StringHelper.convertToMD5(ADMIN_PASSWORD_INIT));
+          uc.create(adminUser, USER_TYPE.ADMIN);
         } catch (NotFoundException e) {
           LOGGER.info(
               "!!! IMPORTANT !!! Create admin@imeji.org as system administrator with password admin. !!! CHANGE PASSWORD !!!");
-          Imeji.adminUser = uc.create(Imeji.adminUser, USER_TYPE.ADMIN);
-          LOGGER.info("Created admin user successfully:" + Imeji.adminUser.getEmail(), e);
+          adminUser = uc.create(adminUser, USER_TYPE.ADMIN);
+          LOGGER.info("Created admin user successfully:" + adminUser.getEmail(), e);
         }
       } else {
-        LOGGER.info("Admin user already exists:");
+        LOGGER.info("Admin users found:");
         for (User admin : admins) {
           LOGGER.info(admin.getEmail() + " is admin + (" + admin.getId() + ")");
         }
       }
     } catch (AlreadyExistsException e) {
-      LOGGER.warn(Imeji.adminUser.getEmail() + " already exists", e);
+      LOGGER.warn(adminUser.getEmail() + " already exists", e);
     } catch (Exception e) {
-      if (e.getCause() instanceof AlreadyExistsException) {
-        LOGGER.warn(Imeji.adminUser.getEmail() + " already exists");
-      } else {
-        throw new RuntimeException("Error initializing Admin user! ", e);
-      }
+      LOGGER.error("Error initializing Admin user! ", e);
     }
   }
 

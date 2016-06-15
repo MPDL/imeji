@@ -101,7 +101,6 @@ public class ImejiProperties {
    * @throws IOException
    */
   public String getInternalStorageBase() {
-
     return internalStorageBase;
   }
 
