@@ -567,6 +567,11 @@
 			<artifactId>mapdb</artifactId>
 			<version>1.0.9</version>
 		</dependency>
+		<dependency>
+		  <groupId>org.elasticsearch</groupId>
+		  <artifactId>elasticsearch-analysis-icu</artifactId>
+		  <version>2.7.0</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<!-- this profile is used by developers -->
