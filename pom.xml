@@ -19,14 +19,14 @@
 		<url>http://www.mpdl.mpg.de/</url>
 	</organization>
 	<scm>
-		<url>https://github.com/imeji-community/imeji</url>
-		<connection>scm:git:git://github.com/imeji-community/imeji.git</connection>
-		<developerConnection>scm:git:git@github.com:imeji-community/imeji.git</developerConnection>
+		<url>https://github.com/mpdl/imeji</url>
+		<connection>scm:git:git://github.com/mpdl/imeji.git</connection>
+		<developerConnection>scm:git:git@github.com:mpdl/imeji.git</developerConnection>
 		<tag>develop</tag>
 	</scm>
 	<issueManagement>
 		<system>Github</system>
-		<url>https://github.com/imeji-community/imeji/issues</url>
+		<url>https://github.com/mpdl/imeji/issues</url>
 	</issueManagement>
 	<developers>
 		<developer>

@@ -30,7 +30,7 @@ public class ProfileValidator extends ObjectValidator implements Validator<Metad
       return;
     }
     
-    if ( profile.getDefault() && Imeji.defaultMetadataProfile != null && profile.getId() != Imeji.defaultMetadataProfile.getId()) {
+    if (Method.CREATE == m &&  profile.getDefault() && Imeji.defaultMetadataProfile != null && profile.getId() != Imeji.defaultMetadataProfile.getId()) {
       throw new UnprocessableError("default_metadata_profile_already_exists" + profile.getId()+" - "+Imeji.defaultMetadataProfile.getId());
     }
 
