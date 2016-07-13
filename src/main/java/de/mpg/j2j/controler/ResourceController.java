@@ -47,8 +47,8 @@ public class ResourceController {
    */
   public void create(Object o) throws AlreadyExistsException {
     if (java2rdf.exists(o)) {
-      throw new AlreadyExistsException(
-          "Error creating resource " + J2JHelper.getId(o) + ". Resource already exists! ");
+      throw new AlreadyExistsException("Error creating resource "
+          + J2JHelper.getId(o).getPath().replace("imeji/", "") + ". Resource already exists! ");
     }
     java2rdf.write(o);
   }
@@ -75,7 +75,8 @@ public class ResourceController {
    */
   public Object read(Object o) throws NotFoundException {
     if (!java2rdf.exists(o)) {
-      throw new NotFoundException("Resource " + J2JHelper.getId(o) + " not found!");
+      throw new NotFoundException(
+          "Resource " + J2JHelper.getId(o).getPath().replace("imeji/", "") + " not found!");
     }
     o = rdf2Java.loadResource(o);
     return o;
@@ -90,7 +91,8 @@ public class ResourceController {
   public void update(Object o) throws NotFoundException {
     if (!java2rdf.exists(o)) {
       throw new NotFoundException("Error updating resource " + o.toString() + " with id \""
-          + J2JHelper.getId(o) + "\". Resource doesn't exists in model " + model.toString());
+          + J2JHelper.getId(o).getPath().replace("imeji/", "")
+          + "\". Resource doesn't exists in model " + model.toString());
     }
     java2rdf.update(o);
   }
@@ -103,8 +105,8 @@ public class ResourceController {
    */
   public void delete(Object o) throws NotFoundException {
     if (!java2rdf.exists(o)) {
-      throw new NotFoundException(
-          "Error deleting resource " + J2JHelper.getId(o) + ". Resource doesn't exists! ");
+      throw new NotFoundException("Error deleting resource "
+          + J2JHelper.getId(o).getPath().replace("imeji/", "") + ". Resource doesn't exists! ");
     }
     java2rdf.remove(o);
   }
