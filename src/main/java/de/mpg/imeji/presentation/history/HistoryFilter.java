@@ -88,7 +88,6 @@ public class HistoryFilter implements Filter {
       LOGGER.error("Error history filter", e);
       ((HttpServletResponse) resp).sendError(Status.BAD_REQUEST.getStatusCode(), "BAD_REQUEST");
     } catch (Exception e) {
-
       LOGGER.error("Error history filter", e);
       ((HttpServletResponse) resp).sendError(Status.INTERNAL_SERVER_ERROR.getStatusCode(),
           "INTERNAL_SERVER_ERROR");

@@ -6,6 +6,8 @@ package de.mpg.imeji.presentation.history;
 import java.net.URI;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
@@ -31,6 +33,8 @@ public class HistoryPage {
   private String title;
   private ImejiPages imejiPage;
   private Map<String, String[]> params;
+  private static final Logger LOGGER = Logger.getLogger(HistoryPage.class);
+
 
   /**
    * Constructor a an {@link HistoryPage}

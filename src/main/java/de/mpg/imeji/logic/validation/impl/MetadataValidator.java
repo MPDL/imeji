@@ -1,12 +1,11 @@
 package de.mpg.imeji.logic.validation.impl;
 
 import java.net.URI;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.controller.util.MetadataProfileUtil;
+import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
@@ -134,17 +133,7 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
    * @return
    */
   private boolean isValidDate(String dateString) {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    java.util.Date valueDate = null;
-    try {
-      valueDate = sdf.parse(dateString);
-      if (!dateString.equals(sdf.format(valueDate))) {
-        return false;
-      }
-    } catch (ParseException e1) {
-      return false;
-    }
-    return true;
+    return DateFormatter.parseDate(dateString) != null;
   }
 
 

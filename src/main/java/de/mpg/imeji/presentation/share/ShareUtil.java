@@ -8,6 +8,8 @@ import java.util.Locale;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
@@ -30,6 +32,8 @@ import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
  *
  */
 public class ShareUtil {
+
+  private static final Logger LOGGER = Logger.getLogger(ShareUtil.class);
 
   private ShareUtil() {
     // private constructor
@@ -89,7 +93,6 @@ public class ShareUtil {
     return albumRoleMenu;
   }
 
-
   /**
    * Read the role of the {@link User}
    *
@@ -108,28 +111,31 @@ public class ShareUtil {
       }
     }
     List<ShareListItem> roles = new ArrayList<ShareListItem>();
-
     for (String sharedWith : shareToList) {
-      if (sharedWith.contains("/collection/")) {
-        CollectionImeji c =
-            new CollectionController().retrieveLazy(URI.create(sharedWith), sessionUser);
-        if (c != null) {
-          roles.add(new ShareListItem(user, SharedObjectType.COLLECTION, sharedWith,
-              c.getProfile() != null ? c.getProfile().toString() : null, c.getMetadata().getTitle(),
-              sessionUser, locale));
+      try {
+        if (sharedWith.contains("/collection/")) {
+          CollectionImeji c =
+              new CollectionController().retrieveLazy(URI.create(sharedWith), sessionUser);
+          if (c != null) {
+            roles.add(new ShareListItem(user, SharedObjectType.COLLECTION, sharedWith,
+                c.getProfile() != null ? c.getProfile().toString() : null,
+                c.getMetadata().getTitle(), sessionUser, locale));
+          }
+        } else if (sharedWith.contains("/album/")) {
+          Album a = new AlbumController().retrieveLazy(URI.create(sharedWith), sessionUser);
+          if (a != null) {
+            roles.add(new ShareListItem(user, SharedObjectType.ALBUM, sharedWith, null,
+                a.getMetadata().getTitle(), sessionUser, locale));
+          }
+        } else if (sharedWith.contains("/item/")) {
+          Item it = new ItemController().retrieveLazy(URI.create(sharedWith), sessionUser);
+          if (it != null) {
+            roles.add(new ShareListItem(user, SharedObjectType.ITEM, sharedWith, null,
+                it.getFilename(), sessionUser, locale));
+          }
         }
-      } else if (sharedWith.contains("/album/")) {
-        Album a = new AlbumController().retrieveLazy(URI.create(sharedWith), sessionUser);
-        if (a != null) {
-          roles.add(new ShareListItem(user, SharedObjectType.ALBUM, sharedWith, null,
-              a.getMetadata().getTitle(), sessionUser, locale));
-        }
-      } else if (sharedWith.contains("/item/")) {
-        Item it = new ItemController().retrieveLazy(URI.create(sharedWith), sessionUser);
-        if (it != null) {
-          roles.add(new ShareListItem(user, SharedObjectType.ITEM, sharedWith, null,
-              it.getFilename(), sessionUser, locale));
-        }
+      } catch (Exception e) {
+        LOGGER.error("Problem by getting user roles for user " + user.getEmail(), e);
       }
     }
     return roles;
