@@ -104,6 +104,7 @@
 		<!-- <sonar.exclusions></sonar.exclusions> -->
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+		<project.scm.id>git-credentials</project.scm.id>
 	</properties>
 	<repositories>
 		<!-- <repository> <id>central</id> <url>http://central</url> <releases> 
