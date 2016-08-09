@@ -4,7 +4,7 @@
 	<groupId>org.imeji</groupId>
 	<name>imeji</name>
 	<packaging>war</packaging>
-	<version>3.4.0.1-SNAPSHOT</version>
+	<version>3.4.1.0</version>
 	<url>http://imeji.org</url>
 	<description>The imeji open source software offers a dedicated metadata management by supporting a non- restrictive metadata schema definition, as simple as liked or as complex as needed.</description>
 	<licenses>
@@ -22,7 +22,7 @@
 		<url>https://github.com/mpdl/imeji</url>
 		<connection>scm:git:https://github.com/MPDL/imeji.git</connection>
 		<developerConnection>scm:git:https://github.com/MPDL/imeji.git</developerConnection>
-		<tag>develop</tag>
+		<tag>imeji-3.4.1.0</tag>
 	</scm>
 	<issueManagement>
 		<system>Github</system>
