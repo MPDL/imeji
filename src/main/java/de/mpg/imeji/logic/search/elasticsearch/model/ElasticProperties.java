@@ -64,5 +64,4 @@ public class ElasticProperties {
   public String getStatus() {
     return status;
   }
-
 }

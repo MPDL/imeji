@@ -11,6 +11,7 @@ import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
+import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -18,6 +19,7 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Space;
+import de.mpg.imeji.logic.vo.User;
 
 /**
  * REindex data from the database into elastic search
@@ -36,6 +38,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
     ElasticService.getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
     String index = ElasticService.createIndex();
     addAllMappings(index);
+    reindexUsers(index);
     reindexAlbums(index);
     reindexItems(index);
     reindexFolders(index);
@@ -121,7 +124,17 @@ public class ElasticReIndexJob implements Callable<Integer> {
     LOGGER.info("+++ " + items.size() + " items to index +++");
     indexer.indexBatch(items);
     indexer.commit();
-    LOGGER.info("Items reindexed!");
+    LOGGER.info("Spaces reindexed!");
+  }
+
+  private void reindexUsers(String index) throws ImejiException {
+    LOGGER.info("Indexing users...");
+    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER);
+    List<User> users = new UserController(Imeji.adminUser).retrieveAll();
+    LOGGER.info("+++ " + users.size() + " users to index +++");
+    indexer.indexBatch(users);
+    indexer.commit();
+    LOGGER.info("...users reindexed!");
   }
 
 }

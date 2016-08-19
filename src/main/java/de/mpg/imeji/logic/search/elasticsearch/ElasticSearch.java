@@ -51,6 +51,9 @@ public class ElasticSearch implements Search {
       case SPACE:
         this.type = ElasticTypes.spaces;
         break;
+      case USER:
+        this.type = ElasticTypes.users;
+        break;
       default:
         this.type = ElasticTypes.items;
         break;
@@ -93,6 +96,31 @@ public class ElasticSearch implements Search {
         .setNoFields().setTypes(getTypes()).setQuery(q).setSize(size).setFrom(from)
         .addSort(ElasticSortFactory.build(sort)).execute().actionGet();
     return toSearchResult(resp);
+  }
+
+  /**
+   * Search with a string query and select the value of one specidic field. For example search for
+   * email:user@example.org and return the field apikey
+   * 
+   * @param query
+   * @param field
+   * @param sort
+   * @param user
+   * @param from
+   * @param size
+   * @return
+   */
+  public SearchResult searchStringAndRetrieveFieldValue(String query, String field,
+      SortCriterion sort, User user, int from, int size) {
+    QueryBuilder q = QueryBuilders.queryStringQuery(query);
+    SearchResponse resp = ElasticService.client.prepareSearch(ElasticService.DATA_ALIAS)
+        .addField(field).setTypes(getTypes()).setQuery(q).setSize(size).setFrom(from)
+        .addSort(ElasticSortFactory.build(sort)).execute().actionGet();
+    List<String> fieldValues = new ArrayList<>();
+    for (SearchHit hit : resp.getHits()) {
+      fieldValues.add(hit.field(field).getValue());
+    }
+    return new SearchResult(fieldValues, resp.getHits().getTotalHits());
   }
 
   /**

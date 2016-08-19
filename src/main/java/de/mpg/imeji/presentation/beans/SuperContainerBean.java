@@ -122,7 +122,7 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
         Imeji.RESOURCE_BUNDLE.getLabel("sort_title", sb.getLocale())));
     sortMenu.add(new SelectItem(SearchIndex.SearchFields.modified.name(),
         Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", sb.getLocale())));
-    sortMenu.add(new SelectItem(SearchIndex.SearchFields.creator.name(),
+    sortMenu.add(new SelectItem(SearchIndex.SearchFields.creator_id.name(),
         Imeji.RESOURCE_BUNDLE.getLabel("sort_author", sb.getLocale())));
     if (sb.getUser() != null) {
       filterMenu = new ArrayList<SelectItem>();

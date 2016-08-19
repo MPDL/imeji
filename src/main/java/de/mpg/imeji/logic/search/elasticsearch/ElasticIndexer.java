@@ -31,6 +31,7 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFolder;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticItem;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticSpace;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUser;
 import de.mpg.imeji.logic.search.elasticsearch.util.ElasticSearchUtil;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
@@ -41,6 +42,7 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Space;
+import de.mpg.imeji.logic.vo.User;
 
 /**
  * Indexer for ElasticSearch
@@ -55,7 +57,6 @@ public class ElasticIndexer implements SearchIndexer {
   private String dataType;
   private ElasticAnalysers analyser;
   private String mappingFile = "elasticsearch/Elastic_TYPE_Mapping.json";
-
 
   public ElasticIndexer(String indexName, ElasticTypes dataType, ElasticAnalysers analyser) {
     this.index = indexName;
@@ -185,8 +186,9 @@ public class ElasticIndexer implements SearchIndexer {
       return new ElasticAlbum((Album) obj);
     } else if (obj instanceof Space) {
       return new ElasticSpace((Space) obj);
+    } else if (obj instanceof User) {
+      return new ElasticUser((User) obj);
     }
-
     return obj;
   }
 
@@ -219,6 +221,9 @@ public class ElasticIndexer implements SearchIndexer {
     if (obj instanceof Properties) {
       return ((Properties) obj).getId().toString();
     }
+    if (obj instanceof User) {
+      return ((User) obj).getId().toString();
+    }
     return null;
   }
 
@@ -227,11 +232,10 @@ public class ElasticIndexer implements SearchIndexer {
    */
   public void addMapping() {
     try {
-      String jsonMapping =
-          new String(
-              Files.readAllBytes(Paths
-                  .get(ElasticIndexer.class.getClassLoader().getResource(mappingFile).toURI())),
-              "UTF-8").replace("XXX_ANALYSER_XXX", analyser.name());
+      String jsonMapping = new String(
+          Files.readAllBytes(
+              Paths.get(ElasticIndexer.class.getClassLoader().getResource(mappingFile).toURI())),
+          "UTF-8").replace("XXX_ANALYSER_XXX", analyser.name());
       ElasticService.client.admin().indices().preparePutMapping(this.index).setType(dataType)
           .setSource(jsonMapping).execute().actionGet();
     } catch (Exception e) {

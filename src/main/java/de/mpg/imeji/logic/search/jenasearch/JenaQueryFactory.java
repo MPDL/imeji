@@ -223,7 +223,7 @@ public class JenaQueryFactory {
         searchQuery =
             "?s <http://imeji.org/terms/container/metadata> ?cmd . OPTIONAL_FOR_NOT {?cmd <http://purl.org/dc/elements/1.1/title> ?el";
         break;
-      case creator:
+      case creator_id:
         break;
       case date:
         break;
@@ -444,7 +444,7 @@ public class JenaQueryFactory {
         return ". ?s <" + sortCriterion.getIndex().getNamespace() + "> ?sort0";
       } else if (SearchFields.status == sortCriterion.getIndex().getField()) {
         return ". ?s <" + sortCriterion.getIndex().getNamespace() + "> ?sort0";
-      } else if (SearchFields.creator == sortCriterion.getIndex().getField()) {
+      } else if (SearchFields.creator_id == sortCriterion.getIndex().getField()) {
         return ". ?s <http://imeji.org/terms/container/metadata> ?contmd . ?contmd <http://xmlns.com/foaf/0.1/person> ?person . ?person <http://purl.org/escidoc/metadata/terms/0.1/complete-name> ?sort0";
       } else if (SearchFields.title == sortCriterion.getIndex().getField()) {
         return (item ? " . ?s <http://imeji.org/terms/collection> ?c . ?c" : " . ?s")

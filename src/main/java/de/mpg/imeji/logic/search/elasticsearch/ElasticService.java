@@ -47,7 +47,7 @@ public class ElasticService {
    *
    */
   public enum ElasticTypes {
-    items, folders, albums, spaces;
+    items, folders, albums, spaces, users;
   }
 
   public enum ElasticAnalysers {
@@ -73,10 +73,9 @@ public class ElasticService {
     client = node.client();
     initializeIndex();
     LOGGER.info("Add elasticsearch mappings...");
-    new ElasticIndexer(DATA_ALIAS, ElasticTypes.items, ANALYSER).addMapping();
-    new ElasticIndexer(DATA_ALIAS, ElasticTypes.folders, ANALYSER).addMapping();
-    new ElasticIndexer(DATA_ALIAS, ElasticTypes.albums, ANALYSER).addMapping();
-    new ElasticIndexer(DATA_ALIAS, ElasticTypes.spaces, ANALYSER).addMapping();
+    for (ElasticTypes type : ElasticTypes.values()) {
+      new ElasticIndexer(DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
+    }
     LOGGER.info("...done!");
   }
 
@@ -189,10 +188,9 @@ public class ElasticService {
     LOGGER.warn("Resetting ElasticSearch!!!");
     clear();
     initializeIndex();
-    new ElasticIndexer(DATA_ALIAS, ElasticTypes.items, ANALYSER).addMapping();
-    new ElasticIndexer(DATA_ALIAS, ElasticTypes.folders, ANALYSER).addMapping();
-    new ElasticIndexer(DATA_ALIAS, ElasticTypes.albums, ANALYSER).addMapping();
-    new ElasticIndexer(DATA_ALIAS, ElasticTypes.spaces, ANALYSER).addMapping();
+    for (ElasticTypes type : ElasticTypes.values()) {
+      new ElasticIndexer(DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
+    }
   }
 
   /**

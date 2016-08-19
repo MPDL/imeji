@@ -9,11 +9,14 @@ import java.util.List;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import com.hp.hpl.jena.util.iterator.Filter;
 
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.elasticsearch.util.ElasticSearchUtil;
 import de.mpg.imeji.logic.search.model.SearchElement;
@@ -52,9 +55,38 @@ public class ElasticQueryFactory {
    * @return
    */
   public static QueryBuilder build(SearchQuery query, String folderUri, String spaceId, User user) {
-    return QueryBuilders.boolQuery().must(buildSearchQuery(query, user))
-        .must(buildContainerFilter(folderUri)).must(buildSecurityQuery(user, folderUri))
-        .must(buildSpaceQuery(spaceId)).must(buildStatusQuery(query, user));
+    BoolQueryBuilder q = QueryBuilders.boolQuery();
+    QueryBuilder searchQuery = buildSearchQuery(query, user);
+    QueryBuilder containerQuery = buildContainerFilter(folderUri);
+    QueryBuilder securityQuery = buildSecurityQuery(user, folderUri);
+    QueryBuilder spaceQuery = buildSpaceQuery(spaceId);
+    QueryBuilder statusQuery = buildStatusQuery(query, user);
+    if (!isMatchAll(searchQuery)) {
+      q.must(searchQuery);
+    }
+    if (!isMatchAll(containerQuery)) {
+      q.must(containerQuery);
+    }
+    if (!isMatchAll(securityQuery)) {
+      q.must(securityQuery);
+    }
+    if (!isMatchAll(spaceQuery)) {
+      q.must(spaceQuery);
+    }
+    if (!isMatchAll(statusQuery)) {
+      q.must(statusQuery);
+    }
+    return q;
+  }
+
+  /**
+   * True if the query is a match all query
+   * 
+   * @param q
+   * @return
+   */
+  private static boolean isMatchAll(QueryBuilder q) {
+    return q instanceof MatchAllQueryBuilder;
   }
 
   /**
@@ -186,7 +218,10 @@ public class ElasticQueryFactory {
       if (isFolderUri(containerUri)) {
         return fieldQuery(ElasticFields.FOLDER, containerUri, SearchOperators.EQUALS, false);
       } else {
-        return fieldQuery(ElasticFields.ALBUM, containerUri, SearchOperators.EQUALS, false);
+        return QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
+            .lookupIndex(ElasticService.DATA_ALIAS).lookupId(containerUri)
+            .lookupType(ElasticTypes.albums.name()).lookupPath(ElasticFields.MEMBER.field());
+        // return fieldQuery(ElasticFields.ALBUM, containerUri, SearchOperators.EQUALS, false);
       }
     }
     return QueryBuilders.matchAllQuery();
@@ -285,8 +320,18 @@ public class ElasticQueryFactory {
         break;
       case created:
         return timeQuery(ElasticFields.CREATED, pair.getValue(), pair.getOperator(), pair.isNot());
-      case creator:
+      case creator_id:
         // not indexed
+        break;
+      case creator:
+        return fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(pair.getValue()),
+            pair.getOperator(), pair.isNot());
+      case collaborator:
+        return QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
+            .lookupIndex(ElasticService.DATA_ALIAS)
+            .lookupId(ElasticSearchUtil.getUserId(pair.getValue()))
+            .lookupType(ElasticTypes.users.name()).lookupPath(ElasticFields.READ.field());
+      case shared_with:
         break;
       case date:
         return timeQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), pair.getOperator(),

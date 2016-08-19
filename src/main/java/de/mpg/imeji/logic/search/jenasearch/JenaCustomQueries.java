@@ -555,6 +555,15 @@ public class JenaCustomQueries {
   }
 
   /**
+   * Select all {@link Item} available imeji
+   *
+   * @return
+   */
+  public static final String selectUserAll() {
+    return "SELECT ?s WHERE { ?s a <http://imeji.org/terms/user>}";
+  }
+
+  /**
    * Update all {@link Item}. Remove the {@link Metadata} which have a non existing
    * {@link Statement}
    *

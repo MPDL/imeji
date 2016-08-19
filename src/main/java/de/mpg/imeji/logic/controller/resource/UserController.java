@@ -32,11 +32,13 @@ import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
+import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.QuotaUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.User;
@@ -193,6 +195,21 @@ public class UserController {
       u.setGroups((List<UserGroup>) ugc.searchByUser(u, currentUser));
     }
     return u;
+  }
+
+  /**
+   * Retrieve all {@link Item} (all status, all users) in imeji
+   *
+   * @return
+   * @throws ImejiException
+   */
+  public List<User> retrieveAll() throws ImejiException {
+    List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectUserAll(), Imeji.userModel);
+    List<User> users = new ArrayList<>();
+    for (String uri : uris) {
+      users.add(retrieve(URI.create(uri)));
+    }
+    return users;
   }
 
 

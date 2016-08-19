@@ -4,8 +4,12 @@ import java.util.Map;
 
 import org.apache.lucene.queryparser.classic.QueryParserBase;
 
+import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
+import de.mpg.imeji.logic.search.model.SearchResult;
 
 /**
  * Utility Class for ElasticSearch
@@ -33,6 +37,22 @@ public class ElasticSearchUtil {
       return obj != null ? obj.toString() : "";
     }
     return "";
+  }
+
+  /**
+   * Retrieve the Id of the user according to its email
+   * 
+   * @param email
+   * @return
+   */
+  public static String getUserId(String email) {
+    ElasticSearch search = new ElasticSearch(SearchObjectTypes.USER);
+    SearchResult r = search.searchStringAndRetrieveFieldValue("email:\"" + email.toString() + "\"",
+        ElasticFields.ID.field().toLowerCase(), null, Imeji.adminUser, 0, 1);
+    if (r.getNumberOfRecords() > 0) {
+      return r.getResults().get(0);
+    }
+    return null;
   }
 
   /**

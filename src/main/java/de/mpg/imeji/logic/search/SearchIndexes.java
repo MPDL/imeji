@@ -87,7 +87,7 @@ public class SearchIndexes {
      * Properties indexes
      */
     indexes = put(indexes,
-        new SearchIndex(SearchIndex.SearchFields.creator.name(), ImejiNamespaces.CREATOR));
+        new SearchIndex(SearchIndex.SearchFields.creator_id.name(), ImejiNamespaces.CREATOR));
     indexes = put(indexes,
         new SearchIndex(SearchIndex.SearchFields.editor.name(), ImejiNamespaces.MODIFIED_BY));
     indexes = put(indexes,
@@ -102,7 +102,7 @@ public class SearchIndexes {
      * Grant indexes
      */
     indexes = put(indexes, new SearchIndex(SearchIndex.SearchFields.grant.name(),
-        "http://xmlns.com/foaf/0.1/grants", indexes.get(SearchIndex.SearchFields.creator.name())));
+        "http://xmlns.com/foaf/0.1/grants", indexes.get(SearchIndex.SearchFields.creator_id.name())));
     indexes = put(indexes, new SearchIndex(SearchIndex.SearchFields.grant_type.name(),
         "http://imeji.org/terms/grantType", indexes.get(SearchIndex.SearchFields.grant.name())));
     indexes = put(indexes, new SearchIndex(SearchIndex.SearchFields.grant_for.name(),
