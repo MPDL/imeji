@@ -327,10 +327,14 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(pair.getValue()),
             pair.getOperator(), pair.isNot());
       case collaborator:
-        return QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
+        BoolQueryBuilder q = QueryBuilders.boolQuery();
+        q.must(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
             .lookupIndex(ElasticService.DATA_ALIAS)
             .lookupId(ElasticSearchUtil.getUserId(pair.getValue()))
-            .lookupType(ElasticTypes.users.name()).lookupPath(ElasticFields.READ.field());
+            .lookupType(ElasticTypes.users.name()).lookupPath(ElasticFields.READ.field()))
+            .mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(pair.getValue()),
+                pair.getOperator(), pair.isNot()));
+        return q;
       case shared_with:
         break;
       case date:
@@ -343,12 +347,12 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.FILENAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case filetype:
-        BoolQueryBuilder q = QueryBuilders.boolQuery();
+        BoolQueryBuilder collaboratorQuery = QueryBuilders.boolQuery();
         for (String ext : SearchUtils.parseFileTypesAsExtensionList(pair.getValue())) {
-          q.should(
+          collaboratorQuery.should(
               fieldQuery(ElasticFields.FILENAME, "\"." + ext + "\"", SearchOperators.REGEX, false));
         }
-        return q;
+        return collaboratorQuery;
       case grant:
         // same as grant_type
         GrantType grant = pair.getValue().equals("upload") ? GrantType.CREATE
@@ -431,6 +435,15 @@ public class ElasticQueryFactory {
         String status = pair.getValue();
         if (status.contains("#")) {
           status = status.split("#")[1];
+        }
+        if ("private".equals(status)) {
+          status = Status.PENDING.name();
+        }
+        if ("public".equals(status)) {
+          status = Status.RELEASED.name();
+        }
+        if ("discarded".equals(status)) {
+          status = Status.WITHDRAWN.name();
         }
         return fieldQuery(ElasticFields.STATUS, status.toUpperCase(), pair.getOperator(),
             pair.isNot());

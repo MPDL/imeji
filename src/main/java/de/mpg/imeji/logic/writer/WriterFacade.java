@@ -38,9 +38,9 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.authorization.Authorization;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
-import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.validation.ValidatorFactory;
 import de.mpg.imeji.logic.validation.impl.Validator;
 import de.mpg.imeji.logic.vo.Container;
@@ -85,6 +85,9 @@ public class WriterFacade {
     } else if (modelURI.equals(Imeji.spaceModel)) {
       indexer = SearchFactory.create(SearchObjectTypes.SPACE, SEARCH_IMPLEMENTATIONS.ELASTIC)
           .getIndexer();
+    } else if (modelURI.equals(Imeji.userModel)) {
+      indexer =
+          SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
     } else {
       indexer = SearchFactory.create(SEARCH_IMPLEMENTATIONS.JENA).getIndexer();
     }
