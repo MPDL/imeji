@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.filter;
+package de.mpg.imeji.presentation.facet;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,23 +26,24 @@ import de.mpg.imeji.presentation.facet.Facet.FacetType;
 import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
- * Java Bean for the {@link Filter}
+ * Java Bean for the {@link FacetFilter}
  *
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-@ManagedBean(name = "FiltersBean")
+@ManagedBean(name = "FacetFiltersBean")
 @ViewScoped
-public class FiltersBean {
-  private FiltersSession fs = (FiltersSession) BeanHelper.getSessionBean(FiltersSession.class);
+public class FacetFiltersBean {
+  private FacetFiltersSession fs =
+      (FacetFiltersSession) BeanHelper.getSessionBean(FacetFiltersSession.class);
   private int count = 0;
-  private static final Logger LOGGER = Logger.getLogger(FiltersBean.class);
+  private static final Logger LOGGER = Logger.getLogger(FacetFiltersBean.class);
 
   /**
    * Default constructor
    */
-  public FiltersBean() {
+  public FacetFiltersBean() {
     // construct...
   }
 
@@ -52,7 +53,7 @@ public class FiltersBean {
    * @param query
    * @param count
    */
-  public FiltersBean(SearchQuery sq, int count, Locale locale, MetadataLabels metadataLabels) {
+  public FacetFiltersBean(SearchQuery sq, int count, Locale locale, MetadataLabels metadataLabels) {
     try {
       this.count = count;
       String q = SearchQueryParser.transform2URL(sq);
@@ -71,7 +72,7 @@ public class FiltersBean {
         n = FacetType.SEARCH.name().toLowerCase();
       }
       if (q != null) {
-        List<Filter> filters =
+        List<FacetFilter> filters =
             parseQueryAndSetFilters(q, n, t, metadataURI, locale, metadataLabels);
         resetFiltersSession(q, filters);
       }
@@ -86,7 +87,7 @@ public class FiltersBean {
    * @param q
    * @param filters
    */
-  private void resetFiltersSession(String q, List<Filter> filters) {
+  private void resetFiltersSession(String q, List<FacetFilter> filters) {
     fs.setFilters(filters);
     if (!q.contains(fs.getWholeQuery()) || "".equals(q)) {
       fs.getNoResultsFilters().clear();
@@ -103,11 +104,11 @@ public class FiltersBean {
    * @return
    * @throws IOException
    */
-  private List<Filter> parseQueryAndSetFilters(String q, String n, String t, URI metadataURI,
+  private List<FacetFilter> parseQueryAndSetFilters(String q, String n, String t, URI metadataURI,
       Locale locale, MetadataLabels metadataLabels) throws IOException {
-    List<Filter> filters = findAlreadyDefinedFilters(q, n, t);
+    List<FacetFilter> filters = findAlreadyDefinedFilters(q, n, t);
     String newQuery = removeFiltersQueryFromQuery(q, filters);
-    Filter newFilter = createNewFilter(newQuery, n, t, metadataURI, locale, metadataLabels);
+    FacetFilter newFilter = createNewFilter(newQuery, n, t, metadataURI, locale, metadataLabels);
     if (newFilter != null) {
       filters.add(newFilter);
     }
@@ -125,10 +126,10 @@ public class FiltersBean {
    * @return
    * @throws IOException
    */
-  private Filter createNewFilter(String q, String n, String t, URI metadataURI, Locale locale,
+  private FacetFilter createNewFilter(String q, String n, String t, URI metadataURI, Locale locale,
       MetadataLabels metadataLabels) throws IOException {
     if (q != null && !"".equals(q.trim())) {
-      return new Filter(n, q, count, FacetType.valueOf(t.toUpperCase()), metadataURI, locale,
+      return new FacetFilter(n, q, count, FacetType.valueOf(t.toUpperCase()), metadataURI, locale,
           metadataLabels);
     }
     return null;
@@ -142,9 +143,9 @@ public class FiltersBean {
    * @param t
    * @return
    */
-  private List<Filter> findAlreadyDefinedFilters(String q, String n, String t) {
-    List<Filter> filters = new ArrayList<Filter>();
-    for (Filter f : fs.getFilters()) {
+  private List<FacetFilter> findAlreadyDefinedFilters(String q, String n, String t) {
+    List<FacetFilter> filters = new ArrayList<FacetFilter>();
+    for (FacetFilter f : fs.getFilters()) {
       if (q != null && q.contains(f.getQuery())) {
         filters.add(f);
       }
@@ -161,9 +162,9 @@ public class FiltersBean {
    * @return
    * @throws UnsupportedEncodingException
    */
-  private List<Filter> resetQueriesToRemoveFilters(String q, List<Filter> filters)
+  private List<FacetFilter> resetQueriesToRemoveFilters(String q, List<FacetFilter> filters)
       throws UnsupportedEncodingException {
-    for (Filter f : filters) {
+    for (FacetFilter f : filters) {
       f.setRemoveQuery(createQueryToRemoveFilter(f, q));
     }
     return filters;
@@ -176,8 +177,8 @@ public class FiltersBean {
    * @param filters
    * @return
    */
-  private String removeFiltersQueryFromQuery(String q, List<Filter> filters) {
-    for (Filter f : filters) {
+  private String removeFiltersQueryFromQuery(String q, List<FacetFilter> filters) {
+    for (FacetFilter f : filters) {
       q = removeFilterQueryFromQuery(q, f);
     }
     return q;
@@ -190,7 +191,7 @@ public class FiltersBean {
    * @param filter
    * @return
    */
-  private String removeFilterQueryFromQuery(String q, Filter filter) {
+  private String removeFilterQueryFromQuery(String q, FacetFilter filter) {
     if (!q.contains(filter.getQuery())) {
       LOGGER.error("Query: " + q + " . Error: non removable filter: " + filter.getQuery());
     }
@@ -205,11 +206,12 @@ public class FiltersBean {
    * @return
    * @throws UnsupportedEncodingException
    */
-  public String createQueryToRemoveFilter(Filter f, String q) throws UnsupportedEncodingException {
+  public String createQueryToRemoveFilter(FacetFilter f, String q)
+      throws UnsupportedEncodingException {
     return URLEncoder.encode(removeFilterQueryFromQuery(q, f), "UTF-8") + "&f=" + f.getLabel();
   }
 
-  public FiltersSession getSession() {
+  public FacetFiltersSession getSession() {
     return fs;
   }
 }

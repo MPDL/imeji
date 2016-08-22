@@ -23,8 +23,6 @@ import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.facet.Facet.FacetType;
-import de.mpg.imeji.presentation.filter.Filter;
-import de.mpg.imeji.presentation.filter.FiltersSession;
 import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
@@ -36,7 +34,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  */
 public class TechnicalFacets extends FacetsAbstract {
   private static final Logger LOGGER = Logger.getLogger(TechnicalFacets.class);
-  private FiltersSession fs = (FiltersSession) BeanHelper.getSessionBean(FiltersSession.class);
+  private FacetFiltersSession fs = (FacetFiltersSession) BeanHelper.getSessionBean(FacetFiltersSession.class);
   private List<List<Facet>> facets = new ArrayList<List<Facet>>();
   private SearchQuery searchQuery;
   private String baseURI =
@@ -109,7 +107,7 @@ public class TechnicalFacets extends FacetsAbstract {
                     t.toString(), count, FacetType.TECHNICAL, null, locale, null));
           } else {
             fs.getNoResultsFilters()
-                .add(new Filter(t.toString(), "", 0, FacetType.TECHNICAL, null, locale, null));
+                .add(new FacetFilter(t.toString(), "", 0, FacetType.TECHNICAL, null, locale, null));
           }
           count = 0;
         }

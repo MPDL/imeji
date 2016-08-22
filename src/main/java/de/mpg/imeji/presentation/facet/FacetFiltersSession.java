@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.filter;
+package de.mpg.imeji.presentation.facet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,16 +9,16 @@ import java.util.List;
 import de.mpg.imeji.presentation.facet.Facet.FacetType;
 
 /**
- * Session where the {@link Filter} are stored
+ * Session where the {@link FacetFilter} are stored
  *
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class FiltersSession {
-  private List<Filter> filters = new ArrayList<Filter>();
+public class FacetFiltersSession {
+  private List<FacetFilter> filters = new ArrayList<FacetFilter>();
   private String wholeQuery = "";
-  private List<Filter> noResultsFilters = new ArrayList<Filter>();
+  private List<FacetFilter> noResultsFilters = new ArrayList<FacetFilter>();
 
   /**
    * Check if the name correspond to an existing filter name
@@ -27,7 +27,7 @@ public class FiltersSession {
    * @return
    */
   public boolean isFilter(String name) {
-    for (Filter f : filters) {
+    for (FacetFilter f : filters) {
       if (f.getLabel().equalsIgnoreCase(name)) {
         return true;
       }
@@ -45,7 +45,7 @@ public class FiltersSession {
    * @return
    */
   public boolean isNoResultFilter(String name) {
-    for (Filter f : noResultsFilters) {
+    for (FacetFilter f : noResultsFilters) {
       if (f.getLabel().equalsIgnoreCase(name)) {
         return true;
       }
@@ -56,8 +56,8 @@ public class FiltersSession {
   /**
    * @return filter with the search query
    */
-  public Filter getSearchFilter() {
-    for (Filter f : filters) {
+  public FacetFilter getSearchFilter() {
+    for (FacetFilter f : filters) {
       if (f.getType() == FacetType.SEARCH) {
         return f;
       }
@@ -65,11 +65,11 @@ public class FiltersSession {
     return null;
   }
 
-  public List<Filter> getFilters() {
+  public List<FacetFilter> getFilters() {
     return filters;
   }
 
-  public void setFilters(List<Filter> filters) {
+  public void setFilters(List<FacetFilter> filters) {
     this.filters = filters;
   }
 
@@ -81,11 +81,11 @@ public class FiltersSession {
     this.wholeQuery = wholeQuery;
   }
 
-  public List<Filter> getNoResultsFilters() {
+  public List<FacetFilter> getNoResultsFilters() {
     return noResultsFilters;
   }
 
-  public void setNoResultsFilters(List<Filter> noResultsFilters) {
+  public void setNoResultsFilters(List<FacetFilter> noResultsFilters) {
     this.noResultsFilters = noResultsFilters;
   }
 }

@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:composite="http://java.sun.com/jsf/composite">
+	
+	<composite:interface>
+		<composite:attribute name="menuClass" type="java.lang.String" default="imj_contentMenu" required="true" shortDescription="@type: String, used for the component and will be extended with 'Item' for every menu entry, @default: imj_contentMenu"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{Auth.loggedIn}">
+			<div class="imj_menuHeader">
+                      <span class="fa fa-filter">&#160;</span>
+				<h:outputText id="txtFilter" value="#{lbl.filter}" styleClass="imj_headerEntry"/>
+			</div>
+			<div class="imj_menuBody">
+				<h:outputText value="#{lbl.filter_by}:" styleClass="imj_sectionHeadline imj_active"/>
+				<ul>
+					<ui:repeat var="entry" value="#{UserFilterMenuBean.menu}" varStatus="fpos">
+						<li> 
+							<a href="#{UserFilterMenuBean.getFilterUrl(entry.value)}">#{entry.label}</a>
+						</li>
+					</ui:repeat>
+				</ul>
+			</div>
+		</h:panelGroup>
+	</composite:implementation>
+</html>

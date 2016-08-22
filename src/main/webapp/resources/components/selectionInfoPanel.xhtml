@@ -3,7 +3,8 @@
 	  xmlns:h="http://java.sun.com/jsf/html"
 	  xmlns:composite="http://java.sun.com/jsf/composite"
 	  xmlns:f="http://java.sun.com/jsf/core"
-		>
+	  xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	  
 	<composite:interface>
 		<composite:attribute name="fSession" required="false"/>
 		<composite:attribute name="facetBean" required="false"/>
@@ -94,6 +95,7 @@
 					</h:panelGroup>
 				</h:form>		
 			</ui:fragment>
+			
 			<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu}">
 				<div class="imj_menuHeader">
                     <span class="fa fa-sort">&#160;</span>
@@ -122,6 +124,8 @@
 					</h:form>
 				</div>
 			</h:panelGroup>
+			<menu:StatusFilter/>
+			<menu:FilterMenu/>
 		</h:panelGroup>
 	</composite:implementation>
 </html>

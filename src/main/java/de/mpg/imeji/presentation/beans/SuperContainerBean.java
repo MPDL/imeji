@@ -27,7 +27,7 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.presentation.filter.Filter;
+import de.mpg.imeji.presentation.facet.FacetFilter;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.CookieUtils;
@@ -150,7 +150,7 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
   }
 
   /**
-   * Return the current {@link Filter} for the {@link List} of {@link Container}
+   * Return the current {@link FacetFilter} for the {@link List} of {@link Container}
    *
    * @return
    */
@@ -272,7 +272,7 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
   }
 
   /**
-   * return the {@link Filter} name defined in the url as a {@link String}
+   * return the {@link FacetFilter} name defined in the url as a {@link String}
    *
    * @return
    */
@@ -308,7 +308,7 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
   }
 
   /**
-   * return the internationalized labels of the {@link Filter}
+   * return the internationalized labels of the {@link FacetFilter}
    *
    * @return
    */

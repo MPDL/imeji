@@ -327,16 +327,7 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(pair.getValue()),
             pair.getOperator(), pair.isNot());
       case collaborator:
-        BoolQueryBuilder q = QueryBuilders.boolQuery();
-        q.must(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
-            .lookupIndex(ElasticService.DATA_ALIAS)
-            .lookupId(ElasticSearchUtil.getUserId(pair.getValue()))
-            .lookupType(ElasticTypes.users.name()).lookupPath(ElasticFields.READ.field()))
-            .mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(pair.getValue()),
-                pair.getOperator(), pair.isNot()));
-        return q;
-      case shared_with:
-        break;
+        return collaboratorQuery(pair.getValue(), pair.isNot());
       case date:
         return timeQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -347,12 +338,12 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.FILENAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case filetype:
-        BoolQueryBuilder collaboratorQuery = QueryBuilders.boolQuery();
+        BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
         for (String ext : SearchUtils.parseFileTypesAsExtensionList(pair.getValue())) {
-          collaboratorQuery.should(
+          filetypeQuery.should(
               fieldQuery(ElasticFields.FILENAME, "\"." + ext + "\"", SearchOperators.REGEX, false));
         }
-        return collaboratorQuery;
+        return filetypeQuery;
       case grant:
         // same as grant_type
         GrantType grant = pair.getValue().equals("upload") ? GrantType.CREATE
@@ -743,6 +734,29 @@ public class ElasticQueryFactory {
       grants.addAll(group.getGrants());
     }
     return grants;
+  }
+
+  /**
+   * Create the query for collaborator="email"
+   * 
+   * @param email
+   * @param not
+   * @return
+   */
+  private static QueryBuilder collaboratorQuery(String email, boolean not) {
+    BoolQueryBuilder q1 = QueryBuilders.boolQuery();
+    q1.must(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
+        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(ElasticSearchUtil.getUserId(email))
+        .lookupType(ElasticTypes.users.name()).lookupPath(ElasticFields.READ.field()));
+    q1.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(email),
+        SearchOperators.EQUALS, not));
+    BoolQueryBuilder q2 = QueryBuilders.boolQuery();
+    q2.must(QueryBuilders.termsLookupQuery(ElasticFields.FOLDER.field())
+        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(ElasticSearchUtil.getUserId(email))
+        .lookupType(ElasticTypes.users.name()).lookupPath(ElasticFields.READ.field()));
+    q2.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(email),
+        SearchOperators.EQUALS, not));
+    return QueryBuilders.boolQuery().should(q1).should(q2);
   }
 
 }

@@ -117,6 +117,17 @@ public class HistoryPage {
     }
   }
 
+  /**
+   * Set a parameter (for instance q) with a new value. To get it as an RUL, call getCompleteUrl()
+   * 
+   * @param param
+   * @param value
+   */
+  public void setParamValue(String param, String value) {
+    String[] valueArray = {value};
+    params.put(param, valueArray);
+  }
+
   public int getPos() {
     return pos;
   }

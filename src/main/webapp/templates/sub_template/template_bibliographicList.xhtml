@@ -26,7 +26,7 @@
 			<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes"/>
 			
 			<!-- Selection Info Panel -->
-			<imjc:filterInfoPanel fSession="#{FiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
+			<imjc:filterInfoPanel fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
 									 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
 									 filterBeanHasQuery="#{filterBeanHasQuery}"
 									 objectLabel="#{objectLabel}"/>

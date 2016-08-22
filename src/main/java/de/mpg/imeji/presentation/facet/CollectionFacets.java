@@ -30,7 +30,6 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.facet.Facet.FacetType;
-import de.mpg.imeji.presentation.filter.FiltersSession;
 import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
@@ -41,7 +40,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class CollectionFacets extends FacetsAbstract {
-  private FiltersSession fs = (FiltersSession) BeanHelper.getSessionBean(FiltersSession.class);
+  private FacetFiltersSession fs = (FacetFiltersSession) BeanHelper.getSessionBean(FacetFiltersSession.class);
   private List<List<Facet>> facets = new ArrayList<List<Facet>>();
   private URI colURI = null;
   private SearchQuery searchQuery;

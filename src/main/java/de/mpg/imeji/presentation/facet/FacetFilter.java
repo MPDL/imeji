@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.filter;
+package de.mpg.imeji.presentation.facet;
 
 import java.net.URI;
 import java.util.Locale;
@@ -11,14 +11,13 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
-import de.mpg.imeji.presentation.facet.Facet;
 
 /**
  * {@link Facet} with extended
  *
  * @author saquet
  */
-public class Filter extends Facet {
+public class FacetFilter extends Facet {
   private String query = "";
   private URI collectionID;
   private String removeQuery = "";
@@ -33,7 +32,7 @@ public class Filter extends Facet {
    * @param type
    * @param metadataURI
    */
-  public Filter(String label, String query, int count, FacetType type, URI metadataURI,
+  public FacetFilter(String label, String query, int count, FacetType type, URI metadataURI,
       Locale locale, MetadataLabels metadataLabels) {
     super(null, label, count, type, metadataURI, locale, metadataLabels);
     this.query = query;
@@ -41,7 +40,7 @@ public class Filter extends Facet {
   }
 
   /**
-   * Initialize the {@link Filter}
+   * Initialize the {@link FacetFilter}
    */
   public void init() {
     try {
@@ -49,7 +48,7 @@ public class Filter extends Facet {
         searchQuery = SearchQueryParser.parseStringQuery(query);
       }
     } catch (Exception e) {
-      Logger.getLogger(Filter.class).error("Some issues during Filter initialization", e);
+      Logger.getLogger(FacetFilter.class).error("Some issues during Filter initialization", e);
     }
   }
 
