@@ -27,7 +27,7 @@ public class SuperFilterMenuBean extends SuperBean {
   private static final long serialVersionUID = 5211495478085868441L;
   private static final Logger LOGGER = Logger.getLogger(SuperFilterMenuBean.class);
   private List<SelectItem> menu;
-  private String selected;
+  private SelectItem selected;
 
   public void init(List<SelectItem> menu) {
     this.menu = menu;
@@ -47,13 +47,13 @@ public class SuperFilterMenuBean extends SuperBean {
    * @return
    * @throws UnprocessableError
    */
-  private String findSelected(SearchQuery query) throws UnprocessableError {
+  private SelectItem findSelected(SearchQuery query) throws UnprocessableError {
     for (SearchElement element : query.getElements()) {
       for (SelectItem selectItem : menu) {
         SearchQuery filterQuery =
             SearchQueryParser.parseStringQuery(selectItem.getValue().toString());
         if (filterQuery.isSame(element)) {
-          return selectItem.getValue().toString();
+          return selectItem;
         }
       }
     }
@@ -177,11 +177,11 @@ public class SuperFilterMenuBean extends SuperBean {
     this.menu = menu;
   }
 
-  public String getSelected() {
+  public SelectItem getSelected() {
     return selected;
   }
 
-  public void setSelected(String selected) {
+  public void setSelected(SelectItem selected) {
     this.selected = selected;
   }
 

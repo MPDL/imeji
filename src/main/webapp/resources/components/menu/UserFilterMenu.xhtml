@@ -10,19 +10,36 @@
 	<composite:implementation>
 		<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{Auth.loggedIn}">
 			<div class="imj_menuHeader">
-                      <span class="fa fa-filter">&#160;</span>
-				<h:outputText id="txtFilter" value="#{lbl.filter}" styleClass="imj_headerEntry"/>
+				<ui:fragment rendered="#{UserFilterMenuBean.selected == null}">
+	                <span class="fa fa-lock">&#160;</span>
+					<h:outputText id="txtFilter" value="#{lbl.filter}" styleClass="imj_headerEntry"/>
+				</ui:fragment>
+				<h:outputLink id="txtFilter2" value="#{UserFilterMenuBean.removeFilterUrl}" styleClass="imj_headerEntry" rendered="#{UserFilterMenuBean.selected != null}">
+					<span class="fa fa-times"/>
+					#{UserFilterMenuBean.selected.label}
+				</h:outputLink>
+				<span>&#160;</span>
 			</div>
 			<div class="imj_menuBody">
 				<h:outputText value="#{lbl.filter_by}:" styleClass="imj_sectionHeadline imj_active"/>
 				<ul>
-					<ui:repeat var="entry" value="#{UserFilterMenuBean.menu}" varStatus="fpos">
+					<ui:fragment rendered="#{UserFilterMenuBean.selected != null}">
 						<li>
-							<span class="#{(UserFilterMenuBean.selected == entry.value) ? 'imj_active' : ''}">
-								<a href="#{UserFilterMenuBean.selected == entry.value ? UserFilterMenuBean.removeFilterUrl : UserFilterMenuBean.getFilterUrl(entry.value)}">#{entry.label}</a>
-								<h:panelGroup rendered="#{UserFilterMenuBean.selected == entry.value}" styleClass="imj_removeFacetButton fa fa-times"/>
+							<span class="imj_active">
+								<a href="#{UserFilterMenuBean.removeFilterUrl}">
+									<span class="fa fa-check"/>
+									#{UserFilterMenuBean.selected.label}
+								</a>						
 							</span>
 						</li>
+					</ui:fragment>
+					<ui:repeat var="entry" value="#{UserFilterMenuBean.menu}" varStatus="fpos">
+						<ui:fragment rendered="#{UserFilterMenuBean.selected.value != entry.value}">
+							<li>
+								<span class="fa fa-check" style="visibility:hidden"/>
+								<a href="#{UserFilterMenuBean.getFilterUrl(entry.value)}">#{entry.label}</a>						
+							</li>
+						</ui:fragment>
 					</ui:repeat>
 				</ul>
 			</div>

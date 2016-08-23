@@ -10,19 +10,37 @@
 	<composite:implementation>
 		<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{Auth.loggedIn}">
 			<div class="imj_menuHeader">
-                      <span class="fa fa-lock">&#160;</span>
-				<h:outputText id="txtFilter" value="#{lbl.status}" styleClass="imj_headerEntry"/>
+				<ui:fragment rendered="#{StatusFilterMenuBean.selected == null}">
+	                <span class="fa fa-lock">&#160;</span>
+					<h:outputText id="txtFilter" value="#{lbl.status}" styleClass="imj_headerEntry"/>
+				</ui:fragment>
+				<h:outputLink id="txtFilter2" value="#{StatusFilterMenuBean.removeFilterUrl}" styleClass="imj_headerEntry" rendered="#{StatusFilterMenuBean.selected != null}">
+					<span class="fa fa-times"/>
+					#{StatusFilterMenuBean.selected.label}
+				</h:outputLink>
+				<span>&#160;</span>
 			</div>
 			<div class="imj_menuBody">
 				<h:outputText value="#{lbl.filter_by}:" styleClass="imj_sectionHeadline imj_active"/>
 				<ul>
-					<ui:repeat var="entry" value="#{StatusFilterMenuBean.menu}" varStatus="fpos">
+					<ui:fragment rendered="#{StatusFilterMenuBean.selected != null}">
 						<li>
-							<span class="#{(StatusFilterMenuBean.selected == entry.value) ? 'imj_active' : ''}">
-								<a href="#{StatusFilterMenuBean.selected == entry.value ? StatusFilterMenuBean.removeFilterUrl : StatusFilterMenuBean.getFilterUrl(entry.value)}">#{entry.label}</a>
-								<h:panelGroup rendered="#{StatusFilterMenuBean.selected == entry.value}" styleClass="imj_removeFacetButton fa fa-times"/>
+							<span class="imj_active">
+								<a href="#{StatusFilterMenuBean.removeFilterUrl}">
+									<span class="fa fa-check"/>
+									#{StatusFilterMenuBean.selected.label}
+								</a>
+								
 							</span>
 						</li>
+					</ui:fragment>
+					<ui:repeat var="entry" value="#{StatusFilterMenuBean.menu}" varStatus="fpos">
+						<ui:fragment rendered="#{StatusFilterMenuBean.selected.value != entry.value}">
+							<li>
+								<span class="fa fa-check" style="visibility:hidden"/>
+								<a href="#{StatusFilterMenuBean.getFilterUrl(entry.value)}">#{entry.label}</a>						
+							</li>
+						</ui:fragment>
 					</ui:repeat>
 				</ul>
 			</div>
