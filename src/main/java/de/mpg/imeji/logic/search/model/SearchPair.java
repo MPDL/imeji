@@ -90,4 +90,32 @@ public class SearchPair extends SearchElement {
   public void setField(SearchFields field) {
     this.field = field;
   }
+
+  @Override
+  public boolean isSame(SearchElement element) {
+    SearchPair pair = toPair(element);
+    if (pair != null) {
+      return pair.field.equals(field) && pair.operator.equals(operator) && pair.value.equals(value);
+    }
+    return false;
+  }
+
+  /**
+   * If the element can be reduced to one Pair, return a pair. Otherwise return null
+   * 
+   * @param element
+   * @return
+   */
+  private SearchPair toPair(SearchElement element) {
+    if (element.getType() == SEARCH_ELEMENTS.PAIR) {
+      return (SearchPair) element;
+    } else if (element.getType() == SEARCH_ELEMENTS.QUERY
+        && ((SearchQuery) element).getElements().size() == 1) {
+      return toPair(((SearchQuery) element).getElements().get(0));
+    } else if (element.getType() == SEARCH_ELEMENTS.GROUP
+        && ((SearchGroup) element).getElements().size() == 1) {
+      return toPair(((SearchGroup) element).getElements().get(0));
+    }
+    return null;
+  }
 }

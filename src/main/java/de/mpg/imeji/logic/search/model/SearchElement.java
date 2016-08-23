@@ -107,6 +107,14 @@ public abstract class SearchElement {
     return getElements().size() == 0;
   }
 
+  /**
+   * True if 2 elements are equals
+   * 
+   * @param element
+   * @return
+   */
+  public abstract boolean isSame(SearchElement element);
+
   private boolean hasElements() {
     return getType().equals(SEARCH_ELEMENTS.QUERY) || getType().equals(SEARCH_ELEMENTS.GROUP);
   }

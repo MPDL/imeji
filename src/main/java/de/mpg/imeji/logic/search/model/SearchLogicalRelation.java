@@ -37,4 +37,12 @@ public class SearchLogicalRelation extends SearchElement {
   public List<SearchElement> getElements() {
     return null;
   }
+
+  @Override
+  public boolean isSame(SearchElement element) {
+    if (element.getType() == SEARCH_ELEMENTS.LOGICAL_RELATIONS) {
+      return ((SearchLogicalRelation) element).getLogicalRelation() == logicalRelation;
+    }
+    return false;
+  }
 }

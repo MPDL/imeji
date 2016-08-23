@@ -43,4 +43,23 @@ public class SearchGroup extends SearchElement {
   public boolean isNot() {
     return not;
   }
+
+  @Override
+  public boolean isSame(SearchElement element) {
+    if (element.getType() != SEARCH_ELEMENTS.GROUP) {
+      return false;
+    } else {
+      SearchGroup g = (SearchGroup) element;
+      if (g.group.size() != group.size()) {
+        return false;
+      } else {
+        for (int i = 0; i < group.size(); i++) {
+          if (!g.group.get(i).isSame(group.get(i))) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+  }
 }
