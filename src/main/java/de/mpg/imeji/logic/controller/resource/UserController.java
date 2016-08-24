@@ -34,6 +34,10 @@ import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchOperators;
+import de.mpg.imeji.logic.search.model.SearchPair;
+import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.QuotaUtil;
@@ -58,6 +62,8 @@ public class UserController {
   private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel);
   private User user;
   private static final Logger LOGGER = Logger.getLogger(UserController.class);
+  private Search search =
+      SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.ELASTIC);
   private static final Comparator<User> USER_COMPARATOR_BY_NAME = new Comparator<User>() {
     @Override
     public int compare(User c1, User c2) {
@@ -159,9 +165,9 @@ public class UserController {
   }
 
   public User retrieve(String email, User currentUser) throws ImejiException {
-    Search search = SearchFactory.create(SEARCH_IMPLEMENTATIONS.JENA);
-    SearchResult result =
-        search.searchString(JenaCustomQueries.selectUserByEmail(email), null, null, 0, -1);
+    SearchQuery query = new SearchQuery();
+    query.addPair(new SearchPair(SearchFields.email, SearchOperators.EQUALS, email, false));
+    SearchResult result = search.search(query, null, user, null, null, 0, 1);
     if (result.getNumberOfRecords() == 1) {
       return retrieve(URI.create(result.getResults().get(0)), currentUser);
     }

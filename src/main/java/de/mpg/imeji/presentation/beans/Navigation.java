@@ -55,6 +55,7 @@ public class Navigation implements Serializable {
   public static final Page SINGLEUPLOAD = new Page("Single upload", "singleupload");
   public static final Page REGISTRATION = new Page("Registration", "register");
   public static final Page IMPRINT = new Page("IMPRINT", "imprint");
+  public static final Page TERMS_OF_USE = new Page("Terms of use", "terms_of_use");
   public static final String spaceCommonSlug = "space/";
   public static final String spacesAllSlug = "spaces";
 
@@ -192,6 +193,10 @@ public class Navigation implements Serializable {
 
   public String getFileUrl() {
     return applicationUrl + "file/?id=";
+  }
+
+  public String getTermsOfUseUrl() {
+    return applicationUrl + TERMS_OF_USE.path;
   }
 
   /*

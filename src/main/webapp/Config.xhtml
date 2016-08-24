@@ -138,6 +138,17 @@
 									
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.terms_of_use}"/>
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputTextarea value="#{Configuration.termsOfUse}" styleClass="imj_admindataEdit imj_additionalCodeSnippet"/>
+										</div>
+										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+									</div>
+									
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
 											<h:outputText value="#{lbl.privateModus_enable}"/>
 											<span class="imj_noDisplay">: </span>
 										</div>

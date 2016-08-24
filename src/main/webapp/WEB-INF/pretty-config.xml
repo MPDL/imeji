@@ -199,6 +199,11 @@
 		<view-id>/jsf/Imprint.xhtml</view-id>
 	</url-mapping>
 	
+	<url-mapping id="termsOfUse">
+		<pattern value="/terms_of_use"></pattern>
+		<view-id>/jsf/TermsOfUse.xhtml</view-id>
+	</url-mapping>
+	
 	<url-mapping id="digilibImage">
 		<pattern value="/digilibImage"></pattern>
 		<view-id>/jsf/DigilibImage.xhtml</view-id>

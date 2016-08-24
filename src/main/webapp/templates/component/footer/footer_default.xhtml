@@ -17,12 +17,17 @@
 				</div>
 			</div>
 			<div id="poweredBy" class="imj_poweredby_imprint">
-	 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Configuration.impressumUrl}" rendered="#{Configuration.impressumText==''}">
+	 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Configuration.impressumUrl}" rendered="#{Configuration.impressumText ==''}">
 	 		    	<h:outputText value="#{lbl.imprint}" />
 	 		    </h:outputLink>
-	 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Navigation.imprintUrl}" rendered="#{Configuration.impressumText!=''}">
+	 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Navigation.imprintUrl}" rendered="#{Configuration.impressumText !=''}">
 	 		    	<h:outputText value="#{lbl.imprint}" />
 	 		    </h:outputLink>
+	 		    <h:outputText value="  " rendered="#{Configuration.termsOfUse != ''}"/>
+	 		    <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Navigation.termsOfUseUrl}" rendered="#{Configuration.termsOfUse != ''}">
+	 		    	<h:outputText value="#{lbl.terms_of_use}" />
+	 		    </h:outputLink>
+	 		    
 			</div>
 			<div id="imejiVersion" class="imj_poweredby_imprint">
 				#{SessionBean.version}
@@ -36,7 +41,6 @@
 				  		<img class="imj_community_logo" src="https://spot.mpdl.mpg.de/static/style/mpdl.png" alt="MPDL logo"/>
 				  </h:outputLink>
 				</ui:fragment>
-
 			</div>
 		</div>
 		<!-- end: footer section -->

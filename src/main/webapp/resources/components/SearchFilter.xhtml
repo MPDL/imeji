@@ -8,8 +8,9 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{SearchFilterBean.hasQuery}">
-			<div  class="imj_overlayMenu">
-				<h:outputLink styleClass="imj_removeFacetButton fa fa-times" value="#{SearchFilterBean.clearFilterAndSearchQuery}">
+			<div class="imj_overlayMenu">
+				<h:outputLink styleClass="imj_removeFacetButton" value="#{SearchFilterBean.clearFilterAndSearchQuery}">
+					<span class=" fa fa-times"></span>
 					#{lbl.clear_filter_and_query}
 				</h:outputLink>
 			</div>

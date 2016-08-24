@@ -12,7 +12,9 @@
             "include_in_all":false
          },
          "email":{
-            "type":"string"
+            "type":"string",
+            "index":"not_analyzed", 
+	       	"include_in_all": false
          },
 	      "read":{
 	       "type":"string",

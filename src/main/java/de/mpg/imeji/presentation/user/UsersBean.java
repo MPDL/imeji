@@ -4,13 +4,11 @@
 package de.mpg.imeji.presentation.user;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
@@ -29,9 +27,8 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
-import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.notification.NotificationUtils;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
@@ -43,14 +40,12 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  */
 @ManagedBean(name = "UsersBean")
 @ViewScoped
-public class UsersBean implements Serializable {
+public class UsersBean extends SuperBean {
   private static final long serialVersionUID = 909531319532057429L;
   private List<User> users;
   private List<User> inactiveUsers;
   private UserGroup group;
   private String query;
-  @ManagedProperty(value = "#{SessionBean.user}")
-  private User sessionUser;
   private static final Logger LOGGER = Logger.getLogger(UserBean.class);
 
   /**
@@ -68,10 +63,9 @@ public class UsersBean implements Serializable {
    * Trigger the search to users Groups
    */
   public void search() {
-    Navigation nav = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     try {
-      FacesContext.getCurrentInstance().getExternalContext().redirect(nav.getApplicationUrl()
-          + "users?q=" + query + (group != null ? "&group=" + group.getId() : ""));
+      redirect(getNavigation().getApplicationUrl() + "users?q=" + query
+          + (group != null ? "&group=" + group.getId() : ""));
     } catch (IOException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error(e);
@@ -82,7 +76,7 @@ public class UsersBean implements Serializable {
    * Retrieve all users
    */
   public void doSearch() {
-    users = (List<User>) new UserController(sessionUser).searchUserByName(query);
+    users = (List<User>) new UserController(getSessionUser()).searchUserByName(query);
     inactiveUsers = new RegistrationBusinessController().searchInactiveUsers(query);
   }
 
@@ -95,7 +89,7 @@ public class UsersBean implements Serializable {
         && !"".equals(UrlHelper.getParameterValue("group"))) {
       UserGroupController c = new UserGroupController();
       try {
-        setGroup(c.read(UrlHelper.getParameterValue("group"), sessionUser));
+        setGroup(c.read(UrlHelper.getParameterValue("group"), getSessionUser()));
       } catch (Exception e) {
         BeanHelper.error("error loading user group " + UrlHelper.getParameterValue("group"));
         LOGGER.error(e);
@@ -110,21 +104,20 @@ public class UsersBean implements Serializable {
    * @throws Exception
    */
   public String sendPassword() {
-    String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .get("email");
+    String email = UrlHelper.getParameterValue("email");
     PasswordGenerator generator = new PasswordGenerator();
-    UserBean userBean = new UserBean(email);
-    SessionBean session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+    UserController controller = new UserController(getSessionUser());
     try {
+      User user = controller.retrieve(email);
       String newPassword = generator.generatePassword();
-      userBean.getUser().setEncryptedPassword(StringHelper.convertToMD5(newPassword));
-      userBean.updateUser();
-      sendEmail(email, newPassword, userBean.getUser().getPerson().getCompleteName());
+      user.setEncryptedPassword(StringHelper.convertToMD5(newPassword));
+      controller.update(user, getSessionUser());
+      sendEmail(email, newPassword, user.getPerson().getCompleteName());
     } catch (Exception e) {
       BeanHelper.error("Could not update or send new password!");
       LOGGER.error("Could not update or send new password", e);
     }
-    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_email", session.getLocale()));
+    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_email", getLocale()));
     return "";
   }
 
@@ -141,8 +134,8 @@ public class UsersBean implements Serializable {
     EmailService emailClient = new EmailService();
     try {
       emailClient.sendMail(email, null,
-          EmailMessages.getEmailOnAccountAction_Subject(false, BeanHelper.getLocale()),
-          EmailMessages.getNewPasswordMessage(password, email, username, BeanHelper.getLocale()));
+          EmailMessages.getEmailOnAccountAction_Subject(false, getLocale()),
+          EmailMessages.getNewPasswordMessage(password, email, username, getLocale()));
     } catch (Exception e) {
       BeanHelper.info("Error: Password Email not sent");
       LOGGER.error("Error sending password email", e);
@@ -157,7 +150,7 @@ public class UsersBean implements Serializable {
   public String deleteUser() {
     String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
         .get("email");
-    UserController controller = new UserController(sessionUser);
+    UserController controller = new UserController(getSessionUser());
     try {
       controller.delete(controller.retrieve(email));
     } catch (Exception e) {
@@ -222,17 +215,16 @@ public class UsersBean implements Serializable {
    * @param hasgrant
    */
   public String addToGroup() {
-    Navigation nav = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
         .get("email");
     try {
-      UserController uc = new UserController(sessionUser);
+      UserController uc = new UserController(getSessionUser());
       User user = uc.retrieve(email);
       group.getUsers().add(user.getId());
       UserGroupController c = new UserGroupController();
-      c.update(group, sessionUser);
+      c.update(group, getSessionUser());
       FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(nav.getApplicationUrl() + "usergroup?id=" + group.getId());
+          .redirect(getNavigation().getApplicationUrl() + "usergroup?id=" + group.getId());
     } catch (Exception e) {
       BeanHelper.error(e.getMessage());
     }
@@ -269,20 +261,6 @@ public class UsersBean implements Serializable {
    */
   public void setGroup(UserGroup group) {
     this.group = group;
-  }
-
-  /**
-   * @return the sessionUser
-   */
-  public User getSessionUser() {
-    return sessionUser;
-  }
-
-  /**
-   * @param sessionUser the sessionUser to set
-   */
-  public void setSessionUser(User sessionUser) {
-    this.sessionUser = sessionUser;
   }
 
   /**

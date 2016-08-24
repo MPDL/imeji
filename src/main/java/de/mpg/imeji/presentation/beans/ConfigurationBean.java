@@ -565,4 +565,12 @@ public class ConfigurationBean {
   public String getMaintenanceMessage() {
     return Imeji.CONFIG.getMaintenanceMessage();
   }
+
+  public void setTermsOfUse(String s) {
+    Imeji.CONFIG.setTermsOfUse(s);
+  }
+
+  public String getTermsOfUse() {
+    return Imeji.CONFIG.getTermsOfUse() != null ? Imeji.CONFIG.getTermsOfUse() : "";
+  }
 }

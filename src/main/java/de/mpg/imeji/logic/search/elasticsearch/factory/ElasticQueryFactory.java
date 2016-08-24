@@ -54,7 +54,8 @@ public class ElasticQueryFactory {
    * @return
    * @return
    */
-  public static QueryBuilder build(SearchQuery query, String folderUri, String spaceId, User user) {
+  public static QueryBuilder build(SearchQuery query, String folderUri, String spaceId, User user,
+      ElasticTypes type) {
     BoolQueryBuilder q = QueryBuilders.boolQuery();
     QueryBuilder searchQuery = buildSearchQuery(query, user);
     QueryBuilder containerQuery = buildContainerFilter(folderUri);
@@ -73,7 +74,7 @@ public class ElasticQueryFactory {
     if (!isMatchAll(spaceQuery)) {
       q.must(spaceQuery);
     }
-    if (!isMatchAll(statusQuery)) {
+    if (type != ElasticTypes.users && !isMatchAll(statusQuery)) {
       q.must(statusQuery);
     }
     return q;
@@ -473,6 +474,9 @@ public class ElasticQueryFactory {
             pair.isNot());
       case info_url:
         return fieldQuery(ElasticFields.INFO_URL, pair.getValue(), pair.getOperator(),
+            pair.isNot());
+      case email:
+        return fieldQuery(ElasticFields.EMAIL, pair.getValue(), SearchOperators.REGEX,
             pair.isNot());
       default:
         break;
