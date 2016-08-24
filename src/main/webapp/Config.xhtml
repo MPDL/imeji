@@ -66,16 +66,12 @@
 				
 					<h:panelGroup layout="block" styleClass="imj_listBody" rendered="#{Auth.admin}">
 						<h:form id="configForm">
-							
-							
 							<div class="imj_adminPanel">
-							
 								<div class="imj_config_headline">
 									<h2>
 										<h:outputText value="#{lbl.config_general}"/>
 									</h2>
 								</div>
-													
 								<div class="imj_content">
 									<!-- Admin - Snippet Insert -->	
 									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
@@ -165,7 +161,16 @@
 											</h:selectOneRadio>
 										</div>
 									</div>
-									
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.maintenance_message}"/>
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputTextarea value="#{Configuration.maintenanceMessage}" styleClass="imj_admindataEdit imj_additionalCodeSnippet"/>
+										</div>
+										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+									</div>
 									
 								</div>
 							</div>

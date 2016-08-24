@@ -20,7 +20,11 @@
             <!-- optional header scripts, which must load before -->
             <ui:insert name="additonalHeaderScripts"/>          
             <!-- global page wrapper -->
+            <h:panelGroup id="imeji_maintenance" layout="block" styleClass="imj_messageError" style="width:100%; padding:0.5em" rendered="#{Configuration.maintenanceMessage != ''}">
+            	<h:outputText value="#{Configuration.maintenanceMessage}" escape="false"/>
+            </h:panelGroup>
             <div class="#{siteWrapperClass}">
+
                 <ui:insert name="init"/>
                 <ui:include src="component/header/header_default.xhtml"/>
 	                 <!-- headline -->

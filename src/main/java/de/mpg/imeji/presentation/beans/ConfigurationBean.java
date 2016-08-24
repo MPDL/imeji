@@ -557,4 +557,12 @@ public class ConfigurationBean {
   public String getRegistrationSnippet() {
     return Imeji.CONFIG.getRegistrationSnippet();
   }
+
+  public void setMaintenanceMessage(String message) {
+    Imeji.CONFIG.setMaintenanceMessage(message);
+  }
+
+  public String getMaintenanceMessage() {
+    return Imeji.CONFIG.getMaintenanceMessage();
+  }
 }
