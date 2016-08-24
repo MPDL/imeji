@@ -1,0 +1,18 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:composite="http://java.sun.com/jsf/composite">
+	
+	<composite:interface>
+	</composite:interface>
+	
+	<composite:implementation>
+		<ui:fragment rendered="#{SearchFilterBean.hasQuery}">
+			<div  class="imj_overlayMenu">
+				<h:outputLink styleClass="imj_removeFacetButton fa fa-times" value="#{SearchFilterBean.clearFilterAndSearchQuery}">
+					#{lbl.clear_filter_and_query}
+				</h:outputLink>
+			</div>
+		</ui:fragment>
+	</composite:implementation>
+</html>

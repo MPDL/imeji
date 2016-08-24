@@ -115,25 +115,6 @@
 				</ui:fragment>
 			
 			<ui:fragment rendered="#{Auth.loggedIn}">
-				
-				<h:panelGroup layout="block" styleClass="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item" rendered="#{cc.attrs.filterBean != null}">
-					<div class="imj_menuHeader">
-                        <span class="fa fa-filter">&#160;</span>
-						<h:outputText id="txtFilter" value="#{lbl.filter}" styleClass="imj_headerEntry"/>
-					</div>
-					<div class="imj_menuBody">
-						<h:outputText value="#{lbl.filter_by}:" styleClass="imj_sectionHeadline imj_active"/>
-						<h:form>
-							<ul>
-								<ui:repeat var="filterItem" value="#{cc.attrs.filterBean.filterMenu}" varStatus="fpos">
-									<li>
-										<h:commandLink action="#{cc.attrs.filterBean.setSelectedFilter(filterItem.value)}" value="#{filterItem.label}" onclick="window.location.href = '?f=' + this.value" styleClass="#{(cc.attrs.filterBean.selectedFilter == filterItem.value) ? 'imj_active' : ''}"/>
-									</li>
-								</ui:repeat>
-							</ul>
-						</h:form>
-					</div>
-				</h:panelGroup>
 				<ui:fragment  rendered="#{cc.attrs.actionEnabled and cc.attrs.vo.status != 'WITHDRAWN'}">
 					<!-- SHARE MENU -->
 					<ui:fragment rendered="#{adminVO}">

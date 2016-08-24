@@ -3,7 +3,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:composite="http://java.sun.com/jsf/composite"
- 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+ 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+ 	xmlns:imj="http://java.sun.com/jsf/composite/components">
 	
 	<composite:interface>
 		<composite:attribute name="fSession" required="false"/>
@@ -17,37 +18,8 @@
 	
 	<composite:implementation>		
 		<h:panelGroup layout="block" id="filterInfoPanel" styleClass="imj_filterInfoPanel" >
-			<h:form id="preListForm">
-				<h:outputLink value="?q=&amp;f=all">
-						<h:outputText value="#{lbl.all}"/>
-					</h:outputLink>
-				<ui:fragment rendered="#{cc.attrs.filterBeanHasQuery == 'yes' and cc.attrs.filterBean.query != ''}">
-					<span class="imj_facetSeparator">
-						<h:outputText value="|"/>
-					</span>
-					
-					<h:outputText value="#{lbl.search}"/>
-
-					<h:outputLink value="?q=" styleClass="imj_removeFilterButton fa fa-times"/>
-				</ui:fragment>
-				
-				<ui:fragment rendered="#{cc.attrs.filterBean.selectedFilter != 'all'}">
-					<span class="imj_facetSeparator">
-						<h:outputText value="|"/>
-					</span>
-					<h:outputText value="#{lbl.filter}: "/>
-					<h:outputText value="#{cc.attrs.filterBean.filterLabel}"/>
-					
-					<h:outputLink value="?f=all" styleClass="imj_removeFilterButton fa fa-times"/>
-				</ui:fragment>
-				
-				<span class="imj_facetSeparator">
-					<h:outputText value="|"/>
-				</span>
-				
-				<h:outputText value=" #{cc.attrs.filterBean.totalNumberOfElements} #{objectLabel}"/>
-				
-			</h:form>
+			<h:outputText value=" #{cc.attrs.filterBean.totalNumberOfElements} #{objectLabel}"/>
+			<imj:SearchFilter/>		
 			<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item">
 				<div class="imj_menuHeader">
 	                   <span class="fa fa-sort">&#160;</span>
@@ -55,12 +27,10 @@
 				</div>
 				
 				<div class="imj_menuBody">
-					
 					<h:form>
 						<h:outputText value="#{lbl.sort_by}: " styleClass="imj_active"/>
 						<h:commandLink id="lnkSortAsc" value="&#160;" styleClass="fa fa-sort-asc fa-pull-right" action="#{cc.attrs.filterBean.toggleSortOrder}" rendered="#{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING'}"/>
-						<h:commandLink id="lnkSortDesc" value="&#160;" styleClass="fa fa-sort-desc fa-pull-right" action="#{cc.attrs.filterBean.toggleSortOrder}" rendered="#{cc.attrs.filterBean.selectedSortOrder != 'ASCENDING'}"/>
-						
+						<h:commandLink id="lnkSortDesc" value="&#160;" styleClass="fa fa-sort-desc fa-pull-right" action="#{cc.attrs.filterBean.toggleSortOrder}" rendered="#{cc.attrs.filterBean.selectedSortOrder != 'ASCENDING'}"/>	
 						<ul>
 							<ui:repeat var="sortItem" value="#{cc.attrs.filterBean.sortMenu}" varStatus="spos">
 								<li>
@@ -74,7 +44,5 @@
 			<menu:StatusFilterMenu/>
 			<menu:UserFilterMenu/>
 		</h:panelGroup>
-		
-		
 	</composite:implementation>
 </html>

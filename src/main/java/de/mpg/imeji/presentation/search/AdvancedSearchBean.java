@@ -29,7 +29,6 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.Navigation;
-import de.mpg.imeji.presentation.facet.FacetFiltersSession;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
 
@@ -175,9 +174,6 @@ public class AdvancedSearchBean {
    * @throws IOException
    */
   public String search() throws IOException {
-    FacetFiltersSession filtersSession =
-        (FacetFiltersSession) BeanHelper.getSessionBean(FacetFiltersSession.class);
-    filtersSession.getFilters().clear();
     goToResultPage();
     return "";
   }

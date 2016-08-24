@@ -30,7 +30,6 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.facet.Facet.FacetType;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * Facets for the item browsed within a collection
@@ -40,7 +39,6 @@ import de.mpg.imeji.presentation.util.BeanHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class CollectionFacets extends FacetsAbstract {
-  private FacetFiltersSession fs = (FacetFiltersSession) BeanHelper.getSessionBean(FacetFiltersSession.class);
   private List<List<Facet>> facets = new ArrayList<List<Facet>>();
   private URI colURI = null;
   private SearchQuery searchQuery;
@@ -90,7 +88,7 @@ public class CollectionFacets extends FacetsAbstract {
       try {
         for (Statement st : profile.getStatements()) {
           List<Facet> group = new ArrayList<Facet>();
-          if (st.isPreview() && !fs.isFilter(getName(st.getId()))) {
+          if (st.isPreview()) {
             SearchPair pair = new SearchPair(SearchFields.statement, SearchOperators.EQUALS,
                 st.getId().toString(), false);
             count = getCount(searchQuery, pair, set);

@@ -14,10 +14,6 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.search.SearchIndexes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchIndex;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
-import de.mpg.imeji.logic.search.model.SearchOperators;
-import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -25,9 +21,6 @@ import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.util.PropertyReader;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Container;
-import de.mpg.imeji.logic.vo.Grant.GrantType;
-import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.presentation.facet.FacetFilter;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.CookieUtils;
@@ -41,17 +34,13 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  * @param <T>
  */
 public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean<T> {
+  private static final Logger LOGGER = Logger.getLogger(SuperContainerBean.class);
   protected String query = "";
   protected String selectedMenu;
   private String selectedSortCriterion;
   private String selectedSortOrder;
-  private String selectedFilter;
   protected SessionBean sb;
   private List<SelectItem> sortMenu = new ArrayList<SelectItem>();
-  protected List<SelectItem> filterMenu = new ArrayList<SelectItem>();
-  private static final Logger LOGGER = Logger.getLogger(SuperContainerBean.class);
-  // private SearchQuery searchQuery ;
-  protected SearchPair selectedFilterSearch;
   protected SearchQuery searchQuery = new SearchQuery();
   protected SearchResult searchResult;
   private int totalNumberOfRecords;
@@ -92,19 +81,12 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
    * @return
    */
   public String getInit() {
-    setSelectedFilterSearch(null);
     setSearchQuery(null);
-    if (UrlHelper.hasParameter("f") && !UrlHelper.getParameterValue("f").isEmpty()) {
-      selectedFilter = UrlHelper.getParameterValue("f");
-    }
     if (UrlHelper.hasParameter("tab") && !UrlHelper.getParameterValue("tab").isEmpty()) {
       selectedMenu = UrlHelper.getParameterValue("tab");
     }
     if (UrlHelper.hasParameter("q")) {
       query = UrlHelper.getParameterValue("q");
-    }
-    if (selectedFilter == null) {
-      selectedFilter = "all";
     }
     if (selectedMenu == null) {
       selectedMenu = "SORTING";
@@ -124,20 +106,6 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
         Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", sb.getLocale())));
     sortMenu.add(new SelectItem(SearchIndex.SearchFields.creator_id.name(),
         Imeji.RESOURCE_BUNDLE.getLabel("sort_author", sb.getLocale())));
-    if (sb.getUser() != null) {
-      filterMenu = new ArrayList<SelectItem>();
-      filterMenu.add(new SelectItem("all",
-          Imeji.RESOURCE_BUNDLE.getLabel("all_except_withdrawn", sb.getLocale())));
-      filterMenu.add(new SelectItem("my",
-          Imeji.RESOURCE_BUNDLE.getLabel("my_except_withdrawn", sb.getLocale())));
-      filterMenu.add(new SelectItem("private",
-          Imeji.RESOURCE_BUNDLE.getLabel("only_private", sb.getLocale())));
-      filterMenu.add(
-          new SelectItem("public", Imeji.RESOURCE_BUNDLE.getLabel("only_public", sb.getLocale())));
-      filterMenu.add(new SelectItem("withdrawn",
-          Imeji.RESOURCE_BUNDLE.getLabel("only_withdrawn", sb.getLocale())));
-    }
-
   }
 
   /**
@@ -149,28 +117,6 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
     initMenus();
   }
 
-  /**
-   * Return the current {@link FacetFilter} for the {@link List} of {@link Container}
-   *
-   * @return
-   */
-  public SearchPair getFilter() {
-    SearchPair pair = null;
-    if ("my".equals(selectedFilter)) {
-      pair =
-          new SearchPair(SearchFields.grant, SearchOperators.EQUALS, GrantType.READ.name(), false);
-    } else if ("private".equals(selectedFilter)) {
-      pair = new SearchPair(SearchFields.status, SearchOperators.EQUALS,
-          Status.PENDING.getUriString(), false);
-    } else if ("public".equals(selectedFilter)) {
-      pair = new SearchPair(SearchFields.status, SearchOperators.EQUALS,
-          Status.RELEASED.getUriString(), false);
-    } else if ("withdrawn".equals(selectedFilter)) {
-      pair = new SearchPair(SearchIndex.SearchFields.status, SearchOperators.EQUALS,
-          Status.WITHDRAWN.getUriString(), false);
-    }
-    return pair;
-  }
 
   /**
    * setter
@@ -271,55 +217,7 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
     return getNavigationString();
   }
 
-  /**
-   * return the {@link FacetFilter} name defined in the url as a {@link String}
-   *
-   * @return
-   */
-  public String getSelectedFilter() {
-    return selectedFilter;
-  }
 
-  /**
-   * setter
-   *
-   * @param selectedFilter
-   */
-  public void setSelectedFilter(String selectedFilter) {
-    this.selectedFilter = selectedFilter;
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
-  public List<SelectItem> getFilterMenu() {
-    return filterMenu;
-  }
-
-  /**
-   * setter
-   *
-   * @param filterMenu
-   */
-  public void setFilterMenu(List<SelectItem> filterMenu) {
-    this.filterMenu = filterMenu;
-  }
-
-  /**
-   * return the internationalized labels of the {@link FacetFilter}
-   *
-   * @return
-   */
-  public String getFilterLabel() {
-    for (SelectItem si : filterMenu) {
-      if (selectedFilter.equals(si.getValue())) {
-        return si.getLabel();
-      }
-    }
-    return Imeji.RESOURCE_BUNDLE.getLabel("all_except_withdrawn", sb.getLocale());
-  }
 
   /**
    * setter
@@ -360,42 +258,6 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
   }
 
 
-  /**
-   * @return the selectedFilterSearch
-   */
-  public SearchPair getSelectedFilterSearch() {
-    return selectedFilterSearch;
-  }
-
-  /**
-   * @param selectedFilterSearch the selectedFilterSearch to set
-   */
-  public void setSelectedFilterSearch(SearchPair selectedFilterSearch) {
-    this.selectedFilterSearch = selectedFilterSearch;
-  }
-
-
-  /**
-   * Checks if filters between two different searches have been changed in order to trigger new
-   * query execution
-   *
-   * @param p1
-   * @param p2
-   * @return
-   */
-  protected boolean changedFilters(SearchPair p1, SearchPair p2) {
-    if ((p1 == null && p2 != null) || (p1 != null && p2 == null)) {
-      return true;
-    }
-
-    if (p1 != null && p2 != null) {
-      if (!p1.getValue().equals(p2.getValue())) {
-        return true;
-      }
-    }
-
-    return false;
-  }
 
   /**
    * Search for containers, according to the current queries
@@ -411,13 +273,7 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
     if (!"".equals(getQuery())) {
       searchQuery = SearchQueryParser.parseStringQuery(getQuery());
     }
-    // get Filters for Collections
-    SearchPair sp = getFilter();
-    if (sp != null) {
-      searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
-      searchQuery.addPair(sp);
-    }
-    if (getSearchQuery() == null || changedFilters(sp, getSelectedFilterSearch())) {
+    if (getSearchQuery() == null) {
       setCurrentPageNumber(1);
       setGoToPage("1");
       myOffset = 0;
@@ -429,7 +285,6 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
 
     searchResult = search(searchQuery, sortCriterion, myOffset, limit);
     setSearchQuery(searchQuery);
-    setSelectedFilterSearch(sp);
     searchResult.setQuery(getQuery());
     // setQuery(getQuery());
 

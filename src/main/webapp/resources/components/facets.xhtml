@@ -10,7 +10,7 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<ui:fragment rendered="#{cc.attrs.paginatorBean.navigationString != 'pretty:albumBrowse'}" >
+		<ui:fragment rendered="#{cc.attrs.paginatorBean.navigationString == 'pretty:collectionBrowse'}" >
 			<h:form id="form">
 				<ul id="facetGroup" class="imj_facetList">
 								

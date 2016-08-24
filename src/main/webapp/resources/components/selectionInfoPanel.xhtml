@@ -3,7 +3,8 @@
 	  xmlns:h="http://java.sun.com/jsf/html"
 	  xmlns:composite="http://java.sun.com/jsf/composite"
 	  xmlns:f="http://java.sun.com/jsf/core"
-	  xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	  xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	  xmlns:imj="http://java.sun.com/jsf/composite/components">
 	  
 	<composite:interface>
 		<composite:attribute name="fSession" required="false"/>
@@ -20,18 +21,9 @@
 			
 			<ui:fragment rendered="#{cc.attrs.showSelectMenu}">
 				<h:form id="preListForm">
-
-					<ui:repeat id="filterList" var="filter" value="#{cc.attrs.fSession.filters}" offset="0" varStatus="index">
-						<h:outputText value="/" styleClass="imj_facetSeparator" rendered="#{index.index > 0}"/>
-						<h:outputText value="#{filter.internationalizedLabel}" rendered="#{!(filter.notDefine)}"/>
-						<h:outputText value="NO #{filter.notDefineType}" rendered="#{filter.notDefine}"/>
-						<h:outputLink styleClass="imj_removeFacetButton fa fa-times" value="#{Navigation.browseUrl}?q=#{filter.removeQuery}" rendered="#{cc.attrs.facetBean.navigationString == SessionBean.getPrettySpacePage('pretty:browse')}"/>
-						<h:outputLink styleClass="imj_removeFacetButton fa fa-times" value="#{Navigation.collectionUrl}#{cc.attrs.facetBean.id}/#{Navigation.browsePath}?q=#{filter.removeQuery}" rendered="#{cc.attrs.facetBean.navigationString != SessionBean.getPrettySpacePage('pretty:browse')}"/>	
-					</ui:repeat>
-					
-					<h:panelGroup layout="block" styleClass="imj_overlayMenu">
+					<div class="imj_overlayMenu">
 						<h:outputText value="#{cc.attrs.numberOfElements} #{lbl.items}"/>
-					</h:panelGroup>
+					</div>
 					<h:panelGroup layout="block" id="preListHeaderSelected" styleClass="imj_overlayMenu" rendered="#{Auth.loggedIn}">
 						<h:panelGroup layout="block"  styleClass="imj_menuHeader" rendered="#{SessionBean.selectedSize > 0}">
 							<h:outputText id="lblSelectedSize" value=" #{SessionBean.selectedSize} #{lbl.selected}"/>
@@ -93,6 +85,7 @@
 							</ui:fragment>
 						</div>
 					</h:panelGroup>
+					<imj:SearchFilter/>
 				</h:form>		
 			</ui:fragment>
 			

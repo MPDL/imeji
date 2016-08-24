@@ -50,20 +50,6 @@ public class FacetsJob implements Callable<Boolean> {
   }
 
   /**
-   * Initialize the {@link FacetsJob} for one {@link SearchQuery} from the item browse page
-   *
-   * @param searchQuery
-   */
-  public FacetsJob(SearchQuery searchQuery, User user, Locale locale, String space) {
-    try {
-      facetsClass = new TechnicalFacets(searchQuery, user, locale, space);
-    } catch (Exception e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", BeanHelper.getLocale())
-          + ", Technical Facets intialization: " + e.getMessage());
-    }
-  }
-
-  /**
    * Initialize the {@link FacetsJob} for one {@link SearchQuery} from the collection browse page
    *
    * @param col

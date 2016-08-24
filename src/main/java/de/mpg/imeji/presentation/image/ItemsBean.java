@@ -7,14 +7,13 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.ItemController;
@@ -27,15 +26,13 @@ import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.util.PropertyReader;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.beans.BasePaginatorListSessionBean;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.Navigation;
-import de.mpg.imeji.presentation.facet.Facet.FacetType;
-import de.mpg.imeji.presentation.facet.FacetFilter;
-import de.mpg.imeji.presentation.facet.FacetFiltersBean;
 import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
@@ -57,9 +54,7 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
   private String selectedSortCriterion;
   private String selectedSortOrder = SortOrder.DESCENDING.name();
   private FacetsJob facets;
-  protected FacetFiltersBean filters;
   private String query;
-  private FacetFilter searchFilter;
   private boolean isSimpleSearch;
   private SearchQuery searchQuery = new SearchQuery();
   private String discardComment;
@@ -79,7 +74,6 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
     super();
     navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    filters = new FacetFiltersBean();
     selectedSortCriterion = null;
     metadataLabels = new MetadataLabels(new ArrayList<Item>(), session.getLocale());
     setElementsPerPage(session.getNumberOfItemsPerPage());
@@ -116,7 +110,6 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
     parseSearchQuery();
     initMenus();
     cleanSelectItems();
-    initFilters();
     cleanFacets();
     initFacets();
     setCurrentPageNumber(1);
@@ -236,28 +229,18 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    * return the current {@link SearchQuery} in a user friendly style.
    *
    * @return
+   * @throws UnprocessableError
    */
-  public String getSimpleQuery() {
-    if (searchFilter != null && searchFilter.getSearchQuery() != null) {
-      return SearchQueryParser.searchQuery2PrettyQuery(searchFilter.getSearchQuery(),
-          session.getLocale(), metadataLabels.getInternationalizedLabels());
+  public String getSimpleQuery() throws UnprocessableError {
+    String q = UrlHelper.getParameterValue("q");
+    if (StringHelper.isNullOrEmptyTrim(q)) {
+      SearchQuery query = SearchQueryParser.parseStringQuery(q);
+      return SearchQueryParser.searchQuery2PrettyQuery(query, session.getLocale(),
+          metadataLabels.getInternationalizedLabels());
     }
     return "";
   }
 
-  /**
-   * Init the filters with the new search query
-   */
-  public void initFilters() {
-    filters =
-        new FacetFiltersBean(searchQuery, totalNumberOfRecords, session.getLocale(), metadataLabels);
-    searchFilter = null;
-    for (FacetFilter f : filters.getSession().getFilters()) {
-      if (FacetType.SEARCH.equals(f.getType())) {
-        searchFilter = f;
-      }
-    }
-  }
 
   /**
    * Methods called at the end of the page loading, which initialize the facets
@@ -265,15 +248,7 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    * @return @
    */
   public void initFacets() {
-    try {
-      this.setFacets(new FacetsJob(SearchQueryParser.parseStringQuery(query), session.getUser(),
-          session.getLocale(), session.getSelectedSpaceString()));
-      ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-      executor.submit(facets);
-      executor.shutdown();
-    } catch (Exception e) {
-      LOGGER.error("Error Initializing the facets", e);
-    }
+    // No Facets for browse page
   }
 
   /**
@@ -536,14 +511,6 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
     return query;
   }
 
-  public FacetFiltersBean getFilters() {
-    return filters;
-  }
-
-  public void setFilters(FacetFiltersBean filters) {
-    this.filters = filters;
-  }
-
   /**
    * Select all item on the current page
    *
@@ -601,14 +568,6 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
 
   public void setSimpleSearch(boolean isSimpleSearch) {
     this.isSimpleSearch = isSimpleSearch;
-  }
-
-  public FacetFilter getSearchFilter() {
-    return searchFilter;
-  }
-
-  public void setSearchFilter(FacetFilter searchFilter) {
-    this.searchFilter = searchFilter;
   }
 
   /**

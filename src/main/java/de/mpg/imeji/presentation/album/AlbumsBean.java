@@ -27,7 +27,6 @@ import de.mpg.imeji.presentation.util.ListUtils;
  * @version $Revision$ $LastChangedDate$
  */
 public class AlbumsBean extends SuperContainerBean<AlbumBean> {
-
   private boolean addSelected = false;
 
   /**
