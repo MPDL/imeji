@@ -12,7 +12,7 @@
 				</div>
 				<div class="imj_poweredby_software_image">
 					<h:outputLink target="_blank" value="http://imeji.org">
-						<img alt="imeji community logo" src="#{Navigation.applicationUrl}resources/icon/imeji_community_bright.png" class="imj_community_logo"/>
+						<img alt="imeji community logo" src="#{Navigation.applicationUrl}resources/icon/logo-imeji.png" class="imj_community_logo"/>
 					</h:outputLink>
 				</div>
 			</div>
@@ -35,9 +35,6 @@
 		 		    </h:outputLink>
 	 		    </ui:fragment>
 			</div>
-			<div id="imejiVersion" class="imj_poweredby_imprint">
-				#{SessionBean.version}
-			</div>
 			<div class="imj_poweredby_institution">
 				<ui:fragment rendered="#{Configuration.startPageFooterLogos != ''}">
 							<h:outputText value="#{Configuration.startPageFooterLogos}" escape="false"/>
@@ -47,6 +44,9 @@
 				  		<img class="imj_community_logo" src="https://spot.mpdl.mpg.de/static/style/mpdl.png" alt="MPDL logo"/>
 				  </h:outputLink>
 				</ui:fragment>
+			</div>
+			<div id="imejiVersion" class="imj_poweredby_imprint">
+				#{SessionBean.version}
 			</div>
 		</div>
 		<!-- end: footer section -->
