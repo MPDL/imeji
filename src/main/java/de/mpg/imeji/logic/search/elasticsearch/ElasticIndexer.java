@@ -7,9 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -69,14 +67,11 @@ public class ElasticIndexer implements SearchIndexer {
   @Override
   public void index(Object obj) {
     List<String> collectionsToReindex = new ArrayList<String>();
-    List<String> albumItemsToReindex = new ArrayList<String>();
     try {
       addSpaceForldersToRedindex(collectionsToReindex, obj);
-      addAlbumItemsToReindex(albumItemsToReindex, obj, false);
       indexJSON(getId(obj), toJson(obj, dataType));
       commit();
       reindexFoldersItems(collectionsToReindex);
-      reindexItemsFromList(albumItemsToReindex);
     } catch (Exception e) {
       LOGGER.error("Error indexing object ", e);
     }
@@ -86,16 +81,13 @@ public class ElasticIndexer implements SearchIndexer {
   @Override
   public void indexBatch(List<?> l) {
     List<String> collectionsToReindex = new ArrayList<String>();
-    List<String> albumItemsToReindex = new ArrayList<String>();
     try {
       for (Object obj : l) {
         addSpaceForldersToRedindex(collectionsToReindex, obj);
-        addAlbumItemsToReindex(albumItemsToReindex, obj, false);
         indexJSON(getId(obj), toJson(obj, dataType));
       }
       commit();
       reindexFoldersItems(collectionsToReindex);
-      reindexItemsFromList(albumItemsToReindex);
 
     } catch (Exception e) {
       LOGGER.error("error indexing object ", e);
@@ -105,22 +97,16 @@ public class ElasticIndexer implements SearchIndexer {
 
   @Override
   public void delete(Object obj) {
-    List<String> albumItemsToReindex = new ArrayList<String>();
-    addAlbumItemsToReindex(albumItemsToReindex, obj, true);
     ElasticService.client.prepareDelete(index, dataType, getId(obj)).execute().actionGet();
-    reindexItemsFromList(albumItemsToReindex);
     commit();
   }
 
   @Override
   public void deleteBatch(List<?> l) {
-    List<String> albumItemsToReindex = new ArrayList<String>();
     for (Object obj : l) {
-      addAlbumItemsToReindex(albumItemsToReindex, obj, true);
       ElasticService.client.prepareDelete(index, dataType, getId(obj)).execute().actionGet();
     }
     commit();
-    reindexItemsFromList(albumItemsToReindex);
   }
 
   /**
@@ -313,29 +299,6 @@ public class ElasticIndexer implements SearchIndexer {
     }
   }
 
-
-  /**
-   * Reindex all {@link Item} stored in the database
-   *
-   * @throws ImejiException
-   * @throws URISyntaxException
-   * @throws IOException
-   *
-   */
-  private void reindexItemsFromList(List<String> itemUris) {
-    if (itemUris.size() > 0) {
-      try {
-        ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.items, analyser);
-        ItemController controller = new ItemController();
-        List<Item> items = (List<Item>) controller.retrieveBatch(itemUris, -1, -1, Imeji.adminUser);
-        indexer.indexBatch(items);
-      } catch (Exception e) {
-        LOGGER.error(
-            "There has been an error during reindexing of items from provided list of items!", e);
-      }
-    }
-  }
-
   /**
    * Find Folders which need to be updated, because they have been added/removed toa space
    *
@@ -347,56 +310,6 @@ public class ElasticIndexer implements SearchIndexer {
       // reindex items and collections in Space (check first if this has been changed)
       if (isSpaceCollectionChanged((CollectionImeji) obj, dataType, index)) {
         collectionsToReindex.add(getId(obj));
-      }
-    }
-  }
-
-
-  /**
-   * Find Items which need to be reindexed as Album members, because they have been added/removed
-   * to/from album
-   *
-   * @param collectionsToReindex
-   * @param obj
-   * @throws URISyntaxException
-   * @throws IOException
-   * @throws ImejiException
-   */
-  private void addAlbumItemsToReindex(List<String> itemsToReindex, Object obj, boolean delete) {
-    if (dataType.equals(ElasticTypes.albums.name())) {
-      try {
-        // getAlbumImages before update indexing into the List
-
-        // Get Old Items of the Album
-        ItemController controller = new ItemController();
-        List<Item> items = controller.searchAndRetrieve(new URI(getId(obj)), (SearchQuery) null,
-            null, Imeji.adminUser, null, -1, -1);
-        List<String> oldItemsToReindex =
-            items.stream().map((Item item) -> item.getId().toString()).collect(Collectors.toList());
-
-        if (delete) {
-          for (String s : oldItemsToReindex) {
-            if (!itemsToReindex.contains(s)) {
-              itemsToReindex.add(s);
-            }
-          }
-        } else {
-
-          // getNew Items of the Album
-          List<String> newItemsofTheAlbum = ((Album) obj).getImages().stream()
-              .map((URI uri) -> uri.toString()).collect(Collectors.toList());
-
-          // reindex only different items which were not previously added in itemsToReindex input
-          for (String s : CollectionUtils.disjunction(oldItemsToReindex, newItemsofTheAlbum)) {
-            if (!itemsToReindex.contains(s)) {
-              itemsToReindex.add(s);
-            }
-          }
-        }
-      } catch (Exception e) {
-        LOGGER.error(
-            "There has been an error during creatino of the item list for reindexing of Albums!",
-            e);
       }
     }
   }

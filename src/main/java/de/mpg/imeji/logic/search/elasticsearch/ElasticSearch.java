@@ -71,7 +71,6 @@ public class ElasticSearch implements Search {
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
       String spaceId, int from, int size) {
     QueryBuilder f = ElasticQueryFactory.build(query, folderUri, spaceId, user, type);
-    size = Integer.MAX_VALUE;
     if (size == -1) {
       size = Integer.MAX_VALUE;
     }

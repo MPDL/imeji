@@ -24,7 +24,6 @@ public final class ElasticItem extends ElasticProperties {
   private final long width;
   private final long height;
   private final List<ElasticMetadata> metadata = new ArrayList<>();
-  private final List<String> album;
 
 
   /**
@@ -40,7 +39,6 @@ public final class ElasticItem extends ElasticProperties {
     this.filetype = item.getFiletype();
     this.height = item.getHeight();
     this.width = item.getWidth();
-    this.album = item.getAlbums();
     this.size = item.getFileSize();
     this.space = space;
     for (Metadata md : item.getMetadataSet().getMetadata()) {
@@ -95,14 +93,6 @@ public final class ElasticItem extends ElasticProperties {
    */
   public String getFolder() {
     return folder;
-  }
-
-
-  /**
-   * @return the albums
-   */
-  public List<String> getAlbum() {
-    return album;
   }
 
   /**

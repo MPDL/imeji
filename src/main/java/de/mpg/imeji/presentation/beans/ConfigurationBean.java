@@ -453,7 +453,7 @@ public class ConfigurationBean {
   }
 
   public String getImpressumUrl() {
-    return Imeji.CONFIG.getImpressumUrl();
+    return Imeji.CONFIG.getImpressumUrl() != null ? Imeji.CONFIG.getImpressumUrl() : "";
   }
 
   public void setImpressumText(String s) {
@@ -461,7 +461,7 @@ public class ConfigurationBean {
   }
 
   public String getImpressumText() {
-    return Imeji.CONFIG.getImpressumText();
+    return Imeji.CONFIG.getImpressumText() != null ? Imeji.CONFIG.getImpressumText() : "";
   }
 
   public void setFaviconUrl(String s) {
