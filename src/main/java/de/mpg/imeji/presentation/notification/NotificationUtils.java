@@ -138,7 +138,7 @@ public class NotificationUtils {
     // EmailMessages emailMessages = new EmailMessages();
     try {
       // send to support
-      emailClient.sendMail(Imeji.CONFIG.getContactEmail(), null,
+      emailClient.sendMail(user.getEmail(), null,
           EmailMessages.getEmailOnAccountActivation_Subject(user, locale),
           EmailMessages.getEmailOnAccountActivation_Body(user, locale, invitation));
     } catch (Exception e) {

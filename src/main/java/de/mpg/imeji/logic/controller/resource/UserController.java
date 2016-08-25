@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.BadRequestException;
@@ -25,6 +26,7 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.QuotaExceededException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.auth.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.auth.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.collaboration.invitation.InvitationBusinessController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
@@ -134,6 +136,12 @@ public class UserController {
     u.setModified(now);
     WRITER.create(WriterFacade.toList(u), null, user);
     new InvitationBusinessController().consume(u);
+    try {
+      u.setApiKey(APIKeyAuthentication.generateKey(u.getId(), Integer.MAX_VALUE));
+      update(u, user);
+    } catch (JoseException e) {
+      LOGGER.error("Error creating API Key during user creation", e);
+    }
     return u;
   }
 
