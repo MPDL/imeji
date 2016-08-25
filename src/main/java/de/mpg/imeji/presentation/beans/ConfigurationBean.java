@@ -573,4 +573,12 @@ public class ConfigurationBean {
   public String getTermsOfUse() {
     return Imeji.CONFIG.getTermsOfUse() != null ? Imeji.CONFIG.getTermsOfUse() : "";
   }
+
+  public void setTermsOfUseUrl(String s) {
+    Imeji.CONFIG.setTermsOfUseUrl(s);
+  }
+
+  public String getTermsOfUseUrl() {
+    return Imeji.CONFIG.getTermsOfUseUrl() != null ? Imeji.CONFIG.getTermsOfUseUrl() : "";
+  }
 }

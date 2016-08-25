@@ -17,17 +17,23 @@
 				</div>
 			</div>
 			<div id="poweredBy" class="imj_poweredby_imprint">
-	 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Configuration.impressumUrl}" rendered="#{Configuration.impressumText ==''}">
-	 		    	<h:outputText value="#{lbl.imprint}" />
-	 		    </h:outputLink>
-	 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Navigation.imprintUrl}" rendered="#{Configuration.impressumText !=''}">
-	 		    	<h:outputText value="#{lbl.imprint}" />
-	 		    </h:outputLink>
-	 		    <h:outputText value="  " rendered="#{Configuration.termsOfUse != ''}"/>
-	 		    <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Navigation.termsOfUseUrl}" rendered="#{Configuration.termsOfUse != ''}">
-	 		    	<h:outputText value="#{lbl.terms_of_use}" />
-	 		    </h:outputLink>
-	 		    
+				<ui:fragment rendered="#{Configuration.impressumText != '' or Configuration.impressumUrl != ''}">
+		 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Configuration.impressumUrl}" rendered="#{Configuration.impressumUrl != ''}">
+		 		    	<h:outputText value="#{lbl.imprint}" />
+		 		    </h:outputLink>
+		 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Navigation.imprintUrl}" rendered="#{Configuration.impressumUrl ==''}">
+		 		    	<h:outputText value="#{lbl.imprint}" />
+		 		    </h:outputLink>
+		 		</ui:fragment>
+		 		<ui:fragment rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
+		 		    <h:outputText value=" - " rendered="#{Configuration.impressumText != '' or Configuration.impressumUrl != ''}"/>
+		 		     <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Configuration.termsOfUseUrl}" rendered="#{Configuration.termsOfUseUrl != ''}">
+		 		    	<h:outputText value="#{lbl.terms_of_use}" />
+		 		    </h:outputLink>
+		 		    <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Navigation.termsOfUseUrl}" rendered="#{Configuration.termsOfUseUrl == ''}">
+		 		    	<h:outputText value="#{lbl.terms_of_use}" />
+		 		    </h:outputLink>
+	 		    </ui:fragment>
 			</div>
 			<div id="imejiVersion" class="imj_poweredby_imprint">
 				#{SessionBean.version}
