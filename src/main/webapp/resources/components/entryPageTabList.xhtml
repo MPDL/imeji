@@ -148,16 +148,20 @@
 						<h:outputText value="#{cc.attrs.infoLogicBean.pageUrl}"/>
 					</span>
 				</div>
-				
-				
-				
+		
 				<!--  QR-Tag -->
 				<h:panelGroup styleClass="imj_infodataSet" rendered="#{cc.attrs.infoLogicBean.type == 'COLLECTION'}">
 					<span class="imj_infodataLabel">
 						<h:outputText value="#{lbl.qrcode}"/>
 						<span class="imj_invisible">: </span>
 					</span>
-					<span class="imj_infodataValue qr" id="qr"></span>
+					<span class="imj_infodataValue">
+						<span class="qr" id="qr"></span>
+						<br/>
+						<ui:fragment rendered="#{cc.attrs.infoLogicBean.type == 'COLLECTION' and Auth.createContent(cc.attrs.infoLogicBean.container)}">
+							#{lbl.qr_code_for} <a href="http://labcam.mpdl.mpg.de/" target="_blank">LabCam</a>
+						</ui:fragment>
+					</span>
 					<h:outputScript>var qrHtml = document.getElementById('qr'); qrHtml.innerHTML = create_qrcode('{key:"#{SessionBean.user.apiKey}",col:"#{cc.attrs.infoLogicBean.collection.id}"}');</h:outputScript>
 				</h:panelGroup>
 			</div>					 
