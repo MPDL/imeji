@@ -19,28 +19,16 @@
 
 	<!-- Collections Bean -->
 	<managed-bean>
-		<managed-bean-name>CollectionsBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.collection.CollectionsBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
 		<managed-bean-name>CollectionSession</managed-bean-name>
 		<managed-bean-class>de.mpg.imeji.presentation.collection.CollectionSessionBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>CollectionItemsBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.collection.CollectionItemsBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 	<!-- Search Bean -->
 	<managed-bean>
 		<managed-bean-name>AdvancedSearchBean</managed-bean-name>
 		<managed-bean-class>de.mpg.imeji.presentation.search.AdvancedSearchBean</managed-bean-class>
 		<managed-bean-scope>view</managed-bean-scope>
 	</managed-bean>
-
 	<!-- Profiles bean -->
 	<managed-bean>
 		<managed-bean-name>MdProfileBean</managed-bean-name>
@@ -62,36 +50,11 @@
 		<managed-bean-class>de.mpg.imeji.presentation.mdProfile.EditMdProfileBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-
-	<!-- Item Beans -->
-	<managed-bean>
-		<managed-bean-name>ItemsBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.image.ItemsBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- Album Beans -->
-	<managed-bean>
-		<managed-bean-name>AlbumsBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.album.AlbumsBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>AlbumItemsBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.album.AlbumItemsBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
+	<!-- Other Beans -->
 	<managed-bean>
 		<managed-bean-name>MessagesBean</managed-bean-name>
 		<managed-bean-class>de.mpg.imeji.presentation.beans.MessagesBean</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>FiltersSession</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.filter.FiltersSession</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>HistorySession</managed-bean-name>

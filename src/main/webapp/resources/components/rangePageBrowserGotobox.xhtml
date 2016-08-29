@@ -61,7 +61,7 @@
 				 				<h:outputText value="#{paginatorPage.number}"/>
 				 			</h:panelGroup>
 				 			
-				 			<h:commandButton id="btPageNumberAjax" onclick="setContentLoadingStatus();" styleClass="imj_pageNumber" value="#{paginatorPage.number}" title="#{lbl.paginator_results} #{(paginatorPage.number-1) * cc.attrs.paginatorBean.elementsPerPage +1} -  #{paginatorPage.number*cc.attrs.paginatorBean.elementsPerPage}" action="#{paginatorPage.goToPage}" rendered="#{paginatorPage.number != cc.attrs.paginatorBean.currentPageNumber}">
+				 			<h:commandButton id="btPageNumberAjax" onclick="setContentLoadingStatus();" styleClass="imj_pageNumber" value="#{paginatorPage.number}" title="#{lbl.paginator_results} #{(paginatorPage.number-1) * cc.attrs.paginatorBean.elementsPerPage +1} -  #{paginatorPage.number*cc.attrs.paginatorBean.elementsPerPage}" action="#{cc.attrs.paginatorBean.gotoPageNumber(paginatorPage.number)}" rendered="#{paginatorPage.number != cc.attrs.paginatorBean.currentPageNumber}">
 				 				<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 				 			</h:commandButton>
 				 			

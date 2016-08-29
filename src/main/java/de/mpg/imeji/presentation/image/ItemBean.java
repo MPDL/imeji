@@ -227,7 +227,7 @@ public class ItemBean extends SuperBean {
     if (item != null) {
       ItemsBean itemsBean = (ItemsBean) BeanHelper.getSessionBean(ItemsBean.class);
       if (UrlHelper.getParameterBoolean("reload")) {
-        itemsBean.browseInit(); // search the items
+        // itemsBean.browseInit(); // search the items
         itemsBean.update(); // Load the items
       }
       browse = new SingleItemBrowse(itemsBean, item, "item", "");

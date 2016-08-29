@@ -6,10 +6,7 @@
                 xmlns:imjc="http://java.sun.com/jsf/composite/components"
                 xmlns:list="http://java.sun.com/jsf/composite/components/list">
 	
-    <ui:define name="init">
-        <h:outputText value="#{paginatorListSessionBean.initPage}"/>
-    </ui:define>
-
+  
     <ui:define name="modalDialogs_from_template">
         <!-- Confirmation Pages -->
         <ui:include src="../../confirmationPages/AllDelete.xhtml">
@@ -29,8 +26,10 @@
     <!-- Main Content - Image tiled list - START -->
     <ui:define name="mainContent">
         <h:panelGroup layout="block" id ="ajaxWrapper">
+        	<ui:remove>
         	<h:outputText value="#{paginatorListSessionBean.urlParameters}" styleClass="imj_noDisplay"/>
             <h:outputText value="#{paginatorListSessionBean.initPaginator}" styleClass="imj_noDisplay"/>
+            </ui:remove>
         	 <!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true"/>
         	

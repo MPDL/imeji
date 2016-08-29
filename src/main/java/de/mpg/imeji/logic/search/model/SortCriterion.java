@@ -4,6 +4,7 @@
 package de.mpg.imeji.logic.search.model;
 
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
+import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 
 /**
  * A sort criterion for a {@link JenaSearch}
@@ -25,6 +26,10 @@ public class SortCriterion {
     this.sortOrder = so;
   }
 
+  public SortCriterion(SearchFields field, SortOrder order) {
+    this.index = new SearchIndex(field);
+    this.sortOrder = order;
+  }
 
   public SortCriterion() {
     this.sortOrder = SortOrder.ASCENDING;

@@ -34,7 +34,9 @@
 						<ul>
 							<ui:repeat var="sortItem" value="#{cc.attrs.filterBean.sortMenu}" varStatus="spos">
 								<li>
-									<h:commandLink action="#{cc.attrs.filterBean.setSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" styleClass="#{(cc.attrs.filterBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}"/>
+									<h:commandLink action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" styleClass="#{(cc.attrs.filterBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}">
+										<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+									</h:commandLink>
 								</li>
 							</ui:repeat>
 						</ul>

@@ -74,7 +74,6 @@ public class SessionBean implements Serializable {
   private int numberOfItemsPerPage = 18;
   private int numberOfContainersPerPage = 10;
   private boolean hasUploadRights = false;
-
   private String applicationUrl;
   private String spaceId;
   private URI selectedSpace;

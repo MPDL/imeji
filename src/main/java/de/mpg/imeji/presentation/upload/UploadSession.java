@@ -25,6 +25,7 @@
 package de.mpg.imeji.presentation.upload;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,6 @@ import javax.faces.bean.SessionScoped;
 import org.apache.commons.lang.BooleanUtils;
 
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.logic.vo.Item;
 
 /**
  * Session for the upload page for the parameter which must be in a sesion (because of the upload
@@ -47,14 +47,14 @@ import de.mpg.imeji.logic.vo.Item;
  */
 @ManagedBean(name = "UploadSession")
 @SessionScoped
-public class UploadSession {
-  private List<Item> sFiles;
+public class UploadSession implements Serializable {
+  private static final long serialVersionUID = 8094256535052643070L;
+  private List<UploadItem> sFiles;
   private List<String> fFiles;
   private boolean importImageToFile = false;
   private boolean uploadFileToItem = false;
   private boolean checkNameUnique = true;
-
-  private List<Item> itemsToEdit;
+  private List<UploadItem> itemsToEdit;
 
   /**
    * DEfault Constructor
@@ -63,7 +63,7 @@ public class UploadSession {
    * @throws IOException
    */
   public UploadSession() throws IOException, URISyntaxException {
-    this.sFiles = new ArrayList<Item>();
+    this.sFiles = new ArrayList<UploadItem>();
     this.fFiles = new ArrayList<String>();
   }
 
@@ -71,10 +71,10 @@ public class UploadSession {
    * Reset to default value
    */
   public void reset() {
-    sFiles.clear();
-    fFiles.clear();
+    sFiles = new ArrayList<>();
+    fFiles = new ArrayList<>();
+    itemsToEdit = new ArrayList<>();
     resetProperties();
-    itemsToEdit = new ArrayList<Item>();
   }
 
   public void resetProperties() {
@@ -110,14 +110,14 @@ public class UploadSession {
   /**
    * @return the sFiles
    */
-  public List<Item> getsFiles() {
+  public List<UploadItem> getsFiles() {
     return sFiles;
   }
 
   /**
    * @param sFiles the sFiles to set
    */
-  public void setsFiles(List<Item> sFiles) {
+  public void setsFiles(List<UploadItem> sFiles) {
     this.sFiles = sFiles;
   }
 
@@ -180,11 +180,11 @@ public class UploadSession {
   /**
    * @return the itemsToEdit
    */
-  public List<Item> getItemsToEdit() {
+  public List<UploadItem> getItemsToEdit() {
     return itemsToEdit;
   }
 
-  public void setItemsToEdit(List<Item> itemsToEdit) {
+  public void setItemsToEdit(List<UploadItem> itemsToEdit) {
     this.itemsToEdit = itemsToEdit;
   }
 

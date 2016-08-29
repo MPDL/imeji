@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 import com.hp.hpl.jena.sparql.pfunction.library.container;
 
 import de.mpg.imeji.logic.Imeji;
@@ -17,7 +21,6 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.presentation.beans.SuperContainerBean;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
@@ -27,8 +30,10 @@ import de.mpg.imeji.presentation.util.ListUtils;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@ManagedBean(name = "CollectionsBean")
+@ViewScoped
 public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
-
+  private static final long serialVersionUID = -3417058608949508441L;
   /**
    * The comment required to discard a {@link container}
    */
@@ -39,12 +44,17 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
    */
   public CollectionsBean() {
     super();
-    this.sb = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+  }
+
+  @PostConstruct
+  @Override
+  public void init() {
+    super.init();
   }
 
   @Override
   public String getNavigationString() {
-    return sb.getPrettySpacePage("pretty:collections");
+    return SessionBean.getPrettySpacePage("pretty:collections", getSpaceId());
   }
 
   @Override
@@ -53,8 +63,9 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
     Collection<CollectionImeji> collections = new ArrayList<CollectionImeji>();
     search(offset, limit);
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
-    collections = controller.retrieveBatchLazy(searchResult.getResults(), -1, offset, sb.getUser());
-    return ListUtils.collectionListToListItem(collections, sb.getUser());
+    collections =
+        controller.retrieveBatchLazy(searchResult.getResults(), -1, offset, getSessionUser());
+    return ListUtils.collectionListToListItem(collections, getSessionUser());
   }
 
 
@@ -109,12 +120,12 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
     CollectionController controller = new CollectionController();
-    return controller.search(searchQuery, sortCriterion, limit, offset, sb.getUser(),
-        sb.getSelectedSpaceString());
+    return controller.search(searchQuery, sortCriterion, limit, offset, getSessionUser(),
+        getSpace());
   }
 
   public String getTypeLabel() {
-    return Imeji.RESOURCE_BUNDLE.getLabel("type_" + getType().toLowerCase(), sb.getLocale());
+    return Imeji.RESOURCE_BUNDLE.getLabel("type_" + getType().toLowerCase(), getLocale());
   }
 
 

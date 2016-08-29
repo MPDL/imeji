@@ -6,6 +6,7 @@ package de.mpg.imeji.presentation.collection;
 import java.io.IOException;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
@@ -14,10 +15,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.image.ItemBean;
-import de.mpg.imeji.presentation.image.ItemsBean;
 import de.mpg.imeji.presentation.image.SingleItemBrowse;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * Bean for the detail item page when viewed within a collection
@@ -29,8 +28,10 @@ import de.mpg.imeji.presentation.util.BeanHelper;
 @ManagedBean(name = "CollectionItemBean")
 @ViewScoped
 public class CollectionItemBean extends ItemBean {
+  private static final long serialVersionUID = -6273094031705225499L;
   private String collectionId;
-  private CollectionItemsBean collectionImagesBean;
+  @ManagedProperty(value = "#{CollectionItemsBean}")
+  private CollectionItemsBean collectionItemsBean;
   private static Logger LOGGER = Logger.getLogger(CollectionItemBean.class);
 
   public CollectionItemBean() {
@@ -42,15 +43,14 @@ public class CollectionItemBean extends ItemBean {
   @Override
   public void initBrowsing() {
     if (getImage() != null) {
-      ItemsBean itemsBean =
-          (CollectionItemsBean) BeanHelper.getSessionBean(CollectionItemsBean.class);
+
       String tempId = (String) FacesContext.getCurrentInstance().getExternalContext()
           .getSessionMap().get("CollectionItemsBean.id");
       if (UrlHelper.getParameterBoolean("reload")) {
-        itemsBean.browseInit(); // search the items
-        itemsBean.update(); // Load the items
+        // itemsBean.browseInit(); // search the items
+        collectionItemsBean.update(); // Load the items
       }
-      setBrowse(new SingleItemBrowse(itemsBean, getImage(), "collection", tempId));
+      setBrowse(new SingleItemBrowse(collectionItemsBean, getImage(), "collection", tempId));
     }
   }
 
@@ -77,11 +77,11 @@ public class CollectionItemBean extends ItemBean {
   }
 
   public CollectionItemsBean getCollectionImagesBean() {
-    return collectionImagesBean;
+    return collectionItemsBean;
   }
 
   public void setCollectionImagesBean(CollectionItemsBean collectionImagesBean) {
-    this.collectionImagesBean = collectionImagesBean;
+    this.collectionItemsBean = collectionImagesBean;
   }
 
   public String getCollectionId() {

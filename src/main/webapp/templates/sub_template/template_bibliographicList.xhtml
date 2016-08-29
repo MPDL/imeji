@@ -6,10 +6,6 @@
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
 	
-	<ui:define name="init">
-			<h:outputText value="#{paginatorListSessionBean.init}"/>
-	</ui:define>
-	
 	<ui:define name="modalDialogs_from_template">
 		<!-- Confirmation Page: globalDeleteDialog -->
 		<dialog:confirmationDialog bean="#{paginatorListSessionBean}" submitAction="deleteAll" confirmationText="#{deleteSelectedItemsConfirmationText}" submitLabel="#{lbl.delete_all}" dialogId="#{currentMainMenu}List-selected-deleteDialog"/>
@@ -20,8 +16,6 @@
 	<ui:define name="mainContent">
 		<h:panelGroup layout="block" id ="ajaxWrapper">
 		
-			<h:outputText value="#{paginatorListSessionBean.initPaginator}"/>
-			
 			<!-- Page Browser GotoBox -->
 			<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes"/>
 			

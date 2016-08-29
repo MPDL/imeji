@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -16,7 +19,6 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.presentation.beans.SuperContainerBean;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
@@ -26,7 +28,10 @@ import de.mpg.imeji.presentation.util.ListUtils;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@ManagedBean(name = "AlbumsBean")
+@ViewScoped
 public class AlbumsBean extends SuperContainerBean<AlbumBean> {
+  private static final long serialVersionUID = -6633102421428463672L;
   private boolean addSelected = false;
 
   /**
@@ -34,12 +39,16 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
    */
   public AlbumsBean() {
     super();
-    this.sb = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+  }
+
+  @Override
+  public void init() {
+    super.init();
   }
 
   @Override
   public String getNavigationString() {
-    return sb.getPrettySpacePage("pretty:albums");
+    return SessionBean.getPrettySpacePage("pretty:albums", getSpaceId());
   }
 
   @Override
@@ -49,8 +58,8 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
     Collection<Album> albums = new ArrayList<Album>();
     search(offset, limit);
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
-    albums = controller.retrieveBatchLazy(searchResult.getResults(), sb.getUser(), -1, offset);
-    return ListUtils.albumListToAlbumBeanList(albums, sb.getUser());
+    albums = controller.retrieveBatchLazy(searchResult.getResults(), getSessionUser(), -1, offset);
+    return ListUtils.albumListToAlbumBeanList(albums, getSessionUser());
   }
 
   @Override
@@ -86,12 +95,12 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
     AlbumController controller = new AlbumController();
-    return controller.search(searchQuery, sb.getUser(), sortCriterion, limit, offset,
-        sb.getSelectedSpaceString());
+    return controller.search(searchQuery, getSessionUser(), sortCriterion, limit, offset,
+        getSpace());
   }
 
   public String getTypeLabel() {
-    return Imeji.RESOURCE_BUNDLE.getLabel("type_" + getType().toLowerCase(), sb.getLocale());
+    return Imeji.RESOURCE_BUNDLE.getLabel("type_" + getType().toLowerCase(), getLocale());
   }
 
   public boolean isAddSelected() {

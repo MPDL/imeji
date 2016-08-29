@@ -8,7 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -25,18 +29,17 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
-import de.mpg.imeji.logic.util.PropertyReader;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.beans.BasePaginatorListSessionBean;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
-import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
 import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.util.CookieUtils;
 import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
@@ -46,21 +49,28 @@ import de.mpg.imeji.presentation.util.ListUtils;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@ManagedBean(name = "ItemsBean")
+@ViewScoped
 public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
-  private final SessionBean session;
-  private final Navigation navigation;
+  private static final long serialVersionUID = -5564640316578205957L;
   private int totalNumberOfRecords;
-  private List<SelectItem> sortMenu;
-  private String selectedSortCriterion;
-  private String selectedSortOrder = SortOrder.DESCENDING.name();
   private FacetsJob facets;
   private String query;
   private boolean isSimpleSearch;
   private SearchQuery searchQuery = new SearchQuery();
   private String discardComment;
-  private String selectedImagesContext;
   private SearchResult searchResult;
   protected MetadataLabels metadataLabels;
+  private static final String ITEM_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
+  private static final String ITEM_SORT_COOKIE = "CONTAINER_SORT_COOKIE";
+  private static final int DEFAULT_ELEMENTS_PER_PAGE = 18;
+  // From session
+  @ManagedProperty(value = "#{SessionBean.selected}")
+  private List<String> selected;
+  @ManagedProperty(value = "#{SessionBean.activeAlbum}")
+  private Album activeAlbum;
+  @ManagedProperty(value = "#{SessionBean.selectedImagesContext}")
+  private String selectedImagesContext;
 
   /**
    * The context of the browse page (browse, collection browse, album browse)
@@ -72,65 +82,65 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    */
   public ItemsBean() {
     super();
-    navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
-    session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    selectedSortCriterion = null;
-    metadataLabels = new MetadataLabels(new ArrayList<Item>(), session.getLocale());
-    setElementsPerPage(session.getNumberOfItemsPerPage());
+  }
+
+  @Override
+  @PostConstruct
+  public void init() {
+    super.init();
+    initItemsPage();
+    cleanSelectItems();
+  }
+
+  public void initItemsPage() {
+    parseSearchQuery();
+    metadataLabels = new MetadataLabels(new ArrayList<Item>(), getLocale());
+    isSimpleSearch = SearchQueryParser.isSimpleSearch(searchQuery);
+    if (UrlHelper.getParameterBoolean("add_selected")) {
+      try {
+        addSelectedToActiveAlbum();
+      } catch (ImejiException e) {
+        LOGGER.error("Error initializing itemsbean", e);
+      }
+    }
+    update();
+  }
+
+  @Override
+  public void initSortMenu() {
+    setSelectedSortCriterion(SearchIndex.SearchFields
+        .valueOf(
+            CookieUtils.readNonNull(ITEM_SORT_COOKIE, SearchIndex.SearchFields.modified.name()))
+        .name());
+    setSelectedSortOrder(SortOrder
+        .valueOf(CookieUtils.readNonNull(ITEM_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name()))
+        .name());
+    setSortMenu(new ArrayList<SelectItem>());
+    if (getSelectedSortCriterion() == null) {
+      setSelectedSortCriterion(SearchIndex.SearchFields.modified.name());
+    }
+    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.modified,
+        Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", getLocale())));
+    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.filename,
+        Imeji.RESOURCE_BUNDLE.getLabel("filename", getLocale())));
+    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.filesize,
+        Imeji.RESOURCE_BUNDLE.getLabel("file_size", getLocale())));
+    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.filetype,
+        Imeji.RESOURCE_BUNDLE.getLabel("file_type", getLocale())));
+  }
+
+  @Override
+  public void initElementsPerPageMenu() {
+    setElementsPerPage(Integer.parseInt(CookieUtils.readNonNull(
+        SessionBean.numberOfItemsPerPageCookieName, Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
     try {
-      String options = PropertyReader.getProperty("imeji.image.list.size.options");
+      String options = Imeji.PROPERTIES.getProperty("imeji.image.list.size.options");
       for (String option : options.split(",")) {
         getElementsPerPageSelectItems().add(new SelectItem(option));
       }
     } catch (Exception e) {
       LOGGER.error("Error reading property imeji.image.list.size.options", e);
     }
-  }
-
-  /**
-   * Init the page when it is called
-   *
-   * @return @
-   * @throws ImejiException
-   */
-  public String getInitPage() throws ImejiException {
-    browseContext = getNavigationString();
-    browseInit();
-    isSimpleSearch = SearchQueryParser.isSimpleSearch(searchQuery);
-    if (UrlHelper.getParameterBoolean("add_selected")) {
-      addSelectedToActiveAlbum();
-    }
-    return "";
-  }
-
-  /**
-   * Initialization for all browse pages for get queries (non ajax queries)
-   */
-  public void browseInit() {
-    parseSearchQuery();
-    initMenus();
-    cleanSelectItems();
-    cleanFacets();
-    initFacets();
-    setCurrentPageNumber(1);
-  }
-
-  /**
-   * Init all menus of the page
-   */
-  public void initMenus() {
-    sortMenu = new ArrayList<SelectItem>();
-    if (selectedSortCriterion == null) {
-      this.selectedSortCriterion = SearchIndex.SearchFields.modified.name();
-    }
-    sortMenu.add(new SelectItem(SearchIndex.SearchFields.modified,
-        Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", session.getLocale())));
-    sortMenu.add(new SelectItem(SearchIndex.SearchFields.filename,
-        Imeji.RESOURCE_BUNDLE.getLabel("filename", session.getLocale())));
-    sortMenu.add(new SelectItem(SearchIndex.SearchFields.filesize,
-        Imeji.RESOURCE_BUNDLE.getLabel("file_size", session.getLocale())));
-    sortMenu.add(new SelectItem(SearchIndex.SearchFields.filetype,
-        Imeji.RESOURCE_BUNDLE.getLabel("file_type", session.getLocale())));
   }
 
   @Override
@@ -143,7 +153,7 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
       Collection<Item> items = loadImages(searchResult.getResults());
       // Init the labels for the item
       if (!items.isEmpty()) {
-        metadataLabels = new MetadataLabels((List<Item>) items, session.getLocale());
+        metadataLabels = new MetadataLabels((List<Item>) items, getLocale());
       }
       // Return the item as thumbnailBean
       return ListUtils.itemListToThumbList(items);
@@ -163,8 +173,8 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int size) {
     ItemController controller = new ItemController();
-    return controller.search(null, searchQuery, sortCriterion, session.getUser(),
-        session.getSelectedSpaceString(), size, offset);
+    return controller.search(null, searchQuery, sortCriterion, getSessionUser(), getSpace(), size,
+        offset);
   }
 
   /**
@@ -176,7 +186,7 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    */
   public Collection<Item> loadImages(List<String> uris) throws ImejiException {
     ItemController controller = new ItemController();
-    return controller.retrieveBatchLazy(uris, -1, 0, session.getUser());
+    return controller.retrieveBatchLazy(uris, -1, 0, getSessionUser());
   }
 
   /**
@@ -184,16 +194,15 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    * "pretty:browse"
    */
   public void cleanSelectItems() {
-    if (session.getSelectedImagesContext() != null
-        && !(session.getSelectedImagesContext().equals(browseContext))) {
-      session.getSelected().clear();
+    if (getSelectedImagesContext() != null && !(getSelectedImagesContext().equals(browseContext))) {
+      getSelected().clear();
     }
-    session.setSelectedImagesContext(browseContext);
+    setSelectedImagesContext(browseContext);
   }
 
   @Override
   public String getNavigationString() {
-    return session.getPrettySpacePage("pretty:browse");
+    return SessionBean.getPrettySpacePage("pretty:browse", getSpaceId());
   }
 
   @Override
@@ -235,7 +244,7 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
     String q = UrlHelper.getParameterValue("q");
     if (StringHelper.isNullOrEmptyTrim(q)) {
       SearchQuery query = SearchQueryParser.parseStringQuery(q);
-      return SearchQueryParser.searchQuery2PrettyQuery(query, session.getLocale(),
+      return SearchQueryParser.searchQuery2PrettyQuery(query, getLocale(),
           metadataLabels.getInternationalizedLabels());
     }
     return "";
@@ -268,8 +277,8 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    * @throws ImejiException
    */
   public String addSelectedToActiveAlbum() throws ImejiException {
-    addToActiveAlbum(session.getSelected());
-    session.getSelected().clear();
+    addToActiveAlbum(selected);
+    selected.clear();
     return "pretty:";
   }
 
@@ -290,7 +299,7 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    * @return @
    */
   public String deleteSelected() {
-    delete(session.getSelected());
+    delete(getSelected());
     return "pretty:";
   }
 
@@ -322,7 +331,7 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    * @throws ImejiException
    */
   public String withdrawSelected() throws ImejiException {
-    withdraw(session.getSelected());
+    withdraw(getSelected());
     return "pretty:";
   }
 
@@ -336,15 +345,14 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
     Collection<Item> items = loadImages(uris);
     int count = items.size();
     if ("".equals(discardComment.trim())) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_image_withdraw_discardComment",
-          session.getLocale()));
+      BeanHelper.error(
+          Imeji.RESOURCE_BUNDLE.getMessage("error_image_withdraw_discardComment", getLocale()));
     } else {
       ItemController c = new ItemController();
-      c.withdraw((List<Item>) items, discardComment, session.getUser());
+      c.withdraw((List<Item>) items, discardComment, getSessionUser());
       discardComment = null;
       unselect(uris);
-      BeanHelper.info(
-          count + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_withdraw", session.getLocale()));
+      BeanHelper.info(count + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_withdraw", getLocale()));
     }
   }
 
@@ -357,13 +365,12 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
     try {
       Collection<Item> items = loadImages(uris);
       ItemController ic = new ItemController();
-      ic.delete((List<Item>) items, session.getUser());
-      BeanHelper.info(uris.size() + " "
-          + Imeji.RESOURCE_BUNDLE.getLabel("images_deleted", session.getLocale()));
+      ic.delete((List<Item>) items, getSessionUser());
+      BeanHelper
+          .info(uris.size() + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_deleted", getLocale()));
       unselect(uris);
     } catch (WorkflowException e) {
-      BeanHelper.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_delete_items_public", session.getLocale()));
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_delete_items_public", getLocale()));
       LOGGER.error("Error deleting items", e);
     } catch (ImejiException e) {
       LOGGER.error("Error deleting items", e);
@@ -393,21 +400,21 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    */
   private void addToActiveAlbum(List<String> uris) throws ImejiException {
     int sizeToAdd = uris.size();
-    int sizeBefore = session.getActiveAlbumSize();
+    int sizeBefore = getActiveAlbum().getImages().size();
     SessionObjectsController soc = new SessionObjectsController();
     soc.addToActiveAlbum(uris);
-    int sizeAfter = session.getActiveAlbumSize();
+    int sizeAfter = getActiveAlbum().getImages().size();
     int added = sizeAfter - sizeBefore;
     int notAdded = sizeToAdd - added;
     String message = "";
     String error = "";
     if (added > 0) {
       message = " " + added + " "
-          + Imeji.RESOURCE_BUNDLE.getMessage("images_added_to_active_album", session.getLocale());
+          + Imeji.RESOURCE_BUNDLE.getMessage("images_added_to_active_album", getLocale());
     }
     if (notAdded > 0) {
       error += " " + notAdded + " "
-          + Imeji.RESOURCE_BUNDLE.getMessage("already_in_active_album", session.getLocale());
+          + Imeji.RESOURCE_BUNDLE.getMessage("already_in_active_album", getLocale());
     }
     if (!"".equals(message)) {
       BeanHelper.info(message);
@@ -426,14 +433,19 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
     return selectedImagesContext;
   }
 
-  public void setSelectedImagesContext(String selectedImagesContext) {
-    if (selectedImagesContext.equals(session.getSelectedImagesContext())) {
-      this.selectedImagesContext = selectedImagesContext;
-    } else {
-      session.getSelected().clear();
-      this.selectedImagesContext = selectedImagesContext;
-      session.setSelectedImagesContext(selectedImagesContext);
-    }
+  public void setSelectedImagesContext(String newContext) {
+    // this.selected = this.selectedImagesContext.equals(newContext) ? selected : new ArrayList<>();
+    this.selectedImagesContext = newContext;
+  }
+
+  @Override
+  protected void setCookieSortValue(String value) {
+    CookieUtils.updateCookieValue(ITEM_SORT_COOKIE, value);
+  }
+
+  @Override
+  protected void setCookieSortOrder(String order) {
+    CookieUtils.updateCookieValue(ITEM_SORT_ORDER_COOKIE, order);
   }
 
   /**
@@ -442,57 +454,11 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    * @return
    */
   public String getImageBaseUrl() {
-    return navigation.getApplicationSpaceUrl();
+    return getNavigation().getApplicationSpaceUrl();
   }
 
   public String getBackUrl() {
-    return navigation.getBrowseUrl();
-  }
-
-  public List<SelectItem> getSortMenu() {
-    return sortMenu;
-  }
-
-  public void setSortMenu(List<SelectItem> sortMenu) {
-    this.sortMenu = sortMenu;
-  }
-
-  public String getSelectedSortCriterion() {
-    return selectedSortCriterion;
-  }
-
-  public String changeSortCriterion(String selectedSortCriterion) {
-    if (selectedSortCriterion.equals(this.selectedSortCriterion)) {
-      toggleSortOrder();
-    }
-    this.selectedSortCriterion = selectedSortCriterion;
-    return "";
-  }
-
-  public void setSelectedSortCriterion(String selectedSortCriterion) {
-    this.selectedSortCriterion = selectedSortCriterion;
-  }
-
-  public String getSelectedSortOrder() {
-    return selectedSortOrder;
-  }
-
-  public void setSelectedSortOrder(String selectedSortOrder) {
-    this.selectedSortOrder = selectedSortOrder;
-  }
-
-  /**
-   * Method called when user toggle the sort order
-   *
-   * @return
-   */
-  public String toggleSortOrder() {
-    if (selectedSortOrder.equals("DESCENDING")) {
-      selectedSortOrder = "ASCENDING";
-    } else {
-      selectedSortOrder = "DESCENDING";
-    }
-    return getNavigationString();
+    return getNavigation().getBrowseUrl();
   }
 
   public FacetsJob getFacets() {
@@ -518,15 +484,15 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
    */
   public String selectAll() {
     for (ThumbnailBean bean : getCurrentPartList()) {
-      if (!(session.getSelected().contains(bean.getUri().toString()))) {
-        session.getSelected().add(bean.getUri().toString());
+      if (!(getSelected().contains(bean.getUri().toString()))) {
+        getSelected().add(bean.getUri().toString());
       }
     }
     return getNavigationString();
   }
 
   public String selectNone() {
-    session.getSelected().clear();
+    selected = new ArrayList<>();
     return getNavigationString();
   }
 
@@ -583,7 +549,7 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
   }
 
   public String getTypeLabel() {
-    return Imeji.RESOURCE_BUNDLE.getLabel("type_" + getType().toLowerCase(), session.getLocale());
+    return Imeji.RESOURCE_BUNDLE.getLabel("type_" + getType().toLowerCase(), getLocale());
   }
 
   public void changeAllSelected(ValueChangeEvent event) {
@@ -610,5 +576,24 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
   public MetadataLabels getMetadataLabels() {
     return metadataLabels;
   }
+
+  public List<String> getSelected() {
+    return selected;
+  }
+
+  public void setSelected(List<String> selected) {
+    this.selected = selected;
+  }
+
+
+  public Album getActiveAlbum() {
+    return activeAlbum;
+  }
+
+  public void setActiveAlbum(Album activeAlbum) {
+    this.activeAlbum = activeAlbum;
+  }
+
+
 
 }

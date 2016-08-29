@@ -331,7 +331,7 @@ public class UploadBean extends SuperBean implements Serializable {
       } else {
         item = controller.createWithFile(null, file, title, collection, getSessionUser());
       }
-      getsFiles().add(item);
+      getsFiles().add(new UploadItem(item));
       return item;
     } catch (Exception e) {
       getfFiles().add(" File " + title + " not uploaded. " + e.getMessage() != null
@@ -533,11 +533,11 @@ public class UploadBean extends SuperBean implements Serializable {
     return uploadSession.getfFiles();
   }
 
-  public List<Item> getsFiles() {
+  public List<UploadItem> getsFiles() {
     return uploadSession.getsFiles();
   }
 
-  public List<Item> getItemsToEdit() {
+  public List<UploadItem> getItemsToEdit() {
     return uploadSession.getItemsToEdit();
   }
 
@@ -612,8 +612,8 @@ public class UploadBean extends SuperBean implements Serializable {
 
   public void prepareBatchEdit() throws IOException {
     getSelected().clear();
-    for (Item item : getItemsToEdit()) {
-      getSelected().add(item.getId().toString());
+    for (UploadItem item : getItemsToEdit()) {
+      getSelected().add(item.getId());
     }
     resetItemsToEdit();
     redirect(getNavigation().getApplicationSpaceUrl() + getNavigation().getEditPath()

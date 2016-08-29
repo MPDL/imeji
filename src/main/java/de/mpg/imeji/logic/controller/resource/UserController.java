@@ -32,6 +32,7 @@ import de.mpg.imeji.logic.collaboration.invitation.InvitationBusinessController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -41,6 +42,8 @@ import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
+import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.QuotaUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -336,10 +339,21 @@ public class UserController {
    * @return
    */
   public Collection<User> searchUserByName(String name) {
-    Search search = SearchFactory.create();
-    return retrieveBatchLazy(
-        search.searchString(JenaCustomQueries.selectUserAll(name), null, null, 0, -1).getResults(),
-        -1);
+    // Search search = SearchFactory.create();
+
+    // return retrieveBatchLazy(
+    // search.searchString(JenaCustomQueries.selectUserAll(name), null, null, 0, -1).getResults(),
+    // -1);
+
+    try {
+      return retrieveBatchLazy(search.search(SearchQueryParser.parseStringQuery(name),
+          new SortCriterion(SearchFields.person_family, SortOrder.ASCENDING), user, null, null, 0,
+          -1).getResults(), -1);
+    } catch (UnprocessableError e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return new ArrayList<>();
   }
 
   /**

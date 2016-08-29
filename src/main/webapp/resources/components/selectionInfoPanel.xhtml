@@ -109,7 +109,7 @@
 						<ul>
 							<ui:repeat var="sortItem" value="#{cc.attrs.facetBean.sortMenu}" varStatus="spos">
 								<li>
-									<h:commandLink action="#{cc.attrs.facetBean.setSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" styleClass="#{(cc.attrs.facetBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}" onclick="setContentLoadingStatus();">
+									<h:commandLink action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" styleClass="#{(cc.attrs.facetBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}" onclick="setContentLoadingStatus();">
 										<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 									</h:commandLink>
 								</li>

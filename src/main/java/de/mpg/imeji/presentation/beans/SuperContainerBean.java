@@ -4,7 +4,6 @@
 package de.mpg.imeji.presentation.beans;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.faces.model.SelectItem;
 
@@ -18,11 +17,9 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
-import de.mpg.imeji.logic.util.PropertyReader;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.CookieUtils;
 
 /**
@@ -34,34 +31,43 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  * @param <T>
  */
 public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean<T> {
+  private static final long serialVersionUID = -7823020782502007646L;
   private static final Logger LOGGER = Logger.getLogger(SuperContainerBean.class);
   protected String query = "";
   protected String selectedMenu;
-  private String selectedSortCriterion;
-  private String selectedSortOrder;
-  protected SessionBean sb;
-  private List<SelectItem> sortMenu = new ArrayList<SelectItem>();
   protected SearchQuery searchQuery = new SearchQuery();
   protected SearchResult searchResult;
   private int totalNumberOfRecords;
+  private static final String CONTAINER_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
+  private static final String CONTAINER_SORT_COOKIE = "CONTAINER_SORT_COOKIE";
+  private static final int DEFAULT_ELEMENTS_PER_PAGE = 10;
 
   /**
    * Constructor
    */
   public SuperContainerBean() {
-    sb = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    initMenus();
-    selectedSortCriterion = SearchIndex.SearchFields.modified.name();
-    selectedSortOrder = SortOrder.DESCENDING.name();
-    setElementsPerPage(sb.getNumberOfContainersPerPage());
-    try {
-      String options = PropertyReader.getProperty("imeji.container.list.size.options");
-      for (String option : options.split(",")) {
-        getElementsPerPageSelectItems().add(new SelectItem(option));
-      }
-    } catch (Exception e) {
-      LOGGER.error("Error reading property imeji.container.list.size.options", e);
+    super();
+  }
+
+  /**
+   * Initialize the page
+   *
+   * @return
+   */
+  @Override
+  public void init() {
+    super.init();
+    setSearchQuery(null);
+    if (UrlHelper.hasParameter("tab") && !UrlHelper.getParameterValue("tab").isEmpty()) {
+      selectedMenu = UrlHelper.getParameterValue("tab");
     }
+    if (UrlHelper.hasParameter("q")) {
+      query = UrlHelper.getParameterValue("q");
+    }
+    if (selectedMenu == null) {
+      selectedMenu = "SORTING";
+    }
+    update();
   }
 
   /*
@@ -75,48 +81,37 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
         Integer.toString(getElementsPerPage()));
   }
 
-  /**
-   * Initialize the page
-   *
-   * @return
-   */
-  public String getInit() {
-    setSearchQuery(null);
-    if (UrlHelper.hasParameter("tab") && !UrlHelper.getParameterValue("tab").isEmpty()) {
-      selectedMenu = UrlHelper.getParameterValue("tab");
-    }
-    if (UrlHelper.hasParameter("q")) {
-      query = UrlHelper.getParameterValue("q");
-    }
-    if (selectedMenu == null) {
-      selectedMenu = "SORTING";
-    }
-    initMenus();
-    return "";
-  }
-
-  /**
-   * Initialize the menus of the page
-   */
-  protected void initMenus() {
-    sortMenu = new ArrayList<SelectItem>();
-    sortMenu.add(new SelectItem(SearchIndex.SearchFields.title.name(),
-        Imeji.RESOURCE_BUNDLE.getLabel("sort_title", sb.getLocale())));
-    sortMenu.add(new SelectItem(SearchIndex.SearchFields.modified.name(),
-        Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", sb.getLocale())));
-    sortMenu.add(new SelectItem(SearchIndex.SearchFields.creator_id.name(),
-        Imeji.RESOURCE_BUNDLE.getLabel("sort_author", sb.getLocale())));
-  }
-
-  /**
-   * Reset the page, called when url paramenter "init" is set to 1
-   */
   @Override
-  public void reset() {
-    super.reset();
-    initMenus();
+  public void initSortMenu() {
+    setSelectedSortCriterion(SearchIndex.SearchFields.valueOf(
+        CookieUtils.readNonNull(CONTAINER_SORT_COOKIE, SearchIndex.SearchFields.modified.name()))
+        .name());
+    setSelectedSortOrder(SortOrder
+        .valueOf(CookieUtils.readNonNull(CONTAINER_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name()))
+        .name());
+    setSortMenu(new ArrayList<SelectItem>());
+    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.title.name(),
+        Imeji.RESOURCE_BUNDLE.getLabel("sort_title", getLocale())));
+    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.modified.name(),
+        Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", getLocale())));
+    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.creator_id.name(),
+        Imeji.RESOURCE_BUNDLE.getLabel("sort_author", getLocale())));
   }
 
+  @Override
+  public void initElementsPerPageMenu() {
+    setElementsPerPage(
+        Integer.parseInt(CookieUtils.readNonNull(SessionBean.numberOfContainersPerPageCookieName,
+            Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
+    try {
+      String options = Imeji.PROPERTIES.getProperty("imeji.container.list.size.options");
+      for (String option : options.split(",")) {
+        getElementsPerPageSelectItems().add(new SelectItem(option));
+      }
+    } catch (Exception e) {
+      LOGGER.error("Error reading property imeji.image.list.size.options", e);
+    }
+  }
 
   /**
    * setter
@@ -153,71 +148,6 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
   public String selectNone() {
     return getNavigationString();
   }
-
-  /**
-   * setter
-   *
-   * @param sortMenu
-   */
-  public void setSortMenu(List<SelectItem> sortMenu) {
-    this.sortMenu = sortMenu;
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
-  public List<SelectItem> getSortMenu() {
-    return sortMenu;
-  }
-
-  public void setSelectedSortOrder(String selectedSortOrder) {
-    this.selectedSortOrder = selectedSortOrder;
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
-  public String getSelectedSortOrder() {
-    return selectedSortOrder;
-  }
-
-  /**
-   * setter
-   *
-   * @param selectedSortCriterion
-   */
-  public void setSelectedSortCriterion(String selectedSortCriterion) {
-    this.selectedSortCriterion = selectedSortCriterion;
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
-  public String getSelectedSortCriterion() {
-    return selectedSortCriterion;
-  }
-
-  /**
-   * Change the sort sort order
-   *
-   * @return
-   */
-  public String toggleSortOrder() {
-    if (selectedSortOrder.equals("DESCENDING")) {
-      selectedSortOrder = "ASCENDING";
-    } else {
-      selectedSortOrder = "DESCENDING";
-    }
-    return getNavigationString();
-  }
-
-
 
   /**
    * setter
@@ -287,12 +217,8 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
     setSearchQuery(searchQuery);
     searchResult.setQuery(getQuery());
     // setQuery(getQuery());
-
     searchResult.setSort(sortCriterion);
-
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
-
-
     return myOffset;
   }
 
@@ -324,8 +250,6 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
     this.totalNumberOfRecords = totalNumberOfRecords;
   }
 
-
-
   /**
    * needed for searchQueryDisplayArea.xhtml component
    *
@@ -347,4 +271,13 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
     return true;
   }
 
+  @Override
+  protected void setCookieSortValue(String value) {
+    CookieUtils.updateCookieValue(CONTAINER_SORT_COOKIE, value);
+  }
+
+  @Override
+  protected void setCookieSortOrder(String order) {
+    CookieUtils.updateCookieValue(CONTAINER_SORT_ORDER_COOKIE, order);
+  }
 }

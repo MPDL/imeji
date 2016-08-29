@@ -58,7 +58,7 @@
 		<view-id>/jsf/CollectionView.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="collectionBrowse">
-		<pattern value="/collection/#{CollectionItemsBean.id}/browse" />
+		<pattern value="/collection/#{ id }/browse" />
 		<view-id>/jsf/CollectionBrowse.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="collectionItem">
@@ -114,7 +114,7 @@
 	</url-mapping>
 
 	<url-mapping id="albumBrowse">
-		<pattern value="/album/#{AlbumItemsBean.id}/browse" />
+		<pattern value="/album/#{ id }/browse" />
 		<view-id>/jsf/AlbumBrowse.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="shareAlbum">

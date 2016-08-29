@@ -13,6 +13,7 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.CookieUtils;
@@ -33,7 +34,8 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  * @param <FilterType> The type of filters managed by this bean that are usable for every
  *        ListRetriever, eg. sorting of PubItems.
  */
-public abstract class BasePaginatorListSessionBean<ListElementType> {
+public abstract class BasePaginatorListSessionBean<ListElementType> extends SuperBean {
+  private static final long serialVersionUID = -3493783822585689753L;
   protected static Logger LOGGER = Logger.getLogger(BasePaginatorListSessionBean.class);
   /**
    * A list that contains the menu entries of the elements per page menu.
@@ -65,6 +67,10 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
    */
   private int totalNumberOfElements = 0;
 
+  private List<SelectItem> sortMenu;
+  private String selectedSortCriterion;
+  private String selectedSortOrder = SortOrder.DESCENDING.name();
+
   /**
    * Types of paginators
    *
@@ -83,22 +89,24 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
     paginatorPageList = new ArrayList<PaginatorPage>();
     currentPartList = new ArrayList<ListElementType>();
     elementsPerPageSelectItems = new ArrayList<SelectItem>();
+    readUrlParameters();
   }
 
-  // Must be called by PrettyFaces action method
-  public void reset() {
+  /**
+   * Should be called by bean in a postconstruct method
+   */
+  public void init() {
+    initSortMenu();
+    initElementsPerPageMenu();
     setCurrentPageNumber(1);
-    setElementsPerPage(24);
   }
 
-  // Must be called by PrettyFaces action method
-  public String getInitPaginator() {
-    update();
-    return "";
-  }
-
-  // Should not be call in AJAX area
-  public String getUrlParameters() {
+  /**
+   * Read if there are navigation parameters in the url
+   * 
+   * @return
+   */
+  public void readUrlParameters() {
     if (FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
         .containsKey("page")) {
       currentPageNumber = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
@@ -106,11 +114,20 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
     }
     if (FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
         .containsKey("el")) {
-      elementsPerPage = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-          .getRequestParameterMap().get("el"));
+      setElementsPerPage(Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+          .getRequestParameterMap().get("el")));
     }
-    return "";
   }
+
+  /**
+   * Initialize the Sorting menu
+   */
+  public abstract void initSortMenu();
+
+  /**
+   * Initialize the Men for elements per page
+   */
+  public abstract void initElementsPerPageMenu();
 
   /**
    * This method is called by the corresponding BaseListRetrieverRequestBean whenever the list has
@@ -139,6 +156,8 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
       LOGGER.error("Error paginator list update ", e);
     }
   }
+
+
 
   /**
    * Returns the current list with the specified elements
@@ -185,10 +204,6 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
     return 0;
   }
 
-  public void setPageOffset(int i) {
-    //
-  }
-
   /*
    * public abstract String getAdditionalParameterUrl();
    */
@@ -208,6 +223,15 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
         Integer.toString(elementsPerPage));
   }
 
+  /**
+   * Set the cookie with the sort value
+   */
+  protected abstract void setCookieSortValue(String value);
+
+  /**
+   * set the cookie with the sort order
+   */
+  protected abstract void setCookieSortOrder(String order);
 
   /**
    * Returns the currently selected number of elements per page
@@ -217,7 +241,6 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
   public int getElementsPerPage() {
     return elementsPerPage;
   }
-
 
   /**
    * Listener for elementsPerPageTop
@@ -229,20 +252,14 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
     if (event != null) {
       setElementsPerPage((Integer) event.getNewValue());
       setCurrentPageNumber(1);
+      update();
     }
   }
 
-  /**
-   * Used as action when the user sends an value from the upper go to input field
-   *
-   * @return
-   * @throws Exception
-   */
-  public String goToPage() {
+  public void gotoPageNumber(int page) {
     try {
-      int goToPage = Integer.parseInt(getGoToPage());
-      if (goToPage > 0 && goToPage <= getPaginatorPageSize()) {
-        setCurrentPageNumber(goToPage);
+      if (page > 0 && page <= getPaginatorPageSize()) {
+        setCurrentPageNumber(page);
       } else {
         BeanHelper.error(
             Imeji.RESOURCE_BUNDLE.getMessage("error_page_not_exists", BeanHelper.getLocale()));
@@ -251,9 +268,8 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
       BeanHelper.error(
           Imeji.RESOURCE_BUNDLE.getMessage("error_integer_required", BeanHelper.getLocale()));
     }
-    return "";
+    update();
   }
-
 
   /**
    * Returns the current page number of the paginator
@@ -315,6 +331,49 @@ public abstract class BasePaginatorListSessionBean<ListElementType> {
   public List<SelectItem> getElementsPerPageSelectItems() {
     return elementsPerPageSelectItems;
   }
+
+  public List<SelectItem> getSortMenu() {
+    return sortMenu;
+  }
+
+  public void setSortMenu(List<SelectItem> sortMenu) {
+
+    this.sortMenu = sortMenu;
+  }
+
+  public String getSelectedSortCriterion() {
+    return selectedSortCriterion;
+  }
+
+  public void setSelectedSortCriterion(String selectedSortCriterion) {
+    this.selectedSortCriterion = selectedSortCriterion;
+  }
+
+  public void changeSelectedSortCriterion(String selectedSortCriterion) {
+    this.selectedSortCriterion = selectedSortCriterion;
+    setCookieSortValue(this.selectedSortCriterion);
+    update();
+  }
+
+  public String getSelectedSortOrder() {
+    return selectedSortOrder;
+  }
+
+  public void setSelectedSortOrder(String selectedSortOrder) {
+    this.selectedSortOrder = selectedSortOrder;
+  }
+
+  public void toggleSortOrder() {
+    if (selectedSortOrder.equals("DESCENDING")) {
+      selectedSortOrder = "ASCENDING";
+    } else {
+      selectedSortOrder = "DESCENDING";
+    }
+    update();
+    setCookieSortOrder(selectedSortOrder);
+  }
+
+
 
   /**
    * Inner class pf which an instance represents an paginator button. Used by the iterator in jsf.
