@@ -69,9 +69,10 @@ public class AlbumItemBean extends ItemBean {
    * Remove the current {@link Item} from the current {@link Album}
    *
    * @return
+   * @throws IOException
    * @throws Exception
    */
-  public String removeFromAlbum() {
+  public void removeFromAlbum() {
     try {
       if (getIsActiveAlbum()) {
         super.removeFromActiveAlbum();
@@ -88,9 +89,8 @@ public class AlbumItemBean extends ItemBean {
     } catch (Exception e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error remove item from album", e);
-      return "";
     }
-    return SessionBean.getPrettySpacePage("pretty:albumBrowse", getSpace());
+    redirectToBrowsePage();
   }
 
   @Override

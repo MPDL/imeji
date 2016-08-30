@@ -118,9 +118,10 @@
 					</h:form>
 				</div>
 			</h:panelGroup>
-			<menu:StatusFilterMenu/>
-			<menu:UserFilterMenu/>
-			
+			<ui:fragment rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu}">
+				<menu:StatusFilterMenu/>
+				<menu:UserFilterMenu/>
+			</ui:fragment>
 		</h:panelGroup>
 	</composite:implementation>
 </html>

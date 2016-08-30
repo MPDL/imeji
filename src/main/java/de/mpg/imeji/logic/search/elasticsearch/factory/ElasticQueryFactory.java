@@ -328,7 +328,9 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(pair.getValue()),
             pair.getOperator(), pair.isNot());
       case collaborator:
-        return collaboratorQuery(pair.getValue(), pair.isNot());
+        return roleQueryWithoutCreator(ElasticFields.READ, pair.getValue(), pair.isNot());
+      case uploader:
+        return roleQuery(ElasticFields.UPLOAD, pair.getValue(), pair.isNot());
       case date:
         return timeQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -740,27 +742,49 @@ public class ElasticQueryFactory {
     return grants;
   }
 
+
   /**
-   * Create the query for collaborator="email"
+   * Create the query for role="email". Role can be uploader, collaborator. Objects where the user
+   * is creator are not excluded
    * 
    * @param email
    * @param not
    * @return
    */
-  private static QueryBuilder collaboratorQuery(String email, boolean not) {
+  private static QueryBuilder roleQuery(ElasticFields role, String email, boolean not) {
+    QueryBuilder q1 = QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
+        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(ElasticSearchUtil.getUserId(email))
+        .lookupType(ElasticTypes.users.name()).lookupPath(role.field());
+    QueryBuilder q2 = QueryBuilders.termsLookupQuery(ElasticFields.FOLDER.field())
+        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(ElasticSearchUtil.getUserId(email))
+        .lookupType(ElasticTypes.users.name()).lookupPath(role.field());
+    return QueryBuilders.boolQuery().should(q1).should(q2);
+  }
+
+  /**
+   * Create the query for role="email". Role can be uploader, collaborator. Objects where the user
+   * is cretor will be excluded
+   * 
+   * @param email
+   * @param not
+   * @return
+   */
+  private static QueryBuilder roleQueryWithoutCreator(ElasticFields role, String email,
+      boolean not) {
     BoolQueryBuilder q1 = QueryBuilders.boolQuery();
     q1.must(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
         .lookupIndex(ElasticService.DATA_ALIAS).lookupId(ElasticSearchUtil.getUserId(email))
-        .lookupType(ElasticTypes.users.name()).lookupPath(ElasticFields.READ.field()));
+        .lookupType(ElasticTypes.users.name()).lookupPath(role.field()));
     q1.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(email),
         SearchOperators.EQUALS, not));
     BoolQueryBuilder q2 = QueryBuilders.boolQuery();
     q2.must(QueryBuilders.termsLookupQuery(ElasticFields.FOLDER.field())
         .lookupIndex(ElasticService.DATA_ALIAS).lookupId(ElasticSearchUtil.getUserId(email))
-        .lookupType(ElasticTypes.users.name()).lookupPath(ElasticFields.READ.field()));
+        .lookupType(ElasticTypes.users.name()).lookupPath(role.field()));
     q2.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(email),
         SearchOperators.EQUALS, not));
     return QueryBuilders.boolQuery().should(q1).should(q2);
   }
+
 
 }
