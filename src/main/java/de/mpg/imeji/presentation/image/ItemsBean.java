@@ -61,8 +61,8 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
   private String discardComment;
   private SearchResult searchResult;
   protected MetadataLabels metadataLabels;
-  private static final String ITEM_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
-  private static final String ITEM_SORT_COOKIE = "CONTAINER_SORT_COOKIE";
+  public static final String ITEM_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
+  public static final String ITEM_SORT_COOKIE = "CONTAINER_SORT_COOKIE";
   private static final int DEFAULT_ELEMENTS_PER_PAGE = 18;
   // From session
   @ManagedProperty(value = "#{SessionBean.selected}")
@@ -88,11 +88,14 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
   @PostConstruct
   public void init() {
     super.init();
-    initItemsPage();
+    initSpecific();
     cleanSelectItems();
   }
 
-  public void initItemsPage() {
+  /**
+   * Initialization which are specific for this bean. Can be overriden by other beans
+   */
+  public void initSpecific() {
     parseSearchQuery();
     metadataLabels = new MetadataLabels(new ArrayList<Item>(), getLocale());
     isSimpleSearch = SearchQueryParser.isSimpleSearch(searchQuery);

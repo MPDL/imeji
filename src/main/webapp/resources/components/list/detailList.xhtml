@@ -24,8 +24,8 @@
                          styleClass="order-table imj_detailList"
                          headerClass="order-table-header"
                          rowClasses="order-table-odd-row,order-table-even-row"
-                         columnClasses="#{colClasses}" rendered="#{cc.attrs.listBean.totalNumberOfElements != 0}">
-
+                         columnClasses="#{colClasses}" rendered="#{cc.attrs.listBean.totalNumberOfElements != 0}"  binding="#{table}">
+				
                 <h:column rendered="#{Auth.loggedIn}">
                     <f:facet name="header">
                         <h:selectBooleanCheckbox  value="#{cc.attrs.listBean.allSelected}" valueChangeListener="#{cc.attrs.listBean.changeAllSelected}">
@@ -62,7 +62,7 @@
                     	 &#160;
                     	<h:outputText value="&#160;" styleClass="#{cc.attrs.listBean.selectedSortOrder == 'ASCENDING' ? 'fa fa-sort-asc fa-push-right' : 'fa fa-sort-desc fa-push-left'}" rendered="#{cc.attrs.listBean.selectedSortCriterion == 'filename'}"/>
                     </f:facet>
-                    <h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.listBean.imageBaseUrl}item/#{o.id}" title="#{o.filename}">
+                    <h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.listBean.imageBaseUrl}item/#{o.id}?q=#{cc.attrs.picList.query}&amp;pos=#{cc.attrs.listBean.offset + table.rowIndex}" title="#{o.filename}">
                         #{o.filename}
                     </h:outputLink>
 

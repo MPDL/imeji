@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -41,6 +42,7 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
     super();
   }
 
+  @PostConstruct
   @Override
   public void init() {
     super.init();

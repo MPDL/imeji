@@ -53,14 +53,19 @@ public class AlbumItemsBean extends ItemsBean {
     super();
   }
 
+  @Override
   @PostConstruct
   public void init() {
+    super.init();
+  }
+
+  @Override
+  public void initSpecific() {
     try {
       id = UrlHelper.getParameterValue("id");
       uri = ObjectHelper.getURI(Album.class, id);
       loadAlbum();
       browseContext = getNavigationString() + id;
-
       if (getActiveAlbum() != null
           && getActiveAlbum().getImages().size() != getTotalNumberOfRecords()) {
         AlbumController ac = new AlbumController();
@@ -68,10 +73,10 @@ public class AlbumItemsBean extends ItemsBean {
         setActiveAlbum(activeA);
         setAlbum(activeA);
       }
+      update();
     } catch (Exception e) {
       LOGGER.error("Error initializing AlbumItemsBean", e);
     }
-
   }
 
   @Override

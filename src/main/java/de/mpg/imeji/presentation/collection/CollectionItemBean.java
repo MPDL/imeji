@@ -6,13 +6,13 @@ package de.mpg.imeji.presentation.collection;
 import java.io.IOException;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
+import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.image.ItemBean;
 import de.mpg.imeji.presentation.image.SingleItemBrowse;
@@ -30,8 +30,6 @@ import de.mpg.imeji.presentation.session.SessionBean;
 public class CollectionItemBean extends ItemBean {
   private static final long serialVersionUID = -6273094031705225499L;
   private String collectionId;
-  @ManagedProperty(value = "#{CollectionItemsBean}")
-  private CollectionItemsBean collectionItemsBean;
   private static Logger LOGGER = Logger.getLogger(CollectionItemBean.class);
 
   public CollectionItemBean() {
@@ -43,14 +41,9 @@ public class CollectionItemBean extends ItemBean {
   @Override
   public void initBrowsing() {
     if (getImage() != null) {
-
-      String tempId = (String) FacesContext.getCurrentInstance().getExternalContext()
-          .getSessionMap().get("CollectionItemsBean.id");
-      if (UrlHelper.getParameterBoolean("reload")) {
-        // itemsBean.browseInit(); // search the items
-        collectionItemsBean.update(); // Load the items
-      }
-      setBrowse(new SingleItemBrowse(collectionItemsBean, getImage(), "collection", tempId));
+      setBrowse(new SingleItemBrowse(getImage(), "collection",
+          ObjectHelper.getURI(CollectionImeji.class, collectionId).toString(), getSessionUser(),
+          getSpaceId()));
     }
   }
 
@@ -74,14 +67,6 @@ public class CollectionItemBean extends ItemBean {
   @Override
   public String getNavigationString() {
     return SessionBean.getPrettySpacePage("pretty:CollectionItem", getSpace());
-  }
-
-  public CollectionItemsBean getCollectionImagesBean() {
-    return collectionItemsBean;
-  }
-
-  public void setCollectionImagesBean(CollectionItemsBean collectionImagesBean) {
-    this.collectionItemsBean = collectionImagesBean;
   }
 
   public String getCollectionId() {

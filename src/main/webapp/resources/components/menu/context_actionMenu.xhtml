@@ -357,18 +357,11 @@
 										<h:commandLink  id="lnkPicFullResolution2" action="#{itemBean.addToActiveAlbum}" rendered="#{!itemBean.isInActiveAlbum and SessionBean.activeAlbum != null and Auth.update(SessionBean.activeAlbum.id)}">
 											<h:outputText value="#{lbl.add_to_active_album}"/>
 										</h:commandLink>
-										<h:commandLink id="lnkPicRemoveFromAvtiveAlbum" action="#{itemBean.removeFromActiveAlbum}" rendered="#{itemBean.isInActiveAlbum and SessionBean.activeAlbum != null and !itemBean.activeAlbum and Auth.update(SessionBean.activeAlbum.id)}">
+										<h:commandLink id="lnkPicRemoveFromAvtiveAlbum" action="#{itemBean.removeFromActiveAlbum}" rendered="#{itemBean.isInActiveAlbum and SessionBean.activeAlbum != null and Auth.update(SessionBean.activeAlbum.id)}">
 											<h:outputText value="#{lbl.remove_from_active}"/>
 										</h:commandLink>
 									</ui:fragment>
 								</li>
-								<ui:fragment rendered="">
-									<li>
-										<a href="#{Navigation.applicationSpaceUrl}createuser" title="#{lbl.remove_from_active}">
-											<h:outputText value="#{lbl.admin_user_new}"/>
-										</a>
-									</li>
-								</ui:fragment>
 								</h:form>
 							</ul>
 						</div>

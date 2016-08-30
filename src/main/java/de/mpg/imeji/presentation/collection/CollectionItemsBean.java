@@ -67,7 +67,7 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   @Override
-  public void initItemsPage() {
+  public void initSpecific() {
     try {
       id = UrlHelper.getParameterValue("id");
       uri = ObjectHelper.getURI(CollectionImeji.class, id);

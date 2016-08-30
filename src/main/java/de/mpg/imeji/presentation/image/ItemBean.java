@@ -71,6 +71,7 @@ import de.mpg.imeji.presentation.util.BeanHelper;
 @ManagedBean(name = "ItemBean")
 @ViewScoped
 public class ItemBean extends SuperBean {
+  private static final long serialVersionUID = -4957755233785015759L;
   private String tab;
   private Item item;
   private String id;
@@ -225,12 +226,7 @@ public class ItemBean extends SuperBean {
    */
   public void initBrowsing() {
     if (item != null) {
-      ItemsBean itemsBean = (ItemsBean) BeanHelper.getSessionBean(ItemsBean.class);
-      if (UrlHelper.getParameterBoolean("reload")) {
-        // itemsBean.browseInit(); // search the items
-        itemsBean.update(); // Load the items
-      }
-      browse = new SingleItemBrowse(itemsBean, item, "item", "");
+      browse = new SingleItemBrowse(item, "item", null, getSessionUser(), getSpaceId());
     }
   }
 
