@@ -21,7 +21,6 @@
 										curMainMenu="#{currentMainMenu}" 
 										userHasAdminRights="#{Auth.admin}" 
 										userHasUploadRights="#{Auth.createContent(logicBean.collection) and logicBean.collection.status != 'WITHDRAWN'}" 
-										hasContent="#{logicBean.size > 0}" 
 										navBean="#{Navigation}" 
 										activeMenu="start"/>
 

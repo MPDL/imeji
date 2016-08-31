@@ -16,7 +16,6 @@
 		
 		<composite:attribute name="userHasAdminRights" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean, @dependencies: curMainMenu, required for ingest"/>
 		<composite:attribute name="userHasUploadRights" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean, @dependencies: curMainMenu, required for upload"/>
-		<composite:attribute name="hasContent" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean, required to show menus (e.g. content startpage, show images)"/>
 	</composite:interface>
 	
 	<composite:implementation>
@@ -29,18 +28,16 @@
 			<div class="#{curMenuClass}">
 				<ul>
 					
-						<li class="#{curMenuClass}Item #{(activeMenuValue == 'start') ? 'imj_active' : ''}">
-							<h:outputLink value="#{curContextUrl}" title="#{lbl.about}" styleClass="">
-								<h:outputText value="#{lbl.about}"/>
-							</h:outputLink>
-						</li>
-					<ui:fragment rendered="#{(activeMenuValue == 'content')  or (cc.attrs.hasContent and cc.attrs.navBean != null)}">
-						<li class="#{curMenuClass}Item #{(activeMenuValue == 'content') ? 'imj_active' : ''}">
-							<h:outputLink value="#{curContextUrl}/#{cc.attrs.navBean.browsePath}?q=" title="#{lbl.view_images}" styleClass="">
-								<h:outputText value="#{lbl.view_images}"/>
-							</h:outputLink>
-						</li>
-					</ui:fragment>
+					<li class="#{curMenuClass}Item #{(activeMenuValue == 'start') ? 'imj_active' : ''}">
+						<h:outputLink value="#{curContextUrl}" title="#{lbl.about}" styleClass="">
+							<h:outputText value="#{lbl.about}"/>
+						</h:outputLink>
+					</li>
+					<li class="#{curMenuClass}Item #{(activeMenuValue == 'content') ? 'imj_active' : ''}">
+						<h:outputLink value="#{curContextUrl}/#{cc.attrs.navBean.browsePath}?q=" title="#{lbl.view_images}" styleClass="">
+							<h:outputText value="#{lbl.view_images}"/>
+						</h:outputLink>
+					</li>
 					
 					<ui:fragment rendered="#{cc.attrs.curMainMenu.trim().toLowerCase() == 'collection'}">
 						<li class="#{curMenuClass}Item #{(activeMenuValue == 'metadata') ? 'imj_active' : ''}">

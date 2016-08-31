@@ -10,20 +10,6 @@
 		<!-- EntryPagePreviewTiledList -->
 		<ui:fragment rendered="#{Auth.read(logicBean.container)}">
 			<div class="imj_#{currentMainMenu}EntryPage">
-				<ui:fragment rendered="#{currentMainMenu == 'collection'}">
-					<ui:fragment rendered="#{empty logicBean.profile.statements and Auth.admin(logicBean.collection) and logicBean.profile.status != 'WITHDRAWN'}">
-						<h2 class="imj_headline">#{msg.error_collection_profile_not_exist}
-							<br/>
-							<h:outputLink value="#{Navigation.applicationUrl}createprofile?col=#{logicBean.id}&amp;redirect=view" title="#{lbl.create_now_from_template}">
-									<span class="imj_entryPagePreviewTiledListLinkArrow"> </span>
-									<h:outputText value="#{lbl.add_profile}"/>
-							</h:outputLink>
-						</h2>
-					</ui:fragment>
-				</ui:fragment>
-				
-				<imjc:entryPagePreviewTiledList mediaLogicBean="#{logicBean}" lbl="#{lbl}" applicationUrl="#{Navigation.applicationSpaceUrl}" browsePath="#{Navigation.browsePath}" /> 
-	
 				<!-- EntryPageTabList -->
 				<imjc:entryPageTabList infoLogicBean="#{logicBean}" applicationUrl="#{Navigation.applicationSpaceUrl}" lbl="#{lbl}"/>
 			</div>

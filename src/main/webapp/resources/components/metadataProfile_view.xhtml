@@ -24,14 +24,12 @@
 			<ui:fragment rendered="#{cc.attrs.metadataProfile == null or cc.attrs.metadataProfile.statements.size() == 0}">
 				<div class="imj_listHeader">
 					<h3 class="imj_headline">
-						<h:outputText value="#{msg.error_collection_profile_not_exist}"/>
-					</h3>
-					
-					<div class="imj_listHeaderMenu">
+						<span class="fa fa-exclamation-triangle"/>
+						<h:outputText value=" #{msg.error_collection_profile_not_exist} "/>
 						<h:outputLink value="#{Navigation.applicationUrl}createprofile?warn=0&amp;col=#{cc.attrs.metadataBean.collection.idString}&amp;redirect=view" title="#{lbl.add_profile}" rendered="#{cc.attrs.adminable}">
 							<h:outputText value="#{lbl.add_profile}"/>
 						</h:outputLink>
-					</div>
+					</h3>
 				</div>
 			</ui:fragment>
 			<ui:fragment rendered="#{cc.attrs.metadataProfile != null and cc.attrs.metadataProfile.statements.size() != 0}">

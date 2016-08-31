@@ -17,8 +17,7 @@
                                     userHasAdminRights="#{Auth.admin}" 
                                     userHasUploadRights="#{Auth.createContent(UploadBean.collection) and UploadBean.collection.status !='WITHDRAWN'}" 
                                     navBean="#{Navigation}" 
-                                    activeMenu="upload" 
-                                    hasContent="#{UploadBean.collectionSize > 0}"/>
+                                    activeMenu="upload"/>
 
         <menu:context_actionMenu id="action"
         						  vo="#{UploadBean.collection}"

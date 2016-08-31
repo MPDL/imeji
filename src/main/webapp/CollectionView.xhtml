@@ -23,7 +23,6 @@
 										curMainMenu="#{currentMainMenu}" 
 										userHasAdminRights="#{Auth.admin}" 
 										userHasUploadRights="#{Auth.createContent(metadataBean.collection) and metadataContextBean.status != 'WITHDRAWN'}" 
-										hasContent="#{metadataBean.size > 0}" 
 										navBean="#{Navigation}" 
 										activeMenu="metadata" />
 			

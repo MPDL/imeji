@@ -28,21 +28,33 @@
 				};
 			</script>
 	
-		<div class="imj_metadataList">
+		<div>
 			<!-- MetaDataList - LIST BODY START -->		
 			<div id="metadata" class="imj_listBody">	
-				<div id="description">
-					<h2 class="imj_entryPageTitle">
-						<h:outputText value="#{cc.attrs.infoLogicBean.container.metadata.title}"/>
-					</h2>
-					<p class="imj_entryPageDescription"></p>
-					<pre>
-						<h:outputText escape="false" value="#{cc.attrs.infoLogicBean.container.metadata.description}"/>
-					</pre>
-					<h:outputText value="#{lbl.by}: #{cc.attrs.infoLogicBean.authorsWithOrg}" styleClass="imj_itemAuthorPanel"/>
+				<div id="description" class="imj_infodataSet">
+					<h:graphicImage style="float:left; margin-right:1em;" rendered="#{cc.attrs.infoLogicBean.container.logoUrl != null}" styleClass="imj_entryPagePreviewPicture" value="#{cc.attrs.infoLogicBean.container.logoUrl.toString()}"/>
+					<h:outputText  escape="false" value="#{cc.attrs.infoLogicBean.container.metadata.description}"/>
 				</div>
+				<br/>
+				<ui:fragment rendered="#{cc.attrs.infoLogicBean.type == 'COLLECTION' and empty logicBean.profile.statements and Auth.admin(logicBean.collection) and logicBean.profile.status != 'WITHDRAWN'}">
+					<span class="fa fa-exclamation-triangle"/>
+					#{msg.error_collection_profile_not_exist}
+					<h:outputLink styleClass="" value="#{Navigation.applicationUrl}createprofile?col=#{logicBean.id}&amp;redirect=view" title="#{lbl.create_now_from_template}">
+							<h:outputText value="#{lbl.add_profile}"/>
+					</h:outputLink>
+				</ui:fragment>
 				<div class="imj_metadataSubPanel">
 					<h:outputText id="lblViewColFull_lblUtil" value="#{lbl.colUtil}" styleClass="imj_metadataSubPanelItem"/>
+				</div>
+				<!--  Authors -->
+				<div class="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.authors}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<h:outputText value="#{cc.attrs.infoLogicBean.authorsWithOrg}"/>
+					</span>
 				</div>
 				<ui:repeat var="info" value="#{cc.attrs.infoLogicBean.container.metadata.additionalInformations}">
 					<div class="imj_infodataSet">
@@ -67,6 +79,7 @@
 						</span>
 					</div>
 				</ui:repeat>
+				
 				<!--  Citation -->
 				<div class="imj_infodataSet">
 					<span class="imj_infodataLabel">

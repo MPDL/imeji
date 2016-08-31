@@ -126,8 +126,6 @@ public class AlbumBean extends ContainerBean {
         album =
             new AlbumController().retrieve(ObjectHelper.getURI(Album.class, id), getSessionUser());
         if (album != null) {
-          findItems(getSessionUser(), MAX_ITEM_NUM_VIEW);
-          loadItems(getSessionUser(), MAX_ITEM_NUM_VIEW);
           countItems();
           countAllowedItems();
           countDiscardedItems(getSessionUser());

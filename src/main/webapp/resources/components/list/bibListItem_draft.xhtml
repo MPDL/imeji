@@ -50,7 +50,7 @@
 				<!-- description area - includes default values - START -->
 				<div class="imj_itemHeadline">
 					<h3>
-						<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}" title="#{cc.attrs.item.title}">
+						<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}/#{Navigation.browsePath}?q=" title="#{cc.attrs.item.title}">
 							<h:outputText value="#{cc.attrs.item.title}"/>
 						</h:outputLink>
 					</h3>
@@ -89,13 +89,6 @@
 									<h:outputText value="#{lbl.about}"/>
 								</h:outputLink>
 							</li>	
-							<ui:fragment rendered="#{cc.attrs.item.size > 0}">
-								<li>
-									<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}/#{Navigation.browsePath}?q=">
-										<h:outputText value="#{lbl.view_images}"/>
-									</h:outputLink>
-								</li>
-							</ui:fragment>
 							<ui:fragment rendered="#{cc.attrs.item.type != 'ALBUM'}">
 							<li>
 								<h:outputLink id="lnkViewMetadataDetail" value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}/#{Navigation.infosPath}?init=1">

@@ -55,11 +55,6 @@ public class ViewCollectionBean extends CollectionBean {
     try {
       setCollection(new CollectionController()
           .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
-      if (getCollection() != null) {
-        findItems(getSessionUser(), MAX_ITEM_NUM_VIEW);
-        loadItems(getSessionUser(), MAX_ITEM_NUM_VIEW);
-        countItems();
-      }
       if (getSessionUser() != null) {
         setSendEmailNotification(getSessionUser().getObservedCollections().contains(getId()));
       }
