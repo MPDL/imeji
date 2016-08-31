@@ -41,6 +41,7 @@ import de.mpg.imeji.logic.concurrency.locks.LocksSurveyor;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiProperties;
 import de.mpg.imeji.logic.config.ImejiResourceBundle;
+import de.mpg.imeji.logic.config.ImejiStartupConfig;
 import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
 import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.controller.resource.UserController.USER_TYPE;
@@ -83,7 +84,8 @@ public class Imeji {
   private static final String ADMIN_EMAIL_INIT = "admin@imeji.org";
   private static final String ADMIN_PASSWORD_INIT = "admin";
   public static ImejiConfiguration CONFIG;
-  public static ImejiProperties PROPERTIES = new ImejiProperties();
+  public static final ImejiProperties PROPERTIES = new ImejiProperties();
+  public static final ImejiStartupConfig STARTUP = new ImejiStartupConfig();
   /**
    * The path for this servlet as defined in the web.xml
    */

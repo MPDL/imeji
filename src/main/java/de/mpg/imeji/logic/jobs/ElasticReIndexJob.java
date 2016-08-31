@@ -12,6 +12,7 @@ import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
 import de.mpg.imeji.logic.controller.resource.UserController;
+import de.mpg.imeji.logic.controller.resource.UserGroupController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -20,6 +21,7 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
  * REindex data from the database into elastic search
@@ -39,6 +41,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
     String index = ElasticService.createIndex();
     addAllMappings(index);
     reindexUsers(index);
+    reindexUserGroups(index);
     reindexAlbums(index);
     reindexItems(index);
     reindexFolders(index);
@@ -127,6 +130,12 @@ public class ElasticReIndexJob implements Callable<Integer> {
     LOGGER.info("Spaces reindexed!");
   }
 
+  /**
+   * Reindex all users
+   * 
+   * @param index
+   * @throws ImejiException
+   */
   private void reindexUsers(String index) throws ImejiException {
     LOGGER.info("Indexing users...");
     ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER);
@@ -135,6 +144,23 @@ public class ElasticReIndexJob implements Callable<Integer> {
     indexer.indexBatch(users);
     indexer.commit();
     LOGGER.info("...users reindexed!");
+  }
+
+  /**
+   * Reindex all usergroups
+   * 
+   * @param index
+   * @throws ImejiException
+   */
+  private void reindexUserGroups(String index) throws ImejiException {
+    LOGGER.info("Indexing users...");
+    ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.usergroups, ElasticService.ANALYSER);
+    List<UserGroup> groups = (List<UserGroup>) new UserGroupController().retrieveAll();
+    LOGGER.info("+++ " + groups.size() + " user groups to index +++");
+    indexer.indexBatch(groups);
+    indexer.commit();
+    LOGGER.info("...user groups reindexed!");
   }
 
 }

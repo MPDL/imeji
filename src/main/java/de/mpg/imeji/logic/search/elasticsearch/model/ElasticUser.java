@@ -29,8 +29,9 @@ public class ElasticUser {
     this.read = new ArrayList<>();
     this.upload = new ArrayList<>();
     for (Grant g : user.getGrants()) {
-      this.read.add(g.getGrantFor().toString());
-      if (g.asGrantType() == GrantType.CREATE) {
+      if (g.asGrantType() == GrantType.READ) {
+        this.read.add(g.getGrantFor().toString());
+      } else if (g.asGrantType() == GrantType.CREATE) {
         this.upload.add(g.getGrantFor().toString());
       }
     }

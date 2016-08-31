@@ -752,18 +752,26 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder roleQuery(ElasticFields role, String email, boolean not) {
+    String userId = ElasticSearchUtil.getUserId(email);
     QueryBuilder q1 = QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
-        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(ElasticSearchUtil.getUserId(email))
+        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
         .lookupType(ElasticTypes.users.name()).lookupPath(role.field());
     QueryBuilder q2 = QueryBuilders.termsLookupQuery(ElasticFields.FOLDER.field())
-        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(ElasticSearchUtil.getUserId(email))
+        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
         .lookupType(ElasticTypes.users.name()).lookupPath(role.field());
-    return QueryBuilders.boolQuery().should(q1).should(q2);
+    BoolQueryBuilder q = QueryBuilders.boolQuery().should(q1).should(q2);
+    List<String> groups = ElasticSearchUtil.getGroupsOfUser(userId);
+    for (String group : groups) {
+      q.should(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
+          .lookupIndex(ElasticService.DATA_ALIAS).lookupId(group)
+          .lookupType(ElasticTypes.usergroups.name()).lookupPath(role.field()));
+    }
+    return q;
   }
 
   /**
    * Create the query for role="email". Role can be uploader, collaborator. Objects where the user
-   * is cretor will be excluded
+   * is creator will be excluded
    * 
    * @param email
    * @param not
@@ -771,20 +779,26 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder roleQueryWithoutCreator(ElasticFields role, String email,
       boolean not) {
+    String userId = ElasticSearchUtil.getUserId(email);
     BoolQueryBuilder q1 = QueryBuilders.boolQuery();
     q1.must(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
-        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(ElasticSearchUtil.getUserId(email))
+        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
         .lookupType(ElasticTypes.users.name()).lookupPath(role.field()));
     q1.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(email),
         SearchOperators.EQUALS, not));
     BoolQueryBuilder q2 = QueryBuilders.boolQuery();
     q2.must(QueryBuilders.termsLookupQuery(ElasticFields.FOLDER.field())
-        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(ElasticSearchUtil.getUserId(email))
+        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
         .lookupType(ElasticTypes.users.name()).lookupPath(role.field()));
     q2.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(email),
         SearchOperators.EQUALS, not));
-    return QueryBuilders.boolQuery().should(q1).should(q2);
+    BoolQueryBuilder q = QueryBuilders.boolQuery().should(q1).should(q2);
+    List<String> groups = ElasticSearchUtil.getGroupsOfUser(userId);
+    for (String group : groups) {
+      q.should(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
+          .lookupIndex(ElasticService.DATA_ALIAS).lookupId(group)
+          .lookupType(ElasticTypes.usergroups.name()).lookupPath(role.field()));
+    }
+    return q;
   }
-
-
 }

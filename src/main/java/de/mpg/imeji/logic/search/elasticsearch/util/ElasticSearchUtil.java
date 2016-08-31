@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.search.elasticsearch.util;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.lucene.queryparser.classic.QueryParserBase;
@@ -53,6 +54,19 @@ public class ElasticSearchUtil {
       return r.getResults().get(0);
     }
     return null;
+  }
+
+  /**
+   * Retrieve all usergroup of one user
+   * 
+   * @param userId
+   * @return
+   */
+  public static List<String> getGroupsOfUser(String userId) {
+    ElasticSearch search = new ElasticSearch(SearchObjectTypes.USERGROUPS);
+    SearchResult r = search.searchStringAndRetrieveFieldValue("users:\"" + userId + "\"",
+        ElasticFields.ID.field().toLowerCase(), null, Imeji.adminUser, 0, -1);
+    return r.getResults();
   }
 
   /**

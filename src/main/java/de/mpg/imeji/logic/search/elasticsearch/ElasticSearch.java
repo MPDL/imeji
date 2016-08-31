@@ -15,6 +15,7 @@ import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticQueryFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -53,6 +54,9 @@ public class ElasticSearch implements Search {
         break;
       case USER:
         this.type = ElasticTypes.users;
+        break;
+      case USERGROUPS:
+        this.type = ElasticTypes.usergroups;
         break;
       default:
         this.type = ElasticTypes.items;
@@ -118,7 +122,12 @@ public class ElasticSearch implements Search {
         .addSort(ElasticSortFactory.build(sort)).execute().actionGet();
     List<String> fieldValues = new ArrayList<>();
     for (SearchHit hit : resp.getHits()) {
-      fieldValues.add(hit.field(field).getValue());
+      if (field.equals(ElasticFields.ID.field())) {
+        fieldValues.add(hit.getId());
+      } else {
+        fieldValues.add(hit.field(field).getValue());
+      }
+
     }
     return new SearchResult(fieldValues, resp.getHits().getTotalHits());
   }

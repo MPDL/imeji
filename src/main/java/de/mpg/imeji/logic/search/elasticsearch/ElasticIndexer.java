@@ -30,6 +30,7 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFolder;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticItem;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticSpace;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUser;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
 import de.mpg.imeji.logic.search.elasticsearch.util.ElasticSearchUtil;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
@@ -41,6 +42,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
  * Indexer for ElasticSearch
@@ -97,14 +99,21 @@ public class ElasticIndexer implements SearchIndexer {
 
   @Override
   public void delete(Object obj) {
-    ElasticService.client.prepareDelete(index, dataType, getId(obj)).execute().actionGet();
-    commit();
+    String id = getId(obj);
+    if (id != null) {
+      ElasticService.client.prepareDelete(index, dataType, id).execute().actionGet();
+      commit();
+    }
   }
 
   @Override
   public void deleteBatch(List<?> l) {
     for (Object obj : l) {
-      ElasticService.client.prepareDelete(index, dataType, getId(obj)).execute().actionGet();
+      String id = getId(obj);
+      if (id != null) {
+        ElasticService.client.prepareDelete(index, dataType, id).execute().actionGet();
+      }
+
     }
     commit();
   }
@@ -131,8 +140,10 @@ public class ElasticIndexer implements SearchIndexer {
    * @param json
    */
   public void indexJSON(String id, String json) {
-    ElasticService.client.prepareIndex(index, dataType).setId(id).setSource(json).execute()
-        .actionGet();
+    if (id != null) {
+      ElasticService.client.prepareIndex(index, dataType).setId(id).setSource(json).execute()
+          .actionGet();
+    }
   }
 
   /**
@@ -165,15 +176,22 @@ public class ElasticIndexer implements SearchIndexer {
       obj = setAlbums((Item) obj);
       return new ElasticItem((Item) obj,
           getSpace((Item) obj, ElasticTypes.folders.name(), ElasticService.DATA_ALIAS));
-    } else if (obj instanceof CollectionImeji) {
+    }
+    if (obj instanceof CollectionImeji) {
       ElasticFolder ef = new ElasticFolder((CollectionImeji) obj);
       return ef;
-    } else if (obj instanceof Album) {
+    }
+    if (obj instanceof Album) {
       return new ElasticAlbum((Album) obj);
-    } else if (obj instanceof Space) {
+    }
+    if (obj instanceof Space) {
       return new ElasticSpace((Space) obj);
-    } else if (obj instanceof User) {
+    }
+    if (obj instanceof User) {
       return new ElasticUser((User) obj);
+    }
+    if (obj instanceof UserGroup) {
+      return new ElasticUserGroup((UserGroup) obj);
     }
     return obj;
   }
@@ -209,6 +227,9 @@ public class ElasticIndexer implements SearchIndexer {
     }
     if (obj instanceof User) {
       return ((User) obj).getId().toString();
+    }
+    if (obj instanceof UserGroup) {
+      return ((UserGroup) obj).getId().toString();
     }
     return null;
   }

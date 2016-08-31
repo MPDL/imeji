@@ -19,6 +19,7 @@ import org.apache.log4j.lf5.util.StreamUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.jobs.ElasticReIndexJob;
 import de.mpg.imeji.logic.jobs.ReadMaxPlanckIPMappingJob;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.util.IdentifierUtil;
@@ -39,6 +40,7 @@ public class InitializerServlet extends HttpServlet {
       super.init();
       Imeji.locksSurveyor.start();
       initModel();
+      reindex();
       Imeji.executor.submit(new ReadMaxPlanckIPMappingJob());
     } catch (Exception e) {
       LOGGER.error("imeji didn't initialize correctly", e);
@@ -55,6 +57,16 @@ public class InitializerServlet extends HttpServlet {
   public void initModel() throws IOException, URISyntaxException, ImejiException {
     Imeji.init();
     runMigration();
+  }
+
+  /**
+   * Reindex the data
+   */
+  private void reindex() {
+    if (Imeji.STARTUP.doReIndex()) {
+      LOGGER.info("Doing reindex...");
+      Imeji.executor.submit(new ElasticReIndexJob());
+    }
   }
 
 

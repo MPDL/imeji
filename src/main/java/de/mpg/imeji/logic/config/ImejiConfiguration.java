@@ -82,7 +82,7 @@ public class ImejiConfiguration {
   }
 
   /**
-   * IGet the Configuration File from the filesystem. If not existing, create a new one with default
+   * Get the Configuration File from the filesystem. If not existing, create a new one with default
    * values
    *
    * @throws IOException

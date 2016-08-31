@@ -128,6 +128,16 @@ public class UserGroupController {
   }
 
   /**
+   * Retrieve all {@link UserGroup}
+   *
+   * @return
+   * @throws ImejiException
+   */
+  public Collection<UserGroup> retrieveAll() throws ImejiException {
+    return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupAll(), Imeji.adminUser);
+  }
+
+  /**
    * Retrieve all {@link UserGroup} a user is member of
    *
    * @return

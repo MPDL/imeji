@@ -250,6 +250,16 @@ public class JenaCustomQueries {
   }
 
   /**
+   * Select all {@link UserGroup}
+   *
+   * @return
+   */
+  public static final String selectUserGroupAll() {
+    return X_PATH_FUNCTIONS_DECLARATION
+        + "  SELECT DISTINCT ?s WHERE {?s a <http://imeji.org/terms/userGroup>}";
+  }
+
+  /**
    * Select {@link UserGroup} of User
    *
    * @return
