@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.logic.Imeji;
@@ -16,7 +17,6 @@ import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
-import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.presentation.beans.SuperContainerBean;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -34,6 +34,8 @@ import de.mpg.imeji.presentation.util.ListUtils;
 public class AlbumsBean extends SuperContainerBean<AlbumBean> {
   private static final long serialVersionUID = -6633102421428463672L;
   private boolean addSelected = false;
+  @ManagedProperty(value = "#{SessionBean.activeAlbum}")
+  private Album activeAlbum;
 
   /**
    * Bean for the Albums page
@@ -55,13 +57,12 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
 
   @Override
   public List<AlbumBean> retrieveList(int offset, int limit) throws Exception {
-    addSelected = UrlHelper.getParameterBoolean("add_selected");
     AlbumController controller = new AlbumController();
     Collection<Album> albums = new ArrayList<Album>();
     search(offset, limit);
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
     albums = controller.retrieveBatchLazy(searchResult.getResults(), getSessionUser(), -1, offset);
-    return ListUtils.albumListToAlbumBeanList(albums, getSessionUser());
+    return ListUtils.albumListToAlbumBeanList(albums, getSessionUser(), getActiveAlbum());
   }
 
   @Override
@@ -81,18 +82,6 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
     return PAGINATOR_TYPE.ALBUMS.name();
   }
 
-  /*
-   * Perform the {@link SPARQLSearch}
-   *
-   * @param searchQuery
-   *
-   * @param sortCriterion
-   *
-   * @return
-   *
-   * @see de.mpg.imeji.presentation.beans.SuperContainerBean#search(de.mpg.imeji.logic.search.vo.
-   * SearchQuery , de.mpg.imeji.logic.search.vo.SortCriterion)
-   */
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
@@ -111,5 +100,13 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
 
   public void setAddSelected(boolean addSelected) {
     this.addSelected = addSelected;
+  }
+
+  public Album getActiveAlbum() {
+    return activeAlbum;
+  }
+
+  public void setActiveAlbum(Album activeAlbum) {
+    this.activeAlbum = activeAlbum;
   }
 }

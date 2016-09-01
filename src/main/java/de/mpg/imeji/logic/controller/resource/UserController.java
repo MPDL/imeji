@@ -19,7 +19,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jose4j.lang.JoseException;
 
-import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
@@ -349,18 +348,6 @@ public class UserController {
     return new ArrayList<>();
   }
 
-  /**
-   * Search for all users having the grant for an object
-   *
-   * @param grantFor
-   * @return
-   */
-  public List<String> searchByGrantFor(String grantFor) {
-    Search search = SearchFactory.create(SEARCH_IMPLEMENTATIONS.JENA);
-    return search
-        .searchString(JenaCustomQueries.selectUserWithGrantFor(grantFor), null, null, 0, -1)
-        .getResults();
-  }
 
   /**
    * Search for users
@@ -374,6 +361,22 @@ public class UserController {
    */
   public SearchResult search(SearchQuery q, SortCriterion sort, User user, int offset, int size) {
     return search.search(q, sort, user, null, null, offset, size);
+  }
+
+  /**
+   * Search for users
+   * 
+   * @param q
+   * @param sort
+   * @param user
+   * @param offset
+   * @param size
+   * @return
+   */
+  public List<User> searchAndRetrieve(SearchQuery q, SortCriterion sort, User user, int offset,
+      int size) {
+    return (List<User>) retrieveBatch(
+        search.search(q, sort, user, null, null, offset, size).getResults(), size);
   }
 
 
@@ -407,22 +410,6 @@ public class UserController {
     return c.iterator().next();
   }
 
-  /**
-   * Retrieve a User by its API Key
-   *
-   * @param key
-   * @return
-   * @throws ImejiException
-   */
-  public User retrieveByApiKey(String key) throws ImejiException {
-    Search search = SearchFactory.create(SEARCH_IMPLEMENTATIONS.JENA);
-    SearchResult result =
-        search.searchString(JenaCustomQueries.selectUserByApiKey(key), null, null, 0, -1);
-    if (result.getNumberOfRecords() != 1) {
-      throw new AuthenticationError("API Key not valid!");
-    }
-    return retrieve(URI.create(result.getResults().get(0)));
-  }
 
   /**
    * Load an {@link Organization} by its uri

@@ -112,20 +112,6 @@ public class JenaCustomQueries {
 
   }
 
-  // /**
-  // * Select all {@link Username}
-  // *
-  // * @return
-  // */
-  // public static final String selectUserAll(String name) {
-  // return X_PATH_FUNCTIONS_DECLARATION
-  // + " SELECT DISTINCT ?s WHERE {?s a <http://imeji.org/terms/user> . ?s
-  // <http://xmlns.com/foaf/0.1/person> ?person . ?person
-  // <http://purl.org/escidoc/metadata/terms/0.1/complete-name> ?name . ?s
-  // <http://xmlns.com/foaf/0.1/email> ?email. filter(regex(?name, '"
-  // + name + "','i') || regex(?email, '" + name + "','i'))}";
-  // }
-
   /**
    * Select all {@link Username}
    *
@@ -161,31 +147,6 @@ public class JenaCustomQueries {
         + "\"^^<http://www.w3.org/2001/XMLSchema#string> }";
   }
 
-  /**
-   * Select a User by its Email
-   *
-   * @param email
-   * @return
-   */
-  public static final String selectUserByApiKey(String key) {
-    return X_PATH_FUNCTIONS_DECLARATION
-        + "  SELECT DISTINCT ?s WHERE { ?s a  <http://imeji.org/terms/user>. "
-        + " ?s <http://imeji.org/terms/apiKey> \"" + key
-        + "\"^^<http://www.w3.org/2001/XMLSchema#string> }";
-  }
-
-  /**
-   * Select a User by its Email
-   *
-   * @param email
-   * @return
-   */
-  public static final String selectUserByEmailAndId(String email, URI userId) {
-    return X_PATH_FUNCTIONS_DECLARATION
-        + "  SELECT DISTINCT ?s WHERE { ?s a  <http://imeji.org/terms/user>. "
-        + " ?s <http://xmlns.com/foaf/0.1/email> \"" + email
-        + "\"^^<http://www.w3.org/2001/XMLSchema#string> }";
-  }
 
   /**
    * Select a User by its Email
@@ -211,31 +172,6 @@ public class JenaCustomQueries {
         + AuthUtil.toGrantTypeURI(GrantType.ADMIN).toString()
         + ">. ?g <http://imeji.org/terms/grantFor> <" + Imeji.PROPERTIES.getBaseURI()
         + ">} . filter(bound(?g)) . ?s a <http://imeji.org/terms/user>}";
-  }
-
-  /**
-   * Select {@link User} having a {@link Grant} for an object defined by its uri
-   *
-   * @return
-   */
-  public static final String selectUserWithGrantFor(String uri) {
-    return X_PATH_FUNCTIONS_DECLARATION
-        + "  SELECT DISTINCT ?s WHERE {OPTIONAL{ ?s <http://imeji.org/terms/grant> ?g . ?g <http://imeji.org/terms/grantFor> <"
-        + uri
-        + ">} . filter(bound(?g)) . ?s a <http://imeji.org/terms/user> . ?s <http://xmlns.com/foaf/0.1/person> ?person . ?person <http://purl.org/escidoc/metadata/terms/0.1/complete-name> ?name } ORDER BY DESC(?name)";
-  }
-
-  /**
-   * Return th {@link UserGroup} which have {@link Grant} for the object defined by the passed uri
-   *
-   * @param uri
-   * @return
-   */
-  public static final String selectUserGroupWithGrantFor(String uri) {
-    return X_PATH_FUNCTIONS_DECLARATION
-        + "  SELECT DISTINCT ?s WHERE {OPTIONAL{ ?s <http://imeji.org/terms/grant> ?g . ?g <http://imeji.org/terms/grantFor> <"
-        + uri
-        + ">} . filter(bound(?g)) . ?s a <http://imeji.org/terms/userGroup> . ?s <http://xmlns.com/foaf/0.1/name> ?name } ORDER BY DESC(?name)";
   }
 
   /**

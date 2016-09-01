@@ -12,6 +12,10 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.controller.resource.UserGroupController;
+import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchOperators;
+import de.mpg.imeji.logic.search.model.SearchPair;
+import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
@@ -114,6 +118,10 @@ public class StatusComponent extends UINamingContainer {
     List<String> l = new ArrayList<>();
     for (User user : findAllUsersWithReadGrant(p)) {
       if (!l.contains(user.getPerson().getCompleteName())) {
+        if (collaboratorListSize >= COLLABORATOR_LIST_MAX_SIZE) {
+          hasMoreCollaborator = true;
+          return l;
+        }
         if (!p.getCreatedBy().toString().equals(user.getId().toString())) {
           l.add(user.getPerson().getCompleteName());
           collaboratorListSize++;
@@ -121,12 +129,7 @@ public class StatusComponent extends UINamingContainer {
           owner = user.getPerson().getCompleteName();
         }
       }
-      if (collaboratorListSize >= COLLABORATOR_LIST_MAX_SIZE) {
-        hasMoreCollaborator = true;
-        break;
-      }
     }
-
     return l;
   }
 
@@ -141,14 +144,15 @@ public class StatusComponent extends UINamingContainer {
   private List<String> getGroupSharedWith(Properties properties) {
     List<String> l = new ArrayList<>();
     for (UserGroup group : findAllGroupsWithReadGrant(properties)) {
-      if (!l.contains(group.getName())) {
-        l.add(group.getName());
-        collaboratorListSize++;
-      }
       if (collaboratorListSize >= COLLABORATOR_LIST_MAX_SIZE) {
         hasMoreCollaborator = true;
         return l;
       }
+      if (!l.contains(group.getName())) {
+        l.add(group.getName());
+        collaboratorListSize++;
+      }
+
 
     }
     return l;
@@ -162,21 +166,24 @@ public class StatusComponent extends UINamingContainer {
    */
   private List<User> findAllUsersWithReadGrant(Properties p) {
     UserController uc = new UserController(Imeji.adminUser);
-    // SearchQuery q = new SearchQuery();
-    // try {
-    // q.addPair(
-    // new SearchPair(SearchFields.read, SearchOperators.EQUALS, p.getId().toString(), false));
-    // } catch (UnprocessableError e) {
-    // // TODO Auto-generated catch block
-    // e.printStackTrace();
-    // }
-    List<User> l = uc.retrieveBatchLazy(uc.searchByGrantFor(p.getId().toString()),
-        COLLABORATOR_LIST_MAX_SIZE + 1);
+    List<User> l = uc.searchAndRetrieve(getReadQuery(p.getId().toString()), null, Imeji.adminUser,
+        0, COLLABORATOR_LIST_MAX_SIZE);
     if (p instanceof Item) {
-      l.addAll(uc.retrieveBatchLazy(uc.searchByGrantFor(((Item) p).getCollection().toString()),
-          COLLABORATOR_LIST_MAX_SIZE + 1));
+      l.addAll(uc.searchAndRetrieve(getReadQuery(((Item) p).getCollection().toString()), null,
+          Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE));
     }
     return l;
+  }
+
+  /**
+   * Return query "read:objectId" to find all users or user groups with read rights on this object
+   * 
+   * @param objectId
+   * @return
+   */
+  private SearchQuery getReadQuery(String objectId) {
+    return SearchQuery
+        .toSearchQuery(new SearchPair(SearchFields.read, SearchOperators.EQUALS, objectId, false));
   }
 
   /**
@@ -187,10 +194,11 @@ public class StatusComponent extends UINamingContainer {
    */
   private List<UserGroup> findAllGroupsWithReadGrant(Properties p) {
     UserGroupController ugc = new UserGroupController();
-    List<UserGroup> l =
-        new ArrayList<>(ugc.searchByGrantFor(p.getId().toString(), Imeji.adminUser));
+    List<UserGroup> l = ugc.searchAndRetrieve(getReadQuery(p.getId().toString()), null,
+        Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE);
     if (p instanceof Item) {
-      l.addAll(ugc.searchByGrantFor(((Item) p).getCollection().toString(), Imeji.adminUser));
+      l.addAll(ugc.searchAndRetrieve(getReadQuery(((Item) p).getCollection().toString()), null,
+          Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE));
     }
     return l;
   }

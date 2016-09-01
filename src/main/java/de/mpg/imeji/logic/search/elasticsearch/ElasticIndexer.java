@@ -223,7 +223,7 @@ public class ElasticIndexer implements SearchIndexer {
       ElasticService.client.admin().indices().preparePutMapping(this.index).setType(dataType)
           .setSource(jsonMapping).execute().actionGet();
     } catch (Exception e) {
-      LOGGER.error("Error initializing the Elastic Search Mapping", e);
+      LOGGER.error("Error initializing the Elastic Search Mapping " + mappingFile, e);
     }
   }
 

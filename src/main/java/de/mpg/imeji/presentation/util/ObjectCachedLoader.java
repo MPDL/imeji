@@ -7,9 +7,7 @@ import java.net.URI;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.session.SessionBean;
 
@@ -60,23 +58,5 @@ public class ObjectCachedLoader {
       }
     }
     return profile;
-  }
-
-
-  /**
-   * Load a {@link CollectionImeji} from the session if possible
-   *
-   * @param uri
-   * @return
-   * @throws Exception
-   */
-  public static CollectionImeji loadCollection(URI uri) throws ImejiException {
-    SessionBean session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    CollectionImeji collection = session.getCollectionCached().get(uri);
-    if (collection == null) {
-      collection = new CollectionController().retrieveLazy(uri, session.getUser());
-      session.getCollectionCached().put(collection.getId(), collection);
-    }
-    return collection;
   }
 }

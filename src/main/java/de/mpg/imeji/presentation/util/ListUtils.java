@@ -64,11 +64,11 @@ public class ListUtils {
    * @return
    * @throws Exception
    */
-  public static List<AlbumBean> albumListToAlbumBeanList(Collection<Album> albumList, User user)
-      throws Exception {
+  public static List<AlbumBean> albumListToAlbumBeanList(Collection<Album> albumList, User user,
+      Album activeAlbum) throws Exception {
     List<AlbumBean> beanList = new ArrayList<AlbumBean>();
     for (Album album : albumList) {
-      beanList.add(new AlbumBean(album, user));
+      beanList.add(new AlbumBean(album, user, activeAlbum));
     }
     return beanList;
   }

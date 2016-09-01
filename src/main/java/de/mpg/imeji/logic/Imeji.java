@@ -123,8 +123,9 @@ public class Imeji {
    */
   public static void init() throws IOException, URISyntaxException, ImejiException {
     tdbPath = PropertyReader.getProperty("imeji.tdb.path");
-    init(tdbPath);
     ElasticService.start();
+    init(tdbPath);
+
     nightlyExecutor.start();
   }
 

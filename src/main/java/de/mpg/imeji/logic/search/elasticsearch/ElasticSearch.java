@@ -139,7 +139,7 @@ public class ElasticSearch implements Search {
    */
   private String[] getTypes() {
     if (type == null) {
-      return (String[]) Arrays.asList(ElasticTypes.values()).toArray();
+      return Arrays.stream(ElasticTypes.values()).map(ElasticTypes::name).toArray(String[]::new);
     }
     return (String[]) Arrays.asList(type.name()).toArray();
   }

@@ -331,6 +331,9 @@ public class ElasticQueryFactory {
         return roleQueryWithoutCreator(ElasticFields.READ, pair.getValue(), pair.isNot());
       case uploader:
         return roleQuery(ElasticFields.UPLOAD, pair.getValue(), pair.isNot());
+      case read:
+        return fieldQuery(ElasticFields.READ, pair.getValue(), SearchOperators.EQUALS,
+            pair.isNot());
       case date:
         return timeQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -768,6 +771,8 @@ public class ElasticQueryFactory {
     }
     return q;
   }
+
+
 
   /**
    * Create the query for role="email". Role can be uploader, collaborator. Objects where the user

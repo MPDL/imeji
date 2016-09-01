@@ -563,7 +563,7 @@ public class ConfigurationBean {
   }
 
   public String getMaintenanceMessage() {
-    return Imeji.CONFIG.getMaintenanceMessage();
+    return Imeji.CONFIG.getMaintenanceMessage() != null ? Imeji.CONFIG.getMaintenanceMessage() : "";
   }
 
   public void setTermsOfUse(String s) {

@@ -3,7 +3,6 @@
  */
 package de.mpg.imeji.presentation.album;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -32,7 +30,6 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.ContainerBean;
-import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.image.ThumbnailBean;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
@@ -61,10 +58,6 @@ public class AlbumBean extends ContainerBean {
    * Maximum number of character displayed in the list for the description
    */
   private static final int DESCRIPTION_MAX_SIZE = 300;
-  /**
-   * Maximum number of items displayed on album start page
-   */
-  private static final int MAX_ITEM_NUM_VIEW = 13;
   private String description = "";
   private String descriptionFull = null;
   private ThumbnailBean thumbnail;
@@ -81,11 +74,10 @@ public class AlbumBean extends ContainerBean {
    * @param album
    * @throws Exception
    */
-  public AlbumBean(Album album, User user) throws Exception {
+  public AlbumBean(Album album, User user, Album activeAlbum) throws Exception {
     this.album = album;
     if (album != null) {
       this.id = ObjectHelper.getId(album.getId());
-      activeAlbum = ((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getActiveAlbum();
       if (activeAlbum != null && activeAlbum.getId().equals(album.getId())) {
         active = true;
       }
@@ -129,7 +121,7 @@ public class AlbumBean extends ContainerBean {
           countItems();
           countAllowedItems();
           countDiscardedItems(getSessionUser());
-          if (activeAlbum != null && activeAlbum.getId().equals(album.getId())) {
+          if (getActiveAlbum() != null && getActiveAlbum().getId().equals(album.getId())) {
             active = true;
           }
           int myPrivateCount = getPrivateCount();
@@ -273,37 +265,6 @@ public class AlbumBean extends ContainerBean {
     return active;
   }
 
-  /**
-   * Make the current {@link Album} active
-   *
-   * @return
-   * @throws ImejiException
-   * @throws IOException
-   */
-  public String makeActive(boolean addSelected) throws ImejiException, IOException {
-    findItems(getSessionUser(), getSize());
-    SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    sessionBean.setActiveAlbum(this.album);
-    this.setActive(true);
-    if (addSelected) {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(((HistorySession) BeanHelper.getSessionBean(HistorySession.class))
-              .getPreviousPage().getCompleteUrlWithHistory() + "&add_selected=1");
-    }
-    return "";
-  }
-
-  /**
-   * Make the current {@link Album} inactive
-   *
-   * @return
-   */
-  public String makeInactive() {
-    SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    sessionBean.setActiveAlbum(null);
-    this.setActive(false);
-    return "";
-  }
 
   /**
    * Release the current {@link Album}
@@ -314,7 +275,6 @@ public class AlbumBean extends ContainerBean {
     AlbumController ac = new AlbumController();
     try {
       ac.release(album, getSessionUser());
-      makeInactive();
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_release", getLocale()));
     } catch (Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_release", getLocale()));
@@ -332,7 +292,6 @@ public class AlbumBean extends ContainerBean {
   public String delete() {
     AlbumController c = new AlbumController();
     try {
-      makeInactive();
       c.delete(album, getSessionUser());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_delete", getLocale())
           .replace("XXX_albumName_XXX", this.album.getMetadata().getTitle()));
@@ -496,19 +455,11 @@ public class AlbumBean extends ContainerBean {
             .getNumberOfRecords();
   }
 
-  /**
-   * @return the activeAlbum
-   */
   public Album getActiveAlbum() {
     return activeAlbum;
   }
 
-  /**
-   * @param activeAlbum the activeAlbum to set
-   */
   public void setActiveAlbum(Album activeAlbum) {
     this.activeAlbum = activeAlbum;
   }
-
-
 }

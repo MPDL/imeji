@@ -27,6 +27,7 @@ package de.mpg.imeji.logic.controller.resource;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -38,7 +39,9 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.vo.Grant;
+import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.search.model.SearchResult;
+import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.logic.writer.WriterFacade;
@@ -56,7 +59,7 @@ public class UserGroupController {
       new WriterFacade(Imeji.userModel, SearchObjectTypes.USERGROUPS);
   private Search search =
       SearchFactory.create(SearchObjectTypes.USERGROUPS, SEARCH_IMPLEMENTATIONS.ELASTIC);
-  static Logger LOGGER = Logger.getLogger(UserGroupController.class);
+  private static final Logger LOGGER = Logger.getLogger(UserGroupController.class);
 
   /**
    * Create a {@link UserGroup}
@@ -77,6 +80,26 @@ public class UserGroupController {
    */
   public UserGroup read(String uri, User user) throws ImejiException {
     return (UserGroup) READER.read(uri, user, new UserGroup());
+  }
+
+  /**
+   * Retrieve a list of {@link UserGroup}
+   * 
+   * @param uris
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public List<UserGroup> readBatch(List<String> uris, User user) {
+    List<UserGroup> groups = new ArrayList<>();
+    for (String uri : uris) {
+      try {
+        groups.add((UserGroup) READER.read(uri, user, new UserGroup()));
+      } catch (ImejiException e) {
+        LOGGER.error("Error reading user group" + uri, e);
+      }
+    }
+    return groups;
   }
 
   /**
@@ -113,14 +136,34 @@ public class UserGroupController {
   }
 
   /**
-   * Search all {@link UserGroup} having a {@link Grant} for the object defined in grantFor
-   *
-   * @param grantFor
+   * Search for {@link UserGroup}
+   * 
+   * @param q
+   * @param sort
    * @param user
+   * @param offset
+   * @param size
    * @return
+   * @throws ImejiException
    */
-  public Collection<UserGroup> searchByGrantFor(String grantFor, User user) {
-    return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupWithGrantFor(grantFor), user);
+  public SearchResult search(SearchQuery q, SortCriterion sort, User user, int offset, int size) {
+    return search.search(q, sort, user, null, null, offset, size);
+  }
+
+  /**
+   * Search for {@link UserGroup}
+   * 
+   * @param q
+   * @param sort
+   * @param user
+   * @param offset
+   * @param size
+   * @return
+   * @throws ImejiException
+   */
+  public List<UserGroup> searchAndRetrieve(SearchQuery q, SortCriterion sort, User user, int offset,
+      int size) {
+    return readBatch(search(q, sort, user, offset, size).getResults(), user);
   }
 
   /**

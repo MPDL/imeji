@@ -33,7 +33,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
@@ -96,9 +95,7 @@ public class CreateAlbumBean extends AlbumBean {
             getSessionUser());
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_create", getLocale()));
-      makeActive(false);
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(getNavigation().getAlbumUrl() + getAlbum().getIdString());
+      redirect(getNavigation().getAlbumUrl() + getAlbum().getIdString());
     } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error creating album", e);

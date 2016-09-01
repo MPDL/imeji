@@ -21,13 +21,13 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
+import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
 import de.mpg.imeji.logic.controller.resource.UserController;
@@ -36,11 +36,9 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.PropertyReader;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
-import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.Navigation.Page;
 import de.mpg.imeji.presentation.lang.InternationalizationBean;
 import de.mpg.imeji.presentation.upload.IngestImage;
 import de.mpg.imeji.presentation.util.CookieUtils;
@@ -63,16 +61,12 @@ public class SessionBean implements Serializable {
 
   private Locale locale;
   private User user = null;
-  private Page currentPage;
   private List<String> selected;
   private Album activeAlbum;
   private Map<URI, MetadataProfile> profileCached;
-  private Map<URI, CollectionImeji> collectionCached;
   private String selectedImagesContext = null;
   private Style selectedCss = Style.NONE;
   private boolean showLogin = false;
-  private int numberOfItemsPerPage = 18;
-  private int numberOfContainersPerPage = 10;
   private boolean hasUploadRights = false;
   private String applicationUrl;
   private String spaceId;
@@ -85,8 +79,6 @@ public class SessionBean implements Serializable {
    */
   public static final String styleCookieName = "IMEJI_STYLE";
   public static final String langCookieName = "IMEJI_LANG";
-  public static final String numberOfItemsPerPageCookieName = "IMEJI_ITEMS_PER_PAGE";
-  public static final String numberOfContainersPerPageCookieName = "IMEJI_CONTAINERS_PER_PAGE";
   public static final String browseViewCookieName = "IMEJI_BROWSE_VIEW";
 
   /*
@@ -107,29 +99,14 @@ public class SessionBean implements Serializable {
   public SessionBean() {
     selected = new ArrayList<String>();
     profileCached = new HashMap<URI, MetadataProfile>();
-    collectionCached = new HashMap<URI, CollectionImeji>();
     locale = InternationalizationBean.getUserLocale();
     initCssWithCookie();
     initApplicationUrl();
-    initNumberOfItemsPerPageWithCookieOrProperties();
-    initNumberOfContainersPerPageWithCookieOrProperties();
     initBrowseViewWithCookieOrConfig();
     institute = findInstitute();
     instituteId = findInstituteId();
   }
 
-  /**
-   * Initialize the number of items per page by:<br/>
-   * 1- Reading the property<br/>
-   * 2- Reading the Cookie<br/>
-   * If the cookie is not null, this value is used, otherwise, a new cookie is created with the
-   * value in the porperty
-   */
-  private void initNumberOfItemsPerPageWithCookieOrProperties() {
-    this.numberOfItemsPerPage =
-        Integer.parseInt(initWithCookieAndProperty(Integer.toString(numberOfItemsPerPage),
-            numberOfItemsPerPageCookieName, "imeji.image.list.size"));
-  }
 
   /**
    * Init the default browse view. If a cookie is set, use it, otherwise use config value
@@ -137,43 +114,6 @@ public class SessionBean implements Serializable {
   private void initBrowseViewWithCookieOrConfig() {
     this.selectedBrowseListView =
         CookieUtils.readNonNull(browseViewCookieName, Imeji.CONFIG.getDefaultBrowseView());
-  }
-
-  /**
-   * Initialize the number of items per page by:<br/>
-   * 1- Reading the property<br/>
-   * 2- Reading the Cookie<br/>
-   * If the cookie is not null, this value is used, otherwise, a new cookie is created with the
-   * value in the porperty
-   */
-  private void initNumberOfContainersPerPageWithCookieOrProperties() {
-    this.numberOfContainersPerPage =
-        Integer.parseInt(initWithCookieAndProperty(Integer.toString(numberOfContainersPerPage),
-            numberOfContainersPerPageCookieName, "imeji.container.list.size"));
-  }
-
-  /**
-   * Initialize the property by:<br/>
-   * 1- Reading the property file<br/>
-   * 2- Reading the Cookie<br/>
-   * If the cookie is not null, this value is used, otherwise, a new cookie is created with the
-   * value from the property file
-   *
-   * @param value
-   * @param cookieName
-   * @param propertyName
-   * @return
-   */
-  private String initWithCookieAndProperty(String value, String cookieName, String propertyName) {
-    try {
-      // First read in the property
-      value = PropertyReader.getProperty(propertyName);
-    } catch (NumberFormatException | IOException | URISyntaxException e) {
-      Logger.getLogger(SessionBean.class)
-          .error("There had been some initWithCookieAndProperty issues.", e);
-    }
-    // Second, Read the cookie and set a default value if null
-    return CookieUtils.readNonNull(cookieName, value);
   }
 
   /**
@@ -285,24 +225,6 @@ public class SessionBean implements Serializable {
    *
    * @return
    */
-  public Page getCurrentPage() {
-    return currentPage;
-  }
-
-  /**
-   * setter
-   *
-   * @param currentPage
-   */
-  public void setCurrentPage(Page currentPage) {
-    this.currentPage = currentPage;
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
   public List<String> getSelected() {
     return selected;
   }
@@ -349,6 +271,25 @@ public class SessionBean implements Serializable {
   }
 
   /**
+   * Make the passed album active
+   * 
+   * @param albumId
+   * @throws ImejiException
+   */
+  public String activateAlbum(String albumId) throws ImejiException {
+    this.activeAlbum = new AlbumController().retrieve(URI.create(albumId), user);
+    return "pretty:";
+  }
+
+  /**
+   * Deactivate the album
+   */
+  public String deactivateAlbum() {
+    this.activeAlbum = null;
+    return "pretty:";
+  }
+
+  /**
    * setter
    *
    * @return
@@ -384,19 +325,6 @@ public class SessionBean implements Serializable {
     this.profileCached = profileCached;
   }
 
-  /**
-   * @return the collectionCached
-   */
-  public Map<URI, CollectionImeji> getCollectionCached() {
-    return collectionCached;
-  }
-
-  /**
-   * @param collectionCached the collectionCached to set
-   */
-  public void setCollectionCached(Map<URI, CollectionImeji> collectionCached) {
-    this.collectionCached = collectionCached;
-  }
 
   /**
    * Check if the selected CSS is correct according to the configuration value. If errors are found,
@@ -449,34 +377,6 @@ public class SessionBean implements Serializable {
 
   public void setShowLogin(boolean showLogin) {
     this.showLogin = showLogin;
-  }
-
-  /**
-   * @return the numberOfItemsPerPage
-   */
-  public int getNumberOfItemsPerPage() {
-    return numberOfItemsPerPage;
-  }
-
-  /**
-   * @param numberOfItemsPerPage the numberOfItemsPerPage to set
-   */
-  public void setNumberOfItemsPerPage(int numberOfItemsPerPage) {
-    this.numberOfItemsPerPage = numberOfItemsPerPage;
-  }
-
-  /**
-   * @return the numberOfContainersPerPage
-   */
-  public int getNumberOfContainersPerPage() {
-    return numberOfContainersPerPage;
-  }
-
-  /**
-   * @param numberOfContainersPerPage the numberOfContainersPerPage to set
-   */
-  public void setNumberOfContainersPerPage(int numberOfContainersPerPage) {
-    this.numberOfContainersPerPage = numberOfContainersPerPage;
   }
 
   /**

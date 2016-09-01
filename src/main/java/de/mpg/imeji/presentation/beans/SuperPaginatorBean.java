@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.CookieUtils;
 
@@ -34,9 +33,11 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  * @param <FilterType> The type of filters managed by this bean that are usable for every
  *        ListRetriever, eg. sorting of PubItems.
  */
-public abstract class BasePaginatorListSessionBean<ListElementType> extends SuperBean {
+public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
   private static final long serialVersionUID = -3493783822585689753L;
-  protected static Logger LOGGER = Logger.getLogger(BasePaginatorListSessionBean.class);
+  protected static Logger LOGGER = Logger.getLogger(SuperPaginatorBean.class);
+  public static final String numberOfItemsPerPageCookieName = "IMEJI_ITEMS_PER_PAGE";
+  public static final String numberOfContainersPerPageCookieName = "IMEJI_CONTAINERS_PER_PAGE";
   /**
    * A list that contains the menu entries of the elements per page menu.
    */
@@ -85,7 +86,7 @@ public abstract class BasePaginatorListSessionBean<ListElementType> extends Supe
   /**
    * Initializes a new BasePaginatorListSessionBean
    */
-  public BasePaginatorListSessionBean() {
+  public SuperPaginatorBean() {
     paginatorPageList = new ArrayList<PaginatorPage>();
     currentPartList = new ArrayList<ListElementType>();
     elementsPerPageSelectItems = new ArrayList<SelectItem>();
@@ -219,7 +220,7 @@ public abstract class BasePaginatorListSessionBean<ListElementType> extends Supe
    * Set the cookie for number of elements per page (per default, for items)
    */
   public void setCookieElementPerPage() {
-    CookieUtils.updateCookieValue(SessionBean.numberOfItemsPerPageCookieName,
+    CookieUtils.updateCookieValue(numberOfItemsPerPageCookieName,
         Integer.toString(elementsPerPage));
   }
 

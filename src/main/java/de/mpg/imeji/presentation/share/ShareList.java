@@ -12,6 +12,10 @@ import de.mpg.imeji.logic.collaboration.invitation.Invitation;
 import de.mpg.imeji.logic.collaboration.invitation.InvitationBusinessController;
 import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.controller.resource.UserGroupController;
+import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchOperators;
+import de.mpg.imeji.logic.search.model.SearchPair;
+import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
@@ -56,7 +60,10 @@ public final class ShareList {
   private void retrieveGroups(URI ownerUri, String sharedObjectUri, String profileUri,
       SharedObjectType type, User currentUser, Locale locale) {
     UserGroupController ugc = new UserGroupController();
-    Collection<UserGroup> groups = ugc.searchByGrantFor(sharedObjectUri, Imeji.adminUser);
+    Collection<UserGroup> groups = ugc.searchAndRetrieve(
+        SearchQuery.toSearchQuery(
+            new SearchPair(SearchFields.read, SearchOperators.EQUALS, sharedObjectUri, false)),
+        null, Imeji.adminUser, 0, -1);;
     for (UserGroup group : groups) {
       items.add(
           new ShareListItem(group, type, sharedObjectUri, profileUri, null, currentUser, locale));
@@ -75,7 +82,10 @@ public final class ShareList {
   private void retrieveUsers(URI ownerUri, String sharedObjectUri, String profileUri,
       SharedObjectType type, User currentUser, Locale locale) {
     UserController uc = new UserController(Imeji.adminUser);
-    Collection<User> allUser = uc.retrieveBatch(uc.searchByGrantFor(sharedObjectUri), -1);
+    Collection<User> allUser = uc.searchAndRetrieve(
+        SearchQuery.toSearchQuery(
+            new SearchPair(SearchFields.read, SearchOperators.EQUALS, sharedObjectUri, false)),
+        null, Imeji.adminUser, 0, -1);
     for (User u : allUser) {
       // Do not display the creator of this collection here
       if (!u.getId().toString().equals(ownerUri.toString())) {

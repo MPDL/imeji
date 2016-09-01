@@ -19,7 +19,6 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Container;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.CookieUtils;
 
 /**
@@ -30,7 +29,7 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  * @version $Revision$ $LastChangedDate$
  * @param <T>
  */
-public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean<T> {
+public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
   private static final long serialVersionUID = -7823020782502007646L;
   private static final Logger LOGGER = Logger.getLogger(SuperContainerBean.class);
   protected String query = "";
@@ -77,7 +76,7 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
    */
   @Override
   public void setCookieElementPerPage() {
-    CookieUtils.updateCookieValue(SessionBean.numberOfContainersPerPageCookieName,
+    CookieUtils.updateCookieValue(SuperPaginatorBean.numberOfContainersPerPageCookieName,
         Integer.toString(getElementsPerPage()));
   }
 
@@ -100,8 +99,8 @@ public abstract class SuperContainerBean<T> extends BasePaginatorListSessionBean
 
   @Override
   public void initElementsPerPageMenu() {
-    setElementsPerPage(
-        Integer.parseInt(CookieUtils.readNonNull(SessionBean.numberOfContainersPerPageCookieName,
+    setElementsPerPage(Integer
+        .parseInt(CookieUtils.readNonNull(SuperPaginatorBean.numberOfContainersPerPageCookieName,
             Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
     try {
       String options = Imeji.PROPERTIES.getProperty("imeji.container.list.size.options");

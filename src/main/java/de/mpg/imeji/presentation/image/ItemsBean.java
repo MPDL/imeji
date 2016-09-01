@@ -33,7 +33,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.presentation.beans.BasePaginatorListSessionBean;
+import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -51,7 +51,7 @@ import de.mpg.imeji.presentation.util.ListUtils;
  */
 @ManagedBean(name = "ItemsBean")
 @ViewScoped
-public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
+public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private static final long serialVersionUID = -5564640316578205957L;
   private int totalNumberOfRecords;
   private FacetsJob facets;
@@ -134,8 +134,9 @@ public class ItemsBean extends BasePaginatorListSessionBean<ThumbnailBean> {
 
   @Override
   public void initElementsPerPageMenu() {
-    setElementsPerPage(Integer.parseInt(CookieUtils.readNonNull(
-        SessionBean.numberOfItemsPerPageCookieName, Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
+    setElementsPerPage(Integer.parseInt(
+        CookieUtils.readNonNull(SuperPaginatorBean.numberOfItemsPerPageCookieName,
+            Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
     try {
       String options = Imeji.PROPERTIES.getProperty("imeji.image.list.size.options");
       for (String option : options.split(",")) {
