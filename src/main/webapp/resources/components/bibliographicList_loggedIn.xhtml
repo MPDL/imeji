@@ -26,10 +26,7 @@
 						<ui:fragment >
 							<list:bibListItem_draft itemClass="imj_bibliographicListItem" item="#{container}" itemIndex="#{index.index}" deleteItemConfirmationText="#{cc.attrs.deleteItemConfirmationText}" releaseItemConfirmationText="#{cc.attrs.releaseItemConfirmationText}" isActivatable="#{cc.attrs.isActivatable}" metadataNavigationURL="#{cc.attrs.metadataNavigationURL}" withdrawConfirmationText="#{cc.attrs.withdrawItemConfirmationText}"/>
 						</ui:fragment>
-<!-- 						<ui:fragment rendered="#{container.status == 'RELEASED'}">
-							<list:bibListItem_released itemClass="imj_bibliographicListItem" item="#{container}" itemIndex="#{index.index}" isActivatable="#{cc.attrs.isActivatable}" metadataNavigationURL="#{cc.attrs.metadataNavigationURL}" deleteItemConfirmationText="#{cc.attrs.deleteItemConfirmationText}" withdrawConfirmationText="#{cc.attrs.withdrawItemConfirmationText}"/>
-						</ui:fragment>
- -->					</ui:repeat>
+ 					</ui:repeat>
 				</ul>
 			</h:panelGroup>
 	   </div> <!-- END OF BIBLIOGRAPHIC LIST -->

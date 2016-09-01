@@ -34,7 +34,9 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
+import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
@@ -50,7 +52,10 @@ import de.mpg.imeji.logic.writer.WriterFacade;
  */
 public class UserGroupController {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
-  private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel);
+  private static final WriterFacade WRITER =
+      new WriterFacade(Imeji.userModel, SearchObjectTypes.USERGROUPS);
+  private Search search =
+      SearchFactory.create(SearchObjectTypes.USERGROUPS, SEARCH_IMPLEMENTATIONS.ELASTIC);
   static Logger LOGGER = Logger.getLogger(UserGroupController.class);
 
   /**

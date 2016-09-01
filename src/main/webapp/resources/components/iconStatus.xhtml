@@ -4,50 +4,52 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:composite="http://java.sun.com/jsf/composite">
 	
-	<composite:interface>
+	<composite:interface componentType="StatusComponent">
 		<composite:attribute name="imejiResource"/>
 	</composite:interface>
 	
 	<composite:implementation>
-		<h:outputText value="#{StatusBean.init(cc.attrs.imejiResource)}"/>
-		<ui:fragment rendered="#{SessionBean.user != null and StatusBean.show}">
+		<h:outputText value="#{cc.init(cc.attrs.imejiResource, SessionBean.user, SessionBean.locale, Navigation.applicationUrl)}"/>
+	
+		<ui:fragment rendered="#{SessionBean.user != null and cc.show}">
 			<div class="imj_statusHeaderArea">
-				<ui:fragment rendered="#{StatusBean.status != 'PENDING'}">
+				<ui:fragment rendered="#{cc.status != 'PENDING'}">
 					<div class="imj_overlayMenu imj_menuRight">
 						<div class="imj_menuHeader">
-		                    <span class="#{StatusBean.status == 'RELEASED' ? 'fa fa-globe' : 'fa fa-minus-circle'} fa-size-3">&#160;</span>
+		                    <span class="#{cc.status == 'RELEASED' ? 'fa fa-globe' : 'fa fa-minus-circle'} fa-size-3">&#160;</span>
 						</div>
 						<div class="imj_menuBody">
 							<ul class="imj_overlayMenuList">
-								<li>#{StatusBean.statusLabel}</li>
+								<li>#{cc.statusLabel}</li>
 							</ul>
 						</div>
 					</div>
 				</ui:fragment>
-				<ui:fragment rendered="#{!empty StatusBean.users or !empty StatusBean.groups}">
+
+				<ui:fragment rendered="#{!empty cc.users or !empty cc.groups}">
 					<div class="imj_overlayMenu imj_menuRight">
 						<div class="imj_menuHeader">
 		                    <span class="fa fa-users fa-size-3">&#160;</span>
 						</div>
 						<div class="imj_menuBody">
 							<ul class="imj_overlayMenuList">
-								<ui:fragment rendered="#{StatusBean.owner != null}">
+								<ui:fragment rendered="#{cc.owner != null}">
 									<span style="font-style:italic">#{lbl.role_owner}:</span>
-									<li>#{StatusBean.owner}</li>
+									<li>#{cc.owner}</li>
 								</ui:fragment>
 								<span style="font-style:italic">#{lbl.shared_with}:</span>
-								<ui:repeat var="sharedWith" value="#{StatusBean.users}">
+								<ui:repeat var="sharedWith" value="#{cc.users}">
 									<li>#{sharedWith}</li>
 								</ui:repeat>
-								<ui:repeat var="sharedWith" value="#{StatusBean.groups}">
+								<ui:repeat var="sharedWith" value="#{cc.groups}">
 									<li>#{sharedWith} <span style="font-style:italic;">(#{lbl.group})</span></li>
 								</ui:repeat>
-								<ui:fragment rendered="#{StatusBean.hasMoreCollaborator}">
+								<ui:fragment rendered="#{cc.hasMoreCollaborator}">
 									<li>...</li>
 								</ui:fragment>
-								<ui:fragment rendered="#{StatusBean.showManage}">
+								<ui:fragment rendered="#{cc.showManage}">
 									<li class="imj_listDottedSeparator">
-										<a href="#{StatusBean.linkToSharePage}" class="imj_inactiveLink">
+										<a href="#{cc.linkToSharePage}" class="imj_inactiveLink">
 											#{lbl.manage}
 										</a>
 									</li>

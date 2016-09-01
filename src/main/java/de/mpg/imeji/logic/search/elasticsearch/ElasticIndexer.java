@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
@@ -32,9 +31,6 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticSpace;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUser;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
 import de.mpg.imeji.logic.search.elasticsearch.util.ElasticSearchUtil;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchOperators;
-import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -173,13 +169,11 @@ public class ElasticIndexer implements SearchIndexer {
    */
   private static Object toESEntity(Object obj, String dataType) {
     if (obj instanceof Item) {
-      obj = setAlbums((Item) obj);
       return new ElasticItem((Item) obj,
           getSpace((Item) obj, ElasticTypes.folders.name(), ElasticService.DATA_ALIAS));
     }
     if (obj instanceof CollectionImeji) {
-      ElasticFolder ef = new ElasticFolder((CollectionImeji) obj);
-      return ef;
+      return new ElasticFolder((CollectionImeji) obj);
     }
     if (obj instanceof Album) {
       return new ElasticAlbum((Album) obj);
@@ -196,24 +190,7 @@ public class ElasticIndexer implements SearchIndexer {
     return obj;
   }
 
-  /**
-   * Set the albums of an item
-   *
-   * @param item
-   * @return
-   */
-  private static Item setAlbums(Item item) {
-    AlbumController c = new AlbumController();
-    SearchQuery q = new SearchQuery();
-    try {
-      q.addPair(new SearchPair(SearchFields.member, SearchOperators.EQUALS, item.getId().toString(),
-          false));
-    } catch (UnprocessableError e) {
-      LOGGER.error("Error searching for albums of item " + item.getIdString(), e);
-    }
-    item.setAlbums(c.search(q, Imeji.adminUser, null, -1, 0, null).getResults());
-    return item;
-  }
+
 
   /**
    * Get the Id of an Object

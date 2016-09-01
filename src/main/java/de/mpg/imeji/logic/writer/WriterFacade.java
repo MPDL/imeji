@@ -93,6 +93,18 @@ public class WriterFacade {
     }
   }
 
+  /**
+   * Constructor to decouple model and searchtype. Needed for usergroup which have same mode than
+   * users
+   * 
+   * @param modelURI
+   * @param type
+   */
+  public WriterFacade(String modelURI, SearchObjectTypes type) {
+    this.writer = WriterFactory.create(modelURI);
+    indexer = SearchFactory.create(type, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
+  }
+
   /*
    * (non-Javadoc)
    *

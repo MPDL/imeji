@@ -339,19 +339,12 @@ public class UserController {
    * @return
    */
   public Collection<User> searchUserByName(String name) {
-    // Search search = SearchFactory.create();
-
-    // return retrieveBatchLazy(
-    // search.searchString(JenaCustomQueries.selectUserAll(name), null, null, 0, -1).getResults(),
-    // -1);
-
     try {
       return retrieveBatchLazy(search.search(SearchQueryParser.parseStringQuery(name),
           new SortCriterion(SearchFields.person_family, SortOrder.ASCENDING), user, null, null, 0,
           -1).getResults(), -1);
     } catch (UnprocessableError e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("Error search users", e);
     }
     return new ArrayList<>();
   }
@@ -367,6 +360,20 @@ public class UserController {
     return search
         .searchString(JenaCustomQueries.selectUserWithGrantFor(grantFor), null, null, 0, -1)
         .getResults();
+  }
+
+  /**
+   * Search for users
+   * 
+   * @param q
+   * @param sort
+   * @param user
+   * @param offset
+   * @param size
+   * @return
+   */
+  public SearchResult search(SearchQuery q, SortCriterion sort, User user, int offset, int size) {
+    return search.search(q, sort, user, null, null, offset, size);
   }
 
 

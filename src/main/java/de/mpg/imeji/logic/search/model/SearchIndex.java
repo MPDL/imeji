@@ -24,7 +24,7 @@ public class SearchIndex {
    * @version $Revision$ $LastChangedDate$
    */
   public static enum SearchFields {
-    member, hasgrant, prop, creator_id, creator, collaborator, editor, uploader, created, modified, status, grant, grant_type, grant_for, filename, visibility, mds, col, alb, prof, metadatatype, cont_md, title, description, cont_person, author_familyname, author_givenname, author_name, cont_person_org, author_org_name, md, statement, all, text, number, date, time, location, coordinates, license, url, label, citation, cone, person, person_completename, person_family, person_given, person_id, person_role, person_org, person_org_name, person_org_id, person_org_description, person_org_city, person_org_country, checksum, filetype, filesize, pid, info_label, info_text, info_url, email;
+    member, hasgrant, prop, creator_id, creator, collaborator, read, editor, uploader, created, modified, status, grant, grant_type, grant_for, filename, visibility, mds, col, alb, prof, metadatatype, cont_md, title, description, cont_person, author_familyname, author_givenname, author_name, cont_person_org, author_org_name, md, statement, all, text, number, date, time, location, coordinates, license, url, label, citation, cone, person, person_completename, person_family, person_given, person_id, person_role, person_org, person_org_name, person_org_id, person_org_description, person_org_city, person_org_country, checksum, filetype, filesize, pid, info_label, info_text, info_url, email;
   }
 
   private String name;

@@ -1,12 +1,12 @@
-package de.mpg.imeji.presentation.beans;
+package de.mpg.imeji.presentation.component;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.faces.component.FacesComponent;
+import javax.faces.component.UINamingContainer;
 
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
@@ -20,18 +20,17 @@ import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.presentation.album.AlbumBean;
+import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.collection.CollectionListItem;
 
 /**
- * Abstract Bean for Status informations (Status + Shared)
+ * JSF Component Status informations (Status + Shared)
  *
  * @author bastiens
  *
  */
-@ManagedBean(name = "StatusBean")
-@RequestScoped
-public class StatusBean extends SuperBean implements Serializable {
-  private static final long serialVersionUID = 3560140124183947655L;
+@FacesComponent("StatusComponent")
+public class StatusComponent extends UINamingContainer {
   private Status status;
   private String owner;
   private boolean show = false;
@@ -42,13 +41,29 @@ public class StatusBean extends SuperBean implements Serializable {
   private static final int COLLABORATOR_LIST_MAX_SIZE = 5;
   private int collaboratorListSize = 0;
   private boolean hasMoreCollaborator = false;
+  private User sessionUser;
+  private Locale locale;
+  private String applicationUrl;
+
+  public StatusComponent() {
+    // do nothing
+  }
 
   /**
    * Method called from the JSF component
    *
    * @param o
    */
-  public void init(Object o) {
+  public void init(Object o, User sessionUser, Locale locale, String applicationUrl) {
+    this.sessionUser = sessionUser;
+    this.locale = locale;
+    this.applicationUrl = applicationUrl;
+    this.show = false;
+    this.showManage = false;
+    this.users = new ArrayList<>();
+    this.groups = new ArrayList<>();
+    this.collaboratorListSize = 0;
+    this.hasMoreCollaborator = false;
     if (o instanceof Properties) {
       initialize((Properties) o);
     } else if (o instanceof CollectionListItem) {
@@ -65,10 +80,10 @@ public class StatusBean extends SuperBean implements Serializable {
     reset();
     if (properties != null) {
       status = properties.getStatus();
-      if (AuthUtil.staticAuth().hasReadGrant(getSessionUser(), properties)) {
+      if (AuthUtil.staticAuth().hasReadGrant(sessionUser, properties)) {
         users = getUserSharedWith(properties);
         groups = getGroupSharedWith(properties);
-        showManage = AuthUtil.staticAuth().administrate(getSessionUser(), properties)
+        showManage = AuthUtil.staticAuth().administrate(sessionUser, properties)
             && !(properties instanceof MetadataProfile);
       }
       linkToSharePage = initLinkToSharePage(properties.getId());
@@ -111,6 +126,7 @@ public class StatusBean extends SuperBean implements Serializable {
         break;
       }
     }
+
     return l;
   }
 
@@ -146,6 +162,14 @@ public class StatusBean extends SuperBean implements Serializable {
    */
   private List<User> findAllUsersWithReadGrant(Properties p) {
     UserController uc = new UserController(Imeji.adminUser);
+    // SearchQuery q = new SearchQuery();
+    // try {
+    // q.addPair(
+    // new SearchPair(SearchFields.read, SearchOperators.EQUALS, p.getId().toString(), false));
+    // } catch (UnprocessableError e) {
+    // // TODO Auto-generated catch block
+    // e.printStackTrace();
+    // }
     List<User> l = uc.retrieveBatchLazy(uc.searchByGrantFor(p.getId().toString()),
         COLLABORATOR_LIST_MAX_SIZE + 1);
     if (p instanceof Item) {
@@ -179,9 +203,8 @@ public class StatusBean extends SuperBean implements Serializable {
    * @return
    */
   private String initLinkToSharePage(URI uri) {
-    return getNavigation().getApplicationUrl()
-        + ObjectHelper.getObjectType(uri).name().toLowerCase() + "/" + ObjectHelper.getId(uri) + "/"
-        + Navigation.SHARE.getPath();
+    return applicationUrl + ObjectHelper.getObjectType(uri).name().toLowerCase() + "/"
+        + ObjectHelper.getId(uri) + "/" + Navigation.SHARE.getPath();
   }
 
   /**
@@ -191,11 +214,11 @@ public class StatusBean extends SuperBean implements Serializable {
    */
   public String getStatusLabel() {
     if (status == Status.RELEASED) {
-      return Imeji.RESOURCE_BUNDLE.getLabel("published", getLocale());
+      return Imeji.RESOURCE_BUNDLE.getLabel("published", locale);
     } else if (status == Status.WITHDRAWN) {
-      return Imeji.RESOURCE_BUNDLE.getLabel("withdrawn", getLocale());
+      return Imeji.RESOURCE_BUNDLE.getLabel("withdrawn", locale);
     }
-    return Imeji.RESOURCE_BUNDLE.getLabel("private", getLocale());
+    return Imeji.RESOURCE_BUNDLE.getLabel("private", locale);
   }
 
   /**
@@ -232,4 +255,6 @@ public class StatusBean extends SuperBean implements Serializable {
   public boolean isHasMoreCollaborator() {
     return hasMoreCollaborator;
   }
+
+
 }
