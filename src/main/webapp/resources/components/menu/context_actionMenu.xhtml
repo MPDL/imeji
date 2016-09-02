@@ -347,7 +347,7 @@
 							<h:form>
 								<h:outputText styleClass="imj_menuText" value="#{lbl.size}: #{SessionBean.activeAlbum.images.size()} #{lbl.items} "/>
 								<li>
-									<h:outputLink value="#{Navigation.albumUrl}#{SessionBean.activeAlbum.idString}" title="#{lbl.view}">
+									<h:outputLink value="#{Navigation.albumUrl}#{SessionBean.activeAlbum.idString}/#{Navigation.browsePath}?q=" title="#{lbl.view}">
 										<h:outputText value="#{lbl.album_view} "/>
 										<span class="fa fa-external-link"/>
 									</h:outputLink>					

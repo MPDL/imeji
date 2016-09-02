@@ -78,8 +78,19 @@ public class UserGroupController {
    * @return
    * @throws ImejiException
    */
-  public UserGroup read(String uri, User user) throws ImejiException {
+  public UserGroup retrieve(String uri, User user) throws ImejiException {
     return (UserGroup) READER.read(uri, user, new UserGroup());
+  }
+
+  /**
+   * Read a {@link UserGroup} with the given uri
+   *
+   * @param uri
+   * @return
+   * @throws ImejiException
+   */
+  public UserGroup retrieveLazy(String uri, User user) throws ImejiException {
+    return (UserGroup) READER.readLazy(uri, user, new UserGroup());
   }
 
   /**
@@ -90,11 +101,31 @@ public class UserGroupController {
    * @return
    * @throws ImejiException
    */
-  public List<UserGroup> readBatch(List<String> uris, User user) {
+  public List<UserGroup> retrieveBatch(List<String> uris, User user) {
     List<UserGroup> groups = new ArrayList<>();
     for (String uri : uris) {
       try {
         groups.add((UserGroup) READER.read(uri, user, new UserGroup()));
+      } catch (ImejiException e) {
+        LOGGER.error("Error reading user group" + uri, e);
+      }
+    }
+    return groups;
+  }
+
+  /**
+   * Retrieve a list of {@link UserGroup}
+   * 
+   * @param uris
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public List<UserGroup> retrieveBatchLazy(List<String> uris, User user) {
+    List<UserGroup> groups = new ArrayList<>();
+    for (String uri : uris) {
+      try {
+        groups.add((UserGroup) READER.readLazy(uri, user, new UserGroup()));
       } catch (ImejiException e) {
         LOGGER.error("Error reading user group" + uri, e);
       }
@@ -110,7 +141,7 @@ public class UserGroupController {
    * @throws ImejiException
    */
   public UserGroup read(URI uri, User user) throws ImejiException {
-    return read(uri.toString(), user);
+    return retrieve(uri.toString(), user);
   }
 
   /**
@@ -163,7 +194,23 @@ public class UserGroupController {
    */
   public List<UserGroup> searchAndRetrieve(SearchQuery q, SortCriterion sort, User user, int offset,
       int size) {
-    return readBatch(search(q, sort, user, offset, size).getResults(), user);
+    return retrieveBatch(search(q, sort, user, offset, size).getResults(), user);
+  }
+
+  /**
+   * Search for {@link UserGroup}
+   * 
+   * @param q
+   * @param sort
+   * @param user
+   * @param offset
+   * @param size
+   * @return
+   * @throws ImejiException
+   */
+  public List<UserGroup> searchAndRetrieveLazy(SearchQuery q, SortCriterion sort, User user,
+      int offset, int size) {
+    return retrieveBatchLazy(search(q, sort, user, offset, size).getResults(), user);
   }
 
   /**

@@ -89,7 +89,7 @@ public class UsersBean extends SuperBean {
         && !"".equals(UrlHelper.getParameterValue("group"))) {
       UserGroupController c = new UserGroupController();
       try {
-        setGroup(c.read(UrlHelper.getParameterValue("group"), getSessionUser()));
+        setGroup(c.retrieve(UrlHelper.getParameterValue("group"), getSessionUser()));
       } catch (Exception e) {
         BeanHelper.error("error loading user group " + UrlHelper.getParameterValue("group"));
         LOGGER.error(e);

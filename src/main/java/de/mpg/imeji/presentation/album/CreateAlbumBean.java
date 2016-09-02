@@ -94,6 +94,7 @@ public class CreateAlbumBean extends AlbumBean {
         ac.updateLogo(album, new File(containerEditorSession.getUploadedLogoPath()),
             getSessionUser());
       }
+      getSessionBean().setActiveAlbum(album);
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_create", getLocale()));
       redirect(getNavigation().getAlbumUrl() + getAlbum().getIdString());
     } catch (UnprocessableError e) {
@@ -120,4 +121,5 @@ public class CreateAlbumBean extends AlbumBean {
   public void setContainerEditorSession(ContainerEditorSession containerEditorSession) {
     this.containerEditorSession = containerEditorSession;
   }
+
 }

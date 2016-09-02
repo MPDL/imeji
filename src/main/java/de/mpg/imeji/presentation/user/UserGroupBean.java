@@ -75,7 +75,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
     if (groupId != null) {
       UserGroupController c = new UserGroupController();
       try {
-        this.userGroup = c.read(groupId, getSessionUser());
+        this.userGroup = c.retrieve(groupId, getSessionUser());
         this.users = loadUsers(userGroup);
         this.roles = ShareUtil.getAllRoles(userGroup, getSessionUser(), getLocale());
       } catch (ImejiException e) {

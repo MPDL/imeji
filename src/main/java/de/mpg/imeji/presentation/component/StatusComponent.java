@@ -166,10 +166,10 @@ public class StatusComponent extends UINamingContainer {
    */
   private List<User> findAllUsersWithReadGrant(Properties p) {
     UserController uc = new UserController(Imeji.adminUser);
-    List<User> l = uc.searchAndRetrieve(getReadQuery(p.getId().toString()), null, Imeji.adminUser,
-        0, COLLABORATOR_LIST_MAX_SIZE);
+    List<User> l = uc.searchAndRetrieveLazy(getReadQuery(p.getId().toString()), null,
+        Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE);
     if (p instanceof Item) {
-      l.addAll(uc.searchAndRetrieve(getReadQuery(((Item) p).getCollection().toString()), null,
+      l.addAll(uc.searchAndRetrieveLazy(getReadQuery(((Item) p).getCollection().toString()), null,
           Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE));
     }
     return l;
@@ -194,10 +194,10 @@ public class StatusComponent extends UINamingContainer {
    */
   private List<UserGroup> findAllGroupsWithReadGrant(Properties p) {
     UserGroupController ugc = new UserGroupController();
-    List<UserGroup> l = ugc.searchAndRetrieve(getReadQuery(p.getId().toString()), null,
+    List<UserGroup> l = ugc.searchAndRetrieveLazy(getReadQuery(p.getId().toString()), null,
         Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE);
     if (p instanceof Item) {
-      l.addAll(ugc.searchAndRetrieve(getReadQuery(((Item) p).getCollection().toString()), null,
+      l.addAll(ugc.searchAndRetrieveLazy(getReadQuery(((Item) p).getCollection().toString()), null,
           Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE));
     }
     return l;

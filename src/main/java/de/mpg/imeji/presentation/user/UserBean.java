@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
@@ -49,6 +50,8 @@ public class UserBean extends SuperBean {
   private List<ShareListItem> roles = new ArrayList<ShareListItem>();
   private boolean edit = false;
   private QuotaUICompoment quota;
+  @ManagedProperty(value = "#{LoginBean}")
+  private LoginBean loginBean;
 
   public UserBean() {
     // mandatory for JSF initialization
@@ -96,7 +99,6 @@ public class UserBean extends SuperBean {
     if (id != null && getSessionUser() != null) {
       user = new UserController(getSessionUser()).retrieve(id, getSessionUser());
     } else if (id != null && getSessionUser() == null) {
-      LoginBean loginBean = (LoginBean) BeanHelper.getRequestBean(LoginBean.class);
       loginBean.setLogin(id);
     }
   }
@@ -322,5 +324,13 @@ public class UserBean extends SuperBean {
    */
   public void setQuota(QuotaUICompoment quota) {
     this.quota = quota;
+  }
+
+  public LoginBean getLoginBean() {
+    return loginBean;
+  }
+
+  public void setLoginBean(LoginBean loginBean) {
+    this.loginBean = loginBean;
   }
 }

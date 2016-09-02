@@ -392,7 +392,7 @@ public class ShareBean extends SuperBean implements Serializable {
   private UserGroup retrieveGroup(String uri) {
     UserGroupController c = new UserGroupController();
     try {
-      return c.read(uri, Imeji.adminUser);
+      return c.retrieve(uri, Imeji.adminUser);
     } catch (Exception e) {
       return null;
     }

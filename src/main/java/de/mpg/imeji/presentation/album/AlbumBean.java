@@ -54,6 +54,8 @@ public class AlbumBean extends ContainerBean {
   private String tab;
   @ManagedProperty(value = "#{SessionBean.activeAlbum}")
   private Album activeAlbum;
+  @ManagedProperty(value = "#{SessionBean}")
+  private SessionBean sessionBean;
   /**
    * Maximum number of character displayed in the list for the description
    */
@@ -76,6 +78,7 @@ public class AlbumBean extends ContainerBean {
    */
   public AlbumBean(Album album, User user, Album activeAlbum) throws Exception {
     this.album = album;
+    setSessionUser(user);
     if (album != null) {
       this.id = ObjectHelper.getId(album.getId());
       if (activeAlbum != null && activeAlbum.getId().equals(album.getId())) {
@@ -275,6 +278,9 @@ public class AlbumBean extends ContainerBean {
     AlbumController ac = new AlbumController();
     try {
       ac.release(album, getSessionUser());
+      if (active) {
+        sessionBean.deactivateAlbum();
+      }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_release", getLocale()));
     } catch (Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_release", getLocale()));
@@ -293,6 +299,9 @@ public class AlbumBean extends ContainerBean {
     AlbumController c = new AlbumController();
     try {
       c.delete(album, getSessionUser());
+      if (active) {
+        sessionBean.deactivateAlbum();
+      }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_delete", getLocale())
           .replace("XXX_albumName_XXX", this.album.getMetadata().getTitle()));
     } catch (Exception e) {
@@ -313,6 +322,9 @@ public class AlbumBean extends ContainerBean {
     AlbumController c = new AlbumController();
     try {
       c.withdraw(album, getSessionUser());
+      if (active) {
+        sessionBean.deactivateAlbum();
+      }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_withdraw", getLocale()));
     } catch (Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_withdraw", getLocale()));
@@ -461,5 +473,13 @@ public class AlbumBean extends ContainerBean {
 
   public void setActiveAlbum(Album activeAlbum) {
     this.activeAlbum = activeAlbum;
+  }
+
+  public SessionBean getSessionBean() {
+    return sessionBean;
+  }
+
+  public void setSessionBean(SessionBean sessionBean) {
+    this.sessionBean = sessionBean;
   }
 }

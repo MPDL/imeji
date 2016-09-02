@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
@@ -59,7 +58,7 @@ public class EditAlbumBean extends AlbumBean implements Serializable {
    */
   public void save() throws Exception {
     if (update()) {
-      FacesContext.getCurrentInstance().getExternalContext().redirect(getPageUrl());
+      redirect(getPageUrl());
     }
   }
 

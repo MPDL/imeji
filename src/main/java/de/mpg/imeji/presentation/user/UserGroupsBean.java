@@ -124,7 +124,7 @@ public class UserGroupsBean implements Serializable {
     UserGroupController c = new UserGroupController();
     UserGroup group;
     try {
-      group = c.read(id, sessionUser);
+      group = c.retrieve(id, sessionUser);
       if (group != null) {
         UserGroupController controller = new UserGroupController();
         controller.delete(group, sessionUser);

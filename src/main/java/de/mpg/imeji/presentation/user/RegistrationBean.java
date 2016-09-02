@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
@@ -55,6 +56,8 @@ public class RegistrationBean extends SuperBean {
   private String redirect;
   private boolean isInvited = false;
   private boolean termsAccepted = StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getTermsOfUse());
+  @ManagedProperty(value = "#{LoginBean}")
+  private LoginBean loginBean;
 
   @PostConstruct
   public void init() {
@@ -121,7 +124,6 @@ public class RegistrationBean extends SuperBean {
       sendActivationNotification();
       this.activation_success = true;
       this.activation_message = Imeji.RESOURCE_BUNDLE.getMessage("activation_success", getLocale());
-      LoginBean loginBean = (LoginBean) BeanHelper.getRequestBean(LoginBean.class);
       loginBean.setLogin(user.getEmail());
       this.redirect = getNavigation().getHomeUrl();
     } catch (ImejiException e) {
@@ -233,5 +235,13 @@ public class RegistrationBean extends SuperBean {
 
   public void setTermsAccepted(boolean termsAccepted) {
     this.termsAccepted = termsAccepted;
+  }
+
+  public LoginBean getLoginBean() {
+    return loginBean;
+  }
+
+  public void setLoginBean(LoginBean loginBean) {
+    this.loginBean = loginBean;
   }
 }

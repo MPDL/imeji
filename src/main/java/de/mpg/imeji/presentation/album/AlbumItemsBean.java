@@ -45,6 +45,7 @@ public class AlbumItemsBean extends ItemsBean {
   private Album album;
   private URI uri;
   private CollectionImeji collection;
+  private boolean active;
 
   /**
    * Constructor
@@ -66,13 +67,8 @@ public class AlbumItemsBean extends ItemsBean {
       uri = ObjectHelper.getURI(Album.class, id);
       loadAlbum();
       browseContext = getNavigationString() + id;
-      if (getActiveAlbum() != null
-          && getActiveAlbum().getImages().size() != getTotalNumberOfRecords()) {
-        AlbumController ac = new AlbumController();
-        Album activeA = ac.retrieve(getActiveAlbum().getId(), getSessionUser());
-        setActiveAlbum(activeA);
-        setAlbum(activeA);
-      }
+      active = getSessionBean().getActiveAlbum() != null
+          && album.getIdString().equals(getSessionBean().getActiveAlbum().getIdString());
       update();
     } catch (Exception e) {
       LOGGER.error("Error initializing AlbumItemsBean", e);
@@ -114,8 +110,8 @@ public class AlbumItemsBean extends ItemsBean {
    * @return @
    */
   public String removeFromAlbum() {
-    removeFromAlbum(getSelected());
-    getSelected().clear();
+    removeFromAlbum(getSessionBean().getSelected());
+    selectNone();
     return "pretty:";
   }
 
@@ -126,8 +122,8 @@ public class AlbumItemsBean extends ItemsBean {
    * @throws ImejiException @
    */
   public String removeFromActiveAlbum() throws ImejiException {
-    removeFromActive(getSelected());
-    getSelected().clear();
+    removeFromActive(getSessionBean().getSelected());
+    selectNone();
     return "pretty:";
   }
 
@@ -152,7 +148,7 @@ public class AlbumItemsBean extends ItemsBean {
    * @throws ImejiException @
    */
   public String removeAllFromActiveAlbum() throws ImejiException {
-    removeAllFromAlbum(getActiveAlbum());
+    removeAllFromAlbum(getSessionBean().getActiveAlbum());
     return "pretty:";
   }
 
@@ -162,11 +158,9 @@ public class AlbumItemsBean extends ItemsBean {
    * @param album @
    */
   private void removeAllFromAlbum(Album album) throws ImejiException {
-    if (getActiveAlbum() != null
-        && album.getId().toString().equals(getActiveAlbum().getId().toString())) {
-      // if the current album is the active album as well
+    if (active) {
       List<String> uris = new ArrayList<>();
-      for (URI uri : getActiveAlbum().getImages()) {
+      for (URI uri : getSessionBean().getActiveAlbum().getImages()) {
         uris.add(uri.toString());
       }
       removeFromActive(uris);
@@ -186,9 +180,7 @@ public class AlbumItemsBean extends ItemsBean {
    */
   private void removeFromAlbum(List<String> uris) {
     try {
-      if (getActiveAlbum() != null
-          && album.getId().toString().equals(getActiveAlbum().getId().toString())) {
-        // if the current album is the active album as well
+      if (active) {
         removeFromActive(uris);
       } else {
         ItemController ic = new ItemController();
@@ -211,7 +203,7 @@ public class AlbumItemsBean extends ItemsBean {
   private void removeFromActive(List<String> uris) throws ImejiException {
     SessionObjectsController soc = new SessionObjectsController();
     int deleted = soc.removeFromActiveAlbum(uris);
-    getSelected().clear();
+    selectNone();
     BeanHelper.info(deleted + " "
         + Imeji.RESOURCE_BUNDLE.getMessage("success_album_remove_images", getLocale()));
   }
@@ -233,11 +225,21 @@ public class AlbumItemsBean extends ItemsBean {
    * Release current {@link Album}
    *
    * @return @
+   * @throws Exception
    */
   public String release() {
-    ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).setId(id);
-    ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).init();
-    ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).release();
+    AlbumController ac = new AlbumController();
+    try {
+      ac.release(album, getSessionUser());
+      if (active) {
+        getSessionBean().deactivateAlbum();
+      }
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_release", getLocale()));
+    } catch (Exception e) {
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_release", getLocale()));
+      BeanHelper.error(e.getMessage());
+      LOGGER.error("Issue during release", e);
+    }
     return "pretty:";
   }
 
@@ -245,12 +247,23 @@ public class AlbumItemsBean extends ItemsBean {
    * Delete current {@link Album}
    *
    * @return @
+   * @throws Exception
    */
   public String delete() {
-    ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).setId(id);
-    ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).init();
-    ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).delete();
-    return SessionBean.getPrettySpacePage("pretty:albums", getSpaceId());
+    AlbumController c = new AlbumController();
+    try {
+      c.delete(album, getSessionUser());
+      if (active) {
+        getSessionBean().deactivateAlbum();
+      }
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_delete", getLocale())
+          .replace("XXX_albumName_XXX", this.album.getMetadata().getTitle()));
+    } catch (Exception e) {
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_delete", getLocale()));
+      BeanHelper.error(e.getMessage());
+      LOGGER.error("Error during delete album", e);
+    }
+    return SessionBean.getPrettySpacePage("pretty:albums", getSpace());
   }
 
   /**
@@ -259,15 +272,17 @@ public class AlbumItemsBean extends ItemsBean {
    * @return @
    */
   public String withdraw() {
-    ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).setId(id);
-    ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).init();
-    String dc = album.getDiscardComment();
-    ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).getAlbum().setDiscardComment(dc);
+    AlbumController c = new AlbumController();
     try {
-      ((AlbumBean) BeanHelper.getSessionBean(AlbumBean.class)).withdraw();
-    } catch (ImejiException e) {
-      LOGGER.error("Error discard album", e);
-      BeanHelper.error("Error discarding album");
+      c.withdraw(album, getSessionUser());
+      if (active) {
+        getSessionBean().deactivateAlbum();
+      }
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_withdraw", getLocale()));
+    } catch (Exception e) {
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_withdraw", getLocale()));
+      BeanHelper.error(e.getMessage());
+      LOGGER.error("Error during withdraw album", e);
     }
     return "pretty:";
   }
@@ -313,6 +328,6 @@ public class AlbumItemsBean extends ItemsBean {
   @Override
   public String getType() {
     return PAGINATOR_TYPE.ALBUM_ITEMS.name();
-
   }
+
 }

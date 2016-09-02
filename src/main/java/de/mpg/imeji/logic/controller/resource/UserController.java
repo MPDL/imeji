@@ -379,6 +379,22 @@ public class UserController {
         search.search(q, sort, user, null, null, offset, size).getResults(), size);
   }
 
+  /**
+   * Search for users
+   * 
+   * @param q
+   * @param sort
+   * @param user
+   * @param offset
+   * @param size
+   * @return
+   */
+  public List<User> searchAndRetrieveLazy(SearchQuery q, SortCriterion sort, User user, int offset,
+      int size) {
+    return (List<User>) retrieveBatchLazy(
+        search.search(q, sort, user, null, null, offset, size).getResults(), size);
+  }
+
 
 
   /**

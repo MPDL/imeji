@@ -31,6 +31,7 @@ import java.util.Collection;
 
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.j2j.annotations.j2jId;
+import de.mpg.j2j.annotations.j2jLazyList;
 import de.mpg.j2j.annotations.j2jList;
 import de.mpg.j2j.annotations.j2jLiteral;
 import de.mpg.j2j.annotations.j2jModel;
@@ -51,7 +52,7 @@ public class UserGroup implements Serializable {
   private URI id = IdentifierUtil.newURI(UserGroup.class);
   @j2jLiteral("http://xmlns.com/foaf/0.1/name")
   private String name;
-  @j2jList("http://imeji.org/terms/grant")
+  @j2jLazyList("http://imeji.org/terms/grant")
   private Collection<Grant> grants = new ArrayList<Grant>();
   @j2jList("http://xmlns.com/foaf/0.1/member")
   private Collection<URI> users = new ArrayList<URI>();

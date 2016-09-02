@@ -33,8 +33,8 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
+import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
 import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
@@ -65,12 +65,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   public static final String ITEM_SORT_COOKIE = "CONTAINER_SORT_COOKIE";
   private static final int DEFAULT_ELEMENTS_PER_PAGE = 18;
   // From session
-  @ManagedProperty(value = "#{SessionBean.selected}")
-  private List<String> selected;
-  @ManagedProperty(value = "#{SessionBean.activeAlbum}")
-  private Album activeAlbum;
-  @ManagedProperty(value = "#{SessionBean.selectedImagesContext}")
-  private String selectedImagesContext;
+  @ManagedProperty(value = "#{SessionBean}")
+  private SessionBean sessionBean;
 
   /**
    * The context of the browse page (browse, collection browse, album browse)
@@ -97,6 +93,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public void initSpecific() {
     parseSearchQuery();
+    browseContext = getNavigationString();
     metadataLabels = new MetadataLabels(new ArrayList<Item>(), getLocale());
     isSimpleSearch = SearchQueryParser.isSimpleSearch(searchQuery);
     if (UrlHelper.getParameterBoolean("add_selected")) {
@@ -134,8 +131,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   @Override
   public void initElementsPerPageMenu() {
-    setElementsPerPage(Integer.parseInt(
-        CookieUtils.readNonNull(SuperPaginatorBean.numberOfItemsPerPageCookieName,
+    setElementsPerPage(
+        Integer.parseInt(CookieUtils.readNonNull(SuperPaginatorBean.numberOfItemsPerPageCookieName,
             Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
     try {
       String options = Imeji.PROPERTIES.getProperty("imeji.image.list.size.options");
@@ -198,10 +195,12 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * "pretty:browse"
    */
   public void cleanSelectItems() {
-    if (getSelectedImagesContext() != null && !(getSelectedImagesContext().equals(browseContext))) {
-      getSelected().clear();
+    if (sessionBean.getSelectedImagesContext() != null
+        && !sessionBean.getSelectedImagesContext().equals(browseContext)) {
+      selectNone();
+      update();
     }
-    setSelectedImagesContext(browseContext);
+    sessionBean.setSelectedImagesContext(browseContext);
   }
 
   @Override
@@ -281,8 +280,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws ImejiException
    */
   public String addSelectedToActiveAlbum() throws ImejiException {
-    addToActiveAlbum(selected);
-    selected.clear();
+    addToActiveAlbum(sessionBean.getSelected());
+    selectNone();
     return "pretty:";
   }
 
@@ -303,7 +302,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @return @
    */
   public String deleteSelected() {
-    delete(getSelected());
+    delete(sessionBean.getSelected());
+    selectNone();
     return "pretty:";
   }
 
@@ -314,6 +314,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public String deleteAll() {
     delete(search(searchQuery, null, 0, -1).getResults());
+    selectNone();
     return "pretty:";
   }
 
@@ -325,6 +326,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public String withdrawAll() throws ImejiException {
     withdraw(search(searchQuery, null, 0, -1).getResults());
+    selectNone();
     return "pretty:";
   }
 
@@ -335,7 +337,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws ImejiException
    */
   public String withdrawSelected() throws ImejiException {
-    withdraw(getSelected());
+    withdraw(sessionBean.getSelected());
+    selectNone();
     return "pretty:";
   }
 
@@ -387,12 +390,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    *
    * @param uris
    */
-  private void unselect(List<String> l) {
-    SessionObjectsController soc = new SessionObjectsController();
-    List<String> uris = new ArrayList<String>(l);
-    for (String uri : uris) {
-      soc.unselectItem(uri);
-    }
+  private void unselect(List<String> uris) {
+    sessionBean.getSelected().removeAll(uris);
   }
 
   /**
@@ -404,10 +403,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   private void addToActiveAlbum(List<String> uris) throws ImejiException {
     int sizeToAdd = uris.size();
-    int sizeBefore = getActiveAlbum().getImages().size();
+    int sizeBefore = sessionBean.getActiveAlbum().getImages().size();
     SessionObjectsController soc = new SessionObjectsController();
     soc.addToActiveAlbum(uris);
-    int sizeAfter = getActiveAlbum().getImages().size();
+    int sizeAfter = sessionBean.getActiveAlbum().getImages().size();
     int added = sizeAfter - sizeBefore;
     int notAdded = sizeToAdd - added;
     String message = "";
@@ -431,15 +430,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   public String getInitComment() {
     setDiscardComment("");
     return "";
-  }
-
-  public String getSelectedImagesContext() {
-    return selectedImagesContext;
-  }
-
-  public void setSelectedImagesContext(String newContext) {
-    // this.selected = this.selectedImagesContext.equals(newContext) ? selected : new ArrayList<>();
-    this.selectedImagesContext = newContext;
   }
 
   @Override
@@ -488,15 +478,15 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public String selectAll() {
     for (ThumbnailBean bean : getCurrentPartList()) {
-      if (!(getSelected().contains(bean.getUri().toString()))) {
-        getSelected().add(bean.getUri().toString());
+      if (!(sessionBean.getSelected().contains(bean.getUri().toString()))) {
+        sessionBean.getSelected().add(bean.getUri().toString());
       }
     }
     return getNavigationString();
   }
 
   public String selectNone() {
-    selected = new ArrayList<>();
+    sessionBean.setSelected(new ArrayList<>());
     return getNavigationString();
   }
 
@@ -573,31 +563,16 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     return true;
   }
 
-  public void setAllSelected(boolean allSelected) {
-
-  }
-
   public MetadataLabels getMetadataLabels() {
     return metadataLabels;
   }
 
-  public List<String> getSelected() {
-    return selected;
+  public SessionBean getSessionBean() {
+    return sessionBean;
   }
 
-  public void setSelected(List<String> selected) {
-    this.selected = selected;
+  public void setSessionBean(SessionBean sessionBean) {
+    this.sessionBean = sessionBean;
   }
-
-
-  public Album getActiveAlbum() {
-    return activeAlbum;
-  }
-
-  public void setActiveAlbum(Album activeAlbum) {
-    this.activeAlbum = activeAlbum;
-  }
-
-
 
 }

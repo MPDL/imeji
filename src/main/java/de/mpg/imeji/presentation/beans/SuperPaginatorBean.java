@@ -205,9 +205,6 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
     return 0;
   }
 
-  /*
-   * public abstract String getAdditionalParameterUrl();
-   */
   /**
    * Sets the current value for 'element per pages'
    */
@@ -427,9 +424,9 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
    *
    * @return
    */
-  public String goToNextPage() {
+  public void goToNextPage() {
     currentPageNumber += 1;
-    return "";
+    update();
   }
 
   /**
@@ -437,9 +434,9 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
    *
    * @return
    */
-  public String goToPreviousPage() {
+  public void goToPreviousPage() {
     currentPageNumber -= 1;
-    return "";
+    update();
   }
 
   /**
@@ -447,9 +444,9 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
    *
    * @return
    */
-  public String goToFirstPage() {
+  public void goToFirstPage() {
     currentPageNumber = 1;
-    return "";
+    update();
   }
 
   /**
@@ -457,9 +454,19 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
    *
    * @return
    */
-  public String goToLastPage() {
+  public void goToLastPage() {
     currentPageNumber = getPaginatorPageSize();
-    return "";
+    update();
+  }
+
+  /**
+   * Returns the link for the "Last Page"-Button of the Paginator
+   *
+   * @return
+   */
+  public void goToPage() {
+    currentPageNumber = Integer.parseInt(getGoToPage());
+    update();
   }
 
   /**
