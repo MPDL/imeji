@@ -70,7 +70,8 @@ public final class DefaultAuthentication implements Authentication {
     try {
       user = new UserController(Imeji.adminUser).retrieve(getUserLogin(), Imeji.adminUser);
     } catch (ImejiException e) {
-      throw new AuthenticationError("User could not be authenticated with provided credentials!");
+      throw new AuthenticationError(
+          "User could not be authenticated with provided credentials! " + getUserLogin());
     }
     if (!user.isActive()) {
       throw new InactiveAuthenticationError(

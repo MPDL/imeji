@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
@@ -15,6 +16,8 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
+import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.jobs.ElasticReIndexJob;
 import de.mpg.imeji.logic.util.PropertyReader;
 
 /**
@@ -190,6 +193,12 @@ public class ElasticService {
     initializeIndex();
     for (ElasticTypes type : ElasticTypes.values()) {
       new ElasticIndexer(DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
+    }
+    // reindex...
+    try {
+      Imeji.executor.submit(new ElasticReIndexJob()).get();
+    } catch (InterruptedException | ExecutionException e) {
+      LOGGER.error("Error reindexing elasticsearch", e);
     }
   }
 
