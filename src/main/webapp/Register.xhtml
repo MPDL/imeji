@@ -36,16 +36,16 @@
 	                                </div>
 	                            </div>
 	                            <imjc:person id="userPersonRegister" person="#{RegistrationBean.user.person}" bean="#{RegistrationBean}" position="0" userSource="" minimized="true"/>
-	                            <h:selectBooleanCheckbox id="accept_terms" value="#{RegistrationBean.termsAccepted}" rendered="#{Configuration.termsOfUse != ''}">
-	                            		
-	                            	</h:selectBooleanCheckbox>
+	                            
+	                            <ui:fragment rendered="#{Configuration.termsOfUse != ''}">
+	                            	<h:selectBooleanCheckbox id="accept_terms" value="#{RegistrationBean.termsAccepted}"/>
 	                            	#{lbl.agree_to} <a href="#{Navigation.termsOfUseUrl}" target="_blank">#{lbl.terms_of_use}</a> *
-	                            <h:panelGroup layout="block" styleClass="imj_submitPanel">
-	                            	
-	                                <h:commandButton action="#{RegistrationBean.register}" type="submit" value="#{lbl.register_now}" styleClass="imj_submitButton"> 
-	                                </h:commandButton>
-	                               
-	                            </h:panelGroup>
+	                            </ui:fragment>
+	                            
+	                            <div class="imj_submitPanel">
+	                                <h:commandButton action="#{RegistrationBean.register}" type="submit" value="#{lbl.register_now}" styleClass="imj_submitButton"/>                              
+	                            </div>
+	                            
 	                        </h:form>
 	                    </ui:fragment>
 	                    <h:outputText value="#{lbl.required_marker} #{lbl.required}"/>
