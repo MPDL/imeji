@@ -78,6 +78,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public ItemsBean() {
     super();
+    System.out.println("Demo git");
   }
 
   @Override
