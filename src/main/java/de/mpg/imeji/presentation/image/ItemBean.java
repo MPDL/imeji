@@ -103,7 +103,6 @@ public class ItemBean extends SuperBean {
    */
   public ItemBean() {
     prettyLink = SessionBean.getPrettySpacePage("pretty:editImage", getSpace());
-    System.out.println("Test Git");
   }
 
   /**
