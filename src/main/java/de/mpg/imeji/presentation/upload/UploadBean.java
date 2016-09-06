@@ -334,8 +334,8 @@ public class UploadBean extends SuperBean implements Serializable {
       getsFiles().add(new UploadItem(item));
       return item;
     } catch (Exception e) {
-      getfFiles().add(" File " + title + " not uploaded. " + e.getMessage() != null
-          ? Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), getLocale()) : "");
+      getfFiles().add(e.getMessage() != null ? "File " + title + " not uploaded. "
+          + Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), getLocale()) : "");
       LOGGER.error("Error uploading item: ", e);
       return null;
     }
