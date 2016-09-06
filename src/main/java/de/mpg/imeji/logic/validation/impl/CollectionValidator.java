@@ -100,7 +100,7 @@ public class CollectionValidator extends ContainerValidator implements Validator
    */
   private void validateDOI(String doi) {
     if (!isNullOrEmpty(doi) && !DOI_VALIDATION_PATTERN.matcher(doi).find()) {
-      exception = new UnprocessableError("error_doi_format", exception);
+      exception = new UnprocessableError("error_doi_creation_error_doi_format", exception);
     }
 
   }

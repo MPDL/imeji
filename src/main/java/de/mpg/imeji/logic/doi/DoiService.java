@@ -3,12 +3,14 @@ package de.mpg.imeji.logic.doi;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.authorization.Authorization;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.doi.models.DOICollection;
 import de.mpg.imeji.logic.doi.util.DOIUtil;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
@@ -51,6 +53,9 @@ public final class DoiService {
    */
   public void addDoiToCollection(String doi, CollectionImeji collection, User user)
       throws ImejiException {
+    if (StringHelper.isNullOrEmptyTrim(doi)) {
+      throw new UnprocessableError("error_doi_creation_error_doi_emtpy");
+    }
     isValidDOIOperation(collection, user);
     collection.setDoi(doi);
     collectionController.update(collection, user);
