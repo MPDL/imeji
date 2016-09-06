@@ -6,11 +6,13 @@
 	
 	<composite:interface componentType="StatusComponent">
 		<composite:attribute name="imejiResource"/>
+		<composite:attribute name="displayStatusOnly" default="false" type="java.lang.Boolean"/>
 	</composite:interface>
 	
 	<composite:implementation>
 		<h:outputText value="#{cc.init(cc.attrs.imejiResource, SessionBean.user, SessionBean.locale, Navigation.applicationUrl)}"/>
-	
+		<ui:param name="displayStatusOnly" value="#{iconStatusDisplayStatusOnly ? true : false}"/>
+
 		<ui:fragment rendered="#{SessionBean.user != null and cc.show}">
 			<div class="imj_statusHeaderArea">
 				<ui:fragment rendered="#{cc.status != 'PENDING'}">
@@ -25,8 +27,8 @@
 						</div>
 					</div>
 				</ui:fragment>
-
-				<ui:fragment rendered="#{!empty cc.users or !empty cc.groups}">
+				
+				<ui:fragment rendered="#{(!empty cc.users or !empty cc.groups) and !displayStatusOnly}">
 					<div class="imj_overlayMenu imj_menuRight">
 						<div class="imj_menuHeader">
 		                    <span class="fa fa-users fa-size-3">&#160;</span>

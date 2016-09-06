@@ -10,6 +10,8 @@
 	<ui:param name="headlineSecondRow" value="#{ShareBean.title}"/>
 	<ui:param name="currentMainMenu" value="#{ShareBean.type}"/>
 	<ui:param name="contUrl" value="#{ShareBean.type == 'COLLECTION' ? Navigation.collectionUrl : Navigation.albumUrl}"/>
+	<ui:param name="imejiResource" value="#{ShareBean.sharedObject}"/>
+	<ui:param name="iconStatusDisplayStatusOnly" value="true"/>
 	
 		
 	<ui:define name="mainContent">

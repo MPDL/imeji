@@ -66,6 +66,7 @@ public class ShareBean extends SuperBean implements Serializable {
   private ShareList shareListCollection;
   private String collectionShareUrl;
   private String collectionName;
+  private Object sharedObject;
 
   public enum SharedObjectType {
     COLLECTION, ALBUM, ITEM
@@ -90,6 +91,7 @@ public class ShareBean extends SuperBean implements Serializable {
       this.title = collection.getMetadata().getTitle();
       this.owner = collection.getCreatedBy();
       this.backUrl = getNavigation().getCollectionUrl() + collection.getIdString();
+      this.sharedObject = collection;
     }
     this.init();
   }
@@ -110,6 +112,7 @@ public class ShareBean extends SuperBean implements Serializable {
       this.title = album.getMetadata().getTitle();
       this.owner = album.getCreatedBy();
       this.backUrl = getNavigation().getAlbumUrl() + album.getIdString();
+      this.sharedObject = album;
     }
     this.init();
   }
@@ -138,6 +141,7 @@ public class ShareBean extends SuperBean implements Serializable {
           + ObjectHelper.getId(item.getCollection()) + "/" + Navigation.SHARE.getPath();
       this.collectionName = new CollectionController()
           .retrieve(item.getCollection(), getSessionUser()).getMetadata().getTitle();
+      this.sharedObject = item;
     }
     this.init();
     return "";
@@ -587,5 +591,9 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   public void setCollectionName(String collectionName) {
     this.collectionName = collectionName;
+  }
+
+  public Object getSharedObject() {
+    return sharedObject;
   }
 }
