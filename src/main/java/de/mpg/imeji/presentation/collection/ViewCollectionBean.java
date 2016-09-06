@@ -36,10 +36,6 @@ public class ViewCollectionBean extends CollectionBean {
   private static final long serialVersionUID = 6473181109648137472L;
   private List<Person> persons;
   private static final Logger LOGGER = Logger.getLogger(ViewCollectionBean.class);
-  /**
-   * Maximum number of items displayed on collection start page
-   */
-  private static final int MAX_ITEM_NUM_VIEW = 13;
 
 
   /**
@@ -55,6 +51,7 @@ public class ViewCollectionBean extends CollectionBean {
     try {
       setCollection(new CollectionController()
           .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
+      countItems();
       if (getSessionUser() != null) {
         setSendEmailNotification(getSessionUser().getObservedCollections().contains(getId()));
       }
