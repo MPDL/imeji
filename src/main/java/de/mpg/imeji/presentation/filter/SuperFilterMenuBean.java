@@ -137,10 +137,10 @@ public class SuperFilterMenuBean extends SuperBean {
       for (int i = 0; i < q1.getElements().size(); i++) {
         if (q1.getElements().get(i).isSame(q2)) {
           q1.getElements().remove(i);
-          // if (i - 1 > 0
-          // && q1.getElements().get(i - 1).getType() == SEARCH_ELEMENTS.LOGICAL_RELATIONS) {
-          // q1.getElements().remove(i - 1);
-          // }
+          if (i - 1 > 0
+              && q1.getElements().get(i - 1).getType() == SEARCH_ELEMENTS.LOGICAL_RELATIONS) {
+            q1.getElements().remove(i - 1);
+          }
         }
       }
     }

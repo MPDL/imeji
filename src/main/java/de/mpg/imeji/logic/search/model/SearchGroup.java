@@ -46,10 +46,8 @@ public class SearchGroup extends SearchElement {
 
   @Override
   public boolean isSame(SearchElement element) {
-    if (element.getType() != SEARCH_ELEMENTS.GROUP) {
-      return false;
-    } else {
-      SearchGroup g = (SearchGroup) element;
+    SearchGroup g = toGroup(element);
+    if (g != null) {
       if (g.group.size() != group.size()) {
         return false;
       } else {
@@ -61,5 +59,19 @@ public class SearchGroup extends SearchElement {
       }
       return true;
     }
+    return false;
+  }
+
+  public SearchGroup toGroup(SearchElement element) {
+    if (element.getType() == SEARCH_ELEMENTS.GROUP) {
+      return (SearchGroup) element;
+    } else if (element.getType() == SEARCH_ELEMENTS.QUERY
+        && ((SearchQuery) element).getElements().size() == 1) {
+      return toGroup(((SearchQuery) element).getElements().get(0));
+    } else if (element.getType() == SEARCH_ELEMENTS.GROUP
+        && ((SearchGroup) element).getElements().size() == 1) {
+      return toGroup(((SearchGroup) element).getElements().get(0));
+    }
+    return null;
   }
 }
