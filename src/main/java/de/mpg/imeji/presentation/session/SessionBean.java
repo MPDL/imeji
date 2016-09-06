@@ -66,7 +66,6 @@ public class SessionBean implements Serializable {
   private Map<URI, MetadataProfile> profileCached;
   private String selectedImagesContext = null;
   private Style selectedCss = Style.NONE;
-  private boolean showLogin = false;
   private boolean hasUploadRights = false;
   private String applicationUrl;
   private String spaceId;
@@ -369,16 +368,6 @@ public class SessionBean implements Serializable {
     CookieUtils.updateCookieValue(styleCookieName, selectedCss.name());
   }
 
-
-
-  public boolean isShowLogin() {
-    return showLogin;
-  }
-
-  public void setShowLogin(boolean showLogin) {
-    this.showLogin = showLogin;
-  }
-
   /**
    * Return the Institute of the current {@link User} according to his IP. IMPORTANT: works only for
    * Max Planck Institutes IPs.
@@ -528,7 +517,6 @@ public class SessionBean implements Serializable {
   private void logoutFromSpot() {
     if (getUser() != null && !getUser().isAdmin()) {
       setUser(null);
-      setShowLogin(false);
     }
   }
 

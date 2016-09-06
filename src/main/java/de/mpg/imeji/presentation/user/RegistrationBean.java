@@ -22,6 +22,7 @@ import de.mpg.imeji.logic.collaboration.invitation.InvitationBusinessController;
 import de.mpg.imeji.logic.controller.util.ImejiFactory;
 import de.mpg.imeji.logic.registration.Registration;
 import de.mpg.imeji.logic.registration.RegistrationBusinessController;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.SuperBean;
@@ -54,7 +55,8 @@ public class RegistrationBean extends SuperBean {
   private String activation_message;
   private String redirect;
   private boolean isInvited = false;
-  private boolean termsAccepted = false;
+  private boolean termsAccepted = StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getTermsOfUse())
+      && StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getTermsOfUseUrl());
   @ManagedProperty(value = "#{LoginBean}")
   private LoginBean loginBean;
 

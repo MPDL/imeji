@@ -37,9 +37,10 @@ All rights reserved. Use is subject to license terms.
 </ui:remove>
 	<!-- meta Menu starts here -->
 	
-	<h:panelGroup layout="block" styleClass="imj_metaMenuStandardSingleLine">
+	<div class="imj_metaMenuStandardSingleLine">
 		
-		<h:panelGroup styleClass="imj_metaMenuItemsAlign">
+		<div class="imj_metaMenuItemsAlign">
+			
 			
 			<!-- Username if logged in -->
 			<ui:fragment rendered="#{Auth.loggedIn}">
@@ -52,27 +53,21 @@ All rights reserved. Use is subject to license terms.
 			
 			<!-- LogIn, LogOut -->
 			<h:form id="loginForm">
-				<h:panelGroup rendered="#{!Auth.loggedIn}" styleClass="imj_metaMenuItem">
-					<h:panelGroup rendered="#{!SessionBean.showLogin and SessionBean.spaceId==''}">
-						<h:commandLink id="lnkLogin1" title="#{lbl.login}" action="#{LoginBean.loginClick}" styleClass="imj_metaMenuItem">
-			    			<h:outputText value="#{lbl.login}"></h:outputText>
-			    			<f:ajax render="@form" execute="@this"/>
-			   			</h:commandLink>
-					</h:panelGroup>
-					<h:panelGroup rendered="#{SessionBean.showLogin}">
+				<h:panelGroup rendered="#{!Auth.loggedIn}" styleClass="imj_metaMenuItem imj_loginFormHidden">
+					<ui:fragment rendered="#{SessionBean.spaceId==''}">
+			   			<a href="#" id="lnkshowLogin" class="imj_metaMenuItem" onclick="showLogin(); return false;">#{lbl.login}</a>
+					</ui:fragment>
+					<span class="imj_loginFormDisplay">
 						<h:inputText value="#{LoginBean.login}"  p:placeholder="#{lbl.admin_user}"/>
 						<h:inputSecret value="#{LoginBean.passwd}" p:placeholder="#{lbl.password}"/>
-						<h:commandButton id="lnkLogin" title="#{lbl.login}" value="#{lbl.login}" action="#{LoginBean.doLogin}" styleClass="imj_metaMenuItem"/>
-					</h:panelGroup>
+						<h:commandButton id="lnkLogin2" title="#{lbl.login}" value="#{lbl.login}" action="#{LoginBean.doLogin}" styleClass="imj_metaMenuItem"/>
+					</span>
 				</h:panelGroup>
-				
-				<!-- <h:commandLink id="lnkLogout" title="#{lbl.logout}" value="#{lbl.logout}" action="#{LoginBean.logout}" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}"/>-->
 				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationSpaceUrl}login?logout=1" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
 					<h:outputText value="#{lbl.logout}"/>
 				</h:outputLink>
 			</h:form>
-			
-			
+						
 			<!-- Register -->
 			<h:form rendered="#{!Auth.loggedIn and Configuration.registrationEnabled}">
 				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>
@@ -118,8 +113,16 @@ All rights reserved. Use is subject to license terms.
 					<h:outputText value="#{lbl.help}"/>
 				</h:outputLink>
 			</ui:fragment>
-		</h:panelGroup>
-	</h:panelGroup>
-	
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			$('.imj_loginFormDisplay').hide();
+		    $('#lnkshowLogin').click(function() {
+		         $('.imj_loginFormDisplay').toggle();
+		         $(this).hide();
+		    });
+		});
+	</script>
 	<!-- meta Menu ends here -->
 </ui:composition>

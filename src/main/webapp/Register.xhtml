@@ -37,10 +37,17 @@
 	                            </div>
 	                            <imjc:person id="userPersonRegister" person="#{RegistrationBean.user.person}" bean="#{RegistrationBean}" position="0" userSource="" minimized="true"/>
 	                            
-	                            <ui:fragment rendered="#{Configuration.termsOfUse != ''}">
-	                            	<h:selectBooleanCheckbox id="accept_terms" value="#{RegistrationBean.termsAccepted}"/>
-	                            	#{lbl.agree_to} <a href="#{Navigation.termsOfUseUrl}" target="_blank">#{lbl.terms_of_use}</a> *
-	                            </ui:fragment>
+	                            <ui:fragment rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
+					 		    	<h:selectBooleanCheckbox id="accept_terms" value="#{RegistrationBean.termsAccepted}"/>
+					 		    	#{lbl.agree_to}
+						 		     <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Configuration.termsOfUseUrl}" rendered="#{Configuration.termsOfUseUrl != ''}">
+						 		    	<h:outputText value="#{lbl.terms_of_use}" />
+						 		    </h:outputLink>
+						 		    <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Navigation.termsOfUseUrl}" rendered="#{Configuration.termsOfUseUrl == ''}">
+						 		    	<h:outputText value="#{lbl.terms_of_use}" />
+						 		    </h:outputLink>
+					 		    </ui:fragment>
+	                           
 	                            
 	                            <div class="imj_submitPanel">
 	                                <h:commandButton action="#{RegistrationBean.register}" type="submit" value="#{lbl.register_now}" styleClass="imj_submitButton"/>                              

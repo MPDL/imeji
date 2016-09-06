@@ -91,7 +91,8 @@ public class ModusFilter implements Filter {
   private boolean isPublicPage(HttpServletRequest request) {
     String path = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
     return Navigation.HELP.hasSamePath(path) || Navigation.HOME.hasSamePath(path)
-        || Navigation.REGISTRATION.hasSamePath(path) || Navigation.IMPRINT.hasSamePath(path);
+        || Navigation.REGISTRATION.hasSamePath(path) || Navigation.IMPRINT.hasSamePath(path)
+        || Navigation.TERMS_OF_USE.hasSamePath(path);
   }
 
   /**
