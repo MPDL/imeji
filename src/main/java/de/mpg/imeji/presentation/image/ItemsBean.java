@@ -62,7 +62,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private SearchResult searchResult;
   protected MetadataLabels metadataLabels;
   public static final String ITEM_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
-  public static final String ITEM_SORT_COOKIE = "CONTAINER_SORT_COOKIE";
+  public static final String ITEM_SORT_COOKIE = "ITEM_SORT_COOKIE";
   private static final int DEFAULT_ELEMENTS_PER_PAGE = 18;
   // From session
   @ManagedProperty(value = "#{SessionBean}")
