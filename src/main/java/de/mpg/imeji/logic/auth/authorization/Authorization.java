@@ -377,7 +377,9 @@ public class Authorization implements Serializable {
    * @return
    */
   private boolean isPublic(Object obj, User user) {
-    if (Imeji.CONFIG.getPrivateModus() && user == null) {
+    if (obj instanceof Organization) {
+      return true;
+    } else if (Imeji.CONFIG.getPrivateModus() && user == null) {
       return false;
     } else if (obj instanceof Item) {
       return isPublicStatus(((Item) obj).getStatus());
@@ -388,8 +390,6 @@ public class Authorization implements Serializable {
     } else if (obj instanceof MetadataProfile) {
       return isPublicStatus(((MetadataProfile) obj).getStatus());
     } else if (obj instanceof Person) {
-      return true;
-    } else if (obj instanceof Organization) {
       return true;
     }
     return false;
