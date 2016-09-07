@@ -26,10 +26,7 @@
     <!-- Main Content - Image tiled list - START -->
     <ui:define name="mainContent">
         <h:panelGroup layout="block" id ="ajaxWrapper">
-        	<ui:remove>
-        	<h:outputText value="#{paginatorListSessionBean.urlParameters}" styleClass="imj_noDisplay"/>
-            <h:outputText value="#{paginatorListSessionBean.initPaginator}" styleClass="imj_noDisplay"/>
-            </ui:remove>
+
         	 <!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true"/>
         	

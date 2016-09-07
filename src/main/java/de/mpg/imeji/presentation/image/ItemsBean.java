@@ -476,13 +476,13 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    *
    * @return
    */
-  public String selectAll() {
+  public void selectAll() {
     for (ThumbnailBean bean : getCurrentPartList()) {
       if (!(sessionBean.getSelected().contains(bean.getUri().toString()))) {
         sessionBean.getSelected().add(bean.getUri().toString());
+        bean.setSelected(true);
       }
     }
-    return getNavigationString();
   }
 
   public String selectNone() {
