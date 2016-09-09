@@ -17,14 +17,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jList;
+import de.mpg.imeji.j2j.annotations.j2jLiteral;
+import de.mpg.imeji.j2j.annotations.j2jModel;
+import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.j2j.annotations.j2jId;
-import de.mpg.j2j.annotations.j2jList;
-import de.mpg.j2j.annotations.j2jLiteral;
-import de.mpg.j2j.annotations.j2jModel;
-import de.mpg.j2j.annotations.j2jResource;
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 /**
  * Define the properties of a {@link Metadata}. {@link Statement} are defined in a

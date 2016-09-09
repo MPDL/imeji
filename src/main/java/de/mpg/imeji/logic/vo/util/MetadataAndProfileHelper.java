@@ -18,7 +18,7 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Number;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Text;
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 public class MetadataAndProfileHelper {
 

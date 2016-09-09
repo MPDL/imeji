@@ -174,19 +174,7 @@ public class UserCreationBean extends SuperBean {
     this.sendEmail = sendEmail;
   }
 
-  /**
-   * @return the allowedToCreateCollection
-   */
-  public boolean isAllowedToCreateCollection() {
-    return allowedToCreateCollection;
-  }
 
-  /**
-   * @param allowedToCreateCollection the allowedToCreateCollection to set
-   */
-  public void setAllowedToCreateCollection(boolean allowedToCreateCollection) {
-    this.allowedToCreateCollection = allowedToCreateCollection;
-  }
 
   private void reloadUserPage() {
     try {

@@ -22,6 +22,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.collaboration.share.ShareBusinessController;
@@ -43,7 +44,6 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.writer.WriterFacade;
-import de.mpg.j2j.helper.J2JHelper;
 
 /**
  * CRUD controller for {@link CollectionImeji}, plus search mehtods related to
@@ -323,7 +323,7 @@ public class CollectionController extends ImejiController {
     if (hasImageLocked(itemUris, user)) {
       throw new RuntimeException("Collection can not be deleted: It contains locked items:");
     } else {
-      if (collection.getStatus() != Status.PENDING && !user.isAdmin()) {
+      if (collection.getStatus() != Status.PENDING && !AuthUtil.isSysAdmin(user)) {
         throw new UnprocessableError("collection_is_not_pending");
       }
       // Delete images
@@ -354,13 +354,10 @@ public class CollectionController extends ImejiController {
               LOGGER.info("Metadata profile <" + collectionMdp.getId().toString()
                   + "> is not referenced elsewhere, will be deleted!");
               pc.delete(collectionMdp, user, collection.getId().toString());
-            }
-            else
-            {
+            } else {
               LOGGER.info("Metadata profile <" + collectionMdp.getId().toString()
                   + "> is not referenced elsewhere, could be deleted, "
-                  + "but it is not, as it has status "
-                  + collectionMdp.getStatus().name()+"!");
+                  + "but it is not, as it has status " + collectionMdp.getStatus().name() + "!");
             }
           }
         } catch (NotFoundException e) {

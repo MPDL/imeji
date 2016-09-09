@@ -16,16 +16,15 @@ import javax.xml.bind.annotation.XmlEnum;
 
 import org.apache.commons.io.FileUtils;
 
+import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jLazyList;
+import de.mpg.imeji.j2j.annotations.j2jList;
+import de.mpg.imeji.j2j.annotations.j2jLiteral;
+import de.mpg.imeji.j2j.annotations.j2jModel;
+import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiNamespaces;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.util.IdentifierUtil;
-import de.mpg.j2j.annotations.j2jId;
-import de.mpg.j2j.annotations.j2jLazyList;
-import de.mpg.j2j.annotations.j2jList;
-import de.mpg.j2j.annotations.j2jLiteral;
-import de.mpg.j2j.annotations.j2jModel;
-import de.mpg.j2j.annotations.j2jResource;
 
 /**
  * imeji user
@@ -51,7 +50,6 @@ public class User implements Serializable {
   private long quota = -1;
   @j2jLiteral("http://imeji.org/terms/apiKey")
   private String apiKey;
-
   private URI id = IdentifierUtil.newURI(User.class);
   private List<UserGroup> groups = new ArrayList<>();
 
@@ -129,23 +127,6 @@ public class User implements Serializable {
    */
   public void setGroups(List<UserGroup> groups) {
     this.groups = groups;
-  }
-
-  /**
-   * True if the current user is the system administrator
-   *
-   * @return
-   */
-  public boolean isAdmin() {
-    return AuthUtil.isSysAdmin(this);
-  }
-
-  public void setAdmin(boolean b) {
-    // dummy method for jsf
-  }
-
-  public boolean isAllowedToCreateCollection() {
-    return AuthUtil.isAllowedToCreateCollection(this);
   }
 
   /**

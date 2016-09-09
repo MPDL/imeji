@@ -27,7 +27,7 @@ import de.mpg.imeji.presentation.session.SessionObjectsController;
 import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.CommonUtils;
 import de.mpg.imeji.presentation.util.ObjectCachedLoader;
-import de.mpg.j2j.helper.DateHelper;
+import de.mpg.imeji.util.DateHelper;
 
 /**
  * Bean for Thumbnail list elements. Each element of a list with thumbnail is an instance of a

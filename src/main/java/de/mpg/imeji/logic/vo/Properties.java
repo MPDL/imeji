@@ -19,9 +19,9 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.j2j.annotations.j2jLiteral;
+import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.ImejiNamespaces;
-import de.mpg.j2j.annotations.j2jLiteral;
-import de.mpg.j2j.annotations.j2jResource;
 
 /**
  * Common properties to all imeji objects

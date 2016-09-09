@@ -3,10 +3,10 @@ package de.mpg.imeji.rest.to.predefinedMetadataTO;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import de.mpg.j2j.annotations.j2jDataType;
+import de.mpg.imeji.rest.to.predefinedMetadataTO.annotations.MetadataTOType;
 
 @XmlRootElement
-@j2jDataType("http://imeji.org/terms/metadata#license")
+@MetadataTOType("http://imeji.org/terms/metadata#license")
 @XmlType(propOrder = {"license", "url"})
 public class LicenseTO extends MetadataTO {
   private static final long serialVersionUID = 5493360284361097587L;

@@ -18,7 +18,7 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.presentation.mdProfile.MdProfileBean;
 import de.mpg.imeji.presentation.util.VocabularyHelper;
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 /**
  * Wrapper for {@link Statement}, used in java bean {@link MdProfileBean}

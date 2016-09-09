@@ -14,12 +14,12 @@
 	
 	<ui:define name="mainContent">
 		<!-- Are You Admin? -->
-		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.admin}">
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
 			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}"/>
 			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}"/>
 		</h:panelGroup>
 		
-		<ui:fragment rendered="#{Auth.admin}">
+		<ui:fragment rendered="#{Auth.sysAdmin}">
 		<!-- Only for Admins -->
 			
 			<!-- Admin - TiledList -->
@@ -58,7 +58,7 @@
 					</h:panelGroup>
 					
 					<h:panelGroup layout="block" styleClass="imj_adminPanel imj_config">
-						<ui:fragment rendered="#{Auth.admin}">
+						<ui:fragment rendered="#{Auth.sysAdmin}">
 							<div class="imj_headline">
 								<h2><h:outputText value="#{lbl.configuration}"/></h2>
 							</div>
@@ -85,7 +85,7 @@
 						</div>
 						<div class="imj_content">
 							<ul>
-							 	<ui:fragment rendered="#{Auth.admin and SessionBean.spaceId == ''}">
+							 	<ui:fragment rendered="#{Auth.sysAdmin and SessionBean.spaceId == ''}">
 									<li>
 										<a href="#{Navigation.applicationUrl}spaces" title="#{lbl.admin_space_create}">
 											<h:outputText value="#{lbl.admin_space_list}"/>
@@ -97,7 +97,7 @@
 										</a>
 									</li>
 								</ui:fragment>
-								<ui:fragment rendered="#{Auth.admin and SessionBean.spaceId != ''}">
+								<ui:fragment rendered="#{Auth.sysAdmin and SessionBean.spaceId != ''}">
 									<li>
 										<a href="#{Navigation.applicationSpaceUrl}editspace" title="#{lbl.admin_space_edit}">
 											<h:outputText value="#{lbl.edit}"/>
@@ -109,7 +109,7 @@
 					</h:panelGroup>
 					
 					<h:panelGroup layout="block" styleClass="imj_adminPanel imj_storageConfig">
-						<ui:fragment rendered="#{Auth.admin}">
+						<ui:fragment rendered="#{Auth.sysAdmin}">
 							<div class="imj_headline">
 								<h2><h:outputText value="#{lbl.administration_storage}"/></h2>
 							</div>
@@ -137,7 +137,7 @@
 					</h:panelGroup>
 					
 					<h:panelGroup layout="block" styleClass="imj_adminPanel imj_advancedConfig" rendered="false">
-						<ui:fragment rendered="#{Auth.admin}">
+						<ui:fragment rendered="#{Auth.sysAdmin}">
 							<div class="imj_headline">
 								<h2><h:outputText value="#{lbl.administration_advanced}"/></h2>
 							</div>

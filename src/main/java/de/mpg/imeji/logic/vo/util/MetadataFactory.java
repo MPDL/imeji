@@ -3,6 +3,7 @@
  */
 package de.mpg.imeji.logic.vo.util;
 
+import de.mpg.imeji.j2j.annotations.j2jDataType;
 import de.mpg.imeji.logic.controller.util.ImejiFactory;
 import de.mpg.imeji.logic.controller.util.MetadataTypesHelper;
 import de.mpg.imeji.logic.vo.Statement;
@@ -16,7 +17,6 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Number;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Text;
-import de.mpg.j2j.annotations.j2jDataType;
 
 /**
  * Factory for {@link Metadata}

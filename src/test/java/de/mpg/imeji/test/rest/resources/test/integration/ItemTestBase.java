@@ -35,7 +35,7 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.transfer.ReverseTransferObjectFactory;
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 import util.JenaUtil;
 
 /**

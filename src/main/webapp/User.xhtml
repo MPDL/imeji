@@ -22,7 +22,7 @@
 		
 		
 		<ui:fragment rendered="#{Auth.admin(UserBean.user)}">
-			<h:panelGroup layout="block" styleClass="imj_backPanel" rendered="#{Auth.admin}">
+			<h:panelGroup layout="block" styleClass="imj_backPanel" rendered="#{Auth.sysAdmin}">
 				<a href="#{Navigation.applicationSpaceUrl}users" title="#{lbl.admin_user_view}">
 					<h:outputText value="#{lbl.admin_user_view}" />
 				</a>
@@ -98,15 +98,15 @@
 										<!-- Disk space quota -->
 										<div class="imj_admindataSet">
 											<div class="imj_admindataLabel">
-												<h:outputText value="#{lbl.quota}" rendered="#{!UserBean.edit or !SessionBean.user.admin}"/>
-												<h:outputText value="#{lbl.quota_input}" rendered="#{UserBean.edit and SessionBean.user.admin}"/>
+												<h:outputText value="#{lbl.quota}" rendered="#{!UserBean.edit or Auth.sysAdmin}"/>
+												<h:outputText value="#{lbl.quota_input}" rendered="#{UserBean.edit and Auth.sysAdmin}"/>
 												<span class="imj_invisible">: </span>
 											</div>
 											<div class="imj_admindataValue">
-												<h:panelGroup class="imj_admindataValueEntry" rendered="#{!UserBean.edit or !SessionBean.user.admin}">
+												<h:panelGroup class="imj_admindataValueEntry" rendered="#{!UserBean.edit or Auth.sysAdmin}">
 													<h:outputText value="#{UserBean.user.getQuotaHumanReadable(SessionBean.locale)}"/>
 												</h:panelGroup>
-												<h:panelGroup class="imj_admindataSetEdit" rendered="#{UserBean.edit and SessionBean.user.admin}" >
+												<h:panelGroup class="imj_admindataSetEdit" rendered="#{UserBean.edit and Auth.sysAdmin}" >
 													<h:selectOneMenu value="#{UserBean.quota.quota}" >
 														<f:selectItems value="#{UserBean.quota.quotaMenu}"/>
 													</h:selectOneMenu>
@@ -187,23 +187,23 @@
 										</div>
 										<div class="imj_admindataValue">
 											<div class="imj_admindataValueEntry">
-												<ui:fragment rendered="#{Auth.admin}">
+												<ui:fragment rendered="#{Auth.sysAdmin}">
 													<div class="imj_admindataSet">
-														<h:selectBooleanCheckbox id="createcollectioncheck" value="#{UserBean.user.allowedToCreateCollection}" readonly="true" styleClass="imj_admindataCheckbox" onchange="document.getElementById('grantForm:toggleCreate').click()" disabled="#{UserBean.user.admin}"/>
+														<h:selectBooleanCheckbox id="createcollectioncheck" value="#{Auth.isAllowedToCreateCollection(UserBean.user)}" readonly="true" styleClass="imj_admindataCheckbox" onchange="document.getElementById('grantForm:toggleCreate').click()" disabled="#{Auth.isSysAdmin(UserBean.user)}"/>
 														<label for="grantForm:createcollectioncheck"><h:outputText value="#{lbl.allowedToCreateCollection}"/></label>
 														<span class="imj_invisible">: </span>
 													</div>
-													<ui:fragment rendered="#{UserBean.user.admin}">
+													<ui:fragment rendered="#{Auth.isSysAdmin(UserBean.user)}">
 													<div class="imj_admindataSet">
-														<h:selectBooleanCheckbox id="admincheck1" title="#{UserBean.user.admin and UserBean.uniqueAdmin ? lbl.user_unique_admin : lbl.user_toggle_admin_role}" value="#{UserBean.user.admin}" styleClass="imj_admindataCheckbox"  onchange="openDialog('general');" disabled="#{UserBean.user.admin and UserBean.uniqueAdmin}"/>
+														<h:selectBooleanCheckbox id="admincheck1" title="#{Auth.isSysAdmin(UserBean.user) and UserBean.uniqueAdmin ? lbl.user_unique_admin : lbl.user_toggle_admin_role}" value="#{Auth.isSysAdmin(UserBean.user)}" styleClass="imj_admindataCheckbox"  onchange="openDialog('general');" disabled="#{Auth.isSysAdmin(UserBean.user) and UserBean.uniqueAdmin}"/>
 														<label for="grantForm:admincheck"><h:outputText value="#{lbl.isAdmin}"/></label>
 														<span class="imj_invisible">: </span>
 													<dialog:confirmationDialog submitAction="toggleAdmin" bean="#{UserBean}" confirmationText="#{msg.admin_to_user}" submitLabel="#{lbl.confirm}" dialogId="general"/></div>
 													</ui:fragment>
 													
-													<ui:fragment rendered="#{!UserBean.user.admin}">
+													<ui:fragment rendered="#{!Auth.isSysAdmin(UserBean.user)}">
 													<div class="imj_admindataSet">
-														<h:selectBooleanCheckbox id="admincheck2" title="#{UserBean.user.admin and UserBean.uniqueAdmin ? lbl.user_unique_admin : lbl.user_toggle_admin_role}" value="#{UserBean.user.admin}" styleClass="imj_admindataCheckbox"  onchange="openDialog('general');" disabled="#{UserBean.user.admin and UserBean.uniqueAdmin}"/>
+														<h:selectBooleanCheckbox id="admincheck2" title="#{Auth.isSysAdmin(UserBean.user) and UserBean.uniqueAdmin ? lbl.user_unique_admin : lbl.user_toggle_admin_role}" value="#{Auth.isSysAdmin(UserBean.user)}" styleClass="imj_admindataCheckbox"  onchange="openDialog('general');" disabled="#{Auth.isSysAdmin(UserBean.user) and UserBean.uniqueAdmin}"/>
 														<label for="grantForm:admincheck"><h:outputText value="#{lbl.isAdmin}"/></label>
 														<span class="imj_invisible">: </span>
 													<dialog:confirmationDialog submitAction="toggleAdmin" bean="#{UserBean}" confirmationText="#{msg.user_to_admin}" submitLabel="#{lbl.confirm}" dialogId="general"/></div>

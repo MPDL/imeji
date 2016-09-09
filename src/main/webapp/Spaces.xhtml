@@ -16,13 +16,13 @@
 	
 	<ui:define name="mainContent">
 		<!-- Are You Admin? -->	
-		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.admin}">
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{Auth.sysAdmin}">
 			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}"/>
 			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}"/>
 		</h:panelGroup>
 		
 		<!-- Only for Admins -->
-		<ui:fragment rendered="#{Auth.admin}">
+		<ui:fragment rendered="#{Auth.sysAdmin}">
 			<!-- AdminDataList - Back Button -->
 			<h:panelGroup layout="block" styleClass="imj_backPanel">
 				<h:outputLink value="#{Navigation.adminUrl}">

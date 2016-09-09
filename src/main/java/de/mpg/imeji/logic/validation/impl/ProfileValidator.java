@@ -13,7 +13,7 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 /**
  * {@link Validator} for {@link MetadataProfile}

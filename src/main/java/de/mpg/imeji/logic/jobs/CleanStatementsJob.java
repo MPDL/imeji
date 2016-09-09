@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
@@ -16,7 +17,6 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.writer.WriterFacade;
-import de.mpg.j2j.annotations.j2jId;
 
 /**
  * Clean empty {@link MetadataProfile}, which are not referenced by any collection

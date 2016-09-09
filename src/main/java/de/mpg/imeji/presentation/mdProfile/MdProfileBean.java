@@ -26,7 +26,7 @@ import de.mpg.imeji.presentation.collection.CollectionBean.TabType;
 import de.mpg.imeji.presentation.collection.CollectionSessionBean;
 import de.mpg.imeji.presentation.mdProfile.wrapper.StatementWrapper;
 import de.mpg.imeji.presentation.util.BeanHelper;
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 /**
  * Bean for {@link MetadataProfile} view pages

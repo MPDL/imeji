@@ -58,7 +58,7 @@ import de.mpg.imeji.rest.to.predefinedMetadataTO.LinkTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.NumberTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.PublicationTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.TextTO;
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 public class TransferObjectFactory {
   private static UserNameCache userNameCache = new UserNameCache();

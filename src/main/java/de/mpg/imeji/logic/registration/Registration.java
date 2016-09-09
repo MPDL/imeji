@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.j2j.helper.DateHelper;
+import de.mpg.imeji.util.DateHelper;
 
 /**
  * A Registration to imeji

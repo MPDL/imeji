@@ -51,7 +51,7 @@
 	
 	<ui:define name="mainContent">
 		<!-- Are You Admin? -->	
-		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.admin}">
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
 			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}"/>
 			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}"/>
 		</h:panelGroup>
@@ -59,7 +59,7 @@
 		<div class="imj_spaceConfigPage">
 			<div class="imj_administrationTiledList imj_maxWidth">
 				
-				<h:panelGroup layout="block" styleClass="imj_listBody" rendered="#{Auth.admin}">
+				<h:panelGroup layout="block" styleClass="imj_listBody" rendered="#{Auth.sysAdmin}">
 					<h:form id="spaceForm">
 						<div class="imj_adminPanel">
 							<div class="imj_headline">

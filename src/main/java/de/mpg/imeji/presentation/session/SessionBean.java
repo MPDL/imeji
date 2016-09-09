@@ -515,7 +515,7 @@ public class SessionBean implements Serializable {
    * @throws IOException
    */
   private void logoutFromSpot() {
-    if (getUser() != null && !getUser().isAdmin()) {
+    if (getUser() != null && !AuthUtil.isSysAdmin(user)) {
       setUser(null);
     }
   }
@@ -549,7 +549,7 @@ public class SessionBean implements Serializable {
    * Check and set isHasUploadRights
    */
   public void checkIfHasUploadRights() {
-    if (user.isAllowedToCreateCollection()) {
+    if (AuthUtil.isAllowedToCreateCollection(user)) {
       hasUploadRights = true;
       return;
     }

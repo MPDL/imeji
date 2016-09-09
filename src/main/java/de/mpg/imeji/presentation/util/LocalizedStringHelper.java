@@ -3,7 +3,7 @@
  */
 package de.mpg.imeji.presentation.util;
 
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 /**
  * Helper to work with {@link LocalizedString}

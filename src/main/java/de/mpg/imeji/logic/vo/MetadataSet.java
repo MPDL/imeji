@@ -22,12 +22,12 @@ import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.ontology.Profile;
 
+import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jLazyList;
+import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.util.MetadataAndProfileHelper;
-import de.mpg.j2j.annotations.j2jId;
-import de.mpg.j2j.annotations.j2jLazyList;
-import de.mpg.j2j.annotations.j2jResource;
 
 /**
  * Container for a {@link List} of {@link Metadata} defined for one {@link Profile}

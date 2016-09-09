@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jList;
+import de.mpg.imeji.j2j.annotations.j2jLiteral;
+import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.util.IdentifierUtil;
-import de.mpg.j2j.annotations.j2jId;
-import de.mpg.j2j.annotations.j2jList;
-import de.mpg.j2j.annotations.j2jLiteral;
-import de.mpg.j2j.annotations.j2jResource;
 
 /**
  * Metadata of a {@link Container} TODO Description

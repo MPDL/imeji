@@ -3,9 +3,9 @@ package de.mpg.imeji.logic.vo;
 import java.io.Serializable;
 import java.net.URI;
 
-import de.mpg.j2j.annotations.j2jId;
-import de.mpg.j2j.annotations.j2jLiteral;
-import de.mpg.j2j.annotations.j2jResource;
+import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jLiteral;
+import de.mpg.imeji.j2j.annotations.j2jResource;
 
 /**
  * Additional Information for container metadata

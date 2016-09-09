@@ -17,12 +17,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.chrono.AssembledChronology.Fields;
 
+import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jList;
+import de.mpg.imeji.j2j.annotations.j2jLiteral;
+import de.mpg.imeji.j2j.annotations.j2jModel;
+import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.j2j.annotations.j2jId;
-import de.mpg.j2j.annotations.j2jList;
-import de.mpg.j2j.annotations.j2jLiteral;
-import de.mpg.j2j.annotations.j2jModel;
-import de.mpg.j2j.annotations.j2jResource;
 
 /**
  * imeji item. Can be an image, a video, a sound, etc.

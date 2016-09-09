@@ -19,7 +19,7 @@
 			<menu:context_subNavigation contextId="#{logicBean.id}" 
 										contextUrl="#{Navigation.collectionUrl}" 
 										curMainMenu="#{currentMainMenu}" 
-										userHasAdminRights="#{Auth.admin}" 
+										userHasAdminRights="#{Auth.sysAdmin}" 
 										userHasUploadRights="#{Auth.createContent(logicBean.collection) and logicBean.collection.status != 'WITHDRAWN'}" 
 										navBean="#{Navigation}" 
 										activeMenu="start"/>

@@ -24,24 +24,12 @@
  */
 package de.mpg.imeji.logic.auth.util;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-import com.sun.org.apache.bcel.internal.generic.ReturnaddressType;
-
-import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.authorization.Authorization;
-import de.mpg.imeji.logic.controller.resource.AlbumController;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
-import de.mpg.imeji.logic.controller.resource.SpaceController;
-import de.mpg.imeji.logic.storage.StorageController;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
@@ -59,9 +47,6 @@ import de.mpg.imeji.logic.vo.UserGroup;
  */
 public class AuthUtil {
   private static final Authorization authorization = new Authorization();
-  private static final StorageController STORAGE_CONTROLLER = new StorageController();
-  private static final Logger LOGGER = Logger.getLogger(AuthUtil.class);
-
 
   /**
    * Return the {@link Authorization} as static
@@ -70,87 +55,6 @@ public class AuthUtil {
    */
   public static Authorization staticAuth() {
     return authorization;
-  }
-
-  /**
-   * True if the user is allowed to view this file
-   *
-   * @param fileUrl
-   * @param user
-   * @return
-   */
-  public static boolean isAllowedToViewFile(String fileUrl, User user) {
-    if (isSpaceUrl(fileUrl)) {
-      // For space Logos do not check any security (spaces are always public)
-      return true;
-    }
-    return isAllowedToViewItemOfFile(fileUrl, user)
-        || isAllowedToViewCollectionOfFile(fileUrl, user)
-        || isAllowedToViewAlbumOfFile(fileUrl, user);
-  }
-
-  /**
-   * True if the fileUrl is associated to a {@link Item} which can be read by the user
-   *
-   * @param fileUrl
-   * @param user
-   * @return
-   */
-  private static boolean isAllowedToViewItemOfFile(String fileUrl, User user) {
-    try {
-      new ItemController()
-          .retrieveLazyForFile(STORAGE_CONTROLLER.getStorage().getStorageId(fileUrl), user);
-      return true;
-    } catch (ImejiException e) {
-      return false;
-    }
-  }
-
-  /**
-   * True if the fileurl is associated to {@link CollectionImeji} which can be read by the user
-   * (usefull for collection logos)
-   *
-   * @param fileUrl
-   * @param user
-   * @return
-   */
-  private static boolean isAllowedToViewCollectionOfFile(String fileUrl, User user) {
-    try {
-      String collectionId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
-      new CollectionController().retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId),
-          user);
-      return true;
-    } catch (Exception e) {
-      return false;
-    }
-  }
-
-  /**
-   * True if the filerurl is associated an {@link Album} which can be read by the user (usefull for
-   * album logos)
-   *
-   * @param fileUrl
-   * @param user
-   * @return
-   */
-  private static boolean isAllowedToViewAlbumOfFile(String fileUrl, User user) {
-    String albumId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
-    try {
-      new AlbumController().retrieve(ObjectHelper.getURI(Album.class, albumId), user);
-      return true;
-    } catch (Exception e) {
-      return false;
-    }
-  }
-
-  /**
-   * True if the file is the logo of a space
-   *
-   * @param url
-   * @return
-   */
-  public static boolean isSpaceUrl(String url) {
-    return new SpaceController().isSpaceLogoURL(url);
   }
 
 
@@ -198,7 +102,7 @@ public class AuthUtil {
     List<String> uris = new ArrayList<>();
     for (Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/collection/")
-          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ))) {
+          && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
       }
 
@@ -217,7 +121,7 @@ public class AuthUtil {
     List<String> uris = new ArrayList<>();
     for (Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/metadataProfile/")
-          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ))) {
+          && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
       }
 
@@ -236,7 +140,7 @@ public class AuthUtil {
     List<String> uris = new ArrayList<>();
     for (Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/item/")
-          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ))) {
+          && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
       }
     }
@@ -253,7 +157,7 @@ public class AuthUtil {
     List<String> uris = new ArrayList<>();
     for (Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/album/")
-          && g.getGrantType().equals(toGrantTypeURI(GrantType.READ))) {
+          && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
       }
     }
@@ -307,7 +211,7 @@ public class AuthUtil {
    */
   public static Grant extractGrant(List<Grant> grants, String grantForUri, GrantType type) {
     for (Grant g : AuthUtil.extractGrantsFor(grants, Imeji.PROPERTIES.getBaseURI())) {
-      if (g.getGrantType().compareTo(AuthUtil.toGrantTypeURI(type)) == 0) {
+      if (g.getGrantType().compareTo(Grant.toGrantTypeURI(type)) == 0) {
         return g;
       }
     }
@@ -328,15 +232,5 @@ public class AuthUtil {
       }
     }
     return nl;
-  }
-
-  /**
-   * Transform a {@link GrantType} into an {@link URI}
-   *
-   * @param type
-   * @return
-   */
-  public static URI toGrantTypeURI(GrantType type) {
-    return URI.create("http://imeji.org/terms/grantType#" + type.name());
   }
 }

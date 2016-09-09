@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import de.mpg.imeji.j2j.transaction.SearchTransaction;
 import de.mpg.imeji.logic.search.model.ComparableSearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
-import de.mpg.j2j.transaction.SearchTransaction;
 
 /**
  * Helper for sort parameters in SPARQL queries

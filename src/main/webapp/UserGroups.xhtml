@@ -21,7 +21,7 @@
 		
 		<ui:fragment rendered="#{Auth.loggedIn}">
 			<!-- AdminDataList - Back Button -->
-			<h:panelGroup layout="block" styleClass="imj_backPanel" rendered="#{Auth.admin and UserGroups.backContainerUrl == null}">
+			<h:panelGroup layout="block" styleClass="imj_backPanel" rendered="#{Auth.sysAdmin and UserGroups.backContainerUrl == null}">
 				<h:outputLink value="#{Navigation.adminUrl}">
 					<h:outputText value="#{lbl.back_to_admin}"/>
 				</h:outputLink>
@@ -64,11 +64,11 @@
 										<h:outputLink value="#{UserGroups.backContainerUrl}group=#{group.id}" styleClass="imj_editButton" rendered="#{UserGroups.backContainerUrl != null}">
 											<h:outputText value="#{lbl.share_with}"/>
 										</h:outputLink>
-										<h:outputLink value="#{Navigation.applicationSpaceUrl}usergroup?id=#{group.id}" styleClass="imj_editButton" rendered="#{Auth.admin}">
+										<h:outputLink value="#{Navigation.applicationSpaceUrl}usergroup?id=#{group.id}" styleClass="imj_editButton" rendered="#{Auth.sysAdmin}">
 											<h:outputText value="#{lbl.view_detail}"/>
 										</h:outputLink>
 																					<!-- AdminDataList - Delete User -->
-										<h:outputLink value="#" styleClass="imj_cancelButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteUserGroup#{row.index}');" rendered="#{Auth.admin}">
+										<h:outputLink value="#" styleClass="imj_cancelButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteUserGroup#{row.index}');" rendered="#{Auth.sysAdmin}">
 											<h:outputText value="#{lbl.delete}"/>
 										</h:outputLink>
 										<dialog:confirmationDialog submitAction="remove" bean="#{UserGroups}" confirmationText="#{msg.confirmation_delete_user_group}" submitLabel="#{lbl.delete}" dialogId="deleteUserGroup#{row.index}" identifierName="group" identifierValue="#{group.id}"/>

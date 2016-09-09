@@ -10,16 +10,16 @@ import com.hp.hpl.jena.Jena;
 import com.hp.hpl.jena.rdf.model.Model;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.j2j.transaction.CRUDTransaction;
+import de.mpg.imeji.j2j.transaction.ThreadedTransaction;
+import de.mpg.imeji.j2j.transaction.Transaction;
+import de.mpg.imeji.j2j.transaction.CRUDTransaction.CRUDTransactionType;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.reader.JenaReader;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.j2j.transaction.CRUDTransaction;
-import de.mpg.j2j.transaction.CRUDTransaction.CRUDTransactionType;
-import de.mpg.j2j.transaction.ThreadedTransaction;
-import de.mpg.j2j.transaction.Transaction;
 
 /**
  * imeji WRITE operations (create/delete/update) in {@link Jena} <br/>

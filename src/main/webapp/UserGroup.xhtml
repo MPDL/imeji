@@ -13,12 +13,12 @@
 	</ui:define>
 	
 	<ui:define name="mainContent">
-		<ui:fragment rendered="#{!Auth.admin}">
+		<ui:fragment rendered="#{Auth.sysAdmin}">
 			<ui:include src="./include/LoginFormular.xhtml" />
 		</ui:fragment>
 		
 		
-		<ui:fragment rendered="#{Auth.admin}">
+		<ui:fragment rendered="#{Auth.sysAdmin}">
 			<h:panelGroup layout="block" styleClass="imj_backPanel">
 				<a href="#{Navigation.applicationSpaceUrl}usergroups" title="#{lbl.admin_groups_view}">
 					<h:outputText value="#{lbl.admin_userGroups_view}"/>

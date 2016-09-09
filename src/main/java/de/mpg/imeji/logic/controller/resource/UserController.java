@@ -27,6 +27,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.auth.authorization.AuthorizationPredefinedRoles;
+import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.collaboration.invitation.InvitationBusinessController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
@@ -52,7 +53,7 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.logic.writer.WriterFacade;
-import de.mpg.j2j.helper.DateHelper;
+import de.mpg.imeji.util.DateHelper;
 
 /**
  * Controller for {@link User}
@@ -303,7 +304,7 @@ public class UserController {
    */
   public long checkQuota(File file, CollectionImeji col) throws ImejiException {
     // do not check quota for admin
-    if (this.user.isAdmin()) {
+    if (AuthUtil.isSysAdmin(user)) {
       return -1L;
     }
     User targetCollectionUser = this.user.getId().equals(col.getCreatedBy()) ? this.user

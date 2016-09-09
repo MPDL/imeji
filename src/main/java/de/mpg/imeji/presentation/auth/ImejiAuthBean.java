@@ -31,6 +31,7 @@ import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.authorization.Authorization;
+import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.collection.CollectionListItem;
@@ -249,8 +250,28 @@ public class ImejiAuthBean implements Serializable {
    * @param url
    * @return
    */
-  public boolean isAdmin() {
+  public boolean isSysAdmin() {
     return auth.administrate(sessionUser, Imeji.PROPERTIES.getBaseURI());
+  }
+
+  /**
+   * True if the user is sysadmin
+   * 
+   * @param user
+   * @return
+   */
+  public boolean isSysAdmin(User user) {
+    return auth.administrate(user, Imeji.PROPERTIES.getBaseURI());
+  }
+
+  /**
+   * True if the user ca create a new collection
+   * 
+   * @param user
+   * @return
+   */
+  public boolean isAllowedToCreateCollection(User user) {
+    return AuthUtil.isAllowedToCreateCollection(user);
   }
 
   /**

@@ -21,6 +21,7 @@ import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 import com.hp.hpl.jena.tdb.TDB;
 
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
@@ -46,7 +47,7 @@ public class SPARQLEndpointServlet extends HttpServlet {
     String model = req.getParameter("model");
     SessionBean session =
         (SessionBean) req.getSession(false).getAttribute(SessionBean.class.getSimpleName());
-    if (!"".equals(q) && session.getUser() != null && session.getUser().isAdmin()) {
+    if (!"".equals(q) && session.getUser() != null && AuthUtil.isSysAdmin(session.getUser())) {
       try {
         Imeji.dataset.begin(ReadWrite.WRITE);
         Query sparql = QueryFactory.create(q, Syntax.syntaxARQ);
@@ -68,7 +69,7 @@ public class SPARQLEndpointServlet extends HttpServlet {
     } else if (session.getUser() == null) {
       resp.sendError(HttpServletResponse.SC_FORBIDDEN,
           "imeji security: You need administration priviliges");
-    } else if (session.getUser().isAdmin()) {
+    } else if (AuthUtil.isSysAdmin(session.getUser())) {
       resp.sendError(HttpServletResponse.SC_UNAUTHORIZED,
           "imeji security: You need to be signed-in");
     }

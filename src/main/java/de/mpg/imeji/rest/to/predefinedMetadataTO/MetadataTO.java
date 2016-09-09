@@ -6,8 +6,7 @@ import java.net.URI;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import de.mpg.j2j.annotations.j2jDataType;
-import de.mpg.j2j.helper.J2JHelper;
+import de.mpg.imeji.rest.to.predefinedMetadataTO.annotations.AnnotationsUtil;
 
 @JsonInclude(Include.NON_NULL)
 public abstract class MetadataTO implements Serializable {
@@ -15,8 +14,8 @@ public abstract class MetadataTO implements Serializable {
 
   public static enum Types {
     TEXT(TextTO.class), NUMBER(NumberTO.class), CONE_PERSON(ConePersonTO.class), DATE(
-        DateTO.class), GEOLOCATION(GeolocationTO.class), LICENSE(LicenseTO.class), LINK(
-            LinkTO.class), PUBLICATION(PublicationTO.class);
+        DateTO.class), GEOLOCATION(GeolocationTO.class), LICENSE(
+            LicenseTO.class), LINK(LinkTO.class), PUBLICATION(PublicationTO.class);
     private Class<? extends MetadataTO> clazz = null;
 
     private Types(Class<? extends MetadataTO> clazz) {
@@ -27,7 +26,6 @@ public abstract class MetadataTO implements Serializable {
       return clazz;
     }
 
-
     public static Class<MetadataTO> getClassOfType(URI typeUri)
         throws IllegalAccessException, InstantiationException {
       if (typeUri == null) {
@@ -35,19 +33,13 @@ public abstract class MetadataTO implements Serializable {
       }
       String type = typeUri.toString();
       for (Types typezz : Types.values()) {
-        Class clazz = typezz.getClazz();
-        if (type.equals(J2JHelper.getType(clazz.newInstance()))) {
-          return clazz;
+        Class<?> clazz = typezz.getClazz();
+        if (type.equals(AnnotationsUtil.getType(clazz.newInstance()))) {
+          return (Class<MetadataTO>) clazz;
         }
       }
       return null;
     }
-
   }
-
-  public static URI getTypeURI(Class<? extends MetadataTO> clazz) {
-    return URI.create(clazz.getAnnotation(j2jDataType.class).value());
-  }
-
 
 }

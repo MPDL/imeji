@@ -21,12 +21,12 @@
 		</h:panelGroup>		
 		
 		<!-- Are You Admin? -->	
-		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.admin}">
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
 			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}"/>
 			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}"/>
 		</h:panelGroup>
 	
-		<ui:fragment rendered="#{Auth.admin}">
+		<ui:fragment rendered="#{Auth.sysAdmin}">
 		<!-- Only for Admins -->			
 			
 			<div class="imj_userConfig">
@@ -36,7 +36,7 @@
 				
 					<div class="imj_listBody">
 					
-						<h:panelGroup layout="block" styleClass="imj_adminPanel imj_userConfig" rendered="#{Auth.admin}">
+						<h:panelGroup layout="block" styleClass="imj_adminPanel imj_userConfig" rendered="#{Auth.sysAdmin}">
 								
 							<h:outputText value="#{lbl.admin_tools_warning}"/>			
 							<br/>

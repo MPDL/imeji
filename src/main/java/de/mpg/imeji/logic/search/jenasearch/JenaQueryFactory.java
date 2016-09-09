@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.search.model.FileTypes.Type;
@@ -28,7 +29,6 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.j2j.helper.J2JHelper;
 
 /**
  * Factory to created Sparql query from a {@link SearchPair}

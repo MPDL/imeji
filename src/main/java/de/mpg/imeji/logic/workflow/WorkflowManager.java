@@ -4,14 +4,14 @@ import java.util.Calendar;
 
 import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.WorkflowException;
+import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Item.Visibility;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.util.DateHelper;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.j2j.helper.DateHelper;
-import de.mpg.j2j.helper.J2JHelper;
 
 /**
  * Prepare Objects for Workflow operations.<br/>

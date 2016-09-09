@@ -14,7 +14,7 @@
         <menu:context_subNavigation contextId="#{UploadBean.id}" 
                                     contextUrl="#{Navigation.collectionUrl}" 
                                     curMainMenu="#{currentMainMenu}" 
-                                    userHasAdminRights="#{Auth.admin}" 
+                                    userHasAdminRights="#{Auth.sysAdmin}" 
                                     userHasUploadRights="#{Auth.createContent(UploadBean.collection) and UploadBean.collection.status !='WITHDRAWN'}" 
                                     navBean="#{Navigation}" 
                                     activeMenu="upload"/>
@@ -108,7 +108,7 @@
                             <ul class="imj_tabMenu">
                                 <li><a href="#tabsUpload-1">#{lbl.select_files}</a></li>
                                 <li><a href="#tabsUpload-2">#{lbl.upload_from_link_menu}</a></li>
-                                <ui:fragment rendered="#{Auth.admin}">
+                                <ui:fragment rendered="#{Auth.sysAdmin}">
                                     <li><a href="#tabsUpload-3">#{lbl.upload_directory_menu}</a></li>
                                 </ui:fragment>
                             </ul>
@@ -134,7 +134,7 @@
                                     </h:form>
                                 </div>
                             </div>
-                            <ui:fragment rendered="#{Auth.admin}">
+                            <ui:fragment rendered="#{Auth.sysAdmin}">
                                 <div id="tabsUpload-3" class="imj_tabContent">
 
                                     <div class="imj_uploadUrlReference">
@@ -185,7 +185,7 @@
                                 <h:outputLabel styleClass="imj_optionLabel" value="#{lbl.upload_unique_filename}" for="selUniqueNames"/>
                             </div>
 
-                            <ui:fragment rendered="#{Auth.admin}">
+                            <ui:fragment rendered="#{Auth.sysAdmin}">
                                 <div class="imj_optionSet right">
                                     <h:selectBooleanCheckbox styleClass="imj_optionCheckbox" id="selRecursive" value="#{UploadBean.recursive}">
                                         <f:ajax event="click" render="@none"/>

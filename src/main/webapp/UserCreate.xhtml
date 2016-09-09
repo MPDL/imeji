@@ -16,14 +16,14 @@
 	<ui:define name="mainContent">
 		<!-- Are You Admin? -->
 		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
-			rendered="#{!Auth.admin}">
+			rendered="#{Auth.sysAdmin}">
 			<h:outputText value="#{lbl.view_page_disallowed}"
 				styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
 			<h:outputText value="#{lbl.view_page_disallowed2}"
 				styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
 		</h:panelGroup>
 
-		<ui:fragment rendered="#{Auth.admin}">
+		<ui:fragment rendered="#{Auth.sysAdmin}">
 			<!-- Only for Admins -->
 
 			<div class="imj_userConfig">
@@ -35,7 +35,7 @@
 
 						<h:panelGroup layout="block"
 							styleClass="imj_adminPanel imj_userConfig"
-							rendered="#{Auth.admin}">
+							rendered="#{Auth.sysAdmin}">
 							<h:form id="userForm">
 								<!-- Admin User Info-->
 								<div class="imj_headline">
@@ -87,7 +87,7 @@
 										<div class="imj_admindataValueCheckBox">
 											<div class="imj_admindataValueEntry">
 												<h:selectBooleanCheckbox
-													value="#{UserCreationBean.allowedToCreateCollection}"
+													value="#{Auth.isAllowedToCreateCollection(SessionBean.user)}"
 													styleClass="imj_admindataCheckbox" />
 											</div>
 										</div>

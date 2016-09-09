@@ -17,7 +17,7 @@
 			<menu:context_subNavigation contextId="#{metadataContextBean.idString}" 
 										contextUrl="#{Navigation.collectionUrl}" 
 										curMainMenu="#{currentMainMenu}" 
-										userHasAdminRights="#{Auth.admin}" 
+										userHasAdminRights="#{Auth.sysAdmin}" 
 										userHasUploadRights="#{Auth.createContent(metadataContextBean) and metadataContextBean.status != 'WITHDRAWN'}" 
 										navBean="#{Navigation}" 
 										activeMenu="start"/>

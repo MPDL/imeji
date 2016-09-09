@@ -5,7 +5,7 @@ package de.mpg.imeji.presentation.lang;
 
 import java.util.Iterator;
 
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 public class LabelHelper {
   public static String getDefaultLabel(Iterator<LocalizedString> labels) {

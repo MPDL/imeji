@@ -14,14 +14,12 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.hp.hpl.jena.util.Metadata;
-
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.util.MetadataProfileUtil;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 /**
  * Utility class for the labels of the {@link Metadata}

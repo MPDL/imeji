@@ -284,7 +284,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
       }
     }
     // If the user hasn't any collection but is allowed to create one, create a default collection
-    if (collectionItems.isEmpty() && getSessionUser().isAllowedToCreateCollection()) {
+    if (collectionItems.isEmpty() && AuthUtil.isAllowedToCreateCollection(getSessionUser())) {
       CollectionImeji defaultCollection = createDefaultCollection();
       collectionItems.add(
           new SelectItem(defaultCollection.getId(), defaultCollection.getMetadata().getTitle()));

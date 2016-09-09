@@ -9,9 +9,9 @@ import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import de.mpg.j2j.annotations.j2jId;
-import de.mpg.j2j.annotations.j2jLiteral;
-import de.mpg.j2j.annotations.j2jResource;
+import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jLiteral;
+import de.mpg.imeji.j2j.annotations.j2jResource;
 
 /**
  * Super class for all imeji containers ({@link CollectionImeji} and {@link Album})

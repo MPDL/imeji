@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
@@ -47,7 +48,6 @@ import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.writer.WriterFacade;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.j2j.annotations.j2jId;
 
 /**
  * Bean for the administration page. Methods working on data

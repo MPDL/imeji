@@ -25,7 +25,7 @@
 			<menu:context_subNavigation contextId="#{metadataBean.id}" 
 									contextUrl="#{Navigation.albumUrl}" 
 									curMainMenu="#{currentMainMenu}" 
-									userHasAdminRights="#{Auth.admin}" 
+									userHasAdminRights="#{Auth.sysAdmin}" 
 									userHasUploadRights="#{Auth.createContent(metadataBean.album) and metadataContextBean.status != 'WITHDRAWN'}" 
 									navBean="#{Navigation}" 
 									activeMenu="metadata" />

@@ -34,6 +34,7 @@ import com.hp.hpl.jena.tdb.sys.TDBMaker;
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.logic.auth.ImejiRsaKeys;
 import de.mpg.imeji.logic.auth.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.auth.authorization.AuthorizationPredefinedRoles;
@@ -59,7 +60,6 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.j2j.annotations.j2jModel;
 
 /**
  * {@link Jena} interface for imeji
@@ -125,7 +125,6 @@ public class Imeji {
     tdbPath = PropertyReader.getProperty("imeji.tdb.path");
     ElasticService.start();
     init(tdbPath);
-
     nightlyExecutor.start();
   }
 
@@ -273,7 +272,7 @@ public class Imeji {
           LOGGER.warn("PASSWORD: " + ADMIN_PASSWORD_INIT);
           LOGGER.error(
               "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-          adminUser.setEmail(System.currentTimeMillis() + "@admin.org");
+          adminUser.setEmail(newEmail);
           adminUser.setEncryptedPassword(StringHelper.convertToMD5(ADMIN_PASSWORD_INIT));
           uc.create(adminUser, USER_TYPE.ADMIN);
         } catch (NotFoundException e) {

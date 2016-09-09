@@ -123,8 +123,6 @@ public class ImejiConfiguration {
     } catch (Exception e) {
       throw new ImejiException(
           "conf.xml could not be read. Please check in tdb directory if exsting and not empty. If Emtpy, remove it.");
-      // LOGGER.info("conf.xml can not be read, probably emtpy");
-      // return;
     }
     dataViewerUrl = (String) config.get(CONFIGURATION.DATA_VIEWER_URL.name());
     fileTypes = new FileTypes((String) config.get(CONFIGURATION.FILE_TYPES.name()));

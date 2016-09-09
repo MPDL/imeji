@@ -71,9 +71,14 @@ public final class DoiService {
       String doiPassword) throws ImejiException {
     DOICollection dcol = DOIUtil.transformToDO(col);
     String xml = DOIUtil.convertToXML(dcol);
-    String doi = DOIUtil.makeDOIRequest(doiServiceUrl, doiUser, doiPassword, xml);
+    String doi =
+        DOIUtil.makeDOIRequest(doiServiceUrl, doiUser, doiPassword, getCollectionUrl(col), xml);
     return doi;
 
+  }
+
+  private String getCollectionUrl(CollectionImeji col) {
+    return Imeji.PROPERTIES.getApplicationURL() + "collection/" + col.getIdString();
   }
 
   /**

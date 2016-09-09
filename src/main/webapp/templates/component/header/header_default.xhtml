@@ -60,7 +60,7 @@ All rights reserved. Use is subject to license terms.
 			<ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
 				<div class="imj_siteHeaderMenuSearchSection">
 					<!-- place main menu here -->
-					<menu:mainMenu id="mainMenu" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.admin}"/>			
+					<menu:mainMenu id="mainMenu" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>			
 					<!-- import search here-->
 					<ui:include src="../menu/searchmenu_default.xhtml"/>
 				</div>

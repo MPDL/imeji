@@ -21,7 +21,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.validation.impl.UserValidator;
 import de.mpg.imeji.logic.validation.impl.Validator.Method;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.j2j.helper.DateHelper;
+import de.mpg.imeji.util.DateHelper;
 
 /**
  * Business Controller for user registration

@@ -114,7 +114,11 @@ public class AuthenticationFilter implements Filter {
    * @return
    */
   private boolean isModifiedUser(User user) {
-    return new UserController(user).isModified(user);
+    try {
+      return new UserController(user).isModified(user);
+    } catch (Exception e) {
+      return true;
+    }
   }
 
   /**

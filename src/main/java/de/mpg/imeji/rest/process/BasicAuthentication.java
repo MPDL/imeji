@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.logic.auth.authentication.Authentication;
-import de.mpg.imeji.logic.auth.authentication.AuthenticationFactory;
+import de.mpg.imeji.logic.auth.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.vo.User;
 
 /**

@@ -11,13 +11,13 @@ import com.hp.hpl.jena.Jena;
 import com.hp.hpl.jena.rdf.model.Model;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.j2j.helper.J2JHelper;
+import de.mpg.imeji.j2j.transaction.CRUDTransaction;
+import de.mpg.imeji.j2j.transaction.Transaction;
+import de.mpg.imeji.j2j.transaction.CRUDTransaction.CRUDTransactionType;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.writer.JenaWriter;
-import de.mpg.j2j.helper.J2JHelper;
-import de.mpg.j2j.transaction.CRUDTransaction;
-import de.mpg.j2j.transaction.CRUDTransaction.CRUDTransactionType;
-import de.mpg.j2j.transaction.Transaction;
 
 /**
  * imeji READ operations in {@link Jena} <br/>

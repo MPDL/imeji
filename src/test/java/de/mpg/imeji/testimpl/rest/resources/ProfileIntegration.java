@@ -38,7 +38,7 @@ import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.MetadataProfileTO;
 import de.mpg.imeji.rest.to.StatementTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 public class ProfileIntegration extends ImejiTestBase {
 

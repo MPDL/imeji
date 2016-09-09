@@ -15,6 +15,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.hp.hpl.jena.util.iterator.Filter;
 
+import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
@@ -196,7 +197,7 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder buildSecurityQuery(User user, String folderUri) {
     if (user != null) {
-      if (user.isAdmin()) {
+      if (AuthUtil.isSysAdmin(user)) {
         // Admin: can view everything
         return QueryBuilders.matchAllQuery();
       } else {

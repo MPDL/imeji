@@ -8,9 +8,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import de.mpg.j2j.annotations.j2jId;
-import de.mpg.j2j.annotations.j2jModel;
-import de.mpg.j2j.annotations.j2jResource;
+import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jModel;
+import de.mpg.imeji.j2j.annotations.j2jResource;
 
 /**
  * imeji collection has one {@link MetadataProfile} and contains {@link Item}

@@ -21,6 +21,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.logic.controller.resource.UserController;
@@ -177,7 +178,7 @@ public class UserBean extends SuperBean {
    */
   public void toggleAdmin() throws ImejiException {
     ShareBusinessController shareController = new ShareBusinessController();
-    if (user.isAdmin()) {
+    if (AuthUtil.isSysAdmin(user)) {
       shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(),
           ShareBusinessController.rolesAsList(ShareRoles.CREATE));
     } else {
@@ -197,9 +198,9 @@ public class UserBean extends SuperBean {
    */
   public void toggleCreateCollection() throws ImejiException {
     ShareBusinessController shareController = new ShareBusinessController();
-    if (!user.isAdmin()) {
+    if (!AuthUtil.isSysAdmin(user)) {
       // admin can not be forbidden to create collections
-      if (user.isAllowedToCreateCollection()) {
+      if (AuthUtil.isAllowedToCreateCollection(user)) {
         shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(), null);
       } else {
         shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(),

@@ -39,6 +39,7 @@ public abstract class ImejiController {
 
   public static final String LOGO_STORAGE_SUBDIRECTORY = "/thumbnail";
 
+
   /**
    * If a user is not logged in, throw a Exception
    *
@@ -78,9 +79,10 @@ public abstract class ImejiController {
    * @param properties
    * @param user
    * @throws WorkflowException
-   * @throws NotSupportedMethodException 
+   * @throws NotSupportedMethodException
    */
-  protected void prepareRelease(Properties properties, User user) throws WorkflowException, NotSupportedMethodException {
+  protected void prepareRelease(Properties properties, User user)
+      throws WorkflowException, NotSupportedMethodException {
     WORKFLOW_MANAGER.prepareRelease(properties);
   }
 
@@ -90,10 +92,11 @@ public abstract class ImejiController {
    * @param properties
    * @param comment
    * @throws WorkflowException
-   * @throws NotSupportedMethodException 
+   * @throws NotSupportedMethodException
    * @throws UnprocessableError
    */
-  protected void prepareWithdraw(Properties properties, String comment) throws WorkflowException, NotSupportedMethodException {
+  protected void prepareWithdraw(Properties properties, String comment)
+      throws WorkflowException, NotSupportedMethodException {
     if (comment != null && !"".equals(comment)) {
       properties.setDiscardComment(comment);
     }

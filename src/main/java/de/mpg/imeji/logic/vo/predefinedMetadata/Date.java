@@ -11,12 +11,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import de.mpg.imeji.j2j.annotations.j2jDataType;
+import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jLiteral;
+import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.util.DateFormatter;
-import de.mpg.j2j.annotations.j2jDataType;
-import de.mpg.j2j.annotations.j2jId;
-import de.mpg.j2j.annotations.j2jLiteral;
-import de.mpg.j2j.annotations.j2jResource;
 
 /**
  * The Date {@link Metadata}. Should be used for {@link Metadata} related to a date

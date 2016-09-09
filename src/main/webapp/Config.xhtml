@@ -45,13 +45,13 @@
 	
 	<ui:define name="mainContent">
 		<!-- Are You Admin? -->	
-		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.admin}">
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
 			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}"/>
 			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}"/>
 		</h:panelGroup>
 			
 		<!-- Only for Admins -->	
-		<ui:fragment rendered="#{Auth.admin}">
+		<ui:fragment rendered="#{Auth.sysAdmin}">
 		
 			<!-- AdminDataList - Back Button -->
 			<h:panelGroup layout="block" styleClass="imj_backPanel">
@@ -64,7 +64,7 @@
 				<!-- Admin - TiledList -->		
 				<div class="imj_administrationTiledList imj_maxWidth">
 				
-					<h:panelGroup layout="block" styleClass="imj_listBody" rendered="#{Auth.admin}">
+					<h:panelGroup layout="block" styleClass="imj_listBody" rendered="#{Auth.sysAdmin}">
 						<h:form id="configForm">
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">

@@ -6,7 +6,7 @@
         xmlns:imjc="http://java.sun.com/jsf/composite/components">
     <f:loadBundle var="lbl" basename="labels"/>
     <f:loadBundle var="msg" basename="messages"/>
-    <ui:param name="siteWrapperClass" value="#{Auth.admin ? 'imj_siteWrapper imj_isAdmin' : 'imj_siteWrapper'}" />
+    <ui:param name="siteWrapperClass" value="#{Auth.sysAdmin ? 'imj_siteWrapper imj_isAdmin' : 'imj_siteWrapper'}" />
 
     <html xmlns="http://www.w3.org/1999/xhtml">
         <h:head>

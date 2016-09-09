@@ -23,7 +23,7 @@ import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.InactiveAuthenticationError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.auth.authentication.Authentication;
-import de.mpg.imeji.logic.auth.authentication.AuthenticationFactory;
+import de.mpg.imeji.logic.auth.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;

@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.MetadataTO;
-import de.mpg.j2j.misc.LocalizedString;
+import de.mpg.imeji.util.LocalizedString;
 
 @XmlRootElement
 @XmlType(propOrder = {"position", "Labels", "value", "statementUri", "typeUri",})

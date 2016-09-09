@@ -37,10 +37,6 @@ import de.mpg.imeji.logic.vo.Person;
  */
 public class DOIUtil {
   private static final Client client = ClientBuilder.newClient();
-  /**
-   * The DOI service needs an URL to first create a DOI
-   */
-  private static final String DUMMY_OBJECT_URL = "http://imeji.org/dummyDOI";
 
   private DOIUtil() {
     // private controller
@@ -84,13 +80,13 @@ public class DOIUtil {
   }
 
   public static String makeDOIRequest(String doiServiceUrl, String doiUser, String doiPassword,
-      String xml) throws ImejiException {
+      String url, String xml) throws ImejiException {
 
     // Trim to avoid errors due to unwanted spaces
     doiServiceUrl = doiServiceUrl.trim();
     validateURL(doiServiceUrl);
 
-    Response response = client.target(doiServiceUrl).queryParam("url", DUMMY_OBJECT_URL)
+    Response response = client.target(doiServiceUrl).queryParam("url", url)
         .register(HttpAuthenticationFeature.basic(doiUser, doiPassword))
         .register(MultiPartFeature.class).register(JacksonFeature.class)
         .request(MediaType.TEXT_PLAIN).put(Entity.entity(xml, "text/xml"));
@@ -100,9 +96,9 @@ public class DOIUtil {
     // throw Exception if the DOI service request fails
     if (statusCode != HttpStatus.SC_CREATED) {
       throw new ImejiException("Error occured, when contacting DOxI. StatusCode=" + statusCode
-          + " - " + HttpStatus.getStatusText(statusCode) + ". Please contact your admin");
+          + " - " + HttpStatus.getStatusText(statusCode) + " - " + response.readEntity(String.class)
+          + ". Please contact your admin");
     }
-
     return response.readEntity(String.class);
   }
 

@@ -28,7 +28,6 @@ import java.net.URI;
 
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiNamespaces;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -169,7 +168,7 @@ public class JenaCustomQueries {
   public static final String selectUserSysAdmin() {
     return X_PATH_FUNCTIONS_DECLARATION
         + "  SELECT DISTINCT ?s WHERE {OPTIONAL{ ?s <http://imeji.org/terms/grant> ?g . ?g <http://imeji.org/terms/grantType> <"
-        + AuthUtil.toGrantTypeURI(GrantType.ADMIN).toString()
+        + Grant.toGrantTypeURI(GrantType.ADMIN).toString()
         + ">. ?g <http://imeji.org/terms/grantFor> <" + Imeji.PROPERTIES.getBaseURI()
         + ">} . filter(bound(?g)) . ?s a <http://imeji.org/terms/user>}";
   }

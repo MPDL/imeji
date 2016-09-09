@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.jobs.CleanMetadataJob;
@@ -43,8 +44,7 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.writer.WriterFacade;
-import de.mpg.j2j.helper.DateHelper;
-import de.mpg.j2j.helper.J2JHelper;
+import de.mpg.imeji.util.DateHelper;
 
 /**
  * Controller for {@link MetadataProfile}

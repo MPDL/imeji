@@ -31,7 +31,7 @@
 		<ui:param name="updateContentVO" value="#{Auth.updateContent(cc.attrs.vo)}"/>
 
 		<div class="#{cc.attrs.menuClass.trim()}">		
-			<ui:fragment rendered="#{Auth.loggedIn and (Auth.sessionUser.allowedToCreateCollection or Configuration.albumsEnabled)}">
+			<ui:fragment rendered="#{Auth.loggedIn and (Auth.isAllowedToCreateCollection(SessionBean.user) or Configuration.albumsEnabled)}">
 				<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item">
 					<div class="imj_menuHeader">
                         <span class="fa fa-plus">&#160;</span>
@@ -39,7 +39,7 @@
 					</div>
 					<div class="imj_menuBody">
 						<ul class="imj_overlayMenuList">
-							<ui:fragment rendered="#{Auth.sessionUser.allowedToCreateCollection}">
+							<ui:fragment rendered="#{Auth.isAllowedToCreateCollection(SessionBean.user)}">
 								<li>
 									<h:outputLink value="#{Navigation.createCollectionUrl}?init=1" title="#{lbl.collection_create}">
 										<h:outputText value="#{lbl.collection_create}"/>
@@ -53,7 +53,7 @@
 									</h:outputLink>
 								</li>
 							</ui:fragment>
-							<ui:fragment rendered="#{Auth.sessionUser.admin}">
+							<ui:fragment rendered="#{Auth.sysAdmin}">
 								<li>
 									<a href="#{Navigation.applicationSpaceUrl}createuser" title="#{lbl.admin_user_new}">
 										<h:outputText value="#{lbl.admin_user_new}"/>

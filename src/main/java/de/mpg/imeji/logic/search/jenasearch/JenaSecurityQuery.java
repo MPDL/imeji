@@ -6,6 +6,7 @@ package de.mpg.imeji.logic.search.jenasearch;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.vo.Album;
@@ -14,7 +15,6 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.j2j.helper.J2JHelper;
 
 /**
  * Simple security query add to any imeji sparql query, a security filter (according to user,
@@ -40,7 +40,7 @@ public class JenaSecurityQuery {
 
     String statusFilter = getStatusAsFilter(status);
 
-    if (Status.PENDING.equals(status) && !user.isAdmin()) {
+    if (Status.PENDING.equals(status) && !AuthUtil.isSysAdmin(user)) {
       // add this explicitly in order to avoid too long queries. Only if Admin user should not be
       // set explicitly again
       isUserSearch = true;
@@ -67,7 +67,8 @@ public class JenaSecurityQuery {
     // If user has no grants for requested objects, simply no data should be returned
     // that's why FILTER(false)
     String userGrantsAsFilterSimple = getUserGrantsAsFilterSimple(user, rdfType, isUserSearch);
-    return userGrantsAsFilterSimple.equals("") ? (user.isAdmin() ? statusFilter : " FILTER(false) ")
+    return userGrantsAsFilterSimple.equals("")
+        ? (AuthUtil.isSysAdmin(user) ? statusFilter : " FILTER(false) ")
         : userGrantsAsFilterSimple + statusFilter + " .";
   }
 
@@ -95,7 +96,7 @@ public class JenaSecurityQuery {
   private static String getUserGrantsAsFilterSimple(User user, String rdfType,
       boolean isUserSearch) {
 
-    if (user.isAdmin() && !isUserSearch) {
+    if (AuthUtil.isSysAdmin(user) && !isUserSearch) {
       return "";
     }
     return getAllowedContainersFilter(user, rdfType, isUserSearch);
