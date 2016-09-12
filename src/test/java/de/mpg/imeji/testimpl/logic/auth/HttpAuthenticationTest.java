@@ -12,10 +12,11 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.auth.ImejiRsaKeys;
-import de.mpg.imeji.logic.auth.authentication.factory.AuthenticationFactory;
-import de.mpg.imeji.logic.auth.authentication.impl.APIKeyAuthentication;
-import de.mpg.imeji.logic.controller.resource.UserController;
+import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.security.authentication.ImejiRsaKeys;
+import de.mpg.imeji.logic.security.authentication.factory.AuthenticationFactory;
+import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.rest.process.AdminProcess;
 import util.JenaUtil;
@@ -32,8 +33,8 @@ public class HttpAuthenticationTest {
       throws ImejiException, JoseException, NoSuchAlgorithmException, InvalidKeySpecException {
     JenaUtil.initJena();
     ImejiRsaKeys.init(null, null);
-    UserController controller = new UserController(JenaUtil.testUser);
-    User usertest = controller.retrieve(JenaUtil.TEST_USER_EMAIL);
+    UserBusinessController controller = new UserBusinessController();
+    User usertest = controller.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     usertest.setApiKey(APIKeyAuthentication.generateKey(usertest.getId(), Integer.MAX_VALUE));
     controller.update(usertest, usertest);
   }
@@ -81,7 +82,8 @@ public class HttpAuthenticationTest {
    */
   @Test
   public void loginWithAPIKey() throws ImejiException, JoseException {
-    User usertest = new UserController(JenaUtil.testUser).retrieve(JenaUtil.TEST_USER_EMAIL);
+    User usertest =
+        new UserBusinessController().retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     try {
       User user = AuthenticationFactory
           .factory(generateAPIKEYAuthenticationHeader(usertest.getApiKey())).doLogin();
@@ -99,7 +101,8 @@ public class HttpAuthenticationTest {
    */
   @Test
   public void loginWithWrongAPIKey() throws ImejiException, JoseException {
-    User usertest = new UserController(JenaUtil.testUser).retrieve(JenaUtil.TEST_USER_EMAIL);
+    User usertest =
+        new UserBusinessController().retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     try {
       AuthenticationFactory
           .factory(generateAPIKEYAuthenticationHeader(usertest.getApiKey() + "abc")).doLogin();
@@ -117,13 +120,13 @@ public class HttpAuthenticationTest {
   @Test
   public void loginUserWithoutKey() throws ImejiException {
     // Force key == null
-    UserController controller = new UserController(JenaUtil.testUser);
-    User usertest = controller.retrieve(JenaUtil.TEST_USER_EMAIL);
+    UserBusinessController controller = new UserBusinessController();
+    User usertest = controller.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     usertest.setApiKey(null);
     controller.update(usertest, usertest);
     AdminProcess
         .login(generateBasicAuthenticationHeader(JenaUtil.TEST_USER_EMAIL, JenaUtil.TEST_USER_PWD));
-    String key = controller.retrieve(JenaUtil.TEST_USER_EMAIL).getApiKey();
+    String key = controller.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser).getApiKey();
     Assert.assertTrue(key != null && !"".equals(key));
   }
 
@@ -135,13 +138,13 @@ public class HttpAuthenticationTest {
   @Test
   public void loginUserWithEmtpytKey() throws ImejiException {
     // Force key == ""
-    UserController controller = new UserController(JenaUtil.testUser);
-    User usertest = controller.retrieve(JenaUtil.TEST_USER_EMAIL);
+    UserBusinessController controller = new UserBusinessController();
+    User usertest = controller.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     usertest.setApiKey("");
     controller.update(usertest, usertest);
     AdminProcess
         .login(generateBasicAuthenticationHeader(JenaUtil.TEST_USER_EMAIL, JenaUtil.TEST_USER_PWD));
-    String key = controller.retrieve(JenaUtil.TEST_USER_EMAIL).getApiKey();
+    String key = controller.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser).getApiKey();
     Assert.assertTrue(key != null && !"".equals(key));
   }
 
@@ -156,11 +159,12 @@ public class HttpAuthenticationTest {
     AdminProcess
         .login(generateBasicAuthenticationHeader(JenaUtil.TEST_USER_EMAIL, JenaUtil.TEST_USER_PWD));
     // read the key
-    UserController controller = new UserController(JenaUtil.testUser);
-    User usertest = controller.retrieve(JenaUtil.TEST_USER_EMAIL);
+    UserBusinessController controller = new UserBusinessController();
+    User usertest = controller.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     String key = usertest.getApiKey();
     AdminProcess.logout(generateAPIKEYAuthenticationHeader(key));
-    Assert.assertFalse(key.equals(controller.retrieve(JenaUtil.TEST_USER_EMAIL).getApiKey()));
+    Assert.assertFalse(
+        key.equals(controller.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser).getApiKey()));
     try {
       // Try to login again with the old key
       AuthenticationFactory.factory(generateAPIKEYAuthenticationHeader(key)).doLogin();

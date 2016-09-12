@@ -18,7 +18,6 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.jobs.CleanMetadataJob;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
@@ -35,7 +34,6 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
@@ -43,6 +41,7 @@ import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 import de.mpg.imeji.logic.writer.WriterFacade;
 import de.mpg.imeji.util.DateHelper;
 
@@ -77,8 +76,7 @@ public class ProfileController extends ImejiController {
     prepareCreate(p, user);
     p.setStatus(Status.PENDING);
     WRITER.create(WriterFacade.toList(p), null, user);
-    ShareBusinessController shareController = new ShareBusinessController();
-    shareController.shareToCreator(user, p.getId().toString());
+    updateCreatorGrants(user, p.getId().toString());
     return p;
   }
 
@@ -238,7 +236,7 @@ public class ProfileController extends ImejiController {
     }
 
     prepareWithdraw(mdp, mdp.getDiscardComment());
-    //TODO: check if these two setters are needed. 
+    // TODO: check if these two setters are needed.
     mdp.setStatus(Status.WITHDRAWN);
     mdp.setVersionDate(DateHelper.getCurrentDate());
     update(mdp, user);

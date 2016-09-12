@@ -15,13 +15,13 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.PasswordGenerator;
-import de.mpg.imeji.logic.collaboration.email.EmailMessages;
-import de.mpg.imeji.logic.collaboration.email.EmailService;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.controller.resource.UserController.USER_TYPE;
 import de.mpg.imeji.logic.controller.util.ImejiFactory;
-import de.mpg.imeji.logic.util.QuotaUtil;
+import de.mpg.imeji.logic.security.util.PasswordGenerator;
+import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
+import de.mpg.imeji.logic.user.collaboration.email.EmailService;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
+import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.User;
@@ -89,7 +89,7 @@ public class UserCreationBean extends SuperBean {
    * @throws Exception
    */
   private String createNewUser() throws ImejiException {
-    UserController uc = new UserController(getSessionUser());
+    UserBusinessController uc = new UserBusinessController();
     PasswordGenerator generator = new PasswordGenerator();
     String password = generator.generatePassword();
     user.setEncryptedPassword(StringHelper.convertToMD5(password));

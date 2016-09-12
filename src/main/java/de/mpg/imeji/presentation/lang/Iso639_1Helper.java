@@ -15,8 +15,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.util.PropertyReader;
-import de.mpg.imeji.logic.util.ProxyHelper;
+import de.mpg.imeji.logic.config.util.PropertyReader;
+import de.mpg.imeji.logic.config.util.ProxyHelper;
 
 /**
  * Utility class for Iso638_1 languages vocabulary

@@ -10,15 +10,15 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
-import de.mpg.imeji.logic.collaboration.invitation.Invitation;
-import de.mpg.imeji.logic.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController.ShareRoles;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.controller.resource.UserController.USER_TYPE;
 import de.mpg.imeji.logic.controller.util.ImejiFactory;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
+import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.user.collaboration.invitation.Invitation;
+import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
 
@@ -59,9 +59,9 @@ public class InvitationBusinessControllerTest extends ControllerTest {
         ShareBusinessController.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
     Invitation invitation = new Invitation(UNKNOWN_EMAIL, collection.getId().toString(), roles);
     invitationBC.invite(invitation);
-    UserController userController = new UserController(Imeji.adminUser);
+    UserBusinessController userController = new UserBusinessController();
     userController.create(getRegisteredUser(), USER_TYPE.DEFAULT);
-    User user = userController.retrieve(UNKNOWN_EMAIL);
+    User user = userController.retrieve(UNKNOWN_EMAIL, Imeji.adminUser);
     Assert.assertTrue(AuthUtil.staticAuth().read(user, collection));
     Assert.assertTrue(AuthUtil.staticAuth().update(user, collection));
     Assert.assertTrue(AuthUtil.staticAuth().createContent(user, collection));

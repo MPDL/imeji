@@ -13,12 +13,12 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collaboration.email.EmailMessages;
-import de.mpg.imeji.logic.collaboration.email.EmailService;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.export.format.Export;
 import de.mpg.imeji.logic.export.format.ZIPExport;
+import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
+import de.mpg.imeji.logic.user.collaboration.email.EmailService;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
@@ -35,7 +35,7 @@ public class NotificationUtils {
 
   private static EmailMessages msgs = new EmailMessages();
   private static final EmailService emailClient = new EmailService();
-  private static UserController uc = new UserController(Imeji.adminUser);
+  private static UserBusinessController uc = new UserBusinessController();
   private static CollectionController cc = new CollectionController();
 
   /**

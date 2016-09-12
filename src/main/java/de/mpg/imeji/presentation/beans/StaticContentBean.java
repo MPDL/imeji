@@ -10,7 +10,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.util.PropertyReader;
+import de.mpg.imeji.logic.config.util.PropertyReader;
 
 /**
  * JavaBean to read static content externally stored and to display it in imeji

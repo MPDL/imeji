@@ -16,12 +16,14 @@ import com.hp.hpl.jena.tdb.sys.TDBMaker;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.authorization.AuthorizationPredefinedRoles;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.controller.resource.UserController.USER_TYPE;
+import de.mpg.imeji.logic.ImejiInitializer;
+import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.util.PropertyReader;
+import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
+import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
@@ -82,7 +84,7 @@ public class JenaUtil {
       // closing Jena
       SystemTDB.setFileMode(FileMode.direct);
       // Create new tdb
-      Imeji.init(TDB_PATH);
+      ImejiInitializer.init(TDB_PATH);
       initTestUser();
     } catch (Exception e) {
       throw new RuntimeException("Error initialiting Jena for testing: ", e);
@@ -117,7 +119,8 @@ public class JenaUtil {
 
   private static void createUser(User u) {
     try {
-      UserController c = new UserController(Imeji.adminUser);
+      UserBusinessController c = new UserBusinessController();
+      System.out.println(AuthUtil.isSysAdmin(Imeji.adminUser));
       c.create(u, USER_TYPE.DEFAULT);
     } catch (Exception e) {
       LOGGER.info(u.getEmail() + " already exists. Must not be created");

@@ -12,10 +12,10 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.UploadResult;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 
 /**
  * Job to import files from escidoc to the internal storage. This is used when you want to switch

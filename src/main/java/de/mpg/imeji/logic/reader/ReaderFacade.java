@@ -32,8 +32,8 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
-import de.mpg.imeji.logic.auth.authorization.Authorization;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
+import de.mpg.imeji.logic.security.authorization.Authorization;
+import de.mpg.imeji.logic.security.util.AuthUtil;
 import de.mpg.imeji.logic.vo.User;
 
 /**

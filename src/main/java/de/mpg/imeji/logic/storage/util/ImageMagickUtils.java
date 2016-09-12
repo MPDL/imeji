@@ -17,8 +17,8 @@ import org.im4java.core.Info;
 import org.im4java.core.InfoException;
 import org.im4java.process.ProcessStarter;
 
+import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
-import de.mpg.imeji.logic.util.PropertyReader;
 import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**

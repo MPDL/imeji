@@ -13,11 +13,11 @@ import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.controller.resource.UserGroupController;
-import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.user.controller.GroupBusinessController;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
@@ -72,7 +72,7 @@ public class HistoryPage {
         return new ItemController().retrieveLazy(uri, user).getFilename();
       } else if (ImejiPages.USER_GROUP == imejiPage) {
         String groupUri = UrlHelper.decode(ObjectHelper.getId(uri));
-        return new UserGroupController().read(URI.create(groupUri), user).getName();
+        return new GroupBusinessController().read(URI.create(groupUri), user).getName();
       } else if (ImejiPages.PROFILE.matches(uriStr)) {
         return new ProfileController().retrieveLazy(uri, user).getTitle();
       } else if (ImejiPages.USER == imejiPage) {
@@ -80,7 +80,8 @@ public class HistoryPage {
         if (user != null && email.equals(user.getEmail())) {
           return user.getPerson().getCompleteName();
         } else {
-          return new UserController(user).retrieve(email).getPerson().getCompleteName();
+          return new UserBusinessController().retrieve(email, Imeji.adminUser).getPerson()
+              .getCompleteName();
         }
       }
     }

@@ -28,8 +28,8 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
-import de.mpg.imeji.logic.util.PropertyReader;
 
 /**
  * {@link ImageGenerator} implemented with imagemagick

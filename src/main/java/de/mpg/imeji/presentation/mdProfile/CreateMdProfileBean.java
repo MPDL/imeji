@@ -6,15 +6,15 @@ package de.mpg.imeji.presentation.mdProfile;
 import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.controller.util.ImejiFactory;
-import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.security.util.AuthUtil;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.session.SessionBean;

@@ -24,8 +24,6 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -36,6 +34,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.security.util.AuthUtil;
 import de.mpg.imeji.logic.validation.impl.CollectionValidator;
 import de.mpg.imeji.logic.validation.impl.Validator.Method;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -111,17 +110,12 @@ public class CollectionController extends ImejiController {
                 + "The profile you reference must be released or must be created by you!");
       }
     }
-
     prepareCreate(c, user);
-
     if (p != null) {
       c.setProfile(p.getId());
     }
-
     WRITER.create(WriterFacade.toList(c), p, user);
-    // Prepare grants
-    ShareBusinessController shareController = new ShareBusinessController();
-    user = shareController.shareToCreator(user, c.getId().toString());
+    updateCreatorGrants(user, c.getId().toString());
     // check the space
     // Just read SessionBean for SpaceId
     if (!isNullOrEmpty(spaceId)) {
@@ -480,6 +474,7 @@ public class CollectionController extends ImejiController {
     SearchResult result = search.search(searchQuery, sortCri, user, null, spaceId, offset, size);
     return (List<CollectionImeji>) retrieveBatchLazy(result.getResults(), -1, 0, user);
   }
+
 
   public MetadataProfileCreationMethod getProfileCreationMethod(String method) {
     if ("reference".equalsIgnoreCase(method)) {

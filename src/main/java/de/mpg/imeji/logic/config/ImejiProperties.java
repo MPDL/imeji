@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.util.PropertyReader;
+import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**

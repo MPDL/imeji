@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -31,7 +32,8 @@ public class QuotaUICompoment implements Serializable {
   public QuotaUICompoment(User user, Locale locale) {
     this.quotaMenu = new ArrayList<>();
     this.quota = user.getQuota() > 0
-        ? user.getQuotaHumanReadable(Locale.ENGLISH).replace("GB", "").trim() : quota;
+        ? QuotaUtil.getQuotaHumanReadable(user.getQuota(), Locale.ENGLISH).replace("GB", "").trim()
+        : quota;
     for (String limit : Imeji.CONFIG.getQuotaLimitsAsList()) {
       if (NumberUtils.isNumber(limit)) {
         quotaMenu.add(new SelectItem(limit.trim()));

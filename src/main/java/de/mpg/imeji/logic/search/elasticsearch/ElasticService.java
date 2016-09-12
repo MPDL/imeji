@@ -17,8 +17,8 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.jobs.ElasticReIndexJob;
-import de.mpg.imeji.logic.util.PropertyReader;
 
 /**
  * elasticsearch service for spot

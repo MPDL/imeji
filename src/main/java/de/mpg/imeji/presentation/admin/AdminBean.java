@@ -18,9 +18,9 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.jobs.CleanMetadataJob;
 import de.mpg.imeji.logic.jobs.CleanMetadataProfileJob;
 import de.mpg.imeji.logic.jobs.ElasticReIndexJob;
@@ -37,7 +37,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
-import de.mpg.imeji.logic.util.PropertyReader;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
@@ -375,7 +375,7 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public List<User> getAllUsers() {
-    UserController uc = new UserController(Imeji.adminUser);
+    UserBusinessController uc = new UserBusinessController();
     return (List<User>) uc.searchUserByName("");
   }
 

@@ -9,10 +9,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.presentation.beans.ConfigurationBean;
 import de.mpg.imeji.presentation.storage.StorageUtil;
 import de.mpg.imeji.test.logic.controller.ControllerTest;

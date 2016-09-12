@@ -3,8 +3,7 @@ package de.mpg.imeji.logic.validation.impl;
 import java.util.HashSet;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.UserController;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
@@ -58,7 +57,7 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
    * @throws Exception
    */
   private boolean emailAlreadyUsed(User user) {
-    UserController uc = new UserController(Imeji.adminUser);
+    UserBusinessController uc = new UserBusinessController();
     return uc.existsUserWitheMail(user.getEmail(), user.getId().toString(),
         (Method.CREATE.equals(getValidateForMethod()) ? true : false));
   }

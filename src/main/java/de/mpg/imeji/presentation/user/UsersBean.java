@@ -16,13 +16,13 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.PasswordGenerator;
-import de.mpg.imeji.logic.collaboration.email.EmailMessages;
-import de.mpg.imeji.logic.collaboration.email.EmailService;
-import de.mpg.imeji.logic.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.controller.resource.UserGroupController;
 import de.mpg.imeji.logic.registration.RegistrationBusinessController;
+import de.mpg.imeji.logic.security.util.PasswordGenerator;
+import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
+import de.mpg.imeji.logic.user.collaboration.email.EmailService;
+import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.user.controller.GroupBusinessController;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
@@ -76,7 +76,7 @@ public class UsersBean extends SuperBean {
    * Retrieve all users
    */
   public void doSearch() {
-    users = (List<User>) new UserController(getSessionUser()).searchUserByName(query);
+    users = (List<User>) new UserBusinessController().searchUserByName(query);
     inactiveUsers = new RegistrationBusinessController().searchInactiveUsers(query);
   }
 
@@ -87,7 +87,7 @@ public class UsersBean extends SuperBean {
   public void retrieveGroup() {
     if (UrlHelper.getParameterValue("group") != null
         && !"".equals(UrlHelper.getParameterValue("group"))) {
-      UserGroupController c = new UserGroupController();
+      GroupBusinessController c = new GroupBusinessController();
       try {
         setGroup(c.retrieve(UrlHelper.getParameterValue("group"), getSessionUser()));
       } catch (Exception e) {
@@ -106,9 +106,9 @@ public class UsersBean extends SuperBean {
   public String sendPassword() {
     String email = UrlHelper.getParameterValue("email");
     PasswordGenerator generator = new PasswordGenerator();
-    UserController controller = new UserController(getSessionUser());
+    UserBusinessController controller = new UserBusinessController();
     try {
-      User user = controller.retrieve(email);
+      User user = controller.retrieve(email, getSessionUser());
       String newPassword = generator.generatePassword();
       user.setEncryptedPassword(StringHelper.convertToMD5(newPassword));
       controller.update(user, getSessionUser());
@@ -150,9 +150,9 @@ public class UsersBean extends SuperBean {
   public String deleteUser() {
     String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
         .get("email");
-    UserController controller = new UserController(getSessionUser());
+    UserBusinessController controller = new UserBusinessController();
     try {
-      controller.delete(controller.retrieve(email));
+      controller.delete(controller.retrieve(email, getSessionUser()));
     } catch (Exception e) {
       BeanHelper.error("Error Deleting user");
       LOGGER.error("Error Deleting user", e);
@@ -218,10 +218,10 @@ public class UsersBean extends SuperBean {
     String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
         .get("email");
     try {
-      UserController uc = new UserController(getSessionUser());
-      User user = uc.retrieve(email);
+      UserBusinessController uc = new UserBusinessController();
+      User user = uc.retrieve(email, Imeji.adminUser);
       group.getUsers().add(user.getId());
-      UserGroupController c = new UserGroupController();
+      GroupBusinessController c = new GroupBusinessController();
       c.update(group, getSessionUser());
       FacesContext.getCurrentInstance().getExternalContext()
           .redirect(getNavigation().getApplicationUrl() + "usergroup?id=" + group.getId());

@@ -21,7 +21,7 @@ import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 import com.hp.hpl.jena.tdb.TDB;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.AuthUtil;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**

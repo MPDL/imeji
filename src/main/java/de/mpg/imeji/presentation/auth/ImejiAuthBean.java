@@ -30,8 +30,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.authorization.Authorization;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
+import de.mpg.imeji.logic.security.authorization.Authorization;
+import de.mpg.imeji.logic.security.util.AuthUtil;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.collection.CollectionListItem;

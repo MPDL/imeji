@@ -1,6 +1,6 @@
 package de.mpg.imeji.logic.config;
 
-import static de.mpg.imeji.logic.util.StringHelper.isNullOrEmptyTrim;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,8 +25,9 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.search.model.FileTypes;
-import de.mpg.imeji.logic.util.PropertyReader;
+import de.mpg.imeji.logic.util.StringHelper;
 
 public class ImejiConfiguration {
 
@@ -744,7 +745,8 @@ public class ImejiConfiguration {
 
   private String registrationTokenCompute() {
     String myToken = (String) config.get(CONFIGURATION.REGISTRATION_TOKEN_EXPIRY.name());
-    return isNullOrEmptyTrim(myToken) ? DEFAULT_REGISTRATION_TOKEN_EXPIRATION_IN_DAYS : myToken;
+    return StringHelper.isNullOrEmptyTrim(myToken) ? DEFAULT_REGISTRATION_TOKEN_EXPIRATION_IN_DAYS
+        : myToken;
   }
 
   public String getRsaPublicKey() {

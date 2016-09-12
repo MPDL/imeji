@@ -41,8 +41,9 @@ import com.hp.hpl.jena.sparql.pfunction.library.container;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.controller.resource.UserGroupController;
+import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.user.controller.GroupBusinessController;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Grant;
@@ -73,7 +74,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
   public void init() {
     String groupId = UrlHelper.getParameterValue("id");
     if (groupId != null) {
-      UserGroupController c = new UserGroupController();
+      GroupBusinessController c = new GroupBusinessController();
       try {
         this.userGroup = c.retrieve(groupId, getSessionUser());
         this.users = loadUsers(userGroup);
@@ -96,10 +97,10 @@ public class UserGroupBean extends SuperBean implements Serializable {
    */
   public Collection<User> loadUsers(UserGroup group) {
     Collection<User> users = new ArrayList<User>();
-    UserController c = new UserController(getSessionUser());
+    UserBusinessController c = new UserBusinessController();
     for (URI uri : userGroup.getUsers()) {
       try {
-        users.add(c.retrieve(uri));
+        users.add(c.retrieve(uri, Imeji.adminUser));
       } catch (ImejiException e) {
         LOGGER.error("Error reading user: ", e);
       }
@@ -145,7 +146,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * Create a new {@link UserGroup}
    */
   public String create() {
-    UserGroupController c = new UserGroupController();
+    GroupBusinessController c = new GroupBusinessController();
     try {
       c.create(userGroup, getSessionUser());
       reload();
@@ -165,7 +166,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @throws IOException
    */
   public void save() throws IOException {
-    UserGroupController c = new UserGroupController();
+    GroupBusinessController c = new GroupBusinessController();
     try {
       c.update(userGroup, getSessionUser());
     } catch (UnprocessableError e) {

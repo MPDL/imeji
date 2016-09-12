@@ -15,6 +15,7 @@ import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
+import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
 import de.mpg.imeji.logic.vo.Album;
@@ -37,9 +38,6 @@ import de.mpg.imeji.logic.workflow.WorkflowManager;
 public abstract class ImejiController {
   private static final WorkflowManager WORKFLOW_MANAGER = new WorkflowManager();
 
-  public static final String LOGO_STORAGE_SUBDIRECTORY = "/thumbnail";
-
-
   /**
    * If a user is not logged in, throw a Exception
    *
@@ -61,6 +59,18 @@ public abstract class ImejiController {
    */
   protected void prepareCreate(Properties properties, User user) throws WorkflowException {
     WORKFLOW_MANAGER.prepareCreate(properties, user);
+  }
+
+  /**
+   * Update the grants of the user who created the objects
+   * 
+   * @param user
+   * @param uri
+   * @throws ImejiException
+   */
+  protected void updateCreatorGrants(User user, String uri) throws ImejiException {
+    user.getGrants().addAll(AuthorizationPredefinedRoles.admin(uri));
+    new UserController().update(user);
   }
 
   /**

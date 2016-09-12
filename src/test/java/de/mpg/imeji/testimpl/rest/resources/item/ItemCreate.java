@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.rest.api.CollectionService;
 import de.mpg.imeji.rest.api.DefaultItemService;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
@@ -324,7 +323,7 @@ public class ItemCreate extends ItemTestBase {
         itemJSON.replace("___COLLECTION_ID___", collectionId).replace("___FILENAME___", "test.png")
             .replace("___REFERENCE_URL___",
                 "http://th03.deviantart.net/fs71/PRE/i/2012/242/1/f/png_moon_by_paradise234-d5czhdo.png")
-        .replaceAll("\"fetchUrl\"\\s*:\\s*\"___FETCH_URL___\",", "")
+            .replaceAll("\"fetchUrl\"\\s*:\\s*\"___FETCH_URL___\",", "")
 
     );
 
@@ -380,11 +379,7 @@ public class ItemCreate extends ItemTestBase {
 
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    if (Imeji.isValidateChecksumInCollection()) {
-      assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
-    } else {
-      assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-    }
+    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
   @Test

@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.controller.resource.UserGroupController;
+import de.mpg.imeji.logic.user.controller.GroupBusinessController;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
@@ -45,7 +45,7 @@ public class CleanUserGroupsJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void cleanZombieMember() throws ImejiException {
-    UserGroupController controller = new UserGroupController();
+    GroupBusinessController controller = new GroupBusinessController();
     for (URI userId : findZombieMember()) {
       User user = new User();
       user.setId(userId);
@@ -91,8 +91,8 @@ public class CleanUserGroupsJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private User retrieveUser(URI userId) throws ImejiException {
-    UserController controller = new UserController(Imeji.adminUser);
-    return controller.retrieve(userId);
+    UserBusinessController controller = new UserBusinessController();
+    return controller.retrieve(userId, Imeji.adminUser);
   }
 
   /**
@@ -101,7 +101,7 @@ public class CleanUserGroupsJob implements Callable<Integer> {
    * @return
    */
   private List<UserGroup> getAllUserGroups() {
-    UserGroupController controller = new UserGroupController();
+    GroupBusinessController controller = new GroupBusinessController();
     return (List<UserGroup>) controller.searchByName("", Imeji.adminUser);
   }
 }

@@ -24,14 +24,14 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
 import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -99,7 +99,7 @@ public class EditCollectionBean extends CollectionBean {
       CollectionController collectionController = new CollectionController();
       User user = getSessionUser();
       collectionController.update(getCollection(), user);
-      UserController uc = new UserController(user);
+      UserBusinessController uc = new UserBusinessController();
       uc.update(user, user);
       if (containerEditorSession.getUploadedLogoPath() != null) {
         collectionController.updateLogo(getCollection(),

@@ -9,20 +9,20 @@ import javax.faces.component.FacesComponent;
 import javax.faces.component.UINamingContainer;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.controller.resource.UserGroupController;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.controller.GroupBusinessController;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
+import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.collection.CollectionListItem;
@@ -165,7 +165,7 @@ public class StatusComponent extends UINamingContainer {
    * @return
    */
   private List<User> findAllUsersWithReadGrant(Properties p) {
-    UserController uc = new UserController(Imeji.adminUser);
+    UserBusinessController uc = new UserBusinessController();
     List<User> l = uc.searchAndRetrieveLazy(getReadQuery(p.getId().toString()), null,
         Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE);
     if (p instanceof Item) {
@@ -193,7 +193,7 @@ public class StatusComponent extends UINamingContainer {
    * @return
    */
   private List<UserGroup> findAllGroupsWithReadGrant(Properties p) {
-    UserGroupController ugc = new UserGroupController();
+    GroupBusinessController ugc = new GroupBusinessController();
     List<UserGroup> l = ugc.searchAndRetrieveLazy(getReadQuery(p.getId().toString()), null,
         Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE);
     if (p instanceof Item) {

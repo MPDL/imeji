@@ -12,8 +12,8 @@ import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.authentication.impl.APIKeyAuthentication;
-import de.mpg.imeji.logic.controller.resource.UserController;
+import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -67,7 +67,7 @@ public class APIClient {
       return user.getApiKey();
     }
     try {
-      UserController userController = new UserController(Imeji.adminUser);
+      UserBusinessController userController = new UserBusinessController();
       user.setApiKey(APIKeyAuthentication.generateKey(user.getId(), Integer.MAX_VALUE));
       userController.update(user, Imeji.adminUser);
     } catch (ImejiException | JoseException e) {

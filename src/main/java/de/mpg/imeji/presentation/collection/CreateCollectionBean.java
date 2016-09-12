@@ -21,8 +21,8 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.controller.util.ImejiFactory;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
@@ -128,7 +128,7 @@ public class CreateCollectionBean extends CollectionBean {
             new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
       }
       setSendEmailNotification(isSendEmailNotification());
-      UserController uc = new UserController(getSessionUser());
+      UserBusinessController uc = new UserBusinessController();
       uc.update(getSessionUser(), getSessionUser());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_create", getLocale()));
       return true;

@@ -9,7 +9,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.util.PropertyReader;
+import de.mpg.imeji.logic.config.util.PropertyReader;
 
 /**
  * Startup configuration. Read only. Must be edited by sysadmin on server

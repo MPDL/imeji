@@ -8,27 +8,29 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.authentication.impl.APIKeyAuthentication;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController.ShareRoles;
-import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.controller.util.ImejiFactory;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.util.QuotaUtil;
+import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Organization;
@@ -98,7 +100,7 @@ public class UserBean extends SuperBean {
    */
   public void retrieveUser() throws ImejiException {
     if (id != null && getSessionUser() != null) {
-      user = new UserController(getSessionUser()).retrieve(id, getSessionUser());
+      user = new UserBusinessController().retrieve(id, getSessionUser());
     } else if (id != null && getSessionUser() == null) {
       loginBean.setLogin(id);
     }
@@ -145,7 +147,7 @@ public class UserBean extends SuperBean {
         LOGGER.error("Error generating API Key", e);
         throw new ImejiException("Error generating API Key", e);
       }
-      new UserController(getSessionUser()).update(user, getSessionUser());
+      new UserBusinessController().update(user, getSessionUser());
     }
   }
 
@@ -217,7 +219,7 @@ public class UserBean extends SuperBean {
    */
   public void updateUser() throws ImejiException {
     if (user != null) {
-      UserController controller = new UserController(getSessionUser());
+      UserBusinessController controller = new UserBusinessController();
       user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
       try {
         controller.update(user, getSessionUser());
@@ -226,6 +228,20 @@ public class UserBean extends SuperBean {
         BeanHelper.error(e, getLocale());
         LOGGER.error("Error updating user", e);
       }
+    }
+  }
+
+  /**
+   * Return the quota of the current user in a user friendly way
+   * 
+   * @param locale
+   * @return
+   */
+  public String getQuotaHumanReadable(Locale locale) {
+    if (user.getQuota() == Long.MAX_VALUE) {
+      return Imeji.RESOURCE_BUNDLE.getLabel("unlimited", getLocale());
+    } else {
+      return FileUtils.byteCountToDisplaySize(user.getQuota());
     }
   }
 

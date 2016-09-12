@@ -13,7 +13,7 @@ import java.util.Properties;
 import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.util.PropertyReader;
+import de.mpg.imeji.logic.config.util.PropertyReader;
 
 /**
  * Helper to work with vocabularies

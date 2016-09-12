@@ -10,9 +10,9 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.image.ItemBean;
 import de.mpg.imeji.presentation.image.SingleItemBrowse;

@@ -22,8 +22,6 @@ import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -35,6 +33,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.security.util.AuthUtil;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
@@ -73,9 +72,8 @@ public class AlbumController extends ImejiController {
     }
     isLoggedInUser(user);
     prepareCreate(album, user);
-    ShareBusinessController shareController = new ShareBusinessController();
-    shareController.shareToCreator(user, album.getId().toString());
     WRITER.create(WriterFacade.toList(album), null, user);
+    updateCreatorGrants(user, album.getId().toString());
     return album;
   }
 

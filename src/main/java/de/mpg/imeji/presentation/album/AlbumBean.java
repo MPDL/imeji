@@ -20,8 +20,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Container;
@@ -29,6 +28,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 import de.mpg.imeji.presentation.beans.ContainerBean;
 import de.mpg.imeji.presentation.image.ThumbnailBean;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -380,8 +380,8 @@ public class AlbumBean extends ContainerBean {
   }
 
   public User getAlbumCreator() throws Exception {
-    UserController uc = new UserController(getSessionUser());
-    User user = uc.retrieve(album.getCreatedBy());
+    UserBusinessController uc = new UserBusinessController();
+    User user = uc.retrieve(album.getCreatedBy(), Imeji.adminUser);
     return user;
   }
 

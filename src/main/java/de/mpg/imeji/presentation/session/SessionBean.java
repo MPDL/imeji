@@ -24,21 +24,21 @@ import org.apache.commons.lang.StringUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
+import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
-import de.mpg.imeji.logic.controller.resource.UserController;
+import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.MaxPlanckInstitutUtils;
-import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.util.PropertyReader;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 import de.mpg.imeji.presentation.lang.InternationalizationBean;
 import de.mpg.imeji.presentation.upload.IngestImage;
 import de.mpg.imeji.presentation.util.CookieUtils;
@@ -199,8 +199,8 @@ public class SessionBean implements Serializable {
 
   public void reloadUser() throws Exception {
     if (user != null) {
-      UserController c = new UserController(user);
-      user = c.retrieve(user.getId());
+      UserBusinessController c = new UserBusinessController();
+      user = c.retrieve(user.getId(), Imeji.adminUser);
       checkIfHasUploadRights();
     }
   }

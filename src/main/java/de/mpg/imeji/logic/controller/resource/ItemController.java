@@ -29,7 +29,6 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.controller.util.ImejiFactory;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
@@ -41,11 +40,12 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.security.util.AuthUtil;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
-import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
@@ -55,6 +55,7 @@ import de.mpg.imeji.logic.vo.MetadataSet;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
@@ -115,9 +116,8 @@ public class ItemController extends ImejiController {
       throw new UnprocessableError("upload_format_not_allowed");
     }
     // To check the user Quota, it always has to be provided with the Admin User
-    UserController uc = new UserController(user);
-    uc.checkQuota(f, c);
-
+    UserBusinessController uc = new UserBusinessController();
+    uc.checkQuota(user, f, c);
 
     UploadResult uploadResult = sc.upload(filename, f, c.getIdString());
 
@@ -160,11 +160,12 @@ public class ItemController extends ImejiController {
     String origName = FilenameUtils.getName(externalFileUrl);
     if ("".equals(filename) || filename == null) {
       filename = origName;
-    } 
-    //Filename extension will be added if not provided.
-    //Will not be appended if it is the same value from original external reference again
-    //Original external reference will be appended to the provided extension in addition 
-    else if ( FilenameUtils.getExtension(filename).equals("") || !FilenameUtils.getExtension(filename).equals(FilenameUtils.getExtension(origName)) )  {
+    }
+    // Filename extension will be added if not provided.
+    // Will not be appended if it is the same value from original external reference again
+    // Original external reference will be appended to the provided extension in addition
+    else if (FilenameUtils.getExtension(filename).equals("")
+        || !FilenameUtils.getExtension(filename).equals(FilenameUtils.getExtension(origName))) {
       filename = filename + "." + FilenameUtils.getExtension(origName);
     }
 
@@ -446,8 +447,8 @@ public class ItemController extends ImejiController {
     CollectionController cc = new CollectionController();
     CollectionImeji col = cc.retrieveLazy(item.getCollection(), user);
 
-    UserController uc = new UserController(user);
-    uc.checkQuota(f, col);
+    UserBusinessController uc = new UserBusinessController();
+    uc.checkQuota(user, f, col);
 
     StorageController sc = new StorageController();
     UploadResult uploadResult = sc.upload(item.getFilename(), f, col.getIdString());
@@ -581,6 +582,20 @@ public class ItemController extends ImejiController {
       c.getImages().add(URI.create(s));
     }
     return c;
+  }
+
+  /**
+   * Return the collection id of the item
+   * 
+   * @param itemId
+   * @return
+   */
+  public String getCollectionId(String itemId) {
+    List<String> c = ImejiSPARQL.exec(JenaCustomQueries.selectCollectionIdOfItem(itemId), null);
+    if (!c.isEmpty()) {
+      return c.get(0);
+    }
+    return null;
   }
 
   /**
@@ -756,12 +771,10 @@ public class ItemController extends ImejiController {
    */
   private void validateChecksum(URI collectionURI, File file, Boolean isUpdate)
       throws UnprocessableError, ImejiException {
-    if (Imeji.isValidateChecksumInCollection()) {
-      if (checksumExistsInCollection(collectionURI, StorageUtils.calculateChecksum(file))) {
-        throw new UnprocessableError((!isUpdate)
-            ? "Same file already exists in the collection (with same checksum). Please choose another file."
-            : "Same file already exists in the collection or you are trying to upload same file for the item (with same checksum). Please choose another file.");
-      }
+    if (checksumExistsInCollection(collectionURI, StorageUtils.calculateChecksum(file))) {
+      throw new UnprocessableError((!isUpdate)
+          ? "Same file already exists in the collection (with same checksum). Please choose another file."
+          : "Same file already exists in the collection or you are trying to upload same file for the item (with same checksum). Please choose another file.");
     }
   }
 

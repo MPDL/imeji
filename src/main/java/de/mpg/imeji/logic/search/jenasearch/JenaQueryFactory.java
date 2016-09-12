@@ -22,13 +22,13 @@ import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.util.DateFormatter;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 
 /**
  * Factory to created Sparql query from a {@link SearchPair}

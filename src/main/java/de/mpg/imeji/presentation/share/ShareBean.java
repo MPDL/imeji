@@ -14,16 +14,15 @@ import com.ocpsoft.pretty.PrettyContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
-import de.mpg.imeji.logic.collaboration.email.EmailMessages;
-import de.mpg.imeji.logic.collaboration.email.EmailService;
-import de.mpg.imeji.logic.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
-import de.mpg.imeji.logic.controller.resource.UserGroupController;
-import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
+import de.mpg.imeji.logic.user.collaboration.email.EmailService;
+import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
+import de.mpg.imeji.logic.user.controller.GroupBusinessController;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -31,6 +30,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.history.HistoryUtil;
@@ -394,7 +394,7 @@ public class ShareBean extends SuperBean implements Serializable {
    * @return
    */
   private UserGroup retrieveGroup(String uri) {
-    UserGroupController c = new UserGroupController();
+    GroupBusinessController c = new GroupBusinessController();
     try {
       return c.retrieve(uri, Imeji.adminUser);
     } catch (Exception e) {

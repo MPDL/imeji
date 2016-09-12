@@ -19,6 +19,7 @@ import org.apache.log4j.lf5.util.StreamUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.ImejiInitializer;
 import de.mpg.imeji.logic.jobs.ElasticReIndexJob;
 import de.mpg.imeji.logic.jobs.ReadMaxPlanckIPMappingJob;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -55,7 +56,7 @@ public class InitializerServlet extends HttpServlet {
    * @throws ImejiException
    */
   public void initModel() throws IOException, URISyntaxException, ImejiException {
-    Imeji.init();
+    ImejiInitializer.init();
     runMigration();
   }
 
@@ -114,8 +115,7 @@ public class InitializerServlet extends HttpServlet {
 
   @Override
   public void destroy() {
-    Imeji.shutdown();
+    ImejiInitializer.shutdown();
     super.destroy();
   }
-
 }

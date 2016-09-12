@@ -9,11 +9,12 @@ import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.auth.authentication.impl.APIKeyAuthentication;
-import de.mpg.imeji.logic.controller.resource.UserController;
+import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.rest.to.SearchResultTO;
 import de.mpg.imeji.rest.to.UserTO;
@@ -29,12 +30,13 @@ public class UserService implements API<UserTO> {
 
 
   public User read(URI uri) throws ImejiException {
-    return adminUser.getId().equals(uri) ? adminUser : new UserController(adminUser).retrieve(uri);
+    return adminUser.getId().equals(uri) ? adminUser
+        : new UserBusinessController().retrieve(uri, Imeji.adminUser);
   }
 
   public User read(String email) throws ImejiException {
     return adminUser.getEmail().equals(email) ? adminUser
-        : new UserController(adminUser).retrieve(email);
+        : new UserBusinessController().retrieve(email, Imeji.adminUser);
   }
 
   public String getCompleteName(URI uri) throws ImejiException {
@@ -103,7 +105,7 @@ public class UserService implements API<UserTO> {
     if ((login && (userVO.getApiKey() == null || "".equals(userVO.getApiKey()))) || !login) {
       // If it is login, then update the key only if it is null
       userVO.setApiKey(generateNewKey(userVO));
-      new UserController(userVO).update(userVO, userVO);
+      new UserBusinessController().update(userVO, userVO);
     }
     return TransferObjectFactory.transferUser(userVO);
   }

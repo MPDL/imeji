@@ -15,7 +15,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.hp.hpl.jena.util.iterator.Filter;
 
-import de.mpg.imeji.logic.auth.util.AuthUtil;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
@@ -31,13 +30,14 @@ import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchSimpleMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
+import de.mpg.imeji.logic.security.util.AuthUtil;
 import de.mpg.imeji.logic.util.DateFormatter;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Grant;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
+import de.mpg.imeji.logic.vo.util.ObjectHelper;
 
 /**
  * Factory to create an ElasticSearch query from the {@link SearchQuery}

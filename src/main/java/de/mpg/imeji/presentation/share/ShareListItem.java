@@ -13,12 +13,12 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.AuthUtil;
-import de.mpg.imeji.logic.collaboration.invitation.Invitation;
-import de.mpg.imeji.logic.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.collaboration.share.ShareBusinessController.ShareRoles;
-import de.mpg.imeji.logic.controller.resource.UserController;
+import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.user.collaboration.invitation.Invitation;
+import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
@@ -246,12 +246,12 @@ public class ShareListItem implements Serializable {
    * @return
    */
   public List<User> getUsers() {
-    UserController controller = new UserController(Imeji.adminUser);
+    UserBusinessController controller = new UserBusinessController();
     List<User> users = new ArrayList<>();
     if (group != null) {
       for (URI uri : group.getUsers()) {
         try {
-          users.add(controller.retrieve(uri));
+          users.add(controller.retrieve(uri, Imeji.adminUser));
         } catch (ImejiException e) {
           LOGGER.error("Error retrieving user:" + uri);
         }

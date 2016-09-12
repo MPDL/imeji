@@ -18,8 +18,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.controller.util.ImejiFactory;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
@@ -112,7 +112,7 @@ public class PersonBean extends SuperBean implements Serializable {
       try {
         URI.create(uri);
         // if not errors, then the person is intern to imeji
-        UserController uc = new UserController(getSessionUser());
+        UserBusinessController uc = new UserBusinessController();
         return uc.retrievePersonById(personURI);
       } catch (Exception e) {
         // is a cone person
@@ -172,7 +172,7 @@ public class PersonBean extends SuperBean implements Serializable {
   private Organization loadOrga(String uri) {
     if (uri != null) {
       try {
-        UserController uc = new UserController(getSessionUser());
+        UserBusinessController uc = new UserBusinessController();
         return uc.retrieveOrganizationById(uri);
       } catch (Exception e) {
         BeanHelper.error(e.getMessage());

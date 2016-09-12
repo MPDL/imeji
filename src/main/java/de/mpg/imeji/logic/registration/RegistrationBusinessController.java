@@ -11,11 +11,11 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.auth.util.PasswordGenerator;
-import de.mpg.imeji.logic.controller.resource.UserController;
-import de.mpg.imeji.logic.controller.resource.UserController.USER_TYPE;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
 import de.mpg.imeji.logic.keyValueStore.stores.HTreeMapStore;
+import de.mpg.imeji.logic.security.util.PasswordGenerator;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.validation.impl.UserValidator;
@@ -185,7 +185,7 @@ public class RegistrationBusinessController {
     }
     USER_TYPE type = isAuthorizedEmail(registration.getUser().getEmail()) ? USER_TYPE.DEFAULT
         : USER_TYPE.RESTRICTED;
-    User user = new UserController(Imeji.adminUser).create(registration.getUser(), type);
+    User user = new UserBusinessController().create(registration.getUser(), type);
     delete(registration);
     return user;
   }
@@ -249,7 +249,7 @@ public class RegistrationBusinessController {
    */
   private boolean exists(String email) throws ImejiException {
     try {
-      new UserController(Imeji.adminUser).retrieve(email);
+      new UserBusinessController().retrieve(email, Imeji.adminUser);
       return true;
     } catch (NotFoundException e) {
       return false;
