@@ -13,7 +13,7 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.concurrency.locks.Lock;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.controller.resource.ItemController;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
@@ -111,7 +111,7 @@ public class SingleEditorWrapper {
    * @return
    */
   public String showEditor() {
-    if (AuthUtil.staticAuth().updateContent(sessionUser, item)) {
+    if (SecurityUtil.staticAuth().updateContent(sessionUser, item)) {
       this.toggleState = "editMd";
       try {
         Locks.lock(new Lock(item.getId().toString(), sessionUser.getEmail()));

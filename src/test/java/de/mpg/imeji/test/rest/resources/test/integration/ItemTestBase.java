@@ -26,7 +26,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.controller.util.ImejiFactory;
+import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
@@ -219,7 +219,7 @@ public class ItemTestBase extends ImejiTestBase {
     CollectionImeji coll =
         cc.retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId), JenaUtil.testUser);
     item = ImejiFactory.newItem(coll);
-    item = ic.create(item, coll.getId(), JenaUtil.testUser);
+    item = ic.create(item, coll, JenaUtil.testUser);
     itemId = item.getIdString();
     // TransferObjectFactory.transferItem(item, itemTO);
   }

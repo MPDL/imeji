@@ -8,7 +8,7 @@ import java.util.List;
 
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.ImejiNamespaces;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
@@ -40,7 +40,7 @@ public class JenaSecurityQuery {
 
     String statusFilter = getStatusAsFilter(status);
 
-    if (Status.PENDING.equals(status) && !AuthUtil.isSysAdmin(user)) {
+    if (Status.PENDING.equals(status) && !SecurityUtil.isSysAdmin(user)) {
       // add this explicitly in order to avoid too long queries. Only if Admin user should not be
       // set explicitly again
       isUserSearch = true;
@@ -68,7 +68,7 @@ public class JenaSecurityQuery {
     // that's why FILTER(false)
     String userGrantsAsFilterSimple = getUserGrantsAsFilterSimple(user, rdfType, isUserSearch);
     return userGrantsAsFilterSimple.equals("")
-        ? (AuthUtil.isSysAdmin(user) ? statusFilter : " FILTER(false) ")
+        ? (SecurityUtil.isSysAdmin(user) ? statusFilter : " FILTER(false) ")
         : userGrantsAsFilterSimple + statusFilter + " .";
   }
 
@@ -96,7 +96,7 @@ public class JenaSecurityQuery {
   private static String getUserGrantsAsFilterSimple(User user, String rdfType,
       boolean isUserSearch) {
 
-    if (AuthUtil.isSysAdmin(user) && !isUserSearch) {
+    if (SecurityUtil.isSysAdmin(user) && !isUserSearch) {
       return "";
     }
     return getAllowedContainersFilter(user, rdfType, isUserSearch);
@@ -114,9 +114,9 @@ public class JenaSecurityQuery {
     List<String> uris = new ArrayList<>();
 
     if (J2JHelper.getResourceNamespace(new Album()).equals(rdfType)) {
-      uris = AuthUtil.getListOfAllowedAlbums(user);
+      uris = SecurityUtil.getListOfAllowedAlbums(user);
     } else {
-      uris = AuthUtil.getListOfAllowedCollections(user);
+      uris = SecurityUtil.getListOfAllowedCollections(user);
     }
 
     String s = "";
@@ -161,7 +161,7 @@ public class JenaSecurityQuery {
       // user has extra rights as well as the item which are public
       StringBuilder builderItems = new StringBuilder();
       int itNo = 0;
-      List<String> allowedItems = AuthUtil.getListOfAllowedItem(user);
+      List<String> allowedItems = SecurityUtil.getListOfAllowedItem(user);
       String allowedItemsString = "";
       if (allowedItems.size() > 0) {
         for (String uri : allowedItems) {
@@ -182,7 +182,7 @@ public class JenaSecurityQuery {
 
       StringBuilder builderProfiles = new StringBuilder();
       int pNo = 0;
-      List<String> allowedProfiles = AuthUtil.getListOfAllowedProfiles(user);
+      List<String> allowedProfiles = SecurityUtil.getListOfAllowedProfiles(user);
       String allowedProfilesString = "";
       String releasedStatusFilter = "( ?status = <" + Status.RELEASED.getUriString() + "> )";
       if (allowedProfiles.size() > 0) {

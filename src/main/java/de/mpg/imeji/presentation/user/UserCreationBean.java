@@ -15,13 +15,13 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.util.ImejiFactory;
 import de.mpg.imeji.logic.security.util.PasswordGenerator;
 import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
 import de.mpg.imeji.logic.user.collaboration.email.EmailService;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
-import de.mpg.imeji.logic.user.util.QuotaUtil;
+import de.mpg.imeji.logic.util.ImejiFactory;
+import de.mpg.imeji.logic.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.User;
@@ -190,6 +190,14 @@ public class UserCreationBean extends SuperBean {
 
   public void setQuota(QuotaUICompoment quota) {
     this.quota = quota;
+  }
+
+  public boolean isAllowedToCreateCollection() {
+    return allowedToCreateCollection;
+  }
+
+  public void setAllowedToCreateCollection(boolean allowedToCreateCollection) {
+    this.allowedToCreateCollection = allowedToCreateCollection;
   }
 }
 

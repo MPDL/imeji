@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -57,7 +57,7 @@ public class ShareUtil {
         Imeji.RESOURCE_BUNDLE.getLabel("collection_share_image_delete", locale)));
     collectionRoleMenu.add(new SelectItem(ShareRoles.EDIT,
         Imeji.RESOURCE_BUNDLE.getLabel("collection_share_collection_edit", locale)));
-    if (AuthUtil.staticAuth().administrate(user, profileUri)) {
+    if (SecurityUtil.staticAuth().administrate(user, profileUri)) {
       collectionRoleMenu.add(new SelectItem(ShareRoles.EDIT_PROFILE,
           Imeji.RESOURCE_BUNDLE.getLabel("collection_share_profile_edit", locale)));
     }

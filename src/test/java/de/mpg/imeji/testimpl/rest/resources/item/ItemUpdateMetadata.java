@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
@@ -139,8 +140,10 @@ public class ItemUpdateMetadata extends ItemTestBase {
     itemTO = (DefaultItemTO) response.readEntity(DefaultItemTO.class);
 
     // Read collection profile
-    MetadataProfile profile = new ProfileController().retrieveByCollectionId(
+    CollectionImeji collection = new CollectionController().retrieveLazy(
         ObjectHelper.getURI(CollectionImeji.class, itemTO.getCollectionId()), JenaUtil.testUser);
+    MetadataProfile profile =
+        new ProfileController().retrieveCollectionProfile(collection, JenaUtil.testUser);
 
     // Transfer the response (ItemTO) into a VO (Item)
     Item item = new Item();

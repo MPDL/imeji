@@ -18,8 +18,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.util.ImejiFactory;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;

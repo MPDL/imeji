@@ -103,8 +103,8 @@
 												<span class="imj_invisible">: </span>
 											</div>
 											<div class="imj_admindataValue">
-												<h:panelGroup class="imj_admindataValueEntry" rendered="#{!UserBean.edit or Auth.sysAdmin}">
-													<h:outputText value="#{UserBean.quotaHumanReadable}"/>
+												<h:panelGroup class="imj_admindataValueEntry" rendered="#{!UserBean.edit}">
+													<h:outputText value="#{UserBean.quota.humanReadableQuota}"/>
 												</h:panelGroup>
 												<h:panelGroup class="imj_admindataSetEdit" rendered="#{UserBean.edit and Auth.sysAdmin}" >
 													<h:selectOneMenu value="#{UserBean.quota.quota}" >

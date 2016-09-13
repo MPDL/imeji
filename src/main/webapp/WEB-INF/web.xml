@@ -31,7 +31,7 @@
     </servlet>
     <servlet>
         <servlet-name>File Servlet</servlet-name>
-        <servlet-class>de.mpg.imeji.presentation.servlet.FileServlet</servlet-class>
+        <servlet-class>de.mpg.imeji.presentation.storage.FileServlet</servlet-class>
         <load-on-startup>3</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>

@@ -34,8 +34,8 @@ import javax.faces.bean.ManagedBean;
 import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.ImejiFileTypes;
 import de.mpg.imeji.logic.config.ImejiConfiguration.HtmlSnippet;
-import de.mpg.imeji.logic.search.model.FileTypes;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.presentation.lang.InternationalizationBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
@@ -140,7 +140,7 @@ public class ConfigurationBean {
    *
    * @return
    */
-  public FileTypes getFileTypes() {
+  public ImejiFileTypes getFileTypes() {
     return Imeji.CONFIG.getFileTypes();
   }
 
@@ -149,7 +149,7 @@ public class ConfigurationBean {
    *
    * @param types
    */
-  public void setFileTypes(FileTypes types) {
+  public void setFileTypes(ImejiFileTypes types) {
     Imeji.CONFIG.setFileTypes(types);
   }
 

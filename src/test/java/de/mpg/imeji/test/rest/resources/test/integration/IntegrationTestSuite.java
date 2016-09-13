@@ -30,7 +30,7 @@ import util.SuperTestSuite;
     ItemUpdateMetadata.class, ItemDelete.class, ItemDefaultMdCreate.class,
     ItemDefaultMdCreateHierarchical.class, ItemUpdate.class, ItemDefaultMdUpdateHierarchical.class,
     ItemEasyPatchMetadata.class, ItemDefaultUpdate.class,
-    // Other Tests 
+    // Other Tests
     AlbumIntegration.class, CollectionIntegration.class, ProfileIntegration.class,
     StorageIntegration.class, VersionManagerTest.class})
 

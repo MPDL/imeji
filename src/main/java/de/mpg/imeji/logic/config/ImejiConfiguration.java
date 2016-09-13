@@ -26,7 +26,6 @@ import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.search.model.FileTypes;
 import de.mpg.imeji.logic.util.StringHelper;
 
 public class ImejiConfiguration {
@@ -44,7 +43,7 @@ public class ImejiConfiguration {
 
   private static Properties config;
   private static File configFile;
-  private static FileTypes fileTypes;
+  private static ImejiFileTypes fileTypes;
   private static String lang = "en";
   private static final Logger LOGGER = Logger.getLogger(ImejiConfiguration.class);
   // A list of predefined file types, which is set when imeji is initialized
@@ -104,7 +103,7 @@ public class ImejiConfiguration {
    */
   private synchronized void setDefaultConfig() {
     config = new Properties();
-    fileTypes = new FileTypes(DEFAULT_SEARCH_FILE_TYPE_LIST);
+    fileTypes = new ImejiFileTypes(DEFAULT_SEARCH_FILE_TYPE_LIST);
     initPropertiesWithDefaultValue();
     saveConfig();
   }
@@ -126,7 +125,7 @@ public class ImejiConfiguration {
           "conf.xml could not be read. Please check in tdb directory if exsting and not empty. If Emtpy, remove it.");
     }
     dataViewerUrl = (String) config.get(CONFIGURATION.DATA_VIEWER_URL.name());
-    fileTypes = new FileTypes((String) config.get(CONFIGURATION.FILE_TYPES.name()));
+    fileTypes = new ImejiFileTypes((String) config.get(CONFIGURATION.FILE_TYPES.name()));
     initPropertiesWithDefaultValue();
   }
 
@@ -284,7 +283,7 @@ public class ImejiConfiguration {
    *
    * @return
    */
-  public FileTypes getFileTypes() {
+  public ImejiFileTypes getFileTypes() {
     return fileTypes;
   }
 
@@ -293,7 +292,7 @@ public class ImejiConfiguration {
    *
    * @param types
    */
-  public void setFileTypes(FileTypes types) {
+  public void setFileTypes(ImejiFileTypes types) {
     setProperty(CONFIGURATION.FILE_TYPES.name(), fileTypes.toString());
   }
 

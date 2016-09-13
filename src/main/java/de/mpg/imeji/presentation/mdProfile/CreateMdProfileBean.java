@@ -9,8 +9,8 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.controller.util.ImejiFactory;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
+import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
@@ -114,11 +114,11 @@ public class CreateMdProfileBean {
       FacesContext.getCurrentInstance().getExternalContext()
           .redirect(navigation.getCollectionUrl() + collectionId + "/infos");
     } else if ("edit".equals(redirect)
-        && AuthUtil.staticAuth().update(session.getUser(), profile)) {
+        && SecurityUtil.staticAuth().update(session.getUser(), profile)) {
       FacesContext.getCurrentInstance().getExternalContext().redirect(
           navigation.getProfileUrl() + profile.getIdString() + "/edit?init=1&col=" + collectionId);
     } else if ("edit".equals(redirect)
-        && !AuthUtil.staticAuth().update(session.getUser(), profile)) {
+        && !SecurityUtil.staticAuth().update(session.getUser(), profile)) {
       FacesContext.getCurrentInstance().getExternalContext()
           .redirect(navigation.getCollectionUrl() + collectionId + "/infos");
     } else {

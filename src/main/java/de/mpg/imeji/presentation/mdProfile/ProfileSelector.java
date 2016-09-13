@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties.Status;
@@ -78,11 +78,11 @@ public class ProfileSelector implements Serializable {
     referenceProfiles = new ArrayList<>();
     referenceProfiles.add(new SelectItem(null, "Select a profile"));
     for (MetadataProfile mdp : profiles) {
-      if (!mdp.getStatements().isEmpty() && (AuthUtil.staticAuth().administrate(user, mdp)
+      if (!mdp.getStatements().isEmpty() && (SecurityUtil.staticAuth().administrate(user, mdp)
           || mdp.getStatus() == Status.RELEASED)) {
         referenceProfiles.add(new SelectItem(mdp.getId().toString(), mdp.getTitle()));
       }
-      if (!mdp.getStatements().isEmpty() && AuthUtil.staticAuth().read(user, mdp)) {
+      if (!mdp.getStatements().isEmpty() && SecurityUtil.staticAuth().read(user, mdp)) {
         copyProfiles.add(new SelectItem(mdp.getId().toString(), mdp.getTitle()));
       }
     }

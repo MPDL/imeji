@@ -21,7 +21,7 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -120,7 +120,7 @@ public class JenaUtil {
   private static void createUser(User u) {
     try {
       UserBusinessController c = new UserBusinessController();
-      System.out.println(AuthUtil.isSysAdmin(Imeji.adminUser));
+      System.out.println(SecurityUtil.isSysAdmin(Imeji.adminUser));
       c.create(u, USER_TYPE.DEFAULT);
     } catch (Exception e) {
       LOGGER.info(u.getEmail() + " already exists. Must not be created");

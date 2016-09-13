@@ -87,7 +87,7 @@ public class GroupBusinessController {
    * @throws ImejiException
    */
   public UserGroup retrieveLazy(String uri, User user) throws ImejiException {
-    return retrieveLazy(uri, user);
+    return controller.retrieveLazy(uri, user);
   }
 
   /**
@@ -99,7 +99,7 @@ public class GroupBusinessController {
    * @throws ImejiException
    */
   public List<UserGroup> retrieveBatch(List<String> uris, User user) {
-    return retrieveBatch(uris, user);
+    return controller.retrieveBatch(uris, user);
   }
 
   /**
@@ -111,7 +111,7 @@ public class GroupBusinessController {
    * @throws ImejiException
    */
   public List<UserGroup> retrieveBatchLazy(List<String> uris, User user) {
-    return retrieveBatchLazy(uris, user);
+    return controller.retrieveBatchLazy(uris, user);
   }
 
   /**

@@ -9,7 +9,7 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
@@ -217,7 +217,7 @@ public class EmailMessages {
         .replace("XXX_ORGANIZATION_XXX", u.getPerson().getOrganizationString())
         .replace("XXX_TIME_XXX", new Date().toString())
         .replace("XXX_CREATE_COLLECTIONS_XXX",
-            Boolean.toString(AuthUtil.isAllowedToCreateCollection(u)))
+            Boolean.toString(SecurityUtil.isAllowedToCreateCollection(u)))
         .replace("XXX_INVITATION_XXX", Boolean.toString(invitation));
   }
 

@@ -30,7 +30,7 @@ import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchSimpleMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
@@ -197,7 +197,7 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder buildSecurityQuery(User user, String folderUri) {
     if (user != null) {
-      if (AuthUtil.isSysAdmin(user)) {
+      if (SecurityUtil.isSysAdmin(user)) {
         // Admin: can view everything
         return QueryBuilders.matchAllQuery();
       } else {

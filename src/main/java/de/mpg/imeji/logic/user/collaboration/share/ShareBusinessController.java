@@ -11,16 +11,16 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.controller.GroupBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
-import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
  * Controller for {@link Grant}
@@ -30,8 +30,6 @@ import de.mpg.imeji.logic.writer.WriterFacade;
  * @version $Revision$ $LastChangedDate$
  */
 public class ShareBusinessController {
-  // Writer for user model, but only used to deleted Grants
-  private static final WriterFacade writer = new WriterFacade(Imeji.userModel);
   private static final Logger LOGGER = Logger.getLogger(ShareBusinessController.class);
 
   /**
@@ -267,7 +265,7 @@ public class ShareBusinessController {
     UserBusinessController c = new UserBusinessController();
     try {
       c.update(toUser, Imeji.adminUser);
-      writer.delete(new ArrayList<Object>(removedGrants), Imeji.adminUser);
+      new UserController().deleteGrants(removedGrants);
     } catch (Exception e) {
       LOGGER.error(e);
     }
@@ -295,7 +293,7 @@ public class ShareBusinessController {
     GroupBusinessController c = new GroupBusinessController();
     try {
       c.update(toGroup, Imeji.adminUser);
-      writer.delete(new ArrayList<Object>(removedGrants), Imeji.adminUser);
+      new UserController().deleteGrants(removedGrants);
     } catch (Exception e) {
       LOGGER.error("Error cleaning grants", e);
     }
@@ -352,11 +350,11 @@ public class ShareBusinessController {
       List<String> c = ImejiSPARQL
           .exec(JenaCustomQueries.selectCollectionIdOfItem(g.getGrantFor().toString()), null);
       if (!c.isEmpty()) {
-        return AuthUtil.staticAuth().administrate(user, c.get(0));
+        return SecurityUtil.staticAuth().administrate(user, c.get(0));
       }
 
     }
-    return AuthUtil.staticAuth().administrate(user, g.getGrantFor());
+    return SecurityUtil.staticAuth().administrate(user, g.getGrantFor());
   }
 
   private static boolean hasReadGrants(List<Grant> userGrants, String uri) {

@@ -45,7 +45,7 @@ import de.mpg.imeji.logic.vo.UserGroup;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class AuthUtil {
+public class SecurityUtil {
   private static final Authorization authorization = new Authorization();
 
   /**
@@ -210,7 +210,7 @@ public class AuthUtil {
    * @return
    */
   public static Grant extractGrant(List<Grant> grants, String grantForUri, GrantType type) {
-    for (Grant g : AuthUtil.extractGrantsFor(grants, Imeji.PROPERTIES.getBaseURI())) {
+    for (Grant g : SecurityUtil.extractGrantsFor(grants, Imeji.PROPERTIES.getBaseURI())) {
       if (g.getGrantType().compareTo(Grant.toGrantTypeURI(type)) == 0) {
         return g;
       }

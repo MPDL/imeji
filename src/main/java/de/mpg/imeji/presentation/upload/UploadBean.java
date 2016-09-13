@@ -327,7 +327,8 @@ public class UploadBean extends SuperBean implements Serializable {
       if (isImportImageToFile()) {
         item = controller.updateThumbnail(findItemByFileName(title), file, getSessionUser());
       } else if (isUploadFileToItem()) {
-        item = controller.updateFile(findItemByFileName(title), file, title, getSessionUser());
+        item = controller.updateFile(findItemByFileName(title), collection, file, title,
+            getSessionUser());
       } else {
         item = controller.createWithFile(null, file, title, collection, getSessionUser());
       }

@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
-import de.mpg.imeji.logic.controller.util.ImejiFactory;
+import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.test.logic.controller.ControllerTest;

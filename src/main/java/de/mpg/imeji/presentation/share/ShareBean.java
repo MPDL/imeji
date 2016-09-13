@@ -17,7 +17,7 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
 import de.mpg.imeji.logic.user.collaboration.email.EmailService;
 import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
@@ -157,7 +157,7 @@ public class ShareBean extends SuperBean implements Serializable {
         instanceName);
     shareList =
         new ShareList(owner, uri.toString(), profileUri, type, getSessionUser(), getLocale());
-    isAdmin = AuthUtil.staticAuth().administrate(getSessionUser(), shareTo);
+    isAdmin = SecurityUtil.staticAuth().administrate(getSessionUser(), shareTo);
     pageUrl = PrettyContext.getCurrentInstance().getRequestURL().toString()
         + PrettyContext.getCurrentInstance().getRequestQueryString();
     pageUrl = pageUrl.split("[&\\?]group=")[0];
@@ -302,11 +302,11 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   public void reloadPage() {
     try {
-      if (AuthUtil.staticAuth().administrate(getSessionUser(), uri.toString())) {
+      if (SecurityUtil.staticAuth().administrate(getSessionUser(), uri.toString())) {
         // user has still rights to read the collection
         FacesContext.getCurrentInstance().getExternalContext()
             .redirect(getNavigation().getApplicationUri() + pageUrl);
-      } else if (AuthUtil.staticAuth().read(getSessionUser(), uri.toString())) {
+      } else if (SecurityUtil.staticAuth().read(getSessionUser(), uri.toString())) {
         FacesContext.getCurrentInstance().getExternalContext()
             .redirect(getNavigation().getApplicationUri() + pageUrl.replace("share", ""));
       } else {

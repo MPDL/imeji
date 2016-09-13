@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.ItemController;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Grant;
@@ -67,7 +67,7 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean create(User user, Object obj) {
-    if (AuthUtil.isSysAdmin(user)) {
+    if (SecurityUtil.isSysAdmin(user)) {
       return true;
     }
     if (obj instanceof Album) {
@@ -90,7 +90,7 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean read(User user, Object obj) {
-    if (AuthUtil.isSysAdmin(user)) {
+    if (SecurityUtil.isSysAdmin(user)) {
       return true;
     }
     if (isPublic(obj, user)) {
@@ -126,7 +126,7 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean update(User user, Object obj) {
-    if (AuthUtil.isSysAdmin(user)) {
+    if (SecurityUtil.isSysAdmin(user)) {
       return true;
     }
     if (hasGrant(user, toGrant(getRelevantURIForSecurity(obj, false, false, false),
@@ -150,7 +150,7 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean delete(User user, Object obj) {
-    if (AuthUtil.isSysAdmin(user)) {
+    if (SecurityUtil.isSysAdmin(user)) {
       return true;
     }
     if (!isPublic(obj, user)
@@ -218,7 +218,7 @@ public class Authorization implements Serializable {
    * @return
    */
   public boolean deleteContent(User user, Object obj) {
-    if (AuthUtil.isSysAdmin(user)) {
+    if (SecurityUtil.isSysAdmin(user)) {
       return true;
     }
     if (!isPublic(obj, user) && hasGrant(user,
@@ -252,7 +252,7 @@ public class Authorization implements Serializable {
    * @return
    */
   private boolean hasGrant(User user, Grant g) {
-    List<Grant> all = AuthUtil.getAllGrantsOfUser(user);
+    List<Grant> all = SecurityUtil.getAllGrantsOfUser(user);
     if (all.contains(g)) {
       return true;
     }

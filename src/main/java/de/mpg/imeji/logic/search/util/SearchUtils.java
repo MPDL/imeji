@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
 import de.mpg.imeji.logic.search.Search;
-import de.mpg.imeji.logic.search.model.FileTypes.Type;
 
 /**
  * Utility class for the {@link Search}

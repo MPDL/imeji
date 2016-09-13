@@ -39,7 +39,7 @@ import de.mpg.imeji.logic.search.model.SearchIndex;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -190,7 +190,7 @@ public class ItemBean extends SuperBean {
     if (item != null) {
       this.discardComment = null;
       User user = getSessionUser();
-      if (AuthUtil.canReadItemButNotCollection(user, item)) {
+      if (SecurityUtil.canReadItemButNotCollection(user, item)) {
         // User has right to read the item, but not collection and the
         // profile
         user = Imeji.adminUser;

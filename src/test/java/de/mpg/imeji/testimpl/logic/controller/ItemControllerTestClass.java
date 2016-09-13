@@ -63,7 +63,7 @@ public class ItemControllerTestClass extends ControllerTest {
   public void replaceItemFile() throws ImejiException, IOException {
     ItemController controller = new ItemController();
     try {
-      item = controller.updateFile(item, thumbnailFile, "test.tmp", JenaUtil.testUser);
+      item = controller.updateFile(item, collection, thumbnailFile, "test.tmp", JenaUtil.testUser);
     } catch (ImejiException e) {
       Assert.fail("File could not be replaced" + e.getMessage());
     }
@@ -81,21 +81,21 @@ public class ItemControllerTestClass extends ControllerTest {
 
 
   @Test
-  public void batchUpdateItemProfiles() throws ImejiException  {
-  //Create one collection
+  public void batchUpdateItemProfiles() throws ImejiException {
+    // Create one collection
     createCollection();
     List<Item> itemsToUpdate = new ArrayList<Item>();
     itemsToUpdate.add(createItemWithFile());
-    
+
     createProfile();
     createCollection();
-    
+
     itemsToUpdate.add(createItemWithFile());
     ItemController controller = new ItemController();
-    
+
     try {
       controller.updateBatch(itemsToUpdate, JenaUtil.testUser);
-      
+
     } catch (Exception e) {
       Assert.assertTrue(e instanceof UnprocessableError);
       LOGGER.info("Files with different profiles could not be updated!");
@@ -103,20 +103,20 @@ public class ItemControllerTestClass extends ControllerTest {
 
     createCollection();
     itemsToUpdate.add(createItemWithFile());
-    
+
     try {
       controller.updateBatch(itemsToUpdate, JenaUtil.testUser);
-      
+
     } catch (Exception e) {
       Assert.assertTrue(e instanceof UnprocessableError);
       LOGGER.info("Second Time Files with different profiles could not be updated!");
     }
-    
+
     itemsToUpdate = new ArrayList<Item>();
     createCollection();
     itemsToUpdate.add(createItemWithFile());
     itemsToUpdate.add(createItem());
-    
+
     controller.updateBatch(itemsToUpdate, JenaUtil.testUser);
     LOGGER.info("Files with same profiles could be updated!");
 

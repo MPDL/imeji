@@ -13,7 +13,7 @@
 	</ui:define>
 	
 	<ui:define name="mainContent">
-		<ui:fragment rendered="#{Auth.sysAdmin}">
+		<ui:fragment rendered="#{!Auth.sysAdmin}">
 			<ui:include src="./include/LoginFormular.xhtml" />
 		</ui:fragment>
 		

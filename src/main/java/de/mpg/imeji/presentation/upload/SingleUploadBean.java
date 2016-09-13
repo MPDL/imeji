@@ -34,16 +34,16 @@ import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.controller.util.ImejiFactory;
 import de.mpg.imeji.logic.search.model.SearchIndex;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -118,7 +118,8 @@ public class SingleUploadBean extends SuperBean implements Serializable {
       MetadataSetWrapper newSet = getMdSetBean();
       edit.getEditor().getItems().get(0).setMds(newSet);
       edit.getEditor().validateAndFormatItemsForSaving();
-      uploadFileToItem(item, getIngestImage().getFile(), getIngestImage().getName());
+      uploadFileToItem(item, getCollection(), getIngestImage().getFile(),
+          getIngestImage().getName());
       sus.uploaded();
       BeanHelper.cleanMessages();
       reloadItemPage(item.getIdString(), ObjectHelper.getId(item.getCollection()));
@@ -164,9 +165,10 @@ public class SingleUploadBean extends SuperBean implements Serializable {
     sus.copyToTemp();
   }
 
-  private Item uploadFileToItem(Item item, File file, String title) throws ImejiException {
+  private Item uploadFileToItem(Item item, CollectionImeji col, File file, String title)
+      throws ImejiException {
     ItemController controller = new ItemController();
-    item = controller.create(item, file, title, getSessionUser(), null, null);
+    item = controller.create(item, col, file, title, getSessionUser(), null, null);
     sus.setUploadedItem(item);
     return item;
   }
@@ -279,12 +281,12 @@ public class SingleUploadBean extends SuperBean implements Serializable {
    */
   private void loadCollections() throws ImejiException {
     for (CollectionImeji c : retrieveAllUserCollections()) {
-      if (AuthUtil.staticAuth().createContent(getSessionUser(), c)) {
+      if (SecurityUtil.staticAuth().createContent(getSessionUser(), c)) {
         collectionItems.add(new SelectItem(c.getId(), c.getMetadata().getTitle()));
       }
     }
     // If the user hasn't any collection but is allowed to create one, create a default collection
-    if (collectionItems.isEmpty() && AuthUtil.isAllowedToCreateCollection(getSessionUser())) {
+    if (collectionItems.isEmpty() && SecurityUtil.isAllowedToCreateCollection(getSessionUser())) {
       CollectionImeji defaultCollection = createDefaultCollection();
       collectionItems.add(
           new SelectItem(defaultCollection.getId(), defaultCollection.getMetadata().getTitle()));

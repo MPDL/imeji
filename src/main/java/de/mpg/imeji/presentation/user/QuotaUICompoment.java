@@ -10,7 +10,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.user.util.QuotaUtil;
+import de.mpg.imeji.logic.util.QuotaUtil;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -25,15 +25,15 @@ public class QuotaUICompoment implements Serializable {
   private static final long serialVersionUID = -8215734534906829819L;
   private String quota = Imeji.CONFIG.getDefaultQuota();
   private List<SelectItem> quotaMenu;
+  private final String humanReadableQuota;
 
   /**
    * default Constructor
    */
   public QuotaUICompoment(User user, Locale locale) {
     this.quotaMenu = new ArrayList<>();
-    this.quota = user.getQuota() > 0
-        ? QuotaUtil.getQuotaHumanReadable(user.getQuota(), Locale.ENGLISH).replace("GB", "").trim()
-        : quota;
+    this.humanReadableQuota = QuotaUtil.getQuotaHumanReadable(user.getQuota(), Locale.ENGLISH);
+    this.quota = user.getQuota() > 0 ? humanReadableQuota.replace("GB", "").trim() : quota;
     for (String limit : Imeji.CONFIG.getQuotaLimitsAsList()) {
       if (NumberUtils.isNumber(limit)) {
         quotaMenu.add(new SelectItem(limit.trim()));
@@ -70,5 +70,9 @@ public class QuotaUICompoment implements Serializable {
    */
   public void setQuotaMenu(List<SelectItem> quotaMenu) {
     this.quotaMenu = quotaMenu;
+  }
+
+  public String getHumanReadableQuota() {
+    return humanReadableQuota;
   }
 }

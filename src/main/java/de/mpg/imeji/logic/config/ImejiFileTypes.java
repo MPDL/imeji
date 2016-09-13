@@ -22,7 +22,7 @@
  * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
  * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
  */
-package de.mpg.imeji.logic.search.model;
+package de.mpg.imeji.logic.config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +38,8 @@ import java.util.regex.Pattern;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class FileTypes {
+public class ImejiFileTypes {
+
   /**
    * A Single File Type (video, image, sound, etc.)
    *
@@ -170,7 +171,7 @@ public class FileTypes {
   /**
    * Initialize a new FilterTypeBean
    */
-  public FileTypes(String s) {
+  public ImejiFileTypes(String s) {
     parse(s);
   }
 

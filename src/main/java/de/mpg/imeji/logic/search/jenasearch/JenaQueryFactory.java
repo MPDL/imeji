@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiNamespaces;
-import de.mpg.imeji.logic.search.model.FileTypes.Type;
+import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
 import de.mpg.imeji.logic.search.SearchIndexes;
 import de.mpg.imeji.logic.search.model.SearchIndex;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
@@ -26,8 +26,8 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.util.ObjectHelper;
 
 /**
@@ -298,8 +298,7 @@ public class JenaQueryFactory {
         if (J2JHelper.getResourceNamespace(new MetadataProfile()).equals(rdfType)) {
           pair.setValue(normalizeURI(MetadataProfile.class, pair.getValue()));
           return "FILTER(" + getSimpleFilter(pair, "s", pair.isNot()) + ") . ?c <"
-              + SearchIndexes.getIndex(SearchIndex.SearchFields.prof).getNamespace()
-              + "> ?s .";
+              + SearchIndexes.getIndex(SearchIndex.SearchFields.prof).getNamespace() + "> ?s .";
         } else if (J2JHelper.getResourceNamespace(new CollectionImeji()).equals(rdfType)) {
           searchQuery = "?s <http://imeji.org/terms/mdprofile> ?el";
         } else if (J2JHelper.getResourceNamespace(new Item()).equals(rdfType)) {

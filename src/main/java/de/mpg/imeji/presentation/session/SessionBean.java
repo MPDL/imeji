@@ -30,7 +30,7 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.MaxPlanckInstitutUtils;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -262,8 +262,8 @@ public class SessionBean implements Serializable {
    * @return
    */
   public Album getActiveAlbum() {
-    if (activeAlbum != null && (!AuthUtil.staticAuth().read(getUser(), activeAlbum.getId())
-        || !AuthUtil.staticAuth().create(getUser(), activeAlbum.getId()))) {
+    if (activeAlbum != null && (!SecurityUtil.staticAuth().read(getUser(), activeAlbum.getId())
+        || !SecurityUtil.staticAuth().create(getUser(), activeAlbum.getId()))) {
       setActiveAlbum(null);
     }
     return activeAlbum;
@@ -515,7 +515,7 @@ public class SessionBean implements Serializable {
    * @throws IOException
    */
   private void logoutFromSpot() {
-    if (getUser() != null && !AuthUtil.isSysAdmin(user)) {
+    if (getUser() != null && !SecurityUtil.isSysAdmin(user)) {
       setUser(null);
     }
   }
@@ -549,14 +549,14 @@ public class SessionBean implements Serializable {
    * Check and set isHasUploadRights
    */
   public void checkIfHasUploadRights() {
-    if (AuthUtil.isAllowedToCreateCollection(user)) {
+    if (SecurityUtil.isAllowedToCreateCollection(user)) {
       hasUploadRights = true;
       return;
     }
     List<String> collectionUris =
         new CollectionController().search(null, null, -1, 0, user, spaceId).getResults();
     for (String uri : collectionUris) {
-      if (AuthUtil.staticAuth().createContent(user, uri)) {
+      if (SecurityUtil.staticAuth().createContent(user, uri)) {
         hasUploadRights = true;
         return;
       }

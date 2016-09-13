@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.security.authentication.impl;
+package de.mpg.imeji.logic.user.authentication.impl;
 
 import java.net.URI;
 
@@ -15,8 +15,8 @@ import org.jose4j.lang.JoseException;
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.InactiveAuthenticationError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.security.authentication.Authentication;
-import de.mpg.imeji.logic.security.authentication.ImejiRsaKeys;
+import de.mpg.imeji.logic.user.authentication.Authentication;
+import de.mpg.imeji.logic.user.authentication.ImejiRsaKeys;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.User;
 

@@ -10,15 +10,15 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.util.ImejiFactory;
 import de.mpg.imeji.logic.registration.Registration;
 import de.mpg.imeji.logic.registration.RegistrationBusinessController;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.collaboration.invitation.Invitation;
 import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
 
@@ -43,7 +43,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     registrationBC.activate(registration);
     user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
-    assertTrue(AuthUtil.isAllowedToCreateCollection(user));
+    assertTrue(SecurityUtil.isAllowedToCreateCollection(user));
   }
 
   /**
@@ -61,7 +61,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     registrationBC.activate(registration);
     user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
-    assertTrue(AuthUtil.isAllowedToCreateCollection(user));
+    assertTrue(SecurityUtil.isAllowedToCreateCollection(user));
   }
 
   /**
@@ -79,7 +79,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     registrationBC.activate(registration);
     user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
-    assertTrue(AuthUtil.isAllowedToCreateCollection(user));
+    assertTrue(SecurityUtil.isAllowedToCreateCollection(user));
   }
 
   /**
@@ -97,7 +97,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     registrationBC.activate(registration);
     user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
-    assertTrue(!AuthUtil.isAllowedToCreateCollection(user));
+    assertTrue(!SecurityUtil.isAllowedToCreateCollection(user));
   }
 
   /**
@@ -115,7 +115,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     registrationBC.activate(registration);
     user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
-    assertTrue(!AuthUtil.isAllowedToCreateCollection(user));
+    assertTrue(!SecurityUtil.isAllowedToCreateCollection(user));
   }
 
   /**
@@ -133,7 +133,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     registrationBC.activate(registration);
     user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
-    assertTrue(!AuthUtil.isAllowedToCreateCollection(user));
+    assertTrue(!SecurityUtil.isAllowedToCreateCollection(user));
   }
 
 

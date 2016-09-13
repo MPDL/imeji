@@ -33,7 +33,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
@@ -213,7 +213,7 @@ public class AlbumController extends ImejiController {
     if (Status.WITHDRAWN.equals(album.getStatus())) {
       throw new UnprocessableError("error_album_withdrawn_members_can_not_be_added");
     }
-    if (!AuthUtil.staticAuth().create(user, album)) {
+    if (!SecurityUtil.staticAuth().create(user, album)) {
       throw new NotAllowedError("album_not_allowed_to_add_item");
     }
     ItemController itemController = new ItemController();

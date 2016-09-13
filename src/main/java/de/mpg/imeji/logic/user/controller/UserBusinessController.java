@@ -36,12 +36,12 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
-import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
+import de.mpg.imeji.logic.user.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.IdentifierUtil;
+import de.mpg.imeji.logic.util.QuotaUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Organization;
@@ -62,9 +62,6 @@ public class UserBusinessController {
   private final Search search =
       SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.ELASTIC);
 
-  public UserBusinessController() {
-    // TODO Auto-generated constructor stub
-  }
 
 
   /**
@@ -262,7 +259,7 @@ public class UserBusinessController {
    */
   public long checkQuota(User user, File file, CollectionImeji col) throws ImejiException {
     // do not check quota for admin
-    if (AuthUtil.isSysAdmin(user)) {
+    if (SecurityUtil.isSysAdmin(user)) {
       return -1L;
     }
     User targetCollectionUser = user.getId().equals(col.getCreatedBy()) ? user

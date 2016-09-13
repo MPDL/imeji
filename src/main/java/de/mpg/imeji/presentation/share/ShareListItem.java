@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.collaboration.invitation.Invitation;
 import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
@@ -158,7 +158,7 @@ public class ShareListItem implements Serializable {
           roles = new ArrayList<>(Arrays.asList(ShareRoles.CREATE.toString(),
               ShareRoles.EDIT_ITEM.toString(), ShareRoles.DELETE_ITEM.toString(),
               ShareRoles.EDIT.toString(), ShareRoles.ADMIN.toString()));
-          if (AuthUtil.staticAuth().administrate(currentUser, profileUri)) {
+          if (SecurityUtil.staticAuth().administrate(currentUser, profileUri)) {
             roles.add(ShareRoles.EDIT_PROFILE.toString());
           }
         } else if (type == SharedObjectType.ALBUM) {

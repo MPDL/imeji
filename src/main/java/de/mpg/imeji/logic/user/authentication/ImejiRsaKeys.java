@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.security.authentication;
+package de.mpg.imeji.logic.user.authentication;
 
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;

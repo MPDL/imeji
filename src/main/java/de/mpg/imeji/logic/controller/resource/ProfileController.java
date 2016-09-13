@@ -120,38 +120,14 @@ public class ProfileController extends ImejiController {
    * @throws NotFoundException
    * @throws ImejiException
    */
-  public MetadataProfile retrieveByCollectionId(URI collectionId, User user) throws ImejiException {
-    CollectionController cc = new CollectionController();
-    CollectionImeji c;
-    try {
-      c = cc.retrieve(collectionId, user);
-      if (c.getProfile() == null) {
-        return null;
-      }
-      return retrieve(c.getProfile(), user);
-    } catch (NotFoundException e) {
-      throw new UnprocessableError("Invalid collection: " + e.getLocalizedMessage());
+  public MetadataProfile retrieveCollectionProfile(CollectionImeji c, User user)
+      throws ImejiException {
+    if (c.getProfile() == null) {
+      return null;
     }
+    return retrieve(c.getProfile(), user);
   }
 
-
-  /**
-   * Retrieve the {@link MetadataProfile} of an {@link Item} TODO: Use Search for better performance
-   *
-   * @param itemId
-   * @param user
-   * @return
-   * @throws ImejiException
-   */
-  public MetadataProfile retrieveByItemId(URI itemId, User user) throws ImejiException {
-    try {
-      Item item = new ItemController().retrieve(itemId, user);
-      CollectionImeji c = new CollectionController().retrieve(item.getCollection(), user);
-      return retrieve(c.getProfile(), user);
-    } catch (NotFoundException e) {
-      throw new UnprocessableError("Invalid collection: " + e.getLocalizedMessage());
-    }
-  }
 
   /**
    * Updates a collection -Logged in users: --User is collection owner --OR user is collection

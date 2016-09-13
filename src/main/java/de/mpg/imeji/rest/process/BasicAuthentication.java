@@ -3,8 +3,8 @@ package de.mpg.imeji.rest.process;
 import javax.servlet.http.HttpServletRequest;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
-import de.mpg.imeji.logic.security.authentication.Authentication;
-import de.mpg.imeji.logic.security.authentication.factory.AuthenticationFactory;
+import de.mpg.imeji.logic.user.authentication.Authentication;
+import de.mpg.imeji.logic.user.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.vo.User;
 
 /**

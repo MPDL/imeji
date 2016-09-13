@@ -148,7 +148,7 @@ public class ItemCreate extends ItemTestBase {
     FileDataBodyPart filePart = new FileDataBodyPart("file", TEST_PNG_FILE);
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
-    multiPart.field("json", itemJSON);
+    multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", ""));
 
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
@@ -179,7 +179,7 @@ public class ItemCreate extends ItemTestBase {
 
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
+    assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatus());
   }
 
   @Test

@@ -34,7 +34,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.validation.impl.CollectionValidator;
 import de.mpg.imeji.logic.validation.impl.Validator.Method;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -96,7 +96,7 @@ public class CollectionController extends ImejiController {
       p.setTitle(c.getMetadata().getTitle() + metadataProfileName);
       p = pc.create(p.clone(), user);
     } else if (p != null && method == MetadataProfileCreationMethod.REFERENCE
-        && !AuthUtil.staticAuth().administrate(user, p) && p.getStatus() != Status.RELEASED) {
+        && !SecurityUtil.staticAuth().administrate(user, p) && p.getStatus() != Status.RELEASED) {
       // User must be allowed to release the profile: otherwise, he might not be allowed to release
       // his collection (if profile is already released, no problems)
       throw new NotAllowedError("Not allowed to reference this profile");
@@ -117,7 +117,6 @@ public class CollectionController extends ImejiController {
     WRITER.create(WriterFacade.toList(c), p, user);
     updateCreatorGrants(user, c.getId().toString());
     // check the space
-    // Just read SessionBean for SpaceId
     if (!isNullOrEmpty(spaceId)) {
       SpaceController sp = new SpaceController();
       sp.addCollection(spaceId, c.getId().toString(), user);
@@ -317,7 +316,7 @@ public class CollectionController extends ImejiController {
     if (hasImageLocked(itemUris, user)) {
       throw new RuntimeException("Collection can not be deleted: It contains locked items:");
     } else {
-      if (collection.getStatus() != Status.PENDING && !AuthUtil.isSysAdmin(user)) {
+      if (collection.getStatus() != Status.PENDING && !SecurityUtil.isSysAdmin(user)) {
         throw new UnprocessableError("collection_is_not_pending");
       }
       // Delete images
@@ -338,7 +337,7 @@ public class CollectionController extends ImejiController {
           MetadataProfile collectionMdp = pc.retrieve(collection.getProfile(), user);
           if ((pc.isReferencedByOtherResources(collectionMdp.getId().toString(),
               collection.getId().toString()))
-              || (!AuthUtil.staticAuth().delete(user, collectionMdp.getId().toString()))
+              || (!SecurityUtil.staticAuth().delete(user, collectionMdp.getId().toString()))
               || collectionMdp.getDefault()) {
             LOGGER.info(
                 "Metadata profile related to this collection is referenced elsewhere, or user does not have permission to delete this profile."
@@ -392,7 +391,7 @@ public class CollectionController extends ImejiController {
       itemController.release(items, user);
       update(collection, user);
       if (collection.getProfile() != null
-          && AuthUtil.staticAuth().administrate(user, collection.getProfile().toString())) {
+          && SecurityUtil.staticAuth().administrate(user, collection.getProfile().toString())) {
         ProfileController pc = new ProfileController();
         MetadataProfile profile = pc.retrieve(collection.getProfile(), user);
         if (profile.getStatus() == Status.PENDING) {
@@ -430,7 +429,7 @@ public class CollectionController extends ImejiController {
       update(coll, user);
       if (coll.getProfile() != null
           && !coll.getProfile().equals(Imeji.defaultMetadataProfile.getId())
-          && AuthUtil.staticAuth().administrate(user, coll.getProfile().toString())) {
+          && SecurityUtil.staticAuth().administrate(user, coll.getProfile().toString())) {
         // Withdraw profile
         ProfileController pc = new ProfileController();
         if (!pc.isReferencedByOtherResources(coll.getProfile().toString(),

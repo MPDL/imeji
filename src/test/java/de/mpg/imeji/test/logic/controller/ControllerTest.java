@@ -10,7 +10,7 @@ import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.controller.util.ImejiFactory;
+import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
@@ -74,8 +74,7 @@ public class ControllerTest {
    */
   protected static Item createItem() throws ImejiException {
     ItemController controller = new ItemController();
-    item =
-        controller.create(ImejiFactory.newItem(collection), collection.getId(), JenaUtil.testUser);
+    item = controller.create(ImejiFactory.newItem(collection), collection, JenaUtil.testUser);
     return item;
   }
 

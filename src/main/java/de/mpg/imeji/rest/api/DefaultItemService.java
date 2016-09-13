@@ -11,6 +11,8 @@ import org.apache.commons.io.FilenameUtils;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -45,13 +47,15 @@ public class DefaultItemService implements API<DefaultItemTO> {
     if (to instanceof DefaultItemWithFileTO) {
       // get newFilename
       String filename = getFilename((DefaultItemWithFileTO) to);
+      // Get Collection
+      CollectionImeji collection = getCollection(to.getCollectionId(), u);
       // Get Item profile
-      MetadataProfile profile = getProfile(to, u);
+      MetadataProfile profile = getProfile(collection, u);
       // transfer TO into item
       Item item = new Item();
       ReverseTransferObjectFactory.transferDefaultItem(to, item, profile, u, CREATE);
-      item = controller.create(item, ((DefaultItemWithFileTO) to).getFile(), filename, u,
-          ((DefaultItemWithFileTO) to).getFetchUrl(),
+      item = controller.create(item, collection, ((DefaultItemWithFileTO) to).getFile(), filename,
+          u, ((DefaultItemWithFileTO) to).getFetchUrl(),
           ((DefaultItemWithFileTO) to).getReferenceUrl());
       // transfer item into ItemTO
       DefaultItemTO createdTO = new DefaultItemTO();
@@ -76,17 +80,19 @@ public class DefaultItemService implements API<DefaultItemTO> {
   @Override
   public DefaultItemTO update(DefaultItemTO to, User u) throws ImejiException {
     Item item = controller.retrieveLazy(ObjectHelper.getURI(Item.class, to.getId()), u);
+    // Get the collection
+    CollectionImeji collection = getCollection(ObjectHelper.getId(item.getCollection()), u);
     // Get Item profile
-    MetadataProfile profile = getProfile(to, u);
+    MetadataProfile profile = getProfile(collection, u);
     // Transfer the item
     ReverseTransferObjectFactory.transferDefaultItem(to, item, profile, u, UPDATE);
     DefaultItemWithFileTO tof = (DefaultItemWithFileTO) to;
     String url = getExternalFileUrl(tof);
     if (tof.getFile() != null) {
-      item = controller.updateFile(item, tof.getFile(), to.getFilename(), u);
+      item = controller.updateFile(item, collection, tof.getFile(), to.getFilename(), u);
     } else if (!StringHelper.isNullOrEmptyTrim(url)) {
-      item = controller.updateWithExternalFile(item, getExternalFileUrl(tof), to.getFilename(),
-          !isNullOrEmpty(tof.getFetchUrl()), u);
+      item = controller.updateWithExternalFile(item, collection, getExternalFileUrl(tof),
+          to.getFilename(), !isNullOrEmpty(tof.getFetchUrl()), u);
     } else {
       item = controller.update(item, u);
     }
@@ -143,14 +149,27 @@ public class DefaultItemService implements API<DefaultItemTO> {
    * @return
    * @throws ImejiException
    */
-  private MetadataProfile getProfile(DefaultItemTO to, User u) throws ImejiException {
-    if (to.getCollectionId() != null) {
-      return new ProfileController().retrieveByCollectionId(
-          ObjectHelper.getURI(CollectionImeji.class, to.getCollectionId()), u);
-    } else {
-      return new ProfileController().retrieveByItemId(ObjectHelper.getURI(Item.class, to.getId()),
-          u);
+  private MetadataProfile getProfile(CollectionImeji col, User u) throws ImejiException {
+    if (col != null) {
+      return new ProfileController().retrieveCollectionProfile(col, u);
     }
+    return null;
+  }
+
+  /**
+   * Return the collection of the item
+   * 
+   * @param item
+   * @param u
+   * @return
+   * @throws ImejiException
+   */
+  private CollectionImeji getCollection(String collectionId, User u) throws ImejiException {
+    if (!StringHelper.isNullOrEmptyTrim(collectionId)) {
+      return new CollectionController()
+          .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, collectionId), u);
+    }
+    throw new UnprocessableError("Item must be uploaded in a collection");
   }
 
   /**

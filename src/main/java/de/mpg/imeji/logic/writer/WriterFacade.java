@@ -40,7 +40,7 @@ import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.security.authorization.Authorization;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.validation.ValidatorFactory;
 import de.mpg.imeji.logic.validation.impl.Validator;
 import de.mpg.imeji.logic.vo.Container;
@@ -208,16 +208,16 @@ public class WriterFacade {
     for (Object o : list) {
       message += " not allowed to " + Grant.getGrantTypeName(gt) + " " + extractID(o);
       if (gt == GrantType.CREATE) {
-        throwAuthorizationException(user != null, AuthUtil.staticAuth().create(user, o), message);
+        throwAuthorizationException(user != null, SecurityUtil.staticAuth().create(user, o), message);
       } else if (gt == GrantType.UPDATE) {
-        throwAuthorizationException(user != null, AuthUtil.staticAuth().update(user, o), message);
+        throwAuthorizationException(user != null, SecurityUtil.staticAuth().update(user, o), message);
       } else if (gt == GrantType.DELETE) {
-        throwAuthorizationException(user != null, AuthUtil.staticAuth().delete(user, o), message);
+        throwAuthorizationException(user != null, SecurityUtil.staticAuth().delete(user, o), message);
       } else if (gt == GrantType.UPDATE_CONTENT) {
-        throwAuthorizationException(user != null, AuthUtil.staticAuth().updateContent(user, o),
+        throwAuthorizationException(user != null, SecurityUtil.staticAuth().updateContent(user, o),
             message);
       } else if (gt == GrantType.ADMIN_CONTENT) {
-        throwAuthorizationException(user != null, AuthUtil.staticAuth().adminContent(user, o),
+        throwAuthorizationException(user != null, SecurityUtil.staticAuth().adminContent(user, o),
             message);
       }
     }

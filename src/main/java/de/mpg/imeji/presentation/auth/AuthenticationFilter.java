@@ -39,7 +39,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.security.authentication.impl.HttpAuthentication;
+import de.mpg.imeji.logic.user.authentication.impl.HttpAuthentication;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.session.SessionBean;

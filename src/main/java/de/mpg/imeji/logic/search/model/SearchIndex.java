@@ -3,10 +3,10 @@ package de.mpg.imeji.logic.search.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.controller.util.MetadataTypesHelper;
 import de.mpg.imeji.logic.search.SearchIndexes;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
+import de.mpg.imeji.logic.vo.util.MetadataTypesHelper;
 
 /**
  * Element of a {@link SearchPair}, defines the index of the searched elements

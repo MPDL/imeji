@@ -67,7 +67,7 @@ public class SpaceController extends ImejiController {
    */
   private String storageUrl = null;
 
-  private static CollectionController cc = new CollectionController();
+  private final CollectionController cc = new CollectionController();
 
   public SpaceController() {
     try {

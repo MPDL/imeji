@@ -22,15 +22,15 @@ import org.jose4j.lang.JoseException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.util.ImejiFactory;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
+import de.mpg.imeji.logic.user.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
-import de.mpg.imeji.logic.user.util.QuotaUtil;
+import de.mpg.imeji.logic.util.ImejiFactory;
+import de.mpg.imeji.logic.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Organization;
@@ -101,6 +101,10 @@ public class UserBean extends SuperBean {
   public void retrieveUser() throws ImejiException {
     if (id != null && getSessionUser() != null) {
       user = new UserBusinessController().retrieve(id, getSessionUser());
+      if (user.getPerson().getOrganizations() == null
+          || user.getPerson().getOrganizations().isEmpty()) {
+        user.getPerson().getOrganizations().add(new Organization());
+      }
     } else if (id != null && getSessionUser() == null) {
       loginBean.setLogin(id);
     }
@@ -180,7 +184,7 @@ public class UserBean extends SuperBean {
    */
   public void toggleAdmin() throws ImejiException {
     ShareBusinessController shareController = new ShareBusinessController();
-    if (AuthUtil.isSysAdmin(user)) {
+    if (SecurityUtil.isSysAdmin(user)) {
       shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(),
           ShareBusinessController.rolesAsList(ShareRoles.CREATE));
     } else {
@@ -200,9 +204,9 @@ public class UserBean extends SuperBean {
    */
   public void toggleCreateCollection() throws ImejiException {
     ShareBusinessController shareController = new ShareBusinessController();
-    if (!AuthUtil.isSysAdmin(user)) {
+    if (!SecurityUtil.isSysAdmin(user)) {
       // admin can not be forbidden to create collections
-      if (AuthUtil.isAllowedToCreateCollection(user)) {
+      if (SecurityUtil.isAllowedToCreateCollection(user)) {
         shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(), null);
       } else {
         shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(),

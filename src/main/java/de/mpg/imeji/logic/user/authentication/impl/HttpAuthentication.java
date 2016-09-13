@@ -22,14 +22,14 @@
  * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
  * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
  */
-package de.mpg.imeji.logic.security.authentication.impl;
+package de.mpg.imeji.logic.user.authentication.impl;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
-import de.mpg.imeji.logic.security.authentication.Authentication;
+import de.mpg.imeji.logic.user.authentication.Authentication;
 import de.mpg.imeji.logic.vo.User;
 
 /**

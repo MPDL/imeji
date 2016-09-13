@@ -31,7 +31,7 @@ import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.security.authorization.Authorization;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.collection.CollectionListItem;
@@ -271,7 +271,7 @@ public class ImejiAuthBean implements Serializable {
    * @return
    */
   public boolean isAllowedToCreateCollection(User user) {
-    return AuthUtil.isAllowedToCreateCollection(user);
+    return SecurityUtil.isAllowedToCreateCollection(user);
   }
 
   /**

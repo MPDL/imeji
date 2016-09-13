@@ -33,7 +33,7 @@ import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.security.authorization.Authorization;
-import de.mpg.imeji.logic.security.util.AuthUtil;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -114,7 +114,7 @@ public class ReaderFacade implements Reader {
    */
   private void checkSecurity(List<Object> list, User user) throws ImejiException {
     for (int i = 0; i < list.size(); i++) {
-      if (!AuthUtil.staticAuth().read(user, list.get(i))) {
+      if (!SecurityUtil.staticAuth().read(user, list.get(i))) {
         String id = J2JHelper.getId(list.get(i)).toString();
         String email = "Not logged in";
         if (user != null) {
