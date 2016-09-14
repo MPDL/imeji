@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.search.jenasearch.util;
+package de.mpg.imeji.logic.search.util;
 
 import java.util.ArrayList;
 import java.util.Collections;

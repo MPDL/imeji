@@ -34,8 +34,8 @@ import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.history.HistoryUtil;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.user.UserGroupsBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 @ManagedBean(name = "ShareBean")
 @ViewScoped

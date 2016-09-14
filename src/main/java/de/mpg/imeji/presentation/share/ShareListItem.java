@@ -23,7 +23,6 @@ import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
-import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
@@ -309,7 +308,7 @@ public class ShareListItem implements Serializable {
   }
 
   public String getTypeLabel() {
-    return Imeji.RESOURCE_BUNDLE.getLabel(type.name().toLowerCase(), BeanHelper.getLocale());
+    return Imeji.RESOURCE_BUNDLE.getLabel(type.name().toLowerCase(), locale);
   }
 
   /**

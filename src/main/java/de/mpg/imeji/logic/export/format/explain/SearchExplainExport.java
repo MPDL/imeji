@@ -27,8 +27,8 @@ package de.mpg.imeji.logic.export.format.explain;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import de.mpg.imeji.logic.search.SearchIndexes;
 import de.mpg.imeji.logic.search.model.SearchIndex;
+import de.mpg.imeji.logic.search.model.SearchIndexes;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.vo.User;
 

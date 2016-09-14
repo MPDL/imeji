@@ -20,8 +20,8 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.history.HistorySession;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.VocabularyHelper;
 
 /**
@@ -52,7 +52,7 @@ public class EditMdProfileBean extends MdProfileBean {
   @Override
   public String getInit() {
     readUrl();
-    vocabularyHelper = new VocabularyHelper();
+    vocabularyHelper = new VocabularyHelper(session.getLocale());
     if (init) {
       // set object to null (since this is a session bean)
       setProfile(null);

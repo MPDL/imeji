@@ -2,8 +2,8 @@ package de.mpg.imeji.logic.search.model;
 
 import java.util.List;
 
-import de.mpg.imeji.logic.search.jenasearch.util.SortHelper;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
+import de.mpg.imeji.logic.search.util.SortHelper;
 
 /**
  * Search result (as {@link String} entry of a {@link List} of uris) which can be sorted

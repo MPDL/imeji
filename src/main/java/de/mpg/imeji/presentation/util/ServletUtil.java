@@ -5,10 +5,6 @@ import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import de.mpg.imeji.presentation.history.HistorySession;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Utility class for {@link Servlet} and {@link Filter}
@@ -38,26 +34,6 @@ public class ServletUtil {
     return false;
   }
 
-  /**
-   * Return the {@link SessionBean} form the {@link HttpSession}
-   *
-   * @param req
-   * @return
-   */
-  public static SessionBean getSessionBean(HttpServletRequest req) {
-    return (SessionBean) getSession(req, SessionBean.class.getSimpleName());
-  }
-
-
-  /**
-   * Return the {@link HistorySession}
-   *
-   * @param req
-   * @return
-   */
-  public static HistorySession getHistorySession(HttpServletRequest req) {
-    return (HistorySession) getSession(req, HistorySession.class.getSimpleName());
-  }
 
   /**
    * Return a Session Object
@@ -66,7 +42,7 @@ public class ServletUtil {
    * @param classSimpleName
    * @return
    */
-  private static Object getSession(HttpServletRequest req, String classSimpleName) {
+  public static Object getSession(HttpServletRequest req, String classSimpleName) {
     return req.getSession(true).getAttribute(classSimpleName);
   }
 }

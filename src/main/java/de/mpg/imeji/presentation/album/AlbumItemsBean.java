@@ -26,9 +26,9 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.image.ItemsBean;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * {@link ItemsBean} within an {@link Album}: Used to browse {@link Item} of an {@link Album}

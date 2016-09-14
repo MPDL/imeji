@@ -20,6 +20,7 @@ import com.ocpsoft.pretty.PrettyContext;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.history.HistoryUtil;
+import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.ServletUtil;
 
 /**
@@ -102,8 +103,8 @@ public class ModusFilter implements Filter {
    * @return
    */
   private boolean isLoggedIn(HttpServletRequest request) {
-    return ServletUtil.getSessionBean(request) != null
-        && ServletUtil.getSessionBean(request).getUser() != null;
+    return SessionBean.getSessionBean(request) != null
+        && SessionBean.getSessionBean(request).getUser() != null;
   }
 
 

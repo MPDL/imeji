@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.history.HistoryPage;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Super Bean for Filter menu implementation.

@@ -21,7 +21,7 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataFactory;
 import de.mpg.imeji.presentation.metadata.util.MetadataHelper;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.CommonUtils;
 import de.mpg.imeji.presentation.util.SearchAndExportHelper;
 

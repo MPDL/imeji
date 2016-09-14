@@ -29,6 +29,7 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
 import de.mpg.imeji.logic.jobs.executors.NightlyExecutor;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.user.authentication.ImejiRsaKeys;
@@ -69,7 +70,7 @@ public class ImejiInitializer {
    */
   public static void init() throws IOException, URISyntaxException, ImejiException {
     Imeji.tdbPath = PropertyReader.getProperty("imeji.tdb.path");
-    ElasticService.start();
+    ElasticInitializer.start();
     ImejiInitializer.init(Imeji.tdbPath);
     NIGHTLY_EXECUTOR.start();
   }

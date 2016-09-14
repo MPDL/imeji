@@ -15,8 +15,8 @@ import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessContro
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * The Input for Share Page

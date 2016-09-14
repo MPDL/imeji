@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.CookieUtils;
 
 /**
@@ -259,12 +259,10 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
       if (page > 0 && page <= getPaginatorPageSize()) {
         setCurrentPageNumber(page);
       } else {
-        BeanHelper.error(
-            Imeji.RESOURCE_BUNDLE.getMessage("error_page_not_exists", BeanHelper.getLocale()));
+        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_page_not_exists", getLocale()));
       }
     } catch (Exception e) {
-      BeanHelper.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_integer_required", BeanHelper.getLocale()));
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_integer_required", getLocale()));
     }
     update();
   }

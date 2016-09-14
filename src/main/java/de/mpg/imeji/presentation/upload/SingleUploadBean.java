@@ -61,8 +61,8 @@ import de.mpg.imeji.presentation.metadata.MetadataWrapper;
 import de.mpg.imeji.presentation.metadata.SingleEditorWrapper;
 import de.mpg.imeji.presentation.metadata.extractors.TikaExtractor;
 import de.mpg.imeji.presentation.metadata.util.SuggestBean;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.user.UserBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 @ManagedBean(name = "SingleUploadBean")
 @ViewScoped

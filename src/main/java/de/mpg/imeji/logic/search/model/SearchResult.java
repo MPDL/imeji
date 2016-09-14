@@ -9,7 +9,7 @@ import java.util.List;
 import com.hp.hpl.jena.Jena;
 
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
-import de.mpg.imeji.logic.search.jenasearch.util.SortHelper;
+import de.mpg.imeji.logic.search.util.SortHelper;
 
 /**
  * Result {@link Object} for {@link JenaSearch}

@@ -1,16 +1,21 @@
-package de.mpg.imeji.logic.search.elasticsearch.util;
+package de.mpg.imeji.logic.search.elasticsearch.factory.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.lucene.queryparser.classic.QueryParserBase;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
-import de.mpg.imeji.logic.search.model.SearchResult;
+import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.vo.User;
 
 /**
  * Utility Class for ElasticSearch
@@ -18,7 +23,7 @@ import de.mpg.imeji.logic.search.model.SearchResult;
  * @author bastiens
  *
  */
-public class ElasticSearchUtil {
+public class ElasticSearchFactoryUtil {
 
   /**
    * Read the field of an object in Elasticsearch. The value is returned as String
@@ -47,11 +52,10 @@ public class ElasticSearchUtil {
    * @return
    */
   public static String getUserId(String email) {
-    ElasticSearch search = new ElasticSearch(SearchObjectTypes.USER);
-    SearchResult r = search.searchStringAndRetrieveFieldValue("email:\"" + email.toString() + "\"",
+    List<String> r = searchStringAndRetrieveFieldValue("email:\"" + email.toString() + "\"",
         ElasticFields.ID.field().toLowerCase(), null, Imeji.adminUser, 0, 1);
-    if (r.getNumberOfRecords() > 0) {
-      return r.getResults().get(0);
+    if (r.size() > 0) {
+      return r.get(0);
     }
     return null;
   }
@@ -63,10 +67,36 @@ public class ElasticSearchUtil {
    * @return
    */
   public static List<String> getGroupsOfUser(String userId) {
-    ElasticSearch search = new ElasticSearch(SearchObjectTypes.USERGROUPS);
-    SearchResult r = search.searchStringAndRetrieveFieldValue("users:\"" + userId + "\"",
+    return searchStringAndRetrieveFieldValue("users:\"" + userId + "\"",
         ElasticFields.ID.field().toLowerCase(), null, Imeji.adminUser, 0, -1);
-    return r.getResults();
+  }
+
+  /**
+   * Search for a String query and retrieve only the value of a specific field
+   * 
+   * @param query
+   * @param field
+   * @param sort
+   * @param user
+   * @param from
+   * @param size
+   * @return
+   */
+  public static List<String> searchStringAndRetrieveFieldValue(String query, String field,
+      SortCriterion sort, User user, int from, int size) {
+    QueryBuilder q = QueryBuilders.queryStringQuery(query);
+    SearchResponse resp = ElasticService.client.prepareSearch(ElasticService.DATA_ALIAS)
+        .addField(field).setQuery(q).addSort(ElasticSortFactory.build(sort)).setSize(size)
+        .setFrom(from).execute().actionGet();
+    List<String> fieldValues = new ArrayList<>();
+    for (SearchHit hit : resp.getHits()) {
+      if (field.equals(ElasticFields.ID.field())) {
+        fieldValues.add(hit.getId());
+      } else {
+        fieldValues.add(hit.field(field).getValue());
+      }
+    }
+    return fieldValues;
   }
 
   /**

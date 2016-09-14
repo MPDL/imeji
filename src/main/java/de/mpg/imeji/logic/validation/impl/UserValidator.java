@@ -2,8 +2,14 @@ package de.mpg.imeji.logic.validation.impl;
 
 import java.util.HashSet;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.search.Search;
+import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
+import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
@@ -57,8 +63,7 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
    * @throws Exception
    */
   private boolean emailAlreadyUsed(User user) {
-    UserBusinessController uc = new UserBusinessController();
-    return uc.existsUserWitheMail(user.getEmail(), user.getId().toString(),
+    return existsUserWitheMail(user.getEmail(), user.getId().toString(),
         (Method.CREATE.equals(getValidateForMethod()) ? true : false));
   }
 
@@ -75,6 +80,36 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
   @Override
   public void validate(User t, MetadataProfile p, Method m) throws UnprocessableError {
     validate(t, m);
+  }
+
+  /**
+   * Retrieve a {@link User} according to its email
+   *
+   * @param email
+   * @return
+   * @throws ImejiException
+   */
+  private boolean existsUserWitheMail(String email, String userUri, boolean newUser) {
+    Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+    SearchResult result =
+        search.searchString(JenaCustomQueries.selectUserByEmail(email), null, null, 0, -1);
+    if (result.getNumberOfRecords() == 0) {
+      return false;
+    } else {
+      // New users always have assigned Id, thus we do not check if it is existing user here
+      if (newUser && result.getNumberOfRecords() > 0) {
+        return true;
+      }
+
+      // Check if it is existing user here who has same email
+      boolean thereIsOtherUser = false;
+      for (String userId : result.getResults()) {
+        if (!userUri.equals(userId)) {
+          thereIsOtherUser = true;
+        }
+      }
+      return thereIsOtherUser;
+    }
   }
 
 }

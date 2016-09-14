@@ -34,8 +34,8 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
 import de.mpg.imeji.presentation.history.HistorySession;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 @ManagedBean(name = "EditCollectionBean")
 @ViewScoped

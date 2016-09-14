@@ -29,7 +29,7 @@ import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.notification.NotificationUtils;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Java Bean for the view users page
@@ -198,7 +198,7 @@ public class UsersBean extends SuperBean {
 
     BeanHelper.cleanMessages();
     BeanHelper.info("Sending activation email and new password.");
-    NotificationUtils.sendActivationNotification(toActivateUser, BeanHelper.getLocale(),
+    NotificationUtils.sendActivationNotification(toActivateUser, getLocale(),
         !new InvitationBusinessController().retrieveInvitationOfUser(email).isEmpty());
     if (FacesContext.getCurrentInstance().getMessageList().size() > 1) {
       BeanHelper.cleanMessages();

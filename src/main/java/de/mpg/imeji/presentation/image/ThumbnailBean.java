@@ -22,11 +22,10 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.metadata.MetadataSetWrapper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
-import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.CommonUtils;
-import de.mpg.imeji.presentation.util.ObjectCachedLoader;
 import de.mpg.imeji.util.DateHelper;
 
 /**
@@ -81,7 +80,7 @@ public class ThumbnailBean implements Serializable {
     if (initMetadata) {
       SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
       this.mdSet = item.getMetadataSet();
-      this.profile = ObjectCachedLoader.loadProfileWithoutPrivs(this.mdSet.getProfile());
+      this.profile = sessionBean.loadProfileWithoutPrivs(this.mdSet.getProfile());
       this.caption = findCaption();
       this.selected = sessionBean.getSelected().contains(uri.toString());
       if (sessionBean.getActiveAlbum() != null) {

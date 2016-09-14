@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * Defines the page names and Path for imeji. All changes here must be synchronized with

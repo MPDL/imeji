@@ -28,8 +28,8 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
 import de.mpg.imeji.presentation.mdProfile.ProfileSelector;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 import de.mpg.imeji.presentation.util.VocabularyHelper;
 
 /**
@@ -44,7 +44,7 @@ import de.mpg.imeji.presentation.util.VocabularyHelper;
 public class CreateCollectionBean extends CollectionBean {
   private static final Logger LOGGER = Logger.getLogger(CreateCollectionBean.class);
   private static final long serialVersionUID = 1257698224590957642L;
-  private final VocabularyHelper vocabularyHelper = new VocabularyHelper();;
+  private VocabularyHelper vocabularyHelper;
   private ProfileSelector profileSelector;
   private boolean createProfile = false;
   @ManagedProperty(value = "#{ContainerEditorSession}")
@@ -55,7 +55,8 @@ public class CreateCollectionBean extends CollectionBean {
    */
   @PostConstruct
   public void init() {
-    profileSelector = new ProfileSelector(null, getSessionUser(), getSpace());
+    profileSelector = new ProfileSelector(null, getSessionUser(), getSpace(), getLocale());
+    vocabularyHelper = new VocabularyHelper(getLocale());
     setCollectionCreateMode(true);
     setCollection(ImejiFactory.newCollection());
     ((List<Person>) getCollection().getMetadata().getPersons()).set(0,

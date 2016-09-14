@@ -27,7 +27,7 @@ import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.notification.NotificationUtils;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Bean for registration workflow

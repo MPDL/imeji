@@ -38,7 +38,7 @@ import de.mpg.imeji.logic.config.ImejiFileTypes;
 import de.mpg.imeji.logic.config.ImejiConfiguration.HtmlSnippet;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.presentation.lang.InternationalizationBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * JavaBean managing the imeji configuration which is made directly by the administrator from the

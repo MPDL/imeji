@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.util;
+package de.mpg.imeji.presentation.session;
 
 import java.util.Iterator;
 import java.util.Locale;
@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Helper to work with jsf beans

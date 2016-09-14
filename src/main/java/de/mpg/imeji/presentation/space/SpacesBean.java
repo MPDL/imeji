@@ -16,8 +16,8 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * Java Bean for the view spaces page

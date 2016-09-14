@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.search;
+package de.mpg.imeji.logic.search.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,6 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.logic.ImejiNamespaces;
-import de.mpg.imeji.logic.search.model.SearchIndex;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 
@@ -101,8 +100,9 @@ public class SearchIndexes {
     /**
      * Grant indexes
      */
-    indexes = put(indexes, new SearchIndex(SearchIndex.SearchFields.grant.name(),
-        "http://xmlns.com/foaf/0.1/grants", indexes.get(SearchIndex.SearchFields.creator_id.name())));
+    indexes = put(indexes,
+        new SearchIndex(SearchIndex.SearchFields.grant.name(), "http://xmlns.com/foaf/0.1/grants",
+            indexes.get(SearchIndex.SearchFields.creator_id.name())));
     indexes = put(indexes, new SearchIndex(SearchIndex.SearchFields.grant_type.name(),
         "http://imeji.org/terms/grantType", indexes.get(SearchIndex.SearchFields.grant.name())));
     indexes = put(indexes, new SearchIndex(SearchIndex.SearchFields.grant_for.name(),

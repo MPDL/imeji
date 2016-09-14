@@ -7,7 +7,6 @@ import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * SEt of methods to control objects that are stored in the {@link SessionBean}
@@ -88,4 +87,6 @@ public class SessionObjectsController {
           session.getUser(), -1, 0));
     }
   }
+
+
 }

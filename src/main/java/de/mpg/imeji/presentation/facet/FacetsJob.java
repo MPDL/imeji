@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Callable to exectute Facets objects
@@ -60,7 +60,7 @@ public class FacetsJob implements Callable<Boolean> {
     try {
       facetsClass = new CollectionFacets(col, searchQuery, searchRes, user, locale);
     } catch (Exception e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", BeanHelper.getLocale())
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", locale)
           + ", Collection Facets intialization : " + e.getMessage());
     }
   }

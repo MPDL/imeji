@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -13,14 +14,14 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.mdProfile.wrapper.StatementWrapper;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  *
@@ -40,6 +41,7 @@ public class ProfileSelector implements Serializable {
   private String selectedProfileItem;
   private List<StatementWrapper> statementWrappers = new ArrayList<StatementWrapper>();
   private boolean copyProfile;
+  private final Locale locale;
 
   /**
    * Constructor
@@ -48,10 +50,10 @@ public class ProfileSelector implements Serializable {
    * @param user
    * @param space
    */
-  public ProfileSelector(MetadataProfile profile, User user, String space) {
-    // this.profile = profile;
+  public ProfileSelector(MetadataProfile profile, User user, String space, Locale locale) {
     this.user = user;
     this.space = space;
+    this.locale = locale;
   }
 
   /**
@@ -95,7 +97,7 @@ public class ProfileSelector implements Serializable {
     statementWrappers = new ArrayList<>();
     if (profile != null) {
       for (Statement st : profile.getStatements()) {
-        statementWrappers.add(new StatementWrapper(st, profile.getId(), 0));
+        statementWrappers.add(new StatementWrapper(st, profile.getId(), 0, locale));
       }
     }
   }

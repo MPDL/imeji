@@ -41,7 +41,9 @@ public class CookieUtils {
   /**
    * private Constructor
    */
-  private CookieUtils() {}
+  private CookieUtils() {
+    // avoid construction
+  }
 
   /**
    * Read a cookie. If not found, the default value is returned. After the cookie has been read, the

@@ -25,7 +25,7 @@ import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.collection.CollectionBean.TabType;
 import de.mpg.imeji.presentation.collection.CollectionSessionBean;
 import de.mpg.imeji.presentation.mdProfile.wrapper.StatementWrapper;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.util.LocalizedString;
 
 /**
@@ -109,8 +109,8 @@ public class MdProfileBean {
 
   public void addFirstStatement() {
     Statement firstStatement = ImejiFactory.newStatement();
-    getWrappers()
-        .add(new StatementWrapper(firstStatement, getProfile().getId(), getLevel(firstStatement)));
+    getWrappers().add(new StatementWrapper(firstStatement, getProfile().getId(),
+        getLevel(firstStatement), BeanHelper.getLocale()));
   }
 
   /**
@@ -147,7 +147,7 @@ public class MdProfileBean {
     wrappers.clear();
     levels = new HashMap<URI, Integer>();
     for (Statement st : mdp.getStatements()) {
-      wrappers.add(new StatementWrapper(st, mdp.getId(), getLevel(st)));
+      wrappers.add(new StatementWrapper(st, mdp.getId(), getLevel(st), BeanHelper.getLocale()));
     }
   }
 
@@ -460,12 +460,13 @@ public class MdProfileBean {
    */
   public void addStatement() {
     if (wrappers.isEmpty()) {
-      wrappers.add(new StatementWrapper(ImejiFactory.newStatement(), profile.getId(), 0));
+      wrappers.add(new StatementWrapper(ImejiFactory.newStatement(), profile.getId(), 0,
+          BeanHelper.getLocale()));
     } else {
       Statement previousStatement = wrappers.get(getStatementPosition()).getStatement();
       Statement newStatement = ImejiFactory.newStatement(previousStatement.getParent());
-      wrappers.add(findNextStatementWithSameLevel(previousStatement),
-          new StatementWrapper(newStatement, profile.getId(), getLevel(newStatement)));
+      wrappers.add(findNextStatementWithSameLevel(previousStatement), new StatementWrapper(
+          newStatement, profile.getId(), getLevel(newStatement), BeanHelper.getLocale()));
     }
   }
 
@@ -490,8 +491,8 @@ public class MdProfileBean {
     if (!wrappers.isEmpty()) {
       URI parent = wrappers.get(getStatementPosition()).getStatement().getId();
       Statement newChild = ImejiFactory.newStatement(parent);
-      wrappers.add(getStatementPosition() + 1,
-          new StatementWrapper(newChild, profile.getId(), getLevel(newChild)));
+      wrappers.add(getStatementPosition() + 1, new StatementWrapper(newChild, profile.getId(),
+          getLevel(newChild), BeanHelper.getLocale()));
     }
   }
 

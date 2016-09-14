@@ -43,8 +43,8 @@ import de.mpg.imeji.presentation.metadata.editors.AbstractMetadataEditor;
 import de.mpg.imeji.presentation.metadata.editors.MultipleEditor;
 import de.mpg.imeji.presentation.metadata.util.MetadataHelper;
 import de.mpg.imeji.presentation.metadata.util.SuggestBean;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * Bean for batch and multiple metadata editor

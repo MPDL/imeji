@@ -15,7 +15,6 @@ import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticQueryFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
-import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -62,8 +61,8 @@ public class ElasticSearch implements Search {
         this.type = ElasticTypes.items;
         break;
     }
-    this.indexer =
-        new ElasticIndexer(ElasticService.DATA_ALIAS, this.type, ElasticService.ANALYSER);
+    this.indexer = new ElasticIndexer(ElasticService.DATA_ALIAS, this.type, ElasticService.ANALYSER,
+        ElasticService.client);
   }
 
   @Override
@@ -102,35 +101,6 @@ public class ElasticSearch implements Search {
     return toSearchResult(resp);
   }
 
-  /**
-   * Search with a string query and select the value of one specidic field. For example search for
-   * email:user@example.org and return the field apikey
-   * 
-   * @param query
-   * @param field
-   * @param sort
-   * @param user
-   * @param from
-   * @param size
-   * @return
-   */
-  public SearchResult searchStringAndRetrieveFieldValue(String query, String field,
-      SortCriterion sort, User user, int from, int size) {
-    QueryBuilder q = QueryBuilders.queryStringQuery(query);
-    SearchResponse resp = ElasticService.client.prepareSearch(ElasticService.DATA_ALIAS)
-        .addField(field).setTypes(getTypes()).setQuery(q).setSize(size).setFrom(from)
-        .addSort(ElasticSortFactory.build(sort)).execute().actionGet();
-    List<String> fieldValues = new ArrayList<>();
-    for (SearchHit hit : resp.getHits()) {
-      if (field.equals(ElasticFields.ID.field())) {
-        fieldValues.add(hit.getId());
-      } else {
-        fieldValues.add(hit.field(field).getValue());
-      }
-
-    }
-    return new SearchResult(fieldValues, resp.getHits().getTotalHits());
-  }
 
   /**
    * Get the datatype to search for

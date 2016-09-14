@@ -19,6 +19,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -29,6 +30,7 @@ import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
@@ -42,6 +44,7 @@ import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.lang.InternationalizationBean;
 import de.mpg.imeji.presentation.upload.IngestImage;
 import de.mpg.imeji.presentation.util.CookieUtils;
+import de.mpg.imeji.presentation.util.ServletUtil;
 
 /**
  * The session Bean for imeji.
@@ -562,5 +565,33 @@ public class SessionBean implements Serializable {
       }
     }
     hasUploadRights = false;
+  }
+
+  /**
+   * Load a {@link MetadataProfile} from the session if possible, otherwise from jena
+   *
+   * @param uri
+   * @return
+   * @throws ImejiException
+   */
+  public MetadataProfile loadProfileWithoutPrivs(URI uri) throws ImejiException {
+    MetadataProfile profile = getProfileCached().get(uri);
+    if (profile == null) {
+      profile = new ProfileController().retrieve(uri, Imeji.adminUser);
+      if (profile != null) {
+        getProfileCached().put(profile.getId(), profile);
+      }
+    }
+    return profile;
+  }
+
+  /**
+   * Return the {@link SessionBean} form the {@link HttpSession}
+   *
+   * @param req
+   * @return
+   */
+  public static SessionBean getSessionBean(HttpServletRequest req) {
+    return (SessionBean) ServletUtil.getSession(req, SessionBean.class.getSimpleName());
   }
 }

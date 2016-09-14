@@ -6,6 +6,10 @@ package de.mpg.imeji.presentation.history;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import de.mpg.imeji.presentation.util.ServletUtil;
+
 /**
  * JavaBean for the http session object related to the history
  *
@@ -27,6 +31,16 @@ public class HistorySession {
    * Create new {@link HistorySession}
    */
   public HistorySession() {}
+
+  /**
+   * Return the {@link HistorySession}
+   *
+   * @param req
+   * @return
+   */
+  public static HistorySession getHistorySession(HttpServletRequest req) {
+    return (HistorySession) ServletUtil.getSession(req, HistorySession.class.getSimpleName());
+  }
 
   /**
    * Add a {@link HistoryPage} to the history

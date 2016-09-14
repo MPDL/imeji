@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.faces.model.SelectItem;
@@ -29,10 +30,10 @@ public class VocabularyHelper {
   /**
    * Load the properties and initialize the vocabularies
    */
-  public VocabularyHelper() {
+  public VocabularyHelper(Locale locale) {
     try {
       loadProperties();
-      initVocabularies();
+      initVocabularies(locale);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -41,11 +42,11 @@ public class VocabularyHelper {
   /**
    * Initialize the vocabularies
    */
-  public void initVocabularies() {
+  public void initVocabularies(Locale locale) {
     vocabularies = new ArrayList<SelectItem>();
     for (Object o : properties.keySet()) {
       vocabularies.add(new SelectItem(properties.getProperty(o.toString()),
-          Imeji.RESOURCE_BUNDLE.getLabel("vocabulary_" + o.toString(), BeanHelper.getLocale())));
+          Imeji.RESOURCE_BUNDLE.getLabel("vocabulary_" + o.toString(), locale)));
     }
   }
 

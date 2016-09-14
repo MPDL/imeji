@@ -187,36 +187,6 @@ public class UserBusinessController {
     return controller.retrieveAll();
   }
 
-  /**
-   * Retrieve a {@link User} according to its email
-   *
-   * @param email
-   * @return
-   * @throws ImejiException
-   */
-  public boolean existsUserWitheMail(String email, String userUri, boolean newUser) {
-    Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
-    SearchResult result =
-        search.searchString(JenaCustomQueries.selectUserByEmail(email), null, null, 0, -1);
-    if (result.getNumberOfRecords() == 0) {
-      return false;
-    } else {
-      // New users always have assigned Id, thus we do not check if it is existing user here
-      if (newUser && result.getNumberOfRecords() > 0) {
-        return true;
-      }
-
-      // Check if it is existing user here who has same email
-      boolean thereIsOtherUser = false;
-      for (String userId : result.getResults()) {
-        if (!userUri.equals(userId)) {
-          thereIsOtherUser = true;
-        }
-      }
-      return thereIsOtherUser;
-    }
-  }
-
 
 
   /**

@@ -19,7 +19,7 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiInitializer;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
@@ -105,7 +105,7 @@ public class JenaUtil {
     TDBMaker.releaseLocation(new Location(TDB_PATH));
     LOGGER.info("TDB Location released!");
     deleteTDBDirectory();
-    ElasticService.reset();
+    ElasticInitializer.reset();
     KeyValueStoreBusinessController.stopAllStores();
   }
 

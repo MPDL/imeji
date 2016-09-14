@@ -44,7 +44,7 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Java Bean for create album page

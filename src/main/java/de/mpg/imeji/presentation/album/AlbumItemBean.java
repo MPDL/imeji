@@ -22,8 +22,8 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.image.ItemBean;
 import de.mpg.imeji.presentation.image.SingleItemBrowse;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * Bean for the detail {@link Item} page within an {@link Album}

@@ -37,23 +37,23 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.collection.CollectionBean;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * Super Java Bean for containers bean {@link AlbumBean} and {@link CollectionBean}
@@ -303,8 +303,8 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
     if (orgs.size() > 1) {
       orgs.remove(organizationPosition);
     } else {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_author_need_one_organization",
-          BeanHelper.getLocale()));
+      BeanHelper.error(
+          Imeji.RESOURCE_BUNDLE.getMessage("error_author_need_one_organization", getLocale()));
     }
     return "";
   }

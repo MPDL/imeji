@@ -8,7 +8,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.util.MetadataAndProfileHelper;
-import de.mpg.imeji.presentation.util.BeanHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Uitlity class to {@link Metadata}

@@ -17,8 +17,8 @@ import com.hp.hpl.jena.util.iterator.Filter;
 
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
-import de.mpg.imeji.logic.search.elasticsearch.util.ElasticSearchUtil;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
@@ -34,9 +34,9 @@ import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
@@ -152,6 +152,7 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder buildSpaceQuery(String spaceId) {
+    // TODO create query lookup query (see by albums)
     if (spaceId == null || "".equals(spaceId)) {
       return QueryBuilders.matchAllQuery();
     } else {
@@ -326,7 +327,7 @@ public class ElasticQueryFactory {
         // not indexed
         break;
       case creator:
-        return fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(pair.getValue()),
+        return fieldQuery(ElasticFields.CREATOR, ElasticSearchFactoryUtil.getUserId(pair.getValue()),
             pair.getOperator(), pair.isNot());
       case collaborator:
         return roleQueryWithoutCreator(ElasticFields.READ, pair.getValue(), pair.isNot());
@@ -566,7 +567,7 @@ public class ElasticQueryFactory {
     }
     switch (operator) {
       case REGEX:
-        q = matchFieldQuery(field, ElasticSearchUtil.escape(value));
+        q = matchFieldQuery(field, ElasticSearchFactoryUtil.escape(value));
         break;
       case EQUALS:
         q = exactFieldQuery(field, value);
@@ -756,7 +757,7 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder roleQuery(ElasticFields role, String email, boolean not) {
-    String userId = ElasticSearchUtil.getUserId(email);
+    String userId = ElasticSearchFactoryUtil.getUserId(email);
     QueryBuilder q1 = QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
         .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
         .lookupType(ElasticTypes.users.name()).lookupPath(role.field());
@@ -764,7 +765,7 @@ public class ElasticQueryFactory {
         .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
         .lookupType(ElasticTypes.users.name()).lookupPath(role.field());
     BoolQueryBuilder q = QueryBuilders.boolQuery().should(q1).should(q2);
-    List<String> groups = ElasticSearchUtil.getGroupsOfUser(userId);
+    List<String> groups = ElasticSearchFactoryUtil.getGroupsOfUser(userId);
     for (String group : groups) {
       q.should(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
           .lookupIndex(ElasticService.DATA_ALIAS).lookupId(group)
@@ -785,21 +786,21 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder roleQueryWithoutCreator(ElasticFields role, String email,
       boolean not) {
-    String userId = ElasticSearchUtil.getUserId(email);
+    String userId = ElasticSearchFactoryUtil.getUserId(email);
     BoolQueryBuilder q1 = QueryBuilders.boolQuery();
     q1.must(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
         .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
         .lookupType(ElasticTypes.users.name()).lookupPath(role.field()));
-    q1.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(email),
+    q1.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchFactoryUtil.getUserId(email),
         SearchOperators.EQUALS, not));
     BoolQueryBuilder q2 = QueryBuilders.boolQuery();
     q2.must(QueryBuilders.termsLookupQuery(ElasticFields.FOLDER.field())
         .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
         .lookupType(ElasticTypes.users.name()).lookupPath(role.field()));
-    q2.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchUtil.getUserId(email),
+    q2.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchFactoryUtil.getUserId(email),
         SearchOperators.EQUALS, not));
     BoolQueryBuilder q = QueryBuilders.boolQuery().should(q1).should(q2);
-    List<String> groups = ElasticSearchUtil.getGroupsOfUser(userId);
+    List<String> groups = ElasticSearchFactoryUtil.getGroupsOfUser(userId);
     for (String group : groups) {
       q.should(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
           .lookupIndex(ElasticService.DATA_ALIAS).lookupId(group)

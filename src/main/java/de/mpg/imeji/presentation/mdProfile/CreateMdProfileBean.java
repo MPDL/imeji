@@ -17,8 +17,8 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.history.HistorySession;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * Java Bean for {@link MetadataProfile} create page
@@ -40,8 +40,8 @@ public class CreateMdProfileBean {
     showWarning = UrlHelper.getParameterBoolean("warn");
     collectionId = UrlHelper.getParameterValue("col");
     redirect = UrlHelper.getParameterValue("redirect");
-    profileSelector =
-        new ProfileSelector(null, session.getUser(), session.getSelectedSpaceString());
+    profileSelector = new ProfileSelector(null, session.getUser(), session.getSelectedSpaceString(),
+        session.getLocale());
     return "";
   }
 

@@ -54,8 +54,8 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.collection.CollectionBean;
 import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.history.HistoryUtil;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * Bean for the upload page

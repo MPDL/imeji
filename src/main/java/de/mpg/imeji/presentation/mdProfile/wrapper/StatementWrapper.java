@@ -6,6 +6,7 @@ package de.mpg.imeji.presentation.mdProfile.wrapper;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -35,6 +36,7 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
   private transient VocabularyHelper vocabularyHelper;
   private boolean showRemoveWarning = false;
   private int level = 0;
+  private Locale locale;
   /**
    * True if this {@link Statement} is used by at least on {@link Metadata} in imeji
    */
@@ -46,9 +48,11 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * @param st
    * @param profile
    */
-  public StatementWrapper(Statement st, URI profile, int level) {
-    init(st);
+  public StatementWrapper(Statement st, URI profile, int level, Locale locale) {
+    this.locale = locale;
     this.level = level;
+    init(st);
+
   }
 
   /**
@@ -97,7 +101,7 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * Initialize the {@link VocabularyHelper} according to the {@link Statement}
    */
   private void initVocabulary() {
-    vocabularyHelper = new VocabularyHelper();
+    vocabularyHelper = new VocabularyHelper(locale);
     if (statement.getVocabulary() != null) {
       vocabularyString = statement.getVocabulary().toString();
       if ("unknown".equals(vocabularyHelper.getVocabularyName(statement.getVocabulary()))) {

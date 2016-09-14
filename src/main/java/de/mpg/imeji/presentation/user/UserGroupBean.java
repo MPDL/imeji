@@ -50,9 +50,9 @@ import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.share.ShareListItem;
 import de.mpg.imeji.presentation.share.ShareUtil;
-import de.mpg.imeji.presentation.util.BeanHelper;
 
 /**
  * Bean to create a

@@ -26,7 +26,7 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
@@ -81,7 +81,7 @@ public class ImejiTestBase extends JerseyTest {
 
   @After
   public void reeindex() {
-    ElasticService.reset();
+    ElasticInitializer.reset();
   }
 
   @BeforeClass
