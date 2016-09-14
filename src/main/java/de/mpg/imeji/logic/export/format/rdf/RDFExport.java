@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.client.HttpResponseException;
-
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -32,25 +30,7 @@ public abstract class RDFExport extends Export {
   protected Map<String, String> namespaces;
   protected String modelURI;
 
-  /**
-   * Factory for {@link RDFExport}
-   *
-   * @param type
-   * @return
-   * @throws HttpResponseException
-   */
-  public static RDFExport factory(String type) throws HttpResponseException {
-    if ("image".equalsIgnoreCase(type)) {
-      return new RDFImageExport();
-    } else if ("collection".equalsIgnoreCase(type)) {
-      return new RDFCollectionExport();
-    } else if ("album".equalsIgnoreCase(type)) {
-      return new RDFAlbumExport();
-    } else if ("profile".equals(type)) {
-      return new RDFProfileExport();
-    }
-    throw new HttpResponseException(400, "Type " + type + " is not supported.");
-  }
+
 
   @Override
   public void export(OutputStream out, SearchResult sr, User user) {

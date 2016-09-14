@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.logic.vo.util;
+package de.mpg.imeji.logic.util;
 
 
 import java.io.UnsupportedEncodingException;
@@ -20,8 +20,6 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
-import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.util.StringHelper;
 
 /**
  * Helper for imeji {@link Object}
@@ -33,6 +31,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 public class ObjectHelper {
 
   private static final Logger LOGGER = Logger.getLogger(ObjectHelper.class);
+  public static String baseUri;
 
   public enum ObjectType {
     COLLECTION, ITEM, ALBUM, PROFILE;
@@ -64,7 +63,7 @@ public class ObjectHelper {
    * @return
    */
   public static URI getURI(Class<?> c, String id) {
-    String baseURI = Imeji.PROPERTIES.getBaseURI();
+    String baseURI = baseUri;
     j2jModel modelName = c.getAnnotation(j2jModel.class);
     if (modelName != null) {
       baseURI = StringHelper.normalizeURI(baseURI + modelName.value());

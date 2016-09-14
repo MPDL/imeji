@@ -11,9 +11,9 @@ import de.mpg.imeji.logic.security.util.PasswordGenerator;
 import de.mpg.imeji.logic.user.authentication.Authentication;
 import de.mpg.imeji.logic.user.authentication.impl.DefaultAuthentication;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
-import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import util.JenaUtil;
 
 /**

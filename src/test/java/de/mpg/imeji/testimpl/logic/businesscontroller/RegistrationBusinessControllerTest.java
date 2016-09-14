@@ -18,8 +18,8 @@ import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessContro
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
-import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
 
 public class RegistrationBusinessControllerTest extends ControllerTest {

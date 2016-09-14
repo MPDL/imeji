@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.jobs;
+package de.mpg.imeji.logic.jobs.executors;
 
 import java.util.concurrent.Callable;
 

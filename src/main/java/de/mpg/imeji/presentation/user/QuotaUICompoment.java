@@ -10,7 +10,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.util.QuotaUtil;
+import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.vo.User;
 
 /**

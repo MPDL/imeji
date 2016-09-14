@@ -4,7 +4,6 @@
 package de.mpg.imeji.logic.vo.util;
 
 import de.mpg.imeji.j2j.annotations.j2jDataType;
-import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Date;

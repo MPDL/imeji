@@ -4,13 +4,8 @@
 package de.mpg.imeji.logic.export.format;
 
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.util.Map;
 
-import org.apache.http.client.HttpResponseException;
-
-import de.mpg.imeji.logic.export.format.explain.ExplainExport;
-import de.mpg.imeji.logic.export.format.rdf.RDFExport;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.vo.User;
 
@@ -20,8 +15,6 @@ import de.mpg.imeji.logic.vo.User;
  * @author saquet
  */
 public abstract class Export {
-  private StringWriter writer;
-
   /**
    * The {@link User} doing the export
    */
@@ -52,39 +45,10 @@ public abstract class Export {
    */
   public abstract void init();
 
-  /**
-   * Factory to create an {@link Export} from url paramters
-   *
-   * @param params
-   * @return
-   * @throws HttpResponseException
-   */
-  public static Export factory(Map<String, String[]> params) throws HttpResponseException {
-    Export export = null;
-    String format = getParam(params, "format");
-    String type = getParam(params, "type");
-    if (format == null || "".equals(format)) {
-      export = RDFExport.factory(type);
-    } else if ("rdf".equals(format)) {
-      export = RDFExport.factory(type);
-    } else if ("jena".equals(format)) {
-      export = new JenaExport();
-    } else if ("sitemap".equals(format)) {
-      export = new SitemapExport();
-    } else if ("zip".equals(format)) {
-      export = new ZIPExport(type);
-    } else if ("explain".equals(format)) {
-      export = ExplainExport.factory(type);
-    } else {
-      throw new HttpResponseException(400, "Format " + format + " is not supported.");
-    }
-    export.setParams(params);
-    export.init();
-    return export;
-  }
+
 
   /**
-   * REturn the value of a paramter as it has been used for this export
+   * REturn the value of a parameter as it has been used for this export
    *
    * @param s
    * @return
@@ -92,6 +56,7 @@ public abstract class Export {
   public String getParam(String s) {
     return getParam(params, s);
   }
+
 
   /**
    * REturn the value of a Param as defined in a string array
@@ -107,6 +72,8 @@ public abstract class Export {
     }
     return null;
   }
+
+
 
   /**
    * @return

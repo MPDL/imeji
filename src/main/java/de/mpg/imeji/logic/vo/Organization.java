@@ -16,7 +16,7 @@ import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.util.IdentifierUtil;
-import de.mpg.imeji.logic.vo.util.ObjectHelper;
+import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
  * An organization

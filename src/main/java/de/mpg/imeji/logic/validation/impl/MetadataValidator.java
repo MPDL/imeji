@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Collection;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.controller.util.MetadataProfileUtil;
 import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
@@ -17,6 +16,7 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Number;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Text;
+import de.mpg.imeji.logic.vo.util.MetadataAndProfileHelper;
 
 /**
  * {@link Validator} for a {@link Metadata}. Only working with profile
@@ -37,7 +37,7 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
     if (isDelete()) {
       return;
     }
-    Statement s = MetadataProfileUtil.getStatement(md.getStatement(), p);
+    Statement s = MetadataAndProfileHelper.getStatement(md.getStatement(), p);
     validataMetadata(md, s);
   }
 

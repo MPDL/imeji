@@ -30,7 +30,9 @@ public class UrlHelper {
   /**
    * Private Constructor
    */
-  private UrlHelper() {}
+  private UrlHelper() {
+    // avoid constructor
+  }
 
   /**
    * Return the value of a parameter in an url

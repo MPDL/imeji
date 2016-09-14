@@ -28,8 +28,6 @@ import java.net.URI;
 import java.util.Random;
 import java.util.UUID;
 
-import de.mpg.imeji.logic.vo.util.ObjectHelper;
-
 /**
  * Provides A utility Method to create identifers in imeji
  *
@@ -55,7 +53,9 @@ public class IdentifierUtil {
   /**
    * Private Constructor
    */
-  private IdentifierUtil() {}
+  private IdentifierUtil() {
+    // avoid constructor
+  }
 
   /**
    * Return a randon id

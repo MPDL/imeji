@@ -35,7 +35,6 @@ import de.mpg.imeji.logic.user.authentication.ImejiRsaKeys;
 import de.mpg.imeji.logic.user.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
-import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -44,6 +43,7 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.util.ImejiFactory;
 
 /**
  * Initialize imeji

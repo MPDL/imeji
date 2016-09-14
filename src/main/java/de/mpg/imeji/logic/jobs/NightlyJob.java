@@ -3,6 +3,8 @@ package de.mpg.imeji.logic.jobs;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.CleanMetadataJob;
+import de.mpg.imeji.logic.jobs.executors.CleanInactiveUsersJob;
 import de.mpg.imeji.logic.jobs.executors.NightlyExecutor;
 
 /**

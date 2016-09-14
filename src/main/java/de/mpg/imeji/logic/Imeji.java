@@ -65,5 +65,4 @@ public class Imeji {
   private Imeji() {
     // avoid constructor
   }
-
 }

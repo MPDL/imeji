@@ -31,7 +31,7 @@ import util.JenaUtil;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.vo.util.ObjectHelper;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.rest.api.CollectionService;
 import de.mpg.imeji.rest.api.ProfileService;
 import de.mpg.imeji.rest.process.RestProcessUtils;

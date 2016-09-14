@@ -12,7 +12,9 @@ public class ResourceHelper {
   /**
    * Private Constructor
    */
-  private ResourceHelper() {}
+  private ResourceHelper() {
+    // avoid constructor
+  }
 
   /**
    * Read a file defined by its path, and return the content as String

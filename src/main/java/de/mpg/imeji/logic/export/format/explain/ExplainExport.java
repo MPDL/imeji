@@ -24,8 +24,6 @@
  */
 package de.mpg.imeji.logic.export.format.explain;
 
-import org.apache.http.client.HttpResponseException;
-
 import de.mpg.imeji.logic.export.format.Export;
 import de.mpg.imeji.logic.search.model.SearchIndex;
 
@@ -45,22 +43,6 @@ public abstract class ExplainExport extends Export {
   @Override
   public String getContentType() {
     return "application/xml";
-  }
-
-  /**
-   * Factory for {@link ExplainExport}
-   *
-   * @param type
-   * @return
-   * @throws HttpResponseException
-   */
-  public static ExplainExport factory(String type) throws HttpResponseException {
-    if ("search".equals(type)) {
-      return new SearchExplainExport();
-    } else if ("metadata".equals(type)) {
-      return new MetadataExplainExport();
-    }
-    throw new HttpResponseException(400, "Type " + type + " is not supported.");
   }
 
   /**

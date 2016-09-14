@@ -36,7 +36,9 @@ public class MaxPlanckInstitutUtils {
   /**
    * Private Constructor
    */
-  private MaxPlanckInstitutUtils() {}
+  private MaxPlanckInstitutUtils() {
+    // avoid constructor
+  }
 
   /**
    * Return the name of the Max Planck Institute according to the IP. If not found, return null

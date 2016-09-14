@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.util;
+package de.mpg.imeji.logic.user.util;
 
 import java.io.File;
 import java.util.List;

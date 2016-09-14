@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.logic.util;
+package de.mpg.imeji.logic.vo.util;
 
 import java.net.URI;
 

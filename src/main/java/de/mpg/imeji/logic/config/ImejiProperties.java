@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**
@@ -86,6 +87,7 @@ public class ImejiProperties {
     if (baseURI == null) {
       throw new RuntimeException("Error in properties. Check property: imeji.instance.url");
     }
+    ObjectHelper.baseUri = baseURI;
   }
 
   /**

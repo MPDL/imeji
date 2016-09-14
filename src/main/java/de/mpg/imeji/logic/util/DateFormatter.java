@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class DateFormatter {
 
   private DateFormatter() {
-    // private construtor
+    // avoid constructor
   }
 
 

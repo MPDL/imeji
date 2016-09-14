@@ -55,18 +55,6 @@ public class MetadataProfileUtil {
   }
 
   /**
-   * Return a {@link Statement} according to its {@link URI} if defined within the provided
-   * {@link MetadataProfile}
-   *
-   * @param uri
-   * @param profile
-   * @return
-   */
-  public static Statement getStatement(URI uri, MetadataProfile profile) {
-    return MetadataAndProfileHelper.getStatement(uri, profile);
-  }
-
-  /**
    * Get the all {@link Statement} that are childs of the passed statement. If onlyFirst ist true,
    * then give back only childs that are direct child of this {@link Statement}
    *
@@ -105,7 +93,7 @@ public class MetadataProfileUtil {
     URI lastParent = null;
     while (parent != null) {
       lastParent = parent;
-      Statement parentStatement = getStatement(parent, profile);
+      Statement parentStatement = MetadataAndProfileHelper.getStatement(parent, profile);
       if (parentStatement == null) {
         break;
       }
@@ -126,7 +114,8 @@ public class MetadataProfileUtil {
     boolean isParent = false;
     while (!isParent || st2.getParent() != null) {
       isParent = st2.getParent().compareTo(st1.getId()) == 0;
-      isParent = isParent(st1, getStatement(st2.getParent(), profile), profile);
+      isParent =
+          isParent(st1, MetadataAndProfileHelper.getStatement(st2.getParent(), profile), profile);
     }
     return isParent;
   }

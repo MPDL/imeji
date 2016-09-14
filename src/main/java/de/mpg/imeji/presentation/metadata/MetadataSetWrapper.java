@@ -37,6 +37,7 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.MetadataSet;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
+import de.mpg.imeji.logic.vo.util.MetadataAndProfileHelper;
 import de.mpg.imeji.logic.vo.util.MetadataFactory;
 import de.mpg.imeji.presentation.metadata.util.MetadataHelper;
 
@@ -124,7 +125,7 @@ public class MetadataSetWrapper implements Serializable {
   private List<MetadataWrapper> toSuperList(List<Metadata> l) {
     List<MetadataWrapper> flat = new ArrayList<MetadataWrapper>();
     for (Metadata md : l) {
-      Statement st = MetadataProfileUtil.getStatement(md.getStatement(), profile);
+      Statement st = MetadataAndProfileHelper.getStatement(md.getStatement(), profile);
       if (st != null) {
         MetadataWrapper smd = new MetadataWrapper(md, st);
         flat.add(smd);

@@ -20,11 +20,11 @@ import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
 import de.mpg.imeji.logic.user.collaboration.email.EmailService;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
-import de.mpg.imeji.logic.util.ImejiFactory;
-import de.mpg.imeji.logic.util.QuotaUtil;
+import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.util.BeanHelper;
 

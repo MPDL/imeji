@@ -11,10 +11,10 @@ import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
+import de.mpg.imeji.logic.vo.util.ImejiFactory;
 
 /**
  * Business Controller for {@link MetadataProfile}
