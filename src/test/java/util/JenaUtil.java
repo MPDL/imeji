@@ -1,6 +1,7 @@
 package util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +20,7 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiInitializer;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -74,7 +73,6 @@ public class JenaUtil {
    * Init a Jena Instance for Testing
    */
   public static void initJena() {
-
     try {
       // Read tdb location
       TDB_PATH = PropertyReader.getProperty("imeji.tdb.path");
@@ -92,8 +90,9 @@ public class JenaUtil {
   }
 
 
-  public static void closeJena() throws InterruptedException {
-    // Imeji.executor.shutdownNow();
+  public static void closeJena() throws InterruptedException, IOException {
+    KeyValueStoreBusinessController.resetAndStopAllStores();
+    Imeji.getExecutor().shutdownNow();
     LOGGER.info("Closing Jena:");
     TDB.sync(Imeji.dataset);
     LOGGER.info("Jena Sync done! ");
@@ -102,11 +101,10 @@ public class JenaUtil {
     Imeji.dataset.close();
     LOGGER.info("Dataset closed!");
     TDB.closedown();
-    TDBMaker.releaseLocation(new Location(TDB_PATH));
+    TDBMaker.reset();
+    TDBMaker.releaseLocation(Location.create(TDB_PATH));
     LOGGER.info("TDB Location released!");
     deleteTDBDirectory();
-    ElasticInitializer.reset();
-    KeyValueStoreBusinessController.stopAllStores();
   }
 
   private static void initTestUser() throws Exception {
@@ -120,7 +118,6 @@ public class JenaUtil {
   private static void createUser(User u) {
     try {
       UserBusinessController c = new UserBusinessController();
-      System.out.println(SecurityUtil.isSysAdmin(Imeji.adminUser));
       c.create(u, USER_TYPE.DEFAULT);
     } catch (Exception e) {
       LOGGER.info(u.getEmail() + " already exists. Must not be created");
@@ -152,10 +149,10 @@ public class JenaUtil {
     return user;
   }
 
-  private static void deleteTDBDirectory() {
+  private static void deleteTDBDirectory() throws IOException {
     File f = new File(TDB_PATH);
     if (f.exists()) {
-      LOGGER.info("TDB directory deleted: " + FileUtils.deleteQuietly(f));
+      LOGGER.info(f.getAbsolutePath() + " deleted: " + FileUtils.deleteQuietly(f));
     }
   }
 }

@@ -103,7 +103,7 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public String refreshFileSize() {
-    Imeji.executor.submit(new RefreshFileSizeJob());
+    Imeji.getExecutor().submit(new RefreshFileSizeJob());
     return "";
   }
 
@@ -126,7 +126,7 @@ public class AdminBean extends SuperBean {
    */
   public void findUnusedProfiles() throws InterruptedException, ExecutionException {
     CleanMetadataProfileJob job = new CleanMetadataProfileJob(false);
-    Future<Integer> f = Imeji.executor.submit(job);
+    Future<Integer> f = Imeji.getExecutor().submit(job);
     f.get();
     this.unusedProfiles = job.getProfiles();
   }
@@ -135,7 +135,7 @@ public class AdminBean extends SuperBean {
    * Remove all unused {@link MetadataProfile}
    */
   public void deleteUnusedProfiles() {
-    Imeji.executor.submit(new CleanMetadataProfileJob(true));
+    Imeji.getExecutor().submit(new CleanMetadataProfileJob(true));
   }
 
   /**
@@ -180,7 +180,7 @@ public class AdminBean extends SuperBean {
    * @throws URISyntaxException
    */
   public String analyseStorageUsage() throws IOException, URISyntaxException {
-    storageAnalyseStatus = Imeji.executor.submit(new StorageUsageAnalyseJob());
+    storageAnalyseStatus = Imeji.getExecutor().submit(new StorageUsageAnalyseJob());
     return "";
   }
 
@@ -188,7 +188,7 @@ public class AdminBean extends SuperBean {
    * Reindex all data
    */
   public void reindex() {
-    Imeji.executor.submit(new ElasticReIndexJob());
+    Imeji.getExecutor().submit(new ElasticReIndexJob());
   }
 
   /**
@@ -197,7 +197,7 @@ public class AdminBean extends SuperBean {
    * @
    */
   public String importToInternalStorage() {
-    Imeji.executor.submit(new ImportFileFromEscidocToInternalStorageJob(getSessionUser()));
+    Imeji.getExecutor().submit(new ImportFileFromEscidocToInternalStorageJob(getSessionUser()));
     return "";
   }
 
@@ -227,7 +227,7 @@ public class AdminBean extends SuperBean {
               .getResults();
       cleanDatabaseReport += "Metadata Without Statement: " + uris.size() + " found  <br/> ";
     } else {
-      Imeji.executor.submit(new CleanMetadataJob(null));
+      Imeji.getExecutor().submit(new CleanMetadataJob(null));
     }
   }
 

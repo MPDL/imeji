@@ -34,6 +34,7 @@ import util.SuperTestSuite;
     AlbumIntegration.class, CollectionIntegration.class, ProfileIntegration.class,
     StorageIntegration.class, VersionManagerTest.class})
 
+
 public class IntegrationTestSuite extends SuperTestSuite {
 
 }

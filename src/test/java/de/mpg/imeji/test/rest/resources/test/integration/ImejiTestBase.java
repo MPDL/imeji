@@ -17,7 +17,6 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -26,7 +25,6 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
@@ -77,11 +75,6 @@ public class ImejiTestBase extends JerseyTest {
   @Override
   protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
     return new MyTestContainerFactory();
-  }
-
-  @After
-  public void reeindex() {
-    ElasticInitializer.reset();
   }
 
   @BeforeClass

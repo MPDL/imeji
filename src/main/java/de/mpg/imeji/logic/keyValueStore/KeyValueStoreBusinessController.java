@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 
@@ -21,6 +23,7 @@ import de.mpg.imeji.exceptions.NotFoundException;
  *
  */
 public class KeyValueStoreBusinessController {
+  private static final Logger LOGGER = Logger.getLogger(KeyValueStoreBusinessController.class);
   private KeyValueStore store;
   private static final Map<String, KeyValueStore> stores = new HashMap<>();
 
@@ -48,6 +51,7 @@ public class KeyValueStoreBusinessController {
    */
   public synchronized static void stopAllStores() {
     for (KeyValueStore kvs : stores.values()) {
+      LOGGER.info("Stopping store: " + kvs.getName());
       kvs.stop();
     }
   }
@@ -59,7 +63,19 @@ public class KeyValueStoreBusinessController {
    */
   public synchronized static void resetAllStores() {
     for (KeyValueStore kvs : stores.values()) {
+      LOGGER.info("Resetting store: " + kvs.getName());
       kvs.reset();
+    }
+  }
+
+  /**
+   * Resetting and stopping all stores
+   */
+  public synchronized static void resetAndStopAllStores() {
+    for (KeyValueStore kvs : stores.values()) {
+      LOGGER.info("Resetting and stopping store: " + kvs.getName());
+      kvs.reset();
+      kvs.stop();
     }
   }
 

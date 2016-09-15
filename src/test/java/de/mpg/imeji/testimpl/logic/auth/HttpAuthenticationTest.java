@@ -28,6 +28,7 @@ import util.JenaUtil;
  *
  */
 public class HttpAuthenticationTest {
+
   @BeforeClass
   public static void setup()
       throws ImejiException, JoseException, NoSuchAlgorithmException, InvalidKeySpecException {

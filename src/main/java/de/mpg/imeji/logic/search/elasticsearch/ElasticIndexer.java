@@ -46,14 +46,12 @@ public class ElasticIndexer implements SearchIndexer {
   private final String dataType;
   private final ElasticAnalysers analyser;
   private String mappingFile = "elasticsearch/Elastic_TYPE_Mapping.json";
-  private final Client client;
+  // private final Client client;
 
-  public ElasticIndexer(String indexName, ElasticTypes dataType, ElasticAnalysers analyser,
-      Client client) {
+  public ElasticIndexer(String indexName, ElasticTypes dataType, ElasticAnalysers analyser) {
     this.index = indexName;
     this.dataType = dataType.name();
     this.analyser = analyser;
-    this.client = client;
     this.mappingFile = mappingFile.replace("_TYPE_", StringUtils.capitalize(this.dataType));
   }
 
@@ -85,7 +83,7 @@ public class ElasticIndexer implements SearchIndexer {
   public void delete(Object obj) {
     String id = getId(obj);
     if (id != null) {
-      client.prepareDelete(index, dataType, id).execute().actionGet();
+      ElasticService.getClient().prepareDelete(index, dataType, id).execute().actionGet();
       commit();
     }
   }
@@ -95,7 +93,7 @@ public class ElasticIndexer implements SearchIndexer {
     for (Object obj : l) {
       String id = getId(obj);
       if (id != null) {
-        client.prepareDelete(index, dataType, id).execute().actionGet();
+        ElasticService.getClient().prepareDelete(index, dataType, id).execute().actionGet();
       }
 
     }
@@ -125,7 +123,8 @@ public class ElasticIndexer implements SearchIndexer {
    */
   public void indexJSON(String id, String json) {
     if (id != null) {
-      client.prepareIndex(index, dataType).setId(id).setSource(json).execute().actionGet();
+      ElasticService.getClient().prepareIndex(index, dataType).setId(id).setSource(json).execute()
+          .actionGet();
     }
   }
 
@@ -134,7 +133,7 @@ public class ElasticIndexer implements SearchIndexer {
    * immediately available for other tasks
    */
   public void commit() {
-    client.admin().indices().prepareRefresh(index).execute().actionGet();
+    ElasticService.getClient().admin().indices().prepareRefresh(index).execute().actionGet();
   }
 
   /**
@@ -206,7 +205,7 @@ public class ElasticIndexer implements SearchIndexer {
           Files.readAllBytes(
               Paths.get(ElasticIndexer.class.getClassLoader().getResource(mappingFile).toURI())),
           "UTF-8").replace("XXX_ANALYSER_XXX", analyser.name());
-      client.admin().indices().preparePutMapping(this.index).setType(dataType)
+      ElasticService.getClient().admin().indices().preparePutMapping(this.index).setType(dataType)
           .setSource(jsonMapping).execute().actionGet();
     } catch (Exception e) {
       LOGGER.error("Error initializing the Elastic Search Mapping " + mappingFile, e);

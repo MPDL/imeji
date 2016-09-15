@@ -141,7 +141,7 @@ public class ProfileController extends ImejiController {
     isLoggedInUser(user);
     prepareUpdate(mdp, user);
     WRITER.update(WriterFacade.toList(mdp), null, user, true);
-    Imeji.executor.submit(new CleanMetadataJob(mdp));
+    // Imeji.executor.submit(new CleanMetadataJob(mdp));
   }
 
   /**
@@ -184,7 +184,7 @@ public class ProfileController extends ImejiController {
       throw new UnprocessableError("error_profile_is_default_cannot_be_deleted");
     }
     WRITER.delete(WriterFacade.toList(mdp), user);
-    Imeji.executor.submit(new CleanMetadataJob(mdp));
+    Imeji.getExecutor().submit(new CleanMetadataJob(mdp));
   }
 
   /**
@@ -210,7 +210,6 @@ public class ProfileController extends ImejiController {
     if (mdp.getDefault()) {
       throw new UnprocessableError("error_profile_is_default_cannot_be_withdrawn");
     }
-
     prepareWithdraw(mdp, mdp.getDiscardComment());
     // TODO: check if these two setters are needed.
     mdp.setStatus(Status.WITHDRAWN);

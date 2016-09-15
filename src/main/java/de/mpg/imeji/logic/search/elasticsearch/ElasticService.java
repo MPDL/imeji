@@ -11,8 +11,8 @@ import org.elasticsearch.node.Node;
  *
  */
 public class ElasticService {
-  static Node NODE;
-  public static Client client;
+  private static Node NODE;
+  private static Client client;
   static String CLUSTER_NAME = "name of my cluster";
   static boolean CLUSTER_LOCAL = true;
   static boolean CLUSTER_DATA = true;
@@ -40,7 +40,19 @@ public class ElasticService {
     standard, ducet_sort, simple;
   }
 
-  public static void shutdown() {
-    NODE.close();
+  public static Client getClient() {
+    return client;
+  }
+
+  public static void setClient(Client client) {
+    ElasticService.client = client;
+  }
+
+  static Node getNODE() {
+    return NODE;
+  }
+
+  static void setNODE(Node nODE) {
+    NODE = nODE;
   }
 }

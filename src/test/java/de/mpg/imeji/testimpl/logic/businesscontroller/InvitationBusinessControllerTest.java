@@ -104,7 +104,7 @@ public class InvitationBusinessControllerTest extends ControllerTest {
     List<Invitation> invitations = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
     Assert.assertEquals(numberOfInvitations, invitations.size());
 
-    // Re-invite the user to the same objects, + one new objects -> allinvitations shoud return
+    // Re-invite the user to the same objects, + one new objects -> allinvitations should return
     // numberOfInvitations +1
     for (int i = 0; i < numberOfInvitations + 1; i++) {
       Invitation invitation =

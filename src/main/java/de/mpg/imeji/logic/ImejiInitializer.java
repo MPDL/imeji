@@ -30,7 +30,6 @@ import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
 import de.mpg.imeji.logic.jobs.executors.NightlyExecutor;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.user.authentication.ImejiRsaKeys;
 import de.mpg.imeji.logic.user.authentication.impl.APIKeyAuthentication;
@@ -254,10 +253,10 @@ public class ImejiInitializer {
    */
   public static void shutdown() {
     LOGGER.info("Shutting down thread executor...");
-    Imeji.executor.shutdown();
+    Imeji.getExecutor().shutdown();
     NIGHTLY_EXECUTOR.stop();
-    LOGGER.info("executor shutdown shutdown? " + Imeji.executor.isShutdown());
-    ElasticService.shutdown();
+    LOGGER.info("executor shutdown shutdown? " + Imeji.getExecutor().isShutdown());
+    ElasticInitializer.shutdown();
     KeyValueStoreBusinessController.stopAllStores();
     LOGGER.info("Ending LockSurveyor...");
     Imeji.locksSurveyor.terminate();

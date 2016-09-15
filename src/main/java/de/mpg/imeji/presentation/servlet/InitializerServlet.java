@@ -42,7 +42,7 @@ public class InitializerServlet extends HttpServlet {
       Imeji.locksSurveyor.start();
       initModel();
       reindex();
-      Imeji.executor.submit(new ReadMaxPlanckIPMappingJob());
+      Imeji.getExecutor().submit(new ReadMaxPlanckIPMappingJob());
     } catch (Exception e) {
       LOGGER.error("imeji didn't initialize correctly", e);
     }
@@ -66,7 +66,7 @@ public class InitializerServlet extends HttpServlet {
   private void reindex() {
     if (Imeji.STARTUP.doReIndex()) {
       LOGGER.info("Doing reindex...");
-      Imeji.executor.submit(new ElasticReIndexJob());
+      Imeji.getExecutor().submit(new ElasticReIndexJob());
     }
   }
 

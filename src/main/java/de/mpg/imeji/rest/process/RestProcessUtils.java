@@ -246,13 +246,13 @@ public class RestProcessUtils {
       resp = RestProcessUtils.buildJSONAndExceptionResponse(Status.BAD_REQUEST.getStatusCode(),
           localMessage);
     } else if (eX instanceof NotSupportedMethodException) {
-      resp = RestProcessUtils.buildJSONAndExceptionResponse(Status.METHOD_NOT_ALLOWED.getStatusCode(),
-          localMessage);
+      resp = RestProcessUtils
+          .buildJSONAndExceptionResponse(Status.METHOD_NOT_ALLOWED.getStatusCode(), localMessage);
     } else {
       resp = RestProcessUtils.buildJSONAndExceptionResponse(
           Status.INTERNAL_SERVER_ERROR.getStatusCode(), localMessage);
     }
-
+    LOGGER.error("Error API:", eX);
     return resp;
 
   }

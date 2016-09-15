@@ -79,12 +79,16 @@ public class ControllerTest {
   }
 
   protected static Item createItemWithFile() throws ImejiException {
+    return createItemWithFile(originalFile);
+  }
+
+  protected static Item createItemWithFile(File file) throws ImejiException {
     ItemController controller = new ItemController();
     if (collection == null) {
       createCollection();
     }
     item = ImejiFactory.newItem(collection);
-    item = controller.createWithFile(item, originalFile, "test.jpg", collection, JenaUtil.testUser);
+    item = controller.createWithFile(item, file, "test.jpg", collection, JenaUtil.testUser);
     return item;
   }
 }

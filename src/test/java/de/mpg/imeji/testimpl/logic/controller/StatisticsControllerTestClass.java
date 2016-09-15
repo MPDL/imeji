@@ -1,77 +1,70 @@
 package de.mpg.imeji.testimpl.logic.controller;
 
 
-import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_REST;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_STORAGE;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.MediaType;
-
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.business.StatisticsBusinessController;
-import de.mpg.imeji.rest.api.CollectionService;
-import de.mpg.imeji.rest.api.DefaultItemService;
-import de.mpg.imeji.rest.process.RestProcessUtils;
-import de.mpg.imeji.rest.to.CollectionTO;
-import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
-import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
+import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.test.logic.controller.ControllerTest;
 import util.JenaUtil;
 
-public class StatisticsControllerTestClass extends ImejiTestBase {
+public class StatisticsControllerTestClass extends ControllerTest {
+
 
   @Test
-  public void test_3_ReleaseCollection_1_WithAuth() throws ImejiException {
-    long totalFileSize = 0;
-    DefaultItemService service = new DefaultItemService();
-    initCollection();
-    initItem("test"); // +1
-    totalFileSize += service.read(itemId, JenaUtil.testUser).getFileSize();
-    initItem("test2"); // +2
-    totalFileSize += service.read(itemId, JenaUtil.testUser).getFileSize();
-    initItem("test3"); // +3
-    long lastAddedItemSize = service.read(itemId, JenaUtil.testUser).getFileSize();
-    totalFileSize += service.read(itemId, JenaUtil.testUser).getFileSize();
-
-    // deleteItem
-    Form form = new Form();
-    form.param("id", itemId);
-    target("/rest/items").register(authAsUser).path("/" + itemId)
-        .request(MediaType.APPLICATION_JSON_TYPE).delete(); // +2
-
-    totalFileSize -= lastAddedItemSize;
-    // init Collection with testUser2
-    CollectionService cs = new CollectionService();
-    try {
-      collectionTO = (CollectionTO) RestProcessUtils.buildTOFromJSON(
-          getStringFromPath(STATIC_CONTEXT_REST + "/createCollection.json"), CollectionTO.class);
-      collectionTO = cs.create(collectionTO, JenaUtil.testUser2);
-      collectionId = collectionTO.getId();
-    } catch (Exception e) {
-    }
-
-    // init Item with testUser2
-    DefaultItemWithFileTO to = new DefaultItemWithFileTO();
-    to.setCollectionId(collectionId);
-    to.setFile(new File(STATIC_CONTEXT_STORAGE + "/test4.jpg"));
-    to.setStatus("PENDING");
-    try {
-      itemTO = service.create(to, JenaUtil.testUser2); // +3
-      itemId = itemTO.getId();
-    } catch (Exception e) {
-      // Do nothing
-    }
-
+  public void test() throws ImejiException {
     StatisticsBusinessController controller = new StatisticsBusinessController();
+    CollectionImeji col1 = createCollection(JenaUtil.testUser);
+    Item item1 = createItemWithFile(col1, originalFile, JenaUtil.testUser);
+    long totalFileSize = FileUtils.sizeOf(originalFile);
     long result = controller.getUsedStorageSizeForInstitute("imeji.org");
-
-    assertEquals(service.read(itemId, JenaUtil.testUser2).getFileSize() + totalFileSize, result);
-
+    assertEquals(totalFileSize, result);
+    // add again
+    Item item2 = createItemWithFile(col1, thumbnailFile, JenaUtil.testUser);
+    totalFileSize = totalFileSize + FileUtils.sizeOf(thumbnailFile);;
+    result = controller.getUsedStorageSizeForInstitute("imeji.org");
+    assertEquals(totalFileSize, result);
+    // deleteItem
+    ItemController itemController = new ItemController();
+    itemController.delete(item2.getIdString(), JenaUtil.testUser);
+    totalFileSize = totalFileSize - FileUtils.sizeOf(thumbnailFile);
+    result = controller.getUsedStorageSizeForInstitute("imeji.org");
+    assertEquals(totalFileSize, result);
+    // Upload in another collection
+    CollectionImeji col2 = createCollection(JenaUtil.testUser);
+    Item item3 = createItemWithFile(col2, originalFile, JenaUtil.testUser);
+    totalFileSize = totalFileSize + FileUtils.sizeOf(originalFile);;
+    result = controller.getUsedStorageSizeForInstitute("imeji.org");
+    assertEquals(totalFileSize, result);
+    // Upload by another user
+    Item item4 = createItemWithFile(col2, thumbnailFile, JenaUtil.testUser2);
+    totalFileSize = totalFileSize + FileUtils.sizeOf(thumbnailFile);;
+    result = controller.getUsedStorageSizeForInstitute("imeji.org");
+    assertEquals(totalFileSize, result);
   }
 
+  private CollectionImeji createCollection(User user) throws ImejiException {
+    CollectionController controller = new CollectionController();
+    collection = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
+    return controller.create(collection, profile, user, MetadataProfileCreationMethod.COPY, null);
+  }
+
+  private Item createItemWithFile(CollectionImeji col, File file, User user) throws ImejiException {
+    ItemController controller = new ItemController();
+    Item item = ImejiFactory.newItem(col);
+    item = controller.createWithFile(item, file, "test.jpg", collection, JenaUtil.testUser);
+    return item;
+  }
 }

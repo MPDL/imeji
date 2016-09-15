@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
@@ -72,6 +73,7 @@ public class HTreeMapStore implements KeyValueStore {
     File f = new File(StringHelper.normalizePath(Imeji.tdbPath) + STORE_FILENAME_PREFIX + name);
     STORE = DBMaker.newFileDB(f).make();
     map = STORE.createHashMap(name).keySerializer(Serializer.STRING).makeOrGet();
+
   }
 
   @Override
@@ -84,15 +86,17 @@ public class HTreeMapStore implements KeyValueStore {
 
   @Override
   public boolean isStarted() {
-    return STORE != null && map != null;
+    return STORE != null && map != null && !STORE.isClosed();
   }
 
   @Override
   public void reset() {
     if (isStarted()) {
+      map.clear();
       stop();
+      FileUtils.deleteQuietly(
+          new File(StringHelper.normalizePath(Imeji.tdbPath) + STORE_FILENAME_PREFIX + name));
+      start();
     }
-    new File(StringHelper.normalizePath(Imeji.tdbPath) + STORE_FILENAME_PREFIX + name).delete();
-    start();
   }
 }

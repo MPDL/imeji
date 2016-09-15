@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import util.JenaUtil;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
@@ -39,6 +38,7 @@ import de.mpg.imeji.rest.to.MetadataProfileTO;
 import de.mpg.imeji.rest.to.StatementTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
 import de.mpg.imeji.util.LocalizedString;
+import util.JenaUtil;
 
 public class ProfileIntegration extends ImejiTestBase {
 
@@ -53,7 +53,7 @@ public class ProfileIntegration extends ImejiTestBase {
 
   }
 
- @Test
+  @Test
   public void test_1_ReadProfiles() {
     String profileId = collectionTO.getProfile().getId();
     Response response = target(pathPrefix).path(profileId).register(authAsUser)
@@ -121,7 +121,7 @@ public class ProfileIntegration extends ImejiTestBase {
     MetadataProfileTO profile = response.readEntity(MetadataProfileTO.class);
     assertThat(profile.getId(), equalTo(ObjectHelper.getId(Imeji.defaultMetadataProfile.getId())));
   }
-  
+
   @Test
   public void test_1_ReadProfiles_ItemTemplate() {
     String profileId = collectionTO.getProfile().getId();
@@ -165,7 +165,7 @@ public class ProfileIntegration extends ImejiTestBase {
         .request(MediaType.APPLICATION_JSON).delete();
     assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
   }
-  
+
   @Test
   public void test_3_CreateDoubleDefaultProfiles() throws BadRequestException {
     String profileId = ProfileService.DEFAULT_METADATA_PROFILE_ID;
@@ -176,15 +176,15 @@ public class ProfileIntegration extends ImejiTestBase {
     MetadataProfileTO profile = response.readEntity(MetadataProfileTO.class);
     assertThat(profile.getId(), equalTo(ObjectHelper.getId(Imeji.defaultMetadataProfile.getId())));
 
-    profile.setTitle(profile.getTitle()+" A COPY OF DEFAULT PROFILE");
+    profile.setTitle(profile.getTitle() + " A COPY OF DEFAULT PROFILE");
     profile.setDefault(true);
-    
-    String jSonProfile = RestProcessUtils.buildJSONFromObject(profile); 
-    
+
+    String jSonProfile = RestProcessUtils.buildJSONFromObject(profile);
+
     Response response1 = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
         .request(MediaType.APPLICATION_JSON_TYPE)
         .post(Entity.entity(jSonProfile, MediaType.APPLICATION_JSON_TYPE));
-    
+
     assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response1.getStatus());
 
   }
@@ -232,8 +232,7 @@ public class ProfileIntegration extends ImejiTestBase {
     assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
     try {
-      proService.withdraw(profileId, JenaUtil.testUser,
-          "test_3_DeleteProfile_3_NotPendingProfile");
+      proService.withdraw(profileId, JenaUtil.testUser, "test_3_DeleteProfile_3_NotPendingProfile");
       assertEquals("WITHDRAWN", proService.read(profileId, JenaUtil.testUser).getStatus());
     } catch (ImejiException e) {
       LOGGER.error("Could not discard the Metadata profile");
@@ -245,7 +244,7 @@ public class ProfileIntegration extends ImejiTestBase {
     assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
 
   }
-  
+
   @Test
   public void test_6_ReleaseProfile_1_WithAuth() throws ImejiException {
 
@@ -254,8 +253,8 @@ public class ProfileIntegration extends ImejiTestBase {
     ProfileService service = new ProfileService();
     assertEquals("PENDING", service.read(profileId, JenaUtil.testUser).getStatus());
 
-    Response response = target(pathPrefix).path("/" + profileId + "/release")
-        .register(authAsUser).request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
+    Response response = target(pathPrefix).path("/" + profileId + "/release").register(authAsUser)
+        .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
 
     assertEquals(OK.getStatusCode(), response.getStatus());
     assertEquals("RELEASED", service.read(profileId, JenaUtil.testUser).getStatus());
@@ -268,8 +267,8 @@ public class ProfileIntegration extends ImejiTestBase {
     ProfileService service = new ProfileService();
     assertEquals("PENDING", service.read(profileId, JenaUtil.testUser).getStatus());
 
-    Response response = target(pathPrefix).path("/" + profileId + "/release")
-        .register(authAsUser2).request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
+    Response response = target(pathPrefix).path("/" + profileId + "/release").register(authAsUser2)
+        .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
     assertEquals(FORBIDDEN.getStatusCode(), response.getStatus());
 
     assertEquals("PENDING", service.read(profileId, JenaUtil.testUser).getStatus());
@@ -293,8 +292,8 @@ public class ProfileIntegration extends ImejiTestBase {
     ProfileService s = new ProfileService();
     s.release(profileId, JenaUtil.testUser);
     assertEquals("RELEASED", s.read(profileId, JenaUtil.testUser).getStatus());
-    Response response = target(pathPrefix).path("/" + profileId + "/release")
-        .register(authAsUser).request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
+    Response response = target(pathPrefix).path("/" + profileId + "/release").register(authAsUser)
+        .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
     assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
 
@@ -313,13 +312,12 @@ public class ProfileIntegration extends ImejiTestBase {
 
     assertEquals("RELEASED", s.read(profileId, JenaUtil.testUser).getStatus());
     Form form = new Form();
-    form.param("discardComment",
-        "test_6_WithdrawProfile_1_WithAuth_" + System.currentTimeMillis());
-    Response response = target(pathPrefix).path("/" + profileId + "/discard")
-        .register(authAsUser).request((MediaType.APPLICATION_JSON_TYPE))
+    form.param("discardComment", "test_6_WithdrawProfile_1_WithAuth_" + System.currentTimeMillis());
+    Response response = target(pathPrefix).path("/" + profileId + "/discard").register(authAsUser)
+        .request((MediaType.APPLICATION_JSON_TYPE))
         .put(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
-    
+
     assertEquals(OK.getStatusCode(), response.getStatus());
 
     assertEquals("WITHDRAWN", s.read(profileId, JenaUtil.testUser).getStatus());
@@ -339,8 +337,8 @@ public class ProfileIntegration extends ImejiTestBase {
     Form form = new Form();
     form.param("discardComment",
         "test_6_WithdrawProfile_2_WithUnAuth_" + System.currentTimeMillis());
-    Response response = target(pathPrefix).path("/" + profileId + "/discard")
-        .register(authAsUser2).request((MediaType.APPLICATION_JSON_TYPE))
+    Response response = target(pathPrefix).path("/" + profileId + "/discard").register(authAsUser2)
+        .request((MediaType.APPLICATION_JSON_TYPE))
         .put(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
     assertEquals(FORBIDDEN.getStatusCode(), response.getStatus());
@@ -381,8 +379,8 @@ public class ProfileIntegration extends ImejiTestBase {
     Form form = new Form();
     form.param("discardComment",
         "test_7_WithdrawProfile_4_NotReleasedProfile_" + System.currentTimeMillis());
-    Response response = target(pathPrefix).path("/" + profileId + "/discard")
-        .register(authAsUser).request((MediaType.APPLICATION_JSON_TYPE))
+    Response response = target(pathPrefix).path("/" + profileId + "/discard").register(authAsUser)
+        .request((MediaType.APPLICATION_JSON_TYPE))
         .put(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
     assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
@@ -400,10 +398,10 @@ public class ProfileIntegration extends ImejiTestBase {
     assertEquals("WITHDRAWN", s.read(profileId, JenaUtil.testUser).getStatus());
 
     Form form = new Form();
-    form.param("discardComment", "test_7_WithdrawProfile_5_WithdrawProfileTwice_SecondTime_"
-        + System.currentTimeMillis());
-    Response response = target(pathPrefix).path("/" + profileId + "/discard")
-        .register(authAsUser).request((MediaType.APPLICATION_JSON_TYPE))
+    form.param("discardComment",
+        "test_7_WithdrawProfile_5_WithdrawProfileTwice_SecondTime_" + System.currentTimeMillis());
+    Response response = target(pathPrefix).path("/" + profileId + "/discard").register(authAsUser)
+        .request((MediaType.APPLICATION_JSON_TYPE))
         .put(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
     assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
@@ -421,7 +419,7 @@ public class ProfileIntegration extends ImejiTestBase {
 
     assertEquals(NOT_FOUND.getStatusCode(), response.getStatus());
   }
-  
+
 
   @Test
   public void test_8_ConsistentStatements_when_copy() throws ImejiException {
@@ -430,16 +428,19 @@ public class ProfileIntegration extends ImejiTestBase {
         .request(MediaType.APPLICATION_JSON).get();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
     String stringJson = response.readEntity(String.class);
-    
-    MetadataProfileTO profile = (MetadataProfileTO) RestProcessUtils.buildTOFromJSON(stringJson, MetadataProfileTO.class);
-    MetadataProfileTO testProfile = (MetadataProfileTO) RestProcessUtils.buildTOFromJSON(stringJson, MetadataProfileTO.class);
-    
+
+    MetadataProfileTO profile =
+        (MetadataProfileTO) RestProcessUtils.buildTOFromJSON(stringJson, MetadataProfileTO.class);
+    MetadataProfileTO testProfile =
+        (MetadataProfileTO) RestProcessUtils.buildTOFromJSON(stringJson, MetadataProfileTO.class);
+
     assertThat(profile.getId(), equalTo(ObjectHelper.getId(Imeji.defaultMetadataProfile.getId())));
-    
-    String copyJson= stringJson.replace(profile.getTitle(), " A COPY OF DEFAULT PROFILE AS A NEW ONE")
-           .replace("\"default\" : true", "\"default\" : false");
-    
-    //FLAT PROFILES TEST
+
+    String copyJson =
+        stringJson.replace(profile.getTitle(), " A COPY OF DEFAULT PROFILE AS A NEW ONE")
+            .replace("\"default\" : true", "\"default\" : false");
+
+    // FLAT PROFILES TEST
     Response response1 = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
         .request(MediaType.APPLICATION_JSON_TYPE)
         .post(Entity.entity(copyJson, MediaType.APPLICATION_JSON_TYPE));
@@ -450,103 +451,94 @@ public class ProfileIntegration extends ImejiTestBase {
     assertFalse(copiedProfile.getId().equals(profile.getId()));
     assertEquals(copiedProfile.getStatements().size(), profile.getStatements().size());
     assertEquals(testProfile.getStatements().size(), profile.getStatements().size());
-    
-    List<String> copiedProfileStatements =
-        copiedProfile.getStatements().stream()
-          .map((StatementTO statement) -> statement.getId())
-          .collect(Collectors.toList());
-    
-    List<String> profileStatements =
-        profile.getStatements().stream()
-          .map((StatementTO statement) -> statement.getId())
-          .collect(Collectors.toList());
 
-    List<String> testProfileStatements =
-        testProfile.getStatements().stream()
-          .map((StatementTO statement) -> statement.getId())
-          .collect(Collectors.toList());
-    
-    //Test profile here checked just in case to ensure other assertions are fine
+    List<String> copiedProfileStatements = copiedProfile.getStatements().stream()
+        .map((StatementTO statement) -> statement.getId()).collect(Collectors.toList());
+
+    List<String> profileStatements = profile.getStatements().stream()
+        .map((StatementTO statement) -> statement.getId()).collect(Collectors.toList());
+
+    List<String> testProfileStatements = testProfile.getStatements().stream()
+        .map((StatementTO statement) -> statement.getId()).collect(Collectors.toList());
+
+    // Test profile here checked just in case to ensure other assertions are fine
     assertEquals(CollectionUtils.disjunction(testProfileStatements, profileStatements).size(), 0);
-    assertEquals(CollectionUtils.disjunction(copiedProfileStatements, profileStatements).size(), 
-          copiedProfileStatements.size()+ profileStatements.size());
+    assertEquals(CollectionUtils.disjunction(copiedProfileStatements, profileStatements).size(),
+        copiedProfileStatements.size() + profileStatements.size());
     assertFalse(CollectionUtils.isEqualCollection(copiedProfileStatements, profileStatements));
     assertTrue(CollectionUtils.isEqualCollection(testProfileStatements, profileStatements));
-    
-    //Hierarchy Profiles Test
+
+    // Hierarchy Profiles Test
     StatementTO child = new StatementTO();
     child.setType(copiedProfile.getStatements().get(0).getType());
-    child.setId(copiedProfile.getStatements().get(0).getId()+"-child");
+    child.setId(copiedProfile.getStatements().get(0).getId() + "-child");
 
-    
-    //Map Labels
+
+    // Map Labels
     child.setLabels(copiedProfile.getStatements().get(0).getLabels().stream()
-          .map(label->new LocalizedString(label.getValue()+"-child", label.getLang()))
-          .collect(Collectors.toList()));
+        .map(label -> new LocalizedString(label.getValue() + "-child", label.getLang()))
+        .collect(Collectors.toList()));
 
     child.setParentStatementId(copiedProfile.getStatements().get(0).getId());
     child.setPos(0);
 
     copiedProfile.getStatements().add(child);
-    
+
     String jSonNew = RestProcessUtils.buildJSONFromObject(copiedProfile);
-    
-    //Create the new Hierarchical Profile
+
+    // Create the new Hierarchical Profile
     Response response2 = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
         .request(MediaType.APPLICATION_JSON_TYPE)
         .post(Entity.entity(jSonNew, MediaType.APPLICATION_JSON_TYPE));
     assertEquals(Status.CREATED.getStatusCode(), response2.getStatus());
     copiedProfile = response2.readEntity(MetadataProfileTO.class);
-    
-    //Create another new Hierarchical Profile to compare to previous one (make no other changes)
-    //Create the new Hierarchical Profile
+
+    // Create another new Hierarchical Profile to compare to previous one (make no other changes)
+    // Create the new Hierarchical Profile
     Response response3 = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)
         .request(MediaType.APPLICATION_JSON_TYPE)
         .post(Entity.entity(jSonNew, MediaType.APPLICATION_JSON_TYPE));
     assertEquals(Status.CREATED.getStatusCode(), response3.getStatus());
     MetadataProfileTO newCopiedProfile = response3.readEntity(MetadataProfileTO.class);
-    
-    //Check if profiles have all different Ids
-    List<String> copiedHProfileStatements =
-        copiedProfile.getStatements().stream()
-          .map((StatementTO statement) -> statement.getId()).collect(Collectors.toList());
 
-    List<String> newCopiedHProfileStatements =
-        newCopiedProfile.getStatements().stream()
-          .map((StatementTO statement) -> statement.getId()).collect(Collectors.toList());
-    
-    assertFalse(CollectionUtils.isEqualCollection(copiedHProfileStatements, newCopiedHProfileStatements));
-    assertEquals(CollectionUtils.disjunction(copiedHProfileStatements, newCopiedHProfileStatements).size(), 
-                  copiedHProfileStatements.size()+ newCopiedHProfileStatements.size());
-    
-    //Now Check that Parent-Child Nodes are with correct id (i.e. all with different Ids, but same Labels)
+    // Check if profiles have all different Ids
+    List<String> copiedHProfileStatements = copiedProfile.getStatements().stream()
+        .map((StatementTO statement) -> statement.getId()).collect(Collectors.toList());
+
+    List<String> newCopiedHProfileStatements = newCopiedProfile.getStatements().stream()
+        .map((StatementTO statement) -> statement.getId()).collect(Collectors.toList());
+
+    assertFalse(
+        CollectionUtils.isEqualCollection(copiedHProfileStatements, newCopiedHProfileStatements));
+    assertEquals(
+        CollectionUtils.disjunction(copiedHProfileStatements, newCopiedHProfileStatements).size(),
+        copiedHProfileStatements.size() + newCopiedHProfileStatements.size());
+
+    // Now Check that Parent-Child Nodes are with correct id (i.e. all with different Ids, but same
+    // Labels)
     StatementTO childStatementCopiedProfile = copiedProfile.getStatements().stream()
-          .filter( s-> s.getLabels().get(0).getValue().contains("-child"))
-          .findFirst()
-          .get();
-    
+        .filter(s -> s.getLabels().get(0).getValue().contains("-child")).findFirst().get();
+
     StatementTO childStatementNewCopiedProfile = newCopiedProfile.getStatements().stream()
-          .filter( s-> s.getLabels().get(0).getValue().contains("-child"))
-          .findFirst()
-          .get();
-    
+        .filter(s -> s.getLabels().get(0).getValue().contains("-child")).findFirst().get();
+
     assertFalse(childStatementCopiedProfile.getId().equals(childStatementNewCopiedProfile.getId()));
-    assertFalse(childStatementCopiedProfile.getParentStatementId().equals(childStatementNewCopiedProfile.getParentStatementId()));
-    
+    assertFalse(childStatementCopiedProfile.getParentStatementId()
+        .equals(childStatementNewCopiedProfile.getParentStatementId()));
+
     StatementTO parentStatementCopiedProfile = copiedProfile.getStatements().stream()
-          .filter( s-> s.getId().equals(childStatementCopiedProfile.getParentStatementId()))
-          .findFirst()
-          .get();
-    
+        .filter(s -> s.getId().equals(childStatementCopiedProfile.getParentStatementId()))
+        .findFirst().get();
+
     StatementTO parentStatementNewCopiedProfile = newCopiedProfile.getStatements().stream()
-          .filter( s-> s.getId().equals(childStatementNewCopiedProfile.getParentStatementId()))
-          .findFirst()
-          .get();
-    
+        .filter(s -> s.getId().equals(childStatementNewCopiedProfile.getParentStatementId()))
+        .findFirst().get();
+
     assertTrue(parentStatementCopiedProfile != null);
     assertTrue(parentStatementNewCopiedProfile != null);
-    assertTrue(!parentStatementCopiedProfile.getId().equals(parentStatementNewCopiedProfile.getId()));
+    assertTrue(
+        !parentStatementCopiedProfile.getId().equals(parentStatementNewCopiedProfile.getId()));
 
-    
+
   }
 }

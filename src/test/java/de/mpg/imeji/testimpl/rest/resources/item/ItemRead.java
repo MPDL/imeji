@@ -131,6 +131,7 @@ public class ItemRead extends ItemTestBase {
 
   @Test
   public void test_6_ReadItem_NotFound() throws Exception {
+    LOGGER.info("Start  test_6_ReadItem_NotFound");
     Response response =
         (target(PATH_PREFIX).path("/" + itemId + "_not_exist_item").register(authAsUser)
             .register(MultiPartFeature.class).request(MediaType.APPLICATION_JSON_TYPE)).get();

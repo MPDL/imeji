@@ -8,7 +8,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 
 public class SuperTestSuite {
   @BeforeClass
@@ -18,6 +17,6 @@ public class SuperTestSuite {
 
   @AfterClass
   public static void endSuite() {
-    ElasticService.shutdown();
+    ElasticInitializer.shutdown();
   }
 }

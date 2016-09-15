@@ -61,8 +61,8 @@ public class ElasticSearch implements Search {
         this.type = ElasticTypes.items;
         break;
     }
-    this.indexer = new ElasticIndexer(ElasticService.DATA_ALIAS, this.type, ElasticService.ANALYSER,
-        ElasticService.client);
+    this.indexer =
+        new ElasticIndexer(ElasticService.DATA_ALIAS, this.type, ElasticService.ANALYSER);
   }
 
   @Override
@@ -77,7 +77,7 @@ public class ElasticSearch implements Search {
     if (size == -1) {
       size = Integer.MAX_VALUE;
     }
-    SearchResponse resp = ElasticService.client.prepareSearch(ElasticService.DATA_ALIAS)
+    SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setNoFields().setQuery(QueryBuilders.matchAllQuery()).setPostFilter(f).setTypes(getTypes())
         .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri)).execute()
         .actionGet();
@@ -95,7 +95,7 @@ public class ElasticSearch implements Search {
   public SearchResult searchString(String query, SortCriterion sort, User user, int from,
       int size) {
     QueryBuilder q = QueryBuilders.queryStringQuery(query);
-    SearchResponse resp = ElasticService.client.prepareSearch(ElasticService.DATA_ALIAS)
+    SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setNoFields().setTypes(getTypes()).setQuery(q).setSize(size).setFrom(from)
         .addSort(ElasticSortFactory.build(sort)).execute().actionGet();
     return toSearchResult(resp);

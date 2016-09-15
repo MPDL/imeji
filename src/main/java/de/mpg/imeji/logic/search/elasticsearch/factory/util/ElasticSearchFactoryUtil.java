@@ -36,7 +36,7 @@ public class ElasticSearchFactoryUtil {
    */
   public static String readFieldAsString(String id, ElasticFields field, String dataType,
       String index) {
-    Map<String, Object> sourceMap = ElasticService.client.prepareGet(index, dataType, id)
+    Map<String, Object> sourceMap = ElasticService.getClient().prepareGet(index, dataType, id)
         .setFetchSource(true).execute().actionGet().getSource();
     if (sourceMap != null) {
       Object obj = sourceMap.get(field.field());
@@ -85,7 +85,7 @@ public class ElasticSearchFactoryUtil {
   public static List<String> searchStringAndRetrieveFieldValue(String query, String field,
       SortCriterion sort, User user, int from, int size) {
     QueryBuilder q = QueryBuilders.queryStringQuery(query);
-    SearchResponse resp = ElasticService.client.prepareSearch(ElasticService.DATA_ALIAS)
+    SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .addField(field).setQuery(q).addSort(ElasticSortFactory.build(sort)).setSize(size)
         .setFrom(from).execute().actionGet();
     List<String> fieldValues = new ArrayList<>();

@@ -56,7 +56,7 @@ public class Imeji {
   /**
    * The {@link ExecutorService} which runs the thread in imeji
    */
-  public static final ExecutorService executor = Executors.newCachedThreadPool();
+  private static ExecutorService executor = Executors.newCachedThreadPool();
 
 
   /**
@@ -64,5 +64,13 @@ public class Imeji {
    */
   private Imeji() {
     // avoid constructor
+  }
+
+
+  public static ExecutorService getExecutor() {
+    if (executor == null || executor.isShutdown()) {
+      executor = Executors.newCachedThreadPool();
+    }
+    return executor;
   }
 }
