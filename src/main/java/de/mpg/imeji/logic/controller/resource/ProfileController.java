@@ -141,7 +141,7 @@ public class ProfileController extends ImejiController {
     isLoggedInUser(user);
     prepareUpdate(mdp, user);
     WRITER.update(WriterFacade.toList(mdp), null, user, true);
-    // Imeji.executor.submit(new CleanMetadataJob(mdp));
+    Imeji.getExecutor().submit(new CleanMetadataJob(mdp));
   }
 
   /**

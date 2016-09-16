@@ -60,7 +60,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    */
   private void addAllMappings(String index) {
     for (ElasticTypes type : ElasticTypes.values()) {
-      new ElasticIndexer(index, type, ElasticService.ANALYSER, ElasticService.getClient()).addMapping();
+      new ElasticIndexer(index, type, ElasticService.ANALYSER).addMapping();
     }
   }
 
@@ -71,8 +71,8 @@ public class ElasticReIndexJob implements Callable<Integer> {
    */
   private void reindexFolders(String index) throws ImejiException {
     LOGGER.info("Indexing Folders...");
-    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.folders,
-        ElasticService.ANALYSER, ElasticService.getClient());
+    ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.folders, ElasticService.ANALYSER);
     CollectionController c = new CollectionController();
     List<CollectionImeji> collections = (List<CollectionImeji>) c.retrieveAll(Imeji.adminUser);
     indexer.indexBatch(collections);
@@ -87,8 +87,8 @@ public class ElasticReIndexJob implements Callable<Integer> {
    */
   private void reindexAlbums(String index) throws ImejiException {
     LOGGER.info("Indexing Albums...");
-    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.albums, ElasticService.ANALYSER,
-        ElasticService.getClient());
+    ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.albums, ElasticService.ANALYSER);
     AlbumController controller = new AlbumController();
     List<Album> albums = controller.retrieveAll(Imeji.adminUser);
     indexer.indexBatch(albums);
@@ -104,8 +104,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    */
   private void reindexItems(String index) throws ImejiException {
     LOGGER.info("Indexing Items...");
-    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.items, ElasticService.ANALYSER,
-        ElasticService.getClient());
+    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.items, ElasticService.ANALYSER);
     ItemController controller = new ItemController();
     List<Item> items = (List<Item>) controller.retrieveAll(Imeji.adminUser);
     LOGGER.info("+++ " + items.size() + " items to index +++");
@@ -122,8 +121,8 @@ public class ElasticReIndexJob implements Callable<Integer> {
    */
   private void reindexSpaces(String index) throws ImejiException {
     LOGGER.info("Indexing Spaces...");
-    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.spaces, ElasticService.ANALYSER,
-        ElasticService.getClient());
+    ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.spaces, ElasticService.ANALYSER);
     SpaceController controller = new SpaceController();
     List<Space> items = controller.retrieveAll();
     LOGGER.info("+++ " + items.size() + " items to index +++");
@@ -140,8 +139,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    */
   private void reindexUsers(String index) throws ImejiException {
     LOGGER.info("Indexing users...");
-    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER,
-        ElasticService.getClient());
+    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER);
     List<User> users = new UserBusinessController().retrieveAll();
     LOGGER.info("+++ " + users.size() + " users to index +++");
     indexer.indexBatch(users);
@@ -157,8 +155,8 @@ public class ElasticReIndexJob implements Callable<Integer> {
    */
   private void reindexUserGroups(String index) throws ImejiException {
     LOGGER.info("Indexing users...");
-    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.usergroups,
-        ElasticService.ANALYSER, ElasticService.getClient());
+    ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.usergroups, ElasticService.ANALYSER);
     List<UserGroup> groups = (List<UserGroup>) new GroupBusinessController().retrieveAll();
     LOGGER.info("+++ " + groups.size() + " user groups to index +++");
     indexer.indexBatch(groups);
