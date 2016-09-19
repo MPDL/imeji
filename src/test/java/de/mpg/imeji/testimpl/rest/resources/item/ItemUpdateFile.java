@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
 
@@ -128,9 +128,9 @@ public class ItemUpdateFile extends ImejiTestBase {
         equalTo(itemWithFileTO.getFileUrl().toString()));
     assertThat("Should be link to NO_THUMBNAIL image:",
         itemWithFileTO.getWebResolutionUrlUrl().toString(),
-        endsWith(ItemController.NO_THUMBNAIL_URL));
+        endsWith(ItemBusinessController.NO_THUMBNAIL_URL));
     assertThat("Should be link to NO_THUMBNAIL image:", itemWithFileTO.getThumbnailUrl().toString(),
-        endsWith(ItemController.NO_THUMBNAIL_URL));
+        endsWith(ItemBusinessController.NO_THUMBNAIL_URL));
   }
 
   @Test
@@ -159,9 +159,9 @@ public class ItemUpdateFile extends ImejiTestBase {
     assertThat("Checksum of stored file does not match the source file",
         itemWithFileTO.getChecksumMd5(), equalTo(calculateChecksum(newFile)));
     assertThat(itemWithFileTO.getThumbnailUrl().toString(),
-        not(endsWith(ItemController.NO_THUMBNAIL_URL)));
+        not(endsWith(ItemBusinessController.NO_THUMBNAIL_URL)));
     assertThat(itemWithFileTO.getWebResolutionUrlUrl().toString(),
-        not(endsWith(ItemController.NO_THUMBNAIL_URL)));
+        not(endsWith(ItemBusinessController.NO_THUMBNAIL_URL)));
 
   }
 
@@ -191,9 +191,9 @@ public class ItemUpdateFile extends ImejiTestBase {
     assertThat("Checksum of stored file does not match the source file",
         itemWithFileTO.getChecksumMd5(), equalTo(calculateChecksum(newFile)));
     assertThat(itemWithFileTO.getThumbnailUrl().toString(),
-        not(endsWith(ItemController.NO_THUMBNAIL_URL)));
+        not(endsWith(ItemBusinessController.NO_THUMBNAIL_URL)));
     assertThat(itemWithFileTO.getWebResolutionUrlUrl().toString(),
-        not(endsWith(ItemController.NO_THUMBNAIL_URL)));
+        not(endsWith(ItemBusinessController.NO_THUMBNAIL_URL)));
   }
 
   @Test
@@ -221,9 +221,9 @@ public class ItemUpdateFile extends ImejiTestBase {
     assertThat(itemWithFileTO.getFileUrl().toString(), not(isEmptyOrNullString()));
     assertThat(itemWithFileTO.getFileUrl().toString(), not(equalTo(storedFileURL)));
     assertThat(itemWithFileTO.getThumbnailUrl().toString(),
-        not(endsWith(ItemController.NO_THUMBNAIL_URL)));
+        not(endsWith(ItemBusinessController.NO_THUMBNAIL_URL)));
     assertThat(itemWithFileTO.getWebResolutionUrlUrl().toString(),
-        not(endsWith(ItemController.NO_THUMBNAIL_URL)));
+        not(endsWith(ItemBusinessController.NO_THUMBNAIL_URL)));
   }
 
   @Test
@@ -256,9 +256,9 @@ public class ItemUpdateFile extends ImejiTestBase {
     assertThat(itemWithFileTO.getFileUrl().toString(), not(equalTo(fileURL)));
     assertThat(itemWithFileTO.getFileUrl().toString(), not(equalTo(storedFileURL)));
     assertThat(itemWithFileTO.getThumbnailUrl().toString(),
-        not(containsString(ItemController.NO_THUMBNAIL_URL)));
+        not(containsString(ItemBusinessController.NO_THUMBNAIL_URL)));
     assertThat(itemWithFileTO.getWebResolutionUrlUrl().toString(),
-        not(containsString(ItemController.NO_THUMBNAIL_URL)));
+        not(containsString(ItemBusinessController.NO_THUMBNAIL_URL)));
   }
 
   @Test

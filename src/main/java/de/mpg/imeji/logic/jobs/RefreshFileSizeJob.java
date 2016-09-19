@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
@@ -33,7 +33,7 @@ public class RefreshFileSizeJob implements Callable<Integer> {
     ImejiSPARQL.execUpdate(JenaCustomQueries.deleteAllFileSize());
     LOGGER.info("...done!");
     LOGGER.info("Retrieving all items...");
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     InternalStorageManager storageManager = new InternalStorageManager();
     Collection<Item> items = itemController.retrieveAll(Imeji.adminUser);
     LOGGER.info("...done (found  " + items.size() + ")");

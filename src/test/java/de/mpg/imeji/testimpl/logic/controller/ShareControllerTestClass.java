@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
@@ -185,7 +185,7 @@ public class ShareControllerTestClass extends ControllerTest {
     ShareBusinessController shareController = new ShareBusinessController();
     shareController.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, item.getId().toString(),
         ShareBusinessController.rolesAsList(ShareRoles.READ));
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     try {
       itemController.retrieve(item.getId(), JenaUtil.testUser2);
     } catch (Exception e) {

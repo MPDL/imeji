@@ -9,9 +9,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.user.controller.GroupBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
@@ -69,7 +69,7 @@ public class HistoryPage {
       } else if (ImejiPages.ALBUM_HOME.matches(uriStr)) {
         return new AlbumController().retrieveLazy(uri, user).getMetadata().getTitle();
       } else if (ImejiPages.ITEM_DETAIL.matches(uriStr)) {
-        return new ItemController().retrieveLazy(uri, user).getFilename();
+        return new ItemBusinessController().retrieveLazy(uri, user).getFilename();
       } else if (ImejiPages.USER_GROUP == imejiPage) {
         String groupUri = UrlHelper.decode(ObjectHelper.getId(uri));
         return new GroupBusinessController().read(URI.create(groupUri), user).getName();

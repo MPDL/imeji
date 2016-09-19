@@ -36,6 +36,9 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.GroupController;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -257,5 +260,22 @@ public class GroupBusinessController {
       LOGGER.info("User " + userToRemove.getId() + " (" + userToRemove.getEmail()
           + ") has been removed from group " + memberIn.getName());
     }
+  }
+
+  /**
+   * Reindex all user groups
+   * 
+   * @param index
+   * @throws ImejiException
+   */
+  public void reindex(String index) throws ImejiException {
+    LOGGER.info("Indexing users...");
+    ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.usergroups, ElasticService.ANALYSER);
+    List<UserGroup> groups = (List<UserGroup>) retrieveAll();
+    LOGGER.info("+++ " + groups.size() + " user groups to index +++");
+    indexer.indexBatch(groups);
+    indexer.commit();
+    LOGGER.info("...user groups reindexed!");
   }
 }

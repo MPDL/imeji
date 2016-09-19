@@ -127,6 +127,17 @@ public final class StorageController implements Serializable {
   }
 
   /**
+   * Return the file for the url
+   *
+   * @param url
+   * @param out
+   * @throws ImejiException
+   */
+  public File read(String url) throws ImejiException {
+    return storage.read(url);
+  }
+
+  /**
    * Call delete method of the controlled {@link Storage}
    *
    * @param url

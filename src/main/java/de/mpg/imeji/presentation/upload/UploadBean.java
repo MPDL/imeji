@@ -34,8 +34,8 @@ import com.ocpsoft.pretty.PrettyContext;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -323,7 +323,7 @@ public class UploadBean extends SuperBean implements Serializable {
       }
       validateName(file, title);
       Item item = null;
-      ItemController controller = new ItemController();
+      ItemBusinessController controller = new ItemBusinessController();
       if (isImportImageToFile()) {
         item = controller.updateThumbnail(findItemByFileName(title), file, getSessionUser());
       } else if (isUploadFileToItem()) {
@@ -364,7 +364,7 @@ public class UploadBean extends SuperBean implements Serializable {
 
           + sr.size() + " found).");
     }
-    return new ItemController().retrieveLazy(URI.create(sr.get(0)), getSessionUser());
+    return new ItemBusinessController().retrieveLazy(URI.create(sr.get(0)), getSessionUser());
   }
 
   /**
@@ -394,7 +394,7 @@ public class UploadBean extends SuperBean implements Serializable {
           .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, id), getSessionUser());
       isDiscaded();
       if (collection != null && getCollection().getId() != null) {
-        ItemController ic = new ItemController();
+        ItemBusinessController ic = new ItemBusinessController();
         collectionSize = ic.search(collection.getId(), null, null, Imeji.adminUser, null, 0, 0)
             .getNumberOfRecords();
       }

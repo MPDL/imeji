@@ -25,6 +25,8 @@
 package de.mpg.imeji.logic.storage.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -37,6 +39,7 @@ import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**
  * The {@link Storage} implementation for external Storages. Can only read files (if the files are
@@ -163,5 +166,16 @@ public class ExternalStorage implements Storage {
   @Override
   public String getStorageId(String url) {
     return url;
+  }
+
+  @Override
+  public File read(String url) throws ImejiException {
+    try {
+      File temp = TempFileUtil.createTempFile(url, null);
+      read(url, new FileOutputStream(temp), true);
+      return temp;
+    } catch (IOException e) {
+      throw new ImejiException("error reading file " + url, e);
+    }
   }
 }

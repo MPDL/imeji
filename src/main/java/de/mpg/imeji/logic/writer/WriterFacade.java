@@ -34,8 +34,8 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
-import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
@@ -208,11 +208,14 @@ public class WriterFacade {
     for (Object o : list) {
       message += " not allowed to " + Grant.getGrantTypeName(gt) + " " + extractID(o);
       if (gt == GrantType.CREATE) {
-        throwAuthorizationException(user != null, SecurityUtil.staticAuth().create(user, o), message);
+        throwAuthorizationException(user != null, SecurityUtil.staticAuth().create(user, o),
+            message);
       } else if (gt == GrantType.UPDATE) {
-        throwAuthorizationException(user != null, SecurityUtil.staticAuth().update(user, o), message);
+        throwAuthorizationException(user != null, SecurityUtil.staticAuth().update(user, o),
+            message);
       } else if (gt == GrantType.DELETE) {
-        throwAuthorizationException(user != null, SecurityUtil.staticAuth().delete(user, o), message);
+        throwAuthorizationException(user != null, SecurityUtil.staticAuth().delete(user, o),
+            message);
       } else if (gt == GrantType.UPDATE_CONTENT) {
         throwAuthorizationException(user != null, SecurityUtil.staticAuth().updateContent(user, o),
             message);
@@ -292,5 +295,4 @@ public class WriterFacade {
   public static List<Object> toList(Object o) {
     return Arrays.asList(o);
   }
-
 }

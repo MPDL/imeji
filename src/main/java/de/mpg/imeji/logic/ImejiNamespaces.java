@@ -31,8 +31,10 @@ public class ImejiNamespaces {
   public static final String STORAGE_ID = "http://imeji.org/terms/storageId";
 
 
+
   /*
    * Metadata
    */
   public static final String METADATA = "http://imeji.org/terms/metadata/";
+  public static final String TECHNICAL_METADATA = "http://imeji.org/terms/technicalmetadata/";
 }

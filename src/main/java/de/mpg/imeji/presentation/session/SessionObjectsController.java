@@ -3,8 +3,8 @@ package de.mpg.imeji.presentation.session;
 import java.util.List;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
 
@@ -82,7 +82,7 @@ public class SessionObjectsController {
    */
   public void reloadActiveAlbum() {
     if (session.getActiveAlbum() != null) {
-      ItemController ic = new ItemController();
+      ItemBusinessController ic = new ItemBusinessController();
       session.setActiveAlbum((Album) ic.searchAndSetContainerItems(session.getActiveAlbum(),
           session.getUser(), -1, 0));
     }

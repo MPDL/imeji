@@ -21,7 +21,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.concurrency.locks.Lock;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.controller.util.MetadataProfileUtil;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -296,7 +296,7 @@ public class EditItemMetadataBean extends SuperBean {
    * @throws ImejiException
    */
   public List<Item> loaditems(List<String> uris) throws ImejiException {
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     return (List<Item>) itemController.retrieveBatch(uris, -1, 0, getSessionUser());
   }
 
@@ -308,7 +308,7 @@ public class EditItemMetadataBean extends SuperBean {
    */
   public List<String> searchItems() throws ImejiException {
     SearchQuery sq = SearchQueryParser.parseStringQuery(query);
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     SearchResult sr =
         itemController.search(URI.create(collectionId), sq, null, getSessionUser(), null, -1, 0);
     return sr.getResults();

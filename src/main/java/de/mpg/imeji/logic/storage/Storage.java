@@ -77,6 +77,15 @@ public interface Storage extends Serializable {
   public void read(String url, OutputStream out, boolean close) throws ImejiException;
 
   /**
+   * Read the file stored in the passed url
+   *
+   * @param url
+   * @param out
+   * @throws ImejiException
+   */
+  public File read(String url) throws ImejiException;
+
+  /**
    * Delete the file stored in the passed url
    *
    * @param url

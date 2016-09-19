@@ -9,8 +9,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.presentation.beans.ConfigurationBean;
@@ -139,7 +139,7 @@ public class FileAuthorizationTest extends ControllerTest {
   }
 
   private void releaseItem() throws ImejiException {
-    ItemController c = new ItemController();
+    ItemBusinessController c = new ItemBusinessController();
     c.release(Arrays.asList(item), JenaUtil.testUser);
   }
 

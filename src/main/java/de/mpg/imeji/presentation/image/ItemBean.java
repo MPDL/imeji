@@ -26,9 +26,9 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -50,13 +50,13 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.TechnicalMetadata;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.metadata.MetadataSetWrapper;
 import de.mpg.imeji.presentation.metadata.SingleEditorWrapper;
-import de.mpg.imeji.presentation.metadata.extractors.TikaExtractor;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
@@ -209,13 +209,9 @@ public class ItemBean extends SuperBean {
    * @
    */
   public void initViewTechnicalMetadata() {
-    try {
-      techMd = new ArrayList<String>();
-      techMd = TikaExtractor.extract(item);
-    } catch (Exception e) {
-      techMd = new ArrayList<String>();
-      techMd.add(e.getMessage());
-      LOGGER.error("Error reading technical metadata", e);
+    techMd = new ArrayList<>();
+    for (TechnicalMetadata tmd : item.getTechnicalMetadata()) {
+      techMd.add(tmd.getName() + ": " + tmd.getValue());
     }
   }
 
@@ -238,7 +234,8 @@ public class ItemBean extends SuperBean {
    * @
    */
   public void loadImage() throws ImejiException {
-    item = new ItemController().retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
+    item = new ItemBusinessController().retrieve(ObjectHelper.getURI(Item.class, id),
+        getSessionUser());
     if (item == null) {
       throw new NotFoundException("LoadImage: empty");
     }
@@ -343,13 +340,13 @@ public class ItemBean extends SuperBean {
   }
 
   public void makePublic() throws ImejiException {
-    ItemController c = new ItemController();
+    ItemBusinessController c = new ItemBusinessController();
     c.release(Arrays.asList(item), getSessionUser());
     item = c.retrieve(item.getId(), getSessionUser());
   }
 
   public void makePrivate() throws ImejiException {
-    ItemController c = new ItemController();
+    ItemBusinessController c = new ItemBusinessController();
     c.unRelease(Arrays.asList(item), getSessionUser());
     item = c.retrieve(item.getId(), getSessionUser());
   }
@@ -407,7 +404,7 @@ public class ItemBean extends SuperBean {
     if (getIsInActiveAlbum()) {
       removeFromActiveAlbum();
     }
-    new ItemController().delete(Arrays.asList(item), getSessionUser());
+    new ItemBusinessController().delete(Arrays.asList(item), getSessionUser());
     new SessionObjectsController().unselectItem(item.getId().toString());
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
         + " " + Imeji.RESOURCE_BUNDLE.getMessage("success_collection_remove_from", getLocale()));
@@ -421,7 +418,8 @@ public class ItemBean extends SuperBean {
    * @throws IOException
    */
   public void withdraw() throws ImejiException, IOException {
-    new ItemController().withdraw(Arrays.asList(item), getDiscardComment(), getSessionUser());
+    new ItemBusinessController().withdraw(Arrays.asList(item), getDiscardComment(),
+        getSessionUser());
     new SessionObjectsController().unselectItem(item.getId().toString());
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
         + " " + Imeji.RESOURCE_BUNDLE.getMessage("success_item_withdraw", getLocale()));

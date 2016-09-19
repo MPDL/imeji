@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
@@ -85,7 +85,7 @@ public abstract class AbstractMetadataEditor {
    * @throws ImejiException
    */
   public void save() throws ImejiException {
-    ItemController ic = new ItemController();
+    ItemBusinessController ic = new ItemBusinessController();
     List<Item> itemList = validateAndFormatItemsForSaving();
     ic.updateBatch(itemList, sessionUser);
   }

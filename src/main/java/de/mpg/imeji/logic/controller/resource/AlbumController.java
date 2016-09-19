@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
@@ -22,10 +24,15 @@ import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.ImejiController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -48,6 +55,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
  * @version $Revision$ $LastChangedDate$
  */
 public class AlbumController extends ImejiController {
+  private static final Logger LOGGER = Logger.getLogger(AlbumController.class);
   private static final ReaderFacade READER = new ReaderFacade(Imeji.albumModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.albumModel);
   private Search search =
@@ -131,7 +139,7 @@ public class AlbumController extends ImejiController {
   public List<Album> retrieveBatch(List<String> uris, User user, int limit, int offset)
       throws ImejiException {
     List<Album> albums = retrieveBatchLazy(uris, user, limit, offset);
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     for (Album album : albums) {
       itemController.searchAndSetContainerItems(album, user, -1, 0);
     }
@@ -173,7 +181,7 @@ public class AlbumController extends ImejiController {
    */
   public void release(Album album, User user) throws ImejiException {
     prepareRelease(album, user);
-    ItemController ic = new ItemController();
+    ItemBusinessController ic = new ItemBusinessController();
     album = (Album) ic.searchAndSetContainerItems(album, user, -1, 0);
     if (album.getImages().isEmpty()) {
       throw new UnprocessableError("An empty album can not be released!");
@@ -216,7 +224,7 @@ public class AlbumController extends ImejiController {
     if (!SecurityUtil.staticAuth().create(user, album)) {
       throw new NotAllowedError("album_not_allowed_to_add_item");
     }
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     // Get the item of the album
     List<String> albumItems =
         itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0).getResults();
@@ -252,7 +260,7 @@ public class AlbumController extends ImejiController {
    * @throws ImejiException
    */
   public int removeFromAlbum(Album album, List<String> toDelete, User user) throws ImejiException {
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     // Get the item of the album
     List<String> albumItems =
         itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0).getResults();
@@ -381,6 +389,16 @@ public class AlbumController extends ImejiController {
     update(album, user);
     // Return how many items have been removed from album
     return beforeSize;
+  }
+
+  public void reindex(String index) throws ImejiException {
+    LOGGER.info("Indexing Albums...");
+    ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.albums, ElasticService.ANALYSER);
+    List<Album> albums = retrieveAll(Imeji.adminUser);
+    indexer.indexBatch(albums);
+    indexer.commit();
+    LOGGER.info("Albums reindexed!");
   }
 
 }

@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
@@ -114,7 +114,7 @@ public class StartPageBean extends SuperBean implements Serializable {
    * @return
    */
   private SearchResult searchItems(SearchQuery sq, SortCriterion sc) {
-    ItemController ic = new ItemController();
+    ItemBusinessController ic = new ItemBusinessController();
     if (sq.isEmpty() && searchforItemCreatedForLessThan > 0) {
       // Search for item which have been for less than n hours
       try {
@@ -173,7 +173,7 @@ public class StartPageBean extends SuperBean implements Serializable {
     if (sr == null) {
       return;
     }
-    ItemController ic = new ItemController();
+    ItemBusinessController ic = new ItemBusinessController();
     List<String> uris = new ArrayList<String>();
     if (random) {
       uris = getRandomResults(sr);

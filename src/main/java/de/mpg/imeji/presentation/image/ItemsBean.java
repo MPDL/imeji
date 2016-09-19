@@ -20,7 +20,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchIndex;
@@ -173,7 +173,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int size) {
-    ItemController controller = new ItemController();
+    ItemBusinessController controller = new ItemBusinessController();
     return controller.search(null, searchQuery, sortCriterion, getSessionUser(), getSpace(), size,
         offset);
   }
@@ -186,7 +186,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws ImejiException
    */
   public Collection<Item> loadImages(List<String> uris) throws ImejiException {
-    ItemController controller = new ItemController();
+    ItemBusinessController controller = new ItemBusinessController();
     return controller.retrieveBatchLazy(uris, -1, 0, getSessionUser());
   }
 
@@ -355,7 +355,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       BeanHelper.error(
           Imeji.RESOURCE_BUNDLE.getMessage("error_image_withdraw_discardComment", getLocale()));
     } else {
-      ItemController c = new ItemController();
+      ItemBusinessController c = new ItemBusinessController();
       c.withdraw((List<Item>) items, discardComment, getSessionUser());
       discardComment = null;
       unselect(uris);
@@ -371,7 +371,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private void delete(List<String> uris) {
     try {
       Collection<Item> items = loadImages(uris);
-      ItemController ic = new ItemController();
+      ItemBusinessController ic = new ItemBusinessController();
       ic.delete((List<Item>) items, getSessionUser());
       BeanHelper
           .info(uris.size() + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_deleted", getLocale()));

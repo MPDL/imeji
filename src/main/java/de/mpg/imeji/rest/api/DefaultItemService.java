@@ -12,8 +12,8 @@ import org.apache.commons.io.FilenameUtils;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -40,7 +40,7 @@ import de.mpg.imeji.rest.transfer.TransferObjectFactory;
  *
  */
 public class DefaultItemService implements API<DefaultItemTO> {
-  private final ItemController controller = new ItemController();
+  private final ItemBusinessController controller = new ItemBusinessController();
 
   @Override
   public DefaultItemTO create(DefaultItemTO to, User u) throws ImejiException {

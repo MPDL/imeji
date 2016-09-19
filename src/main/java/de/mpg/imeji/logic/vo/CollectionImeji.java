@@ -28,7 +28,6 @@ public class CollectionImeji extends Container implements Serializable {
   private URI profile = null;
   @j2jResource("http://imeji.org/terms/metadataSet")
   private MetadataSet metadataSet = new MetadataSet();
-
   @j2jResource("http://imeji.org/terms/space")
   private URI space;
 

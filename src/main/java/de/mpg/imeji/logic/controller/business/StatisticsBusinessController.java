@@ -2,7 +2,7 @@ package de.mpg.imeji.logic.controller.business;
 
 import java.util.List;
 
-import de.mpg.imeji.logic.controller.resource.ImejiController;
+import de.mpg.imeji.logic.controller.ImejiController;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;

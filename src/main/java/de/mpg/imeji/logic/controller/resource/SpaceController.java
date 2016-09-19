@@ -24,9 +24,13 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
+import de.mpg.imeji.logic.controller.ImejiController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -501,6 +505,22 @@ public class SpaceController extends ImejiController {
     removeFile(space);
     removeCollections(space, retrieveCollections(space, true), user);
     WRITER.delete(WriterFacade.toList(space), user);
+  }
+
+  /**
+   * Reindex all spaces
+   * 
+   * @param index
+   * @throws ImejiException
+   */
+  public void reindex(String index) throws ImejiException {
+    LOGGER.info("Indexing Spaces...");
+    ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.spaces, ElasticService.ANALYSER);
+    List<Space> items = retrieveAll();
+    LOGGER.info("+++ " + items.size() + " items to index +++");
+    indexer.indexBatch(items);
+    LOGGER.info("Spaces reindexed!");
   }
 
   public boolean isSpaceByLabel(String spaceId) {

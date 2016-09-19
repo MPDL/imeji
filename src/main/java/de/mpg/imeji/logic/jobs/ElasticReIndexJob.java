@@ -1,15 +1,13 @@
 package de.mpg.imeji.logic.jobs;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
@@ -20,9 +18,6 @@ import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Space;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
  * REindex data from the database into elastic search
@@ -70,14 +65,8 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void reindexFolders(String index) throws ImejiException {
-    LOGGER.info("Indexing Folders...");
-    ElasticIndexer indexer =
-        new ElasticIndexer(index, ElasticTypes.folders, ElasticService.ANALYSER);
     CollectionController c = new CollectionController();
-    List<CollectionImeji> collections = (List<CollectionImeji>) c.retrieveAll(Imeji.adminUser);
-    indexer.indexBatch(collections);
-    indexer.commit();
-    LOGGER.info("Folders reindexed!");
+    c.reindex(index);
   }
 
   /**
@@ -86,14 +75,8 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void reindexAlbums(String index) throws ImejiException {
-    LOGGER.info("Indexing Albums...");
-    ElasticIndexer indexer =
-        new ElasticIndexer(index, ElasticTypes.albums, ElasticService.ANALYSER);
     AlbumController controller = new AlbumController();
-    List<Album> albums = controller.retrieveAll(Imeji.adminUser);
-    indexer.indexBatch(albums);
-    indexer.commit();
-    LOGGER.info("Albums reindexed!");
+    controller.reindex(index);
   }
 
   /**
@@ -103,14 +86,8 @@ public class ElasticReIndexJob implements Callable<Integer> {
    *
    */
   private void reindexItems(String index) throws ImejiException {
-    LOGGER.info("Indexing Items...");
-    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.items, ElasticService.ANALYSER);
-    ItemController controller = new ItemController();
-    List<Item> items = (List<Item>) controller.retrieveAll(Imeji.adminUser);
-    LOGGER.info("+++ " + items.size() + " items to index +++");
-    indexer.indexBatch(items);
-    indexer.commit();
-    LOGGER.info("Items reindexed!");
+    ItemBusinessController controller = new ItemBusinessController();
+    controller.reindex(index);
   }
 
   /**
@@ -120,15 +97,8 @@ public class ElasticReIndexJob implements Callable<Integer> {
    *
    */
   private void reindexSpaces(String index) throws ImejiException {
-    LOGGER.info("Indexing Spaces...");
-    ElasticIndexer indexer =
-        new ElasticIndexer(index, ElasticTypes.spaces, ElasticService.ANALYSER);
     SpaceController controller = new SpaceController();
-    List<Space> items = controller.retrieveAll();
-    LOGGER.info("+++ " + items.size() + " items to index +++");
-    indexer.indexBatch(items);
-    indexer.commit();
-    LOGGER.info("Spaces reindexed!");
+    controller.reindex(index);
   }
 
   /**
@@ -138,13 +108,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void reindexUsers(String index) throws ImejiException {
-    LOGGER.info("Indexing users...");
-    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER);
-    List<User> users = new UserBusinessController().retrieveAll();
-    LOGGER.info("+++ " + users.size() + " users to index +++");
-    indexer.indexBatch(users);
-    indexer.commit();
-    LOGGER.info("...users reindexed!");
+    new UserBusinessController().reindex(index);
   }
 
   /**
@@ -154,14 +118,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void reindexUserGroups(String index) throws ImejiException {
-    LOGGER.info("Indexing users...");
-    ElasticIndexer indexer =
-        new ElasticIndexer(index, ElasticTypes.usergroups, ElasticService.ANALYSER);
-    List<UserGroup> groups = (List<UserGroup>) new GroupBusinessController().retrieveAll();
-    LOGGER.info("+++ " + groups.size() + " user groups to index +++");
-    indexer.indexBatch(groups);
-    indexer.commit();
-    LOGGER.info("...user groups reindexed!");
+    new GroupBusinessController().reindex(index);
   }
 
 }

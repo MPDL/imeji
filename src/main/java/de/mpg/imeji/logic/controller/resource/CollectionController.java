@@ -24,9 +24,14 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.ImejiController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -310,7 +315,7 @@ public class CollectionController extends ImejiController {
    * @throws ImejiException
    */
   public void delete(CollectionImeji collection, User user) throws ImejiException {
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     List<String> itemUris =
         itemController.search(collection.getId(), null, null, user, null, -1, 0).getResults();
     if (hasImageLocked(itemUris, user)) {
@@ -370,7 +375,7 @@ public class CollectionController extends ImejiController {
    * @throws ImejiException
    */
   public void release(CollectionImeji collection, User user) throws ImejiException {
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
 
     isLoggedInUser(user);
 
@@ -410,7 +415,7 @@ public class CollectionController extends ImejiController {
    * @throws ImejiException
    */
   public void withdraw(CollectionImeji coll, User user) throws ImejiException {
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     isLoggedInUser(user);
 
     if (coll == null) {
@@ -487,9 +492,24 @@ public class CollectionController extends ImejiController {
     }
   }
 
+  /**
+   * Reindex all collections
+   * 
+   * @param index
+   * @throws ImejiException
+   */
+  public void reindex(String index) throws ImejiException {
+    LOGGER.info("Indexing collections...");
+    ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.folders, ElasticService.ANALYSER);
+    List<CollectionImeji> collections = (List<CollectionImeji>) retrieveAll(Imeji.adminUser);
+    indexer.indexBatch(collections);
+    LOGGER.info("collections reindexed!");
+  }
+
   private void updateCollectionItemsProfile(CollectionImeji ic, URI newProfileUri, User user)
       throws ImejiException {
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     List<String> itemUris =
         itemController.search(ic.getId(), null, null, user, null, -1, 0).getResults();
 
