@@ -29,8 +29,8 @@ import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchSimpleMetadata;
+import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Grant;
@@ -198,7 +198,7 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder buildSecurityQuery(User user, String folderUri) {
     if (user != null) {
-      if (SecurityUtil.isSysAdmin(user)) {
+      if (SearchUtils.isSysAdmin(user)) {
         // Admin: can view everything
         return QueryBuilders.matchAllQuery();
       } else {
@@ -224,7 +224,6 @@ public class ElasticQueryFactory {
         return QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
             .lookupIndex(ElasticService.DATA_ALIAS).lookupId(containerUri)
             .lookupType(ElasticTypes.albums.name()).lookupPath(ElasticFields.MEMBER.field());
-        // return fieldQuery(ElasticFields.ALBUM, containerUri, SearchOperators.EQUALS, false);
       }
     }
     return QueryBuilders.matchAllQuery();
@@ -270,6 +269,10 @@ public class ElasticQueryFactory {
   private static QueryBuilder termQuery(SearchPair pair, User user) {
     if (pair instanceof SearchMetadata) {
       return metadataFilter((SearchMetadata) pair);
+    } else if (pair instanceof SearchTechnicalMetadata) {
+      return technicalMetadataQuery((SearchTechnicalMetadata) pair);
+    } else if (pair instanceof SearchSimpleMetadata) {
+      simpleMetadataQuery((SearchSimpleMetadata) pair);
     }
     SearchFields index = pair.getField();
     switch (index) {
@@ -277,12 +280,22 @@ public class ElasticQueryFactory {
         break;
       case all:
         BoolQueryBuilder f = QueryBuilders.boolQuery()
-            .should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.REGEX, false));
+            .should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.REGEX, false))
+            .should(
+                fieldQuery(ElasticFields.FULLTEXT, pair.getValue(), SearchOperators.REGEX, false));
         if (NumberUtils.isNumber(pair.getValue())) {
           f.should(fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(),
               SearchOperators.EQUALS, false));
         }
         return negate(f, pair.isNot());
+      case metadata:
+        BoolQueryBuilder mdQuery = QueryBuilders.boolQuery()
+            .should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.REGEX, false));
+        if (NumberUtils.isNumber(pair.getValue())) {
+          mdQuery.should(fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(),
+              SearchOperators.EQUALS, false));
+        }
+        return negate(mdQuery, pair.isNot());
       case checksum:
         return fieldQuery(ElasticFields.CHECKSUM, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -327,8 +340,8 @@ public class ElasticQueryFactory {
         // not indexed
         break;
       case creator:
-        return fieldQuery(ElasticFields.CREATOR, ElasticSearchFactoryUtil.getUserId(pair.getValue()),
-            pair.getOperator(), pair.isNot());
+        return fieldQuery(ElasticFields.CREATOR,
+            ElasticSearchFactoryUtil.getUserId(pair.getValue()), pair.getOperator(), pair.isNot());
       case collaborator:
         return roleQueryWithoutCreator(ElasticFields.READ, pair.getValue(), pair.isNot());
       case uploader:
@@ -492,17 +505,6 @@ public class ElasticQueryFactory {
   }
 
   /**
-   * TODO Index Labels of metadata to search for metadata by label
-   *
-   * @param md
-   * @return
-   */
-  private static QueryBuilder metadataFilter(SearchSimpleMetadata md) {
-    return null;
-  }
-
-
-  /**
    * Create a {@link QueryBuilder} for a {@link SearchMetadata}
    *
    * @param md
@@ -636,6 +638,38 @@ public class ElasticQueryFactory {
         QueryBuilders.boolQuery().must(valueQuery).must(fieldQuery(ElasticFields.METADATA_STATEMENT,
             ObjectHelper.getId(statement), SearchOperators.EQUALS, false)));
 
+  }
+
+  /**
+   * Query for technical metadata
+   * 
+   * @param label
+   * @param value
+   * @param not
+   * @return
+   */
+  private static QueryBuilder technicalMetadataQuery(SearchTechnicalMetadata tmd) {
+    return QueryBuilders.nestedQuery(ElasticFields.TECHNICAL.field(), QueryBuilders.boolQuery()
+        .must(
+            fieldQuery(ElasticFields.TECHNICAL_NAME, tmd.getLabel(), SearchOperators.EQUALS, false))
+        .must(fieldQuery(ElasticFields.TECHNICAL_VALUE, tmd.getValue(), tmd.getOperator(),
+            tmd.isNot())));
+  }
+
+  /**
+   * Query for metadata via metadata label (label="value")
+   * 
+   * @param label
+   * @param value
+   * @param not
+   * @return
+   */
+  private static QueryBuilder simpleMetadataQuery(SearchSimpleMetadata smd) {
+    return QueryBuilders.boolQuery()
+        .must(
+            fieldQuery(ElasticFields.TECHNICAL_NAME, smd.getLabel(), SearchOperators.EQUALS, false))
+        .must(fieldQuery(ElasticFields.TECHNICAL_VALUE, smd.getValue(), smd.getOperator(),
+            smd.isNot()));
   }
 
   /**

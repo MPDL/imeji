@@ -28,7 +28,8 @@
          },
          "fulltext":{
             "type":"string",
-            "analyzer":"ngram_analyzer"
+            "analyzer":"ngram_analyzer",
+            "include_in_all":false
          },
          "filetype":{
             "type":"string",

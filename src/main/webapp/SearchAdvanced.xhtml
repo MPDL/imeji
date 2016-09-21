@@ -22,7 +22,23 @@
 	<ui:define name="mainContent">
 		<!-- AJAX Wrapper - START -->
 		<h:panelGroup layout="block" id="imj_ajaxWrapper" class="imj_advancedSearch">
-			<h:form id="advancedSearchForm" onkeypress="if (event.keyCode == 13) return false;">
+			<h:form id="advancedSearchForm" onkeypress="if (event.keyCode == 13) {document.getElementById('advancedSearchForm:submit').click(); return false;}">
+				<div class="imj_searchUnit">
+					<div class="imj_searchDetails">
+						<h:outputText value="#{lbl.all_fields}" />
+					</div>
+					<div class="imj_searchDetails">
+						<div class="imj_searchInput">
+							<h:inputText value="#{AdvancedSearchBean.formular.allSearch.value}"/>
+						</div>
+						<h:selectBooleanCheckbox value="#{AdvancedSearchBean.formular.allSearch.includeFulltext}" /> 
+						<h:outputText value="#{lbl.include_fulltext}"/>
+					</div>
+					<div class="imj_logicalConnector">
+			    		<h:outputLabel value="#{lbl.and_big}"/>
+			    		<h:outputText value="&#160;"/>
+		    		</div>
+				</div>
 				
 				<div class="imj_searchUnit">
 					<div class="imj_searchDetails">
@@ -57,7 +73,7 @@
 				    		<h:outputLabel value="#{lbl.or_big}" rendered="#{gIndex.index > 0}"/>
 				    		<h:outputText value="&#160;" rendered="#{gIndex.index == 0}"/>
 			    		</div>
-						
+			    		
 						<div class="imj_searchSelectbox">
 							<h:selectOneMenu id="selProfile" value="#{g.profileId}" onchange="document.getElementById('advancedSearchForm:groups:' + #{gIndex.index} +':changeGroup').click();">
 								<f:selectItems value="#{AdvancedSearchBean.profilesMenu}"/>
@@ -76,6 +92,7 @@
 								</h:selectOneMenu>
 							</h:panelGroup>
 						</div>
+						
 						<ui:repeat id="els" var="el" value="#{g.searchElementForms}" rows="0" varStatus="elIndex">
 							<div class="imj_searchDetails">
 								

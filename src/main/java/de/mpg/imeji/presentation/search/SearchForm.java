@@ -39,6 +39,7 @@ public class SearchForm {
   private List<SearchGroupForm> groups;
   private SearchPair fileTypeSearch =
       new SearchPair(SearchFields.filetype, SearchOperators.REGEX, "", false);
+  private SearchPair allSearch = new SearchPair(SearchFields.all, SearchOperators.REGEX, "", false);
 
 
   /**
@@ -75,6 +76,10 @@ public class SearchForm {
           fileTypeSearch = new SearchPair(SearchFields.filetype, SearchOperators.REGEX,
               ((SearchPair) se).getValue(), false);
         }
+        if (((SearchPair) se).getField() == SearchFields.all) {
+          setAllSearch(new SearchPair(SearchFields.all, SearchOperators.REGEX,
+              ((SearchPair) se).getValue(), false));
+        }
       }
     }
   }
@@ -109,13 +114,16 @@ public class SearchForm {
   public SearchQuery getFormularAsSearchQuery() {
     try {
       SearchQuery searchQuery = new SearchQuery();
+      searchQuery.addPair(allSearch);
       for (SearchGroupForm g : groups) {
         if (!searchQuery.isEmpty()) {
           searchQuery.addLogicalRelation(LOGICAL_RELATIONS.OR);
         }
         searchQuery.addGroup(g.getAsSearchGroup());
       }
-      searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
+      if (!searchQuery.isEmpty()) {
+        searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
+      }
       searchQuery.addPair(fileTypeSearch);
       return searchQuery;
     } catch (UnprocessableError e) {
@@ -230,5 +238,13 @@ public class SearchForm {
 
   public void setFileTypeSearch(SearchPair fileTypeSearch) {
     this.fileTypeSearch = fileTypeSearch;
+  }
+
+  public SearchPair getAllSearch() {
+    return allSearch;
+  }
+
+  public void setAllSearch(SearchPair allSearch) {
+    this.allSearch = allSearch;
   }
 }

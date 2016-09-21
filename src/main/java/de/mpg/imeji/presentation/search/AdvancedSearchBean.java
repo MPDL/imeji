@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -29,8 +31,8 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Java bean for the advanced search page
@@ -39,7 +41,10 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class AdvancedSearchBean {
+@ManagedBean(name = "AdvancedSearchBean")
+@ViewScoped
+public class AdvancedSearchBean extends SuperBean {
+  private static final long serialVersionUID = -3989020231445922611L;
   private SearchForm formular = null;
   private MetadataLabels metadataLabels;
   // Menus
@@ -53,7 +58,6 @@ public class AdvancedSearchBean {
    * red
    */
   private boolean errorQuery = false;
-  private SessionBean session;
   private static final Logger LOGGER = Logger.getLogger(AdvancedSearchBean.class);
 
   /**
@@ -61,23 +65,25 @@ public class AdvancedSearchBean {
    *
    * @throws ImejiException
    */
-  public AdvancedSearchBean() throws ImejiException {
-    session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    metadataLabels = new MetadataLabels(new MetadataProfile(), session.getLocale());
-    formular = new SearchForm(new SearchQuery(), new HashMap<>(), metadataLabels);
+  public AdvancedSearchBean() {
+
   }
+
+
 
   /**
    * Called when the page is called per get request. Read the query in the url and initialize the
    * form with it
    *
    * @return
+   * @throws ImejiException
    */
-  public String getNewSearch() {
+  public String getNewSearch() throws ImejiException {
+    metadataLabels = new MetadataLabels(new MetadataProfile(), getLocale());
+    formular = new SearchForm(new SearchQuery(), new HashMap<>(), metadataLabels);
     initMenus();
     try {
-      String query =
-          FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("q");
+      String query = UrlHelper.getParameterValue("q");
       if (!UrlHelper.getParameterBoolean("error")) {
         errorQuery = false;
         initForm(SearchQueryParser.parseStringQuery(query));
@@ -95,12 +101,12 @@ public class AdvancedSearchBean {
   private void initMenus() {
     operatorsMenu = new ArrayList<SelectItem>();
     operatorsMenu.add(new SelectItem(LOGICAL_RELATIONS.AND,
-        Imeji.RESOURCE_BUNDLE.getLabel("and_small", session.getLocale())));
+        Imeji.RESOURCE_BUNDLE.getLabel("and_small", getLocale())));
     operatorsMenu.add(new SelectItem(LOGICAL_RELATIONS.OR,
-        Imeji.RESOURCE_BUNDLE.getLabel("or_small", session.getLocale())));
+        Imeji.RESOURCE_BUNDLE.getLabel("or_small", getLocale())));
     fileTypesMenu = new ArrayList<>();
     for (Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
-      fileTypesMenu.add(new SelectItem(type.getName(session.getLocale().getLanguage())));
+      fileTypesMenu.add(new SelectItem(type.getName(getLocale().getLanguage())));
     }
   }
 
@@ -113,7 +119,7 @@ public class AdvancedSearchBean {
   public void initForm(SearchQuery searchQuery) throws Exception {
     Map<String, MetadataProfile> profs = loadProfilesAndInitMenu();
     metadataLabels =
-        new MetadataLabels(new ArrayList<MetadataProfile>(profs.values()), session.getLocale());
+        new MetadataLabels(new ArrayList<MetadataProfile>(profs.values()), getLocale());
     formular = new SearchForm(searchQuery, profs, metadataLabels);
     if (formular.getGroups().size() == 0) {
       formular.addSearchGroup(0);
@@ -129,7 +135,7 @@ public class AdvancedSearchBean {
     for (String t : formular.getFileTypeSearch().getValue().split(Pattern.quote("|"))) {
       Type type = Imeji.CONFIG.getFileTypes().getType(t);
       if (type != null) {
-        fileTypesSelected.add(type.getName(session.getLocale().getLanguage()));
+        fileTypesSelected.add(type.getName(getLocale().getLanguage()));
       }
       fileTypesSelected.add(t);
     }
@@ -153,12 +159,11 @@ public class AdvancedSearchBean {
    */
   private Map<String, MetadataProfile> loadProfilesAndInitMenu() throws ImejiException {
     profilesMenu = new ArrayList<SelectItem>();
-    profilesMenu.add(new SelectItem(null,
-        Imeji.RESOURCE_BUNDLE.getLabel("select_profile", session.getLocale())));
+    profilesMenu
+        .add(new SelectItem(null, Imeji.RESOURCE_BUNDLE.getLabel("select_profile", getLocale())));
     ProfileController controller = new ProfileController();
     Map<String, MetadataProfile> map = new HashMap<String, MetadataProfile>();
-    for (MetadataProfile p : controller.search(session.getUser(),
-        session.getSelectedSpaceString())) {
+    for (MetadataProfile p : controller.search(getSessionUser(), getSpace())) {
       if (p != null && p.getStatements() != null && p.getStatements().size() > 0) {
         map.put(p.getId().toString(), p);
         profilesMenu.add(new SelectItem(p.getId().toString(), p.getTitle()));
@@ -192,7 +197,7 @@ public class AdvancedSearchBean {
       FacesContext.getCurrentInstance().getExternalContext()
           .redirect(navigation.getBrowseUrl() + "?q=" + q);
     } catch (UnprocessableError e) {
-      BeanHelper.error(e, session.getLocale());
+      BeanHelper.error(e, getLocale());
       LOGGER.error("Error invalid search form", e);
     }
   }
@@ -307,7 +312,7 @@ public class AdvancedSearchBean {
    */
   public String getSimpleQuery() {
     return SearchQueryParser.searchQuery2PrettyQuery(formular.getFormularAsSearchQuery(),
-        session.getLocale(), metadataLabels.getInternationalizedLabels());
+        getLocale(), metadataLabels.getInternationalizedLabels());
   }
 
   /**
@@ -417,5 +422,4 @@ public class AdvancedSearchBean {
   public MetadataLabels getMetadataLabels() {
     return metadataLabels;
   }
-
 }

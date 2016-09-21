@@ -7,7 +7,7 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
  *
  */
 public enum ElasticFields {
-  ALL, ID, NAME, DESCRIPTION, SPACE, READ, UPLOAD, USERS, COLLECTIONSINSPACE, STATUS, LASTEDITOR, CREATOR, CREATED, MODIFIED, MEMBER, PID, FILETYPE, SIZE, FOLDER, PROFILE, ALBUM, CHECKSUM, FILENAME, METADATA, METADATA_TEXT(
+  ALL, ID, NAME, DESCRIPTION, FULLTEXT, SPACE, READ, UPLOAD, USERS, COLLECTIONSINSPACE, STATUS, LASTEDITOR, CREATOR, CREATED, MODIFIED, MEMBER, PID, FILETYPE, SIZE, FOLDER, PROFILE, ALBUM, CHECKSUM, FILENAME, METADATA, METADATA_TEXT(
       "metadata.text", true), METADATA_NUMBER("metadata.number"), METADATA_LOCATION(
           "metadata.location"), METADATA_URI("metadata.uri"), METADATA_FAMILYNAME(
               "metadata.familyname"), METADATA_GIVENNAME("metadata.givenname"), METADATA_LONGITUDE(
@@ -21,7 +21,10 @@ public enum ElasticFields {
                                               "author.organization.country"), AUTHOR_ORGANIZATION_DESCRIPTION(
                                                   "author.organization.description"), INFO_LABEL(
                                                       "info.label"), INFO_TEXT(
-                                                          "info.text"), INFO_URL("info.url"), EMAIL;
+                                                          "info.text"), INFO_URL(
+                                                              "info.url"), EMAIL, TECHNICAL, TECHNICAL_NAME(
+                                                                  "technical.name"), TECHNICAL_VALUE(
+                                                                      "technical.value");
   /**
    * The field which must be used to search in elasticsearch
    */

@@ -20,6 +20,7 @@ public class SearchPair extends SearchElement {
   private SearchOperators operator;
   private String value;
   private SearchFields field;
+  private boolean includeFulltext = true;
 
   /**
    * Default constructor

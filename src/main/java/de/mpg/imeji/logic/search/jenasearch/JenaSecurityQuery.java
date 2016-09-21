@@ -8,13 +8,14 @@ import java.util.List;
 
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.ImejiNamespaces;
+import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.User;
 
 /**
  * Simple security query add to any imeji sparql query, a security filter (according to user,
@@ -96,7 +97,7 @@ public class JenaSecurityQuery {
   private static String getUserGrantsAsFilterSimple(User user, String rdfType,
       boolean isUserSearch) {
 
-    if (SecurityUtil.isSysAdmin(user) && !isUserSearch) {
+    if (SearchUtils.isSysAdmin(user) && !isUserSearch) {
       return "";
     }
     return getAllowedContainersFilter(user, rdfType, isUserSearch);

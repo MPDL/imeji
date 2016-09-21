@@ -15,13 +15,13 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
  * @version $Revision$ $LastChangedDate$
  */
 public class SearchMetadata extends SearchPair {
-  private URI statement;
+  private final URI statement;
 
   /**
    * Default Constructor
    */
   public SearchMetadata() {
-
+    this.statement = null;
   }
 
   public SearchMetadata(SearchFields field, SearchOperators operator, String value, URI statement,
@@ -42,9 +42,5 @@ public class SearchMetadata extends SearchPair {
 
   public URI getStatement() {
     return statement;
-  }
-
-  public void setStatement(URI statement) {
-    this.statement = statement;
   }
 }
