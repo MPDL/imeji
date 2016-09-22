@@ -37,8 +37,13 @@ public class UserController {
   private static final Comparator<User> USER_COMPARATOR_BY_NAME = new Comparator<User>() {
     @Override
     public int compare(User c1, User c2) {
-      return c1.getPerson().getCompleteName().toLowerCase()
-          .compareTo(c2.getPerson().getCompleteName().toLowerCase());
+      try {
+        return c1.getPerson().getCompleteName().toLowerCase()
+            .compareTo(c2.getPerson().getCompleteName().toLowerCase());
+      } catch (Exception e) {
+        return 0;
+      }
+
     }
   };
 
