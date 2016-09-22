@@ -288,14 +288,9 @@ public class ElasticQueryFactory {
               SearchOperators.EQUALS, false));
         }
         return negate(f, pair.isNot());
-      case metadata:
-        BoolQueryBuilder mdQuery = QueryBuilders.boolQuery()
-            .should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.REGEX, false));
-        if (NumberUtils.isNumber(pair.getValue())) {
-          mdQuery.should(fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(),
-              SearchOperators.EQUALS, false));
-        }
-        return negate(mdQuery, pair.isNot());
+      case fulltext:
+        return fieldQuery(ElasticFields.FULLTEXT, pair.getValue(), pair.getOperator(),
+            pair.isNot());
       case checksum:
         return fieldQuery(ElasticFields.CHECKSUM, pair.getValue(), pair.getOperator(),
             pair.isNot());

@@ -40,6 +40,7 @@ public class SearchForm {
   private SearchPair fileTypeSearch =
       new SearchPair(SearchFields.filetype, SearchOperators.REGEX, "", false);
   private SearchPair allSearch = new SearchPair(SearchFields.all, SearchOperators.REGEX, "", false);
+  private boolean includeFulltext = true;
 
 
   /**
@@ -76,9 +77,25 @@ public class SearchForm {
           fileTypeSearch = new SearchPair(SearchFields.filetype, SearchOperators.REGEX,
               ((SearchPair) se).getValue(), false);
         }
-        if (((SearchPair) se).getField() == SearchFields.all) {
-          setAllSearch(new SearchPair(SearchFields.all, SearchOperators.REGEX,
-              ((SearchPair) se).getValue(), false));
+      }
+      parseAllFieldSearch(se);
+    }
+  }
+
+  /**
+   * Find the search for all field
+   * 
+   * @param se
+   */
+  private void parseAllFieldSearch(SearchElement se) {
+    if (allSearch.getValue().isEmpty()) {
+      if (se.getType().equals(SEARCH_ELEMENTS.PAIR)
+          && ((SearchPair) se).getField() == SearchFields.all) {
+        setAllSearch(new SearchPair(SearchFields.all, SearchOperators.REGEX,
+            ((SearchPair) se).getValue(), false));
+      } else if (se.getType().equals(SEARCH_ELEMENTS.GROUP)) {
+        for (SearchElement gse : ((SearchGroup) se).getElements()) {
+          parseAllFieldSearch(gse);
         }
       }
     }
@@ -114,6 +131,15 @@ public class SearchForm {
   public SearchQuery getFormularAsSearchQuery() {
     try {
       SearchQuery searchQuery = new SearchQuery();
+      if (!allSearch.isEmpty()) {
+        if (includeFulltext) {
+          SearchGroup g = new SearchGroup();
+          g.addPair(allSearch);
+          g.addLogicalRelation(LOGICAL_RELATIONS.OR);
+          g.addPair(new SearchPair(SearchFields.fulltext, SearchOperators.REGEX,
+              allSearch.getValue(), false));
+        }
+      }
       searchQuery.addPair(allSearch);
       for (SearchGroupForm g : groups) {
         if (!searchQuery.isEmpty()) {
@@ -246,5 +272,13 @@ public class SearchForm {
 
   public void setAllSearch(SearchPair allSearch) {
     this.allSearch = allSearch;
+  }
+
+  public boolean isIncludeFulltext() {
+    return includeFulltext;
+  }
+
+  public void setIncludeFulltext(boolean includeFulltext) {
+    this.includeFulltext = includeFulltext;
   }
 }
