@@ -39,6 +39,8 @@ public class SearchForm {
   private List<SearchGroupForm> groups;
   private SearchPair fileTypeSearch =
       new SearchPair(SearchFields.filetype, SearchOperators.REGEX, "", false);
+  private SearchPair allSearch = new SearchPair(SearchFields.all, SearchOperators.REGEX, "", false);
+  private boolean includeFulltext = true;
 
 
   /**
@@ -76,6 +78,26 @@ public class SearchForm {
               ((SearchPair) se).getValue(), false);
         }
       }
+      parseAllFieldSearch(se);
+    }
+  }
+
+  /**
+   * Find the search for all field
+   * 
+   * @param se
+   */
+  private void parseAllFieldSearch(SearchElement se) {
+    if (allSearch.getValue().isEmpty()) {
+      if (se.getType().equals(SEARCH_ELEMENTS.PAIR)
+          && ((SearchPair) se).getField() == SearchFields.all) {
+        setAllSearch(new SearchPair(SearchFields.all, SearchOperators.REGEX,
+            ((SearchPair) se).getValue(), false));
+      } else if (se.getType().equals(SEARCH_ELEMENTS.GROUP)) {
+        for (SearchElement gse : ((SearchGroup) se).getElements()) {
+          parseAllFieldSearch(gse);
+        }
+      }
     }
   }
 
@@ -109,13 +131,25 @@ public class SearchForm {
   public SearchQuery getFormularAsSearchQuery() {
     try {
       SearchQuery searchQuery = new SearchQuery();
+      if (!allSearch.isEmpty()) {
+        if (includeFulltext) {
+          SearchGroup g = new SearchGroup();
+          g.addPair(allSearch);
+          g.addLogicalRelation(LOGICAL_RELATIONS.OR);
+          g.addPair(new SearchPair(SearchFields.fulltext, SearchOperators.REGEX,
+              allSearch.getValue(), false));
+        }
+      }
+      searchQuery.addPair(allSearch);
       for (SearchGroupForm g : groups) {
         if (!searchQuery.isEmpty()) {
           searchQuery.addLogicalRelation(LOGICAL_RELATIONS.OR);
         }
         searchQuery.addGroup(g.getAsSearchGroup());
       }
-      searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
+      if (!searchQuery.isEmpty()) {
+        searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
+      }
       searchQuery.addPair(fileTypeSearch);
       return searchQuery;
     } catch (UnprocessableError e) {
@@ -230,5 +264,21 @@ public class SearchForm {
 
   public void setFileTypeSearch(SearchPair fileTypeSearch) {
     this.fileTypeSearch = fileTypeSearch;
+  }
+
+  public SearchPair getAllSearch() {
+    return allSearch;
+  }
+
+  public void setAllSearch(SearchPair allSearch) {
+    this.allSearch = allSearch;
+  }
+
+  public boolean isIncludeFulltext() {
+    return includeFulltext;
+  }
+
+  public void setIncludeFulltext(boolean includeFulltext) {
+    this.includeFulltext = includeFulltext;
   }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.TechnicalMetadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 
 /**
@@ -24,6 +25,8 @@ public final class ElasticItem extends ElasticProperties {
   private final long width;
   private final long height;
   private final List<ElasticMetadata> metadata = new ArrayList<>();
+  private final List<ElasticTechnicalMetadata> technical = new ArrayList<>();
+  private final String fulltext;
 
 
   /**
@@ -43,6 +46,10 @@ public final class ElasticItem extends ElasticProperties {
     this.space = space;
     for (Metadata md : item.getMetadataSet().getMetadata()) {
       metadata.add(new ElasticMetadata(md));
+    }
+    this.fulltext = item.getFulltext();
+    for (TechnicalMetadata md : item.getTechnicalMetadata()) {
+      technical.add(new ElasticTechnicalMetadata(md));
     }
   }
 
@@ -104,5 +111,13 @@ public final class ElasticItem extends ElasticProperties {
 
   public long getSize() {
     return size;
+  }
+
+  public String getFulltext() {
+    return fulltext;
+  }
+
+  public List<ElasticTechnicalMetadata> getTechnical() {
+    return technical;
   }
 }

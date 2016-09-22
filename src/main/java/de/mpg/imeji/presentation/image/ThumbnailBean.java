@@ -9,7 +9,7 @@ import java.net.URI;
 import javax.faces.event.ValueChangeEvent;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Item;
@@ -98,7 +98,7 @@ public class ThumbnailBean implements Serializable {
   public void initPopup() throws ImejiException {
     SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     if (getMds() == null) {
-      ItemController controller = new ItemController();
+      ItemBusinessController controller = new ItemBusinessController();
       mdSet = controller.retrieve(uri, sessionBean.getUser()).getMetadataSet();
       setMds(new MetadataSetWrapper(mdSet, getProfile(), false));
     }

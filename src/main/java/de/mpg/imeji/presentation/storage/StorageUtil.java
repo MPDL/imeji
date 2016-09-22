@@ -1,9 +1,9 @@
 package de.mpg.imeji.presentation.storage;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -48,7 +48,7 @@ public class StorageUtil {
    */
   private static boolean isAllowedToViewItemOfFile(String fileUrl, User user) {
     try {
-      new ItemController()
+      new ItemBusinessController()
           .retrieveLazyForFile(STORAGE_CONTROLLER.getStorage().getStorageId(fileUrl), user);
       return true;
     } catch (ImejiException e) {

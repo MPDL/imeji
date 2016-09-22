@@ -21,6 +21,7 @@ public class SearchPair extends SearchElement {
   private String value;
   private SearchFields field;
 
+
   /**
    * Default constructor
    */

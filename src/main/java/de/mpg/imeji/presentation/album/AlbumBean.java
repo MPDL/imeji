@@ -18,8 +18,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -461,7 +461,7 @@ public class AlbumBean extends ContainerBean {
    * Count the amount of items a user is allow to see
    */
   private void countAllowedItems() {
-    ItemController ic = new ItemController();
+    ItemBusinessController ic = new ItemBusinessController();
     allowedItemsSize =
         ic.search(getContainer().getId(), null, null, getSessionUser(), getSpaceId(), -1, 0)
             .getNumberOfRecords();

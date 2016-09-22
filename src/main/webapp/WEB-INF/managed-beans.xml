@@ -23,12 +23,6 @@
 		<managed-bean-class>de.mpg.imeji.presentation.collection.CollectionSessionBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<!-- Search Bean -->
-	<managed-bean>
-		<managed-bean-name>AdvancedSearchBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.search.AdvancedSearchBean</managed-bean-class>
-		<managed-bean-scope>view</managed-bean-scope>
-	</managed-bean>
 	<!-- Profiles bean -->
 	<managed-bean>
 		<managed-bean-name>MdProfileBean</managed-bean-name>

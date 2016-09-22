@@ -29,6 +29,7 @@ import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchSimpleMetadata;
+import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.StringParser;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Statement;
@@ -51,10 +52,13 @@ public class SearchQueryParser {
    */
   private static final String SEARCH_PAIR_REGEX = "([a-zA-Z_]+)([=<>@]{1,2})\"(.+)\"";
   /**
+   * Search for technical metadata technical:index="value"
+   */
+  private static String SEARCH_TECHNICAL_METADATA_REGEX = "technical[(.+)]([=<>@]{1,2})\"(.+)\"";
+  /**
    * Regex to match md:label="value"
    */
-  private static final String SEARCH_METADATA_SIMPLE_REGEX =
-      "md:([a-zA-Z0-9-_]+)([=<>@]{1,2})\"(.+)\"";
+  private static String SEARCH_METADATA_SIMPLE_REGEX = "metadata[(.+)]([=<>@]{1,2})\"(.+)\"";
   /**
    * PAttern for SEARCH_METADATA_REGEX
    */
@@ -66,8 +70,14 @@ public class SearchQueryParser {
   /**
    * Pattern for SEARCH_METADATA_SIMPLE_REGEX
    */
-  private static final Pattern SEARCH_METADATA_SIMPLE_PATTERN =
+  private static Pattern SEARCH_METADATA_SIMPLE_PATTERN =
       Pattern.compile(SEARCH_METADATA_SIMPLE_REGEX);
+
+  /**
+   * Pattern for SEARCH_TECHNICAL_METADATA_REGEX
+   */
+  private static Pattern SEARCH_TECHNICAL_METADATA_PATTERN =
+      Pattern.compile(SEARCH_TECHNICAL_METADATA_REGEX);
 
   /**
    * Private Constructor
@@ -122,6 +132,7 @@ public class SearchQueryParser {
     StringParser simpleMdParser = new StringParser(SEARCH_METADATA_SIMPLE_PATTERN);
     StringParser mdParser = new StringParser(SEARCH_METADATA_PATTERN);
     StringParser pairParser = new StringParser(SEARCH_PAIR_PATTERN);
+    StringParser technicalMdParser = new StringParser(SEARCH_TECHNICAL_METADATA_PATTERN);
     try {
       while ((c = reader.read()) != -1) {
         if (bracketsOpened - bracketsClosed != 0) {
@@ -160,6 +171,14 @@ public class SearchQueryParser {
           searchQuery.addPair(new SearchSimpleMetadata(simpleMdParser.getGroup(1),
               stringOperator2SearchOperator(simpleMdParser.getGroup(2)), simpleMdParser.getGroup(3),
               not));
+          not = false;
+          scString = "";
+        } else if (technicalMdParser.find(scString)) {
+          SearchOperators operator = stringOperator2SearchOperator(technicalMdParser.getGroup(2));
+          String label = technicalMdParser.getGroup(1);
+          String value = technicalMdParser.getGroup(3);
+          searchQuery.addPair(
+              new SearchTechnicalMetadata(SearchFields.technical, operator, value, label, not));
           not = false;
           scString = "";
         } else if (mdParser.find(scString)) {
@@ -284,6 +303,12 @@ public class SearchQueryParser {
                   ((SearchPair) se).getField())
               + operator2URL(((SearchMetadata) se).getOperator())
               + searchValue2URL(((SearchMetadata) se));
+          break;
+        case TECHNICAL_METADATA:
+          if (((SearchTechnicalMetadata) se).isNot()) {
+            query += " NOT";
+          }
+          query += "TODO";
           break;
         default:
           break;

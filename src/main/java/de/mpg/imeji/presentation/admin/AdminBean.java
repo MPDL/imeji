@@ -24,6 +24,7 @@ import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.jobs.CleanMetadataProfileJob;
 import de.mpg.imeji.logic.jobs.ElasticReIndexJob;
+import de.mpg.imeji.logic.jobs.FulltextAndTechnicalMetadataJob;
 import de.mpg.imeji.logic.jobs.ImportFileFromEscidocToInternalStorageJob;
 import de.mpg.imeji.logic.jobs.RefreshFileSizeJob;
 import de.mpg.imeji.logic.jobs.StorageUsageAnalyseJob;
@@ -104,6 +105,16 @@ public class AdminBean extends SuperBean {
    */
   public String refreshFileSize() {
     Imeji.getExecutor().submit(new RefreshFileSizeJob());
+    return "";
+  }
+
+  /**
+   * Reindex the Files, i.e., parse the fulltext and the technicale metadata and index it
+   *
+   * @return
+   */
+  public String extractFulltextAndTechnicalMetadata() {
+    Imeji.getExecutor().submit(new FulltextAndTechnicalMetadataJob());
     return "";
   }
 

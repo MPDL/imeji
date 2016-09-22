@@ -9,10 +9,10 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.business.StatisticsBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
@@ -37,7 +37,7 @@ public class StatisticsControllerTestClass extends ControllerTest {
     result = controller.getUsedStorageSizeForInstitute("imeji.org");
     assertEquals(totalFileSize, result);
     // deleteItem
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     itemController.delete(item2.getIdString(), JenaUtil.testUser);
     totalFileSize = totalFileSize - FileUtils.sizeOf(thumbnailFile);
     result = controller.getUsedStorageSizeForInstitute("imeji.org");
@@ -62,7 +62,7 @@ public class StatisticsControllerTestClass extends ControllerTest {
   }
 
   private Item createItemWithFile(CollectionImeji col, File file, User user) throws ImejiException {
-    ItemController controller = new ItemController();
+    ItemBusinessController controller = new ItemBusinessController();
     Item item = ImejiFactory.newItem(col);
     item = controller.createWithFile(item, file, "test.jpg", collection, JenaUtil.testUser);
     return item;

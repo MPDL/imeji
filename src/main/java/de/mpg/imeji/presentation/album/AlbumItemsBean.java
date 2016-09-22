@@ -15,8 +15,8 @@ import javax.faces.event.ValueChangeEvent;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -83,7 +83,7 @@ public class AlbumItemsBean extends ItemsBean {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
-    ItemController controller = new ItemController();
+    ItemBusinessController controller = new ItemBusinessController();
     return controller.search(uri, searchQuery, sortCriterion, getSessionUser(), null, limit,
         offset);
   }
@@ -166,7 +166,7 @@ public class AlbumItemsBean extends ItemsBean {
       removeFromActive(uris);
     } else {
       AlbumController ac = new AlbumController();
-      ItemController ic = new ItemController();
+      ItemBusinessController ic = new ItemBusinessController();
       ac.removeFromAlbum(album,
           ic.search(album.getId(), null, null, getSessionUser(), getSpaceId(), -1, 0).getResults(),
           getSessionUser());
@@ -183,7 +183,7 @@ public class AlbumItemsBean extends ItemsBean {
       if (active) {
         removeFromActive(uris);
       } else {
-        ItemController ic = new ItemController();
+        ItemBusinessController ic = new ItemBusinessController();
         album = (Album) ic.searchAndSetContainerItems(album, getSessionUser(), -1, 0);
         AlbumController ac = new AlbumController();
         int deletedCount = ac.removeFromAlbum(album, uris, getSessionUser());

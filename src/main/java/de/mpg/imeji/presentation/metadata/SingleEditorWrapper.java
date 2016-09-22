@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.concurrency.locks.Lock;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
@@ -96,7 +96,7 @@ public class SingleEditorWrapper {
    * Reload the current image
    */
   private void reloadImage() {
-    ItemController itemController = new ItemController();
+    ItemBusinessController itemController = new ItemBusinessController();
     try {
       item = itemController.retrieve(item.getId(), sessionUser);
     } catch (Exception e) {

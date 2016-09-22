@@ -16,8 +16,8 @@ import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -84,7 +84,7 @@ public class CollectionItemsBean extends ItemsBean {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
-    ItemController controller = new ItemController();
+    ItemBusinessController controller = new ItemBusinessController();
     return controller.search(uri, searchQuery, sortCriterion, getSessionUser(), null, limit,
         offset);
   }

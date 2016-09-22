@@ -14,9 +14,9 @@ import com.ocpsoft.pretty.PrettyContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
 import de.mpg.imeji.logic.user.collaboration.email.EmailService;
@@ -129,7 +129,7 @@ public class ShareBean extends SuperBean implements Serializable {
     this.shareTo = null;
     this.uri =
         HistoryUtil.extractURI(PrettyContext.getCurrentInstance().getRequestURL().toString());
-    Item item = new ItemController().retrieveLazy(uri, getSessionUser());
+    Item item = new ItemBusinessController().retrieveLazy(uri, getSessionUser());
     if (item != null) {
       this.shareTo = item;
       this.title = item.getFilename();

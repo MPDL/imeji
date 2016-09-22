@@ -32,7 +32,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
+import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Container;
@@ -332,7 +333,11 @@ public class Authorization implements Serializable {
    */
   private String getCollectionUri(String uri, boolean isReadGrant) {
     if (!isReadGrant && uri.contains("/item/")) {
-      return new ItemController().getCollectionId(uri);
+      List<String> c = ImejiSPARQL.exec(JenaCustomQueries.selectCollectionIdOfItem(uri), null);
+      if (!c.isEmpty()) {
+        return c.get(0);
+      }
+      return uri;
     }
     return uri;
   }

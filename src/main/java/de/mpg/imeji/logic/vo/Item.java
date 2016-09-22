@@ -18,10 +18,12 @@ import org.apache.commons.io.FileUtils;
 import org.joda.time.chrono.AssembledChronology.Fields;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jLazyList;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 
 /**
@@ -72,10 +74,16 @@ public class Item extends Properties implements Serializable {
   private long width;
   @j2jLiteral("http://www.w3.org/2003/12/exif/ns#height")
   private long height;
-  private List<String> albums = new ArrayList<>();
+  @j2jLiteral("http://imeji.org/terms/fulltext")
+  private String fulltext;
+  @j2jLazyList(ImejiNamespaces.TECHNICAL_METADATA)
+  private List<TechnicalMetadata> technicalMetadata = new ArrayList<>();
 
+  /**
+   * Default constructor
+   */
   public Item() {
-
+    // Do nothing
   }
 
   public Item(Item im) {
@@ -297,18 +305,19 @@ public class Item extends Properties implements Serializable {
     return thumbnailImageUrl.toString();
   }
 
-  /**
-   * @return the albums
-   */
-  public List<String> getAlbums() {
-    return albums;
+  public String getFulltext() {
+    return fulltext;
   }
 
-  /**
-   * @param albums the albums to set
-   */
-  public void setAlbums(List<String> albums) {
-    this.albums = albums;
+  public void setFulltext(String fulltext) {
+    this.fulltext = fulltext;
   }
 
+  public List<TechnicalMetadata> getTechnicalMetadata() {
+    return technicalMetadata;
+  }
+
+  public void setTechnicalMetadata(List<TechnicalMetadata> technicalMetadata) {
+    this.technicalMetadata = technicalMetadata;
+  }
 }

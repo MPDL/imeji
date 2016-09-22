@@ -6,9 +6,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
@@ -73,7 +73,7 @@ public class ControllerTest {
    * @throws ImejiException
    */
   protected static Item createItem() throws ImejiException {
-    ItemController controller = new ItemController();
+    ItemBusinessController controller = new ItemBusinessController();
     item = controller.create(ImejiFactory.newItem(collection), collection, JenaUtil.testUser);
     return item;
   }
@@ -83,7 +83,7 @@ public class ControllerTest {
   }
 
   protected static Item createItemWithFile(File file) throws ImejiException {
-    ItemController controller = new ItemController();
+    ItemBusinessController controller = new ItemBusinessController();
     if (collection == null) {
       createCollection();
     }

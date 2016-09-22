@@ -13,12 +13,9 @@ import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.NodeBuilder;
 
-import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
-import de.mpg.imeji.logic.vo.User;
 
 /**
  * Start/Stop elasticsearch
@@ -178,23 +175,8 @@ public class ElasticInitializer {
     for (ElasticTypes type : ElasticTypes.values()) {
       new ElasticIndexer(ElasticService.DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
     }
-    indexUsers(ElasticService.DATA_ALIAS);
   }
 
-  public static void indexUsers(String index) {
-    try {
-      LOGGER.info("Indexing users...");
-      ElasticIndexer indexer =
-          new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER);
-      List<User> users = new UserBusinessController().retrieveAll();
-      LOGGER.info("+++ " + users.size() + " users to index +++");
-      indexer.indexBatch(users);
-      indexer.commit();
-      LOGGER.info("...users reindexed!");
-    } catch (ImejiException e) {
-      LOGGER.error("Error reindexing users", e);
-    }
-  }
 
   /**
    * Remove everything from ES

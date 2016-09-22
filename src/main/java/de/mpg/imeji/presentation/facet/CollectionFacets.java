@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
@@ -136,7 +136,7 @@ public class CollectionFacets extends FacetsAbstract {
    */
   public int getCount(SearchQuery searchQuery, SearchPair pair, HashSet<String> collectionImages) {
     int counter = 0;
-    ItemController ic = new ItemController();
+    ItemBusinessController ic = new ItemBusinessController();
     SearchQuery sq = new SearchQuery();
     if (pair != null) {
       try {

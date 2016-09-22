@@ -29,10 +29,10 @@ import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.TypeNotAllowedException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
-import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.search.model.SearchIndex;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
@@ -167,7 +167,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
 
   private Item uploadFileToItem(Item item, CollectionImeji col, File file, String title)
       throws ImejiException {
-    ItemController controller = new ItemController();
+    ItemBusinessController controller = new ItemBusinessController();
     item = controller.create(item, col, file, title, getSessionUser(), null, null);
     sus.setUploadedItem(item);
     return item;

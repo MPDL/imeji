@@ -81,6 +81,36 @@
 							<!-- Admin - Clean storage -->
 							<div class="imj_headline">
 								<h2>
+									<h:outputText value="#{lbl.storage}"/>
+								</h2>
+							</div>
+							
+							<div class="imj_content">
+								<h:outputText value="#{lbl.admin_clean_storage_description}"/> 				
+								<h:form>
+									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
+										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.cleanStorage}" value="#{lbl.clean}: #{AdminBean.internalStorageLocation}"  onclick="openDialog('dialogWait');">
+											<f:ajax/>
+										</h:commandLink>
+									</h:panelGroup>		
+								</h:form>
+								<h:outputText value="#{lbl.admin_refresh_file_size_description}"/>							
+								<h:form>
+									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
+										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.refreshFileSize}" value="#{lbl.refresh}"/>
+									</h:panelGroup>	
+								</h:form>
+								<h:outputText value="#{lbl.admin_extract_fulltext_and_technical_metadata}"/>							
+								<h:form>
+									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
+										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.extractFulltextAndTechnicalMetadata}" value="#{lbl.extract}"/>
+									</h:panelGroup>	
+								</h:form>
+							</div>
+							
+							<!-- Admin - Clean storage -->
+							<div class="imj_headline">
+								<h2>
 									<h:outputText value="#{lbl.admin_clean_unused_profiles}"/>
 								</h2>
 							</div>
@@ -100,26 +130,8 @@
 									</ui:repeat>
 								</h:panelGroup>
 							</div>
-							
-							<!-- Admin - Clean storage -->
-							<div class="imj_headline">
-								<h2>
-									<h:outputText value="#{lbl.admin_clean_storage}"/>
-								</h2>
-							</div>
-							
-							<div class="imj_content">
-								<h:outputText value="#{lbl.admin_clean_storage_description}"/> 				
-								<h:form>
-									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.cleanStorage}" value="#{lbl.admin_clean_storage}: #{AdminBean.internalStorageLocation}"  onclick="openDialog('dialogWait');">
-											<f:ajax/>
-										</h:commandLink>
-									</h:panelGroup>		
-								</h:form>
-							</div>
-							
-								<!-- Admin - reindex -->
+	
+							<!-- Admin - reindex -->
 							<div class="imj_headline">
 								<h2>
 									<h:outputText value="#{lbl.search}"/>
@@ -160,27 +172,7 @@
 									</h:panelGroup>
 								</h:form>
 							</div>
-							
-							
-							
-							
-								<!-- Admin - calculate file size -->
-							<div class="imj_headline">
-								<h2>
-									<h:outputText value="#{lbl.admin_refresh_file_size}"/>
-								</h2>
-							</div>
-							
-							<div class="imj_content">
-								<h:outputText value="#{lbl.admin_refresh_file_size_description}"/>							
-								<h:form>
-									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.refreshFileSize}" value="#{lbl.admin_refresh_file_size_buttontext}"/>
-									</h:panelGroup>	
-								</h:form>
-							</div>
-							
-							
+											
 							<!-- Admin - Import escidoc Pictures to imeji internal Storage -->
 							<div class="imj_headline">
 								<h2>

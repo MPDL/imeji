@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
 import de.mpg.imeji.logic.search.Search;
+import de.mpg.imeji.logic.vo.Grant;
+import de.mpg.imeji.logic.vo.Grant.GrantType;
+import de.mpg.imeji.logic.vo.User;
 
 /**
  * Utility class for the {@link Search}
@@ -31,5 +34,21 @@ public class SearchUtils {
       }
     }
     return extensions;
+  }
+
+  /**
+   * True if the user has the sysadmin grant
+   * 
+   * @param user
+   * @return
+   */
+  public static boolean isSysAdmin(User user) {
+    for (Grant g : user.getGrants()) {
+      if (g.getGrantFor().toString().equals(Imeji.PROPERTIES.getBaseURI())
+          && g.asGrantType().equals(GrantType.ADMIN)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

@@ -26,6 +26,9 @@ import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -508,5 +511,14 @@ public class UserBusinessController {
         search.searchString(JenaCustomQueries.selectUsersToBeNotifiedByFileDownload(user, c), null,
             null, 0, -1).getResults();
     return (List<User>) retrieveBatchLazy(uris, -1);
+  }
+
+  public void reindex(String index) throws ImejiException {
+    LOGGER.info("Indexing users...");
+    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER);
+    List<User> users = retrieveAll();
+    LOGGER.info("+++ " + users.size() + " users to index +++");
+    indexer.indexBatch(users);
+    LOGGER.info("...users reindexed!");
   }
 }

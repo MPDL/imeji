@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -38,7 +38,7 @@ public class ImportFileFromEscidocToInternalStorageJob implements Callable<Integ
   public Integer call() throws Exception {
     StorageController internal = new StorageController("internal");
     StorageController escidoc = new StorageController("escidoc");
-    ItemController ic = new ItemController();
+    ItemBusinessController ic = new ItemBusinessController();
     for (Item item : ic.retrieveAll(user)) {
       File tmp = null;
       try {

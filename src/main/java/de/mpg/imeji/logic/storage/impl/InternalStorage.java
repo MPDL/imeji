@@ -91,13 +91,8 @@ public class InternalStorage implements Storage {
     }
   }
 
-  /**
-   * Read file in internal storage
-   *
-   * @param url
-   * @return
-   */
-  public File readFile(String url) {
+  @Override
+  public File read(String url) {
     final String path = manager.transformUrlToPath(url);
     File file;
     try {
@@ -187,4 +182,5 @@ public class InternalStorage implements Storage {
   public String getStorageId(String url) {
     return manager.getStorageId(url);
   }
+
 }

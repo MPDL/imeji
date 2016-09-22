@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.ItemController;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
@@ -125,7 +125,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @param size
    */
   protected void findItems(User user, int size) {
-    ItemController ic = new ItemController();
+    ItemBusinessController ic = new ItemBusinessController();
     ic.searchAndSetContainerItems(getContainer(), user, size, 0);
   }
 
@@ -136,7 +136,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   protected void countItems() {
-    ItemController ic = new ItemController();
+    ItemBusinessController ic = new ItemBusinessController();
     size = ic.search(getContainer().getId(), null, null, Imeji.adminUser, null, 0, 0)
         .getNumberOfRecords();
   }
@@ -153,7 +153,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
       for (URI uri : getContainer().getImages()) {
         uris.add(uri.toString());
       }
-      ItemController ic = new ItemController();
+      ItemBusinessController ic = new ItemBusinessController();
       setItems((List<Item>) ic.retrieveBatchLazy(uris, size, 0, user));
     }
   }
@@ -164,7 +164,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    */
   public void countDiscardedItems(User user) {
     if (getContainer() != null) {
-      ItemController ic = new ItemController();
+      ItemBusinessController ic = new ItemBusinessController();
       SearchQuery q = new SearchQuery();
       try {
         q.addPair(new SearchPair(SearchFields.status, SearchOperators.EQUALS,
