@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.faces.model.SelectItem;
@@ -29,9 +30,8 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
-import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * A {@link SearchGroupForm} is a group of {@link SearchMetadataForm}
@@ -72,7 +72,7 @@ public class SearchGroupForm {
    * @throws ImejiException
    */
   public SearchGroupForm(SearchGroup searchGroup, MetadataProfile profile,
-      MetadataLabels metadataLabels) throws ImejiException {
+      MetadataLabels metadataLabels, User user, String space) throws ImejiException {
     this();
     if (profile != null) {
       this.setProfileId(profile.getId().toString());
@@ -88,13 +88,14 @@ public class SearchGroupForm {
       for (SearchElement se : metadataGroup.getElements()) {
         if (se.getType().equals(SEARCH_ELEMENTS.GROUP)) {
           // metadata search
-          elements.add(new SearchMetadataForm((SearchGroup) se, profile));
+          elements.add(new SearchMetadataForm((SearchGroup) se, profile,
+              Locale.forLanguageTag(metadataLabels.getLang())));
         } else if (elements.size() > 0 && se.getType().equals(SEARCH_ELEMENTS.LOGICAL_RELATIONS)) {
           elements.get(elements.size() - 1)
               .setLogicalRelation(((SearchLogicalRelation) se).getLogicalRelation());
         }
       }
-      initStatementsMenu(profile, metadataLabels);
+      initStatementsMenu(profile, metadataLabels, user, space);
     }
   }
 
@@ -151,8 +152,8 @@ public class SearchGroupForm {
    * @param p
    * @throws ImejiException
    */
-  public void initStatementsMenu(MetadataProfile p, MetadataLabels metadataLabels)
-      throws ImejiException {
+  public void initStatementsMenu(MetadataProfile p, MetadataLabels metadataLabels, User user,
+      String space) throws ImejiException {
     if (p != null) {
       if (p.getStatements() != null) {
         for (Statement st : p.getStatements()) {
@@ -160,7 +161,8 @@ public class SearchGroupForm {
           statementMenu.add(new SelectItem(st.getId().toString(), stName));
         }
       }
-      setCollectionsMenu(getCollectionsMenu(p));
+      setCollectionsMenu(
+          getCollectionsMenu(p, Locale.forLanguageTag(metadataLabels.getLang()), user, space));
     } else {
       reset();
     }
@@ -175,18 +177,17 @@ public class SearchGroupForm {
    * @return
    * @throws ImejiException
    */
-  private List<SelectItem> getCollectionsMenu(MetadataProfile p) throws ImejiException {
+  private List<SelectItem> getCollectionsMenu(MetadataProfile p, Locale locale, User user,
+      String space) throws ImejiException {
     CollectionController cc = new CollectionController();
     SearchQuery q = new SearchQuery();
     q.addPair(
         new SearchPair(SearchFields.prof, SearchOperators.EQUALS, p.getId().toString(), false));
     List<SelectItem> l = new ArrayList<SelectItem>();
-    SessionBean session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     l.add(new SelectItem(null,
-        Imeji.RESOURCE_BUNDLE.getLabel("adv_search_collection_restrict", session.getLocale())));
-    for (String uri : cc.search(q, null, -1, 0, session.getUser(), session.getSelectedSpaceString())
-        .getResults()) {
-      CollectionImeji c = cc.retrieveLazy(URI.create(uri), session.getUser());
+        Imeji.RESOURCE_BUNDLE.getLabel("adv_search_collection_restrict", locale)));
+    for (String uri : cc.search(q, null, -1, 0, user, space).getResults()) {
+      CollectionImeji c = cc.retrieveLazy(URI.create(uri), user);
       l.add(new SelectItem(c.getId().toString(), c.getMetadata().getTitle()));
     }
     return l;

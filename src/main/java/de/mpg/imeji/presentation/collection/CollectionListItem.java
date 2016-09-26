@@ -3,10 +3,7 @@
  */
 package de.mpg.imeji.presentation.collection;
 
-import static de.mpg.imeji.presentation.notification.CommonMessages.getSuccessCollectionDeleteMessage;
-
 import java.net.URI;
-import java.util.Collection;
 
 import javax.faces.event.ValueChangeEvent;
 
@@ -15,19 +12,14 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Person;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.ContainerBean.CONTAINER_TYPE;
 import de.mpg.imeji.presentation.image.ThumbnailBean;
-import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.CommonUtils;
 
 /**
@@ -138,96 +130,95 @@ public class CollectionListItem {
         ic.search(collection.getId(), null, null, Imeji.adminUser, null, 0, 0).getNumberOfRecords();
   }
 
-  /**
-   * Release the {@link Collection} in the list
-   *
-   * @return
-   */
-  public String release() {
-    SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    CollectionController cc = new CollectionController();
-    try {
-      cc.release(cc.retrieve(uri, sessionBean.getUser()), sessionBean.getUser());
-      BeanHelper.info(
-          Imeji.RESOURCE_BUNDLE.getMessage("success_collection_release", sessionBean.getLocale()));
-    } catch (Exception e) {
-      BeanHelper.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_collection_release", sessionBean.getLocale()));
-      BeanHelper.error(e.getMessage());
-      LOGGER.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_collection_release", sessionBean.getLocale()), e);
-    }
-    return "pretty:";
-  }
-
-  /**
-   * Delete the {@link CollectionImeji} in the list
-   *
-   * @return
-   */
-  public String delete() {
-    SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    CollectionController cc = new CollectionController();
-    try {
-      CollectionImeji c = cc.retrieve(uri, sessionBean.getUser());
-      cc.delete(c, sessionBean.getUser());
-      BeanHelper.info(
-          getSuccessCollectionDeleteMessage(c.getMetadata().getTitle(), sessionBean.getLocale()));
-    } catch (Exception e) {
-      BeanHelper.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_collection_delete", sessionBean.getLocale()) + ":"
-              + e.getMessage());
-      LOGGER.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_collection_delete", sessionBean.getLocale()), e);
-    }
-    return ((SessionBean) BeanHelper.getSessionBean(SessionBean.class))
-        .getPrettySpacePage("pretty:collections");
-  }
-
-  public String createDOI() {
-    SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    try {
-      String doi = UrlHelper.getParameterValue("doi");
-      CollectionImeji collection = new CollectionController().retrieve(uri, sessionBean.getUser());
-      DoiService doiService = new DoiService();
-      if (doi != null) {
-        doiService.addDoiToCollection(doi, collection, sessionBean.getUser());
-      } else {
-        doiService.addDoiToCollection(collection, sessionBean.getUser());
-      }
-      BeanHelper
-          .info(Imeji.RESOURCE_BUNDLE.getMessage("success_doi_creation", sessionBean.getLocale()));
-    } catch (ImejiException e) {
-      BeanHelper
-          .error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", sessionBean.getLocale())
-              + " " + e.getMessage());
-      LOGGER.error("Error during doi creation", e);
-    }
-    return "pretty:";
-  }
-
-  /**
-   * Withdraw the {@link CollectionImeji} of the list
-   *
-   * @return
-   */
-  public String withdraw() {
-    SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    try {
-      CollectionController cc = new CollectionController();
-      CollectionImeji c = cc.retrieveLazy(uri, sessionBean.getUser());
-      c.setDiscardComment(getDiscardComment());
-      cc.withdraw(c, sessionBean.getUser());
-      BeanHelper.info(
-          Imeji.RESOURCE_BUNDLE.getMessage("success_collection_withdraw", sessionBean.getLocale()));
-    } catch (Exception e) {
-      BeanHelper.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_collection_withdraw", sessionBean.getLocale()));
-      BeanHelper.error(e.getMessage());
-      LOGGER.error("Error discarding collection", e);
-    }
-    return "pretty:";
-  }
+  // /**
+  // * Release the {@link Collection} in the list
+  // *
+  // * @return
+  // */
+  // public String release() {
+  // CollectionController cc = new CollectionController();
+  // try {
+  // cc.release(cc.retrieve(uri, sessionBean.getUser()), sessionBean.getUser());
+  // BeanHelper.info(
+  // Imeji.RESOURCE_BUNDLE.getMessage("success_collection_release", .getLocale()));
+  // } catch (Exception e) {
+  // BeanHelper.error(
+  // Imeji.RESOURCE_BUNDLE.getMessage("error_collection_release", sessionBean.getLocale()));
+  // BeanHelper.error(e.getMessage());
+  // LOGGER.error(
+  // Imeji.RESOURCE_BUNDLE.getMessage("error_collection_release", sessionBean.getLocale()), e);
+  // }
+  // return "pretty:";
+  // }
+  //
+  // /**
+  // * Delete the {@link CollectionImeji} in the list
+  // *
+  // * @return
+  // */
+  // public String delete() {
+  // SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+  // CollectionController cc = new CollectionController();
+  // try {
+  // CollectionImeji c = cc.retrieve(uri, sessionBean.getUser());
+  // cc.delete(c, sessionBean.getUser());
+  // BeanHelper.info(
+  // getSuccessCollectionDeleteMessage(c.getMetadata().getTitle(), sessionBean.getLocale()));
+  // } catch (Exception e) {
+  // BeanHelper.error(
+  // Imeji.RESOURCE_BUNDLE.getMessage("error_collection_delete", sessionBean.getLocale()) + ":"
+  // + e.getMessage());
+  // LOGGER.error(
+  // Imeji.RESOURCE_BUNDLE.getMessage("error_collection_delete", sessionBean.getLocale()), e);
+  // }
+  // return ((SessionBean) BeanHelper.getSessionBean(SessionBean.class))
+  // .getPrettySpacePage("pretty:collections");
+  // }
+  //
+  // public String createDOI() {
+  // SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+  // try {
+  // String doi = UrlHelper.getParameterValue("doi");
+  // CollectionImeji collection = new CollectionController().retrieve(uri, sessionBean.getUser());
+  // DoiService doiService = new DoiService();
+  // if (doi != null) {
+  // doiService.addDoiToCollection(doi, collection, sessionBean.getUser());
+  // } else {
+  // doiService.addDoiToCollection(collection, sessionBean.getUser());
+  // }
+  // BeanHelper
+  // .info(Imeji.RESOURCE_BUNDLE.getMessage("success_doi_creation", sessionBean.getLocale()));
+  // } catch (ImejiException e) {
+  // BeanHelper
+  // .error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", sessionBean.getLocale())
+  // + " " + e.getMessage());
+  // LOGGER.error("Error during doi creation", e);
+  // }
+  // return "pretty:";
+  // }
+  //
+  // /**
+  // * Withdraw the {@link CollectionImeji} of the list
+  // *
+  // * @return
+  // */
+  // public String withdraw() {
+  // SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+  // try {
+  // CollectionController cc = new CollectionController();
+  // CollectionImeji c = cc.retrieveLazy(uri, sessionBean.getUser());
+  // c.setDiscardComment(getDiscardComment());
+  // cc.withdraw(c, sessionBean.getUser());
+  // BeanHelper.info(
+  // Imeji.RESOURCE_BUNDLE.getMessage("success_collection_withdraw", sessionBean.getLocale()));
+  // } catch (Exception e) {
+  // BeanHelper.error(
+  // Imeji.RESOURCE_BUNDLE.getMessage("error_collection_withdraw", sessionBean.getLocale()));
+  // BeanHelper.error(e.getMessage());
+  // LOGGER.error("Error discarding collection", e);
+  // }
+  // return "pretty:";
+  // }
 
   /**
    * Listener for the discard comment

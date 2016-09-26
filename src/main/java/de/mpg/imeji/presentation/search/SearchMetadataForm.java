@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.faces.model.SelectItem;
@@ -27,8 +28,6 @@ import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.util.MetadataTypesHelper;
-import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * An element in the advanced search form
@@ -70,7 +69,7 @@ public class SearchMetadataForm {
    * @param searchGroup
    * @param profile
    */
-  public SearchMetadataForm(SearchGroup searchGroup, MetadataProfile profile) {
+  public SearchMetadataForm(SearchGroup searchGroup, MetadataProfile profile, Locale locale) {
     this();
     for (SearchElement se : searchGroup.getElements()) {
       switch (se.getType()) {
@@ -91,7 +90,7 @@ public class SearchMetadataForm {
       }
     }
     initStatement(profile, namespace);
-    initOperatorMenu();
+    initOperatorMenu(locale);
   }
 
   private void parseMetadata(SearchMetadata md) {
@@ -203,22 +202,21 @@ public class SearchMetadataForm {
     }
   }
 
-  public SearchMetadataForm(SearchMetadata metadata, MetadataProfile profile) {
+  public SearchMetadataForm(SearchMetadata metadata, MetadataProfile profile, Locale locale) {
     this();
     operator = metadata.getOperator();
     searchValue = metadata.getValue();
     not = metadata.isNot();
     namespace = metadata.getStatement().toString();
     initStatement(profile, namespace);
-    initOperatorMenu();
+    initOperatorMenu(locale);
   }
 
   /**
    * Intialize the filtrsMenu
    */
-  public void initOperatorMenu() {
+  public void initOperatorMenu(Locale locale) {
     operatorMenu = new ArrayList<SelectItem>();
-    SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     switch (MetadataTypesHelper.getTypesForNamespace(statement.getType().toString())) {
       case DATE:
         operatorMenu.add(new SelectItem(SearchOperators.EQUALS, "="));
@@ -233,7 +231,7 @@ public class SearchMetadataForm {
       default:
         operatorMenu.add(new SelectItem(SearchOperators.REGEX, "--"));
         operatorMenu.add(new SelectItem(SearchOperators.EQUALS,
-            Imeji.RESOURCE_BUNDLE.getLabel("exactly", sessionBean.getLocale())));
+            Imeji.RESOURCE_BUNDLE.getLabel("exactly", locale)));
     }
   }
 

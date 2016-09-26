@@ -55,7 +55,7 @@ public class CreateCollectionBean extends CollectionBean {
    */
   @PostConstruct
   public void init() {
-    profileSelector = new ProfileSelector(null, getSessionUser(), getSpace(), getLocale());
+    profileSelector = new ProfileSelector(null, getSessionUser(), getSelectedSpaceString(), getLocale());
     vocabularyHelper = new VocabularyHelper(getLocale());
     setCollectionCreateMode(true);
     setCollection(ImejiFactory.newCollection());
@@ -123,7 +123,7 @@ public class CreateCollectionBean extends CollectionBean {
         profileSelector.setProfile(null);
       }
       setCollection(collectionController.create(getCollection(), profileSelector.getProfile(),
-          getSessionUser(), profileSelector.getSelectorMode(), getSpace()));
+          getSessionUser(), profileSelector.getSelectorMode(), getSelectedSpaceString()));
       if (containerEditorSession.getUploadedLogoPath() != null) {
         collectionController.updateLogo(getCollection(),
             new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
@@ -161,7 +161,7 @@ public class CreateCollectionBean extends CollectionBean {
 
   @Override
   protected String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:createCollection", getSpace());
+    return SessionBean.getPrettySpacePage("pretty:createCollection", getSelectedSpaceString());
   }
 
   public String getVocabularyLabel(URI id) {

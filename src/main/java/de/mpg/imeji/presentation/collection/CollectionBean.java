@@ -222,7 +222,7 @@ public abstract class CollectionBean extends ContainerBean {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getLocalizedMessage(), getLocale()));
       LOGGER.error("Error delete collection", e);
     }
-    return SessionBean.getPrettySpacePage("pretty:collections", getSpace());
+    return SessionBean.getPrettySpacePage("pretty:collections", getSelectedSpaceString());
   }
 
   /**

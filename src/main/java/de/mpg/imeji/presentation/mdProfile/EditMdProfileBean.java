@@ -2,6 +2,8 @@ package de.mpg.imeji.presentation.mdProfile;
 
 import java.io.IOException;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
@@ -18,8 +20,6 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
-import de.mpg.imeji.presentation.beans.Navigation;
-import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.VocabularyHelper;
@@ -31,59 +31,38 @@ import de.mpg.imeji.presentation.util.VocabularyHelper;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@ManagedBean(name = "EditMdProfileBean")
+@ViewScoped
 public class EditMdProfileBean extends MdProfileBean {
-  private SessionBean session;
-  private boolean init = false;
+  private static final long serialVersionUID = 7411697130976477046L;
   private String colId = null;
   private static final Logger LOGGER = Logger.getLogger(EditMdProfileBean.class);
   private VocabularyHelper vocabularyHelper;
   private CollectionImeji collection;
 
-
-  /**
-   * Constructor
-   */
-  public EditMdProfileBean() {
-    super();
-    session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    readUrl();
-  }
-
   @Override
-  public String getInit() {
-    readUrl();
-    vocabularyHelper = new VocabularyHelper(session.getLocale());
-    if (init) {
-      // set object to null (since this is a session bean)
-      setProfile(null);
-      setCollection(null);
-      if (getId() != null) {
-        try {
-          if (colId != null) {
-            // load the collection if provided in the url
-            CollectionController cc = new CollectionController();
-            setCollection(
-                cc.retrieve(ObjectHelper.getURI(CollectionImeji.class, colId), session.getUser()));
-          }
-          // load the profile
-          ProfileController pc = new ProfileController();
-          setProfile(pc.retrieve(getId(), session.getUser()));
-        } catch (ImejiException e) {
-          BeanHelper.error(e.getMessage());
+  public void specificSetup() {
+    colId = UrlHelper.getParameterValue("col");
+    vocabularyHelper = new VocabularyHelper(getLocale());
+    if (getId() != null) {
+      retrieveProfile();
+      try {
+        if (colId != null) {
+          // load the collection if provided in the url
+          CollectionController cc = new CollectionController();
+          setCollection(
+              cc.retrieve(ObjectHelper.getURI(CollectionImeji.class, colId), getSessionUser()));
         }
+      } catch (ImejiException e) {
+        BeanHelper.error(e.getMessage());
+        LOGGER.error("Error initialising edit profile page", e);
       }
-      init = false;
     }
-    super.getInit();
-    return "";
+    super.specificSetup();
   }
 
-  /**
-   * Parse the url parameters
-   */
-  public void readUrl() {
-    colId = UrlHelper.getParameterValue("col");
-    init = UrlHelper.getParameterBoolean("init");
+  public void test() {
+    System.out.println("test");
   }
 
   /**
@@ -103,7 +82,7 @@ public class EditMdProfileBean extends MdProfileBean {
     ProfileController profileController = new ProfileController();
     MetadataProfile profile = ImejiFactory.newProfile();
     profile.setTitle("Profile for " + getCollection().getMetadata().getTitle());
-    profile = profileController.create(profile, session.getUser());
+    profile = profileController.create(profile, getSessionUser());
     setProfile(profile);
     initStatementWrappers(getProfile());
     if (getProfile().getStatements().isEmpty()) {
@@ -118,14 +97,12 @@ public class EditMdProfileBean extends MdProfileBean {
    * @throws IOException
    */
   public String cancel() throws IOException {
-    Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     if (colId != null) {
-      FacesContext.getCurrentInstance().getExternalContext().redirect(
-          navigation.getCollectionUrl() + colId + "/" + navigation.getInfosPath() + "?init=1");
-    } else {
-      HistorySession history = (HistorySession) BeanHelper.getSessionBean(HistorySession.class);
       FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(history.getPreviousPage().getCompleteUrlWithHistory());
+          .redirect(getNavigation().getCollectionUrl() + colId + "/"
+              + getNavigation().getInfosPath() + "?init=1");
+    } else {
+      redirect(getHistory().getPreviousPage().getCompleteUrlWithHistory());
     }
     return "";
   }
@@ -147,15 +124,14 @@ public class EditMdProfileBean extends MdProfileBean {
 
     try {
       ProfileController profileController = new ProfileController();
-      profileController.update(getProfile(), session.getUser());
-      session.getProfileCached().clear();
-      BeanHelper
-          .info(Imeji.RESOURCE_BUNDLE.getMessage("success_profile_save", session.getLocale()));
+      profileController.update(getProfile(), getSessionUser());
+      // session.getProfileCached().clear();
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_profile_save", getLocale()));
       cancel();
     } catch (UnprocessableError e) {
       BeanHelper.error(e.getMessage());
     } catch (Exception e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_profile_save", session.getLocale()),
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_profile_save", getLocale()),
           e.getMessage());
       LOGGER.error("Error saving profile", e);
     }
@@ -186,7 +162,7 @@ public class EditMdProfileBean extends MdProfileBean {
 
   @Override
   protected String getNavigationString() {
-    return session.getPrettySpacePage("pretty:editProfile");
+    return SessionBean.getPrettySpacePage("pretty:editProfile", getSelectedSpaceString());
   }
 
   /**

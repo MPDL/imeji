@@ -104,12 +104,11 @@ public class LoginBean extends SuperBean {
       sessionBean.setUser(user);
       sessionBean.checkIfHasUploadRights();
       BeanHelper.cleanMessages();
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_in", sessionBean.getLocale()));
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_in", getLocale()));
     } catch (InactiveAuthenticationError e) {
-      BeanHelper.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_log_in_inactive", sessionBean.getLocale()));
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in_inactive", getLocale()));
     } catch (AuthenticationError e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in", sessionBean.getLocale())
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in", getLocale())
           .replace("XXX_INSTANCE_NAME_XXX", instanceName));
     }
     if (isNullOrEmptyTrim(redirect)) {

@@ -473,7 +473,7 @@ public class UploadBean extends SuperBean implements Serializable {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_delete", getLocale()));
       LOGGER.error("Error delete collection", e);
     }
-    return SessionBean.getPrettySpacePage("pretty:collections", getSpace());
+    return SessionBean.getPrettySpacePage("pretty:collections", getSelectedSpaceString());
   }
 
   /**

@@ -43,7 +43,7 @@ public class AlbumItemBean extends ItemBean {
   public AlbumItemBean() {
     super();
     this.albumId = UrlHelper.getParameterValue("albumId");
-    this.prettyLink = SessionBean.getPrettySpacePage("pretty:editImageOfAlbum", getSpace());
+    this.prettyLink = SessionBean.getPrettySpacePage("pretty:editImageOfAlbum", getSelectedSpaceString());
   }
 
   @Override
@@ -114,7 +114,7 @@ public class AlbumItemBean extends ItemBean {
 
   @Override
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:albumItem", getSpace());
+    return SessionBean.getPrettySpacePage("pretty:albumItem", getSelectedSpaceString());
   }
 
   @Override

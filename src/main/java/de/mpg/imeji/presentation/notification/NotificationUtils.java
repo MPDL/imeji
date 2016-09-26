@@ -98,8 +98,8 @@ public class NotificationUtils {
         for (Map.Entry<String, String> entry : msgsPerEmail.entrySet()) {
           User u = usersPerEmail.get(entry.getKey());
           emailClient.sendMail(u.getEmail(), null,
-              EmailMessages.getEmailOnZipDownload_Subject(session.getLocale()), EmailMessages
-                  .getEmailOnZipDownload_Body(u, user, entry.getValue(), url, session.getLocale()));
+              EmailMessages.getEmailOnZipDownload_Subject(Locale.ENGLISH), EmailMessages
+                  .getEmailOnZipDownload_Body(u, user, entry.getValue(), url, Locale.ENGLISH));
           LOGGER.info("Sent notification email to user: " + u.getPerson().getCompleteName() + "<"
               + u.getEmail() + ">;" + " zip download query: <" + url + ">; message: <"
               + entry.getValue().replaceAll("[\\r\\n]]", ";") + ">");

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 
 /**
@@ -37,6 +39,7 @@ public class SearchForm {
   private static final Logger LOGGER = Logger.getLogger(SearchForm.class);
   private Map<String, MetadataProfile> profilesMap;
   private List<SearchGroupForm> groups;
+  private List<SearchGroupForm> technicalMetadata;
   private SearchPair fileTypeSearch =
       new SearchPair(SearchFields.filetype, SearchOperators.REGEX, "", false);
   private SearchPair allSearch = new SearchPair(SearchFields.all, SearchOperators.REGEX, "", false);
@@ -60,7 +63,7 @@ public class SearchForm {
    * @throws ImejiException
    */
   public SearchForm(SearchQuery searchQuery, Map<String, MetadataProfile> profilesMap,
-      MetadataLabels metadataLabels) throws ImejiException {
+      MetadataLabels metadataLabels, User user, String space) throws ImejiException {
     this();
     this.profilesMap = profilesMap;
     for (SearchElement se : searchQuery.getElements()) {
@@ -68,8 +71,8 @@ public class SearchForm {
         String profileId =
             SearchFormularHelper.getProfileIdFromStatement((SearchGroup) se, profilesMap.values());
         if (profileId != null) {
-          groups.add(
-              new SearchGroupForm((SearchGroup) se, profilesMap.get(profileId), metadataLabels));
+          groups.add(new SearchGroupForm((SearchGroup) se, profilesMap.get(profileId),
+              metadataLabels, user, space));
         }
       }
       if (se.getType().equals(SEARCH_ELEMENTS.PAIR)) {
@@ -131,16 +134,18 @@ public class SearchForm {
   public SearchQuery getFormularAsSearchQuery() {
     try {
       SearchQuery searchQuery = new SearchQuery();
-      if (!allSearch.isEmpty()) {
+      if (!allSearch.getValue().isEmpty()) {
         if (includeFulltext) {
           SearchGroup g = new SearchGroup();
           g.addPair(allSearch);
           g.addLogicalRelation(LOGICAL_RELATIONS.OR);
           g.addPair(new SearchPair(SearchFields.fulltext, SearchOperators.REGEX,
               allSearch.getValue(), false));
+          searchQuery.addGroup(g);
+        } else {
+          searchQuery.addPair(allSearch);
         }
       }
-      searchQuery.addPair(allSearch);
       for (SearchGroupForm g : groups) {
         if (!searchQuery.isEmpty()) {
           searchQuery.addLogicalRelation(LOGICAL_RELATIONS.OR);
@@ -178,14 +183,15 @@ public class SearchForm {
    * @param pos
    * @throws ImejiException
    */
-  public void changeSearchGroup(int pos, MetadataLabels metadataLabels) throws ImejiException {
+  public void changeSearchGroup(int pos, MetadataLabels metadataLabels, User user, String space)
+      throws ImejiException {
     SearchGroupForm group = groups.get(pos);
     group.getStatementMenu().clear();
     group.setSearchElementForms(new ArrayList<SearchMetadataForm>());
     if (group.getProfileId() != null) {
       MetadataProfile p = profilesMap.get(group.getProfileId());
-      group.initStatementsMenu(p, metadataLabels);
-      addElement(pos, 0);
+      group.initStatementsMenu(p, metadataLabels, user, space);
+      addElement(pos, 0, Locale.forLanguageTag(metadataLabels.getLang()));
     }
   }
 
@@ -204,14 +210,14 @@ public class SearchForm {
    * @param groupPos
    * @param elPos
    */
-  public void addElement(int groupPos, int elPos) {
+  public void addElement(int groupPos, int elPos, Locale locale) {
     SearchGroupForm group = groups.get(groupPos);
     if (group.getStatementMenu().size() > 0) {
       SearchMetadataForm fe = new SearchMetadataForm();
       String namespace = (String) group.getStatementMenu().get(0).getValue();
       fe.setNamespace(namespace);
       fe.initStatement(profilesMap.get(group.getProfileId()), namespace);
-      fe.initOperatorMenu();
+      fe.initOperatorMenu(locale);
       if (elPos >= group.getSearchElementForms().size()) {
         group.getSearchElementForms().add(fe);
       } else {
@@ -226,13 +232,13 @@ public class SearchForm {
    * @param groupPos
    * @param elPos
    */
-  public void changeElement(int groupPos, int elPos, boolean keepValue) {
+  public void changeElement(int groupPos, int elPos, boolean keepValue, Locale locale) {
     SearchGroupForm group = groups.get(groupPos);
     SearchMetadataForm fe = group.getSearchElementForms().get(elPos);
     String profileId = group.getProfileId();
     String namespace = fe.getNamespace();
     fe.initStatement(profilesMap.get(profileId), namespace);
-    fe.initOperatorMenu();
+    fe.initOperatorMenu(locale);
     if (!keepValue) {
       fe.setSearchValue("");
     }

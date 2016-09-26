@@ -124,9 +124,9 @@ public class StartPageBean extends SuperBean implements Serializable {
         LOGGER.error("Error building query to search items", e);
       }
       return new SearchResult(
-          ic.search(null, sq, sc, getSessionUser(), getSpace(), -1, 0).getResults(), null);
+          ic.search(null, sq, sc, getSessionUser(), getSelectedSpaceString(), -1, 0).getResults(), null);
     }
-    return ic.search(null, sq, sc, getSessionUser(), getSpace(), -1, 0);
+    return ic.search(null, sq, sc, getSessionUser(), getSelectedSpaceString(), -1, 0);
   }
 
   /**
@@ -135,12 +135,12 @@ public class StartPageBean extends SuperBean implements Serializable {
    * @return
    */
   private Space readSpace() {
-    if (StringHelper.isNullOrEmptyTrim(getSpace())) {
+    if (StringHelper.isNullOrEmptyTrim(getSelectedSpaceString())) {
       return new Space();
     }
     SpaceController sc = new SpaceController();
     try {
-      return sc.retrieve(URI.create(getSpace()), getSessionUser());
+      return sc.retrieve(URI.create(getSelectedSpaceString()), getSessionUser());
     } catch (ImejiException e) {
       Space scc = new Space();
       scc.setTitle("Space Not Found");

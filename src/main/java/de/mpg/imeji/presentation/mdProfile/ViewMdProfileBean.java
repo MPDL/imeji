@@ -3,12 +3,10 @@
  */
 package de.mpg.imeji.presentation.mdProfile;
 
-import org.apache.log4j.Logger;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
@@ -18,17 +16,10 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@ManagedBean(name = "ViewMdProfileBean")
+@RequestScoped
 public class ViewMdProfileBean extends MdProfileBean {
-  private SessionBean session;
-  private static final Logger LOGGER = Logger.getLogger(ViewMdProfileBean.class);
-
-  /**
-   * Bean constructor
-   */
-  public ViewMdProfileBean() {
-    super();
-    session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-  }
+  private static final long serialVersionUID = 4353869579444298312L;
 
   /**
    * Initialize the page
@@ -37,47 +28,12 @@ public class ViewMdProfileBean extends MdProfileBean {
    * @throws Exception
    */
   @Override
-  public String getInit() {
-    try {
-      if (this.getId() != null) {
-
-        ProfileController profileController = new ProfileController();
-        this.setProfile(profileController.retrieve(this.getId(), session.getUser()));
-        super.getInit();
-
-      } else {
-        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", session.getLocale())
-            + "  No profile Id found in URL");
-      }
-      return "";
-
-    } catch (Exception e) {
-      return "";
-    }
-  }
-
-  /**
-   * Method for save button. Save the profile according to the form values TODO check if such a
-   * method is used on view profile page...
-   *
-   * @return
-   */
-  public String save() {
-    try {
-      ProfileController profileController = new ProfileController();
-      profileController.update(this.getProfile(), session.getUser());
-      session.getProfileCached().clear();
-      BeanHelper
-          .info(Imeji.RESOURCE_BUNDLE.getMessage("success_profile_save", session.getLocale()));
-    } catch (Exception e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_profile_save", session.getLocale()));
-      LOGGER.error("Error saving profile", e);
-    }
-    return "pretty:";
+  public void specificSetup() {
+    // nothing...
   }
 
   @Override
   protected String getNavigationString() {
-    return session.getPrettySpacePage("pretty:viewProfile");
+    return SessionBean.getPrettySpacePage("pretty:viewProfile", getSelectedSpaceString());
   }
 }

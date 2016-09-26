@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<f:view encoding="UTF-8" locale="#{SessionBean.locale}" 
+<f:view encoding="UTF-8" locale="#{InternationalizationBean.locale}" 
         xmlns:f="http://java.sun.com/jsf/core" 
         xmlns:h="http://java.sun.com/jsf/html" 
         xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -13,7 +13,7 @@
             <ui:include src="component/header/html_head_default.xhtml"/>
             <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
         </h:head>
-        <h:body lang="#{SessionBean.locale}">
+        <h:body lang="#{InternationalizationBean.locale}">
             <!-- default necessary scripts, because of use in body-load context -->
             <h:outputScript library="jquery" name="jquery-1.11.1.min.js"/>
             <h:outputScript library="jquery/ui" name="1.10.4/jquery-ui.min.js"/>
@@ -87,30 +87,8 @@
             <div class="imj_modalDialogBackground">&#160;</div>
             <ui:insert name="modalDialogs_from_template"/>
             <ui:insert name="modalDialogs_from_site"/>
-            
-            
-            <!-- scripts -->
-            <ui:fragment rendered="#{SessionBean.locale == 'en' or SessionBean.locale == 'es'}">
-                <script type="text/javascript">var placeholder_simpleSearch = 'Search for ...';</script>
-            </ui:fragment>
-            <ui:fragment rendered="#{SessionBean.locale == 'de'}">
-                <script type="text/javascript">var placeholder_simpleSearch = 'Suche nach ...';</script>
-            </ui:fragment>
-            <ui:fragment rendered="#{SessionBean.locale == 'jp' or SessionBean.locale == 'ja'}">
-                <script type="text/javascript">var placeholder_simpleSearch = '検索キーワード...';</script>
-            </ui:fragment>
-
             <script type="text/javascript">var homeURL = '#{Navigation.applicationUrl}';</script>
-
-			<h:outputScript library="js/" name="default.js"></h:outputScript>
-            <script type="text/javascript">
-                $(function () {
-                    //add placeholders for meta menu (username and password) and simple search
-                    //$(".imj_metaMenuStandardSingleLine input[type='text']").attr("placeholder", placeholder_username);
-                    //$(".imj_metaMenuStandardSingleLine input[type='password']").attr("placeholder", placeholder_password);
-                    $(".imj_simpleSearchInput").attr("placeholder", placeholder_simpleSearch);
-                });
-            </script>
+            <h:outputScript library="js/" name="default.js"/>
 
             <div id="additonalFooterScripts" class="imj_noDisplay">
                 <ui:insert name="additonalFooterScripts"/>

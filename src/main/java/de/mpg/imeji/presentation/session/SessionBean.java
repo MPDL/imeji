@@ -12,7 +12,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
@@ -41,7 +40,6 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.lang.InternationalizationBean;
 import de.mpg.imeji.presentation.upload.IngestImage;
 import de.mpg.imeji.presentation.util.CookieUtils;
 import de.mpg.imeji.presentation.util.ServletUtil;
@@ -53,16 +51,17 @@ import de.mpg.imeji.presentation.util.ServletUtil;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-@ManagedBean
+@ManagedBean(name = "SessionBean")
 @SessionScoped
 public class SessionBean implements Serializable {
   private static final long serialVersionUID = 3367867290955569762L;
+  private static final String STYLE_COOKIE = "IMEJI_STYLE";
+  private static final String BROWSE_VIEW_COOKIE = "IMEJI_BROWSE_VIEW";
 
-  public enum Style {
+  private enum Style {
     NONE, DEFAULT, ALTERNATIVE;
   }
 
-  private Locale locale;
   private User user = null;
   private List<String> selected;
   private Album activeAlbum;
@@ -76,15 +75,9 @@ public class SessionBean implements Serializable {
   private String selectedSpaceLogoURL;
   private String selectedBrowseListView;
 
-  /*
-   * Cookies name
-   */
-  public static final String styleCookieName = "IMEJI_STYLE";
-  public static final String langCookieName = "IMEJI_LANG";
-  public static final String browseViewCookieName = "IMEJI_BROWSE_VIEW";
 
   /*
-   * Specific variables for the May Planck Inistute
+   * Specific variables for the May Planck Institute
    */
   public String institute;
   public String instituteId;
@@ -101,7 +94,7 @@ public class SessionBean implements Serializable {
   public SessionBean() {
     selected = new ArrayList<String>();
     profileCached = new HashMap<URI, MetadataProfile>();
-    locale = InternationalizationBean.getUserLocale();
+    // locale = InternationalizationBean.getUserLocale();
     initCssWithCookie();
     initApplicationUrl();
     initBrowseViewWithCookieOrConfig();
@@ -115,14 +108,14 @@ public class SessionBean implements Serializable {
    */
   private void initBrowseViewWithCookieOrConfig() {
     this.selectedBrowseListView =
-        CookieUtils.readNonNull(browseViewCookieName, Imeji.CONFIG.getDefaultBrowseView());
+        CookieUtils.readNonNull(BROWSE_VIEW_COOKIE, Imeji.CONFIG.getDefaultBrowseView());
   }
 
   /**
    * Initialize the CSS value with the Cookie value
    */
   private void initCssWithCookie() {
-    selectedCss = Style.valueOf(CookieUtils.readNonNull(styleCookieName, Style.NONE.name()));
+    selectedCss = Style.valueOf(CookieUtils.readNonNull(STYLE_COOKIE, Style.NONE.name()));
   }
 
   /**
@@ -162,24 +155,6 @@ public class SessionBean implements Serializable {
 
   public String getApplicationUrl() {
     return applicationUrl;
-  }
-
-  /**
-   * Getter
-   *
-   * @return
-   */
-  public Locale getLocale() {
-    return this.locale;
-  }
-
-  /**
-   * Setter
-   *
-   * @param userLocale
-   */
-  public void setLocale(final Locale userLocale) {
-    this.locale = userLocale;
   }
 
   /**
@@ -368,7 +343,7 @@ public class SessionBean implements Serializable {
    */
   public void toggleCss() {
     selectedCss = selectedCss == Style.DEFAULT ? Style.ALTERNATIVE : Style.DEFAULT;
-    CookieUtils.updateCookieValue(styleCookieName, selectedCss.name());
+    CookieUtils.updateCookieValue(STYLE_COOKIE, selectedCss.name());
   }
 
   /**
@@ -535,7 +510,7 @@ public class SessionBean implements Serializable {
     selectedBrowseListView =
         selectedBrowseListView.equals(ImejiConfiguration.BROWSE_VIEW.LIST.name())
             ? BROWSE_VIEW.THUMBNAIL.name() : BROWSE_VIEW.LIST.name();
-    CookieUtils.updateCookieValue(browseViewCookieName, selectedBrowseListView);
+    CookieUtils.updateCookieValue(BROWSE_VIEW_COOKIE, selectedBrowseListView);
   }
 
   /**

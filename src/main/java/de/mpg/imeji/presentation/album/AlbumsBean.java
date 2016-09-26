@@ -87,7 +87,7 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
       int limit) {
     AlbumController controller = new AlbumController();
     return controller.search(searchQuery, getSessionUser(), sortCriterion, limit, offset,
-        getSpace());
+        getSelectedSpaceString());
   }
 
   public String getTypeLabel() {

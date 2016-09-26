@@ -28,13 +28,13 @@ public class EditSpaceBean extends SpaceBean {
 
   public String save() throws Exception {
     if (updatedSpace()) {
-      sessionBean.setSpaceId(getSpace().getSlug());
+      getSessionBean().setSpaceId(getSpace().getSlug());
       // Go to the home URL of the Space
       if (!isBackToAdminNoSpace()) {
-        FacesContext.getCurrentInstance().getExternalContext().redirect(navigation.getHomeUrl());
-      } else {
         FacesContext.getCurrentInstance().getExternalContext()
-            .redirect(navigation.getApplicationUrl() + Navigation.spacesAllSlug);
+            .redirect(getNavigation().getHomeUrl());
+      } else {
+        redirect(getNavigation().getApplicationUrl() + Navigation.spacesAllSlug);
       }
     }
 
@@ -42,34 +42,32 @@ public class EditSpaceBean extends SpaceBean {
   }
 
   public String cancel() throws Exception {
-    sessionBean.setSpaceId(getSpace().getSlug());
+    getSessionBean().setSpaceId(getSpace().getSlug());
     // Go to the home URL of the Space
-    FacesContext.getCurrentInstance().getExternalContext().redirect(navigation.getAdminUrl());
+    FacesContext.getCurrentInstance().getExternalContext().redirect(getNavigation().getAdminUrl());
     return "";
   }
 
   public boolean updatedSpace() throws ImejiException, IOException {
     try {
       SpaceController spaceController = new SpaceController();
-      File spaceLogoFile = (sessionBean.getSpaceLogoIngestImage() != null)
-          ? sessionBean.getSpaceLogoIngestImage().getFile() : null;
+      File spaceLogoFile = (getSessionBean().getSpaceLogoIngestImage() != null)
+          ? getSessionBean().getSpaceLogoIngestImage().getFile() : null;
       setSpace(spaceController.update(getSpace(), getSelectedCollections(), spaceLogoFile,
-          sessionBean.getUser()));
+          getSessionBean().getUser()));
       // reset the Session bean and this local, as anyway it will navigate
       // back to the home page
       // Note: check how it will work with eDit! Edit bean should be
       // implemented
       setIngestImage(null);
-      BeanHelper
-          .info(Imeji.RESOURCE_BUNDLE.getMessage("success_space_update", sessionBean.getLocale()));
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_space_update", getLocale()));
       return true;
     } catch (UnprocessableError e) {
       BeanHelper.cleanMessages();
-      BeanHelper
-          .error(Imeji.RESOURCE_BUNDLE.getMessage("error_space_update", sessionBean.getLocale()));
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_space_update", getLocale()));
       List<String> listOfErrors = Arrays.asList(e.getMessage().split(";"));
       for (String errorM : listOfErrors) {
-        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(errorM, sessionBean.getLocale()));
+        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(errorM, getLocale()));
       }
       return false;
     }

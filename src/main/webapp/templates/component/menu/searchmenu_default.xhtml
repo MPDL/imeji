@@ -4,12 +4,14 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
 	<div class="imj_simpleSearch">
+	
 		<form id="simpleSearch" onsubmit="return submitSimpleSearch();">
 			<div class="imj_simpleSearchInputWrapper">
 				<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item">
 					<div class="imj_menuHeader">
-						<input type="search" id="quickSearchString" class="imj_simpleSearchInput" value="#{QuickSearchBean.searchString}" autocomplete="off" onfocus="initSimpleSearch('#{Navigation.albumsUrl}', '#{Navigation.collectionsUrl}', '#{Navigation.browseUrl}', #{Configuration.albumsEnabled ? 3 : 2})"/>
+						<input type="search" id="quickSearchString" class="imj_simpleSearchInput" placeholder="#{lbl.search_for}..." value="#{QuickSearchBean.searchString}" autocomplete="off" onfocus="initSimpleSearch('#{Navigation.albumsUrl}', '#{Navigation.collectionsUrl}', '#{Navigation.browseUrl}', #{Configuration.albumsEnabled ? 3 : 2})"/>
 						<input type="submit" id="btnQuickSearchStart" title="#{lbl.search_for}" class="imj_simpleSearchButtonSubmit" value="#{lbl.paginator_go}" formaction="#"/>	
 					</div>
 					<div class="imj_menuSimpleSearch"  >

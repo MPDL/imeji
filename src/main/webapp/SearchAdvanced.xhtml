@@ -22,7 +22,10 @@
 	<ui:define name="mainContent">
 		<!-- AJAX Wrapper - START -->
 		<h:panelGroup layout="block" id="imj_ajaxWrapper" class="imj_advancedSearch">
-			<h:form id="advancedSearchForm" onkeypress="if (event.keyCode == 13) {document.getElementById('advancedSearchForm:submit').click(); return false;}">
+			<h:form id="advancedSearchForm" onkeyup="if (event.keyCode == 13) {document.getElementById('advancedSearchForm:submit').click(); return false;} else{document.getElementById('advancedSearchForm:updateAll').click()}">
+				<h:commandButton type="button" id="updateAll" action="#{AdvancedSearchBean.updateForm}" styleClass="imj_ajaxUpdateElementButton">
+					<f:ajax execute="@form" render=":imj_searchQueryMessageArea"/>
+				</h:commandButton>
 				<div class="imj_searchUnit">
 					<div class="imj_searchDetails">
 						<h:outputText value="#{lbl.all_fields}" />

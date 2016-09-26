@@ -5,9 +5,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
@@ -15,9 +15,8 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
 import de.mpg.imeji.logic.vo.Space;
-import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Java Bean for the view spaces page
@@ -27,22 +26,17 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 @ManagedBean(name = "SpacesBean")
 @ViewScoped
-public class SpacesBean implements Serializable {
+public class SpacesBean extends SuperBean implements Serializable {
   private static final long serialVersionUID = 909531319532057427L;
 
   private List<Space> spaces;
   private static final Logger LOGGER = Logger.getLogger(SpacesBean.class);
-  private SessionBean sessionBean;
-  private Navigation navigation;
 
   public SpacesBean() {
     spaces = new ArrayList<Space>();
-    sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
-
-    init();
   }
 
+  @PostConstruct
   public void init() {
     SpaceController sc = new SpaceController();
     try {
@@ -70,13 +64,12 @@ public class SpacesBean implements Serializable {
   public void delete(Space delSpace) throws IOException {
     SpaceController sc = new SpaceController();
     try {
-      sc.delete(delSpace, sessionBean.getUser());
+      sc.delete(delSpace, getSessionUser());
     } catch (Exception e) {
-      BeanHelper
-          .error(Imeji.RESOURCE_BUNDLE.getMessage("error_delete_space", sessionBean.getLocale()));
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_delete_space", getLocale()));
     }
 
-    FacesContext.getCurrentInstance().getExternalContext().redirect(navigation.getSpacesUrl());
+    redirect(getNavigation().getSpacesUrl());
 
   }
 

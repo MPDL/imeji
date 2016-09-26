@@ -66,8 +66,8 @@
 		</script>
         
 	</ui:define>
-	
-	<ui:define name="mainContent">#{StartPageBean.selectedSpaceResource.id}
+	#{InternationalizationBean.locale}
+	<ui:define name="mainContent">
 		<!-- in case of space, the welcome get only one text with the carousel on right hand side -->
 		<ui:fragment rendered="#{StartPageBean.selectedSpaceResource.id != '' and not empty StartPageBean.selectedSpaceResource.id and StartPageBean.selectedSpaceResource.description.trim() != ''}">
 			<!-- Main Content -->							
@@ -79,11 +79,11 @@
 			<!-- Main Content -->							
 			<div id="imj_welcomeInfoWrapper" class="imj_welcomeInfo" style="#{Configuration.startPageCarouselEnabled? '' : 'width: 98%'}">			
 				<!-- HTML Snippet defined in the configuration -->
-				<ui:fragment rendered="#{Configuration.getStartPageHTML(SessionBean.locale) != ''}">
-					<h:outputText value="#{Configuration.getStartPageHTML(SessionBean.locale)}" escape="false"/>
+				<ui:fragment rendered="#{Configuration.getStartPageHTML(InternationalizationBean.locale) != ''}">
+					<h:outputText value="#{Configuration.getStartPageHTML(InternationalizationBean.locale)}" escape="false"/>
 				</ui:fragment>
 				<!-- Default Startpage content (if configuration is emtpy) -->
-				<ui:fragment rendered="#{Configuration.getStartPageHTML('en') == '' and (SessionBean.locale == 'en' or SessionBean.locale == 'es')}">
+				<ui:fragment rendered="#{Configuration.getStartPageHTML('en') == '' and (InternationalizationBean.locale == 'en' or InternationalizationBean.locale == 'es')}">
 					<div id="tabsEN_OLD" class="id_tabs" >
 						<!-- tabs -->
 						<ul class="imj_tabMenu">
@@ -144,7 +144,7 @@
 					</div>
 				</ui:fragment>
 				
-				<ui:fragment rendered="#{Configuration.getStartPageHTML('de') == '' and SessionBean.locale == 'de'}">
+				<ui:fragment rendered="#{Configuration.getStartPageHTML('de') == '' and InternationalizationBean.locale == 'de'}">
 					<div id="tabsDE" class="id_tabs" >
 						<ul class="imj_tabMenu">
 							<li><a href="#tabsDE-1">Über</a></li>
@@ -205,7 +205,7 @@
 					</div>
 				</ui:fragment>
 				<!-- japanese part -->
-				<ui:fragment rendered="#{(Configuration.getStartPageHTML('jp') == '' and Configuration.getStartPageHTML('ja') == '') and (SessionBean.locale == 'jp' or SessionBean.locale == 'ja')}">
+				<ui:fragment rendered="#{(Configuration.getStartPageHTML('jp') == '' and Configuration.getStartPageHTML('ja') == '') and (InternationalizationBean.locale == 'jp' or InternationalizationBean.locale == 'ja')}">
 					<div id="tabsJP" class="id_tabs" >
 						<!-- tabs -->
 						<ul class="imj_tabMenu">

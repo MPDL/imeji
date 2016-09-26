@@ -8,10 +8,10 @@
 	
 	<ui:define name="mainContent">
 		<h:panelGroup layout="block" id="imj_ajaxWrapper" class="imj_helpPage">
-			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{SessionBean.locale.language == 'en'}"/>
-			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{SessionBean.locale.language == 'de'}"/>
-			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{SessionBean.locale.language == 'ja'}"/>
-			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{SessionBean.locale.language == 'es'}"/>
+			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{InternationalizationBean.locale.language == 'en'}"/>
+			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{InternationalizationBean.locale.language == 'de'}"/>
+			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{InternationalizationBean.locale.language == 'ja'}"/>
+			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{InternationalizationBean.locale.language == 'es'}"/>
 		</h:panelGroup>
 	</ui:define>
 </ui:composition>

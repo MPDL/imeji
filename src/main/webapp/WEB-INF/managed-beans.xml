@@ -23,27 +23,6 @@
 		<managed-bean-class>de.mpg.imeji.presentation.collection.CollectionSessionBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<!-- Profiles bean -->
-	<managed-bean>
-		<managed-bean-name>MdProfileBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.mdProfile.MdProfileBean</managed-bean-class>
-		<managed-bean-scope>view</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>ViewMdProfileBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.mdProfile.ViewMdProfileBean</managed-bean-class>
-		<managed-bean-scope>view</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>CreateMdProfileBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.mdProfile.CreateMdProfileBean</managed-bean-class>
-		<managed-bean-scope>view</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>EditMdProfileBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.mdProfile.EditMdProfileBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 	<!-- Other Beans -->
 	<managed-bean>
 		<managed-bean-name>MessagesBean</managed-bean-name>
@@ -66,11 +45,6 @@
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>SessionBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.session.SessionBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
 		<managed-bean-name>AdminBean</managed-bean-name>
 		<managed-bean-class>de.mpg.imeji.presentation.admin.AdminBean</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
@@ -78,11 +52,6 @@
 	<managed-bean>
 		<managed-bean-name>SuggestBean</managed-bean-name>
 		<managed-bean-class>de.mpg.imeji.presentation.metadata.util.SuggestBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>Internationalization</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.lang.InternationalizationBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<converter>

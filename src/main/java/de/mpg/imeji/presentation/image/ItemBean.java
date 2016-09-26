@@ -102,7 +102,7 @@ public class ItemBean extends SuperBean {
    * @
    */
   public ItemBean() {
-    prettyLink = SessionBean.getPrettySpacePage("pretty:editImage", getSpace());
+    prettyLink = SessionBean.getPrettySpacePage("pretty:editImage", getSelectedSpaceString());
   }
 
   /**
@@ -336,7 +336,7 @@ public class ItemBean extends SuperBean {
   }
 
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:item", getSpace());
+    return SessionBean.getPrettySpacePage("pretty:item", getSelectedSpaceString());
   }
 
   public void makePublic() throws ImejiException {

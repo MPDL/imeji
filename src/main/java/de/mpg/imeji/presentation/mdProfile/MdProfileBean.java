@@ -12,16 +12,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
+
+import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.collection.CollectionBean.TabType;
 import de.mpg.imeji.presentation.collection.CollectionSessionBean;
 import de.mpg.imeji.presentation.mdProfile.wrapper.StatementWrapper;
@@ -35,41 +43,55 @@ import de.mpg.imeji.util.LocalizedString;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class MdProfileBean {
+@ManagedBean(name = "MdProfileBean")
+@ViewScoped
+public class MdProfileBean extends SuperBean {
+  private static final long serialVersionUID = -1845604633134947188L;
+  private static final Logger LOGGER = Logger.getLogger(MdProfileBean.class);
+  private String id = null;
   private MetadataProfile profile = null;
   private TabType tab = TabType.PROFILE;
-  private CollectionSessionBean collectionSession = null;
+  @ManagedProperty(value = "#{CollectionSessionBean}")
+  private CollectionSessionBean collectionSession;
   private List<StatementWrapper> wrappers = null;
   private List<SelectItem> mdTypesMenu = null;
   private Map<URI, Integer> levels;
-  private String id = null;
   private List<SelectItem> profilesMenu = null;
-  // private String template;
-  private int statementPosition = 0;
   /**
-   * Position of the dragged element at the start
+   * Position of the dragged element
    */
   private int draggedStatementPosition = 0;
-  private int constraintPosition = 0;
-  private int labelPosition = 0;
   private static final int MARGIN_PIXELS_FOR_STATEMENT_CHILD = 30;
   /**
    * If a {@link Statement} already used by {@link Metadata} has been removed, return true;
    */
   protected boolean cleanMetadata = false;
 
-  /**
-   * initialize a default {@link MdProfileBean}
-   */
-  public MdProfileBean() {
-    collectionSession =
-        (CollectionSessionBean) BeanHelper.getSessionBean(CollectionSessionBean.class);
+  @PostConstruct
+  public void init() {
+    this.id = UrlHelper.getParameterValue("id");
+    retrieveProfile();
     if (collectionSession.getProfile() == null) {
-      collectionSession.setProfile(new MetadataProfile());
+      collectionSession.setProfile(profile);
     }
-    profile = collectionSession.getProfile();
-    wrappers = new ArrayList<StatementWrapper>();
-    initMenus();
+    specificSetup();
+  }
+
+  /**
+   * Retrieve the profile
+   */
+  protected void retrieveProfile() {
+    if (id != null) {
+      try {
+        this.profile = new ProfileController().retrieve(id, getSessionUser());
+      } catch (ImejiException e) {
+        LOGGER.error("Error retrieving profile", e);
+        BeanHelper.error(e.getMessage());;
+      }
+    } else {
+      BeanHelper.error(
+          Imeji.RESOURCE_BUNDLE.getLabel("error", getLocale()) + "  No profile Id found in URL");
+    }
   }
 
   /**
@@ -79,21 +101,20 @@ public class MdProfileBean {
    * @throws ImejiException
    * @throws Exception
    */
-  public String getInit() {
-    parseID();
+  public void specificSetup() {
+    wrappers = new ArrayList<StatementWrapper>();
     initMenus();
     cleanMetadata = false;
     // updateFirstTemplateProfileLabel();
     if (UrlHelper.getParameterBoolean("reset")) {
       reset();
     }
-    if (UrlHelper.getParameterBoolean("init") && profile != null) {
+    if (profile != null) {
       initStatementWrappers(profile);
       if (profile.getStatements().isEmpty()) {
         addFirstStatement();
       }
     }
-    return "";
   }
 
   /**
@@ -102,15 +123,15 @@ public class MdProfileBean {
   private void initMenus() {
     mdTypesMenu = new ArrayList<SelectItem>();
     for (Metadata.Types t : Metadata.Types.values()) {
-      mdTypesMenu.add(new SelectItem(t.getClazzNamespace(), Imeji.RESOURCE_BUNDLE
-          .getLabel("facet_" + t.name().toLowerCase(), BeanHelper.getLocale())));
+      mdTypesMenu.add(new SelectItem(t.getClazzNamespace(),
+          Imeji.RESOURCE_BUNDLE.getLabel("facet_" + t.name().toLowerCase(), getLocale())));
     }
   }
 
   public void addFirstStatement() {
     Statement firstStatement = ImejiFactory.newStatement();
     getWrappers().add(new StatementWrapper(firstStatement, getProfile().getId(),
-        getLevel(firstStatement), BeanHelper.getLocale()));
+        getLevel(firstStatement), getLocale()));
   }
 
   /**
@@ -122,8 +143,7 @@ public class MdProfileBean {
   public String getTypeLabel(String uri) {
     for (Metadata.Types t : Metadata.Types.values()) {
       if (t.getClazzNamespace().equals(uri)) {
-        return Imeji.RESOURCE_BUNDLE.getLabel("facet_" + t.name().toLowerCase(),
-            BeanHelper.getLocale());
+        return Imeji.RESOURCE_BUNDLE.getLabel("facet_" + t.name().toLowerCase(), getLocale());
       }
     }
     return uri;
@@ -147,16 +167,7 @@ public class MdProfileBean {
     wrappers.clear();
     levels = new HashMap<URI, Integer>();
     for (Statement st : mdp.getStatements()) {
-      wrappers.add(new StatementWrapper(st, mdp.getId(), getLevel(st), BeanHelper.getLocale()));
-    }
-  }
-
-  /**
-   * Parse the id defined in the url
-   */
-  private void parseID() {
-    if (this.getId() == null && this.getProfile().getId() != null) {
-      this.setId(this.getProfile().getId().getPath().split("/")[2]);
+      wrappers.add(new StatementWrapper(st, mdp.getId(), getLevel(st), getLocale()));
     }
   }
 
@@ -190,11 +201,10 @@ public class MdProfileBean {
   /**
    * Method called when the user drop a metadata in "insert metadata" area
    */
-  public void insertMetadata() {
-    StatementWrapper dragged = wrappers.get(getDraggedStatementPosition());
-    StatementWrapper dropped =
-        wrappers.get(getStatementPosition() > 0 ? getStatementPosition() - 1 : 0);
-    boolean moved = insertWrapper(dragged, getStatementPosition());
+  public void insertMetadata(int position) {
+    StatementWrapper dragged = wrappers.get(draggedStatementPosition);
+    StatementWrapper dropped = wrappers.get(position > 0 ? position - 1 : 0);
+    boolean moved = insertWrapper(dragged, position);
     if (moved) {
       dragged.getStatement().setParent(dropped.getStatement().getParent());
     }
@@ -204,9 +214,9 @@ public class MdProfileBean {
   /**
    * Method called when the user drop a metadata at the end of the list
    */
-  public void insertLastMetadata() {
-    StatementWrapper dragged = wrappers.get(getDraggedStatementPosition());
-    boolean moved = insertWrapper(dragged, getStatementPosition());
+  public void insertLastMetadata(int position) {
+    StatementWrapper dragged = wrappers.get(draggedStatementPosition);
+    boolean moved = insertWrapper(dragged, position);
     if (moved) {
       dragged.getStatement().setParent(null);
     }
@@ -216,10 +226,10 @@ public class MdProfileBean {
   /**
    * Method called when the user drop a metadata in "insert child" area
    */
-  public void insertChild() {
-    StatementWrapper dragged = wrappers.get(getDraggedStatementPosition());
-    StatementWrapper dropped = wrappers.get(getStatementPosition());
-    boolean moved = insertWrapper(dragged, getStatementPosition() + 1);
+  public void insertChild(int position) {
+    StatementWrapper dragged = wrappers.get(draggedStatementPosition);
+    StatementWrapper dropped = wrappers.get(position);
+    boolean moved = insertWrapper(dragged, position + 1);
     if (moved) {
       dropped = setParentOfDropped(dragged, dropped);
       dragged.getStatement().setParent(dropped.getStatement().getId());
@@ -381,36 +391,23 @@ public class MdProfileBean {
   /**
    * Methods called when the user start to drag a metadata
    */
-  public void dragStart() {
-    // do nothing, the draggedStatementPosition is set
+  public void dragStart(int position) {
+    this.draggedStatementPosition = position;
   }
 
-  /**
-   * Move a statement up in statement list
-   */
-  public void moveUp() {
-    Collections.swap(wrappers, getStatementPosition(), getStatementPosition() + 1);
-  }
-
-  /**
-   * Move a statement down in statement list
-   */
-  public void moveDown() {
-    Collections.swap(wrappers, getStatementPosition() + 1, getStatementPosition());
-  }
 
   /**
    * add a vocabulary according to the position of the clicked button
    */
-  public void addVocabulary() {
-    wrappers.get(getStatementPosition()).setVocabularyString("--");
+  public void addVocabulary(int position) {
+    wrappers.get(position).setVocabularyString("--");
   }
 
   /**
    * remove a vocabulary
    */
-  public void removeVocabulary() {
-    wrappers.get(getStatementPosition()).setVocabularyString(null);
+  public void removeVocabulary(int position) {
+    wrappers.get(position).setVocabularyString(null);
   }
 
   /**
@@ -436,9 +433,9 @@ public class MdProfileBean {
    * @param st
    * @return
    */
-  private int findNextStatementWithSameLevel(Statement st) {
+  private int findNextStatementWithSameLevel(Statement st, int position) {
     int i = 0;
-    for (i = getStatementPosition() + 1; i < wrappers.size(); i++) {
+    for (i = position + 1; i < wrappers.size(); i++) {
       if (wrappers.get(i).getLevel() == getLevel(st)) {
         // a statement with the same level have been found, return
         // position
@@ -458,15 +455,15 @@ public class MdProfileBean {
    * Called by add statement button. Add a new statement to the profile. The position of the new
    * statement is defined by the button position
    */
-  public void addStatement() {
+  public void addStatement(int position) {
     if (wrappers.isEmpty()) {
-      wrappers.add(new StatementWrapper(ImejiFactory.newStatement(), profile.getId(), 0,
-          BeanHelper.getLocale()));
+      wrappers
+          .add(new StatementWrapper(ImejiFactory.newStatement(), profile.getId(), 0, getLocale()));
     } else {
-      Statement previousStatement = wrappers.get(getStatementPosition()).getStatement();
+      Statement previousStatement = wrappers.get(position).getStatement();
       Statement newStatement = ImejiFactory.newStatement(previousStatement.getParent());
-      wrappers.add(findNextStatementWithSameLevel(previousStatement), new StatementWrapper(
-          newStatement, profile.getId(), getLevel(newStatement), BeanHelper.getLocale()));
+      wrappers.add(findNextStatementWithSameLevel(previousStatement, position),
+          new StatementWrapper(newStatement, profile.getId(), getLevel(newStatement), getLocale()));
     }
   }
 
@@ -475,11 +472,11 @@ public class MdProfileBean {
    * according to the position of the button. If the statement is used, display a warning message in
    * a panel
    */
-  public void removeStatement() {
-    if (!wrappers.get(getStatementPosition()).isUsed()) {
-      removeStatementWithChilds(wrappers.get(getStatementPosition()));
+  public void removeStatement(int position) {
+    if (!wrappers.get(position).isUsed()) {
+      removeStatementWithChilds(wrappers.get(position), position);
     } else {
-      wrappers.get(getStatementPosition()).setShowRemoveWarning(true);
+      wrappers.get(position).setShowRemoveWarning(true);
     }
   }
 
@@ -487,12 +484,12 @@ public class MdProfileBean {
    * Called by add statement child button. Add a new statement to the profile as a child of the
    * previous statement. The position of the new statement is defined by the button position
    */
-  public void addStatementChild() {
+  public void addStatementChild(int position) {
     if (!wrappers.isEmpty()) {
-      URI parent = wrappers.get(getStatementPosition()).getStatement().getId();
+      URI parent = wrappers.get(position).getStatement().getId();
       Statement newChild = ImejiFactory.newStatement(parent);
-      wrappers.add(getStatementPosition() + 1, new StatementWrapper(newChild, profile.getId(),
-          getLevel(newChild), BeanHelper.getLocale()));
+      wrappers.add(position + 1,
+          new StatementWrapper(newChild, profile.getId(), getLevel(newChild), getLocale()));
     }
   }
 
@@ -500,17 +497,17 @@ public class MdProfileBean {
    * Remove a {@link Statement} even if it is used by a an item. All {@link Metadata} using this
    * {@link Statement} are then removed.
    */
-  public void forceRemoveStatement() {
-    removeStatementWithChilds(wrappers.get(getStatementPosition()));
+  public void forceRemoveStatement(int position) {
+    removeStatementWithChilds(wrappers.get(position), position);
     cleanMetadata = true;
   }
 
   /**
    * Remove a {@link StatementWrapper} and all its childs from the {@link MetadataProfile}
    */
-  private void removeStatementWithChilds(StatementWrapper parent) {
+  private void removeStatementWithChilds(StatementWrapper parent, int position) {
     List<StatementWrapper> toDelete = getChilds(parent, false);
-    toDelete.add(wrappers.get(getStatementPosition()));
+    toDelete.add(wrappers.get(position));
     List<StatementWrapper> l = new ArrayList<StatementWrapper>();
     for (StatementWrapper sw : wrappers) {
       if (!toDelete.contains(sw)) {
@@ -523,35 +520,34 @@ public class MdProfileBean {
   /**
    * Close the panel with warning information
    */
-  public void closeRemoveWarning() {
-    wrappers.get(getStatementPosition()).setShowRemoveWarning(false);
+  public void closeRemoveWarning(int position) {
+    wrappers.get(position).setShowRemoveWarning(false);
   }
 
   /**
    * called by add label button
    */
-  public void addLabel() {
-    wrappers.get(getStatementPosition()).getStatement().getLabels()
-        .add(new LocalizedString("", ""));
+  public void addLabel(int position) {
+    wrappers.get(position).getStatement().getLabels().add(new LocalizedString("", ""));
   }
 
   /**
    * Called by remove label button
    */
-  public void removeLabel() {
-    ((List<LocalizedString>) wrappers.get(getStatementPosition()).getStatement().getLabels())
-        .remove(getLabelPosition());
+  public void removeLabel(int position, int labelPosition) {
+    ((List<LocalizedString>) wrappers.get(position).getStatement().getLabels())
+        .remove(labelPosition);
   }
 
   /**
    * Called by add constraint button
    */
-  public void addConstraint() {
-    Statement st = wrappers.get(getStatementPosition()).getAsStatement();
-    if (getConstraintPosition() >= st.getLiteralConstraints().size()) {
+  public void addConstraint(int position, int constrainPosition) {
+    Statement st = wrappers.get(position).getAsStatement();
+    if (constrainPosition >= st.getLiteralConstraints().size()) {
       ((List<String>) st.getLiteralConstraints()).add("");
     } else {
-      ((List<String>) st.getLiteralConstraints()).add(getConstraintPosition() + 1, "");
+      ((List<String>) st.getLiteralConstraints()).add(constrainPosition + 1, "");
     }
     collectionSession.setProfile(profile);
   }
@@ -559,28 +555,10 @@ public class MdProfileBean {
   /**
    * Called by remove constraint button
    */
-  public void removeConstraint() {
-    Statement st = wrappers.get(getStatementPosition()).getAsStatement();
-    ((List<String>) st.getLiteralConstraints()).remove(getConstraintPosition());
+  public void removeConstraint(int position, int constrainPosition) {
+    Statement st = wrappers.get(position).getAsStatement();
+    ((List<String>) st.getLiteralConstraints()).remove(constrainPosition);
     collectionSession.setProfile(profile);
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
-  public int getConstraintPosition() {
-    return constraintPosition;
-  }
-
-  /**
-   * setter
-   *
-   * @param constraintPosition
-   */
-  public void setConstraintPosition(int constraintPosition) {
-    this.constraintPosition = constraintPosition;
   }
 
   /**
@@ -617,20 +595,6 @@ public class MdProfileBean {
    */
   public void setTab(TabType tab) {
     this.tab = tab;
-  }
-
-  /**
-   * @return the statementPosition
-   */
-  public int getStatementPosition() {
-    return statementPosition;
-  }
-
-  /**
-   * @param statementPosition the statementPosition to set
-   */
-  public void setStatementPosition(int statementPosition) {
-    this.statementPosition = statementPosition;
   }
 
   /**
@@ -718,37 +682,7 @@ public class MdProfileBean {
     this.profilesMenu = profilesMenu;
   }
 
-  /**
-   * getter
-   *
-   * @return
-   */
-  public int getLabelPosition() {
-    return labelPosition;
-  }
 
-  /**
-   * setter
-   *
-   * @param labelPosition
-   */
-  public void setLabelPosition(int labelPosition) {
-    this.labelPosition = labelPosition;
-  }
-
-  /**
-   * @param draggedStatementPosition the draggedStatementPosition to set
-   */
-  public void setDraggedStatementPosition(int draggedStatementPosition) {
-    this.draggedStatementPosition = draggedStatementPosition;
-  }
-
-  /**
-   * @return the draggedStatementPosition
-   */
-  public int getDraggedStatementPosition() {
-    return draggedStatementPosition;
-  }
 
   public String getMdTypesMenuAsString() {
     String s = "";
@@ -756,5 +690,13 @@ public class MdProfileBean {
       s += si.getValue() + "," + si.getLabel() + "|";
     }
     return s;
+  }
+
+  public CollectionSessionBean getCollectionSession() {
+    return collectionSession;
+  }
+
+  public void setCollectionSession(CollectionSessionBean collectionSession) {
+    this.collectionSession = collectionSession;
   }
 }

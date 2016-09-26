@@ -80,7 +80,8 @@ public class AdvancedSearchBean extends SuperBean {
    */
   public String getNewSearch() throws ImejiException {
     metadataLabels = new MetadataLabels(new MetadataProfile(), getLocale());
-    formular = new SearchForm(new SearchQuery(), new HashMap<>(), metadataLabels);
+    formular = new SearchForm(new SearchQuery(), new HashMap<>(), metadataLabels, getSessionUser(),
+        getSelectedSpaceString());
     initMenus();
     try {
       String query = UrlHelper.getParameterValue("q");
@@ -120,7 +121,8 @@ public class AdvancedSearchBean extends SuperBean {
     Map<String, MetadataProfile> profs = loadProfilesAndInitMenu();
     metadataLabels =
         new MetadataLabels(new ArrayList<MetadataProfile>(profs.values()), getLocale());
-    formular = new SearchForm(searchQuery, profs, metadataLabels);
+    formular = new SearchForm(searchQuery, profs, metadataLabels, getSessionUser(),
+        getSelectedSpaceString());
     if (formular.getGroups().size() == 0) {
       formular.addSearchGroup(0);
     }
@@ -163,7 +165,7 @@ public class AdvancedSearchBean extends SuperBean {
         .add(new SelectItem(null, Imeji.RESOURCE_BUNDLE.getLabel("select_profile", getLocale())));
     ProfileController controller = new ProfileController();
     Map<String, MetadataProfile> map = new HashMap<String, MetadataProfile>();
-    for (MetadataProfile p : controller.search(getSessionUser(), getSpace())) {
+    for (MetadataProfile p : controller.search(getSessionUser(), getSelectedSpaceString())) {
       if (p != null && p.getStatements() != null && p.getStatements().size() > 0) {
         map.put(p.getId().toString(), p);
         profilesMenu.add(new SelectItem(p.getId().toString(), p.getTitle()));
@@ -233,7 +235,7 @@ public class AdvancedSearchBean extends SuperBean {
   public void changeGroup() throws ImejiException {
     int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("gPos"));
-    formular.changeSearchGroup(gPos, metadataLabels);
+    formular.changeSearchGroup(gPos, metadataLabels, getSessionUser(), getSelectedSpaceString());
   }
 
   /**
@@ -265,7 +267,7 @@ public class AdvancedSearchBean extends SuperBean {
         .getRequestParameterMap().get("gPos"));
     int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("elPos"));
-    formular.changeElement(gPos, elPos, false);
+    formular.changeElement(gPos, elPos, false, getLocale());
   }
 
   /**
@@ -276,7 +278,11 @@ public class AdvancedSearchBean extends SuperBean {
         .getRequestParameterMap().get("gPos"));
     int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("elPos"));
-    formular.changeElement(gPos, elPos, true);
+    formular.changeElement(gPos, elPos, true, getLocale());
+  }
+
+  public void updateForm() {
+
   }
 
   /**
@@ -287,7 +293,7 @@ public class AdvancedSearchBean extends SuperBean {
         .getRequestParameterMap().get("gPos"));
     int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("elPos"));
-    formular.addElement(gPos, elPos);
+    formular.addElement(gPos, elPos, getLocale());
   }
 
   /**

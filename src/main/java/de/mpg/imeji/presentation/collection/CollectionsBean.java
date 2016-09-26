@@ -121,7 +121,7 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
       int limit) {
     CollectionController controller = new CollectionController();
     return controller.search(searchQuery, sortCriterion, limit, offset, getSessionUser(),
-        getSpace());
+        getSelectedSpaceString());
   }
 
   public String getTypeLabel() {

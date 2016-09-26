@@ -3,7 +3,8 @@
  */
 package de.mpg.imeji.presentation.mdProfile;
 
-import javax.faces.context.FacesContext;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
@@ -15,10 +16,7 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
-import de.mpg.imeji.presentation.beans.Navigation;
-import de.mpg.imeji.presentation.history.HistorySession;
-import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
+import de.mpg.imeji.presentation.beans.SuperBean;
 
 /**
  * Java Bean for {@link MetadataProfile} create page
@@ -27,8 +25,10 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class CreateMdProfileBean {
-  private SessionBean session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+@ManagedBean(name = "CreateMdProfileBean")
+@ViewScoped
+public class CreateMdProfileBean extends SuperBean {
+  private static final long serialVersionUID = 3639532454098819901L;
   private ProfileSelector profileSelector;
   private boolean showWarning = false;
   private boolean showSelector = false;
@@ -40,8 +40,7 @@ public class CreateMdProfileBean {
     showWarning = UrlHelper.getParameterBoolean("warn");
     collectionId = UrlHelper.getParameterValue("col");
     redirect = UrlHelper.getParameterValue("redirect");
-    profileSelector = new ProfileSelector(null, session.getUser(), session.getSelectedSpaceString(),
-        session.getLocale());
+    profileSelector = new ProfileSelector(null, getSessionUser(), getSelectedSpaceString(), getLocale());
     return "";
   }
 
@@ -59,9 +58,9 @@ public class CreateMdProfileBean {
    */
   public void startNewProfile() throws Exception {
     MetadataProfile profile = ImejiFactory.newProfile();
-    profile.setTitle("New Profile of " + session.getUser().getPerson().getCompleteName());
+    profile.setTitle("New Profile of " + getSessionUser().getPerson().getCompleteName());
     ProfileController controller = new ProfileController();
-    profile = controller.create(profile, session.getUser());
+    profile = controller.create(profile, getSessionUser());
     changeProfile(profile, MetadataProfileCreationMethod.REFERENCE);
     redirect = "edit";
     redirect(profile);
@@ -91,11 +90,11 @@ public class CreateMdProfileBean {
       MetadataProfileCreationMethod method) throws ImejiException {
     CollectionController controller = new CollectionController();
     CollectionImeji collection = controller
-        .retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId), session.getUser());
+        .retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId), getSessionUser());
     CollectionImeji col =
-        controller.updateCollectionProfile(collection, profile, session.getUser(), method);
+        controller.updateCollectionProfile(collection, profile, getSessionUser(), method);
     ProfileController profileController = new ProfileController();
-    return profileController.retrieve(col.getProfile(), session.getUser());
+    return profileController.retrieve(col.getProfile(), getSessionUser());
   }
 
   /**
@@ -108,22 +107,17 @@ public class CreateMdProfileBean {
   }
 
   private void redirect(MetadataProfile profile) throws Exception {
-    Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
-    HistorySession history = (HistorySession) BeanHelper.getSessionBean(HistorySession.class);
     if ("view".equals(redirect) && collectionId != null) {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(navigation.getCollectionUrl() + collectionId + "/infos");
+      redirect(getNavigation().getCollectionUrl() + collectionId + "/infos");
     } else if ("edit".equals(redirect)
-        && SecurityUtil.staticAuth().update(session.getUser(), profile)) {
-      FacesContext.getCurrentInstance().getExternalContext().redirect(
-          navigation.getProfileUrl() + profile.getIdString() + "/edit?init=1&col=" + collectionId);
+        && SecurityUtil.staticAuth().update(getSessionUser(), profile)) {
+      redirect(getNavigation().getProfileUrl() + profile.getIdString() + "/edit?init=1&col="
+          + collectionId);
     } else if ("edit".equals(redirect)
-        && !SecurityUtil.staticAuth().update(session.getUser(), profile)) {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(navigation.getCollectionUrl() + collectionId + "/infos");
+        && !SecurityUtil.staticAuth().update(getSessionUser(), profile)) {
+      redirect(getNavigation().getCollectionUrl() + collectionId + "/infos");
     } else {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(history.getPreviousPage().getCompleteUrlWithHistory());
+      redirect(getHistory().getPreviousPage().getCompleteUrlWithHistory());
     }
   }
 

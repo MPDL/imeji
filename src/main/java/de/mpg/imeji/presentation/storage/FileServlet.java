@@ -6,6 +6,7 @@ package de.mpg.imeji.presentation.storage;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -126,7 +127,7 @@ public class FileServlet extends HttpServlet {
     boolean isExternalStorage = false;
     if (!StorageUtil.isSpaceUrl(url)) {
       Item fileItem = getItem(url, user);
-      NotificationUtils.notifyByItemDownload(user, fileItem, session.getLocale());
+      NotificationUtils.notifyByItemDownload(user, fileItem, Locale.ENGLISH);
       isExternalStorage = StringHelper.isNullOrEmptyTrim(fileItem.getStorageId());
     }
     readFile(url, resp, isExternalStorage, user);

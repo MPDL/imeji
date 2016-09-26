@@ -6,6 +6,9 @@ package de.mpg.imeji.presentation.collection;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
@@ -18,6 +21,8 @@ import de.mpg.imeji.logic.vo.util.MetadataFactory;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@ManagedBean(name = "CollectionSessionBean")
+@SessionScoped
 public class CollectionSessionBean {
   private MetadataProfile profile = null;
   private String selectedMenu = "SORTING";

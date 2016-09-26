@@ -10,7 +10,7 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<h:outputText value="#{cc.init(cc.attrs.imejiResource, SessionBean.user, SessionBean.locale, Navigation.applicationUrl)}"/>
+		<h:outputText value="#{cc.init(cc.attrs.imejiResource, SessionBean.user, InternationalizationBean.locale, Navigation.applicationUrl)}"/>
 		<ui:param name="displayStatusOnly" value="#{iconStatusDisplayStatusOnly ? true : false}"/>
 
 		<ui:fragment rendered="#{SessionBean.user != null and cc.show}">

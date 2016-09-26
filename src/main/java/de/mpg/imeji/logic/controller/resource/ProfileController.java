@@ -82,7 +82,7 @@ public class ProfileController extends ImejiController {
   }
 
   /**
-   * Retrieve a {@link User} by its id
+   * Retrieve a Profile by its id
    *
    * @param id
    * @param user

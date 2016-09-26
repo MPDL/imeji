@@ -309,7 +309,7 @@ public class AlbumBean extends ContainerBean {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error during delete album", e);
     }
-    return SessionBean.getPrettySpacePage("pretty:albums", getSpace());
+    return SessionBean.getPrettySpacePage("pretty:albums", getSelectedSpaceString());
   }
 
   /**

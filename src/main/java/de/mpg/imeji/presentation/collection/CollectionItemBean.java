@@ -35,7 +35,7 @@ public class CollectionItemBean extends ItemBean {
   public CollectionItemBean() {
     super();
     this.collectionId = UrlHelper.getParameterValue("collectionId");
-    this.prettyLink = SessionBean.getPrettySpacePage("pretty:EditImageOfCollection", getSpace());
+    this.prettyLink = SessionBean.getPrettySpacePage("pretty:EditImageOfCollection", getSelectedSpaceString());
   }
 
   @Override
@@ -66,7 +66,7 @@ public class CollectionItemBean extends ItemBean {
 
   @Override
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:CollectionItem", getSpace());
+    return SessionBean.getPrettySpacePage("pretty:CollectionItem", getSelectedSpaceString());
   }
 
   public String getCollectionId() {

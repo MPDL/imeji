@@ -7,12 +7,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +40,7 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.upload.IngestImage;
@@ -52,14 +52,11 @@ import de.mpg.imeji.presentation.upload.IngestImage;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public abstract class SpaceBean implements Serializable {
-
+public class SpaceBean extends SuperBean {
   private static final long serialVersionUID = -3164518799136292492L;
-
+  @ManagedProperty(value = "#{SessionBean}")
+  private SessionBean sessionBean;
   private static final Logger LOGGER = Logger.getLogger(SpaceBean.class);
-
-  protected SessionBean sessionBean;
-  protected Navigation navigation;
   private Space space;
   private List<CollectionImeji> collections;
   private List<String> selectedCollections = new ArrayList<String>();
@@ -73,8 +70,6 @@ public abstract class SpaceBean implements Serializable {
    */
   public SpaceBean() {
     space = new Space();
-    sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     collections = new ArrayList<CollectionImeji>();
   }
 
@@ -102,12 +97,10 @@ public abstract class SpaceBean implements Serializable {
   public String delete() {
     SpaceController sc = new SpaceController();
     try {
-      sc.delete(space, sessionBean.getUser());
-      BeanHelper.info(
-          Imeji.RESOURCE_BUNDLE.getMessage("space_successfully_deleted", sessionBean.getLocale()));
+      sc.delete(space, getSessionUser());
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("space_successfully_deleted", getLocale()));
     } catch (Exception e) {
-      BeanHelper
-          .error(Imeji.RESOURCE_BUNDLE.getMessage("error_space_delete", sessionBean.getLocale()));
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_space_delete", getLocale()));
       LOGGER.error("Error delete space", e);
     }
 
@@ -125,12 +118,12 @@ public abstract class SpaceBean implements Serializable {
   public void init() {
     CollectionController cc = new CollectionController();
     String q = "";
-    User user = sessionBean.getUser();
+    User user = getSessionUser();
     try {
       if (!isSpaceCreateMode()) {
 
         SpaceController sc = new SpaceController();
-        space = sc.retrieve(sessionBean.getSelectedSpace(), sessionBean.getUser());
+        space = sc.retrieve(getSpace(), getSessionUser());
         backToAdminNoSpace = UrlHelper.getParameterBoolean("admin");
       }
 
@@ -152,20 +145,20 @@ public abstract class SpaceBean implements Serializable {
         }
       });
     } catch (ImejiException e) {
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("could_not_load_collections_for_space",
-          sessionBean.getLocale()));
+      BeanHelper.info(
+          Imeji.RESOURCE_BUNDLE.getMessage("could_not_load_collections_for_space", getLocale()));
       LOGGER.error("error reading collection spaces", e);
     }
     if (UrlHelper.getParameterBoolean("start")) {
       try {
         upload();
       } catch (FileUploadException e) {
-        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_uri_save",
-            sessionBean.getLocale()));
+        BeanHelper
+            .error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_uri_save", getLocale()));
         LOGGER.error("error upload space logo", e);
       } catch (TypeNotAllowedException e) {
-        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_uri_save",
-            sessionBean.getLocale()));
+        BeanHelper
+            .error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_uri_save", getLocale()));
         LOGGER.error("error upload space logo", e);
       }
     }
@@ -204,14 +197,6 @@ public abstract class SpaceBean implements Serializable {
 
   public void setCollections(List<CollectionImeji> collections) {
     this.collections = collections;
-  }
-
-  public SessionBean getSessionBean() {
-    return sessionBean;
-  }
-
-  public void setSessionBean(SessionBean sessionBean) {
-    this.sessionBean = sessionBean;
   }
 
   public List<String> getSelectedCollections() {
@@ -256,7 +241,7 @@ public abstract class SpaceBean implements Serializable {
                 "{\"jsonrpc\" : \"2.0\", \"error\" : {\"code\": 400, \"message\": \"Bad Filetype\"}, \"details\" : \"Error description\"}STOP");
             response.flushBuffer();
             throw new TypeNotAllowedException(Imeji.RESOURCE_BUNDLE
-                .getMessage("Logo_single_upload_invalid_content_format", sessionBean.getLocale()));
+                .getMessage("Logo_single_upload_invalid_content_format", getLocale()));
           }
           FileOutputStream fos = new FileOutputStream(tmp);
           if (fis.getName() != null) {
@@ -292,7 +277,7 @@ public abstract class SpaceBean implements Serializable {
 
   public void setIngestImage(IngestImage im) {
     this.ingestImage = im;
-    sessionBean.setSpaceLogoIngestImage(im);
+    getSessionBean().setSpaceLogoIngestImage(im);
   }
 
   public IngestImage getIngestImage() {
@@ -304,6 +289,14 @@ public abstract class SpaceBean implements Serializable {
    */
   public boolean isBackToAdminNoSpace() {
     return backToAdminNoSpace;
+  }
+
+  public SessionBean getSessionBean() {
+    return sessionBean;
+  }
+
+  public void setSessionBean(SessionBean sessionBean) {
+    this.sessionBean = sessionBean;
   }
 
 

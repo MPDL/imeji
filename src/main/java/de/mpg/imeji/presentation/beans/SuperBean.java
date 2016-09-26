@@ -24,7 +24,7 @@ public class SuperBean implements Serializable {
   private static final long serialVersionUID = -5167729051940514378L;
   @ManagedProperty(value = "#{SessionBean.user}")
   private User sessionUser;
-  @ManagedProperty(value = "#{SessionBean.locale}")
+  @ManagedProperty(value = "#{InternationalizationBean.locale}")
   private Locale locale;
   @ManagedProperty(value = "#{SessionBean.selectedSpaceString}")
   private String space;
@@ -76,7 +76,7 @@ public class SuperBean implements Serializable {
   /**
    * @return the space
    */
-  public String getSpace() {
+  public String getSelectedSpaceString() {
     return space;
   }
 

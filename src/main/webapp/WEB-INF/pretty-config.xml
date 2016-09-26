@@ -81,11 +81,11 @@
 	</url-mapping>
 	<!-- Profile Pages -->
 	<url-mapping id="viewProfile">
-		<pattern value="/profile/#{ViewMdProfileBean.id}" />
+		<pattern value="/profile/#{ id }" />
 		<view-id>/jsf/ProfileView.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="editProfile">
-		<pattern value="/profile/#{EditMdProfileBean.id}/edit" />
+		<pattern value="/profile/#{ id }/edit" />
 		<view-id>/jsf/ProfileEdit.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="createProfile">
@@ -301,11 +301,11 @@
 	</url-mapping>
 	<!-- Profile Pages -->
 	<url-mapping id="space_viewProfile">
-		<pattern value="/space/#{SessionBean.spaceId}/profile/#{ViewMdProfileBean.id}" />
+		<pattern value="/space/#{SessionBean.spaceId}/profile/#{ id }" />
 		<view-id>/jsf/ProfileView.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="space_editProfile">
-		<pattern value="/space/#{SessionBean.spaceId}/profile/#{EditMdProfileBean.id}/edit" />
+		<pattern value="/space/#{SessionBean.spaceId}/profile/#{ id }/edit" />
 		<view-id>/jsf/ProfileEdit.xhtml</view-id>
 	</url-mapping>
 	<!-- Album Pages -->

@@ -4,22 +4,22 @@
 package de.mpg.imeji.presentation.lang;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 
-import com.ocpsoft.pretty.PrettyContext;
-
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.CookieUtils;
 
 /**
@@ -29,25 +29,29 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class InternationalizationBean {
+@ManagedBean(name = "InternationalizationBean")
+@SessionScoped
+public class InternationalizationBean implements Serializable {
+  private static final long serialVersionUID = -6750472078884009668L;
   private static final Logger LOGGER = Logger.getLogger(InternationalizationBean.class);
-  private List<SelectItem> languages = null;
-  private List<SelectItem> isolanguages = null;
-  private String languagesAsString = "";
-  private String currentLanguage = "en";
-  private SessionBean session = null;
+  private static final String lANGUAGE_COOKIE = "IMEJI_LANG";
+  private static String[] SUPPORTED_LANGUAGES;
+  private List<SelectItem> languages;
+  private List<SelectItem> isolanguages;
   private List<SelectItem> internationalizedLanguages;
   // The languages supported in imeji (defined in the properties)
-  private static String[] SUPPORTED_LANGUAGES;
-  public static final String LABEL_BUNDLE = "labels";
-  public static final String MESSAGES_BUNDLE = "messages";
 
+  private Locale locale = Locale.ENGLISH;
+  private String languagesAsString;
 
   /**
    * Constructor
    */
   public InternationalizationBean() {
-    session = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+    SUPPORTED_LANGUAGES = Imeji.CONFIG.getLanguages().split(",");
+    isolanguages = new Iso639_1Helper().getList();
+    readLocaleFromCookie();
+    initLanguagesMenu();
     init();
     internationalizeLanguages();
   }
@@ -57,10 +61,11 @@ public class InternationalizationBean {
    */
   public void init() {
     try {
-      Iso639_1Helper iso639_1Helper = new Iso639_1Helper();
-      isolanguages = iso639_1Helper.getList();
-      initLanguagesMenu();
-      changeLanguage(session.getLocale().getLanguage());
+      changeLanguage(locale.getLanguage());
+      languagesAsString = "";
+      for (SelectItem s : languages) {
+        languagesAsString += s.getValue() + "," + s.getLabel() + "|";
+      }
     } catch (Exception e) {
       LOGGER.error("Error Intializing InternationalitationBean:", e);
     }
@@ -75,15 +80,6 @@ public class InternationalizationBean {
     // Add first languages out of properties
     languages = new ArrayList<SelectItem>();
     languages.addAll(getsupportedLanguages(true));
-    // add a separator
-    // languages.add(new SelectItem(null, "--"));
-    // Add the other languages (non supported)
-    // languages.addAll(getsupportedLanguages(false));
-    // init the string of all languages
-    languagesAsString = "";
-    for (SelectItem s : languages) {
-      languagesAsString += s.getValue() + "," + s.getLabel() + "|";
-    }
   }
 
   /**
@@ -92,9 +88,9 @@ public class InternationalizationBean {
    *
    * @return
    */
-  public static Locale getUserLocale() {
-    return Locale.forLanguageTag(
-        CookieUtils.readNonNull(SessionBean.langCookieName, getRequestedLocale().getLanguage()));
+  private void readLocaleFromCookie() {
+    this.locale = Locale.forLanguageTag(
+        CookieUtils.readNonNull(lANGUAGE_COOKIE, getRequestedLocale().getLanguage()));
   }
 
   /**
@@ -130,7 +126,7 @@ public class InternationalizationBean {
    * @return
    */
   public static boolean isSupported(String langString) {
-    SUPPORTED_LANGUAGES = Imeji.CONFIG.getLanguages().split(",");
+
     for (int i = 0; i < SUPPORTED_LANGUAGES.length; i++) {
       if (SUPPORTED_LANGUAGES[i].equals(langString)) {
         return true;
@@ -181,12 +177,11 @@ public class InternationalizationBean {
    */
   private void changeLanguage(String languageString) {
     if (isSupported(languageString)) {
-      currentLanguage = languageString;
+      locale = new Locale(languageString);
     } else {
-      currentLanguage = getRequestedLocale().getLanguage();
+      locale = getRequestedLocale();
     }
-    session.setLocale(new Locale(currentLanguage));
-    CookieUtils.updateCookieValue(SessionBean.langCookieName, session.getLocale().getLanguage());
+    CookieUtils.updateCookieValue(lANGUAGE_COOKIE, getLocale().getLanguage());
     internationalizeLanguages();
   }
 
@@ -198,7 +193,6 @@ public class InternationalizationBean {
   public void currentlanguageListener(ValueChangeEvent event) {
     if (event != null && !event.getNewValue().toString().equals(event.getOldValue().toString())) {
       changeLanguage(event.getNewValue().toString());
-      PrettyContext.getCurrentInstance().getRequestURL().toString();
     }
   }
 
@@ -209,11 +203,11 @@ public class InternationalizationBean {
    * @return
    * @throws IOException
    */
-  public String changeLanguage() throws IOException {
+  public void changeLanguage() throws IOException {
     HistorySession history = (HistorySession) BeanHelper.getSessionBean(HistorySession.class);
     FacesContext.getCurrentInstance().getExternalContext()
         .redirect(history.getCurrentPage().getCompleteUrl());
-    return "pretty:";
+    // return "pretty:";
   }
 
   /**
@@ -222,7 +216,7 @@ public class InternationalizationBean {
    * @param currentLanguage
    */
   public void setCurrentLanguage(String currentLanguage) {
-    this.currentLanguage = currentLanguage;
+    this.locale = new Locale(currentLanguage);
   }
 
   /**
@@ -231,7 +225,7 @@ public class InternationalizationBean {
    * @return
    */
   public String getCurrentLanguage() {
-    return currentLanguage;
+    return this.locale.getLanguage();
   }
 
   /**
@@ -270,9 +264,14 @@ public class InternationalizationBean {
     this.internationalizedLanguages = internationalizedLanguages;
   }
 
-  /**
-   * @return the languagesAsString
-   */
+  public Locale getLocale() {
+    return locale;
+  }
+
+  public void setLocale(Locale locale) {
+    this.locale = locale;
+  }
+
   public String getLanguagesAsString() {
     return languagesAsString;
   }
