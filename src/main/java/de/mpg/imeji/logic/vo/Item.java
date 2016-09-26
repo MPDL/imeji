@@ -78,6 +78,8 @@ public class Item extends Properties implements Serializable {
   private String fulltext;
   @j2jLazyList(ImejiNamespaces.TECHNICAL_METADATA)
   private List<TechnicalMetadata> technicalMetadata = new ArrayList<>();
+  @j2jList("http://imeji.org/terms/license")
+  private List<License> licenses = new ArrayList<>();
 
   /**
    * Default constructor
@@ -319,5 +321,13 @@ public class Item extends Properties implements Serializable {
 
   public void setTechnicalMetadata(List<TechnicalMetadata> technicalMetadata) {
     this.technicalMetadata = technicalMetadata;
+  }
+
+  public List<License> getLicenses() {
+    return licenses;
+  }
+
+  public void setLicenses(List<License> licenses) {
+    this.licenses = licenses;
   }
 }

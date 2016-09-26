@@ -10,11 +10,13 @@ import java.util.Locale;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.util.MetadataFactory;
+import de.mpg.imeji.presentation.component.LicenseEditor;
 import de.mpg.imeji.presentation.metadata.ItemWrapper;
 
 /**
@@ -30,6 +32,7 @@ public abstract class AbstractMetadataEditor {
   protected MetadataProfile profile;
   protected User sessionUser;
   protected Locale locale;
+  private LicenseEditor licenseEditor;
 
   /**
    * Editor: Edit a list of images for one statement.
@@ -43,6 +46,7 @@ public abstract class AbstractMetadataEditor {
     this.profile = profile;
     this.locale = locale;
     this.sessionUser = sessionUser;
+    this.licenseEditor = new LicenseEditor(locale);
     items = new ArrayList<ItemWrapper>();
     for (Item item : itemList) {
       items.add(new ItemWrapper(item, profile, true));
@@ -98,9 +102,23 @@ public abstract class AbstractMetadataEditor {
   public List<Item> validateAndFormatItemsForSaving() {
     List<Item> itemList = new ArrayList<Item>();
     for (ItemWrapper eib : items) {
-      itemList.add(eib.asItem());
+      Item item = eib.asItem();
+      addLicense(item);
+      itemList.add(item);
     }
     return itemList;
+  }
+
+  /**
+   * Add the selected license to the item if not null
+   * 
+   * @param item
+   */
+  private void addLicense(Item item) {
+    License lic = licenseEditor.getLicense();
+    if (lic != null) {
+      item.getLicenses().add(lic);
+    }
   }
 
   /**
@@ -169,5 +187,19 @@ public abstract class AbstractMetadataEditor {
    */
   public void setLocale(Locale locale) {
     this.locale = locale;
+  }
+
+  /**
+   * @return the licenseEditor
+   */
+  public LicenseEditor getLicenseEditor() {
+    return licenseEditor;
+  }
+
+  /**
+   * @param licenseEditor the licenseEditor to set
+   */
+  public void setLicenseEditor(LicenseEditor licenseEditor) {
+    this.licenseEditor = licenseEditor;
   }
 }

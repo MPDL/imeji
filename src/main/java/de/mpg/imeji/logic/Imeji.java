@@ -6,8 +6,6 @@ package de.mpg.imeji.logic;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
-
 import com.hp.hpl.jena.query.Dataset;
 
 import de.mpg.imeji.logic.concurrency.locks.LocksSurveyor;
@@ -26,7 +24,6 @@ import de.mpg.imeji.logic.vo.User;
  * @version $Revision$ $LastChangedDate$
  */
 public class Imeji {
-  public static final Logger LOGGER = Logger.getLogger(Imeji.class);
   public static String tdbPath = null;
   public static String collectionModel;
   public static String albumModel;

@@ -49,7 +49,6 @@ public class DateHelper {
     try {
       Date d = format.get().parse(dateString);
       Calendar cal = Calendar.getInstance();
-
       cal.setTime(d);
       return cal;
     } catch (ParseException e) {
@@ -68,4 +67,18 @@ public class DateHelper {
   public static String printDate(Calendar c) {
     return formatSmall.get().format(c.getTime());
   }
+
+  /**
+   * Return the time as a calendar
+   * 
+   * @param time
+   * @return
+   */
+  public static Calendar getDate(long time) {
+    Date d = new Date(time);
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(d);
+    return cal;
+  }
+
 }

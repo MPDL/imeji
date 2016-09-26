@@ -93,7 +93,7 @@
 		<!-- MetaDataList - LIST BODY START -->
 		<h:panelGroup id="metadata" layout="block" styleClass="imj_listBody">
 			<ui:fragment rendered="#{itemBean.tab == null}">
-				<h:form onkeypress="if(event.keyCode == 13) return false;">
+				<h:form id="editItem" onkeypress="if(event.keyCode == 13) return false;">
 					<br/>
 					<!-- MetaDataList - media data Wrapper START -->
 					<h:panelGroup layout="block" styleClass="imj_metadataWrapper">
@@ -114,24 +114,59 @@
 					
 							<!-- MetaDataList - global / basic metadata -->
 							<!-- MetaDataList - Filename -->
-							<h:panelGroup layout="block" styleClass="imj_metadataSet">
+							<div class="imj_metadataSet">
 								<div class="imj_metadataLabel">
 									<h:outputText value="#{lbl.filename} "/>
 									<span class="imj_invisible">: </span>
 								</div>
-							<ui:fragment rendered="#{itemBean.edit.toggleState == 'displayMd'}">
-								<div class="imj_metadataValue">
-									<h:outputText id="txtUrl" value="#{itemBean.image.filename}"/>
-								</div>							
-							</ui:fragment>
-							
-							<ui:fragment rendered="#{itemBean.edit.toggleState == 'editMd'}">
-								<div class="imj_metadataValue">
-									<h:inputText value="#{itemBean.newFilename}"/>
-								</div>
-							</ui:fragment>
+								<ui:fragment rendered="#{itemBean.edit.toggleState == 'displayMd'}">
+									<div class="imj_metadataValue">
+										<h:outputText id="txtUrl" value="#{itemBean.image.filename}"/>
+									</div>							
+								</ui:fragment>
+								
+								<ui:fragment rendered="#{itemBean.edit.toggleState == 'editMd'}">
+									<div class="imj_metadataValue">
+										<h:inputText value="#{itemBean.newFilename}"/>
+									</div>
+								</ui:fragment>
 			
-							</h:panelGroup>
+							</div>
+							
+							<div class="imj_metadataSet">
+								<div class="imj_metadataLabel">
+									#{lbl.license}
+									<span class="imj_invisible">: </span>
+								</div>
+								<ui:fragment rendered="#{itemBean.edit.toggleState == 'displayMd'}">
+									<ui:repeat var="license" value="#{itemBean.image.licenses}">
+										<div class="imj_metadataValue">
+											<h:outputText id="license" value="#{license.name} (#{license.timestamp})"/>
+										</div>	
+									</ui:repeat>
+								</ui:fragment>
+					
+								<h:panelGroup id="licenseEditor" rendered="#{itemBean.edit.toggleState != 'displayMd'}">
+									<div class="imj_metadataValue">
+										<div class="imj_metadataSet">
+											<h:outputLabel value="#{lbl.select}" styleClass="imj_metadataLabel"/>
+											<h:selectOneMenu value="#{itemBean.edit.editor.licenseEditor.licenseName}" styleClass="imj_metadataValue">
+												<f:selectItems value="#{itemBean.edit.editor.licenseEditor.licenseMenu}"/>
+												<f:ajax listener="#{itemBean.edit.editor.licenseEditor.licenseMenuListener}" render=":editItem:licenseEditor"/>
+											</h:selectOneMenu>
+										</div>
+										<h:outputText value="#{lbl.or_big}" styleClass="imj_metadataSet imj_metadataLabel"/>
+										<div class="imj_metadataSet">
+											<h:outputLabel value="#{lbl.name}" styleClass="imj_metadataLabel"/>
+											<h:inputText value="#{itemBean.edit.editor.licenseEditor.licenseName}" styleClass="imj_metadataValue"/>
+										</div>
+										<div class="imj_metadataSet">
+											<h:outputLabel value="#{lbl.url}" styleClass="imj_metadataLabel"/>
+											<h:inputText value="#{itemBean.edit.editor.licenseEditor.licenseUrl}" styleClass="imj_metadataValue"/>
+										</div>
+									</div>
+								</h:panelGroup>
+							</div>
 							
 							<!-- MetaDataList - Collection -->
 							<h:panelGroup layout="block" styleClass="imj_metadataSet">

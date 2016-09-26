@@ -30,5 +30,6 @@ public class SingleEditor extends AbstractMetadataEditor {
   public SingleEditor(Item item, MetadataProfile profile, Statement statement, User sessionUser,
       Locale locale) {
     super(Arrays.asList(item), profile, statement, sessionUser, locale);
+    getLicenseEditor().init(item);
   }
 }

@@ -20,6 +20,7 @@ import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Item.Visibility;
+import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
@@ -45,7 +46,6 @@ public class ItemController extends ImejiController {
    * @throws ImejiException
    */
   public void create(Collection<Item> items, CollectionImeji ic, User user) throws ImejiException {
-
     for (Item img : items) {
       prepareCreate(img, user);
       if (Status.PENDING.equals(ic.getStatus())) {
@@ -59,7 +59,7 @@ public class ItemController extends ImejiController {
       img.getMetadataSet().setProfile(ic.getProfile());
       ic.getImages().add(img.getId());
     }
-    cleanMetadata(items);
+    cleanItem(items);
     ProfileController pc = new ProfileController();
     WRITER.create(J2JHelper.cast2ObjectList((List<?>) items),
         pc.retrieve(items.iterator().next().getMetadataSet().getProfile(), user), user);
@@ -155,7 +155,7 @@ public class ItemController extends ImejiController {
         item.setFilename(FilenameUtils.getName(item.getFilename()));
 
       }
-      cleanMetadata(items);
+      cleanItem(items);
       ProfileController pc = new ProfileController();
       WRITER.update(new ArrayList<>(items),
           pc.retrieve(items.iterator().next().getMetadataSet().getProfile(), user), user, true);
@@ -179,12 +179,65 @@ public class ItemController extends ImejiController {
    *
    * @param l
    */
-  private void cleanMetadata(Collection<Item> l) {
+  private void cleanItem(Collection<Item> l) {
     for (Item item : l) {
       for (Metadata md : item.getMetadataSet().getMetadata()) {
         md.clean();
       }
       item.getMetadataSet().trim();
+      cleanLicenses(item);
+    }
+  }
+
+  /**
+   * Clean the licenses of the item
+   * 
+   * @param item
+   */
+  private void cleanLicenses(Item item) {
+    long time = System.currentTimeMillis();
+    License current = getCurrentLicense(item);
+    if (current != null) {
+      current.setStart(time);
+      if (item.getStatus().equals(Status.PENDING)) {
+        item.setLicenses(Arrays.asList(current));
+      } else {
+        // item.getLicenses().add(current);
+      }
+    } else if (current == null && item.getStatus().equals(Status.PENDING)) {
+      item.setLicenses(null);
+    }
+    setLicensesEnd(item, current, time);
+  }
+
+  /**
+   * Return the current license of an item
+   * 
+   * @param item
+   * @return
+   */
+  private License getCurrentLicense(Item item) {
+    License current = null;
+    for (License lic : item.getLicenses()) {
+      if (current == null || current.getStart() < lic.getStart()) {
+        current = lic;
+      }
+    }
+    return current;
+  }
+
+  /**
+   * Set the end of the licenses (normally,´only one license shouldn't have any end)
+   * 
+   * @param item
+   * @param current
+   * @param end
+   */
+  private void setLicensesEnd(Item item, License current, long end) {
+    for (License lic : item.getLicenses()) {
+      if (lic.getEnd() < 0 && !lic.getName().equals(current.getName())) {
+        lic.setEnd(end);
+      }
     }
   }
 
