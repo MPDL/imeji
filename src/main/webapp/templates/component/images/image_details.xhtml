@@ -139,15 +139,27 @@
 									<span class="imj_invisible">: </span>
 								</div>
 								<ui:fragment rendered="#{itemBean.edit.toggleState == 'displayMd'}">
-									<ui:repeat var="license" value="#{itemBean.image.licenses}">
-										<div class="imj_metadataValue">
-											<h:outputText id="license" value="#{license.name} (#{license.timestamp})"/>
-										</div>	
-									</ui:repeat>
+									<div class="imj_metadataValue">
+										<ui:repeat var="license" value="#{itemBean.image.licenses}">
+											<ui:fragment rendered="#{not empty license.url}">
+												<a href="#{license.url}" target="_blank">
+													<ui:fragment rendered="#{empty license.label}">#{license.url}</ui:fragment> 
+													<ui:fragment rendered="#{not empty license.label}">#{license.label}</ui:fragment> 
+												</a>
+											</ui:fragment>
+											<ui:fragment rendered="#{empty license.url}">
+												#{license.label} 
+											</ui:fragment>
+											 - #{lbl.valid_from} #{license.startTime} <ui:fragment rendered="#{license.end &gt; 0}">#{lbl.to_date} #{license.endTime}</ui:fragment>
+											<br/>
+										</ui:repeat>
+										<h:outputText value="#{lbl.no_license}" rendered="#{empty itemBean.image.licenses}"/>
+									</div>	
 								</ui:fragment>
 					
 								<h:panelGroup id="licenseEditor" rendered="#{itemBean.edit.toggleState != 'displayMd'}">
 									<div class="imj_metadataValue">
+										<ui:fragment rendered="#{!itemBean.edit.editor.licenseEditor.showInput}">
 										<div class="imj_metadataSet">
 											<h:outputLabel value="#{lbl.select}" styleClass="imj_metadataLabel"/>
 											<h:selectOneMenu value="#{itemBean.edit.editor.licenseEditor.licenseName}" styleClass="imj_metadataValue">
@@ -155,15 +167,24 @@
 												<f:ajax listener="#{itemBean.edit.editor.licenseEditor.licenseMenuListener}" render=":editItem:licenseEditor"/>
 											</h:selectOneMenu>
 										</div>
-										<h:outputText value="#{lbl.or_big}" styleClass="imj_metadataSet imj_metadataLabel"/>
-										<div class="imj_metadataSet">
-											<h:outputLabel value="#{lbl.name}" styleClass="imj_metadataLabel"/>
-											<h:inputText value="#{itemBean.edit.editor.licenseEditor.licenseName}" styleClass="imj_metadataValue"/>
-										</div>
-										<div class="imj_metadataSet">
-											<h:outputLabel value="#{lbl.url}" styleClass="imj_metadataLabel"/>
-											<h:inputText value="#{itemBean.edit.editor.licenseEditor.licenseUrl}" styleClass="imj_metadataValue"/>
-										</div>
+										</ui:fragment>
+										<ui:fragment rendered="#{itemBean.edit.editor.licenseEditor.showInput}">
+											<div class="imj_metadataSet">
+												<h:outputLabel value="#{lbl.name}" styleClass="imj_metadataLabel"/>
+												<h:inputText value="#{itemBean.edit.editor.licenseEditor.customLicenseName}" styleClass="imj_metadataValue"/>
+											</div>
+											<div class="imj_metadataSet">
+												<h:outputLabel value="#{lbl.url}" styleClass="imj_metadataLabel"/>
+												<h:inputText value="#{itemBean.edit.editor.licenseEditor.customLicenseUrl}" styleClass="imj_metadataValue"/>
+											</div>
+										</ui:fragment>
+										<span class="imj_metadataSet">
+											#{lbl.or_big}
+											<h:commandLink value="#{itemBean.edit.editor.licenseEditor.showInput ? lbl.choose_license : lbl.enter_own_license}" action="#{itemBean.edit.editor.licenseEditor.toggleShowInput}">
+												<f:ajax render=":editItem:licenseEditor"/>
+											</h:commandLink>
+										</span>
+										
 									</div>
 								</h:panelGroup>
 							</div>
@@ -266,16 +287,16 @@
 												</h:outputLink>
 											</h3>
 										</ui:fragment>
-									</ui:repeat>									
-									<!-- MetaDataList - EDIT - imj_submitPanel - cancel + submit command buttons -->
-									<div class="imj_submitPanel">
-										<h:commandLink styleClass="imj_cancelButton" action="#{itemBean.edit.cancel}">
-											<h:outputText value="#{lbl.cancel}"/>
-										</h:commandLink>
-										<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.saveEditor}" value="#{lbl.save}">
-										</h:commandLink>
-									</div>
+									</ui:repeat>	
 								</ui:fragment>
+								<!-- MetaDataList - EDIT - imj_submitPanel - cancel + submit command buttons -->
+								<div class="imj_submitPanel">
+									<h:commandLink styleClass="imj_cancelButton" action="#{itemBean.edit.cancel}">
+										<h:outputText value="#{lbl.cancel}"/>
+									</h:commandLink>
+									<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.saveEditor}" value="#{lbl.save}">
+									</h:commandLink>
+								</div>
 							</ui:fragment> <!-- MetaDataList - EDIT MetaData - panel END -->
 						</h:panelGroup> <!-- MetaDataList - further metadata - single edit panel - Wrapper END -->
 					</h:panelGroup> <!-- MetaDataList - media data Wrapper END -->

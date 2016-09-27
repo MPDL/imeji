@@ -15,6 +15,7 @@ import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.ImejiController;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.controller.util.LicenseUtil;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -178,6 +179,7 @@ public class ItemController extends ImejiController {
    * Clean the values of all {@link Metadata} of an {@link Item}
    *
    * @param l
+   * @throws ImejiException
    */
   private void cleanItem(Collection<Item> l) {
     for (Item item : l) {
@@ -193,37 +195,21 @@ public class ItemController extends ImejiController {
    * Clean the licenses of the item
    * 
    * @param item
+   * @throws ImejiException
    */
   private void cleanLicenses(Item item) {
-    long time = System.currentTimeMillis();
-    License current = getCurrentLicense(item);
-    if (current != null) {
-      current.setStart(time);
+    long start = System.currentTimeMillis();
+    item.setLicenses(LicenseUtil.removeDuplicates(item.getLicenses()));
+    License active = LicenseUtil.getActiveLicense(item);
+    if (active != null && !active.isEmtpy() && active.getStart() < 0) {
+      active.setStart(start);
       if (item.getStatus().equals(Status.PENDING)) {
-        item.setLicenses(Arrays.asList(current));
-      } else {
-        // item.getLicenses().add(current);
+        item.setLicenses(Arrays.asList(active));
       }
-    } else if (current == null && item.getStatus().equals(Status.PENDING)) {
-      item.setLicenses(null);
+      setLicensesEnd(item, active, start);
+    } else if ((active == null || active.isEmtpy()) && item.getStatus().equals(Status.PENDING)) {
+      item.setLicenses(new ArrayList<>());
     }
-    setLicensesEnd(item, current, time);
-  }
-
-  /**
-   * Return the current license of an item
-   * 
-   * @param item
-   * @return
-   */
-  private License getCurrentLicense(Item item) {
-    License current = null;
-    for (License lic : item.getLicenses()) {
-      if (current == null || current.getStart() < lic.getStart()) {
-        current = lic;
-      }
-    }
-    return current;
   }
 
   /**

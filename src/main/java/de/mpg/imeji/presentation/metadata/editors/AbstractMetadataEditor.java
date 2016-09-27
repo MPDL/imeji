@@ -46,7 +46,6 @@ public abstract class AbstractMetadataEditor {
     this.profile = profile;
     this.locale = locale;
     this.sessionUser = sessionUser;
-    this.licenseEditor = new LicenseEditor(locale);
     items = new ArrayList<ItemWrapper>();
     for (Item item : itemList) {
       items.add(new ItemWrapper(item, profile, true));

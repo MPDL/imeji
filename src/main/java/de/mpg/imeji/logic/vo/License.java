@@ -6,6 +6,7 @@ import java.net.URI;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.util.DateHelper;
 
 /**
@@ -19,6 +20,8 @@ import de.mpg.imeji.util.DateHelper;
 public class License implements Serializable {
   private static final long serialVersionUID = -966062330323435843L;
   private URI id;
+  @j2jLiteral("http://imeji.org/terms/label")
+  private String label;
   @j2jLiteral("http://imeji.org/terms/name")
   private String name;
   @j2jLiteral("http://imeji.org/terms/url")
@@ -37,6 +40,23 @@ public class License implements Serializable {
     String s = start > 0 ? DateHelper.printDate(DateHelper.getDate(start)) : "...";
     String e = end > 0 ? DateHelper.printDate(DateHelper.getDate(end)) : "...";
     return s + " - " + e;
+  }
+
+  public String getStartTime() {
+    return start > 0 ? DateHelper.printDate(DateHelper.getDate(start)) : null;
+  }
+
+  public String getEndTime() {
+    return end > 0 ? DateHelper.printDate(DateHelper.getDate(end)) : null;
+  }
+
+  /**
+   * True if this license is emtpy
+   * 
+   * @return
+   */
+  public boolean isEmtpy() {
+    return StringHelper.isNullOrEmptyTrim(name) && StringHelper.isNullOrEmptyTrim(url);
   }
 
   /**
@@ -108,5 +128,21 @@ public class License implements Serializable {
   public void setEnd(long end) {
     this.end = end;
   }
+
+  /**
+   * @return the label
+   */
+  public String getLabel() {
+    return label;
+  }
+
+  /**
+   * @param label the label to set
+   */
+  public void setLabel(String label) {
+    this.label = label;
+  }
+
+
 
 }

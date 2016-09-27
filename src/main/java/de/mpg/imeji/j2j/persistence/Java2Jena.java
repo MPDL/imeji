@@ -89,12 +89,10 @@ public class Java2Jena {
       throw new NullPointerException("Fatal error: Resource " + o + " with a null id");
     }
     Resource r = model.getResource(J2JHelper.getId(o).toString());// createResource(o);
-
-    model.removeAll(r, null, null);
     for (Resource e : getEmbeddedResources(r, o)) {
-
       model.removeAll(e, null, null);
     }
+    model.removeAll(r, null, null);
   }
 
   /**
@@ -363,16 +361,12 @@ public class Java2Jena {
             Resource o = model.getResource(J2JHelper.getId(r2).toString());
             l.add(o);
             l.addAll(getEmbeddedResources(o, r2));
-          } else if (J2JHelper.isLazyList(f) || J2JHelper.isList(f))// r2
-          // instanceof
-          // ArrayList<?>)
-          {
+          } else if (J2JHelper.isLazyList(f) || J2JHelper.isList(f)) {
             String predicate = J2JHelper.getNamespace(r2, f);
-            Resource resource = model.getResource(J2JHelper.getId(r).toString());
-            l.add(resource);
-            // delete all properties for this predicate
+            Resource parent = model.getResource(J2JHelper.getId(r).toString());
+            // Find all child resources for this predicate: <parent> <predicate> <childs>
             for (StmtIterator iterator =
-                resource.listProperties(model.createProperty(predicate)); iterator.hasNext();) {
+                parent.listProperties(model.createProperty(predicate)); iterator.hasNext();) {
               Statement st = iterator.next();
               if (st.getObject().isResource()) {
                 l.add(st.getResource());
