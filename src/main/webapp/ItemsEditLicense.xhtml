@@ -1,0 +1,22 @@
+<ui:composition template="templates/template_site.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:lic="http://java.sun.com/jsf/composite/components/license">
+	<ui:param name="headline" value="#{lbl.edit_license}"/>
+	<ui:define name="actionsMenu"></ui:define>
+	<ui:define name="mainContent">
+		<div class="">
+			<h:form id="licenseEditorForm">
+				<lic:licenseEditor licenseEditor="#{ItemsEditLicenseBean.licenseEditor}" containerId="licenseEditorForm"/>
+				<h:selectBooleanCheckbox value="#{ItemsEditLicenseBean.overwriteLicenses}"/>
+				#{lbl.overwrite_licenses}
+				<div class="imj_submitPanel">
+					<h:commandLink styleClass="imj_cancelButton" action="#{ItemsEditLicenseBean.cancel}" value="#{lbl.cancel}"/>
+					<h:commandLink type="submit" styleClass="imj_submitButton" action="#{ItemsEditLicenseBean.save}" value="#{lbl.save}"/>
+				</div>
+			</h:form>
+		</div>	
+	</ui:define>
+</ui:composition>

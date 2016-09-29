@@ -158,7 +158,7 @@
 												<h:outputText value="#{lbl.album_share_album_edit}"/>
 											</h:outputLink>
 											<h:outputLink rendered="#{cc.attrs.activeMenu == 'item'}" value="?edit=1#itemMetadata">
-												<h:outputText value="#{lbl.metadata_edit}"/>
+												<h:outputText value="#{lbl.edit_item}"/>
 											</h:outputLink>
 										</li>
 									</ui:fragment>
@@ -175,7 +175,14 @@
 												<h:outputText value="#{lbl.edit_all}"/>
 											</h:outputLink>
 										</li>
-									</ui:fragment>			
+									</ui:fragment>
+									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and paginatorListSessionBean!= null and cc.attrs.hasContent and updateContentVO}">	
+										<li class="#{curMenuClass}Item">
+											<h:outputLink  value="#{Navigation.applicationSpaceUrl}edit/license?collection=#{paginatorListSessionBean.id}" id="lnkEditItemLicense">
+												<h:outputText value="#{lbl.edit_all_licenses}"/>
+											</h:outputLink>
+										</li>
+									</ui:fragment>				
 								</ul>
 							</div>
 						</div>

@@ -1,6 +1,8 @@
 package de.mpg.imeji.j2j.persistence;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +91,7 @@ public class Java2Jena {
       throw new NullPointerException("Fatal error: Resource " + o + " with a null id");
     }
     Resource r = model.getResource(J2JHelper.getId(o).toString());// createResource(o);
-    for (Resource e : getEmbeddedResources(r, o)) {
+    for (Resource e : getEmbeddedResources(o)) {
       model.removeAll(e, null, null);
     }
     model.removeAll(r, null, null);
@@ -142,7 +144,7 @@ public class Java2Jena {
         }
       }
     }
-    for (Resource e : getEmbeddedResources(r, o)) {
+    for (Resource e : getEmbeddedResources(o)) {
       model.removeAll(e, null, null);
     }
   }
@@ -351,7 +353,7 @@ public class Java2Jena {
    * @param r - {@link Object}
    * @return
    */
-  private List<Resource> getEmbeddedResources(Resource s, Object r) {
+  private List<Resource> getEmbeddedResources(Object r) {
     List<Resource> l = new ArrayList<Resource>();
     for (Field f : J2JHelper.getAllObjectFields(r.getClass())) {
       if (!(lazy && J2JHelper.isLazyList(f))) {
@@ -360,22 +362,28 @@ public class Java2Jena {
           if (J2JHelper.isResource(r2) && exists(r2)) {
             Resource o = model.getResource(J2JHelper.getId(r2).toString());
             l.add(o);
-            l.addAll(getEmbeddedResources(o, r2));
+            l.addAll(getEmbeddedResources(r2));
           } else if (J2JHelper.isLazyList(f) || J2JHelper.isList(f)) {
             String predicate = J2JHelper.getNamespace(r2, f);
-            Resource parent = model.getResource(J2JHelper.getId(r).toString());
-            // Find all child resources for this predicate: <parent> <predicate> <childs>
-            for (StmtIterator iterator =
-                parent.listProperties(model.createProperty(predicate)); iterator.hasNext();) {
-              Statement st = iterator.next();
-              if (st.getObject().isResource()) {
-                l.add(st.getResource());
+            // Get the class of the object in the list
+            ParameterizedType paramType = (ParameterizedType) f.getGenericType();
+            Type type = paramType.getActualTypeArguments()[0];
+            boolean isListOfResources = J2JHelper.isResource((Class<?>) type);
+            if (isListOfResources) {
+              Resource parent = model.getResource(J2JHelper.getId(r).toString());
+              // Find all child resources for this predicate: <parent> <predicate> <childs>
+              for (StmtIterator iterator =
+                  parent.listProperties(model.createProperty(predicate)); iterator.hasNext();) {
+                Statement st = iterator.next();
+                if (st.getObject().isResource()) {
+                  l.add(st.getResource());
+                }
               }
-            }
-            // Search for other objects
-            for (Object o : ((List<?>) r2)) {
-              if (J2JHelper.isResource(o) && exists(o)) {
-                l.addAll(getEmbeddedResources(s, o));
+              // Search for other objects
+              for (Object o : ((List<?>) r2)) {
+                if (J2JHelper.isResource(o) && exists(o)) {
+                  l.addAll(getEmbeddedResources(o));
+                }
               }
             }
           }

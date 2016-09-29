@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.UserController;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
@@ -265,7 +264,6 @@ public class ShareBusinessController {
     UserBusinessController c = new UserBusinessController();
     try {
       c.update(toUser, Imeji.adminUser);
-      new UserController().deleteGrants(removedGrants);
     } catch (Exception e) {
       LOGGER.error(e);
     }
@@ -293,7 +291,7 @@ public class ShareBusinessController {
     GroupBusinessController c = new GroupBusinessController();
     try {
       c.update(toGroup, Imeji.adminUser);
-      new UserController().deleteGrants(removedGrants);
+      // new UserController().deleteGrants(removedGrants);
     } catch (Exception e) {
       LOGGER.error("Error cleaning grants", e);
     }

@@ -5,7 +5,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"	
 	xmlns:share="http://java.sun.com/jsf/composite/components/share"	
-	xmlns:list="http://java.sun.com/jsf/composite/components/list">
+	xmlns:list="http://java.sun.com/jsf/composite/components/list"
+	xmlns:lic="http://java.sun.com/jsf/composite/components/license">
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
@@ -158,34 +159,7 @@
 								</ui:fragment>
 					
 								<h:panelGroup id="licenseEditor" rendered="#{itemBean.edit.toggleState != 'displayMd'}">
-									<div class="imj_metadataValue">
-										<ui:fragment rendered="#{!itemBean.edit.editor.licenseEditor.showInput}">
-										<div class="imj_metadataSet">
-											<h:outputLabel value="#{lbl.select}" styleClass="imj_metadataLabel"/>
-											<h:selectOneMenu value="#{itemBean.edit.editor.licenseEditor.licenseName}" styleClass="imj_metadataValue">
-												<f:selectItems value="#{itemBean.edit.editor.licenseEditor.licenseMenu}"/>
-												<f:ajax listener="#{itemBean.edit.editor.licenseEditor.licenseMenuListener}" render=":editItem:licenseEditor"/>
-											</h:selectOneMenu>
-										</div>
-										</ui:fragment>
-										<ui:fragment rendered="#{itemBean.edit.editor.licenseEditor.showInput}">
-											<div class="imj_metadataSet">
-												<h:outputLabel value="#{lbl.name}" styleClass="imj_metadataLabel"/>
-												<h:inputText value="#{itemBean.edit.editor.licenseEditor.customLicenseName}" styleClass="imj_metadataValue"/>
-											</div>
-											<div class="imj_metadataSet">
-												<h:outputLabel value="#{lbl.url}" styleClass="imj_metadataLabel"/>
-												<h:inputText value="#{itemBean.edit.editor.licenseEditor.customLicenseUrl}" styleClass="imj_metadataValue"/>
-											</div>
-										</ui:fragment>
-										<span class="imj_metadataSet">
-											#{lbl.or_big}
-											<h:commandLink value="#{itemBean.edit.editor.licenseEditor.showInput ? lbl.choose_license : lbl.enter_own_license}" action="#{itemBean.edit.editor.licenseEditor.toggleShowInput}">
-												<f:ajax render=":editItem:licenseEditor"/>
-											</h:commandLink>
-										</span>
-										
-									</div>
+									<lic:licenseEditor licenseEditor="#{itemBean.edit.editor.licenseEditor}" parentId=":editItem:licenseEditor"/>
 								</h:panelGroup>
 							</div>
 							

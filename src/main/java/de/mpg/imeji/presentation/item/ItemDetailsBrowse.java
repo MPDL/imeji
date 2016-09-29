@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.image;
+package de.mpg.imeji.presentation.item;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -33,9 +33,9 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class SingleItemBrowse implements Serializable {
+public class ItemDetailsBrowse implements Serializable {
   private static final long serialVersionUID = -1627171360319925422L;
-  private static final Logger LOGGER = Logger.getLogger(SingleItemBrowse.class);
+  private static final Logger LOGGER = Logger.getLogger(ItemDetailsBrowse.class);
   private String q;
   private String containerUri;
   private int currentPosition;
@@ -54,7 +54,7 @@ public class SingleItemBrowse implements Serializable {
    * @param type
    * @param containerId
    */
-  public SingleItemBrowse(Item item, String type, String containerUri, User user, String spaceId) {
+  public ItemDetailsBrowse(Item item, String type, String containerUri, User user, String spaceId) {
     this.q = UrlHelper.hasParameter("q") ? UrlHelper.getParameterValue("q") : "";
     this.containerUri = containerUri;
     this.currentItem = item;
@@ -108,7 +108,7 @@ public class SingleItemBrowse implements Serializable {
   }
 
   /**
-   * Initialize the {@link SingleItemBrowse} for the current {@link Item} according to:
+   * Initialize the {@link ItemDetailsBrowse} for the current {@link Item} according to:
    *
    * @param type - if the detail page is initialized within a collection, an album, or a browse page
    *        (item)

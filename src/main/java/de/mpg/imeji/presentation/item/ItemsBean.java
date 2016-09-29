@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.image;
+package de.mpg.imeji.presentation.item;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;

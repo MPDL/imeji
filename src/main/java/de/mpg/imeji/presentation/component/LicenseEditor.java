@@ -8,7 +8,6 @@ import java.util.Locale;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
@@ -25,8 +24,6 @@ import de.mpg.imeji.logic.vo.Properties.Status;
  */
 public class LicenseEditor implements Serializable {
   private static final long serialVersionUID = -2942345495443979609L;
-  private static final Logger LOGGER = Logger.getLogger(LicenseEditor.class);
-
 
   /**
    * List of predefined licenses for imeji
@@ -90,6 +87,21 @@ public class LicenseEditor implements Serializable {
       licenseMenu.add(new SelectItem(lic.name(), lic.label));
     }
     init(item);
+  }
+
+  /**
+   * Constructor for the batch edit
+   * 
+   * @param locale
+   */
+  public LicenseEditor(Locale locale) {
+    this.licenseMenu = new ArrayList<>();
+    this.showInput = false;
+    this.licenseName = Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale);
+    licenseMenu.add(new SelectItem(Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale)));
+    for (ImejiLicenses lic : ImejiLicenses.values()) {
+      licenseMenu.add(new SelectItem(lic.name(), lic.label));
+    }
   }
 
   /**

@@ -54,6 +54,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @ManagedBean(name = "EditItemMetadataBean")
 @ViewScoped
 public class EditItemMetadataBean extends SuperBean {
+  private static final long serialVersionUID = 120352070993734848L;
   private static final Logger LOGGER = Logger.getLogger(EditItemMetadataBean.class);
   // objects
   private List<Item> allItems;

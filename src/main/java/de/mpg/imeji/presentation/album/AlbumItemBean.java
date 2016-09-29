@@ -20,8 +20,8 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.beans.Navigation;
-import de.mpg.imeji.presentation.image.ItemBean;
-import de.mpg.imeji.presentation.image.SingleItemBrowse;
+import de.mpg.imeji.presentation.item.ItemBean;
+import de.mpg.imeji.presentation.item.ItemDetailsBrowse;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 
@@ -52,10 +52,10 @@ public class AlbumItemBean extends ItemBean {
       // Should redirect to the Item if user can not see the Album, but
       // can see the Item (this is by default)
       setAlbum(loadAlbum());
-      setBrowse(new SingleItemBrowse(getImage(), "album",
+      setBrowse(new ItemDetailsBrowse(getImage(), "album",
           ObjectHelper.getURI(Album.class, albumId).toString(), getSessionUser(), getSpaceId()));
     } catch (ImejiException e) {
-      setBrowse(new SingleItemBrowse(getImage(), "item", null, getSessionUser(), getSpaceId()));
+      setBrowse(new ItemDetailsBrowse(getImage(), "item", null, getSessionUser(), getSpaceId()));
     }
 
   }

@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.image;
+package de.mpg.imeji.presentation.item;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -81,7 +81,7 @@ public class ItemBean extends SuperBean {
   private MetadataProfile profile;
   private SingleEditorWrapper edit;
   protected String prettyLink;
-  private SingleItemBrowse browse = null;
+  private ItemDetailsBrowse browse = null;
   private MetadataSetWrapper mds;
   private List<Album> relatedAlbums;
   private String dateCreated;
@@ -216,13 +216,13 @@ public class ItemBean extends SuperBean {
   }
 
   /**
-   * Initiliaue the {@link SingleItemBrowse} for this {@link ItemBean}
+   * Initiliaue the {@link ItemDetailsBrowse} for this {@link ItemBean}
    *
    * @
    */
   public void initBrowsing() {
     if (item != null) {
-      browse = new SingleItemBrowse(item, "item", null, getSessionUser(), getSpaceId());
+      browse = new ItemDetailsBrowse(item, "item", null, getSessionUser(), getSpaceId());
     }
   }
 
@@ -529,11 +529,11 @@ public class ItemBean extends SuperBean {
     return Locks.isLocked(this.item.getId().toString(), getSessionUser().getEmail());
   }
 
-  public SingleItemBrowse getBrowse() {
+  public ItemDetailsBrowse getBrowse() {
     return browse;
   }
 
-  public void setBrowse(SingleItemBrowse browse) {
+  public void setBrowse(ItemDetailsBrowse browse) {
     this.browse = browse;
   }
 

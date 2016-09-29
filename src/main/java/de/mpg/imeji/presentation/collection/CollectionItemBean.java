@@ -14,8 +14,8 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.presentation.beans.Navigation;
-import de.mpg.imeji.presentation.image.ItemBean;
-import de.mpg.imeji.presentation.image.SingleItemBrowse;
+import de.mpg.imeji.presentation.item.ItemBean;
+import de.mpg.imeji.presentation.item.ItemDetailsBrowse;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
@@ -41,7 +41,7 @@ public class CollectionItemBean extends ItemBean {
   @Override
   public void initBrowsing() {
     if (getImage() != null) {
-      setBrowse(new SingleItemBrowse(getImage(), "collection",
+      setBrowse(new ItemDetailsBrowse(getImage(), "collection",
           ObjectHelper.getURI(CollectionImeji.class, collectionId).toString(), getSessionUser(),
           getSpaceId()));
     }

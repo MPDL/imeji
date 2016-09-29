@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+	
+	<composite:interface componentType="StatusComponent">
+		<composite:attribute name="licenseEditor"/>
+		<composite:attribute name="containerId"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		<div class="imj_metadataValue">
+			<ui:fragment rendered="#{!cc.attrs.licenseEditor.showInput}">
+			<div class="imj_metadataSet">
+				<h:outputLabel value="#{lbl.select}" styleClass="imj_metadataLabel"/>
+				<h:selectOneMenu value="#{cc.attrs.licenseEditor.licenseName}" styleClass="imj_metadataValue">
+					<f:selectItems value="#{cc.attrs.licenseEditor.licenseMenu}"/>
+					<f:ajax listener="#{cc.attrs.licenseEditor.licenseMenuListener}" render=":editItem:licenseEditor"/>
+				</h:selectOneMenu>
+			</div>
+			</ui:fragment>
+			<ui:fragment rendered="#{cc.attrs.licenseEditor.showInput}">
+				<div class="imj_metadataSet">
+					<h:outputLabel value="#{lbl.name}" styleClass="imj_metadataLabel"/>
+					<h:inputText value="#{cc.attrs.licenseEditor.customLicenseName}" styleClass="imj_metadataValue"/>
+				</div>
+				<div class="imj_metadataSet">
+					<h:outputLabel value="#{lbl.url}" styleClass="imj_metadataLabel"/>
+					<h:inputText value="#{cc.attrs.licenseEditor.customLicenseUrl}" styleClass="imj_metadataValue"/>
+				</div>
+			</ui:fragment>
+			<span class="imj_metadataSet">
+				#{lbl.or_big}
+				<h:commandLink value="#{cc.attrs.licenseEditor.showInput ? lbl.choose_license : lbl.enter_own_license}" action="#{cc.attrs.licenseEditor.toggleShowInput}">
+					<f:ajax render="#{cc.attrs.containerId}"/>
+				</h:commandLink>
+			</span>		
+		</div>
+	</composite:implementation>
+</html>

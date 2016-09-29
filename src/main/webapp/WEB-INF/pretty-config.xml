@@ -26,6 +26,10 @@
 		<pattern value="/browse" />
 		<view-id>/jsf/Items.xhtml</view-id>
 	</url-mapping>
+	<url-mapping id="license">
+		<pattern value="/edit/license"></pattern>
+		<view-id>/jsf/ItemsEditLicense.xhtml</view-id>
+	</url-mapping>
 	<url-mapping id="editPage">
 		<pattern value="/edit"></pattern>
 		<view-id>/jsf/BatchEdit.xhtml</view-id>

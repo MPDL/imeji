@@ -31,7 +31,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.facet.FacetsJob;
-import de.mpg.imeji.presentation.image.ItemsBean;
+import de.mpg.imeji.presentation.item.ItemsBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 

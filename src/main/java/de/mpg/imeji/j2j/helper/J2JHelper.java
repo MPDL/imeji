@@ -239,6 +239,16 @@ public class J2JHelper {
   }
 
   /**
+   * True if object is a {@link j2jResource}
+   *
+   * @param o
+   * @return
+   */
+  public static boolean isResource(Class<?> c) {
+    return c != null && c.getAnnotation(j2jResource.class) != null;
+  }
+
+  /**
    * True id the {@link Field} is a {@link j2jResource}
    *
    * @param f

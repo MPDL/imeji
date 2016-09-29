@@ -19,7 +19,7 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.ContainerBean.CONTAINER_TYPE;
-import de.mpg.imeji.presentation.image.ThumbnailBean;
+import de.mpg.imeji.presentation.item.ThumbnailBean;
 import de.mpg.imeji.presentation.util.CommonUtils;
 
 /**

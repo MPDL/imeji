@@ -16,7 +16,6 @@ import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.user.controller.GroupBusinessController;
-import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
@@ -159,15 +158,4 @@ public class UserController {
     // remove user
     WRITER.delete(WriterFacade.toList(user), Imeji.adminUser);
   }
-
-  /**
-   * Remove the following grants
-   * 
-   * @param grants
-   * @throws ImejiException
-   */
-  public void deleteGrants(List<Grant> grants) throws ImejiException {
-    WRITER.delete(new ArrayList<Object>(grants), Imeji.adminUser);
-  }
-
 }
