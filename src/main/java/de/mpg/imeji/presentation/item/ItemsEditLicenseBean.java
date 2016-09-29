@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -36,11 +37,34 @@ public class ItemsEditLicenseBean extends SuperBean {
   private boolean overwriteLicenses = false;
   private LicenseEditor licenseEditor;
   private String collectionId;
+  private boolean releasedCollection = false;
 
   @PostConstruct
-  public void init() {
+  public void init() throws ImejiException {
     collectionId = UrlHelper.getParameterValue("collection");
     setLicenseEditor(new LicenseEditor(getLocale()));
+    releasedCollection = findIfCollectionIsReleased();
+  }
+
+  /**
+   * True if the collection or one of the selected item is released/withdrawn
+   * 
+   * @return
+   * @throws ImejiException
+   */
+  private boolean findIfCollectionIsReleased() throws ImejiException {
+    if (StringHelper.isNullOrEmptyTrim(collectionId)) {
+      for (Item item : retrieveSelectedItems()) {
+        if (!item.getStatus().equals(Status.PENDING)) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return !new CollectionController()
+          .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, collectionId), getSessionUser())
+          .getStatus().equals(Status.PENDING);
+    }
   }
 
   /**
@@ -183,6 +207,20 @@ public class ItemsEditLicenseBean extends SuperBean {
    */
   public void setSelectedItems(List<String> selectedItems) {
     this.selectedItems = selectedItems;
+  }
+
+  /**
+   * @return the releasedCollection
+   */
+  public boolean isReleasedCollection() {
+    return releasedCollection;
+  }
+
+  /**
+   * @param releasedCollection the releasedCollection to set
+   */
+  public void setReleasedCollection(boolean releasedCollection) {
+    this.releasedCollection = releasedCollection;
   }
 
 
