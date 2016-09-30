@@ -24,6 +24,7 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.controller.ImejiController;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
@@ -44,6 +45,7 @@ import de.mpg.imeji.logic.validation.impl.CollectionValidator;
 import de.mpg.imeji.logic.validation.impl.Validator.Method;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
@@ -367,16 +369,19 @@ public class CollectionController extends ImejiController {
     }
   }
 
+
+
   /**
    * Release a {@link CollectionImeji} and all its {@link Item}
    *
    * @param collection
    * @param user
+   * @param defaultLicense TODO
    * @throws ImejiException
    */
-  public void release(CollectionImeji collection, User user) throws ImejiException {
+  public void release(CollectionImeji collection, User user, License defaultLicense)
+      throws ImejiException {
     ItemBusinessController itemController = new ItemBusinessController();
-
     isLoggedInUser(user);
 
     if (collection == null) {
@@ -393,7 +398,7 @@ public class CollectionController extends ImejiController {
       throw new UnprocessableError("An empty collection can not be released!");
     } else {
       List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
-      itemController.release(items, user);
+      itemController.release(items, user, defaultLicense);
       update(collection, user);
       if (collection.getProfile() != null
           && SecurityUtil.staticAuth().administrate(user, collection.getProfile().toString())) {
@@ -406,7 +411,31 @@ public class CollectionController extends ImejiController {
     }
   }
 
+  /**
+   * Release a collection and set the instance default license to items without licenses
+   * 
+   * @param collection
+   * @param user
+   * @throws ImejiException
+   */
+  public void releaseWithDefaultLicense(CollectionImeji collection, User user)
+      throws ImejiException {
+    release(collection, user, getDefaultLicense());
+  }
 
+  /**
+   * Get the instance default instance
+   * 
+   * @return
+   */
+  private License getDefaultLicense() {
+    ImejiLicenses lic = ImejiLicenses.valueOf(Imeji.CONFIG.getDefaultLicense());
+    License license = new License();
+    license.setName(lic.name());
+    license.setLabel(lic.getLabel());
+    license.setUrl(lic.getUrl());
+    return license;
+  }
 
   /**
    * Withdraw a {@link CollectionImeji} and all its {@link Item}

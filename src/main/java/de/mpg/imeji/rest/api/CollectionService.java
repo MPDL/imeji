@@ -173,7 +173,7 @@ public class CollectionService implements API<CollectionTO> {
   public CollectionTO release(String id, User u) throws ImejiException {
     CollectionController controller = new CollectionController();
     CollectionImeji vo = controller.retrieve(ObjectHelper.getURI(CollectionImeji.class, id), u);
-    controller.release(vo, u);
+    controller.release(vo, u, null);
     // Now Read the collection and return it back
     return getCollectionTO(id, u);
 

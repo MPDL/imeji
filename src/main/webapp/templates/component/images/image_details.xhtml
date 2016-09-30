@@ -149,7 +149,7 @@
 												</a>
 											</ui:fragment>
 											<ui:fragment rendered="#{empty license.url}">
-												#{license.label} 
+												#{not empty license.label ? license.label : license.name}
 											</ui:fragment>
 											 - #{lbl.valid_from} #{license.startTime} <ui:fragment rendered="#{license.end &gt; 0}">#{lbl.to_date} #{license.endTime}</ui:fragment>
 											<br/>
@@ -159,7 +159,7 @@
 								</ui:fragment>
 					
 								<h:panelGroup id="licenseEditor" rendered="#{itemBean.edit.toggleState != 'displayMd'}">
-									<lic:licenseEditor licenseEditor="#{itemBean.edit.editor.licenseEditor}" parentId=":editItem:licenseEditor"/>
+									<lic:licenseEditor licenseEditor="#{itemBean.edit.editor.licenseEditor}" containerId=":editItem:licenseEditor"/>
 								</h:panelGroup>
 							</div>
 							

@@ -51,11 +51,13 @@ import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.user.util.QuotaUtil;
+import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
@@ -526,30 +528,20 @@ public class ItemBusinessController extends ImejiController {
    *
    * @param l
    * @param user
+   * @param defaultLicense TODO
    * @throws ImejiException
    */
-  public void release(List<Item> l, User user) throws ImejiException {
+  public void release(List<Item> l, User user, License defaultLicense) throws ImejiException {
     Collection<Item> items = filterItemsByStatus(l, Status.PENDING);
     for (Item item : items) {
       prepareRelease(item, user);
+      if (defaultLicense != null && LicenseUtil.getActiveLicense(item) != null) {
+        item.setLicenses(Arrays.asList(defaultLicense));
+      }
     }
     updateBatch(items, user);
   }
 
-  /**
-   * Make the Items private
-   *
-   * @param l
-   * @param user
-   * @throws ImejiException
-   */
-  public void unRelease(List<Item> l, User user) throws ImejiException {
-    Collection<Item> items = filterItemsByStatus(l, Status.RELEASED);
-    for (Item item : items) {
-      item.setStatus(Status.PENDING);
-    }
-    updateBatch(items, user);
-  }
 
   /**
    * Set the status of a {@link List} of {@link Item} to withdraw and delete its files from the

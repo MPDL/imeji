@@ -11,10 +11,10 @@ import org.apache.commons.lang3.EnumUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.util.LicenseUtil;
+import de.mpg.imeji.logic.config.ImejiLicenses;
+import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
-import de.mpg.imeji.logic.vo.Properties.Status;
 
 /**
  * Editor to edit the license of an item
@@ -24,36 +24,6 @@ import de.mpg.imeji.logic.vo.Properties.Status;
  */
 public class LicenseEditor implements Serializable {
   private static final long serialVersionUID = -2942345495443979609L;
-
-  /**
-   * List of predefined licenses for imeji
-   * 
-   * @author saquet
-   *
-   */
-  public enum ImejiLicenses {
-    CC_BY("Attribution 4.0 International (CC BY 4.0)",
-        "https://creativecommons.org/licenses/by/4.0/"), CC_BY_SA(
-            "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
-            "https://creativecommons.org/licenses/by-sa/4.0/"), PDDL(
-                "ODC Public Domain Dedication and Licence",
-                "http://opendatacommons.org/licenses/pddl/summary/"), ODC_By(
-                    "Open Data Commons Attribution License (ODC-By) v1.0",
-                    "http://opendatacommons.org/licenses/by/summary/"), ODC_ODbL(
-                        "Open Database License (ODbL) v1.0",
-                        "http://opendatacommons.org/licenses/odbl/summary/"), CC0(
-                            "Public Domain Dedication (CC0 1.0)",
-                            "https://creativecommons.org/publicdomain/zero/1.0/");
-
-    private final String url;
-    private final String label;
-
-    private ImejiLicenses(String label, String url) {
-      this.url = url;
-      this.label = label;
-    }
-  }
-
   private List<SelectItem> licenseMenu;
   private String licenseName;
   private String licenseLabel;
@@ -80,11 +50,9 @@ public class LicenseEditor implements Serializable {
       this.customLicenseName = active.getName();
       this.customLicenseUrl = active.getUrl();
     }
-    if (item.getStatus().equals(Status.PENDING)) {
-      licenseMenu.add(new SelectItem(Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale)));
-    }
+    licenseMenu.add(new SelectItem(Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale)));
     for (ImejiLicenses lic : ImejiLicenses.values()) {
-      licenseMenu.add(new SelectItem(lic.name(), lic.label));
+      licenseMenu.add(new SelectItem(lic.name(), lic.getLabel()));
     }
     init(item);
   }
@@ -100,7 +68,7 @@ public class LicenseEditor implements Serializable {
     this.licenseName = Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale);
     licenseMenu.add(new SelectItem(Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale)));
     for (ImejiLicenses lic : ImejiLicenses.values()) {
-      licenseMenu.add(new SelectItem(lic.name(), lic.label));
+      licenseMenu.add(new SelectItem(lic.name(), lic.getLabel()));
     }
   }
 
@@ -129,8 +97,8 @@ public class LicenseEditor implements Serializable {
   public void licenseMenuListener() {
     if (EnumUtils.isValidEnum(ImejiLicenses.class, licenseName)) {
       ImejiLicenses lic = ImejiLicenses.valueOf(licenseName);
-      this.licenseUrl = lic.url;
-      this.licenseLabel = lic.label;
+      this.licenseUrl = lic.getUrl();
+      this.licenseLabel = lic.getLabel();
     } else {
       this.licenseName = null;
       this.licenseUrl = null;

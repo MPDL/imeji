@@ -444,7 +444,7 @@ public class UploadBean extends SuperBean implements Serializable {
   public String release() throws IOException {
     CollectionController cc = new CollectionController();
     try {
-      cc.release(collection, getSessionUser());
+      cc.releaseWithDefaultLicense(collection, getSessionUser());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_release", getLocale()));
     } catch (ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_release", getLocale()));

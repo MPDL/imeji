@@ -26,16 +26,19 @@ package de.mpg.imeji.presentation.beans;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.model.SelectItem;
 
 import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.config.ImejiFileTypes;
 import de.mpg.imeji.logic.config.ImejiConfiguration.HtmlSnippet;
+import de.mpg.imeji.logic.config.ImejiFileTypes;
+import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.presentation.lang.InternationalizationBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -49,8 +52,9 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  * @version $Revision$ $LastChangedDate$
  */
 @ManagedBean(name = "Configuration")
-@ApplicationScoped
-public class ConfigurationBean {
+@ViewScoped
+public class ConfigurationBean extends SuperBean {
+  private static final long serialVersionUID = -5694991319458172548L;
 
   /**
    * Save the configuration in the config file
@@ -580,5 +584,21 @@ public class ConfigurationBean {
 
   public String getTermsOfUseUrl() {
     return Imeji.CONFIG.getTermsOfUseUrl() != null ? Imeji.CONFIG.getTermsOfUseUrl() : "";
+  }
+
+  public String getDefaultLicense() {
+    return Imeji.CONFIG.getDefaultLicense();
+  }
+
+  public void setDefaultLicense(String licenseName) {
+    Imeji.CONFIG.setDefaultLicense(licenseName);
+  }
+
+  public List<SelectItem> getLicenseMenu() {
+    List<SelectItem> licenseMenu = new ArrayList<>();
+    for (ImejiLicenses lic : ImejiLicenses.values()) {
+      licenseMenu.add(new SelectItem(lic.name(), lic.getLabel()));
+    }
+    return licenseMenu;
   }
 }

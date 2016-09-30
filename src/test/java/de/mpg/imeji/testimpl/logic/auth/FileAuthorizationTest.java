@@ -135,12 +135,12 @@ public class FileAuthorizationTest extends ControllerTest {
 
   private void releaseCollection() throws ImejiException {
     CollectionController c = new CollectionController();
-    c.release(collection, JenaUtil.testUser);
+    c.release(collection, JenaUtil.testUser, null);
   }
 
   private void releaseItem() throws ImejiException {
     ItemBusinessController c = new ItemBusinessController();
-    c.release(Arrays.asList(item), JenaUtil.testUser);
+    c.release(Arrays.asList(item), JenaUtil.testUser, null);
   }
 
   private void enablePrivateMode() throws IOException, URISyntaxException, ImejiException {

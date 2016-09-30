@@ -339,18 +339,6 @@ public class ItemBean extends SuperBean {
     return SessionBean.getPrettySpacePage("pretty:item", getSelectedSpaceString());
   }
 
-  public void makePublic() throws ImejiException {
-    ItemBusinessController c = new ItemBusinessController();
-    c.release(Arrays.asList(item), getSessionUser());
-    item = c.retrieve(item.getId(), getSessionUser());
-  }
-
-  public void makePrivate() throws ImejiException {
-    ItemBusinessController c = new ItemBusinessController();
-    c.unRelease(Arrays.asList(item), getSessionUser());
-    item = c.retrieve(item.getId(), getSessionUser());
-  }
-
   public void saveEditor() throws IOException {
     try {
       edit.getEditor().save();

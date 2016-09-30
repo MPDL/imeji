@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.util.MetadataAndProfileHelper;
@@ -29,56 +32,67 @@ public class ItemValidator extends ObjectValidator implements Validator<Item> {
   public void validate(Item item, MetadataProfile p, Method m) throws UnprocessableError {
     UnprocessableError error = new UnprocessableError();
     setValidateForMethod(m);
-    if (isDelete() || p == null) {
+
+    if (isDelete()) {
       return;
     }
-    // List of the statement which are not defined as Multiple
-    List<String> nonMultipleStatement = new ArrayList<String>();
-    Object[] itemMetadataList = item.getMetadataSet().getMetadata().toArray();
 
-    // Validate that every child has its parent filled
-    for (int i = 0; i < itemMetadataList.length; i++) {
-      Statement s =
-          MetadataAndProfileHelper.getStatement(((Metadata) itemMetadataList[i]).getStatement(), p);
-      if (s.getParent() != null) {
-        Statement parentStatement = MetadataAndProfileHelper.getStatement(s.getParent(), p);
-        // First element can not have a parent
-        if (i == 0) {
-          throw new UnprocessableError(parentStatement.getLabel() + " has to be filled");
-        } else {
-          Statement preStatement = MetadataAndProfileHelper
-              .getStatement(((Metadata) itemMetadataList[i - 1]).getStatement(), p);
-          if (parentStatement.getId().equals(preStatement.getId())
-              && MetadataAndProfileHelper.isEmpty((Metadata) itemMetadataList[i - 1])) {
-            error = new UnprocessableError(parentStatement.getLabel() + " has to be filled", error);
-            // Statement has to be preceded by same statement (multiple childs) or parent statement
-            // or a descendant statement (multiple statement with childs)
+    // Check that all publish items have a license
+    if (!item.getStatus().equals(Status.PENDING)) {
+      License lic = LicenseUtil.getActiveLicense(item);
+      if (lic == null || lic.isEmtpy()) {
+        error = new UnprocessableError("Items must have a license to be released", error);
+      }
+    }
+
+    if (p != null) {
+      // List of the statement which are not defined as Multiple
+      List<String> nonMultipleStatement = new ArrayList<String>();
+      Object[] itemMetadataList = item.getMetadataSet().getMetadata().toArray();
+
+      // Validate that every child has its parent filled
+      for (int i = 0; i < itemMetadataList.length; i++) {
+        Statement s = MetadataAndProfileHelper
+            .getStatement(((Metadata) itemMetadataList[i]).getStatement(), p);
+        if (s.getParent() != null) {
+          Statement parentStatement = MetadataAndProfileHelper.getStatement(s.getParent(), p);
+          // First element can not have a parent
+          if (i == 0) {
+            throw new UnprocessableError(parentStatement.getLabel() + " has to be filled");
+          } else {
+            Statement preStatement = MetadataAndProfileHelper
+                .getStatement(((Metadata) itemMetadataList[i - 1]).getStatement(), p);
+            if (parentStatement.getId().equals(preStatement.getId())
+                && MetadataAndProfileHelper.isEmpty((Metadata) itemMetadataList[i - 1])) {
+              error =
+                  new UnprocessableError(parentStatement.getLabel() + " has to be filled", error);
+              // Statement has to be preceded by same statement (multiple childs) or parent
+              // statement
+              // or a descendant statement (multiple statement with childs)
+            }
           }
         }
       }
-    }
 
-    // Validate each metadata Value
-    for (Metadata md : item.getMetadataSet().getMetadata()) {
-      Statement s = MetadataAndProfileHelper.getStatement(md.getStatement(), p);
-      try {
-        METADATA_VALIDATOR.validate(md, p, getValidateForMethod());
-      } catch (UnprocessableError e) {
-        error = new UnprocessableError(e.getMessages(), error);
-      }
+      // Validate each metadata Value
+      for (Metadata md : item.getMetadataSet().getMetadata()) {
+        Statement s = MetadataAndProfileHelper.getStatement(md.getStatement(), p);
+        try {
+          METADATA_VALIDATOR.validate(md, p, getValidateForMethod());
+        } catch (UnprocessableError e) {
+          error = new UnprocessableError(e.getMessages(), error);
+        }
 
-      boolean isMultiple = isMultipleStatement(s, p);
-      if (!isMultiple) {
-        // if (s.getMaxOccurs() == null || s.getMaxOccurs().equals("1")) {
+        boolean isMultiple = isMultipleStatement(s, p);
+        if (!isMultiple) {
+          // if (s.getMaxOccurs() == null || s.getMaxOccurs().equals("1")) {
 
-        if (nonMultipleStatement.contains(s.getId().toString())) {
-          error =
-              new UnprocessableError(
-                  "Multiple value not allowed for metadata "
-                      + s.getLabels().iterator().next().getValue() + "(ID: " + s.getId() + "",
-                  error);
-        } else {
-          nonMultipleStatement.add(s.getId().toString());
+          if (nonMultipleStatement.contains(s.getId().toString())) {
+            error = new UnprocessableError("Multiple value not allowed for metadata "
+                + s.getLabels().iterator().next().getValue() + "(ID: " + s.getId() + "", error);
+          } else {
+            nonMultipleStatement.add(s.getId().toString());
+          }
         }
       }
     }

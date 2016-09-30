@@ -155,7 +155,7 @@ public class CollectionItemsBean extends ItemsBean {
   public String release() {
     CollectionController cc = new CollectionController();
     try {
-      cc.release(collection, getSessionUser());
+      cc.releaseWithDefaultLicense(collection, getSessionUser());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_release", getLocale()));
     } catch (Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_release", getLocale()));

@@ -52,7 +52,7 @@ public class WorkflowValidator implements Serializable {
    * @param p
    * @return
    * @throws WorkflowException
-   * @throws NotSupportedMethodException 
+   * @throws NotSupportedMethodException
    */
   public void isReleaseAllowed(Properties p) throws WorkflowException, NotSupportedMethodException {
     if (Imeji.CONFIG.getPrivateModus()) {
@@ -69,13 +69,14 @@ public class WorkflowValidator implements Serializable {
    *
    * @param p
    * @throws WorkflowException
-   * @throws NotSupportedMethodException 
+   * @throws NotSupportedMethodException
    */
-  public void isWithdrawAllowed(Properties p) throws WorkflowException, NotSupportedMethodException {
+  public void isWithdrawAllowed(Properties p)
+      throws WorkflowException, NotSupportedMethodException {
     if (Imeji.CONFIG.getPrivateModus()) {
       throw new NotSupportedMethodException("Object withdrawal is disabled!");
     }
-    
+
     if (p.getStatus() != Status.RELEASED) {
       throw new WorkflowException("Only RELEASED objects can be withdrawn");
     }

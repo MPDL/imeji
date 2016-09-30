@@ -67,7 +67,7 @@ public class ShareControllerTestClass extends ControllerTest {
       Assert.fail("User shouldn't be abble to release the profile");
       collectionController.delete(collection, user2);
       Assert.fail("User shouldn't be abble to delete the collection");
-      collectionController.release(collection, user2);
+      collectionController.release(collection, user2, null);
       Assert.fail("User shouldn't be abble to release the collection");
       profileController.update(profile, user2);
     } catch (Exception e) {
@@ -105,7 +105,7 @@ public class ShareControllerTestClass extends ControllerTest {
       // OK
     }
     try {
-      collectionController.release(collection, user2);
+      collectionController.release(collection, user2, null);
       Assert.fail("User shouldn't be abble to release the collection");
     } catch (Exception e) {
       // OK
@@ -155,7 +155,7 @@ public class ShareControllerTestClass extends ControllerTest {
       // OK
     }
     try {
-      collectionController.release(collection, user2);
+      collectionController.release(collection, user2, null);
       Assert.fail("User shouldn't be abble to release the collection");
     } catch (Exception e) {
       // OK

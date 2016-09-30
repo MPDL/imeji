@@ -191,7 +191,19 @@
 										</div>
 										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
 									</div>
-									
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.default_license}"/>
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:selectOneMenu value="#{Configuration.defaultLicense}" styleClass="imj_metadataValue">
+												<f:selectItems value="#{Configuration.licenseMenu}"/>
+											</h:selectOneMenu>
+										</div>
+										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+									</div>
+									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>				
 								</div>
 							</div>
 							

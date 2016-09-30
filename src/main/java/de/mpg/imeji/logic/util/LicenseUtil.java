@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.controller.util;
+package de.mpg.imeji.logic.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +76,7 @@ public class LicenseUtil {
    * @return
    */
   public static boolean isSame(License lic1, License lic2) {
-    return lic1 != null && lic2 != null && lic1.getName().equals(lic2.getName())
+    return lic1 != null && lic2 != null && !lic1.isEmtpy() && lic1.getName().equals(lic2.getName())
         && lic1.getUrl().equals(lic2.getUrl());
   }
 
