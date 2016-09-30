@@ -535,7 +535,7 @@ public class ItemBusinessController extends ImejiController {
     Collection<Item> items = filterItemsByStatus(l, Status.PENDING);
     for (Item item : items) {
       prepareRelease(item, user);
-      if (defaultLicense != null && LicenseUtil.getActiveLicense(item) != null) {
+      if (defaultLicense != null && LicenseUtil.getActiveLicense(item) == null) {
         item.setLicenses(Arrays.asList(defaultLicense));
       }
     }

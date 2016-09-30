@@ -215,20 +215,6 @@
 												</h:outputLink>
 											</li>
 										</ui:fragment>
-										<ui:fragment rendered="#{adminVO and WorkflowBean.release(cc.attrs.vo)}">
-											<li>
-												<h:outputLink id="actionMenuMakePublic" value="#" onclick="openDialog('makePublicMenuItemDialog');" title="#{lbl.make_public}">
-													<h:outputText value="#{lbl.make_public}"/>
-												</h:outputLink>
-											</li>
-										</ui:fragment>
-										<ui:fragment rendered="#{adminVO and WorkflowBean.withdraw(cc.attrs.vo)}">
-											<li>
-												<h:outputLink id="actionMenuMakePrivate" value="#" onclick="openDialog('makePrivateMenuItemDialog');" title="#{lbl.make_private}">
-													<h:outputText value="#{lbl.make_private}"/>
-												</h:outputLink>
-											</li>
-										</ui:fragment>
 									</ul>
 								</div>
 							</div>
