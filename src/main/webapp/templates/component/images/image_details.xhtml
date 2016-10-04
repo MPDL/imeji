@@ -141,17 +141,8 @@
 								</div>
 								<ui:fragment rendered="#{itemBean.edit.toggleState == 'displayMd'}">
 									<div class="imj_metadataValue">
-										<ui:repeat var="license" value="#{itemBean.image.licenses}">
-											<ui:fragment rendered="#{not empty license.url}">
-												<a href="#{license.url}" target="_blank">
-													<ui:fragment rendered="#{empty license.label}">#{license.url}</ui:fragment> 
-													<ui:fragment rendered="#{not empty license.label}">#{license.label}</ui:fragment> 
-												</a>
-											</ui:fragment>
-											<ui:fragment rendered="#{empty license.url}">
-												#{not empty license.label ? license.label : license.name}
-											</ui:fragment>
-											 - #{lbl.valid_from} #{license.startTime} <ui:fragment rendered="#{license.end &gt; 0}">#{lbl.to_date} #{license.endTime}</ui:fragment>
+										<ui:repeat var="license" value="#{LicenseViewer.getLicensesSortedByDate(itemBean.image.licenses)}">
+											<lic:licenseViewer license="#{license}" showLogo="#{license.end &lt; 0}"/>
 											<br/>
 										</ui:repeat>
 										<h:outputText value="#{lbl.no_license}" rendered="#{empty itemBean.image.licenses}"/>

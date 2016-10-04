@@ -6,6 +6,7 @@ import java.net.URI;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.util.DateHelper;
 
@@ -30,6 +31,16 @@ public class License implements Serializable {
   private long start = -1;
   @j2jLiteral("http://imeji.org/terms/end")
   private long end = -1;
+
+  public License() {
+
+  }
+
+  public License(ImejiLicenses lic) {
+    this.name = lic.name();
+    this.url = lic.getUrl();
+    this.label = lic.getLabel();
+  }
 
   /**
    * Return the timestamp of the license as a string

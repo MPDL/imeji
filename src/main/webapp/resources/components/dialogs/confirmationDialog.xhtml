@@ -2,30 +2,39 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:composite="http://java.sun.com/jsf/composite">
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:lic="http://java.sun.com/jsf/composite/components/license">
 	
 	<composite:interface>
 		<composite:attribute name="bean" required="true" type="java.lang.Object"/>
 		<composite:attribute name="submitAction" required="true" type="java.lang.String"/>
 		<composite:attribute name="submitLabel" required="true" type="java.lang.String"/>
 		<composite:attribute name="confirmationText" required="true" type="java.lang.String"/>
+		<composite:attribute name="confirmationText2" type="java.lang.String"/>
 		<composite:attribute name="dialogId" required="true" type="java.lang.String"/>
 		<composite:attribute name="identifierName" required="false" type="java.lang.String"/>
 		<composite:attribute name="identifierValue" required="false"/>
+		<composite:attribute name="confirmationTextLicense"/>
 	</composite:interface>
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{Auth.loggedIn}">
-			
 			<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox" style="display:none;">
 				<div class="imj_confirmationText">
-					<h:outputText value="#{cc.attrs.confirmationText}"/>
+					#{cc.attrs.confirmationText}
 				</div>
+				<ui:fragment rendered="#{not empty cc.attrs.confirmationText2}">
+					<div class="imj_confirmationText">
+						#{cc.attrs.confirmationText2}
+						<ui:fragment rendered="#{not empty cc.attrs.confirmationTextLicense}">
+							<lic:licenseViewer license="#{cc.attrs.confirmationTextLicense}"/>
+						</ui:fragment>
+					</div>
+				</ui:fragment>
 				<div class="imj_submitPanel">
 					<button onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
-						<h:outputText value="#{lbl.cancel}"/>
+						#{lbl.cancel}
 					</button>
-					
 					<h:form>
 						<ui:fragment rendered="#{not empty cc.attrs.identifierName and not empty cc.attrs.identifierValue}">
 							<input type="hidden" name="#{cc.attrs.identifierName}" value="#{cc.attrs.identifierValue}"/>

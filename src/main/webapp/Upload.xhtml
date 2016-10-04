@@ -29,7 +29,7 @@
     </ui:define>
 
     <ui:define name="modalDialogs_from_site">
-        <dialog:confirmationDialog submitAction="release" bean="#{UploadBean}" confirmationText="#{msg.confirmation_release_collection}?" submitLabel="#{lbl.release}" dialogId="releaseMenuItemDialog" />
+        <dialog:confirmationDialog submitAction="release" bean="#{UploadBean}" confirmationText="#{msg.confirmation_release_collection}" confirmationText2="#{msg.confirmation_release_collection_license}: " confirmationTextLicense="#{LicenseViewer.getLicense(Configuration.defaultLicense)}" submitLabel="#{lbl.release}" dialogId="releaseMenuItemDialog" />
         <dialog:confirmationDialog submitAction="delete" bean="#{UploadBean}" confirmationText="#{msg.confirmation_delete_collection}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog"/>
         <dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{UploadBean}" confirmationText="#{msg.confirmation_withdraw_collection}" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" />
 		<dialog:dialogOptionDialog submitId1="doiInput" submitId2="getDOIDialog" confirmationText="#{UploadBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}" submitLabel1="#{lbl.createDOI_manually}" submitLabel2="#{lbl.createDOI_from_service}" dialogId="createDOIDialog" rendered="#{Auth.update(UploadBean.collection) and UploadBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>

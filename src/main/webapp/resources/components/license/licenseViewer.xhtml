@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+	
+	<composite:interface>
+		<composite:attribute name="license"/>
+		<composite:attribute name="showLogo" type="java.lang.Boolean" default="false"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		<ui:fragment rendered="#{cc.attrs.license != null}">
+			<ui:fragment rendered="#{not empty cc.attrs.license.url}">
+				<a href="#{cc.attrs.license.url}" target="_blanck" style="vertical-align:middle">
+					<ui:fragment rendered="#{cc.attrs.showLogo}">
+						<ui:fragment rendered="#{cc.attrs.license.name == 'CC_BY'}">
+							<img src="#{Navigation.applicationUrl}resources/icon/license/by.svg"/>
+						</ui:fragment>
+						<ui:fragment rendered="#{cc.attrs.license.name == 'CC_BY_SA'}">
+							<img src="#{Navigation.applicationUrl}resources/icon/license/by-sa.svg"/>
+						</ui:fragment>
+						<ui:fragment rendered="#{cc.attrs.license.name == 'CC0'}">
+							<img src="#{Navigation.applicationUrl}resources/icon/license/cc-zero.svg"/>
+						</ui:fragment>
+						<ui:fragment rendered="#{cc.attrs.license.name != 'CC0' and cc.attrs.license.name != 'CC_BY' and cc.attrs.license.name != 'CC_BY_SA'}">
+							#{cc.attrs.license.label}
+						</ui:fragment>
+					</ui:fragment>
+					<ui:fragment rendered="#{!cc.attrs.showLogo}">
+						#{cc.attrs.license.label}
+					</ui:fragment>
+				 </a>
+			</ui:fragment>
+			<ui:fragment rendered="#{empty cc.attrs.license.url}">
+				#{cc.attrs.license.label}
+			</ui:fragment>
+			<ui:fragment rendered="#{!LicenseViewer.isActive(cc.attrs.license)}">
+				<i>
+			 	 #{lbl.valid_from} #{license.startTime}, #{lbl.to_date} #{license.endTime}
+			 	</i>
+			</ui:fragment>
+		</ui:fragment>
+	</composite:implementation>
+</html>

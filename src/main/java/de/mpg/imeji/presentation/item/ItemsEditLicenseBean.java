@@ -10,6 +10,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
@@ -32,6 +34,7 @@ import de.mpg.imeji.presentation.component.LicenseEditor;
 @ViewScoped
 public class ItemsEditLicenseBean extends SuperBean {
   private static final long serialVersionUID = 6463190740530976180L;
+  private static final Logger LOGGER = Logger.getLogger(ItemsEditLicenseBean.class);
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItems;
   private boolean overwriteLicenses = false;
@@ -40,10 +43,15 @@ public class ItemsEditLicenseBean extends SuperBean {
   private boolean releasedCollection = false;
 
   @PostConstruct
-  public void init() throws ImejiException {
-    collectionId = UrlHelper.getParameterValue("collection");
-    setLicenseEditor(new LicenseEditor(getLocale()));
-    releasedCollection = findIfCollectionIsReleased();
+  public void init() {
+    try {
+      collectionId = UrlHelper.getParameterValue("collection");
+      setLicenseEditor(new LicenseEditor(getLocale()));
+      releasedCollection = findIfCollectionIsReleased();
+    } catch (Exception e) {
+      LOGGER.error("Error initializing edit items license page", e);
+    }
+
   }
 
   /**
