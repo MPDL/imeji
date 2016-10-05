@@ -8,7 +8,7 @@
 	<ui:define name="actionsMenu"></ui:define>
 	<ui:define name="mainContent">
 		<div class="">
-			<h:form id="licenseEditorForm">sss
+			<h:form id="licenseEditorForm">
 				<lic:licenseEditor licenseEditor="#{ItemsEditLicenseBean.licenseEditor}" containerId="licenseEditorForm"/>
 				<ui:fragment rendered="#{!ItemsEditLicenseBean.releasedCollection}">
 					<h:selectBooleanCheckbox value="#{ItemsEditLicenseBean.overwriteLicenses}"/>

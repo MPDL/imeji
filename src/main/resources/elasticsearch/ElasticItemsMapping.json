@@ -26,6 +26,11 @@
                }
             }
          },
+          "license":{
+            "type":"string",
+            "index":"not_analyzed",
+            "include_in_all":false
+         },
          "fulltext":{
             "type":"string",
             "analyzer":"ngram_analyzer",

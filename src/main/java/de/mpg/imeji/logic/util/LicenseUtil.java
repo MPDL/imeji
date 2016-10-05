@@ -49,7 +49,24 @@ public class LicenseUtil {
         noDuplicates.add(active);
       }
     }
+    noDuplicates.addAll(getRevokedLicenses(licenses));
     return noDuplicates;
+  }
+
+  /**
+   * Return al licenses which have an end
+   * 
+   * @param licenses
+   * @return
+   */
+  public static List<License> getRevokedLicenses(List<License> licenses) {
+    List<License> revoked = new ArrayList<>();
+    for (License lic : licenses) {
+      if (lic.getEnd() > 0) {
+        revoked.add(lic);
+      }
+    }
+    return revoked;
   }
 
   /**

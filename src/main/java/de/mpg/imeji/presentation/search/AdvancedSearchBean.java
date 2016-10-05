@@ -53,6 +53,9 @@ public class AdvancedSearchBean extends SuperBean {
   private List<SelectItem> operatorsMenu;
   private List<SelectItem> fileTypesMenu;
   private List<String> fileTypesSelected;
+
+
+
   /**
    * True if the query got an error (for instance wrong date format). Then the message is written in
    * red
@@ -142,6 +145,8 @@ public class AdvancedSearchBean extends SuperBean {
       fileTypesSelected.add(t);
     }
   }
+
+
 
   /**
    * Reset the Search form with empty values

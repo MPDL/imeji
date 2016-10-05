@@ -3,6 +3,7 @@
  */
 package de.mpg.imeji.presentation.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,10 +36,12 @@ import de.mpg.imeji.presentation.beans.MetadataLabels;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class SearchForm {
+public class SearchForm implements Serializable {
+  private static final long serialVersionUID = 9203984025130411565L;
   private static final Logger LOGGER = Logger.getLogger(SearchForm.class);
   private Map<String, MetadataProfile> profilesMap;
   private List<SearchGroupForm> groups;
+  private LicenseSearchGroup licenseSearchGroup;
   private List<SearchGroupForm> technicalMetadata;
   private SearchPair fileTypeSearch =
       new SearchPair(SearchFields.filetype, SearchOperators.REGEX, "", false);
@@ -66,6 +69,8 @@ public class SearchForm {
       MetadataLabels metadataLabels, User user, String space) throws ImejiException {
     this();
     this.profilesMap = profilesMap;
+    this.licenseSearchGroup =
+        new LicenseSearchGroup(Locale.forLanguageTag(metadataLabels.getLang()));
     for (SearchElement se : searchQuery.getElements()) {
       if (se.getType().equals(SEARCH_ELEMENTS.GROUP)) {
         String profileId =
@@ -80,10 +85,15 @@ public class SearchForm {
           fileTypeSearch = new SearchPair(SearchFields.filetype, SearchOperators.REGEX,
               ((SearchPair) se).getValue(), false);
         }
+        if (((SearchPair) se).getField() == SearchFields.license) {
+          licenseSearchGroup = new LicenseSearchGroup(((SearchPair) se).getValue(),
+              Locale.forLanguageTag(metadataLabels.getLang()));
+        }
       }
       parseAllFieldSearch(se);
     }
   }
+
 
   /**
    * Find the search for all field
@@ -147,15 +157,29 @@ public class SearchForm {
         }
       }
       for (SearchGroupForm g : groups) {
-        if (!searchQuery.isEmpty()) {
-          searchQuery.addLogicalRelation(LOGICAL_RELATIONS.OR);
+        SearchGroup mdGroup = g.getAsSearchGroup();
+        if (!mdGroup.isEmpty()) {
+          if (!searchQuery.isEmpty()) {
+            searchQuery.addLogicalRelation(LOGICAL_RELATIONS.OR);
+          }
+          searchQuery.addGroup(g.getAsSearchGroup());
         }
-        searchQuery.addGroup(g.getAsSearchGroup());
       }
-      if (!searchQuery.isEmpty()) {
-        searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
+
+      if (!fileTypeSearch.isEmpty()) {
+        if (!searchQuery.isEmpty()) {
+          searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
+        }
+        searchQuery.addPair(fileTypeSearch);
       }
-      searchQuery.addPair(fileTypeSearch);
+
+      if (!licenseSearchGroup.isEmpty()) {
+        if (!searchQuery.isEmpty()) {
+          searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
+        }
+        searchQuery.addPair(licenseSearchGroup.asSearchPair());
+      }
+
       return searchQuery;
     } catch (UnprocessableError e) {
       LOGGER.error("Error transforming search form to searchquery", e);
@@ -286,5 +310,19 @@ public class SearchForm {
 
   public void setIncludeFulltext(boolean includeFulltext) {
     this.includeFulltext = includeFulltext;
+  }
+
+  /**
+   * @return the licenseSearchGroup
+   */
+  public LicenseSearchGroup getLicenseSearchGroup() {
+    return licenseSearchGroup;
+  }
+
+  /**
+   * @param licenseSearchGroup the licenseSearchGroup to set
+   */
+  public void setLicenseSearchGroup(LicenseSearchGroup licenseSearchGroup) {
+    this.licenseSearchGroup = licenseSearchGroup;
   }
 }

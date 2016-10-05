@@ -7,6 +7,7 @@ import java.net.URI;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContainerMetadata;
@@ -161,11 +162,12 @@ public class ImejiFactory {
    *
    * @param collection
    * @return
+   * @throws UnprocessableError
    */
-  public static Item newItem(CollectionImeji collection) {
+  public static Item newItem(CollectionImeji collection) throws UnprocessableError {
     Item item = new Item();
     if (collection == null || collection.getId() == null) {
-      throw new RuntimeException("Can not create item with a collection null");
+      throw new UnprocessableError("Can not create item with a collection null");
     }
     item.setCollection(collection.getId());
     item.getMetadataSets().add(newMetadataSet(collection.getProfile()));
@@ -183,9 +185,10 @@ public class ImejiFactory {
    * @param thumbnailURI
    * @param webURI
    * @return
+   * @throws UnprocessableError
    */
   public static Item newItem(CollectionImeji collection, User user, String storageId, String title,
-      URI fullImageURI, URI thumbnailURI, URI webURI, String filetype) {
+      URI fullImageURI, URI thumbnailURI, URI webURI, String filetype) throws UnprocessableError {
     Item item = ImejiFactory.newItem(collection);
     return newItem(item, collection, user, storageId, title, fullImageURI, thumbnailURI, webURI,
         filetype);

@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -15,6 +16,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.hp.hpl.jena.util.iterator.Filter;
 
+import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
@@ -379,8 +381,17 @@ public class ElasticQueryFactory {
         // not indexed
         break;
       case license:
-        return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
-            pair.isNot());
+        BoolQueryBuilder licenseQuery = QueryBuilders.boolQuery();
+        for (String licenseName : pair.getValue().split(Pattern.quote("|"))) {
+          if (ImejiLicenses.NO_LICENSE.equals(licenseName)) {
+            licenseQuery.should(QueryBuilders.boolQuery()
+                .mustNot(QueryBuilders.existsQuery(ElasticFields.LICENSE.field())));
+          } else {
+            licenseQuery.should(
+                fieldQuery(ElasticFields.LICENSE, licenseName, SearchOperators.REGEX, false));
+          }
+        }
+        return licenseQuery;
       case md:
         // not indexed
         break;

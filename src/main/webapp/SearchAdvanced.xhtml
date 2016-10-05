@@ -43,20 +43,6 @@
 		    		</div>
 				</div>
 				
-				<div class="imj_searchUnit">
-					<div class="imj_searchDetails">
-						<h:outputText value="#{lbl.select_file_type}" />
-						<h:selectManyCheckbox value="#{AdvancedSearchBean.fileTypesSelected}" valueChangeListener="#{AdvancedSearchBean.fileTypeListener}">
-							<f:selectItems value="#{AdvancedSearchBean.fileTypesMenu}"></f:selectItems>
-							<f:ajax execute="@this" render=":imj_searchQueryMessageArea"/>
-						</h:selectManyCheckbox>
-					</div>
-					<div class="imj_logicalConnector">
-			    		<h:outputLabel value="#{lbl.and_big}"/>
-			    		<h:outputText value="&#160;"/>
-		    		</div>
-				</div>
-				
 				<ui:repeat id="groups" var="g" value="#{AdvancedSearchBean.formular.groups}" offset="0" varStatus="gIndex">
 					
 					<div class="imj_searchUnit">
@@ -76,7 +62,7 @@
 				    		<h:outputLabel value="#{lbl.or_big}" rendered="#{gIndex.index > 0}"/>
 				    		<h:outputText value="&#160;" rendered="#{gIndex.index == 0}"/>
 			    		</div>
-			    		
+			    		<div class="imj_searchDetails">
 						<div class="imj_searchSelectbox">
 							<h:selectOneMenu id="selProfile" value="#{g.profileId}" onchange="document.getElementById('advancedSearchForm:groups:' + #{gIndex.index} +':changeGroup').click();">
 								<f:selectItems value="#{AdvancedSearchBean.profilesMenu}"/>
@@ -88,14 +74,14 @@
 							
 						</div>
 						<div class="imj_searchSelectbox">
-							<h:panelGroup layout="block" styleClass="imj_searchDetails" rendered="#{!empty g.collectionsMenu}">
+							<h:panelGroup layout="block" styleClass="" rendered="#{!empty g.collectionsMenu}">
 								<h:selectOneMenu id="selCollection" value="#{g.collection}">
 									<f:selectItems value="#{g.collectionsMenu}"/>
 									<f:ajax event="change" execute="@form" render="@form :imj_searchQueryMessageArea "/>
 								</h:selectOneMenu>
 							</h:panelGroup>
 						</div>
-						
+						</div>
 						<ui:repeat id="els" var="el" value="#{g.searchElementForms}" rows="0" varStatus="elIndex">
 							<div class="imj_searchDetails">
 								
@@ -232,8 +218,38 @@
 						
 					</div> <!-- END of imj_searchUnit -->
 					
+					
 				</ui:repeat>
 				
+				<div class="imj_logicalConnector">
+		    		<h:outputLabel value="#{lbl.and_big}"/>
+		    		<h:outputText value="&#160;"/>
+		    	</div>
+		    	
+				<div class="imj_searchUnit">
+					<div class="imj_searchDetails">
+						<h:outputText value="#{lbl.select_file_type}" />
+						<h:selectManyCheckbox value="#{AdvancedSearchBean.fileTypesSelected}" valueChangeListener="#{AdvancedSearchBean.fileTypeListener}">
+							<f:selectItems value="#{AdvancedSearchBean.fileTypesMenu}"></f:selectItems>
+							<f:ajax execute="@this" render=":imj_searchQueryMessageArea"/>
+						</h:selectManyCheckbox>
+					</div>
+				</div>
+				
+				<div class="imj_logicalConnector">
+		    		<h:outputLabel value="#{lbl.and_big}"/>
+		    		<h:outputText value="&#160;"/>
+		    	</div>
+		    	
+				<div class="imj_searchUnit">
+					<div class="imj_searchDetails">
+						<h:outputText value="#{lbl.select_licenses}" />
+						<h:selectManyCheckbox layout="pageDirection" value="#{AdvancedSearchBean.formular.licenseSearchGroup.selected}" valueChangeListener="#{AdvancedSearchBean.formular.licenseSearchGroup.selectedListener}">
+							<f:selectItems  value="#{AdvancedSearchBean.formular.licenseSearchGroup.menu}" title="hello"/>
+							<f:ajax execute="@this" render=":imj_searchQueryMessageArea"/>
+						</h:selectManyCheckbox>
+					</div>
+				</div>
 				
 				<!-- submit panel -->
 				<div class="imj_submitPanel">

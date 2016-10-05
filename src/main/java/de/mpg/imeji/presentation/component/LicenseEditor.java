@@ -15,6 +15,7 @@ import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
+import de.mpg.imeji.logic.vo.Properties.Status;
 
 /**
  * Editor to edit the license of an item
@@ -50,7 +51,9 @@ public class LicenseEditor implements Serializable {
       this.customLicenseName = active.getName();
       this.customLicenseUrl = active.getUrl();
     }
-    licenseMenu.add(new SelectItem(Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale)));
+    if (item.getStatus().equals(Status.PENDING)) {
+      licenseMenu.add(new SelectItem(Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale)));
+    }
     for (ImejiLicenses lic : ImejiLicenses.values()) {
       licenseMenu.add(new SelectItem(lic.name(), lic.getLabel()));
     }
@@ -62,11 +65,15 @@ public class LicenseEditor implements Serializable {
    * 
    * @param locale
    */
-  public LicenseEditor(Locale locale) {
+  public LicenseEditor(Locale locale, boolean privat) {
     this.licenseMenu = new ArrayList<>();
     this.showInput = false;
-    this.licenseName = Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale);
-    licenseMenu.add(new SelectItem(Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale)));
+    if (privat) {
+      this.licenseName = Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale);
+      licenseMenu.add(new SelectItem(Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale)));
+    } else {
+      this.licenseName = Imeji.CONFIG.getDefaultLicense();
+    }
     for (ImejiLicenses lic : ImejiLicenses.values()) {
       licenseMenu.add(new SelectItem(lic.name(), lic.getLabel()));
     }
@@ -119,9 +126,7 @@ public class LicenseEditor implements Serializable {
       license.setUrl(customLicenseUrl);
       license.setLabel(customLicenseName);
     } else if (EnumUtils.isValidEnum(ImejiLicenses.class, licenseName)) {
-      license.setName(licenseName);
-      license.setUrl(licenseUrl);
-      license.setLabel(licenseLabel);
+      license = new License(ImejiLicenses.valueOf(licenseName));
     }
     return license;
   }

@@ -77,6 +77,7 @@ public class ElasticSearch implements Search {
     if (size == -1) {
       size = Integer.MAX_VALUE;
     }
+
     SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setNoFields().setQuery(QueryBuilders.matchAllQuery()).setPostFilter(f).setTypes(getTypes())
         .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri)).execute()

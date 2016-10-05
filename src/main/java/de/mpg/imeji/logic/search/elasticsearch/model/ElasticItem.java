@@ -3,7 +3,9 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.TechnicalMetadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 
@@ -18,6 +20,7 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 public final class ElasticItem extends ElasticProperties {
   private final String folder;
   private final String filename;
+  private final String license;
   private final String filetype;
   private final long size;
   private final String space;
@@ -44,6 +47,7 @@ public final class ElasticItem extends ElasticProperties {
     this.width = item.getWidth();
     this.size = item.getFileSize();
     this.space = space;
+    this.license = getLicenseName(item);
     for (Metadata md : item.getMetadataSet().getMetadata()) {
       metadata.add(new ElasticMetadata(md));
     }
@@ -51,6 +55,11 @@ public final class ElasticItem extends ElasticProperties {
     for (TechnicalMetadata md : item.getTechnicalMetadata()) {
       technical.add(new ElasticTechnicalMetadata(md));
     }
+  }
+
+  private String getLicenseName(Item item) {
+    License license = LicenseUtil.getActiveLicense(item);
+    return license != null ? license.getName() : null;
   }
 
   /**
@@ -119,5 +128,9 @@ public final class ElasticItem extends ElasticProperties {
 
   public List<ElasticTechnicalMetadata> getTechnical() {
     return technical;
+  }
+
+  public String getLicense() {
+    return license;
   }
 }

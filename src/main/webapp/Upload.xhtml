@@ -4,7 +4,8 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
-                xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
+                xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+                xmlns:lic="http://java.sun.com/jsf/composite/components/license">
 
     <ui:param name="headline" value="#{UploadBean.collection.metadata.title}"/>
     <ui:param name="currentMainMenu" value="collection"/>
@@ -101,8 +102,17 @@
             <!-- START UPLOAD -->
             <div class="imj_upload">
                 <ui:fragment rendered="#{Auth.createContent(UploadBean.collection)}">
-
                     <div class="imj_uploadInputWrapper">
+	                    <ui:fragment rendered="#{UploadBean.collection.status == 'RELEASED'}">
+	                    	<div>
+								<span class="fa fa-exclamation-triangle fa-size-3"/>
+								#{lbl.warning_upload_released_collection}
+								<br/><br/>
+								<h:form id="chooseLicenseForm">
+									<lic:licenseEditor licenseEditor="#{UploadBean.licenseEditor}" containerId=":chooseLicenseForm"/>
+								</h:form>
+							</div>
+						</ui:fragment>
                         <div id="tabsUpload" class="id_tabs imj_tabList">
                             <!-- tabs -->
                             <ul class="imj_tabMenu">

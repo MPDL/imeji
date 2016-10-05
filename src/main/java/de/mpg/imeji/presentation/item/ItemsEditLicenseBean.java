@@ -23,6 +23,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.component.LicenseEditor;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Bean to edit the licenses of items
@@ -46,8 +47,8 @@ public class ItemsEditLicenseBean extends SuperBean {
   public void init() {
     try {
       collectionId = UrlHelper.getParameterValue("collection");
-      setLicenseEditor(new LicenseEditor(getLocale()));
       releasedCollection = findIfCollectionIsReleased();
+      setLicenseEditor(new LicenseEditor(getLocale(), !releasedCollection));
     } catch (Exception e) {
       LOGGER.error("Error initializing edit items license page", e);
     }
@@ -95,8 +96,13 @@ public class ItemsEditLicenseBean extends SuperBean {
    * @param items
    * @throws ImejiException
    */
-  private void save(List<Item> items) throws ImejiException {
-    new ItemBusinessController().updateBatch(items, getSessionUser());
+  private void save(List<Item> items) {
+    try {
+      new ItemBusinessController().updateBatch(items, getSessionUser());
+    } catch (ImejiException e) {
+      BeanHelper.error(e.getMessage());
+      LOGGER.error("Error saving items", e);
+    }
   }
 
   /**
@@ -107,7 +113,7 @@ public class ItemsEditLicenseBean extends SuperBean {
   private List<Item> addLicense(List<Item> items) {
     List<Item> itemsWithNewLicense = new ArrayList<>();
     for (Item item : items) {
-      if (overwriteLicenses || !hasLicense(item)) {
+      if (overwriteLicenses || !hasLicense(item) || !item.getStatus().equals(Status.PENDING)) {
         itemsWithNewLicense.add(addLicense(item));
       }
     }

@@ -53,6 +53,7 @@ import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
@@ -122,15 +123,13 @@ public class ItemBusinessController extends ImejiController {
       throw new UnprocessableError("upload_format_not_allowed");
     }
     QuotaUtil.checkQuota(user, f, c);
-
     UploadResult uploadResult = sc.upload(filename, f, c.getIdString());
-
 
     if (item == null) {
       item = ImejiFactory.newItem(c);
     }
 
-    if (filename == null || filename.equals("")) {
+    if (StringHelper.isNullOrEmptyTrim(filename)) {
       throw new UnprocessableError("Filename must not be empty!");
     }
     validateChecksum(c.getId(), f, false);

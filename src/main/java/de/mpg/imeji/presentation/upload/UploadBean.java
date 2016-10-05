@@ -9,9 +9,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -50,8 +50,10 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.collection.CollectionBean;
+import de.mpg.imeji.presentation.component.LicenseEditor;
 import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.history.HistoryUtil;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -66,7 +68,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 @ManagedBean(name = "UploadBean")
 @ViewScoped
-public class UploadBean extends SuperBean implements Serializable {
+public class UploadBean extends SuperBean {
   private static final long serialVersionUID = -2731118794797476328L;
   private static final Logger LOGGER = Logger.getLogger(UploadBean.class);
   private CollectionImeji collection = new CollectionImeji();
@@ -79,7 +81,7 @@ public class UploadBean extends SuperBean implements Serializable {
   private List<String> selected;
   @ManagedProperty(value = "#{UploadSession}")
   private UploadSession uploadSession;
-
+  private LicenseEditor licenseEditor;
 
 
   /**
@@ -94,6 +96,7 @@ public class UploadBean extends SuperBean implements Serializable {
     readId();
     try {
       loadCollection();
+      licenseEditor = new LicenseEditor(getLocale(), collection.getStatus().equals(Status.PENDING));
       if (UrlHelper.getParameterBoolean("init")) {
         uploadSession.reset();
         getSelected().clear();
@@ -330,7 +333,11 @@ public class UploadBean extends SuperBean implements Serializable {
         item = controller.updateFile(findItemByFileName(title), collection, file, title,
             getSessionUser());
       } else {
-        item = controller.createWithFile(null, file, title, collection, getSessionUser());
+        item = ImejiFactory.newItem(collection);
+        if (!Status.PENDING.equals(collection.getStatus())) {
+          item.setLicenses(Arrays.asList(licenseEditor.getLicense()));
+        }
+        item = controller.createWithFile(item, file, title, collection, getSessionUser());
       }
       getsFiles().add(new UploadItem(item));
       return item;
@@ -641,6 +648,20 @@ public class UploadBean extends SuperBean implements Serializable {
 
   public void setUploadSession(UploadSession uploadSession) {
     this.uploadSession = uploadSession;
+  }
+
+  /**
+   * @return the licenseEditor
+   */
+  public LicenseEditor getLicenseEditor() {
+    return licenseEditor;
+  }
+
+  /**
+   * @param licenseEditor the licenseEditor to set
+   */
+  public void setLicenseEditor(LicenseEditor licenseEditor) {
+    this.licenseEditor = licenseEditor;
   }
 
 }
