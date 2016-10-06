@@ -343,8 +343,7 @@ public class ItemBean extends SuperBean {
     try {
       edit.getEditor().save();
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_editor_image", getLocale()));
-      redirect(getHistory().getCurrentPage().getUrl());
-      return;
+      redirect(getHistory().getCurrentPage().getCompleteUrl());
     } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error saving item metadata", e);
@@ -352,6 +351,14 @@ public class ItemBean extends SuperBean {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()));
       LOGGER.error("Error saving item metadata", e);
     }
+  }
+
+  public void cancelEditor() throws Exception {
+    redirect(getHistory().getCurrentPage().getCompleteUrl());
+  }
+
+  public void showEditor() {
+
   }
 
   /**

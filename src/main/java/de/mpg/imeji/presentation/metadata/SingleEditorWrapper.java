@@ -3,6 +3,7 @@
  */
 package de.mpg.imeji.presentation.metadata;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -29,7 +30,8 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class SingleEditorWrapper {
+public class SingleEditorWrapper implements Serializable {
+  private static final long serialVersionUID = 914870669221300081L;
   private Item item = null;
   private MetadataProfile profile = null;
   private SingleEditor editor = null;

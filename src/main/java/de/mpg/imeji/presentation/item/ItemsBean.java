@@ -84,6 +84,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   @PostConstruct
   public void init() {
     super.init();
+    parseSearchQuery();
     initSpecific();
     cleanSelectItems();
   }
@@ -92,7 +93,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * Initialization which are specific for this bean. Can be overriden by other beans
    */
   public void initSpecific() {
-    parseSearchQuery();
     browseContext = getNavigationString();
     metadataLabels = new MetadataLabels(new ArrayList<Item>(), getLocale());
     isSimpleSearch = SearchQueryParser.isSimpleSearch(searchQuery);
@@ -148,7 +148,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   public List<ThumbnailBean> retrieveList(int offset, int size) {
     try {
       // Search the items of the page
-      searchResult = search(searchQuery, getSortCriterion(), offset, size);
+      searchResult = search(getSearchQuery(), getSortCriterion(), offset, size);
       totalNumberOfRecords = searchResult.getNumberOfRecords();
       // load the item
       Collection<Item> items = loadImages(searchResult.getResults());
@@ -174,8 +174,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int size) {
     ItemBusinessController controller = new ItemBusinessController();
-    return controller.search(null, searchQuery, sortCriterion, getSessionUser(), getSelectedSpaceString(), size,
-        offset);
+    return controller.search(null, searchQuery, sortCriterion, getSessionUser(),
+        getSelectedSpaceString(), size, offset);
   }
 
   /**

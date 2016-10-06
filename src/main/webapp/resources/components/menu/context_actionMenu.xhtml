@@ -30,7 +30,7 @@
 		<ui:param name="updateVO" value="#{Auth.update(cc.attrs.vo)}"/>
 		<ui:param name="updateContentVO" value="#{Auth.updateContent(cc.attrs.vo)}"/>
 
-		<div class="#{cc.attrs.menuClass.trim()}">		
+		<div class="#{cc.attrs.menuClass.trim()}">#{filterBean}
 			<ui:fragment rendered="#{Auth.loggedIn and (Auth.isAllowedToCreateCollection(SessionBean.user) or Configuration.albumsEnabled)}">
 				<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item">
 					<div class="imj_menuHeader">
@@ -157,9 +157,12 @@
 											<h:outputLink  id="actionMenuEditAlbum" rendered="#{cc.attrs.curMainMenu == 'album' and cc.attrs.activeMenu != 'item'}" value="#{Navigation.albumUrl}#{cc.attrs.vo.idString}/edit?init=1">
 												<h:outputText value="#{lbl.album_share_album_edit}"/>
 											</h:outputLink>
-											<h:outputLink rendered="#{cc.attrs.activeMenu == 'item'}" value="?edit=1#itemMetadata">
-												<h:outputText value="#{lbl.edit_item}"/>
-											</h:outputLink>
+											<h:form>
+												<h:commandLink rendered="#{cc.attrs.activeMenu == 'item'}" action="#{cc.attrs.filterBean.edit.showEditor}" onclick="window.open('#itemMetadata','_self')">
+													<h:outputText value="#{lbl.edit_item}"/>
+													<f:ajax render=":imj_ajaxWrapper"/>
+												</h:commandLink>
+											</h:form>
 										</li>
 									</ui:fragment>
 									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and Auth.update(cc.attrs.profile) and !(cc.attrs.profile == null or cc.attrs.profile.statements.size() == 0)}">	

@@ -256,7 +256,7 @@
 								</ui:fragment>
 								<!-- MetaDataList - EDIT - imj_submitPanel - cancel + submit command buttons -->
 								<div class="imj_submitPanel">
-									<h:commandLink styleClass="imj_cancelButton" action="#{itemBean.edit.cancel}">
+									<h:commandLink styleClass="imj_cancelButton" action="#{itemBean.cancelEditor}">
 										<h:outputText value="#{lbl.cancel}"/>
 									</h:commandLink>
 									<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.saveEditor}" value="#{lbl.save}">
@@ -405,18 +405,6 @@
 								<h:outputText value="#{lbl['item_private']}" rendered="#{itemBean.image.status == 'PENDING'}"/>
 								<h:outputText value="#{lbl['item_public']}" rendered="#{itemBean.image.status == 'RELEASED'}"/>
 								<span class="imj_noDisplay">: </span>
-								<ui:fragment rendered="#{Auth.admin(itemBean.image)}">
-									<h:form rendered="#{WorkflowBean.release(itemBean.image)}">
-										<h:commandButton value="#{lbl.make_public}" action="#{itemBean.makePublic}" styleClass="imj_submitButton">
-											<f:ajax render=":sharePanel"/>
-										</h:commandButton>
-									</h:form>
-									<h:form rendered="#{itemBean.image.status == 'RELEASED' and itemBean.collection.status != 'RELEASED'}">
-										<h:commandButton value="#{lbl.make_private}" action="#{itemBean.makePrivate}" styleClass="imj_submitButton">
-											<f:ajax render=":sharePanel"/>
-										</h:commandButton>
-									</h:form>
-								</ui:fragment>
 							</fieldset>
 						</div>
 						<ui:fragment rendered="#{itemBean.image.status == 'PENDING'}">

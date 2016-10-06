@@ -10,18 +10,17 @@
 	<ui:param name="forwardClass" value="#{itemBean.browse.next == null ? 'nextItem imj_deactivated' : 'nextItem'}"/>
 	
 	<ui:define name="actionsMenu">
-
 		<menu:context_actionMenu id="action" 
 									curMainMenu="#{currentMainMenu}" 
 									vo="#{itemBean.image}"
 									downloadEnabled="true"
 									contextDownloadParam="&amp;col=#{logicBean.id}"
-									activeMenu="item"/>
+									activeMenu="item"
+									filterBean="#{itemBean}"/>
 	</ui:define>
 	
 	<!-- Main Content - Image Detail View -->
 	<ui:define name="mainContent">
-	  
 		<ui:fragment rendered="#{itemBean.image != null}">
 			<!-- AJAX Wrapper - START -->
 			<h:panelGroup layout="block" id="imj_ajaxWrapper" styleClass="imj_mediaEntryDetailPage">

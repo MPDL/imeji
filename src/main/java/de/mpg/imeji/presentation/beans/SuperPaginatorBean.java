@@ -346,9 +346,13 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
   }
 
   public void changeSelectedSortCriterion(String selectedSortCriterion) {
-    this.selectedSortCriterion = selectedSortCriterion;
-    setCookieSortValue(this.selectedSortCriterion);
-    update();
+    if (!this.selectedSortCriterion.equals(selectedSortCriterion)) {
+      this.selectedSortCriterion = selectedSortCriterion;
+      setCookieSortValue(this.selectedSortCriterion);
+      update();
+    } else {
+      toggleSortOrder();
+    }
   }
 
   public String getSelectedSortOrder() {
