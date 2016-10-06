@@ -2,17 +2,23 @@
 				xmlns="http://www.w3.org/1999/xhtml"
 				xmlns:ui="http://java.sun.com/jsf/facelets"
 				xmlns:h="http://java.sun.com/jsf/html"
-				xmlns:f="http://java.sun.com/jsf/core">
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
 	
 	<ui:param name="headline" value=""/>
 		
 	<ui:define name="init">
 		<h:outputText value="#{AdvancedSearchBean.newSearch}"/>
+	</ui:define>	
+	
+	<ui:define name="actionsMenu">
+		<menu:context_actionMenu id="action" downloadEnabled="false" actionEnabled="false"/>
 	</ui:define>
 	
 	<ui:define name="searchQuery">
-		<h:panelGroup layout="block" id="imj_searchQueryMessageArea" styleClass="imj_searchQueryDisplay">
-			<h:outputText value="#{lbl.search_query} #{lbl.for_type} #{lbl.type_items}: "/>
+		<h:panelGroup id="imj_searchQueryMessageArea" styleClass="imj_searchQueryDisplay">
+			<br/>
+			#{lbl.search_query} #{lbl.for_type} #{lbl.type_items}:
 			<span class="imj_searchQueryText">
 				<h:outputText value="#{AdvancedSearchBean.simpleQuery}" styleClass="#{AdvancedSearchBean.errorQuery ? 'imj_messageError' : ''}"/>
 			</span>
@@ -34,7 +40,9 @@
 						<div class="imj_searchInput">
 							<h:inputText value="#{AdvancedSearchBean.formular.allSearch.value}"/>
 						</div>
-						<h:selectBooleanCheckbox value="#{AdvancedSearchBean.formular.includeFulltext}" /> 
+						<h:selectBooleanCheckbox value="#{AdvancedSearchBean.formular.includeFulltext}">
+							<f:ajax render=":imj_searchQueryMessageArea"/>
+						</h:selectBooleanCheckbox> 
 						<h:outputText value="#{lbl.include_fulltext}"/>
 					</div>
 					<div class="imj_logicalConnector">
@@ -43,44 +51,33 @@
 		    		</div>
 				</div>
 				
+				<div class="imj_searchUnit" style="font-size: 150%;">(<br/><br/></div>
+				
 				<ui:repeat id="groups" var="g" value="#{AdvancedSearchBean.formular.groups}" offset="0" varStatus="gIndex">
-					
 					<div class="imj_searchUnit">
-						
-						<div class="imj_inlineButtonGroup">
-							<h:commandLink  value="" action="#{AdvancedSearchBean.addGroup}" render="imj_ajaxWrapper :imj_searchQueryMessageArea" styleClass="fa fa-plus-square-o" title="#{lbl.add_collection}">
-								<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
-								<f:param name="gPos" value="#{gIndex.index}"/>
-							</h:commandLink>
-							<h:commandLink value="" action="#{AdvancedSearchBean.removeGroup}" render="imj_ajaxWrapper :imj_searchQueryMessageArea" styleClass="fa fa-minus-square-o" title="#{lbl.remove_collection}">
-								<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
-								<f:param name="gPos" value="#{gIndex.index}"/>
-							</h:commandLink>
-						</div>
-						
-						<div class="imj_logicalConnector">
-				    		<h:outputLabel value="#{lbl.or_big}" rendered="#{gIndex.index > 0}"/>
-				    		<h:outputText value="&#160;" rendered="#{gIndex.index == 0}"/>
-			    		</div>
+						<ui:fragment rendered="#{gIndex.index > 0}">
+							<div class="imj_logicalConnector">#{lbl.or_big}</div>
+			    		</ui:fragment>
+			    		
 			    		<div class="imj_searchDetails">
-						<div class="imj_searchSelectbox">
-							<h:selectOneMenu id="selProfile" value="#{g.profileId}" onchange="document.getElementById('advancedSearchForm:groups:' + #{gIndex.index} +':changeGroup').click();">
-								<f:selectItems value="#{AdvancedSearchBean.profilesMenu}"/>
-							</h:selectOneMenu>
-							<h:commandButton id="changeGroup" action="#{AdvancedSearchBean.changeGroup}" styleClass="imj_ajaxChangeElementButton">
-								<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
-								<f:param name="gPos" value="#{gIndex.index}"/>
-							</h:commandButton>
-							
-						</div>
-						<div class="imj_searchSelectbox">
-							<h:panelGroup layout="block" styleClass="" rendered="#{!empty g.collectionsMenu}">
-								<h:selectOneMenu id="selCollection" value="#{g.collection}">
-									<f:selectItems value="#{g.collectionsMenu}"/>
-									<f:ajax event="change" execute="@form" render="@form :imj_searchQueryMessageArea "/>
+							<div class="imj_searchSelectbox">
+								<h:selectOneMenu id="selProfile" value="#{g.profileId}" onchange="document.getElementById('advancedSearchForm:groups:' + #{gIndex.index} +':changeGroup').click();">
+									<f:selectItems value="#{AdvancedSearchBean.profilesMenu}"/>
 								</h:selectOneMenu>
-							</h:panelGroup>
-						</div>
+								<h:commandButton id="changeGroup" action="#{AdvancedSearchBean.changeGroup}" styleClass="imj_ajaxChangeElementButton">
+									<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
+									<f:param name="gPos" value="#{gIndex.index}"/>
+								</h:commandButton>
+								
+							</div>
+							<div class="imj_searchSelectbox">
+								<h:panelGroup layout="block" styleClass="" rendered="#{!empty g.collectionsMenu}">
+									<h:selectOneMenu id="selCollection" value="#{g.collection}">
+										<f:selectItems value="#{g.collectionsMenu}"/>
+										<f:ajax event="change" execute="@form" render="@form :imj_searchQueryMessageArea "/>
+									</h:selectOneMenu>
+								</h:panelGroup>
+							</div>
 						</div>
 						<ui:repeat id="els" var="el" value="#{g.searchElementForms}" rows="0" varStatus="elIndex">
 							<div class="imj_searchDetails">
@@ -108,7 +105,6 @@
 								
 								<div class="imj_searchInput">
 									<ui:fragment rendered="#{el.predefinedValues == null}">
-										
 										<ui:fragment rendered="#{el.type != 'CONE_PERSON' and el.type != 'GEOLOCATION' and el.type != 'LICENSE' and el.type != 'LINK'}">
 											<h:panelGroup styleClass="imj_searchInputValue">
 												<h:inputText id="input" value="#{el.searchValue}" onkeyup="document.getElementById('advancedSearchForm:groups:' + #{gIndex.index} +':els:'+ #{elIndex.index} +':updateEl').click();">
@@ -216,10 +212,22 @@
 							</h:panelGroup>
 						</ui:repeat>
 						
+						<div class="imj_inlineButtonGroup">
+							<h:commandLink  value="" action="#{AdvancedSearchBean.addGroup}" render="imj_ajaxWrapper :imj_searchQueryMessageArea" styleClass="fa fa-plus-square-o" title="#{lbl.add_collection}">
+								<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
+								<f:param name="gPos" value="#{gIndex.index}"/>
+							</h:commandLink>
+							<h:commandLink value="" action="#{AdvancedSearchBean.removeGroup}" render="imj_ajaxWrapper :imj_searchQueryMessageArea" styleClass="fa fa-minus-square-o" title="#{lbl.remove_collection}">
+								<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
+								<f:param name="gPos" value="#{gIndex.index}"/>
+							</h:commandLink>
+						</div>
+						
+						
 					</div> <!-- END of imj_searchUnit -->
-					
-					
 				</ui:repeat>
+				
+				<div class="imj_searchUnit" style="font-size: 150%;">)<br/><br/></div>
 				
 				<div class="imj_logicalConnector">
 		    		<h:outputLabel value="#{lbl.and_big}"/>
@@ -229,8 +237,8 @@
 				<div class="imj_searchUnit">
 					<div class="imj_searchDetails">
 						<h:outputText value="#{lbl.select_file_type}" />
-						<h:selectManyCheckbox value="#{AdvancedSearchBean.fileTypesSelected}" valueChangeListener="#{AdvancedSearchBean.fileTypeListener}">
-							<f:selectItems value="#{AdvancedSearchBean.fileTypesMenu}"></f:selectItems>
+						<h:selectManyCheckbox value="#{AdvancedSearchBean.formular.fileTypeSearchGroup.selected}" valueChangeListener="#{AdvancedSearchBean.formular.fileTypeSearchGroup.listener}">
+							<f:selectItems value="#{AdvancedSearchBean.formular.fileTypeSearchGroup.menu}"/>
 							<f:ajax execute="@this" render=":imj_searchQueryMessageArea"/>
 						</h:selectManyCheckbox>
 					</div>
@@ -245,10 +253,51 @@
 					<div class="imj_searchDetails">
 						<h:outputText value="#{lbl.select_licenses}" />
 						<h:selectManyCheckbox layout="pageDirection" value="#{AdvancedSearchBean.formular.licenseSearchGroup.selected}" valueChangeListener="#{AdvancedSearchBean.formular.licenseSearchGroup.selectedListener}">
-							<f:selectItems  value="#{AdvancedSearchBean.formular.licenseSearchGroup.menu}" title="hello"/>
+							<f:selectItems  value="#{AdvancedSearchBean.formular.licenseSearchGroup.menu}"/>
 							<f:ajax execute="@this" render=":imj_searchQueryMessageArea"/>
 						</h:selectManyCheckbox>
 					</div>
+				</div>
+				
+				<div class="imj_logicalConnector">
+		    		<h:outputLabel value="#{lbl.and_big}"/>
+		    		<h:outputText value="&#160;"/>
+		    	</div>
+		    	
+		    	<div class="imj_searchUnit">
+		    		<div class="imj_searchDetails">
+		    			#{lbl.select_technical_metadata_name}
+		    		</div>
+		    		<ui:repeat var="tmd" value="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.list}"  varStatus="pos">
+		    			<ui:fragment rendered="#{pos.index &gt; 0}">
+			    			<div class="imj_searchDetails">
+								<h:selectOneMenu id="selLogicalRelationTechnical" value="#{tmd.relation}">
+									<f:selectItems value="#{AdvancedSearchBean.operatorsMenu}"/>
+									<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
+								</h:selectOneMenu>
+							</div>
+						</ui:fragment>
+		    			<div class="imj_searchDetails">
+		    				<div class="imj_searchStatement">	
+				    			<h:selectOneMenu value="#{tmd.index}" >
+				    				<f:selectItems  value="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.menu}"/>
+				    			</h:selectOneMenu>
+			    			</div>
+			    			&#160;&#160;=&#160;&#160;
+			    			<div class="imj_searchInput">
+			    				<h:inputText value="#{tmd.value}" styleClass="imj_searchInputValue"/>
+			    			</div>
+			    			<div class="imj_inlineButtonGroup">
+								<h:commandLink value="" action="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.add(pos.index)}" render="imj_ajaxWrapper, imj_searchQueryMessageArea" styleClass="fa fa-plus-square-o">
+									<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
+								</h:commandLink>
+								<h:commandLink value="" action="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.remove(pos.index)}" render="imj_ajaxWrapper, imj_searchQueryMessageArea" styleClass="fa fa-minus-square-o">
+									<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
+								</h:commandLink>
+							</div>
+						</div>
+		    		</ui:repeat>
+		    	
 				</div>
 				
 				<!-- submit panel -->

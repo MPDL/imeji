@@ -601,4 +601,12 @@ public class ConfigurationBean extends SuperBean {
     }
     return licenseMenu;
   }
+
+  public String getTechnicalMetadata() {
+    return Imeji.CONFIG.getTechnicalMetadata();
+  }
+
+  public void setTechnicalMetadata(String technicalMetadata) {
+    Imeji.CONFIG.setTechnicalMetadata(technicalMetadata);
+  }
 }

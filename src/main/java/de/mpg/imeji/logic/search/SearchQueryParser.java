@@ -54,11 +54,12 @@ public class SearchQueryParser {
   /**
    * Search for technical metadata technical:index="value"
    */
-  private static String SEARCH_TECHNICAL_METADATA_REGEX = "technical[(.+)]([=<>@]{1,2})\"(.+)\"";
+  private static String SEARCH_TECHNICAL_METADATA_REGEX =
+      "technical\\[(.+)\\]([=<>@]{1,2})\"(.+)\"";
   /**
    * Regex to match md:label="value"
    */
-  private static String SEARCH_METADATA_SIMPLE_REGEX = "metadata[(.+)]([=<>@]{1,2})\"(.+)\"";
+  private static String SEARCH_METADATA_SIMPLE_REGEX = "metadata\\[(.+)\\]([=<>@]{1,2})\"(.+)\"";
   /**
    * PAttern for SEARCH_METADATA_REGEX
    */
@@ -308,7 +309,9 @@ public class SearchQueryParser {
           if (((SearchTechnicalMetadata) se).isNot()) {
             query += " NOT";
           }
-          query += "TODO";
+          query +=
+              logical + SearchFields.technical + "[" + ((SearchTechnicalMetadata) se).getLabel()
+                  + "]=\"" + ((SearchTechnicalMetadata) se).getValue() + "\"";
           break;
         default:
           break;
@@ -466,6 +469,17 @@ public class SearchQueryParser {
   }
 
   /**
+   * transform a {@link SearchTechnicalMetadata} into a user friendly query
+   *
+   * @param rel
+   * @return
+   */
+  private static String searchLTechnicalMetadata2PrettyQuery(SearchTechnicalMetadata tmd,
+      Locale locale) {
+    return tmd.getLabel() + "=" + tmd.getValue();
+  }
+
+  /**
    * Transform a {@link SearchElement} into a user friendly query
    *
    * @param els
@@ -487,6 +501,9 @@ public class SearchQueryParser {
           break;
         case METADATA:
           q += searchMetadata2PrettyQuery((SearchMetadata) el, locale, metadataLabelMap);
+          break;
+        case TECHNICAL_METADATA:
+          q += searchLTechnicalMetadata2PrettyQuery((SearchTechnicalMetadata) el, locale);
           break;
         default:
           break;

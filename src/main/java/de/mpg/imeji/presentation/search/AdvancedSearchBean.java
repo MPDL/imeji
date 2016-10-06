@@ -8,12 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
@@ -21,7 +19,6 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchGroup;
@@ -51,8 +48,6 @@ public class AdvancedSearchBean extends SuperBean {
   private List<SelectItem> profilesMenu;
   private List<SelectItem> collectionsMenu;
   private List<SelectItem> operatorsMenu;
-  private List<SelectItem> fileTypesMenu;
-  private List<String> fileTypesSelected;
 
 
 
@@ -108,10 +103,6 @@ public class AdvancedSearchBean extends SuperBean {
         Imeji.RESOURCE_BUNDLE.getLabel("and_small", getLocale())));
     operatorsMenu.add(new SelectItem(LOGICAL_RELATIONS.OR,
         Imeji.RESOURCE_BUNDLE.getLabel("or_small", getLocale())));
-    fileTypesMenu = new ArrayList<>();
-    for (Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
-      fileTypesMenu.add(new SelectItem(type.getName(getLocale().getLanguage())));
-    }
   }
 
   /**
@@ -129,23 +120,7 @@ public class AdvancedSearchBean extends SuperBean {
     if (formular.getGroups().size() == 0) {
       formular.addSearchGroup(0);
     }
-    initFileTypesSelected();
   }
-
-  /**
-   * Init the selected file types according the query
-   */
-  private void initFileTypesSelected() {
-    fileTypesSelected = new ArrayList<String>();
-    for (String t : formular.getFileTypeSearch().getValue().split(Pattern.quote("|"))) {
-      Type type = Imeji.CONFIG.getFileTypes().getType(t);
-      if (type != null) {
-        fileTypesSelected.add(type.getName(getLocale().getLanguage()));
-      }
-      fileTypesSelected.add(t);
-    }
-  }
-
 
 
   /**
@@ -209,27 +184,6 @@ public class AdvancedSearchBean extends SuperBean {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  public void fileTypeListener(ValueChangeEvent event) {
-    fileTypesSelected = (List<String>) event.getNewValue();
-    formular.getFileTypeSearch().setValue(getFileTypesQuery());
-  }
-
-  /**
-   * REturn the file types Selected as a query
-   *
-   * @return
-   */
-  private String getFileTypesQuery() {
-    String qf = "";
-    for (String type : fileTypesSelected) {
-      if (!qf.equals("")) {
-        qf += "|";
-      }
-      qf += type;
-    }
-    return qf;
-  }
 
 
   /**
@@ -394,33 +348,6 @@ public class AdvancedSearchBean extends SuperBean {
     this.errorQuery = errorQuery;
   }
 
-  /**
-   * @return the fileTypesMenu
-   */
-  public List<SelectItem> getFileTypesMenu() {
-    return fileTypesMenu;
-  }
-
-  /**
-   * @param fileTypesMenu the fileTypesMenu to set
-   */
-  public void setFileTypesMenu(List<SelectItem> fileTypesMenu) {
-    this.fileTypesMenu = fileTypesMenu;
-  }
-
-  /**
-   * @return the fileTypesSelected
-   */
-  public List<String> getFileTypesSelected() {
-    return fileTypesSelected;
-  }
-
-  /**
-   * @param fileTypesSelected the fileTypesSelected to set
-   */
-  public void setFileTypesSelected(List<String> fileTypesSelected) {
-    this.fileTypesSelected = fileTypesSelected;
-  }
 
   public List<SelectItem> getCollectionsMenu() {
     return collectionsMenu;

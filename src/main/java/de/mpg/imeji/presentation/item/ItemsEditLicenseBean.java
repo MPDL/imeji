@@ -155,7 +155,7 @@ public class ItemsEditLicenseBean extends SuperBean {
    */
   private List<Item> retrieveSelectedItems() throws ImejiException {
     ItemBusinessController controller = new ItemBusinessController();
-    return (List<Item>) controller.retrieveBatchLazy(selectedItems, -1, 0, getSessionUser());
+    return (List<Item>) controller.retrieveBatch(selectedItems, -1, 0, getSessionUser());
   }
 
   /**
@@ -169,7 +169,7 @@ public class ItemsEditLicenseBean extends SuperBean {
     ItemBusinessController controller = new ItemBusinessController();
     List<String> uris = controller.search(ObjectHelper.getURI(CollectionImeji.class, collectionId),
         null, null, getSessionUser(), getSpaceId(), -1, 0).getResults();
-    return (List<Item>) controller.retrieveBatchLazy(uris, -1, 0, getSessionUser());
+    return (List<Item>) controller.retrieveBatch(uris, -1, 0, getSessionUser());
   }
 
   /**

@@ -454,6 +454,16 @@
 								
 								<div class="imj_content">
 									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.technical_metadata} (#{lbl.comma_separated_index})"/>
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputTextarea value="#{Configuration.technicalMetadata}" styleClass="imj_admindataEdit"/>
+										</div>
+										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+									</div>
 									<h3 class="imj_sectionHeadline">
 										<h:outputText value="#{lbl.file_types}"/><span class="imj_noDisplay">: </span>
 									</h3>

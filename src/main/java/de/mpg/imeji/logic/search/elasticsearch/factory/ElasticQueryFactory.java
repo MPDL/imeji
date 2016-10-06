@@ -5,7 +5,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -382,7 +381,7 @@ public class ElasticQueryFactory {
         break;
       case license:
         BoolQueryBuilder licenseQuery = QueryBuilders.boolQuery();
-        for (String licenseName : pair.getValue().split(Pattern.quote("|"))) {
+        for (String licenseName : pair.getValue().split(" OR ")) {
           if (ImejiLicenses.NO_LICENSE.equals(licenseName)) {
             licenseQuery.should(QueryBuilders.boolQuery()
                 .mustNot(QueryBuilders.existsQuery(ElasticFields.LICENSE.field())));

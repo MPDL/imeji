@@ -49,7 +49,6 @@ import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -584,8 +583,6 @@ public class ItemBusinessController extends ImejiController {
   public void extractFulltextAndTechnicalMetadataForAllItems() throws ImejiException {
     StorageController storageController = new StorageController();
     ContentAnalyser contentAnalyser = ContentAnalyserFactory.build();
-    UserBusinessController userBusinessController = new UserBusinessController();
-    List<User> allUsers = userBusinessController.retrieveAll();
     List<Item> allItems = (List<Item>) retrieveAll(Imeji.adminUser);
     int count = 0;
     for (Item item : allItems) {
@@ -593,7 +590,7 @@ public class ItemBusinessController extends ImejiController {
         File f = storageController.read(item.getFullImageUrl().toString());
         item.setFulltext(contentAnalyser.extractFulltext(f));
         item.setTechnicalMetadata(contentAnalyser.extractTechnicalMetadata(f));
-        itemController.updateBatch(Arrays.asList(item), getCreator(item, allUsers));
+        itemController.updateBatchForce(Arrays.asList(item), Imeji.adminUser);
         LOGGER.info(count++ + "/" + allItems.size() + " extracted");
       } catch (Exception e) {
         LOGGER.error("Error extracting fulltext/technical metadata", e);

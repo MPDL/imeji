@@ -164,6 +164,19 @@ public class ItemController extends ImejiController {
   }
 
   /**
+   * Update without any validation and any operations on the data. WARNING: use with care. Invalid
+   * data would overwrite valid data
+   * 
+   * @param items
+   * @param user
+   * @throws ImejiException
+   */
+  public void updateBatchForce(Collection<Item> items, User user) throws ImejiException {
+    cleanItem(items);
+    WRITER.updateWithoutValidation(new ArrayList<>(items), user);
+  }
+
+  /**
    * Delete a {@link List} of {@link Item} inclusive all files stored in the {@link Storage}
    *
    * @param items

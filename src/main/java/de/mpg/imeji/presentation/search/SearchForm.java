@@ -42,9 +42,8 @@ public class SearchForm implements Serializable {
   private Map<String, MetadataProfile> profilesMap;
   private List<SearchGroupForm> groups;
   private LicenseSearchGroup licenseSearchGroup;
-  private List<SearchGroupForm> technicalMetadata;
-  private SearchPair fileTypeSearch =
-      new SearchPair(SearchFields.filetype, SearchOperators.REGEX, "", false);
+  private FileTypeSearchGroup fileTypeSearchGroup;
+  private TechnicalMetadataSearchGroup technicalMetadataSearchGroup;
   private SearchPair allSearch = new SearchPair(SearchFields.all, SearchOperators.REGEX, "", false);
   private boolean includeFulltext = true;
 
@@ -71,6 +70,9 @@ public class SearchForm implements Serializable {
     this.profilesMap = profilesMap;
     this.licenseSearchGroup =
         new LicenseSearchGroup(Locale.forLanguageTag(metadataLabels.getLang()));
+    this.fileTypeSearchGroup =
+        new FileTypeSearchGroup(Locale.forLanguageTag(metadataLabels.getLang()));
+    this.setTechnicalMetadataSearchGroup(new TechnicalMetadataSearchGroup());
     for (SearchElement se : searchQuery.getElements()) {
       if (se.getType().equals(SEARCH_ELEMENTS.GROUP)) {
         String profileId =
@@ -82,8 +84,8 @@ public class SearchForm implements Serializable {
       }
       if (se.getType().equals(SEARCH_ELEMENTS.PAIR)) {
         if (((SearchPair) se).getField() == SearchFields.filetype) {
-          fileTypeSearch = new SearchPair(SearchFields.filetype, SearchOperators.REGEX,
-              ((SearchPair) se).getValue(), false);
+          fileTypeSearchGroup = new FileTypeSearchGroup(((SearchPair) se).getValue(),
+              Locale.forLanguageTag(metadataLabels.getLang()));
         }
         if (((SearchPair) se).getField() == SearchFields.license) {
           licenseSearchGroup = new LicenseSearchGroup(((SearchPair) se).getValue(),
@@ -156,21 +158,28 @@ public class SearchForm implements Serializable {
           searchQuery.addPair(allSearch);
         }
       }
+      SearchGroup metadataGroup = new SearchGroup();
       for (SearchGroupForm g : groups) {
         SearchGroup mdGroup = g.getAsSearchGroup();
         if (!mdGroup.isEmpty()) {
-          if (!searchQuery.isEmpty()) {
-            searchQuery.addLogicalRelation(LOGICAL_RELATIONS.OR);
+          if (!metadataGroup.isEmpty()) {
+            metadataGroup.addLogicalRelation(LOGICAL_RELATIONS.OR);
           }
-          searchQuery.addGroup(g.getAsSearchGroup());
+          metadataGroup.addGroup(g.getAsSearchGroup());
         }
       }
-
-      if (!fileTypeSearch.isEmpty()) {
+      if (!metadataGroup.isEmpty()) {
         if (!searchQuery.isEmpty()) {
           searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
         }
-        searchQuery.addPair(fileTypeSearch);
+        searchQuery.addGroup(metadataGroup);
+      }
+
+      if (!fileTypeSearchGroup.isEmpty()) {
+        if (!searchQuery.isEmpty()) {
+          searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
+        }
+        searchQuery.addPair(fileTypeSearchGroup.getPair());
       }
 
       if (!licenseSearchGroup.isEmpty()) {
@@ -178,6 +187,13 @@ public class SearchForm implements Serializable {
           searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
         }
         searchQuery.addPair(licenseSearchGroup.asSearchPair());
+      }
+
+      if (!technicalMetadataSearchGroup.isEmpty()) {
+        if (!searchQuery.isEmpty()) {
+          searchQuery.addLogicalRelation(LOGICAL_RELATIONS.AND);
+        }
+        searchQuery.addGroup(technicalMetadataSearchGroup.asSearchGroup());
       }
 
       return searchQuery;
@@ -288,14 +304,6 @@ public class SearchForm implements Serializable {
     this.profilesMap = profilesMap;
   }
 
-  public SearchPair getFileTypeSearch() {
-    return fileTypeSearch;
-  }
-
-  public void setFileTypeSearch(SearchPair fileTypeSearch) {
-    this.fileTypeSearch = fileTypeSearch;
-  }
-
   public SearchPair getAllSearch() {
     return allSearch;
   }
@@ -325,4 +333,34 @@ public class SearchForm implements Serializable {
   public void setLicenseSearchGroup(LicenseSearchGroup licenseSearchGroup) {
     this.licenseSearchGroup = licenseSearchGroup;
   }
+
+  /**
+   * @return the fileTypeSearchGroup
+   */
+  public FileTypeSearchGroup getFileTypeSearchGroup() {
+    return fileTypeSearchGroup;
+  }
+
+  /**
+   * @param fileTypeSearchGroup the fileTypeSearchGroup to set
+   */
+  public void setFileTypeSearchGroup(FileTypeSearchGroup fileTypeSearchGroup) {
+    this.fileTypeSearchGroup = fileTypeSearchGroup;
+  }
+
+  /**
+   * @return the technicalMetadataSearchGroup
+   */
+  public TechnicalMetadataSearchGroup getTechnicalMetadataSearchGroup() {
+    return technicalMetadataSearchGroup;
+  }
+
+  /**
+   * @param technicalMetadataSearchGroup the technicalMetadataSearchGroup to set
+   */
+  public void setTechnicalMetadataSearchGroup(
+      TechnicalMetadataSearchGroup technicalMetadataSearchGroup) {
+    this.technicalMetadataSearchGroup = technicalMetadataSearchGroup;
+  }
+
 }

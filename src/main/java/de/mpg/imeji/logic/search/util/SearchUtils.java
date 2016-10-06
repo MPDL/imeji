@@ -2,7 +2,6 @@ package de.mpg.imeji.logic.search.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
@@ -27,7 +26,7 @@ public class SearchUtils {
    */
   public static List<String> parseFileTypesAsExtensionList(String fileTypes) {
     List<String> extensions = new ArrayList<>();
-    for (String typeName : fileTypes.split(Pattern.quote("|"))) {
+    for (String typeName : fileTypes.split(" OR ")) {
       Type type = Imeji.CONFIG.getFileTypes().getType(typeName);
       for (String ext : type.getExtensionArray()) {
         extensions.add(ext);

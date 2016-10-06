@@ -156,6 +156,24 @@ public class WriterFacade {
     indexer.indexBatch(objects);
   }
 
+  /**
+   * Do a full update without any validation
+   * 
+   * @param objects
+   * @param user
+   * @throws ImejiException
+   */
+  public void updateWithoutValidation(List<Object> objects, User user) throws ImejiException {
+    if (objects.isEmpty()) {
+      return;
+    }
+    throwAuthorizationException(user != null,
+        SecurityUtil.staticAuth().administrate(user, Imeji.PROPERTIES.getBaseURI()),
+        "Only admin ca use update wihout validation");
+    writer.update(objects, user);
+    indexer.indexBatch(objects);
+  }
+
   /*
    * (non-Javadoc)
    *

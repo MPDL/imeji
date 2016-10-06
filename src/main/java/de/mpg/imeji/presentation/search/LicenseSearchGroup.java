@@ -1,10 +1,10 @@
 package de.mpg.imeji.presentation.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -23,8 +23,8 @@ import de.mpg.imeji.logic.search.model.SearchPair;
  * @author saquet
  *
  */
-public class LicenseSearchGroup {
-
+public class LicenseSearchGroup implements Serializable {
+  private static final long serialVersionUID = -2822491289836043116L;
   private List<String> selected = new ArrayList<>();
   private List<SelectItem> menu;
 
@@ -39,7 +39,7 @@ public class LicenseSearchGroup {
    */
   public LicenseSearchGroup(String value, Locale locale) {
     this(locale);
-    selected = Arrays.asList(value.split(Pattern.quote("|")));
+    selected = Arrays.asList(value.split(" OR "));
   }
 
   /**
@@ -49,7 +49,7 @@ public class LicenseSearchGroup {
    */
   public SearchPair asSearchPair() {
     return new SearchPair(SearchFields.license, SearchOperators.REGEX,
-        StringUtils.join(selected, "|"), false);
+        StringUtils.join(selected, " OR "), false);
   }
 
   public boolean isEmpty() {
