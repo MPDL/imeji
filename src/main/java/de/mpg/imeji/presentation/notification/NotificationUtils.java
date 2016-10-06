@@ -131,14 +131,14 @@ public class NotificationUtils {
 
 
   /**
-   * Send account activation email
+   * Send account activation email to current admin
    */
   public static void sendActivationNotification(User user, Locale locale, boolean invitation) {
     // EmailClient emailClient = new EmailClient();
     // EmailMessages emailMessages = new EmailMessages();
     try {
       // send to support
-      emailClient.sendMail(user.getEmail(), null,
+      emailClient.sendMail(Imeji.CONFIG.getContactEmail(), null,
           EmailMessages.getEmailOnAccountActivation_Subject(user, locale),
           EmailMessages.getEmailOnAccountActivation_Body(user, locale, invitation));
     } catch (Exception e) {

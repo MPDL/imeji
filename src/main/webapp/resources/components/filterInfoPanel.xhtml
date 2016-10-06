@@ -43,7 +43,7 @@
 					</h:form>
 				</div>
 			</h:panelGroup>
-			<menu:StatusFilterMenu/>
+			<menu:StatusFilterMenu rendered="#{!Configuration.privateModus}"/>
 			<menu:UserFilterMenu/>
 		</h:panelGroup>
 	</composite:implementation>
