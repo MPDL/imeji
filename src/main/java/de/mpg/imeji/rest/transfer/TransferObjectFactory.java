@@ -321,7 +321,29 @@ public class TransferObjectFactory {
     to.setWebResolutionUrlUrl(vo.getWebImageUrl());
     to.setThumbnailUrl(vo.getThumbnailImageUrl());
     to.setFileUrl(vo.getFullImageUrl());
+    to.setLicenses(transferLicense(vo.getLicenses()));
     transferItemMetadataDefault(profile, vo.getMetadataSet().getMetadata(), to);
+  }
+
+  /**
+   * Transfer a list of LicenseVO to a list of LicenseTO
+   * 
+   * @param licenses
+   * @return
+   */
+  private static List<de.mpg.imeji.rest.to.LicenseTO> transferLicense(
+      List<de.mpg.imeji.logic.vo.License> licenses) {
+    List<de.mpg.imeji.rest.to.LicenseTO> licenseTOs = new ArrayList<>();
+    for (de.mpg.imeji.logic.vo.License lic : licenses) {
+      de.mpg.imeji.rest.to.LicenseTO licTO = new de.mpg.imeji.rest.to.LicenseTO();
+      licTO.setName(lic.getName());
+      licTO.setLabel(lic.getLabel());
+      licTO.setUrl(lic.getUrl());
+      licTO.setStart(lic.getStartTime());
+      licTO.setEnd(lic.getEndTime());
+      licenseTOs.add(licTO);
+    }
+    return licenseTOs;
   }
 
 

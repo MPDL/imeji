@@ -3,6 +3,7 @@ package de.mpg.imeji.rest.to.defaultItemTO;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,48 +12,26 @@ import javax.xml.bind.annotation.XmlType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import de.mpg.imeji.rest.to.LicenseTO;
 import de.mpg.imeji.rest.to.PropertiesTO;
 
 @XmlRootElement
 @XmlType(propOrder = {"visibility", "collectionId", "filename", "mimetype", "fileSize",
-    "checksumMd5", "webResolutionUrlUrl", "thumbnailUrl", "fileUrl", "metadata"})
+    "checksumMd5", "webResolutionUrlUrl", "thumbnailUrl", "fileUrl", "metadata", "licenses"})
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultItemTO extends PropertiesTO implements Serializable {
-
   private static final long serialVersionUID = -1870847854605861134L;
-
   private String visibility;
-
   private String collectionId;
-
   private String filename;
-
   private String mimetype;
-
   private String checksumMd5;
-
-  public long getFileSize() {
-    return fileSize;
-  }
-
-  public void setFileSize(long fileSize) {
-    this.fileSize = fileSize;
-  }
-
+  private List<LicenseTO> licenses;
   private URI webResolutionUrlUrl;
-
   private URI thumbnailUrl;
-
   private URI fileUrl;
-
   private long fileSize;
-
-  /*
-   * ORIGINAL EASY METADATA
-   *
-   * private Map<String, JsonNode> metadata = new HashMap<String, JsonNode>();
-   */
   private Map<String, JsonNode> metadata = new LinkedHashMap<String, JsonNode>();
 
   public String getCollectionId() {
@@ -127,6 +106,26 @@ public class DefaultItemTO extends PropertiesTO implements Serializable {
     this.fileUrl = fileUrl;
   }
 
+  public long getFileSize() {
+    return fileSize;
+  }
 
+  public void setFileSize(long fileSize) {
+    this.fileSize = fileSize;
+  }
+
+  /**
+   * @return the license
+   */
+  public List<LicenseTO> getLicenses() {
+    return licenses;
+  }
+
+  /**
+   * @param licenses the license to set
+   */
+  public void setLicenses(List<LicenseTO> licenses) {
+    this.licenses = licenses;
+  }
 
 }

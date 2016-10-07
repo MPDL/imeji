@@ -21,6 +21,7 @@ import com.google.common.collect.Iterables;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
@@ -152,7 +153,28 @@ public class ReverseTransferObjectFactory {
     if (!isNullOrEmpty(to.getFilename())) {
       vo.setFilename(to.getFilename());
     }
+    vo.getLicenses().addAll(transferLicenses(to.getLicenses()));
     transferDefaultMetadata(to, vo, profile, u, mode);
+  }
+
+  /**
+   * Transfer a LicenseVO to a LicenseTO
+   * 
+   * @param licenseTOs
+   * @return
+   */
+  private static List<de.mpg.imeji.logic.vo.License> transferLicenses(
+      List<de.mpg.imeji.rest.to.LicenseTO> licenseTOs) {
+    List<de.mpg.imeji.logic.vo.License> licenses = new ArrayList<>();
+    for (de.mpg.imeji.rest.to.LicenseTO licTO : licenseTOs) {
+      de.mpg.imeji.logic.vo.License lic = new de.mpg.imeji.logic.vo.License();
+      lic.setLabel(
+          StringHelper.isNullOrEmptyTrim(licTO.getLabel()) ? licTO.getName() : licTO.getLabel());
+      lic.setName(licTO.getName());
+      lic.setUrl(licTO.getUrl());
+      licenses.add(lic);
+    }
+    return licenses;
   }
 
 
@@ -301,13 +323,13 @@ public class ReverseTransferObjectFactory {
 
       for (StatementTO stTO : to.getStatements()) {
         Statement stVO = new Statement();
-        //Put Old Statement (as Key) and new Statement(as Value) in a Map
-        
+        // Put Old Statement (as Key) and new Statement(as Value) in a Map
+
         statementsIdMap.put(stTO.getId(), stVO.getId().toString());
         stVO.setType(stTO.getType());
         stVO.setLabels(stTO.getLabels());
         stVO.setVocabulary(stTO.getVocabulary());
-        
+
         for (LiteralConstraintTO lc : stTO.getLiteralConstraints()) {
           stVO.getLiteralConstraints().add(lc.getValue());
         }
@@ -319,14 +341,15 @@ public class ReverseTransferObjectFactory {
         }
         vo.getStatements().add(stVO);
       }
-      
+
       if (hasParents) {
-          for (Statement s:vo.getStatements()){
-                //Set the new parent statement ID, taken from the Map
-                if ( (s.getParent()!=null ) )  {
-                    vo.getStatement(s.getId().toString()).setParent(URI.create(statementsIdMap.get(s.getParent().toString())));
-                }
+        for (Statement s : vo.getStatements()) {
+          // Set the new parent statement ID, taken from the Map
+          if ((s.getParent() != null)) {
+            vo.getStatement(s.getId().toString())
+                .setParent(URI.create(statementsIdMap.get(s.getParent().toString())));
           }
+        }
       }
     }
 

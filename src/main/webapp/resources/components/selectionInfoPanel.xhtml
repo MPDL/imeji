@@ -62,6 +62,15 @@
 										</li>
 									</ui:fragment>
 									
+									<ui:fragment rendered="#{cc.attrs.facetBean.navigationString == 'pretty:collectionBrowse' and cc.attrs.facetBean.collection != null and Auth.updateContent(cc.attrs.facetBean.collection)}">
+										<li class="imj_overlayMenuListItem">
+											<!-- Edit selected -->
+											<h:outputLink value="#{Navigation.applicationSpaceUrl}edit/license" id="lnkSelectEditLicense">
+												<h:outputText value="#{lbl.edit_selected_license}"/>
+											</h:outputLink>
+										</li>
+									</ui:fragment>
+									
 									<ui:fragment rendered="#{cc.attrs.facetBean.navigationString == 'pretty:collectionBrowse' and cc.attrs.facetBean.collection != null}">
 										<li class="imj_overlayMenuListItem">
 											<!-- Delete/Discard selected images -->
