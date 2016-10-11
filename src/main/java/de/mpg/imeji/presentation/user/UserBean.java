@@ -191,6 +191,12 @@ public class UserBean extends SuperBean {
       shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(),
           ShareBusinessController.rolesAsList(ShareRoles.ADMIN));
     }
+
+    reloadPage();
+  }
+
+  public boolean isSysAdmin() {
+    return SecurityUtil.isSysAdmin(user);
   }
 
   public boolean isUniqueAdmin() {

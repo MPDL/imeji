@@ -193,22 +193,13 @@
 														<label for="grantForm:createcollectioncheck"><h:outputText value="#{lbl.allowedToCreateCollection}"/></label>
 														<span class="imj_invisible">: </span>
 													</div>
-													<ui:fragment rendered="#{Auth.isSysAdmin(UserBean.user)}">
 													<div class="imj_admindataSet">
-														<h:selectBooleanCheckbox id="admincheck1" title="#{Auth.isSysAdmin(UserBean.user) and UserBean.uniqueAdmin ? lbl.user_unique_admin : lbl.user_toggle_admin_role}" value="#{Auth.isSysAdmin(UserBean.user)}" styleClass="imj_admindataCheckbox"  onchange="openDialog('general');" disabled="#{Auth.isSysAdmin(UserBean.user) and UserBean.uniqueAdmin}"/>
+														<h:selectBooleanCheckbox id="admincheck1" readonly="true" title="#{UserBean.sysAdmin and UserBean.uniqueAdmin ? lbl.user_unique_admin : lbl.user_toggle_admin_role}" value="#{UserBean.sysAdmin}" styleClass="imj_admindataCheckbox"  onchange="openDialog('general');" disabled="#{UserBean.sysAdmin and UserBean.uniqueAdmin}"/>
 														<label for="grantForm:admincheck"><h:outputText value="#{lbl.isAdmin}"/></label>
 														<span class="imj_invisible">: </span>
-													<dialog:confirmationDialog submitAction="toggleAdmin" bean="#{UserBean}" confirmationText="#{msg.admin_to_user}" submitLabel="#{lbl.confirm}" dialogId="general"/></div>
-													</ui:fragment>
-													
-													<ui:fragment rendered="#{!Auth.isSysAdmin(UserBean.user)}">
-													<div class="imj_admindataSet">
-														<h:selectBooleanCheckbox id="admincheck2" title="#{Auth.isSysAdmin(UserBean.user) and UserBean.uniqueAdmin ? lbl.user_unique_admin : lbl.user_toggle_admin_role}" value="#{Auth.isSysAdmin(UserBean.user)}" styleClass="imj_admindataCheckbox"  onchange="openDialog('general');" disabled="#{Auth.isSysAdmin(UserBean.user) and UserBean.uniqueAdmin}"/>
-														<label for="grantForm:admincheck"><h:outputText value="#{lbl.isAdmin}"/></label>
-														<span class="imj_invisible">: </span>
-													<dialog:confirmationDialog submitAction="toggleAdmin" bean="#{UserBean}" confirmationText="#{msg.user_to_admin}" submitLabel="#{lbl.confirm}" dialogId="general"/></div>
-													</ui:fragment>													
-													</ui:fragment>
+														<dialog:confirmationDialog submitAction="toggleAdmin" bean="#{UserBean}" confirmationText="#{UserBean.sysAdmin ? msg.admin_to_user : msg.user_to_admin}" submitLabel="#{lbl.confirm}" dialogId="general"/>
+													</div>
+												</ui:fragment>
 											</div>
 										</div>
 									</h:panelGroup>
