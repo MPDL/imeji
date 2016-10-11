@@ -29,4 +29,13 @@ public interface ContentAnalyser {
    */
   public List<TechnicalMetadata> extractTechnicalMetadata(File file);
 
+  /**
+   * Extract everything what can be extracted from file. Faster than extracting fulltext and
+   * metadata separately
+   * 
+   * @param file
+   * @return
+   */
+  public ContentAnalyse extractAll(File file);
+
 }

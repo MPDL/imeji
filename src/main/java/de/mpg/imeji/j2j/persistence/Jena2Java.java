@@ -121,7 +121,8 @@ public class Jena2Java {
       }
       return subject;
     } catch (Exception e) {
-      throw new RuntimeException("Error writing " + object + " to " + subject, e);
+      throw new RuntimeException("Error writing " + object + " to " + subject + " for field " + f,
+          e);
     }
   }
 

@@ -10,6 +10,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
 
+import de.mpg.imeji.logic.contentanalysis.ContentAnalyse;
 import de.mpg.imeji.logic.contentanalysis.ContentAnalyser;
 import de.mpg.imeji.logic.vo.TechnicalMetadata;
 
@@ -25,7 +26,7 @@ public class TikaContentAnalyser implements ContentAnalyser {
   @Override
   public String extractFulltext(File file) {
     try {
-      BodyContentHandler handler = new BodyContentHandler();
+      BodyContentHandler handler = new BodyContentHandler(-1);
       FileInputStream stream = new FileInputStream(file);
       AutoDetectParser parser = new AutoDetectParser();
       Metadata metadata = new Metadata();
@@ -43,7 +44,7 @@ public class TikaContentAnalyser implements ContentAnalyser {
     try {
       Metadata metadata = new Metadata();
       AutoDetectParser parser = new AutoDetectParser();
-      BodyContentHandler handler = new BodyContentHandler();
+      BodyContentHandler handler = new BodyContentHandler(-1);
       FileInputStream is = new FileInputStream(file);
       parser.parse(is, handler, metadata);
       for (String name : metadata.names()) {
@@ -53,6 +54,25 @@ public class TikaContentAnalyser implements ContentAnalyser {
       LOGGER.error("Error extracting technical metadata from file", e);
     }
     return techMd;
+  }
+
+  @Override
+  public ContentAnalyse extractAll(File file) {
+    ContentAnalyse contentAnalyse = new ContentAnalyse();
+    try {
+      Metadata metadata = new Metadata();
+      AutoDetectParser parser = new AutoDetectParser();
+      BodyContentHandler handler = new BodyContentHandler(-1);
+      FileInputStream is = new FileInputStream(file);
+      parser.parse(is, handler, metadata);
+      for (String name : metadata.names()) {
+        contentAnalyse.getTechnicalMetadata().add(new TechnicalMetadata(name, metadata.get(name)));
+      }
+      contentAnalyse.setFulltext(handler.toString());
+    } catch (Exception e) {
+      LOGGER.error("Error extracting fulltext/metadata from file", e);
+    }
+    return contentAnalyse;
   }
 
 }

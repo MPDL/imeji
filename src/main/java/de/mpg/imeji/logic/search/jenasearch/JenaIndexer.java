@@ -32,4 +32,9 @@ public class JenaIndexer implements SearchIndexer {
     // No indexation needed, since search is done directly on jena Database with sparql queries
   }
 
+  @Override
+  public void updatePartial(String id, Object obj) {
+    // No indexation needed, since search is done directly on jena Database with sparql queries
+  }
+
 }

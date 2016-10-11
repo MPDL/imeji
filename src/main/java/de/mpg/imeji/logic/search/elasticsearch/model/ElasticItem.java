@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.util.LicenseUtil;
+import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.TechnicalMetadata;
@@ -18,18 +19,18 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
  *
  */
 public final class ElasticItem extends ElasticProperties {
-  private final String folder;
-  private final String filename;
-  private final String license;
-  private final String filetype;
-  private final long size;
-  private final String space;
-  private final String checksum;
-  private final long width;
-  private final long height;
-  private final List<ElasticMetadata> metadata = new ArrayList<>();
-  private final List<ElasticTechnicalMetadata> technical = new ArrayList<>();
-  private final String fulltext;
+  private String folder;
+  private String filename;
+  private String license;
+  private String filetype;
+  private long size;
+  private String space;
+  private String checksum;
+  private long width;
+  private long height;
+  private List<ElasticMetadata> metadata = new ArrayList<>();
+  private List<ElasticTechnicalMetadata> technical = new ArrayList<>();
+  private String fulltext;
 
 
   /**
@@ -37,7 +38,7 @@ public final class ElasticItem extends ElasticProperties {
    *
    * @param item
    */
-  public ElasticItem(Item item, String space) {
+  public ElasticItem(Item item, String space, ContentVO contentVO) {
     super(item);
     this.checksum = item.getChecksum();
     this.folder = item.getCollection().toString();
@@ -51,8 +52,21 @@ public final class ElasticItem extends ElasticProperties {
     for (Metadata md : item.getMetadataSet().getMetadata()) {
       metadata.add(new ElasticMetadata(md));
     }
-    this.fulltext = item.getFulltext();
-    for (TechnicalMetadata md : item.getTechnicalMetadata()) {
+    this.fulltext = contentVO.getFulltext();
+    for (TechnicalMetadata md : contentVO.getTechnicalMetadata()) {
+      technical.add(new ElasticTechnicalMetadata(md));
+    }
+  }
+
+  /**
+   * Constructor used for partial update of contentVO
+   * 
+   * @param contentVO
+   */
+  public ElasticItem(ContentVO contentVO) {
+    super(null);
+    this.fulltext = contentVO.getFulltext();
+    for (TechnicalMetadata md : contentVO.getTechnicalMetadata()) {
       technical.add(new ElasticTechnicalMetadata(md));
     }
   }

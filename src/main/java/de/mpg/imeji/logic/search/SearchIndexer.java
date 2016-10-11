@@ -41,4 +41,11 @@ public interface SearchIndexer {
    * @param l
    */
   public void deleteBatch(List<?> l);
+
+  /**
+   * Do a partial update of the object
+   * 
+   * @param obj
+   */
+  public void updatePartial(String id, Object obj);
 }

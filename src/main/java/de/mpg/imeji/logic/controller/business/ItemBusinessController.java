@@ -4,8 +4,6 @@
 package de.mpg.imeji.logic.controller.business;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static de.mpg.imeji.logic.storage.util.StorageUtils.calculateChecksum;
-import static de.mpg.imeji.logic.storage.util.StorageUtils.getMimeType;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,13 +22,11 @@ import com.google.common.collect.Collections2;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.contentanalysis.ContentAnalyser;
-import de.mpg.imeji.logic.contentanalysis.ContentAnalyserFactory;
 import de.mpg.imeji.logic.controller.ImejiController;
+import de.mpg.imeji.logic.controller.resource.ContentController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -44,18 +40,16 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
-import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
-import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
+import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties.Status;
@@ -112,41 +106,23 @@ public class ItemBusinessController extends ImejiController {
    */
   public Item createWithFile(Item item, File f, String filename, CollectionImeji c, User user)
       throws ImejiException {
-    StorageController sc = new StorageController();
-    if (!SecurityUtil.staticAuth().createContent(user, c)) {
-      throw new NotAllowedError(
-          "User not Allowed to upload files in collection " + c.getIdString());
-    }
-    String guessedNotAllowedFormat = sc.guessNotAllowedFormat(f);
-    if (StorageUtils.BAD_FORMAT.equals(guessedNotAllowedFormat)) {
-      throw new UnprocessableError("upload_format_not_allowed");
-    }
-    QuotaUtil.checkQuota(user, f, c);
-    UploadResult uploadResult = sc.upload(filename, f, c.getIdString());
-
-    if (item == null) {
-      item = ImejiFactory.newItem(c);
-    }
-
     if (StringHelper.isNullOrEmptyTrim(filename)) {
       throw new UnprocessableError("Filename must not be empty!");
     }
     validateChecksum(c.getId(), f, false);
-    String mimeType = StorageUtils.getMimeType(guessedNotAllowedFormat);
-
-    item = ImejiFactory.newItem(item, c, user, uploadResult.getId(), filename,
-        URI.create(uploadResult.getOrginal()), URI.create(uploadResult.getThumb()),
-        URI.create(uploadResult.getWeb()), mimeType);
-    item.setChecksum(uploadResult.getChecksum());
-    item.setFileSize(uploadResult.getFileSize());
-    item.setTechnicalMetadata(ContentAnalyserFactory.build().extractTechnicalMetadata(f));
-    item.setFulltext(ContentAnalyserFactory.build().extractFulltext(f));
-
-    if (uploadResult.getWidth() > 0 && uploadResult.getHeight() > 0) {
-      item.setWidth(uploadResult.getWidth());
-      item.setHeight(uploadResult.getHeight());
+    ContentController contentController = new ContentController();
+    ContentVO content = contentController.create(f, c, user);
+    if (item == null) {
+      item = ImejiFactory.newItem(c);
     }
-    return create(item, c, user);
+    item = copyContent(item, content);
+    item.setFilename(filename);
+    if (c.getStatus() == Status.RELEASED) {
+      item.setStatus(Status.RELEASED);
+    }
+    item = create(item, c, user);
+    contentController.extractFileContentAndUpdateContentVOAsync(item.getId().toString(), content);
+    return item;
   }
 
   /**
@@ -361,31 +337,15 @@ public class ItemBusinessController extends ImejiController {
   public Item updateFile(Item item, CollectionImeji col, File f, String filename, User user)
       throws ImejiException {
     validateChecksum(item.getCollection(), f, true);
-    // First remove the old File from the Internal Storage if its there
-    if (!isNullOrEmpty(item.getStorageId())) {
-      removeFileFromStorage(item.getStorageId());
-    }
-    QuotaUtil.checkQuota(user, f, col);
-
-    StorageController sc = new StorageController();
-    UploadResult uploadResult = sc.upload(item.getFilename(), f, col.getIdString());
-
-    item.setFiletype(getMimeType(f));
-    item.setChecksum(calculateChecksum(f));
-    item.setStorageId(uploadResult.getId());
-    item.setFullImageUrl(URI.create(uploadResult.getOrginal()));
-    item.setThumbnailImageUrl(URI.create(uploadResult.getThumb()));
-    item.setWebImageUrl(URI.create(uploadResult.getWeb()));
-    item.setFileSize(uploadResult.getFileSize());
-    if (uploadResult.getWidth() > 0 && uploadResult.getHeight() > 0) {
-      item.setWidth(uploadResult.getWidth());
-      item.setHeight(uploadResult.getHeight());
-    }
+    ContentController contentController = new ContentController();
+    ContentVO content = contentController.update(item.getContentId(), f, col, user);
+    item = copyContent(item, content);
     if (filename != null) {
       item.setFilename(filename);
     }
-
-    return update(item, user);
+    item = update(item, user);
+    contentController.extractFileContentAndUpdateContentVOAsync(item.getId().toString(), content);
+    return item;
   }
 
   /**
@@ -576,27 +536,73 @@ public class ItemBusinessController extends ImejiController {
   }
 
   /**
+   * Copy the value of the contentVO to the item
+   * 
+   * @param item
+   * @param content
+   * @return
+   */
+  private Item copyContent(Item item, ContentVO content) {
+    item.setContentId(content.getId().toString());
+    item.setChecksum(content.getChecksum());
+    item.setFiletype(content.getMimetype());
+    item.setFileSize(content.getFileSize());
+    item.setFullImageUrl(URI.create(content.getOriginal()));
+    item.setWebImageUrl(URI.create(content.getPreview()));
+    item.setThumbnailImageUrl(URI.create(content.getThumbnail()));
+    if (content.getWidth() > 0 && content.getHeight() > 0) {
+      item.setWidth(content.getWidth());
+      item.setHeight(content.getHeight());
+    }
+
+    return item;
+  }
+
+  /**
    * Update the fulltext and the technical metadata of all items
    * 
    * @throws ImejiException
    */
   public void extractFulltextAndTechnicalMetadataForAllItems() throws ImejiException {
-    StorageController storageController = new StorageController();
-    ContentAnalyser contentAnalyser = ContentAnalyserFactory.build();
     List<Item> allItems = (List<Item>) retrieveAll(Imeji.adminUser);
     int count = 0;
     for (Item item : allItems) {
       try {
-        File f = storageController.read(item.getFullImageUrl().toString());
-        item.setFulltext(contentAnalyser.extractFulltext(f));
-        item.setTechnicalMetadata(contentAnalyser.extractTechnicalMetadata(f));
+        ContentController contentController = new ContentController();
+        ContentVO contentVO = toContentVO(item);
+        if (contentVO.getId() == null) {
+          contentVO = contentController.create(contentVO);
+          item.setContentId(contentVO.getId().toString());
+        }
+        contentController.extractFileContentAndUpdateContentVOAsync(item.getId().toString(),
+            contentVO);
         itemController.updateBatchForce(Arrays.asList(item), Imeji.adminUser);
         LOGGER.info(count++ + "/" + allItems.size() + " extracted");
       } catch (Exception e) {
         LOGGER.error("Error extracting fulltext/technical metadata", e);
       }
-
     }
+  }
+
+  /**
+   * 
+   * @param item
+   * @return
+   */
+  private ContentVO toContentVO(Item item) {
+    ContentVO contentVO = new ContentVO();
+    if (StringHelper.isNullOrEmptyTrim(item.getContentId() != null)) {
+      contentVO.setId(URI.create(item.getContentId()));
+    }
+    contentVO.setOriginal(item.getFullImageUrl().toString());
+    contentVO.setPreview(item.getWebImageUrl().toString());
+    contentVO.setThumbnail(item.getThumbnailImageUrl().toString());
+    contentVO.setChecksum(item.getChecksum());
+    contentVO.setFileSize(item.getFileSize());
+    contentVO.setHeight(item.getHeight());
+    contentVO.setWidth(item.getWidth());
+    contentVO.setMimetype(item.getFiletype());
+    return contentVO;
   }
 
   /**

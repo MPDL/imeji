@@ -4,14 +4,11 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:list="http://java.sun.com/jsf/composite/components/list"
-	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:lic="http://java.sun.com/jsf/composite/components/license">
 	
 	<ui:param name="headline" value=""/>
 	<ui:param name="currentMainMenu" value="upload"/>
-	
-	<f:metadata>
-		<f:viewAction action="#{SingleUploadBean.init}" />
-	</f:metadata>
 	
 	<ui:define name="actionsMenu">
 		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}" downloadEnabled="false" actionEnabled="false"/>
@@ -26,7 +23,7 @@
 		</ui:fragment>
 
 		<h:panelGroup layout="block" id="imj_ajaxWrapper" rendered="#{Auth.loggedIn and SessionBean.hasUploadRights}">
-	
+		
 			<h:panelGroup layout="block" styleClass="imj_upload">
 				<div id="container" class="imj_noDisplay"/>			
 				<div id="uploader" class="imj_fileUploadContainer imj_singleUpload imj_uploadDropArea" style="position:inherit">
@@ -79,6 +76,7 @@
 					</script>
 				</div>
 				<h:form id="singleUpload">
+				
 					<h:panelGroup layout="block" id="selCols" styleClass="imj_inlineSelectionGroup" rendered="#{not empty SingleUploadBean.ingestImage}">
 						<span class="imj_selectionLabel">
 							<h:outputText value="#{lbl.select_collection}"/>
@@ -88,6 +86,7 @@
 							<f:ajax event="change" execute="@this" render="@form :additonalFooterScripts" listener="#{SingleUploadBean.colChangeListener}"/>
 						</h:selectOneMenu>
 					</h:panelGroup>
+					
 					<div class="imj_infodataWrapper">
 						<h:panelGroup id="techmetadata" layout="block" styleClass="imj_techdataList" rendered="#{SingleUploadBean.techMd.size()>0}">
 							<div class="imj_listHeader">
@@ -109,7 +108,16 @@
 							<h:commandButton id="submitTop" action="#{SingleUploadBean.save}" value="#{lbl.save}" styleClass="imj_submitButton" rendered="#{SingleUploadBean.readyForUploading()}"/>
 						</div>
 					</ui:fragment>
-					
+					 <ui:fragment rendered="#{SingleUploadSession.collection.status == 'RELEASED'}">
+			             <div class="imj_infodataWrapper">
+							<span class="fa fa-exclamation-triangle fa-size-3"/>
+							#{lbl.warning_upload_released_collection}
+							<br/><br/>
+							<h:panelGroup id="licenseEditorContainer">
+							<lic:licenseEditor licenseEditor="#{SingleUploadBean.licenseEditor}" containerId=":singleUpload:licenseEditorContainer"/>
+							</h:panelGroup>
+						</div>
+					</ui:fragment>
 					<ui:fragment rendered="#{SingleUploadBean.getfFile() != '' or not empty SingleUploadBean.getItem()}">
 						<div class="imj_uploadMessageArea">
 							<h2 class="imj_headline">

@@ -18,12 +18,10 @@ import org.apache.commons.io.FileUtils;
 import org.joda.time.chrono.AssembledChronology.Fields;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
-import de.mpg.imeji.j2j.annotations.j2jLazyList;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
-import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 
 /**
@@ -62,8 +60,6 @@ public class Item extends Properties implements Serializable {
   private String filename;
   @j2jLiteral("http://imeji.org/terms/filetype")
   private String filetype;
-  @j2jLiteral("http://imeji.org/terms/escidocId")
-  private String escidocId;
   @j2jLiteral("http://imeji.org/terms/storageId")
   private String storageId;
   @j2jLiteral("http://imeji.org/terms/checksum")
@@ -74,10 +70,8 @@ public class Item extends Properties implements Serializable {
   private long width;
   @j2jLiteral("http://www.w3.org/2003/12/exif/ns#height")
   private long height;
-  @j2jLiteral("http://imeji.org/terms/fulltext")
-  private String fulltext;
-  @j2jLazyList(ImejiNamespaces.TECHNICAL_METADATA)
-  private List<TechnicalMetadata> technicalMetadata = new ArrayList<>();
+  @j2jLiteral("http://imeji.org/terms/contentId")
+  private String contentId;
   @j2jList("http://imeji.org/terms/license")
   private List<License> licenses = new ArrayList<>();
 
@@ -90,15 +84,6 @@ public class Item extends Properties implements Serializable {
 
   public Item(Item im) {
     copyInFields(im);
-  }
-
-  @XmlElement(name = "escidocId", namespace = "http://imeji.org/terms/")
-  public String getEscidocId() {
-    return escidocId;
-  }
-
-  public void setEscidocId(String escidocId) {
-    this.escidocId = escidocId;
   }
 
   @XmlElement(name = "webImageUrl", namespace = "http://imeji.org/terms/")
@@ -307,22 +292,6 @@ public class Item extends Properties implements Serializable {
     return thumbnailImageUrl.toString();
   }
 
-  public String getFulltext() {
-    return fulltext;
-  }
-
-  public void setFulltext(String fulltext) {
-    this.fulltext = fulltext;
-  }
-
-  public List<TechnicalMetadata> getTechnicalMetadata() {
-    return technicalMetadata;
-  }
-
-  public void setTechnicalMetadata(List<TechnicalMetadata> technicalMetadata) {
-    this.technicalMetadata = technicalMetadata;
-  }
-
   public List<License> getLicenses() {
     return licenses;
   }
@@ -330,4 +299,13 @@ public class Item extends Properties implements Serializable {
   public void setLicenses(List<License> licenses) {
     this.licenses = licenses;
   }
+
+  public String getContentId() {
+    return contentId;
+  }
+
+  public void setContentId(String contentId) {
+    this.contentId = contentId;
+  }
+
 }

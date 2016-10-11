@@ -94,6 +94,8 @@ public class SPARQLEndpointServlet extends HttpServlet {
       return Imeji.profileModel;
     } else if ("user".equals(name)) {
       return Imeji.userModel;
+    } else if ("content".equals(name)) {
+      return Imeji.contentModel;
     }
     return null;
   }

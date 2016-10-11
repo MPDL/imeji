@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -52,10 +53,11 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.MetadataSet;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
+import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
-import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.component.LicenseEditor;
 import de.mpg.imeji.presentation.metadata.MetadataSetWrapper;
 import de.mpg.imeji.presentation.metadata.MetadataWrapper;
 import de.mpg.imeji.presentation.metadata.SingleEditorWrapper;
@@ -78,6 +80,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
   private boolean hasUploadRights = false;
   @ManagedProperty("#{SessionBean.selectedSpaceString}")
   private String selectedSpaceString;
+  private LicenseEditor licenseEditor;
 
   private IngestImage ingestImage;
 
@@ -85,7 +88,8 @@ public class SingleUploadBean extends SuperBean implements Serializable {
     // constructs...
   }
 
-  public void init() throws IOException {
+  @PostConstruct
+  public void init() {
     if (getSessionUser() != null && hasUploadRights) {
       try {
         if (UrlHelper.getParameterBoolean("init")) {
@@ -98,16 +102,18 @@ public class SingleUploadBean extends SuperBean implements Serializable {
         }
       } catch (Exception e) {
         BeanHelper.error(e.getLocalizedMessage());
+        LOGGER.error("Error initialization single upload", e);
       }
-    } else {
-      if (getSessionUser() != null) {
-        BeanHelper.cleanMessages();
-        BeanHelper.info("You have no right to create collections, thus you can not upload items!");
-        Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
-        FacesContext.getCurrentInstance().getExternalContext().redirect(navigation.getHomeUrl());
-
+    } else if (getSessionUser() != null) {
+      BeanHelper.cleanMessages();
+      BeanHelper.info("You have no right to create collections, thus you can not upload items!");
+      try {
+        redirect(getNavigation().getHomeUrl());
+      } catch (IOException e) {
+        LOGGER.error("Error redirecting", e);
       }
     }
+
   }
 
   public String save() {
@@ -118,6 +124,9 @@ public class SingleUploadBean extends SuperBean implements Serializable {
       MetadataSetWrapper newSet = getMdSetBean();
       edit.getEditor().getItems().get(0).setMds(newSet);
       edit.getEditor().validateAndFormatItemsForSaving();
+      if (licenseEditor != null) {
+        item.getLicenses().add(licenseEditor.getLicense());
+      }
       uploadFileToItem(item, getCollection(), getIngestImage().getFile(),
           getIngestImage().getName());
       sus.uploaded();
@@ -138,12 +147,10 @@ public class SingleUploadBean extends SuperBean implements Serializable {
    */
   private void reloadItemPage(String itemIdString, String collectionIdString) {
     try {
-      Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+      String redirectUrl = getNavigation().getCollectionUrl() + collectionIdString + "/"
+          + getNavigation().getItemPath() + "/" + itemIdString;
 
-      String redirectUrl = navigation.getCollectionUrl() + collectionIdString + "/"
-          + navigation.getItemPath() + "/" + itemIdString;
-
-      FacesContext.getCurrentInstance().getExternalContext().redirect(redirectUrl);
+      redirect(redirectUrl);
     } catch (IOException e) {
       Logger.getLogger(UserBean.class).info("Error reloading the page", e);
     }
@@ -254,6 +261,8 @@ public class SingleUploadBean extends SuperBean implements Serializable {
       sus.setCollection(collection);
       sus.setProfile(profile);
       sus.setMdSetBean(mdSetBean);
+      licenseEditor =
+          new LicenseEditor(getLocale(), collection.getStatus().equals(Status.RELEASED));
     }
   }
 
@@ -433,5 +442,19 @@ public class SingleUploadBean extends SuperBean implements Serializable {
 
   public void setHasUploadRights(boolean hasUploadRights) {
     this.hasUploadRights = hasUploadRights;
+  }
+
+  /**
+   * @return the licenseEditor
+   */
+  public LicenseEditor getLicenseEditor() {
+    return licenseEditor;
+  }
+
+  /**
+   * @param licenseEditor the licenseEditor to set
+   */
+  public void setLicenseEditor(LicenseEditor licenseEditor) {
+    this.licenseEditor = licenseEditor;
   }
 }

@@ -32,6 +32,7 @@ public class Imeji {
   public static String profileModel;
   public static String statementModel;
   public static String spaceModel;
+  public static String contentModel;
   public static Dataset dataset;
   public static User adminUser;
   public static MetadataProfile defaultMetadataProfile;

@@ -10,10 +10,13 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.client.Client;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.controller.resource.ContentController;
 import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -27,6 +30,7 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUser;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Space;
@@ -109,7 +113,8 @@ public class ElasticIndexer implements SearchIndexer {
    */
   public static String toJson(Object obj, String dataType, String index) throws UnprocessableError {
     try {
-      return mapper.writeValueAsString(toESEntity(obj, dataType, index));
+      return mapper.setSerializationInclusion(Include.NON_NULL)
+          .writeValueAsString(toESEntity(obj, dataType, index));
     } catch (JsonProcessingException e) {
       throw new UnprocessableError("Error serializing object to json", e);
     }
@@ -155,7 +160,8 @@ public class ElasticIndexer implements SearchIndexer {
    */
   private static Object toESEntity(Object obj, String dataType, String index) {
     if (obj instanceof Item) {
-      return new ElasticItem((Item) obj, getSpace((Item) obj, ElasticTypes.folders.name(), index));
+      return new ElasticItem((Item) obj, getSpace((Item) obj, ElasticTypes.folders.name(), index),
+          getContentVO((Item) obj));
     }
     if (obj instanceof CollectionImeji) {
       return new ElasticFolder((CollectionImeji) obj);
@@ -171,6 +177,9 @@ public class ElasticIndexer implements SearchIndexer {
     }
     if (obj instanceof UserGroup) {
       return new ElasticUserGroup((UserGroup) obj);
+    }
+    if (obj instanceof ContentVO) {
+      return new ElasticItem((ContentVO) obj);
     }
     return obj;
   }
@@ -224,4 +233,32 @@ public class ElasticIndexer implements SearchIndexer {
         ElasticFields.SPACE, dataType, index);
   }
 
+
+  /**
+   * Return the content of an item
+   * 
+   * @param item
+   * @return
+   */
+  private static ContentVO getContentVO(Item item) {
+    try {
+      return new ContentController().read(item.getContentId());
+    } catch (ImejiException e) {
+      return new ContentVO();
+    }
+  }
+
+
+  @Override
+  public void updatePartial(String id, Object obj) {
+    if (id != null) {
+      try {
+        ElasticService.getClient().prepareUpdate(index, dataType, id)
+            .setDoc(toJson(obj, dataType, index)).execute().actionGet();
+      } catch (UnprocessableError e) {
+        LOGGER.error("Error index partial update ", e);
+      }
+
+    }
+  }
 }

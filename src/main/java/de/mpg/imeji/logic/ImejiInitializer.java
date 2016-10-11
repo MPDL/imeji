@@ -38,6 +38,7 @@ import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Space;
@@ -103,6 +104,7 @@ public class ImejiInitializer {
     Imeji.statementModel = ImejiInitializer.getModelName(Statement.class);
     Imeji.profileModel = ImejiInitializer.getModelName(MetadataProfile.class);
     Imeji.spaceModel = ImejiInitializer.getModelName(Space.class);
+    Imeji.contentModel = ImejiInitializer.getModelName(ContentVO.class);
     ImejiInitializer.initModel(Imeji.albumModel);
     ImejiInitializer.initModel(Imeji.collectionModel);
     ImejiInitializer.initModel(Imeji.imageModel);
@@ -110,6 +112,7 @@ public class ImejiInitializer {
     ImejiInitializer.initModel(Imeji.statementModel);
     ImejiInitializer.initModel(Imeji.profileModel);
     ImejiInitializer.initModel(Imeji.spaceModel);
+    ImejiInitializer.initModel(Imeji.contentModel);
     LOGGER.info("... models done!");
     Imeji.CONFIG = new ImejiConfiguration();
     KeyValueStoreBusinessController.startAllStores();

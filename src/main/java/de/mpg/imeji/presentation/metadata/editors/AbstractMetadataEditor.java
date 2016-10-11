@@ -115,7 +115,7 @@ public abstract class AbstractMetadataEditor {
    */
   private void addLicense(Item item) {
     License lic = licenseEditor.getLicense();
-    if (lic != null) {
+    if (lic != null && !lic.isEmtpy()) {
       item.getLicenses().add(lic);
     }
   }

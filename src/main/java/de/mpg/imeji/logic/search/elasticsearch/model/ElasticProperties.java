@@ -11,11 +11,11 @@ import de.mpg.imeji.logic.vo.Properties;
  *
  */
 public class ElasticProperties {
-  private final String id;
-  private final String creator;
-  private final Date created;
-  private final Date modified;
-  private final String status;
+  private String id;
+  private String creator;
+  private Date created;
+  private Date modified;
+  private String status;
 
   /**
    * Constructor for {@link Properties}
@@ -23,11 +23,13 @@ public class ElasticProperties {
    * @param p
    */
   public ElasticProperties(Properties p) {
-    this.id = p.getId().toString();
-    this.created = p.getCreated().getTime();
-    this.creator = p.getCreatedBy().toString();
-    this.modified = p.getModified().getTime();
-    this.status = p.getStatus().name();
+    if (p != null) {
+      this.id = p.getId().toString();
+      this.created = p.getCreated().getTime();
+      this.creator = p.getCreatedBy().toString();
+      this.modified = p.getModified().getTime();
+      this.status = p.getStatus().name();
+    }
   }
 
   /**

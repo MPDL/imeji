@@ -10,12 +10,10 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.model.SortCriterion;
-import de.mpg.imeji.logic.vo.User;
 
 /**
  * Utility Class for ElasticSearch
@@ -53,7 +51,7 @@ public class ElasticSearchFactoryUtil {
    */
   public static String getUserId(String email) {
     List<String> r = searchStringAndRetrieveFieldValue("email:\"" + email.toString() + "\"",
-        ElasticFields.ID.field().toLowerCase(), null, Imeji.adminUser, 0, 1);
+        ElasticFields.ID.field().toLowerCase(), null, 0, 1);
     if (r.size() > 0) {
       return r.get(0);
     }
@@ -68,7 +66,7 @@ public class ElasticSearchFactoryUtil {
    */
   public static List<String> getGroupsOfUser(String userId) {
     return searchStringAndRetrieveFieldValue("users:\"" + userId + "\"",
-        ElasticFields.ID.field().toLowerCase(), null, Imeji.adminUser, 0, -1);
+        ElasticFields.ID.field().toLowerCase(), null, 0, -1);
   }
 
   /**
@@ -83,7 +81,7 @@ public class ElasticSearchFactoryUtil {
    * @return
    */
   public static List<String> searchStringAndRetrieveFieldValue(String query, String field,
-      SortCriterion sort, User user, int from, int size) {
+      SortCriterion sort, int from, int size) {
     QueryBuilder q = QueryBuilders.queryStringQuery(query);
     SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .addField(field).setQuery(q).addSort(ElasticSortFactory.build(sort)).setSize(size)

@@ -29,6 +29,7 @@ import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.controller.resource.ContentController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -47,6 +48,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
@@ -205,18 +207,21 @@ public class ItemBean extends SuperBean {
 
   /**
    * Initialize the technical metadata when the "technical metadata" tab is called
+   * 
+   * @throws ImejiException
    *
    * @
    */
-  public void initViewTechnicalMetadata() {
+  public void initViewTechnicalMetadata() throws ImejiException {
     techMd = new ArrayList<>();
-    for (TechnicalMetadata tmd : item.getTechnicalMetadata()) {
+    ContentVO content = new ContentController().read(item.getContentId());
+    for (TechnicalMetadata tmd : content.getTechnicalMetadata()) {
       techMd.add(tmd.getName() + ": " + tmd.getValue());
     }
   }
 
   /**
-   * Initiliaue the {@link ItemDetailsBrowse} for this {@link ItemBean}
+   * Initialize the {@link ItemDetailsBrowse} for this {@link ItemBean}
    *
    * @
    */
