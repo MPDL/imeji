@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLazyList;
+import de.mpg.imeji.j2j.annotations.j2jLazyLiteral;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
@@ -24,7 +25,7 @@ import de.mpg.imeji.logic.ImejiNamespaces;
 public class ContentVO implements Serializable {
   private static final long serialVersionUID = -7906584876989077898L;
   private URI id;
-  @j2jLiteral("http://imeji.org/terms/fulltext")
+  @j2jLazyLiteral("http://imeji.org/terms/fulltext")
   private String fulltext;
   @j2jLazyList(ImejiNamespaces.TECHNICAL_METADATA)
   private List<TechnicalMetadata> technicalMetadata = new ArrayList<>();

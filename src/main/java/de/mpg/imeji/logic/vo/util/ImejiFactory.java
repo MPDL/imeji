@@ -12,7 +12,6 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContainerMetadata;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Item.Visibility;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.MetadataSet;
 import de.mpg.imeji.logic.vo.Organization;
@@ -213,12 +212,9 @@ public class ImejiFactory {
     item.setFullImageUrl(fullImageURI);
     item.setThumbnailImageUrl(thumbnailURI);
     item.setWebImageUrl(webURI);
-    item.setVisibility(Visibility.PUBLIC);
     item.setFilename(title);
     item.setFiletype(filetype);
-    if (storageId != null) {
-      item.setStorageId(storageId);
-    }
+    item.setContentId(item.getContentId());
     if (collection.getStatus() == Status.RELEASED) {
       item.setStatus(Status.RELEASED);
     }

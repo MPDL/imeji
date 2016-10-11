@@ -293,8 +293,6 @@ public class TransferObjectFactory {
    */
   public static void transferItem(Item vo, ItemTO to, MetadataProfile profile) {
     transferProperties(vo, to);
-    // set visibility
-    to.setVisibility(vo.getVisibility().toString());
     // set collectionID
     to.setCollectionId(CommonUtils.extractIDFromURI(vo.getCollection()));
     to.setFilename(vo.getFilename());
@@ -310,8 +308,6 @@ public class TransferObjectFactory {
 
   public static void transferDefaultItem(Item vo, DefaultItemTO to, MetadataProfile profile) {
     transferProperties(vo, to);
-    // set visibility
-    to.setVisibility(vo.getVisibility().toString());
     // set collectionID
     to.setCollectionId(CommonUtils.extractIDFromURI(vo.getCollection()));
     to.setFilename(vo.getFilename());

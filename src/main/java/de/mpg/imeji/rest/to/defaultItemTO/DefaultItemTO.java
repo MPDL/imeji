@@ -2,6 +2,7 @@ package de.mpg.imeji.rest.to.defaultItemTO;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,18 +17,17 @@ import de.mpg.imeji.rest.to.LicenseTO;
 import de.mpg.imeji.rest.to.PropertiesTO;
 
 @XmlRootElement
-@XmlType(propOrder = {"visibility", "collectionId", "filename", "mimetype", "fileSize",
-    "checksumMd5", "webResolutionUrlUrl", "thumbnailUrl", "fileUrl", "metadata", "licenses"})
+@XmlType(propOrder = {"collectionId", "filename", "mimetype", "fileSize", "checksumMd5",
+    "webResolutionUrlUrl", "thumbnailUrl", "fileUrl", "metadata", "licenses"})
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultItemTO extends PropertiesTO implements Serializable {
   private static final long serialVersionUID = -1870847854605861134L;
-  private String visibility;
   private String collectionId;
   private String filename;
   private String mimetype;
   private String checksumMd5;
-  private List<LicenseTO> licenses;
+  private List<LicenseTO> licenses = new ArrayList<>();;
   private URI webResolutionUrlUrl;
   private URI thumbnailUrl;
   private URI fileUrl;
@@ -48,14 +48,6 @@ public class DefaultItemTO extends PropertiesTO implements Serializable {
 
   public void setMetadata(Map<String, JsonNode> metadata) {
     this.metadata = metadata;
-  }
-
-  public String getVisibility() {
-    return visibility;
-  }
-
-  public void setVisibility(String visibility) {
-    this.visibility = visibility;
   }
 
   public String getFilename() {

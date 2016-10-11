@@ -128,7 +128,7 @@ public class FileServlet extends HttpServlet {
     if (!StorageUtil.isSpaceUrl(url)) {
       Item fileItem = getItem(url, user);
       NotificationUtils.notifyByItemDownload(user, fileItem, Locale.ENGLISH);
-      isExternalStorage = StringHelper.isNullOrEmptyTrim(fileItem.getStorageId());
+      isExternalStorage = StringHelper.isNullOrEmptyTrim(fileItem.getContentId());
     }
     readFile(url, resp, isExternalStorage, user);
 

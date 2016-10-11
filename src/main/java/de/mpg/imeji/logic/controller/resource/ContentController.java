@@ -89,6 +89,17 @@ public class ContentController extends ImejiController {
   }
 
   /**
+   * Read a {@link ContentVO}
+   * 
+   * @param contentId
+   * @return
+   * @throws ImejiException
+   */
+  public ContentVO readLazy(String contentId) throws ImejiException {
+    return (ContentVO) READER.readLazy(contentId, Imeji.adminUser, new ContentVO());
+  }
+
+  /**
    * Update the ContentVO. The file will get a new url
    * 
    * @param contentId
@@ -101,14 +112,20 @@ public class ContentController extends ImejiController {
    */
   public ContentVO update(String contentId, File file, CollectionImeji c, User user)
       throws ImejiException {
+    if (StringHelper.isNullOrEmptyTrim(contentId)) {
+      throw new UnprocessableError("Error updating content: Id is null");
+    }
+    ContentVO contentVO = read(contentId);
     StorageController storageController = new StorageController();
     try {
-      storageController.delete(contentId);
+      storageController.delete(contentVO.getOriginal());
+      storageController.delete(contentVO.getPreview());
+      storageController.delete(contentVO.getThumbnail());
     } catch (Exception e) {
       // Delete file should not stop update process
       LOGGER.error("Error deleting file", e);
     }
-    ContentVO contentVO = read(contentId);
+
     contentVO = uploadFileToContentVO(file, contentVO, user, c);
     contentVO = update(contentVO);
     return contentVO;

@@ -20,7 +20,6 @@ import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Item.Visibility;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
@@ -49,11 +48,6 @@ public class ItemController extends ImejiController {
   public void create(Collection<Item> items, CollectionImeji ic, User user) throws ImejiException {
     for (Item img : items) {
       prepareCreate(img, user);
-      if (Status.PENDING.equals(ic.getStatus())) {
-        img.setVisibility(Visibility.PRIVATE);
-      } else {
-        img.setVisibility(Visibility.PUBLIC);
-      }
       img.setFilename(FilenameUtils.getName(img.getFilename()));
       img.setStatus(ic.getStatus());
       img.setCollection(ic.getId());

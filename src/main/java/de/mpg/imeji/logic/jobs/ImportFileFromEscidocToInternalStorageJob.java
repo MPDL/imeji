@@ -60,7 +60,6 @@ public class ImportFileFromEscidocToInternalStorageJob implements Callable<Integ
           item.setFullImageUrl(URI.create(result.getOrginal()));
           item.setWebImageUrl(URI.create(result.getWeb()));
           item.setThumbnailImageUrl(URI.create(result.getThumb()));
-          item.setStorageId(result.getId());
           item.setFiletype(item.getFiletype());
           // Update the item with the new values
           ic.update(item, user);

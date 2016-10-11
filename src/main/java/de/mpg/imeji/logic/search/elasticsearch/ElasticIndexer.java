@@ -28,6 +28,7 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticItem;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticSpace;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUser;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
@@ -241,11 +242,15 @@ public class ElasticIndexer implements SearchIndexer {
    * @return
    */
   private static ContentVO getContentVO(Item item) {
-    try {
-      return new ContentController().read(item.getContentId());
-    } catch (ImejiException e) {
-      return new ContentVO();
+    if (!StringHelper.isNullOrEmptyTrim(item.getContentId())) {
+      try {
+        return new ContentController().read(item.getContentId());
+      } catch (ImejiException e) {
+        return null;
+      }
     }
+    return null;
+
   }
 
 

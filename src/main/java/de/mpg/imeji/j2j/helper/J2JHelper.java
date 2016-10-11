@@ -9,6 +9,7 @@ import java.util.List;
 import de.mpg.imeji.j2j.annotations.j2jDataType;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLazyList;
+import de.mpg.imeji.j2j.annotations.j2jLazyLiteral;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
@@ -193,6 +194,8 @@ public class J2JHelper {
   public static String getLiteralNamespace(Field f) {
     if (isLiteral(f)) {
       return f.getAnnotation(j2jLiteral.class).value();
+    } else if (isLazyLitereal(f)) {
+      return f.getAnnotation(j2jLazyLiteral.class).value();
     } else if (isList(f)) {
       return getListNamespace(f);
     } else {
@@ -301,6 +304,16 @@ public class J2JHelper {
   }
 
   /**
+   * True if the {@link Field} is a {@link j2jLazyList}
+   *
+   * @param f
+   * @return
+   */
+  public static boolean isLazyLitereal(Field f) {
+    return f != null && f.getAnnotation(j2jLazyLiteral.class) != null;
+  }
+
+  /**
    * true if the {@link Object} has a {@link j2jDataType} value
    *
    * @param o
@@ -373,6 +386,6 @@ public class J2JHelper {
    * @return
    */
   public static boolean isAnnotated(Field f) {
-    return isLazyList(f) || isList(f) || isLiteral(f) || isResource(f);
+    return isLazyList(f) || isList(f) || isLiteral(f) || isResource(f) || isLazyLitereal(f);
   }
 }

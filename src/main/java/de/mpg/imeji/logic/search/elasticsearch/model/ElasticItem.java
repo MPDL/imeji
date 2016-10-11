@@ -44,18 +44,13 @@ public final class ElasticItem extends ElasticProperties {
     this.folder = item.getCollection().toString();
     this.filename = item.getFilename();
     this.filetype = item.getFiletype();
-    this.height = item.getHeight();
-    this.width = item.getWidth();
     this.size = item.getFileSize();
     this.space = space;
     this.license = getLicenseName(item);
     for (Metadata md : item.getMetadataSet().getMetadata()) {
       metadata.add(new ElasticMetadata(md));
     }
-    this.fulltext = contentVO.getFulltext();
-    for (TechnicalMetadata md : contentVO.getTechnicalMetadata()) {
-      technical.add(new ElasticTechnicalMetadata(md));
-    }
+    copyContentVO(contentVO);
   }
 
   /**
@@ -65,9 +60,17 @@ public final class ElasticItem extends ElasticProperties {
    */
   public ElasticItem(ContentVO contentVO) {
     super(null);
-    this.fulltext = contentVO.getFulltext();
-    for (TechnicalMetadata md : contentVO.getTechnicalMetadata()) {
-      technical.add(new ElasticTechnicalMetadata(md));
+    copyContentVO(contentVO);
+  }
+
+  private void copyContentVO(ContentVO contentVO) {
+    if (contentVO != null) {
+      this.height = contentVO.getHeight();
+      this.width = contentVO.getWidth();
+      this.fulltext = contentVO.getFulltext();
+      for (TechnicalMetadata md : contentVO.getTechnicalMetadata()) {
+        technical.add(new ElasticTechnicalMetadata(md));
+      }
     }
   }
 

@@ -179,13 +179,13 @@
 							</h:panelGroup>
 							
 							<!-- MetaDataList - image dimension Size -->
-							<h:panelGroup layout="block" styleClass="imj_metadataSet" rendered="#{itemBean.image.width &gt; 0 and itemBean.image.height &gt; 0}">
+							<h:panelGroup layout="block" styleClass="imj_metadataSet" rendered="#{itemBean.content.width &gt; 0 and itemBean.content.height &gt; 0}">
 								<div class="imj_metadataLabel">
 									<h:outputText value="#{lbl.width} x #{lbl.height}"/>
 									<span class="imj_invisible">: </span>
 								</div>
 								<div class="imj_metadataValue">
-										<h:outputText value="#{itemBean.image.width} x #{itemBean.image.height}"/>
+										<h:outputText value="#{itemBean.content.width} x #{itemBean.content.height}"/>
 								</div>
 							</h:panelGroup>
 						</h:panelGroup>

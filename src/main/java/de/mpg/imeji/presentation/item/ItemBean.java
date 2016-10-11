@@ -76,6 +76,7 @@ public class ItemBean extends SuperBean {
   private static final long serialVersionUID = -4957755233785015759L;
   private String tab;
   private Item item;
+  private ContentVO content;
   private String id;
   private boolean selected;
   private CollectionImeji collection;
@@ -241,6 +242,7 @@ public class ItemBean extends SuperBean {
   public void loadImage() throws ImejiException {
     item = new ItemBusinessController().retrieve(ObjectHelper.getURI(Item.class, id),
         getSessionUser());
+    content = new ContentController().readLazy(item.getContentId());
     if (item == null) {
       throw new NotFoundException("LoadImage: empty");
     }
@@ -748,5 +750,19 @@ public class ItemBean extends SuperBean {
 
   public void setActiveAlbum(Album activeAlbum) {
     this.activeAlbum = activeAlbum;
+  }
+
+  /**
+   * @return the content
+   */
+  public ContentVO getContent() {
+    return content;
+  }
+
+  /**
+   * @param content the content to set
+   */
+  public void setContent(ContentVO content) {
+    this.content = content;
   }
 }

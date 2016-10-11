@@ -35,6 +35,7 @@ import de.mpg.imeji.rest.api.DefaultItemService;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.AlbumTO;
 import de.mpg.imeji.rest.to.CollectionTO;
+import de.mpg.imeji.rest.to.LicenseTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
 import de.mpg.imeji.util.LocalizedString;
@@ -192,6 +193,9 @@ public class ImejiTestBase extends JerseyTest {
       to.setFile(new File(STATIC_CONTEXT_STORAGE + "/" + fileName + ".jpg"));
     }
     to.setStatus("PENDING");
+    LicenseTO licTO = new LicenseTO();
+    licTO.setName("dummy license");
+    to.getLicenses().add(licTO);
     try {
       itemTO = s.create(to, JenaUtil.testUser);
       itemId = itemTO.getId();

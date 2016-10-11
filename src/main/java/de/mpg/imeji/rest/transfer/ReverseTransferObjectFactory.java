@@ -166,13 +166,15 @@ public class ReverseTransferObjectFactory {
   private static List<de.mpg.imeji.logic.vo.License> transferLicenses(
       List<de.mpg.imeji.rest.to.LicenseTO> licenseTOs) {
     List<de.mpg.imeji.logic.vo.License> licenses = new ArrayList<>();
-    for (de.mpg.imeji.rest.to.LicenseTO licTO : licenseTOs) {
-      de.mpg.imeji.logic.vo.License lic = new de.mpg.imeji.logic.vo.License();
-      lic.setLabel(
-          StringHelper.isNullOrEmptyTrim(licTO.getLabel()) ? licTO.getName() : licTO.getLabel());
-      lic.setName(licTO.getName());
-      lic.setUrl(licTO.getUrl());
-      licenses.add(lic);
+    if (licenseTOs != null) {
+      for (de.mpg.imeji.rest.to.LicenseTO licTO : licenseTOs) {
+        de.mpg.imeji.logic.vo.License lic = new de.mpg.imeji.logic.vo.License();
+        lic.setLabel(
+            StringHelper.isNullOrEmptyTrim(licTO.getLabel()) ? licTO.getName() : licTO.getLabel());
+        lic.setName(licTO.getName());
+        lic.setUrl(licTO.getUrl());
+        licenses.add(lic);
+      }
     }
     return licenses;
   }

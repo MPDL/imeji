@@ -18,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.joda.time.chrono.AssembledChronology.Fields;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jLazyList;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
@@ -53,26 +54,17 @@ public class Item extends Properties implements Serializable {
   private URI thumbnailImageUrl;
   @j2jResource("http://imeji.org/terms/fullImageUrl")
   private URI fullImageUrl;
-  @j2jResource("http://imeji.org/terms/visibility")
-  private URI visibility =
-      URI.create("http://imeji.org/terms/visibility#" + Visibility.PRIVATE.name());
   @j2jLiteral("http://imeji.org/terms/filename")
   private String filename;
   @j2jLiteral("http://imeji.org/terms/filetype")
   private String filetype;
-  @j2jLiteral("http://imeji.org/terms/storageId")
-  private String storageId;
   @j2jLiteral("http://imeji.org/terms/checksum")
   private String checksum;
   @j2jLiteral("http://imeji.org/terms/fileSize")
   private long fileSize;
-  @j2jLiteral("http://www.w3.org/2003/12/exif/ns#width")
-  private long width;
-  @j2jLiteral("http://www.w3.org/2003/12/exif/ns#height")
-  private long height;
   @j2jLiteral("http://imeji.org/terms/contentId")
   private String contentId;
-  @j2jList("http://imeji.org/terms/license")
+  @j2jLazyList("http://imeji.org/terms/license")
   private List<License> licenses = new ArrayList<>();
 
   /**
@@ -111,15 +103,6 @@ public class Item extends Properties implements Serializable {
 
   public void setFullImageUrl(URI fullImageUrl) {
     this.fullImageUrl = fullImageUrl;
-  }
-
-  public void setVisibility(Visibility visibility) {
-    this.visibility = URI.create("http://imeji.org/terms/visibility#" + visibility.name());
-  }
-
-  @XmlElement(name = "visibility", namespace = "http://imeji.org/terms/")
-  public Visibility getVisibility() {
-    return Visibility.valueOf(visibility.getFragment());
   }
 
   public MetadataSet getMetadataSet() {
@@ -211,21 +194,6 @@ public class Item extends Properties implements Serializable {
   }
 
   /**
-   * @return the storageId
-   */
-  @XmlElement(name = "storageId", namespace = "http://imeji.org/terms/")
-  public String getStorageId() {
-    return storageId;
-  }
-
-  /**
-   * @param storageId the storageId to set
-   */
-  public void setStorageId(String storageId) {
-    this.storageId = storageId;
-  }
-
-  /**
    * @return the checksum
    */
   @XmlElement(name = "checksum", namespace = "http://imeji.org/terms/")
@@ -262,22 +230,6 @@ public class Item extends Properties implements Serializable {
    */
   public void setFileSize(long fileSize) {
     this.fileSize = fileSize;
-  }
-
-  public void setHeight(long height) {
-    this.height = height;
-  }
-
-  public long getHeight() {
-    return height;
-  }
-
-  public void setWidth(long width) {
-    this.width = width;
-  }
-
-  public long getWidth() {
-    return width;
   }
 
   public String getFullImageLink() {

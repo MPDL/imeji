@@ -338,7 +338,12 @@ public class ItemBusinessController extends ImejiController {
       throws ImejiException {
     validateChecksum(item.getCollection(), f, true);
     ContentController contentController = new ContentController();
-    ContentVO content = contentController.update(item.getContentId(), f, col, user);
+    ContentVO content;
+    if (StringHelper.isNullOrEmptyTrim(item.getContentId())) {
+      content = contentController.create(f, col, user);
+    } else {
+      content = contentController.update(item.getContentId(), f, col, user);
+    }
     item = copyContent(item, content);
     if (filename != null) {
       item.setFilename(filename);
@@ -369,7 +374,7 @@ public class ItemBusinessController extends ImejiController {
       File tmp = readFile(externalFileUrl);
       item = updateFile(item, col, tmp, filename, u);
     } else {
-      removeFileFromStorage(item.getStorageId());
+      removeFileFromStorage(item);
       // Reference the file
       item.setFullImageUrl(URI.create(externalFileUrl));
       item.setThumbnailImageUrl(URI.create(NO_THUMBNAIL_URL));
@@ -410,7 +415,7 @@ public class ItemBusinessController extends ImejiController {
   public void delete(List<Item> items, User user) throws ImejiException {
     itemController.delete(items, user);
     for (Item item : items) {
-      removeFileFromStorage(item.getStorageId());
+      removeFileFromStorage(item);
     }
   }
 
@@ -486,7 +491,7 @@ public class ItemBusinessController extends ImejiController {
    *
    * @param l
    * @param user
-   * @param defaultLicense TODO
+   * @param defaultLicens
    * @throws ImejiException
    */
   public void release(List<Item> l, User user, License defaultLicense) throws ImejiException {
@@ -516,7 +521,7 @@ public class ItemBusinessController extends ImejiController {
     }
     updateBatch(items, user);
     for (Item item : items) {
-      removeFileFromStorage(item.getStorageId());
+      removeFileFromStorage(item);
     }
   }
 
@@ -550,11 +555,6 @@ public class ItemBusinessController extends ImejiController {
     item.setFullImageUrl(URI.create(content.getOriginal()));
     item.setWebImageUrl(URI.create(content.getPreview()));
     item.setThumbnailImageUrl(URI.create(content.getThumbnail()));
-    if (content.getWidth() > 0 && content.getHeight() > 0) {
-      item.setWidth(content.getWidth());
-      item.setHeight(content.getHeight());
-    }
-
     return item;
   }
 
@@ -599,8 +599,6 @@ public class ItemBusinessController extends ImejiController {
     contentVO.setThumbnail(item.getThumbnailImageUrl().toString());
     contentVO.setChecksum(item.getChecksum());
     contentVO.setFileSize(item.getFileSize());
-    contentVO.setHeight(item.getHeight());
-    contentVO.setWidth(item.getWidth());
     contentVO.setMimetype(item.getFiletype());
     return contentVO;
   }
@@ -642,10 +640,10 @@ public class ItemBusinessController extends ImejiController {
    *
    * @param id
    */
-  private void removeFileFromStorage(String id) {
-    StorageController storageController = new StorageController();
+  private void removeFileFromStorage(Item item) {
+    ContentController contentController = new ContentController();
     try {
-      storageController.delete(id);
+      contentController.delete(item.getContentId());
     } catch (Exception e) {
       LOGGER.error("error deleting file", e);
     }
