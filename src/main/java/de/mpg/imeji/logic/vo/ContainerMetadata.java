@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jLazyList;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
@@ -33,7 +34,7 @@ public class ContainerMetadata implements Serializable {
   @j2jList("http://xmlns.com/foaf/0.1/person")
   protected Collection<Person> persons = new ArrayList<Person>();
   private URI id = IdentifierUtil.newURI(ContainerMetadata.class);
-  @j2jList("http://imeji.org/AdditionalInfo")
+  @j2jLazyList("http://imeji.org/AdditionalInfo")
   private List<ContainerAdditionalInfo> additionalInformations = new ArrayList<>();
 
   public String getTitle() {

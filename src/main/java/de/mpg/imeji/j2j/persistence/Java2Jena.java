@@ -268,14 +268,17 @@ public class Java2Jena {
     try {
       if (J2JHelper.isResource(obj) && J2JHelper.getId(obj) != null) {
         writeResource(s, obj);
-      } else if (J2JHelper.isLiteral(f)) {
+      } else if (J2JHelper.isLiteral(f) || J2JHelper.isLazyLitereal(f)) {
         addLiteral(s, obj, f);
-      } else if (J2JHelper.isURIResource(obj, f) && obj != null) {
+      } else if ((J2JHelper.isURIResource(obj, f) || J2JHelper.isLazyURIResource(obj, f))
+          && obj != null) {
         addURIResource(s, obj, f);
       } else if (obj instanceof LocalizedString) {
         addLabel(s, (LocalizedString) obj);
       } else if (J2JHelper.isList(f)) {
         addLiteral(s, obj, f);
+      } else {
+        LOGGER.error("Not adding field " + f);
       }
     } catch (Exception e) {
       throw new RuntimeException("Error adding property", e);

@@ -10,6 +10,7 @@ import de.mpg.imeji.j2j.annotations.j2jDataType;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLazyList;
 import de.mpg.imeji.j2j.annotations.j2jLazyLiteral;
+import de.mpg.imeji.j2j.annotations.j2jLazyURIResource;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
@@ -118,9 +119,9 @@ public class J2JHelper {
   public static String getNamespace(Object o, Field f) {
     if (isResource(o)) {
       return getResourceNamespace(o);
-    } else if (isLiteral(f)) {
+    } else if (isLiteral(f) || isLazyLitereal(f)) {
       return getLiteralNamespace(f);
-    } else if (isURIResource(o, f)) {
+    } else if (isURIResource(o, f) || isLazyURIResource(o, f)) {
       return getURIResourceNamespace(o, f);
     } else if (isList(f)) {
       return getListNamespace(f);
@@ -173,9 +174,11 @@ public class J2JHelper {
    * @return
    */
   public static String getURIResourceNamespace(Object o, Field f) {
-    if (isURIResource(o, f)) {
+    if (isURIResource(o, f) || isLazyURIResource(o, f)) {
       if (f.getAnnotation(j2jResource.class) != null) {
         return f.getAnnotation(j2jResource.class).value();
+      } else if (f.getAnnotation(j2jLazyURIResource.class) != null) {
+        return f.getAnnotation(j2jLazyURIResource.class).value();
       } else if (f.getAnnotation(j2jList.class) != null) {
         return f.getAnnotation(j2jList.class).value();
       } else if (isLazyList(f)) {
@@ -261,6 +264,8 @@ public class J2JHelper {
     return f != null && f.getAnnotation(j2jResource.class) != null;
   }
 
+
+
   /**
    * True if the {@link Field} is a {@link j2jResource} and and {@link URI}
    *
@@ -271,6 +276,29 @@ public class J2JHelper {
   public static boolean isURIResource(Object o, Field f) {
     return f != null && (f.getType().equals(URI.class) && f.getAnnotation(j2jResource.class) != null
         || ((isList(f) || isLazyList(f)) && o instanceof URI));
+  }
+
+  /**
+   * True id the {@link Field} is a {@link j2jResource}
+   *
+   * @param f
+   * @return
+   */
+  public static boolean isLazyURIResource(Field f) {
+    return f != null && f.getAnnotation(j2jLazyURIResource.class) != null;
+  }
+
+  /**
+   * True if the {@link Field} is a {@link j2jResource} and and {@link URI}
+   *
+   * @param o
+   * @param f
+   * @return
+   */
+  public static boolean isLazyURIResource(Object o, Field f) {
+    return f != null
+        && (f.getType().equals(URI.class) && f.getAnnotation(j2jLazyURIResource.class) != null
+            || (isLazyList(f) && o instanceof URI));
   }
 
   /**
@@ -304,7 +332,7 @@ public class J2JHelper {
   }
 
   /**
-   * True if the {@link Field} is a {@link j2jLazyList}
+   * True if the {@link Field} is a {@link j2jLazyLiteral}
    *
    * @param f
    * @return
@@ -386,6 +414,7 @@ public class J2JHelper {
    * @return
    */
   public static boolean isAnnotated(Field f) {
-    return isLazyList(f) || isList(f) || isLiteral(f) || isResource(f) || isLazyLitereal(f);
+    return isLazyList(f) || isList(f) || isLiteral(f) || isResource(f) || isLazyLitereal(f)
+        || isLazyURIResource(f);
   }
 }

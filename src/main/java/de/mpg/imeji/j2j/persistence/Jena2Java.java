@@ -91,7 +91,8 @@ public class Jena2Java {
       object = loadResourceObject(subject, object, position);
     } else if (J2JHelper.isLiteral(f) || (J2JHelper.isLazyLitereal(f) && !lazy)) {
       object = loadObjectLiteral(f, subject, object, position, st);
-    } else if (J2JHelper.isURIResource(object, f)) {
+    } else if (J2JHelper.isURIResource(object, f)
+        || (J2JHelper.isLazyURIResource(object, f) && !lazy)) {
       object = readURIResource(f, subject, object, position);
     } else if (object instanceof List<?>) {
       object = readList(f, subject);

@@ -150,6 +150,10 @@ public class ItemBean extends SuperBean {
     }
   }
 
+  public String getDigilibUrl() {
+    return getNavigation().getDigilibUrl() + "?id=" + content.getOriginal();
+  }
+
   /**
    * Initialize the util tab
    * 

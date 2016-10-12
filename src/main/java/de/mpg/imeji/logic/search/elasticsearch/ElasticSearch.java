@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -30,6 +31,7 @@ public class ElasticSearch implements Search {
 
   private ElasticTypes type = null;
   private ElasticIndexer indexer = null;
+  private static final int SEARCH_MAX_SIZE = 500;
 
   /**
    * Construct an Elastic Search Query for on data type. If type is null, search for all types
@@ -73,16 +75,68 @@ public class ElasticSearch implements Search {
   @Override
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
       String spaceId, int from, int size) {
-    QueryBuilder f = ElasticQueryFactory.build(query, folderUri, spaceId, user, type);
-    if (size == -1) {
-      size = Integer.MAX_VALUE;
+    size = size == -1 ? size = SEARCH_MAX_SIZE : size;
+    if (size < SEARCH_MAX_SIZE) {
+      return searchSinglePage(query, sortCri, user, folderUri, spaceId, from, size);
+    } else {
+      return searchWithScroll(query, sortCri, user, folderUri, spaceId, from, size);
     }
+  }
 
+  /**
+   * A Search returning a single document. Faster, but limited to not too big search result list
+   * (max is SEARCH_MAX_SIZE)
+   * 
+   * @param query
+   * @param sortCri
+   * @param user
+   * @param folderUri
+   * @param spaceId
+   * @param from
+   * @param size
+   * @return
+   */
+  private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
+      String folderUri, String spaceId, int from, int size) {
+    QueryBuilder f = ElasticQueryFactory.build(query, folderUri, spaceId, user, type);
     SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setNoFields().setQuery(QueryBuilders.matchAllQuery()).setPostFilter(f).setTypes(getTypes())
         .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri)).execute()
         .actionGet();
     return toSearchResult(resp);
+  }
+
+  /**
+   * A Search via the scroll api. Allow to search for many documents
+   * 
+   * @param query
+   * @param sortCri
+   * @param user
+   * @param folderUri
+   * @param spaceId
+   * @param from
+   * @param size
+   * @return
+   */
+  private SearchResult searchWithScroll(SearchQuery query, SortCriterion sortCri, User user,
+      String folderUri, String spaceId, int from, int size) {
+    QueryBuilder f = ElasticQueryFactory.build(query, folderUri, spaceId, user, type);
+    SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
+        .setScroll(new TimeValue(60000)).setNoFields().setQuery(QueryBuilders.matchAllQuery())
+        .setPostFilter(f).setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).setFrom(from)
+        .addSort(ElasticSortFactory.build(sortCri)).execute().actionGet();
+    SearchResult result = toSearchResult(resp);
+    while (true) {
+      resp = ElasticService.getClient().prepareSearchScroll(resp.getScrollId())
+          .setScroll(new TimeValue(60000)).execute().actionGet();
+      if (resp.getHits().getHits().length == 0) {
+        break;
+      }
+      result = addSearchResult(result, resp);
+    }
+    ElasticService.getClient().prepareClearScroll().addScrollId(resp.getScrollId()).execute()
+        .actionGet();
+    return result;
   }
 
   @Override
@@ -101,6 +155,7 @@ public class ElasticSearch implements Search {
         .addSort(ElasticSortFactory.build(sort)).execute().actionGet();
     return toSearchResult(resp);
   }
+
 
 
   /**
@@ -127,6 +182,21 @@ public class ElasticSearch implements Search {
       ids.add(hit.getId());
     }
     return new SearchResult(ids, resp.getHits().getTotalHits());
+  }
+
+  /**
+   * Add the resp to an existing searchresult
+   *
+   * @param resp
+   * @return
+   */
+  private SearchResult addSearchResult(SearchResult result, SearchResponse resp) {
+    List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
+    for (SearchHit hit : resp.getHits()) {
+      ids.add(hit.getId());
+    }
+    result.getResults().addAll(ids);
+    return result;
   }
 
 

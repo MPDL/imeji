@@ -13,7 +13,7 @@
 			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDigilib and !itemBean.viewInDataViewer}">
 				<h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" />
 			</h:outputLink>
-			<h:outputLink id="lnkPicInternalDigilib" value="#{Navigation.applicationSpaceUrl}digilibImage?fn=#{Navigation.internalStorageBase}/#{itemBean.image.storageId}/original/#{itemBean.itemStorageIdFilename}" target="_blank" rendered="#{itemBean.viewInDigilib}">
+			<h:outputLink id="lnkPicInternalDigilib" value="#{ItemBean.digilibUrl}" target="_blank" rendered="#{itemBean.viewInDigilib}">
 				<h:graphicImage id="picWebResolutionInternalDigilib" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" rendered="#{itemBean.image.status!='WITHDRAWN'}"/>
 			</h:outputLink>
 			<h:outputLink id="lnkPicInternalDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" target="_blank" rendered="#{itemBean.viewInDataViewer}">
@@ -43,7 +43,7 @@
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 			
-			<h:outputLink id="lnkDigilib" value="#{Navigation.applicationUrl}digilibImage?fn=#{Navigation.internalStorageBase}/#{itemBean.image.storageId}/original/#{itemBean.itemStorageIdFilename}" target="_blank" rendered="#{itemBean.viewInDigilib}">
+			<h:outputLink id="lnkDigilib" value="#{itemBean.viewInDigilib}" target="_blank" rendered="#{itemBean.viewInDigilib}">
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 			

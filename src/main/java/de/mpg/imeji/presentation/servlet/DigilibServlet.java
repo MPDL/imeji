@@ -48,7 +48,6 @@ import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.authorization.Authorization;
-import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
@@ -72,7 +71,6 @@ public class DigilibServlet extends Scaler {
    */
   private Authorization authorization;
   private String internalStorageBase;
-  private StorageController storageController;
   private Navigation navigation;
 
   /*
@@ -84,13 +82,8 @@ public class DigilibServlet extends Scaler {
   public void init(ServletConfig config) throws ServletException {
     String filePath = "";
     if (Imeji.PROPERTIES.isDigilibEnabled()) {
-      try {
-        authorization = new Authorization();
-        navigation = new Navigation();
-      } catch (Exception e) {
-        throw new RuntimeException(e);
-      }
-      storageController = new StorageController();
+      authorization = new Authorization();
+      navigation = new Navigation();
       InternalStorageManager ism = new InternalStorageManager();
       internalStorageBase =
           FilenameUtils.getBaseName(FilenameUtils.normalizeNoEndSeparator(ism.getStoragePath()));
@@ -123,7 +116,7 @@ public class DigilibServlet extends Scaler {
         String path = internalStorageBase
             + url.replaceAll(navigation.getApplicationUrl() + Imeji.FILE_SERVLET_PATH, "");
         path = path.replace("\\", "/");
-        resp.sendRedirect(req.getRequestURL().toString() + "?fn=" + path + "&dw=1000");
+        resp.sendRedirect(req.getRequestURL().toString() + "Image?fn=" + path + "&dw=1000");
       } else if (fn != null) {
         SessionBean session = getSession(req);
         url = navigation.getApplicationUrl() + Imeji.FILE_SERVLET_PATH
@@ -136,8 +129,7 @@ public class DigilibServlet extends Scaler {
         }
       }
     } catch (Exception e) {
-      LOGGER.error(e);
-      throw new RuntimeException(e);
+      LOGGER.error("Error digilib", e);
     }
   }
 
@@ -150,7 +142,8 @@ public class DigilibServlet extends Scaler {
     try {
       return PropertyReader.getProperty("digilib.configuration.path");
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      LOGGER.error("Error reading digilib configuration path", e);
+      return null;
     }
   }
 
@@ -164,7 +157,7 @@ public class DigilibServlet extends Scaler {
     try {
       FileUtils.copyFileToDirectory(new File(from), new File(to));
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      LOGGER.error("Error copying digilib config file", e);
     }
   }
 

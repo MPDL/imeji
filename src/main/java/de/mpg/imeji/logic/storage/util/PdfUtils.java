@@ -4,13 +4,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 
 public final class PdfUtils {
-
 
   private PdfUtils() {
     // private constructor
@@ -28,10 +27,12 @@ public final class PdfUtils {
   public static File pdfToImage(File file) throws IOException {
     PDDocument document = PDDocument.load(file);
     try {
-      List<?> pages = document.getDocumentCatalog().getAllPages();
-      PDPage page = (PDPage) pages.get(0); // first one
-      BufferedImage bufferedImage = page.convertToImage();
-      return ImageUtils.toFile(bufferedImage, StorageUtils.getMimeType("jpg"));
+      if (document.getNumberOfPages() > 0) {
+        PDFRenderer pdfRenderer = new PDFRenderer(document);
+        BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
+        return ImageUtils.toFile(bim, StorageUtils.getMimeType("jpg"));
+      }
+      return null;
     } finally {
       document.close();
     }

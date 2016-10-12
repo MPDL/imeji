@@ -10,7 +10,7 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
-import de.mpg.imeji.j2j.annotations.j2jLiteral;
+import de.mpg.imeji.j2j.annotations.j2jLazyLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 
 /**
@@ -26,7 +26,7 @@ public abstract class Container extends Properties implements Serializable {
   private static final long serialVersionUID = -5314334939747696614L;
   @j2jResource("http://imeji.org/terms/container/metadata")
   private ContainerMetadata metadata = new ContainerMetadata();
-  @j2jLiteral("http://imeji.org/terms/doi")
+  @j2jLazyLiteral("http://imeji.org/terms/doi")
   private String doi;
   @j2jResource("http://imeji.org/terms/logoUrl")
   private URI logoUrl;

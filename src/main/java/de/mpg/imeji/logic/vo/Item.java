@@ -19,6 +19,8 @@ import org.joda.time.chrono.AssembledChronology.Fields;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLazyList;
+import de.mpg.imeji.j2j.annotations.j2jLazyLiteral;
+import de.mpg.imeji.j2j.annotations.j2jLazyURIResource;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
@@ -48,21 +50,21 @@ public class Item extends Properties implements Serializable {
   private URI collection;
   @j2jList("http://imeji.org/terms/metadataSet")
   private List<MetadataSet> metadataSets = new ArrayList<MetadataSet>();
-  @j2jResource("http://imeji.org/terms/webImageUrl")
+  @j2jLazyURIResource("http://imeji.org/terms/webImageUrl")
   private URI webImageUrl;
   @j2jResource("http://imeji.org/terms/thumbnailImageUrl")
   private URI thumbnailImageUrl;
-  @j2jResource("http://imeji.org/terms/fullImageUrl")
+  @j2jLazyURIResource("http://imeji.org/terms/fullImageUrl")
   private URI fullImageUrl;
   @j2jLiteral("http://imeji.org/terms/filename")
   private String filename;
   @j2jLiteral("http://imeji.org/terms/filetype")
   private String filetype;
-  @j2jLiteral("http://imeji.org/terms/checksum")
+  @j2jLazyLiteral("http://imeji.org/terms/checksum")
   private String checksum;
   @j2jLiteral("http://imeji.org/terms/fileSize")
   private long fileSize;
-  @j2jLiteral("http://imeji.org/terms/contentId")
+  @j2jLazyLiteral("http://imeji.org/terms/contentId")
   private String contentId;
   @j2jLazyList("http://imeji.org/terms/license")
   private List<License> licenses = new ArrayList<>();

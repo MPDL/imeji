@@ -96,6 +96,19 @@ public class EditItemMetadataBean extends SuperBean {
   }
 
   /**
+   * Read the url paramameters when the page is first called. This method is called directly from
+   * the xhtml page
+   *
+   * @return
+   */
+  public String getUrlParameters() {
+    type = UrlHelper.getParameterValue("type");
+    query = UrlHelper.getParameterValue("q");
+    collectionId = UrlHelper.getParameterValue("c");
+    return "";
+  }
+
+  /**
    * Initialize all elements of the bean
    *
    * @throws IOException
@@ -154,18 +167,7 @@ public class EditItemMetadataBean extends SuperBean {
     redirectToView();
   }
 
-  /**
-   * Read the url paramameters when the page is first called. This method is called directly from
-   * the xhtml page
-   *
-   * @return
-   */
-  public String getUrlParameters() {
-    type = UrlHelper.getParameterValue("type");
-    query = UrlHelper.getParameterValue("q");
-    collectionId = UrlHelper.getParameterValue("c");
-    return "";
-  }
+
 
   /**
    * Find the uri of the {@link Item} which are edited

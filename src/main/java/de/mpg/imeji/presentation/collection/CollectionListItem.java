@@ -38,7 +38,7 @@ public class CollectionListItem {
   private URI uri = null;
   private String discardComment = "";
   // dates
-  private String creationDate = null;
+  // private String creationDate = null;
   private String lastModificationDate = null;
   private String versionDate = null;
   private static final Logger LOGGER = Logger.getLogger(CollectionListItem.class);
@@ -78,7 +78,7 @@ public class CollectionListItem {
       setId(ObjectHelper.getId(uri));
       status = collection.getStatus().toString();
       discardComment = collection.getDiscardComment();
-      creationDate = collection.getCreated().getTime().toString();
+      // creationDate = collection.getCreated().getTime().toString();
       lastModificationDate = collection.getModified().getTime().toString();
       if (collection.getVersionDate() != null) {
         versionDate = collection.getVersionDate().getTime().toString();
@@ -279,13 +279,13 @@ public class CollectionListItem {
     this.discardComment = discardComment;
   }
 
-  public String getCreationDate() {
-    return creationDate;
-  }
-
-  public void setCreationDate(String creationDate) {
-    this.creationDate = creationDate;
-  }
+  // public String getCreationDate() {
+  // return creationDate;
+  // }
+  //
+  // public void setCreationDate(String creationDate) {
+  // this.creationDate = creationDate;
+  // }
 
   public String getLastModificationDate() {
     return lastModificationDate;

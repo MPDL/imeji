@@ -65,8 +65,6 @@ import de.mpg.imeji.logic.vo.util.ImejiFactory;
  */
 public class ItemBusinessController extends ImejiController {
   private static final Logger LOGGER = Logger.getLogger(ItemBusinessController.class);
-  // private static final ReaderFacade READER = new ReaderFacade(Imeji.imageModel);
-  // private static final WriterFacade WRITER = new WriterFacade(Imeji.imageModel);
   public static final String NO_THUMBNAIL_URL = "NO_THUMBNAIL_URL";
   private final Search search =
       SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC);
@@ -579,7 +577,8 @@ public class ItemBusinessController extends ImejiController {
         itemController.updateBatchForce(Arrays.asList(item), Imeji.adminUser);
         LOGGER.info(count++ + "/" + allItems.size() + " extracted");
       } catch (Exception e) {
-        LOGGER.error("Error extracting fulltext/technical metadata", e);
+        LOGGER.error("Error extracting fulltext/technical metadata for item " + item.getIdString(),
+            e);
       }
     }
   }
