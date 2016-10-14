@@ -8,6 +8,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.controller.resource.ContentController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
@@ -40,6 +41,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
     reindexUserGroups(index);
     reindexAlbums(index);
     reindexItems(index);
+    reindexContents(index);
     reindexFolders(index);
     reindexSpaces(index);
     ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
@@ -88,6 +90,16 @@ public class ElasticReIndexJob implements Callable<Integer> {
   private void reindexItems(String index) throws ImejiException {
     ItemBusinessController controller = new ItemBusinessController();
     controller.reindex(index);
+  }
+
+  /**
+   * Reindex all ContentVO stored in the database
+   *
+   * @throws ImejiException
+   *
+   */
+  private void reindexContents(String index) throws ImejiException {
+    new ContentController().reindex(index);
   }
 
   /**

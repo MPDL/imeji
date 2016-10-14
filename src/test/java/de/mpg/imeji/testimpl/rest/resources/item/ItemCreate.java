@@ -91,7 +91,6 @@ public class ItemCreate extends ItemTestBase {
             .replace("___FILENAME___", "").replace("___REFERENCE_URL___", "")
             .replace("___FETCH_URL___", ""));
 
-
     // LOGGER.info(multiPart.getField("json").getValue());
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
     assertEquals(CREATED.getStatusCode(), response.getStatus());

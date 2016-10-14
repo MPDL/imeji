@@ -2,6 +2,7 @@ package de.mpg.imeji.rest;
 
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -17,7 +18,14 @@ public class MyApplication extends ResourceConfig {
     if (LOGGER.isDebugEnabled()) {
       register(LoggingFilter.class);
     }
+    register(LoggingFilter.class);
     register(MultiPartFeature.class);
+    register(JacksonFeature.class);
+
+    System.out.println("is mulitpart enabled? " + isEnabled(MultiPartFeature.class));
+    System.out.println("is jackson enabled? " + isEnabled(JacksonFeature.class));
+    System.out.println("is mulitpart registered? " + isRegistered(MultiPartFeature.class));
+    System.out.println("is jackson registered? " + isRegistered(JacksonFeature.class));
 
     // register(MoxyJsonFeature.class);
     // property(MarshallerProperties.JSON_NAMESPACE_SEPARATOR, ".");

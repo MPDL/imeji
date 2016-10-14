@@ -71,8 +71,7 @@
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>de.mpg.imeji.rest.resources; com.wordnik.swagger.jersey.listing
-            </param-value>
+            <param-value>de.mpg.imeji.rest.resources</param-value>
         </init-param>
         <!--
                 <init-param>

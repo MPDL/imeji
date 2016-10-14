@@ -114,17 +114,18 @@ public class JenaUtil {
     new UserBusinessController().reindex(ElasticService.DATA_ALIAS);
     testUser = getMockupUser(TEST_USER_EMAIL, TEST_USER_NAME, TEST_USER_PWD);
     testUser2 = getMockupUser(TEST_USER_EMAIL_2, TEST_USER_NAME, TEST_USER_PWD);
-    createUser(testUser);
-    createUser(testUser2);
+    testUser = createUser(testUser);
+    testUser2 = createUser(testUser2);
   }
 
 
-  private static void createUser(User u) {
+  private static User createUser(User u) throws ImejiException {
+    UserBusinessController c = new UserBusinessController();
     try {
-      UserBusinessController c = new UserBusinessController();
-      c.create(u, USER_TYPE.DEFAULT);
+      return c.create(u, USER_TYPE.DEFAULT);
     } catch (Exception e) {
       LOGGER.info(u.getEmail() + " already exists. Must not be created");
+      return c.retrieve(u.getEmail(), Imeji.adminUser);
     }
   }
 

@@ -88,6 +88,9 @@ public class WriterFacade {
     } else if (modelURI.equals(Imeji.userModel)) {
       indexer =
           SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
+    } else if (modelURI.equals(Imeji.contentModel)) {
+      indexer = SearchFactory.create(SearchObjectTypes.CONTENT, SEARCH_IMPLEMENTATIONS.ELASTIC)
+          .getIndexer();
     } else {
       indexer = SearchFactory.create(SEARCH_IMPLEMENTATIONS.JENA).getIndexer();
     }

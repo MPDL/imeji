@@ -59,6 +59,9 @@ public class ElasticSearch implements Search {
       case USERGROUPS:
         this.type = ElasticTypes.usergroups;
         break;
+      case CONTENT:
+        this.type = ElasticTypes.content;
+        break;
       default:
         this.type = ElasticTypes.items;
         break;

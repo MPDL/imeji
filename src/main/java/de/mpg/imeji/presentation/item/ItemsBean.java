@@ -370,7 +370,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   private void delete(List<String> uris) {
     try {
-      Collection<Item> items = loadImages(uris);
+      ItemBusinessController controller = new ItemBusinessController();
+      Collection<Item> items = controller.retrieveBatch(uris, -1, 0, getSessionUser());
       ItemBusinessController ic = new ItemBusinessController();
       ic.delete((List<Item>) items, getSessionUser());
       BeanHelper
@@ -487,6 +488,9 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   public String selectNone() {
     sessionBean.setSelected(new ArrayList<>());
+    for (ThumbnailBean bean : getCurrentPartList()) {
+      bean.setSelected(false);
+    }
     return getNavigationString();
   }
 
@@ -561,6 +565,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       }
     }
     return true;
+  }
+
+  public void setAllSelected(boolean b) {
+    // do nothing
   }
 
   public MetadataLabels getMetadataLabels() {

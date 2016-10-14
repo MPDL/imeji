@@ -56,7 +56,7 @@ public class EditCollectionBean extends CollectionBean {
         setProfile(
             new ProfileController().retrieve(getCollection().getProfile(), getSessionUser()));
         setCollection(new CollectionController()
-            .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
+            .retrieve(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
         setSendEmailNotification(getSessionUser().getObservedCollections().contains(getId()));
         LinkedList<Person> persons = new LinkedList<Person>();
         if (getCollection().getMetadata().getPersons().size() == 0) {

@@ -78,7 +78,7 @@ public class ThreadedTransaction implements Callable<Integer> {
     try {
       f.get();
     } catch (Exception e) {
-      LOGGER.info("An exception happened in run method ", e);
+      LOGGER.info("An exception happened in Transaction ", e);
     }
     t.throwException();
   }

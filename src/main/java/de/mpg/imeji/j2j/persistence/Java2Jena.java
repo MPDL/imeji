@@ -266,7 +266,9 @@ public class Java2Jena {
    */
   private void addProperty(Resource s, Object obj, Field f) {
     try {
-      if (J2JHelper.isResource(obj) && J2JHelper.getId(obj) != null) {
+      if (obj == null) {
+        return;
+      } else if (J2JHelper.isResource(obj) && J2JHelper.getId(obj) != null) {
         writeResource(s, obj);
       } else if (J2JHelper.isLiteral(f) || J2JHelper.isLazyLitereal(f)) {
         addLiteral(s, obj, f);

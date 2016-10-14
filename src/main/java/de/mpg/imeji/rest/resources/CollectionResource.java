@@ -29,10 +29,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-
 import de.mpg.imeji.rest.to.JSONResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 // @Singleton
 @Path("/collections")

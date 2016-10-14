@@ -26,12 +26,8 @@ public class CollectionImeji extends Container implements Serializable {
   private static final long serialVersionUID = -4689209760815149573L;
   @j2jResource("http://imeji.org/terms/mdprofile")
   private URI profile = null;
-  @j2jResource("http://imeji.org/terms/metadataSet")
-  private MetadataSet metadataSet = new MetadataSet();
   @j2jResource("http://imeji.org/terms/space")
   private URI space;
-
-
 
   private Collection<URI> images = new ArrayList<URI>();
 
@@ -41,14 +37,6 @@ public class CollectionImeji extends Container implements Serializable {
 
   public void setProfile(URI profile) {
     this.profile = profile;
-  }
-
-  public MetadataSet getMetadataSet() {
-    return metadataSet;
-  }
-
-  public void setMetadataSet(MetadataSet metadataSet) {
-    this.metadataSet = metadataSet;
   }
 
   @Override

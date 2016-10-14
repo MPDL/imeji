@@ -1,11 +1,12 @@
 package de.mpg.imeji.logic.workflow;
 
+import java.io.Serializable;
+
 import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import scala.Serializable;
 
 /**
  * Check update and delete Operation against the imeji Workflow. If not compliant, throw an error

@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -22,6 +24,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticAlbum;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticContent;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFolder;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticItem;
@@ -51,7 +54,6 @@ public class ElasticIndexer implements SearchIndexer {
   private final String dataType;
   private final ElasticAnalysers analyser;
   private String mappingFile = "elasticsearch/Elastic_TYPE_Mapping.json";
-  // private final Client client;
 
   public ElasticIndexer(String indexName, ElasticTypes dataType, ElasticAnalysers analyser) {
     this.index = indexName;
@@ -71,18 +73,28 @@ public class ElasticIndexer implements SearchIndexer {
   }
 
 
+  // TODO Implements bulk index
   @Override
   public void indexBatch(List<?> l) {
+    if (l.isEmpty()) {
+      return;
+    }
     try {
+      BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
       for (Object obj : l) {
-        indexJSON(getId(obj), toJson(obj, dataType, index));
+        bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, index)));
+        // indexJSON(getId(obj), toJson(obj, dataType, index));
       }
+      bulkRequest.get();
       commit();
     } catch (Exception e) {
       LOGGER.error("error indexing object ", e);
     }
   }
 
+  private IndexRequestBuilder getIndexRequest(String id, String json) {
+    return ElasticService.getClient().prepareIndex(index, dataType).setId(id).setSource(json);
+  }
 
   @Override
   public void delete(Object obj) {
@@ -139,7 +151,8 @@ public class ElasticIndexer implements SearchIndexer {
    * immediately available for other tasks
    */
   public void commit() {
-    ElasticService.getClient().admin().indices().prepareRefresh(index).execute().actionGet();
+    // Check if refersh is needed: cost are very high
+    // ElasticService.getClient().admin().indices().prepareRefresh(index).execute().actionGet();
   }
 
   /**
@@ -161,8 +174,7 @@ public class ElasticIndexer implements SearchIndexer {
    */
   private static Object toESEntity(Object obj, String dataType, String index) {
     if (obj instanceof Item) {
-      return new ElasticItem((Item) obj, getSpace((Item) obj, ElasticTypes.folders.name(), index),
-          getContentVO((Item) obj));
+      return new ElasticItem((Item) obj, getSpace((Item) obj, ElasticTypes.folders.name(), index));
     }
     if (obj instanceof CollectionImeji) {
       return new ElasticFolder((CollectionImeji) obj);
@@ -180,7 +192,7 @@ public class ElasticIndexer implements SearchIndexer {
       return new ElasticUserGroup((UserGroup) obj);
     }
     if (obj instanceof ContentVO) {
-      return new ElasticItem((ContentVO) obj);
+      return new ElasticContent((ContentVO) obj);
     }
     return obj;
   }
@@ -202,6 +214,9 @@ public class ElasticIndexer implements SearchIndexer {
     }
     if (obj instanceof UserGroup) {
       return ((UserGroup) obj).getId().toString();
+    }
+    if (obj instanceof ContentVO) {
+      return ((ContentVO) obj).getId().toString();
     }
     return null;
   }

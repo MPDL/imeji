@@ -1,12 +1,13 @@
 package de.mpg.imeji.presentation.workflow;
 
+import java.io.Serializable;
+
 import javax.faces.bean.ManagedBean;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
-import scala.Serializable;
 
 /**
  * JSF Bean for usage of Workflow features

@@ -33,7 +33,7 @@ public class ElasticService {
    *
    */
   public enum ElasticTypes {
-    items, folders, albums, spaces, users, usergroups;
+    items, folders, albums, spaces, users, usergroups, content;
   }
 
   public enum ElasticAnalysers {

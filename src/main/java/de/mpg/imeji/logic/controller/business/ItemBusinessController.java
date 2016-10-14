@@ -564,23 +564,36 @@ public class ItemBusinessController extends ImejiController {
   public void extractFulltextAndTechnicalMetadataForAllItems() throws ImejiException {
     List<Item> allItems = (List<Item>) retrieveAll(Imeji.adminUser);
     int count = 0;
+    List<Item> itemToUpdate = new ArrayList<>();
+    List<ContentVO> contents = new ArrayList<>();
+    ContentController contentController = new ContentController();
     for (Item item : allItems) {
       try {
-        ContentController contentController = new ContentController();
+
         ContentVO contentVO = toContentVO(item);
         if (contentVO.getId() == null) {
           contentVO = contentController.create(contentVO);
           item.setContentId(contentVO.getId().toString());
+          itemToUpdate.add(item);
         }
-        contentController.extractFileContentAndUpdateContentVOAsync(item.getId().toString(),
-            contentVO);
-        itemController.updateBatchForce(Arrays.asList(item), Imeji.adminUser);
-        LOGGER.info(count++ + "/" + allItems.size() + " extracted");
+        boolean extracted = contentController.extractContent(contentVO);
+        if (extracted) {
+          contents.add(contentVO);
+          LOGGER.info(count++ + "/" + allItems.size() + " extracted");
+        } else {
+          LOGGER.info(count++ + "/" + allItems.size() + " NOT extracted");
+        }
       } catch (Exception e) {
         LOGGER.error("Error extracting fulltext/technical metadata for item " + item.getIdString(),
             e);
       }
     }
+    LOGGER.info("Updating " + contents.size() + " content with extracted infos...");
+    contentController.updateBatch(contents);
+    LOGGER.info("... done!");
+    LOGGER.info("Updating " + itemToUpdate.size() + " items with new Content");
+    itemController.updateBatchForce(itemToUpdate, Imeji.adminUser);
+    LOGGER.info("... done!");
   }
 
   /**

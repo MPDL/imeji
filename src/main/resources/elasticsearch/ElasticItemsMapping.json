@@ -1,6 +1,10 @@
 {
    "items":{
       "properties":{
+      	"id":{
+            "type":"string",
+            "index":"not_analyzed"
+         },
          "checksum":{
             "type":"string",
             "index":"not_analyzed"
@@ -51,27 +55,6 @@
          "space":{
             "type":"string",
             "index":"not_analyzed"
-         },
-         "height":{
-            "type":"long"
-         },
-         "id":{
-            "type":"string",
-            "index":"not_analyzed"
-         },
-         "technical":{
-            "type":"nested",
-            "include_in_all":false,
-            "include_in_parent":true,
-            "properties":{
-               "name":{
-                  "type":"string",
-                  "index":"not_analyzed"
-               },
-               "value":{
-                  "type":"string"
-               }
-            }
          },
          "metadata":{
             "type":"nested",
@@ -188,9 +171,6 @@
          "status":{
             "type":"string",
             "index":"not_analyzed"
-         },
-         "width":{
-            "type":"long"
          },
          "size":{
             "type":"long"

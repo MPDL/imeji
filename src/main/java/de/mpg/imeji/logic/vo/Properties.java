@@ -19,8 +19,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.j2j.annotations.j2jLazyLiteral;
-import de.mpg.imeji.j2j.annotations.j2jLazyURIResource;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.ImejiNamespaces;
@@ -40,20 +38,20 @@ public class Properties implements Serializable {
   private static final long serialVersionUID = 6874979775433576816L;
   private URI id;
   @j2jResource(ImejiNamespaces.CREATOR)
-  private URI createdBy;
-  @j2jLazyURIResource(ImejiNamespaces.MODIFIED_BY)
-  private URI modifiedBy;
-  @j2jLazyLiteral(ImejiNamespaces.DATE_CREATED)
-  private Calendar created;
+  private URI createdBy = URI.create("");
+  @j2jResource(ImejiNamespaces.MODIFIED_BY)
+  private URI modifiedBy = URI.create("");;
+  @j2jLiteral(ImejiNamespaces.DATE_CREATED)
+  private Calendar created = Calendar.getInstance();
   @j2jLiteral(ImejiNamespaces.LAST_MODIFICATION_DATE)
-  private Calendar modified;
-  @j2jLazyLiteral(ImejiNamespaces.VERSION_DATE)
+  private Calendar modified = Calendar.getInstance();
+  @j2jLiteral(ImejiNamespaces.VERSION_DATE)
   private Calendar versionDate;
   @j2jResource(ImejiNamespaces.STATUS)
   private URI status = URI.create(Status.PENDING.getUriString());
-  @j2jLazyLiteral(ImejiNamespaces.VERSION)
+  @j2jLiteral(ImejiNamespaces.VERSION)
   private int version = 0;
-  @j2jLazyLiteral(ImejiNamespaces.DISCARD_COMMENT)
+  @j2jLiteral(ImejiNamespaces.DISCARD_COMMENT)
   private String discardComment;
 
   private static final Logger LOGGER = Logger.getLogger(Properties.class);

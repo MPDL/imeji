@@ -34,8 +34,6 @@ public class EditAlbumBean extends AlbumBean implements Serializable {
   @ManagedProperty(value = "#{ContainerEditorSession}")
   private ContainerEditorSession containerEditorSession;
 
-
-
   @Override
   @PostConstruct
   public void init() {

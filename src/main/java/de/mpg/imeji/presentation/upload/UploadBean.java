@@ -318,26 +318,27 @@ public class UploadBean extends SuperBean {
    */
   private Item uploadFile(File fileUploaded, String title) {
     try {
-      String calculatedExtension = StorageUtils.guessExtension(fileUploaded);
-      File file = fileUploaded;
-      if (!fileUploaded.getName().endsWith(calculatedExtension)) {
-        file = new File(file.getName() + calculatedExtension);
-        FileUtils.moveFile(fileUploaded, file);
-      }
-      validateName(file, title);
+      // String calculatedExtension = StorageUtils.guessExtension(fileUploaded);
+      // File file = fileUploaded;
+      // if (!fileUploaded.getName().endsWith(calculatedExtension)) {
+      // file = new File(file.getName() + calculatedExtension);
+      // FileUtils.moveFile(fileUploaded, file);
+      // }
+      validateName(fileUploaded, title);
       Item item = null;
       ItemBusinessController controller = new ItemBusinessController();
       if (isImportImageToFile()) {
-        item = controller.updateThumbnail(findItemByFileName(title), file, getSessionUser());
+        item =
+            controller.updateThumbnail(findItemByFileName(title), fileUploaded, getSessionUser());
       } else if (isUploadFileToItem()) {
-        item = controller.updateFile(findItemByFileName(title), collection, file, title,
+        item = controller.updateFile(findItemByFileName(title), collection, fileUploaded, title,
             getSessionUser());
       } else {
         item = ImejiFactory.newItem(collection);
         if (!Status.PENDING.equals(collection.getStatus())) {
           item.setLicenses(Arrays.asList(licenseEditor.getLicense()));
         }
-        item = controller.createWithFile(item, file, title, collection, getSessionUser());
+        item = controller.createWithFile(item, fileUploaded, title, collection, getSessionUser());
       }
       getsFiles().add(new UploadItem(item));
       return item;
