@@ -12,6 +12,8 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 import de.mpg.imeji.logic.contentanalysis.ContentAnalyse;
 import de.mpg.imeji.logic.contentanalysis.ContentAnalyser;
@@ -36,7 +38,7 @@ public class TikaContentAnalyser implements ContentAnalyser {
       Metadata metadata = new Metadata();
       AutoDetectParser parser = new AutoDetectParser();
       parser.parse(stream, handler, metadata);
-      return handler.toString();
+      return Jsoup.clean(handler.toString(), Whitelist.simpleText());
     } catch (Exception e) {
       LOGGER.error("Error extracting fulltext", e);
     }
@@ -81,7 +83,7 @@ public class TikaContentAnalyser implements ContentAnalyser {
                 .add(new TechnicalMetadata(name, metadata.get(name)));
           }
         }
-        contentAnalyse.setFulltext(handler.toString());
+        contentAnalyse.setFulltext(Jsoup.clean(handler.toString(), Whitelist.simpleText()));
       } catch (Exception e) {
         LOGGER.error("Error extracting fulltext/metadata from file", e);
       } finally {
