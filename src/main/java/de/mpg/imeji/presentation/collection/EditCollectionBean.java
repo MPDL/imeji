@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +32,6 @@ import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
-import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 
@@ -83,9 +81,7 @@ public class EditCollectionBean extends CollectionBean {
 
   public void save() throws Exception {
     if (saveEditedCollection()) {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(((HistorySession) BeanHelper.getSessionBean(HistorySession.class))
-              .getPreviousPage().getCompleteUrl());
+      redirect(getHistory().getPreviousPage().getCompleteUrl());
     }
   }
 
@@ -164,9 +160,8 @@ public class EditCollectionBean extends CollectionBean {
    */
   public String saveAndEditProfile() throws Exception {
     if (saveEditedCollection()) {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(getNavigation().getProfileUrl() + getProfileId() + "/edit?init=1&col="
-              + getCollection().getIdString());
+      redirect(getNavigation().getProfileUrl() + getProfileId() + "/edit?init=1&col="
+          + getCollection().getIdString());
     }
     return "";
   }

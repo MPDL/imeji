@@ -71,7 +71,7 @@ public class SuperFilterMenuBean extends SuperBean {
     SearchQuery filterQuery = SearchQueryParser.parseStringQuery(filter);
     SearchQuery currentQuery = getCurrentQueryWihoutFilter();
     currentQuery = mergeQueries(currentQuery, filterQuery);
-    HistoryPage page = getHistory().getCurrentPage();
+    HistoryPage page = getHistory().getCurrentPage().copy();
     page.setParamValue("q", SearchQueryParser.transform2URL(currentQuery));
     return page.getCompleteUrl();
   }
@@ -84,7 +84,7 @@ public class SuperFilterMenuBean extends SuperBean {
    */
   public String getRemoveFilterUrl() throws UnprocessableError {
     String query = SearchQueryParser.transform2URL(getCurrentQueryWihoutFilter());
-    HistoryPage page = getHistory().getCurrentPage();
+    HistoryPage page = getHistory().getCurrentPage().copy();
     page.setParamValue("q", query);
     return page.getCompleteUrl();
   }

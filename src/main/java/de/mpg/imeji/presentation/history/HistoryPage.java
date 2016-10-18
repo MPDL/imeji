@@ -4,6 +4,7 @@
 package de.mpg.imeji.presentation.history;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -49,6 +50,21 @@ public class HistoryPage {
     this.url = url;
     this.imejiPage = HistoryUtil.getImejiPage(getCompleteUrl());
     this.title = loadTitle(HistoryUtil.extractURI(getCompleteUrl()), user);
+  }
+
+  private HistoryPage(String url, Map<String, String[]> params, String title,
+      ImejiPages imejiPage) {
+    this.params = params;
+    this.url = url;
+    this.imejiPage = imejiPage;
+    this.title = title;
+  }
+
+  /**
+   * Return a new instance of the same page
+   */
+  public HistoryPage copy() {
+    return new HistoryPage(new String(url), new HashMap<>(params), new String(title), imejiPage);
   }
 
   /**

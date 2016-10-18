@@ -46,5 +46,5 @@
 		<dialog:doiInputDialog col="#{paginatorListSessionBean.collection}" bean="#{paginatorListSessionBean}" confirmationText="#{paginatorListSessionBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}" submitLabel="#{lbl.save}" dialogId="doiInput" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>
 
 	</ui:define>
-	
+
 </ui:composition>
