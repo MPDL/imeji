@@ -1,5 +1,8 @@
 {
    "content":{
+      "_parent":{
+         "type":"items"
+      },
       "properties":{
          "id":{
             "type":"string",

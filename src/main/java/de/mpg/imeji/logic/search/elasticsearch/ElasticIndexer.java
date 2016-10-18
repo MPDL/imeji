@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 
@@ -66,7 +67,7 @@ public class ElasticIndexer implements SearchIndexer {
   @Override
   public void index(Object obj) {
     try {
-      indexJSON(getId(obj), toJson(obj, dataType, index));
+      indexJSON(getId(obj), toJson(obj, dataType, index), getParent(obj));
     } catch (Exception e) {
       LOGGER.error("Error indexing object ", e);
     }
@@ -82,7 +83,7 @@ public class ElasticIndexer implements SearchIndexer {
     try {
       BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
       for (Object obj : l) {
-        bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, index)));
+        bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, index), getParent(obj)));
         // indexJSON(getId(obj), toJson(obj, dataType, index));
       }
       bulkRequest.get();
@@ -92,29 +93,61 @@ public class ElasticIndexer implements SearchIndexer {
     }
   }
 
-  private IndexRequestBuilder getIndexRequest(String id, String json) {
-    return ElasticService.getClient().prepareIndex(index, dataType).setId(id).setSource(json);
-  }
+
 
   @Override
   public void delete(Object obj) {
     String id = getId(obj);
     if (id != null) {
-      ElasticService.getClient().prepareDelete(index, dataType, id).execute().actionGet();
+      getDeleteRequest(id, getParent(obj)).execute().actionGet();
       commit();
     }
   }
 
   @Override
   public void deleteBatch(List<?> l) {
+    BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
     for (Object obj : l) {
       String id = getId(obj);
       if (id != null) {
-        ElasticService.getClient().prepareDelete(index, dataType, id).execute().actionGet();
+        bulkRequest.add(getDeleteRequest(id, getParent(obj)));
       }
-
     }
+    bulkRequest.get();
     commit();
+  }
+
+  /**
+   * Return the index Request
+   * 
+   * @param id
+   * @param json
+   * @param parent
+   * @return
+   */
+  private IndexRequestBuilder getIndexRequest(String id, String json, String parent) {
+    IndexRequestBuilder builder =
+        ElasticService.getClient().prepareIndex(index, dataType).setId(id).setSource(json);
+    if (parent != null) {
+      builder.setParent(parent);
+    }
+    return builder;
+  }
+
+  /**
+   * Return the Delete Request
+   * 
+   * @param id
+   * @param json
+   * @param parent
+   * @return
+   */
+  private DeleteRequestBuilder getDeleteRequest(String id, String parent) {
+    DeleteRequestBuilder builder = ElasticService.getClient().prepareDelete(index, dataType, id);
+    if (parent != null) {
+      builder.setParent(parent);
+    }
+    return builder;
   }
 
   /**
@@ -133,16 +166,17 @@ public class ElasticIndexer implements SearchIndexer {
     }
   }
 
+
+
   /**
    * Index in Elasticsearch the passed json with the given id
    *
    * @param id
    * @param json
    */
-  public void indexJSON(String id, String json) {
+  public void indexJSON(String id, String json, String parent) {
     if (id != null) {
-      ElasticService.getClient().prepareIndex(index, dataType).setId(id).setSource(json).execute()
-          .actionGet();
+      getIndexRequest(id, json, parent).execute().actionGet();
     }
   }
 
@@ -197,7 +231,19 @@ public class ElasticIndexer implements SearchIndexer {
     return obj;
   }
 
-
+  /**
+   * Get the Parent of the object
+   * 
+   * @param obj
+   * @return
+   */
+  public static String getParent(Object obj) {
+    if (obj instanceof ContentVO) {
+      return StringHelper.isNullOrEmptyTrim(((ContentVO) obj).getItemId()) ? null
+          : ((ContentVO) obj).getItemId();
+    }
+    return null;
+  }
 
   /**
    * Get the Id of an Object

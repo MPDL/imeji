@@ -25,6 +25,8 @@ import de.mpg.imeji.logic.ImejiNamespaces;
 public class ContentVO implements Serializable {
   private static final long serialVersionUID = -7906584876989077898L;
   private URI id;
+  @j2jLiteral("http://imeji.org/terms/itemId")
+  private String itemId;
   @j2jLazyLiteral("http://imeji.org/terms/fulltext")
   private String fulltext;
   @j2jLazyList(ImejiNamespaces.TECHNICAL_METADATA)
@@ -202,6 +204,20 @@ public class ContentVO implements Serializable {
    */
   public void setMimetype(String mimetype) {
     this.mimetype = mimetype;
+  }
+
+  /**
+   * @return the itemId
+   */
+  public String getItemId() {
+    return itemId;
+  }
+
+  /**
+   * @param itemId the itemId to set
+   */
+  public void setItemId(String itemId) {
+    this.itemId = itemId;
   }
 
 }

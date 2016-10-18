@@ -290,8 +290,8 @@ public class ElasticQueryFactory {
         }
         return negate(f, pair.isNot());
       case fulltext:
-        return fieldQuery(ElasticFields.FULLTEXT, pair.getValue(), pair.getOperator(),
-            pair.isNot());
+        return contentQuery(
+            fieldQuery(ElasticFields.FULLTEXT, pair.getValue(), pair.getOperator(), pair.isNot()));
       case checksum:
         return fieldQuery(ElasticFields.CHECKSUM, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -654,11 +654,12 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder technicalMetadataQuery(SearchTechnicalMetadata tmd) {
-    return QueryBuilders.nestedQuery(ElasticFields.TECHNICAL.field(), QueryBuilders.boolQuery()
-        .must(
-            fieldQuery(ElasticFields.TECHNICAL_NAME, tmd.getLabel(), SearchOperators.EQUALS, false))
-        .must(fieldQuery(ElasticFields.TECHNICAL_VALUE, tmd.getValue(), tmd.getOperator(),
-            tmd.isNot())));
+    return contentQuery(QueryBuilders.nestedQuery(ElasticFields.TECHNICAL.field(),
+        QueryBuilders.boolQuery()
+            .must(fieldQuery(ElasticFields.TECHNICAL_NAME, tmd.getLabel(), SearchOperators.EQUALS,
+                false))
+            .must(fieldQuery(ElasticFields.TECHNICAL_VALUE, tmd.getValue(), tmd.getOperator(),
+                tmd.isNot()))));
   }
 
   /**
@@ -846,5 +847,9 @@ public class ElasticQueryFactory {
           .lookupType(ElasticTypes.usergroups.name()).lookupPath(role.field()));
     }
     return q;
+  }
+
+  private static QueryBuilder contentQuery(QueryBuilder q) {
+    return QueryBuilders.hasChildQuery(ElasticTypes.content.name(), q);
   }
 }

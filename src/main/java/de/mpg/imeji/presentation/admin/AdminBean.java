@@ -22,6 +22,7 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.controller.CleanMetadataJob;
 import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
+import de.mpg.imeji.logic.jobs.CleanContentVOsJob;
 import de.mpg.imeji.logic.jobs.CleanMetadataProfileJob;
 import de.mpg.imeji.logic.jobs.ElasticReIndexJob;
 import de.mpg.imeji.logic.jobs.FulltextAndTechnicalMetadataJob;
@@ -58,6 +59,7 @@ import de.mpg.imeji.presentation.beans.SuperBean;
  * @version $Revision$ $LastChangedDate$
  */
 public class AdminBean extends SuperBean {
+  private static final long serialVersionUID = 777808298937503532L;
   private static final Logger LOGGER = Logger.getLogger(AdminBean.class);
   private boolean clean = false;
   private String numberOfFilesInStorage;
@@ -223,6 +225,13 @@ public class AdminBean extends SuperBean {
     cleanStatement();
     cleanMetadata();
     cleanGrants();
+    cleanContent();
+  }
+
+  private void cleanContent() {
+    if (clean) {
+      Imeji.getExecutor().submit(new CleanContentVOsJob());
+    }
   }
 
   /**
@@ -266,7 +275,6 @@ public class AdminBean extends SuperBean {
    */
   private void cleanGrants() {
     if (clean) {
-
       ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutObject());
       ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutUser());
       ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantEmtpy());

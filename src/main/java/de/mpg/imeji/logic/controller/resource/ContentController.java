@@ -67,10 +67,11 @@ public class ContentController extends ImejiController {
    * @return
    * @throws ImejiException
    */
-  public ContentVO create(File file, CollectionImeji c, User user) throws ImejiException {
+  public ContentVO create(Item item, File file, CollectionImeji c, User user)
+      throws ImejiException {
     ContentVO contentVO = new ContentVO();
     contentVO = uploadFileToContentVO(file, contentVO, user, c);
-    contentVO = create(contentVO);
+    contentVO = create(item, contentVO);
     return contentVO;
   }
 
@@ -81,8 +82,11 @@ public class ContentController extends ImejiController {
    * @return
    * @throws ImejiException
    */
-  public ContentVO create(ContentVO contentVO) throws ImejiException {
+  public ContentVO create(Item item, ContentVO contentVO) throws ImejiException {
     contentVO.setId(IdentifierUtil.newURI(ContentVO.class));
+    if (item.getId() != null) {
+      contentVO.setItemId(item.getId().toString());
+    }
     WRITER.create(Arrays.asList(contentVO), null, Imeji.adminUser);
     return contentVO;
   }
@@ -316,10 +320,9 @@ public class ContentController extends ImejiController {
     public Integer call() throws Exception {
       if (itemId != null && !StringHelper.isNullOrEmptyTrim(contentVO.getId())) {
         try {
-          boolean update = extractContent(contentVO);
-          if (update) {
-            update(contentVO);
-          }
+          extractContent(contentVO);
+          contentVO.setItemId(itemId);
+          update(contentVO);
         } catch (Exception e) {
           LOGGER.warn("Error extracting fulltext/metadata from file of file " + itemId
               + " with content id " + contentVO.getId().toString(), e);

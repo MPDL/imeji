@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -13,6 +14,8 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document.OutputSettings;
+import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Whitelist;
 
 import de.mpg.imeji.logic.contentanalysis.ContentAnalyse;
@@ -65,6 +68,23 @@ public class TikaContentAnalyser implements ContentAnalyser {
     return techMd;
   }
 
+  public static void main(String[] args) {
+    String str =
+        "\nDogon Bibliography \n \n \nJournal abbreviations  \n \nJAL = Journal of African Languages (London) \nJSA =";
+    System.out.println(new TikaContentAnalyser().cleanText(str));
+
+
+  }
+
+  private String cleanText(String text) {
+    OutputSettings settings = new OutputSettings();
+    settings.prettyPrint(true);
+    settings.escapeMode(EscapeMode.xhtml);
+    settings.charset("UTF-8");
+    return StringEscapeUtils.unescapeHtml4(Jsoup.clean(text, "", Whitelist.none(), settings));
+    // return StringEscapeUtils.unescapeJava(text);
+  }
+
   @Override
   public ContentAnalyse extractAll(File file) {
     ContentAnalyse contentAnalyse = new ContentAnalyse();
@@ -72,7 +92,6 @@ public class TikaContentAnalyser implements ContentAnalyser {
     try {
       InputStream stream = TikaInputStream.get(file.toPath());
       try {
-
         stream = TikaInputStream.get(file.toPath());
         Metadata metadata = new Metadata();
         AutoDetectParser parser = new AutoDetectParser();
@@ -83,7 +102,8 @@ public class TikaContentAnalyser implements ContentAnalyser {
                 .add(new TechnicalMetadata(name, metadata.get(name)));
           }
         }
-        contentAnalyse.setFulltext(Jsoup.clean(handler.toString(), Whitelist.simpleText()));
+        // contentAnalyse.setFulltext(Jsoup.clean(handler.toString(), Whitelist.none()));
+        contentAnalyse.setFulltext(cleanText(handler.toString()));
       } catch (Exception e) {
         LOGGER.error("Error extracting fulltext/metadata from file", e);
       } finally {

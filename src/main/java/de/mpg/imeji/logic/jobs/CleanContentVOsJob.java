@@ -25,7 +25,11 @@ public class CleanContentVOsJob implements Callable<Integer> {
     LOGGER.info(contentIds.size() + " content found to be removed");
     ContentController controller = new ContentController();
     for (String id : contentIds) {
-      controller.delete(id);
+      try {
+        controller.delete(id);
+      } catch (Exception e) {
+        LOGGER.error("Error removing content " + id, e);
+      }
     }
     LOGGER.info("Contents cleaned!");
     return 1;

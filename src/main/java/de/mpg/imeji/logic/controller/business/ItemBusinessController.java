@@ -109,7 +109,7 @@ public class ItemBusinessController extends ImejiController {
     }
     validateChecksum(c.getId(), f, false);
     ContentController contentController = new ContentController();
-    ContentVO content = contentController.create(f, c, user);
+    ContentVO content = contentController.create(item, f, c, user);
     if (item == null) {
       item = ImejiFactory.newItem(c);
     }
@@ -119,6 +119,7 @@ public class ItemBusinessController extends ImejiController {
       item.setStatus(Status.RELEASED);
     }
     item = create(item, c, user);
+
     contentController.extractFileContentAndUpdateContentVOAsync(item.getId().toString(), content);
     return item;
   }
@@ -338,14 +339,14 @@ public class ItemBusinessController extends ImejiController {
     ContentController contentController = new ContentController();
     ContentVO content;
     if (StringHelper.isNullOrEmptyTrim(item.getContentId())) {
-      content = contentController.create(f, col, user);
+      content = contentController.create(item, f, col, user);
     } else {
       content = contentController.update(item.getContentId(), f, col, user);
     }
-    item = copyContent(item, content);
     if (filename != null) {
       item.setFilename(filename);
     }
+    item = copyContent(item, content);
     item = update(item, user);
     contentController.extractFileContentAndUpdateContentVOAsync(item.getId().toString(), content);
     return item;
@@ -540,7 +541,7 @@ public class ItemBusinessController extends ImejiController {
 
   /**
    * Copy the value of the contentVO to the item
-   * 
+   *
    * @param item
    * @param content
    * @return
@@ -572,7 +573,7 @@ public class ItemBusinessController extends ImejiController {
 
         ContentVO contentVO = toContentVO(item);
         if (contentVO.getId() == null) {
-          contentVO = contentController.create(contentVO);
+          contentVO = contentController.create(item, contentVO);
           item.setContentId(contentVO.getId().toString());
           itemToUpdate.add(item);
         }
