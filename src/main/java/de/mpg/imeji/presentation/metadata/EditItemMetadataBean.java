@@ -11,7 +11,6 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
@@ -36,15 +35,12 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataFactory;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
-import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.metadata.editors.AbstractMetadataEditor;
 import de.mpg.imeji.presentation.metadata.editors.MultipleEditor;
 import de.mpg.imeji.presentation.metadata.util.MetadataHelper;
 import de.mpg.imeji.presentation.metadata.util.SuggestBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Bean for batch and multiple metadata editor
@@ -86,6 +82,7 @@ public class EditItemMetadataBean extends SuperBean {
   private MetadataLabels metadataLabels;
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItems;
+  List<String> uris = new ArrayList<>();
 
   /**
    * Bean for batch and multiple metadata editor
@@ -115,8 +112,9 @@ public class EditItemMetadataBean extends SuperBean {
    */
   public void init() throws IOException {
     reset();
+    uris = new ArrayList<>();
     try {
-      List<String> uris = findItems();
+      uris = findItems();
       if (uris != null && !uris.isEmpty()) {
         lockImages(uris);
         // If editing all items, load only the first one
@@ -139,7 +137,7 @@ public class EditItemMetadataBean extends SuperBean {
       }
     } catch (Exception e) {
       redirectToView();
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", getLocale()) + " " + e);
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", getLocale()) + " " + e.getMessage());
       LOGGER.error("Error init Edit page", e);
     }
   }
@@ -388,24 +386,22 @@ public class EditItemMetadataBean extends SuperBean {
   private void lockImages(List<String> uris) {
     lockedImages = 0;
     for (int i = 0; i < uris.size(); i++) {
-      try {
-        Locks.lock(new Lock(uris.get(i), getSessionUser().getEmail()));
-      } catch (Exception e) {
-        uris.remove(i);
-        lockedImages++;
-        i--;
-      }
+      Locks.lock(new Lock(uris.get(i), getSessionUser().getEmail()));
     }
   }
 
   /**
    * Release the lock on all current {@link Item}
    */
-  private void unlockImages() {
-    SessionBean sb = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    for (ItemWrapper eib : editor.getItems()) {
-      Locks.unLock(new Lock(eib.asItem().getId().toString(), sb.getUser().getEmail()));
+  private void unlockImages(List<String> uris) {
+    try {
+      for (String uri : uris) {
+        Locks.unLock(new Lock(uri, getSessionUser().getEmail()));
+      }
+    } catch (Exception e) {
+      LOGGER.error("Error unlocking items", e);
     }
+
   }
 
   /**
@@ -442,17 +438,12 @@ public class EditItemMetadataBean extends SuperBean {
    */
   public void redirectToView() throws IOException {
     this.reset();
-    unlockImages();
-    HistorySession hs = (HistorySession) BeanHelper.getSessionBean(HistorySession.class);
-
+    unlockImages(uris);
     // redirect to view when previous page was upload
-    if (hs.getPreviousPage().getUrl().contains("upload")) {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(hs.getPreviousPage().getCompleteUrl().replaceFirst("upload.*", "browse"));
-
+    if (getHistory().getPreviousPage().getUrl().contains("upload")) {
+      redirect(getHistory().getPreviousPage().getCompleteUrl().replaceFirst("upload.*", "browse"));
     } else {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(hs.getPreviousPage().getCompleteUrl());
+      redirect(getHistory().getPreviousPage().getCompleteUrl());
     }
   }
 
@@ -462,9 +453,7 @@ public class EditItemMetadataBean extends SuperBean {
    * @throws IOException
    */
   public void reload() throws IOException {
-    HistorySession hs = (HistorySession) BeanHelper.getSessionBean(HistorySession.class);
-    FacesContext.getCurrentInstance().getExternalContext()
-        .redirect(hs.getCurrentPage().getCompleteUrl());
+    redirect(getHistory().getCurrentPage().getCompleteUrl());
   }
 
   /**
@@ -697,11 +686,8 @@ public class EditItemMetadataBean extends SuperBean {
   }
 
   public void redirectToCollectionItemsPage(String collectionId) throws IOException {
-    Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
-
-    FacesContext.getCurrentInstance().getExternalContext()
-        .redirect(navigation.getApplicationSpaceUrl() + navigation.getCollectionPath() + "/"
-            + ObjectHelper.getId(URI.create(collectionId)) + "/" + navigation.getBrowsePath());
+    redirect(getNavigation().getApplicationSpaceUrl() + getNavigation().getCollectionPath() + "/"
+        + ObjectHelper.getId(URI.create(collectionId)) + "/" + getNavigation().getBrowsePath());
   }
 
   public MetadataLabels getMetadataLabels() {
