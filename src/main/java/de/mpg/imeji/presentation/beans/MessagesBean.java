@@ -5,10 +5,15 @@ package de.mpg.imeji.presentation.beans;
 
 import java.util.Iterator;
 
+import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 
+@ManagedBean(name = "MessagesBean")
+@RequestScoped
 public class MessagesBean {
+
   public boolean getHasErrorMessages() {
     for (Iterator<FacesMessage> i = FacesContext.getCurrentInstance().getMessages(); i.hasNext();) {
       FacesMessage fm = i.next();

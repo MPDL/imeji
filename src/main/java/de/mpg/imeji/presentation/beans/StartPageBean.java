@@ -31,9 +31,11 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.presentation.item.ThumbnailBean;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
@@ -55,7 +57,6 @@ public class StartPageBean extends SuperBean implements Serializable {
   private int searchforItemCreatedForLessThan = 0;
   private boolean carouselEnabled = Imeji.CONFIG.getStartPageCarouselEnabled();
 
-
   @PostConstruct
   public void init() {
     if (Imeji.CONFIG.getStartPageCarouselEnabled()) {
@@ -68,6 +69,17 @@ public class StartPageBean extends SuperBean implements Serializable {
       } catch (Exception e) {
         LOGGER.error("Error initializing start page", e);
       }
+    }
+
+  }
+
+  /**
+   * Method called before the message rendering. Postconstruct method happens too late to display
+   * the messages
+   */
+  public void onload() {
+    if (UrlHelper.hasParameter("redirectAfterLogin")) {
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("view_page_disallowed", getLocale()));
     }
   }
 
@@ -124,7 +136,8 @@ public class StartPageBean extends SuperBean implements Serializable {
         LOGGER.error("Error building query to search items", e);
       }
       return new SearchResult(
-          ic.search(null, sq, sc, getSessionUser(), getSelectedSpaceString(), -1, 0).getResults(), null);
+          ic.search(null, sq, sc, getSessionUser(), getSelectedSpaceString(), -1, 0).getResults(),
+          null);
     }
     return ic.search(null, sq, sc, getSessionUser(), getSelectedSpaceString(), -1, 0);
   }
