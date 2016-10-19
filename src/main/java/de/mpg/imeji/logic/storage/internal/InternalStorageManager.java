@@ -39,6 +39,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -62,6 +65,8 @@ import de.mpg.imeji.logic.vo.Item;
  */
 public class InternalStorageManager implements Serializable {
   private static final long serialVersionUID = -5768110924108700468L;
+  private static final ThreadPoolExecutor INTERNAL_STORAGE_EXECUTOR =
+      (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
   /**
    * The directory path where files are stored
    */
@@ -314,6 +319,8 @@ public class InternalStorageManager implements Serializable {
         + StringHelper.urlSeparator + filename;
   }
 
+
+
   /**
    * Write a new file for the 3 resolution of one file
    *
@@ -323,23 +330,51 @@ public class InternalStorageManager implements Serializable {
    */
   private InternalStorageItem writeItemFiles(InternalStorageItem item, File file)
       throws IOException {
-    ImageGeneratorManager generatorManager = new ImageGeneratorManager();
-    // write web resolution file in storage
-    String calculatedExtension = guessExtension(file);
-    String webResolutionPath =
-        write(generatorManager.generateWebResolution(file, calculatedExtension),
-            transformUrlToPath(item.getWebUrl()));
-    // Use Web resolution to generate Thumbnail (avoid to read the original
-    // file again)
-    File webResolutionFile = new File(webResolutionPath);
-    write(
-        generatorManager.generateThumbnail(webResolutionFile,
-            FilenameUtils.getExtension(webResolutionPath)),
-        transformUrlToPath(item.getThumbnailUrl()));
-    // write original file in storage: simple copy the tmp file to the
-    // correct path
-    copy(file, transformUrlToPath(item.getOriginalUrl()));
+    INTERNAL_STORAGE_EXECUTOR.submit(new TransformAndWriteFilesTask(item, file));
     return item;
+  }
+
+  /**
+   * Inner class to transform and write the files in the storage asynchronously
+   * 
+   * @author saquet
+   *
+   */
+  private class TransformAndWriteFilesTask implements Callable<Integer> {
+    private final InternalStorageItem item;
+    private final File file;
+
+    public TransformAndWriteFilesTask(InternalStorageItem item, File file) {
+      this.item = item;
+      this.file = file;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+      try {
+        ImageGeneratorManager generatorManager = new ImageGeneratorManager();
+        // write web resolution file in storage
+        String calculatedExtension = guessExtension(file);
+        String webResolutionPath =
+            write(generatorManager.generateWebResolution(file, calculatedExtension),
+                transformUrlToPath(item.getWebUrl()));
+        // Use Web resolution to generate Thumbnail (avoid to read the original
+        // file again)
+        File webResolutionFile = new File(webResolutionPath);
+        write(
+            generatorManager.generateThumbnail(webResolutionFile,
+                FilenameUtils.getExtension(webResolutionPath)),
+            transformUrlToPath(item.getThumbnailUrl()));
+        // write original file in storage: simple copy the tmp file to the
+        // correct path
+        copy(file, transformUrlToPath(item.getOriginalUrl()));
+      } catch (Exception e) {
+        LOGGER.error("Error transforming and writing file in internal storage ", e);
+      } finally {
+        FileUtils.deleteQuietly(file);
+      }
+      return 1;
+    }
   }
 
   /**

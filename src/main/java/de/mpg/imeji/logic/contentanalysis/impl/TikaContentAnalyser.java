@@ -1,22 +1,19 @@
 package de.mpg.imeji.logic.contentanalysis.impl;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.Reader;
+import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.util.List;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.sax.BodyContentHandler;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document.OutputSettings;
-import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.safety.Whitelist;
 
 import de.mpg.imeji.logic.contentanalysis.ContentAnalyse;
 import de.mpg.imeji.logic.contentanalysis.ContentAnalyser;
@@ -32,78 +29,79 @@ public class TikaContentAnalyser implements ContentAnalyser {
   private static final Logger LOGGER = Logger.getLogger(TikaContentAnalyser.class);
   // Avoid too long technical metadata, to reduce performance issues
   private static final int METADATA_MAX_LENGHT = 250;
+  // Limit the sire of the body parsed, too avoid heap space out of memory
+  private static final int BODY_MAX_LENGHT = 1000000;
 
   @Override
   public String extractFulltext(File file) {
-    try {
-      BodyContentHandler handler = new BodyContentHandler(-1);
-      FileInputStream stream = new FileInputStream(file);
-      Metadata metadata = new Metadata();
-      AutoDetectParser parser = new AutoDetectParser();
-      parser.parse(stream, handler, metadata);
-      return Jsoup.clean(handler.toString(), Whitelist.simpleText());
-    } catch (Exception e) {
-      LOGGER.error("Error extracting fulltext", e);
-    }
-    return "";
-  }
-
-  @Override
-  public List<TechnicalMetadata> extractTechnicalMetadata(File file) {
-    List<TechnicalMetadata> techMd = new ArrayList<>();
-    try {
-      Metadata metadata = new Metadata();
-      BodyContentHandler handler = new BodyContentHandler(-1);
-      FileInputStream is = new FileInputStream(file);
-      AutoDetectParser parser = new AutoDetectParser();
-      parser.parse(is, handler, metadata);
-      for (String name : metadata.names()) {
-        if (metadata.get(name).length() < METADATA_MAX_LENGHT) {
-          techMd.add(new TechnicalMetadata(name, metadata.get(name)));
-        }
-      }
-    } catch (Exception e) {
-      LOGGER.error("Error extracting technical metadata from file", e);
-    }
-    return techMd;
-  }
-
-  public static void main(String[] args) {
-    String str =
-        "\nDogon Bibliography \n \n \nJournal abbreviations  \n \nJAL = Journal of African Languages (London) \nJSA =";
-    System.out.println(new TikaContentAnalyser().cleanText(str));
-
-
-  }
-
-  private String cleanText(String text) {
-    OutputSettings settings = new OutputSettings();
-    settings.prettyPrint(true);
-    settings.escapeMode(EscapeMode.xhtml);
-    settings.charset("UTF-8");
-    return StringEscapeUtils.unescapeHtml4(Jsoup.clean(text, "", Whitelist.none(), settings));
-    // return StringEscapeUtils.unescapeJava(text);
-  }
-
-  @Override
-  public ContentAnalyse extractAll(File file) {
+    Tika tika = new Tika();
     ContentAnalyse contentAnalyse = new ContentAnalyse();
-    BodyContentHandler handler = new BodyContentHandler(-1);
+    Metadata metadata = new Metadata();
     try {
       InputStream stream = TikaInputStream.get(file.toPath());
       try {
         stream = TikaInputStream.get(file.toPath());
-        Metadata metadata = new Metadata();
-        AutoDetectParser parser = new AutoDetectParser();
-        parser.parse(stream, handler, metadata, new ParseContext());
+        contentAnalyse
+            .setFulltext(cleanText(tika.parseToString(stream, metadata, BODY_MAX_LENGHT)));
+      } catch (Exception e) {
+        LOGGER.error("Error extracting fulltext/metadata from file", e);
+      } finally {
+        stream.close();
+      }
+    } catch (Exception e) {
+      LOGGER.error("Error closing stream", e);
+    }
+    return contentAnalyse.getFulltext();
+  }
+
+  @Override
+  public List<TechnicalMetadata> extractTechnicalMetadata(File file) {
+    Tika tika = new Tika();
+    ContentAnalyse contentAnalyse = new ContentAnalyse();
+    Metadata metadata = new Metadata();
+    try {
+      InputStream stream = TikaInputStream.get(file.toPath());
+      Reader reader = null;
+      try {
+        stream = TikaInputStream.get(file.toPath());
+        reader = tika.parse(stream, metadata);
         for (String name : metadata.names()) {
           if (metadata.get(name).length() < METADATA_MAX_LENGHT) {
             contentAnalyse.getTechnicalMetadata()
                 .add(new TechnicalMetadata(name, metadata.get(name)));
           }
         }
-        // contentAnalyse.setFulltext(Jsoup.clean(handler.toString(), Whitelist.none()));
-        contentAnalyse.setFulltext(cleanText(handler.toString()));
+      } catch (Exception e) {
+        LOGGER.error("Error extracting fulltext/metadata from file", e);
+      } finally {
+        stream.close();
+        if (reader != null) {
+          reader.close();
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Error closing stream", e);
+    }
+    return contentAnalyse.getTechnicalMetadata();
+  }
+
+  @Override
+  public ContentAnalyse extractAll(File file) {
+    Tika tika = new Tika();
+    ContentAnalyse contentAnalyse = new ContentAnalyse();
+    Metadata metadata = new Metadata();
+    try {
+      InputStream stream = TikaInputStream.get(file.toPath());
+      try {
+        stream = TikaInputStream.get(file.toPath());
+        contentAnalyse
+            .setFulltext(cleanText(tika.parseToString(stream, metadata, BODY_MAX_LENGHT)));
+        for (String name : metadata.names()) {
+          if (metadata.get(name).length() < METADATA_MAX_LENGHT) {
+            contentAnalyse.getTechnicalMetadata()
+                .add(new TechnicalMetadata(name, metadata.get(name)));
+          }
+        }
       } catch (Exception e) {
         LOGGER.error("Error extracting fulltext/metadata from file", e);
       } finally {
@@ -113,5 +111,22 @@ public class TikaContentAnalyser implements ContentAnalyser {
       LOGGER.error("Error closing stream", e);
     }
     return contentAnalyse;
+  }
+
+  /**
+   * Clean the text to make it better for search
+   * 
+   * @param text
+   * @return
+   * @throws IOException
+   */
+  private String cleanText(String text) throws IOException {
+    BufferedReader reader = new BufferedReader(new StringReader(text));
+    ByteArrayOutputStream bous = new ByteArrayOutputStream();
+    String line = "";
+    while ((line = reader.readLine()) != null) {
+      bous.write((line + " ").getBytes(Charset.forName("UTF-8")));
+    }
+    return bous.toString("UTF-8");
   }
 }

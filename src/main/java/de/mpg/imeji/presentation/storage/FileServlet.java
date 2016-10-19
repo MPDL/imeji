@@ -114,10 +114,24 @@ public class FileServlet extends HttpServlet {
             "The resource you are trying to retrieve does not exist!");
       } else {
         LOGGER.error(e.getMessage());
+        sendEmptyThumbnail(resp);
         if (!resp.isCommitted()) {
           resp.sendError(422, "Unprocessable entity!");
         }
       }
+    }
+  }
+
+  /**
+   * Send an empty thumbnail
+   * 
+   * @param resp
+   */
+  private void sendEmptyThumbnail(HttpServletResponse resp) {
+    try {
+      externalStorage.read(RESOURCE_EMTPY_ICON_URL, resp.getOutputStream(), true);
+    } catch (ImejiException | IOException e) {
+      LOGGER.error("Error reading default thumbnail", e);
     }
   }
 

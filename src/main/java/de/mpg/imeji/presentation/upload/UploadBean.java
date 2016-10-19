@@ -152,7 +152,6 @@ public class UploadBean extends SuperBean {
               uploadFile(tmp, filename);
             } finally {
               stream.close();
-              FileUtils.deleteQuietly(tmp);
             }
           }
         }

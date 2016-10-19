@@ -330,8 +330,6 @@ public class ContentController extends ImejiController {
       }
       return 1;
     }
-
-
   }
 
   /**

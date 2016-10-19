@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -15,6 +16,9 @@ public final class PdfUtils {
     // private constructor
   }
 
+  public static void main(String[] args) throws IOException {
+    pdfToImage(new File("C:\\Users\\saquet\\Pictures\\pdf\\A Grammar of Togo Kan.pdf"));
+  }
 
   /**
    * Read a pdf File, et the first page, and return it as an image
@@ -25,7 +29,7 @@ public final class PdfUtils {
    * @throws IOException
    */
   public static File pdfToImage(File file) throws IOException {
-    PDDocument document = PDDocument.load(file);
+    PDDocument document = PDDocument.load(file, MemoryUsageSetting.setupTempFileOnly());
     try {
       if (document.getNumberOfPages() > 0) {
         PDFRenderer pdfRenderer = new PDFRenderer(document);

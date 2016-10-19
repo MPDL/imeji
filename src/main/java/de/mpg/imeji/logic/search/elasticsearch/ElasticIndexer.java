@@ -185,8 +185,8 @@ public class ElasticIndexer implements SearchIndexer {
    * immediately available for other tasks
    */
   public void commit() {
-    // Check if refersh is needed: cost are very high
-    // ElasticService.getClient().admin().indices().prepareRefresh(index).execute().actionGet();
+    // Check if refresh is needed: cost are very high
+    ElasticService.getClient().admin().indices().prepareRefresh(index).execute().actionGet();
   }
 
   /**
