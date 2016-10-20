@@ -129,7 +129,6 @@ public class InternalStorageManager implements Serializable {
     String origExtension = getExtension(file.getPath());
     String guessedExtension = guessExtension(file);
     ImageGeneratorManager generatorManager = new ImageGeneratorManager();
-
     removeFile(url);
     if (url.contains(FileResolution.ORIGINAL.name().toLowerCase())) {
       url = replaceExtension(url, origExtension);

@@ -2,6 +2,8 @@ package de.mpg.imeji.test.logic.controller;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -88,7 +90,19 @@ public class ControllerTest {
       createCollection();
     }
     item = ImejiFactory.newItem(collection);
-    item = controller.createWithFile(item, file, "test.jpg", collection, JenaUtil.testUser);
+    item =
+        controller.createWithFile(item, copyFile(file), "test.jpg", collection, JenaUtil.testUser);
     return item;
+  }
+
+  private static File copyFile(File f) {
+    try {
+      File copy = File.createTempFile(f.getName(), FilenameUtils.getExtension(f.getName()));
+      FileUtils.copyFile(f, copy);
+      return copy;
+    } catch (Exception e) {
+      throw new RuntimeException("Error copying file", e);
+    }
+
   }
 }

@@ -86,10 +86,8 @@ public class ItemControllerTestClass extends ControllerTest {
     createCollection();
     List<Item> itemsToUpdate = new ArrayList<Item>();
     itemsToUpdate.add(createItemWithFile());
-
     createProfile();
     createCollection();
-
     itemsToUpdate.add(createItemWithFile());
     ItemBusinessController controller = new ItemBusinessController();
 
