@@ -130,7 +130,7 @@ public class LoginBean extends SuperBean {
   public void logout() throws IOException {
     FacesContext fc = FacesContext.getCurrentInstance();
     String spaceId = sessionBean.getSpaceId();
-    Locks.unlockAll(sessionBean.getUser().getEmail());
+    Locks.unlockAll(getSessionUser().getEmail());
     HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
     session.invalidate();
     sessionBean.setUser(null);

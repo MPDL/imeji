@@ -5,11 +5,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:composite="http://java.sun.com/jsf/composite"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
-	<ui:remove>
-	<ui:define name="init">
-		<h:outputText value="#{metadataBean.init}"/>
-	</ui:define>
-	</ui:remove>
+
 	<!-- Main Content - bibliographic grid list - START -->
 	<ui:define name="mainContent">
 		<ui:fragment rendered="#{metadataBean.profile != null and Auth.update(metadataBean.profile)}">

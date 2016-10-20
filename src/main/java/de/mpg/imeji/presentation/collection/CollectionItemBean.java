@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.item.ItemBean;
 import de.mpg.imeji.presentation.item.ItemDetailsBrowse;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -35,7 +34,8 @@ public class CollectionItemBean extends ItemBean {
   public CollectionItemBean() {
     super();
     this.collectionId = UrlHelper.getParameterValue("collectionId");
-    this.prettyLink = SessionBean.getPrettySpacePage("pretty:EditImageOfCollection", getSelectedSpaceString());
+    this.prettyLink =
+        SessionBean.getPrettySpacePage("pretty:EditImageOfCollection", getSelectedSpaceString());
   }
 
   @Override
@@ -55,13 +55,6 @@ public class CollectionItemBean extends ItemBean {
     } catch (IOException e) {
       LOGGER.error("Error redirect to browse page", e);
     }
-  }
-
-
-  @Override
-  public String getPageUrl() {
-    return getNavigation().getCollectionUrl() + collectionId + "/" + Navigation.ITEM.getPath() + "/"
-        + getId();
   }
 
   @Override

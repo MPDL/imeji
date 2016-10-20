@@ -57,6 +57,7 @@ import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.history.HistoryPage;
 import de.mpg.imeji.presentation.metadata.MetadataSetWrapper;
 import de.mpg.imeji.presentation.metadata.SingleEditorWrapper;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -292,8 +293,27 @@ public class ItemBean extends SuperBean {
     this.techMd = md;
   }
 
+  private HistoryPage getPage() {
+    return getHistory().getCurrentPage().copy();
+  }
+
   public String getPageUrl() {
-    return getNavigation().getItemUrl() + id;
+    HistoryPage p = getPage();
+    p.getParams().remove("tab");
+    return p.getCompleteUrl();
+    // return getNavigation().getItemUrl() + id + g;
+  }
+
+  public String getTechnicalMetadataUrl() {
+    HistoryPage p = getPage();
+    p.getParams().put("tab", new String[] {"techmd"});
+    return p.getCompleteUrl();
+  }
+
+  public String getUtilitiesUrl() {
+    HistoryPage p = getPage();
+    p.getParams().put("tab", new String[] {"util"});
+    return p.getCompleteUrl();
   }
 
   public CollectionImeji getCollection() {

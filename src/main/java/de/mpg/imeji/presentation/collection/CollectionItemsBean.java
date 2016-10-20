@@ -72,7 +72,7 @@ public class CollectionItemsBean extends ItemsBean {
       id = UrlHelper.getParameterValue("id");
       uri = ObjectHelper.getURI(CollectionImeji.class, id);
       collection = new CollectionController().retrieveLazy(uri, getSessionUser());
-      profile = new ProfileController().retrieve(collection.getProfile(), getSessionUser());
+      profile = new ProfileController().retrieve(collection.getProfile(), Imeji.adminUser);
       metadataLabels = new MetadataLabels(profile, getLocale());
       browseContext = getNavigationString() + id;
       update();

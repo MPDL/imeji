@@ -68,17 +68,17 @@
 	
 		<!-- MetaDataTypes ListHeader - show media meta data, tech., other -->
 		<div class="imj_listHeader">
-			<h:outputLink id="lnkViewItemUtilPage" styleClass="imj_active" value="#{itemBean.pageUrl}?tab=util" rendered="#{itemBean.tab == 'util' and itemBean.image.status!='WITHDRAWN'}">
+			<h:outputLink id="lnkViewItemUtilPage" styleClass="imj_active" value="#{itemBean.utilitiesUrl}" rendered="#{itemBean.tab == 'util' and itemBean.image.status!='WITHDRAWN'}">
 				<h:outputText value="#{lbl.view_util}"/>
 			</h:outputLink>
-			<h:outputLink id="lnkViewItemUtilPage2" value="#{itemBean.pageUrl}?tab=util" rendered="#{itemBean.tab != 'util' and itemBean.image.status!='WITHDRAWN'}">
+			<h:outputLink id="lnkViewItemUtilPage2" value="#{itemBean.utilitiesUrl}" rendered="#{itemBean.tab != 'util' and itemBean.image.status!='WITHDRAWN'}">
 				<h:outputText value="#{lbl.view_util}"/>
 			</h:outputLink>
 			<h:panelGroup styleClass="imj_separator" rendered = "#{itemBean.image.status!='WITHDRAWN'}"/>
-			<h:outputLink id="lnkViewItemMdPage" styleClass="imj_active" value="#{itemBean.pageUrl}?tab=techmd" rendered="#{itemBean.tab == 'techmd' and itemBean.image.status!='WITHDRAWN'}">
+			<h:outputLink id="lnkViewItemMdPage" styleClass="imj_active" value="#{itemBeantechnicalMetadataUrl}" rendered="#{itemBean.tab == 'techmd' and itemBean.image.status!='WITHDRAWN'}">
 				<h:outputText value="#{lbl.view_tech_md}"/>
 			</h:outputLink>
-			<h:outputLink id="lnkViewItemMdPage2" value="#{itemBean.pageUrl}?tab=techmd" rendered="#{itemBean.tab != 'techmd' and itemBean.image.status!='WITHDRAWN'}">
+			<h:outputLink id="lnkViewItemMdPage2" value="#{itemBean.technicalMetadataUrl}" rendered="#{itemBean.tab != 'techmd' and itemBean.image.status!='WITHDRAWN'}">
 				<h:outputText value="#{lbl.view_tech_md}"/>
 			</h:outputLink>
 			<h:panelGroup styleClass="imj_separator"  rendered = "#{itemBean.image.status!='WITHDRAWN'}"/>

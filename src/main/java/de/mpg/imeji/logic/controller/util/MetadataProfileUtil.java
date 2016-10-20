@@ -48,7 +48,6 @@ public class MetadataProfileUtil {
         // safe to retrieve the profile as an admin user, as there is only one call to this method
         pMap.put(im.getMetadataSet().getProfile(),
             new ProfileController().retrieve(im.getMetadataSet().getProfile(), Imeji.adminUser));
-        // ObjectCachedLoader.loadProfile(im.getMetadataSet().getProfile()));
       }
     }
     return pMap;

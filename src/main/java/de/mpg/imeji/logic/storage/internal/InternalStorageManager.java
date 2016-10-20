@@ -330,7 +330,10 @@ public class InternalStorageManager implements Serializable {
    */
   private InternalStorageItem writeItemFiles(InternalStorageItem item, File file)
       throws IOException {
-    INTERNAL_STORAGE_EXECUTOR.submit(new TransformAndWriteFilesTask(item, file));
+    // write original file in storage
+    copy(file, transformUrlToPath(item.getOriginalUrl()));
+    // Create thumbnail and Preview file
+    INTERNAL_STORAGE_EXECUTOR.submit(new GenerateThumbnailAndPreviewTask(item, file));
     return item;
   }
 
@@ -340,11 +343,11 @@ public class InternalStorageManager implements Serializable {
    * @author saquet
    *
    */
-  private class TransformAndWriteFilesTask implements Callable<Integer> {
+  private class GenerateThumbnailAndPreviewTask implements Callable<Integer> {
     private final InternalStorageItem item;
     private final File file;
 
-    public TransformAndWriteFilesTask(InternalStorageItem item, File file) {
+    public GenerateThumbnailAndPreviewTask(InternalStorageItem item, File file) {
       this.item = item;
       this.file = file;
     }
@@ -365,9 +368,7 @@ public class InternalStorageManager implements Serializable {
             generatorManager.generateThumbnail(webResolutionFile,
                 FilenameUtils.getExtension(webResolutionPath)),
             transformUrlToPath(item.getThumbnailUrl()));
-        // write original file in storage: simple copy the tmp file to the
-        // correct path
-        copy(file, transformUrlToPath(item.getOriginalUrl()));
+
       } catch (Exception e) {
         LOGGER.error("Error transforming and writing file in internal storage ", e);
       } finally {
