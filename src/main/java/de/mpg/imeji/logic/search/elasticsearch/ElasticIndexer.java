@@ -74,7 +74,6 @@ public class ElasticIndexer implements SearchIndexer {
   }
 
 
-  // TODO Implements bulk index
   @Override
   public void indexBatch(List<?> l) {
     if (l.isEmpty()) {
@@ -106,6 +105,9 @@ public class ElasticIndexer implements SearchIndexer {
 
   @Override
   public void deleteBatch(List<?> l) {
+    if (l.isEmpty()) {
+      return;
+    }
     BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
     for (Object obj : l) {
       String id = getId(obj);

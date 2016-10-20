@@ -153,8 +153,6 @@ public class UserController {
     // remove User from User Groups
     GroupBusinessController ugc = new GroupBusinessController();
     ugc.removeUserFromAllGroups(user, Imeji.adminUser);
-    // remove user grant
-    WRITER.delete(new ArrayList<Object>(user.getGrants()), Imeji.adminUser);
     // remove user
     WRITER.delete(WriterFacade.toList(user), Imeji.adminUser);
   }
