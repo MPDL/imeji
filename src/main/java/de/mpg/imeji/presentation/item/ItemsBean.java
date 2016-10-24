@@ -349,7 +349,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws ImejiException @
    */
   private void withdraw(List<String> uris) throws ImejiException {
-    Collection<Item> items = loadImages(uris);
+    Collection<Item> items =
+        new ItemBusinessController().retrieveBatch(uris, -1, 0, getSessionUser());
     int count = items.size();
     if ("".equals(discardComment.trim())) {
       BeanHelper.error(
