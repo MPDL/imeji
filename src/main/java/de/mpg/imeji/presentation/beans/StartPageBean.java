@@ -76,10 +76,19 @@ public class StartPageBean extends SuperBean implements Serializable {
   /**
    * Method called before the message rendering. Postconstruct method happens too late to display
    * the messages
+   * 
+   * @throws IOException
    */
-  public void onload() {
+  public void onload() throws IOException {
     if (UrlHelper.hasParameter("redirectAfterLogin")) {
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("view_page_disallowed", getLocale()));
+    }
+    if (UrlHelper.getParameterBoolean("uploadForbidden")) {
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("upload_forbidden", getLocale()));
+    }
+    if (UrlHelper.getParameterBoolean("logout")) {
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_out", getLocale()));
+      redirect(getNavigation().getHomeUrl());
     }
   }
 

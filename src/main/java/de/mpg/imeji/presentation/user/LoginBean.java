@@ -130,14 +130,13 @@ public class LoginBean extends SuperBean {
   public void logout() throws IOException {
     FacesContext fc = FacesContext.getCurrentInstance();
     String spaceId = sessionBean.getSpaceId();
-    Locks.unlockAll(getSessionUser().getEmail());
+    Locks.unlockAll(sessionBean.getUser().getEmail());
     HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
     session.invalidate();
     sessionBean.setUser(null);
     sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     sessionBean.setSpaceId(spaceId);
-    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_out", getLocale()));
-    redirect(getNavigation().getHomeUrl());
+    redirect(getNavigation().getHomeUrl() + "?logout=1");
   }
 
   private void initRequestUrl() {

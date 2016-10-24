@@ -105,10 +105,8 @@ public class SingleUploadBean extends SuperBean implements Serializable {
         LOGGER.error("Error initialization single upload", e);
       }
     } else if (getSessionUser() != null) {
-      BeanHelper.cleanMessages();
-      BeanHelper.info("You have no right to create collections, thus you can not upload items!");
       try {
-        redirect(getNavigation().getHomeUrl());
+        redirect(getNavigation().getHomeUrl() + "?uploadForbidden=1");
       } catch (IOException e) {
         LOGGER.error("Error redirecting", e);
       }
