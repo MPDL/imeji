@@ -261,8 +261,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
       sus.setCollection(collection);
       sus.setProfile(profile);
       sus.setMdSetBean(mdSetBean);
-      licenseEditor =
-          new LicenseEditor(getLocale(), collection.getStatus().equals(Status.RELEASED));
+      licenseEditor = new LicenseEditor(getLocale(), collection.getStatus().equals(Status.PENDING));
     }
   }
 

@@ -28,8 +28,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 
+
 @Path("/albums")
-@Api(value = "rest/albums", description = "Operations on albums")
+@Api(value = "albums")
 public class AlbumResource implements ImejiResource {
 
   @POST

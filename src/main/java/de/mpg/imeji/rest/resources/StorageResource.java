@@ -11,11 +11,12 @@ import de.mpg.imeji.rest.process.StorageProcess;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+
 /**
  * Created by vlad on 13.01.15.
  */
 @Path("/storage")
-@Api(value = "rest/storage", description = "Storage properties")
+@Api(value = "storage")
 public class StorageResource {
 
   @GET
@@ -24,5 +25,4 @@ public class StorageResource {
   public Response getStorageProperties() {
     return RestProcessUtils.buildJSONResponse(StorageProcess.getStorageProperties());
   }
-
 }

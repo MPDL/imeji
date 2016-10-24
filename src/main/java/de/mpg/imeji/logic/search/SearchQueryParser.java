@@ -185,7 +185,10 @@ public class SearchQueryParser {
         } else if (mdParser.find(scString)) {
           SearchOperators operator = stringOperator2SearchOperator(mdParser.getGroup(3));
           String value = mdParser.getGroup(4);
-          value = value.startsWith("\"") ? value + "\"" : value;
+          if (value.startsWith("\"")) {
+            reader.read();
+            value = value + "\"";
+          }
           SearchFields field = SearchFields.valueOf(mdParser.getGroup(2));
           URI statementId = ObjectHelper.getURI(Statement.class, mdParser.getGroup(1));
           searchQuery.addPair(new SearchMetadata(field, operator, value, statementId, not));
@@ -195,7 +198,10 @@ public class SearchQueryParser {
           SearchOperators operator = stringOperator2SearchOperator(pairParser.getGroup(2));
           SearchFields field = SearchFields.valueOf(pairParser.getGroup(1));
           String value = pairParser.getGroup(3);
-          value = value.startsWith("\"") ? value + "\"" : value;
+          if (value.startsWith("\"")) {
+            reader.read();
+            value = value + "\"";
+          }
           searchQuery.addPair(new SearchPair(field, operator, value, not));
           scString = "";
           not = false;

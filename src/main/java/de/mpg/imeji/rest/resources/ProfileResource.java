@@ -26,8 +26,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 
+
 @Path("/profiles")
-@Api(value = "rest/profiles", description = "Operations on profiles")
+@Api(value = "profiles")
 public class ProfileResource implements ImejiResource {
 
   @Override

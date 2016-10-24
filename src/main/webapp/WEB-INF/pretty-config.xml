@@ -9,6 +9,8 @@
 		/> -->
 	<rewrite match="/metadataProfile/(.+)" substitute="/profile/$1"
 		redirect="301" />
+		<rewrite match="/rest$" substitute="/api/index.html"
+		redirect="301" />
 	<!-- Begin UrlMappings -->
 	<url-mapping id="home">
 		<pattern value="/" />

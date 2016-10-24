@@ -35,7 +35,7 @@ import io.swagger.annotations.ApiOperation;
 
 // @Singleton
 @Path("/collections")
-@Api(value = "rest/collections", description = "Operations on collections")
+@Api(value = "collections")
 public class CollectionResource implements ImejiResource {
 
   @GET

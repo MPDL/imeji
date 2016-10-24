@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 
+
 /**
  * API Method to login
  *
@@ -24,7 +25,7 @@ import io.swagger.annotations.ApiOperation;
  */
 
 @Path("/")
-@Api(value = "rest/authentication", description = "Authentication")
+@Api(value = "authentication")
 public class AuthenticationResource {
 
   @POST
@@ -50,8 +51,7 @@ public class AuthenticationResource {
   @GET
   // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
   @Path("/login")
-  // Pattern.compile
-  // ("(((https?|ftp|gopher|telnet|file|Unsure|http):)*((/)|(//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)");
+  @ApiOperation(value = "hidden1", hidden = true)
   @Produces(MediaType.APPLICATION_JSON)
   public Response badMethodGetlogin() {
     return RestProcessUtils.buildJSONResponse(AdminProcess.invalidResource());
@@ -60,8 +60,7 @@ public class AuthenticationResource {
   @GET
   // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
   @Path("/logout")
-  // Pattern.compile
-  // ("(((https?|ftp|gopher|telnet|file|Unsure|http):)*((/)|(//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)");
+  @ApiOperation(value = "hidden2", hidden = true)
   @Produces(MediaType.APPLICATION_JSON)
   public Response badMethodGetlogout() {
     return RestProcessUtils.buildJSONResponse(AdminProcess.invalidResource());
@@ -70,8 +69,7 @@ public class AuthenticationResource {
   @PUT
   // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
   @Path("/login")
-  // Pattern.compile
-  // ("(((https?|ftp|gopher|telnet|file|Unsure|http):)*((/)|(//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)");
+  @ApiOperation(value = "hidden3", hidden = true)
   @Produces(MediaType.APPLICATION_JSON)
   public Response badMethodPutlogin() {
     return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
@@ -80,8 +78,7 @@ public class AuthenticationResource {
   @PUT
   // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
   @Path("/logout")
-  // Pattern.compile
-  // ("(((https?|ftp|gopher|telnet|file|Unsure|http):)*((/)|(//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)");
+  @ApiOperation(value = "hidden4", hidden = true)
   @Produces(MediaType.APPLICATION_JSON)
   public Response badMethodPutlogout() {
     return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
@@ -90,8 +87,7 @@ public class AuthenticationResource {
   @DELETE
   // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
   @Path("/login")
-  // Pattern.compile
-  // ("(((https?|ftp|gopher|telnet|file|Unsure|http):)*((/)|(//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)");
+  @ApiOperation(value = "hidden5", hidden = true)
   @Produces(MediaType.APPLICATION_JSON)
   public Response badMethodDeletelogin() {
     return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
@@ -100,8 +96,7 @@ public class AuthenticationResource {
   @DELETE
   // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
   @Path("/logout")
-  // Pattern.compile
-  // ("(((https?|ftp|gopher|telnet|file|Unsure|http):)*((/)|(//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)");
+  @ApiOperation(value = "hidden6", hidden = true)
   @Produces(MediaType.APPLICATION_JSON)
   public Response badMethodDeletelogout() {
     return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
@@ -124,6 +119,7 @@ public class AuthenticationResource {
 
   @Path("/{text: (/?.*)}")
   @Produces(MediaType.APPLICATION_JSON)
+  @ApiOperation(value = "hidden7", hidden = true)
   public Response badMethodPost() {
     return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
   }
@@ -131,6 +127,7 @@ public class AuthenticationResource {
   @PUT
   @Path("/{text: (/?.*)}")
   @Produces(MediaType.APPLICATION_JSON)
+  @ApiOperation(value = "hidden8", hidden = true)
   public Response badMethodPut() {
     return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
   }
@@ -138,6 +135,7 @@ public class AuthenticationResource {
   @GET
   @Path("/{text: (/?.*)}")
   @Produces(MediaType.APPLICATION_JSON)
+  @ApiOperation(value = "hidden9", hidden = true)
   public Response badMethodGet() {
     return RestProcessUtils.buildJSONResponse(AdminProcess.invalidResource());
   }
@@ -145,6 +143,7 @@ public class AuthenticationResource {
   @DELETE
   @Path("/{text: (/?.*)}")
   @Produces(MediaType.APPLICATION_JSON)
+  @ApiOperation(value = "hidden10", hidden = true)
   public Response badMethodDelete() {
     return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
   }

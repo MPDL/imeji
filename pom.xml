@@ -548,12 +548,6 @@
 		  <groupId>io.swagger</groupId>
 		  <artifactId>swagger-jersey2-jaxrs</artifactId>
 		  <version>1.5.3</version>
-		  <exclusions>
-		  	<exclusion>
-		  		<groupId>com.fasterxml.jackson.core</groupId>
-		  		<artifactId>jackson-core</artifactId>
-		  	</exclusion>
-		  </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch</groupId>

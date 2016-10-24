@@ -34,9 +34,8 @@ import io.swagger.annotations.ApiParam;
 
 
 @Path("/items")
-@Api(value = "rest/items", description = "Operations on items")
+@Api(value = "items")
 public class ItemResource implements ImejiResource {
-
 
   @Override
   @GET
@@ -75,8 +74,10 @@ public class ItemResource implements ImejiResource {
           + "<br/> }</div>")
   @Produces(MediaType.APPLICATION_JSON)
   public Response create(@Context HttpServletRequest req, @FormDataParam("file") InputStream file,
-      @ApiParam(required = true) @FormDataParam("json") String json,
-      @FormDataParam("file") FormDataContentDisposition fileDetail) {
+      @ApiParam(required = true, value = " item json",
+          defaultValue = "{default}") @FormDataParam("json") String json,
+      @ApiParam(value = "File details", required = false,
+          hidden = true) @FormDataParam("file") FormDataContentDisposition fileDetail) {
     String origName = fileDetail != null ? fileDetail.getFileName() : null;
     return RestProcessUtils.buildJSONResponse(createItem(req, file, json, origName));
   }
@@ -100,7 +101,9 @@ public class ItemResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response update(@Context HttpServletRequest req, @FormDataParam("file") InputStream file,
       @ApiParam(required = true) @FormDataParam("json") String json,
-      @FormDataParam("file") FormDataContentDisposition fileDetail, @PathParam("id") String id) {
+      @ApiParam(value = "File details", required = false,
+          hidden = true) @FormDataParam("file") FormDataContentDisposition fileDetail,
+      @PathParam("id") String id) {
     String filename = fileDetail != null ? fileDetail.getFileName() : null;
     return RestProcessUtils.buildJSONResponse(updateItem(req, id, file, json, filename));
   }

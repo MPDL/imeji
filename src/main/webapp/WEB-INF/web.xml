@@ -66,37 +66,19 @@
         <async-supported>true</async-supported>
     </servlet>
 
+	 
     <servlet>
         <servlet-name>imeji REST Service</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>de.mpg.imeji.rest.resources</param-value>
+            <param-value>io.swagger.jaxrs.listing,de.mpg.imeji.rest.resources</param-value>
         </init-param>
-        <!--
-                <init-param>
-                    <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
-                    <param-value>com.sun.jersey.api.core.PackagesResourceConfig</param-value>
-                </init-param>
-        -->
         <init-param>
             <param-name>javax.ws.rs.Application</param-name>
             <param-value>de.mpg.imeji.rest.MyApplication</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet>
-        <servlet-name>JerseyJaxrsConfig</servlet-name>
-        <servlet-class>de.mpg.imeji.rest.SwaggerApiDocsConfig</servlet-class>
-        <init-param>
-            <param-name>api.version</param-name>
-            <param-value>0.1</param-value>
-        </init-param>
-        <init-param>
-            <param-name>swagger.api.basepath</param-name>
-            <param-value>/rest</param-value>
-        </init-param>
-        <load-on-startup>2</load-on-startup>
     </servlet>
 
     <!-- Filters (order is important) -->

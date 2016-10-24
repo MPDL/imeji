@@ -281,9 +281,7 @@ public class ElasticQueryFactory {
         break;
       case all:
         BoolQueryBuilder f = QueryBuilders.boolQuery()
-            .should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.REGEX, false))
-            .should(
-                fieldQuery(ElasticFields.FULLTEXT, pair.getValue(), SearchOperators.REGEX, false));
+            .should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.REGEX, false));
         if (NumberUtils.isNumber(pair.getValue())) {
           f.should(fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(),
               SearchOperators.EQUALS, false));
