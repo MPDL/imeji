@@ -53,8 +53,6 @@ import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.collection.CollectionBean;
-import de.mpg.imeji.presentation.component.LicenseEditor;
-import de.mpg.imeji.presentation.history.HistorySession;
 import de.mpg.imeji.presentation.history.HistoryUtil;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -81,7 +79,6 @@ public class UploadBean extends SuperBean {
   private List<String> selected;
   @ManagedProperty(value = "#{UploadSession}")
   private UploadSession uploadSession;
-  private LicenseEditor licenseEditor;
 
 
   /**
@@ -96,7 +93,6 @@ public class UploadBean extends SuperBean {
     readId();
     try {
       loadCollection();
-      licenseEditor = new LicenseEditor(getLocale(), collection.getStatus().equals(Status.PENDING));
       if (UrlHelper.getParameterBoolean("init")) {
         uploadSession.reset();
         getSelected().clear();
@@ -208,10 +204,8 @@ public class UploadBean extends SuperBean {
       LOGGER.error("Error uploading file from link: " + externalUrl, e);
       BeanHelper.error(e.getMessage());
     }
-    HistorySession hs = (HistorySession) BeanHelper.getSessionBean(HistorySession.class);
     try {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(hs.getCurrentPage().getUrl() + "?done=1");
+      redirect(getHistory().getCurrentPage().getUrl() + "?done=1");
     } catch (IOException e) {
       LOGGER.error("Error redirecting agter upload", e);
     }
@@ -335,7 +329,7 @@ public class UploadBean extends SuperBean {
       } else {
         item = ImejiFactory.newItem(collection);
         if (!Status.PENDING.equals(collection.getStatus())) {
-          item.setLicenses(Arrays.asList(licenseEditor.getLicense()));
+          item.setLicenses(Arrays.asList(uploadSession.getLicenseEditor().getLicense()));
         }
         item = controller.createWithFile(item, fileUploaded, title, collection, getSessionUser());
       }
@@ -649,19 +643,4 @@ public class UploadBean extends SuperBean {
   public void setUploadSession(UploadSession uploadSession) {
     this.uploadSession = uploadSession;
   }
-
-  /**
-   * @return the licenseEditor
-   */
-  public LicenseEditor getLicenseEditor() {
-    return licenseEditor;
-  }
-
-  /**
-   * @param licenseEditor the licenseEditor to set
-   */
-  public void setLicenseEditor(LicenseEditor licenseEditor) {
-    this.licenseEditor = licenseEditor;
-  }
-
 }

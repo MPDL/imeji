@@ -29,13 +29,16 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 
 import org.apache.commons.lang.BooleanUtils;
 
 import de.mpg.imeji.logic.util.UrlHelper;
+import de.mpg.imeji.presentation.component.LicenseEditor;
 
 /**
  * Session for the upload page for the parameter which must be in a sesion (because of the upload
@@ -55,6 +58,9 @@ public class UploadSession implements Serializable {
   private boolean uploadFileToItem = false;
   private boolean checkNameUnique = true;
   private List<UploadItem> itemsToEdit;
+  private LicenseEditor licenseEditor;
+  @ManagedProperty(value = "#{InternationalizationBean.locale}")
+  private Locale locale;
 
   /**
    * DEfault Constructor
@@ -65,6 +71,7 @@ public class UploadSession implements Serializable {
   public UploadSession() throws IOException, URISyntaxException {
     this.sFiles = new ArrayList<UploadItem>();
     this.fFiles = new ArrayList<String>();
+    this.licenseEditor = new LicenseEditor(getLocale(), false);
   }
 
   /**
@@ -74,6 +81,7 @@ public class UploadSession implements Serializable {
     sFiles = new ArrayList<>();
     fFiles = new ArrayList<>();
     itemsToEdit = new ArrayList<>();
+    licenseEditor = new LicenseEditor(getLocale(), false);
     resetProperties();
   }
 
@@ -187,5 +195,34 @@ public class UploadSession implements Serializable {
   public void setItemsToEdit(List<UploadItem> itemsToEdit) {
     this.itemsToEdit = itemsToEdit;
   }
+
+  /**
+   * @return the licenseEditor
+   */
+  public LicenseEditor getLicenseEditor() {
+    return licenseEditor;
+  }
+
+  /**
+   * @param licenseEditor the licenseEditor to set
+   */
+  public void setLicenseEditor(LicenseEditor licenseEditor) {
+    this.licenseEditor = licenseEditor;
+  }
+
+  /**
+   * @return the locale
+   */
+  public Locale getLocale() {
+    return locale;
+  }
+
+  /**
+   * @param locale the locale to set
+   */
+  public void setLocale(Locale locale) {
+    this.locale = locale;
+  }
+
 
 }
