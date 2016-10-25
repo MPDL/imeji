@@ -50,7 +50,7 @@ public class ViewCollectionBean extends CollectionBean {
     setId(UrlHelper.getParameterValue("id"));
     try {
       setCollection(new CollectionController()
-          .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
+          .retrieve(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
       countItems();
       if (getSessionUser() != null) {
         setSendEmailNotification(getSessionUser().getObservedCollections().contains(getId()));
