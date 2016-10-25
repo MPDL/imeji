@@ -57,7 +57,7 @@ public class ShareUtil {
         Imeji.RESOURCE_BUNDLE.getLabel("collection_share_image_delete", locale)));
     collectionRoleMenu.add(new SelectItem(ShareRoles.EDIT,
         Imeji.RESOURCE_BUNDLE.getLabel("collection_share_collection_edit", locale)));
-    if (SecurityUtil.staticAuth().administrate(user, profileUri)) {
+    if (profileUri != null && SecurityUtil.staticAuth().administrate(user, profileUri)) {
       collectionRoleMenu.add(new SelectItem(ShareRoles.EDIT_PROFILE,
           Imeji.RESOURCE_BUNDLE.getLabel("collection_share_profile_edit", locale)));
     }
