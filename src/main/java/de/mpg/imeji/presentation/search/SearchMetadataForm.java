@@ -181,8 +181,9 @@ public class SearchMetadataForm {
             throw new UnprocessableError(messages);
           }
           break;
-        case LICENSE:
-          break;
+        /*
+         * case LICENSE: break;
+         */
         case NUMBER:
           try {
             Long.parseLong(searchValue);
@@ -301,20 +302,13 @@ public class SearchMetadataForm {
               }
             }
             break;
-          case LICENSE:
-            if (!isEmtpyValue(searchValue + uri)) {
-              if (!isEmtpyValue(searchValue)) {
-                group.addPair(
-                    new SearchMetadata(SearchFields.license, operator, searchValue, ns, not));
-              }
-              if (!isEmtpyValue(uri)) {
-                if (!group.isEmpty()) {
-                  group.addLogicalRelation(LOGICAL_RELATIONS.AND);
-                }
-                group.addPair(new SearchMetadata(SearchFields.url, operator, uri, ns, not));
-              }
-            }
-            break;
+          /*
+           * case LICENSE: if (!isEmtpyValue(searchValue + uri)) { if (!isEmtpyValue(searchValue)) {
+           * group.addPair( new SearchMetadata(SearchFields.license, operator, searchValue, ns,
+           * not)); } if (!isEmtpyValue(uri)) { if (!group.isEmpty()) {
+           * group.addLogicalRelation(LOGICAL_RELATIONS.AND); } group.addPair(new
+           * SearchMetadata(SearchFields.url, operator, uri, ns, not)); } } break;
+           */
           case NUMBER:
             if (!isEmtpyValue(searchValue)) {
               group

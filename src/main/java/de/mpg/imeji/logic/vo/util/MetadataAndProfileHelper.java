@@ -12,7 +12,6 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Date;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.License;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Number;
@@ -70,12 +69,11 @@ public class MetadataAndProfileHelper {
         newGT.setLongitude(11.5667);
         md = newGT;
         break;
-      case LICENSE:
-        License newLicense = new License();
-        newLicense.setLicense("License name");
-        newLicense.setExternalUri(URI.create("http://example.license.com"));
-        md = newLicense;
-        break;
+      /*
+       * case LICENSE: License newLicense = new License(); newLicense.setLicense("License name");
+       * newLicense.setExternalUri(URI.create("http://example.license.com")); md = newLicense;
+       * break;
+       */
       case LINK:
         Link newLink = new Link();
         newLink.setUri(URI.create("http://example.link.com"));
@@ -122,12 +120,11 @@ public class MetadataAndProfileHelper {
       Geolocation geo = (Geolocation) md;
       return StringHelper.isNullOrEmptyTrim(geo.getName()) && Double.isNaN(geo.getLatitude())
           && Double.isNaN(geo.getLongitude());
-    } else if (md instanceof License) {
-      if ((((License) md).getLicense() == null || "".equals(((License) md).getLicense().trim()))
-          && ((License) md).getExternalUri() == null) {
-        return true;
-      }
-    } else if (md instanceof Publication) {
+    } /*
+       * else if (md instanceof License) { if ((((License) md).getLicense() == null ||
+       * "".equals(((License) md).getLicense().trim())) && ((License) md).getExternalUri() == null)
+       * { return true; } }
+       */ else if (md instanceof Publication) {
       if (((Publication) md).getUri() == null
           || "".equals(((Publication) md).getUri().toString())) {
         return true;

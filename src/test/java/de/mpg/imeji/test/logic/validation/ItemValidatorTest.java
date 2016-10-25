@@ -23,12 +23,11 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Date;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.License;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
+import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Text;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataFactory;
 import de.mpg.imeji.util.LocalizedString;
@@ -76,9 +75,6 @@ public class ItemValidatorTest {
       newStatement(Types.GEOLOCATION, "geolocation", null, false);
   private static Statement GEOLOCATION_MULTIPLE =
       newStatement(Types.GEOLOCATION, "geolocation multiple", null, true);
-  private static Statement LICENSE = newStatement(Types.LICENSE, "license", null, false);
-  private static Statement LICENSE_MULTIPLE =
-      newStatement(Types.LICENSE, "license multiple", null, true);
   private static Statement PUBLICATION =
       newStatement(Types.PUBLICATION, "publication", null, false);
   private static Statement PUBLICATION_MULTIPLE =
@@ -228,10 +224,6 @@ public class ItemValidatorTest {
     md6.setLongitude(11.575127);
     md6.setName("Munich");
     validateMultipleValueNotAllowed(md6);
-    // License
-    License md7 = (License) MetadataFactory.createMetadata(LICENSE);
-    md7.setLicense("test");
-    validateMultipleValueNotAllowed(md7);
     // Publication
     Publication md8 = (Publication) MetadataFactory.createMetadata(PUBLICATION);
     md8.setCitation("test");
@@ -286,10 +278,6 @@ public class ItemValidatorTest {
     md6.setLongitude(11.575127);
     md6.setName("Munich");
     validateMultipleValueAllowed(md6);
-    // License
-    License md7 = (License) MetadataFactory.createMetadata(LICENSE_MULTIPLE);
-    md7.setLicense("test");
-    validateMultipleValueAllowed(md7);
     // Publication
     Publication md8 = (Publication) MetadataFactory.createMetadata(PUBLICATION_MULTIPLE);
     md8.setCitation("test");
@@ -346,8 +334,6 @@ public class ItemValidatorTest {
     profile.getStatements().add(PERSON_MULTIPLE);
     profile.getStatements().add(GEOLOCATION);
     profile.getStatements().add(GEOLOCATION_MULTIPLE);
-    profile.getStatements().add(LICENSE);
-    profile.getStatements().add(LICENSE_MULTIPLE);
     profile.getStatements().add(PUBLICATION);
     profile.getStatements().add(PUBLICATION_MULTIPLE);
   }

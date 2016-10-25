@@ -23,7 +23,6 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.License;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Number;
@@ -53,7 +52,6 @@ import de.mpg.imeji.rest.to.defaultItemTO.predefinedEasyMetadataTO.DefaultConePe
 import de.mpg.imeji.rest.to.predefinedMetadataTO.ConePersonTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.DateTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.GeolocationTO;
-import de.mpg.imeji.rest.to.predefinedMetadataTO.LicenseTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.LinkTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.NumberTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.PublicationTO;
@@ -451,14 +449,12 @@ public class TransferObjectFactory {
           gto.setLatitude(mdGeo.getLatitude());
           mdTO.setValue(gto);
           break;
-        case "de.mpg.imeji.logic.vo.predefinedMetadata.License":
-          License mdLicense = (License) md;
-          LicenseTO lto = new LicenseTO();
-          lto.setLicense(mdLicense.getLicense());
-          final URI externalUri = mdLicense.getExternalUri();
-          lto.setUrl(externalUri != null ? externalUri.toString() : "");
-          mdTO.setValue(lto);
-          break;
+        /*
+         * case "de.mpg.imeji.logic.vo.predefinedMetadata.License": License mdLicense = (License)
+         * md; LicenseTO lto = new LicenseTO(); lto.setLicense(mdLicense.getLicense()); final URI
+         * externalUri = mdLicense.getExternalUri(); lto.setUrl(externalUri != null ?
+         * externalUri.toString() : ""); mdTO.setValue(lto); break;
+         */
         case "de.mpg.imeji.logic.vo.predefinedMetadata.Link":
           Link mdLink = (Link) md;
           LinkTO llto = new LinkTO();

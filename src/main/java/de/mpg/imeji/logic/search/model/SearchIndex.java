@@ -87,9 +87,9 @@ public class SearchIndex {
       case GEOLOCATION:
         list.add(SearchIndexes.getIndex(SearchFields.location));
         break;
-      case LICENSE:
-        list.add(SearchIndexes.getIndex(SearchFields.license));
-        break;
+      /*
+       * case LICENSE: list.add(SearchIndexes.getIndex(SearchFields.license)); break;
+       */
       case NUMBER:
         list.add(SearchIndexes.getIndex(SearchFields.number));
         break;

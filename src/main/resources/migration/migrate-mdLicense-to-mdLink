@@ -1,0 +1,40 @@
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+
+#This script will migrate all metadata of type license to the metadata of type Link
+
+WITH <http://imeji.org/item>
+DELETE{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#license>}
+INSERT{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#link>}
+USING <http://imeji.org/item>
+WHERE{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#license>};
+
+WITH <http://imeji.org/item>
+DELETE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#license>}
+INSERT{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#link>}
+USING <http://imeji.org/item>
+WHERE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#license>};
+
+WITH <http://imeji.org/item>
+DELETE{?s <http://imeji.org/terms/license> ?o}
+INSERT{?s <http://www.w3.org/2000/01/rdf-schema#label> ?o}
+USING <http://imeji.org/item>
+WHERE{?s <http://imeji.org/terms/license> ?o};
+
+WITH <http://imeji.org/item>
+DELETE{?s <http://purl.org/dc/elements/1.1/identifier> ?o}
+INSERT{?s <http://imeji.org/terms/uri> ?o}
+USING <http://imeji.org/item>
+WHERE{?s <http://purl.org/dc/elements/1.1/identifier> ?o};
+
+WITH <http://imeji.org/item>
+DELETE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.License"}
+INSERT{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.Link"}
+USING <http://imeji.org/item>
+WHERE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.License"};
+
+WITH <http://imeji.org/metadataProfile>
+DELETE{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#license>}
+INSERT{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#link>}
+USING <http://imeji.org/metadataProfile>
+WHERE{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#license>};

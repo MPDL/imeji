@@ -8,7 +8,6 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Date;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.License;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
@@ -53,9 +52,10 @@ public class MetadataFactory {
       md = new Geolocation();
     } else if ("http://imeji.org/terms/metadata#link".equals(typeNamespace)) {
       md = new Link();
-    } else if ("http://imeji.org/terms/metadata#license".equals(typeNamespace)) {
-      md = new License();
-    } else {
+    } /*
+       * else if ("http://imeji.org/terms/metadata#license".equals(typeNamespace)) { md = new
+       * License(); }
+       */else {
       throw new RuntimeException(
           "MetadataFactory: Error creating new Metadata. Unknown type: " + typeNamespace);
     }

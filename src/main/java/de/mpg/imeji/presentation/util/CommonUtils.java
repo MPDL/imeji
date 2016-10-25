@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.License;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 
 /**
@@ -46,14 +45,11 @@ public class CommonUtils {
   public static String toStringCustomField(Metadata md) {
     if (md != null) {
       String s = "";
-      if (md instanceof License) {
-        if (((License) md).getLicense() != null) {
-          s += " name:" + ((License) md).getLicense();
-        }
-        if (((License) md).getExternalUri() != null) {
-          s += " uri:" + ((License) md).getExternalUri();
-        }
-      }
+      /*
+       * if (md instanceof License) { if (((License) md).getLicense() != null) { s += " name:" +
+       * ((License) md).getLicense(); } if (((License) md).getExternalUri() != null) { s += " uri:"
+       * + ((License) md).getExternalUri(); } }
+       */
       if (md instanceof Geolocation) {
         if (((Geolocation) md).getName() != null) {
           s += " name:" + ((Geolocation) md).getName();

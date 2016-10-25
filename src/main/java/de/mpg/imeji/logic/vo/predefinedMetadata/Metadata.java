@@ -38,7 +38,7 @@ import de.mpg.imeji.logic.vo.Item;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "metadata", namespace = "http://imeji.org/terms/")
 @XmlSeeAlso({Text.class, Number.class, ConePerson.class, Date.class, Geolocation.class,
-    License.class, Link.class, Publication.class})
+    /* License.class, */ Link.class, Publication.class})
 public abstract class Metadata implements Comparable<Metadata>, Serializable {
   private static final long serialVersionUID = -6967620655990351430L;
   // Metadata should have a universal id to avoid overwriting
@@ -50,7 +50,7 @@ public abstract class Metadata implements Comparable<Metadata>, Serializable {
   @XmlEnum(Types.class)
   public enum Types {
     TEXT(Text.class), NUMBER(Number.class), CONE_PERSON(ConePerson.class), DATE(
-        Date.class), GEOLOCATION(Geolocation.class), LICENSE(License.class), LINK(
+        Date.class), GEOLOCATION(Geolocation.class), /* LICENSE(License.class), */ LINK(
             Link.class), PUBLICATION(Publication.class);
     private Class<? extends Metadata> clazz = null;
 

@@ -26,6 +26,6 @@ public class MetadataTypesHelper {
         return t;
       }
     }
-    return null;
+    return Types.TEXT;
   }
 }

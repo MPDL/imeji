@@ -4,7 +4,6 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Date;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.License;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
@@ -75,13 +74,12 @@ public final class ElasticMetadata extends ElasticPerson {
       this.number = Double.NaN;
       this.uri = null;
       this.location = ((Geolocation) md).getLatitude() + "," + ((Geolocation) md).getLongitude();
-    } else if (md instanceof License) {
-      this.text = ((License) md).getLicense();
-      this.number = Double.NaN;
-      this.uri = ((License) md).getExternalUri() == null ? null
-          : ((License) md).getExternalUri().toString();
-      this.location = null;
-    } else if (md instanceof Publication) {
+    } /*
+       * else if (md instanceof License) { this.text = ((License) md).getLicense(); this.number =
+       * Double.NaN; this.uri = ((License) md).getExternalUri() == null ? null : ((License)
+       * md).getExternalUri().toString(); this.location = null; }
+       */
+    else if (md instanceof Publication) {
       this.text = ((Publication) md).getCitation();
       this.number = Double.NaN;
       this.uri =

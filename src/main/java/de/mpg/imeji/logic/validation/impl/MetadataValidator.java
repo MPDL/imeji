@@ -10,7 +10,6 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Date;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.License;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Number;
@@ -89,12 +88,10 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
       } catch (UnprocessableError e1) {
         e = new UnprocessableError(e1.getMessages(), e);
       }
-    } else if (md instanceof License) {
-      String value = ((License) md).getLicense();
-      if (value == null) {
-        e = new UnprocessableError("error_metadata_invalid_value" + value, e);
-      }
-    } else if (md instanceof Publication) {
+    } /*
+       * else if (md instanceof License) { String value = ((License) md).getLicense(); if (value ==
+       * null) { e = new UnprocessableError("error_metadata_invalid_value" + value, e); } }
+       */else if (md instanceof Publication) {
       URI value = ((Publication) md).getUri();
       if (value == null) {
         e = new UnprocessableError("error_metadata_invalid_value" + value, e);
@@ -118,9 +115,9 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
       return "Location";
     } else if (md instanceof ConePerson) {
       return "Person/Organization";
-    } else if (md instanceof License) {
-      return "License";
-    } else if (md instanceof Publication) {
+    } /*
+       * else if (md instanceof License) { return "License"; }
+       */ else if (md instanceof Publication) {
       return "Publication";
     }
     return "";

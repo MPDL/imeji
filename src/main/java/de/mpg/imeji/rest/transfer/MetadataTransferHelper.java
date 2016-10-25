@@ -30,7 +30,6 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.License;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
@@ -48,13 +47,11 @@ import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultOrganizationTO;
 import de.mpg.imeji.rest.to.defaultItemTO.predefinedEasyMetadataTO.DefaultConePersonTO;
 import de.mpg.imeji.rest.to.defaultItemTO.predefinedEasyMetadataTO.DefaultGeolocationTO;
-import de.mpg.imeji.rest.to.defaultItemTO.predefinedEasyMetadataTO.DefaultLicenseTO;
 import de.mpg.imeji.rest.to.defaultItemTO.predefinedEasyMetadataTO.DefaultLinkTO;
 import de.mpg.imeji.rest.to.defaultItemTO.predefinedEasyMetadataTO.DefaultPublicationTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.ConePersonTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.DateTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.GeolocationTO;
-import de.mpg.imeji.rest.to.predefinedMetadataTO.LicenseTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.LinkTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.MetadataTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.NumberTO;
@@ -78,7 +75,7 @@ public class MetadataTransferHelper {
         || (statement.getParentStatementId() != null
             && !parentLabel.equals(ProfileTransferHelper
                 .getParentStatementLabel(statement.getParentStatementId(), profileTO))
-        && !parentLabel.equals(label))) {
+            && !parentLabel.equals(label))) {
       String localParentsLabelStack = ProfileTransferHelper
           .getParentStatementLabels(statement.getParentStatementId(), profileTO, "");
       throw new UnprocessableError("Metadata with label \"" + label
@@ -97,7 +94,7 @@ public class MetadataTransferHelper {
 
   public static void validateInnerNodeParentStack(String currentLabel, String label,
       StatementTO innerStatement, MetadataProfileTO profileTO, boolean hasInnerParent)
-          throws UnprocessableError {
+      throws UnprocessableError {
     String parentStatementRealLabel = ProfileTransferHelper
         .getParentStatementLabel(innerStatement.getParentStatementId(), profileTO);
     if (parentStatementRealLabel != "" && !currentLabel.equals(label)) {
@@ -333,13 +330,12 @@ public class MetadataTransferHelper {
         dgto.setLongitude(mdGeo.getLongitude());
         dgto.setLatitude(mdGeo.getLatitude());
         return RestProcessUtils.buildJsonNode(dgto);
-      case LICENSE:
-        License mdLicense = (License) metadata;
-        DefaultLicenseTO dlto = new DefaultLicenseTO();
-        dlto.setLicense(mdLicense.getLicense());
-        URI externalUri = mdLicense.getExternalUri();
-        dlto.setUrl(externalUri != null ? externalUri.toString() : "");
-        return RestProcessUtils.buildJsonNode(dlto);
+      /*
+       * case LICENSE: License mdLicense = (License) metadata; DefaultLicenseTO dlto = new
+       * DefaultLicenseTO(); dlto.setLicense(mdLicense.getLicense()); URI externalUri =
+       * mdLicense.getExternalUri(); dlto.setUrl(externalUri != null ? externalUri.toString() : "");
+       * return RestProcessUtils.buildJsonNode(dlto);
+       */
       case LINK:
         Link mdLink = (Link) metadata;
         DefaultLinkTO dllto = new DefaultLinkTO();
@@ -430,18 +426,13 @@ public class MetadataTransferHelper {
         newGT.setLongitude(easyGeoTO.getLongitude());
         metadata.setValue(newGT);
         break;
-      case LICENSE:
-        DefaultLicenseTO easyLTO = null;
-        try {
-          easyLTO = mapper.readValue(json.toString(), new TypeReference<DefaultLicenseTO>() {});
-        } catch (Exception e) {
-          throw new UnprocessableError("Error Transferring" + label, e);
-        }
-        LicenseTO newLicense = new LicenseTO();
-        newLicense.setLicense(easyLTO.getLicense());
-        newLicense.setUrl(easyLTO.getUrl());
-        metadata.setValue(newLicense);
-        break;
+      /*
+       * case LICENSE: DefaultLicenseTO easyLTO = null; try { easyLTO =
+       * mapper.readValue(json.toString(), new TypeReference<DefaultLicenseTO>() {}); } catch
+       * (Exception e) { throw new UnprocessableError("Error Transferring" + label, e); } LicenseTO
+       * newLicense = new LicenseTO(); newLicense.setLicense(easyLTO.getLicense());
+       * newLicense.setUrl(easyLTO.getUrl()); metadata.setValue(newLicense); break;
+       */
       case LINK:
         DefaultLinkTO easyLinkTO = null;
         try {

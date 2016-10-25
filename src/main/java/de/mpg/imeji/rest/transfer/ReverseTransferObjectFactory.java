@@ -34,7 +34,6 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.License;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Number;
@@ -56,7 +55,6 @@ import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.ConePersonTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.DateTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.GeolocationTO;
-import de.mpg.imeji.rest.to.predefinedMetadataTO.LicenseTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.LinkTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.NumberTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.PublicationTO;
@@ -259,23 +257,14 @@ public class ReverseTransferObjectFactory {
             voMDs.add(mdVO);
           }
           break;
-        case "http://imeji.org/terms/metadata#license":
-          LicenseTO licenseTO = (LicenseTO) mds.getValue();
-          final String lic = licenseTO.getLicense();
-          final String url = licenseTO.getUrl();
-          if (!isNullOrEmpty(lic) || !isNullOrEmpty(url)) {
-            License mdVO = new License();
-            mdVO.setStatement(mds.getStatementUri());
-            // set license to uri if empty
-            mdVO.setLicense(isNullOrEmpty(lic) ? url : lic);
-            if (!isNullOrEmpty(url)) {
-              mdVO.setExternalUri(URI.create(url));
-            }
-            mdVO.setPos(i);
-            i++;
-            voMDs.add(mdVO);
-          }
-          break;
+        /*
+         * case "http://imeji.org/terms/metadata#license": LicenseTO licenseTO = (LicenseTO)
+         * mds.getValue(); final String lic = licenseTO.getLicense(); final String url =
+         * licenseTO.getUrl(); if (!isNullOrEmpty(lic) || !isNullOrEmpty(url)) { License mdVO = new
+         * License(); mdVO.setStatement(mds.getStatementUri()); // set license to uri if empty
+         * mdVO.setLicense(isNullOrEmpty(lic) ? url : lic); if (!isNullOrEmpty(url)) {
+         * mdVO.setExternalUri(URI.create(url)); } mdVO.setPos(i); i++; voMDs.add(mdVO); } break;
+         */
         case "http://imeji.org/terms/metadata#publication":
           PublicationTO pubTO = (PublicationTO) mds.getValue();
           if (!isNullOrEmpty(pubTO.getPublication())) {
