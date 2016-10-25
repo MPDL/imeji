@@ -143,8 +143,8 @@ public class ShareInput implements Serializable {
   private List<ShareListItem> toShareListItem(List<String> emails) {
     List<ShareListItem> listItems = new ArrayList<ShareListItem>();
     for (String email : emails) {
-      ShareListItem item =
-          new ShareListItem(retrieveUser(email), type, objectUri, profileUri, null, user, locale);
+      ShareListItem item = new ShareListItem(retrieveUser(email), type, objectUri, profileUri, null,
+          user, locale, false);
       item.setRoles(menu.getRoles());
       listItems.add(item);
     }

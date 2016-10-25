@@ -44,6 +44,7 @@ public class ShareListItem implements Serializable {
   private String title;
   private String profileUri;
   private Locale locale;
+  private boolean creator = false;
 
   /**
    * Constructor without User of Group (To be used as menu)
@@ -91,12 +92,13 @@ public class ShareListItem implements Serializable {
    * @param roles
    */
   public ShareListItem(User user, SharedObjectType type, String containerUri, String profileUri,
-      String title, User currentUser, Locale locale) {
+      String title, User currentUser, Locale locale, boolean creator) {
     this.user = user;
     this.type = type;
     this.shareToUri = containerUri;
     this.title = title;
     this.currentUser = currentUser;
+    this.creator = creator;
     init((List<Grant>) user.getGrants(), containerUri, profileUri, locale);
   }
 
@@ -352,5 +354,9 @@ public class ShareListItem implements Serializable {
     boolean add = roles.size() >= this.roles.size();
     this.roles = roles;
     checkRoles(add);
+  }
+
+  public boolean isCreator() {
+    return creator;
   }
 }

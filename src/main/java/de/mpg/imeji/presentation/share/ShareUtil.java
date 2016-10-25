@@ -119,19 +119,19 @@ public class ShareUtil {
           if (c != null) {
             roles.add(new ShareListItem(user, SharedObjectType.COLLECTION, sharedWith,
                 c.getProfile() != null ? c.getProfile().toString() : null,
-                c.getMetadata().getTitle(), sessionUser, locale));
+                c.getMetadata().getTitle(), sessionUser, locale, false));
           }
         } else if (sharedWith.contains("/album/")) {
           Album a = new AlbumController().retrieveLazy(URI.create(sharedWith), sessionUser);
           if (a != null) {
             roles.add(new ShareListItem(user, SharedObjectType.ALBUM, sharedWith, null,
-                a.getMetadata().getTitle(), sessionUser, locale));
+                a.getMetadata().getTitle(), sessionUser, locale, false));
           }
         } else if (sharedWith.contains("/item/")) {
           Item it = new ItemBusinessController().retrieveLazy(URI.create(sharedWith), sessionUser);
           if (it != null) {
             roles.add(new ShareListItem(user, SharedObjectType.ITEM, sharedWith, null,
-                it.getFilename(), sessionUser, locale));
+                it.getFilename(), sessionUser, locale, false));
           }
         }
       } catch (Exception e) {
