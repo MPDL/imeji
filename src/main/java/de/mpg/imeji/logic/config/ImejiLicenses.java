@@ -22,7 +22,7 @@ public enum ImejiLicenses {
                               "Data licence Germany – attribution – version 2.0", "dl-de/by-2-0",
                               "https://www.govdata.de/dl-de/by-2-0"), DL_DE_0(
                                   "Data licence Germany - Zero - Version 2.0", "dl-de/0-2-0",
-                                  "https://www.govdata.de/dl-de/by-2-0");
+                                  "https://www.govdata.de/dl-de/zero-2-0");
 
   private final String url;
   private final String label;
