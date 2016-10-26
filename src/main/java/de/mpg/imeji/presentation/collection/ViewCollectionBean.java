@@ -67,6 +67,7 @@ public class ViewCollectionBean extends CollectionBean {
           persons.add(p);
         }
         getCollection().getMetadata().setPersons(persons);
+        searchItemsWihoutLicense();
       }
     } catch (ImejiException e) {
       LOGGER.error("Error initializing Bean", e);

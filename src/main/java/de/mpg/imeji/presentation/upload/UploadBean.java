@@ -34,6 +34,7 @@ import com.ocpsoft.pretty.PrettyContext;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.doi.DoiService;
@@ -42,6 +43,10 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchOperators;
+import de.mpg.imeji.logic.search.model.SearchPair;
+import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -79,6 +84,7 @@ public class UploadBean extends SuperBean {
   private List<String> selected;
   @ManagedProperty(value = "#{UploadSession}")
   private UploadSession uploadSession;
+  private int itemsWithoutLicense = 0;
 
 
   /**
@@ -398,6 +404,7 @@ public class UploadBean extends SuperBean {
         ItemBusinessController ic = new ItemBusinessController();
         collectionSize = ic.search(collection.getId(), null, null, Imeji.adminUser, null, 0, 0)
             .getNumberOfRecords();
+        searchItemsWihoutLicense();
       }
     } else {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", getLocale()) + "No ID in URL");
@@ -642,5 +649,35 @@ public class UploadBean extends SuperBean {
 
   public void setUploadSession(UploadSession uploadSession) {
     this.uploadSession = uploadSession;
+  }
+
+  /**
+   * Return the number of item without license
+   * 
+   * @return
+   */
+  public int getCountOfItemsWithoutLicense() {
+    return itemsWithoutLicense;
+  }
+
+  /**
+   * Search the number of items wihout any license
+   */
+  protected void searchItemsWihoutLicense() {
+    ItemBusinessController controller = new ItemBusinessController();
+    itemsWithoutLicense = controller
+        .search(collection.getId(),
+            SearchQuery.toSearchQuery(new SearchPair(SearchFields.license, SearchOperators.REGEX,
+                ImejiLicenses.NO_LICENSE, false)),
+            null, getSessionUser(), null, 0, 0)
+        .getNumberOfRecords();
+  }
+
+  public String getReleaseMessage() {
+    if (itemsWithoutLicense > 0) {
+      return itemsWithoutLicense + Imeji.RESOURCE_BUNDLE
+          .getMessage("confirmation_release_collection_license", getLocale());
+    }
+    return "";
   }
 }

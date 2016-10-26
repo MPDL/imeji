@@ -16,11 +16,15 @@ import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchOperators;
+import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -51,6 +55,7 @@ public class CollectionItemsBean extends ItemsBean {
   private CollectionImeji collection;
   private MetadataProfile profile;
   private SearchQuery searchQuery = new SearchQuery();
+  private int itemsWithoutLicense = 0;
 
   /**
    * Initialize the bean
@@ -76,6 +81,7 @@ public class CollectionItemsBean extends ItemsBean {
       metadataLabels = new MetadataLabels(profile, getLocale());
       browseContext = getNavigationString() + id;
       update();
+      searchItemsWihoutLicense();
     } catch (Exception e) {
       LOGGER.error("Error initializing collectionItemsBean", e);
     }
@@ -145,6 +151,31 @@ public class CollectionItemsBean extends ItemsBean {
 
   public CollectionImeji getCollection() {
     return collection;
+  }
+
+  /**
+   * Return the number of item without license
+   * 
+   * @return
+   */
+  public int getCountOfItemsWithoutLicense() {
+    return itemsWithoutLicense;
+  }
+
+  /**
+   * Search the number of items wihout any license
+   */
+  public void searchItemsWihoutLicense() {
+    itemsWithoutLicense = search(SearchQuery.toSearchQuery(new SearchPair(SearchFields.license,
+        SearchOperators.REGEX, ImejiLicenses.NO_LICENSE, false)), null, 0, -1).getNumberOfRecords();
+  }
+
+  public String getReleaseMessage() {
+    if (itemsWithoutLicense > 0) {
+      return itemsWithoutLicense + Imeji.RESOURCE_BUNDLE
+          .getMessage("confirmation_release_collection_license", getLocale());
+    }
+    return "";
   }
 
   /**

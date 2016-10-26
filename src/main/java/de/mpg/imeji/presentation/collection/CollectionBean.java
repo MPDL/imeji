@@ -17,9 +17,15 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.ImejiLicenses;
+import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.doi.DoiService;
+import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchOperators;
+import de.mpg.imeji.logic.search.model.SearchPair;
+import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
@@ -56,6 +62,7 @@ public abstract class CollectionBean extends ContainerBean {
   private boolean sendEmailNotification = false;
   private boolean collectionCreateMode = true;
   private boolean profileSelectMode = false;
+  private int itemsWithoutLicense = 0;
 
   /**
    * New default {@link CollectionBean}
@@ -184,6 +191,36 @@ public abstract class CollectionBean extends ContainerBean {
       LOGGER.error("Error during collection release", e);
     }
     return "pretty:";
+  }
+
+  /**
+   * Return the number of item without license
+   * 
+   * @return
+   */
+  public int getCountOfItemsWithoutLicense() {
+    return itemsWithoutLicense;
+  }
+
+  /**
+   * Search the number of items wihout any license
+   */
+  protected void searchItemsWihoutLicense() {
+    ItemBusinessController controller = new ItemBusinessController();
+    itemsWithoutLicense = controller
+        .search(collection.getId(),
+            SearchQuery.toSearchQuery(new SearchPair(SearchFields.license, SearchOperators.REGEX,
+                ImejiLicenses.NO_LICENSE, false)),
+            null, getSessionUser(), null, 0, 0)
+        .getNumberOfRecords();
+  }
+
+  public String getReleaseMessage() {
+    if (itemsWithoutLicense > 0) {
+      return itemsWithoutLicense + Imeji.RESOURCE_BUNDLE
+          .getMessage("confirmation_release_collection_license", getLocale());
+    }
+    return "";
   }
 
   public String createDOI() {
