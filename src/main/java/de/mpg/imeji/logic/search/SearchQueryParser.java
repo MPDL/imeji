@@ -213,6 +213,9 @@ public class SearchQueryParser {
     if (!"".equals(query) && searchQuery.isEmpty()) {
       searchQuery
           .addPair(new SearchPair(SearchFields.all, SearchOperators.REGEX, query.trim(), false));
+      searchQuery.addLogicalRelation(LOGICAL_RELATIONS.OR);
+      searchQuery.addPair(
+          new SearchPair(SearchFields.fulltext, SearchOperators.REGEX, query.trim(), false));
     }
     return searchQuery;
   }
