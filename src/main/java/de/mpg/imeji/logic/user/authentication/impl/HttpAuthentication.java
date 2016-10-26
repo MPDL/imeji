@@ -30,6 +30,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.logic.user.authentication.Authentication;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -50,7 +51,7 @@ public class HttpAuthentication implements Authentication {
    * Constructor with {@link HttpServletRequest}
    */
   public HttpAuthentication(HttpServletRequest request) {
-    this(request.getHeader("Authorization"));
+    this(getAuthorizationHeader(request));
   }
 
   /**
@@ -60,6 +61,20 @@ public class HttpAuthentication implements Authentication {
    */
   public HttpAuthentication(String authorizationHeader) {
     parseAuthorizationHeader(authorizationHeader);
+  }
+
+  /**
+   * Get the Authorization header
+   * 
+   * @param request
+   * @return
+   */
+  private static String getAuthorizationHeader(HttpServletRequest request) {
+    if (request.getHeader("Authorization") == null
+        && !StringHelper.isNullOrEmptyTrim(request.getParameter("apiKey"))) {
+      return "Bearer " + request.getParameter("apiKey");
+    }
+    return request.getHeader("Authorization");
   }
 
   /*

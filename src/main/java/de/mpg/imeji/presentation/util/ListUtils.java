@@ -45,11 +45,11 @@ public class ListUtils {
    * @param itemList
    * @return
    */
-  public static List<ThumbnailBean> itemListToThumbList(Collection<Item> itemList) {
+  public static List<ThumbnailBean> itemListToThumbList(Collection<Item> itemList, User user) {
     List<ThumbnailBean> beanList = new ArrayList<ThumbnailBean>();
     for (Item img : itemList) {
       try {
-        beanList.add(new ThumbnailBean(img, true));
+        beanList.add(new ThumbnailBean(img, user, true));
       } catch (Exception e) {
         LOGGER.error("Error creating ThumbnailBean list", e);
       }

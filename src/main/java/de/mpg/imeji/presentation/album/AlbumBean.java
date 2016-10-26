@@ -101,7 +101,7 @@ public class AlbumBean extends ContainerBean {
           thumbnail = new ThumbnailBean();
           thumbnail.setLink(album.getLogoUrl().toString());
         } else if (!getItems().isEmpty()) {
-          thumbnail = new ThumbnailBean(getItems().get(0), false);
+          thumbnail = new ThumbnailBean(getItems().get(0), user, false);
         }
       }
     }

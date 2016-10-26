@@ -157,7 +157,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
         metadataLabels = new MetadataLabels((List<Item>) items, getLocale());
       }
       // Return the item as thumbnailBean
-      return ListUtils.itemListToThumbList(items);
+      return ListUtils.itemListToThumbList(items, getSessionUser());
     } catch (ImejiException e) {
       BeanHelper.error(e.getMessage());
     }

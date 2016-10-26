@@ -8,17 +8,6 @@
 		<ui:param name="navigationPath" value="#{cc.attrs.picList.imageBaseUrl}#{Navigation.itemPath}/#{item.id}"/>
 		
 		<div class="imj_imageInfoLayer">
-			<h:panelGroup layout="block" class="imj_infoNavigation">			
-				<h:outputLink value="#{navigationPath}">
-					<h:panelGroup styleClass="fa fa-eye"/>
-					<h:outputText value=" #{lbl.view_detail}"/>
-				</h:outputLink>
-				<h:outputLink value="#{navigationPath}?edit=1" rendered="#{Auth.updateContent(item.collectionUri) and item.profile.statements.size() >0 }">
-					<h:panelGroup styleClass="fa fa-pencil"/>
-					<h:outputText value="#{lbl.metadata_edit}"/>
-				</h:outputLink>
-			</h:panelGroup>
-			
 			<div class="imj_metadataSet">
 				<div class="imj_metadataLabel" title="#{lbl.filename}">
 					<h:outputText value="#{lbl.filename}"/>
@@ -27,15 +16,13 @@
 					<h:outputText value="#{item.filename}"/>
 				</div>
 			</div>
-
-			
 			<ui:repeat id="metadata" var="md" value="#{item.mds.tree.list}" rows="0" varStatus="indexMetadata">
 				<ui:fragment rendered="#{!md.isEmpty() and md.preview}">
 					<div class="imj_metadataSet id_#{md.statementId}  parent_#{md.parent.statementId} highlight_area">
 						<div class="imj_metadataLabel" style="margin-left: #{metadata.hierarchyLevel}em;" title="#{cc.attrs.picList.metadataLabels.internationalizedLabels[md.statement.id]}">
 							<h:outputText value="#{cc.attrs.picList.metadataLabels.internationalizedLabels[md.statement.id]}"/>
 						</div>
-						<h:panelGroup layout="block" styleClass="imj_metadataValue">
+						<div class="imj_metadataValue">
 							<h:outputText value="#{md.text}" title="#{md.text}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#text'}"/>
 							<h:outputText value="#{md.number}" title="#{md.number}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#number'}">
 								<f:converter converterId="DoubleConverter"/>
@@ -45,13 +32,6 @@
 								<h:outputText value="Link" rendered="#{md.label == ''}"/>
 								<h:outputText value="#{md.label}" rendered="#{md.label != ''}"/>
 							</h:outputLink>
-							<ui:fragment rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#license'}">
-								<h:outputText value="#{md.license}" rendered="#{md.externalUri== null and md.license != null}"/>
-								<h:outputLink rendered="#{md.externalUri != null}" value="#{md.externalUri}">
-									<h:outputText value="#{md.license}" rendered="#{md.license != null}"/>
-									<h:outputText value="#{md.externalUri}" rendered="#{md.license == null or md.license == ''}"/>
-								</h:outputLink>
-							</ui:fragment>
 							<h:panelGroup rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#conePerson'}">
 								<h:outputText value="#{md.person.completeName}" title="#{md.person.completeName}"/>
 								<h:outputText value="(#{md.person.organizationString})" title="(#{md.person.organizationString})" rendered="#{md.person.organizationString} != ''"/>
@@ -80,7 +60,7 @@
 									</h:outputLink>
 								</ui:fragment>
 							</h:panelGroup>
-						</h:panelGroup>
+						</div>
 					</div>
 				</ui:fragment>
 			</ui:repeat>

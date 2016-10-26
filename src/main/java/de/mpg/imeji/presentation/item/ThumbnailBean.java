@@ -17,6 +17,7 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.MetadataSet;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
@@ -53,11 +54,11 @@ public class ThumbnailBean implements Serializable {
   private String shortFileType;
   private String fileSize;
   private String modified;
+  private User user;
 
-  /**
-   * Emtpy {@link ThumbnailBean}
-   */
-  public ThumbnailBean() {}
+  public ThumbnailBean() {
+    // Empty thumbnail
+  }
 
   /**
    * Bean for Thumbnail list elements. Each element of a list with thumbnail is an instance of a
@@ -67,7 +68,8 @@ public class ThumbnailBean implements Serializable {
    * @param initMetadata if true, will read the metadata
    * @throws Exception
    */
-  public ThumbnailBean(Item item, boolean initMetadata) throws Exception {
+  public ThumbnailBean(Item item, User user, boolean initMetadata) throws Exception {
+    this.user = user;
     this.uri = item.getId();
     this.collectionUri = item.getCollection();
     this.id = ObjectHelper.getId(getUri());
@@ -96,10 +98,9 @@ public class ThumbnailBean implements Serializable {
    * @throws ImejiException
    */
   public void initPopup() throws ImejiException {
-    SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     if (getMds() == null) {
       ItemBusinessController controller = new ItemBusinessController();
-      mdSet = controller.retrieve(uri, sessionBean.getUser()).getMetadataSet();
+      mdSet = controller.retrieve(uri, user).getMetadataSet();
       setMds(new MetadataSetWrapper(mdSet, getProfile(), false));
     }
   }

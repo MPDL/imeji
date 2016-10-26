@@ -70,7 +70,7 @@
 				</div>
 			</ui:fragment>
 			
-			<ui:fragment rendered="#{Navigation != null and cc.attrs.downloadEnabled}">					
+			<ui:fragment rendered="#{Navigation != null and cc.attrs.downloadEnabled}">				
 					<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item">
 						<div class="imj_menuHeader">
                             <span class="fa fa-download">&#160;</span>
@@ -80,19 +80,14 @@
 							<ul class="imj_overlayMenuList">
 								<ui:fragment rendered="#{cc.attrs.activeMenu != 'metadata' and cc.attrs.activeMenu != 'item'}">
 									<li>
-										<h:outputLink title="#{lbl.export_zip}" value="#{Navigation.applicationUrl}export?format=zip&amp;type=image&amp;n=10000&amp;space=#{SessionBean.selectedSpace}#{cc.attrs.contextDownloadParam.trim()}&amp;q=#{cc.attrs.exportQuery.trim()}" target="_blank">
-											<h:outputText value="#{lbl.export_zip}"/>
-										</h:outputLink>
+										<a title="#{lbl.export_zip}" href="#{Navigation.applicationUrl}export?format=zip&amp;type=image&amp;n=10000&amp;space=#{SessionBean.selectedSpace}#{cc.attrs.contextDownloadParam.trim()}&amp;q=#{cc.attrs.exportQuery.trim()}" target="_blank">
+											#{lbl.download_files}
+										</a>
 									</li>
 									<li>
-										<h:outputLink title="#{lbl.export_rdf}" value="#{Navigation.applicationUrl}export?format=rdf&amp;type=image&amp;n=10000&amp;space=#{SessionBean.selectedSpace}#{cc.attrs.contextDownloadParam.trim()}&amp;q=#{cc.attrs.exportQuery.trim()}" target="_blank">
-											<h:outputText value="#{lbl.export_rdf}"/>
-										</h:outputLink>
-									</li>
-									<li>
-										<h:outputLink title="#{lbl.export_native}" value="#{Navigation.applicationUrl}export?format=xml&amp;type=image&amp;n=10000&amp;space=#{SessionBean.selectedSpace}#{cc.attrs.contextDownloadParam.trim()}&amp;q=#{cc.attrs.exportQuery.trim()}" target="_blank">
-											<h:outputText value="#{lbl.export_native}"/>
-										</h:outputLink>
+										<a title="#{lbl.download_metadata}" target="_blanck"  href="#{Navigation.applicationUrl}rest/items?size=10000&amp;&amp;q=#{cc.attrs.exportQuery.trim()}&amp;apiKey=#{SessionBean.user.apiKey}">
+											#{lbl.download_metadata}
+										</a>
 									</li>
 								</ui:fragment>
 								<ui:fragment rendered="#{cc.attrs.activeMenu == 'metadata'}">
