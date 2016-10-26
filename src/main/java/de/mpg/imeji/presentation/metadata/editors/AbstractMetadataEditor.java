@@ -12,6 +12,7 @@ import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
@@ -116,8 +117,12 @@ public abstract class AbstractMetadataEditor {
   private void addLicense(Item item) {
     if (licenseEditor != null) {
       License lic = licenseEditor.getLicense();
-      if (lic != null && !lic.isEmtpy()) {
-        item.getLicenses().add(lic);
+      if (lic != null) {
+        if (!lic.isEmtpy()) {
+          item.getLicenses().add(lic);
+        } else if (lic.isEmtpy() && item.getStatus().equals(Status.PENDING)) {
+          item.getLicenses().clear();
+        }
       }
     }
   }
