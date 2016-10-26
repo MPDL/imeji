@@ -11,7 +11,6 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
@@ -27,6 +26,7 @@ public class LicenseSearchGroup implements Serializable {
   private static final long serialVersionUID = -2822491289836043116L;
   private List<String> selected = new ArrayList<>();
   private List<SelectItem> menu;
+  private String hasLicense = "all";
 
   public LicenseSearchGroup(Locale locale) {
     initMenu(locale);
@@ -48,18 +48,22 @@ public class LicenseSearchGroup implements Serializable {
    * @return
    */
   public SearchPair asSearchPair() {
-    return new SearchPair(SearchFields.license, SearchOperators.REGEX,
-        StringUtils.join(selected, " OR "), false);
+    if ("true".equals(hasLicense)) {
+      return new SearchPair(SearchFields.license, SearchOperators.REGEX, "*", false);
+    } else if ("false".equals(hasLicense)) {
+      return new SearchPair(SearchFields.license, SearchOperators.REGEX, "no_license", false);
+    } else {
+      return new SearchPair(SearchFields.license, SearchOperators.REGEX,
+          StringUtils.join(selected, " OR "), false);
+    }
   }
 
   public boolean isEmpty() {
-    return selected.isEmpty();
+    return "all".equals(hasLicense);
   }
 
   private void initMenu(Locale locale) {
     menu = new ArrayList<>();
-    menu.add(new SelectItem(ImejiLicenses.NO_LICENSE,
-        Imeji.RESOURCE_BUNDLE.getLabel("no_license", locale)));
     for (ImejiLicenses lic : ImejiLicenses.values()) {
       menu.add(new SelectItem(lic.name(), lic.getLabel()));
     }
@@ -96,6 +100,20 @@ public class LicenseSearchGroup implements Serializable {
    */
   public void setMenu(List<SelectItem> menu) {
     this.menu = menu;
+  }
+
+  /**
+   * @return the hasLicense
+   */
+  public String getHasLicense() {
+    return hasLicense;
+  }
+
+  /**
+   * @param hasLicense the hasLicense to set
+   */
+  public void setHasLicense(String hasLicense) {
+    this.hasLicense = hasLicense;
   }
 
 }

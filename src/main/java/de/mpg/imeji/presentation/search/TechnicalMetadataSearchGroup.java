@@ -88,14 +88,18 @@ public class TechnicalMetadataSearchGroup implements Serializable {
 
   public TechnicalMetadataSearchGroup() {
     initMenu();
-    list = new ArrayList<>();
-    list.add(0, new TechnicalMetadataElement(getDefaultMetadata(), ""));
+    if (!menu.isEmpty()) {
+      list = new ArrayList<>();
+      list.add(0, new TechnicalMetadataElement(getDefaultMetadata(), ""));
+    }
   }
 
   private void initMenu() {
     menu = new ArrayList<>();
     for (String index : Imeji.CONFIG.getTechnicalMetadata().split(",")) {
-      menu.add(new SelectItem(index));
+      if (!StringHelper.isNullOrEmptyTrim(index)) {
+        menu.add(new SelectItem(index));
+      }
     }
   }
 

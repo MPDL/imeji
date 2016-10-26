@@ -251,54 +251,63 @@
 		    	
 				<div class="imj_searchUnit">
 					<div class="imj_searchDetails">
-						<h:outputText value="#{lbl.select_licenses}" />
-						<h:selectManyCheckbox layout="pageDirection" value="#{AdvancedSearchBean.formular.licenseSearchGroup.selected}" valueChangeListener="#{AdvancedSearchBean.formular.licenseSearchGroup.selectedListener}">
+						<h:selectOneRadio class="select_has_license" value="#{AdvancedSearchBean.formular.licenseSearchGroup.hasLicense}" onchange="if(this.value == 'select'){$('.menu_select_license').show();}else{$('.menu_select_license').hide();}">
+						   	<f:selectItem itemValue="all" itemLabel="#{lbl.all}" />
+						   	<f:selectItem itemValue="true" itemLabel="#{lbl.has_license}" />
+						   	<f:selectItem itemValue="false" itemLabel="#{lbl.no_license}" />
+						   	<f:selectItem itemValue="select" itemLabel="#{lbl.select_licenses}"/>
+						   	<f:ajax execute="@this" render=":imj_searchQueryMessageArea"/>
+						</h:selectOneRadio>
+						<br/>
+						<h:selectManyCheckbox style="display:none" class="menu_select_license" layout="pageDirection" value="#{AdvancedSearchBean.formular.licenseSearchGroup.selected}" valueChangeListener="#{AdvancedSearchBean.formular.licenseSearchGroup.selectedListener}">
 							<f:selectItems  value="#{AdvancedSearchBean.formular.licenseSearchGroup.menu}"/>
 							<f:ajax execute="@this" render=":imj_searchQueryMessageArea"/>
 						</h:selectManyCheckbox>
 					</div>
 				</div>
-				
-				<div class="imj_logicalConnector">
-		    		<h:outputLabel value="#{lbl.and_big}"/>
-		    		<h:outputText value="&#160;"/>
-		    	</div>
-		    	
-		    	<div class="imj_searchUnit">
-		    		<div class="imj_searchDetails">
-		    			#{lbl.select_technical_metadata_name}
-		    		</div>
-		    		<ui:repeat var="tmd" value="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.list}"  varStatus="pos">
-		    			<ui:fragment rendered="#{pos.index &gt; 0}">
+
+				<ui:fragment rendered="#{not empty AdvancedSearchBean.formular.technicalMetadataSearchGroup.menu}">
+					<div class="imj_logicalConnector">
+			    		<h:outputLabel value="#{lbl.and_big}"/>
+			    		<h:outputText value="&#160;"/>
+			    	</div>
+			    	
+			    	
+			    	<div class="imj_searchUnit">
+			    		<div class="imj_searchDetails">
+			    			#{lbl.select_technical_metadata_name}
+			    		</div>
+			    		<ui:repeat var="tmd" value="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.list}"  varStatus="pos">
+			    			<ui:fragment rendered="#{pos.index &gt; 0}">
+				    			<div class="imj_searchDetails">
+									<h:selectOneMenu id="selLogicalRelationTechnical" value="#{tmd.relation}">
+										<f:selectItems value="#{AdvancedSearchBean.operatorsMenu}"/>
+										<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
+									</h:selectOneMenu>
+								</div>
+							</ui:fragment>
 			    			<div class="imj_searchDetails">
-								<h:selectOneMenu id="selLogicalRelationTechnical" value="#{tmd.relation}">
-									<f:selectItems value="#{AdvancedSearchBean.operatorsMenu}"/>
-									<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
-								</h:selectOneMenu>
+			    				<div class="imj_searchStatement">	
+					    			<h:selectOneMenu value="#{tmd.index}" >
+					    				<f:selectItems value="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.menu}"/>
+					    			</h:selectOneMenu>
+				    			</div>
+				    			&#160;&#160;=&#160;&#160;
+				    			<div class="imj_searchInput">
+				    				<h:inputText value="#{tmd.value}" styleClass="imj_searchInputValue"/>
+				    			</div>
+				    			<div class="imj_inlineButtonGroup">
+									<h:commandLink value="" action="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.add(pos.index)}" render="imj_ajaxWrapper, imj_searchQueryMessageArea" styleClass="fa fa-plus-square-o">
+										<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
+									</h:commandLink>
+									<h:commandLink value="" action="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.remove(pos.index)}" render="imj_ajaxWrapper, imj_searchQueryMessageArea" styleClass="fa fa-minus-square-o">
+										<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
+									</h:commandLink>
+								</div>
 							</div>
-						</ui:fragment>
-		    			<div class="imj_searchDetails">
-		    				<div class="imj_searchStatement">	
-				    			<h:selectOneMenu value="#{tmd.index}" >
-				    				<f:selectItems  value="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.menu}"/>
-				    			</h:selectOneMenu>
-			    			</div>
-			    			&#160;&#160;=&#160;&#160;
-			    			<div class="imj_searchInput">
-			    				<h:inputText value="#{tmd.value}" styleClass="imj_searchInputValue"/>
-			    			</div>
-			    			<div class="imj_inlineButtonGroup">
-								<h:commandLink value="" action="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.add(pos.index)}" render="imj_ajaxWrapper, imj_searchQueryMessageArea" styleClass="fa fa-plus-square-o">
-									<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
-								</h:commandLink>
-								<h:commandLink value="" action="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.remove(pos.index)}" render="imj_ajaxWrapper, imj_searchQueryMessageArea" styleClass="fa fa-minus-square-o">
-									<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea"/>
-								</h:commandLink>
-							</div>
-						</div>
-		    		</ui:repeat>
-		    	
-				</div>
+			    		</ui:repeat>
+					</div>
+				</ui:fragment>
 				
 				<!-- submit panel -->
 				<div class="imj_submitPanel">

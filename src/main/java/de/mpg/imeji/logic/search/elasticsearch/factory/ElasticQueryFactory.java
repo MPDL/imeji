@@ -383,6 +383,8 @@ public class ElasticQueryFactory {
           if (ImejiLicenses.NO_LICENSE.equals(licenseName)) {
             licenseQuery.should(QueryBuilders.boolQuery()
                 .mustNot(QueryBuilders.existsQuery(ElasticFields.LICENSE.field())));
+          } else if ("*".equals(licenseName)) {
+            licenseQuery.should(QueryBuilders.existsQuery(ElasticFields.LICENSE.field()));
           } else {
             licenseQuery.should(
                 fieldQuery(ElasticFields.LICENSE, licenseName, SearchOperators.REGEX, false));

@@ -3,38 +3,29 @@ PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
 
 #This script will migrate all metadata of type license to the metadata of type Link
 
-WITH <http://imeji.org/item>
-DELETE{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#license>}
-INSERT{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#link>}
-USING <http://imeji.org/item>
-WHERE{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#license>};
-
-WITH <http://imeji.org/item>
-DELETE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#license>}
-INSERT{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#link>}
-USING <http://imeji.org/item>
-WHERE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#license>};
-
-WITH <http://imeji.org/item>
-DELETE{?s <http://imeji.org/terms/license> ?o}
-INSERT{?s <http://www.w3.org/2000/01/rdf-schema#label> ?o}
-USING <http://imeji.org/item>
-WHERE{?s <http://imeji.org/terms/license> ?o};
-
-WITH <http://imeji.org/item>
-DELETE{?s <http://purl.org/dc/elements/1.1/identifier> ?o}
-INSERT{?s <http://imeji.org/terms/uri> ?o}
-USING <http://imeji.org/item>
-WHERE{?s <http://purl.org/dc/elements/1.1/identifier> ?o};
-
+# Change the class type of license objects
 WITH <http://imeji.org/item>
 DELETE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.License"}
 INSERT{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.Link"}
 USING <http://imeji.org/item>
 WHERE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.License"};
 
+# Replace license statement by link statement
 WITH <http://imeji.org/metadataProfile>
 DELETE{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#license>}
 INSERT{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#link>}
 USING <http://imeji.org/metadataProfile>
 WHERE{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#license>};
+
+# Replace license md by link md
+WITH <http://imeji.org/item>
+DELETE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#license> . ?s <http://imeji.org/terms/license> ?licenseName . ?s <http://purl.org/dc/elements/1.1/identifier>  ?licenseUrl}
+INSERT{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#link> . ?s <http://www.w3.org/2000/01/rdf-schema#label> ?licenseName . ?s <http://imeji.org/terms/uri> ?licenseUrl}
+USING <http://imeji.org/item>
+WHERE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#license> . OPTIONAL{ ?s <http://imeji.org/terms/license> ?licenseName} . OPTIONAL {?s <http://purl.org/dc/elements/1.1/identifier>  ?licenseUrl}};
+
+# Add dummy url to link without url (happen because of migration, since license and link have different validation rules)
+WITH <http://imeji.org/item>
+INSERT{?s  <http://imeji.org/terms/uri> <https://example.org/>}
+USING <http://imeji.org/item>
+WHERE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#link> . not exists {?s <http://imeji.org/terms/uri> ?url}};
