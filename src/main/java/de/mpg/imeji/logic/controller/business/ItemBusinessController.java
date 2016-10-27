@@ -497,7 +497,7 @@ public class ItemBusinessController extends ImejiController {
     for (Item item : items) {
       prepareRelease(item, user);
       if (defaultLicense != null && LicenseUtil.getActiveLicense(item) == null) {
-        item.setLicenses(Arrays.asList(defaultLicense));
+        item.setLicenses(Arrays.asList(defaultLicense.clone()));
       }
     }
     updateBatch(items, user);

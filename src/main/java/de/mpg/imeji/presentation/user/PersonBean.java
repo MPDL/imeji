@@ -27,7 +27,6 @@ import de.mpg.imeji.presentation.beans.ContainerBean;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.metadata.MetadataWrapper;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * The JSF Composite for a {@link Person}
@@ -42,8 +41,7 @@ public class PersonBean extends SuperBean implements Serializable {
   private String personURI;
   private String orgaURI;
 
-  public PersonBean() {
-  }
+  public PersonBean() {}
 
   /**
    * Change the person
@@ -51,6 +49,9 @@ public class PersonBean extends SuperBean implements Serializable {
    * @return
    */
   public String changePerson(Object bean, int position) {
+    if (personURI == null || personURI.isEmpty()) {
+      return ":";
+    }
     Person person = loadPerson(personURI);
     if (bean instanceof UserCreationBean) {
       ((UserCreationBean) bean).getUser().setPerson(person.clone());

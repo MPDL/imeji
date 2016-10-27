@@ -16,7 +16,7 @@
     </composite:interface>
 
     <composite:implementation>
-        <h:form id="mediaContainerForm">
+        <h:form id="mediaContainerForm" onkeyup="if (event.keyCode == 13) {document.getElementById('editContainer:mediaContainerForm:btn_saveCollection').click(); return false;}">
             <div class="imj_headline">
                 <br/>
             </div>
@@ -27,10 +27,8 @@
                         <label class="imj_metadataLabel"> <h:outputText
                                 value="#{lbl.title} *" /> <span class="imj_noDisplay">: </span>
                         </label>
-                        <h:inputText id="inputTitleText" styleClass="imj_metadataValue"
-                                     value="#{cc.attrs.formularContextBean.metadata.title}" html5:autofocus="true" />
+                        <h:inputText id="inputTitleText" styleClass="imj_metadataValue"  value="#{cc.attrs.formularContextBean.metadata.title}" html5:autofocus="true" />
                     </div>
-
 
                     <!-- Description -->
                     <div class="imj_metadataSet">
@@ -38,9 +36,7 @@
                             <h:outputText value="#{lbl.description}" /> <span class="imj_noDisplay">:
                             </span>
                         </label>
-                        <h:inputTextarea id="inputDescription"
-                                         styleClass="imj_metadataValue"
-                                         value="#{cc.attrs.formularContextBean.metadata.description}" />
+                        <h:inputTextarea id="inputDescription" styleClass="imj_metadataValue"  value="#{cc.attrs.formularContextBean.metadata.description}" />
                     </div>
 
                     <h:outputText value="* #{lbl.mandatory}" />
@@ -260,7 +256,7 @@
                         <h:outputText value="#{lbl.cancel}"/>
                     </h:outputLink>
                     <h:commandButton action="#{cc.attrs.formularBean.saveAndEditProfile()}" value="#{lbl.save_and_edit_profile}" styleClass="imj_submitButton" onclick="openDialog('dialogWait');" rendered="#{cc.attrs.formularBean.collectionType and cc.attrs.showProfileSelector and cc.attrs.formularBean.createProfile and cc.attrs.formularBean.profileSelector.copyProfile}"/>
-                    <h:commandButton action="#{cc.attrs.formularBean.save()}" value="#{lbl.save}" styleClass="imj_submitButton" onclick="openDialog('dialogWait');"/>
+                    <h:commandButton id="btn_saveCollection" action="#{cc.attrs.formularBean.save()}" value="#{lbl.save}" styleClass="imj_submitButton" onclick="openDialog('dialogWait');"/>
                 </div>
             </div>
         </h:form>

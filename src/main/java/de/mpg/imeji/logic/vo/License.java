@@ -36,6 +36,17 @@ public class License implements Serializable {
 
   }
 
+  public License clone() {
+    License clone = new License();
+    clone.setId(id);
+    clone.setLabel(label);
+    clone.setName(name);
+    clone.setEnd(end);
+    clone.setStart(start);
+    clone.setUrl(url);
+    return clone;
+  }
+
   public License(ImejiLicenses lic) {
     this.name = lic.name();
     this.url = lic.getUrl();

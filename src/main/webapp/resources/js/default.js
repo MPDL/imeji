@@ -658,15 +658,13 @@ function initSimpleSearch(albumsUrlValue, collectionsUrlValue, browseUrlValue, n
 }
 
 function getSearchSelectedName() {
-	if (selectedSearch == 1) {
-		return 'items';
-	}
 	if (selectedSearch == 2) {
 		return 'collections';
 	}
 	if (selectedSearch == 3) {
 		return 'albums';
 	}
+	return 'items';
 }
 /**
  * Trigger the simple search, according to the currently selected context
