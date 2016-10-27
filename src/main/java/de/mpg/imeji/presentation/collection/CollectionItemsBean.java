@@ -3,8 +3,6 @@
  */
 package de.mpg.imeji.presentation.collection;
 
-import static de.mpg.imeji.presentation.notification.CommonMessages.getSuccessCollectionDeleteMessage;
-
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,15 +14,10 @@ import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchOperators;
-import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -36,7 +29,6 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.item.ItemsBean;
-import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
@@ -55,7 +47,7 @@ public class CollectionItemsBean extends ItemsBean {
   private CollectionImeji collection;
   private MetadataProfile profile;
   private SearchQuery searchQuery = new SearchQuery();
-  private int itemsWithoutLicense = 0;
+  private CollectionActionMenu actionMenu;
 
   /**
    * Initialize the bean
@@ -81,11 +73,14 @@ public class CollectionItemsBean extends ItemsBean {
       metadataLabels = new MetadataLabels(profile, getLocale());
       browseContext = getNavigationString() + id;
       update();
-      searchItemsWihoutLicense();
+      actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale(),
+          getSelectedSpaceString());
     } catch (Exception e) {
       LOGGER.error("Error initializing collectionItemsBean", e);
     }
   }
+
+
 
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
@@ -154,107 +149,6 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   /**
-   * Return the number of item without license
-   * 
-   * @return
-   */
-  public int getCountOfItemsWithoutLicense() {
-    return itemsWithoutLicense;
-  }
-
-  /**
-   * Search the number of items wihout any license
-   */
-  public void searchItemsWihoutLicense() {
-    itemsWithoutLicense = search(SearchQuery.toSearchQuery(new SearchPair(SearchFields.license,
-        SearchOperators.REGEX, ImejiLicenses.NO_LICENSE, false)), null, 0, -1).getNumberOfRecords();
-  }
-
-  public String getReleaseMessage() {
-    if (itemsWithoutLicense > 0) {
-      return itemsWithoutLicense + Imeji.RESOURCE_BUNDLE
-          .getMessage("confirmation_release_collection_license", getLocale());
-    }
-    return "";
-  }
-
-  /**
-   * Release the current {@link CollectionImeji}
-   *
-   * @return
-   */
-  public String release() {
-    CollectionController cc = new CollectionController();
-    try {
-      cc.releaseWithDefaultLicense(collection, getSessionUser());
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_release", getLocale()));
-    } catch (Exception e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_release", getLocale()));
-      BeanHelper.error(e.getMessage());
-      LOGGER.error("Error releasing collection", e);
-    }
-    return "pretty:";
-  }
-
-  public String createDOI() {
-    try {
-      String doi = UrlHelper.getParameterValue("doi");
-      DoiService doiService = new DoiService();
-      if (doi != null) {
-        doiService.addDoiToCollection(doi, collection, getSessionUser());
-      } else {
-        doiService.addDoiToCollection(collection, getSessionUser());
-      }
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_doi_creation", getLocale()));
-    } catch (ImejiException e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", getLocale()) + " "
-          + e.getMessage());
-      LOGGER.error("Error during doi creation", e);
-    }
-    return "pretty:";
-  }
-
-  /**
-   * Delete the current {@link CollectionImeji}
-   *
-   * @return
-   */
-  public String delete() {
-    CollectionController cc = new CollectionController();
-    try {
-      cc.delete(collection, getSessionUser());
-      BeanHelper.info(
-          getSuccessCollectionDeleteMessage(collection.getMetadata().getTitle(), getLocale()));
-    } catch (Exception e) {
-      BeanHelper.error(
-          getSuccessCollectionDeleteMessage(collection.getMetadata().getTitle(), getLocale()));
-      BeanHelper.error(e.getMessage());
-      LOGGER.error("Error deleting collection", e);
-    }
-    return SessionBean.getPrettySpacePage("pretty:collections", getSpaceId());
-  }
-
-  /**
-   * Withdraw the current {@link CollectionImeji}
-   *
-   * @return
-   * @throws Exception
-   */
-  public String withdraw() throws Exception {
-    CollectionController cc = new CollectionController();
-    try {
-      collection.setDiscardComment(getDiscardComment());
-      cc.withdraw(collection, getSessionUser());
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_withdraw", getLocale()));
-    } catch (Exception e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_withdraw", getLocale()));
-      BeanHelper.error(e.getMessage());
-      LOGGER.error("Error discarding collection", e);
-    }
-    return "pretty:";
-  }
-
-  /**
    * @return the profile
    */
   public MetadataProfile getProfile() {
@@ -271,6 +165,19 @@ public class CollectionItemsBean extends ItemsBean {
   @Override
   public String getType() {
     return PAGINATOR_TYPE.COLLECTION_ITEMS.name();
+  }
 
+  /**
+   * @return the actionMenu
+   */
+  public CollectionActionMenu getActionMenu() {
+    return actionMenu;
+  }
+
+  /**
+   * @param actionMenu the actionMenu to set
+   */
+  public void setActionMenu(CollectionActionMenu actionMenu) {
+    this.actionMenu = actionMenu;
   }
 }

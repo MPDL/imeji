@@ -284,9 +284,9 @@ public class JenaCustomQueries {
    * @param storageId
    * @return
    */
-  public static final String selectItemOfFile(String storageId) {
-    return X_PATH_FUNCTIONS_DECLARATION + XSD_DECLARATION + "SELECT DISTINCT ?s WHERE { ?s <"
-        + ImejiNamespaces.STORAGE_ID + "> '" + storageId + "'^^xsd:string } limit 1";
+  public static final String selectItemOfFile(String fileUrl) {
+    return X_PATH_FUNCTIONS_DECLARATION + XSD_DECLARATION + "SELECT DISTINCT ?s WHERE { ?s ?p <"
+        + fileUrl + "> } limit 1";
   }
 
   /**

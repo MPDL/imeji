@@ -248,11 +248,10 @@ public class ItemBusinessController extends ImejiController {
    * @return
    * @throws ImejiException
    */
-  public Item retrieveLazyForFile(String storageId, User user) throws ImejiException {
-    Search s = SearchFactory.create(SEARCH_IMPLEMENTATIONS.JENA);
+  public Item retrieveLazyForFile(String fileUrl, User user) throws ImejiException {
+    Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
     List<String> r =
-        s.searchString(JenaCustomQueries.selectItemOfFile(storageId), null, null, 0, -1)
-            .getResults();
+        s.searchString(JenaCustomQueries.selectItemOfFile(fileUrl), null, null, 0, -1).getResults();
     if (!r.isEmpty() && r.get(0) != null) {
       return retrieveLazy(URI.create(r.get(0)), user);
     } else {

@@ -48,8 +48,7 @@ public class StorageUtil {
    */
   private static boolean isAllowedToViewItemOfFile(String fileUrl, User user) {
     try {
-      new ItemBusinessController()
-          .retrieveLazyForFile(STORAGE_CONTROLLER.getStorage().getStorageId(fileUrl), user);
+      new ItemBusinessController().retrieveLazyForFile(fileUrl, user);
       return true;
     } catch (ImejiException e) {
       return false;

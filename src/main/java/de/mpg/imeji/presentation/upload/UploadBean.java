@@ -3,8 +3,6 @@
  */
 package de.mpg.imeji.presentation.upload;
 
-import static de.mpg.imeji.presentation.notification.CommonMessages.getSuccessCollectionDeleteMessage;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,19 +32,13 @@ import com.ocpsoft.pretty.PrettyContext;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchOperators;
-import de.mpg.imeji.logic.search.model.SearchPair;
-import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -57,10 +49,9 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.collection.CollectionBean;
+import de.mpg.imeji.presentation.collection.CollectionActionMenu;
 import de.mpg.imeji.presentation.history.HistoryUtil;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Bean for the upload page
@@ -84,7 +75,7 @@ public class UploadBean extends SuperBean {
   private List<String> selected;
   @ManagedProperty(value = "#{UploadSession}")
   private UploadSession uploadSession;
-  private int itemsWithoutLicense = 0;
+  private CollectionActionMenu actionMenu;
 
 
   /**
@@ -404,7 +395,8 @@ public class UploadBean extends SuperBean {
         ItemBusinessController ic = new ItemBusinessController();
         collectionSize = ic.search(collection.getId(), null, null, Imeji.adminUser, null, 0, 0)
             .getNumberOfRecords();
-        searchItemsWihoutLicense();
+        actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale(),
+            getSelectedSpaceString());
       }
     } else {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", getLocale()) + "No ID in URL");
@@ -422,88 +414,6 @@ public class UploadBean extends SuperBean {
       throw new UnprocessableError(
           Imeji.RESOURCE_BUNDLE.getMessage("error_collection_discarded_upload", getLocale()));
     }
-  }
-
-  public String createDOI() {
-    try {
-      String doi = UrlHelper.getParameterValue("doi");
-      DoiService doiService = new DoiService();
-      if (doi != null) {
-        doiService.addDoiToCollection(doi, collection, getSessionUser());
-      } else {
-        doiService.addDoiToCollection(collection, getSessionUser());
-      }
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_doi_creation", getLocale()));
-    } catch (ImejiException e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", getLocale()) + " "
-          + e.getMessage());
-      LOGGER.error("Error during doi creation", e);
-    }
-    return "";
-  }
-
-
-  /**
-   * release the {@link CollectionImeji}
-   *
-   * @return
-   * @throws IOException
-   */
-  public String release() throws IOException {
-    CollectionController cc = new CollectionController();
-    try {
-      cc.releaseWithDefaultLicense(collection, getSessionUser());
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_release", getLocale()));
-    } catch (ImejiException e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_release", getLocale()));
-      BeanHelper.error(e.getMessage());
-      LOGGER.error("Error releasing collection", e);
-    }
-    redirect(getNavigation().getCollectionUrl() + ObjectHelper.getId(collection.getId()) + "/"
-        + getNavigation().getUploadPath() + "?init=1");
-
-    return "";
-
-  }
-
-  /**
-   * Delete the {@link CollectionImeji}
-   *
-   * @return
-   */
-  public String delete() {
-    CollectionController cc = new CollectionController();
-    try {
-      cc.delete(collection, getSessionUser());
-      BeanHelper.info(
-          getSuccessCollectionDeleteMessage(collection.getMetadata().getTitle(), getLocale()));
-    } catch (Exception e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_delete", getLocale()));
-      LOGGER.error("Error delete collection", e);
-    }
-    return SessionBean.getPrettySpacePage("pretty:collections", getSelectedSpaceString());
-  }
-
-  /**
-   * Discard the {@link CollectionImeji} of this {@link CollectionBean}
-   *
-   * @return @
-   * @throws IOException
-   */
-  public String withdraw() throws IOException {
-    CollectionController cc = new CollectionController();
-    try {
-      cc.withdraw(collection, getSessionUser());
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_withdraw", getLocale()));
-    } catch (Exception e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_withdraw", getLocale()));
-      BeanHelper.error(e.getMessage());
-      LOGGER.error("Error discarding collection:", e);
-    }
-    redirect(getNavigation().getCollectionUrl() + ObjectHelper.getId(collection.getId()));
-
-    return "";
-
   }
 
   public CollectionImeji getCollection() {
@@ -652,32 +562,16 @@ public class UploadBean extends SuperBean {
   }
 
   /**
-   * Return the number of item without license
-   * 
-   * @return
+   * @return the actionMenu
    */
-  public int getCountOfItemsWithoutLicense() {
-    return itemsWithoutLicense;
+  public CollectionActionMenu getActionMenu() {
+    return actionMenu;
   }
 
   /**
-   * Search the number of items wihout any license
+   * @param actionMenu the actionMenu to set
    */
-  protected void searchItemsWihoutLicense() {
-    ItemBusinessController controller = new ItemBusinessController();
-    itemsWithoutLicense = controller
-        .search(collection.getId(),
-            SearchQuery.toSearchQuery(new SearchPair(SearchFields.license, SearchOperators.REGEX,
-                ImejiLicenses.NO_LICENSE, false)),
-            null, getSessionUser(), null, 0, 0)
-        .getNumberOfRecords();
-  }
-
-  public String getReleaseMessage() {
-    if (itemsWithoutLicense > 0) {
-      return itemsWithoutLicense + Imeji.RESOURCE_BUNDLE
-          .getMessage("confirmation_release_collection_license", getLocale());
-    }
-    return "";
+  public void setActionMenu(CollectionActionMenu actionMenu) {
+    this.actionMenu = actionMenu;
   }
 }

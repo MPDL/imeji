@@ -35,6 +35,9 @@
 			<ui:fragment rendered="#{empty cc.attrs.license.url}">
 				#{cc.attrs.license.label}
 			</ui:fragment>
+			<ui:fragment rendered="#{empty cc.attrs.license.label}">
+				#{cc.attrs.license.url}
+			</ui:fragment>
 			<ui:fragment rendered="#{!LicenseViewer.isActive(cc.attrs.license)}">
 				<i>
 			 	 #{lbl.valid_from} #{license.startTime}, #{lbl.to_date} #{license.endTime}
