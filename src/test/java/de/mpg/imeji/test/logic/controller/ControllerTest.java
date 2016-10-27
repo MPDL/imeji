@@ -15,6 +15,7 @@ import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import util.JenaUtil;
@@ -27,8 +28,8 @@ public class ControllerTest {
   protected static CollectionImeji collection = null;
   protected static MetadataProfile profile = null;
   protected static Item item = null;
-  protected static final File originalFile = new File("src/test/resources/storage/test.jpg");
-  protected static final File thumbnailFile = new File("src/test/resources/storage/test.png");
+  private static final File originalFile = new File("src/test/resources/storage/test.jpg");
+  private static final File thumbnailFile = new File("src/test/resources/storage/test.png");
 
   @BeforeClass
   public static void setup() {
@@ -81,17 +82,21 @@ public class ControllerTest {
   }
 
   protected static Item createItemWithFile() throws ImejiException {
-    return createItemWithFile(originalFile);
+    return createItemWithFile(getOriginalfile());
   }
 
   protected static Item createItemWithFile(File file) throws ImejiException {
-    ItemBusinessController controller = new ItemBusinessController();
     if (collection == null) {
       createCollection();
     }
+    return createItemWithFile(file, collection, JenaUtil.testUser);
+  }
+
+  protected static Item createItemWithFile(File file, CollectionImeji collection, User user)
+      throws ImejiException {
+    ItemBusinessController controller = new ItemBusinessController();
     item = ImejiFactory.newItem(collection);
-    item =
-        controller.createWithFile(item, copyFile(file), "test.jpg", collection, JenaUtil.testUser);
+    item = controller.createWithFile(item, copyFile(file), file.getName(), collection, user);
     return item;
   }
 
@@ -104,5 +109,19 @@ public class ControllerTest {
       throw new RuntimeException("Error copying file", e);
     }
 
+  }
+
+  /**
+   * @return the originalfile
+   */
+  protected static File getOriginalfile() {
+    return copyFile(originalFile);
+  }
+
+  /**
+   * @return the thumbnailfile
+   */
+  protected static File getThumbnailfile() {
+    return copyFile(thumbnailFile);
   }
 }

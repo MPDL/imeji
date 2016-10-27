@@ -208,6 +208,13 @@ public class ItemCreate extends ItemTestBase {
   public void createItem_InReleasedCollection() throws Exception {
     initItem("test6");
     CollectionService sc = new CollectionService();
+    for (DefaultItemTO item : sc.readItems(collectionId, JenaUtil.testUser, "", 0, -1)
+        .getResults()) {
+      if (item.getLicenses().isEmpty()) {
+        addDummyLicenseToItem(item);
+        new DefaultItemService().update(item, JenaUtil.testUser);
+      }
+    }
     sc.release(collectionId, JenaUtil.testUser);
     assertEquals("RELEASED", sc.read(collectionId, JenaUtil.testUser).getStatus());
 

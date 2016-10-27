@@ -2,6 +2,7 @@ package util;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +81,7 @@ public class JenaUtil {
       TDB_PATH = PropertyReader.getProperty("imeji.tdb.path");
       // remove old Database
       deleteTDBDirectory();
+      deleteFilesDirectory();
       // Set Filemode: important to be able to delete TDB directory by
       // closing Jena
       SystemTDB.setFileMode(FileMode.direct);
@@ -156,6 +158,13 @@ public class JenaUtil {
 
   private static void deleteTDBDirectory() throws IOException {
     File f = new File(TDB_PATH);
+    if (f.exists()) {
+      LOGGER.info(f.getAbsolutePath() + " deleted: " + FileUtils.deleteQuietly(f));
+    }
+  }
+
+  private static void deleteFilesDirectory() throws IOException, URISyntaxException {
+    File f = new File(PropertyReader.getProperty("imeji.storage.path"));
     if (f.exists()) {
       LOGGER.info(f.getAbsolutePath() + " deleted: " + FileUtils.deleteQuietly(f));
     }

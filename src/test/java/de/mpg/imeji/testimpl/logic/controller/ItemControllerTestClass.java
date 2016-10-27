@@ -45,7 +45,7 @@ public class ItemControllerTestClass extends ControllerTest {
   public void replaceItemThumbnail() throws ImejiException, IOException {
     ItemBusinessController controller = new ItemBusinessController();
     try {
-      item = controller.updateThumbnail(item, thumbnailFile, JenaUtil.testUser);
+      item = controller.updateThumbnail(item, getThumbnailfile(), JenaUtil.testUser);
     } catch (ImejiException e) {
       Assert.fail("Thubmnail could not be replaced" + e.getMessage());
     }
@@ -53,9 +53,9 @@ public class ItemControllerTestClass extends ControllerTest {
     File storedFile = File.createTempFile("testFile", null);
     FileOutputStream fos = new FileOutputStream(storedFile);
     sController.read(item.getFullImageUrl().toString(), fos, true);
-    Assert.assertEquals(StorageUtils.calculateChecksum(originalFile),
+    Assert.assertEquals(StorageUtils.calculateChecksum(getOriginalfile()),
         StorageUtils.calculateChecksum(storedFile));
-    Assert.assertEquals(StorageUtils.calculateChecksum(originalFile), item.getChecksum());
+    Assert.assertEquals(StorageUtils.calculateChecksum(getOriginalfile()), item.getChecksum());
 
   }
 
@@ -63,7 +63,7 @@ public class ItemControllerTestClass extends ControllerTest {
   public void replaceItemFile() throws ImejiException, IOException {
     ItemBusinessController controller = new ItemBusinessController();
     try {
-      item = controller.updateFile(item, collection, thumbnailFile, "test.tmp", JenaUtil.testUser);
+      item = controller.updateFile(item, collection, getThumbnailfile(), "test.tmp", JenaUtil.testUser);
     } catch (ImejiException e) {
       Assert.fail("File could not be replaced. " + e.getMessage());
     }
@@ -71,11 +71,11 @@ public class ItemControllerTestClass extends ControllerTest {
     File storedFile = File.createTempFile("testFile", null);
     FileOutputStream fos = new FileOutputStream(storedFile);
     sController.read(item.getFullImageUrl().toString(), fos, true);
-    Assert.assertNotEquals(StorageUtils.calculateChecksum(originalFile),
+    Assert.assertNotEquals(StorageUtils.calculateChecksum(getOriginalfile()),
         StorageUtils.calculateChecksum(storedFile));
-    Assert.assertEquals(StorageUtils.calculateChecksum(thumbnailFile),
+    Assert.assertEquals(StorageUtils.calculateChecksum(getThumbnailfile()),
         StorageUtils.calculateChecksum(storedFile));
-    Assert.assertEquals(StorageUtils.calculateChecksum(thumbnailFile), item.getChecksum());
+    Assert.assertEquals(StorageUtils.calculateChecksum(getThumbnailfile()), item.getChecksum());
 
   }
 

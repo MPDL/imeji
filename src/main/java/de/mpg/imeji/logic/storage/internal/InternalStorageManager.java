@@ -258,8 +258,8 @@ public class InternalStorageManager implements Serializable {
     item.setId(id);
     item.setFileName(fileName);
     item.setFileType(getMimeType(file));
-    fileName =
-        isNullOrEmpty(getExtension(fileName)) ? fileName + "." + guessExtension(file) : fileName;
+    fileName = isNullOrEmpty(getExtension(fileName)) || "tmp".equals(getExtension(fileName))
+        ? fileName + "." + guessExtension(file) : fileName;
     item.setOriginalUrl(generateUrl(id, fileName, FileResolution.ORIGINAL));
     item.setThumbnailUrl(generateUrl(id, fileName, FileResolution.THUMBNAIL));
     item.setWebUrl(generateUrl(id, fileName, FileResolution.WEB));
@@ -310,8 +310,8 @@ public class InternalStorageManager implements Serializable {
    */
   public String generateUrl(String id, String filename, FileResolution resolution) {
     filename = StringHelper.normalizeFilename(filename);
+    String extension = getExtension(filename);
     if (resolution != FileResolution.ORIGINAL) {
-      String extension = getExtension(filename);
       filename = removeExtension(filename) + (extension.equals("gif") ? ".gif" : ".jpg");
     }
     return storageUrl + id + StringHelper.urlSeparator + resolution.name().toLowerCase()

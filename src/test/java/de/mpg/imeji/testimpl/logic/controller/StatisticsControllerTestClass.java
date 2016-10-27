@@ -13,6 +13,8 @@ import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.business.StatisticsBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
+import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
@@ -27,30 +29,32 @@ public class StatisticsControllerTestClass extends ControllerTest {
   public void test() throws ImejiException {
     StatisticsBusinessController controller = new StatisticsBusinessController();
     CollectionImeji col1 = createCollection(JenaUtil.testUser);
-    Item item1 = createItemWithFile(col1, originalFile, JenaUtil.testUser);
-    long totalFileSize = FileUtils.sizeOf(originalFile);
+    Item item1 = createItemWithFile(col1, getOriginalfile(), JenaUtil.testUser);
+    long totalFileSize = FileUtils.sizeOf(getOriginalfile());
     long result = controller.getUsedStorageSizeForInstitute("imeji.org");
     assertEquals(totalFileSize, result);
     // add again
-    Item item2 = createItemWithFile(col1, thumbnailFile, JenaUtil.testUser);
-    totalFileSize = totalFileSize + FileUtils.sizeOf(thumbnailFile);;
+    Item item2 = createItemWithFile(col1, getThumbnailfile(), JenaUtil.testUser);
+    totalFileSize = totalFileSize + FileUtils.sizeOf(getThumbnailfile());;
     result = controller.getUsedStorageSizeForInstitute("imeji.org");
     assertEquals(totalFileSize, result);
     // deleteItem
     ItemBusinessController itemController = new ItemBusinessController();
     itemController.delete(item2.getIdString(), JenaUtil.testUser);
-    totalFileSize = totalFileSize - FileUtils.sizeOf(thumbnailFile);
+    totalFileSize = totalFileSize - FileUtils.sizeOf(getThumbnailfile());
     result = controller.getUsedStorageSizeForInstitute("imeji.org");
     assertEquals(totalFileSize, result);
     // Upload in another collection
     CollectionImeji col2 = createCollection(JenaUtil.testUser);
-    Item item3 = createItemWithFile(col2, originalFile, JenaUtil.testUser);
-    totalFileSize = totalFileSize + FileUtils.sizeOf(originalFile);;
+    Item item3 = createItemWithFile(col2, getOriginalfile(), JenaUtil.testUser);
+    totalFileSize = totalFileSize + FileUtils.sizeOf(getOriginalfile());;
     result = controller.getUsedStorageSizeForInstitute("imeji.org");
     assertEquals(totalFileSize, result);
     // Upload by another user
-    Item item4 = createItemWithFile(col2, thumbnailFile, JenaUtil.testUser2);
-    totalFileSize = totalFileSize + FileUtils.sizeOf(thumbnailFile);;
+    new ShareBusinessController().shareToUser(JenaUtil.testUser, JenaUtil.testUser2,
+        col2.getId().toString(), ShareBusinessController.rolesAsList(ShareRoles.CREATE));
+    Item item4 = createItemWithFile(col2, getThumbnailfile(), JenaUtil.testUser2);
+    totalFileSize = totalFileSize + FileUtils.sizeOf(getThumbnailfile());;
     result = controller.getUsedStorageSizeForInstitute("imeji.org");
     assertEquals(totalFileSize, result);
   }
@@ -62,9 +66,6 @@ public class StatisticsControllerTestClass extends ControllerTest {
   }
 
   private Item createItemWithFile(CollectionImeji col, File file, User user) throws ImejiException {
-    ItemBusinessController controller = new ItemBusinessController();
-    Item item = ImejiFactory.newItem(col);
-    item = controller.createWithFile(item, file, "test.jpg", collection, JenaUtil.testUser);
-    return item;
+    return super.createItemWithFile(file, col, user);
   }
 }

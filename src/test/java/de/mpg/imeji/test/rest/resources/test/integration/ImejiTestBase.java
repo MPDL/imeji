@@ -193,15 +193,19 @@ public class ImejiTestBase extends JerseyTest {
       to.setFile(new File(STATIC_CONTEXT_STORAGE + "/" + fileName + ".jpg"));
     }
     to.setStatus("PENDING");
-    LicenseTO licTO = new LicenseTO();
-    licTO.setName("dummy license");
-    to.getLicenses().add(licTO);
+    addDummyLicenseToItem(to);
     try {
       itemTO = s.create(to, JenaUtil.testUser);
       itemId = itemTO.getId();
     } catch (Exception e) {
       LOGGER.error("Cannot init Item", e);
     }
+  }
+
+  public static void addDummyLicenseToItem(DefaultItemTO item) {
+    LicenseTO licTO = new LicenseTO();
+    licTO.setName("dummy license");
+    item.getLicenses().add(licTO);
   }
 
 }
