@@ -65,7 +65,7 @@ public class ItemControllerTestClass extends ControllerTest {
     try {
       item = controller.updateFile(item, collection, thumbnailFile, "test.tmp", JenaUtil.testUser);
     } catch (ImejiException e) {
-      Assert.fail("File could not be replaced" + e.getMessage());
+      Assert.fail("File could not be replaced. " + e.getMessage());
     }
     StorageController sController = new StorageController();
     File storedFile = File.createTempFile("testFile", null);
