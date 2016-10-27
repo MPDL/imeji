@@ -324,8 +324,12 @@ public class ReverseTransferObjectFactory {
         for (LiteralConstraintTO lc : stTO.getLiteralConstraints()) {
           stVO.getLiteralConstraints().add(lc.getValue());
         }
-        stVO.setMinOccurs(stTO.getMinOccurs());
-        stVO.setMaxOccurs(stTO.getMaxOccurs());
+        if (!StringHelper.isNullOrEmptyTrim(stTO.getMinOccurs())) {
+          stVO.setMinOccurs(stTO.getMinOccurs());
+        }
+        if (!StringHelper.isNullOrEmptyTrim(stTO.getMaxOccurs())) {
+          stVO.setMaxOccurs(stTO.getMaxOccurs());
+        }
         if (!isNullOrEmpty(stTO.getParentStatementId())) {
           stVO.setParent(URI.create(stTO.getParentStatementId()));
           hasParents = true;

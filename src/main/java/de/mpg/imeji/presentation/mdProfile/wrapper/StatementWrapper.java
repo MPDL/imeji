@@ -14,6 +14,7 @@ import javax.faces.model.SelectItem;
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
@@ -89,8 +90,9 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * Initialize the multiple value according to the {@link Statement}
    */
   private void initMultiple() {
-    if ("unbounded".equals(statement.getMaxOccurs())
-        || Integer.parseInt(statement.getMaxOccurs()) > 1) {
+    if (!StringHelper.isNullOrEmptyTrim(statement.getMaxOccurs())
+        && ("unbounded".equals(statement.getMaxOccurs())
+            || Integer.parseInt(statement.getMaxOccurs()) > 1)) {
       multiple = true;
     } else {
       multiple = false;
