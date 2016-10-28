@@ -1,10 +1,8 @@
 package de.mpg.imeji.test.rest.resources.test.integration;
 
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_STORAGE;
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -35,6 +33,7 @@ import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.transfer.ReverseTransferObjectFactory;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 import de.mpg.imeji.util.LocalizedString;
 import util.JenaUtil;
 
@@ -268,8 +267,7 @@ public class ItemTestBase extends ImejiTestBase {
   public void test_5_defaultSyntax_badTypedValues(String itemId, String jSon) throws IOException {
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart
-        .bodyPart(new FileDataBodyPart("file", new File(STATIC_CONTEXT_STORAGE + "/test.jpg")));
+    multiPart.bodyPart(new FileDataBodyPart("file", ImejiTestResources.getTestJpg()));
 
     LOGGER.info("Checking textual values ... ");
     // Put Number Value to a String metadata
@@ -333,8 +331,7 @@ public class ItemTestBase extends ImejiTestBase {
   public void test_6_ExistingDefaultFields(String itemId, String jSon) throws IOException {
     // validates the name of each predefined metadata from a metadata record
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart
-        .bodyPart(new FileDataBodyPart("file", new File(STATIC_CONTEXT_STORAGE + "/test.jpg")));
+    multiPart.bodyPart(new FileDataBodyPart("file", ImejiTestResources.getTestJpg()));
 
     LOGGER.info("Checking text field label  ");
     multiPart.field("json", replaceFieldName(jSon, "text"));

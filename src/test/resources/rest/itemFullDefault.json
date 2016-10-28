@@ -19,6 +19,13 @@
   "filename": "Emotion-Masks-760100.jpg",
   "mimetype": "application/octet-stream",
   "checksumMd5": "c33c70705df8c1f1f2f29db5bc6004db",
+   "licenses": [
+        {
+          "label": "Dummy License",
+          "name": "Dummy",
+          "url": "http://example.org"
+        }
+      ],
   "webResolutionUrlUrl": "http://qa-imeji.mpdl.mpg.de/imeji/file/_FAfwLZ9Vy3LUSM/f7/a5/84/a3-ca3f-4116-9b05-34c49892c17d/0/web/cb6faf2b3b358438e2b670548168dd10.jpg",
   "thumbnailUrl": "http://qa-imeji.mpdl.mpg.de/imeji/file/_FAfwLZ9Vy3LUSM/f7/a5/84/a3-ca3f-4116-9b05-34c49892c17d/0/thumbnail/cb6faf2b3b358438e2b670548168dd10.jpg",
   "fileUrl": "http://qa-imeji.mpdl.mpg.de/imeji/file/_FAfwLZ9Vy3LUSM/f7/a5/84/a3-ca3f-4116-9b05-34c49892c17d/0/original/cb6faf2b3b358438e2b670548168dd10.jpg",
@@ -137,11 +144,7 @@
         }
     ]    ,
     "Magazine" :"Abstracts of Papers of the American Chemical Society",
-    "License" :{
-        "license": "Attribution-NonCommercial 4.0 International",
-        "url": "http://creativecommons.org/licenses/by-nc/4.0/"
-      },
-      "Color":"Black/White"
+     "Color":"Black/White"
   },
   "fileSize": 0
 }

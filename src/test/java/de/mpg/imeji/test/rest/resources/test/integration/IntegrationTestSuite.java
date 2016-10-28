@@ -14,7 +14,6 @@ import de.mpg.imeji.testimpl.rest.resources.item.ItemDefaultMdCreateHierarchical
 import de.mpg.imeji.testimpl.rest.resources.item.ItemDefaultMdUpdateHierarchical;
 import de.mpg.imeji.testimpl.rest.resources.item.ItemDefaultUpdate;
 import de.mpg.imeji.testimpl.rest.resources.item.ItemDelete;
-import de.mpg.imeji.testimpl.rest.resources.item.ItemEasyPatchMetadata;
 import de.mpg.imeji.testimpl.rest.resources.item.ItemRead;
 import de.mpg.imeji.testimpl.rest.resources.item.ItemUpdate;
 import de.mpg.imeji.testimpl.rest.resources.item.ItemUpdateBasic;
@@ -29,7 +28,7 @@ import util.SuperTestSuite;
     ItemCreate.class, ItemRead.class, ItemUpdateBasic.class, ItemUpdateFile.class,
     ItemUpdateMetadata.class, ItemDelete.class, ItemDefaultMdCreate.class,
     ItemDefaultMdCreateHierarchical.class, ItemUpdate.class, ItemDefaultMdUpdateHierarchical.class,
-    ItemEasyPatchMetadata.class, ItemDefaultUpdate.class,
+    ItemDefaultUpdate.class,
     // Other Tests
     AlbumIntegration.class, CollectionIntegration.class, ProfileIntegration.class,
     StorageIntegration.class, VersionManagerTest.class})

@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableMap;
  *
  * @author vmakarenko
  *
- * */
+ */
 public class MyTestContainerFactory implements TestContainerFactory {
 
   public static final String REST_CONTEXT_PATH = "/rest";
@@ -55,16 +55,11 @@ public class MyTestContainerFactory implements TestContainerFactory {
       @Override
       public void start() {
         try {
-          this.server =
-              create(
-                  baseUri,
-                  ServletContainer.class,
-                  null,
-                  ImmutableMap
-                      .of("jersey.config.server.provider.packages", "de.mpg.imeji.rest.resources",
-                          "jersey.config.server.provider.classnames",
-                          "org.glassfish.jersey.filter.LoggingFilter;org.glassfish.jersey.media.multipart.MultiPartFeature"),
-                  null);
+          this.server = create(baseUri, ServletContainer.class, null,
+              ImmutableMap.of("jersey.config.server.provider.packages",
+                  "de.mpg.imeji.rest.resources", "jersey.config.server.provider.classnames",
+                  "org.glassfish.jersey.filter.LoggingFilter;org.glassfish.jersey.media.multipart.MultiPartFeature"),
+              null);
 
         } catch (ProcessingException | IOException e) {
           throw new TestContainerException(e);
@@ -91,8 +86,8 @@ public class MyTestContainerFactory implements TestContainerFactory {
     } else if (path.isEmpty()) {
       throw new IllegalArgumentException("The URI path, of the URI " + u + ", must be present");
     } else if (path.charAt(0) != '/') {
-      throw new IllegalArgumentException("The URI path, of the URI " + u
-          + ". must start with a '/'");
+      throw new IllegalArgumentException(
+          "The URI path, of the URI " + u + ". must start with a '/'");
     }
 
     path = String.format("/%s", UriComponent.decodePath(u.getPath(), true).get(1).toString());

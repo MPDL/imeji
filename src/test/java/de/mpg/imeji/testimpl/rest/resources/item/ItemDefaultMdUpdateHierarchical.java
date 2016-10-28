@@ -71,7 +71,7 @@ public class ItemDefaultMdUpdateHierarchical extends ItemTestBase {
 
     defaultItemTO = response.readEntity(DefaultItemTO.class);
 
-    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(8)); // check
+    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(7)); // check
                                                                   // defaultCreateItemHierarchical.json,
                                                                   // only top level elements count
     assertThat(defaultItemTO.getCollectionId(), equalTo(collectionId));
@@ -200,7 +200,7 @@ public class ItemDefaultMdUpdateHierarchical extends ItemTestBase {
                 .replace("___COLLECTION_ID___", collectionId).replace("___FILENAME___", "test.png")
                 .replaceAll("\"fetchUrl\"\\s*:\\s*\"___FETCH_URL___\",",
                     "\"id\": \"" + itemId + "\", ")
-            .replaceAll("\"referenceUrl\"\\s*:\\s*\"___FETCH_URL___\",", ""));
+                .replaceAll("\"referenceUrl\"\\s*:\\s*\"___FETCH_URL___\",", ""));
 
     Response response =
         getTargetAuth(itemId).put(Entity.entity(multiPart, multiPart.getMediaType()));
@@ -289,7 +289,7 @@ public class ItemDefaultMdUpdateHierarchical extends ItemTestBase {
     // LOGGER.info(response.readEntity(String.class));
     assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
   }
-  
+
   private Invocation.Builder getTargetAuth(String itemId) {
     return target(pathPrefix + "/" + itemId).register(authAsUser).register(MultiPartFeature.class)
         .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE);

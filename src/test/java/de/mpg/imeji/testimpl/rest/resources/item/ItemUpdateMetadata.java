@@ -11,7 +11,6 @@ import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -47,7 +46,6 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.License;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
@@ -59,6 +57,7 @@ import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
 import de.mpg.imeji.rest.transfer.ReverseTransferObjectFactory;
 import de.mpg.imeji.rest.transfer.ReverseTransferObjectFactory.TRANSFER_MODE;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 import util.JenaUtil;
 
 /**
@@ -182,18 +181,13 @@ public class ItemUpdateMetadata extends ItemTestBase {
     assertThat(((de.mpg.imeji.logic.vo.predefinedMetadata.Date) mds.get(4)).getDate(),
         equalTo(dateFormat.format(date)));
 
-    // license
-    final License license = (License) mds.get(5);
-    assertThat(license.getLicense(), equalTo(CHANGED));
-    assertThat(license.getExternalUri().toString(), equalTo(CHANGED));
-
     // link
-    assertThat(((Link) mds.get(6)).getUri().toString(), equalTo(CHANGED));
-    assertThat(((Link) mds.get(6)).getLabel(), equalTo(CHANGED));
+    assertThat(((Link) mds.get(5)).getUri().toString(), equalTo(CHANGED));
+    assertThat(((Link) mds.get(5)).getLabel(), equalTo(CHANGED));
 
     // publication
-    assertThat(((Publication) mds.get(7)).getExportFormat(), equalTo(CHANGED));
-    assertThat(((Publication) mds.get(7)).getUri().toString(), equalTo(CHANGED));
+    assertThat(((Publication) mds.get(6)).getExportFormat(), equalTo(CHANGED));
+    assertThat(((Publication) mds.get(6)).getUri().toString(), equalTo(CHANGED));
   }
 
 
@@ -378,8 +372,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
 
     assertThat(json, not(containsString("\"text\"")));
     assertThat(json, not(containsString("\"date\"")));
-    assertThat(json, allOf(not(containsString("\"license\"")), not(containsString("\"url\""))));
-    assertThat(json, allOf(not(containsString("\"link\"")), not(containsString("\"url\""))));
+    assertThat(json, not(containsString("\"link\"")));
     assertThat(json, allOf(not(containsString("\"format\"")),
         not(containsString("\"publication\"")), not(containsString("\"citation\""))));
   }
@@ -549,7 +542,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
     String json = updateJSON.replace("___COLLECTION_ID___", collectionId);
     DefaultItemWithFileTO defaultItemWithFileTO =
         (DefaultItemWithFileTO) RestProcessUtils.buildTOFromJSON(json, DefaultItemWithFileTO.class);
-    defaultItemWithFileTO.setFile(new File("src/test/resources/storage/test.png"));
+    defaultItemWithFileTO.setFile(ImejiTestResources.getTestPng());
     itemTO = service.create(defaultItemWithFileTO, JenaUtil.testUser);
     itemId = itemTO.getId();
   }
@@ -566,7 +559,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
             .replace("___COLLECTION_ID___", collectionId);
     DefaultItemWithFileTO defaultItemWithFileTO =
         (DefaultItemWithFileTO) RestProcessUtils.buildTOFromJSON(json, DefaultItemWithFileTO.class);
-    defaultItemWithFileTO.setFile(new File("src/test/resources/storage/test.png"));
+    defaultItemWithFileTO.setFile(ImejiTestResources.getTestPng());
     itemTO = service.create(defaultItemWithFileTO, JenaUtil.testUser);
     itemId = itemTO.getId();
   }

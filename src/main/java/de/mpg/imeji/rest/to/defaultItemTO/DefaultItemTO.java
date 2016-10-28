@@ -17,8 +17,8 @@ import de.mpg.imeji.rest.to.LicenseTO;
 import de.mpg.imeji.rest.to.PropertiesTO;
 
 @XmlRootElement
-@XmlType(propOrder = {"collectionId", "filename", "mimetype", "fileSize", "checksumMd5",
-    "webResolutionUrlUrl", "thumbnailUrl", "fileUrl", "metadata", "licenses"})
+@XmlType(propOrder = {"collectionId", "filename", "mimetype", "fileSize", "checksumMd5", "licenses",
+    "webResolutionUrlUrl", "thumbnailUrl", "fileUrl", "metadata"})
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultItemTO extends PropertiesTO implements Serializable {

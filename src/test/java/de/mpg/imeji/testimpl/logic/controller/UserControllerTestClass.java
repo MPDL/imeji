@@ -1,11 +1,9 @@
 package de.mpg.imeji.testimpl.logic.controller;
 
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_STORAGE;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
 import java.net.URI;
 
 import org.apache.log4j.Logger;
@@ -25,13 +23,12 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 import util.JenaUtil;
 
 public class UserControllerTestClass extends ControllerTest {
 
   private static final Logger LOGGER = Logger.getLogger(UserControllerTestClass.class);
-  private static File file1 = new File(STATIC_CONTEXT_STORAGE + "/test.jpg");
-  private static File file2 = new File(STATIC_CONTEXT_STORAGE + "/test2.jpg");
 
   @Test
   public void createAlreadyExistingUserTest() {
@@ -84,13 +81,15 @@ public class UserControllerTestClass extends ControllerTest {
     col = cc.retrieve(uri, user);
 
     item = ImejiFactory.newItem(col);
-    user.setQuota(file1.length());
+    user.setQuota(ImejiTestResources.getTestJpg().length());
     ItemBusinessController itemController = new ItemBusinessController();
-    item = itemController.createWithFile(item, file1, file1.getName(), col, user);
+    item = itemController.createWithFile(item, ImejiTestResources.getTestJpg(),
+        ImejiTestResources.getTestJpg().getName(), col, user);
 
     Item item2 = ImejiFactory.newItem(col);
     try {
-      item2 = itemController.createWithFile(item2, file2, file2.getName(), col, user);
+      item2 = itemController.createWithFile(item2, ImejiTestResources.getTest2Jpg(),
+          ImejiTestResources.getTest2Jpg().getName(), col, user);
       fail("Disk Quota should be exceeded!");
     } catch (QuotaExceededException e) {
     }

@@ -4,6 +4,13 @@
   "filename": "___FILENAME___",
   "fetchUrl": "___FETCH_URL___",
   "referenceUrl": "___REFERENCE_URL___",
+   "licenses": [
+        {
+          "label": "Dummy License",
+          "name": "Dummy",
+          "url": "http://example.org"
+        }
+      ],
   "metadata":
     {
       "text": {
@@ -40,10 +47,6 @@
         ]
       },
       "date": "2014-12-11",
-      "license": {
-        "license": "CC0 1.0 Universal",
-        "url": "http://creativecommons.org/publicdomain/zero/1.0/"
-      },
       "link": {
         "link": "LinkTitle",
         "url": "http://dev-faces.mpdl.mpg.de/imeji/file/xVkq7ovYUOGveQH2/8c/9e/59/45-27ab-4b5e-94c3-5aa68f38af55/0/web/f66a15ca0b26de7f5849cef559f189ec.jpg"

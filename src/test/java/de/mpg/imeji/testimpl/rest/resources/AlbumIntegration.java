@@ -735,7 +735,7 @@ public class AlbumIntegration extends ImejiTestBase {
   public void test_8_UnlinkAllItemsFromAlbum() throws ImejiException {
     // in principle it does not care if item exists or not, it will simply do nothing
     initCollection();
-    initItem("test");
+    initItem();
 
     Response response =
         target(pathPrefix).path("/" + albumId + "/members/link").register(authAsUser)
@@ -759,7 +759,7 @@ public class AlbumIntegration extends ImejiTestBase {
     Assert.assertThat(itemList, not(empty()));
     Assert.assertEquals(2, itemList.size());
 
-    // remove all album mebres
+    // remove all album members
     response = target(pathPrefix).path("/" + albumId + "/members").register(authAsUser)
         .request(MediaType.APPLICATION_JSON_TYPE).delete();
     assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
@@ -816,9 +816,7 @@ public class AlbumIntegration extends ImejiTestBase {
     // in principle it does not care if item exists or not, it will simply do nothing
     initCollection();
     initAlbum();
-
-    initItem("test");
-
+    initItem();
     Response response =
         target(pathPrefix).path("/" + albumId + "/members/link").register(authAsUser)
             .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("[\"" + itemId + "\"]"));
@@ -867,8 +865,7 @@ public class AlbumIntegration extends ImejiTestBase {
     // in principle it does not care if item exists or not, it will simply do nothing
     initCollection();
     initAlbum();
-
-    initItem("test");
+    initItem();
 
     Response response =
         target(pathPrefix).path("/" + albumId + "/members/link").register(authAsUser)

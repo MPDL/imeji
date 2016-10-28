@@ -1,14 +1,12 @@
 package de.mpg.imeji.testimpl.rest.resources.item;
 
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_STORAGE;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.ws.rs.client.Entity;
@@ -28,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 
 /**
  * Created by vlad on 09.12.14.
@@ -67,7 +66,7 @@ public class ItemDefaultMdCreate extends ItemTestBase {
 
     defaultItemTO = response.readEntity(DefaultItemTO.class);
 
-    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(8)); // check defaultCreateItem.json
+    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(7)); // check defaultCreateItem.json
     assertThat(defaultItemTO.getCollectionId(), equalTo(collectionId));
 
 
@@ -79,8 +78,7 @@ public class ItemDefaultMdCreate extends ItemTestBase {
 
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart
-        .bodyPart(new FileDataBodyPart("file", new File(STATIC_CONTEXT_STORAGE + "/test3.jpg")));
+    multiPart.bodyPart(new FileDataBodyPart("file", ImejiTestResources.getTest3Jpg()));
     multiPart.field("json",
         itemJSON.replace("___COLLECTION_ID___", collectionId).replace("___FILENAME___", "test3.jpg")
             .replaceAll("\"fetchUrl\"\\s*:\\s*\"___FETCH_URL___\",", "")
@@ -93,7 +91,7 @@ public class ItemDefaultMdCreate extends ItemTestBase {
     assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
     defaultItemTO = response.readEntity(DefaultItemTO.class);
-    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(8)); // check defaultCreateItem.json
+    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(7)); // check defaultCreateItem.json
     assertThat(defaultItemTO.getCollectionId(), equalTo(collectionId));
 
   }
@@ -103,8 +101,7 @@ public class ItemDefaultMdCreate extends ItemTestBase {
 
     // Create default item without metadata
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart
-        .bodyPart(new FileDataBodyPart("file", new File(STATIC_CONTEXT_STORAGE + "/test4.jpg")));
+    multiPart.bodyPart(new FileDataBodyPart("file", ImejiTestResources.getTest4Jpg()));
     multiPart.field("json",
         itemJSON.replace("___COLLECTION_ID___", collectionId).replace("___FILENAME___", "test4.jpg")
             .replaceAll("\"fetchUrl\"\\s*:\\s*\"___FETCH_URL___\",", "")
@@ -138,8 +135,7 @@ public class ItemDefaultMdCreate extends ItemTestBase {
   public void test_5_createItem_defaultSyntax_badJsonSyntax() throws IOException {
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart
-        .bodyPart(new FileDataBodyPart("file", new File(STATIC_CONTEXT_STORAGE + "/test5.jpg")));
+    multiPart.bodyPart(new FileDataBodyPart("file", ImejiTestResources.getTest5Jpg()));
     multiPart.field("json",
         itemJSON.replace("___COLLECTION_ID___", collectionId).replace("___FILENAME___", "test5.jpg")
             .replaceAll("\"fetchUrl\"\\s*:\\s*\"___FETCH_URL___\",", "")

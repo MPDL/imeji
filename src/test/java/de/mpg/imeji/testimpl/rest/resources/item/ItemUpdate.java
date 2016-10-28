@@ -50,14 +50,14 @@ public class ItemUpdate extends ItemTestBase {
     initCollectionWithProfile(getDefaultBasicStatements());
     createItem();
   }
-  
+
 
   @Test
-  public void test_1_updateItem_updateMetadata_empty() throws IOException,
-      BadRequestException {
+  public void test_1_updateItem_updateMetadata_empty() throws IOException, BadRequestException {
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart.field("json", updateItemJSON.replace("\"___COLLECTION_ID___\",", "\""+collectionId+"\", ").
-        replaceAll("\"metadata\"\\s*:\\s*\\{[\\d\\D]*\\}", "\"referenceUrl\":\""+referenceUrl+"\" }"));
+    multiPart.field("json",
+        updateItemJSON.replace("\"___COLLECTION_ID___\",", "\"" + collectionId + "\", ").replaceAll(
+            "\"metadata\"\\s*:\\s*\\{[\\d\\D]*\\}", "\"referenceUrl\":\"" + referenceUrl + "\" }"));
     Response response = getTargetAuth().put(Entity.entity(multiPart, multiPart.getMediaType()));
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     defaultItemTO = response.readEntity(DefaultItemTO.class);
@@ -69,9 +69,8 @@ public class ItemUpdate extends ItemTestBase {
   public void test_2_updateItem_deleteAllMetadata() throws IOException, BadRequestException {
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    String jsonNew =
-        updateItemJSON.replace("___COLLECTION_ID___", collectionId).replaceAll(
-            "\"metadata\"\\s*:\\s*\\{[\\d\\D]*\\}", "\"metadata\":{}}");
+    String jsonNew = updateItemJSON.replace("___COLLECTION_ID___", collectionId)
+        .replaceAll("\"metadata\"\\s*:\\s*\\{[\\d\\D]*\\}", "\"metadata\":{}}");
 
     multiPart.field("json", jsonNew);
     Response response = getTargetAuth().put(Entity.entity(multiPart, multiPart.getMediaType()));
@@ -80,7 +79,7 @@ public class ItemUpdate extends ItemTestBase {
     assertThat(defaultItemTO.getMetadata().keySet(), hasSize(0));
   }
 
- 
+
   @Test
   public void test_4_updateItem_defaultSyntax_OK() throws IOException, BadRequestException {
 
@@ -89,24 +88,23 @@ public class ItemUpdate extends ItemTestBase {
 
 
     Response response =
-        target(PATH_PREFIX).path("/" + itemId)
-            .register(authAsUser).register(MultiPartFeature.class).register(JacksonFeature.class)
-            .request(MediaType.APPLICATION_JSON_TYPE)
+        target(PATH_PREFIX).path("/" + itemId).register(authAsUser).register(MultiPartFeature.class)
+            .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE)
             .put(Entity.entity(multiPart, multiPart.getMediaType()));
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     defaultItemTO = response.readEntity(DefaultItemTO.class);
-    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(7));
+    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(6));
 
   }
-  
+
   @Test
   public void test_5_updateItem_defaultSyntax_badTypedValues() throws IOException {
-        test_5_defaultSyntax_badTypedValues(itemId, createItemJSON);
-      
+    test_5_defaultSyntax_badTypedValues(itemId, createItemJSON);
+
   }
-  
-  
+
+
   @Test
   public void test_6_updateItem_ExistingDefaultFields() throws IOException {
     test_6_ExistingDefaultFields(itemId, createItemJSON);
@@ -115,9 +113,10 @@ public class ItemUpdate extends ItemTestBase {
 
 
   private Invocation.Builder getTargetAuth() {
-    return target(PATH_PREFIX).path("/"+itemId).register(authAsUser).register(MultiPartFeature.class)
-        .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE);
+    return target(PATH_PREFIX).path("/" + itemId).register(authAsUser)
+        .register(MultiPartFeature.class).register(JacksonFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE);
   }
-  
- 
+
+
 }

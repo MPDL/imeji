@@ -1,6 +1,5 @@
 package de.mpg.imeji.testimpl.rest.resources.item;
 
-import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
 import static org.junit.Assert.assertEquals;
 
 import javax.ws.rs.core.Form;
@@ -20,22 +19,17 @@ import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
 import util.JenaUtil;
 
 public class ItemDelete extends ImejiTestBase {
-
   private static final Logger LOGGER = LoggerFactory.getLogger(ItemDelete.class);
-
-  private static String itemJSON;
   private static final String pathPrefix = "/rest/items";
 
   @BeforeClass
   public static void specificSetup() throws Exception {
     initCollection();
     initItem();
-    itemJSON = getStringFromPath("src/test/resources/rest/createItem.json");
   }
 
   @Test
   public void test_1_deleteItem_WithNonAuth() throws Exception {
-
     initCollection();
     initItem();
     DefaultItemService s = new DefaultItemService();

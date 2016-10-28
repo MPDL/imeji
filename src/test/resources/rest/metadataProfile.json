@@ -103,25 +103,8 @@
       "useInPreview": true
     },
     {
-      "id": "So9Uhn3WyRpJlh0x",
-      "pos": 5,
-      "type": "http://imeji.org/terms/metadata#license",
-      "labels": [
-        {
-          "value": "LicenseLabel",
-          "lang": "en"
-        }
-      ],
-      "vocabulary": null,
-      "literalConstraints": [],
-      "minOccurs": "0",
-      "maxOccurs": "1",
-      "parentStatementId": null,
-      "useInPreview": true
-    },
-    {
       "id": "YA9MGNhkggp2lRA",
-      "pos": 6,
+      "pos": 5,
       "type": "http://imeji.org/terms/metadata#link",
       "labels": [
         {
@@ -138,7 +121,7 @@
     },
     {
       "id": "CPQU87FGkyReUZ5",
-      "pos": 7,
+      "pos": 6,
       "type": "http://imeji.org/terms/metadata#publication",
       "labels": [
         {
@@ -155,7 +138,7 @@
     },
     {
       "id": "mKjny0RdodNiYQdy",
-      "pos": 8,
+      "pos": 7,
       "type": "http://imeji.org/terms/metadata#text",
       "labels": [
         {
@@ -172,7 +155,7 @@
     },
     {
       "id": "FoIeGfEogLa5ozg6", 
-      "pos": 9,
+      "pos": 8,
       "type": "http://imeji.org/terms/metadata#text",
       "labels": [
         {
@@ -189,7 +172,7 @@
     },
     {
       "id": "sQCLBHnYetLwviz8",
-      "pos": 10,
+      "pos": 9,
       "type": "http://imeji.org/terms/metadata#text",
       "labels": [
         {

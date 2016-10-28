@@ -9,7 +9,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.ws.rs.client.Entity;
@@ -31,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 
 /**
  * Created by vlad on 09.12.14.
@@ -53,23 +53,16 @@ public class ItemUpdateBasic extends ItemTestBase {
     updateJSON = getStringFromPath(STATIC_CONTEXT_REST + "/easyUpdateItemBasic.json");
   }
 
-  
+
   @Test
   public void test_1_UpdateItem_1_Basic() throws IOException, BadRequestException {
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart
-        .field("json", 
-             updateJSON
-                 .replace("___FILE_NAME___", UPDATED_FILE_NAME)
-                 .replace("___ITEM_ID___", itemId)
-                 .replace("___COLLECTION_ID___", collectionId)
-            );
+    multiPart.field("json", updateJSON.replace("___FILE_NAME___", UPDATED_FILE_NAME)
+        .replace("___ITEM_ID___", itemId).replace("___COLLECTION_ID___", collectionId));
     Response response =
-        target(PATH_PREFIX).path("/" + itemId)
-            .register(authAsUser)
-            .register(MultiPartFeature.class).register(JacksonFeature.class)
-            .request(MediaType.APPLICATION_JSON_TYPE)
+        target(PATH_PREFIX).path("/" + itemId).register(authAsUser).register(MultiPartFeature.class)
+            .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE)
             .put(Entity.entity(multiPart, multiPart.getMediaType()));
 
     DefaultItemTO updatedItem = response.readEntity(DefaultItemTO.class);
@@ -79,99 +72,74 @@ public class ItemUpdateBasic extends ItemTestBase {
 
   }
 
-  
+
   @Test
   public void test_1_UpdateItem_2_NotAllowedUser() throws IOException {
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart
-        .field("json", 
-             updateJSON
-                 .replace("___FILE_NAME___", UPDATED_FILE_NAME)
-                 .replace("___ITEM_ID___", itemId)
-                 .replace("___COLLECTION_ID___", collectionId)
-            );
-    Response response =
-        target(PATH_PREFIX).path("/" + itemId)
-            .register(authAsUser2)
-            .register(MultiPartFeature.class).register(JacksonFeature.class)
-            .request(MediaType.APPLICATION_JSON_TYPE)
-            .put(Entity.entity(multiPart, multiPart.getMediaType()));
+    multiPart.field("json", updateJSON.replace("___FILE_NAME___", UPDATED_FILE_NAME)
+        .replace("___ITEM_ID___", itemId).replace("___COLLECTION_ID___", collectionId));
+    Response response = target(PATH_PREFIX).path("/" + itemId).register(authAsUser2)
+        .register(MultiPartFeature.class).register(JacksonFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .put(Entity.entity(multiPart, multiPart.getMediaType()));
     assertEquals(FORBIDDEN.getStatusCode(), response.getStatus());
   }
 
   @Test
   public void test_1_UpdateItem_3_NotFoundItem() throws IOException {
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart
-    .field("json", 
-         updateJSON
-             .replace("___ITEM_ID___", itemId +"_not_exist_item")
-             .replace("___COLLECTION_ID___", collectionId)
-        );
-    
-    Response response =
-        target(PATH_PREFIX).path("/" + itemId + "_not_exist_item")
-            .register(authAsUser)
-            .register(MultiPartFeature.class).register(JacksonFeature.class)
-            .request(MediaType.APPLICATION_JSON_TYPE)
-            .put(Entity.entity(multiPart, multiPart.getMediaType()));
+    multiPart.field("json", updateJSON.replace("___ITEM_ID___", itemId + "_not_exist_item")
+        .replace("___COLLECTION_ID___", collectionId));
+
+    Response response = target(PATH_PREFIX).path("/" + itemId + "_not_exist_item")
+        .register(authAsUser).register(MultiPartFeature.class).register(JacksonFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .put(Entity.entity(multiPart, multiPart.getMediaType()));
     assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
   }
 
   @Test
   public void test_1_UpdateItem_4_Unauthorized() throws IOException {
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart
-    .field("json", 
-         updateJSON
-             .replace("___FILE_NAME___", UPDATED_FILE_NAME)
-             .replace("___ITEM_ID___", itemId)
-             .replace("___COLLECTION_ID___", collectionId)
-        );
+    multiPart.field("json", updateJSON.replace("___FILE_NAME___", UPDATED_FILE_NAME)
+        .replace("___ITEM_ID___", itemId).replace("___COLLECTION_ID___", collectionId));
 
-    Response response =
-        target(PATH_PREFIX).path("/" + itemId)
-            .register(MultiPartFeature.class).register(JacksonFeature.class)
-            .request(MediaType.APPLICATION_JSON_TYPE)
-            .put(Entity.entity(multiPart, multiPart.getMediaType()));
+    Response response = target(PATH_PREFIX).path("/" + itemId).register(MultiPartFeature.class)
+        .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE)
+        .put(Entity.entity(multiPart, multiPart.getMediaType()));
     assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
 
-    Response response2 =
-        target(PATH_PREFIX).path("/" + itemId)
-            .register(authAsUserFalse)
-            .register(MultiPartFeature.class).register(JacksonFeature.class)
-            .request(MediaType.APPLICATION_JSON_TYPE)
-            .put(Entity.entity(multiPart, multiPart.getMediaType()));
+    Response response2 = target(PATH_PREFIX).path("/" + itemId).register(authAsUserFalse)
+        .register(MultiPartFeature.class).register(JacksonFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .put(Entity.entity(multiPart, multiPart.getMediaType()));
 
     assertEquals(Status.UNAUTHORIZED.getStatusCode(), response2.getStatus());
-}
+  }
 
 
-  
+
   @Test
   public void test_2_UpdateItem_SyntaxInvalidJSONFile() throws Exception {
 
-    FileDataBodyPart filePart =
-        new FileDataBodyPart("file", new File("src/test/resources/storage/test.png"));
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestJpg());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     String wrongJSON = getStringFromPath("src/test/resources/rest/wrongSyntax.json");
 
     multiPart.field("json", wrongJSON
 
-    .replace("___FILENAME___", "test.png"));
+        .replace("___FILENAME___", "test.png"));
 
     Response response =
-        target(PATH_PREFIX).path("/" + itemId)
-            .register(authAsUser)
-            .register(MultiPartFeature.class).register(JacksonFeature.class)
-            .request(MediaType.APPLICATION_JSON_TYPE)
+        target(PATH_PREFIX).path("/" + itemId).register(authAsUser).register(MultiPartFeature.class)
+            .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE)
             .put(Entity.entity(multiPart, multiPart.getMediaType()));
 
     assertEquals(BAD_REQUEST.getStatusCode(), response.getStatus());
 
   }
-  
+
   @Test
   public void test_2_UpdateItem_WrongID() throws Exception {
     FormDataMultiPart multiPart = new FormDataMultiPart();
@@ -179,10 +147,8 @@ public class ItemUpdateBasic extends ItemTestBase {
         getStringFromPath(UPDATE_ITEM_FILE_JSON).replace("___ITEM_ID___", "12345"));
 
     Response response =
-        target(PATH_PREFIX).path("/" + itemId)
-            .register(authAsUser)
-            .register(MultiPartFeature.class).register(JacksonFeature.class)
-            .request(MediaType.APPLICATION_JSON_TYPE)
+        target(PATH_PREFIX).path("/" + itemId).register(authAsUser).register(MultiPartFeature.class)
+            .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE)
             .put(Entity.entity(multiPart, multiPart.getMediaType()));
 
     assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());

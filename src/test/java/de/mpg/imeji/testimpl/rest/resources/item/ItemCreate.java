@@ -3,7 +3,6 @@ package de.mpg.imeji.testimpl.rest.resources.item;
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
 import static de.mpg.imeji.rest.process.RestProcessUtils.jsonToPOJO;
 import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_PATH;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_STORAGE;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -13,7 +12,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -38,6 +36,7 @@ import de.mpg.imeji.rest.api.CollectionService;
 import de.mpg.imeji.rest.api.DefaultItemService;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 import util.JenaUtil;
 
 /**
@@ -47,11 +46,9 @@ import util.JenaUtil;
 public class ItemCreate extends ItemTestBase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ItemCreate.class);
-  public static final File TEST_PNG_FILE = new File("src/test/resources/storage/test.png");
 
   private static String itemJSON;
   private static final String pathPrefix = "/rest/items";
-  private static final File ATTACHED_FILE = new File(STATIC_CONTEXT_STORAGE + "/test2.jpg");
 
   @BeforeClass
   public static void specificSetup() throws Exception {
@@ -63,7 +60,7 @@ public class ItemCreate extends ItemTestBase {
   @Test
   public void createItemWithEmptyFilename() throws Exception {
     initCollectionWithProfile(getDefaultBasicStatements());
-    FileDataBodyPart filePart = new FileDataBodyPart("file", TEST_PNG_FILE);
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestPng());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json",
@@ -81,8 +78,7 @@ public class ItemCreate extends ItemTestBase {
 
   @Test
   public void createItemWithFile_NullAsExtensionInFileUrl_Bug1023() throws IOException {
-    FileDataBodyPart filePart =
-        new FileDataBodyPart("file", new File("src/test/resources/storage/test"));
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTest());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json",
@@ -106,9 +102,7 @@ public class ItemCreate extends ItemTestBase {
 
   @Test
   public void createItemWithoutFilename() throws IOException {
-
-    FileDataBodyPart filePart =
-        new FileDataBodyPart("file", new File("src/test/resources/storage/test.jpg"));
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestJpg());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", collectionId)
@@ -126,8 +120,7 @@ public class ItemCreate extends ItemTestBase {
   @Test
   public void createItemWithFilename() throws IOException {
 
-    FileDataBodyPart filePart =
-        new FileDataBodyPart("file", new File("src/test/resources/storage/test4.jpg"));
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTest4Jpg());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", collectionId)
@@ -137,14 +130,14 @@ public class ItemCreate extends ItemTestBase {
 
     assertEquals(CREATED.getStatusCode(), response.getStatus());
     Map<String, Object> itemData = jsonToPOJO(response);
-    assertEquals(Long.toString(new File("src/test/resources/storage/test4.jpg").length()),
+    assertEquals(Long.toString(ImejiTestResources.getTest4Jpg().length()),
         Integer.toString((Integer) itemData.get("fileSize")));
   }
 
   @Test
   public void createItemWithOutCollection() throws IOException {
 
-    FileDataBodyPart filePart = new FileDataBodyPart("file", TEST_PNG_FILE);
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestPng());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", ""));
@@ -170,7 +163,7 @@ public class ItemCreate extends ItemTestBase {
 
   @Test
   public void createItemInNotExistingCollection() throws IOException {
-    FileDataBodyPart filePart = new FileDataBodyPart("file", TEST_PNG_FILE);
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestPng());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", collectionId + "i_do_not_exist")
@@ -183,7 +176,7 @@ public class ItemCreate extends ItemTestBase {
 
   @Test
   public void createItem_NotLoggedIn() throws IOException {
-    FileDataBodyPart filePart = new FileDataBodyPart("file", TEST_PNG_FILE);
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestPng());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", collectionId)
@@ -208,25 +201,14 @@ public class ItemCreate extends ItemTestBase {
   public void createItem_InReleasedCollection() throws Exception {
     initItem("test6");
     CollectionService sc = new CollectionService();
-    for (DefaultItemTO item : sc.readItems(collectionId, JenaUtil.testUser, "", 0, -1)
-        .getResults()) {
-      if (item.getLicenses().isEmpty()) {
-        addDummyLicenseToItem(item);
-        new DefaultItemService().update(item, JenaUtil.testUser);
-      }
-    }
     sc.release(collectionId, JenaUtil.testUser);
     assertEquals("RELEASED", sc.read(collectionId, JenaUtil.testUser).getStatus());
-
-    FileDataBodyPart filePart =
-        new FileDataBodyPart("file", new File("src/test/resources/storage/test2.jpg"));
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTest2Jpg());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", collectionId)
         .replace("___FILENAME___", "test.png"));
-
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
-
     assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 
     DefaultItemService is = new DefaultItemService();
@@ -242,7 +224,7 @@ public class ItemCreate extends ItemTestBase {
     assertEquals("RELEASED", sc.read(collectionId, JenaUtil.testUser).getStatus());
     sc.withdraw(collectionId, JenaUtil.testUser, "ItemCreateTest_createItem_InWithdrawnCollection");
 
-    FileDataBodyPart filePart = new FileDataBodyPart("file", TEST_PNG_FILE);
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestPng());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", collectionId)
@@ -256,7 +238,7 @@ public class ItemCreate extends ItemTestBase {
 
   @Test
   public void createItem_WithNotAllowedUser() throws Exception {
-    FileDataBodyPart filePart = new FileDataBodyPart("file", TEST_PNG_FILE);
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestPng());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", collectionId)
@@ -272,7 +254,7 @@ public class ItemCreate extends ItemTestBase {
 
   @Test
   public void createItem_SyntaxInvalidJSONFile() throws Exception {
-    FileDataBodyPart filePart = new FileDataBodyPart("file", TEST_PNG_FILE);
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestPng());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     String wrongJSON = getStringFromPath("src/test/resources/rest/wrongSyntax.json");
@@ -377,7 +359,7 @@ public class ItemCreate extends ItemTestBase {
     initItem();
     // init Item creates already one item with test.png file , thus checksum
     // is expected
-    FileDataBodyPart filePart = new FileDataBodyPart("file", TEST_PNG_FILE);
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestPng());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", collectionId)
@@ -394,7 +376,7 @@ public class ItemCreate extends ItemTestBase {
     initItem();
     // init Item creates already one item with test.png file , thus checksum
     // is expected
-    FileDataBodyPart filePart = new FileDataBodyPart("file", TEST_PNG_FILE);
+    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestPng());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", collectionId)
@@ -433,24 +415,9 @@ public class ItemCreate extends ItemTestBase {
   }
 
   /**
-   * @return the testPngFile
-   */
-  public static File getTestPngFile() {
-    return TEST_PNG_FILE;
-  }
-
-  /**
    * @return the pathprefix
    */
   public static String getPathprefix() {
     return pathPrefix;
   }
-
-  /**
-   * @return the attachedFile
-   */
-  public static File getAttachedFile() {
-    return ATTACHED_FILE;
-  }
-
 }

@@ -48,6 +48,7 @@ import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.impl.InternalStorage;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 
 /**
  * Test {@link Storage}
@@ -60,7 +61,6 @@ public class StorageTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(StorageTest.class);
 
-  private static final String TEST_IMAGE = "./src/test/resources/storage/test.png";
   private static final String FILENAME = "test";
   private static final String INTERNATIONAL_CHARACHTERS =
       "japanese:ãƒ†ã‚¹ãƒˆ  chinese:å¯¦é©— yiddish:×¤Ö¼×¨×�Ö¸×‘×¢ arab:Ø§Ø®ØªØ¨Ø§Ø± bengali: à¦ªà¦°à§€à¦•à§�à¦·à¦¾";
@@ -112,8 +112,7 @@ public class StorageTest {
 
   @Test
   public void testMimeTypeDetection() {
-    String STATIC_CONTEXT_STORAGE = "src/test/resources/storage";
-    File file = new File(STATIC_CONTEXT_STORAGE + "/test2.wrongext");
+    File file = ImejiTestResources.getTest2WrongExt();
     String mimeType = StorageUtils.getMimeType(file);
     assertThat(mimeType, equalTo("image/jpeg"));
   }
@@ -128,7 +127,7 @@ public class StorageTest {
     StorageController sc = new StorageController("internal");
     InternalStorageManager manager = new InternalStorageManager();
     // UPLOAD
-    File file = new File(TEST_IMAGE);
+    File file = ImejiTestResources.getTestPng();
     try {
       UploadResult res = sc.upload(filename, file, "1");
       Assert.assertFalse(res.getOrginal() + " url is same as path",

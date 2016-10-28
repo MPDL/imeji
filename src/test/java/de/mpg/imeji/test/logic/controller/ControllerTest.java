@@ -2,8 +2,6 @@ package de.mpg.imeji.test.logic.controller;
 
 import java.io.File;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -18,6 +16,7 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 import util.JenaUtil;
 
 /**
@@ -28,8 +27,6 @@ public class ControllerTest {
   protected static CollectionImeji collection = null;
   protected static MetadataProfile profile = null;
   protected static Item item = null;
-  private static final File originalFile = new File("src/test/resources/storage/test.jpg");
-  private static final File thumbnailFile = new File("src/test/resources/storage/test.png");
 
   @BeforeClass
   public static void setup() {
@@ -96,32 +93,21 @@ public class ControllerTest {
       throws ImejiException {
     ItemBusinessController controller = new ItemBusinessController();
     item = ImejiFactory.newItem(collection);
-    item = controller.createWithFile(item, copyFile(file), file.getName(), collection, user);
+    item = controller.createWithFile(item, file, file.getName(), collection, user);
     return item;
-  }
-
-  private static File copyFile(File f) {
-    try {
-      File copy = File.createTempFile(f.getName(), FilenameUtils.getExtension(f.getName()));
-      FileUtils.copyFile(f, copy);
-      return copy;
-    } catch (Exception e) {
-      throw new RuntimeException("Error copying file", e);
-    }
-
   }
 
   /**
    * @return the originalfile
    */
   protected static File getOriginalfile() {
-    return copyFile(originalFile);
+    return ImejiTestResources.getTestJpg();
   }
 
   /**
    * @return the thumbnailfile
    */
   protected static File getThumbnailfile() {
-    return copyFile(thumbnailFile);
+    return ImejiTestResources.getTestPng();
   }
 }

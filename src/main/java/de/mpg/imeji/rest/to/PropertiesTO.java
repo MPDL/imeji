@@ -10,8 +10,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = {"id", "createdBy", "modifiedBy", "createdDate", "modifiedDate", "versionDate",
     "status", "version", "discardComment"})
 public class PropertiesTO implements Serializable {
-
-
   private static final long serialVersionUID = 1508003946046656414L;
 
   private String id;

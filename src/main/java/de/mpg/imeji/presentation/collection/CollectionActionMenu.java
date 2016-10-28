@@ -168,6 +168,4 @@ public class CollectionActionMenu implements Serializable {
       setDiscardComment(event.getNewValue().toString().trim());
     }
   }
-
-
 }

@@ -27,6 +27,7 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 
 /**
  * Created by vlad on 15.04.15.
@@ -40,7 +41,6 @@ public class SpaceControllerTestClass extends ControllerTest {
   private static CollectionController cc;
   private static URI spaceId;
   private static Space space;
-  private static final File uploadFile = new File("src/test/resources/storage/test.jpg");
 
   @BeforeClass
   public static void specificSetup() {
@@ -84,8 +84,8 @@ public class SpaceControllerTestClass extends ControllerTest {
   @Test
   public void test_3_UpdateFile() throws Exception {
 
-    space = sc.updateFile(space, uploadFile, adminUser);
-    File updateFile = new File("src/test/resources/storage/test2.jpg");
+    space = sc.updateFile(space, ImejiTestResources.getTestJpg(), adminUser);
+    File updateFile = ImejiTestResources.getTest2Jpg();
     space = sc.updateFile(space, updateFile, adminUser);
     assertTrue(FileUtils.contentEquals(updateFile,
         new File(sc.transformUrlToPath(space.getLogoUrl().toURL().toString()))));
@@ -140,14 +140,15 @@ public class SpaceControllerTestClass extends ControllerTest {
         Lists.newArrayList(ci1.getId().toString(), ci2.getId().toString());
     sp1.setSpaceCollections(colls);
 
-    space = sc.retrieve(sc.create(sp1, colls, uploadFile, adminUser), adminUser);
+    space =
+        sc.retrieve(sc.create(sp1, colls, ImejiTestResources.getTestJpg(), adminUser), adminUser);
     assertThat(space.getTitle(), equalTo(sp1.getTitle()));
 
     Collection<String> spaceCollections = space.getSpaceCollections();
     Iterables.removeAll(spaceCollections, colls);
     assertThat(spaceCollections, empty());
 
-    assertTrue(FileUtils.contentEquals(uploadFile,
+    assertTrue(FileUtils.contentEquals(ImejiTestResources.getTestJpg(),
         new File(sc.transformUrlToPath(space.getLogoUrl().toURL().toString()))));
   }
   //

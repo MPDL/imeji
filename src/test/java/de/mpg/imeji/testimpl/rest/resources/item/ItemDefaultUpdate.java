@@ -5,7 +5,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.ws.rs.client.Entity;
@@ -28,6 +27,7 @@ import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 import util.JenaUtil;
 
 
@@ -105,7 +105,7 @@ public class ItemDefaultUpdate extends ItemTestBase {
         DefaultItemWithFileTO.class);
 
     itemTO.setCollectionId(collectionId);
-    ((DefaultItemWithFileTO) itemTO).setFile(new File("src/test/resources/storage/test.png"));
+    ((DefaultItemWithFileTO) itemTO).setFile(ImejiTestResources.getTestJpg());
 
     DefaultItemService s = new DefaultItemService();
     itemTO = s.create(itemTO, JenaUtil.testUser);

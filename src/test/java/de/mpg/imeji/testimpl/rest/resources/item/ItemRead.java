@@ -46,7 +46,8 @@ public class ItemRead extends ItemTestBase {
     Response response = (target(PATH_PREFIX).path("/" + itemId).register(authAsUser)
         .register(MultiPartFeature.class).request(MediaType.APPLICATION_JSON_TYPE)).get();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-
+    System.out.println(response.toString());
+    // System.out.println(response.readEntity(String.class));
     DefaultItemTO itemWithFileTO = response.readEntity(DefaultItemTO.class);
     assertEquals(itemId, itemWithFileTO.getId());
   }
@@ -150,10 +151,9 @@ public class ItemRead extends ItemTestBase {
   @Test
   public void test_7_ReadItemsWithQuery() throws Exception {
     // DEFAULT FORMAT
-
-    Response response =
-        (target(PATH_PREFIX).queryParam("q", itemTO.getFilename()).register(authAsUser)
-            .register(MultiPartFeature.class).request(MediaType.APPLICATION_JSON_TYPE)).get();
+    Response response = (target(PATH_PREFIX).queryParam("q", "\"" + itemTO.getFilename() + "\"")
+        .register(authAsUser).register(MultiPartFeature.class)
+        .request(MediaType.APPLICATION_JSON_TYPE)).get();
 
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
     SearchResultTO<DefaultItemTO> resultTO = RestProcessUtils.buildTOFromJSON(

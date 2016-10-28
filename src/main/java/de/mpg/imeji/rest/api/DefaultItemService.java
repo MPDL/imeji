@@ -86,13 +86,17 @@ public class DefaultItemService implements API<DefaultItemTO> {
     MetadataProfile profile = getProfile(collection, u);
     // Transfer the item
     ReverseTransferObjectFactory.transferDefaultItem(to, item, profile, u, UPDATE);
-    DefaultItemWithFileTO tof = (DefaultItemWithFileTO) to;
-    String url = getExternalFileUrl(tof);
-    if (tof.getFile() != null) {
-      item = controller.updateFile(item, collection, tof.getFile(), to.getFilename(), u);
-    } else if (!StringHelper.isNullOrEmptyTrim(url)) {
-      item = controller.updateWithExternalFile(item, collection, getExternalFileUrl(tof),
-          to.getFilename(), !isNullOrEmpty(tof.getFetchUrl()), u);
+    if (to instanceof DefaultItemWithFileTO) {
+      DefaultItemWithFileTO tof = (DefaultItemWithFileTO) to;
+      String url = getExternalFileUrl(tof);
+      if (tof.getFile() != null) {
+        item = controller.updateFile(item, collection, tof.getFile(), to.getFilename(), u);
+      } else if (!StringHelper.isNullOrEmptyTrim(url)) {
+        item = controller.updateWithExternalFile(item, collection, getExternalFileUrl(tof),
+            to.getFilename(), !isNullOrEmpty(tof.getFetchUrl()), u);
+      } else {
+        item = controller.update(item, u);
+      }
     } else {
       item = controller.update(item, u);
     }

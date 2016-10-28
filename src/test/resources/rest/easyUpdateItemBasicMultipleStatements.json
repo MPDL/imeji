@@ -14,11 +14,17 @@
   "status": "RELEASED",
   "version": 1,
   "discardComment": "",
-  "visibility": "PUBLIC",
   "collectionId": "___COLLECTION_ID___",
   "filename": "___FILE_NAME___",
   "mimetype": "application/octet-stream",
   "checksumMd5": "bc7df93ab2e2542944681c791a6eb61c",
+   "licenses": [
+        {
+          "label": "Dummy License",
+          "name": "Dummy",
+          "url": "http://example.org"
+        }
+      ],
   "webResolutionUrlUrl": "http://mydomain.org/imeji/file/tLelAYNqHNlounyW/d3/b8/fe/31-01af-4167-be36-b82d5d45e0da/0/web/364be8860e8d72b4358b5e88099a935a.jpg",
   "thumbnailUrl": "http://qa-imeji.mpdl.mpg.de/imeji/file/_FAfwLZ9Vy3LUSM/f7/a5/84/a3-ca3f-4116-9b05-34c49892c17d/0/thumbnail/cb6faf2b3b358438e2b670548168dd10.jpg",
   "fileUrl": "http://qa-imeji.mpdl.mpg.de/imeji/file/_FAfwLZ9Vy3LUSM/f7/a5/84/a3-ca3f-4116-9b05-34c49892c17d/0/original/cb6faf2b3b358438e2b670548168dd10.jpg",
@@ -47,10 +53,6 @@
 	          }
 	        ]
       },
-		"license" : {
-			"license" : "cc-by",
-			"url" : "http://test.org"
-		},
 		"geolocation" : {
 			"name" : "munich",
 			"longitude" : 50,

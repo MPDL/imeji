@@ -2,9 +2,7 @@ package de.mpg.imeji.test.rest.resources.test.integration;
 
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
 import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_REST;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_STORAGE;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -38,6 +36,7 @@ import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.LicenseTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 import de.mpg.imeji.util.LocalizedString;
 import util.JenaUtil;
 
@@ -188,9 +187,21 @@ public class ImejiTestBase extends JerseyTest {
     DefaultItemWithFileTO to = new DefaultItemWithFileTO();
     to.setCollectionId(collectionId);
     if (fileName == null) {
-      to.setFile(new File(STATIC_CONTEXT_STORAGE + "/test.png"));
+      to.setFile(ImejiTestResources.getTestPng());
+    } else if ("test1".equals(fileName)) {
+      to.setFile(ImejiTestResources.getTest1Jpg());
+    } else if ("test2".equals(fileName)) {
+      to.setFile(ImejiTestResources.getTest2Jpg());
+    } else if ("test3".equals(fileName)) {
+      to.setFile(ImejiTestResources.getTest3Jpg());
+    } else if ("test4".equals(fileName)) {
+      to.setFile(ImejiTestResources.getTest4Jpg());
+    } else if ("test5".equals(fileName)) {
+      to.setFile(ImejiTestResources.getTest5Jpg());
+    } else if ("test6".equals(fileName)) {
+      to.setFile(ImejiTestResources.getTest6Jpg());
     } else {
-      to.setFile(new File(STATIC_CONTEXT_STORAGE + "/" + fileName + ".jpg"));
+      to.setFile(ImejiTestResources.getTestJpg());
     }
     to.setStatus("PENDING");
     addDummyLicenseToItem(to);
