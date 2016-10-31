@@ -5,8 +5,12 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @XmlRootElement
 @XmlType(propOrder = {"language", "value"})
+@JsonInclude(Include.NON_NULL)
 public class LicenseTO implements Serializable {
   private static final long serialVersionUID = -6942964122324055238L;
   private String label;

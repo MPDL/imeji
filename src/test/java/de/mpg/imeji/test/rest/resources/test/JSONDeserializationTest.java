@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.mpg.imeji.exceptions.BadRequestException;
@@ -31,6 +32,7 @@ public class JSONDeserializationTest {
     DefaultItemTO item =
         (DefaultItemTO) RestProcessUtils.buildTOFromJSON(jsonStringIn, DefaultItemTO.class);
     ObjectMapper mapper = new ObjectMapper();
+    mapper.setSerializationInclusion(Include.NON_NULL);
     // mapper.enable(SerializationFeature.INDENT_OUTPUT);
     String jsonStringOut = mapper.writeValueAsString(item);
     assertThat("Bad deserialization of DefaultItemTO JSON", jsonToPOJO(jsonStringIn),
