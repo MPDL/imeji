@@ -66,8 +66,8 @@ public class FileAuthorizationTest extends ControllerTest {
     createCollection();
     createItemWithFile();
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser));
-    Assert
-        .assertTrue(StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser));
   }
 
@@ -75,7 +75,8 @@ public class FileAuthorizationTest extends ControllerTest {
   public void loggedInReadPrivateItemOfForbiddenCollection() throws ImejiException {
     createCollection();
     createItemWithFile();
-    Assert.assertFalse(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
+    Assert
+        .assertFalse(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
     Assert.assertFalse(
         StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
     Assert.assertFalse(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser2));
@@ -89,8 +90,8 @@ public class FileAuthorizationTest extends ControllerTest {
     c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, collection.getId().toString(),
         ShareBusinessController.rolesAsList(ShareRoles.READ));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
-    Assert
-        .assertTrue(StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser2));
   }
 
@@ -102,8 +103,8 @@ public class FileAuthorizationTest extends ControllerTest {
     c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, item.getId().toString(),
         ShareBusinessController.rolesAsList(ShareRoles.READ));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
-    Assert
-        .assertTrue(StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser2));
   }
 
@@ -115,8 +116,8 @@ public class FileAuthorizationTest extends ControllerTest {
     releaseItem();
     enablePrivateMode();
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
-    Assert
-        .assertTrue(StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser2));
   }
 
@@ -128,19 +129,19 @@ public class FileAuthorizationTest extends ControllerTest {
     releaseCollection();
     enablePrivateMode();
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
-    Assert
-        .assertTrue(StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser2));
   }
 
   private void releaseCollection() throws ImejiException {
     CollectionController c = new CollectionController();
-    c.release(collection, JenaUtil.testUser, null);
+    c.releaseWithDefaultLicense(collection, JenaUtil.testUser);
   }
 
   private void releaseItem() throws ImejiException {
     ItemBusinessController c = new ItemBusinessController();
-    c.release(Arrays.asList(item), JenaUtil.testUser, null);
+    c.releaseWithDefaultLicense(Arrays.asList(item), JenaUtil.testUser);
   }
 
   private void enablePrivateMode() throws IOException, URISyntaxException, ImejiException {

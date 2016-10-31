@@ -24,7 +24,6 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.controller.ImejiController;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
@@ -421,20 +420,6 @@ public class CollectionController extends ImejiController {
   public void releaseWithDefaultLicense(CollectionImeji collection, User user)
       throws ImejiException {
     release(collection, user, getDefaultLicense());
-  }
-
-  /**
-   * Get the instance default instance
-   * 
-   * @return
-   */
-  private License getDefaultLicense() {
-    ImejiLicenses lic = ImejiLicenses.valueOf(Imeji.CONFIG.getDefaultLicense());
-    License license = new License();
-    license.setName(lic.name());
-    license.setLabel(lic.getLabel());
-    license.setUrl(lic.getUrl());
-    return license;
   }
 
   /**

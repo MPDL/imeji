@@ -503,6 +503,16 @@ public class ItemBusinessController extends ImejiController {
     updateBatch(items, user);
   }
 
+  /**
+   * Release the items with the current default license
+   * 
+   * @param l
+   * @param user
+   * @throws ImejiException
+   */
+  public void releaseWithDefaultLicense(List<Item> l, User user) throws ImejiException {
+    this.release(l, user, itemController.getDefaultLicense());
+  }
 
   /**
    * Set the status of a {@link List} of {@link Item} to withdraw and delete its files from the

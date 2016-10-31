@@ -132,6 +132,6 @@ public class URLQueryTransformerTest {
    * @return
    */
   private String toSimpleQuery(String q) {
-    return "all=\"" + q + "\"";
+    return "all=\"" + q + "\" OR fulltext=\"" + q + "\"";
   }
 }
