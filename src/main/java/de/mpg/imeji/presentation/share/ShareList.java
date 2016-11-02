@@ -1,5 +1,6 @@
 package de.mpg.imeji.presentation.share;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +27,8 @@ import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
  * @author bastiens
  *
  */
-public final class ShareList {
+public final class ShareList implements Serializable {
+  private static final long serialVersionUID = -3986021952970961215L;
   private final List<ShareListItem> items = new ArrayList<ShareListItem>();
   private final List<ShareListItem> invitations = new ArrayList<ShareListItem>();
 

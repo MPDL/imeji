@@ -3,6 +3,7 @@
  */
 package de.mpg.imeji.presentation.history;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class HistoryPage {
+public class HistoryPage implements Serializable {
   private int pos = 0;
   private String url;
   private String title;

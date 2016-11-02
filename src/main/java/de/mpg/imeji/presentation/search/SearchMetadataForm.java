@@ -3,6 +3,7 @@
  */
 package de.mpg.imeji.presentation.search;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,7 +37,9 @@ import de.mpg.imeji.logic.vo.util.MetadataTypesHelper;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class SearchMetadataForm {
+public class SearchMetadataForm implements Serializable {
+
+  private static final long serialVersionUID = 5066545429677597018L;
   private static final Logger LOGGER = Logger.getLogger(SearchMetadataForm.class);
   private String searchValue;
   private String familyName;

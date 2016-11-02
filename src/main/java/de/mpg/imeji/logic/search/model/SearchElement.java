@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.search.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -12,7 +13,9 @@ import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public abstract class SearchElement {
+public abstract class SearchElement implements Serializable {
+  private static final long serialVersionUID = -7678082315474306307L;
+
   public enum SEARCH_ELEMENTS {
     LOGICAL_RELATIONS, PAIR, GROUP, QUERY, METADATA, SIMPLE_METADATA, TECHNICAL_METADATA;
   }

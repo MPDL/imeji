@@ -5,16 +5,9 @@
 				xmlns:f="http://java.sun.com/jsf/core"
 				xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
 	
-	<ui:param name="headline" value=""/>
-		
-	<ui:define name="init">
-		<h:outputText value="#{AdvancedSearchBean.newSearch}"/>
-	</ui:define>	
-	
 	<ui:define name="actionsMenu">
 		<menu:context_actionMenu id="action" downloadEnabled="false" actionEnabled="false"/>
 	</ui:define>
-	
 	<ui:define name="searchQuery">
 		<h:panelGroup id="imj_searchQueryMessageArea" styleClass="imj_searchQueryDisplay">
 			<br/>
@@ -253,7 +246,7 @@
 					<div class="imj_searchDetails">
 						<h:selectOneRadio class="select_has_license" value="#{AdvancedSearchBean.formular.licenseSearchGroup.hasLicense}" onchange="if(this.value == 'select'){$('.menu_select_license').show();}else{$('.menu_select_license').hide();}">
 						   	<f:selectItem itemValue="all" itemLabel="#{lbl.all}" />
-						   	<f:selectItem itemValue="true" itemLabel="#{lbl.has_license}" />
+						   	<f:selectItem itemValue="true" itemLabel="#{lbl.any_license}" />
 						   	<f:selectItem itemValue="false" itemLabel="#{lbl.no_license}" />
 						   	<f:selectItem itemValue="select" itemLabel="#{lbl.select_licenses}"/>
 						   	<f:ajax execute="@this" render=":imj_searchQueryMessageArea"/>

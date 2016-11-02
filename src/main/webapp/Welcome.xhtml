@@ -84,7 +84,7 @@
 		</ui:fragment>
 		<ui:fragment rendered="#{StartPageBean.selectedSpaceResource.id == '' or empty StartPageBean.selectedSpaceResource.description or StartPageBean.selectedSpaceResource.description == ''}">
 			<!-- Main Content -->							
-			<div id="imj_welcomeInfoWrapper" class="imj_welcomeInfo" style="#{Configuration.startPageCarouselEnabled? '' : 'width: 98%'}">			
+			<div id="imj_welcomeInfoWrapper" class="imj_welcomeInfo" style="#{Configuration.startPageCarouselEnabled? '' : 'width: 96%'}">			
 				<!-- HTML Snippet defined in the configuration -->
 				<ui:fragment rendered="#{Configuration.getStartPageHTML(InternationalizationBean.locale) != ''}">
 					<h:outputText value="#{Configuration.getStartPageHTML(InternationalizationBean.locale)}" escape="false"/>

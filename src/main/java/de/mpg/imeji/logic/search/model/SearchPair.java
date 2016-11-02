@@ -15,6 +15,7 @@ import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
  * @version $Revision$ $LastChangedDate$
  */
 public class SearchPair extends SearchElement {
+  private static final long serialVersionUID = -1522952540004708017L;
   private boolean not = false;
   private SearchIndex index;
   private SearchOperators operator;

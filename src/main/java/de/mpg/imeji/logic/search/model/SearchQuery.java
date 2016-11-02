@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
  * @version $Revision$ $LastChangedDate$
  */
 public class SearchQuery extends SearchElement {
+  private static final long serialVersionUID = 409836256942379675L;
   private static final Logger LOGGER = Logger.getLogger(SearchQuery.class);
   /**
    * The elements of the {@link SearchQuery}

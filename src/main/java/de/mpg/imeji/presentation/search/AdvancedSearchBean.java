@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -27,7 +28,6 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
-import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -42,14 +42,12 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class AdvancedSearchBean extends SuperBean {
   private static final long serialVersionUID = -3989020231445922611L;
-  private SearchForm formular = null;
+  private SearchForm formular = new SearchForm();
   private MetadataLabels metadataLabels;
   // Menus
   private List<SelectItem> profilesMenu;
   private List<SelectItem> collectionsMenu;
   private List<SelectItem> operatorsMenu;
-
-
 
   /**
    * True if the query got an error (for instance wrong date format). Then the message is written in
@@ -58,16 +56,15 @@ public class AdvancedSearchBean extends SuperBean {
   private boolean errorQuery = false;
   private static final Logger LOGGER = Logger.getLogger(AdvancedSearchBean.class);
 
-  /**
-   * Constructor for the {@link AdvancedSearchBean}
-   *
-   * @throws ImejiException
-   */
-  public AdvancedSearchBean() {
-
+  @PostConstruct
+  public void newSearch() {
+    try {
+      getNewSearch();
+    } catch (ImejiException e) {
+      BeanHelper.error("Error initializing page: " + e.getMessage());
+      LOGGER.error("Error initializing advanced search", e);
+    }
   }
-
-
 
   /**
    * Called when the page is called per get request. Read the query in the url and initialize the
@@ -171,13 +168,11 @@ public class AdvancedSearchBean extends SuperBean {
    * @throws IOException
    */
   public void goToResultPage() throws IOException {
-    Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     errorQuery = false;
     try {
       formular.validate();
       String q = SearchQueryParser.transform2UTF8URL(formular.getFormularAsSearchQuery());
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(navigation.getBrowseUrl() + "?q=" + q);
+      redirect(getNavigation().getBrowseUrl() + "?q=" + q);
     } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error invalid search form", e);
@@ -276,6 +271,9 @@ public class AdvancedSearchBean extends SuperBean {
    * @return
    */
   public String getSimpleQuery() {
+    if (formular == null) {
+      return "";
+    }
     return SearchQueryParser.searchQuery2PrettyQuery(formular.getFormularAsSearchQuery(),
         getLocale(), metadataLabels.getInternationalizedLabels());
   }

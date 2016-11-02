@@ -10,6 +10,8 @@ import java.util.List;
  * @version $Revision$ $LastChangedDate$
  */
 public class SearchLogicalRelation extends SearchElement {
+  private static final long serialVersionUID = 3519298685331947754L;
+
   public enum LOGICAL_RELATIONS {
     AND, OR;
   }

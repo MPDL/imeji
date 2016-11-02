@@ -3,6 +3,7 @@
  */
 package de.mpg.imeji.presentation.history;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,8 @@ import de.mpg.imeji.presentation.util.ServletUtil;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class HistorySession {
+public class HistorySession implements Serializable {
+  private static final long serialVersionUID = 28762010528555885L;
   /**
    * {@link List} of {@link HistoryPage} stored in the history
    */

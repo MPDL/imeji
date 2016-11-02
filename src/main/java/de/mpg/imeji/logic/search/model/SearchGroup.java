@@ -11,6 +11,7 @@ import java.util.List;
  * @version $Revision$ $LastChangedDate$
  */
 public class SearchGroup extends SearchElement {
+  private static final long serialVersionUID = 3563281809630416673L;
   private List<SearchElement> group;
   private boolean not;
 

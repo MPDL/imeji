@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.search.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,9 @@ import de.mpg.imeji.logic.vo.util.MetadataTypesHelper;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class SearchIndex {
+public class SearchIndex implements Serializable {
+  private static final long serialVersionUID = 8909950834646667282L;
+
   /**
    * All indexes names, searchable in imeji
    *
