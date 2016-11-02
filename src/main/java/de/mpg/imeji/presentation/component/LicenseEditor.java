@@ -113,6 +113,11 @@ public class LicenseEditor implements Serializable {
     }
   }
 
+  public void licenseInputListener() {
+    // just an empty listener which is triggered by the component to be sure that changed value are
+    // caught
+  }
+
   /**
    * Get the license of the entered via the component
    * 

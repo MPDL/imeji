@@ -14,17 +14,17 @@
 						<input type="search" id="quickSearchString" class="imj_simpleSearchInput" placeholder="#{lbl.search_for}..." value="#{QuickSearchBean.searchString}" autocomplete="off" onfocus="initSimpleSearch('#{Navigation.albumsUrl}', '#{Navigation.collectionsUrl}', '#{Navigation.browseUrl}', #{Configuration.albumsEnabled ? 3 : 2})"/>
 						<input type="submit" id="btnQuickSearchStart" title="#{lbl.search_for}" class="imj_simpleSearchButtonSubmit" value="#{lbl.paginator_go}" formaction="#" onclick="initSimpleSearch('#{Navigation.albumsUrl}', '#{Navigation.collectionsUrl}', '#{Navigation.browseUrl}', #{Configuration.albumsEnabled ? 3 : 2})"/>	
 					</div>
-					<div class="imj_menuSimpleSearch"  >
+					<div class="imj_menuSimpleSearch">
 						<span class="imj_menuText" style="display: block;"> #{lbl.search_for} ...</span>
 						<ul class="imj_bodyContextSearch">
-							<li id="simpleSearchForItems" class="defaultSearchType hovered">...  
+							<li id="simpleSearchForItems" class="defaultSearchType hovered">  
 								<a href="#"> #{lbl.search_for_items}</a>
 							</li>
-							<li id="simpleSearchForCollections">... 
+							<li id="simpleSearchForCollections">
 								<a href="#"> #{lbl.search_for_collections}</a>
 							</li>
 							<ui:fragment rendered="#{Configuration.albumsEnabled}">
-								<li id="simpleSearchForAlbums">...
+								<li id="simpleSearchForAlbums">
 									 <a href="#"> #{lbl.search_for_albums}</a>
 								</li>
 							</ui:fragment>

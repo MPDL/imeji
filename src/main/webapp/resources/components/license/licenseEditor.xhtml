@@ -23,11 +23,15 @@
 			<ui:fragment rendered="#{cc.attrs.licenseEditor.showInput}">
 				<div class="imj_metadataSet">
 					<h:outputLabel value="#{lbl.name}" styleClass="imj_metadataLabel"/>
-					<h:inputText value="#{cc.attrs.licenseEditor.customLicenseName}" styleClass="imj_metadataValue"/>
+					<h:inputText value="#{cc.attrs.licenseEditor.customLicenseName}" styleClass="imj_metadataValue" >
+						<f:ajax  render="@none"/>
+					</h:inputText>
 				</div>
 				<div class="imj_metadataSet">
 					<h:outputLabel value="#{lbl.url}" styleClass="imj_metadataLabel"/>
-					<h:inputText value="#{cc.attrs.licenseEditor.customLicenseUrl}" styleClass="imj_metadataValue"/>
+					<h:inputText value="#{cc.attrs.licenseEditor.customLicenseUrl}" styleClass="imj_metadataValue">
+						<f:ajax render="@none"/>
+					</h:inputText>
 				</div>
 			</ui:fragment>
 			<span class="imj_metadataSet">

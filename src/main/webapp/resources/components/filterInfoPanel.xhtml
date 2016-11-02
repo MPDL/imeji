@@ -17,7 +17,7 @@
 	</composite:interface>
 	
 	<composite:implementation>		
-		<h:panelGroup layout="block" id="filterInfoPanel" styleClass="imj_filterInfoPanel" >
+		<div id="filterInfoPanel" class="imj_selectionInfoPanel" >
 			<h:outputText value=" #{cc.attrs.filterBean.totalNumberOfElements} #{objectLabel}"/>
 			<imj:SearchFilter/>		
 			<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item">
@@ -45,6 +45,6 @@
 			</h:panelGroup>
 			<menu:StatusFilterMenu rendered="#{!Configuration.privateModus}"/>
 			<menu:UserFilterMenu/>
-		</h:panelGroup>
+		</div>
 	</composite:implementation>
 </html>

@@ -21,22 +21,20 @@
 				<span>&#160;</span>
 			</div>
 			<div class="imj_menuBody">
-				<h:outputText value="#{lbl.filter_by}:" styleClass="imj_sectionHeadline imj_active"/>
+				<span class="imj_active">#{lbl.filter_by}:</span>
 				<ul>
 					<ui:fragment rendered="#{UserFilterMenuBean.selected != null}">
 						<li>
-							<span class="imj_active">
-								<a href="#{UserFilterMenuBean.removeFilterUrl}">
-									<span class="fa fa-check"/>
-									#{UserFilterMenuBean.selected.label}
-								</a>						
-							</span>
+							<span class="fa fa-check"  style="margin:0; padding:0"/>
+							<a href="#{UserFilterMenuBean.removeFilterUrl}">
+								#{UserFilterMenuBean.selected.label}
+							</a>						
 						</li>
 					</ui:fragment>
 					<ui:repeat var="entry" value="#{UserFilterMenuBean.menu}" varStatus="fpos">
 						<ui:fragment rendered="#{UserFilterMenuBean.selected.value != entry.value}">
 							<li>
-								<span class="fa fa-check" style="visibility:hidden"/>
+								<span class="fa fa-check" style="margin:0; padding:0;visibility:hidden"/>
 								<a href="#{UserFilterMenuBean.getFilterUrl(entry.value)}">#{entry.label}</a>						
 							</li>
 						</ui:fragment>
