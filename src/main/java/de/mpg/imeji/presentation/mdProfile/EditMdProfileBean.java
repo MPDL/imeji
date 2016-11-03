@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
 import org.apache.log4j.Logger;
@@ -43,6 +42,7 @@ public class EditMdProfileBean extends MdProfileBean {
   @Override
   public void specificSetup() {
     colId = UrlHelper.getParameterValue("col");
+    System.out.println(colId);
     vocabularyHelper = new VocabularyHelper(getLocale());
     if (getId() != null) {
       retrieveProfile();
@@ -59,10 +59,6 @@ public class EditMdProfileBean extends MdProfileBean {
       }
     }
     super.specificSetup();
-  }
-
-  public void test() {
-    System.out.println("test");
   }
 
   /**
@@ -96,15 +92,14 @@ public class EditMdProfileBean extends MdProfileBean {
    * @return
    * @throws IOException
    */
-  public String cancel() throws IOException {
+  public void cancel() throws IOException {
+    System.out.println("colId " + colId);
     if (colId != null) {
-      FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(getNavigation().getCollectionUrl() + colId + "/"
-              + getNavigation().getInfosPath() + "?init=1");
+      redirect(getNavigation().getCollectionUrl() + colId + "/" + getNavigation().getInfosPath()
+          + "?init=1");
     } else {
       redirect(getHistory().getPreviousPage().getCompleteUrlWithHistory());
     }
-    return "";
   }
 
   /**
@@ -113,7 +108,7 @@ public class EditMdProfileBean extends MdProfileBean {
    * @return
    * @throws IOException
    */
-  public String save() throws IOException {
+  public void save() throws IOException {
     getProfile().setStatements(getUnwrappedStatements());
     int pos = 0;
     // Set the position of the statement (used for the sorting later)
@@ -135,7 +130,6 @@ public class EditMdProfileBean extends MdProfileBean {
           e.getMessage());
       LOGGER.error("Error saving profile", e);
     }
-    return "";
   }
 
   /**

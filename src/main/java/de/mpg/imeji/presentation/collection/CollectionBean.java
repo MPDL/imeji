@@ -74,8 +74,6 @@ public abstract class CollectionBean extends ContainerBean {
     return "error_collection_need_one_author";
   }
 
-
-
   /**
    * getter
    *

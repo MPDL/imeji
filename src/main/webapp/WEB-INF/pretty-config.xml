@@ -41,9 +41,8 @@
 		<view-id>/jsf/Item.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="shareItem">
-		<pattern value="/item/#{ShareBean.id}/share"></pattern>
+		<pattern value="/item/#{ id }/share"/>
 		<view-id>/jsf/Share.xhtml</view-id>
-		<action onPostback="false">#{ShareBean.initShareItem}</action>
 	</url-mapping>
 	<url-mapping id="upload">
 		<pattern value="/collection/#{UploadBean.id}/upload" />
@@ -81,9 +80,8 @@
 		<view-id>/jsf/CollectionCreate.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="shareCollection">
-		<pattern value="/collection/#{ShareBean.id}/share"></pattern>
+		<pattern value="/collection/#{ id }/share"/>
 		<view-id>/jsf/Share.xhtml</view-id>
-		<action onPostback="false">#{ShareBean.initShareCollection}</action>
 	</url-mapping>
 	<!-- Profile Pages -->
 	<url-mapping id="viewProfile">
@@ -124,9 +122,8 @@
 		<view-id>/jsf/AlbumBrowse.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="shareAlbum">
-		<pattern value="/album/#{ShareBean.id}/share"></pattern>
+		<pattern value="/album/#{ id }/share"/>
 		<view-id>/jsf/Share.xhtml</view-id>
-		<action onPostback="false">#{ShareBean.initShareAlbum}</action>
 	</url-mapping>
 
 	<url-mapping id="albumItem">
@@ -301,9 +298,8 @@
 		<view-id>/jsf/CollectionCreate.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="space_shareCollection">
-		<pattern value="/space/#{SessionBean.spaceId}/collection/#{ShareBean.id}/share"></pattern>
+		<pattern value="/space/#{SessionBean.spaceId}/collection/#{ id }/share"></pattern>
 		<view-id>/jsf/Share.xhtml</view-id>
-		<action onPostback="false">#{ShareBean.initShareCollection}</action>
 	</url-mapping>
 	<!-- Profile Pages -->
 	<url-mapping id="space_viewProfile">
@@ -453,14 +449,4 @@
 		<view-id>/jsf/AdminSpaceEdit.xhtml</view-id>
 	</url-mapping>
 
-<!-- 
-	NB 15.04. Not needed anylonger will redirect to space home page in any case
-	AdminSpaceWelcome content to be used for space/welcome page perhaps.
-    <url-mapping id="space_spaceWelcome">
-		<pattern value="/space/#{SessionBean.spaceId}/spaceinfo"></pattern>
-		<view-id>/jsf/AdminSpaceWelcome.xhtml</view-id>
-	</url-mapping>
-
- -->
- 
  </pretty-config>

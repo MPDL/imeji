@@ -57,10 +57,11 @@ public class ShareUtil {
         Imeji.RESOURCE_BUNDLE.getLabel("collection_share_image_delete", locale)));
     collectionRoleMenu.add(new SelectItem(ShareRoles.EDIT,
         Imeji.RESOURCE_BUNDLE.getLabel("collection_share_collection_edit", locale)));
-    if (profileUri != null && SecurityUtil.staticAuth().administrate(user, profileUri)) {
-      collectionRoleMenu.add(new SelectItem(ShareRoles.EDIT_PROFILE,
-          Imeji.RESOURCE_BUNDLE.getLabel("collection_share_profile_edit", locale)));
-    }
+    boolean profileDisabled =
+        profileUri == null || !SecurityUtil.staticAuth().administrate(user, profileUri);
+    collectionRoleMenu.add(new SelectItem(ShareRoles.EDIT_PROFILE,
+        Imeji.RESOURCE_BUNDLE.getLabel("collection_share_profile_edit", locale), "Read Only",
+        profileDisabled));
     collectionRoleMenu.add(new SelectItem(ShareRoles.ADMIN,
         Imeji.RESOURCE_BUNDLE.getLabel("collection_share_admin", locale)));
     return collectionRoleMenu;

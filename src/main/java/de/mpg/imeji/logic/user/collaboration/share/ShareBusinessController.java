@@ -4,12 +4,12 @@
 package de.mpg.imeji.logic.user.collaboration.share;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -91,7 +91,8 @@ public class ShareBusinessController {
   private User shareGrantsToUser(User fromUser, User toUser, String sharedObjectUri,
       List<Grant> grants) throws ImejiException {
     if (toUser != null) {
-      cleanUserGrants(fromUser, toUser, grants, sharedObjectUri);
+      checkSecurity(fromUser, grants);
+      toUser = removeGrants(toUser, sharedObjectUri);
       addGrants(toUser, fromUser, grants);
     }
     return toUser;
@@ -110,7 +111,8 @@ public class ShareBusinessController {
   private void shareGrantsToGroup(User fromUser, UserGroup toGroup, String sharedObjectUri,
       List<Grant> grants) throws ImejiException {
     if (toGroup != null) {
-      cleanGroupGrants(fromUser, toGroup, grants, sharedObjectUri);
+      checkSecurity(fromUser, grants);
+      toGroup = removeGrants(toGroup, sharedObjectUri);
       addGrants(Imeji.adminUser, toGroup, grants);
     }
   }
@@ -185,7 +187,8 @@ public class ShareBusinessController {
    * @param type
    * @return
    */
-  public static List<String> transformGrantsToRoles(List<Grant> grants, String uri) {
+  public static List<String> transformGrantsToRoles(List<Grant> grants, String uri,
+      String profileUri) {
     List<String> l = new ArrayList<>();
     if (hasReadGrants(grants, uri)) {
       l.add(ShareRoles.READ.toString());
@@ -205,6 +208,9 @@ public class ShareBusinessController {
     if (hasAdminGrants(grants, uri)) {
       l.add(ShareRoles.ADMIN.toString());
     }
+    if (profileUri != null && hasEditGrants(grants, profileUri)) {
+      l.add(ShareRoles.EDIT_PROFILE.toString());
+    }
     return l;
   }
 
@@ -216,11 +222,8 @@ public class ShareBusinessController {
    * @throws ImejiException
    */
   private User addGrants(User toUser, User fromUser, List<Grant> grants) throws ImejiException {
-    toUser.getGrants().addAll(filterNewGrants(toUser.getGrants(), grants, fromUser));
-    UserBusinessController c = new UserBusinessController();
-    // Admin is the only User which can update other users
-    c.update(toUser, Imeji.adminUser);
-    return toUser;
+    toUser.getGrants().addAll(grants);
+    return new UserBusinessController().update(toUser, Imeji.adminUser);
 
   }
 
@@ -228,110 +231,43 @@ public class ShareBusinessController {
    * Add to the {@link UserGroup} the {@link List} of {@link Grant} and update the user in the
    * database
    *
-   * @param toUser
+   * @param fromUser
    * @param toGroup
    * @param grants
    *
    * @throws ImejiException
    */
-  private void addGrants(User toUser, UserGroup toGroup, List<Grant> grants) throws ImejiException {
-    toGroup.getGrants().addAll(filterNewGrants(toGroup.getGrants(), grants, toUser));
-    GroupBusinessController c = new GroupBusinessController();
-    // Admin is the only User which can update other users
-    c.update(toGroup, Imeji.adminUser);
+  private void addGrants(User fromUser, UserGroup toGroup, List<Grant> grants)
+      throws ImejiException {
+    toGroup.getGrants().addAll(grants);
+    new GroupBusinessController().update(toGroup, Imeji.adminUser);
+  }
+
+  private User removeGrants(User toUser, String uri) throws ImejiException {
+    toUser.setGrants(removeGrantsOfObject((List<Grant>) toUser.getGrants(), uri));
+    return new UserBusinessController().update(toUser, Imeji.adminUser);
+  }
+
+  private UserGroup removeGrants(UserGroup toGroup, String uri) throws ImejiException {
+    toGroup.setGrants(removeGrantsOfObject((List<Grant>) toGroup.getGrants(), uri));
+    return new GroupBusinessController().update(toGroup, Imeji.adminUser);
   }
 
   /**
-   * Clean all {@link Grant} for an object
-   *
-   * @param hasgrant
-   * @param uri
-   * @param currentUser
-   */
-  private void cleanUserGrants(User fromUser, User toUser, List<Grant> grants, String uri) {
-    List<Grant> notRemovedGrants = new ArrayList<Grant>();
-    List<Grant> removedGrants = new ArrayList<Grant>();
-    List<String> grantFor = getGrantFor(grants);
-    for (Grant g : toUser.getGrants()) {
-      if (g.getGrantFor() == null || grantFor.contains(g.getGrantFor().toString())
-          || uri.equals(g.getGrantFor().toString())) {
-        removedGrants.add(g);
-      } else {
-        notRemovedGrants.add(g);
-      }
-    }
-    toUser.setGrants(notRemovedGrants);
-    UserBusinessController c = new UserBusinessController();
-    try {
-      c.update(toUser, Imeji.adminUser);
-    } catch (Exception e) {
-      LOGGER.error(e);
-    }
-  }
-
-  /**
-   * Clean all {@link Grant} for an object
-   *
-   * @param hasgrant
-   * @param uri
-   * @param currentUser
-   */
-  private void cleanGroupGrants(User fromUser, UserGroup toGroup, List<Grant> grants, String uri) {
-    List<Grant> notRemovedGrants = new ArrayList<Grant>();
-    List<Grant> removedGrants = new ArrayList<Grant>();
-    List<String> grantFor = getGrantFor(grants);
-    for (Grant g : toGroup.getGrants()) {
-      if (grantFor.contains(g.getGrantFor().toString()) || uri.equals(g.getGrantFor().toString())) {
-        removedGrants.add(g);
-      } else {
-        notRemovedGrants.add(g);
-      }
-    }
-    toGroup.setGrants(notRemovedGrants);
-    GroupBusinessController c = new GroupBusinessController();
-    try {
-      c.update(toGroup, Imeji.adminUser);
-      // new UserController().deleteGrants(removedGrants);
-    } catch (Exception e) {
-      LOGGER.error("Error cleaning grants", e);
-    }
-  }
-
-  /**
-   * Get all Objects uri which are in this list of {@link Grant}
-   *
+   * Remove all Grant with grantfor = uri
+   * 
    * @param grants
+   * @param uri
    * @return
    */
-  private List<String> getGrantFor(List<Grant> grants) {
-    List<String> l = new ArrayList<String>();
+  private List<Grant> removeGrantsOfObject(List<Grant> grants, String uri) {
+    List<Grant> l = new ArrayList<>();
     for (Grant g : grants) {
-      if (!l.contains(g.getGrantFor().toString())) {
-        l.add(g.getGrantFor().toString());
+      if (!g.getGrantFor().toString().equals(uri)) {
+        l.add(g);
       }
     }
     return l;
-  }
-
-
-  /**
-   * Return the {@link Grant} which are new for the {@link User}
-   *
-   * @param current
-   * @param toAdd
-   * @return
-   */
-  private List<Grant> filterNewGrants(Collection<Grant> current, List<Grant> toAdd, User user) {
-    List<Grant> newGrants = new ArrayList<>();
-    for (Grant g : toAdd) {
-      if (!current.contains(g) && !newGrants.contains(g) && isAllowedToAddGrant(user, g)) {
-        newGrants.add(g);
-      } else if (!current.contains(g) && !newGrants.contains(g) && !isAllowedToAddGrant(user, g)) {
-        LOGGER
-            .error(user.getPerson().getCompleteName() + " NOT ALLOWED TO share " + g.getGrantFor());
-      }
-    }
-    return newGrants;
   }
 
   /**
@@ -340,19 +276,26 @@ public class ShareBusinessController {
    * @param user
    * @param g
    * @return
+   * @throws NotAllowedError
    */
-  private boolean isAllowedToAddGrant(User user, Grant g) {
-    if (g.getGrantFor().toString().contains("/item/")) {
-      // If the grantFor is an Item, the collection is needed to know if
-      // the user can administrate it
-      List<String> c = ImejiSPARQL
-          .exec(JenaCustomQueries.selectCollectionIdOfItem(g.getGrantFor().toString()), null);
-      if (!c.isEmpty()) {
-        return SecurityUtil.staticAuth().administrate(user, c.get(0));
+  private void checkSecurity(User user, List<Grant> grants) throws NotAllowedError {
+    boolean allowed = true;
+    for (Grant g : grants) {
+      if (g.getGrantFor().toString().contains("/item/")) {
+        // If the grantFor is an Item, the collection is needed to know if
+        // the user can administrate it
+        List<String> c = ImejiSPARQL
+            .exec(JenaCustomQueries.selectCollectionIdOfItem(g.getGrantFor().toString()), null);
+        if (!c.isEmpty()) {
+          allowed = SecurityUtil.staticAuth().administrate(user, c.get(0));
+        }
+      } else {
+        allowed = SecurityUtil.staticAuth().administrate(user, g.getGrantFor());
       }
-
+      if (!allowed) {
+        throw new NotAllowedError(user.getEmail() + " not allowed to share " + g.getGrantFor());
+      }
     }
-    return SecurityUtil.staticAuth().administrate(user, g.getGrantFor());
   }
 
   private static boolean hasReadGrants(List<Grant> userGrants, String uri) {

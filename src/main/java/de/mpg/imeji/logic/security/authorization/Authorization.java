@@ -114,6 +114,10 @@ public class Authorization implements Serializable {
     } else if (hasGrant(user, toGrant(getRelevantURIForSecurity(obj, false, false, false),
         getGrantTypeAccordingToObjectType(obj, GrantType.READ)))) {
       return true;
+    } else if ((obj instanceof MetadataProfile || obj.toString().contains("/metadataProfile/"))
+        && user != null) {
+      // all logged in user can read all profiles
+      return true;
     }
     return false;
   }

@@ -5,6 +5,7 @@ package de.mpg.imeji.presentation.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,8 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class VocabularyHelper {
+public class VocabularyHelper implements Serializable {
+  private static final long serialVersionUID = -6066436759603556529L;
   private List<SelectItem> vocabularies;
   private static volatile Properties properties = null;
 

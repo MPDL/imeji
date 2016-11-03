@@ -3,6 +3,7 @@ package de.mpg.imeji.presentation.share;
 import java.io.Serializable;
 import java.net.URI;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -79,21 +80,29 @@ public class ShareBean extends SuperBean implements Serializable {
    *
    * @throws Exception
    */
-  public void initShareCollection() throws ImejiException {
-    this.shareTo = null;
-    this.profileUri = null;
-    this.type = SharedObjectType.COLLECTION;
-    this.uri = ObjectHelper.getURI(CollectionImeji.class, getId());
-    CollectionImeji collection = new CollectionController().retrieveLazy(uri, getSessionUser());
-    if (collection != null) {
-      this.shareTo = collection;
-      this.profileUri = collection.getProfile() != null ? collection.getProfile().toString() : null;
-      this.title = collection.getMetadata().getTitle();
-      this.owner = collection.getCreatedBy();
-      this.backUrl = getNavigation().getCollectionUrl() + collection.getIdString();
-      this.sharedObject = collection;
+  @PostConstruct
+  public void initShareCollection() {
+    try {
+      id = UrlHelper.getParameterValue("id");
+      this.shareTo = null;
+      this.profileUri = null;
+      this.type = SharedObjectType.COLLECTION;
+      this.uri = ObjectHelper.getURI(CollectionImeji.class, getId());
+      CollectionImeji collection = new CollectionController().retrieveLazy(uri, getSessionUser());
+      if (collection != null) {
+        this.shareTo = collection;
+        this.profileUri =
+            collection.getProfile() != null ? collection.getProfile().toString() : null;
+        this.title = collection.getMetadata().getTitle();
+        this.owner = collection.getCreatedBy();
+        this.backUrl = getNavigation().getCollectionUrl() + collection.getIdString();
+        this.sharedObject = collection;
+      }
+      this.init();
+    } catch (Exception e) {
+      LOGGER.error("Error initializing the share collection page", e);
+      BeanHelper.error("Error initializing page: " + e.getMessage());
     }
-    this.init();
   }
 
   /**
@@ -101,20 +110,26 @@ public class ShareBean extends SuperBean implements Serializable {
    *
    * @throws Exception
    */
-  public void initShareAlbum() throws ImejiException {
-    this.type = SharedObjectType.ALBUM;
-    this.shareTo = null;
-    this.profileUri = null;
-    this.uri = ObjectHelper.getURI(Album.class, getId());
-    Album album = new AlbumController().retrieveLazy(uri, getSessionUser());
-    if (album != null) {
-      this.shareTo = album;
-      this.title = album.getMetadata().getTitle();
-      this.owner = album.getCreatedBy();
-      this.backUrl = getNavigation().getAlbumUrl() + album.getIdString();
-      this.sharedObject = album;
+  public void initShareAlbum() {
+    try {
+      id = UrlHelper.getParameterValue("id");
+      this.type = SharedObjectType.ALBUM;
+      this.shareTo = null;
+      this.profileUri = null;
+      this.uri = ObjectHelper.getURI(Album.class, getId());
+      Album album = new AlbumController().retrieveLazy(uri, getSessionUser());
+      if (album != null) {
+        this.shareTo = album;
+        this.title = album.getMetadata().getTitle();
+        this.owner = album.getCreatedBy();
+        this.backUrl = getNavigation().getAlbumUrl() + album.getIdString();
+        this.sharedObject = album;
+      }
+      this.init();
+    } catch (Exception e) {
+      LOGGER.error("Error initializing the share Album page", e);
+      BeanHelper.error("Error initializing page: " + e.getMessage());
     }
-    this.init();
   }
 
   /**
@@ -123,28 +138,34 @@ public class ShareBean extends SuperBean implements Serializable {
    * @return
    * @throws Exception
    */
-  public String initShareItem() throws ImejiException {
-    this.type = SharedObjectType.ITEM;
-    this.profileUri = null;
-    this.shareTo = null;
-    this.uri =
-        HistoryUtil.extractURI(PrettyContext.getCurrentInstance().getRequestURL().toString());
-    Item item = new ItemBusinessController().retrieveLazy(uri, getSessionUser());
-    if (item != null) {
-      this.shareTo = item;
-      this.title = item.getFilename();
-      this.owner = item.getCreatedBy();
-      this.backUrl = getNavigation().getItemUrl() + item.getIdString();
-      this.shareListCollection = new ShareList(owner, item.getCollection().toString(), profileUri,
-          SharedObjectType.COLLECTION, getSessionUser(), getLocale());
-      this.collectionShareUrl = getNavigation().getCollectionUrl()
-          + ObjectHelper.getId(item.getCollection()) + "/" + Navigation.SHARE.getPath();
-      this.collectionName = new CollectionController()
-          .retrieve(item.getCollection(), getSessionUser()).getMetadata().getTitle();
-      this.sharedObject = item;
+  public void initShareItem() {
+    try {
+      id = UrlHelper.getParameterValue("id");
+      this.type = SharedObjectType.ITEM;
+      this.profileUri = null;
+      this.shareTo = null;
+      this.uri =
+          HistoryUtil.extractURI(PrettyContext.getCurrentInstance().getRequestURL().toString());
+      Item item = new ItemBusinessController().retrieveLazy(uri, getSessionUser());
+      if (item != null) {
+        this.shareTo = item;
+        this.title = item.getFilename();
+        this.owner = item.getCreatedBy();
+        this.backUrl = getNavigation().getItemUrl() + item.getIdString();
+        this.shareListCollection = new ShareList(owner, item.getCollection().toString(), profileUri,
+            SharedObjectType.COLLECTION, getSessionUser(), getLocale());
+        this.collectionShareUrl = getNavigation().getCollectionUrl()
+            + ObjectHelper.getId(item.getCollection()) + "/" + Navigation.SHARE.getPath();
+        this.collectionName = new CollectionController()
+            .retrieve(item.getCollection(), getSessionUser()).getMetadata().getTitle();
+        this.sharedObject = item;
+      }
+      this.init();
+    } catch (Exception e) {
+      LOGGER.error("Error initializing the share Item page", e);
+      BeanHelper.error("Error initializing page: " + e.getMessage());
     }
-    this.init();
-    return "";
+
   }
 
   /**
@@ -184,7 +205,7 @@ public class ShareBean extends SuperBean implements Serializable {
    * @return
    * @throws ImejiException
    */
-  public void update() throws ImejiException {
+  public void update() {
     for (ShareListItem item : shareList.getItems()) {
       boolean modified = item.update();
       if (sendEmail && modified) {
@@ -192,7 +213,12 @@ public class ShareBean extends SuperBean implements Serializable {
       }
     }
     for (ShareListItem item : shareList.getInvitations()) {
-      item.updateInvitation();
+      try {
+        item.updateInvitation();
+      } catch (ImejiException e) {
+        LOGGER.error("Error updating invitations", e);
+        BeanHelper.error("An error occured updating the invitations: " + e.getMessage());
+      }
     }
     reloadPage();
   }

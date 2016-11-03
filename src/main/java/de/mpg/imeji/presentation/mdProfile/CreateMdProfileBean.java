@@ -40,7 +40,8 @@ public class CreateMdProfileBean extends SuperBean {
     showWarning = UrlHelper.getParameterBoolean("warn");
     collectionId = UrlHelper.getParameterValue("col");
     redirect = UrlHelper.getParameterValue("redirect");
-    profileSelector = new ProfileSelector(null, getSessionUser(), getSelectedSpaceString(), getLocale());
+    profileSelector =
+        new ProfileSelector(null, getSessionUser(), getSelectedSpaceString(), getLocale());
     return "";
   }
 
@@ -111,8 +112,8 @@ public class CreateMdProfileBean extends SuperBean {
       redirect(getNavigation().getCollectionUrl() + collectionId + "/infos");
     } else if ("edit".equals(redirect)
         && SecurityUtil.staticAuth().update(getSessionUser(), profile)) {
-      redirect(getNavigation().getProfileUrl() + profile.getIdString() + "/edit?init=1&col="
-          + collectionId);
+      redirect(getNavigation().getProfileUrl() + profile.getIdString()
+          + "/edit?init=1&redirect=view&col=" + collectionId);
     } else if ("edit".equals(redirect)
         && !SecurityUtil.staticAuth().update(getSessionUser(), profile)) {
       redirect(getNavigation().getCollectionUrl() + collectionId + "/infos");

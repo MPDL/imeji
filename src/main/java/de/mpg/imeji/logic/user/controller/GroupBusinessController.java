@@ -133,10 +133,12 @@ public class GroupBusinessController {
    *
    * @param group
    * @param user
+   * @return
    * @throws ImejiException
    */
-  public void update(UserGroup group, User user) throws ImejiException {
+  public UserGroup update(UserGroup group, User user) throws ImejiException {
     controller.update(group, user);
+    return group;
   }
 
   /**

@@ -129,17 +129,10 @@ public class ShareListItem implements Serializable {
    * @param profileUri
    */
   private void init(List<Grant> grants, String uri, String profileUri, Locale locale) {
-    roles = ShareBusinessController.transformGrantsToRoles(grants, uri);
+    roles = ShareBusinessController.transformGrantsToRoles(grants, uri, profileUri);
     this.profileUri = profileUri;
     this.locale = locale;
-    if (profileUri != null) {
-      List<String> profileRoles =
-          ShareBusinessController.transformGrantsToRoles(grants, profileUri);
-      if (profileRoles.contains(ShareRoles.EDIT.toString())) {
-        roles.add(ShareRoles.EDIT_PROFILE.toString());
-      }
-    }
-    checkRoles(true);
+    // checkRoles(true);
   }
 
   /**
@@ -156,9 +149,10 @@ public class ShareListItem implements Serializable {
     if (add) {
       if (roles.contains(ShareRoles.ADMIN.toString())) {
         if (type == SharedObjectType.COLLECTION) {
-          roles = new ArrayList<>(Arrays.asList(ShareRoles.CREATE.toString(),
-              ShareRoles.EDIT_ITEM.toString(), ShareRoles.DELETE_ITEM.toString(),
-              ShareRoles.EDIT.toString(), ShareRoles.ADMIN.toString()));
+          roles = new ArrayList<>(
+              Arrays.asList(ShareRoles.READ.toString(), ShareRoles.CREATE.toString(),
+                  ShareRoles.EDIT_ITEM.toString(), ShareRoles.DELETE_ITEM.toString(),
+                  ShareRoles.EDIT.toString(), ShareRoles.ADMIN.toString()));
           if (SecurityUtil.staticAuth().administrate(currentUser, profileUri)) {
             roles.add(ShareRoles.EDIT_PROFILE.toString());
           }
@@ -196,16 +190,19 @@ public class ShareListItem implements Serializable {
     try {
       if (user != null) {
         rolesBeforeUpdate = ShareBusinessController
-            .transformGrantsToRoles((List<Grant>) user.getGrants(), shareToUri);
+            .transformGrantsToRoles((List<Grant>) user.getGrants(), shareToUri, profileUri);
         sbc.shareToUser(currentUser, user, shareToUri, roles);
+        if (roles.contains(ShareRoles.EDIT_PROFILE.toString()) && profileUri != null) {
+          // sbc.shareToUser(currentUser, user, profileUri, roles);
+        }
         rolesAfterUpdate = ShareBusinessController
-            .transformGrantsToRoles((List<Grant>) user.getGrants(), shareToUri);
+            .transformGrantsToRoles((List<Grant>) user.getGrants(), shareToUri, profileUri);
       } else if (group != null) {
         rolesBeforeUpdate = ShareBusinessController
-            .transformGrantsToRoles((List<Grant>) group.getGrants(), shareToUri);
+            .transformGrantsToRoles((List<Grant>) group.getGrants(), shareToUri, profileUri);
         sbc.shareToGroup(currentUser, group, shareToUri, roles);
         rolesAfterUpdate = ShareBusinessController
-            .transformGrantsToRoles((List<Grant>) group.getGrants(), shareToUri);
+            .transformGrantsToRoles((List<Grant>) group.getGrants(), shareToUri, profileUri);
       }
       return !ListUtils.equalsIgnoreOrder(rolesBeforeUpdate, rolesAfterUpdate);
     } catch (ImejiException e) {

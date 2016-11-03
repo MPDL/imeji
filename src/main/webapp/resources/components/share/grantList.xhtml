@@ -40,6 +40,7 @@
 									<h:outputText value="#{sh.user.person.completeName}" rendered="#{sh.user != null}"/>
 									<h:outputText value="#{sh.invitation.inviteeEmail}" rendered="#{sh.invitation != null}"/>
 									<h:outputText value="#{sh.group.name}" rendered="#{sh.group != null}"/>
+									<h:outputText value=" (#{lbl.role_owner})" rendered="#{sh.creator}"/>
 								</td>
 								<td colspan="#{cc.attrs.rolesMenu.size()}">
 									<h:selectManyCheckbox id="role" value="#{sh.roles}" styleClass="imj_rightsTable" enabledClass="imj_noDisplay" disabledClass="imj_noDisplay" layout="lineDirection" onclick="checkRoles(this.id);" disabled="#{cc.attrs.readOnly or sh.creator}">

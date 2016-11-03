@@ -4,7 +4,7 @@
 package de.mpg.imeji.presentation.mdProfile;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -17,7 +17,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @version $Revision$ $LastChangedDate$
  */
 @ManagedBean(name = "ViewMdProfileBean")
-@RequestScoped
+@ViewScoped
 public class ViewMdProfileBean extends MdProfileBean {
   private static final long serialVersionUID = 4353869579444298312L;
 

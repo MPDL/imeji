@@ -280,9 +280,11 @@
 							</h:panelGroup>
 							<div class="imj_submitPanel">
 								<h:commandButton action="#{metadataBean.cancel}" type="submit" value="#{lbl.cancel}" styleClass="imj_cancelButton">
-									<f:ajax execute="@this"/>
+									<f:ajax render="@none" execute="@this"/>
 								</h:commandButton>
-								<h:commandButton action="#{metadataBean.save}" type="submit" value="#{lbl.save}" styleClass="imj_submitButton"/>
+								<h:commandButton action="#{metadataBean.save}" type="submit" value="#{lbl.save}" styleClass="imj_submitButton">
+									<f:ajax render="@none" execute="@form"/>
+								</h:commandButton>
 							</div>
 						</div>
 					</div>

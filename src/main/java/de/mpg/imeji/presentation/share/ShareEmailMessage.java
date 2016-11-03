@@ -5,8 +5,6 @@ import java.util.Locale;
 
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
 
@@ -67,19 +65,6 @@ public class ShareEmailMessage {
             sharedObjectLink, locale);
     }
     return null;
-  }
-
-  private List<String> toRoleList(String shareToUri, String profileUri, List<Grant> grants) {
-    List<String> roles = ShareBusinessController.transformGrantsToRoles(grants, shareToUri);
-    if (profileUri != null) {
-      for (String profileRole : ShareBusinessController.transformGrantsToRoles(grants,
-          profileUri)) {
-        if (profileRole.equals("EDIT")) {
-          roles.add("EDIT_PROFILE");
-        }
-      }
-    }
-    return roles;
   }
 
   private String getMessageForShareItem(List<String> roles) {
