@@ -34,15 +34,14 @@ import de.mpg.imeji.presentation.util.VocabularyHelper;
 @ViewScoped
 public class EditMdProfileBean extends MdProfileBean {
   private static final long serialVersionUID = 7411697130976477046L;
-  private String colId = null;
   private static final Logger LOGGER = Logger.getLogger(EditMdProfileBean.class);
+  private String colId;
   private VocabularyHelper vocabularyHelper;
   private CollectionImeji collection;
 
   @Override
   public void specificSetup() {
     colId = UrlHelper.getParameterValue("col");
-    System.out.println(colId);
     vocabularyHelper = new VocabularyHelper(getLocale());
     if (getId() != null) {
       retrieveProfile();
@@ -93,7 +92,6 @@ public class EditMdProfileBean extends MdProfileBean {
    * @throws IOException
    */
   public void cancel() throws IOException {
-    System.out.println("colId " + colId);
     if (colId != null) {
       redirect(getNavigation().getCollectionUrl() + colId + "/" + getNavigation().getInfosPath()
           + "?init=1");
@@ -116,7 +114,6 @@ public class EditMdProfileBean extends MdProfileBean {
       st.setPos(pos);
       pos++;
     }
-
     try {
       ProfileController profileController = new ProfileController();
       profileController.update(getProfile(), getSessionUser());

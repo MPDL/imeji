@@ -105,10 +105,6 @@ public class MdProfileBean extends SuperBean {
     wrappers = new ArrayList<StatementWrapper>();
     initMenus();
     cleanMetadata = false;
-    // updateFirstTemplateProfileLabel();
-    if (UrlHelper.getParameterBoolean("reset")) {
-      reset();
-    }
     if (profile != null) {
       initStatementWrappers(profile);
       if (profile.getStatements().isEmpty()) {
@@ -147,15 +143,6 @@ public class MdProfileBean extends SuperBean {
       }
     }
     return uri;
-  }
-
-  /**
-   * Reset to an empty {@link MetadataProfile}
-   */
-  public void reset() {
-    profile.getStatements().clear();
-    wrappers.clear();
-    collectionSession.setProfile(profile);
   }
 
   /**
