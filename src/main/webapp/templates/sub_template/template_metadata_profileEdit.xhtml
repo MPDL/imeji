@@ -49,10 +49,10 @@
 								<ui:repeat id="profile" var="wrapper" value="#{metadataBean.wrappers}" varStatus="position">
 									
 									<ui:param name="itemLevel" value="#{(wrapper.level > 0) ? (wrapper.level / 30) : 0}"/>
-									
+								
 									<div id="statement" class="imj_metadataListItem statement_area  statement_area_parent_#{wrapper.parentId} statement_area_id_#{wrapper.statementId}">
 											
-										<h:panelGroup layout="block" id="metadata" style="margin-left:#{wrapper.level}px; margin-top:0.5em;" styleClass="draggable dropChild id_#{wrapper.statementId} parent_#{wrapper.parentId} highlight_area">
+										<h:panelGroup layout="block" id="metadata" style="width: #{96 - (wrapper.level/10)}%; margin-left:#{(wrapper.level/10)}%;/*margin-left:#{wrapper.level}px;*/ margin-top:0.5em;" styleClass="draggable dropChild id_#{wrapper.statementId} parent_#{wrapper.parentId} highlight_area">
 											
 											<h:commandButton id="dropChildButton"  type="submit" value="Insert metadata" action="#{metadataBean.insertChild(position.index)}" styleClass="imj_noDisplay">
 												<f:ajax execute="@form" render=":profileForm:ajaxArea"/>

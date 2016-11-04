@@ -27,10 +27,9 @@
                 <ui:insert name="init"/>
                 <ui:include src="component/header/header_default.xhtml"/>
 	                 <!-- headline -->
-                 <div class="imj_siteContentHeadline #{headline.toString().trim().length() == 0 ? 'imj_invisible' : ''}">
+                 <div class="imj_siteContentHeadline #{empty headline ? 'imj_invisible' : ''}">
                     <h1>
                         #{headline.toString().trim()}
-                        <h:outputText value="imeji" rendered="#{headline.toString().trim().length() == 0}"/>
                         <ui:fragment rendered="#{headlineSecondRow != null and headlineSecondRow.toString().trim().length() > 0}">
                             <br/>
                             #{headlineSecondRow.toString().trim()}
@@ -44,7 +43,8 @@
                 <ui:insert name="searchQuery"/>
                 <!-- Actions Menu -->
                 <div id="actionsMenuArea">
-               		<ui:insert name="actionsMenu"/>  
+               
+               		<ui:insert name="actionsMenu"/>
                 </div>
                 <!-- Message area -->
                    <h:panelGroup id="imj_pageMessageArea" layout="block" styleClass="imj_pageMessageArea" rendered="#{MessagesBean.hasMessages}">
