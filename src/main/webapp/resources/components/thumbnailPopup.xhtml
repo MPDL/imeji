@@ -1,0 +1,72 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:composite="http://java.sun.com/jsf/composite"
+	  xmlns:f="http://java.sun.com/jsf/core">
+	
+	<composite:interface>
+		<composite:attribute name="item" required="true"/>
+		<composite:attribute name="labels" required="true"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		<div class="imj_imageInfoLayer">
+			<div class="imj_metadataSet">
+				<div class="imj_metadataLabel" title="#{lbl.filename}">
+					<h:outputText value="#{lbl.filename}"/>
+				</div>
+				<div class="imj_metadataValue" title="#{item.filename}">
+					<h:outputText value="#{item.filename}"/>
+				</div>
+			</div>
+			<ui:repeat id="metadata" var="md" value="#{cc.attrs.item.mds.tree.list}" rows="0" varStatus="indexMetadata">
+				<ui:fragment rendered="#{!md.isEmpty() and md.preview}">
+					<div class="imj_metadataSet id_#{md.statementId}  parent_#{md.parent.statementId} highlight_area">
+						<div class="imj_metadataLabel" style="margin-left: #{metadata.hierarchyLevel}em;" title="#{cc.attrs.title}">
+							<h:outputText value="#{cc.attrs.labels.internationalizedLabels[md.statement.id]}"/>
+						</div>
+						<div class="imj_metadataValue">
+							<h:outputText value="#{md.text}" title="#{md.text}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#text'}"/>
+							<h:outputText value="#{md.number}" title="#{md.number}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#number'}">
+								<f:converter converterId="DoubleConverter"/>
+							</h:outputText>
+							<h:outputText value="#{md.date}" title="#{md.date}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#date'}"/>
+							<h:outputLink value="#{md.uri}" title="#{md.uri}" target="_blank" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#link'}">
+								<h:outputText value="Link" rendered="#{md.label == ''}"/>
+								<h:outputText value="#{md.label}" rendered="#{md.label != ''}"/>
+							</h:outputLink>
+							<h:panelGroup rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#conePerson'}">
+								<h:outputText value="#{md.person.completeName}" title="#{md.person.completeName}"/>
+								<h:outputText value="(#{md.person.organizationString})" title="(#{md.person.organizationString})" rendered="#{md.person.organizationString} != ''"/>
+							</h:panelGroup>
+							<ui:fragment rendered="#{md.latitude == 'NaN' or md.latitude == '' or md.latitude == null or  md.longitude == 'NaN' or md.longitude == '' or md.longitude == null }">
+								<h:outputLink value="http://maps.google.com/maps?q=#{md.name}" target="_blank">
+									<h:outputText value="#{md.name} (" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#geolocation' and md.name != null}"/>
+									<h:outputText value="#{md.longitude}/#{md.latitude}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#geolocation'}"/>
+									<h:outputText value=")" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#geolocation' and md.name != null}"/>
+								</h:outputLink>
+							</ui:fragment>
+							<ui:fragment rendered="#{!(md.latitude == 'NaN' or md.latitude == '' or md.latitude == null or  md.longitude == 'NaN' or md.longitude == '' or md.longitude == null)}">
+								<h:outputLink value="http://maps.google.com/maps?q=#{md.latitude},#{md.longitude}" target="_blank">
+									<h:outputText value="#{md.name} (" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#geolocation' and md.name != null}"/>
+									<h:outputText value="#{md.longitude}/#{md.latitude}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#geolocation'}"/>
+									<h:outputText value=")" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#geolocation' and md.name != null}"/>
+								</h:outputLink>
+							</ui:fragment>
+							<h:panelGroup layout="block" styleClass="imj_metadataPublicationArea" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#publication'}">
+								<div class="imj_citation">
+									<h:outputText value="#{md.citation}" rendered="#{md.citation != ''}" escape="false"/>
+								</div>
+								<ui:fragment rendered="#{md.citation == ''}">
+									<h:outputLink value="#{md.uri}" title="#{md.uri}" target="_blank">
+										<h:outputText value="#{md.uri}"/>
+									</h:outputLink>
+								</ui:fragment>
+							</h:panelGroup>
+						</div>
+					</div>
+				</ui:fragment>
+			</ui:repeat>
+		</div>
+	</composite:implementation>
+</html>

@@ -89,6 +89,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     cleanSelectItems();
   }
 
+
   /**
    * Initialization which are specific for this bean. Can be overriden by other beans
    */

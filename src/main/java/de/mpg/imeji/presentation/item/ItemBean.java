@@ -247,9 +247,13 @@ public class ItemBean extends SuperBean {
   public void loadImage() throws ImejiException {
     item = new ItemBusinessController().retrieve(ObjectHelper.getURI(Item.class, id),
         getSessionUser());
-    content = new ContentController().readLazy(item.getContentId());
     if (item == null) {
       throw new NotFoundException("LoadImage: empty");
+    }
+    try {
+      content = new ContentController().readLazy(item.getContentId());
+    } catch (Exception e) {
+      LOGGER.error("No content found for " + item.getIdString(), e);
     }
   }
 
@@ -282,6 +286,9 @@ public class ItemBean extends SuperBean {
    * @throws UnsupportedEncodingException
    */
   public String getEncodedFileName() throws UnsupportedEncodingException {
+    if (item == null || item.getFilename() == null) {
+      return "";
+    }
     return URLEncoder.encode(item.getFilename(), "UTF-8");
   }
 

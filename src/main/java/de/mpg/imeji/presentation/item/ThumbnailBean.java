@@ -91,7 +91,6 @@ public class ThumbnailBean implements Serializable {
     }
   }
 
-
   /**
    * Initialize the {@link MetadataSetWrapper} which is used in the Popup
    *
@@ -127,12 +126,13 @@ public class ThumbnailBean implements Serializable {
    * @throws ImejiException
    */
   private String findCaption() throws ImejiException {
+    initPopup();
     if (profile == null) {
       return getFilename();
     }
     for (Statement s : profile.getStatements()) {
       if (s.isDescription()) {
-        initPopup();
+
         for (Metadata md : mdSet.getMetadata()) {
           if (md.getStatement().equals(s.getId())) {
             String str = "";
@@ -358,5 +358,4 @@ public class ThumbnailBean implements Serializable {
   public void setShortFileType(String shortFileType) {
     this.shortFileType = shortFileType;
   }
-
 }

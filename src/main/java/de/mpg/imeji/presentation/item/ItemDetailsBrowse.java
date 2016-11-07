@@ -46,8 +46,8 @@ public class ItemDetailsBrowse implements Serializable {
   private String previous = null;
 
   /**
-   * Object for the browsing over the detail items. The Browsing is based on a {@link ItemsBean} and
-   * the current {@link Item}.
+   * Object for the browsing over the detail items. The Browsing is based on a ItemsBean and the
+   * current {@link Item}.
    *
    * @param imagesBean
    * @param item
@@ -58,7 +58,7 @@ public class ItemDetailsBrowse implements Serializable {
     this.q = UrlHelper.hasParameter("q") ? UrlHelper.getParameterValue("q") : "";
     this.containerUri = containerUri;
     this.currentItem = item;
-    this.sortCriterion = initSortCriterion();
+    // this.sortCriterion = initSortCriterion();
     this.currentPosition =
         UrlHelper.hasParameter("pos") ? Integer.parseInt(UrlHelper.getParameterValue("pos")) : -1;
     List<String> items = searchPreviousAndNextItem(user, spaceId);

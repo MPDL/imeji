@@ -7,7 +7,7 @@ public class NotFoundException extends ImejiException {
 
   public NotFoundException(String message) {
     super(message, null);
-    minimizeStacktrace();
+    // minimizeStacktrace();
   }
 
 }
