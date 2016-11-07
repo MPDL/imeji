@@ -58,7 +58,7 @@ public class ItemDetailsBrowse implements Serializable {
     this.q = UrlHelper.hasParameter("q") ? UrlHelper.getParameterValue("q") : "";
     this.containerUri = containerUri;
     this.currentItem = item;
-    // this.sortCriterion = initSortCriterion();
+    this.sortCriterion = initSortCriterion();
     this.currentPosition =
         UrlHelper.hasParameter("pos") ? Integer.parseInt(UrlHelper.getParameterValue("pos")) : -1;
     List<String> items = searchPreviousAndNextItem(user, spaceId);
