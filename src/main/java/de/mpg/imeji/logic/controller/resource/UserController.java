@@ -40,9 +40,9 @@ public class UserController {
         return c1.getPerson().getCompleteName().toLowerCase()
             .compareTo(c2.getPerson().getCompleteName().toLowerCase());
       } catch (Exception e) {
-        return 0;
+        LOGGER.error("Error comparing user " + c1.getEmail() + " with user " + c2.getEmail(), e);
+        return c1.getEmail().compareTo(c2.getEmail());
       }
-
     }
   };
 

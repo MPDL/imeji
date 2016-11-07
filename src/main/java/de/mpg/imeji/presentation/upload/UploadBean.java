@@ -101,8 +101,6 @@ public class UploadBean extends SuperBean {
         uploadSession.resetProperties();
       } else if ((UrlHelper.getParameterBoolean("edituploaded"))) {
         prepareBatchEdit();
-      } else {
-        BeanHelper.error("I can not get to the collection id ");
       }
     } catch (Exception e) {
       BeanHelper.error(e.getLocalizedMessage());
