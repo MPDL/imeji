@@ -2,7 +2,6 @@ package de.mpg.imeji.j2j.transaction;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
@@ -12,6 +11,7 @@ import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.Imeji;
 
 /**
  * Run a {@link Transaction} in a new {@link Thread}. A new {@link Dataset} is created for this
@@ -23,10 +23,7 @@ import de.mpg.imeji.exceptions.ImejiException;
  * @version $Revision$ $LastChangedDate$
  */
 public class ThreadedTransaction implements Callable<Integer> {
-  /**
-   * The {@link ExecutorService} which runs the thread in imeji
-   */
-  public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+
   private Transaction transaction;
   private String tdbPath;
   protected static Logger LOGGER = Logger.getLogger(ThreadedTransaction.class);
@@ -73,7 +70,7 @@ public class ThreadedTransaction implements Callable<Integer> {
    * @throws Exception
    */
   public static void run(ThreadedTransaction t) throws ImejiException {
-    Future<Integer> f = EXECUTOR.submit(t);
+    Future<Integer> f = Imeji.EXECUTOR.submit(t);
     // wait for the transaction to be finished
     try {
       f.get();

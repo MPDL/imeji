@@ -20,20 +20,20 @@ public class NightlyJob implements Runnable {
   @Override
   public void run() {
     LOGGER.info("Running Nightly Jobs");
-    Imeji.getExecutor().submit(new CleanTempFilesJob());
+    Imeji.EXECUTOR.submit(new CleanTempFilesJob());
     try {
-      Imeji.getExecutor().submit(new StorageUsageAnalyseJob());
+      Imeji.EXECUTOR.submit(new StorageUsageAnalyseJob());
     } catch (Exception e) {
       LOGGER.error("Error: " + e.getMessage());
     }
-    Imeji.getExecutor().submit(new CleanInactiveUsersJob());
-    Imeji.getExecutor().submit(new ReadMaxPlanckIPMappingJob());
-    Imeji.getExecutor().submit(new CleanEmptyMetadataProfileJob());
-    Imeji.getExecutor().submit(new CleanMetadataJob(null));
-    Imeji.getExecutor().submit(new CleanGrantsJob());
-    Imeji.getExecutor().submit(new CleanStatementsJob());
-    Imeji.getExecutor().submit(new CleanUserGroupsJob());
-    Imeji.getExecutor().submit(new CleanContentVOsJob());
+    Imeji.EXECUTOR.submit(new CleanInactiveUsersJob());
+    Imeji.EXECUTOR.submit(new ReadMaxPlanckIPMappingJob());
+    Imeji.EXECUTOR.submit(new CleanEmptyMetadataProfileJob());
+    Imeji.EXECUTOR.submit(new CleanMetadataJob(null));
+    Imeji.EXECUTOR.submit(new CleanGrantsJob());
+    Imeji.EXECUTOR.submit(new CleanStatementsJob());
+    Imeji.EXECUTOR.submit(new CleanUserGroupsJob());
+    Imeji.EXECUTOR.submit(new CleanContentVOsJob());
   }
 
 }

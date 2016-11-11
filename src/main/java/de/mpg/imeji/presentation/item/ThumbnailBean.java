@@ -8,6 +8,8 @@ import java.net.URI;
 
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
@@ -39,6 +41,7 @@ import de.mpg.imeji.util.DateHelper;
  */
 public class ThumbnailBean implements Serializable {
   private static final long serialVersionUID = -8084039496592141508L;
+  private static final Logger LOGGER = Logger.getLogger(ThumbnailBean.class);
   private String link = "";
   private String filename = "";
   private String caption = "";
@@ -68,7 +71,8 @@ public class ThumbnailBean implements Serializable {
    * @param initMetadata if true, will read the metadata
    * @throws Exception
    */
-  public ThumbnailBean(Item item, User user, boolean initMetadata) throws Exception {
+  public ThumbnailBean(Item item, User user, boolean initMetadata, MetadataProfile profile)
+      throws Exception {
     this.user = user;
     this.uri = item.getId();
     this.collectionUri = item.getCollection();
@@ -82,7 +86,8 @@ public class ThumbnailBean implements Serializable {
     if (initMetadata) {
       SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
       this.mdSet = item.getMetadataSet();
-      this.profile = sessionBean.loadProfileWithoutPrivs(this.mdSet.getProfile());
+      this.profile = profile;
+      // this.profile = sessionBean.loadProfileWithoutPrivs(this.mdSet.getProfile());
       this.caption = findCaption();
       this.selected = sessionBean.getSelected().contains(uri.toString());
       if (sessionBean.getActiveAlbum() != null) {
@@ -96,11 +101,15 @@ public class ThumbnailBean implements Serializable {
    *
    * @throws ImejiException
    */
-  public void initPopup() throws ImejiException {
+  public void initPopup() {
     if (getMds() == null) {
       ItemBusinessController controller = new ItemBusinessController();
-      mdSet = controller.retrieve(uri, user).getMetadataSet();
-      setMds(new MetadataSetWrapper(mdSet, getProfile(), false));
+      try {
+        mdSet = controller.retrieve(uri, user).getMetadataSet();
+        setMds(new MetadataSetWrapper(mdSet, getProfile(), false));
+      } catch (Exception e) {
+        LOGGER.error("Error reading the metadata of the iten " + getId(), e);
+      }
     }
   }
 

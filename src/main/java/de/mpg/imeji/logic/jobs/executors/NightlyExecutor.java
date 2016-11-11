@@ -55,6 +55,10 @@ public class NightlyExecutor {
     LOGGER.info("Nightly Job stopped");
   }
 
+  public boolean isShutdown() {
+    return executor.isShutdown();
+  }
+
   /**
    * Return the next Date when the Job should be run
    *

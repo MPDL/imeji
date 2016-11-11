@@ -130,7 +130,7 @@ public class ProfileService implements API<MetadataProfileTO> {
     SearchResult result = controller.search(SearchQueryParser.parseStringQuery(q), u, null);
 
     List<MetadataProfileTO> tos = new ArrayList<>();
-    for (MetadataProfile vo : controller.retrieveLazy(result.getResults(), -1, 0, u)) {
+    for (MetadataProfile vo : controller.retrieveBatchLazy(result.getResults(), -1, 0, u)) {
       MetadataProfileTO to = new MetadataProfileTO();
       TransferObjectFactory.transferMetadataProfile(vo, to);
       tos.add(to);

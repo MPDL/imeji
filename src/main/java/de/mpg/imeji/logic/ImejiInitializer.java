@@ -27,7 +27,6 @@ import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
-import de.mpg.imeji.logic.jobs.executors.NightlyExecutor;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
@@ -54,10 +53,6 @@ import de.mpg.imeji.logic.vo.util.ImejiFactory;
  */
 public class ImejiInitializer {
   private static final Logger LOGGER = Logger.getLogger(ImejiInitializer.class);
-  /**
-   * Executes jobs over night
-   */
-  private static final NightlyExecutor NIGHTLY_EXECUTOR = new NightlyExecutor();
 
   /**
    * Initialize the {@link Jena} database according to imeji.properties<br/>
@@ -72,7 +67,7 @@ public class ImejiInitializer {
     Imeji.tdbPath = PropertyReader.getProperty("imeji.tdb.path");
     ElasticInitializer.start();
     ImejiInitializer.init(Imeji.tdbPath);
-    NIGHTLY_EXECUTOR.start();
+    Imeji.NIGHTLY_EXECUTOR.start();
   }
 
 
@@ -255,10 +250,17 @@ public class ImejiInitializer {
    * Shutdown imeji
    */
   public static void shutdown() {
-    LOGGER.info("Shutting down thread executor...");
-    Imeji.getExecutor().shutdown();
-    NIGHTLY_EXECUTOR.stop();
-    LOGGER.info("executor shutdown shutdown? " + Imeji.getExecutor().isShutdown());
+    LOGGER.info("Shutting down thread executors...");
+    Imeji.EXECUTOR.shutdown();
+    Imeji.CONTENT_EXTRACTION_EXECUTOR.shutdown();
+    Imeji.INTERNAL_STORAGE_EXECUTOR.shutdown();
+    Imeji.NIGHTLY_EXECUTOR.stop();
+    LOGGER.info("imeji executor shutdown? " + Imeji.EXECUTOR.isShutdown());
+    LOGGER.info(
+        "content extraction executor shutdown? " + Imeji.CONTENT_EXTRACTION_EXECUTOR.isShutdown());
+    LOGGER.info(
+        "internal executor shutdown shutdown? " + Imeji.INTERNAL_STORAGE_EXECUTOR.isShutdown());
+    LOGGER.info("nightly executor shutdown shutdown? " + Imeji.NIGHTLY_EXECUTOR.isShutdown());
     ElasticInitializer.shutdown();
     KeyValueStoreBusinessController.stopAllStores();
     LOGGER.info("Ending LockSurveyor...");

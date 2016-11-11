@@ -29,7 +29,6 @@ import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
@@ -540,24 +539,6 @@ public class SessionBean implements Serializable {
       }
     }
     hasUploadRights = false;
-  }
-
-  /**
-   * Load a {@link MetadataProfile} from the session if possible, otherwise from jena
-   *
-   * @param uri
-   * @return
-   * @throws ImejiException
-   */
-  public MetadataProfile loadProfileWithoutPrivs(URI uri) throws ImejiException {
-    MetadataProfile profile = getProfileCached().get(uri);
-    if (profile == null) {
-      profile = new ProfileController().retrieve(uri, Imeji.adminUser);
-      if (profile != null) {
-        getProfileCached().put(profile.getId(), profile);
-      }
-    }
-    return profile;
   }
 
   /**

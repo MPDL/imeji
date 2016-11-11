@@ -40,13 +40,12 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
@@ -65,8 +64,7 @@ import de.mpg.imeji.logic.vo.Item;
  */
 public class InternalStorageManager implements Serializable {
   private static final long serialVersionUID = -5768110924108700468L;
-  private static final ThreadPoolExecutor INTERNAL_STORAGE_EXECUTOR =
-      (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
+
   /**
    * The directory path where files are stored
    */
@@ -332,7 +330,7 @@ public class InternalStorageManager implements Serializable {
     // write original file in storage
     copy(file, transformUrlToPath(item.getOriginalUrl()));
     // Create thumbnail and Preview file
-    INTERNAL_STORAGE_EXECUTOR.submit(new GenerateThumbnailAndPreviewTask(item, file));
+    Imeji.INTERNAL_STORAGE_EXECUTOR.submit(new GenerateThumbnailAndPreviewTask(item, file));
     return item;
   }
 

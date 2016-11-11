@@ -5,6 +5,7 @@ package de.mpg.imeji.logic;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import com.hp.hpl.jena.query.Dataset;
 
@@ -13,6 +14,7 @@ import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiProperties;
 import de.mpg.imeji.logic.config.ImejiResourceBundle;
 import de.mpg.imeji.logic.config.ImejiStartupConfig;
+import de.mpg.imeji.logic.jobs.executors.NightlyExecutor;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 
@@ -54,21 +56,26 @@ public class Imeji {
   /**
    * The {@link ExecutorService} which runs the thread in imeji
    */
-  private static ExecutorService executor = Executors.newCachedThreadPool();
-
+  public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+  /**
+   * Executor used for the content extraction
+   */
+  public static final ThreadPoolExecutor CONTENT_EXTRACTION_EXECUTOR =
+      (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+  /**
+   * Executes jobs over night
+   */
+  public static final NightlyExecutor NIGHTLY_EXECUTOR = new NightlyExecutor();
+  /**
+   * Executor used to transform files by the internal storage
+   */
+  public static final ThreadPoolExecutor INTERNAL_STORAGE_EXECUTOR =
+      (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
   /**
    * private Constructor
    */
   private Imeji() {
     // avoid constructor
-  }
-
-
-  public static ExecutorService getExecutor() {
-    if (executor == null || executor.isShutdown()) {
-      executor = Executors.newCachedThreadPool();
-    }
-    return executor;
   }
 }

@@ -21,6 +21,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchIndex;
@@ -158,7 +159,9 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
         metadataLabels = new MetadataLabels((List<Item>) items, getLocale());
       }
       // Return the item as thumbnailBean
-      return ListUtils.itemListToThumbList(items, getSessionUser());
+      return ListUtils.itemListToThumbList(items,
+          new ProfileController().retrieveItemProfiles((List<Item>) items, Imeji.adminUser),
+          getSessionUser());
     } catch (ImejiException e) {
       BeanHelper.error(e.getMessage());
     }

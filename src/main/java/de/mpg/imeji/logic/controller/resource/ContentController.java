@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.log4j.Logger;
 
@@ -20,13 +18,9 @@ import de.mpg.imeji.logic.contentanalysis.ContentAnalyse;
 import de.mpg.imeji.logic.contentanalysis.ContentAnalyserFactory;
 import de.mpg.imeji.logic.controller.ImejiController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
-import de.mpg.imeji.logic.search.Search;
-import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
-import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
@@ -52,10 +46,7 @@ public class ContentController extends ImejiController {
   private static final Logger LOGGER = Logger.getLogger(ContentController.class);
   private static final ReaderFacade READER = new ReaderFacade(Imeji.contentModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.contentModel);
-  private static ThreadPoolExecutor executor =
-      (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
-  private final Search search =
-      SearchFactory.create(SearchObjectTypes.CONTENT, SEARCH_IMPLEMENTATIONS.ELASTIC);
+
 
   /**
    * Create a {@link ContentVO}
@@ -247,7 +238,8 @@ public class ContentController extends ImejiController {
    */
   public void extractFileContentAndUpdateContentVOAsync(String itemId, ContentVO contentVO)
       throws ImejiException {
-    executor.submit(new ExtractFileContentAndUpdateTask(itemId, contentVO));
+    Imeji.CONTENT_EXTRACTION_EXECUTOR
+        .submit(new ExtractFileContentAndUpdateTask(itemId, contentVO));
   }
 
   /**

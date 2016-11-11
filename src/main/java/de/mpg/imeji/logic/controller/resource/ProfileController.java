@@ -9,7 +9,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -113,6 +115,19 @@ public class ProfileController extends ImejiController {
   }
 
   /**
+   * 
+   * @param imgUri
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public MetadataProfile retrieveLazy(URI imgUri, User user) throws ImejiException {
+    return (MetadataProfile) READER.readLazy(imgUri.toString(), user, new MetadataProfile());
+  }
+
+
+
+  /**
    * Retrieve a {@link User} by its {@link URI}
    *
    * @param collectionId
@@ -129,6 +144,62 @@ public class ProfileController extends ImejiController {
     return retrieve(c.getProfile(), user);
   }
 
+  /**
+   * Load {@link MetadataProfile} defined in a {@link List} of uris. Don't load the {@link Item}
+   * contained in the {@link MetadataProfile}
+   *
+   * @param uri
+   * @param limit
+   * @param offset
+   * @return
+   * @throws ImejiException
+   */
+  public Collection<MetadataProfile> retrieveBatchLazy(List<String> uris, int limit, int offset,
+      User user) {
+    List<MetadataProfile> cols = prepareBatch(uris, limit, offset);
+    try {
+      READER.readLazy(J2JHelper.cast2ObjectList(cols), user);
+      return cols;
+    } catch (ImejiException e) {
+      LOGGER.error("Error loading metadataProfiles: " + e.getMessage(), e);
+      return null;
+    }
+  }
+
+  /**
+   * Retrieve profiles
+   * 
+   * @param ids
+   * @param limit
+   * @param offset
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public List<MetadataProfile> retrieveBatch(List<String> ids, int limit, int offset, User user)
+      throws ImejiException {
+    List<MetadataProfile> profiles = prepareBatch(ids, limit, offset);
+    READER.read(J2JHelper.cast2ObjectList(profiles), user);
+    return profiles;
+  }
+
+  /**
+   * Return all the metadata profile for this item list
+   * 
+   * @param items
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public List<MetadataProfile> retrieveItemProfiles(List<Item> items, User user)
+      throws ImejiException {
+    Set<String> profileIds = new HashSet<>();
+    for (Item item : items) {
+      profileIds.add(item.getMetadataSet().getProfile().toString());
+    }
+    return retrieveBatch(new ArrayList<>(profileIds), -1, 0, user);
+  }
+
 
   /**
    * Updates a collection -Logged in users: --User is collection owner --OR user is collection
@@ -142,7 +213,7 @@ public class ProfileController extends ImejiController {
     isLoggedInUser(user);
     prepareUpdate(mdp, user);
     WRITER.update(WriterFacade.toList(mdp), null, user, true);
-    Imeji.getExecutor().submit(new CleanMetadataJob(mdp));
+    Imeji.EXECUTOR.submit(new CleanMetadataJob(mdp));
   }
 
   /**
@@ -185,7 +256,7 @@ public class ProfileController extends ImejiController {
       throw new UnprocessableError("error_profile_is_default_cannot_be_deleted");
     }
     WRITER.delete(WriterFacade.toList(mdp), user);
-    Imeji.getExecutor().submit(new CleanMetadataJob(mdp));
+    Imeji.EXECUTOR.submit(new CleanMetadataJob(mdp));
   }
 
   /**
@@ -244,7 +315,7 @@ public class ProfileController extends ImejiController {
   public List<MetadataProfile> search(User user, String q, String spaceId) throws ImejiException {
     try {
       SearchResult result = search(SearchQueryParser.parseStringQuery(q), user, spaceId);
-      return (List<MetadataProfile>) retrieveLazy(result.getResults(),
+      return (List<MetadataProfile>) retrieveBatchLazy(result.getResults(),
           getMin(result.getResults().size(), 500), 0, user);
     } catch (Exception e) {
       LOGGER.error("Cannot retrieve profiles:", e);
@@ -296,19 +367,18 @@ public class ProfileController extends ImejiController {
     return false;
   }
 
+
+
   /**
-   * Load {@link MetadataProfile} defined in a {@link List} of uris. Don't load the {@link Item}
-   * contained in the {@link MetadataProfile}
-   *
-   * @param uri
+   * Return a list of profiles which ca be used for batch reading
+   * 
+   * @param uris
    * @param limit
    * @param offset
    * @return
-   * @throws ImejiException
    */
-  public Collection<MetadataProfile> retrieveLazy(List<String> uris, int limit, int offset,
-      User user) {
-    List<MetadataProfile> cols = new ArrayList<MetadataProfile>();
+  private List<MetadataProfile> prepareBatch(List<String> uris, int limit, int offset) {
+
     List<String> retrieveUris;
     if (limit < 0) {
       retrieveUris = uris;
@@ -316,21 +386,11 @@ public class ProfileController extends ImejiController {
       retrieveUris = uris.size() > 0 && limit > 0
           ? uris.subList(offset, getMin(offset + limit, uris.size())) : new ArrayList<String>();
     }
-
+    List<MetadataProfile> profiles = new ArrayList<MetadataProfile>(retrieveUris.size());
     for (String s : retrieveUris) {
-      cols.add((MetadataProfile) J2JHelper.setId(new MetadataProfile(), URI.create(s)));
+      profiles.add((MetadataProfile) J2JHelper.setId(new MetadataProfile(), URI.create(s)));
     }
-    try {
-      READER.readLazy(J2JHelper.cast2ObjectList(cols), user);
-      return cols;
-    } catch (ImejiException e) {
-      LOGGER.error("Error loading metadataProfiles: " + e.getMessage(), e);
-      return null;
-    }
+    return profiles;
   }
 
-  public MetadataProfile retrieveLazy(URI imgUri, User user) throws ImejiException {
-    return (MetadataProfile) READER.readLazy(imgUri.toString(), user, new MetadataProfile());
-
-  }
 }

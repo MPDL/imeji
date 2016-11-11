@@ -209,7 +209,7 @@ public class StartPageBean extends SuperBean implements Serializable {
       }
     }
     List<Item> items = (List<Item>) ic.retrieveBatchLazy(uris, -1, 0, getSessionUser());
-    carousselImages = ListUtils.itemListToThumbList(items, getSessionUser());
+    carousselImages = ListUtils.itemListToThumbList(items, null, getSessionUser());
   }
 
   /**
