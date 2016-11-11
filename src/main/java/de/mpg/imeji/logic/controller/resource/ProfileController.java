@@ -218,7 +218,7 @@ public class ProfileController extends ImejiController {
     isLoggedInUser(user);
     prepareUpdate(mdp, user);
     WRITER.update(WriterFacade.toList(mdp), null, user, true);
-    Imeji.EXECUTOR.submit(new CleanMetadataJob(mdp));
+    Imeji.getEXECUTOR().submit(new CleanMetadataJob(mdp));
   }
 
   /**
@@ -261,7 +261,7 @@ public class ProfileController extends ImejiController {
       throw new UnprocessableError("error_profile_is_default_cannot_be_deleted");
     }
     WRITER.delete(WriterFacade.toList(mdp), user);
-    Imeji.EXECUTOR.submit(new CleanMetadataJob(mdp));
+    Imeji.getEXECUTOR().submit(new CleanMetadataJob(mdp));
   }
 
   /**

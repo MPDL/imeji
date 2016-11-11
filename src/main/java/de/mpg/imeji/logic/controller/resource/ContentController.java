@@ -238,7 +238,7 @@ public class ContentController extends ImejiController {
    */
   public void extractFileContentAndUpdateContentVOAsync(String itemId, ContentVO contentVO)
       throws ImejiException {
-    Imeji.CONTENT_EXTRACTION_EXECUTOR
+    Imeji.getCONTENT_EXTRACTION_EXECUTOR()
         .submit(new ExtractFileContentAndUpdateTask(itemId, contentVO));
   }
 

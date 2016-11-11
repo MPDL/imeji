@@ -67,7 +67,7 @@ public class ImejiInitializer {
     Imeji.tdbPath = PropertyReader.getProperty("imeji.tdb.path");
     ElasticInitializer.start();
     ImejiInitializer.init(Imeji.tdbPath);
-    Imeji.NIGHTLY_EXECUTOR.start();
+    Imeji.getNIGHTLY_EXECUTOR().start();
   }
 
 
@@ -251,16 +251,16 @@ public class ImejiInitializer {
    */
   public static void shutdown() {
     LOGGER.info("Shutting down thread executors...");
-    Imeji.EXECUTOR.shutdown();
-    Imeji.CONTENT_EXTRACTION_EXECUTOR.shutdown();
-    Imeji.INTERNAL_STORAGE_EXECUTOR.shutdown();
-    Imeji.NIGHTLY_EXECUTOR.stop();
-    LOGGER.info("imeji executor shutdown? " + Imeji.EXECUTOR.isShutdown());
+    Imeji.getEXECUTOR().shutdown();
+    Imeji.getCONTENT_EXTRACTION_EXECUTOR().shutdown();
+    Imeji.getINTERNAL_STORAGE_EXECUTOR().shutdown();
+    Imeji.getNIGHTLY_EXECUTOR().stop();
+    LOGGER.info("imeji executor shutdown? " + Imeji.getEXECUTOR().isShutdown());
     LOGGER.info(
-        "content extraction executor shutdown? " + Imeji.CONTENT_EXTRACTION_EXECUTOR.isShutdown());
+        "content extraction executor shutdown? " + Imeji.getCONTENT_EXTRACTION_EXECUTOR().isShutdown());
     LOGGER.info(
-        "internal executor shutdown shutdown? " + Imeji.INTERNAL_STORAGE_EXECUTOR.isShutdown());
-    LOGGER.info("nightly executor shutdown shutdown? " + Imeji.NIGHTLY_EXECUTOR.isShutdown());
+        "internal executor shutdown shutdown? " + Imeji.getINTERNAL_STORAGE_EXECUTOR().isShutdown());
+    LOGGER.info("nightly executor shutdown shutdown? " + Imeji.getNIGHTLY_EXECUTOR().isShutdown());
     ElasticInitializer.shutdown();
     KeyValueStoreBusinessController.stopAllStores();
     LOGGER.info("Ending LockSurveyor...");

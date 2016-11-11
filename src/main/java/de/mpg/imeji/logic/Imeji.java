@@ -56,20 +56,20 @@ public class Imeji {
   /**
    * The {@link ExecutorService} which runs the thread in imeji
    */
-  public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+  private static ExecutorService EXECUTOR = Executors.newCachedThreadPool();
   /**
    * Executor used for the content extraction
    */
-  public static final ThreadPoolExecutor CONTENT_EXTRACTION_EXECUTOR =
+  private static ThreadPoolExecutor CONTENT_EXTRACTION_EXECUTOR =
       (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
   /**
    * Executes jobs over night
    */
-  public static final NightlyExecutor NIGHTLY_EXECUTOR = new NightlyExecutor();
+  private static NightlyExecutor NIGHTLY_EXECUTOR = new NightlyExecutor();
   /**
    * Executor used to transform files by the internal storage
    */
-  public static final ThreadPoolExecutor INTERNAL_STORAGE_EXECUTOR =
+  private static ThreadPoolExecutor INTERNAL_STORAGE_EXECUTOR =
       (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
   /**
@@ -78,4 +78,45 @@ public class Imeji {
   private Imeji() {
     // avoid constructor
   }
+
+  /**
+   * @return the eXECUTOR
+   */
+  public static ExecutorService getEXECUTOR() {
+    if (EXECUTOR.isShutdown()) {
+      EXECUTOR = Executors.newCachedThreadPool();
+    }
+    return EXECUTOR;
+  }
+
+  /**
+   * @return the cONTENT_EXTRACTION_EXECUTOR
+   */
+  public static ThreadPoolExecutor getCONTENT_EXTRACTION_EXECUTOR() {
+    if (CONTENT_EXTRACTION_EXECUTOR.isShutdown()) {
+      return CONTENT_EXTRACTION_EXECUTOR = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+    }
+    return CONTENT_EXTRACTION_EXECUTOR;
+  }
+
+  /**
+   * @return the iNTERNAL_STORAGE_EXECUTOR
+   */
+  public static ThreadPoolExecutor getINTERNAL_STORAGE_EXECUTOR() {
+    if (INTERNAL_STORAGE_EXECUTOR.isShutdown()) {
+      return INTERNAL_STORAGE_EXECUTOR = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+    }
+    return INTERNAL_STORAGE_EXECUTOR;
+  }
+
+  /**
+   * @return the nIGHTLY_EXECUTOR
+   */
+  public static NightlyExecutor getNIGHTLY_EXECUTOR() {
+    if (NIGHTLY_EXECUTOR.isShutdown()) {
+      NIGHTLY_EXECUTOR = new NightlyExecutor();
+    }
+    return NIGHTLY_EXECUTOR;
+  }
+
 }

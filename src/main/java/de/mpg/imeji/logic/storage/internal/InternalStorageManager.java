@@ -330,7 +330,7 @@ public class InternalStorageManager implements Serializable {
     // write original file in storage
     copy(file, transformUrlToPath(item.getOriginalUrl()));
     // Create thumbnail and Preview file
-    Imeji.INTERNAL_STORAGE_EXECUTOR.submit(new GenerateThumbnailAndPreviewTask(item, file));
+    Imeji.getINTERNAL_STORAGE_EXECUTOR().submit(new GenerateThumbnailAndPreviewTask(item, file));
     return item;
   }
 

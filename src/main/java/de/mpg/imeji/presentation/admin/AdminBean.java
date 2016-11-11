@@ -106,7 +106,7 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public String refreshFileSize() {
-    Imeji.EXECUTOR.submit(new RefreshFileSizeJob());
+    Imeji.getEXECUTOR().submit(new RefreshFileSizeJob());
     return "";
   }
 
@@ -116,7 +116,7 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public String extractFulltextAndTechnicalMetadata() {
-    Imeji.EXECUTOR.submit(new FulltextAndTechnicalMetadataJob());
+    Imeji.getEXECUTOR().submit(new FulltextAndTechnicalMetadataJob());
     return "";
   }
 
@@ -139,7 +139,7 @@ public class AdminBean extends SuperBean {
    */
   public void findUnusedProfiles() throws InterruptedException, ExecutionException {
     CleanMetadataProfileJob job = new CleanMetadataProfileJob(false);
-    Future<Integer> f = Imeji.EXECUTOR.submit(job);
+    Future<Integer> f = Imeji.getEXECUTOR().submit(job);
     f.get();
     this.unusedProfiles = job.getProfiles();
   }
@@ -148,7 +148,7 @@ public class AdminBean extends SuperBean {
    * Remove all unused {@link MetadataProfile}
    */
   public void deleteUnusedProfiles() {
-    Imeji.EXECUTOR.submit(new CleanMetadataProfileJob(true));
+    Imeji.getEXECUTOR().submit(new CleanMetadataProfileJob(true));
   }
 
   /**
@@ -193,7 +193,7 @@ public class AdminBean extends SuperBean {
    * @throws URISyntaxException
    */
   public String analyseStorageUsage() throws IOException, URISyntaxException {
-    storageAnalyseStatus = Imeji.EXECUTOR.submit(new StorageUsageAnalyseJob());
+    storageAnalyseStatus = Imeji.getEXECUTOR().submit(new StorageUsageAnalyseJob());
     return "";
   }
 
@@ -201,7 +201,7 @@ public class AdminBean extends SuperBean {
    * Reindex all data
    */
   public void reindex() {
-    Imeji.EXECUTOR.submit(new ElasticReIndexJob());
+    Imeji.getEXECUTOR().submit(new ElasticReIndexJob());
   }
 
   /**
@@ -210,7 +210,7 @@ public class AdminBean extends SuperBean {
    * @
    */
   public String importToInternalStorage() {
-    Imeji.EXECUTOR.submit(new ImportFileFromEscidocToInternalStorageJob(getSessionUser()));
+    Imeji.getEXECUTOR().submit(new ImportFileFromEscidocToInternalStorageJob(getSessionUser()));
     return "";
   }
 
@@ -230,7 +230,7 @@ public class AdminBean extends SuperBean {
 
   private void cleanContent() {
     if (clean) {
-      Imeji.EXECUTOR.submit(new CleanContentVOsJob());
+      Imeji.getEXECUTOR().submit(new CleanContentVOsJob());
     }
   }
 
@@ -247,7 +247,7 @@ public class AdminBean extends SuperBean {
               .getResults();
       cleanDatabaseReport += "Metadata Without Statement: " + uris.size() + " found  <br/> ";
     } else {
-      Imeji.EXECUTOR.submit(new CleanMetadataJob(null));
+      Imeji.getEXECUTOR().submit(new CleanMetadataJob(null));
     }
   }
 
