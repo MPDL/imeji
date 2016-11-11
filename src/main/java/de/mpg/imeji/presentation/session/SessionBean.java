@@ -10,9 +10,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -36,7 +34,6 @@ import de.mpg.imeji.logic.util.MaxPlanckInstitutUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.upload.IngestImage;
@@ -64,7 +61,6 @@ public class SessionBean implements Serializable {
   private User user = null;
   private List<String> selected;
   private Album activeAlbum;
-  private Map<URI, MetadataProfile> profileCached;
   private String selectedImagesContext = null;
   private Style selectedCss = Style.NONE;
   private boolean hasUploadRights = false;
@@ -92,7 +88,6 @@ public class SessionBean implements Serializable {
    */
   public SessionBean() {
     selected = new ArrayList<String>();
-    profileCached = new HashMap<URI, MetadataProfile>();
     // locale = InternationalizationBean.getUserLocale();
     initCssWithCookie();
     initApplicationUrl();
@@ -283,23 +278,6 @@ public class SessionBean implements Serializable {
     return activeAlbum.getImages().size();
   }
 
-  /**
-   * Getter
-   *
-   * @return
-   */
-  public Map<URI, MetadataProfile> getProfileCached() {
-    return profileCached;
-  }
-
-  /**
-   * Setter
-   *
-   * @param profileCached
-   */
-  public void setProfileCached(Map<URI, MetadataProfile> profileCached) {
-    this.profileCached = profileCached;
-  }
 
 
   /**
