@@ -96,7 +96,10 @@ public class JenaUtil {
 
   public static void closeJena() throws InterruptedException, IOException {
     KeyValueStoreBusinessController.resetAndStopAllStores();
-    Imeji.getExecutor().shutdownNow();
+    Imeji.EXECUTOR.shutdown();
+    Imeji.CONTENT_EXTRACTION_EXECUTOR.shutdown();
+    Imeji.INTERNAL_STORAGE_EXECUTOR.shutdown();
+    Imeji.NIGHTLY_EXECUTOR.stop();
     LOGGER.info("Closing Jena:");
     TDB.sync(Imeji.dataset);
     LOGGER.info("Jena Sync done! ");
