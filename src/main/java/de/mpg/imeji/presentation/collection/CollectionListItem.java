@@ -113,7 +113,7 @@ public class CollectionListItem {
       if (searchedContainer.getImages().iterator().hasNext()) {
         URI uri = searchedContainer.getImages().iterator().next();
         if (uri != null) {
-          this.thumbnail = new ThumbnailBean(ic.retrieveLazy(uri, user), user, false, null);
+          this.thumbnail = new ThumbnailBean(ic.retrieveLazy(uri, user), false, null);
         }
       }
     }

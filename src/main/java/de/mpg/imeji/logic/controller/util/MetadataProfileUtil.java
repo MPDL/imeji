@@ -5,14 +5,8 @@ package de.mpg.imeji.logic.controller.util;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.util.MetadataAndProfileHelper;
@@ -30,27 +24,6 @@ public class MetadataProfileUtil {
    */
   private MetadataProfileUtil() {
     // Avoid creation
-  }
-
-  /**
-   * Load the all th {@link MetadataProfile} found in a {@link List} of {@link Item}
-   *
-   * @param imgs
-   * @return
-   * @throws ImejiException
-   * @throws Exception
-   */
-  public static Map<URI, MetadataProfile> loadProfiles(List<Item> imgs) throws ImejiException {
-    Map<URI, MetadataProfile> pMap = new HashMap<URI, MetadataProfile>();
-
-    for (Item im : imgs) {
-      if (pMap.get(im.getMetadataSet().getProfile()) == null) {
-        // safe to retrieve the profile as an admin user, as there is only one call to this method
-        pMap.put(im.getMetadataSet().getProfile(),
-            new ProfileController().retrieve(im.getMetadataSet().getProfile(), Imeji.adminUser));
-      }
-    }
-    return pMap;
   }
 
   /**

@@ -51,7 +51,7 @@ public class ListUtils {
     List<ThumbnailBean> beanList = new ArrayList<ThumbnailBean>();
     for (Item item : itemList) {
       try {
-        beanList.add(new ThumbnailBean(item, user, true, findItemProfileFromList(profiles, item)));
+        beanList.add(new ThumbnailBean(item, true, findItemProfileFromList(profiles, item)));
       } catch (Exception e) {
         LOGGER.error("Error creating ThumbnailBean list", e);
       }
@@ -68,7 +68,7 @@ public class ListUtils {
    */
   private static MetadataProfile findItemProfileFromList(List<MetadataProfile> profiles,
       Item item) {
-    if (profiles == null || item == null) {
+    if (profiles == null || item == null || item.getMetadataSet().getProfile() == null) {
       return null;
     }
     for (MetadataProfile profile : profiles) {

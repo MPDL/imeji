@@ -26,7 +26,6 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.item.ItemsBean;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -69,8 +68,7 @@ public class CollectionItemsBean extends ItemsBean {
       id = UrlHelper.getParameterValue("id");
       uri = ObjectHelper.getURI(CollectionImeji.class, id);
       collection = new CollectionController().retrieveLazy(uri, getSessionUser());
-      profile = new ProfileController().retrieve(collection.getProfile(), Imeji.adminUser);
-      metadataLabels = new MetadataLabels(profile, getLocale());
+      profile = new ProfileController().retrieveLazy(collection.getProfile(), Imeji.adminUser);
       browseContext = getNavigationString() + id;
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale(),

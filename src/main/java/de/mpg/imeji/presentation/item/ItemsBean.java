@@ -34,6 +34,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
 import de.mpg.imeji.presentation.facet.FacetsJob;
@@ -96,7 +97,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public void initSpecific() {
     browseContext = getNavigationString();
-    metadataLabels = new MetadataLabels(new ArrayList<Item>(), getLocale());
+    metadataLabels = new MetadataLabels(new ArrayList<>(), getLocale());
     isSimpleSearch = SearchQueryParser.isSimpleSearch(searchQuery);
     if (UrlHelper.getParameterBoolean("add_selected")) {
       try {
@@ -154,14 +155,15 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       totalNumberOfRecords = searchResult.getNumberOfRecords();
       // load the item
       Collection<Item> items = loadImages(searchResult.getResults());
+      // Load the profiles
+      List<MetadataProfile> profiles =
+          new ProfileController().retrieveItemProfiles((List<Item>) items, Imeji.adminUser);
       // Init the labels for the item
       if (!items.isEmpty()) {
-        metadataLabels = new MetadataLabels((List<Item>) items, getLocale());
+        metadataLabels = new MetadataLabels(profiles, getLocale());
       }
       // Return the item as thumbnailBean
-      return ListUtils.itemListToThumbList(items,
-          new ProfileController().retrieveItemProfiles((List<Item>) items, Imeji.adminUser),
-          getSessionUser());
+      return ListUtils.itemListToThumbList(items, profiles, getSessionUser());
     } catch (ImejiException e) {
       BeanHelper.error(e.getMessage());
     }
@@ -191,7 +193,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public Collection<Item> loadImages(List<String> uris) throws ImejiException {
     ItemBusinessController controller = new ItemBusinessController();
-    return controller.retrieveBatchLazy(uris, -1, 0, getSessionUser());
+    return controller.retrieveBatch(uris, -1, 0, getSessionUser());
   }
 
   /**

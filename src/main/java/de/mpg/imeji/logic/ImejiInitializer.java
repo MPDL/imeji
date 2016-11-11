@@ -287,5 +287,4 @@ public class ImejiInitializer {
     alarmClock.release();
     LOGGER.info("done");
   }
-
 }

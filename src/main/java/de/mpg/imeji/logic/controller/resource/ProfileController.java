@@ -116,13 +116,16 @@ public class ProfileController extends ImejiController {
 
   /**
    * 
-   * @param imgUri
+   * @param uri
    * @param user
    * @return
    * @throws ImejiException
    */
-  public MetadataProfile retrieveLazy(URI imgUri, User user) throws ImejiException {
-    return (MetadataProfile) READER.readLazy(imgUri.toString(), user, new MetadataProfile());
+  public MetadataProfile retrieveLazy(URI uri, User user) throws ImejiException {
+    if (uri == null) {
+      return null;
+    }
+    return (MetadataProfile) READER.readLazy(uri.toString(), user, new MetadataProfile());
   }
 
 
@@ -195,7 +198,9 @@ public class ProfileController extends ImejiController {
       throws ImejiException {
     Set<String> profileIds = new HashSet<>();
     for (Item item : items) {
-      profileIds.add(item.getMetadataSet().getProfile().toString());
+      if (item.getMetadataSet().getProfile() != null) {
+        profileIds.add(item.getMetadataSet().getProfile().toString());
+      }
     }
     return retrieveBatch(new ArrayList<>(profileIds), -1, 0, user);
   }

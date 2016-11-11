@@ -8,10 +8,7 @@ import java.net.URI;
 
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.log4j.Logger;
-
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Item;
@@ -19,7 +16,6 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.MetadataSet;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
@@ -41,7 +37,6 @@ import de.mpg.imeji.util.DateHelper;
  */
 public class ThumbnailBean implements Serializable {
   private static final long serialVersionUID = -8084039496592141508L;
-  private static final Logger LOGGER = Logger.getLogger(ThumbnailBean.class);
   private String link = "";
   private String filename = "";
   private String caption = "";
@@ -57,7 +52,6 @@ public class ThumbnailBean implements Serializable {
   private String shortFileType;
   private String fileSize;
   private String modified;
-  private User user;
 
   public ThumbnailBean() {
     // Empty thumbnail
@@ -71,10 +65,9 @@ public class ThumbnailBean implements Serializable {
    * @param initMetadata if true, will read the metadata
    * @throws Exception
    */
-  public ThumbnailBean(Item item, User user, boolean initMetadata, MetadataProfile profile)
-      throws Exception {
-    this.user = user;
+  public ThumbnailBean(Item item, boolean initMetadata, MetadataProfile profile) throws Exception {
     this.uri = item.getId();
+    this.profile = profile;
     this.collectionUri = item.getCollection();
     this.id = ObjectHelper.getId(getUri());
     this.link = initThumbnailLink(item);
@@ -86,8 +79,6 @@ public class ThumbnailBean implements Serializable {
     if (initMetadata) {
       SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
       this.mdSet = item.getMetadataSet();
-      this.profile = profile;
-      // this.profile = sessionBean.loadProfileWithoutPrivs(this.mdSet.getProfile());
       this.caption = findCaption();
       this.selected = sessionBean.getSelected().contains(uri.toString());
       if (sessionBean.getActiveAlbum() != null) {
@@ -103,13 +94,7 @@ public class ThumbnailBean implements Serializable {
    */
   public void initPopup() {
     if (getMds() == null) {
-      ItemBusinessController controller = new ItemBusinessController();
-      try {
-        mdSet = controller.retrieve(uri, user).getMetadataSet();
-        setMds(new MetadataSetWrapper(mdSet, getProfile(), false));
-      } catch (Exception e) {
-        LOGGER.error("Error reading the metadata of the iten " + getId(), e);
-      }
+      setMds(new MetadataSetWrapper(mdSet, getProfile(), false));
     }
   }
 
