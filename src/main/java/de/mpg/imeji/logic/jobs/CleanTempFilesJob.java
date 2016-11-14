@@ -15,22 +15,27 @@ import org.apache.log4j.Logger;
  **/
 public class CleanTempFilesJob implements Callable<Integer> {
   private static final Logger LOGGER = Logger.getLogger(CleanTempFilesJob.class);
-  private static String IMEJI_TEMP_FILE_REGEX = "imeji*";
+  private static final String IMEJI_TEMP_FILE_REGEX = "imeji*";
 
   @Override
   public Integer call() throws Exception {
     IOFileFilter filter = new WildcardFileFilter(IMEJI_TEMP_FILE_REGEX);
     LOGGER.info("Deleting all imeji temp file from: " + FileUtils.getTempDirectory() + " ...");
     Iterator<File> iterator = FileUtils.iterateFiles(FileUtils.getTempDirectory(), filter, null);
+    int success = 0;
+    int count = 0;
     while (iterator.hasNext()) {
       File file = iterator.next();
       try {
+        count++;
         FileUtils.forceDelete(file);
+        success++;
       } catch (IOException e) {
         LOGGER.error("File " + file.getAbsolutePath() + " can not be deleted");
       }
     }
-    LOGGER.info("... done!");
+    LOGGER.info(
+        "Deleting all imeji temp file done! " + success + " from " + count + " deleted tmp files.");
     return 1;
   }
 
