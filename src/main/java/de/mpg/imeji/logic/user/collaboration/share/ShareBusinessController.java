@@ -17,6 +17,7 @@ import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.controller.GroupBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
@@ -54,7 +55,7 @@ public class ShareBusinessController {
   public User shareToUser(User fromUser, User toUser, String sharedObjectUri, List<String> roles)
       throws ImejiException {
     if (toUser != null) {
-      List<Grant> grants = transformRolesToGrants(roles, sharedObjectUri);
+      List<Grant> grants = transformRolesToGrants(roles, sharedObjectUri, fromUser);
       toUser = shareGrantsToUser(fromUser, toUser, sharedObjectUri, grants);
     }
     return toUser;
@@ -73,7 +74,7 @@ public class ShareBusinessController {
   public void shareToGroup(User fromUser, UserGroup toGroup, String sharedObjectUri,
       List<String> roles) throws ImejiException {
     if (toGroup != null) {
-      List<Grant> grants = transformRolesToGrants(roles, sharedObjectUri);
+      List<Grant> grants = transformRolesToGrants(roles, sharedObjectUri, fromUser);
       shareGrantsToGroup(fromUser, toGroup, sharedObjectUri, grants);
     }
   }
@@ -125,13 +126,14 @@ public class ShareBusinessController {
    * @param profileUri
    * @return
    */
-  public static List<Grant> transformRolesToGrants(List<String> roles, String uri) {
+  public static List<Grant> transformRolesToGrants(List<String> roles, String uri, User user) {
     List<Grant> grants = new ArrayList<Grant>();
     if (roles == null) {
       return grants;
     }
     String profileUri = getProfileUri(uri);
-    if (profileUri != null) {
+    boolean isProfileAdmin = SecurityUtil.staticAuth().administrate(user, profileUri);
+    if (profileUri != null && isProfileAdmin) {
       // Only for sharing collection
       grants.addAll(AuthorizationPredefinedRoles.read(profileUri));
     }
@@ -156,7 +158,7 @@ public class ShareBusinessController {
           grants.addAll(AuthorizationPredefinedRoles.admin(uri));
           break;
         case EDIT_PROFILE:
-          if (profileUri != null) {
+          if (profileUri != null && isProfileAdmin) {
             grants.addAll(AuthorizationPredefinedRoles.edit(profileUri));
           }
       }
@@ -281,16 +283,17 @@ public class ShareBusinessController {
   private void checkSecurity(User user, List<Grant> grants) throws NotAllowedError {
     boolean allowed = true;
     for (Grant g : grants) {
-      if (g.getGrantFor().toString().contains("/item/")) {
-        // If the grantFor is an Item, the collection is needed to know if
-        // the user can administrate it
-        List<String> c = ImejiSPARQL
-            .exec(JenaCustomQueries.selectCollectionIdOfItem(g.getGrantFor().toString()), null);
-        if (!c.isEmpty()) {
-          allowed = SecurityUtil.staticAuth().administrate(user, c.get(0));
-        }
-      } else {
-        allowed = SecurityUtil.staticAuth().administrate(user, g.getGrantFor());
+      switch (ObjectHelper.getObjectType(g.getGrantFor())) {
+        case ITEM:
+          List<String> c = ImejiSPARQL
+              .exec(JenaCustomQueries.selectCollectionIdOfItem(g.getGrantFor().toString()), null);
+          if (!c.isEmpty()) {
+            allowed = SecurityUtil.staticAuth().administrate(user, c.get(0));
+          }
+          break;
+        default:
+          allowed = SecurityUtil.staticAuth().administrate(user, g.getGrantFor());
+          break;
       }
       if (!allowed) {
         throw new NotAllowedError(user.getEmail() + " not allowed to share " + g.getGrantFor());

@@ -79,8 +79,8 @@ public class ShareListItem implements Serializable {
     this.type = type;
     this.shareToUri = containerUri;
     this.currentUser = currentUser;
-    init(ShareBusinessController.transformRolesToGrants(invitation.getRoles(), containerUri),
-        containerUri, profileUri, locale);
+    init(ShareBusinessController.transformRolesToGrants(invitation.getRoles(), containerUri,
+        currentUser), containerUri, profileUri, locale);
   }
 
   /**
