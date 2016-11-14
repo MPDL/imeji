@@ -40,8 +40,8 @@
 		<pattern value="/item/#{ id }" />
 		<view-id>/jsf/Item.xhtml</view-id>
 	</url-mapping>
-	<url-mapping id="shareItem">
-		<pattern value="/item/#{ id }/share"/>
+	<url-mapping id="share">
+		<pattern value="/#{ type }/#{ id }/share"/>
 		<view-id>/jsf/Share.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="upload">
@@ -78,10 +78,6 @@
 	<url-mapping id="createCollection">
 		<pattern value="/createcollection" />
 		<view-id>/jsf/CollectionCreate.xhtml</view-id>
-	</url-mapping>
-	<url-mapping id="shareCollection">
-		<pattern value="/collection/#{ id }/share"/>
-		<view-id>/jsf/Share.xhtml</view-id>
 	</url-mapping>
 	<!-- Profile Pages -->
 	<url-mapping id="viewProfile">
@@ -120,10 +116,6 @@
 	<url-mapping id="albumBrowse">
 		<pattern value="/album/#{ id }/browse" />
 		<view-id>/jsf/AlbumBrowse.xhtml</view-id>
-	</url-mapping>
-	<url-mapping id="shareAlbum">
-		<pattern value="/album/#{ id }/share"/>
-		<view-id>/jsf/Share.xhtml</view-id>
 	</url-mapping>
 
 	<url-mapping id="albumItem">
@@ -297,8 +289,8 @@
 		<pattern value="/space/#{SessionBean.spaceId}/createcollection" />
 		<view-id>/jsf/CollectionCreate.xhtml</view-id>
 	</url-mapping>
-	<url-mapping id="space_shareCollection">
-		<pattern value="/space/#{SessionBean.spaceId}/collection/#{ id }/share"></pattern>
+	<url-mapping id="space_share">
+		<pattern value="/space/#{SessionBean.spaceId}/#{ type }/#{ id }/share"></pattern>
 		<view-id>/jsf/Share.xhtml</view-id>
 	</url-mapping>
 	<!-- Profile Pages -->
@@ -334,11 +326,6 @@
 	<url-mapping id="space_albumBrowse">
 		<pattern value="/space/#{SessionBean.spaceId}/album/#{AlbumItemsBean.id}/browse" />
 		<view-id>/jsf/AlbumBrowse.xhtml</view-id>
-	</url-mapping>
-	<url-mapping id="space_shareAlbum">
-		<pattern value="/space/#{SessionBean.spaceId}/album/#{ShareBean.id}/share"></pattern>
-		<view-id>/jsf/Share.xhtml</view-id>
-		<action onPostback="false">#{ShareBean.initShareAlbum}</action>
 	</url-mapping>
 
 	<url-mapping id="space_albumItem">

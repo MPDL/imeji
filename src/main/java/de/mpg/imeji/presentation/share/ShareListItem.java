@@ -22,6 +22,7 @@ import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
 import de.mpg.imeji.presentation.util.ListUtils;
 
@@ -207,6 +208,7 @@ public class ShareListItem implements Serializable {
       return !ListUtils.equalsIgnoreOrder(rolesBeforeUpdate, rolesAfterUpdate);
     } catch (ImejiException e) {
       LOGGER.error("Error updating grants: ", e);
+      BeanHelper.error("Error during sharing: " + e.getMessage());
     }
     return false;
   }

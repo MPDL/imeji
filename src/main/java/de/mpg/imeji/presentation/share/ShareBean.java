@@ -73,6 +73,23 @@ public class ShareBean extends SuperBean implements Serializable {
     COLLECTION, ALBUM, ITEM
   }
 
+  @PostConstruct
+  public void construct() {
+    this.id = UrlHelper.getParameterValue("id");
+    this.type = SharedObjectType.valueOf(UrlHelper.getParameterValue("type").toUpperCase());
+    switch (type) {
+      case ALBUM:
+        initShareAlbum();
+        break;
+      case COLLECTION:
+        initShareCollection();
+        break;
+      case ITEM:
+        initShareItem();
+        break;
+    }
+  }
+
   /**
    * Init {@link ShareBean} for {@link CollectionImeji}
    *
@@ -80,13 +97,10 @@ public class ShareBean extends SuperBean implements Serializable {
    *
    * @throws Exception
    */
-  @PostConstruct
   public void initShareCollection() {
     try {
-      id = UrlHelper.getParameterValue("id");
       this.shareTo = null;
       this.profileUri = null;
-      this.type = SharedObjectType.COLLECTION;
       this.uri = ObjectHelper.getURI(CollectionImeji.class, getId());
       CollectionImeji collection = new CollectionController().retrieveLazy(uri, getSessionUser());
       if (collection != null) {
@@ -112,8 +126,6 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   public void initShareAlbum() {
     try {
-      id = UrlHelper.getParameterValue("id");
-      this.type = SharedObjectType.ALBUM;
       this.shareTo = null;
       this.profileUri = null;
       this.uri = ObjectHelper.getURI(Album.class, getId());
@@ -140,8 +152,6 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   public void initShareItem() {
     try {
-      id = UrlHelper.getParameterValue("id");
-      this.type = SharedObjectType.ITEM;
       this.profileUri = null;
       this.shareTo = null;
       this.uri =
