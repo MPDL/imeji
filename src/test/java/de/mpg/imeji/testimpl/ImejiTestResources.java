@@ -3,7 +3,6 @@ package de.mpg.imeji.testimpl;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 /**
  * Resources used for the imeji tests
@@ -113,12 +112,9 @@ public class ImejiTestResources {
     return copyFile(TEST_EXE);
   }
 
-  private static File copyFile(File f) {
+  private static synchronized File copyFile(File f) {
     try {
-      String extension = FilenameUtils.getExtension(f.getName());
       File tmp = File.createTempFile(f.getName(), "");
-      // File copy = File.createTempFile(f.getName(),
-      // StringHelper.isNullOrEmptyTrim(extension) ? "" : "." + extension);
       File copyWithSameName = new File(tmp.getAbsolutePath().replace(tmp.getName(), f.getName()));
       FileUtils.copyFile(f, copyWithSameName);
       return copyWithSameName;
@@ -126,6 +122,4 @@ public class ImejiTestResources {
       throw new RuntimeException("Error copying file", e);
     }
   }
-
-
 }
