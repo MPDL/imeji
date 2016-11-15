@@ -178,7 +178,7 @@ public class AlbumIntegration extends ImejiTestBase {
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
     response = target(pathPrefix).path("/" + albumId + "/items")
-        .queryParam("q", itemTO.getFilename() + "_new").register(authAsUser)
+        .queryParam("q", "\"" + itemTO.getFilename() + "_new\"").register(authAsUser)
         .request(MediaType.APPLICATION_JSON).get();
 
     assertEquals(Status.OK.getStatusCode(), response.getStatus());

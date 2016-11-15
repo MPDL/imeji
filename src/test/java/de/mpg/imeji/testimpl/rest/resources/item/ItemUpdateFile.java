@@ -58,12 +58,13 @@ public class ItemUpdateFile extends ImejiTestBase {
 
   @Test
   public void test_1_UpdateItem_1_WithFile_Attached() throws IOException {
-    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTest2Jpg());
+    File testFile = ImejiTestResources.getTest2Jpg();
+    String filename = testFile.getName();
+    FileDataBodyPart filePart = new FileDataBodyPart("file", testFile);
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json",
-        getStringFromPath(UPDATE_ITEM_FILE_JSON)
-            .replace("___FILE_NAME___", ImejiTestResources.getTest2Jpg().getName())
+        getStringFromPath(UPDATE_ITEM_FILE_JSON).replace("___FILE_NAME___", filename)
             .replace("___FETCH_URL___", "").replaceAll("\"id\"\\s*:\\s*\"__ITEM_ID__\",", "")
             .replace("___REFERENCE_URL___", ""));
 
@@ -74,8 +75,7 @@ public class ItemUpdateFile extends ImejiTestBase {
 
     assertEquals(OK.getStatusCode(), response.getStatus());
     DefaultItemTO itemWithFileTO = response.readEntity(DefaultItemTO.class);
-    assertThat("Wrong file name", itemWithFileTO.getFilename(),
-        equalTo(ImejiTestResources.getTest2Jpg().getName()));
+    assertThat("Wrong file name", itemWithFileTO.getFilename(), equalTo(filename));
     storedFileURL = target().getUri() + itemWithFileTO.getFileUrl().getPath().substring(1);
     assertEquals(ImejiTestResources.getTest2Jpg().length(), itemWithFileTO.getFileSize());
     // LOGGER.info(RestProcessUtils.buildJSONFromObject(itemWithFileTO));
@@ -302,13 +302,13 @@ public class ItemUpdateFile extends ImejiTestBase {
 
   @Test
   public void test_2_UpdateItem_1_TypeDetection_JPG() throws IOException {
-
-    FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTest2Jpg());
+    File testFile = ImejiTestResources.getTest2Jpg();
+    String filename = testFile.getName();
+    FileDataBodyPart filePart = new FileDataBodyPart("file", testFile);
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("json",
-        getStringFromPath(UPDATE_ITEM_FILE_JSON)
-            .replace("___FILE_NAME___", ImejiTestResources.getTest2Jpg().getName())
+        getStringFromPath(UPDATE_ITEM_FILE_JSON).replace("___FILE_NAME___", filename)
             .replace("___FETCH_URL___", "").replaceAll("\"id\"\\s*:\\s*\"__ITEM_ID__\",", "")
             .replace("___REFERENCE_URL___", ""));
 
@@ -319,8 +319,7 @@ public class ItemUpdateFile extends ImejiTestBase {
 
     assertEquals(OK.getStatusCode(), response.getStatus());
     DefaultItemTO itemWithFileTO = response.readEntity(DefaultItemTO.class);
-    assertThat("Wrong file name", itemWithFileTO.getFilename(),
-        equalTo(ImejiTestResources.getTest2Jpg().getName()));
+    assertThat("Wrong file name", itemWithFileTO.getFilename(), equalTo(filename));
   }
 
 
