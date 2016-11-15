@@ -41,6 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
@@ -77,6 +79,7 @@ public class StorageTest {
   @Before
   public void cleanFiles() {
     try {
+      Imeji.CONFIG = new ImejiConfiguration();
       File f = new File(PropertyReader.getProperty("imeji.storage.path"));
       if (f.exists())
         FileUtils.cleanDirectory(f);
@@ -123,7 +126,7 @@ public class StorageTest {
    * @param filename
    * @throws ImejiException
    */
-  private void uploadReadDelete(String filename) {
+  private synchronized void uploadReadDelete(String filename) {
     StorageController sc = new StorageController("internal");
     InternalStorageManager manager = new InternalStorageManager();
     // UPLOAD
