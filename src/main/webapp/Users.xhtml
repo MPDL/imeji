@@ -37,12 +37,6 @@
 				<div class="imj_administrationTiledList imj_maxWidth">
 				
 					<div class="imj_listHeader">
-						<div class="imj_headline">
-							<h2>
-								<h:outputText value="#{lbl.admin_user_info} - #{lbl.admin_user_view} " rendered="#{UsersBean.group == null}"/>
-								<h:outputText value="#{lbl.add_to_group} #{UsersBean.group.name}" rendered="#{UsersBean.group != null}"/>
-							</h2>
-						</div>
 						<div class="imj_simpleSearch">
 							<h:outputText value="(#{UsersBean.users.size()} #{lbl.users})" styleClass="imj_searchInfoText"/>
 							<h:form id="new">
