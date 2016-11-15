@@ -113,11 +113,12 @@ public class UsersBean extends SuperBean {
       user.setEncryptedPassword(StringHelper.convertToMD5(newPassword));
       controller.update(user, getSessionUser());
       sendEmail(email, newPassword, user.getPerson().getCompleteName());
+      BeanHelper
+          .info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
     } catch (Exception e) {
       BeanHelper.error("Could not update or send new password!");
       LOGGER.error("Could not update or send new password", e);
     }
-    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_email", getLocale()));
     return "";
   }
 
