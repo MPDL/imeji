@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.Imeji;
 
 /**
  * Helper for imeji {@link Object}
@@ -34,7 +35,7 @@ public class ObjectHelper {
   public static String baseUri;
 
   public enum ObjectType {
-    COLLECTION, ITEM, ALBUM, PROFILE;
+    COLLECTION, ITEM, ALBUM, PROFILE, SYSTEM;
   }
 
   /**
@@ -103,6 +104,9 @@ public class ObjectHelper {
    */
   public static ObjectType getObjectType(URI uri) {
     String path = uri.getPath();
+    if (uri.toString().equals(Imeji.PROPERTIES.getBaseURI())) {
+      return ObjectType.SYSTEM;
+    }
     for (ObjectType type : ObjectType.values()) {
       if (path.contains("/" + type.name().toLowerCase())) {
         return type;

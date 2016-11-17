@@ -38,7 +38,7 @@ public class TikaContentAnalyser implements ContentAnalyser {
     ContentAnalyse contentAnalyse = new ContentAnalyse();
     Metadata metadata = new Metadata();
     try {
-      InputStream stream = TikaInputStream.get(file.toPath());
+      InputStream stream = null;
       try {
         stream = TikaInputStream.get(file.toPath());
         contentAnalyse
@@ -46,7 +46,9 @@ public class TikaContentAnalyser implements ContentAnalyser {
       } catch (Exception e) {
         LOGGER.error("Error extracting fulltext/metadata from file", e);
       } finally {
-        stream.close();
+        if (stream != null) {
+          stream.close();
+        }
       }
     } catch (Exception e) {
       LOGGER.error("Error closing stream", e);
@@ -60,7 +62,7 @@ public class TikaContentAnalyser implements ContentAnalyser {
     ContentAnalyse contentAnalyse = new ContentAnalyse();
     Metadata metadata = new Metadata();
     try {
-      InputStream stream = TikaInputStream.get(file.toPath());
+      InputStream stream = null;
       Reader reader = null;
       try {
         stream = TikaInputStream.get(file.toPath());
@@ -74,10 +76,13 @@ public class TikaContentAnalyser implements ContentAnalyser {
       } catch (Exception e) {
         LOGGER.error("Error extracting fulltext/metadata from file", e);
       } finally {
-        stream.close();
+        if (stream != null) {
+          stream.close();
+        }
         if (reader != null) {
           reader.close();
         }
+
       }
     } catch (Exception e) {
       LOGGER.error("Error closing stream", e);
@@ -91,7 +96,7 @@ public class TikaContentAnalyser implements ContentAnalyser {
     ContentAnalyse contentAnalyse = new ContentAnalyse();
     Metadata metadata = new Metadata();
     try {
-      InputStream stream = TikaInputStream.get(file.toPath());
+      TikaInputStream stream = null;
       try {
         stream = TikaInputStream.get(file.toPath());
         contentAnalyse
@@ -105,7 +110,9 @@ public class TikaContentAnalyser implements ContentAnalyser {
       } catch (Exception e) {
         LOGGER.error("Error extracting fulltext/metadata from file", e);
       } finally {
-        stream.close();
+        if (stream != null) {
+          stream.close();
+        }
       }
     } catch (Exception e) {
       LOGGER.error("Error closing stream", e);

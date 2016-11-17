@@ -4,39 +4,6 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
-<ui:remove>
-<!--
-/* 
-CDDL HEADER START
-
-The contents of this file are subject to the terms of the
-Common Development and Distribution License, Version 1.0 only
-(the "License"). You may not use this file except in compliance
-with the License.
-
-You can obtain a copy of the license at license/ESCIDOC.LICENSE
-or http://www.escidoc.de/license.
-See the License for the specific language governing permissions
-and limitations under the License.
-
-When distributing Covered Code, include this CDDL HEADER in each
-file and include the License file at license/ESCIDOC.LICENSE.
-If applicable, add the following below this CDDL HEADER, with the
-fields enclosed by brackets "[]" replaced with your own identifying
-information: Portions Copyright [yyyy] [name of copyright owner]
-
-CDDL HEADER END
-
-
-Copyright 2006-2009 Fachinformationszentrum Karlsruhe Gesellschaft
-f�r wissenschaftlich-technische Information mbH and Max-Planck-
-Gesellschaft zur F�rderung der Wissenschaft e.V.
-All rights reserved. Use is subject to license terms.
-*/
--->
-</ui:remove>
-	<!-- meta Menu starts here -->
-	
 	<div class="imj_metaMenuStandardSingleLine">
 		
 		<div class="imj_metaMenuItemsAlign">
@@ -47,7 +14,6 @@ All rights reserved. Use is subject to license terms.
 				<h:outputLink id="txtAccountUserName" title="#{lbl.goto_user_profile}" styleClass="imj_metaMenuItem" value="#{Navigation.applicationSpaceUrl}user?id=#{Auth.sessionUser.email}">
 					<h:outputText value="#{Auth.sessionUser.person.completeName}"/>
 				</h:outputLink>
-				
 				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>
 			</ui:fragment>
 			

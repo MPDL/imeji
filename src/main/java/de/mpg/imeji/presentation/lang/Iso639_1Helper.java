@@ -44,10 +44,10 @@ public class Iso639_1Helper {
    */
   private void initLanguageList() {
     list = new ArrayList<SelectItem>();
-    list.add(new SelectItem("en", "en - English"));
-    list.add(new SelectItem("de", "de - German"));
-    list.add(new SelectItem("jp", "jp - Japanese"));
-    list.add(new SelectItem("es", "es - Spanish"));
+    list.add(new SelectItem("en", "English"));
+    list.add(new SelectItem("de", "German"));
+    list.add(new SelectItem("jp", "Japanese"));
+    list.add(new SelectItem("es", "Spanish"));
   }
 
   /**
