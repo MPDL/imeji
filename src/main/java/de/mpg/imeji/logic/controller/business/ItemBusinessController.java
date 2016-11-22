@@ -297,6 +297,7 @@ public class ItemBusinessController extends ImejiController {
    */
   public Collection<Item> retrieveAll(User user) throws ImejiException {
     List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
+    LOGGER.info(uris.size() + " items found, retrieving...");
     return retrieveBatch(uris, -1, 0, user);
   }
 
@@ -542,6 +543,7 @@ public class ItemBusinessController extends ImejiController {
   public void reindex(String index) throws ImejiException {
     LOGGER.info("Indexing Items...");
     ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.items, ElasticService.ANALYSER);
+    LOGGER.info("Retrieving Items...");
     List<Item> items = (List<Item>) retrieveAll(Imeji.adminUser);
     LOGGER.info("+++ " + items.size() + " items to index +++");
     indexer.indexBatch(items);

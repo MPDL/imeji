@@ -31,22 +31,27 @@ public class ElasticReIndexJob implements Callable<Integer> {
   private static final Logger LOGGER = Logger.getLogger(ElasticReIndexJob.class);
 
   @Override
-  public Integer call() throws Exception {
-    LOGGER.info("Reindex started!");
-    // Check if the alias is used by only 1 index. If not, reset completely the indexes
-    ElasticInitializer.getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
-    String index = ElasticInitializer.createIndex();
-    addAllMappings(index);
-    reindexUsers(index);
-    reindexUserGroups(index);
-    reindexAlbums(index);
-    reindexItems(index);
-    reindexContents(index);
-    reindexFolders(index);
-    reindexSpaces(index);
-    ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
-    // IMPORTANT: Albums must be reindex after Items
-    LOGGER.info("Reindex done!");
+  public Integer call() {
+    try {
+      LOGGER.info("Reindex started!");
+      // Check if the alias is used by only 1 index. If not, reset completely the indexes
+      ElasticInitializer.getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
+      String index = ElasticInitializer.createIndex();
+      addAllMappings(index);
+      reindexUsers(index);
+      reindexUserGroups(index);
+      reindexAlbums(index);
+      reindexItems(index);
+      reindexContents(index);
+      reindexFolders(index);
+      reindexSpaces(index);
+      ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
+      // IMPORTANT: Albums must be reindex after Items
+      LOGGER.info("Reindex done!");
+    } catch (Exception e) {
+      LOGGER.error("Error by reindex", e);
+    }
+
     return null;
   }
 

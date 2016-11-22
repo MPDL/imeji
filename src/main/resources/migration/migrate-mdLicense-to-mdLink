@@ -5,10 +5,10 @@ PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
 
 # Change the class type of license objects
 WITH <http://imeji.org/item>
-DELETE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.License"}
-INSERT{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.Link"}
+DELETE{<http://imeji.org/terms/metadata#license> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.License"}
+INSERT{<http://imeji.org/terms/metadata#link> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.Link"}
 USING <http://imeji.org/item>
-WHERE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.License"};
+WHERE{<http://imeji.org/terms/metadata#license> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.License"};
 
 # Replace license statement by link statement
 WITH <http://imeji.org/metadataProfile>
