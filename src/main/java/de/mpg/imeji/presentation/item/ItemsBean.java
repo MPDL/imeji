@@ -493,12 +493,11 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     }
   }
 
-  public String selectNone() {
+  public void selectNone() {
     sessionBean.setSelected(new ArrayList<>());
     for (ThumbnailBean bean : getCurrentPartList()) {
       bean.setSelected(false);
     }
-    return getNavigationString();
   }
 
   public boolean isEditable() {
