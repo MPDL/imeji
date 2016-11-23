@@ -15,11 +15,6 @@
 	<composite:implementation>
 		<ul id="mainMenuSkipLinkAnchor" class="#{cc.attrs.menuClass.trim()}">
 			<!-- main Menu starts here -->
-			<li class="#{cc.attrs.menuClass.trim()}Item#{ (cc.attrs.curMainMenu == 'welcome') ? ' imj_active' : ''}">
-				<h:outputLink id="lnkHome" title="#{lbl.goto_startpage}" value="#{cc.attrs.navBean.homeUrl}">
-					<h:outputText value="#{lbl.home}"/>
-				</h:outputLink>
-			</li>
 			<li class="#{cc.attrs.menuClass.trim()}Item#{ (cc.attrs.curMainMenu == 'collection') ? ' imj_active' : ''}">
 				<h:outputLink id="lnkCollections" title="#{lbl.goto_collections}" value="#{cc.attrs.navBean.collectionsUrl}?q=">
 					<h:outputText value="#{lbl.header_collections}"/>
