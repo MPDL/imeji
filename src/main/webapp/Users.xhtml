@@ -37,20 +37,16 @@
 				<div class="imj_administrationTiledList imj_maxWidth">
 				
 					<div class="imj_listHeader">
-						<div class="imj_simpleSearch">
-							<h:outputText value="(#{UsersBean.users.size()} #{lbl.users})" styleClass="imj_searchInfoText"/>
-							<h:form id="new">
-								<h:inputText value="#{UsersBean.query}" styleClass="imj_simpleSearchInput" />
-								<h:commandButton action="#{UsersBean.search()}" value="#{lbl.search}" styleClass="imj_simpleSearchButtonSubmit" />
-							</h:form>
-							<h:outputLink value="#{Navigation.applicationSpaceUrl}users?group=#{UsersBean.group.id}" title="#{lbl.clear}" rendered="#{UsersBean.query != ''}" styleClass="imj_cancelButton">
-								<h:outputText value="#{lbl.clear}" />
+						#{UsersBean.users.size()} #{lbl.users} #{lbl.found}
+						<div class="imj_overlayMenu">
+							<h:outputLink styleClass="imj_removeFacetButton" value="#{Navigation.applicationSpaceUrl}users?group=#{UsersBean.group.id}" rendered="#{UsersBean.query != ''}">
+								<span class=" fa fa-times"></span>
+								#{lbl.clear}
 							</h:outputLink>
 						</div>
 					</div>
 					
 					<div class="imj_listBody">
-					
 						<ui:repeat id="inactiveUserList" var="user" value="#{UsersBean.inactiveUsers}" rows="0" varStatus="row">
 							<div class="imj_adminPanel imj_userConfig">
 								<div class="imj_admindataSet">									

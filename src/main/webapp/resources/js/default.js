@@ -646,67 +646,31 @@ jQuery(document).ready(function() {
  * SIMPLE SEARCH
  * 
  ******************************************************************************/
-var selectedSearch = 1;
-var albumsUrl, collectionsUrl, browseUrl;
-var numberOfContext = 3;
+var selectedSearch;
+var numberOfContext = $('.imj_bodyContextSearch li').length;
 
-function initSimpleSearch(albumsUrlValue, collectionsUrlValue, browseUrlValue, numberOfContextValue) {
-	albumsUrl = albumsUrlValue;
-	collectionsUrl = collectionsUrlValue;
-	browseUrl = browseUrlValue;
-	numberOfContext = numberOfContextValue;
-}
 
-function getSearchSelectedName() {
-	if (selectedSearch == 2) {
-		return 'collections';
-	}
-	if (selectedSearch == 3) {
-		return 'albums';
-	}
-	return 'items';
-}
 /**
  * Trigger the simple search, according to the currently selected context
  * @returns {Boolean}
  */
 function submitSimpleSearch() {
 	if ($('.imj_simpleSearchInput').val() != '') {
-		goToSearch(getSearchSelectedName());
+		goToSearch(selectedSearch);
 	}
 	return false;
 };
 
-/**
- * Click on Menu -> Trigger simple search
- */
-$("#simpleSearchForAlbums").click(function(){
-	goToSearch('albums');
+$(".imj_bodyContextSearch li").click(function(){
+	 goToSearch($(this).index() + 1);
 });
-$("#simpleSearchForCollections").click(function(){
-	goToSearch('collections');
-});
-$("#simpleSearchForItems").click(function(){
-	goToSearch('items');
-});
-
 /**
  * Open a search page according to the type 
  * @param type
  */
-function goToSearch(type) {
-	if (type == 'items') {
-		window.open(browseUrl + '?q=' + encodeURIComponent($('.imj_simpleSearchInput').val()),
-				"_self");
-	}
-	if (type == 'collections') {
-		window.open(collectionsUrl + '?q=' + encodeURIComponent($('.imj_simpleSearchInput').val()),
-				"_self");
-	}
-	if (type == 'albums') {
-		window.open(albumsUrl + '?q=' + encodeURIComponent($('.imj_simpleSearchInput').val()),
-				"_self");
-	}
+function goToSearch(index) {
+	window.open($('.imj_bodyContextSearch li:nth-child('+ index +')').data('url') + '?q=' + encodeURIComponent($('.imj_simpleSearchInput').val()),
+	"_self");
 };
 
 /**
@@ -715,8 +679,6 @@ function goToSearch(type) {
 $(".imj_simpleSearchInput").focusin(function() {
 	if ($(this).val() != '') {
 		$(".imj_menuSimpleSearch").show();
-		selectedSearch = 1;
-		highlightSearch();
 	}
 }).keyup(function(event) {
 	if (event.which == 40) {
@@ -730,6 +692,19 @@ $(".imj_simpleSearchInput").focusin(function() {
 	else if ($(this).val() != '') {
 		$(".imj_menuSimpleSearch").show();
 	}
+});
+
+// Set the correct context for the search according to the current page
+$( document ).ready(function() {
+	selectedSearch = 1;
+	var path = window.location.pathname;
+	$("ul.imj_bodyContextSearch li" ).each(function( index ) {
+		if($(this).data('url').indexOf(path) !== -1){
+			selectedSearch = index + 1;
+			return false;
+		}
+	});
+	highlightSearch();
 });
 
 /**
@@ -749,15 +724,7 @@ $("ul.imj_bodyContextSearch li").mouseover(function() {
  */
 function highlightSearch() {
 	$("ul.imj_bodyContextSearch li").removeClass("hovered");
-	if (selectedSearch == 1) {
-		$("ul.imj_bodyContextSearch li:nth-child(1)").addClass("hovered");
-	}
-	if (selectedSearch == 2) {
-		$("ul.imj_bodyContextSearch li:nth-child(2)").addClass("hovered");
-	}
-	if (selectedSearch == 3) {
-		$("ul.imj_bodyContextSearch li:nth-child(3)").addClass("hovered");
-	}
+	$("ul.imj_bodyContextSearch li:nth-child(" + selectedSearch + ")").addClass("hovered");
 }
 /**
  * Select the next search 
@@ -768,13 +735,41 @@ function incrementSelectedSearch() {
 	}
 }
 /**
- * SElect the previous search
+ * Select the previous search
  */
 function decrementSelectedSearch() {
 	if (selectedSearch > 1) {
 		selectedSearch = selectedSearch - 1;
 	}
 }
+
+/**
+ * Resize the simple saerch menu to fit the complete text
+ */
+$( document ).ready(function() {
+	resizeMenu();
+});
+
+function resizeMenu(){
+	var width = $(".imj_menuHeader").outerWidth(true);
+	var left = $(".imj_menuHeader").offset().left;
+	var menuWidth = $(".imj_menuSimpleSearch").outerWidth(true);
+	var offset = menuWidth > width ? menuWidth - width : 0;
+	width = menuWidth > width ? menuWidth : width;
+	if(offset > 0){
+		$(".imj_menuSimpleSearch").css({
+			"width": width,
+		     "left": (left -offset)
+		 });
+	}
+	else{
+		$(".imj_menuSimpleSearch").css({
+		     "width": width
+		 });
+	}
+}
+
+
 
 /*******************************************************************************
  * 

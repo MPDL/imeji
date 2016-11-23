@@ -50,6 +50,7 @@ public class Navigation implements Serializable {
   public static final Page UPLOAD = new Page("Upload collection", "upload");
   public static final Page SHARE = new Page("Share", "share");
   public static final Page USER = new Page("User", "user");
+  public static final Page USERS = new Page("Users", "users");
   public static final Page ADMIN = new Page("Admin", "admin");
   public static final Page DIGILIB = new Page("Digilib", "digilib");
   public static final Page SINGLEUPLOAD = new Page("Single upload", "singleupload");
@@ -177,6 +178,10 @@ public class Navigation implements Serializable {
 
   public String getUserUrl() {
     return applicationUrl + getSpacePath() + USER.getPath();
+  }
+
+  public String getUsersUrl() {
+    return applicationUrl + getSpacePath() + USERS.getPath();
   }
 
   public String getAdminUrl() {

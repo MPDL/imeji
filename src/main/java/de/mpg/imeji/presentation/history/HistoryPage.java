@@ -30,6 +30,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class HistoryPage implements Serializable {
+  private static final long serialVersionUID = -6620054520723398563L;
   private int pos = 0;
   private String url;
   private String title;
