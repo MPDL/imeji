@@ -4,7 +4,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
-	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	xmlns:imjc="http://java.sun.com/jsf/composite/components">
 	
 	<ui:param name="headline" value="#{lbl.admin_users_head}"/>
 	<ui:param name="currentMainMenu" value="admin"/>
@@ -13,6 +14,9 @@
 		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}" downloadEnabled="false" actionEnabled="false"/>
 	</ui:define>
 	
+	<ui:define name="searchQuery">
+		<imjc:searchQueryDisplayArea searchBean="#{UsersBean}" navBean="#{Navigation}"  rendered="#{UsersBean.query != ''}" label="#{lbl.search_for} #{lbl.users}"/>
+	</ui:define>
 	
 	<ui:define name="mainContent">
 		<!-- Are You Admin? -->	

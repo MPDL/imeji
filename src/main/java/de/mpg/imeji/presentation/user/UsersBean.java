@@ -97,6 +97,10 @@ public class UsersBean extends SuperBean {
     }
   }
 
+  public String getSimpleQuery() {
+    return this.query;
+  }
+
   /**
    * Method called when a new password is sent
    *

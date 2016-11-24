@@ -5,7 +5,7 @@
 				xmlns:imjc="http://java.sun.com/jsf/composite/components">
 	
 	<ui:param name="paginatorListSessionBean" value="#{AlbumsBean}"/>
-	<ui:param name="headline" value=""/>
+	<ui:param name="headline" value=" "/>
 	<ui:param name="displayQuery" value="#{paginatorListSessionBean.simpleQuery != ''}"/>
 	<ui:param name="currentMainMenu" value="album"/>
 	<ui:param name="browseToAllItemsUrl" value="?q=&amp;f=all"/>
@@ -30,6 +30,6 @@
 	</ui:define>
 	
 	<ui:define name="searchQuery">
-		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}" navBean="#{Navigation}"  rendered="#{paginatorListSessionBean.simpleQuery != ''}"/>
+		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}" navBean="#{Navigation}" rendered="#{paginatorListSessionBean.simpleQuery != ''}" label="#{lbl.search_for} #{lbl.albums}"/>
 	</ui:define>
 </ui:composition>

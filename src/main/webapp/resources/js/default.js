@@ -718,7 +718,13 @@ $(".imj_simpleSearch").focusout(function() {
  */
 $("ul.imj_bodyContextSearch li").mouseover(function() {
 	$(".hovered").removeClass("hovered");
+	selectedSearch = $(this).index() +1;
 });
+
+$("ul.imj_bodyContextSearch li").mouseout(function() {
+	highlightSearch();
+});
+
 /**
  * Highlight the currently selected search
  */

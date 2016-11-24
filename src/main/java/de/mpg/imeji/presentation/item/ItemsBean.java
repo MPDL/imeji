@@ -159,9 +159,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       List<MetadataProfile> profiles =
           new ProfileController().retrieveItemProfiles((List<Item>) items, Imeji.adminUser);
       // Init the labels for the item
-      if (!items.isEmpty()) {
-        metadataLabels = new MetadataLabels(profiles, getLocale());
-      }
+      metadataLabels = new MetadataLabels(profiles, getLocale());
       // Return the item as thumbnailBean
       return ListUtils.itemListToThumbList(items, profiles, getSessionUser());
     } catch (ImejiException e) {
@@ -251,7 +249,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public String getSimpleQuery() throws UnprocessableError {
     String q = UrlHelper.getParameterValue("q");
-    if (StringHelper.isNullOrEmptyTrim(q)) {
+    if (!StringHelper.isNullOrEmptyTrim(q)) {
       SearchQuery query = SearchQueryParser.parseStringQuery(q);
       return SearchQueryParser.searchQuery2PrettyQuery(query, getLocale(),
           metadataLabels.getInternationalizedLabels());

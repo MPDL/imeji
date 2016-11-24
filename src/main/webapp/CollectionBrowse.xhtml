@@ -46,5 +46,12 @@
 		<dialog:doiInputDialog col="#{paginatorListSessionBean.collection}" bean="#{paginatorListSessionBean.actionMenu}" confirmationText="#{paginatorListSessionBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}" submitLabel="#{lbl.save}" dialogId="doiInput" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>
 
 	</ui:define>
+	
+	<ui:define name="searchQuery">
+		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}"
+			navBean="#{Navigation}"
+			rendered="#{paginatorListSessionBean.simpleQuery != ''}" 
+			label="#{lbl.search_for} #{HistorySession.currentPage.internationalizedName}"/>
+	</ui:define>
 
 </ui:composition>

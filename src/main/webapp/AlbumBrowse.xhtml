@@ -43,4 +43,10 @@
 		<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{paginatorListSessionBean}" confirmationText="#{msg.confirmation_withdraw_album}" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" rendered="#{Auth.update(paginatorListSessionBean.album)and paginatorListSessionBean.album.status.toString().toUpperCase() == 'RELEASED'}"/>
 	</ui:define>
 	
+	<ui:define name="searchQuery">
+		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}"
+			navBean="#{Navigation}"
+			rendered="#{paginatorListSessionBean.simpleQuery != ''}" 
+			label="#{lbl.search_for} #{HistorySession.currentPage.internationalizedName}"/>
+	</ui:define>
 </ui:composition>

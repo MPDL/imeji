@@ -5,17 +5,18 @@
 	<composite:interface>
 		<composite:attribute name="searchBean" type="java.lang.Object" required="true" shortDescription="@type: Object, bean which includes the searchFilter, query, simpleQuery and simpleSearch"/>
 		<composite:attribute name="navBean" type="java.lang.Object" required="true" shortDescription="@type: Object, used to get searchUrl"/>
+		<composite:attribute name="label" type="java.lang.String" default="#{lbl.search_query}"/>
 	</composite:interface>
 	
 	<composite:implementation>
 		<div class="imj_searchQueryDisplay" >
-			<h:outputText value=" #{lbl.search_query}:"/>
+			<h:outputText value="#{cc.attrs.label}: "/>
 			
 			<span class="imj_searchQueryText">
 				<h:outputText value="#{cc.attrs.searchBean.simpleQuery}"/>
 			</span>
 			
-			<h:outputLink value="#{cc.attrs.navBean.searchUrl}?q=#{cc.attrs.searchBean.query}" styleClass="imj_submitButton" rendered="#{!cc.attrs.searchBean.simpleSearch}">
+			<h:outputLink value="#{cc.attrs.navBean.searchUrl}?q=#{cc.attrs.searchBean.query}" styleClass="imj_submitButton" rendered="false">
 				<h:outputText value="#{lbl.search_revise}"/>
 			</h:outputLink>
 		</div>
