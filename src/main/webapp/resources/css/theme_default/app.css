@@ -1666,7 +1666,7 @@ body .imj_siteWrapper .moxie-shim input { border-radius: 0; -webkit-border-radiu
 .imj_siteWrapper .imj_headline_text h3 { font-size: 120%; font-weight: bold; letter-spacing: 0.045em; line-height: normal; }
 .imj_siteWrapper .imj_justified_text { text-align: justify; }
 
-html body { background: url("../images/background.jpg"); background-size: cover; background-repeat: no-repeat; background-attachment: fixed; }
+html body { background-size: cover; background-repeat: no-repeat; background-attachment: fixed; }
 html body input { font-family: 'Titillium Web', Arial, Helvetica, Verdana, sans-serif !important; border: 1px solid #6CAE2F; background: transparent; color: #F0F0F0; border-radius: 2px; padding: 5px 10px 5px 10px; }
 html body input:hover { color: #F0F0F0; }
 html body input:focus { color: #F0F0F0; border: 1px solid #F0F0F0; outline: none; }
@@ -2072,11 +2072,6 @@ html body .imj_siteWrapper .imj_menuBody li:hover { background-color: #444444; }
 html body .imj_siteWrapper .imj_menuBody span { margin: 0.272727em 1em; font-size: 1em; }
 html body .imj_siteWrapper .imj_invisible { display: none; }
 html body .imj_siteWrapper .imj_siteFooter { width: initial; height: 60px !important; padding: 20px; left: 0; bottom: 0; min-height: 3em; background-color: #313131; }
-html body .imj_siteWrapper .imj_siteFooter .imj_startpageFooterLogos { margin: auto; padding-top: 10px; }
-html body .imj_siteWrapper .imj_siteFooter .imj_startpageFooterLogos .imj_poweredby_software { float: right; margin-left: 0; margin-right: 2%; padding-right: 50px; background: url("../images/imeji_logo_black.png"); background-size: contain; background-repeat: no-repeat; }
-html body .imj_siteWrapper .imj_siteFooter .imj_startpageFooterLogos .imj_poweredby_software .imj_poweredby_software_text { display: none; }
-html body .imj_siteWrapper .imj_siteFooter .imj_startpageFooterLogos .imj_poweredby_software .imj_poweredby_software_image a img { visibility: hidden; }
-html body .imj_siteWrapper .imj_siteFooter .imj_startpageFooterLogos .imj_poweredby_institution { float: left; margin-left: 2%; margin-right: 0; margin-top: -2.5em; }
 
 .imj_overlayMenu { display: inline-block; padding: 0.125em 0.25em; }
 .imj_overlayMenu .imj_menuHeader { text-align: left; color: #6CAE2F; cursor: pointer; }
