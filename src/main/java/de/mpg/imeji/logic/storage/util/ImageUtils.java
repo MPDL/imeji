@@ -368,15 +368,20 @@ public final class ImageUtils {
   }
 
   public static Dimension getImageDimension(File f) {
+    System.out.println("ImageUtils getImageDimension of " + f.getAbsolutePath());
     try (ImageInputStream in = ImageIO.createImageInputStream(f)) {
+      System.out.println("ImageUtils getImageDimension inputstream ");
       final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+      System.out.println("ImageUtils getImageDimension readers ");
       if (readers.hasNext()) {
         ImageReader reader = readers.next();
         try {
           reader.setInput(in);
+          System.out.println("ImageUtils getImageDimension ready ");
           return new Dimension(reader.getWidth(0), reader.getHeight(0));
         } finally {
           reader.dispose();
+          System.out.println("ImageUtils getImageDimension done ");
         }
       }
     } catch (Exception e) {
