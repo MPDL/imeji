@@ -121,8 +121,9 @@ public class ItemBusinessController extends ImejiController {
       item.setStatus(Status.RELEASED);
     }
     item = create(item, c, user);
-
+    System.out.println("Item CREATED " + item.getIdString());
     contentController.extractFileContentAndUpdateContentVOAsync(item.getId().toString(), content);
+    System.out.println("File content extracted ");
     return item;
   }
 
