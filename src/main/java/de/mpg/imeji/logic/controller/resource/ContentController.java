@@ -208,7 +208,7 @@ public class ContentController extends ImejiController {
    */
   private ContentVO uploadFileToContentVO(File file, ContentVO contentVO, User user,
       CollectionImeji c) throws ImejiException {
-    System.out.println("uploadFileToContentVO start " + file.getAbsolutePath());
+    System.out.println("ContentController uploadFileToContentVO start " + file.getAbsolutePath());
     StorageController sc = new StorageController();
     if (!SecurityUtil.staticAuth().createContent(user, c)) {
       throw new NotAllowedError(

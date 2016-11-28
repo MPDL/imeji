@@ -107,15 +107,19 @@ public final class StorageController implements Serializable {
     File storageFile = storage.read(result.getOrginal());
     System.out.println("Storagecontroller upload uploaded readed " + storageFile.getAbsolutePath());
     result.setChecksum(calculateChecksum(storageFile));
+    System.out.println("Storagecontroller upload checksum ");
     result.setFileSize(storageFile.length());
+    System.out.println("Storagecontroller upload filesyse ");
     // If the file is an image, read the dimension of the image
     if (StorageUtils.getMimeType(storageFile).contains("image")) {
       Dimension d = ImageUtils.getImageDimension(storageFile);
+      System.out.println("Storagecontroller upload dimension ");
       if (d != null) {
         result.setHeight(d.height);
         result.setWidth(d.width);
       }
     }
+    System.out.println("Storagecontroller upload done");
     return result;
   }
 

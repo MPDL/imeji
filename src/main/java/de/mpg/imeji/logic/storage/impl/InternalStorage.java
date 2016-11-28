@@ -74,6 +74,7 @@ public class InternalStorage implements Storage {
   @Override
   public UploadResult upload(String filename, File file, String collectionId) {
     InternalStorageItem item = manager.createItem(file, filename, collectionId);
+    System.out.println("InternalStorage Item creted");
     return new UploadResult(item.getId(), item.getOriginalUrl(), item.getWebUrl(),
         item.getThumbnailUrl());
   }
