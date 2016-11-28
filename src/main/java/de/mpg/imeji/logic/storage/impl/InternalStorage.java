@@ -33,6 +33,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
@@ -49,6 +51,7 @@ import de.mpg.imeji.logic.storage.util.StorageUtils;
  */
 public class InternalStorage implements Storage {
   private static final long serialVersionUID = 7865121663793602621L;
+  private static Logger LOGGER = Logger.getLogger(InternalStorage.class);
   private static final String name = "internal";
   protected InternalStorageManager manager;
 
@@ -98,6 +101,7 @@ public class InternalStorage implements Storage {
     try {
       file = new File(path);
     } catch (Exception e) {
+      LOGGER.error("Error reading file " + url, e);
       throw new RuntimeException("Error reading file " + path + " in internal storage: ", e);
     }
     return file;
