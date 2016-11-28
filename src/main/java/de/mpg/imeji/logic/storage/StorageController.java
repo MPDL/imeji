@@ -100,26 +100,19 @@ public final class StorageController implements Serializable {
    */
   public UploadResult upload(String filename, File file, String collectionId)
       throws ImejiException {
-    System.out.println("Storagecontroller upload start " + file.getAbsolutePath());
     filename = FilenameUtils.getName(filename);
     UploadResult result = storage.upload(filename, file, collectionId);
-    System.out.println("Storagecontroller upload uploaded with file " + result.getOrginal());
     File storageFile = storage.read(result.getOrginal());
-    System.out.println("Storagecontroller upload uploaded readed " + storageFile.getAbsolutePath());
     result.setChecksum(calculateChecksum(storageFile));
-    System.out.println("Storagecontroller upload checksum ");
     result.setFileSize(storageFile.length());
-    System.out.println("Storagecontroller upload filesyse ");
     // If the file is an image, read the dimension of the image
     if (StorageUtils.getMimeType(storageFile).contains("image")) {
       Dimension d = ImageUtils.getImageDimension(storageFile);
-      System.out.println("Storagecontroller upload dimension ");
       if (d != null) {
         result.setHeight(d.height);
         result.setWidth(d.width);
       }
     }
-    System.out.println("Storagecontroller upload done");
     return result;
   }
 

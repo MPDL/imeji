@@ -62,9 +62,7 @@ public class ContentController extends ImejiController {
       throws ImejiException {
     ContentVO contentVO = new ContentVO();
     contentVO = uploadFileToContentVO(file, contentVO, user, c);
-    System.out.println("ContentController file uploaded " + contentVO.getOriginal());
     contentVO = create(item, contentVO);
-    System.out.println("ContentController content created " + contentVO.getId());
     return contentVO;
   }
 
@@ -208,7 +206,6 @@ public class ContentController extends ImejiController {
    */
   private ContentVO uploadFileToContentVO(File file, ContentVO contentVO, User user,
       CollectionImeji c) throws ImejiException {
-    System.out.println("ContentController uploadFileToContentVO start " + file.getAbsolutePath());
     StorageController sc = new StorageController();
     if (!SecurityUtil.staticAuth().createContent(user, c)) {
       throw new NotAllowedError(

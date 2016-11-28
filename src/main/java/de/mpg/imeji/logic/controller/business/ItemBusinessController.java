@@ -104,14 +104,12 @@ public class ItemBusinessController extends ImejiController {
    */
   public Item createWithFile(Item item, File f, String filename, CollectionImeji c, User user)
       throws ImejiException {
-    System.out.println("CREATE ITEM WITH FILE " + f.getAbsolutePath());
     if (StringHelper.isNullOrEmptyTrim(filename)) {
       throw new UnprocessableError("Filename must not be empty!");
     }
     validateChecksum(c.getId(), f, false);
     ContentController contentController = new ContentController();
     ContentVO content = contentController.create(item, f, c, user);
-    System.out.println("CONTENT CREATED " + f.getAbsolutePath());
     if (item == null) {
       item = ImejiFactory.newItem(c);
     }
@@ -121,9 +119,7 @@ public class ItemBusinessController extends ImejiController {
       item.setStatus(Status.RELEASED);
     }
     item = create(item, c, user);
-    System.out.println("Item CREATED " + item.getIdString());
     contentController.extractFileContentAndUpdateContentVOAsync(item.getId().toString(), content);
-    System.out.println("File content extracted ");
     return item;
   }
 

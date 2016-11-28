@@ -251,8 +251,6 @@ public class InternalStorageManager implements Serializable {
    */
   public InternalStorageItem generateInternalStorageItem(File file, String fileName,
       String collectionId) {
-    System.out.println(
-        "InternalStorageManager generateInternalStorageItem start " + file.getAbsolutePath());
     String id = generateIdWithVersion(collectionId);
     InternalStorageItem item = new InternalStorageItem();
     item.setId(id);
@@ -354,7 +352,6 @@ public class InternalStorageManager implements Serializable {
     @Override
     public Integer call() {
       try {
-        System.out.println("GenerateThumbnailAndPreviewTask start");
         ImageGeneratorManager generatorManager = new ImageGeneratorManager();
         // write web resolution file in storage
         String calculatedExtension = guessExtension(file);
@@ -372,7 +369,6 @@ public class InternalStorageManager implements Serializable {
       } catch (Exception e) {
         LOGGER.error("Error transforming and writing file in internal storage ", e);
       } finally {
-        System.out.println("GenerateThumbnailAndPreviewTask delete file");
         FileUtils.deleteQuietly(file);
       }
       return 1;
