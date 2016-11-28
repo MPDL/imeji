@@ -34,7 +34,7 @@ public class ElasticSortFactory {
    * @return
    */
   public static SortBuilder build(SortCriterion sort) {
-    if (sort == null || sort.getIndex() == null) {
+    if (sort == null || sort.getIndex() == null || sort.getIndex().getName() == null) {
       return defaultSort;
     }
     SearchFields index = SearchFields.valueOf(sort.getIndex().getName());

@@ -704,8 +704,15 @@ $( document ).ready(function() {
 			return false;
 		}
 	});
+	changePlaceholder();
 	highlightSearch();
 });
+
+function changePlaceholder(){
+	var currentValue = $("#quickSearchString").attr("placeholder");
+	var searchContext = $("ul.imj_bodyContextSearch li:nth-child(" + selectedSearch + ")").text().trim().split(" ").splice(0,3).join(" ");
+	$("#quickSearchString").attr("placeholder", currentValue + " " + searchContext);
+}
 
 /**
  * Close the search menu
@@ -717,8 +724,8 @@ $(".imj_simpleSearch").focusout(function() {
  * On mouse over, unselect the previously selected menu
  */
 $("ul.imj_bodyContextSearch li").mouseover(function() {
-	$(".hovered").removeClass("hovered");
-	selectedSearch = $(this).index() +1;
+	//$(".hovered").removeClass("hovered");
+	//selectedSearch = $(this).index() +1;
 });
 
 $("ul.imj_bodyContextSearch li").mouseout(function() {

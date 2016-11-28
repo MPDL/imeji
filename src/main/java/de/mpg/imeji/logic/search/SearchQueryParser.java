@@ -391,13 +391,13 @@ public class SearchQueryParser {
    * @param pair
    * @return
    */
-  private static String searchPair2PrettyQuery(SearchPair pair) {
+  private static String searchPair2PrettyQuery(SearchPair pair, Locale locale) {
     if (pair == null || pair.getField() == null || pair.getValue() == null
         || pair.getValue().equals("")) {
       return "";
     }
     if (pair.getField() == SearchFields.all) {
-      return pair.getValue();
+      return Imeji.RESOURCE_BUNDLE.getLabel("item", locale) + " = " + pair.getValue();
     } else {
       return indexNamespace2PrettyQuery(pair.getField().name()) + " "
           + negation2PrettyQuery(pair.isNot()) + searchOperator2PrettyQuery(pair.getOperator())
@@ -500,7 +500,7 @@ public class SearchQueryParser {
     for (SearchElement el : els) {
       switch (el.getType()) {
         case PAIR:
-          q += searchPair2PrettyQuery((SearchPair) el);
+          q += searchPair2PrettyQuery((SearchPair) el, locale);
           break;
         case GROUP:
           q += searchGroup2PrettyQuery((SearchGroup) el, locale, metadataLabelMap);
