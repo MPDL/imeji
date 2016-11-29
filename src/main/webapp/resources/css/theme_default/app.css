@@ -1726,7 +1726,7 @@ html body .imj_siteWrapper .imj_siteHeader .imj_siteHeaderMenuSearchSection .imj
 html body .imj_siteWrapper .imj_siteHeader .imj_siteHeaderMenuSearchSection .imj_active a { color: #6CAE2F; }
 html body .imj_siteWrapper .imj_siteHeader .imj_siteHeaderMenuSearchSection .imj_mainMenuStandard { padding: 0; }
 html body .imj_siteWrapper .imj_siteHeader .imj_siteHeaderMenuSearchSection .imj_simpleSearch { padding: 0; margin: 0 0 0 -30px; }
-html body .imj_siteWrapper .imj_siteHeader .imj_siteHeaderMenuSearchSection .imj_simpleSearch .imj_simpleSearchInput { font-family: 'Titillium Web', Arial, Helvetica, Verdana, sans-serif !important; border: 1px solid #6CAE2F; background: transparent; color: #F0F0F0; border-radius: 2px; padding: 5px 10px 5px 10px; border-radius: 2px 0 0 2px; height: 35px; padding-left: 35px; }
+html body .imj_siteWrapper .imj_siteHeader .imj_siteHeaderMenuSearchSection .imj_simpleSearch .imj_simpleSearchInput { font-family: 'Titillium Web', Arial, Helvetica, Verdana, sans-serif !important; border: 1px solid #6CAE2F; background: transparent; color: #F0F0F0; border-radius: 2px; padding: 5px 10px 5px 10px; border-radius: 2px 0 0 2px; height: 35px; padding: 0 0 0 35px; }
 html body .imj_siteWrapper .imj_siteHeader .imj_siteHeaderMenuSearchSection .imj_simpleSearch .imj_simpleSearchInput:hover { color: #F0F0F0; }
 html body .imj_siteWrapper .imj_siteHeader .imj_siteHeaderMenuSearchSection .imj_simpleSearch .imj_simpleSearchInput:focus { color: #F0F0F0; border: 1px solid #F0F0F0; outline: none; }
 html body .imj_siteWrapper .imj_siteHeader .imj_siteHeaderMenuSearchSection .imj_simpleSearch .imj_simpleSearchInput::-webkit-input-placeholder { /* Chrome/Opera/Safari */ text-transform: uppercase; font-family: "Titillium Web", Arial, Helvetica, Verdana, sans-serif; }
@@ -2076,8 +2076,8 @@ html body .imj_siteWrapper .imj_siteFooter { width: initial; height: 60px !impor
 .imj_overlayMenu .imj_menuHeader .selectAll:before { font-family: FontAwesome; content: "\f00c"; padding-right: 0.1em; }
 .imj_overlayMenu .imj_menuHeader .selectNone:before { font-family: FontAwesome; content: "\f00d "; padding-right: 0.1em; }
 .imj_overlayMenu .imj_menuText { text-align: left; line-height: 175%; padding: 0.5em 1em; display: block; }
-.imj_overlayMenu .imj_menuSimpleSearch { width: auto; min-width: 0; font-size: 1.2em; }
-.imj_overlayMenu .imj_menuSimpleSearch li { border-top: 1px dashed #313131; padding: 0.5em 1em; text-transform: uppercase; font-size: 0.9em; cursor: pointer !important; }
+.imj_overlayMenu .imj_menuSimpleSearch { width: auto; min-width: 0; font-size: 1em; }
+.imj_overlayMenu .imj_menuSimpleSearch li { border-top: 1px dashed #313131; padding: 0.5em 1em; text-transform: uppercase; cursor: pointer !important; }
 .imj_overlayMenu .imj_menuSimpleSearch li:hover > a { color: #F0F0F0; }
 .imj_overlayMenu .imj_menuSimpleSearch .imj_simpleSearchInput { width: 200em !important; }
 .imj_overlayMenu .imj_menuBody, .imj_overlayMenu .imj_menuSimpleSearch { display: none; position: absolute; background-color: #444444; border: 1px solid #313131; }

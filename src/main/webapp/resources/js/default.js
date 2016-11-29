@@ -702,14 +702,12 @@ $( document ).ready(function() {
 			return false;
 		}
 	});
-	changePlaceholder();
 	highlightSearch();
 });
 
 function changePlaceholder(){
-	var currentValue = $("#quickSearchString").attr("placeholder");
-	var searchContext = $("ul.imj_bodyContextSearch li:nth-child(" + selectedSearch + ")").text().trim().split(" ").splice(0,3).join(" ");
-	$("#quickSearchString").attr("placeholder", currentValue + " " + searchContext);
+	var placeholder = $("ul.imj_bodyContextSearch li:nth-child(" + selectedSearch + ")").data('placeholder').trim().split(" ").splice(0,3).join(" ");
+	$("#quickSearchString").attr("placeholder", placeholder);
 }
 
 /**
@@ -717,6 +715,7 @@ function changePlaceholder(){
  */
 $(".imj_simpleSearch").focusout(function() {
 	$(".imj_menuSimpleSearch").delay(200).hide(0);
+	
 });
 /**
  * On mouse over, unselect the previously selected menu
@@ -736,6 +735,7 @@ $("ul.imj_bodyContextSearch li").mouseout(function() {
 function highlightSearch() {
 	$("ul.imj_bodyContextSearch li").removeClass("hovered");
 	$("ul.imj_bodyContextSearch li:nth-child(" + selectedSearch + ")").addClass("hovered");
+	changePlaceholder();
 }
 /**
  * Select the next search 

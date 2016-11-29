@@ -17,23 +17,23 @@
 						<span class="imj_menuText" style="display: block;"> #{lbl.search_for} ...</span>
 						<ul class="imj_bodyContextSearch" >
 							<ui:fragment rendered="#{HistorySession.currentPage.imejiPage == 'COLLECTION_ITEMS' or HistorySession.currentPage.imejiPage == 'ALBUM_ITEMS'}" >
-								<li id="simpleSearchForThisCollection" data-url="">
+								<li id="simpleSearchForThisCollection" data-url="" data-placeholder="#{HistorySession.currentPage.internationalizedName}">
 									<a href="#">#{HistorySession.currentPage.internationalizedName}</a>
 								</li>
 							</ui:fragment>
-							<li id="simpleSearchForItems" class="defaultSearchType hovered"  data-url="#{Navigation.browseUrl}">  
+							<li id="simpleSearchForItems" class="defaultSearchType hovered"  data-url="#{Navigation.browseUrl}" data-placeholder="#{lbl.search_for} #{lbl.search_for_items}">  
 								<a href="#"> #{lbl.search_for_items}</a>
 							</li>
-							<li id="simpleSearchForCollections" data-url="#{Navigation.collectionsUrl}">
+							<li id="simpleSearchForCollections" data-url="#{Navigation.collectionsUrl}" data-placeholder="#{lbl.search_for} #{lbl.search_for_collections}">
 								<a href="#"> #{lbl.search_for_collections}</a>
 							</li>
 							<ui:fragment rendered="#{Configuration.albumsEnabled}" >
-								<li id="simpleSearchForAlbums" data-url="#{Navigation.albumsUrl}">
+								<li id="simpleSearchForAlbums" data-url="#{Navigation.albumsUrl}" data-placeholder="#{lbl.search_for} #{lbl.search_for_albums}">
 									 <a href="#"> #{lbl.search_for_albums}</a>
 								</li>
 							</ui:fragment>
 							<ui:fragment rendered="#{Auth.sysAdmin}">
-								<li id="simpleSearchForUsers" data-url="#{Navigation.usersUrl}">
+								<li id="simpleSearchForUsers" data-url="#{Navigation.usersUrl}" data-placeholder="#{lbl.search_for} #{lbl.users}">
 									 <a href="#"> #{lbl.users}</a>
 								</li>
 							</ui:fragment>
