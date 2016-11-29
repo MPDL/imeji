@@ -4,14 +4,33 @@
             "analyzer":{
                 "ngram_analyzer":{
                     "tokenizer":"ngram_tokenizer"
-                }
+                },
+		        "edgegram_analyzer": {
+		          "tokenizer": "edgegram_tokenizer",
+				   "filter": [
+		            "lowercase"
+		           ]
+		        },
+				"simple_search": {
+		          "tokenizer": "lowercase"
+		        }
             },
             "tokenizer":{
                 "ngram_tokenizer":{
                     "type":"nGram",
                     "min_gram":"3",
                     "max_gram":"3"
-                }
+                },
+                 "edgegram_tokenizer": {
+			          "type": "edge_ngram",
+			          "min_gram": 2,
+			          "max_gram": 10,
+			          "token_chars": [
+			            "letter",
+			            "digit",
+			            "punctuation"
+			          ]
+		        }
             }
         }
     }

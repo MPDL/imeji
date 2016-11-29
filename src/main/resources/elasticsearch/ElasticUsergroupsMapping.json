@@ -7,7 +7,10 @@
             "include_in_all":false
          },
          "name":{
-            "type":"string"
+            "type":"string",
+            "analyzer":"edgegram_analyzer",
+            "search_analyzer": "simple_search",
+            "include_in_all":false
          },
 	     "read":{
 	       "type":"string",
