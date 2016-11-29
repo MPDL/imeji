@@ -48,7 +48,7 @@ public class ElasticSortFactory {
       case modified:
         return makeBuilder(ElasticFields.MODIFIED.field(), sort);
       case filename:
-        return makeBuilder(ElasticFields.FILENAME.field() + SORT_INDEX, sort);
+        return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort);
       case filetype:
         return makeBuilder(ElasticFields.FILETYPE.field(), sort);
       case filesize:

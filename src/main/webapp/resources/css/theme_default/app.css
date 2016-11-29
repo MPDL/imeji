@@ -695,7 +695,7 @@ iframe#twitter-widget-0 div.root div.stream { height: 20em !important; }
 .imj_metadataProfileList.imj_edit .imj_itemHeader .imj_optionList .imj_optionLabel { min-width: 0; width: auto; }
 .imj_metadataProfileList.imj_edit .statement_area { width: 100%; overflow: none; }
 .imj_metadataProfileList.imj_edit .dropMetadataActive, .imj_metadataProfileList.imj_edit .dropChildActive { border-color: #6CAE2F !important; }
-.imj_metadataProfileList.imj_edit .drop-hover { min-height: 1em; background-color: #F0F0F0 !important; }
+.imj_metadataProfileList.imj_edit .drop-hover { min-height: 1em; background-color: #5e5e5e !important; }
 .imj_metadataProfileList.imj_edit .imj_dropArea { display: block; min-width: 85%; }
 .imj_metadataProfileList.imj_edit .imj_dropArea .imj_orderInfo { display: none; }
 .imj_metadataProfileList.imj_edit .imj_dropArea:hover .imj_orderInfo { display: inline; }
@@ -1527,7 +1527,7 @@ iframe#twitter-widget-0 div.root div.stream { height: 20em !important; }
 .imj_metadataProfileList.imj_edit .imj_itemHeader .imj_optionList .imj_optionLabel { min-width: 0; width: auto; }
 .imj_metadataProfileList.imj_edit .statement_area { width: 100%; overflow: none; }
 .imj_metadataProfileList.imj_edit .dropMetadataActive, .imj_metadataProfileList.imj_edit .dropChildActive { border-color: #6CAE2F !important; }
-.imj_metadataProfileList.imj_edit .drop-hover { min-height: 1em; background-color: #F0F0F0 !important; }
+.imj_metadataProfileList.imj_edit .drop-hover { min-height: 1em; background-color: #5e5e5e !important; }
 .imj_metadataProfileList.imj_edit .imj_dropArea { display: block; min-width: 85%; }
 .imj_metadataProfileList.imj_edit .imj_dropArea .imj_orderInfo { display: none; }
 .imj_metadataProfileList.imj_edit .imj_dropArea:hover .imj_orderInfo { display: inline; }
@@ -1975,8 +1975,6 @@ html body .imj_siteWrapper .imj_mainContentWrapper .imj_mediaEntryDetailPage .im
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_mediaEntryDetailPage .imj_metadataWrapper .imj_submitPanel { display: inline-block; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_mediaEntryDetailPage .imj_metadataWrapper .imj_submitPanel a { font-size: 1.2em !important; height: 20px !important; display: inline; padding: 5px 20px 5px 20px; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_fileUploadContainer { border: 1px dashed #6CAE2F; }
-html body .imj_siteWrapper .imj_mainContentWrapper .imj_modalDialogBox { font-size: 1.2em; background: white; border-radius: 2px; border: 1px solid #F0F0F0; min-width: 400px; left: 720px; }
-html body .imj_siteWrapper .imj_mainContentWrapper .imj_modalDialogBox .imj_submitPanel { display: inline-block !important; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_administrationTiledList a { font-size: 0.9em; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_collectionEntryPage .imj_headline, html body .imj_siteWrapper .imj_mainContentWrapper .imj_collectionEntryPage .imj_administrationTiledList .imj_adminPanel .imj_config_headline, .imj_administrationTiledList .imj_adminPanel html body .imj_siteWrapper .imj_mainContentWrapper .imj_collectionEntryPage .imj_config_headline { width: 100%; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_collectionEntryPage .imj_headline a, html body .imj_siteWrapper .imj_mainContentWrapper .imj_collectionEntryPage .imj_administrationTiledList .imj_adminPanel .imj_config_headline a, .imj_administrationTiledList .imj_adminPanel html body .imj_siteWrapper .imj_mainContentWrapper .imj_collectionEntryPage .imj_config_headline a { font-size: 1em; line-height: 1em; }
@@ -2033,7 +2031,6 @@ html body .imj_siteWrapper .imj_mainContentWrapper .imj_listBody span.imj_option
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_listBody span.imj_optionSet label { width: 100%; overflow: hidden; max-width: 70%; text-align: left; padding-left: 10px; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_listBody span.imj_optionSet .imj_optionLabel { max-width: 70%; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_listBody .imj_listItem dl { padding-left: 0; }
-html body .imj_siteWrapper .imj_mainContentWrapper .imj_listBody .imj_tileItem { width: 158px; margin: 0; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_listBody .imj_tileItem .imj_tooltip { box-shadow: none; background: #444444; border-radius: 2px; border: 1px solid #313131; padding: 10px; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_listBody .imj_tileItem .imj_tooltip a { color: #6CAE2F; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_listBody .imj_tileItem .imj_tooltip a:hover { color: #85cc44; }
@@ -2080,7 +2077,8 @@ html body .imj_siteWrapper .imj_siteFooter { width: initial; height: 60px !impor
 .imj_overlayMenu .imj_menuHeader .selectNone:before { font-family: FontAwesome; content: "\f00d "; padding-right: 0.1em; }
 .imj_overlayMenu .imj_menuText { text-align: left; line-height: 175%; padding: 0.5em 1em; display: block; }
 .imj_overlayMenu .imj_menuSimpleSearch { width: auto; min-width: 0; font-size: 1.2em; }
-.imj_overlayMenu .imj_menuSimpleSearch li { border-top: 1px dashed #313131; padding: 0.5em 1em; }
+.imj_overlayMenu .imj_menuSimpleSearch li { border-top: 1px dashed #313131; padding: 0.5em 1em; text-transform: uppercase; font-size: 0.9em; cursor: pointer !important; }
+.imj_overlayMenu .imj_menuSimpleSearch li:hover > a { color: #F0F0F0; }
 .imj_overlayMenu .imj_menuSimpleSearch .imj_simpleSearchInput { width: 200em !important; }
 .imj_overlayMenu .imj_menuBody, .imj_overlayMenu .imj_menuSimpleSearch { display: none; position: absolute; background-color: #444444; border: 1px solid #313131; }
 .imj_overlayMenu:hover .imj_menuHeader { color: #85cc44; }
@@ -2088,8 +2086,11 @@ html body .imj_siteWrapper .imj_siteFooter { width: initial; height: 60px !impor
 .imj_overlayMenu .imj_criticalItem:hover { background-color: #D80000; }
 .imj_overlayMenu .imj_listItemSeparator { padding-top: 0.181818em; border-top: 0 solid #6CAE2F; }
 .imj_overlayMenu li { line-height: 175%; padding: 0.272727em 1em; }
-.imj_overlayMenu li:hover { background-color: #5e5e5e; }
 .imj_overlayMenu .hovered { background-color: #5e5e5e; }
+.imj_overlayMenu .hovered:hover { background-color: #5e5e5e !important; }
+
+.imj_modalDialogBox { background-color: color-13; font-size: 1.2em; border: 1px solid #313131; min-width: 400px; -webkit-box-shadow: none !important; -moz-box-shadow: none !important; box-shadow: none !important; }
+.imj_modalDialogBox .imj_submitPanel { display: inline-block !important; }
 
 .fa-chevron-right:before { content: "\f105" !important; }
 

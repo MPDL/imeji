@@ -20,9 +20,8 @@
             "type":"string",
             "index":"not_analyzed"
          },
-         "filename":{
+         "name":{
             "type":"string",
-            "analyzer":"ngram_analyzer",
             "fields":{
                "sort":{
                   "type":"string",

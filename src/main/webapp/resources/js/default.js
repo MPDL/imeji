@@ -677,9 +677,7 @@ function goToSearch(index) {
  * Actions for the search menu: open, navigate with array keys
  */
 $(".imj_simpleSearchInput").focusin(function() {
-	if ($(this).val() != '') {
-		$(".imj_menuSimpleSearch").show();
-	}
+	$(".imj_menuSimpleSearch").show();
 }).keyup(function(event) {
 	if (event.which == 40) {
 		incrementSelectedSearch();

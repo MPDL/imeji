@@ -48,6 +48,7 @@ import de.mpg.imeji.logic.vo.UserGroup;
  */
 public class ElasticQueryFactory {
   private static final Logger LOGGER = Logger.getLogger(ElasticQueryFactory.class);
+  private static final float FULLTEXT_MIN_SCORE = 0.5f;
 
   /**
    * Build a {@link QueryBuilder} from a {@link SearchQuery}
@@ -350,13 +351,12 @@ public class ElasticQueryFactory {
         // not indexed
         break;
       case filename:
-        return fieldQuery(ElasticFields.FILENAME, pair.getValue(), pair.getOperator(),
-            pair.isNot());
+        return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case filetype:
         BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
         for (String ext : SearchUtils.parseFileTypesAsExtensionList(pair.getValue())) {
           filetypeQuery.should(
-              fieldQuery(ElasticFields.FILENAME, "\"." + ext + "\"", SearchOperators.REGEX, false));
+              fieldQuery(ElasticFields.NAME, "\"." + ext + "\"", SearchOperators.REGEX, false));
         }
         return filetypeQuery;
       case grant:
@@ -698,7 +698,7 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder matchFieldQuery(ElasticFields field, String value) {
     if (field == ElasticFields.ALL) {
-      return QueryBuilders.queryStringQuery(value);
+      return QueryBuilders.queryStringQuery("*" + value + "*");
     }
     return QueryBuilders.queryStringQuery(field.field() + ":" + value);
   }

@@ -18,7 +18,7 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
  */
 public final class ElasticItem extends ElasticProperties {
   private final String folder;
-  private final String filename;
+  private final String name;
   private final String license;
   private final String filetype;
   private final long size;
@@ -36,7 +36,7 @@ public final class ElasticItem extends ElasticProperties {
     super(item);
     this.checksum = item.getChecksum();
     this.folder = item.getCollection().toString();
-    this.filename = item.getFilename();
+    this.name = item.getFilename();
     this.space = space;
     this.license = getLicenseName(item);
     this.size = item.getFileSize();
@@ -50,13 +50,6 @@ public final class ElasticItem extends ElasticProperties {
   private String getLicenseName(Item item) {
     License license = LicenseUtil.getActiveLicense(item);
     return license != null ? license.getName() : null;
-  }
-
-  /**
-   * @return the filename
-   */
-  public String getFilename() {
-    return filename;
   }
 
   /**
@@ -102,4 +95,9 @@ public final class ElasticItem extends ElasticProperties {
   public String getLicense() {
     return license;
   }
+
+  public String getName() {
+    return name;
+  }
+
 }
