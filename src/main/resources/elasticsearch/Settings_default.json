@@ -10,9 +10,6 @@
 				   "filter": [
 		            "lowercase"
 		           ]
-		        },
-				"simple_search": {
-		          "tokenizer": "lowercase"
 		        }
             },
             "tokenizer":{
