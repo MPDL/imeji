@@ -698,8 +698,8 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder matchFieldQuery(ElasticFields field, String value) {
     if (field == ElasticFields.ALL) {
-      return QueryBuilders.queryStringQuery(value + " " + ElasticFields.NAME.field() + ":" + value)
-          .quoteAnalyzer("standard");
+      return QueryBuilders
+          .queryStringQuery(value + " " + ElasticFields.NAME.field() + ".suggest:" + value);
     }
     return QueryBuilders.queryStringQuery(field.field() + ":" + value);
   }

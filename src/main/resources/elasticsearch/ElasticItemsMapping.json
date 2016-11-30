@@ -1,7 +1,7 @@
 {
    "items":{
       "properties":{
-      	"id":{
+         "id":{
             "type":"string",
             "index":"not_analyzed"
          },
@@ -22,17 +22,22 @@
          },
          "name":{
             "type":"string",
-            "analyzer":"edgegram_analyzer",
-            "search_analyzer": "simple_search",
-            "include_in_all":false,
             "fields":{
-               "sort":{
+               "suggest":{
                   "type":"string",
-                  "analyzer":"XXX_ANALYSER_XXX"
+                  "analyzer":"edgegram_analyzer",
+                  "search_analyzer":"standard",
+                  "include_in_all":false,
+                  "fields":{
+                     "sort":{
+                        "type":"string",
+                        "analyzer":"XXX_ANALYSER_XXX"
+                     }
+                  }
                }
             }
          },
-          "license":{
+         "license":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false

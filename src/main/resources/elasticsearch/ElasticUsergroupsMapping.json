@@ -8,9 +8,20 @@
          },
          "name":{
             "type":"string",
-            "analyzer":"edgegram_analyzer",
-            "search_analyzer": "simple_search",
-            "include_in_all":false
+            "fields":{
+               "suggest":{
+                  "type":"string",
+                  "analyzer":"edgegram_analyzer",
+                  "search_analyzer":"standard",
+                  "include_in_all":false,
+                  "fields":{
+                     "sort":{
+                        "type":"string",
+                        "analyzer":"XXX_ANALYSER_XXX"
+                     }
+                  }
+               }
+            }
          },
 	     "read":{
 	       "type":"string",
