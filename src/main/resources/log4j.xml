@@ -9,10 +9,10 @@
 
 	<!-- A time/date based rolling appender -->
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
- 		<param name="File" value="${catalina.base}/logs/imeji.out" />
+ 		<param name="File" value="${catalina.base}/logs/imeji.log" />
 		<param name="Threshold" value="info" />
 		<!-- Rollover at midnight each day -->
-		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<!-- The default pattern: Date Priority [Category] Message\n -->
 			<param name="ConversionPattern" value="%d [%t] %-5p %c- %m%n" />

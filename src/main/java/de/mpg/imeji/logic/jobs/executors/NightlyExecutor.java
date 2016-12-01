@@ -26,10 +26,9 @@ public class NightlyExecutor {
    * The minute the executor will be executate at
    */
   private static final int JOB_MINUTE = 0;
-  /**
-   */
-  private static Calendar NEXT_JOB_DATE = scheduleNextDate();
-  private static ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+  private static final Calendar NEXT_JOB_DATE = scheduleNextDate();
+  private static final int JOB_PERIOD_IN_HOURS = 24;
+  private static final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 
 
   /**
@@ -39,9 +38,9 @@ public class NightlyExecutor {
     // Execute first job (by imeji start)
     executor.execute(new NightlyJob());
     // Schedule the next executions
-    executor.scheduleAtFixedRate(new NightlyJob(), getDelay(), 1, TimeUnit.DAYS);
-    LOGGER.info(
-        "Nightly Executor started. First job planned at " + NEXT_JOB_DATE.getTime().toString());
+    executor.scheduleAtFixedRate(new NightlyJob(), getDelay(), JOB_PERIOD_IN_HOURS, TimeUnit.HOURS);
+    LOGGER.info("Nightly Executor started. First job will start in " + getDelay()
+        + " hours (around: " + NEXT_JOB_DATE.getTime().toString() + ")");
 
   }
 
@@ -76,18 +75,14 @@ public class NightlyExecutor {
   }
 
   /**
-   * Calculate the Delay until the next Job execution in milliseconds
+   * Calculate the Delay until the next Job execution in hours
    *
    * @return
    */
   private static long getDelay() {
-    return NEXT_JOB_DATE.getTimeInMillis() - System.currentTimeMillis();
+    long delayInMs = NEXT_JOB_DATE.getTimeInMillis() - System.currentTimeMillis();
+    Calendar delay = Calendar.getInstance();
+    delay.setTimeInMillis(delayInMs);
+    return delay.get(Calendar.HOUR_OF_DAY);
   }
-
-  public static void main(String[] args) {
-    NightlyExecutor nightlyExecutor = new NightlyExecutor();
-    nightlyExecutor.start();
-
-  }
-
 }
