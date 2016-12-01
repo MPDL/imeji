@@ -24,60 +24,61 @@
             	<h:outputText value="#{Configuration.maintenanceMessage}" escape="false"/>
             </h:panelGroup>
             <div class="#{siteWrapperClass}">
-                <ui:insert name="init"/>
-                <ui:include src="component/header/header_default.xhtml"/>
-                 <!-- Search Query -->
-                <ui:insert name="searchQuery"/>
-	                 <!-- headline -->
-                 <div class="imj_siteContentHeadline #{empty headline ? 'imj_invisible' : ''}">
-                    <h1>
-                        #{headline.toString().trim()}
-                        <ui:fragment rendered="#{headlineSecondRow != null and headlineSecondRow.toString().trim().length() > 0}">
-                            <br/>
-                            #{headlineSecondRow.toString().trim()}
-                        </ui:fragment>
-                    </h1>
-                </div>
-                <div class="imj_siteContentStatus #{headline.toString().trim().length() == 0 ? 'imj_invisible' : ''}">
-                	<imjc:iconStatus id="status" imejiResource="#{imejiResource}"/>
-                </div>
-               
-                <!-- Actions Menu -->
-                <div id="actionsMenuArea">
-               		<ui:insert name="actionsMenu"/>
-                </div>
-                <!-- Message area -->
-                   <h:panelGroup id="imj_pageMessageArea" layout="block" styleClass="imj_pageMessageArea" rendered="#{MessagesBean.hasMessages}">
-
-                       <ui:fragment rendered="#{MessagesBean.hasMessages}">
-                           <ui:fragment rendered="#{MessagesBean.numberOfMessages == 1}">
-                               <h:messages styleClass="imj_messageList"
-                                           errorClass="imj_messageError" warnClass="imj_messageWarn" fatalClass="imj_messageFatal" infoClass="imj_messageInfo" 
-                                           layout="list" globalOnly="false" showDetail="false" showSummary="true"/>
-                           </ui:fragment>
-
-                           <ui:fragment rendered="#{MessagesBean.numberOfMessages != 1}">
-                               <ui:fragment rendered="#{MessagesBean.hasErrorMessages}">
-                                   <div class="imj_messageTitleWarn"><h:outputText value="#{lbl.warning_lblMessageHeader}"/></div>
-                                   <h:messages styleClass="imj_messageList"
-                                               errorClass="imj_messageError" warnClass="imj_messageWarn" fatalClass="imj_messageFatal" infoClass="imj_messageInfo" 
-                                               layout="list" globalOnly="false" showDetail="false" showSummary="true"/>
-                               </ui:fragment>
-
-                               <ui:fragment rendered="#{!MessagesBean.hasErrorMessages}">
-                                   <div class="imj_messageTitleInfo"><h:outputText value="#{lbl.info_lblMessageHeader}"/></div>
-                                   <h:messages styleClass="imj_messageList"
-                                               errorClass="imj_messageError" warnClass="imj_messageWarn" fatalClass="imj_messageFatal" infoClass="imj_messageInfo" 
-                                               layout="list" globalOnly="false" showDetail="false" showSummary="true"/>
-                               </ui:fragment>
-                           </ui:fragment>
-                       </ui:fragment>
-                   </h:panelGroup>
-                <!-- content wrapper -->
-                <div class="imj_mainContentWrapper">
-                    <ui:insert name="mainContent"/>
-                    <div class="push"/>
-                </div>     
+            	<div class="imj_allContentWrapper">
+	                <ui:insert name="init"/>
+	                <ui:include src="component/header/header_default.xhtml"/>
+	                 <!-- Search Query -->
+	                <ui:insert name="searchQuery"/>
+		                 <!-- headline -->
+	                 <div class="imj_siteContentHeadline #{empty headline ? 'imj_invisible' : ''}">
+	                    <h1>
+	                        #{headline.toString().trim()}
+	                        <ui:fragment rendered="#{headlineSecondRow != null and headlineSecondRow.toString().trim().length() > 0}">
+	                            <br/>
+	                            #{headlineSecondRow.toString().trim()}
+	                        </ui:fragment>
+	                    </h1>
+	                </div>
+	                <div class="imj_siteContentStatus #{headline.toString().trim().length() == 0 ? 'imj_invisible' : ''}">
+	                	<imjc:iconStatus id="status" imejiResource="#{imejiResource}"/>
+	                </div>
+	               
+	                <!-- Actions Menu -->
+	                <div id="actionsMenuArea">
+	               		<ui:insert name="actionsMenu"/>
+	                </div>
+	                <!-- Message area -->
+	                   <h:panelGroup id="imj_pageMessageArea" layout="block" styleClass="imj_pageMessageArea" rendered="#{MessagesBean.hasMessages}">
+	
+	                       <ui:fragment rendered="#{MessagesBean.hasMessages}">
+	                           <ui:fragment rendered="#{MessagesBean.numberOfMessages == 1}">
+	                               <h:messages styleClass="imj_messageList"
+	                                           errorClass="imj_messageError" warnClass="imj_messageWarn" fatalClass="imj_messageFatal" infoClass="imj_messageInfo" 
+	                                           layout="list" globalOnly="false" showDetail="false" showSummary="true"/>
+	                           </ui:fragment>
+	
+	                           <ui:fragment rendered="#{MessagesBean.numberOfMessages != 1}">
+	                               <ui:fragment rendered="#{MessagesBean.hasErrorMessages}">
+	                                   <div class="imj_messageTitleWarn"><h:outputText value="#{lbl.warning_lblMessageHeader}"/></div>
+	                                   <h:messages styleClass="imj_messageList"
+	                                               errorClass="imj_messageError" warnClass="imj_messageWarn" fatalClass="imj_messageFatal" infoClass="imj_messageInfo" 
+	                                               layout="list" globalOnly="false" showDetail="false" showSummary="true"/>
+	                               </ui:fragment>
+	
+	                               <ui:fragment rendered="#{!MessagesBean.hasErrorMessages}">
+	                                   <div class="imj_messageTitleInfo"><h:outputText value="#{lbl.info_lblMessageHeader}"/></div>
+	                                   <h:messages styleClass="imj_messageList"
+	                                               errorClass="imj_messageError" warnClass="imj_messageWarn" fatalClass="imj_messageFatal" infoClass="imj_messageInfo" 
+	                                               layout="list" globalOnly="false" showDetail="false" showSummary="true"/>
+	                               </ui:fragment>
+	                           </ui:fragment>
+	                       </ui:fragment>
+	                   </h:panelGroup>
+	                <!-- content wrapper -->
+	                <div class="imj_mainContentWrapper">
+	                    <ui:insert name="mainContent"/>
+	                </div>
+	             </div>
                 <!-- footer -->
                 <ui:include src="component/footer/footer_default.xhtml"/>
             </div>

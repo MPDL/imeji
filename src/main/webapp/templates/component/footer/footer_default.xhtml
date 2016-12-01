@@ -3,7 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
-	<h:panelGroup layout="block" styleClass="imj_siteFooter">
+	<div class="imj_siteFooter">
 		<!-- begin: footer section-->
 		<div class="imj_startpageFooterLogos">
 			<div class="imj_poweredby_software">
@@ -50,7 +50,7 @@
 			</div>
 		</div>
 		<!-- end: footer section -->
-	</h:panelGroup>
+	</div>
 	<h:inputHidden id="instituteNameForIP" value="#{SessionBean.instituteNameByIP}"/>
 	<h:inputHidden id="instituteIdForIP" value="#{SessionBean.instituteIdByIP}"/>
 	<h:inputHidden id="instituteNameForUser" value="#{SessionBean.instituteByUser}"/>
