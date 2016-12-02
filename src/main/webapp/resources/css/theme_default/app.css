@@ -1696,7 +1696,9 @@ html body .imj_cancelButton:hover, html body .imj_resetButton:hover { background
 html body .imj_submitPanel { display: inline-block !important; }
 html body .imj_modalDialogBackground { background: rgba(49, 49, 49, 0.6); }
 html body .imj_modalDialogBox .imj_confirmationText { font-size: 1.2em; }
-html body .imj_siteWrapper { border: none; margin-bottom: 0; }
+html body .imj_allContentWrapper { min-height: 100vh !important; margin-bottom: -5em !important; }
+html body .imj_allContentWrapper:after { content: ""; display: block; }
+html body .imj_siteWrapper { min-height: 100% !important; border: none; margin-bottom: 0; }
 html body .imj_siteWrapper .imj_logo { background-color: #313131; background-position-y: center; background-position-x: left; padding: 15px 10px 15px 10px; }
 html body .imj_siteWrapper .imj_siteHeader { padding: 0; margin-bottom: 10px; }
 html body .imj_siteWrapper .imj_siteHeader .imj_metaMenuStandardSingleLine { margin: 0; height: 40px; max-width: 70%; width: inherit; float: right; padding: 10px 20px 10px 10px; background: #313131; }
@@ -2069,7 +2071,7 @@ html body .imj_siteWrapper .imj_menuBody { border: 1px solid #313131; background
 html body .imj_siteWrapper .imj_menuBody li:hover { background-color: #444444; }
 html body .imj_siteWrapper .imj_menuBody span { margin: 0.272727em 1em; font-size: 1em; }
 html body .imj_siteWrapper .imj_invisible { display: none; }
-html body .imj_siteWrapper .imj_siteFooter { width: initial; height: 60px !important; padding: 20px; left: 0; bottom: 0; min-height: 3em; background-color: #313131; }
+html body .imj_siteWrapper .imj_siteFooter { width: initial; padding: 1em !important; left: 0; bottom: 0; height: 3em; background-color: #313131 !important; }
 
 .imj_overlayMenu { display: inline-block; padding: 0.125em 0.25em; }
 .imj_overlayMenu .imj_menuHeader { text-align: left; color: #6CAE2F; cursor: pointer; }
