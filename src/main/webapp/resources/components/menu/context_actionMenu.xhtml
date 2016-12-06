@@ -274,19 +274,19 @@
 												</h:outputLink>
 											</li>
 											
-										<ui:fragment rendered ="#{adminVO and cc.attrs.curMainMenu == 'collection'}">
-											<li>
-												<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and cc.attrs.hasDoi}">
-													<h:outputText value="#{lbl.change_doi}"/>
-												</h:outputLink>
-												<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog('createDOIDialog');" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != ''}">
-													<h:outputText value="#{lbl.createDOI}" rendered="#{!cc.attrs.hasDoi}"/>
-												</h:outputLink>
-												<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl == null or Configuration.doiServiceUrl == ''}">
-													<h:outputText value="#{lbl.createDOI}" rendered="#{!cc.attrs.hasDoi}"/>
-													<h:outputText value="#{lbl.change_doi}" rendered="#{cc.attrs.hasDoi}"/>
-												</h:outputLink>
-											</li>
+											<ui:fragment rendered ="#{adminVO and cc.attrs.curMainMenu == 'collection' and WorkflowBean.createDOI(cc.attrs.vo)}">
+												<li>
+													<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and cc.attrs.hasDoi}">
+														<h:outputText value="#{lbl.change_doi}"/>
+													</h:outputLink>
+													<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog('createDOIDialog');" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != ''}">
+														<h:outputText value="#{lbl.createDOI}" rendered="#{!cc.attrs.hasDoi}"/>
+													</h:outputLink>
+													<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl == null or Configuration.doiServiceUrl == ''}">
+														<h:outputText value="#{lbl.createDOI}" rendered="#{!cc.attrs.hasDoi}"/>
+														<h:outputText value="#{lbl.change_doi}" rendered="#{cc.attrs.hasDoi}"/>
+													</h:outputLink>
+												</li>
 											</ui:fragment>
 										</ui:fragment>							
 										<ui:fragment rendered="#{deleteContentVO and cc.attrs.curMainMenu == 'collection' and paginatorListSessionBean!=null}">
