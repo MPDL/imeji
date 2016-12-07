@@ -122,7 +122,7 @@
 											<h:outputLink value="#" styleClass="imj_cancelButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteUser#{row.index}');">
 												<h:outputText value="#{lbl.user_admin_delete}"/>
 											</h:outputLink>
-											<dialog:confirmationDialog submitAction="deleteUser" bean="#{UsersBean}" confirmationText="#{msg.confirmation_delete_user}" submitLabel="#{lbl.user_admin_delete}" dialogId="deleteUser#{row.index}" identifierName="email" identifierValue="#{user.email}"/>
+											<dialog:confirmationDialog submitAction="deleteUser" bean="#{UsersBean}" confirmationText="#{msg.confirmation_delete_user}: #{user.person.completeName} (#{user.email})?" submitLabel="#{lbl.user_admin_delete}" dialogId="deleteUser#{row.index}" identifierName="email" identifierValue="#{user.email}"/>
 
 										</div>
 									</ui:fragment>
