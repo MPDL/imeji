@@ -16,6 +16,16 @@
 					</h:outputLink>
 				</div>
 			</div>
+			<div class="imj_poweredby_institution">
+				<ui:fragment rendered="#{Configuration.startPageFooterLogos != ''}">
+							<h:outputText value="#{Configuration.startPageFooterLogos}" escape="false"/>
+				</ui:fragment>
+				<ui:fragment rendered="#{Configuration.startPageFooterLogos == ''}">
+				  <h:outputLink title="Max Planck Digital Library" target="_blank" value="http://mpdl.mpg.de">
+				  		<img class="imj_community_logo" src="/imeji/resources/imj_iconset/mpdl.png" alt="MPDL logo"/>
+				  </h:outputLink>
+				</ui:fragment>
+			</div>
 			<div id="poweredBy" class="imj_poweredby_imprint">
 				<ui:fragment rendered="#{Configuration.impressumText != '' or Configuration.impressumUrl != ''}">
 		 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Configuration.impressumUrl}" rendered="#{Configuration.impressumUrl != ''}">
@@ -35,16 +45,7 @@
 		 		    </h:outputLink>
 	 		    </ui:fragment>
 			</div>
-			<div class="imj_poweredby_institution">
-				<ui:fragment rendered="#{Configuration.startPageFooterLogos != ''}">
-							<h:outputText value="#{Configuration.startPageFooterLogos}" escape="false"/>
-				</ui:fragment>
-				<ui:fragment rendered="#{Configuration.startPageFooterLogos == ''}">
-				  <h:outputLink title="Max Planck Digital Library" target="_blank" value="http://mpdl.mpg.de">
-				  		<img class="imj_community_logo" src="/imeji/resources/imj_iconset/mpdl.png" alt="MPDL logo"/>
-				  </h:outputLink>
-				</ui:fragment>
-			</div>
+			
 			<div id="imejiVersion" class="imj_poweredby_imprint">
 				#{SessionBean.version}
 			</div>
