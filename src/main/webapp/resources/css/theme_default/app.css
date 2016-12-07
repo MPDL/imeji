@@ -1747,7 +1747,7 @@ html body .imj_siteWrapper #actionsMenuArea .imj_contentMenu { margin: 0; }
 html body .imj_siteWrapper #actionsMenuArea .imj_contentMenu .imj_contentMenuItem { font-weight: 600; }
 html body .imj_siteWrapper #actionsMenuArea .imj_contentMenu .imj_contentMenuItem:hover { background: transparent; }
 html body .imj_siteWrapper #actionsMenuArea .imj_contentSubMenu { width: 96%; padding: 0; height: 15px; border-bottom: 1px solid #6CAE2F; padding-bottom: 10px; padding-top: 10px; margin-top: 20px; }
-html body .imj_siteWrapper .imj_mainContentWrapper { height: 100%; min-height: 100%; width: 100%; padding: 20px; margin-top: 0; padding-bottom: 2em; margin-bottom: 30px; background-color: #313131; }
+html body .imj_siteWrapper .imj_mainContentWrapper { height: 100%; min-height: 100%; width: 100%; padding: 20px; margin-top: 0; padding-bottom: 2em; background-color: #313131; }
 html body .imj_siteWrapper .imj_mainContentWrapper hr { border-style: none; width: 100%; height: 1px !important; background: #F0F0F0; border-width: 1px; }
 html body .imj_siteWrapper .imj_mainContentWrapper h3 { padding-left: 0 !important; font-size: 1.3em; line-height: 1.4em; font-weight: 600; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_paginator { background-color: rgba(255, 255, 255, 0); font-size: 110% !important; width: 96%; padding-left: 0; padding-right: 0; margin-top: 0; border-top: 1px solid #6CAE2F; }
@@ -2064,7 +2064,7 @@ html body .imj_siteWrapper .imj_listHeader a:hover { color: #85cc44; }
 html body .imj_siteWrapper .imj_listHeader a:hover { background: transparent; }
 html body .imj_siteWrapper .imj_pageMessageArea { background-color: #313131; margin: 0; padding: 10px 10px 10px 25px; width: 100%; }
 html body .imj_siteWrapper .imj_pageMessageArea .imj_messageInfo, html body .imj_siteWrapper .imj_pageMessageArea .imj_messageError { padding-left: 0; }
-html body .imj_siteWrapper .imj_searchQueryDisplay { margin: 0 0 10px 0; padding: 5px 25px 5px 25px !important; float: left; background-color: #313131; width: 96%; }
+html body .imj_siteWrapper .imj_searchQueryDisplay { margin: 0 0 10px 0; padding: 5px 25px 5px 25px !important; float: left; background-color: #313131; width: 99%; }
 html body .imj_siteWrapper .imj_searchQueryDisplay .imj_submitButton { display: inline; }
 html body .imj_siteWrapper .imj_searchQueryDisplay .imj_searchQueryText { color: #6CAE2F; }
 html body .imj_siteWrapper .imj_menuBody { border: 1px solid #313131; background-color: #444444; }
@@ -2072,6 +2072,7 @@ html body .imj_siteWrapper .imj_menuBody li:hover { background-color: #444444; }
 html body .imj_siteWrapper .imj_menuBody span { margin: 0.272727em 1em; font-size: 1em; }
 html body .imj_siteWrapper .imj_invisible { display: none; }
 html body .imj_siteWrapper .imj_siteFooter { width: initial; padding: 1em !important; left: 0; bottom: 0; height: 3em; background-color: #313131 !important; }
+html body .imj_siteWrapper .imj_siteFooter .imj_poweredby_institution { margin-top: 0; }
 
 .imj_overlayMenu { display: inline-block; padding: 0.125em 0.25em; }
 .imj_overlayMenu .imj_menuHeader { text-align: left; color: #6CAE2F; cursor: pointer; }
