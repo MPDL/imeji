@@ -90,11 +90,10 @@
 			</h:outputLink>
 			<h:outputText value="#{itemBean.edit.checkToggleState}"/>
 		</div>
-		
 		<!-- MetaDataList - LIST BODY START -->
 		<h:panelGroup id="metadata" layout="block" styleClass="imj_listBody">
 			<ui:fragment rendered="#{itemBean.tab == null}">
-				<h:form id="editItem" onkeypress="if(event.keyCode == 13) return false;">
+				<h:form id="editItem">
 					<br/>
 					<!-- MetaDataList - media data Wrapper START -->
 					<h:panelGroup layout="block" styleClass="imj_metadataWrapper">

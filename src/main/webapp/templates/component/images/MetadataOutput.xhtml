@@ -4,7 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<!-- MetaDataOutput START -->
-	<h:outputText styleClass="imj_metadataValueEntry" value="#{md.text}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#text' and md.text != null}"/>
+	<h:outputText styleClass="imj_metadataValueEntry" style="white-space: pre-wrap;" value="#{md.text}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#text' and md.text != null}"/>
 	<h:outputText styleClass="imj_metadataValueEntry" value="#{md.number}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#number' and md.number != null}">
 		<f:converter converterId="DoubleConverter"/>
 	</h:outputText>
@@ -13,12 +13,12 @@
 	<!-- MetaDataOutput - Link -->
 	<h:outputLink value="#{md.uri}" target="_blank" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#link'}">
 		<h:outputText value="#{md.uri}" rendered="#{md.label == ''}"/>
-		<h:outputText value="#{md.label}" rendered="#{md.label != ''}"/>
+		<h:outputText value="#{md.label}" rendered="#{md.label != ''}" style="white-space: pre-wrap;"/>
 	</h:outputLink>
 			
 	<!-- MetaDataOutput - License -->
 	<ui:fragment rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#license'}">
-		<h:outputText styleClass="imj_metadataValueEntry" value="#{md.license}" rendered="#{md.externalUri== null and md.license != null}"/>
+		<h:outputText styleClass="imj_metadataValueEntry" value="#{md.license}" rendered="#{md.externalUri== null and md.license != null}" style="white-space: pre-wrap;"/>
 		<h:outputLink rendered="#{md.externalUri != null}" value="#{md.externalUri}">
 			<h:outputText styleClass="imj_metadataValueEntry" value="#{md.license}" rendered="#{md.license != null}"/>
 			<h:outputText styleClass="imj_metadataValueEntry" value="#{md.externalUri}" rendered="#{md.license == null or md.license == ''}"/>
@@ -49,7 +49,7 @@
 			
 	<!-- MetaDataOutput - Geolocation -->
 	<ui:fragment rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#geolocation'}">
-		<h:outputText value="#{md.name} (" rendered="#{md.name != null}"/>
+		<h:outputText value="#{md.name} (" rendered="#{md.name != null}" style="white-space: pre-wrap;"/>
 		<h:outputText value="#{md.longitude}/#{md.latitude}"/>
 		<h:outputText value=")" rendered="#{md.name != null}"/>
 		<ui:fragment rendered="#{md.latitude == 'NaN' or md.latitude == '' or md.latitude == null or  md.longitude == 'NaN' or md.longitude == '' or md.longitude == null }">

@@ -28,9 +28,7 @@
 			<ui:fragment rendered="#{cc.attrs.itemBean.typeNamespace =='http://imeji.org/terms/metadata#text'}">
 				<div class="imj_metadataSet">
 					<h:outputText value="#{cc.attrs.itemLabelBean.internationalizedLabels[cc.attrs.itemStatement.id]} (#{cc.attrs.itemLabelBean.lang})" styleClass="imj_metadataLabel" rendered="#{cc.attrs.hideLabel == false}"/>
-					
-					<h:inputTextarea id="inputText" name="inputText"  html5:placeholder="#{lbl.placeholder_text}" styleClass="imj_metadataValue autocomplete_js" value="#{cc.attrs.itemBean.text}" rendered="#{!cc.attrs.suggestBean.suggests[cc.attrs.itemStatement.id].hasRestrictedValues}" onfocus="getDatasourceUrl('#{cc.attrs.itemStatement.vocabulary}', '#{cc.attrs.navBean.autocompleteUrl}')"/>
-					
+					<h:inputTextarea id="inputText" name="inputText" row="3" html5:placeholder="#{lbl.placeholder_text}" styleClass="imj_metadataValue autocomplete_js" value="#{cc.attrs.itemBean.text}" rendered="#{!cc.attrs.suggestBean.suggests[cc.attrs.itemStatement.id].hasRestrictedValues}" onfocus="getDatasourceUrl('#{cc.attrs.itemStatement.vocabulary}', '#{cc.attrs.navBean.autocompleteUrl}')"/>
 					<h:panelGroup layout="block" styleClass="imj_metadataValue" rendered="#{cc.attrs.suggestBean.suggests[cc.attrs.itemStatement.id].hasRestrictedValues}">
 						<h:selectOneMenu value="#{cc.attrs.itemBean.text}" valueChangeListener="#{cc.attrs.itemBean.predefinedValueListener}" >
 							<f:selectItems value="#{cc.attrs.suggestBean.suggests[cc.attrs.itemStatement.id].restrictedValues}"/>
