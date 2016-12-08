@@ -807,7 +807,7 @@ public class ItemBean extends SuperBean {
     return Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
   }
 
-  public int getWebResoultionWidth() {
+  public int getWebResolutionWidth() {
     int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
     int imgWidth = (int) getContent().getWidth();
     int imgHeight = (int) getContent().getHeight();
@@ -818,7 +818,7 @@ public class ItemBean extends SuperBean {
     return (int) (imgWidth * 1.0 / imgHeight * webSize);
   }
 
-  public int getWebResoultionHeight() {
+  public int getWebResolutionHeight() {
     int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
     int imgWidth = (int) getContent().getWidth();
     int imgHeight = (int) getContent().getHeight();

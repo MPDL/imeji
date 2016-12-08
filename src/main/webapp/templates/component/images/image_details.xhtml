@@ -50,7 +50,7 @@
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 			
-			<h:outputLink id="lnkOriginalData" value="#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDigilib and !itemBean.viewInDataViewer}" >
+			<h:outputLink id="lnkOriginalData" value="#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDigilib and !itemBean.viewInDataViewer}" > 
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 		</div>	
@@ -445,11 +445,22 @@
     			var img = {
     			type: 'legacy-image-pyramid',
     	   
-    	    	levels: [{	
+    	    	levels: [
+    	    		{	
+        	    		url: '#{Navigation.fileUrl}#{itemBean.image.thumbnailImageUrl}',    	    	
+        	    		height: #{itemBean.thumbnailWidth},
+        	    		width: #{itemBean.thumbnailWidth}
+        	    	},
+    	    		{	
     	    		url: '#{Navigation.fileUrl}#{itemBean.image.webImageUrl}',    	    	
-    	    		height: 768,
-    	    		width: 1024
-    	    	}]
+    	    		height: #{itemBean.webResolutionHeight},
+    	    		width: #{itemBean.webResolutionWidth}
+    	    	    },
+        	    	{	
+        	    		url: '#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}',    	    	
+        	    		height: #{itemBean.content.height},
+        	    		width: #{itemBean.content.width}
+        	    	}]
     			};
 
     			var viewer = OpenSeadragon({

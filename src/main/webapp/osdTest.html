@@ -1,20 +1,16 @@
-test
+
 <div id="seadragon-viewer" style="width:800px; height:600px;"></div>
 <script src="//openseadragon.github.io/openseadragon/openseadragon.js"></script>
 <script type="text/javascript">
 
     var img = {
     		type: 'legacy-image-pyramid',
-    	    /*levels:[{
+    	    levels:[{
     	        url: '//openseadragon.github.io/example-images/rbc/rbc0001/2003/2003rosen1799/0001q.jpg',
     	        height: 889,
     	        width:  600
-    	    }]*/
-    	    levels:[{
-    	    	url: '//localhost:8080/imeji/Desert.jpg',
-    	    	height: 768,
-    	    	width: 1024
     	    }]
+    	   
     };
 
     var viewer = OpenSeadragon({
