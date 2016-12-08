@@ -36,7 +36,7 @@ import de.mpg.imeji.presentation.util.CookieUtils;
 public class ItemDetailsBrowse implements Serializable {
   private static final long serialVersionUID = -1627171360319925422L;
   private static final Logger LOGGER = Logger.getLogger(ItemDetailsBrowse.class);
-  private String q;
+  private String query;
   private String containerUri;
   private int currentPosition;
   private SortCriterion sortCriterion;
@@ -55,7 +55,7 @@ public class ItemDetailsBrowse implements Serializable {
    * @param containerId
    */
   public ItemDetailsBrowse(Item item, String type, String containerUri, User user, String spaceId) {
-    this.q = UrlHelper.hasParameter("q") ? UrlHelper.getParameterValue("q") : "";
+    this.query = UrlHelper.hasParameter("q") ? UrlHelper.getParameterValue("q") : "";
     this.containerUri = containerUri;
     this.currentItem = item;
     this.sortCriterion = initSortCriterion();
@@ -76,8 +76,8 @@ public class ItemDetailsBrowse implements Serializable {
     ItemBusinessController controller = new ItemBusinessController();
     try {
       return controller.search(containerUri != null ? URI.create(containerUri) : null,
-          SearchQueryParser.parseStringQuery(q), sortCriterion, user, spaceId, SIZE, getOffset())
-          .getResults();
+          SearchQueryParser.parseStringQuery(query), sortCriterion, user, spaceId, SIZE,
+          getOffset()).getResults();
     } catch (UnprocessableError e) {
       LOGGER.error("Error retrieving items", e);
     }
@@ -129,12 +129,12 @@ public class ItemDetailsBrowse implements Serializable {
     String nextItem = nextItem(items);
     String previousItem = previousItem(items);
     if (nextItem != null) {
-      next = baseUrl + ObjectHelper.getId(URI.create(nextItem)) + "?q=" + this.q + "&pos="
+      next = baseUrl + ObjectHelper.getId(URI.create(nextItem)) + "?q=" + this.query + "&pos="
           + (this.currentPosition + 1);
     }
     if (previousItem != null) {
-      previous = baseUrl + ObjectHelper.getId(URI.create(previousItem)) + "?q=" + this.q + "&pos="
-          + (this.currentPosition - 1);
+      previous = baseUrl + ObjectHelper.getId(URI.create(previousItem)) + "?q=" + this.query
+          + "&pos=" + (this.currentPosition - 1);
     }
   }
 
@@ -176,4 +176,20 @@ public class ItemDetailsBrowse implements Serializable {
   public void setPrevious(String previous) {
     this.previous = previous;
   }
+
+  /**
+   * @return the query
+   */
+  public String getQuery() {
+    return query;
+  }
+
+  /**
+   * @param query the query to set
+   */
+  public void setQuery(String query) {
+    this.query = query;
+  }
+
+
 }

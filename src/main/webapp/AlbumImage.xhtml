@@ -7,7 +7,7 @@
 	
 	<ui:param name="itemBean" value="#{AlbumItemBean}"/>
 	<ui:param name="currentMainMenu" value="album"/>
-	<ui:param name="browseToAllItemsUrl" value="#{Navigation.albumUrl}#{AlbumItemBean.albumId}/browse?q=#{AlbumItemsBean.query}"/>
+	<ui:param name="browseToAllItemsUrl" value="#{Navigation.albumUrl}#{AlbumItemBean.albumId}/browse?q=#{AlbumItemBean.browse.query}"/>
 	<ui:param name="isContentDeletable" value="#{Auth.update(AlbumItemBean.album)}"/>
 	<ui:param name="imejiResource" value="#{AlbumItemBean.image}"/>
 
