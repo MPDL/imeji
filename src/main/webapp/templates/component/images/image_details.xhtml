@@ -11,7 +11,10 @@
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
 			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDigilib and !itemBean.viewInDataViewer}">
-				<h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" />
+				 <!--  <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" /> -->
+				<center>
+					<div id="seadragon-viewer" style="width:400px; height:300px;"></div>
+				</center>
 			</h:outputLink>
 			<h:outputLink id="lnkPicInternalDigilib" value="#{ItemBean.digilibUrl}" target="_blank" rendered="#{itemBean.viewInDigilib}">
 				<h:graphicImage id="picWebResolutionInternalDigilib" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" rendered="#{itemBean.image.status!='WITHDRAWN'}"/>
@@ -434,6 +437,32 @@
 					// return qr.createTableTag();
 					return qr.createImgTag();
 				};
+			</script>
+			
+			<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.js"></script>
+			<script type="text/javascript">
+
+    			var img = {
+    			type: 'legacy-image-pyramid',
+    	   
+    	    	levels: [{	
+    	    		url: '#{Navigation.fileUrl}#{itemBean.image.webImageUrl}',    	    	
+    	    		height: 768,
+    	    		width: 1024
+    	    	}]
+    			};
+
+    			var viewer = OpenSeadragon({
+    
+        		id: "seadragon-viewer",
+        		prefixUrl: "#{Navigation.applicationUrl}/resources/openseadragon/images/",
+        		tileSources: img,
+        		showRotationControl: true,
+        		gestureSettingsTouch: {
+           		 pinchRotate: true
+        		}
+    		});
+
 			</script>
 			
 		</h:panelGroup><!-- END LISTBODY -->

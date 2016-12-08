@@ -53,6 +53,7 @@ public class Navigation implements Serializable {
   public static final Page USERS = new Page("Users", "users");
   public static final Page ADMIN = new Page("Admin", "admin");
   public static final Page DIGILIB = new Page("Digilib", "digilib");
+  public static final Page OPENSEADRAGON = new Page("Openseadragon", "openseadragon");
   public static final Page SINGLEUPLOAD = new Page("Single upload", "singleupload");
   public static final Page REGISTRATION = new Page("Registration", "register");
   public static final Page IMPRINT = new Page("IMPRINT", "imprint");
@@ -95,8 +96,13 @@ public class Navigation implements Serializable {
     return applicationUrl + DIGILIB.getPath();
   }
 
+
   public String getExternalDigilibUrl() {
     return externalDigilibUrl;
+  }
+
+  public String getOpenseadragonUrl() {
+    return applicationUrl + OPENSEADRAGON.getPath();
   }
 
   public String getDomain() {

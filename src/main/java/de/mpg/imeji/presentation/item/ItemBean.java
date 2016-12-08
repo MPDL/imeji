@@ -153,7 +153,13 @@ public class ItemBean extends SuperBean {
 
   public String getDigilibUrl() {
     return getNavigation().getDigilibUrl() + "?id=" + content.getOriginal();
+
   }
+
+  public String getOpenseadragonUrl() {
+    return getNavigation().getOpenseadragonUrl() + "?id=" + content.getOriginal();
+  }
+
 
   /**
    * Initialize the util tab
@@ -796,4 +802,31 @@ public class ItemBean extends SuperBean {
   public void setContent(ContentVO content) {
     this.content = content;
   }
+
+  public int getThumbnailWidth() {
+    return Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
+  }
+
+  public int getWebResoultionWidth() {
+    int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
+    int imgWidth = (int) getContent().getWidth();
+    int imgHeight = (int) getContent().getHeight();
+
+    if (imgWidth <= imgHeight) {
+      return webSize;
+    }
+    return (int) (imgWidth * 1.0 / imgHeight * webSize);
+  }
+
+  public int getWebResoultionHeight() {
+    int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
+    int imgWidth = (int) getContent().getWidth();
+    int imgHeight = (int) getContent().getHeight();
+
+    if (imgWidth <= imgHeight) {
+      return (int) (imgHeight * 1.0 / imgWidth * webSize);
+    }
+    return webSize;
+  }
+
 }
