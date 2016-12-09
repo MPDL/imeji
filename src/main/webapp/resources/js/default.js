@@ -621,9 +621,6 @@ $(function() {
 /*
  * For menu on the right side: set the margin of the body to avoid to be out of page
  */
-$(function() {
-	menuRightOffset();
-});
 function menuRightOffset(){
 	$('.imj_overlayMenu.imj_menuRight').each(function(i, obj) {
 		var menuHeaderWidth = $(this).find(".imj_menuHeader").width();
@@ -633,13 +630,15 @@ function menuRightOffset(){
 	});
 }
 
+/**
+ * Method called when page is ready
+ */
 jQuery(document).ready(function() {
 	customSelectbox();
-	/**
-	 * Trigger the highlight on page load
-	 */
 	highlighter();
+	menuRightOffset();
 });
+
 
 /*******************************************************************************
  * 

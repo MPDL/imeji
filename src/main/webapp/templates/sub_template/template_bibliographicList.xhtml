@@ -15,7 +15,7 @@
 	<!-- Main Content - bibliographic grid list - START -->
 	<ui:define name="mainContent">
 		<h:panelGroup layout="block" id ="ajaxWrapper">
-		
+			
 			<!-- Page Browser GotoBox -->
 			<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes"/>
 			
@@ -56,7 +56,7 @@
 			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
 				<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}"/>
 			</ui:fragment>
-			
+			<script>menuRightOffset();</script>
 		</h:panelGroup>
 	</ui:define>
 	<!-- Main Content - END -->
