@@ -1,0 +1,7 @@
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+
+WITH <http://imeji.org/item>
+DELETE{?item <http://imeji.org/terms/license> ?lic}
+USING <http://imeji.org/item>
+WHERE{?item <http://imeji.org/terms/license> ?lic . not exists{?lic ?p ?o}};

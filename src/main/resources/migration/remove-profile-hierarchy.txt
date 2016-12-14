@@ -1,0 +1,6 @@
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+
+WITH <http://imeji.org/metadataProfile>
+DELETE {?s <http://imeji.org/terms/parent> ?o}
+WHERE{?s <http://imeji.org/terms/parent> ?o};
