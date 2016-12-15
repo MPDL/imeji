@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -99,6 +100,7 @@ public class ItemBean extends SuperBean {
   @ManagedProperty(value = "#{SessionBean.activeAlbum}")
   private Album activeAlbum;
   private static final Logger LOGGER = Logger.getLogger(ItemBean.class);
+  private int rotation;
 
   /**
    * Construct a default {@link ItemBean}
@@ -149,6 +151,7 @@ public class ItemBean extends SuperBean {
       LOGGER.error("Error initialitzing item page", e);
       BeanHelper.error("Error initializing page" + e.getMessage());
     }
+    System.out.println("Bean Innited");
   }
 
   public String getDigilibUrl() {
@@ -805,6 +808,25 @@ public class ItemBean extends SuperBean {
 
   public int getThumbnailWidth() {
     return Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
+
+
+  }
+
+  @PreDestroy
+  public void destroyBean() {
+    /*
+     * System.out.println("Bean Destroyed"); StorageController storageController = new
+     * StorageController(); try { storageController.rotate(getImage().getFullImageUrl().getPath(),
+     * rotation); } catch (ImejiException e) { LOGGER.error("Error while destroying the bean: ", e);
+     * }
+     */
+  }
+
+  public void updateRotation() throws ImejiException {
+    System.out.println("UPDATE ROTATION " + rotation);
+
+    StorageController storageController = new StorageController();
+    storageController.rotate(getImage().getFullImageUrl().getPath(), 90);
   }
 
   public int getWebResolutionWidth() {
@@ -829,4 +851,12 @@ public class ItemBean extends SuperBean {
     return webSize;
   }
 
+  public int getRotation() {
+    return rotation;
+  }
+
+  public void setRotation(int rotation) {
+    this.rotation = rotation;
+
+  }
 }

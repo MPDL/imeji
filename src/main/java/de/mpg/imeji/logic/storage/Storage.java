@@ -25,6 +25,7 @@
 package de.mpg.imeji.logic.storage;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 
@@ -93,12 +94,32 @@ public interface Storage extends Serializable {
   public void delete(String url);
 
   /**
-   * Update the file stored in the passed url with the passed {@link Byte} array
+   * Update the file stored in the passed url with a new original resolution (original resolution is
+   * not updated)
    *
    * @param url
    * @param bytes
    */
-  public void update(String url, File file);
+  public void changeThumbnail(String url, File file);
+
+
+  /**
+   * Update the file defined by the url with a new file
+   * 
+   * @param url
+   * @param file
+   * @throws IOException
+   */
+  public void update(String url, File file) throws IOException;
+
+  /**
+   * Rotate the file
+   * 
+   * @param originalUrl
+   * @param degrees
+   * @throws ImejiException
+   */
+  public void rotate(String originalUrl, int degrees) throws ImejiException;
 
   /**
    * Return a {@link StorageAdministrator} for this {@link Storage}

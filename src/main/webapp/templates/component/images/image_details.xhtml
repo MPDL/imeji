@@ -10,6 +10,14 @@
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
+			<h:form id="rotationForm">
+				<h:inputHidden id="inputTextRotation" value="#{itemBean.rotation}" />
+				<h:commandButton id="buttonUpdateRotation" value="update rotation hidden"  action="#{itemBean.updateRotation}" styleClass="imj_noDisplay">
+					<f:ajax render="@none" execute="@form"/>
+				</h:commandButton>
+			</h:form>
+			
+			<div id="toolbarDiv"></div>
 			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDigilib and !itemBean.viewInDataViewer}">
 				 <!--  <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" /> -->
 				<center>
@@ -467,12 +475,19 @@
     
         		id: "seadragon-viewer",
         		prefixUrl: "#{Navigation.applicationUrl}/resources/openseadragon/images/",
+        		//toolbar: "toolbarDiv",
         		tileSources: img,
         		showRotationControl: true,
         		gestureSettingsTouch: {
            		 pinchRotate: true
         		}
+        		
     		});
+    			
+				viewer.addHandler('rotate',function(){
+					 document.getElementById("rotationForm:inputTextRotation").value= viewer.viewport.getRotation();
+					 document.getElementById("rotationForm:buttonUpdateRotation").click();
+        		});
 
 			</script>
 			

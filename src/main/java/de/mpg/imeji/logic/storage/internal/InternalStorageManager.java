@@ -112,6 +112,11 @@ public class InternalStorageManager implements Serializable {
     }
   }
 
+  public void replaceFile(String url, File file) throws IOException {
+    removeFile(url);
+    copy(file, transformUrlToPath(url));
+  }
+
   /**
    * Replace the {@link File} stored at the passed url by the passed {@link File}
    *
@@ -119,7 +124,7 @@ public class InternalStorageManager implements Serializable {
    * @param url
    * @throws IOException
    */
-  public void replaceFile(File file, String url) throws IOException {
+  public void changeThumbnail(File file, String url) throws IOException {
     // Get the filextension for the thumbnail and preview generation (can be
     // jpg, gif etc.)
     // String extension = file.getName().substring(

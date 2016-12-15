@@ -35,11 +35,13 @@ import java.nio.file.Paths;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.internal.InternalStorageItem;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
+import de.mpg.imeji.logic.storage.util.ImageUtils;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 
 /**
@@ -123,13 +125,30 @@ public class InternalStorage implements Storage {
    * @see de.mpg.imeji.logic.storage.Storage#update(java.lang.String, byte[])
    */
   @Override
-  public void update(String url, File file) {
+  public void changeThumbnail(String url, File file) {
     try {
-      manager.replaceFile(file, url);
+      manager.changeThumbnail(file, url);
     } catch (IOException e) {
       throw new RuntimeException(
           "Error updating file " + manager.transformUrlToPath(url) + " in internal storage: ", e);
     }
+  }
+
+  @Override
+  public void update(String url, File file) throws IOException {
+    manager.replaceFile(url, file);
+
+  }
+
+  @Override
+  public void rotate(String originalUrl, int degrees) throws ImejiException {
+    String thumbnailUrl = getThumbnailUrl(originalUrl);
+    String webUrl = getWebResolutionUrl(originalUrl);
+    File thumbnail = read(thumbnailUrl);
+    File web = read(webUrl);
+
+    ImageUtils.rotate(thumbnail, degrees);
+    ImageUtils.rotate(web, degrees);
   }
 
   /*
@@ -187,4 +206,11 @@ public class InternalStorage implements Storage {
     return manager.getStorageId(url);
   }
 
+  private String getThumbnailUrl(String originalUrl) {
+    return originalUrl.replace("/original/", "/thumbnail/");
+  }
+
+  private String getWebResolutionUrl(String originalUrl) {
+    return originalUrl.replace("/original/", "/web/");
+  }
 }

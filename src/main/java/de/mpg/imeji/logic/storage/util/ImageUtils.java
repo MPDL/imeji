@@ -107,6 +107,34 @@ public final class ImageUtils {
   }
 
   /**
+   * Rotates an image and overrides the old image with the rotated version
+   * 
+   * @param file The file to be rotated
+   * @param degrees the number of degrees to be rotated to the right. Must be a multiple of 90
+   */
+  public static void rotate(File file, int degrees) {
+    try {
+      BufferedImage img = ImageIO.read(file);
+      for (int i = 0; i < degrees / 90; i++) {
+        img = rotateBy90Degrees(img);
+      }
+      ImageIO.write(img, "jpg", file);
+    } catch (Exception e) {
+      LOGGER.info("Image could not be rotated: ", e);
+    }
+  }
+
+  private static BufferedImage rotateBy90Degrees(BufferedImage src) {
+    BufferedImage result = new BufferedImage(src.getHeight(), src.getWidth(), src.getType());
+    for (int x = 0; x < result.getWidth(); x++) {
+      for (int y = 0; y < result.getHeight(); y++) {
+        result.setRGB(x, y, src.getRGB(y, result.getWidth() - x - 1));
+      }
+    }
+    return result;
+  }
+
+  /**
    * Scale a {@link BufferedImage} to new size. Is faster than the basic {@link ImageUtils}
    * .scaleImage method, has the same quality. If it is a thumbnail, cut the images to fit into the
    * raster
