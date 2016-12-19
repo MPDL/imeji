@@ -19,10 +19,6 @@
 <p>Originated in March 2012 from the <a title="MPDL" href="http://mpdl.mpg.de/" target="_blank">Max Planck Digital Library</a>, the <a title="IKB" href="http://www.kunstgeschichte.hu-berlin.de/" target="_blank">Institute of Art and Visual History</a> of the Humboldt-Universität zu Berlin and the <a title="Konrad Zuse Internet Archive" href="http://zuse.zib.de" target="_blank">Konrad Zuse Internet Archive</a> of Freie Universität Berlin, the community constantly grows.</p><p>The aim is to ensure the sustainability of the imeji software and to enable further stable software development.</p>
 <p>We are open to everyone who wants to get involved and contribute to the imeji development. Please contact the <a href="mailto:imeji-community@gwdg.de" title="contact to the imeji community">community list</a> for further information.</p>
 
-<h2>Contact &amp; Support</h2>
-<p>Follow <a href="https://twitter.com/imeji_org">@imeji_org</a> on twitter</p>
-<p>For general information and contact<br /> <a href="mailto:imeji-community@gwdg.de" title="contact to the imeji community">imeji-community@gwdg.de</a></p>
-<p>For (not only technical) support<br /> <a href="mailto:imeji-support@gwdg.de" title="support mailinglist">imeji-support@gwdg.de</a></p>
 
 <h2>Download</h2>
 <p><a href="http://github.com/imeji-community/imeji/" target="_blank" class="gitwatch">Watch Us/Get the community source code on GitHub</a></p>
