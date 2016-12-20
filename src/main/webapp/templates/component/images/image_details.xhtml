@@ -17,18 +17,27 @@
 				</h:commandButton>
 			</h:form>
 			
-			<div id="toolbarDiv"></div>
-			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDigilib and !itemBean.viewInDataViewer}">
-				 <!--  <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" /> -->
-				<center>
-					<div id="seadragon-viewer" style="width:400px; height:300px;"></div>
-				</center>
-			</h:outputLink>
+			<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
+			<div>
+				<h:outputLink id="zoominButton" class="fa fa-search-plus fa-size-3 imj_mediaEditPanelItem" /> &#160;
+				<h:outputLink id="zoomoutButton" class="fa fa-search-minus fa-size-3 imj_mediaEditPanelItem" /> &#160;
+				<h:outputLink id="fullscreenButton" class="fa fa-expand fa-size-3 imj_mediaEditPanelItem" /> &#160;
+				<h:outputLink id="homeButton" class="fa fa-home fa-size-3 imj_mediaEditPanelItem" /> &#160;
+				<h:outputLink id="rotateLeftButton" class="fa fa-rotate-left fa-size-3 imj_mediaEditPanelItem" /> &#160;
+				<h:outputLink id="rotateRightButton" class="fa fa-rotate-right fa-size-3 imj_mediaEditPanelItem" />
+			</div>
+			<center>
+				<div id="seadragon-viewer" style="width:#{itemBean.webResolutionMaxLength}px; height:#{itemBean.webResolutionMaxLength}px;"></div>
+			</center>
+			</ui:fragment>
 			<h:outputLink id="lnkPicInternalDigilib" value="#{ItemBean.digilibUrl}" target="_blank" rendered="#{itemBean.viewInDigilib}">
 				<h:graphicImage id="picWebResolutionInternalDigilib" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" rendered="#{itemBean.image.status!='WITHDRAWN'}"/>
 			</h:outputLink>
 			<h:outputLink id="lnkPicInternalDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" target="_blank" rendered="#{itemBean.viewInDataViewer}">
 				<h:graphicImage title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" />
+			</h:outputLink>
+			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInOpenseadragon and !itemBean.viewInDigilib and !itemBean.viewInDataViewer}">
+				 <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" /> 
 			</h:outputLink>
 		</ui:fragment>
 		<ui:fragment rendered="#{itemBean.videoFile}">
@@ -58,7 +67,7 @@
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 			
-			<h:outputLink id="lnkOriginalData" value="#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDigilib and !itemBean.viewInDataViewer}" > 
+			<h:outputLink id="lnkOriginalData" value="#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInOpenseadragon and !itemBean.viewInDigilib and !itemBean.viewInDataViewer}" > 
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 		</div>	
@@ -475,9 +484,14 @@
     
         		id: "seadragon-viewer",
         		prefixUrl: "#{Navigation.applicationUrl}/resources/openseadragon/images/",
-        		//toolbar: "toolbarDiv",
         		tileSources: img,
         		showRotationControl: true,
+        		fullPageButton: "fullscreenButton",
+        		homeButton: "homeButton",
+        		zoomInButton: "zoominButton",
+        		zoomOutButton: "zoomoutButton",
+        		rotateRightButton: "rotateRightButton",
+        		rotateLeftButton: "rotateLeftButton",
         		gestureSettingsTouch: {
            		 pinchRotate: true
         		}

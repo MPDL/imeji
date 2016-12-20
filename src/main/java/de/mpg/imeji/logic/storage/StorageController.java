@@ -204,11 +204,7 @@ public final class StorageController implements Serializable {
    */
   public void rotate(String originalUrl, int degrees) throws ImejiException {
     storage.rotate(originalUrl, degrees);
-    /*
-     * File testfile = new File(
-     * "http://localhost:8080/imeji/file/i7uigjNKg1loj7i/1d/eb/2e/7e-9559-4b3b-a45f-9db2c0e75c5b/0/thumbnail/2e62cec5858a0e4f3c101524646eb62b.jpg"
-     * ); int a = 5; a++;
-     */
+
   }
 
   /**

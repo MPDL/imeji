@@ -101,6 +101,7 @@ public class ItemBean extends SuperBean {
   private Album activeAlbum;
   private static final Logger LOGGER = Logger.getLogger(ItemBean.class);
   private int rotation;
+  private int lastRotation = 0;
 
   /**
    * Construct a default {@link ItemBean}
@@ -151,7 +152,6 @@ public class ItemBean extends SuperBean {
       LOGGER.error("Error initialitzing item page", e);
       BeanHelper.error("Error initializing page" + e.getMessage());
     }
-    System.out.println("Bean Innited");
   }
 
   public String getDigilibUrl() {
@@ -159,9 +159,6 @@ public class ItemBean extends SuperBean {
 
   }
 
-  public String getOpenseadragonUrl() {
-    return getNavigation().getOpenseadragonUrl() + "?id=" + content.getOriginal();
-  }
 
 
   /**
@@ -678,6 +675,11 @@ public class ItemBean extends SuperBean {
     return Imeji.PROPERTIES.isDigilibEnabled() && isImageFile() && !isSVGFile();
   }
 
+  public boolean isViewInOpenseadragon() {
+    return !isViewInDigilib() && !isViewInDataViewer() && isImageFile() && !isSVGFile()
+        && !isGIFFile();
+  }
+
   /**
    * True if the file is an svg
    *
@@ -685,6 +687,15 @@ public class ItemBean extends SuperBean {
    */
   public boolean isSVGFile() {
     return "svg".equals(FilenameUtils.getExtension(item.getFullImageUrl().toString()));
+  }
+
+  /**
+   * True if the file ia a gif
+   * 
+   * @return
+   */
+  public boolean isGIFFile() {
+    return "gif".equals(FilenameUtils.getExtension(item.getFullImageUrl().toString()));
   }
 
   /**
@@ -806,6 +817,11 @@ public class ItemBean extends SuperBean {
     this.content = content;
   }
 
+  /**
+   * Gets the witdh of a thumbnail from imeji.properties
+   * 
+   * @return
+   */
   public int getThumbnailWidth() {
     return Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
 
@@ -814,23 +830,32 @@ public class ItemBean extends SuperBean {
 
   @PreDestroy
   public void destroyBean() {
-    /*
-     * System.out.println("Bean Destroyed"); StorageController storageController = new
-     * StorageController(); try { storageController.rotate(getImage().getFullImageUrl().getPath(),
-     * rotation); } catch (ImejiException e) { LOGGER.error("Error while destroying the bean: ", e);
-     * }
-     */
+
   }
 
+  /**
+   * Called when a picture is rotated by Openseadragon. If the user is authorized to rotate the
+   * image, webresolution and thumbnail get rotated
+   * 
+   * @throws ImejiException
+   */
   public void updateRotation() throws ImejiException {
-    System.out.println("UPDATE ROTATION " + rotation);
 
-    StorageController storageController = new StorageController();
-    storageController.rotate(getImage().getFullImageUrl().getPath(), 90);
+    if (getAuth().admin(getImage())) {
+      StorageController storageController = new StorageController();
+      int degrees = (rotation - lastRotation + 360) % 360;
+      lastRotation = rotation;
+      storageController.rotate(getImage().getFullImageUrl().getPath(), degrees);
+    }
   }
 
+  /**
+   * Gets the width of the web resolution
+   * 
+   * @return
+   */
   public int getWebResolutionWidth() {
-    int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
+    int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web"));
     int imgWidth = (int) getContent().getWidth();
     int imgHeight = (int) getContent().getHeight();
 
@@ -840,8 +865,13 @@ public class ItemBean extends SuperBean {
     return (int) (imgWidth * 1.0 / imgHeight * webSize);
   }
 
+  /**
+   * Gets the height of the web resolution
+   * 
+   * @return
+   */
   public int getWebResolutionHeight() {
-    int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
+    int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web"));
     int imgWidth = (int) getContent().getWidth();
     int imgHeight = (int) getContent().getHeight();
 
@@ -849,6 +879,15 @@ public class ItemBean extends SuperBean {
       return (int) (imgHeight * 1.0 / imgWidth * webSize);
     }
     return webSize;
+  }
+
+  /**
+   * Gets the max of width and height of the web resolution
+   * 
+   * @return
+   */
+  public int getWebResolutionMaxLength() {
+    return Math.max(getWebResolutionWidth(), getWebResolutionHeight());
   }
 
   public int getRotation() {

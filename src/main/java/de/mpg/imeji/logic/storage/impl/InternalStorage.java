@@ -142,6 +142,8 @@ public class InternalStorage implements Storage {
 
   @Override
   public void rotate(String originalUrl, int degrees) throws ImejiException {
+
+
     String thumbnailUrl = getThumbnailUrl(originalUrl);
     String webUrl = getWebResolutionUrl(originalUrl);
     File thumbnail = read(thumbnailUrl);
@@ -149,6 +151,15 @@ public class InternalStorage implements Storage {
 
     ImageUtils.rotate(thumbnail, degrees);
     ImageUtils.rotate(web, degrees);
+    // System.out.println("Path: " + web.getAbsolutePath());
+
+
+    /*
+     * String path =
+     * "C:/data/imeji/files/b5TuBh1fVSWh2YYr/f6/6a/bb/e1-b5a1-416f-992b-e7d22eb29657/0/web/070c65a8042724d4414d77fd55d5c623.jpg";
+     * String path2 = "C:/Users/jandura/Documents/test.bmp"; File file = new File(path2);
+     * ImageUtils.rotate(file, degrees);
+     */
   }
 
   /*

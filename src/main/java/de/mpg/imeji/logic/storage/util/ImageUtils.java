@@ -119,18 +119,28 @@ public final class ImageUtils {
         img = rotateBy90Degrees(img);
       }
       ImageIO.write(img, "jpg", file);
+
+      System.out.println("Done rotating");
     } catch (Exception e) {
       LOGGER.info("Image could not be rotated: ", e);
     }
   }
 
+
   private static BufferedImage rotateBy90Degrees(BufferedImage src) {
+
     BufferedImage result = new BufferedImage(src.getHeight(), src.getWidth(), src.getType());
     for (int x = 0; x < result.getWidth(); x++) {
       for (int y = 0; y < result.getHeight(); y++) {
         result.setRGB(x, y, src.getRGB(y, result.getWidth() - x - 1));
       }
     }
+
+    /*
+     * BufferedImage result = new BufferedImage(src.getWidth(), src.getHeight(), src.getType()); for
+     * (int x = 0; x < src.getWidth(); x++) { for (int y = 0; y < src.getHeight(); y++) {
+     * result.setRGB(x, y, src.getRGB((x + 1) % src.getWidth(), y)); } }
+     */
     return result;
   }
 
