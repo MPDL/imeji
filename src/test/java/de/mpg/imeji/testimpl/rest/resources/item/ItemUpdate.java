@@ -61,7 +61,7 @@ public class ItemUpdate extends ItemTestBase {
     Response response = getTargetAuth().put(Entity.entity(multiPart, multiPart.getMediaType()));
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     defaultItemTO = response.readEntity(DefaultItemTO.class);
-    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(0));
+    assertThat(defaultItemTO.getMetadataJson().keySet(), hasSize(0));
   }
 
 
@@ -76,7 +76,7 @@ public class ItemUpdate extends ItemTestBase {
     Response response = getTargetAuth().put(Entity.entity(multiPart, multiPart.getMediaType()));
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     defaultItemTO = response.readEntity(DefaultItemTO.class);
-    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(0));
+    assertThat(defaultItemTO.getMetadataJson().keySet(), hasSize(0));
   }
 
 
@@ -94,7 +94,7 @@ public class ItemUpdate extends ItemTestBase {
 
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     defaultItemTO = response.readEntity(DefaultItemTO.class);
-    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(6));
+    assertThat(defaultItemTO.getMetadataJson().keySet(), hasSize(6));
 
   }
 

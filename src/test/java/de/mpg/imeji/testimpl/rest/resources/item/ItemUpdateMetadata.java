@@ -151,7 +151,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
 
     // Tests
     assertThat(itemTO.getFilename(), equalTo(CHANGED));
-    List<Metadata> mds = (List<Metadata>) item.getMetadataSet().getMetadata();
+    List<Metadata> mds = (List<Metadata>) item.getMetadataSet().getMetadataJson();
 
     // text
     assertThat(((Text) mds.get(0)).getText(), equalTo(CHANGED));
@@ -415,7 +415,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
     DefaultItemTO newUpdItem = (DefaultItemTO) RestProcessUtils
         .buildTOFromJSON(responseUpd2.readEntity(String.class), DefaultItemTO.class);
 
-    assertThat(newUpdItem.getMetadata().size(), equalTo(updItem.getMetadata().size() - 2));
+    assertThat(newUpdItem.getMetadataJson().size(), equalTo(updItem.getMetadataJson().size() - 2));
 
   }
 
@@ -440,7 +440,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
     DefaultItemTO newUpdItem =
         (DefaultItemTO) RestProcessUtils.buildTOFromJSON(newJson, DefaultItemTO.class);
 
-    assertThat(newUpdItem.getMetadata().size(), equalTo(0));
+    assertThat(newUpdItem.getMetadataJson().size(), equalTo(0));
 
   }
 
@@ -484,8 +484,8 @@ public class ItemUpdateMetadata extends ItemTestBase {
     Item originalItem = new Item();
     ReverseTransferObjectFactory.transferDefaultItem(itemTO, originalItem, profile,
         JenaUtil.testUser, TRANSFER_MODE.UPDATE);
-    assertThat(item.getMetadataSet().getMetadata(),
-        hasSize(originalItem.getMetadataSet().getMetadata().size() + 1));
+    assertThat(item.getMetadataSet().getMetadataJson(),
+        hasSize(originalItem.getMetadataSet().getMetadataJson().size() + 1));
     int i = 0;
     String updatedTextString = "";
     // Find the statementId for the text Metadata
@@ -495,7 +495,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
         textStatementId = st.getId().toString();
       }
     }
-    for (Metadata md : item.getMetadataSet().getMetadata()) {
+    for (Metadata md : item.getMetadataSet().getMetadataJson()) {
       if (md.getStatement().toString().equals(textStatementId) && md instanceof Text) {
         i++;
         updatedTextString += ((Text) md).getText();

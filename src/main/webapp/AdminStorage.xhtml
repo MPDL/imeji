@@ -59,7 +59,7 @@
 											<option value="collection">Collection</option>
 											<option value="album">Album</option>
 											<option value="user">User</option>
-											<option value="profile">Profile</option>
+											<option value="statement">Statement</option>
 										</select>
 									 </p>
 									 <p>
@@ -107,30 +107,7 @@
 									</h:panelGroup>	
 								</h:form>
 							</div>
-							
-							<!-- Admin - Clean storage -->
-							<div class="imj_headline">
-								<h2>
-									<h:outputText value="#{lbl.admin_clean_unused_profiles}"/>
-								</h2>
-							</div>
-							
-							<div class="imj_content">
-								<h:outputText value="#{lbl.admin_clean_unused_profiles_description}"/> 				
-								<h:panelGroup id="clean_profiles" layout="block" styleClass="imj_adminEditPanel">
-									<h:form>
-										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.findUnusedProfiles}" value="#{lbl.admin_find_unused_profiles}" rendered="#{empty AdminBean.unusedProfiles}"/>
-										<h:commandButton styleClass="imj_cancelButton #{empty AdminBean.unusedProfiles ? 'imj_noDisplay' : ''}" style="#{empty AdminBean.unusedProfiles} ? 'visibility:none' : ''" action="#{AdminBean.deleteUnusedProfiles}" value="#{lbl.delete_all}"/>
-									</h:form>
-									<ui:repeat var="profile" value="#{AdminBean.unusedProfiles}">
-										<div class="imj_metadataSet imj_metadataLabel">
-											<h:outputText value="#{profile.title}"/>
-											<h:outputLink value="#{Navigation.profileUrl}#{profile.idString}"><h:outputText value="#{lbl.view}"/></h:outputLink>
-										</div>
-									</ui:repeat>
-								</h:panelGroup>
-							</div>
-	
+
 							<!-- Admin - reindex -->
 							<div class="imj_headline">
 								<h2>

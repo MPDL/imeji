@@ -20,26 +20,20 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.concurrency.locks.Lock;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
-import de.mpg.imeji.logic.controller.util.MetadataProfileUtil;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
+import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
-import de.mpg.imeji.logic.vo.util.MetadataFactory;
+import de.mpg.imeji.logic.vo.util.MetadataUtil;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.metadata.editors.AbstractMetadataEditor;
 import de.mpg.imeji.presentation.metadata.editors.MultipleEditor;
-import de.mpg.imeji.presentation.metadata.util.MetadataHelper;
-import de.mpg.imeji.presentation.metadata.util.SuggestBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -58,7 +52,6 @@ public class EditItemMetadataBean extends SuperBean {
   private AbstractMetadataEditor editor = null;
   // The editor before the user made any modification
   private AbstractMetadataEditor noChangesEditor = null;
-  private MetadataProfile profile = null;
   private Statement statement = null;
   /**
    * the {@link ItemWrapper} used to for the editor and which will be copied to all {@link Item}
@@ -119,14 +112,9 @@ public class EditItemMetadataBean extends SuperBean {
         lockImages(uris);
         // If editing all items, load only the first one
         allItems = "selected".equals(type) ? loaditems(uris) : loaditems(uris.subList(0, 1));
-        initProfileAndStatement(allItems);
-        if (profile == null) {
-          redirectToCollectionItemsPage(collectionId);
-          BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("profile_empty", getLocale()));
-        }
-        metadataLabels = new MetadataLabels(profile, getLocale());
+        statement = getSelectedStatement();
+        metadataLabels = new MetadataLabels(allItems, getLocale());
         initStatementsMenu();
-        initEmtpyEditorItem();
         initEditor(new ArrayList<Item>(allItems));
         initialized = true;
         noChangesEditor = editor.clone();
@@ -182,20 +170,6 @@ public class EditItemMetadataBean extends SuperBean {
     return null;
   }
 
-  /**
-   * Load the profile of the images, and set the statement to be edited.
-   *
-   * @param items
-   * @throws ImejiException
-   */
-  private void initProfileAndStatement(List<Item> items) throws ImejiException {
-    profile = null;
-    if (items != null && items.size() > 0) {
-      profile = new ProfileController().retrieve(items.get(0).getMetadataSet().getProfile(),
-          getSessionUser());
-    }
-    statement = getSelectedStatement();
-  }
 
   /**
    * Init the {@link AbstractMetadataEditor}
@@ -206,9 +180,7 @@ public class EditItemMetadataBean extends SuperBean {
     try {
       isProfileWithStatements = true;
       if (statement != null) {
-        editor = new MultipleEditor(items, profile, getSelectedStatement(), getSessionUser(),
-            getLocale());
-        ((SuggestBean) BeanHelper.getSessionBean(SuggestBean.class)).init(profile);
+        editor = new MultipleEditor(items, getSelectedStatement(), getSessionUser(), getLocale());
       } else {
         LOGGER.error("No statement found");
         isProfileWithStatements = false;
@@ -221,16 +193,6 @@ public class EditItemMetadataBean extends SuperBean {
   }
 
   /**
-   * Initialize the {@link ItemWrapper} with a new emtpy one;
-   */
-  private void initEmtpyEditorItem() {
-    Item emtpyItem = new Item();
-    emtpyItem.getMetadataSets().add(ImejiFactory.newMetadataSet(profile.getId()));
-    editorItem = new ItemWrapper(emtpyItem, profile, true);
-    editorItem.getMds().addEmtpyValues();
-  }
-
-  /**
    * Init the radio select menu with the 3 edit modes (overwrite all values, append new value, add
    * if empty)
    */
@@ -239,10 +201,8 @@ public class EditItemMetadataBean extends SuperBean {
     modeRadio = new ArrayList<SelectItem>();
     modeRadio.add(
         new SelectItem("basic", Imeji.RESOURCE_BUNDLE.getMessage("editor_basic", getLocale())));
-    if (this.statement.getMaxOccurs().equals("unbounded")) {
-      modeRadio.add(
-          new SelectItem("append", Imeji.RESOURCE_BUNDLE.getMessage("editor_append", getLocale())));
-    }
+    modeRadio.add(
+        new SelectItem("append", Imeji.RESOURCE_BUNDLE.getMessage("editor_append", getLocale())));
     modeRadio.add(new SelectItem("overwrite",
         Imeji.RESOURCE_BUNDLE.getMessage("editor_overwrite", getLocale())));
   }
@@ -252,14 +212,9 @@ public class EditItemMetadataBean extends SuperBean {
    */
   private void initStatementsMenu() {
     statementMenu = new ArrayList<SelectItem>();
-    for (Statement s : profile.getStatements()) {
-      if (s.getParent() == null) {
-        // Add a statement to the menu only if it doen'st have a parent
-        // statement. If it has a parent, then it
-        // will be editable by choosing the parent in the menu
-        statementMenu.add(new SelectItem(s.getId().toString(),
-            metadataLabels.getInternationalizedLabels().get(s.getId())));
-      }
+    for (Statement s : new StatementService().searchAndRetrieve()) {
+      statementMenu.add(new SelectItem(s.getId().toString(),
+          metadataLabels.getInternationalizedLabels().get(s.getId())));
     }
   }
 
@@ -297,7 +252,7 @@ public class EditItemMetadataBean extends SuperBean {
    * @throws ImejiException
    */
   public List<Item> loaditems(List<String> uris) throws ImejiException {
-    ItemBusinessController itemController = new ItemBusinessController();
+    ItemService itemController = new ItemService();
     return (List<Item>) itemController.retrieveBatch(uris, -1, 0, getSessionUser());
   }
 
@@ -309,7 +264,7 @@ public class EditItemMetadataBean extends SuperBean {
    */
   public List<String> searchItems() throws ImejiException {
     SearchQuery sq = SearchQueryParser.parseStringQuery(query);
-    ItemBusinessController itemController = new ItemBusinessController();
+    ItemService itemController = new ItemService();
     SearchResult sr =
         itemController.search(URI.create(collectionId), sq, null, getSessionUser(), null, -1, 0);
     return sr.getResults();
@@ -414,21 +369,12 @@ public class EditItemMetadataBean extends SuperBean {
       if ("overwrite".equals(selectedMode)) {
         // remove all metadata which have the same statement
         eib.clear(statement);
-        // Prepare the emtpy values in which the new values will be
-        // added
-        eib.getMds().addEmtpyValues();
       } else if ("append".equals(selectedMode)) {
-        // Remove all emtpy Metadata
-        eib.getMds().trim();
-        // Add an emtpy metadata at the position we want to have it
-        appendEmtpyMetadata(eib);
       }
       // Add the Metadata which has been entered to the emtpy Metadata
       // with the same statement in the editor
       eib = pasteMetadataIfEmtpy(eib);
     }
-    // Make a new Emtpy Metadata of the same statement
-    initEmtpyEditorItem();
   }
 
   /**
@@ -464,7 +410,6 @@ public class EditItemMetadataBean extends SuperBean {
   public String clearAll() {
     for (ItemWrapper eib : editor.getItems()) {
       eib.clear(statement);
-      eib.getMds().addEmtpyValues();
     }
     return "";
   }
@@ -476,10 +421,11 @@ public class EditItemMetadataBean extends SuperBean {
    * @return
    */
   private ItemWrapper pasteMetadataIfEmtpy(ItemWrapper eib) {
-    List<MetadataWrapper> list =
-        fillEmtpyValues(eib.getMds().getTree().getList(), editorItem.getMds().getTree().getList());
-    list = MetadataWrapperTree.resetPosition(list);
-    eib.getMds().initTreeFromList(list);
+    // TODO
+    // List<MetadataWrapper> list =
+    // fillEmtpyValues(eib.getMds().getTree().getList(), editorItem.getMds().getTree().getList());
+    // list = MetadataWrapperTree.resetPosition(list);
+    // eib.getMds().initTreeFromList(list);
     return eib;
   }
 
@@ -493,9 +439,9 @@ public class EditItemMetadataBean extends SuperBean {
       List<MetadataWrapper> l2) {
     List<MetadataWrapper> filled = new ArrayList<MetadataWrapper>();
     for (MetadataWrapper md1 : l1) {
-      boolean emtpy1 = MetadataHelper.isEmpty(md1.asMetadata());
+      boolean emtpy1 = MetadataUtil.isEmpty(md1.asMetadata());
       for (MetadataWrapper md2 : l2) {
-        boolean emtpy2 = MetadataHelper.isEmpty(md2.asMetadata());
+        boolean emtpy2 = MetadataUtil.isEmpty(md2.asMetadata());
         if (md1.getStatementId().equals(md2.getStatementId())) {
           if (emtpy1 && !emtpy2) {
             filled.add(md2.copy());
@@ -508,20 +454,6 @@ public class EditItemMetadataBean extends SuperBean {
     return filled;
   }
 
-  /**
-   * Add an emtpy {@link Metadata} accroding to the current {@link Statement} to the
-   * {@link ItemWrapper}. If the {@link ItemWrapper} has already an emtpy {@link Metadata} for this
-   * {@link Statement}, then don't had it.
-   *
-   * @param eib
-   */
-  private void appendEmtpyMetadata(ItemWrapper eib) {
-    List<MetadataWrapper> l = eib.getMds().getTree().getList();
-    for (Statement st : profile.getStatements()) {
-      l.add(new MetadataWrapper(MetadataFactory.createMetadata(st), st));
-    }
-    eib.getMds().initTreeFromList(MetadataWrapperTree.resetPosition(l));
-  }
 
   /**
    * Return the {@link Statement} which is currently edited
@@ -529,24 +461,10 @@ public class EditItemMetadataBean extends SuperBean {
    * @return
    */
   public Statement getSelectedStatement() {
-    if (profile != null) {
-      for (Statement s : profile.getStatements()) {
-        if (s.getId().toString().equals(selectedStatementName)) {
-          return s;
-        }
+    for (Statement s : new StatementService().searchAndRetrieve()) {
+      if (s.getId().toString().equals(selectedStatementName)) {
+        return s;
       }
-    }
-    return getDefaultStatement();
-  }
-
-  /**
-   * Return the first {@link Statement} of the current {@link MetadataProfile}
-   *
-   * @return
-   */
-  public Statement getDefaultStatement() {
-    if (profile != null && profile.getStatements().iterator().hasNext()) {
-      return profile.getStatements().iterator().next();
     }
     return null;
   }
@@ -558,9 +476,7 @@ public class EditItemMetadataBean extends SuperBean {
    * @return
    */
   public boolean isEditableStatement(Statement st) {
-    URI lastParent = MetadataProfileUtil.getLastParent(st, profile);
-    return statement.getId().compareTo(st.getId()) == 0
-        || (lastParent != null && statement.getId().compareTo(lastParent) == 0);
+    return statement.getId().compareTo(st.getId()) == 0;
   }
 
   public int getMdPosition() {
@@ -605,14 +521,6 @@ public class EditItemMetadataBean extends SuperBean {
 
   public void setSelectedStatementName(String selectedStatementName) {
     this.selectedStatementName = selectedStatementName;
-  }
-
-  public MetadataProfile getProfile() {
-    return profile;
-  }
-
-  public void setProfile(MetadataProfile profile) {
-    this.profile = profile;
   }
 
   public List<SelectItem> getModeRadio() {

@@ -6,16 +6,16 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.testimpl.ImejiTestResources;
 import util.JenaUtil;
 
@@ -73,7 +73,7 @@ public class ControllerTest {
    * @throws ImejiException
    */
   protected static Item createItem() throws ImejiException {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     item = controller.create(ImejiFactory.newItem(collection), collection, JenaUtil.testUser);
     return item;
   }
@@ -91,7 +91,7 @@ public class ControllerTest {
 
   protected static Item createItemWithFile(File file, CollectionImeji collection, User user)
       throws ImejiException {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     item = ImejiFactory.newItem(collection);
     item = controller.createWithFile(item, file, file.getName(), collection, user);
     return item;

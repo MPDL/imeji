@@ -13,9 +13,9 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.config.ImejiLicenses;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.doi.DoiService;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
@@ -77,7 +77,7 @@ public class CollectionActionMenu implements Serializable {
    * Search the number of items wihout any license
    */
   protected void searchItemsWihoutLicense() {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     itemsWithoutLicense = controller
         .search(collection.getId(), SearchQuery.toSearchQuery(new SearchPair(SearchFields.license,
             SearchOperators.REGEX, ImejiLicenses.NO_LICENSE, false)), null, user, null, 0, 0)

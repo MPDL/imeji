@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 
@@ -103,11 +102,6 @@ public class CollectionValidator extends ContainerValidator implements Validator
       exception = new UnprocessableError("error_doi_creation_error_doi_format", exception);
     }
 
-  }
-
-  @Override
-  public void validate(CollectionImeji t, MetadataProfile p, Method m) throws UnprocessableError {
-    validate(t, m);
   }
 
   @Override

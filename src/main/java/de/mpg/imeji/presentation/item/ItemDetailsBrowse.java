@@ -11,7 +11,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -73,7 +73,7 @@ public class ItemDetailsBrowse implements Serializable {
    * @return
    */
   private List<String> searchPreviousAndNextItem(User user, String spaceId) {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     try {
       return controller.search(containerUri != null ? URI.create(containerUri) : null,
           SearchQueryParser.parseStringQuery(query), sortCriterion, user, spaceId, SIZE,

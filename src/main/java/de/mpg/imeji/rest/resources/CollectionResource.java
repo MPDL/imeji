@@ -5,7 +5,6 @@ import static de.mpg.imeji.rest.process.CollectionProcess.deleteCollection;
 import static de.mpg.imeji.rest.process.CollectionProcess.readAllCollections;
 import static de.mpg.imeji.rest.process.CollectionProcess.readCollection;
 import static de.mpg.imeji.rest.process.CollectionProcess.readCollectionItems;
-import static de.mpg.imeji.rest.process.CollectionProcess.readItemTemplate;
 import static de.mpg.imeji.rest.process.CollectionProcess.releaseCollection;
 import static de.mpg.imeji.rest.process.CollectionProcess.updateCollection;
 import static de.mpg.imeji.rest.process.CollectionProcess.withdrawCollection;
@@ -131,17 +130,4 @@ public class CollectionResource implements ImejiResource {
     // TODO Auto-generated method stub
     return null;
   }
-
-
-  @GET
-  @Path("/{id}/items/template")
-  @ApiOperation(value = "Get template item for a collection")
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response readCollectionItemTemplate(@Context HttpServletRequest req,
-      @PathParam("id") String id) {
-    JSONResponse resp = readItemTemplate(req, id);
-    return buildJSONResponse(resp);
-  }
-
-
 }

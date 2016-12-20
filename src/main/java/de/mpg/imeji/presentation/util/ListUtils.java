@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.collection.CollectionListItem;
@@ -46,37 +45,16 @@ public class ListUtils {
    * @param itemList
    * @return
    */
-  public static List<ThumbnailBean> itemListToThumbList(Collection<Item> itemList,
-      List<MetadataProfile> profiles, User user) {
+  public static List<ThumbnailBean> itemListToThumbList(Collection<Item> itemList, User user) {
     List<ThumbnailBean> beanList = new ArrayList<ThumbnailBean>();
     for (Item item : itemList) {
       try {
-        beanList.add(new ThumbnailBean(item, true, findItemProfileFromList(profiles, item)));
+        beanList.add(new ThumbnailBean(item, true));
       } catch (Exception e) {
         LOGGER.error("Error creating ThumbnailBean list", e);
       }
     }
     return beanList;
-  }
-
-  /**
-   * Return the profile of an item
-   * 
-   * @param profiles
-   * @param item
-   * @return
-   */
-  private static MetadataProfile findItemProfileFromList(List<MetadataProfile> profiles,
-      Item item) {
-    if (profiles == null || item == null || item.getMetadataSet().getProfile() == null) {
-      return null;
-    }
-    for (MetadataProfile profile : profiles) {
-      if (profile.getId().toString().equals(item.getMetadataSet().getProfile().toString())) {
-        return profile;
-      }
-    }
-    return null;
   }
 
   /**

@@ -18,8 +18,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -101,7 +101,7 @@ public class AlbumBean extends ContainerBean {
           thumbnail = new ThumbnailBean();
           thumbnail.setLink(album.getLogoUrl().toString());
         } else if (!getItems().isEmpty()) {
-          thumbnail = new ThumbnailBean(getItems().get(0), false, null);
+          thumbnail = new ThumbnailBean(getItems().get(0), false);
         }
       }
     }
@@ -461,7 +461,7 @@ public class AlbumBean extends ContainerBean {
    * Count the amount of items a user is allow to see
    */
   private void countAllowedItems() {
-    ItemBusinessController ic = new ItemBusinessController();
+    ItemService ic = new ItemService();
     allowedItemsSize =
         ic.search(getContainer().getId(), null, null, getSessionUser(), getSpaceId(), -1, 0)
             .getNumberOfRecords();

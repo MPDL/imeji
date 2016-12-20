@@ -32,8 +32,8 @@ import com.ocpsoft.pretty.PrettyContext;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -47,7 +47,7 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.collection.CollectionActionMenu;
 import de.mpg.imeji.presentation.history.HistoryUtil;
@@ -314,7 +314,7 @@ public class UploadBean extends SuperBean {
       // }
       validateName(fileUploaded, title);
       Item item = null;
-      ItemBusinessController controller = new ItemBusinessController();
+      ItemService controller = new ItemService();
       if (isImportImageToFile()) {
         item =
             controller.updateThumbnail(findItemByFileName(title), fileUploaded, getSessionUser());
@@ -360,7 +360,7 @@ public class UploadBean extends SuperBean {
 
           + sr.size() + " found).");
     }
-    return new ItemBusinessController().retrieveLazy(URI.create(sr.get(0)), getSessionUser());
+    return new ItemService().retrieveLazy(URI.create(sr.get(0)), getSessionUser());
   }
 
   /**
@@ -390,7 +390,7 @@ public class UploadBean extends SuperBean {
           .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, id), getSessionUser());
       isDiscaded();
       if (collection != null && getCollection().getId() != null) {
-        ItemBusinessController ic = new ItemBusinessController();
+        ItemService ic = new ItemService();
         collectionSize = ic.search(collection.getId(), null, null, Imeji.adminUser, null, 0, 0)
             .getNumberOfRecords();
         actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale(),

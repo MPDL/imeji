@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 
 /**
  * Specific {@link SearchPair} for {@link Metadata} search
@@ -15,6 +14,7 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
  * @version $Revision$ $LastChangedDate$
  */
 public class SearchMetadata extends SearchPair {
+  private static final long serialVersionUID = -7422025148855635937L;
   private final URI statement;
 
   /**

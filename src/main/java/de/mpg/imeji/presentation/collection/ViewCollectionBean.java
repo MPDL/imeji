@@ -56,7 +56,6 @@ public class ViewCollectionBean extends CollectionBean {
         setSendEmailNotification(getSessionUser().getObservedCollections().contains(getId()));
       }
       if (getCollection() != null) {
-        initCollectionProfile();
         persons = new ArrayList<Person>(getCollection().getMetadata().getPersons().size());
         for (Person p : getCollection().getMetadata().getPersons()) {
           List<Organization> orgs = new ArrayList<Organization>(p.getOrganizations().size());

@@ -10,124 +10,80 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 @XmlRootElement
 @XmlType(propOrder = {"id", "createdBy", "modifiedBy", "createdDate", "modifiedDate", "versionDate",
     "status", "visibility", "version", "discardComment", "collectionId", "filename", "mimetype",
     "checksumMd5", "webResolutionUrlUrl", "thumbnailUrl", "fileUrl", "metadata"})
 @JsonInclude(Include.NON_NULL)
-// TODO REMOVE and replace definitely by defaultItemTO
 public class ItemTO extends PropertiesTO implements Serializable {
-
   private static final long serialVersionUID = 8408059450327059926L;
-
   private String visibility;
-
   private String collectionId;
-
   private String filename;
-
-
   private String mimetype;
-
   private String checksumMd5;
-
   private URI webResolutionUrlUrl;
-
   private URI thumbnailUrl;
-
   private URI fileUrl;
-
-  protected List<MetadataSetTO> metadata = new ArrayList<MetadataSetTO>();
-
+  private List<MetadataTO> metadata = new ArrayList<>();
   private long fileSize;
-
-  // public static enum SYNTAX {
-  // DEFAULT, RAW;
-  // public static SYNTAX guessType(String type) {
-  // if (type != null && type.trim().equalsIgnoreCase(RAW.toString()))
-  // return RAW;
-  // else if (isNullOrEmptyTrim(type) || type.trim().equalsIgnoreCase(DEFAULT.toString()))
-  // return DEFAULT;
-  // else
-  // return null;
-  // }
-  // };
-
 
   public long getFileSize() {
     return fileSize;
   }
 
-
   public void setFileSize(long fileSize) {
     this.fileSize = fileSize;
   }
-
 
   public String getVisibility() {
     return visibility;
   }
 
-
   public void setVisibility(String visibility) {
     this.visibility = visibility;
   }
-
 
   public String getCollectionId() {
     return collectionId;
   }
 
-
   public void setCollectionId(String collectionId) {
     this.collectionId = collectionId;
   }
-
 
   public String getFilename() {
     return filename;
   }
 
-
   public void setFilename(String filename) {
     this.filename = filename;
   }
-
 
   public String getMimetype() {
     return mimetype;
   }
 
-
   public void setMimetype(String mimetype) {
     this.mimetype = mimetype;
   }
-
-
 
   public String getChecksumMd5() {
     return checksumMd5;
   }
 
-
   public void setChecksumMd5(String checksumMd5) {
     this.checksumMd5 = checksumMd5;
   }
-
 
   public URI getWebResolutionUrlUrl() {
     return webResolutionUrlUrl;
   }
 
-
   public void setWebResolutionUrlUrl(URI webResolutionUrlUrl) {
     this.webResolutionUrlUrl = webResolutionUrlUrl;
   }
-
 
   public URI getThumbnailUrl() {
     return thumbnailUrl;
@@ -138,50 +94,25 @@ public class ItemTO extends PropertiesTO implements Serializable {
     this.thumbnailUrl = thumbnailUrl;
   }
 
-
   public URI getFileUrl() {
     return fileUrl;
   }
-
 
   public void setFileUrl(URI fileUrl) {
     this.fileUrl = fileUrl;
   }
 
-
-  public List<MetadataSetTO> getMetadata() {
+  /**
+   * @return the metadata
+   */
+  public List<MetadataTO> getMetadata() {
     return metadata;
   }
 
-  public List<MetadataSetTO> filterMetadataByTypeURI(final URI type) {
-    return Lists.newArrayList(
-        Collections2.filter(Lists.newArrayList(this.metadata), new Predicate<MetadataSetTO>() {
-          @Override
-          public boolean apply(MetadataSetTO md) {
-            return type.equals(md.getTypeUri());
-          }
-        }));
-  }
-
   /**
-   * Remove all {@link MetadataSetTO} which are defined with this statement
-   *
-   * @param statement
-   * @return
+   * @param metadata the metadata to set
    */
-  public List<MetadataSetTO> clearMetadata(final URI statement) {
-    return Lists.newArrayList(
-        Collections2.filter(Lists.newArrayList(this.metadata), new Predicate<MetadataSetTO>() {
-          @Override
-          public boolean apply(MetadataSetTO md) {
-            return !md.getStatementUri().equals(statement);
-          }
-        }));
-  }
-
-  public void setMetadata(List<MetadataSetTO> metadata) {
+  public void setMetadata(List<MetadataTO> metadata) {
     this.metadata = metadata;
   }
-
-
 }

@@ -7,7 +7,6 @@ import java.net.URI;
 import java.util.Locale;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 
 /**

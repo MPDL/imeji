@@ -21,7 +21,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -239,7 +239,7 @@ public class FileServlet extends HttpServlet {
     List<String> r = s.searchString(JenaCustomQueries.selectItemIdOfFileUrl(url), null, null, 0, -1)
         .getResults();
     if (!r.isEmpty() && r.get(0) != null) {
-      ItemBusinessController c = new ItemBusinessController();
+      ItemService c = new ItemService();
       return c.retrieveLazy(URI.create(r.get(0)), user);
     } else {
       throw new NotFoundException("Can not find the resource requested");

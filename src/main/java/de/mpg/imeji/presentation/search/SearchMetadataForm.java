@@ -26,9 +26,7 @@ import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.util.DateFormatter;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.util.MetadataTypesHelper;
 
 /**
  * An element in the advanced search form
@@ -72,7 +70,7 @@ public class SearchMetadataForm implements Serializable {
    * @param searchGroup
    * @param profile
    */
-  public SearchMetadataForm(SearchGroup searchGroup, MetadataProfile profile, Locale locale) {
+  public SearchMetadataForm(SearchGroup searchGroup, Locale locale) {
     this();
     for (SearchElement se : searchGroup.getElements()) {
       switch (se.getType()) {
@@ -92,7 +90,7 @@ public class SearchMetadataForm implements Serializable {
           break;
       }
     }
-    initStatement(profile, namespace);
+    initStatement(namespace);
     initOperatorMenu(locale);
   }
 
@@ -138,7 +136,7 @@ public class SearchMetadataForm implements Serializable {
    */
   public void validate() throws UnprocessableError {
     if (namespace != null) {
-      switch (MetadataTypesHelper.getTypesForNamespace(statement.getType().toString())) {
+      switch (statement.getType()) {
         case DATE:
           try {
             DateFormatter.format(searchValue);
@@ -184,9 +182,6 @@ public class SearchMetadataForm implements Serializable {
             throw new UnprocessableError(messages);
           }
           break;
-        /*
-         * case LICENSE: break;
-         */
         case NUMBER:
           try {
             Long.parseLong(searchValue);
@@ -194,25 +189,17 @@ public class SearchMetadataForm implements Serializable {
             throw new UnprocessableError("error_number_format", e);
           }
           break;
-        case CONE_PERSON:
-          break;
-        case PUBLICATION:
-          break;
-        case TEXT:
-          break;
-        case LINK:
-          break;
       }
     }
   }
 
-  public SearchMetadataForm(SearchMetadata metadata, MetadataProfile profile, Locale locale) {
+  public SearchMetadataForm(SearchMetadata metadata, Locale locale) {
     this();
     operator = metadata.getOperator();
     searchValue = metadata.getValue();
     not = metadata.isNot();
     namespace = metadata.getStatement().toString();
-    initStatement(profile, namespace);
+    initStatement(namespace);
     initOperatorMenu(locale);
   }
 
@@ -221,7 +208,7 @@ public class SearchMetadataForm implements Serializable {
    */
   public void initOperatorMenu(Locale locale) {
     operatorMenu = new ArrayList<SelectItem>();
-    switch (MetadataTypesHelper.getTypesForNamespace(statement.getType().toString())) {
+    switch (statement.getType()) {
       case DATE:
         operatorMenu.add(new SelectItem(SearchOperators.EQUALS, "="));
         operatorMenu.add(new SelectItem(SearchOperators.GREATER, ">="));
@@ -243,15 +230,9 @@ public class SearchMetadataForm implements Serializable {
    * @param p
    * @param namespace
    */
-  public void initStatement(MetadataProfile p, String namespace) {
-    for (Statement st : p.getStatements()) {
-      if (st.getId().toString().equals(namespace)) {
-        statement = st;
-      }
-    }
+  public void initStatement(String namespace) {
     if (statement == null) {
-      throw new RuntimeException(
-          "Statement with namespace \"" + namespace + "\" not found in profile " + p.getId());
+      throw new RuntimeException("Statement with namespace \"" + namespace + "\" not found ");
     }
     initPredefinedValues();
   }
@@ -281,7 +262,7 @@ public class SearchMetadataForm implements Serializable {
       SearchGroup group = new SearchGroup();
       if (namespace != null) {
         URI ns = URI.create(namespace);
-        switch (MetadataTypesHelper.getTypesForNamespace(statement.getType().toString())) {
+        switch (statement.getType()) {
           case DATE:
             if (!isEmtpyValue(searchValue)) {
               group.addPair(new SearchMetadata(SearchFields.time, operator, searchValue, ns, not));
@@ -318,7 +299,7 @@ public class SearchMetadataForm implements Serializable {
                   .addPair(new SearchMetadata(SearchFields.number, operator, searchValue, ns, not));
             }
             break;
-          case CONE_PERSON:
+          case PERSON:
             if (!isEmtpyValue(searchValue + familyName + givenName + uri + orgName)) {
               group.setNot(not);
               if (!isEmtpyValue(searchValue)) {
@@ -354,18 +335,12 @@ public class SearchMetadataForm implements Serializable {
               }
             }
             break;
-          case PUBLICATION:
-            if (!isEmtpyValue(searchValue)) {
-              group.addPair(
-                  new SearchMetadata(SearchFields.citation, operator, searchValue, ns, not));
-            }
-            break;
           case TEXT:
             if (!isEmtpyValue(searchValue)) {
               group.addPair(new SearchMetadata(SearchFields.text, operator, searchValue, ns, not));
             }
             break;
-          case LINK:
+          case URL:
             if (!isEmtpyValue(searchValue + uri)) {
               if (!isEmtpyValue(searchValue)) {
                 group.addPair(
@@ -404,7 +379,7 @@ public class SearchMetadataForm implements Serializable {
    * @return
    */
   public String getType() {
-    return MetadataTypesHelper.getTypesForNamespace(statement.getType().toString()).name();
+    return statement.getType().name();
   }
 
   public String getSearchValue() {

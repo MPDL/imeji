@@ -16,7 +16,6 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
 import de.mpg.imeji.logic.search.model.SearchIndex;
-import de.mpg.imeji.logic.search.model.SearchIndexes;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchPair;
@@ -26,7 +25,6 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 
@@ -293,17 +291,6 @@ public class JenaQueryFactory {
       case person_org_name:
         break;
       case person_role:
-        break;
-      case prof: // Search for a profile
-        if (J2JHelper.getResourceNamespace(new MetadataProfile()).equals(rdfType)) {
-          pair.setValue(normalizeURI(MetadataProfile.class, pair.getValue()));
-          return "FILTER(" + getSimpleFilter(pair, "s", pair.isNot()) + ") . ?c <"
-              + SearchIndexes.getIndex(SearchIndex.SearchFields.prof).getNamespace() + "> ?s .";
-        } else if (J2JHelper.getResourceNamespace(new CollectionImeji()).equals(rdfType)) {
-          searchQuery = "?s <http://imeji.org/terms/mdprofile> ?el";
-        } else if (J2JHelper.getResourceNamespace(new Item()).equals(rdfType)) {
-          searchQuery = "?c <http://imeji.org/terms/mdprofile> ?el";
-        }
         break;
       case prop:
         break;

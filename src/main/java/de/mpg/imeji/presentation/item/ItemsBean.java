@@ -20,8 +20,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchIndex;
@@ -34,7 +33,6 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
 import de.mpg.imeji.presentation.facet.FacetsJob;
@@ -155,13 +153,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       totalNumberOfRecords = searchResult.getNumberOfRecords();
       // load the item
       Collection<Item> items = loadImages(searchResult.getResults());
-      // Load the profiles
-      List<MetadataProfile> profiles =
-          new ProfileController().retrieveItemProfiles((List<Item>) items, Imeji.adminUser);
       // Init the labels for the item
-      metadataLabels = new MetadataLabels(profiles, getLocale());
+      metadataLabels = new MetadataLabels((List<Item>) items, getLocale());
       // Return the item as thumbnailBean
-      return ListUtils.itemListToThumbList(items, profiles, getSessionUser());
+      return ListUtils.itemListToThumbList(items, getSessionUser());
     } catch (ImejiException e) {
       BeanHelper.error(e.getMessage());
     }
@@ -177,7 +172,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int size) {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     return controller.search(null, searchQuery, sortCriterion, getSessionUser(),
         getSelectedSpaceString(), size, offset);
   }
@@ -190,7 +185,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws ImejiException
    */
   public Collection<Item> loadImages(List<String> uris) throws ImejiException {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     return controller.retrieveBatch(uris, -1, 0, getSessionUser());
   }
 
@@ -354,13 +349,13 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   private void withdraw(List<String> uris) throws ImejiException {
     Collection<Item> items =
-        new ItemBusinessController().retrieveBatch(uris, -1, 0, getSessionUser());
+        new ItemService().retrieveBatch(uris, -1, 0, getSessionUser());
     int count = items.size();
     if ("".equals(discardComment.trim())) {
       BeanHelper.error(
           Imeji.RESOURCE_BUNDLE.getMessage("error_image_withdraw_discardComment", getLocale()));
     } else {
-      ItemBusinessController c = new ItemBusinessController();
+      ItemService c = new ItemService();
       c.withdraw((List<Item>) items, discardComment, getSessionUser());
       discardComment = null;
       unselect(uris);
@@ -375,9 +370,9 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   private void delete(List<String> uris) {
     try {
-      ItemBusinessController controller = new ItemBusinessController();
+      ItemService controller = new ItemService();
       Collection<Item> items = controller.retrieveBatch(uris, -1, 0, getSessionUser());
-      ItemBusinessController ic = new ItemBusinessController();
+      ItemService ic = new ItemService();
       ic.delete((List<Item>) items, getSessionUser());
       BeanHelper
           .info(uris.size() + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_deleted", getLocale()));

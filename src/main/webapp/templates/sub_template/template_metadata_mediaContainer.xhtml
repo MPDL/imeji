@@ -3,7 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:imjc="http://java.sun.com/jsf/composite/components">
+	xmlns:col="http://java.sun.com/jsf/composite/components/collection">
 	
 	<!-- Main Content - bibliographic grid list - START -->
 	<ui:define name="mainContent">
@@ -14,12 +14,11 @@
 			<!-- AJAX Wrapper - START -->
 			<h:panelGroup layout="block" id="imj_ajaxWrapper">
 				<ui:fragment rendered="#{Auth.loggedIn and metadataView != 'yes'}">
-					<imjc:mediaContainer_editMetadata id="editContainer" formularContextBean="#{metadataContextBean}" formularBean="#{metadataBean}" headline="#{containerHeadline}" showProfileSelector="#{showProfileSelector}"/>
+					<col:editForm id="editContainer" formularContextBean="#{metadataContextBean}" formularBean="#{metadataBean}" headline="#{containerHeadline}" showProfileSelector="#{showProfileSelector}"/>
 				</ui:fragment>
 				<ui:fragment rendered="#{metadataView == 'yes'}">
-					<imjc:mediaContainer_viewMetadata metadataContextBean="#{metadataContextBean}" metadata="#{metadataBean}" headline="#{containerHeadline}" navigationContextURL="#{navigationContextURL}"/>
+					<col:details metadataContextBean="#{metadataContextBean}" metadata="#{metadataBean}" headline="#{containerHeadline}" navigationContextURL="#{navigationContextURL}"/>
 				</ui:fragment>
-				<ui:insert name="metadataProfile"/>
 			</h:panelGroup>
 		</ui:fragment>
 	</ui:define>

@@ -13,12 +13,8 @@ import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
-import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
-import de.mpg.imeji.presentation.mdProfile.MdProfileBean;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.util.VocabularyHelper;
 import de.mpg.imeji.util.LocalizedString;
 
@@ -90,13 +86,7 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * Initialize the multiple value according to the {@link Statement}
    */
   private void initMultiple() {
-    if (!StringHelper.isNullOrEmptyTrim(statement.getMaxOccurs())
-        && ("unbounded".equals(statement.getMaxOccurs())
-            || Integer.parseInt(statement.getMaxOccurs()) > 1)) {
-      multiple = true;
-    } else {
-      multiple = false;
-    }
+    multiple = true;
   }
 
   /**
@@ -135,7 +125,7 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * @return
    */
   public String getStatementId() {
-    return ObjectHelper.getId(statement.getId());
+    return statement.getId();
   }
 
   /**
@@ -144,9 +134,6 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * @return
    */
   public String getParentId() {
-    if (statement.getParent() != null) {
-      return ObjectHelper.getId(statement.getParent());
-    }
     return null;
   }
 
@@ -182,9 +169,7 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * @param event
    */
   public void previewListener(ValueChangeEvent event) {
-    if (event.getNewValue() != null && event.getNewValue() != event.getOldValue()) {
-      statement.setPreview((Boolean) event.getNewValue());
-    }
+    // to be deleted
   }
 
   /**
@@ -193,13 +178,7 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * @param event
    */
   public void multipleListener(ValueChangeEvent event) {
-    if (event.getNewValue() != null && event.getNewValue() != event.getOldValue()) {
-      if ((Boolean) event.getNewValue()) {
-        statement.setMaxOccurs("unbounded");
-      } else {
-        statement.setMaxOccurs("1");
-      }
-    }
+    // to be deleted
   }
 
   /**
@@ -208,9 +187,7 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * @param event
    */
   public void descriptionListener(ValueChangeEvent event) {
-    if (event.getNewValue() != null && event.getNewValue() != event.getOldValue()) {
-      statement.setDescription((Boolean) event.getNewValue());
-    }
+    // nothing
   }
 
   /**

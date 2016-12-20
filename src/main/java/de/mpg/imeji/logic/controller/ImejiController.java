@@ -27,7 +27,6 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.workflow.WorkflowManager;

@@ -10,7 +10,6 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 
 /**
  * Initialize the imeji {@link SearchIndex}

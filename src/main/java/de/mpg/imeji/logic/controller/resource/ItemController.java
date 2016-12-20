@@ -10,20 +10,20 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.ImejiController;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
+import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
+import de.mpg.imeji.logic.vo.util.MetadataUtil;
 import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
@@ -33,7 +33,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
  *
  */
 public class ItemController extends ImejiController {
-  private static final Logger LOGGER = Logger.getLogger(ItemBusinessController.class);
+  private static final Logger LOGGER = Logger.getLogger(ItemService.class);
   private static final ReaderFacade READER = new ReaderFacade(Imeji.imageModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.imageModel);
 
@@ -51,13 +51,10 @@ public class ItemController extends ImejiController {
       img.setFilename(FilenameUtils.getName(img.getFilename()));
       img.setStatus(ic.getStatus());
       img.setCollection(ic.getId());
-      img.getMetadataSet().setProfile(ic.getProfile());
       ic.getImages().add(img.getId());
     }
     cleanItem(items);
-    ProfileController pc = new ProfileController();
-    WRITER.create(J2JHelper.cast2ObjectList((List<?>) items),
-        pc.retrieve(items.iterator().next().getMetadataSet().getProfile(), user), user);
+    WRITER.create(J2JHelper.cast2ObjectList((List<?>) items), user);
     // Update the collection
     // cc.update(cc.retrieve(coll, user), Imeji.adminUser);
   }
@@ -133,27 +130,11 @@ public class ItemController extends ImejiController {
    */
   public void updateBatch(Collection<Item> items, User user) throws ImejiException {
     if (items != null && !items.isEmpty()) {
-      List<String> profileLists = new ArrayList<String>();
-      String profileToAdd = "";
-
       for (Item item : items) {
-        profileToAdd = item.getMetadataSet().getProfile() != null
-            ? item.getMetadataSet().getProfile().toString() : "profileisnull";
-        if (!profileLists.contains(profileToAdd)) {
-          profileLists.add(profileToAdd);
-        }
-        if (profileLists.size() > 1) {
-          throw new UnprocessableError(
-              "Error during batch update, items for batch update do not have same metadata profile!");
-        }
         prepareUpdate(item, user);
         item.setFilename(FilenameUtils.getName(item.getFilename()));
-
       }
       cleanItem(items);
-      ProfileController pc = new ProfileController();
-      WRITER.update(new ArrayList<>(items),
-          pc.retrieve(items.iterator().next().getMetadataSet().getProfile(), user), user, true);
     }
   }
 
@@ -190,10 +171,9 @@ public class ItemController extends ImejiController {
    */
   private void cleanItem(Collection<Item> l) {
     for (Item item : l) {
-      for (Metadata md : item.getMetadataSet().getMetadata()) {
-        md.clean();
+      for (Metadata md : item.getMetadata()) {
+        MetadataUtil.cleanMetadata(md);
       }
-      item.getMetadataSet().trim();
       cleanLicenses(item);
     }
   }

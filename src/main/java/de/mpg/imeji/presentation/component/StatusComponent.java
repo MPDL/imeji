@@ -8,21 +8,20 @@ import java.util.Locale;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UINamingContainer;
 
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
-import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.user.controller.GroupBusinessController;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.security.util.SecurityUtil;
+import de.mpg.imeji.logic.user.controller.GroupBusinessController;
+import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties;
+import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
-import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.collection.CollectionListItem;
@@ -87,8 +86,7 @@ public class StatusComponent extends UINamingContainer {
       if (SecurityUtil.staticAuth().hasReadGrant(sessionUser, properties)) {
         users = getUserSharedWith(properties);
         groups = getGroupSharedWith(properties);
-        showManage = SecurityUtil.staticAuth().administrate(sessionUser, properties)
-            && !(properties instanceof MetadataProfile);
+        showManage = SecurityUtil.staticAuth().administrate(sessionUser, properties);
       }
       linkToSharePage = initLinkToSharePage(properties.getId());
       show = true;

@@ -89,7 +89,7 @@ public class ItemDefaultMdCreateHierarchical extends ItemTestBase {
 
     defaultItemTO = response.readEntity(DefaultItemTO.class);
 
-    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(7)); // check
+    assertThat(defaultItemTO.getMetadataJson().keySet(), hasSize(7)); // check
                                                                   // defaultCreateItemHierarchical.json,
                                                                   // only top level elements count
     assertThat(defaultItemTO.getCollectionId(), equalTo(collectionId));
@@ -117,7 +117,7 @@ public class ItemDefaultMdCreateHierarchical extends ItemTestBase {
     assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 
     defaultItemTO = response.readEntity(DefaultItemTO.class);
-    assertThat(defaultItemTO.getMetadata().keySet(), hasSize(7)); // check defaultCreateItem.json
+    assertThat(defaultItemTO.getMetadataJson().keySet(), hasSize(7)); // check defaultCreateItem.json
                                                                   // (only top level elements count)
     assertThat(defaultItemTO.getCollectionId(), equalTo(collectionId));
 
@@ -142,7 +142,7 @@ public class ItemDefaultMdCreateHierarchical extends ItemTestBase {
     assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 
     defaultItemTO = response.readEntity(DefaultItemTO.class);
-    assertThat(defaultItemTO.getMetadata().keySet(), empty()); // check defaultCreateItem.json
+    assertThat(defaultItemTO.getMetadataJson().keySet(), empty()); // check defaultCreateItem.json
     assertThat(defaultItemTO.getCollectionId(), equalTo(collectionId));
   }
 

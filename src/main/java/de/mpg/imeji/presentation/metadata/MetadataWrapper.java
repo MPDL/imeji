@@ -12,18 +12,15 @@ import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.MetadataSet;
+import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
-import de.mpg.imeji.logic.vo.util.MetadataFactory;
-import de.mpg.imeji.presentation.metadata.util.MetadataHelper;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.MetadataFactory;
+import de.mpg.imeji.logic.vo.util.MetadataUtil;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.CommonUtils;
-import de.mpg.imeji.presentation.util.SearchAndExportHelper;
 
 /**
  * Bean for all Metadata types. This bean should have all variable that have been defined in all
@@ -60,7 +57,6 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
   private List<MetadataWrapper> childs = new ArrayList<MetadataWrapper>();
   private boolean preview = true;
   private boolean toNull = false;
-  private boolean resetCitation = false;
   // All possible fields defined for a metadata:
   private String text;
   private Person person;
@@ -77,10 +73,6 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
   private double number = Double.NaN;
   private String license = null;
   private URI externalUri;
-  /**
-   * A field where it is possible to define many other fields
-   */
-  private String customField;
 
   /**
    * Bean for all Metadata types. This bean should have all variable that have been defined in all
@@ -91,13 +83,10 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
   public MetadataWrapper(Metadata metadata, Statement statement) {
     ObjectHelper.copyAllFields(metadata, this);
     this.metadata = metadata;
-    this.preview = statement.isPreview();
     this.statement = statement;
-    this.customField = CommonUtils.toStringCustomField(metadata);
   }
 
   public MetadataWrapper(Statement statement) {
-    this.preview = statement.isPreview();
     this.statement = statement;
   }
 
@@ -107,11 +96,7 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    * @return
    */
   public Metadata asMetadata() {
-    if (resetCitation) {
-      resetCitation();
-    }
     ObjectHelper.copyAllFields(this, metadata);
-    MetadataHelper.setConeID(metadata);
     return metadata;
   }
 
@@ -133,9 +118,9 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    * @return a new {@link MetadataWrapper} with the same values
    */
   public MetadataWrapper copy() {
-    metadata.setId(IdentifierUtil.newURI(Metadata.class));
+    metadata.setUri(IdentifierUtil.newURI(Metadata.class));
     MetadataWrapper copy =
-        new MetadataWrapper(MetadataFactory.copyMetadata(asMetadata()), statement);
+        new MetadataWrapper(new MetadataFactory(asMetadata()).build(), statement);
     copy.setParent(parent);
     copy.setTreeIndex(treeIndex);
     return copy;
@@ -147,9 +132,9 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    * @return a new {@link MetadataWrapper} with the same values
    */
   public MetadataWrapper copyEmpty() {
-    metadata.setId(IdentifierUtil.newURI(Metadata.class));
-    MetadataWrapper copy =
-        new MetadataWrapper(MetadataFactory.createMetadata(statement), statement);
+    metadata.setUri(IdentifierUtil.newURI(Metadata.class));
+    MetadataWrapper copy = new MetadataWrapper(
+        new MetadataFactory().setStatementId(statement.getId()).build(), statement);
     copy.setParent(parent);
     copy.setTreeIndex(treeIndex);
     return copy;
@@ -218,24 +203,7 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    * @return
    */
   public String getStatementId() {
-    return ObjectHelper.getId(getStatement().getId());
-  }
-
-  /**
-   * JSF listener when a citation has been changed
-   */
-  public void resetCitationListener(ValueChangeEvent vce) {
-    resetCitation = true;
-    this.predefinedValueListener(vce);
-  }
-
-  /**
-   * Reset the citation of a publication
-   *
-   * @param smb
-   */
-  public void resetCitation() {
-    citation = SearchAndExportHelper.getCitation(uri, exportFormat);
+    return getStatement().getId();
   }
 
   /**
@@ -569,7 +537,7 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    * @return the empty
    */
   public boolean isEmpty() {
-    return MetadataHelper.isEmpty(asMetadata());
+    return MetadataUtil.isEmpty(asMetadata());
   }
 
   /**
@@ -668,21 +636,6 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
   }
 
   /**
-   * Add emtpy childs according to the {@link MetadataProfile}
-   *
-   * @param p
-   */
-  public void addEmtpyChilds(MetadataProfile p) {
-    for (Statement st : p.getStatements()) {
-      if (st.getParent() != null && st.getParent().compareTo(statement.getId()) == 0) {
-        MetadataWrapper child = new MetadataWrapper(MetadataFactory.createMetadata(st), st);
-        child.addEmtpyChilds(p);
-        childs.add(child);
-      }
-    }
-  }
-
-  /**
    * @return the treeIndex
    */
   public String getTreeIndex() {
@@ -694,22 +647,6 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    */
   public void setTreeIndex(String treeIndex) {
     this.treeIndex = treeIndex;
-  }
-
-  /**
-   * @return the customField
-   */
-  public String getCustomField() {
-    return customField;
-  }
-
-  /**
-   * @param customField the customField to set
-   */
-  public void setCustomField(String customField) {
-    if (!toNull) {
-      this.customField = customField;
-    }
   }
 
   /**

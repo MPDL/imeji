@@ -15,7 +15,7 @@ public class StatementTO implements Serializable {
 
   private int pos;
 
-  private URI type;
+  private String type;
 
   private List<LocalizedString> labels = new ArrayList<LocalizedString>();
 
@@ -47,15 +47,13 @@ public class StatementTO implements Serializable {
     this.pos = pos;
   }
 
-  public URI getType() {
+  public String getType() {
     return type;
   }
 
-  public void setType(URI type) {
+  public void setType(String type) {
     this.type = type;
   }
-
-
 
   public List<LocalizedString> getLabels() {
     return labels;

@@ -5,7 +5,6 @@ package de.mpg.imeji.presentation.beans;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -13,7 +12,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.statement.StatementService;
+import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.util.LocalizedString;
 
@@ -31,32 +31,19 @@ public class MetadataLabels implements Serializable {
   private Map<URI, String> internationalizedLabels = new HashMap<URI, String>();
   private static final Logger LOGGER = Logger.getLogger(MetadataLabels.class);
 
-  public MetadataLabels(MetadataProfile profile, Locale locale) {
+  public MetadataLabels(List<Item> items, Locale locale) {
     lang = locale.getLanguage();
-    init(profile);
   }
 
-  public MetadataLabels(Collection<MetadataProfile> profiles, Locale locale) {
+  public MetadataLabels(Item item, Locale locale) {
     lang = locale.getLanguage();
-    initForProfiles((List<MetadataProfile>) profiles);
   }
 
-  /**
-   * initialize the labels for a {@link List} of {@link MetadataProfile}
-   *
-   * @param profiles
-   * @throws Exception
-   */
-  private void initForProfiles(List<MetadataProfile> profiles) {
-    HashMap<URI, String> map = new HashMap<URI, String>();
-    for (MetadataProfile p : profiles) {
-      if (p != null) {
-        init(p);
-        map.putAll(internationalizedLabels);
-      }
-    }
-    internationalizedLabels = new HashMap<URI, String>(map);
+  public MetadataLabels(Locale locale) {
+    lang = locale.getLanguage();
+    init(new StatementService().searchAndRetrieve());
   }
+
 
   /**
    * Initialize the labels for one {@link MetadataProfile}
@@ -64,31 +51,29 @@ public class MetadataLabels implements Serializable {
    * @param profile
    * @throws Exception
    */
-  private void init(MetadataProfile profile) {
+  private void init(List<Statement> statements) {
     labels = new HashMap<URI, String>();
     internationalizedLabels = new HashMap<URI, String>();
-    if (profile != null) {
-      for (Statement s : profile.getStatements()) {
-        boolean hasInternationalizedLabel = false;
-        boolean hasEnglishLabel = false;
-        String labelFallBack = null;
-        for (LocalizedString ls : s.getLabels()) {
-          if (ls.getLang().equals("en")) {
-            labels.put(s.getId(), ls.getValue());
-            hasEnglishLabel = true;
-          }
-          if (ls.getLang().equals(lang)) {
-            internationalizedLabels.put(s.getId(), ls.getValue());
-            hasInternationalizedLabel = true;
-          }
-          labelFallBack = ls.getValue();
+    for (Statement s : statements) {
+      boolean hasInternationalizedLabel = false;
+      boolean hasEnglishLabel = false;
+      String labelFallBack = null;
+      for (LocalizedString ls : s.getLabels()) {
+        if (ls.getLang().equals("en")) {
+          labels.put(s.getUri(), ls.getValue());
+          hasEnglishLabel = true;
         }
-        if (!hasEnglishLabel) {
-          labels.put(s.getId(), labelFallBack);
+        if (ls.getLang().equals(lang)) {
+          internationalizedLabels.put(s.getUri(), ls.getValue());
+          hasInternationalizedLabel = true;
         }
-        if (!hasInternationalizedLabel) {
-          internationalizedLabels.put(s.getId(), labels.get(s.getId()));
-        }
+        labelFallBack = ls.getValue();
+      }
+      if (!hasEnglishLabel) {
+        labels.put(s.getUri(), labelFallBack);
+      }
+      if (!hasInternationalizedLabel) {
+        internationalizedLabels.put(s.getUri(), labels.get(s.getId()));
       }
     }
   }

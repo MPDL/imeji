@@ -14,7 +14,6 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.user.controller.GroupBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 

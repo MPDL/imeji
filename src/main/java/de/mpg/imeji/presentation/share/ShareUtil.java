@@ -12,9 +12,9 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.logic.vo.Album;
@@ -129,7 +129,7 @@ public class ShareUtil {
                 a.getMetadata().getTitle(), sessionUser, locale, false));
           }
         } else if (sharedWith.contains("/item/")) {
-          Item it = new ItemBusinessController().retrieveLazy(URI.create(sharedWith), sessionUser);
+          Item it = new ItemService().retrieveLazy(URI.create(sharedWith), sessionUser);
           if (it != null) {
             roles.add(new ShareListItem(user, SharedObjectType.ITEM, sharedWith, null,
                 it.getFilename(), sessionUser, locale, false));
@@ -169,7 +169,7 @@ public class ShareUtil {
         roles.add(new ShareListItem(group, SharedObjectType.ALBUM, sharedWith, null,
             a.getMetadata().getTitle(), sessionUser, locale));
       } else if (sharedWith.contains("/item/")) {
-        ItemBusinessController c = new ItemBusinessController();
+        ItemService c = new ItemService();
         Item it = c.retrieveLazy(URI.create(sharedWith), sessionUser);
         roles.add(new ShareListItem(group, SharedObjectType.ITEM, sharedWith, null,
             it.getFilename(), sessionUser, locale));

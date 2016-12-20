@@ -30,11 +30,8 @@ import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.TypeNotAllowedException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
-import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchIndex;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -49,20 +46,16 @@ import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.MetadataSet;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.component.LicenseEditor;
-import de.mpg.imeji.presentation.metadata.MetadataSetWrapper;
 import de.mpg.imeji.presentation.metadata.MetadataWrapper;
 import de.mpg.imeji.presentation.metadata.SingleEditorWrapper;
 import de.mpg.imeji.presentation.metadata.extractors.TikaExtractor;
-import de.mpg.imeji.presentation.metadata.util.SuggestBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.user.UserBean;
 
@@ -117,10 +110,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
   public String save() {
     try {
       Item item = ImejiFactory.newItem(getCollection());
-      SingleEditorWrapper edit =
-          new SingleEditorWrapper(item, sus.getProfile(), getSessionUser(), getLocale());
-      MetadataSetWrapper newSet = getMdSetBean();
-      edit.getEditor().getItems().get(0).setMds(newSet);
+      SingleEditorWrapper edit = new SingleEditorWrapper(item, getSessionUser(), getLocale());
       edit.getEditor().validateAndFormatItemsForSaving();
       if (licenseEditor != null) {
         item.getLicenses().add(licenseEditor.getLicense());
@@ -172,7 +162,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
 
   private Item uploadFileToItem(Item item, CollectionImeji col, File file, String title)
       throws ImejiException {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     item = controller.create(item, col, file, title, getSessionUser(), null, null);
     sus.setUploadedItem(item);
     return item;
@@ -248,17 +238,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
 
       CollectionImeji collection = new CollectionController()
           .retrieveLazy(URI.create(selectedCollectionItem), getSessionUser());
-      MetadataProfile profile =
-          new ProfileController().retrieve(collection.getProfile(), getSessionUser());
-      ((SuggestBean) BeanHelper.getSessionBean(SuggestBean.class)).init(profile);
-
-      MetadataSet mdSet = profile != null ? ImejiFactory.newMetadataSet(profile.getId())
-          : ImejiFactory.newMetadataSet(null);
-      MetadataSetWrapper mdSetBean = new MetadataSetWrapper(mdSet, profile, true);
-      metadataLabels = new MetadataLabels(profile, getLocale());
       sus.setCollection(collection);
-      sus.setProfile(profile);
-      sus.setMdSetBean(mdSetBean);
       licenseEditor = new LicenseEditor(getLocale(), collection.getStatus().equals(Status.PENDING));
     }
   }
@@ -267,17 +247,14 @@ public class SingleUploadBean extends SuperBean implements Serializable {
    * Add a Metadata of the same type as the passed metadata
    */
   public void addMetadata(MetadataWrapper md) {
-    MetadataWrapper newMd = md.copyEmpty();
-    newMd.addEmtpyChilds(sus.getProfile());
-    sus.getMdSetBean().getTree().add(newMd);
+
   }
 
   /**
    * Remove the active metadata
    */
   public void removeMetadata(MetadataWrapper smb) {
-    sus.getMdSetBean().getTree().remove(smb);
-    sus.getMdSetBean().addEmtpyValues();
+
   }
 
   /**
@@ -351,10 +328,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
     // Add current user as Author
     newC.getMetadata().getPersons().add(creatorUser);
 
-    MetadataProfileBusinessController metadataProfileBC = new MetadataProfileBusinessController();
-    newC.setProfile(metadataProfileBC.retrieveDefaultProfile().getId());
-    return cc.create(newC, metadataProfileBC.retrieveDefaultProfile(), getSessionUser(),
-        MetadataProfileCreationMethod.REFERENCE, selectedSpaceString);
+    return cc.create(newC, getSessionUser(), selectedSpaceString);
   }
 
   public List<SelectItem> getCollectionItems() {
@@ -379,10 +353,6 @@ public class SingleUploadBean extends SuperBean implements Serializable {
 
   public CollectionImeji getCollection() {
     return sus.getCollection();
-  }
-
-  public MetadataSetWrapper getMdSetBean() {
-    return sus.getMdSetBean();
   }
 
   public List<String> getTechMd() {

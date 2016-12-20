@@ -7,7 +7,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultOrganizationTO;
 
 /**

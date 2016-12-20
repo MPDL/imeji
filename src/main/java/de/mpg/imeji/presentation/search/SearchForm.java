@@ -5,11 +5,9 @@ package de.mpg.imeji.presentation.search;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -25,7 +23,6 @@ import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 
@@ -39,7 +36,6 @@ import de.mpg.imeji.presentation.beans.MetadataLabels;
 public class SearchForm implements Serializable {
   private static final long serialVersionUID = 9203984025130411565L;
   private static final Logger LOGGER = Logger.getLogger(SearchForm.class);
-  private Map<String, MetadataProfile> profilesMap;
   private List<SearchGroupForm> groups;
   private LicenseSearchGroup licenseSearchGroup;
   private FileTypeSearchGroup fileTypeSearchGroup;
@@ -53,7 +49,6 @@ public class SearchForm implements Serializable {
    */
   public SearchForm() {
     groups = new ArrayList<SearchGroupForm>();
-    profilesMap = new HashMap<String, MetadataProfile>();
   }
 
   /**
@@ -64,10 +59,9 @@ public class SearchForm implements Serializable {
    * @param profilesMap
    * @throws ImejiException
    */
-  public SearchForm(SearchQuery searchQuery, Map<String, MetadataProfile> profilesMap,
-      MetadataLabels metadataLabels, User user, String space) throws ImejiException {
+  public SearchForm(SearchQuery searchQuery, MetadataLabels metadataLabels, User user, String space)
+      throws ImejiException {
     this();
-    this.profilesMap = profilesMap;
     this.licenseSearchGroup =
         new LicenseSearchGroup(Locale.forLanguageTag(metadataLabels.getLang()));
     this.fileTypeSearchGroup =
@@ -75,12 +69,7 @@ public class SearchForm implements Serializable {
     this.setTechnicalMetadataSearchGroup(new TechnicalMetadataSearchGroup());
     for (SearchElement se : searchQuery.getElements()) {
       if (se.getType().equals(SEARCH_ELEMENTS.GROUP)) {
-        String profileId =
-            SearchFormularHelper.getProfileIdFromStatement((SearchGroup) se, profilesMap.values());
-        if (profileId != null) {
-          groups.add(new SearchGroupForm((SearchGroup) se, profilesMap.get(profileId),
-              metadataLabels, user, space));
-        }
+
       }
       if (se.getType().equals(SEARCH_ELEMENTS.PAIR)) {
         if (((SearchPair) se).getField() == SearchFields.filetype) {
@@ -228,11 +217,6 @@ public class SearchForm implements Serializable {
     SearchGroupForm group = groups.get(pos);
     group.getStatementMenu().clear();
     group.setSearchElementForms(new ArrayList<SearchMetadataForm>());
-    if (group.getProfileId() != null) {
-      MetadataProfile p = profilesMap.get(group.getProfileId());
-      group.initStatementsMenu(p, metadataLabels, user, space);
-      addElement(pos, 0, Locale.forLanguageTag(metadataLabels.getLang()));
-    }
   }
 
   /**
@@ -256,7 +240,6 @@ public class SearchForm implements Serializable {
       SearchMetadataForm fe = new SearchMetadataForm();
       String namespace = (String) group.getStatementMenu().get(0).getValue();
       fe.setNamespace(namespace);
-      fe.initStatement(profilesMap.get(group.getProfileId()), namespace);
       fe.initOperatorMenu(locale);
       if (elPos >= group.getSearchElementForms().size()) {
         group.getSearchElementForms().add(fe);
@@ -277,7 +260,6 @@ public class SearchForm implements Serializable {
     SearchMetadataForm fe = group.getSearchElementForms().get(elPos);
     String profileId = group.getProfileId();
     String namespace = fe.getNamespace();
-    fe.initStatement(profilesMap.get(profileId), namespace);
     fe.initOperatorMenu(locale);
     if (!keepValue) {
       fe.setSearchValue("");
@@ -294,14 +276,6 @@ public class SearchForm implements Serializable {
 
   public void setGroups(List<SearchGroupForm> groups) {
     this.groups = groups;
-  }
-
-  public Map<String, MetadataProfile> getProfilesMap() {
-    return profilesMap;
-  }
-
-  public void setProfilesMap(Map<String, MetadataProfile> profilesMap) {
-    this.profilesMap = profilesMap;
   }
 
   public SearchPair getAllSearch() {

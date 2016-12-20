@@ -25,7 +25,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.impl.InternalStorage;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Item;
@@ -55,7 +55,7 @@ public class DataViewerServlet extends HttpServlet {
     try {
       SessionBean sb =
           (SessionBean) req.getSession(false).getAttribute(SessionBean.class.getSimpleName());
-      Item item = new ItemBusinessController()
+      Item item = new ItemService()
           .retrieveLazy(ObjectHelper.getURI(Item.class, req.getParameter("id")), sb.getUser());
       boolean isPublicItem = Status.RELEASED.equals(item.getStatus());
 

@@ -6,7 +6,8 @@
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"	
 	xmlns:share="http://java.sun.com/jsf/composite/components/share"	
 	xmlns:list="http://java.sun.com/jsf/composite/components/list"
-	xmlns:lic="http://java.sun.com/jsf/composite/components/license">
+	xmlns:lic="http://java.sun.com/jsf/composite/components/license"
+	xmlns:md="http://java.sun.com/jsf/composite/components/metadata">
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
@@ -193,21 +194,10 @@
 						<h:panelGroup id="singleEditPanel" layout="block" class="imj_metadataWrapper">
 							<!-- MetaDataList - show further MetaData -->
 							<ui:fragment rendered="#{itemBean.edit.toggleState == 'displayMd'}">
-								<ui:repeat var="metadata" value="#{itemBean.mds.tree.list}" rows="0">
-									<h:panelGroup layout="block" rendered="#{!metadata.isEmpty()}" styleClass="imj_metadataSet id_#{metadata.statementId}  parent_#{metadata.parent.statementId} highlight_area">
-									<!-- MetaDataList - MetaData Hierachy Hardcoded! -->
-										<div class="imj_metadataLabel" style="margin-left: #{metadata.hierarchyLevel}em;">
-											<h:outputText value="#{itemBean.metadataLabels.internationalizedLabels[metadata.statement.id]}"/>
-											<span class="imj_invisible">: </span>
-										</div>
-										<!-- div class="imj_metadataValue imj_keepFormat" -->
-										<div class="imj_metadataValue">
-											<!-- MetaDataOutput -->
-											<ui:include src="MetadataOutput.xhtml">
-												<ui:param name="md" value="#{metadata}"/>
-											</ui:include>
-										</div>
-									</h:panelGroup>
+								<ui:repeat var="metadata" value="#{itemBean.item.metadata}" rows="0">
+									<div class="imj_metadataValue">
+										<md:output metadata="#{metadata}"/>
+									</div>
 								</ui:repeat>
 							</ui:fragment>
 							

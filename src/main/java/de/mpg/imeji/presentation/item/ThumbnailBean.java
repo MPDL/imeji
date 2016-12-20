@@ -5,6 +5,7 @@ package de.mpg.imeji.presentation.item;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.List;
 
 import javax.faces.event.ValueChangeEvent;
 
@@ -12,19 +13,12 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.MetadataSet;
+import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
 import de.mpg.imeji.presentation.beans.Navigation;
-import de.mpg.imeji.presentation.metadata.MetadataSetWrapper;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
-import de.mpg.imeji.presentation.util.CommonUtils;
 import de.mpg.imeji.util.DateHelper;
 
 /**
@@ -44,14 +38,12 @@ public class ThumbnailBean implements Serializable {
   private String id;
   private boolean selected = false;
   private boolean isInActiveAlbum = false;
-  private MetadataSetWrapper mds;
-  private MetadataProfile profile;
-  private MetadataSet mdSet;
   private URI collectionUri;
   private String fileType;
   private String shortFileType;
   private String fileSize;
   private String modified;
+  private List<Metadata> metadata;
 
   public ThumbnailBean() {
     // Empty thumbnail
@@ -65,9 +57,8 @@ public class ThumbnailBean implements Serializable {
    * @param initMetadata if true, will read the metadata
    * @throws Exception
    */
-  public ThumbnailBean(Item item, boolean initMetadata, MetadataProfile profile) throws Exception {
+  public ThumbnailBean(Item item, boolean initMetadata) throws Exception {
     this.uri = item.getId();
-    this.profile = profile;
     this.collectionUri = item.getCollection();
     this.id = ObjectHelper.getId(getUri());
     this.link = initThumbnailLink(item);
@@ -76,25 +67,14 @@ public class ThumbnailBean implements Serializable {
     this.fileSize = item.getFileSizeHumanReadable();
     this.modified = DateHelper.printDate(item.getModified());
     this.shortFileType = StorageUtils.getExtension(fileType);
+    this.metadata = item.getMetadata();
     if (initMetadata) {
       SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-      this.mdSet = item.getMetadataSet();
       this.caption = findCaption();
       this.selected = sessionBean.getSelected().contains(uri.toString());
       if (sessionBean.getActiveAlbum() != null) {
         this.isInActiveAlbum = sessionBean.getActiveAlbum().getImages().contains(item.getId());
       }
-    }
-  }
-
-  /**
-   * Initialize the {@link MetadataSetWrapper} which is used in the Popup
-   *
-   * @throws ImejiException
-   */
-  public void initPopup() {
-    if (getMds() == null) {
-      setMds(new MetadataSetWrapper(mdSet, getProfile(), false));
     }
   }
 
@@ -120,30 +100,6 @@ public class ThumbnailBean implements Serializable {
    * @throws ImejiException
    */
   private String findCaption() throws ImejiException {
-    initPopup();
-    if (profile == null) {
-      return getFilename();
-    }
-    for (Statement s : profile.getStatements()) {
-      if (s.isDescription()) {
-
-        for (Metadata md : mdSet.getMetadata()) {
-          if (md.getStatement().equals(s.getId())) {
-            String str = "";
-            if (md instanceof Link) {
-              str = ((Link) md).getLabel();
-            } else if (md instanceof Publication) {
-              str = CommonUtils.removeTags(((Publication) md).getCitation());
-            } else {
-              str = md.asFulltext();
-            }
-            if (!"".equals(str.trim())) {
-              return str;
-            }
-          }
-        }
-      }
-    }
     return getFilename();
   }
 
@@ -287,38 +243,12 @@ public class ThumbnailBean implements Serializable {
     this.id = id;
   }
 
-  /**
-   * getter
-   *
-   * @return the mds
-   */
-  public MetadataSetWrapper getMds() {
-    return mds;
-  }
-
-  /**
-   * setter
-   *
-   * @param mds the mds to set
-   */
-  public void setMds(MetadataSetWrapper mds) {
-    this.mds = mds;
-  }
-
   public URI getCollectionUri() {
     return collectionUri;
   }
 
   public void setCollectionUri(URI colUri) {
     this.collectionUri = colUri;
-  }
-
-  public MetadataProfile getProfile() {
-    return profile;
-  }
-
-  public void setProfile(MetadataProfile profile) {
-    this.profile = profile;
   }
 
   public String getFileType() {
@@ -351,5 +281,19 @@ public class ThumbnailBean implements Serializable {
 
   public void setShortFileType(String shortFileType) {
     this.shortFileType = shortFileType;
+  }
+
+  /**
+   * @return the metadata
+   */
+  public List<Metadata> getMetadata() {
+    return metadata;
+  }
+
+  /**
+   * @param metadata the metadata to set
+   */
+  public void setMetadata(List<Metadata> metadata) {
+    this.metadata = metadata;
   }
 }

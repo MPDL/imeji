@@ -10,9 +10,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.imeji.logic.vo.util.MetadataFactory;
+import de.mpg.imeji.logic.vo.Metadata;
 
 /**
  * Session with objects related to {@link CollectionImeji}
@@ -24,7 +22,6 @@ import de.mpg.imeji.logic.vo.util.MetadataFactory;
 @ManagedBean(name = "CollectionSessionBean")
 @SessionScoped
 public class CollectionSessionBean {
-  private MetadataProfile profile = null;
   private String selectedMenu = "SORTING";
   private String filter = "all";
   private List<Metadata> metadataTypes = null;
@@ -46,11 +43,7 @@ public class CollectionSessionBean {
    * @throws Exception
    */
   public void init() {
-    profile = new MetadataProfile();
     metadataTypes = new ArrayList<Metadata>();
-    for (Metadata.Types t : Metadata.Types.values()) {
-      metadataTypes.add(MetadataFactory.createMetadata(t));
-    }
   }
 
 
@@ -102,23 +95,5 @@ public class CollectionSessionBean {
    */
   public List<Metadata> getMetadataTypes() {
     return metadataTypes;
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
-  public MetadataProfile getProfile() {
-    return profile;
-  }
-
-  /**
-   * setter
-   *
-   * @param profile
-   */
-  public void setProfile(MetadataProfile profile) {
-    this.profile = profile;
   }
 }

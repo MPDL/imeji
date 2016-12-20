@@ -5,7 +5,6 @@ import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response.Status;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -143,28 +142,4 @@ public class CollectionProcess {
     }
     return resp;
   }
-
-  /**
-   * Returns an item template of a {@link CollectionImeji}
-   *
-   * @param req
-   * @param id
-   * @return
-   */
-  public static JSONResponse readItemTemplate(HttpServletRequest req, String id) {
-    JSONResponse resp = null;
-
-
-    CollectionService ccrud = new CollectionService();
-    try {
-      User u = BasicAuthentication.auth(req);
-      resp =
-          RestProcessUtils.buildResponse(Status.OK.getStatusCode(), ccrud.readItemTemplate(id, u));
-    } catch (Exception e) {
-      resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
-    }
-    return resp;
-  }
-
-
 }

@@ -35,7 +35,7 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.share.ShareListItem;

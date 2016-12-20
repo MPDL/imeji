@@ -13,11 +13,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.export.format.Export;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
@@ -98,7 +97,7 @@ public class ExportManager {
     }
     SearchResult result = null;
     if (!selectedItemsToExport.isEmpty()) {
-      ItemBusinessController itemController = new ItemBusinessController();
+      ItemService itemController = new ItemService();
       List<Item> itemResult =
           (List<Item>) itemController.retrieveBatch(selectedItemsToExport, 500, 0, user);
       List<String> sr = new ArrayList<String>();
@@ -115,11 +114,8 @@ public class ExportManager {
         AlbumController albumController = new AlbumController();
         result =
             albumController.search(searchQuery, user, null, maximumNumberOfRecords, 0, spaceId);
-      } else if ("profile".equals(searchType)) {
-        ProfileController pc = new ProfileController();
-        result = pc.search(searchQuery, user, spaceId);
       } else if ("image".equals(searchType)) {
-        ItemBusinessController itemController = new ItemBusinessController();
+        ItemService itemController = new ItemService();
         if (collectionId != null) {
           result = itemController.search(ObjectHelper.getURI(CollectionImeji.class, collectionId),
               searchQuery, null, user, spaceId, -1, 0);

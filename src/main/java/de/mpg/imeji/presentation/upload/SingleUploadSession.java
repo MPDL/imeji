@@ -9,9 +9,7 @@ import javax.faces.bean.SessionScoped;
 
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
-import de.mpg.imeji.presentation.metadata.MetadataSetWrapper;
 
 
 @ManagedBean(name = "SingleUploadSession")
@@ -20,11 +18,9 @@ public class SingleUploadSession implements Serializable {
   private static final long serialVersionUID = -7330919735840276789L;
   private String selectedCollectionItem;
   private CollectionImeji collection;
-  private MetadataProfile profile;
   private MetadataLabels labels;
   private IngestImage ingestImage;
   private List<String> techMD = new ArrayList<String>();
-  private MetadataSetWrapper mdSetBean;
   private boolean uploadFileToTemp = false;
   private boolean uploadFileToItem = false;
   private Item uploadedItem;
@@ -33,10 +29,8 @@ public class SingleUploadSession implements Serializable {
   public void reset() {
     selectedCollectionItem = "";
     collection = null;
-    profile = null;
     ingestImage = null;
     techMD.clear();;
-    mdSetBean = null;
     labels = null;
     uploadFileToTemp = false;
     uploadFileToItem = false;
@@ -54,10 +48,8 @@ public class SingleUploadSession implements Serializable {
   public void uploaded() {
     selectedCollectionItem = "";
     collection = null;
-    profile = null;
     ingestImage = null;
-    techMD.clear();;
-    mdSetBean = null;
+    techMD.clear();
     labels = null;
     uploadFileToTemp = false;
     uploadFileToItem = true;
@@ -83,14 +75,6 @@ public class SingleUploadSession implements Serializable {
 
   public boolean isUploadFileToTemp() {
     return uploadFileToTemp;
-  }
-
-  public MetadataSetWrapper getMdSetBean() {
-    return mdSetBean;
-  }
-
-  public void setMdSetBean(MetadataSetWrapper mdSetBean) {
-    this.mdSetBean = mdSetBean;
   }
 
   public void setUploadFileToTemp(boolean uploadFileToTemp) {
@@ -143,13 +127,5 @@ public class SingleUploadSession implements Serializable {
 
   public void setIngestImage(IngestImage ingestImage) {
     this.ingestImage = ingestImage;
-  }
-
-  public MetadataProfile getProfile() {
-    return profile;
-  }
-
-  public void setProfile(MetadataProfile profile) {
-    this.profile = profile;
   }
 }

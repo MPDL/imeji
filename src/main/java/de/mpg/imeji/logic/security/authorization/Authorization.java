@@ -40,7 +40,6 @@ import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
@@ -113,10 +112,6 @@ public class Authorization implements Serializable {
       return true;
     } else if (hasGrant(user, toGrant(getRelevantURIForSecurity(obj, false, false, false),
         getGrantTypeAccordingToObjectType(obj, GrantType.READ)))) {
-      return true;
-    } else if ((obj instanceof MetadataProfile || obj.toString().contains("/metadataProfile/"))
-        && user != null) {
-      // all logged in user can read all profiles
       return true;
     }
     return false;
@@ -304,10 +299,6 @@ public class Authorization implements Serializable {
         return getContext ? AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI
             : ((Container) obj).getId().toString();
       }
-      if (obj instanceof MetadataProfile) {
-        return getContext ? AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI
-            : ((MetadataProfile) obj).getId().toString();
-      }
       if (obj instanceof User) {
         return ((User) obj).getId().toString();
       }
@@ -400,8 +391,6 @@ public class Authorization implements Serializable {
       return isPublicStatus(((Container) obj).getStatus());
     } else if (obj instanceof Space) {
       return isPublicStatus(((Space) obj).getStatus());
-    } else if (obj instanceof MetadataProfile) {
-      return isPublicStatus(((MetadataProfile) obj).getStatus());
     } else if (obj instanceof Person) {
       return true;
     }
@@ -421,8 +410,6 @@ public class Authorization implements Serializable {
       return isDiscardedStatus(((Container) obj).getStatus());
     } else if (obj instanceof Space) {
       return isDiscardedStatus(((Space) obj).getStatus());
-    } else if (obj instanceof MetadataProfile) {
-      return isDiscardedStatus(((MetadataProfile) obj).getStatus());
     } else if (obj instanceof Person) {
       return false;
     } else if (obj instanceof Organization) {

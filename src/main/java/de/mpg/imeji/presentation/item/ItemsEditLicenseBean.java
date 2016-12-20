@@ -13,8 +13,8 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -98,7 +98,7 @@ public class ItemsEditLicenseBean extends SuperBean {
    */
   private void save(List<Item> items) {
     try {
-      new ItemBusinessController().updateBatch(items, getSessionUser());
+      new ItemService().updateBatch(items, getSessionUser());
     } catch (ImejiException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error saving items", e);
@@ -154,7 +154,7 @@ public class ItemsEditLicenseBean extends SuperBean {
    * @throws ImejiException
    */
   private List<Item> retrieveSelectedItems() throws ImejiException {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     return (List<Item>) controller.retrieveBatch(selectedItems, -1, 0, getSessionUser());
   }
 
@@ -166,7 +166,7 @@ public class ItemsEditLicenseBean extends SuperBean {
    * @throws ImejiException
    */
   private List<Item> retrieveAllCollectionsItem(String collectionId) throws ImejiException {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     List<String> uris = controller.search(ObjectHelper.getURI(CollectionImeji.class, collectionId),
         null, null, getSessionUser(), getSpaceId(), -1, 0).getResults();
     return (List<Item>) controller.retrieveBatch(uris, -1, 0, getSessionUser());

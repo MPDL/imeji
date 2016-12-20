@@ -9,13 +9,9 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Calendar;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.apache.log4j.Logger;
 
@@ -31,9 +27,6 @@ import de.mpg.imeji.logic.ImejiNamespaces;
  * @version $Revision$ $LastChangedDate$
  */
 @j2jResource("http://imeji.org/terms/properties")
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlRootElement(name = "properties", namespace = "http://imeji.org/terms/")
-@XmlSeeAlso({Item.class, MetadataProfile.class})
 public class Properties implements Serializable {
   private static final long serialVersionUID = 6874979775433576816L;
   private URI id;

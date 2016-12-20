@@ -1,6 +1,5 @@
 package de.mpg.imeji.rest.transfer;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,19 +14,12 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Number;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Text;
 import de.mpg.imeji.rest.helper.CommonUtils;
 import de.mpg.imeji.rest.helper.UserNameCache;
 import de.mpg.imeji.rest.to.AlbumTO;
@@ -35,11 +27,9 @@ import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.ContainerAdditionalInformationTO;
 import de.mpg.imeji.rest.to.ContainerTO;
 import de.mpg.imeji.rest.to.IdentifierTO;
-import de.mpg.imeji.rest.to.ItemTO;
-import de.mpg.imeji.rest.to.LabelTO;
 import de.mpg.imeji.rest.to.LiteralConstraintTO;
 import de.mpg.imeji.rest.to.MetadataProfileTO;
-import de.mpg.imeji.rest.to.MetadataSetTO;
+import de.mpg.imeji.rest.to.MetadataTO;
 import de.mpg.imeji.rest.to.OrganizationTO;
 import de.mpg.imeji.rest.to.PersonTO;
 import de.mpg.imeji.rest.to.PersonTOBasic;
@@ -49,13 +39,6 @@ import de.mpg.imeji.rest.to.UserTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultOrganizationTO;
 import de.mpg.imeji.rest.to.defaultItemTO.predefinedEasyMetadataTO.DefaultConePersonTO;
-import de.mpg.imeji.rest.to.predefinedMetadataTO.ConePersonTO;
-import de.mpg.imeji.rest.to.predefinedMetadataTO.DateTO;
-import de.mpg.imeji.rest.to.predefinedMetadataTO.GeolocationTO;
-import de.mpg.imeji.rest.to.predefinedMetadataTO.LinkTO;
-import de.mpg.imeji.rest.to.predefinedMetadataTO.NumberTO;
-import de.mpg.imeji.rest.to.predefinedMetadataTO.PublicationTO;
-import de.mpg.imeji.rest.to.predefinedMetadataTO.TextTO;
 import de.mpg.imeji.util.LocalizedString;
 
 public class TransferObjectFactory {
@@ -73,33 +56,20 @@ public class TransferObjectFactory {
    * @throws JsonMappingException
    */
 
-  /**
-   * Transfer a {@link MetadataProfile} into a {@link MetadataProfileTO}
-   *
-   * @param vo
-   * @param to
-   */
-  public static void transferMetadataProfile(MetadataProfile vo, MetadataProfileTO to) {
-    transferProperties(vo, to);
-    to.setTitle(vo.getTitle());
-    to.setDefault(vo.getDefault());
-    to.setDescription(vo.getDescription());
-    transferStatements(vo.getStatements(), to);
-  }
 
   /**
    * Transfer a list Statement in to MetadataProfileTO
    *
-   * @param stats
+   * @param statements
    * @param to
    */
-  private static void transferStatements(Collection<Statement> stats, MetadataProfileTO to) {
+  private static void transferStatements(Collection<Statement> statements, MetadataProfileTO to) {
     to.getStatements().clear();
-    for (Statement t : stats) {
+    for (Statement t : statements) {
       StatementTO sto = new StatementTO();
-      sto.setId(CommonUtils.extractIDFromURI(t.getId()));
+      sto.setId(t.getId());
       sto.setPos(t.getPos());
-      sto.setType(t.getType());
+      sto.setType(t.getType().name());
       sto.setLabels(new ArrayList<LocalizedString>(t.getLabels()));
       sto.setVocabulary(t.getVocabulary());
       for (String s : t.getLiteralConstraints()) {
@@ -107,12 +77,6 @@ public class TransferObjectFactory {
         lcto.setValue(s);
         sto.getLiteralConstraints().add(lcto);
       }
-      sto.setMinOccurs(t.getMinOccurs());
-      sto.setMaxOccurs(t.getMaxOccurs());
-      if (t.getParent() != null) {
-        sto.setParentStatementId(CommonUtils.extractIDFromURI(t.getParent()));
-      }
-      sto.setUseInPreview(t.isPreview());
       to.getStatements().add(sto);
     }
 
@@ -198,9 +162,7 @@ public class TransferObjectFactory {
    * @param p
    * @param pto
    */
-  public static void transferPerson(Person p, PersonTO pto) {
-
-    // pto.setPosition(p.getPos());
+  public static PersonTO transferPerson(Person p, PersonTO pto) {
     pto.setId(CommonUtils.extractIDFromURI(p.getId()));
     pto.setFamilyName(p.getFamilyName());
     pto.setGivenName(p.getGivenName());
@@ -212,7 +174,7 @@ public class TransferObjectFactory {
     pto.getIdentifiers().add(ito);
     // set oganizations
     transferContributorOrganizations(p.getOrganizations(), pto);
-
+    return pto;
   }
 
   /**
@@ -261,6 +223,12 @@ public class TransferObjectFactory {
 
   }
 
+  /**
+   * Transfer {@link Properties} to {@link PropertiesTO}
+   * 
+   * @param vo
+   * @param to
+   */
   public static void transferProperties(Properties vo, PropertiesTO to) {
     // set ID
     to.setId(vo.getIdString());
@@ -284,29 +252,13 @@ public class TransferObjectFactory {
   }
 
   /**
-   * Transfer an {@link Item} into a {@link ItemTO}
-   *
+   * Transfer {@link Item} to {@link DefaultItemTO}
+   * 
    * @param vo
    * @param to
    */
-  public static void transferItem(Item vo, ItemTO to, MetadataProfile profile) {
+  public static void transferDefaultItem(Item vo, DefaultItemTO to) {
     transferProperties(vo, to);
-    // set collectionID
-    to.setCollectionId(CommonUtils.extractIDFromURI(vo.getCollection()));
-    to.setFilename(vo.getFilename());
-    to.setFileSize(vo.getFileSize());
-    to.setMimetype(vo.getFiletype());
-    to.setChecksumMd5(vo.getChecksum());
-    to.setWebResolutionUrlUrl(vo.getWebImageUrl());
-    to.setThumbnailUrl(vo.getThumbnailImageUrl());
-    to.setFileUrl(vo.getFullImageUrl());
-    transferItemMetadata(profile, vo.getMetadataSet().getMetadata(), to);
-  }
-
-
-  public static void transferDefaultItem(Item vo, DefaultItemTO to, MetadataProfile profile) {
-    transferProperties(vo, to);
-    // set collectionID
     to.setCollectionId(CommonUtils.extractIDFromURI(vo.getCollection()));
     to.setFilename(vo.getFilename());
     to.setFileSize(vo.getFileSize());
@@ -316,7 +268,29 @@ public class TransferObjectFactory {
     to.setThumbnailUrl(vo.getThumbnailImageUrl());
     to.setFileUrl(vo.getFullImageUrl());
     to.setLicenses(transferLicense(vo.getLicenses()));
-    transferItemMetadataDefault(profile, vo.getMetadataSet().getMetadata(), to);
+    to.setMetadata(transferMetadata(vo.getMetadata()));
+  }
+
+  /**
+   * Transfer a list of {@link Metadata} to a list of {@link MetadataTO}
+   * 
+   * @param metadata
+   * @return
+   */
+  public static List<MetadataTO> transferMetadata(List<Metadata> metadata) {
+    List<MetadataTO> tos = new ArrayList<>();
+    for (Metadata vo : metadata) {
+      MetadataTO to = new MetadataTO();
+      to.setText(vo.getText());
+      to.setNumber(vo.getNumber());
+      to.setUrl(vo.getUrl());
+      to.setPerson(transferPerson(vo.getPerson(), new PersonTO()));
+      to.setLatitude(vo.getLatitude());
+      to.setLongitude(vo.getLongitude());
+      to.setStatementId(vo.getStatementId());
+      tos.add(to);
+    }
+    return tos;
   }
 
   /**
@@ -356,124 +330,4 @@ public class TransferObjectFactory {
       return i;
     }
   }
-
-  /**
-   * Transfer a {@link List} of {@link Metadata} into default Metadata json and set it to the
-   * {@link DefaultItemTO}
-   *
-   * @param profile
-   * @param voMds
-   * @param to
-   */
-  public static void transferItemMetadataDefault(MetadataProfile profile,
-      Collection<Metadata> voMds, DefaultItemTO to) {
-    if (voMds.size() == 0) {
-      return;
-    }
-    to.setMetadata(MetadataTransferHelper.serializeMetadataSet(voMds, profile));
-  }
-
-  public static void transferItemMetadata(MetadataProfile profile, Collection<Metadata> voMds,
-      ItemTO to) {
-
-    if (voMds.size() == 0) {
-      // to.setMetadata(null);
-      return;
-    }
-
-    // get all statements of the Profile!
-    int mdPosition = 0;
-    for (Metadata md : voMds) {
-      md.getId();
-      MetadataSetTO mdTO = new MetadataSetTO();
-      // mdTO.setPosition(md.getPos());
-      mdTO.setStatementUri(md.getStatement());
-      mdTO.setTypeUri(URI.create(md.getTypeNamespace()));
-      // NB
-      mdTO.setPosition(mdPosition);
-
-      if (profile.getStatements().size() > 0) {
-
-        List<LabelTO> ltos = new ArrayList<LabelTO>();
-        for (Statement s : profile.getStatements()) {
-          if (s.getId().toString().equals(md.getStatement().toString())) {
-            for (LocalizedString ls : s.getLabels()) {
-              LabelTO lto = new LabelTO(ls.getLang(), ls.getValue());
-              ltos.add(lto);
-            }
-
-            if (s.getParent() != null) {
-              mdTO.setParentStatementUri(s.getParent().toString());
-            }
-
-            break;
-          }
-        }
-
-        mdTO.setLabels(ltos);
-      }
-
-      switch (md.getClass().getName()) {
-        case "de.mpg.imeji.logic.vo.predefinedMetadata.Text":
-          Text mdText = (Text) md;
-          TextTO tt = new TextTO();
-          tt.setText(mdText.getText());
-          mdTO.setValue(tt);
-          break;
-        case "de.mpg.imeji.logic.vo.predefinedMetadata.Number":
-          Number mdNumber = (Number) md;
-          NumberTO nt = new NumberTO();
-          nt.setNumber(mdNumber.getNumber());
-          mdTO.setValue(nt);
-          break;
-        case "de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson":
-          ConePerson mdCP = (ConePerson) md;
-          ConePersonTO cpto = new ConePersonTO();
-          PersonTO personTo = new PersonTO();
-          cpto.setPerson(personTo);
-          transferPerson(mdCP.getPerson(), cpto.getPerson());
-          mdTO.setValue(cpto);
-          break;
-        case "de.mpg.imeji.logic.vo.predefinedMetadata.Date":
-          de.mpg.imeji.logic.vo.predefinedMetadata.Date mdDate =
-              (de.mpg.imeji.logic.vo.predefinedMetadata.Date) md;
-          DateTO dt = new DateTO();
-          dt.setDate(mdDate.getDate());
-          mdTO.setValue(dt);
-          break;
-        case "de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation":
-          Geolocation mdGeo = (Geolocation) md;
-          GeolocationTO gto = new GeolocationTO();
-          gto.setName(mdGeo.getName());
-          gto.setLongitude(mdGeo.getLongitude());
-          gto.setLatitude(mdGeo.getLatitude());
-          mdTO.setValue(gto);
-          break;
-        /*
-         * case "de.mpg.imeji.logic.vo.predefinedMetadata.License": License mdLicense = (License)
-         * md; LicenseTO lto = new LicenseTO(); lto.setLicense(mdLicense.getLicense()); final URI
-         * externalUri = mdLicense.getExternalUri(); lto.setUrl(externalUri != null ?
-         * externalUri.toString() : ""); mdTO.setValue(lto); break;
-         */
-        case "de.mpg.imeji.logic.vo.predefinedMetadata.Link":
-          Link mdLink = (Link) md;
-          LinkTO llto = new LinkTO();
-          llto.setLink(mdLink.getLabel());
-          llto.setUrl(mdLink.getUri() != null ? mdLink.getUri().toString() : "");
-          mdTO.setValue(llto);
-          break;
-        case "de.mpg.imeji.logic.vo.predefinedMetadata.Publication":
-          Publication mdP = (Publication) md;
-          PublicationTO pto = new PublicationTO();
-          pto.setPublication(mdP.getUri() != null ? mdP.getUri().toString() : "");
-          pto.setFormat(mdP.getExportFormat());
-          pto.setCitation(mdP.getCitation());
-          mdTO.setValue(pto);
-          break;
-      }
-
-      to.getMetadata().add(mdTO);
-    }
-  }
-
 }

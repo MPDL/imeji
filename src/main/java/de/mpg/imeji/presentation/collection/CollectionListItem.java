@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
@@ -108,12 +108,12 @@ public class CollectionListItem {
       thumbnail = new ThumbnailBean();
       thumbnail.setLink(collection.getLogoUrl().toString());
     } else {
-      ItemBusinessController ic = new ItemBusinessController();
+      ItemService ic = new ItemService();
       Container searchedContainer = ic.searchAndSetContainerItems(collection, user, 1, 0);
       if (searchedContainer.getImages().iterator().hasNext()) {
         URI uri = searchedContainer.getImages().iterator().next();
         if (uri != null) {
-          this.thumbnail = new ThumbnailBean(ic.retrieveLazy(uri, user), false, null);
+          this.thumbnail = new ThumbnailBean(ic.retrieveLazy(uri, user), false);
         }
       }
     }
@@ -125,7 +125,7 @@ public class CollectionListItem {
    * @param user
    */
   private void initSize(CollectionImeji collection, User user) {
-    ItemBusinessController ic = new ItemBusinessController();
+    ItemService ic = new ItemService();
     size =
         ic.search(collection.getId(), null, null, Imeji.adminUser, null, 0, 0).getNumberOfRecords();
   }

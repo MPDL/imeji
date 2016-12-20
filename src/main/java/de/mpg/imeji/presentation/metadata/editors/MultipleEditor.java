@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 
@@ -33,8 +32,7 @@ public class MultipleEditor extends AbstractMetadataEditor {
    * @param profile
    * @param statement
    */
-  public MultipleEditor(List<Item> items, MetadataProfile profile, Statement statement,
-      User sessionUser, Locale locale) {
-    super(items, profile, statement, sessionUser, locale);
+  public MultipleEditor(List<Item> items, Statement statement, User sessionUser, Locale locale) {
+    super(items, statement, sessionUser, locale);
   }
 }

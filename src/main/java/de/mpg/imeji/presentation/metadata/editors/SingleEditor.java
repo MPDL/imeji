@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.component.LicenseEditor;
@@ -28,9 +27,8 @@ public class SingleEditor extends AbstractMetadataEditor {
    * @param profile
    * @param statement
    */
-  public SingleEditor(Item item, MetadataProfile profile, Statement statement, User sessionUser,
-      Locale locale) {
-    super(Arrays.asList(item), profile, statement, sessionUser, locale);
+  public SingleEditor(Item item, Statement statement, User sessionUser, Locale locale) {
+    super(Arrays.asList(item), statement, sessionUser, locale);
     setLicenseEditor(new LicenseEditor(locale, item));
   }
 }

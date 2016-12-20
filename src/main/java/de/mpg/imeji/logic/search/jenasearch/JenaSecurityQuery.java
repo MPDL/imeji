@@ -13,7 +13,6 @@ import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 
@@ -177,32 +176,6 @@ public class JenaSecurityQuery {
       s += allowedItemsString;
     }
 
-    if (J2JHelper.getResourceNamespace(new MetadataProfile()).equals(rdfType)) {
-      // searching for profiles. Add to the Filter the profiles for which the
-      // user has extra rights as well as the item which are public
-
-      StringBuilder builderProfiles = new StringBuilder();
-      int pNo = 0;
-      List<String> allowedProfiles = SecurityUtil.getListOfAllowedProfiles(user);
-      String allowedProfilesString = "";
-      String releasedStatusFilter = "( ?status = <" + Status.RELEASED.getUriString() + "> )";
-      if (allowedProfiles.size() > 0) {
-        for (String uri : allowedProfiles) {
-          pNo++;
-          builderProfiles.append(" <" + uri + "> " + (pNo == allowedProfiles.size() ? "" : ","));
-        }
-
-        allowedProfilesString = " { ?s <" + ImejiNamespaces.STATUS + "> ?status. FILTER (?s in ("
-            + builderProfiles.toString() + ") || " + releasedStatusFilter + ") }";
-      }
-
-      allowedProfilesString = " { ?s <" + ImejiNamespaces.STATUS
-          + "> ?status. FILTER (" + ((allowedProfiles.size() > 0)
-              ? (" ?s in (" + builderProfiles.toString() + ") || ") : "")
-          + releasedStatusFilter + ") }";
-      s += allowedProfilesString;
-
-    }
     return s;
   }
 

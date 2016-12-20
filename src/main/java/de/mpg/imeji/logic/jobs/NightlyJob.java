@@ -3,7 +3,6 @@ package de.mpg.imeji.logic.jobs;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.CleanMetadataJob;
 import de.mpg.imeji.logic.jobs.executors.CleanInactiveUsersJob;
 import de.mpg.imeji.logic.jobs.executors.NightlyExecutor;
 
@@ -28,8 +27,6 @@ public class NightlyJob implements Runnable {
     }
     Imeji.getEXECUTOR().submit(new CleanInactiveUsersJob());
     Imeji.getEXECUTOR().submit(new ReadMaxPlanckIPMappingJob());
-    Imeji.getEXECUTOR().submit(new CleanEmptyMetadataProfileJob());
-    Imeji.getEXECUTOR().submit(new CleanMetadataJob(null));
     Imeji.getEXECUTOR().submit(new CleanGrantsJob());
     Imeji.getEXECUTOR().submit(new CleanStatementsJob());
     Imeji.getEXECUTOR().submit(new CleanUserGroupsJob());

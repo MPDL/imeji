@@ -1,8 +1,7 @@
 package de.mpg.imeji.logic.validation.impl;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
+import de.mpg.imeji.logic.vo.Metadata;
 
 /**
  * Validator for geolocation
@@ -10,13 +9,12 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
  * @author bastiens
  *
  */
-public class GeolocationValidator implements Validator<Geolocation> {
+public class GeolocationValidator implements Validator<Metadata> {
 
   @Override
-  public void validate(Geolocation geolocation,
-      de.mpg.imeji.logic.validation.impl.Validator.Method method) throws UnprocessableError {
+  public void validate(Metadata geolocation, Method method) throws UnprocessableError {
     UnprocessableError e = new UnprocessableError();
-    String value = geolocation.getName();
+    String value = geolocation.getText();
     Double latitude = geolocation.getLatitude();
     Double longitude = geolocation.getLongitude();
     if ((!Double.isNaN(latitude) || !Double.isNaN(longitude)) && value != null) {
@@ -36,12 +34,5 @@ public class GeolocationValidator implements Validator<Geolocation> {
     if (e.hasMessages()) {
       throw e;
     }
-  }
-
-  @Override
-  public void validate(Geolocation t, MetadataProfile p,
-      de.mpg.imeji.logic.validation.impl.Validator.Method method) throws UnprocessableError {
-    validate(t, method);
-
   }
 }

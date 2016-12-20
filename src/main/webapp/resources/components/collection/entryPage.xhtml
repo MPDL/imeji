@@ -36,13 +36,6 @@
 					<h:outputText  escape="false" value="#{cc.attrs.infoLogicBean.container.metadata.description}"/>
 				</div>
 				<br/>
-				<ui:fragment rendered="#{cc.attrs.infoLogicBean.type == 'COLLECTION' and empty logicBean.profile.statements and Auth.admin(logicBean.collection) and logicBean.profile.status != 'WITHDRAWN'}">
-					<span class="fa fa-exclamation-triangle"/>
-					#{msg.error_collection_profile_not_exist}
-					<h:outputLink styleClass="" value="#{Navigation.applicationUrl}createprofile?col=#{logicBean.id}&amp;redirect=view" title="#{lbl.create_now_from_template}">
-							<h:outputText value="#{lbl.add_profile}"/>
-					</h:outputLink>
-				</ui:fragment>
 				<div class="imj_metadataSubPanel">
 					<h:outputText id="lblViewColFull_lblUtil" value="#{lbl.colUtil}" styleClass="imj_metadataSubPanelItem"/>
 				</div>

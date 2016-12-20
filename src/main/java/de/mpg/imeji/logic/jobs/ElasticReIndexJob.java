@@ -5,11 +5,11 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ContentController;
 import de.mpg.imeji.logic.controller.resource.SpaceController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
@@ -93,7 +93,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    *
    */
   private void reindexItems(String index) throws ImejiException {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     controller.reindex(index);
   }
 

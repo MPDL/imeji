@@ -33,7 +33,7 @@ public class GroupController {
    * @throws ImejiException
    */
   public void create(UserGroup group, User user) throws ImejiException {
-    WRITER.create(WriterFacade.toList(group), null, user);
+    WRITER.create(WriterFacade.toList(group), user);
   }
 
   /**
@@ -117,7 +117,7 @@ public class GroupController {
    * @throws ImejiException
    */
   public void update(UserGroup group, User user) throws ImejiException {
-    WRITER.update(WriterFacade.toList(group), null, user, true);
+    WRITER.update(WriterFacade.toList(group), user, true);
   }
 
   /**

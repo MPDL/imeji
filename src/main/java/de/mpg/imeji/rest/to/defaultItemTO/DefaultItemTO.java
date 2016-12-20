@@ -3,17 +3,15 @@ package de.mpg.imeji.rest.to.defaultItemTO;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import de.mpg.imeji.rest.to.LicenseTO;
+import de.mpg.imeji.rest.to.MetadataTO;
 import de.mpg.imeji.rest.to.PropertiesTO;
 
 @XmlRootElement
@@ -27,12 +25,12 @@ public class DefaultItemTO extends PropertiesTO implements Serializable {
   private String filename;
   private String mimetype;
   private String checksumMd5;
-  private List<LicenseTO> licenses = new ArrayList<>();;
+  private List<LicenseTO> licenses = new ArrayList<>();
   private URI webResolutionUrlUrl;
   private URI thumbnailUrl;
   private URI fileUrl;
   private long fileSize;
-  private Map<String, JsonNode> metadata = new LinkedHashMap<String, JsonNode>();
+  private List<MetadataTO> metadata = new ArrayList<>();
 
   public String getCollectionId() {
     return collectionId;
@@ -40,14 +38,6 @@ public class DefaultItemTO extends PropertiesTO implements Serializable {
 
   public void setCollectionId(String collectionId) {
     this.collectionId = collectionId;
-  }
-
-  public Map<String, JsonNode> getMetadata() {
-    return metadata;
-  }
-
-  public void setMetadata(Map<String, JsonNode> metadata) {
-    this.metadata = metadata;
   }
 
   public String getFilename() {
@@ -118,6 +108,20 @@ public class DefaultItemTO extends PropertiesTO implements Serializable {
    */
   public void setLicenses(List<LicenseTO> licenses) {
     this.licenses = licenses;
+  }
+
+  /**
+   * @return the metadata
+   */
+  public List<MetadataTO> getMetadata() {
+    return metadata;
+  }
+
+  /**
+   * @param metadata the metadata to set
+   */
+  public void setMetadata(List<MetadataTO> metadata) {
+    this.metadata = metadata;
   }
 
 }

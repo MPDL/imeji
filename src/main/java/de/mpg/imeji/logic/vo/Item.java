@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.io.FileUtils;
@@ -21,11 +20,9 @@ import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLazyList;
 import de.mpg.imeji.j2j.annotations.j2jLazyLiteral;
 import de.mpg.imeji.j2j.annotations.j2jLazyURIResource;
-import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 
 /**
  * imeji item. Can be an image, a video, a sound, etc.
@@ -48,8 +45,6 @@ public class Item extends Properties implements Serializable {
 
   @j2jResource("http://imeji.org/terms/collection")
   private URI collection;
-  @j2jList("http://imeji.org/terms/metadataSet")
-  private List<MetadataSet> metadataSets = new ArrayList<MetadataSet>();
   @j2jLazyURIResource("http://imeji.org/terms/webImageUrl")
   private URI webImageUrl;
   @j2jResource("http://imeji.org/terms/thumbnailImageUrl")
@@ -68,6 +63,8 @@ public class Item extends Properties implements Serializable {
   private String contentId;
   @j2jLazyList("http://imeji.org/terms/license")
   private List<License> licenses = new ArrayList<>();
+  @j2jLazyList("http://imeji.org/terms/metadata")
+  private List<Metadata> metadata = new ArrayList<>();
 
   /**
    * Default constructor
@@ -80,7 +77,6 @@ public class Item extends Properties implements Serializable {
     copyInFields(im);
   }
 
-  @XmlElement(name = "webImageUrl", namespace = "http://imeji.org/terms/")
   public URI getWebImageUrl() {
     return webImageUrl;
   }
@@ -89,7 +85,6 @@ public class Item extends Properties implements Serializable {
     this.webImageUrl = webImageUrl;
   }
 
-  @XmlElement(name = "thumbnailImageUrl", namespace = "http://imeji.org/terms/")
   public URI getThumbnailImageUrl() {
     return thumbnailImageUrl;
   }
@@ -98,7 +93,6 @@ public class Item extends Properties implements Serializable {
     this.thumbnailImageUrl = thumbnailImageUrl;
   }
 
-  @XmlElement(name = "fullImageUrl", namespace = "http://imeji.org/terms/")
   public URI getFullImageUrl() {
     return fullImageUrl;
   }
@@ -107,18 +101,10 @@ public class Item extends Properties implements Serializable {
     this.fullImageUrl = fullImageUrl;
   }
 
-  public MetadataSet getMetadataSet() {
-    if (metadataSets.size() == 0) {
-      metadataSets.add(new MetadataSet());
-    }
-    return metadataSets.get(0);
-  }
-
   public void setCollection(URI collection) {
     this.collection = collection;
   }
 
-  @XmlElement(name = "collection", namespace = "http://imeji.org/terms/")
   public URI getCollection() {
     return collection;
   }
@@ -127,7 +113,6 @@ public class Item extends Properties implements Serializable {
     this.filename = filename;
   }
 
-  @XmlElement(name = "filename", namespace = "http://imeji.org/terms/")
   public String getFilename() {
     return filename;
   }
@@ -136,7 +121,6 @@ public class Item extends Properties implements Serializable {
     this.filetype = filetype;
   }
 
-  @XmlElement(name = "filetype", namespace = "http://imeji.org/terms/")
   public String getFiletype() {
     return filetype;
   }
@@ -186,19 +170,9 @@ public class Item extends Properties implements Serializable {
     }
   }
 
-  public void setMetadataSets(List<MetadataSet> metadataSets) {
-    this.metadataSets = metadataSets;
-  }
-
-  @XmlElement(name = "metadataSet", namespace = "http://imeji.org/terms/")
-  public List<MetadataSet> getMetadataSets() {
-    return metadataSets;
-  }
-
   /**
    * @return the checksum
    */
-  @XmlElement(name = "checksum", namespace = "http://imeji.org/terms/")
   public String getChecksum() {
     return checksum;
   }
@@ -260,6 +234,14 @@ public class Item extends Properties implements Serializable {
 
   public void setContentId(String contentId) {
     this.contentId = contentId;
+  }
+
+  public List<Metadata> getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(List<Metadata> metadata) {
+    this.metadata = metadata;
   }
 
 }

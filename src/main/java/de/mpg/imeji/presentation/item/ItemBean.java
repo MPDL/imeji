@@ -26,11 +26,10 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ContentController;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -41,6 +40,7 @@ import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
+import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -50,15 +50,12 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.TechnicalMetadata;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.history.HistoryPage;
-import de.mpg.imeji.presentation.metadata.MetadataSetWrapper;
 import de.mpg.imeji.presentation.metadata.SingleEditorWrapper;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -82,11 +79,9 @@ public class ItemBean extends SuperBean {
   private boolean selected;
   private CollectionImeji collection;
   private List<String> techMd;
-  private MetadataProfile profile;
   private SingleEditorWrapper edit;
   protected String prettyLink;
   private ItemDetailsBrowse browse = null;
-  private MetadataSetWrapper mds;
   private List<Album> relatedAlbums;
   private String dateCreated;
   private String newFilename;
@@ -204,10 +199,8 @@ public class ItemBean extends SuperBean {
         user = Imeji.adminUser;
       }
       loadCollection(user);
-      loadProfile(user);
-      metadataLabels = new MetadataLabels(profile, getLocale());
-      edit = new SingleEditorWrapper(item, profile, getSessionUser(), getLocale());
-      mds = edit.getEditor().getItems().get(0).getMds();
+      metadataLabels = new MetadataLabels(item, getLocale());
+      edit = new SingleEditorWrapper(item, getSessionUser(), getLocale());
     }
   }
 
@@ -245,8 +238,7 @@ public class ItemBean extends SuperBean {
    * @
    */
   public void loadImage() throws ImejiException {
-    item = new ItemBusinessController().retrieve(ObjectHelper.getURI(Item.class, id),
-        getSessionUser());
+    item = new ItemService().retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
     if (item == null) {
       throw new NotFoundException("LoadImage: empty");
     }
@@ -268,15 +260,6 @@ public class ItemBean extends SuperBean {
       collection = null;
       LOGGER.error("Error loading collection", e);
     }
-  }
-
-  /**
-   * Load the {@link MetadataProfile} of the {@link Item}
-   *
-   * @throws ImejiException
-   */
-  public void loadProfile(User user) throws ImejiException {
-    profile = new ProfileController().retrieve(item.getMetadataSet().getProfile(), user);
   }
 
   /**
@@ -437,7 +420,7 @@ public class ItemBean extends SuperBean {
     if (getIsInActiveAlbum()) {
       removeFromActiveAlbum();
     }
-    new ItemBusinessController().delete(Arrays.asList(item), getSessionUser());
+    new ItemService().delete(Arrays.asList(item), getSessionUser());
     new SessionObjectsController().unselectItem(item.getId().toString());
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
         + " " + Imeji.RESOURCE_BUNDLE.getMessage("success_collection_remove_from", getLocale()));
@@ -451,8 +434,7 @@ public class ItemBean extends SuperBean {
    * @throws IOException
    */
   public void withdraw() throws ImejiException, IOException {
-    new ItemBusinessController().withdraw(Arrays.asList(item), getDiscardComment(),
-        getSessionUser());
+    new ItemService().withdraw(Arrays.asList(item), getDiscardComment(), getSessionUser());
     new SessionObjectsController().unselectItem(item.getId().toString());
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
         + " " + Imeji.RESOURCE_BUNDLE.getMessage("success_item_withdraw", getLocale()));
@@ -531,20 +513,11 @@ public class ItemBean extends SuperBean {
     }
   }
 
-  public MetadataProfile getProfile() {
-    return profile;
-  }
 
-  public void setProfile(MetadataProfile profile) {
-    this.profile = profile;
-  }
 
   public List<SelectItem> getStatementMenu() throws ImejiException {
     List<SelectItem> statementMenu = new ArrayList<SelectItem>();
-    if (profile == null) {
-      loadProfile(getSessionUser());
-    }
-    for (Statement s : profile.getStatements()) {
+    for (Statement s : new StatementService().searchAndRetrieve()) {
       statementMenu.add(new SelectItem(s.getId(), s.getLabels().iterator().next().toString()));
     }
     return statementMenu;
@@ -571,15 +544,6 @@ public class ItemBean extends SuperBean {
   }
 
   public String getDescription() {
-    for (Statement s : getProfile().getStatements()) {
-      if (s.isDescription()) {
-        for (Metadata md : this.getImage().getMetadataSet().getMetadata()) {
-          if (md.getStatement().equals(s.getId())) {
-            return md.asFulltext();
-          }
-        }
-      }
-    }
     return item.getFilename();
   }
 
@@ -612,23 +576,6 @@ public class ItemBean extends SuperBean {
     return imageUploader;
   }
 
-  /**
-   * setter
-   *
-   * @param mds the mds to set
-   */
-  public void setMds(MetadataSetWrapper mds) {
-    this.mds = mds;
-  }
-
-  /**
-   * getter
-   *
-   * @return the mds
-   */
-  public MetadataSetWrapper getMds() {
-    return mds;
-  }
 
   /**
    * getter
@@ -795,5 +742,13 @@ public class ItemBean extends SuperBean {
    */
   public void setContent(ContentVO content) {
     this.content = content;
+  }
+
+  public Item getItem() {
+    return item;
+  }
+
+  public void setItem(Item item) {
+    this.item = item;
   }
 }

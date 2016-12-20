@@ -15,7 +15,6 @@ import de.mpg.imeji.logic.config.ImejiProperties;
 import de.mpg.imeji.logic.config.ImejiResourceBundle;
 import de.mpg.imeji.logic.config.ImejiStartupConfig;
 import de.mpg.imeji.logic.jobs.executors.NightlyExecutor;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -37,7 +36,6 @@ public class Imeji {
   public static String contentModel;
   public static Dataset dataset;
   public static User adminUser;
-  public static MetadataProfile defaultMetadataProfile;
   public static final String ADMIN_EMAIL_INIT = "admin@imeji.org";
   public static final String ADMIN_PASSWORD_INIT = "admin";
   public static ImejiConfiguration CONFIG;

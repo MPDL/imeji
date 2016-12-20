@@ -9,16 +9,16 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.business.StatisticsBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
 import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
 import util.JenaUtil;
 
@@ -39,7 +39,7 @@ public class StatisticsControllerTestClass extends ControllerTest {
     result = controller.getUsedStorageSizeForInstitute("imeji.org");
     assertEquals(totalFileSize, result);
     // deleteItem
-    ItemBusinessController itemController = new ItemBusinessController();
+    ItemService itemController = new ItemService();
     itemController.delete(item2.getIdString(), JenaUtil.testUser);
     totalFileSize = totalFileSize - FileUtils.sizeOf(getThumbnailfile());
     result = controller.getUsedStorageSizeForInstitute("imeji.org");

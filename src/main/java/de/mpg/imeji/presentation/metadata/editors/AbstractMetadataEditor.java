@@ -8,15 +8,14 @@ import java.util.List;
 import java.util.Locale;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
-import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.imeji.logic.vo.util.MetadataFactory;
 import de.mpg.imeji.presentation.component.LicenseEditor;
 import de.mpg.imeji.presentation.metadata.ItemWrapper;
 
@@ -30,7 +29,6 @@ import de.mpg.imeji.presentation.metadata.ItemWrapper;
 public abstract class AbstractMetadataEditor {
   protected List<ItemWrapper> items;
   protected Statement statement;
-  protected MetadataProfile profile;
   protected User sessionUser;
   protected Locale locale;
   private LicenseEditor licenseEditor;
@@ -41,15 +39,14 @@ public abstract class AbstractMetadataEditor {
    * @param items
    * @param statement
    */
-  public AbstractMetadataEditor(List<Item> itemList, MetadataProfile profile, Statement statement,
-      User sessionUser, Locale locale) {
+  public AbstractMetadataEditor(List<Item> itemList, Statement statement, User sessionUser,
+      Locale locale) {
     this.statement = statement;
-    this.profile = profile;
     this.locale = locale;
     this.sessionUser = sessionUser;
     items = new ArrayList<ItemWrapper>();
     for (Item item : itemList) {
-      items.add(new ItemWrapper(item, profile, true));
+      items.add(new ItemWrapper(item, true));
     }
   }
 
@@ -66,7 +63,6 @@ public abstract class AbstractMetadataEditor {
   public void reset() {
     items = new ArrayList<ItemWrapper>();
     statement = null;
-    profile = null;
   }
 
   /**
@@ -76,7 +72,6 @@ public abstract class AbstractMetadataEditor {
   public AbstractMetadataEditor clone() {
     AbstractMetadataEditor editor = new MultipleEditor();
     editor.setItems(items);
-    editor.setProfile(profile);
     editor.setStatement(statement);
     editor.setSessionUser(sessionUser);
     editor.setLocale(locale);
@@ -89,7 +84,7 @@ public abstract class AbstractMetadataEditor {
    * @throws ImejiException
    */
   public void save() throws ImejiException {
-    ItemBusinessController ic = new ItemBusinessController();
+    ItemService ic = new ItemService();
     List<Item> itemList = validateAndFormatItemsForSaving();
     ic.updateBatch(itemList, sessionUser);
   }
@@ -134,7 +129,7 @@ public abstract class AbstractMetadataEditor {
    */
   protected Metadata newMetadata() {
     if (statement != null) {
-      return MetadataFactory.createMetadata(statement);
+      return ImejiFactory.newMetadata(statement).build();
     }
     return null;
   }
@@ -159,13 +154,6 @@ public abstract class AbstractMetadataEditor {
     this.statement = statement;
   }
 
-  public MetadataProfile getProfile() {
-    return profile;
-  }
-
-  public void setProfile(MetadataProfile profile) {
-    this.profile = profile;
-  }
 
   /**
    * @return the sessionUser

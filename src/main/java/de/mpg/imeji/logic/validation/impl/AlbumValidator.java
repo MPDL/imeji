@@ -8,7 +8,6 @@ import java.util.List;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.vo.Album;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 
@@ -60,11 +59,6 @@ public class AlbumValidator extends ContainerValidator implements Validator<Albu
       throw exception;
     }
 
-  }
-
-  @Override
-  public void validate(Album t, MetadataProfile p, Method method) throws UnprocessableError {
-    validate(t, method);
   }
 
   @Override

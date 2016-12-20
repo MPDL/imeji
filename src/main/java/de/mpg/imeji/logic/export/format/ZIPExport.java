@@ -41,7 +41,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.vo.Item;
@@ -121,7 +121,7 @@ public class ZIPExport extends Export {
     try {
       // Create the ZIP file
       for (int i = 0; i < source.size(); i++) {
-        ItemBusinessController ic = new ItemBusinessController();
+        ItemService ic = new ItemService();
         Item item = null;
         StorageController sc = null;
         try {

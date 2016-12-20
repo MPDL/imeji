@@ -20,6 +20,7 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.predefinedMetadata.ConePerson;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Date;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Geolocation;
@@ -28,7 +29,6 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Text;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataFactory;
 import de.mpg.imeji.util.LocalizedString;
 
@@ -129,10 +129,10 @@ public class ItemValidatorTest {
     md3.setDate(ValidatorPredefinedValues.DATE1.value());
     Link md4 = (Link) MetadataFactory.createMetadata(LINK_PREDEFINED);
     md4.setUri(URI.create(ValidatorPredefinedValues.LINK1.value()));
-    item.getMetadataSet().getMetadata().add(md1);
-    item.getMetadataSet().getMetadata().add(md2);
-    item.getMetadataSet().getMetadata().add(md3);
-    item.getMetadataSet().getMetadata().add(md4);
+    item.getMetadataSet().getMetadataJson().add(md1);
+    item.getMetadataSet().getMetadataJson().add(md2);
+    item.getMetadataSet().getMetadataJson().add(md3);
+    item.getMetadataSet().getMetadataJson().add(md4);
     try {
       validator.validate(item, profile, Method.ALL);
     } catch (Exception e) {
@@ -147,7 +147,7 @@ public class ItemValidatorTest {
     // TEXT
     Text md1 = (Text) MetadataFactory.createMetadata(TEXT_PREDEFINED);
     md1.setText(ValidatorPredefinedValues.TEXT1.value() + "QWERTY");
-    item.getMetadataSet().getMetadata().add(md1);
+    item.getMetadataSet().getMetadataJson().add(md1);
     try {
       validator.validate(item, profile, Method.ALL);
       Assert.fail("Validation for Text with wrong predefined value not working");
@@ -159,7 +159,7 @@ public class ItemValidatorTest {
         (de.mpg.imeji.logic.vo.predefinedMetadata.Number) MetadataFactory
             .createMetadata(NUMBER_PREDEFINED);
     md2.setNumber(0);
-    item.getMetadataSet().getMetadata().add(md2);
+    item.getMetadataSet().getMetadataJson().add(md2);
     try {
       validator.validate(item, profile, Method.ALL);
       Assert.fail("Validation for Number with wrong predefined value not working");
@@ -169,7 +169,7 @@ public class ItemValidatorTest {
     // Date
     Date md3 = (Date) MetadataFactory.createMetadata(DATE_PREDEFINED);
     md3.setDate("2000");
-    item.getMetadataSet().getMetadata().add(md3);
+    item.getMetadataSet().getMetadataJson().add(md3);
     try {
       validator.validate(item, profile, Method.ALL);
       Assert.fail("Validation for Date with wrong predefined value not working");
@@ -179,7 +179,7 @@ public class ItemValidatorTest {
     // Link
     Link md4 = (Link) MetadataFactory.createMetadata(LINK_PREDEFINED);
     md4.setUri(URI.create(ValidatorPredefinedValues.LINK1.value() + "/wrong"));
-    item.getMetadataSet().getMetadata().add(md3);
+    item.getMetadataSet().getMetadataJson().add(md3);
     try {
       validator.validate(item, profile, Method.ALL);
       Assert.fail("Validation for Link with wrong predefined value not working");
@@ -234,8 +234,8 @@ public class ItemValidatorTest {
 
   private void validateMultipleValueNotAllowed(Metadata md) {
     Item item = getItem();
-    item.getMetadataSet().getMetadata().add(md);
-    item.getMetadataSet().getMetadata().add(md);
+    item.getMetadataSet().getMetadataJson().add(md);
+    item.getMetadataSet().getMetadataJson().add(md);
     try {
       validator.validate(item, profile, Method.ALL);
       Assert.fail("Error validating multiple values for " + md.getTypeNamespace()
@@ -287,8 +287,8 @@ public class ItemValidatorTest {
 
   private void validateMultipleValueAllowed(Metadata md) {
     Item item = getItem();
-    item.getMetadataSet().getMetadata().add(md);
-    item.getMetadataSet().getMetadata().add(md);
+    item.getMetadataSet().getMetadataJson().add(md);
+    item.getMetadataSet().getMetadataJson().add(md);
     try {
       validator.validate(item, profile, Method.ALL);
     } catch (UnprocessableError e) {
@@ -302,7 +302,7 @@ public class ItemValidatorTest {
     Date md = (Date) MetadataFactory.createMetadata(DATE_PREDEFINED_MULTIPLE);
     md.setDate("not a date");
     Item item = getItem();
-    item.getMetadataSet().getMetadata().add(md);
+    item.getMetadataSet().getMetadataJson().add(md);
     try {
       validator.validate(item, profile, Method.ALL);
       Assert.fail("Wrong date format, should not be validated");

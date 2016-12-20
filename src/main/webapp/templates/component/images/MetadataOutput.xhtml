@@ -2,67 +2,32 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
-
-	<!-- MetaDataOutput START -->
-	<h:outputText styleClass="imj_metadataValueEntry" style="white-space: pre-wrap;" value="#{md.text}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#text' and md.text != null}"/>
-	<h:outputText styleClass="imj_metadataValueEntry" value="#{md.number}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#number' and md.number != null}">
-		<f:converter converterId="DoubleConverter"/>
-	</h:outputText>
-	<h:outputText styleClass="imj_metadataValueEntry" value="#{md.date}" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#date' and md.date != null}"/>
 	
-	<!-- MetaDataOutput - Link -->
-	<h:outputLink value="#{md.uri}" target="_blank" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#link'}">
-		<h:outputText value="#{md.uri}" rendered="#{md.label == ''}"/>
-		<h:outputText value="#{md.label}" rendered="#{md.label != ''}" style="white-space: pre-wrap;"/>
-	</h:outputLink>
-			
-	<!-- MetaDataOutput - License -->
-	<ui:fragment rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#license'}">
-		<h:outputText styleClass="imj_metadataValueEntry" value="#{md.license}" rendered="#{md.externalUri== null and md.license != null}" style="white-space: pre-wrap;"/>
-		<h:outputLink rendered="#{md.externalUri != null}" value="#{md.externalUri}">
-			<h:outputText styleClass="imj_metadataValueEntry" value="#{md.license}" rendered="#{md.license != null}"/>
-			<h:outputText styleClass="imj_metadataValueEntry" value="#{md.externalUri}" rendered="#{md.license == null or md.license == ''}"/>
-		</h:outputLink>
+	<ui:param name="isURL" value="#{not empty md.url}"/>
+	<ui:param name="isGeolocation" value="#{md.latitude != 'NaN' and md.longitude != 'NaN'}"/>
+	<ui:param name="isPerson" value="#{not empty md.person.completeName}"/>
+	<ui:param name="isDefault" value="#{!(isURL and isGeolocation and isPerson)}"/>
+	
+	
+	<ui:fragment rendered="#{isURL}">
+		<a target="_blank" href="#{md.url}">#{empty md.text ? md.url : md.text}</a>
 	</ui:fragment>
-			
-	<!-- MetaDataOutput - CoNE Author -->
-	<h:outputLink value="#{md.coneId}" target="_blank" rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#conePerson' and md.coneId != null}" >
-		<h:outputText styleClass="imj_metadataValueEntry" value="#{md.person.completeName} "/>
-		<h:outputText styleClass="" value="  " rendered="#{md.person.organizationString != ''}"/>
-		<h:outputText styleClass="imj_metadataValueEntry" value="  (#{md.person.organizationString})" rendered="#{md.person.organizationString != ''}"/>
-	</h:outputLink>
-			
-	<!-- MetaDataOutput - Person -->
-	<ui:fragment rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#conePerson' and md.coneId == null and md.person.familyName != null}">
-		<h:outputText styleClass="imj_metadataValueEntry" value="#{md.person.completeName}"/>
-		<h:outputText styleClass="" value="  " rendered="#{md.person.organizationString != ''}"/>
-		<h:outputText styleClass="imj_metadataValueEntry" value="  (#{md.person.organizationString})" rendered="#{md.person.organizationString != ''}"/>
+	
+	<ui:fragment rendered="#{isGeolocation}">
+		<span>#{md.text} </span>
+		<span>#{md.longitude}/#{md.latitude}</span>
+		<a href="http://maps.google.com/maps?q=#{md.latitude},#{md.longitude}" target="_blank">
+			<span class="imj_metadataValueEntryViewMap">"View in Google maps"</span>
+		</a>
 	</ui:fragment>
-			
-	<!-- MetaDataOutput - Publication -->
-	<ui:fragment rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#publication'}">
-		<h:outputText styleClass="imj_metadataValueEntry" value="#{md.citation}" rendered="#{md.citation != ''}" escape="false"/>
-		<h:outputLink styleClass="imj_metadataValueEntry" value="#{md.uri}" target="_blank">
-			<h:outputText styleClass="imj_metadataValueEntry" value="#{md.uri}" rendered="#{md.citation == ''}"/>
-		</h:outputLink>
+	
+	<ui:fragment rendered="#{isPerson}">
+		<span class="imj_metadataValueEntry">#{md.person.completeName}</span>
 	</ui:fragment>
-			
-	<!-- MetaDataOutput - Geolocation -->
-	<ui:fragment rendered="#{md.typeNamespace == 'http://imeji.org/terms/metadata#geolocation'}">
-		<h:outputText value="#{md.name} (" rendered="#{md.name != null}" style="white-space: pre-wrap;"/>
-		<h:outputText value="#{md.longitude}/#{md.latitude}"/>
-		<h:outputText value=")" rendered="#{md.name != null}"/>
-		<ui:fragment rendered="#{md.latitude == 'NaN' or md.latitude == '' or md.latitude == null or  md.longitude == 'NaN' or md.longitude == '' or md.longitude == null }">
-			<h:outputLink value="http://maps.google.com/maps?q=#{md.name}" target="_blank">
-				<h:outputText styleClass="imj_metadataValueEntryViewMap" value="View in Google maps"/>
-			</h:outputLink>
-		</ui:fragment>
-		<ui:fragment rendered="#{!(md.latitude == 'NaN' or md.latitude == '' or md.latitude == null or  md.longitude == 'NaN' or md.longitude == '' or md.longitude == null)}">
-			<h:outputLink value="http://maps.google.com/maps?q=#{md.latitude},#{md.longitude}" target="_blank">
-				<h:outputText styleClass="imj_metadataValueEntryViewMap" value="View in Google maps"/>
-			</h:outputLink>
-		</ui:fragment>
+	
+	<ui:fragment rendered="#{isDefault}">
+		<span class="imj_metadataValueEntry">#{md.text}#{md.number}</span>
 	</ui:fragment>
-			
+	
 <!-- MetaDataOutput END -->
 </ui:composition>

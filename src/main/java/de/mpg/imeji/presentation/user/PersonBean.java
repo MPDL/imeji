@@ -22,7 +22,7 @@ import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.ContainerBean;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.metadata.MetadataWrapper;

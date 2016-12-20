@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.vo.Item;
@@ -22,7 +22,7 @@ import de.mpg.imeji.test.logic.controller.ControllerTest;
 import util.JenaUtil;
 
 /**
- * Unit Tests for the {@link ItemBusinessController}
+ * Unit Tests for the {@link ItemService}
  * 
  * @author bastiens
  * 
@@ -45,7 +45,7 @@ public class ItemControllerTestClass extends ControllerTest {
   @Ignore
   @Test
   public void replaceItemThumbnail() throws ImejiException, IOException {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     File original = getOriginalfile();
     String checksum = StorageUtils.calculateChecksum(original);
     try {
@@ -63,7 +63,7 @@ public class ItemControllerTestClass extends ControllerTest {
 
   @Test
   public void replaceItemFile() throws ImejiException, IOException {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     try {
       item = controller.updateFile(item, collection, getThumbnailfile(), "test.tmp",
           JenaUtil.testUser);
@@ -92,7 +92,7 @@ public class ItemControllerTestClass extends ControllerTest {
     createProfile();
     createCollection();
     itemsToUpdate.add(createItemWithFile());
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
 
     try {
       controller.updateBatch(itemsToUpdate, JenaUtil.testUser);

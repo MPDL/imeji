@@ -25,9 +25,8 @@ import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
-import de.mpg.imeji.presentation.mdProfile.ProfileSelector;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.VocabularyHelper;
@@ -45,7 +44,6 @@ public class CreateCollectionBean extends CollectionBean {
   private static final Logger LOGGER = Logger.getLogger(CreateCollectionBean.class);
   private static final long serialVersionUID = 1257698224590957642L;
   private VocabularyHelper vocabularyHelper;
-  private ProfileSelector profileSelector;
   private boolean createProfile = false;
   @ManagedProperty(value = "#{ContainerEditorSession}")
   private ContainerEditorSession containerEditorSession;
@@ -55,7 +53,6 @@ public class CreateCollectionBean extends CollectionBean {
    */
   @PostConstruct
   public void init() {
-    profileSelector = new ProfileSelector(null, getSessionUser(), getSelectedSpaceString(), getLocale());
     vocabularyHelper = new VocabularyHelper(getLocale());
     setCollectionCreateMode(true);
     setCollection(ImejiFactory.newCollection());
@@ -119,11 +116,9 @@ public class CreateCollectionBean extends CollectionBean {
           pos2++;
         }
       }
-      if (!createProfile) {
-        profileSelector.setProfile(null);
-      }
-      setCollection(collectionController.create(getCollection(), profileSelector.getProfile(),
-          getSessionUser(), profileSelector.getSelectorMode(), getSelectedSpaceString()));
+
+      setCollection(
+          collectionController.create(getCollection(), getSessionUser(), getSelectedSpaceString()));
       if (containerEditorSession.getUploadedLogoPath() != null) {
         collectionController.updateLogo(getCollection(),
             new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
@@ -171,14 +166,6 @@ public class CreateCollectionBean extends CollectionBean {
       }
     }
     return "";
-  }
-
-  public ProfileSelector getProfileSelector() {
-    return profileSelector;
-  }
-
-  public void setProfileSelector(ProfileSelector profileSelector) {
-    this.profileSelector = profileSelector;
   }
 
   public boolean isCreateProfile() {

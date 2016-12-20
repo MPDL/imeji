@@ -24,7 +24,7 @@ import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 

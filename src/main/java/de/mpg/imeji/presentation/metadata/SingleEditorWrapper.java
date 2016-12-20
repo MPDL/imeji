@@ -13,14 +13,12 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.concurrency.locks.Lock;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.metadata.editors.SingleEditor;
-import de.mpg.imeji.presentation.metadata.util.SuggestBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -33,7 +31,6 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 public class SingleEditorWrapper implements Serializable {
   private static final long serialVersionUID = 914870669221300081L;
   private Item item = null;
-  private MetadataProfile profile = null;
   private SingleEditor editor = null;
   private String toggleState = "displayMd";
   private int mdPosition = 0;
@@ -49,9 +46,8 @@ public class SingleEditorWrapper implements Serializable {
    * @param profile
    * @param pageUrl
    */
-  public SingleEditorWrapper(Item im, MetadataProfile profile, User sessionUser, Locale locale) {
+  public SingleEditorWrapper(Item im, User sessionUser, Locale locale) {
     this.item = im;
-    this.profile = profile;
     this.sessionUser = sessionUser;
     this.locale = locale;
     init();
@@ -73,10 +69,9 @@ public class SingleEditorWrapper implements Serializable {
    * Initialize the page
    */
   private void init() {
-    editor = new SingleEditor(item, profile, null, sessionUser, locale);
-    ((SuggestBean) BeanHelper.getSessionBean(SuggestBean.class)).init(profile);
+    editor = new SingleEditor(item, null, sessionUser, locale);
     metadataList = new ArrayList<MetadataWrapper>();
-    metadataList.addAll(editor.getItems().get(0).getMds().getTree().getList());
+    // metadataList.addAll(editor.getItems().get(0).asItem());
   }
 
 
@@ -90,7 +85,7 @@ public class SingleEditorWrapper implements Serializable {
     this.toggleState = "displayMd";
     Locks.unLock(new Lock(item.getId().toString(), sessionUser.getEmail()));
     reloadImage();
-    editor = new SingleEditor(item, profile, null, sessionUser, locale);
+    editor = new SingleEditor(item, null, sessionUser, locale);
     return "";
   }
 
@@ -98,7 +93,7 @@ public class SingleEditorWrapper implements Serializable {
    * Reload the current image
    */
   private void reloadImage() {
-    ItemBusinessController itemController = new ItemBusinessController();
+    ItemService itemController = new ItemService();
     try {
       item = itemController.retrieve(item.getId(), sessionUser);
     } catch (Exception e) {
@@ -141,14 +136,6 @@ public class SingleEditorWrapper implements Serializable {
 
   public void setImage(Item item) {
     this.item = item;
-  }
-
-  public MetadataProfile getProfile() {
-    return profile;
-  }
-
-  public void setProfile(MetadataProfile profile) {
-    this.profile = profile;
   }
 
   public int getMdPosition() {

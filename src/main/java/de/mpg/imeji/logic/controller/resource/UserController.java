@@ -50,7 +50,7 @@ public class UserController {
     Calendar now = DateHelper.getCurrentDate();
     user.setCreated(now);
     user.setModified(now);
-    WRITER.create(WriterFacade.toList(user), null, Imeji.adminUser);
+    WRITER.create(WriterFacade.toList(user), Imeji.adminUser);
     return user;
   }
 
@@ -139,7 +139,7 @@ public class UserController {
    */
   public User update(User updatedUser) throws ImejiException {
     updatedUser.setModified(DateHelper.getCurrentDate());
-    WRITER.update(WriterFacade.toList(updatedUser), null, Imeji.adminUser, true);
+    WRITER.update(WriterFacade.toList(updatedUser), Imeji.adminUser, true);
     return updatedUser;
   }
 

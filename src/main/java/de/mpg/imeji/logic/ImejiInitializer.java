@@ -26,7 +26,6 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
@@ -39,11 +38,10 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 
 /**
  * Initialize imeji
@@ -97,7 +95,6 @@ public class ImejiInitializer {
     Imeji.imageModel = ImejiInitializer.getModelName(Item.class);
     Imeji.userModel = ImejiInitializer.getModelName(User.class);
     Imeji.statementModel = ImejiInitializer.getModelName(Statement.class);
-    Imeji.profileModel = ImejiInitializer.getModelName(MetadataProfile.class);
     Imeji.spaceModel = ImejiInitializer.getModelName(Space.class);
     Imeji.contentModel = ImejiInitializer.getModelName(ContentVO.class);
     ImejiInitializer.initModel(Imeji.albumModel);
@@ -105,7 +102,6 @@ public class ImejiInitializer {
     ImejiInitializer.initModel(Imeji.imageModel);
     ImejiInitializer.initModel(Imeji.userModel);
     ImejiInitializer.initModel(Imeji.statementModel);
-    ImejiInitializer.initModel(Imeji.profileModel);
     ImejiInitializer.initModel(Imeji.spaceModel);
     ImejiInitializer.initModel(Imeji.contentModel);
     LOGGER.info("... models done!");
@@ -113,7 +109,6 @@ public class ImejiInitializer {
     KeyValueStoreBusinessController.startAllStores();
     ImejiInitializer.initRsaKeys();
     ImejiInitializer.initadminUser();
-    ImejiInitializer.initDefaultMetadataProfile();
   }
 
 
@@ -215,25 +210,6 @@ public class ImejiInitializer {
     }
   }
 
-
-  public static void initDefaultMetadataProfile() {
-    MetadataProfileBusinessController metadataProfileBC = new MetadataProfileBusinessController();
-    LOGGER.info("Initializing default metadata profile...");
-    try {
-      Imeji.defaultMetadataProfile = metadataProfileBC.initDefaultMetadataProfile();
-    } catch (Exception e) {
-      LOGGER.error("error retrieving/creating default metadata profile: ", e);
-    }
-    if (Imeji.defaultMetadataProfile != null) {
-      LOGGER.info("Default metadata profile is set-up to " + Imeji.defaultMetadataProfile.getId());
-    } else {
-      LOGGER.info(
-          "Checking for default metadata profile is finished: no default metadata profile has been set.");
-
-    }
-  }
-
-
   /**
    * Return the name of the model if defined in a {@link Class} with {@link j2jModel} annotation
    *
@@ -256,10 +232,10 @@ public class ImejiInitializer {
     Imeji.getINTERNAL_STORAGE_EXECUTOR().shutdown();
     Imeji.getNIGHTLY_EXECUTOR().stop();
     LOGGER.info("imeji executor shutdown? " + Imeji.getEXECUTOR().isShutdown());
-    LOGGER.info(
-        "content extraction executor shutdown? " + Imeji.getCONTENT_EXTRACTION_EXECUTOR().isShutdown());
-    LOGGER.info(
-        "internal executor shutdown shutdown? " + Imeji.getINTERNAL_STORAGE_EXECUTOR().isShutdown());
+    LOGGER.info("content extraction executor shutdown? "
+        + Imeji.getCONTENT_EXTRACTION_EXECUTOR().isShutdown());
+    LOGGER.info("internal executor shutdown shutdown? "
+        + Imeji.getINTERNAL_STORAGE_EXECUTOR().isShutdown());
     LOGGER.info("nightly executor shutdown shutdown? " + Imeji.getNIGHTLY_EXECUTOR().isShutdown());
     ElasticInitializer.shutdown();
     KeyValueStoreBusinessController.stopAllStores();

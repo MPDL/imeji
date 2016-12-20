@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.logic.vo.util;
+package de.mpg.imeji.logic.vo.factory;
 
 import java.net.URI;
 
@@ -12,15 +12,13 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContainerMetadata;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.MetadataSet;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
 import de.mpg.imeji.util.LocalizedString;
 
 /**
@@ -60,11 +58,6 @@ public class ImejiFactory {
     return coll;
   }
 
-  public static MetadataProfile newProfile() {
-    MetadataProfile p = new MetadataProfile();
-    return p;
-  }
-
   public static ContainerMetadata newContainerMetadata() {
     ContainerMetadata cm = new ContainerMetadata();
     cm.getPersons().add(newPerson());
@@ -101,10 +94,10 @@ public class ImejiFactory {
    *
    * @return
    */
-  public static Statement newStatement(String label, String lang, Types type) {
+  public static Statement newStatement(String label, String lang, StatementType type) {
     Statement s = new Statement();
     s.getLabels().add(new LocalizedString(label, lang));
-    s.setType(URI.create(type.getClazzNamespace()));
+    s.setType(type);
     return s;
   }
 
@@ -116,7 +109,6 @@ public class ImejiFactory {
    */
   public static Statement newStatement(URI parent) {
     Statement s = newStatement();
-    s.setParent(parent);
     return s;
   }
 
@@ -150,12 +142,6 @@ public class ImejiFactory {
     return org;
   }
 
-  public static MetadataSet newMetadataSet(URI profile) {
-    MetadataSet mds = new MetadataSet();
-    mds.setProfile(profile);
-    return mds;
-  }
-
   /**
    * Create a new emtpy {@link Item}
    *
@@ -169,7 +155,6 @@ public class ImejiFactory {
       throw new UnprocessableError("Can not create item with a collection null");
     }
     item.setCollection(collection.getId());
-    item.getMetadataSets().add(newMetadataSet(collection.getProfile()));
     return item;
   }
 
@@ -219,5 +204,10 @@ public class ImejiFactory {
       item.setStatus(Status.RELEASED);
     }
     return item;
+  }
+
+
+  public static MetadataFactory newMetadata(Statement s) {
+    return new MetadataFactory().setStatementId(s.getId());
   }
 }

@@ -34,8 +34,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.doi.DoiService;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
@@ -48,8 +48,8 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
 import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.collection.CollectionBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -125,7 +125,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @param size
    */
   protected void findItems(User user, int size) {
-    ItemBusinessController ic = new ItemBusinessController();
+    ItemService ic = new ItemService();
     ic.searchAndSetContainerItems(getContainer(), user, size, 0);
   }
 
@@ -136,7 +136,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   protected void countItems() {
-    ItemBusinessController ic = new ItemBusinessController();
+    ItemService ic = new ItemService();
     size = ic.search(getContainer().getId(), null, null, Imeji.adminUser, null, 0, 0)
         .getNumberOfRecords();
   }
@@ -153,7 +153,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
       for (URI uri : getContainer().getImages()) {
         uris.add(uri.toString());
       }
-      ItemBusinessController ic = new ItemBusinessController();
+      ItemService ic = new ItemService();
       setItems((List<Item>) ic.retrieveBatchLazy(uris, size, 0, user));
     }
   }
@@ -164,7 +164,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    */
   public void countDiscardedItems(User user) {
     if (getContainer() != null) {
-      ItemBusinessController ic = new ItemBusinessController();
+      ItemService ic = new ItemService();
       SearchQuery q = new SearchQuery();
       try {
         q.addPair(new SearchPair(SearchFields.status, SearchOperators.EQUALS,

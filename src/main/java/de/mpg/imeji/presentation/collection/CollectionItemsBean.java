@@ -13,10 +13,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
@@ -25,7 +23,6 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.item.ItemsBean;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -44,7 +41,6 @@ public class CollectionItemsBean extends ItemsBean {
   private String id = null;
   private URI uri;
   private CollectionImeji collection;
-  private MetadataProfile profile;
   private SearchQuery searchQuery = new SearchQuery();
   private CollectionActionMenu actionMenu;
 
@@ -68,7 +64,6 @@ public class CollectionItemsBean extends ItemsBean {
       id = UrlHelper.getParameterValue("id");
       uri = ObjectHelper.getURI(CollectionImeji.class, id);
       collection = new CollectionController().retrieveLazy(uri, getSessionUser());
-      profile = new ProfileController().retrieveLazy(collection.getProfile(), Imeji.adminUser);
       browseContext = getNavigationString() + id;
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale(),
@@ -83,7 +78,7 @@ public class CollectionItemsBean extends ItemsBean {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     return controller.search(uri, searchQuery, sortCriterion, getSessionUser(), null, limit,
         offset);
   }
@@ -146,19 +141,6 @@ public class CollectionItemsBean extends ItemsBean {
     return collection;
   }
 
-  /**
-   * @return the profile
-   */
-  public MetadataProfile getProfile() {
-    return profile;
-  }
-
-  /**
-   * @param profile the profile to set
-   */
-  public void setProfile(MetadataProfile profile) {
-    this.profile = profile;
-  }
 
   @Override
   public String getType() {

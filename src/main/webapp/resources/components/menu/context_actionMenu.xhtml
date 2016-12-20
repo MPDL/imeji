@@ -17,7 +17,6 @@
 		<composite:attribute name="activeMenu" type="java.lang.String" default="" required="false" shortDescription="@type String, e.g. active sub navigation Menu"/>
 			
 		<composite:attribute name="vo" type="java.lang.Object" required="false" shortDescription="@type: the VO on the current page (collection, item, album, profile)"/>
-		<composite:attribute name="profile" type="java.lang.Object" required="false" shortDescription="@type: The profile of the current VO"/>
 		<composite:attribute name="hasContent" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: True if the current VO is a not empty container"/>
 		<composite:attribute name="hasDoi" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean: check if the container has already a doi"/>
 							
@@ -90,13 +89,6 @@
 										</a>
 									</li>
 								</ui:fragment>
-								<ui:fragment rendered="#{cc.attrs.activeMenu == 'metadata'}">
-									<li>
-										<h:outputLink value="#{Navigation.applicationSpaceUrl}export?format=xml&amp;type=profile&amp;q=prof==&quot;#{metadataContextBean.profile}&quot;" target="_blank">
-											<h:outputText value="#{lbl.download_profile_xml}"/>
-										</h:outputLink>
-									</li>
-								</ui:fragment>
 								<ui:fragment rendered="#{cc.attrs.activeMenu == 'item'}">
 									<li>
 										<h:outputLink value="#{Navigation.applicationUrl}file/#{itemBean.encodedFileName}?id=#{itemBean.image.fullImageUrl}&amp;download=1" target="_blank">
@@ -136,7 +128,7 @@
 						</div>
 					</ui:fragment>
 					<!-- EDIT MENU -->
-					<ui:fragment  rendered="#{(adminVO or updateContentVO or updateVO or Auth.update(cc.attrs.profile)) and cc.attrs.vo.status != 'WITHDRAWN'}">
+					<ui:fragment  rendered="#{(adminVO or updateContentVO or updateVO) and cc.attrs.vo.status != 'WITHDRAWN'}">
 						<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item" id="editMenu">
 							<div class="imj_menuHeader" >
 	                            <span class="fa fa-pencil">&#160;</span>
@@ -160,14 +152,7 @@
 											</h:form>
 										</li>
 									</ui:fragment>
-									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and Auth.update(cc.attrs.profile) and !(cc.attrs.profile == null or cc.attrs.profile.statements.size() == 0)}">	
-										<li class="#{curMenuClass}Item">
-											<h:outputLink  value="#{Navigation.profileUrl}#{cc.attrs.profile.idString}/#{Navigation.editPath}?init=1&amp;col=#{cc.attrs.vo.idString}" id="lnkSelectEdit3">
-												<h:outputText value="#{lbl.profile_edit}"/>
-											</h:outputLink>
-										</li>
-									</ui:fragment>
-									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and paginatorListSessionBean!= null and cc.attrs.hasContent and updateContentVO and !(cc.attrs.profile == null or cc.attrs.profile.statements.size() == 0)}">	
+									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and paginatorListSessionBean!= null and cc.attrs.hasContent and updateContentVO}">	
 										<li class="#{curMenuClass}Item">
 											<h:outputLink  value="#{Navigation.applicationSpaceUrl}edit?type=all&amp;c=#{cc.attrs.vo.id}&amp;q=#{paginatorListSessionBean.query}" id="lnkSelectEdit2">
 												<h:outputText value="#{lbl.edit_all}"/>
@@ -307,17 +292,6 @@
 														<h:outputText value="#{lbl.remove_from_album_all}"/>
 													</h:commandLink>
 												</h:form>
-											</li>
-										</ui:fragment>							
-										
-										<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and adminVO and cc.attrs.profile != null}">
-											<li>
-												<h:outputLink rendered="#{metadataBean.profile.statements.size() == 0}" value="#{Navigation.applicationUrl}createprofile?warn=0&amp;col=#{metadataBean.collection.idString}&amp;redirect=view" title="#{lbl.add_profile}">
-													<h:outputText value="#{lbl.add_profile}"/>
-												</h:outputLink>
-												<h:outputLink rendered="#{metadataBean.profile.statements.size() > 0}" value="#{Navigation.applicationUrl}createprofile?warn=1&amp;col=#{metadataBean.collection.idString}&amp;redirect=view" title="#{lbl.profile_change}" >
-													<h:outputText value="#{lbl.profile_change}"/>
-												</h:outputLink>
 											</li>
 										</ui:fragment>
 									</ul>

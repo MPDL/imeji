@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.logic.controller.business;
+package de.mpg.imeji.logic.item;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -53,8 +53,8 @@ import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
 
 /**
  * Implements CRUD and Search methods for {@link Item}
@@ -63,8 +63,8 @@ import de.mpg.imeji.logic.vo.util.ImejiFactory;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class ItemBusinessController extends ImejiController {
-  private static final Logger LOGGER = Logger.getLogger(ItemBusinessController.class);
+public class ItemService extends ImejiController {
+  private static final Logger LOGGER = Logger.getLogger(ItemService.class);
   public static final String NO_THUMBNAIL_URL = "NO_THUMBNAIL_URL";
   private final Search search =
       SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC);
@@ -74,7 +74,7 @@ public class ItemBusinessController extends ImejiController {
   /**
    * Controller constructor
    */
-  public ItemBusinessController() {
+  public ItemService() {
     super();
   }
 
@@ -715,21 +715,6 @@ public class ItemBusinessController extends ImejiController {
    */
   private boolean downloadFile(String fetchUrl) {
     return !isNullOrEmpty(fetchUrl);
-  }
-
-  /**
-   * Set the status of a {@link List} of {@link Item} to released
-   *
-   * @param l
-   * @param user
-   * @throws ImejiException
-   */
-  public void updateItemsProfile(List<Item> l, User user, String profileUri) throws ImejiException {
-    for (Item item : l) {
-      item.getMetadataSet().setProfile(URI.create(profileUri));
-      item.getMetadataSet().getMetadata().clear();
-    }
-    updateBatch(l, user);
   }
 
 

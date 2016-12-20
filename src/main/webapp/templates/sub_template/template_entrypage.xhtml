@@ -3,7 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:imjc="http://java.sun.com/jsf/composite/components">
+	xmlns:col="http://java.sun.com/jsf/composite/components/collection">
 	
 	<!-- Main Content - Entry Page -->
 	<ui:define name="mainContent">	
@@ -11,7 +11,7 @@
 		<ui:fragment rendered="#{Auth.read(logicBean.container)}">
 			<div class="imj_#{currentMainMenu}EntryPage">
 				<!-- EntryPageTabList -->
-				<imjc:entryPageTabList infoLogicBean="#{logicBean}" applicationUrl="#{Navigation.applicationSpaceUrl}" lbl="#{lbl}"/>
+				<col:entryPage infoLogicBean="#{logicBean}" applicationUrl="#{Navigation.applicationSpaceUrl}" lbl="#{lbl}"/>
 			</div>
 		</ui:fragment>
 			

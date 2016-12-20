@@ -13,15 +13,15 @@ import org.junit.Test;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.QuotaExceededException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
 import de.mpg.imeji.testimpl.ImejiTestResources;
 import util.JenaUtil;
@@ -82,7 +82,7 @@ public class UserControllerTestClass extends ControllerTest {
 
     item = ImejiFactory.newItem(col);
     user.setQuota(ImejiTestResources.getTestJpg().length());
-    ItemBusinessController itemController = new ItemBusinessController();
+    ItemService itemController = new ItemService();
     item = itemController.createWithFile(item, ImejiTestResources.getTestJpg(),
         ImejiTestResources.getTestJpg().getName(), col, user);
 

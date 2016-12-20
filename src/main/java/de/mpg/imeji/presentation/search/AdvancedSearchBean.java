@@ -5,9 +5,7 @@ package de.mpg.imeji.presentation.search;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -20,13 +18,11 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -74,8 +70,8 @@ public class AdvancedSearchBean extends SuperBean {
    * @throws ImejiException
    */
   public String getNewSearch() throws ImejiException {
-    metadataLabels = new MetadataLabels(new MetadataProfile(), getLocale());
-    formular = new SearchForm(new SearchQuery(), new HashMap<>(), metadataLabels, getSessionUser(),
+    metadataLabels = new MetadataLabels(getLocale());
+    formular = new SearchForm(new SearchQuery(), metadataLabels, getSessionUser(),
         getSelectedSpaceString());
     initMenus();
     try {
@@ -109,11 +105,9 @@ public class AdvancedSearchBean extends SuperBean {
    * @throws Exception
    */
   public void initForm(SearchQuery searchQuery) throws Exception {
-    Map<String, MetadataProfile> profs = loadProfilesAndInitMenu();
-    metadataLabels =
-        new MetadataLabels(new ArrayList<MetadataProfile>(profs.values()), getLocale());
-    formular = new SearchForm(searchQuery, profs, metadataLabels, getSessionUser(),
-        getSelectedSpaceString());
+    metadataLabels = new MetadataLabels(getLocale());
+    formular =
+        new SearchForm(searchQuery, metadataLabels, getSessionUser(), getSelectedSpaceString());
     if (formular.getGroups().size() == 0) {
       formular.addSearchGroup(0);
     }
@@ -128,27 +122,6 @@ public class AdvancedSearchBean extends SuperBean {
   public String reset() throws Exception {
     initForm(new SearchQuery());
     return "";
-  }
-
-  /**
-   * Load all available profiles
-   *
-   * @return
-   * @throws ImejiException
-   */
-  private Map<String, MetadataProfile> loadProfilesAndInitMenu() throws ImejiException {
-    profilesMenu = new ArrayList<SelectItem>();
-    profilesMenu
-        .add(new SelectItem(null, Imeji.RESOURCE_BUNDLE.getLabel("select_profile", getLocale())));
-    ProfileController controller = new ProfileController();
-    Map<String, MetadataProfile> map = new HashMap<String, MetadataProfile>();
-    for (MetadataProfile p : controller.search(getSessionUser(), getSelectedSpaceString())) {
-      if (p != null && p.getStatements() != null && p.getStatements().size() > 0) {
-        map.put(p.getId().toString(), p);
-        profilesMenu.add(new SelectItem(p.getId().toString(), p.getTitle()));
-      }
-    }
-    return map;
   }
 
   /**

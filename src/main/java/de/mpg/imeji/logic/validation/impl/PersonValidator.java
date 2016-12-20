@@ -2,7 +2,6 @@ package de.mpg.imeji.logic.validation.impl;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 
@@ -15,8 +14,7 @@ import de.mpg.imeji.logic.vo.Person;
 public class PersonValidator extends ObjectValidator implements Validator<Person> {
 
   @Override
-  public void validate(Person p, de.mpg.imeji.logic.validation.impl.Validator.Method method)
-      throws UnprocessableError {
+  public void validate(Person p, Method method) throws UnprocessableError {
     UnprocessableError e = new UnprocessableError();
     if (StringHelper.isNullOrEmptyTrim(p.getFamilyName())) {
       e = new UnprocessableError("error_author_need_one_family_name", e);
@@ -33,12 +31,6 @@ public class PersonValidator extends ObjectValidator implements Validator<Person
     if (e.hasMessages()) {
       throw e;
     }
-  }
-
-  @Override
-  public void validate(Person t, MetadataProfile p,
-      de.mpg.imeji.logic.validation.impl.Validator.Method method) throws UnprocessableError {
-    validate(t, method);
   }
 
 

@@ -25,7 +25,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.ImejiController;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -80,7 +80,7 @@ public class AlbumController extends ImejiController {
     }
     isLoggedInUser(user);
     prepareCreate(album, user);
-    WRITER.create(WriterFacade.toList(album), null, user);
+    WRITER.create(WriterFacade.toList(album), user);
     updateCreatorGrants(user, album.getId().toString());
     return album;
   }
@@ -139,7 +139,7 @@ public class AlbumController extends ImejiController {
   public List<Album> retrieveBatch(List<String> uris, User user, int limit, int offset)
       throws ImejiException {
     List<Album> albums = retrieveBatchLazy(uris, user, limit, offset);
-    ItemBusinessController itemController = new ItemBusinessController();
+    ItemService itemController = new ItemService();
     for (Album album : albums) {
       itemController.searchAndSetContainerItems(album, user, -1, 0);
     }
@@ -156,7 +156,7 @@ public class AlbumController extends ImejiController {
    */
   public Album update(Album album, User user) throws ImejiException {
     prepareUpdate(album, user);
-    WRITER.update(WriterFacade.toList(album), null, user, true);
+    WRITER.update(WriterFacade.toList(album), user, true);
     return retrieve(album.getId(), user);
   }
 
@@ -181,7 +181,7 @@ public class AlbumController extends ImejiController {
    */
   public void release(Album album, User user) throws ImejiException {
     prepareRelease(album, user);
-    ItemBusinessController ic = new ItemBusinessController();
+    ItemService ic = new ItemService();
     album = (Album) ic.searchAndSetContainerItems(album, user, -1, 0);
     if (album.getImages().isEmpty()) {
       throw new UnprocessableError("An empty album can not be released!");
@@ -224,7 +224,7 @@ public class AlbumController extends ImejiController {
     if (!SecurityUtil.staticAuth().create(user, album)) {
       throw new NotAllowedError("album_not_allowed_to_add_item");
     }
-    ItemBusinessController itemController = new ItemBusinessController();
+    ItemService itemController = new ItemService();
     // Get the item of the album
     List<String> albumItems =
         itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0).getResults();
@@ -260,7 +260,7 @@ public class AlbumController extends ImejiController {
    * @throws ImejiException
    */
   public int removeFromAlbum(Album album, List<String> toDelete, User user) throws ImejiException {
-    ItemBusinessController itemController = new ItemBusinessController();
+    ItemService itemController = new ItemService();
     // Get the item of the album
     List<String> albumItems =
         itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0).getResults();

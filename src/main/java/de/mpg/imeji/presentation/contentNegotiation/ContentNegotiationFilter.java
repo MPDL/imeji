@@ -45,7 +45,6 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.servlet.ExportServlet;
 
 /**
@@ -143,10 +142,6 @@ public class ContentNegotiationFilter implements Filter {
       return "q=" + SearchIndex.SearchFields.alb.name() + "==\""
           + URLEncoder.encode(ObjectHelper.getURI(Album.class, getID(path)).toString(), "UTF-8")
           + "\"";
-    }
-    if (path.startsWith("/profile/")) {
-      return "q=" + SearchIndex.SearchFields.prof.name() + "==\"" + URLEncoder.encode(
-          ObjectHelper.getURI(MetadataProfile.class, getID(path)).toString(), "UTF-8") + "\"";
     }
     return request.getQueryString();
   }

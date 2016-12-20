@@ -5,7 +5,6 @@
       xmlns:c="http://java.sun.com/jsp/jstl/core"
       xmlns:composite="http://java.sun.com/jsf/composite"
       xmlns:imjc="http://java.sun.com/jsf/composite/components"
-      xmlns:mdprofile="http://java.sun.com/jsf/composite/components/mdProfile"
       xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
     <composite:interface>
@@ -21,7 +20,7 @@
                 <br/>
             </div>
             <div class="imj_descriptionArea">
-                <c:if test="#{cc.attrs.formularBean.albumType or cc.attrs.formularBean.collectionType and !cc.attrs.formularBean.profileSelectMode}"> 
+                <c:if test="#{cc.attrs.formularBean.albumType or cc.attrs.formularBean.collectionType}"> 
                     <!-- Title -->
                     <div class="imj_metadataSet">
                         <label class="imj_metadataLabel"> <h:outputText
@@ -236,21 +235,6 @@
                         </div>
                     <br/>
                 </c:if> 
-                <!-- END profileSelectMode, basicInfoAria -->
-                <!-- Select Profile-->
-                <c:if test="#{cc.attrs.showProfileSelector}">
-                    <h:selectOneRadio value="#{cc.attrs.formularBean.createProfile}">
-                        <f:ajax execute="@this" render="editContainer:mediaContainerForm:profileSelectorArea" />
-                        <f:selectItem itemLabel="#{lbl.skip_create_profile}" itemValue="false" />
-                        <f:selectItem itemLabel="#{lbl.profile_select_existing_profile}" itemValue="true" />
-                    </h:selectOneRadio>
-                    <h:panelGroup id="profileSelectorArea" layout="block">
-                        <ui:fragment rendered="#{cc.attrs.formularBean.createProfile}">
-                            <mdprofile:profileSelector profileSelector="#{cc.attrs.formularBean.profileSelector}"/>
-                        </ui:fragment>
-                    </h:panelGroup>
-                </c:if>
-
                 <div id="submitButtonPanel" class="imj_submitPanel">
                     <h:outputLink value="#{HistorySession.previousPage.completeUrlWithHistory}" styleClass="imj_cancelButton">
                         <h:outputText value="#{lbl.cancel}"/>

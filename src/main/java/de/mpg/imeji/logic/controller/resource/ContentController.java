@@ -78,7 +78,7 @@ public class ContentController extends ImejiController {
     if (item.getId() != null) {
       contentVO.setItemId(item.getId().toString());
     }
-    WRITER.create(Arrays.asList(contentVO), null, Imeji.adminUser);
+    WRITER.create(Arrays.asList(contentVO), Imeji.adminUser);
     return contentVO;
   }
 
@@ -159,7 +159,7 @@ public class ContentController extends ImejiController {
    * @throws ImejiException
    */
   public ContentVO update(ContentVO contentVO) throws ImejiException {
-    WRITER.update(Arrays.asList(contentVO), null, Imeji.adminUser, false);
+    WRITER.update(Arrays.asList(contentVO), Imeji.adminUser, false);
     return contentVO;
   }
 
@@ -171,7 +171,7 @@ public class ContentController extends ImejiController {
    * @throws ImejiException
    */
   public List<ContentVO> updateBatch(List<ContentVO> contents) throws ImejiException {
-    WRITER.update(J2JHelper.cast2ObjectList(contents), null, Imeji.adminUser, false);
+    WRITER.update(J2JHelper.cast2ObjectList(contents), Imeji.adminUser, false);
     return contents;
   }
 

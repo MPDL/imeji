@@ -11,7 +11,7 @@ import java.util.Map;
 
 import javax.faces.model.SelectItem;
 
-import de.mpg.imeji.logic.vo.MetadataProfile;
+import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.presentation.util.CommonUtils;
 
@@ -35,13 +35,12 @@ public class SuggestBean {
    *
    * @param profile
    */
-  public void init(MetadataProfile profile) {
+  public void init() {
     suggests = new HashMap<URI, Suggest>();
-    if (profile != null) {
-      for (Statement s : profile.getStatements()) {
-        suggests.put(s.getId(), new Suggest(s));
-      }
+    for (Statement s : new StatementService().searchAndRetrieve()) {
+      suggests.put(s.getUri(), new Suggest(s));
     }
+
   }
 
   /**

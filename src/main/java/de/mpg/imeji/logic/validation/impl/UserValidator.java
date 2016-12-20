@@ -11,7 +11,6 @@ import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -75,11 +74,6 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
   public static boolean isValidEmail(String email) {
     String regexEmailMatch = "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)";
     return email.matches(regexEmailMatch);
-  }
-
-  @Override
-  public void validate(User t, MetadataProfile p, Method m) throws UnprocessableError {
-    validate(t, m);
   }
 
   /**

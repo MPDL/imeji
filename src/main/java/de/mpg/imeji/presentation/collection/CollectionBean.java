@@ -10,16 +10,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.presentation.beans.ContainerBean;
-import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Abstract bean for all collection beans
@@ -39,8 +33,6 @@ public abstract class CollectionBean extends ContainerBean {
   private TabType tab = TabType.HOME;
 
   private CollectionImeji collection;
-  private MetadataProfile profile = null;
-  private MetadataProfile profileTemplate;
 
   private String id;
   private String profileId;
@@ -56,17 +48,6 @@ public abstract class CollectionBean extends ContainerBean {
    */
   public CollectionBean() {
     collection = new CollectionImeji();
-  }
-
-  /**
-   * Read the profile of the current collection
-   *
-   * @param user
-   * @throws ImejiException
-   */
-  protected void initCollectionProfile() throws ImejiException {
-    this.profile = new ProfileController().retrieve(collection.getProfile(), getSessionUser());
-    this.profileId = profile != null ? profile.getIdString() : null;
   }
 
   @Override
@@ -156,32 +137,6 @@ public abstract class CollectionBean extends ContainerBean {
    *
    * @return
    */
-  public MetadataProfile getProfile() {
-    return profile;
-  }
-
-  /**
-   * setter
-   *
-   * @param profile
-   */
-  public void setProfile(MetadataProfile profile) {
-    this.profile = profile;
-  }
-
-  public MetadataProfile getProfileTemplate() {
-    return profileTemplate;
-  }
-
-  public void setProfileTemplate(MetadataProfile profileTemplate) {
-    this.profileTemplate = profileTemplate;
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
   public String getProfileId() {
     return profileId;
   }
@@ -250,24 +205,6 @@ public abstract class CollectionBean extends ContainerBean {
 
   public void setProfileSelectMode(boolean profileSelectMode) {
     this.profileSelectMode = profileSelectMode;
-  }
-
-  public boolean isShowCheckBoxUseTemplate() {
-    if (collectionCreateMode) {
-      return collectionCreateMode;
-    } else {
-      ProfileController pc = new ProfileController();
-      MetadataProfile collectionProfile = null;
-      try {
-        collectionProfile = pc.retrieve(collection.getProfile(), getSessionUser());
-      } catch (NotFoundException e) {
-        return true;
-      } catch (ImejiException e) {
-        BeanHelper.error(
-            Imeji.RESOURCE_BUNDLE.getMessage("error_retrieving_metadata_profile", getLocale()));
-      }
-      return collectionProfile.getStatements().isEmpty();
-    }
   }
 
   /**

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
-import de.mpg.imeji.logic.vo.util.MetadataTypesHelper;
 
 /**
  * Element of a {@link SearchPair}, defines the index of the searched elements
@@ -83,31 +81,25 @@ public class SearchIndex implements Serializable {
    */
   public static List<SearchIndex> getAllIndexForStatement(Statement st) {
     List<SearchIndex> list = new ArrayList<SearchIndex>();
-    switch (MetadataTypesHelper.getTypesForNamespace(st.getType().toString())) {
+    switch (st.getType()) {
       case DATE:
         list.add(SearchIndexes.getIndex(SearchFields.time));
         break;
       case GEOLOCATION:
         list.add(SearchIndexes.getIndex(SearchFields.location));
         break;
-      /*
-       * case LICENSE: list.add(SearchIndexes.getIndex(SearchFields.license)); break;
-       */
       case NUMBER:
         list.add(SearchIndexes.getIndex(SearchFields.number));
         break;
-      case CONE_PERSON:
+      case PERSON:
         list.add(SearchIndexes.getIndex(SearchFields.person_family));
         list.add(SearchIndexes.getIndex(SearchFields.person_given));
         list.add(SearchIndexes.getIndex(SearchFields.person_org_name));
         break;
-      case PUBLICATION:
-        list.add(SearchIndexes.getIndex(SearchFields.citation));
-        break;
       case TEXT:
         list.add(SearchIndexes.getIndex(SearchFields.text));
         break;
-      case LINK:
+      case URL:
         list.add(SearchIndexes.getIndex(SearchFields.url));
         list.add(SearchIndexes.getIndex(SearchFields.label));
         break;

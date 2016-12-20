@@ -8,7 +8,6 @@ import de.mpg.imeji.logic.export.format.Export;
 import de.mpg.imeji.logic.export.format.SitemapExport;
 import de.mpg.imeji.logic.export.format.ZIPExport;
 import de.mpg.imeji.logic.export.format.explain.ExplainExport;
-import de.mpg.imeji.logic.export.format.explain.MetadataExplainExport;
 import de.mpg.imeji.logic.export.format.explain.SearchExplainExport;
 
 /**
@@ -59,8 +58,6 @@ public class ExportFactory {
   public static ExplainExport buidExplain(String type) throws HttpResponseException {
     if ("search".equals(type)) {
       return new SearchExplainExport();
-    } else if ("metadata".equals(type)) {
-      return new MetadataExplainExport();
     }
     throw new HttpResponseException(400, "Type " + type + " is not supported.");
   }

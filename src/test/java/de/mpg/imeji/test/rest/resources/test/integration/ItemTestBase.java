@@ -21,15 +21,15 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.util.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.transfer.ReverseTransferObjectFactory;
@@ -214,7 +214,7 @@ public class ItemTestBase extends ImejiTestBase {
 
   protected static void createItem() throws Exception {
     CollectionController cc = new CollectionController();
-    ItemBusinessController ic = new ItemBusinessController();
+    ItemService ic = new ItemService();
     CollectionImeji coll =
         cc.retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId), JenaUtil.testUser);
     item = ImejiFactory.newItem(coll);

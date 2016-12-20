@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.io.FileUtils;
@@ -19,11 +18,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.controller.CleanMetadataJob;
-import de.mpg.imeji.logic.controller.business.MetadataProfileBusinessController;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.jobs.CleanContentVOsJob;
-import de.mpg.imeji.logic.jobs.CleanMetadataProfileJob;
 import de.mpg.imeji.logic.jobs.ElasticReIndexJob;
 import de.mpg.imeji.logic.jobs.FulltextAndTechnicalMetadataJob;
 import de.mpg.imeji.logic.jobs.ImportFileFromEscidocToInternalStorageJob;
@@ -43,11 +38,8 @@ import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.writer.WriterFacade;
 import de.mpg.imeji.presentation.beans.SuperBean;
 
@@ -68,7 +60,6 @@ public class AdminBean extends SuperBean {
   private String lastUpdateStorageStatistics;
   private Future<Integer> storageAnalyseStatus;
   private String cleanDatabaseReport = "";
-  private List<MetadataProfile> unusedProfiles = new ArrayList<MetadataProfile>();
 
   public AdminBean() {
     try {
@@ -83,21 +74,6 @@ public class AdminBean extends SuperBean {
       LOGGER.error("Error constructing StorageUsageAnalyseJob", e);
     }
 
-  }
-
-  /**
-   * Return the Id of the default {@link MetadataProfile}
-   *
-   * @return
-   * @throws ImejiException
-   */
-  public String getDefaultProfileId() throws ImejiException {
-    MetadataProfileBusinessController metadataProfileBC = new MetadataProfileBusinessController();
-    MetadataProfile p = metadataProfileBC.retrieveDefaultProfile();
-    if (p.getStatus() == Status.PENDING) {
-      new ProfileController().release(p, getSessionUser());
-    }
-    return metadataProfileBC.retrieveDefaultProfile().getIdString();
   }
 
   /**
@@ -129,26 +105,6 @@ public class AdminBean extends SuperBean {
     StorageController controller = new StorageController();
     controller.getAdministrator().clean();
     return "pretty:";
-  }
-
-  /**
-   * Find all unused {@link MetadataProfile}
-   *
-   * @throws InterruptedException
-   * @throws ExecutionException
-   */
-  public void findUnusedProfiles() throws InterruptedException, ExecutionException {
-    CleanMetadataProfileJob job = new CleanMetadataProfileJob(false);
-    Future<Integer> f = Imeji.getEXECUTOR().submit(job);
-    f.get();
-    this.unusedProfiles = job.getProfiles();
-  }
-
-  /**
-   * Remove all unused {@link MetadataProfile}
-   */
-  public void deleteUnusedProfiles() {
-    Imeji.getEXECUTOR().submit(new CleanMetadataProfileJob(true));
   }
 
   /**
@@ -223,7 +179,6 @@ public class AdminBean extends SuperBean {
    */
   private void invokeCleanMethods() throws ImejiException {
     cleanStatement();
-    cleanMetadata();
     cleanGrants();
     cleanContent();
   }
@@ -231,23 +186,6 @@ public class AdminBean extends SuperBean {
   private void cleanContent() {
     if (clean) {
       Imeji.getEXECUTOR().submit(new CleanContentVOsJob());
-    }
-  }
-
-  /**
-   * Find all {@link Metadata} which are not related to a {@link Statement}
-   */
-  private void cleanMetadata() {
-    LOGGER.info("Cleaning Metadata");
-    if (clean == false) {
-      Search search = SearchFactory.create();
-
-      List<String> uris =
-          search.searchString(JenaCustomQueries.selectMetadataUnbounded(), null, null, 0, -1)
-              .getResults();
-      cleanDatabaseReport += "Metadata Without Statement: " + uris.size() + " found  <br/> ";
-    } else {
-      Imeji.getEXECUTOR().submit(new CleanMetadataJob(null));
     }
   }
 
@@ -436,13 +374,5 @@ public class AdminBean extends SuperBean {
 
   public String getCleanDatabaseReport() {
     return cleanDatabaseReport;
-  }
-
-  public List<MetadataProfile> getUnusedProfiles() {
-    return unusedProfiles;
-  }
-
-  public void setUnusedProfiles(List<MetadataProfile> unusedProfiles) {
-    this.unusedProfiles = unusedProfiles;
   }
 }

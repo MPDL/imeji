@@ -47,7 +47,6 @@ import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
@@ -113,13 +112,12 @@ public class WriterFacade {
    *
    * @see de.mpg.imeji.logic.writer.Writer#create(java.util.List, de.mpg.imeji.logic.vo.User)
    */
-  public void create(List<Object> objects, MetadataProfile profile, User user)
-      throws ImejiException {
+  public void create(List<Object> objects, User user) throws ImejiException {
     if (objects.isEmpty()) {
       return;
     }
     checkSecurity(objects, user, GrantType.CREATE);
-    validate(objects, profile, Validator.Method.CREATE);
+    validate(objects, Validator.Method.CREATE);
     writer.create(objects, user);
     indexer.indexBatch(objects);
   }
@@ -135,7 +133,7 @@ public class WriterFacade {
     }
     checkWorkflowForDelete(objects);
     checkSecurity(objects, user, GrantType.DELETE);
-    validate(objects, null, Validator.Method.DELETE);
+    validate(objects, Validator.Method.DELETE);
     writer.delete(objects, user);
     indexer.deleteBatch(objects);
   }
@@ -146,15 +144,15 @@ public class WriterFacade {
    * @see de.mpg.imeji.logic.writer.Writer#update(java.util.List, de.mpg.imeji.logic.vo.User),
    * choose to check security
    */
-  public void update(List<Object> objects, MetadataProfile profile, User user,
-      boolean doCheckSecurity) throws ImejiException {
+  public void update(List<Object> objects, User user, boolean doCheckSecurity)
+      throws ImejiException {
     if (objects.isEmpty()) {
       return;
     }
     if (doCheckSecurity) {
       checkSecurity(objects, user, GrantType.UPDATE);
     }
-    validate(objects, profile, Validator.Method.UPDATE);
+    validate(objects, Validator.Method.UPDATE);
     writer.update(objects, user);
     indexer.indexBatch(objects);
   }
@@ -182,27 +180,25 @@ public class WriterFacade {
    *
    * @see de.mpg.imeji.logic.writer.Writer#updateLazy(java.util.List, de.mpg.imeji.logic.vo.User)
    */
-  public void updateLazy(List<Object> objects, MetadataProfile profile, User user)
-      throws ImejiException {
+  public void updateLazy(List<Object> objects, User user) throws ImejiException {
     if (objects.isEmpty()) {
       return;
     }
     checkSecurity(objects, user, GrantType.UPDATE);
-    validate(objects, profile, Validator.Method.UPDATE);
+    validate(objects, Validator.Method.UPDATE);
     writer.updateLazy(objects, user);
     indexer.indexBatch(objects);
   }
 
   @SuppressWarnings("unchecked")
-  private void validate(List<Object> list, MetadataProfile profile, Validator.Method method)
-      throws UnprocessableError {
+  private void validate(List<Object> list, Validator.Method method) throws UnprocessableError {
     if (list.isEmpty()) {
       return;
     }
     Validator<Object> validator =
         (Validator<Object>) ValidatorFactory.newValidator(list.get(0), method);
     for (Object o : list) {
-      validator.validate(o, profile, method);
+      validator.validate(o, method);
     }
   }
 
@@ -275,8 +271,6 @@ public class WriterFacade {
       return ((Item) o).getId();
     } else if (o instanceof Container) {
       return ((Container) o).getId();
-    } else if (o instanceof MetadataProfile) {
-      return ((MetadataProfile) o).getId();
     } else if (o instanceof Space) {
       return ((Space) o).getId();
     } else if (o instanceof User) {

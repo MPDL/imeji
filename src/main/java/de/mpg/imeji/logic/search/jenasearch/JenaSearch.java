@@ -28,7 +28,6 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -295,8 +294,6 @@ public class JenaSearch implements Search {
         return J2JHelper.getResourceNamespace(new CollectionImeji());
       case ALBUM:
         return J2JHelper.getResourceNamespace(new Album());
-      case PROFILE:
-        return J2JHelper.getResourceNamespace(new MetadataProfile());
       default:
         return J2JHelper.getResourceNamespace(new Item());
     }

@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
+import de.mpg.imeji.logic.item.ItemService;
 
 /**
  * Job to extract fulltext and technical metadata for all files
@@ -18,7 +18,7 @@ public class FulltextAndTechnicalMetadataJob implements Callable<Integer> {
   @Override
   public Integer call() throws Exception {
     LOGGER.info("Extracting fulltext and technical metadata for all files...");
-    ItemBusinessController itemBusinessController = new ItemBusinessController();
+    ItemService itemBusinessController = new ItemService();
     itemBusinessController.extractFulltextAndTechnicalMetadataForAllItems();
     LOGGER.info("... Extracting fulltext and technical metadata for all files done!");
     return 1;

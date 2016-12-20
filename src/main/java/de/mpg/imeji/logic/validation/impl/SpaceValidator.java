@@ -11,7 +11,6 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Space;
 
 /**
@@ -73,10 +72,4 @@ public class SpaceValidator extends ObjectValidator implements Validator<Space> 
     }
     return false;
   }
-
-  @Override
-  public void validate(Space t, MetadataProfile p, Method m) throws UnprocessableError {
-    validate(t, m);
-  }
-
 }

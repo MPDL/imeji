@@ -19,17 +19,13 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.search.model.SearchElement;
-import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
@@ -73,32 +69,10 @@ public class SearchGroupForm implements Serializable {
    * @param collectionId
    * @throws ImejiException
    */
-  public SearchGroupForm(SearchGroup searchGroup, MetadataProfile profile,
-      MetadataLabels metadataLabels, User user, String space) throws ImejiException {
+  public SearchGroupForm(SearchGroup searchGroup, MetadataLabels metadataLabels, User user,
+      String space) throws ImejiException {
     this();
-    if (profile != null) {
-      this.setProfileId(profile.getId().toString());
-      this.collectionId = SearchFormularHelper.getCollectionId(searchGroup);
-      SearchGroup metadataGroup;
-      if (this.collectionId != null) {
-        // case where: query = (collection AND (metadata))
-        metadataGroup = (SearchGroup) searchGroup.getElements().get(2);
-      } else {
-        // case where: query = (metadata)
-        metadataGroup = searchGroup;
-      }
-      for (SearchElement se : metadataGroup.getElements()) {
-        if (se.getType().equals(SEARCH_ELEMENTS.GROUP)) {
-          // metadata search
-          elements.add(new SearchMetadataForm((SearchGroup) se, profile,
-              Locale.forLanguageTag(metadataLabels.getLang())));
-        } else if (elements.size() > 0 && se.getType().equals(SEARCH_ELEMENTS.LOGICAL_RELATIONS)) {
-          elements.get(elements.size() - 1)
-              .setLogicalRelation(((SearchLogicalRelation) se).getLogicalRelation());
-        }
-      }
-      initStatementsMenu(profile, metadataLabels, user, space);
-    }
+    initStatementsMenu(new ArrayList<>(), metadataLabels, user, space);
   }
 
   /**
@@ -154,21 +128,12 @@ public class SearchGroupForm implements Serializable {
    * @param p
    * @throws ImejiException
    */
-  public void initStatementsMenu(MetadataProfile p, MetadataLabels metadataLabels, User user,
-      String space) throws ImejiException {
-    if (p != null) {
-      if (p.getStatements() != null) {
-        for (Statement st : p.getStatements()) {
-          String stName = metadataLabels.getInternationalizedLabels().get(st.getId());
-          statementMenu.add(new SelectItem(st.getId().toString(), stName));
-        }
-      }
-      setCollectionsMenu(
-          getCollectionsMenu(p, Locale.forLanguageTag(metadataLabels.getLang()), user, space));
-    } else {
-      reset();
+  public void initStatementsMenu(List<Statement> statements, MetadataLabels metadataLabels,
+      User user, String space) throws ImejiException {
+    for (Statement st : statements) {
+      String stName = metadataLabels.getInternationalizedLabels().get(st.getId());
+      statementMenu.add(new SelectItem(st.getId().toString(), stName));
     }
-
   }
 
   /**
@@ -179,12 +144,10 @@ public class SearchGroupForm implements Serializable {
    * @return
    * @throws ImejiException
    */
-  private List<SelectItem> getCollectionsMenu(MetadataProfile p, Locale locale, User user,
-      String space) throws ImejiException {
+  private List<SelectItem> getCollectionsMenu(Locale locale, User user, String space)
+      throws ImejiException {
     CollectionController cc = new CollectionController();
     SearchQuery q = new SearchQuery();
-    q.addPair(
-        new SearchPair(SearchFields.prof, SearchOperators.EQUALS, p.getId().toString(), false));
     List<SelectItem> l = new ArrayList<SelectItem>();
     l.add(new SelectItem(null,
         Imeji.RESOURCE_BUNDLE.getLabel("adv_search_collection_restrict", locale)));

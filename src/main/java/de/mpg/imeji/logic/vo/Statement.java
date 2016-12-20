@@ -11,19 +11,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.util.IdentifierUtil;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.util.LocalizedString;
 
 /**
@@ -36,51 +29,35 @@ import de.mpg.imeji.util.LocalizedString;
  */
 @j2jResource("http://imeji.org/terms/statement")
 @j2jModel("statement")
-@j2jId(getMethod = "getId", setMethod = "setId")
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlRootElement(name = "statement", namespace = "http://imeji.org/terms/")
+@j2jId(getMethod = "getUri", setMethod = "setUri")
 public class Statement implements Comparable<Statement>, Serializable, Cloneable {
   private static final long serialVersionUID = -7950561563075491540L;
+  private String id;
   // Id: creation to be changed with pretty ids
-  private URI id = IdentifierUtil.newURI(Statement.class);
-  @j2jResource("http://purl.org/dc/terms/type")
-  private URI type = URI.create("http://imeji.org/terms/metadata#text");
-  // @j2jList("http://imeji.org/terms/label")
+  private URI uri = IdentifierUtil.newURI(Statement.class);
+  @j2jLiteral("http://purl.org/dc/terms/type")
+  private StatementType type = StatementType.TEXT;
   @j2jList("http://www.w3.org/2000/01/rdf-schema#label")
   private Collection<LocalizedString> labels = new ArrayList<LocalizedString>();
   @j2jResource("http://purl.org/dc/dcam/VocabularyEncodingScheme")
   private URI vocabulary;
   @j2jList("http://imeji.org/terms/literalConstraint")
   private Collection<String> literalConstraints = new ArrayList<String>();
-  @j2jLiteral("http://imeji.org/terms/isDescription")
-  private boolean isDescription = false;
-  @j2jLiteral("http://imeji.org/terms/minOccurs")
-  private String minOccurs = "0";
-  @j2jLiteral("http://imeji.org/terms/maxOccurs")
-  private String maxOccurs = "1";
-  @j2jResource("http://imeji.org/terms/parent")
-  private URI parent = null;
-  @j2jLiteral("http://imeji.org/terms/isPreview")
-  private boolean isPreview = true;
   @j2jLiteral("http://imeji.org/terms/position")
   private int pos = 0;
-  @j2jLiteral("http://imeji.org/terms/restricted")
-  private boolean restricted = false;
   @j2jResource("http://imeji.org/terms/namespace")
   private URI namespace;
 
   public Statement() {}
 
-  @XmlElement(name = "type", namespace = "http://purl.org/dc/terms/")
-  public URI getType() {
+  public StatementType getType() {
     return type;
   }
 
-  public void setType(URI type) {
+  public void setType(StatementType type) {
     this.type = type;
   }
 
-  @XmlElement(name = "label", namespace = "http://www.w3.org/2000/01/rdf-schema#")
   public Collection<LocalizedString> getLabels() {
     return labels;
   }
@@ -103,7 +80,6 @@ public class Statement implements Comparable<Statement>, Serializable, Cloneable
     return labels.iterator().next().getValue();
   }
 
-  @XmlElement(name = "VocabularyEncodingScheme", namespace = "http://purl.org/dc/dcam/")
   public URI getVocabulary() {
     return vocabulary;
   }
@@ -112,7 +88,6 @@ public class Statement implements Comparable<Statement>, Serializable, Cloneable
     this.vocabulary = vocabulary;
   }
 
-  @XmlElement(name = "literalConstraint", namespace = "http://imeji.org/terms/")
   public Collection<String> getLiteralConstraints() {
     List<String> constraints = new ArrayList<String>(literalConstraints);
     Collections.sort(constraints, new SortIgnoreCase());
@@ -124,30 +99,7 @@ public class Statement implements Comparable<Statement>, Serializable, Cloneable
     this.literalConstraints = literalConstraints;
   }
 
-  @XmlElement(name = "minOccurs", namespace = "http://imeji.org/terms/")
-  public String getMinOccurs() {
-    return minOccurs;
-  }
 
-  public void setMinOccurs(String minOccurs) {
-    this.minOccurs = minOccurs;
-  }
-
-  /**
-   * If statement is multiple return "unbounded" else return "1"
-   *
-   * @return
-   */
-  @XmlElement(name = "maxOccurs", namespace = "http://imeji.org/terms/")
-  public String getMaxOccurs() {
-    return maxOccurs;
-  }
-
-  public void setMaxOccurs(String maxOccurs) {
-    this.maxOccurs = maxOccurs;
-  }
-
-  @XmlElement(name = "position", namespace = "http://imeji.org/terms/")
   public int getPos() {
     return pos;
   }
@@ -167,49 +119,12 @@ public class Statement implements Comparable<Statement>, Serializable, Cloneable
     }
   }
 
-  @XmlElement(name = "isDescription", namespace = "http://imeji.org/terms/")
-  public boolean isDescription() {
-    return isDescription;
+  public void setUri(URI uri) {
+    this.uri = uri;
   }
 
-  public void setDescription(boolean isDescription) {
-    this.isDescription = isDescription;
-  }
-
-  public void setId(URI id) {
-    this.id = id;
-  }
-
-  @XmlAttribute(name = "id")
-  public URI getId() {
-    return id;
-  }
-
-  public void setParent(URI parent) {
-    this.parent = parent;
-  }
-
-  @XmlElement(name = "parent", namespace = "http://imeji.org/terms/")
-  public URI getParent() {
-    return parent;
-  }
-
-  public void setPreview(boolean isPreview) {
-    this.isPreview = isPreview;
-  }
-
-  @XmlElement(name = "isPreview", namespace = "http://imeji.org/terms/")
-  public boolean isPreview() {
-    return isPreview;
-  }
-
-  @XmlElement(name = "restricted", namespace = "http://imeji.org/terms/")
-  public boolean isRestricted() {
-    return restricted;
-  }
-
-  public void setRestricted(boolean restricted) {
-    this.restricted = restricted;
+  public URI getUri() {
+    return uri;
   }
 
   /**
@@ -234,18 +149,26 @@ public class Statement implements Comparable<Statement>, Serializable, Cloneable
   @Override
   public Statement clone() {
     Statement clone = new Statement();
-    clone.isDescription = isDescription;
-    clone.isPreview = isPreview;
     clone.labels = new ArrayList<>(labels);
     clone.literalConstraints = literalConstraints;
-    clone.maxOccurs = maxOccurs;
-    clone.minOccurs = minOccurs;
-    clone.parent = parent;
     clone.pos = pos;
-    clone.restricted = restricted;
     clone.type = type;
     clone.vocabulary = vocabulary;
     return clone;
+  }
+
+  /**
+   * @return the id
+   */
+  public String getId() {
+    return id;
+  }
+
+  /**
+   * @param id the id to set
+   */
+  public void setId(String id) {
+    this.id = id;
   }
 
   /**

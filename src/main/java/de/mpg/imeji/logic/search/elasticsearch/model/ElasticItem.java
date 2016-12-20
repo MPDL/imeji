@@ -6,7 +6,7 @@ import java.util.List;
 import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
-import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
+import de.mpg.imeji.logic.vo.Metadata;
 
 /**
  * The object which is indexed in Elastic search <br/>
@@ -41,7 +41,7 @@ public final class ElasticItem extends ElasticProperties {
     this.license = getLicenseName(item);
     this.size = item.getFileSize();
     this.filetype = item.getFiletype();
-    for (Metadata md : item.getMetadataSet().getMetadata()) {
+    for (Metadata md : item.getMetadata()) {
       metadata.add(new ElasticMetadata(md));
     }
   }

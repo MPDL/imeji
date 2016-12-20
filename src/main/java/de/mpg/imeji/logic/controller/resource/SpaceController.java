@@ -101,7 +101,7 @@ public class SpaceController extends ImejiController {
      * AuthorizationPredefinedRoles.admin(space.getId() .toString(), null), user);
      */
 
-    WRITER.create(WriterFacade.toList(space), null, user);
+    WRITER.create(WriterFacade.toList(space), user);
 
     // add collections if exist
     Collection<String> spaceCollections = space.getSpaceCollections();
@@ -171,7 +171,7 @@ public class SpaceController extends ImejiController {
    */
   public Space update(Space space, User user) throws ImejiException {
     prepareUpdate(space, user);
-    WRITER.update(WriterFacade.toList(space), null, user, true);
+    WRITER.update(WriterFacade.toList(space), user, true);
     return retrieve(space.getId(), user);
   }
 
@@ -276,7 +276,7 @@ public class SpaceController extends ImejiController {
    */
   public void updateLazy(Space space, User user) throws ImejiException {
     prepareUpdate(space, user);
-    WRITER.updateLazy(WriterFacade.toList(space), null, user);
+    WRITER.updateLazy(WriterFacade.toList(space), user);
   }
 
   /**

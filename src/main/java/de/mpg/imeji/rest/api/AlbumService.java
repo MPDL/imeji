@@ -11,19 +11,18 @@ import java.util.List;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.controller.business.ItemBusinessController;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.rest.helper.CommonUtils;
-import de.mpg.imeji.rest.helper.ProfileCache;
 import de.mpg.imeji.rest.to.AlbumTO;
 import de.mpg.imeji.rest.to.SearchResultTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
@@ -63,16 +62,14 @@ public class AlbumService implements API<AlbumTO> {
    */
   public SearchResultTO<DefaultItemTO> readItems(String id, User u, String q, int offset, int size)
       throws ImejiException {
-    ProfileCache profileCache = new ProfileCache();
     List<DefaultItemTO> tos = new ArrayList<>();
-    ItemBusinessController controller = new ItemBusinessController();
+    ItemService controller = new ItemService();
     SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC).search(
         SearchQueryParser.parseStringQuery(q), null, u,
         ObjectHelper.getURI(Album.class, id).toString(), null, offset, size);
     for (Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
       DefaultItemTO to = new DefaultItemTO();
-      TransferObjectFactory.transferDefaultItem(vo, to,
-          profileCache.read(vo.getMetadataSet().getProfile()));
+      TransferObjectFactory.transferDefaultItem(vo, to);
       tos.add(to);
     }
     return new SearchResultTO.Builder<DefaultItemTO>().numberOfRecords(result.getResults().size())
