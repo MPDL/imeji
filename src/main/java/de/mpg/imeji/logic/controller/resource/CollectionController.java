@@ -23,8 +23,6 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.ImejiController;
-import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -39,6 +37,8 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
+import de.mpg.imeji.logic.service.ImejiServiceAbstract;
+import de.mpg.imeji.logic.service.item.ItemService;
 import de.mpg.imeji.logic.validation.impl.CollectionValidator;
 import de.mpg.imeji.logic.validation.impl.Validator.Method;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -56,7 +56,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class CollectionController extends ImejiController {
+public class CollectionController extends ImejiServiceAbstract {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.collectionModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.collectionModel);
   private static final Logger LOGGER = Logger.getLogger(CollectionController.class);

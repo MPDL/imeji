@@ -11,7 +11,9 @@ import java.util.Map;
 
 import javax.faces.model.SelectItem;
 
-import de.mpg.imeji.logic.statement.StatementService;
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.service.statement.StatementService;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.presentation.util.CommonUtils;
 
@@ -37,8 +39,14 @@ public class SuggestBean {
    */
   public void init() {
     suggests = new HashMap<URI, Suggest>();
-    for (Statement s : new StatementService().searchAndRetrieve()) {
-      suggests.put(s.getUri(), new Suggest(s));
+    try {
+      for (Statement s : new StatementService().searchAndRetrieve(null, null, Imeji.adminUser, -1,
+          0)) {
+        suggests.put(s.getUri(), new Suggest(s));
+      }
+    } catch (ImejiException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
 
   }

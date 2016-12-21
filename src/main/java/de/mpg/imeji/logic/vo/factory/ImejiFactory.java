@@ -17,9 +17,7 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.util.LocalizedString;
 
 /**
  * Create objects ready to be displayed in JSF
@@ -79,37 +77,12 @@ public class ImejiFactory {
   }
 
   /**
-   * Crate a new emtpy {@link Statement}
+   * Return a {@link StatementFactory}
    *
    * @return
    */
-  public static Statement newStatement() {
-    Statement s = new Statement();
-    s.getLabels().add(new LocalizedString("", null));
-    return s;
-  }
-
-  /**
-   * Crate a new emtpy {@link Statement}
-   *
-   * @return
-   */
-  public static Statement newStatement(String label, String lang, StatementType type) {
-    Statement s = new Statement();
-    s.getLabels().add(new LocalizedString(label, lang));
-    s.setType(type);
-    return s;
-  }
-
-  /**
-   * Create an emtpy {@link Statement} as a child of another {@link Statement}
-   *
-   * @param parent
-   * @return
-   */
-  public static Statement newStatement(URI parent) {
-    Statement s = newStatement();
-    return s;
+  public static StatementFactory newStatement() {
+    return new StatementFactory();
   }
 
   public static Person newPerson() {

@@ -24,7 +24,6 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.controller.ImejiController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -38,6 +37,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.service.ImejiServiceAbstract;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
@@ -55,7 +55,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class SpaceController extends ImejiController {
+public class SpaceController extends ImejiServiceAbstract {
   private static final Logger LOGGER = LoggerFactory.getLogger(SpaceController.class);
   private static final ReaderFacade READER = new ReaderFacade(Imeji.spaceModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.spaceModel);

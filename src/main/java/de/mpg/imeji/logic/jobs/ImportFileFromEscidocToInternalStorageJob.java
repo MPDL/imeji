@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.service.item.ItemService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.util.ObjectHelper;

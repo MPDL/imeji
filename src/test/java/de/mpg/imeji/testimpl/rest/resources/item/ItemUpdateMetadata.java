@@ -183,7 +183,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
 
     // link
     assertThat(((Link) mds.get(5)).getUri().toString(), equalTo(CHANGED));
-    assertThat(((Link) mds.get(5)).getLabel(), equalTo(CHANGED));
+    assertThat(((Link) mds.get(5)).getDefaultName(), equalTo(CHANGED));
 
     // publication
     assertThat(((Publication) mds.get(6)).getExportFormat(), equalTo(CHANGED));
@@ -491,7 +491,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
     // Find the statementId for the text Metadata
     String textStatementId = null;
     for (Statement st : profile.getStatements()) {
-      if ("text".equals(st.getLabel())) {
+      if ("text".equals(st.getDefaultName())) {
         textStatementId = st.getId().toString();
       }
     }

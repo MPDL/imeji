@@ -90,8 +90,8 @@ public class SPARQLEndpointServlet extends HttpServlet {
       return Imeji.collectionModel;
     } else if ("album".equals(name)) {
       return Imeji.albumModel;
-    } else if ("profile".equals(name)) {
-      return Imeji.profileModel;
+    } else if ("statement".equals(name)) {
+      return Imeji.statementModel;
     } else if ("user".equals(name)) {
       return Imeji.userModel;
     } else if ("content".equals(name)) {

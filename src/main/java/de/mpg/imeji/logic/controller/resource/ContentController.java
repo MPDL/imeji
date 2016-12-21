@@ -16,7 +16,6 @@ import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.contentanalysis.ContentAnalyse;
 import de.mpg.imeji.logic.contentanalysis.ContentAnalyserFactory;
-import de.mpg.imeji.logic.controller.ImejiController;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
@@ -24,6 +23,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
+import de.mpg.imeji.logic.service.ImejiServiceAbstract;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
@@ -42,7 +42,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
  * @author saquet
  *
  */
-public class ContentController extends ImejiController {
+public class ContentController extends ImejiServiceAbstract {
   private static final Logger LOGGER = Logger.getLogger(ContentController.class);
   private static final ReaderFacade READER = new ReaderFacade(Imeji.contentModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.contentModel);

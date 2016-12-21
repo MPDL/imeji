@@ -39,7 +39,6 @@ import de.mpg.imeji.rest.to.UserTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultOrganizationTO;
 import de.mpg.imeji.rest.to.defaultItemTO.predefinedEasyMetadataTO.DefaultConePersonTO;
-import de.mpg.imeji.util.LocalizedString;
 
 public class TransferObjectFactory {
   private static UserNameCache userNameCache = new UserNameCache();
@@ -68,9 +67,9 @@ public class TransferObjectFactory {
     for (Statement t : statements) {
       StatementTO sto = new StatementTO();
       sto.setId(t.getId());
-      sto.setPos(t.getPos());
+      sto.setIndex(t.getIndex());
       sto.setType(t.getType().name());
-      sto.setLabels(new ArrayList<LocalizedString>(t.getLabels()));
+      sto.setLabels(new ArrayList<>(t.getNames()));
       sto.setVocabulary(t.getVocabulary());
       for (String s : t.getLiteralConstraints()) {
         LiteralConstraintTO lcto = new LiteralConstraintTO();

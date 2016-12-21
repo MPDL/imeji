@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.logic.item;
+package de.mpg.imeji.logic.service.item;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -25,7 +25,6 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.ImejiController;
 import de.mpg.imeji.logic.controller.resource.ContentController;
 import de.mpg.imeji.logic.controller.resource.ItemController;
 import de.mpg.imeji.logic.search.Search;
@@ -40,6 +39,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.service.SearchServiceAbstract;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
@@ -53,8 +53,8 @@ import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 
 /**
  * Implements CRUD and Search methods for {@link Item}
@@ -63,7 +63,7 @@ import de.mpg.imeji.logic.vo.User;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class ItemService extends ImejiController {
+public class ItemService extends SearchServiceAbstract<Item> {
   private static final Logger LOGGER = Logger.getLogger(ItemService.class);
   public static final String NO_THUMBNAIL_URL = "NO_THUMBNAIL_URL";
   private final Search search =
@@ -75,7 +75,7 @@ public class ItemService extends ImejiController {
    * Controller constructor
    */
   public ItemService() {
-    super();
+    super(SearchObjectTypes.ITEM);
   }
 
   /**
@@ -765,4 +765,25 @@ public class ItemService extends ImejiController {
       throw new UnprocessableError(e.getLocalizedMessage());
     }
   }
+
+  @Override
+  public SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, User user, int size,
+      int offset) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<Item> retrieve(List<String> ids, User user) throws ImejiException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<Item> retrieveAll() throws ImejiException {
+    List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
+    LOGGER.info(uris.size() + " items found, retrieving...");
+    return (List<Item>) retrieveBatch(uris, -1, 0, Imeji.adminUser);
+  }
+
 }

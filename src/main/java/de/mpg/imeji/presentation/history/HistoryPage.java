@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.service.item.ItemService;
 import de.mpg.imeji.logic.user.controller.GroupBusinessController;
 import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.ObjectHelper;

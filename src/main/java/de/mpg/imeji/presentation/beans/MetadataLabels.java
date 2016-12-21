@@ -12,10 +12,11 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.statement.StatementService;
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.service.statement.StatementService;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.util.LocalizedString;
 
 /**
  * Utility class for the labels of the {@link Metadata}
@@ -41,7 +42,11 @@ public class MetadataLabels implements Serializable {
 
   public MetadataLabels(Locale locale) {
     lang = locale.getLanguage();
-    init(new StatementService().searchAndRetrieve());
+    try {
+      init(new StatementService().searchAndRetrieve(null, null, Imeji.adminUser, -1, 0));
+    } catch (ImejiException e) {
+      LOGGER.error("Error initializing metadatalables", e);
+    }
   }
 
 
@@ -55,25 +60,9 @@ public class MetadataLabels implements Serializable {
     labels = new HashMap<URI, String>();
     internationalizedLabels = new HashMap<URI, String>();
     for (Statement s : statements) {
-      boolean hasInternationalizedLabel = false;
-      boolean hasEnglishLabel = false;
-      String labelFallBack = null;
-      for (LocalizedString ls : s.getLabels()) {
-        if (ls.getLang().equals("en")) {
-          labels.put(s.getUri(), ls.getValue());
-          hasEnglishLabel = true;
-        }
-        if (ls.getLang().equals(lang)) {
-          internationalizedLabels.put(s.getUri(), ls.getValue());
-          hasInternationalizedLabel = true;
-        }
-        labelFallBack = ls.getValue();
-      }
-      if (!hasEnglishLabel) {
-        labels.put(s.getUri(), labelFallBack);
-      }
-      if (!hasInternationalizedLabel) {
-        internationalizedLabels.put(s.getUri(), labels.get(s.getId()));
+      for (String name : s.getNames()) {
+        labels.put(s.getUri(), name);
+        internationalizedLabels.put(s.getUri(), name);
       }
     }
   }

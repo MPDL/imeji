@@ -1,0 +1,20 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:md="http://java.sun.com/jsf/composite/components/metadata">
+	
+	<composite:interface>
+		<composite:attribute name="metadataInputComponent" required="true"/>
+		<composite:attribute name="statementMenu" required="true"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		 <h:selectOneMenu id="selStatementType" value="#{cc.attrs.metadataInputComponent.statement.id}" valueChangeListener="#{cc.attrs.metadataInputComponent.statementMenuListener}">
+			<f:selectItems value="#{cc.attrs.statementMenu}"/>
+			<f:ajax onevent="change" execute="@this" render="@form"/>
+		</h:selectOneMenu>
+		
+	</composite:implementation>
+</html>

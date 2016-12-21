@@ -29,7 +29,6 @@ import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ContentController;
-import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -40,7 +39,8 @@ import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
-import de.mpg.imeji.logic.statement.StatementService;
+import de.mpg.imeji.logic.service.item.ItemService;
+import de.mpg.imeji.logic.service.statement.StatementService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -517,8 +517,9 @@ public class ItemBean extends SuperBean {
 
   public List<SelectItem> getStatementMenu() throws ImejiException {
     List<SelectItem> statementMenu = new ArrayList<SelectItem>();
-    for (Statement s : new StatementService().searchAndRetrieve()) {
-      statementMenu.add(new SelectItem(s.getId(), s.getLabels().iterator().next().toString()));
+    for (Statement s : new StatementService().searchAndRetrieve(null, null, getSessionUser(), -1,
+        0)) {
+      statementMenu.add(new SelectItem(s.getId(), s.getDefaultName()));
     }
     return statementMenu;
   }

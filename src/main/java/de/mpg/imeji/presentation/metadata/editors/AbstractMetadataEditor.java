@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.service.item.ItemService;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Metadata;

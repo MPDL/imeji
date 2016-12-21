@@ -587,11 +587,6 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    */
   @Override
   public int compareTo(MetadataWrapper o) {
-    if (statement.getPos() > o.getStatement().getPos()) {
-      return 1;
-    } else if (statement.getPos() < o.getStatement().getPos()) {
-      return -1;
-    }
     if (getPos() > o.getPos()) {
       return 1;
     } else if (getPos() < o.getPos()) {

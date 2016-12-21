@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.logic.controller;
+package de.mpg.imeji.logic.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import de.mpg.imeji.logic.workflow.WorkflowManager;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public abstract class ImejiController {
+public abstract class ImejiServiceAbstract {
   private static final WorkflowManager WORKFLOW_MANAGER = new WorkflowManager();
 
   /**

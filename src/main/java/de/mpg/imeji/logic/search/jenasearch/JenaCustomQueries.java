@@ -501,6 +501,15 @@ public class JenaCustomQueries {
   }
 
   /**
+   * Select all {@link Statement} available imeji
+   *
+   * @return
+   */
+  public static final String selectStatementAll() {
+    return "SELECT ?s WHERE { ?s a <http://imeji.org/terms/statement>}";
+  }
+
+  /**
    * Select all {@link Item} available imeji
    *
    * @return

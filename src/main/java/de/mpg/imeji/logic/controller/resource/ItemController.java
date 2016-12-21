@@ -12,9 +12,9 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.ImejiController;
-import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.reader.ReaderFacade;
+import de.mpg.imeji.logic.service.ImejiServiceAbstract;
+import de.mpg.imeji.logic.service.item.ItemService;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -32,7 +32,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
  * @author saquet
  *
  */
-public class ItemController extends ImejiController {
+public class ItemController extends ImejiServiceAbstract {
   private static final Logger LOGGER = Logger.getLogger(ItemService.class);
   private static final ReaderFacade READER = new ReaderFacade(Imeji.imageModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.imageModel);
@@ -135,6 +135,7 @@ public class ItemController extends ImejiController {
         item.setFilename(FilenameUtils.getName(item.getFilename()));
       }
       cleanItem(items);
+      WRITER.update(J2JHelper.cast2ObjectList((List<?>) items), user, true);
     }
   }
 

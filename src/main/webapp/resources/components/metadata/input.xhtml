@@ -1,0 +1,15 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+	
+	<composite:interface>
+		<composite:attribute name="metadataInputComponent" required="true"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'TEXT'}">
+			<h:inputText value="#{cc.attrs.metadataInputComponent.metadata.text}"/>
+		</ui:fragment>
+	</composite:implementation>
+</html>

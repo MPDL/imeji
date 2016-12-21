@@ -5,31 +5,24 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.util.LocalizedString;
+import de.mpg.imeji.logic.vo.Statement;
 
+/**
+ * TO for {@link Statement}
+ * 
+ * @author saquet
+ *
+ */
 public class StatementTO implements Serializable {
-
   private static final long serialVersionUID = -5987536340352396442L;
-
   private String id;
-
-  private int pos;
-
   private String type;
-
-  private List<LocalizedString> labels = new ArrayList<LocalizedString>();
-
+  private List<String> labels = new ArrayList<>();
   private URI vocabulary;
-
   private List<LiteralConstraintTO> literalConstraints = new ArrayList<LiteralConstraintTO>();
-
   private String minOccurs;
-
   private String maxOccurs;
-
-  private String parentStatementId;
-
-  private boolean useInPreview;
+  private String index;
 
   public String getId() {
     return id;
@@ -37,14 +30,6 @@ public class StatementTO implements Serializable {
 
   public void setId(String id) {
     this.id = id;
-  }
-
-  public int getPos() {
-    return pos;
-  }
-
-  public void setPos(int pos) {
-    this.pos = pos;
   }
 
   public String getType() {
@@ -55,11 +40,11 @@ public class StatementTO implements Serializable {
     this.type = type;
   }
 
-  public List<LocalizedString> getLabels() {
+  public List<String> getLabels() {
     return labels;
   }
 
-  public void setLabels(List<LocalizedString> labels) {
+  public void setLabels(List<String> labels) {
     this.labels = labels;
   }
 
@@ -95,22 +80,17 @@ public class StatementTO implements Serializable {
     this.maxOccurs = maxOccurs;
   }
 
-  public String getParentStatementId() {
-    return parentStatementId;
+  /**
+   * @return the index
+   */
+  public String getIndex() {
+    return index;
   }
 
-  public void setParentStatementId(String parentStatementId) {
-    this.parentStatementId = parentStatementId;
+  /**
+   * @param index the index to set
+   */
+  public void setIndex(String index) {
+    this.index = index;
   }
-
-  public boolean isUseInPreview() {
-    return useInPreview;
-  }
-
-  public void setUseInPreview(boolean useInPreview) {
-    this.useInPreview = useInPreview;
-  }
-
-
-
 }

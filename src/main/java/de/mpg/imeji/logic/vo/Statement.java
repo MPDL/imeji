@@ -17,7 +17,7 @@ import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.util.IdentifierUtil;
-import de.mpg.imeji.util.LocalizedString;
+import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
  * Define the properties of a {@link Metadata}. {@link Statement} are defined in a
@@ -30,25 +30,25 @@ import de.mpg.imeji.util.LocalizedString;
 @j2jResource("http://imeji.org/terms/statement")
 @j2jModel("statement")
 @j2jId(getMethod = "getUri", setMethod = "setUri")
-public class Statement implements Comparable<Statement>, Serializable, Cloneable {
+public class Statement implements Serializable, Cloneable {
   private static final long serialVersionUID = -7950561563075491540L;
   private String id;
-  // Id: creation to be changed with pretty ids
-  private URI uri = IdentifierUtil.newURI(Statement.class);
+  private URI uri;
+  @j2jLiteral("http://imeji.org/terms/index")
+  private String index;
   @j2jLiteral("http://purl.org/dc/terms/type")
   private StatementType type = StatementType.TEXT;
-  @j2jList("http://www.w3.org/2000/01/rdf-schema#label")
-  private Collection<LocalizedString> labels = new ArrayList<LocalizedString>();
+  @j2jList("http://purl.org/dc/terms/name")
+  private List<String> names = new ArrayList<>();
   @j2jResource("http://purl.org/dc/dcam/VocabularyEncodingScheme")
   private URI vocabulary;
   @j2jList("http://imeji.org/terms/literalConstraint")
   private Collection<String> literalConstraints = new ArrayList<String>();
-  @j2jLiteral("http://imeji.org/terms/position")
-  private int pos = 0;
-  @j2jResource("http://imeji.org/terms/namespace")
-  private URI namespace;
 
-  public Statement() {}
+  public Statement() {
+    this.id = IdentifierUtil.newUniversalUniqueId();
+    this.uri = ObjectHelper.getURI(Statement.class, id);
+  }
 
   public StatementType getType() {
     return type;
@@ -58,12 +58,32 @@ public class Statement implements Comparable<Statement>, Serializable, Cloneable
     this.type = type;
   }
 
-  public Collection<LocalizedString> getLabels() {
-    return labels;
+  /**
+   * @return the names
+   */
+  public List<String> getNames() {
+    return names;
   }
 
-  public void setLabels(Collection<LocalizedString> labels) {
-    this.labels = labels;
+  /**
+   * @param names the names to set
+   */
+  public void setNames(List<String> names) {
+    this.names = names;
+  }
+
+  /**
+   * @return the index
+   */
+  public String getIndex() {
+    return index;
+  }
+
+  /**
+   * @param index the index to set
+   */
+  public void setIndex(String index) {
+    this.index = index;
   }
 
   /**
@@ -71,13 +91,8 @@ public class Statement implements Comparable<Statement>, Serializable, Cloneable
    *
    * @return
    */
-  public String getLabel() {
-    for (LocalizedString l : labels) {
-      if (l.getLang().equals("en")) {
-        return l.getValue();
-      }
-    }
-    return labels.iterator().next().getValue();
+  public String getDefaultName() {
+    return names.get(0);
   }
 
   public URI getVocabulary() {
@@ -99,62 +114,13 @@ public class Statement implements Comparable<Statement>, Serializable, Cloneable
     this.literalConstraints = literalConstraints;
   }
 
-
-  public int getPos() {
-    return pos;
-  }
-
-  public void setPos(int pos) {
-    this.pos = pos;
-  }
-
-  @Override
-  public int compareTo(Statement o) {
-    if (o.getPos() > this.pos) {
-      return -1;
-    } else if (o.getPos() == this.pos) {
-      return 0;
-    } else {
-      return 1;
-    }
-  }
-
   public void setUri(URI uri) {
     this.uri = uri;
+    this.id = ObjectHelper.getId(uri);
   }
 
   public URI getUri() {
     return uri;
-  }
-
-  /**
-   * @param namespace the namespace to set
-   */
-  public void setNamespace(URI namespace) {
-    this.namespace = namespace;
-  }
-
-  /**
-   * @return the namespace
-   */
-  public URI getNamespace() {
-    return namespace;
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see java.lang.Object#clone()
-   */
-  @Override
-  public Statement clone() {
-    Statement clone = new Statement();
-    clone.labels = new ArrayList<>(labels);
-    clone.literalConstraints = literalConstraints;
-    clone.pos = pos;
-    clone.type = type;
-    clone.vocabulary = vocabulary;
-    return clone;
   }
 
   /**
@@ -169,7 +135,26 @@ public class Statement implements Comparable<Statement>, Serializable, Cloneable
    */
   public void setId(String id) {
     this.id = id;
+    this.uri = ObjectHelper.getURI(Statement.class, id);
   }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see java.lang.Object#clone()
+   */
+  @Override
+  public Statement clone() {
+    Statement clone = new Statement();
+    clone.names = new ArrayList<>(names);
+    clone.literalConstraints = literalConstraints;
+    clone.index = index;
+    clone.type = type;
+    clone.vocabulary = vocabulary;
+    return clone;
+  }
+
+
 
   /**
    * Comparator to sort String ignoring the case

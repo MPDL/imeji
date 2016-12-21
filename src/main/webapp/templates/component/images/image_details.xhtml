@@ -201,57 +201,17 @@
 								</ui:repeat>
 							</ui:fragment>
 							
-							<!-- MetaDataList - EDIT MetaData - panel START -->
 							<ui:fragment rendered="#{itemBean.edit.toggleState == 'editMd' and Auth.updateContent(itemBean.image) and !itemBean.locked}">
-								<ui:fragment rendered="#{itemBean.profile == null}">
-									<span class="fa fa-exclamation-triangle"/> #{msg.error_collection_profile_not_exist}
-									<a href="#{Navigation.applicationUrl}createprofile?col=#{itemBean.collection.idString}&amp;redirect=back">#{lbl.add_profile}</a>
-								 </ui:fragment>
-								<ui:fragment rendered="#{itemBean.profile != null}">
-									<ui:repeat id="editItem" var="item" value="#{itemBean.edit.editor.items}" rows="0" varStatus="indexMetadata">
-										<ui:repeat id="metadata" var="metadata" value="#{item.mds.tree.list}" rows="0" varStatus="indexMetadata">									
-											<!-- MetaDataList - edit panel container set -->
-											<div class="imj_metadataSet">
-												<div class="imj_metadataLabel">
-													<h:outputText value="#{itemBean.metadataLabels.internationalizedLabels[metadata.statement.id]}"/>
-													<span class="imj_invisible">: </span>
-												</div>
-												<div class="imj_metadataValue">
-													<div style="margin-left: #{metadata.hierarchyLevel}em;">
-														<!-- MetaDataInput -->
-														<list:batchEditList_singleStatement id="editMd" itemBean="#{metadata}" itemStatement="#{metadata.statement}" itemLabelBean="#{itemBean.metadataLabels}" hideLabel="true" navBean="#{Navigation}" suggestBean="#{SuggestBean}"/>		
-														<!-- imj_multipleButtons (-) (+) command buttons -->
-														<h:panelGroup class="imj_metadataEditButtonArea" rendered="#{metadata.statement.maxOccurs != '1'}">
-															<h:commandLink type="submit" styleClass="fa fa-plus-square-o" rendered="#{metadata.statement.maxOccurs != '1'}" action="#{item.addMetadata(metadata)}" value="" title="#{lbl.add} #{itemBean.metadataLabels.internationalizedLabels[metadata.statement.id]}">
-																<f:ajax execute="@form" render="@form"/>
-		                                                    </h:commandLink>
-															<h:commandLink type="submit" styleClass="fa fa-minus-square-o" rendered="#{metadata.statement.maxOccurs != '1'}" action="#{item.removeMetadata(metadata)}" value="" title="#{lbl.remove_this_metadata} #{itemBean.metadataLabels.internationalizedLabels[metadata.statement.id]}">
-																<f:ajax execute="@form" render="@form"/>
-		                                                    </h:commandLink>                                                
-														</h:panelGroup>
-														<h:panelGroup style="visibility:hidden" styleClass="fa fa-minus-square-o" rendered="#{metadata.statement.maxOccurs == '1'}"></h:panelGroup>												
-													</div>
-												</div>
-											</div>
-										</ui:repeat>
-										<ui:fragment rendered="#{empty item.mds.tree.list and Auth.update(itemBean.profile)}">
-											<h3 class="imj_headline">#{msg.error_collection_profile_not_exist}
-												<h:outputLink value="#{Navigation.applicationUrl}createprofile?redirect=back&amp;col=#{itemBean.collection.idString}" title="#{lbl.add_profile}">
-													<h:outputText value="#{lbl.add_profile}"/>
-												</h:outputLink>
-											</h3>
-										</ui:fragment>
-									</ui:repeat>	
-								</ui:fragment>
-								<!-- MetaDataList - EDIT - imj_submitPanel - cancel + submit command buttons -->
+								<md:metadataItemEdit formBean="#{EditMetadataItemBean}"/>
 								<div class="imj_submitPanel">
 									<h:commandLink styleClass="imj_cancelButton" action="#{itemBean.cancelEditor}">
 										<h:outputText value="#{lbl.cancel}"/>
 									</h:commandLink>
-									<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.saveEditor}" value="#{lbl.save}">
+									<h:commandLink type="submit" styleClass="imj_submitButton" action="#{EditMetadataItemBean.save}" value="#{lbl.save}">
 									</h:commandLink>
 								</div>
-							</ui:fragment> <!-- MetaDataList - EDIT MetaData - panel END -->
+							</ui:fragment> 
+							
 						</h:panelGroup> <!-- MetaDataList - further metadata - single edit panel - Wrapper END -->
 					</h:panelGroup> <!-- MetaDataList - media data Wrapper END -->
 				</h:form>

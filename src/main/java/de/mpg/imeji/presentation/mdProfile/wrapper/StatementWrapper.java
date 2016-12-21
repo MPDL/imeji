@@ -16,7 +16,6 @@ import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.util.VocabularyHelper;
-import de.mpg.imeji.util.LocalizedString;
 
 /**
  * Wrapper for {@link Statement}, used in java bean {@link MdProfileBean}
@@ -25,7 +24,7 @@ import de.mpg.imeji.util.LocalizedString;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class StatementWrapper implements Comparable<StatementWrapper>, Serializable {
+public class StatementWrapper implements Serializable {
   private static final long serialVersionUID = 7304068244275901609L;
   private Statement statement;
   private boolean multiple = false;
@@ -56,9 +55,7 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * Reset this {@link StatementWrapper} with emtpy {@link Statement}
    */
   public void reset() {
-    Statement newSt = ImejiFactory.newStatement();
-    newSt.setType(statement.getType());
-    init(newSt);
+    init(ImejiFactory.newStatement().addName("").setType(statement.getType()).build());
   }
 
   /**
@@ -75,11 +72,6 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
             + ImejiNamespaces.METADATA + "> ?md . ?md <http://imeji.org/terms/statement> <"
             + statement.getId() + ">} LIMIT 1 ", null)
         .size() > 0;
-    for (LocalizedString s : statement.getLabels()) {
-      if (s.getLang() == null) {
-        s.setLang("en");
-      }
-    }
   }
 
   /**
@@ -143,7 +135,7 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    * @return
    */
   public int getLabelsCount() {
-    return statement.getLabels().size();
+    return statement.getNames().size();
   }
 
   /**
@@ -335,20 +327,5 @@ public class StatementWrapper implements Comparable<StatementWrapper>, Serializa
    */
   public void setUsed(boolean used) {
     this.used = used;
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see java.lang.Comparable#compareTo(java.lang.Object)
-   */
-  @Override
-  public int compareTo(StatementWrapper o) {
-    if (getStatement().getPos() > o.getStatement().getPos()) {
-      return 1;
-    } else if (getStatement().getPos() < o.getStatement().getPos()) {
-      return -1;
-    }
-    return 0;
   }
 }

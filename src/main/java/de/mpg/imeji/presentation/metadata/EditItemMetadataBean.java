@@ -20,11 +20,11 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.concurrency.locks.Lock;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
-import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
-import de.mpg.imeji.logic.statement.StatementService;
+import de.mpg.imeji.logic.service.item.ItemService;
+import de.mpg.imeji.logic.service.statement.StatementService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
@@ -212,9 +212,15 @@ public class EditItemMetadataBean extends SuperBean {
    */
   private void initStatementsMenu() {
     statementMenu = new ArrayList<SelectItem>();
-    for (Statement s : new StatementService().searchAndRetrieve()) {
-      statementMenu.add(new SelectItem(s.getId().toString(),
-          metadataLabels.getInternationalizedLabels().get(s.getId())));
+    try {
+      for (Statement s : new StatementService().searchAndRetrieve(null, null, getSessionUser(), -1,
+          0)) {
+        statementMenu.add(new SelectItem(s.getId().toString(),
+            metadataLabels.getInternationalizedLabels().get(s.getId())));
+      }
+    } catch (ImejiException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 
@@ -461,10 +467,16 @@ public class EditItemMetadataBean extends SuperBean {
    * @return
    */
   public Statement getSelectedStatement() {
-    for (Statement s : new StatementService().searchAndRetrieve()) {
-      if (s.getId().toString().equals(selectedStatementName)) {
-        return s;
+    try {
+      for (Statement s : new StatementService().searchAndRetrieve(null, null, getSessionUser(), -1,
+          0)) {
+        if (s.getId().toString().equals(selectedStatementName)) {
+          return s;
+        }
       }
+    } catch (ImejiException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
     return null;
   }

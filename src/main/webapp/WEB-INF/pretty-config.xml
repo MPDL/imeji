@@ -79,18 +79,10 @@
 		<pattern value="/createcollection" />
 		<view-id>/jsf/CollectionCreate.xhtml</view-id>
 	</url-mapping>
-	<!-- Profile Pages -->
-	<url-mapping id="viewProfile">
-		<pattern value="/profile/#{ id }" />
-		<view-id>/jsf/ProfileView.xhtml</view-id>
-	</url-mapping>
-	<url-mapping id="editProfile">
-		<pattern value="/profile/#{ id }/edit" />
-		<view-id>/jsf/ProfileEdit.xhtml</view-id>
-	</url-mapping>
-	<url-mapping id="createProfile">
-		<pattern value="/createprofile" />
-		<view-id>/jsf/ProfileCreate.xhtml</view-id>
+	<!-- Statement pages -->
+	<url-mapping id="createStatement">
+		<pattern value="/createstatement" />
+		<view-id>/jsf/StatementCreate.xhtml</view-id>
 	</url-mapping>
 	<!-- Album Pages -->
 	<url-mapping id="createalbum">
