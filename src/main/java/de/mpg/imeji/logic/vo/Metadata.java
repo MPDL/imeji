@@ -21,15 +21,15 @@ public class Metadata implements Serializable {
   @j2jLiteral("http://imeji.org/terms/statement")
   private String statementId;
   @j2jLiteral("http://imeji.org/terms/text")
-  private String text;
+  private String text = null;
   @j2jLiteral("http://imeji.org/terms/number")
-  private double number;
+  private double number = Double.NaN;
   @j2jLiteral("http://imeji.org/terms/url")
-  private String url;
+  private String url = null;
   @j2jLiteral("http://imeji.org/terms/latitude")
-  private double latitude;
+  private double latitude = Double.NaN;
   @j2jLiteral("http://imeji.org/terms/longitude")
-  private double longitude;
+  private double longitude = Double.NaN;
   @j2jLiteral("http://xmlns.com/foaf/0.1/person")
   private Person person;
   @j2jLiteral("http://imeji.org/terms/pos")

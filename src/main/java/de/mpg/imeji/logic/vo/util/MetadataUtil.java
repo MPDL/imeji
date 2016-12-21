@@ -61,7 +61,7 @@ public class MetadataUtil {
     return StringHelper.isNullOrEmptyTrim(md.getText()) && Double.isNaN(md.getLatitude())
         && Double.isNaN(md.getLongitude()) && Double.isNaN(md.getNumber())
         && StringHelper.isNullOrEmptyTrim(md.getUrl())
-        && (StringHelper.isNullOrEmptyTrim(md.getPerson().AsFullText()));
+        && (md.getPerson() == null || StringHelper.isNullOrEmptyTrim(md.getPerson().AsFullText()));
   }
 
   public static Statement findStatementByLabel(String label) {

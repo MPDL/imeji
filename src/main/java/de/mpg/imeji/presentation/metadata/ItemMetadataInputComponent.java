@@ -41,6 +41,17 @@ public class ItemMetadataInputComponent implements Serializable {
   }
 
   /**
+   * Remove a {@link MetadataInputComponent} from the {@link ItemMetadataInputComponent}
+   * 
+   * @param position
+   */
+  public void removeMetadata(int position) {
+    if (metadata.size() > position) {
+      metadata.remove(position);
+    }
+  }
+
+  /**
    * Convert the {@link ItemMetadataInputComponent} to an {@link Item}
    * 
    * @return

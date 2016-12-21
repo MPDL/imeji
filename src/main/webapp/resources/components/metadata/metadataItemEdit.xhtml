@@ -13,7 +13,7 @@
 			<div class="imj_metadataSet">
 				<div class="imj_metadataLabel">
 					<ui:fragment rendered="#{metadata.isEmpty()}">
-						<md:select metadataInputComponent="#{cc.attrs.formBean.metadata}" statementMenu="#{cc.attrs.formBean.statementMenu}"/>
+						<md:select metadataInputComponent="#{metadata}" statementMenu="#{cc.attrs.formBean.statementMenu}"/>
 					</ui:fragment>
 					<ui:fragment rendered="#{!metadata.isEmpty()}">
 						<h:outputText value="#{metadata.statement.index}"/>
@@ -22,11 +22,11 @@
 				</div>
 				<div class="imj_metadataValue">
 					<md:input metadataInputComponent="#{metadata}"/>
+					<h:commandLink type="submit" rendered="#{!metadata.isEmpty()}" styleClass="fa fa-minus-square-o" action="#{cc.attrs.formBean.item.removeMetadata(position.index)}" value="" title="#{lbl.remove_metadata}">
+						<f:ajax execute="@form" render="@form"/>
+					</h:commandLink>
 				</div>
 			</div>
-			<h:commandLink type="submit" styleClass="fa fa-minus-square-o" action="#{cc.attrs.formBean.removeMetadata(position.index)}" value="#{lbl.remove_metadata}" title="#{lbl.remove_metadata}">
-				<f:ajax execute="@form" render="@form"/>
-			</h:commandLink>
 		</ui:repeat>
 	</composite:implementation>
 </html>

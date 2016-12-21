@@ -24,12 +24,12 @@ public class MetadataInputComponent implements Serializable {
   public MetadataInputComponent(Metadata metadata, Statement statement) {
     this.metadata = metadata;
     this.statement = statement;
+    emtpy = MetadataUtil.isEmpty(metadata);
   }
 
   public void statementMenuListener(ValueChangeEvent event) {
     statement = (Statement) event.getNewValue();
     metadata = ImejiFactory.newMetadata(statement).build();
-    emtpy = MetadataUtil.isEmpty(metadata);
   }
 
   /**

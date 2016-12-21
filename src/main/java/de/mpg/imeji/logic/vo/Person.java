@@ -10,9 +10,7 @@ import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
@@ -113,8 +111,6 @@ public class Person implements Cloneable, Serializable {
     this.role = role;
   }
 
-  @XmlElements(value = @XmlElement(name = "organizationalunit",
-      namespace = "http://purl.org/escidoc/metadata/profiles/0.1/") )
   public Collection<Organization> getOrganizations() {
     return organizations;
   }
@@ -123,7 +119,6 @@ public class Person implements Cloneable, Serializable {
     this.organizations = organizations;
   }
 
-  @XmlElement(name = "complete-name", namespace = "http://purl.org/escidoc/metadata/terms/0.1/")
   public String getCompleteName() {
     return completeName;
   }
@@ -136,7 +131,6 @@ public class Person implements Cloneable, Serializable {
     return pos;
   }
 
-  @XmlElement(name = "position", namespace = "http://imeji.org/terms/")
   public void setPos(int pos) {
     this.pos = pos;
   }
@@ -145,7 +139,6 @@ public class Person implements Cloneable, Serializable {
     this.id = id;
   }
 
-  @XmlAttribute(name = "id")
   public URI getId() {
     return id;
   }
