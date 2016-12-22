@@ -1,4 +1,7 @@
-package de.mpg.imeji.presentation.metadata;
+package de.mpg.imeji.presentation.metadata.editItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -11,6 +14,7 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
+import de.mpg.imeji.presentation.metadata.EditMetadataAbstract;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -21,9 +25,10 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  */
 @ManagedBean(name = "EditMetadataItemBean")
 @ViewScoped
-public class EditMetadataItemBean extends EditMetadataBean {
+public class EditMetadataItemBean extends EditMetadataAbstract {
   private static final long serialVersionUID = 4116466458089234630L;
   private static Logger LOGGER = Logger.getLogger(EditMetadataItemBean.class);
+  private List<ItemMetadataInputComponent> items = new ArrayList<>();
 
   public EditMetadataItemBean() {
     super();
@@ -39,6 +44,30 @@ public class EditMetadataItemBean extends EditMetadataBean {
       BeanHelper.error("Error retrieving item");
       LOGGER.error("Error retrieving Item with id " + id, e);
     }
+  }
+
+  @Override
+  public List<Item> toItemList() {
+    List<Item> itemList = new ArrayList<>();
+    for (ItemMetadataInputComponent component : items) {
+      itemList.add(component.toItem());
+    }
+    return itemList;
+  }
+
+
+  /**
+   * @return the items
+   */
+  public List<ItemMetadataInputComponent> getItems() {
+    return items;
+  }
+
+  /**
+   * @param items the items to set
+   */
+  public void setItems(List<ItemMetadataInputComponent> items) {
+    this.items = items;
   }
 
   /**

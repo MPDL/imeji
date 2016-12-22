@@ -31,11 +31,6 @@ public class ItemWrapper {
    * @return
    */
   public Item asItem() {
-    int pos = 0;
-    for (Metadata md : item.getMetadata()) {
-      md.setPosition(pos);
-      pos++;
-    }
     return item;
   }
 

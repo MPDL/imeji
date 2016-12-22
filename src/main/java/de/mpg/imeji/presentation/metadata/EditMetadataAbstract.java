@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
@@ -17,8 +15,8 @@ import de.mpg.imeji.logic.service.statement.StatementService;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.metadata.editItem.ItemMetadataInputComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -27,28 +25,20 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  * @author saquet
  *
  */
-@ManagedBean(name = "EditMetadataBean")
-@ViewScoped
-public class EditMetadataBean extends SuperBean {
+public abstract class EditMetadataAbstract extends SuperBean {
   private static final long serialVersionUID = -8870761990852602492L;
   private static final Logger LOGGER = Logger.getLogger(EditItemMetadataBean.class);
-  private List<ItemMetadataInputComponent> items = new ArrayList<>();
   protected ItemService itemService = new ItemService();
   private List<SelectItem> statementMenu = new ArrayList<>();
   protected Map<String, Statement> statementMap = new HashMap<>();
-  private Statement statement;
-  private Metadata metadata;
 
-  public EditMetadataBean() {
+
+  public EditMetadataAbstract() {
     StatementService statementService = new StatementService();
     try {
       for (Statement s : statementService.searchAndRetrieve(null, null, getSessionUser(), -1, 0)) {
-        if (statement == null) {
-          statement = s;
-          metadata = ImejiFactory.newMetadata(statement).build();
-        }
-        statementMenu.add(new SelectItem(s.getId(), s.getIndex()));
-        statementMap.put(statement.getId(), statement);
+        statementMenu.add(new SelectItem(s.getIndex()));
+        statementMap.put(s.getIndex(), s);
       }
     } catch (ImejiException e) {
       BeanHelper.error("Error retrieving statements");
@@ -73,59 +63,11 @@ public class EditMetadataBean extends SuperBean {
    * 
    * @return
    */
-  private List<Item> toItemList() {
-    List<Item> itemList = new ArrayList<>();
-    for (ItemMetadataInputComponent component : items) {
-      itemList.add(component.toItem());
-    }
-    return itemList;
-  }
+  public abstract List<Item> toItemList();
 
 
-
-  /**
-   * @return the items
-   */
-  public List<ItemMetadataInputComponent> getItems() {
-    return items;
-  }
-
-  /**
-   * @param items the items to set
-   */
-  public void setItems(List<ItemMetadataInputComponent> items) {
-    this.items = items;
-  }
 
   public List<SelectItem> getStatementMenu() {
     return statementMenu;
-  }
-
-  /**
-   * @return the statement
-   */
-  public Statement getStatement() {
-    return statement;
-  }
-
-  /**
-   * @param statement the statement to set
-   */
-  public void setStatement(Statement statement) {
-    this.statement = statement;
-  }
-
-  /**
-   * @return the metadata
-   */
-  public Metadata getMetadata() {
-    return metadata;
-  }
-
-  /**
-   * @param metadata the metadata to set
-   */
-  public void setMetadata(Metadata metadata) {
-    this.metadata = metadata;
   }
 }

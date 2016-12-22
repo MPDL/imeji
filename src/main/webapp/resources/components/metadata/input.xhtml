@@ -9,7 +9,7 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'TEXT'}">
-			<h:inputText value="#{cc.attrs.metadataInputComponent.metadata.text}"/>
+			<h:inputText id="text" value="#{cc.attrs.metadataInputComponent.metadata.text}"/>
 		</ui:fragment>
 	</composite:implementation>
 </html>

@@ -7,10 +7,6 @@
 
 	<!-- <rewrite match="^/old-url/(\w+)/$" substitute="/new_url/$1/" redirect="301" 
 		/> -->
-	<rewrite match="/metadataProfile/(.+)" substitute="/profile/$1"
-		redirect="301" />
-		<rewrite match="/rest$" substitute="/api/index.html"
-		redirect="301" />
 	<!-- Begin UrlMappings -->
 	<url-mapping id="home">
 		<pattern value="/" />
@@ -35,6 +31,10 @@
 	<url-mapping id="editPage">
 		<pattern value="/edit"></pattern>
 		<view-id>/jsf/BatchEdit.xhtml</view-id>
+	</url-mapping>
+	<url-mapping id="editSelectedItems">
+		<pattern value="/editselected"></pattern>
+		<view-id>/jsf/EditMetadataSelectedItems.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="item">
 		<pattern value="/item/#{ id }" />

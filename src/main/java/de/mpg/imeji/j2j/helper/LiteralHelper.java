@@ -69,4 +69,23 @@ public class LiteralHelper {
       return null;
     }
   }
+
+  /**
+   * True if an a literal is empty
+   * 
+   * @param o
+   * @return
+   */
+  public boolean isEmpty(Object o) {
+    if (o == null) {
+      return true;
+    }
+    if (o instanceof String && ((String) o).isEmpty()) {
+      return true;
+    }
+    if (o instanceof Double && Double.isNaN((double) o)) {
+      return true;
+    }
+    return false;
+  }
 }

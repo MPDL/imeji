@@ -52,7 +52,7 @@
 										</ui:fragment>
 									</ui:fragment>
 									
-									<ui:fragment rendered="#{cc.attrs.facetBean.navigationString == 'pretty:collectionBrowse' and cc.attrs.facetBean.collection != null and Auth.updateContent(cc.attrs.facetBean.collection) and cc.attrs.facetBean.profile.statements.size() > 0}">
+									<ui:fragment rendered="#{cc.attrs.facetBean.navigationString == 'pretty:collectionBrowse' and cc.attrs.facetBean.collection != null and Auth.updateContent(cc.attrs.facetBean.collection)}">
 										<li class="imj_overlayMenuListItem">
 											<!-- Edit selected -->
 											<h:outputLink value="#{Navigation.applicationSpaceUrl}edit?type=selected&amp;c=#{cc.attrs.facetBean.collection.id}&amp;q=#{cc.attrs.facetBean.query}" id="lnkSelectEdit">

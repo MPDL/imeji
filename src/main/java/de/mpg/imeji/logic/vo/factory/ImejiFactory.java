@@ -181,6 +181,6 @@ public class ImejiFactory {
 
 
   public static MetadataFactory newMetadata(Statement s) {
-    return new MetadataFactory().setStatementId(s.getId());
+    return new MetadataFactory().setStatementId(s.getIndex());
   }
 }

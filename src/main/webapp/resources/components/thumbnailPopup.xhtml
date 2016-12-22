@@ -21,16 +21,14 @@
 				</div>
 			</div>
 			<ui:repeat id="metadata" var="md" value="#{cc.attrs.item.metadata}" rows="0" varStatus="indexMetadata">
-				<ui:fragment rendered="#{!md.isEmpty() and md.preview}">
-					<div class="imj_metadataSet id_#{md.statementId}  parent_#{md.parent.statementId} highlight_area">
-						<div class="imj_metadataLabel" title="#{cc.attrs.title}">
-							<h:outputText value="#{cc.attrs.labels.internationalizedLabels[md.statement.id]}"/>
-						</div>
-						<div class="imj_metadataValue">
-							<md:output metadata="#{md}"/>
-						</div>
+				<div class="imj_metadataSet highlight_area">
+					<div class="imj_metadataLabel" title="#{cc.attrs.title}">
+						<h:outputText value="#{cc.attrs.labels.internationalizedLabels[md.statementId]}"/>
 					</div>
-				</ui:fragment>
+					<div class="imj_metadataValue">
+						<md:output metadata="#{md}"/>
+					</div>
+				</div>
 			</ui:repeat>
 		</div>
 	</composite:implementation>

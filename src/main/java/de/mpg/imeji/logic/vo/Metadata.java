@@ -32,8 +32,6 @@ public class Metadata implements Serializable {
   private double longitude = Double.NaN;
   @j2jLiteral("http://xmlns.com/foaf/0.1/person")
   private Person person;
-  @j2jLiteral("http://imeji.org/terms/pos")
-  private int position = 0;
 
   /**
    * @return the uri
@@ -146,19 +144,4 @@ public class Metadata implements Serializable {
   public void setPerson(Person person) {
     this.person = person;
   }
-
-  /**
-   * @return the position
-   */
-  public int getPosition() {
-    return position;
-  }
-
-  /**
-   * @param position the position to set
-   */
-  public void setPosition(int position) {
-    this.position = position;
-  }
-
 }

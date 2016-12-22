@@ -28,5 +28,8 @@
 				</div>
 			</div>
 		</ui:repeat>
+		<h:commandLink type="submit"  styleClass="fa fa-plus-square-o" action="#{cc.attrs.formBean.item.addEmptyMetadata()}" value="#{lbl.add_metadata}" title="#{lbl.add_metadata}">
+			<f:ajax execute="@form" render="@form"/>
+		</h:commandLink>
 	</composite:implementation>
 </html>

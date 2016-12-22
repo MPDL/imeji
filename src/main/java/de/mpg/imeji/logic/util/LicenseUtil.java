@@ -27,9 +27,11 @@ public class LicenseUtil {
    */
   public static List<License> getActiveLicenses(List<License> licenses) {
     List<License> actives = new ArrayList<>();
-    for (License lic : licenses) {
-      if (lic.getEnd() < 0) {
-        actives.add(lic);
+    if (licenses != null) {
+      for (License lic : licenses) {
+        if (lic.getEnd() < 0) {
+          actives.add(lic);
+        }
       }
     }
     return actives;

@@ -169,14 +169,12 @@ public class ReverseTransferObjectFactory {
       throws ImejiException {
     List<Metadata> voMDs = (List<Metadata>) vo.getMetadata();
     voMDs.clear();
-    int i = 0;
     for (MetadataTO mdTO : to.getMetadata()) {
       Metadata mdVO = new MetadataFactory().setStatementId(mdTO.getStatementId())
           .setText(mdTO.getText()).setNumber(mdTO.getNumber()).setUrl(mdTO.getUrl())
           .setPerson(transferPerson(mdTO.getPerson(), new Person(), mode))
           .setLatitude(mdTO.getLatitude()).setLongitude(mdTO.getLongitude()).build();
-      mdVO.setPosition(i);
-      i++;
+      vo.getMetadata().add(mdVO);
     }
   }
 

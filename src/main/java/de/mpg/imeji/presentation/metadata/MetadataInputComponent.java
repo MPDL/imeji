@@ -2,11 +2,8 @@ package de.mpg.imeji.presentation.metadata;
 
 import java.io.Serializable;
 
-import javax.faces.event.ValueChangeEvent;
-
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataUtil;
 
 /**
@@ -25,11 +22,6 @@ public class MetadataInputComponent implements Serializable {
     this.metadata = metadata;
     this.statement = statement;
     emtpy = MetadataUtil.isEmpty(metadata);
-  }
-
-  public void statementMenuListener(ValueChangeEvent event) {
-    statement = (Statement) event.getNewValue();
-    metadata = ImejiFactory.newMetadata(statement).build();
   }
 
   /**

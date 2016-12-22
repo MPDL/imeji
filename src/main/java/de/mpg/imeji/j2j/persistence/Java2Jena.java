@@ -312,7 +312,7 @@ public class Java2Jena {
    * @param f
    */
   private void addLiteral(Resource s, Object literalObject, Field f) {
-    if (literalObject != null) {
+    if (!literalHelper.isEmpty(literalObject)) {
       Property p = model.createProperty(J2JHelper.getLiteralNamespace(f));
       Literal o = literalHelper.java2Literal(literalObject);
       if (o != null) {
