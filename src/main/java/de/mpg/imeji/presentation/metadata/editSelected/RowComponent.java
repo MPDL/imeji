@@ -8,6 +8,7 @@ import java.util.Map;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataUtil;
 
 /**
@@ -22,15 +23,16 @@ public class RowComponent implements Serializable {
   private String filename;
   private final Item item;
 
-  public RowComponent(Item item, Map<String, Statement> statementMap) {
+  public RowComponent(Item item, Map<String, Statement> statementMap, List<String> columns) {
     this.item = item;
-    for (Statement statement : statementMap.values()) {
-      cells.add(new CellComponent(statement, getMetadataForStatement(item, statement)));
+    this.filename = item.getFilename();
+    for (String column : columns) {
+      cells.add(new CellComponent(statementMap.get(column),
+          getMetadataForStatement(item, statementMap.get(column))));
     }
   }
 
   private List<Metadata> getMetadataForStatement(Item item, Statement statement) {
-    this.filename = item.getFilename();
     List<Metadata> l = new ArrayList<>();
     for (Metadata metadata : item.getMetadata()) {
       if (metadata.getStatementId().equals(statement.getIndex())
@@ -39,6 +41,17 @@ public class RowComponent implements Serializable {
       }
     }
     return l;
+  }
+
+  /**
+   * Add a Statement
+   * 
+   * @param statement
+   */
+  public void addCell(Statement statement) {
+    List<Metadata> l = new ArrayList<>();
+    l.add(ImejiFactory.newMetadata(statement).build());
+    cells.add(new CellComponent(statement, l));
   }
 
   public Item toItem() {

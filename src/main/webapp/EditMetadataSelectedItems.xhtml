@@ -3,7 +3,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:md="http://java.sun.com/jsf/composite/components/metadata">
+	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	
 	<ui:param name="headline" value="#{lbl.edit_selected_items}"/>
 
@@ -14,15 +15,22 @@
 			<div class="">
 				<h:outputLink value="">#{lbl.back}</h:outputLink>
 				<h:commandLink type="submit" styleClass="imj_submitButton" action="#{EditMetadataSelectedItemsBean.save}" value="#{lbl.save}">
-					<f:ajax/>
+					<f:ajax execute="@form" render="@form"/>
 				</h:commandLink>
 			</div>
-			<table >
+			<br/>
+			<table>
 				<tr>
 					<th>#{lbl.filename}</th>
 					<ui:repeat value="#{EditMetadataSelectedItemsBean.columns}" var="column">
 				    	<th>#{column}</th>
 				    </ui:repeat>
+				    <th>
+				    	<h:inputText value="#{EditMetadataSelectedItemsBean.newStatementIndex}" html5:placeholder="#{lbl.add_metadata}"/>
+				    	<h:commandLink type="submit" action="#{EditMetadataSelectedItemsBean.addColumn}" value=" #{lbl.add}" title="#{lbl.add}">
+							<f:ajax execute="@form" render="@form"/>
+						</h:commandLink>
+					</th>
 			  	</tr>
 			  	<ui:repeat id="item" value="#{EditMetadataSelectedItemsBean.rows}" var="row">
 					<tr style="margin:5px;">
@@ -33,8 +41,8 @@
 									<md:input id="input" metadataInputComponent="#{input}"/>
 									<br/>
 								</ui:repeat>
-								<h:commandLink type="submit"  styleClass="fa fa-plus-square-o" action="#{cell.addValue}" value="#{lbl.add_metadata}" title="#{lbl.add_metadata}">
-									<f:ajax execute="@form" render="@form"/>
+								<h:commandLink type="submit" styleClass="fa fa-plus" action="#{cell.addValue}" value=" #{lbl.add_value}" title="#{lbl.add_metadata}">
+									<f:ajax/>
 								</h:commandLink>
 							</td>
 					    </ui:repeat>

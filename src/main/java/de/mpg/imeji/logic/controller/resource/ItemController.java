@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -172,9 +173,10 @@ public class ItemController extends ImejiServiceAbstract {
    */
   private void cleanItem(Collection<Item> l) {
     for (Item item : l) {
-      for (Metadata md : item.getMetadata()) {
-        MetadataUtil.cleanMetadata(md);
-      }
+      List<Metadata> cleanMetadata =
+          item.getMetadata().stream().filter(md -> !MetadataUtil.isEmpty(md))
+              .map(md -> MetadataUtil.cleanMetadata(md)).collect(Collectors.toList());
+      item.setMetadata(cleanMetadata);
       cleanLicenses(item);
     }
   }
@@ -201,7 +203,7 @@ public class ItemController extends ImejiServiceAbstract {
   }
 
   /**
-   * Set the end of the licenses (normally,´only one license shouldn't have any end)
+   * Set the end of the licenses (normally, only one license shouldn't have any end)
    * 
    * @param item
    * @param current

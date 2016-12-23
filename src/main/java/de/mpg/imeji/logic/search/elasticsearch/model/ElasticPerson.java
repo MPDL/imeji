@@ -32,12 +32,19 @@ public class ElasticPerson {
    * @param p
    */
   public ElasticPerson(Person p) {
-    this.familyname = p.getFamilyName();
-    this.givenname = p.getGivenName();
-    this.identifier = p.getIdentifier();
-    this.completename = p.getCompleteName();
-    for (Organization org : p.getOrganizations()) {
-      organization.add(new ElasticOrganization(org));
+    if (p == null) {
+      this.familyname = null;
+      this.givenname = null;
+      this.identifier = null;
+      this.completename = null;
+    } else {
+      this.familyname = p.getFamilyName();
+      this.givenname = p.getGivenName();
+      this.identifier = p.getIdentifier();
+      this.completename = p.getCompleteName();
+      for (Organization org : p.getOrganizations()) {
+        organization.add(new ElasticOrganization(org));
+      }
     }
   }
 
