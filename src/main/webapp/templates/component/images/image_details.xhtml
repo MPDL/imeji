@@ -11,11 +11,8 @@
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
-			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDigilib and !itemBean.viewInDataViewer}">
+			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDataViewer}">
 				<h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" />
-			</h:outputLink>
-			<h:outputLink id="lnkPicInternalDigilib" value="#{ItemBean.digilibUrl}" target="_blank" rendered="#{itemBean.viewInDigilib}">
-				<h:graphicImage id="picWebResolutionInternalDigilib" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" rendered="#{itemBean.image.status!='WITHDRAWN'}"/>
 			</h:outputLink>
 			<h:outputLink id="lnkPicInternalDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" target="_blank" rendered="#{itemBean.viewInDataViewer}">
 				<h:graphicImage title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" />
@@ -43,12 +40,8 @@
 			<h:outputLink id="lnkDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" rendered="#{itemBean.viewInDataViewer}" target="_blank">
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
-			
-			<h:outputLink id="lnkDigilib" value="#{itemBean.digilibUrl}" target="_blank" rendered="#{itemBean.viewInDigilib}">
-				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
-			</h:outputLink>
-			
-			<h:outputLink id="lnkOriginalData" value="#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDigilib and !itemBean.viewInDataViewer}" >
+
+			<h:outputLink id="lnkOriginalData" value="#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDataViewer}" >
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 		</div>	
@@ -185,7 +178,7 @@
 									<span class="imj_invisible">: </span>
 								</div>
 								<div class="imj_metadataValue">
-										<h:outputText value="#{itemBean.content.width} x #{itemBean.content.height}"/>
+									<h:outputText value="#{itemBean.content.width} x #{itemBean.content.height}"/>
 								</div>
 							</h:panelGroup>
 						</h:panelGroup>
@@ -195,8 +188,14 @@
 							<!-- MetaDataList - show further MetaData -->
 							<ui:fragment rendered="#{itemBean.edit.toggleState == 'displayMd'}">
 								<ui:repeat var="metadata" value="#{itemBean.item.metadata}" rows="0">
-									<div class="imj_metadataValue">
-										<md:output metadata="#{metadata}"/>
+									<div class="imj_metadataSet">
+										<div class="imj_metadataLabel">
+											<h:outputText value="#{metadata.statementId}"/>
+											<span class="imj_invisible">: </span>
+										</div>
+										<div class="imj_metadataValue">
+											<md:output metadata="#{metadata}"/>
+										</div>
 									</div>
 								</ui:repeat>
 							</ui:fragment>

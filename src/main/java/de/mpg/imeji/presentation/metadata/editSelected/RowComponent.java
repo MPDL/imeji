@@ -10,6 +10,7 @@ import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataUtil;
+import de.mpg.imeji.presentation.metadata.StatementComponent;
 
 /**
  * A row of the edit select item page
@@ -23,12 +24,13 @@ public class RowComponent implements Serializable {
   private String filename;
   private final Item item;
 
-  public RowComponent(Item item, Map<String, Statement> statementMap, List<String> columns) {
+  public RowComponent(Item item, Map<String, Statement> statementMap,
+      List<StatementComponent> columns) {
     this.item = item;
     this.filename = item.getFilename();
-    for (String column : columns) {
-      cells.add(new CellComponent(statementMap.get(column),
-          getMetadataForStatement(item, statementMap.get(column))));
+    for (StatementComponent column : columns) {
+      cells.add(new CellComponent(statementMap.get(column.getIndex()),
+          getMetadataForStatement(item, statementMap.get(column.getIndex()))));
     }
   }
 

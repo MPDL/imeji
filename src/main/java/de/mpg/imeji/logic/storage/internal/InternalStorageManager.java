@@ -161,8 +161,7 @@ public class InternalStorageManager implements Serializable {
     if (f.exists()) {
       boolean deleted = FileUtils.deleteQuietly(f);
       if (!deleted) {
-        throw new RuntimeException(
-            "Impossible to delete the existing file. Please close all Digilib pages and try later.");
+        throw new RuntimeException("Impossible to delete the existing file.");
       }
     }
   }

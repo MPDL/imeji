@@ -8,5 +8,4 @@ package de.mpg.imeji.logic.vo;
  */
 public enum StatementType {
   TEXT, NUMBER, GEOLOCATION, DATE, PERSON, URL;
-
 }

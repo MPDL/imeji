@@ -18,10 +18,6 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class ImejiProperties {
   /**
-   * True if Digilib is enabled
-   */
-  private boolean digilibEnabled = false;
-  /**
    * The base of the path to the internal storage
    */
   private String internalStorageBase = "files";
@@ -46,7 +42,6 @@ public class ImejiProperties {
   public void load() {
     try {
       PropertyReader.loadProperties();
-      digilibEnabled = Boolean.parseBoolean(getProperty("imeji.digilib.enable"));
       internalStorageBase = FilenameUtils
           .getBaseName(FilenameUtils.normalizeNoEndSeparator(getProperty("imeji.storage.path")));
       applicationURL = StringHelper.normalizeURI(getProperty("imeji.instance.url"));
@@ -88,13 +83,6 @@ public class ImejiProperties {
       throw new RuntimeException("Error in properties. Check property: imeji.instance.url");
     }
     ObjectHelper.baseUri = baseURI;
-  }
-
-  /**
-   * @return the digilibEnabled
-   */
-  public boolean isDigilibEnabled() {
-    return digilibEnabled;
   }
 
   /**

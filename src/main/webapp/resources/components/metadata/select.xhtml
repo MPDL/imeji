@@ -3,18 +3,30 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:composite="http://java.sun.com/jsf/composite"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:md="http://java.sun.com/jsf/composite/components/metadata">
+      xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
+      xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	
 	<composite:interface>
-		<composite:attribute name="metadataInputComponent" required="true"/>
-		<composite:attribute name="statementMenu" required="true"/>
+		<composite:attribute name="menu" required="true"/>
+		<composite:attribute name="component" required="true"/>
 	</composite:interface>
 	
 	<composite:implementation>
-		 <h:selectOneMenu id="selStatementType" value="#{cc.attrs.metadataInputComponent.statement.id}" valueChangeListener="#{cc.attrs.metadataInputComponent.statementMenuListener}">
-			<f:selectItems value="#{cc.attrs.statementMenu}"/>
-			<f:ajax onevent="change" execute="@this" render="@form"/>
-		</h:selectOneMenu>
-		
+		<h:panelGroup id="selectMetadata">
+			<h:inputText value="#{cc.attrs.component.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
+				<f:ajax event="change" render=":#{cc.clientId}:selectMetadata" listener="#{cc.attrs.component.listener}"/>
+			</h:inputText>
+			<datalist id="statementList">
+				<ui:repeat var="statement" value="#{cc.attrs.menu}">
+			   		<option>#{statement.value}</option>
+			   	</ui:repeat>
+			</datalist>
+			<ui:fragment rendered="#{not cc.attrs.component.exists}">
+				<h:selectOneMenu value="#{cc.attrs.component.type}">
+					<f:selectItems value="#{cc.attrs.component.types}" var="type" itemValue="#{type}" itemLabel="#{type.name()}" />
+					<f:ajax event="change" render=":#{cc.clientId}:selectMetadata" listener="#{cc.attrs.component.listener}"/>			
+				</h:selectOneMenu>
+			</ui:fragment>
+		</h:panelGroup>
 	</composite:implementation>
 </html>

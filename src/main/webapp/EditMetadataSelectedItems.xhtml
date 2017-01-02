@@ -23,10 +23,10 @@
 				<tr>
 					<th>#{lbl.filename}</th>
 					<ui:repeat value="#{EditMetadataSelectedItemsBean.columns}" var="column">
-				    	<th>#{column}</th>
+				    	<th>#{column.index}</th>
 				    </ui:repeat>
 				    <th>
-				    	<h:inputText value="#{EditMetadataSelectedItemsBean.newStatementIndex}" html5:placeholder="#{lbl.add_metadata}"/>
+				    	<md:select component="#{EditMetadataSelectedItemsBean.newStatement}"  menu="#{EditMetadataSelectedItemsBean.statementMenu}"/>
 				    	<h:commandLink type="submit" action="#{EditMetadataSelectedItemsBean.addColumn}" value=" #{lbl.add}" title="#{lbl.add}">
 							<f:ajax execute="@form" render="@form"/>
 						</h:commandLink>
@@ -42,7 +42,7 @@
 									<br/>
 								</ui:repeat>
 								<h:commandLink type="submit" styleClass="fa fa-plus" action="#{cell.addValue}" value=" #{lbl.add_value}" title="#{lbl.add_metadata}">
-									<f:ajax/>
+									<f:ajax execute="@form" render="@form"/>
 								</h:commandLink>
 							</td>
 					    </ui:repeat>

@@ -30,8 +30,6 @@ public class Navigation implements Serializable {
   public static String frameworkUrl;
   // Url of the application
   public static String applicationUrl;
-  // Url of digilib
-  public static String externalDigilibUrl;
   // Pages of imeji
   public static final Page HOME = new Page("HomePage", "");
   public static final Page SEARCH = new Page("Search", "search");
@@ -52,7 +50,6 @@ public class Navigation implements Serializable {
   public static final Page USER = new Page("User", "user");
   public static final Page USERS = new Page("Users", "users");
   public static final Page ADMIN = new Page("Admin", "admin");
-  public static final Page DIGILIB = new Page("Digilib", "digilib");
   public static final Page SINGLEUPLOAD = new Page("Single upload", "singleupload");
   public static final Page REGISTRATION = new Page("Registration", "register");
   public static final Page IMPRINT = new Page("IMPRINT", "imprint");
@@ -73,9 +70,8 @@ public class Navigation implements Serializable {
         frameworkUrl = StringHelper.normalizeURI(frameworkUrl);
       }
       applicationUrl = Imeji.PROPERTIES.getApplicationURL();
-      externalDigilibUrl = PropertyReader.getProperty("digilib.imeji.instance.url");
     } catch (Exception e) {
-      LOGGER.error(e);
+      LOGGER.error("Error initializing NavigationBean", e);
     }
   }
 
@@ -89,14 +85,6 @@ public class Navigation implements Serializable {
 
   public String getApplicationUri() {
     return applicationUrl.substring(0, applicationUrl.length() - 1);
-  }
-
-  public String getDigilibUrl() {
-    return applicationUrl + DIGILIB.getPath();
-  }
-
-  public String getExternalDigilibUrl() {
-    return externalDigilibUrl;
   }
 
   public String getDomain() {

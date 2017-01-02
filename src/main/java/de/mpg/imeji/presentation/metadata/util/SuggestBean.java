@@ -13,7 +13,7 @@ import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.service.statement.StatementService;
+import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.presentation.util.CommonUtils;
 

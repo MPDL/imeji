@@ -191,11 +191,6 @@
 		<view-id>/jsf/TermsOfUse.xhtml</view-id>
 	</url-mapping>
 	
-	<url-mapping id="digilibImage">
-		<pattern value="/digilibImage"></pattern>
-		<view-id>/jsf/DigilibImage.xhtml</view-id>
-	</url-mapping>
-	
 	<url-mapping id="loginFormular">
 		<pattern value="/login" />
 		<view-id>/jsf/Login.xhtml</view-id>
@@ -395,12 +390,6 @@
 	<url-mapping id="space_imprint">
 		<pattern value="/space/#{SessionBean.spaceId}/imprint"></pattern>
 		<view-id>/jsf/Imprint.xhtml</view-id>
-	</url-mapping>
-	
-
-	<url-mapping id="space_digilibImage">
-		<pattern value="/space/#{SessionBean.spaceId}/digilibImage"></pattern>
-		<view-id>/jsf/DigilibImage.xhtml</view-id>
 	</url-mapping>
 	
 	<url-mapping id="space_loginFormular">

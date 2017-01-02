@@ -61,11 +61,15 @@ public class ImejiInitializer {
    * @throws ImejiException
    *
    */
-  public static void init() throws IOException, URISyntaxException, ImejiException {
-    Imeji.tdbPath = PropertyReader.getProperty("imeji.tdb.path");
-    ElasticInitializer.start();
-    ImejiInitializer.init(Imeji.tdbPath);
-    Imeji.getNIGHTLY_EXECUTOR().start();
+  public static void init() {
+    try {
+      Imeji.tdbPath = PropertyReader.getProperty("imeji.tdb.path");
+      ElasticInitializer.start();
+      ImejiInitializer.init(Imeji.tdbPath);
+      Imeji.getNIGHTLY_EXECUTOR().start();
+    } catch (Exception e) {
+      LOGGER.fatal("Error initializing imeji", e);
+    }
   }
 
 

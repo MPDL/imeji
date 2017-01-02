@@ -20,13 +20,13 @@
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>2</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
     <servlet>
         <servlet-name>Initializer Servlet</servlet-name>
         <servlet-class>de.mpg.imeji.presentation.servlet.InitializerServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
+        <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
     <servlet>
@@ -39,12 +39,6 @@
         <servlet-name>Export Servlet</servlet-name>
         <servlet-class>de.mpg.imeji.presentation.servlet.ExportServlet</servlet-class>
         <load-on-startup>4</load-on-startup>
-        <async-supported>true</async-supported>
-    </servlet>
-    <servlet>
-        <servlet-name>Digilib Servlet</servlet-name>
-        <servlet-class>de.mpg.imeji.presentation.servlet.DigilibServlet</servlet-class>
-        <load-on-startup>5</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
     <servlet>
@@ -167,10 +161,6 @@
         <url-pattern>/export</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Digilib Servlet</servlet-name>
-        <url-pattern>/digilib</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>Data Viewer Servlet</servlet-name>
         <url-pattern>/dataviewer</url-pattern>
     </servlet-mapping>
@@ -280,30 +270,7 @@
         <location>/jsf/errorPages/500.xhtml</location>
     </error-page>
       
-    <!-- Digilib staff -->
-    <!-- The Intialisation Listener -->
-    <listener>
-        <listener-class>digilib.conf.DigilibServletConfiguration</listener-class>
-    </listener>
     <listener>
         <listener-class>de.mpg.imeji.presentation.session.SetActiveViewMapsSizeSessionListener</listener-class>
     </listener>
-	
-    <!-- The Scaler servlet -->
-    <servlet>
-        <servlet-name>Scaler</servlet-name>
-        <servlet-class>digilib.servlet.Scaler</servlet-class>
-        <!-- Load this servlet at server startup time -->
-        <load-on-startup>6</load-on-startup>
-        <async-supported>true</async-supported>
-    </servlet>
-    <!-- The mapping for the Scaler servlet -->
-    <servlet-mapping>
-        <servlet-name>Scaler</servlet-name>
-        <url-pattern>/servlet/Scaler/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Scaler</servlet-name>
-        <url-pattern>/Scaler/*</url-pattern>
-    </servlet-mapping>
 </web-app>

@@ -1,7 +1,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:composite="http://java.sun.com/jsf/composite">
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	
 	<composite:interface>
 		<composite:attribute name="metadataInputComponent" required="true"/>
@@ -10,6 +11,10 @@
 	<composite:implementation>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'TEXT'}">
 			<h:inputText id="text" value="#{cc.attrs.metadataInputComponent.metadata.text}"/>
+		</ui:fragment>
+		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'URL'}">
+			<h:inputText id="urlText" value="#{cc.attrs.metadataInputComponent.metadata.text}" html5:placeholder="#{lbl.title}"/>
+			<h:inputText id="url" value="#{cc.attrs.metadataInputComponent.metadata.url}" html5:type="url" html5:placeholder="#{lbl.url}"/>
 		</ui:fragment>
 	</composite:implementation>
 </html>

@@ -33,11 +33,12 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 public class Statement implements Serializable, Cloneable {
   private static final long serialVersionUID = -7950561563075491540L;
   private String id;
+  private StatementType type = StatementType.TEXT;
   private URI uri;
   @j2jLiteral("http://imeji.org/terms/index")
   private String index;
   @j2jLiteral("http://purl.org/dc/terms/type")
-  private StatementType type = StatementType.TEXT;
+  private String typeString = type.name();
   @j2jList("http://purl.org/dc/terms/name")
   private List<String> names = new ArrayList<>();
   @j2jResource("http://purl.org/dc/dcam/VocabularyEncodingScheme")
@@ -51,11 +52,13 @@ public class Statement implements Serializable, Cloneable {
   }
 
   public StatementType getType() {
+    type = StatementType.valueOf(typeString);
     return type;
   }
 
   public void setType(StatementType type) {
     this.type = type;
+    this.typeString = type.name();
   }
 
   /**
@@ -153,8 +156,6 @@ public class Statement implements Serializable, Cloneable {
     clone.vocabulary = vocabulary;
     return clone;
   }
-
-
 
   /**
    * Comparator to sort String ignoring the case

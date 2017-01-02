@@ -29,6 +29,7 @@ import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.controller.resource.AlbumController;
 import de.mpg.imeji.logic.controller.resource.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ContentController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -39,8 +40,7 @@ import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.security.util.SecurityUtil;
-import de.mpg.imeji.logic.service.item.ItemService;
-import de.mpg.imeji.logic.service.statement.StatementService;
+import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -144,10 +144,6 @@ public class ItemBean extends SuperBean {
       LOGGER.error("Error initialitzing item page", e);
       BeanHelper.error("Error initializing page" + e.getMessage());
     }
-  }
-
-  public String getDigilibUrl() {
-    return getNavigation().getDigilibUrl() + "?id=" + content.getOriginal();
   }
 
   /**
@@ -608,14 +604,6 @@ public class ItemBean extends SuperBean {
         .isDataViewerSupportedFormats(FilenameUtils.getExtension(item.getFilename()));
   }
 
-  /**
-   * View the File in Digilib (if Digilib is enabled)
-   *
-   * @return
-   */
-  public boolean isViewInDigilib() {
-    return Imeji.PROPERTIES.isDigilibEnabled() && isImageFile() && !isSVGFile();
-  }
 
   /**
    * True if the file is an svg

@@ -18,12 +18,15 @@ import de.mpg.imeji.presentation.metadata.MetadataInputComponent;
 public class CellComponent implements Serializable {
   private static final long serialVersionUID = 4617072974872823679L;
   private List<MetadataInputComponent> inputs = new ArrayList<>();
-  private final Statement statement;
+  private Statement statement;
 
   public CellComponent(Statement statement, List<Metadata> metadata) {
     this.statement = statement;
     for (Metadata m : metadata) {
       inputs.add(new MetadataInputComponent(m, statement));
+    }
+    if (inputs.isEmpty()) {
+      addValue();
     }
   }
 

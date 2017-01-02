@@ -11,6 +11,7 @@
 		<ui:param name="isURL" value="#{not empty cc.attrs.metadata.url}"/>
 		<ui:param name="isGeolocation" value="#{cc.attrs.metadata.latitude != 'NaN' and cc.attrs.metadata.longitude != 'NaN'}"/>
 		<ui:param name="isPerson" value="#{not empty cc.attrs.metadata.person.completeName}"/>
+		<ui:param name="isNumber" value="#{cc.attrs.metadata.number != 'NaN' and emtpy}"/>
 		<ui:param name="isDefault" value="#{!(isURL and isGeolocation and isPerson)}"/>		
 		
 		<ui:fragment rendered="#{isURL}">
@@ -31,8 +32,12 @@
 			<span class="imj_metadataValueEntry">#{cc.attrs.metadata.person.completeName}</span>
 		</ui:fragment>
 		
+		<ui:fragment rendered="#{isNumber}">
+			<span class="imj_metadataValueEntry">#{cc.attrs.metadata.number}</span>
+		</ui:fragment>
+		
 		<ui:fragment rendered="#{isDefault}">
-			<span class="imj_metadataValueEntry">#{cc.attrs.metadata.text}#{cc.attrs.metadata.number}</span>
+			<span class="imj_metadataValueEntry">#{cc.attrs.metadata.text}</span>
 		</ui:fragment>
 	
 	</composite:implementation>

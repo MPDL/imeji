@@ -10,8 +10,8 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.service.item.ItemService;
-import de.mpg.imeji.logic.service.statement.StatementService;
+import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
@@ -29,9 +29,9 @@ public abstract class EditMetadataAbstract extends SuperBean {
   private static final long serialVersionUID = -8870761990852602492L;
   private static final Logger LOGGER = Logger.getLogger(EditItemMetadataBean.class);
   protected ItemService itemService = new ItemService();
+  protected StatementService statementService = new StatementService();
   private List<SelectItem> statementMenu = new ArrayList<>();
   protected Map<String, Statement> statementMap = new HashMap<>();
-
 
   public EditMetadataAbstract() {
     StatementService statementService = new StatementService();
@@ -51,6 +51,7 @@ public abstract class EditMetadataAbstract extends SuperBean {
    */
   public void save() {
     try {
+      statementService.createBatch(getNewStatements(), getSessionUser());
       itemService.updateBatch(toItemList(), getSessionUser());
     } catch (ImejiException e) {
       BeanHelper.error("Error editing metadata");
@@ -65,6 +66,27 @@ public abstract class EditMetadataAbstract extends SuperBean {
    */
   public abstract List<Item> toItemList();
 
+  /**
+   * Return all Statement used by all items as a {@link StatementComponent} list
+   * 
+   * @return
+   */
+  public abstract List<StatementComponent> getAllStatements();
+
+  /**
+   * Return all statements which are not already existing
+   * 
+   * @return
+   */
+  private List<Statement> getNewStatements() {
+    List<Statement> newStatements = new ArrayList<>();
+    for (StatementComponent component : getAllStatements()) {
+      if (!component.isExists()) {
+        newStatements.add(component.asStatement());
+      }
+    }
+    return newStatements;
+  }
 
 
   public List<SelectItem> getStatementMenu() {

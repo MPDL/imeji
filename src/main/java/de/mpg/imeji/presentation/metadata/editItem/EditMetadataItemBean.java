@@ -15,6 +15,8 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.presentation.metadata.EditMetadataAbstract;
+import de.mpg.imeji.presentation.metadata.MetadataInputComponent;
+import de.mpg.imeji.presentation.metadata.StatementComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -55,6 +57,18 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
     return itemList;
   }
 
+  @Override
+  public List<StatementComponent> getAllStatements() {
+    List<StatementComponent> l = new ArrayList<>();
+    for (ItemMetadataInputComponent component : items) {
+      for (MetadataInputComponent md : component.getMetadata()) {
+        // TODO
+      }
+    }
+    return l;
+  }
+
+
 
   /**
    * @return the items
@@ -78,5 +92,6 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
   public ItemMetadataInputComponent getItem() {
     return getItems().get(0);
   }
+
 
 }

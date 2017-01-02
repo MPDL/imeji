@@ -20,11 +20,10 @@ import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.config.util.PropertyReader;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.service.item.ItemService;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.impl.ExternalStorage;
@@ -50,7 +49,6 @@ public class FileServlet extends HttpServlet {
   private StorageController storageController;
   private Navigation navivation;
   private String domain;
-  private String digilibUrl;
   private ExternalStorage externalStorage;
   private static final String RESOURCE_EMTPY_ICON_URL =
       "http://localhost:8080/imeji/resources/icon/empty.png";
@@ -64,10 +62,6 @@ public class FileServlet extends HttpServlet {
       navivation = new Navigation();
       domain = StringHelper.normalizeURI(navivation.getDomain());
       domain = domain.substring(0, domain.length() - 1);
-      digilibUrl = PropertyReader.getProperty("digilib.imeji.instance.url");
-      if (digilibUrl != null && !digilibUrl.isEmpty()) {
-        digilibUrl = StringHelper.normalizeURI(digilibUrl);
-      }
       LOGGER.info("File Servlet initialized");
     } catch (Exception e) {
       LOGGER.info("Error intializing File Servlet", e);

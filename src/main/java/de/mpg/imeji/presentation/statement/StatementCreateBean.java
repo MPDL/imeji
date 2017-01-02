@@ -10,8 +10,8 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.service.statement.StatementService;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
