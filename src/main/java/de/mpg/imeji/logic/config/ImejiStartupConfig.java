@@ -13,7 +13,7 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
 
 /**
  * Startup configuration. Read only. Must be edited by sysadmin on server
- * 
+ *
  * @author saquet
  *
  */
@@ -39,7 +39,7 @@ public class ImejiStartupConfig {
    * values
    *
    * @throws IOException
-   * 
+   *
    * @throws URISyntaxException
    */
   private synchronized void readConfigurationFile() throws IOException, URISyntaxException {
@@ -49,7 +49,7 @@ public class ImejiStartupConfig {
       configFile.createNewFile();
       setDefaultConfig();
     }
-    FileInputStream in = new FileInputStream(configFile);
+    final FileInputStream in = new FileInputStream(configFile);
     config.load(in);
   }
 
@@ -70,14 +70,14 @@ public class ImejiStartupConfig {
     try {
       config.store(new FileOutputStream(configFile), "imeji startup configuration File");
       LOGGER.info("saving imeji startup config");
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error saving startup configuration:", e);
     }
   }
 
   /**
    * True if a reindex must be done by startup
-   * 
+   *
    * @return
    */
   public boolean doReIndex() {

@@ -12,8 +12,8 @@ import de.mpg.imeji.logic.doi.util.DOIUtil;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.User;
 
 /**
  * Service for using MPDL DOI Service
@@ -36,10 +36,10 @@ public final class DoiService {
    */
   public void addDoiToCollection(CollectionImeji coll, User user) throws ImejiException {
     isValidDOIOperation(coll, user);
-    String doiServiceUrl = Imeji.CONFIG.getDoiServiceUrl();
-    String doiUser = Imeji.CONFIG.getDoiUser();
-    String doiPassword = Imeji.CONFIG.getDoiPassword();
-    String doi = getNewDoi(coll, doiServiceUrl, doiUser, doiPassword);
+    final String doiServiceUrl = Imeji.CONFIG.getDoiServiceUrl();
+    final String doiUser = Imeji.CONFIG.getDoiUser();
+    final String doiPassword = Imeji.CONFIG.getDoiPassword();
+    final String doi = getNewDoi(coll, doiServiceUrl, doiUser, doiPassword);
     coll.setDoi(doi);
     collectionController.update(coll, user);
   }
@@ -69,9 +69,9 @@ public final class DoiService {
    */
   private String getNewDoi(CollectionImeji col, String doiServiceUrl, String doiUser,
       String doiPassword) throws ImejiException {
-    DOICollection dcol = DOIUtil.transformToDO(col);
-    String xml = DOIUtil.convertToXML(dcol);
-    String doi =
+    final DOICollection dcol = DOIUtil.transformToDO(col);
+    final String xml = DOIUtil.convertToXML(dcol);
+    final String doi =
         DOIUtil.makeDOIRequest(doiServiceUrl, doiUser, doiPassword, getCollectionUrl(col), xml);
     return doi;
 

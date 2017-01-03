@@ -61,12 +61,12 @@ public final class ShareList implements Serializable {
    */
   private void retrieveGroups(URI ownerUri, String sharedObjectUri, String profileUri,
       SharedObjectType type, User currentUser, Locale locale) {
-    GroupBusinessController ugc = new GroupBusinessController();
-    Collection<UserGroup> groups = ugc.searchAndRetrieve(
+    final GroupBusinessController ugc = new GroupBusinessController();
+    final Collection<UserGroup> groups = ugc.searchAndRetrieve(
         SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.read, SearchOperators.EQUALS, sharedObjectUri, false)),
         null, Imeji.adminUser, 0, -1);;
-    for (UserGroup group : groups) {
+    for (final UserGroup group : groups) {
       items.add(
           new ShareListItem(group, type, sharedObjectUri, profileUri, null, currentUser, locale));
     }
@@ -83,12 +83,12 @@ public final class ShareList implements Serializable {
    */
   private void retrieveUsers(URI ownerUri, String sharedObjectUri, String profileUri,
       SharedObjectType type, User currentUser, Locale locale) {
-    UserBusinessController uc = new UserBusinessController();
-    Collection<User> allUser = uc.searchAndRetrieve(
+    final UserBusinessController uc = new UserBusinessController();
+    final Collection<User> allUser = uc.searchAndRetrieve(
         SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.read, SearchOperators.EQUALS, sharedObjectUri, false)),
         null, Imeji.adminUser, 0, -1);
-    for (User u : allUser) {
+    for (final User u : allUser) {
       // Do not display the creator of this collection here
       items.add(new ShareListItem(u, type, sharedObjectUri, profileUri, null, currentUser, locale,
           u.getId().toString().equals(ownerUri.toString())));
@@ -110,8 +110,8 @@ public final class ShareList implements Serializable {
    */
   private void retrieveInvitations(String sharedObjectUri, String profileUri, SharedObjectType type,
       User currentUser, Locale locale) throws ImejiException {
-    InvitationBusinessController invitationBC = new InvitationBusinessController();
-    for (Invitation invitation : invitationBC.retrieveInvitationsOfObject(sharedObjectUri)) {
+    final InvitationBusinessController invitationBC = new InvitationBusinessController();
+    for (final Invitation invitation : invitationBC.retrieveInvitationsOfObject(sharedObjectUri)) {
       invitations.add(
           new ShareListItem(invitation, type, sharedObjectUri, profileUri, currentUser, locale));
     }

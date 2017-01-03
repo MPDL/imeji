@@ -34,7 +34,7 @@ public class QuotaUICompoment implements Serializable {
     this.quotaMenu = new ArrayList<>();
     this.humanReadableQuota = QuotaUtil.getQuotaHumanReadable(user.getQuota(), Locale.ENGLISH);
     this.quota = user.getQuota() > 0 ? humanReadableQuota.replace("GB", "").trim() : quota;
-    for (String limit : Imeji.CONFIG.getQuotaLimitsAsList()) {
+    for (final String limit : Imeji.CONFIG.getQuotaLimitsAsList()) {
       if (NumberUtils.isNumber(limit)) {
         quotaMenu.add(new SelectItem(limit.trim()));
       } else {

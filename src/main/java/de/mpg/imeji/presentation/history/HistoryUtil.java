@@ -66,7 +66,7 @@ public class HistoryUtil {
    * @return
    */
   public static ImejiPages getImejiPage(String url) {
-    for (ImejiPages page : ImejiPages.values()) {
+    for (final ImejiPages page : ImejiPages.values()) {
       if (page.matches(url)) {
         return page;
       }
@@ -82,7 +82,7 @@ public class HistoryUtil {
       return "history_home";
     }
 
-    for (ImejiPages page : ImejiPages.values()) {
+    for (final ImejiPages page : ImejiPages.values()) {
       if (url.matches(page.getRegex())) {
         return page.getLabel();
       }
@@ -98,11 +98,11 @@ public class HistoryUtil {
    */
   public static String paramsMapToString(Map<String, String[]> params) {
     String s = "";
-    for (String key : params.keySet()) {
-      String delim = "".equals(s) ? "?" : "&";
+    for (final String key : params.keySet()) {
+      final String delim = "".equals(s) ? "?" : "&";
       try {
         s += delim + key + "=" + URLEncoder.encode(params.get(key)[0], "UTF-8");
-      } catch (UnsupportedEncodingException e) {
+      } catch (final UnsupportedEncodingException e) {
         throw new RuntimeException("Error encoding " + params.get(key)[0], e);
       }
     }

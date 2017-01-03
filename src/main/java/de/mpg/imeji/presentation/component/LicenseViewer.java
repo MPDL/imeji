@@ -14,7 +14,7 @@ import de.mpg.imeji.logic.vo.License;
 
 /**
  * Backing bean for the LicenseViewer component
- * 
+ *
  * @author saquet
  *
  */
@@ -24,7 +24,7 @@ public class LicenseViewer {
 
   /**
    * Return a license according to its name. The license must be an {@link ImejiLicenses}
-   * 
+   *
    * @param name
    * @return
    */
@@ -37,7 +37,7 @@ public class LicenseViewer {
 
   /**
    * True if the license is active, i.e. not ended
-   * 
+   *
    * @param license
    * @return
    */
@@ -47,12 +47,12 @@ public class LicenseViewer {
 
   /**
    * Sort the license by the start date
-   * 
+   *
    * @param licenses
    * @return
    */
   public List<License> getLicensesSortedByDate(List<License> licenses) {
-    List<License> sorted = new ArrayList<>(licenses);
+    final List<License> sorted = new ArrayList<>(licenses);
     Collections.sort(sorted, (l1, l2) -> l1.getStart() > l2.getStart() ? -1 : 1);
     return sorted;
 

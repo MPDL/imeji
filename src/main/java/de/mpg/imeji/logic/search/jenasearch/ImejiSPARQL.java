@@ -35,12 +35,12 @@ public class ImejiSPARQL {
    * @return
    */
   public static List<String> exec(String query, String modelName) {
-    List<String> results = new ArrayList<String>();
-    SearchTransaction transaction = new SearchTransaction(modelName, query, results, false);
+    final List<String> results = new ArrayList<String>();
+    final SearchTransaction transaction = new SearchTransaction(modelName, query, results, false);
     transaction.start(Imeji.dataset);
     try {
       transaction.throwException();
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       Logger.getLogger(ImejiSPARQL.class).error("There has been some SPARQL issue", e);
     }
     return results;
@@ -55,12 +55,12 @@ public class ImejiSPARQL {
    */
   public static int execCount(String query, String modelName) {
     query = query.replace("SELECT DISTINCT ?s WHERE ", "SELECT count(DISTINCT ?s) WHERE ");
-    List<String> results = new ArrayList<String>(1);
-    SearchTransaction transaction = new SearchTransaction(modelName, query, results, true);
+    final List<String> results = new ArrayList<String>(1);
+    final SearchTransaction transaction = new SearchTransaction(modelName, query, results, true);
     transaction.start(Imeji.dataset);
     try {
       transaction.throwException();
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       Logger.getLogger(ImejiSPARQL.class).error("There has been execCount issue", e);
     }
     if (results.size() > 0) {
@@ -78,7 +78,7 @@ public class ImejiSPARQL {
     try {
       ThreadedTransaction
           .run(new ThreadedTransaction(new SPARQLUpdateTransaction(null, query), Imeji.tdbPath));
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       throw new RuntimeException(e);
     }
   }

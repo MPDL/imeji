@@ -78,16 +78,16 @@ public class HistoryFilter implements Filter {
         ((HttpServletResponse) resp).sendError(Status.NOT_FOUND.getStatusCode(),
             "RESOURCE_NOT_FOUND");
       }
-    } catch (AuthenticationError e) {
+    } catch (final AuthenticationError e) {
       LOGGER.error("Error history filter", e);
       redirectToLoginPage(serv, resp);
     } catch (NotAllowedException | NotAllowedError e) {
       LOGGER.error("Error history filter", e);
       ((HttpServletResponse) resp).sendError(Status.FORBIDDEN.getStatusCode(), "FORBIDDEN");
-    } catch (BadRequestException e) {
+    } catch (final BadRequestException e) {
       LOGGER.error("Error history filter", e);
       ((HttpServletResponse) resp).sendError(Status.BAD_REQUEST.getStatusCode(), "BAD_REQUEST");
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error history filter", e);
       ((HttpServletResponse) resp).sendError(Status.INTERNAL_SERVER_ERROR.getStatusCode(),
           "INTERNAL_SERVER_ERROR");
@@ -106,10 +106,10 @@ public class HistoryFilter implements Filter {
    */
   private void redirectToLoginPage(ServletRequest serv, ServletResponse resp)
       throws UnsupportedEncodingException, IOException {
-    HttpServletRequest request = (HttpServletRequest) serv;
-    String url = navigation.getApplicationUri()
+    final HttpServletRequest request = (HttpServletRequest) serv;
+    final String url = navigation.getApplicationUri()
         + PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
-    Map<String, String[]> params =
+    final Map<String, String[]> params =
         PrettyContext.getCurrentInstance(request).getRequestQueryString().getParameterMap();
     ((HttpServletResponse) resp)
         .sendRedirect(serv.getServletContext().getContextPath() + "/login?redirect="
@@ -126,18 +126,18 @@ public class HistoryFilter implements Filter {
    */
   private void dofilterImpl(HttpServletRequest request, ServletResponse resp) throws Exception {
     getFacesContext(request, resp);
-    SessionBean session = getSessionBean(request, resp);
-    HistorySession hs = getHistorySession(request, resp);
+    final SessionBean session = getSessionBean(request, resp);
+    final HistorySession hs = getHistorySession(request, resp);
     if (session != null && hs != null) {
       checkSpaceMatching(request, session, hs);
-      String url = navigation.getApplicationUri()
+      final String url = navigation.getApplicationUri()
           + PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
-      Map<String, String[]> params =
+      final Map<String, String[]> params =
           PrettyContext.getCurrentInstance(request).getRequestQueryString().getParameterMap();
       if (params.containsKey("h")) {
         params.remove("h");
       }
-      HistoryPage p = new HistoryPage(url, params, session.getUser());
+      final HistoryPage p = new HistoryPage(url, params, session.getUser());
       hs.addPage(p);
     }
 
@@ -161,13 +161,13 @@ public class HistoryFilter implements Filter {
   private void checkSpaceMatching(HttpServletRequest request, SessionBean session,
       HistorySession hs) throws NotFoundException, ImejiException {
     // TODO CHANGE ME
-    String spaceHome = "space_home";
-    String matchingUrl = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
-    PrettyConfig pc =
+    final String spaceHome = "space_home";
+    final String matchingUrl = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
+    final PrettyConfig pc =
         PrettyContext.getCurrentInstance(FacesContext.getCurrentInstance()).getConfig();
 
     if (pc.isURLMapped(new URL(matchingUrl))) {
-      UrlMapping myMap =
+      final UrlMapping myMap =
           pc.getMappingForUrl(PrettyContext.getCurrentInstance(request).getRequestURL());
       if (myMap.getId().startsWith("space_")) {
         String mySpaceId = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
@@ -176,7 +176,7 @@ public class HistoryFilter implements Filter {
             : StringUtils.substringBefore(StringUtils.substringAfter(matchingUrl, "/space/"), "/");
         if (!mySpaceId.equals(session.getSpaceId())) {
           hs.getPages().clear();
-          SpaceController sc = new SpaceController();
+          final SpaceController sc = new SpaceController();
           if (!sc.isSpaceByLabel(mySpaceId)) {
             session.setSpaceId("");
             throw new NotFoundException("SPACE_NOT_FOUND");
@@ -216,15 +216,15 @@ public class HistoryFilter implements Filter {
 
 
   private Object getBean(Class<?> c, ServletRequest request, ServletResponse resp) {
-    String name = c.getSimpleName();
-    FacesContext fc = getFacesContext(request, resp);
-    Object result = fc.getExternalContext().getSessionMap().get(name);
+    final String name = c.getSimpleName();
+    final FacesContext fc = getFacesContext(request, resp);
+    final Object result = fc.getExternalContext().getSessionMap().get(name);
     if (result == null) {
       try {
-        Object b = c.newInstance();
+        final Object b = c.newInstance();
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(name, b);
         return b;
-      } catch (Exception e) {
+      } catch (final Exception e) {
         throw new RuntimeException("Error creating History Session", e);
       }
     } else {
@@ -252,20 +252,21 @@ public class HistoryFilter implements Filter {
    * @return
    */
   private FacesContext getFacesContext(ServletRequest request, ServletResponse response) {
-    ServletContext servletContext = ((HttpServletRequest) request).getSession().getServletContext();
+    final ServletContext servletContext =
+        ((HttpServletRequest) request).getSession().getServletContext();
     // Try to get it first
     FacesContext facesContext = FacesContext.getCurrentInstance();
     // if (facesContext != null) return facesContext;
-    FacesContextFactory contextFactory =
+    final FacesContextFactory contextFactory =
         (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
-    LifecycleFactory lifecycleFactory =
+    final LifecycleFactory lifecycleFactory =
         (LifecycleFactory) FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
-    Lifecycle lifecycle = lifecycleFactory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
+    final Lifecycle lifecycle = lifecycleFactory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
     facesContext = contextFactory.getFacesContext(servletContext, request, response, lifecycle);
     // Set using our inner class
     InnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
     // set a new viewRoot, otherwise context.getViewRoot returns null
-    UIViewRoot view =
+    final UIViewRoot view =
         facesContext.getApplication().getViewHandler().createView(facesContext, "imeji");
     facesContext.setViewRoot(view);
     return facesContext;

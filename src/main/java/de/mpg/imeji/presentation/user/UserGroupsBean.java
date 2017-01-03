@@ -65,8 +65,8 @@ public class UserGroupsBean implements Serializable {
 
   @PostConstruct
   public void init() {
-    String q = UrlHelper.getParameterValue("q");
-    String back = UrlHelper.getParameterValue("back");
+    final String q = UrlHelper.getParameterValue("q");
+    final String back = UrlHelper.getParameterValue("back");
     backContainerUrl = back == null || "".equals(back) ? null : back;
     if (backContainerUrl != null) {
       if (URI.create(back).getQuery() != null) {
@@ -83,7 +83,7 @@ public class UserGroupsBean implements Serializable {
    * Trigger the search to users Groups
    */
   public void search() {
-    Navigation nav = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+    final Navigation nav = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     try {
 
       String redirectTo = nav.getApplicationSpaceUrl() + "usergroups?q=" + query
@@ -98,7 +98,7 @@ public class UserGroupsBean implements Serializable {
       }
 
       FacesContext.getCurrentInstance().getExternalContext().redirect(redirectTo);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error(e);
     }
@@ -108,7 +108,7 @@ public class UserGroupsBean implements Serializable {
    * Do the search
    */
   public void doSearch() {
-    GroupBusinessController controller = new GroupBusinessController();
+    final GroupBusinessController controller = new GroupBusinessController();
     userGroups = controller.searchByName(query, Imeji.adminUser);
   }
 
@@ -119,17 +119,17 @@ public class UserGroupsBean implements Serializable {
    * @return
    */
   public String remove() {
-    String id = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .get("group");
-    GroupBusinessController c = new GroupBusinessController();
+    final String id = FacesContext.getCurrentInstance().getExternalContext()
+        .getRequestParameterMap().get("group");
+    final GroupBusinessController c = new GroupBusinessController();
     UserGroup group;
     try {
       group = c.retrieve(id, sessionUser);
       if (group != null) {
-        GroupBusinessController controller = new GroupBusinessController();
+        final GroupBusinessController controller = new GroupBusinessController();
         controller.delete(group, sessionUser);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Error removing group");
       LOGGER.error(e);
     }

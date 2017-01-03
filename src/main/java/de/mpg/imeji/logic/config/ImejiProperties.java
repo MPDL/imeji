@@ -61,7 +61,7 @@ public class ImejiProperties {
   public String getProperty(String key) {
     try {
       return PropertyReader.getProperty(key).trim();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error reading properties: ", e);
     }
   }
@@ -73,7 +73,7 @@ public class ImejiProperties {
     try {
       baseURI =
           StringHelper.normalizeURI(PropertyReader.getProperty("imeji.jena.resource.base_uri"));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error reading properties: ", e);
     }
     if (baseURI == null || baseURI.trim().equals("/")) {

@@ -40,7 +40,7 @@ public class SearchQuery extends SearchElement {
    * Clone a {@link SearchQuery}
    */
   public SearchQuery copy() {
-    SearchQuery q = new SearchQuery();
+    final SearchQuery q = new SearchQuery();
     q.setElements(new ArrayList<>(elements));
     return q;
   }
@@ -70,9 +70,9 @@ public class SearchQuery extends SearchElement {
   public boolean isSame(SearchElement element) {
     element = toSearchQuery(element);
     if (element.getType() == SEARCH_ELEMENTS.QUERY) {
-      SearchGroup g1 = new SearchGroup();
+      final SearchGroup g1 = new SearchGroup();
       g1.setGroup(((SearchQuery) element).elements);
-      SearchGroup g2 = new SearchGroup();
+      final SearchGroup g2 = new SearchGroup();
       g2.setGroup(elements);
       return g1.isSame(g2);
     }
@@ -81,19 +81,19 @@ public class SearchQuery extends SearchElement {
 
   /**
    * Transform a SearchElent to a SearchQuery when possible (i.e for SearchPair and SearchGroup)
-   * 
+   *
    * @param element
    * @return
    */
   public static SearchQuery toSearchQuery(SearchElement element) {
-    SearchQuery query = new SearchQuery();
+    final SearchQuery query = new SearchQuery();
     try {
       if (element.getType() == SEARCH_ELEMENTS.PAIR) {
         query.addPair((SearchPair) element);
       } else if (element.getType() == SEARCH_ELEMENTS.GROUP) {
         query.addGroup((SearchGroup) element);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error Transforming SearchElement to SearchQuery");
     }
 

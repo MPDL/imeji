@@ -2,7 +2,7 @@ package de.mpg.imeji.logic.vo;
 
 /**
  * Enumeration of a {@link Statement} types
- * 
+ *
  * @author saquet
  *
  */

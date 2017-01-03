@@ -11,35 +11,35 @@ import de.mpg.imeji.logic.vo.factory.StatementFactory;
 
 /**
  * HTML Component for Statement
- * 
+ *
  * @author saquet
  *
  */
-public class StatementComponent implements Serializable {
+public class SelectStatementComponent implements Serializable {
   private static final long serialVersionUID = 2521052242334769127L;
   private String index;
   private StatementType type;
   private boolean exists = false;
   private final Map<String, Statement> statementMap;
 
-  public StatementComponent(Map<String, Statement> statementMap) {
+  public SelectStatementComponent(Map<String, Statement> statementMap) {
     this.type = StatementType.TEXT;
     this.statementMap = statementMap;
   }
 
-  public StatementComponent(String index, Map<String, Statement> statementMap) {
+  public SelectStatementComponent(String index, Map<String, Statement> statementMap) {
     this(statementMap);
     init(index);
   }
 
   /**
    * Initialize the component
-   * 
+   *
    * @param index
    */
   private void init(String index) {
     this.index = index;
-    Statement s = statementMap.get(index);
+    final Statement s = statementMap.get(index);
     this.exists = s != null;
     if (exists) {
       this.type = s.getType();
@@ -90,13 +90,6 @@ public class StatementComponent implements Serializable {
    */
   public boolean isExists() {
     return exists;
-  }
-
-  /**
-   * @param exists the exists to set
-   */
-  public void setExists(boolean exists) {
-    this.exists = exists;
   }
 
   public List<StatementType> getTypes() {

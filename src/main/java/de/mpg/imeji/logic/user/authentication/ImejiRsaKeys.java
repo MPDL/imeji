@@ -56,8 +56,8 @@ public class ImejiRsaKeys {
    */
   private static PrivateKey generatePrivateKey(String privateKeyString)
       throws NoSuchAlgorithmException, InvalidKeySpecException {
-    KeyFactory keyFactory = KeyFactory.getInstance(RsaKeyUtil.RSA);
-    KeySpec privateKeySpec = new PKCS8EncodedKeySpec(Base64Url.decode(privateKeyString));
+    final KeyFactory keyFactory = KeyFactory.getInstance(RsaKeyUtil.RSA);
+    final KeySpec privateKeySpec = new PKCS8EncodedKeySpec(Base64Url.decode(privateKeyString));
     return keyFactory.generatePrivate(privateKeySpec);
   }
 

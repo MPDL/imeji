@@ -7,7 +7,7 @@ import de.mpg.imeji.logic.vo.TechnicalMetadata;
 
 /**
  * Interface for imeji content Analyser
- * 
+ *
  * @author saquet
  *
  */
@@ -15,7 +15,7 @@ public interface ContentAnalyser {
 
   /**
    * Extract the fulltext of a file (if availabe)
-   * 
+   *
    * @param file
    * @return
    */
@@ -23,7 +23,7 @@ public interface ContentAnalyser {
 
   /**
    * Extract the technical metadata of a a file
-   * 
+   *
    * @param file
    * @return
    */
@@ -32,7 +32,7 @@ public interface ContentAnalyser {
   /**
    * Extract everything what can be extracted from file. Faster than extracting fulltext and
    * metadata separately
-   * 
+   *
    * @param file
    * @return
    */

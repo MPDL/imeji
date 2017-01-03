@@ -53,7 +53,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 public class AuthenticationFilter implements Filter {
   private FilterConfig filterConfig = null;
-  private Pattern jsfPattern = Pattern.compile(".*\\/jsf\\/.*\\.xhtml");
+  private final Pattern jsfPattern = Pattern.compile(".*\\/jsf\\/.*\\.xhtml");
   private static final Logger LOGGER = Logger.getLogger(AuthenticationFilter.class);
 
   /*
@@ -76,10 +76,10 @@ public class AuthenticationFilter implements Filter {
   public void doFilter(ServletRequest serv, ServletResponse resp, FilterChain chain)
       throws IOException, ServletException {
     try {
-      HttpServletRequest request = (HttpServletRequest) serv;
-      SessionBean session = getSession(request);
+      final HttpServletRequest request = (HttpServletRequest) serv;
+      final SessionBean session = getSession(request);
       if (session != null && session.getUser() == null) {
-        HttpAuthentication httpAuthentification = new HttpAuthentication(request);
+        final HttpAuthentication httpAuthentification = new HttpAuthentication(request);
         if (httpAuthentification.hasLoginInfos()) {
           session.setUser(httpAuthentification.doLogin());
         }
@@ -88,7 +88,7 @@ public class AuthenticationFilter implements Filter {
           session.reloadUser();
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.info("We had some exception in Authentication filter", e);
     } finally {
       chain.doFilter(serv, resp);
@@ -116,7 +116,7 @@ public class AuthenticationFilter implements Filter {
   private boolean isModifiedUser(User user) {
     try {
       return new UserBusinessController().isModified(user);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return true;
     }
   }
@@ -128,7 +128,7 @@ public class AuthenticationFilter implements Filter {
    * @return
    */
   private boolean isXHTMLRequest(HttpServletRequest req) {
-    Matcher m = jsfPattern.matcher(req.getRequestURI());
+    final Matcher m = jsfPattern.matcher(req.getRequestURI());
     return m.matches();
   }
 

@@ -54,9 +54,9 @@ public class RestProcessUtils {
    */
   public static <T> Object buildTOFromJSON(String json, Class<T> type) throws BadRequestException {
     try {
-      ObjectReader reader = new ObjectMapper().reader().withType(type);
+      final ObjectReader reader = new ObjectMapper().reader().withType(type);
       return reader.readValue(json);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new BadRequestException("Cannot parse json: " + e.getLocalizedMessage(), e);
     }
   }
@@ -85,7 +85,7 @@ public class RestProcessUtils {
     T data = null;
     try {
       data = new ObjectMapper().readValue(json, type);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new BadRequestException("Cannot parse json: " + e.getLocalizedMessage(), e);
     }
     return data;
@@ -93,69 +93,69 @@ public class RestProcessUtils {
 
 
   public static JsonNode buildJsonNode(Object obj) {
-    ObjectMapper mapper = new ObjectMapper();
+    final ObjectMapper mapper = new ObjectMapper();
     return mapper.convertValue(obj, JsonNode.class);
   }
 
   public static <T> Object buildTOFromJSON(HttpServletRequest req, Class<T> type)
       throws BadRequestException {
-    ObjectReader reader = new ObjectMapper().reader().withType(type);
+    final ObjectReader reader = new ObjectMapper().reader().withType(type);
     try {
       return reader.readValue(req.getInputStream());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new BadRequestException("Cannot parse json: ", e);
     }
   }
 
   public static <T> List<T> buildTOListFromJSON(String jsonSting, final Class<T> type)
       throws BadRequestException {
-    ObjectReader reader = new ObjectMapper().reader()
+    final ObjectReader reader = new ObjectMapper().reader()
         .withType(TypeFactory.defaultInstance().constructCollectionType(List.class, type));
     try {
       return reader.readValue(jsonSting);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new BadRequestException("Cannot parse json:", e);
     }
   }
 
   public static String buildJSONFromObject(Object obj) throws BadRequestException {
-    ObjectWriter ow = new ObjectMapper().writer().with(SerializationFeature.INDENT_OUTPUT);
+    final ObjectWriter ow = new ObjectMapper().writer().with(SerializationFeature.INDENT_OUTPUT);
     try {
       return ow.writeValueAsString(obj);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new BadRequestException("Cannot parse json: ", e);
     }
   }
 
   public static String buildJSONFromObject(Object obj, TypeReference<?> typeReference)
       throws BadRequestException {
-    ObjectWriter ow =
+    final ObjectWriter ow =
         new ObjectMapper().writerWithType(typeReference).with(SerializationFeature.INDENT_OUTPUT);
     try {
       return ow.writeValueAsString(obj);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new BadRequestException("Cannot parse json: ", e);
     }
   }
 
   public static Response buildJSONResponse(JSONResponse resp) {
-    ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     String json = "";
     try {
       json = ow.writeValueAsString(resp.getObject());
-    } catch (JsonProcessingException e) {
+    } catch (final JsonProcessingException e) {
       LOGGER.error("Have a JSON Processing Exception during building JSON Response", e);
     }
     return Response.status(resp.getStatus()).entity(json).type(MediaType.APPLICATION_JSON).build();
   }
 
   public static Object buildExceptionResponse(int errorCode, String e) {
-    JSONException ex = new JSONException();
-    HTTPError error = new HTTPError();
-    String errorCodeLocal = "1" + errorCode;
+    final JSONException ex = new JSONException();
+    final HTTPError error = new HTTPError();
+    final String errorCodeLocal = "1" + errorCode;
     error.setCode(errorCodeLocal);
     String errorTitleLocal = "";
-    Status localStatus = Status.fromStatusCode(errorCode);
+    final Status localStatus = Status.fromStatusCode(errorCode);
     if (localStatus != null) {
       errorTitleLocal = localStatus.getReasonPhrase();
     } else {
@@ -183,7 +183,7 @@ public class RestProcessUtils {
    * @return
    */
   public static JSONResponse buildJSONAndExceptionResponse(int errorCode, String e) {
-    JSONResponse resp = new JSONResponse();
+    final JSONResponse resp = new JSONResponse();
     resp.setStatus(errorCode);
     resp.setObject(buildExceptionResponse(errorCode, e));
     return resp;
@@ -199,7 +199,7 @@ public class RestProcessUtils {
    * @return
    */
   public static JSONResponse buildResponse(int statusCode, Object responseObject) {
-    JSONResponse resp = new JSONResponse();
+    final JSONResponse resp = new JSONResponse();
     resp.setStatus(statusCode);
     resp.setObject(responseObject);
     return resp;
@@ -218,7 +218,7 @@ public class RestProcessUtils {
     if (isNullOrEmpty(message)) {
       message = eX.getLocalizedMessage();
     }
-    String localMessage = message;
+    final String localMessage = message;
     JSONResponse resp;
 
     if (eX instanceof AuthenticationError) {
@@ -266,16 +266,16 @@ public class RestProcessUtils {
   }
 
   public static Map<String, Object> jsonToPOJO(Response response) throws IOException {
-    ObjectMapper mapper = new ObjectMapper();
+    final ObjectMapper mapper = new ObjectMapper();
     return mapper.readValue(ByteStreams.toByteArray(response.readEntity(InputStream.class)),
         Map.class);
   }
 
   public static Map<String, Object> jsonToPOJO(String str) throws IOException, BadRequestException {
     try {
-      ObjectMapper mapper = new ObjectMapper();
+      final ObjectMapper mapper = new ObjectMapper();
       return mapper.readValue(str, Map.class);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new BadRequestException("Cannot parse json: ", e);
     }
   }

@@ -37,7 +37,7 @@ public class SpaceValidator extends ObjectValidator implements Validator<Space> 
     try {
       // creation of URI in order to check if it is a syntactically valid slug
       new URI(space.getSlug());
-    } catch (URISyntaxException e) {
+    } catch (final URISyntaxException e) {
       exception = new UnprocessableError("error_space_invalid_slug", exception);
     }
 
@@ -59,12 +59,12 @@ public class SpaceValidator extends ObjectValidator implements Validator<Space> 
       return false;
     }
 
-    List<String> spaceUrisFound =
+    final List<String> spaceUrisFound =
         ImejiSPARQL.exec(JenaCustomQueries.getSpaceByLabel(spaceId), Imeji.spaceModel);
     if (spaceUrisFound.size() == 0) {
       return false;
     } else {
-      for (String spaceUri : spaceUrisFound) {
+      for (final String spaceUri : spaceUrisFound) {
         if (!spaceUri.equals(spaceUriId.toString())) {
           return true;
         }

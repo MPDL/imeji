@@ -44,7 +44,7 @@ public interface SearchIndexer {
 
   /**
    * Do a partial update of the object
-   * 
+   *
    * @param obj
    */
   public void updatePartial(String id, Object obj);

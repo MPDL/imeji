@@ -19,7 +19,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 
 /**
  * Start/Stop elasticsearch
- * 
+ *
  * @author saquet
  *
  */
@@ -51,7 +51,7 @@ public class ElasticInitializer {
     ElasticService.setClient(ElasticService.getNODE().client());
     initializeIndex();
     LOGGER.info("Add elasticsearch mappings..." + ElasticService.getNODE().isClosed());
-    for (ElasticTypes type : ElasticTypes.values()) {
+    for (final ElasticTypes type : ElasticTypes.values()) {
       new ElasticIndexer(ElasticService.DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
     }
     LOGGER.info("...done!");
@@ -72,7 +72,7 @@ public class ElasticInitializer {
    */
   public synchronized static String initializeIndex() {
     LOGGER.info("Initializing ElasticSearch index.");
-    String indexName = getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
+    final String indexName = getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
     if (indexName != null) {
       LOGGER.info("Using existing index: " + indexName);
       return indexName;
@@ -88,12 +88,12 @@ public class ElasticInitializer {
    */
   public static String createIndexWithAlias() {
     try {
-      String indexName = createIndex();
+      final String indexName = createIndex();
       LOGGER.info("Adding Alias to index " + indexName);
       ElasticService.getClient().admin().indices().prepareAliases()
           .addAlias(indexName, ElasticService.DATA_ALIAS).execute().actionGet();
       return indexName;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.info("Index +" + "+ already existing");
     }
     return null;
@@ -107,8 +107,8 @@ public class ElasticInitializer {
    * @return
    */
   public synchronized static String getIndexNameFromAliasName(final String aliasName) {
-    ImmutableOpenMap<String, List<AliasMetaData>> map = ElasticService.getClient().admin().indices()
-        .getAliases(new GetAliasesRequest(aliasName)).actionGet().getAliases();
+    final ImmutableOpenMap<String, List<AliasMetaData>> map = ElasticService.getClient().admin()
+        .indices().getAliases(new GetAliasesRequest(aliasName)).actionGet().getAliases();
     if (map.keys().size() > 1) {
       LOGGER.error("Alias " + aliasName
           + " has more than one index. This is forbidden: All indexes will be removed, please reindex!!!");
@@ -128,7 +128,7 @@ public class ElasticInitializer {
    * @param newIndex
    */
   public static void setNewIndexAndRemoveOldIndex(String newIndex) {
-    String oldIndex = getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
+    final String oldIndex = getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
 
     if (oldIndex != null && !oldIndex.equals(newIndex)) {
       ElasticService.getClient().admin().indices().prepareAliases()
@@ -148,18 +148,18 @@ public class ElasticInitializer {
    */
   public static String createIndex() {
     try {
-      String indexName = ElasticService.DATA_ALIAS + "-" + System.currentTimeMillis();
+      final String indexName = ElasticService.DATA_ALIAS + "-" + System.currentTimeMillis();
       LOGGER.info("Creating a new index " + indexName);
-      String settingsName = ElasticService.ANALYSER == ElasticAnalysers.ducet_sort
+      final String settingsName = ElasticService.ANALYSER == ElasticAnalysers.ducet_sort
           ? ElasticService.SETTINGS_DUCET : ElasticService.SETTINGS_DEFAULT;
-      String settingsJson = new String(
+      final String settingsJson = new String(
           Files.readAllBytes(
               Paths.get(ElasticIndexer.class.getClassLoader().getResource(settingsName).toURI())),
           "UTF-8");
       ElasticService.getClient().admin().indices().prepareCreate(indexName)
           .setSettings(settingsJson).execute().actionGet();
       return indexName;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error creating index", e);
     }
     return null;
@@ -172,7 +172,7 @@ public class ElasticInitializer {
     LOGGER.warn("Resetting ElasticSearch!!!");
     clear();
     initializeIndex();
-    for (ElasticTypes type : ElasticTypes.values()) {
+    for (final ElasticTypes type : ElasticTypes.values()) {
       new ElasticIndexer(ElasticService.DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
     }
   }

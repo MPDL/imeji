@@ -52,37 +52,37 @@ public class TikaExtractor {
   private static final int WRITE_LIMIT = 10 * 1024 * 1024;
 
   public static List<String> extract(Item item) {
-    List<String> techMd = new ArrayList<String>();
+    final List<String> techMd = new ArrayList<String>();
     try {
-      StorageController sc = new StorageController();
-      ByteArrayOutputStream bous = new ByteArrayOutputStream();
+      final StorageController sc = new StorageController();
+      final ByteArrayOutputStream bous = new ByteArrayOutputStream();
       sc.read(item.getFullImageUrl().toString(), bous, true);
-      ByteArrayInputStream in = new ByteArrayInputStream(bous.toByteArray());
-      Metadata metadata = new Metadata();
-      AutoDetectParser parser = new AutoDetectParser();
-      BodyContentHandler handler = new BodyContentHandler(WRITE_LIMIT);
+      final ByteArrayInputStream in = new ByteArrayInputStream(bous.toByteArray());
+      final Metadata metadata = new Metadata();
+      final AutoDetectParser parser = new AutoDetectParser();
+      final BodyContentHandler handler = new BodyContentHandler(WRITE_LIMIT);
       parser.parse(in, handler, metadata);
-      for (String name : metadata.names()) {
+      for (final String name : metadata.names()) {
         techMd.add(name + " :  " + metadata.get(name));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("There had been some Tika extraction issues.", e);
     }
     return techMd;
   }
 
   public static List<String> extractFromFile(File file) {
-    List<String> techMd = new ArrayList<String>();
+    final List<String> techMd = new ArrayList<String>();
     try {
-      Metadata metadata = new Metadata();
-      AutoDetectParser parser = new AutoDetectParser();
-      BodyContentHandler handler = new BodyContentHandler();
-      FileInputStream is = new FileInputStream(file);
+      final Metadata metadata = new Metadata();
+      final AutoDetectParser parser = new AutoDetectParser();
+      final BodyContentHandler handler = new BodyContentHandler();
+      final FileInputStream is = new FileInputStream(file);
       parser.parse(is, handler, metadata);
-      for (String name : metadata.names()) {
+      for (final String name : metadata.names()) {
         techMd.add(name + " :  " + metadata.get(name));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("There had been some Tika file metadata extraction issues.", e);
     }
     return techMd;

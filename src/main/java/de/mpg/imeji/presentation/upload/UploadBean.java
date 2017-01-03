@@ -102,7 +102,7 @@ public class UploadBean extends SuperBean {
       } else if ((UrlHelper.getParameterBoolean("edituploaded"))) {
         prepareBatchEdit();
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(e.getLocalizedMessage());
     }
 
@@ -112,7 +112,8 @@ public class UploadBean extends SuperBean {
    * Read the id of the collection from the url
    */
   private void readId() {
-    URI uri = HistoryUtil.extractURI(PrettyContext.getCurrentInstance().getRequestURL().toString());
+    final URI uri =
+        HistoryUtil.extractURI(PrettyContext.getCurrentInstance().getRequestURL().toString());
     if (uri != null) {
       this.id = ObjectHelper.getId(uri);
     }
@@ -124,20 +125,20 @@ public class UploadBean extends SuperBean {
    * @
    */
   public void upload() {
-    HttpServletRequest req =
+    final HttpServletRequest req =
         (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-    boolean isMultipart = ServletFileUpload.isMultipartContent(req);
+    final boolean isMultipart = ServletFileUpload.isMultipartContent(req);
     if (isMultipart) {
       // Parse the request
       try {
-        ServletFileUpload upload = new ServletFileUpload();
-        FileItemIterator iter = upload.getItemIterator(req);
+        final ServletFileUpload upload = new ServletFileUpload();
+        final FileItemIterator iter = upload.getItemIterator(req);
         while (iter.hasNext()) {
-          FileItemStream fis = iter.next();
-          InputStream stream = fis.openStream();
+          final FileItemStream fis = iter.next();
+          final InputStream stream = fis.openStream();
           if (!fis.isFormField()) {
-            String filename = fis.getName();
-            File tmp = createTmpFile(filename);
+            final String filename = fis.getName();
+            final File tmp = createTmpFile(filename);
             try {
               writeInTmpFile(tmp, stream);
               uploadFile(tmp, filename);
@@ -146,7 +147,7 @@ public class UploadBean extends SuperBean {
             }
           }
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error upload file", e);
       }
     }
@@ -159,16 +160,16 @@ public class UploadBean extends SuperBean {
    */
   public String uploadFromLocalDirectory() {
     try {
-      File dir = new File(localDirectory);
+      final File dir = new File(localDirectory);
       int i = 0;
       if (dir.isDirectory()) {
-        for (File f : FileUtils.listFiles(dir, null, recursive)) {
+        for (final File f : FileUtils.listFiles(dir, null, recursive)) {
           uploadFile(f, f.getName());
           i++;
         }
       }
       BeanHelper.info(i + " files uploaded from " + localDirectory);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(e.getMessage());
     }
     return "pretty:";
@@ -181,27 +182,27 @@ public class UploadBean extends SuperBean {
    */
   public String uploadFromLink() {
     try {
-      URL url = new URL(externalUrl);
-      File tmp = createTmpFile(findFileName(url));
+      final URL url = new URL(externalUrl);
+      final File tmp = createTmpFile(findFileName(url));
       try {
-        StorageController externalController = new StorageController("external");
-        FileOutputStream fos = new FileOutputStream(tmp);
+        final StorageController externalController = new StorageController("external");
+        final FileOutputStream fos = new FileOutputStream(tmp);
         externalController.read(url.toString(), fos, true);
         uploadFile(tmp, findFileName(url));
         externalUrl = null;
-      } catch (Exception e) {
+      } catch (final Exception e) {
         getfFiles().add(e.getMessage() + ": " + findFileName(url));
         LOGGER.error("Error uploading file from link: " + externalUrl, e);
       } finally {
         FileUtils.deleteQuietly(tmp);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error uploading file from link: " + externalUrl, e);
       BeanHelper.error(e.getMessage());
     }
     try {
       redirect(getHistory().getCurrentPage().getUrl() + "?done=1");
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.error("Error redirecting agter upload", e);
     }
     return "";
@@ -246,7 +247,7 @@ public class UploadBean extends SuperBean {
   private File createTmpFile(String title) {
     try {
       return TempFileUtil.createTempFile("upload", "." + FilenameUtils.getExtension(title));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error creating a temp file", e);
     }
     return null;
@@ -261,11 +262,11 @@ public class UploadBean extends SuperBean {
    * @throws IOException
    */
   private File writeInTmpFile(File tmp, InputStream fis) throws IOException {
-    FileOutputStream fos = new FileOutputStream(tmp);
+    final FileOutputStream fos = new FileOutputStream(tmp);
     try {
       StorageUtils.writeInOut(fis, fos, true);
       return tmp;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error writing uploaded File in temp file", e);
       return null;
     } finally {
@@ -290,8 +291,8 @@ public class UploadBean extends SuperBean {
               + FilenameUtils.getBaseName(title));
         }
       }
-      StorageController sc = new StorageController();
-      String guessedNotAllowedFormat = sc.guessNotAllowedFormat(file);
+      final StorageController sc = new StorageController();
+      final String guessedNotAllowedFormat = sc.guessNotAllowedFormat(file);
       if (StorageUtils.BAD_FORMAT.equals(guessedNotAllowedFormat)) {
         LOGGER
             .error("Upload format not allowed: " + " (" + StorageUtils.guessExtension(file) + ")");
@@ -314,7 +315,7 @@ public class UploadBean extends SuperBean {
       // }
       validateName(fileUploaded, title);
       Item item = null;
-      ItemService controller = new ItemService();
+      final ItemService controller = new ItemService();
       if (isImportImageToFile()) {
         item =
             controller.updateThumbnail(findItemByFileName(title), fileUploaded, getSessionUser());
@@ -330,7 +331,7 @@ public class UploadBean extends SuperBean {
       }
       getsFiles().add(new UploadItem(item));
       return item;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       getfFiles().add(e.getMessage() != null ? "File " + title + " not uploaded. "
           + Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), getLocale()) : "");
       LOGGER.error("Error uploading item: ", e);
@@ -347,8 +348,8 @@ public class UploadBean extends SuperBean {
    * @throws ImejiException
    */
   private Item findItemByFileName(String filename) throws ImejiException {
-    Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
-    List<String> sr =
+    final Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
+    final List<String> sr =
         s.searchString(JenaCustomQueries.selectContainerItemByFilename(collection.getId(),
             FilenameUtils.getBaseName(filename)), null, null, 0, -1).getResults();
     if (sr.size() == 0) {
@@ -370,14 +371,14 @@ public class UploadBean extends SuperBean {
    * @return
    */
   private boolean filenameExistsInCollection(String filename) {
-    Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
+    final Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
     return s.searchString(JenaCustomQueries.selectContainerItemByFilename(collection.getId(),
         FilenameUtils.getBaseName(filename)), null, null, 0, -1).getNumberOfRecords() > 0;
   }
 
   /**
    * Load the collection
-   * 
+   *
    * @throws ImejiException
    *
    * @
@@ -390,7 +391,7 @@ public class UploadBean extends SuperBean {
           .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, id), getSessionUser());
       isDiscaded();
       if (collection != null && getCollection().getId() != null) {
-        ItemService ic = new ItemService();
+        final ItemService ic = new ItemService();
         collectionSize = ic.search(collection.getId(), null, null, Imeji.adminUser, null, 0, 0)
             .getNumberOfRecords();
         actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale(),
@@ -529,7 +530,7 @@ public class UploadBean extends SuperBean {
 
   public void prepareBatchEdit() throws IOException {
     getSelected().clear();
-    for (UploadItem item : getItemsToEdit()) {
+    for (final UploadItem item : getItemsToEdit()) {
       getSelected().add(item.getId());
     }
     resetItemsToEdit();

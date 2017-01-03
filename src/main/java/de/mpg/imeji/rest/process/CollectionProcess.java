@@ -21,11 +21,11 @@ public class CollectionProcess {
 
     User u = null;
 
-    CollectionService ccrud = new CollectionService();
+    final CollectionService ccrud = new CollectionService();
     try {
       u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(), ccrud.read(id, u));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
     return resp;
@@ -44,12 +44,12 @@ public class CollectionProcess {
       int offset, int size) {
     JSONResponse resp = null;
     User u = null;
-    CollectionService ccrud = new CollectionService();
+    final CollectionService ccrud = new CollectionService();
     try {
       u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(),
           ccrud.readItems(id, u, q, offset, size));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
     return resp;
@@ -58,12 +58,13 @@ public class CollectionProcess {
   public static JSONResponse createCollection(HttpServletRequest req) {
     JSONResponse resp;
 
-    CollectionService service = new CollectionService();
+    final CollectionService service = new CollectionService();
     try {
-      User u = BasicAuthentication.auth(req);
-      CollectionTO to = (CollectionTO) RestProcessUtils.buildTOFromJSON(req, CollectionTO.class);
+      final User u = BasicAuthentication.auth(req);
+      final CollectionTO to =
+          (CollectionTO) RestProcessUtils.buildTOFromJSON(req, CollectionTO.class);
       resp = RestProcessUtils.buildResponse(CREATED.getStatusCode(), service.create(to, u));
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
     return resp;
@@ -72,15 +73,16 @@ public class CollectionProcess {
   public static JSONResponse updateCollection(HttpServletRequest req, String id) {
     JSONResponse resp;
 
-    CollectionService service = new CollectionService();
+    final CollectionService service = new CollectionService();
     try {
-      User u = BasicAuthentication.auth(req);
-      CollectionTO to = (CollectionTO) RestProcessUtils.buildTOFromJSON(req, CollectionTO.class);
+      final User u = BasicAuthentication.auth(req);
+      final CollectionTO to =
+          (CollectionTO) RestProcessUtils.buildTOFromJSON(req, CollectionTO.class);
       if (!id.equals(to.getId())) {
         throw new BadRequestException("Collection id is not equal in request URL and in json");
       }
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(), service.update(to, u));
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
 
@@ -90,12 +92,12 @@ public class CollectionProcess {
   public static JSONResponse releaseCollection(HttpServletRequest req, String id) {
     JSONResponse resp;
 
-    CollectionService service = new CollectionService();
+    final CollectionService service = new CollectionService();
 
     try {
-      User u = BasicAuthentication.auth(req);
+      final User u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(), service.release(id, u));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
     return resp;
@@ -106,13 +108,13 @@ public class CollectionProcess {
       String discardComment) throws Exception {
     JSONResponse resp;
 
-    CollectionService service = new CollectionService();
+    final CollectionService service = new CollectionService();
 
     try {
-      User u = BasicAuthentication.auth(req);
+      final User u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(),
           service.withdraw(id, u, discardComment));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
     return resp;
@@ -120,11 +122,11 @@ public class CollectionProcess {
 
   public static JSONResponse deleteCollection(HttpServletRequest req, String id) {
     JSONResponse resp;
-    CollectionService service = new CollectionService();
+    final CollectionService service = new CollectionService();
     try {
-      User u = BasicAuthentication.auth(req);
+      final User u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(NO_CONTENT.getStatusCode(), service.delete(id, u));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
     return resp;
@@ -133,11 +135,11 @@ public class CollectionProcess {
   public static JSONResponse readAllCollections(HttpServletRequest req, String q, int offset,
       int size) {
     JSONResponse resp;
-    CollectionService ccrud = new CollectionService();
+    final CollectionService ccrud = new CollectionService();
     try {
-      User u = BasicAuthentication.auth(req);
+      final User u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(), ccrud.search(q, offset, size, u));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
     return resp;

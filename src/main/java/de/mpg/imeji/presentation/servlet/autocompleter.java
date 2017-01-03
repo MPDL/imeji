@@ -42,13 +42,13 @@ import de.mpg.imeji.presentation.session.SessionBean;
     urlPatterns = {"/autocompleter"})
 public class autocompleter extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  private Pattern conePattern =
+  private final Pattern conePattern =
       Pattern.compile("http.*/cone/.*?format=json.*", Pattern.CASE_INSENSITIVE);
-  private Pattern coneAuthorPattern =
+  private final Pattern coneAuthorPattern =
       Pattern.compile("http.*/cone/persons/.*?format=json.*", Pattern.CASE_INSENSITIVE);
-  private Pattern googleGeoAPIPattern = Pattern.compile(
+  private final Pattern googleGeoAPIPattern = Pattern.compile(
       "https://maps.googleapis.com/maps/api/geocode/json.*address=", Pattern.CASE_INSENSITIVE);
-  private Pattern ccLicensePattern =
+  private final Pattern ccLicensePattern =
       Pattern.compile("http.*://api.creativecommons.org/rest/.*/simple/chooser.*");
 
   /**
@@ -65,33 +65,33 @@ public class autocompleter extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String suggest = request.getParameter("searchkeyword");
-    String datasource = request.getParameter("datasource");
+    final String datasource = request.getParameter("datasource");
 
     String responseString = "";
     if (suggest == null || suggest.isEmpty()) {
       suggest = "a";
     } else if (datasource != null && !datasource.isEmpty()) {
       if ("imeji_persons".equals(datasource)) {
-        UserBusinessController uc = new UserBusinessController();
-        Collection<Person> persons = uc.searchPersonByName(suggest);
-        for (Person p : persons) {
+        final UserBusinessController uc = new UserBusinessController();
+        final Collection<Person> persons = uc.searchPersonByName(suggest);
+        for (final Person p : persons) {
           responseString = appendResponseForInternalSuggestion(responseString,
               p.getCompleteName() + "(" + p.getOrganizationString() + ")", p.getId().toString());
         }
         responseString = "[" + responseString + "]";
 
       } else if ("imeji_orgs".equals(datasource)) {
-        UserBusinessController uc = new UserBusinessController();
-        Collection<Organization> orgs = uc.searchOrganizationByName(suggest);
-        for (Organization o : orgs) {
+        final UserBusinessController uc = new UserBusinessController();
+        final Collection<Organization> orgs = uc.searchOrganizationByName(suggest);
+        for (final Organization o : orgs) {
           responseString = appendResponseForInternalSuggestion(responseString, o.getName(),
               o.getId().toString());
         }
         responseString = "[" + responseString + "]";
 
       } else {
-        HttpClient client = new HttpClient();
-        GetMethod getMethod =
+        final HttpClient client = new HttpClient();
+        final GetMethod getMethod =
             new GetMethod(datasource + URLEncoder.encode(suggest.toString(), "UTF-8"));
         try {
           // client.executeMethod(getMethod);
@@ -101,7 +101,7 @@ public class autocompleter extends HttpServlet {
           if (datasource != null && responseString != null) {
             responseString = passResult(responseString, datasource);
           }
-        } catch (Exception e) {
+        } catch (final Exception e) {
           throw new RuntimeException(e);
         } finally {
           getMethod.releaseConnection();
@@ -110,7 +110,7 @@ public class autocompleter extends HttpServlet {
 
     }
     response.setContentType("application/json");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     try {
       out.print(responseString);
     } finally {
@@ -164,17 +164,17 @@ public class autocompleter extends HttpServlet {
    */
   @SuppressWarnings("unchecked")
   private String parseConeVocabulary(String cone) throws IOException {
-    Object obj = JSONValue.parse(cone);
-    JSONArray array = (JSONArray) obj;
-    JSONArray result = new JSONArray();
+    final Object obj = JSONValue.parse(cone);
+    final JSONArray array = (JSONArray) obj;
+    final JSONArray result = new JSONArray();
     for (int i = 0; i < array.size(); ++i) {
-      JSONObject parseObject = (JSONObject) array.get(i);
-      JSONObject sendObject = new JSONObject();
+      final JSONObject parseObject = (JSONObject) array.get(i);
+      final JSONObject sendObject = new JSONObject();
       sendObject.put("label", parseObject.get("http_purl_org_dc_elements_1_1_title"));
       sendObject.put("value", parseObject.get("http_purl_org_dc_elements_1_1_title"));
       result.add(sendObject);
     }
-    StringWriter out = new StringWriter();
+    final StringWriter out = new StringWriter();
     result.writeJSONString(out);
     return out.toString();
   }
@@ -188,20 +188,21 @@ public class autocompleter extends HttpServlet {
    */
   @SuppressWarnings("unchecked")
   private String parseGoogleGeoAPI(String google) throws IOException {
-    JSONObject obj = (JSONObject) JSONValue.parse(google);
-    JSONArray array = (JSONArray) obj.get("results");
-    JSONArray result = new JSONArray();
+    final JSONObject obj = (JSONObject) JSONValue.parse(google);
+    final JSONArray array = (JSONArray) obj.get("results");
+    final JSONArray result = new JSONArray();
     for (int i = 0; i < array.size(); ++i) {
-      JSONObject parseObject = (JSONObject) array.get(i);
-      JSONObject sendObject = new JSONObject();
+      final JSONObject parseObject = (JSONObject) array.get(i);
+      final JSONObject sendObject = new JSONObject();
       sendObject.put("label", parseObject.get("formatted_address"));
       sendObject.put("value", parseObject.get("formatted_address"));
-      JSONObject location = (JSONObject) ((JSONObject) parseObject.get("geometry")).get("location");
+      final JSONObject location =
+          (JSONObject) ((JSONObject) parseObject.get("geometry")).get("location");
       sendObject.put("latitude", location.get("lat"));
       sendObject.put("longitude", location.get("lng"));
       result.add(sendObject);
     }
-    StringWriter out = new StringWriter();
+    final StringWriter out = new StringWriter();
     result.writeJSONString(out);
     return out.toString();
   }
@@ -216,12 +217,12 @@ public class autocompleter extends HttpServlet {
    */
   @SuppressWarnings("unchecked")
   private String parseConeAuthor(String cone) throws IOException {
-    Object obj = JSONValue.parse(cone);
-    JSONArray array = (JSONArray) obj;
-    JSONArray result = new JSONArray();
+    final Object obj = JSONValue.parse(cone);
+    final JSONArray array = (JSONArray) obj;
+    final JSONArray result = new JSONArray();
     for (int i = 0; i < array.size(); ++i) {
-      JSONObject parseObject = (JSONObject) array.get(i);
-      JSONObject sendObject = new JSONObject();
+      final JSONObject parseObject = (JSONObject) array.get(i);
+      final JSONObject sendObject = new JSONObject();
       sendObject.put("label", parseObject.get("http_purl_org_dc_elements_1_1_title"));
       sendObject.put("value", parseObject.toJSONString());
       sendObject.put("family", parseObject.get("http_xmlns_com_foaf_0_1_family_name"));
@@ -232,7 +233,7 @@ public class autocompleter extends HttpServlet {
           writeJsonArrayToOneString(parseObject.get("http_purl_org_dc_terms_alternative"), ""));
       result.add(sendObject);
     }
-    StringWriter out = new StringWriter();
+    final StringWriter out = new StringWriter();
     JSONArray.writeJSONString(result, out);
     return out.toString();
   }
@@ -241,27 +242,27 @@ public class autocompleter extends HttpServlet {
   private String parseCCLicense(String str) {
     str = "<licences>" + str.trim() + "</licences>";
     try {
-      JSONArray json = new JSONArray();
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-      org.w3c.dom.Document doc = dBuilder.parse(new ByteArrayInputStream(str.getBytes()));
+      final JSONArray json = new JSONArray();
+      final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      final org.w3c.dom.Document doc = dBuilder.parse(new ByteArrayInputStream(str.getBytes()));
       doc.getDocumentElement().normalize();
-      NodeList nList = doc.getElementsByTagName("option");
+      final NodeList nList = doc.getElementsByTagName("option");
       for (int i = 0; i < nList.getLength(); i++) {
-        Node nNode = nList.item(i);
+        final Node nNode = nList.item(i);
         if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-          JSONObject license = new JSONObject();
-          Element eElement = (Element) nNode;
+          final JSONObject license = new JSONObject();
+          final Element eElement = (Element) nNode;
           license.put("label", eElement.getTextContent());
           license.put("value", eElement.getTextContent());
           license.put("licenseId", eElement.getAttribute("value"));
           json.add(license);
         }
       }
-      StringWriter out = new StringWriter();
+      final StringWriter out = new StringWriter();
       JSONArray.writeJSONString(json, out);
       return out.toString();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log("Error Parsing CC License", e);
     }
     return str;
@@ -278,7 +279,7 @@ public class autocompleter extends HttpServlet {
   private String writeJsonArrayToOneString(Object jsonObj, String jsonName) {
     String str = "";
     if (jsonObj instanceof JSONArray) {
-      for (Iterator<?> iterator = ((JSONArray) jsonObj).iterator(); iterator.hasNext();) {
+      for (final Iterator<?> iterator = ((JSONArray) jsonObj).iterator(); iterator.hasNext();) {
         if (!"".equals(str)) {
           str += ", ";
         }

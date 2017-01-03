@@ -41,7 +41,7 @@ import de.mpg.imeji.exceptions.ImejiException;
  * @version $Revision$ $LastChangedDate$
  */
 public class SPARQLUpdateTransaction extends Transaction {
-  private String query;
+  private final String query;
 
   /**
    * @param modelURI
@@ -58,7 +58,7 @@ public class SPARQLUpdateTransaction extends Transaction {
    */
   @Override
   protected void execute(Dataset ds) throws ImejiException {
-    UpdateRequest request = UpdateFactory.create(query, Syntax.syntaxARQ);
+    final UpdateRequest request = UpdateFactory.create(query, Syntax.syntaxARQ);
     UpdateAction.execute(request, ds);
   }
 

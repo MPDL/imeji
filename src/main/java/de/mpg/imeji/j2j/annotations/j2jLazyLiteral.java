@@ -5,7 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * A Literal which is not loaded in lazy loading
- * 
+ *
  * @author saquet
  *
  */

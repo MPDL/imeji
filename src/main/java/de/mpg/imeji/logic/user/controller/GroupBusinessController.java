@@ -57,7 +57,7 @@ import de.mpg.imeji.logic.vo.UserGroup;
  */
 public class GroupBusinessController {
   private final GroupController controller = new GroupController();
-  private Search search =
+  private final Search search =
       SearchFactory.create(SearchObjectTypes.USERGROUPS, SEARCH_IMPLEMENTATIONS.ELASTIC);
   private static final Logger LOGGER = Logger.getLogger(GroupBusinessController.class);
 
@@ -95,7 +95,7 @@ public class GroupBusinessController {
 
   /**
    * Retrieve a list of {@link UserGroup}
-   * 
+   *
    * @param uris
    * @param user
    * @return
@@ -107,7 +107,7 @@ public class GroupBusinessController {
 
   /**
    * Retrieve a list of {@link UserGroup}
-   * 
+   *
    * @param uris
    * @param user
    * @return
@@ -154,7 +154,7 @@ public class GroupBusinessController {
 
   /**
    * Search for {@link UserGroup}
-   * 
+   *
    * @param q
    * @param sort
    * @param user
@@ -169,7 +169,7 @@ public class GroupBusinessController {
 
   /**
    * Search for {@link UserGroup}
-   * 
+   *
    * @param q
    * @param sort
    * @param user
@@ -185,7 +185,7 @@ public class GroupBusinessController {
 
   /**
    * Search for {@link UserGroup}
-   * 
+   *
    * @param q
    * @param sort
    * @param user
@@ -235,12 +235,12 @@ public class GroupBusinessController {
    * @return
    */
   private Collection<UserGroup> searchBySPARQLQuery(String q, User user) {
-    Collection<UserGroup> userGroups = new ArrayList<UserGroup>();
-    Search search = SearchFactory.create();
-    for (String uri : search.searchString(q, null, null, 0, -1).getResults()) {
+    final Collection<UserGroup> userGroups = new ArrayList<UserGroup>();
+    final Search search = SearchFactory.create();
+    for (final String uri : search.searchString(q, null, null, 0, -1).getResults()) {
       try {
         userGroups.add(controller.read(URI.create(uri), user));
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.info("User group with uri " + uri + " not found.");
       }
     }
@@ -249,13 +249,13 @@ public class GroupBusinessController {
 
   /**
    * Removes single user from all user groups where he is a member Of
-   * 
+   *
    * @param userToRemove
    * @param userRemover
    * @throws ImejiException
    */
   public void removeUserFromAllGroups(User userToRemove, User userRemover) throws ImejiException {
-    for (UserGroup memberIn : searchByUser(userToRemove, userRemover)) {
+    for (final UserGroup memberIn : searchByUser(userToRemove, userRemover)) {
       memberIn.getUsers().remove(userToRemove.getId());
       update(memberIn, userRemover);
       // Write to log to inform
@@ -266,15 +266,15 @@ public class GroupBusinessController {
 
   /**
    * Reindex all user groups
-   * 
+   *
    * @param index
    * @throws ImejiException
    */
   public void reindex(String index) throws ImejiException {
     LOGGER.info("Indexing users...");
-    ElasticIndexer indexer =
+    final ElasticIndexer indexer =
         new ElasticIndexer(index, ElasticTypes.usergroups, ElasticService.ANALYSER);
-    List<UserGroup> groups = (List<UserGroup>) retrieveAll();
+    final List<UserGroup> groups = (List<UserGroup>) retrieveAll();
     LOGGER.info("+++ " + groups.size() + " user groups to index +++");
     indexer.indexBatch(groups);
     indexer.commit();

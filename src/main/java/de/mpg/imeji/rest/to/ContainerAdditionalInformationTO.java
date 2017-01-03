@@ -22,9 +22,8 @@ public class ContainerAdditionalInformationTO implements Serializable {
     this.setText(text);
     this.setUrl(url);
   }
-  
-  public ContainerAdditionalInformationTO() {
-  }
+
+  public ContainerAdditionalInformationTO() {}
 
   /**
    * @return the label

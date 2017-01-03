@@ -67,16 +67,16 @@ public class UserCreationBean extends SuperBean {
    */
   public String create() {
     try {
-      String password = createNewUser();
+      final String password = createNewUser();
       if (sendEmail) {
         sendNewAccountEmail(password);
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_user_create", getLocale()));
       reloadUserPage();
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error creating user", e);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error creating user:", e);
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), getLocale()));
     }
@@ -89,9 +89,9 @@ public class UserCreationBean extends SuperBean {
    * @throws Exception
    */
   private String createNewUser() throws ImejiException {
-    UserBusinessController uc = new UserBusinessController();
-    PasswordGenerator generator = new PasswordGenerator();
-    String password = generator.generatePassword();
+    final UserBusinessController uc = new UserBusinessController();
+    final PasswordGenerator generator = new PasswordGenerator();
+    final String password = generator.generatePassword();
     user.setEncryptedPassword(StringHelper.convertToMD5(password));
     user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
     uc.create(user, allowedToCreateCollection ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED);
@@ -104,13 +104,13 @@ public class UserCreationBean extends SuperBean {
    * @param password
    */
   public void sendNewAccountEmail(String password) {
-    EmailService emailClient = new EmailService();
+    final EmailService emailClient = new EmailService();
     try {
       emailClient.sendMail(user.getEmail(), null,
           EmailMessages.getEmailOnAccountAction_Subject(true, getLocale()),
           EmailMessages.getNewAccountMessage(password, user.getEmail(),
               user.getPerson().getCompleteName(), getLocale()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error sending email", e);
       BeanHelper.error("Error: Email not sent");
     }
@@ -132,7 +132,7 @@ public class UserCreationBean extends SuperBean {
    * @param index
    */
   public void removeOrganization(int index) {
-    List<Organization> orgas = (List<Organization>) this.user.getPerson().getOrganizations();
+    final List<Organization> orgas = (List<Organization>) this.user.getPerson().getOrganizations();
     if (orgas.size() > 1) {
       orgas.remove(index);
     }
@@ -179,7 +179,7 @@ public class UserCreationBean extends SuperBean {
   private void reloadUserPage() {
     try {
       redirect(getNavigation().getUserUrl() + "?id=" + user.getEmail());
-    } catch (IOException e) {
+    } catch (final IOException e) {
       Logger.getLogger(UserBean.class).info("Some reloadPage exception", e);
     }
   }

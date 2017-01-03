@@ -21,9 +21,9 @@ public class AdminProcess {
   public static JSONResponse login(String authorizationHeader) {
     try {
       // Authenticate user and update the key if successfull authentication
-      User userVO = BasicAuthentication.auth(authorizationHeader);
-      UserService service = new UserService();
-      UserTO userTO = service.updateUserKey(userVO, true);
+      final User userVO = BasicAuthentication.auth(authorizationHeader);
+      final UserService service = new UserService();
+      final UserTO userTO = service.updateUserKey(userVO, true);
       return RestProcessUtils.buildResponse(Status.OK.getStatusCode(), userTO);
     } catch (ImejiException | JoseException e) {
       return RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
@@ -40,8 +40,8 @@ public class AdminProcess {
     try {
       // Authenticate user and update the key if successfull authentication
       // key will only be updated if the key already existed
-      User userVO = BasicAuthentication.auth(authorizationHeader);
-      UserService service = new UserService();
+      final User userVO = BasicAuthentication.auth(authorizationHeader);
+      final UserService service = new UserService();
       service.updateUserKey(userVO, false);
       return RestProcessUtils.buildResponse(Status.OK.getStatusCode(), null);
     } catch (ImejiException | JoseException e) {

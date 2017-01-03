@@ -57,9 +57,9 @@ public class ViewCollectionBean extends CollectionBean {
       }
       if (getCollection() != null) {
         persons = new ArrayList<Person>(getCollection().getMetadata().getPersons().size());
-        for (Person p : getCollection().getMetadata().getPersons()) {
-          List<Organization> orgs = new ArrayList<Organization>(p.getOrganizations().size());
-          for (Organization o : p.getOrganizations()) {
+        for (final Person p : getCollection().getMetadata().getPersons()) {
+          final List<Organization> orgs = new ArrayList<Organization>(p.getOrganizations().size());
+          for (final Organization o : p.getOrganizations()) {
             orgs.add(o);
           }
           p.setOrganizations(orgs);
@@ -69,7 +69,7 @@ public class ViewCollectionBean extends CollectionBean {
         setActionMenu(new CollectionActionMenu(getCollection(), getSessionUser(), getLocale(),
             getSelectedSpaceString()));
       }
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Error initializing Bean", e);
     }
   }

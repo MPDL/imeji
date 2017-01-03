@@ -27,7 +27,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Bean to edit the licenses of items
- * 
+ *
  * @author saquet
  *
  */
@@ -49,7 +49,7 @@ public class ItemsEditLicenseBean extends SuperBean {
       collectionId = UrlHelper.getParameterValue("collection");
       releasedCollection = findIfCollectionIsReleased();
       setLicenseEditor(new LicenseEditor(getLocale(), !releasedCollection));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing edit items license page", e);
     }
 
@@ -57,13 +57,13 @@ public class ItemsEditLicenseBean extends SuperBean {
 
   /**
    * True if the collection or one of the selected item is released/withdrawn
-   * 
+   *
    * @return
    * @throws ImejiException
    */
   private boolean findIfCollectionIsReleased() throws ImejiException {
     if (StringHelper.isNullOrEmptyTrim(collectionId)) {
-      for (Item item : retrieveSelectedItems()) {
+      for (final Item item : retrieveSelectedItems()) {
         if (!item.getStatus().equals(Status.PENDING)) {
           return true;
         }
@@ -78,12 +78,12 @@ public class ItemsEditLicenseBean extends SuperBean {
 
   /**
    * Save the editor: add licenses to all items
-   * 
+   *
    * @throws ImejiException
    * @throws IOException
    */
   public void save() throws ImejiException, IOException {
-    List<Item> items = !StringHelper.isNullOrEmptyTrim(collectionId)
+    final List<Item> items = !StringHelper.isNullOrEmptyTrim(collectionId)
         ? retrieveAllCollectionsItem(collectionId) : retrieveSelectedItems();
     addLicense(items);
     save(items);
@@ -92,14 +92,14 @@ public class ItemsEditLicenseBean extends SuperBean {
 
   /**
    * Save the Items
-   * 
+   *
    * @param items
    * @throws ImejiException
    */
   private void save(List<Item> items) {
     try {
       new ItemService().updateBatch(items, getSessionUser());
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error saving items", e);
     }
@@ -107,12 +107,12 @@ public class ItemsEditLicenseBean extends SuperBean {
 
   /**
    * Add the selected License to all the items
-   * 
+   *
    * @param items
    */
   private List<Item> addLicense(List<Item> items) {
-    List<Item> itemsWithNewLicense = new ArrayList<>();
-    for (Item item : items) {
+    final List<Item> itemsWithNewLicense = new ArrayList<>();
+    for (final Item item : items) {
       if (overwriteLicenses || !hasLicense(item) || !item.getStatus().equals(Status.PENDING)) {
         itemsWithNewLicense.add(addLicense(item));
       }
@@ -122,7 +122,7 @@ public class ItemsEditLicenseBean extends SuperBean {
 
   /**
    * Add the selected License to the item
-   * 
+   *
    * @param item
    */
   private Item addLicense(Item item) {
@@ -139,7 +139,7 @@ public class ItemsEditLicenseBean extends SuperBean {
 
   /**
    * True if the Item has at least one license
-   * 
+   *
    * @param item
    * @return
    */
@@ -149,32 +149,33 @@ public class ItemsEditLicenseBean extends SuperBean {
 
   /**
    * retrieve the selectedItems
-   * 
+   *
    * @return
    * @throws ImejiException
    */
   private List<Item> retrieveSelectedItems() throws ImejiException {
-    ItemService controller = new ItemService();
+    final ItemService controller = new ItemService();
     return (List<Item>) controller.retrieveBatch(selectedItems, -1, 0, getSessionUser());
   }
 
   /**
    * Retrieve all items of a collection
-   * 
+   *
    * @param collectionId
    * @return
    * @throws ImejiException
    */
   private List<Item> retrieveAllCollectionsItem(String collectionId) throws ImejiException {
-    ItemService controller = new ItemService();
-    List<String> uris = controller.search(ObjectHelper.getURI(CollectionImeji.class, collectionId),
-        null, null, getSessionUser(), getSpaceId(), -1, 0).getResults();
+    final ItemService controller = new ItemService();
+    final List<String> uris =
+        controller.search(ObjectHelper.getURI(CollectionImeji.class, collectionId), null, null,
+            getSessionUser(), getSpaceId(), -1, 0).getResults();
     return (List<Item>) controller.retrieveBatch(uris, -1, 0, getSessionUser());
   }
 
   /**
    * Return to the previous page
-   * 
+   *
    * @throws IOException
    */
   public void cancel() throws IOException {

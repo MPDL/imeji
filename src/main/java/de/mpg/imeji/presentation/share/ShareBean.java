@@ -102,7 +102,8 @@ public class ShareBean extends SuperBean implements Serializable {
       this.shareTo = null;
       this.profileUri = null;
       this.uri = ObjectHelper.getURI(CollectionImeji.class, getId());
-      CollectionImeji collection = new CollectionController().retrieveLazy(uri, getSessionUser());
+      final CollectionImeji collection =
+          new CollectionController().retrieveLazy(uri, getSessionUser());
       if (collection != null) {
         this.shareTo = collection;
         this.profileUri =
@@ -113,7 +114,7 @@ public class ShareBean extends SuperBean implements Serializable {
         this.sharedObject = collection;
       }
       this.init();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing the share collection page", e);
       BeanHelper.error("Error initializing page: " + e.getMessage());
     }
@@ -129,7 +130,7 @@ public class ShareBean extends SuperBean implements Serializable {
       this.shareTo = null;
       this.profileUri = null;
       this.uri = ObjectHelper.getURI(Album.class, getId());
-      Album album = new AlbumController().retrieveLazy(uri, getSessionUser());
+      final Album album = new AlbumController().retrieveLazy(uri, getSessionUser());
       if (album != null) {
         this.shareTo = album;
         this.title = album.getMetadata().getTitle();
@@ -138,7 +139,7 @@ public class ShareBean extends SuperBean implements Serializable {
         this.sharedObject = album;
       }
       this.init();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing the share Album page", e);
       BeanHelper.error("Error initializing page: " + e.getMessage());
     }
@@ -156,7 +157,7 @@ public class ShareBean extends SuperBean implements Serializable {
       this.shareTo = null;
       this.uri =
           HistoryUtil.extractURI(PrettyContext.getCurrentInstance().getRequestURL().toString());
-      Item item = new ItemService().retrieveLazy(uri, getSessionUser());
+      final Item item = new ItemService().retrieveLazy(uri, getSessionUser());
       if (item != null) {
         this.shareTo = item;
         this.title = item.getFilename();
@@ -171,7 +172,7 @@ public class ShareBean extends SuperBean implements Serializable {
         this.sharedObject = item;
       }
       this.init();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing the share Item page", e);
       BeanHelper.error("Error initializing page: " + e.getMessage());
     }
@@ -200,9 +201,9 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   private void initShareWithGroup() {
     this.userGroup = null;
-    String groupToShareWithUri = UrlHelper.getParameterValue("group");
+    final String groupToShareWithUri = UrlHelper.getParameterValue("group");
     if (groupToShareWithUri != null) {
-      UserGroup group = retrieveGroup(groupToShareWithUri);
+      final UserGroup group = retrieveGroup(groupToShareWithUri);
       if (group != null) {
         userGroup = group;
       }
@@ -216,16 +217,16 @@ public class ShareBean extends SuperBean implements Serializable {
    * @throws ImejiException
    */
   public void update() {
-    for (ShareListItem item : shareList.getItems()) {
-      boolean modified = item.update();
+    for (final ShareListItem item : shareList.getItems()) {
+      final boolean modified = item.update();
       if (sendEmail && modified) {
         sendEmailForShare(item, title);
       }
     }
-    for (ShareListItem item : shareList.getInvitations()) {
+    for (final ShareListItem item : shareList.getInvitations()) {
       try {
         item.updateInvitation();
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.error("Error updating invitations", e);
         BeanHelper.error("An error occured updating the invitations: " + e.getMessage());
       }
@@ -237,7 +238,7 @@ public class ShareBean extends SuperBean implements Serializable {
    * Check the input and add all correct entry to the list of elements to be saved
    */
   public void share() {
-    boolean reload = input.share();
+    final boolean reload = input.share();
     sendEmailForInput();
     if (reload) {
       reloadPage();
@@ -246,7 +247,7 @@ public class ShareBean extends SuperBean implements Serializable {
 
   /**
    * Unshare...
-   * 
+   *
    * @param item
    * @throws ImejiException
    */
@@ -274,7 +275,7 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   private void sendEmailForInput() {
     if (sendEmail) {
-      for (ShareListItem item : input.getExistingUsersAsShareListItems()) {
+      for (final ShareListItem item : input.getExistingUsersAsShareListItems()) {
         sendEmailForShare(item, title);
       }
     }
@@ -301,7 +302,7 @@ public class ShareBean extends SuperBean implements Serializable {
 
   /**
    * Select all roles, i.e give admin role
-   * 
+   *
    * @param item
    */
   public void selectAll(ShareListItem item) {
@@ -313,8 +314,8 @@ public class ShareBean extends SuperBean implements Serializable {
    * Called when user share with a group
    */
   public void shareWithGroup() {
-    ShareListItem groupListItem = new ShareListItem(userGroup, type, uri.toString(), profileUri,
-        null, getSessionUser(), getLocale());
+    final ShareListItem groupListItem = new ShareListItem(userGroup, type, uri.toString(),
+        profileUri, null, getSessionUser(), getLocale());
     groupListItem.setRoles(input.getMenu().getRoles());
     if (groupListItem.update() && sendEmail) {
       sendEmailForShare(groupListItem, title);
@@ -362,7 +363,7 @@ public class ShareBean extends SuperBean implements Serializable {
             break;
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error reloading page " + pageUrl, e);
     }
   }
@@ -378,7 +379,7 @@ public class ShareBean extends SuperBean implements Serializable {
     try {
       new EmailService().sendMail(email, null,
           subject.replaceAll("XXX_INSTANCE_NAME_XXX", instanceName), body);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error sending email", e);
       BeanHelper.error("Error: Email not sent");
     }
@@ -392,8 +393,8 @@ public class ShareBean extends SuperBean implements Serializable {
    * @param subject
    */
   private void sendEmailForShare(ShareListItem item, String subject) {
-    for (User user : item.getUsers()) {
-      ShareEmailMessage emailMessage =
+    for (final User user : item.getUsers()) {
+      final ShareEmailMessage emailMessage =
           new ShareEmailMessage(user.getPerson().getCompleteName(), title, getLinkToSharedObject(),
               getShareToUri(), profileUri, item.getRoles(), type, getSessionUser(), getLocale());
       sendEmail(user.getEmail(), subject.replaceAll("XXX_INSTANCE_NAME_XXX", instanceName),
@@ -411,9 +412,10 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   private void sendEmailUnshare(ShareListItem item, String subject) {
     subject = subject.replaceAll("XXX_INSTANCE_NAME_XXX", instanceName);
-    for (User user : item.getUsers()) {
-      String body = EmailMessages.getUnshareMessage(getSessionUser().getPerson().getCompleteName(),
-          user.getPerson().getCompleteName(), title, getLinkToSharedObject(), getLocale());
+    for (final User user : item.getUsers()) {
+      final String body =
+          EmailMessages.getUnshareMessage(getSessionUser().getPerson().getCompleteName(),
+              user.getPerson().getCompleteName(), title, getLinkToSharedObject(), getLocale());
       sendEmail(user.getEmail(), subject, body);
     }
   }
@@ -430,10 +432,10 @@ public class ShareBean extends SuperBean implements Serializable {
    * @return
    */
   private UserGroup retrieveGroup(String uri) {
-    GroupBusinessController c = new GroupBusinessController();
+    final GroupBusinessController c = new GroupBusinessController();
     try {
       return c.retrieve(uri, Imeji.adminUser);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return null;
     }
   }

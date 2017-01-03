@@ -9,7 +9,7 @@ import de.mpg.imeji.logic.vo.License;
 
 /**
  * Utility Class for {@link License}
- * 
+ *
  * @author saquet
  *
  */
@@ -21,14 +21,14 @@ public class LicenseUtil {
 
   /**
    * Return all the active licenses
-   * 
+   *
    * @param licenses
    * @return
    */
   public static List<License> getActiveLicenses(List<License> licenses) {
-    List<License> actives = new ArrayList<>();
+    final List<License> actives = new ArrayList<>();
     if (licenses != null) {
-      for (License lic : licenses) {
+      for (final License lic : licenses) {
         if (lic.getEnd() < 0) {
           actives.add(lic);
         }
@@ -39,14 +39,14 @@ public class LicenseUtil {
 
   /**
    * Remove all duplicates (only for active licenses)
-   * 
+   *
    * @param licenses
    * @return
    */
   public static List<License> removeDuplicates(List<License> licenses) {
-    List<License> noDuplicates = new ArrayList<>();
-    List<License> actives = getActiveLicenses(licenses);
-    for (License active : actives) {
+    final List<License> noDuplicates = new ArrayList<>();
+    final List<License> actives = getActiveLicenses(licenses);
+    for (final License active : actives) {
       if (!containsLicense(active, noDuplicates)) {
         noDuplicates.add(active);
       }
@@ -57,13 +57,13 @@ public class LicenseUtil {
 
   /**
    * Return al licenses which have an end
-   * 
+   *
    * @param licenses
    * @return
    */
   public static List<License> getRevokedLicenses(List<License> licenses) {
-    List<License> revoked = new ArrayList<>();
-    for (License lic : licenses) {
+    final List<License> revoked = new ArrayList<>();
+    for (final License lic : licenses) {
       if (lic.getEnd() > 0) {
         revoked.add(lic);
       }
@@ -73,13 +73,13 @@ public class LicenseUtil {
 
   /**
    * True if the license is already in the list of licenses
-   * 
+   *
    * @param license
    * @param licenses
    * @return
    */
   public static boolean containsLicense(License license, List<License> licenses) {
-    for (License lic : licenses) {
+    for (final License lic : licenses) {
       if (isSame(lic, license)) {
         return true;
       }
@@ -89,7 +89,7 @@ public class LicenseUtil {
 
   /**
    * True if 2 licenses are same
-   * 
+   *
    * @param lic1
    * @param lic2
    * @return
@@ -101,13 +101,13 @@ public class LicenseUtil {
 
   /**
    * Return the current license of an item. Null if no current license found
-   * 
+   *
    * @param item
    * @return
    * @throws ImejiException
    */
   public static License getActiveLicense(Item item) {
-    List<License> actives = getActiveLicenses(item.getLicenses());
+    final List<License> actives = getActiveLicenses(item.getLicenses());
     if (actives.isEmpty()) {
       return null;
     } else {
@@ -117,14 +117,14 @@ public class LicenseUtil {
 
   /**
    * Return the newer license between from the list (i.e the last created)
-   * 
+   *
    * @param lic1
    * @param lic2
    * @return
    */
   public static License getNewerLicense(List<License> licenses) {
     License newer = licenses.get(0);
-    for (License lic : licenses) {
+    for (final License lic : licenses) {
       if (lic.getStart() > newer.getStart() || lic.getStart() < 0) {
         newer = lic;
       }

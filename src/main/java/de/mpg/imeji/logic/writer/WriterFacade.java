@@ -61,9 +61,9 @@ import de.mpg.imeji.logic.workflow.WorkflowValidator;
  * @version $Revision$ $LastChangedDate$
  */
 public class WriterFacade {
-  private Writer writer;
+  private final Writer writer;
   private SearchIndexer indexer;
-  private WorkflowValidator workflowManager = new WorkflowValidator();
+  private final WorkflowValidator workflowManager = new WorkflowValidator();
 
   /**
    * Constructor for one model
@@ -98,7 +98,7 @@ public class WriterFacade {
   /**
    * Constructor to decouple model and searchtype. Needed for usergroup which have same mode than
    * users
-   * 
+   *
    * @param modelURI
    * @param type
    */
@@ -159,7 +159,7 @@ public class WriterFacade {
 
   /**
    * Do a full update without any validation
-   * 
+   *
    * @param objects
    * @param user
    * @throws ImejiException
@@ -195,15 +195,15 @@ public class WriterFacade {
     if (list.isEmpty()) {
       return;
     }
-    Validator<Object> validator =
+    final Validator<Object> validator =
         (Validator<Object>) ValidatorFactory.newValidator(list.get(0), method);
-    for (Object o : list) {
+    for (final Object o : list) {
       validator.validate(o, method);
     }
   }
 
   private void checkWorkflowForDelete(List<Object> objects) throws WorkflowException {
-    for (Object o : objects) {
+    for (final Object o : objects) {
       if (o instanceof Properties) {
         workflowManager.isDeleteAllowed((Properties) o);
       }
@@ -222,7 +222,7 @@ public class WriterFacade {
   private void checkSecurity(List<Object> list, User user, GrantType gt)
       throws NotAllowedError, AuthenticationError {
     String message = user != null ? user.getEmail() : "";
-    for (Object o : list) {
+    for (final Object o : list) {
       message += " not allowed to " + Grant.getGrantTypeName(gt) + " " + extractID(o);
       if (gt == GrantType.CREATE) {
         throwAuthorizationException(user != null, SecurityUtil.staticAuth().create(user, o),

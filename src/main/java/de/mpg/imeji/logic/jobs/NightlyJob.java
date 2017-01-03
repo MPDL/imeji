@@ -22,7 +22,7 @@ public class NightlyJob implements Runnable {
     Imeji.getEXECUTOR().submit(new CleanTempFilesJob());
     try {
       Imeji.getEXECUTOR().submit(new StorageUsageAnalyseJob());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error: " + e.getMessage());
     }
     Imeji.getEXECUTOR().submit(new CleanInactiveUsersJob());

@@ -12,11 +12,11 @@ import de.mpg.imeji.logic.controller.business.StatisticsBusinessController;
 @ManagedBean
 public class StorageStatisticsBean {
 
-  private List<Institute> institutes = new ArrayList<>();
+  private final List<Institute> institutes = new ArrayList<>();
 
   public StorageStatisticsBean() {
-    StatisticsBusinessController controller = new StatisticsBusinessController();
-    for (String institute : controller.getAllInstitute()) {
+    final StatisticsBusinessController controller = new StatisticsBusinessController();
+    for (final String institute : controller.getAllInstitute()) {
       institutes
           .add(new Institute(institute, controller.getUsedStorageSizeForInstitute(institute)));
     }

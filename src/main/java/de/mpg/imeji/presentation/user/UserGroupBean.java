@@ -72,14 +72,14 @@ public class UserGroupBean extends SuperBean implements Serializable {
 
   @PostConstruct
   public void init() {
-    String groupId = UrlHelper.getParameterValue("id");
+    final String groupId = UrlHelper.getParameterValue("id");
     if (groupId != null) {
-      GroupBusinessController c = new GroupBusinessController();
+      final GroupBusinessController c = new GroupBusinessController();
       try {
         this.userGroup = c.retrieve(groupId, getSessionUser());
         this.users = loadUsers(userGroup);
         this.roles = ShareUtil.getAllRoles(userGroup, getSessionUser(), getLocale());
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         BeanHelper.error("Error reading user group " + groupId);
         LOGGER.error("Error initializing UserGroupBean", e);
       }
@@ -96,12 +96,12 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @return
    */
   public Collection<User> loadUsers(UserGroup group) {
-    Collection<User> users = new ArrayList<User>();
-    UserBusinessController c = new UserBusinessController();
-    for (URI uri : userGroup.getUsers()) {
+    final Collection<User> users = new ArrayList<User>();
+    final UserBusinessController c = new UserBusinessController();
+    for (final URI uri : userGroup.getUsers()) {
       try {
         users.add(c.retrieve(uri, Imeji.adminUser));
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.error("Error reading user: ", e);
       }
     }
@@ -146,14 +146,14 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * Create a new {@link UserGroup}
    */
   public String create() {
-    GroupBusinessController c = new GroupBusinessController();
+    final GroupBusinessController c = new GroupBusinessController();
     try {
       c.create(userGroup, getSessionUser());
       reload();
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error creating user group", e);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Error creating user group");
       LOGGER.error("Error creating user group", e);
     }
@@ -166,13 +166,13 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @throws IOException
    */
   public void save() throws IOException {
-    GroupBusinessController c = new GroupBusinessController();
+    final GroupBusinessController c = new GroupBusinessController();
     try {
       c.update(userGroup, getSessionUser());
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error updating user group", e);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Error updating user group");
       LOGGER.error("Error updating user group", e);
     }

@@ -52,8 +52,8 @@ public class UrlHelper {
    * @return
    */
   public static boolean getParameterBoolean(String parameterName) {
-    String str = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .get(parameterName);
+    final String str = FacesContext.getCurrentInstance().getExternalContext()
+        .getRequestParameterMap().get(parameterName);
     if ("1".equals(str)) {
       return true;
     }
@@ -80,7 +80,7 @@ public class UrlHelper {
    * @return
    */
   public static String addParameter(String url, String param, String value) {
-    String[] params = url.split("\\?", 2);
+    final String[] params = url.split("\\?", 2);
     if (params.length > 1 && !"".equals(params[1])) {
       return url + "&" + param + "=" + value;
     }
@@ -96,7 +96,7 @@ public class UrlHelper {
   public static String decode(String s) {
     try {
       return URLDecoder.decode(s, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    } catch (final UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
   }
@@ -110,7 +110,7 @@ public class UrlHelper {
   public static String encode(String s) {
     try {
       return URLEncoder.encode(s, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    } catch (final UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
   }
@@ -123,7 +123,7 @@ public class UrlHelper {
    */
   public static String encodeQuery(String urlStr) {
     try {
-      URL url = new URL(urlStr);
+      final URL url = new URL(urlStr);
       return new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(),
           url.getPath(), url.getQuery(), url.getRef()).toURL().toString();
     } catch (MalformedURLException | URISyntaxException e) {

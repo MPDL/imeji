@@ -104,15 +104,15 @@ public class AuthenticationResource {
 
   /*
    * NOTE
-   * 
+   *
    * DO NOT DELETE FOLLOWING METHODS HERE They match the URI Path for all other methods which are
    * not supported. Thus we get proper error message and no entity returned (instead of previously
    * returned jsf page in the response which is stated in the web.xml) If method is not already
    * matched by any of the other resources, these error methods will be given
-   * 
+   *
    * FOR some reason, for /login and /logout there have to be special methods (below matcher does
    * not catch them).
-   * 
+   *
    */
 
   @POST

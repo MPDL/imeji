@@ -54,7 +54,7 @@ public abstract class ExplainExport extends Export {
    * @return
    */
   protected String getIndexTag(String title, String namespace) {
-    String s = "<imeji:index>" + "<dcterms:title>" + title + "</dcterms:title>"
+    final String s = "<imeji:index>" + "<dcterms:title>" + title + "</dcterms:title>"
         + "<imeji:namespace>" + namespace + "</imeji:namespace>" + "</imeji:index>";
     return s;
   }

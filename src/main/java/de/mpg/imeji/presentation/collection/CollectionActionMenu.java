@@ -28,7 +28,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Class with all methods needed by the Action menu in collection context
- * 
+ *
  * @author saquet
  *
  */
@@ -56,11 +56,11 @@ public class CollectionActionMenu implements Serializable {
    * @return
    */
   public String release() {
-    CollectionController cc = new CollectionController();
+    final CollectionController cc = new CollectionController();
     try {
       cc.releaseWithDefaultLicense(collection, user);
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_release", locale));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(
           Imeji.RESOURCE_BUNDLE.getMessage("error_collection_release: " + e.getMessage(), locale));
       LOGGER.error("Error during collection release", e);
@@ -77,7 +77,7 @@ public class CollectionActionMenu implements Serializable {
    * Search the number of items wihout any license
    */
   protected void searchItemsWihoutLicense() {
-    ItemService controller = new ItemService();
+    final ItemService controller = new ItemService();
     itemsWithoutLicense = controller
         .search(collection.getId(), SearchQuery.toSearchQuery(new SearchPair(SearchFields.license,
             SearchOperators.REGEX, ImejiLicenses.NO_LICENSE, false)), null, user, null, 0, 0)
@@ -94,18 +94,18 @@ public class CollectionActionMenu implements Serializable {
 
   public String createDOI() {
     try {
-      String doi = UrlHelper.getParameterValue("doi");
-      DoiService doiService = new DoiService();
+      final String doi = UrlHelper.getParameterValue("doi");
+      final DoiService doiService = new DoiService();
       if (doi != null) {
         doiService.addDoiToCollection(doi, collection, user);
       } else {
         doiService.addDoiToCollection(collection, user);
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_doi_creation", locale));
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
       LOGGER.error("Error during doi creation", e);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error(
           Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " + e.getMessage());
       LOGGER.error("Error during doi creation", e);
@@ -119,12 +119,12 @@ public class CollectionActionMenu implements Serializable {
    * @return
    */
   public String delete() {
-    CollectionController cc = new CollectionController();
+    final CollectionController cc = new CollectionController();
     try {
       cc.delete(collection, user);
       BeanHelper.info(
           getSuccessCollectionDeleteMessage(this.collection.getMetadata().getTitle(), locale));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getLocalizedMessage(), locale));
       LOGGER.error("Error delete collection", e);
     }
@@ -138,11 +138,11 @@ public class CollectionActionMenu implements Serializable {
    * @throws Exception
    */
   public String withdraw() throws Exception {
-    CollectionController cc = new CollectionController();
+    final CollectionController cc = new CollectionController();
     try {
       cc.withdraw(collection, user);
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_withdraw", locale));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_withdraw", locale));
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error discarding collection:", e);

@@ -14,7 +14,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
  * Controller for {@link Statement}
- * 
+ *
  * @author saquet
  *
  */
@@ -30,7 +30,7 @@ public class StatementController extends ImejiControllerAbstract<Statement> {
 
   @Override
   public List<Statement> retrieveBatch(List<String> ids, User user) throws ImejiException {
-    List<Statement> statements = initializeEmtpyList(ids);
+    final List<Statement> statements = initializeEmtpyList(ids);
     READER.read(toObjectList(statements), user);
     return statements;
   }
@@ -53,14 +53,14 @@ public class StatementController extends ImejiControllerAbstract<Statement> {
 
   /**
    * Initialize a list of empty statements with their id
-   * 
+   *
    * @param ids
    * @return
    */
   private List<Statement> initializeEmtpyList(List<String> ids) {
-    List<Statement> statements = new ArrayList<>(ids.size());
-    for (String id : ids) {
-      Statement st = new Statement();
+    final List<Statement> statements = new ArrayList<>(ids.size());
+    for (final String id : ids) {
+      final Statement st = new Statement();
       st.setUri(URI.create(id));
       statements.add(st);
     }

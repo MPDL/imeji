@@ -38,7 +38,7 @@ public class IPUtils {
     try {
       return ipToLong(InetAddress.getByName(ip)) >= ipToLong(getMinIP(ipRange))
           && ipToLong(InetAddress.getByName(ip)) <= ipToLong(getMaxIP(ipRange));
-    } catch (UnknownHostException e) {
+    } catch (final UnknownHostException e) {
       LOGGER.error(e.getMessage());
     }
     return false;
@@ -53,7 +53,7 @@ public class IPUtils {
    */
   public static InetAddress getMinIP(String ipRangeString) throws UnknownHostException {
     String ip = "";
-    for (String s : ipRangeString.split("\\.")) {
+    for (final String s : ipRangeString.split("\\.")) {
       if (!"".equals(ip)) {
         ip += ".";
       }
@@ -67,7 +67,7 @@ public class IPUtils {
     }
     try {
       return InetAddress.getByName(ip);
-    } catch (UnknownHostException e) {
+    } catch (final UnknownHostException e) {
       // if some error return the locahost IP
       return InetAddress.getLocalHost();
     }
@@ -82,7 +82,7 @@ public class IPUtils {
    */
   public static InetAddress getMaxIP(String ipRangeString) throws UnknownHostException {
     String ip = "";
-    for (String s : ipRangeString.split("\\.")) {
+    for (final String s : ipRangeString.split("\\.")) {
       if (!"".equals(ip)) {
         ip += ".";
       }
@@ -96,7 +96,7 @@ public class IPUtils {
     }
     try {
       return InetAddress.getByName(ip);
-    } catch (UnknownHostException e) {
+    } catch (final UnknownHostException e) {
       // if some error return the locahost IP
       return InetAddress.getLocalHost();
     }
@@ -109,9 +109,9 @@ public class IPUtils {
    * @return
    */
   public static long ipToLong(InetAddress ip) {
-    byte[] octets = ip.getAddress();
+    final byte[] octets = ip.getAddress();
     long result = 0;
-    for (byte octet : octets) {
+    for (final byte octet : octets) {
       result <<= 8;
       result |= octet & 0xff;
     }

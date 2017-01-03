@@ -30,7 +30,7 @@ public class DateFormatter {
    * @return
    */
   public static long getTime(String str) {
-    Date d = parseDate(str);
+    final Date d = parseDate(str);
     if (d != null) {
       return d.getTime();
     } else {
@@ -84,7 +84,7 @@ public class DateFormatter {
       field = Calendar.YEAR;
     }
     if (d != null) {
-      Calendar c = Calendar.getInstance();
+      final Calendar c = Calendar.getInstance();
       c.setTime(d);
       if (field == Calendar.YEAR) {
         c.set(Calendar.MONTH, c.getActualMaximum(Calendar.MONTH));
@@ -111,9 +111,9 @@ public class DateFormatter {
    */
   public static Date parseDate(String str, String pattern) {
     try {
-      SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+      final SimpleDateFormat sdf = new SimpleDateFormat(pattern);
       return sdf.parse(str);
-    } catch (ParseException e) {
+    } catch (final ParseException e) {
       return null;
     }
   }
@@ -133,7 +133,7 @@ public class DateFormatter {
       d = parseDate(str, "yyyy");
     }
     if (d != null) {
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+      final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
       return sdf.format(d);
     } else {
       throw new RuntimeException("Wrong date format");
@@ -157,7 +157,7 @@ public class DateFormatter {
     if (d == null) {
       d = new Date(getTime(str));
     }
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     return sdf.format(d);
   }
 
@@ -168,7 +168,7 @@ public class DateFormatter {
    * @return
    */
   public static String formatToSparqlDateTime(Calendar cal) {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     return sdf.format(cal.getTime());
   }
 }

@@ -28,7 +28,7 @@ public class ImportFileFromEscidocToInternalStorageJob implements Callable<Integ
 
   private static final Logger LOGGER =
       Logger.getLogger(ImportFileFromEscidocToInternalStorageJob.class);
-  private User user;
+  private final User user;
 
   public ImportFileFromEscidocToInternalStorageJob(User user) {
     this.user = user;
@@ -36,16 +36,16 @@ public class ImportFileFromEscidocToInternalStorageJob implements Callable<Integ
 
   @Override
   public Integer call() throws Exception {
-    StorageController internal = new StorageController("internal");
-    StorageController escidoc = new StorageController("escidoc");
-    ItemService ic = new ItemService();
-    for (Item item : ic.retrieveAll(user)) {
+    final StorageController internal = new StorageController("internal");
+    final StorageController escidoc = new StorageController("escidoc");
+    final ItemService ic = new ItemService();
+    for (final Item item : ic.retrieveAll(user)) {
       File tmp = null;
       try {
         // Get escidoc url for all files
-        URI escidocUrl = item.getFullImageUrl();
+        final URI escidocUrl = item.getFullImageUrl();
         LOGGER.info("Importing file " + escidocUrl + " for item " + item.getId());
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         // Read the file in a stream
         escidoc.read(escidocUrl.toString(), out, true);
         // Upload the file in the internal storage
@@ -53,7 +53,7 @@ public class ImportFileFromEscidocToInternalStorageJob implements Callable<Integ
           tmp = TempFileUtil.createTempFile("ImportFileFromEscidocToInternalStorageJob",
               FilenameUtils.getExtension(item.getFilename()));
           FileUtils.writeByteArrayToFile(tmp, out.toByteArray());
-          UploadResult result =
+          final UploadResult result =
               internal.upload(item.getFilename(), tmp, ObjectHelper.getId(item.getCollection()));
           FileUtils.deleteQuietly(tmp);
           item.setChecksum(result.getChecksum());
@@ -66,7 +66,7 @@ public class ImportFileFromEscidocToInternalStorageJob implements Callable<Integ
         } else {
           LOGGER.error("File not found: " + escidocUrl + " for item " + item.getId());
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error importing item " + item.getId(), e);
       } finally {
         FileUtils.deleteQuietly(tmp);

@@ -11,18 +11,18 @@ import de.mpg.imeji.presentation.metadata.MetadataInputComponent;
 
 /**
  * A cell of the edit selected items page
- * 
+ *
  * @author saquet
  *
  */
 public class CellComponent implements Serializable {
   private static final long serialVersionUID = 4617072974872823679L;
   private List<MetadataInputComponent> inputs = new ArrayList<>();
-  private Statement statement;
+  private final Statement statement;
 
   public CellComponent(Statement statement, List<Metadata> metadata) {
     this.statement = statement;
-    for (Metadata m : metadata) {
+    for (final Metadata m : metadata) {
       inputs.add(new MetadataInputComponent(m, statement));
     }
     if (inputs.isEmpty()) {
@@ -31,8 +31,8 @@ public class CellComponent implements Serializable {
   }
 
   public List<Metadata> toMetadataList() {
-    List<Metadata> l = new ArrayList<>();
-    for (MetadataInputComponent input : inputs) {
+    final List<Metadata> l = new ArrayList<>();
+    for (final MetadataInputComponent input : inputs) {
       l.add(input.getMetadata());
     }
     return l;

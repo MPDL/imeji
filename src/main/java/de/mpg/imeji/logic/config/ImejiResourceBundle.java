@@ -27,10 +27,10 @@ public class ImejiResourceBundle {
     try {
       try {
         return ResourceBundle.getBundle(getSelectedLabelBundle(locale)).getString(placeholder);
-      } catch (MissingResourceException e) {
+      } catch (final MissingResourceException e) {
         return ResourceBundle.getBundle(getDefaultLabelBundle()).getString(placeholder);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return placeholder;
     }
   }
@@ -45,10 +45,10 @@ public class ImejiResourceBundle {
     try {
       try {
         return ResourceBundle.getBundle(getSelectedMessagesBundle(locale)).getString(placeholder);
-      } catch (MissingResourceException e) {
+      } catch (final MissingResourceException e) {
         return ResourceBundle.getBundle(getDefaultMessagesBundle()).getString(placeholder);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return placeholder;
     }
   }

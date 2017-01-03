@@ -87,7 +87,7 @@ public class JenaCustomQueries {
    */
   public static final String hasOtherMetadataProfileReferences(String profileUri,
       String resourceUri) {
-    String q = " SELECT ?s WHERE { ?s ?p ?o ." + "?s <http://imeji.org/terms/mdprofile> <"
+    final String q = " SELECT ?s WHERE { ?s ?p ?o ." + "?s <http://imeji.org/terms/mdprofile> <"
         + profileUri + ">." + " FILTER (?s != <" + resourceUri + ">  && ?s != <" + profileUri
         + ">) " + " NOT EXISTS { " + "?item <http://imeji.org/terms/metadataSet> ?s. "
         + "?s <http://imeji.org/terms/mdprofile> ?o. "
@@ -269,7 +269,7 @@ public class JenaCustomQueries {
    * @return
    */
   public static final String selectItemIdOfFileUrl(String fileUrl) {
-    String path = URI.create(fileUrl).getPath();
+    final String path = URI.create(fileUrl).getPath();
     return X_PATH_FUNCTIONS_DECLARATION + "  SELECT DISTINCT ?s WHERE {"
         + "?s <http://imeji.org/terms/webImageUrl> ?url1 . ?s <http://imeji.org/terms/thumbnailImageUrl> ?url2 . ?s <http://imeji.org/terms/fullImageUrl> ?url3 . FILTER(REGEX(str(?url1), '"
         + path + "', 'i') || REGEX(str(?url2), '" + path + "', 'i') || REGEX(str(?url3), '" + path
@@ -534,7 +534,7 @@ public class JenaCustomQueries {
    * @return
    */
   public static final String updateRemoveAllMetadataWithoutStatement(String profileURI) {
-    String profileQuery = profileURI != null ? "<" + profileURI + ">" : "?profile";
+    final String profileQuery = profileURI != null ? "<" + profileURI + ">" : "?profile";
     return "WITH <http://imeji.org/item> " + "DELETE {?mds <" + ImejiNamespaces.METADATA
         + "> ?s . ?s ?p ?o } " + "USING <http://imeji.org/item> "
         + "USING <http://imeji.org/metadataProfile> "
@@ -665,7 +665,7 @@ public class JenaCustomQueries {
    * @return
    */
   public static final String removeforbiddenCharacters(String s) {
-    String[] forbidden = {"(", ")", "'"};
+    final String[] forbidden = {"(", ")", "'"};
     for (int i = 0; i < forbidden.length; i++) {
       s = s.replace(forbidden[i], ".");
     }

@@ -2,7 +2,7 @@ package de.mpg.imeji.logic.config;
 
 /**
  * List of predefined licenses for imeji
- * 
+ *
  * @author saquet
  *
  */

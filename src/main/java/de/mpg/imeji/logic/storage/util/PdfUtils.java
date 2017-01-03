@@ -29,11 +29,11 @@ public final class PdfUtils {
    * @throws IOException
    */
   public static File pdfToImage(File file) throws IOException {
-    PDDocument document = PDDocument.load(file, MemoryUsageSetting.setupTempFileOnly());
+    final PDDocument document = PDDocument.load(file, MemoryUsageSetting.setupTempFileOnly());
     try {
       if (document.getNumberOfPages() > 0) {
-        PDFRenderer pdfRenderer = new PDFRenderer(document);
-        BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
+        final PDFRenderer pdfRenderer = new PDFRenderer(document);
+        final BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
         return ImageUtils.toFile(bim, StorageUtils.getMimeType("jpg"));
       }
       return null;

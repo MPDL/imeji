@@ -9,7 +9,7 @@ import de.mpg.imeji.j2j.annotations.j2jResource;
 
 /**
  * A metadata for imeji object
- * 
+ *
  * @author saquet
  *
  */

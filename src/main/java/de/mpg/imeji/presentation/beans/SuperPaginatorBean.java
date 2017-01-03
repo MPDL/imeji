@@ -45,7 +45,7 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
   /**
    * A list containing the PaginatorPage objects
    */
-  private List<PaginatorPage> paginatorPageList;
+  private final List<PaginatorPage> paginatorPageList;
   /**
    * The list containing the current elements of the displayed list
    */
@@ -104,7 +104,7 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
 
   /**
    * Read if there are navigation parameters in the url
-   * 
+   *
    * @return
    */
   public void readUrlParameters() {
@@ -152,7 +152,7 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
       for (int i = 0; i < ((getTotalNumberOfElements() - 1) / elementsPerPage) + 1; i++) {
         paginatorPageList.add(new PaginatorPage(i + 1));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error paginator list update ", e);
     }
@@ -261,7 +261,7 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
       } else {
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_page_not_exists", getLocale()));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_integer_required", getLocale()));
     }
     update();

@@ -42,14 +42,14 @@ public class J2JHelper {
     if (o == null) {
       return null;
     }
-    j2jId ano = o.getClass().getAnnotation(j2jId.class);
+    final j2jId ano = o.getClass().getAnnotation(j2jId.class);
     if (ano != null) {
       try {
-        Object id = o.getClass().getMethod(ano.getMethod(), null).invoke(o, null);
+        final Object id = o.getClass().getMethod(ano.getMethod(), null).invoke(o, null);
         if (id != null) {
           return new URI(id.toString());
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         throw new RuntimeException("Error reading ID of " + o, e);
       }
     }
@@ -63,12 +63,12 @@ public class J2JHelper {
    * @param id
    */
   public static Object setId(Object o, URI id) {
-    j2jId ano = o.getClass().getAnnotation(j2jId.class);
-    Object[] args = {id};
+    final j2jId ano = o.getClass().getAnnotation(j2jId.class);
+    final Object[] args = {id};
     if (ano != null) {
       try {
         o.getClass().getMethod(ano.setMethod(), URI.class).invoke(o, args);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         throw new RuntimeException("Error setting ID of " + o, e);
       }
     }
@@ -139,7 +139,7 @@ public class J2JHelper {
    */
   public static String getNamespace(Field f) {
     if (isResource(f)) {
-      String resourceNamespace = getResourceNamespace(f);
+      final String resourceNamespace = getResourceNamespace(f);
       if (resourceNamespace != null) {
         return resourceNamespace;
       }
@@ -367,7 +367,7 @@ public class J2JHelper {
         object = f.getType().newInstance();
       }
       return object;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return null;
     }
   }
@@ -381,7 +381,7 @@ public class J2JHelper {
    */
   public static List<Field> getAllObjectFields(Class<?> clazz) {
     if (clazz.getAnnotation(j2jResource.class) != null) {
-      List<Field> l = new ArrayList<Field>(Arrays.asList(clazz.getDeclaredFields()));
+      final List<Field> l = new ArrayList<Field>(Arrays.asList(clazz.getDeclaredFields()));
       if (clazz.getSuperclass() != null
           && clazz.getSuperclass().getAnnotation(j2jResource.class) != null) {
         l.addAll(getAllObjectFields(clazz.getSuperclass()));
@@ -398,8 +398,8 @@ public class J2JHelper {
    * @return
    */
   public static List<Field> getOnlyAnnotatedFields(List<Field> l) {
-    List<Field> afl = new ArrayList<Field>();
-    for (Field f : l) {
+    final List<Field> afl = new ArrayList<Field>();
+    for (final Field f : l) {
       if (isAnnotated(f)) {
         afl.add(f);
       }

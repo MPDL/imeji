@@ -42,24 +42,24 @@ public class SPARQLEndpointServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    String q = req.getParameter("q");
-    String format = req.getParameter("format");
-    String model = req.getParameter("model");
-    SessionBean session =
+    final String q = req.getParameter("q");
+    final String format = req.getParameter("format");
+    final String model = req.getParameter("model");
+    final SessionBean session =
         (SessionBean) req.getSession(false).getAttribute(SessionBean.class.getSimpleName());
     if (!"".equals(q) && session.getUser() != null && SecurityUtil.isSysAdmin(session.getUser())) {
       try {
         Imeji.dataset.begin(ReadWrite.WRITE);
-        Query sparql = QueryFactory.create(q, Syntax.syntaxARQ);
-        QueryExecution exec = initQueryExecution(sparql, model);
+        final Query sparql = QueryFactory.create(q, Syntax.syntaxARQ);
+        final QueryExecution exec = initQueryExecution(sparql, model);
         exec.getContext().set(TDB.symUnionDefaultGraph, true);
-        ResultSet result = exec.execSelect();
+        final ResultSet result = exec.execSelect();
         if ("table".equals(format)) {
           ResultSetFormatter.out(resp.getOutputStream(), result);
         } else {
           ResultSetFormatter.output(resp.getOutputStream(), result, getFormat(format));
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("spraql error: ", e);
         Imeji.dataset.abort();
       } finally {
@@ -76,7 +76,7 @@ public class SPARQLEndpointServlet extends HttpServlet {
   }
 
   private QueryExecution initQueryExecution(Query sparql, String model) {
-    String modelName = getModelName(model);
+    final String modelName = getModelName(model);
     if (modelName != null) {
       return QueryExecutionFactory.create(sparql, Imeji.dataset.getNamedModel(modelName));
     }

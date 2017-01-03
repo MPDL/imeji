@@ -80,7 +80,7 @@ public class SearchIndex implements Serializable {
    * @return
    */
   public static List<SearchIndex> getAllIndexForStatement(Statement st) {
-    List<SearchIndex> list = new ArrayList<SearchIndex>();
+    final List<SearchIndex> list = new ArrayList<SearchIndex>();
     switch (st.getType()) {
       case DATE:
         list.add(SearchIndexes.getIndex(SearchFields.time));

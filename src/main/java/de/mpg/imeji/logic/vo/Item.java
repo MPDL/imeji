@@ -131,7 +131,7 @@ public class Item extends Properties implements Serializable {
    * @return
    */
   public Item copyEmpty() {
-    Item emptyItem = new Item();
+    final Item emptyItem = new Item();
     emptyItem.setId(this.getId());
     emptyItem.setCollection(collection);
     return emptyItem;
@@ -144,9 +144,9 @@ public class Item extends Properties implements Serializable {
    * @param copyFrom
    */
   protected void copyInFields(Item copyFrom) {
-    Class<? extends Item> copyFromClass = copyFrom.getClass();
-    Class<? extends Item> copyToClass = this.getClass();
-    for (Method methodFrom : copyFromClass.getDeclaredMethods()) {
+    final Class<? extends Item> copyFromClass = copyFrom.getClass();
+    final Class<? extends Item> copyToClass = this.getClass();
+    for (final Method methodFrom : copyFromClass.getDeclaredMethods()) {
       String setMethodName = null;
       if (methodFrom.getName().startsWith("get")) {
         setMethodName = "set" + methodFrom.getName().substring(3, methodFrom.getName().length());
@@ -155,16 +155,16 @@ public class Item extends Properties implements Serializable {
       }
       if (setMethodName != null) {
         try {
-          Method methodTo = copyToClass.getMethod(setMethodName, methodFrom.getReturnType());
+          final Method methodTo = copyToClass.getMethod(setMethodName, methodFrom.getReturnType());
           try {
             methodTo.invoke(this, methodFrom.invoke(copyFrom, (Object) null));
-          } catch (Exception e) {
+          } catch (final Exception e) {
             // LOGGER.error("Could not copy field from method: " +
             // methodFrom.getName(), e);
           }
         }
         // No setter, do nothing.
-        catch (NoSuchMethodException e) {
+        catch (final NoSuchMethodException e) {
         }
       }
     }

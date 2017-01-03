@@ -45,7 +45,7 @@ import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 
 /**
  * Initialize imeji
- * 
+ *
  * @author saquet
  *
  */
@@ -67,7 +67,7 @@ public class ImejiInitializer {
       ElasticInitializer.start();
       ImejiInitializer.init(Imeji.tdbPath);
       Imeji.getNIGHTLY_EXECUTOR().start();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.fatal("Error initializing imeji", e);
     }
   }
@@ -83,7 +83,7 @@ public class ImejiInitializer {
    */
   public static void init(String path) throws IOException, URISyntaxException, ImejiException {
     if (path != null) {
-      File f = new File(path);
+      final File f = new File(path);
       if (!f.exists()) {
         f.getParentFile().mkdirs();
       }
@@ -129,11 +129,11 @@ public class ImejiInitializer {
       if (Imeji.dataset.containsNamedModel(name)) {
         Imeji.dataset.getNamedModel(name);
       } else {
-        Model m = ModelFactory.createDefaultModel();
+        final Model m = ModelFactory.createDefaultModel();
         Imeji.dataset.addNamedModel(name, m);
       }
       Imeji.dataset.commit();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       Imeji.dataset.abort();
       LOGGER.fatal("Error initialising model " + name, e);
     } finally {
@@ -173,12 +173,12 @@ public class ImejiInitializer {
           .setApiKey(APIKeyAuthentication.generateKey(Imeji.adminUser.getId(), Integer.MAX_VALUE));
       // create
       LOGGER.info("Checking admin users..");
-      UserBusinessController uc = new UserBusinessController();
-      List<User> admins = uc.retrieveAllAdmins();
+      final UserBusinessController uc = new UserBusinessController();
+      final List<User> admins = uc.retrieveAllAdmins();
       if (admins.size() == 0) {
         try {
           LOGGER.info("... No admin found! Creating one.");
-          User admin = uc.retrieve(Imeji.adminUser.getEmail(), Imeji.adminUser);
+          final User admin = uc.retrieve(Imeji.adminUser.getEmail(), Imeji.adminUser);
           LOGGER.warn(admin.getEmail() + " already exists: " + admin.getId());
           LOGGER.error(
               "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -186,7 +186,7 @@ public class ImejiInitializer {
               "!!!! Something went wrong: No users with admin rights found, but default admin user found !!!!!");
           LOGGER.warn("Creating a new sysadmin");
           LOGGER.warn("Use this user to recover your system");
-          String newEmail = System.currentTimeMillis() + Imeji.adminUser.getEmail();
+          final String newEmail = System.currentTimeMillis() + Imeji.adminUser.getEmail();
           LOGGER.warn("EMAIL: " + newEmail);
           LOGGER.warn("PASSWORD: " + Imeji.ADMIN_PASSWORD_INIT);
           LOGGER.error(
@@ -195,7 +195,7 @@ public class ImejiInitializer {
           Imeji.adminUser
               .setEncryptedPassword(StringHelper.convertToMD5(Imeji.ADMIN_PASSWORD_INIT));
           Imeji.adminUser = uc.create(Imeji.adminUser, USER_TYPE.ADMIN);
-        } catch (NotFoundException e) {
+        } catch (final NotFoundException e) {
           LOGGER.info(
               "!!! IMPORTANT !!! Create admin@imeji.org as system administrator with password admin. !!! CHANGE PASSWORD !!!");
           Imeji.adminUser = uc.create(Imeji.adminUser, USER_TYPE.ADMIN);
@@ -203,13 +203,13 @@ public class ImejiInitializer {
         }
       } else {
         LOGGER.info("Admin users found:");
-        for (User admin : admins) {
+        for (final User admin : admins) {
           LOGGER.info(admin.getEmail() + " is admin + (" + admin.getId() + ")");
         }
       }
-    } catch (AlreadyExistsException e) {
+    } catch (final AlreadyExistsException e) {
       LOGGER.warn(Imeji.adminUser.getEmail() + " already exists", e);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing Admin user! ", e);
     }
   }
@@ -221,7 +221,7 @@ public class ImejiInitializer {
    * @return
    */
   private static String getModelName(Class<?> voClass) {
-    j2jModel j2jModel = voClass.getAnnotation(j2jModel.class);
+    final j2jModel j2jModel = voClass.getAnnotation(j2jModel.class);
     return "http://imeji.org/" + j2jModel.value();
   }
 
@@ -263,7 +263,7 @@ public class ImejiInitializer {
     // after tomcat stop
     // see https://github.com/imeji-community/imeji/issues/966!
     LOGGER.info("Release AlarmClock...");
-    AlarmClock alarmClock = AlarmClock.get();
+    final AlarmClock alarmClock = AlarmClock.get();
     alarmClock.release();
     LOGGER.info("done");
   }

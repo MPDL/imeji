@@ -68,7 +68,7 @@ public class ElasticIndexer implements SearchIndexer {
   public void index(Object obj) {
     try {
       indexJSON(getId(obj), toJson(obj, dataType, index), getParent(obj));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error indexing object ", e);
     }
   }
@@ -80,14 +80,14 @@ public class ElasticIndexer implements SearchIndexer {
       return;
     }
     try {
-      BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
-      for (Object obj : l) {
+      final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
+      for (final Object obj : l) {
         bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, index), getParent(obj)));
         // indexJSON(getId(obj), toJson(obj, dataType, index));
       }
       bulkRequest.get();
       commit();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("error indexing object ", e);
     }
   }
@@ -96,7 +96,7 @@ public class ElasticIndexer implements SearchIndexer {
 
   @Override
   public void delete(Object obj) {
-    String id = getId(obj);
+    final String id = getId(obj);
     if (id != null) {
       getDeleteRequest(id, getParent(obj)).execute().actionGet();
       commit();
@@ -108,9 +108,9 @@ public class ElasticIndexer implements SearchIndexer {
     if (l.isEmpty()) {
       return;
     }
-    BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
-    for (Object obj : l) {
-      String id = getId(obj);
+    final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
+    for (final Object obj : l) {
+      final String id = getId(obj);
       if (id != null) {
         bulkRequest.add(getDeleteRequest(id, getParent(obj)));
       }
@@ -121,14 +121,14 @@ public class ElasticIndexer implements SearchIndexer {
 
   /**
    * Return the index Request
-   * 
+   *
    * @param id
    * @param json
    * @param parent
    * @return
    */
   private IndexRequestBuilder getIndexRequest(String id, String json, String parent) {
-    IndexRequestBuilder builder =
+    final IndexRequestBuilder builder =
         ElasticService.getClient().prepareIndex(index, dataType).setId(id).setSource(json);
     if (parent != null) {
       builder.setParent(parent);
@@ -138,14 +138,15 @@ public class ElasticIndexer implements SearchIndexer {
 
   /**
    * Return the Delete Request
-   * 
+   *
    * @param id
    * @param json
    * @param parent
    * @return
    */
   private DeleteRequestBuilder getDeleteRequest(String id, String parent) {
-    DeleteRequestBuilder builder = ElasticService.getClient().prepareDelete(index, dataType, id);
+    final DeleteRequestBuilder builder =
+        ElasticService.getClient().prepareDelete(index, dataType, id);
     if (parent != null) {
       builder.setParent(parent);
     }
@@ -163,7 +164,7 @@ public class ElasticIndexer implements SearchIndexer {
     try {
       return mapper.setSerializationInclusion(Include.NON_NULL)
           .writeValueAsString(toESEntity(obj, dataType, index));
-    } catch (JsonProcessingException e) {
+    } catch (final JsonProcessingException e) {
       throw new UnprocessableError("Error serializing object to json", e);
     }
   }
@@ -195,7 +196,7 @@ public class ElasticIndexer implements SearchIndexer {
    * Remove all indexed data
    */
   public static void clear(Client client, String index) {
-    DeleteIndexResponse delete =
+    final DeleteIndexResponse delete =
         client.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
     if (!delete.isAcknowledged()) {
       // Error
@@ -235,7 +236,7 @@ public class ElasticIndexer implements SearchIndexer {
 
   /**
    * Get the Parent of the object
-   * 
+   *
    * @param obj
    * @return
    */
@@ -274,13 +275,13 @@ public class ElasticIndexer implements SearchIndexer {
    */
   public void addMapping() {
     try {
-      String jsonMapping = new String(
+      final String jsonMapping = new String(
           Files.readAllBytes(
               Paths.get(ElasticIndexer.class.getClassLoader().getResource(mappingFile).toURI())),
           "UTF-8").replace("XXX_ANALYSER_XXX", analyser.name());
       ElasticService.getClient().admin().indices().preparePutMapping(this.index).setType(dataType)
           .setSource(jsonMapping).execute().actionGet();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing the Elastic Search Mapping " + mappingFile, e);
     }
   }
@@ -300,7 +301,7 @@ public class ElasticIndexer implements SearchIndexer {
 
   /**
    * Return the content of an item
-   * 
+   *
    * @param item
    * @return
    */
@@ -308,7 +309,7 @@ public class ElasticIndexer implements SearchIndexer {
     if (!StringHelper.isNullOrEmptyTrim(item.getContentId())) {
       try {
         return new ContentController().read(item.getContentId());
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         return null;
       }
     }
@@ -323,7 +324,7 @@ public class ElasticIndexer implements SearchIndexer {
       try {
         ElasticService.getClient().prepareUpdate(index, dataType, id)
             .setDoc(toJson(obj, dataType, index)).execute().actionGet();
-      } catch (UnprocessableError e) {
+      } catch (final UnprocessableError e) {
         LOGGER.error("Error index partial update ", e);
       }
 

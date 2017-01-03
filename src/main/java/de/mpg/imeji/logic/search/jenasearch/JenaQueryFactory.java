@@ -107,9 +107,9 @@ public class JenaQueryFactory {
       return "";
     }
 
-    boolean isCollection = modelName.equals(Imeji.collectionModel);
-    boolean isImage = modelName.equals(Imeji.imageModel);
-    boolean isProfile = modelName.equals(Imeji.profileModel);
+    final boolean isCollection = modelName.equals(Imeji.collectionModel);
+    final boolean isImage = modelName.equals(Imeji.imageModel);
+    final boolean isProfile = modelName.equals(Imeji.profileModel);
     // boolean isAlbum = modelName.equals(Imeji.albumModel);
 
     if (!isCollection && !isImage && !isProfile) {
@@ -157,13 +157,13 @@ public class JenaQueryFactory {
    */
   private static String getSearchElement(SearchPair pair, String rdfType, User user) {
     String searchQuery = "";
-    String variable = "el";
+    final String variable = "el";
 
     if (pair == null) {
       return "";
     }
 
-    SearchFields index = pair.getField();
+    final SearchFields index = pair.getField();
     switch (index) {
       case all:// Simple Search
         break;
@@ -229,9 +229,9 @@ public class JenaQueryFactory {
         break;
       case filetype: // Search for filetype ( image, video, audio...)
         String regex = "";
-        String types = pair.getValue();
-        for (String typeName : types.split(Pattern.quote("|"))) {
-          Type type = Imeji.CONFIG.getFileTypes().getType(typeName);
+        final String types = pair.getValue();
+        for (final String typeName : types.split(Pattern.quote("|"))) {
+          final Type type = Imeji.CONFIG.getFileTypes().getType(typeName);
           if (type != null) {
             if (!regex.equals("")) {
               regex += "|";
@@ -551,11 +551,11 @@ public class JenaQueryFactory {
    */
   private static String getTextSearchFilter(SearchPair pair, String variable) {
     String filter = "";
-    String text = pair.getValue();
-    StringReader simpleReader = new StringReader(text);
+    final String text = pair.getValue();
+    final StringReader simpleReader = new StringReader(text);
     int i = 0;
     boolean isPhraseQuery = false;
-    List<String> words = new ArrayList<String>();
+    final List<String> words = new ArrayList<String>();
     String word = "";
     try {
       while ((i = simpleReader.read()) != -1) {
@@ -574,13 +574,13 @@ public class JenaQueryFactory {
           word += (char) i;
         }
       }
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new RuntimeException(e);
     }
     if (!"".equals(word.trim())) {
       words.add(word);
     }
-    for (String str : words) {
+    for (final String str : words) {
       if (!"".equals(filter)) {
         filter += " || ";
       }

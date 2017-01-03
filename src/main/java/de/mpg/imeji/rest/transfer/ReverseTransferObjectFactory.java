@@ -79,7 +79,7 @@ public class ReverseTransferObjectFactory {
    */
   private static ContainerMetadata transferContainerMetatadata(ContainerTO to, TRANSFER_MODE mode,
       User u) {
-    ContainerMetadata metadata = new ContainerMetadata();
+    final ContainerMetadata metadata = new ContainerMetadata();
     metadata.setTitle(to.getTitle());
     metadata.setDescription(to.getDescription());
     metadata.setAdditionalInformations(transferAdditionalInfos(to.getAdditionalInfos()));
@@ -96,8 +96,8 @@ public class ReverseTransferObjectFactory {
    */
   private static List<ContainerAdditionalInfo> transferAdditionalInfos(
       List<ContainerAdditionalInformationTO> infosTO) {
-    List<ContainerAdditionalInfo> infos = new ArrayList<>();
-    for (ContainerAdditionalInformationTO infoTO : infosTO) {
+    final List<ContainerAdditionalInfo> infos = new ArrayList<>();
+    for (final ContainerAdditionalInformationTO infoTO : infosTO) {
       infos.add(new ContainerAdditionalInfo(infoTO.getLabel(), infoTO.getText(), infoTO.getUrl()));
     }
     return infos;
@@ -134,16 +134,16 @@ public class ReverseTransferObjectFactory {
 
   /**
    * Transfer a LicenseVO to a LicenseTO
-   * 
+   *
    * @param licenseTOs
    * @return
    */
   private static List<de.mpg.imeji.logic.vo.License> transferLicenses(
       List<de.mpg.imeji.rest.to.LicenseTO> licenseTOs) {
-    List<de.mpg.imeji.logic.vo.License> licenses = new ArrayList<>();
+    final List<de.mpg.imeji.logic.vo.License> licenses = new ArrayList<>();
     if (licenseTOs != null) {
-      for (de.mpg.imeji.rest.to.LicenseTO licTO : licenseTOs) {
-        de.mpg.imeji.logic.vo.License lic = new de.mpg.imeji.logic.vo.License();
+      for (final de.mpg.imeji.rest.to.LicenseTO licTO : licenseTOs) {
+        final de.mpg.imeji.logic.vo.License lic = new de.mpg.imeji.logic.vo.License();
         lic.setLabel(
             StringHelper.isNullOrEmptyTrim(licTO.getLabel()) ? licTO.getName() : licTO.getLabel());
         lic.setName(licTO.getName());
@@ -167,10 +167,10 @@ public class ReverseTransferObjectFactory {
    */
   public static void transferItemMetadata(DefaultItemTO to, Item vo, User u, TRANSFER_MODE mode)
       throws ImejiException {
-    List<Metadata> voMDs = (List<Metadata>) vo.getMetadata();
+    final List<Metadata> voMDs = vo.getMetadata();
     voMDs.clear();
-    for (MetadataTO mdTO : to.getMetadata()) {
-      Metadata mdVO = new MetadataFactory().setStatementId(mdTO.getStatementId())
+    for (final MetadataTO mdTO : to.getMetadata()) {
+      final Metadata mdVO = new MetadataFactory().setStatementId(mdTO.getStatementId())
           .setText(mdTO.getText()).setNumber(mdTO.getNumber()).setUrl(mdTO.getUrl())
           .setPerson(transferPerson(mdTO.getPerson(), new Person(), mode))
           .setLatitude(mdTO.getLatitude()).setLongitude(mdTO.getLongitude()).build();
@@ -187,7 +187,7 @@ public class ReverseTransferObjectFactory {
    */
   public static Person transferPerson(PersonTO pto, Person p, TRANSFER_MODE mode) {
     if (mode == TRANSFER_MODE.CREATE) {
-      IdentifierTO ito = new IdentifierTO();
+      final IdentifierTO ito = new IdentifierTO();
       ito.setValue(pto.getIdentifiers().isEmpty() ? null : pto.getIdentifiers().get(0).getValue());
       p.setIdentifier(ito.getValue());
     }
@@ -204,8 +204,8 @@ public class ReverseTransferObjectFactory {
 
   public static void transferCollectionContributors(List<PersonTO> persons,
       ContainerMetadata metadata, User u, TRANSFER_MODE mode) {
-    for (PersonTO pTO : persons) {
-      Person person = new Person();
+    for (final PersonTO pTO : persons) {
+      final Person person = new Person();
       person.setFamilyName(pTO.getFamilyName());
       person.setGivenName(pTO.getGivenName());
       person.setCompleteName(pTO.getCompleteName());
@@ -213,7 +213,7 @@ public class ReverseTransferObjectFactory {
       person.setRole(URI.create(pTO.getRole()));
       if (pTO.getIdentifiers().size() == 1) {
         // set the identifier of current person
-        IdentifierTO ito = new IdentifierTO();
+        final IdentifierTO ito = new IdentifierTO();
         ito.setValue(pTO.getIdentifiers().get(0).getValue());
         person.setIdentifier(ito.getValue());
       } else if (pTO.getIdentifiers().size() > 1) {
@@ -225,14 +225,14 @@ public class ReverseTransferObjectFactory {
     }
 
     if (metadata.getPersons().size() == 0 && TRANSFER_MODE.CREATE.equals(mode) && u != null) {
-      Person personU = new Person();
-      PersonTO pTo = new PersonTO();
+      final Person personU = new Person();
+      final PersonTO pTo = new PersonTO();
       personU.setFamilyName(u.getPerson().getFamilyName());
       personU.setGivenName(u.getPerson().getGivenName());
       personU.setCompleteName(u.getPerson().getCompleteName());
       personU.setAlternativeName(u.getPerson().getAlternativeName());
       if (!isNullOrEmpty(u.getPerson().getIdentifier())) {
-        IdentifierTO ito = new IdentifierTO();
+        final IdentifierTO ito = new IdentifierTO();
         ito.setValue(u.getPerson().getIdentifier());
         personU.setIdentifier(ito.getValue());
       }
@@ -245,15 +245,15 @@ public class ReverseTransferObjectFactory {
 
   public static void transferContributorOrganizations(List<OrganizationTO> orgs, Person person,
       TRANSFER_MODE mode) {
-    for (OrganizationTO orgTO : orgs) {
-      Organization org = new Organization();
+    for (final OrganizationTO orgTO : orgs) {
+      final Organization org = new Organization();
 
       if (mode == TRANSFER_MODE.CREATE) {
         // TODO: Organization can have only one identifier, why
         // OrganizationTO has many?
         // get only first one!
         if (orgTO.getIdentifiers().size() > 0) {
-          IdentifierTO ito = new IdentifierTO();
+          final IdentifierTO ito = new IdentifierTO();
           ito.setValue(orgTO.getIdentifiers().get(0).getValue());
           org.setIdentifier(ito.getValue());
           if (orgTO.getIdentifiers().size() > 1) {

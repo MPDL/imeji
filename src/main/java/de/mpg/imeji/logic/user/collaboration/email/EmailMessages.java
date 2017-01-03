@@ -55,12 +55,12 @@ public class EmailMessages {
    */
   public static String getNewPasswordMessage(String password, String email, String username,
       Locale locale) {
-    String msg = "";
+    final String msg = "";
     try {
-      String name = Imeji.CONFIG.getInstanceName();
+      final String name = Imeji.CONFIG.getInstanceName();
       return getEmailOnAccountAction_Body(password, email, username, "email_new_password", locale)
           .replace("XXX_INSTANCE_NAME_XXX", name);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       Logger.getLogger(EmailMessages.class).info("Will return empty message, due to some error", e);
       return msg;
     }
@@ -138,7 +138,7 @@ public class EmailMessages {
    */
   private static String getEmailOnAccountAction_Body(String password, String email, String username,
       String message_bundle, Locale locale) {
-    String userPage = Imeji.PROPERTIES.getApplicationURL() + "user?id=" + email;
+    final String userPage = Imeji.PROPERTIES.getApplicationURL() + "user?id=" + email;
     String emailMessage = getBundle(message_bundle, locale);
     if ("email_new_user".equals(message_bundle)) {
       emailMessage =

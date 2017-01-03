@@ -40,11 +40,11 @@ public class SuggestBean {
   public void init() {
     suggests = new HashMap<URI, Suggest>();
     try {
-      for (Statement s : new StatementService().searchAndRetrieve(null, null, Imeji.adminUser, -1,
-          0)) {
+      for (final Statement s : new StatementService().searchAndRetrieve(null, null, Imeji.adminUser,
+          -1, 0)) {
         suggests.put(s.getUri(), new Suggest(s));
       }
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -99,9 +99,9 @@ public class SuggestBean {
     public List<SelectItem> getRestrictedValues() {
       if (statement.getLiteralConstraints() != null
           && statement.getLiteralConstraints().size() > 0) {
-        List<SelectItem> list = new ArrayList<SelectItem>();
+        final List<SelectItem> list = new ArrayList<SelectItem>();
         list.add(new SelectItem(null, "-"));
-        for (String str : statement.getLiteralConstraints()) {
+        for (final String str : statement.getLiteralConstraints()) {
           list.add(new SelectItem(str, CommonUtils.extractFieldValue("name", str)));
         }
         return list;

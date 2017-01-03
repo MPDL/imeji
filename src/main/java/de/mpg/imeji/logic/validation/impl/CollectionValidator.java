@@ -47,8 +47,8 @@ public class CollectionValidator extends ContainerValidator implements Validator
    * @param c
    */
   private void validateCollectionPersons(CollectionImeji c) {
-    List<Person> validPersons = new ArrayList<Person>();
-    for (Person p : c.getMetadata().getPersons()) {
+    final List<Person> validPersons = new ArrayList<Person>();
+    for (final Person p : c.getMetadata().getPersons()) {
       if (validatePerson(p)) {
         validPersons.add(p);
       }
@@ -85,7 +85,7 @@ public class CollectionValidator extends ContainerValidator implements Validator
    * @return the valid organizations
    */
   private void validateOrgsName(Collection<Organization> organizations) {
-    for (Organization o : organizations) {
+    for (final Organization o : organizations) {
       if (isNullOrEmpty(o.getName().trim())) {
         exception = new UnprocessableError("error_organization_need_name", exception);
       }

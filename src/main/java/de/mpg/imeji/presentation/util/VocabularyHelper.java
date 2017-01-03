@@ -36,7 +36,7 @@ public class VocabularyHelper implements Serializable {
     try {
       loadProperties();
       initVocabularies(locale);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new RuntimeException(e);
     }
   }
@@ -46,7 +46,7 @@ public class VocabularyHelper implements Serializable {
    */
   public void initVocabularies(Locale locale) {
     vocabularies = new ArrayList<SelectItem>();
-    for (Object o : properties.keySet()) {
+    for (final Object o : properties.keySet()) {
       vocabularies.add(new SelectItem(properties.getProperty(o.toString()),
           Imeji.RESOURCE_BUNDLE.getLabel("vocabulary_" + o.toString(), locale)));
     }
@@ -64,10 +64,10 @@ public class VocabularyHelper implements Serializable {
           InputStream instream = null;
           try {
             instream = PropertyReader.getInputStream("vocabulary.properties");
-            Properties p = new Properties();
+            final Properties p = new Properties();
             p.load(instream);
             properties = p;
-          } catch (Exception e) {
+          } catch (final Exception e) {
             throw new RuntimeException(e);
           } finally {
             if (instream != null) {
@@ -89,7 +89,7 @@ public class VocabularyHelper implements Serializable {
     if (uri == null) {
       return null;
     } else {
-      for (SelectItem voc : vocabularies) {
+      for (final SelectItem voc : vocabularies) {
         if (voc.getValue().toString().equals(uri.toString())) {
           return voc.getLabel();
         }

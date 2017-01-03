@@ -36,12 +36,12 @@ public class ExportServlet extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    SessionBean session = getSessionBean(req, resp);
-    String instanceName = session.getInstanceName();
-    User user = session.getUser();
+    final SessionBean session = getSessionBean(req, resp);
+    final String instanceName = session.getInstanceName();
+    final User user = session.getUser();
 
     try {
-      ExportManager exportManager = new ExportManager(resp.getOutputStream(), user,
+      final ExportManager exportManager = new ExportManager(resp.getOutputStream(), user,
           req.getParameterMap(), session.getSelected());
       String exportName = instanceName + "_";
       exportName += new Date().toString().replace(" ", "_").replace(":", "-");
@@ -55,7 +55,7 @@ public class ExportServlet extends HttpServlet {
       resp.setHeader("Content-Type", exportManager.getContentType() + ";charset=UTF-8");
       resp.setHeader("Content-disposition", "filename=" + exportName);
       resp.setStatus(HttpServletResponse.SC_OK);
-      SearchResult result = exportManager.search();
+      final SearchResult result = exportManager.search();
       exportManager.export(result, user);
 
       NotificationUtils.notifyByExport(user, exportManager.getExport(), session);
@@ -63,9 +63,9 @@ public class ExportServlet extends HttpServlet {
       resp.getOutputStream().flush();
 
 
-    } catch (HttpResponseException he) {
+    } catch (final HttpResponseException he) {
       resp.sendError(he.getStatusCode(), he.getMessage());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
     }
   }
@@ -79,14 +79,14 @@ public class ExportServlet extends HttpServlet {
    * @return
    */
   private SessionBean getSessionBean(HttpServletRequest req, HttpServletResponse resp) {
-    FacesContext fc = getFacesContext(req, resp);
-    Object session = fc.getExternalContext().getSessionMap().get("SessionBean");
+    final FacesContext fc = getFacesContext(req, resp);
+    final Object session = fc.getExternalContext().getSessionMap().get("SessionBean");
     if (session == null) {
       try {
-        SessionBean newSession = SessionBean.class.newInstance();
+        final SessionBean newSession = SessionBean.class.newInstance();
         fc.getExternalContext().getSessionMap().put("SessionBean", newSession);
         return newSession;
-      } catch (Exception e) {
+      } catch (final Exception e) {
         throw new RuntimeException("Error creating Session", e);
       }
     }
@@ -104,17 +104,17 @@ public class ExportServlet extends HttpServlet {
     // Try to get it first
     FacesContext facesContext = FacesContext.getCurrentInstance();
     // if (facesContext != null) return facesContext;
-    FacesContextFactory contextFactory =
+    final FacesContextFactory contextFactory =
         (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
-    LifecycleFactory lifecycleFactory =
+    final LifecycleFactory lifecycleFactory =
         (LifecycleFactory) FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
-    Lifecycle lifecycle = lifecycleFactory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
+    final Lifecycle lifecycle = lifecycleFactory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
     facesContext =
         contextFactory.getFacesContext(getServletContext(), request, response, lifecycle);
     // Set using our inner class
     InnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
     // set a new viewRoot, otherwise context.getViewRoot returns null
-    UIViewRoot view =
+    final UIViewRoot view =
         facesContext.getApplication().getViewHandler().createView(facesContext, "imeji");
     facesContext.setViewRoot(view);
     return facesContext;

@@ -123,7 +123,7 @@ public class EditItemMetadataBean extends SuperBean {
         redirectToCollectionItemsPage(collectionId);
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("no_items_to_edit", getLocale()));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       redirectToView();
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", getLocale()) + " " + e.getMessage());
       LOGGER.error("Error init Edit page", e);
@@ -186,7 +186,7 @@ public class EditItemMetadataBean extends SuperBean {
         isProfileWithStatements = false;
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("profile_empty", getLocale()));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", getLocale()) + " " + e);
       LOGGER.error("Error init Edit page", e);
     }
@@ -213,12 +213,12 @@ public class EditItemMetadataBean extends SuperBean {
   private void initStatementsMenu() {
     statementMenu = new ArrayList<SelectItem>();
     try {
-      for (Statement s : new StatementService().searchAndRetrieve(null, null, getSessionUser(), -1,
-          0)) {
+      for (final Statement s : new StatementService().searchAndRetrieve(null, null,
+          getSessionUser(), -1, 0)) {
         statementMenu.add(new SelectItem(s.getId().toString(),
             metadataLabels.getInternationalizedLabels().get(s.getId())));
       }
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -258,7 +258,7 @@ public class EditItemMetadataBean extends SuperBean {
    * @throws ImejiException
    */
   public List<Item> loaditems(List<String> uris) throws ImejiException {
-    ItemService itemController = new ItemService();
+    final ItemService itemController = new ItemService();
     return (List<Item>) itemController.retrieveBatch(uris, -1, 0, getSessionUser());
   }
 
@@ -269,9 +269,9 @@ public class EditItemMetadataBean extends SuperBean {
    * @throws IOException
    */
   public List<String> searchItems() throws ImejiException {
-    SearchQuery sq = SearchQueryParser.parseStringQuery(query);
-    ItemService itemController = new ItemService();
-    SearchResult sr =
+    final SearchQuery sq = SearchQueryParser.parseStringQuery(query);
+    final ItemService itemController = new ItemService();
+    final SearchResult sr =
         itemController.search(URI.create(collectionId), sq, null, getSessionUser(), null, -1, 0);
     return sr.getResults();
   }
@@ -317,10 +317,10 @@ public class EditItemMetadataBean extends SuperBean {
       editor.save();
       redirectToView();
       return;
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error saving batch editor", e);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()));
       LOGGER.error("Error saving batch editor", e);
     }
@@ -356,10 +356,10 @@ public class EditItemMetadataBean extends SuperBean {
    */
   private void unlockImages(List<String> uris) {
     try {
-      for (String uri : uris) {
+      for (final String uri : uris) {
         Locks.unLock(new Lock(uri, getSessionUser().getEmail()));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error unlocking items", e);
     }
 
@@ -414,7 +414,7 @@ public class EditItemMetadataBean extends SuperBean {
    * @return
    */
   public String clearAll() {
-    for (ItemWrapper eib : editor.getItems()) {
+    for (final ItemWrapper eib : editor.getItems()) {
       eib.clear(statement);
     }
     return "";
@@ -443,11 +443,11 @@ public class EditItemMetadataBean extends SuperBean {
    */
   private List<MetadataWrapper> fillEmtpyValues(List<MetadataWrapper> l1,
       List<MetadataWrapper> l2) {
-    List<MetadataWrapper> filled = new ArrayList<MetadataWrapper>();
-    for (MetadataWrapper md1 : l1) {
-      boolean emtpy1 = MetadataUtil.isEmpty(md1.asMetadata());
-      for (MetadataWrapper md2 : l2) {
-        boolean emtpy2 = MetadataUtil.isEmpty(md2.asMetadata());
+    final List<MetadataWrapper> filled = new ArrayList<MetadataWrapper>();
+    for (final MetadataWrapper md1 : l1) {
+      final boolean emtpy1 = MetadataUtil.isEmpty(md1.asMetadata());
+      for (final MetadataWrapper md2 : l2) {
+        final boolean emtpy2 = MetadataUtil.isEmpty(md2.asMetadata());
         if (md1.getStatementId().equals(md2.getStatementId())) {
           if (emtpy1 && !emtpy2) {
             filled.add(md2.copy());
@@ -468,13 +468,13 @@ public class EditItemMetadataBean extends SuperBean {
    */
   public Statement getSelectedStatement() {
     try {
-      for (Statement s : new StatementService().searchAndRetrieve(null, null, getSessionUser(), -1,
-          0)) {
+      for (final Statement s : new StatementService().searchAndRetrieve(null, null,
+          getSessionUser(), -1, 0)) {
         if (s.getId().toString().equals(selectedStatementName)) {
           return s;
         }
       }
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }

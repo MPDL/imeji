@@ -28,7 +28,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @ViewScoped
 public class CollectionItemBean extends ItemBean {
   private static final long serialVersionUID = -6273094031705225499L;
-  private String collectionId;
+  private final String collectionId;
   private static Logger LOGGER = Logger.getLogger(CollectionItemBean.class);
 
   public CollectionItemBean() {
@@ -52,7 +52,7 @@ public class CollectionItemBean extends ItemBean {
     try {
       redirect(getNavigation().getCollectionUrl() + collectionId + "/"
           + getNavigation().getBrowsePath());
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.error("Error redirect to browse page", e);
     }
   }

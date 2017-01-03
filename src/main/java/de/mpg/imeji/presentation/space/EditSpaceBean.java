@@ -50,8 +50,8 @@ public class EditSpaceBean extends SpaceBean {
 
   public boolean updatedSpace() throws ImejiException, IOException {
     try {
-      SpaceController spaceController = new SpaceController();
-      File spaceLogoFile = (getSessionBean().getSpaceLogoIngestImage() != null)
+      final SpaceController spaceController = new SpaceController();
+      final File spaceLogoFile = (getSessionBean().getSpaceLogoIngestImage() != null)
           ? getSessionBean().getSpaceLogoIngestImage().getFile() : null;
       setSpace(spaceController.update(getSpace(), getSelectedCollections(), spaceLogoFile,
           getSessionBean().getUser()));
@@ -62,11 +62,11 @@ public class EditSpaceBean extends SpaceBean {
       setIngestImage(null);
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_space_update", getLocale()));
       return true;
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.cleanMessages();
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_space_update", getLocale()));
-      List<String> listOfErrors = Arrays.asList(e.getMessage().split(";"));
-      for (String errorM : listOfErrors) {
+      final List<String> listOfErrors = Arrays.asList(e.getMessage().split(";"));
+      for (final String errorM : listOfErrors) {
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(errorM, getLocale()));
       }
       return false;

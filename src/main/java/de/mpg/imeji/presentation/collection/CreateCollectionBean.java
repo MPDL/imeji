@@ -71,7 +71,7 @@ public class CreateCollectionBean extends CollectionBean {
     if (createCollection()) {
       try {
         redirect(getNavigation().getCollectionUrl() + getCollection().getIdString());
-      } catch (IOException e) {
+      } catch (final IOException e) {
         LOGGER.error("Error redirecting after saving collection", e);
       }
     }
@@ -89,7 +89,7 @@ public class CreateCollectionBean extends CollectionBean {
       try {
         redirect(getNavigation().getProfileUrl() + extractIDFromURI(getCollection().getProfile())
             + "/edit?init=1&col=" + getCollection().getIdString());
-      } catch (IOException e) {
+      } catch (final IOException e) {
         LOGGER.error("Error redirect after create collection", e);
       }
     }
@@ -104,14 +104,14 @@ public class CreateCollectionBean extends CollectionBean {
    */
   public boolean createCollection() {
     try {
-      CollectionController collectionController = new CollectionController();
+      final CollectionController collectionController = new CollectionController();
       int pos = 0;
       // Set the position of the persons and organizations (used for the sorting later)
-      for (Person p : getCollection().getMetadata().getPersons()) {
+      for (final Person p : getCollection().getMetadata().getPersons()) {
         p.setPos(pos);
         pos++;
         int pos2 = 0;
-        for (Organization o : p.getOrganizations()) {
+        for (final Organization o : p.getOrganizations()) {
           o.setPos(pos2);
           pos2++;
         }
@@ -124,18 +124,18 @@ public class CreateCollectionBean extends CollectionBean {
             new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
       }
       setSendEmailNotification(isSendEmailNotification());
-      UserBusinessController uc = new UserBusinessController();
+      final UserBusinessController uc = new UserBusinessController();
       uc.update(getSessionUser(), getSessionUser());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_create", getLocale()));
       return true;
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error create collection", e);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.cleanMessages();
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getLocalizedMessage(), getLocale()));
       LOGGER.error("Error create collection", e);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error create collection", e);
     }
     return false;
@@ -160,7 +160,7 @@ public class CreateCollectionBean extends CollectionBean {
   }
 
   public String getVocabularyLabel(URI id) {
-    for (SelectItem item : vocabularyHelper.getVocabularies()) {
+    for (final SelectItem item : vocabularyHelper.getVocabularies()) {
       if (id.toString().equals(item.getValue().toString())) {
         return item.getLabel();
       }

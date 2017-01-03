@@ -51,7 +51,7 @@ public class InternalStorageAdministrator implements StorageAdministrator {
   /**
    * The directory in file system of the {@link InternalStorage}
    */
-  private File storageDir;
+  private final File storageDir;
 
   /**
    * Constructor
@@ -88,7 +88,7 @@ public class InternalStorageAdministrator implements StorageAdministrator {
    * @return
    */
   private long getNumberOfFiles(String directory) {
-    File f = new File(directory);
+    final File f = new File(directory);
     return FileUtils.listFiles(f, FileFilterUtils.fileFileFilter(), TrueFileFilter.INSTANCE).size();
   }
 
@@ -121,10 +121,10 @@ public class InternalStorageAdministrator implements StorageAdministrator {
   public int clean() {
     int deleted = 0;
     LOGGER.info("Start cleaning...");
-    for (File f : FileUtils.listFiles(storageDir, null, true)) {
+    for (final File f : FileUtils.listFiles(storageDir, null, true)) {
       if (f.isFile()) {
-        InternalStorageManager m = new InternalStorageManager();
-        String url = m.transformPathToUrl(f.getPath());
+        final InternalStorageManager m = new InternalStorageManager();
+        final String url = m.transformPathToUrl(f.getPath());
         if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFileUrl(url), null).size() == 0
             && ImejiSPARQL.exec(JenaCustomQueries.selectSpaceIdOfFileOrCollection(url), null)
                 .size() == 0) {

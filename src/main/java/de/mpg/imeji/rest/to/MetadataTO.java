@@ -6,7 +6,7 @@ import de.mpg.imeji.logic.vo.Metadata;
 
 /**
  * TO for {@link Metadata}
- * 
+ *
  * @author saquet
  *
  */

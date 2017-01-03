@@ -32,7 +32,7 @@ public class StatementWrapper implements Serializable {
   private transient VocabularyHelper vocabularyHelper;
   private boolean showRemoveWarning = false;
   private int level = 0;
-  private Locale locale;
+  private final Locale locale;
   /**
    * True if this {@link Statement} is used by at least on {@link Metadata} in imeji
    */
@@ -189,7 +189,8 @@ public class StatementWrapper implements Serializable {
    */
   public void constraintListener(ValueChangeEvent event) {
     if (event.getNewValue() != null && event.getNewValue() != event.getOldValue()) {
-      int pos = Integer.parseInt(event.getComponent().getAttributes().get("position").toString());
+      final int pos =
+          Integer.parseInt(event.getComponent().getAttributes().get("position").toString());
       ((List<String>) statement.getLiteralConstraints()).set(pos, event.getNewValue().toString());
     }
   }

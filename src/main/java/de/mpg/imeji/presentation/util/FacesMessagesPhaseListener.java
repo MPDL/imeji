@@ -27,6 +27,10 @@ import org.apache.log4j.Logger;
  * @version $Revision: 1891 $ $LastChangedDate: 2008-12-23 11:13:59 +0100 (Di, 23 Dez 2008) $
  */
 public class FacesMessagesPhaseListener implements PhaseListener {
+  /**
+   *
+   */
+  private static final long serialVersionUID = -598831434225897621L;
   private static final Logger LOGGER = Logger.getLogger(FacesMessagesPhaseListener.class);
   private static final String sessionToken = "REDIRECT_MESSAGES_SUPPORT";
 
@@ -76,10 +80,10 @@ public class FacesMessagesPhaseListener implements PhaseListener {
    */
   private int cacheMessages(FacesContext context) {
     int cachedCount = 0;
-    Iterator<String> clientIdsWithMessages = context.getClientIdsWithMessages();
+    final Iterator<String> clientIdsWithMessages = context.getClientIdsWithMessages();
     while (clientIdsWithMessages.hasNext()) {
-      String clientId = clientIdsWithMessages.next();
-      Iterator<FacesMessage> iterator = context.getMessages(clientId);
+      final String clientId = clientIdsWithMessages.next();
+      final Iterator<FacesMessage> iterator = context.getMessages(clientId);
       Collection<FacesMessage> cachedMessages = getMessageCache(context).get(clientId);
       if (cachedMessages == null) {
         // cachedMessages = new TreeSet<FacesMessage>(new FacesMessageComparator());
@@ -87,7 +91,7 @@ public class FacesMessagesPhaseListener implements PhaseListener {
         getMessageCache(context).put(clientId, cachedMessages);
       }
       while (iterator.hasNext()) {
-        FacesMessage facesMessage = iterator.next();
+        final FacesMessage facesMessage = iterator.next();
         if (cachedMessages.add(facesMessage)) {
           cachedCount++;
         }
@@ -104,8 +108,8 @@ public class FacesMessagesPhaseListener implements PhaseListener {
    */
   private void restoreMessages(FacesContext context) {
     if (!getMessageCache(context).isEmpty()) {
-      for (String clientId : getMessageCache(context).keySet()) {
-        for (FacesMessage message : getMessageCache(context).get(clientId)) {
+      for (final String clientId : getMessageCache(context).keySet()) {
+        for (final FacesMessage message : getMessageCache(context).get(clientId)) {
           context.addMessage(clientId, message);
         }
       }
@@ -123,7 +127,7 @@ public class FacesMessagesPhaseListener implements PhaseListener {
       return (Map<String, Collection<FacesMessage>>) context.getExternalContext().getSessionMap()
           .get(sessionToken);
     } else {
-      Map<String, Collection<FacesMessage>> messageCache =
+      final Map<String, Collection<FacesMessage>> messageCache =
           Collections.synchronizedMap(new HashMap<String, Collection<FacesMessage>>());
       context.getExternalContext().getSessionMap().put(sessionToken, messageCache);
       return messageCache;

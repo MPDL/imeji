@@ -49,12 +49,12 @@ public class MaxPlanckInstitutUtils {
   public static String getInstituteNameForIP(String userIP) {
     if (MPINameMap != null) {
       try {
-        for (String ipRange : MPINameMap.keySet()) {
+        for (final String ipRange : MPINameMap.keySet()) {
           if (IPUtils.isInRange(ipRange, userIP)) {
             return MPINameMap.get(ipRange);
           }
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error reading the institute name", e);
       }
     }
@@ -70,12 +70,12 @@ public class MaxPlanckInstitutUtils {
   public static String getInstituteIdForIP(String userIP) {
     if (IdMap != null) {
       try {
-        for (String ipRange : IdMap.keySet()) {
+        for (final String ipRange : IdMap.keySet()) {
           if (IPUtils.isInRange(ipRange, userIP)) {
             return IdMap.get(ipRange);
           }
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error reading the institute Id", e);
       }
     }
@@ -91,7 +91,7 @@ public class MaxPlanckInstitutUtils {
     try {
       LOGGER.info("Reading MPG Institute IP Mapping by name");
       MPINameMap = readMPIMap(1, 4);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("There was a problem with finding the MPINameMap: " + e.getLocalizedMessage());
     }
   }
@@ -105,7 +105,7 @@ public class MaxPlanckInstitutUtils {
     try {
       LOGGER.info("Reading MPG Institute IP Mapping by ID");
       IdMap = readMPIMap(1, 2);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("There was a problem with finding the IdMap: " + e.getLocalizedMessage());
     }
   }
@@ -119,21 +119,21 @@ public class MaxPlanckInstitutUtils {
    */
   private static Map<String, String> readMPIMap(int keyPosition, int valuePosition) {
     try {
-      URL mpiCSV = new URL(MAX_PLANCK_INSTITUTES_IP_URL);
-      URLConnection con = mpiCSV.openConnection();
+      final URL mpiCSV = new URL(MAX_PLANCK_INSTITUTES_IP_URL);
+      final URLConnection con = mpiCSV.openConnection();
       con.setConnectTimeout(TIME_OUT);
-      BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+      final BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
       String line = "";
-      String cvsSplitBy = ";";
-      Map<String, String> maps = new HashMap<String, String>();
+      final String cvsSplitBy = ";";
+      final Map<String, String> maps = new HashMap<String, String>();
       while ((line = br.readLine()) != null) {
         // use comma as separator
-        String[] institute = line.split(cvsSplitBy);
+        final String[] institute = line.split(cvsSplitBy);
         maps.put(institute[keyPosition], institute[valuePosition]);
       }
       return maps;
 
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("There was a problem by getting the MPI Map: (" + e.getLocalizedMessage()
           + ")! Check your internet connection. ");
       return null;

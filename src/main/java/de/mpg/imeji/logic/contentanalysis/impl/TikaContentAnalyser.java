@@ -21,7 +21,7 @@ import de.mpg.imeji.logic.vo.TechnicalMetadata;
 
 /**
  * A content analyser based on apache Tika
- * 
+ *
  * @author saquet
  *
  */
@@ -34,23 +34,23 @@ public class TikaContentAnalyser implements ContentAnalyser {
 
   @Override
   public String extractFulltext(File file) {
-    Tika tika = new Tika();
-    ContentAnalyse contentAnalyse = new ContentAnalyse();
-    Metadata metadata = new Metadata();
+    final Tika tika = new Tika();
+    final ContentAnalyse contentAnalyse = new ContentAnalyse();
+    final Metadata metadata = new Metadata();
     try {
       InputStream stream = null;
       try {
         stream = TikaInputStream.get(file.toPath());
         contentAnalyse
             .setFulltext(cleanText(tika.parseToString(stream, metadata, BODY_MAX_LENGHT)));
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error extracting fulltext/metadata from file", e);
       } finally {
         if (stream != null) {
           stream.close();
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error closing stream", e);
     }
     return contentAnalyse.getFulltext();
@@ -58,22 +58,22 @@ public class TikaContentAnalyser implements ContentAnalyser {
 
   @Override
   public List<TechnicalMetadata> extractTechnicalMetadata(File file) {
-    Tika tika = new Tika();
-    ContentAnalyse contentAnalyse = new ContentAnalyse();
-    Metadata metadata = new Metadata();
+    final Tika tika = new Tika();
+    final ContentAnalyse contentAnalyse = new ContentAnalyse();
+    final Metadata metadata = new Metadata();
     try {
       InputStream stream = null;
       Reader reader = null;
       try {
         stream = TikaInputStream.get(file.toPath());
         reader = tika.parse(stream, metadata);
-        for (String name : metadata.names()) {
+        for (final String name : metadata.names()) {
           if (metadata.get(name).length() < METADATA_MAX_LENGHT) {
             contentAnalyse.getTechnicalMetadata()
                 .add(new TechnicalMetadata(name, metadata.get(name)));
           }
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error extracting fulltext/metadata from file", e);
       } finally {
         if (stream != null) {
@@ -84,7 +84,7 @@ public class TikaContentAnalyser implements ContentAnalyser {
         }
 
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error closing stream", e);
     }
     return contentAnalyse.getTechnicalMetadata();
@@ -92,29 +92,29 @@ public class TikaContentAnalyser implements ContentAnalyser {
 
   @Override
   public ContentAnalyse extractAll(File file) {
-    Tika tika = new Tika();
-    ContentAnalyse contentAnalyse = new ContentAnalyse();
-    Metadata metadata = new Metadata();
+    final Tika tika = new Tika();
+    final ContentAnalyse contentAnalyse = new ContentAnalyse();
+    final Metadata metadata = new Metadata();
     try {
       TikaInputStream stream = null;
       try {
         stream = TikaInputStream.get(file.toPath());
         contentAnalyse
             .setFulltext(cleanText(tika.parseToString(stream, metadata, BODY_MAX_LENGHT)));
-        for (String name : metadata.names()) {
+        for (final String name : metadata.names()) {
           if (metadata.get(name).length() < METADATA_MAX_LENGHT) {
             contentAnalyse.getTechnicalMetadata()
                 .add(new TechnicalMetadata(name, metadata.get(name)));
           }
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error extracting fulltext/metadata from file", e);
       } finally {
         if (stream != null) {
           stream.close();
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error closing stream", e);
     }
     return contentAnalyse;
@@ -122,14 +122,14 @@ public class TikaContentAnalyser implements ContentAnalyser {
 
   /**
    * Clean the text to make it better for search
-   * 
+   *
    * @param text
    * @return
    * @throws IOException
    */
   private String cleanText(String text) throws IOException {
-    BufferedReader reader = new BufferedReader(new StringReader(text));
-    ByteArrayOutputStream bous = new ByteArrayOutputStream();
+    final BufferedReader reader = new BufferedReader(new StringReader(text));
+    final ByteArrayOutputStream bous = new ByteArrayOutputStream();
     String line = "";
     while ((line = reader.readLine()) != null) {
       bous.write((line + " ").getBytes(Charset.forName("UTF-8")));

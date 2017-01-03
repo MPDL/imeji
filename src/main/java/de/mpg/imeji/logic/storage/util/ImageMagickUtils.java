@@ -41,15 +41,15 @@ public class ImageMagickUtils {
    */
   public static boolean verifyImageMagickInstallation() {
     try {
-      String imPath = getImageMagickInstallationPath();
-      ConvertCmd cmd = new ConvertCmd(false);
+      final String imPath = getImageMagickInstallationPath();
+      final ConvertCmd cmd = new ConvertCmd(false);
       ProcessStarter.setGlobalSearchPath(imPath);
       cmd.setSearchPath(imPath);
-      IMOperation op = new IMOperation();
+      final IMOperation op = new IMOperation();
       // get ImageMagick version
       op.version();
       cmd.run(op);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("imagemagick not installed", e);
       return false;
     }
@@ -71,10 +71,10 @@ public class ImageMagickUtils {
     // In case the file is made of many frames, (for instance videos), generate only the frames from
     // 0 to 48 to
     // avoid high memory consumption
-    String path = tmp.getAbsolutePath() + "[0-48]";
-    ConvertCmd cmd = getConvert();
+    final String path = tmp.getAbsolutePath() + "[0-48]";
+    final ConvertCmd cmd = getConvert();
     // create the operation, add images and operators/options
-    IMOperation op = new IMOperation();
+    final IMOperation op = new IMOperation();
     if (isImage(extension)) {
       op.colorspace(findColorSpace(tmp));
     }
@@ -82,13 +82,13 @@ public class ImageMagickUtils {
     op.flatten();
     op.addImage(path);
     // op.colorspace("RGB");
-    File jpeg = TempFileUtil.createTempFile("uploadMagick", ".jpg");
+    final File jpeg = TempFileUtil.createTempFile("uploadMagick", ".jpg");
     try {
       op.addImage(jpeg.getAbsolutePath());
       cmd.run(op);
-      int frame = getNonBlankFrame(jpeg.getAbsolutePath());
+      final int frame = getNonBlankFrame(jpeg.getAbsolutePath());
       if (frame >= 0) {
-        File f = new File(FilenameUtils.getFullPath(jpeg.getAbsolutePath())
+        final File f = new File(FilenameUtils.getFullPath(jpeg.getAbsolutePath())
             + FilenameUtils.getBaseName(jpeg.getAbsolutePath()) + "-" + frame + ".jpg");
         return f;
       }
@@ -111,11 +111,11 @@ public class ImageMagickUtils {
       if (!imageMagickEnabled) {
         return null;
       }
-      String path = file.getAbsolutePath();
-      ConvertCmd cmd = ImageMagickUtils.getConvert();
+      final String path = file.getAbsolutePath();
+      final ConvertCmd cmd = ImageMagickUtils.getConvert();
       // create the operation, add images and operators/options
-      IMOperation op = new IMOperation();
-      int size = getSize(file, resolution);
+      final IMOperation op = new IMOperation();
+      final int size = getSize(file, resolution);
       if (resolution == FileResolution.THUMBNAIL) {
         op.thumbnail(size, size, "^");
       } else {
@@ -124,14 +124,14 @@ public class ImageMagickUtils {
       op.gravity("center");
       op.extent(size);
       op.addImage(path);
-      File gif = TempFileUtil.createTempFile("uploadMagick", ".gif");
+      final File gif = TempFileUtil.createTempFile("uploadMagick", ".gif");
       try {
         op.addImage(gif.getAbsolutePath());
         cmd.run(op);
         return gif;
       } finally {
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error transforming gif", e);
     }
     return null;
@@ -146,8 +146,8 @@ public class ImageMagickUtils {
    * @throws Exception
    */
   private static int getSize(File file, FileResolution resolution) throws Exception {
-    int size = ImageUtils.getResolution(resolution);
-    Info info = ImageMagickUtils.getInfo(file);
+    final int size = ImageUtils.getResolution(resolution);
+    final Info info = ImageMagickUtils.getInfo(file);
     if (info.getImageWidth() > size || info.getImageHeight() > size) {
       return size;
     } else {
@@ -179,12 +179,12 @@ public class ImageMagickUtils {
    */
   public static String findColorSpace(File tmp) {
     try {
-      Info imageInfo = new Info(tmp.getAbsolutePath());
-      String cs = imageInfo.getProperty("Colorspace");
+      final Info imageInfo = new Info(tmp.getAbsolutePath());
+      final String cs = imageInfo.getProperty("Colorspace");
       if (cs != null) {
         return cs;
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("No color space found for " + tmp.getAbsolutePath(), e);
     }
     return "RGB";
@@ -214,29 +214,30 @@ public class ImageMagickUtils {
    */
   public static int getNonBlankFrame(String path)
       throws IOException, URISyntaxException, InterruptedException, IM4JavaException {
-    ConvertCmd cmd = getConvert();
+    final ConvertCmd cmd = getConvert();
     int count = 0;
-    String dir = FilenameUtils.getFullPath(path);
-    String pathBase = FilenameUtils.getBaseName(path);
+    final String dir = FilenameUtils.getFullPath(path);
+    final String pathBase = FilenameUtils.getBaseName(path);
     File f = new File(dir + pathBase + "-" + count + ".jpg");
     while (f.exists()) {
-      IMOperation op = new IMOperation();
+      final IMOperation op = new IMOperation();
       op.addImage();
       op.shave(1, 1, true);
       op.fuzz(10.0, true);
       op.trim();
       op.addImage();
-      File trim = TempFileUtil.createTempFile("trim", ".jpg");
+      final File trim = TempFileUtil.createTempFile("trim", ".jpg");
       try {
         cmd.run(op, f.getAbsolutePath(), trim.getAbsolutePath());
-        Info info = new Info(trim.getAbsolutePath());
+        final Info info = new Info(trim.getAbsolutePath());
         if (!info.getImageGeometry().contains("1x1")) {
           return count;
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.info("Some problems with getting non blank frame!", e);
       } finally {
-        String newPath = f.getAbsolutePath().replace("-" + count, "-" + Integer.valueOf(count + 1));
+        final String newPath =
+            f.getAbsolutePath().replace("-" + count, "-" + Integer.valueOf(count + 1));
         f = new File(newPath);
         count++;
         trim.delete();
@@ -252,11 +253,12 @@ public class ImageMagickUtils {
    */
   private static void removeFilesCreatedByImageMagick(String path) {
     int count = 0;
-    String dir = FilenameUtils.getFullPath(path);
-    String pathBase = FilenameUtils.getBaseName(path);
+    final String dir = FilenameUtils.getFullPath(path);
+    final String pathBase = FilenameUtils.getBaseName(path);
     File f = new File(dir + pathBase + "-" + count + ".jpg");
     while (f.exists()) {
-      String newPath = f.getAbsolutePath().replace("-" + count, "-" + Integer.valueOf(count + 1));
+      final String newPath =
+          f.getAbsolutePath().replace("-" + count, "-" + Integer.valueOf(count + 1));
       f.delete();
       f = new File(newPath);
       count++;
@@ -271,8 +273,8 @@ public class ImageMagickUtils {
    * @throws URISyntaxException
    */
   public static ConvertCmd getConvert() throws IOException, URISyntaxException {
-    String magickPath = getImageMagickInstallationPath();
-    ConvertCmd cmd = new ConvertCmd(false);
+    final String magickPath = getImageMagickInstallationPath();
+    final ConvertCmd cmd = new ConvertCmd(false);
     cmd.setSearchPath(magickPath);
     return cmd;
   }

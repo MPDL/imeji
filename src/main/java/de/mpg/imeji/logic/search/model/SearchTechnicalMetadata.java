@@ -4,11 +4,15 @@ import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 
 /**
  * Search element for technical metadata
- * 
+ *
  * @author saquet
  *
  */
 public class SearchTechnicalMetadata extends SearchPair {
+  /**
+   *
+   */
+  private static final long serialVersionUID = -2241342408739861614L;
   private final String label;
 
   public SearchTechnicalMetadata() {

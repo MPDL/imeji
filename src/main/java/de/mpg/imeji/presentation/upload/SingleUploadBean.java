@@ -93,14 +93,14 @@ public class SingleUploadBean extends SuperBean implements Serializable {
           loadCollections();
           prepareEditor();
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         BeanHelper.error(e.getLocalizedMessage());
         LOGGER.error("Error initialization single upload", e);
       }
     } else if (getSessionUser() != null) {
       try {
         redirect(getNavigation().getHomeUrl() + "?uploadForbidden=1");
-      } catch (IOException e) {
+      } catch (final IOException e) {
         LOGGER.error("Error redirecting", e);
       }
     }
@@ -109,8 +109,8 @@ public class SingleUploadBean extends SuperBean implements Serializable {
 
   public String save() {
     try {
-      Item item = ImejiFactory.newItem(getCollection());
-      SingleEditorWrapper edit = new SingleEditorWrapper(item, getSessionUser(), getLocale());
+      final Item item = ImejiFactory.newItem(getCollection());
+      final SingleEditorWrapper edit = new SingleEditorWrapper(item, getSessionUser(), getLocale());
       edit.getEditor().validateAndFormatItemsForSaving();
       if (licenseEditor != null) {
         item.getLicenses().add(licenseEditor.getLicense());
@@ -120,7 +120,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
       sus.uploaded();
       BeanHelper.cleanMessages();
       reloadItemPage(item.getIdString(), ObjectHelper.getId(item.getCollection()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("There has been an error during saving of the item: " + e.getMessage());
       LOGGER.error("Error single upload: ", e);
     }
@@ -135,11 +135,11 @@ public class SingleUploadBean extends SuperBean implements Serializable {
    */
   private void reloadItemPage(String itemIdString, String collectionIdString) {
     try {
-      String redirectUrl = getNavigation().getCollectionUrl() + collectionIdString + "/"
+      final String redirectUrl = getNavigation().getCollectionUrl() + collectionIdString + "/"
           + getNavigation().getItemPath() + "/" + itemIdString;
 
       redirect(redirectUrl);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       Logger.getLogger(UserBean.class).info("Error reloading the page", e);
     }
   }
@@ -151,7 +151,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
    * @throws Exception
    */
   private void prepareEditor() throws Exception {
-    StorageController sc = new StorageController();
+    final StorageController sc = new StorageController();
     if (sc.guessNotAllowedFormat(sus.getIngestImage().getFile()).equals(StorageUtils.BAD_FORMAT)) {
       sus.reset();
       throw new TypeNotAllowedException(
@@ -162,7 +162,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
 
   private Item uploadFileToItem(Item item, CollectionImeji col, File file, String title)
       throws ImejiException {
-    ItemService controller = new ItemService();
+    final ItemService controller = new ItemService();
     item = controller.create(item, col, file, title, getSessionUser(), null, null);
     sus.setUploadedItem(item);
     return item;
@@ -175,7 +175,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
    * @throws TypeNotAllowedException
    */
   public void upload() throws FileUploadException, TypeNotAllowedException {
-    HttpServletRequest request =
+    final HttpServletRequest request =
         (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
     List<String> techMd = new ArrayList<String>();
     this.ingestImage = getUploadedIngestFile(request);
@@ -196,19 +196,19 @@ public class SingleUploadBean extends SuperBean implements Serializable {
   private IngestImage getUploadedIngestFile(HttpServletRequest request)
       throws FileUploadException, TypeNotAllowedException {
     File tmp = null;
-    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-    IngestImage ii = new IngestImage();
+    final boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    final IngestImage ii = new IngestImage();
     if (isMultipart) {
-      ServletFileUpload upload = new ServletFileUpload();
+      final ServletFileUpload upload = new ServletFileUpload();
       try {
-        FileItemIterator iter = upload.getItemIterator(request);
+        final FileItemIterator iter = upload.getItemIterator(request);
         while (iter.hasNext()) {
-          FileItemStream fis = iter.next();
-          String filename = fis.getName();
-          InputStream in = fis.openStream();
+          final FileItemStream fis = iter.next();
+          final String filename = fis.getName();
+          final InputStream in = fis.openStream();
           tmp = TempFileUtil.createTempFile("singleupload",
               "." + FilenameUtils.getExtension(filename));
-          FileOutputStream fos = new FileOutputStream(tmp);
+          final FileOutputStream fos = new FileOutputStream(tmp);
           if (!fis.isFormField()) {
             try {
               IOUtils.copy(in, fos);
@@ -236,7 +236,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
     if (!"".equals(selectedCollectionItem)) {
       sus.setSelectedCollectionItem(selectedCollectionItem);
 
-      CollectionImeji collection = new CollectionController()
+      final CollectionImeji collection = new CollectionController()
           .retrieveLazy(URI.create(selectedCollectionItem), getSessionUser());
       sus.setCollection(collection);
       licenseEditor = new LicenseEditor(getLocale(), collection.getStatus().equals(Status.PENDING));
@@ -263,14 +263,14 @@ public class SingleUploadBean extends SuperBean implements Serializable {
    * @throws ImejiException
    */
   private void loadCollections() throws ImejiException {
-    for (CollectionImeji c : retrieveAllUserCollections()) {
+    for (final CollectionImeji c : retrieveAllUserCollections()) {
       if (SecurityUtil.staticAuth().createContent(getSessionUser(), c)) {
         collectionItems.add(new SelectItem(c.getId(), c.getMetadata().getTitle()));
       }
     }
     // If the user hasn't any collection but is allowed to create one, create a default collection
     if (collectionItems.isEmpty() && SecurityUtil.isAllowedToCreateCollection(getSessionUser())) {
-      CollectionImeji defaultCollection = createDefaultCollection();
+      final CollectionImeji defaultCollection = createDefaultCollection();
       collectionItems.add(
           new SelectItem(defaultCollection.getId(), defaultCollection.getMetadata().getTitle()));
     }
@@ -292,11 +292,11 @@ public class SingleUploadBean extends SuperBean implements Serializable {
    * @throws ImejiException
    */
   private List<CollectionImeji> retrieveAllUserCollections() throws ImejiException {
-    CollectionController cc = new CollectionController();
-    SearchQuery sq = new SearchQuery();
-    SortCriterion sortCriterion =
+    final CollectionController cc = new CollectionController();
+    final SearchQuery sq = new SearchQuery();
+    final SortCriterion sortCriterion =
         new SortCriterion(new SearchIndex(SearchFields.title), SortOrder.ASCENDING);
-    SearchResult results =
+    final SearchResult results =
         cc.search(sq, sortCriterion, -1, 0, getSessionUser(), selectedSpaceString);
     return (List<CollectionImeji>) cc.retrieveBatchLazy(results.getResults(), -1, 0,
         getSessionUser());
@@ -308,16 +308,16 @@ public class SingleUploadBean extends SuperBean implements Serializable {
    * @throws ImejiException
    */
   private CollectionImeji createDefaultCollection() throws ImejiException {
-    CollectionController cc = new CollectionController();
-    CollectionImeji newC = ImejiFactory.newCollection();
+    final CollectionController cc = new CollectionController();
+    final CollectionImeji newC = ImejiFactory.newCollection();
     newC.getMetadata()
         .setTitle("Default first collection of " + getSessionUser().getPerson().getCompleteName());
 
-    Person creatorUser = getSessionUser().getPerson();
+    final Person creatorUser = getSessionUser().getPerson();
 
     // If there are no organizations for Current User, add one
     if ("".equals(creatorUser.getOrganizationString())) {
-      Organization creatorOrganization = new Organization();
+      final Organization creatorOrganization = new Organization();
       creatorUser.getOrganizations().clear();
       creatorOrganization.setName("Organization name not specified");
       creatorUser.getOrganizations().add(creatorOrganization);
@@ -395,6 +395,7 @@ public class SingleUploadBean extends SuperBean implements Serializable {
     return metadataLabels;
   }
 
+  @Override
   public String getSelectedSpaceString() {
     return selectedSpaceString;
   }

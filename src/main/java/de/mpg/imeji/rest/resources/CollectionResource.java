@@ -44,7 +44,7 @@ public class CollectionResource implements ImejiResource {
   public Response readItemsWithQuery(@Context HttpServletRequest req, @PathParam("id") String id,
       @QueryParam("q") String q, @DefaultValue("0") @QueryParam("offset") int offset,
       @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
-    JSONResponse resp = readCollectionItems(req, id, q, offset, size);
+    final JSONResponse resp = readCollectionItems(req, id, q, offset, size);
     return buildJSONResponse(resp);
   }
 
@@ -57,7 +57,7 @@ public class CollectionResource implements ImejiResource {
   public Response readAll(@Context HttpServletRequest req, @QueryParam("q") String q,
       @DefaultValue("0") @QueryParam("offset") int offset,
       @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
-    JSONResponse resp = readAllCollections(req, q, offset, size);
+    final JSONResponse resp = readAllCollections(req, q, offset, size);
     return buildJSONResponse(resp);
   }
 
@@ -67,7 +67,7 @@ public class CollectionResource implements ImejiResource {
   @ApiOperation(value = "Get collection by id")
   @Produces(MediaType.APPLICATION_JSON)
   public Response read(@Context HttpServletRequest req, @PathParam("id") String id) {
-    JSONResponse resp = readCollection(req, id);
+    final JSONResponse resp = readCollection(req, id);
     return buildJSONResponse(resp);
   }
 
@@ -78,7 +78,7 @@ public class CollectionResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response update(@Context HttpServletRequest req, InputStream json,
       @PathParam("id") String id) throws Exception {
-    JSONResponse resp = updateCollection(req, id);
+    final JSONResponse resp = updateCollection(req, id);
     return buildJSONResponse(resp);
   }
 
@@ -88,7 +88,7 @@ public class CollectionResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response release(@Context HttpServletRequest req, @PathParam("id") String id)
       throws Exception {
-    JSONResponse resp = releaseCollection(req, id);
+    final JSONResponse resp = releaseCollection(req, id);
     return buildJSONResponse(resp);
   }
 
@@ -99,7 +99,7 @@ public class CollectionResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response withdraw(@Context HttpServletRequest req, @PathParam("id") String id,
       @FormParam("discardComment") String discardComment) throws Exception {
-    JSONResponse resp = withdrawCollection(req, id, discardComment);
+    final JSONResponse resp = withdrawCollection(req, id, discardComment);
     return buildJSONResponse(resp);
   }
 
@@ -109,7 +109,7 @@ public class CollectionResource implements ImejiResource {
       notes = "The body parameter is the json of a collection. You can get an example by using the get collection method.")
   @Produces(MediaType.APPLICATION_JSON)
   public Response create(@Context HttpServletRequest req, InputStream json) {
-    JSONResponse resp = createCollection(req);
+    final JSONResponse resp = createCollection(req);
     return buildJSONResponse(resp);
   }
 
@@ -120,7 +120,7 @@ public class CollectionResource implements ImejiResource {
       notes = "Deletes also the profile and items of this collection")
   @Produces(MediaType.APPLICATION_JSON)
   public Response delete(@Context HttpServletRequest req, @PathParam("id") String id) {
-    JSONResponse resp = deleteCollection(req, id);
+    final JSONResponse resp = deleteCollection(req, id);
     return buildJSONResponse(resp);
   }
 

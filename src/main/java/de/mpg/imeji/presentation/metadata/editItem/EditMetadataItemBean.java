@@ -15,13 +15,12 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.presentation.metadata.EditMetadataAbstract;
-import de.mpg.imeji.presentation.metadata.MetadataInputComponent;
-import de.mpg.imeji.presentation.metadata.StatementComponent;
+import de.mpg.imeji.presentation.metadata.SelectStatementComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Edit the {@link Metadata} of a single {@link Item}
- * 
+ *
  * @author saquet
  *
  */
@@ -30,7 +29,8 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 public class EditMetadataItemBean extends EditMetadataAbstract {
   private static final long serialVersionUID = 4116466458089234630L;
   private static Logger LOGGER = Logger.getLogger(EditMetadataItemBean.class);
-  private List<ItemMetadataInputComponent> items = new ArrayList<>();
+  private List<RowComponent> rows = new ArrayList<>();
+  private Item item;
 
   public EditMetadataItemBean() {
     super();
@@ -38,11 +38,13 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
 
   @PostConstruct
   public void init() {
-    String id = UrlHelper.getParameterValue("id");
+    final String id = UrlHelper.getParameterValue("id");
     try {
-      Item item = itemService.retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
-      getItems().add(new ItemMetadataInputComponent(item, statementMap));
-    } catch (ImejiException e) {
+      this.item = itemService.retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
+      for (final Metadata metadata : item.getMetadata()) {
+        rows.add(new RowComponent(metadata, statementMap));
+      }
+    } catch (final ImejiException e) {
       BeanHelper.error("Error retrieving item");
       LOGGER.error("Error retrieving Item with id " + id, e);
     }
@@ -50,48 +52,53 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
 
   @Override
   public List<Item> toItemList() {
-    List<Item> itemList = new ArrayList<>();
-    for (ItemMetadataInputComponent component : items) {
-      itemList.add(component.toItem());
+    final List<Item> itemList = new ArrayList<>();
+    final List<Metadata> metadataList = new ArrayList<>();
+    for (final RowComponent row : rows) {
+      metadataList.add(row.getInput().getMetadata());
     }
+    item.setMetadata(metadataList);
+    itemList.add(item);
     return itemList;
   }
 
   @Override
-  public List<StatementComponent> getAllStatements() {
-    List<StatementComponent> l = new ArrayList<>();
-    for (ItemMetadataInputComponent component : items) {
-      for (MetadataInputComponent md : component.getMetadata()) {
-        // TODO
-      }
+  public List<SelectStatementComponent> getAllStatements() {
+    final List<SelectStatementComponent> l = new ArrayList<>();
+    for (final RowComponent row : rows) {
+      l.add(row);
     }
     return l;
   }
 
-
-
   /**
-   * @return the items
+   * Add a new empty row
    */
-  public List<ItemMetadataInputComponent> getItems() {
-    return items;
+  public void addMetadata() {
+    rows.add(new RowComponent(statementMap));
   }
 
   /**
-   * @param items the items to set
+   * Remove a metadata
+   *
+   * @param index
    */
-  public void setItems(List<ItemMetadataInputComponent> items) {
-    this.items = items;
+  public void removeMetadata(int index) {
+    rows.remove(index);
   }
 
   /**
-   * Return the current {@link ItemMetadataInputComponent} to be edited
-   * 
-   * @return
+   * @return the rows
    */
-  public ItemMetadataInputComponent getItem() {
-    return getItems().get(0);
+  public List<RowComponent> getRows() {
+    return rows;
   }
 
+  /**
+   * @param rows the rows to set
+   */
+  public void setRows(List<RowComponent> rows) {
+    this.rows = rows;
+  }
 
 }

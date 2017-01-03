@@ -46,11 +46,11 @@ public class ListUtils {
    * @return
    */
   public static List<ThumbnailBean> itemListToThumbList(Collection<Item> itemList, User user) {
-    List<ThumbnailBean> beanList = new ArrayList<ThumbnailBean>();
-    for (Item item : itemList) {
+    final List<ThumbnailBean> beanList = new ArrayList<ThumbnailBean>();
+    for (final Item item : itemList) {
       try {
         beanList.add(new ThumbnailBean(item, true));
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error creating ThumbnailBean list", e);
       }
     }
@@ -66,8 +66,8 @@ public class ListUtils {
    */
   public static List<AlbumBean> albumListToAlbumBeanList(Collection<Album> albumList, User user,
       Album activeAlbum) throws Exception {
-    List<AlbumBean> beanList = new ArrayList<AlbumBean>();
-    for (Album album : albumList) {
+    final List<AlbumBean> beanList = new ArrayList<AlbumBean>();
+    for (final Album album : albumList) {
       beanList.add(new AlbumBean(album, user, activeAlbum));
     }
     return beanList;
@@ -83,9 +83,9 @@ public class ListUtils {
    */
   public static List<CollectionListItem> collectionListToListItem(
       Collection<CollectionImeji> collList, User user) {
-    List<CollectionListItem> l = new ArrayList<CollectionListItem>();
+    final List<CollectionListItem> l = new ArrayList<CollectionListItem>();
     if (collList != null) {
-      for (CollectionImeji c : collList) {
+      for (final CollectionImeji c : collList) {
         l.add(new CollectionListItem(c, user));
       }
     }

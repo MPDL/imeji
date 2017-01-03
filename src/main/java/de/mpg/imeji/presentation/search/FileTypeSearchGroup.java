@@ -18,7 +18,7 @@ import de.mpg.imeji.logic.search.model.SearchPair;
 
 /**
  * Search group for the filetypes
- * 
+ *
  * @author saquet
  *
  */
@@ -40,7 +40,7 @@ public class FileTypeSearchGroup implements Serializable {
 
   private void initMenu(Locale locale) {
     menu = new ArrayList<>();
-    for (Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
+    for (final Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
       menu.add(new SelectItem(type.getName(locale.getLanguage())));
     }
   }
@@ -50,8 +50,8 @@ public class FileTypeSearchGroup implements Serializable {
    */
   private void initSelected(String value, Locale locale) {
     selected = new ArrayList<String>();
-    for (String t : value.split(" OR ")) {
-      Type type = Imeji.CONFIG.getFileTypes().getType(t);
+    for (final String t : value.split(" OR ")) {
+      final Type type = Imeji.CONFIG.getFileTypes().getType(t);
       if (type != null) {
         selected.add(type.getName(locale.getLanguage()));
       }
@@ -68,7 +68,7 @@ public class FileTypeSearchGroup implements Serializable {
 
   /**
    * True if the search is empty
-   * 
+   *
    * @return
    */
   public boolean isEmpty() {

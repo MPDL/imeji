@@ -10,7 +10,7 @@ import de.mpg.imeji.logic.ImejiNamespaces;
 
 /**
  * A technical metadata as parsed from content
- * 
+ *
  * @author saquet
  *
  */

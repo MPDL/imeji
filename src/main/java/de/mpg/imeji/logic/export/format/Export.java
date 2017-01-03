@@ -66,7 +66,7 @@ public abstract class Export {
    * @return
    */
   public static String getParam(Map<String, String[]> params, String s) {
-    String[] values = params.get(s);
+    final String[] values = params.get(s);
     if (values != null) {
       return values[0];
     }

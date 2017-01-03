@@ -13,8 +13,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.j2j.transaction.CRUDTransaction;
-import de.mpg.imeji.j2j.transaction.Transaction;
 import de.mpg.imeji.j2j.transaction.CRUDTransaction.CRUDTransactionType;
+import de.mpg.imeji.j2j.transaction.Transaction;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.writer.JenaWriter;
@@ -31,8 +31,8 @@ import de.mpg.imeji.logic.writer.JenaWriter;
  * @version $Revision$ $LastChangedDate$
  */
 public class JenaReader implements Reader {
-  private String modelURI;
-  private boolean lazy = false;
+  private final String modelURI;
+  private final boolean lazy = false;
 
   /**
    * imeji object loader for one {@link Model}
@@ -101,9 +101,9 @@ public class JenaReader implements Reader {
 
   private Object read(String uri, User user, Object o, boolean lazy) throws ImejiException {
     J2JHelper.setId(o, URI.create(uri));
-    List<Object> objects = new ArrayList<Object>();
+    final List<Object> objects = new ArrayList<Object>();
     objects.add(o);
-    List<Object> l = read(objects, user, lazy);
+    final List<Object> l = read(objects, user, lazy);
     if (l.size() > 0) {
       return l.get(0);
     }
@@ -111,7 +111,7 @@ public class JenaReader implements Reader {
   }
 
   private List<Object> read(List<Object> objects, User user, boolean lazy) throws ImejiException {
-    Transaction t = new CRUDTransaction(objects, CRUDTransactionType.READ, modelURI, lazy);
+    final Transaction t = new CRUDTransaction(objects, CRUDTransactionType.READ, modelURI, lazy);
     t.start(Imeji.dataset);
     t.throwException();
     return objects;

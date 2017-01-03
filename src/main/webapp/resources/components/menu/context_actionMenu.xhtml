@@ -29,7 +29,7 @@
 		<ui:param name="updateVO" value="#{Auth.update(cc.attrs.vo)}"/>
 		<ui:param name="updateContentVO" value="#{Auth.updateContent(cc.attrs.vo)}"/>
 
-		<div class="#{cc.attrs.menuClass.trim()}">#{filterBean}
+		<div class="#{cc.attrs.menuClass.trim()}">
 			<ui:fragment rendered="#{Auth.loggedIn and (Auth.isAllowedToCreateCollection(SessionBean.user) or Configuration.albumsEnabled)}">
 				<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item">
 					<div class="imj_menuHeader">

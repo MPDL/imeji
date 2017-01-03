@@ -52,20 +52,20 @@ public class EditCollectionBean extends CollectionBean {
         setCollection(new CollectionController()
             .retrieve(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
         setSendEmailNotification(getSessionUser().getObservedCollections().contains(getId()));
-        LinkedList<Person> persons = new LinkedList<Person>();
+        final LinkedList<Person> persons = new LinkedList<Person>();
         if (getCollection().getMetadata().getPersons().size() == 0) {
           getCollection().getMetadata().getPersons().add(new Person());
         }
-        for (Person p : getCollection().getMetadata().getPersons()) {
-          LinkedList<Organization> orgs = new LinkedList<Organization>();
-          for (Organization o : p.getOrganizations()) {
+        for (final Person p : getCollection().getMetadata().getPersons()) {
+          final LinkedList<Organization> orgs = new LinkedList<Organization>();
+          for (final Organization o : p.getOrganizations()) {
             orgs.add(o);
           }
           p.setOrganizations(orgs);
           persons.add(p);
         }
         getCollection().getMetadata().setPersons(persons);
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         BeanHelper.error("Error initiatilzing page: " + e.getMessage());
         LOGGER.error("Error init edit collection page", e);
       }
@@ -88,10 +88,10 @@ public class EditCollectionBean extends CollectionBean {
    */
   public boolean saveEditedCollection() {
     try {
-      CollectionController collectionController = new CollectionController();
-      User user = getSessionUser();
+      final CollectionController collectionController = new CollectionController();
+      final User user = getSessionUser();
       collectionController.update(getCollection(), user);
-      UserBusinessController uc = new UserBusinessController();
+      final UserBusinessController uc = new UserBusinessController();
       uc.update(user, user);
       if (containerEditorSession.getUploadedLogoPath() != null) {
         collectionController.updateLogo(getCollection(),
@@ -99,20 +99,20 @@ public class EditCollectionBean extends CollectionBean {
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_save", getLocale()));
       return true;
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error saving collection", e);
       return false;
-    } catch (IOException e) {
+    } catch (final IOException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_save", getLocale()));
       LOGGER.error("Error saving collection", e);
       return false;
-    } catch (URISyntaxException e) {
+    } catch (final URISyntaxException e) {
       BeanHelper
           .error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_uri_save", getLocale()));
       LOGGER.error("Error saving collection", e);
       return false;
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_save", getLocale()));
       LOGGER.error("Error saving collection", e);
       return false;

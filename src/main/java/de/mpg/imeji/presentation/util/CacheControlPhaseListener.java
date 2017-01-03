@@ -19,8 +19,8 @@ public class CacheControlPhaseListener implements PhaseListener {
 
   @Override
   public void beforePhase(PhaseEvent event) {
-    FacesContext facesContext = event.getFacesContext();
-    HttpServletResponse response =
+    final FacesContext facesContext = event.getFacesContext();
+    final HttpServletResponse response =
         (HttpServletResponse) facesContext.getExternalContext().getResponse();
     // Set standard HTTP/1.1 no-cache headers.
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");

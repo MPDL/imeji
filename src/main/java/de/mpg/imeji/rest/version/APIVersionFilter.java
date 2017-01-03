@@ -40,13 +40,13 @@ public class APIVersionFilter implements Filter {
       versionManager.checkVersion(((HttpServletRequest) request).getRequestURI());
       if (versionManager.isCurrentVersion() && versionManager.hasVersion()) {
         // redirect to non latest api (i.e. without version in the url)
-        String q = ((HttpServletRequest) request).getQueryString();
+        final String q = ((HttpServletRequest) request).getQueryString();
         ((HttpServletResponse) response).sendRedirect(
             versionManager.getPathToLatestVersion() + (isNullOrEmptyTrim(q) ? "" : "?" + q));
       }
-    } catch (DeprecatedAPIVersionException e) {
+    } catch (final DeprecatedAPIVersionException e) {
       ((HttpServletResponse) response).sendError(Status.GONE.getStatusCode(), e.getMessage());
-    } catch (UnknowAPIVersionException e) {
+    } catch (final UnknowAPIVersionException e) {
       ((HttpServletResponse) response).sendError(Status.BAD_REQUEST.getStatusCode(),
           e.getMessage());
     } finally {

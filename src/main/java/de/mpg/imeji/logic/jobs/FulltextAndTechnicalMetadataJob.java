@@ -8,7 +8,7 @@ import de.mpg.imeji.logic.item.ItemService;
 
 /**
  * Job to extract fulltext and technical metadata for all files
- * 
+ *
  * @author saquet
  *
  */
@@ -18,7 +18,7 @@ public class FulltextAndTechnicalMetadataJob implements Callable<Integer> {
   @Override
   public Integer call() throws Exception {
     LOGGER.info("Extracting fulltext and technical metadata for all files...");
-    ItemService itemBusinessController = new ItemService();
+    final ItemService itemBusinessController = new ItemService();
     itemBusinessController.extractFulltextAndTechnicalMetadataForAllItems();
     LOGGER.info("... Extracting fulltext and technical metadata for all files done!");
     return 1;

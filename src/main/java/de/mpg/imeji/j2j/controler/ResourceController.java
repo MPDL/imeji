@@ -21,8 +21,8 @@ import de.mpg.imeji.j2j.persistence.Jena2Java;
  */
 public class ResourceController {
   private Model model = null;
-  private Java2Jena java2rdf;
-  private Jena2Java rdf2Java;
+  private final Java2Jena java2rdf;
+  private final Jena2Java rdf2Java;
 
   /**
    * Use for transaction. The model must have been created/retrieved within the transaction

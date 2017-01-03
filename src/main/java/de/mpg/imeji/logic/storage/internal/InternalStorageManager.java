@@ -86,12 +86,12 @@ public class InternalStorageManager implements Serializable {
    */
   public InternalStorageManager() {
     try {
-      File storageDir = new File(PropertyReader.getProperty("imeji.storage.path"));
+      final File storageDir = new File(PropertyReader.getProperty("imeji.storage.path"));
       storagePath = StringHelper.normalizePath(storageDir.getAbsolutePath());
       storageUrl = StringHelper.normalizeURI(PropertyReader.getProperty("imeji.instance.url"))
           + "file" + StringHelper.urlSeparator;
       administrator = new InternalStorageAdministrator(storagePath);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Internal storage couldn't be initialized!!!!!", e);
     }
   }
@@ -105,9 +105,9 @@ public class InternalStorageManager implements Serializable {
    */
   public InternalStorageItem createItem(File file, String filename, String collectionId) {
     try {
-      InternalStorageItem item = generateInternalStorageItem(file, filename, collectionId);
+      final InternalStorageItem item = generateInternalStorageItem(file, filename, collectionId);
       return writeItemFiles(item, file);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException(e);
     }
   }
@@ -124,9 +124,9 @@ public class InternalStorageManager implements Serializable {
     // jpg, gif etc.)
     // String extension = file.getName().substring(
     // file.getName().lastIndexOf(".") + 1, file.getName().length());
-    String origExtension = getExtension(file.getPath());
-    String guessedExtension = guessExtension(file);
-    ImageGeneratorManager generatorManager = new ImageGeneratorManager();
+    final String origExtension = getExtension(file.getPath());
+    final String guessedExtension = guessExtension(file);
+    final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
     removeFile(url);
     if (url.contains(FileResolution.ORIGINAL.name().toLowerCase())) {
       url = replaceExtension(url, origExtension);
@@ -157,9 +157,9 @@ public class InternalStorageManager implements Serializable {
    * @param url
    */
   public void removeFile(String url) {
-    File f = new File(transformUrlToPath(url));
+    final File f = new File(transformUrlToPath(url));
     if (f.exists()) {
-      boolean deleted = FileUtils.deleteQuietly(f);
+      final boolean deleted = FileUtils.deleteQuietly(f);
       if (!deleted) {
         throw new RuntimeException("Impossible to delete the existing file.");
       }
@@ -250,8 +250,8 @@ public class InternalStorageManager implements Serializable {
    */
   public InternalStorageItem generateInternalStorageItem(File file, String fileName,
       String collectionId) {
-    String id = generateIdWithVersion(collectionId);
-    InternalStorageItem item = new InternalStorageItem();
+    final String id = generateIdWithVersion(collectionId);
+    final InternalStorageItem item = new InternalStorageItem();
     item.setId(id);
     item.setFileName(fileName);
     item.setFileType(getMimeType(file));
@@ -286,7 +286,7 @@ public class InternalStorageManager implements Serializable {
    * @return
    */
   private String generateId(String collectionId, int version) {
-    String uuid = IdentifierUtil.newUniversalUniqueId();
+    final String uuid = IdentifierUtil.newUniversalUniqueId();
     // split the uuid to split the number of subdirectories for each
     // collection
     return collectionId + StringHelper.urlSeparator + uuid.substring(0, 2)
@@ -307,7 +307,7 @@ public class InternalStorageManager implements Serializable {
    */
   public String generateUrl(String id, String filename, FileResolution resolution) {
     filename = StringHelper.normalizeFilename(filename);
-    String extension = getExtension(filename);
+    final String extension = getExtension(filename);
     if (resolution != FileResolution.ORIGINAL) {
       filename = removeExtension(filename) + (extension.equals("gif") ? ".gif" : ".jpg");
     }
@@ -335,7 +335,7 @@ public class InternalStorageManager implements Serializable {
 
   /**
    * Inner class to transform and write the files in the storage asynchronously
-   * 
+   *
    * @author saquet
    *
    */
@@ -351,21 +351,21 @@ public class InternalStorageManager implements Serializable {
     @Override
     public Integer call() {
       try {
-        ImageGeneratorManager generatorManager = new ImageGeneratorManager();
+        final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
         // write web resolution file in storage
-        String calculatedExtension = guessExtension(file);
-        String webResolutionPath =
+        final String calculatedExtension = guessExtension(file);
+        final String webResolutionPath =
             write(generatorManager.generateWebResolution(file, calculatedExtension),
                 transformUrlToPath(item.getWebUrl()));
         // Use Web resolution to generate Thumbnail (avoid to read the original
         // file again)
-        File webResolutionFile = new File(webResolutionPath);
+        final File webResolutionFile = new File(webResolutionPath);
         write(
             generatorManager.generateThumbnail(webResolutionFile,
                 FilenameUtils.getExtension(webResolutionPath)),
             transformUrlToPath(item.getThumbnailUrl()));
 
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error transforming and writing file in internal storage ", e);
       } finally {
         FileUtils.deleteQuietly(file);
@@ -383,12 +383,12 @@ public class InternalStorageManager implements Serializable {
    * @throws IOException
    */
   private String copy(File toCopy, String path) throws IOException {
-    File dest = new File(path);
+    final File dest = new File(path);
     if (!dest.exists()) {
       dest.getParentFile().mkdirs();
       dest.createNewFile();
-      FileInputStream fis = new FileInputStream(toCopy);
-      FileOutputStream fos = new FileOutputStream(dest);
+      final FileInputStream fis = new FileInputStream(toCopy);
+      final FileOutputStream fos = new FileOutputStream(dest);
       writeInOut(fis, fos, true);
       return dest.getAbsolutePath();
     } else {
@@ -405,7 +405,7 @@ public class InternalStorageManager implements Serializable {
    * @throws IOException
    */
   private String write(File srcFile, String path) throws IOException {
-    File file = new File(path);
+    final File file = new File(path);
     if (!file.exists()) {
       file.getParentFile().mkdirs();
       file.createNewFile();

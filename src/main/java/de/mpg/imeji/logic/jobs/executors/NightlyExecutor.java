@@ -64,7 +64,7 @@ public class NightlyExecutor {
    * @return
    */
   private static Calendar scheduleNextDate() {
-    Calendar date = Calendar.getInstance();
+    final Calendar date = Calendar.getInstance();
     // Set Date to today with defined hour
     date.set(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DATE), JOB_HOUR,
         JOB_MINUTE);
@@ -80,8 +80,8 @@ public class NightlyExecutor {
    * @return
    */
   private static long getDelay() {
-    long delayInMs = NEXT_JOB_DATE.getTimeInMillis() - System.currentTimeMillis();
-    Calendar delay = Calendar.getInstance();
+    final long delayInMs = NEXT_JOB_DATE.getTimeInMillis() - System.currentTimeMillis();
+    final Calendar delay = Calendar.getInstance();
     delay.setTimeInMillis(delayInMs);
     return delay.get(Calendar.HOUR_OF_DAY);
   }

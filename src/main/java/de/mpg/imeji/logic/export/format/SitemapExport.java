@@ -30,7 +30,7 @@ public class SitemapExport extends Export {
 
   @Override
   public void export(OutputStream out, SearchResult sr, User user) {
-    StringWriter writer = new StringWriter();
+    final StringWriter writer = new StringWriter();
     writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     writer.append("<urlset xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
         + " xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\""
@@ -39,7 +39,7 @@ public class SitemapExport extends Export {
     writer.append("</urlset>");
     try {
       out.write(writer.getBuffer().toString().getBytes());
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.info("Some problems with exporting Sitemap!", e);
     }
   }
@@ -51,7 +51,7 @@ public class SitemapExport extends Export {
 
   private void writeURLs(StringWriter writer, SearchResult sr) {
     if (sr != null) {
-      for (String url : sr.getResults()) {
+      for (final String url : sr.getResults()) {
         writeURL(writer, url);
       }
     }
@@ -65,14 +65,14 @@ public class SitemapExport extends Export {
   }
 
   private void readPriority() {
-    String p = getParam("priority");
+    final String p = getParam("priority");
     if (p != null) {
       priority = Double.parseDouble(p);
     }
   }
 
   private String getReaUrl(String url) {
-    URI uri = URI.create(url);
+    final URI uri = URI.create(url);
     return Imeji.PROPERTIES.getApplicationURI() + uri.getPath();
   }
 }

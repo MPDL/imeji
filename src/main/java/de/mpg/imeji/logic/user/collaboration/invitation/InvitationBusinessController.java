@@ -32,7 +32,7 @@ public class InvitationBusinessController {
    * @throws ImejiException
    */
   public void invite(Invitation invitation) throws ImejiException {
-    User invitee = retrieveInvitee(invitation.getInviteeEmail());
+    final User invitee = retrieveInvitee(invitation.getInviteeEmail());
     if (invitee == null) {
       add(invitation);
     } else {
@@ -49,7 +49,7 @@ public class InvitationBusinessController {
    * @throws ImejiException
    */
   public User consume(User user) throws ImejiException {
-    for (Invitation invitation : retrieveInvitationOfUser(user.getEmail())) {
+    for (final Invitation invitation : retrieveInvitationOfUser(user.getEmail())) {
       user = shareBC.shareToUser(Imeji.adminUser, user, invitation.getObjectUri(),
           invitation.getRoles());
       cancel(invitation.getId());
@@ -64,7 +64,7 @@ public class InvitationBusinessController {
    * @throws ImejiException
    */
   public void cancel(String invitationId) throws ImejiException {
-    Invitation invitation = retrieve(invitationId);
+    final Invitation invitation = retrieve(invitationId);
     remove(invitation);
   }
 
@@ -76,7 +76,7 @@ public class InvitationBusinessController {
    * @throws ImejiException
    */
   public Invitation retrieve(String id) throws ImejiException {
-    Object invitation = KEY_VALUE_STORE_BC.get(id);
+    final Object invitation = KEY_VALUE_STORE_BC.get(id);
     if (invitation instanceof Invitation) {
       return (Invitation) invitation;
     }
@@ -123,7 +123,7 @@ public class InvitationBusinessController {
    * @throws ImejiException
    */
   public void clear() throws ImejiException {
-    for (Invitation invitation : retrieveAll()) {
+    for (final Invitation invitation : retrieveAll()) {
       remove(invitation);
     }
   }
@@ -156,7 +156,7 @@ public class InvitationBusinessController {
   private User retrieveInvitee(String email) {
     try {
       return userController.retrieve(email, Imeji.adminUser);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       return null;
     }
   }

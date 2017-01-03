@@ -48,8 +48,8 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.collection.CollectionBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -125,7 +125,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @param size
    */
   protected void findItems(User user, int size) {
-    ItemService ic = new ItemService();
+    final ItemService ic = new ItemService();
     ic.searchAndSetContainerItems(getContainer(), user, size, 0);
   }
 
@@ -136,7 +136,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   protected void countItems() {
-    ItemService ic = new ItemService();
+    final ItemService ic = new ItemService();
     size = ic.search(getContainer().getId(), null, null, Imeji.adminUser, null, 0, 0)
         .getNumberOfRecords();
   }
@@ -149,11 +149,11 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
   protected void loadItems(User user, int size) throws ImejiException {
     setItems(new ArrayList<Item>());
     if (getContainer() != null) {
-      List<String> uris = new ArrayList<String>();
-      for (URI uri : getContainer().getImages()) {
+      final List<String> uris = new ArrayList<String>();
+      for (final URI uri : getContainer().getImages()) {
         uris.add(uri.toString());
       }
-      ItemService ic = new ItemService();
+      final ItemService ic = new ItemService();
       setItems((List<Item>) ic.retrieveBatchLazy(uris, size, 0, user));
     }
   }
@@ -164,12 +164,12 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    */
   public void countDiscardedItems(User user) {
     if (getContainer() != null) {
-      ItemService ic = new ItemService();
-      SearchQuery q = new SearchQuery();
+      final ItemService ic = new ItemService();
+      final SearchQuery q = new SearchQuery();
       try {
         q.addPair(new SearchPair(SearchFields.status, SearchOperators.EQUALS,
             Status.WITHDRAWN.getUriString(), false));
-      } catch (UnprocessableError e) {
+      } catch (final UnprocessableError e) {
         LOGGER.error("Error creating query to search for discarded items of a container", e);
       }
       setSizeDiscarded(
@@ -186,7 +186,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    */
   public String getPersonString() {
     String personString = "";
-    for (Person p : getContainer().getMetadata().getPersons()) {
+    for (final Person p : getContainer().getMetadata().getPersons()) {
       if (!"".equalsIgnoreCase(personString)) {
         personString += ", ";
       }
@@ -200,7 +200,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    */
   public String getAuthorsWithOrg() {
     String personString = "";
-    for (Person p : getContainer().getMetadata().getPersons()) {
+    for (final Person p : getContainer().getMetadata().getPersons()) {
       if (!"".equalsIgnoreCase(personString)) {
         personString += ", ";
       }
@@ -213,7 +213,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
   }
 
   public String getCitation() {
-    String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
+    final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
     return getAuthorsWithOrg() + ". " + getContainer().getMetadata().getTitle() + ". <a href=\""
         + url + "\">" + url + "</a>";
   }
@@ -254,8 +254,8 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   public String addAuthor(int authorPosition) {
-    List<Person> c = (List<Person>) getContainer().getMetadata().getPersons();
-    Person p = ImejiFactory.newPerson();
+    final List<Person> c = (List<Person>) getContainer().getMetadata().getPersons();
+    final Person p = ImejiFactory.newPerson();
     p.setPos(authorPosition + 1);
     c.add(authorPosition + 1, p);
     return "";
@@ -267,7 +267,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   public String removeAuthor(int authorPosition) {
-    List<Person> c = (List<Person>) getContainer().getMetadata().getPersons();
+    final List<Person> c = (List<Person>) getContainer().getMetadata().getPersons();
     if (c.size() > 1) {
       c.remove(authorPosition);
     } else {
@@ -284,9 +284,10 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   public String addOrganization(int authorPosition, int organizationPosition) {
-    List<Person> persons = (List<Person>) getContainer().getMetadata().getPersons();
-    List<Organization> orgs = (List<Organization>) persons.get(authorPosition).getOrganizations();
-    Organization o = ImejiFactory.newOrganization();
+    final List<Person> persons = (List<Person>) getContainer().getMetadata().getPersons();
+    final List<Organization> orgs =
+        (List<Organization>) persons.get(authorPosition).getOrganizations();
+    final Organization o = ImejiFactory.newOrganization();
     o.setPos(organizationPosition + 1);
     orgs.add(organizationPosition + 1, o);
     return "";
@@ -298,8 +299,9 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   public String removeOrganization(int authorPosition, int organizationPosition) {
-    List<Person> persons = (List<Person>) getContainer().getMetadata().getPersons();
-    List<Organization> orgs = (List<Organization>) persons.get(authorPosition).getOrganizations();
+    final List<Person> persons = (List<Person>) getContainer().getMetadata().getPersons();
+    final List<Organization> orgs =
+        (List<Organization>) persons.get(authorPosition).getOrganizations();
     if (orgs.size() > 1) {
       orgs.remove(organizationPosition);
     } else {
@@ -400,7 +402,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   public boolean isOwner() {
-    SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+    final SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     if (getContainer() != null && getContainer().getCreatedBy() != null
         && sessionBean.getUser() != null) {
       return getContainer().getCreatedBy()

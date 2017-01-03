@@ -41,7 +41,7 @@ public class EditAlbumBean extends AlbumBean implements Serializable {
       setId(UrlHelper.getParameterValue("id"));
       setAlbum(new AlbumController().retrieve(ObjectHelper.getURI(Album.class, getId()),
           getSessionUser()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error init album edit", e);
     }
@@ -67,16 +67,16 @@ public class EditAlbumBean extends AlbumBean implements Serializable {
    * @throws Exception
    */
   public boolean update() throws Exception {
-    AlbumController ac = new AlbumController();
+    final AlbumController ac = new AlbumController();
     try {
-      Album album = ac.update(getAlbum(), getSessionUser());
+      final Album album = ac.update(getAlbum(), getSessionUser());
       if (containerEditorSession.getUploadedLogoPath() != null) {
         ac.updateLogo(album, new File(containerEditorSession.getUploadedLogoPath()),
             getSessionUser());
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_update", getLocale()));
       return true;
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error update album", e);
       return false;

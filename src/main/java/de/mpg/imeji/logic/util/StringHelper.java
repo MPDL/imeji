@@ -50,10 +50,10 @@ public class StringHelper {
    */
   public static String convertToMD5(String pass) throws ImejiException {
     try {
-      MessageDigest dig = MessageDigest.getInstance("MD5");
+      final MessageDigest dig = MessageDigest.getInstance("MD5");
       dig.update(pass.getBytes("UTF-8"));
-      byte[] messageDigest = dig.digest();
-      StringBuilder sBuilder = new StringBuilder();
+      final byte[] messageDigest = dig.digest();
+      final StringBuilder sBuilder = new StringBuilder();
       for (int i = 0; i < messageDigest.length; i++) {
         sBuilder.append(Integer.toHexString(0xFF & messageDigest[i]));
       }
@@ -98,10 +98,10 @@ public class StringHelper {
    */
   public static String normalizeFilename(String filename) {
     try {
-      String filextension = getFileExtension(filename);
+      final String filextension = getFileExtension(filename);
       filename = DigestUtils.md5Hex(filename) + "." + filextension;
       return filename;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error with filename: " + filename, e);
     }
   }
@@ -113,7 +113,7 @@ public class StringHelper {
    * @return
    */
   public static String getFileExtension(String filename) {
-    int i = filename.lastIndexOf('.');
+    final int i = filename.lastIndexOf('.');
     if (i > 0) {
       return filename.substring(i + 1);
     }

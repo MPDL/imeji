@@ -43,7 +43,7 @@ public class InitializerServlet extends HttpServlet {
       initModel();
       reindex();
       Imeji.getEXECUTOR().submit(new ReadMaxPlanckIPMappingJob());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("imeji didn't initialize correctly", e);
     }
   }
@@ -77,11 +77,11 @@ public class InitializerServlet extends HttpServlet {
    * @throws IOException
    */
   private void runMigration() throws IOException {
-    File f = new File(Imeji.tdbPath + StringHelper.urlSeparator + "migration.txt");
+    final File f = new File(Imeji.tdbPath + StringHelper.urlSeparator + "migration.txt");
     FileInputStream in = null;
     try {
       in = new FileInputStream(f);
-    } catch (FileNotFoundException e) {
+    } catch (final FileNotFoundException e) {
       LOGGER.info("No " + f.getAbsolutePath() + " found, no migration runs");
     }
     if (in != null) {
@@ -103,9 +103,9 @@ public class InitializerServlet extends HttpServlet {
    * @return
    */
   private String addNewIdToMigration(String migrationRequests) {
-    Pattern p = Pattern.compile("XXX_NEW_ID_XXX");
-    Matcher m = p.matcher(migrationRequests);
-    StringBuffer sb = new StringBuffer();
+    final Pattern p = Pattern.compile("XXX_NEW_ID_XXX");
+    final Matcher m = p.matcher(migrationRequests);
+    final StringBuffer sb = new StringBuffer();
     while (m.find()) {
       m.appendReplacement(sb, IdentifierUtil.newId());
     }

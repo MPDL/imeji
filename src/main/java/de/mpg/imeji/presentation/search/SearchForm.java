@@ -67,7 +67,7 @@ public class SearchForm implements Serializable {
     this.fileTypeSearchGroup =
         new FileTypeSearchGroup(Locale.forLanguageTag(metadataLabels.getLang()));
     this.setTechnicalMetadataSearchGroup(new TechnicalMetadataSearchGroup());
-    for (SearchElement se : searchQuery.getElements()) {
+    for (final SearchElement se : searchQuery.getElements()) {
       if (se.getType().equals(SEARCH_ELEMENTS.GROUP)) {
 
       }
@@ -88,7 +88,7 @@ public class SearchForm implements Serializable {
 
   /**
    * Find the search for all field
-   * 
+   *
    * @param se
    */
   private void parseAllFieldSearch(SearchElement se) {
@@ -98,7 +98,7 @@ public class SearchForm implements Serializable {
         setAllSearch(new SearchPair(SearchFields.all, SearchOperators.REGEX,
             ((SearchPair) se).getValue(), false));
       } else if (se.getType().equals(SEARCH_ELEMENTS.GROUP)) {
-        for (SearchElement gse : ((SearchGroup) se).getElements()) {
+        for (final SearchElement gse : ((SearchGroup) se).getElements()) {
           parseAllFieldSearch(gse);
         }
       }
@@ -111,11 +111,11 @@ public class SearchForm implements Serializable {
    * @throws UnprocessableError
    */
   public void validate() throws UnprocessableError {
-    Set<String> messages = new HashSet<>();
-    for (SearchGroupForm g : groups) {
+    final Set<String> messages = new HashSet<>();
+    for (final SearchGroupForm g : groups) {
       try {
         g.validate();
-      } catch (UnprocessableError e) {
+      } catch (final UnprocessableError e) {
         messages.addAll(e.getMessages());
       }
     }
@@ -134,10 +134,10 @@ public class SearchForm implements Serializable {
    */
   public SearchQuery getFormularAsSearchQuery() {
     try {
-      SearchQuery searchQuery = new SearchQuery();
+      final SearchQuery searchQuery = new SearchQuery();
       if (!allSearch.getValue().isEmpty()) {
         if (includeFulltext) {
-          SearchGroup g = new SearchGroup();
+          final SearchGroup g = new SearchGroup();
           g.addPair(allSearch);
           g.addLogicalRelation(LOGICAL_RELATIONS.OR);
           g.addPair(new SearchPair(SearchFields.fulltext, SearchOperators.REGEX,
@@ -147,9 +147,9 @@ public class SearchForm implements Serializable {
           searchQuery.addPair(allSearch);
         }
       }
-      SearchGroup metadataGroup = new SearchGroup();
-      for (SearchGroupForm g : groups) {
-        SearchGroup mdGroup = g.getAsSearchGroup();
+      final SearchGroup metadataGroup = new SearchGroup();
+      for (final SearchGroupForm g : groups) {
+        final SearchGroup mdGroup = g.getAsSearchGroup();
         if (!mdGroup.isEmpty()) {
           if (!metadataGroup.isEmpty()) {
             metadataGroup.addLogicalRelation(LOGICAL_RELATIONS.OR);
@@ -186,7 +186,7 @@ public class SearchForm implements Serializable {
       }
 
       return searchQuery;
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       LOGGER.error("Error transforming search form to searchquery", e);
       return new SearchQuery();
     }
@@ -198,7 +198,7 @@ public class SearchForm implements Serializable {
    * @param pos
    */
   public void addSearchGroup(int pos) {
-    SearchGroupForm fg = new SearchGroupForm();
+    final SearchGroupForm fg = new SearchGroupForm();
     if (pos >= groups.size()) {
       groups.add(fg);
     } else {
@@ -214,7 +214,7 @@ public class SearchForm implements Serializable {
    */
   public void changeSearchGroup(int pos, MetadataLabels metadataLabels, User user, String space)
       throws ImejiException {
-    SearchGroupForm group = groups.get(pos);
+    final SearchGroupForm group = groups.get(pos);
     group.getStatementMenu().clear();
     group.setSearchElementForms(new ArrayList<SearchMetadataForm>());
   }
@@ -235,10 +235,10 @@ public class SearchForm implements Serializable {
    * @param elPos
    */
   public void addElement(int groupPos, int elPos, Locale locale) {
-    SearchGroupForm group = groups.get(groupPos);
+    final SearchGroupForm group = groups.get(groupPos);
     if (group.getStatementMenu().size() > 0) {
-      SearchMetadataForm fe = new SearchMetadataForm();
-      String namespace = (String) group.getStatementMenu().get(0).getValue();
+      final SearchMetadataForm fe = new SearchMetadataForm();
+      final String namespace = (String) group.getStatementMenu().get(0).getValue();
       fe.setNamespace(namespace);
       fe.initOperatorMenu(locale);
       if (elPos >= group.getSearchElementForms().size()) {
@@ -256,10 +256,10 @@ public class SearchForm implements Serializable {
    * @param elPos
    */
   public void changeElement(int groupPos, int elPos, boolean keepValue, Locale locale) {
-    SearchGroupForm group = groups.get(groupPos);
-    SearchMetadataForm fe = group.getSearchElementForms().get(elPos);
-    String profileId = group.getProfileId();
-    String namespace = fe.getNamespace();
+    final SearchGroupForm group = groups.get(groupPos);
+    final SearchMetadataForm fe = group.getSearchElementForms().get(elPos);
+    final String profileId = group.getProfileId();
+    final String namespace = fe.getNamespace();
     fe.initOperatorMenu(locale);
     if (!keepValue) {
       fe.setSearchValue("");

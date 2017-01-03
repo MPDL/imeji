@@ -99,7 +99,7 @@ public final class ImageGeneratorManager {
    */
   public File generate(File file, String extension, FileResolution resolution) {
     if (StorageUtils.compareExtension("gif", extension)) {
-      File gifFile = ImageMagickUtils.resizeAnimatedGif(file, resolution);
+      final File gifFile = ImageMagickUtils.resizeAnimatedGif(file, resolution);
       if (gifFile != null) {
         return gifFile;
       }
@@ -119,7 +119,7 @@ public final class ImageGeneratorManager {
     // Make a jpg out of the file
     try {
       return ImageUtils.resizeJPEG(toJpeg(file, extension), resolution);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error generating JPEG from File: ", e);
     }
     return null;
@@ -139,13 +139,13 @@ public final class ImageGeneratorManager {
     if (StorageUtils.compareExtension(extension, "jpg")) {
       return file;
     }
-    for (ImageGenerator imageGenerator : generators) {
+    for (final ImageGenerator imageGenerator : generators) {
       try {
-        File jpeg = imageGenerator.generateJPG(file, extension);
+        final File jpeg = imageGenerator.generateJPG(file, extension);
         if (jpeg != null && jpeg.length() > 0) {
           return jpeg;
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.warn("Error generating image (generator: " + imageGenerator.getClass().getName(), e);
       }
     }

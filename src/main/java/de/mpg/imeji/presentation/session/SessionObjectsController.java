@@ -16,7 +16,7 @@ import de.mpg.imeji.logic.vo.Item;
  * @version $Revision$ $LastChangedDate$
  */
 public class SessionObjectsController {
-  private SessionBean session;
+  private final SessionBean session;
 
   /**
    * Default constructor: Initialize the {@link SessionBean}
@@ -56,7 +56,7 @@ public class SessionObjectsController {
    * @throws Exception
    */
   public void addToActiveAlbum(List<String> uris) throws ImejiException {
-    AlbumController ac = new AlbumController();
+    final AlbumController ac = new AlbumController();
     ac.addToAlbum(session.getActiveAlbum(), uris, session.getUser());
     reloadActiveAlbum();
   }
@@ -68,9 +68,9 @@ public class SessionObjectsController {
    * @throws Exception
    */
   public int removeFromActiveAlbum(List<String> uris) throws ImejiException {
-    AlbumController ac = new AlbumController();
+    final AlbumController ac = new AlbumController();
     try {
-      int deleted = ac.removeFromAlbum(session.getActiveAlbum(), uris, session.getUser());
+      final int deleted = ac.removeFromAlbum(session.getActiveAlbum(), uris, session.getUser());
       return deleted;
     } finally {
       reloadActiveAlbum();
@@ -82,7 +82,7 @@ public class SessionObjectsController {
    */
   public void reloadActiveAlbum() {
     if (session.getActiveAlbum() != null) {
-      ItemService ic = new ItemService();
+      final ItemService ic = new ItemService();
       session.setActiveAlbum((Album) ic.searchAndSetContainerItems(session.getActiveAlbum(),
           session.getUser(), -1, 0));
     }

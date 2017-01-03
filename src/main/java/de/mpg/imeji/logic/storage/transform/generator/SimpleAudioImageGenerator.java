@@ -53,7 +53,7 @@ public class SimpleAudioImageGenerator implements ImageGenerator {
       try {
         return new File(SimpleAudioImageGenerator.class.getClassLoader()
             .getResource(PATH_TO_AUDIO_ICON).toURI());
-      } catch (URISyntaxException e) {
+      } catch (final URISyntaxException e) {
         LOGGER.error("Error creating thunmbnail", e);
       }
     }

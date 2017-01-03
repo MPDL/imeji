@@ -53,13 +53,13 @@ public class DataViewerServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
     try {
-      SessionBean sb =
+      final SessionBean sb =
           (SessionBean) req.getSession(false).getAttribute(SessionBean.class.getSimpleName());
-      Item item = new ItemService()
+      final Item item = new ItemService()
           .retrieveLazy(ObjectHelper.getURI(Item.class, req.getParameter("id")), sb.getUser());
-      boolean isPublicItem = Status.RELEASED.equals(item.getStatus());
+      final boolean isPublicItem = Status.RELEASED.equals(item.getStatus());
 
-      String fileExtensionName = FilenameUtils.getExtension(item.getFilename());
+      final String fileExtensionName = FilenameUtils.getExtension(item.getFilename());
       String dataViewerUrl = "api/view";
 
       if (Imeji.CONFIG.getDataViewerUrl().endsWith("/")) {
@@ -83,9 +83,9 @@ public class DataViewerServlet extends HttpServlet {
       }
 
       // resp.getWriter().append("id" + id);
-    } catch (HttpResponseException he) {
+    } catch (final HttpResponseException he) {
       resp.sendError(he.getStatusCode(), he.getMessage());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error(e.getMessage(), e);
       resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
           "Requested resource could not be visualized!");
@@ -97,20 +97,20 @@ public class DataViewerServlet extends HttpServlet {
 
     // in any other case, download the temporary file and send it to the
     // data viewer
-    InternalStorage ist = new InternalStorage();
-    File file = ist.read(item.getFullImageUrl().toString());
+    final InternalStorage ist = new InternalStorage();
+    final File file = ist.read(item.getFullImageUrl().toString());
 
     // Data Viewer File Parameter is always named "file1" not filename
-    FileDataBodyPart filePart = new FileDataBodyPart("file1", file);
+    final FileDataBodyPart filePart = new FileDataBodyPart("file1", file);
 
-    FormDataMultiPart multiPart = new FormDataMultiPart();
+    final FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
     multiPart.field("mimetype", fileType);
 
-    Client client = ClientBuilder.newClient();
-    WebTarget target = client.target(dataViewerServiceTargetURL);
+    final Client client = ClientBuilder.newClient();
+    final WebTarget target = client.target(dataViewerServiceTargetURL);
 
-    Response response = target.register(MultiPartFeature.class)
+    final Response response = target.register(MultiPartFeature.class)
         .request(MediaType.MULTIPART_FORM_DATA_TYPE, MediaType.TEXT_HTML_TYPE)
         .post(Entity.entity(multiPart, multiPart.getMediaType()));
 
@@ -127,7 +127,7 @@ public class DataViewerServlet extends HttpServlet {
 
   private String viewGenericUrl(String originalUrl, String fileType,
       String dataViewerServiceTargetURL)
-          throws FileNotFoundException, IOException, URISyntaxException {
+      throws FileNotFoundException, IOException, URISyntaxException {
     return dataViewerServiceTargetURL + "?" + "mimetype=" + fileType + "&url=" + originalUrl;
   }
 

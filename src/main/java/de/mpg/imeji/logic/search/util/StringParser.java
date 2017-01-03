@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public class StringParser {
   private Matcher m;
-  private Pattern p;
+  private final Pattern p;
 
   public StringParser(Pattern p) {
     this.p = p;

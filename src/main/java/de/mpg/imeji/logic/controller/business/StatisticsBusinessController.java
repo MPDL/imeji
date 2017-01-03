@@ -22,7 +22,7 @@ public class StatisticsBusinessController extends ImejiServiceAbstract {
    * @return
    */
   public List<String> getAllInstitute() {
-    Search s = new JenaSearch(SearchObjectTypes.USER, null);
+    final Search s = new JenaSearch(SearchObjectTypes.USER, null);
     return s.searchString(JenaCustomQueries.selectAllInstitutes(), null, null, 0, -1).getResults();
   }
 
@@ -34,12 +34,12 @@ public class StatisticsBusinessController extends ImejiServiceAbstract {
    * @return
    */
   public long getUsedStorageSizeForInstitute(String instituteName) {
-    Search s = new JenaSearch(SearchObjectTypes.ALL, null);
-    List<String> result =
+    final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
+    final List<String> result =
         s.searchString(JenaCustomQueries.selectInstituteFileSize(instituteName), null, null, 0, -1)
             .getResults();
     if (result.size() == 1 && result.get(0) != null) {
-      String size = result.get(0).replace("^^http://www.w3.org/2001/XMLSchema#integer", "");
+      final String size = result.get(0).replace("^^http://www.w3.org/2001/XMLSchema#integer", "");
       return Long.parseLong(size);
     }
     return 0;

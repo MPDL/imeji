@@ -42,9 +42,9 @@ public class DefaultItemService implements API<DefaultItemTO> {
   public DefaultItemTO create(DefaultItemTO to, User u) throws ImejiException {
     if (to instanceof DefaultItemWithFileTO) {
       // get newFilename
-      String filename = getFilename((DefaultItemWithFileTO) to);
+      final String filename = getFilename((DefaultItemWithFileTO) to);
       // Get Collection
-      CollectionImeji collection = getCollection(to.getCollectionId(), u);
+      final CollectionImeji collection = getCollection(to.getCollectionId(), u);
       // transfer TO into item
       Item item = new Item();
       ReverseTransferObjectFactory.transferDefaultItem(to, item, u, CREATE);
@@ -52,7 +52,7 @@ public class DefaultItemService implements API<DefaultItemTO> {
           u, ((DefaultItemWithFileTO) to).getFetchUrl(),
           ((DefaultItemWithFileTO) to).getReferenceUrl());
       // transfer item into ItemTO
-      DefaultItemTO createdTO = new DefaultItemTO();
+      final DefaultItemTO createdTO = new DefaultItemTO();
       TransferObjectFactory.transferDefaultItem(item, createdTO);
       return createdTO;
     } else {
@@ -63,8 +63,8 @@ public class DefaultItemService implements API<DefaultItemTO> {
 
   @Override
   public DefaultItemTO read(String id, User u) throws ImejiException {
-    DefaultItemTO defaultTO = new DefaultItemTO();
-    Item item = controller.retrieve(ObjectHelper.getURI(Item.class, id), u);
+    final DefaultItemTO defaultTO = new DefaultItemTO();
+    final Item item = controller.retrieve(ObjectHelper.getURI(Item.class, id), u);
     TransferObjectFactory.transferDefaultItem(item, defaultTO);
     return defaultTO;
   }
@@ -73,12 +73,12 @@ public class DefaultItemService implements API<DefaultItemTO> {
   public DefaultItemTO update(DefaultItemTO to, User u) throws ImejiException {
     Item item = controller.retrieveLazy(ObjectHelper.getURI(Item.class, to.getId()), u);
     // Get the collection
-    CollectionImeji collection = getCollection(ObjectHelper.getId(item.getCollection()), u);
+    final CollectionImeji collection = getCollection(ObjectHelper.getId(item.getCollection()), u);
     // Transfer the item
     ReverseTransferObjectFactory.transferDefaultItem(to, item, u, UPDATE);
     if (to instanceof DefaultItemWithFileTO) {
-      DefaultItemWithFileTO tof = (DefaultItemWithFileTO) to;
-      String url = getExternalFileUrl(tof);
+      final DefaultItemWithFileTO tof = (DefaultItemWithFileTO) to;
+      final String url = getExternalFileUrl(tof);
       if (tof.getFile() != null) {
         item = controller.updateFile(item, collection, tof.getFile(), to.getFilename(), u);
       } else if (!StringHelper.isNullOrEmptyTrim(url)) {
@@ -90,7 +90,7 @@ public class DefaultItemService implements API<DefaultItemTO> {
     } else {
       item = controller.update(item, u);
     }
-    DefaultItemTO createdTO = new DefaultItemTO();
+    final DefaultItemTO createdTO = new DefaultItemTO();
     TransferObjectFactory.transferDefaultItem(item, createdTO);
     return createdTO;
   }
@@ -121,11 +121,11 @@ public class DefaultItemService implements API<DefaultItemTO> {
   public SearchResultTO<DefaultItemTO> search(String q, int offset, int size, User u)
       throws ImejiException {
 
-    List<DefaultItemTO> tos = new ArrayList<>();
-    SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC)
+    final List<DefaultItemTO> tos = new ArrayList<>();
+    final SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC)
         .search(SearchQueryParser.parseStringQuery(q), null, u, null, null, offset, size);
-    for (Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
-      DefaultItemTO to = new DefaultItemTO();
+    for (final Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
+      final DefaultItemTO to = new DefaultItemTO();
       TransferObjectFactory.transferDefaultItem(vo, to);
       tos.add(to);
     }
@@ -136,7 +136,7 @@ public class DefaultItemService implements API<DefaultItemTO> {
 
   /**
    * Return the collection of the item
-   * 
+   *
    * @param item
    * @param u
    * @return
@@ -176,7 +176,7 @@ public class DefaultItemService implements API<DefaultItemTO> {
     if (strs == null) {
       return null;
     }
-    for (String str : strs) {
+    for (final String str : strs) {
       if (str != null && !"".equals(str.trim())) {
         return str;
       }

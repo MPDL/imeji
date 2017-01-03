@@ -107,7 +107,7 @@ public class Statement implements Serializable, Cloneable {
   }
 
   public Collection<String> getLiteralConstraints() {
-    List<String> constraints = new ArrayList<String>(literalConstraints);
+    final List<String> constraints = new ArrayList<String>(literalConstraints);
     Collections.sort(constraints, new SortIgnoreCase());
     literalConstraints = constraints;
     return literalConstraints;
@@ -148,7 +148,7 @@ public class Statement implements Serializable, Cloneable {
    */
   @Override
   public Statement clone() {
-    Statement clone = new Statement();
+    final Statement clone = new Statement();
     clone.names = new ArrayList<>(names);
     clone.literalConstraints = literalConstraints;
     clone.index = index;

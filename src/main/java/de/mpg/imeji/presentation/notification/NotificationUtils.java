@@ -52,7 +52,7 @@ public class NotificationUtils {
   public static void notifyByItemDownload(User user, Item fileItem, Locale locale)
       throws ImejiException, IOException, URISyntaxException {
     final CollectionImeji c = cc.retrieve(fileItem.getCollection(), Imeji.adminUser);
-    for (User u : uc.searchUsersToBeNotified(user, c)) {
+    for (final User u : uc.searchUsersToBeNotified(user, c)) {
       emailClient.sendMail(u.getEmail(), null,
           EmailMessages.getEmailOnItemDownload_Subject(fileItem, locale),
           EmailMessages.getEmailOnItemDownload_Body(u, user, fileItem, c, locale));
@@ -78,14 +78,15 @@ public class NotificationUtils {
     if ("zip".equals(export.getParam("format"))) {
       // only for images
       if ("image".equals(export.getParam("type"))) {
-        Map<String, String> msgsPerEmail = new HashMap<>();
-        Map<String, User> usersPerEmail = new HashMap<>();
-        String q = !isNullOrEmpty(export.getParam("q")) ? "/browse?q=" + export.getParam("q") : "";
-        for (Map.Entry<URI, Integer> entry : ((ZIPExport) export).getItemsPerCollection()
+        final Map<String, String> msgsPerEmail = new HashMap<>();
+        final Map<String, User> usersPerEmail = new HashMap<>();
+        final String q =
+            !isNullOrEmpty(export.getParam("q")) ? "/browse?q=" + export.getParam("q") : "";
+        for (final Map.Entry<URI, Integer> entry : ((ZIPExport) export).getItemsPerCollection()
             .entrySet()) {
           final CollectionImeji c = cc.retrieve(entry.getKey(), Imeji.adminUser);
-          for (User u : uc.searchUsersToBeNotified(user, c)) {
-            String key = u.getEmail();
+          for (final User u : uc.searchUsersToBeNotified(user, c)) {
+            final String key = u.getEmail();
             msgsPerEmail.put(key,
                 (msgsPerEmail.containsKey(key) ? msgsPerEmail.get(key) + "\r\n" : "")
                     + "XXX_COLLECTION_XXX URI" + (isNullOrEmpty(q) ? ": " : " (XXX_FILTERED_XXX): ")
@@ -94,9 +95,9 @@ public class NotificationUtils {
             usersPerEmail.put(key, u);
           }
         }
-        String url = reconstructQueryUrl((ZIPExport) export, session);
-        for (Map.Entry<String, String> entry : msgsPerEmail.entrySet()) {
-          User u = usersPerEmail.get(entry.getKey());
+        final String url = reconstructQueryUrl((ZIPExport) export, session);
+        for (final Map.Entry<String, String> entry : msgsPerEmail.entrySet()) {
+          final User u = usersPerEmail.get(entry.getKey());
           emailClient.sendMail(u.getEmail(), null,
               EmailMessages.getEmailOnZipDownload_Subject(Locale.ENGLISH), EmailMessages
                   .getEmailOnZipDownload_Body(u, user, entry.getValue(), url, Locale.ENGLISH));
@@ -141,7 +142,7 @@ public class NotificationUtils {
       emailClient.sendMail(Imeji.CONFIG.getContactEmail(), null,
           EmailMessages.getEmailOnAccountActivation_Subject(user, locale),
           EmailMessages.getEmailOnAccountActivation_Body(user, locale, invitation));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("error", locale)
           + ": Account activation email not sent");
       LOGGER.info("Error sending account activation email", e);

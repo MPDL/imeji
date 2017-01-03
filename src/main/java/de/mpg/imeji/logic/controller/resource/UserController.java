@@ -24,7 +24,7 @@ import de.mpg.imeji.util.DateHelper;
 
 /**
  * Resource Controllers for {@link User}
- * 
+ *
  * @author saquet
  *
  */
@@ -39,7 +39,7 @@ public class UserController {
       try {
         return c1.getPerson().getCompleteName().toLowerCase()
             .compareTo(c2.getPerson().getCompleteName().toLowerCase());
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error comparing user " + c1.getEmail() + " with user " + c2.getEmail(), e);
         return c1.getEmail().compareTo(c2.getEmail());
       }
@@ -47,7 +47,7 @@ public class UserController {
   };
 
   public User create(User user) throws ImejiException {
-    Calendar now = DateHelper.getCurrentDate();
+    final Calendar now = DateHelper.getCurrentDate();
     user.setCreated(now);
     user.setModified(now);
     WRITER.create(WriterFacade.toList(user), Imeji.adminUser);
@@ -63,9 +63,9 @@ public class UserController {
    * @throws ImejiException
    */
   public User retrieve(URI uri, User user) throws ImejiException {
-    User u = (User) READER.read(uri.toString(), user, new User());
+    final User u = (User) READER.read(uri.toString(), user, new User());
     if (u.isActive()) {
-      GroupBusinessController ugc = new GroupBusinessController();
+      final GroupBusinessController ugc = new GroupBusinessController();
       u.setGroups((List<UserGroup>) ugc.searchByUser(u, Imeji.adminUser));
     }
     return u;
@@ -78,9 +78,9 @@ public class UserController {
    * @throws ImejiException
    */
   public List<User> retrieveAll() throws ImejiException {
-    List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectUserAll(), Imeji.userModel);
-    List<User> users = new ArrayList<>();
-    for (String uri : uris) {
+    final List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectUserAll(), Imeji.userModel);
+    final List<User> users = new ArrayList<>();
+    for (final String uri : uris) {
       users.add(retrieve(URI.create(uri), Imeji.adminUser));
     }
     return users;
@@ -94,12 +94,12 @@ public class UserController {
    * @throws ImejiException
    */
   public List<User> retrieveBatchLazy(List<String> uris, int limit) {
-    int max = limit < uris.size() && limit > 0 ? limit : uris.size();
-    List<User> users = new ArrayList<User>(max);
+    final int max = limit < uris.size() && limit > 0 ? limit : uris.size();
+    final List<User> users = new ArrayList<User>(max);
     for (int i = 0; i < max; i++) {
       try {
         users.add((User) READER.readLazy(uris.get(i), Imeji.adminUser, new User()));
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.error("Error reading user", e);
       }
     }
@@ -115,12 +115,12 @@ public class UserController {
    * @throws ImejiException
    */
   public Collection<User> retrieveBatch(List<String> uris, int limit) {
-    int max = limit < uris.size() && limit > 0 ? limit : uris.size();
-    List<User> users = new ArrayList<User>(max);
+    final int max = limit < uris.size() && limit > 0 ? limit : uris.size();
+    final List<User> users = new ArrayList<User>(max);
     for (int i = 0; i < max; i++) {
       try {
         users.add((User) READER.read(uris.get(i), Imeji.adminUser, new User()));
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.error("Error reading user", e);
       }
     }
@@ -151,7 +151,7 @@ public class UserController {
    */
   public void delete(User user) throws ImejiException {
     // remove User from User Groups
-    GroupBusinessController ugc = new GroupBusinessController();
+    final GroupBusinessController ugc = new GroupBusinessController();
     ugc.removeUserFromAllGroups(user, Imeji.adminUser);
     // remove user
     WRITER.delete(WriterFacade.toList(user), Imeji.adminUser);

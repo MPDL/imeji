@@ -72,7 +72,7 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
    * @return
    */
   public static boolean isValidEmail(String email) {
-    String regexEmailMatch = "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)";
+    final String regexEmailMatch = "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)";
     return email.matches(regexEmailMatch);
   }
 
@@ -84,8 +84,8 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
    * @throws ImejiException
    */
   private boolean existsUserWitheMail(String email, String userUri, boolean newUser) {
-    Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
-    SearchResult result =
+    final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+    final SearchResult result =
         search.searchString(JenaCustomQueries.selectUserByEmail(email), null, null, 0, -1);
     if (result.getNumberOfRecords() == 0) {
       return false;
@@ -97,7 +97,7 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
 
       // Check if it is existing user here who has same email
       boolean thereIsOtherUser = false;
-      for (String userId : result.getResults()) {
+      for (final String userId : result.getResults()) {
         if (!userUri.equals(userId)) {
           thereIsOtherUser = true;
         }

@@ -44,7 +44,7 @@ public class MetadataLabels implements Serializable {
     lang = locale.getLanguage();
     try {
       init(new StatementService().searchAndRetrieve(null, null, Imeji.adminUser, -1, 0));
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Error initializing metadatalables", e);
     }
   }
@@ -59,8 +59,8 @@ public class MetadataLabels implements Serializable {
   private void init(List<Statement> statements) {
     labels = new HashMap<URI, String>();
     internationalizedLabels = new HashMap<URI, String>();
-    for (Statement s : statements) {
-      for (String name : s.getNames()) {
+    for (final Statement s : statements) {
+      for (final String name : s.getNames()) {
         labels.put(s.getUri(), name);
         internationalizedLabels.put(s.getUri(), name);
       }

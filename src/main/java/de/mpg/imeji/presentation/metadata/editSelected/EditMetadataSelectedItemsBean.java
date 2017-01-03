@@ -16,12 +16,12 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.presentation.metadata.EditMetadataAbstract;
-import de.mpg.imeji.presentation.metadata.StatementComponent;
+import de.mpg.imeji.presentation.metadata.SelectStatementComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Bean for the page "Edit selected items metadata"
- * 
+ *
  * @author saquet
  *
  */
@@ -32,22 +32,22 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   private static final Logger LOGGER = Logger.getLogger(EditMetadataSelectedItemsBean.class);
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItemsIds = new ArrayList<>();
-  private List<StatementComponent> columns = new ArrayList<>();
+  private List<SelectStatementComponent> columns = new ArrayList<>();
   private List<RowComponent> rows = new ArrayList<>();
-  private StatementComponent newStatement;
+  private SelectStatementComponent newStatement;
 
   public EditMetadataSelectedItemsBean() {
     super();
-    this.newStatement = new StatementComponent(statementMap);
+    this.newStatement = new SelectStatementComponent(statementMap);
   }
 
   @PostConstruct
   public void init() {
     try {
-      List<Item> itemList = retrieveItems();
+      final List<Item> itemList = retrieveItems();
       initColumns(itemList);
       initRows(itemList);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error("Error initialiting page:" + e.getCause());
       LOGGER.error("Error initializing bean", e);
     }
@@ -55,11 +55,11 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
 
   /**
    * Initialize the rows of the editor
-   * 
+   *
    * @param items
    */
   private void initRows(List<Item> items) {
-    for (Item item : items) {
+    for (final Item item : items) {
       rows.add(new RowComponent(item, statementMap, columns));
     }
   }
@@ -68,11 +68,11 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
    * Initialize the columns of the editor
    */
   private void initColumns(List<Item> items) {
-    Map<String, StatementComponent> map = new HashMap<>();
-    for (Item item : items) {
-      for (Metadata md : item.getMetadata()) {
+    final Map<String, SelectStatementComponent> map = new HashMap<>();
+    for (final Item item : items) {
+      for (final Metadata md : item.getMetadata()) {
         map.putIfAbsent(md.getStatementId(),
-            new StatementComponent(md.getStatementId(), statementMap));
+            new SelectStatementComponent(md.getStatementId(), statementMap));
       }
     }
     columns = new ArrayList<>(map.values());
@@ -80,15 +80,15 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
 
   @Override
   public List<Item> toItemList() {
-    List<Item> l = new ArrayList<>();
-    for (RowComponent row : rows) {
+    final List<Item> l = new ArrayList<>();
+    for (final RowComponent row : rows) {
       l.add(row.toItem());
     }
     return l;
   }
 
   @Override
-  public List<StatementComponent> getAllStatements() {
+  public List<SelectStatementComponent> getAllStatements() {
     return columns;
   }
 
@@ -98,16 +98,19 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
    */
   public void addColumn() {
     columns.add(newStatement);
-    for (RowComponent row : rows) {
+    for (final RowComponent row : rows) {
       row.addCell(newStatement.asStatement());
     }
-    newStatement = new StatementComponent(statementMap);
+    newStatement = new SelectStatementComponent(statementMap);
   }
 
+  public String getBackUrl() {
+    return getHistory().getPreviousPage().getCompleteUrlWithHistory();
+  }
 
   /**
    * Retrieve the Items
-   * 
+   *
    * @return
    * @throws ImejiException
    */
@@ -146,25 +149,25 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   /**
    * @param newStatement the newStatement to set
    */
-  public void setNewStatement(StatementComponent newStatement) {
+  public void setNewStatement(SelectStatementComponent newStatement) {
     this.newStatement = newStatement;
   }
 
-  public StatementComponent getNewStatement() {
+  public SelectStatementComponent getNewStatement() {
     return newStatement;
   }
 
   /**
    * @return the columns
    */
-  public List<StatementComponent> getColumns() {
+  public List<SelectStatementComponent> getColumns() {
     return columns;
   }
 
   /**
    * @param columns the columns to set
    */
-  public void setColumns(List<StatementComponent> columns) {
+  public void setColumns(List<SelectStatementComponent> columns) {
     this.columns = columns;
   }
 

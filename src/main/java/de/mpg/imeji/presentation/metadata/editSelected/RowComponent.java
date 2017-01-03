@@ -10,11 +10,11 @@ import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataUtil;
-import de.mpg.imeji.presentation.metadata.StatementComponent;
+import de.mpg.imeji.presentation.metadata.SelectStatementComponent;
 
 /**
  * A row of the edit select item page
- * 
+ *
  * @author saquet
  *
  */
@@ -25,18 +25,18 @@ public class RowComponent implements Serializable {
   private final Item item;
 
   public RowComponent(Item item, Map<String, Statement> statementMap,
-      List<StatementComponent> columns) {
+      List<SelectStatementComponent> columns) {
     this.item = item;
     this.filename = item.getFilename();
-    for (StatementComponent column : columns) {
+    for (final SelectStatementComponent column : columns) {
       cells.add(new CellComponent(statementMap.get(column.getIndex()),
           getMetadataForStatement(item, statementMap.get(column.getIndex()))));
     }
   }
 
   private List<Metadata> getMetadataForStatement(Item item, Statement statement) {
-    List<Metadata> l = new ArrayList<>();
-    for (Metadata metadata : item.getMetadata()) {
+    final List<Metadata> l = new ArrayList<>();
+    for (final Metadata metadata : item.getMetadata()) {
       if (metadata.getStatementId().equals(statement.getIndex())
           && !MetadataUtil.isEmpty(metadata)) {
         l.add(metadata);
@@ -47,19 +47,19 @@ public class RowComponent implements Serializable {
 
   /**
    * Add a Statement
-   * 
+   *
    * @param statement
    */
   public void addCell(Statement statement) {
-    List<Metadata> l = new ArrayList<>();
+    final List<Metadata> l = new ArrayList<>();
     l.add(ImejiFactory.newMetadata(statement).build());
     cells.add(new CellComponent(statement, l));
   }
 
   public Item toItem() {
     item.setFilename(filename);
-    List<Metadata> metadata = new ArrayList<>();
-    for (CellComponent cell : cells) {
+    final List<Metadata> metadata = new ArrayList<>();
+    for (final CellComponent cell : cells) {
       metadata.addAll(cell.toMetadataList());
     }
     item.setMetadata(metadata);

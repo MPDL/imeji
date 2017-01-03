@@ -95,11 +95,11 @@ public class SpaceBean extends SuperBean {
    * @return
    */
   public String delete() {
-    SpaceController sc = new SpaceController();
+    final SpaceController sc = new SpaceController();
     try {
       sc.delete(space, getSessionUser());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("space_successfully_deleted", getLocale()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_space_delete", getLocale()));
       LOGGER.error("Error delete space", e);
     }
@@ -116,13 +116,13 @@ public class SpaceBean extends SuperBean {
   }
 
   public void init() {
-    CollectionController cc = new CollectionController();
-    String q = "";
-    User user = getSessionUser();
+    final CollectionController cc = new CollectionController();
+    final String q = "";
+    final User user = getSessionUser();
     try {
       if (!isSpaceCreateMode()) {
 
-        SpaceController sc = new SpaceController();
+        final SpaceController sc = new SpaceController();
         space = sc.retrieve(getSpace(), getSessionUser());
         backToAdminNoSpace = UrlHelper.getParameterBoolean("admin");
       }
@@ -131,7 +131,7 @@ public class SpaceBean extends SuperBean {
       if (!StringHelper.isNullOrEmptyTrim(space.getIdString())) {
         collections = cc.searchAndRetrieve(SearchQueryParser.parseStringQuery(q), null, user,
             space.getId().toString(), 0, -1);
-        for (CollectionImeji selC : collections) {
+        for (final CollectionImeji selC : collections) {
           selectedCollections.add(selC.getId().toString());
         }
       }
@@ -144,7 +144,7 @@ public class SpaceBean extends SuperBean {
           return coll1.getMetadata().getTitle().compareToIgnoreCase(coll2.getMetadata().getTitle());
         }
       });
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.info(
           Imeji.RESOURCE_BUNDLE.getMessage("could_not_load_collections_for_space", getLocale()));
       LOGGER.error("error reading collection spaces", e);
@@ -152,11 +152,11 @@ public class SpaceBean extends SuperBean {
     if (UrlHelper.getParameterBoolean("start")) {
       try {
         upload();
-      } catch (FileUploadException e) {
+      } catch (final FileUploadException e) {
         BeanHelper
             .error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_uri_save", getLocale()));
         LOGGER.error("error upload space logo", e);
-      } catch (TypeNotAllowedException e) {
+      } catch (final TypeNotAllowedException e) {
         BeanHelper
             .error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_uri_save", getLocale()));
         LOGGER.error("error upload space logo", e);
@@ -166,8 +166,8 @@ public class SpaceBean extends SuperBean {
   }
 
   public List<SelectItem> getCollectionItems() {
-    List<SelectItem> itemList = new ArrayList<SelectItem>();
-    for (CollectionImeji ci : collections) {
+    final List<SelectItem> itemList = new ArrayList<SelectItem>();
+    for (final CollectionImeji ci : collections) {
       itemList.add(new SelectItem(ci.getId().toString(), ci.getMetadata().getTitle()));
     }
     return itemList;
@@ -175,9 +175,9 @@ public class SpaceBean extends SuperBean {
 
   public String[] getSelectedCollectionItemsArray() {
     int i = 0;
-    String[] selItemArray = new String[selectedCollections.size()];
-    for (CollectionImeji ci : collections) {
-      for (String sel : selectedCollections) {
+    final String[] selItemArray = new String[selectedCollections.size()];
+    for (final CollectionImeji ci : collections) {
+      for (final String sel : selectedCollections) {
         if (sel.equals(ci.getId().toString())) {
           selItemArray[i] = ci.getIdString();
           i++;
@@ -212,9 +212,9 @@ public class SpaceBean extends SuperBean {
   }
 
   public void upload() throws FileUploadException, TypeNotAllowedException {
-    HttpServletRequest request =
+    final HttpServletRequest request =
         (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-    HttpServletResponse response =
+    final HttpServletResponse response =
         (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
     setIngestImage(getUploadedIngestFile(request, response));
   }
@@ -222,16 +222,16 @@ public class SpaceBean extends SuperBean {
   private IngestImage getUploadedIngestFile(HttpServletRequest request,
       HttpServletResponse response) throws FileUploadException, TypeNotAllowedException {
     File tmp = null;
-    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-    IngestImage ii = new IngestImage();
+    final boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    final IngestImage ii = new IngestImage();
     if (isMultipart) {
-      ServletFileUpload upload = new ServletFileUpload();
+      final ServletFileUpload upload = new ServletFileUpload();
       try {
-        FileItemIterator iter = upload.getItemIterator(request);
+        final FileItemIterator iter = upload.getItemIterator(request);
 
         while (iter.hasNext()) {
-          FileItemStream fis = iter.next();
-          InputStream in = fis.openStream();
+          final FileItemStream fis = iter.next();
+          final InputStream in = fis.openStream();
 
           tmp = TempFileUtil.createTempFile("spacelogo",
               "." + FilenameUtils.getExtension(fis.getName()));
@@ -243,14 +243,14 @@ public class SpaceBean extends SuperBean {
             throw new TypeNotAllowedException(Imeji.RESOURCE_BUNDLE
                 .getMessage("Logo_single_upload_invalid_content_format", getLocale()));
           }
-          FileOutputStream fos = new FileOutputStream(tmp);
+          final FileOutputStream fos = new FileOutputStream(tmp);
           if (fis.getName() != null) {
             ii.setName(fis.getName());
           }
           if (!fis.isFormField()) {
             try {
               IOUtils.copy(in, fos);
-            } catch (Exception e) {
+            } catch (final Exception e) {
               BeanHelper.error("Could not process uploaded Logo file streams");
             }
 
@@ -270,8 +270,8 @@ public class SpaceBean extends SuperBean {
   }
 
   public boolean extensionNotAllowed(File file) {
-    StorageController sc = new StorageController();
-    String guessedNotAllowedFormat = sc.guessNotAllowedFormat(file);
+    final StorageController sc = new StorageController();
+    final String guessedNotAllowedFormat = sc.guessNotAllowedFormat(file);
     return StorageUtils.BAD_FORMAT.equals(guessedNotAllowedFormat);
   }
 

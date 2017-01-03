@@ -37,9 +37,9 @@ public class ItemDetailsBrowse implements Serializable {
   private static final long serialVersionUID = -1627171360319925422L;
   private static final Logger LOGGER = Logger.getLogger(ItemDetailsBrowse.class);
   private String query;
-  private String containerUri;
-  private int currentPosition;
-  private SortCriterion sortCriterion;
+  private final String containerUri;
+  private final int currentPosition;
+  private final SortCriterion sortCriterion;
   private static final int SIZE = 3;
   private Item currentItem = null;
   private String next = null;
@@ -61,24 +61,24 @@ public class ItemDetailsBrowse implements Serializable {
     this.sortCriterion = initSortCriterion();
     this.currentPosition =
         UrlHelper.hasParameter("pos") ? Integer.parseInt(UrlHelper.getParameterValue("pos")) : -1;
-    List<String> items = searchPreviousAndNextItem(user, spaceId);
+    final List<String> items = searchPreviousAndNextItem(user, spaceId);
     init(items, type, containerUri);
   }
 
   /**
    * Search for items previous and after to the current item.
-   * 
+   *
    * @param user
    * @param spaceId
    * @return
    */
   private List<String> searchPreviousAndNextItem(User user, String spaceId) {
-    ItemService controller = new ItemService();
+    final ItemService controller = new ItemService();
     try {
       return controller.search(containerUri != null ? URI.create(containerUri) : null,
           SearchQueryParser.parseStringQuery(query), sortCriterion, user, spaceId, SIZE,
           getOffset()).getResults();
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       LOGGER.error("Error retrieving items", e);
     }
     return new ArrayList<>();
@@ -86,13 +86,13 @@ public class ItemDetailsBrowse implements Serializable {
 
   /**
    * Initialize the Sort Criterion
-   * 
+   *
    * @return
    */
   private SortCriterion initSortCriterion() {
-    String sortFieldName =
+    final String sortFieldName =
         CookieUtils.readNonNull(ItemsBean.ITEM_SORT_COOKIE, SearchFields.modified.name());
-    String orderFieldName =
+    final String orderFieldName =
         CookieUtils.readNonNull(ItemsBean.ITEM_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name());
     return new SortCriterion(SearchFields.valueOf(sortFieldName),
         SortOrder.valueOf(orderFieldName));
@@ -100,7 +100,7 @@ public class ItemDetailsBrowse implements Serializable {
 
   /**
    * Return the Offset for the saerch according to the current position
-   * 
+   *
    * @return
    */
   private int getOffset() {
@@ -126,8 +126,8 @@ public class ItemDetailsBrowse implements Serializable {
       baseUrl = ((Navigation) BeanHelper.getApplicationBean(Navigation.class)).getAlbumUrl()
           + ObjectHelper.getId(URI.create(containerUri)) + "/item/";
     }
-    String nextItem = nextItem(items);
-    String previousItem = previousItem(items);
+    final String nextItem = nextItem(items);
+    final String previousItem = previousItem(items);
     if (nextItem != null) {
       next = baseUrl + ObjectHelper.getId(URI.create(nextItem)) + "?q=" + this.query + "&pos="
           + (this.currentPosition + 1);
@@ -140,23 +140,23 @@ public class ItemDetailsBrowse implements Serializable {
 
   /**
    * Return the item id next to the current item
-   * 
+   *
    * @param items
    * @return
    */
   private String nextItem(List<String> items) {
-    int currentIndex = items.indexOf(currentItem.getId().toString());
+    final int currentIndex = items.indexOf(currentItem.getId().toString());
     return currentIndex < items.size() - 1 ? items.get(currentIndex + 1) : null;
   }
 
   /**
    * Return the item id previous to the current item
-   * 
+   *
    * @param items
    * @return
    */
   private String previousItem(List<String> items) {
-    int currentIndex = items.indexOf(currentItem.getId().toString());
+    final int currentIndex = items.indexOf(currentItem.getId().toString());
     return currentIndex > 0 ? items.get(0) : null;
   }
 

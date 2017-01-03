@@ -16,14 +16,14 @@ import de.mpg.imeji.logic.vo.User;
 public class BasicAuthentication {
 
   public static User auth(HttpServletRequest req) throws AuthenticationError {
-    Authentication auth = AuthenticationFactory.factory(req);
-    User u = auth.doLogin();
+    final Authentication auth = AuthenticationFactory.factory(req);
+    final User u = auth.doLogin();
     return u;
   }
 
   public static User auth(String authorizationHeader) throws AuthenticationError {
-    Authentication auth = AuthenticationFactory.factory(authorizationHeader);
-    User u = auth.doLogin();
+    final Authentication auth = AuthenticationFactory.factory(authorizationHeader);
+    final User u = auth.doLogin();
     return u;
   }
 }

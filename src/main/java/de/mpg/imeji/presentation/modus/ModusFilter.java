@@ -90,7 +90,7 @@ public class ModusFilter implements Filter {
    * @return
    */
   private boolean isPublicPage(HttpServletRequest request) {
-    String path = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
+    final String path = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
     return Navigation.HELP.hasSamePath(path) || Navigation.HOME.hasSamePath(path)
         || Navigation.REGISTRATION.hasSamePath(path) || Navigation.IMPRINT.hasSamePath(path)
         || Navigation.TERMS_OF_USE.hasSamePath(path);
@@ -128,9 +128,9 @@ public class ModusFilter implements Filter {
    */
   private void redirectToStartPage(ServletRequest serv, ServletResponse resp)
       throws UnsupportedEncodingException, IOException {
-    String url = navigation.getApplicationUri()
+    final String url = navigation.getApplicationUri()
         + PrettyContext.getCurrentInstance((HttpServletRequest) serv).getRequestURL().toURL();
-    Map<String, String[]> params = PrettyContext.getCurrentInstance((HttpServletRequest) serv)
+    final Map<String, String[]> params = PrettyContext.getCurrentInstance((HttpServletRequest) serv)
         .getRequestQueryString().getParameterMap();
     ((HttpServletResponse) resp)
         .sendRedirect(navigation.getApplicationUri() + "?" + REDIRECT_AFTER_LOGIN_PARAM + "="
@@ -145,7 +145,7 @@ public class ModusFilter implements Filter {
    * @throws IOException
    */
   private void redirect(ServletRequest serv, ServletResponse resp) throws IOException {
-    String url = URLDecoder.decode(serv.getParameter(REDIRECT_AFTER_LOGIN_PARAM), "UTF-8");
+    final String url = URLDecoder.decode(serv.getParameter(REDIRECT_AFTER_LOGIN_PARAM), "UTF-8");
     ((HttpServletResponse) resp).sendRedirect(url);
   }
 }

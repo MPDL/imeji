@@ -19,7 +19,7 @@ public class MyApplication extends ResourceConfig {
       register(LoggingFilter.class);
     }
     register(MultiPartFeature.class);
-    BeanConfig beanConfig = new BeanConfig();
+    final BeanConfig beanConfig = new BeanConfig();
     beanConfig.setTitle("imeji API");
     beanConfig.setVersion("v" + CURRENT_VERSION);
     beanConfig.setBasePath("/imeji/rest");

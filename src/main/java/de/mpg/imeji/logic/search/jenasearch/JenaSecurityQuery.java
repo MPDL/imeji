@@ -38,7 +38,7 @@ public class JenaSecurityQuery {
   public static String queryFactory(User user, String rdfType, Status status,
       boolean isUserSearch) {
 
-    String statusFilter = getStatusAsFilter(status);
+    final String statusFilter = getStatusAsFilter(status);
 
     if (Status.PENDING.equals(status) && !SecurityUtil.isSysAdmin(user)) {
       // add this explicitly in order to avoid too long queries. Only if Admin user should not be
@@ -66,7 +66,8 @@ public class JenaSecurityQuery {
     // Logic below is invoked for logged-in users. Grants must be always checked.
     // If user has no grants for requested objects, simply no data should be returned
     // that's why FILTER(false)
-    String userGrantsAsFilterSimple = getUserGrantsAsFilterSimple(user, rdfType, isUserSearch);
+    final String userGrantsAsFilterSimple =
+        getUserGrantsAsFilterSimple(user, rdfType, isUserSearch);
     return userGrantsAsFilterSimple.equals("")
         ? (SecurityUtil.isSysAdmin(user) ? statusFilter : " FILTER(false) ")
         : userGrantsAsFilterSimple + statusFilter + " .";
@@ -120,13 +121,13 @@ public class JenaSecurityQuery {
     }
 
     String s = "";
-    boolean addReleasedStatus = !isUserSearch;
+    final boolean addReleasedStatus = !isUserSearch;
 
-    StringBuilder builder = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     String allowedContainerString = "";
     if (J2JHelper.getResourceNamespace(new Item()).equals(rdfType)) {
       int i = 0;
-      for (String uri : uris) {
+      for (final String uri : uris) {
         i++;
         builder.append(
             (i == 1 ? "{ " : " UNION {") + "?s " + getPredicateName(rdfType) + " <" + uri + "> }");
@@ -139,7 +140,7 @@ public class JenaSecurityQuery {
     } else if ((J2JHelper.getResourceNamespace(new CollectionImeji()).equals(rdfType)
         || J2JHelper.getResourceNamespace(new Album()).equals(rdfType))) {
       int j = 0;
-      for (String uri : uris) {
+      for (final String uri : uris) {
         j++;
         builder.append(" <" + uri + "> " + (j == uris.size() ? "" : ","));
       }
@@ -159,12 +160,12 @@ public class JenaSecurityQuery {
     if (J2JHelper.getResourceNamespace(new Item()).equals(rdfType)) {
       // searching for items. Add to the Filter the item for which the
       // user has extra rights as well as the item which are public
-      StringBuilder builderItems = new StringBuilder();
+      final StringBuilder builderItems = new StringBuilder();
       int itNo = 0;
-      List<String> allowedItems = SecurityUtil.getListOfAllowedItem(user);
+      final List<String> allowedItems = SecurityUtil.getListOfAllowedItem(user);
       String allowedItemsString = "";
       if (allowedItems.size() > 0) {
-        for (String uri : allowedItems) {
+        for (final String uri : allowedItems) {
           itNo++;
           builderItems.append(" <" + uri + "> " + (itNo == allowedItems.size() ? "" : ","));
         }

@@ -4,7 +4,7 @@ import de.mpg.imeji.logic.contentanalysis.impl.TikaContentAnalyser;
 
 /**
  * Factory for Content Analysers
- * 
+ *
  * @author saquet
  *
  */
@@ -16,7 +16,7 @@ public class ContentAnalyserFactory {
 
   /**
    * Return the default content analyser
-   * 
+   *
    * @return
    */
   public static ContentAnalyser build() {

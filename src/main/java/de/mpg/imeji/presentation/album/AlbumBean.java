@@ -127,14 +127,14 @@ public class AlbumBean extends ContainerBean {
           if (getActiveAlbum() != null && getActiveAlbum().getId().equals(album.getId())) {
             active = true;
           }
-          int myPrivateCount = getPrivateCount();
+          final int myPrivateCount = getPrivateCount();
           if (myPrivateCount != 0) {
             BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("album_Private_Content", getLocale())
                 .replace("XXX_COUNT_XXX", myPrivateCount + ""));
           }
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing album page", e);
       // Has to be in try/catch block, otherwise redirect from
       // HistoryFilter will not work.
@@ -241,7 +241,7 @@ public class AlbumBean extends ContainerBean {
   @Override
   public String getPersonString() {
     String personString = "";
-    for (Person p : album.getMetadata().getPersons()) {
+    for (final Person p : album.getMetadata().getPersons()) {
       if (!"".equals(personString)) {
         personString += "; ";
       }
@@ -275,14 +275,14 @@ public class AlbumBean extends ContainerBean {
    * @return
    */
   public String release() {
-    AlbumController ac = new AlbumController();
+    final AlbumController ac = new AlbumController();
     try {
       ac.release(album, getSessionUser());
       if (active) {
         sessionBean.deactivateAlbum();
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_release", getLocale()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_release", getLocale()));
       BeanHelper.error(e.getMessage());
       LOGGER.error("Issue during release", e);
@@ -296,7 +296,7 @@ public class AlbumBean extends ContainerBean {
    * @return
    */
   public String delete() {
-    AlbumController c = new AlbumController();
+    final AlbumController c = new AlbumController();
     try {
       c.delete(album, getSessionUser());
       if (active) {
@@ -304,7 +304,7 @@ public class AlbumBean extends ContainerBean {
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_delete", getLocale())
           .replace("XXX_albumName_XXX", this.album.getMetadata().getTitle()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_delete", getLocale()));
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error during delete album", e);
@@ -319,14 +319,14 @@ public class AlbumBean extends ContainerBean {
    * @throws Exception
    */
   public String withdraw() throws ImejiException {
-    AlbumController c = new AlbumController();
+    final AlbumController c = new AlbumController();
     try {
       c.withdraw(album, getSessionUser());
       if (active) {
         sessionBean.deactivateAlbum();
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_withdraw", getLocale()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_withdraw", getLocale()));
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error during withdraw album", e);
@@ -380,8 +380,8 @@ public class AlbumBean extends ContainerBean {
   }
 
   public User getAlbumCreator() throws Exception {
-    UserBusinessController uc = new UserBusinessController();
-    User user = uc.retrieve(album.getCreatedBy(), Imeji.adminUser);
+    final UserBusinessController uc = new UserBusinessController();
+    final User user = uc.retrieve(album.getCreatedBy(), Imeji.adminUser);
     return user;
   }
 
@@ -461,7 +461,7 @@ public class AlbumBean extends ContainerBean {
    * Count the amount of items a user is allow to see
    */
   private void countAllowedItems() {
-    ItemService ic = new ItemService();
+    final ItemService ic = new ItemService();
     allowedItemsSize =
         ic.search(getContainer().getId(), null, null, getSessionUser(), getSpaceId(), -1, 0)
             .getNumberOfRecords();

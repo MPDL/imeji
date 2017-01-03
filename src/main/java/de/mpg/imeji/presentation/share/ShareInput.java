@@ -35,9 +35,9 @@ public class ShareInput implements Serializable {
   private final String objectUri;
   private final String profileUri;
   private final SharedObjectType type;
-  private Locale locale;
-  private User user;
-  private String instanceName;
+  private final Locale locale;
+  private final User user;
+  private final String instanceName;
 
   /**
    * Constructor
@@ -72,14 +72,14 @@ public class ShareInput implements Serializable {
    * Send Invitations to unknown Emails
    */
   public void sendInvitations() {
-    InvitationBusinessController invitationBC = new InvitationBusinessController();
-    EmailService emailService = new EmailService();
-    for (String invitee : unknownEmails) {
+    final InvitationBusinessController invitationBC = new InvitationBusinessController();
+    final EmailService emailService = new EmailService();
+    for (final String invitee : unknownEmails) {
       try {
         invitationBC.invite(new Invitation(invitee, objectUri, menu.getRoles()));
         emailService.sendMail(invitee, null, getInvitationEmailSubject(),
             getInvitationEmailBody(invitee));
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_send_invitation", locale));
         LOGGER.error("Error sending invitation:", e);
       }
@@ -90,7 +90,7 @@ public class ShareInput implements Serializable {
    * @return the invitation message
    */
   private String getInvitationEmailBody(String email) {
-    Navigation nav = new Navigation();
+    final Navigation nav = new Navigation();
     return Imeji.RESOURCE_BUNDLE.getMessage("email_invitation_body", locale)
         .replace("XXX_SENDER_NAME_XXX", user.getPerson().getCompleteName())
         .replace("XXX_INSTANCE_NAME_XXX", instanceName)
@@ -128,7 +128,7 @@ public class ShareInput implements Serializable {
    * Share with existing users
    */
   private void shareWithValidEmails() {
-    for (ShareListItem shareListItem : toShareListItem(validEmails)) {
+    for (final ShareListItem shareListItem : toShareListItem(validEmails)) {
       shareListItem.update();
     }
   }
@@ -141,10 +141,10 @@ public class ShareInput implements Serializable {
    * @return
    */
   private List<ShareListItem> toShareListItem(List<String> emails) {
-    List<ShareListItem> listItems = new ArrayList<ShareListItem>();
-    for (String email : emails) {
-      ShareListItem item = new ShareListItem(retrieveUser(email), type, objectUri, profileUri, null,
-          user, locale, false);
+    final List<ShareListItem> listItems = new ArrayList<ShareListItem>();
+    for (final String email : emails) {
+      final ShareListItem item = new ShareListItem(retrieveUser(email), type, objectUri, profileUri,
+          null, user, locale, false);
       item.setRoles(menu.getRoles());
       listItems.add(item);
     }
@@ -162,9 +162,9 @@ public class ShareInput implements Serializable {
     validEmails.clear();
     unknownEmails.clear();
     invalidEntries.clear();
-    for (String value : input.split("\\s*[|,;\\n]\\s*")) {
+    for (final String value : input.split("\\s*[|,;\\n]\\s*")) {
       if (EmailService.isValidEmail(value) && !value.equalsIgnoreCase(user.getEmail())) {
-        boolean exists = retrieveUser(value) != null;
+        final boolean exists = retrieveUser(value) != null;
         if (exists) {
           validEmails.add(value);
         } else {
@@ -184,10 +184,10 @@ public class ShareInput implements Serializable {
    * @return
    */
   private User retrieveUser(String email) {
-    UserBusinessController controller = new UserBusinessController();
+    final UserBusinessController controller = new UserBusinessController();
     try {
       return controller.retrieve(email, Imeji.adminUser);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return null;
     }
   }

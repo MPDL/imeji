@@ -79,18 +79,18 @@ public class PropertyReader {
    */
   public static void loadProperties() throws IOException, URISyntaxException {
     String propertiesFile = null;
-    Properties solProperties = new Properties();
+    final Properties solProperties = new Properties();
     try {
       solution = PropertyReader.class.getClassLoader().getResource("solution.properties");
-    } catch (Exception e) {
+    } catch (final Exception e) {
       Logger.getLogger(PropertyReader.class)
           .warn("WARNING: solution.properties not found: " + e.getMessage());
     }
     if (solution != null) {
       Logger.getLogger(PropertyReader.class).info("Solution URI is " + solution.toString());
-      InputStream in = getInputStream("solution.properties");
+      final InputStream in = getInputStream("solution.properties");
       solProperties.load(in);
-      String appname = solProperties.getProperty("appname");
+      final String appname = solProperties.getProperty("appname");
       version = solProperties.getProperty("imeji.application.version");
       propertiesFile = appname + ".properties";
     } else {
@@ -99,7 +99,7 @@ public class PropertyReader {
       Logger.getLogger(PropertyReader.class)
           .debug("solution.properties file not found. Trying default.");
     }
-    InputStream instream = getInputStream(propertiesFile);
+    final InputStream instream = getInputStream(propertiesFile);
     properties = new Properties();
     properties.load(instream);
     cleanUp(properties).putAll(solProperties);
@@ -131,9 +131,9 @@ public class PropertyReader {
       }
       LOGGER.info("loading properties from " + serverConfDirectory + "/" + filepath);
       instream = new FileInputStream(serverConfDirectory + "/" + filepath);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       // try to get resource from classpath
-      URL url = PropertyReader.class.getClassLoader().getResource(filepath);
+      final URL url = PropertyReader.class.getClassLoader().getResource(filepath);
       if (url != null) {
         instream = url.openStream();
       }
@@ -157,7 +157,7 @@ public class PropertyReader {
 
   private static Properties cleanUp(Properties props) {
     // Trim values
-    for (Entry<Object, Object> e : props.entrySet()) {
+    for (final Entry<Object, Object> e : props.entrySet()) {
       e.setValue(((String) e.getValue()).trim());
     }
     return props;

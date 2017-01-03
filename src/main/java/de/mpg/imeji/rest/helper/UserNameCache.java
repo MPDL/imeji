@@ -15,7 +15,7 @@ import de.mpg.imeji.rest.api.UserService;
  *
  */
 public class UserNameCache {
-  private Map<String, String> userNameMap = new HashMap<>();
+  private final Map<String, String> userNameMap = new HashMap<>();
   private static final Logger LOGGER = Logger.getLogger(UserNameCache.class);
 
   public String getUserName(URI userId) {
@@ -26,11 +26,11 @@ public class UserNameCache {
       return userNameMap.get(userId.toString());
     } else {
       try {
-        UserService ucrud = new UserService();
-        String name = ucrud.getCompleteName(userId);
+        final UserService ucrud = new UserService();
+        final String name = ucrud.getCompleteName(userId);
         userNameMap.put(userId.toString(), name);
         return name;
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Cannot read user: " + userId, e);
         return null;
       }

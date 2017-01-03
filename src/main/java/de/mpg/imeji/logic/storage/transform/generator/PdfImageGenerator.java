@@ -52,7 +52,7 @@ public class PdfImageGenerator implements ImageGenerator {
     if (StorageUtils.getMimeType(extension).equals("application/pdf")) {
       try {
         return PdfUtils.pdfToImage(file);
-      } catch (IOException e) {
+      } catch (final IOException e) {
         LOGGER.error("Error reading pdf file", e);
       }
     }

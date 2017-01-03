@@ -35,10 +35,10 @@ public class ElasticContainerProperties extends ElasticProperties {
     this.description = c.getMetadata().getDescription();
     this.space = c instanceof CollectionImeji ? c.getDoi() : null;
     this.pid = c.getDoi() != null ? Arrays.asList(c.getDoi()) : new ArrayList<String>();
-    for (Person p : c.getMetadata().getPersons()) {
+    for (final Person p : c.getMetadata().getPersons()) {
       author.add(new ElasticPerson(p));
     }
-    for (ContainerAdditionalInfo i : c.getMetadata().getAdditionalInformations()) {
+    for (final ContainerAdditionalInfo i : c.getMetadata().getAdditionalInformations()) {
       info.add(new ElasticContainerAdditionalInfo(i));
     }
   }

@@ -37,34 +37,34 @@ public class ImejiFactory {
   }
 
   public static Album newAlbum() {
-    Album album = new Album();
+    final Album album = new Album();
     album.setMetadata(newContainerMetadata());
     return album;
   }
 
   public static CollectionImeji newCollection() {
-    CollectionImeji coll = new CollectionImeji();
+    final CollectionImeji coll = new CollectionImeji();
     coll.setMetadata(newContainerMetadata());
     return coll;
   }
 
   public static CollectionImeji newCollection(String title, String firstAuthorFamilyName,
       String firstAuthorGivenName, String firstAuthorOrganization) {
-    CollectionImeji coll = new CollectionImeji();
+    final CollectionImeji coll = new CollectionImeji();
     coll.setMetadata(newContainerMetadata(title, firstAuthorFamilyName, firstAuthorGivenName,
         firstAuthorOrganization));
     return coll;
   }
 
   public static ContainerMetadata newContainerMetadata() {
-    ContainerMetadata cm = new ContainerMetadata();
+    final ContainerMetadata cm = new ContainerMetadata();
     cm.getPersons().add(newPerson());
     return cm;
   }
 
   public static ContainerMetadata newContainerMetadata(String title, String firstAuthorFamilyName,
       String firstAuthorGivenName, String firstAuthorOrganization) {
-    ContainerMetadata cm = new ContainerMetadata();
+    final ContainerMetadata cm = new ContainerMetadata();
     cm.setTitle(title);
     cm.getPersons()
         .add(newPerson(firstAuthorFamilyName, firstAuthorGivenName, firstAuthorOrganization));
@@ -72,7 +72,7 @@ public class ImejiFactory {
   }
 
   public static Space newSpace() {
-    Space s = new Space();
+    final Space s = new Space();
     return s;
   }
 
@@ -86,7 +86,7 @@ public class ImejiFactory {
   }
 
   public static Person newPerson() {
-    Person pers = new Person();
+    final Person pers = new Person();
     pers.setAlternativeName("");
     pers.setFamilyName("");
     pers.setGivenName("");
@@ -95,7 +95,7 @@ public class ImejiFactory {
   }
 
   public static Person newPerson(String familyName, String givenName, String firstOrganization) {
-    Person pers = new Person();
+    final Person pers = new Person();
     pers.setAlternativeName("");
     pers.setFamilyName(familyName);
     pers.setGivenName(givenName);
@@ -104,13 +104,13 @@ public class ImejiFactory {
   }
 
   public static Organization newOrganization() {
-    Organization org = new Organization();
+    final Organization org = new Organization();
     org.setName("");
     return org;
   }
 
   public static Organization newOrganization(String name) {
-    Organization org = new Organization();
+    final Organization org = new Organization();
     org.setName(name);
     return org;
   }
@@ -123,7 +123,7 @@ public class ImejiFactory {
    * @throws UnprocessableError
    */
   public static Item newItem(CollectionImeji collection) throws UnprocessableError {
-    Item item = new Item();
+    final Item item = new Item();
     if (collection == null || collection.getId() == null) {
       throw new UnprocessableError("Can not create item with a collection null");
     }
@@ -146,7 +146,7 @@ public class ImejiFactory {
    */
   public static Item newItem(CollectionImeji collection, User user, String storageId, String title,
       URI fullImageURI, URI thumbnailURI, URI webURI, String filetype) throws UnprocessableError {
-    Item item = ImejiFactory.newItem(collection);
+    final Item item = ImejiFactory.newItem(collection);
     return newItem(item, collection, user, storageId, title, fullImageURI, thumbnailURI, webURI,
         filetype);
   }

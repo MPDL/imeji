@@ -16,7 +16,7 @@ import de.mpg.imeji.exceptions.ImejiException;
  * @version $Revision$ $LastChangedDate$
  */
 public abstract class Transaction {
-  private String modelURI;
+  private final String modelURI;
   private boolean isException;
   private ImejiException exception;
   private static Logger LOGGER = Logger.getLogger(Transaction.class);
@@ -40,7 +40,7 @@ public abstract class Transaction {
       dataset.begin(getLockType());
       execute(dataset);
       dataset.commit();
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       dataset.abort();
       isException = true;
       exception = e;

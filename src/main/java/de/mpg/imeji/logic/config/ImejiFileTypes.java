@@ -78,7 +78,7 @@ public class ImejiFileTypes {
      */
     public String getAsRegexQuery() {
       String regex = "";
-      for (String extension : extensions.split(",")) {
+      for (final String extension : extensions.split(",")) {
         if (!regex.equals("")) {
           regex += "|";
         }
@@ -108,7 +108,7 @@ public class ImejiFileTypes {
      * @return
      */
     public String getName(String lang) {
-      String name = namesMap.get(lang);
+      final String name = namesMap.get(lang);
       if (name != null) {
         return name;
       }
@@ -151,10 +151,10 @@ public class ImejiFileTypes {
      * @return
      */
     private Map<String, String> parseNames(String names) {
-      Map<String, String> map = new HashMap<String, String>();
-      for (String nameWithLang : names.split(",")) {
-        String[] nl = nameWithLang.split("@");
-        String name = nl[0];
+      final Map<String, String> map = new HashMap<String, String>();
+      for (final String nameWithLang : names.split(",")) {
+        final String[] nl = nameWithLang.split("@");
+        final String name = nl[0];
         String lang = "en";
         if (nl.length > 1) {
           lang = nl[1];
@@ -166,7 +166,7 @@ public class ImejiFileTypes {
   }
 
   private List<Type> types;
-  private Pattern typePattern = Pattern.compile("\\[(.*?)\\]");
+  private final Pattern typePattern = Pattern.compile("\\[(.*?)\\]");
 
   /**
    * Initialize a new FilterTypeBean
@@ -184,9 +184,9 @@ public class ImejiFileTypes {
   private void parse(String s) {
     this.types = new ArrayList<>();
     if (s != null) {
-      Matcher m = typePattern.matcher(s);
+      final Matcher m = typePattern.matcher(s);
       while (m.find()) {
-        String typeString = m.group(1);
+        final String typeString = m.group(1);
         this.types.add(new Type(typeString.split("=")[0], typeString.split("=")[1]));
       }
     }
@@ -200,7 +200,7 @@ public class ImejiFileTypes {
   @Override
   public String toString() {
     String s = "";
-    for (Type type : types) {
+    for (final Type type : types) {
       s += "[" + type.toString() + "]";
     }
     return s;
@@ -213,7 +213,7 @@ public class ImejiFileTypes {
    * @return
    */
   public Type getType(String name) {
-    for (Type type : types) {
+    for (final Type type : types) {
       if (type.hasName(name)) {
         return type;
       }

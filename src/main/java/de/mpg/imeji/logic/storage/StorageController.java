@@ -81,7 +81,7 @@ public final class StorageController implements Serializable {
       if (name == null) {
         name = PropertyReader.getProperty(IMEJI_STORAGE_NAME_PROPERTY);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing StorageController", e);
     }
     storage = StorageFactory.create(name);
@@ -101,13 +101,13 @@ public final class StorageController implements Serializable {
   public UploadResult upload(String filename, File file, String collectionId)
       throws ImejiException {
     filename = FilenameUtils.getName(filename);
-    UploadResult result = storage.upload(filename, file, collectionId);
-    File storageFile = storage.read(result.getOrginal());
+    final UploadResult result = storage.upload(filename, file, collectionId);
+    final File storageFile = storage.read(result.getOrginal());
     result.setChecksum(calculateChecksum(storageFile));
     result.setFileSize(storageFile.length());
     // If the file is an image, read the dimension of the image
     if (StorageUtils.getMimeType(storageFile).contains("image")) {
-      Dimension d = ImageUtils.getImageDimension(storageFile);
+      final Dimension d = ImageUtils.getImageDimension(storageFile);
       if (d != null) {
         result.setHeight(d.height);
         result.setWidth(d.width);
@@ -212,13 +212,13 @@ public final class StorageController implements Serializable {
       return false;
     }
     // check in white list, if found then allowed
-    for (String s : formatWhiteList.split(",")) {
+    for (final String s : formatWhiteList.split(",")) {
       if (compareExtension(extension, s.trim())) {
         return true;
       }
     }
     // check black list, if found then forbidden
-    for (String s : formatBlackList.split(",")) {
+    for (final String s : formatBlackList.split(",")) {
       if (compareExtension(extension, s.trim())) {
         return false;
       }

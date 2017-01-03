@@ -19,7 +19,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * Super Bean for Filter menu implementation.
- * 
+ *
  * @author saquet
  *
  */
@@ -34,7 +34,7 @@ public class SuperFilterMenuBean extends SuperBean {
     try {
       this.selected =
           findSelected(SearchQueryParser.parseStringQuery(UrlHelper.getParameterValue("q")));
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error("Error parsing query in the URL");
       LOGGER.error("Error parsing query in the URL", e);
     }
@@ -42,15 +42,15 @@ public class SuperFilterMenuBean extends SuperBean {
 
   /**
    * Find the selected Filter from the url. If the Filter is not found, return null
-   * 
+   *
    * @param query
    * @return
    * @throws UnprocessableError
    */
   private SelectItem findSelected(SearchQuery query) throws UnprocessableError {
-    for (SearchElement element : query.getElements()) {
-      for (SelectItem selectItem : menu) {
-        SearchQuery filterQuery =
+    for (final SearchElement element : query.getElements()) {
+      for (final SelectItem selectItem : menu) {
+        final SearchQuery filterQuery =
             SearchQueryParser.parseStringQuery(selectItem.getValue().toString());
         if (filterQuery.isSame(element)) {
           return selectItem;
@@ -62,42 +62,42 @@ public class SuperFilterMenuBean extends SuperBean {
 
   /**
    * Get the URL for this filter
-   * 
+   *
    * @param filter
    * @return
    * @throws UnprocessableError
    */
   public String getFilterUrl(String filter) throws UnprocessableError {
-    SearchQuery filterQuery = SearchQueryParser.parseStringQuery(filter);
+    final SearchQuery filterQuery = SearchQueryParser.parseStringQuery(filter);
     SearchQuery currentQuery = getCurrentQueryWihoutFilter();
     currentQuery = mergeQueries(currentQuery, filterQuery);
-    HistoryPage page = getHistory().getCurrentPage().copy();
+    final HistoryPage page = getHistory().getCurrentPage().copy();
     page.setParamValue("q", SearchQueryParser.transform2URL(currentQuery));
     return page.getCompleteUrl();
   }
 
   /**
    * Return the url to remove the current filter
-   * 
+   *
    * @return
    * @throws UnprocessableError
    */
   public String getRemoveFilterUrl() throws UnprocessableError {
-    String query = SearchQueryParser.transform2URL(getCurrentQueryWihoutFilter());
-    HistoryPage page = getHistory().getCurrentPage().copy();
+    final String query = SearchQueryParser.transform2URL(getCurrentQueryWihoutFilter());
+    final HistoryPage page = getHistory().getCurrentPage().copy();
     page.setParamValue("q", query);
     return page.getCompleteUrl();
   }
 
   /**
    * Read the current Query and remove all possible filter (defined in the current menu) from it
-   * 
+   *
    * @return
    * @throws UnprocessableError
    */
   private SearchQuery getCurrentQueryWihoutFilter() throws UnprocessableError {
     SearchQuery currentQuery = SearchQueryParser.parseStringQuery(UrlHelper.getParameterValue("q"));
-    for (SelectItem item : menu) {
+    for (final SelectItem item : menu) {
       currentQuery = soustractToQuery(currentQuery,
           SearchQueryParser.parseStringQuery((String) item.getValue()));
     }
@@ -106,7 +106,7 @@ public class SuperFilterMenuBean extends SuperBean {
 
   /**
    * Merge q1 to q2 as "q1 AND q2"
-   * 
+   *
    * @param q1
    * @param q2
    * @return
@@ -126,7 +126,7 @@ public class SuperFilterMenuBean extends SuperBean {
 
   /**
    * Soustract a SearchQuery from a SearchQuery: q1 - q2
-   * 
+   *
    * @param q1
    * @param q2
    * @return
@@ -151,7 +151,7 @@ public class SuperFilterMenuBean extends SuperBean {
   /**
    * Remove all Search Logical Operation which are at the beginning or at the end (and therefore
    * useless)
-   * 
+   *
    * @param q
    * @return
    * @throws UnprocessableError

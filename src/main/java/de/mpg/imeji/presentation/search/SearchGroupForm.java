@@ -82,13 +82,13 @@ public class SearchGroupForm implements Serializable {
    */
   public SearchGroup getAsSearchGroup() {
     try {
-      SearchGroup groupWithAllMetadata = new SearchGroup();
-      for (SearchMetadataForm e : elements) {
+      final SearchGroup groupWithAllMetadata = new SearchGroup();
+      for (final SearchMetadataForm e : elements) {
         groupWithAllMetadata.addGroup(e.getAsSearchGroup());
         groupWithAllMetadata.addLogicalRelation(e.getLogicalRelation());
       }
       if (collectionId != null && !"".equals(collectionId)) {
-        SearchGroup searchGroup = new SearchGroup();
+        final SearchGroup searchGroup = new SearchGroup();
         searchGroup.addPair(new SearchPair(SearchFields.col, SearchOperators.EQUALS,
             collectionId.toString(), false));
         searchGroup.addLogicalRelation(LOGICAL_RELATIONS.AND);
@@ -96,7 +96,7 @@ public class SearchGroupForm implements Serializable {
         return searchGroup;
       }
       return groupWithAllMetadata;
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       LOGGER.error("Error transforming search group form to searchgroup", e);
       return new SearchGroup();
     }
@@ -109,11 +109,11 @@ public class SearchGroupForm implements Serializable {
    * @throws UnprocessableError
    */
   public void validate() throws UnprocessableError {
-    Set<String> messages = new HashSet<>();
-    for (SearchMetadataForm el : elements) {
+    final Set<String> messages = new HashSet<>();
+    for (final SearchMetadataForm el : elements) {
       try {
         el.validate();
-      } catch (UnprocessableError e) {
+      } catch (final UnprocessableError e) {
         messages.addAll(e.getMessages());
       }
     }
@@ -130,8 +130,8 @@ public class SearchGroupForm implements Serializable {
    */
   public void initStatementsMenu(List<Statement> statements, MetadataLabels metadataLabels,
       User user, String space) throws ImejiException {
-    for (Statement st : statements) {
-      String stName = metadataLabels.getInternationalizedLabels().get(st.getId());
+    for (final Statement st : statements) {
+      final String stName = metadataLabels.getInternationalizedLabels().get(st.getId());
       statementMenu.add(new SelectItem(st.getId().toString(), stName));
     }
   }
@@ -146,13 +146,13 @@ public class SearchGroupForm implements Serializable {
    */
   private List<SelectItem> getCollectionsMenu(Locale locale, User user, String space)
       throws ImejiException {
-    CollectionController cc = new CollectionController();
-    SearchQuery q = new SearchQuery();
-    List<SelectItem> l = new ArrayList<SelectItem>();
+    final CollectionController cc = new CollectionController();
+    final SearchQuery q = new SearchQuery();
+    final List<SelectItem> l = new ArrayList<SelectItem>();
     l.add(new SelectItem(null,
         Imeji.RESOURCE_BUNDLE.getLabel("adv_search_collection_restrict", locale)));
-    for (String uri : cc.search(q, null, -1, 0, user, space).getResults()) {
-      CollectionImeji c = cc.retrieveLazy(URI.create(uri), user);
+    for (final String uri : cc.search(q, null, -1, 0, user, space).getResults()) {
+      final CollectionImeji c = cc.retrieveLazy(URI.create(uri), user);
       l.add(new SelectItem(c.getId().toString(), c.getMetadata().getTitle()));
     }
     return l;

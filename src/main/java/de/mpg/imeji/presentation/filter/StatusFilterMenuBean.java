@@ -28,13 +28,13 @@ public class StatusFilterMenuBean extends SuperFilterMenuBean {
   public void init() {
     try {
       init(initMenu());
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       LOGGER.error("Error initializing StatusFilterMenuBean", e);
     }
   }
 
   private List<SelectItem> initMenu() throws UnprocessableError {
-    List<SelectItem> menu = new ArrayList<SelectItem>();
+    final List<SelectItem> menu = new ArrayList<SelectItem>();
     menu.add(new SelectItem(
         SearchQueryParser.transform2URL(SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.status, SearchOperators.REGEX, "private", false))),

@@ -13,8 +13,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
@@ -31,7 +31,7 @@ import de.mpg.imeji.logic.vo.User;
  * @version $Revision$ $LastChangedDate$
  */
 public class CollectionFacets extends FacetsAbstract {
-  private List<List<Facet>> facets = new ArrayList<List<Facet>>();
+  private final List<List<Facet>> facets = new ArrayList<List<Facet>>();
   private URI colURI = null;
   private SearchQuery searchQuery;
   private SearchResult allImages;
@@ -88,19 +88,19 @@ public class CollectionFacets extends FacetsAbstract {
    */
   public int getCount(SearchQuery searchQuery, SearchPair pair, HashSet<String> collectionImages) {
     int counter = 0;
-    ItemService ic = new ItemService();
-    SearchQuery sq = new SearchQuery();
+    final ItemService ic = new ItemService();
+    final SearchQuery sq = new SearchQuery();
     if (pair != null) {
       try {
         sq.addLogicalRelation(LOGICAL_RELATIONS.AND);
         sq.addPair(pair);
-      } catch (UnprocessableError e) {
+      } catch (final UnprocessableError e) {
         LOGGER.error("Error creating query to count facet size", e);
       }
 
     }
-    SearchResult res = ic.search(colURI, sq, null, user, null, -1, 0);
-    for (String record : res.getResults()) {
+    final SearchResult res = ic.search(colURI, sq, null, user, null, -1, 0);
+    for (final String record : res.getResults()) {
       if (collectionImages.contains(record)) {
         counter++;
       }

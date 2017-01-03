@@ -11,7 +11,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 
 /**
  * Job to clean contentVO
- * 
+ *
  * @author saquet
  *
  */
@@ -21,13 +21,13 @@ public class CleanContentVOsJob implements Callable<Integer> {
   @Override
   public Integer call() throws Exception {
     LOGGER.info("Cleaning contents...");
-    List<String> contentIds = ImejiSPARQL.exec(JenaCustomQueries.selectUnusedContent(), null);
+    final List<String> contentIds = ImejiSPARQL.exec(JenaCustomQueries.selectUnusedContent(), null);
     LOGGER.info(contentIds.size() + " content found to be removed");
-    ContentController controller = new ContentController();
-    for (String id : contentIds) {
+    final ContentController controller = new ContentController();
+    for (final String id : contentIds) {
       try {
         controller.delete(id);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error removing content " + id, e);
       }
     }

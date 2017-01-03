@@ -6,7 +6,7 @@ import de.mpg.imeji.logic.vo.Item;
 
 /**
  * Item for the Upload
- * 
+ *
  * @author saquet
  *
  */

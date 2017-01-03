@@ -24,7 +24,7 @@ import de.mpg.imeji.exceptions.NotFoundException;
  */
 public class KeyValueStoreBusinessController {
   private static final Logger LOGGER = Logger.getLogger(KeyValueStoreBusinessController.class);
-  private KeyValueStore store;
+  private final KeyValueStore store;
   private static final Map<String, KeyValueStore> stores = new HashMap<>();
 
   public KeyValueStoreBusinessController(KeyValueStore store) {
@@ -39,7 +39,7 @@ public class KeyValueStoreBusinessController {
    * Start all stores which have been registed
    */
   public synchronized static void startAllStores() {
-    for (KeyValueStore kvs : stores.values()) {
+    for (final KeyValueStore kvs : stores.values()) {
       kvs.start();
     }
   }
@@ -50,7 +50,7 @@ public class KeyValueStoreBusinessController {
    * @throws IOException
    */
   public synchronized static void stopAllStores() {
-    for (KeyValueStore kvs : stores.values()) {
+    for (final KeyValueStore kvs : stores.values()) {
       LOGGER.info("Stopping store: " + kvs.getName());
       kvs.stop();
     }
@@ -62,7 +62,7 @@ public class KeyValueStoreBusinessController {
    * @throws IOException
    */
   public synchronized static void resetAllStores() {
-    for (KeyValueStore kvs : stores.values()) {
+    for (final KeyValueStore kvs : stores.values()) {
       LOGGER.info("Resetting store: " + kvs.getName());
       kvs.reset();
     }
@@ -72,7 +72,7 @@ public class KeyValueStoreBusinessController {
    * Resetting and stopping all stores
    */
   public synchronized static void resetAndStopAllStores() {
-    for (KeyValueStore kvs : stores.values()) {
+    for (final KeyValueStore kvs : stores.values()) {
       LOGGER.info("Resetting and stopping store: " + kvs.getName());
       kvs.reset();
       kvs.stop();
@@ -89,7 +89,7 @@ public class KeyValueStoreBusinessController {
   public Object get(String key) throws NotFoundException {
     try {
       return deserialize(store.get(key));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new NotFoundException(
           "Key " + key + " not found in  " + store.getName() + ": " + e.getMessage());
     }
@@ -106,8 +106,8 @@ public class KeyValueStoreBusinessController {
    */
 
   public <T> List<T> getList(String keyPattern, Class<T> clazz) throws ImejiException {
-    List<T> list = new ArrayList<>();
-    for (byte[] b : store.getList(keyPattern)) {
+    final List<T> list = new ArrayList<>();
+    for (final byte[] b : store.getList(keyPattern)) {
       try {
         list.add(clazz.cast(deserialize(b)));
       } catch (ClassNotFoundException | IOException e) {
@@ -127,7 +127,7 @@ public class KeyValueStoreBusinessController {
   public void put(String key, Object value) throws ImejiException {
     try {
       store.put(key, serialize(value));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new ImejiException("Error writing Data in Key/Value Store", e);
     }
   }
@@ -141,7 +141,7 @@ public class KeyValueStoreBusinessController {
   public void delete(String key) throws ImejiException {
     try {
       store.delete(key);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new ImejiException("Error deleting Data " + store.getName(), e);
     }
   }
@@ -155,8 +155,8 @@ public class KeyValueStoreBusinessController {
    * @throws ClassNotFoundException
    */
   private Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
-    ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-    ObjectInputStream is = new ObjectInputStream(in);
+    final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+    final ObjectInputStream is = new ObjectInputStream(in);
     return is.readObject();
   }
 
@@ -168,8 +168,8 @@ public class KeyValueStoreBusinessController {
    * @throws IOException
    */
   private byte[] serialize(Object obj) throws IOException {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    ObjectOutputStream os = new ObjectOutputStream(out);
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    final ObjectOutputStream os = new ObjectOutputStream(out);
     os.writeObject(obj);
     return out.toByteArray();
   }

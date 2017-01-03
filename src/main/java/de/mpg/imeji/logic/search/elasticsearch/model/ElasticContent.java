@@ -8,7 +8,7 @@ import de.mpg.imeji.logic.vo.TechnicalMetadata;
 
 /**
  * Elastic Object for contentVO
- * 
+ *
  * @author saquet
  *
  */
@@ -23,7 +23,7 @@ public class ElasticContent {
 
   /**
    * Constructor
-   * 
+   *
    * @param contentVO
    */
   public ElasticContent(ContentVO contentVO) {
@@ -33,7 +33,7 @@ public class ElasticContent {
     this.width = contentVO.getWidth();
     this.fulltext = contentVO.getFulltext();
     this.checksum = contentVO.getChecksum();
-    for (TechnicalMetadata md : contentVO.getTechnicalMetadata()) {
+    for (final TechnicalMetadata md : contentVO.getTechnicalMetadata()) {
       technical.add(new ElasticTechnicalMetadata(md));
     }
   }

@@ -119,7 +119,7 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    */
   public MetadataWrapper copy() {
     metadata.setUri(IdentifierUtil.newURI(Metadata.class));
-    MetadataWrapper copy =
+    final MetadataWrapper copy =
         new MetadataWrapper(new MetadataFactory(asMetadata()).build(), statement);
     copy.setParent(parent);
     copy.setTreeIndex(treeIndex);
@@ -133,7 +133,7 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    */
   public MetadataWrapper copyEmpty() {
     metadata.setUri(IdentifierUtil.newURI(Metadata.class));
-    MetadataWrapper copy = new MetadataWrapper(
+    final MetadataWrapper copy = new MetadataWrapper(
         new MetadataFactory().setStatementId(statement.getId()).build(), statement);
     copy.setParent(parent);
     copy.setTreeIndex(treeIndex);
@@ -153,7 +153,7 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    * @param vce
    */
   public void predefinedValueListener(ValueChangeEvent vce) {
-    Object newValue = vce.getNewValue();
+    final Object newValue = vce.getNewValue();
     if (newValue == null) {
       clear();
       toNull = true;
@@ -169,10 +169,10 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    * @param s
    */
   private void patternParser(String s) {
-    String uriString = CommonUtils.extractFieldValue("uri", s);
-    String nameString = CommonUtils.extractFieldValue("name", s);
-    String longString = CommonUtils.extractFieldValue("long", s);
-    String latString = CommonUtils.extractFieldValue("lat", s);
+    final String uriString = CommonUtils.extractFieldValue("uri", s);
+    final String nameString = CommonUtils.extractFieldValue("name", s);
+    final String longString = CommonUtils.extractFieldValue("long", s);
+    final String latString = CommonUtils.extractFieldValue("lat", s);
     if (uriString != null) {
       uri = URI.create(uriString);
       externalUri = URI.create(uriString);
@@ -652,8 +652,8 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    * @return
    */
   public String addOrganization(int organizationPosition) {
-    List<Organization> orgs = (List<Organization>) this.person.getOrganizations();
-    Organization o = ImejiFactory.newOrganization();
+    final List<Organization> orgs = (List<Organization>) this.person.getOrganizations();
+    final Organization o = ImejiFactory.newOrganization();
     o.setPos(organizationPosition + 1);
     orgs.add(organizationPosition + 1, o);
     return "";
@@ -665,7 +665,7 @@ public class MetadataWrapper implements Comparable<MetadataWrapper>, Serializabl
    * @return
    */
   public String removeOrganization(int organizationPosition) {
-    List<Organization> orgs = (List<Organization>) this.person.getOrganizations();
+    final List<Organization> orgs = (List<Organization>) this.person.getOrganizations();
     if (orgs.size() > 1) {
       orgs.remove(organizationPosition);
     } else {

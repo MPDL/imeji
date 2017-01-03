@@ -51,7 +51,7 @@ import de.mpg.imeji.logic.util.TempFileUtil;
  */
 public class ExternalStorage implements Storage {
   private static final long serialVersionUID = -5808761436385828641L;
-  private HttpClient client;
+  private final HttpClient client;
 
   /**
    * Default constructor
@@ -102,7 +102,7 @@ public class ExternalStorage implements Storage {
         ProxyHelper.executeMethod(client, get);
       }
       StorageUtils.writeInOut(get.getResponseBodyAsStream(), out, close);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       // throw new RuntimeException("Error reading " + url, e);
       throw new UnprocessableError("Error reading " + url + " (" + e.getMessage() + ")", e);
     } finally {
@@ -171,10 +171,10 @@ public class ExternalStorage implements Storage {
   @Override
   public File read(String url) throws ImejiException {
     try {
-      File temp = TempFileUtil.createTempFile(url, null);
+      final File temp = TempFileUtil.createTempFile(url, null);
       read(url, new FileOutputStream(temp), true);
       return temp;
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new ImejiException("error reading file " + url, e);
     }
   }

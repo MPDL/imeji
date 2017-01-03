@@ -19,7 +19,7 @@ import de.mpg.imeji.logic.vo.Properties.Status;
 
 /**
  * Editor to edit the license of an item
- * 
+ *
  * @author saquet
  *
  */
@@ -36,11 +36,11 @@ public class LicenseEditor implements Serializable {
 
   /**
    * Constructor
-   * 
+   *
    * @throws ImejiException
    */
   public LicenseEditor(Locale locale, Item item) {
-    License active = LicenseUtil.getActiveLicense(item);
+    final License active = LicenseUtil.getActiveLicense(item);
     this.licenseMenu = new ArrayList<>();
     this.showInput =
         !(active == null || EnumUtils.isValidEnum(ImejiLicenses.class, active.getName()));
@@ -54,7 +54,7 @@ public class LicenseEditor implements Serializable {
     if (item.getStatus().equals(Status.PENDING)) {
       licenseMenu.add(new SelectItem(Imeji.RESOURCE_BUNDLE.getLabel(NO_LICENSE, locale)));
     }
-    for (ImejiLicenses lic : ImejiLicenses.values()) {
+    for (final ImejiLicenses lic : ImejiLicenses.values()) {
       licenseMenu.add(new SelectItem(lic.name(), lic.getLabel()));
     }
     init(item);
@@ -62,7 +62,7 @@ public class LicenseEditor implements Serializable {
 
   /**
    * Constructor for the batch edit
-   * 
+   *
    * @param locale
    */
   public LicenseEditor(Locale locale, boolean privat) {
@@ -74,18 +74,18 @@ public class LicenseEditor implements Serializable {
     } else {
       this.licenseName = Imeji.CONFIG.getDefaultLicense();
     }
-    for (ImejiLicenses lic : ImejiLicenses.values()) {
+    for (final ImejiLicenses lic : ImejiLicenses.values()) {
       licenseMenu.add(new SelectItem(lic.name(), lic.getLabel()));
     }
   }
 
   /**
    * Init the component for a specific item
-   * 
+   *
    * @param item
    */
   public void init(Item item) {
-    for (License l : item.getLicenses()) {
+    for (final License l : item.getLicenses()) {
       if (l.getEnd() < 0) {
         this.licenseName = l.getName();
         this.licenseLabel = l.getLabel();
@@ -103,7 +103,7 @@ public class LicenseEditor implements Serializable {
    */
   public void licenseMenuListener() {
     if (EnumUtils.isValidEnum(ImejiLicenses.class, licenseName)) {
-      ImejiLicenses lic = ImejiLicenses.valueOf(licenseName);
+      final ImejiLicenses lic = ImejiLicenses.valueOf(licenseName);
       this.licenseUrl = lic.getUrl();
       this.licenseLabel = lic.getLabel();
     } else {
@@ -120,7 +120,7 @@ public class LicenseEditor implements Serializable {
 
   /**
    * Get the license of the entered via the component
-   * 
+   *
    * @param lic
    * @return
    */

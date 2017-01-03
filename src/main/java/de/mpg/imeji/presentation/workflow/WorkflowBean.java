@@ -18,7 +18,7 @@ import de.mpg.imeji.logic.workflow.WorkflowValidator;
 @ManagedBean(name = "WorkflowBean")
 public class WorkflowBean implements Serializable {
   private static final long serialVersionUID = 622491364454878511L;
-  private WorkflowValidator validator = new WorkflowValidator();
+  private final WorkflowValidator validator = new WorkflowValidator();
 
   /**
    * True if the Object can be Released
@@ -30,7 +30,7 @@ public class WorkflowBean implements Serializable {
     try {
       validator.isReleaseAllowed(p);
       return true;
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       return false;
     }
   }
@@ -45,7 +45,7 @@ public class WorkflowBean implements Serializable {
     try {
       validator.isWithdrawAllowed(p);
       return true;
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       return false;
     }
   }
@@ -60,7 +60,7 @@ public class WorkflowBean implements Serializable {
     try {
       validator.isDeleteAllowed(p);
       return true;
-    } catch (WorkflowException e) {
+    } catch (final WorkflowException e) {
       return false;
     }
   }

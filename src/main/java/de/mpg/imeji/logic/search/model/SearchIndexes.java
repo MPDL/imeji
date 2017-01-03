@@ -36,7 +36,7 @@ public class SearchIndexes {
         index = new SearchIndex(SearchFields.valueOf(indexName));
       }
       return index;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Unknown index: " + indexName, e);
     }
     return null;
@@ -59,7 +59,7 @@ public class SearchIndexes {
    * @return
    */
   public static Map<String, SearchIndex> init() {
-    Map<String, SearchIndex> indexes = new HashMap<String, SearchIndex>();
+    final Map<String, SearchIndex> indexes = new HashMap<String, SearchIndex>();
     indexes.putAll(initBasisIndexes());
     indexes.putAll(initMetadataIndexes());
     return indexes;

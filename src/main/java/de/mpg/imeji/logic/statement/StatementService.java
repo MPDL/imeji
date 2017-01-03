@@ -16,12 +16,12 @@ import de.mpg.imeji.logic.vo.User;
 
 /**
  * Service for {@link Statement}
- * 
+ *
  * @author saquet
  *
  */
 public class StatementService extends SearchServiceAbstract<Statement> {
-  private StatementController controller = new StatementController();
+  private final StatementController controller = new StatementController();
 
   public StatementService() {
     super(SearchObjectTypes.STATEMENT);
@@ -29,7 +29,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
 
   /**
    * Create a {@link Statement}
-   * 
+   *
    * @param statement
    * @param user
    * @return
@@ -41,7 +41,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
 
   /**
    * Create a list of {@link Statement}
-   * 
+   *
    * @param statement
    * @param user
    * @return
@@ -53,7 +53,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
 
   /**
    * Retrieve a {@link Statement}
-   * 
+   *
    * @param id
    * @param user
    * @return
@@ -65,7 +65,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
 
   /**
    * Retrieve a list of {@link Statement}
-   * 
+   *
    * @param ids
    * @param user
    * @return
@@ -77,7 +77,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
 
   /**
    * Update a {@link Statement}
-   * 
+   *
    * @param statement
    * @param user
    * @return
@@ -89,7 +89,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
 
   /**
    * Merge statement1 into statement2
-   * 
+   *
    * @param statement1
    * @param statement2
    * @return
@@ -101,7 +101,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, User user, int size,
       int offset) {
-    SearchResult result = new SearchResult(
+    final SearchResult result = new SearchResult(
         ImejiSPARQL.exec(JenaCustomQueries.selectStatementAll(), Imeji.statementModel));
     return result;
   }
@@ -113,8 +113,8 @@ public class StatementService extends SearchServiceAbstract<Statement> {
 
   @Override
   public List<Statement> retrieveAll() throws ImejiException {
-    List<String> uris =
+    final List<String> uris =
         ImejiSPARQL.exec(JenaCustomQueries.selectStatementAll(), Imeji.statementModel);
-    return (List<Statement>) retrieveBatch(uris, Imeji.adminUser);
+    return retrieveBatch(uris, Imeji.adminUser);
   }
 }

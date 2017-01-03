@@ -12,7 +12,7 @@ import de.mpg.imeji.logic.export.format.explain.SearchExplainExport;
 
 /**
  * Factory for export
- * 
+ *
  * @author saquet
  *
  */
@@ -31,8 +31,8 @@ public class ExportFactory {
    */
   public static Export build(Map<String, String[]> params) throws HttpResponseException {
     Export export = null;
-    String format = Export.getParam(params, "format");
-    String type = Export.getParam(params, "type");
+    final String format = Export.getParam(params, "format");
+    final String type = Export.getParam(params, "type");
     if ("sitemap".equals(format)) {
       export = new SitemapExport();
     } else if ("zip".equals(format)) {

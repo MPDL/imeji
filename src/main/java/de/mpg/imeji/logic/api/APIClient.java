@@ -24,12 +24,12 @@ import de.mpg.imeji.logic.vo.User;
  */
 public class APIClient {
 
-  private WebTarget target;
+  private final WebTarget target;
   public static final String REST_PROFILES_PATH = "rest/profiles";
   private static final Logger LOGGER = Logger.getLogger(APIClient.class);
 
   public APIClient() {
-    Client client = ClientBuilder.newClient();
+    final Client client = ClientBuilder.newClient();
     target = client.target(Imeji.PROPERTIES.getApplicationURL());
   }
 
@@ -67,7 +67,7 @@ public class APIClient {
       return user.getApiKey();
     }
     try {
-      UserBusinessController userController = new UserBusinessController();
+      final UserBusinessController userController = new UserBusinessController();
       user.setApiKey(APIKeyAuthentication.generateKey(user.getId(), Integer.MAX_VALUE));
       userController.update(user, Imeji.adminUser);
     } catch (ImejiException | JoseException e) {

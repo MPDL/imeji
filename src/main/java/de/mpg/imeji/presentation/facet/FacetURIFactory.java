@@ -49,15 +49,15 @@ public class FacetURIFactory {
    */
   public URI createFacetURI(String baseURI, SearchPair pair, String facetName, FacetType type)
       throws UnsupportedEncodingException {
-    SearchQuery sq = new SearchQuery(searchQuery.getElements());
+    final SearchQuery sq = new SearchQuery(searchQuery.getElements());
     try {
       sq.addLogicalRelation(LOGICAL_RELATIONS.AND);
       sq.addPair(pair);
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       LOGGER.error("Error creating facet URI", e);
     }
 
-    String uri = baseURI + getCommonURI(sq, facetName, type);
+    final String uri = baseURI + getCommonURI(sq, facetName, type);
     return URI.create(uri);
   }
 

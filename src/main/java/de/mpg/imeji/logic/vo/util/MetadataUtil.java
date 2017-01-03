@@ -16,8 +16,8 @@ public class MetadataUtil {
 
   public static Metadata getDefaultValueMetadata(Statement statement)
       throws UnprocessableError, IllegalAccessException, InstantiationException {
-    String type = statement.getType().toString();
-    Metadata md = new Metadata();
+    final String type = statement.getType().toString();
+    final Metadata md = new Metadata();
     md.setStatementId(statement.getId());
     switch (statement.getType()) {
       case TEXT:
@@ -34,10 +34,10 @@ public class MetadataUtil {
         md.setLongitude(11.5667);
         break;
       case PERSON:
-        Person p = new Person();
+        final Person p = new Person();
         p.setFamilyName("Family name");
         p.setGivenName("Given name");
-        Organization org = new Organization();
+        final Organization org = new Organization();
         org.setName("Organization name");
         p.getOrganizations().add(org);
         md.setPerson(p);
@@ -71,7 +71,7 @@ public class MetadataUtil {
 
   /**
    * Clean the metadata values
-   * 
+   *
    * @param md
    * @return
    */

@@ -59,8 +59,8 @@ public class HTreeMapStore implements KeyValueStore {
 
   @Override
   public List<byte[]> getList(String keyPattern) {
-    List<byte[]> list = new ArrayList<>();
-    for (Object key : map.keySet()) {
+    final List<byte[]> list = new ArrayList<>();
+    for (final Object key : map.keySet()) {
       if (((String) key).matches(keyPattern)) {
         list.add((byte[]) map.get(key));
       }
@@ -70,7 +70,8 @@ public class HTreeMapStore implements KeyValueStore {
 
   @Override
   public void start() {
-    File f = new File(StringHelper.normalizePath(Imeji.tdbPath) + STORE_FILENAME_PREFIX + name);
+    final File f =
+        new File(StringHelper.normalizePath(Imeji.tdbPath) + STORE_FILENAME_PREFIX + name);
     STORE = DBMaker.newFileDB(f).make();
     map = STORE.createHashMap(name).keySerializer(Serializer.STRING).makeOrGet();
 

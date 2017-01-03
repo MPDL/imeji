@@ -9,7 +9,7 @@ import de.mpg.imeji.logic.vo.Statement;
 
 /**
  * TO for {@link Statement}
- * 
+ *
  * @author saquet
  *
  */

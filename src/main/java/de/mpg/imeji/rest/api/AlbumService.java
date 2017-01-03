@@ -37,15 +37,15 @@ import de.mpg.imeji.rest.transfer.TransferObjectFactory;
 public class AlbumService implements API<AlbumTO> {
 
   private AlbumTO getAlbumTO(AlbumController controller, String id, User u) throws ImejiException {
-    AlbumTO to = new AlbumTO();
-    Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
+    final AlbumTO to = new AlbumTO();
+    final Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
     TransferObjectFactory.transferAlbum(vo, to);
     return to;
   }
 
   @Override
   public AlbumTO read(String id, User u) throws ImejiException {
-    AlbumController controller = new AlbumController();
+    final AlbumController controller = new AlbumController();
     return getAlbumTO(controller, id, u);
   }
 
@@ -62,13 +62,13 @@ public class AlbumService implements API<AlbumTO> {
    */
   public SearchResultTO<DefaultItemTO> readItems(String id, User u, String q, int offset, int size)
       throws ImejiException {
-    List<DefaultItemTO> tos = new ArrayList<>();
-    ItemService controller = new ItemService();
-    SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC).search(
+    final List<DefaultItemTO> tos = new ArrayList<>();
+    final ItemService controller = new ItemService();
+    final SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC).search(
         SearchQueryParser.parseStringQuery(q), null, u,
         ObjectHelper.getURI(Album.class, id).toString(), null, offset, size);
-    for (Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
-      DefaultItemTO to = new DefaultItemTO();
+    for (final Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
+      final DefaultItemTO to = new DefaultItemTO();
       TransferObjectFactory.transferDefaultItem(vo, to);
       tos.add(to);
     }
@@ -79,8 +79,8 @@ public class AlbumService implements API<AlbumTO> {
 
   @Override
   public AlbumTO create(AlbumTO to, User u) throws ImejiException {
-    AlbumController ac = new AlbumController();
-    Album vo = new Album();
+    final AlbumController ac = new AlbumController();
+    final Album vo = new Album();
     transferAlbum(to, vo, CREATE, u);
     URI albumURI;
     albumURI = ac.create(vo, u).getId();
@@ -89,37 +89,37 @@ public class AlbumService implements API<AlbumTO> {
 
   @Override
   public AlbumTO update(AlbumTO to, User u) throws ImejiException {
-    AlbumController ac = new AlbumController();
-    Album vo = ac.retrieve(ObjectHelper.getURI(Album.class, to.getId()), u);
+    final AlbumController ac = new AlbumController();
+    final Album vo = ac.retrieve(ObjectHelper.getURI(Album.class, to.getId()), u);
     if (vo == null) {
       throw new UnprocessableError("Album not found");
     }
     transferAlbum(to, vo, UPDATE, u);
-    AlbumTO newTO = new AlbumTO();
+    final AlbumTO newTO = new AlbumTO();
     TransferObjectFactory.transferAlbum(ac.update(vo, u), newTO);
     return newTO;
   }
 
   @Override
   public boolean delete(String id, User u) throws ImejiException {
-    AlbumController controller = new AlbumController();
-    Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
+    final AlbumController controller = new AlbumController();
+    final Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
     controller.delete(vo, u);
     return true;
   }
 
   @Override
   public AlbumTO release(String id, User u) throws ImejiException {
-    AlbumController controller = new AlbumController();
-    Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
+    final AlbumController controller = new AlbumController();
+    final Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
     controller.release(vo, u);
     return getAlbumTO(controller, id, u);
   }
 
   @Override
   public AlbumTO withdraw(String id, User u, String discardComment) throws ImejiException {
-    AlbumController controller = new AlbumController();
-    Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
+    final AlbumController controller = new AlbumController();
+    final Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
     vo.setDiscardComment(discardComment);
     controller.withdraw(vo, u);
     return getAlbumTO(controller, id, u);
@@ -129,11 +129,11 @@ public class AlbumService implements API<AlbumTO> {
   public void share(String id, String userId, List<String> roles, User u) throws ImejiException {}
 
   public List<String> addItems(String id, User u, List<String> itemIds) throws ImejiException {
-    AlbumController controller = new AlbumController();
-    Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
-    List<String> itemUris = new ArrayList<>();
+    final AlbumController controller = new AlbumController();
+    final Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
+    final List<String> itemUris = new ArrayList<>();
     // Convert Ids to Uris
-    for (String itemId : itemIds) {
+    for (final String itemId : itemIds) {
       itemUris.add(ObjectHelper.getURI(Item.class, itemId).toASCIIString());
     }
     return controller.addToAlbum(vo, itemUris, u);
@@ -141,16 +141,16 @@ public class AlbumService implements API<AlbumTO> {
 
   public boolean removeItems(String id, User u, List<String> itemIds, boolean removeAll)
       throws ImejiException {
-    AlbumController controller = new AlbumController();
-    Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
-    List<String> itemUris = new ArrayList<>();
+    final AlbumController controller = new AlbumController();
+    final Album vo = controller.retrieve(ObjectHelper.getURI(Album.class, id), u);
+    final List<String> itemUris = new ArrayList<>();
     if (!removeAll) {
       // Convert Ids to Uris
-      for (String itemId : itemIds) {
+      for (final String itemId : itemIds) {
         itemUris.add(ObjectHelper.getURI(Item.class, itemId).toASCIIString());
       }
     } else {
-      for (URI uri : vo.getImages()) {
+      for (final URI uri : vo.getImages()) {
         itemUris.add(uri.toString());
       }
     }
@@ -164,13 +164,13 @@ public class AlbumService implements API<AlbumTO> {
   @Override
   public SearchResultTO<AlbumTO> search(String q, int offset, int size, User u)
       throws ImejiException {
-    AlbumController controller = new AlbumController();
-    List<AlbumTO> tos = new ArrayList<>();
-    SearchResult result =
+    final AlbumController controller = new AlbumController();
+    final List<AlbumTO> tos = new ArrayList<>();
+    final SearchResult result =
         SearchFactory.create(SearchObjectTypes.ALBUM, SEARCH_IMPLEMENTATIONS.ELASTIC)
             .search(SearchQueryParser.parseStringQuery(q), null, u, null, null, offset, size);
-    for (Album vo : controller.retrieveBatchLazy(result.getResults(), u, -1, 0)) {
-      AlbumTO to = new AlbumTO();
+    for (final Album vo : controller.retrieveBatchLazy(result.getResults(), u, -1, 0)) {
+      final AlbumTO to = new AlbumTO();
       TransferObjectFactory.transferAlbum(vo, to);
       tos.add(to);
     }

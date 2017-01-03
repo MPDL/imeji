@@ -7,17 +7,17 @@ import de.mpg.imeji.logic.vo.StatementType;
 
 /**
  * Factory for {@link Statement}
- * 
+ *
  * @author saquet
  *
  */
 public class StatementFactory {
 
-  private Statement statement = new Statement();
+  private final Statement statement = new Statement();
 
   /**
    * Build the statement
-   * 
+   *
    * @return
    */
   public Statement build() {

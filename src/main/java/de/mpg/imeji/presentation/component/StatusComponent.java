@@ -113,8 +113,8 @@ public class StatusComponent extends UINamingContainer {
    * @return
    */
   private List<String> getUserSharedWith(Properties p) {
-    List<String> l = new ArrayList<>();
-    for (User user : findAllUsersWithReadGrant(p)) {
+    final List<String> l = new ArrayList<>();
+    for (final User user : findAllUsersWithReadGrant(p)) {
       if (!l.contains(user.getPerson().getCompleteName())) {
         if (collaboratorListSize >= COLLABORATOR_LIST_MAX_SIZE) {
           hasMoreCollaborator = true;
@@ -140,8 +140,8 @@ public class StatusComponent extends UINamingContainer {
    * @return
    */
   private List<String> getGroupSharedWith(Properties properties) {
-    List<String> l = new ArrayList<>();
-    for (UserGroup group : findAllGroupsWithReadGrant(properties)) {
+    final List<String> l = new ArrayList<>();
+    for (final UserGroup group : findAllGroupsWithReadGrant(properties)) {
       if (collaboratorListSize >= COLLABORATOR_LIST_MAX_SIZE) {
         hasMoreCollaborator = true;
         return l;
@@ -163,8 +163,8 @@ public class StatusComponent extends UINamingContainer {
    * @return
    */
   private List<User> findAllUsersWithReadGrant(Properties p) {
-    UserBusinessController uc = new UserBusinessController();
-    List<User> l = uc.searchAndRetrieveLazy(getReadQuery(p.getId().toString()), null,
+    final UserBusinessController uc = new UserBusinessController();
+    final List<User> l = uc.searchAndRetrieveLazy(getReadQuery(p.getId().toString()), null,
         Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE);
     if (p instanceof Item) {
       l.addAll(uc.searchAndRetrieveLazy(getReadQuery(((Item) p).getCollection().toString()), null,
@@ -175,7 +175,7 @@ public class StatusComponent extends UINamingContainer {
 
   /**
    * Return query "read:objectId" to find all users or user groups with read rights on this object
-   * 
+   *
    * @param objectId
    * @return
    */
@@ -191,8 +191,8 @@ public class StatusComponent extends UINamingContainer {
    * @return
    */
   private List<UserGroup> findAllGroupsWithReadGrant(Properties p) {
-    GroupBusinessController ugc = new GroupBusinessController();
-    List<UserGroup> l = ugc.searchAndRetrieveLazy(getReadQuery(p.getId().toString()), null,
+    final GroupBusinessController ugc = new GroupBusinessController();
+    final List<UserGroup> l = ugc.searchAndRetrieveLazy(getReadQuery(p.getId().toString()), null,
         Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE);
     if (p instanceof Item) {
       l.addAll(ugc.searchAndRetrieveLazy(getReadQuery(((Item) p).getCollection().toString()), null,

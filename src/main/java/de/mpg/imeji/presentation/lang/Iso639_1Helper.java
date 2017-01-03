@@ -57,8 +57,8 @@ public class Iso639_1Helper {
    */
   private String getVocabularyString() {
     try {
-      HttpClient client = new HttpClient();
-      String coneVocabularyPath = PropertyReader.getProperty("cone.isos639_1.all");
+      final HttpClient client = new HttpClient();
+      final String coneVocabularyPath = PropertyReader.getProperty("cone.isos639_1.all");
       if (isNullOrEmpty(coneVocabularyPath)) {
         LOGGER.info(
             "CONE Service Property for Language Vocabularies has not been set-up. Will use default vocabulary for languages."
@@ -66,10 +66,10 @@ public class Iso639_1Helper {
         return null;
 
       }
-      GetMethod getMethod = new GetMethod(coneVocabularyPath + "?format=options");
+      final GetMethod getMethod = new GetMethod(coneVocabularyPath + "?format=options");
       ProxyHelper.executeMethod(client, getMethod);
       return IOUtils.toString(getMethod.getResponseBodyAsStream());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Couldn't read ISO639_1 vocabulary, will use default one! Error: " + e);
       return null;
     }
@@ -82,11 +82,11 @@ public class Iso639_1Helper {
    */
   private void parseVocabularyString(String v) {
     try {
-      for (String l : v.split("\n")) {
-        String[] s = l.split("\\|");
+      for (final String l : v.split("\n")) {
+        final String[] s = l.split("\\|");
         list.add(new SelectItem(s[0], s[1]));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       list = new ArrayList<SelectItem>();
       list.add(new SelectItem("en", "en - English"));
       list.add(new SelectItem("de", "de - German"));

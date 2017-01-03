@@ -30,12 +30,12 @@ public class CleanStatementsJob implements Callable<Integer> {
   public Integer call() {
     try {
       LOGGER.info("Cleaning statements...");
-      Search search = SearchFactory.create();
-      List<String> uris = search
+      final Search search = SearchFactory.create();
+      final List<String> uris = search
           .searchString(JenaCustomQueries.selectStatementUnbounded(), null, Imeji.adminUser, 0, -1)
           .getResults();
       removeResources(uris, Imeji.profileModel, new Statement());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error cleaning statements: " + e.getMessage());
     }
     LOGGER.info("...done!");
@@ -64,7 +64,7 @@ public class CleanStatementsJob implements Callable<Integer> {
    * @throws Exception
    */
   private void removeObjects(List<Object> l, String modelName) throws Exception {
-    WriterFacade writer = new WriterFacade(modelName);
+    final WriterFacade writer = new WriterFacade(modelName);
     writer.delete(l, Imeji.adminUser);
   }
 
@@ -77,12 +77,12 @@ public class CleanStatementsJob implements Callable<Integer> {
    * @return
    */
   private List<Object> loadResourcesAsObjects(List<String> uris, String modelName, Object obj) {
-    ReaderFacade reader = new ReaderFacade(modelName);
-    List<Object> l = new ArrayList<Object>();
-    for (String uri : uris) {
+    final ReaderFacade reader = new ReaderFacade(modelName);
+    final List<Object> l = new ArrayList<Object>();
+    for (final String uri : uris) {
       try {
         l.add(reader.read(uri, Imeji.adminUser, obj.getClass().newInstance()));
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("ERROR LOADING RESOURCE " + uri + " !!!!!", e);
       }
     }

@@ -18,10 +18,10 @@ public class StorageProcess {
 
     JSONResponse resp;
 
-    StorageTO sto = new StorageTO();
+    final StorageTO sto = new StorageTO();
 
     try {
-      StorageController c = new StorageController();
+      final StorageController c = new StorageController();
       final String black = c.getFormatBlackList();
       if (!isNullOrEmpty(black)) {
         sto.setUploadBlackList(black);
@@ -31,7 +31,7 @@ public class StorageProcess {
         sto.setUploadWhiteList(white);
       }
       resp = RestProcessUtils.buildResponse(Status.OK.getStatusCode(), sto);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
     return resp;

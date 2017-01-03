@@ -103,11 +103,11 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
         .parseInt(CookieUtils.readNonNull(SuperPaginatorBean.numberOfContainersPerPageCookieName,
             Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
     try {
-      String options = Imeji.PROPERTIES.getProperty("imeji.container.list.size.options");
-      for (String option : options.split(",")) {
+      final String options = Imeji.PROPERTIES.getProperty("imeji.container.list.size.options");
+      for (final String option : options.split(",")) {
         getElementsPerPageSelectItems().add(new SelectItem(option));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error reading property imeji.image.list.size.options", e);
     }
   }
@@ -208,7 +208,7 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
       myOffset = 0;
     }
 
-    SortCriterion sortCriterion = new SortCriterion();
+    final SortCriterion sortCriterion = new SortCriterion();
     sortCriterion.setIndex(SearchIndexes.getIndex(getSelectedSortCriterion()));
     sortCriterion.setSortOrder(SortOrder.valueOf(getSelectedSortOrder()));
 

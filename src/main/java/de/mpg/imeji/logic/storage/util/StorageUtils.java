@@ -78,7 +78,7 @@ public class StorageUtils {
   public static byte[] toBytes(InputStream stream) {
     try {
       return IOUtils.toByteArray(stream);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.error("Error writing stream to byte array", e);
       return new byte[0];
     }
@@ -92,10 +92,10 @@ public class StorageUtils {
    */
   public static File toFile(byte[] bytes) {
     try {
-      File f = TempFileUtil.createTempFile("storageUtils_toFile", null);
+      final File f = TempFileUtil.createTempFile("storageUtils_toFile", null);
       IOUtils.write(bytes, new FileOutputStream(f));
       return f;
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.error("Error creating a temp File", e);
     }
     return null;
@@ -109,10 +109,10 @@ public class StorageUtils {
    */
   public static File toFile(InputStream in) {
     try {
-      File f = TempFileUtil.createTempFile("storageUtils_toFile", null);
+      final File f = TempFileUtil.createTempFile("storageUtils_toFile", null);
       writeInOut(in, new FileOutputStream(f), true);
       return f;
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.error("Error creating a temp File", e);
     }
     return null;
@@ -128,7 +128,7 @@ public class StorageUtils {
   public static void writeInOut(InputStream in, OutputStream out, boolean close) {
     try {
       IOUtils.copyLarge(in, out);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new RuntimeException("Error writing inputstream in outputstream: ", e);
     } finally {
       IOUtils.closeQuietly(in);
@@ -144,8 +144,8 @@ public class StorageUtils {
    * @return
    */
   public static HttpClient getHttpClient() {
-    MultiThreadedHttpConnectionManager conn = new MultiThreadedHttpConnectionManager();
-    HttpConnectionManagerParams connParams = new HttpConnectionManagerParams();
+    final MultiThreadedHttpConnectionManager conn = new MultiThreadedHttpConnectionManager();
+    final HttpConnectionManagerParams connParams = new HttpConnectionManagerParams();
     connParams.setConnectionTimeout(5000);
     connParams.setDefaultMaxConnectionsPerHost(50);
     conn.setParams(connParams);
@@ -160,7 +160,7 @@ public class StorageUtils {
    * @return
    */
   public static GetMethod newGetMethod(HttpClient client, String url) throws ImejiException {
-    GetMethod method = new GetMethod(url);
+    final GetMethod method = new GetMethod(url);
     method.addRequestHeader("Cache-Control", "public");
     method.setRequestHeader("Connection", "close");
     return method;
@@ -185,7 +185,7 @@ public class StorageUtils {
   public static String getExtension(String mimeType) {
     try {
       return allTypes.forName(mimeType).getExtension().substring(1);
-    } catch (MimeTypeException e) {
+    } catch (final MimeTypeException e) {
       return mimeType;
     }
   }
@@ -198,20 +198,20 @@ public class StorageUtils {
    */
   public static String guessExtension(File file) {
     try {
-      MimeType type = allTypes.forName(tika.detect(file));
+      final MimeType type = allTypes.forName(tika.detect(file));
       if (!type.getExtensions().isEmpty()) {
-        String ext = type.getExtensions().get(0).replace(".", "");
+        final String ext = type.getExtensions().get(0).replace(".", "");
         if (FilenameUtils.getExtension(file.getName()).equals("smr") && "bin".equals(ext)) {
           return "smr";
         }
         return ext;
       } else {
-        String calculatedExtension = FilenameUtils.getExtension(file.getName());
+        final String calculatedExtension = FilenameUtils.getExtension(file.getName());
         if (!isNullOrEmpty(calculatedExtension)) {
           return calculatedExtension;
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error guessing file format", e);
     }
 
@@ -239,8 +239,8 @@ public class StorageUtils {
     if ("".equals(ext1.trim()) || "".equals(ext2.trim())) {
       return false;
     }
-    String mimeType1 = getMimeType(ext1.trim());
-    String mimeType2 = getMimeType(ext2.trim());
+    final String mimeType1 = getMimeType(ext1.trim());
+    final String mimeType2 = getMimeType(ext2.trim());
     if (DEFAULT_MIME_TYPE.equals(mimeType1) && DEFAULT_MIME_TYPE.equals(mimeType2)) {
       return ext1.equalsIgnoreCase(ext2);
     }
@@ -318,7 +318,7 @@ public class StorageUtils {
     } else if ("cmd".equals(extension)) {
       return "application/cmd";
     }
-    String calculatedMimeType = tika.detect("name." + extension);
+    final String calculatedMimeType = tika.detect("name." + extension);
 
     if ("".equals(calculatedMimeType)) {
       return "application/octet-stream";
@@ -347,7 +347,7 @@ public class StorageUtils {
   public static String calculateChecksum(File file) throws ImejiException {
     try {
       return DigestUtils.md5Hex(new FileInputStream(file));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new UnprocessableError("Error calculating the cheksum of the file: ", e);
     }
   }

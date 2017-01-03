@@ -31,7 +31,7 @@ public class UserFilterMenuBean extends SuperFilterMenuBean {
     if (getSessionUser() != null) {
       try {
         init(initMenu());
-      } catch (UnprocessableError e) {
+      } catch (final UnprocessableError e) {
         LOGGER.error("Error initializing UserFilterMenuBean", e);
       }
     }
@@ -39,11 +39,11 @@ public class UserFilterMenuBean extends SuperFilterMenuBean {
 
   /**
    * Initialize the menus
-   * 
+   *
    * @throws UnprocessableError
    */
   private List<SelectItem> initMenu() throws UnprocessableError {
-    List<SelectItem> menu = new ArrayList<SelectItem>();
+    final List<SelectItem> menu = new ArrayList<SelectItem>();
     menu.add(new SelectItem(SearchQueryParser.transform2URL(getCreatedByMeQuery()),
         Imeji.RESOURCE_BUNDLE.getLabel("created_by_me", getLocale())));
     menu.add(new SelectItem(SearchQueryParser.transform2URL(getSharedWithMeQuery()),
@@ -55,7 +55,7 @@ public class UserFilterMenuBean extends SuperFilterMenuBean {
 
   /**
    * Create Query for Filter Created by me
-   * 
+   *
    * @return
    */
   private SearchQuery getCreatedByMeQuery() {
@@ -65,7 +65,7 @@ public class UserFilterMenuBean extends SuperFilterMenuBean {
 
   /**
    * Create Query for Filter Shared with me
-   * 
+   *
    * @return
    */
   private SearchQuery getSharedWithMeQuery() {
@@ -75,12 +75,12 @@ public class UserFilterMenuBean extends SuperFilterMenuBean {
 
   /**
    * Create SearchQuery For Filter "created by meor shared with me"
-   * 
+   *
    * @return
    * @throws UnprocessableError
    */
   private SearchQuery getCreatedByMeOrSharedWithMeQuery() throws UnprocessableError {
-    SearchGroup q = new SearchGroup();
+    final SearchGroup q = new SearchGroup();
     q.addPair(new SearchPair(SearchFields.creator, SearchOperators.REGEX,
         getSessionUser().getEmail(), false));
     q.addLogicalRelation(LOGICAL_RELATIONS.OR);

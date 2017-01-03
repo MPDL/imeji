@@ -126,7 +126,7 @@ public class Organization implements Cloneable, Serializable {
 
   @Override
   public Organization clone() {
-    Organization clone = new Organization();
+    final Organization clone = new Organization();
     clone.city = this.city;
     clone.country = this.country;
     clone.description = this.description;

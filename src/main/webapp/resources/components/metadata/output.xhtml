@@ -12,7 +12,7 @@
 		<ui:param name="isGeolocation" value="#{cc.attrs.metadata.latitude != 'NaN' and cc.attrs.metadata.longitude != 'NaN'}"/>
 		<ui:param name="isPerson" value="#{not empty cc.attrs.metadata.person.completeName}"/>
 		<ui:param name="isNumber" value="#{cc.attrs.metadata.number != 'NaN' and emtpy}"/>
-		<ui:param name="isDefault" value="#{!(isURL and isGeolocation and isPerson)}"/>		
+		<ui:param name="isDefault" value="#{!(isURL || isGeolocation || isPerson)}"/>		
 		
 		<ui:fragment rendered="#{isURL}">
 			<a target="_blank" href="#{cc.attrs.metadata.url}">#{empty cc.attrs.metadata.text ? cc.attrs.metadata.url : cc.attrs.metadata.text}</a>

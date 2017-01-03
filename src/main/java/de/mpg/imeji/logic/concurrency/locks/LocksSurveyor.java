@@ -28,13 +28,13 @@ public class LocksSurveyor extends Thread {
     while (!signal) {
       try {
         synchronized (LOGGER) {
-          List<Lock> list = new ArrayList<Lock>(Locks.getExpiredLocks());
+          final List<Lock> list = new ArrayList<Lock>(Locks.getExpiredLocks());
           if (!Locks.getExpiredLocks().isEmpty()) {
             LOGGER.info("Unlocking dead locks...");
-            for (Lock l : Locks.getExpiredLocks()) {
+            for (final Lock l : Locks.getExpiredLocks()) {
               list.add(l);
             }
-            for (Lock l : list) {
+            for (final Lock l : list) {
               LOGGER.info("on " + l.getUri() + " by " + l.getEmail());
               Locks.unLock(l);
             }
@@ -43,10 +43,10 @@ public class LocksSurveyor extends Thread {
           LOGGER.wait(10000);
           // Thread.sleep(10000);
         }
-      } catch (NegativeArraySizeException e) {
+      } catch (final NegativeArraySizeException e) {
         Locks.reset();
         LOGGER.error("Locks have been reinitialized. All locks have been released: ", e);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Locks Surveyor encountered a problem: ", e);
       }
     }

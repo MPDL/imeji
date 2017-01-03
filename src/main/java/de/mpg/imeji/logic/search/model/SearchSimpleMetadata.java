@@ -11,6 +11,10 @@ import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
  *
  */
 public class SearchSimpleMetadata extends SearchPair {
+  /**
+   *
+   */
+  private static final long serialVersionUID = -4825456417808018282L;
   private String label;
 
   public SearchSimpleMetadata(String label, SearchOperators operator, String value, boolean not) {

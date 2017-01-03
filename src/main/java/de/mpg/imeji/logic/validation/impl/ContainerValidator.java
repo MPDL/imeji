@@ -33,11 +33,11 @@ public abstract class ContainerValidator extends ObjectValidator {
   }
 
   private void validateAdditionalInfos(Container c) {
-    for (ContainerAdditionalInfo info : c.getMetadata().getAdditionalInformations()) {
+    for (final ContainerAdditionalInfo info : c.getMetadata().getAdditionalInformations()) {
       if (isNullOrEmpty(info.getLabel())) {
         setException(new UnprocessableError("error_additionalinfo_need_label", getException()));
       }
-      if ( isNullOrEmpty(info.getText()) && isNullOrEmpty(info.getUrl())) {
+      if (isNullOrEmpty(info.getText()) && isNullOrEmpty(info.getUrl())) {
         setException(new UnprocessableError("error_additionalinfo_need_value", getException()));
       }
     }

@@ -65,7 +65,7 @@ public class HttpAuthentication implements Authentication {
 
   /**
    * Get the Authorization header
-   * 
+   *
    * @param request
    * @return
    */
@@ -85,10 +85,10 @@ public class HttpAuthentication implements Authentication {
   @Override
   public User doLogin() throws AuthenticationError {
     if (apiKey != null) {
-      APIKeyAuthentication keyAuthentication = new APIKeyAuthentication(apiKey);
+      final APIKeyAuthentication keyAuthentication = new APIKeyAuthentication(apiKey);
       return keyAuthentication.doLogin();
     } else if (usernamePassword != null) {
-      int p = usernamePassword.indexOf(":");
+      final int p = usernamePassword.indexOf(":");
       if (p != -1) {
         return new DefaultAuthentication(getUserLogin(), getUserPassword()).doLogin();
       }
@@ -121,7 +121,7 @@ public class HttpAuthentication implements Authentication {
   @Override
   public String getUserLogin() {
     if (usernamePassword != null) {
-      int p = usernamePassword.indexOf(":");
+      final int p = usernamePassword.indexOf(":");
       if (p != -1) {
         return usernamePassword.substring(0, p);
       }
@@ -137,7 +137,7 @@ public class HttpAuthentication implements Authentication {
   @Override
   public String getUserPassword() {
     if (usernamePassword != null) {
-      int p = usernamePassword.indexOf(":");
+      final int p = usernamePassword.indexOf(":");
       if (p != -1) {
         return usernamePassword.substring(p + 1);
       }

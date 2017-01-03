@@ -24,7 +24,7 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
     if (isDelete()) {
       return;
     }
-    Statement s = null; // TODO
+    final Statement s = null; // TODO
     validataMetadata(md, s);
   }
 
@@ -61,13 +61,13 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
       case GEOLOCATION:
         try {
           new GeolocationValidator().validate(md, validateForMethod);
-        } catch (UnprocessableError e2) {
+        } catch (final UnprocessableError e2) {
           e = new UnprocessableError(e2.getMessages(), e);
         }
       case PERSON:
         try {
           new PersonValidator().validate(md.getPerson(), validateForMethod);
-        } catch (UnprocessableError e1) {
+        } catch (final UnprocessableError e1) {
           e = new UnprocessableError(e1.getMessages(), e);
         }
     }
@@ -142,7 +142,7 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
    * @return
    */
   private boolean containsString(Collection<String> l, String value) {
-    for (String s : l) {
+    for (final String s : l) {
       if (s.equals(value)) {
         return true;
       }
@@ -158,7 +158,7 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
    * @return
    */
   private boolean containsDouble(Collection<String> l, double value) {
-    for (String s : l) {
+    for (final String s : l) {
       if (Double.parseDouble(s) == value) {
         return true;
       }
@@ -174,7 +174,7 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
    * @return
    */
   private boolean containsURI(Collection<String> l, URI value) {
-    for (String s : l) {
+    for (final String s : l) {
       if (URI.create(s).equals(value)) {
         return true;
       }

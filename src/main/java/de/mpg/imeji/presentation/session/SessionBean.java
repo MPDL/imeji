@@ -131,7 +131,7 @@ public class SessionBean implements Serializable {
   public String getInstanceName() {
     try {
       return Imeji.CONFIG.getInstanceName();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return "imeji";
     }
   }
@@ -142,7 +142,7 @@ public class SessionBean implements Serializable {
   private void initApplicationUrl() {
     try {
       applicationUrl = StringHelper.normalizeURI(PropertyReader.getProperty("imeji.instance.url"));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       applicationUrl = "http://localhost:8080/imeji";
     }
   }
@@ -171,7 +171,7 @@ public class SessionBean implements Serializable {
 
   public void reloadUser() throws Exception {
     if (user != null) {
-      UserBusinessController c = new UserBusinessController();
+      final UserBusinessController c = new UserBusinessController();
       user = c.retrieve(user.getId(), Imeji.adminUser);
       checkIfHasUploadRights();
     }
@@ -243,7 +243,7 @@ public class SessionBean implements Serializable {
 
   /**
    * Make the passed album active
-   * 
+   *
    * @param albumId
    * @throws ImejiException
    */
@@ -387,7 +387,7 @@ public class SessionBean implements Serializable {
    * @return
    */
   private String readUserIp() {
-    HttpServletRequest request =
+    final HttpServletRequest request =
         (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
     String ipAddress = request.getHeader("X-FORWARDED-FOR");
     if (ipAddress == null) {
@@ -402,9 +402,9 @@ public class SessionBean implements Serializable {
   public void setSpaceId(String spaceIdString) {
     this.spaceId = spaceIdString;
     if (!isNullOrEmpty(spaceIdString)) {
-      SpaceController sc = new SpaceController();
+      final SpaceController sc = new SpaceController();
       try {
-        Space selectedSpace = sc.retrieveSpaceByLabel(spaceIdString, this.user);
+        final Space selectedSpace = sc.retrieveSpaceByLabel(spaceIdString, this.user);
         if (selectedSpace != null) {
           this.selectedSpace = selectedSpace.getId();
           this.selectedSpaceLogoURL = String.valueOf(selectedSpace.getLogoUrl());
@@ -414,7 +414,7 @@ public class SessionBean implements Serializable {
           this.spaceId = "";
           this.selectedSpaceLogoURL = "";
         }
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         this.selectedSpace = null;
         this.spaceId = "";
         this.selectedSpaceLogoURL = "";
@@ -508,9 +508,9 @@ public class SessionBean implements Serializable {
       hasUploadRights = true;
       return;
     }
-    List<String> collectionUris =
+    final List<String> collectionUris =
         new CollectionController().search(null, null, -1, 0, user, spaceId).getResults();
-    for (String uri : collectionUris) {
+    for (final String uri : collectionUris) {
       if (SecurityUtil.staticAuth().createContent(user, uri)) {
         hasUploadRights = true;
         return;

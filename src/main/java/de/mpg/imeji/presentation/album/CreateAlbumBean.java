@@ -88,8 +88,8 @@ public class CreateAlbumBean extends AlbumBean {
    */
   public void save() {
     try {
-      AlbumController ac = new AlbumController();
-      Album album = ac.create(getAlbum(), getSessionUser());
+      final AlbumController ac = new AlbumController();
+      final Album album = ac.create(getAlbum(), getSessionUser());
       if (containerEditorSession.getUploadedLogoPath() != null) {
         ac.updateLogo(album, new File(containerEditorSession.getUploadedLogoPath()),
             getSessionUser());
@@ -97,10 +97,10 @@ public class CreateAlbumBean extends AlbumBean {
       getSessionBean().setActiveAlbum(album);
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_create", getLocale()));
       redirect(getNavigation().getAlbumUrl() + getAlbum().getIdString());
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error creating album", e);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_create", getLocale()));
       LOGGER.error("Error creating album", e);
     } catch (IOException | URISyntaxException e) {

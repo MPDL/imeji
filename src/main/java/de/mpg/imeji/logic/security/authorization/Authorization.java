@@ -252,7 +252,7 @@ public class Authorization implements Serializable {
    * @return
    */
   private boolean hasGrant(User user, Grant g) {
-    List<Grant> all = SecurityUtil.getAllGrantsOfUser(user);
+    final List<Grant> all = SecurityUtil.getAllGrantsOfUser(user);
     if (all.contains(g)) {
       return true;
     }
@@ -313,7 +313,7 @@ public class Authorization implements Serializable {
       }
       LOGGER.fatal("Invalid Object type: " + obj.getClass());
       return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error get security URI", e);
       return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
     }
@@ -328,7 +328,8 @@ public class Authorization implements Serializable {
    */
   private String getCollectionUri(String uri, boolean isReadGrant) {
     if (!isReadGrant && uri.contains("/item/")) {
-      List<String> c = ImejiSPARQL.exec(JenaCustomQueries.selectCollectionIdOfItem(uri), null);
+      final List<String> c =
+          ImejiSPARQL.exec(JenaCustomQueries.selectCollectionIdOfItem(uri), null);
       if (!c.isEmpty()) {
         return c.get(0);
       }

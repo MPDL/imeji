@@ -86,7 +86,7 @@ public abstract class SearchElement implements Serializable {
    * @throws UnprocessableError
    */
   public SEARCH_ELEMENTS getTypeOfLastElement() throws UnprocessableError {
-    SearchElement se = getLastElement();
+    final SearchElement se = getLastElement();
     if (se == null) {
       return null;
     }
@@ -112,7 +112,7 @@ public abstract class SearchElement implements Serializable {
 
   /**
    * True if 2 elements are equals
-   * 
+   *
    * @param element
    * @return
    */

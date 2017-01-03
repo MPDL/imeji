@@ -16,7 +16,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
  * Resource Controller for {@link UserGroup}
- * 
+ *
  * @author saquet
  *
  */
@@ -60,18 +60,18 @@ public class GroupController {
 
   /**
    * Retrieve a list of {@link UserGroup}
-   * 
+   *
    * @param uris
    * @param user
    * @return
    * @throws ImejiException
    */
   public List<UserGroup> retrieveBatch(List<String> uris, User user) {
-    List<UserGroup> groups = new ArrayList<>();
-    for (String uri : uris) {
+    final List<UserGroup> groups = new ArrayList<>();
+    for (final String uri : uris) {
       try {
         groups.add((UserGroup) READER.read(uri, user, new UserGroup()));
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.error("Error reading user group" + uri, e);
       }
     }
@@ -80,18 +80,18 @@ public class GroupController {
 
   /**
    * Retrieve a list of {@link UserGroup}
-   * 
+   *
    * @param uris
    * @param user
    * @return
    * @throws ImejiException
    */
   public List<UserGroup> retrieveBatchLazy(List<String> uris, User user) {
-    List<UserGroup> groups = new ArrayList<>();
-    for (String uri : uris) {
+    final List<UserGroup> groups = new ArrayList<>();
+    for (final String uri : uris) {
       try {
         groups.add((UserGroup) READER.readLazy(uri, user, new UserGroup()));
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.error("Error reading user group" + uri, e);
       }
     }

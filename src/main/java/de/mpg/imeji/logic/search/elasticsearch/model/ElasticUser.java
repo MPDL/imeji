@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
+import de.mpg.imeji.logic.vo.User;
 
 /**
  * Indexed user
- * 
+ *
  * @author saquet
  *
  */
@@ -28,7 +28,7 @@ public class ElasticUser {
     this.person = new ElasticPerson(user.getPerson());
     this.read = new ArrayList<>();
     this.upload = new ArrayList<>();
-    for (Grant g : user.getGrants()) {
+    for (final Grant g : user.getGrants()) {
       if (g.asGrantType() == GrantType.READ) {
         this.read.add(g.getGrantFor().toString());
       } else if (g.asGrantType() == GrantType.CREATE) {

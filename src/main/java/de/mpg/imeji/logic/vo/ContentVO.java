@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.ImejiNamespaces;
 
 /**
  * Content of an Item
- * 
+ *
  * @author saquet
  *
  */

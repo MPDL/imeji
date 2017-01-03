@@ -23,7 +23,7 @@ public class SearchFormularHelper {
 
   public static String getCollectionId(SearchGroup searchGroup) {
     String id = null;
-    for (SearchElement se : searchGroup.getElements()) {
+    for (final SearchElement se : searchGroup.getElements()) {
       if (se.getType().equals(SEARCH_ELEMENTS.PAIR)
           && SearchIndex.SearchFields.col == ((SearchPair) se).getField()) {
         return ((SearchPair) se).getValue();

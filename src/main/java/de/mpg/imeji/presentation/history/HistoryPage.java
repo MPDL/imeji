@@ -33,7 +33,7 @@ public class HistoryPage implements Serializable {
   private int pos = 0;
   private String url;
   private String title;
-  private ImejiPages imejiPage;
+  private final ImejiPages imejiPage;
   private Map<String, String[]> params;
   private static final Logger LOGGER = Logger.getLogger(HistoryPage.class);
 
@@ -80,7 +80,7 @@ public class HistoryPage implements Serializable {
     // or change when the title of the history page should be loaded (after successful request)
     // otherwise the redirect to proper pages comes from here in addition
     if (uri != null) {
-      String uriStr = UrlHelper.decode(uri.toString());
+      final String uriStr = UrlHelper.decode(uri.toString());
       if (ImejiPages.COLLECTION_HOME.matches(uriStr)) {
         return new CollectionController().retrieveLazy(uri, user).getMetadata().getTitle();
       } else if (ImejiPages.ALBUM_HOME.matches(uriStr)) {
@@ -88,10 +88,10 @@ public class HistoryPage implements Serializable {
       } else if (ImejiPages.ITEM_DETAIL.matches(uriStr)) {
         return new ItemService().retrieveLazy(uri, user).getFilename();
       } else if (ImejiPages.USER_GROUP == imejiPage) {
-        String groupUri = UrlHelper.decode(ObjectHelper.getId(uri));
+        final String groupUri = UrlHelper.decode(ObjectHelper.getId(uri));
         return new GroupBusinessController().read(URI.create(groupUri), user).getName();
       } else if (ImejiPages.USER == imejiPage) {
-        String email = UrlHelper.decode(ObjectHelper.getId(uri));
+        final String email = UrlHelper.decode(ObjectHelper.getId(uri));
         if (user != null && email.equals(user.getEmail())) {
           return user.getPerson().getCompleteName();
         } else {
@@ -126,21 +126,22 @@ public class HistoryPage implements Serializable {
 
   public String getInternationalizedName() {
     try {
-      String inter = Imeji.RESOURCE_BUNDLE.getLabel(imejiPage.getLabel(), BeanHelper.getLocale());
+      final String inter =
+          Imeji.RESOURCE_BUNDLE.getLabel(imejiPage.getLabel(), BeanHelper.getLocale());
       return title != null ? inter + " " + title : inter;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return imejiPage.getLabel();
     }
   }
 
   /**
    * Set a parameter (for instance q) with a new value. To get it as an RUL, call getCompleteUrl()
-   * 
+   *
    * @param param
    * @param value
    */
   public void setParamValue(String param, String value) {
-    String[] valueArray = {value};
+    final String[] valueArray = {value};
     params.put(param, valueArray);
   }
 
@@ -153,7 +154,7 @@ public class HistoryPage implements Serializable {
   }
 
   public String getCompleteUrlWithHistory() {
-    String delim = params.isEmpty() ? "?" : "&";
+    final String delim = params.isEmpty() ? "?" : "&";
     return getCompleteUrl() + delim + "h=" + pos;
   }
 

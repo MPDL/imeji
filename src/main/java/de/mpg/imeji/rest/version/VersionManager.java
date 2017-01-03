@@ -18,7 +18,7 @@ import de.mpg.imeji.rest.version.exception.UnknowAPIVersionException;
  */
 public class VersionManager {
   private int requestedVersion = MyApplication.CURRENT_VERSION;
-  private Pattern p = Pattern.compile(".*/rest/v([0-9]+)/.*");
+  private final Pattern p = Pattern.compile(".*/rest/v([0-9]+)/.*");
   private String path;
   private boolean hasVersion = false;
   private static final Logger LOGGER = Logger.getLogger(VersionManager.class);
@@ -54,7 +54,7 @@ public class VersionManager {
   private String linkToAPIDoc() {
     try {
       return Imeji.PROPERTIES.getApplicationURL() + "rest-doc/index.html";
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error(e.getMessage());
     }
     return "http://imeji.org/development/technical-specification/api";
@@ -78,7 +78,7 @@ public class VersionManager {
    * @return
    */
   private int parseVersionNumber(String path) {
-    Matcher m = p.matcher(path);
+    final Matcher m = p.matcher(path);
     if (m.matches()) {
       hasVersion = true;
       return Integer.parseInt(m.group(1));

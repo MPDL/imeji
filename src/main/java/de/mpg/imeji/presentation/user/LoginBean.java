@@ -65,14 +65,14 @@ public class LoginBean extends SuperBean {
       if (UrlHelper.getParameterBoolean("logout")) {
         logout();
       }
-      String login = UrlHelper.getParameterValue("login");
+      final String login = UrlHelper.getParameterValue("login");
       if (!isNullOrEmptyTrim(login)) {
         setLogin(login);
       }
       if (UrlHelper.getParameterValue("redirect") != null) {
         this.redirect = URLDecoder.decode(UrlHelper.getParameterValue("redirect"), "UTF-8");
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing LoginBean", e);
     }
   }
@@ -94,20 +94,20 @@ public class LoginBean extends SuperBean {
   }
 
   public void doLogin() throws IOException {
-    String instanceName = Imeji.CONFIG.getInstanceName();
+    final String instanceName = Imeji.CONFIG.getInstanceName();
     if (StringHelper.isNullOrEmptyTrim(getLogin())) {
       return;
     }
-    Authentication auth = AuthenticationFactory.factory(getLogin(), getPasswd());
+    final Authentication auth = AuthenticationFactory.factory(getLogin(), getPasswd());
     try {
-      User user = auth.doLogin();
+      final User user = auth.doLogin();
       sessionBean.setUser(user);
       sessionBean.checkIfHasUploadRights();
       BeanHelper.cleanMessages();
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_in", getLocale()));
-    } catch (InactiveAuthenticationError e) {
+    } catch (final InactiveAuthenticationError e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in_inactive", getLocale()));
-    } catch (AuthenticationError e) {
+    } catch (final AuthenticationError e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in", getLocale())
           .replace("XXX_INSTANCE_NAME_XXX", instanceName));
     }
@@ -128,10 +128,10 @@ public class LoginBean extends SuperBean {
    * @throws IOException
    */
   public void logout() throws IOException {
-    FacesContext fc = FacesContext.getCurrentInstance();
-    String spaceId = sessionBean.getSpaceId();
+    final FacesContext fc = FacesContext.getCurrentInstance();
+    final String spaceId = sessionBean.getSpaceId();
     Locks.unlockAll(sessionBean.getUser().getEmail());
-    HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
+    final HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
     session.invalidate();
     sessionBean.setUser(null);
     sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);

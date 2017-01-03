@@ -60,7 +60,7 @@ public class CollectionController extends ImejiServiceAbstract {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.collectionModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.collectionModel);
   private static final Logger LOGGER = Logger.getLogger(CollectionController.class);
-  private Search search =
+  private final Search search =
       SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.ELASTIC);
 
   public static enum MetadataProfileCreationMethod {
@@ -94,7 +94,7 @@ public class CollectionController extends ImejiServiceAbstract {
     updateCreatorGrants(user, c.getId().toString());
     // check the space
     if (!isNullOrEmpty(spaceId)) {
-      SpaceController sp = new SpaceController();
+      final SpaceController sp = new SpaceController();
       sp.addCollection(spaceId, c.getId().toString(), user);
     }
     return c;
@@ -137,7 +137,7 @@ public class CollectionController extends ImejiServiceAbstract {
    */
   public Collection<CollectionImeji> retrieveBatchLazy(List<String> uris, int limit, int offset,
       User user) throws ImejiException {
-    List<CollectionImeji> cols = prepareBatchRetrieve(uris, limit, offset);
+    final List<CollectionImeji> cols = prepareBatchRetrieve(uris, limit, offset);
     READER.readLazy(J2JHelper.cast2ObjectList(cols), user);
     return cols;
 
@@ -152,10 +152,10 @@ public class CollectionController extends ImejiServiceAbstract {
    * @return
    */
   private List<CollectionImeji> prepareBatchRetrieve(List<String> uris, int limit, int offset) {
-    List<CollectionImeji> collections = new ArrayList<CollectionImeji>();
+    final List<CollectionImeji> collections = new ArrayList<CollectionImeji>();
     uris = uris.size() > 0 && limit > 0 ? uris.subList(offset, getMin(offset + limit, uris.size()))
         : uris;
-    for (String s : uris) {
+    for (final String s : uris) {
       collections.add((CollectionImeji) J2JHelper.setId(new CollectionImeji(), URI.create(s)));
     }
     return collections;
@@ -168,7 +168,7 @@ public class CollectionController extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   public Collection<CollectionImeji> retrieveAll(User user) throws ImejiException {
-    List<String> uris =
+    final List<String> uris =
         ImejiSPARQL.exec(JenaCustomQueries.selectCollectionAll(), Imeji.collectionModel);
     return retrieveBatchLazy(uris, -1, 0, user);
   }
@@ -223,8 +223,8 @@ public class CollectionController extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   public void delete(CollectionImeji collection, User user) throws ImejiException {
-    ItemService itemController = new ItemService();
-    List<String> itemUris =
+    final ItemService itemController = new ItemService();
+    final List<String> itemUris =
         itemController.search(collection.getId(), null, null, user, null, -1, 0).getResults();
     if (hasImageLocked(itemUris, user)) {
       throw new RuntimeException("Collection can not be deleted: It contains locked items:");
@@ -233,8 +233,8 @@ public class CollectionController extends ImejiServiceAbstract {
         throw new UnprocessableError("collection_is_not_pending");
       }
       // Delete images
-      List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
-      for (Item it : items) {
+      final List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
+      for (final Item it : items) {
         if (it.getStatus().equals(Status.RELEASED)) {
           throw new UnprocessableError("collection_has_released_items");
         }
@@ -256,7 +256,7 @@ public class CollectionController extends ImejiServiceAbstract {
    */
   public void release(CollectionImeji collection, User user, License defaultLicense)
       throws ImejiException {
-    ItemService itemController = new ItemService();
+    final ItemService itemController = new ItemService();
     isLoggedInUser(user);
 
     if (collection == null) {
@@ -264,7 +264,7 @@ public class CollectionController extends ImejiServiceAbstract {
     }
 
     prepareRelease(collection, user);
-    List<String> itemUris =
+    final List<String> itemUris =
         itemController.search(collection.getId(), null, null, user, null, -1, 0).getResults();
 
     if (hasImageLocked(itemUris, user)) {
@@ -272,7 +272,7 @@ public class CollectionController extends ImejiServiceAbstract {
     } else if (itemUris.isEmpty()) {
       throw new UnprocessableError("An empty collection can not be released!");
     } else {
-      List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
+      final List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
       itemController.release(items, user, defaultLicense);
       update(collection, user);
     }
@@ -280,7 +280,7 @@ public class CollectionController extends ImejiServiceAbstract {
 
   /**
    * Release a collection and set the instance default license to items without licenses
-   * 
+   *
    * @param collection
    * @param user
    * @throws ImejiException
@@ -297,7 +297,7 @@ public class CollectionController extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   public void withdraw(CollectionImeji coll, User user) throws ImejiException {
-    ItemService itemController = new ItemService();
+    final ItemService itemController = new ItemService();
     isLoggedInUser(user);
 
     if (coll == null) {
@@ -306,12 +306,12 @@ public class CollectionController extends ImejiServiceAbstract {
 
     prepareWithdraw(coll, null);
 
-    List<String> itemUris =
+    final List<String> itemUris =
         itemController.search(coll.getId(), null, null, user, null, -1, 0).getResults();
     if (hasImageLocked(itemUris, user)) {
       throw new UnprocessableError("Collection has locked images: can not be withdrawn");
     } else {
-      List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
+      final List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
       itemController.withdraw(items, coll.getDiscardComment(), user);
       update(coll, user);
     }
@@ -345,7 +345,8 @@ public class CollectionController extends ImejiServiceAbstract {
    */
   public List<CollectionImeji> searchAndRetrieve(SearchQuery searchQuery, SortCriterion sortCri,
       User user, String spaceId, int offset, int size) throws ImejiException {
-    SearchResult result = search.search(searchQuery, sortCri, user, null, spaceId, offset, size);
+    final SearchResult result =
+        search.search(searchQuery, sortCri, user, null, spaceId, offset, size);
     return (List<CollectionImeji>) retrieveBatchLazy(result.getResults(), -1, 0, user);
   }
 
@@ -364,15 +365,15 @@ public class CollectionController extends ImejiServiceAbstract {
 
   /**
    * Reindex all collections
-   * 
+   *
    * @param index
    * @throws ImejiException
    */
   public void reindex(String index) throws ImejiException {
     LOGGER.info("Indexing collections...");
-    ElasticIndexer indexer =
+    final ElasticIndexer indexer =
         new ElasticIndexer(index, ElasticTypes.folders, ElasticService.ANALYSER);
-    List<CollectionImeji> collections = (List<CollectionImeji>) retrieveAll(Imeji.adminUser);
+    final List<CollectionImeji> collections = (List<CollectionImeji>) retrieveAll(Imeji.adminUser);
     indexer.indexBatch(collections);
     LOGGER.info("collections reindexed!");
   }
@@ -387,7 +388,7 @@ public class CollectionController extends ImejiServiceAbstract {
           public CollectionImeji apply(String id) {
             try {
               return retrieve(URI.create(id), u);
-            } catch (ImejiException e) {
+            } catch (final ImejiException e) {
               LOGGER.info("Cannot retrieve collection: " + id);
             }
             return null;
@@ -404,7 +405,7 @@ public class CollectionController extends ImejiServiceAbstract {
   // TODO Remove and replace with method checking the cache, related to ElasticIndexer.java (see
   // comment there as well)
   public String retrieveSpaceOfCollection(URI collectionId) {
-    List<String> collectionSpace =
+    final List<String> collectionSpace =
         ImejiSPARQL.exec(JenaCustomQueries.selectSpaceOfCollection(collectionId), null);
     if (collectionSpace.isEmpty()) {
       return null;

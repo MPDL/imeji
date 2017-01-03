@@ -17,7 +17,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 
 /**
  * Search Group for technical metadata
- * 
+ *
  * @author saquet
  *
  */
@@ -28,7 +28,7 @@ public class TechnicalMetadataSearchGroup implements Serializable {
 
   /**
    * Technical metadata Search Element for the advanced search form
-   * 
+   *
    * @author saquet
    *
    */
@@ -96,7 +96,7 @@ public class TechnicalMetadataSearchGroup implements Serializable {
 
   private void initMenu() {
     menu = new ArrayList<>();
-    for (String index : Imeji.CONFIG.getTechnicalMetadata().split(",")) {
+    for (final String index : Imeji.CONFIG.getTechnicalMetadata().split(",")) {
       if (!StringHelper.isNullOrEmptyTrim(index)) {
         menu.add(new SelectItem(index));
       }
@@ -109,13 +109,13 @@ public class TechnicalMetadataSearchGroup implements Serializable {
 
   /**
    * Return the technical metadata group as a {@link SearchGroup}
-   * 
+   *
    * @return
    * @throws UnprocessableError
    */
   public SearchGroup asSearchGroup() throws UnprocessableError {
-    SearchGroup group = new SearchGroup();
-    for (TechnicalMetadataElement el : list) {
+    final SearchGroup group = new SearchGroup();
+    for (final TechnicalMetadataElement el : list) {
       if (!StringHelper.isNullOrEmptyTrim(el.value)) {
         if (!group.isEmpty()) {
           group.addLogicalRelation(el.getRelation());
@@ -129,11 +129,11 @@ public class TechnicalMetadataSearchGroup implements Serializable {
 
   /**
    * True if no search is set for the technical metadata
-   * 
+   *
    * @return
    */
   public boolean isEmpty() {
-    for (TechnicalMetadataElement el : list) {
+    for (final TechnicalMetadataElement el : list) {
       if (!StringHelper.isNullOrEmptyTrim(el)) {
         return false;
       }

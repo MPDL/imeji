@@ -13,7 +13,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * Create a Single object
-   * 
+   *
    * @param t
    * @param user
    * @return
@@ -24,7 +24,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * retrieve a single Object
-   * 
+   *
    * @param id
    * @param user
    * @return
@@ -35,7 +35,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * Retrieve a single object wihout any list of content defined as lazy
-   * 
+   *
    * @param id
    * @param user
    * @return
@@ -47,7 +47,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * Update a single object
-   * 
+   *
    * @param t
    * @param user
    * @return
@@ -58,7 +58,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * Delete a single Object
-   * 
+   *
    * @param t
    * @param user
    * @return
@@ -69,7 +69,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * Create a list of objects
-   * 
+   *
    * @param l
    * @param user
    * @return
@@ -78,7 +78,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * Retrieve a list of objects
-   * 
+   *
    * @param ids
    * @param user
    * @return
@@ -87,7 +87,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * Retrieve a list of objects but without their lazy list content
-   * 
+   *
    * @param ids
    * @param user
    * @return
@@ -97,7 +97,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * Update a list of objects
-   * 
+   *
    * @param l
    * @param user
    * @return
@@ -106,7 +106,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * Delete a list of objects
-   * 
+   *
    * @param l
    * @param user
    * @return
@@ -116,7 +116,7 @@ public abstract class ImejiControllerAbstract<T> {
 
   /**
    * Cast a list of any Type to a list of object
-   * 
+   *
    * @param l
    * @return
    */

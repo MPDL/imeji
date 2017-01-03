@@ -31,9 +31,9 @@ public abstract class MetadataTO implements Serializable {
       if (typeUri == null) {
         return null;
       }
-      String type = typeUri.toString();
-      for (Types typezz : Types.values()) {
-        Class<?> clazz = typezz.getClazz();
+      final String type = typeUri.toString();
+      for (final Types typezz : Types.values()) {
+        final Class<?> clazz = typezz.getClazz();
         if (type.equals(AnnotationsUtil.getType(clazz.newInstance()))) {
           return (Class<MetadataTO>) clazz;
         }

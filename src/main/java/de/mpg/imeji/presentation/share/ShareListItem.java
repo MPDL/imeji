@@ -28,7 +28,7 @@ import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
  * A Item of the list of shared person
- * 
+ *
  * @author bastiens
  *
  */
@@ -185,7 +185,7 @@ public class ShareListItem implements Serializable {
    * @return
    */
   public boolean update() {
-    ShareBusinessController sbc = new ShareBusinessController();
+    final ShareBusinessController sbc = new ShareBusinessController();
     List<String> rolesBeforeUpdate = new ArrayList<>();
     List<String> rolesAfterUpdate = new ArrayList<>();
     try {
@@ -206,7 +206,7 @@ public class ShareListItem implements Serializable {
             .transformGrantsToRoles((List<Grant>) group.getGrants(), shareToUri, profileUri);
       }
       return !ListUtils.equalsIgnoreOrder(rolesBeforeUpdate, rolesAfterUpdate);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Error updating grants: ", e);
       BeanHelper.error("Error during sharing: " + e.getMessage());
     }
@@ -220,11 +220,11 @@ public class ShareListItem implements Serializable {
    */
   public void updateInvitation() throws ImejiException {
     if (invitation != null) {
-      InvitationBusinessController invitationBC = new InvitationBusinessController();
+      final InvitationBusinessController invitationBC = new InvitationBusinessController();
       if (roles.isEmpty()) {
         invitationBC.cancel(invitation.getId());
       } else {
-        Invitation newInvitation =
+        final Invitation newInvitation =
             new Invitation(invitation.getInviteeEmail(), invitation.getObjectUri(), roles);
         invitationBC.invite(newInvitation);
       }
@@ -246,13 +246,13 @@ public class ShareListItem implements Serializable {
    * @return
    */
   public List<User> getUsers() {
-    UserBusinessController controller = new UserBusinessController();
-    List<User> users = new ArrayList<>();
+    final UserBusinessController controller = new UserBusinessController();
+    final List<User> users = new ArrayList<>();
     if (group != null) {
-      for (URI uri : group.getUsers()) {
+      for (final URI uri : group.getUsers()) {
         try {
           users.add(controller.retrieve(uri, Imeji.adminUser));
-        } catch (ImejiException e) {
+        } catch (final ImejiException e) {
           LOGGER.error("Error retrieving user:" + uri);
         }
       }
@@ -350,7 +350,7 @@ public class ShareListItem implements Serializable {
   }
 
   public void setRoles(List<String> roles) {
-    boolean add = roles.size() >= this.roles.size();
+    final boolean add = roles.size() >= this.roles.size();
     this.roles = roles;
     checkRoles(add);
   }

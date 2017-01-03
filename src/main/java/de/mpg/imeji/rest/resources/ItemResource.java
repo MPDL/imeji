@@ -78,7 +78,7 @@ public class ItemResource implements ImejiResource {
           defaultValue = "{default}") @FormDataParam("json") String json,
       @ApiParam(value = "File details", required = false,
           hidden = true) @FormDataParam("file") FormDataContentDisposition fileDetail) {
-    String origName = fileDetail != null ? fileDetail.getFileName() : null;
+    final String origName = fileDetail != null ? fileDetail.getFileName() : null;
     return RestProcessUtils.buildJSONResponse(createItem(req, file, json, origName));
   }
 
@@ -104,7 +104,7 @@ public class ItemResource implements ImejiResource {
       @ApiParam(value = "File details", required = false,
           hidden = true) @FormDataParam("file") FormDataContentDisposition fileDetail,
       @PathParam("id") String id) {
-    String filename = fileDetail != null ? fileDetail.getFileName() : null;
+    final String filename = fileDetail != null ? fileDetail.getFileName() : null;
     return RestProcessUtils.buildJSONResponse(updateItem(req, id, file, json, filename));
   }
 

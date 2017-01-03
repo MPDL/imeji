@@ -38,7 +38,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
  * Controller for {@link ContentVO}
- * 
+ *
  * @author saquet
  *
  */
@@ -50,7 +50,7 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Create a {@link ContentVO}
-   * 
+   *
    * @param file
    * @param filename
    * @param c
@@ -68,7 +68,7 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Create a ContentVO.
-   * 
+   *
    * @param contentVO
    * @return
    * @throws ImejiException
@@ -85,7 +85,7 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Read a {@link ContentVO}
-   * 
+   *
    * @param contentId
    * @return
    * @throws ImejiException
@@ -96,13 +96,13 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Read a {@link ContentVO}
-   * 
+   *
    * @param contentId
    * @return
    * @throws ImejiException
    */
   public List<ContentVO> retrieveBatch(List<String> ids) throws ImejiException {
-    List<ContentVO> list = toObjectList(ids);
+    final List<ContentVO> list = toObjectList(ids);
     READER.read(J2JHelper.cast2ObjectList(list), Imeji.adminUser);
     return list;
   }
@@ -110,7 +110,7 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Read a {@link ContentVO}
-   * 
+   *
    * @param contentId
    * @return
    * @throws ImejiException
@@ -121,7 +121,7 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Update the ContentVO. The file will get a new url
-   * 
+   *
    * @param contentId
    * @param file
    * @param filename
@@ -136,12 +136,12 @@ public class ContentController extends ImejiServiceAbstract {
       throw new UnprocessableError("Error updating content: Id is null");
     }
     ContentVO contentVO = read(contentId);
-    StorageController storageController = new StorageController();
+    final StorageController storageController = new StorageController();
     try {
       storageController.delete(contentVO.getOriginal());
       storageController.delete(contentVO.getPreview());
       storageController.delete(contentVO.getThumbnail());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       // Delete file should not stop update process
       LOGGER.error("Error deleting file", e);
     }
@@ -153,7 +153,7 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Update a contentVO
-   * 
+   *
    * @param contentVO
    * @return
    * @throws ImejiException
@@ -165,7 +165,7 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Update a contentVO
-   * 
+   *
    * @param contentVO
    * @return
    * @throws ImejiException
@@ -177,13 +177,13 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Delete a
-   * 
+   *
    * @param contentId
    * @throws ImejiException
    */
   public void delete(String contentId) throws ImejiException {
-    StorageController storageController = new StorageController();
-    ContentVO contentVO = read(contentId);
+    final StorageController storageController = new StorageController();
+    final ContentVO contentVO = read(contentId);
     try {
       storageController.delete(contentVO.getOriginal());
       storageController.delete(contentVO.getPreview());
@@ -195,7 +195,7 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Upload a File to the storage and add upload result to the contentVO
-   * 
+   *
    * @param file
    * @param filename
    * @param contentVO
@@ -206,17 +206,17 @@ public class ContentController extends ImejiServiceAbstract {
    */
   private ContentVO uploadFileToContentVO(File file, ContentVO contentVO, User user,
       CollectionImeji c) throws ImejiException {
-    StorageController sc = new StorageController();
+    final StorageController sc = new StorageController();
     if (!SecurityUtil.staticAuth().createContent(user, c)) {
       throw new NotAllowedError(
           "User not Allowed to upload files in collection " + c.getIdString());
     }
-    String guessedNotAllowedFormat = sc.guessNotAllowedFormat(file);
+    final String guessedNotAllowedFormat = sc.guessNotAllowedFormat(file);
     if (StorageUtils.BAD_FORMAT.equals(guessedNotAllowedFormat)) {
       throw new UnprocessableError("upload_format_not_allowed");
     }
     QuotaUtil.checkQuota(user, file, c);
-    UploadResult uploadResult = sc.upload(file.getName(), file, c.getIdString());
+    final UploadResult uploadResult = sc.upload(file.getName(), file, c.getIdString());
     contentVO.setOriginal(uploadResult.getOrginal());
     contentVO.setPreview(uploadResult.getWeb());
     contentVO.setThumbnail(uploadResult.getThumb());
@@ -231,7 +231,7 @@ public class ContentController extends ImejiServiceAbstract {
   /**
    * Extract the content of the file (Fulltext and technical metadata) and add it to the contentVO.
    * This method is asynchronous
-   * 
+   *
    * @param contentVO
    * @return
    * @throws ImejiException
@@ -244,22 +244,22 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Extract the content of the File of the contentVO. Return true if th extraction happened
-   * 
+   *
    * @param contentVO
    * @return
    * @throws ImejiException
    */
   public boolean extractContent(ContentVO contentVO) {
     try {
-      StorageController storageController = new StorageController();
-      File file = storageController.read(contentVO.getOriginal());
+      final StorageController storageController = new StorageController();
+      final File file = storageController.read(contentVO.getOriginal());
       if (file.exists()) {
-        ContentAnalyse contentAnalyse = ContentAnalyserFactory.build().extractAll(file);
+        final ContentAnalyse contentAnalyse = ContentAnalyserFactory.build().extractAll(file);
         contentVO.setFulltext(contentAnalyse.getFulltext());
         contentVO.setTechnicalMetadata(contentAnalyse.getTechnicalMetadata());
         return true;
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error extracting content ", e);
     }
     return false;
@@ -267,15 +267,15 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Reindex all items
-   * 
+   *
    * @param index
    * @throws ImejiException
    */
   public void reindex(String index) throws ImejiException {
     LOGGER.info("Indexing Content...");
-    ElasticIndexer indexer =
+    final ElasticIndexer indexer =
         new ElasticIndexer(index, ElasticTypes.content, ElasticService.ANALYSER);
-    List<ContentVO> contents = retrieveAll();
+    final List<ContentVO> contents = retrieveAll();
     LOGGER.info("+++ " + contents.size() + " content to index +++");
     indexer.indexBatch(contents);
     LOGGER.info("Content reindexed!");
@@ -288,14 +288,15 @@ public class ContentController extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   public List<ContentVO> retrieveAll() throws ImejiException {
-    List<String> ids = ImejiSPARQL.exec(JenaCustomQueries.selectContentAll(), Imeji.contentModel);
+    final List<String> ids =
+        ImejiSPARQL.exec(JenaCustomQueries.selectContentAll(), Imeji.contentModel);
     return retrieveBatch(ids);
   }
 
 
   /**
    * Inner class to extract the content of a file to a contentVO asynchronously
-   * 
+   *
    * @author saquet
    *
    */
@@ -315,7 +316,7 @@ public class ContentController extends ImejiServiceAbstract {
           extractContent(contentVO);
           contentVO.setItemId(itemId);
           update(contentVO);
-        } catch (Exception e) {
+        } catch (final Exception e) {
           LOGGER.warn("Error extracting fulltext/metadata from file of file " + itemId
               + " with content id " + contentVO.getId().toString(), e);
         }
@@ -326,14 +327,14 @@ public class ContentController extends ImejiServiceAbstract {
 
   /**
    * Transform a list of if to a list of contentVO
-   * 
+   *
    * @param ids
    * @return
    */
   private List<ContentVO> toObjectList(List<String> ids) {
-    List<ContentVO> list = new ArrayList<>();
-    for (String id : ids) {
-      ContentVO c = new ContentVO();
+    final List<ContentVO> list = new ArrayList<>();
+    for (final String id : ids) {
+      final ContentVO c = new ContentVO();
       c.setId(URI.create(id));
       list.add(c);
     }

@@ -37,7 +37,7 @@ public class ElasticSortFactory {
     if (sort == null || sort.getIndex() == null || sort.getIndex().getName() == null) {
       return defaultSort;
     }
-    SearchFields index = SearchFields.valueOf(sort.getIndex().getName());
+    final SearchFields index = SearchFields.valueOf(sort.getIndex().getName());
     switch (index) {
       case text:
         return makeBuilder(ElasticFields.METADATA_TEXT.field() + SORT_INDEX, sort);

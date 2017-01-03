@@ -12,7 +12,7 @@ import de.mpg.imeji.util.DateHelper;
 
 /**
  * A License for imeji objects
- * 
+ *
  * @author saquet
  *
  */
@@ -36,8 +36,9 @@ public class License implements Serializable {
 
   }
 
+  @Override
   public License clone() {
-    License clone = new License();
+    final License clone = new License();
     clone.setId(id);
     clone.setLabel(label);
     clone.setName(name);
@@ -55,12 +56,12 @@ public class License implements Serializable {
 
   /**
    * Return the timestamp of the license as a string
-   * 
+   *
    * @return
    */
   public String getTimestamp() {
-    String s = start > 0 ? DateHelper.printDate(DateHelper.getDate(start)) : "...";
-    String e = end > 0 ? DateHelper.printDate(DateHelper.getDate(end)) : "...";
+    final String s = start > 0 ? DateHelper.printDate(DateHelper.getDate(start)) : "...";
+    final String e = end > 0 ? DateHelper.printDate(DateHelper.getDate(end)) : "...";
     return s + " - " + e;
   }
 
@@ -74,7 +75,7 @@ public class License implements Serializable {
 
   /**
    * True if this license is emtpy
-   * 
+   *
    * @return
    */
   public boolean isEmtpy() {

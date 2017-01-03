@@ -114,7 +114,7 @@ public class UserBusinessController {
     try {
       u.setApiKey(APIKeyAuthentication.generateKey(u.getId(), Integer.MAX_VALUE));
       controller.update(u);
-    } catch (JoseException e) {
+    } catch (final JoseException e) {
       LOGGER.error("Error creating API Key during user creation", e);
     }
     return u;
@@ -138,9 +138,9 @@ public class UserBusinessController {
    * @throws ImejiException
    */
   public User retrieve(String email, User user) throws ImejiException {
-    SearchQuery query = new SearchQuery();
+    final SearchQuery query = new SearchQuery();
     query.addPair(new SearchPair(SearchFields.email, SearchOperators.EQUALS, email, false));
-    SearchResult result = search.search(query, null, Imeji.adminUser, null, null, 0, 1);
+    final SearchResult result = search.search(query, null, Imeji.adminUser, null, null, 0, 1);
     if (result.getNumberOfRecords() == 1) {
       return controller.retrieve(URI.create(result.getResults().get(0)), user);
     }
@@ -213,7 +213,7 @@ public class UserBusinessController {
    * @return
    */
   public boolean isModified(User u) {
-    SearchResult result = SearchFactory.create()
+    final SearchResult result = SearchFactory.create()
         .searchString(JenaCustomQueries.selectLastModifiedDate(u.getId()), null, u, 0, 1);
     return result.getNumberOfRecords() > 0 && (u.getModified() == null
         || DateHelper.parseDate(result.getResults().get(0)).after(u.getModified()));
@@ -235,22 +235,22 @@ public class UserBusinessController {
     if (SecurityUtil.isSysAdmin(user)) {
       return -1L;
     }
-    User targetCollectionUser = user.getId().equals(col.getCreatedBy()) ? user
+    final User targetCollectionUser = user.getId().equals(col.getCreatedBy()) ? user
         : retrieve(col.getCreatedBy(), Imeji.adminUser);
 
-    Search search = SearchFactory.create();
-    List<String> results =
+    final Search search = SearchFactory.create();
+    final List<String> results =
         search.searchString(JenaCustomQueries.selectUserFileSize(col.getCreatedBy().toString()),
             null, null, 0, -1).getResults();
     long currentDiskUsage = 0L;
     try {
       currentDiskUsage = Long.parseLong(results.get(0).toString());
-    } catch (NumberFormatException e) {
+    } catch (final NumberFormatException e) {
       throw new UnprocessableError("Cannot parse currentDiskSpaceUsage " + results.get(0).toString()
           + "; requested by user: " + user.getEmail() + "; targetCollectionUser: "
           + targetCollectionUser.getEmail(), e);
     }
-    long needed = currentDiskUsage + file.length();
+    final long needed = currentDiskUsage + file.length();
     if (needed > targetCollectionUser.getQuota()) {
       throw new QuotaExceededException("Data quota ("
           + QuotaUtil.getQuotaHumanReadable(targetCollectionUser.getQuota(), Locale.ENGLISH)
@@ -271,7 +271,7 @@ public class UserBusinessController {
       return retrieveBatchLazy(search.search(SearchQueryParser.parseStringQuery(name),
           new SortCriterion(SearchFields.person_family, SortOrder.ASCENDING), Imeji.adminUser, null,
           null, 0, -1).getResults(), -1);
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       LOGGER.error("Error search users", e);
     }
     return new ArrayList<>();
@@ -280,7 +280,7 @@ public class UserBusinessController {
 
   /**
    * Search for users
-   * 
+   *
    * @param q
    * @param sort
    * @param user
@@ -294,7 +294,7 @@ public class UserBusinessController {
 
   /**
    * Search for users
-   * 
+   *
    * @param q
    * @param sort
    * @param user
@@ -310,7 +310,7 @@ public class UserBusinessController {
 
   /**
    * Search for users
-   * 
+   *
    * @param q
    * @param sort
    * @param user
@@ -320,8 +320,8 @@ public class UserBusinessController {
    */
   public List<User> searchAndRetrieveLazy(SearchQuery q, SortCriterion sort, User user, int offset,
       int size) {
-    return (List<User>) retrieveBatchLazy(
-        search.search(q, sort, user, null, null, offset, size).getResults(), size);
+    return retrieveBatchLazy(search.search(q, sort, user, null, null, offset, size).getResults(),
+        size);
   }
 
 
@@ -344,12 +344,12 @@ public class UserBusinessController {
    * @return
    */
   public Person retrievePersonById(String id) {
-    List<String> l = new ArrayList<String>();
+    final List<String> l = new ArrayList<String>();
     l.add(id);
     Collection<Person> c = new ArrayList<Person>();
     try {
       c = loadPersons(l, Imeji.userModel);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       c.addAll(loadPersons(l, Imeji.collectionModel));
     }
     return c.iterator().next();
@@ -363,12 +363,12 @@ public class UserBusinessController {
    * @return
    */
   public Organization retrieveOrganizationById(String id) {
-    List<String> l = new ArrayList<String>();
+    final List<String> l = new ArrayList<String>();
     l.add(id);
     Collection<Organization> c = new ArrayList<Organization>();
     try {
       c = loadOrganizations(l, Imeji.userModel);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       c.addAll(loadOrganizations(l, Imeji.collectionModel));
     }
     return c.iterator().next();
@@ -382,9 +382,9 @@ public class UserBusinessController {
    * @return
    */
   public Collection<Organization> searchOrganizationByName(String name) {
-    Collection<Organization> l = searchOrganizationByNameInUsers(name);
-    Map<String, Organization> map = new HashMap<>();
-    for (Organization o : l) {
+    final Collection<Organization> l = searchOrganizationByNameInUsers(name);
+    final Map<String, Organization> map = new HashMap<>();
+    for (final Organization o : l) {
       // map.put(o.getIdentifier(), o);
       map.put(o.getName().toLowerCase(), o);
     }
@@ -398,7 +398,7 @@ public class UserBusinessController {
    * @return
    */
   private Collection<Person> searchPersonByNameInUsers(String name) {
-    Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+    final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
     return loadPersons(search
         .searchString(JenaCustomQueries.selectPersonByName(name), null, null, 0, -1).getResults(),
         Imeji.userModel);
@@ -412,7 +412,7 @@ public class UserBusinessController {
    * @return
    */
   private Collection<Organization> searchOrganizationByNameInUsers(String name) {
-    Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+    final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
     return loadOrganizations(
         search.searchString(JenaCustomQueries.selectOrganizationByName(name), null, null, 0, -1)
             .getResults(),
@@ -429,12 +429,12 @@ public class UserBusinessController {
    * @return
    */
   public Collection<Organization> loadOrganizations(List<String> uris, String model) {
-    Collection<Organization> orgs = new ArrayList<Organization>();
-    for (String uri : uris) {
+    final Collection<Organization> orgs = new ArrayList<Organization>();
+    for (final String uri : uris) {
       try {
-        ReaderFacade reader = new ReaderFacade(model);
+        final ReaderFacade reader = new ReaderFacade(model);
         orgs.add((Organization) reader.read(uri, Imeji.adminUser, new Organization()));
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.info("Organization with " + uri + " not found");
       }
     }
@@ -449,12 +449,12 @@ public class UserBusinessController {
    * @return
    */
   private Collection<Person> loadPersons(List<String> uris, String model) {
-    Collection<Person> p = new ArrayList<Person>();
-    for (String uri : uris) {
+    final Collection<Person> p = new ArrayList<Person>();
+    for (final String uri : uris) {
       try {
-        ReaderFacade reader = new ReaderFacade(model);
+        final ReaderFacade reader = new ReaderFacade(model);
         p.add((Person) reader.read(uri, Imeji.adminUser, new Person()));
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.error("Error reding person", e);
       }
     }
@@ -468,8 +468,8 @@ public class UserBusinessController {
    */
   public static boolean adminUserExist() {
     boolean exist = false;
-    Search search = SearchFactory.create();
-    List<String> uris =
+    final Search search = SearchFactory.create();
+    final List<String> uris =
         search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, 0, -1).getResults();
     if (uris != null && uris.size() > 0) {
       exist = true;
@@ -484,14 +484,14 @@ public class UserBusinessController {
    * @throws ImejiException
    */
   public List<User> retrieveAllAdmins() {
-    Search search = SearchFactory.create();
-    List<String> uris =
+    final Search search = SearchFactory.create();
+    final List<String> uris =
         search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, 0, -1).getResults();
-    List<User> admins = new ArrayList<User>();
-    for (String uri : uris) {
+    final List<User> admins = new ArrayList<User>();
+    for (final String uri : uris) {
       try {
         admins.add(retrieve(URI.create(uri), Imeji.adminUser));
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.info("Could not retrieve any admin in the list. Something is wrong!", e);
       }
     }
@@ -506,17 +506,18 @@ public class UserBusinessController {
    * @return
    */
   public List<User> searchUsersToBeNotified(User user, CollectionImeji c) {
-    Search search = SearchFactory.create();
-    List<String> uris =
+    final Search search = SearchFactory.create();
+    final List<String> uris =
         search.searchString(JenaCustomQueries.selectUsersToBeNotifiedByFileDownload(user, c), null,
             null, 0, -1).getResults();
-    return (List<User>) retrieveBatchLazy(uris, -1);
+    return retrieveBatchLazy(uris, -1);
   }
 
   public void reindex(String index) throws ImejiException {
     LOGGER.info("Indexing users...");
-    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER);
-    List<User> users = retrieveAll();
+    final ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER);
+    final List<User> users = retrieveAll();
     LOGGER.info("+++ " + users.size() + " users to index +++");
     indexer.indexBatch(users);
     LOGGER.info("...users reindexed!");

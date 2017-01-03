@@ -59,7 +59,7 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
 
   @Override
   public List<CollectionListItem> retrieveList(int offset, int limit) throws Exception {
-    CollectionController controller = new CollectionController();
+    final CollectionController controller = new CollectionController();
     Collection<CollectionImeji> collections = new ArrayList<CollectionImeji>();
     search(offset, limit);
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
@@ -119,7 +119,7 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
-    CollectionController controller = new CollectionController();
+    final CollectionController controller = new CollectionController();
     return controller.search(searchQuery, sortCriterion, limit, offset, getSessionUser(),
         getSelectedSpaceString());
   }

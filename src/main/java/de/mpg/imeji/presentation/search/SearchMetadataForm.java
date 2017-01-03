@@ -72,7 +72,7 @@ public class SearchMetadataForm implements Serializable {
    */
   public SearchMetadataForm(SearchGroup searchGroup, Locale locale) {
     this();
-    for (SearchElement se : searchGroup.getElements()) {
+    for (final SearchElement se : searchGroup.getElements()) {
       switch (se.getType()) {
         case PAIR:
           // No use case so far with simple pairs
@@ -98,7 +98,7 @@ public class SearchMetadataForm implements Serializable {
     namespace = md.getStatement().toString();
     switch (md.getField()) {
       case coordinates:
-        String[] values = md.getValue().split(",");
+        final String[] values = md.getValue().split(",");
         this.distance = "1km";
         this.latitude = values[0];
         this.longitude = values[1];
@@ -140,12 +140,12 @@ public class SearchMetadataForm implements Serializable {
         case DATE:
           try {
             DateFormatter.format(searchValue);
-          } catch (Exception e) {
+          } catch (final Exception e) {
             throw new UnprocessableError("error_date_format", e);
           }
           break;
         case GEOLOCATION:
-          Set<String> messages = new HashSet<>();
+          final Set<String> messages = new HashSet<>();
           if (isEmtpyValue(latitude + longitude)) {
             break;
           }
@@ -158,23 +158,23 @@ public class SearchMetadataForm implements Serializable {
           }
           try {
             if (!isEmtpyValue(latitude)) {
-              Double la = Double.parseDouble(latitude);
+              final Double la = Double.parseDouble(latitude);
               if (!(la >= -90 && la <= 90)) {
                 messages.add("error_latitude_format");
               }
             }
-          } catch (Exception e) {
+          } catch (final Exception e) {
             messages.add("error_latitude_format");
             LOGGER.error("Search: invalid latitude", e);
           }
           try {
             if (!isEmtpyValue(longitude)) {
-              Double lo = Double.parseDouble(longitude);
+              final Double lo = Double.parseDouble(longitude);
               if (!(lo >= -180 && lo <= 180)) {
                 messages.add("error_longitude_format");
               }
             }
-          } catch (Exception e) {
+          } catch (final Exception e) {
             messages.add("error_longitude_format");
             LOGGER.error("Search: invalid longitude", e);
           }
@@ -185,7 +185,7 @@ public class SearchMetadataForm implements Serializable {
         case NUMBER:
           try {
             Long.parseLong(searchValue);
-          } catch (Exception e) {
+          } catch (final Exception e) {
             throw new UnprocessableError("error_number_format", e);
           }
           break;
@@ -244,7 +244,7 @@ public class SearchMetadataForm implements Serializable {
     if (statement.getLiteralConstraints() != null && statement.getLiteralConstraints().size() > 0) {
       predefinedValues = new ArrayList<SelectItem>();
       predefinedValues.add(new SelectItem(null, "Select"));
-      for (String s : statement.getLiteralConstraints()) {
+      for (final String s : statement.getLiteralConstraints()) {
         predefinedValues.add(new SelectItem(s, s));
       }
     } else {
@@ -259,9 +259,9 @@ public class SearchMetadataForm implements Serializable {
    */
   public SearchGroup getAsSearchGroup() {
     try {
-      SearchGroup group = new SearchGroup();
+      final SearchGroup group = new SearchGroup();
       if (namespace != null) {
-        URI ns = URI.create(namespace);
+        final URI ns = URI.create(namespace);
         switch (statement.getType()) {
           case DATE:
             if (!isEmtpyValue(searchValue)) {
@@ -357,7 +357,7 @@ public class SearchMetadataForm implements Serializable {
         }
       }
       return group;
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       LOGGER.error("Error transforming search metadata form to search group", e);
       return new SearchGroup();
     }

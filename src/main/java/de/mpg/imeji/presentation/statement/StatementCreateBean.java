@@ -10,8 +10,8 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.statement.StatementService;
+import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
@@ -27,7 +27,7 @@ public class StatementCreateBean extends SuperBean {
   private String type = StatementType.TEXT.name();
 
   public StatementCreateBean() {
-    for (StatementType statementType : StatementType.values()) {
+    for (final StatementType statementType : StatementType.values()) {
       statementTypeMenu.add(new SelectItem(statementType.name()));
     }
   }
@@ -36,12 +36,12 @@ public class StatementCreateBean extends SuperBean {
    * Create a new statement
    */
   public void save() {
-    StatementService service = new StatementService();
-    Statement statement = ImejiFactory.newStatement().setIndex(name).addName(name)
+    final StatementService service = new StatementService();
+    final Statement statement = ImejiFactory.newStatement().setIndex(name).addName(name)
         .setType(StatementType.valueOf(type)).build();
     try {
       service.create(statement, getSessionUser());
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error("Error creating statement");
       LOGGER.error("Error creating statement", e);
     }

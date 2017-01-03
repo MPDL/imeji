@@ -61,15 +61,15 @@ public class GifUtils {
    * @throws Exception
    */
   private static byte[] convert(byte[] bytes, Color backgroundColor) throws Exception {
-    ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-    BufferedImage bufferedImage = ImageIO.read(inputStream);
-    BufferedImage newBi = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(),
-        BufferedImage.TYPE_INT_RGB);
-    Graphics2D g2d = (Graphics2D) newBi.getGraphics();
+    final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+    final BufferedImage bufferedImage = ImageIO.read(inputStream);
+    final BufferedImage newBi = new BufferedImage(bufferedImage.getWidth(),
+        bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+    final Graphics2D g2d = (Graphics2D) newBi.getGraphics();
     g2d.drawImage(bufferedImage, 0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(),
         backgroundColor, null);
-    ByteArrayOutputStream osByteArray = new ByteArrayOutputStream();
-    ImageOutputStream outputStream = ImageIO.createImageOutputStream(osByteArray);
+    final ByteArrayOutputStream osByteArray = new ByteArrayOutputStream();
+    final ImageOutputStream outputStream = ImageIO.createImageOutputStream(osByteArray);
     try {
       ImageIO.write(newBi, "jpg", outputStream);
       return osByteArray.toByteArray();

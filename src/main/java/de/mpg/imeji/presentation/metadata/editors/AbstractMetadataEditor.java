@@ -13,9 +13,9 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.component.LicenseEditor;
 import de.mpg.imeji.presentation.metadata.ItemWrapper;
 
@@ -45,7 +45,7 @@ public abstract class AbstractMetadataEditor {
     this.locale = locale;
     this.sessionUser = sessionUser;
     items = new ArrayList<ItemWrapper>();
-    for (Item item : itemList) {
+    for (final Item item : itemList) {
       items.add(new ItemWrapper(item, true));
     }
   }
@@ -70,7 +70,7 @@ public abstract class AbstractMetadataEditor {
    */
   @Override
   public AbstractMetadataEditor clone() {
-    AbstractMetadataEditor editor = new MultipleEditor();
+    final AbstractMetadataEditor editor = new MultipleEditor();
     editor.setItems(items);
     editor.setStatement(statement);
     editor.setSessionUser(sessionUser);
@@ -84,8 +84,8 @@ public abstract class AbstractMetadataEditor {
    * @throws ImejiException
    */
   public void save() throws ImejiException {
-    ItemService ic = new ItemService();
-    List<Item> itemList = validateAndFormatItemsForSaving();
+    final ItemService ic = new ItemService();
+    final List<Item> itemList = validateAndFormatItemsForSaving();
     ic.updateBatch(itemList, sessionUser);
   }
 
@@ -95,9 +95,9 @@ public abstract class AbstractMetadataEditor {
    * @return
    */
   public List<Item> validateAndFormatItemsForSaving() {
-    List<Item> itemList = new ArrayList<Item>();
-    for (ItemWrapper eib : items) {
-      Item item = eib.asItem();
+    final List<Item> itemList = new ArrayList<Item>();
+    for (final ItemWrapper eib : items) {
+      final Item item = eib.asItem();
       addLicense(item);
       itemList.add(item);
     }
@@ -106,12 +106,12 @@ public abstract class AbstractMetadataEditor {
 
   /**
    * Add the selected license to the item if not null
-   * 
+   *
    * @param item
    */
   private void addLicense(Item item) {
     if (licenseEditor != null) {
-      License lic = licenseEditor.getLicense();
+      final License lic = licenseEditor.getLicense();
       if (lic != null) {
         if (!lic.isEmtpy()) {
           item.getLicenses().add(lic);

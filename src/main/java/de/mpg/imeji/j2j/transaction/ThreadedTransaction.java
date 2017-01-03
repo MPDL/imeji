@@ -24,8 +24,8 @@ import de.mpg.imeji.logic.Imeji;
  */
 public class ThreadedTransaction implements Callable<Integer> {
 
-  private Transaction transaction;
-  private String tdbPath;
+  private final Transaction transaction;
+  private final String tdbPath;
   protected static Logger LOGGER = Logger.getLogger(ThreadedTransaction.class);
 
   /**
@@ -45,7 +45,7 @@ public class ThreadedTransaction implements Callable<Integer> {
    */
   @Override
   public Integer call() throws Exception {
-    Dataset ds = TDBFactory.createDataset(tdbPath);
+    final Dataset ds = TDBFactory.createDataset(tdbPath);
     try {
       transaction.start(ds);
     } finally {
@@ -70,11 +70,11 @@ public class ThreadedTransaction implements Callable<Integer> {
    * @throws Exception
    */
   public static void run(ThreadedTransaction t) throws ImejiException {
-    Future<Integer> f = Imeji.getEXECUTOR().submit(t);
+    final Future<Integer> f = Imeji.getEXECUTOR().submit(t);
     // wait for the transaction to be finished
     try {
       f.get();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.info("An exception happened in Transaction ", e);
     }
     t.throwException();

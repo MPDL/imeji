@@ -42,7 +42,7 @@ public class ElasticPerson {
       this.givenname = p.getGivenName();
       this.identifier = p.getIdentifier();
       this.completename = p.getCompleteName();
-      for (Organization org : p.getOrganizations()) {
+      for (final Organization org : p.getOrganizations()) {
         organization.add(new ElasticOrganization(org));
       }
     }

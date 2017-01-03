@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
+import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
  * Elastic Object for UserGroup
- * 
+ *
  * @author saquet
  *
  */
@@ -22,15 +22,15 @@ public class ElasticUserGroup {
 
   /**
    * Constructor for one group
-   * 
+   *
    * @param group
    */
   public ElasticUserGroup(UserGroup group) {
     this.name = group.getName();
-    for (URI uri : group.getUsers()) {
+    for (final URI uri : group.getUsers()) {
       users.add(uri.toString());
     }
-    for (Grant g : group.getGrants()) {
+    for (final Grant g : group.getGrants()) {
       if (g.asGrantType() == GrantType.READ) {
         this.read.add(g.getGrantFor().toString());
       } else if (g.asGrantType() == GrantType.CREATE) {

@@ -2,7 +2,7 @@ package de.mpg.imeji.rest.to.predefinedMetadataTO.annotations;
 
 /**
  * Utility class for Annotations
- * 
+ *
  * @author saquet
  *
  */

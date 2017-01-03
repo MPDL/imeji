@@ -36,14 +36,14 @@ public class QuickSearchBean implements Serializable {
    * @throws IOException
    */
   public QuickSearchBean() {
-    String q = UrlHelper.getParameterValue("q");
+    final String q = UrlHelper.getParameterValue("q");
     try {
       if (SearchQueryParser.isSimpleSearch(SearchQueryParser.parseStringQuery(q))) {
         this.searchString = q;
       } else {
         searchString = "";
       }
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       LOGGER.error("Error parsing query", e);
     }
   }

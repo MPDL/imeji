@@ -59,17 +59,17 @@ public class BeanHelper {
    * @return
    */
   private static synchronized Object addRequestBean(final Class<?> cls, String name) {
-    Object result =
+    final Object result =
         FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get(name);
     if (result != null) {
       return result;
     }
     try {
       LOGGER.debug("Creating new session bean: " + name);
-      Object newBean = cls.newInstance();
+      final Object newBean = cls.newInstance();
       FacesContext.getCurrentInstance().getExternalContext().getRequestMap().put(name, newBean);
       return newBean;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error creating new bean of type " + cls, e);
     }
   }
@@ -100,17 +100,17 @@ public class BeanHelper {
    * @return
    */
   private static synchronized Object addSessionBean(final Class<?> cls, String name) {
-    Object result =
+    final Object result =
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(name);
     if (result != null) {
       return result;
     }
     try {
       LOGGER.debug("Creating new session bean: " + name);
-      Object newBean = cls.newInstance();
+      final Object newBean = cls.newInstance();
       FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(name, newBean);
       return newBean;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error creating new bean of type " + cls, e);
     }
   }
@@ -141,17 +141,17 @@ public class BeanHelper {
    * @return
    */
   private static synchronized Object addApplicationBean(final Class<?> cls, String name) {
-    Object result =
+    final Object result =
         FacesContext.getCurrentInstance().getExternalContext().getApplicationMap().get(name);
     if (result != null) {
       return result;
     }
     try {
       LOGGER.debug("Creating new session bean: " + name);
-      Object newBean = cls.newInstance();
+      final Object newBean = cls.newInstance();
       FacesContext.getCurrentInstance().getExternalContext().getApplicationMap().put(name, newBean);
       return newBean;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error creating new bean of type " + cls, e);
     }
   }
@@ -162,8 +162,8 @@ public class BeanHelper {
    * @param cls
    */
   public static synchronized void removeBeanFromMap(final Class<?> cls) {
-    String name = cls.getSimpleName();
-    Object result =
+    final String name = cls.getSimpleName();
+    final Object result =
         FacesContext.getCurrentInstance().getExternalContext().getApplicationMap().get(name);
     if (result != null) {
       FacesContext.getCurrentInstance().getExternalContext().getApplicationMap().remove(name);
@@ -242,10 +242,10 @@ public class BeanHelper {
    */
   public static void error(UnprocessableError e, Locale locale) {
     cleanMessages();
-    for (String m : e.getMessages()) {
-      int i = m.trim().indexOf(" ");
-      String placeholder = i > 0 ? m.substring(0, i) : m.trim();
-      String additionalInfo = i > 0 ? ": " + m.substring(i) : "";
+    for (final String m : e.getMessages()) {
+      final int i = m.trim().indexOf(" ");
+      final String placeholder = i > 0 ? m.substring(0, i) : m.trim();
+      final String additionalInfo = i > 0 ? ": " + m.substring(i) : "";
       error(Imeji.RESOURCE_BUNDLE.getMessage(placeholder, locale) + additionalInfo);
     }
   }
@@ -306,7 +306,7 @@ public class BeanHelper {
    */
   public static void message(String summary, String detail, UIComponent component,
       Severity severity) {
-    FacesMessage fm = new FacesMessage(severity, summary, detail);
+    final FacesMessage fm = new FacesMessage(severity, summary, detail);
     if (component == null) {
       FacesContext.getCurrentInstance().addMessage(null, fm);
     } else {
@@ -318,7 +318,7 @@ public class BeanHelper {
    * @param summary summary text
    */
   public static void cleanMessages() {
-    Iterator<FacesMessage> it = FacesContext.getCurrentInstance().getMessages();
+    final Iterator<FacesMessage> it = FacesContext.getCurrentInstance().getMessages();
     while (it.hasNext()) {
       it.next();
       it.remove();

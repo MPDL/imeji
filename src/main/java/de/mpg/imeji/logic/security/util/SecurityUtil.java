@@ -99,8 +99,8 @@ public class SecurityUtil {
    * @return
    */
   public static List<String> getListOfAllowedCollections(User user) {
-    List<String> uris = new ArrayList<>();
-    for (Grant g : getAllGrantsOfUser(user)) {
+    final List<String> uris = new ArrayList<>();
+    for (final Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/collection/")
           && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
@@ -118,8 +118,8 @@ public class SecurityUtil {
    * @return
    */
   public static List<String> getListOfAllowedProfiles(User user) {
-    List<String> uris = new ArrayList<>();
-    for (Grant g : getAllGrantsOfUser(user)) {
+    final List<String> uris = new ArrayList<>();
+    for (final Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/metadataProfile/")
           && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
@@ -137,8 +137,8 @@ public class SecurityUtil {
    * @return
    */
   public static List<String> getListOfAllowedItem(User user) {
-    List<String> uris = new ArrayList<>();
-    for (Grant g : getAllGrantsOfUser(user)) {
+    final List<String> uris = new ArrayList<>();
+    for (final Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/item/")
           && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
@@ -154,8 +154,8 @@ public class SecurityUtil {
    * @return
    */
   public static List<String> getListOfAllowedAlbums(User user) {
-    List<String> uris = new ArrayList<>();
-    for (Grant g : getAllGrantsOfUser(user)) {
+    final List<String> uris = new ArrayList<>();
+    for (final Grant g : getAllGrantsOfUser(user)) {
       if (g.getGrantFor().toString().contains("/album/")
           && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
         uris.add(g.getGrantFor().toString());
@@ -173,8 +173,8 @@ public class SecurityUtil {
    */
   public static List<Grant> getAllGrantsOfUser(User user) {
     if (user != null) {
-      List<Grant> l = new ArrayList<>(filterUnvalidGrants(user.getGrants()));
-      for (UserGroup ug : user.getGroups()) {
+      final List<Grant> l = new ArrayList<>(filterUnvalidGrants(user.getGrants()));
+      for (final UserGroup ug : user.getGroups()) {
         l.addAll(filterUnvalidGrants(ug.getGrants()));
       }
       return l;
@@ -190,8 +190,8 @@ public class SecurityUtil {
    * @return
    */
   public static List<Grant> extractGrantsFor(List<Grant> grants, String grantForUri) {
-    List<Grant> l = new ArrayList<Grant>();
-    for (Grant g : filterUnvalidGrants(grants)) {
+    final List<Grant> l = new ArrayList<Grant>();
+    for (final Grant g : filterUnvalidGrants(grants)) {
       if (g.getGrantFor().toString().equals(grantForUri)) {
         l.add(g);
       }
@@ -210,7 +210,7 @@ public class SecurityUtil {
    * @return
    */
   public static Grant extractGrant(List<Grant> grants, String grantForUri, GrantType type) {
-    for (Grant g : SecurityUtil.extractGrantsFor(grants, Imeji.PROPERTIES.getBaseURI())) {
+    for (final Grant g : SecurityUtil.extractGrantsFor(grants, Imeji.PROPERTIES.getBaseURI())) {
       if (g.getGrantType().compareTo(Grant.toGrantTypeURI(type)) == 0) {
         return g;
       }
@@ -225,8 +225,8 @@ public class SecurityUtil {
    * @return
    */
   private static Collection<Grant> filterUnvalidGrants(Collection<Grant> l) {
-    Collection<Grant> nl = new ArrayList<Grant>();
-    for (Grant g : l) {
+    final Collection<Grant> nl = new ArrayList<Grant>();
+    for (final Grant g : l) {
       if (g.getGrantFor() != null && g.getGrantType() != null) {
         nl.add(g);
       }

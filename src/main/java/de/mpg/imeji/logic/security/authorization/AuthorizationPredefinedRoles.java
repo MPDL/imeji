@@ -30,8 +30,8 @@ import java.util.List;
 
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
+import de.mpg.imeji.logic.vo.User;
 
 /**
  * Defines the predefined roles (for instance the creator of collection) with a {@link List} of
@@ -74,8 +74,8 @@ public class AuthorizationPredefinedRoles {
    * @return
    */
   public static List<Grant> defaultUser(String uri) {
-    GrantType[] g = {GrantType.CREATE};
-    List<Grant> l = toGrantList(g, IMEJI_GLOBAL_URI);
+    final GrantType[] g = {GrantType.CREATE};
+    final List<Grant> l = toGrantList(g, IMEJI_GLOBAL_URI);
     l.addAll(restrictedUser(uri));
     return l;
   }
@@ -87,7 +87,7 @@ public class AuthorizationPredefinedRoles {
    * @return
    */
   public static List<Grant> restrictedUser(String uri) {
-    GrantType[] g =
+    final GrantType[] g =
         {GrantType.CREATE, GrantType.READ, GrantType.UPDATE, GrantType.DELETE, GrantType.ADMIN};
     return toGrantList(g, uri);
   }
@@ -98,34 +98,34 @@ public class AuthorizationPredefinedRoles {
    * @return
    */
   public static List<Grant> imejiAdministrator(String uri) {
-    GrantType[] g = {GrantType.ADMIN};
-    List<Grant> l = toGrantList(g, IMEJI_GLOBAL_URI);
+    final GrantType[] g = {GrantType.ADMIN};
+    final List<Grant> l = toGrantList(g, IMEJI_GLOBAL_URI);
     l.addAll(defaultUser(uri));
     return l;
   }
 
   public static List<Grant> read(String uri) {
-    List<Grant> l = toGrantList(read, uri);
+    final List<Grant> l = toGrantList(read, uri);
     return l;
   }
 
   public static List<Grant> upload(String uri) {
-    List<Grant> l = toGrantList(upload, uri);
+    final List<Grant> l = toGrantList(upload, uri);
     return l;
   }
 
   public static List<Grant> editContent(String uri) {
-    List<Grant> l = toGrantList(edit_items, uri);
+    final List<Grant> l = toGrantList(edit_items, uri);
     return l;
   }
 
   public static List<Grant> delete(String uri) {
-    List<Grant> l = toGrantList(delete_items, uri);
+    final List<Grant> l = toGrantList(delete_items, uri);
     return l;
   }
 
   public static List<Grant> edit(String uri) {
-    List<Grant> l = toGrantList(edit_container, uri);
+    final List<Grant> l = toGrantList(edit_container, uri);
     return l;
   }
 
@@ -134,7 +134,7 @@ public class AuthorizationPredefinedRoles {
     List<Grant> l = new ArrayList<Grant>();
     if (uri != null) {
       // add grant for the container (collection or album)
-      GrantType[] g = uri.contains("/collection/") ? admin_collection : admin_album;
+      final GrantType[] g = uri.contains("/collection/") ? admin_collection : admin_album;
       l = toGrantList(g, uri);
     }
     return l;
@@ -148,8 +148,8 @@ public class AuthorizationPredefinedRoles {
    * @return
    */
   private static List<Grant> toGrantList(GrantType[] array, String uri) {
-    List<Grant> l = new ArrayList<Grant>();
-    for (GrantType gt : array) {
+    final List<Grant> l = new ArrayList<Grant>();
+    for (final GrantType gt : array) {
       l.add(new Grant(gt, URI.create(uri)));
     }
     return l;

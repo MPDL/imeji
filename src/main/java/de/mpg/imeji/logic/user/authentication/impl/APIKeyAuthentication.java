@@ -28,7 +28,7 @@ import de.mpg.imeji.logic.vo.User;
  */
 public class APIKeyAuthentication implements Authentication {
   private static final Logger LOGGER = Logger.getLogger(APIKeyAuthentication.class);
-  private String key;
+  private final String key;
 
   public APIKeyAuthentication(String key) {
     this.key = key;
@@ -37,15 +37,15 @@ public class APIKeyAuthentication implements Authentication {
   @Override
   public User doLogin() throws AuthenticationError {
     try {
-      UserBusinessController controller = new UserBusinessController();
-      User user = controller.retrieve(URI.create(consumeJsonWebToken(key)), Imeji.adminUser);
+      final UserBusinessController controller = new UserBusinessController();
+      final User user = controller.retrieve(URI.create(consumeJsonWebToken(key)), Imeji.adminUser);
       if (!user.isActive()) {
         throw new InactiveAuthenticationError(
             "Not active user: please activate your account with the limk sent after your registration");
       } else if (key.equals(user.getApiKey())) {
         return user;
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Invalid Key authorization");
     }
     LOGGER.error(
@@ -77,7 +77,7 @@ public class APIKeyAuthentication implements Authentication {
   private static String produceJsonWebToken(URI userId, int expirationTimeMinutesInTheFuture)
       throws JoseException {
     // Create the Claims, which will be the content of the JWT
-    JwtClaims claims = new JwtClaims();
+    final JwtClaims claims = new JwtClaims();
     // claims.setIssuer("Issuer"); // who creates the token and signs it
     // claims.setAudience(userId.toString()); // to whom the token is intended to be sent
     // time when the token will expire in minutes
@@ -87,7 +87,7 @@ public class APIKeyAuthentication implements Authentication {
     claims.setSubject(userId.toString()); // the subject/principal is whom the token is about
     // A JWT is a JWS and/or a JWE with JSON claims as the payload.
     // In this example it is a JWS so we create a JsonWebSignature object.
-    JsonWebSignature jws = new JsonWebSignature();
+    final JsonWebSignature jws = new JsonWebSignature();
     // The payload of the JWS is JSON content of the JWT Claims
     jws.setPayload(claims.toJson());
     // The JWT is signed using the private key
@@ -112,11 +112,11 @@ public class APIKeyAuthentication implements Authentication {
    * @throws JoseException
    */
   public static String consumeJsonWebToken(String token) throws JoseException {
-    JwtConsumer jwtConsumer = new JwtConsumerBuilder().setRequireExpirationTime()
+    final JwtConsumer jwtConsumer = new JwtConsumerBuilder().setRequireExpirationTime()
         .setAllowedClockSkewInSeconds(30).setRequireSubject()
         .setVerificationKey(ImejiRsaKeys.getRsaJsonWebKey().getKey()).build();
     try {
-      JwtClaims jwtClaims = jwtConsumer.processToClaims(token);
+      final JwtClaims jwtClaims = jwtConsumer.processToClaims(token);
       return jwtClaims.getSubject();
     } catch (InvalidJwtException | MalformedClaimException e) {
       LOGGER.error("Wrong APi Key!", e);

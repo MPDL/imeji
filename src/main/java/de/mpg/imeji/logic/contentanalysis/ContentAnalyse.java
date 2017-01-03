@@ -7,7 +7,7 @@ import de.mpg.imeji.logic.vo.TechnicalMetadata;
 
 /**
  * The result of a content analyser
- * 
+ *
  * @author saquet
  *
  */

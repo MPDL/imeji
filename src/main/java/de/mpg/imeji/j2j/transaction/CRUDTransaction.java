@@ -18,7 +18,7 @@ import de.mpg.imeji.j2j.controler.ResourceController;
  */
 public class CRUDTransaction extends Transaction {
   private List<Object> objects = new ArrayList<Object>();
-  private CRUDTransactionType type;
+  private final CRUDTransactionType type;
   private boolean lazy = false;
 
   public enum CRUDTransactionType {
@@ -43,8 +43,8 @@ public class CRUDTransaction extends Transaction {
 
   @Override
   protected void execute(Dataset ds) throws ImejiException {
-    ResourceController rc = new ResourceController(getModel(ds), lazy);
-    for (Object o : objects) {
+    final ResourceController rc = new ResourceController(getModel(ds), lazy);
+    for (final Object o : objects) {
       invokeResourceController(rc, o);
     }
   }

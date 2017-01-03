@@ -67,7 +67,7 @@ public abstract class ImejiServiceAbstract {
 
   /**
    * Update the grants of the user who created the objects
-   * 
+   *
    * @param user
    * @param uri
    * @throws ImejiException
@@ -127,7 +127,7 @@ public abstract class ImejiServiceAbstract {
    * @return
    */
   protected boolean hasImageLocked(List<String> uris, User user) {
-    for (String uri : uris) {
+    for (final String uri : uris) {
       if (Locks.isLocked(uri.toString(), user.getEmail())) {
         return true;
       }
@@ -147,9 +147,10 @@ public abstract class ImejiServiceAbstract {
    */
   protected Container setLogo(Container container, File f)
       throws ImejiException, IOException, URISyntaxException {
-    InternalStorageManager ism = new InternalStorageManager();
+    final InternalStorageManager ism = new InternalStorageManager();
     if (f != null) {
-      String url = ism.generateUrl(container.getIdString(), f.getName(), FileResolution.THUMBNAIL);
+      final String url =
+          ism.generateUrl(container.getIdString(), f.getName(), FileResolution.THUMBNAIL);
       container.setLogoUrl(URI.create(url));
       ism.replaceFile(f, url);
     } else {
@@ -168,13 +169,13 @@ public abstract class ImejiServiceAbstract {
 
   /**
    * Get the instance default instance
-   * 
+   *
    * @return
    */
   public License getDefaultLicense() {
-    ImejiLicenses lic = StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getDefaultLicense())
+    final ImejiLicenses lic = StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getDefaultLicense())
         ? ImejiLicenses.CC0 : ImejiLicenses.valueOf(Imeji.CONFIG.getDefaultLicense());
-    License license = new License();
+    final License license = new License();
     license.setName(lic.name());
     license.setLabel(lic.getLabel());
     license.setUrl(lic.getUrl());

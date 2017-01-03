@@ -100,7 +100,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     if (UrlHelper.getParameterBoolean("add_selected")) {
       try {
         addSelectedToActiveAlbum();
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.error("Error initializing itemsbean", e);
       }
     }
@@ -136,11 +136,11 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
         Integer.parseInt(CookieUtils.readNonNull(SuperPaginatorBean.numberOfItemsPerPageCookieName,
             Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
     try {
-      String options = Imeji.PROPERTIES.getProperty("imeji.image.list.size.options");
-      for (String option : options.split(",")) {
+      final String options = Imeji.PROPERTIES.getProperty("imeji.image.list.size.options");
+      for (final String option : options.split(",")) {
         getElementsPerPageSelectItems().add(new SelectItem(option));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error reading property imeji.image.list.size.options", e);
     }
   }
@@ -152,12 +152,12 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       searchResult = search(getSearchQuery(), getSortCriterion(), offset, size);
       totalNumberOfRecords = searchResult.getNumberOfRecords();
       // load the item
-      Collection<Item> items = loadImages(searchResult.getResults());
+      final Collection<Item> items = loadImages(searchResult.getResults());
       // Init the labels for the item
       metadataLabels = new MetadataLabels((List<Item>) items, getLocale());
       // Return the item as thumbnailBean
       return ListUtils.itemListToThumbList(items, getSessionUser());
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
     }
     return new ArrayList<>();
@@ -172,7 +172,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int size) {
-    ItemService controller = new ItemService();
+    final ItemService controller = new ItemService();
     return controller.search(null, searchQuery, sortCriterion, getSessionUser(),
         getSelectedSpaceString(), size, offset);
   }
@@ -185,7 +185,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws ImejiException
    */
   public Collection<Item> loadImages(List<String> uris) throws ImejiException {
-    ItemService controller = new ItemService();
+    final ItemService controller = new ItemService();
     return controller.retrieveBatch(uris, -1, 0, getSessionUser());
   }
 
@@ -219,12 +219,12 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   private void parseSearchQuery() {
     try {
-      String q = UrlHelper.getParameterValue("q");
+      final String q = UrlHelper.getParameterValue("q");
       if (q != null) {
         setQuery(URLEncoder.encode(q, "UTF-8"));
         setSearchQuery(SearchQueryParser.parseStringQuery(query));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Error parsing query: " + e.getMessage());
       LOGGER.error("Error parsing query", e);
     }
@@ -243,9 +243,9 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws UnprocessableError
    */
   public String getSimpleQuery() throws UnprocessableError {
-    String q = UrlHelper.getParameterValue("q");
+    final String q = UrlHelper.getParameterValue("q");
     if (!StringHelper.isNullOrEmptyTrim(q)) {
-      SearchQuery query = SearchQueryParser.parseStringQuery(q);
+      final SearchQuery query = SearchQueryParser.parseStringQuery(q);
       return SearchQueryParser.searchQuery2PrettyQuery(query, getLocale(),
           metadataLabels.getInternationalizedLabels());
     }
@@ -348,14 +348,13 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws ImejiException @
    */
   private void withdraw(List<String> uris) throws ImejiException {
-    Collection<Item> items =
-        new ItemService().retrieveBatch(uris, -1, 0, getSessionUser());
-    int count = items.size();
+    final Collection<Item> items = new ItemService().retrieveBatch(uris, -1, 0, getSessionUser());
+    final int count = items.size();
     if ("".equals(discardComment.trim())) {
       BeanHelper.error(
           Imeji.RESOURCE_BUNDLE.getMessage("error_image_withdraw_discardComment", getLocale()));
     } else {
-      ItemService c = new ItemService();
+      final ItemService c = new ItemService();
       c.withdraw((List<Item>) items, discardComment, getSessionUser());
       discardComment = null;
       unselect(uris);
@@ -370,17 +369,17 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   private void delete(List<String> uris) {
     try {
-      ItemService controller = new ItemService();
-      Collection<Item> items = controller.retrieveBatch(uris, -1, 0, getSessionUser());
-      ItemService ic = new ItemService();
+      final ItemService controller = new ItemService();
+      final Collection<Item> items = controller.retrieveBatch(uris, -1, 0, getSessionUser());
+      final ItemService ic = new ItemService();
       ic.delete((List<Item>) items, getSessionUser());
       BeanHelper
           .info(uris.size() + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_deleted", getLocale()));
       unselect(uris);
-    } catch (WorkflowException e) {
+    } catch (final WorkflowException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_delete_items_public", getLocale()));
       LOGGER.error("Error deleting items", e);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Error deleting items", e);
       BeanHelper.error(e.getMessage());
     }
@@ -403,13 +402,13 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws ImejiException
    */
   private void addToActiveAlbum(List<String> uris) throws ImejiException {
-    int sizeToAdd = uris.size();
-    int sizeBefore = sessionBean.getActiveAlbum().getImages().size();
-    SessionObjectsController soc = new SessionObjectsController();
+    final int sizeToAdd = uris.size();
+    final int sizeBefore = sessionBean.getActiveAlbum().getImages().size();
+    final SessionObjectsController soc = new SessionObjectsController();
     soc.addToActiveAlbum(uris);
-    int sizeAfter = sessionBean.getActiveAlbum().getImages().size();
-    int added = sizeAfter - sizeBefore;
-    int notAdded = sizeToAdd - added;
+    final int sizeAfter = sessionBean.getActiveAlbum().getImages().size();
+    final int added = sizeAfter - sizeBefore;
+    final int notAdded = sizeToAdd - added;
     String message = "";
     String error = "";
     if (added > 0) {
@@ -478,7 +477,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @return
    */
   public void selectAll() {
-    for (ThumbnailBean bean : getCurrentPartList()) {
+    for (final ThumbnailBean bean : getCurrentPartList()) {
       if (!(sessionBean.getSelected().contains(bean.getUri().toString()))) {
         sessionBean.getSelected().add(bean.getUri().toString());
         bean.setSelected(true);
@@ -488,7 +487,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   public void selectNone() {
     sessionBean.setSelected(new ArrayList<>());
-    for (ThumbnailBean bean : getCurrentPartList()) {
+    for (final ThumbnailBean bean : getCurrentPartList()) {
       bean.setSelected(false);
     }
   }
@@ -558,7 +557,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   }
 
   public boolean isAllSelected() {
-    for (ThumbnailBean bean : getCurrentPartList()) {
+    for (final ThumbnailBean bean : getCurrentPartList()) {
       if (!bean.isSelected()) {
         return false;
       }

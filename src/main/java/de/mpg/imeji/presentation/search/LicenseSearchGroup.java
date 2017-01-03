@@ -18,7 +18,7 @@ import de.mpg.imeji.logic.search.model.SearchPair;
 
 /**
  * Search group for licenses
- * 
+ *
  * @author saquet
  *
  */
@@ -34,7 +34,7 @@ public class LicenseSearchGroup implements Serializable {
 
   /**
    * Init the search group with a search value
-   * 
+   *
    * @param value
    */
   public LicenseSearchGroup(String value, Locale locale) {
@@ -44,7 +44,7 @@ public class LicenseSearchGroup implements Serializable {
 
   /**
    * return the grooup as a search pair
-   * 
+   *
    * @return
    */
   public SearchPair asSearchPair() {
@@ -64,7 +64,7 @@ public class LicenseSearchGroup implements Serializable {
 
   private void initMenu(Locale locale) {
     menu = new ArrayList<>();
-    for (ImejiLicenses lic : ImejiLicenses.values()) {
+    for (final ImejiLicenses lic : ImejiLicenses.values()) {
       menu.add(new SelectItem(lic.name(), lic.getLabel()));
     }
   }

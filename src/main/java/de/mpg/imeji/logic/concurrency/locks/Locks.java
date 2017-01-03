@@ -45,11 +45,11 @@ public class Locks {
    * @return
    */
   public static boolean isLocked(String uri, String email) {
-    Lock syslock = getSystemLocks().get(uri);
+    final Lock syslock = getSystemLocks().get(uri);
     if (syslock != null) {
       return true;
     } else {
-      Lock userLock = getUserLocks().get(uri);
+      final Lock userLock = getUserLocks().get(uri);
       if (userLock != null && email != null && !userLock.getEmail().equals(email)) {
         return true;
       }
@@ -100,15 +100,15 @@ public class Locks {
    * @param email
    */
   public static void unlockAll(String email) {
-    List<Lock> toUnlock = new ArrayList<Lock>();
+    final List<Lock> toUnlock = new ArrayList<Lock>();
     if (!getUserLocks().isEmpty() && email != null) {
-      for (Lock l : getUserLocks().values()) {
+      for (final Lock l : getUserLocks().values()) {
         if (email.equals(l.getEmail())) {
           toUnlock.add(l);
         }
       }
     }
-    for (Lock l : toUnlock) {
+    for (final Lock l : toUnlock) {
       unLock(l);
     }
   }
@@ -119,22 +119,22 @@ public class Locks {
    * @return
    */
   public static List<Lock> getExpiredLocks() {
-    List<Lock> list = new ArrayList<Lock>();
+    final List<Lock> list = new ArrayList<Lock>();
     if (!getUserLocks().isEmpty()) {
-      List<Lock> l1 = new ArrayList<Lock>(userLocks.values());
-      for (Lock lock : l1) {
-        long created = lock.getCreateTime();
-        long current = System.currentTimeMillis();
+      final List<Lock> l1 = new ArrayList<Lock>(userLocks.values());
+      for (final Lock lock : l1) {
+        final long created = lock.getCreateTime();
+        final long current = System.currentTimeMillis();
         if (current > (LOCK_MAX_TIME + created)) {
           list.add(lock);
         }
       }
     }
     if (!getSystemLocks().isEmpty()) {
-      List<Lock> l1 = new ArrayList<Lock>(sysLocks.values());
-      for (Lock lock : l1) {
-        long created = lock.getCreateTime();
-        long current = System.currentTimeMillis();
+      final List<Lock> l1 = new ArrayList<Lock>(sysLocks.values());
+      for (final Lock lock : l1) {
+        final long created = lock.getCreateTime();
+        final long current = System.currentTimeMillis();
         if (current > (LOCK_MAX_TIME + created)) {
           list.add(lock);
         }
@@ -144,7 +144,7 @@ public class Locks {
   }
 
   public synchronized static boolean tryLock() {
-    long startLocked = System.currentTimeMillis();
+    final long startLocked = System.currentTimeMillis();
     while (writeLock) {
       // wait for lock to be released
       if ((System.currentTimeMillis() - startLocked) > 10000) {
@@ -174,7 +174,7 @@ public class Locks {
   }
 
   public synchronized static boolean tryLockCounter() {
-    long startLocked = System.currentTimeMillis();
+    final long startLocked = System.currentTimeMillis();
     while (counterLock) {
       // wait for lock to be released
       if ((System.currentTimeMillis() - startLocked) > 10000) {

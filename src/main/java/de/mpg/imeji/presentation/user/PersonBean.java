@@ -52,11 +52,11 @@ public class PersonBean extends SuperBean implements Serializable {
     if (personURI == null || personURI.isEmpty()) {
       return ":";
     }
-    Person person = loadPerson(personURI);
+    final Person person = loadPerson(personURI);
     if (bean instanceof UserCreationBean) {
       ((UserCreationBean) bean).getUser().setPerson(person.clone());
     } else if (bean instanceof ContainerBean) {
-      List<Person> l =
+      final List<Person> l =
           (List<Person>) ((ContainerBean) bean).getContainer().getMetadata().getPersons();
       l.set(position, person.clone());
     } else if (bean instanceof UserBean) {
@@ -76,26 +76,26 @@ public class PersonBean extends SuperBean implements Serializable {
    * @return
    */
   public String changeOrga(Object bean, int positionUser, int positionOrga) {
-    Organization orga = loadOrga(orgaURI);
+    final Organization orga = loadOrga(orgaURI);
     if (bean instanceof UserCreationBean) {
-      List<Organization> l =
+      final List<Organization> l =
           (List<Organization>) ((UserCreationBean) bean).getUser().getPerson().getOrganizations();
       l.set(positionOrga, orga);
     } else if (bean instanceof ContainerBean) {
-      List<Person> pl =
+      final List<Person> pl =
           (List<Person>) ((ContainerBean) bean).getContainer().getMetadata().getPersons();
-      List<Organization> l = (List<Organization>) pl.get(positionUser).getOrganizations();
+      final List<Organization> l = (List<Organization>) pl.get(positionUser).getOrganizations();
       l.set(positionOrga, orga.clone());
     } else if (bean instanceof UserBean) {
-      List<Organization> l =
+      final List<Organization> l =
           (List<Organization>) ((UserBean) bean).getUser().getPerson().getOrganizations();
       l.set(positionOrga, orga);
     } else if (bean instanceof MetadataWrapper) {
-      List<Organization> l =
+      final List<Organization> l =
           (List<Organization>) ((MetadataWrapper) bean).getPerson().getOrganizations();
       l.set(positionOrga, orga);
     } else if (bean instanceof RegistrationBean) {
-      List<Organization> l =
+      final List<Organization> l =
           (List<Organization>) ((RegistrationBean) bean).getUser().getPerson().getOrganizations();
       l.set(positionOrga, orga);
     }
@@ -113,9 +113,9 @@ public class PersonBean extends SuperBean implements Serializable {
       try {
         URI.create(uri);
         // if not errors, then the person is intern to imeji
-        UserBusinessController uc = new UserBusinessController();
+        final UserBusinessController uc = new UserBusinessController();
         return uc.retrievePersonById(personURI);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         // is a cone person
         return parseConePersonJSON(uri);
       }
@@ -130,8 +130,8 @@ public class PersonBean extends SuperBean implements Serializable {
    * @return
    */
   private Person parseConePersonJSON(String jsonString) {
-    Object json = JSONValue.parse(jsonString);
-    Person p = ImejiFactory.newPerson();
+    final Object json = JSONValue.parse(jsonString);
+    final Person p = ImejiFactory.newPerson();
     if (json instanceof JSONObject) {
 
       p.setFamilyName((String) ((JSONObject) json).get("http_xmlns_com_foaf_0_1_family_name"));
@@ -154,14 +154,14 @@ public class PersonBean extends SuperBean implements Serializable {
    * @return
    */
   private List<Organization> parseConeOrgnanizationJson(String jsonString) {
-    Object json = JSONValue.parse(jsonString);
-    List<Organization> l = new ArrayList<Organization>();
+    final Object json = JSONValue.parse(jsonString);
+    final List<Organization> l = new ArrayList<Organization>();
     if (json instanceof JSONArray) {
-      for (Iterator<?> iterator = ((JSONArray) json).iterator(); iterator.hasNext();) {
+      for (final Iterator<?> iterator = ((JSONArray) json).iterator(); iterator.hasNext();) {
         l.addAll(parseConeOrgnanizationJson(iterator.next().toString()));
       }
     } else if (json instanceof JSONObject) {
-      Organization o = ImejiFactory.newOrganization();
+      final Organization o = ImejiFactory.newOrganization();
       o.setName(
           (String) ((JSONObject) json).get("http_purl_org_eprint_terms_affiliatedInstitution"));
       o.setIdentifier((String) ((JSONObject) json).get("http_purl_org_dc_elements_1_1_identifier"));
@@ -173,9 +173,9 @@ public class PersonBean extends SuperBean implements Serializable {
   private Organization loadOrga(String uri) {
     if (uri != null) {
       try {
-        UserBusinessController uc = new UserBusinessController();
+        final UserBusinessController uc = new UserBusinessController();
         return uc.retrieveOrganizationById(uri);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         BeanHelper.error(e.getMessage());
       }
     }
@@ -193,7 +193,7 @@ public class PersonBean extends SuperBean implements Serializable {
   private String writeJsonArrayToOneString(Object jsonObj, String jsonName) {
     String str = "";
     if (jsonObj instanceof JSONArray) {
-      for (Iterator<?> iterator = ((JSONArray) jsonObj).iterator(); iterator.hasNext();) {
+      for (final Iterator<?> iterator = ((JSONArray) jsonObj).iterator(); iterator.hasNext();) {
         if (!"".equals(str)) {
           str += ", ";
         }
@@ -211,9 +211,9 @@ public class PersonBean extends SuperBean implements Serializable {
    * Get the {@link Person} which comes from the parent bean
    */
   private Person getPersonFromParentBean() {
-    FacesContext facesContext = FacesContext.getCurrentInstance();
-    ELContext elContext = facesContext.getELContext();
-    ValueExpression valueExpression = facesContext.getApplication().getExpressionFactory()
+    final FacesContext facesContext = FacesContext.getCurrentInstance();
+    final ELContext elContext = facesContext.getELContext();
+    final ValueExpression valueExpression = facesContext.getApplication().getExpressionFactory()
         .createValueExpression(elContext, "#{cc.attrs.person}", Person.class);
 
     return (Person) valueExpression.getValue(elContext);
@@ -227,8 +227,9 @@ public class PersonBean extends SuperBean implements Serializable {
    * @return
    */
   public String addOrganization(int organizationPosition) {
-    List<Organization> orgs = (List<Organization>) getPersonFromParentBean().getOrganizations();
-    Organization o = ImejiFactory.newOrganization();
+    final List<Organization> orgs =
+        (List<Organization>) getPersonFromParentBean().getOrganizations();
+    final Organization o = ImejiFactory.newOrganization();
     o.setPos(organizationPosition);
     orgs.add(organizationPosition, o);
     return "";
@@ -240,7 +241,8 @@ public class PersonBean extends SuperBean implements Serializable {
    * @return
    */
   public String removeOrganization(int organizationPosition) {
-    List<Organization> orgs = (List<Organization>) getPersonFromParentBean().getOrganizations();
+    final List<Organization> orgs =
+        (List<Organization>) getPersonFromParentBean().getOrganizations();
     if (orgs.size() > 1) {
       orgs.remove(organizationPosition);
     } else {

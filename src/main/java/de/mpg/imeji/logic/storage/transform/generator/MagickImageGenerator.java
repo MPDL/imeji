@@ -48,7 +48,7 @@ public class MagickImageGenerator implements ImageGenerator {
   public MagickImageGenerator() {
     try {
       enabled = Boolean.parseBoolean(PropertyReader.getProperty("imeji.imagemagick.enable"));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error reading property imeji.imagemagick.enable", e);
     }
   }
@@ -63,7 +63,7 @@ public class MagickImageGenerator implements ImageGenerator {
     if (enabled) {
       try {
         return ImageMagickUtils.convertToJPEG(file, extension);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.warn("Error with imagemagick: ", e);
         return null;
       }

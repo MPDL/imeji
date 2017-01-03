@@ -31,7 +31,7 @@ public class StorageUsageAnalyseJob implements Callable<Integer> {
   }
 
   private static File STORAGE_USAGE_STATS_FILE_NAME;
-  private Properties storageProperties = new Properties();
+  private final Properties storageProperties = new Properties();
 
   /**
    * Constructor
@@ -47,7 +47,7 @@ public class StorageUsageAnalyseJob implements Callable<Integer> {
     }
     try {
       storageProperties.loadFromXML(new FileInputStream(STORAGE_USAGE_STATS_FILE_NAME));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.info("Can not read " + STORAGE_USAGE_STATS_FILE_NAME + " (Probably empty)");
     }
   }
@@ -55,7 +55,7 @@ public class StorageUsageAnalyseJob implements Callable<Integer> {
   @Override
   public Integer call() throws Exception {
     LOGGER.info("Analysing the storage...");
-    StorageController sc = new StorageController();
+    final StorageController sc = new StorageController();
     storageProperties.setProperty(StorageUsage.NUMBER_OF_FILES.name(),
         Long.toString(sc.getAdministrator().getNumberOfFiles()));
     storageProperties.setProperty(StorageUsage.STORAGE_USED.name(),
@@ -75,8 +75,8 @@ public class StorageUsageAnalyseJob implements Callable<Integer> {
    * @return
    */
   private String getCurrentDate() {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    Calendar cal = Calendar.getInstance();
+    final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    final Calendar cal = Calendar.getInstance();
     return dateFormat.format(cal.getTime());
   }
 

@@ -61,7 +61,7 @@ public class InternalStorage implements Storage {
   public InternalStorage() {
     try {
       manager = new InternalStorageManager();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error initialising InternalStorageManager: ", e);
     }
   }
@@ -73,7 +73,7 @@ public class InternalStorage implements Storage {
    */
   @Override
   public UploadResult upload(String filename, File file, String collectionId) {
-    InternalStorageItem item = manager.createItem(file, filename, collectionId);
+    final InternalStorageItem item = manager.createItem(file, filename, collectionId);
     return new UploadResult(item.getId(), item.getOriginalUrl(), item.getWebUrl(),
         item.getThumbnailUrl());
   }
@@ -87,9 +87,9 @@ public class InternalStorage implements Storage {
   public void read(String url, OutputStream out, boolean close) {
     final String path = manager.transformUrlToPath(url);
     try {
-      FileInputStream fis = new FileInputStream(path);
+      final FileInputStream fis = new FileInputStream(path);
       StorageUtils.writeInOut(fis, out, close);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error reading file " + path + " in internal storage: ", e);
     }
   }
@@ -100,7 +100,7 @@ public class InternalStorage implements Storage {
     File file;
     try {
       file = new File(path);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error reading file " + url, e);
       throw new RuntimeException("Error reading file " + path + " in internal storage: ", e);
     }
@@ -126,7 +126,7 @@ public class InternalStorage implements Storage {
   public void update(String url, File file) {
     try {
       manager.replaceFile(file, url);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new RuntimeException(
           "Error updating file " + manager.transformUrlToPath(url) + " in internal storage: ", e);
     }
@@ -171,12 +171,12 @@ public class InternalStorage implements Storage {
    */
   @Override
   public String readFileStringContent(String url) {
-    String pathString = manager.transformUrlToPath(url);
-    Path path = Paths.get(pathString);
+    final String pathString = manager.transformUrlToPath(url);
+    final Path path = Paths.get(pathString);
     String stringFromFile = "";
     try {
       stringFromFile = new String(Files.readAllBytes(path));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       stringFromFile = "";
     }
     return stringFromFile;

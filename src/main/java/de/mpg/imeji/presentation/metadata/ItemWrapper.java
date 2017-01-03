@@ -14,7 +14,7 @@ import de.mpg.imeji.logic.vo.Statement;
  * @version $Revision$ $LastChangedDate$
  */
 public class ItemWrapper {
-  private Item item;
+  private final Item item;
 
   /**
    * Bean for item element in the metadata editors

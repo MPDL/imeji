@@ -37,7 +37,7 @@ public class InternationalizationBean implements Serializable {
   private static final String lANGUAGE_COOKIE = "IMEJI_LANG";
   private static String[] SUPPORTED_LANGUAGES;
   private List<SelectItem> languages;
-  private List<SelectItem> isolanguages;
+  private final List<SelectItem> isolanguages;
   private List<SelectItem> internationalizedLanguages;
   // The languages supported in imeji (defined in the properties)
 
@@ -63,10 +63,10 @@ public class InternationalizationBean implements Serializable {
     try {
       changeLanguage(locale.getLanguage());
       languagesAsString = "";
-      for (SelectItem s : languages) {
+      for (final SelectItem s : languages) {
         languagesAsString += s.getValue() + "," + s.getLabel() + "|";
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error Intializing InternationalitationBean:", e);
     }
   }
@@ -100,7 +100,7 @@ public class InternationalizationBean implements Serializable {
    * @return
    */
   public static Locale getRequestedLocale() {
-    Locale requestedLocale =
+    final Locale requestedLocale =
         FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
     if (isSupported(requestedLocale.getLanguage())) {
       return requestedLocale;
@@ -145,8 +145,8 @@ public class InternationalizationBean implements Serializable {
    * @return
    */
   private List<SelectItem> getsupportedLanguages(boolean supported) {
-    List<SelectItem> l = new ArrayList<SelectItem>();
-    for (SelectItem iso : isolanguages) {
+    final List<SelectItem> l = new ArrayList<SelectItem>();
+    for (final SelectItem iso : isolanguages) {
       if (supported && isSupported(iso.getValue().toString())
           || (!supported && !isSupported(iso.getValue().toString()))) {
         l.add(iso);
@@ -162,7 +162,7 @@ public class InternationalizationBean implements Serializable {
    * @return
    */
   public String getLanguageLabel(String lang) {
-    for (SelectItem iso : isolanguages) {
+    for (final SelectItem iso : isolanguages) {
       if (((String) iso.getValue()).equals(lang)) {
         return iso.getLabel();
       }
@@ -204,7 +204,7 @@ public class InternationalizationBean implements Serializable {
    * @throws IOException
    */
   public void changeLanguage() throws IOException {
-    HistorySession history = (HistorySession) BeanHelper.getSessionBean(HistorySession.class);
+    final HistorySession history = (HistorySession) BeanHelper.getSessionBean(HistorySession.class);
     FacesContext.getCurrentInstance().getExternalContext()
         .redirect(history.getCurrentPage().getCompleteUrl());
     // return "pretty:";

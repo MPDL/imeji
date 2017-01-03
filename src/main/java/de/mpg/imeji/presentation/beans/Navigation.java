@@ -70,7 +70,7 @@ public class Navigation implements Serializable {
         frameworkUrl = StringHelper.normalizeURI(frameworkUrl);
       }
       applicationUrl = Imeji.PROPERTIES.getApplicationURL();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing NavigationBean", e);
     }
   }

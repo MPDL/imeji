@@ -35,7 +35,7 @@ public class DateHelper {
    * @return
    */
   public static Calendar getCurrentDate() {
-    Calendar cal = Calendar.getInstance();
+    final Calendar cal = Calendar.getInstance();
     return cal;
   }
 
@@ -47,11 +47,11 @@ public class DateHelper {
    */
   public static Calendar parseDate(String dateString) {
     try {
-      Date d = format.get().parse(dateString);
-      Calendar cal = Calendar.getInstance();
+      final Date d = format.get().parse(dateString);
+      final Calendar cal = Calendar.getInstance();
       cal.setTime(d);
       return cal;
-    } catch (ParseException e) {
+    } catch (final ParseException e) {
       throw new RuntimeException(
           "Error parsing date " + dateString + ": Format should be yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
           e);
@@ -70,13 +70,13 @@ public class DateHelper {
 
   /**
    * Return the time as a calendar
-   * 
+   *
    * @param time
    * @return
    */
   public static Calendar getDate(long time) {
-    Date d = new Date(time);
-    Calendar cal = Calendar.getInstance();
+    final Date d = new Date(time);
+    final Calendar cal = Calendar.getInstance();
     cal.setTime(d);
     return cal;
   }

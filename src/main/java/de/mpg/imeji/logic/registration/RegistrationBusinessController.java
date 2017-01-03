@@ -42,7 +42,7 @@ public class RegistrationBusinessController {
    * @throws ImejiException
    */
   public Registration retrieveByToken(String token) throws ImejiException {
-    List<Registration> registrations =
+    final List<Registration> registrations =
         KEY_VALUE_STORE_BC.getList(token + ":.*", Registration.class);
     if (registrations.size() == 1) {
       return registrations.get(0);
@@ -59,7 +59,7 @@ public class RegistrationBusinessController {
    * @throws ImejiException
    */
   public Registration retrieveByEmail(String email) throws ImejiException {
-    List<Registration> registrations =
+    final List<Registration> registrations =
         KEY_VALUE_STORE_BC.getList(".*:" + email, Registration.class);
     if (registrations.size() == 1) {
       return registrations.get(0);
@@ -83,9 +83,9 @@ public class RegistrationBusinessController {
     if (exists(user.getEmail())) {
       throw new AlreadyExistsException(user.getEmail() + " has already an account");
     }
-    String password = new PasswordGenerator().generatePassword();
+    final String password = new PasswordGenerator().generatePassword();
     user.setEncryptedPassword(StringHelper.convertToMD5(password));
-    Registration registration =
+    final Registration registration =
         new Registration(IdentifierUtil.newUniversalUniqueId(), user, password);
     KEY_VALUE_STORE_BC.put(registration.getKey(), registration);
     return registration;
@@ -107,7 +107,7 @@ public class RegistrationBusinessController {
    * @throws ImejiException
    */
   public void deleteExpiredRegistration() throws ImejiException {
-    for (Registration registration : retrieveAll()) {
+    for (final Registration registration : retrieveAll()) {
       if (isExpired(registration)) {
         delete(registration);
       }
@@ -123,7 +123,7 @@ public class RegistrationBusinessController {
   public List<Registration> retrieveAll() {
     try {
       return KEY_VALUE_STORE_BC.getList(".*", Registration.class);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Error retrieving all registrations", e);
       return new ArrayList<>();
     }
@@ -137,8 +137,8 @@ public class RegistrationBusinessController {
    * @throws ImejiException
    */
   public List<User> searchInactiveUsers(String q) {
-    List<User> users = new ArrayList<>();
-    for (Registration r : retrieveAll()) {
+    final List<User> users = new ArrayList<>();
+    for (final Registration r : retrieveAll()) {
       if (matchUser(r.getUser(), q)) {
         users.add(r.getUser());
       }
@@ -154,7 +154,7 @@ public class RegistrationBusinessController {
    * @throws ImejiException
    */
   public void removeAll() throws ImejiException {
-    for (Registration registration : retrieveAll()) {
+    for (final Registration registration : retrieveAll()) {
       KEY_VALUE_STORE_BC.delete(registration.getKey());
     }
   }
@@ -166,7 +166,7 @@ public class RegistrationBusinessController {
    * @return
    */
   private boolean isExpired(Registration registration) {
-    Calendar expirationDate = registration.getCreationDate();
+    final Calendar expirationDate = registration.getCreationDate();
     expirationDate.add(Calendar.DAY_OF_MONTH,
         Integer.valueOf(Imeji.CONFIG.getRegistrationTokenExpiry()));
     return DateHelper.getCurrentDate().after(expirationDate);
@@ -183,9 +183,9 @@ public class RegistrationBusinessController {
     if (isExpired(registration)) {
       throw new UnprocessableError("Registration is expired");
     }
-    USER_TYPE type = isAuthorizedEmail(registration.getUser().getEmail()) ? USER_TYPE.DEFAULT
+    final USER_TYPE type = isAuthorizedEmail(registration.getUser().getEmail()) ? USER_TYPE.DEFAULT
         : USER_TYPE.RESTRICTED;
-    User user = new UserBusinessController().create(registration.getUser(), type);
+    final User user = new UserBusinessController().create(registration.getUser(), type);
     delete(registration);
     return user;
   }
@@ -199,11 +199,11 @@ public class RegistrationBusinessController {
    * @return
    */
   private boolean isAuthorizedEmail(String email) {
-    String rwl = Imeji.CONFIG.getRegistrationWhiteList();
+    final String rwl = Imeji.CONFIG.getRegistrationWhiteList();
     if (StringHelper.isNullOrEmptyTrim(rwl)) {
       return true;
     }
-    for (String suffix : rwl.split(",")) {
+    for (final String suffix : rwl.split(",")) {
       if (email.endsWith(suffix)) {
         return true;
       }
@@ -235,7 +235,7 @@ public class RegistrationBusinessController {
       deleteExpiredRegistration();
       retrieveByEmail(email);
       return true;
-    } catch (NotFoundException e) {
+    } catch (final NotFoundException e) {
       return false;
     }
   }
@@ -251,7 +251,7 @@ public class RegistrationBusinessController {
     try {
       new UserBusinessController().retrieve(email, Imeji.adminUser);
       return true;
-    } catch (NotFoundException e) {
+    } catch (final NotFoundException e) {
       return false;
     }
   }

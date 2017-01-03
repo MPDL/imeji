@@ -9,26 +9,26 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<ui:repeat var="metadata" value="#{cc.attrs.formBean.item.metadata}" varStatus="position">
+		<ui:repeat var="row" value="#{cc.attrs.formBean.rows}" varStatus="position">
 			<div class="imj_metadataSet">
 				<div class="imj_metadataLabel">
-					<ui:fragment rendered="#{metadata.isEmpty()}">
-						<md:select metadataInputComponent="#{metadata}" statementMenu="#{cc.attrs.formBean.statementMenu}"/>
+					<ui:fragment rendered="#{!row.exists}">
+						<md:select component="#{row}" menu="#{cc.attrs.formBean.statementMenu}" render="@form"/>
 					</ui:fragment>
-					<ui:fragment rendered="#{!metadata.isEmpty()}">
-						<h:outputText value="#{metadata.statement.index}"/>
+					<ui:fragment rendered="#{row.exists}">
+						<h:outputText value="#{row.index}"/>
 					</ui:fragment>
 					<span class="imj_invisible">: </span>
 				</div>
 				<div class="imj_metadataValue">
-					<md:input metadataInputComponent="#{metadata}"/>
-					<h:commandLink type="submit" rendered="#{!metadata.isEmpty()}" styleClass="fa fa-minus-square-o" action="#{cc.attrs.formBean.item.removeMetadata(position.index)}" value="" title="#{lbl.remove_metadata}">
+					<md:input metadataInputComponent="#{row.input}"/>
+					<h:commandLink type="submit" rendered="#{!metadata.isEmpty()}" styleClass="fa fa-minus-square-o" action="#{cc.attrs.formBean.removeMetadata(position.index)}" value="" title="#{lbl.remove_metadata}">
 						<f:ajax execute="@form" render="@form"/>
 					</h:commandLink>
 				</div>
 			</div>
 		</ui:repeat>
-		<h:commandLink type="submit"  styleClass="fa fa-plus-square-o" action="#{cc.attrs.formBean.item.addEmptyMetadata()}" value="#{lbl.add_metadata}" title="#{lbl.add_metadata}">
+		<h:commandLink type="submit" styleClass="fa fa-plus-square-o" action="#{cc.attrs.formBean.addMetadata()}" value="#{lbl.add_metadata}" title="#{lbl.add_metadata}">
 			<f:ajax execute="@form" render="@form"/>
 		</h:commandLink>
 	</composite:implementation>

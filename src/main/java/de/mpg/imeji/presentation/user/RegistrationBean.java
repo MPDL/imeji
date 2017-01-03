@@ -76,7 +76,7 @@ public class RegistrationBean extends SuperBean {
       // if is logged in, redirect to home page
       try {
         redirect(getNavigation().getHomeUrl());
-      } catch (IOException e) {
+      } catch (final IOException e) {
         BeanHelper.error(e.getLocalizedMessage());
         LOGGER.error("Error redirect", e);
       }
@@ -94,13 +94,13 @@ public class RegistrationBean extends SuperBean {
       registration_submitted = true;
       registration = registrationBC.register(user);
       registration_success = true;
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("error registering user", e);
-    } catch (AlreadyExistsException e) {
+    } catch (final AlreadyExistsException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_user_already_exists", getLocale()));
       LOGGER.error("error registering user", e);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper
           .error(Imeji.RESOURCE_BUNDLE.getMessage("error_during_user_registration", getLocale()));
       LOGGER.error("error registering user", e);
@@ -127,7 +127,7 @@ public class RegistrationBean extends SuperBean {
       this.activation_message = Imeji.RESOURCE_BUNDLE.getMessage("activation_success", getLocale());
       loginBean.setLogin(user.getEmail());
       this.redirect = getNavigation().getHomeUrl();
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       this.activation_success = false;
       this.activation_message = e.getLocalizedMessage();
       LOGGER.error("Error activating user", e);
@@ -144,7 +144,7 @@ public class RegistrationBean extends SuperBean {
     try {
       return !new InvitationBusinessController().retrieveInvitationOfUser(user.getEmail())
           .isEmpty();
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Error checking user invitations", e);
       return false;
     }
@@ -154,14 +154,14 @@ public class RegistrationBean extends SuperBean {
    * Send registration email
    */
   private void sendRegistrationNotification(String token, String password) {
-    EmailService emailClient = new EmailService();
+    final EmailService emailClient = new EmailService();
     try {
       // send to requester
       emailClient.sendMail(getUser().getEmail(), Imeji.CONFIG.getEmailServerSender(),
           EmailMessages.getEmailOnRegistrationRequest_Subject(getLocale()),
           EmailMessages.getEmailOnRegistrationRequest_Body(getUser(), token, password,
               Imeji.CONFIG.getContactEmail(), getLocale(), getNavigation().getRegistrationUrl()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error sending email", e);
       BeanHelper.error("Error: Email not sent");
     }

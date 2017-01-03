@@ -19,7 +19,7 @@ public class JenaVersionReader implements VersionReader {
 
   @Override
   public Status getStatus(Properties p) {
-    List<String> statusString =
+    final List<String> statusString =
         ImejiSPARQL.exec(JenaCustomQueries.selectStatus(p.getId().toString()), null);
     if (statusString.size() == 1) {
       return StatusUtil.parseStatus(statusString.get(0));
@@ -29,7 +29,7 @@ public class JenaVersionReader implements VersionReader {
 
   @Override
   public int getVersion(Properties p) {
-    List<String> statusString =
+    final List<String> statusString =
         ImejiSPARQL.exec(JenaCustomQueries.selectVersion(p.getId().toString()), null);
     if (statusString.size() == 1) {
       return Integer.parseInt(statusString.get(0));

@@ -25,8 +25,8 @@ import de.mpg.imeji.exceptions.ImejiException;
  * @version $Revision$ $LastChangedDate$
  */
 public class SearchTransaction extends Transaction {
-  private String searchQuery;
-  private List<String> results;
+  private final String searchQuery;
+  private final List<String> results;
   private String modelName = null;
   private boolean count = false;
   public final static String SORT_VALUE_REGEX = "XXX_SORT_VALUE_PATTERN_XXX";
@@ -50,12 +50,12 @@ public class SearchTransaction extends Transaction {
 
   @Override
   protected void execute(Dataset ds) throws ImejiException {
-    Query q = QueryFactory.create(searchQuery, Syntax.syntaxARQ);
-    QueryExecution qexec = initQueryExecution(ds, q);
+    final Query q = QueryFactory.create(searchQuery, Syntax.syntaxARQ);
+    final QueryExecution qexec = initQueryExecution(ds, q);
     qexec.getContext().set(TDB.symUnionDefaultGraph, true);
     qexec.setTimeout(100000);
     try {
-      ResultSet rs = qexec.execSelect();
+      final ResultSet rs = qexec.execSelect();
       setResults(rs);
       count = true;
     } finally {
@@ -98,9 +98,9 @@ public class SearchTransaction extends Transaction {
    */
   private void setCountResults(ResultSet rs) {
     if (rs.hasNext()) {
-      QuerySolution qs = rs.next();
-      Literal l = qs.getLiteral("?.1");
-      int c = l.getInt();
+      final QuerySolution qs = rs.next();
+      final Literal l = qs.getLiteral("?.1");
+      final int c = l.getInt();
       results.add(Integer.toString(c));
     }
   }
@@ -123,8 +123,8 @@ public class SearchTransaction extends Transaction {
    * @return
    */
   private String readResult(ResultSet results) {
-    QuerySolution qs = results.nextSolution();
-    RDFNode rdfNode = qs.get("sort0");
+    final QuerySolution qs = results.nextSolution();
+    final RDFNode rdfNode = qs.get("sort0");
     if (rdfNode != null) {
       String sortValue = "";
       if (rdfNode.isLiteral()) {
@@ -134,7 +134,7 @@ public class SearchTransaction extends Transaction {
       }
       return addSortValue(qs.getResource("s").toString(), sortValue);
     }
-    RDFNode node = qs.get("s");
+    final RDFNode node = qs.get("s");
 
     /*
      * Was causing internal Server error when node was Null (i.e. there were no results),

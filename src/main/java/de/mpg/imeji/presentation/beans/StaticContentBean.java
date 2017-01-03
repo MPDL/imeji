@@ -26,9 +26,10 @@ public class StaticContentBean {
    */
   public String getHeaderLogo() {
     try {
-      String html = "background-image: url( " + PropertyReader.getProperty("imeji.logo.url") + ");";
+      final String html =
+          "background-image: url( " + PropertyReader.getProperty("imeji.logo.url") + ");";
       return html;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return " ";
     }
   }
@@ -41,7 +42,7 @@ public class StaticContentBean {
   public String getLogoLink() {
     try {
       return PropertyReader.getProperty("imeji.logo.link.url");
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return "#";
     }
   }
@@ -56,11 +57,11 @@ public class StaticContentBean {
   public String getHelpContent() throws IOException, URISyntaxException {
     String html = "";
     try {
-      String helpProp = Imeji.CONFIG.getHelpUrl();
-      String supportEmail = Imeji.CONFIG.getContactEmail();
+      final String helpProp = Imeji.CONFIG.getHelpUrl();
+      final String supportEmail = Imeji.CONFIG.getContactEmail();
       html = getContent(new URL(helpProp));
       html = html.replaceAll("XXX_SUPPORT_EMAIL_XXX", supportEmail);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       html =
           Imeji.CONFIG.getHelpUrl() + " couldn't be loaded. Url might be either wrong or protected."
               + "<br/><br/>" + "Error message:" + "<br/><br/>" + e.toString();
@@ -76,7 +77,7 @@ public class StaticContentBean {
    * @throws Exception
    */
   private String getContent(URL url) throws Exception {
-    BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+    final BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
     try {
       String inputLine = "";
       String content = "";

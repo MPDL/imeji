@@ -31,8 +31,8 @@ import de.mpg.imeji.util.LocalizedString;
  * @version $Revision$ $LastChangedDate$
  */
 public class Java2Jena {
-  private Model model;
-  private LiteralHelper literalHelper;
+  private final Model model;
+  private final LiteralHelper literalHelper;
   private static Logger LOGGER = Logger.getLogger(Java2Jena.class);
   private boolean lazy = false;
 
@@ -58,8 +58,9 @@ public class Java2Jena {
     if (J2JHelper.getId(o) == null) {
       throw new NullPointerException("Fatal error: Resource " + o + " with a null id");
     }
-    Resource type = model.createResource(J2JHelper.getResourceNamespace(o).toString(), RDFS.Class);
-    Resource r = model.createResource(J2JHelper.getId(o).toString(), type);
+    final Resource type =
+        model.createResource(J2JHelper.getResourceNamespace(o).toString(), RDFS.Class);
+    final Resource r = model.createResource(J2JHelper.getId(o).toString(), type);
     addProperties2Resource(r, o);
   }
 
@@ -90,8 +91,8 @@ public class Java2Jena {
     if (J2JHelper.getId(o) == null) {
       throw new NullPointerException("Fatal error: Resource " + o + " with a null id");
     }
-    Resource r = model.getResource(J2JHelper.getId(o).toString());// createResource(o);
-    for (Resource e : getEmbeddedResources(o)) {
+    final Resource r = model.getResource(J2JHelper.getId(o).toString());// createResource(o);
+    for (final Resource e : getEmbeddedResources(o)) {
       model.removeAll(e, null, null);
     }
     model.removeAll(r, null, null);
@@ -105,23 +106,23 @@ public class Java2Jena {
    * @param obj
    */
   public void update(String uri, String property, Object obj) {
-    Resource r = model.createResource(uri);
+    final Resource r = model.createResource(uri);
     Property p = model.createProperty(property);
     model.removeAll(r, p, null);
     if (obj instanceof URI) {
-      Resource o = model.createResource(((URI) obj).toString());
+      final Resource o = model.createResource(((URI) obj).toString());
       if (o != null) {
         model.add(r, p, o);
       }
     } else if (obj instanceof LocalizedString) {
-      Literal o = model.createLiteral(((LocalizedString) obj).getValue(),
+      final Literal o = model.createLiteral(((LocalizedString) obj).getValue(),
           ((LocalizedString) obj).getLang());
       p = RDFS.label;
       if (o != null) {
         model.add(r, p, o);
       }
     } else {
-      Literal o = literalHelper.java2Literal(obj);
+      final Literal o = literalHelper.java2Literal(obj);
       if (o != null) {
         model.add(r, p, o);
       }
@@ -134,17 +135,17 @@ public class Java2Jena {
    * @param o
    */
   private void removeLazy(Object o) {
-    Resource r = createResource(o);
-    for (Field f : J2JHelper.getAllObjectFields(o.getClass())) {
+    final Resource r = createResource(o);
+    for (final Field f : J2JHelper.getAllObjectFields(o.getClass())) {
       if (!J2JHelper.isLazyList(f)) {
-        String ns = J2JHelper.getNamespace(f);
+        final String ns = J2JHelper.getNamespace(f);
         if (ns != null) {
-          Property p = model.createProperty(ns);
+          final Property p = model.createProperty(ns);
           model.removeAll(r, p, null);
         }
       }
     }
-    for (Resource e : getEmbeddedResources(o)) {
+    for (final Resource e : getEmbeddedResources(o)) {
       model.removeAll(e, null, null);
     }
   }
@@ -162,7 +163,7 @@ public class Java2Jena {
     }
     // Resource r = createResource(o); //This seems to be a problem, new
     // method is simpler and faster
-    Resource r = model.getResource(J2JHelper.getId(o).toString());
+    final Resource r = model.getResource(J2JHelper.getId(o).toString());
     return model.contains(r, null);
   }
 
@@ -176,7 +177,7 @@ public class Java2Jena {
     if (uri == null) {
       return false;
     }
-    Resource r = model.getResource(uri);
+    final Resource r = model.getResource(uri);
     return model.contains(r, null);
   }
 
@@ -188,7 +189,7 @@ public class Java2Jena {
    */
   private Resource createResource(Object o) {
     if (J2JHelper.hasDataType(o)) {
-      Resource type = model.createResource(J2JHelper.getType(o));
+      final Resource type = model.createResource(J2JHelper.getType(o));
       type.addProperty(RDF.type, o.getClass().getName());
       return model.createResource(J2JHelper.getId(o).toString(), type);
     } else {
@@ -203,15 +204,15 @@ public class Java2Jena {
    * @param o
    */
   private void addProperties2Resource(Resource s, Object o) {
-    for (Field f : J2JHelper.getAllObjectFields(o.getClass())) {
+    for (final Field f : J2JHelper.getAllObjectFields(o.getClass())) {
       try {
-        Object r = J2JHelper.getFieldAsJavaObject(f, o);
+        final Object r = J2JHelper.getFieldAsJavaObject(f, o);
         if (r instanceof List<?>) {
           addList2Resource(s, ((List<?>) r), f);
         } else {
           addProperty(s, r, f);
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         throw new RuntimeException(
             "Error adding property for field " + f + " to object " + o.getClass(), e);
       }
@@ -229,9 +230,9 @@ public class Java2Jena {
       for (int i = 0; i < list.size(); i++) {
         Object listElement = list.get(i);
         if (J2JHelper.isResource(listElement) && J2JHelper.getId(listElement) == null) {
-          URI ns = URI.create(J2JHelper.getResourceNamespace(listElement));
-          String objectName = ns.getPath().replaceAll("/terms/", "");
-          String subjectId = s.getURI();
+          final URI ns = URI.create(J2JHelper.getResourceNamespace(listElement));
+          final String objectName = ns.getPath().replaceAll("/terms/", "");
+          final String subjectId = s.getURI();
           listElement =
               J2JHelper.setId(listElement, URI.create(subjectId + "/" + objectName + "@pos" + i));
         }
@@ -248,9 +249,9 @@ public class Java2Jena {
    * @return
    */
   private void updatePosition(Object listElement, int pos) {
-    URI id = J2JHelper.getId(listElement);
+    final URI id = J2JHelper.getId(listElement);
     if (id != null) {
-      String[] s = id.getPath().split("@pos");
+      final String[] s = id.getPath().split("@pos");
       if (s.length > 1 && pos != Integer.parseInt(s[1])) {
         listElement = J2JHelper.setId(listElement, URI.create(s[0] + "@pos" + pos));
       }
@@ -282,7 +283,7 @@ public class Java2Jena {
       } else {
         LOGGER.error("Not adding field " + f);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error adding property", e);
     }
   }
@@ -295,8 +296,8 @@ public class Java2Jena {
    */
   private void writeResource(Resource s, Object resourceObject) {
     if (J2JHelper.getId(resourceObject) != null) {
-      Property p = model.createProperty(J2JHelper.getResourceNamespace(resourceObject));
-      Resource o = createResource(resourceObject);// model.createResource(J2JHelper.getId(resourceObject).toString());
+      final Property p = model.createProperty(J2JHelper.getResourceNamespace(resourceObject));
+      final Resource o = createResource(resourceObject);// model.createResource(J2JHelper.getId(resourceObject).toString());
       model.add(s, p, o);
       addProperties2Resource(o, resourceObject);
     } else {
@@ -313,8 +314,8 @@ public class Java2Jena {
    */
   private void addLiteral(Resource s, Object literalObject, Field f) {
     if (!literalHelper.isEmpty(literalObject)) {
-      Property p = model.createProperty(J2JHelper.getLiteralNamespace(f));
-      Literal o = literalHelper.java2Literal(literalObject);
+      final Property p = model.createProperty(J2JHelper.getLiteralNamespace(f));
+      final Literal o = literalHelper.java2Literal(literalObject);
       if (o != null) {
         model.add(s, p, o);
       }
@@ -328,8 +329,8 @@ public class Java2Jena {
    * @param ls
    */
   private void addLabel(Resource s, LocalizedString ls) {
-    Literal o = model.createLiteral(ls.getValue(), ls.getLang());
-    Property p = RDFS.label;
+    final Literal o = model.createLiteral(ls.getValue(), ls.getLang());
+    final Property p = RDFS.label;
     if (o != null) {
       model.add(s, p, o);
     }
@@ -343,8 +344,8 @@ public class Java2Jena {
    * @param f
    */
   private void addURIResource(Resource s, Object resourceURI, Field f) {
-    Property p = model.createProperty(J2JHelper.getURIResourceNamespace(resourceURI, f));
-    Resource o = model.createResource(resourceURI.toString());
+    final Property p = model.createProperty(J2JHelper.getURIResourceNamespace(resourceURI, f));
+    final Resource o = model.createResource(resourceURI.toString());
     if (o != null) {
       model.add(s, p, o);
     }
@@ -359,40 +360,40 @@ public class Java2Jena {
    * @return
    */
   private List<Resource> getEmbeddedResources(Object r) {
-    List<Resource> l = new ArrayList<Resource>();
-    for (Field f : J2JHelper.getAllObjectFields(r.getClass())) {
+    final List<Resource> l = new ArrayList<Resource>();
+    for (final Field f : J2JHelper.getAllObjectFields(r.getClass())) {
       if (!(lazy && J2JHelper.isLazyList(f))) {
         try {
-          Object r2 = J2JHelper.getFieldAsJavaObject(f, r);
+          final Object r2 = J2JHelper.getFieldAsJavaObject(f, r);
           if (J2JHelper.isResource(r2) && exists(r2)) {
-            Resource o = model.getResource(J2JHelper.getId(r2).toString());
+            final Resource o = model.getResource(J2JHelper.getId(r2).toString());
             l.add(o);
             l.addAll(getEmbeddedResources(r2));
           } else if (J2JHelper.isLazyList(f) || J2JHelper.isList(f)) {
-            String predicate = J2JHelper.getNamespace(r2, f);
+            final String predicate = J2JHelper.getNamespace(r2, f);
             // Get the class of the object in the list
-            ParameterizedType paramType = (ParameterizedType) f.getGenericType();
-            Type type = paramType.getActualTypeArguments()[0];
-            boolean isListOfResources = J2JHelper.isResource((Class<?>) type);
+            final ParameterizedType paramType = (ParameterizedType) f.getGenericType();
+            final Type type = paramType.getActualTypeArguments()[0];
+            final boolean isListOfResources = J2JHelper.isResource((Class<?>) type);
             if (isListOfResources) {
-              Resource parent = model.getResource(J2JHelper.getId(r).toString());
+              final Resource parent = model.getResource(J2JHelper.getId(r).toString());
               // Find all child resources for this predicate: <parent> <predicate> <childs>
-              for (StmtIterator iterator =
+              for (final StmtIterator iterator =
                   parent.listProperties(model.createProperty(predicate)); iterator.hasNext();) {
-                Statement st = iterator.next();
+                final Statement st = iterator.next();
                 if (st.getObject().isResource()) {
                   l.add(st.getResource());
                 }
               }
               // Search for other objects
-              for (Object o : ((List<?>) r2)) {
+              for (final Object o : ((List<?>) r2)) {
                 if (J2JHelper.isResource(o) && exists(o)) {
                   l.addAll(getEmbeddedResources(o));
                 }
               }
             }
           }
-        } catch (Exception e) {
+        } catch (final Exception e) {
           throw new RuntimeException("Error getting all embedded resources for " + r, e);
         }
       }

@@ -150,7 +150,7 @@ public class JenaSearch implements Search {
     }
     boolean isFirstResult = results.isEmpty();
     LOGICAL_RELATIONS logic = LOGICAL_RELATIONS.AND;
-    for (SearchElement se : sq.getElements()) {
+    for (final SearchElement se : sq.getElements()) {
       List<String> subResults = new ArrayList<String>();
       switch (se.getType()) {
         case GROUP:
@@ -200,7 +200,7 @@ public class JenaSearch implements Search {
    * @return
    */
   private List<String> simple(SearchPair pair, SortCriterion sortCri, User user, String spaceId) {
-    String sparqlQuery = JenaQueryFactory.getQuery(getModelName(type), getRDFType(type), pair,
+    final String sparqlQuery = JenaQueryFactory.getQuery(getModelName(type), getRDFType(type), pair,
         sortCri, user, (containerURI != null), getSpecificQuery(user), spaceId);
     return ImejiSPARQL.exec(sparqlQuery, null);
   }
@@ -235,7 +235,7 @@ public class JenaSearch implements Search {
   private String getSpecificQuery(User user) {
     String specificQuery = "";
     if (containerURI != null) {
-      String id = ObjectHelper.getId(URI.create(containerURI));
+      final String id = ObjectHelper.getId(URI.create(containerURI));
       if (containerURI.equals(ObjectHelper.getURI(CollectionImeji.class, id).toString())) {
         specificQuery = "?s <http://imeji.org/terms/collection> <" + containerURI + ">  .";
         // specificQuery = "FILTER (?c=<" + containerURI + ">) .";

@@ -9,22 +9,24 @@
 	<composite:interface>
 		<composite:attribute name="menu" required="true"/>
 		<composite:attribute name="component" required="true"/>
+		<composite:attribute name="listener"/>
 	</composite:interface>
 	
 	<composite:implementation>
 		<h:panelGroup id="selectMetadata">
 			<h:inputText value="#{cc.attrs.component.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
-				<f:ajax event="change" render=":#{cc.clientId}:selectMetadata" listener="#{cc.attrs.component.listener}"/>
+				<f:ajax event="change" render="@form" listener="#{cc.attrs.component.listener}"/>
+				<f:ajax event="select" render="@form" listener="#{cc.attrs.component.listener}"/>
 			</h:inputText>
 			<datalist id="statementList">
 				<ui:repeat var="statement" value="#{cc.attrs.menu}">
 			   		<option>#{statement.value}</option>
 			   	</ui:repeat>
 			</datalist>
-			<ui:fragment rendered="#{not cc.attrs.component.exists}">
+			<ui:fragment rendered="#{not cc.attrs.component.exists and not empty cc.attrs.component.index}">
 				<h:selectOneMenu value="#{cc.attrs.component.type}">
 					<f:selectItems value="#{cc.attrs.component.types}" var="type" itemValue="#{type}" itemLabel="#{type.name()}" />
-					<f:ajax event="change" render=":#{cc.clientId}:selectMetadata" listener="#{cc.attrs.component.listener}"/>			
+					<f:ajax event="change" render="@form" listener="#{cc.attrs.component.listener}"/>			
 				</h:selectOneMenu>
 			</ui:fragment>
 		</h:panelGroup>

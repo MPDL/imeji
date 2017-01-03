@@ -64,15 +64,15 @@ public class TransferObjectFactory {
    */
   private static void transferStatements(Collection<Statement> statements, MetadataProfileTO to) {
     to.getStatements().clear();
-    for (Statement t : statements) {
-      StatementTO sto = new StatementTO();
+    for (final Statement t : statements) {
+      final StatementTO sto = new StatementTO();
       sto.setId(t.getId());
       sto.setIndex(t.getIndex());
       sto.setType(t.getType().name());
       sto.setLabels(new ArrayList<>(t.getNames()));
       sto.setVocabulary(t.getVocabulary());
-      for (String s : t.getLiteralConstraints()) {
-        LiteralConstraintTO lcto = new LiteralConstraintTO();
+      for (final String s : t.getLiteralConstraints()) {
+        final LiteralConstraintTO lcto = new LiteralConstraintTO();
         lcto.setValue(s);
         sto.getLiteralConstraints().add(lcto);
       }
@@ -117,8 +117,8 @@ public class TransferObjectFactory {
     to.setTitle(vo.getMetadata().getTitle());
     to.setDescription(vo.getMetadata().getDescription());
     to.setAdditionalInfos(transferAdditionalInfos(vo.getMetadata().getAdditionalInformations()));
-    for (Person p : vo.getMetadata().getPersons()) {
-      PersonTO pto = new PersonTO();
+    for (final Person p : vo.getMetadata().getPersons()) {
+      final PersonTO pto = new PersonTO();
       transferPerson(p, pto);
       to.getContributors().add(pto);
     }
@@ -132,8 +132,8 @@ public class TransferObjectFactory {
    */
   private static List<ContainerAdditionalInformationTO> transferAdditionalInfos(
       List<ContainerAdditionalInfo> vos) {
-    List<ContainerAdditionalInformationTO> tos = new ArrayList<>();
-    for (ContainerAdditionalInfo vo : vos) {
+    final List<ContainerAdditionalInformationTO> tos = new ArrayList<>();
+    for (final ContainerAdditionalInfo vo : vos) {
       tos.add(new ContainerAdditionalInformationTO(vo.getLabel(), vo.getText(), vo.getUrl()));
     }
     return tos;
@@ -147,7 +147,7 @@ public class TransferObjectFactory {
    * @param to
    */
   public static UserTO transferUser(User vo) {
-    UserTO to = new UserTO();
+    final UserTO to = new UserTO();
     transferPerson(vo.getPerson(), to.getPerson());
     to.setApiKey(vo.getApiKey());
     to.setEmail(vo.getEmail());
@@ -168,7 +168,7 @@ public class TransferObjectFactory {
     pto.setCompleteName(p.getCompleteName());
     pto.setAlternativeName(p.getAlternativeName());
     pto.setRole(p.getRole() == null ? "" : p.getRole().toString());
-    IdentifierTO ito = new IdentifierTO();
+    final IdentifierTO ito = new IdentifierTO();
     ito.setValue(p.getIdentifier());
     pto.getIdentifiers().add(ito);
     // set oganizations
@@ -185,8 +185,8 @@ public class TransferObjectFactory {
   public static void transferDefaultPerson(Person p, DefaultConePersonTO pTO) {
     pTO.setFamilyName(p.getFamilyName());
     pTO.setGivenName(p.getGivenName());
-    for (Organization o : p.getOrganizations()) {
-      DefaultOrganizationTO oTO = new DefaultOrganizationTO();
+    for (final Organization o : p.getOrganizations()) {
+      final DefaultOrganizationTO oTO = new DefaultOrganizationTO();
       transferDefaultOrganization(o, oTO);
       pTO.getOrganizations().add(oTO);
     }
@@ -207,12 +207,12 @@ public class TransferObjectFactory {
 
   public static void transferContributorOrganizations(Collection<Organization> orgas,
       PersonTO pto) {
-    for (Organization orga : orgas) {
-      OrganizationTO oto = new OrganizationTO();
+    for (final Organization orga : orgas) {
+      final OrganizationTO oto = new OrganizationTO();
       oto.setId(CommonUtils.extractIDFromURI(orga.getId()));
       oto.setName(orga.getName());
       oto.setDescription(orga.getDescription());
-      IdentifierTO ito = new IdentifierTO();
+      final IdentifierTO ito = new IdentifierTO();
       ito.setValue(orga.getIdentifier());
       oto.getIdentifiers().add(ito);
       oto.setCity(orga.getCity());
@@ -224,7 +224,7 @@ public class TransferObjectFactory {
 
   /**
    * Transfer {@link Properties} to {@link PropertiesTO}
-   * 
+   *
    * @param vo
    * @param to
    */
@@ -252,7 +252,7 @@ public class TransferObjectFactory {
 
   /**
    * Transfer {@link Item} to {@link DefaultItemTO}
-   * 
+   *
    * @param vo
    * @param to
    */
@@ -272,14 +272,14 @@ public class TransferObjectFactory {
 
   /**
    * Transfer a list of {@link Metadata} to a list of {@link MetadataTO}
-   * 
+   *
    * @param metadata
    * @return
    */
   public static List<MetadataTO> transferMetadata(List<Metadata> metadata) {
-    List<MetadataTO> tos = new ArrayList<>();
-    for (Metadata vo : metadata) {
-      MetadataTO to = new MetadataTO();
+    final List<MetadataTO> tos = new ArrayList<>();
+    for (final Metadata vo : metadata) {
+      final MetadataTO to = new MetadataTO();
       to.setText(vo.getText());
       to.setNumber(vo.getNumber());
       to.setUrl(vo.getUrl());
@@ -294,15 +294,15 @@ public class TransferObjectFactory {
 
   /**
    * Transfer a list of LicenseVO to a list of LicenseTO
-   * 
+   *
    * @param licenses
    * @return
    */
   private static List<de.mpg.imeji.rest.to.LicenseTO> transferLicense(
       List<de.mpg.imeji.logic.vo.License> licenses) {
-    List<de.mpg.imeji.rest.to.LicenseTO> licenseTOs = new ArrayList<>();
-    for (de.mpg.imeji.logic.vo.License lic : licenses) {
-      de.mpg.imeji.rest.to.LicenseTO licTO = new de.mpg.imeji.rest.to.LicenseTO();
+    final List<de.mpg.imeji.rest.to.LicenseTO> licenseTOs = new ArrayList<>();
+    for (final de.mpg.imeji.logic.vo.License lic : licenses) {
+      final de.mpg.imeji.rest.to.LicenseTO licTO = new de.mpg.imeji.rest.to.LicenseTO();
       licTO.setName(lic.getName());
       licTO.setLabel(lic.getLabel());
       licTO.setUrl(lic.getUrl());
@@ -320,7 +320,7 @@ public class TransferObjectFactory {
       return 0;
     } else {
       int i = 0;
-      for (Map.Entry<Integer, String> entry : positions.entrySet()) {
+      for (final Map.Entry<Integer, String> entry : positions.entrySet()) {
         if (statement.equals(entry.getValue())) {
           i++;
         }

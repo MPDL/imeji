@@ -61,7 +61,7 @@ public final class ImageUtils {
       throws IOException, Exception {
     // If it is original resolution, don't touch the file, otherwise resize
     if (!FileResolution.ORIGINAL.equals(resolution)) {
-      BufferedImage image = JpegUtils.readJpeg(file);
+      final BufferedImage image = JpegUtils.readJpeg(file);
       return toFile(scaleImage(image, resolution), StorageUtils.getMimeType("jpg"));
     }
     return file;
@@ -84,7 +84,7 @@ public final class ImageUtils {
       } else {
         return image2Jpeg(bytes);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.info("Image could not be transformed to jpeg: ", e);
     }
     return new byte[0];
@@ -100,7 +100,7 @@ public final class ImageUtils {
       } else {
         return image2Jpeg(file);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.info("Image could not be transformed to jpeg: ", e);
     }
     return null;
@@ -119,15 +119,15 @@ public final class ImageUtils {
    */
   private static BufferedImage scaleImageFast(BufferedImage image, int size,
       FileResolution resolution) throws Exception {
-    int width = image.getWidth(null);
-    int height = image.getHeight(null);
+    final int width = image.getWidth(null);
+    final int height = image.getHeight(null);
     BufferedImage newImg = null;
     Image rescaledImage;
-    int colorSpace = BufferedImage.TYPE_INT_RGB;
+    final int colorSpace = BufferedImage.TYPE_INT_RGB;
     if (width > height) {
       if (FileResolution.THUMBNAIL.equals(resolution)) {
         newImg = new BufferedImage(height, height, colorSpace);
-        Graphics g1 = newImg.createGraphics();
+        final Graphics g1 = newImg.createGraphics();
         g1.drawImage(image, (height - width) / 2, 0, null);
         if (height > size) {
           rescaledImage = getScaledInstance(newImg, size, size,
@@ -142,7 +142,7 @@ public final class ImageUtils {
     } else {
       if (FileResolution.THUMBNAIL.equals(resolution)) {
         newImg = new BufferedImage(width, width, colorSpace);
-        Graphics g1 = newImg.createGraphics();
+        final Graphics g1 = newImg.createGraphics();
         g1.drawImage(image, 0, (width - height) / 2, null);
         if (width > size) {
           rescaledImage = getScaledInstance(newImg, size, size,
@@ -155,9 +155,9 @@ public final class ImageUtils {
             RenderingHints.VALUE_INTERPOLATION_BILINEAR, RESCALE_HIGH_QUALITY);
       }
     }
-    BufferedImage rescaledBufferedImage =
+    final BufferedImage rescaledBufferedImage =
         new BufferedImage(rescaledImage.getWidth(null), rescaledImage.getHeight(null), colorSpace);
-    Graphics g2 = rescaledBufferedImage.getGraphics();
+    final Graphics g2 = rescaledBufferedImage.getGraphics();
     g2.drawImage(rescaledImage, 0, 0, null);
     return rescaledBufferedImage;
   }
@@ -181,7 +181,7 @@ public final class ImageUtils {
    */
   private static BufferedImage getScaledInstance(BufferedImage img, int targetWidth,
       int targetHeight, Object hint, boolean higherQuality) {
-    int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
+    final int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
         : BufferedImage.TYPE_INT_ARGB;
     BufferedImage ret = img;
     int w, h;
@@ -210,8 +210,8 @@ public final class ImageUtils {
           h = targetHeight;
         }
       }
-      BufferedImage tmp = new BufferedImage(w, h, type);
-      Graphics2D g2 = tmp.createGraphics();
+      final BufferedImage tmp = new BufferedImage(w, h, type);
+      final Graphics2D g2 = tmp.createGraphics();
       g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);
       g2.drawImage(ret, 0, 0, w, h, null);
       g2.dispose();
@@ -229,9 +229,9 @@ public final class ImageUtils {
    * @throws IOException
    */
   private static byte[] image2Jpeg(byte[] bytes) throws IOException {
-    InputStream ins = new ByteArrayInputStream(bytes);
-    BufferedImage image = ImageIO.read(ins);
-    ByteArrayOutputStream ous = new ByteArrayOutputStream();
+    final InputStream ins = new ByteArrayInputStream(bytes);
+    final BufferedImage image = ImageIO.read(ins);
+    final ByteArrayOutputStream ous = new ByteArrayOutputStream();
     ImageIO.write(image, "jpg", ous);
     return ous.toByteArray();
   }
@@ -246,7 +246,7 @@ public final class ImageUtils {
    * @throws IOException
    */
   private static File image2Jpeg(File file) throws IOException {
-    BufferedImage image = ImageIO.read(new FileInputStream(file));
+    final BufferedImage image = ImageIO.read(new FileInputStream(file));
     return toFile(image, StorageUtils.getMimeType("jpg"));
   }
 
@@ -272,7 +272,7 @@ public final class ImageUtils {
    * @throws IOException
    */
   public static byte[] toBytes(BufferedImage image, String mimeType) throws IOException {
-    ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
+    final ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
     ImageIO.write(image, ImageUtils.getImageFormat(mimeType), byteOutput);
     return byteOutput.toByteArray();
   }
@@ -286,8 +286,8 @@ public final class ImageUtils {
    * @throws IOException
    */
   public static File toFile(BufferedImage image, String mimeType) throws IOException {
-    File file = TempFileUtil.createTempFile("ImageUtils_toFile", null);
-    FileOutputStream fos = new FileOutputStream(file);
+    final File file = TempFileUtil.createTempFile("ImageUtils_toFile", null);
+    final FileOutputStream fos = new FileOutputStream(file);
     ImageIO.write(image, ImageUtils.getImageFormat(mimeType), fos);
     return file;
   }
@@ -371,7 +371,7 @@ public final class ImageUtils {
     try (ImageInputStream in = ImageIO.createImageInputStream(f)) {
       final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
       if (readers.hasNext()) {
-        ImageReader reader = readers.next();
+        final ImageReader reader = readers.next();
         try {
           reader.setInput(in);
           return new Dimension(reader.getWidth(0), reader.getHeight(0));
@@ -379,7 +379,7 @@ public final class ImageUtils {
           reader.dispose();
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error reading image dimension: ", e);
     }
     return null;

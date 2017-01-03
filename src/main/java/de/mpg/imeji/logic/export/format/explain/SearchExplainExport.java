@@ -48,10 +48,10 @@ public class SearchExplainExport extends ExplainExport {
    */
   @Override
   public void export(OutputStream out, SearchResult sr, User user) {
-    PrintWriter writer = new PrintWriter(out);
+    final PrintWriter writer = new PrintWriter(out);
     try {
       writer.append(getRDFTagOpen());
-      for (SearchIndex index : SearchIndexes.indexes.values()) {
+      for (final SearchIndex index : SearchIndexes.indexes.values()) {
         writer.append(getIndexTag(index.getName(), index.getNamespace()));
       }
       writer.append(getRDFTagClose());

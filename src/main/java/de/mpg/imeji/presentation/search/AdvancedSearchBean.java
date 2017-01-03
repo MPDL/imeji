@@ -56,7 +56,7 @@ public class AdvancedSearchBean extends SuperBean {
   public void newSearch() {
     try {
       getNewSearch();
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error("Error initializing page: " + e.getMessage());
       LOGGER.error("Error initializing advanced search", e);
     }
@@ -75,12 +75,12 @@ public class AdvancedSearchBean extends SuperBean {
         getSelectedSpaceString());
     initMenus();
     try {
-      String query = UrlHelper.getParameterValue("q");
+      final String query = UrlHelper.getParameterValue("q");
       if (!UrlHelper.getParameterBoolean("error")) {
         errorQuery = false;
         initForm(SearchQueryParser.parseStringQuery(query));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing advanced search", e);
       BeanHelper.error("Error initializing advanced search");
     }
@@ -144,9 +144,9 @@ public class AdvancedSearchBean extends SuperBean {
     errorQuery = false;
     try {
       formular.validate();
-      String q = SearchQueryParser.transform2UTF8URL(formular.getFormularAsSearchQuery());
+      final String q = SearchQueryParser.transform2UTF8URL(formular.getFormularAsSearchQuery());
       redirect(getNavigation().getBrowseUrl() + "?q=" + q);
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error invalid search form", e);
     }
@@ -160,7 +160,7 @@ public class AdvancedSearchBean extends SuperBean {
    * @throws ImejiException
    */
   public void changeGroup() throws ImejiException {
-    int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("gPos"));
     formular.changeSearchGroup(gPos, metadataLabels, getSessionUser(), getSelectedSpaceString());
   }
@@ -169,7 +169,7 @@ public class AdvancedSearchBean extends SuperBean {
    * Add a new {@link SearchGroupForm}
    */
   public void addGroup() {
-    int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("gPos"));
     formular.addSearchGroup(gPos);
   }
@@ -178,7 +178,7 @@ public class AdvancedSearchBean extends SuperBean {
    * Remove a {@link SearchGroupForm}
    */
   public void removeGroup() {
-    int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("gPos"));
     formular.removeSearchGroup(gPos);
     if (formular.getGroups().size() == 0) {
@@ -190,9 +190,9 @@ public class AdvancedSearchBean extends SuperBean {
    * Change a {@link SearchMetadataForm}. The search value is removed
    */
   public void changeElement() {
-    int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("gPos"));
-    int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("elPos"));
     formular.changeElement(gPos, elPos, false, getLocale());
   }
@@ -201,9 +201,9 @@ public class AdvancedSearchBean extends SuperBean {
    * Update a {@link SearchMetadataForm}. The search value is keeped
    */
   public void updateElement() {
-    int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("gPos"));
-    int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("elPos"));
     formular.changeElement(gPos, elPos, true, getLocale());
   }
@@ -216,9 +216,9 @@ public class AdvancedSearchBean extends SuperBean {
    * Add a new {@link SearchMetadataForm}
    */
   public void addElement() {
-    int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("gPos"));
-    int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("elPos"));
     formular.addElement(gPos, elPos, getLocale());
   }
@@ -227,9 +227,9 @@ public class AdvancedSearchBean extends SuperBean {
    * Remove a new {@link SearchMetadataForm}
    */
   public void removeElement() {
-    int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("gPos"));
-    int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
+    final int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("elPos"));
     formular.removeElement(gPos, elPos);
     if (formular.getGroups().get(gPos).getSearchElementForms().size() == 0) {

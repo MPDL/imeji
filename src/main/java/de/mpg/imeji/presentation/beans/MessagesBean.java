@@ -15,8 +15,9 @@ import javax.faces.context.FacesContext;
 public class MessagesBean {
 
   public boolean getHasErrorMessages() {
-    for (Iterator<FacesMessage> i = FacesContext.getCurrentInstance().getMessages(); i.hasNext();) {
-      FacesMessage fm = i.next();
+    for (final Iterator<FacesMessage> i = FacesContext.getCurrentInstance().getMessages(); i
+        .hasNext();) {
+      final FacesMessage fm = i.next();
       if (fm.getSeverity().equals(FacesMessage.SEVERITY_ERROR)
           || fm.getSeverity().equals(FacesMessage.SEVERITY_WARN)
           || fm.getSeverity().equals(FacesMessage.SEVERITY_FATAL)) {
@@ -28,7 +29,8 @@ public class MessagesBean {
 
   public int getNumberOfMessages() {
     int number = 0;
-    for (Iterator<FacesMessage> i = FacesContext.getCurrentInstance().getMessages(); i.hasNext();) {
+    for (final Iterator<FacesMessage> i = FacesContext.getCurrentInstance().getMessages(); i
+        .hasNext();) {
       i.next();
       number++;
     }

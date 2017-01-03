@@ -50,13 +50,13 @@ public class ItemProcess {
   public static JSONResponse createItem(HttpServletRequest req, InputStream file, String json,
       String origName) {
     try {
-      User u = BasicAuthentication.auth(req);
+      final User u = BasicAuthentication.auth(req);
       DefaultItemWithFileTO defaultItemWithFileTO = (DefaultItemWithFileTO) RestProcessUtils
           .buildTOFromJSON(json, DefaultItemWithFileTO.class);
       defaultItemWithFileTO = uploadAndValidateFile(file, defaultItemWithFileTO, origName);
-      DefaultItemTO defaultItemTO = new DefaultItemService().create(defaultItemWithFileTO, u);
+      final DefaultItemTO defaultItemTO = new DefaultItemService().create(defaultItemWithFileTO, u);
       return RestProcessUtils.buildResponse(Status.CREATED.getStatusCode(), defaultItemTO);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error creating item", e);
       return RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
@@ -70,11 +70,11 @@ public class ItemProcess {
    * @return
    */
   public static JSONResponse readItem(HttpServletRequest req, String id) {
-    DefaultItemService service = new DefaultItemService();
+    final DefaultItemService service = new DefaultItemService();
     try {
-      User u = BasicAuthentication.auth(req);
+      final User u = BasicAuthentication.auth(req);
       return RestProcessUtils.buildResponse(Status.OK.getStatusCode(), service.read(id, u));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
   }
@@ -87,12 +87,12 @@ public class ItemProcess {
    * @return
    */
   public static JSONResponse deleteItem(HttpServletRequest req, String id) {
-    DefaultItemService service = new DefaultItemService();
+    final DefaultItemService service = new DefaultItemService();
     try {
-      User u = BasicAuthentication.auth(req);
+      final User u = BasicAuthentication.auth(req);
       service.delete(id, u);
       return RestProcessUtils.buildResponse(Status.NO_CONTENT.getStatusCode(), null);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
   }
@@ -105,11 +105,11 @@ public class ItemProcess {
    * @return
    */
   public static JSONResponse readItems(HttpServletRequest req, String q, int offset, int size) {
-    DefaultItemService service = new DefaultItemService();
+    final DefaultItemService service = new DefaultItemService();
     try {
-      User u = BasicAuthentication.auth(req);
+      final User u = BasicAuthentication.auth(req);
       return RestProcessUtils.buildResponse(OK.getStatusCode(), service.search(q, offset, size, u));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }
   }
@@ -130,19 +130,19 @@ public class ItemProcess {
   public static JSONResponse updateItem(HttpServletRequest req, String id,
       InputStream fileInputStream, String json, String filename) {
     try {
-      DefaultItemService service = new DefaultItemService();
+      final DefaultItemService service = new DefaultItemService();
       DefaultItemWithFileTO to = (DefaultItemWithFileTO) RestProcessUtils.buildTOFromJSON(json,
           DefaultItemWithFileTO.class);
       validateId(id, to);
       to.setId(id);
-      boolean fileUpdate = !isNullOrEmpty(json) && (fileInputStream != null
+      final boolean fileUpdate = !isNullOrEmpty(json) && (fileInputStream != null
           || json.indexOf("fetchUrl") > 0 || json.indexOf("referenceUrl") > 0);
-      User u = BasicAuthentication.auth(req);
+      final User u = BasicAuthentication.auth(req);
       if (fileUpdate) {
         to = uploadAndValidateFile(fileInputStream, to, filename);
       }
       return RestProcessUtils.buildResponse(Status.OK.getStatusCode(), service.update(to, u));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error updating item ", e);
       return RestProcessUtils.localExceptionHandler(e, e.getMessage());
     }
@@ -168,18 +168,18 @@ public class ItemProcess {
    */
   private static DefaultItemWithFileTO uploadAndValidateFile(InputStream file,
       DefaultItemWithFileTO to, String origName)
-          throws IOException, UnprocessableError, BadRequestException {
+      throws IOException, UnprocessableError, BadRequestException {
     if (file != null) {
-      String calculatedFilename =
+      final String calculatedFilename =
           StringHelper.isNullOrEmptyTrim(to.getFilename()) ? origName : to.getFilename();
       String calculatedExtension = FilenameUtils.getExtension(calculatedFilename);
       calculatedExtension = !isNullOrEmpty(calculatedExtension) ? "." + calculatedExtension : null;
       // Note: createTempFile suffix must be provided in order not to rename the file to .tmp
-      File tmp = TempFileUtil.createTempFile("imejiAPI", calculatedExtension);
+      final File tmp = TempFileUtil.createTempFile("imejiAPI", calculatedExtension);
       IOUtils.copy(file, new FileOutputStream(tmp));
-      StorageController c = new StorageController();
+      final StorageController c = new StorageController();
       // convenience call to stop the processing here asap. Item controller checks it anyway
-      String guessNotAllowedFormatUploaded = c.guessNotAllowedFormat(tmp);
+      final String guessNotAllowedFormatUploaded = c.guessNotAllowedFormat(tmp);
       if (StorageUtils.BAD_FORMAT.equals(guessNotAllowedFormatUploaded)) {
         throw new UnprocessableError(
             "upload_format_not_allowed: " + " (" + calculatedExtension + ")");

@@ -89,7 +89,7 @@ public class ElasticSearch implements Search {
   /**
    * A Search returning a single document. Faster, but limited to not too big search result list
    * (max is SEARCH_MAX_SIZE)
-   * 
+   *
    * @param query
    * @param sortCri
    * @param user
@@ -101,8 +101,8 @@ public class ElasticSearch implements Search {
    */
   private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, String spaceId, int from, int size) {
-    QueryBuilder f = ElasticQueryFactory.build(query, folderUri, spaceId, user, type);
-    SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
+    final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, spaceId, user, type);
+    final SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setNoFields().setQuery(QueryBuilders.matchAllQuery()).setPostFilter(f).setTypes(getTypes())
         .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri)).execute()
         .actionGet();
@@ -111,7 +111,7 @@ public class ElasticSearch implements Search {
 
   /**
    * A Search via the scroll api. Allow to search for many documents
-   * 
+   *
    * @param query
    * @param sortCri
    * @param user
@@ -123,7 +123,7 @@ public class ElasticSearch implements Search {
    */
   private SearchResult searchWithScroll(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, String spaceId, int from, int size) {
-    QueryBuilder f = ElasticQueryFactory.build(query, folderUri, spaceId, user, type);
+    final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, spaceId, user, type);
     SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setScroll(new TimeValue(60000)).setNoFields().setQuery(QueryBuilders.matchAllQuery())
         .setPostFilter(f).setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).setFrom(from)
@@ -152,8 +152,8 @@ public class ElasticSearch implements Search {
   @Override
   public SearchResult searchString(String query, SortCriterion sort, User user, int from,
       int size) {
-    QueryBuilder q = QueryBuilders.queryStringQuery(query);
-    SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
+    final QueryBuilder q = QueryBuilders.queryStringQuery(query);
+    final SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setNoFields().setTypes(getTypes()).setQuery(q).setSize(size).setFrom(from)
         .addSort(ElasticSortFactory.build(sort)).execute().actionGet();
     return toSearchResult(resp);
@@ -180,8 +180,8 @@ public class ElasticSearch implements Search {
    * @return
    */
   private SearchResult toSearchResult(SearchResponse resp) {
-    List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
-    for (SearchHit hit : resp.getHits()) {
+    final List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
+    for (final SearchHit hit : resp.getHits()) {
       ids.add(hit.getId());
     }
     return new SearchResult(ids, resp.getHits().getTotalHits());
@@ -194,8 +194,8 @@ public class ElasticSearch implements Search {
    * @return
    */
   private SearchResult addSearchResult(SearchResult result, SearchResponse resp) {
-    List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
-    for (SearchHit hit : resp.getHits()) {
+    final List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
+    for (final SearchHit hit : resp.getHits()) {
       ids.add(hit.getId());
     }
     result.getResults().addAll(ids);

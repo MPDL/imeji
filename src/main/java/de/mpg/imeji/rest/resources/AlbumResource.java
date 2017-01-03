@@ -39,7 +39,7 @@ public class AlbumResource implements ImejiResource {
       notes = "The body parameter is the json of an album. You can get an example by using the get album method.")
   @Produces(MediaType.APPLICATION_JSON)
   public Response create(@Context HttpServletRequest req, InputStream json) {
-    JSONResponse resp = AlbumProcess.createAlbum(req);
+    final JSONResponse resp = AlbumProcess.createAlbum(req);
     return RestProcessUtils.buildJSONResponse(resp);
   }
 
@@ -50,7 +50,7 @@ public class AlbumResource implements ImejiResource {
   public Response readAll(@Context HttpServletRequest req, @QueryParam("q") String q,
       @DefaultValue("0") @QueryParam("offset") int offset,
       @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
-    JSONResponse resp = readAllAlbums(req, q, offset, size);
+    final JSONResponse resp = readAllAlbums(req, q, offset, size);
     return buildJSONResponse(resp);
   }
 
@@ -60,7 +60,7 @@ public class AlbumResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response update(@PathParam("id") String id, @Context HttpServletRequest req,
       InputStream json) throws Exception {
-    JSONResponse resp = AlbumProcess.updateAlbum(req, id);
+    final JSONResponse resp = AlbumProcess.updateAlbum(req, id);
     return buildJSONResponse(resp);
   }
 
@@ -70,7 +70,7 @@ public class AlbumResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Override
   public Response read(@Context HttpServletRequest req, @PathParam("id") String id) {
-    JSONResponse resp = AlbumProcess.readAlbum(req, id);
+    final JSONResponse resp = AlbumProcess.readAlbum(req, id);
     return RestProcessUtils.buildJSONResponse(resp);
   }
 
@@ -81,7 +81,7 @@ public class AlbumResource implements ImejiResource {
   public Response searchItems(@Context HttpServletRequest req, @PathParam("id") String id,
       @QueryParam("q") String q, @DefaultValue("0") @QueryParam("offset") int offset,
       @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
-    JSONResponse resp = AlbumProcess.readAlbumItems(req, id, q, offset, size);
+    final JSONResponse resp = AlbumProcess.readAlbumItems(req, id, q, offset, size);
     return RestProcessUtils.buildJSONResponse(resp);
   }
 
@@ -97,7 +97,7 @@ public class AlbumResource implements ImejiResource {
   @ApiOperation(value = "Delete album by id")
   @Produces(MediaType.APPLICATION_JSON)
   public Response delete(@Context HttpServletRequest req, @PathParam("id") String id) {
-    JSONResponse resp = AlbumProcess.deleteAlbum(req, id);
+    final JSONResponse resp = AlbumProcess.deleteAlbum(req, id);
     return RestProcessUtils.buildJSONResponse(resp);
   }
 
@@ -108,7 +108,7 @@ public class AlbumResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response withdraw(@Context HttpServletRequest req, @PathParam("id") String id,
       @FormParam("discardComment") String discardComment) throws Exception {
-    JSONResponse resp = AlbumProcess.withdrawAlbum(req, id, discardComment);
+    final JSONResponse resp = AlbumProcess.withdrawAlbum(req, id, discardComment);
     return RestProcessUtils.buildJSONResponse(resp);
   }
 
@@ -118,7 +118,7 @@ public class AlbumResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response release(@Context HttpServletRequest req, @PathParam("id") String id)
       throws Exception {
-    JSONResponse resp = AlbumProcess.releaseAlbum(req, id);
+    final JSONResponse resp = AlbumProcess.releaseAlbum(req, id);
     return RestProcessUtils.buildJSONResponse(resp);
   }
 
@@ -133,7 +133,7 @@ public class AlbumResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response addItem(@PathParam("id") String id, @Context HttpServletRequest req,
       InputStream json) throws Exception {
-    JSONResponse resp = AlbumProcess.addItems(req, id);
+    final JSONResponse resp = AlbumProcess.addItems(req, id);
     return RestProcessUtils.buildJSONResponse(resp);
   }
 
@@ -148,7 +148,7 @@ public class AlbumResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response removeItem(@PathParam("id") String id, @Context HttpServletRequest req,
       InputStream json) throws Exception {
-    JSONResponse resp = AlbumProcess.removeItems(req, id, false);
+    final JSONResponse resp = AlbumProcess.removeItems(req, id, false);
     return RestProcessUtils.buildJSONResponse(resp);
   }
 
@@ -159,7 +159,7 @@ public class AlbumResource implements ImejiResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response removeAllItems(@PathParam("id") String id, @Context HttpServletRequest req)
       throws Exception {
-    JSONResponse resp = AlbumProcess.removeItems(req, id, true);
+    final JSONResponse resp = AlbumProcess.removeItems(req, id, true);
     return RestProcessUtils.buildJSONResponse(resp);
   }
 

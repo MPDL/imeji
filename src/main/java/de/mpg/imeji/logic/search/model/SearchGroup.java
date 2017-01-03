@@ -47,7 +47,7 @@ public class SearchGroup extends SearchElement {
 
   @Override
   public boolean isSame(SearchElement element) {
-    SearchGroup g = toGroup(element);
+    final SearchGroup g = toGroup(element);
     if (g != null) {
       if (g.group.size() != group.size()) {
         return false;

@@ -16,9 +16,9 @@ import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
  */
 public class ShareEmailMessage {
   private String body = "";
-  private String subject = "";
-  private Locale locale;
-  private User user;
+  private final String subject = "";
+  private final Locale locale;
+  private final User user;
 
   /**
    * Constructor
@@ -52,7 +52,7 @@ public class ShareEmailMessage {
 
   private String initBody(String addresseeName, String sharedObjectName, String sharedObjectLink,
       SharedObjectType type) {
-    String from = user.getPerson().getCompleteName();
+    final String from = user.getPerson().getCompleteName();
     switch (type) {
       case ALBUM:
         return EmailMessages.getSharedAlbumMessage(from, addresseeName, sharedObjectName,
@@ -68,7 +68,7 @@ public class ShareEmailMessage {
   }
 
   private String getMessageForShareItem(List<String> roles) {
-    for (String role : roles) {
+    for (final String role : roles) {
       if ("READ".equals(role)) {
         return "- " + Imeji.RESOURCE_BUNDLE.getLabel("collection_share_read", locale);
       }
@@ -78,7 +78,7 @@ public class ShareEmailMessage {
 
   private String getMessageForShareCollection(List<String> roles, String profileUri) {
     String message = "";
-    for (String role : roles) {
+    for (final String role : roles) {
       switch (role) {
         case "READ":
           message += "- " + Imeji.RESOURCE_BUNDLE.getLabel("collection_share_read", locale) + "\n";
@@ -113,7 +113,7 @@ public class ShareEmailMessage {
 
   private String getMessageForShareAlbum(List<String> roles) {
     String message = "";
-    for (String role : roles) {
+    for (final String role : roles) {
       switch (role) {
         case "READ":
           message += "- " + Imeji.RESOURCE_BUNDLE.getLabel("album_share_read", locale) + "\n";

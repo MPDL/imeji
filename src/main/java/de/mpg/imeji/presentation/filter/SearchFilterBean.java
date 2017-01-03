@@ -22,11 +22,11 @@ public class SearchFilterBean extends SuperBean {
 
   /**
    * Get the URL to remove all Filter and Search
-   * 
+   *
    * @return
    */
   public String getClearFilterAndSearchQuery() {
-    HistoryPage page = getHistory().getCurrentPage();
+    final HistoryPage page = getHistory().getCurrentPage();
     page.setParamValue("q", "");
     return page.getCompleteUrl();
   }

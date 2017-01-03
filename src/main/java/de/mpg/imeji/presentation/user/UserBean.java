@@ -71,7 +71,7 @@ public class UserBean extends SuperBean {
 
   /**
    * Initialize the bean
-   * 
+   *
    * @param id
    */
   private void init(String id) {
@@ -85,7 +85,7 @@ public class UserBean extends SuperBean {
         this.setEdit(false);
         this.setQuota(new QuotaUICompoment(user, getLocale()));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing page", e);
       BeanHelper.error("Error initializing page");
     }
@@ -93,7 +93,7 @@ public class UserBean extends SuperBean {
 
   /**
    * Retrieve the current user
-   * 
+   *
    * @throws ImejiException
    *
    * @throws Exception
@@ -147,7 +147,7 @@ public class UserBean extends SuperBean {
     if (user != null) {
       try {
         user.setApiKey(APIKeyAuthentication.generateKey(user.getId(), Integer.MAX_VALUE));
-      } catch (JoseException e) {
+      } catch (final JoseException e) {
         LOGGER.error("Error generating API Key", e);
         throw new ImejiException("Error generating API Key", e);
       }
@@ -171,7 +171,7 @@ public class UserBean extends SuperBean {
    * @param index
    */
   public void removeOrganization(int index) {
-    List<Organization> orgas = (List<Organization>) this.user.getPerson().getOrganizations();
+    final List<Organization> orgas = (List<Organization>) this.user.getPerson().getOrganizations();
     if (!orgas.isEmpty()) {
       orgas.remove(index);
     }
@@ -183,7 +183,7 @@ public class UserBean extends SuperBean {
    * @throws Exception
    */
   public void toggleAdmin() throws ImejiException {
-    ShareBusinessController shareController = new ShareBusinessController();
+    final ShareBusinessController shareController = new ShareBusinessController();
     if (SecurityUtil.isSysAdmin(user)) {
       shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(),
           ShareBusinessController.rolesAsList(ShareRoles.CREATE));
@@ -209,7 +209,7 @@ public class UserBean extends SuperBean {
    * @throws Exception
    */
   public void toggleCreateCollection() throws ImejiException {
-    ShareBusinessController shareController = new ShareBusinessController();
+    final ShareBusinessController shareController = new ShareBusinessController();
     if (!SecurityUtil.isSysAdmin(user)) {
       // admin can not be forbidden to create collections
       if (SecurityUtil.isAllowedToCreateCollection(user)) {
@@ -229,12 +229,12 @@ public class UserBean extends SuperBean {
    */
   public void updateUser() throws ImejiException {
     if (user != null) {
-      UserBusinessController controller = new UserBusinessController();
+      final UserBusinessController controller = new UserBusinessController();
       user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
       try {
         controller.update(user, getSessionUser());
         reloadPage();
-      } catch (UnprocessableError e) {
+      } catch (final UnprocessableError e) {
         BeanHelper.error(e, getLocale());
         LOGGER.error("Error updating user", e);
       }
@@ -243,7 +243,7 @@ public class UserBean extends SuperBean {
 
   /**
    * Return the quota of the current user in a user friendly way
-   * 
+   *
    * @param locale
    * @return
    */
@@ -263,7 +263,7 @@ public class UserBean extends SuperBean {
   private void reloadPage() {
     try {
       redirect(getUserPageUrl());
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.error("Error reloading user page", e);
     }
   }

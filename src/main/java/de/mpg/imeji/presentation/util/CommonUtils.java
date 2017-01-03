@@ -29,7 +29,7 @@ public class CommonUtils {
     if (string == null || string.length() == 0) {
       return string;
     }
-    Matcher m = REMOVE_TAGS.matcher(string);
+    final Matcher m = REMOVE_TAGS.matcher(string);
     return m.replaceAll("").trim();
   }
 
@@ -62,7 +62,7 @@ public class CommonUtils {
    * @return
    */
   public static String executeAndReturnFirstResult(Pattern p, String s) {
-    Matcher m = p.matcher(s);
+    final Matcher m = p.matcher(s);
     if (m.find()) {
       return m.group();
     }

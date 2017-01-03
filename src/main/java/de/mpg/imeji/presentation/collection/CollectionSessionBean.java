@@ -32,7 +32,7 @@ public class CollectionSessionBean {
   public CollectionSessionBean() {
     try {
       init();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error initializing collection session:", e);
     }
   }

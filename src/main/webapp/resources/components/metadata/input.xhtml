@@ -9,12 +9,42 @@
 	</composite:interface>
 	
 	<composite:implementation>
+		<style>
+			.imj_mdInput, .imj_mdInputLabel{
+				float:left;
+				clear: both;
+			}
+		</style>
+		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/datepicker.js"/>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'TEXT'}">
-			<h:inputText id="text" value="#{cc.attrs.metadataInputComponent.metadata.text}"/>
+			<h:inputTextarea id="text" value="#{cc.attrs.metadataInputComponent.metadata.text}" styleClass="imj_mdInput"/>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'URL'}">
-			<h:inputText id="urlText" value="#{cc.attrs.metadataInputComponent.metadata.text}" html5:placeholder="#{lbl.title}"/>
-			<h:inputText id="url" value="#{cc.attrs.metadataInputComponent.metadata.url}" html5:type="url" html5:placeholder="#{lbl.url}"/>
+			<h:outputLabel value="#{lbl.title}" for="urlText" styleClass="imj_mdInputLabel"/>
+			<h:inputTextarea id="urlText" value="#{cc.attrs.metadataInputComponent.metadata.text}" html5:placeholder="#{lbl.title}" styleClass="imj_mdInput"/>
+			<h:outputLabel value="#{lbl.url}" for="url"/>
+			<h:inputText id="url" value="#{cc.attrs.metadataInputComponent.metadata.url}" html5:type="url" html5:placeholder="#{lbl.url}" styleClass="imj_mdInput"/>
+		</ui:fragment>
+		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'NUMBER'}">
+			<h:inputText id="number" value="#{cc.attrs.metadataInputComponent.metadata.number}" html5:type="number" html5:step="any" html5:placeholder="#{lbl.number}" styleClass="imj_mdInput"/>
+		</ui:fragment>
+		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'GEOLOCATION'}">
+			<h:inputTextarea id="location" value="#{cc.attrs.metadataInputComponent.metadata.text}" styleClass="imj_mdInput"/>
+			<h:outputLabel value="#{lbl.geolocation_latitude}" for="latitude" styleClass="imj_mdInputLabel"/>
+			<h:inputText id="latitude" value="#{cc.attrs.metadataInputComponent.metadata.latitude}" html5:type="number" html5:step="any" html5:min="-90" html5:max="90" html5:placeholder="#{lbl.placeholder_geolocation_latitude}" styleClass="imj_mdInput"/>
+			<h:outputLabel value="#{lbl.geolocation_longitude}" for="longitude" styleClass="imj_mdInputLabel"/>
+			<h:inputText id="longitude" value="#{cc.attrs.metadataInputComponent.metadata.longitude}" html5:type="number" html5:step="any" html5:min="-180" html5:max="180" html5:placeholder="#{lbl.placeholder_geolocation_longitude}" styleClass="imj_mdInput"/>
+		</ui:fragment>
+		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'DATE'}">
+			<h:inputText id="date" value="#{cc.attrs.metadataInputComponent.metadata.text}" html5:type="date" html5:placeholder="YYYY-MM-DD" styleClass="imj_mdInput datepicker"/>
+		</ui:fragment>
+		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'PERSON'}">
+			<h:outputLabel value="#{lbl.familyName}" for="family" styleClass="imj_mdInputLabel"/>
+			<h:inputText id="family" value="#{cc.attrs.metadataInputComponent.metadata.person.familyName}" html5:placeholder="#{lbl.familyName}" styleClass="imj_mdInput"/>
+			<h:outputLabel value="#{lbl.givenName}" for="given" styleClass="imj_mdInputLabel"/>
+			<h:inputText id="given" value="#{cc.attrs.metadataInputComponent.metadata.person.givenName}" html5:placeholder="#{lbl.givenName}" styleClass="imj_mdInput"/>
+			<h:outputLabel value="#{lbl.organization}" for="organization" styleClass="imj_mdInputLabel"/>
+			<h:inputText id="organization" value="#{cc.attrs.metadataInputComponent.metadata.person.organization.name}" html5:placeholder="#{lbl.organization}" styleClass="imj_mdInput"/>
 		</ui:fragment>
 	</composite:implementation>
 </html>

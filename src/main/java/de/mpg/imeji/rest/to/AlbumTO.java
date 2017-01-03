@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class AlbumTO extends ContainerTO implements Serializable {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = -6299975725127957067L;
 

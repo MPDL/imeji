@@ -31,7 +31,7 @@ public class CleanUserGroupsJob implements Callable<Integer> {
     LOGGER.info("Cleaning User Groups...");
     try {
       cleanZombieMember();
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Error cleaning user groups: " + e.getMessage());
     }
     LOGGER.info("...done!");
@@ -44,9 +44,9 @@ public class CleanUserGroupsJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void cleanZombieMember() throws ImejiException {
-    GroupBusinessController controller = new GroupBusinessController();
-    for (URI userId : findZombieMember()) {
-      User user = new User();
+    final GroupBusinessController controller = new GroupBusinessController();
+    for (final URI userId : findZombieMember()) {
+      final User user = new User();
       user.setId(userId);
       controller.removeUserFromAllGroups(user, Imeji.adminUser);
     }
@@ -58,9 +58,9 @@ public class CleanUserGroupsJob implements Callable<Integer> {
    * @return
    */
   private List<URI> findZombieMember() {
-    Set<URI> zombies = new HashSet<>();
-    for (UserGroup group : getAllUserGroups()) {
-      for (URI member : group.getUsers()) {
+    final Set<URI> zombies = new HashSet<>();
+    for (final UserGroup group : getAllUserGroups()) {
+      for (final URI member : group.getUsers()) {
         if (!userExists(member) && !zombies.contains(member)) {
           zombies.add(member);
         }
@@ -74,9 +74,9 @@ public class CleanUserGroupsJob implements Callable<Integer> {
     try {
       retrieveUser(userId);
       return true;
-    } catch (NotFoundException e) {
+    } catch (final NotFoundException e) {
       return false;
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Erro reading user: ", e);
       return true;
     }
@@ -90,7 +90,7 @@ public class CleanUserGroupsJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private User retrieveUser(URI userId) throws ImejiException {
-    UserBusinessController controller = new UserBusinessController();
+    final UserBusinessController controller = new UserBusinessController();
     return controller.retrieve(userId, Imeji.adminUser);
   }
 
@@ -100,7 +100,7 @@ public class CleanUserGroupsJob implements Callable<Integer> {
    * @return
    */
   private List<UserGroup> getAllUserGroups() {
-    GroupBusinessController controller = new GroupBusinessController();
+    final GroupBusinessController controller = new GroupBusinessController();
     return (List<UserGroup>) controller.searchByName("", Imeji.adminUser);
   }
 }

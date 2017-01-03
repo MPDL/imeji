@@ -8,7 +8,7 @@ import de.mpg.imeji.logic.vo.util.MetadataUtil;
 
 /**
  * Component for the html input of {@link Metadata}
- * 
+ *
  * @author saquet
  *
  */
@@ -26,7 +26,7 @@ public class MetadataInputComponent implements Serializable {
 
   /**
    * True if the current {@link Metadata} is empty
-   * 
+   *
    * @return
    */
   public boolean isEmpty() {

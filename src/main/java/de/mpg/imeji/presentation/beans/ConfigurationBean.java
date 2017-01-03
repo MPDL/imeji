@@ -198,7 +198,7 @@ public class ConfigurationBean extends SuperBean {
    * @return
    */
   public List<HtmlSnippet> getSnippets() {
-    de.mpg.imeji.presentation.lang.InternationalizationBean internationalizationBean =
+    final de.mpg.imeji.presentation.lang.InternationalizationBean internationalizationBean =
         (InternationalizationBean) BeanHelper.getApplicationBean(InternationalizationBean.class);
     return Imeji.CONFIG.getSnippets(internationalizationBean.getLanguages());
   }
@@ -473,7 +473,7 @@ public class ConfigurationBean extends SuperBean {
   }
 
   public String getFaviconUrl() {
-    Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+    final Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     return Imeji.CONFIG.getFaviconUrl(navigation.getApplicationUri());
   }
 
@@ -512,7 +512,7 @@ public class ConfigurationBean extends SuperBean {
   public void setQuotaLimits(String limits) {
     try {
       Imeji.CONFIG.setQuotaLimits(limits);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Wrong format for quota definition! Has to be comma separated list. "
           + "Wrong input " + e.getMessage());
     }
@@ -595,8 +595,8 @@ public class ConfigurationBean extends SuperBean {
   }
 
   public List<SelectItem> getLicenseMenu() {
-    List<SelectItem> licenseMenu = new ArrayList<>();
-    for (ImejiLicenses lic : ImejiLicenses.values()) {
+    final List<SelectItem> licenseMenu = new ArrayList<>();
+    for (final ImejiLicenses lic : ImejiLicenses.values()) {
       licenseMenu.add(new SelectItem(lic.name(), lic.getLabel()));
     }
     return licenseMenu;

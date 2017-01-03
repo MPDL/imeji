@@ -25,10 +25,10 @@ public class SearchUtils {
    * @return
    */
   public static List<String> parseFileTypesAsExtensionList(String fileTypes) {
-    List<String> extensions = new ArrayList<>();
-    for (String typeName : fileTypes.split(" OR ")) {
-      Type type = Imeji.CONFIG.getFileTypes().getType(typeName);
-      for (String ext : type.getExtensionArray()) {
+    final List<String> extensions = new ArrayList<>();
+    for (final String typeName : fileTypes.split(" OR ")) {
+      final Type type = Imeji.CONFIG.getFileTypes().getType(typeName);
+      for (final String ext : type.getExtensionArray()) {
         extensions.add(ext);
       }
     }
@@ -37,12 +37,12 @@ public class SearchUtils {
 
   /**
    * True if the user has the sysadmin grant
-   * 
+   *
    * @param user
    * @return
    */
   public static boolean isSysAdmin(User user) {
-    for (Grant g : user.getGrants()) {
+    for (final Grant g : user.getGrants()) {
       if (g.getGrantFor().toString().equals(Imeji.PROPERTIES.getBaseURI())
           && g.asGrantType().equals(GrantType.ADMIN)) {
         return true;

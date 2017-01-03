@@ -69,7 +69,7 @@ public final class DefaultAuthentication implements Authentication {
     User user;
     try {
       user = new UserBusinessController().retrieve(getUserLogin(), Imeji.adminUser);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       throw new AuthenticationError(
           "User could not be authenticated with provided credentials! " + getUserLogin());
     }
@@ -81,7 +81,7 @@ public final class DefaultAuthentication implements Authentication {
       if (user.getEncryptedPassword().equals(StringHelper.convertToMD5(getUserPassword()))) {
         return user;
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error checking user password", e);
     }
 

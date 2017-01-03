@@ -34,9 +34,9 @@ import de.mpg.imeji.logic.vo.User;
  * @version $Revision$ $LastChangedDate$
  */
 public class ExportManager {
-  private OutputStream out;
-  private Export export;
-  private User user;
+  private final OutputStream out;
+  private final Export export;
+  private final User user;
   private List<String> selectedItemsToExport = new ArrayList<String>();
 
   /**
@@ -69,7 +69,7 @@ public class ExportManager {
     } else {
       try {
         out.write("Unknown format".getBytes());
-      } catch (IOException e) {
+      } catch (final IOException e) {
         throw new RuntimeException(e);
       }
     }
@@ -84,38 +84,38 @@ public class ExportManager {
    * @throws ImejiException
    */
   public SearchResult search() throws IOException, ImejiException {
-    String collectionId = export.getParam("col");
-    String albumId = export.getParam("album");
-    String spaceId = export.getParam("space");
-    String query = export.getParam("q");
+    final String collectionId = export.getParam("col");
+    final String albumId = export.getParam("album");
+    final String spaceId = export.getParam("space");
+    final String query = export.getParam("q");
     export.getParam("id");
-    String searchType = export.getParam("type");
+    final String searchType = export.getParam("type");
     int maximumNumberOfRecords = 100;
-    SearchQuery searchQuery = SearchQueryParser.parseStringQuery(query);
+    final SearchQuery searchQuery = SearchQueryParser.parseStringQuery(query);
     if (export.getParam("n") != null) {
       maximumNumberOfRecords = Integer.parseInt(export.getParam("n"));
     }
     SearchResult result = null;
     if (!selectedItemsToExport.isEmpty()) {
-      ItemService itemController = new ItemService();
-      List<Item> itemResult =
+      final ItemService itemController = new ItemService();
+      final List<Item> itemResult =
           (List<Item>) itemController.retrieveBatch(selectedItemsToExport, 500, 0, user);
-      List<String> sr = new ArrayList<String>();
-      for (Item it : itemResult) {
+      final List<String> sr = new ArrayList<String>();
+      for (final Item it : itemResult) {
         sr.add(it.getId().toString());
       }
       result = new SearchResult(sr, null);
     } else {
       if ("collection".equals(searchType) || "metadata".equals(searchType)) {
-        CollectionController collectionController = new CollectionController();
+        final CollectionController collectionController = new CollectionController();
         result = collectionController.search(searchQuery, null, maximumNumberOfRecords, 0, user,
             spaceId);
       } else if ("album".equals(searchType)) {
-        AlbumController albumController = new AlbumController();
+        final AlbumController albumController = new AlbumController();
         result =
             albumController.search(searchQuery, user, null, maximumNumberOfRecords, 0, spaceId);
       } else if ("image".equals(searchType)) {
-        ItemService itemController = new ItemService();
+        final ItemService itemController = new ItemService();
         if (collectionId != null) {
           result = itemController.search(ObjectHelper.getURI(CollectionImeji.class, collectionId),
               searchQuery, null, user, spaceId, -1, 0);

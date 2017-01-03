@@ -34,7 +34,7 @@ public class ProxyHelper {
   private static void setProxy(final HttpClient httpClient, final String url) {
     getProxyProperties();
     if (proxyHost != null) {
-      org.apache.commons.httpclient.HostConfiguration hc = httpClient.getHostConfiguration();
+      final org.apache.commons.httpclient.HostConfiguration hc = httpClient.getHostConfiguration();
       if (findUrlInNonProxyHosts(url)) {
         hc.setProxyHost(null);
       } else {
@@ -54,7 +54,8 @@ public class ProxyHelper {
     getProxyProperties();
     if (proxyHost != null) {
       if (!findUrlInNonProxyHosts(url)) {
-        SocketAddress proxyAddress = new InetSocketAddress(proxyHost, Integer.valueOf(proxyPort));
+        final SocketAddress proxyAddress =
+            new InetSocketAddress(proxyHost, Integer.valueOf(proxyPort));
         proxy = new Proxy(Proxy.Type.HTTP, proxyAddress);
       }
     }
@@ -103,7 +104,7 @@ public class ProxyHelper {
         nonProxyPattern = Pattern.compile(nph);
       }
       flag = true;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Cannot read proxy configuration:", e);
     }
   }
@@ -117,7 +118,7 @@ public class ProxyHelper {
   private static boolean findUrlInNonProxyHosts(String url) {
     getProxyProperties();
     if (nonProxyPattern != null) {
-      Matcher nonProxyMatcher = nonProxyPattern.matcher(url);
+      final Matcher nonProxyMatcher = nonProxyPattern.matcher(url);
       return nonProxyMatcher.find();
     } else {
       return false;

@@ -45,7 +45,7 @@ public class QuotaUtil {
         return Long.MAX_VALUE;
       }
       return (long) ((Double.parseDouble(gigaByte)) * BYTES_PER_GB);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error parsing quota: ", e);
       return 0;
     }
@@ -53,7 +53,7 @@ public class QuotaUtil {
 
   /**
    * Return a Quota in Bytes as a user friendly value
-   * 
+   *
    * @param quota
    * @param locale
    * @return
@@ -80,22 +80,22 @@ public class QuotaUtil {
     if (col == null) {
       return -1L;
     }
-    User targetCollectionUser = user.getId().equals(col.getCreatedBy()) ? user
+    final User targetCollectionUser = user.getId().equals(col.getCreatedBy()) ? user
         : new UserBusinessController().retrieve(col.getCreatedBy(), Imeji.adminUser);
 
-    Search search = SearchFactory.create();
-    List<String> results =
+    final Search search = SearchFactory.create();
+    final List<String> results =
         search.searchString(JenaCustomQueries.selectUserFileSize(col.getCreatedBy().toString()),
             null, null, 0, -1).getResults();
     long currentDiskUsage = 0L;
     try {
       currentDiskUsage = Long.parseLong(results.get(0).toString());
-    } catch (NumberFormatException e) {
+    } catch (final NumberFormatException e) {
       throw new UnprocessableError("Cannot parse currentDiskSpaceUsage " + results.get(0).toString()
           + "; requested by user: " + user.getEmail() + "; targetCollectionUser: "
           + targetCollectionUser.getEmail(), e);
     }
-    long needed = currentDiskUsage + file.length();
+    final long needed = currentDiskUsage + file.length();
     if (needed > targetCollectionUser.getQuota()) {
       throw new QuotaExceededException("Data quota ("
           + QuotaUtil.getQuotaHumanReadable(targetCollectionUser.getQuota(), Locale.ENGLISH)

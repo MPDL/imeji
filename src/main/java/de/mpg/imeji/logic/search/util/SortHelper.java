@@ -28,7 +28,7 @@ public class SortHelper {
    */
   public final static List<String> sort(List<String> l, SortOrder order) {
     if (SortHelper.isListToSort(l)) {
-      List<ComparableSearchResult> csrl = SortHelper.toComparableSearchResultList(l, order);
+      final List<ComparableSearchResult> csrl = SortHelper.toComparableSearchResultList(l, order);
       Collections.sort(csrl);
       return toStringList(csrl);
     }
@@ -43,7 +43,7 @@ public class SortHelper {
    * @return
    */
   public final static String parseSortValue(String s) {
-    String[] t = s.split(SearchTransaction.SORT_VALUE_REGEX);
+    final String[] t = s.split(SearchTransaction.SORT_VALUE_REGEX);
     if (t.length > 1) {
       return t[1];
     }
@@ -84,8 +84,8 @@ public class SortHelper {
     if (!isListToSort(l)) {
       return l;
     }
-    List<String> l1 = new ArrayList<String>(l.size());
-    for (String s : l) {
+    final List<String> l1 = new ArrayList<String>(l.size());
+    for (final String s : l) {
       l1.add(removeSortValue(s));
     }
     return l1;
@@ -99,8 +99,8 @@ public class SortHelper {
    * @return
    */
   public final static List<String> toStringList(List<ComparableSearchResult> unsortedResults) {
-    List<String> sortedResults = new ArrayList<String>(unsortedResults.size());
-    for (ComparableSearchResult csr : unsortedResults) {
+    final List<String> sortedResults = new ArrayList<String>(unsortedResults.size());
+    for (final ComparableSearchResult csr : unsortedResults) {
       sortedResults.add(csr.getValue());
     }
     return sortedResults;
@@ -116,8 +116,8 @@ public class SortHelper {
    */
   public final static List<ComparableSearchResult> toComparableSearchResultList(List<String> l,
       SortOrder order) {
-    List<ComparableSearchResult> csrl = new ArrayList<ComparableSearchResult>(l.size());
-    for (String s : l) {
+    final List<ComparableSearchResult> csrl = new ArrayList<ComparableSearchResult>(l.size());
+    for (final String s : l) {
       csrl.add(new ComparableSearchResult(s, order));
     }
     return csrl;

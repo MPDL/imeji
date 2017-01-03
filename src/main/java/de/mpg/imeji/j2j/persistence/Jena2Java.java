@@ -32,7 +32,7 @@ import de.mpg.imeji.util.LocalizedString;
  * @version $Revision$ $LastChangedDate$
  */
 public class Jena2Java {
-  private Model model;
+  private final Model model;
   private boolean lazy = false;
   private static Logger LOGGER = Logger.getLogger(Jena2Java.class);
 
@@ -64,11 +64,11 @@ public class Jena2Java {
    * @return
    */
   private Object loadResourceFields(Object javaObject) {
-    Resource subject = model.getResource(J2JHelper.getId(javaObject).toString());
+    final Resource subject = model.getResource(J2JHelper.getId(javaObject).toString());
     if (J2JHelper.hasDataType(javaObject) && isTypedResource(subject)) {
       javaObject = createJavaObjectFromDataType(subject);
     }
-    for (Field f : J2JHelper.getAllObjectFields(javaObject.getClass())) {
+    for (final Field f : J2JHelper.getAllObjectFields(javaObject.getClass())) {
       Object object = J2JHelper.getFieldAsJavaObject(f, javaObject);
       object = loadObject(subject, f, object, 0, null);
       setField(javaObject, f, object);
@@ -121,7 +121,7 @@ public class Jena2Java {
         f.set(subject, object);
       }
       return subject;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Error writing " + object + " to " + subject + " for field " + f,
           e);
     }
@@ -138,10 +138,10 @@ public class Jena2Java {
    * @return
    */
   private Object loadResourceObject(Resource subject, Object object, int position) {
-    String predicate = J2JHelper.getResourceNamespace(object);
-    Statement st = getStatement(subject, predicate, position);
+    final String predicate = J2JHelper.getResourceNamespace(object);
+    final Statement st = getStatement(subject, predicate, position);
     if (st != null) {
-      URI uri = URI.create(st.getObject().toString());
+      final URI uri = URI.create(st.getObject().toString());
       J2JHelper.setId(object, uri);
       object = loadResource(object);
     }
@@ -161,8 +161,8 @@ public class Jena2Java {
    */
   private Object loadObjectLiteral(Field f, Resource subject, Object object, int position,
       Statement statement) {
-    String predicate = J2JHelper.getLiteralNamespace(f);
-    Statement st = statement == null ? getStatement(subject, predicate, position) : statement;
+    final String predicate = J2JHelper.getLiteralNamespace(f);
+    final Statement st = statement == null ? getStatement(subject, predicate, position) : statement;
     if (st != null) {
       object = LiteralHelper.jenaTypeToJ2jType(st.getLiteral().getValue());
     }
@@ -181,8 +181,8 @@ public class Jena2Java {
    * @return
    */
   private Object readURIResource(Field f, Resource subject, Object object, int position) {
-    String predicate = J2JHelper.getURIResourceNamespace(object, f);
-    Statement st = getStatement(subject, predicate, position);
+    final String predicate = J2JHelper.getURIResourceNamespace(object, f);
+    final Statement st = getStatement(subject, predicate, position);
     if (st != null) {
       object = URI.create(st.getObject().toString());
     }
@@ -202,9 +202,9 @@ public class Jena2Java {
    */
   private Object readLocalizedString(Field f, Resource subject, Object object, int position,
       Statement statement) {
-    Statement st =
+    final Statement st =
         statement == null ? getStatement(subject, RDFS.label.getURI(), position) : statement;
-    LocalizedString ls =
+    final LocalizedString ls =
         new LocalizedString(st.getObject().asLiteral().getValue().toString(), st.getLanguage());
     return ls;
   }
@@ -219,7 +219,7 @@ public class Jena2Java {
    * @return
    */
   private Object readList(Field f, Resource subject) {
-    List<Object> object = new ArrayList<Object>();
+    final List<Object> object = new ArrayList<Object>();
     String predicate = J2JHelper.getListNamespace(f);
     if (predicate == null && !lazy) {
       predicate = J2JHelper.getLazyListNamespace(f);
@@ -228,9 +228,9 @@ public class Jena2Java {
       return object;
     }
     int count = 0;
-    for (StmtIterator iterator = subject.listProperties(model.createProperty(predicate)); iterator
-        .hasNext();) {
-      Statement st = iterator.nextStatement();
+    for (final StmtIterator iterator =
+        subject.listProperties(model.createProperty(predicate)); iterator.hasNext();) {
+      final Statement st = iterator.nextStatement();
       Object listObject = null;
       if (st.getObject().isResource() && isTypedResource(st.getResource())) {
         listObject = createJavaObjectFromDataType(st.getResource());
@@ -240,10 +240,10 @@ public class Jena2Java {
       if (listObject != null) {
         if (J2JHelper.isResource(listObject)) {
           J2JHelper.setId(listObject, URI.create(st.getResource().toString()));
-          Object o = loadResource(listObject);
+          final Object o = loadResource(listObject);
           object.add(o);
         } else {
-          Object o = loadObject(st.getSubject(), f, listObject, count, st);
+          final Object o = loadObject(st.getSubject(), f, listObject, count, st);
           object.add(o);
           count++;
         }
@@ -260,7 +260,7 @@ public class Jena2Java {
    * @return
    */
   private boolean isTypedResource(Resource r) {
-    Statement type = r.getProperty(RDF.type);
+    final Statement type = r.getProperty(RDF.type);
     return type != null && type.getProperty(RDF.type).getObject().isLiteral();
   }
 
@@ -272,13 +272,13 @@ public class Jena2Java {
    * @return
    */
   private Object createJavaObjectFromDataType(Resource r) {
-    Statement statementType = r.getProperty(RDF.type);
-    String clazz = statementType.getResource().getProperty(RDF.type).getString();
+    final Statement statementType = r.getProperty(RDF.type);
+    final String clazz = statementType.getResource().getProperty(RDF.type).getString();
     try {
-      Object o = this.getClass().getClassLoader().loadClass(clazz).newInstance();
+      final Object o = this.getClass().getClassLoader().loadClass(clazz).newInstance();
       J2JHelper.setId(o, URI.create(r.getURI()));
       return o;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.info("Error initializing resource with a datatype: ", e);
     }
     return null;
@@ -295,9 +295,9 @@ public class Jena2Java {
    */
   private Statement getStatement(Resource subject, String predicateUri, int position) {
     int count = 0;
-    for (StmtIterator iterator =
+    for (final StmtIterator iterator =
         subject.listProperties(model.createProperty(predicateUri)); iterator.hasNext();) {
-      Statement st = iterator.next();
+      final Statement st = iterator.next();
       if (position == count) {
         return st;
       }
@@ -313,18 +313,18 @@ public class Jena2Java {
    * @return
    */
   private Object createJavaObjectForListElements(Field f) {
-    Type genericFieldType = f.getGenericType();
+    final Type genericFieldType = f.getGenericType();
     if (genericFieldType instanceof ParameterizedType) {
-      ParameterizedType aType = (ParameterizedType) genericFieldType;
-      Type[] fieldArgTypes = aType.getActualTypeArguments();
-      for (Type fieldArgType : fieldArgTypes) {
-        Class<?> fieldArgClass = (Class<?>) fieldArgType;
+      final ParameterizedType aType = (ParameterizedType) genericFieldType;
+      final Type[] fieldArgTypes = aType.getActualTypeArguments();
+      for (final Type fieldArgType : fieldArgTypes) {
+        final Class<?> fieldArgClass = (Class<?>) fieldArgType;
         try {
           if (fieldArgClass == URI.class) {
             return URI.create("");
           }
           return fieldArgClass.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
           throw new RuntimeException("Error initializing " + fieldArgClass);
         }
       }

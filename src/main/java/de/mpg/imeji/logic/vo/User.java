@@ -94,8 +94,8 @@ public class User implements Serializable {
   }
 
   public Collection<Grant> getGrantsWithoutUser() {
-    Collection<Grant> grantsWithoutUser = new ArrayList<Grant>();
-    for (Grant g : grants) {
+    final Collection<Grant> grantsWithoutUser = new ArrayList<Grant>();
+    for (final Grant g : grants) {
       if (!g.getGrantFor().getPath().contains("user")) {
         grantsWithoutUser.add(new Grant(g.asGrantType(), g.getGrantFor()));
       }
@@ -196,7 +196,7 @@ public class User implements Serializable {
         new String(ImejiNamespaces.USER_STATUS + "#INACTIVE")), INVITED(
             ImejiNamespaces.USER_STATUS + "#INVITED");
 
-    private String uri;
+    private final String uri;
 
     private UserStatus(String uri) {
       this.uri = uri;

@@ -95,7 +95,7 @@ public class SearchPair extends SearchElement {
 
   @Override
   public boolean isSame(SearchElement element) {
-    SearchPair pair = toPair(element);
+    final SearchPair pair = toPair(element);
     if (pair != null) {
       return pair.field.equals(field) && pair.operator.equals(operator) && pair.value.equals(value);
     }
@@ -104,7 +104,7 @@ public class SearchPair extends SearchElement {
 
   /**
    * If the element can be reduced to one Pair, return a pair. Otherwise return null
-   * 
+   *
    * @param element
    * @return
    */

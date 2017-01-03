@@ -26,7 +26,7 @@ public class ServletUtil {
    */
   public static boolean isGetRequest(ServletRequest serv) {
     if (DispatcherType.FORWARD.compareTo(serv.getDispatcherType()) == 0) {
-      HttpServletRequest request = (HttpServletRequest) serv;
+      final HttpServletRequest request = (HttpServletRequest) serv;
       if ("GET".equals(request.getMethod())) {
         return true;
       }

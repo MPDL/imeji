@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
  *
  */
 public class UpdateUrisDomainJob implements Callable<Integer> {
-  private String domain;
+  private final String domain;
 
   public UpdateUrisDomainJob(String domain) {
     this.domain = domain;

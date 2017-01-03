@@ -63,7 +63,7 @@ public class AdminBean extends SuperBean {
 
   public AdminBean() {
     try {
-      StorageUsageAnalyseJob storageUsageAnalyse = new StorageUsageAnalyseJob();
+      final StorageUsageAnalyseJob storageUsageAnalyse = new StorageUsageAnalyseJob();
       this.numberOfFilesInStorage = Integer.toString(storageUsageAnalyse.getNumberOfFiles());
       this.sizeOfFilesinStorage =
           FileUtils.byteCountToDisplaySize(storageUsageAnalyse.getStorageUsed());
@@ -102,7 +102,7 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public String cleanStorage() {
-    StorageController controller = new StorageController();
+    final StorageController controller = new StorageController();
     controller.getAdministrator().clean();
     return "pretty:";
   }
@@ -120,7 +120,7 @@ public class AdminBean extends SuperBean {
 
   /**
    * Make the same as clean, but doesn't remove the resources
-   * 
+   *
    * @throws ImejiException
    *
    * @
@@ -132,7 +132,7 @@ public class AdminBean extends SuperBean {
 
   /**
    * Here are called all methods related to data cleaning
-   * 
+   *
    * @throws ImejiException
    *
    * @
@@ -172,7 +172,7 @@ public class AdminBean extends SuperBean {
 
   /**
    * Invoke all clean methods available
-   * 
+   *
    * @throws ImejiException
    *
    * @
@@ -191,15 +191,15 @@ public class AdminBean extends SuperBean {
 
   /**
    * Clean {@link Statement} which are not bound a {@link MetadataProfile}
-   * 
+   *
    * @throws ImejiException
    *
    * @
    */
   private void cleanStatement() throws ImejiException {
     LOGGER.info("Searching for statement without profile...");
-    Search search = SearchFactory.create();
-    List<String> uris = search
+    final Search search = SearchFactory.create();
+    final List<String> uris = search
         .searchString(JenaCustomQueries.selectStatementUnbounded(), null, null, 0, -1).getResults();
     LOGGER.info("...found " + uris.size());
     cleanDatabaseReport += "Statement without any profile " + uris.size() + " found  <br/> ";
@@ -218,7 +218,7 @@ public class AdminBean extends SuperBean {
       ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantEmtpy());
     }
     LOGGER.info("Searching for problematic grants...");
-    Search search = SearchFactory.create();
+    final Search search = SearchFactory.create();
     List<String> uris = search
         .searchString(JenaCustomQueries.selectGrantWithoutUser(), null, null, 0, -1).getResults();
     cleanDatabaseReport += "Grants without users: " + uris.size() + " found  <br/>";
@@ -256,13 +256,13 @@ public class AdminBean extends SuperBean {
    * @return
    */
   private List<Object> loadResourcesAsObjects(List<String> uris, String modelName, Object obj) {
-    ReaderFacade reader = new ReaderFacade(modelName);
-    List<Object> l = new ArrayList<Object>();
-    for (String uri : uris) {
+    final ReaderFacade reader = new ReaderFacade(modelName);
+    final List<Object> l = new ArrayList<Object>();
+    for (final String uri : uris) {
       try {
         LOGGER.info("Resource to be removed: " + uri);
         l.add(reader.read(uri, getSessionUser(), obj.getClass().newInstance()));
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("ERROR LOADING RESOURCE " + uri + " !!!!!", e);
       }
     }
@@ -278,7 +278,7 @@ public class AdminBean extends SuperBean {
    */
   private void removeObjects(List<Object> l, String modelName) throws ImejiException {
     if (clean) {
-      WriterFacade writer = new WriterFacade(modelName);
+      final WriterFacade writer = new WriterFacade(modelName);
       writer.delete(l, getSessionUser());
     }
   }
@@ -289,7 +289,8 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public int getAllAlbumsSize() {
-    Search search = SearchFactory.create(SearchObjectTypes.ALBUM, SEARCH_IMPLEMENTATIONS.JENA);
+    final Search search =
+        SearchFactory.create(SearchObjectTypes.ALBUM, SEARCH_IMPLEMENTATIONS.JENA);
     return search.searchString(JenaCustomQueries.selectAlbumAll(), null, null, 0, -1)
         .getNumberOfRecords();
   }
@@ -300,7 +301,8 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public int getAllCollectionsSize() {
-    Search search = SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.JENA);
+    final Search search =
+        SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.JENA);
     return search.searchString(JenaCustomQueries.selectCollectionAll(), null, null, 0, -1)
         .getNumberOfRecords();
   }
@@ -311,7 +313,7 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public int getAllImagesSize() {
-    Search search = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
+    final Search search = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
     return search.searchString(JenaCustomQueries.selectItemAll(), null, null, 0, -1)
         .getNumberOfRecords();
   }
@@ -322,7 +324,7 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public boolean isAdministrate() {
-    StorageController sc = new StorageController();
+    final StorageController sc = new StorageController();
     return sc.getAdministrator() != null;
   }
 
@@ -332,7 +334,7 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public List<User> getAllUsers() {
-    UserBusinessController uc = new UserBusinessController();
+    final UserBusinessController uc = new UserBusinessController();
     return (List<User>) uc.searchUserByName("");
   }
 
@@ -344,7 +346,7 @@ public class AdminBean extends SuperBean {
   public int getAllUsersSize() {
     try {
       return this.getAllUsers().size();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return 0;
     }
   }

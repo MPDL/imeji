@@ -34,7 +34,7 @@ import de.mpg.imeji.rest.transfer.TransferObjectFactory;
  */
 public class CollectionService implements API<CollectionTO> {
   private CollectionTO getCollectionTO(String id, User u) throws ImejiException {
-    CollectionTO to = new CollectionTO();
+    final CollectionTO to = new CollectionTO();
     TransferObjectFactory.transferCollection(getCollectionVO(id, u), to);
     return to;
   }
@@ -62,13 +62,13 @@ public class CollectionService implements API<CollectionTO> {
    */
   public SearchResultTO<DefaultItemTO> readItems(String id, User u, String q, int offset, int size)
       throws ImejiException {
-    List<DefaultItemTO> tos = new ArrayList<>();
-    ItemService controller = new ItemService();
-    SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC).search(
+    final List<DefaultItemTO> tos = new ArrayList<>();
+    final ItemService controller = new ItemService();
+    final SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC).search(
         SearchQueryParser.parseStringQuery(q), null, u,
         ObjectHelper.getURI(CollectionImeji.class, id).toString(), null, offset, size);
-    for (Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
-      DefaultItemTO to = new DefaultItemTO();
+    for (final Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
+      final DefaultItemTO to = new DefaultItemTO();
       TransferObjectFactory.transferDefaultItem(vo, to);
       tos.add(to);
     }
@@ -81,9 +81,9 @@ public class CollectionService implements API<CollectionTO> {
   @Override
   public CollectionTO create(CollectionTO to, User u) throws ImejiException {
     // toDo: Move to Controller
-    CollectionController cc = new CollectionController();
+    final CollectionController cc = new CollectionController();
 
-    CollectionImeji vo = new CollectionImeji();
+    final CollectionImeji vo = new CollectionImeji();
     transferCollection(to, vo, CREATE, u);
 
     URI collectionURI = null;
@@ -93,18 +93,19 @@ public class CollectionService implements API<CollectionTO> {
 
   @Override
   public CollectionTO update(CollectionTO to, User u) throws ImejiException {
-    CollectionController cc = new CollectionController();
-    CollectionImeji vo = getCollectionVO(to.getId(), u);
-    CollectionImeji updatedCollection = cc.update(vo, u);
-    CollectionTO newTO = new CollectionTO();
+    final CollectionController cc = new CollectionController();
+    final CollectionImeji vo = getCollectionVO(to.getId(), u);
+    final CollectionImeji updatedCollection = cc.update(vo, u);
+    final CollectionTO newTO = new CollectionTO();
     TransferObjectFactory.transferCollection(updatedCollection, newTO);
     return newTO;
   }
 
   @Override
   public CollectionTO release(String id, User u) throws ImejiException {
-    CollectionController controller = new CollectionController();
-    CollectionImeji vo = controller.retrieve(ObjectHelper.getURI(CollectionImeji.class, id), u);
+    final CollectionController controller = new CollectionController();
+    final CollectionImeji vo =
+        controller.retrieve(ObjectHelper.getURI(CollectionImeji.class, id), u);
     controller.release(vo, u, null);
     // Now Read the collection and return it back
     return getCollectionTO(id, u);
@@ -113,16 +114,18 @@ public class CollectionService implements API<CollectionTO> {
 
   @Override
   public boolean delete(String id, User u) throws ImejiException {
-    CollectionController controller = new CollectionController();
-    CollectionImeji vo = controller.retrieve(ObjectHelper.getURI(CollectionImeji.class, id), u);
+    final CollectionController controller = new CollectionController();
+    final CollectionImeji vo =
+        controller.retrieve(ObjectHelper.getURI(CollectionImeji.class, id), u);
     controller.delete(vo, u);
     return true;
   }
 
   @Override
   public CollectionTO withdraw(String id, User u, String discardComment) throws ImejiException {
-    CollectionController controller = new CollectionController();
-    CollectionImeji vo = controller.retrieve(ObjectHelper.getURI(CollectionImeji.class, id), u);
+    final CollectionController controller = new CollectionController();
+    final CollectionImeji vo =
+        controller.retrieve(ObjectHelper.getURI(CollectionImeji.class, id), u);
     vo.setDiscardComment(discardComment);
     controller.withdraw(vo, u);
     // Now Read the withdrawn collection and return it back
@@ -138,13 +141,13 @@ public class CollectionService implements API<CollectionTO> {
   @Override
   public SearchResultTO<CollectionTO> search(String q, int offset, int size, User u)
       throws ImejiException {
-    CollectionController cc = new CollectionController();
-    List<CollectionTO> tos = new ArrayList<>();
-    SearchResult result =
+    final CollectionController cc = new CollectionController();
+    final List<CollectionTO> tos = new ArrayList<>();
+    final SearchResult result =
         SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.ELASTIC)
             .search(SearchQueryParser.parseStringQuery(q), null, u, null, null, offset, size);
-    for (CollectionImeji vo : cc.retrieveBatchLazy(result.getResults(), -1, 0, u)) {
-      CollectionTO to = new CollectionTO();
+    for (final CollectionImeji vo : cc.retrieveBatchLazy(result.getResults(), -1, 0, u)) {
+      final CollectionTO to = new CollectionTO();
       TransferObjectFactory.transferCollection(vo, to);
       tos.add(to);
     }

@@ -22,7 +22,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Servlet to upload logo to the ContainerEditorSession
- * 
+ *
  * @author bastiens
  *
  */
@@ -43,7 +43,7 @@ public class UploadLogoServlet extends HttpServlet {
       resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Please login");
     } else {
       try {
-        File f = uploadLogo(req, resp);
+        final File f = uploadLogo(req, resp);
         getContainerEditorSession(req)
             .setUploadedLogoPath(f != null && f.exists() ? f.getAbsolutePath() : null);
       } catch (FileUploadException | TypeNotAllowedException e) {
@@ -56,12 +56,12 @@ public class UploadLogoServlet extends HttpServlet {
   private File uploadLogo(HttpServletRequest request, HttpServletResponse response)
       throws FileUploadException, TypeNotAllowedException, IOException {
     File tmp = null;
-    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    final boolean isMultipart = ServletFileUpload.isMultipartContent(request);
     if (isMultipart) {
-      ServletFileUpload upload = new ServletFileUpload();
-      FileItemIterator iter = upload.getItemIterator(request);
+      final ServletFileUpload upload = new ServletFileUpload();
+      final FileItemIterator iter = upload.getItemIterator(request);
       while (iter.hasNext()) {
-        FileItemStream fis = iter.next();
+        final FileItemStream fis = iter.next();
         tmp = StorageUtils.toFile(fis.openStream());
         if (StorageUtils.getMimeType(tmp).contains("image")) {
           return tmp;

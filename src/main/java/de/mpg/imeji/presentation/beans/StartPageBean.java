@@ -54,19 +54,19 @@ public class StartPageBean extends SuperBean implements Serializable {
   private static final int CAROUSSEL_SIZE = 6;
   private Space currentSpace;
   // in hours
-  private int searchforItemCreatedForLessThan = 0;
+  private final int searchforItemCreatedForLessThan = 0;
   private boolean carouselEnabled = Imeji.CONFIG.getStartPageCarouselEnabled();
 
   @PostConstruct
   public void init() {
     if (Imeji.CONFIG.getStartPageCarouselEnabled()) {
       try {
-        SearchQuery query = readSearchQueryInProperty();
-        SortCriterion order = readSortCriterionInProperty();
-        SearchResult result = searchItems(query, order);
+        final SearchQuery query = readSearchQueryInProperty();
+        final SortCriterion order = readSortCriterionInProperty();
+        final SearchResult result = searchItems(query, order);
         loadItemInCaroussel(result, order == null);
         this.currentSpace = readSpace();
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error initializing start page", e);
       }
     }
@@ -76,7 +76,7 @@ public class StartPageBean extends SuperBean implements Serializable {
   /**
    * Method called before the message rendering. Postconstruct method happens too late to display
    * the messages
-   * 
+   *
    * @throws IOException
    */
   public void onload() throws IOException {
@@ -100,7 +100,7 @@ public class StartPageBean extends SuperBean implements Serializable {
    * @throws IOException
    */
   private SearchQuery readSearchQueryInProperty() throws ImejiException, URISyntaxException {
-    String prop = Imeji.CONFIG.getStartPageCarouselQuery();
+    final String prop = Imeji.CONFIG.getStartPageCarouselQuery();
     if (prop != null) {
       return SearchQueryParser.parseStringQuery(prop);
     }
@@ -116,12 +116,12 @@ public class StartPageBean extends SuperBean implements Serializable {
    */
   private SortCriterion readSortCriterionInProperty() throws IOException, URISyntaxException {
     try {
-      String[] prop = Imeji.CONFIG.getStartPageCarouselQueryOrder().split("-");
+      final String[] prop = Imeji.CONFIG.getStartPageCarouselQueryOrder().split("-");
       if ("".equals(prop[0]) && "".equals(prop[1])) {
         return new SortCriterion(SearchIndexes.getIndex(prop[0]),
             SortOrder.valueOf(prop[1].toUpperCase()));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       // no sort order defined
     }
     return null;
@@ -135,13 +135,13 @@ public class StartPageBean extends SuperBean implements Serializable {
    * @return
    */
   private SearchResult searchItems(SearchQuery sq, SortCriterion sc) {
-    ItemService ic = new ItemService();
+    final ItemService ic = new ItemService();
     if (sq.isEmpty() && searchforItemCreatedForLessThan > 0) {
       // Search for item which have been for less than n hours
       try {
         sq.addPair(new SearchPair(SearchFields.created, SearchOperators.GREATER,
             getTimeforNDaybeforeNow(searchforItemCreatedForLessThan), false));
-      } catch (UnprocessableError e) {
+      } catch (final UnprocessableError e) {
         LOGGER.error("Error building query to search items", e);
       }
       return new SearchResult(
@@ -160,11 +160,11 @@ public class StartPageBean extends SuperBean implements Serializable {
     if (StringHelper.isNullOrEmptyTrim(getSelectedSpaceString())) {
       return new Space();
     }
-    SpaceController sc = new SpaceController();
+    final SpaceController sc = new SpaceController();
     try {
       return sc.retrieve(URI.create(getSelectedSpaceString()), getSessionUser());
-    } catch (ImejiException e) {
-      Space scc = new Space();
+    } catch (final ImejiException e) {
+      final Space scc = new Space();
       scc.setTitle("Space Not Found");
       scc.setDescription("Space Not Found");
       return scc;
@@ -178,7 +178,7 @@ public class StartPageBean extends SuperBean implements Serializable {
    * @return
    */
   private String getTimeforNDaybeforeNow(int n) {
-    Calendar cal = Calendar.getInstance();
+    final Calendar cal = Calendar.getInstance();
     cal.add(Calendar.HOUR, -n);
     return DateFormatter.formatToSparqlDateTime(cal);
   }
@@ -195,7 +195,7 @@ public class StartPageBean extends SuperBean implements Serializable {
     if (sr == null) {
       return;
     }
-    ItemService ic = new ItemService();
+    final ItemService ic = new ItemService();
     List<String> uris = new ArrayList<String>();
     if (random) {
       uris = getRandomResults(sr);
@@ -208,7 +208,7 @@ public class StartPageBean extends SuperBean implements Serializable {
         uris = sr.getResults().subList(0, sublistSize);
       }
     }
-    List<Item> items = (List<Item>) ic.retrieveBatchLazy(uris, -1, 0, getSessionUser());
+    final List<Item> items = (List<Item>) ic.retrieveBatchLazy(uris, -1, 0, getSessionUser());
     carousselImages = ListUtils.itemListToThumbList(items, getSessionUser());
   }
 
@@ -219,11 +219,11 @@ public class StartPageBean extends SuperBean implements Serializable {
    * @return
    */
   private List<String> getRandomResults(SearchResult sr) {
-    List<String> l = new ArrayList<String>();
-    Random r = new Random();
+    final List<String> l = new ArrayList<String>();
+    final Random r = new Random();
     while (l.size() < CAROUSSEL_SIZE && l.size() < sr.getNumberOfRecords()) {
       if (sr.getNumberOfRecords() > 0) {
-        String uri = sr.getResults().get(r.nextInt(sr.getNumberOfRecords()));
+        final String uri = sr.getResults().get(r.nextInt(sr.getNumberOfRecords()));
         if (!l.contains(uri)) {
           l.add(uri);
         }

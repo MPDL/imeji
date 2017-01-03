@@ -57,7 +57,7 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
 
   @Override
   public List<AlbumBean> retrieveList(int offset, int limit) throws Exception {
-    AlbumController controller = new AlbumController();
+    final AlbumController controller = new AlbumController();
     Collection<Album> albums = new ArrayList<Album>();
     search(offset, limit);
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
@@ -85,7 +85,7 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
-    AlbumController controller = new AlbumController();
+    final AlbumController controller = new AlbumController();
     return controller.search(searchQuery, getSessionUser(), sortCriterion, limit, offset,
         getSelectedSpaceString());
   }

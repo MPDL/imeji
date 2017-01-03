@@ -43,10 +43,10 @@ public class DOIUtil {
   }
 
   public static DOICollection transformToDO(CollectionImeji col) {
-    DOICollection dcol = new DOICollection();
-    DOITitle title = new DOITitle(col.getMetadata().getTitle());
-    List<DOICreators> creators = new ArrayList<DOICreators>();
-    for (Person author : col.getMetadata().getPersons()) {
+    final DOICollection dcol = new DOICollection();
+    final DOITitle title = new DOITitle(col.getMetadata().getTitle());
+    final List<DOICreators> creators = new ArrayList<DOICreators>();
+    for (final Person author : col.getMetadata().getPersons()) {
       creators.add(new DOICreators(author.getCompleteName()));
     }
 
@@ -60,21 +60,21 @@ public class DOIUtil {
   }
 
   public static String convertToXML(DOICollection dcol) throws ImejiException {
-    StringWriter sw = new StringWriter();
+    final StringWriter sw = new StringWriter();
 
     try {
-      JAXBContext context = JAXBContext.newInstance(DOICollection.class);
+      final JAXBContext context = JAXBContext.newInstance(DOICollection.class);
       Marshaller m;
       m = context.createMarshaller();
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
       m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
           "http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd");
       m.marshal(dcol, sw);
-    } catch (JAXBException e) {
+    } catch (final JAXBException e) {
       throw new ImejiException("Error occured, when contacting DOxI.");
     }
 
-    String xml = sw.toString().trim();
+    final String xml = sw.toString().trim();
     return xml;
 
   }
@@ -86,12 +86,12 @@ public class DOIUtil {
     doiServiceUrl = doiServiceUrl.trim();
     validateURL(doiServiceUrl);
 
-    Response response = client.target(doiServiceUrl).queryParam("url", url)
+    final Response response = client.target(doiServiceUrl).queryParam("url", url)
         .register(HttpAuthenticationFeature.basic(doiUser, doiPassword))
         .register(MultiPartFeature.class).register(JacksonFeature.class)
         .request(MediaType.TEXT_PLAIN).put(Entity.entity(xml, "text/xml"));
 
-    int statusCode = response.getStatus();
+    final int statusCode = response.getStatus();
 
     // throw Exception if the DOI service request fails
     if (statusCode != HttpStatus.SC_CREATED) {
@@ -105,7 +105,7 @@ public class DOIUtil {
   private static void validateURL(String doiServiceUrl) throws ImejiException {
     try {
       new URL(doiServiceUrl);
-    } catch (MalformedURLException e) {
+    } catch (final MalformedURLException e) {
       throw new ImejiException("DOI Service: Invalid Service URL: " + e.getMessage());
     }
   }

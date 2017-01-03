@@ -120,9 +120,9 @@ public class ImejiConfiguration {
   private synchronized void readConfig() throws IOException, ImejiException {
     config = new Properties();
     try {
-      FileInputStream in = new FileInputStream(configFile);
+      final FileInputStream in = new FileInputStream(configFile);
       config.loadFromXML(in);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new ImejiException(
           "conf.xml could not be read. Please check in tdb directory if exsting and not empty. If Emtpy, remove it.");
     }
@@ -152,7 +152,7 @@ public class ImejiConfiguration {
    * @param defaultValue
    */
   private void initPropertyWithDefaultValue(CONFIGURATION c, String defaultValue) {
-    String currentValue = (String) config.get(c.name());
+    final String currentValue = (String) config.get(c.name());
     if (currentValue != null && !"".equals(currentValue)) {
       setProperty(c.name(), currentValue);
     } else {
@@ -174,7 +174,7 @@ public class ImejiConfiguration {
       }
       config.storeToXML(new FileOutputStream(configFile), "imeji configuration File", "UTF-8");
       LOGGER.info("saving imeji config");
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error saving configuration:", e);
     }
   }
@@ -196,7 +196,7 @@ public class ImejiConfiguration {
    * @return
    */
   private String getPropertyAsNonNullString(String name) {
-    String v = (String) config.get(name);
+    final String v = (String) config.get(name);
     return v == null ? "" : v;
   }
 
@@ -262,7 +262,7 @@ public class ImejiConfiguration {
   public void setUploadMaxFileSize(String size) {
     try {
       Integer.parseInt(size);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       setProperty(CONFIGURATION.MAX_FILE_SIZE.name(), "");
     }
     setProperty(CONFIGURATION.MAX_FILE_SIZE.name(), size);
@@ -274,7 +274,7 @@ public class ImejiConfiguration {
    * @return
    */
   public String getUploadMaxFileSize() {
-    String size = (String) config.get(CONFIGURATION.MAX_FILE_SIZE.name());
+    final String size = (String) config.get(CONFIGURATION.MAX_FILE_SIZE.name());
     if (size == null || size.equals("")) {
       return "0";
     }
@@ -306,7 +306,7 @@ public class ImejiConfiguration {
    * @return
    */
   public String getStartPageHTML(String lang) {
-    String html = (String) config.get(CONFIGURATION.STARTPAGE_HTML.name() + "_" + lang);
+    final String html = (String) config.get(CONFIGURATION.STARTPAGE_HTML.name() + "_" + lang);
     return html != null ? html : "";
   }
 
@@ -316,7 +316,7 @@ public class ImejiConfiguration {
    * @return
    */
   public String getStartPageFooterLogos() {
-    String html = (String) config.get(CONFIGURATION.STARTPAGE_FOOTER_LOGOS.name());
+    final String html = (String) config.get(CONFIGURATION.STARTPAGE_FOOTER_LOGOS.name());
     return html != null ? html : "";
   }
 
@@ -371,9 +371,9 @@ public class ImejiConfiguration {
    * @return
    */
   public List<HtmlSnippet> getSnippets(List<SelectItem> languages) {
-    List<HtmlSnippet> snippets = new ArrayList<>();
-    for (SelectItem lang : languages) {
-      String html =
+    final List<HtmlSnippet> snippets = new ArrayList<>();
+    for (final SelectItem lang : languages) {
+      final String html =
           (String) config.get(CONFIGURATION.STARTPAGE_HTML.name() + "_" + lang.getValue());
       snippets.add(new HtmlSnippet((String) lang.getValue(), html != null ? html : ""));
     }
@@ -417,7 +417,7 @@ public class ImejiConfiguration {
    * @return
    */
   public boolean isDataViewerSupportedFormats(String format) {
-    String l = getDataViewerFormatListString();
+    final String l = getDataViewerFormatListString();
     if (l == null || "".equals(format)) {
       return false;
     }
@@ -447,17 +447,17 @@ public class ImejiConfiguration {
       connURL = dataViewerUrl + "/api/explain/formats";
     }
     // String connURL = dataViewerUrl + "/api/explain/formats";
-    DefaultHttpClient httpclient = new DefaultHttpClient();
-    HttpGet httpget = new HttpGet(connURL);
+    final DefaultHttpClient httpclient = new DefaultHttpClient();
+    final HttpGet httpget = new HttpGet(connURL);
     HttpResponse resp;
     String str = "";
     try {
       resp = httpclient.execute(httpget);
       if (200 == resp.getStatusLine().getStatusCode()) {
-        HttpEntity entity = resp.getEntity();
+        final HttpEntity entity = resp.getEntity();
         if (entity != null) {
-          String retSrc = EntityUtils.toString(entity);
-          JSONArray array = new JSONArray(retSrc);
+          final String retSrc = EntityUtils.toString(entity);
+          final JSONArray array = new JSONArray(retSrc);
           int i = 0;
           while (i < array.length()) {
             str += array.get(i) + ", ";
@@ -465,7 +465,7 @@ public class ImejiConfiguration {
           }
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error(e.getMessage(), e);
     }
     setDataViewerFormatListString(str);
@@ -695,7 +695,7 @@ public class ImejiConfiguration {
   public void setRegistrationTokenExpiry(String s) {
     try {
       Integer.valueOf(s);
-    } catch (NumberFormatException e) {
+    } catch (final NumberFormatException e) {
       LOGGER.info(
           "Could not understand the Registration Token Expiry Setting, setting it to default ("
               + DEFAULT_REGISTRATION_TOKEN_EXPIRATION_IN_DAYS + " day).");
@@ -724,7 +724,7 @@ public class ImejiConfiguration {
    * @return
    */
   public String getFaviconUrl(String applicationUrl) {
-    String myFavicon = (String) config.get(CONFIGURATION.FAVICON_URL.name());
+    final String myFavicon = (String) config.get(CONFIGURATION.FAVICON_URL.name());
     if (myFavicon == null || "".equals(myFavicon)) {
       return applicationUrl + "resources/icon/imeji.ico";
     } else {
@@ -746,7 +746,7 @@ public class ImejiConfiguration {
   }
 
   private String registrationTokenCompute() {
-    String myToken = (String) config.get(CONFIGURATION.REGISTRATION_TOKEN_EXPIRY.name());
+    final String myToken = (String) config.get(CONFIGURATION.REGISTRATION_TOKEN_EXPIRY.name());
     return StringHelper.isNullOrEmptyTrim(myToken) ? DEFAULT_REGISTRATION_TOKEN_EXPIRATION_IN_DAYS
         : myToken;
   }
@@ -776,7 +776,7 @@ public class ImejiConfiguration {
   }
 
   public void setQuotaLimits(String limits) {
-    String[] limitArray = limits.split(",");
+    final String[] limitArray = limits.split(",");
     for (int i = 0; i < limitArray.length; i++) {
       Double.parseDouble(limitArray[i]);
     }
@@ -796,7 +796,7 @@ public class ImejiConfiguration {
   }
 
   public List<String> getQuotaLimitsAsList() {
-    String limitString =
+    final String limitString =
         (String) config.get(CONFIGURATION.QUOTA_LIMITS.name()) + "," + QUOTA_UNLIMITED;
     return Arrays.asList(limitString.split(","));
   }

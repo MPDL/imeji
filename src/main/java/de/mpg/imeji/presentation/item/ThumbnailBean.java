@@ -69,7 +69,7 @@ public class ThumbnailBean implements Serializable {
     this.shortFileType = StorageUtils.getExtension(fileType);
     this.metadata = item.getMetadata();
     if (initMetadata) {
-      SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+      final SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
       this.caption = findCaption();
       this.selected = sessionBean.getSelected().contains(uri.toString());
       if (sessionBean.getActiveAlbum() != null) {
@@ -85,7 +85,7 @@ public class ThumbnailBean implements Serializable {
    * @return
    */
   private String initThumbnailLink(Item item) {
-    Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+    final Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     return Status.WITHDRAWN != item.getStatus()
         ? navigation.getFileUrl() + item.getThumbnailImageUrl().toString()
         : navigation.getApplicationUrl() + "resources/icon/discarded.png";
@@ -109,7 +109,7 @@ public class ThumbnailBean implements Serializable {
    * @param event
    */
   public void selectedChanged(ValueChangeEvent event) {
-    SessionObjectsController soc = new SessionObjectsController();
+    final SessionObjectsController soc = new SessionObjectsController();
     if (event.getNewValue().toString().equals("true")) {
       setSelected(true);
       soc.selectItem(getUri().toString());

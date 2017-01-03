@@ -53,7 +53,7 @@ public class UsersBean extends SuperBean {
    */
   @PostConstruct
   public void init() {
-    String q = UrlHelper.getParameterValue("q");
+    final String q = UrlHelper.getParameterValue("q");
     query = q == null ? "" : q;
     doSearch();
     retrieveGroup();
@@ -66,7 +66,7 @@ public class UsersBean extends SuperBean {
     try {
       redirect(getNavigation().getApplicationUrl() + "users?q=" + query
           + (group != null ? "&group=" + group.getId() : ""));
-    } catch (IOException e) {
+    } catch (final IOException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error(e);
     }
@@ -87,10 +87,10 @@ public class UsersBean extends SuperBean {
   public void retrieveGroup() {
     if (UrlHelper.getParameterValue("group") != null
         && !"".equals(UrlHelper.getParameterValue("group"))) {
-      GroupBusinessController c = new GroupBusinessController();
+      final GroupBusinessController c = new GroupBusinessController();
       try {
         setGroup(c.retrieve(UrlHelper.getParameterValue("group"), getSessionUser()));
-      } catch (Exception e) {
+      } catch (final Exception e) {
         BeanHelper.error("error loading user group " + UrlHelper.getParameterValue("group"));
         LOGGER.error(e);
       }
@@ -108,18 +108,18 @@ public class UsersBean extends SuperBean {
    * @throws Exception
    */
   public String sendPassword() {
-    String email = UrlHelper.getParameterValue("email");
-    PasswordGenerator generator = new PasswordGenerator();
-    UserBusinessController controller = new UserBusinessController();
+    final String email = UrlHelper.getParameterValue("email");
+    final PasswordGenerator generator = new PasswordGenerator();
+    final UserBusinessController controller = new UserBusinessController();
     try {
-      User user = controller.retrieve(email, getSessionUser());
-      String newPassword = generator.generatePassword();
+      final User user = controller.retrieve(email, getSessionUser());
+      final String newPassword = generator.generatePassword();
       user.setEncryptedPassword(StringHelper.convertToMD5(newPassword));
       controller.update(user, getSessionUser());
       sendEmail(email, newPassword, user.getPerson().getCompleteName());
       BeanHelper
           .info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Could not update or send new password!");
       LOGGER.error("Could not update or send new password", e);
     }
@@ -136,12 +136,12 @@ public class UsersBean extends SuperBean {
    * @throws IOException
    */
   public void sendEmail(String email, String password, String username) {
-    EmailService emailClient = new EmailService();
+    final EmailService emailClient = new EmailService();
     try {
       emailClient.sendMail(email, null,
           EmailMessages.getEmailOnAccountAction_Subject(false, getLocale()),
           EmailMessages.getNewPasswordMessage(password, email, username, getLocale()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.info("Error: Password Email not sent");
       LOGGER.error("Error sending password email", e);
     }
@@ -153,12 +153,12 @@ public class UsersBean extends SuperBean {
    * @return
    */
   public String deleteUser() {
-    String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .get("email");
-    UserBusinessController controller = new UserBusinessController();
+    final String email = FacesContext.getCurrentInstance().getExternalContext()
+        .getRequestParameterMap().get("email");
+    final UserBusinessController controller = new UserBusinessController();
     try {
       controller.delete(controller.retrieve(email, getSessionUser()));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Error Deleting user");
       LOGGER.error("Error Deleting user", e);
     }
@@ -170,12 +170,12 @@ public class UsersBean extends SuperBean {
    * Cancel a pending invitation
    */
   public void cancelInvitation() {
-    String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .get("email");
-    RegistrationBusinessController registrationBC = new RegistrationBusinessController();
+    final String email = FacesContext.getCurrentInstance().getExternalContext()
+        .getRequestParameterMap().get("email");
+    final RegistrationBusinessController registrationBC = new RegistrationBusinessController();
     try {
       registrationBC.delete(registrationBC.retrieveByEmail(email));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Error Deleting registration");
       LOGGER.error("Error Deleting registration", e);
     }
@@ -190,13 +190,13 @@ public class UsersBean extends SuperBean {
    */
   public String activateUser() throws ImejiException {
     final RegistrationBusinessController registrationBC = new RegistrationBusinessController();
-    String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .get("email");
+    final String email = FacesContext.getCurrentInstance().getExternalContext()
+        .getRequestParameterMap().get("email");
     User toActivateUser = null;
     try {
       // Activate first
       toActivateUser = registrationBC.activate(registrationBC.retrieveByEmail(email));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Error during activation of the user ");
       LOGGER.error("Error during activation of the user", e);
     }
@@ -220,17 +220,17 @@ public class UsersBean extends SuperBean {
    * @param hasgrant
    */
   public String addToGroup() {
-    String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .get("email");
+    final String email = FacesContext.getCurrentInstance().getExternalContext()
+        .getRequestParameterMap().get("email");
     try {
-      UserBusinessController uc = new UserBusinessController();
-      User user = uc.retrieve(email, Imeji.adminUser);
+      final UserBusinessController uc = new UserBusinessController();
+      final User user = uc.retrieve(email, Imeji.adminUser);
       group.getUsers().add(user.getId());
-      GroupBusinessController c = new GroupBusinessController();
+      final GroupBusinessController c = new GroupBusinessController();
       c.update(group, getSessionUser());
       FacesContext.getCurrentInstance().getExternalContext()
           .redirect(getNavigation().getApplicationUrl() + "usergroup?id=" + group.getId());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(e.getMessage());
     }
     return "";

@@ -65,7 +65,7 @@ public class ObjectHelper {
    */
   public static URI getURI(Class<?> c, String id) {
     String baseURI = baseUri;
-    j2jModel modelName = c.getAnnotation(j2jModel.class);
+    final j2jModel modelName = c.getAnnotation(j2jModel.class);
     if (modelName != null) {
       baseURI = StringHelper.normalizeURI(baseURI + modelName.value());
     } else {
@@ -74,7 +74,7 @@ public class ObjectHelper {
     String encodedId = id;
     try {
       encodedId = URLEncoder.encode(id, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    } catch (final UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
     return URI.create(baseURI + encodedId);
@@ -87,8 +87,8 @@ public class ObjectHelper {
    * @return
    */
   public static String getId(URI uri) {
-    Pattern p = Pattern.compile("(.*)/(\\d+)");
-    Matcher m = p.matcher(uri.getPath());
+    final Pattern p = Pattern.compile("(.*)/(\\d+)");
+    final Matcher m = p.matcher(uri.getPath());
     if (m.matches()) {
       return m.group(2);
     }
@@ -103,11 +103,11 @@ public class ObjectHelper {
    * @return
    */
   public static ObjectType getObjectType(URI uri) {
-    String path = uri.getPath();
+    final String path = uri.getPath();
     if (uri.toString().equals(Imeji.PROPERTIES.getBaseURI())) {
       return ObjectType.SYSTEM;
     }
-    for (ObjectType type : ObjectType.values()) {
+    for (final ObjectType type : ObjectType.values()) {
       if (path.contains("/" + type.name().toLowerCase())) {
         return type;
       }
@@ -125,8 +125,8 @@ public class ObjectHelper {
    * @return
    */
   public static List<Field> getObjectFields(Class<?> cl) {
-    List<Field> fields = new ArrayList<Field>();
-    for (Field f : cl.getDeclaredFields()) {
+    final List<Field> fields = new ArrayList<Field>();
+    for (final Field f : cl.getDeclaredFields()) {
       fields.add(f);
     }
     return fields;
@@ -139,7 +139,7 @@ public class ObjectHelper {
    * @return
    */
   public static List<Field> getAllObjectFields(Class<?> cl) {
-    List<Field> fields = getObjectFields(cl);
+    final List<Field> fields = getObjectFields(cl);
     if (cl.getSuperclass() != null) {
       fields.addAll(getAllObjectFields(cl.getSuperclass()));
     }
@@ -154,16 +154,16 @@ public class ObjectHelper {
    * @param obj2
    */
   public static void copyFields(Object obj1, Object obj2) {
-    for (Field f2 : getObjectFields(obj2.getClass())) {
+    for (final Field f2 : getObjectFields(obj2.getClass())) {
       try {
         f2.setAccessible(true);
-        for (Field f1 : getObjectFields(obj1.getClass())) {
+        for (final Field f1 : getObjectFields(obj1.getClass())) {
           f1.setAccessible(true);
           if (f1.getName().equals(f2.getName()) && f1.getType().equals(f2.getType())) {
             f2.set(obj2, f1.get(obj1));
           }
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("CopyFields issue", e);
       }
     }
@@ -177,17 +177,17 @@ public class ObjectHelper {
    * @param obj2
    */
   public static void copyAllFields(Object obj1, Object obj2) {
-    for (Field f2 : getAllObjectFields(obj2.getClass())) {
+    for (final Field f2 : getAllObjectFields(obj2.getClass())) {
       try {
         f2.setAccessible(true);
-        for (Field f1 : getAllObjectFields(obj1.getClass())) {
+        for (final Field f1 : getAllObjectFields(obj1.getClass())) {
           f1.setAccessible(true);
           if (f1.getName().equals(f2.getName()) && f1.getType().equals(f2.getType())
               && !f2.toGenericString().contains("final")) {
             f2.set(obj2, f1.get(obj1));
           }
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("copyAllFields issue", e);
       }
     }
@@ -207,19 +207,19 @@ public class ObjectHelper {
         || StringHelper.isNullOrEmptyTrim(setter)) {
       return;
     }
-    Class fromClass = obj1.getClass();
-    Class toClass = obj2.getClass();
+    final Class fromClass = obj1.getClass();
+    final Class toClass = obj2.getClass();
     try {
 
       Method getterMethod = null;
       Method setterMethod = null;
-      for (Method m : fromClass.getMethods()) {
+      for (final Method m : fromClass.getMethods()) {
         if (m.getName().equalsIgnoreCase(getter)) {
           getterMethod = m;
           break;
         }
       }
-      for (Method m : toClass.getMethods()) {
+      for (final Method m : toClass.getMethods()) {
         if (m.getName().equalsIgnoreCase(setter)) {
           setterMethod = m;
           break;
@@ -232,9 +232,9 @@ public class ObjectHelper {
           setterMethod.invoke(obj2, val);
         }
       }
-    } catch (InvocationTargetException e) {
+    } catch (final InvocationTargetException e) {
       LOGGER.error("Invocation Target in transfer Fields", e);
-    } catch (IllegalAccessException e) {
+    } catch (final IllegalAccessException e) {
       LOGGER.error("Illegal Access in transfer fields", e);
     }
 

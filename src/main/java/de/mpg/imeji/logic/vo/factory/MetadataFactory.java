@@ -6,13 +6,13 @@ import de.mpg.imeji.logic.vo.Person;
 
 /**
  * Factory for {@link Metadata}
- * 
+ *
  * @author saquet
  *
  */
 public class MetadataFactory {
 
-  private Metadata metadata = new Metadata();
+  private final Metadata metadata = new Metadata();
 
   public MetadataFactory() {
     // default constructor
@@ -20,7 +20,7 @@ public class MetadataFactory {
 
   /**
    * Construct a new metadata out of an existing metadata
-   * 
+   *
    * @param metadata
    */
   public MetadataFactory(Metadata metadata) {

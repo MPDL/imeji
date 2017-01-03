@@ -76,12 +76,12 @@ public class SpaceController extends ImejiServiceAbstract {
   public SpaceController() {
     try {
 
-      File storageDir =
+      final File storageDir =
           new File(PropertyReader.getProperty("imeji.storage.path") + SPACES_STORAGE_SUBDIRECTORY);
       storagePath = StringHelper.normalizePath(storageDir.getAbsolutePath());
       storageUrl = StringHelper.normalizeURI(PropertyReader.getProperty("imeji.instance.url"))
           + "file" + SPACES_STORAGE_SUBDIRECTORY + StringHelper.urlSeparator;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException("Internal spaces storage couldn't be initialized!!!!!", e);
     }
   }
@@ -104,7 +104,7 @@ public class SpaceController extends ImejiServiceAbstract {
     WRITER.create(WriterFacade.toList(space), user);
 
     // add collections if exist
-    Collection<String> spaceCollections = space.getSpaceCollections();
+    final Collection<String> spaceCollections = space.getSpaceCollections();
     if (spaceCollections != null && !spaceCollections.isEmpty()) {
       setSpaceInCollections(space, spaceCollections, user, false);
     }
@@ -117,7 +117,7 @@ public class SpaceController extends ImejiServiceAbstract {
     if (newSpaceCollections != null && !newSpaceCollections.isEmpty()) {
       space.setSpaceCollections(newSpaceCollections);
     }
-    Space newSpace = create(space, user);
+    final Space newSpace = create(space, user);
 
     if (file != null && file.exists()) {
 
@@ -131,11 +131,12 @@ public class SpaceController extends ImejiServiceAbstract {
   public Space update(Space space, Collection<String> newSpaceCollections, File file, User user)
       throws ImejiException, IOException {
 
-    CollectionController cc = new CollectionController();
-    List<String> alreadyAssignedCollections = cc.retrieveAllCollectionIdsInSpace(space.getId());
-    List<String> toRemoveCollections = new ArrayList<String>();
+    final CollectionController cc = new CollectionController();
+    final List<String> alreadyAssignedCollections =
+        cc.retrieveAllCollectionIdsInSpace(space.getId());
+    final List<String> toRemoveCollections = new ArrayList<String>();
 
-    for (String previousColId : alreadyAssignedCollections) {
+    for (final String previousColId : alreadyAssignedCollections) {
       if (!(newSpaceCollections.contains(previousColId))) {
         toRemoveCollections.add(previousColId);
       }
@@ -158,7 +159,7 @@ public class SpaceController extends ImejiServiceAbstract {
 
     // update space for reindexing at the end
     space.setSpaceCollections(newSpaceCollections);
-    Space spaceUpdated = update(space, user);
+    final Space spaceUpdated = update(space, user);
     return spaceUpdated;
   }
 
@@ -199,7 +200,7 @@ public class SpaceController extends ImejiServiceAbstract {
    * @throws IOException
    */
   private String update(File toCopy, String path) throws IOException {
-    File f = new File(path);
+    final File f = new File(path);
     if (f.getParentFile().exists()) {
       // clean space dir
       FileUtils.cleanDirectory(f.getParentFile());
@@ -257,11 +258,11 @@ public class SpaceController extends ImejiServiceAbstract {
     if (space == null || space.getLogoUrl() == null) {
       return;
     }
-    String url = space.getLogoUrl().toURL().toString();
+    final String url = space.getLogoUrl().toURL().toString();
     if (isNullOrEmptyTrim(url)) {
       return;
     }
-    File f = new File(transformUrlToPath(url)).getParentFile();
+    final File f = new File(transformUrlToPath(url)).getParentFile();
     if (f.exists()) {
       FileUtils.deleteDirectory(f);
     }
@@ -288,7 +289,7 @@ public class SpaceController extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   public Space retrieve(URI spaceId, User user) throws ImejiException {
-    Space space = (Space) READER.read(spaceId.toString(), user, new Space());
+    final Space space = (Space) READER.read(spaceId.toString(), user, new Space());
     space.setSpaceCollections(retrieveCollections(space));
     return space;
   }
@@ -318,7 +319,7 @@ public class SpaceController extends ImejiServiceAbstract {
           public Space apply(String id) {
             try {
               return retrieve(URI.create(id), Imeji.adminUser);
-            } catch (ImejiException e) {
+            } catch (final ImejiException e) {
               LOGGER.info("Cannot retrieve space: " + id);
             }
             return null;
@@ -335,9 +336,9 @@ public class SpaceController extends ImejiServiceAbstract {
    * @throws URISyntaxException
    */
   public Collection<String> retrieveCollections(Space space, boolean force) throws ImejiException {
-    List<String> currentSpaceCollections = new ArrayList<>();
+    final List<String> currentSpaceCollections = new ArrayList<>();
     if (force || Iterables.isEmpty(space.getSpaceCollections())) {
-      for (String colUri : ImejiSPARQL
+      for (final String colUri : ImejiSPARQL
           .exec(JenaCustomQueries.selectCollectionsOfSpace(space.getId()), null)) {
         currentSpaceCollections.add(colUri);
       }
@@ -377,10 +378,10 @@ public class SpaceController extends ImejiServiceAbstract {
   public void addCollections(Space space, List<String> toAdd, User user) throws ImejiException {
 
     space.setSpaceCollections(retrieveCollections(space));
-    Collection<String> spaceCollections = space.getSpaceCollections();
+    final Collection<String> spaceCollections = space.getSpaceCollections();
     Iterables.removeAll(toAdd, spaceCollections);
     if (!toAdd.isEmpty()) {
-      for (String collId : toAdd) {
+      for (final String collId : toAdd) {
         spaceCollections.add(collId);
       }
       space.setSpaceCollections(spaceCollections);
@@ -399,7 +400,7 @@ public class SpaceController extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   public void addCollection(String spaceId, String collId, User user) throws ImejiException {
-    Space sp = retrieve(URI.create(spaceId), user);
+    final Space sp = retrieve(URI.create(spaceId), user);
     addCollection(sp, collId, user);
   }
 
@@ -430,7 +431,7 @@ public class SpaceController extends ImejiServiceAbstract {
    */
   public Collection<String> removeCollections(Space space, Collection<String> collsToRemove,
       User user) throws ImejiException {
-    Collection<String> colls = retrieveCollections(space, true);
+    final Collection<String> colls = retrieveCollections(space, true);
     Iterables.removeAll(colls, collsToRemove);
 
     space.setSpaceCollections(colls);
@@ -443,13 +444,13 @@ public class SpaceController extends ImejiServiceAbstract {
 
   private void setSpaceInCollections(Space space, Collection<String> collIds, User user,
       boolean remove) throws ImejiException {
-    for (String collId : collIds) {
+    for (final String collId : collIds) {
       // NB comment: seems the whole collIdURI comes from input
-      CollectionImeji c = cc.retrieve(URI.create(collId), user);
+      final CollectionImeji c = cc.retrieve(URI.create(collId), user);
       c.setSpace(remove ? null : space.getId());
       try {
         cc.update(c, user);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         throw new UnprocessableError(
             "Error during patching collection " + c.getId() + " with space Id " + c.getSpace());
       }
@@ -479,13 +480,14 @@ public class SpaceController extends ImejiServiceAbstract {
    */
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, int limit, int offset,
       User user, String spaceId) {
-    Search search = SearchFactory.create(SearchObjectTypes.SPACE, SEARCH_IMPLEMENTATIONS.ELASTIC);
+    final Search search =
+        SearchFactory.create(SearchObjectTypes.SPACE, SEARCH_IMPLEMENTATIONS.ELASTIC);
     return search.search(searchQuery, sortCri, user, null, null, 0, -1);
   }
 
   public Space retrieveSpaceByLabel(String spaceId, User user) throws ImejiException {
-    Search s = SearchFactory.create();
-    List<String> r =
+    final Search s = SearchFactory.create();
+    final List<String> r =
         s.searchString(JenaCustomQueries.getSpaceByLabel(spaceId), null, null, 0, -1).getResults();
     if (!r.isEmpty() && !isNullOrEmptyTrim(r.get(0))) {
       return retrieve(URI.create(r.get(0)), user);
@@ -509,15 +511,15 @@ public class SpaceController extends ImejiServiceAbstract {
 
   /**
    * Reindex all spaces
-   * 
+   *
    * @param index
    * @throws ImejiException
    */
   public void reindex(String index) throws ImejiException {
     LOGGER.info("Indexing Spaces...");
-    ElasticIndexer indexer =
+    final ElasticIndexer indexer =
         new ElasticIndexer(index, ElasticTypes.spaces, ElasticService.ANALYSER);
-    List<Space> items = retrieveAll();
+    final List<Space> items = retrieveAll();
     LOGGER.info("+++ " + items.size() + " items to index +++");
     indexer.indexBatch(items);
     LOGGER.info("Spaces reindexed!");

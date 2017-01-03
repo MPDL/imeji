@@ -68,7 +68,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
   private final Search search =
       SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC);
 
-  private ItemController itemController = new ItemController();
+  private final ItemController itemController = new ItemController();
 
   /**
    * Controller constructor
@@ -107,8 +107,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
       throw new UnprocessableError("Filename must not be empty!");
     }
     validateChecksum(c.getId(), f, false);
-    ContentController contentController = new ContentController();
-    ContentVO content = contentController.create(item, f, c, user);
+    final ContentController contentController = new ContentController();
+    final ContentVO content = contentController.create(item, f, c, user);
     if (item == null) {
       item = ImejiFactory.newItem(c);
     }
@@ -136,7 +136,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public Item createWithExternalFile(Item item, CollectionImeji c, String externalFileUrl,
       String filename, boolean download, User user) throws ImejiException {
-    String origName = FilenameUtils.getName(externalFileUrl);
+    final String origName = FilenameUtils.getName(externalFileUrl);
     if ("".equals(filename) || filename == null) {
       filename = origName;
     }
@@ -161,7 +161,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     }
     if (download) {
       // download the file in storage
-      File tmp = readFile(externalFileUrl);
+      final File tmp = readFile(externalFileUrl);
       item = createWithFile(item, tmp, filename, c, user);
     } else {
       // Reference the file
@@ -247,8 +247,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public Item retrieveLazyForFile(String fileUrl, User user) throws ImejiException {
-    Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
-    List<String> r =
+    final Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
+    final List<String> r =
         s.searchString(JenaCustomQueries.selectItemOfFile(fileUrl), null, null, 0, -1).getResults();
     if (!r.isEmpty() && r.get(0) != null) {
       return retrieveLazy(URI.create(r.get(0)), user);
@@ -294,7 +294,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public Collection<Item> retrieveAll(User user) throws ImejiException {
-    List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
+    final List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
     LOGGER.info(uris.size() + " items found, retrieving...");
     return retrieveBatch(uris, -1, 0, user);
   }
@@ -334,7 +334,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
   public Item updateFile(Item item, CollectionImeji col, File f, String filename, User user)
       throws ImejiException {
     validateChecksum(item.getCollection(), f, true);
-    ContentController contentController = new ContentController();
+    final ContentController contentController = new ContentController();
     ContentVO content;
     if (StringHelper.isNullOrEmptyTrim(item.getContentId())) {
       content = contentController.create(item, f, col, user);
@@ -363,12 +363,12 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public Item updateWithExternalFile(Item item, CollectionImeji col, String externalFileUrl,
       String filename, boolean download, User u) throws ImejiException {
-    String origName = FilenameUtils.getName(externalFileUrl);
+    final String origName = FilenameUtils.getName(externalFileUrl);
     filename =
         isNullOrEmpty(filename) ? origName : filename + "." + FilenameUtils.getExtension(origName);
     item.setFilename(filename);
     if (download) {
-      File tmp = readFile(externalFileUrl);
+      final File tmp = readFile(externalFileUrl);
       item = updateFile(item, col, tmp, filename, u);
     } else {
       removeFileFromStorage(item);
@@ -395,7 +395,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public Item updateThumbnail(Item item, File f, User user) throws ImejiException {
-    StorageController sc = new StorageController();
+    final StorageController sc = new StorageController();
     sc.update(item.getWebImageUrl().toString(), f);
     sc.update(item.getThumbnailImageUrl().toString(), f);
     return update(item, user);
@@ -411,7 +411,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public void delete(List<Item> items, User user) throws ImejiException {
     itemController.delete(items, user);
-    for (Item item : items) {
+    for (final Item item : items) {
       removeFileFromStorage(item);
     }
   }
@@ -425,7 +425,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public void delete(String itemId, User u) throws ImejiException {
-    Item item = retrieve(ObjectHelper.getURI(Item.class, itemId), u);
+    final Item item = retrieve(ObjectHelper.getURI(Item.class, itemId), u);
     delete(Arrays.asList(item), u);
   }
 
@@ -454,9 +454,9 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param user
    */
   public Container searchAndSetContainerItems(Container c, User user, int limit, int offset) {
-    List<String> newUris = search(c.getId(), null, null, user, null, limit, 0).getResults();
+    final List<String> newUris = search(c.getId(), null, null, user, null, limit, 0).getResults();
     c.getImages().clear();
-    for (String s : newUris) {
+    for (final String s : newUris) {
       c.getImages().add(URI.create(s));
     }
     return c;
@@ -474,10 +474,10 @@ public class ItemService extends SearchServiceAbstract<Item> {
       User user, String spaceId, int offset, int size) throws ImejiException, IOException {
     List<Item> itemList = new ArrayList<Item>();
     try {
-      List<String> results =
+      final List<String> results =
           search(containerUri, q, sort, user, spaceId, size, offset).getResults();
       itemList = (List<Item>) retrieveBatch(results, -1, 0, user);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new UnprocessableError("Cannot retrieve items:", e);
     }
     return itemList;
@@ -492,8 +492,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public void release(List<Item> l, User user, License defaultLicense) throws ImejiException {
-    Collection<Item> items = filterItemsByStatus(l, Status.PENDING);
-    for (Item item : items) {
+    final Collection<Item> items = filterItemsByStatus(l, Status.PENDING);
+    for (final Item item : items) {
       prepareRelease(item, user);
       if (defaultLicense != null && LicenseUtil.getActiveLicense(item) == null) {
         item.setLicenses(Arrays.asList(defaultLicense.clone()));
@@ -504,7 +504,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
 
   /**
    * Release the items with the current default license
-   * 
+   *
    * @param l
    * @param user
    * @throws ImejiException
@@ -522,27 +522,28 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public void withdraw(List<Item> l, String comment, User user) throws ImejiException {
-    Collection<Item> items = filterItemsByStatus(l, Status.RELEASED);
-    for (Item item : items) {
+    final Collection<Item> items = filterItemsByStatus(l, Status.RELEASED);
+    for (final Item item : items) {
       prepareWithdraw(item, comment);
     }
     updateBatch(items, user);
-    for (Item item : items) {
+    for (final Item item : items) {
       removeFileFromStorage(item);
     }
   }
 
   /**
    * Reindex all items
-   * 
+   *
    * @param index
    * @throws ImejiException
    */
   public void reindex(String index) throws ImejiException {
     LOGGER.info("Indexing Items...");
-    ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.items, ElasticService.ANALYSER);
+    final ElasticIndexer indexer =
+        new ElasticIndexer(index, ElasticTypes.items, ElasticService.ANALYSER);
     LOGGER.info("Retrieving Items...");
-    List<Item> items = (List<Item>) retrieveAll(Imeji.adminUser);
+    final List<Item> items = (List<Item>) retrieveAll(Imeji.adminUser);
     LOGGER.info("+++ " + items.size() + " items to index +++");
     indexer.indexBatch(items);
     LOGGER.info("Items reindexed!");
@@ -568,17 +569,17 @@ public class ItemService extends SearchServiceAbstract<Item> {
 
   /**
    * Update the fulltext and the technical metadata of all items
-   * 
+   *
    * @throws ImejiException
    */
   public void extractFulltextAndTechnicalMetadataForAllItems() throws ImejiException {
-    List<Item> allItems = (List<Item>) retrieveAll(Imeji.adminUser);
+    final List<Item> allItems = (List<Item>) retrieveAll(Imeji.adminUser);
     int count = 1;
     int countPart = 1;
-    List<Item> itemToUpdate = new ArrayList<>();
+    final List<Item> itemToUpdate = new ArrayList<>();
     List<ContentVO> contents = new ArrayList<>();
-    ContentController contentController = new ContentController();
-    for (Item item : allItems) {
+    final ContentController contentController = new ContentController();
+    for (final Item item : allItems) {
       try {
         ContentVO contentVO = toContentVO(item);
         if (contentVO.getId() == null) {
@@ -586,7 +587,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
           item.setContentId(contentVO.getId().toString());
           itemToUpdate.add(item);
         }
-        boolean extracted = contentController.extractContent(contentVO);
+        final boolean extracted = contentController.extractContent(contentVO);
         count++;
         if (extracted) {
           countPart++;
@@ -604,7 +605,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
           countPart = 1;
           LOGGER.info("... done!");
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error extracting fulltext/technical metadata for item " + item.getIdString(),
             e);
       }
@@ -618,12 +619,12 @@ public class ItemService extends SearchServiceAbstract<Item> {
   }
 
   /**
-   * 
+   *
    * @param item
    * @return
    */
   private ContentVO toContentVO(Item item) {
-    ContentVO contentVO = new ContentVO();
+    final ContentVO contentVO = new ContentVO();
     if (StringHelper.isNullOrEmptyTrim(item.getContentId() != null)) {
       contentVO.setId(URI.create(item.getContentId()));
     }
@@ -638,13 +639,13 @@ public class ItemService extends SearchServiceAbstract<Item> {
 
   /**
    * Find a the creator of an item from a list of user. If not in list, return default admin user
-   * 
+   *
    * @param item
    * @param allUsers
    * @return
    */
   private User getCreator(Item item, List<User> allUsers) {
-    for (User user : allUsers) {
+    for (final User user : allUsers) {
       if (user.getId().equals(item.getCreatedBy())) {
         return user;
       }
@@ -674,10 +675,10 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param id
    */
   private void removeFileFromStorage(Item item) {
-    ContentController contentController = new ContentController();
+    final ContentController contentController = new ContentController();
     try {
       contentController.delete(item.getContentId());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("error deleting file", e);
     }
   }
@@ -698,7 +699,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     if (strs == null) {
       return null;
     }
-    for (String str : strs) {
+    for (final String str : strs) {
       if (str != null && !"".equals(str.trim())) {
         return str;
       }
@@ -740,7 +741,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @return
    */
   private boolean checksumExistsInCollection(URI collectionId, String checksum) {
-    Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
+    final Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
     return s.searchString(JenaCustomQueries.selectItemByChecksum(collectionId, checksum), null,
         null, 0, -1).getNumberOfRecords() > 0;
   }
@@ -756,11 +757,11 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   private File readFile(String url) throws UnprocessableError {
     try {
-      StorageController sController = new StorageController("external");
-      File tmp = TempFileUtil.createTempFile("createOrUploadWithExternalFile", null);
+      final StorageController sController = new StorageController("external");
+      final File tmp = TempFileUtil.createTempFile("createOrUploadWithExternalFile", null);
       sController.read(url, new FileOutputStream(tmp), true);
       return tmp;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new UnprocessableError(e.getLocalizedMessage());
     }
   }
@@ -780,7 +781,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
 
   @Override
   public List<Item> retrieveAll() throws ImejiException {
-    List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
+    final List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
     LOGGER.info(uris.size() + " items found, retrieving...");
     return (List<Item>) retrieveBatch(uris, -1, 0, Imeji.adminUser);
   }

@@ -38,10 +38,10 @@ public class SpacesBean extends SuperBean implements Serializable {
 
   @PostConstruct
   public void init() {
-    SpaceController sc = new SpaceController();
+    final SpaceController sc = new SpaceController();
     try {
       spaces = sc.retrieveAll();
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Error retrieving all spaces", e);
     }
   }
@@ -62,10 +62,10 @@ public class SpacesBean extends SuperBean implements Serializable {
   }
 
   public void delete(Space delSpace) throws IOException {
-    SpaceController sc = new SpaceController();
+    final SpaceController sc = new SpaceController();
     try {
       sc.delete(delSpace, getSessionUser());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_delete_space", getLocale()));
     }
 

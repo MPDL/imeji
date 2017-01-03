@@ -4,7 +4,7 @@ import de.mpg.imeji.logic.vo.TechnicalMetadata;
 
 /**
  * Elastic object for technical metadata
- * 
+ *
  * @author saquet
  *
  */
@@ -14,7 +14,7 @@ public class ElasticTechnicalMetadata {
 
   /**
    * Constructor for a technical metadata
-   * 
+   *
    * @param tmd
    */
   public ElasticTechnicalMetadata(TechnicalMetadata tmd) {

@@ -58,7 +58,7 @@ public class AlbumController extends ImejiServiceAbstract {
   private static final Logger LOGGER = Logger.getLogger(AlbumController.class);
   private static final ReaderFacade READER = new ReaderFacade(Imeji.albumModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.albumModel);
-  private Search search =
+  private final Search search =
       SearchFactory.create(SearchObjectTypes.ALBUM, SEARCH_IMPLEMENTATIONS.ELASTIC);
 
   /**
@@ -121,7 +121,7 @@ public class AlbumController extends ImejiServiceAbstract {
    */
   public List<Album> retrieveBatchLazy(List<String> uris, User user, int limit, int offset)
       throws ImejiException {
-    List<Album> albums = prepareBatchRetrieve(uris, limit, offset);
+    final List<Album> albums = prepareBatchRetrieve(uris, limit, offset);
     READER.readLazy(J2JHelper.cast2ObjectList(albums), user);
     return albums;
   }
@@ -138,9 +138,9 @@ public class AlbumController extends ImejiServiceAbstract {
    */
   public List<Album> retrieveBatch(List<String> uris, User user, int limit, int offset)
       throws ImejiException {
-    List<Album> albums = retrieveBatchLazy(uris, user, limit, offset);
-    ItemService itemController = new ItemService();
-    for (Album album : albums) {
+    final List<Album> albums = retrieveBatchLazy(uris, user, limit, offset);
+    final ItemService itemController = new ItemService();
+    for (final Album album : albums) {
       itemController.searchAndSetContainerItems(album, user, -1, 0);
     }
     return albums;
@@ -181,7 +181,7 @@ public class AlbumController extends ImejiServiceAbstract {
    */
   public void release(Album album, User user) throws ImejiException {
     prepareRelease(album, user);
-    ItemService ic = new ItemService();
+    final ItemService ic = new ItemService();
     album = (Album) ic.searchAndSetContainerItems(album, user, -1, 0);
     if (album.getImages().isEmpty()) {
       throw new UnprocessableError("An empty album can not be released!");
@@ -224,19 +224,19 @@ public class AlbumController extends ImejiServiceAbstract {
     if (!SecurityUtil.staticAuth().create(user, album)) {
       throw new NotAllowedError("album_not_allowed_to_add_item");
     }
-    ItemService itemController = new ItemService();
+    final ItemService itemController = new ItemService();
     // Get the item of the album
-    List<String> albumItems =
+    final List<String> albumItems =
         itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0).getResults();
     // Add Items which are not already in the album
-    Set<String> albumItemsSet = new HashSet<>(albumItems);
+    final Set<String> albumItemsSet = new HashSet<>(albumItems);
     // Retrieve the uris, to check that the items all exist
     itemController.retrieveBatch(uris, -1, 0, user);
-    for (String uri : uris) {
+    for (final String uri : uris) {
       albumItemsSet.add(uri);
     }
     album.setImages(new ArrayList<URI>());
-    for (String uri : albumItemsSet) {
+    for (final String uri : albumItemsSet) {
       album.getImages().add(URI.create(uri));
     }
 
@@ -260,18 +260,18 @@ public class AlbumController extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   public int removeFromAlbum(Album album, List<String> toDelete, User user) throws ImejiException {
-    ItemService itemController = new ItemService();
+    final ItemService itemController = new ItemService();
     // Get the item of the album
-    List<String> albumItems =
+    final List<String> albumItems =
         itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0).getResults();
-    int beforeSize = albumItems.size();
+    final int beforeSize = albumItems.size();
     // Retrieving Items to check if there will be some not existing item
     itemController.retrieveBatch(toDelete, -1, 0, user);
-    for (String uri : toDelete) {
+    for (final String uri : toDelete) {
       albumItems.remove(uri);
     }
     album.setImages(new ArrayList<URI>());
-    for (String uri : albumItems) {
+    for (final String uri : albumItems) {
       album.getImages().add(URI.create(uri));
     }
     if (album.getStatus() == Status.RELEASED && album.getImages().isEmpty()) {
@@ -283,8 +283,8 @@ public class AlbumController extends ImejiServiceAbstract {
     // We do not update items of the album
     // itemController.updateBatch(items, Imeji.adminUser);
     // Get the new size of the album
-    int afterSize = itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0)
-        .getNumberOfRecords();
+    final int afterSize = itemController
+        .search(album.getId(), null, null, Imeji.adminUser, null, -1, 0).getNumberOfRecords();
     // Return how many items have been deleted
     return beforeSize - afterSize;
   }
@@ -315,11 +315,11 @@ public class AlbumController extends ImejiServiceAbstract {
   public List<Album> searchAndretrieveLazy(User user, String q, String spaceId, int offset,
       int size) throws ImejiException {
     try {
-      List<String> results =
+      final List<String> results =
           search(!isNullOrEmptyTrim(q) ? SearchQueryParser.parseStringQuery(q) : null, user, null,
               size, offset, spaceId).getResults();
       return retrieveBatchLazy(results, user, -1, 0);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new UnprocessableError("Cannot retrieve albums:", e);
     }
   }
@@ -334,10 +334,10 @@ public class AlbumController extends ImejiServiceAbstract {
    * @return
    */
   private List<Album> prepareBatchRetrieve(List<String> uris, int limit, int offset) {
-    List<Album> albums = new ArrayList<Album>();
+    final List<Album> albums = new ArrayList<Album>();
     uris = uris.size() > 0 && limit > 0 ? uris.subList(offset, getMin(offset + limit, uris.size()))
         : uris;
-    for (String s : uris) {
+    for (final String s : uris) {
       albums.add((Album) J2JHelper.setId(new Album(), URI.create(s)));
     }
     return albums;
@@ -350,8 +350,9 @@ public class AlbumController extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   public List<Album> retrieveAll(User user) throws ImejiException {
-    List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectAlbumAll(), Imeji.albumModel);
-    List<Album> albums = prepareBatchRetrieve(uris, -1, 0);
+    final List<String> uris =
+        ImejiSPARQL.exec(JenaCustomQueries.selectAlbumAll(), Imeji.albumModel);
+    final List<Album> albums = prepareBatchRetrieve(uris, -1, 0);
     READER.read(J2JHelper.cast2ObjectList(albums), user);
     return albums;
   }
@@ -383,7 +384,7 @@ public class AlbumController extends ImejiServiceAbstract {
     if (album.getStatus() == Status.RELEASED) {
       throw new UnprocessableError("A released album can not be empty! ");
     }
-    int beforeSize = album.getImages().size();
+    final int beforeSize = album.getImages().size();
     album.setImages(new ArrayList<URI>());
     // save the album
     update(album, user);
@@ -393,9 +394,9 @@ public class AlbumController extends ImejiServiceAbstract {
 
   public void reindex(String index) throws ImejiException {
     LOGGER.info("Indexing Albums...");
-    ElasticIndexer indexer =
+    final ElasticIndexer indexer =
         new ElasticIndexer(index, ElasticTypes.albums, ElasticService.ANALYSER);
-    List<Album> albums = retrieveAll(Imeji.adminUser);
+    final List<Album> albums = retrieveAll(Imeji.adminUser);
     indexer.indexBatch(albums);
     indexer.commit();
     LOGGER.info("Albums reindexed!");

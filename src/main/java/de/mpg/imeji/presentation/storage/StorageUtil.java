@@ -14,7 +14,7 @@ import de.mpg.imeji.logic.vo.User;
 
 /**
  * Utility Class for storage presentation module
- * 
+ *
  * @author saquet
  *
  */
@@ -50,7 +50,7 @@ public class StorageUtil {
     try {
       new ItemService().retrieveLazyForFile(fileUrl, user);
       return true;
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       return false;
     }
   }
@@ -65,11 +65,11 @@ public class StorageUtil {
    */
   private static boolean isAllowedToViewCollectionOfFile(String fileUrl, User user) {
     try {
-      String collectionId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
+      final String collectionId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
       new CollectionController().retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId),
           user);
       return true;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return false;
     }
   }
@@ -83,11 +83,11 @@ public class StorageUtil {
    * @return
    */
   private static boolean isAllowedToViewAlbumOfFile(String fileUrl, User user) {
-    String albumId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
+    final String albumId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
     try {
       new AlbumController().retrieve(ObjectHelper.getURI(Album.class, albumId), user);
       return true;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       return false;
     }
   }

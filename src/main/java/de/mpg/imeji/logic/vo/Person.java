@@ -145,7 +145,7 @@ public class Person implements Cloneable, Serializable {
 
   public String getOrganizationString() {
     String s = "";
-    for (Organization o : organizations) {
+    for (final Organization o : organizations) {
       if (!"".equals(s)) {
         s += " ,";
       }
@@ -161,7 +161,7 @@ public class Person implements Cloneable, Serializable {
    */
   public String AsFullText() {
     String str = givenName + " " + familyName + " " + alternativeName;
-    for (Organization org : organizations) {
+    for (final Organization org : organizations) {
       str += " " + org.getName();
     }
     return str.trim();
@@ -169,7 +169,7 @@ public class Person implements Cloneable, Serializable {
 
   @Override
   public Person clone() {
-    Person clone = new Person();
+    final Person clone = new Person();
     clone.alternativeName = this.alternativeName;
     clone.completeName = this.completeName;
     clone.familyName = this.familyName;
@@ -177,7 +177,7 @@ public class Person implements Cloneable, Serializable {
     if (identifier != null && !"".equals(identifier)) {
       clone.identifier = this.identifier;
     }
-    for (Organization org : this.organizations) {
+    for (final Organization org : this.organizations) {
       clone.organizations.add(org.clone());
     }
     clone.role = this.role;

@@ -46,13 +46,14 @@ public class CollectionItemsBean extends ItemsBean {
 
   /**
    * Initialize the bean
-   * 
+   *
    * @throws ImejiException
    */
   public CollectionItemsBean() {
     super();
   }
 
+  @Override
   @PostConstruct
   public void init() {
     super.init();
@@ -68,7 +69,7 @@ public class CollectionItemsBean extends ItemsBean {
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale(),
           getSelectedSpaceString());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing collectionItemsBean", e);
     }
   }
@@ -78,7 +79,7 @@ public class CollectionItemsBean extends ItemsBean {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
-    ItemService controller = new ItemService();
+    final ItemService controller = new ItemService();
     return controller.search(uri, searchQuery, sortCriterion, getSessionUser(), null, limit,
         offset);
   }
@@ -93,12 +94,12 @@ public class CollectionItemsBean extends ItemsBean {
   public void initFacets() {
     try {
       searchQuery = SearchQueryParser.parseStringQuery(getQuery());
-      SearchResult searchRes = search(getSearchQuery(), null, 0, -1);
+      final SearchResult searchRes = search(getSearchQuery(), null, 0, -1);
       setFacets(new FacetsJob(collection, searchQuery, searchRes, getSessionUser(), getLocale()));
-      ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+      final ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
       executor.submit(getFacets());
       executor.shutdown();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initialising the facets", e);
     }
   }

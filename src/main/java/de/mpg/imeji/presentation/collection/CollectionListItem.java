@@ -67,7 +67,7 @@ public class CollectionListItem {
       if (description != null && description.length() > DESCRIPTION_MAX_SIZE) {
         description = description.substring(0, DESCRIPTION_MAX_SIZE) + "...";
       }
-      for (Person p : collection.getMetadata().getPersons()) {
+      for (final Person p : collection.getMetadata().getPersons()) {
         if (!"".equals(authors)) {
           authors += "; ";
         }
@@ -89,7 +89,7 @@ public class CollectionListItem {
       if (user != null) {
         isOwner = collection.getCreatedBy().equals(user.getId());
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error creating collectionListItem", e);
     }
   }
@@ -108,10 +108,10 @@ public class CollectionListItem {
       thumbnail = new ThumbnailBean();
       thumbnail.setLink(collection.getLogoUrl().toString());
     } else {
-      ItemService ic = new ItemService();
-      Container searchedContainer = ic.searchAndSetContainerItems(collection, user, 1, 0);
+      final ItemService ic = new ItemService();
+      final Container searchedContainer = ic.searchAndSetContainerItems(collection, user, 1, 0);
       if (searchedContainer.getImages().iterator().hasNext()) {
-        URI uri = searchedContainer.getImages().iterator().next();
+        final URI uri = searchedContainer.getImages().iterator().next();
         if (uri != null) {
           this.thumbnail = new ThumbnailBean(ic.retrieveLazy(uri, user), false);
         }
@@ -125,7 +125,7 @@ public class CollectionListItem {
    * @param user
    */
   private void initSize(CollectionImeji collection, User user) {
-    ItemService ic = new ItemService();
+    final ItemService ic = new ItemService();
     size =
         ic.search(collection.getId(), null, null, Imeji.adminUser, null, 0, 0).getNumberOfRecords();
   }

@@ -20,7 +20,7 @@ import de.mpg.imeji.util.DateHelper;
  */
 public class WorkflowManager {
 
-  private WorkflowValidator workflowValidator = new WorkflowValidator();
+  private final WorkflowValidator workflowValidator = new WorkflowValidator();
 
   /**
    * Prepare the creation of an object: Set all Workflow properties
@@ -32,7 +32,7 @@ public class WorkflowManager {
   public void prepareCreate(Properties p, User user) throws WorkflowException {
     workflowValidator.isCreateAllowed(p);
     J2JHelper.setId(p, IdentifierUtil.newURI(p.getClass()));
-    Calendar now = DateHelper.getCurrentDate();
+    final Calendar now = DateHelper.getCurrentDate();
     p.setCreatedBy(user.getId());
     p.setModifiedBy(user.getId());
     p.setCreated(now);

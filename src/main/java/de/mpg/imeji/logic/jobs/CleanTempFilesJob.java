@@ -19,18 +19,19 @@ public class CleanTempFilesJob implements Callable<Integer> {
 
   @Override
   public Integer call() throws Exception {
-    IOFileFilter filter = new WildcardFileFilter(IMEJI_TEMP_FILE_REGEX);
+    final IOFileFilter filter = new WildcardFileFilter(IMEJI_TEMP_FILE_REGEX);
     LOGGER.info("Deleting all imeji temp file from: " + FileUtils.getTempDirectory() + " ...");
-    Iterator<File> iterator = FileUtils.iterateFiles(FileUtils.getTempDirectory(), filter, null);
+    final Iterator<File> iterator =
+        FileUtils.iterateFiles(FileUtils.getTempDirectory(), filter, null);
     int success = 0;
     int count = 0;
     while (iterator.hasNext()) {
-      File file = iterator.next();
+      final File file = iterator.next();
       try {
         count++;
         FileUtils.forceDelete(file);
         success++;
-      } catch (IOException e) {
+      } catch (final IOException e) {
         LOGGER.error("File " + file.getAbsolutePath() + " can not be deleted");
       }
     }

@@ -17,7 +17,7 @@ import com.hp.hpl.jena.rdf.model.Model;
  * @version $Revision$ $LastChangedDate$
  */
 public class LiteralHelper {
-  private Model model;
+  private final Model model;
   private static Logger LOGGER = Logger.getLogger(LiteralHelper.class);
 
   /**
@@ -65,14 +65,14 @@ public class LiteralHelper {
         model.createLiteral(o.toString());
       }
       return l;
-    } catch (NullPointerException e) {
+    } catch (final NullPointerException e) {
       return null;
     }
   }
 
   /**
    * True if an a literal is empty
-   * 
+   *
    * @param o
    * @return
    */

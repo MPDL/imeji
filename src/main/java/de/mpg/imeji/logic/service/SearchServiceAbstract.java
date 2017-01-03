@@ -14,7 +14,7 @@ import de.mpg.imeji.logic.vo.User;
 
 /**
  * Abatract class for imeji services with search methods
- * 
+ *
  * @author saquet
  *
  */
@@ -28,7 +28,7 @@ public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
 
   /**
    * Search for Elements
-   * 
+   *
    * @param searchQuery
    * @param sortCri
    * @param user
@@ -41,7 +41,7 @@ public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
 
   /**
    * Retrieve the search results
-   * 
+   *
    * @param result
    * @return
    * @throws ImejiException
@@ -50,7 +50,7 @@ public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
 
   /**
    * Search and retrieve the search Result
-   * 
+   *
    * @param searchQuery
    * @param sortCri
    * @param user
@@ -61,14 +61,14 @@ public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
    */
   public List<T> searchAndRetrieve(SearchQuery searchQuery, SortCriterion sortCri, User user,
       int size, int offset) throws ImejiException {
-    SearchResult result = search(searchQuery, sortCri, user, size, offset);
+    final SearchResult result = search(searchQuery, sortCri, user, size, offset);
     return retrieve(result.getResults(), user);
   }
 
   /**
    * Retrieve all elements of type T. This method should be abble to work without search, in order
    * to be used by the reindex process
-   * 
+   *
    * @return
    * @throws ImejiException
    */

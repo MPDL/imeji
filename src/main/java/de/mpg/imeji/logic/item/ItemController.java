@@ -28,7 +28,7 @@ import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
  * Resource controller for item
- * 
+ *
  * @author saquet
  *
  */
@@ -51,7 +51,7 @@ public class ItemController extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   public void create(Collection<Item> items, CollectionImeji ic, User user) throws ImejiException {
-    for (Item item : items) {
+    for (final Item item : items) {
       prepareCreate(item, user);
       item.setFilename(FilenameUtils.getName(item.getFilename()));
       item.setStatus(ic.getStatus());
@@ -104,7 +104,7 @@ public class ItemController extends ImejiServiceAbstract {
    */
   public Collection<Item> retrieveBatch(List<String> uris, int limit, int offset, User user)
       throws ImejiException {
-    List<Item> items = uris2Items(uris, limit, offset);
+    final List<Item> items = uris2Items(uris, limit, offset);
     READER.read(J2JHelper.cast2ObjectList(items), user);
     return items;
   }
@@ -121,7 +121,7 @@ public class ItemController extends ImejiServiceAbstract {
    */
   public Collection<Item> retrieveBatchLazy(List<String> uris, int limit, int offset, User user)
       throws ImejiException {
-    List<Item> items = uris2Items(uris, limit, offset);
+    final List<Item> items = uris2Items(uris, limit, offset);
     READER.readLazy(J2JHelper.cast2ObjectList(items), user);
     return items;
   }
@@ -135,7 +135,7 @@ public class ItemController extends ImejiServiceAbstract {
    */
   public void updateBatch(Collection<Item> items, User user) throws ImejiException {
     if (items != null && !items.isEmpty()) {
-      for (Item item : items) {
+      for (final Item item : items) {
         prepareUpdate(item, user);
         item.setFilename(FilenameUtils.getName(item.getFilename()));
       }
@@ -147,7 +147,7 @@ public class ItemController extends ImejiServiceAbstract {
   /**
    * Update without any validation and any operations on the data. WARNING: use with care. Invalid
    * data would overwrite valid data
-   * 
+   *
    * @param items
    * @param user
    * @throws ImejiException
@@ -176,8 +176,8 @@ public class ItemController extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   private void cleanItem(Collection<Item> l) {
-    for (Item item : l) {
-      List<Metadata> cleanMetadata =
+    for (final Item item : l) {
+      final List<Metadata> cleanMetadata =
           item.getMetadata().stream().filter(md -> !MetadataUtil.isEmpty(md))
               .map(md -> MetadataUtil.cleanMetadata(md)).collect(Collectors.toList());
       item.setMetadata(cleanMetadata);
@@ -187,14 +187,14 @@ public class ItemController extends ImejiServiceAbstract {
 
   /**
    * Clean the licenses of the item
-   * 
+   *
    * @param item
    * @throws ImejiException
    */
   private void cleanLicenses(Item item) {
-    long start = System.currentTimeMillis();
+    final long start = System.currentTimeMillis();
     item.setLicenses(LicenseUtil.removeDuplicates(item.getLicenses()));
-    License active = LicenseUtil.getActiveLicense(item);
+    final License active = LicenseUtil.getActiveLicense(item);
     if (active != null && !active.isEmtpy() && active.getStart() < 0) {
       active.setStart(start);
       if (item.getStatus().equals(Status.PENDING)) {
@@ -208,13 +208,13 @@ public class ItemController extends ImejiServiceAbstract {
 
   /**
    * Set the end of the licenses (normally, only one license shouldn't have any end)
-   * 
+   *
    * @param item
    * @param current
    * @param end
    */
   private void setLicensesEnd(Item item, License current, long end) {
-    for (License lic : item.getLicenses()) {
+    for (final License lic : item.getLicenses()) {
       if (lic.getEnd() < 0 && !lic.getName().equals(current.getName())) {
         lic.setEnd(end);
       }
@@ -237,8 +237,8 @@ public class ItemController extends ImejiServiceAbstract {
       retrieveUris = uris.size() > 0 && limit > 0
           ? uris.subList(offset, getMin(offset + limit, uris.size())) : new ArrayList<String>();
     }
-    List<Item> items = new ArrayList<Item>();
-    for (String s : retrieveUris) {
+    final List<Item> items = new ArrayList<Item>();
+    for (final String s : retrieveUris) {
       items.add((Item) J2JHelper.setId(new Item(), URI.create(s)));
     }
     return items;

@@ -14,7 +14,7 @@ public class LabelHelper {
       l = labels.next().toString();
     }
     while (labels.hasNext()) {
-      LocalizedString ls = labels.next();
+      final LocalizedString ls = labels.next();
       if (ls.getLang().equals("eng")) {
         l = ls.toString();
       }

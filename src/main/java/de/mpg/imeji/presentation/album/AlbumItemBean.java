@@ -43,7 +43,8 @@ public class AlbumItemBean extends ItemBean {
   public AlbumItemBean() {
     super();
     this.albumId = UrlHelper.getParameterValue("albumId");
-    this.prettyLink = SessionBean.getPrettySpacePage("pretty:editImageOfAlbum", getSelectedSpaceString());
+    this.prettyLink =
+        SessionBean.getPrettySpacePage("pretty:editImageOfAlbum", getSelectedSpaceString());
   }
 
   @Override
@@ -54,7 +55,7 @@ public class AlbumItemBean extends ItemBean {
       setAlbum(loadAlbum());
       setBrowse(new ItemDetailsBrowse(getImage(), "album",
           ObjectHelper.getURI(Album.class, albumId).toString(), getSessionUser(), getSpaceId()));
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       setBrowse(new ItemDetailsBrowse(getImage(), "item", null, getSessionUser(), getSpaceId()));
     }
 
@@ -77,16 +78,16 @@ public class AlbumItemBean extends ItemBean {
       if (getIsActiveAlbum()) {
         super.removeFromActiveAlbum();
       } else {
-        AlbumController ac = new AlbumController();
-        List<String> l = new ArrayList<String>();
+        final AlbumController ac = new AlbumController();
+        final List<String> l = new ArrayList<String>();
         l.add(getImage().getId().toString());
-        Album album = ac.retrieve(getAlbum().getId(), getSessionUser());
+        final Album album = ac.retrieve(getAlbum().getId(), getSessionUser());
         ac.removeFromAlbum(album, l, getSessionUser());
         BeanHelper.info(
             Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + getImage().getFilename()
                 + " " + Imeji.RESOURCE_BUNDLE.getMessage("success_album_remove_from", getLocale()));
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error remove item from album", e);
     }
@@ -121,7 +122,7 @@ public class AlbumItemBean extends ItemBean {
   public void redirectToBrowsePage() {
     try {
       redirect(getNavigation().getAlbumUrl() + albumId + "/" + getNavigation().getBrowsePath());
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.error("Error redirecting to browse page", e);
     }
   }

@@ -36,7 +36,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
       LOGGER.info("Reindex started!");
       // Check if the alias is used by only 1 index. If not, reset completely the indexes
       ElasticInitializer.getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
-      String index = ElasticInitializer.createIndex();
+      final String index = ElasticInitializer.createIndex();
       addAllMappings(index);
       reindexUsers(index);
       reindexUserGroups(index);
@@ -48,7 +48,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
       ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
       // IMPORTANT: Albums must be reindex after Items
       LOGGER.info("Reindex done!");
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error by reindex", e);
     }
 
@@ -61,7 +61,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @param index
    */
   private void addAllMappings(String index) {
-    for (ElasticTypes type : ElasticTypes.values()) {
+    for (final ElasticTypes type : ElasticTypes.values()) {
       new ElasticIndexer(index, type, ElasticService.ANALYSER).addMapping();
     }
   }
@@ -72,7 +72,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void reindexFolders(String index) throws ImejiException {
-    CollectionController c = new CollectionController();
+    final CollectionController c = new CollectionController();
     c.reindex(index);
   }
 
@@ -82,7 +82,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void reindexAlbums(String index) throws ImejiException {
-    AlbumController controller = new AlbumController();
+    final AlbumController controller = new AlbumController();
     controller.reindex(index);
   }
 
@@ -93,7 +93,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    *
    */
   private void reindexItems(String index) throws ImejiException {
-    ItemService controller = new ItemService();
+    final ItemService controller = new ItemService();
     controller.reindex(index);
   }
 
@@ -114,13 +114,13 @@ public class ElasticReIndexJob implements Callable<Integer> {
    *
    */
   private void reindexSpaces(String index) throws ImejiException {
-    SpaceController controller = new SpaceController();
+    final SpaceController controller = new SpaceController();
     controller.reindex(index);
   }
 
   /**
    * Reindex all users
-   * 
+   *
    * @param index
    * @throws ImejiException
    */
@@ -130,7 +130,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
 
   /**
    * Reindex all usergroups
-   * 
+   *
    * @param index
    * @throws ImejiException
    */

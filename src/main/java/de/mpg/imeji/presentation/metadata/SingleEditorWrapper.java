@@ -35,8 +35,8 @@ public class SingleEditorWrapper implements Serializable {
   private String toggleState = "displayMd";
   private int mdPosition = 0;
   private List<MetadataWrapper> metadataList;
-  private User sessionUser;
-  private Locale locale;
+  private final User sessionUser;
+  private final Locale locale;
   private static final Logger LOGGER = Logger.getLogger(SingleEditorWrapper.class);
 
   /**
@@ -93,10 +93,10 @@ public class SingleEditorWrapper implements Serializable {
    * Reload the current image
    */
   private void reloadImage() {
-    ItemService itemController = new ItemService();
+    final ItemService itemController = new ItemService();
     try {
       item = itemController.retrieve(item.getId(), sessionUser);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Error reload item" + e.getMessage());
       LOGGER.error("Error loading item", e);
     }
@@ -112,7 +112,7 @@ public class SingleEditorWrapper implements Serializable {
       this.toggleState = "editMd";
       try {
         Locks.lock(new Lock(item.getId().toString(), sessionUser.getEmail()));
-      } catch (Exception e) {
+      } catch (final Exception e) {
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_editor_image_locked", locale));
         LOGGER.error("Error locking item", e);
       }

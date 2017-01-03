@@ -80,17 +80,17 @@ public class ContentNegotiationFilter implements Filter {
     try {
       // Limit the case to filter: dispachertype only forward
       if (DispatcherType.REQUEST.compareTo(serv.getDispatcherType()) == 0) {
-        HttpServletRequest request = (HttpServletRequest) serv;
+        final HttpServletRequest request = (HttpServletRequest) serv;
         if (rdfNegotiated(request)) {
           String url = "/export?format=rdf&n=10000";
-          String type = getType(request);
+          final String type = getType(request);
           if (type != null) {
             url += "&type=" + type + "&" + getQuery(request);
             forwardToExport(url, request, resp);
           }
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Filtering error in content negotiation filter", e);
     } finally {
       chain.doFilter(serv, resp);
@@ -104,7 +104,7 @@ public class ContentNegotiationFilter implements Filter {
    * @return
    */
   private String getType(HttpServletRequest request) {
-    String path = request.getServletPath();
+    final String path = request.getServletPath();
     if ("/browse".equals(path) || path.startsWith("/item/")) {
       return "image";
     }
@@ -128,7 +128,7 @@ public class ContentNegotiationFilter implements Filter {
    * @throws UnsupportedEncodingException
    */
   private String getQuery(HttpServletRequest request) throws UnsupportedEncodingException {
-    String path = request.getServletPath();
+    final String path = request.getServletPath();
     if (path.startsWith("/item/")) {
       return "q=" + SearchIndex.SearchFields.member.name() + "==\""
           + URLEncoder.encode(ObjectHelper.getURI(Item.class, getID(path)).toString(), "UTF-8")
@@ -174,7 +174,7 @@ public class ContentNegotiationFilter implements Filter {
    */
   private void forwardToExport(String exportUrl, HttpServletRequest aRequest,
       ServletResponse aResponse) throws ServletException, IOException {
-    RequestDispatcher dispatcher = aRequest.getRequestDispatcher(exportUrl);
+    final RequestDispatcher dispatcher = aRequest.getRequestDispatcher(exportUrl);
     dispatcher.forward(aRequest, aResponse);
   }
 

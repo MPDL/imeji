@@ -38,24 +38,24 @@ public class BasicExtractor {
    * @throws Exception
    */
   public static List<String> extractTechMd(Item item) throws Exception {
-    List<String> techMd = new ArrayList<String>();
-    URI uri = item.getFullImageUrl();
-    String imageUrl = uri.toURL().toString();
-    StorageController sc = new StorageController();
-    ByteArrayOutputStream bous = new ByteArrayOutputStream();
+    final List<String> techMd = new ArrayList<String>();
+    final URI uri = item.getFullImageUrl();
+    final String imageUrl = uri.toURL().toString();
+    final StorageController sc = new StorageController();
+    final ByteArrayOutputStream bous = new ByteArrayOutputStream();
     sc.read(imageUrl, bous, true);
-    InputStream input = new ByteArrayInputStream(bous.toByteArray());
-    ImageInputStream iis = ImageIO.createImageInputStream(input);
-    Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+    final InputStream input = new ByteArrayInputStream(bous.toByteArray());
+    final ImageInputStream iis = ImageIO.createImageInputStream(input);
+    final Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
     if (readers.hasNext()) {
       // pick the first available ImageReader
-      ImageReader reader = readers.next();
+      final ImageReader reader = readers.next();
       // attach source to the reader
       reader.setInput(iis, true);
       // read metadata of first image
-      IIOMetadata metadata = reader.getImageMetadata(0);
-      String[] names = metadata.getMetadataFormatNames();
-      int length = names.length;
+      final IIOMetadata metadata = reader.getImageMetadata(0);
+      final String[] names = metadata.getMetadataFormatNames();
+      final int length = names.length;
       for (int i = 0; i < length; i++) {
         displayMetadata(techMd, metadata.getAsTree(names[i]));
       }
@@ -87,16 +87,16 @@ public class BasicExtractor {
    * @param level
    */
   static void displayMetadata(List<String> techMd, Node node, int level) {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     // print open tag of element
     indent(techMd, sb, level);
     sb.append("<" + node.getNodeName());
-    NamedNodeMap map = node.getAttributes();
+    final NamedNodeMap map = node.getAttributes();
     if (map != null) {
       // print attribute values
-      int length = map.getLength();
+      final int length = map.getLength();
       for (int i = 0; i < length; i++) {
-        Node attr = map.item(i);
+        final Node attr = map.item(i);
         sb.append(" " + attr.getNodeName() + "=\"" + attr.getNodeValue() + "\"");
       }
     }

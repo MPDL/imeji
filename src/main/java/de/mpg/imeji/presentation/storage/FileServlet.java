@@ -63,7 +63,7 @@ public class FileServlet extends HttpServlet {
       domain = StringHelper.normalizeURI(navivation.getDomain());
       domain = domain.substring(0, domain.length() - 1);
       LOGGER.info("File Servlet initialized");
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.info("Error intializing File Servlet", e);
     }
   }
@@ -75,7 +75,7 @@ public class FileServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
     String url = req.getParameter("id");
-    boolean download = "1".equals(req.getParameter("download"));
+    final boolean download = "1".equals(req.getParameter("download"));
     if (url == null) {
       // if the id parameter is null, interpret the whole url as a direct
       // to the file (can only work if the
@@ -83,7 +83,7 @@ public class FileServlet extends HttpServlet {
       url = domain + req.getRequestURI();
     }
     resp.setContentType(StorageUtils.getMimeType(StringHelper.getFileExtension(url)));
-    SessionBean session = getSession(req);
+    final SessionBean session = getSession(req);
     User user;
     try {
       user = getUser(req, session);
@@ -96,7 +96,7 @@ public class FileServlet extends HttpServlet {
           readFile(url, resp, false, user);
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       if (e instanceof NotAllowedError) {
         resp.sendError(HttpServletResponse.SC_FORBIDDEN,
             "imeji security: You are not allowed to view this file");
@@ -118,7 +118,7 @@ public class FileServlet extends HttpServlet {
 
   /**
    * Send an empty thumbnail
-   * 
+   *
    * @param resp
    */
   private void sendEmptyThumbnail(HttpServletResponse resp) {
@@ -134,7 +134,7 @@ public class FileServlet extends HttpServlet {
     resp.setHeader("Content-disposition", "attachment;");
     boolean isExternalStorage = false;
     if (!StorageUtil.isSpaceUrl(url)) {
-      Item fileItem = getItem(url, user);
+      final Item fileItem = getItem(url, user);
       NotificationUtils.notifyByItemDownload(user, fileItem, Locale.ENGLISH);
       isExternalStorage = StringHelper.isNullOrEmptyTrim(fileItem.getContentId());
     }
@@ -211,7 +211,7 @@ public class FileServlet extends HttpServlet {
    * @throws AuthenticationError
    */
   private User getUser(HttpServletRequest req, SessionBean session) throws AuthenticationError {
-    User user = AuthenticationFactory.factory(req).doLogin();
+    final User user = AuthenticationFactory.factory(req).doLogin();
     if (user != null) {
       return user;
     }
@@ -229,11 +229,11 @@ public class FileServlet extends HttpServlet {
    * @throws Exception
    */
   private Item getItem(String url, User user) throws Exception {
-    Search s = SearchFactory.create();
-    List<String> r = s.searchString(JenaCustomQueries.selectItemIdOfFileUrl(url), null, null, 0, -1)
-        .getResults();
+    final Search s = SearchFactory.create();
+    final List<String> r = s
+        .searchString(JenaCustomQueries.selectItemIdOfFileUrl(url), null, null, 0, -1).getResults();
     if (!r.isEmpty() && r.get(0) != null) {
-      ItemService c = new ItemService();
+      final ItemService c = new ItemService();
       return c.retrieveLazy(URI.create(r.get(0)), user);
     } else {
       throw new NotFoundException("Can not find the resource requested");

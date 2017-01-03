@@ -55,7 +55,7 @@ public class ShareBusinessController {
   public User shareToUser(User fromUser, User toUser, String sharedObjectUri, List<String> roles)
       throws ImejiException {
     if (toUser != null) {
-      List<Grant> grants = transformRolesToGrants(roles, sharedObjectUri, fromUser);
+      final List<Grant> grants = transformRolesToGrants(roles, sharedObjectUri, fromUser);
       toUser = shareGrantsToUser(fromUser, toUser, sharedObjectUri, grants);
     }
     return toUser;
@@ -74,7 +74,7 @@ public class ShareBusinessController {
   public void shareToGroup(User fromUser, UserGroup toGroup, String sharedObjectUri,
       List<String> roles) throws ImejiException {
     if (toGroup != null) {
-      List<Grant> grants = transformRolesToGrants(roles, sharedObjectUri, fromUser);
+      final List<Grant> grants = transformRolesToGrants(roles, sharedObjectUri, fromUser);
       shareGrantsToGroup(fromUser, toGroup, sharedObjectUri, grants);
     }
   }
@@ -127,17 +127,17 @@ public class ShareBusinessController {
    * @return
    */
   public static List<Grant> transformRolesToGrants(List<String> roles, String uri, User user) {
-    List<Grant> grants = new ArrayList<Grant>();
+    final List<Grant> grants = new ArrayList<Grant>();
     if (roles == null) {
       return grants;
     }
-    String profileUri = getProfileUri(uri);
-    boolean isProfileAdmin = SecurityUtil.staticAuth().administrate(user, profileUri);
+    final String profileUri = getProfileUri(uri);
+    final boolean isProfileAdmin = SecurityUtil.staticAuth().administrate(user, profileUri);
     if (profileUri != null && isProfileAdmin) {
       // Only for sharing collection
       grants.addAll(AuthorizationPredefinedRoles.read(profileUri));
     }
-    for (String g : roles) {
+    for (final String g : roles) {
       switch (ShareRoles.valueOf(g)) {
         case READ:
           grants.addAll(AuthorizationPredefinedRoles.read(uri));
@@ -173,8 +173,8 @@ public class ShareBusinessController {
    * @return
    */
   public static List<String> rolesAsList(ShareRoles... roles) {
-    List<String> l = new ArrayList<String>(roles.length);
-    for (ShareRoles r : roles) {
+    final List<String> l = new ArrayList<String>(roles.length);
+    for (final ShareRoles r : roles) {
       l.add(r.toString());
     }
     return l;
@@ -191,7 +191,7 @@ public class ShareBusinessController {
    */
   public static List<String> transformGrantsToRoles(List<Grant> grants, String uri,
       String profileUri) {
-    List<String> l = new ArrayList<>();
+    final List<String> l = new ArrayList<>();
     if (hasReadGrants(grants, uri)) {
       l.add(ShareRoles.READ.toString());
     }
@@ -257,14 +257,14 @@ public class ShareBusinessController {
 
   /**
    * Remove all Grant with grantfor = uri
-   * 
+   *
    * @param grants
    * @param uri
    * @return
    */
   private List<Grant> removeGrantsOfObject(List<Grant> grants, String uri) {
-    List<Grant> l = new ArrayList<>();
-    for (Grant g : grants) {
+    final List<Grant> l = new ArrayList<>();
+    for (final Grant g : grants) {
       if (!g.getGrantFor().toString().equals(uri)) {
         l.add(g);
       }
@@ -282,10 +282,10 @@ public class ShareBusinessController {
    */
   private void checkSecurity(User user, List<Grant> grants) throws NotAllowedError {
     boolean allowed = true;
-    for (Grant g : grants) {
+    for (final Grant g : grants) {
       switch (ObjectHelper.getObjectType(g.getGrantFor())) {
         case ITEM:
-          List<String> c = ImejiSPARQL
+          final List<String> c = ImejiSPARQL
               .exec(JenaCustomQueries.selectCollectionIdOfItem(g.getGrantFor().toString()), null);
           if (!c.isEmpty()) {
             allowed = SecurityUtil.staticAuth().administrate(user, c.get(0));
@@ -302,32 +302,32 @@ public class ShareBusinessController {
   }
 
   private static boolean hasReadGrants(List<Grant> userGrants, String uri) {
-    List<Grant> grants = AuthorizationPredefinedRoles.read(uri);
+    final List<Grant> grants = AuthorizationPredefinedRoles.read(uri);
     return !grantNotExist(userGrants, grants);
   }
 
   private static boolean hasUploadGrants(List<Grant> userGrants, String uri) {
-    List<Grant> grants = AuthorizationPredefinedRoles.upload(uri);
+    final List<Grant> grants = AuthorizationPredefinedRoles.upload(uri);
     return !grantNotExist(userGrants, grants);
   }
 
   private static boolean hasEditItemGrants(List<Grant> userGrants, String uri) {
-    List<Grant> grants = AuthorizationPredefinedRoles.editContent(uri);
+    final List<Grant> grants = AuthorizationPredefinedRoles.editContent(uri);
     return !grantNotExist(userGrants, grants);
   }
 
   private static boolean hasDeleteItemGrants(List<Grant> userGrants, String uri) {
-    List<Grant> grants = AuthorizationPredefinedRoles.delete(uri);
+    final List<Grant> grants = AuthorizationPredefinedRoles.delete(uri);
     return !grantNotExist(userGrants, grants);
   }
 
   private static boolean hasEditGrants(List<Grant> userGrants, String uri) {
-    List<Grant> grants = AuthorizationPredefinedRoles.edit(uri);
+    final List<Grant> grants = AuthorizationPredefinedRoles.edit(uri);
     return !grantNotExist(userGrants, grants);
   }
 
   private static boolean hasAdminGrants(List<Grant> userGrants, String uri) {
-    List<Grant> grants = AuthorizationPredefinedRoles.admin(uri);
+    final List<Grant> grants = AuthorizationPredefinedRoles.admin(uri);
     return !grantNotExist(userGrants, grants);
   }
 
@@ -340,7 +340,7 @@ public class ShareBusinessController {
    */
   private static boolean grantNotExist(List<Grant> userGrants, List<Grant> grantList) {
     boolean b = false;
-    for (Grant g : grantList) {
+    for (final Grant g : grantList) {
       if (!userGrants.contains(g)) {
         b = true;
       }
@@ -356,7 +356,7 @@ public class ShareBusinessController {
    */
   private static String getProfileUri(String collectionUri) {
     if (collectionUri.contains("/collection/")) {
-      List<String> r =
+      final List<String> r =
           ImejiSPARQL.exec(JenaCustomQueries.selectProfileIdOfCollection(collectionUri), null);
       if (!r.isEmpty()) {
         return r.get(0);

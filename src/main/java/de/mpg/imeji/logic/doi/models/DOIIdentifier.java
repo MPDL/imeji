@@ -11,7 +11,7 @@ public class DOIIdentifier {
   private String identifierType = "DOI";
 
   @XmlValue
-  private String identifier = "";
+  private final String identifier = "";
 
 
   public DOIIdentifier() {}

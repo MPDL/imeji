@@ -41,7 +41,7 @@ public class FacetsJob implements Callable<Boolean> {
       running = true;
       facetsClass.init();
       facets = facetsClass.getFacets();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing facets", e);
     } finally {
       running = false;
@@ -59,7 +59,7 @@ public class FacetsJob implements Callable<Boolean> {
       Locale locale) {
     try {
       facetsClass = new CollectionFacets(col, searchQuery, searchRes, user, locale);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("error", locale)
           + ", Collection Facets intialization : " + e.getMessage());
     }

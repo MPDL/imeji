@@ -28,7 +28,7 @@ public class ItemValidator extends ObjectValidator implements Validator<Item> {
 
     // Check that all publish items have a license
     if (!item.getStatus().equals(Status.PENDING)) {
-      License lic = LicenseUtil.getActiveLicense(item);
+      final License lic = LicenseUtil.getActiveLicense(item);
       if (lic == null || lic.isEmtpy()) {
         error = new UnprocessableError("Items must have a license to be released", error);
       }

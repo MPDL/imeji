@@ -61,7 +61,7 @@ public class ZIPExport extends Export {
 
 
 
-  private Map<URI, Integer> itemsPerCollection;
+  private final Map<URI, Integer> itemsPerCollection;
 
 
   /**
@@ -88,7 +88,7 @@ public class ZIPExport extends Export {
   public void export(OutputStream out, SearchResult sr, User user) {
     try {
       exportAllImages(sr, out, user);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.info("Some problems with ZIP Export", e);
     }
   }
@@ -116,12 +116,12 @@ public class ZIPExport extends Export {
    * @throws URISyntaxException
    */
   public void exportAllImages(SearchResult sr, OutputStream out, User user) throws ImejiException {
-    List<String> source = sr.getResults();
-    ZipOutputStream zip = new ZipOutputStream(out);
+    final List<String> source = sr.getResults();
+    final ZipOutputStream zip = new ZipOutputStream(out);
     try {
       // Create the ZIP file
       for (int i = 0; i < source.size(); i++) {
-        ItemService ic = new ItemService();
+        final ItemService ic = new ItemService();
         Item item = null;
         StorageController sc = null;
         try {
@@ -132,29 +132,29 @@ public class ZIPExport extends Export {
           sc.read(item.getFullImageUrl().toString(), zip, false);
           // Complete the entry
           zip.closeEntry();
-        } catch (ZipException ze) {
+        } catch (final ZipException ze) {
           if (ze.getMessage().contains("duplicate entry")) {
-            String name = i + "_" + item.getFilename();
+            final String name = i + "_" + item.getFilename();
             zip.putNextEntry(new ZipEntry(name));
             sc.read(item.getFullImageUrl().toString(), zip, false);
             // Complete the entry
             zip.closeEntry();
           }
           LOGGER.error("Error zip export", ze);
-        } catch (ImejiException e) {
+        } catch (final ImejiException e) {
           LOGGER.info("Could not retrieve Item for export!", e);
-        } catch (URISyntaxException eui) {
+        } catch (final URISyntaxException eui) {
           LOGGER.info("Could not create URI during retrieval and export! ", eui);
         }
       }
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.info("Some IO Exception when exporting all images!", e);
     }
 
     try {
       // Complete the ZIP file
       zip.close();
-    } catch (IOException ioe) {
+    } catch (final IOException ioe) {
       LOGGER.info("Could not close the ZIP File!", ioe);
     }
   }
@@ -163,7 +163,7 @@ public class ZIPExport extends Export {
     // only images for the moment!
     if (modelURI.equals(Imeji.imageModel)) {
       if (itemsPerCollection.containsKey(item.getCollection())) {
-        int newVal = itemsPerCollection.get(item.getCollection()).intValue() + 1;
+        final int newVal = itemsPerCollection.get(item.getCollection()).intValue() + 1;
         itemsPerCollection.put(item.getCollection(), Integer.valueOf(newVal));
       } else {
         itemsPerCollection.put(item.getCollection(), new Integer(1));

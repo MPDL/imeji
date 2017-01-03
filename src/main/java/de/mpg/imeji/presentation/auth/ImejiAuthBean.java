@@ -53,7 +53,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @ViewScoped
 public class ImejiAuthBean implements Serializable {
   private static final long serialVersionUID = 4905896901833448372L;
-  private Authorization auth = new Authorization();
+  private final Authorization auth = new Authorization();
   private User sessionUser;
 
   /**
@@ -256,7 +256,7 @@ public class ImejiAuthBean implements Serializable {
 
   /**
    * True if the user is sysadmin
-   * 
+   *
    * @param user
    * @return
    */
@@ -266,7 +266,7 @@ public class ImejiAuthBean implements Serializable {
 
   /**
    * True if the user ca create a new collection
-   * 
+   *
    * @param user
    * @return
    */

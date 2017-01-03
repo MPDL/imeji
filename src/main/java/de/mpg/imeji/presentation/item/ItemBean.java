@@ -132,15 +132,15 @@ public class ItemBean extends SuperBean {
       } else {
         edit = null;
       }
-    } catch (NotFoundException e) {
+    } catch (final NotFoundException e) {
       LOGGER.error("Error loading item", e);
       try {
         FacesContext.getCurrentInstance().getExternalContext().responseSendError(404,
             "404_NOT_FOUND");
-      } catch (IOException e1) {
+      } catch (final IOException e1) {
         LOGGER.error("Error sending error", e1);;
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initialitzing item page", e);
       BeanHelper.error("Error initializing page" + e.getMessage());
     }
@@ -148,13 +148,13 @@ public class ItemBean extends SuperBean {
 
   /**
    * Initialize the util tab
-   * 
+   *
    * @throws ImejiException @
    */
   private void initUtilTab() throws ImejiException {
     relatedAlbums = new ArrayList<Album>();
-    AlbumController ac = new AlbumController();
-    SearchQuery q = new SearchQuery();
+    final AlbumController ac = new AlbumController();
+    final SearchQuery q = new SearchQuery();
     q.addPair(new SearchPair(SearchIndex.SearchFields.member, SearchOperators.EQUALS,
         getImage().getId().toString(), false));
     // TODO NB: check if related albums should be space restricted?
@@ -167,8 +167,8 @@ public class ItemBean extends SuperBean {
    * Find the user name of the user who upload the file
    */
   private void initImageUploader() {
-    Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
-    List<String> users =
+    final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+    final List<String> users =
         search.searchString(JenaCustomQueries.selectUserCompleteName(item.getCreatedBy()), null,
             Imeji.adminUser, 0, 1).getResults();
     if (users != null && users.size() > 0) {
@@ -180,7 +180,7 @@ public class ItemBean extends SuperBean {
 
   /**
    * Initialize the metadata information when the "view metadata" tab is called.
-   * 
+   *
    * @throws ImejiException
    *
    * @
@@ -202,15 +202,15 @@ public class ItemBean extends SuperBean {
 
   /**
    * Initialize the technical metadata when the "technical metadata" tab is called
-   * 
+   *
    * @throws ImejiException
    *
    * @
    */
   public void initViewTechnicalMetadata() throws ImejiException {
     techMd = new ArrayList<>();
-    ContentVO content = new ContentController().read(item.getContentId());
-    for (TechnicalMetadata tmd : content.getTechnicalMetadata()) {
+    final ContentVO content = new ContentController().read(item.getContentId());
+    for (final TechnicalMetadata tmd : content.getTechnicalMetadata()) {
       techMd.add(tmd.getName() + ": " + tmd.getValue());
     }
   }
@@ -228,7 +228,7 @@ public class ItemBean extends SuperBean {
 
   /**
    * Load the item according to the idntifier defined in the URL
-   * 
+   *
    * @throws ImejiException
    *
    * @
@@ -240,7 +240,7 @@ public class ItemBean extends SuperBean {
     }
     try {
       content = new ContentController().readLazy(item.getContentId());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("No content found for " + item.getIdString(), e);
     }
   }
@@ -251,7 +251,7 @@ public class ItemBean extends SuperBean {
   public void loadCollection(User user) {
     try {
       collection = new CollectionController().retrieveLazy(item.getCollection(), user);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error(e.getMessage());
       collection = null;
       LOGGER.error("Error loading collection", e);
@@ -284,20 +284,20 @@ public class ItemBean extends SuperBean {
   }
 
   public String getPageUrl() {
-    HistoryPage p = getPage();
+    final HistoryPage p = getPage();
     p.getParams().remove("tab");
     return p.getCompleteUrl();
     // return getNavigation().getItemUrl() + id + g;
   }
 
   public String getTechnicalMetadataUrl() {
-    HistoryPage p = getPage();
+    final HistoryPage p = getPage();
     p.getParams().put("tab", new String[] {"techmd"});
     return p.getCompleteUrl();
   }
 
   public String getUtilitiesUrl() {
-    HistoryPage p = getPage();
+    final HistoryPage p = getPage();
     p.getParams().put("tab", new String[] {"util"});
     return p.getCompleteUrl();
   }
@@ -361,10 +361,10 @@ public class ItemBean extends SuperBean {
       edit.getEditor().save();
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_editor_image", getLocale()));
       redirect(getHistory().getCurrentPage().getCompleteUrl());
-    } catch (UnprocessableError e) {
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error saving item metadata", e);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()));
       LOGGER.error("Error saving item metadata", e);
     }
@@ -385,13 +385,13 @@ public class ItemBean extends SuperBean {
    * @throws ImejiException @
    */
   public String addToActiveAlbum() throws ImejiException {
-    SessionObjectsController soc = new SessionObjectsController();
-    List<String> l = new ArrayList<String>();
+    final SessionObjectsController soc = new SessionObjectsController();
+    final List<String> l = new ArrayList<String>();
     l.add(item.getId().toString());
-    int sizeBeforeAdd = getActiveAlbum().getImages().size();
+    final int sizeBeforeAdd = getActiveAlbum().getImages().size();
     soc.addToActiveAlbum(l);
-    int sizeAfterAdd = getActiveAlbum().getImages().size();
-    boolean added = sizeAfterAdd > sizeBeforeAdd;
+    final int sizeAfterAdd = getActiveAlbum().getImages().size();
+    final boolean added = sizeAfterAdd > sizeBeforeAdd;
     if (!added) {
       BeanHelper
           .error(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
@@ -407,7 +407,7 @@ public class ItemBean extends SuperBean {
   /**
    * Remove the {@link Item} from the database. If the item was in the current {@link Album}, remove
    * the {@link Item} from it
-   * 
+   *
    * @throws ImejiException
    *
    * @
@@ -488,7 +488,7 @@ public class ItemBean extends SuperBean {
   public void redirectToBrowsePage() {
     try {
       redirect(getNavigation().getBrowseUrl());
-    } catch (IOException e) {
+    } catch (final IOException e) {
       LOGGER.error("Error redirect to browse page", e);
     }
   }
@@ -499,7 +499,7 @@ public class ItemBean extends SuperBean {
    * @param event
    */
   public void selectedChanged(ValueChangeEvent event) {
-    SessionObjectsController soc = new SessionObjectsController();
+    final SessionObjectsController soc = new SessionObjectsController();
     if (event.getNewValue().toString().equals("true")) {
       setSelected(true);
       soc.selectItem(item.getId().toString());
@@ -512,9 +512,9 @@ public class ItemBean extends SuperBean {
 
 
   public List<SelectItem> getStatementMenu() throws ImejiException {
-    List<SelectItem> statementMenu = new ArrayList<SelectItem>();
-    for (Statement s : new StatementService().searchAndRetrieve(null, null, getSessionUser(), -1,
-        0)) {
+    final List<SelectItem> statementMenu = new ArrayList<SelectItem>();
+    for (final Statement s : new StatementService().searchAndRetrieve(null, null, getSessionUser(),
+        -1, 0)) {
       statementMenu.add(new SelectItem(s.getId(), s.getDefaultName()));
     }
     return statementMenu;
@@ -550,7 +550,7 @@ public class ItemBean extends SuperBean {
    * @return String
    */
   public String getStringContent() throws ImejiException {
-    StorageController sc = new StorageController();
+    final StorageController sc = new StorageController();
     stringContent = sc.readFileStringContent(item.getFullImageUrl().toString());
     return stringContent;
   }

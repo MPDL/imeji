@@ -33,20 +33,20 @@ public class RefreshFileSizeJob implements Callable<Integer> {
     ImejiSPARQL.execUpdate(JenaCustomQueries.deleteAllFileSize());
     LOGGER.info("...done!");
     LOGGER.info("Retrieving all items...");
-    ItemService itemController = new ItemService();
-    InternalStorageManager storageManager = new InternalStorageManager();
-    Collection<Item> items = itemController.retrieveAll(Imeji.adminUser);
+    final ItemService itemController = new ItemService();
+    final InternalStorageManager storageManager = new InternalStorageManager();
+    final Collection<Item> items = itemController.retrieveAll(Imeji.adminUser);
     LOGGER.info("...done (found  " + items.size() + ")");
     LOGGER.info("Reading the original file size of each item and update size");
     int count = 1;
     File f;
     String path;
-    for (Item item : items) {
+    for (final Item item : items) {
       try {
         LOGGER.info(count + "/" + items.size());
         path = storageManager.transformUrlToPath(item.getFullImageUrl().toString());
         f = new File(path);
-        Dimension d = ImageUtils.getImageDimension(f);
+        final Dimension d = ImageUtils.getImageDimension(f);
         if (d != null && d.width > 0 && d.height > 0) {
           ImejiSPARQL
               .execUpdate(JenaCustomQueries.insertFileSizeAndDimension(item.getId().toString(),
@@ -56,7 +56,7 @@ public class RefreshFileSizeJob implements Callable<Integer> {
               JenaCustomQueries.insertFileSize(item.getId().toString(), Long.toString(f.length())));
         }
 
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error updating file size and dimension of item " + item.getIdString() + " : "
             + e.getMessage());
       } finally {

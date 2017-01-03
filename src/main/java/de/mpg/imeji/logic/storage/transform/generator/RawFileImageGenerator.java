@@ -90,19 +90,19 @@ public class RawFileImageGenerator implements ImageGenerator {
    * @return
    */
   private BufferedImage writeTextOnImage(BufferedImage old, String extension, String fileName) {
-    int w = old.getWidth();
-    int h = old.getHeight();
-    BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-    Graphics2D g2d = img.createGraphics();
+    final int w = old.getWidth();
+    final int h = old.getHeight();
+    final BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+    final Graphics2D g2d = img.createGraphics();
     g2d.drawImage(old, 0, 0, null);
     g2d.setPaint(Color.WHITE);
     g2d.setFont(FONT);
-    FontMetrics fm = g2d.getFontMetrics();
+    final FontMetrics fm = g2d.getFontMetrics();
 
     // display the filename extension.
     // if filename extension is null, simply show the mimetype (if recognized) which comes with the
     // extension parameter of the method.
-    String fileNameExtension = FilenameUtils.getExtension(fileName);
+    final String fileNameExtension = FilenameUtils.getExtension(fileName);
     if (!fileNameExtension.equals("")) {
       extension = fileNameExtension;
     }

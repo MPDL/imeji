@@ -14,9 +14,9 @@ public class GeolocationValidator implements Validator<Metadata> {
   @Override
   public void validate(Metadata geolocation, Method method) throws UnprocessableError {
     UnprocessableError e = new UnprocessableError();
-    String value = geolocation.getText();
-    Double latitude = geolocation.getLatitude();
-    Double longitude = geolocation.getLongitude();
+    final String value = geolocation.getText();
+    final Double latitude = geolocation.getLatitude();
+    final Double longitude = geolocation.getLongitude();
     if ((!Double.isNaN(latitude) || !Double.isNaN(longitude)) && value != null) {
       if (latitude < -90 || latitude > 90) {
         e = new UnprocessableError("error_latitude_format " + value, e);

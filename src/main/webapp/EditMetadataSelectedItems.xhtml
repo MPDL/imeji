@@ -11,44 +11,66 @@
 	<ui:define name="actionsMenu"></ui:define>
 
 	<ui:define name="mainContent">
+		<style>
+			.edit_selected_table_wrapper{
+				width: 96%; 
+				overflow-x: auto; 
+				overflow-y: hidden;  
+				white-space: nowrap;
+			}
+			.edit_selected_table{
+				border-collapse: collapse;
+				border: 5px solid #444444; 
+			}
+			.edit_selected_table td{
+				vertical-align: top;
+				border: 5px solid #444444; 
+				padding:1px;
+				width: 5em;
+			}
+			.edit_selected_table th{
+				margin:1px;
+				text-align: center;
+				background-color: #444444;
+			}
+		</style>
 		<h:form id="editSelectedForm">
-			<div class="">
-				<h:outputLink value="">#{lbl.back}</h:outputLink>
-				<h:commandLink type="submit" styleClass="imj_submitButton" action="#{EditMetadataSelectedItemsBean.save}" value="#{lbl.save}">
-					<f:ajax execute="@form" render="@form"/>
+			<div>
+				<h:outputLink value="#{EditMetadataSelectedItemsBean.backUrl}">#{lbl.back_to_pictures}</h:outputLink>
+				<h:commandLink styleClass="imj_submitButton" action="#{EditMetadataSelectedItemsBean.save}" value="#{lbl.save}">
 				</h:commandLink>
 			</div>
 			<br/>
-			<table>
-				<tr>
-					<th>#{lbl.filename}</th>
-					<ui:repeat value="#{EditMetadataSelectedItemsBean.columns}" var="column">
-				    	<th>#{column.index}</th>
-				    </ui:repeat>
-				    <th>
-				    	<md:select component="#{EditMetadataSelectedItemsBean.newStatement}"  menu="#{EditMetadataSelectedItemsBean.statementMenu}"/>
-				    	<h:commandLink type="submit" action="#{EditMetadataSelectedItemsBean.addColumn}" value=" #{lbl.add}" title="#{lbl.add}">
-							<f:ajax execute="@form" render="@form"/>
-						</h:commandLink>
-					</th>
-			  	</tr>
-			  	<ui:repeat id="item" value="#{EditMetadataSelectedItemsBean.rows}" var="row">
-					<tr style="margin:5px;">
-						<td style="border: 5px solid #292929; padding:5px;">#{row.filename}</td>
-						<ui:repeat id="metadata" value="#{row.cells}" var="cell">
-					    	<td style="border: 5px solid #292929; padding:5px;">
-								<ui:repeat id="value" value="#{cell.inputs}" var="input">
-									<md:input id="input" metadataInputComponent="#{input}"/>
-									<br/>
-								</ui:repeat>
-								<h:commandLink type="submit" styleClass="fa fa-plus" action="#{cell.addValue}" value=" #{lbl.add_value}" title="#{lbl.add_metadata}">
-									<f:ajax execute="@form" render="@form"/>
-								</h:commandLink>
-							</td>
+			<md:select component="#{EditMetadataSelectedItemsBean.newStatement}" menu="#{EditMetadataSelectedItemsBean.statementMenu}"/>
+	    	<h:commandLink type="submit" action="#{EditMetadataSelectedItemsBean.addColumn}" value=" #{lbl.add}" title="#{lbl.add}" rendered="#{!empty EditMetadataSelectedItemsBean.newStatement.index}">
+				<f:ajax execute="@form" render="@form"/>
+			</h:commandLink>
+			<div class="edit_selected_table_wrapper">
+				<table class="edit_selected_table">
+					<tr>
+						<th>#{lbl.filename}</th>
+						<ui:repeat value="#{EditMetadataSelectedItemsBean.columns}" var="column">
+					    	<th>#{column.index}</th>
 					    </ui:repeat>
-					</tr>
-				</ui:repeat>
-			</table>
+				  	</tr>
+				  	<ui:repeat id="item" value="#{EditMetadataSelectedItemsBean.rows}" var="row">
+						<tr>
+							<th>#{row.filename}</th>
+							<ui:repeat id="metadata" value="#{row.cells}" var="cell">
+						    	<td>
+									<ui:repeat id="value" value="#{cell.inputs}" var="input">
+										<md:input id="input" metadataInputComponent="#{input}"/>
+									</ui:repeat>
+									<br/>
+									<h:commandLink type="submit" style="float:left; clear:both;" styleClass="fa fa-plus" action="#{cell.addValue}" value="" title="#{lbl.add_metadata}">
+										<f:ajax execute="@form" render="@form"/>
+									</h:commandLink>
+								</td>
+						    </ui:repeat>
+						</tr>
+					</ui:repeat>
+				</table>
+			</div>
 		</h:form>
 	</ui:define>
 </ui:composition>
