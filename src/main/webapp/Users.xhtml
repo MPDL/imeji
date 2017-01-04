@@ -94,7 +94,10 @@
 										</div>
 										<h:panelGroup class="imj_messageError" rendered="#{not user.active}">
 											<h2>
-												<h:outputText value="#{lbl.inactive_user}" rendered="#{not user.active}"/>
+												<h:outputText value="#{lbl.inactive_user}" rendered="#{not user.active and not user.removed}"/>
+											</h2>
+											<h2>
+												<h:outputText value="#{lbl.removed_user}" rendered="#{user.removed}"/>
 											</h2>
 										</h:panelGroup>
 										<span class="imj_invisible">: </span>
@@ -102,21 +105,27 @@
 									<ui:fragment rendered="#{UsersBean.group == null}">
 										<!-- AdminDataList - User Email -->
 										<div class="imj_adminEditPanel">
-											<h:outputLink value="#{Navigation.applicationSpaceUrl}user?id=#{user.email}">
+											<h:outputLink value="#{Navigation.applicationSpaceUrl}user?id=#{user.email}" rendered="#{not user.removed}">
 												<h:outputText value="#{lbl.view_detail}" styleClass="imj_editButton"/>
 											</h:outputLink>
 											
 											<!-- AdminDataList - User Password -->
-											<h:outputLink value="#" styleClass="imj_editButton" title="#{lbl.user_admin_newPwd}" onclick="openDialog('sendNewPassword#{row.index}');">
+											<h:outputLink value="#" styleClass="imj_editButton" title="#{lbl.user_admin_newPwd}" onclick="openDialog('sendNewPassword#{row.index}');" rendered="#{not user.removed}">
 												<h:outputText value="#{lbl.user_admin_newPwd}"/>
 											</h:outputLink>
 											<dialog:confirmationDialog submitAction="sendPassword" bean="#{UsersBean}" confirmationText="#{msg.confirmation_new_password}" submitLabel="#{lbl.user_admin_newPwd}" dialogId="sendNewPassword#{row.index}" identifierName="email" identifierValue="#{user.email}"/>
 											
 											<!-- AdminDataList - Activate User -->
-											<h:outputLink value="#" styleClass="imj_editButton" title="#{lbl.activate}" onclick="openDialog('activateUser#{row.index}');" rendered="#{not user.active}">
+											<h:outputLink value="#" styleClass="imj_editButton" title="#{lbl.activate}" onclick="openDialog('activateUser#{row.index}');" rendered="#{not user.active and not user.removed}">
 												<h:outputText value="#{lbl.activate}"/>
 											</h:outputLink>
 											<dialog:confirmationDialog submitAction="activateUser" bean="#{UsersBean}" confirmationText="#{msg.confirmation_activate_user}" submitLabel="#{lbl.activate}" dialogId="activateUser#{row.index}" identifierName="email" identifierValue="#{user.email}"/>
+											
+											<!-- AdminDataList - Remove User -->
+											<h:outputLink value="#" styleClass="imj_editButton" title="#{lbl.remove}" onclick="openDialog('removeUser#{row.index}');" rendered="#{not user.removed}">
+												<h:outputText value="#{lbl.remove}"/>
+											</h:outputLink>
+											<dialog:confirmationDialog submitAction="removeUser" bean="#{UsersBean}" confirmationText="#{msg.confirmation_remove_user}" submitLabel="#{lbl.remove}" dialogId="removeUser#{row.index}" identifierName="email" identifierValue="#{user.email}"/>
 
 											<!-- AdminDataList - Delete User -->
 											<h:outputLink value="#" styleClass="imj_cancelButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteUser#{row.index}');">

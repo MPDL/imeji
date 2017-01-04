@@ -194,7 +194,8 @@ public class User implements Serializable {
   public enum UserStatus {
     ACTIVE(new String(ImejiNamespaces.USER_STATUS + "#ACTIVE")), INACTIVE(
         new String(ImejiNamespaces.USER_STATUS + "#INACTIVE")), INVITED(
-            ImejiNamespaces.USER_STATUS + "#INVITED");
+            ImejiNamespaces.USER_STATUS + "#INVITED"), REMOVED(
+                new String(ImejiNamespaces.USER_STATUS + "#REMOVED"));
 
     private String uri;
 
@@ -241,6 +242,10 @@ public class User implements Serializable {
 
   public boolean isActive() {
     return userStatus.equals(UserStatus.ACTIVE.getURI());
+  }
+
+  public boolean isRemoved() {
+    return userStatus.equals(UserStatus.REMOVED.getURI());
   }
 
   public Calendar getModified() {

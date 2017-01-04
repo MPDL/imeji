@@ -841,7 +841,8 @@ public class ItemBean extends SuperBean {
    */
   public void updateRotation() throws ImejiException {
 
-    if (getAuth().admin(getImage())) {
+
+    if (getAuth().update(getImage())) {
       StorageController storageController = new StorageController();
       int degrees = (rotation - lastRotation + 360) % 360;
       lastRotation = rotation;

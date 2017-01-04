@@ -74,6 +74,9 @@ public final class DefaultAuthentication implements Authentication {
           "User could not be authenticated with provided credentials! " + getUserLogin());
     }
     if (!user.isActive()) {
+      if (user.isRemoved()) {
+        throw new AuthenticationError("User has been removed");
+      }
       throw new InactiveAuthenticationError(
           "Not active user: please activate your account with the limk sent after your registration");
     }

@@ -26,6 +26,7 @@ import de.mpg.imeji.logic.user.controller.UserBusinessController;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.User.UserStatus;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.notification.NotificationUtils;
@@ -164,6 +165,24 @@ public class UsersBean extends SuperBean {
     }
     doSearch();
     return "";
+  }
+
+  /**
+   * Removes a {@link User}, but does not delete him
+   */
+  public void removeUser() {
+    String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+        .get("email");
+    UserBusinessController controller = new UserBusinessController();
+    try {
+      User user = controller.retrieve(email, getSessionUser());
+      user.setUserStatus(UserStatus.REMOVED);
+      controller.update(user, getSessionUser());
+      doSearch();
+    } catch (ImejiException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**
