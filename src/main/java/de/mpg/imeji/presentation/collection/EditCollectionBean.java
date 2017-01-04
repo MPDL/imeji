@@ -21,8 +21,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -91,7 +91,7 @@ public class EditCollectionBean extends CollectionBean {
       final CollectionController collectionController = new CollectionController();
       final User user = getSessionUser();
       collectionController.update(getCollection(), user);
-      final UserBusinessController uc = new UserBusinessController();
+      final UserService uc = new UserService();
       uc.update(user, user);
       if (containerEditorSession.getUploadedLogoPath() != null) {
         collectionController.updateLogo(getCollection(),

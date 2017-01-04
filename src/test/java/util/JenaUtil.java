@@ -19,13 +19,13 @@ import com.hp.hpl.jena.tdb.sys.TDBMaker;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiInitializer;
+import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
-import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
+import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
@@ -116,7 +116,7 @@ public class JenaUtil {
 
   private static void initTestUser() throws Exception {
     ElasticInitializer.reset();
-    new UserBusinessController().reindex(ElasticService.DATA_ALIAS);
+    new UserService().reindex(ElasticService.DATA_ALIAS);
     testUser = getMockupUser(TEST_USER_EMAIL, TEST_USER_NAME, TEST_USER_PWD);
     testUser2 = getMockupUser(TEST_USER_EMAIL_2, TEST_USER_NAME, TEST_USER_PWD);
     testUser = createUser(testUser);
@@ -125,7 +125,7 @@ public class JenaUtil {
 
 
   private static User createUser(User u) throws ImejiException {
-    UserBusinessController c = new UserBusinessController();
+    UserService c = new UserService();
     try {
       return c.create(u, USER_TYPE.DEFAULT);
     } catch (Exception e) {

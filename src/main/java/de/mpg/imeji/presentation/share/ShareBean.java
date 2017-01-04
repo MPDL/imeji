@@ -15,15 +15,15 @@ import com.ocpsoft.pretty.PrettyContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.AlbumController;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
-import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
-import de.mpg.imeji.logic.user.collaboration.email.EmailService;
-import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
-import de.mpg.imeji.logic.user.controller.GroupBusinessController;
+import de.mpg.imeji.logic.share.ShareService.ShareRoles;
+import de.mpg.imeji.logic.share.email.EmailMessages;
+import de.mpg.imeji.logic.share.email.EmailService;
+import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
@@ -432,7 +432,7 @@ public class ShareBean extends SuperBean implements Serializable {
    * @return
    */
   private UserGroup retrieveGroup(String uri) {
-    final GroupBusinessController c = new GroupBusinessController();
+    final UserGroupService c = new UserGroupService();
     try {
       return c.retrieve(uri, Imeji.adminUser);
     } catch (final Exception e) {

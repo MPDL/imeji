@@ -32,8 +32,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mpg.imeji.rest.api.CollectionService;
-import de.mpg.imeji.rest.api.DefaultItemService;
+import de.mpg.imeji.rest.api.CollectionAPIService;
+import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
 import de.mpg.imeji.testimpl.ImejiTestResources;
@@ -200,7 +200,7 @@ public class ItemCreate extends ItemTestBase {
   @Test
   public void createItem_InReleasedCollection() throws Exception {
     initItem("test6");
-    CollectionService sc = new CollectionService();
+    CollectionAPIService sc = new CollectionAPIService();
     sc.release(collectionId, JenaUtil.testUser);
     assertEquals("RELEASED", sc.read(collectionId, JenaUtil.testUser).getStatus());
     FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTest2Jpg());
@@ -211,7 +211,7 @@ public class ItemCreate extends ItemTestBase {
     Response response = getAuthTarget().post(Entity.entity(multiPart, multiPart.getMediaType()));
     assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
 
-    DefaultItemService is = new DefaultItemService();
+    ItemAPIService is = new ItemAPIService();
     assertEquals("RELEASED", is.read(itemId, JenaUtil.testUser).getStatus());
 
   }
@@ -219,7 +219,7 @@ public class ItemCreate extends ItemTestBase {
   @Test
   public void createItem_InWithdrawnCollection() throws Exception {
     initItem("test5");
-    CollectionService sc = new CollectionService();
+    CollectionAPIService sc = new CollectionAPIService();
     sc.release(collectionId, JenaUtil.testUser);
     assertEquals("RELEASED", sc.read(collectionId, JenaUtil.testUser).getStatus());
     sc.withdraw(collectionId, JenaUtil.testUser, "ItemCreateTest_createItem_InWithdrawnCollection");

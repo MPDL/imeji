@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import de.mpg.imeji.rest.api.CollectionService;
+import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.SearchResultTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
@@ -84,7 +84,7 @@ public class ItemRead extends ItemTestBase {
 
   @Test
   public void test_4_ReadItem_InReleaseCollection() throws Exception {
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     s.release(collectionId, JenaUtil.testUser);
     assertEquals("RELEASED", s.read(collectionId, JenaUtil.testUser).getStatus());
 
@@ -106,7 +106,7 @@ public class ItemRead extends ItemTestBase {
 
   @Test
   public void test_5_ReadItem_InWithDrawnCollection() throws Exception {
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     s.release(collectionId, JenaUtil.testUser);
     assertEquals("RELEASED", s.read(collectionId, JenaUtil.testUser).getStatus());
     s.withdraw(collectionId, JenaUtil.testUser,

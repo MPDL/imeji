@@ -27,9 +27,9 @@ import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
 import de.mpg.imeji.rest.MyApplication;
-import de.mpg.imeji.rest.api.AlbumService;
-import de.mpg.imeji.rest.api.CollectionService;
-import de.mpg.imeji.rest.api.DefaultItemService;
+import de.mpg.imeji.rest.api.AlbumAPIService;
+import de.mpg.imeji.rest.api.CollectionAPIService;
+import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.AlbumTO;
 import de.mpg.imeji.rest.to.CollectionTO;
@@ -123,7 +123,7 @@ public class ImejiTestBase extends JerseyTest {
    * @throws Exception
    */
   public static String initCollection() {
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     try {
       collectionTO = (CollectionTO) RestProcessUtils.buildTOFromJSON(
           getStringFromPath(STATIC_CONTEXT_REST + "/createCollection.json"), CollectionTO.class);
@@ -137,7 +137,7 @@ public class ImejiTestBase extends JerseyTest {
   }
 
   public static String initCollectionWithProfile(String profileId) {
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     try {
       collectionTO = (CollectionTO) RestProcessUtils.buildTOFromJSON(
           getStringFromPath(STATIC_CONTEXT_REST + "/createCollectionWithProfile.json")
@@ -161,7 +161,7 @@ public class ImejiTestBase extends JerseyTest {
    * @throws Exception
    */
   public static void initAlbum() {
-    AlbumService s = new AlbumService();
+    AlbumAPIService s = new AlbumAPIService();
     try {
       albumTO = (AlbumTO) RestProcessUtils.buildTOFromJSON(
           getStringFromPath(STATIC_CONTEXT_REST + "/createAlbum.json"), AlbumTO.class);
@@ -183,7 +183,7 @@ public class ImejiTestBase extends JerseyTest {
   }
 
   public static void initItem(String fileName) {
-    DefaultItemService s = new DefaultItemService();
+    ItemAPIService s = new ItemAPIService();
     DefaultItemWithFileTO to = new DefaultItemWithFileTO();
     to.setCollectionId(collectionId);
     if (fileName == null) {

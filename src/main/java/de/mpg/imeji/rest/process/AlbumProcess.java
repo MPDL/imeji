@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response.Status;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.rest.api.AlbumService;
+import de.mpg.imeji.rest.api.AlbumAPIService;
 import de.mpg.imeji.rest.to.AlbumTO;
 import de.mpg.imeji.rest.to.JSONResponse;
 
@@ -23,7 +23,7 @@ public class AlbumProcess {
 
   public static JSONResponse readAlbum(HttpServletRequest req, String id) {
     JSONResponse resp;
-    final AlbumService ccrud = new AlbumService();
+    final AlbumAPIService ccrud = new AlbumAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       resp = buildResponse(Status.OK.getStatusCode(), ccrud.read(id, u));
@@ -36,7 +36,7 @@ public class AlbumProcess {
 
   public static JSONResponse readAllAlbums(HttpServletRequest req, String q, int offset, int size) {
     JSONResponse resp;
-    final AlbumService as = new AlbumService();
+    final AlbumAPIService as = new AlbumAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(), as.search(q, offset, size, u));
@@ -49,7 +49,7 @@ public class AlbumProcess {
   public static JSONResponse readAlbumItems(HttpServletRequest req, String id, String q, int offset,
       int size) {
     JSONResponse resp = null;
-    final AlbumService ccrud = new AlbumService();
+    final AlbumAPIService ccrud = new AlbumAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(),
@@ -77,7 +77,7 @@ public class AlbumProcess {
   public static JSONResponse createAlbum(HttpServletRequest req) {
     JSONResponse resp;
 
-    final AlbumService service = new AlbumService();
+    final AlbumAPIService service = new AlbumAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       final AlbumTO to = (AlbumTO) buildTOFromJSON(req, AlbumTO.class);
@@ -91,7 +91,7 @@ public class AlbumProcess {
   public static JSONResponse updateAlbum(HttpServletRequest req, String id) {
     JSONResponse resp;
 
-    final AlbumService service = new AlbumService();
+    final AlbumAPIService service = new AlbumAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       final AlbumTO to = (AlbumTO) buildTOFromJSON(req, AlbumTO.class);
@@ -108,7 +108,7 @@ public class AlbumProcess {
   public static JSONResponse deleteAlbum(HttpServletRequest req, String id) {
     JSONResponse resp;
 
-    final AlbumService service = new AlbumService();
+    final AlbumAPIService service = new AlbumAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       resp = buildResponse(Status.NO_CONTENT.getStatusCode(), service.delete(id, u));
@@ -125,7 +125,7 @@ public class AlbumProcess {
       return localExceptionHandler(new BadRequestException("Please give a comment"), null);
     }
 
-    final AlbumService service = new AlbumService();
+    final AlbumAPIService service = new AlbumAPIService();
 
     try {
       final User u = BasicAuthentication.auth(req);
@@ -139,7 +139,7 @@ public class AlbumProcess {
   public static JSONResponse releaseAlbum(HttpServletRequest req, String id) {
     JSONResponse resp;
 
-    final AlbumService service = new AlbumService();
+    final AlbumAPIService service = new AlbumAPIService();
 
     try {
       final User u = BasicAuthentication.auth(req);
@@ -152,7 +152,7 @@ public class AlbumProcess {
 
   public static JSONResponse addItems(HttpServletRequest req, String id) {
     JSONResponse resp;
-    final AlbumService service = new AlbumService();
+    final AlbumAPIService service = new AlbumAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       final List<String> itemIds = (List) buildTOFromJSON(req, List.class);
@@ -166,7 +166,7 @@ public class AlbumProcess {
   public static JSONResponse removeItems(HttpServletRequest req, String id,
       boolean removeAllItems) {
     JSONResponse resp;
-    final AlbumService service = new AlbumService();
+    final AlbumAPIService service = new AlbumAPIService();
     List<String> itemIds = null;
     try {
       final User u = BasicAuthentication.auth(req);

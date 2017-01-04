@@ -8,8 +8,8 @@ import java.util.List;
 
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.ImejiNamespaces;
+import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.search.util.SearchUtils;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;

@@ -9,12 +9,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import com.hp.hpl.jena.query.Dataset;
 
+import de.mpg.imeji.logic.batch.executors.NightlyExecutor;
 import de.mpg.imeji.logic.concurrency.locks.LocksSurveyor;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiProperties;
 import de.mpg.imeji.logic.config.ImejiResourceBundle;
 import de.mpg.imeji.logic.config.ImejiStartupConfig;
-import de.mpg.imeji.logic.jobs.executors.NightlyExecutor;
 import de.mpg.imeji.logic.vo.User;
 
 /**

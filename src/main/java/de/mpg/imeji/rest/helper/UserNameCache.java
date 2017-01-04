@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.rest.api.UserService;
+import de.mpg.imeji.rest.api.UserAPIService;
 
 /**
  * Class to be used as cache to read the usernames from the database
@@ -26,7 +26,7 @@ public class UserNameCache {
       return userNameMap.get(userId.toString());
     } else {
       try {
-        final UserService ucrud = new UserService();
+        final UserAPIService ucrud = new UserAPIService();
         final String name = ucrud.getCompleteName(userId);
         userNameMap.put(userId.toString(), name);
         return name;

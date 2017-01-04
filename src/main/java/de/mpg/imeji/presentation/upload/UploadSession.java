@@ -38,7 +38,7 @@ import javax.faces.bean.SessionScoped;
 import org.apache.commons.lang.BooleanUtils;
 
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.presentation.component.LicenseEditor;
+import de.mpg.imeji.presentation.license.LicenseEditor;
 
 /**
  * Session for the upload page for the parameter which must be in a sesion (because of the upload

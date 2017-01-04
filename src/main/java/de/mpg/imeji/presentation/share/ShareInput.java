@@ -9,10 +9,10 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.user.collaboration.email.EmailService;
-import de.mpg.imeji.logic.user.collaboration.invitation.Invitation;
-import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.share.email.EmailService;
+import de.mpg.imeji.logic.share.invitation.Invitation;
+import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -184,7 +184,7 @@ public class ShareInput implements Serializable {
    * @return
    */
   private User retrieveUser(String email) {
-    final UserBusinessController controller = new UserBusinessController();
+    final UserService controller = new UserService();
     try {
       return controller.retrieve(email, Imeji.adminUser);
     } catch (final Exception e) {

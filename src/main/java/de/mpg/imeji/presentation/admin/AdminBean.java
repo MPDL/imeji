@@ -17,13 +17,13 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.batch.CleanContentVOsJob;
+import de.mpg.imeji.logic.batch.ElasticReIndexJob;
+import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
+import de.mpg.imeji.logic.batch.ImportFileFromEscidocToInternalStorageJob;
+import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
+import de.mpg.imeji.logic.batch.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.jobs.CleanContentVOsJob;
-import de.mpg.imeji.logic.jobs.ElasticReIndexJob;
-import de.mpg.imeji.logic.jobs.FulltextAndTechnicalMetadataJob;
-import de.mpg.imeji.logic.jobs.ImportFileFromEscidocToInternalStorageJob;
-import de.mpg.imeji.logic.jobs.RefreshFileSizeJob;
-import de.mpg.imeji.logic.jobs.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -34,7 +34,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
@@ -334,7 +334,7 @@ public class AdminBean extends SuperBean {
    * @return
    */
   public List<User> getAllUsers() {
-    final UserBusinessController uc = new UserBusinessController();
+    final UserService uc = new UserService();
     return (List<User>) uc.searchUserByName("");
   }
 

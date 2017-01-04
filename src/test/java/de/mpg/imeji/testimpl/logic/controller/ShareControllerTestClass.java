@@ -10,19 +10,19 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.share.ShareService;
+import de.mpg.imeji.logic.share.ShareService.ShareRoles;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
 import util.JenaUtil;
 
 /**
- * Test the {@link ShareBusinessController}
+ * Test the {@link ShareService}
  * 
  * @author saquet
  *
@@ -45,12 +45,12 @@ public class ShareControllerTestClass extends ControllerTest {
 
   @Test
   public void shareEditProfile() throws ImejiException {
-    UserBusinessController userController = new UserBusinessController();
+    UserService userController = new UserService();
     User user = userController.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     User user2 = userController.retrieve(JenaUtil.TEST_USER_EMAIL_2, Imeji.adminUser);
-    ShareBusinessController controller = new ShareBusinessController();
+    ShareService controller = new ShareService();
     controller.shareToUser(user, user2, profile.getId().toString(),
-        (List<String>) ShareBusinessController.rolesAsList(ShareRoles.EDIT));
+        (List<String>) ShareService.rolesAsList(ShareRoles.EDIT));
     ProfileController profileController = new ProfileController();
 
     try {
@@ -77,12 +77,12 @@ public class ShareControllerTestClass extends ControllerTest {
 
   @Test
   public void shareReadCollection() throws ImejiException {
-    UserBusinessController userController = new UserBusinessController();
+    UserService userController = new UserService();
     User user = userController.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     User user2 = userController.retrieve(JenaUtil.TEST_USER_EMAIL_2, Imeji.adminUser);
-    ShareBusinessController controller = new ShareBusinessController();
+    ShareService controller = new ShareService();
     controller.shareToUser(user, user2, collection.getId().toString(),
-        (List<String>) ShareBusinessController.rolesAsList(ShareRoles.READ));
+        (List<String>) ShareService.rolesAsList(ShareRoles.READ));
     ProfileController profileController = new ProfileController();
     CollectionController collectionController = new CollectionController();
     MetadataProfile collectionProfile = null;
@@ -132,12 +132,12 @@ public class ShareControllerTestClass extends ControllerTest {
 
   @Test
   public void shareEditCollectionMetadata() throws ImejiException {
-    UserBusinessController userController = new UserBusinessController();
+    UserService userController = new UserService();
     User user = userController.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     User user2 = userController.retrieve(JenaUtil.TEST_USER_EMAIL_2, Imeji.adminUser);
-    ShareBusinessController controller = new ShareBusinessController();
+    ShareService controller = new ShareService();
     controller.shareToUser(user, user2, collection.getId().toString(),
-        (List<String>) ShareBusinessController.rolesAsList(ShareRoles.EDIT));
+        (List<String>) ShareService.rolesAsList(ShareRoles.EDIT));
     ProfileController profileController = new ProfileController();
     CollectionController collectionController = new CollectionController();
     MetadataProfile collectionProfile = null;
@@ -182,9 +182,9 @@ public class ShareControllerTestClass extends ControllerTest {
 
   @Test
   public void shareItem() throws ImejiException {
-    ShareBusinessController shareController = new ShareBusinessController();
+    ShareService shareController = new ShareService();
     shareController.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, item.getId().toString(),
-        ShareBusinessController.rolesAsList(ShareRoles.READ));
+        ShareService.rolesAsList(ShareRoles.READ));
     ItemService itemController = new ItemService();
     try {
       itemController.retrieve(item.getId(), JenaUtil.testUser2);
@@ -195,10 +195,10 @@ public class ShareControllerTestClass extends ControllerTest {
 
   @Test
   public void unshareCollection() throws ImejiException {
-    ShareBusinessController shareController = new ShareBusinessController();
+    ShareService shareController = new ShareService();
     // First share...
     shareController.shareToUser(JenaUtil.testUser, JenaUtil.testUser2,
-        collection.getId().toString(), ShareBusinessController.rolesAsList(ShareRoles.READ));
+        collection.getId().toString(), ShareService.rolesAsList(ShareRoles.READ));
     // ... then unshare
     shareController.shareToUser(JenaUtil.testUser, JenaUtil.testUser2,
         collection.getId().toString(), new ArrayList<String>());

@@ -42,8 +42,8 @@ import com.hp.hpl.jena.sparql.pfunction.library.container;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.user.controller.GroupBusinessController;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Grant;
@@ -74,7 +74,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
   public void init() {
     final String groupId = UrlHelper.getParameterValue("id");
     if (groupId != null) {
-      final GroupBusinessController c = new GroupBusinessController();
+      final UserGroupService c = new UserGroupService();
       try {
         this.userGroup = c.retrieve(groupId, getSessionUser());
         this.users = loadUsers(userGroup);
@@ -97,7 +97,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
    */
   public Collection<User> loadUsers(UserGroup group) {
     final Collection<User> users = new ArrayList<User>();
-    final UserBusinessController c = new UserBusinessController();
+    final UserService c = new UserService();
     for (final URI uri : userGroup.getUsers()) {
       try {
         users.add(c.retrieve(uri, Imeji.adminUser));
@@ -146,7 +146,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * Create a new {@link UserGroup}
    */
   public String create() {
-    final GroupBusinessController c = new GroupBusinessController();
+    final UserGroupService c = new UserGroupService();
     try {
       c.create(userGroup, getSessionUser());
       reload();
@@ -166,7 +166,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @throws IOException
    */
   public void save() throws IOException {
-    final GroupBusinessController c = new GroupBusinessController();
+    final UserGroupService c = new UserGroupService();
     try {
       c.update(userGroup, getSessionUser());
     } catch (final UnprocessableError e) {

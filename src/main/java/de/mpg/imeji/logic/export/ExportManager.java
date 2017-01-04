@@ -13,8 +13,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.resource.AlbumController;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.export.format.Export;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;

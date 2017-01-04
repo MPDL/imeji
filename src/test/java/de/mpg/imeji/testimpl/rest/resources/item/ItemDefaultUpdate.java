@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.exceptions.BadRequestException;
-import de.mpg.imeji.rest.api.DefaultItemService;
+import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
@@ -107,7 +107,7 @@ public class ItemDefaultUpdate extends ItemTestBase {
     itemTO.setCollectionId(collectionId);
     ((DefaultItemWithFileTO) itemTO).setFile(ImejiTestResources.getTestJpg());
 
-    DefaultItemService s = new DefaultItemService();
+    ItemAPIService s = new ItemAPIService();
     itemTO = s.create(itemTO, JenaUtil.testUser);
     itemId = itemTO.getId();
   }

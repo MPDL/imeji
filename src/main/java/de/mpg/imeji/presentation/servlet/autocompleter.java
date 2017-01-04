@@ -29,7 +29,7 @@ import org.w3c.dom.NodeList;
 
 import de.mpg.imeji.logic.config.util.ProxyHelper;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -72,7 +72,7 @@ public class autocompleter extends HttpServlet {
       suggest = "a";
     } else if (datasource != null && !datasource.isEmpty()) {
       if ("imeji_persons".equals(datasource)) {
-        final UserBusinessController uc = new UserBusinessController();
+        final UserService uc = new UserService();
         final Collection<Person> persons = uc.searchPersonByName(suggest);
         for (final Person p : persons) {
           responseString = appendResponseForInternalSuggestion(responseString,
@@ -81,7 +81,7 @@ public class autocompleter extends HttpServlet {
         responseString = "[" + responseString + "]";
 
       } else if ("imeji_orgs".equals(datasource)) {
-        final UserBusinessController uc = new UserBusinessController();
+        final UserService uc = new UserService();
         final Collection<Organization> orgs = uc.searchOrganizationByName(suggest);
         for (final Organization o : orgs) {
           responseString = appendResponseForInternalSuggestion(responseString, o.getName(),

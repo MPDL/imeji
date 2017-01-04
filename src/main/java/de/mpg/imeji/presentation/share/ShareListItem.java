@@ -13,12 +13,12 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
-import de.mpg.imeji.logic.user.collaboration.invitation.Invitation;
-import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.share.ShareService;
+import de.mpg.imeji.logic.share.ShareService.ShareRoles;
+import de.mpg.imeji.logic.share.invitation.Invitation;
+import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
@@ -79,7 +79,7 @@ public class ShareListItem implements Serializable {
     this.type = type;
     this.shareToUri = containerUri;
     this.currentUser = currentUser;
-    init(ShareBusinessController.transformRolesToGrants(invitation.getRoles(), containerUri,
+    init(ShareService.transformRolesToGrants(invitation.getRoles(), containerUri,
         currentUser), containerUri, profileUri, locale);
   }
 
@@ -130,7 +130,7 @@ public class ShareListItem implements Serializable {
    * @param profileUri
    */
   private void init(List<Grant> grants, String uri, String profileUri, Locale locale) {
-    roles = ShareBusinessController.transformGrantsToRoles(grants, uri, profileUri);
+    roles = ShareService.transformGrantsToRoles(grants, uri, profileUri);
     this.profileUri = profileUri;
     this.locale = locale;
     // checkRoles(true);
@@ -185,24 +185,24 @@ public class ShareListItem implements Serializable {
    * @return
    */
   public boolean update() {
-    final ShareBusinessController sbc = new ShareBusinessController();
+    final ShareService sbc = new ShareService();
     List<String> rolesBeforeUpdate = new ArrayList<>();
     List<String> rolesAfterUpdate = new ArrayList<>();
     try {
       if (user != null) {
-        rolesBeforeUpdate = ShareBusinessController
+        rolesBeforeUpdate = ShareService
             .transformGrantsToRoles((List<Grant>) user.getGrants(), shareToUri, profileUri);
         sbc.shareToUser(currentUser, user, shareToUri, roles);
         if (roles.contains(ShareRoles.EDIT_PROFILE.toString()) && profileUri != null) {
           // sbc.shareToUser(currentUser, user, profileUri, roles);
         }
-        rolesAfterUpdate = ShareBusinessController
+        rolesAfterUpdate = ShareService
             .transformGrantsToRoles((List<Grant>) user.getGrants(), shareToUri, profileUri);
       } else if (group != null) {
-        rolesBeforeUpdate = ShareBusinessController
+        rolesBeforeUpdate = ShareService
             .transformGrantsToRoles((List<Grant>) group.getGrants(), shareToUri, profileUri);
         sbc.shareToGroup(currentUser, group, shareToUri, roles);
-        rolesAfterUpdate = ShareBusinessController
+        rolesAfterUpdate = ShareService
             .transformGrantsToRoles((List<Grant>) group.getGrants(), shareToUri, profileUri);
       }
       return !ListUtils.equalsIgnoreOrder(rolesBeforeUpdate, rolesAfterUpdate);
@@ -246,7 +246,7 @@ public class ShareListItem implements Serializable {
    * @return
    */
   public List<User> getUsers() {
-    final UserBusinessController controller = new UserBusinessController();
+    final UserService controller = new UserService();
     final List<User> users = new ArrayList<>();
     if (group != null) {
       for (final URI uri : group.getUsers()) {

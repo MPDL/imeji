@@ -10,14 +10,14 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
-import de.mpg.imeji.logic.user.collaboration.invitation.Invitation;
-import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
-import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
+import de.mpg.imeji.logic.share.ShareService;
+import de.mpg.imeji.logic.share.ShareService.ShareRoles;
+import de.mpg.imeji.logic.share.invitation.Invitation;
+import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
@@ -56,10 +56,10 @@ public class InvitationBusinessControllerTest extends ControllerTest {
   @Test
   public void inviteAndConsume() throws ImejiException {
     List<String> roles =
-        ShareBusinessController.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
+        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
     Invitation invitation = new Invitation(UNKNOWN_EMAIL, collection.getId().toString(), roles);
     invitationBC.invite(invitation);
-    UserBusinessController userController = new UserBusinessController();
+    UserService userController = new UserService();
     userController.create(getRegisteredUser(), USER_TYPE.DEFAULT);
     User user = userController.retrieve(UNKNOWN_EMAIL, Imeji.adminUser);
     Assert.assertTrue(SecurityUtil.staticAuth().read(user, collection));
@@ -77,7 +77,7 @@ public class InvitationBusinessControllerTest extends ControllerTest {
   @Test
   public void inviteStopAndStartStore() throws ImejiException {
     List<String> roles =
-        ShareBusinessController.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
+        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
     Invitation invitation = new Invitation(UNKNOWN_EMAIL, collection.getId().toString(), roles);
     invitationBC.invite(invitation);
     List<Invitation> invitationsBefore = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
@@ -94,7 +94,7 @@ public class InvitationBusinessControllerTest extends ControllerTest {
   public void getAllinvitationsOfUser() throws ImejiException {
     // create many invitations for different object for one user
     List<String> roles =
-        ShareBusinessController.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
+        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
     int numberOfInvitations = 15;
     for (int i = 0; i < numberOfInvitations; i++) {
       Invitation invitation =
@@ -119,7 +119,7 @@ public class InvitationBusinessControllerTest extends ControllerTest {
   public void getAllInvitationsOfObject() throws ImejiException {
     // create many invitations for one object
     List<String> roles =
-        ShareBusinessController.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
+        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
     int numberOfInvitations = 15;
     for (int i = 0; i < numberOfInvitations; i++) {
       Invitation invitation =

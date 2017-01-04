@@ -13,8 +13,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mpg.imeji.rest.api.CollectionService;
-import de.mpg.imeji.rest.api.DefaultItemService;
+import de.mpg.imeji.rest.api.CollectionAPIService;
+import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
 import util.JenaUtil;
 
@@ -32,7 +32,7 @@ public class ItemDelete extends ImejiTestBase {
   public void test_1_deleteItem_WithNonAuth() throws Exception {
     initCollection();
     initItem();
-    DefaultItemService s = new DefaultItemService();
+    ItemAPIService s = new ItemAPIService();
     assertEquals("PENDING", s.read(itemId, JenaUtil.testUser).getStatus());
 
     Form form = new Form();
@@ -51,7 +51,7 @@ public class ItemDelete extends ImejiTestBase {
   public void test_2_deleteItem_NotAllowed() throws Exception {
     initCollection();
     initItem();
-    DefaultItemService s = new DefaultItemService();
+    ItemAPIService s = new ItemAPIService();
     assertEquals("PENDING", s.read(itemId, JenaUtil.testUser).getStatus());
 
     Form form = new Form();
@@ -65,7 +65,7 @@ public class ItemDelete extends ImejiTestBase {
   @Test
   public void test_3_deleteItem_NotExist() throws Exception {
     initItem();
-    DefaultItemService s = new DefaultItemService();
+    ItemAPIService s = new ItemAPIService();
     assertEquals("PENDING", s.read(itemId, JenaUtil.testUser).getStatus());
 
     Form form = new Form();
@@ -80,9 +80,9 @@ public class ItemDelete extends ImejiTestBase {
   public void test_2_deleteItem_Released() throws Exception {
     initCollection();
     initItem();
-    DefaultItemService s = new DefaultItemService();
+    ItemAPIService s = new ItemAPIService();
     assertEquals("PENDING", s.read(itemId, JenaUtil.testUser).getStatus());
-    CollectionService cs = new CollectionService();
+    CollectionAPIService cs = new CollectionAPIService();
     cs.release(s.read(itemId, JenaUtil.testUser).getCollectionId(), JenaUtil.testUser);
     assertEquals("RELEASED", s.read(itemId, JenaUtil.testUser).getStatus());
 
@@ -98,9 +98,9 @@ public class ItemDelete extends ImejiTestBase {
   public void test_2_deleteItem_Withdrawn() throws Exception {
     initCollection();
     initItem();
-    DefaultItemService s = new DefaultItemService();
+    ItemAPIService s = new ItemAPIService();
     assertEquals("PENDING", s.read(itemId, JenaUtil.testUser).getStatus());
-    CollectionService cs = new CollectionService();
+    CollectionAPIService cs = new CollectionAPIService();
     cs.release(s.read(itemId, JenaUtil.testUser).getCollectionId(), JenaUtil.testUser);
     assertEquals("RELEASED", s.read(itemId, JenaUtil.testUser).getStatus());
     cs.withdraw(s.read(itemId, JenaUtil.testUser).getCollectionId(), JenaUtil.testUser,
@@ -119,7 +119,7 @@ public class ItemDelete extends ImejiTestBase {
   public void test_3_deleteItem() throws Exception {
     initCollection();
     initItem();
-    DefaultItemService s = new DefaultItemService();
+    ItemAPIService s = new ItemAPIService();
     assertEquals("PENDING", s.read(itemId, JenaUtil.testUser).getStatus());
 
     Form form = new Form();
@@ -135,7 +135,7 @@ public class ItemDelete extends ImejiTestBase {
   public void test_3_deleteItemTwice() throws Exception {
     initCollection();
     initItem();
-    DefaultItemService s = new DefaultItemService();
+    ItemAPIService s = new ItemAPIService();
     assertEquals("PENDING", s.read(itemId, JenaUtil.testUser).getStatus());
 
     Form form = new Form();

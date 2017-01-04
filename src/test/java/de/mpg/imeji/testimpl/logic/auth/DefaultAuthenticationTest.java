@@ -7,10 +7,10 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.InactiveAuthenticationError;
-import de.mpg.imeji.logic.security.util.PasswordGenerator;
-import de.mpg.imeji.logic.user.authentication.Authentication;
-import de.mpg.imeji.logic.user.authentication.impl.DefaultAuthentication;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.authentication.Authentication;
+import de.mpg.imeji.logic.authentication.impl.DefaultAuthentication;
+import de.mpg.imeji.logic.authorization.util.PasswordGenerator;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
@@ -78,14 +78,14 @@ public class DefaultAuthenticationTest {
 
   @Test
   public void testInactiveUser() throws Exception {
-    UserBusinessController controller = new UserBusinessController();
+    UserService controller = new UserService();
     PasswordGenerator generator = new PasswordGenerator();
     String password = generator.generatePassword();
     User user = new User();
     user.setEmail("inactive_user@unit-test-imeji.org");
     user.setEncryptedPassword(StringHelper.convertToMD5(password));
     user.setPerson(ImejiFactory.newPerson("fam", "giv", "org"));
-    user = controller.create(user, UserBusinessController.USER_TYPE.INACTIVE);
+    user = controller.create(user, UserService.USER_TYPE.INACTIVE);
     Authentication simpAuth = new DefaultAuthentication(user.getEmail(), password);
     try {
       user = simpAuth.doLogin();

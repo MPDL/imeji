@@ -24,15 +24,15 @@ import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.j2j.annotations.j2jModel;
+import de.mpg.imeji.logic.authentication.ImejiRsaKeys;
+import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
-import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
-import de.mpg.imeji.logic.user.authentication.ImejiRsaKeys;
-import de.mpg.imeji.logic.user.authentication.impl.APIKeyAuthentication;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
-import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
+import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -173,7 +173,7 @@ public class ImejiInitializer {
           .setApiKey(APIKeyAuthentication.generateKey(Imeji.adminUser.getId(), Integer.MAX_VALUE));
       // create
       LOGGER.info("Checking admin users..");
-      final UserBusinessController uc = new UserBusinessController();
+      final UserService uc = new UserService();
       final List<User> admins = uc.retrieveAllAdmins();
       if (admins.size() == 0) {
         try {

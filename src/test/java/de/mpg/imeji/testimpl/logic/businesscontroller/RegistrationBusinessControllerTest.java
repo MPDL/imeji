@@ -10,14 +10,14 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.registration.Registration;
 import de.mpg.imeji.logic.registration.RegistrationBusinessController;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
-import de.mpg.imeji.logic.user.collaboration.invitation.Invitation;
-import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.share.ShareService;
+import de.mpg.imeji.logic.share.ShareService.ShareRoles;
+import de.mpg.imeji.logic.share.invitation.Invitation;
+import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
@@ -41,7 +41,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     user.setPerson(ImejiFactory.newPerson("family", "given", "org"));
     Registration registration = registrationBC.register(user);
     registrationBC.activate(registration);
-    user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
+    user = new UserService().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
     assertTrue(SecurityUtil.isAllowedToCreateCollection(user));
   }
@@ -59,7 +59,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     user.setPerson(ImejiFactory.newPerson("family", "given", "org"));
     Registration registration = registrationBC.register(user);
     registrationBC.activate(registration);
-    user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
+    user = new UserService().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
     assertTrue(SecurityUtil.isAllowedToCreateCollection(user));
   }
@@ -77,7 +77,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     user.setPerson(ImejiFactory.newPerson("family", "given", "org"));
     Registration registration = registrationBC.register(user);
     registrationBC.activate(registration);
-    user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
+    user = new UserService().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
     assertTrue(SecurityUtil.isAllowedToCreateCollection(user));
   }
@@ -95,7 +95,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     user.setPerson(ImejiFactory.newPerson("family", "given", "org"));
     Registration registration = registrationBC.register(user);
     registrationBC.activate(registration);
-    user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
+    user = new UserService().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
     assertTrue(!SecurityUtil.isAllowedToCreateCollection(user));
   }
@@ -113,7 +113,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     user.setPerson(ImejiFactory.newPerson("family", "given", "org"));
     Registration registration = registrationBC.register(user);
     registrationBC.activate(registration);
-    user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
+    user = new UserService().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
     assertTrue(!SecurityUtil.isAllowedToCreateCollection(user));
   }
@@ -131,7 +131,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     user.setPerson(ImejiFactory.newPerson("family", "given", "org"));
     Registration registration = registrationBC.register(user);
     registrationBC.activate(registration);
-    user = new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser);
+    user = new UserService().retrieve(user.getEmail(), Imeji.adminUser);
     assertTrue(user.isActive());
     assertTrue(!SecurityUtil.isAllowedToCreateCollection(user));
   }
@@ -149,13 +149,13 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     // invite the user to
     InvitationBusinessController invitationBusinessController = new InvitationBusinessController();
     invitationBusinessController.invite(new Invitation(user.getEmail(),
-        collection.getId().toString(), ShareBusinessController.rolesAsList(ShareRoles.READ)));
+        collection.getId().toString(), ShareService.rolesAsList(ShareRoles.READ)));
     // Register
     Registration registration = registrationBC.register(user);
     Assert.assertNotNull(registrationBC.retrieveByToken(registration.getToken()));
     registrationBC.activate(registration);
     // check if the user exists
-    Assert.assertNotNull(new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser));
+    Assert.assertNotNull(new UserService().retrieve(user.getEmail(), Imeji.adminUser));
   }
 
   @Test
@@ -170,7 +170,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     Assert.assertNotNull(registrationBC.retrieveByToken(registration.getToken()));
     registrationBC.activate(registration);
     // check if the user exists
-    Assert.assertNotNull(new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser));
+    Assert.assertNotNull(new UserService().retrieve(user.getEmail(), Imeji.adminUser));
   }
 
   @Test
@@ -257,6 +257,6 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     Imeji.CONFIG.setRegistrationTokenExpiry("1");
     registrationBC.activate(registration);
     // check if the user exists
-    Assert.assertNotNull(new UserBusinessController().retrieve(user.getEmail(), Imeji.adminUser));
+    Assert.assertNotNull(new UserService().retrieve(user.getEmail(), Imeji.adminUser));
   }
 }

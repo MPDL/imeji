@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionController;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -50,7 +50,7 @@ import de.mpg.imeji.logic.vo.predefinedMetadata.Link;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Publication;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Text;
-import de.mpg.imeji.rest.api.DefaultItemService;
+import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
@@ -538,7 +538,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
    * @throws Exception
    */
   protected static void initItemWithFullMetadata() throws Exception {
-    DefaultItemService service = new DefaultItemService();
+    ItemAPIService service = new ItemAPIService();
     String json = updateJSON.replace("___COLLECTION_ID___", collectionId);
     DefaultItemWithFileTO defaultItemWithFileTO =
         (DefaultItemWithFileTO) RestProcessUtils.buildTOFromJSON(json, DefaultItemWithFileTO.class);
@@ -553,7 +553,7 @@ public class ItemUpdateMetadata extends ItemTestBase {
    * @throws Exception
    */
   private static void initItemWithMultipleStatements() throws Exception {
-    DefaultItemService service = new DefaultItemService();
+    ItemAPIService service = new ItemAPIService();
     String json =
         getStringFromPath(STATIC_CONTEXT_REST + "/easyUpdateItemBasicMultipleStatements.json")
             .replace("___COLLECTION_ID___", collectionId);

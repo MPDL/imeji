@@ -13,11 +13,11 @@ import org.junit.Test;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.QuotaExceededException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionController.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
-import de.mpg.imeji.logic.user.controller.UserBusinessController.USER_TYPE;
+import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
@@ -33,7 +33,7 @@ public class UserControllerTestClass extends ControllerTest {
   @Test
   public void createAlreadyExistingUserTest() {
     try {
-      UserBusinessController c = new UserBusinessController();
+      UserService c = new UserService();
       // Create a new user with a new id but with the same email
       c.create(JenaUtil.testUser, USER_TYPE.DEFAULT);
       Assert.fail("User should not be created, since User exists already");
@@ -45,7 +45,7 @@ public class UserControllerTestClass extends ControllerTest {
   @Test
   public void updateUserWithEmailAlreadyUsedByAnotherUser() {
     try {
-      UserBusinessController c = new UserBusinessController();
+      UserService c = new UserService();
       // Set Email of user2 to user
       User user = JenaUtil.testUser;
       user.setEmail(JenaUtil.TEST_USER_EMAIL_2);
@@ -65,7 +65,7 @@ public class UserControllerTestClass extends ControllerTest {
     user.getPerson().setFamilyName(JenaUtil.TEST_USER_NAME);
     user.getPerson().setOrganizations(JenaUtil.testUser.getPerson().getOrganizations());
 
-    UserBusinessController c = new UserBusinessController();
+    UserService c = new UserService();
     User u = c.create(user, USER_TYPE.DEFAULT);
 
     // change quota

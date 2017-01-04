@@ -9,12 +9,12 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.business.StatisticsBusinessController;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.CollectionController.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionController.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
+import de.mpg.imeji.logic.share.ShareService;
+import de.mpg.imeji.logic.share.ShareService.ShareRoles;
+import de.mpg.imeji.logic.statistic.StatisticsService;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
@@ -27,7 +27,7 @@ public class StatisticsControllerTestClass extends ControllerTest {
 
   @Test
   public void test() throws ImejiException {
-    StatisticsBusinessController controller = new StatisticsBusinessController();
+    StatisticsService controller = new StatisticsService();
     CollectionImeji col1 = createCollection(JenaUtil.testUser);
     Item item1 = createItemWithFile(col1, getOriginalfile(), JenaUtil.testUser);
     long totalFileSize = FileUtils.sizeOf(getOriginalfile());
@@ -51,8 +51,8 @@ public class StatisticsControllerTestClass extends ControllerTest {
     result = controller.getUsedStorageSizeForInstitute("imeji.org");
     assertEquals(totalFileSize, result);
     // Upload by another user
-    new ShareBusinessController().shareToUser(JenaUtil.testUser, JenaUtil.testUser2,
-        col2.getId().toString(), ShareBusinessController.rolesAsList(ShareRoles.CREATE));
+    new ShareService().shareToUser(JenaUtil.testUser, JenaUtil.testUser2,
+        col2.getId().toString(), ShareService.rolesAsList(ShareRoles.CREATE));
     Item item4 = createItemWithFile(col2, getThumbnailfile(), JenaUtil.testUser2);
     totalFileSize = totalFileSize + FileUtils.sizeOf(getThumbnailfile());;
     result = controller.getUsedStorageSizeForInstitute("imeji.org");

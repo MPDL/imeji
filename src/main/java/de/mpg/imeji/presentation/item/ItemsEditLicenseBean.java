@@ -13,7 +13,7 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -22,7 +22,7 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.component.LicenseEditor;
+import de.mpg.imeji.presentation.license.LicenseEditor;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**

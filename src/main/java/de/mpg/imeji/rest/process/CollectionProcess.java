@@ -10,7 +10,7 @@ import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.rest.api.CollectionService;
+import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.JSONResponse;
 
@@ -21,7 +21,7 @@ public class CollectionProcess {
 
     User u = null;
 
-    final CollectionService ccrud = new CollectionService();
+    final CollectionAPIService ccrud = new CollectionAPIService();
     try {
       u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(), ccrud.read(id, u));
@@ -44,7 +44,7 @@ public class CollectionProcess {
       int offset, int size) {
     JSONResponse resp = null;
     User u = null;
-    final CollectionService ccrud = new CollectionService();
+    final CollectionAPIService ccrud = new CollectionAPIService();
     try {
       u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(),
@@ -58,7 +58,7 @@ public class CollectionProcess {
   public static JSONResponse createCollection(HttpServletRequest req) {
     JSONResponse resp;
 
-    final CollectionService service = new CollectionService();
+    final CollectionAPIService service = new CollectionAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       final CollectionTO to =
@@ -73,7 +73,7 @@ public class CollectionProcess {
   public static JSONResponse updateCollection(HttpServletRequest req, String id) {
     JSONResponse resp;
 
-    final CollectionService service = new CollectionService();
+    final CollectionAPIService service = new CollectionAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       final CollectionTO to =
@@ -92,7 +92,7 @@ public class CollectionProcess {
   public static JSONResponse releaseCollection(HttpServletRequest req, String id) {
     JSONResponse resp;
 
-    final CollectionService service = new CollectionService();
+    final CollectionAPIService service = new CollectionAPIService();
 
     try {
       final User u = BasicAuthentication.auth(req);
@@ -108,7 +108,7 @@ public class CollectionProcess {
       String discardComment) throws Exception {
     JSONResponse resp;
 
-    final CollectionService service = new CollectionService();
+    final CollectionAPIService service = new CollectionAPIService();
 
     try {
       final User u = BasicAuthentication.auth(req);
@@ -122,7 +122,7 @@ public class CollectionProcess {
 
   public static JSONResponse deleteCollection(HttpServletRequest req, String id) {
     JSONResponse resp;
-    final CollectionService service = new CollectionService();
+    final CollectionAPIService service = new CollectionAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(NO_CONTENT.getStatusCode(), service.delete(id, u));
@@ -135,7 +135,7 @@ public class CollectionProcess {
   public static JSONResponse readAllCollections(HttpServletRequest req, String q, int offset,
       int size) {
     JSONResponse resp;
-    final CollectionService ccrud = new CollectionService();
+    final CollectionAPIService ccrud = new CollectionAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(), ccrud.search(q, offset, size, u));

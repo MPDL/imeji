@@ -23,7 +23,7 @@ import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.rest.api.DefaultItemService;
+import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.rest.to.JSONResponse;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
@@ -54,7 +54,7 @@ public class ItemProcess {
       DefaultItemWithFileTO defaultItemWithFileTO = (DefaultItemWithFileTO) RestProcessUtils
           .buildTOFromJSON(json, DefaultItemWithFileTO.class);
       defaultItemWithFileTO = uploadAndValidateFile(file, defaultItemWithFileTO, origName);
-      final DefaultItemTO defaultItemTO = new DefaultItemService().create(defaultItemWithFileTO, u);
+      final DefaultItemTO defaultItemTO = new ItemAPIService().create(defaultItemWithFileTO, u);
       return RestProcessUtils.buildResponse(Status.CREATED.getStatusCode(), defaultItemTO);
     } catch (final Exception e) {
       LOGGER.error("Error creating item", e);
@@ -70,7 +70,7 @@ public class ItemProcess {
    * @return
    */
   public static JSONResponse readItem(HttpServletRequest req, String id) {
-    final DefaultItemService service = new DefaultItemService();
+    final ItemAPIService service = new ItemAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       return RestProcessUtils.buildResponse(Status.OK.getStatusCode(), service.read(id, u));
@@ -87,7 +87,7 @@ public class ItemProcess {
    * @return
    */
   public static JSONResponse deleteItem(HttpServletRequest req, String id) {
-    final DefaultItemService service = new DefaultItemService();
+    final ItemAPIService service = new ItemAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       service.delete(id, u);
@@ -105,7 +105,7 @@ public class ItemProcess {
    * @return
    */
   public static JSONResponse readItems(HttpServletRequest req, String q, int offset, int size) {
-    final DefaultItemService service = new DefaultItemService();
+    final ItemAPIService service = new ItemAPIService();
     try {
       final User u = BasicAuthentication.auth(req);
       return RestProcessUtils.buildResponse(OK.getStatusCode(), service.search(q, offset, size, u));
@@ -130,7 +130,7 @@ public class ItemProcess {
   public static JSONResponse updateItem(HttpServletRequest req, String id,
       InputStream fileInputStream, String json, String filename) {
     try {
-      final DefaultItemService service = new DefaultItemService();
+      final ItemAPIService service = new ItemAPIService();
       DefaultItemWithFileTO to = (DefaultItemWithFileTO) RestProcessUtils.buildTOFromJSON(json,
           DefaultItemWithFileTO.class);
       validateId(id, to);

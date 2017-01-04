@@ -38,7 +38,7 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.user.controller.GroupBusinessController;
+import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
@@ -108,7 +108,7 @@ public class UserGroupsBean implements Serializable {
    * Do the search
    */
   public void doSearch() {
-    final GroupBusinessController controller = new GroupBusinessController();
+    final UserGroupService controller = new UserGroupService();
     userGroups = controller.searchByName(query, Imeji.adminUser);
   }
 
@@ -121,12 +121,12 @@ public class UserGroupsBean implements Serializable {
   public String remove() {
     final String id = FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("group");
-    final GroupBusinessController c = new GroupBusinessController();
+    final UserGroupService c = new UserGroupService();
     UserGroup group;
     try {
       group = c.retrieve(id, sessionUser);
       if (group != null) {
-        final GroupBusinessController controller = new GroupBusinessController();
+        final UserGroupService controller = new UserGroupService();
         controller.delete(group, sessionUser);
       }
     } catch (final Exception e) {

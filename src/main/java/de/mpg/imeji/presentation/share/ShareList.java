@@ -10,13 +10,13 @@ import java.util.Locale;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.share.invitation.Invitation;
+import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.user.collaboration.invitation.Invitation;
-import de.mpg.imeji.logic.user.collaboration.invitation.InvitationBusinessController;
-import de.mpg.imeji.logic.user.controller.GroupBusinessController;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
@@ -61,7 +61,7 @@ public final class ShareList implements Serializable {
    */
   private void retrieveGroups(URI ownerUri, String sharedObjectUri, String profileUri,
       SharedObjectType type, User currentUser, Locale locale) {
-    final GroupBusinessController ugc = new GroupBusinessController();
+    final UserGroupService ugc = new UserGroupService();
     final Collection<UserGroup> groups = ugc.searchAndRetrieve(
         SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.read, SearchOperators.EQUALS, sharedObjectUri, false)),
@@ -83,7 +83,7 @@ public final class ShareList implements Serializable {
    */
   private void retrieveUsers(URI ownerUri, String sharedObjectUri, String profileUri,
       SharedObjectType type, User currentUser, Locale locale) {
-    final UserBusinessController uc = new UserBusinessController();
+    final UserService uc = new UserService();
     final Collection<User> allUser = uc.searchAndRetrieve(
         SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.read, SearchOperators.EQUALS, sharedObjectUri, false)),

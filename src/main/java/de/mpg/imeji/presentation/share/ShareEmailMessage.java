@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.user.collaboration.email.EmailMessages;
+import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
 

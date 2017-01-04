@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.User;
 
@@ -81,7 +81,7 @@ public class QuotaUtil {
       return -1L;
     }
     final User targetCollectionUser = user.getId().equals(col.getCreatedBy()) ? user
-        : new UserBusinessController().retrieve(col.getCreatedBy(), Imeji.adminUser);
+        : new UserService().retrieve(col.getCreatedBy(), Imeji.adminUser);
 
     final Search search = SearchFactory.create();
     final List<String> results =

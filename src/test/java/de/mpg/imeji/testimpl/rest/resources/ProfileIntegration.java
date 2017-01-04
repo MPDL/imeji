@@ -31,7 +31,7 @@ import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.rest.api.CollectionService;
+import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.api.ProfileService;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.MetadataProfileTO;
@@ -63,7 +63,7 @@ public class ProfileIntegration extends ImejiTestBase {
 
   @Test
   public void test_1_ReadProfiles_ReleaseCollection() throws Exception {
-    CollectionService cs = new CollectionService();
+    CollectionAPIService cs = new CollectionAPIService();
     cs.release(collectionId, JenaUtil.testUser);
     String profileId = collectionTO.getProfile().getId();
     Response response = target(pathPrefix).path(profileId).register(authAsUser2)

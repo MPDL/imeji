@@ -48,8 +48,8 @@ import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.rest.api.CollectionService;
-import de.mpg.imeji.rest.api.DefaultItemService;
+import de.mpg.imeji.rest.api.CollectionAPIService;
+import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.rest.api.ProfileService;
 import de.mpg.imeji.rest.to.CollectionProfileTO;
 import de.mpg.imeji.rest.to.CollectionProfileTO.METHOD;
@@ -90,7 +90,7 @@ public class CollectionIntegration extends ImejiTestBase {
 
     assertThat("Empty collection id", collectionId, not(isEmptyOrNullString()));
 
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     collectionTO = s.read(collectionId, Imeji.adminUser);
     assertNull(collectionTO.getProfile().getId());
   }
@@ -112,7 +112,7 @@ public class CollectionIntegration extends ImejiTestBase {
     collectionId = (String) collData.get("id");
     assertThat("Empty collection id", collectionId, not(isEmptyOrNullString()));
 
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     collectionTO = s.read(collectionId, Imeji.adminUser);
     assertNotEquals(profileId, collectionTO.getProfile().getId());
 
@@ -136,7 +136,7 @@ public class CollectionIntegration extends ImejiTestBase {
     collectionId = (String) collData.get("id");
     assertThat("Empty collection id", collectionId, not(isEmptyOrNullString()));
 
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
 
 
     collectionTO = s.read(collectionId, Imeji.adminUser);
@@ -188,7 +188,7 @@ public class CollectionIntegration extends ImejiTestBase {
     colProfile.setMethod("copy");
     collectionTO.setProfile(colProfile);
 
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     collectionTO = s.update(collectionTO, JenaUtil.testUser);
     collectionId = collectionTO.getId();
 
@@ -307,7 +307,7 @@ public class CollectionIntegration extends ImejiTestBase {
     initCollection();
 
 
-    DefaultItemService service = new DefaultItemService();
+    ItemAPIService service = new ItemAPIService();
 
     initItem();
     assertEquals("PENDING", service.read(itemId, JenaUtil.testUser).getStatus());
@@ -317,7 +317,7 @@ public class CollectionIntegration extends ImejiTestBase {
 
     assertEquals(OK.getStatusCode(), response.getStatus());
 
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     assertEquals("RELEASED", s.read(collectionId, JenaUtil.testUser).getStatus());
 
     assertEquals("RELEASED", service.read(itemId, JenaUtil.testUser).getStatus());
@@ -328,7 +328,7 @@ public class CollectionIntegration extends ImejiTestBase {
   public void test_3_ReleaseCollection_2_WithUnauth() throws ImejiException {
     initCollection();
     initItem();
-    DefaultItemService itemService = new DefaultItemService();
+    ItemAPIService itemService = new ItemAPIService();
     assertEquals("PENDING", itemService.read(itemId, JenaUtil.testUser).getStatus());
     initItem();
     assertEquals("PENDING", itemService.read(itemId, JenaUtil.testUser).getStatus());
@@ -362,7 +362,7 @@ public class CollectionIntegration extends ImejiTestBase {
   @Test
   public void test_3_ReleaseCollection_5_ReleaseCollectionTwice() throws ImejiException {
     initItem();
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     s.release(collectionId, JenaUtil.testUser);
     assertEquals("RELEASED", s.read(collectionId, JenaUtil.testUser).getStatus());
     Response response = target(pathPrefix).path("/" + collectionId + "/release")
@@ -379,9 +379,9 @@ public class CollectionIntegration extends ImejiTestBase {
 
   @Test
   public void test_4_WithdrawCollection_1_WithAuth() throws ImejiException {
-    DefaultItemService itemService = new DefaultItemService();
+    ItemAPIService itemService = new ItemAPIService();
     initItem();
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     s.release(collectionId, JenaUtil.testUser);
 
     assertEquals("RELEASED", s.read(collectionId, JenaUtil.testUser).getStatus());
@@ -408,7 +408,7 @@ public class CollectionIntegration extends ImejiTestBase {
 
     initCollection();
     initItem();
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     s.release(collectionId, JenaUtil.testUser);
 
     assertEquals("RELEASED", s.read(collectionId, JenaUtil.testUser).getStatus());
@@ -427,7 +427,7 @@ public class CollectionIntegration extends ImejiTestBase {
   public void test_4_WithdrawCollection_3_WithNonAuth() throws ImejiException {
 
     initItem();
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     s.release(collectionId, JenaUtil.testUser);
     assertEquals("RELEASED", s.read(collectionId, JenaUtil.testUser).getStatus());
 
@@ -452,7 +452,7 @@ public class CollectionIntegration extends ImejiTestBase {
   public void test_4_WithdrawCollection_4_NotReleasedCollection() throws ImejiException {
 
     initItem();
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     assertEquals("PENDING", s.read(collectionId, JenaUtil.testUser).getStatus());
 
     Form form = new Form();
@@ -469,7 +469,7 @@ public class CollectionIntegration extends ImejiTestBase {
   public void test_4_WithdrawCollection_5_WithdrawCollectionTwice() throws ImejiException {
 
     initItem();
-    CollectionService s = new CollectionService();
+    CollectionAPIService s = new CollectionAPIService();
     s.release(collectionId, JenaUtil.testUser);
     s.withdraw(collectionId, JenaUtil.testUser,
         "test_4_WithdrawCollection_5_WithdrawCollectionTwice_" + System.currentTimeMillis());
@@ -531,7 +531,7 @@ public class CollectionIntegration extends ImejiTestBase {
     initCollection();
     initItem();
 
-    CollectionService colService = new CollectionService();
+    CollectionAPIService colService = new CollectionAPIService();
     try {
       colService.release(collectionId, JenaUtil.testUser);
       assertEquals("RELEASED", colService.read(collectionId, JenaUtil.testUser).getStatus());

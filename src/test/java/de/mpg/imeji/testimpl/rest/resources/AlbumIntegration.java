@@ -39,7 +39,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.rest.api.AlbumService;
+import de.mpg.imeji.rest.api.AlbumAPIService;
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.AlbumTO;
 import de.mpg.imeji.rest.to.SearchResultTO;
@@ -254,7 +254,7 @@ public class AlbumIntegration extends ImejiTestBase {
 
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
-    AlbumService s = new AlbumService();
+    AlbumAPIService s = new AlbumAPIService();
     assertEquals("RELEASED", s.read(albumId, JenaUtil.testUser).getStatus());
 
   }
@@ -310,7 +310,7 @@ public class AlbumIntegration extends ImejiTestBase {
 
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
-    AlbumService s = new AlbumService();
+    AlbumAPIService s = new AlbumAPIService();
     assertEquals("RELEASED", s.read(albumId, JenaUtil.testUser).getStatus());
 
     response = target(pathPrefix).path("/" + albumId + "/release").register(authAsUser)
@@ -421,7 +421,7 @@ public class AlbumIntegration extends ImejiTestBase {
         target(pathPrefix).path("/" + albumId + "/members/link").register(authAsUser)
             .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("[\"" + itemId + "\"]"));
 
-    AlbumService s = new AlbumService();
+    AlbumAPIService s = new AlbumAPIService();
     s.release(albumId, JenaUtil.testUser);
 
     assertEquals("RELEASED", s.read(albumId, JenaUtil.testUser).getStatus());
@@ -444,7 +444,7 @@ public class AlbumIntegration extends ImejiTestBase {
     Response response =
         target(pathPrefix).path("/" + albumId + "/members/link").register(authAsUser)
             .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("[\"" + itemId + "\"]"));
-    AlbumService s = new AlbumService();
+    AlbumAPIService s = new AlbumAPIService();
     s.release(albumId, JenaUtil.testUser);
 
     assertEquals("RELEASED", s.read(albumId, JenaUtil.testUser).getStatus());
@@ -466,7 +466,7 @@ public class AlbumIntegration extends ImejiTestBase {
     Response response =
         target(pathPrefix).path("/" + albumId + "/members/link").register(authAsUser)
             .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("[\"" + itemId + "\"]"));
-    AlbumService s = new AlbumService();
+    AlbumAPIService s = new AlbumAPIService();
     s.release(albumId, JenaUtil.testUser);
     assertEquals("RELEASED", s.read(albumId, JenaUtil.testUser).getStatus());
 
@@ -497,7 +497,7 @@ public class AlbumIntegration extends ImejiTestBase {
     Response response =
         target(pathPrefix).path("/" + albumId + "/members/link").register(authAsUser)
             .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("[\"" + itemId + "\"]"));
-    AlbumService s = new AlbumService();
+    AlbumAPIService s = new AlbumAPIService();
     assertEquals("PENDING", s.read(albumId, JenaUtil.testUser).getStatus());
 
     Form form = new Form();
@@ -518,7 +518,7 @@ public class AlbumIntegration extends ImejiTestBase {
     Response response =
         target(pathPrefix).path("/" + albumId + "/members/link").register(authAsUser)
             .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("[\"" + itemId + "\"]"));
-    AlbumService s = new AlbumService();
+    AlbumAPIService s = new AlbumAPIService();
     s.release(albumId, JenaUtil.testUser);
     s.withdraw(albumId, JenaUtil.testUser,
         "test_6_WithdrawAlbum_5_WithdrawAlbumTwice_" + System.currentTimeMillis());

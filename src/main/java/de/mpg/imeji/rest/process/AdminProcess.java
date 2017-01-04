@@ -6,7 +6,7 @@ import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.rest.api.UserService;
+import de.mpg.imeji.rest.api.UserAPIService;
 import de.mpg.imeji.rest.to.JSONResponse;
 import de.mpg.imeji.rest.to.UserTO;
 
@@ -22,7 +22,7 @@ public class AdminProcess {
     try {
       // Authenticate user and update the key if successfull authentication
       final User userVO = BasicAuthentication.auth(authorizationHeader);
-      final UserService service = new UserService();
+      final UserAPIService service = new UserAPIService();
       final UserTO userTO = service.updateUserKey(userVO, true);
       return RestProcessUtils.buildResponse(Status.OK.getStatusCode(), userTO);
     } catch (ImejiException | JoseException e) {
@@ -41,7 +41,7 @@ public class AdminProcess {
       // Authenticate user and update the key if successfull authentication
       // key will only be updated if the key already existed
       final User userVO = BasicAuthentication.auth(authorizationHeader);
-      final UserService service = new UserService();
+      final UserAPIService service = new UserAPIService();
       service.updateUserKey(userVO, false);
       return RestProcessUtils.buildResponse(Status.OK.getStatusCode(), null);
     } catch (ImejiException | JoseException e) {

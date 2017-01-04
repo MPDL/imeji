@@ -11,11 +11,11 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.AlbumController;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.user.controller.GroupBusinessController;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
@@ -89,13 +89,13 @@ public class HistoryPage implements Serializable {
         return new ItemService().retrieveLazy(uri, user).getFilename();
       } else if (ImejiPages.USER_GROUP == imejiPage) {
         final String groupUri = UrlHelper.decode(ObjectHelper.getId(uri));
-        return new GroupBusinessController().read(URI.create(groupUri), user).getName();
+        return new UserGroupService().read(URI.create(groupUri), user).getName();
       } else if (ImejiPages.USER == imejiPage) {
         final String email = UrlHelper.decode(ObjectHelper.getId(uri));
         if (user != null && email.equals(user.getEmail())) {
           return user.getPerson().getCompleteName();
         } else {
-          return new UserBusinessController().retrieve(email, Imeji.adminUser).getPerson()
+          return new UserService().retrieve(email, Imeji.adminUser).getPerson()
               .getCompleteName();
         }
       }

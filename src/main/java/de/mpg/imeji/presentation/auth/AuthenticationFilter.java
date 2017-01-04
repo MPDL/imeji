@@ -39,8 +39,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.user.authentication.impl.HttpAuthentication;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.authentication.impl.HttpAuthentication;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.session.SessionBean;
 
@@ -115,7 +115,7 @@ public class AuthenticationFilter implements Filter {
    */
   private boolean isModifiedUser(User user) {
     try {
-      return new UserBusinessController().isModified(user);
+      return new UserService().isModified(user);
     } catch (final Exception e) {
       return true;
     }

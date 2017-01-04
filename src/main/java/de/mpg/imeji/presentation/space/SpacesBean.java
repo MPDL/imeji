@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.controller.resource.SpaceController;
+import de.mpg.imeji.logic.controller.SpaceController;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;

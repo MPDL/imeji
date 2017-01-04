@@ -22,14 +22,14 @@ import org.apache.commons.lang.StringUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.collection.CollectionController;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.controller.resource.AlbumController;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
-import de.mpg.imeji.logic.controller.resource.SpaceController;
-import de.mpg.imeji.logic.security.util.SecurityUtil;
-import de.mpg.imeji.logic.user.controller.UserBusinessController;
+import de.mpg.imeji.logic.controller.AlbumController;
+import de.mpg.imeji.logic.controller.SpaceController;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.MaxPlanckInstitutUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -171,7 +171,7 @@ public class SessionBean implements Serializable {
 
   public void reloadUser() throws Exception {
     if (user != null) {
-      final UserBusinessController c = new UserBusinessController();
+      final UserService c = new UserService();
       user = c.retrieve(user.getId(), Imeji.adminUser);
       checkIfHasUploadRights();
     }

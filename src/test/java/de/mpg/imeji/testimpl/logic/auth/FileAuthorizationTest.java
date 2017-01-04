@@ -9,10 +9,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.controller.resource.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionController;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController;
-import de.mpg.imeji.logic.user.collaboration.share.ShareBusinessController.ShareRoles;
+import de.mpg.imeji.logic.share.ShareService;
+import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.presentation.beans.ConfigurationBean;
 import de.mpg.imeji.presentation.storage.StorageUtil;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
@@ -86,9 +86,9 @@ public class FileAuthorizationTest extends ControllerTest {
   public void loggedInReadPrivateItemOfsharedCollection() throws ImejiException {
     createCollection();
     createItemWithFile();
-    ShareBusinessController c = new ShareBusinessController();
+    ShareService c = new ShareService();
     c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, collection.getId().toString(),
-        ShareBusinessController.rolesAsList(ShareRoles.READ));
+        ShareService.rolesAsList(ShareRoles.READ));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
     Assert.assertTrue(
         StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
@@ -99,9 +99,9 @@ public class FileAuthorizationTest extends ControllerTest {
   public void loggedInReadPrivateItemOfsharedItem() throws ImejiException {
     createCollection();
     createItemWithFile();
-    ShareBusinessController c = new ShareBusinessController();
+    ShareService c = new ShareService();
     c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, item.getId().toString(),
-        ShareBusinessController.rolesAsList(ShareRoles.READ));
+        ShareService.rolesAsList(ShareRoles.READ));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
     Assert.assertTrue(
         StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
