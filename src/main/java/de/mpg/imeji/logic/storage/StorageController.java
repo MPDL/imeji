@@ -198,12 +198,12 @@ public final class StorageController implements Serializable {
   }
 
   /**
-   * Rotate the thumbnail and Web resolution
+   * Rotate the thumbnail, Web and full resolution
    * 
    * @param degree @throws ImejiException @throws
    */
-  public void rotate(String originalUrl, int degrees) throws ImejiException {
-    storage.rotate(originalUrl, degrees);
+  public void rotate(String fullUrl, int degrees) throws ImejiException {
+    storage.rotate(fullUrl, degrees);
 
   }
 

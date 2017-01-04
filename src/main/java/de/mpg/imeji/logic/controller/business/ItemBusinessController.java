@@ -561,7 +561,8 @@ public class ItemBusinessController extends ImejiController {
     item.setChecksum(content.getChecksum());
     item.setFiletype(content.getMimetype());
     item.setFileSize(content.getFileSize());
-    item.setFullImageUrl(URI.create(content.getOriginal()));
+    item.setFullImageUrl(URI.create(content.getFull()));
+    item.setOriginalUrl(URI.create(content.getOriginal()));
     item.setWebImageUrl(URI.create(content.getPreview()));
     item.setThumbnailImageUrl(URI.create(content.getThumbnail()));
     return item;

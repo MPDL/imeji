@@ -49,7 +49,7 @@ public interface Storage extends Serializable {
    * @version $Revision$ $LastChangedDate$
    */
   public enum FileResolution {
-    THUMBNAIL, WEB, ORIGINAL;
+    THUMBNAIL, WEB, ORIGINAL, FULL;
   }
 
   /**
@@ -120,6 +120,22 @@ public interface Storage extends Serializable {
    * @throws ImejiException
    */
   public void rotate(String originalUrl, int degrees) throws ImejiException;
+
+  /**
+   * Returns the width of the image at the url
+   * 
+   * @param url
+   * @return
+   */
+  public int getImageWidth(String url) throws IOException;
+
+  /**
+   * Returns the height of the image at the url
+   * 
+   * @param url
+   * @return
+   */
+  public int getImageHeight(String url) throws IOException;
 
   /**
    * Return a {@link StorageAdministrator} for this {@link Storage}

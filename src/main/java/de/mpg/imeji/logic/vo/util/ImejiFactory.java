@@ -187,10 +187,11 @@ public class ImejiFactory {
    * @throws UnprocessableError
    */
   public static Item newItem(CollectionImeji collection, User user, String storageId, String title,
-      URI fullImageURI, URI thumbnailURI, URI webURI, String filetype) throws UnprocessableError {
+      URI fullImageURI, URI originalURI, URI thumbnailURI, URI webURI, String filetype)
+      throws UnprocessableError {
     Item item = ImejiFactory.newItem(collection);
-    return newItem(item, collection, user, storageId, title, fullImageURI, thumbnailURI, webURI,
-        filetype);
+    return newItem(item, collection, user, storageId, title, fullImageURI, originalURI,
+        thumbnailURI, webURI, filetype);
   }
 
   /**
@@ -208,8 +209,10 @@ public class ImejiFactory {
    * @return
    */
   public static Item newItem(Item item, CollectionImeji collection, User user, String storageId,
-      String title, URI fullImageURI, URI thumbnailURI, URI webURI, String filetype) {
+      String title, URI fullImageURI, URI originalURI, URI thumbnailURI, URI webURI,
+      String filetype) {
     item.setFullImageUrl(fullImageURI);
+    item.setOriginalUrl(originalURI);
     item.setThumbnailImageUrl(thumbnailURI);
     item.setWebImageUrl(webURI);
     item.setFilename(title);

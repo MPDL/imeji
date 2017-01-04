@@ -42,6 +42,7 @@ import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.internal.InternalStorageItem;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
+import de.mpg.imeji.logic.storage.util.ImageUtils;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 
 /**
@@ -77,7 +78,7 @@ public class InternalStorage implements Storage {
   public UploadResult upload(String filename, File file, String collectionId) {
     InternalStorageItem item = manager.createItem(file, filename, collectionId);
     return new UploadResult(item.getId(), item.getOriginalUrl(), item.getWebUrl(),
-        item.getThumbnailUrl());
+        item.getThumbnailUrl(), item.getFullUrl());
   }
 
   /*
@@ -141,32 +142,22 @@ public class InternalStorage implements Storage {
   }
 
   @Override
-  public void rotate(String originalUrl, int degrees) throws ImejiException {
-
-
-    String thumbnailUrl = getThumbnailUrl(originalUrl);
-    String webUrl = getWebResolutionUrl(originalUrl);
+  public void rotate(String fullUrl, int degrees) throws ImejiException {
+    String thumbnailUrl = getThumbnailUrl(fullUrl);
+    String webUrl = getWebResolutionUrl(fullUrl);
     File thumbnail = read(thumbnailUrl);
     File web = read(webUrl);
+    File full = read(fullUrl);
 
-    // ImageUtils.rotate(thumbnail, degrees);
-    // ImageUtils.rotate(web, degrees);
-    ImageMagickUtils.rotateJPEG(thumbnail, degrees);
-    ImageMagickUtils.rotateJPEG(web, degrees);
-
-    /*
-     * try { ImageUtils.rotateLossless(thumbnail, degrees); ImageUtils.rotateLossless(web, degrees);
-     * } catch (LLJTranException e) { throw new ImejiException("Exception while rotating", e); }
-     */
-    // System.out.println("Path: " + web.getAbsolutePath());
-
-
-    /*
-     * String path =
-     * "C:/data/imeji/files/b5TuBh1fVSWh2YYr/f6/6a/bb/e1-b5a1-416f-992b-e7d22eb29657/0/web/070c65a8042724d4414d77fd55d5c623.jpg";
-     * String path2 = "C:/Users/jandura/Documents/test.bmp"; File file = new File(path2);
-     * ImageUtils.rotate(file, degrees);
-     */
+    if (ImageMagickUtils.jpegtranEnabled) {
+      ImageMagickUtils.rotateJPEG(thumbnail, degrees);
+      ImageMagickUtils.rotateJPEG(web, degrees);
+      ImageMagickUtils.rotateJPEG(full, degrees);
+    } else {
+      ImageUtils.rotate(full, degrees);
+      ImageUtils.rotate(web, degrees);
+      ImageUtils.rotate(thumbnail, degrees);
+    }
   }
 
   /*
@@ -225,10 +216,22 @@ public class InternalStorage implements Storage {
   }
 
   private String getThumbnailUrl(String originalUrl) {
-    return originalUrl.replace("/original/", "/thumbnail/");
+    return originalUrl.replace("/full/", "/thumbnail/");
   }
 
   private String getWebResolutionUrl(String originalUrl) {
-    return originalUrl.replace("/original/", "/web/");
+    return originalUrl.replace("/full/", "/web/");
+  }
+
+  @Override
+  public int getImageWidth(String url) throws IOException {
+    File file = read(url);
+    return ImageUtils.getImageWidth(file);
+  }
+
+  @Override
+  public int getImageHeight(String url) throws IOException {
+    File file = read(url);
+    return ImageUtils.getImageHeight(file);
   }
 }

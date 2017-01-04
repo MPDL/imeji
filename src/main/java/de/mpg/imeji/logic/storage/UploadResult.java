@@ -35,6 +35,7 @@ package de.mpg.imeji.logic.storage;
 public class UploadResult {
   private String id;
   private String orginal;
+  private String full;
   private String web;
   private String thumb;
   private String checksum;
@@ -57,11 +58,12 @@ public class UploadResult {
    * @param web
    * @param thumb
    */
-  public UploadResult(String id, String orginal, String web, String thumb) {
+  public UploadResult(String id, String orginal, String web, String thumb, String full) {
     this.id = id;
     this.orginal = orginal;
     this.thumb = thumb;
     this.web = web;
+    this.full = full;
   }
 
   public String getOrginal() {
@@ -146,5 +148,13 @@ public class UploadResult {
 
   public void setHeight(long height) {
     this.height = height;
+  }
+
+  public String getFull() {
+    return full;
+  }
+
+  public void setFull(String full) {
+    this.full = full;
   }
 }

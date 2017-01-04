@@ -218,6 +218,7 @@ public class ContentController extends ImejiController {
     QuotaUtil.checkQuota(user, file, c);
     UploadResult uploadResult = sc.upload(file.getName(), file, c.getIdString());
     contentVO.setOriginal(uploadResult.getOrginal());
+    contentVO.setFull(uploadResult.getFull());
     contentVO.setPreview(uploadResult.getWeb());
     contentVO.setThumbnail(uploadResult.getThumb());
     contentVO.setChecksum(uploadResult.getChecksum());

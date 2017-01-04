@@ -176,6 +176,16 @@ public final class ImageUtils {
     return result;
   }
 
+  public static int getImageWidth(File file) throws IOException {
+    BufferedImage img = ImageIO.read(file);
+    return img.getWidth();
+  }
+
+  public static int getImageHeight(File file) throws IOException {
+    BufferedImage img = ImageIO.read(file);
+    return img.getHeight();
+  }
+
 
   /**
    * Scale a {@link BufferedImage} to new size. Is faster than the basic {@link ImageUtils}

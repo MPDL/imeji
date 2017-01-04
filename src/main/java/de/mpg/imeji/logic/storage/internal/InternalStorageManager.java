@@ -266,6 +266,7 @@ public class InternalStorageManager implements Serializable {
     item.setOriginalUrl(generateUrl(id, fileName, FileResolution.ORIGINAL));
     item.setThumbnailUrl(generateUrl(id, fileName, FileResolution.THUMBNAIL));
     item.setWebUrl(generateUrl(id, fileName, FileResolution.WEB));
+    item.setFullUrl(generateUrl(id, fileName, FileResolution.FULL));
     return item;
   }
 
@@ -314,7 +315,7 @@ public class InternalStorageManager implements Serializable {
   public String generateUrl(String id, String filename, FileResolution resolution) {
     filename = StringHelper.normalizeFilename(filename);
     String extension = getExtension(filename);
-    if (resolution != FileResolution.ORIGINAL) {
+    if (resolution != FileResolution.ORIGINAL && resolution != FileResolution.FULL) {
       filename = removeExtension(filename) + (extension.equals("gif") ? ".gif" : ".jpg");
     }
     return storageUrl + id + StringHelper.urlSeparator + resolution.name().toLowerCase()
@@ -334,6 +335,7 @@ public class InternalStorageManager implements Serializable {
       throws IOException {
     // write original file in storage
     copy(file, transformUrlToPath(item.getOriginalUrl()));
+    copy(file, transformUrlToPath(item.getFullUrl()));
     // Create thumbnail and Preview file
     Imeji.getINTERNAL_STORAGE_EXECUTOR().submit(new GenerateThumbnailAndPreviewTask(item, file));
     return item;

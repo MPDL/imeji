@@ -33,6 +33,7 @@ import de.mpg.imeji.logic.util.TempFileUtil;
 public class ImageMagickUtils {
   private static final Logger LOGGER = Logger.getLogger(ImageMagickUtils.class);
   public static final boolean imageMagickEnabled = verifyImageMagickInstallation();
+  public static final boolean jpegtranEnabled = false;
 
   /**
    * Return true if imagemagick is installed on the current system
@@ -57,6 +58,7 @@ public class ImageMagickUtils {
     }
     return true;
   }
+
 
   /**
    * User imagemagick to convert any image into a jpeg

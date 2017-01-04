@@ -361,6 +361,11 @@
 								</li>
 								<li>
 									<h:outputLink value="#{itemBean.image.fullImageUrl}" target="_blank">
+										<h:outputText value="#{lbl.imageSizesFull}"/>
+									</h:outputLink>
+								</li>
+								<li>
+									<h:outputLink value="#{itemBean.image.originalUrl}" target="_blank">
 										<h:outputText value="#{lbl.imageSizesOrg}"/>
 									</h:outputLink>
 								</li>
@@ -475,8 +480,8 @@
     	    	    },
         	    	{	
         	    		url: '#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}',    	    	
-        	    		height: #{itemBean.content.height},
-        	    		width: #{itemBean.content.width}
+        	    		height: #{itemBean.fullResolutionHeight},
+        	    		width: #{itemBean.fullResolutionWidth}
         	    	}]
     			};
 

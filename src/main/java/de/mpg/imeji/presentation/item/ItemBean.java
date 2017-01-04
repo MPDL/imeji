@@ -140,6 +140,9 @@ public class ItemBean extends SuperBean {
       } else {
         edit = null;
       }
+
+      System.out.println("Wdith: " + getWebResolutionWidth());
+      System.out.println(("Height: " + getWebResolutionHeight()));
     } catch (NotFoundException e) {
       LOGGER.error("Error loading item", e);
       try {
@@ -854,41 +857,58 @@ public class ItemBean extends SuperBean {
    * Gets the width of the web resolution
    * 
    * @return
+   * @throws IOException
    */
-  public int getWebResolutionWidth() {
-    int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web"));
-    int imgWidth = (int) getContent().getWidth();
-    int imgHeight = (int) getContent().getHeight();
-
-    if (imgWidth <= imgHeight) {
-      return webSize;
-    }
-    return (int) (imgWidth * 1.0 / imgHeight * webSize);
+  public int getWebResolutionWidth() throws IOException {
+    /*
+     * int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web")); int
+     * imgWidth = (int) getContent().getWidth(); int imgHeight = (int) getContent().getHeight();
+     * 
+     * 
+     * 
+     * if (imgWidth <= imgHeight) { return webSize; } return (int) (imgWidth * 1.0 / imgHeight *
+     * webSize);
+     */
+    StorageController storageController = new StorageController();
+    return storageController.getStorage().getImageWidth(getImage().getWebImageUrl().getPath());
   }
 
   /**
    * Gets the height of the web resolution
    * 
    * @return
+   * @throws IOException
    */
-  public int getWebResolutionHeight() {
-    int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web"));
-    int imgWidth = (int) getContent().getWidth();
-    int imgHeight = (int) getContent().getHeight();
-
-    if (imgWidth <= imgHeight) {
-      return (int) (imgHeight * 1.0 / imgWidth * webSize);
-    }
-    return webSize;
+  public int getWebResolutionHeight() throws IOException {
+    /*
+     * int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web")); int
+     * imgWidth = (int) getContent().getWidth(); int imgHeight = (int) getContent().getHeight();
+     * 
+     * if (imgWidth <= imgHeight) { return (int) (imgHeight * 1.0 / imgWidth * webSize); } return
+     * webSize;
+     */
+    StorageController storageController = new StorageController();
+    return storageController.getStorage().getImageHeight(getImage().getWebImageUrl().getPath());
   }
 
   /**
    * Gets the max of width and height of the web resolution
    * 
    * @return
+   * @throws IOException
    */
-  public int getWebResolutionMaxLength() {
+  public int getWebResolutionMaxLength() throws IOException {
     return Math.max(getWebResolutionWidth(), getWebResolutionHeight());
+  }
+
+  public int getFullResolutionWidth() throws IOException {
+    StorageController storageController = new StorageController();
+    return storageController.getStorage().getImageWidth(getImage().getFullImageUrl().getPath());
+  }
+
+  public int getFullResolutionHeight() throws IOException {
+    StorageController storageController = new StorageController();
+    return storageController.getStorage().getImageHeight(getImage().getFullImageUrl().getPath());
   }
 
   public int getRotation() {
