@@ -29,7 +29,7 @@ import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
+import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
@@ -110,7 +110,7 @@ public class ImejiInitializer {
     ImejiInitializer.initModel(Imeji.contentModel);
     LOGGER.info("... models done!");
     Imeji.CONFIG = new ImejiConfiguration();
-    KeyValueStoreBusinessController.startAllStores();
+    KeyValueStoreService.startAllStores();
     ImejiInitializer.initRsaKeys();
     ImejiInitializer.initadminUser();
   }
@@ -242,7 +242,7 @@ public class ImejiInitializer {
         + Imeji.getINTERNAL_STORAGE_EXECUTOR().isShutdown());
     LOGGER.info("nightly executor shutdown shutdown? " + Imeji.getNIGHTLY_EXECUTOR().isShutdown());
     ElasticInitializer.shutdown();
-    KeyValueStoreBusinessController.stopAllStores();
+    KeyValueStoreService.stopAllStores();
     LOGGER.info("Ending LockSurveyor...");
     Imeji.locksSurveyor.terminate();
     LOGGER.info("...done");

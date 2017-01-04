@@ -25,8 +25,9 @@ import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.controller.SpaceController;
+import de.mpg.imeji.logic.db.reader.ReaderFacade;
+import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
@@ -47,7 +48,6 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
  * CRUD controller for {@link CollectionImeji}, plus search mehtods related to

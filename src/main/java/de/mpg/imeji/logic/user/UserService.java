@@ -24,7 +24,7 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.reader.ReaderFacade;
+import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;

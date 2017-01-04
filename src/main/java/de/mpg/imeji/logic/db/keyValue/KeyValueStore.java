@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.keyValueStore;
+package de.mpg.imeji.logic.db.keyValue;
 
 import java.io.IOException;
 import java.util.List;

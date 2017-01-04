@@ -25,7 +25,8 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionController;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.reader.ReaderFacade;
+import de.mpg.imeji.logic.db.reader.ReaderFacade;
+import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
@@ -47,7 +48,6 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
  * CRUD methods for {@link Space}

@@ -26,6 +26,7 @@ import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.ContainerBean;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.edit.MetadataWrapper;
+import de.mpg.imeji.presentation.registration.RegistrationBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**

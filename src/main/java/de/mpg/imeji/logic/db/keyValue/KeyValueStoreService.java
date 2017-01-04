@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.keyValueStore;
+package de.mpg.imeji.logic.db.keyValue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,12 +22,12 @@ import de.mpg.imeji.exceptions.NotFoundException;
  * @author bastiens
  *
  */
-public class KeyValueStoreBusinessController {
-  private static final Logger LOGGER = Logger.getLogger(KeyValueStoreBusinessController.class);
+public class KeyValueStoreService {
+  private static final Logger LOGGER = Logger.getLogger(KeyValueStoreService.class);
   private final KeyValueStore store;
   private static final Map<String, KeyValueStore> stores = new HashMap<>();
 
-  public KeyValueStoreBusinessController(KeyValueStore store) {
+  public KeyValueStoreService(KeyValueStore store) {
     this.store = store;
     if (!store.isStarted()) {
       store.start();

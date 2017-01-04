@@ -12,8 +12,8 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.PasswordGenerator;
-import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
-import de.mpg.imeji.logic.keyValueStore.stores.HTreeMapStore;
+import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
+import de.mpg.imeji.logic.db.keyValue.stores.HTreeMapStore;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.util.IdentifierUtil;
@@ -31,8 +31,8 @@ import de.mpg.imeji.util.DateHelper;
  */
 public class RegistrationBusinessController {
   private static final Logger LOGGER = Logger.getLogger(RegistrationBusinessController.class);
-  private static final KeyValueStoreBusinessController KEY_VALUE_STORE_BC =
-      new KeyValueStoreBusinessController(new HTreeMapStore("registrationStore"));
+  private static final KeyValueStoreService KEY_VALUE_STORE_BC =
+      new KeyValueStoreService(new HTreeMapStore("registrationStore"));
 
   /**
    * Retrieve a registration by its token

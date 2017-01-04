@@ -21,7 +21,7 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiInitializer;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
+import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.user.UserService;
@@ -95,7 +95,7 @@ public class JenaUtil {
 
 
   public static void closeJena() throws InterruptedException, IOException {
-    KeyValueStoreBusinessController.resetAndStopAllStores();
+    KeyValueStoreService.resetAndStopAllStores();
     Imeji.getEXECUTOR().shutdown();
     Imeji.getCONTENT_EXTRACTION_EXECUTOR().shutdown();
     Imeji.getINTERNAL_STORAGE_EXECUTOR().shutdown();

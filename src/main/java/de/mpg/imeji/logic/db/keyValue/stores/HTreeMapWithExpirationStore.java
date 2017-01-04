@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.keyValueStore.stores;
+package de.mpg.imeji.logic.db.keyValue.stores;
 
 
 import java.io.File;

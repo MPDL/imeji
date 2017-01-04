@@ -90,7 +90,7 @@
     </filter>
     <filter>
         <filter-name>Authentication Filter</filter-name>
-        <filter-class>de.mpg.imeji.presentation.auth.AuthenticationFilter</filter-class>
+        <filter-class>de.mpg.imeji.presentation.authentication.AuthenticationFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
     <filter>

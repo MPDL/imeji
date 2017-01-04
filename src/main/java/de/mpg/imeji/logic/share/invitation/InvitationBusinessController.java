@@ -7,8 +7,8 @@ import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
-import de.mpg.imeji.logic.keyValueStore.stores.HTreeMapStore;
+import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
+import de.mpg.imeji.logic.db.keyValue.stores.HTreeMapStore;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
@@ -22,8 +22,8 @@ import de.mpg.imeji.logic.vo.User;
 public class InvitationBusinessController {
   private final UserService userController = new UserService();
   private final ShareService shareBC = new ShareService();
-  private static final KeyValueStoreBusinessController KEY_VALUE_STORE_BC =
-      new KeyValueStoreBusinessController(new HTreeMapStore("invitationStore"));
+  private static final KeyValueStoreService KEY_VALUE_STORE_BC =
+      new KeyValueStoreService(new HTreeMapStore("invitationStore"));
 
   /**
    * Invite a user to collaborate for an object

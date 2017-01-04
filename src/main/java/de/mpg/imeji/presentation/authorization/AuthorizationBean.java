@@ -22,7 +22,7 @@
  * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
  * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
  */
-package de.mpg.imeji.presentation.auth;
+package de.mpg.imeji.presentation.authorization;
 
 import java.io.Serializable;
 
@@ -51,7 +51,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 @ManagedBean(name = "Auth")
 @ViewScoped
-public class ImejiAuthBean implements Serializable {
+public class AuthorizationBean implements Serializable {
   private static final long serialVersionUID = 4905896901833448372L;
   private final Authorization auth = new Authorization();
   private User sessionUser;
@@ -60,7 +60,7 @@ public class ImejiAuthBean implements Serializable {
      *
      *
      */
-  public ImejiAuthBean() {
+  public AuthorizationBean() {
     this.sessionUser = ((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getUser();
   }
 

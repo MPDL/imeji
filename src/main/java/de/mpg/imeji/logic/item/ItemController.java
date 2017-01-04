@@ -13,7 +13,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.reader.ReaderFacade;
+import de.mpg.imeji.logic.db.reader.ReaderFacade;
+import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.service.ImejiServiceAbstract;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.util.LicenseUtil;
@@ -24,7 +25,6 @@ import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.util.MetadataUtil;
-import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
  * Resource controller for item

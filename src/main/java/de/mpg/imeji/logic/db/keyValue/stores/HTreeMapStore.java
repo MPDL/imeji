@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.keyValueStore.stores;
+package de.mpg.imeji.logic.db.keyValue.stores;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import org.mapdb.HTreeMap;
 import org.mapdb.Serializer;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.keyValueStore.KeyValueStore;
+import de.mpg.imeji.logic.db.keyValue.KeyValueStore;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**

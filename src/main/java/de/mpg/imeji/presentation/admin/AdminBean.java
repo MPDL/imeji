@@ -24,7 +24,8 @@ import de.mpg.imeji.logic.batch.ImportFileFromEscidocToInternalStorageJob;
 import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
 import de.mpg.imeji.logic.batch.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.reader.ReaderFacade;
+import de.mpg.imeji.logic.db.reader.ReaderFacade;
+import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -40,7 +41,6 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.writer.WriterFacade;
 import de.mpg.imeji.presentation.beans.SuperBean;
 
 /**

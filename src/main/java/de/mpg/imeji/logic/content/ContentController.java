@@ -17,7 +17,8 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.content.extraction.ContentExtractionResult;
 import de.mpg.imeji.logic.content.extraction.ContentExtractorFactory;
-import de.mpg.imeji.logic.reader.ReaderFacade;
+import de.mpg.imeji.logic.db.reader.ReaderFacade;
+import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -34,7 +35,6 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.writer.WriterFacade;
 
 /**
  * Controller for {@link ContentVO}

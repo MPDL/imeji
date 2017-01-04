@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.user;
+package de.mpg.imeji.presentation.registration;
 
 import static de.mpg.imeji.logic.util.StringHelper.isNullOrEmptyTrim;
 
@@ -25,6 +25,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.presentation.authentication.LoginBean;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.notification.NotificationUtils;
 import de.mpg.imeji.presentation.session.BeanHelper;

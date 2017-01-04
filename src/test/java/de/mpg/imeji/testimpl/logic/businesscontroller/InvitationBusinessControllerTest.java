@@ -11,7 +11,7 @@ import org.junit.Test;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.keyValueStore.KeyValueStoreBusinessController;
+import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.share.invitation.Invitation;
@@ -45,7 +45,7 @@ public class InvitationBusinessControllerTest extends ControllerTest {
 
   @Before
   public void resetStore() {
-    KeyValueStoreBusinessController.resetAllStores();
+    KeyValueStoreService.resetAllStores();
   }
 
   /**
@@ -81,8 +81,8 @@ public class InvitationBusinessControllerTest extends ControllerTest {
     Invitation invitation = new Invitation(UNKNOWN_EMAIL, collection.getId().toString(), roles);
     invitationBC.invite(invitation);
     List<Invitation> invitationsBefore = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
-    KeyValueStoreBusinessController.stopAllStores();
-    KeyValueStoreBusinessController.startAllStores();
+    KeyValueStoreService.stopAllStores();
+    KeyValueStoreService.startAllStores();
     invitationBC = new InvitationBusinessController();
     List<Invitation> invitations = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
     // Check the invitation is here

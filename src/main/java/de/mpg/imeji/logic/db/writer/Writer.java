@@ -22,23 +22,55 @@
  * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
  * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
  */
-package de.mpg.imeji.logic.writer;
+package de.mpg.imeji.logic.db.writer;
+
+import java.util.List;
+
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.vo.User;
 
 /**
- * Factory for {@link Writer}
+ * Write imeji objects in the persistence layer. Important: {@link Writer} doens't check
+ * Authorization. Please use {@link WriterFacade} instead.
  *
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class WriterFactory {
+public interface Writer {
   /**
-   * Create a {@link Writer} for a model
+   * Create a list of objects
    *
-   * @param modelURI
-   * @return
+   * @param objects
+   * @param user
+   * @throws ImejiException
    */
-  public static Writer create(String modelURI) {
-    return new JenaWriter(modelURI);
-  }
+  public void create(List<Object> objects, User user) throws ImejiException;
+
+  /**
+   * Delete a list of objects
+   *
+   * @param objects
+   * @param user
+   * @throws ImejiException
+   */
+  public void delete(List<Object> objects, User user) throws ImejiException;
+
+  /**
+   * Update a list of objects
+   *
+   * @param objects
+   * @param user
+   * @throws ImejiException
+   */
+  public void update(List<Object> objects, User user) throws ImejiException;
+
+  /**
+   * Lazy Update a list of objects (don't update lazy list)
+   *
+   * @param objects
+   * @param user
+   * @throws ImejiException
+   */
+  public void updateLazy(List<Object> objects, User user) throws ImejiException;
 }

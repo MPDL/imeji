@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.user;
+package de.mpg.imeji.presentation.authentication;
 
 import static de.mpg.imeji.logic.util.StringHelper.isNullOrEmptyTrim;
 

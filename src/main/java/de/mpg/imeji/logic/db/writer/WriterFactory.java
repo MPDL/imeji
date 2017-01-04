@@ -22,23 +22,23 @@
  * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
  * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
  */
-package de.mpg.imeji.logic.reader;
+package de.mpg.imeji.logic.db.writer;
 
 /**
- * Factory for {@link Reader}
+ * Factory for {@link Writer}
  *
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class ReaderFactory {
+public class WriterFactory {
   /**
-   * Create a Reader according to the uri of the model
+   * Create a {@link Writer} for a model
    *
    * @param modelURI
    * @return
    */
-  public static Reader create(String modelURI) {
-    return new JenaReader(modelURI);
+  public static Writer create(String modelURI) {
+    return new JenaWriter(modelURI);
   }
 }
