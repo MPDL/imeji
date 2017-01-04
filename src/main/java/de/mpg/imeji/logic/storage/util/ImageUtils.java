@@ -106,6 +106,13 @@ public final class ImageUtils {
     return null;
   }
 
+  /*
+   * public static void rotateLossless(File file, int degrees) throws LLJTranException { LLJTran img
+   * = new LLJTran(file); img.read(true); switch (degrees % 360) { case 0: break; case 90:
+   * img.transform(LLJTran.ROT_90); break; case 180: img.transform(LLJTran.ROT_180); break; case
+   * 270: img.transform(LLJTran.ROT_270); break; } }
+   */
+
   /**
    * Rotates an image and overrides the old image with the rotated version
    * 
@@ -115,8 +122,20 @@ public final class ImageUtils {
   public static void rotate(File file, int degrees) {
     try {
       BufferedImage img = ImageIO.read(file);
-      for (int i = 0; i < degrees / 90; i++) {
-        img = rotateBy90Degrees(img);
+      switch (degrees % 360) {
+        case 0:
+          break;
+        case 90:
+          img = rotateBy90Degrees(img);
+          break;
+        case 180:
+          img = rotateBy180Degrees(img);
+          break;
+        case 270:
+          img = rotateBy270Degrees(img);
+          break;
+        default:
+          throw new Exception("Invaild number of degrees: " + degrees);
       }
       ImageIO.write(img, "jpg", file);
 
@@ -128,21 +147,35 @@ public final class ImageUtils {
 
 
   private static BufferedImage rotateBy90Degrees(BufferedImage src) {
-
     BufferedImage result = new BufferedImage(src.getHeight(), src.getWidth(), src.getType());
     for (int x = 0; x < result.getWidth(); x++) {
       for (int y = 0; y < result.getHeight(); y++) {
         result.setRGB(x, y, src.getRGB(y, result.getWidth() - x - 1));
       }
     }
-
-    /*
-     * BufferedImage result = new BufferedImage(src.getWidth(), src.getHeight(), src.getType()); for
-     * (int x = 0; x < src.getWidth(); x++) { for (int y = 0; y < src.getHeight(); y++) {
-     * result.setRGB(x, y, src.getRGB((x + 1) % src.getWidth(), y)); } }
-     */
     return result;
   }
+
+  private static BufferedImage rotateBy270Degrees(BufferedImage src) {
+    BufferedImage result = new BufferedImage(src.getHeight(), src.getWidth(), src.getType());
+    for (int x = 0; x < result.getWidth(); x++) {
+      for (int y = 0; y < result.getHeight(); y++) {
+        result.setRGB(x, y, src.getRGB(result.getHeight() - y - 1, x));
+      }
+    }
+    return result;
+  }
+
+  private static BufferedImage rotateBy180Degrees(BufferedImage src) {
+    BufferedImage result = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
+    for (int x = 0; x < result.getWidth(); x++) {
+      for (int y = 0; y < result.getHeight(); y++) {
+        result.setRGB(x, y, src.getRGB(result.getWidth() - x - 1, result.getHeight() - y - 1));
+      }
+    }
+    return result;
+  }
+
 
   /**
    * Scale a {@link BufferedImage} to new size. Is faster than the basic {@link ImageUtils}

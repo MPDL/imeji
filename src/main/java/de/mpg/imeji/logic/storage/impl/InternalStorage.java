@@ -41,7 +41,7 @@ import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.internal.InternalStorageItem;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
-import de.mpg.imeji.logic.storage.util.ImageUtils;
+import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 
 /**
@@ -149,8 +149,15 @@ public class InternalStorage implements Storage {
     File thumbnail = read(thumbnailUrl);
     File web = read(webUrl);
 
-    ImageUtils.rotate(thumbnail, degrees);
-    ImageUtils.rotate(web, degrees);
+    // ImageUtils.rotate(thumbnail, degrees);
+    // ImageUtils.rotate(web, degrees);
+    ImageMagickUtils.rotateJPEG(thumbnail, degrees);
+    ImageMagickUtils.rotateJPEG(web, degrees);
+
+    /*
+     * try { ImageUtils.rotateLossless(thumbnail, degrees); ImageUtils.rotateLossless(web, degrees);
+     * } catch (LLJTranException e) { throw new ImejiException("Exception while rotating", e); }
+     */
     // System.out.println("Path: " + web.getAbsolutePath());
 
 

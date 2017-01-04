@@ -15,6 +15,8 @@ import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.im4java.core.Info;
 import org.im4java.core.InfoException;
+import org.im4java.core.JpegtranCmd;
+import org.im4java.core.MogrifyCmd;
 import org.im4java.process.ProcessStarter;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
@@ -135,6 +137,24 @@ public class ImageMagickUtils {
       LOGGER.error("Error transforming gif", e);
     }
     return null;
+  }
+
+  /**
+   * rotates an JPEG image lossless
+   * 
+   * @param file
+   * @param degrees
+   */
+  public static void rotateJPEG(File file, int degrees) {
+    try {
+      String commandRot = "jpegtran -rotate " + degrees + " -trim " + file.getAbsolutePath() + " "
+          + file.getAbsolutePath();
+      Runtime rt = Runtime.getRuntime();
+      rt.exec(commandRot);
+
+    } catch (Exception e) {
+      LOGGER.error("Error rotating image", e);
+    }
   }
 
   /**
@@ -273,6 +293,27 @@ public class ImageMagickUtils {
   public static ConvertCmd getConvert() throws IOException, URISyntaxException {
     String magickPath = getImageMagickInstallationPath();
     ConvertCmd cmd = new ConvertCmd(false);
+    cmd.setSearchPath(magickPath);
+    return cmd;
+  }
+
+  /**
+   * Create a {@link JpegtranCmd}
+   * 
+   * @return
+   * @throws IOException
+   * @throws URISyntaxException
+   */
+  public static JpegtranCmd getJpegtran() throws IOException, URISyntaxException {
+    String magickPath = getImageMagickInstallationPath();
+    JpegtranCmd cmd = new JpegtranCmd();
+    cmd.setSearchPath(magickPath);
+    return cmd;
+  }
+
+  public static MogrifyCmd getMogrify() throws IOException, URISyntaxException {
+    String magickPath = getImageMagickInstallationPath();
+    MogrifyCmd cmd = new MogrifyCmd(false);
     cmd.setSearchPath(magickPath);
     return cmd;
   }
