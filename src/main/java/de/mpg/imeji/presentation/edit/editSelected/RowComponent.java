@@ -4,13 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataUtil;
 import de.mpg.imeji.presentation.edit.SelectStatementComponent;
+import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
 
 /**
  * A row of the edit select item page
@@ -25,7 +26,7 @@ public class RowComponent implements Serializable {
   private final Item item;
 
   public RowComponent(Item item, Map<String, Statement> statementMap,
-      List<SelectStatementComponent> columns) {
+      List<SelectStatementWithInputComponent> columns) {
     this.item = item;
     this.filename = item.getFilename();
     for (final SelectStatementComponent column : columns) {
@@ -52,8 +53,28 @@ public class RowComponent implements Serializable {
    */
   public void addCell(Statement statement) {
     final List<Metadata> l = new ArrayList<>();
-    l.add(ImejiFactory.newMetadata(statement).build());
     cells.add(new CellComponent(statement, l));
+  }
+
+  /**
+   * Add a Statement with a metadata
+   *
+   * @param statement
+   */
+  public void addCell(Statement statement, Metadata metadata) {
+    final List<Metadata> l = new ArrayList<>();
+    l.add(metadata);
+    cells.add(new CellComponent(statement, l));
+  }
+
+  /**
+   * Remove all Cells with this index
+   * 
+   * @param index
+   */
+  public void removeCell(String index) {
+    cells =
+        cells.stream().filter(cell -> !index.equals(cell.getIndex())).collect(Collectors.toList());
   }
 
   public Item toItem() {

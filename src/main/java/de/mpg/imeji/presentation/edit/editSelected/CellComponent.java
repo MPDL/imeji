@@ -26,7 +26,7 @@ public class CellComponent implements Serializable {
       inputs.add(new MetadataInputComponent(m, statement));
     }
     if (inputs.isEmpty()) {
-      addValue();
+      // addValue();
     }
   }
 
@@ -38,8 +38,29 @@ public class CellComponent implements Serializable {
     return l;
   }
 
+  /**
+   * Get the index for this cell
+   * 
+   * @return
+   */
+  public String getIndex() {
+    return statement.getIndex();
+  }
+
+  /**
+   * Add an empty value
+   */
   public void addValue() {
     inputs.add(new MetadataInputComponent(ImejiFactory.newMetadata(statement).build(), statement));
+  }
+
+  /**
+   * Add a metadata
+   * 
+   * @param metadata
+   */
+  public void addValue(Metadata metadata) {
+    inputs.add(new MetadataInputComponent(metadata, statement));
   }
 
   /**

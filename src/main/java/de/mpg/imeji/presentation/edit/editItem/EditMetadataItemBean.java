@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
-import de.mpg.imeji.presentation.edit.SelectStatementComponent;
+import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -29,7 +29,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 public class EditMetadataItemBean extends EditMetadataAbstract {
   private static final long serialVersionUID = 4116466458089234630L;
   private static Logger LOGGER = Logger.getLogger(EditMetadataItemBean.class);
-  private List<RowComponent> rows = new ArrayList<>();
+  private List<SelectStatementWithInputComponent> rows = new ArrayList<>();
   private Item item;
 
   public EditMetadataItemBean() {
@@ -42,7 +42,7 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
     try {
       this.item = itemService.retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
       for (final Metadata metadata : item.getMetadata()) {
-        rows.add(new RowComponent(metadata, statementMap));
+        rows.add(new SelectStatementWithInputComponent(metadata, statementMap));
       }
     } catch (final ImejiException e) {
       BeanHelper.error("Error retrieving item");
@@ -54,7 +54,7 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
   public List<Item> toItemList() {
     final List<Item> itemList = new ArrayList<>();
     final List<Metadata> metadataList = new ArrayList<>();
-    for (final RowComponent row : rows) {
+    for (final SelectStatementWithInputComponent row : rows) {
       metadataList.add(row.getInput().getMetadata());
     }
     item.setMetadata(metadataList);
@@ -63,19 +63,15 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
   }
 
   @Override
-  public List<SelectStatementComponent> getAllStatements() {
-    final List<SelectStatementComponent> l = new ArrayList<>();
-    for (final RowComponent row : rows) {
-      l.add(row);
-    }
-    return l;
+  public List<SelectStatementWithInputComponent> getAllStatements() {
+    return rows;
   }
 
   /**
    * Add a new empty row
    */
   public void addMetadata() {
-    rows.add(new RowComponent(statementMap));
+    rows.add(new SelectStatementWithInputComponent(statementMap));
   }
 
   /**
@@ -90,14 +86,14 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
   /**
    * @return the rows
    */
-  public List<RowComponent> getRows() {
+  public List<SelectStatementWithInputComponent> getRows() {
     return rows;
   }
 
   /**
    * @param rows the rows to set
    */
-  public void setRows(List<RowComponent> rows) {
+  public void setRows(List<SelectStatementWithInputComponent> rows) {
     this.rows = rows;
   }
 

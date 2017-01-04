@@ -14,6 +14,43 @@
             <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
         </h:head>
         <h:body lang="#{InternationalizationBean.locale}">
+        	<!-- NEW STYLE - TO BE ADDED TO CSS -->
+             <style>
+					.edit_selected_table_wrapper{
+						width: 96%; 
+						overflow-x: auto; 
+						overflow-y: hidden;  
+						white-space: nowrap;
+					}
+					.edit_selected_table{
+						border-collapse: collapse;
+						border: 5px solid #444444;
+						table-layout:fixed;
+					}
+					.edit_selected_table td{
+						vertical-align: top;
+						border: 5px solid #444444; 
+						padding:1px;
+						width: 5em;
+					}
+					.edit_selected_table_button{
+						width: 100%;
+						text-align: center;
+						float: left;
+					}
+					.edit_selected_table th{
+						vertical-align: top;
+						margin:1px;
+						text-align: center;
+						background-color: #444444;
+					}
+					.edit_selected_table_icon{
+						margin-left: 0.5em;
+						margin-right: 0.5em;
+					}
+                </style>
+                <!-- NEW SCIPT - TO BE ADDED TO JS -->
+               
             <!-- default necessary scripts, because of use in body-load context -->
             <h:outputScript library="jquery" name="jquery-1.11.1.min.js"/>
             <h:outputScript library="jquery/ui" name="1.10.4/jquery-ui.min.js"/>
@@ -77,12 +114,14 @@
 	                <!-- content wrapper -->
 	                <div class="imj_mainContentWrapper">
 	                    <ui:insert name="mainContent"/>
+	                     <div class="modal"></div>
 	                </div>
 	             </div>
                 <!-- footer -->
                 <ui:include src="component/footer/footer_default.xhtml"/>
             </div>
             
+           
             <!-- modal dialogs -->
             <div class="imj_modalDialogBackground">&#160;</div>
             <ui:insert name="modalDialogs_from_template"/>
@@ -91,8 +130,10 @@
             <h:outputScript library="js/" name="default.js"/>
 
             <div id="additonalFooterScripts" class="imj_noDisplay">
-                <ui:insert name="additonalFooterScripts"/>
+                <ui:insert name="additonalFooterScripts"/> 
             </div>
+            
+            
         </h:body>
     </html>
 </f:view>

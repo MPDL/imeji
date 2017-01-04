@@ -73,7 +73,7 @@ public abstract class EditMetadataAbstract extends SuperBean {
    *
    * @return
    */
-  public abstract List<SelectStatementComponent> getAllStatements();
+  public abstract List<SelectStatementWithInputComponent> getAllStatements();
 
   /**
    * Return all statements which are not already existing
