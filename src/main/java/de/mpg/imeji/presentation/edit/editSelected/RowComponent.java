@@ -37,10 +37,12 @@ public class RowComponent implements Serializable {
 
   private List<Metadata> getMetadataForStatement(Item item, Statement statement) {
     final List<Metadata> l = new ArrayList<>();
-    for (final Metadata metadata : item.getMetadata()) {
-      if (metadata.getStatementId().equals(statement.getIndex())
-          && !MetadataUtil.isEmpty(metadata)) {
-        l.add(metadata);
+    if (statement != null) {
+      for (final Metadata metadata : item.getMetadata()) {
+        if (metadata.getStatementId().equals(statement.getIndex())
+            && !MetadataUtil.isEmpty(metadata)) {
+          l.add(metadata);
+        }
       }
     }
     return l;

@@ -14,7 +14,7 @@
 	
 	<composite:implementation>
 		<h:panelGroup id="selectMetadata">
-			<h:inputText value="#{cc.attrs.component.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
+			<h:inputText class="combobox" onfocus="$('#statementList').show();" value="#{cc.attrs.component.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
 				<f:ajax event="change" render="@form" listener="#{cc.attrs.component.listener}"/>
 				<f:ajax event="select" render="@form" listener="#{cc.attrs.component.listener}"/>
 			</h:inputText>

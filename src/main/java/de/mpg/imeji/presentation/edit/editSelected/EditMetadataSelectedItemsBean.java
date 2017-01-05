@@ -37,6 +37,7 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   private List<SelectStatementWithInputComponent> columns = new ArrayList<>();
   private List<RowComponent> rows = new ArrayList<>();
   private SelectStatementWithInputComponent newStatement;
+  private List<String> displayedColumns = new ArrayList<>();
 
   public EditMetadataSelectedItemsBean() {
     super();
@@ -78,6 +79,8 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
       }
     }
     columns = new ArrayList<>(map.values());
+    displayedColumns = columns.stream().map(SelectStatementWithInputComponent::getIndex)
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -93,7 +96,6 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   public List<SelectStatementWithInputComponent> getAllStatements() {
     return columns;
   }
-
 
   /**
    * Add the Metadata defined in the column to all cell of this column
@@ -135,6 +137,7 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
     for (final RowComponent row : rows) {
       row.addCell(newStatement.asStatement());
     }
+    displayedColumns.add(newStatement.getIndex());
     newStatement = new SelectStatementWithInputComponent(statementMap);
   }
 
@@ -216,6 +219,20 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
    */
   public void setColumns(List<SelectStatementWithInputComponent> columns) {
     this.columns = columns;
+  }
+
+  /**
+   * @return the displayedColumns
+   */
+  public List<String> getDisplayedColumns() {
+    return displayedColumns;
+  }
+
+  /**
+   * @param displayedColumns the displayedColumns to set
+   */
+  public void setDisplayedColumns(List<String> displayedColumns) {
+    this.displayedColumns = displayedColumns;
   }
 
 }

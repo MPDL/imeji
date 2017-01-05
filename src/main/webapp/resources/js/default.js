@@ -787,25 +787,36 @@ function resizeMenu(){
  * 
  ******************************************************************************/
 
-/*******
-*
-* LOADER
-*
-********/
+// LOADER
+function startLoader(){
+	$(".loaderWrapper").show();
+	$(".loader").show();
+}
 
 // JSF AJAX EVENTS
 jsf.ajax.addOnEvent(function(data) {
     var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
     switch (ajaxstatus) {
         case "begin":
-        	$(".imj_mainContentWrapper").css({ opacity: 0.2});
             break;
-
         case "complete":
-        	$(".imj_mainContentWrapper").css({ opacity: 1});
+        	$(".loaderWrapper").hide();
+        	$(".loader").show();
         	break;
 
         case "success":
             break;
     }
+});
+
+// Edit selected items table
+$(function(){
+    $(".scrollbarTopWrapper").scroll(function(){
+        $(".edit_selected_table_wrapper")
+            .scrollLeft($(".scrollbarTopWrapper").scrollLeft());
+    });
+    $(".edit_selected_table_wrapper").scroll(function(){
+        $(".scrollbarTopWrapper")
+            .scrollLeft($(".edit_selected_table_wrapper").scrollLeft());
+    });
 });

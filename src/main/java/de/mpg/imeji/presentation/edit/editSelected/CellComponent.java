@@ -77,4 +77,13 @@ public class CellComponent implements Serializable {
     this.inputs = inputs;
   }
 
+  /**
+   * @return the statement
+   */
+  public Statement getStatement() {
+    return statement;
+  }
+
+
+
 }
