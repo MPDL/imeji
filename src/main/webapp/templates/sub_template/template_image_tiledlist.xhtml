@@ -4,7 +4,8 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:imjc="http://java.sun.com/jsf/composite/components"
-                xmlns:list="http://java.sun.com/jsf/composite/components/list">
+                xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+                xmlns:item="http://java.sun.com/jsf/composite/components/item">
 	
   
     <ui:define name="modalDialogs_from_template">
@@ -23,6 +24,11 @@
         </ui:include>
     </ui:define>
 
+	<ui:define name="actionsMenu">
+		<menu:actionItems rendered="#{empty SessionBean.selected}"/>
+		<menu:actionSelectedItems rendered="#{not empty SessionBean.selected}"/>
+	</ui:define>
+	
     <!-- Main Content - Image tiled list - START -->
     <ui:define name="mainContent">
  		
@@ -39,10 +45,9 @@
                                       browseToAllUrl="#{browseToAllItemsUrl}" 
                                       numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}"
                                       containerId="#{containerId}" showSortMenu="true" objectLabel="#{lbl.images}"/>
-
             <!-- Media List -->
-            <imjc:tiledMediaList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
-            <list:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
+            <item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
+            <item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 
 			<!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>

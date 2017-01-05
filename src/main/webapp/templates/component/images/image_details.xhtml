@@ -7,7 +7,9 @@
 	xmlns:share="http://java.sun.com/jsf/composite/components/share"	
 	xmlns:list="http://java.sun.com/jsf/composite/components/list"
 	xmlns:lic="http://java.sun.com/jsf/composite/components/license"
-	xmlns:md="http://java.sun.com/jsf/composite/components/metadata">
+	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
+	xmlns:item="http://java.sun.com/jsf/composite/components/item">
+	
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
@@ -201,7 +203,7 @@
 							</ui:fragment>
 							
 							<ui:fragment rendered="#{itemBean.edit.toggleState == 'editMd' and Auth.updateContent(itemBean.image) and !itemBean.locked}">
-								<md:metadataItemEdit formBean="#{EditMetadataItemBean}"/>
+								<item:editMetadata formBean="#{EditMetadataItemBean}"/>
 								<div class="imj_submitPanel">
 									<h:commandLink styleClass="imj_cancelButton" action="#{itemBean.cancelEditor}">
 										<h:outputText value="#{lbl.cancel}"/>

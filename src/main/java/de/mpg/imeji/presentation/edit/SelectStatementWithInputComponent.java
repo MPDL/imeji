@@ -42,6 +42,7 @@ public class SelectStatementWithInputComponent extends SelectStatementComponent
   @Override
   public void listener() {
     super.listener();
+    System.out.println("hello");
     addInput();
   }
 

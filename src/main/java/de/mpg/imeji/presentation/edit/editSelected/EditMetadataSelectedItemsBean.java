@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 
@@ -81,20 +82,27 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
     columns = new ArrayList<>(map.values());
     displayedColumns = columns.stream().map(SelectStatementWithInputComponent::getIndex)
         .collect(Collectors.toList());
+
   }
 
   @Override
   public List<Item> toItemList() {
-    final List<Item> l = new ArrayList<>();
-    for (final RowComponent row : rows) {
-      l.add(row.toItem());
-    }
-    return l;
+    return rows.stream().map(RowComponent::toItem).collect(Collectors.toList());
   }
 
   @Override
   public List<SelectStatementWithInputComponent> getAllStatements() {
     return columns;
+  }
+
+  /**
+   * Filter all statements which are already set into one column
+   * 
+   * @return
+   */
+  public List<SelectItem> getFilteredStatementMenu() {
+    return getStatementMenu().stream().filter(s -> !displayedColumns.contains(s.getLabel()))
+        .collect(Collectors.toList());
   }
 
   /**

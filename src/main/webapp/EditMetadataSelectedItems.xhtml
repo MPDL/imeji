@@ -33,10 +33,12 @@
 					<table class="edit_selected_table">
 						<tr>
 							<th>
-								<md:select component="#{EditMetadataSelectedItemsBean.newStatement}" menu="#{EditMetadataSelectedItemsBean.statementMenu}"/>
-						    	<h:commandLink action="#{EditMetadataSelectedItemsBean.addColumn}" value=" #{lbl.add}" title="#{lbl.add}" rendered="#{!empty EditMetadataSelectedItemsBean.newStatement.index}">
-									<f:ajax execute="@form" render="@form"/>
-								</h:commandLink>
+								<h:panelGroup id="selectMetadataWrapper">
+									<md:select component="#{EditMetadataSelectedItemsBean.newStatement}" menu="#{EditMetadataSelectedItemsBean.filteredStatementMenu}" render=":editSelectedForm:selectMetadataWrapper"/>
+							    	<h:commandLink action="#{EditMetadataSelectedItemsBean.addColumn}" value=" #{lbl.add}" title="#{lbl.add}" rendered="#{!empty EditMetadataSelectedItemsBean.newStatement.index}" onclick="startLoader();">
+										<f:ajax execute="@form" render="@form"/>
+									</h:commandLink>
+								</h:panelGroup>
 							</th>
 							<ui:repeat value="#{EditMetadataSelectedItemsBean.columns}" var="column" varStatus="status">
 								<ui:fragment rendered="#{EditMetadataSelectedItemsBean.displayedColumns.contains(column.index)}">

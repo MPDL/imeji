@@ -10,14 +10,23 @@
 		<composite:attribute name="menu" required="true"/>
 		<composite:attribute name="component" required="true"/>
 		<composite:attribute name="listener"/>
+		<composite:attribute name="render"/>
 	</composite:interface>
 	
 	<composite:implementation>
 		<h:panelGroup id="selectMetadata">
-			<h:inputText class="combobox" onfocus="$('#statementList').show();" value="#{cc.attrs.component.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
-				<f:ajax event="change" render="@form" listener="#{cc.attrs.component.listener}"/>
-				<f:ajax event="select" render="@form" listener="#{cc.attrs.component.listener}"/>
-			</h:inputText>
+			<ui:fragment rendered="#{empty cc.attrs.render}">
+				<h:inputText class="combobox" onfocus="$('#statementList').show();" value="#{cc.attrs.component.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
+					<f:ajax event="change" render="@form" listener="#{cc.attrs.component.listener}"/>
+					<f:ajax event="select" render="@form" listener="#{cc.attrs.component.listener}"/>
+				</h:inputText>
+			</ui:fragment>
+			<ui:fragment rendered="#{not empty cc.attrs.render}">
+				<h:inputText class="combobox" onfocus="$('#statementList').show();" value="#{cc.attrs.component.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
+					<f:ajax event="change" render="#{cc.attrs.render}" listener="#{cc.attrs.component.listener}"/>
+					<f:ajax event="select" render="#{cc.attrs.render}" listener="#{cc.attrs.component.listener}"/>
+				</h:inputText>
+			</ui:fragment>			
 			<datalist id="statementList">
 				<ui:repeat var="statement" value="#{cc.attrs.menu}">
 			   		<option>#{statement.value}</option>

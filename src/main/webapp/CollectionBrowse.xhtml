@@ -13,28 +13,29 @@
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/browse?q="/>
 	<ui:param name="imejiResource" value="#{CollectionItemsBean.collection}"/>
 	
-	
-	<ui:define name="actionsMenu">
-		<ui:fragment rendered="#{Auth.read(paginatorListSessionBean.collection)}">
-			<menu:context_subNavigation contextId="#{paginatorListSessionBean.id}" 
-									contextUrl="#{Navigation.collectionUrl}" 
-									curMainMenu="#{currentMainMenu}" 
-									userHasAdminRights="#{Auth.sysAdmin}" 
-									userHasUploadRights="#{Auth.createContent(paginatorListSessionBean.collection)}" 
-									navBean="#{Navigation}" 
-									activeMenu="content" />
-		
-			<menu:context_actionMenu id="action" 
-									sortBean="#{paginatorListSessionBean}" 
-									curMainMenu="#{currentMainMenu}" 
-									exportQuery="#{paginatorListSessionBean.query}" 
-									vo="#{CollectionItemsBean.collection}"
-									profile="#{paginatorListSessionBean.profile}"
-									hasContent="#{paginatorListSessionBean.totalNumberOfRecords > 0}"
-									contextDownloadParam="&amp;col=#{paginatorListSessionBean.id}" 
-									hasDoi="#{paginatorListSessionBean.collection.doi != null and paginatorListSessionBean.collection.doi !=''}"/>
-		</ui:fragment>
-	</ui:define>
+	<ui:remove>
+		<ui:define name="actionsMenu">
+			<ui:fragment rendered="#{Auth.read(paginatorListSessionBean.collection)}">
+				<menu:context_subNavigation contextId="#{paginatorListSessionBean.id}" 
+										contextUrl="#{Navigation.collectionUrl}" 
+										curMainMenu="#{currentMainMenu}" 
+										userHasAdminRights="#{Auth.sysAdmin}" 
+										userHasUploadRights="#{Auth.createContent(paginatorListSessionBean.collection)}" 
+										navBean="#{Navigation}" 
+										activeMenu="content" />
+				
+				<menu:context_actionMenu id="action" 
+										sortBean="#{paginatorListSessionBean}" 
+										curMainMenu="#{currentMainMenu}" 
+										exportQuery="#{paginatorListSessionBean.query}" 
+										vo="#{CollectionItemsBean.collection}"
+										profile="#{paginatorListSessionBean.profile}"
+										hasContent="#{paginatorListSessionBean.totalNumberOfRecords > 0}"
+										contextDownloadParam="&amp;col=#{paginatorListSessionBean.id}" 
+										hasDoi="#{paginatorListSessionBean.collection.doi != null and paginatorListSessionBean.collection.doi !=''}"/>
+			</ui:fragment>
+		</ui:define>
+	</ui:remove>
 	
 	
 	<ui:define name="modalDialogs_from_site">

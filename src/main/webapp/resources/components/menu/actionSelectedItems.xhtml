@@ -1,0 +1,22 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+	
+	<composite:interface>		
+		<composite:attribute name="itemsBean"/>								
+	</composite:interface>
+	
+	<composite:implementation>
+		<h:outputText value="#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}"/>
+		<a href="#{Navigation.applicationUrl}editselected" class="imj_submitButton">
+			#{lbl.edit}
+		</a>
+		<h:commandButton value="#{lbl.delete}" action="#{cc.attrs.itemsBean.deleteSelected}" styleClass="imj_submitButton"/>
+		<h:commandButton value="#{lbl.download}" action="#{cc.attrs.itemsBean.downloadSelected}" styleClass="imj_submitButton"/>
+		<h:outputLink value="#{Navigation.applicationSpaceUrl}edit/license" id="lnkSelectEditLicense" styleClass="imj_submitButton">
+			<h:outputText value="#{lbl.edit_selected_license}"/>
+		</h:outputLink>
+	</composite:implementation>
+</html>

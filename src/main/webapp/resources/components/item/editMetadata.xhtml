@@ -13,7 +13,7 @@
 			<div class="imj_metadataSet">
 				<div class="imj_metadataLabel">
 					<ui:fragment rendered="#{!row.exists}">
-						<md:select component="#{row}" menu="#{cc.attrs.formBean.statementMenu}" render="@form"/>
+						<md:select component="#{row}" menu="#{cc.attrs.formBean.statementMenu}" renderForm="true"/>
 					</ui:fragment>
 					<ui:fragment rendered="#{row.exists}">
 						<h:outputText value="#{row.index}"/>
