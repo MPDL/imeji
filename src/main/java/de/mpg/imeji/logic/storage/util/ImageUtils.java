@@ -122,22 +122,23 @@ public final class ImageUtils {
   public static void rotate(File file, int degrees) {
     try {
       BufferedImage img = ImageIO.read(file);
+      BufferedImage res = null;
       switch (degrees % 360) {
         case 0:
           break;
         case 90:
-          img = rotateBy90Degrees(img);
+          res = rotateBy90Degrees(img);
           break;
         case 180:
-          img = rotateBy180Degrees(img);
+          res = rotateBy180Degrees(img);
           break;
         case 270:
-          img = rotateBy270Degrees(img);
+          res = rotateBy270Degrees(img);
           break;
         default:
           throw new Exception("Invaild number of degrees: " + degrees);
       }
-      ImageIO.write(img, "jpg", file);
+      ImageIO.write(res, "jpg", file);
 
       System.out.println("Done rotating");
     } catch (Exception e) {
@@ -176,14 +177,46 @@ public final class ImageUtils {
     return result;
   }
 
-  public static int getImageWidth(File file) throws IOException {
-    BufferedImage img = ImageIO.read(file);
-    return img.getWidth();
+  public static int getImageWidth(File file) {
+    try (ImageInputStream in = ImageIO.createImageInputStream(file)) {
+      if (in == null) {
+        return 0;
+      }
+      final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+      if (readers.hasNext()) {
+        ImageReader reader = readers.next();
+        try {
+          reader.setInput(in);
+          return reader.getWidth(0);
+        } finally {
+          reader.dispose();
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return 0;
   }
 
-  public static int getImageHeight(File file) throws IOException {
-    BufferedImage img = ImageIO.read(file);
-    return img.getHeight();
+  public static int getImageHeight(File file) {
+    try (ImageInputStream in = ImageIO.createImageInputStream(file)) {
+      if (in == null) {
+        return 0;
+      }
+      final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+      if (readers.hasNext()) {
+        ImageReader reader = readers.next();
+        try {
+          reader.setInput(in);
+          return reader.getHeight(0);
+        } finally {
+          reader.dispose();
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return 0;
   }
 
 

@@ -35,7 +35,6 @@ import java.nio.file.Paths;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
@@ -142,7 +141,7 @@ public class InternalStorage implements Storage {
   }
 
   @Override
-  public void rotate(String fullUrl, int degrees) throws ImejiException {
+  public void rotate(String fullUrl, int degrees) throws IOException, Exception {
     String thumbnailUrl = getThumbnailUrl(fullUrl);
     String webUrl = getWebResolutionUrl(fullUrl);
     File thumbnail = read(thumbnailUrl);
@@ -155,8 +154,10 @@ public class InternalStorage implements Storage {
       ImageMagickUtils.rotateJPEG(full, degrees);
     } else {
       ImageUtils.rotate(full, degrees);
-      ImageUtils.rotate(web, degrees);
-      ImageUtils.rotate(thumbnail, degrees);
+      web = ImageUtils.resizeJPEG(full, FileResolution.WEB);
+      thumbnail = ImageUtils.resizeJPEG(full, FileResolution.THUMBNAIL);
+      update(webUrl, web);
+      update(thumbnailUrl, thumbnail);
     }
   }
 

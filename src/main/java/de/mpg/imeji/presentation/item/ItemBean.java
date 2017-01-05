@@ -840,9 +840,10 @@ public class ItemBean extends SuperBean {
    * Called when a picture is rotated by Openseadragon. If the user is authorized to rotate the
    * image, webresolution and thumbnail get rotated
    * 
-   * @throws ImejiException
+   * @throws Exception
+   * @throws IOException
    */
-  public void updateRotation() throws ImejiException {
+  public void updateRotation() throws IOException, Exception {
 
 
     if (getAuth().update(getImage())) {
@@ -869,6 +870,8 @@ public class ItemBean extends SuperBean {
      * if (imgWidth <= imgHeight) { return webSize; } return (int) (imgWidth * 1.0 / imgHeight *
      * webSize);
      */
+    if (!isImageFile() || isSVGFile())
+      return 0;
     StorageController storageController = new StorageController();
     return storageController.getStorage().getImageWidth(getImage().getWebImageUrl().getPath());
   }
@@ -887,6 +890,8 @@ public class ItemBean extends SuperBean {
      * if (imgWidth <= imgHeight) { return (int) (imgHeight * 1.0 / imgWidth * webSize); } return
      * webSize;
      */
+    if (!isImageFile() || isSVGFile())
+      return 0;
     StorageController storageController = new StorageController();
     return storageController.getStorage().getImageHeight(getImage().getWebImageUrl().getPath());
   }
@@ -902,11 +907,15 @@ public class ItemBean extends SuperBean {
   }
 
   public int getFullResolutionWidth() throws IOException {
+    if (!isImageFile() || isSVGFile())
+      return 0;
     StorageController storageController = new StorageController();
     return storageController.getStorage().getImageWidth(getImage().getFullImageUrl().getPath());
   }
 
   public int getFullResolutionHeight() throws IOException {
+    if (!isImageFile() || isSVGFile())
+      return 0;
     StorageController storageController = new StorageController();
     return storageController.getStorage().getImageHeight(getImage().getFullImageUrl().getPath());
   }

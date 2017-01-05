@@ -118,8 +118,10 @@ public interface Storage extends Serializable {
    * @param originalUrl
    * @param degrees
    * @throws ImejiException
+   * @throws Exception
+   * @throws IOException
    */
-  public void rotate(String originalUrl, int degrees) throws ImejiException;
+  public void rotate(String originalUrl, int degrees) throws ImejiException, IOException, Exception;
 
   /**
    * Returns the width of the image at the url
