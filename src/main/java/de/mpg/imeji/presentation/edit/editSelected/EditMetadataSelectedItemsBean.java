@@ -80,9 +80,9 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
       }
     }
     columns = new ArrayList<>(map.values());
+    columns.sort((c1, c2) -> c1.getIndex().compareToIgnoreCase(c2.getIndex()));
     displayedColumns = columns.stream().map(SelectStatementWithInputComponent::getIndex)
         .collect(Collectors.toList());
-
   }
 
   @Override
@@ -165,6 +165,8 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   public String getBackUrl() {
     return getHistory().getPreviousPage().getCompleteUrlWithHistory();
   }
+
+
 
   /**
    * Retrieve the Items
