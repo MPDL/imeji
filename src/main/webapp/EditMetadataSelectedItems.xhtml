@@ -82,7 +82,7 @@
 								<ui:repeat id="metadata" value="#{row.cells}" var="cell" varStatus="status">
 									<ui:fragment rendered="#{EditMetadataSelectedItemsBean.displayedColumns.contains(cell.statement.index)}">
 								    	<td class="column_#{status.index}">
-								    		<h:panelGroup id="cellInput">
+								    		<h:panelGroup layout="block" id="cellInput" >
 												<ui:repeat id="value" value="#{cell.inputs}" var="input">
 													<md:input id="input" metadataInputComponent="#{input}"/>
 												</ui:repeat>

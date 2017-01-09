@@ -45,6 +45,8 @@
                                       browseToAllUrl="#{browseToAllItemsUrl}" 
                                       numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}"
                                       containerId="#{containerId}" showSortMenu="true" objectLabel="#{lbl.images}"/>
+            <imjc:upload/>
+            
             <!-- Media List -->
             <item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
             <item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>

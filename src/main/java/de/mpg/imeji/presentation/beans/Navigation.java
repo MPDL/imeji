@@ -50,6 +50,7 @@ public class Navigation implements Serializable {
   public static final Page USER = new Page("User", "user");
   public static final Page USERS = new Page("Users", "users");
   public static final Page ADMIN = new Page("Admin", "admin");
+  public static final Page OPENSEADRAGON = new Page("Openseadragon", "openseadragon");
   public static final Page SINGLEUPLOAD = new Page("Single upload", "singleupload");
   public static final Page REGISTRATION = new Page("Registration", "register");
   public static final Page IMPRINT = new Page("IMPRINT", "imprint");

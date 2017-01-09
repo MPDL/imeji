@@ -27,15 +27,16 @@
 					}
 					.edit_selected_table {
 						border-collapse: collapse;
-						border: 5px solid #444444;
-						table-layout: fixed; 
+						border: 3px solid #444444;
+						table-layout: fixed;
+						margin: 2px;
 					}
-					.edit_selected_table textarea, .edit_selected_table input[type] {
+					.edit_selected_table textarea, .edit_selected_table input[type]:not(.combobox) {
 					   	width:90%;
 					}
 					.edit_selected_table td{
-						vertical-align: top;
-						border: 2px solid #444444; 
+						vertical-align: middle;
+						border: 1px solid #444444; 
 						max-width: 15.6em;
 						min-width: 15.6em;
 						padding:5px;
@@ -46,7 +47,7 @@
 						float: left;
 					}
 					.edit_selected_table th{
-						vertical-align: top;
+						vertical-align: middle;
 						margin:0;
 						text-align: center;
 						background-color: #444444;
