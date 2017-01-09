@@ -793,6 +793,12 @@ function startLoader(){
 	$(".loader").show();
 }
 
+//LOADER
+function stopLoader(){
+	$(".loaderWrapper").hide();
+	$(".loader").hide();
+}
+
 // JSF AJAX EVENTS
 jsf.ajax.addOnEvent(function(data) {
     var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
@@ -800,8 +806,7 @@ jsf.ajax.addOnEvent(function(data) {
         case "begin":
             break;
         case "complete":
-        	$(".loaderWrapper").hide();
-        	$(".loader").show();
+        	stopLoader();
         	break;
 
         case "success":

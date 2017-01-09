@@ -25,11 +25,20 @@
 						border: 5px solid #444444;
 						table-layout: fixed; 
 					}
+					.edit_selected_table {
+						border-collapse: collapse;
+						border: 5px solid #444444;
+						table-layout: fixed; 
+					}
+					.edit_selected_table textarea, .edit_selected_table input[type] {
+					   	width:90%;
+					}
 					.edit_selected_table td{
 						vertical-align: top;
-						border: 5px solid #444444; 
-						max-width: 16em;
-						min-width: 16em;
+						border: 2px solid #444444; 
+						max-width: 15.6em;
+						min-width: 15.6em;
+						padding:5px;
 					}
 					.edit_selected_table_button{
 						width: 100%;
@@ -38,7 +47,7 @@
 					}
 					.edit_selected_table th{
 						vertical-align: top;
-						margin:1px;
+						margin:0;
 						text-align: center;
 						background-color: #444444;
 					}
@@ -82,7 +91,7 @@
 					   	position: absolute;
 						top: 50%;
 						left: 50%;
-						z-index: 1;
+						z-index: 10001;
 						width: 150px;
 						height: 150px;
 						margin: -75px 0 0 -75px;
@@ -94,6 +103,9 @@
 						-webkit-animation: spin 2s linear infinite;
 						animation: spin 2s linear infinite;
 						display: none;
+					}
+					.show{
+						display: block;
 					}
 					
 					@keyframes spin {
@@ -167,9 +179,8 @@
 	                <div class="imj_mainContentWrapper">
 	                    <ui:insert name="mainContent"/>
 	                </div>
-	               <div class="loaderWrapper">
-	               		<div class="loader"></div>
-	               </div>
+	               <div class="loaderWrapper"/>
+	               <div class="loader"/>
 	             </div>
                 <!-- footer -->
                 <ui:include src="component/footer/footer_default.xhtml"/>
