@@ -46,6 +46,24 @@ public class WorkflowValidator implements Serializable {
   }
 
   /**
+   * DOI can be created if: <br/>
+   * *imeji is not in private mode *Status is released
+   * 
+   * @param p
+   * @throws WorkflowException
+   */
+
+  public void isCreateDOIAllowed(Properties p) throws WorkflowException {
+    if (Imeji.CONFIG.getPrivateModus()) {
+      throw new WorkflowException("DOI is not allowed in private mode");
+    }
+    if (p.getStatus() != Status.RELEASED) {
+      throw new WorkflowException("DOI is only allowed for released items");
+    }
+
+  }
+
+  /**
    * Can be release if: <br/>
    * * imeji is not in private Modus <br/>
    * * Status is PENDING <br/>
@@ -74,10 +92,6 @@ public class WorkflowValidator implements Serializable {
    */
   public void isWithdrawAllowed(Properties p)
       throws WorkflowException, NotSupportedMethodException {
-    if (Imeji.CONFIG.getPrivateModus()) {
-      throw new NotSupportedMethodException("Object withdrawal is disabled!");
-    }
-
     if (p.getStatus() != Status.RELEASED) {
       throw new WorkflowException("Only RELEASED objects can be withdrawn");
     }

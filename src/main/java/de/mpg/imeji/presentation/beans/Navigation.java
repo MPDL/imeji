@@ -87,6 +87,10 @@ public class Navigation implements Serializable {
     return applicationUrl.substring(0, applicationUrl.length() - 1);
   }
 
+  public String getOpenseadragonUrl() {
+    return applicationUrl + OPENSEADRAGON.getPath();
+  }
+
   public String getDomain() {
     return applicationUrl.replaceAll("imeji/", "");
   }
