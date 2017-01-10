@@ -125,7 +125,7 @@ public class ImejiFactory {
   public static Item newItem(CollectionImeji collection) throws UnprocessableError {
     final Item item = new Item();
     if (collection == null || collection.getId() == null) {
-      throw new UnprocessableError("Can not create item with a collection null");
+      return item;
     }
     item.setCollection(collection.getId());
     return item;

@@ -211,12 +211,12 @@ public class FileServlet extends HttpServlet {
    * @throws AuthenticationError
    */
   private User getUser(HttpServletRequest req, SessionBean session) throws AuthenticationError {
+    if (session != null) {
+      return session.getUser();
+    }
     final User user = AuthenticationFactory.factory(req).doLogin();
     if (user != null) {
       return user;
-    }
-    if (session != null) {
-      return session.getUser();
     }
     return null;
   }
@@ -256,7 +256,6 @@ public class FileServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    // No post action
     return;
   }
 }

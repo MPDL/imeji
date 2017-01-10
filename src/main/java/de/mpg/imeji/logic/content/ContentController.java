@@ -216,7 +216,8 @@ public class ContentController extends ImejiServiceAbstract {
       throw new UnprocessableError("upload_format_not_allowed");
     }
     QuotaUtil.checkQuota(user, file, c);
-    final UploadResult uploadResult = sc.upload(file.getName(), file, c.getIdString());
+    final UploadResult uploadResult =
+        sc.upload(file.getName(), file, c != null ? c.getIdString() : user.getId().toString());
     contentVO.setOriginal(uploadResult.getOrginal());
     contentVO.setPreview(uploadResult.getWeb());
     contentVO.setThumbnail(uploadResult.getThumb());
@@ -254,7 +255,8 @@ public class ContentController extends ImejiServiceAbstract {
       final StorageController storageController = new StorageController();
       final File file = storageController.read(contentVO.getOriginal());
       if (file.exists()) {
-        final ContentExtractionResult contentAnalyse = ContentExtractorFactory.build().extractAll(file);
+        final ContentExtractionResult contentAnalyse =
+            ContentExtractorFactory.build().extractAll(file);
         contentVO.setFulltext(contentAnalyse.getFulltext());
         contentVO.setTechnicalMetadata(contentAnalyse.getTechnicalMetadata());
         return true;

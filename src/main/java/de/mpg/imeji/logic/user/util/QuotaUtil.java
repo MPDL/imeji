@@ -76,17 +76,13 @@ public class QuotaUtil {
    *         be returned for unlimited quota
    */
   public static long checkQuota(User user, File file, CollectionImeji col) throws ImejiException {
-    // do not check quota for admin
-    if (col == null) {
-      return -1L;
-    }
-    final User targetCollectionUser = user.getId().equals(col.getCreatedBy()) ? user
+    final User targetCollectionUser = col == null || user.getId().equals(col.getCreatedBy()) ? user
         : new UserService().retrieve(col.getCreatedBy(), Imeji.adminUser);
 
     final Search search = SearchFactory.create();
     final List<String> results =
-        search.searchString(JenaCustomQueries.selectUserFileSize(col.getCreatedBy().toString()),
-            null, null, 0, -1).getResults();
+        search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null,
+            null, 0, -1).getResults();
     long currentDiskUsage = 0L;
     try {
       currentDiskUsage = Long.parseLong(results.get(0).toString());

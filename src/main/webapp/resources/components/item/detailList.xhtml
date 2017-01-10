@@ -16,7 +16,7 @@
 
         <h:form>
         	<div id="imj_listBody">
-        	<h:panelGroup rendered="#{cc.attrs.listBean.totalNumberOfElements == 0}" style="font-size:130%">
+        	<h:panelGroup rendered="#{cc.attrs.listBean.totalNumberOfElements == 0 and cc.attrs.listBean.query != ''}" style="font-size:130%">
 				<span class="fa fa-exclamation-triangle"/>
 				<h:outputText value=" #{msg.no_images_found}!"/>
 			</h:panelGroup>

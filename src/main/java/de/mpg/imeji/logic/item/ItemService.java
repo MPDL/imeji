@@ -103,15 +103,16 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public Item createWithFile(Item item, File f, String filename, CollectionImeji c, User user)
       throws ImejiException {
+    if (item == null) {
+      item = ImejiFactory.newItem(c);
+    }
     if (StringHelper.isNullOrEmptyTrim(filename)) {
       throw new UnprocessableError("Filename must not be empty!");
     }
     validateChecksum(c.getId(), f, false);
     final ContentController contentController = new ContentController();
     final ContentVO content = contentController.create(item, f, c, user);
-    if (item == null) {
-      item = ImejiFactory.newItem(c);
-    }
+
     item = copyContent(item, content);
     item.setFilename(filename);
     if (c.getStatus() == Status.RELEASED) {

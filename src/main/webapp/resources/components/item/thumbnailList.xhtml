@@ -8,7 +8,7 @@
 		<composite:attribute name="picList"/>
 	</composite:interface>
 	<composite:implementation>
-		<h:panelGroup rendered="#{cc.attrs.picList.totalNumberOfElements == 0}" style="font-size:130%">
+		<h:panelGroup rendered="#{cc.attrs.picList.totalNumberOfElements == 0 and cc.attrs.picList.query != ''}" style="font-size:130%">
 			<span class="fa fa-exclamation-triangle"/>
 			<h:outputText value=" #{msg.no_images_found}!"/>
 		</h:panelGroup>

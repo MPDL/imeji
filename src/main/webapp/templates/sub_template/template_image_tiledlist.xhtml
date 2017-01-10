@@ -25,7 +25,7 @@
     </ui:define>
 
 	<ui:define name="actionsMenu">
-		<menu:actionItems rendered="#{empty SessionBean.selected}"/>
+		<menu:actionItems id="actionItems" rendered="#{empty SessionBean.selected}"/>
 		<menu:actionSelectedItems rendered="#{not empty SessionBean.selected}"/>
 	</ui:define>
 	
@@ -34,8 +34,6 @@
  		
         <h:panelGroup layout="block" id ="ajaxWrapper">
 			<script>menuRightOffset();</script>
-        	 <!-- Page Browser GotoBox -->
-            <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true"/>
         	
             <!-- Selection Info Panel -->
             <imjc:selectionInfoPanel id="selPanel" 
@@ -44,13 +42,21 @@
                                       currentMainMenu="mediaEntry" 
                                       browseToAllUrl="#{browseToAllItemsUrl}" 
                                       numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}"
-                                      containerId="#{containerId}" showSortMenu="true" objectLabel="#{lbl.images}"/>
-            <imjc:upload/>
+                                      containerId="#{containerId}" showSortMenu="true" objectLabel="#{lbl.images}"
+                                      rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
+           
             
-            <!-- Media List -->
-            <item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
-            <item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
-
+            <div class="imj_upload">
+				<div id="container" class="imj_noDisplay"/>			
+				<div id="uploader">
+					<div id="filelist"></div>
+					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
+            		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
+            		<div id="uploadTitle" class="uploadDragAndDropTitle" style="#{paginatorListSessionBean.totalNumberOfElements != 0 || paginatorListSessionBean.query != '' ? 'display:none' : ''}"><span class="fa fa-upload" /> #{lbl.uploadFile}</div>	
+            		
+				</div>
+			</div>
+            <imjc:upload browseButtonId="actionItems:upload" collectionId="#{paginatorListSessionBean.collection.id}"/>
 			<!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
             <!-- Facets -->

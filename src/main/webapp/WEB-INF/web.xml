@@ -35,6 +35,12 @@
         <load-on-startup>3</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
+      <servlet>
+        <servlet-name>Upload Servlet</servlet-name>
+        <servlet-class>de.mpg.imeji.presentation.upload.UploadServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
     <servlet>
         <servlet-name>Export Servlet</servlet-name>
         <servlet-class>de.mpg.imeji.presentation.servlet.ExportServlet</servlet-class>
@@ -143,6 +149,10 @@
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>/jsf/*</url-pattern>
+    </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>Upload Servlet</servlet-name>
+        <url-pattern>/stream</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>File Servlet</servlet-name>

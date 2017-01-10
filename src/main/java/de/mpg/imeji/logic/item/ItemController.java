@@ -50,13 +50,16 @@ public class ItemController extends ImejiServiceAbstract {
    * @param coll
    * @throws ImejiException
    */
-  public void create(Collection<Item> items, CollectionImeji ic, User user) throws ImejiException {
+  public void create(Collection<Item> items, CollectionImeji collection, User user)
+      throws ImejiException {
     for (final Item item : items) {
       prepareCreate(item, user);
       item.setFilename(FilenameUtils.getName(item.getFilename()));
-      item.setStatus(ic.getStatus());
-      item.setCollection(ic.getId());
-      ic.getImages().add(item.getId());
+      if (collection != null) {
+        item.setStatus(collection.getStatus());
+        item.setCollection(collection.getId());
+        collection.getImages().add(item.getId());
+      }
     }
     cleanItem(items);
     WRITER.create(J2JHelper.cast2ObjectList((List<?>) items), user);
