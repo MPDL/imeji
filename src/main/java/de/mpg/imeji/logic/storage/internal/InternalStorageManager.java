@@ -380,7 +380,8 @@ public class InternalStorageManager implements Serializable {
         // file again)
         final File webResolutionFile = new File(webResolutionPath);
         write(
-            generatorManager.generateThumbnail(file, FilenameUtils.getExtension(webResolutionPath)),
+            generatorManager.generateThumbnail(webResolutionFile,
+                FilenameUtils.getExtension(webResolutionPath)),
             transformUrlToPath(item.getThumbnailUrl()));
 
       } catch (final Exception e) {

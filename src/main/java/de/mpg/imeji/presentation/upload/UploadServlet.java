@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -88,11 +89,24 @@ public class UploadServlet extends HttpServlet {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
       itemService.createWithFile(null, upload.getFile(), upload.getFilename(), col, user);
+      writeResponse(resp, true, null);
     } catch (AuthenticationError e) {
+      writeResponse(resp, false, e.getMessage());
       resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User must be logged in");
     } catch (ImejiException e) {
       LOGGER.error("Error uploading File", e);
+      writeResponse(resp, false, e.getMessage());
       resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+  }
+
+  private void writeResponse(HttpServletResponse resp, boolean success, String errorMessage)
+      throws IOException {
+    if (success) {
+      resp.getOutputStream().write("{success: 1}".getBytes(Charset.forName("UTF-8")));
+    } else {
+      resp.getOutputStream().write(new String("{success: 0, message: \"" + errorMessage + "\"}")
+          .getBytes(Charset.forName("UTF-8")));
     }
   }
 

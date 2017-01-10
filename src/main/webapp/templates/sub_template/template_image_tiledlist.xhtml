@@ -49,21 +49,25 @@
             <div class="imj_upload">
 				<div id="container" class="imj_noDisplay"/>			
 				<div id="uploader">
-					<div id="filelist"></div>
+					<div id="filelist" class="imj_pageMessageArea"></div>
 					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
             		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
             		<div id="uploadTitle" class="uploadDragAndDropTitle" style="#{paginatorListSessionBean.totalNumberOfElements != 0 || paginatorListSessionBean.query != '' ? 'display:none' : ''}"><span class="fa fa-upload" /> #{lbl.uploadFile}</div>	
             		
 				</div>
 			</div>
-            <imjc:upload browseButtonId="actionItems:upload" collectionId="#{paginatorListSessionBean.collectionId}"/>
+            <imjc:upload browseButtonId="actionItems:upload" collectionId="#{paginatorListSessionBean.collectionId}" updateButtonId="updatePageForm:updatePage"/>
 			<!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
             <!-- Facets -->
             <h:panelGroup layout="block" id="imj_ajaxFacets">
                 <imjc:facets id="facets" paginatorBean="#{paginatorListSessionBean}"/>
             </h:panelGroup>
-           
+            <h:form id="updatePageForm">
+	           <h:commandButton id="updatePage" value="update" action="#{paginatorListSessionBean.update}" style="display:none">
+	           		<f:ajax execute="@this" render=":ajaxWrapper"/>
+	           </h:commandButton>
+           </h:form>
         </h:panelGroup>
     </ui:define>
     <!-- Main Content - END -->

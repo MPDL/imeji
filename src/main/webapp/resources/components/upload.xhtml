@@ -8,6 +8,7 @@
 	<composite:interface componentType="StatusComponent">
 		<composite:attribute name="browseButtonId"/>
 		<composite:attribute name="collectionId"/>
+		<composite:attribute name="updateButtonId"/>
 	</composite:interface>
 	
 	<composite:implementation>
@@ -42,15 +43,25 @@
 							UploadProgress: function(up, file) {
 								document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
 							},
-							StateChanged: function(up) {
-								// Called when the state of the queue is changed
-								if( up.state == plupload.STOPPED){
-									//report();
-								}
+							UploadComplete: function(up, files) {
+								document.getElementById('#{cc.attrs.updateButtonId}').click();;
 							},
 							Error: function(up, err) {
-								document.getElementById(err.file.id).getElementsByTagName('b')[0].innerHTML = "\nError #" + err.code + ": " + err.message;
+						    	 document.getElementById(err.file.id).innerHTML = '<div id="' + err.file.id + '" class="fa fa-exclamation-circle uploadFileListEntry imj_messageError"> ' + err.file.name + ': ' + 'error' + '<b></b></div>';
+								console.log(err.code);
+								console.log(err.message);
 						    },
+						    FileUploaded: function(up, file, info) {
+						    	 console.log(info.status + ' ' + (info.status == 200));
+						    	 if(info.status == 200){
+							    	 document.getElementById(file.id).innerHTML = '<div id="' + file.id + '" class="fa fa-check uploadFileListEntry imj_messageInfo"> ' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+						    	 }
+						    	 else{
+							    	 document.getElementById(file.id).innerHTML = '<div id="' + file.id + '" class="fa fa-exclamation-circle uploadFileListEntry imj_messageError"> ' + file.name + ': ' + info.response + '<b></b></div>';
+						    	 }
+				                // Called when file has finished uploading
+				                console.log('[FileUploaded] File:', file, "Info:", info);
+				            },
 						}
 					});
 					uploader.init();
