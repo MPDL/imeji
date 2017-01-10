@@ -152,7 +152,7 @@ public abstract class ImejiServiceAbstract {
       final String url =
           ism.generateUrl(container.getIdString(), f.getName(), FileResolution.THUMBNAIL);
       container.setLogoUrl(URI.create(url));
-      ism.replaceFile(f, url);
+      ism.replaceFile(url, f);
     } else {
       ism.removeFile(container.getLogoUrl().toString());
       container.setLogoUrl(null);

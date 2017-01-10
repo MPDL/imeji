@@ -13,19 +13,13 @@
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
-			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDataViewer}">
-				<!--  <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" />-->
-				<center>
-					<div id="seadragon-viewer" style="width:400px; height:300px;"></div>
-				</center>
-			</h:outputLink>
 			<h:form id="rotationForm">
 				<h:inputHidden id="inputTextRotation" value="#{itemBean.rotation}" />
 				<h:commandButton id="buttonUpdateRotation" value="update rotation hidden"  action="#{itemBean.updateRotation}" styleClass="imj_noDisplay">
 					<f:ajax render="@none" execute="@form"/>
 				</h:commandButton>
 			</h:form>
-			
+		
 			<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
 			
 				<h:outputLink id="zoominButton" class="fa fa-search-plus fa-size-3 imj_mediaEditPanelItem" /> &#160;
@@ -42,7 +36,7 @@
 			<h:outputLink id="lnkPicInternalDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" target="_blank" rendered="#{itemBean.viewInDataViewer}">
 				<h:graphicImage title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" />
 			</h:outputLink>
-			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInOpenseadragon and !itemBean.viewInDigilib and !itemBean.viewInDataViewer}">
+			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInOpenseadragon and !itemBean.viewInDataViewer}">
 				 <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" /> 
 			</h:outputLink>
 		</ui:fragment>

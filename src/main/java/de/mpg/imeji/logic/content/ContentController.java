@@ -221,6 +221,7 @@ public class ContentController extends ImejiServiceAbstract {
     contentVO.setOriginal(uploadResult.getOrginal());
     contentVO.setPreview(uploadResult.getWeb());
     contentVO.setThumbnail(uploadResult.getThumb());
+    contentVO.setFull(uploadResult.getFull());
     contentVO.setChecksum(uploadResult.getChecksum());
     contentVO.setFileSize(uploadResult.getFileSize());
     contentVO.setHeight(uploadResult.getHeight());

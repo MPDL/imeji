@@ -562,7 +562,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
     item.setChecksum(content.getChecksum());
     item.setFiletype(content.getMimetype());
     item.setFileSize(content.getFileSize());
-    item.setFullImageUrl(URI.create(content.getOriginal()));
+    item.setOriginalUrl(URI.create(content.getOriginal()));
+    item.setFullImageUrl(URI.create(content.getFull()));
     item.setWebImageUrl(URI.create(content.getPreview()));
     item.setThumbnailImageUrl(URI.create(content.getThumbnail()));
     return item;

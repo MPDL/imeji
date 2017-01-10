@@ -826,15 +826,17 @@ public class ItemBean extends SuperBean {
   }
 
   public int getFullResolutionWidth() throws IOException {
-    if (!isImageFile() || isSVGFile())
+    if (!isImageFile() || isSVGFile()) {
       return 0;
+    }
     StorageController storageController = new StorageController();
     return storageController.getStorage().getImageWidth(getImage().getFullImageUrl().getPath());
   }
 
   public int getFullResolutionHeight() throws IOException {
-    if (!isImageFile() || isSVGFile())
+    if (!isImageFile() || isSVGFile()) {
       return 0;
+    }
     StorageController storageController = new StorageController();
     return storageController.getStorage().getImageHeight(getImage().getFullImageUrl().getPath());
   }
@@ -845,6 +847,18 @@ public class ItemBean extends SuperBean {
 
   public void setRotation(int rotation) {
     this.rotation = rotation;
+  }
 
+  public boolean isViewInOpenseadragon() {
+    return !isViewInDataViewer() && isImageFile() && !isSVGFile() && !isGIFFile();
+  }
+
+  /**
+   * True if the file ia a gif
+   * 
+   * @return
+   */
+  public boolean isGIFFile() {
+    return "gif".equals(FilenameUtils.getExtension(item.getFullImageUrl().toString()));
   }
 }

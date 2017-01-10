@@ -161,4 +161,8 @@ public class CollectionItemsBean extends ItemsBean {
   public void setActionMenu(CollectionActionMenu actionMenu) {
     this.actionMenu = actionMenu;
   }
+
+  public String getCollectionId() {
+    return collection.getId().toString();
+  }
 }

@@ -581,4 +581,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     this.sessionBean = sessionBean;
   }
 
+  public String getCollectionId() {
+    return null;
+  }
+
 }
