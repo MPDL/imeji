@@ -152,6 +152,7 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
       for (int i = 0; i < ((getTotalNumberOfElements() - 1) / elementsPerPage) + 1; i++) {
         paginatorPageList.add(new PaginatorPage(i + 1));
       }
+
     } catch (Exception e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error paginator list update ", e);

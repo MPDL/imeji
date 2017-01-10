@@ -13,7 +13,14 @@
             <ui:include src="component/header/html_head_default.xhtml"/>
             <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
         </h:head>
-        <h:body lang="#{InternationalizationBean.locale}">
+        <h:body lang="#{InternationalizationBean.locale}" onload="readWidth()">
+        	<h:form id="widthForm">
+				<h:inputHidden id="inputDivWidth" value="#{SessionBean.divWidth}" />
+				<h:commandButton id="buttonUpdateDivWidth" value="update Width hidden"   styleClass="imj_noDisplay">
+					<f:ajax render="@none" execute="@form"/>
+				</h:commandButton>
+			</h:form>
+        
             <!-- default necessary scripts, because of use in body-load context -->
             <h:outputScript library="jquery" name="jquery-1.11.1.min.js"/>
             <h:outputScript library="jquery/ui" name="1.10.4/jquery-ui.min.js"/>
@@ -23,7 +30,7 @@
             <h:panelGroup id="imeji_maintenance" layout="block" styleClass="imj_messageError" style="width:100%; padding:0.5em" rendered="#{Configuration.maintenanceMessage != ''}">
             	<h:outputText value="#{Configuration.maintenanceMessage}" escape="false"/>
             </h:panelGroup>
-            <div class="#{siteWrapperClass}">
+            <div class="#{siteWrapperClass}" id="mainDiv">
             	<div class="imj_allContentWrapper">
 	                <ui:insert name="init"/>
 	                <ui:include src="component/header/header_default.xhtml"/>
@@ -93,6 +100,16 @@
             <div id="additonalFooterScripts" class="imj_noDisplay">
                 <ui:insert name="additonalFooterScripts"/>
             </div>
+            
+            <script>
+				function readWidth(){
+					var width=document.getElementById("mainDiv").offsetWidth;
+					document.getElementById("widthForm:inputDivWidth").value=width;
+					document.getElementById("widthForm:buttonUpdateDivWidth").click();
+				}
+			</script>
         </h:body>
     </html>
 </f:view>
+
+

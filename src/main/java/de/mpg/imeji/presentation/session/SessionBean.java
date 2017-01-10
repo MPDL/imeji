@@ -69,6 +69,7 @@ public class SessionBean implements Serializable {
   private URI selectedSpace;
   private String selectedSpaceLogoURL;
   private String selectedBrowseListView;
+  private int divWidth;
 
 
   /*
@@ -528,4 +529,14 @@ public class SessionBean implements Serializable {
   public static SessionBean getSessionBean(HttpServletRequest req) {
     return (SessionBean) ServletUtil.getSession(req, SessionBean.class.getSimpleName());
   }
+
+  public int getDivWidth() {
+    return divWidth;
+  }
+
+  public void setDivWidth(int divWidth) {
+    this.divWidth = divWidth;
+  }
+
+
 }

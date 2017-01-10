@@ -374,11 +374,9 @@ public class InternalStorageManager implements Serializable {
         ImageGeneratorManager generatorManager = new ImageGeneratorManager();
         // write web resolution file in storage
         String calculatedExtension = guessExtension(file);
-        System.out.println(System.currentTimeMillis());
         String webResolutionPath =
             write(generatorManager.generateWebResolution(file, calculatedExtension),
                 transformUrlToPath(item.getWebUrl()));
-        System.out.println(System.currentTimeMillis());
         // Use Web resolution to generate Thumbnail (avoid to read the original
         // file again)
         File webResolutionFile = new File(webResolutionPath);

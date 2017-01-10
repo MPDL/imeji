@@ -134,14 +134,23 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   @Override
   public void initElementsPerPageMenu() {
-    setElementsPerPage(
-        Integer.parseInt(CookieUtils.readNonNull(SuperPaginatorBean.numberOfItemsPerPageCookieName,
-            Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
     try {
       String options = Imeji.PROPERTIES.getProperty("imeji.image.list.size.options");
+      int elementsPerRow = sessionBean.getDivWidth() / 185;
       for (String option : options.split(",")) {
-        getElementsPerPageSelectItems().add(new SelectItem(option));
+        int val = Integer.parseInt(option) / 6 * elementsPerRow;
+        getElementsPerPageSelectItems().add(new SelectItem(val));
       }
+
+      int elementsPerPageOld = Integer
+          .parseInt(CookieUtils.readNonNull(SuperPaginatorBean.numberOfItemsPerPageCookieName,
+              Integer.toString(DEFAULT_ELEMENTS_PER_PAGE)));
+      int elementsPerPage = (elementsPerPageOld / elementsPerRow) * elementsPerRow;
+      if (elementsPerPage == 0) {
+        elementsPerPage = elementsPerRow;
+      }
+      setElementsPerPage(elementsPerPage);
+
     } catch (Exception e) {
       LOGGER.error("Error reading property imeji.image.list.size.options", e);
     }
@@ -586,5 +595,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   public void setSessionBean(SessionBean sessionBean) {
     this.sessionBean = sessionBean;
   }
+
+
 
 }

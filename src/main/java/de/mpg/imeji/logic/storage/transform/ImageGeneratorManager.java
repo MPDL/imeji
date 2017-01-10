@@ -35,6 +35,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.transform.generator.ImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.MagickImageGenerator;
+import de.mpg.imeji.logic.storage.transform.generator.NiceRawFileImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.PdfImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.RawFileImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.SimpleAudioImageGenerator;
@@ -63,6 +64,7 @@ public final class ImageGeneratorManager {
     generators.add(new SimpleAudioImageGenerator());
     generators.add(new MagickImageGenerator());
     generators.add(new SimpleImageGenerator());
+    generators.add(new NiceRawFileImageGenerator());
     generators.add(new RawFileImageGenerator());
   }
 

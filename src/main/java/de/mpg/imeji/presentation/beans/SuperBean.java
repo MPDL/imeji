@@ -38,6 +38,7 @@ public class SuperBean implements Serializable {
   @ManagedProperty(value = "#{Auth}")
   private ImejiAuthBean auth;
 
+
   /**
    * Redirect to the passed url
    *
@@ -147,4 +148,7 @@ public class SuperBean implements Serializable {
   public void setAuth(ImejiAuthBean auth) {
     this.auth = auth;
   }
+
+
+
 }
