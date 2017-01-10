@@ -40,6 +40,8 @@ import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.internal.InternalStorageItem;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
+import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
+import de.mpg.imeji.logic.storage.util.ImageUtils;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 
 /**
@@ -75,7 +77,7 @@ public class InternalStorage implements Storage {
   public UploadResult upload(String filename, File file, String collectionId) {
     final InternalStorageItem item = manager.createItem(file, filename, collectionId);
     return new UploadResult(item.getId(), item.getOriginalUrl(), item.getWebUrl(),
-        item.getThumbnailUrl());
+        item.getThumbnailUrl(), item.getFullUrl());
   }
 
   /*
@@ -123,12 +125,39 @@ public class InternalStorage implements Storage {
    * @see de.mpg.imeji.logic.storage.Storage#update(java.lang.String, byte[])
    */
   @Override
-  public void update(String url, File file) {
+  public void changeThumbnail(String url, File file) {
     try {
-      manager.replaceFile(file, url);
+      manager.changeThumbnail(file, url);
     } catch (final IOException e) {
       throw new RuntimeException(
           "Error updating file " + manager.transformUrlToPath(url) + " in internal storage: ", e);
+    }
+  }
+
+  @Override
+  public void update(String url, File file) throws IOException {
+    manager.replaceFile(url, file);
+
+  }
+
+  @Override
+  public void rotate(String fullUrl, int degrees) throws IOException, Exception {
+    String thumbnailUrl = getThumbnailUrl(fullUrl);
+    String webUrl = getWebResolutionUrl(fullUrl);
+    File thumbnail = read(thumbnailUrl);
+    File web = read(webUrl);
+    File full = read(fullUrl);
+
+    if (ImageMagickUtils.jpegtranEnabled) {
+      ImageMagickUtils.rotateJPEG(thumbnail, degrees);
+      ImageMagickUtils.rotateJPEG(web, degrees);
+      ImageMagickUtils.rotateJPEG(full, degrees);
+    } else {
+      ImageUtils.rotate(full, degrees);
+      web = ImageUtils.resizeJPEG(full, FileResolution.WEB);
+      thumbnail = ImageUtils.resizeJPEG(full, FileResolution.THUMBNAIL);
+      update(webUrl, web);
+      update(thumbnailUrl, thumbnail);
     }
   }
 
@@ -187,4 +216,23 @@ public class InternalStorage implements Storage {
     return manager.getStorageId(url);
   }
 
+  private String getThumbnailUrl(String originalUrl) {
+    return originalUrl.replace("/full/", "/thumbnail/");
+  }
+
+  private String getWebResolutionUrl(String originalUrl) {
+    return originalUrl.replace("/full/", "/web/");
+  }
+
+  @Override
+  public int getImageWidth(String url) throws IOException {
+    File file = read(url);
+    return ImageUtils.getImageWidth(file);
+  }
+
+  @Override
+  public int getImageHeight(String url) throws IOException {
+    File file = read(url);
+    return ImageUtils.getImageHeight(file);
+  }
 }

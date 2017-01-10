@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.presentation.authorization.AuthorizationBean;
 import de.mpg.imeji.presentation.history.HistorySession;
 
 /**
@@ -34,6 +35,8 @@ public class SuperBean implements Serializable {
   private Navigation navigation;
   @ManagedProperty(value = "#{HistorySession}")
   private HistorySession history;
+  @ManagedProperty(value = "#{Auth}")
+  private AuthorizationBean auth;
 
   /**
    * Redirect to the passed url
@@ -127,5 +130,21 @@ public class SuperBean implements Serializable {
    */
   public void setSpaceId(String spaceId) {
     this.spaceId = spaceId;
+  }
+
+
+  /**
+   * @return Authentication Bean
+   */
+  public AuthorizationBean getAuth() {
+    return auth;
+  }
+
+  /**
+   * 
+   * @param auth the Authentication Bean to set
+   */
+  public void setAuth(AuthorizationBean auth) {
+    this.auth = auth;
   }
 }

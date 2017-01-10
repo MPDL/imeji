@@ -51,6 +51,8 @@ import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.administrator.impl.InternalStorageAdministrator;
 import de.mpg.imeji.logic.storage.transform.ImageGeneratorManager;
+import de.mpg.imeji.logic.storage.util.ImageUtils;
+import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Item;
@@ -112,6 +114,11 @@ public class InternalStorageManager implements Serializable {
     }
   }
 
+  public void replaceFile(String url, File file) throws IOException {
+    removeFile(url);
+    copy(file, transformUrlToPath(url));
+  }
+
   /**
    * Replace the {@link File} stored at the passed url by the passed {@link File}
    *
@@ -119,7 +126,7 @@ public class InternalStorageManager implements Serializable {
    * @param url
    * @throws IOException
    */
-  public void replaceFile(File file, String url) throws IOException {
+  public void changeThumbnail(File file, String url) throws IOException {
     // Get the filextension for the thumbnail and preview generation (can be
     // jpg, gif etc.)
     // String extension = file.getName().substring(
@@ -260,6 +267,7 @@ public class InternalStorageManager implements Serializable {
     item.setOriginalUrl(generateUrl(id, fileName, FileResolution.ORIGINAL));
     item.setThumbnailUrl(generateUrl(id, fileName, FileResolution.THUMBNAIL));
     item.setWebUrl(generateUrl(id, fileName, FileResolution.WEB));
+    item.setFullUrl(generateUrl(id, fileName, FileResolution.FULL));
     return item;
   }
 
@@ -308,13 +316,17 @@ public class InternalStorageManager implements Serializable {
   public String generateUrl(String id, String filename, FileResolution resolution) {
     filename = StringHelper.normalizeFilename(filename);
     final String extension = getExtension(filename);
-    if (resolution != FileResolution.ORIGINAL) {
+    if (resolution != FileResolution.ORIGINAL && (resolution != FileResolution.FULL
+        || isImage(extension) && !extension.equals("svg") && !extension.equals("gif"))) {
       filename = removeExtension(filename) + (extension.equals("gif") ? ".gif" : ".jpg");
     }
     return storageUrl + id + StringHelper.urlSeparator + resolution.name().toLowerCase()
         + StringHelper.urlSeparator + filename;
   }
 
+  private boolean isImage(String extension) {
+    return StorageUtils.getMimeType(extension).contains("image");
+  }
 
 
   /**
@@ -327,7 +339,14 @@ public class InternalStorageManager implements Serializable {
   private InternalStorageItem writeItemFiles(InternalStorageItem item, File file)
       throws IOException {
     // write original file in storage
+    String extension = getExtension(StringHelper.normalizeFilename(item.getFileName()));
     copy(file, transformUrlToPath(item.getOriginalUrl()));
+    if (isImage(extension) && !extension.equals("gif") && !extension.equals("svg")) {
+      copy(ImageUtils.toJpeg(file, StorageUtils.getMimeType(extension)),
+          transformUrlToPath(item.getFullUrl()));
+    } else {
+      copy(file, transformUrlToPath(item.getFullUrl()));
+    }
     // Create thumbnail and Preview file
     Imeji.getINTERNAL_STORAGE_EXECUTOR().submit(new GenerateThumbnailAndPreviewTask(item, file));
     return item;

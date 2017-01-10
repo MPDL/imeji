@@ -19,8 +19,31 @@
 					<div id="seadragon-viewer" style="width:400px; height:300px;"></div>
 				</center>
 			</h:outputLink>
+			<h:form id="rotationForm">
+				<h:inputHidden id="inputTextRotation" value="#{itemBean.rotation}" />
+				<h:commandButton id="buttonUpdateRotation" value="update rotation hidden"  action="#{itemBean.updateRotation}" styleClass="imj_noDisplay">
+					<f:ajax render="@none" execute="@form"/>
+				</h:commandButton>
+			</h:form>
+			
+			<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
+			
+				<h:outputLink id="zoominButton" class="fa fa-search-plus fa-size-3 imj_mediaEditPanelItem" /> &#160;
+				<h:outputLink id="zoomoutButton" class="fa fa-search-minus fa-size-3 imj_mediaEditPanelItem" /> &#160;
+				<h:outputLink id="fullscreenButton" class="fa fa-expand fa-size-3 imj_mediaEditPanelItem" /> &#160;
+				<h:outputLink id="homeButton" class="fa fa-home fa-size-3 imj_mediaEditPanelItem" /> &#160;
+				<h:outputLink id="rotateLeftButton" class="fa fa-rotate-left fa-size-3 imj_mediaEditPanelItem" /> &#160;
+				<h:outputLink id="rotateRightButton" class="fa fa-rotate-right fa-size-3 imj_mediaEditPanelItem" />
+			
+			<center>
+				<div id="seadragon-viewer" style="width:#{itemBean.webResolutionMaxLength}px; height:#{itemBean.webResolutionMaxLength}px;"></div>
+			</center>
+			</ui:fragment>
 			<h:outputLink id="lnkPicInternalDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" target="_blank" rendered="#{itemBean.viewInDataViewer}">
 				<h:graphicImage title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" />
+			</h:outputLink>
+			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInOpenseadragon and !itemBean.viewInDigilib and !itemBean.viewInDataViewer}">
+				 <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" /> 
 			</h:outputLink>
 		</ui:fragment>
 		<ui:fragment rendered="#{itemBean.videoFile}">
@@ -294,6 +317,11 @@
 								</li>
 								<li>
 									<h:outputLink value="#{itemBean.image.fullImageUrl}" target="_blank">
+										<h:outputText value="#{lbl.imageSizesFull}"/>
+									</h:outputLink>
+								</li>
+								<li>
+									<h:outputLink value="#{itemBean.image.originalUrl}" target="_blank">
 										<h:outputText value="#{lbl.imageSizesOrg}"/>
 									</h:outputLink>
 								</li>
@@ -387,6 +415,56 @@
 					// return qr.createTableTag();
 					return qr.createImgTag();
 				};
+			</script>
+			
+
+			<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.js"></script>
+			<script type="text/javascript">
+
+    			var img = {
+    			type: 'legacy-image-pyramid',
+    	   
+    	    	levels: [
+    	    		{	
+        	    		url: '#{Navigation.fileUrl}#{itemBean.image.thumbnailImageUrl}',    	    	
+        	    		height: #{itemBean.thumbnailWidth},
+        	    		width: #{itemBean.thumbnailWidth}
+        	    	},
+    	    		{	
+    	    		url: '#{Navigation.fileUrl}#{itemBean.image.webImageUrl}',    	    	
+    	    		height: #{itemBean.webResolutionHeight},
+    	    		width: #{itemBean.webResolutionWidth}
+    	    	    },
+        	    	{	
+        	    		url: '#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}',    	    	
+        	    		height: #{itemBean.fullResolutionHeight},
+        	    		width: #{itemBean.fullResolutionWidth}
+        	    	}]
+    			};
+
+    			var viewer = OpenSeadragon({
+    
+        		id: "seadragon-viewer",
+        		prefixUrl: "#{Navigation.applicationUrl}/resources/openseadragon/images/",
+        		tileSources: img,
+        		showRotationControl: true,
+        		fullPageButton: "fullscreenButton",
+        		homeButton: "homeButton",
+        		zoomInButton: "zoominButton",
+        		zoomOutButton: "zoomoutButton",
+        		rotateRightButton: "rotateRightButton",
+        		rotateLeftButton: "rotateLeftButton",
+        		gestureSettingsTouch: {
+           		 pinchRotate: true
+        		}
+        		
+    		});
+    			
+				viewer.addHandler('rotate',function(){
+					 document.getElementById("rotationForm:inputTextRotation").value= viewer.viewport.getRotation();
+					 document.getElementById("rotationForm:buttonUpdateRotation").click();
+        		});
+
 			</script>
 			
 		</h:panelGroup><!-- END LISTBODY -->

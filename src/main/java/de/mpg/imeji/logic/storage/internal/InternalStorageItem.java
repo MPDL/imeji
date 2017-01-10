@@ -33,6 +33,7 @@ package de.mpg.imeji.logic.storage.internal;
  */
 public class InternalStorageItem {
   private String originalUrl;
+  private String fullUrl;
   private String webUrl;
   private String thumbnailUrl;
   private String fileName;
@@ -108,5 +109,13 @@ public class InternalStorageItem {
 
   public void setFileType(String fileType) {
     this.fileType = fileType;
+  }
+
+  public String getFullUrl() {
+    return fullUrl;
+  }
+
+  public void setFullUrl(String fullUrl) {
+    this.fullUrl = fullUrl;
   }
 }

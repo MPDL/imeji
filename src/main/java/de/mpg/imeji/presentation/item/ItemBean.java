@@ -94,6 +94,8 @@ public class ItemBean extends SuperBean {
   @ManagedProperty(value = "#{SessionBean.activeAlbum}")
   private Album activeAlbum;
   private static final Logger LOGGER = Logger.getLogger(ItemBean.class);
+  private int rotation;
+  private int lastRotation = 0;
 
   /**
    * Construct a default {@link ItemBean}
@@ -748,28 +750,101 @@ public class ItemBean extends SuperBean {
 
   public int getThumbnailWidth() {
     return Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
+
+
   }
 
-  public int getWebResolutionWidth() {
-    int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
-    int imgWidth = (int) getContent().getWidth();
-    int imgHeight = (int) getContent().getHeight();
 
-    if (imgWidth <= imgHeight) {
-      return webSize;
+  /**
+   * Called when a picture is rotated by Openseadragon. If the user is authorized to rotate the
+   * image, webresolution and thumbnail get rotated
+   * 
+   * @throws Exception
+   * @throws IOException
+   */
+  public void updateRotation() throws IOException, Exception {
+
+
+    if (getAuth().update(getImage())) {
+      StorageController storageController = new StorageController();
+      int degrees = (rotation - lastRotation + 360) % 360;
+      lastRotation = rotation;
+      storageController.rotate(getImage().getFullImageUrl().getPath(), degrees);
     }
-    return (int) (imgWidth * 1.0 / imgHeight * webSize);
   }
 
-  public int getWebResolutionHeight() {
-    int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
-    int imgWidth = (int) getContent().getWidth();
-    int imgHeight = (int) getContent().getHeight();
-
-    if (imgWidth <= imgHeight) {
-      return (int) (imgHeight * 1.0 / imgWidth * webSize);
-    }
-    return webSize;
+  /**
+   * Gets the width of the web resolution
+   * 
+   * @return
+   * @throws IOException
+   */
+  public int getWebResolutionWidth() throws IOException {
+    /*
+     * int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web")); int
+     * imgWidth = (int) getContent().getWidth(); int imgHeight = (int) getContent().getHeight();
+     * 
+     * 
+     * 
+     * if (imgWidth <= imgHeight) { return webSize; } return (int) (imgWidth * 1.0 / imgHeight *
+     * webSize);
+     */
+    if (!isImageFile() || isSVGFile())
+      return 0;
+    StorageController storageController = new StorageController();
+    return storageController.getStorage().getImageWidth(getImage().getWebImageUrl().getPath());
   }
 
+  /**
+   * Gets the height of the web resolution
+   * 
+   * @return
+   * @throws IOException
+   */
+  public int getWebResolutionHeight() throws IOException {
+    /*
+     * int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web")); int
+     * imgWidth = (int) getContent().getWidth(); int imgHeight = (int) getContent().getHeight();
+     * 
+     * if (imgWidth <= imgHeight) { return (int) (imgHeight * 1.0 / imgWidth * webSize); } return
+     * webSize;
+     */
+    if (!isImageFile() || isSVGFile())
+      return 0;
+    StorageController storageController = new StorageController();
+    return storageController.getStorage().getImageHeight(getImage().getWebImageUrl().getPath());
+  }
+
+  /**
+   * Gets the max of width and height of the web resolution
+   * 
+   * @return
+   * @throws IOException
+   */
+  public int getWebResolutionMaxLength() throws IOException {
+    return Math.max(getWebResolutionWidth(), getWebResolutionHeight());
+  }
+
+  public int getFullResolutionWidth() throws IOException {
+    if (!isImageFile() || isSVGFile())
+      return 0;
+    StorageController storageController = new StorageController();
+    return storageController.getStorage().getImageWidth(getImage().getFullImageUrl().getPath());
+  }
+
+  public int getFullResolutionHeight() throws IOException {
+    if (!isImageFile() || isSVGFile())
+      return 0;
+    StorageController storageController = new StorageController();
+    return storageController.getStorage().getImageHeight(getImage().getFullImageUrl().getPath());
+  }
+
+  public int getRotation() {
+    return rotation;
+  }
+
+  public void setRotation(int rotation) {
+    this.rotation = rotation;
+
+  }
 }

@@ -25,6 +25,7 @@
 package de.mpg.imeji.logic.storage;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 
@@ -48,7 +49,7 @@ public interface Storage extends Serializable {
    * @version $Revision$ $LastChangedDate$
    */
   public enum FileResolution {
-    THUMBNAIL, WEB, ORIGINAL;
+    THUMBNAIL, WEB, ORIGINAL, FULL;
   }
 
   /**
@@ -93,12 +94,50 @@ public interface Storage extends Serializable {
   public void delete(String url);
 
   /**
-   * Update the file stored in the passed url with the passed {@link Byte} array
+   * Update the file stored in the passed url with a new original resolution (original resolution is
+   * not updated)
    *
    * @param url
    * @param bytes
    */
-  public void update(String url, File file);
+  public void changeThumbnail(String url, File file);
+
+
+  /**
+   * Update the file defined by the url with a new file
+   * 
+   * @param url
+   * @param file
+   * @throws IOException
+   */
+  public void update(String url, File file) throws IOException;
+
+  /**
+   * Rotate the file
+   * 
+   * @param originalUrl
+   * @param degrees
+   * @throws ImejiException
+   * @throws Exception
+   * @throws IOException
+   */
+  public void rotate(String originalUrl, int degrees) throws ImejiException, IOException, Exception;
+
+  /**
+   * Returns the width of the image at the url
+   * 
+   * @param url
+   * @return
+   */
+  public int getImageWidth(String url) throws IOException;
+
+  /**
+   * Returns the height of the image at the url
+   * 
+   * @param url
+   * @return
+   */
+  public int getImageHeight(String url) throws IOException;
 
   /**
    * Return a {@link StorageAdministrator} for this {@link Storage}

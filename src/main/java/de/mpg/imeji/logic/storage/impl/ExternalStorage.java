@@ -126,7 +126,7 @@ public class ExternalStorage implements Storage {
    * @see de.mpg.imeji.logic.storage.Storage#update(java.lang.String, byte[])
    */
   @Override
-  public void update(String url, File file) {
+  public void changeThumbnail(String url, File file) {
     // TODO Auto-generated method stub
   }
 
@@ -177,5 +177,29 @@ public class ExternalStorage implements Storage {
     } catch (final IOException e) {
       throw new ImejiException("error reading file " + url, e);
     }
+  }
+
+  @Override
+  public void update(String url, File file) throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void rotate(String originalUrl, int degrees) throws ImejiException {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public int getImageWidth(String url) throws IOException {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public int getImageHeight(String url) throws IOException {
+    // TODO Auto-generated method stub
+    return 0;
   }
 }

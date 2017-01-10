@@ -51,6 +51,8 @@ public class Item extends Properties implements Serializable {
   private URI thumbnailImageUrl;
   @j2jLazyURIResource("http://imeji.org/terms/fullImageUrl")
   private URI fullImageUrl;
+  @j2jLazyURIResource("http://imeji.org/terms/original")
+  private URI originalUrl;
   @j2jLiteral("http://imeji.org/terms/filename")
   private String filename;
   @j2jLiteral("http://imeji.org/terms/filetype")
@@ -99,6 +101,14 @@ public class Item extends Properties implements Serializable {
 
   public void setFullImageUrl(URI fullImageUrl) {
     this.fullImageUrl = fullImageUrl;
+  }
+
+  public URI getOriginalUrl() {
+    return originalUrl;
+  }
+
+  public void setOriginalUrl(URI originalUrl) {
+    this.originalUrl = originalUrl;
   }
 
   public void setCollection(URI collection) {
@@ -243,5 +253,6 @@ public class Item extends Properties implements Serializable {
   public void setMetadata(List<Metadata> metadata) {
     this.metadata = metadata;
   }
+
 
 }

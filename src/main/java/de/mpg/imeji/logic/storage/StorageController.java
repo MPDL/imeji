@@ -154,7 +154,7 @@ public final class StorageController implements Serializable {
    * @param bytes
    */
   public void update(String url, File file) {
-    storage.update(url, file);
+    storage.changeThumbnail(url, file);
   }
 
   /**
@@ -195,6 +195,18 @@ public final class StorageController implements Serializable {
     canBeUploaded = canBeUploaded && isAllowedFormat(guessedExtension);
 
     return canBeUploaded ? guessedExtension : StorageUtils.BAD_FORMAT;
+  }
+
+  /**
+   * Rotate the thumbnail, Web and full resolution
+   * 
+   * @param degree @throws ImejiException @throws
+   * @throws Exception
+   * @throws IOException
+   */
+  public void rotate(String fullUrl, int degrees) throws IOException, Exception {
+    storage.rotate(fullUrl, degrees);
+
   }
 
   /**

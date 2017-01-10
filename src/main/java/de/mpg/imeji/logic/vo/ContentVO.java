@@ -35,6 +35,8 @@ public class ContentVO implements Serializable {
   private String thumbnail;
   @j2jLiteral("http://imeji.org/terms/preview")
   private String preview;
+  @j2jLiteral("http://imeji.org/terms/full")
+  private String full;
   @j2jLiteral("http://imeji.org/terms/original")
   private String original;
   @j2jLiteral("http://imeji.org/terms/mimetype")
@@ -218,6 +220,14 @@ public class ContentVO implements Serializable {
    */
   public void setItemId(String itemId) {
     this.itemId = itemId;
+  }
+
+  public String getFull() {
+    return full;
+  }
+
+  public void setFull(String full) {
+    this.full = full;
   }
 
 }
