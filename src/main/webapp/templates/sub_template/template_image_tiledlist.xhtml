@@ -26,7 +26,7 @@
 
 	<ui:define name="actionsMenu">
 		<menu:actionItems id="actionItems" rendered="#{empty SessionBean.selected}"/>
-		<menu:actionSelectedItems rendered="#{not empty SessionBean.selected}"/>
+		<menu:actionSelectedItems rendered="#{not empty SessionBean.selected}" itemsBean="#{paginatorListSessionBean}"/>
 	</ui:define>
 	
     <!-- Main Content - Image tiled list - START -->
@@ -43,27 +43,31 @@
                                       containerId="#{containerId}" showSortMenu="true" objectLabel="#{lbl.images}"
                                       rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
                   
-            <h:panelGroup  layout="block" id="items" styleClass="imj_upload">
-				<div id="container" class="imj_noDisplay"/>			
-				<div id="uploader">
-					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
-            		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
-            		<div id="uploadTitle" class="uploadDragAndDropTitle" style="#{paginatorListSessionBean.totalNumberOfElements != 0 || paginatorListSessionBean.query != '' ? 'display:none' : ''}"><span class="fa fa-upload" /> #{lbl.uploadFile}</div>		
-				</div>
-				 <imjc:upload browseButtonId="actionItems:upload" collectionId="#{paginatorListSessionBean.collectionId}" updateButtonId="updatePageForm:updateItems"/>
-			</h:panelGroup>
-           
+	
+			<div id="itemsArea" class="itemsArea #{paginatorListSessionBean.totalNumberOfElements != 0 || not empty paginatorListSessionBean.query ? '' : 'imj_dragOver'}" ondragover="this.style.opacity = .5 " ondragleave="this.style.opacity = 1">
+				
+				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
+           		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
+           		
+           		<div id="uploadTitle" class="uploadDragAndDropTitle">
+	           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0 and not empty paginatorListSessionBean.query}">
+	           			<span class="fa fa-exclamation-triangle"/> #{msg.no_images_found}!
+	           		</ui:fragment>
+	           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0 and empty paginatorListSessionBean.query}">
+	           			<span class="fa fa-upload"/> #{lbl.uploadFile}	
+	           		</ui:fragment>
+           		</div>
+           		
+			</div>
 			<!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
-            <!-- Facets -->
-            <h:panelGroup layout="block" id="imj_ajaxFacets">
-                <imjc:facets id="facets" paginatorBean="#{paginatorListSessionBean}"/>
-            </h:panelGroup>
+
             <h:form id="updatePageForm">
 	           <h:commandButton id="updateItems" value="update" action="#{paginatorListSessionBean.update}" style="display:none">
-	           		<f:ajax execute="@this" render=":items"/>
+	           		<f:ajax execute="@this" render=":ajaxWrapper"/>
 	           </h:commandButton>
            </h:form>
+           <imjc:upload browseButtonId="actionItems:upload" collectionId="#{paginatorListSessionBean.collectionId}" updateButtonId="updatePageForm:updateItems" dropElementId="itemsArea"/>
         </h:panelGroup>
     </ui:define>
     <!-- Main Content - END -->

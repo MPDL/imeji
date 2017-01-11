@@ -19,59 +19,13 @@
 	</ui:define>
 	
 	<ui:define name="additonalFooterScripts">
-		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/jquery/jquery-1.6.4.min.js"></script>
 		<script type="text/javascript">
-		  jQuery.noConflict();
-		  // Code that uses other library's $ can follow here.
-		</script>
-		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/carousel/jquery.mousewheel.3.0.2.js"></script>
-		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/jquery/ui/1.8.23/jquery-ui.min.js"></script>
-		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/carousel/cloud-carousel.1.0.5.min.js"></script>
-		
-		<script type="text/javascript">
-			function createCarousel() {
-				jQuery("#carousel").CloudCarousel({	
-					reflHeight: 56,
-					reflGap:2,
-					yRadius:90,
-					xPos: 145,
-					yPos: 80,
-					speed:0.15,
-					autoRotate:"right",
-					autoRotateDelay:8500,
-					bringToFront:false,
-					mouseWheel:true
-				});
-				jQuery("img.cloudcarousel").bind({
-					mouseover: function(ev) {
-						var img = this;
-						jQuery("#title-text").text(img.title);
-						jQuery("#alt-text").text(img.alt);
-						var cloudInfo = jQuery("#cloudinfoText");
-						cloudInfo.addClass("dynamicCloudinfo borderradius_5");
-						cloudInfo.show();
-						jQuery(this).bind({
-							mousemove: function(ev) {
-								jQuery("#cloudinfoText").css("left", ev.pageX).css("top", ev.pageY+10);
-							}
-						});
-						img.title = '';
-					},
-					mouseout: function(ev) {
-						jQuery("#cloudinfoText").hide();
-						jQuery(this).unbind("mousemove");
-						this.title = jQuery("#title-text").text();
-					}
-				});
-			}
 			function initStartpage() {
 				jQuery( ".id_tabs" ).tabs();
-				createCarousel();
 			};
             //initialize the tab menu and carousel
 			initStartpage();
 		</script>
-        
 	</ui:define>
 	#{InternationalizationBean.locale}
 	<ui:define name="mainContent">
@@ -274,27 +228,6 @@
 			</div>
 			<!-- end of tabs international -->
 		</ui:fragment> <!-- end: no space resource is given -->		
-		<!-- carousel -->
-		<ui:fragment rendered="#{StartPageBean.carouselEnabled}">
-			<div class="imj_startpage_carouselWrapper">
-				<div class="imj_startpage_carousel">
-					<div class="imj_startpage_carouselContainer">							
-						<!-- Define elements to accept the alt and title text from the images. -->
-						<div id="carousel">
-							<ui:repeat  var="item" value="#{StartPageBean.carousselImages}">
-								<h:outputLink id="lnkPicDetailCaroussel" value="#{Navigation.itemUrl}#{item.id}">
-									<h:graphicImage styleClass="cloudcarousel" title="#{item.caption}" id="picThumbResolutionCaroussel" url="#{item.link}" height="114"/>
-								</h:outputLink>
-							</ui:repeat>
-						</div>
-						<div id="cloudinfoText">
-							<div id="title-text" class="imj_cloudInfoTitle"></div>
-							<div id="alt-text" class="imj_cloudInfoAdditionalText"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</ui:fragment>
 	</ui:define>	
 </ui:composition>
 					

@@ -36,7 +36,6 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.upload.IngestImage;
 import de.mpg.imeji.presentation.util.CookieUtils;
 import de.mpg.imeji.presentation.util.ServletUtil;
 
@@ -76,12 +75,6 @@ public class SessionBean implements Serializable {
    */
   public String institute;
   public String instituteId;
-
-  // TODO
-  // Provide better handling for ingest image uploader; here temporary code provided in order to
-  // fulfill the sprint deadline
-  private IngestImage spaceLogoIngestImage;
-
 
   /**
    * The session Bean for imeji
@@ -443,14 +436,6 @@ public class SessionBean implements Serializable {
 
   public String getSelectedSpaceLogoURL() {
     return this.selectedSpaceLogoURL;
-  }
-
-  public IngestImage getSpaceLogoIngestImage() {
-    return spaceLogoIngestImage;
-  }
-
-  public void setSpaceLogoIngestImage(IngestImage spaceLogoIngestImage) {
-    this.spaceLogoIngestImage = spaceLogoIngestImage;
   }
 
   public String getPrettySpacePage(String prettyPage) {
