@@ -11,6 +11,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,11 +42,12 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@WebServlet("/uploadServlet")
 public class UploadServlet extends HttpServlet {
   private static final long serialVersionUID = -4879871986174193049L;
   private static final Logger LOGGER = Logger.getLogger(UploadServlet.class);
-  private static ItemService itemService = new ItemService();
-  private static CollectionController collectionController = new CollectionController();
+  private static final ItemService itemService = new ItemService();
+  private static final CollectionController collectionController = new CollectionController();
 
   /**
    * The result of an upload
@@ -82,32 +84,24 @@ public class UploadServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    itemService = new ItemService();
     final UploadItem upload = doUpload(req);
     final SessionBean session = getSession(req);
     try {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
       itemService.createWithFile(null, upload.getFile(), upload.getFilename(), col, user);
-      writeResponse(resp, true, null);
     } catch (AuthenticationError e) {
-      writeResponse(resp, false, e.getMessage());
-      resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User must be logged in");
+      writeResponse(resp, e.getMessage());
+      resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
     } catch (ImejiException e) {
       LOGGER.error("Error uploading File", e);
-      writeResponse(resp, false, e.getMessage());
-      resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+      writeResponse(resp, e.getMessage());
+      resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
   }
 
-  private void writeResponse(HttpServletResponse resp, boolean success, String errorMessage)
-      throws IOException {
-    if (success) {
-      resp.getOutputStream().write("{success: 1}".getBytes(Charset.forName("UTF-8")));
-    } else {
-      resp.getOutputStream().write(new String("{success: 0, message: \"" + errorMessage + "\"}")
-          .getBytes(Charset.forName("UTF-8")));
-    }
+  private void writeResponse(HttpServletResponse resp, String errorMessage) throws IOException {
+    resp.getOutputStream().write(errorMessage.getBytes(Charset.forName("UTF-8")));
   }
 
   /**

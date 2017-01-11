@@ -9,6 +9,7 @@
 		<composite:attribute name="browseButtonId"/>
 		<composite:attribute name="collectionId"/>
 		<composite:attribute name="updateButtonId"/>
+		<composite:attribute name="messageAreaId" default="imj_pageMessageArea"/>
 	</composite:interface>
 	
 	<composite:implementation>
@@ -20,53 +21,69 @@
 		</style>
 		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/plupload/2.1.2/js/plupload.full.min.js"></script>
 				<script type="text/javascript">
+					var totalFiles = 0
+					var uploadedFiles = 0;
 					var uploader = new plupload.Uploader({
 						runtimes : 'html5,flash,silverlight,html4',
 						browse_button : '#{cc.attrs.browseButtonId}', // you can pass in id...
 						container: document.getElementById('container'), // ... or DOM Element itself
-						url : '#{Navigation.applicationUrl}stream?col=#{cc.attrs.collectionId}&amp;apiKey=#{SessionBean.user.apiKey}',
+						url : '#{Navigation.applicationUrl}uploadServlet?col=#{cc.attrs.collectionId}&amp;apiKey=#{SessionBean.user.apiKey}',
 						max_file_size : '#{Configuration.uploadMaxFileSize}kb',
 						multi_selection : true,
 						dragdrop: true,
 						drop_element: 'uploader',
 						init: {
 							PostInit: function() {
-								document.getElementById('filelist').innerHTML = '';					
+								totalFiles = 0
+								uploadedFiles = 0;			
 							},				
 							FilesAdded: function(up, files) {
-								document.getElementById('uploadTitle').innerHTML = '';		
-								 plupload.each(files, function(file) {
-						                document.getElementById('filelist').innerHTML += '<div id="' + file.id + '" class="uploadFileListEntry">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
-						            });
-								uploader.start();
+								totalFiles =  files.length;
+								addUploadStatusMessage(0,totalFiles);	
+								uploader.start();							
 							},
 							UploadProgress: function(up, file) {
-								document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+								addUploadStatusMessage(uploadedFiles,totalFiles,file.name,file.percent);
 							},
 							UploadComplete: function(up, files) {
-								document.getElementById('#{cc.attrs.updateButtonId}').click();;
+								document.getElementById('#{cc.attrs.updateButtonId}').click();
+								addUploadStatusMessageDone();
+								uploader.init();
 							},
 							Error: function(up, err) {
-						    	 document.getElementById(err.file.id).innerHTML = '<div id="' + err.file.id + '" class="fa fa-exclamation-circle uploadFileListEntry imj_messageError"> ' + err.file.name + ': ' + 'error' + '<b></b></div>';
-								console.log(err.code);
-								console.log(err.message);
+								uploadedFiles = uploadedFiles + 1;
+						    	addUploadStatusMessage(uploadedFiles,totalFiles);
+						    	addUploadErrorMessage(err.file.name, err.response);
 						    },
 						    FileUploaded: function(up, file, info) {
-						    	 console.log(info.status + ' ' + (info.status == 200));
-						    	 if(info.status == 200){
-							    	 document.getElementById(file.id).innerHTML = '<div id="' + file.id + '" class="fa fa-check uploadFileListEntry imj_messageInfo"> ' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
-						    	 }
-						    	 else{
-							    	 document.getElementById(file.id).innerHTML = '<div id="' + file.id + '" class="fa fa-exclamation-circle uploadFileListEntry imj_messageError"> ' + file.name + ': ' + info.response + '<b></b></div>';
-						    	 }
-				                // Called when file has finished uploading
-				                console.log('[FileUploaded] File:', file, "Info:", info);
+						    	 uploadedFiles = uploadedFiles + 1;
+						    	 addUploadStatusMessage(uploadedFiles,totalFiles);	
 				            },
 						}
 					});
 					uploader.init();
-					function report(){
-						window.location.href = location.pathname + "?done=1";
+					function closeUploadMessageArea(){
+						$("#closeUploadMessageArea").click(function(){
+							$("##{cc.attrs.messageAreaId}").hide();
+						});
+					}
+					
+					function addUploadStatusMessage(uploaded, total, filename, percent){
+						if(document.getElementById('uploadStatus') == null){
+							document.getElementById('imj_pageMessageArea').innerHTML += '<div id="uploadStatus" class="imj_message"><span class="imj_messageAreaCloseBtn"  onclick="this.parentElement.style.display=\'none\';">x</span><span id="uploadStatusContent"></span></div>';
+						}
+						document.getElementById('uploadStatus').style.display='block';
+						document.getElementById('uploadStatusContent').innerHTML =  '#{lbl.uploading} ' + uploaded + ' / ' + total + ' #{lbl.files}. ';
+						if(filename != null){
+							document.getElementById('uploadStatusContent').innerHTML += ' -  ' + filename + '(' + percent + '%)';
+						}
+					}
+					function addUploadStatusMessageDone(){
+						document.getElementById('uploadStatus').style.display='block';
+						document.getElementById('uploadStatusContent').innerHTML +=  ' #{lbl.done}!';
+					}
+					function addUploadErrorMessage(filename, error){
+						document.getElementById('imj_pageMessageArea').innerHTML += '<div  class="imj_message imj_messageError	"><span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display=\'none\';">x</span>'+ filename + ' #{lbl.not_uploaded}: ' + error +'</div>';
 					}
 				</script>
 	</composite:implementation>

@@ -3,7 +3,7 @@
  */
 package de.mpg.imeji.presentation.beans;
 
-import java.util.Iterator;
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
@@ -13,31 +13,12 @@ import javax.faces.context.FacesContext;
 @ManagedBean(name = "MessagesBean")
 @RequestScoped
 public class MessagesBean {
-
-  public boolean getHasErrorMessages() {
-    for (final Iterator<FacesMessage> i = FacesContext.getCurrentInstance().getMessages(); i
-        .hasNext();) {
-      final FacesMessage fm = i.next();
-      if (fm.getSeverity().equals(FacesMessage.SEVERITY_ERROR)
-          || fm.getSeverity().equals(FacesMessage.SEVERITY_WARN)
-          || fm.getSeverity().equals(FacesMessage.SEVERITY_FATAL)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public int getNumberOfMessages() {
-    int number = 0;
-    for (final Iterator<FacesMessage> i = FacesContext.getCurrentInstance().getMessages(); i
-        .hasNext();) {
-      i.next();
-      number++;
-    }
-    return number;
-  }
-
-  public boolean getHasMessages() {
-    return FacesContext.getCurrentInstance().getMessages().hasNext();
+  /**
+   * Return the messages
+   * 
+   * @return
+   */
+  public List<FacesMessage> getMessages() {
+    return FacesContext.getCurrentInstance().getMessageList();
   }
 }

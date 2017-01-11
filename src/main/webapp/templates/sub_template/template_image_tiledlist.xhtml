@@ -31,10 +31,8 @@
 	
     <!-- Main Content - Image tiled list - START -->
     <ui:define name="mainContent">
- 		
-        <h:panelGroup layout="block" id ="ajaxWrapper">
+        <h:panelGroup layout="block" id="ajaxWrapper">
 			<script>menuRightOffset();</script>
-        	
             <!-- Selection Info Panel -->
             <imjc:selectionInfoPanel id="selPanel" 
                                       fSession="#{FacetFiltersSession}" 
@@ -44,19 +42,17 @@
                                       numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}"
                                       containerId="#{containerId}" showSortMenu="true" objectLabel="#{lbl.images}"
                                       rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
-           
-            
-            <div class="imj_upload">
+                  
+            <h:panelGroup  layout="block" id="items" styleClass="imj_upload">
 				<div id="container" class="imj_noDisplay"/>			
 				<div id="uploader">
-					<div id="filelist" class="imj_pageMessageArea"></div>
 					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
             		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
-            		<div id="uploadTitle" class="uploadDragAndDropTitle" style="#{paginatorListSessionBean.totalNumberOfElements != 0 || paginatorListSessionBean.query != '' ? 'display:none' : ''}"><span class="fa fa-upload" /> #{lbl.uploadFile}</div>	
-            		
+            		<div id="uploadTitle" class="uploadDragAndDropTitle" style="#{paginatorListSessionBean.totalNumberOfElements != 0 || paginatorListSessionBean.query != '' ? 'display:none' : ''}"><span class="fa fa-upload" /> #{lbl.uploadFile}</div>		
 				</div>
-			</div>
-            <imjc:upload browseButtonId="actionItems:upload" collectionId="#{paginatorListSessionBean.collectionId}" updateButtonId="updatePageForm:updatePage"/>
+				 <imjc:upload browseButtonId="actionItems:upload" collectionId="#{paginatorListSessionBean.collectionId}" updateButtonId="updatePageForm:updateItems"/>
+			</h:panelGroup>
+           
 			<!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
             <!-- Facets -->
@@ -64,8 +60,8 @@
                 <imjc:facets id="facets" paginatorBean="#{paginatorListSessionBean}"/>
             </h:panelGroup>
             <h:form id="updatePageForm">
-	           <h:commandButton id="updatePage" value="update" action="#{paginatorListSessionBean.update}" style="display:none">
-	           		<f:ajax execute="@this" render=":ajaxWrapper"/>
+	           <h:commandButton id="updateItems" value="update" action="#{paginatorListSessionBean.update}" style="display:none">
+	           		<f:ajax execute="@this" render=":items"/>
 	           </h:commandButton>
            </h:form>
         </h:panelGroup>
