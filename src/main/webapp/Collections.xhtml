@@ -24,11 +24,7 @@
 	
 	
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" 
-									curMainMenu="#{currentMainMenu}" 
-									downloadEnabled="false" 
-									filterBean="#{paginatorListSessionBean}" 
-									actionEnabled="false"/>
+		<menu:actionMenuCollections rendered="#{!empty SessionBean.user}"/>
 	</ui:define>
 	
 	<ui:define name="searchQuery">

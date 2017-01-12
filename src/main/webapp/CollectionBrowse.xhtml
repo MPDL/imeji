@@ -13,30 +13,6 @@
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/browse?q="/>
 	<ui:param name="imejiResource" value="#{CollectionItemsBean.collection}"/>
 	
-	<ui:remove>
-		<ui:define name="actionsMenu">
-			<ui:fragment rendered="#{Auth.read(paginatorListSessionBean.collection)}">
-				<menu:context_subNavigation contextId="#{paginatorListSessionBean.id}" 
-										contextUrl="#{Navigation.collectionUrl}" 
-										curMainMenu="#{currentMainMenu}" 
-										userHasAdminRights="#{Auth.sysAdmin}" 
-										userHasUploadRights="#{Auth.createContent(paginatorListSessionBean.collection)}" 
-										navBean="#{Navigation}" 
-										activeMenu="content" />
-				
-				<menu:context_actionMenu id="action" 
-										sortBean="#{paginatorListSessionBean}" 
-										curMainMenu="#{currentMainMenu}" 
-										exportQuery="#{paginatorListSessionBean.query}" 
-										vo="#{CollectionItemsBean.collection}"
-										profile="#{paginatorListSessionBean.profile}"
-										hasContent="#{paginatorListSessionBean.totalNumberOfRecords > 0}"
-										contextDownloadParam="&amp;col=#{paginatorListSessionBean.id}" 
-										hasDoi="#{paginatorListSessionBean.collection.doi != null and paginatorListSessionBean.collection.doi !=''}"/>
-			</ui:fragment>
-		</ui:define>
-	</ui:remove>
-	
 	
 	<ui:define name="modalDialogs_from_site">
 		<dialog:confirmationDialog submitAction="release" bean="#{paginatorListSessionBean.actionMenu}" confirmationText="#{msg.confirmation_release_collection}" confirmationText2="#{paginatorListSessionBean.actionMenu.releaseMessage} " confirmationTextLicense="#{paginatorListSessionBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}" submitLabel="#{lbl.release}" dialogId="releaseMenuItemDialog" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'PENDING' and paginatorListSessionBean.totalNumberOfElements > 0}"/>
@@ -45,7 +21,6 @@
 		<dialog:dialogOptionDialog submitId1="doiInput" submitId2="getDOIDialog" confirmationText="#{paginatorListSessionBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}" submitLabel1="#{lbl.createDOI_manually}" submitLabel2="#{lbl.createDOI_from_service}" dialogId="createDOIDialog" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>
 		<dialog:confirmationDialog submitAction="createDOI" bean="#{paginatorListSessionBean.actionMenu}" confirmationText="#{msg.confirmation_create_DOI}" submitLabel="#{lbl.createDOI}" dialogId="getDOIDialog" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>	
 		<dialog:doiInputDialog col="#{paginatorListSessionBean.collection}" bean="#{paginatorListSessionBean.actionMenu}" confirmationText="#{paginatorListSessionBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}" submitLabel="#{lbl.save}" dialogId="doiInput" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>
-
 	</ui:define>
 	
 	<ui:define name="searchQuery">

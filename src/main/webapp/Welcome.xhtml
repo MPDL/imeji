@@ -9,7 +9,7 @@
 	<ui:param name="currentMainMenu" value="welcome"/>
 	
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}" downloadEnabled="false" actionEnabled="false"/>
+		<menu:actionMenuStartPage rendered="#{!empty SessionBean.user}"/>
 	</ui:define>
 	
 	<ui:define name="init">
@@ -23,7 +23,7 @@
 			function initStartpage() {
 				jQuery( ".id_tabs" ).tabs();
 			};
-            //initialize the tab menu and carousel
+            //initialize the tab menu
 			initStartpage();
 		</script>
 	</ui:define>

@@ -145,6 +145,20 @@
 					.itemsArea{
 						max-width : 96%;
 					}
+					.imj_actionMenuArea{
+						max-height: 40px;
+					}
+					.imj_menuButton{
+						font-size: 14px !important;
+						margin: 5px 0 5px 5px;
+						cursor: pointer;
+						padding: 5px 10px 5px 10px !important;
+					}
+					.imj_menuButton:hover{
+						color: white;
+						background-color: #6CAE2F;
+						border: none;
+					}
                 </style>
                 <!-- NEW SCIPT - TO BE ADDED TO JS -->
                
@@ -175,7 +189,7 @@
 	                 <!-- Search Query -->
 	                <ui:insert name="searchQuery"/>
 		                 <!-- headline -->
-	                 <div class="imj_siteContentHeadline #{empty headline ? 'imj_invisible' : ''}">
+	                 <div class="imj_siteContentHeadline">
 	                    <h1>
 	                        #{headline.toString().trim()}
 	                        <ui:fragment rendered="#{headlineSecondRow != null and headlineSecondRow.toString().trim().length() > 0}">
@@ -189,7 +203,7 @@
 	                </div>
 	               
 	                <!-- Actions Menu -->
-	                <h:panelGroup layout="block" id="actionsMenuArea">
+	                <h:panelGroup layout="block" id="actionsMenuArea" class="imj_actionMenuArea">
 	               		<ui:insert name="actionsMenu"/>
 	                </h:panelGroup>
 	       

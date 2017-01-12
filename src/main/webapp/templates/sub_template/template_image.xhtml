@@ -10,13 +10,7 @@
 	<ui:param name="forwardClass" value="#{itemBean.browse.next == null ? 'nextItem imj_deactivated' : 'nextItem'}"/>
 	
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" 
-									curMainMenu="#{currentMainMenu}" 
-									vo="#{itemBean.image}"
-									downloadEnabled="true"
-									contextDownloadParam="&amp;col=#{logicBean.id}"
-									activeMenu="item"
-									filterBean="#{itemBean}"/>
+		<menu:actionMenuItem itemBean="#{itemBean}"/>
 	</ui:define>
 	
 	<!-- Main Content - Image Detail View -->
