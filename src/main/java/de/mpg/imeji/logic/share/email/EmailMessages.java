@@ -217,7 +217,7 @@ public class EmailMessages {
         .replace("XXX_ORGANIZATION_XXX", u.getPerson().getOrganizationString())
         .replace("XXX_TIME_XXX", new Date().toString())
         .replace("XXX_CREATE_COLLECTIONS_XXX",
-            Boolean.toString(SecurityUtil.isAllowedToCreateCollection(u)))
+            Boolean.toString(SecurityUtil.staticAuth().hasCreateCollectionGrant(u)))
         .replace("XXX_INVITATION_XXX", Boolean.toString(invitation));
   }
 

@@ -24,17 +24,13 @@
  */
 package de.mpg.imeji.logic.authorization.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.Authorization;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.Grant.GrantType;
-import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 
@@ -57,40 +53,6 @@ public class SecurityUtil {
     return authorization;
   }
 
-
-  /**
-   * True if the user is Administrator of Imeji
-   *
-   * @param user
-   * @return
-   */
-  public static boolean isSysAdmin(User user) {
-    return authorization.administrate(user, Imeji.PROPERTIES.getBaseURI());
-  }
-
-  /**
-   * True if a {@link User} can create an collection
-   *
-   * @param user
-   * @return
-   */
-  public static boolean isAllowedToCreateCollection(User user) {
-    return authorization.create(user, Imeji.PROPERTIES.getBaseURI());
-  }
-
-  /**
-   * True if the {@link User} has read Grant for a single {@link Item} but not to its
-   * {@link CollectionImeji}
-   *
-   * @param user
-   * @param item
-   * @return
-   */
-  public static boolean canReadItemButNotCollection(User user, Item item) {
-    return staticAuth().read(user, item)
-        && !staticAuth().read(user, item.getCollection().toString());
-  }
-
   /**
    * Return the {@link List} of uri of all {@link CollectionImeji}, the {@link User} is allowed to
    * see
@@ -99,53 +61,10 @@ public class SecurityUtil {
    * @return
    */
   public static List<String> getListOfAllowedCollections(User user) {
-    final List<String> uris = new ArrayList<>();
-    for (final Grant g : getAllGrantsOfUser(user)) {
-      if (g.getGrantFor().toString().contains("/collection/")
-          && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
-        uris.add(g.getGrantFor().toString());
-      }
-
-    }
-    return uris;
+    return user.getGrants().stream().filter(g -> g.getGrantFor().contains("/collection/"))
+        .map(Grant::getGrantFor).collect(Collectors.toList());
   }
 
-  /**
-   * Return the {@link List} of uri of all {@link de.mpg.imeji.logic.vo.MetadataProfile}, the
-   * {@link User} is allowed to see
-   *
-   * @param user
-   * @return
-   */
-  public static List<String> getListOfAllowedProfiles(User user) {
-    final List<String> uris = new ArrayList<>();
-    for (final Grant g : getAllGrantsOfUser(user)) {
-      if (g.getGrantFor().toString().contains("/metadataProfile/")
-          && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
-        uris.add(g.getGrantFor().toString());
-      }
-
-    }
-    return uris;
-  }
-
-  /**
-   * Return the {@link List} of uri of all {@link Item}, , the {@link User} has got an extra read
-   * {@link Grant} for.
-   *
-   * @param user
-   * @return
-   */
-  public static List<String> getListOfAllowedItem(User user) {
-    final List<String> uris = new ArrayList<>();
-    for (final Grant g : getAllGrantsOfUser(user)) {
-      if (g.getGrantFor().toString().contains("/item/")
-          && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
-        uris.add(g.getGrantFor().toString());
-      }
-    }
-    return uris;
-  }
 
   /**
    * Return the {@link List} of uri of all {@link Album}, the {@link User} is allowed to see
@@ -154,14 +73,8 @@ public class SecurityUtil {
    * @return
    */
   public static List<String> getListOfAllowedAlbums(User user) {
-    final List<String> uris = new ArrayList<>();
-    for (final Grant g : getAllGrantsOfUser(user)) {
-      if (g.getGrantFor().toString().contains("/album/")
-          && g.getGrantType().equals(Grant.toGrantTypeURI(GrantType.READ))) {
-        uris.add(g.getGrantFor().toString());
-      }
-    }
-    return uris;
+    return user.getGrants().stream().filter(g -> g.getGrantFor().contains("/album/"))
+        .map(Grant::getGrantFor).collect(Collectors.toList());
   }
 
   /**
@@ -172,65 +85,8 @@ public class SecurityUtil {
    * @return
    */
   public static List<Grant> getAllGrantsOfUser(User user) {
-    if (user != null) {
-      final List<Grant> l = new ArrayList<>(filterUnvalidGrants(user.getGrants()));
-      for (final UserGroup ug : user.getGroups()) {
-        l.addAll(filterUnvalidGrants(ug.getGrants()));
-      }
-      return l;
-    }
-    return new ArrayList<>();
-  }
-
-  /**
-   * Return all {@link Grant} which have the passed grant for
-   *
-   * @param hasgrant
-   * @param grantForUri
-   * @return
-   */
-  public static List<Grant> extractGrantsFor(List<Grant> grants, String grantForUri) {
-    final List<Grant> l = new ArrayList<Grant>();
-    for (final Grant g : filterUnvalidGrants(grants)) {
-      if (g.getGrantFor().toString().equals(grantForUri)) {
-        l.add(g);
-      }
-    }
-    return l;
-  }
-
-  /**
-   * {@link ReturnaddressType} the Grant which is exactly define by the pass parameter. If not found
-   * return null;
-   *
-   * @param grants
-   * @param grantForUri
-   * @param profileUri
-   * @param type
-   * @return
-   */
-  public static Grant extractGrant(List<Grant> grants, String grantForUri, GrantType type) {
-    for (final Grant g : SecurityUtil.extractGrantsFor(grants, Imeji.PROPERTIES.getBaseURI())) {
-      if (g.getGrantType().compareTo(Grant.toGrantTypeURI(type)) == 0) {
-        return g;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Remove the grants which are not valid to avoid error in further methods
-   *
-   * @param hasgrant
-   * @return
-   */
-  private static Collection<Grant> filterUnvalidGrants(Collection<Grant> l) {
-    final Collection<Grant> nl = new ArrayList<Grant>();
-    for (final Grant g : l) {
-      if (g.getGrantFor() != null && g.getGrantType() != null) {
-        nl.add(g);
-      }
-    }
-    return nl;
+    return user.getGrants().stream()
+        .filter(g -> g.getGrantFor().contains("/user/") || g.getGrantFor().contains("/userGroup/"))
+        .collect(Collectors.toList());
   }
 }

@@ -26,16 +26,14 @@ package de.mpg.imeji.logic.authorization;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.List;
+import java.util.Collection;
+import java.util.function.Predicate;
 
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
-import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.vo.Album;
+import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
@@ -59,26 +57,105 @@ public class Authorization implements Serializable {
   private static final Logger LOGGER = Logger.getLogger(Authorization.class);
 
   /**
-   * Return true if the {@link User} can create the object
-   *
-   * @param user
-   * @param url
+   * True if the {@link Grant} is found in the collection
+   * 
+   * @param grants
+   * @param grant
    * @return
-   * @throws NotAllowedError
+   */
+  private boolean hasGrant(Collection<Grant> grants, Grant grant) {
+    return grants.stream().anyMatch(new Predicate<Grant>() {
+      @Override
+      public boolean test(Grant t) {
+        return t.getGrantFor().equals(grant.getGrantFor())
+            && t.getGrantType().equals(grant.getGrantType());
+      }
+    });
+  }
+
+
+  /**
+   * True if the User has either Read, Edit of Admin Grant for this uri
+   * 
+   * @param grants
+   * @param uri
+   * @return
+   */
+  private boolean hasReadGrant(Collection<Grant> grants, String uri) {
+    return grants.stream().anyMatch(new Predicate<Grant>() {
+      @Override
+      public boolean test(Grant t) {
+        return t.getGrantFor().equals(uri);
+      }
+    });
+  }
+
+  /**
+   * True if the User has either Edit of Admin Grant for this uri
+   * 
+   * @param grants
+   * @param uri
+   * @return
+   */
+  private boolean hasEditGrant(Collection<Grant> grants, String uri) {
+    return grants.stream().anyMatch(new Predicate<Grant>() {
+      @Override
+      public boolean test(Grant t) {
+        return t.getGrantFor().equals(uri) && (t.getGrantType().equals(GrantType.EDIT.toString())
+            || t.getGrantType().equals(GrantType.ADMIN.toString()));
+      }
+    });
+  }
+
+  /**
+   * True if the User has Admin Grant for this uri
+   * 
+   * @param grants
+   * @param uri
+   * @return
+   */
+  private boolean hasAdminGrant(Collection<Grant> grants, String uri) {
+    return hasGrant(grants, new Grant(GrantType.ADMIN, uri));
+  }
+
+
+  /**
+   * True if the {@link User} has the grant to create a collection in imeji
+   * 
+   * @param user
+   * @return
+   */
+  public boolean hasCreateCollectionGrant(User user) {
+    return hasGrant(user.getGrants(),
+        new Grant(GrantType.CREATE, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI));
+  }
+
+  /**
+   * True if the {@link User} is a system administrator
+   * 
+   * @param user
+   * @return
+   */
+  public boolean isSysAdmin(User user) {
+    return hasGrant(user.getGrants(),
+        new Grant(GrantType.ADMIN, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI));
+  }
+
+  /**
+   * True if the user can create the object
+   * 
+   * @param user
+   * @param obj
+   * @return
    */
   public boolean create(User user, Object obj) {
-    if (SecurityUtil.isSysAdmin(user)) {
-      return true;
+    if (obj instanceof Item) {
+      return update(user, ((Item) obj).getCollection());
     }
-    if (obj instanceof Album) {
-      return true; // everybody is allowed to create albums
+    if (obj instanceof CollectionImeji) {
+      return hasCreateCollectionGrant(user);
     }
-    if (hasGrant(user,
-        toGrant(getRelevantURIForSecurity(obj, false, true, false), GrantType.CREATE))
-        && !isDiscarded(obj)) {
-      return true;
-    }
-    return false;
+    return isSysAdmin(user);
   }
 
   /**
@@ -90,32 +167,9 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean read(User user, Object obj) {
-    if (SecurityUtil.isSysAdmin(user)) {
-      return true;
-    }
-    if (isPublic(obj, user)) {
-      return true;
-    }
-    return hasReadGrant(user, obj);
+    return isPublic(obj, user) || isSysAdmin(user) || hasReadGrant(user.getGrants(), getId(obj));
   }
 
-  /**
-   * True if a the {@link User} has read gratn for this object
-   *
-   * @param user
-   * @param obj
-   * @return
-   */
-  public boolean hasReadGrant(User user, Object obj) {
-    if (hasGrant(user, toGrant(getRelevantURIForSecurity(obj, true, false, false),
-        getGrantTypeAccordingToObjectType(obj, GrantType.READ)))) {
-      return true;
-    } else if (hasGrant(user, toGrant(getRelevantURIForSecurity(obj, false, false, false),
-        getGrantTypeAccordingToObjectType(obj, GrantType.READ)))) {
-      return true;
-    }
-    return false;
-  }
 
   /**
    * Return true if the {@link User} can update the object
@@ -126,20 +180,8 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean update(User user, Object obj) {
-    if (SecurityUtil.isSysAdmin(user)) {
-      return true;
-    }
-    if (hasGrant(user, toGrant(getRelevantURIForSecurity(obj, false, false, false),
-        getGrantTypeAccordingToObjectType(obj, GrantType.UPDATE)))) {
-      return true;
-    }
-    return false;
+    return isSysAdmin(user) || hasEditGrant(user.getGrants(), getId(obj));
   }
-
-  public boolean isItem(Object obj) {
-    return (obj instanceof Item || isItemUri(obj.toString()));
-  }
-
 
   /**
    * Return true if the {@link User} can delete the object
@@ -150,15 +192,7 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean delete(User user, Object obj) {
-    if (SecurityUtil.isSysAdmin(user)) {
-      return true;
-    }
-    if (!isPublic(obj, user)
-        && hasGrant(user, toGrant(getRelevantURIForSecurity(obj, false, false, false),
-            getGrantTypeAccordingToObjectType(obj, GrantType.DELETE)))) {
-      return true;
-    }
-    return false;
+    return update(user, obj);
   }
 
   /**
@@ -170,111 +204,9 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean administrate(User user, Object obj) {
-    if (!isDiscarded(obj)
-        && hasGrant(user, toGrant(getRelevantURIForSecurity(obj, false, false, false),
-            getGrantTypeAccordingToObjectType(obj, GrantType.ADMIN)))) {
-      return true;
-    }
-    return false;
+    return isSysAdmin(user) || hasAdminGrant(user.getGrants(), getId(obj));
   }
 
-  /**
-   * Return true if the user can create content in the object. For instance, upload an item in a
-   * collection, or add/remove an item to an album
-   *
-   * @param user
-   * @param obj
-   * @return
-   */
-  public boolean createContent(User user, Object obj) {
-    if (hasGrant(user,
-        toGrant(getRelevantURIForSecurity(obj, false, false, false), GrantType.CREATE))
-        && !isDiscarded(obj)) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Return true if the user can update the content of the object
-   *
-   * @param user
-   * @param url
-   * @return
-   */
-  public boolean updateContent(User user, Object obj) {
-    if (hasGrant(user,
-        toGrant(getRelevantURIForSecurity(obj, false, false, false), GrantType.UPDATE_CONTENT))) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Return true if the user can delete the content of the object
-   *
-   * @param user
-   * @param url
-   * @return
-   */
-  public boolean deleteContent(User user, Object obj) {
-    if (SecurityUtil.isSysAdmin(user)) {
-      return true;
-    }
-    if (!isPublic(obj, user) && hasGrant(user,
-        toGrant(getRelevantURIForSecurity(obj, false, false, false), GrantType.DELETE_CONTENT))) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Return true if the user can administrate the content of the object
-   *
-   * @param user
-   * @param url
-   * @return
-   */
-  public boolean adminContent(User user, Object obj) {
-    if (hasGrant(user,
-        toGrant(getRelevantURIForSecurity(obj, false, false, false), GrantType.ADMIN_CONTENT))) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * True if the {@link User} has the given {@link Grant} or if the {@link User} is system
-   * Administrator
-   *
-   * @param user
-   * @param g
-   * @return
-   */
-  private boolean hasGrant(User user, Grant g) {
-    final List<Grant> all = SecurityUtil.getAllGrantsOfUser(user);
-    if (all.contains(g)) {
-      return true;
-    }
-    if (all.contains(toGrant(Imeji.PROPERTIES.getBaseURI(), GrantType.ADMIN))) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Create a {@link Grant} out of the {@link GrantType} and the given uri
-   *
-   * @param uri
-   * @param type
-   * @return
-   */
-  private Grant toGrant(String uri, GrantType type) {
-    if (uri == null) {
-      return null;
-    }
-    return new Grant(type, URI.create(uri));
-  }
 
   /**
    * Return the uri which is relevant for the {@link Authorization}
@@ -285,28 +217,25 @@ public class Authorization implements Serializable {
    * @param isReadGrant
    * @return
    */
-  public String getRelevantURIForSecurity(Object obj, boolean hasItemGrant, boolean getContext,
-      boolean isReadGrant) {
+  private String getId(Object obj) {
     try {
       if (obj == null) {
         return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
       }
       if (obj instanceof Item) {
-        return hasItemGrant ? ((Item) obj).getId().toString()
-            : ((Item) obj).getCollection().toString();
+        return ((Item) obj).getCollection().toString();
       }
       if (obj instanceof Container) {
-        return getContext ? AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI
-            : ((Container) obj).getId().toString();
+        return ((Container) obj).getId().toString();
       }
       if (obj instanceof User) {
         return ((User) obj).getId().toString();
       }
       if (obj instanceof URI) {
-        return getCollectionUri(obj.toString(), isReadGrant);
+        return obj.toString();
       }
       if (obj instanceof String) {
-        return getCollectionUri((String) obj, isReadGrant);
+        return obj.toString();
       }
       if (obj instanceof UserGroup) {
         return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
@@ -317,62 +246,6 @@ public class Authorization implements Serializable {
       LOGGER.error("Error get security URI", e);
       return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
     }
-  }
-
-  /**
-   * Return the collection of an Item. Useful for Non Read Operation, since it is not possible to
-   * give a non read grant to an item. Thus, if the authorization is called with an Item Id
-   *
-   * @param itemUri
-   * @return
-   */
-  private String getCollectionUri(String uri, boolean isReadGrant) {
-    if (!isReadGrant && uri.contains("/item/")) {
-      final List<String> c =
-          ImejiSPARQL.exec(JenaCustomQueries.selectCollectionIdOfItem(uri), null);
-      if (!c.isEmpty()) {
-        return c.get(0);
-      }
-      return uri;
-    }
-    return uri;
-  }
-
-  /**
-   * If the Object is an {@link Item} then the {@link GrantType} must be changed to fit the
-   * authorization on container level
-   *
-   * @param obj
-   * @param type
-   * @return
-   */
-  private GrantType getGrantTypeAccordingToObjectType(Object obj, GrantType type) {
-    if (obj == null) {
-      return type;
-    }
-    if (obj instanceof Item || isItemUri(obj.toString())) {
-      switch (type) {
-        case UPDATE:
-          return GrantType.UPDATE_CONTENT;
-        case DELETE:
-          return GrantType.DELETE_CONTENT;
-        case ADMIN:
-          return GrantType.ADMIN_CONTENT;
-        default:
-          return type;
-      }
-    }
-    return type;
-  }
-
-  /**
-   * True if the uri is the uri of an {@link Item}
-   *
-   * @param uri
-   * @return
-   */
-  private boolean isItemUri(String uri) {
-    return uri.contains("/item/");
   }
 
   /**

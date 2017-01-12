@@ -18,7 +18,6 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.db.reader.JenaReader;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -53,7 +52,7 @@ public class JenaWriter implements Writer {
    */
   @Override
   public void create(List<Object> objects, User user) throws ImejiException {
-    runTransaction(objects, GrantType.CREATE, false);
+    runTransaction(objects, CRUDTransactionType.CREATE, false);
   }
 
   /**
@@ -65,7 +64,7 @@ public class JenaWriter implements Writer {
    */
   @Override
   public void delete(List<Object> objects, User user) throws ImejiException {
-    runTransaction(objects, GrantType.DELETE, false);
+    runTransaction(objects, CRUDTransactionType.DELETE, false);
     for (final Object o : objects) {
       final URI uri = WriterFacade.extractID(o);
       if (uri != null) {
@@ -83,7 +82,7 @@ public class JenaWriter implements Writer {
    */
   @Override
   public void update(List<Object> objects, User user) throws ImejiException {
-    runTransaction(objects, GrantType.UPDATE, false);
+    runTransaction(objects, CRUDTransactionType.UPDATE, false);
   }
 
   /**
@@ -97,7 +96,7 @@ public class JenaWriter implements Writer {
    */
   @Override
   public void updateLazy(List<Object> objects, User user) throws ImejiException {
-    runTransaction(objects, GrantType.UPDATE, true);
+    runTransaction(objects, CRUDTransactionType.UPDATE, true);
   }
 
   /**
@@ -108,10 +107,9 @@ public class JenaWriter implements Writer {
    * @param lazy
    * @throws Exception
    */
-  private void runTransaction(List<Object> objects, GrantType type, boolean lazy)
+  private void runTransaction(List<Object> objects, CRUDTransactionType type, boolean lazy)
       throws ImejiException {
-    final Transaction t =
-        new CRUDTransaction(objects, CRUDTransactionType.valueOf(type.name()), modelURI, lazy);
+    final Transaction t = new CRUDTransaction(objects, type, modelURI, lazy);
     // Write Transaction needs to be added in a new Thread
     ThreadedTransaction.run(new ThreadedTransaction(t, Imeji.tdbPath));
   }

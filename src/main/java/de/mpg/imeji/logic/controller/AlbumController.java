@@ -221,7 +221,7 @@ public class AlbumController extends ImejiServiceAbstract {
     if (Status.WITHDRAWN.equals(album.getStatus())) {
       throw new UnprocessableError("error_album_withdrawn_members_can_not_be_added");
     }
-    if (!SecurityUtil.staticAuth().create(user, album)) {
+    if (!SecurityUtil.staticAuth().update(user, album)) {
       throw new NotAllowedError("album_not_allowed_to_add_item");
     }
     final ItemService itemController = new ItemService();

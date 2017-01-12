@@ -30,13 +30,13 @@ public class Grant implements Serializable {
    * @version $Revision$ $LastChangedDate$
    */
   public enum GrantType {
-    CREATE, READ, UPDATE, DELETE, ADMIN, UPDATE_CONTENT, DELETE_CONTENT, ADMIN_CONTENT;
+    CREATE, READ, EDIT, ADMIN;
   }
 
   @j2jResource("http://imeji.org/terms/grantType")
-  private URI grantType;
+  private String grantType;
   @j2jResource("http://imeji.org/terms/grantFor")
-  private URI grantFor;
+  private String grantFor;
   private URI id;
 
   /**
@@ -51,14 +51,10 @@ public class Grant implements Serializable {
    * @param gt
    * @param gf
    */
-  public Grant(GrantType gt, URI gf) {
+  public Grant(GrantType grantType, String grantFor) {
     id = IdentifierUtil.newURI(Grant.class);
-    if (gt == null || gf == null) {
-      throw new NullPointerException("Impossible to created a grant with a null value! Granttype: "
-          + gt + " , and GrantFor: " + gf);
-    }
-    this.setGrantType(toGrantTypeURI(gt));
-    this.grantFor = gf;
+    this.grantType = grantType.name();
+    this.grantFor = grantFor;
   }
 
   /**
@@ -68,7 +64,7 @@ public class Grant implements Serializable {
    */
   public GrantType asGrantType() {
     if (grantType != null) {
-      return GrantType.valueOf(grantType.getFragment());
+      return GrantType.valueOf(grantType);
     }
     return null;
   }
@@ -87,20 +83,6 @@ public class Grant implements Serializable {
     return false;
   }
 
-  @Override
-  public int hashCode() {
-    // TODO Auto-generated method stub
-    return super.hashCode();
-  }
-
-  public void setGrantFor(URI grantFor) {
-    this.grantFor = grantFor;
-  }
-
-  public URI getGrantFor() {
-    return grantFor;
-  }
-
   public void setId(URI id) {
     this.id = id;
   }
@@ -109,45 +91,32 @@ public class Grant implements Serializable {
     return id;
   }
 
-  public void setGrantType(URI grantType) {
-    this.grantType = grantType;
-  }
-
-  public URI getGrantType() {
+  /**
+   * @return the grantType
+   */
+  public String getGrantType() {
     return grantType;
   }
 
   /**
-   * Transform a {@link GrantType} into an {@link URI}
-   *
-   * @param type
-   * @return
+   * @param grantType the grantType to set
    */
-  public static URI toGrantTypeURI(GrantType type) {
-    return URI.create("http://imeji.org/terms/grantType#" + type.name());
+  public void setGrantType(String grantType) {
+    this.grantType = grantType;
   }
 
-  public static String getGrantTypeName(GrantType gt) {
-    switch (gt) {
-      case CREATE:
-        return "create";
-      case DELETE:
-        return "delete";
-      case UPDATE:
-        return "update";
-      case READ:
-        return "read";
-      case ADMIN:
-        return "admin";
-      case UPDATE_CONTENT:
-        return "update content";
-      case DELETE_CONTENT:
-        return "delete content";
-      case ADMIN_CONTENT:
-        return "administer content";
-    }
-    return "action";
+  /**
+   * @return the grantFor
+   */
+  public String getGrantFor() {
+    return grantFor;
   }
 
+  /**
+   * @param grantFor the grantFor to set
+   */
+  public void setGrantFor(String grantFor) {
+    this.grantFor = grantFor;
+  }
 
 }

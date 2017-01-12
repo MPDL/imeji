@@ -230,7 +230,7 @@ public class CollectionController extends ImejiServiceAbstract {
     if (hasImageLocked(itemUris, user)) {
       throw new RuntimeException("Collection can not be deleted: It contains locked items:");
     } else {
-      if (collection.getStatus() != Status.PENDING && !SecurityUtil.isSysAdmin(user)) {
+      if (collection.getStatus() != Status.PENDING && !SecurityUtil.staticAuth().isSysAdmin(user)) {
         throw new UnprocessableError("collection_is_not_pending");
       }
       // Delete images

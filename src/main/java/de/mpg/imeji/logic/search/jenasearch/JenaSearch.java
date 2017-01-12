@@ -200,9 +200,7 @@ public class JenaSearch implements Search {
    * @return
    */
   private List<String> simple(SearchPair pair, SortCriterion sortCri, User user, String spaceId) {
-    final String sparqlQuery = JenaQueryFactory.getQuery(getModelName(type), getRDFType(type), pair,
-        sortCri, user, (containerURI != null), getSpecificQuery(user), spaceId);
-    return ImejiSPARQL.exec(sparqlQuery, null);
+    return new ArrayList<>();
   }
 
   /**

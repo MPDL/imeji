@@ -44,7 +44,6 @@ import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.validation.ValidatorFactory;
 import de.mpg.imeji.logic.validation.impl.Validator;
 import de.mpg.imeji.logic.vo.Container;
-import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
@@ -132,7 +131,7 @@ public class WriterFacade {
       return;
     }
     checkWorkflowForDelete(objects);
-    checkSecurity(objects, user, GrantType.DELETE);
+    checkSecurity(objects, user, GrantType.EDIT);
     validate(objects, Validator.Method.DELETE);
     writer.delete(objects, user);
     indexer.deleteBatch(objects);
@@ -150,7 +149,7 @@ public class WriterFacade {
       return;
     }
     if (doCheckSecurity) {
-      checkSecurity(objects, user, GrantType.UPDATE);
+      checkSecurity(objects, user, GrantType.EDIT);
     }
     validate(objects, Validator.Method.UPDATE);
     writer.update(objects, user);
@@ -184,7 +183,7 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return;
     }
-    checkSecurity(objects, user, GrantType.UPDATE);
+    checkSecurity(objects, user, GrantType.EDIT);
     validate(objects, Validator.Method.UPDATE);
     writer.updateLazy(objects, user);
     indexer.indexBatch(objects);
@@ -223,21 +222,12 @@ public class WriterFacade {
       throws NotAllowedError, AuthenticationError {
     String message = user != null ? user.getEmail() : "";
     for (final Object o : list) {
-      message += " not allowed to " + Grant.getGrantTypeName(gt) + " " + extractID(o);
+      message += " not allowed to " + gt.name() + " " + extractID(o);
       if (gt == GrantType.CREATE) {
         throwAuthorizationException(user != null, SecurityUtil.staticAuth().create(user, o),
             message);
-      } else if (gt == GrantType.UPDATE) {
+      } else {
         throwAuthorizationException(user != null, SecurityUtil.staticAuth().update(user, o),
-            message);
-      } else if (gt == GrantType.DELETE) {
-        throwAuthorizationException(user != null, SecurityUtil.staticAuth().delete(user, o),
-            message);
-      } else if (gt == GrantType.UPDATE_CONTENT) {
-        throwAuthorizationException(user != null, SecurityUtil.staticAuth().updateContent(user, o),
-            message);
-      } else if (gt == GrantType.ADMIN_CONTENT) {
-        throwAuthorizationException(user != null, SecurityUtil.staticAuth().adminContent(user, o),
             message);
       }
     }

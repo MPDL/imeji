@@ -165,9 +165,10 @@ public class JenaCustomQueries {
    */
   public static final String selectUserSysAdmin() {
     return X_PATH_FUNCTIONS_DECLARATION
-        + "  SELECT DISTINCT ?s WHERE {OPTIONAL{ ?s <http://imeji.org/terms/grant> ?g . ?g <http://imeji.org/terms/grantType> <"
-        + Grant.toGrantTypeURI(GrantType.ADMIN).toString()
-        + ">. ?g <http://imeji.org/terms/grantFor> <" + Imeji.PROPERTIES.getBaseURI()
+        + "  SELECT DISTINCT ?s WHERE {OPTIONAL{ ?s <http://imeji.org/terms/grant> ?g . ?g <http://imeji.org/terms/grantType> \""
+        + GrantType.ADMIN.name()
+        + "\"^^<http://www.w3.org/2001/XMLSchema#string> . ?g <http://imeji.org/terms/grantFor> <"
+        + Imeji.PROPERTIES.getBaseURI()
         + ">} . filter(bound(?g)) . ?s a <http://imeji.org/terms/user>}";
   }
 
