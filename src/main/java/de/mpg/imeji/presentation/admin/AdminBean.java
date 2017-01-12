@@ -28,6 +28,7 @@ import de.mpg.imeji.logic.jobs.ElasticReIndexJob;
 import de.mpg.imeji.logic.jobs.FulltextAndTechnicalMetadataJob;
 import de.mpg.imeji.logic.jobs.ImportFileFromEscidocToInternalStorageJob;
 import de.mpg.imeji.logic.jobs.RefreshFileSizeJob;
+import de.mpg.imeji.logic.jobs.ResizeWebAndThumbnailJob;
 import de.mpg.imeji.logic.jobs.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.reader.ReaderFacade;
 import de.mpg.imeji.logic.search.Search;
@@ -444,5 +445,14 @@ public class AdminBean extends SuperBean {
 
   public void setUnusedProfiles(List<MetadataProfile> unusedProfiles) {
     this.unusedProfiles = unusedProfiles;
+  }
+
+  public void recalculateWebAndThumbnail() {
+    ResizeWebAndThumbnailJob job = new ResizeWebAndThumbnailJob();
+    try {
+      job.call();
+    } catch (Exception e) {
+      LOGGER.error("Error recalculating Thumbnail and Web", e);
+    }
   }
 }

@@ -306,7 +306,26 @@
 										</div>
 										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
 									</h:panelGroup>
-
+									
+									<h:panelGroup layout="block" styleClass="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.thumbnail_width}"/>
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputText value="#{Configuration.thumbnailWidth}" styleClass="imj_admindataEdit"/>
+										</div>
+									</h:panelGroup>
+									
+									<h:panelGroup layout="block" styleClass="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.web_resolution_width}"/>
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputText value="#{Configuration.webResolutionWidth}" styleClass="imj_admindataEdit"/>
+										</div>
+									</h:panelGroup>
 								</div>
 							</div>
 							

@@ -106,6 +106,12 @@
 										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.extractFulltextAndTechnicalMetadata}" value="#{lbl.extract}"/>
 									</h:panelGroup>	
 								</h:form>
+								<h:outputText value="#{lbl.admin_recalculate_web_and_thumbnail}"/>							
+								<h:form>
+									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
+										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.recalculateWebAndThumbnail}" value="#{lbl.recalculate}"/>
+									</h:panelGroup>	
+								</h:form>
 							</div>
 							
 							<!-- Admin - Clean storage -->

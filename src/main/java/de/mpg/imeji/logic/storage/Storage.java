@@ -170,4 +170,14 @@ public interface Storage extends Serializable {
    */
   public String getStorageId(String url);
 
+  /**
+   * Recreates Web Resolution and Thumbnail in the new sizes
+   * 
+   * @throws Exception
+   * @throws IOException
+   * 
+   */
+  public void recalculateWebAndThumbnail(String fullUrl, String webUrl, String thumbnailUrl)
+      throws IOException, Exception;
+
 }

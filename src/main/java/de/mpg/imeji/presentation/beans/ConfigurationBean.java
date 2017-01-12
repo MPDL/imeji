@@ -33,6 +33,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.logic.Imeji;
@@ -55,6 +56,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class ConfigurationBean extends SuperBean {
   private static final long serialVersionUID = -5694991319458172548L;
+  private static final Logger LOGGER = Logger.getLogger(ConfigurationBean.class);
 
   /**
    * Save the configuration in the config file
@@ -609,4 +611,21 @@ public class ConfigurationBean extends SuperBean {
   public void setTechnicalMetadata(String technicalMetadata) {
     Imeji.CONFIG.setTechnicalMetadata(technicalMetadata);
   }
+
+  public String getThumbnailWidth() {
+    return Imeji.CONFIG.getThumbnailWidth();
+  }
+
+  public void setThumbnailWidth(String thumbnailWidth) {
+    Imeji.CONFIG.setThumbnailWidth(thumbnailWidth);
+  }
+
+  public String getWebResolutionWidth() {
+    return Imeji.CONFIG.getWebResolutionWidth();
+  }
+
+  public void setWebResolutionWidth(String webResolutionWidth) {
+    Imeji.CONFIG.setWebResolutionWidth(webResolutionWidth);
+  }
+
 }
