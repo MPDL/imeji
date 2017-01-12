@@ -428,10 +428,6 @@ public class AlbumBean extends ContainerBean {
     return this.getContainer().getModified().getTime();
   }
 
-  public Date getVersionDate() {
-    return this.getContainer().getVersionDate().getTime();
-  }
-
   public Status getStatus() {
     return this.getContainer().getStatus();
   }

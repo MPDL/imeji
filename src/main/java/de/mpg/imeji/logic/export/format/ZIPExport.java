@@ -129,14 +129,14 @@ public class ZIPExport extends Export {
           updateMetrics(item);
           sc = new StorageController();
           zip.putNextEntry(new ZipEntry(item.getFilename()));
-          sc.read(item.getFullImageUrl().toString(), zip, false);
+          // sc.read(item.getFullImageUrl().toString(), zip, false);
           // Complete the entry
           zip.closeEntry();
         } catch (final ZipException ze) {
           if (ze.getMessage().contains("duplicate entry")) {
             final String name = i + "_" + item.getFilename();
             zip.putNextEntry(new ZipEntry(name));
-            sc.read(item.getFullImageUrl().toString(), zip, false);
+            // sc.read(item.getFullImageUrl().toString(), zip, false);
             // Complete the entry
             zip.closeEntry();
           }

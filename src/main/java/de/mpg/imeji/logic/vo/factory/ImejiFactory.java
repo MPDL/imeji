@@ -3,8 +3,6 @@
  */
 package de.mpg.imeji.logic.vo.factory;
 
-import java.net.URI;
-
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -145,10 +143,9 @@ public class ImejiFactory {
    * @throws UnprocessableError
    */
   public static Item newItem(CollectionImeji collection, User user, String storageId, String title,
-      URI fullImageURI, URI thumbnailURI, URI webURI, String filetype) throws UnprocessableError {
+      String filetype) throws UnprocessableError {
     final Item item = ImejiFactory.newItem(collection);
-    return newItem(item, collection, user, storageId, title, fullImageURI, thumbnailURI, webURI,
-        filetype);
+    return newItem(item, collection, user, storageId, title, filetype);
   }
 
   /**
@@ -166,10 +163,7 @@ public class ImejiFactory {
    * @return
    */
   public static Item newItem(Item item, CollectionImeji collection, User user, String storageId,
-      String title, URI fullImageURI, URI thumbnailURI, URI webURI, String filetype) {
-    item.setFullImageUrl(fullImageURI);
-    item.setThumbnailImageUrl(thumbnailURI);
-    item.setWebImageUrl(webURI);
+      String title, String filetype) {
     item.setFilename(title);
     item.setFiletype(filetype);
     item.setContentId(item.getContentId());

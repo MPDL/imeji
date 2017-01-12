@@ -40,7 +40,6 @@ public class CollectionListItem {
   // dates
   // private String creationDate = null;
   private String lastModificationDate = null;
-  private String versionDate = null;
   private static final Logger LOGGER = Logger.getLogger(CollectionListItem.class);
   private ThumbnailBean thumbnail = null;
   private String selectedGrant;
@@ -80,9 +79,6 @@ public class CollectionListItem {
       discardComment = collection.getDiscardComment();
       // creationDate = collection.getCreated().getTime().toString();
       lastModificationDate = collection.getModified().getTime().toString();
-      if (collection.getVersionDate() != null) {
-        versionDate = collection.getVersionDate().getTime().toString();
-      }
       // initializations
       initThumbnail(collection, user);
       initSize(collection, user);
@@ -294,15 +290,6 @@ public class CollectionListItem {
   public void setLastModificationDate(String lastModificationDate) {
     this.lastModificationDate = lastModificationDate;
   }
-
-  public String getVersionDate() {
-    return versionDate;
-  }
-
-  public void setVersionDate(String versionDate) {
-    this.versionDate = versionDate;
-  }
-
 
   public URI getUri() {
     return uri;

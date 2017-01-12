@@ -240,12 +240,8 @@ public class TransferObjectFactory {
     // set createdDate, modifiedDate, versionDate
     to.setCreatedDate(CommonUtils.formatDate(vo.getCreated().getTime()));
     to.setModifiedDate(CommonUtils.formatDate(vo.getModified().getTime()));
-    to.setVersionDate(
-        (vo.getVersionDate() != null) ? CommonUtils.formatDate(vo.getVersionDate().getTime()) : "");
     // set status
     to.setStatus(vo.getStatus().toString());
-    // set version
-    to.setVersion(vo.getVersion());
     // set discardComment
     to.setDiscardComment(vo.getDiscardComment());
   }
@@ -262,10 +258,6 @@ public class TransferObjectFactory {
     to.setFilename(vo.getFilename());
     to.setFileSize(vo.getFileSize());
     to.setMimetype(vo.getFiletype());
-    to.setChecksumMd5(vo.getChecksum());
-    to.setWebResolutionUrlUrl(vo.getWebImageUrl());
-    to.setThumbnailUrl(vo.getThumbnailImageUrl());
-    to.setFileUrl(vo.getFullImageUrl());
     to.setLicenses(transferLicense(vo.getLicenses()));
     to.setMetadata(transferMetadata(vo.getMetadata()));
   }

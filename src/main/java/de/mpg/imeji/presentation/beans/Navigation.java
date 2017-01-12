@@ -190,7 +190,7 @@ public class Navigation implements Serializable {
   }
 
   public String getFileUrl() {
-    return applicationUrl + "file/?id=";
+    return applicationUrl + "file";
   }
 
   public String getTermsOfUseUrl() {

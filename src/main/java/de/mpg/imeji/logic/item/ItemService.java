@@ -165,11 +165,12 @@ public class ItemService extends SearchServiceAbstract<Item> {
       final File tmp = readFile(externalFileUrl);
       item = createWithFile(item, tmp, filename, c, user);
     } else {
-      // Reference the file
+      ContentVO content = new ContentVO();
+      content.setOriginal(externalFileUrl);
+      final ContentController contentController = new ContentController();
+      contentController.create(item, content);
+      item = copyContent(item, content);
       item.setFilename(filename);
-      item.setFullImageUrl(URI.create(externalFileUrl));
-      item.setThumbnailImageUrl(URI.create(NO_THUMBNAIL_URL));
-      item.setWebImageUrl(URI.create(NO_THUMBNAIL_URL));
       item = create(item, c, user);
     }
     return item;
@@ -374,32 +375,14 @@ public class ItemService extends SearchServiceAbstract<Item> {
     } else {
       removeFileFromStorage(item);
       // Reference the file
-      item.setFullImageUrl(URI.create(externalFileUrl));
-      item.setThumbnailImageUrl(URI.create(NO_THUMBNAIL_URL));
-      item.setWebImageUrl(URI.create(NO_THUMBNAIL_URL));
-      item.setChecksum("");
-      item.setFiletype("");
+      ContentVO content = new ContentVO();
+      content.setOriginal(externalFileUrl);
+      final ContentController contentController = new ContentController();
+      contentController.create(item, content);
       item = update(item, u);
     }
     return item;
 
-  }
-
-  /**
-   *
-   * Update only the thumbnail and the Web Resolution (doesn't change the original file)
-   *
-   * @param item
-   * @param f
-   * @param user
-   * @return
-   * @throws ImejiException
-   */
-  public Item updateThumbnail(Item item, File f, User user) throws ImejiException {
-    final StorageController sc = new StorageController();
-    sc.update(item.getWebImageUrl().toString(), f);
-    sc.update(item.getThumbnailImageUrl().toString(), f);
-    return update(item, user);
   }
 
   /**
@@ -559,13 +542,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   private Item copyContent(Item item, ContentVO content) {
     item.setContentId(content.getId().toString());
-    item.setChecksum(content.getChecksum());
     item.setFiletype(content.getMimetype());
     item.setFileSize(content.getFileSize());
-    item.setOriginalUrl(URI.create(content.getOriginal()));
-    item.setFullImageUrl(URI.create(content.getFull()));
-    item.setWebImageUrl(URI.create(content.getPreview()));
-    item.setThumbnailImageUrl(URI.create(content.getThumbnail()));
     return item;
   }
 
@@ -630,10 +608,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
     if (StringHelper.isNullOrEmptyTrim(item.getContentId() != null)) {
       contentVO.setId(URI.create(item.getContentId()));
     }
-    contentVO.setOriginal(item.getFullImageUrl().toString());
-    contentVO.setPreview(item.getWebImageUrl().toString());
-    contentVO.setThumbnail(item.getThumbnailImageUrl().toString());
-    contentVO.setChecksum(item.getChecksum());
     contentVO.setFileSize(item.getFileSize());
     contentVO.setMimetype(item.getFiletype());
     return contentVO;

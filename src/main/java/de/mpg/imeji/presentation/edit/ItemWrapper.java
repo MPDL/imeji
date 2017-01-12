@@ -1,7 +1,5 @@
 package de.mpg.imeji.presentation.edit;
 
-import java.net.URI;
-
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
@@ -56,15 +54,6 @@ public class ItemWrapper {
    */
   public void clear(Statement st) {
 
-  }
-
-  /**
-   * get the thumbnail of the {@link Item}
-   *
-   * @return
-   */
-  public URI getThumbnail() {
-    return item.getThumbnailImageUrl();
   }
 
   /**

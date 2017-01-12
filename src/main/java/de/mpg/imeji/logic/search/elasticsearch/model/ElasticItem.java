@@ -22,8 +22,6 @@ public final class ElasticItem extends ElasticProperties {
   private final String license;
   private final String filetype;
   private final long size;
-  private final String space;
-  private final String checksum;
   private final List<ElasticMetadata> metadata = new ArrayList<>();
 
 
@@ -34,10 +32,8 @@ public final class ElasticItem extends ElasticProperties {
    */
   public ElasticItem(Item item, String space) {
     super(item);
-    this.checksum = item.getChecksum();
     this.folder = item.getCollection().toString();
     this.name = item.getFilename();
-    this.space = space;
     this.license = getLicenseName(item);
     this.size = item.getFileSize();
     this.filetype = item.getFiletype();
@@ -60,13 +56,6 @@ public final class ElasticItem extends ElasticProperties {
   }
 
   /**
-   * @return the checksum
-   */
-  public String getChecksum() {
-    return checksum;
-  }
-
-  /**
    * @return the metadata
    */
   public List<ElasticMetadata> getMetadata() {
@@ -78,13 +67,6 @@ public final class ElasticItem extends ElasticProperties {
    */
   public String getFolder() {
     return folder;
-  }
-
-  /**
-   * @return the space
-   */
-  public String getSpace() {
-    return space;
   }
 
   public long getSize() {

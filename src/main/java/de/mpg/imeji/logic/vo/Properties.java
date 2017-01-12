@@ -9,8 +9,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Calendar;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 
 import org.apache.log4j.Logger;
@@ -38,12 +36,8 @@ public class Properties implements Serializable {
   private Calendar created = Calendar.getInstance();
   @j2jLiteral(ImejiNamespaces.LAST_MODIFICATION_DATE)
   private Calendar modified = Calendar.getInstance();
-  @j2jLiteral(ImejiNamespaces.VERSION_DATE)
-  private Calendar versionDate;
   @j2jResource(ImejiNamespaces.STATUS)
   private URI status = URI.create(Status.PENDING.getUriString());
-  @j2jLiteral(ImejiNamespaces.VERSION)
-  private int version = 0;
   @j2jLiteral(ImejiNamespaces.DISCARD_COMMENT)
   private String discardComment;
 
@@ -77,7 +71,6 @@ public class Properties implements Serializable {
     this.createdBy = createdBy;
   }
 
-  @XmlElement(name = "creator", namespace = "http://purl.org/dc/terms/")
   public URI getCreatedBy() {
     return createdBy;
   }
@@ -86,7 +79,6 @@ public class Properties implements Serializable {
     this.modifiedBy = modifiedBy;
   }
 
-  @XmlElement(name = "modifiedBy", namespace = "http://imeji.org/terms/")
   public URI getModifiedBy() {
     return modifiedBy;
   }
@@ -95,21 +87,10 @@ public class Properties implements Serializable {
     this.status = URI.create(status.getUriString());
   }
 
-  @XmlElement(name = "status", namespace = "http://imeji.org/terms/")
   public Status getStatus() {
     return Status.valueOf(status.getFragment());
   }
 
-  public void setVersion(int version) {
-    this.version = version;
-  }
-
-  @XmlElement(name = "version", namespace = "http://imeji.org/terms/")
-  public int getVersion() {
-    return version;
-  }
-
-  @XmlElement(name = "discardComment", namespace = "http://imeji.org/terms/")
   public String getDiscardComment() {
     return discardComment;
   }
@@ -118,7 +99,6 @@ public class Properties implements Serializable {
     this.discardComment = discardComment;
   }
 
-  @XmlElement(name = "created", namespace = "http://purl.org/dc/terms/")
   public Calendar getCreated() {
     return created;
   }
@@ -127,7 +107,6 @@ public class Properties implements Serializable {
     this.created = created;
   }
 
-  @XmlElement(name = "modified", namespace = "http://purl.org/dc/terms/")
   public Calendar getModified() {
     return modified;
   }
@@ -136,20 +115,10 @@ public class Properties implements Serializable {
     this.modified = modified;
   }
 
-  @XmlElement(name = "issued", namespace = "http://purl.org/dc/terms/")
-  public Calendar getVersionDate() {
-    return versionDate;
-  }
-
-  public void setVersionDate(Calendar versionDate) {
-    this.versionDate = versionDate;
-  }
-
   public void setId(URI id) {
     this.id = id;
   }
 
-  @XmlAttribute(name = "id")
   public URI getId() {
     return id;
   }

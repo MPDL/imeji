@@ -21,6 +21,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.authentication.factory.AuthenticationFactory;
+import de.mpg.imeji.logic.content.ContentController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -30,6 +31,7 @@ import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.impl.ExternalStorage;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.Navigation;
@@ -46,10 +48,12 @@ import de.mpg.imeji.presentation.session.SessionBean;
 public class FileServlet extends HttpServlet {
   private static final long serialVersionUID = 5502546330318540997L;
   private static final Logger LOGGER = Logger.getLogger(FileServlet.class);
-  private StorageController storageController;
-  private Navigation navivation;
+  private final StorageController storageController = new StorageController();
+  private final ContentController contentController = new ContentController();
+  private final ExternalStorage externalStorage = new ExternalStorage();
+  private final Navigation navivation = new Navigation();;
   private String domain;
-  private ExternalStorage externalStorage;
+
   private static final String RESOURCE_EMTPY_ICON_URL =
       "http://localhost:8080/imeji/resources/icon/empty.png";
 
@@ -57,9 +61,6 @@ public class FileServlet extends HttpServlet {
   @Override
   public void init() {
     try {
-      storageController = new StorageController();
-      externalStorage = new ExternalStorage();
-      navivation = new Navigation();
       domain = StringHelper.normalizeURI(navivation.getDomain());
       domain = domain.substring(0, domain.length() - 1);
       LOGGER.info("File Servlet initialized");
@@ -75,18 +76,20 @@ public class FileServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
     String url = req.getParameter("id");
+    final String contentId = req.getParameter("content");
     final boolean download = "1".equals(req.getParameter("download"));
-    if (url == null) {
-      // if the id parameter is null, interpret the whole url as a direct
-      // to the file (can only work if the
-      // internal storage is used)
-      url = domain + req.getRequestURI();
-    }
-    resp.setContentType(StorageUtils.getMimeType(StringHelper.getFileExtension(url)));
-    final SessionBean session = getSession(req);
     User user;
     try {
+      final SessionBean session = getSession(req);
       user = getUser(req, session);
+      if (url == null && contentId != null) {
+        url = retrieveUrlOfContent(contentId, req.getParameter("resolution"));
+      }
+      if (url == null && contentId == null) {
+        url = domain + req.getRequestURI();
+      }
+      resp.setContentType(StorageUtils.getMimeType(StringHelper.getFileExtension(url)));
+
       if ("NO_THUMBNAIL_URL".equals(url)) {
         externalStorage.read(RESOURCE_EMTPY_ICON_URL, resp.getOutputStream(), true);
       } else {
@@ -113,6 +116,20 @@ public class FileServlet extends HttpServlet {
           resp.sendError(422, "Unprocessable entity!");
         }
       }
+    }
+  }
+
+  private String retrieveUrlOfContent(String contentId, String resolution) throws ImejiException {
+    ContentVO content = contentController.readLazy(contentId);
+    switch (resolution) {
+      case "thumbnail":
+        return content.getThumbnail();
+      case "preview":
+        return content.getPreview();
+      case "full":
+        return content.getFull();
+      default:
+        return content.getOriginal();
     }
   }
 

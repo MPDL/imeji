@@ -19,7 +19,6 @@ import org.joda.time.chrono.AssembledChronology.Fields;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLazyList;
 import de.mpg.imeji.j2j.annotations.j2jLazyLiteral;
-import de.mpg.imeji.j2j.annotations.j2jLazyURIResource;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
@@ -38,27 +37,12 @@ import de.mpg.imeji.j2j.annotations.j2jResource;
 @XmlRootElement(name = "item", namespace = "http://imeji.org/terms/")
 public class Item extends Properties implements Serializable {
   private static final long serialVersionUID = 3989965275269803885L;
-
-  public enum Visibility {
-    PUBLIC, PRIVATE;
-  }
-
   @j2jResource("http://imeji.org/terms/collection")
   private URI collection;
-  @j2jLazyURIResource("http://imeji.org/terms/webImageUrl")
-  private URI webImageUrl;
-  @j2jResource("http://imeji.org/terms/thumbnailImageUrl")
-  private URI thumbnailImageUrl;
-  @j2jLazyURIResource("http://imeji.org/terms/fullImageUrl")
-  private URI fullImageUrl;
-  @j2jLazyURIResource("http://imeji.org/terms/original")
-  private URI originalUrl;
   @j2jLiteral("http://imeji.org/terms/filename")
   private String filename;
   @j2jLiteral("http://imeji.org/terms/filetype")
   private String filetype;
-  @j2jLazyLiteral("http://imeji.org/terms/checksum")
-  private String checksum;
   @j2jLiteral("http://imeji.org/terms/fileSize")
   private long fileSize;
   @j2jLazyLiteral("http://imeji.org/terms/contentId")
@@ -77,38 +61,6 @@ public class Item extends Properties implements Serializable {
 
   public Item(Item im) {
     copyInFields(im);
-  }
-
-  public URI getWebImageUrl() {
-    return webImageUrl;
-  }
-
-  public void setWebImageUrl(URI webImageUrl) {
-    this.webImageUrl = webImageUrl;
-  }
-
-  public URI getThumbnailImageUrl() {
-    return thumbnailImageUrl;
-  }
-
-  public void setThumbnailImageUrl(URI thumbnailImageUrl) {
-    this.thumbnailImageUrl = thumbnailImageUrl;
-  }
-
-  public URI getFullImageUrl() {
-    return fullImageUrl;
-  }
-
-  public void setFullImageUrl(URI fullImageUrl) {
-    this.fullImageUrl = fullImageUrl;
-  }
-
-  public URI getOriginalUrl() {
-    return originalUrl;
-  }
-
-  public void setOriginalUrl(URI originalUrl) {
-    this.originalUrl = originalUrl;
   }
 
   public void setCollection(URI collection) {
@@ -181,20 +133,6 @@ public class Item extends Properties implements Serializable {
   }
 
   /**
-   * @return the checksum
-   */
-  public String getChecksum() {
-    return checksum;
-  }
-
-  /**
-   * @param checksum the checksum to set
-   */
-  public void setChecksum(String checksum) {
-    this.checksum = checksum;
-  }
-
-  /**
    *
    * @return
    */
@@ -216,18 +154,6 @@ public class Item extends Properties implements Serializable {
    */
   public void setFileSize(long fileSize) {
     this.fileSize = fileSize;
-  }
-
-  public String getFullImageLink() {
-    return fullImageUrl.toString();
-  }
-
-  public String getThumbnailImageLink() {
-    return thumbnailImageUrl.toString();
-  }
-
-  public String getWebImageLink() {
-    return thumbnailImageUrl.toString();
   }
 
   public List<License> getLicenses() {

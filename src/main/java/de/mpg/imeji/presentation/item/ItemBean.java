@@ -85,7 +85,6 @@ public class ItemBean extends SuperBean {
   private List<Album> relatedAlbums;
   private String dateCreated;
   private String newFilename;
-  private String stringContent = null;
   private String imageUploader;
   private String discardComment;
   private MetadataLabels metadataLabels;
@@ -96,6 +95,10 @@ public class ItemBean extends SuperBean {
   private static final Logger LOGGER = Logger.getLogger(ItemBean.class);
   private int rotation;
   private int lastRotation = 0;
+  private String thumbnail;
+  private String preview;
+  private String fullResolution;
+  private String originalFile;
 
   /**
    * Construct a default {@link ItemBean}
@@ -247,6 +250,10 @@ public class ItemBean extends SuperBean {
     }
     try {
       content = new ContentController().readLazy(item.getContentId());
+      this.preview = content.getPreview();
+      this.thumbnail = content.getThumbnail();
+      this.fullResolution = content.getFull();
+      this.originalFile = content.getOriginal();
     } catch (final Exception e) {
       LOGGER.error("No content found for " + item.getIdString(), e);
     }
@@ -334,13 +341,6 @@ public class ItemBean extends SuperBean {
 
   public boolean getSelected() {
     return selected;
-  }
-
-  public String getThumbnailImageUrlAsString() {
-    if (item.getThumbnailImageUrl() == null) {
-      return "/no_thumb";
-    }
-    return item.getThumbnailImageUrl().toString();
   }
 
   public String getId() {
@@ -552,17 +552,6 @@ public class ItemBean extends SuperBean {
   }
 
   /**
-   * Function to return the content of the item
-   *
-   * @return String
-   */
-  public String getStringContent() throws ImejiException {
-    final StorageController sc = new StorageController();
-    stringContent = sc.readFileStringContent(item.getFullImageUrl().toString());
-    return stringContent;
-  }
-
-  /**
    * Returns a list of all albums this image is added to.
    *
    * @return @
@@ -618,7 +607,7 @@ public class ItemBean extends SuperBean {
    * @return
    */
   public boolean isSVGFile() {
-    return "svg".equals(FilenameUtils.getExtension(item.getFullImageUrl().toString()));
+    return "svg".equals(FilenameUtils.getExtension(content.getOriginal()));
   }
 
   /**
@@ -654,7 +643,7 @@ public class ItemBean extends SuperBean {
    * Function checks if the file ends with swc
    */
   public boolean isSwcFile() {
-    return item.getFullImageUrl().toString().endsWith(".swc");
+    return content.getOriginal().endsWith(".swc");
   }
 
   /**
@@ -763,13 +752,11 @@ public class ItemBean extends SuperBean {
    * @throws IOException
    */
   public void updateRotation() throws IOException, Exception {
-
-
     if (getAuth().update(getImage())) {
       StorageController storageController = new StorageController();
       int degrees = (rotation - lastRotation + 360) % 360;
       lastRotation = rotation;
-      storageController.rotate(getImage().getFullImageUrl().getPath(), degrees);
+      storageController.rotate(content.getOriginal(), degrees);
     }
   }
 
@@ -792,7 +779,7 @@ public class ItemBean extends SuperBean {
     if (!isImageFile() || isSVGFile())
       return 0;
     StorageController storageController = new StorageController();
-    return storageController.getStorage().getImageWidth(getImage().getWebImageUrl().getPath());
+    return storageController.getStorage().getImageWidth(content.getPreview());
   }
 
   /**
@@ -812,7 +799,7 @@ public class ItemBean extends SuperBean {
     if (!isImageFile() || isSVGFile())
       return 0;
     StorageController storageController = new StorageController();
-    return storageController.getStorage().getImageHeight(getImage().getWebImageUrl().getPath());
+    return storageController.getStorage().getImageHeight(content.getPreview());
   }
 
   /**
@@ -830,7 +817,7 @@ public class ItemBean extends SuperBean {
       return 0;
     }
     StorageController storageController = new StorageController();
-    return storageController.getStorage().getImageWidth(getImage().getFullImageUrl().getPath());
+    return storageController.getStorage().getImageWidth(content.getOriginal());
   }
 
   public int getFullResolutionHeight() throws IOException {
@@ -838,7 +825,7 @@ public class ItemBean extends SuperBean {
       return 0;
     }
     StorageController storageController = new StorageController();
-    return storageController.getStorage().getImageHeight(getImage().getFullImageUrl().getPath());
+    return storageController.getStorage().getImageHeight(content.getOriginal());
   }
 
   public int getRotation() {
@@ -859,6 +846,34 @@ public class ItemBean extends SuperBean {
    * @return
    */
   public boolean isGIFFile() {
-    return "gif".equals(FilenameUtils.getExtension(item.getFullImageUrl().toString()));
+    return "gif".equals(FilenameUtils.getExtension(content.getOriginal()));
+  }
+
+  /**
+   * @return the thumbnail
+   */
+  public String getThumbnail() {
+    return thumbnail;
+  }
+
+  /**
+   * @return the preview
+   */
+  public String getPreview() {
+    return preview;
+  }
+
+  /**
+   * @return the fullResolution
+   */
+  public String getFullResolution() {
+    return fullResolution;
+  }
+
+  /**
+   * @return the originalFile
+   */
+  public String getOriginalFile() {
+    return originalFile;
   }
 }

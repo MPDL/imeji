@@ -34,18 +34,18 @@
 			</center>
 			</ui:fragment>
 			<h:outputLink id="lnkPicInternalDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" target="_blank" rendered="#{itemBean.viewInDataViewer}">
-				<h:graphicImage title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" />
+				<h:graphicImage title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
 			</h:outputLink>
-			<h:outputLink id="lnkPicFullResolution" value="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInOpenseadragon and !itemBean.viewInDataViewer}">
-				 <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" /> 
+			<h:outputLink id="lnkPicFullResolution" value="#{itemBean.originalFile}" target="_blank" rendered="#{!itemBean.viewInOpenseadragon and !itemBean.viewInDataViewer}">
+				 <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" /> 
 			</h:outputLink>
 		</ui:fragment>
 		<ui:fragment rendered="#{itemBean.videoFile}">
-			<video id="imejiVideoPlayer" src="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" controls="controls" 
-			poster="#{itemBean.image.webImageUrl}" preload="auto" height="264"></video>
+			<video id="imejiVideoPlayer" src="#{itemBean.originalFile}" controls="controls" 
+			poster="#{itemBean.preview}" preload="auto" height="264"></video>
 		</ui:fragment>
 		<ui:fragment rendered="#{itemBean.audioFile}">
-			<audio id="imejiAudioPlayer" src="#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}" controls="controls" preload="auto">
+			<audio id="imejiAudioPlayer" src="#{itemBean.originalFile}" controls="controls" preload="auto">
 				<h:outputText value="#{lbl.playing} #{itemBean.image.filename} " />
 			</audio>
 		</ui:fragment>
@@ -63,7 +63,7 @@
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 
-			<h:outputLink id="lnkOriginalData" value="#{itemBean.image.fullImageUrl}" target="_blank" rendered="#{!itemBean.viewInDataViewer}" >
+			<h:outputLink id="lnkOriginalData" value="#{itemBean.originalFile}" target="_blank" rendered="#{!itemBean.viewInDataViewer}" >
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 		</div>	
@@ -264,7 +264,7 @@
 							<span class="imj_invisible">: </span>
 						</span>							
 						<span class="imj_infodataValue">
-							<h:outputText value="#{itemBean.image.checksum} "/><h:outputLink value="#{Navigation.browseUrl}?q=checksum=%22#{itemBean.image.checksum}%22">
+							<h:outputText value="#{itemBean.content.checksum} "/><h:outputLink value="#{Navigation.browseUrl}?q=checksum=%22#{itemBean.content.checksum}%22">
 								<h:outputText value="  [#{lbl.search_for_duplicate}]"/>
 							</h:outputLink>
 						</span>
@@ -300,22 +300,22 @@
 						<div class="imj_infodataValue">
 							<ul class="imj_optionList">
 								<li>
-									<h:outputLink value="#{itemBean.image.thumbnailImageUrl}" target="_blank">
+									<h:outputLink value="#{itemBean.thumbnail}" target="_blank">
 										<h:outputText value="#{lbl.imageSizesThumb}"/>
 									</h:outputLink>
 								</li>
 								<li>
-									<h:outputLink value="#{itemBean.image.webImageUrl}" target="_blank">
+									<h:outputLink value="#{itemBean.preview}" target="_blank">
 										<h:outputText value="#{lbl.imageSizesWeb}"/>
 									</h:outputLink>
 								</li>
 								<li>
-									<h:outputLink value="#{itemBean.image.fullImageUrl}" target="_blank">
+									<h:outputLink value="#{itemBean.fullResolution}" target="_blank">
 										<h:outputText value="#{lbl.imageSizesFull}"/>
 									</h:outputLink>
 								</li>
 								<li>
-									<h:outputLink value="#{itemBean.image.originalUrl}" target="_blank">
+									<h:outputLink value="#{itemBean.originalFile}" target="_blank">
 										<h:outputText value="#{lbl.imageSizesOrg}"/>
 									</h:outputLink>
 								</li>
@@ -351,7 +351,7 @@
 								<span class="imj_invisible">: </span>
 						</span>
 						<span class="imj_infodataValue">
-							<h:inputTextarea styleClass="imj_infodataValueEntryEmbed" value="&lt;a href='#{itemBean.pageUrl}' title='#{itemBean.image.filename}'&gt; &lt;img src='#{itemBean.image.webImageUrl}' alt='#{itemBean.image.filename}' title='#{itemBean.image.filename}'&gt;&lt;/a&gt;" onclick="this.select();" escape="false"/>
+							<h:inputTextarea styleClass="imj_infodataValueEntryEmbed" value="&lt;a href='#{itemBean.pageUrl}' title='#{itemBean.image.filename}'&gt; &lt;img src='#{itemBean.preview}' alt='#{itemBean.image.filename}' title='#{itemBean.image.filename}'&gt;&lt;/a&gt;" onclick="this.select();" escape="false"/>
 						</span>
 					</h:panelGroup>
 															
@@ -420,17 +420,17 @@
     	   
     	    	levels: [
     	    		{	
-        	    		url: '#{Navigation.fileUrl}#{itemBean.image.thumbnailImageUrl}',    	    	
+        	    		url: '#{itemBean.thumbnail}',    	    	
         	    		height: #{itemBean.thumbnailWidth},
         	    		width: #{itemBean.thumbnailWidth}
         	    	},
     	    		{	
-    	    		url: '#{Navigation.fileUrl}#{itemBean.image.webImageUrl}',    	    	
+    	    		url: '#{itemBean.preview}',    	    	
     	    		height: #{itemBean.webResolutionHeight},
     	    		width: #{itemBean.webResolutionWidth}
     	    	    },
         	    	{	
-        	    		url: '#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}',    	    	
+        	    		url: '#{itemBean.fullResolution}',    	    	
         	    		height: #{itemBean.fullResolutionHeight},
         	    		width: #{itemBean.fullResolutionWidth}
         	    	}]

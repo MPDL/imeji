@@ -20,7 +20,6 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.batch.CleanContentVOsJob;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
-import de.mpg.imeji.logic.batch.ImportFileFromEscidocToInternalStorageJob;
 import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
 import de.mpg.imeji.logic.batch.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.config.util.PropertyReader;
@@ -158,16 +157,6 @@ public class AdminBean extends SuperBean {
    */
   public void reindex() {
     Imeji.getEXECUTOR().submit(new ElasticReIndexJob());
-  }
-
-  /**
-   * Import the files in an external storage (for instance escidoc) into the internal storage
-   *
-   * @
-   */
-  public String importToInternalStorage() {
-    Imeji.getEXECUTOR().submit(new ImportFileFromEscidocToInternalStorageJob(getSessionUser()));
-    return "";
   }
 
   /**

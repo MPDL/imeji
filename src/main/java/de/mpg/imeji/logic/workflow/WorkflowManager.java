@@ -63,8 +63,6 @@ public class WorkflowManager {
    */
   public void prepareRelease(Properties p) throws NotSupportedMethodException, WorkflowException {
     workflowValidator.isReleaseAllowed(p);
-    p.setVersion(p.getVersion() + 1);
-    p.setVersionDate(DateHelper.getCurrentDate());
     p.setStatus(Status.RELEASED);
   }
 
