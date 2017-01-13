@@ -1,7 +1,6 @@
 package de.mpg.imeji.logic.share.invitation;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * An invitation sent by a user to another user for a Object with some roles. Invitation ids follow
@@ -15,7 +14,7 @@ public final class Invitation implements Serializable {
   private final String id;
   private final String inviteeEmail;
   private final String objectUri;
-  private final List<String> roles;
+  private final String role;
 
   /**
    * Create a new Invitation
@@ -25,10 +24,10 @@ public final class Invitation implements Serializable {
    * @param objectUri
    * @param roles
    */
-  public Invitation(String inviteeEmail, String objectUri, List<String> roles) {
+  public Invitation(String inviteeEmail, String objectUri, String role) {
     this.inviteeEmail = inviteeEmail;
     this.objectUri = objectUri;
-    this.roles = roles;
+    this.role = role;
     this.id = inviteeEmail + ":" + objectUri;
   }
 
@@ -47,10 +46,10 @@ public final class Invitation implements Serializable {
   }
 
   /**
-   * @return the roles
+   * @return the role
    */
-  public List<String> getRoles() {
-    return roles;
+  public String getRole() {
+    return role;
   }
 
   /**

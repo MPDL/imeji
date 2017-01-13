@@ -7,7 +7,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
@@ -17,24 +16,17 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.collection.CollectionController;
-import de.mpg.imeji.logic.controller.AlbumController;
-import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
-import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.history.HistoryUtil;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.userGroup.UserGroupsBean;
 
@@ -55,7 +47,6 @@ public class ShareBean extends SuperBean implements Serializable {
   private boolean isAdmin;
   private boolean sendEmail = false;
   private UserGroup userGroup;
-  private SharedObjectType type;
   // The url of the current share page (used for back link)
   private String pageUrl;
   @ManagedProperty("#{UserGroups}")
@@ -69,25 +60,10 @@ public class ShareBean extends SuperBean implements Serializable {
   private String collectionName;
   private Object sharedObject;
 
-  public enum SharedObjectType {
-    COLLECTION, ALBUM, ITEM
-  }
-
   @PostConstruct
   public void construct() {
     this.id = UrlHelper.getParameterValue("id");
-    this.type = SharedObjectType.valueOf(UrlHelper.getParameterValue("type").toUpperCase());
-    switch (type) {
-      case ALBUM:
-        initShareAlbum();
-        break;
-      case COLLECTION:
-        initShareCollection();
-        break;
-      case ITEM:
-        initShareItem();
-        break;
-    }
+    initShareCollection();
   }
 
   /**
@@ -120,64 +96,7 @@ public class ShareBean extends SuperBean implements Serializable {
     }
   }
 
-  /**
-   * Init {@link ShareBean} for {@link Album}
-   *
-   * @throws Exception
-   */
-  public void initShareAlbum() {
-    try {
-      this.shareTo = null;
-      this.profileUri = null;
-      this.uri = ObjectHelper.getURI(Album.class, getId());
-      final Album album = new AlbumController().retrieveLazy(uri, getSessionUser());
-      if (album != null) {
-        this.shareTo = album;
-        this.title = album.getMetadata().getTitle();
-        this.owner = album.getCreatedBy();
-        this.backUrl = getNavigation().getAlbumUrl() + album.getIdString();
-        this.sharedObject = album;
-      }
-      this.init();
-    } catch (final Exception e) {
-      LOGGER.error("Error initializing the share Album page", e);
-      BeanHelper.error("Error initializing page: " + e.getMessage());
-    }
-  }
 
-  /**
-   * Loaded when the shre component is called from the item page
-   *
-   * @return
-   * @throws Exception
-   */
-  public void initShareItem() {
-    try {
-      this.profileUri = null;
-      this.shareTo = null;
-      this.uri =
-          HistoryUtil.extractURI(PrettyContext.getCurrentInstance().getRequestURL().toString());
-      final Item item = new ItemService().retrieveLazy(uri, getSessionUser());
-      if (item != null) {
-        this.shareTo = item;
-        this.title = item.getFilename();
-        this.owner = item.getCreatedBy();
-        this.backUrl = getNavigation().getItemUrl() + item.getIdString();
-        this.shareListCollection = new ShareList(owner, item.getCollection().toString(), profileUri,
-            SharedObjectType.COLLECTION, getSessionUser(), getLocale());
-        this.collectionShareUrl = getNavigation().getCollectionUrl()
-            + ObjectHelper.getId(item.getCollection()) + "/" + Navigation.SHARE.getPath();
-        this.collectionName = new CollectionController()
-            .retrieve(item.getCollection(), getSessionUser()).getMetadata().getTitle();
-        this.sharedObject = item;
-      }
-      this.init();
-    } catch (final Exception e) {
-      LOGGER.error("Error initializing the share Item page", e);
-      BeanHelper.error("Error initializing page: " + e.getMessage());
-    }
-
-  }
 
   /**
    * Init method for {@link ShareBean}
@@ -185,11 +104,9 @@ public class ShareBean extends SuperBean implements Serializable {
    * @throws ImejiException
    */
   public void init() throws ImejiException {
-    input = new ShareInput(uri.toString(), type, profileUri, getSessionUser(), getLocale(),
-        instanceName);
-    shareList =
-        new ShareList(owner, uri.toString(), profileUri, type, getSessionUser(), getLocale());
-    isAdmin = SecurityUtil.staticAuth().administrate(getSessionUser(), shareTo);
+    input = new ShareInput(uri.toString(), getSessionUser(), getLocale(), instanceName);
+    shareList = new ShareList(owner, uri.toString(), getSessionUser(), getLocale());
+    isAdmin = SecurityUtil.authorization().administrate(getSessionUser(), shareTo);
     pageUrl = PrettyContext.getCurrentInstance().getRequestURL().toString()
         + PrettyContext.getCurrentInstance().getRequestQueryString();
     pageUrl = pageUrl.split("[&\\?]group=")[0];
@@ -252,7 +169,7 @@ public class ShareBean extends SuperBean implements Serializable {
    * @throws ImejiException
    */
   public void unshare(ShareListItem item) throws ImejiException {
-    item.getRoles().clear();
+    item.setRole(null);
     if (item.getInvitation() != null) {
       item.updateInvitation();
       shareList.getInvitations().remove(item);
@@ -291,32 +208,14 @@ public class ShareBean extends SuperBean implements Serializable {
     reloadPage();
   }
 
-  /**
-   * Unselect all roles
-   *
-   * @param sh
-   */
-  public void selectNone(ShareListItem item) {
-    item.getRoles().clear();
-  }
-
-  /**
-   * Select all roles, i.e give admin role
-   *
-   * @param item
-   */
-  public void selectAll(ShareListItem item) {
-    item.getRoles().add(ShareRoles.ADMIN.toString());
-    item.checkRoles(true);
-  }
 
   /**
    * Called when user share with a group
    */
   public void shareWithGroup() {
-    final ShareListItem groupListItem = new ShareListItem(userGroup, type, uri.toString(),
-        profileUri, null, getSessionUser(), getLocale());
-    groupListItem.setRoles(input.getMenu().getRoles());
+    final ShareListItem groupListItem =
+        new ShareListItem(userGroup, uri.toString(), null, getSessionUser(), getLocale());
+    groupListItem.setRole(input.getMenu().getRole());
     if (groupListItem.update() && sendEmail) {
       sendEmailForShare(groupListItem, title);
     }
@@ -339,29 +238,15 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   public void reloadPage() {
     try {
-      if (SecurityUtil.staticAuth().administrate(getSessionUser(), uri.toString())) {
+      if (SecurityUtil.authorization().administrate(getSessionUser(), uri.toString())) {
+        // user has still rights to share the collection
+        redirect(getNavigation().getApplicationUri() + pageUrl);
+      } else if (SecurityUtil.authorization().read(getSessionUser(), uri.toString())) {
         // user has still rights to read the collection
-        FacesContext.getCurrentInstance().getExternalContext()
-            .redirect(getNavigation().getApplicationUri() + pageUrl);
-      } else if (SecurityUtil.staticAuth().read(getSessionUser(), uri.toString())) {
-        FacesContext.getCurrentInstance().getExternalContext()
-            .redirect(getNavigation().getApplicationUri() + pageUrl.replace("share", ""));
+        redirect(getNavigation().getApplicationUri() + pageUrl.replace("share", ""));
       } else {
-        // user has not right anymore to read the collection
-        switch (type) {
-          case COLLECTION:
-            FacesContext.getCurrentInstance().getExternalContext()
-                .redirect(getNavigation().getCollectionsUrl());
-            break;
-          case ALBUM:
-            FacesContext.getCurrentInstance().getExternalContext()
-                .redirect(getNavigation().getAlbumsUrl());
-            break;
-          case ITEM:
-            FacesContext.getCurrentInstance().getExternalContext()
-                .redirect(getNavigation().getBrowseUrl());
-            break;
-        }
+        // user has no right anymore to read the collection
+        redirect(getNavigation().getCollectionsUrl());
       }
     } catch (final Exception e) {
       LOGGER.error("Error reloading page " + pageUrl, e);
@@ -396,7 +281,7 @@ public class ShareBean extends SuperBean implements Serializable {
     for (final User user : item.getUsers()) {
       final ShareEmailMessage emailMessage =
           new ShareEmailMessage(user.getPerson().getCompleteName(), title, getLinkToSharedObject(),
-              getShareToUri(), profileUri, item.getRoles(), type, getSessionUser(), getLocale());
+              getShareToUri(), profileUri, item.getRole(), getSessionUser(), getLocale());
       sendEmail(user.getEmail(), subject.replaceAll("XXX_INSTANCE_NAME_XXX", instanceName),
           emailMessage.getBody());
     }
@@ -464,15 +349,7 @@ public class ShareBean extends SuperBean implements Serializable {
   }
 
   private String getLinkToSharedObject() {
-    switch (type) {
-      case COLLECTION:
-        return getNavigation().getCollectionUrl() + ((Properties) shareTo).getIdString();
-      case ALBUM:
-        return getNavigation().getAlbumUrl() + ((Properties) shareTo).getIdString();
-      case ITEM:
-        return getNavigation().getItemUrl() + ((Properties) shareTo).getIdString();
-    }
-    return null;
+    return getNavigation().getCollectionUrl() + ((Properties) shareTo).getIdString();
   }
 
   public Object getShareTo() {
@@ -527,13 +404,6 @@ public class ShareBean extends SuperBean implements Serializable {
     this.pageUrl = pageUrl;
   }
 
-  public SharedObjectType getType() {
-    return type;
-  }
-
-  public void setType(SharedObjectType type) {
-    this.type = type;
-  }
 
   public UserGroupsBean getUserGroupsBean() {
     return userGroupsBean;

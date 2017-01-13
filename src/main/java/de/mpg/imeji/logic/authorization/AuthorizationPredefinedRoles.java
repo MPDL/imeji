@@ -26,9 +26,9 @@ public class AuthorizationPredefinedRoles {
    * @param allowedToCreateCollection
    * @return
    */
-  public static List<Grant> defaultUser(String uri) {
-    return Arrays.asList(new Grant(GrantType.CREATE, IMEJI_GLOBAL_URI),
-        new Grant(GrantType.ADMIN, uri));
+  public static List<String> defaultUser(String uri) {
+    return Arrays.asList(new Grant(GrantType.EDIT, IMEJI_GLOBAL_URI).toGrantString(),
+        new Grant(GrantType.ADMIN, uri).toGrantString());
   }
 
   /**
@@ -37,8 +37,9 @@ public class AuthorizationPredefinedRoles {
    * @param uri
    * @return
    */
-  public static List<Grant> restrictedUser(String uri) {
-    return Arrays.asList(new Grant(GrantType.ADMIN, uri));
+  public static List<String> restrictedUser(String uri) {
+    return Arrays.asList(new Grant(GrantType.READ, IMEJI_GLOBAL_URI).toGrantString(),
+        new Grant(GrantType.ADMIN, uri).toGrantString());
   }
 
   /**
@@ -46,8 +47,8 @@ public class AuthorizationPredefinedRoles {
    *
    * @return
    */
-  public static List<Grant> imejiAdministrator(String uri) {
-    return Arrays.asList(new Grant(GrantType.CREATE, IMEJI_GLOBAL_URI),
-        new Grant(GrantType.ADMIN, uri), new Grant(GrantType.ADMIN, IMEJI_GLOBAL_URI));
+  public static List<String> imejiAdministrator(String uri) {
+    return Arrays.asList(new Grant(GrantType.ADMIN, uri).toGrantString(),
+        new Grant(GrantType.ADMIN, IMEJI_GLOBAL_URI).toGrantString());
   }
 }

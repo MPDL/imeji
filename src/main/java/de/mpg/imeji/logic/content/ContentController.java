@@ -207,7 +207,7 @@ public class ContentController extends ImejiServiceAbstract {
   private ContentVO uploadFileToContentVO(File file, ContentVO contentVO, User user,
       CollectionImeji c) throws ImejiException {
     final StorageController sc = new StorageController();
-    if (!SecurityUtil.staticAuth().update(user, c)) {
+    if (!SecurityUtil.authorization().update(user, c)) {
       throw new NotAllowedError(
           "User not Allowed to upload files in collection " + c.getIdString());
     }

@@ -12,18 +12,12 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.collection.CollectionController;
-import de.mpg.imeji.logic.controller.AlbumController;
-import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
-import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
 
 /**
  * Utility class for Share implementation
@@ -39,59 +33,17 @@ public class ShareUtil {
     // private constructor
   }
 
-  /**
-   * Menu for sharing collection
-   *
-   * @return
-   */
-  public static List<SelectItem> getCollectionRoleMenu(String profileUri, User user,
-      Locale locale) {
-    final List<SelectItem> collectionRoleMenu = new ArrayList<>();
-    collectionRoleMenu.add(new SelectItem(ShareRoles.READ,
-        Imeji.RESOURCE_BUNDLE.getLabel("collection_share_read", locale)));
-    collectionRoleMenu.add(new SelectItem(ShareRoles.CREATE,
-        Imeji.RESOURCE_BUNDLE.getLabel("collection_share_image_upload", locale)));
-    collectionRoleMenu.add(new SelectItem(ShareRoles.EDIT_ITEM,
-        Imeji.RESOURCE_BUNDLE.getLabel("collection_share_image_edit", locale)));
-    collectionRoleMenu.add(new SelectItem(ShareRoles.DELETE_ITEM,
-        Imeji.RESOURCE_BUNDLE.getLabel("collection_share_image_delete", locale)));
-    collectionRoleMenu.add(new SelectItem(ShareRoles.EDIT,
-        Imeji.RESOURCE_BUNDLE.getLabel("collection_share_collection_edit", locale)));
-    final boolean profileDisabled =
-        profileUri == null || !SecurityUtil.staticAuth().administrate(user, profileUri);
-    collectionRoleMenu.add(new SelectItem(ShareRoles.EDIT_PROFILE,
-        Imeji.RESOURCE_BUNDLE.getLabel("collection_share_profile_edit", locale), "Read Only",
-        profileDisabled));
-    collectionRoleMenu.add(new SelectItem(ShareRoles.ADMIN,
-        Imeji.RESOURCE_BUNDLE.getLabel("collection_share_admin", locale)));
-    return collectionRoleMenu;
-  }
 
   /**
-   * Menu for sharing items
+   * Menu the Role Menu for sharing
    *
    * @return
    */
-  public static List<SelectItem> getItemRoleMenu(Locale locale) {
-    return Arrays.asList(new SelectItem(ShareRoles.READ,
-        Imeji.RESOURCE_BUNDLE.getLabel("collection_share_read", locale)));
-  }
-
-  /**
-   * Menu for sharing Album
-   *
-   * @return
-   */
-  public static List<SelectItem> getAlbumRoleMenu(Locale locale) {
-    final List<SelectItem> albumRoleMenu = Arrays.asList(
-        new SelectItem(ShareRoles.READ, Imeji.RESOURCE_BUNDLE.getLabel("album_share_read", locale)),
-        new SelectItem(ShareRoles.CREATE,
-            Imeji.RESOURCE_BUNDLE.getLabel("album_share_image_add", locale)),
-        new SelectItem(ShareRoles.EDIT,
-            Imeji.RESOURCE_BUNDLE.getLabel("album_share_album_edit", locale)),
-        new SelectItem(ShareRoles.ADMIN,
-            Imeji.RESOURCE_BUNDLE.getLabel("album_share_admin", locale)));
-    return albumRoleMenu;
+  public static List<SelectItem> getRoleMenu(Locale locale) {
+    return Arrays.asList(
+        new SelectItem(ShareRoles.READ, Imeji.RESOURCE_BUNDLE.getLabel("read", locale)),
+        new SelectItem(ShareRoles.EDIT, Imeji.RESOURCE_BUNDLE.getLabel("edit", locale)),
+        new SelectItem(ShareRoles.ADMIN, Imeji.RESOURCE_BUNDLE.getLabel("admin", locale)));
   }
 
   /**
@@ -103,40 +55,17 @@ public class ShareUtil {
    */
   public static List<ShareListItem> getAllRoles(User user, User sessionUser, Locale locale)
       throws ImejiException {
-    final List<String> shareToList = new ArrayList<String>();
-    for (final Grant g : user.getGrants()) {
-      if (g.getGrantFor() != null) {
-        if (!shareToList.contains(g.getGrantFor().toString())) {
-          shareToList.add(g.getGrantFor().toString());
-        }
-      }
-    }
+    final CollectionController collectionController = new CollectionController();
     final List<ShareListItem> roles = new ArrayList<ShareListItem>();
-    for (final String sharedWith : shareToList) {
+    for (final String grantString : user.getGrants()) {
       try {
-        if (sharedWith.contains("/collection/")) {
-          final CollectionImeji c =
-              new CollectionController().retrieveLazy(URI.create(sharedWith), sessionUser);
-          if (c != null) {
-            roles.add(new ShareListItem(user, SharedObjectType.COLLECTION, sharedWith,
-                c.getProfile() != null ? c.getProfile().toString() : null,
-                c.getMetadata().getTitle(), sessionUser, locale, false));
-          }
-        } else if (sharedWith.contains("/album/")) {
-          final Album a = new AlbumController().retrieveLazy(URI.create(sharedWith), sessionUser);
-          if (a != null) {
-            roles.add(new ShareListItem(user, SharedObjectType.ALBUM, sharedWith, null,
-                a.getMetadata().getTitle(), sessionUser, locale, false));
-          }
-        } else if (sharedWith.contains("/item/")) {
-          final Item it = new ItemService().retrieveLazy(URI.create(sharedWith), sessionUser);
-          if (it != null) {
-            roles.add(new ShareListItem(user, SharedObjectType.ITEM, sharedWith, null,
-                it.getFilename(), sessionUser, locale, false));
-          }
-        }
-      } catch (final Exception e) {
-        LOGGER.error("Problem by getting user roles for user " + user.getEmail(), e);
+        Grant grant = new Grant(grantString);
+        CollectionImeji col =
+            collectionController.retrieveLazy(URI.create(grant.getGrantFor()), sessionUser);
+        roles.add(new ShareListItem(user, col.getId().toString(), col.getMetadata().getTitle(),
+            sessionUser, locale, false));
+      } catch (Exception e) {
+        LOGGER.error("Error reading grants of user ", e);
       }
     }
     return roles;
@@ -150,29 +79,17 @@ public class ShareUtil {
    */
   public static List<ShareListItem> getAllRoles(UserGroup group, User sessionUser, Locale locale)
       throws ImejiException {
-    final List<String> shareToList = new ArrayList<String>();
-    for (final Grant g : group.getGrants()) {
-      if (!shareToList.contains(g.getGrantFor().toString())) {
-        shareToList.add(g.getGrantFor().toString());
-      }
-    }
+    final CollectionController collectionController = new CollectionController();
     final List<ShareListItem> roles = new ArrayList<ShareListItem>();
-    for (final String sharedWith : shareToList) {
-      if (sharedWith.contains("/collection/")) {
-        final CollectionImeji c =
-            new CollectionController().retrieveLazy(URI.create(sharedWith), sessionUser);
-        final String profileId = c.getProfile() != null ? c.getProfile().toString() : null;
-        roles.add(new ShareListItem(group, SharedObjectType.COLLECTION, sharedWith, profileId,
-            c.getMetadata().getTitle(), sessionUser, locale));
-      } else if (sharedWith.contains("/album/")) {
-        final Album a = new AlbumController().retrieveLazy(URI.create(sharedWith), sessionUser);
-        roles.add(new ShareListItem(group, SharedObjectType.ALBUM, sharedWith, null,
-            a.getMetadata().getTitle(), sessionUser, locale));
-      } else if (sharedWith.contains("/item/")) {
-        final ItemService c = new ItemService();
-        final Item it = c.retrieveLazy(URI.create(sharedWith), sessionUser);
-        roles.add(new ShareListItem(group, SharedObjectType.ITEM, sharedWith, null,
-            it.getFilename(), sessionUser, locale));
+    for (final String grantString : group.getGrants()) {
+      try {
+        Grant grant = new Grant(grantString);
+        CollectionImeji col =
+            collectionController.retrieveLazy(URI.create(grant.getGrantFor()), sessionUser);
+        roles.add(new ShareListItem(group, col.getId().toString(), col.getMetadata().getTitle(),
+            sessionUser, locale));
+      } catch (Exception e) {
+        LOGGER.error("Error reading grants of user ", e);
       }
     }
     return roles;

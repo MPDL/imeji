@@ -27,7 +27,6 @@ import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.share.ShareService;
-import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -81,6 +80,10 @@ public class UserBean extends SuperBean {
       newPassword = null;
       repeatedPassword = null;
       retrieveUser();
+      // user.getGrants()
+      // .addAll(AuthorizationPredefinedRoles.imejiAdministrator(user.getId().toString()));
+      // user = new UserService().update(user, user);
+      // retrieveUser();
       if (user != null) {
         this.roles = ShareUtil.getAllRoles(user, getSessionUser(), getLocale());
         this.setEdit(false);
@@ -185,19 +188,16 @@ public class UserBean extends SuperBean {
    */
   public void toggleAdmin() throws ImejiException {
     final ShareService shareController = new ShareService();
-    if (SecurityUtil.isSysAdmin(user)) {
-      shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(),
-          ShareService.rolesAsList(ShareRoles.CREATE));
+    if (SecurityUtil.authorization().isSysAdmin(user)) {
+      shareController.unshareSysAdmin(getSessionUser(), user);
     } else {
-      shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(),
-          ShareService.rolesAsList(ShareRoles.ADMIN));
+      shareController.shareSysAdmin(getSessionUser(), user);
     }
-
     reloadPage();
   }
 
   public boolean isSysAdmin() {
-    return SecurityUtil.isSysAdmin(user);
+    return SecurityUtil.authorization().isSysAdmin(user);
   }
 
   public boolean isUniqueAdmin() {
@@ -211,13 +211,12 @@ public class UserBean extends SuperBean {
    */
   public void toggleCreateCollection() throws ImejiException {
     final ShareService shareController = new ShareService();
-    if (!SecurityUtil.isSysAdmin(user)) {
+    if (!SecurityUtil.authorization().isSysAdmin(user)) {
       // admin can not be forbidden to create collections
-      if (SecurityUtil.isAllowedToCreateCollection(user)) {
-        shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(), null);
+      if (SecurityUtil.authorization().hasCreateCollectionGrant(user)) {
+        shareController.unshareCreateCollection(getSessionUser(), user);
       } else {
-        shareController.shareToUser(getSessionUser(), user, Imeji.PROPERTIES.getBaseURI(),
-            ShareService.rolesAsList(ShareService.ShareRoles.CREATE));
+        shareController.shareCreateCollection(getSessionUser(), user);
       }
     }
   }

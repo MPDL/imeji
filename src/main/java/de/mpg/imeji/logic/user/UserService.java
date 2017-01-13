@@ -231,7 +231,7 @@ public class UserService {
    */
   public long checkQuota(User user, File file, CollectionImeji col) throws ImejiException {
     // do not check quota for admin
-    if (SecurityUtil.isSysAdmin(user)) {
+    if (SecurityUtil.authorization().isSysAdmin(user)) {
       return -1L;
     }
     final User targetCollectionUser = user.getId().equals(col.getCreatedBy()) ? user

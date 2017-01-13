@@ -1,33 +1,11 @@
-/*
- *
- * CDDL HEADER START
- *
- * The contents of this file are subject to the terms of the Common Development and Distribution
- * License, Version 1.0 only (the "License"). You may not use this file except in compliance with
- * the License.
- *
- * You can obtain a copy of the license at license/ESCIDOC.LICENSE or http://www.escidoc.de/license.
- * See the License for the specific language governing permissions and limitations under the
- * License.
- *
- * When distributing Covered Code, include this CDDL HEADER in each file and include the License
- * file at license/ESCIDOC.LICENSE. If applicable, add the following below this CDDL HEADER, with
- * the fields enclosed by brackets "[]" replaced with your own identifying information: Portions
- * Copyright [yyyy] [name of copyright owner]
- *
- * CDDL HEADER END
- */
-/*
- * Copyright 2006-2007 Fachinformationszentrum Karlsruhe Gesellschaft für
- * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
- * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
- */
 package de.mpg.imeji.logic.authorization;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Predicate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -57,77 +35,14 @@ public class Authorization implements Serializable {
   private static final Logger LOGGER = Logger.getLogger(Authorization.class);
 
   /**
-   * True if the {@link Grant} is found in the collection
-   * 
-   * @param grants
-   * @param grant
-   * @return
-   */
-  private boolean hasGrant(Collection<Grant> grants, Grant grant) {
-    return grants.stream().anyMatch(new Predicate<Grant>() {
-      @Override
-      public boolean test(Grant t) {
-        return t.getGrantFor().equals(grant.getGrantFor())
-            && t.getGrantType().equals(grant.getGrantType());
-      }
-    });
-  }
-
-
-  /**
-   * True if the User has either Read, Edit of Admin Grant for this uri
-   * 
-   * @param grants
-   * @param uri
-   * @return
-   */
-  private boolean hasReadGrant(Collection<Grant> grants, String uri) {
-    return grants.stream().anyMatch(new Predicate<Grant>() {
-      @Override
-      public boolean test(Grant t) {
-        return t.getGrantFor().equals(uri);
-      }
-    });
-  }
-
-  /**
-   * True if the User has either Edit of Admin Grant for this uri
-   * 
-   * @param grants
-   * @param uri
-   * @return
-   */
-  private boolean hasEditGrant(Collection<Grant> grants, String uri) {
-    return grants.stream().anyMatch(new Predicate<Grant>() {
-      @Override
-      public boolean test(Grant t) {
-        return t.getGrantFor().equals(uri) && (t.getGrantType().equals(GrantType.EDIT.toString())
-            || t.getGrantType().equals(GrantType.ADMIN.toString()));
-      }
-    });
-  }
-
-  /**
-   * True if the User has Admin Grant for this uri
-   * 
-   * @param grants
-   * @param uri
-   * @return
-   */
-  private boolean hasAdminGrant(Collection<Grant> grants, String uri) {
-    return hasGrant(grants, new Grant(GrantType.ADMIN, uri));
-  }
-
-
-  /**
    * True if the {@link User} has the grant to create a collection in imeji
    * 
    * @param user
    * @return
    */
   public boolean hasCreateCollectionGrant(User user) {
-    return hasGrant(user.getGrants(),
-        new Grant(GrantType.CREATE, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI));
+    return isSysAdmin(user) || (user != null && hasGrant(user.getGrants(),
+        new Grant(GrantType.EDIT, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI)));
   }
 
   /**
@@ -137,7 +52,8 @@ public class Authorization implements Serializable {
    * @return
    */
   public boolean isSysAdmin(User user) {
-    return hasGrant(user.getGrants(),
+    // return true;
+    return user != null && hasGrant(user.getGrants(),
         new Grant(GrantType.ADMIN, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI));
   }
 
@@ -167,7 +83,7 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean read(User user, Object obj) {
-    return isPublic(obj, user) || isSysAdmin(user) || hasReadGrant(user.getGrants(), getId(obj));
+    return isPublic(obj, user) || isSysAdmin(user) || hasReadGrant(getAllGrants(user), getId(obj));
   }
 
 
@@ -180,7 +96,7 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean update(User user, Object obj) {
-    return isSysAdmin(user) || hasEditGrant(user.getGrants(), getId(obj));
+    return isSysAdmin(user) || hasEditGrant(getAllGrants(user), getId(obj));
   }
 
   /**
@@ -204,7 +120,92 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean administrate(User user, Object obj) {
-    return isSysAdmin(user) || hasAdminGrant(user.getGrants(), getId(obj));
+    return isSysAdmin(user) || hasAdminGrant(getAllGrants(user), getId(obj));
+  }
+
+  /**
+   * Transform a list of String (with the format: GrantType,GrantFor) to a list of {@link Grant}
+   * 
+   * @param grants
+   * @return
+   */
+  public Collection<Grant> toGrantList(Collection<String> grants) {
+    return grants.stream().map(s -> new Grant(GrantType.valueOf(s.split(",")[0]), s.split(",")[1]))
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * True if the {@link Grant} is found in the collection
+   * 
+   * @param grants
+   * @param grant
+   * @return
+   */
+  private boolean hasGrant(Collection<String> grants, Grant grant) {
+    return grants != null && grants.contains(grant.toGrantString());
+  }
+
+
+  /**
+   * True if the User has either Read, Edit of Admin Grant for this uri
+   * 
+   * @param grants
+   * @param uri
+   * @return
+   */
+  private boolean hasReadGrant(Collection<String> grants, String uri) {
+    return toGrantList(grants).stream().anyMatch(g -> g.getGrantFor().equals(uri));
+  }
+
+  /**
+   * True if the User has either Edit of Admin Grant for this uri
+   * 
+   * @param grants
+   * @param uri
+   * @return
+   */
+  private boolean hasEditGrant(Collection<String> grants, String uri) {
+    return toGrantList(grants).stream().anyMatch(
+        g -> g.getGrantFor().equals(uri) && (g.getGrantType().equals(GrantType.EDIT.toString())
+            || g.getGrantType().equals(GrantType.ADMIN.toString())));
+  }
+
+  /**
+   * True if the User has Admin Grant for this uri
+   * 
+   * @param grants
+   * @param uri
+   * @return
+   */
+  private boolean hasAdminGrant(Collection<String> grants, String uri) {
+    return hasGrant(grants, new Grant(GrantType.ADMIN, uri));
+  }
+
+  /**
+   * Return all {@link Grant} of {@link User} including those from the {@link UserGroup} he is
+   * member of.
+   *
+   * @param uu
+   * @return
+   */
+  public List<String> getAllGrants(User user) {
+    List<String> grants = new ArrayList<>(user.getGrants());
+    grants.addAll(getAllUserGroupGrants(user));
+    return grants;
+  }
+
+  /**
+   * Return all Grants the user have via its Usergroups
+   * 
+   * @param user
+   * @return
+   */
+  public List<String> getAllUserGroupGrants(User user) {
+    List<String> grants = new ArrayList<>();
+    for (UserGroup group : user.getGroups()) {
+      grants.addAll(group.getGrants());
+    }
+    return grants;
   }
 
 

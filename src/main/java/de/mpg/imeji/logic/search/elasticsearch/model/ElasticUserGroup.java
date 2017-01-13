@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.UserGroup;
 
@@ -30,11 +29,12 @@ public class ElasticUserGroup {
     for (final URI uri : group.getUsers()) {
       users.add(uri.toString());
     }
-    for (final Grant g : group.getGrants()) {
-      if (g.asGrantType() == GrantType.READ) {
-        this.read.add(g.getGrantFor().toString());
-      } else if (g.asGrantType() == GrantType.CREATE) {
-        this.upload.add(g.getGrantFor().toString());
+    for (final String g : group.getGrants()) {
+      final String[] grantString = g.split(",");
+      this.read.add(grantString[1]);
+      if (GrantType.valueOf(grantString[0]) == GrantType.EDIT
+          || GrantType.valueOf(grantString[0]) == GrantType.ADMIN) {
+        this.upload.add(grantString[1]);
       }
     }
   }

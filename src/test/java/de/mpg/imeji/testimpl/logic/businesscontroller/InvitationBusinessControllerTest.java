@@ -62,9 +62,9 @@ public class InvitationBusinessControllerTest extends ControllerTest {
     UserService userController = new UserService();
     userController.create(getRegisteredUser(), USER_TYPE.DEFAULT);
     User user = userController.retrieve(UNKNOWN_EMAIL, Imeji.adminUser);
-    Assert.assertTrue(SecurityUtil.staticAuth().read(user, collection));
-    Assert.assertTrue(SecurityUtil.staticAuth().update(user, collection));
-    Assert.assertTrue(SecurityUtil.staticAuth().createContent(user, collection));
+    Assert.assertTrue(SecurityUtil.authorization().read(user, collection));
+    Assert.assertTrue(SecurityUtil.authorization().update(user, collection));
+    Assert.assertTrue(SecurityUtil.authorization().createContent(user, collection));
     // Check the invitation has been deleted
     Assert.assertEquals(0, invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL).size());
   }

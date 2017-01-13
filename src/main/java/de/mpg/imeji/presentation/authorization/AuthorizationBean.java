@@ -1,27 +1,3 @@
-/*
- *
- * CDDL HEADER START
- *
- * The contents of this file are subject to the terms of the Common Development and Distribution
- * License, Version 1.0 only (the "License"). You may not use this file except in compliance with
- * the License.
- *
- * You can obtain a copy of the license at license/ESCIDOC.LICENSE or http://www.escidoc.de/license.
- * See the License for the specific language governing permissions and limitations under the
- * License.
- *
- * When distributing Covered Code, include this CDDL HEADER in each file and include the License
- * file at license/ESCIDOC.LICENSE. If applicable, add the following below this CDDL HEADER, with
- * the fields enclosed by brackets "[]" replaced with your own identifying information: Portions
- * Copyright [yyyy] [name of copyright owner]
- *
- * CDDL HEADER END
- */
-/*
- * Copyright 2006-2007 Fachinformationszentrum Karlsruhe Gesellschaft für
- * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
- * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
- */
 package de.mpg.imeji.presentation.authorization;
 
 import java.io.Serializable;
@@ -29,9 +5,7 @@ import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.Authorization;
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.collection.CollectionListItem;
@@ -53,13 +27,9 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @ViewScoped
 public class AuthorizationBean implements Serializable {
   private static final long serialVersionUID = 4905896901833448372L;
-  private final Authorization auth = new Authorization();
+  private final Authorization authorization = new Authorization();
   private User sessionUser;
 
-  /**
-     *
-     *
-     */
   public AuthorizationBean() {
     this.sessionUser = ((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getUser();
   }
@@ -72,18 +42,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean read(User user, Object obj) {
-    return auth.read(user, extractVO(obj));
-  }
-
-  /**
-   * True if the {@link User} can create the object
-   *
-   * @param user
-   * @param url
-   * @return
-   */
-  public boolean create(User user, Object obj) {
-    return auth.create(user, extractVO(obj));
+    return authorization.read(user, extractVO(obj));
   }
 
   /**
@@ -94,7 +53,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean update(User user, Object obj) {
-    return auth.update(user, extractVO(obj));
+    return authorization.update(user, extractVO(obj));
   }
 
   /**
@@ -105,7 +64,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean delete(User user, Object obj) {
-    return auth.delete(user, extractVO(obj));
+    return authorization.delete(user, extractVO(obj));
   }
 
   /**
@@ -116,41 +75,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean admin(User user, Object obj) {
-    return auth.administrate(user, extractVO(obj));
-  }
-
-  /**
-   * Return true if the user can create content in the object. For instance, upload an item in a
-   * collection, or add/remove an item to an album
-   *
-   * @param user
-   * @param url
-   * @return
-   */
-  public boolean createContent(User user, Object obj) {
-    return auth.createContent(user, extractVO(obj));
-  }
-
-  /**
-   * True if the {@link User} can update the content of the object
-   *
-   * @param user
-   * @param url
-   * @return
-   */
-  public boolean updateContent(User user, Object obj) {
-    return auth.updateContent(user, extractVO(obj));
-  }
-
-  /**
-   * True if the {@link User} can delete the content of the object
-   *
-   * @param user
-   * @param url
-   * @return
-   */
-  public boolean deleteContent(User user, Object obj) {
-    return auth.deleteContent(user, extractVO(obj));
+    return authorization.administrate(user, extractVO(obj));
   }
 
   /**
@@ -161,7 +86,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean read(Object obj) {
-    return auth.read(sessionUser, extractVO(obj));
+    return authorization.read(sessionUser, extractVO(obj));
   }
 
   /**
@@ -172,7 +97,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean create(Object obj) {
-    return auth.create(sessionUser, extractVO(obj));
+    return authorization.create(sessionUser, extractVO(obj));
   }
 
   /**
@@ -183,7 +108,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean update(Object obj) {
-    return auth.update(sessionUser, extractVO(obj));
+    return authorization.update(sessionUser, extractVO(obj));
   }
 
   /**
@@ -194,7 +119,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean delete(Object obj) {
-    return auth.delete(sessionUser, extractVO(obj));
+    return authorization.delete(sessionUser, extractVO(obj));
   }
 
   /**
@@ -205,42 +130,10 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean admin(Object obj) {
-    return auth.administrate(sessionUser, extractVO(obj));
+    return authorization.administrate(sessionUser, extractVO(obj));
   }
 
-  /**
-   * Return true if the user can create content in the object. For instance, upload an item in a
-   * collection, or add/remove an item to an album
-   *
-   * @param hasgrant
-   * @param url
-   * @return
-   */
-  public boolean createContent(Object obj) {
-    return auth.createContent(sessionUser, extractVO(obj));
-  }
 
-  /**
-   * True if the {@link User} can update the content of the object
-   *
-   * @param hasgrant
-   * @param url
-   * @return
-   */
-  public boolean updateContent(Object obj) {
-    return auth.updateContent(sessionUser, extractVO(obj));
-  }
-
-  /**
-   * True if the {@link User} can delete the content of the object
-   *
-   * @param hasgrant
-   * @param url
-   * @return
-   */
-  public boolean deleteContent(Object obj) {
-    return auth.deleteContent(sessionUser, extractVO(obj));
-  }
 
   /**
    * True if the current {@link User} in the session can administrate imeji (i.e. is system
@@ -251,7 +144,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean isSysAdmin() {
-    return auth.administrate(sessionUser, Imeji.PROPERTIES.getBaseURI());
+    return authorization.isSysAdmin(sessionUser);
   }
 
   /**
@@ -261,7 +154,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean isSysAdmin(User user) {
-    return auth.administrate(user, Imeji.PROPERTIES.getBaseURI());
+    return authorization.isSysAdmin(user);
   }
 
   /**
@@ -271,7 +164,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean isAllowedToCreateCollection(User user) {
-    return SecurityUtil.isAllowedToCreateCollection(user);
+    return authorization.hasCreateCollectionGrant(user);
   }
 
   /**

@@ -47,7 +47,8 @@ public class SPARQLEndpointServlet extends HttpServlet {
     final String model = req.getParameter("model");
     final SessionBean session =
         (SessionBean) req.getSession(false).getAttribute(SessionBean.class.getSimpleName());
-    if (!"".equals(q) && session.getUser() != null && SecurityUtil.isSysAdmin(session.getUser())) {
+    if (!"".equals(q) && session.getUser() != null
+        && SecurityUtil.authorization().isSysAdmin(session.getUser())) {
       try {
         Imeji.dataset.begin(ReadWrite.WRITE);
         final Query sparql = QueryFactory.create(q, Syntax.syntaxARQ);
@@ -69,7 +70,7 @@ public class SPARQLEndpointServlet extends HttpServlet {
     } else if (session.getUser() == null) {
       resp.sendError(HttpServletResponse.SC_FORBIDDEN,
           "imeji security: You need administration priviliges");
-    } else if (SecurityUtil.isSysAdmin(session.getUser())) {
+    } else if (SecurityUtil.authorization().isSysAdmin(session.getUser())) {
       resp.sendError(HttpServletResponse.SC_UNAUTHORIZED,
           "imeji security: You need to be signed-in");
     }

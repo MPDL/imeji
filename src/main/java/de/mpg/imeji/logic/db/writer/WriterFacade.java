@@ -44,7 +44,6 @@ import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.validation.ValidatorFactory;
 import de.mpg.imeji.logic.validation.impl.Validator;
 import de.mpg.imeji.logic.vo.Container;
-import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Space;
@@ -115,7 +114,7 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return;
     }
-    checkSecurity(objects, user, GrantType.CREATE);
+    checkSecurity(objects, user, false);
     validate(objects, Validator.Method.CREATE);
     writer.create(objects, user);
     indexer.indexBatch(objects);
@@ -131,7 +130,7 @@ public class WriterFacade {
       return;
     }
     checkWorkflowForDelete(objects);
-    checkSecurity(objects, user, GrantType.EDIT);
+    checkSecurity(objects, user, false);
     validate(objects, Validator.Method.DELETE);
     writer.delete(objects, user);
     indexer.deleteBatch(objects);
@@ -149,7 +148,7 @@ public class WriterFacade {
       return;
     }
     if (doCheckSecurity) {
-      checkSecurity(objects, user, GrantType.EDIT);
+      checkSecurity(objects, user, false);
     }
     validate(objects, Validator.Method.UPDATE);
     writer.update(objects, user);
@@ -168,7 +167,7 @@ public class WriterFacade {
       return;
     }
     throwAuthorizationException(user != null,
-        SecurityUtil.staticAuth().administrate(user, Imeji.PROPERTIES.getBaseURI()),
+        SecurityUtil.authorization().administrate(user, Imeji.PROPERTIES.getBaseURI()),
         "Only admin ca use update wihout validation");
     writer.update(objects, user);
     indexer.indexBatch(objects);
@@ -183,7 +182,7 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return;
     }
-    checkSecurity(objects, user, GrantType.EDIT);
+    checkSecurity(objects, user, false);
     validate(objects, Validator.Method.UPDATE);
     writer.updateLazy(objects, user);
     indexer.indexBatch(objects);
@@ -218,36 +217,19 @@ public class WriterFacade {
    * @throws NotAllowedError
    * @throws AuthenticationError
    */
-  private void checkSecurity(List<Object> list, User user, GrantType gt)
+  private void checkSecurity(List<Object> list, User user, boolean create)
       throws NotAllowedError, AuthenticationError {
     String message = user != null ? user.getEmail() : "";
     for (final Object o : list) {
-      message += " not allowed to " + gt.name() + " " + extractID(o);
-      if (gt == GrantType.CREATE) {
-        throwAuthorizationException(user != null, SecurityUtil.staticAuth().create(user, o),
+      message += " not allowed to " + (create ? "create " : "edit ") + extractID(o);
+      if (create) {
+        throwAuthorizationException(user != null, SecurityUtil.authorization().create(user, o),
             message);
       } else {
-        throwAuthorizationException(user != null, SecurityUtil.staticAuth().update(user, o),
+        throwAuthorizationException(user != null, SecurityUtil.authorization().update(user, o),
             message);
       }
     }
-  }
-
-  /**
-   * Check {@link Security} for WRITE operations
-   *
-   * @param list
-   * @param user
-   * @param opType
-   * @throws NotAllowedError
-   * @throws AuthenticationError
-   */
-  public void checkSecurityParentObject(List<Object> list, User user, GrantType gt)
-      throws NotAllowedError, AuthenticationError {
-    if (list.isEmpty()) {
-      return;
-    }
-    checkSecurity(list, user, gt);
   }
 
   /**

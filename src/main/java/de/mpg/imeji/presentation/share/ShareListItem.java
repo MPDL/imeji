@@ -3,7 +3,6 @@ package de.mpg.imeji.presentation.share;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -13,18 +12,14 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.share.invitation.Invitation;
 import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
 import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
-import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
  * A Item of the list of shared person
@@ -40,10 +35,8 @@ public class ShareListItem implements Serializable {
   private User user;
   private UserGroup group;
   private String shareToUri;
-  private SharedObjectType type;
-  private List<String> roles = new ArrayList<String>();
+  private String role;
   private String title;
-  private String profileUri;
   private Locale locale;
   private boolean creator = false;
 
@@ -56,12 +49,10 @@ public class ShareListItem implements Serializable {
    * @param profileUri
    * @param roles
    */
-  public ShareListItem(SharedObjectType type, String containerUri, String profileUri,
-      User currentUser, Locale locale) {
-    this.type = type;
-    this.shareToUri = containerUri;
+  public ShareListItem(String uri, User currentUser, Locale locale) {
+    this.shareToUri = uri;
     this.currentUser = currentUser;
-    init(new ArrayList<>(), containerUri, profileUri, locale);
+    init(ShareRoles.READ.name(), uri, locale);
   }
 
   /**
@@ -73,14 +64,11 @@ public class ShareListItem implements Serializable {
    * @param profileUri
    * @param roles
    */
-  public ShareListItem(Invitation invitation, SharedObjectType type, String containerUri,
-      String profileUri, User currentUser, Locale locale) {
+  public ShareListItem(Invitation invitation, String uri, User currentUser, Locale locale) {
     this.invitation = invitation;
-    this.type = type;
-    this.shareToUri = containerUri;
+    this.shareToUri = uri;
     this.currentUser = currentUser;
-    init(ShareService.transformRolesToGrants(invitation.getRoles(), containerUri,
-        currentUser), containerUri, profileUri, locale);
+    init(invitation.getRole(), uri, locale);
   }
 
   /**
@@ -92,15 +80,13 @@ public class ShareListItem implements Serializable {
    * @param profileUri
    * @param roles
    */
-  public ShareListItem(User user, SharedObjectType type, String containerUri, String profileUri,
-      String title, User currentUser, Locale locale, boolean creator) {
+  public ShareListItem(User user, String uri, String title, User currentUser, Locale locale,
+      boolean creator) {
     this.user = user;
-    this.type = type;
-    this.shareToUri = containerUri;
     this.title = title;
     this.currentUser = currentUser;
     this.creator = creator;
-    init((List<Grant>) user.getGrants(), containerUri, profileUri, locale);
+    init(ShareService.findRole(user.getGrants(), uri), uri, locale);
   }
 
   /**
@@ -112,14 +98,12 @@ public class ShareListItem implements Serializable {
    * @param profileUri
    * @param roles
    */
-  public ShareListItem(UserGroup group, SharedObjectType type, String containerUri,
-      String profileUri, String title, User currentUser, Locale locale) {
+  public ShareListItem(UserGroup group, String uri, String title, User currentUser, Locale locale) {
     this.setGroup(group);
-    this.type = type;
-    this.shareToUri = containerUri;
+    this.shareToUri = uri;
     this.title = title;
     this.currentUser = currentUser;
-    init((List<Grant>) group.getGrants(), containerUri, profileUri, locale);
+    init(ShareService.findRole(group.getGrants(), uri), uri, locale);
   }
 
   /**
@@ -129,53 +113,9 @@ public class ShareListItem implements Serializable {
    * @param uri
    * @param profileUri
    */
-  private void init(List<Grant> grants, String uri, String profileUri, Locale locale) {
-    roles = ShareService.transformGrantsToRoles(grants, uri, profileUri);
-    this.profileUri = profileUri;
+  private void init(String role, String uri, Locale locale) {
+    this.role = role;
     this.locale = locale;
-    // checkRoles(true);
-  }
-
-  /**
-   * Used to trigger the checkroles process
-   */
-  public void checkRoles() {
-    // do nothing
-  }
-
-  /**
-   * According to the selected roles, add necessary roles (called from page as well)
-   */
-  public void checkRoles(boolean add) {
-    if (add) {
-      if (roles.contains(ShareRoles.ADMIN.toString())) {
-        if (type == SharedObjectType.COLLECTION) {
-          roles = new ArrayList<>(
-              Arrays.asList(ShareRoles.READ.toString(), ShareRoles.CREATE.toString(),
-                  ShareRoles.EDIT_ITEM.toString(), ShareRoles.DELETE_ITEM.toString(),
-                  ShareRoles.EDIT.toString(), ShareRoles.ADMIN.toString()));
-          if (SecurityUtil.staticAuth().administrate(currentUser, profileUri)) {
-            roles.add(ShareRoles.EDIT_PROFILE.toString());
-          }
-        } else if (type == SharedObjectType.ALBUM) {
-          roles = new ArrayList<>(
-              Arrays.asList(ShareRoles.READ.toString(), ShareRoles.CREATE.toString(),
-                  ShareRoles.EDIT.toString(), ShareRoles.ADMIN.toString()));
-        }
-      }
-      if (!roles.isEmpty() && !roles.contains(ShareRoles.READ.toString())) {
-        addReadRole();
-      }
-    } else {
-      roles.remove(ShareRoles.ADMIN.toString());
-      if (!roles.contains(ShareRoles.READ.toString())) {
-        roles.clear();
-      }
-    }
-  }
-
-  public void addReadRole() {
-    roles.add(ShareRoles.READ.toString());
   }
 
   /**
@@ -186,26 +126,16 @@ public class ShareListItem implements Serializable {
    */
   public boolean update() {
     final ShareService sbc = new ShareService();
-    List<String> rolesBeforeUpdate = new ArrayList<>();
-    List<String> rolesAfterUpdate = new ArrayList<>();
+    String roleBefore = null;
     try {
       if (user != null) {
-        rolesBeforeUpdate = ShareService
-            .transformGrantsToRoles((List<Grant>) user.getGrants(), shareToUri, profileUri);
-        sbc.shareToUser(currentUser, user, shareToUri, roles);
-        if (roles.contains(ShareRoles.EDIT_PROFILE.toString()) && profileUri != null) {
-          // sbc.shareToUser(currentUser, user, profileUri, roles);
-        }
-        rolesAfterUpdate = ShareService
-            .transformGrantsToRoles((List<Grant>) user.getGrants(), shareToUri, profileUri);
+        roleBefore = ShareService.findRole(user.getGrants(), shareToUri);
+        sbc.shareToUser(currentUser, user, shareToUri, role);
       } else if (group != null) {
-        rolesBeforeUpdate = ShareService
-            .transformGrantsToRoles((List<Grant>) group.getGrants(), shareToUri, profileUri);
-        sbc.shareToGroup(currentUser, group, shareToUri, roles);
-        rolesAfterUpdate = ShareService
-            .transformGrantsToRoles((List<Grant>) group.getGrants(), shareToUri, profileUri);
+        roleBefore = ShareService.findRole(group.getGrants(), shareToUri);
+        sbc.shareToGroup(currentUser, group, shareToUri, role);
       }
-      return !ListUtils.equalsIgnoreOrder(rolesBeforeUpdate, rolesAfterUpdate);
+      return !role.equals(roleBefore);
     } catch (final ImejiException e) {
       LOGGER.error("Error updating grants: ", e);
       BeanHelper.error("Error during sharing: " + e.getMessage());
@@ -220,13 +150,13 @@ public class ShareListItem implements Serializable {
    */
   public void updateInvitation() throws ImejiException {
     if (invitation != null) {
-      final InvitationBusinessController invitationBC = new InvitationBusinessController();
-      if (roles.isEmpty()) {
-        invitationBC.cancel(invitation.getId());
+      final InvitationBusinessController invitationService = new InvitationBusinessController();
+      if (role == null) {
+        invitationService.cancel(invitation.getId());
       } else {
         final Invitation newInvitation =
-            new Invitation(invitation.getInviteeEmail(), invitation.getObjectUri(), roles);
-        invitationBC.invite(newInvitation);
+            new Invitation(invitation.getInviteeEmail(), invitation.getObjectUri(), role);
+        invitationService.invite(newInvitation);
       }
     }
   }
@@ -235,7 +165,7 @@ public class ShareListItem implements Serializable {
    * Revoke all grants for the current object. Called from the user page
    */
   public String revokeGrants() {
-    roles.clear();
+    role = null;
     update();
     return "";
   }
@@ -264,14 +194,9 @@ public class ShareListItem implements Serializable {
   }
 
   public List<SelectItem> getRolesMenu() {
-    if (type == SharedObjectType.COLLECTION) {
-      return ShareUtil.getCollectionRoleMenu(profileUri, currentUser, locale);
-    }
-    if (type == SharedObjectType.ALBUM) {
-      return ShareUtil.getAlbumRoleMenu(locale);
-    }
-    return ShareUtil.getItemRoleMenu(locale);
+    return ShareUtil.getRoleMenu(locale);
   }
+
 
   /**
    * @return the group
@@ -301,23 +226,6 @@ public class ShareListItem implements Serializable {
     this.shareToUri = shareToUri;
   }
 
-  /**
-   * @return the type
-   */
-  public SharedObjectType getType() {
-    return type;
-  }
-
-  public String getTypeLabel() {
-    return Imeji.RESOURCE_BUNDLE.getLabel(type.name().toLowerCase(), locale);
-  }
-
-  /**
-   * @param type the type to set
-   */
-  public void setType(SharedObjectType type) {
-    this.type = type;
-  }
 
   /**
    * @return the title
@@ -345,17 +253,23 @@ public class ShareListItem implements Serializable {
     return invitation;
   }
 
-  public List<String> getRoles() {
-    return roles;
-  }
-
-  public void setRoles(List<String> roles) {
-    final boolean add = roles.size() >= this.roles.size();
-    this.roles = roles;
-    checkRoles(add);
-  }
-
   public boolean isCreator() {
     return creator;
   }
+
+  /**
+   * @return the role
+   */
+  public String getRole() {
+    return role;
+  }
+
+  /**
+   * @param role the role to set
+   */
+  public void setRole(String role) {
+    this.role = role;
+  }
+
+
 }

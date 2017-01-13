@@ -2,7 +2,6 @@ package de.mpg.imeji.logic.search.elasticsearch.factory;
 
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,6 +14,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.hp.hpl.jena.util.iterator.Filter;
 
+import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -38,7 +38,6 @@ import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
  * Factory to create an ElasticSearch query from the {@link SearchQuery}
@@ -200,12 +199,12 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder buildSecurityQuery(User user, String folderUri) {
     if (user != null) {
-      if (SearchUtils.isSysAdmin(user)) {
+      if (SecurityUtil.authorization().isSysAdmin(user)) {
         // Admin: can view everything
         return QueryBuilders.matchAllQuery();
       } else {
         // normal user
-        return buildGrantQuery(getAllGrants(user), null);
+        return buildGrantQuery(user, null);
       }
     }
     return QueryBuilders.matchAllQuery();
@@ -238,14 +237,16 @@ public class ElasticQueryFactory {
    * @param grants
    * @return
    */
-  private static QueryBuilder buildGrantQuery(Collection<Grant> grants, GrantType grantType) {
+  private static QueryBuilder buildGrantQuery(User user, GrantType grantType) {
+    Collection<Grant> grants =
+        SecurityUtil.authorization().toGrantList(SecurityUtil.authorization().getAllGrants(user));
     final BoolQueryBuilder q = QueryBuilders.boolQuery();
     // Add query for all release objects
     if (grantType == null) {
       q.should(
           fieldQuery(ElasticFields.STATUS, Status.RELEASED.name(), SearchOperators.EQUALS, false));
     }
-    // if granttype is null, set it to READ
+    // if grantType is null, set it to READ
     grantType = grantType == null ? GrantType.READ : grantType;
     // Add query for each read grant
     for (final Grant g : grants) {
@@ -361,17 +362,17 @@ public class ElasticQueryFactory {
         return filetypeQuery;
       case grant:
         // same as grant_type
-        final GrantType grant = pair.getValue().equals("upload") ? GrantType.CREATE
+        final GrantType grant = pair.getValue().equals("upload") ? GrantType.EDIT
             : GrantType.valueOf(pair.getValue().toUpperCase());
-        return buildGrantQuery(getAllGrants(user), grant);
+        return buildGrantQuery(user, grant);
       case grant_for:
         // not indexed
         break;
       case grant_type:
         // same as grant
-        final GrantType grantType = pair.getValue().equals("upload") ? GrantType.CREATE
+        final GrantType grantType = pair.getValue().equals("upload") ? GrantType.EDIT
             : GrantType.valueOf(pair.getValue().toUpperCase());
-        return buildGrantQuery(user.getGrants(), grantType);
+        return buildGrantQuery(user, grantType);
       case member:
         return fieldQuery(ElasticFields.MEMBER, pair.getValue(), pair.getOperator(), pair.isNot());
       case label:
@@ -773,21 +774,6 @@ public class ElasticQueryFactory {
   private static boolean isFolderUri(String uri) {
     return uri.contains("/collection/") ? true : false;
   }
-
-  /**
-   * Return all Grants (included user group grants) of the user
-   *
-   * @param user
-   * @return
-   */
-  private static List<Grant> getAllGrants(User user) {
-    final List<Grant> grants = new ArrayList<>(user.getGrants());
-    for (final UserGroup group : user.getGroups()) {
-      grants.addAll(group.getGrants());
-    }
-    return grants;
-  }
-
 
   /**
    * Create the query for role="email". Role can be uploader, collaborator. Objects where the user

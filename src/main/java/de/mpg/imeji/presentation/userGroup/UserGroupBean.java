@@ -128,7 +128,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @throws IOException
    */
   public void revokeGrants(ShareListItem sh) throws IOException {
-    sh.getRoles().clear();
+    sh.setRole(null);
     sh.update();
     reload();
   }

@@ -16,7 +16,6 @@ import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.share.ShareBean.SharedObjectType;
 
 /**
  * The Input for Share Page
@@ -33,8 +32,6 @@ public class ShareInput implements Serializable {
   private List<String> invalidEntries = new ArrayList<>();
   private List<String> unknownEmails = new ArrayList<>();
   private final String objectUri;
-  private final String profileUri;
-  private final SharedObjectType type;
   private final Locale locale;
   private final User user;
   private final String instanceName;
@@ -44,16 +41,12 @@ public class ShareInput implements Serializable {
    *
    * @param objectUri
    */
-  public ShareInput(String objectUri, SharedObjectType type, String profileUri, User user,
-      Locale locale, String instanceName) {
+  public ShareInput(String objectUri, User user, Locale locale, String instanceName) {
     this.objectUri = objectUri;
-    this.type = type;
-    this.profileUri = profileUri;
     this.user = user;
     this.locale = locale;
     this.instanceName = instanceName;
-    this.menu = new ShareListItem(type, objectUri, profileUri, user, locale);
-    menu.addReadRole();
+    this.menu = new ShareListItem(objectUri, user, locale);
   }
 
   /**
@@ -76,7 +69,7 @@ public class ShareInput implements Serializable {
     final EmailService emailService = new EmailService();
     for (final String invitee : unknownEmails) {
       try {
-        invitationBC.invite(new Invitation(invitee, objectUri, menu.getRoles()));
+        invitationBC.invite(new Invitation(invitee, objectUri, menu.getRole()));
         emailService.sendMail(invitee, null, getInvitationEmailSubject(),
             getInvitationEmailBody(invitee));
       } catch (final ImejiException e) {
@@ -143,9 +136,9 @@ public class ShareInput implements Serializable {
   private List<ShareListItem> toShareListItem(List<String> emails) {
     final List<ShareListItem> listItems = new ArrayList<ShareListItem>();
     for (final String email : emails) {
-      final ShareListItem item = new ShareListItem(retrieveUser(email), type, objectUri, profileUri,
-          null, user, locale, false);
-      item.setRoles(menu.getRoles());
+      final ShareListItem item =
+          new ShareListItem(retrieveUser(email), objectUri, null, user, locale, false);
+      item.setRole(menu.getRole());
       listItems.add(item);
     }
     return listItems;

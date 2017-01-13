@@ -114,7 +114,7 @@ public class ReaderFacade implements Reader {
    */
   private void checkSecurity(List<Object> list, User user) throws ImejiException {
     for (int i = 0; i < list.size(); i++) {
-      if (!SecurityUtil.staticAuth().read(user, list.get(i))) {
+      if (!SecurityUtil.authorization().read(user, list.get(i))) {
         final String id = J2JHelper.getId(list.get(i)).toString();
         String email = "Not logged in";
         if (user != null) {

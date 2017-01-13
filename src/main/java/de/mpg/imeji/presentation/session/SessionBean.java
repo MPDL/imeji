@@ -227,8 +227,8 @@ public class SessionBean implements Serializable {
    * @return
    */
   public Album getActiveAlbum() {
-    if (activeAlbum != null && (!SecurityUtil.staticAuth().read(getUser(), activeAlbum.getId())
-        || !SecurityUtil.staticAuth().create(getUser(), activeAlbum.getId()))) {
+    if (activeAlbum != null && (!SecurityUtil.authorization().read(getUser(), activeAlbum.getId())
+        || !SecurityUtil.authorization().create(getUser(), activeAlbum.getId()))) {
       setActiveAlbum(null);
     }
     return activeAlbum;
@@ -455,7 +455,7 @@ public class SessionBean implements Serializable {
    * @throws IOException
    */
   private void logoutFromSpot() {
-    if (getUser() != null && !SecurityUtil.isSysAdmin(user)) {
+    if (getUser() != null && !SecurityUtil.authorization().isSysAdmin(user)) {
       setUser(null);
     }
   }
@@ -489,19 +489,16 @@ public class SessionBean implements Serializable {
    * Check and set isHasUploadRights
    */
   public void checkIfHasUploadRights() {
-    if (SecurityUtil.isAllowedToCreateCollection(user)) {
-      hasUploadRights = true;
-      return;
-    }
-    final List<String> collectionUris =
-        new CollectionController().search(null, null, -1, 0, user, spaceId).getResults();
-    for (final String uri : collectionUris) {
-      if (SecurityUtil.staticAuth().createContent(user, uri)) {
-        hasUploadRights = true;
-        return;
-      }
-    }
     hasUploadRights = false;
+    if (SecurityUtil.authorization().hasCreateCollectionGrant(user)) {
+      hasUploadRights = true;
+    } else {
+      // Replace by a query by grant "update"
+      final List<String> collectionUris =
+          new CollectionController().search(null, null, -1, 0, user, spaceId).getResults();
+      hasUploadRights =
+          collectionUris.stream().anyMatch(uri -> SecurityUtil.authorization().update(user, uri));
+    }
   }
 
   /**

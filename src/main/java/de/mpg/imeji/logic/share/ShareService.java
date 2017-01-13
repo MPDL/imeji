@@ -4,7 +4,9 @@
 package de.mpg.imeji.logic.share;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -13,12 +15,10 @@ import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
-import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Grant;
+import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 
@@ -39,8 +39,61 @@ public class ShareService {
    *
    */
   public enum ShareRoles {
-    READ, CREATE, EDIT_ITEM, DELETE_ITEM, EDIT, ADMIN, EDIT_PROFILE;
+    READ, EDIT, ADMIN;
   }
+
+
+  /**
+   * Makes user Sysadmin
+   * 
+   * @param fromUser
+   * @param toUser
+   * @throws ImejiException
+   */
+  public void shareSysAdmin(User fromUser, User toUser) throws ImejiException {
+    checkSecurity(fromUser, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
+    addGrant(toUser, new Grant(GrantType.ADMIN, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI),
+        AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
+  }
+
+  /**
+   * Revoke Sysadmin grant
+   * 
+   * @param fromUser
+   * @param toUser
+   * @throws ImejiException
+   */
+  public void unshareSysAdmin(User fromUser, User toUser) throws ImejiException {
+    shareCreateCollection(fromUser, toUser);
+  }
+
+
+  /**
+   * Makes user Sysadmin
+   * 
+   * @param fromUser
+   * @param toUser
+   * @throws ImejiException
+   */
+  public void shareCreateCollection(User fromUser, User toUser) throws ImejiException {
+    checkSecurity(fromUser, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
+    addGrant(toUser, new Grant(GrantType.EDIT, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI),
+        AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
+  }
+
+  /**
+   * Revoke Sysadmin grant
+   * 
+   * @param fromUser
+   * @param toUser
+   * @throws ImejiException
+   */
+  public void unshareCreateCollection(User fromUser, User toUser) throws ImejiException {
+    checkSecurity(fromUser, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
+    addGrant(toUser, new Grant(GrantType.READ, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI),
+        AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
+  }
+
 
   /**
    * Share an object (Item, Collection, Album) to a {@link User}
@@ -52,11 +105,11 @@ public class ShareService {
    * @param roles - The roles given to the shared user
    * @throws ImejiException
    */
-  public User shareToUser(User fromUser, User toUser, String sharedObjectUri, List<String> roles)
+  public User shareToUser(User fromUser, User toUser, String sharedObjectUri, String role)
       throws ImejiException {
     if (toUser != null) {
-      final List<Grant> grants = transformRolesToGrants(roles, sharedObjectUri, fromUser);
-      toUser = shareGrantsToUser(fromUser, toUser, sharedObjectUri, grants);
+      final Grant grant = toGrant(role, sharedObjectUri);
+      toUser = addGrantToUser(fromUser, toUser, sharedObjectUri, grant);
     }
     return toUser;
   }
@@ -67,15 +120,14 @@ public class ShareService {
    * @param fromUser - The User sharing the object
    * @param toGroup - The group the object is shared to
    * @param sharedObjectUri - The uri of the shared object
-   * @param profileUri - (only for collections) the uri of the profile of the collection
-   * @param roles - The roles given to the shared user
+   * @param role - The roles given to the shared user
    * @throws ImejiException
    */
-  public void shareToGroup(User fromUser, UserGroup toGroup, String sharedObjectUri,
-      List<String> roles) throws ImejiException {
+  public void shareToGroup(User fromUser, UserGroup toGroup, String sharedObjectUri, String role)
+      throws ImejiException {
     if (toGroup != null) {
-      final List<Grant> grants = transformRolesToGrants(roles, sharedObjectUri, fromUser);
-      shareGrantsToGroup(fromUser, toGroup, sharedObjectUri, grants);
+      final Grant grant = toGrant(role, sharedObjectUri);
+      shareGrantsToGroup(fromUser, toGroup, sharedObjectUri, grant);
     }
   }
 
@@ -85,16 +137,14 @@ public class ShareService {
    * @param fromUser - The User sharing the object
    * @param toUser - The user the object is shared to
    * @param sharedObjectUri - The uri of the shared object
-   * @param profileUri - (only for collections) the uri of the profile of the collection
-   * @param grants - The grants given to the shared user
+   * @param grant - The grants given to the shared user
    * @throws ImejiException
    */
-  private User shareGrantsToUser(User fromUser, User toUser, String sharedObjectUri,
-      List<Grant> grants) throws ImejiException {
+  private User addGrantToUser(User fromUser, User toUser, String sharedObjectUri, Grant grant)
+      throws ImejiException {
     if (toUser != null) {
-      checkSecurity(fromUser, grants);
-      toUser = removeGrants(toUser, sharedObjectUri);
-      addGrants(toUser, fromUser, grants);
+      checkSecurity(fromUser, sharedObjectUri);
+      toUser = addGrant(toUser, grant, sharedObjectUri);
     }
     return toUser;
   }
@@ -110,61 +160,14 @@ public class ShareService {
    * @throws ImejiException
    */
   private void shareGrantsToGroup(User fromUser, UserGroup toGroup, String sharedObjectUri,
-      List<Grant> grants) throws ImejiException {
+      Grant grant) throws ImejiException {
     if (toGroup != null) {
-      checkSecurity(fromUser, grants);
-      toGroup = removeGrants(toGroup, sharedObjectUri);
-      addGrants(Imeji.adminUser, toGroup, grants);
+      checkSecurity(fromUser, sharedObjectUri);
+      addGrant(toGroup, grant, sharedObjectUri);
     }
   }
 
-  /**
-   * Transform a list of {@link ShareRoles} into a list of {@link Grant}
-   *
-   * @param roles
-   * @param uri
-   * @param profileUri
-   * @return
-   */
-  public static List<Grant> transformRolesToGrants(List<String> roles, String uri, User user) {
-    final List<Grant> grants = new ArrayList<Grant>();
-    if (roles == null) {
-      return grants;
-    }
-    final String profileUri = getProfileUri(uri);
-    final boolean isProfileAdmin = SecurityUtil.staticAuth().administrate(user, profileUri);
-    if (profileUri != null && isProfileAdmin) {
-      // Only for sharing collection
-      grants.addAll(AuthorizationPredefinedRoles.read(profileUri));
-    }
-    for (final String g : roles) {
-      switch (ShareRoles.valueOf(g)) {
-        case READ:
-          grants.addAll(AuthorizationPredefinedRoles.read(uri));
-          break;
-        case CREATE:
-          grants.addAll(AuthorizationPredefinedRoles.upload(uri));
-          break;
-        case EDIT_ITEM:
-          grants.addAll(AuthorizationPredefinedRoles.editContent(uri));
-          break;
-        case DELETE_ITEM:
-          grants.addAll(AuthorizationPredefinedRoles.delete(uri));
-          break;
-        case EDIT:
-          grants.addAll(AuthorizationPredefinedRoles.edit(uri));
-          break;
-        case ADMIN:
-          grants.addAll(AuthorizationPredefinedRoles.admin(uri));
-          break;
-        case EDIT_PROFILE:
-          if (profileUri != null && isProfileAdmin) {
-            grants.addAll(AuthorizationPredefinedRoles.edit(profileUri));
-          }
-      }
-    }
-    return grants;
-  }
+
 
   /**
    * TRansform a list of Roles into a {@link List} of {@link String}
@@ -189,31 +192,47 @@ public class ShareService {
    * @param type
    * @return
    */
-  public static List<String> transformGrantsToRoles(List<Grant> grants, String uri,
-      String profileUri) {
-    final List<String> l = new ArrayList<>();
-    if (hasReadGrants(grants, uri)) {
-      l.add(ShareRoles.READ.toString());
+  public static ShareRoles transformGrantToRole(Grant g) {
+    switch (GrantType.valueOf(g.getGrantType())) {
+      case READ:
+        return ShareRoles.READ;
+      case EDIT:
+        return ShareRoles.READ;
+      case ADMIN:
+        return ShareRoles.READ;
     }
-    if (hasUploadGrants(grants, uri)) {
-      l.add(ShareRoles.CREATE.toString());
+    return null;
+  }
+
+  /**
+   * Transform a Role to a {@link Grant}
+   * 
+   * @param role
+   * @param grantFor
+   * @return
+   */
+  public static Grant toGrant(String role, String grantFor) {
+    switch (ShareRoles.valueOf(role)) {
+      case READ:
+        return new Grant(GrantType.READ, grantFor);
+      case EDIT:
+        return new Grant(GrantType.EDIT, grantFor);
+      case ADMIN:
+        return new Grant(GrantType.ADMIN, grantFor);
     }
-    if (hasEditItemGrants(grants, uri)) {
-      l.add(ShareRoles.EDIT_ITEM.toString());
-    }
-    if (hasDeleteItemGrants(grants, uri)) {
-      l.add(ShareRoles.DELETE_ITEM.toString());
-    }
-    if (hasEditGrants(grants, uri)) {
-      l.add(ShareRoles.EDIT.toString());
-    }
-    if (hasAdminGrants(grants, uri)) {
-      l.add(ShareRoles.ADMIN.toString());
-    }
-    if (profileUri != null && hasEditGrants(grants, profileUri)) {
-      l.add(ShareRoles.EDIT_PROFILE.toString());
-    }
-    return l;
+    return null;
+  }
+
+  /**
+   * Find the Role for this id from the list
+   * 
+   * @param grants
+   * @param id
+   * @return
+   */
+  public static String findRole(Collection<String> grants, String id) {
+    ShareRoles role = ShareService.transformGrantToRole(SecurityUtil.getGrantForObject(grants, id));
+    return role != null ? role.name() : null;
   }
 
   /**
@@ -223,10 +242,9 @@ public class ShareService {
    * @param g
    * @throws ImejiException
    */
-  private User addGrants(User toUser, User fromUser, List<Grant> grants) throws ImejiException {
-    toUser.getGrants().addAll(grants);
+  private User addGrant(User toUser, Grant grant, String uri) throws ImejiException {
+    toUser.setGrants(addGrant(toUser.getGrants(), grant, uri));
     return new UserService().update(toUser, Imeji.adminUser);
-
   }
 
   /**
@@ -239,35 +257,25 @@ public class ShareService {
    *
    * @throws ImejiException
    */
-  private void addGrants(User fromUser, UserGroup toGroup, List<Grant> grants)
-      throws ImejiException {
-    toGroup.getGrants().addAll(grants);
-    new UserGroupService().update(toGroup, Imeji.adminUser);
-  }
-
-  private User removeGrants(User toUser, String uri) throws ImejiException {
-    toUser.setGrants(removeGrantsOfObject((List<Grant>) toUser.getGrants(), uri));
-    return new UserService().update(toUser, Imeji.adminUser);
-  }
-
-  private UserGroup removeGrants(UserGroup toGroup, String uri) throws ImejiException {
-    toGroup.setGrants(removeGrantsOfObject((List<Grant>) toGroup.getGrants(), uri));
+  private UserGroup addGrant(UserGroup toGroup, Grant grant, String uri) throws ImejiException {
+    toGroup.setGrants(addGrant(toGroup.getGrants(), grant, uri));
     return new UserGroupService().update(toGroup, Imeji.adminUser);
   }
 
   /**
-   * Remove all Grant with grantfor = uri
-   *
+   * Add a grant to a list of grant if the grant is not null. All grants with the same grantFor with
+   * be removed
+   * 
    * @param grants
+   * @param grant
    * @param uri
    * @return
    */
-  private List<Grant> removeGrantsOfObject(List<Grant> grants, String uri) {
-    final List<Grant> l = new ArrayList<>();
-    for (final Grant g : grants) {
-      if (!g.getGrantFor().toString().equals(uri)) {
-        l.add(g);
-      }
+  private List<String> addGrant(Collection<String> grants, Grant grant, String uri) {
+    // Remove the grant for this id
+    List<String> l = grants.stream().filter(g -> !g.endsWith(uri)).collect(Collectors.toList());
+    if (grant != null) {
+      l.add(grant.toGrantString());
     }
     return l;
   }
@@ -280,88 +288,10 @@ public class ShareService {
    * @return
    * @throws NotAllowedError
    */
-  private void checkSecurity(User user, List<Grant> grants) throws NotAllowedError {
-    boolean allowed = true;
-    for (final Grant g : grants) {
-      switch (ObjectHelper.getObjectType(g.getGrantFor())) {
-        case ITEM:
-          final List<String> c = ImejiSPARQL
-              .exec(JenaCustomQueries.selectCollectionIdOfItem(g.getGrantFor().toString()), null);
-          if (!c.isEmpty()) {
-            allowed = SecurityUtil.staticAuth().administrate(user, c.get(0));
-          }
-          break;
-        default:
-          allowed = SecurityUtil.staticAuth().administrate(user, g.getGrantFor());
-          break;
-      }
-      if (!allowed) {
-        throw new NotAllowedError(user.getEmail() + " not allowed to share " + g.getGrantFor());
-      }
+  private void checkSecurity(User user, String uri) throws NotAllowedError {
+    boolean allowed = SecurityUtil.authorization().administrate(user, uri);
+    if (!allowed) {
+      throw new NotAllowedError(user.getEmail() + " not allowed to share " + uri);
     }
-  }
-
-  private static boolean hasReadGrants(List<Grant> userGrants, String uri) {
-    final List<Grant> grants = AuthorizationPredefinedRoles.read(uri);
-    return !grantNotExist(userGrants, grants);
-  }
-
-  private static boolean hasUploadGrants(List<Grant> userGrants, String uri) {
-    final List<Grant> grants = AuthorizationPredefinedRoles.upload(uri);
-    return !grantNotExist(userGrants, grants);
-  }
-
-  private static boolean hasEditItemGrants(List<Grant> userGrants, String uri) {
-    final List<Grant> grants = AuthorizationPredefinedRoles.editContent(uri);
-    return !grantNotExist(userGrants, grants);
-  }
-
-  private static boolean hasDeleteItemGrants(List<Grant> userGrants, String uri) {
-    final List<Grant> grants = AuthorizationPredefinedRoles.delete(uri);
-    return !grantNotExist(userGrants, grants);
-  }
-
-  private static boolean hasEditGrants(List<Grant> userGrants, String uri) {
-    final List<Grant> grants = AuthorizationPredefinedRoles.edit(uri);
-    return !grantNotExist(userGrants, grants);
-  }
-
-  private static boolean hasAdminGrants(List<Grant> userGrants, String uri) {
-    final List<Grant> grants = AuthorizationPredefinedRoles.admin(uri);
-    return !grantNotExist(userGrants, grants);
-  }
-
-  /**
-   * True if ???
-   *
-   * @param userGrants
-   * @param grantList
-   * @return
-   */
-  private static boolean grantNotExist(List<Grant> userGrants, List<Grant> grantList) {
-    boolean b = false;
-    for (final Grant g : grantList) {
-      if (!userGrants.contains(g)) {
-        b = true;
-      }
-    }
-    return b;
-  }
-
-  /**
-   * Find the profile of a collection
-   *
-   * @param collectionUri
-   * @return
-   */
-  private static String getProfileUri(String collectionUri) {
-    if (collectionUri.contains("/collection/")) {
-      final List<String> r =
-          ImejiSPARQL.exec(JenaCustomQueries.selectProfileIdOfCollection(collectionUri), null);
-      if (!r.isEmpty()) {
-        return r.get(0);
-      }
-    }
-    return null;
   }
 }

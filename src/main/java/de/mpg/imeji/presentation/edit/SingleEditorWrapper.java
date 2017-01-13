@@ -108,7 +108,7 @@ public class SingleEditorWrapper implements Serializable {
    * @return
    */
   public String showEditor() {
-    if (SecurityUtil.staticAuth().updateContent(sessionUser, item)) {
+    if (SecurityUtil.authorization().update(sessionUser, item.getCollection())) {
       this.toggleState = "editMd";
       try {
         Locks.lock(new Lock(item.getId().toString(), sessionUser.getEmail()));

@@ -53,7 +53,7 @@ public class UserGroup implements Serializable {
   @j2jLiteral("http://xmlns.com/foaf/0.1/name")
   private String name;
   @j2jLazyList("http://imeji.org/terms/grant")
-  private Collection<Grant> grants = new ArrayList<Grant>();
+  private Collection<String> grants = new ArrayList<String>();
   @j2jList("http://xmlns.com/foaf/0.1/member")
   private Collection<URI> users = new ArrayList<URI>();
 
@@ -74,14 +74,14 @@ public class UserGroup implements Serializable {
   /**
    * @return the grants
    */
-  public Collection<Grant> getGrants() {
+  public Collection<String> getGrants() {
     return grants;
   }
 
   /**
    * @param grants the grants to set
    */
-  public void setGrants(Collection<Grant> grants) {
+  public void setGrants(Collection<String> grants) {
     this.grants = grants;
   }
 

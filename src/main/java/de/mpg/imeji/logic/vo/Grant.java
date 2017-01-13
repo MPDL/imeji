@@ -6,9 +6,7 @@ package de.mpg.imeji.logic.vo;
 import java.io.Serializable;
 import java.net.URI;
 
-import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jResource;
-import de.mpg.imeji.logic.util.IdentifierUtil;
 
 /**
  * Grant of one {@link GrantType} for one {@link User} used for imeji authorization
@@ -17,8 +15,6 @@ import de.mpg.imeji.logic.util.IdentifierUtil;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-@j2jResource("http://imeji.org/terms/grant")
-@j2jId(getMethod = "getId", setMethod = "setId")
 public class Grant implements Serializable {
   private static final long serialVersionUID = -6318969286926194883L;
 
@@ -30,14 +26,13 @@ public class Grant implements Serializable {
    * @version $Revision$ $LastChangedDate$
    */
   public enum GrantType {
-    CREATE, READ, EDIT, ADMIN;
+    READ, EDIT, ADMIN;
   }
 
   @j2jResource("http://imeji.org/terms/grantType")
   private String grantType;
   @j2jResource("http://imeji.org/terms/grantFor")
   private String grantFor;
-  private URI id;
 
   /**
    * Constructor: no ids is created with this constructor
@@ -52,9 +47,19 @@ public class Grant implements Serializable {
    * @param gf
    */
   public Grant(GrantType grantType, String grantFor) {
-    id = IdentifierUtil.newURI(Grant.class);
     this.grantType = grantType.name();
     this.grantFor = grantFor;
+  }
+
+  /**
+   * Create a Grant with a String with the format: GrantType,GrantFor
+   * 
+   * @param grantString
+   */
+  public Grant(String grantString) {
+    String[] s = grantString.split(",");
+    this.grantType = s[0];
+    this.grantFor = s[1];
   }
 
   /**
@@ -69,6 +74,15 @@ public class Grant implements Serializable {
     return null;
   }
 
+  /**
+   * Return a {@link Grant} serialized as s String
+   * 
+   * @return
+   */
+  public String toGrantString() {
+    return grantType + "," + grantFor;
+  }
+
   /*
    * (non-Javadoc)
    *
@@ -81,14 +95,6 @@ public class Grant implements Serializable {
           && grantType.equals(((Grant) obj).getGrantType());
     }
     return false;
-  }
-
-  public void setId(URI id) {
-    this.id = id;
-  }
-
-  public URI getId() {
-    return id;
   }
 
   /**

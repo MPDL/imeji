@@ -169,6 +169,8 @@ public class ImejiInitializer {
       Imeji.adminUser.setEncryptedPassword(StringHelper.convertToMD5(Imeji.ADMIN_PASSWORD_INIT));
       Imeji.adminUser.getGrants().addAll(
           AuthorizationPredefinedRoles.imejiAdministrator(Imeji.adminUser.getId().toString()));
+      System.out.println("+++++++++++++++++++++++ GRANTS " + Imeji.adminUser.getGrants().size()
+          + " - " + Imeji.adminUser.getGrants());
       Imeji.adminUser
           .setApiKey(APIKeyAuthentication.generateKey(Imeji.adminUser.getId(), Integer.MAX_VALUE));
       // create

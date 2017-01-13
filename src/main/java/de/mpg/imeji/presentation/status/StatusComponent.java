@@ -11,10 +11,10 @@ import javax.faces.component.UINamingContainer;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Item;
@@ -83,10 +83,10 @@ public class StatusComponent extends UINamingContainer {
     reset();
     if (properties != null) {
       status = properties.getStatus();
-      if (SecurityUtil.staticAuth().hasReadGrant(sessionUser, properties)) {
+      if (SecurityUtil.authorization().read(sessionUser, properties)) {
         users = getUserSharedWith(properties);
         groups = getGroupSharedWith(properties);
-        showManage = SecurityUtil.staticAuth().administrate(sessionUser, properties);
+        showManage = SecurityUtil.authorization().administrate(sessionUser, properties);
       }
       linkToSharePage = initLinkToSharePage(properties.getId());
       show = true;

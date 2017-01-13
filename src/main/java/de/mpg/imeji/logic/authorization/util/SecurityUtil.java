@@ -24,7 +24,9 @@
  */
 package de.mpg.imeji.logic.authorization.util;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import de.mpg.imeji.logic.authorization.Authorization;
@@ -32,7 +34,6 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
  * Utility class for the package auth
@@ -49,7 +50,7 @@ public class SecurityUtil {
    *
    * @return
    */
-  public static Authorization staticAuth() {
+  public static Authorization authorization() {
     return authorization;
   }
 
@@ -61,8 +62,9 @@ public class SecurityUtil {
    * @return
    */
   public static List<String> getListOfAllowedCollections(User user) {
-    return user.getGrants().stream().filter(g -> g.getGrantFor().contains("/collection/"))
-        .map(Grant::getGrantFor).collect(Collectors.toList());
+    return authorization().toGrantList(authorization().getAllGrants(user)).stream()
+        .filter(g -> g.getGrantFor().contains("/collection/")).map(Grant::getGrantFor)
+        .collect(Collectors.toList());
   }
 
 
@@ -73,20 +75,24 @@ public class SecurityUtil {
    * @return
    */
   public static List<String> getListOfAllowedAlbums(User user) {
-    return user.getGrants().stream().filter(g -> g.getGrantFor().contains("/album/"))
-        .map(Grant::getGrantFor).collect(Collectors.toList());
+    return authorization().toGrantList(authorization().getAllGrants(user)).stream()
+        .filter(g -> g.getGrantFor().contains("/album/")).map(Grant::getGrantFor)
+        .collect(Collectors.toList());
   }
 
   /**
-   * Return all {@link Grant} of {@link User} including those from the {@link UserGroup} he is
-   * member of.
-   *
-   * @param u
+   * Return the Grant for the object id. If no grant found, return null
+   * 
+   * @param grants
+   * @param id
    * @return
    */
-  public static List<Grant> getAllGrantsOfUser(User user) {
-    return user.getGrants().stream()
-        .filter(g -> g.getGrantFor().contains("/user/") || g.getGrantFor().contains("/userGroup/"))
-        .collect(Collectors.toList());
+  public static Grant getGrantForObject(Collection<String> grants, String id) {
+    try {
+      return grants.stream().filter(s -> s.split(",")[1].equals(id)).map(s -> new Grant(s))
+          .findFirst().get();
+    } catch (NoSuchElementException e) {
+      return null;
+    }
   }
 }

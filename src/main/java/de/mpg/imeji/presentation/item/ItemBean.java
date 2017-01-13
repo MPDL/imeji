@@ -25,7 +25,6 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.collection.CollectionController;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.content.ContentController;
@@ -198,13 +197,7 @@ public class ItemBean extends SuperBean {
   public void initViewMetadataTab() throws ImejiException {
     if (item != null) {
       this.discardComment = null;
-      User user = getSessionUser();
-      if (SecurityUtil.canReadItemButNotCollection(user, item)) {
-        // User has right to read the item, but not collection and the
-        // profile
-        user = Imeji.adminUser;
-      }
-      loadCollection(user);
+      loadCollection(getSessionUser());
       metadataLabels = new MetadataLabels(item, getLocale());
       edit = new SingleEditorWrapper(item, getSessionUser(), getLocale());
     }

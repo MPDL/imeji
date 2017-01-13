@@ -74,7 +74,7 @@ public abstract class ImejiServiceAbstract {
    * @throws ImejiException
    */
   protected void updateCreatorGrants(User user, String uri) throws ImejiException {
-    user.getGrants().add(new Grant(GrantType.ADMIN, uri));
+    user.getGrants().add(new Grant(GrantType.ADMIN, uri).toGrantString());
     new UserController().update(user);
   }
 

@@ -17,15 +17,14 @@ import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.config.ImejiLicenses;
+import de.mpg.imeji.logic.share.ShareService;
+import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
-import de.mpg.imeji.logic.user.UserController;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
-import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties;
@@ -74,8 +73,7 @@ public abstract class ImejiController {
    * @throws ImejiException
    */
   protected void updateCreatorGrants(User user, String uri) throws ImejiException {
-    user.getGrants().add(new Grant(GrantType.ADMIN, uri));
-    new UserController().update(user);
+    new ShareService().shareToUser(Imeji.adminUser, user, uri, ShareRoles.ADMIN.toString());
   }
 
   /**
