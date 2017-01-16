@@ -5,10 +5,9 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.content.ContentController;
 import de.mpg.imeji.logic.controller.AlbumController;
-import de.mpg.imeji.logic.controller.SpaceController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
@@ -44,7 +43,6 @@ public class ElasticReIndexJob implements Callable<Integer> {
       reindexItems(index);
       reindexContents(index);
       reindexFolders(index);
-      reindexSpaces(index);
       ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
       // IMPORTANT: Albums must be reindex after Items
       LOGGER.info("Reindex done!");
@@ -72,7 +70,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void reindexFolders(String index) throws ImejiException {
-    final CollectionController c = new CollectionController();
+    final CollectionService c = new CollectionService();
     c.reindex(index);
   }
 
@@ -105,17 +103,6 @@ public class ElasticReIndexJob implements Callable<Integer> {
    */
   private void reindexContents(String index) throws ImejiException {
     new ContentController().reindex(index);
-  }
-
-  /**
-   * Reindex all {@link Item} stored in the database
-   *
-   * @throws ImejiException
-   *
-   */
-  private void reindexSpaces(String index) throws ImejiException {
-    final SpaceController controller = new SpaceController();
-    controller.reindex(index);
   }
 
   /**

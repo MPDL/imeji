@@ -201,6 +201,8 @@ public class J2JHelper {
       return f.getAnnotation(j2jLazyLiteral.class).value();
     } else if (isList(f)) {
       return getListNamespace(f);
+    } else if (isLazyList(f)) {
+      return getLazyListNamespace(f);
     } else {
       return null;
     }

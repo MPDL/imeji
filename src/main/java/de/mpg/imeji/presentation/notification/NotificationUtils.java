@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.export.format.Export;
 import de.mpg.imeji.logic.export.format.ZIPExport;
 import de.mpg.imeji.logic.share.email.EmailMessages;
@@ -36,7 +36,7 @@ public class NotificationUtils {
   private static EmailMessages msgs = new EmailMessages();
   private static final EmailService emailClient = new EmailService();
   private static UserService uc = new UserService();
-  private static CollectionController cc = new CollectionController();
+  private static CollectionService cc = new CollectionService();
 
   /**
    * Send email notifications to all users which checked "Send notification email by item download"

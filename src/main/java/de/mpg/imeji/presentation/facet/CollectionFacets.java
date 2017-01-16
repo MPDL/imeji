@@ -15,10 +15,10 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
@@ -99,7 +99,7 @@ public class CollectionFacets extends FacetsAbstract {
       }
 
     }
-    final SearchResult res = ic.search(colURI, sq, null, user, null, -1, 0);
+    final SearchResult res = ic.search(colURI, sq, null, user, -1, 0);
     for (final String record : res.getResults()) {
       if (collectionImages.contains(record)) {
         counter++;

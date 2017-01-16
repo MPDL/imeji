@@ -3,8 +3,6 @@
  */
 package de.mpg.imeji.presentation.beans;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
@@ -12,8 +10,6 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Defines the page names and Path for imeji. All changes here must be synchronized with
@@ -55,8 +51,6 @@ public class Navigation implements Serializable {
   public static final Page REGISTRATION = new Page("Registration", "register");
   public static final Page IMPRINT = new Page("IMPRINT", "imprint");
   public static final Page TERMS_OF_USE = new Page("Terms of use", "terms_of_use");
-  public static final String spaceCommonSlug = "space/";
-  public static final String spacesAllSlug = "spaces";
 
 
   /**
@@ -80,10 +74,6 @@ public class Navigation implements Serializable {
     return applicationUrl;
   }
 
-  public String getApplicationSpaceUrl() {
-    return applicationUrl + getSpacePath();
-  }
-
   public String getApplicationUri() {
     return applicationUrl.substring(0, applicationUrl.length() - 1);
   }
@@ -97,92 +87,83 @@ public class Navigation implements Serializable {
   }
 
   public String getHomeUrl() {
-    // TODO NB.15.04. Change this String
-    if (!"".equals(getSpacePath())) {
-      return applicationUrl + getSpacePath();
-    }
     return getApplicationUri();
   }
 
   public String getBrowseUrl() {
-    return applicationUrl + getSpacePath() + BROWSE.getPath();
+    return applicationUrl + BROWSE.getPath();
   }
 
   public String getItemUrl() {
-    return applicationUrl + getSpacePath() + ITEM.getPath() + "/";
+    return applicationUrl + ITEM.getPath() + "/";
   }
 
   public String getCollectionUrl() {
-    return applicationUrl + getSpacePath() + COLLECTION.getPath() + "/";
+    return applicationUrl + COLLECTION.getPath() + "/";
   }
 
   public String getAlbumUrl() {
-    return applicationUrl + getSpacePath() + ALBUM.getPath() + "/";
+    return applicationUrl + ALBUM.getPath() + "/";
   }
 
   public String getProfileUrl() {
-    return applicationUrl + getSpacePath() + PROFILE.getPath() + "/";
+    return applicationUrl + PROFILE.getPath() + "/";
   }
 
   public String getAlbumsUrl() {
-    return applicationUrl + getSpacePath() + ALBUMS.getPath();
+    return applicationUrl + ALBUMS.getPath();
   }
 
   public String getCollectionsUrl() {
-    return applicationUrl + getSpacePath() + COLLECTIONS.getPath();
-  }
-
-  public String getSpacesUrl() {
-    // No need to getSpacePath() Space Path HERE
-    return applicationUrl + "spaces";
+    return applicationUrl + COLLECTIONS.getPath();
   }
 
   public String getImprintUrl() {
-    return applicationUrl + getSpacePath() + IMPRINT.getPath();
+    return applicationUrl + IMPRINT.getPath();
   }
 
   public String getSingleUploadUrl() {
-    return applicationUrl + getSpacePath() + SINGLEUPLOAD.getPath();
+    return applicationUrl + SINGLEUPLOAD.getPath();
   }
 
   public String getCreateCollectionUrl() {
-    return applicationUrl + getSpacePath() + CREATE.getPath() + COLLECTION.getPath();
+    return applicationUrl + CREATE.getPath() + COLLECTION.getPath();
   }
 
   public String getCreateAlbumUrl() {
-    return applicationUrl + getSpacePath() + CREATE.getPath() + ALBUM.getPath();
+    return applicationUrl + CREATE.getPath() + ALBUM.getPath();
   }
 
   public String getSearchUrl() {
-    return applicationUrl + getSpacePath() + SEARCH.getPath();
+    return applicationUrl + SEARCH.getPath();
   }
 
   public String getHelpUrl() {
-    return applicationUrl + getSpacePath() + HELP.getPath();
+    return applicationUrl + HELP.getPath();
   }
 
   public String getExportUrl() {
-    return applicationUrl + getSpacePath() + EXPORT.getPath();
+    return applicationUrl + EXPORT.getPath();
   }
 
   public String getShareUrl() {
-    return applicationUrl + getSpacePath() + SHARE.getPath();
+    return applicationUrl + SHARE.getPath();
   }
 
   public String getUserUrl() {
-    return applicationUrl + getSpacePath() + USER.getPath();
+    return applicationUrl + USER.getPath();
   }
 
   public String getUsersUrl() {
-    return applicationUrl + getSpacePath() + USERS.getPath();
+    return applicationUrl + USERS.getPath();
   }
 
   public String getAdminUrl() {
-    return applicationUrl + getSpacePath() + ADMIN.getPath();
+    return applicationUrl + ADMIN.getPath();
   }
 
   public String getRegistrationUrl() {
-    return applicationUrl + getSpacePath() + REGISTRATION.getPath();
+    return applicationUrl + REGISTRATION.getPath();
   }
 
   public String getAutocompleteUrl() {
@@ -222,15 +203,6 @@ public class Navigation implements Serializable {
 
   public String getUploadPath() {
     return UPLOAD.path;
-  }
-
-  public String getSpacePath() {
-    if (!(isNullOrEmpty(
-        ((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getSpaceId()))) {
-      return spaceCommonSlug + StringHelper
-          .normalizeURI(((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getSpaceId());
-    }
-    return "";
   }
 
   public String getInternalStorageBase() {

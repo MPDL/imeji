@@ -115,13 +115,13 @@ public final class ImageUtils {
 
   /**
    * Rotates an image and overrides the old image with the rotated version
-   * 
+   *
    * @param file The file to be rotated
    * @param degrees the number of degrees to be rotated to the right. Must be a multiple of 90
    */
   public static void rotate(File file, int degrees) {
     try {
-      BufferedImage img = ImageIO.read(file);
+      final BufferedImage img = ImageIO.read(file);
       BufferedImage res = null;
       switch (degrees % 360) {
         case 0:
@@ -141,14 +141,14 @@ public final class ImageUtils {
       ImageIO.write(res, "jpg", file);
 
       System.out.println("Done rotating");
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.info("Image could not be rotated: ", e);
     }
   }
 
 
   private static BufferedImage rotateBy90Degrees(BufferedImage src) {
-    BufferedImage result = new BufferedImage(src.getHeight(), src.getWidth(), src.getType());
+    final BufferedImage result = new BufferedImage(src.getHeight(), src.getWidth(), src.getType());
     for (int x = 0; x < result.getWidth(); x++) {
       for (int y = 0; y < result.getHeight(); y++) {
         result.setRGB(x, y, src.getRGB(y, result.getWidth() - x - 1));
@@ -158,7 +158,7 @@ public final class ImageUtils {
   }
 
   private static BufferedImage rotateBy270Degrees(BufferedImage src) {
-    BufferedImage result = new BufferedImage(src.getHeight(), src.getWidth(), src.getType());
+    final BufferedImage result = new BufferedImage(src.getHeight(), src.getWidth(), src.getType());
     for (int x = 0; x < result.getWidth(); x++) {
       for (int y = 0; y < result.getHeight(); y++) {
         result.setRGB(x, y, src.getRGB(result.getHeight() - y - 1, x));
@@ -168,7 +168,7 @@ public final class ImageUtils {
   }
 
   private static BufferedImage rotateBy180Degrees(BufferedImage src) {
-    BufferedImage result = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
+    final BufferedImage result = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
     for (int x = 0; x < result.getWidth(); x++) {
       for (int y = 0; y < result.getHeight(); y++) {
         result.setRGB(x, y, src.getRGB(result.getWidth() - x - 1, result.getHeight() - y - 1));
@@ -184,7 +184,7 @@ public final class ImageUtils {
       }
       final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
       if (readers.hasNext()) {
-        ImageReader reader = readers.next();
+        final ImageReader reader = readers.next();
         try {
           reader.setInput(in);
           return reader.getWidth(0);
@@ -192,7 +192,7 @@ public final class ImageUtils {
           reader.dispose();
         }
       }
-    } catch (IOException e) {
+    } catch (final IOException e) {
       e.printStackTrace();
     }
     return 0;
@@ -205,7 +205,7 @@ public final class ImageUtils {
       }
       final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
       if (readers.hasNext()) {
-        ImageReader reader = readers.next();
+        final ImageReader reader = readers.next();
         try {
           reader.setInput(in);
           return reader.getHeight(0);
@@ -213,7 +213,7 @@ public final class ImageUtils {
           reader.dispose();
         }
       }
-    } catch (IOException e) {
+    } catch (final IOException e) {
       e.printStackTrace();
     }
     return 0;

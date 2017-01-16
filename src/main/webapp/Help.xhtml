@@ -1,17 +1,21 @@
-<ui:composition template="templates/template_site.xhtml" 
+<ui:composition template="templates/template_site.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core" >
-	
-	<ui:param name="headline" value=""/>
-	
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<ui:param name="headline" value="" />
+
 	<ui:define name="mainContent">
 		<h:panelGroup layout="block" id="imj_ajaxWrapper" class="imj_helpPage">
-			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{InternationalizationBean.locale.language == 'en'}"/>
-			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{InternationalizationBean.locale.language == 'de'}"/>
-			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{InternationalizationBean.locale.language == 'ja'}"/>
-			<h:outputText escape="false" value="#{StaticContent.helpContent}" rendered="#{InternationalizationBean.locale.language == 'es'}"/>
+			<h:outputText escape="false" value="#{StaticContent.helpContent}"
+				rendered="#{InternationalizationBean.locale.language == 'en'}" />
+			<h:outputText escape="false" value="#{StaticContent.helpContent}"
+				rendered="#{InternationalizationBean.locale.language == 'de'}" />
+			<h:outputText escape="false" value="#{StaticContent.helpContent}"
+				rendered="#{InternationalizationBean.locale.language == 'ja'}" />
+			<h:outputText escape="false" value="#{StaticContent.helpContent}"
+				rendered="#{InternationalizationBean.locale.language == 'es'}" />
 		</h:panelGroup>
 	</ui:define>
 </ui:composition>

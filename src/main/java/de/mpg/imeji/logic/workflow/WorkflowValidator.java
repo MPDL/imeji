@@ -48,7 +48,7 @@ public class WorkflowValidator implements Serializable {
   /**
    * DOI can be created if: <br/>
    * *imeji is not in private mode *Status is released
-   * 
+   *
    * @param p
    * @throws WorkflowException
    */

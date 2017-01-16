@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -31,7 +31,6 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 @ManagedBean(name = "EditCollectionBean")
 @ViewScoped
@@ -49,7 +48,7 @@ public class EditCollectionBean extends CollectionBean {
     getProfileSelect();
     if (getId() != null) {
       try {
-        setCollection(new CollectionController()
+        setCollection(new CollectionService()
             .retrieve(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
         setSendEmailNotification(getSessionUser().getObservedCollections().contains(getId()));
         final LinkedList<Person> persons = new LinkedList<Person>();
@@ -88,7 +87,7 @@ public class EditCollectionBean extends CollectionBean {
    */
   public boolean saveEditedCollection() {
     try {
-      final CollectionController collectionController = new CollectionController();
+      final CollectionService collectionController = new CollectionService();
       final User user = getSessionUser();
       collectionController.update(getCollection(), user);
       final UserService uc = new UserService();
@@ -131,7 +130,7 @@ public class EditCollectionBean extends CollectionBean {
 
   @Override
   protected String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:editCollection", getSelectedSpaceString());
+    return "pretty:editCollection";
   }
 
   /**

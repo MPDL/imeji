@@ -19,7 +19,6 @@ import de.mpg.imeji.logic.vo.Person;
 public class ElasticContainerProperties extends ElasticProperties {
   private final String name;
   private final String description;
-  private final String space;
   private final List<String> pid;
   private final List<ElasticPerson> author = new ArrayList<>();
   private final List<ElasticContainerAdditionalInfo> info = new ArrayList<>();
@@ -33,7 +32,6 @@ public class ElasticContainerProperties extends ElasticProperties {
     super(c);
     this.name = c.getMetadata().getTitle();
     this.description = c.getMetadata().getDescription();
-    this.space = c instanceof CollectionImeji ? c.getDoi() : null;
     this.pid = c.getDoi() != null ? Arrays.asList(c.getDoi()) : new ArrayList<String>();
     for (final Person p : c.getMetadata().getPersons()) {
       author.add(new ElasticPerson(p));
@@ -63,13 +61,6 @@ public class ElasticContainerProperties extends ElasticProperties {
 
   public List<ElasticPerson> getAuthor() {
     return author;
-  }
-
-  /**
-   * @return the space
-   */
-  public String getSpace() {
-    return space;
   }
 
   public List<String> getPid() {

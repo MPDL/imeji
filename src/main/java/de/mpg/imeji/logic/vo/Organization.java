@@ -51,6 +51,11 @@ public class Organization implements Cloneable, Serializable {
     this.identifier = ObjectHelper.getId(id);
   }
 
+  public Organization(String name) {
+    this();
+    this.name = name;
+  }
+
   @XmlElement(name = "title", namespace = "http://purl.org/dc/terms/")
   public String getName() {
     return name;

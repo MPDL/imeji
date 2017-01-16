@@ -97,7 +97,7 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
 
   /**
    * Filter all statements which are already set into one column
-   * 
+   *
    * @return
    */
   public List<SelectItem> getFilteredStatementMenu() {
@@ -107,7 +107,7 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
 
   /**
    * Add the Metadata defined in the column to all cell of this column
-   * 
+   *
    * @param column
    */
   public void addMetadataToAll(SelectStatementWithInputComponent column) {
@@ -117,7 +117,7 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
 
   /**
    * Add the Metadata defined in the column to all cell of this column
-   * 
+   *
    * @param column
    */
   public void addMetadataToColumn(int index) {
@@ -129,7 +129,7 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
 
   /**
    * Remove all metadata of one column
-   * 
+   *
    * @param column
    */
   public void clearColumn(int index) {
@@ -151,7 +151,7 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
 
   /**
    * Remove a column from the table
-   * 
+   *
    * @param index
    */
   public void removeColumn(String index) {

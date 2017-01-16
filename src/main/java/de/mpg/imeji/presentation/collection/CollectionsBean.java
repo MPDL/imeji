@@ -14,13 +14,12 @@ import javax.faces.bean.ViewScoped;
 import com.hp.hpl.jena.sparql.pfunction.library.container;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.presentation.beans.SuperContainerBean;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
@@ -54,17 +53,16 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
 
   @Override
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:collections", getSpaceId());
+    return "pretty:collections";
   }
 
   @Override
   public List<CollectionListItem> retrieveList(int offset, int limit) throws Exception {
-    final CollectionController controller = new CollectionController();
+    final CollectionService controller = new CollectionService();
     Collection<CollectionImeji> collections = new ArrayList<CollectionImeji>();
     search(offset, limit);
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
-    collections =
-        controller.retrieveBatchLazy(searchResult.getResults(), -1, offset, getSessionUser());
+    collections = controller.retrieve(searchResult.getResults(), getSessionUser());
     return ListUtils.collectionListToListItem(collections, getSessionUser());
   }
 
@@ -119,9 +117,8 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
-    final CollectionController controller = new CollectionController();
-    return controller.search(searchQuery, sortCriterion, limit, offset, getSessionUser(),
-        getSelectedSpaceString());
+    final CollectionService controller = new CollectionService();
+    return controller.search(searchQuery, sortCriterion, getSessionUser(), limit, offset);
   }
 
   public String getTypeLabel() {

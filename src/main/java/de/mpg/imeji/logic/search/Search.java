@@ -47,7 +47,7 @@ public interface Search {
    * @version $Revision$ $LastChangedDate$
    */
   public static enum SearchObjectTypes {
-    ITEM, COLLECTION, ALBUM, SPACE, PROFILE, USER, USERGROUPS, ALL, CONTENT, STATEMENT;
+    ITEM, COLLECTION, ALBUM, PROFILE, USER, USERGROUPS, ALL, CONTENT, STATEMENT;
   }
 
   /**
@@ -62,7 +62,7 @@ public interface Search {
    * @return
    */
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
-      String spaceId, int offset, int size);
+      int offset, int size);
 
   /**
    * Get the {@link SearchIndexer} for this {@link Search} implementation
@@ -78,11 +78,10 @@ public interface Search {
    * @param sortCri
    * @param user
    * @param uris
-   * @param spaceId
    * @return
    */
-  public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, List<String> uris,
-      String spaceId);
+  public SearchResult search(SearchQuery query, SortCriterion sortCri, User user,
+      List<String> uris);
 
   /**
    * Search with a Simple {@link String}

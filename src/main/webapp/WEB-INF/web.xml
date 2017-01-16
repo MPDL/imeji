@@ -247,7 +247,7 @@
         <session-timeout>180</session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>Welcome.xhtml</welcome-file>
+        <welcome-file>StartPage.xhtml</welcome-file>
     </welcome-file-list>
     <error-page>
         <error-code>404</error-code>

@@ -96,7 +96,7 @@
 								</h:outputLink>
 							</li>
 							</ui:fragment>
-							<ui:fragment rendered="#{cc.attrs.metadataNavigationURL.contains('collection') and Auth.createContent(cc.attrs.item) and cc.attrs.item.status != 'WITHDRAWN'}">
+							<ui:fragment rendered="#{cc.attrs.metadataNavigationURL.contains('collection') and Auth.update(cc.attrs.item) and cc.attrs.item.status != 'WITHDRAWN'}">
 								<li>
 									<h:outputLink id="lnkUploadImages" value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}/#{Navigation.uploadPath}?init=1">
 										<h:outputText value="#{lbl.upload_images}"/>
@@ -106,7 +106,7 @@
 
 							<ui:fragment rendered="#{cc.attrs.isActivatable == 'yes'}">
 								<li style="float:right">
-									<ui:fragment rendered="#{Auth.createContent(cc.attrs.item)}">				
+									<ui:fragment rendered="#{Auth.update(cc.attrs.item)}">				
 										<h:commandButton id="btnActivate" value="#{lbl.make_active}" action="#{SessionBean.activateAlbum(cc.attrs.item.album.id)}" styleClass="imj_submitButton" rendered="#{!cc.attrs.item.active and cc.attrs.item.status!='WITHDRAWN'}">
 											<f:ajax/>
 										</h:commandButton>
@@ -114,7 +114,7 @@
 											<f:ajax/>
 										</h:commandButton>
 									</ui:fragment>
-									<ui:fragment rendered="#{!Auth.createContent(cc.attrs.item) and !cc.attrs.item.active}">
+									<ui:fragment rendered="#{!Auth.update(cc.attrs.item) and !cc.attrs.item.active}">
 										<h:outputText value="#{lbl.only_view_allowed}"/>
 									</ui:fragment>
 								</li>

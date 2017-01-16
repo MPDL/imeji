@@ -139,7 +139,7 @@ public class UserService {
   public User retrieve(String email, User user) throws ImejiException {
     final SearchQuery query = new SearchQuery();
     query.addPair(new SearchPair(SearchFields.email, SearchOperators.EQUALS, email, false));
-    final SearchResult result = search.search(query, null, Imeji.adminUser, null, null, 0, 1);
+    final SearchResult result = search.search(query, null, Imeji.adminUser, null, 0, 1);
     if (result.getNumberOfRecords() == 1) {
       return controller.retrieve(URI.create(result.getResults().get(0)), user);
     }
@@ -269,7 +269,7 @@ public class UserService {
     try {
       return retrieveBatchLazy(search.search(SearchQueryParser.parseStringQuery(name),
           new SortCriterion(SearchFields.person_family, SortOrder.ASCENDING), Imeji.adminUser, null,
-          null, 0, -1).getResults(), -1);
+          0, -1).getResults(), -1);
     } catch (final UnprocessableError e) {
       LOGGER.error("Error search users", e);
     }
@@ -288,7 +288,7 @@ public class UserService {
    * @return
    */
   public SearchResult search(SearchQuery q, SortCriterion sort, User user, int offset, int size) {
-    return search.search(q, sort, user, null, null, offset, size);
+    return search.search(q, sort, user, null, offset, size);
   }
 
   /**
@@ -303,8 +303,8 @@ public class UserService {
    */
   public List<User> searchAndRetrieve(SearchQuery q, SortCriterion sort, User user, int offset,
       int size) {
-    return (List<User>) retrieveBatch(
-        search.search(q, sort, user, null, null, offset, size).getResults(), size);
+    return (List<User>) retrieveBatch(search.search(q, sort, user, null, offset, size).getResults(),
+        size);
   }
 
   /**
@@ -319,8 +319,7 @@ public class UserService {
    */
   public List<User> searchAndRetrieveLazy(SearchQuery q, SortCriterion sort, User user, int offset,
       int size) {
-    return retrieveBatchLazy(search.search(q, sort, user, null, null, offset, size).getResults(),
-        size);
+    return retrieveBatchLazy(search.search(q, sort, user, null, offset, size).getResults(), size);
   }
 
 

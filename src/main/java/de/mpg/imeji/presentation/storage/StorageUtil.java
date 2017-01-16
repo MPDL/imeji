@@ -1,9 +1,8 @@
 package de.mpg.imeji.presentation.storage;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.controller.AlbumController;
-import de.mpg.imeji.logic.controller.SpaceController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -30,10 +29,6 @@ public class StorageUtil {
    * @return
    */
   public static boolean isAllowedToViewFile(String fileUrl, User user) {
-    if (StorageUtil.isSpaceUrl(fileUrl)) {
-      // For space Logos do not check any security (spaces are always public)
-      return true;
-    }
     return StorageUtil.isAllowedToViewItemOfFile(fileUrl, user)
         || isAllowedToViewCollectionOfFile(fileUrl, user)
         || isAllowedToViewAlbumOfFile(fileUrl, user);
@@ -66,7 +61,7 @@ public class StorageUtil {
   private static boolean isAllowedToViewCollectionOfFile(String fileUrl, User user) {
     try {
       final String collectionId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
-      new CollectionController().retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId),
+      new CollectionService().retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId),
           user);
       return true;
     } catch (final Exception e) {
@@ -91,16 +86,4 @@ public class StorageUtil {
       return false;
     }
   }
-
-  /**
-   * True if the file is the logo of a space
-   *
-   * @param url
-   * @return
-   */
-  public static boolean isSpaceUrl(String url) {
-    return new SpaceController().isSpaceLogoURL(url);
-  }
-
-
 }

@@ -1,47 +1,56 @@
-<ui:composition template="templates/sub_template/template_metadata_mediaContainer.xhtml" 
-	xmlns="http://www.w3.org/1999/xhtml" 
-	xmlns:ui="http://java.sun.com/jsf/facelets" 
-	xmlns:h="http://java.sun.com/jsf/html" 
+<ui:composition
+	template="templates/sub_template/template_metadata_mediaContainer.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
-	
-	<ui:param name="currentMainMenu" value="album"/>
-	
-	<ui:param name="metadataView" value="yes"/>
-	
-	<ui:param name="containerHeadline" value="#{lbl.album_information}"/>
-	<ui:param name="metadataBean" value="#{AlbumBean}"/>
-	<ui:param name="metadataContextBean" value="#{metadataBean.album}"/>
+
+	<ui:param name="currentMainMenu" value="album" />
+
+	<ui:param name="metadataView" value="yes" />
+
+	<ui:param name="containerHeadline" value="#{lbl.album_information}" />
+	<ui:param name="metadataBean" value="#{AlbumBean}" />
+	<ui:param name="metadataContextBean" value="#{metadataBean.album}" />
 	<!--  <ui:param name="metadataBean" value="#{itemContextBean.metadata}"/> -->
-	<ui:param name="navigationContextURL" value="#{Navigation.albumUrl}"/>
-	<ui:param name="headline" value="#{metadataBean.title}"/>
-	<ui:param name="imejiResource" value="#{AlbumBean.album}"/>
-	
-	
+	<ui:param name="navigationContextURL" value="#{Navigation.albumUrl}" />
+	<ui:param name="headline" value="#{metadataBean.title}" />
+	<ui:param name="imejiResource" value="#{AlbumBean.album}" />
+
+
 	<ui:define name="actionsMenu">
 		<ui:fragment rendered="#{Auth.read(metadataBean.album)}">
-			<menu:context_subNavigation contextId="#{metadataBean.id}" 
-									contextUrl="#{Navigation.albumUrl}" 
-									curMainMenu="#{currentMainMenu}" 
-									userHasAdminRights="#{Auth.sysAdmin}" 
-									userHasUploadRights="#{Auth.createContent(metadataBean.album) and metadataContextBean.status != 'WITHDRAWN'}" 
-									navBean="#{Navigation}" 
-									activeMenu="metadata" />
-		
-			<menu:context_actionMenu id="action"  
-									curMainMenu="#{currentMainMenu}"
-									vo="#{metadataBean.album}"
-									hasContent="#{metadataBean.size > 0}" 
-									downloadEnabled="#{metadataBean.size > 0}"
-									contextDownloadParam="&amp;album=#{metadataBean.id}"/>
+			<menu:context_subNavigation contextId="#{metadataBean.id}"
+				contextUrl="#{Navigation.albumUrl}" curMainMenu="#{currentMainMenu}"
+				userHasAdminRights="#{Auth.sysAdmin}"
+				userHasUploadRights="#{Auth.update(metadataBean.album) and metadataContextBean.status != 'WITHDRAWN'}"
+				navBean="#{Navigation}" activeMenu="metadata" />
+
+			<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"
+				vo="#{metadataBean.album}" hasContent="#{metadataBean.size > 0}"
+				downloadEnabled="#{metadataBean.size > 0}"
+				contextDownloadParam="&amp;album=#{metadataBean.id}" />
 		</ui:fragment>
 	</ui:define>
-	
+
 	<ui:define name="modalDialogs_from_site">
-		<dialog:confirmationDialog submitAction="release" bean="#{metadataBean}" confirmationText="#{msg.confirmation_release_album}?" submitLabel="#{lbl.release}" dialogId="releaseMenuItemDialog" rendered="#{Auth.update(metadataBean.album) and metadataBean.album.status.toString().toUpperCase() == 'PENDING' and metadataBean.size > 0}"/>
-		<dialog:confirmationDialog submitAction="delete" bean="#{metadataBean}" confirmationText="#{msg.confirmation_delete_album}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete(metadataBean.album)}"/>
-		<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{metadataBean}" confirmationText="#{msg.confirmation_withdraw_album}" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" rendered="#{Auth.update(metadataBean.album)and metadataBean.album.status.toString().toUpperCase() == 'RELEASED'}"/>
+		<dialog:confirmationDialog submitAction="release"
+			bean="#{metadataBean}"
+			confirmationText="#{msg.confirmation_release_album}?"
+			submitLabel="#{lbl.release}" dialogId="releaseMenuItemDialog"
+			rendered="#{Auth.update(metadataBean.album) and metadataBean.album.status.toString().toUpperCase() == 'PENDING' and metadataBean.size > 0}" />
+		<dialog:confirmationDialog submitAction="delete"
+			bean="#{metadataBean}"
+			confirmationText="#{msg.confirmation_delete_album}?"
+			submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog"
+			rendered="#{Auth.delete(metadataBean.album)}" />
+		<dialog:confirmationReasonedDialog submitAction="withdraw"
+			bean="#{metadataBean}"
+			confirmationText="#{msg.confirmation_withdraw_album}"
+			submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog"
+			rendered="#{Auth.update(metadataBean.album)and metadataBean.album.status.toString().toUpperCase() == 'RELEASED'}" />
 	</ui:define>
 </ui:composition>

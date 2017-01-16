@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.share.ShareService;
@@ -60,7 +60,7 @@ public class ShareControllerTestClass extends ControllerTest {
       Assert.fail(e.getMessage());
     }
     try {
-      CollectionController collectionController = new CollectionController();
+      CollectionService collectionController = new CollectionService();
       profileController.delete(profile, user2);
       Assert.fail("User shouldn't be abble to delete the profile");
       profileController.release(profile, user2);
@@ -84,7 +84,7 @@ public class ShareControllerTestClass extends ControllerTest {
     controller.shareToUser(user, user2, collection.getId().toString(),
         (List<String>) ShareService.rolesAsList(ShareRoles.READ));
     ProfileController profileController = new ProfileController();
-    CollectionController collectionController = new CollectionController();
+    CollectionService collectionController = new CollectionService();
     MetadataProfile collectionProfile = null;
     try {
       collectionController.retrieve(collection.getId(), user2);
@@ -139,7 +139,7 @@ public class ShareControllerTestClass extends ControllerTest {
     controller.shareToUser(user, user2, collection.getId().toString(),
         (List<String>) ShareService.rolesAsList(ShareRoles.EDIT));
     ProfileController profileController = new ProfileController();
-    CollectionController collectionController = new CollectionController();
+    CollectionService collectionController = new CollectionService();
     MetadataProfile collectionProfile = null;
     try {
       collectionController.retrieve(collection.getId(), user2);
@@ -202,7 +202,7 @@ public class ShareControllerTestClass extends ControllerTest {
     // ... then unshare
     shareController.shareToUser(JenaUtil.testUser, JenaUtil.testUser2,
         collection.getId().toString(), new ArrayList<String>());
-    CollectionController collectionController = new CollectionController();
+    CollectionService collectionController = new CollectionService();
     try {
       collectionController.retrieve(collection.getId(), JenaUtil.testUser2);
       Assert.fail("Unshare of collection not working");

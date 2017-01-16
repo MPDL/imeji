@@ -1,4 +1,5 @@
-<ui:composition template="templates/sub_template/template_image_tiledlist.xhtml"
+<ui:composition
+	template="templates/sub_template/template_image_tiledlist.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
@@ -6,28 +7,60 @@
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
-	
-	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}"/>
-	<ui:param name="headline" value="#{CollectionItemsBean.collection.metadata.title}"/>
-	<ui:param name="currentMainMenu" value="collection"/>
-	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/browse?q="/>
-	<ui:param name="imejiResource" value="#{CollectionItemsBean.collection}"/>
-	
-	
+
+	<ui:param name="paginatorListSessionBean"
+		value="#{CollectionItemsBean}" />
+	<ui:param name="headline"
+		value="#{CollectionItemsBean.collection.metadata.title}" />
+	<ui:param name="currentMainMenu" value="collection" />
+	<ui:param name="browseToAllItemsUrl"
+		value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/browse?q=" />
+	<ui:param name="imejiResource"
+		value="#{CollectionItemsBean.collection}" />
+
+
 	<ui:define name="modalDialogs_from_site">
-		<dialog:confirmationDialog submitAction="release" bean="#{paginatorListSessionBean.actionMenu}" confirmationText="#{msg.confirmation_release_collection}" confirmationText2="#{paginatorListSessionBean.actionMenu.releaseMessage} " confirmationTextLicense="#{paginatorListSessionBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}" submitLabel="#{lbl.release}" dialogId="releaseMenuItemDialog" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'PENDING' and paginatorListSessionBean.totalNumberOfElements > 0}"/>
-		<dialog:confirmationDialog submitAction="delete" bean="#{paginatorListSessionBean.actionMenu}" confirmationText="#{msg.confirmation_delete_collection}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete(paginatorListSessionBean.collection)}"/>
-		<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{paginatorListSessionBean.actionMenu}" confirmationText="#{msg.confirmation_withdraw_collection}" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>
-		<dialog:dialogOptionDialog submitId1="doiInput" submitId2="getDOIDialog" confirmationText="#{paginatorListSessionBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}" submitLabel1="#{lbl.createDOI_manually}" submitLabel2="#{lbl.createDOI_from_service}" dialogId="createDOIDialog" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>
-		<dialog:confirmationDialog submitAction="createDOI" bean="#{paginatorListSessionBean.actionMenu}" confirmationText="#{msg.confirmation_create_DOI}" submitLabel="#{lbl.createDOI}" dialogId="getDOIDialog" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>	
-		<dialog:doiInputDialog col="#{paginatorListSessionBean.collection}" bean="#{paginatorListSessionBean.actionMenu}" confirmationText="#{paginatorListSessionBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}" submitLabel="#{lbl.save}" dialogId="doiInput" rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>
+		<dialog:confirmationDialog submitAction="release"
+			bean="#{paginatorListSessionBean.actionMenu}"
+			confirmationText="#{msg.confirmation_release_collection}"
+			confirmationText2="#{paginatorListSessionBean.actionMenu.releaseMessage} "
+			confirmationTextLicense="#{paginatorListSessionBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}"
+			submitLabel="#{lbl.release}" dialogId="releaseMenuItemDialog"
+			rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'PENDING' and paginatorListSessionBean.totalNumberOfElements > 0}" />
+		<dialog:confirmationDialog submitAction="delete"
+			bean="#{paginatorListSessionBean.actionMenu}"
+			confirmationText="#{msg.confirmation_delete_collection}?"
+			submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog"
+			rendered="#{Auth.delete(paginatorListSessionBean.collection)}" />
+		<dialog:confirmationReasonedDialog submitAction="withdraw"
+			bean="#{paginatorListSessionBean.actionMenu}"
+			confirmationText="#{msg.confirmation_withdraw_collection}"
+			submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog"
+			rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}" />
+		<dialog:dialogOptionDialog submitId1="doiInput"
+			submitId2="getDOIDialog"
+			confirmationText="#{paginatorListSessionBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}"
+			submitLabel1="#{lbl.createDOI_manually}"
+			submitLabel2="#{lbl.createDOI_from_service}"
+			dialogId="createDOIDialog"
+			rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}" />
+		<dialog:confirmationDialog submitAction="createDOI"
+			bean="#{paginatorListSessionBean.actionMenu}"
+			confirmationText="#{msg.confirmation_create_DOI}"
+			submitLabel="#{lbl.createDOI}" dialogId="getDOIDialog"
+			rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}" />
+		<dialog:doiInputDialog col="#{paginatorListSessionBean.collection}"
+			bean="#{paginatorListSessionBean.actionMenu}"
+			confirmationText="#{paginatorListSessionBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}"
+			submitLabel="#{lbl.save}" dialogId="doiInput"
+			rendered="#{Auth.update(paginatorListSessionBean.collection) and paginatorListSessionBean.collection.status.toString().toUpperCase() == 'RELEASED'}" />
 	</ui:define>
-	
+
 	<ui:define name="searchQuery">
 		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}"
 			navBean="#{Navigation}"
-			rendered="#{paginatorListSessionBean.simpleQuery != ''}" 
-			label="#{lbl.search_for} #{HistorySession.currentPage.internationalizedName}"/>
+			rendered="#{paginatorListSessionBean.simpleQuery != ''}"
+			label="#{lbl.search_for} #{HistorySession.currentPage.internationalizedName}" />
 	</ui:define>
 
 </ui:composition>

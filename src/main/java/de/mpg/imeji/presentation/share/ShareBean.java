@@ -15,7 +15,7 @@ import com.ocpsoft.pretty.PrettyContext;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
@@ -79,7 +79,7 @@ public class ShareBean extends SuperBean implements Serializable {
       this.profileUri = null;
       this.uri = ObjectHelper.getURI(CollectionImeji.class, getId());
       final CollectionImeji collection =
-          new CollectionController().retrieveLazy(uri, getSessionUser());
+          new CollectionService().retrieveLazy(uri, getSessionUser());
       if (collection != null) {
         this.shareTo = collection;
         this.profileUri =

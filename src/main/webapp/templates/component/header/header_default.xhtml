@@ -43,17 +43,11 @@ All rights reserved. Use is subject to license terms.
 
 			<h:outputLink id="lnkStartPage" title="#{lbl.goto_startpage}" value="#{Navigation.homeUrl}">
 				<!-- default imeji logo set in the css -->
-				<h:panelGroup styleClass="imj_logo"
-						  rendered="#{(Configuration.logoUrl ==null or Configuration.logoUrl == '') and (SessionBean.spaceId == '' or SessionBean.selectedSpaceLogoURL.trim() == 'null')}" />
+				<h:panelGroup styleClass="imj_logo" rendered="#{Configuration.logoUrl == null or Configuration.logoUrl == ''}" />
 				<!-- custom Logo not recommended -->
-                <h:panelGroup  styleClass="imj_logo_alt" rendered="#{Configuration.logoUrl !=null and Configuration.logoUrl != '' and (SessionBean.spaceId == '' or SessionBean.selectedSpaceLogoURL.trim() == 'null')}" >
+                <h:panelGroup  styleClass="imj_logo_alt" rendered="#{Configuration.logoUrl !=null and Configuration.logoUrl != ''}" >
 					<h:graphicImage value="#{Configuration.logoUrl}" alt="{Configuration.instanceName} Logo" />
 			    </h:panelGroup>
-				<!-- space specific logo -->
-				<h:panelGroup styleClass="imj_logo_alt" rendered="#{not (SessionBean.spaceId == '' or SessionBean.selectedSpaceLogoURL.trim() == 'null') }">
-					<h:graphicImage value="#{SessionBean.selectedSpaceLogoURL}" alt="space logo" styleClass="imj_spaceLogo" />
-				</h:panelGroup>
-
 			</h:outputLink>
 			<ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
 				<div class="imj_siteHeaderMenuSearchSection">

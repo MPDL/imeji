@@ -12,7 +12,7 @@ import org.apache.commons.io.FilenameUtils;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -123,7 +123,7 @@ public class ItemAPIService implements APIService<DefaultItemTO> {
 
     final List<DefaultItemTO> tos = new ArrayList<>();
     final SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC)
-        .search(SearchQueryParser.parseStringQuery(q), null, u, null, null, offset, size);
+        .search(SearchQueryParser.parseStringQuery(q), null, u, null, offset, size);
     for (final Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
       final DefaultItemTO to = new DefaultItemTO();
       TransferObjectFactory.transferDefaultItem(vo, to);
@@ -144,7 +144,7 @@ public class ItemAPIService implements APIService<DefaultItemTO> {
    */
   private CollectionImeji getCollection(String collectionId, User u) throws ImejiException {
     if (!StringHelper.isNullOrEmptyTrim(collectionId)) {
-      return new CollectionController()
+      return new CollectionService()
           .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, collectionId), u);
     }
     throw new UnprocessableError("Item must be uploaded in a collection");

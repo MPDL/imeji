@@ -82,7 +82,7 @@ public class SecurityUtil {
 
   /**
    * Return the Grant for the object id. If no grant found, return null
-   * 
+   *
    * @param grants
    * @param id
    * @return
@@ -91,7 +91,7 @@ public class SecurityUtil {
     try {
       return grants.stream().filter(s -> s.split(",")[1].equals(id)).map(s -> new Grant(s))
           .findFirst().get();
-    } catch (NoSuchElementException e) {
+    } catch (final NoSuchElementException e) {
       return null;
     }
   }

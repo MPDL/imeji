@@ -37,10 +37,10 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
@@ -137,8 +137,8 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    */
   protected void countItems() {
     final ItemService ic = new ItemService();
-    size = ic.search(getContainer().getId(), null, null, Imeji.adminUser, null, 0, 0)
-        .getNumberOfRecords();
+    size =
+        ic.search(getContainer().getId(), null, null, Imeji.adminUser, 0, 0).getNumberOfRecords();
   }
 
   /**
@@ -173,7 +173,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
         LOGGER.error("Error creating query to search for discarded items of a container", e);
       }
       setSizeDiscarded(
-          ic.search(getContainer().getId(), q, null, user, null, -1, 0).getNumberOfRecords());
+          ic.search(getContainer().getId(), q, null, user, -1, 0).getNumberOfRecords());
     } else {
       setSizeDiscarded(0);
     }

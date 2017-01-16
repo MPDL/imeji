@@ -163,8 +163,18 @@ public class AuthorizationBean implements Serializable {
    * @param user
    * @return
    */
-  public boolean isAllowedToCreateCollection(User user) {
+  public boolean createCollection(User user) {
     return authorization.hasCreateCollectionGrant(user);
+  }
+
+  /**
+   * True if the user can create a new collection
+   *
+   * @param user
+   * @return
+   */
+  public boolean isCreateCollection() {
+    return authorization.hasCreateCollectionGrant(getSessionUser());
   }
 
   /**

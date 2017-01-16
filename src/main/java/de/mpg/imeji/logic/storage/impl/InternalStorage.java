@@ -142,11 +142,11 @@ public class InternalStorage implements Storage {
 
   @Override
   public void rotate(String fullUrl, int degrees) throws IOException, Exception {
-    String thumbnailUrl = getThumbnailUrl(fullUrl);
-    String webUrl = getWebResolutionUrl(fullUrl);
+    final String thumbnailUrl = getThumbnailUrl(fullUrl);
+    final String webUrl = getWebResolutionUrl(fullUrl);
     File thumbnail = read(thumbnailUrl);
     File web = read(webUrl);
-    File full = read(fullUrl);
+    final File full = read(fullUrl);
 
     if (ImageMagickUtils.jpegtranEnabled) {
       ImageMagickUtils.rotateJPEG(thumbnail, degrees);
@@ -226,13 +226,13 @@ public class InternalStorage implements Storage {
 
   @Override
   public int getImageWidth(String url) throws IOException {
-    File file = read(url);
+    final File file = read(url);
     return ImageUtils.getImageWidth(file);
   }
 
   @Override
   public int getImageHeight(String url) throws IOException {
-    File file = read(url);
+    final File file = read(url);
     return ImageUtils.getImageHeight(file);
   }
 }

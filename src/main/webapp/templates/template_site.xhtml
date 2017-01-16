@@ -179,7 +179,7 @@
 	               <!-- Messages -->
 	                <div id="imj_pageMessageArea">
 		                <ui:repeat var="message" value="#{MessagesBean.messages}">
-		                	 <div class="imj_message #{message.severity == 'SEVERITY_ERROR' ? 'imj_messageError' : ''}">
+		                	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : ''}">
 		                		<span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display='none';">x</span>
 		                		#{message.detail}
 		                	</div>

@@ -80,10 +80,8 @@ public class UserBean extends SuperBean {
       newPassword = null;
       repeatedPassword = null;
       retrieveUser();
-      // user.getGrants()
-      // .addAll(AuthorizationPredefinedRoles.imejiAdministrator(user.getId().toString()));
-      // user = new UserService().update(user, user);
-      // retrieveUser();
+      new ShareService().shareSysAdmin(user, user);
+      retrieveUser();
       if (user != null) {
         this.roles = ShareUtil.getAllRoles(user, getSessionUser(), getLocale());
         this.setEdit(false);

@@ -143,18 +143,18 @@ public class ImageMagickUtils {
 
   /**
    * rotates an JPEG image lossless
-   * 
+   *
    * @param file
    * @param degrees
    */
   public static void rotateJPEG(File file, int degrees) {
     try {
-      String commandRot = "jpegtran -rotate " + degrees + " -trim " + file.getAbsolutePath() + " "
-          + file.getAbsolutePath();
-      Runtime rt = Runtime.getRuntime();
+      final String commandRot = "jpegtran -rotate " + degrees + " -trim " + file.getAbsolutePath()
+          + " " + file.getAbsolutePath();
+      final Runtime rt = Runtime.getRuntime();
       rt.exec(commandRot);
 
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error rotating image", e);
     }
   }
@@ -303,21 +303,21 @@ public class ImageMagickUtils {
 
   /**
    * Create a {@link JpegtranCmd}
-   * 
+   *
    * @return
    * @throws IOException
    * @throws URISyntaxException
    */
   public static JpegtranCmd getJpegtran() throws IOException, URISyntaxException {
-    String magickPath = getImageMagickInstallationPath();
-    JpegtranCmd cmd = new JpegtranCmd();
+    final String magickPath = getImageMagickInstallationPath();
+    final JpegtranCmd cmd = new JpegtranCmd();
     cmd.setSearchPath(magickPath);
     return cmd;
   }
 
   public static MogrifyCmd getMogrify() throws IOException, URISyntaxException {
-    String magickPath = getImageMagickInstallationPath();
-    MogrifyCmd cmd = new MogrifyCmd(false);
+    final String magickPath = getImageMagickInstallationPath();
+    final MogrifyCmd cmd = new MogrifyCmd(false);
     cmd.setSearchPath(magickPath);
     return cmd;
   }

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.net.URI;
 
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.util.StringHelper;
 
 /**
  * Grant of one {@link GrantType} for one {@link User} used for imeji authorization
@@ -53,13 +54,17 @@ public class Grant implements Serializable {
 
   /**
    * Create a Grant with a String with the format: GrantType,GrantFor
-   * 
+   *
    * @param grantString
    */
   public Grant(String grantString) {
-    String[] s = grantString.split(",");
-    this.grantType = s[0];
-    this.grantFor = s[1];
+    if (StringHelper.isNullOrEmptyTrim(grantString)) {
+      final String[] s = grantString.split(",");
+      if (s.length == 2) {
+        this.grantType = s[0];
+        this.grantFor = s[1];
+      }
+    }
   }
 
   /**
@@ -76,7 +81,7 @@ public class Grant implements Serializable {
 
   /**
    * Return a {@link Grant} serialized as s String
-   * 
+   *
    * @return
    */
   public String toGrantString() {

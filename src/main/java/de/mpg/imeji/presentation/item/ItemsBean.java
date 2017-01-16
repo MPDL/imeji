@@ -173,8 +173,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int size) {
     final ItemService controller = new ItemService();
-    return controller.search(null, searchQuery, sortCriterion, getSessionUser(),
-        getSelectedSpaceString(), size, offset);
+    return controller.search(null, searchQuery, sortCriterion, getSessionUser(), size, offset);
   }
 
   /**
@@ -204,7 +203,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   @Override
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:browse", getSpaceId());
+    return "pretty:browse";
   }
 
   @Override
@@ -448,7 +447,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @return
    */
   public String getImageBaseUrl() {
-    return getNavigation().getApplicationSpaceUrl();
+    return getNavigation().getApplicationUrl();
   }
 
   public String getBackUrl() {

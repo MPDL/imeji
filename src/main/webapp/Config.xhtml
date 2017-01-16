@@ -1,14 +1,16 @@
-	<ui:composition template="templates/template_site.xhtml"
+
+<ui:composition template="templates/template_site.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
-	
+
 	<ui:param name="headline" value="#{lbl.configuration}" />
-	
+
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"  downloadEnabled="false" actionEnabled="false"/>
+		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"
+			downloadEnabled="false" actionEnabled="false" />
 	</ui:define>
 
 	<ui:define name="additonalFooterScripts">
@@ -42,745 +44,927 @@
 			});
 		</script>
 	</ui:define>
-	
+
 	<ui:define name="mainContent">
-		<!-- Are You Admin? -->	
-		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
-			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}"/>
-			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}"/>
+		<!-- Are You Admin? -->
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
+			rendered="#{!Auth.sysAdmin}">
+			<h:outputText value="#{lbl.view_page_disallowed}"
+				styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
+			<h:outputText value="#{lbl.view_page_disallowed2}"
+				styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
 		</h:panelGroup>
-			
-		<!-- Only for Admins -->	
+
+		<!-- Only for Admins -->
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-		
+
 			<!-- AdminDataList - Back Button -->
 			<h:panelGroup layout="block" styleClass="imj_backPanel">
 				<h:outputLink value="#{Navigation.adminUrl}">
-					<h:outputText value="#{lbl.back_to_admin}"/>
+					<h:outputText value="#{lbl.back_to_admin}" />
 				</h:outputLink>
 			</h:panelGroup>
 			<div class="imj_setupConfig">
-				
-				<!-- Admin - TiledList -->		
+
+				<!-- Admin - TiledList -->
 				<div class="imj_administrationTiledList imj_maxWidth">
-				
-					<h:panelGroup layout="block" styleClass="imj_listBody" rendered="#{Auth.sysAdmin}">
+
+					<h:panelGroup layout="block" styleClass="imj_listBody"
+						rendered="#{Auth.sysAdmin}">
 						<h:form id="configForm">
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.config_general}"/>
+										<h:outputText value="#{lbl.config_general}" />
 									</h2>
 								</div>
 								<div class="imj_content">
-									<!-- Admin - Snippet Insert -->	
-									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+									<!-- Admin - Snippet Insert -->
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.instance_name}"/>
+											<h:outputText value="#{lbl.instance_name}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.instanceName}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.instanceName}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.contact_email}"/>
+											<h:outputText value="#{lbl.contact_email}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.contactEmail}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.contactEmail}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.config_languages}"/>
+											<h:outputText value="#{lbl.config_languages}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.languages}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.languages}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.help_url}"/>
+											<h:outputText value="#{lbl.help_url}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.helpUrl}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.helpUrl}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.imprint_url}"/>
+											<h:outputText value="#{lbl.imprint_url}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.impressumUrl}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.impressumUrl}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.imprint}"/>
+											<h:outputText value="#{lbl.imprint}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.impressumText}" styleClass="imj_admindataEdit imj_additionalCodeSnippet"/>
+											<h:inputTextarea value="#{Configuration.impressumText}"
+												styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.terms_of_use} #{lbl.url}"/>
+											<h:outputText value="#{lbl.terms_of_use} #{lbl.url}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.termsOfUseUrl}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.termsOfUseUrl}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.terms_of_use}"/>
+											<h:outputText value="#{lbl.terms_of_use}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.termsOfUse}" styleClass="imj_admindataEdit imj_additionalCodeSnippet"/>
+											<h:inputTextarea value="#{Configuration.termsOfUse}"
+												styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
-									
+
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.privateModus_enable}"/>
+											<h:outputText value="#{lbl.privateModus_enable}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
 											<h:selectOneRadio value="#{Configuration.privateModus}">
-												<f:selectItem itemLabel="#{lbl.no}" itemValue="false"/>
-												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true"/>
+												<f:selectItem itemLabel="#{lbl.no}" itemValue="false" />
+												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true" />
 											</h:selectOneRadio>
 										</div>
 									</div>
-									
+
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.albums_enable}"/>
+											<h:outputText value="#{lbl.albums_enable}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
 											<h:selectOneRadio value="#{Configuration.albumsEnabled}">
-												<f:selectItem itemLabel="#{lbl.no}" itemValue="false"/>
-												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true"/>
+												<f:selectItem itemLabel="#{lbl.no}" itemValue="false" />
+												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true" />
 											</h:selectOneRadio>
 										</div>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.maintenance_message}"/>
+											<h:outputText value="#{lbl.maintenance_message}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.maintenanceMessage}" styleClass="imj_admindataEdit imj_additionalCodeSnippet"/>
+											<h:inputTextarea value="#{Configuration.maintenanceMessage}"
+												styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.default_license}"/>
+											<h:outputText value="#{lbl.default_license}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:selectOneMenu value="#{Configuration.defaultLicense}" styleClass="imj_metadataValue">
-												<f:selectItems value="#{Configuration.licenseMenu}"/>
+											<h:selectOneMenu value="#{Configuration.defaultLicense}"
+												styleClass="imj_metadataValue">
+												<f:selectItems value="#{Configuration.licenseMenu}" />
 											</h:selectOneMenu>
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
-									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>				
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
 								</div>
 							</div>
-							
-							
+
+
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.config_appearance}"/>
+										<h:outputText value="#{lbl.config_appearance}" />
 									</h2>
 								</div>
-												
+
 								<div class="imj_content">
-									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.browse_default_view}"/>
+											<h:outputText value="#{lbl.browse_default_view}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
 											<div class="imj_admindataValueEntry">
 												<h:selectOneRadio value="#{Configuration.defaultBrowseView}">
-													<f:selectItem itemLabel="#{lbl.list}" itemValue="LIST"/>
-													<f:selectItem itemLabel="#{lbl.thumbnails}" itemValue="THUMBNAIL"/>
+													<f:selectItem itemLabel="#{lbl.list}" itemValue="LIST" />
+													<f:selectItem itemLabel="#{lbl.thumbnails}"
+														itemValue="THUMBNAIL" />
 												</h:selectOneRadio>
 											</div>
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
-									<!-- Admin - Snippet Insert -->	
+									<!-- Admin - Snippet Insert -->
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.snippet}"/>
+											<h:outputText value="#{lbl.snippet}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.snippet}" styleClass="imj_admindataEdit imj_additionalCodeSnippet"/>
+											<h:inputTextarea value="#{Configuration.snippet}"
+												styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.meta_description}"/>
+											<h:outputText value="#{lbl.meta_description}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.metaDescription}" styleClass="imj_admindataEdit imj_additionalCodeSnippet"/>
+											<h:inputTextarea value="#{Configuration.metaDescription}"
+												styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
-									</div>	
-									<!-- Admin - Snippet Insert -->	
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> </a>
+									</div>
+									<!-- Admin - Snippet Insert -->
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="Default CSS URL"/>
+											<h:outputText value="Default CSS URL" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.defaultCss}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.defaultCss}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</h:panelGroup>
-									<h:panelGroup layout="block" styleClass="imj_admindataSet" rendered="#{Configuration.defaultCss != null and Configuration.defaultCss != ''}">
+									<h:panelGroup layout="block" styleClass="imj_admindataSet"
+										rendered="#{Configuration.defaultCss != null and Configuration.defaultCss != ''}">
 										<div class="imj_admindataLabel">
-											<h:outputText value="Alternative CSS URL"/>
+											<h:outputText value="Alternative CSS URL" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.alternativeCss}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.alternativeCss}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</h:panelGroup>
-																		<h:panelGroup layout="block" styleClass="imj_admindataSet">
+									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.startPageFooterLogos} (#{lbl.html})"/>
+											<h:outputText
+												value="#{lbl.startPageFooterLogos} (#{lbl.html})" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.startPageFooterLogos}" styleClass="imj_admindataEdit imj_additionalCodeSnippet"/>
+											<h:inputTextarea
+												value="#{Configuration.startPageFooterLogos}"
+												styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> </a>
 									</h:panelGroup>
 
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.faviconUrl}"/>
+											<h:outputText value="#{lbl.faviconUrl}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.faviconUrl}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.faviconUrl}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</h:panelGroup>
 
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.logoUrl}"/>
+											<h:outputText value="#{lbl.logoUrl}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.logoUrl}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.logoUrl}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</h:panelGroup>
 
 								</div>
 							</div>
-							
-					
+
+
 							<!-- EMAIL SERVER -->
 							<div class="imj_adminPanel">
-							
+
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.email_server}"/>
+										<h:outputText value="#{lbl.email_server}" />
 									</h2>
 								</div>
-													
+
 								<div class="imj_content">
-									<!-- Admin - Snippet Insert -->	
-									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+									<!-- Admin - Snippet Insert -->
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.server_address}"/>
+											<h:outputText value="#{lbl.server_address}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.emailServer}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.emailServer}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.email_server_port}"/>
+											<h:outputText value="#{lbl.email_server_port}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.emailServerPort}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.emailServerPort}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.email_server_sender}"/>
+											<h:outputText value="#{lbl.email_server_sender}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.emailServerSender}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.emailServerSender}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.server_enable_authentication}"/>
+											<h:outputText value="#{lbl.server_enable_authentication}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:selectOneRadio value="#{Configuration.emailServerEnableAuthentication}">
-												<f:selectItem itemLabel="#{lbl.no}" itemValue="false"/>
-												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true"/>
+											<h:selectOneRadio
+												value="#{Configuration.emailServerEnableAuthentication}">
+												<f:selectItem itemLabel="#{lbl.no}" itemValue="false" />
+												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true" />
 											</h:selectOneRadio>
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.user}"/>
+											<h:outputText value="#{lbl.user}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.emailServerUser}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.emailServerUser}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.password}"/>
+											<h:outputText value="#{lbl.password}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputSecret value="#{Configuration.emailServerPassword}" styleClass="imj_admindataEdit" autocomplete="off" redisplay="true"/>
+											<h:inputSecret value="#{Configuration.emailServerPassword}"
+												styleClass="imj_admindataEdit" autocomplete="off"
+												redisplay="true" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 								</div>
 							</div>
-							
+
 							<!-- Registration -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.registration}"/>
+										<h:outputText value="#{lbl.registration}" />
 									</h2>
 								</div>
-												
+
 								<div class="imj_content">
-									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.registration_enable}"/>
+											<h:outputText value="#{lbl.registration_enable}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:selectOneRadio value="#{Configuration.registrationEnabled}">
-												<f:selectItem itemLabel="#{lbl.no}" itemValue="false"/>
-												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true"/>
+											<h:selectOneRadio
+												value="#{Configuration.registrationEnabled}">
+												<f:selectItem itemLabel="#{lbl.no}" itemValue="false" />
+												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true" />
 											</h:selectOneRadio>
 										</div>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.registration_token_expiry}"/>
+											<h:outputText value="#{lbl.registration_token_expiry}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.registrationTokenExpiry}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.registrationTokenExpiry}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.registration_allowed_email_list}"/>
+											<h:outputText value="#{lbl.registration_allowed_email_list}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.registrationWhiteList}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.registrationWhiteList}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.registration_snippet}"/>
+											<h:outputText value="#{lbl.registration_snippet}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.registrationSnippet}" styleClass="imj_admindataEdit"/>
+											<h:inputTextarea value="#{Configuration.registrationSnippet}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 								</div>
 							</div>
-							
-							
+
+
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.search}"/>
+										<h:outputText value="#{lbl.search}" />
 									</h2>
 								</div>
-								
+
 								<div class="imj_content">
-									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.technical_metadata} (#{lbl.comma_separated_index})"/>
+											<h:outputText
+												value="#{lbl.technical_metadata} (#{lbl.comma_separated_index})" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.technicalMetadata}" styleClass="imj_admindataEdit"/>
+											<h:inputTextarea value="#{Configuration.technicalMetadata}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<h3 class="imj_sectionHeadline">
-										<h:outputText value="#{lbl.file_types}"/><span class="imj_noDisplay">: </span>
+										<h:outputText value="#{lbl.file_types}" />
+										<span class="imj_noDisplay">: </span>
 									</h3>
-									<!-- Admin - Snippet Insert -->	
-									<h:panelGroup layout="block" styleClass="imj_admindataSet" id="searchPanel">
+									<!-- Admin - Snippet Insert -->
+									<h:panelGroup layout="block" styleClass="imj_admindataSet"
+										id="searchPanel">
 										<div class="imj_admindataSet imj_fileTypeConfig">
 											<table class="imj_fileTypeConfigList">
 												<thead>
 													<tr>
-														<th>
-															<h:outputText value="#{lbl.name_with_lang_separated_with_comma}"/><span class="imj_noDisplay">: </span>
-														</th>
-														<th>
-															<h:outputText value="#{lbl.file_types_separated_with_comma}"/><span class="imj_noDisplay">: </span>
-														</th>
+														<th><h:outputText
+																value="#{lbl.name_with_lang_separated_with_comma}" /><span
+															class="imj_noDisplay">: </span></th>
+														<th><h:outputText
+																value="#{lbl.file_types_separated_with_comma}" /><span
+															class="imj_noDisplay">: </span></th>
 														<th>&#160;</th>
 													</tr>
 												</thead>
 												<tbody>
-													<ui:repeat var="type" value="#{Configuration.fileTypes.types}" varStatus="var">
+													<ui:repeat var="type"
+														value="#{Configuration.fileTypes.types}" varStatus="var">
 														<tr>
-															<td>
-																<h:inputText value="#{type.names}" class="imj_fileTypeInput"/>
-															</td>
-															<td>
-																<h:inputText value="#{type.extensions}" class="imj_fileTypeValueInput"/>
-																
-															</td>
-															<td class="imj_inlineButtonGroup">
-																<a href="javascript: void(0);" data-target="tr .imj_fileTypeValueInput" class="imj_clearInput fa fa-times"> </a>
-																<h:commandLink value=" " title="#{lbl.remove}" styleClass="fa fa-trash" action="#{Configuration.fileTypes.removeType(var.index)}" >
-																	<f:ajax execute="@this" render="configForm:searchPanel"/>
-																</h:commandLink>
-															</td>
+															<td><h:inputText value="#{type.names}"
+																	class="imj_fileTypeInput" /></td>
+															<td><h:inputText value="#{type.extensions}"
+																	class="imj_fileTypeValueInput" /></td>
+															<td class="imj_inlineButtonGroup"><a
+																href="javascript: void(0);"
+																data-target="tr .imj_fileTypeValueInput"
+																class="imj_clearInput fa fa-times"> </a> <h:commandLink
+																	value=" " title="#{lbl.remove}"
+																	styleClass="fa fa-trash"
+																	action="#{Configuration.fileTypes.removeType(var.index)}">
+																	<f:ajax execute="@this" render="configForm:searchPanel" />
+																</h:commandLink></td>
 														</tr>
 													</ui:repeat>
 												</tbody>
 											</table>
 											<div class="imj_submitPanel">
-											<h:commandLink styleClass="imj_submitButton" value="#{lbl.add}" action="#{Configuration.fileTypes.addType(Configuration.fileTypes.types.size())}" >
-												<f:ajax execute="@this" render="configForm:searchPanel"/>
-											</h:commandLink>
+												<h:commandLink styleClass="imj_submitButton"
+													value="#{lbl.add}"
+													action="#{Configuration.fileTypes.addType(Configuration.fileTypes.types.size())}">
+													<f:ajax execute="@this" render="configForm:searchPanel" />
+												</h:commandLink>
 											</div>
 										</div>
-									</h:panelGroup>											
+									</h:panelGroup>
 								</div>
 							</div>
-								
+
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.upload}"/>
+										<h:outputText value="#{lbl.upload}" />
 									</h2>
 								</div>
 								<div class="imj_content">
-									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.upload_max_file_size}"/>
+											<h:outputText value="#{lbl.upload_max_file_size}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.uploadMaxFileSize}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.uploadMaxFileSize}"
+												styleClass="imj_admindataEdit" />
 										</div>
 									</h:panelGroup>
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.upload_black_list}"/>
+											<h:outputText value="#{lbl.upload_black_list}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.uploadBlackList}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.uploadBlackList}"
+												styleClass="imj_admindataEdit" />
 										</div>
 									</h:panelGroup>
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.upload_white_list}"/>
+											<h:outputText value="#{lbl.upload_white_list}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.uploadWhiteList}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.uploadWhiteList}"
+												styleClass="imj_admindataEdit" />
 										</div>
 									</h:panelGroup>
 								</div>
-									
+
 							</div>
-								
+
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.start_page}"/>
+										<h:outputText value="#{lbl.start_page}" />
 									</h2>
 								</div>
 								<div class="imj_content">
-									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
 									<ui:repeat value="#{Configuration.snippets}" var="snippet">
 										<h:panelGroup layout="block" styleClass="imj_admindataSet">
 											<div class="imj_admindataLabel">
-											 	<h:outputText value="#{lbl.startPageHtmlSnippet}"/><br/>
-											 	<h:outputText value="#{InternationalizationBean.getLanguageLabel(snippet.lang)}"/>
+												<h:outputText value="#{lbl.startPageHtmlSnippet}" />
+												<br />
+												<h:outputText
+													value="#{InternationalizationBean.getLanguageLabel(snippet.lang)}" />
 												<span class="imj_noDisplay">: </span>
 											</div>
 											<div class="imj_admindataValue">
-												<h:inputTextarea value="#{snippet.html}" styleClass="imj_admindataEdit imj_additionalCodeSnippet" valueChangeListener="#{snippet.listener}"/>
+												<h:inputTextarea value="#{snippet.html}"
+													styleClass="imj_admindataEdit imj_additionalCodeSnippet"
+													valueChangeListener="#{snippet.listener}" />
 											</div>
-											<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+											<a href="javascript: void(0);"
+												data-target=".imj_admindataSet .imj_admindataValue textarea"
+												class="imj_clearInput fa fa-times"> </a>
 										</h:panelGroup>
-									</ui:repeat>								
+									</ui:repeat>
 									<!-- TODO -->
-									
+
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.enable_carousel}"/>
+											<h:outputText value="#{lbl.enable_carousel}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:selectOneRadio value="#{Configuration.startPageCarouselEnabled}">
-												<f:selectItem itemLabel="#{lbl.no}" itemValue="false"/>
-												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true"/>
+											<h:selectOneRadio
+												value="#{Configuration.startPageCarouselEnabled}">
+												<f:selectItem itemLabel="#{lbl.no}" itemValue="false" />
+												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true" />
 											</h:selectOneRadio>
 										</div>
 									</div>
-									
 
-									
+
+
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.carousel_search_query}"/>
+											<h:outputText value="#{lbl.carousel_search_query}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.startPageCarouselQuery}" styleClass="imj_admindataEdit imj_additionalCodeSnippet"/>
+											<h:inputTextarea
+												value="#{Configuration.startPageCarouselQuery}"
+												styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue textarea" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> </a>
 									</h:panelGroup>
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.carousel_search_query_order}"/>
+											<h:outputText value="#{lbl.carousel_search_query_order}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.startPageCarouselQueryOrder}" styleClass="imj_admindataEdit"/>
+											<h:inputText
+												value="#{Configuration.startPageCarouselQueryOrder}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 									</h:panelGroup>
 
-								</div> 
+								</div>
 							</div>
 
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.data_viewer}"/>
+										<h:outputText value="#{lbl.data_viewer}" />
 									</h2>
 								</div>
 								<div class="imj_content">
-									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.data_viewer_url}"/>
+											<h:outputText value="#{lbl.data_viewer_url}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-												<h:inputText value="#{Configuration.dataViewerUrl}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.dataViewerUrl}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
 										<div class="imj_submitPanel">
-											<h:commandButton action="#{Configuration.fetchDataViewerFormats}" value="#{lbl.fetch_from_data_viewer}" styleClass="imj_editButton">
-												<f:ajax execute="@form" render=":configForm:dataViewerFormatListString"/>
+											<h:commandButton
+												action="#{Configuration.fetchDataViewerFormats}"
+												value="#{lbl.fetch_from_data_viewer}"
+												styleClass="imj_editButton">
+												<f:ajax execute="@form"
+													render=":configForm:dataViewerFormatListString" />
 											</h:commandButton>
 										</div>
 									</h:panelGroup>
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.data_viewer_formats}"/>
+											<h:outputText value="#{lbl.data_viewer_formats}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText id="dataViewerFormatListString" value="#{Configuration.dataViewerFormatListString}" styleClass="imj_admindataEdit"/>
+											<h:inputText id="dataViewerFormatListString"
+												value="#{Configuration.dataViewerFormatListString}"
+												styleClass="imj_admindataEdit" />
 										</div>
 									</h:panelGroup>
 								</div>
 							</div>
-							
+
 							<!--DOI-->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.doiService}"/>
+										<h:outputText value="#{lbl.doiService}" />
 									</h2>
 								</div>
 								<div class="imj_content">
-									<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">	
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
+									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.doiService}"/>
+											<h:outputText value="#{lbl.doiService}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.doiServiceUrl}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.doiServiceUrl}"
+												styleClass="imj_admindataEdit" />
 										</div>
 									</h:panelGroup>
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.doiUser}"/>
+											<h:outputText value="#{lbl.doiUser}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.doiUser}" styleClass="imj_admindataEdit"/>
-										</div>
-									</h:panelGroup>									
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.doiPassword}"/>
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputSecret value="#{Configuration.doiPassword}" styleClass="imj_admindataEdit" redisplay="true"/>
+											<h:inputText value="#{Configuration.doiUser}"
+												styleClass="imj_admindataEdit" />
 										</div>
 									</h:panelGroup>
-									
+									<h:panelGroup layout="block" styleClass="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.doiPassword}" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputSecret value="#{Configuration.doiPassword}"
+												styleClass="imj_admindataEdit" redisplay="true" />
+										</div>
+									</h:panelGroup>
+
 								</div>
-									
+
 							</div>
-							
+
 							<!-- QUOTA -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.quota}"/>
+										<h:outputText value="#{lbl.quota}" />
 									</h2>
 								</div>
-								
+
 								<div class="imj_content">
 									<h3 class="imj_sectionHeadline">
-										<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+										<h:commandButton action="#{Configuration.saveConfig}"
+											title="#{lbl.configuration_save_all}"
+											value="#{lbl.configuration_save_all}"
+											styleClass="imj_submitButton" />
 									</h3>
-					
+
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.define_quotaLimits}"/>
+											<h:outputText value="#{lbl.define_quotaLimits}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.quotaLimits}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.quotaLimits}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
-									</div>				
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
+									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.quota}"/>
+											<h:outputText value="#{lbl.quota}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.defaultQuota}" styleClass="imj_admindataEdit"/>
+											<h:inputText value="#{Configuration.defaultQuota}"
+												styleClass="imj_admindataEdit" />
 										</div>
-										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
-									</div>									
-								</div>						
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
+									</div>
+								</div>
 							</div>
-														
-								
+
+
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
-										<h:outputText value="#{lbl.autosuggest}"/>
+										<h:outputText value="#{lbl.autosuggest}" />
 									</h2>
 								</div>
 								<div class="imj_content">
 									<div class="imj_admindataSet">
-										<h:commandButton action="#{Configuration.saveConfig}" title="#{lbl.configuration_save_all}" value="#{lbl.configuration_save_all}" styleClass="imj_submitButton"/>
+										<h:commandButton action="#{Configuration.saveConfig}"
+											title="#{lbl.configuration_save_all}"
+											value="#{lbl.configuration_save_all}"
+											styleClass="imj_submitButton" />
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.enable_autosuggest_for_users}"/>
+											<h:outputText value="#{lbl.enable_autosuggest_for_users}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
 											<div class="imj_admindataValueEntry">
-												<h:selectOneRadio value="#{Configuration.autoSuggestForUsers}">
-													<f:selectItem itemLabel="#{lbl.none}" itemValue=""/>
-													<f:selectItem itemLabel="#{lbl.imeji_users}" itemValue="imeji_persons"/>
-													<f:selectItem itemLabel="#{lbl.max_planck_authors}" itemValue="http://pubman.mpdl.mpg.de/cone/persons/query?format=json&amp;n=10&amp;m=full&amp;q="/>
+												<h:selectOneRadio
+													value="#{Configuration.autoSuggestForUsers}">
+													<f:selectItem itemLabel="#{lbl.none}" itemValue="" />
+													<f:selectItem itemLabel="#{lbl.imeji_users}"
+														itemValue="imeji_persons" />
+													<f:selectItem itemLabel="#{lbl.max_planck_authors}"
+														itemValue="http://pubman.mpdl.mpg.de/cone/persons/query?format=json&amp;n=10&amp;m=full&amp;q=" />
 												</h:selectOneRadio>
 											</div>
 										</div>
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.enable_autosuggest_for_organizations}"/>
+											<h:outputText
+												value="#{lbl.enable_autosuggest_for_organizations}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
 											<div class="imj_admindataValueEntry">
-												<h:selectOneRadio value="#{Configuration.autosuggestForOrganizations}">
-													<f:selectItem itemLabel="#{lbl.none}" itemValue=""/>
-													<f:selectItem itemLabel="#{lbl.imeji_organizations}" itemValue="imeji_orgs"/>
+												<h:selectOneRadio
+													value="#{Configuration.autosuggestForOrganizations}">
+													<f:selectItem itemLabel="#{lbl.none}" itemValue="" />
+													<f:selectItem itemLabel="#{lbl.imeji_organizations}"
+														itemValue="imeji_orgs" />
 												</h:selectOneRadio>
 											</div>
 										</div>
 									</div>
-								</div> 
-							</div> <!-- END CONTENT -->
-							
+								</div>
+							</div>
+							<!-- END CONTENT -->
+
 							<!-- AdminDataList - imj_submitPanel - cancel link + submit command buttons -->
 							<h:panelGroup layout="block" styleClass="imj_submitPanel">
 								<h:outputLink value="#{Navigation.adminUrl}">
-									<h:outputText value="#{lbl.back_to_admin}" styleClass="imj_cancelButton"/>
+									<h:outputText value="#{lbl.back_to_admin}"
+										styleClass="imj_cancelButton" />
 								</h:outputLink>
 							</h:panelGroup>
 						</h:form>
-					</h:panelGroup> <!-- END LIST BODY -->
-			
-				</div> <!-- END ADMIN LIST -->
-			
-			</div> <!-- END USER CONFIG -->
-			
+					</h:panelGroup>
+					<!-- END LIST BODY -->
+
+				</div>
+				<!-- END ADMIN LIST -->
+
+			</div>
+			<!-- END USER CONFIG -->
+
 		</ui:fragment>
-	
+
 	</ui:define>
 
 </ui:composition>

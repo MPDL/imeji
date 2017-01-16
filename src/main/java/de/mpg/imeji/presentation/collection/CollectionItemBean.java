@@ -15,7 +15,6 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.presentation.item.ItemBean;
 import de.mpg.imeji.presentation.item.ItemDetailsBrowse;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Bean for the detail item page when viewed within a collection
@@ -34,16 +33,14 @@ public class CollectionItemBean extends ItemBean {
   public CollectionItemBean() {
     super();
     this.collectionId = UrlHelper.getParameterValue("collectionId");
-    this.prettyLink =
-        SessionBean.getPrettySpacePage("pretty:EditImageOfCollection", getSelectedSpaceString());
+    this.prettyLink = "pretty:EditImageOfCollection";
   }
 
   @Override
   public void initBrowsing() {
     if (getImage() != null) {
       setBrowse(new ItemDetailsBrowse(getImage(), "collection",
-          ObjectHelper.getURI(CollectionImeji.class, collectionId).toString(), getSessionUser(),
-          getSpaceId()));
+          ObjectHelper.getURI(CollectionImeji.class, collectionId).toString(), getSessionUser()));
     }
   }
 
@@ -59,7 +56,7 @@ public class CollectionItemBean extends ItemBean {
 
   @Override
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:CollectionItem", getSelectedSpaceString());
+    return "pretty:CollectionItem";
   }
 
   public String getCollectionId() {

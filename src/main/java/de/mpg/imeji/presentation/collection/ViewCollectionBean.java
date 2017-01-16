@@ -15,13 +15,12 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Bean for the pages "CollectionEntryPage" and "ViewCollection"
@@ -49,7 +48,7 @@ public class ViewCollectionBean extends CollectionBean {
   public void init() {
     setId(UrlHelper.getParameterValue("id"));
     try {
-      setCollection(new CollectionController()
+      setCollection(new CollectionService()
           .retrieve(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
       countItems();
       if (getSessionUser() != null) {
@@ -66,8 +65,7 @@ public class ViewCollectionBean extends CollectionBean {
           persons.add(p);
         }
         getCollection().getMetadata().setPersons(persons);
-        setActionMenu(new CollectionActionMenu(getCollection(), getSessionUser(), getLocale(),
-            getSelectedSpaceString()));
+        setActionMenu(new CollectionActionMenu(getCollection(), getSessionUser(), getLocale()));
       }
     } catch (final ImejiException e) {
       LOGGER.error("Error initializing Bean", e);
@@ -84,7 +82,7 @@ public class ViewCollectionBean extends CollectionBean {
 
   @Override
   protected String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:collectionInfos", getSelectedSpaceString());
+    return "pretty:collectionInfos";
   }
 
   public String getSmallDescription() {

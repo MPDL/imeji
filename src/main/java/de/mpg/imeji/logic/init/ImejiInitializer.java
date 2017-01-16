@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic;
+package de.mpg.imeji.logic.init;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,12 +24,14 @@ import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.j2j.annotations.j2jModel;
+import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authentication.ImejiRsaKeys;
 import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
+import de.mpg.imeji.logic.executors.NightlyExecutor;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
@@ -38,7 +40,6 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
@@ -51,6 +52,10 @@ import de.mpg.imeji.logic.vo.factory.ImejiFactory;
  */
 public class ImejiInitializer {
   private static final Logger LOGGER = Logger.getLogger(ImejiInitializer.class);
+  /**
+   * Executes jobs over night
+   */
+  private static NightlyExecutor NIGHTLY_EXECUTOR = new NightlyExecutor();
 
   /**
    * Initialize the {@link Jena} database according to imeji.properties<br/>
@@ -66,7 +71,7 @@ public class ImejiInitializer {
       Imeji.tdbPath = PropertyReader.getProperty("imeji.tdb.path");
       ElasticInitializer.start();
       ImejiInitializer.init(Imeji.tdbPath);
-      Imeji.getNIGHTLY_EXECUTOR().start();
+      NIGHTLY_EXECUTOR.start();
     } catch (final Exception e) {
       LOGGER.fatal("Error initializing imeji", e);
     }
@@ -99,14 +104,12 @@ public class ImejiInitializer {
     Imeji.imageModel = ImejiInitializer.getModelName(Item.class);
     Imeji.userModel = ImejiInitializer.getModelName(User.class);
     Imeji.statementModel = ImejiInitializer.getModelName(Statement.class);
-    Imeji.spaceModel = ImejiInitializer.getModelName(Space.class);
     Imeji.contentModel = ImejiInitializer.getModelName(ContentVO.class);
     ImejiInitializer.initModel(Imeji.albumModel);
     ImejiInitializer.initModel(Imeji.collectionModel);
     ImejiInitializer.initModel(Imeji.imageModel);
     ImejiInitializer.initModel(Imeji.userModel);
     ImejiInitializer.initModel(Imeji.statementModel);
-    ImejiInitializer.initModel(Imeji.spaceModel);
     ImejiInitializer.initModel(Imeji.contentModel);
     LOGGER.info("... models done!");
     Imeji.CONFIG = new ImejiConfiguration();
@@ -236,13 +239,13 @@ public class ImejiInitializer {
     Imeji.getEXECUTOR().shutdown();
     Imeji.getCONTENT_EXTRACTION_EXECUTOR().shutdown();
     Imeji.getINTERNAL_STORAGE_EXECUTOR().shutdown();
-    Imeji.getNIGHTLY_EXECUTOR().stop();
+    NIGHTLY_EXECUTOR.stop();
     LOGGER.info("imeji executor shutdown? " + Imeji.getEXECUTOR().isShutdown());
     LOGGER.info("content extraction executor shutdown? "
         + Imeji.getCONTENT_EXTRACTION_EXECUTOR().isShutdown());
     LOGGER.info("internal executor shutdown shutdown? "
         + Imeji.getINTERNAL_STORAGE_EXECUTOR().isShutdown());
-    LOGGER.info("nightly executor shutdown shutdown? " + Imeji.getNIGHTLY_EXECUTOR().isShutdown());
+    LOGGER.info("nightly executor shutdown shutdown? " + NIGHTLY_EXECUTOR.isShutdown());
     ElasticInitializer.shutdown();
     KeyValueStoreService.stopAllStores();
     LOGGER.info("Ending LockSurveyor...");
@@ -268,5 +271,15 @@ public class ImejiInitializer {
     final AlarmClock alarmClock = AlarmClock.get();
     alarmClock.release();
     LOGGER.info("done");
+  }
+
+  /**
+   * @return the nIGHTLY_EXECUTOR
+   */
+  public static NightlyExecutor getNIGHTLY_EXECUTOR() {
+    if (NIGHTLY_EXECUTOR.isShutdown()) {
+      NIGHTLY_EXECUTOR = new NightlyExecutor();
+    }
+    return NIGHTLY_EXECUTOR;
   }
 }

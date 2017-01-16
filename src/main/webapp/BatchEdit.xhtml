@@ -4,9 +4,9 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:list="http://java.sun.com/jsf/composite/components/list">
-	
-	<ui:param name="headline" value="#{lbl.edit_images}"/>
-	
+
+	<ui:param name="headline" value="#{lbl.edit_images}" />
+
 	<ui:define name="additonalFooterScripts">
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -14,173 +14,254 @@
 			});
 		</script>
 	</ui:define>
-	
+
 	<ui:define name="actionsMenu"></ui:define>
-	
+
 	<ui:define name="mainContent">
 		<!-- AJAX Wrapper - START -->
 		<h:panelGroup layout="block" id="imj_ajaxWrapper">
 			<!-- Initialize the Edit form -->
-			
-			<h:outputText value="#{EditItemMetadataBean.urlParameters}"/>
-			
+
+			<h:outputText value="#{EditItemMetadataBean.urlParameters}" />
+
 			<h:form id="batchEditForm">
-				<h:selectBooleanCheckbox id="editInitialized" value="false" style="visibility:hidden">
-					<f:ajax event="change" render=":batchEditForm:ajaxContent" listener="#{EditItemMetadataBean.init}"  />
+				<h:selectBooleanCheckbox id="editInitialized" value="false"
+					style="visibility:hidden">
+					<f:ajax event="change" render=":batchEditForm:ajaxContent"
+						listener="#{EditItemMetadataBean.init}" />
 				</h:selectBooleanCheckbox>
-				
-				<h:panelGroup layout="block" id="ajaxContent" styleClass="imj_batchEditList">
+
+				<h:panelGroup layout="block" id="ajaxContent"
+					styleClass="imj_batchEditList">
 					<h:outputScript library="js" name="datepicker.js"></h:outputScript>
-					
-					<ui:fragment rendered="#{!EditItemMetadataBean.initialized and Auth.loggedIn}">
-						<h2 class="imj_headline"><h:outputText value="Preparing editor! Please wait a little ..."/></h2>
+
+					<ui:fragment
+						rendered="#{!EditItemMetadataBean.initialized and Auth.loggedIn}">
+						<h2 class="imj_headline">
+							<h:outputText value="Preparing editor! Please wait a little ..." />
+						</h2>
 					</ui:fragment>
-					
-					<h:panelGroup layout="block" id="editor" rendered="#{EditItemMetadataBean.initialized and Auth.loggedIn}">	
-						
+
+					<h:panelGroup layout="block" id="editor"
+						rendered="#{EditItemMetadataBean.initialized and Auth.loggedIn}">
+
 						<!-- no metadata statements defined -->
-						<ui:fragment rendered="#{!EditItemMetadataBean.profileWithStatements}">
-							<h2 class="imj_headline"><h:outputText value="#{lbl.profile_empty}"/></h2>
-							<h:outputLink value="#{HistorySession.previousPage.completeUrlWithHistory}" title="#{lbl.back_to_pictures}">
-								<h:outputText value="#{lbl.back_to_pictures}"/>
-							</h:outputLink>	
+						<ui:fragment
+							rendered="#{!EditItemMetadataBean.profileWithStatements}">
+							<h2 class="imj_headline">
+								<h:outputText value="#{lbl.profile_empty}" />
+							</h2>
+							<h:outputLink
+								value="#{HistorySession.previousPage.completeUrlWithHistory}"
+								title="#{lbl.back_to_pictures}">
+								<h:outputText value="#{lbl.back_to_pictures}" />
+							</h:outputLink>
 						</ui:fragment>
-						
+
 						<!-- any images are locked -->
 						<ui:fragment rendered="#{EditItemMetadataBean.lockedImages > 0}">
-							<h3 class="imj_headline"><h:outputText value="#{EditItemMetadataBean.lockedImages} #{msg.error_editor_images_locked}!"/></h3>
+							<h3 class="imj_headline">
+								<h:outputText
+									value="#{EditItemMetadataBean.lockedImages} #{msg.error_editor_images_locked}!" />
+							</h3>
 						</ui:fragment>
-						
+
 						<!-- COMMON METADATA -->
-						<ui:fragment rendered="#{EditItemMetadataBean.profileWithStatements}">
-						<div class="imj_editGlobalAssignment">
-							<div class="imj_metadataSet">
-								<div class="imj_metadataLabel">
-									<h:outputLabel for="selStatement" value="#{lbl.metadata_type_select}" rendered="#{EditItemMetadataBean.displayStatementMenu}"/>
-									<h:selectOneMenu id="selStatement" value="#{EditItemMetadataBean.selectedStatementName}" onchange="document.getElementById('batchEditForm:ajaxContent').style.opacity='0.2';" rendered="#{EditItemMetadataBean.displayStatementMenu}">
-										<f:selectItems value="#{EditItemMetadataBean.statementMenu}"/>
-										<f:ajax event="change" execute="@this" render="ajaxContent" listener="#{EditItemMetadataBean.changeStatement}"/>
-									</h:selectOneMenu>
-								</div>
-								
-								<div class="imj_metadataValue">
-								
-									<ui:repeat id="metadata" var="md" value="#{EditItemMetadataBean.editorItem.mds.tree.list}" varStatus="indexMetadata">
-			        					<ui:fragment rendered="#{EditItemMetadataBean.isEditableStatement(md.statement)}">
-			        						<!-- Field -->
-			        						<list:batchEditList_singleStatement id="editBatchMd" itemBean="#{md}" itemStatement="#{md.statement}" itemLabelBean="#{EditItemMetadataBean.metadataLabels}" hideLabel="false" navBean="#{Navigation}" suggestBean="#{SuggestBean}"/>
-			        					</ui:fragment>
-			        				</ui:repeat>
-									
-									<div class="imj_dataAssignmentPanel">
-										<h:panelGroup id="modeRadioMenu">
-											<h:selectOneRadio layout="pageDirection" styleClass="imj_optionSet" value="#{EditItemMetadataBean.selectedMode}">
-						  						<f:selectItems value="#{EditItemMetadataBean.modeRadio}"/>
-											</h:selectOneRadio>
-										</h:panelGroup>
+						<ui:fragment
+							rendered="#{EditItemMetadataBean.profileWithStatements}">
+							<div class="imj_editGlobalAssignment">
+								<div class="imj_metadataSet">
+									<div class="imj_metadataLabel">
+										<h:outputLabel for="selStatement"
+											value="#{lbl.metadata_type_select}"
+											rendered="#{EditItemMetadataBean.displayStatementMenu}" />
+										<h:selectOneMenu id="selStatement"
+											value="#{EditItemMetadataBean.selectedStatementName}"
+											onchange="document.getElementById('batchEditForm:ajaxContent').style.opacity='0.2';"
+											rendered="#{EditItemMetadataBean.displayStatementMenu}">
+											<f:selectItems value="#{EditItemMetadataBean.statementMenu}" />
+											<f:ajax event="change" execute="@this" render="ajaxContent"
+												listener="#{EditItemMetadataBean.changeStatement}" />
+										</h:selectOneMenu>
 									</div>
+
+									<div class="imj_metadataValue">
+
+										<ui:repeat id="metadata" var="md"
+											value="#{EditItemMetadataBean.editorItem.mds.tree.list}"
+											varStatus="indexMetadata">
+											<ui:fragment
+												rendered="#{EditItemMetadataBean.isEditableStatement(md.statement)}">
+												<!-- Field -->
+												<list:batchEditList_singleStatement id="editBatchMd"
+													itemBean="#{md}" itemStatement="#{md.statement}"
+													itemLabelBean="#{EditItemMetadataBean.metadataLabels}"
+													hideLabel="false" navBean="#{Navigation}"
+													suggestBean="#{SuggestBean}" />
+											</ui:fragment>
+										</ui:repeat>
+
+										<div class="imj_dataAssignmentPanel">
+											<h:panelGroup id="modeRadioMenu">
+												<h:selectOneRadio layout="pageDirection"
+													styleClass="imj_optionSet"
+													value="#{EditItemMetadataBean.selectedMode}">
+													<f:selectItems value="#{EditItemMetadataBean.modeRadio}" />
+												</h:selectOneRadio>
+											</h:panelGroup>
+										</div>
+									</div>
+
+									<h:panelGroup styleClass="imj_submitPanel"
+										rendered="#{EditItemMetadataBean.editType == 'selected'}">
+										<h:commandButton styleClass="imj_submitButton" type="submit"
+											action="#{EditItemMetadataBean.addToAll}"
+											value="#{lbl.add_to_all}"
+											onclick="document.getElementById('batchEditForm:ajaxContent').style.opacity='0.2';">
+											<f:ajax render="ajaxContent" execute="@form" />
+										</h:commandButton>
+									</h:panelGroup>
 								</div>
-								
-								<h:panelGroup styleClass="imj_submitPanel" rendered="#{EditItemMetadataBean.editType == 'selected'}">
-									<h:commandButton styleClass="imj_submitButton" type="submit" action="#{EditItemMetadataBean.addToAll}" value="#{lbl.add_to_all}" onclick="document.getElementById('batchEditForm:ajaxContent').style.opacity='0.2';">
-										<f:ajax render="ajaxContent" execute="@form"/>
+
+								<h:panelGroup layout="block" styleClass="imj_submitPanel"
+									rendered="#{EditItemMetadataBean.editType != 'selected'}">
+									<h:commandButton styleClass="imj_cancelButton" type="submit"
+										action="#{EditItemMetadataBean.cancel}" value="#{lbl.cancel}">
+										<f:ajax render="@none" />
+									</h:commandButton>
+									<h:commandButton styleClass="imj_submitButton" type="submit"
+										action="#{EditItemMetadataBean.addToAllSave}"
+										value="#{lbl.save}" onclick="openDialog('dialogWait');">
+										<f:ajax execute="@form" render="@none" />
+									</h:commandButton>
+									<h:commandButton styleClass="imj_submitButton" type="submit"
+										action="#{EditItemMetadataBean.addToAllSaveAndRedirect}"
+										value="#{lbl.save_and_return}"
+										onclick="openDialog('dialogWait');">
+										<f:ajax execute="@form" render="@none" />
 									</h:commandButton>
 								</h:panelGroup>
 							</div>
-							
-							<h:panelGroup layout="block" styleClass="imj_submitPanel" rendered="#{EditItemMetadataBean.editType != 'selected'}">
-								<h:commandButton styleClass="imj_cancelButton" type="submit" action="#{EditItemMetadataBean.cancel}" value="#{lbl.cancel}">
-									<f:ajax render="@none"/>
-								</h:commandButton>
-								<h:commandButton styleClass="imj_submitButton" type="submit" action="#{EditItemMetadataBean.addToAllSave}" value="#{lbl.save}" onclick="openDialog('dialogWait');">
-									<f:ajax  execute="@form" render="@none"/>
-								</h:commandButton>
-								<h:commandButton styleClass="imj_submitButton" type="submit" action="#{EditItemMetadataBean.addToAllSaveAndRedirect}" value="#{lbl.save_and_return}" onclick="openDialog('dialogWait');">
-									<f:ajax  execute="@form" render="@none"/>
-								</h:commandButton>
-							</h:panelGroup>
-						</div>
 						</ui:fragment>
-						
-						
-						
+
+
+
 						<!-- Items -->
-						<h:panelGroup layout="block" id="imagesMetadata" styleClass="imj_batchEditItemList" rendered="#{EditItemMetadataBean.profileWithStatements and EditItemMetadataBean.editType == 'selected'}">
-							<h:panelGroup rendered="#{EditItemMetadataBean.editor.itemsSize > 4}">
-							<div class="imj_listHeader">
-								<div class="imj_submitPanel"> 
-									<h:commandButton  styleClass="imj_cancelButton" type="submit" action="#{EditItemMetadataBean.clearAll}" value="#{lbl.clear_all}">
-										<f:ajax render="ajaxContent"/>
-									</h:commandButton >
-									<h:commandButton styleClass="imj_resetButton" type="submit" action="#{EditItemMetadataBean.resetChanges}" value="#{lbl.reset_changes}">
-										<f:ajax render="ajaxContent"/>
-									</h:commandButton>
-									<h:commandButton styleClass="imj_cancelButton" type="submit" action="#{EditItemMetadataBean.cancel}" value="#{lbl.cancel}">
-										<f:ajax render="@none"/>
-									</h:commandButton>
-									<h:commandButton styleClass="imj_submitButton" type="submit" action="#{EditItemMetadataBean.save}" value="#{lbl.save}" onclick="openDialog('dialogWait');">
-										<f:ajax  execute="@form" render="@none"/>
-									</h:commandButton>
-									<h:commandButton styleClass="imj_submitButton" type="submit" action="#{EditItemMetadataBean.saveAndRedirect}" value="#{lbl.save_and_return}" onclick="openDialog('dialogWait');">
-										<f:ajax  execute="@form" render="@none"/>
-									</h:commandButton>
+						<h:panelGroup layout="block" id="imagesMetadata"
+							styleClass="imj_batchEditItemList"
+							rendered="#{EditItemMetadataBean.profileWithStatements and EditItemMetadataBean.editType == 'selected'}">
+							<h:panelGroup
+								rendered="#{EditItemMetadataBean.editor.itemsSize > 4}">
+								<div class="imj_listHeader">
+									<div class="imj_submitPanel">
+										<h:commandButton styleClass="imj_cancelButton" type="submit"
+											action="#{EditItemMetadataBean.clearAll}"
+											value="#{lbl.clear_all}">
+											<f:ajax render="ajaxContent" />
+										</h:commandButton>
+										<h:commandButton styleClass="imj_resetButton" type="submit"
+											action="#{EditItemMetadataBean.resetChanges}"
+											value="#{lbl.reset_changes}">
+											<f:ajax render="ajaxContent" />
+										</h:commandButton>
+										<h:commandButton styleClass="imj_cancelButton" type="submit"
+											action="#{EditItemMetadataBean.cancel}" value="#{lbl.cancel}">
+											<f:ajax render="@none" />
+										</h:commandButton>
+										<h:commandButton styleClass="imj_submitButton" type="submit"
+											action="#{EditItemMetadataBean.save}" value="#{lbl.save}"
+											onclick="openDialog('dialogWait');">
+											<f:ajax execute="@form" render="@none" />
+										</h:commandButton>
+										<h:commandButton styleClass="imj_submitButton" type="submit"
+											action="#{EditItemMetadataBean.saveAndRedirect}"
+											value="#{lbl.save_and_return}"
+											onclick="openDialog('dialogWait');">
+											<f:ajax execute="@form" render="@none" />
+										</h:commandButton>
+									</div>
 								</div>
-							</div>
 							</h:panelGroup>
-							
-				        	<div class="imj_listBody">
-			        			<ui:repeat id="imagesList" var="item" value="#{EditItemMetadataBean.editor.items}" varStatus="indexImage">
-			        				<div class="imj_batchEditListItem">
-				        				<div class="imj_previewArea">
-											<h:graphicImage alt="#{item.filename}" id="picThumbResolutionBrowse" url="#{Navigation.fileUrl}#{item.thumbnail}"/>
+
+							<div class="imj_listBody">
+								<ui:repeat id="imagesList" var="item"
+									value="#{EditItemMetadataBean.editor.items}"
+									varStatus="indexImage">
+									<div class="imj_batchEditListItem">
+										<div class="imj_previewArea">
+											<h:graphicImage alt="#{item.filename}"
+												id="picThumbResolutionBrowse"
+												url="#{Navigation.fileUrl}#{item.thumbnail}" />
 											<div>
-											<h:outputLabel value="#{item.filename}"/>
+												<h:outputLabel value="#{item.filename}" />
 											</div>
-				        				</div>
-				        				<h:panelGroup layout="block" styleClass="imj_informationContent" rendered="#{item.profile == EditItemMetadataBean.profile.id}">
-					        				<ui:repeat id="metadata" var="md" value="#{item.mds.tree.list}" varStatus="indexMetadata">
-					        					<h:panelGroup rendered="#{EditItemMetadataBean.isEditableStatement(md.statement)}">
-					        						<!-- Field -->
-					        						<list:batchEditList_singleStatement id="editMd" listItem="#{item}" itemBean="#{md}" itemStatement="#{md.statement}" itemLabelBean="#{EditItemMetadataBean.metadataLabels}" hideLabel="false" navBean="#{Navigation}" suggestBean="#{SuggestBean}" formObject="@form"/>
-					        					</h:panelGroup>
-					        				</ui:repeat>
-				        				</h:panelGroup>
-				        			</div>
-			        			</ui:repeat>
+										</div>
+										<h:panelGroup layout="block"
+											styleClass="imj_informationContent"
+											rendered="#{item.profile == EditItemMetadataBean.profile.id}">
+											<ui:repeat id="metadata" var="md"
+												value="#{item.mds.tree.list}" varStatus="indexMetadata">
+												<h:panelGroup
+													rendered="#{EditItemMetadataBean.isEditableStatement(md.statement)}">
+													<!-- Field -->
+													<list:batchEditList_singleStatement id="editMd"
+														listItem="#{item}" itemBean="#{md}"
+														itemStatement="#{md.statement}"
+														itemLabelBean="#{EditItemMetadataBean.metadataLabels}"
+														hideLabel="false" navBean="#{Navigation}"
+														suggestBean="#{SuggestBean}" formObject="@form" />
+												</h:panelGroup>
+											</ui:repeat>
+										</h:panelGroup>
+									</div>
+								</ui:repeat>
 							</div>
-							
+
 							<div class="imj_listFooter">
 								<div class="imj_submitPanel">
-									<h:commandButton  styleClass="imj_cancelButton" action="#{EditItemMetadataBean.clearAll}" type="submit" value="#{lbl.clear_all}">
-										<f:ajax render="ajaxContent"/>
-									</h:commandButton >
-									<h:commandButton styleClass="imj_resetButton" action="#{EditItemMetadataBean.resetChanges}" type="submit" value="#{lbl.reset_changes}">
-										<f:ajax render="ajaxContent"/>
+									<h:commandButton styleClass="imj_cancelButton"
+										action="#{EditItemMetadataBean.clearAll}" type="submit"
+										value="#{lbl.clear_all}">
+										<f:ajax render="ajaxContent" />
+									</h:commandButton>
+									<h:commandButton styleClass="imj_resetButton"
+										action="#{EditItemMetadataBean.resetChanges}" type="submit"
+										value="#{lbl.reset_changes}">
+										<f:ajax render="ajaxContent" />
 									</h:commandButton>
 									<h:messages />
-									<h:commandButton styleClass="imj_cancelButton" type="submit" action="#{EditItemMetadataBean.cancel}" value="#{lbl.cancel}">
-										<f:ajax render="@none"/>
+									<h:commandButton styleClass="imj_cancelButton" type="submit"
+										action="#{EditItemMetadataBean.cancel}" value="#{lbl.cancel}">
+										<f:ajax render="@none" />
 									</h:commandButton>
-									<h:commandButton styleClass="imj_submitButton" type="submit" action="#{EditItemMetadataBean.save}" value="#{lbl.save}" onclick="openDialog('dialogWait');">
-										<f:ajax  execute="@form" render="@none"/>
+									<h:commandButton styleClass="imj_submitButton" type="submit"
+										action="#{EditItemMetadataBean.save}" value="#{lbl.save}"
+										onclick="openDialog('dialogWait');">
+										<f:ajax execute="@form" render="@none" />
 									</h:commandButton>
-									<h:commandButton styleClass="imj_submitButton" type="submit" action="#{EditItemMetadataBean.saveAndRedirect}" value="#{lbl.save_and_return}" onclick="openDialog('dialogWait');">
-										<f:ajax  execute="@form" render="@none"/>
+									<h:commandButton styleClass="imj_submitButton" type="submit"
+										action="#{EditItemMetadataBean.saveAndRedirect}"
+										value="#{lbl.save_and_return}"
+										onclick="openDialog('dialogWait');">
+										<f:ajax execute="@form" render="@none" />
 									</h:commandButton>
 								</div>
 							</div>
-				        </h:panelGroup> <!-- END imj_batchEditItemList -->
-			        	
-					</h:panelGroup> <!-- END id editor -->
-				</h:panelGroup> <!-- END ajaxContent -->
+						</h:panelGroup>
+						<!-- END imj_batchEditItemList -->
+
+					</h:panelGroup>
+					<!-- END id editor -->
+				</h:panelGroup>
+				<!-- END ajaxContent -->
 			</h:form>
 		</h:panelGroup>
-		
-		
+
+
 		<div id="dialogWait" class="imj_dialogWait imj_modalDialogBox">
-	        <h2 class="imj_headline">
-	        	<h:outputText value="#{msg.please_wait}"/>
-	        </h2>
+			<h2 class="imj_headline">
+				<h:outputText value="#{msg.please_wait}" />
+			</h2>
 		</div>
 	</ui:define>
 </ui:composition>

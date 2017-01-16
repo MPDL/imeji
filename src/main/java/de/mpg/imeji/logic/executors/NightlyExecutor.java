@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.batch.executors;
+package de.mpg.imeji.logic.executors;
 
 import java.util.Calendar;
 import java.util.concurrent.Executor;

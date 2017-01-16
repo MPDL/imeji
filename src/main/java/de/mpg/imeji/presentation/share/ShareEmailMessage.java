@@ -34,7 +34,7 @@ public class ShareEmailMessage {
     this.locale = locale;
     body = EmailMessages.getSharedCollectionMessage(user.getPerson().getCompleteName(),
         addresseeName, sharedObjectName, sharedObjectLink, locale);
-    String messageRoles = getMessageForShareCollection(role, profileUri);
+    final String messageRoles = getMessageForShareCollection(role, profileUri);
     body = body.replaceAll("XXX_RIGHTS_XXX", messageRoles.trim());
 
   }

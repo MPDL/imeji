@@ -1,14 +1,15 @@
-<ui:composition template="templates/template_site.xhtml" 
+<ui:composition template="templates/template_site.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
-		
-	<ui:param name="headline" value="#{lbl.about}"/>		
-				
+
+	<ui:param name="headline" value="#{lbl.about}" />
+
 	<ui:define name="mainContent">
-		<h:panelGroup layout="block" id="imj_ajaxWrapper" class="imj_aboutPage">
-			<!-- Main Content --> 
+		<h:panelGroup layout="block" id="imj_ajaxWrapper"
+			class="imj_aboutPage">
+			<!-- Main Content -->
 			<h:outputText escape="false" value="#{StaticContent.aboutContent}" />
 		</h:panelGroup>
 	</ui:define>

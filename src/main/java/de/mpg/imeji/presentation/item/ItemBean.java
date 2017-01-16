@@ -25,7 +25,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.content.ContentController;
 import de.mpg.imeji.logic.controller.AlbumController;
@@ -57,7 +57,6 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.edit.SingleEditorWrapper;
 import de.mpg.imeji.presentation.history.HistoryPage;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
 
 /**
@@ -105,7 +104,7 @@ public class ItemBean extends SuperBean {
    * @
    */
   public ItemBean() {
-    prettyLink = SessionBean.getPrettySpacePage("pretty:editImage", getSelectedSpaceString());
+    prettyLink = "pretty:editImage";
   }
 
   /**
@@ -167,8 +166,8 @@ public class ItemBean extends SuperBean {
     q.addPair(new SearchPair(SearchIndex.SearchFields.member, SearchOperators.EQUALS,
         getImage().getId().toString(), false));
     // TODO NB: check if related albums should be space restricted?
-    relatedAlbums = ac.retrieveBatchLazy(
-        ac.search(q, getSessionUser(), null, -1, 0, null).getResults(), getSessionUser(), -1, 0);
+    relatedAlbums = ac.retrieveBatchLazy(ac.search(q, getSessionUser(), null, -1, 0).getResults(),
+        getSessionUser(), -1, 0);
     initImageUploader();
   }
 
@@ -225,7 +224,7 @@ public class ItemBean extends SuperBean {
    */
   public void initBrowsing() {
     if (item != null) {
-      browse = new ItemDetailsBrowse(item, "item", null, getSessionUser(), getSpaceId());
+      browse = new ItemDetailsBrowse(item, "item", null, getSessionUser());
     }
   }
 
@@ -257,7 +256,7 @@ public class ItemBean extends SuperBean {
    */
   public void loadCollection(User user) {
     try {
-      collection = new CollectionController().retrieveLazy(item.getCollection(), user);
+      collection = new CollectionService().retrieveLazy(item.getCollection(), user);
     } catch (final Exception e) {
       BeanHelper.error(e.getMessage());
       collection = null;
@@ -353,7 +352,7 @@ public class ItemBean extends SuperBean {
   }
 
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:item", getSelectedSpaceString());
+    return "pretty:item";
   }
 
   public void saveEditor() throws IOException {
@@ -740,14 +739,14 @@ public class ItemBean extends SuperBean {
   /**
    * Called when a picture is rotated by Openseadragon. If the user is authorized to rotate the
    * image, webresolution and thumbnail get rotated
-   * 
+   *
    * @throws Exception
    * @throws IOException
    */
   public void updateRotation() throws IOException, Exception {
     if (getAuth().update(getImage())) {
-      StorageController storageController = new StorageController();
-      int degrees = (rotation - lastRotation + 360) % 360;
+      final StorageController storageController = new StorageController();
+      final int degrees = (rotation - lastRotation + 360) % 360;
       lastRotation = rotation;
       storageController.rotate(content.getOriginal(), degrees);
     }
@@ -755,7 +754,7 @@ public class ItemBean extends SuperBean {
 
   /**
    * Gets the width of the web resolution
-   * 
+   *
    * @return
    * @throws IOException
    */
@@ -763,21 +762,22 @@ public class ItemBean extends SuperBean {
     /*
      * int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web")); int
      * imgWidth = (int) getContent().getWidth(); int imgHeight = (int) getContent().getHeight();
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * if (imgWidth <= imgHeight) { return webSize; } return (int) (imgWidth * 1.0 / imgHeight *
      * webSize);
      */
-    if (!isImageFile() || isSVGFile())
+    if (!isImageFile() || isSVGFile()) {
       return 0;
-    StorageController storageController = new StorageController();
+    }
+    final StorageController storageController = new StorageController();
     return storageController.getStorage().getImageWidth(content.getPreview());
   }
 
   /**
    * Gets the height of the web resolution
-   * 
+   *
    * @return
    * @throws IOException
    */
@@ -785,19 +785,20 @@ public class ItemBean extends SuperBean {
     /*
      * int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web")); int
      * imgWidth = (int) getContent().getWidth(); int imgHeight = (int) getContent().getHeight();
-     * 
+     *
      * if (imgWidth <= imgHeight) { return (int) (imgHeight * 1.0 / imgWidth * webSize); } return
      * webSize;
      */
-    if (!isImageFile() || isSVGFile())
+    if (!isImageFile() || isSVGFile()) {
       return 0;
-    StorageController storageController = new StorageController();
+    }
+    final StorageController storageController = new StorageController();
     return storageController.getStorage().getImageHeight(content.getPreview());
   }
 
   /**
    * Gets the max of width and height of the web resolution
-   * 
+   *
    * @return
    * @throws IOException
    */
@@ -809,7 +810,7 @@ public class ItemBean extends SuperBean {
     if (!isImageFile() || isSVGFile()) {
       return 0;
     }
-    StorageController storageController = new StorageController();
+    final StorageController storageController = new StorageController();
     return storageController.getStorage().getImageWidth(content.getOriginal());
   }
 
@@ -817,7 +818,7 @@ public class ItemBean extends SuperBean {
     if (!isImageFile() || isSVGFile()) {
       return 0;
     }
-    StorageController storageController = new StorageController();
+    final StorageController storageController = new StorageController();
     return storageController.getStorage().getImageHeight(content.getOriginal());
   }
 
@@ -835,7 +836,7 @@ public class ItemBean extends SuperBean {
 
   /**
    * True if the file ia a gif
-   * 
+   *
    * @return
    */
   public boolean isGIFFile() {

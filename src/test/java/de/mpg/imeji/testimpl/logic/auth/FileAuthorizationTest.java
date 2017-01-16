@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
@@ -135,7 +135,7 @@ public class FileAuthorizationTest extends ControllerTest {
   }
 
   private void releaseCollection() throws ImejiException {
-    CollectionController c = new CollectionController();
+    CollectionService c = new CollectionService();
     c.releaseWithDefaultLicense(collection, JenaUtil.testUser);
   }
 

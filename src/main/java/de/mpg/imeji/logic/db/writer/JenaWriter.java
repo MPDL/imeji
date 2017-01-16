@@ -113,6 +113,4 @@ public class JenaWriter implements Writer {
     // Write Transaction needs to be added in a new Thread
     ThreadedTransaction.run(new ThreadedTransaction(t, Imeji.tdbPath));
   }
-
-
 }

@@ -18,10 +18,10 @@ import com.hp.hpl.jena.tdb.sys.TDBMaker;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.ImejiInitializer;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
+import de.mpg.imeji.logic.init.ImejiInitializer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.user.UserService;
@@ -99,7 +99,7 @@ public class JenaUtil {
     Imeji.getEXECUTOR().shutdown();
     Imeji.getCONTENT_EXTRACTION_EXECUTOR().shutdown();
     Imeji.getINTERNAL_STORAGE_EXECUTOR().shutdown();
-    Imeji.getNIGHTLY_EXECUTOR().stop();
+    ImejiInitializer.getNIGHTLY_EXECUTOR().stop();
     LOGGER.info("Closing Jena:");
     TDB.sync(Imeji.dataset);
     LOGGER.info("Jena Sync done! ");

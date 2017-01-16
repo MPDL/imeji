@@ -45,7 +45,7 @@ public class ShareService {
 
   /**
    * Makes user Sysadmin
-   * 
+   *
    * @param fromUser
    * @param toUser
    * @throws ImejiException
@@ -58,7 +58,7 @@ public class ShareService {
 
   /**
    * Revoke Sysadmin grant
-   * 
+   *
    * @param fromUser
    * @param toUser
    * @throws ImejiException
@@ -70,7 +70,7 @@ public class ShareService {
 
   /**
    * Makes user Sysadmin
-   * 
+   *
    * @param fromUser
    * @param toUser
    * @throws ImejiException
@@ -83,7 +83,7 @@ public class ShareService {
 
   /**
    * Revoke Sysadmin grant
-   * 
+   *
    * @param fromUser
    * @param toUser
    * @throws ImejiException
@@ -206,7 +206,7 @@ public class ShareService {
 
   /**
    * Transform a Role to a {@link Grant}
-   * 
+   *
    * @param role
    * @param grantFor
    * @return
@@ -225,13 +225,14 @@ public class ShareService {
 
   /**
    * Find the Role for this id from the list
-   * 
+   *
    * @param grants
    * @param id
    * @return
    */
   public static String findRole(Collection<String> grants, String id) {
-    ShareRoles role = ShareService.transformGrantToRole(SecurityUtil.getGrantForObject(grants, id));
+    final ShareRoles role =
+        ShareService.transformGrantToRole(SecurityUtil.getGrantForObject(grants, id));
     return role != null ? role.name() : null;
   }
 
@@ -265,7 +266,7 @@ public class ShareService {
   /**
    * Add a grant to a list of grant if the grant is not null. All grants with the same grantFor with
    * be removed
-   * 
+   *
    * @param grants
    * @param grant
    * @param uri
@@ -273,7 +274,8 @@ public class ShareService {
    */
   private List<String> addGrant(Collection<String> grants, Grant grant, String uri) {
     // Remove the grant for this id
-    List<String> l = grants.stream().filter(g -> !g.endsWith(uri)).collect(Collectors.toList());
+    final List<String> l =
+        grants.stream().filter(g -> !g.endsWith(uri)).collect(Collectors.toList());
     if (grant != null) {
       l.add(grant.toGrantString());
     }
@@ -289,7 +291,7 @@ public class ShareService {
    * @throws NotAllowedError
    */
   private void checkSecurity(User user, String uri) throws NotAllowedError {
-    boolean allowed = SecurityUtil.authorization().administrate(user, uri);
+    final boolean allowed = SecurityUtil.authorization().administrate(user, uri);
     if (!allowed) {
       throw new NotAllowedError(user.getEmail() + " not allowed to share " + uri);
     }

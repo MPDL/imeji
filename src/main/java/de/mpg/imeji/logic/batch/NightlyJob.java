@@ -3,8 +3,7 @@ package de.mpg.imeji.logic.batch;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.batch.executors.CleanInactiveUsersJob;
-import de.mpg.imeji.logic.batch.executors.NightlyExecutor;
+import de.mpg.imeji.logic.executors.NightlyExecutor;
 
 /**
  * This job calls all Jobs which should be run every night, and is called by the

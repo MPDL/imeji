@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.item.ItemService;
@@ -24,7 +24,6 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Class with all methods needed by the Action menu in collection context
@@ -38,15 +37,12 @@ public class CollectionActionMenu implements Serializable {
   private final CollectionImeji collection;
   private final User user;
   private final Locale locale;
-  private final String selectedSpaceString;
   private int itemsWithoutLicense = 0;
 
-  public CollectionActionMenu(CollectionImeji collection, User user, Locale locale,
-      String selectedSpaceString) {
+  public CollectionActionMenu(CollectionImeji collection, User user, Locale locale) {
     this.collection = collection;
     this.user = user;
     this.locale = locale;
-    this.selectedSpaceString = selectedSpaceString;
     searchItemsWihoutLicense();
   }
 
@@ -56,7 +52,7 @@ public class CollectionActionMenu implements Serializable {
    * @return
    */
   public String release() {
-    final CollectionController cc = new CollectionController();
+    final CollectionService cc = new CollectionService();
     try {
       cc.releaseWithDefaultLicense(collection, user);
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_release", locale));
@@ -78,10 +74,13 @@ public class CollectionActionMenu implements Serializable {
    */
   protected void searchItemsWihoutLicense() {
     final ItemService controller = new ItemService();
-    itemsWithoutLicense = controller
-        .search(collection.getId(), SearchQuery.toSearchQuery(new SearchPair(SearchFields.license,
-            SearchOperators.REGEX, ImejiLicenses.NO_LICENSE, false)), null, user, null, 0, 0)
-        .getNumberOfRecords();
+    itemsWithoutLicense =
+        controller
+            .search(collection.getId(),
+                SearchQuery.toSearchQuery(new SearchPair(SearchFields.license,
+                    SearchOperators.REGEX, ImejiLicenses.NO_LICENSE, false)),
+                null, user, 0, 0)
+            .getNumberOfRecords();
   }
 
   public String getReleaseMessage() {
@@ -119,7 +118,7 @@ public class CollectionActionMenu implements Serializable {
    * @return
    */
   public String delete() {
-    final CollectionController cc = new CollectionController();
+    final CollectionService cc = new CollectionService();
     try {
       cc.delete(collection, user);
       BeanHelper.info(
@@ -128,7 +127,7 @@ public class CollectionActionMenu implements Serializable {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getLocalizedMessage(), locale));
       LOGGER.error("Error delete collection", e);
     }
-    return SessionBean.getPrettySpacePage("pretty:collections", selectedSpaceString);
+    return "pretty:collections";
   }
 
   /**
@@ -138,7 +137,7 @@ public class CollectionActionMenu implements Serializable {
    * @throws Exception
    */
   public String withdraw() throws Exception {
-    final CollectionController cc = new CollectionController();
+    final CollectionService cc = new CollectionService();
     try {
       cc.withdraw(collection, user);
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_withdraw", locale));

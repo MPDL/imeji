@@ -71,8 +71,7 @@ public class AdvancedSearchBean extends SuperBean {
    */
   public String getNewSearch() throws ImejiException {
     metadataLabels = new MetadataLabels(getLocale());
-    formular = new SearchForm(new SearchQuery(), metadataLabels, getSessionUser(),
-        getSelectedSpaceString());
+    formular = new SearchForm(new SearchQuery(), metadataLabels, getSessionUser());
     initMenus();
     try {
       final String query = UrlHelper.getParameterValue("q");
@@ -106,8 +105,7 @@ public class AdvancedSearchBean extends SuperBean {
    */
   public void initForm(SearchQuery searchQuery) throws Exception {
     metadataLabels = new MetadataLabels(getLocale());
-    formular =
-        new SearchForm(searchQuery, metadataLabels, getSessionUser(), getSelectedSpaceString());
+    formular = new SearchForm(searchQuery, metadataLabels, getSessionUser());
     if (formular.getGroups().size() == 0) {
       formular.addSearchGroup(0);
     }
@@ -162,7 +160,7 @@ public class AdvancedSearchBean extends SuperBean {
   public void changeGroup() throws ImejiException {
     final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("gPos"));
-    formular.changeSearchGroup(gPos, metadataLabels, getSessionUser(), getSelectedSpaceString());
+    formular.changeSearchGroup(gPos, metadataLabels, getSessionUser());
   }
 
   /**

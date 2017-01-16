@@ -1,4 +1,5 @@
-<ui:composition template="templates/sub_template/template_entrypage.xhtml" 
+<ui:composition
+	template="templates/sub_template/template_entrypage.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
@@ -6,42 +7,55 @@
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
-	
-	<ui:param name="headline" value="#{ViewCollectionBean.collection.metadata.title}"/>
-	<ui:param name="currentMainMenu" value="collection"/>
-	<ui:param name="logicBean" value="#{ViewCollectionBean}"/>
-	<ui:param name="listSize" value="#{ViewCollectionBean.size}"/>
-	<ui:param name="imejiResource" value="#{ViewCollectionBean.collection}"/>
-	
-	
-	<ui:define name="actionsMenu">
-		<ui:fragment rendered="#{Auth.read(logicBean.collection)}">
-			<menu:context_subNavigation contextId="#{logicBean.id}" 
-										contextUrl="#{Navigation.collectionUrl}" 
-										curMainMenu="#{currentMainMenu}" 
-										userHasAdminRights="#{Auth.sysAdmin}" 
-										userHasUploadRights="#{Auth.createContent(logicBean.collection) and logicBean.collection.status != 'WITHDRAWN'}" 
-										navBean="#{Navigation}" 
-										activeMenu="start"/>
 
-			<menu:context_actionMenu id="action" 
-										curMainMenu="#{currentMainMenu}" 
-										hasContent="#{logicBean.size > 0}" 
-										downloadEnabled="#{logicBean.size > 0}"
-										contextDownloadParam="&amp;col=#{logicBean.id}"
-										hasDoi="#{logicBean.collection.doi != null and logicBean.collection.doi !=''}"
-										vo="#{logicBean.collection}"/>
-		</ui:fragment>
+	<ui:param name="headline"
+		value="#{ViewCollectionBean.collection.metadata.title}" />
+	<ui:param name="currentMainMenu" value="collection" />
+	<ui:param name="logicBean" value="#{ViewCollectionBean}" />
+	<ui:param name="listSize" value="#{ViewCollectionBean.size}" />
+	<ui:param name="imejiResource" value="#{ViewCollectionBean.collection}" />
+
+
+	<ui:define name="actionsMenu">
+
 	</ui:define>
-	
+
 	<!-- ModalDialogs - Confirmation Pages -->
 	<ui:define name="modalDialogs_from_site">
-		<dialog:confirmationDialog submitAction="release" bean="#{logicBean.actionMenu}" confirmationText="#{msg.confirmation_release_collection}" confirmationText2="#{logicBean.actionMenu.releaseMessage} " confirmationTextLicense="#{logicBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}" submitLabel="#{lbl.release}" dialogId="releaseMenuItemDialog" rendered="#{Auth.update(logicBean.collection) and logicBean.collection.status.toString().toUpperCase() == 'PENDING' and logicBean.size > 0}"/>
-		<dialog:confirmationDialog submitAction="delete" bean="#{logicBean.actionMenu}" confirmationText="#{msg.confirmation_delete_collection}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete(logicBean.collection)}"/>
-		<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{logicBean.actionMenu}" confirmationText="#{msg.confirmation_withdraw_collection}" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" rendered="#{Auth.update(logicBean.collection) and logicBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>		
-		<dialog:dialogOptionDialog submitId1="doiInput" submitId2="getDOIDialog" confirmationText="#{logicBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}" submitLabel1="#{lbl.createDOI_manually}" submitLabel2="#{lbl.createDOI_from_service}" dialogId="createDOIDialog" rendered="#{Auth.update(logicBean.collection) and logicBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>
-		<dialog:confirmationDialog submitAction="createDOI" bean="#{logicBean.actionMenu}" confirmationText="#{msg.confirmation_create_DOI}" submitLabel="#{lbl.createDOI}" dialogId="getDOIDialog" rendered="#{Auth.update(logicBean.collection) and logicBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>	
-		<dialog:doiInputDialog col="#{logicBean.collection}" bean="#{logicBean.actionMenu}" confirmationText="#{logicBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}" submitLabel="#{lbl.save}" dialogId="doiInput" rendered="#{Auth.update(logicBean.collection) and logicBean.collection.status.toString().toUpperCase() == 'RELEASED'}"/>
+		<dialog:confirmationDialog submitAction="release"
+			bean="#{logicBean.actionMenu}"
+			confirmationText="#{msg.confirmation_release_collection}"
+			confirmationText2="#{logicBean.actionMenu.releaseMessage} "
+			confirmationTextLicense="#{logicBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}"
+			submitLabel="#{lbl.release}" dialogId="releaseMenuItemDialog"
+			rendered="#{Auth.update(logicBean.collection) and logicBean.collection.status.toString().toUpperCase() == 'PENDING' and logicBean.size > 0}" />
+		<dialog:confirmationDialog submitAction="delete"
+			bean="#{logicBean.actionMenu}"
+			confirmationText="#{msg.confirmation_delete_collection}?"
+			submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog"
+			rendered="#{Auth.delete(logicBean.collection)}" />
+		<dialog:confirmationReasonedDialog submitAction="withdraw"
+			bean="#{logicBean.actionMenu}"
+			confirmationText="#{msg.confirmation_withdraw_collection}"
+			submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog"
+			rendered="#{Auth.update(logicBean.collection) and logicBean.collection.status.toString().toUpperCase() == 'RELEASED'}" />
+		<dialog:dialogOptionDialog submitId1="doiInput"
+			submitId2="getDOIDialog"
+			confirmationText="#{logicBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}"
+			submitLabel1="#{lbl.createDOI_manually}"
+			submitLabel2="#{lbl.createDOI_from_service}"
+			dialogId="createDOIDialog"
+			rendered="#{Auth.update(logicBean.collection) and logicBean.collection.status.toString().toUpperCase() == 'RELEASED'}" />
+		<dialog:confirmationDialog submitAction="createDOI"
+			bean="#{logicBean.actionMenu}"
+			confirmationText="#{msg.confirmation_create_DOI}"
+			submitLabel="#{lbl.createDOI}" dialogId="getDOIDialog"
+			rendered="#{Auth.update(logicBean.collection) and logicBean.collection.status.toString().toUpperCase() == 'RELEASED'}" />
+		<dialog:doiInputDialog col="#{logicBean.collection}"
+			bean="#{logicBean.actionMenu}"
+			confirmationText="#{logicBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}"
+			submitLabel="#{lbl.save}" dialogId="doiInput"
+			rendered="#{Auth.update(logicBean.collection) and logicBean.collection.status.toString().toUpperCase() == 'RELEASED'}" />
 	</ui:define>
-	
+
 </ui:composition>

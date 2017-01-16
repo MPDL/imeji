@@ -54,14 +54,14 @@ public class ItemDetailsBrowse implements Serializable {
    * @param type
    * @param containerId
    */
-  public ItemDetailsBrowse(Item item, String type, String containerUri, User user, String spaceId) {
+  public ItemDetailsBrowse(Item item, String type, String containerUri, User user) {
     this.query = UrlHelper.hasParameter("q") ? UrlHelper.getParameterValue("q") : "";
     this.containerUri = containerUri;
     this.currentItem = item;
     this.sortCriterion = initSortCriterion();
     this.currentPosition =
         UrlHelper.hasParameter("pos") ? Integer.parseInt(UrlHelper.getParameterValue("pos")) : -1;
-    final List<String> items = searchPreviousAndNextItem(user, spaceId);
+    final List<String> items = searchPreviousAndNextItem(user);
     init(items, type, containerUri);
   }
 
@@ -72,12 +72,13 @@ public class ItemDetailsBrowse implements Serializable {
    * @param spaceId
    * @return
    */
-  private List<String> searchPreviousAndNextItem(User user, String spaceId) {
+  private List<String> searchPreviousAndNextItem(User user) {
     final ItemService controller = new ItemService();
     try {
-      return controller.search(containerUri != null ? URI.create(containerUri) : null,
-          SearchQueryParser.parseStringQuery(query), sortCriterion, user, spaceId, SIZE,
-          getOffset()).getResults();
+      return controller
+          .search(containerUri != null ? URI.create(containerUri) : null,
+              SearchQueryParser.parseStringQuery(query), sortCriterion, user, SIZE, getOffset())
+          .getResults();
     } catch (final UnprocessableError e) {
       LOGGER.error("Error retrieving items", e);
     }

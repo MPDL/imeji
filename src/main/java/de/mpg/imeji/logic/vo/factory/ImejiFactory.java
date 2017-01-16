@@ -10,10 +10,10 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContainerMetadata;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 
@@ -34,13 +34,60 @@ public class ImejiFactory {
     // avoid creation
   }
 
+  /**
+   * Return the Factory to create item
+   *
+   * @return
+   */
+  public static ItemFactory newItem() {
+    return new ItemFactory();
+  }
+
+  /**
+   * Return a {@link CollectionFactory}
+   *
+   * @return
+   */
+  public static CollectionFactory newCollection() {
+    return new CollectionFactory();
+  }
+
+  /**
+   * Return a {@link StatementFactory}
+   *
+   * @return
+   */
+  public static StatementFactory newStatement() {
+    return new StatementFactory();
+  }
+
+  /**
+   * Return the factory for a {@link Metadata}
+   *
+   * @param s
+   * @return
+   */
+  public static MetadataFactory newMetadata(Statement s) {
+    return new MetadataFactory().setStatementId(s.getIndex());
+  }
+
+  /**
+   * Return the factory for a {@link Metadata}
+   *
+   * @return
+   */
+  public static MetadataFactory newMetadata() {
+    return new MetadataFactory();
+  }
+
+
   public static Album newAlbum() {
     final Album album = new Album();
     album.setMetadata(newContainerMetadata());
     return album;
   }
 
-  public static CollectionImeji newCollection() {
+  public static CollectionImeji newCollectionOld() {
     final CollectionImeji coll = new CollectionImeji();
     coll.setMetadata(newContainerMetadata());
     return coll;
@@ -67,20 +114,6 @@ public class ImejiFactory {
     cm.getPersons()
         .add(newPerson(firstAuthorFamilyName, firstAuthorGivenName, firstAuthorOrganization));
     return cm;
-  }
-
-  public static Space newSpace() {
-    final Space s = new Space();
-    return s;
-  }
-
-  /**
-   * Return a {@link StatementFactory}
-   *
-   * @return
-   */
-  public static StatementFactory newStatement() {
-    return new StatementFactory();
   }
 
   public static Person newPerson() {
@@ -112,6 +145,8 @@ public class ImejiFactory {
     org.setName(name);
     return org;
   }
+
+
 
   /**
    * Create a new emtpy {@link Item}
@@ -174,11 +209,5 @@ public class ImejiFactory {
   }
 
 
-  public static MetadataFactory newMetadata(Statement s) {
-    return new MetadataFactory().setStatementId(s.getIndex());
-  }
 
-  public static MetadataFactory newMetadata() {
-    return new MetadataFactory();
-  }
 }

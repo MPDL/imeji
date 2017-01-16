@@ -339,7 +339,7 @@ public class InternalStorageManager implements Serializable {
   private InternalStorageItem writeItemFiles(InternalStorageItem item, File file)
       throws IOException {
     // write original file in storage
-    String extension = getExtension(StringHelper.normalizeFilename(item.getFileName()));
+    final String extension = getExtension(StringHelper.normalizeFilename(item.getFileName()));
     copy(file, transformUrlToPath(item.getOriginalUrl()));
     if (isImage(extension) && !extension.equals("gif") && !extension.equals("svg")) {
       copy(ImageUtils.toJpeg(file, StorageUtils.getMimeType(extension)),

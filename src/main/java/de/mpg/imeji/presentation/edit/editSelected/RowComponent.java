@@ -71,7 +71,7 @@ public class RowComponent implements Serializable {
 
   /**
    * Remove all Cells with this index
-   * 
+   *
    * @param index
    */
   public void removeCell(String index) {

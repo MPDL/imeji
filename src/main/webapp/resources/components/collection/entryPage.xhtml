@@ -164,7 +164,7 @@
 					<span class="imj_infodataValue">
 						<span class="qr" id="qr"></span>
 						<br/>
-						<ui:fragment rendered="#{cc.attrs.infoLogicBean.type == 'COLLECTION' and Auth.createContent(cc.attrs.infoLogicBean.container)}">
+						<ui:fragment rendered="#{cc.attrs.infoLogicBean.type == 'COLLECTION' and Auth.createCollection}">
 							#{lbl.qr_code_for} <a href="http://labcam.mpdl.mpg.de/" target="_blank">LabCam</a>
 						</ui:fragment>
 					</span>

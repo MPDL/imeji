@@ -13,8 +13,8 @@ import org.junit.Test;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.QuotaExceededException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
-import de.mpg.imeji.logic.collection.CollectionController.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.collection.CollectionService.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
@@ -75,7 +75,7 @@ public class UserControllerTestClass extends ControllerTest {
     assertThat(u.getQuota(), equalTo(NEW_QUOTA));
 
     // try to exceed quota
-    CollectionController cc = new CollectionController();
+    CollectionService cc = new CollectionService();
     CollectionImeji col = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
     URI uri = cc.create(col, profile, user, MetadataProfileCreationMethod.COPY, null).getId();
     col = cc.retrieve(uri, user);

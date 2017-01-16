@@ -86,7 +86,7 @@ public class UserGroupsBean implements Serializable {
     final Navigation nav = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     try {
 
-      String redirectTo = nav.getApplicationSpaceUrl() + "usergroups?q=" + query
+      String redirectTo = nav.getApplicationUrl() + "usergroups?q=" + query
           + (backContainerUrl != null ? "&back=" + backContainerUrl : "");
 
       if (redirectTo.endsWith("?")) {

@@ -6,54 +6,59 @@
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
 
 	<ui:param name="headline" value="Administration" />
-	<ui:param name="currentMainMenu" value="admin"/>
-	
+	<ui:param name="currentMainMenu" value="admin" />
+
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"  downloadEnabled="false" actionEnabled="false"/>
+		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"
+			downloadEnabled="false" actionEnabled="false" />
 	</ui:define>
-	
+
 	<ui:define name="mainContent">
 		<!-- AdminDataList - Back Button -->
 		<h:panelGroup layout="block" styleClass="imj_backPanel">
 			<h:outputLink value="#{Navigation.adminUrl}">
-				<h:outputText value="#{lbl.back_to_admin}"/>
+				<h:outputText value="#{lbl.back_to_admin}" />
 			</h:outputLink>
-		</h:panelGroup>		
-		
-		<!-- Are You Admin? -->	
-		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
-			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}"/>
-			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}"/>
 		</h:panelGroup>
-	
+
+		<!-- Are You Admin? -->
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
+			rendered="#{!Auth.sysAdmin}">
+			<h:outputText value="#{lbl.view_page_disallowed}"
+				styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
+			<h:outputText value="#{lbl.view_page_disallowed2}"
+				styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
+		</h:panelGroup>
+
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-		<!-- Only for Admins -->			
-			
+			<!-- Only for Admins -->
+
 			<div class="imj_userConfig">
-				
-				<!-- Admin - TiledList -->		
+
+				<!-- Admin - TiledList -->
 				<div class="imj_administrationTiledList imj_maxWidth">
-				
+
 					<div class="imj_listBody">
-					
-						<h:panelGroup layout="block" styleClass="imj_adminPanel imj_userConfig" rendered="#{Auth.sysAdmin}">
-								
-							<h:outputText value="#{lbl.admin_tools_warning}"/>			
-							<br/>
+
+						<h:panelGroup layout="block"
+							styleClass="imj_adminPanel imj_userConfig"
+							rendered="#{Auth.sysAdmin}">
+
+							<h:outputText value="#{lbl.admin_tools_warning}" />
+							<br />
 							<!-- Admin - SPARQL -->
 							<div class="imj_headline">
 								<h2>
-									<h:outputText value="#{lbl.admin_sparql}"/>
+									<h:outputText value="#{lbl.admin_sparql}" />
 								</h2>
 							</div>
 							<div class="imj_content">
 								<FORM action="#{Navigation.applicationUrl}sparql">
-								  	<p>
-								        <textarea name="q" cols="40" rows="10" maxlength="10240000" >SELECT * WHERE{?s ?p ?o} limit 1000</textarea>
-								   	</p>
-								  	<p>
-										#{lbl.model} 
-										<select name="model">
+									<p>
+										<textarea name="q" cols="40" rows="10" maxlength="10240000">SELECT * WHERE{?s ?p ?o} limit 1000</textarea>
+									</p>
+									<p>
+										#{lbl.model} <select name="model">
 											<option value="" selected="selected">All (Union)</option>
 											<option value="item">Item</option>
 											<option value="collection">Collection</option>
@@ -61,12 +66,11 @@
 											<option value="user">User</option>
 											<option value="statement">Statement</option>
 										</select>
-									 </p>
-									 <p>
-										#{lbl.format} 
-										<select name="format">
+									</p>
+									<p>
+										#{lbl.format} <select name="format">
 											<option value="table" selected="selected">Table</option>
-											<option value="" >RDF-XML</option>
+											<option value="">RDF-XML</option>
 											<option value="json">JSON</option>
 											<option value="ttl">TTL</option>
 											<option value="bio">BIO</option>
@@ -74,113 +78,135 @@
 											<option value="csv">CSV</option>
 										</select>
 									</p>
-								    <input type="submit" value="#{lbl.execute}" formtarget="_blank" class="imj_editButton"/>
-								</FORM>	
+									<input type="submit" value="#{lbl.execute}" formtarget="_blank"
+										class="imj_editButton" />
+								</FORM>
 							</div>
-							
+
 							<!-- Admin - Clean storage -->
 							<div class="imj_headline">
 								<h2>
-									<h:outputText value="#{lbl.storage}"/>
+									<h:outputText value="#{lbl.storage}" />
 								</h2>
 							</div>
-							
+
 							<div class="imj_content">
-								<h:outputText value="#{lbl.admin_clean_storage_description}"/> 				
+								<h:outputText value="#{lbl.admin_clean_storage_description}" />
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.cleanStorage}" value="#{lbl.clean}: #{AdminBean.internalStorageLocation}"  onclick="openDialog('dialogWait');">
-											<f:ajax/>
+										<h:commandLink styleClass="imj_editButton"
+											action="#{AdminBean.cleanStorage}"
+											value="#{lbl.clean}: #{AdminBean.internalStorageLocation}"
+											onclick="openDialog('dialogWait');">
+											<f:ajax />
 										</h:commandLink>
-									</h:panelGroup>		
+									</h:panelGroup>
 								</h:form>
-								<h:outputText value="#{lbl.admin_refresh_file_size_description}"/>							
+								<h:outputText value="#{lbl.admin_refresh_file_size_description}" />
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.refreshFileSize}" value="#{lbl.refresh}"/>
-									</h:panelGroup>	
+										<h:commandLink styleClass="imj_editButton"
+											action="#{AdminBean.refreshFileSize}" value="#{lbl.refresh}" />
+									</h:panelGroup>
 								</h:form>
-								<h:outputText value="#{lbl.admin_extract_fulltext_and_technical_metadata}"/>							
+								<h:outputText
+									value="#{lbl.admin_extract_fulltext_and_technical_metadata}" />
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.extractFulltextAndTechnicalMetadata}" value="#{lbl.extract}"/>
-									</h:panelGroup>	
+										<h:commandLink styleClass="imj_editButton"
+											action="#{AdminBean.extractFulltextAndTechnicalMetadata}"
+											value="#{lbl.extract}" />
+									</h:panelGroup>
 								</h:form>
 							</div>
 
 							<!-- Admin - reindex -->
 							<div class="imj_headline">
 								<h2>
-									<h:outputText value="#{lbl.search}"/>
+									<h:outputText value="#{lbl.search}" />
 								</h2>
 							</div>
-							
-							<div class="imj_content">							
+
+							<div class="imj_content">
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.reindex}" value="#{lbl.admin_reindex}"/>
-									</h:panelGroup>	
+										<h:commandLink styleClass="imj_editButton"
+											action="#{AdminBean.reindex}" value="#{lbl.admin_reindex}" />
+									</h:panelGroup>
 								</h:form>
 							</div>
-							
+
 							<!-- Admin - Clean database -->
 							<div class="imj_headline">
 								<h2>
-									<h:outputText value="#{lbl.admin_advanced_clean}"/>
+									<h:outputText value="#{lbl.admin_advanced_clean}" />
 								</h2>
 							</div>
 							<div class="imj_content">
-								<h:outputText value="#{lbl.admin_advanced_clean_description}"/> 		
+								<h:outputText value="#{lbl.admin_advanced_clean_description}" />
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink action="#{AdminBean.status}" value="#{lbl.admin_advanced_state}" title="#{lbl.admin_advanced_state}" styleClass="imj_editButton">
+										<h:commandLink action="#{AdminBean.status}"
+											value="#{lbl.admin_advanced_state}"
+											title="#{lbl.admin_advanced_state}"
+											styleClass="imj_editButton">
 										</h:commandLink>
 									</h:panelGroup>
 								</h:form>
-								<h:outputText value="#{AdminBean.cleanDatabaseReport}" escape="false"/>
+								<h:outputText value="#{AdminBean.cleanDatabaseReport}"
+									escape="false" />
 							</div>
 							<div class="imj_content">
-								<h:outputText value="#{lbl.admin_advanced_clean_warning}"/>	
+								<h:outputText value="#{lbl.admin_advanced_clean_warning}" />
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink action="#{AdminBean.clean}" value="#{lbl.admin_advanced_clean}" title="#{lbl.admin_advanced_clean}" styleClass="imj_cancelButton">
-											<f:ajax/>
+										<h:commandLink action="#{AdminBean.clean}"
+											value="#{lbl.admin_advanced_clean}"
+											title="#{lbl.admin_advanced_clean}"
+											styleClass="imj_cancelButton">
+											<f:ajax />
 										</h:commandLink>
 									</h:panelGroup>
 								</h:form>
 							</div>
-											
+
 							<!-- Admin - Import escidoc Pictures to imeji internal Storage -->
 							<div class="imj_headline">
 								<h2>
-									<h:outputText value="#{lbl.import_to_internal}"/>
+									<h:outputText value="#{lbl.import_to_internal}" />
 								</h2>
 							</div>
-							
+
 							<div class="imj_content">
-								<h:outputText value="#{lbl.import_to_internal_warning}"/>													
+								<h:outputText value="#{lbl.import_to_internal_warning}" />
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.importToInternalStorage}" value="#{lbl.import_to_internal}: #{AdminBean.internalStorageLocation}"  onclick="openDialog('dialogWait');">
-											<f:ajax/>
+										<h:commandLink styleClass="imj_editButton"
+											action="#{AdminBean.importToInternalStorage}"
+											value="#{lbl.import_to_internal}: #{AdminBean.internalStorageLocation}"
+											onclick="openDialog('dialogWait');">
+											<f:ajax />
 										</h:commandLink>
 									</h:panelGroup>
 								</h:form>
 							</div>
-							
+
 						</h:panelGroup>
-					
-					</div> <!-- END LIST BODY -->	
-				
-				</div> <!-- END ADMIN LIST -->
-			
-			</div> <!-- END USER CONFIG -->
-		
-		
-			
-		
+
+					</div>
+					<!-- END LIST BODY -->
+
+				</div>
+				<!-- END ADMIN LIST -->
+
+			</div>
+			<!-- END USER CONFIG -->
+
+
+
+
 		</ui:fragment>
-		
+
 	</ui:define>
-	
+
 </ui:composition>

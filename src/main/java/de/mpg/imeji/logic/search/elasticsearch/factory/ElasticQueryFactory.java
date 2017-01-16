@@ -56,13 +56,12 @@ public class ElasticQueryFactory {
    * @return
    * @return
    */
-  public static QueryBuilder build(SearchQuery query, String folderUri, String spaceId, User user,
+  public static QueryBuilder build(SearchQuery query, String folderUri, User user,
       ElasticTypes type) {
     final BoolQueryBuilder q = QueryBuilders.boolQuery();
     final QueryBuilder searchQuery = buildSearchQuery(query, user);
     final QueryBuilder containerQuery = buildContainerFilter(folderUri);
     final QueryBuilder securityQuery = buildSecurityQuery(user, folderUri);
-    final QueryBuilder spaceQuery = buildSpaceQuery(spaceId);
     final QueryBuilder statusQuery = buildStatusQuery(query, user);
     if (!isMatchAll(searchQuery)) {
       q.must(searchQuery);
@@ -72,9 +71,6 @@ public class ElasticQueryFactory {
     }
     if (!isMatchAll(securityQuery)) {
       q.must(securityQuery);
-    }
-    if (!isMatchAll(spaceQuery)) {
-      q.must(spaceQuery);
     }
     if (type != ElasticTypes.users && !isMatchAll(statusQuery)) {
       q.must(statusQuery);
@@ -143,22 +139,6 @@ public class ElasticQueryFactory {
       }
     }
     return false;
-  }
-
-
-  /**
-   * Return the query for space
-   *
-   * @param spaceId
-   * @return
-   */
-  private static QueryBuilder buildSpaceQuery(String spaceId) {
-    // TODO create query lookup query (see by albums)
-    if (spaceId == null || "".equals(spaceId)) {
-      return QueryBuilders.matchAllQuery();
-    } else {
-      return fieldQuery(ElasticFields.SPACE, spaceId, SearchOperators.EQUALS, false);
-    }
   }
 
   /**
@@ -238,7 +218,7 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder buildGrantQuery(User user, GrantType grantType) {
-    Collection<Grant> grants =
+    final Collection<Grant> grants =
         SecurityUtil.authorization().toGrantList(SecurityUtil.authorization().getAllGrants(user));
     final BoolQueryBuilder q = QueryBuilders.boolQuery();
     // Add query for all release objects

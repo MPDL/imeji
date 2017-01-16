@@ -35,7 +35,6 @@ import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
@@ -454,42 +453,6 @@ public class JenaCustomQueries {
   public static final String selectVersion(String id) {
     return "SELECT (str(?version) AS ?s) WHERE { <" + id + "> <" + ImejiNamespaces.VERSION
         + "> ?version}";
-  }
-
-  /**
-   * Select all {@link Space} available imeji
-   *
-   * @return
-   */
-  public static final String selectSpaceAll() {
-    return "SELECT ?s WHERE { ?s a <http://imeji.org/terms/space>}";
-  }
-
-  /**
-   * Select a {@link Space} by its label
-   *
-   * @return
-   */
-  public static final String getSpaceByLabel(String spaceId) {
-    return "SELECT ?s WHERE { ?s <http://imeji.org/terms/slug> \"" + spaceId
-        + "\"^^<http://www.w3.org/2001/XMLSchema#string>. ?s a <http://imeji.org/terms/space> }";
-  }
-
-  public static final String selectCollectionsOfSpace(URI id) {
-    return "SELECT DISTINCT ?s WHERE{ ?s <http://imeji.org/terms/space> " + "<" + id.toString()
-        + "> " + " . ?s a <http://imeji.org/terms/collection> }";
-  }
-
-  public static final String selectSpaceOfCollection(URI id) {
-    return "SELECT DISTINCT ?s WHERE{  <" + id.toString() + "> <http://imeji.org/terms/space> "
-        + "?s " + " . ?s a <http://imeji.org/terms/space> } LIMIT 1";
-  }
-
-  public static final String selectCollectionsNotInSpace() {
-    return "SELECT DISTINCT ?s  WHERE {"
-        + " FILTER NOT EXISTS {?s <http://imeji.org/terms/space> ?o} ."
-        + "  ?s a <http://imeji.org/terms/collection> ." + " FILTER NOT EXISTS {?s <"
-        + ImejiNamespaces.STATUS + "> <" + Status.WITHDRAWN.getUriString() + "> }" + "} ";
   }
 
   /**

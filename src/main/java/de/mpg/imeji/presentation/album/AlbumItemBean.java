@@ -23,7 +23,6 @@ import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.item.ItemBean;
 import de.mpg.imeji.presentation.item.ItemDetailsBrowse;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Bean for the detail {@link Item} page within an {@link Album}
@@ -43,8 +42,7 @@ public class AlbumItemBean extends ItemBean {
   public AlbumItemBean() {
     super();
     this.albumId = UrlHelper.getParameterValue("albumId");
-    this.prettyLink =
-        SessionBean.getPrettySpacePage("pretty:editImageOfAlbum", getSelectedSpaceString());
+    this.prettyLink = "pretty:editImageOfAlbum";
   }
 
   @Override
@@ -54,9 +52,9 @@ public class AlbumItemBean extends ItemBean {
       // can see the Item (this is by default)
       setAlbum(loadAlbum());
       setBrowse(new ItemDetailsBrowse(getImage(), "album",
-          ObjectHelper.getURI(Album.class, albumId).toString(), getSessionUser(), getSpaceId()));
+          ObjectHelper.getURI(Album.class, albumId).toString(), getSessionUser()));
     } catch (final ImejiException e) {
-      setBrowse(new ItemDetailsBrowse(getImage(), "item", null, getSessionUser(), getSpaceId()));
+      setBrowse(new ItemDetailsBrowse(getImage(), "item", null, getSessionUser()));
     }
 
   }
@@ -115,7 +113,7 @@ public class AlbumItemBean extends ItemBean {
 
   @Override
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:albumItem", getSelectedSpaceString());
+    return "pretty:albumItem";
   }
 
   @Override

@@ -309,7 +309,7 @@ public class AlbumBean extends ContainerBean {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error during delete album", e);
     }
-    return SessionBean.getPrettySpacePage("pretty:albums", getSelectedSpaceString());
+    return "pretty:albums";
   }
 
   /**
@@ -459,8 +459,7 @@ public class AlbumBean extends ContainerBean {
   private void countAllowedItems() {
     final ItemService ic = new ItemService();
     allowedItemsSize =
-        ic.search(getContainer().getId(), null, null, getSessionUser(), getSpaceId(), -1, 0)
-            .getNumberOfRecords();
+        ic.search(getContainer().getId(), null, null, getSessionUser(), -1, 0).getNumberOfRecords();
   }
 
   public Album getActiveAlbum() {

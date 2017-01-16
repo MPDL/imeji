@@ -13,7 +13,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpResponseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.export.format.Export;
 import de.mpg.imeji.logic.item.ItemService;
@@ -86,7 +86,6 @@ public class ExportManager {
   public SearchResult search() throws IOException, ImejiException {
     final String collectionId = export.getParam("col");
     final String albumId = export.getParam("album");
-    final String spaceId = export.getParam("space");
     final String query = export.getParam("q");
     export.getParam("id");
     final String searchType = export.getParam("type");
@@ -107,23 +106,21 @@ public class ExportManager {
       result = new SearchResult(sr, null);
     } else {
       if ("collection".equals(searchType) || "metadata".equals(searchType)) {
-        final CollectionController collectionController = new CollectionController();
-        result = collectionController.search(searchQuery, null, maximumNumberOfRecords, 0, user,
-            spaceId);
+        final CollectionService collectionController = new CollectionService();
+        result = collectionController.search(searchQuery, null, user, maximumNumberOfRecords, 0);
       } else if ("album".equals(searchType)) {
         final AlbumController albumController = new AlbumController();
-        result =
-            albumController.search(searchQuery, user, null, maximumNumberOfRecords, 0, spaceId);
+        result = albumController.search(searchQuery, user, null, maximumNumberOfRecords, 0);
       } else if ("image".equals(searchType)) {
         final ItemService itemController = new ItemService();
         if (collectionId != null) {
           result = itemController.search(ObjectHelper.getURI(CollectionImeji.class, collectionId),
-              searchQuery, null, user, spaceId, -1, 0);
+              searchQuery, null, user, -1, 0);
         } else if (albumId != null) {
           result = itemController.search(ObjectHelper.getURI(Album.class, albumId), searchQuery,
-              null, user, spaceId, -1, 0);
+              null, user, -1, 0);
         } else {
-          result = itemController.search(null, searchQuery, null, user, spaceId, -1, 0);
+          result = itemController.search(null, searchQuery, null, user, -1, 0);
         }
       }
     }

@@ -1,27 +1,30 @@
-<ui:composition template="templates/sub_template/template_metadata_mediaContainer.xhtml"  
+<ui:composition
+	template="templates/sub_template/template_metadata_mediaContainer.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
-	
-	<ui:param name="metadataBean" value="#{EditCollectionBean}"/>
-	<ui:param name="metadataContextBean" value="#{EditCollectionBean.collection}"/>
-	<ui:param name="headline" value="#{lbl.edit}: #{metadataContextBean.metadata.title}"/>
-	<ui:param name="currentMainMenu" value="collection"/>
-	<ui:param name="containerHeadline" value="#{lbl.collection_info}"/>
-	<ui:param name="imejiResource" value="#{EditCollectionBean.collection}"/>
-	
+
+	<ui:param name="metadataBean" value="#{EditCollectionBean}" />
+	<ui:param name="metadataContextBean"
+		value="#{EditCollectionBean.collection}" />
+	<ui:param name="headline"
+		value="#{lbl.edit}: #{metadataContextBean.metadata.title}" />
+	<ui:param name="currentMainMenu" value="collection" />
+	<ui:param name="containerHeadline" value="#{lbl.collection_info}" />
+	<ui:param name="imejiResource" value="#{EditCollectionBean.collection}" />
+
 	<ui:define name="actionsMenu">
 		<ui:fragment rendered="#{Auth.read(metadataContextBean)}">
-			<menu:context_subNavigation contextId="#{metadataContextBean.idString}" 
-										contextUrl="#{Navigation.collectionUrl}" 
-										curMainMenu="#{currentMainMenu}" 
-										userHasAdminRights="#{Auth.sysAdmin}" 
-										userHasUploadRights="#{Auth.createContent(metadataContextBean) and metadataContextBean.status != 'WITHDRAWN'}" 
-										navBean="#{Navigation}" 
-										activeMenu="start"/>
-										
+			<menu:context_subNavigation
+				contextId="#{metadataContextBean.idString}"
+				contextUrl="#{Navigation.collectionUrl}"
+				curMainMenu="#{currentMainMenu}"
+				userHasAdminRights="#{Auth.sysAdmin}"
+				userHasUploadRights="#{Auth.update(metadataContextBean) and metadataContextBean.status != 'WITHDRAWN'}"
+				navBean="#{Navigation}" activeMenu="start" />
+
 		</ui:fragment>
 	</ui:define>
 </ui:composition>

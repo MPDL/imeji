@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
@@ -28,7 +28,6 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.VocabularyHelper;
 
 /**
@@ -55,7 +54,7 @@ public class CreateCollectionBean extends CollectionBean {
   public void init() {
     vocabularyHelper = new VocabularyHelper(getLocale());
     setCollectionCreateMode(true);
-    setCollection(ImejiFactory.newCollection());
+    setCollection(ImejiFactory.newCollectionOld());
     ((List<Person>) getCollection().getMetadata().getPersons()).set(0,
         getSessionUser().getPerson().clone());
     containerEditorSession.setUploadedLogoPath(null);
@@ -104,7 +103,7 @@ public class CreateCollectionBean extends CollectionBean {
    */
   public boolean createCollection() {
     try {
-      final CollectionController collectionController = new CollectionController();
+      final CollectionService collectionController = new CollectionService();
       int pos = 0;
       // Set the position of the persons and organizations (used for the sorting later)
       for (final Person p : getCollection().getMetadata().getPersons()) {
@@ -117,8 +116,7 @@ public class CreateCollectionBean extends CollectionBean {
         }
       }
 
-      setCollection(
-          collectionController.create(getCollection(), getSessionUser(), getSelectedSpaceString()));
+      setCollection(collectionController.create(getCollection(), getSessionUser()));
       if (containerEditorSession.getUploadedLogoPath() != null) {
         collectionController.updateLogo(getCollection(),
             new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
@@ -132,11 +130,12 @@ public class CreateCollectionBean extends CollectionBean {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error create collection", e);
     } catch (final ImejiException e) {
-      BeanHelper.cleanMessages();
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getLocalizedMessage(), getLocale()));
       LOGGER.error("Error create collection", e);
     } catch (final Exception e) {
       LOGGER.error("Error create collection", e);
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_create", getLocale())
+          + ": " + e.getMessage());
     }
     return false;
   }
@@ -156,7 +155,7 @@ public class CreateCollectionBean extends CollectionBean {
 
   @Override
   protected String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:createCollection", getSelectedSpaceString());
+    return "pretty:createCollection";
   }
 
   public String getVocabularyLabel(URI id) {

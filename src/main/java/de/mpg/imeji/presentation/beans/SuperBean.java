@@ -27,10 +27,6 @@ public class SuperBean implements Serializable {
   private User sessionUser;
   @ManagedProperty(value = "#{InternationalizationBean.locale}")
   private Locale locale;
-  @ManagedProperty(value = "#{SessionBean.selectedSpaceString}")
-  private String space;
-  @ManagedProperty(value = "#{SessionBean.spaceId}")
-  private String spaceId;
   @ManagedProperty(value = "#{Navigation}")
   private Navigation navigation;
   @ManagedProperty(value = "#{HistorySession}")
@@ -77,20 +73,6 @@ public class SuperBean implements Serializable {
   }
 
   /**
-   * @return the space
-   */
-  public String getSelectedSpaceString() {
-    return space;
-  }
-
-  /**
-   * @param space the space to set
-   */
-  public void setSpace(String space) {
-    this.space = space;
-  }
-
-  /**
    * @return the sessionUser
    */
   public User getSessionUser() {
@@ -119,21 +101,6 @@ public class SuperBean implements Serializable {
   }
 
   /**
-   * @return the spaceId
-   */
-  public String getSpaceId() {
-    return spaceId;
-  }
-
-  /**
-   * @param spaceId the spaceId to set
-   */
-  public void setSpaceId(String spaceId) {
-    this.spaceId = spaceId;
-  }
-
-
-  /**
    * @return Authentication Bean
    */
   public AuthorizationBean getAuth() {
@@ -141,7 +108,7 @@ public class SuperBean implements Serializable {
   }
 
   /**
-   * 
+   *
    * @param auth the Authentication Bean to set
    */
   public void setAuth(AuthorizationBean auth) {

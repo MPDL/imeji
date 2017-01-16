@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>imeji</artifactId>
 	<groupId>org.imeji</groupId>
@@ -197,11 +198,11 @@
 				<version>3.0</version>
 			</plugin>
 			<plugin>
-			  	<groupId>org.apache.maven.plugins</groupId>
-			  	<artifactId>maven-javadoc-plugin</artifactId>
-			  	<version>2.10.3</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
 			</plugin>
-			 <plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.4</version>
@@ -327,9 +328,9 @@
 			<version>3.3.2</version>
 		</dependency>
 		<dependency>
-		  <groupId>commons-codec</groupId>
-		  <artifactId>commons-codec</artifactId>
-		  <version>1.9</version>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -353,7 +354,7 @@
 			<groupId>com.ocpsoft</groupId>
 			<artifactId>prettyfaces-jsf2</artifactId>
 			<version>3.3.3</version>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -463,16 +464,16 @@
 			<version>2.21</version>
 		</dependency>
 		<dependency>
-		  <groupId>org.glassfish.jersey.test-framework</groupId>
-		  <artifactId>jersey-test-framework-core</artifactId>
-		  <version>2.21</version>
-		  <scope>test</scope>
+			<groupId>org.glassfish.jersey.test-framework</groupId>
+			<artifactId>jersey-test-framework-core</artifactId>
+			<version>2.21</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.test-framework.providers</groupId>
 			<artifactId>jersey-test-framework-provider-grizzly2</artifactId>
 			<version>2.21</version>
-			 <scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
@@ -496,9 +497,9 @@
 			<version>0.4.4</version>
 		</dependency>
 		<dependency>
-		  <groupId>io.swagger</groupId>
-		  <artifactId>swagger-jersey2-jaxrs</artifactId>
-		  <version>1.5.3</version>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-jersey2-jaxrs</artifactId>
+			<version>1.5.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
@@ -549,9 +550,12 @@
 								<phase>install</phase>
 								<configuration>
 									<tasks>
-										<delete quiet="true" file="${tomcat.webapps}/${project.warName}.war" />
+										<delete quiet="true"
+											file="${tomcat.webapps}/${project.warName}.war" />
 										<delete quiet="true" dir="${tomcat.webapps}/${project.warName}" />
-										<copy overwrite="true" file="${project.build.directory}/${project.warName}.war" tofile="${tomcat.webapps}/${project.warName}.war" />
+										<copy overwrite="true"
+											file="${project.build.directory}/${project.warName}.war"
+											tofile="${tomcat.webapps}/${project.warName}.war" />
 									</tasks>
 								</configuration>
 								<goals>

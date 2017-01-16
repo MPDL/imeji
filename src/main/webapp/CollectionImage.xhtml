@@ -1,14 +1,15 @@
-<ui:composition template="templates/sub_template/template_image.xhtml" 
+<ui:composition template="templates/sub_template/template_image.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
-	
-	<ui:param name="itemBean" value="#{CollectionItemBean}"/>
-	<ui:param name="currentMainMenu" value="collection"/>
-	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemBean.collectionId}/browse?q=#{CollectionItemBean.browse.query}"/>
-	<ui:param name="imejiResource" value="#{CollectionItemBean.image}"/>
-	
-	
+
+	<ui:param name="itemBean" value="#{CollectionItemBean}" />
+	<ui:param name="currentMainMenu" value="collection" />
+	<ui:param name="browseToAllItemsUrl"
+		value="#{Navigation.collectionUrl}#{CollectionItemBean.collectionId}/browse?q=#{CollectionItemBean.browse.query}" />
+	<ui:param name="imejiResource" value="#{CollectionItemBean.image}" />
+
+
 </ui:composition>

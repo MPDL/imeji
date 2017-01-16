@@ -70,9 +70,9 @@ public class JenaSearch implements Search {
    */
   @Override
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
-      String spaceId, int from, int size) {
+      int from, int size) {
     this.containerURI = folderUri;
-    return new SearchResult(advanced(query, sortCri, user, spaceId), sortCri);
+    return new SearchResult(advanced(query, sortCri, user), sortCri);
   }
 
   /**
@@ -87,9 +87,8 @@ public class JenaSearch implements Search {
    * @return
    */
   @Override
-  public SearchResult search(SearchQuery sq, SortCriterion sortCri, User user, List<String> uris,
-      String spaceId) {
-    return new SearchResult(advanced(uris, sq, sortCri, user, spaceId), sortCri);
+  public SearchResult search(SearchQuery sq, SortCriterion sortCri, User user, List<String> uris) {
+    return new SearchResult(advanced(uris, sq, sortCri, user), sortCri);
   }
 
   /**
@@ -112,8 +111,8 @@ public class JenaSearch implements Search {
    * @param user
    * @return
    */
-  private List<String> advanced(SearchQuery sq, SortCriterion sortCri, User user, String spaceId) {
-    return advanced(new ArrayList<String>(), sq, sortCri, user, spaceId);
+  private List<String> advanced(SearchQuery sq, SortCriterion sortCri, User user) {
+    return advanced(new ArrayList<String>(), sq, sortCri, user);
   }
 
   /**
@@ -128,7 +127,7 @@ public class JenaSearch implements Search {
    * @return
    */
   private List<String> advanced(List<String> previousResults, SearchQuery sq, SortCriterion sortCri,
-      User user, String spaceId) {
+      User user) {
     // indexes = SearchIndexInitializer.init();
     // Set null parameters
     if (sq == null) {
@@ -146,7 +145,7 @@ public class JenaSearch implements Search {
     // second case is useless so far, since all query within a container are
     // container specific.
     if (sq.isEmpty() || (containerURI != null && results.isEmpty() && false)) {
-      results = simple(null, sortCri, user, spaceId);
+      results = simple(null, sortCri, user);
     }
     boolean isFirstResult = results.isEmpty();
     LOGICAL_RELATIONS logic = LOGICAL_RELATIONS.AND;
@@ -155,17 +154,17 @@ public class JenaSearch implements Search {
       switch (se.getType()) {
         case GROUP:
           subResults = new ArrayList<String>(
-              advanced(new SearchQuery(((SearchGroup) se).getGroup()), sortCri, user, spaceId));
+              advanced(new SearchQuery(((SearchGroup) se).getGroup()), sortCri, user));
           results = doLogicalOperation(SortHelper.removeSortValue(subResults), logic,
               SortHelper.removeSortValue(results));
           break;
         case PAIR:
-          subResults = new ArrayList<String>(simple((SearchPair) se, sortCri, user, spaceId));
+          subResults = new ArrayList<String>(simple((SearchPair) se, sortCri, user));
           results = doLogicalOperation(SortHelper.removeSortValue(subResults), logic,
               SortHelper.removeSortValue(results));
           break;
         case METADATA:
-          subResults = new ArrayList<String>(simple((SearchPair) se, sortCri, user, spaceId));
+          subResults = new ArrayList<String>(simple((SearchPair) se, sortCri, user));
           results = doLogicalOperation(SortHelper.removeSortValue(subResults), logic,
               SortHelper.removeSortValue(results));
           break;
@@ -199,7 +198,7 @@ public class JenaSearch implements Search {
    * @param user
    * @return
    */
-  private List<String> simple(SearchPair pair, SortCriterion sortCri, User user, String spaceId) {
+  private List<String> simple(SearchPair pair, SortCriterion sortCri, User user) {
     return new ArrayList<>();
   }
 

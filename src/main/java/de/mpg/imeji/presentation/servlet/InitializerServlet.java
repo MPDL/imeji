@@ -19,9 +19,9 @@ import org.apache.log4j.lf5.util.StreamUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.ImejiInitializer;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.ReadMaxPlanckIPMappingJob;
+import de.mpg.imeji.logic.init.ImejiInitializer;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.StringHelper;

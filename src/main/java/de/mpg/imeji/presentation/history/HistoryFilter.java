@@ -27,19 +27,13 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ocpsoft.pretty.PrettyContext;
-import com.ocpsoft.pretty.faces.config.PrettyConfig;
-import com.ocpsoft.pretty.faces.config.mapping.UrlMapping;
-import com.ocpsoft.pretty.faces.url.URL;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
-import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.controller.SpaceController;
 import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.ServletUtil;
@@ -72,12 +66,8 @@ public class HistoryFilter implements Filter {
       }
     } catch (NotFoundException | NullPointerException e) {
       LOGGER.error("Error history filter", e);
-      if ("SPACE_NOT_FOUND".equals(e.getMessage())) {
-        ((HttpServletResponse) resp).sendRedirect(navigation.getApplicationUrl());
-      } else {
-        ((HttpServletResponse) resp).sendError(Status.NOT_FOUND.getStatusCode(),
-            "RESOURCE_NOT_FOUND");
-      }
+      ((HttpServletResponse) resp).sendError(Status.NOT_FOUND.getStatusCode(),
+          "RESOURCE_NOT_FOUND");
     } catch (final AuthenticationError e) {
       LOGGER.error("Error history filter", e);
       redirectToLoginPage(serv, resp);
@@ -129,7 +119,6 @@ public class HistoryFilter implements Filter {
     final SessionBean session = getSessionBean(request, resp);
     final HistorySession hs = getHistorySession(request, resp);
     if (session != null && hs != null) {
-      checkSpaceMatching(request, session, hs);
       final String url = navigation.getApplicationUri()
           + PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
       final Map<String, String[]> params =
@@ -156,41 +145,6 @@ public class HistoryFilter implements Filter {
     this.filterConfig = filterConfig;
   }
 
-
-
-  private void checkSpaceMatching(HttpServletRequest request, SessionBean session,
-      HistorySession hs) throws NotFoundException, ImejiException {
-    // TODO CHANGE ME
-    final String spaceHome = "space_home";
-    final String matchingUrl = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
-    final PrettyConfig pc =
-        PrettyContext.getCurrentInstance(FacesContext.getCurrentInstance()).getConfig();
-
-    if (pc.isURLMapped(new URL(matchingUrl))) {
-      final UrlMapping myMap =
-          pc.getMappingForUrl(PrettyContext.getCurrentInstance(request).getRequestURL());
-      if (myMap.getId().startsWith("space_")) {
-        String mySpaceId = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
-        mySpaceId = spaceHome.equals(myMap.getId())
-            ? StringUtils.substringAfter(matchingUrl, "/space/")
-            : StringUtils.substringBefore(StringUtils.substringAfter(matchingUrl, "/space/"), "/");
-        if (!mySpaceId.equals(session.getSpaceId())) {
-          hs.getPages().clear();
-          final SpaceController sc = new SpaceController();
-          if (!sc.isSpaceByLabel(mySpaceId)) {
-            session.setSpaceId("");
-            throw new NotFoundException("SPACE_NOT_FOUND");
-          }
-        }
-      } else {
-        if (!("".equals(session.getSpaceId()))) {
-          // Clean old history pages when switching to a new space
-          hs.getPages().clear();
-          session.setSpaceId("");
-        }
-      }
-    }
-  }
 
   /**
    * Return the {@link SessionBean}

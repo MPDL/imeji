@@ -9,8 +9,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.collection.CollectionController;
-import de.mpg.imeji.logic.collection.CollectionController.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.collection.CollectionService.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
@@ -60,7 +60,7 @@ public class StatisticsControllerTestClass extends ControllerTest {
   }
 
   private CollectionImeji createCollection(User user) throws ImejiException {
-    CollectionController controller = new CollectionController();
+    CollectionService controller = new CollectionService();
     collection = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
     return controller.create(collection, profile, user, MetadataProfileCreationMethod.COPY, null);
   }

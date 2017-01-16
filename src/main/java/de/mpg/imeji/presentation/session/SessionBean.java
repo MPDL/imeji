@@ -3,8 +3,6 @@
  */
 package de.mpg.imeji.presentation.session;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
@@ -23,18 +21,16 @@ import org.apache.commons.lang.StringUtils;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.controller.AlbumController;
-import de.mpg.imeji.logic.controller.SpaceController;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.MaxPlanckInstitutUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
-import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.util.CookieUtils;
 import de.mpg.imeji.presentation.util.ServletUtil;
@@ -64,9 +60,6 @@ public class SessionBean implements Serializable {
   private Style selectedCss = Style.NONE;
   private boolean hasUploadRights = false;
   private String applicationUrl;
-  private String spaceId;
-  private URI selectedSpace;
-  private String selectedSpaceLogoURL;
   private String selectedBrowseListView;
 
 
@@ -392,63 +385,6 @@ public class SessionBean implements Serializable {
     return ipAddress;
   }
 
-  public void setSpaceId(String spaceIdString) {
-    this.spaceId = spaceIdString;
-    if (!isNullOrEmpty(spaceIdString)) {
-      final SpaceController sc = new SpaceController();
-      try {
-        final Space selectedSpace = sc.retrieveSpaceByLabel(spaceIdString, this.user);
-        if (selectedSpace != null) {
-          this.selectedSpace = selectedSpace.getId();
-          this.selectedSpaceLogoURL = String.valueOf(selectedSpace.getLogoUrl());
-          logoutFromSpot();
-        } else {
-          this.selectedSpace = null;
-          this.spaceId = "";
-          this.selectedSpaceLogoURL = "";
-        }
-      } catch (final ImejiException e) {
-        this.selectedSpace = null;
-        this.spaceId = "";
-        this.selectedSpaceLogoURL = "";
-      }
-    } else {
-      this.selectedSpace = null;
-      this.spaceId = "";
-      this.selectedSpaceLogoURL = "";
-    }
-  }
-
-  public String getSpaceId() {
-    return this.spaceId;
-  }
-
-  public String getSelectedSpaceString() {
-    if (this.selectedSpace != null) {
-      return this.selectedSpace.toString();
-    }
-    return "";
-  }
-
-  public URI getSelectedSpace() {
-    return this.selectedSpace;
-  }
-
-  public String getSelectedSpaceLogoURL() {
-    return this.selectedSpaceLogoURL;
-  }
-
-  public String getPrettySpacePage(String prettyPage) {
-    return getPrettySpacePage(prettyPage, spaceId);
-  }
-
-  public static String getPrettySpacePage(String prettyPage, String space) {
-    if (isNullOrEmpty(space)) {
-      return prettyPage;
-    }
-    return prettyPage.replace("pretty:", "pretty:space_");
-  }
-
   /**
    * Logout and redirect to the home page
    *
@@ -495,7 +431,7 @@ public class SessionBean implements Serializable {
     } else {
       // Replace by a query by grant "update"
       final List<String> collectionUris =
-          new CollectionController().search(null, null, -1, 0, user, spaceId).getResults();
+          new CollectionService().search(null, null, user, -1, 0).getResults();
       hasUploadRights =
           collectionUris.stream().anyMatch(uri -> SecurityUtil.authorization().update(user, uri));
     }

@@ -27,7 +27,6 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.item.ItemsBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
 
 /**
@@ -77,15 +76,14 @@ public class AlbumItemsBean extends ItemsBean {
 
   @Override
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:albumBrowse", getSpaceId());
+    return "pretty:albumBrowse";
   }
 
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
     final ItemService controller = new ItemService();
-    return controller.search(uri, searchQuery, sortCriterion, getSessionUser(), null, limit,
-        offset);
+    return controller.search(uri, searchQuery, sortCriterion, getSessionUser(), limit, offset);
   }
 
   /**
@@ -168,7 +166,7 @@ public class AlbumItemsBean extends ItemsBean {
       final AlbumController ac = new AlbumController();
       final ItemService ic = new ItemService();
       ac.removeFromAlbum(album,
-          ic.search(album.getId(), null, null, getSessionUser(), getSpaceId(), -1, 0).getResults(),
+          ic.search(album.getId(), null, null, getSessionUser(), -1, 0).getResults(),
           getSessionUser());
     }
   }
@@ -213,7 +211,7 @@ public class AlbumItemsBean extends ItemsBean {
     if (album == null || album.getId() == null) {
       return "";
     }
-    return getNavigation().getApplicationSpaceUrl() + "album/" + this.id + "/";
+    return getNavigation().getApplicationUrl() + "album/" + this.id + "/";
   }
 
   @Override
@@ -263,7 +261,7 @@ public class AlbumItemsBean extends ItemsBean {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error during delete album", e);
     }
-    return SessionBean.getPrettySpacePage("pretty:albums", getSelectedSpaceString());
+    return "pretty:albums";
   }
 
   /**

@@ -15,7 +15,7 @@ import javax.faces.context.FacesContext;
 public class MessagesBean {
   /**
    * Return the messages
-   * 
+   *
    * @return
    */
   public List<FacesMessage> getMessages() {

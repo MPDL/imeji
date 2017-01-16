@@ -4,149 +4,132 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
-	
-	<ui:param name="headline" value=""/>
-	<ui:param name="currentMainMenu" value="admin"/>
-	
+
+	<ui:param name="headline" value="" />
+	<ui:param name="currentMainMenu" value="admin" />
+
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}" downloadEnabled="false" actionEnabled="false"/>
+		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"
+			downloadEnabled="false" actionEnabled="false" />
 	</ui:define>
-	
+
 	<ui:define name="mainContent">
 		<!-- Are You Admin? -->
-		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
-			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}"/>
-			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}"/>
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
+			rendered="#{!Auth.sysAdmin}">
+			<h:outputText value="#{lbl.view_page_disallowed}"
+				styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
+			<h:outputText value="#{lbl.view_page_disallowed2}"
+				styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
 		</h:panelGroup>
-		
+
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-		<!-- Only for Admins -->
-			
+			<!-- Only for Admins -->
+
 			<!-- Admin - TiledList -->
 			<div class="imj_administrationTiledList">
-				
+
 				<div class="imj_listBody">
-					
-					<h:panelGroup layout="block" styleClass="imj_adminPanel imj_userConfig">
+
+					<h:panelGroup layout="block"
+						styleClass="imj_adminPanel imj_userConfig">
 						<div class="imj_headline">
-							<h2><h:outputText value="#{lbl.admin_user_info}"/></h2>
+							<h2>
+								<h:outputText value="#{lbl.admin_user_info}" />
+							</h2>
 						</div>
 						<div class="imj_content">
 							<ul>
-								<li>
-									<a href="#{Navigation.applicationSpaceUrl}createuser" title="#{lbl.admin_user_new}">
-										<h:outputText value="#{lbl.admin_user_new}"/>
-									</a>
-								</li>
-								<li>
-									<a href="#{Navigation.applicationSpaceUrl}users" title="#{lbl.admin_user_view}">
-										<h:outputText value="#{lbl.admin_user_view}" />
-									</a>
-								</li>
-								<li>
-									<a href="#{Navigation.applicationSpaceUrl}usergroups" title="#{lbl.admin_groups_view}">
-										<h:outputText value="#{lbl.admin_userGroups_view}" />
-									</a>
-								</li>
-								<li>
-									<a href="#{Navigation.applicationSpaceUrl}createusergroup" title="#{lbl.admin_group_new}">
-										<h:outputText value="#{lbl.admin_userGroup_new}" />
-									</a>
-								</li>
+								<li><a href="#{Navigation.applicationUrl}createuser"
+									title="#{lbl.admin_user_new}"> <h:outputText
+											value="#{lbl.admin_user_new}" />
+								</a></li>
+								<li><a href="#{Navigation.applicationUrl}users"
+									title="#{lbl.admin_user_view}"> <h:outputText
+											value="#{lbl.admin_user_view}" />
+								</a></li>
+								<li><a href="#{Navigation.applicationUrl}usergroups"
+									title="#{lbl.admin_groups_view}"> <h:outputText
+											value="#{lbl.admin_userGroups_view}" />
+								</a></li>
+								<li><a
+									href="#{Navigation.applicationUrl}createusergroup"
+									title="#{lbl.admin_group_new}"> <h:outputText
+											value="#{lbl.admin_userGroup_new}" />
+								</a></li>
 							</ul>
 						</div>
 					</h:panelGroup>
-					
+
 					<h:panelGroup layout="block" styleClass="imj_adminPanel imj_config">
 						<ui:fragment rendered="#{Auth.sysAdmin}">
 							<div class="imj_headline">
-								<h2><h:outputText value="#{lbl.configuration}"/></h2>
+								<h2>
+									<h:outputText value="#{lbl.configuration}" />
+								</h2>
 							</div>
 							<div class="imj_content">
 								<ul>
-									<li>
-										<a href="#{Navigation.applicationUri}/config" title="#{lbl.edit}">
-											<h:outputText value="#{lbl.edit}" />
-										</a>
-									</li>
+									<li><a href="#{Navigation.applicationUri}/config"
+										title="#{lbl.edit}"> <h:outputText value="#{lbl.edit}" />
+									</a></li>
 								</ul>
 							</div>
 						</ui:fragment>
 					</h:panelGroup>
-					
-					<h:panelGroup layout="block" styleClass="imj_adminPanel imj_spaceConfig">
-						<div class="imj_headline">
-							<h2><h:outputText value="#{lbl.spaces} (Highly experimental)"/></h2>
-						</div>
-						<div class="imj_content">
-							<ul>
-							 	<ui:fragment rendered="#{Auth.sysAdmin and SessionBean.spaceId == ''}">
-									<li>
-										<a href="#{Navigation.applicationUrl}spaces" title="#{lbl.admin_space_create}">
-											<h:outputText value="#{lbl.admin_space_list}"/>
-										</a>
-									</li>
-									<li>
-										<a href="#{Navigation.applicationUrl}createspace" title="#{lbl.admin_space_create}">
-											<h:outputText value="#{lbl.create}"/>
-										</a>
-									</li>
-								</ui:fragment>
-								<ui:fragment rendered="#{Auth.sysAdmin and SessionBean.spaceId != ''}">
-									<li>
-										<a href="#{Navigation.applicationSpaceUrl}editspace" title="#{lbl.admin_space_edit}">
-											<h:outputText value="#{lbl.edit}"/>
-										</a>
-									</li>
-								</ui:fragment>
-							</ul>
-						</div>
-					</h:panelGroup>
-					
-					<h:panelGroup layout="block" styleClass="imj_adminPanel imj_storageConfig">
+
+
+					<h:panelGroup layout="block"
+						styleClass="imj_adminPanel imj_storageConfig">
 						<ui:fragment rendered="#{Auth.sysAdmin}">
 							<div class="imj_headline">
-								<h2><h:outputText value="#{lbl.administration_storage}"/></h2>
+								<h2>
+									<h:outputText value="#{lbl.administration_storage}" />
+								</h2>
 							</div>
 							<div class="imj_content">
 								<ul>
-									<li>
-										<a href="#{Navigation.applicationSpaceUrl}admin/storage/details" title="#{lbl.view_detail}">
-											<h:outputText value="#{lbl.view_detail}" />
-										</a>
-									</li>
-									<li>
-										<a href="#{Navigation.applicationSpaceUrl}admin/storage/statistics" title="#{lbl.storage_statistics}">
-											<h:outputText value="#{lbl.storage_statistics}" />
-										</a>
-									</li>
-									
-									<li>
-										<a href="#{Navigation.applicationSpaceUrl}admin/storage/tools" title="#{lbl.storage_tools}">
-											<h:outputText value="#{lbl.storage_tools}" />
-										</a>
-									</li>
+									<li><a
+										href="#{Navigation.applicationUrl}admin/storage/details"
+										title="#{lbl.view_detail}"> <h:outputText
+												value="#{lbl.view_detail}" />
+									</a></li>
+									<li><a
+										href="#{Navigation.applicationUrl}admin/storage/statistics"
+										title="#{lbl.storage_statistics}"> <h:outputText
+												value="#{lbl.storage_statistics}" />
+									</a></li>
+
+									<li><a
+										href="#{Navigation.applicationUrl}admin/storage/tools"
+										title="#{lbl.storage_tools}"> <h:outputText
+												value="#{lbl.storage_tools}" />
+									</a></li>
 								</ul>
 							</div>
 						</ui:fragment>
 					</h:panelGroup>
-					
-					<h:panelGroup layout="block" styleClass="imj_adminPanel imj_advancedConfig" rendered="false">
+
+					<h:panelGroup layout="block"
+						styleClass="imj_adminPanel imj_advancedConfig" rendered="false">
 						<ui:fragment rendered="#{Auth.sysAdmin}">
 							<div class="imj_headline">
-								<h2><h:outputText value="#{lbl.administration_advanced}"/></h2>
+								<h2>
+									<h:outputText value="#{lbl.administration_advanced}" />
+								</h2>
 							</div>
-							<div class="imj_content">
-							</div>
+							<div class="imj_content"></div>
 						</ui:fragment>
 					</h:panelGroup>
-				
-				</div> <!-- END LIST BODY -->
-			
-			</div> <!-- END ADMIN LIST -->
-	
+
+				</div>
+				<!-- END LIST BODY -->
+
+			</div>
+			<!-- END ADMIN LIST -->
+
 		</ui:fragment>
-		
+
 	</ui:define>
-	
+
 </ui:composition>

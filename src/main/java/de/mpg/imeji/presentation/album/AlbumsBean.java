@@ -19,7 +19,6 @@ import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.presentation.beans.SuperContainerBean;
-import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
@@ -52,7 +51,7 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
 
   @Override
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:albums", getSpaceId());
+    return "pretty:albums";
   }
 
   @Override
@@ -86,8 +85,7 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
     final AlbumController controller = new AlbumController();
-    return controller.search(searchQuery, getSessionUser(), sortCriterion, limit, offset,
-        getSelectedSpaceString());
+    return controller.search(searchQuery, getSessionUser(), sortCriterion, limit, offset);
   }
 
   public String getTypeLabel() {

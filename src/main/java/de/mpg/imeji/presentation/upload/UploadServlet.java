@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.authentication.factory.AuthenticationFactory;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
@@ -47,11 +47,11 @@ public class UploadServlet extends HttpServlet {
   private static final long serialVersionUID = -4879871986174193049L;
   private static final Logger LOGGER = Logger.getLogger(UploadServlet.class);
   private static final ItemService itemService = new ItemService();
-  private static final CollectionController collectionController = new CollectionController();
+  private static final CollectionService collectionController = new CollectionService();
 
   /**
    * The result of an upload
-   * 
+   *
    * @author saquet
    *
    */
@@ -90,10 +90,10 @@ public class UploadServlet extends HttpServlet {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
       itemService.createWithFile(null, upload.getFile(), upload.getFilename(), col, user);
-    } catch (AuthenticationError e) {
+    } catch (final AuthenticationError e) {
       writeResponse(resp, e.getMessage());
       resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Error uploading File", e);
       writeResponse(resp, e.getMessage());
       resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -106,7 +106,7 @@ public class UploadServlet extends HttpServlet {
 
   /**
    * Download the file on the disk in a tmp file
-   * 
+   *
    * @param req
    * @return
    * @throws FileUploadException
@@ -114,19 +114,19 @@ public class UploadServlet extends HttpServlet {
    */
   private UploadItem doUpload(HttpServletRequest req) {
     try {
-      ServletFileUpload upload = new ServletFileUpload();
-      FileItemIterator iter = upload.getItemIterator(req);
+      final ServletFileUpload upload = new ServletFileUpload();
+      final FileItemIterator iter = upload.getItemIterator(req);
       while (iter.hasNext()) {
         final FileItemStream fis = iter.next();
         final InputStream stream = fis.openStream();
         if (!fis.isFormField()) {
-          String name = fis.getName();
-          File tmp = TempFileUtil.createTempFile("upload", ".jpg");
+          final String name = fis.getName();
+          final File tmp = TempFileUtil.createTempFile("upload", ".jpg");
           StorageUtils.writeInOut(stream, new FileOutputStream(tmp), true);
           return new UploadItem(tmp, name);
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error file upload", e);
     }
     return null;
@@ -136,7 +136,7 @@ public class UploadServlet extends HttpServlet {
     if (req.getParameter("col") != null) {
       try {
         return collectionController.retrieve(URI.create(req.getParameter("col")), user);
-      } catch (ImejiException e) {
+      } catch (final ImejiException e) {
         LOGGER.error("Error retrieving collection " + req.getParameter("col"), e);
       }
     }

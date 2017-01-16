@@ -11,7 +11,7 @@
 			
 			<!-- Username if logged in -->
 			<ui:fragment rendered="#{Auth.loggedIn}">
-				<h:outputLink id="txtAccountUserName" title="#{lbl.goto_user_profile}" styleClass="imj_metaMenuItem" value="#{Navigation.applicationSpaceUrl}user?id=#{Auth.sessionUser.email}">
+				<h:outputLink id="txtAccountUserName" title="#{lbl.goto_user_profile}" styleClass="imj_metaMenuItem" value="#{Navigation.applicationUrl}user?id=#{Auth.sessionUser.email}">
 					<h:outputText value="#{Auth.sessionUser.person.completeName}"/>
 				</h:outputLink>
 				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>
@@ -20,16 +20,14 @@
 			<!-- LogIn, LogOut -->
 			<h:form id="loginForm">
 				<h:panelGroup rendered="#{!Auth.loggedIn}" styleClass="imj_metaMenuItem imj_loginFormHidden">
-					<ui:fragment rendered="#{SessionBean.spaceId==''}">
-			   			<a href="#" id="lnkshowLogin" class="imj_metaMenuItem" onclick="showLogin(); return false;">#{lbl.login}</a>
-					</ui:fragment>
+					<a href="#" id="lnkshowLogin" class="imj_metaMenuItem" onclick="showLogin(); return false;">#{lbl.login}</a>
 					<span class="imj_loginFormDisplay">
 						<h:inputText value="#{LoginBean.login}"  p:placeholder="#{lbl.admin_user}"/>
 						<h:inputSecret value="#{LoginBean.passwd}" p:placeholder="#{lbl.password}"/>
 						<h:commandButton id="lnkLogin2" title="#{lbl.login}" value="#{lbl.login}" action="#{LoginBean.doLogin}" styleClass="imj_metaMenuItem"/>
 					</span>
 				</h:panelGroup>
-				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationSpaceUrl}login?logout=1" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
+				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationUrl}login?logout=1" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
 					<h:outputText value="#{lbl.logout}"/>
 				</h:outputLink>
 			</h:form>
@@ -37,7 +35,7 @@
 			<!-- Register -->
 			<h:form rendered="#{!Auth.loggedIn and Configuration.registrationEnabled}">
 				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>
-				<h:outputLink value="#{Navigation.applicationSpaceUrl}register" title="#{lbl.register}" styleClass="imj_metaMenuItem">
+				<h:outputLink value="#{Navigation.applicationUrl}register" title="#{lbl.register}" styleClass="imj_metaMenuItem">
 					<h:outputText value="#{lbl.register}"/>
 				</h:outputLink>
 			</h:form>

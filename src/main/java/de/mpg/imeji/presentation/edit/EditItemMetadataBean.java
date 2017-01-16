@@ -272,7 +272,7 @@ public class EditItemMetadataBean extends SuperBean {
     final SearchQuery sq = SearchQueryParser.parseStringQuery(query);
     final ItemService itemController = new ItemService();
     final SearchResult sr =
-        itemController.search(URI.create(collectionId), sq, null, getSessionUser(), null, -1, 0);
+        itemController.search(URI.create(collectionId), sq, null, getSessionUser(), -1, 0);
     return sr.getResults();
   }
 
@@ -606,7 +606,7 @@ public class EditItemMetadataBean extends SuperBean {
   }
 
   public void redirectToCollectionItemsPage(String collectionId) throws IOException {
-    redirect(getNavigation().getApplicationSpaceUrl() + getNavigation().getCollectionPath() + "/"
+    redirect(getNavigation().getApplicationUrl() + getNavigation().getCollectionPath() + "/"
         + ObjectHelper.getId(URI.create(collectionId)) + "/" + getNavigation().getBrowsePath());
   }
 

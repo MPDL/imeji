@@ -46,7 +46,6 @@ import de.mpg.imeji.logic.validation.impl.Validator;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
@@ -79,9 +78,6 @@ public class WriterFacade {
       indexer = SearchFactory.create(SearchObjectTypes.ALBUM, SEARCH_IMPLEMENTATIONS.ELASTIC)
           .getIndexer();
 
-    } else if (modelURI.equals(Imeji.spaceModel)) {
-      indexer = SearchFactory.create(SearchObjectTypes.SPACE, SEARCH_IMPLEMENTATIONS.ELASTIC)
-          .getIndexer();
     } else if (modelURI.equals(Imeji.userModel)) {
       indexer =
           SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
@@ -243,8 +239,6 @@ public class WriterFacade {
       return ((Item) o).getId();
     } else if (o instanceof Container) {
       return ((Container) o).getId();
-    } else if (o instanceof Space) {
-      return ((Space) o).getId();
     } else if (o instanceof User) {
       return ((User) o).getId();
     } else if (o instanceof UserGroup) {
@@ -278,6 +272,7 @@ public class WriterFacade {
    *
    * @param o
    * @return
+   * @deprecated
    */
   public static List<Object> toList(Object o) {
     return Arrays.asList(o);

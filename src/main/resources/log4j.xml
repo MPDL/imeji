@@ -9,7 +9,7 @@
 
 	<!-- A time/date based rolling appender -->
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
- 		<param name="File" value="${catalina.base}/logs/imeji.log" />
+		<param name="File" value="${catalina.base}/logs/imeji.log" />
 		<param name="Threshold" value="info" />
 		<!-- Rollover at midnight each day -->
 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />

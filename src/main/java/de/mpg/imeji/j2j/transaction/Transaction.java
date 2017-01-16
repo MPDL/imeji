@@ -44,6 +44,10 @@ public abstract class Transaction {
       dataset.abort();
       isException = true;
       exception = e;
+    } catch (final Exception e) {
+      dataset.abort();
+      isException = true;
+      exception = new ImejiException(e.getMessage(), e);
     } finally {
       dataset.end();
     }

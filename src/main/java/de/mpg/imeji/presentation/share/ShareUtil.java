@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
@@ -55,16 +55,16 @@ public class ShareUtil {
    */
   public static List<ShareListItem> getAllRoles(User user, User sessionUser, Locale locale)
       throws ImejiException {
-    final CollectionController collectionController = new CollectionController();
+    final CollectionService collectionController = new CollectionService();
     final List<ShareListItem> roles = new ArrayList<ShareListItem>();
     for (final String grantString : user.getGrants()) {
       try {
-        Grant grant = new Grant(grantString);
-        CollectionImeji col =
+        final Grant grant = new Grant(grantString);
+        final CollectionImeji col =
             collectionController.retrieveLazy(URI.create(grant.getGrantFor()), sessionUser);
         roles.add(new ShareListItem(user, col.getId().toString(), col.getMetadata().getTitle(),
             sessionUser, locale, false));
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error reading grants of user ", e);
       }
     }
@@ -79,16 +79,16 @@ public class ShareUtil {
    */
   public static List<ShareListItem> getAllRoles(UserGroup group, User sessionUser, Locale locale)
       throws ImejiException {
-    final CollectionController collectionController = new CollectionController();
+    final CollectionService collectionController = new CollectionService();
     final List<ShareListItem> roles = new ArrayList<ShareListItem>();
     for (final String grantString : group.getGrants()) {
       try {
-        Grant grant = new Grant(grantString);
-        CollectionImeji col =
+        final Grant grant = new Grant(grantString);
+        final CollectionImeji col =
             collectionController.retrieveLazy(URI.create(grant.getGrantFor()), sessionUser);
         roles.add(new ShareListItem(group, col.getId().toString(), col.getMetadata().getTitle(),
             sessionUser, locale));
-      } catch (Exception e) {
+      } catch (final Exception e) {
         LOGGER.error("Error reading grants of user ", e);
       }
     }

@@ -165,7 +165,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
       final File tmp = readFile(externalFileUrl);
       item = createWithFile(item, tmp, filename, c, user);
     } else {
-      ContentVO content = new ContentVO();
+      final ContentVO content = new ContentVO();
       content.setOriginal(externalFileUrl);
       final ContentController contentController = new ContentController();
       contentController.create(item, content);
@@ -184,8 +184,12 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param coll
    * @throws ImejiException
    */
-  public void create(Collection<Item> items, CollectionImeji ic, User user) throws ImejiException {
-    itemController.create(items, ic, user);
+  public void create(Collection<Item> items, CollectionImeji col, User user) throws ImejiException {
+    items.stream().forEach(item -> {
+      item.setStatus(col.getStatus());
+      item.setCollection(col.getId());
+    });
+    itemController.createBatch((List<Item>) items, user);
   }
 
   /**
@@ -233,11 +237,11 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public Item retrieve(URI imgUri, User user) throws ImejiException {
-    return itemController.retrieve(imgUri, user);
+    return itemController.retrieve(imgUri.toString(), user);
   }
 
   public Item retrieveLazy(URI imgUri, User user) throws ImejiException {
-    return itemController.retrieveLazy(imgUri, user);
+    return itemController.retrieveLazy(imgUri.toString(), user);
   }
 
   /**
@@ -270,7 +274,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public Collection<Item> retrieveBatch(List<String> uris, int limit, int offset, User user)
       throws ImejiException {
-    return itemController.retrieveBatch(uris, limit, offset, user);
+    return itemController.retrieveBatch(uris, user);
   }
 
   /**
@@ -285,7 +289,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public Collection<Item> retrieveBatchLazy(List<String> uris, int limit, int offset, User user)
       throws ImejiException {
-    return itemController.retrieveBatchLazy(uris, limit, offset, user);
+    return itemController.retrieveBatchLazy(uris, user);
   }
 
 
@@ -321,7 +325,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public void updateBatch(Collection<Item> items, User user) throws ImejiException {
-    itemController.updateBatch(items, user);
+    itemController.updateBatch((List<Item>) items, user);
   }
 
   /**
@@ -375,7 +379,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     } else {
       removeFileFromStorage(item);
       // Reference the file
-      ContentVO content = new ContentVO();
+      final ContentVO content = new ContentVO();
       content.setOriginal(externalFileUrl);
       final ContentController contentController = new ContentController();
       contentController.create(item, content);
@@ -394,7 +398,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public void delete(List<Item> items, User user) throws ImejiException {
-    itemController.delete(items, user);
+    itemController.delete((Item) items, user);
     for (final Item item : items) {
       removeFileFromStorage(item);
     }
@@ -425,9 +429,9 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @return
    */
   public SearchResult search(URI containerUri, SearchQuery searchQuery, SortCriterion sortCri,
-      User user, String spaceId, int size, int offset) {
+      User user, int size, int offset) {
     return search.search(searchQuery, sortCri, user,
-        containerUri != null ? containerUri.toString() : null, spaceId, offset, size);
+        containerUri != null ? containerUri.toString() : null, offset, size);
   }
 
   /**
@@ -438,7 +442,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param user
    */
   public Container searchAndSetContainerItems(Container c, User user, int limit, int offset) {
-    final List<String> newUris = search(c.getId(), null, null, user, null, limit, 0).getResults();
+    final List<String> newUris = search(c.getId(), null, null, user, limit, 0).getResults();
     c.getImages().clear();
     for (final String s : newUris) {
       c.getImages().add(URI.create(s));
@@ -455,11 +459,10 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public List<Item> searchAndRetrieve(URI containerUri, SearchQuery q, SortCriterion sort,
-      User user, String spaceId, int offset, int size) throws ImejiException, IOException {
+      User user, int offset, int size) throws ImejiException, IOException {
     List<Item> itemList = new ArrayList<Item>();
     try {
-      final List<String> results =
-          search(containerUri, q, sort, user, spaceId, size, offset).getResults();
+      final List<String> results = search(containerUri, q, sort, user, size, offset).getResults();
       itemList = (List<Item>) retrieveBatch(results, -1, 0, user);
     } catch (final Exception e) {
       throw new UnprocessableError("Cannot retrieve items:", e);

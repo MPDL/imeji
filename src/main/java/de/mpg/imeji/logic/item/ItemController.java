@@ -1,6 +1,5 @@
 package de.mpg.imeji.logic.item;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,15 +14,14 @@ import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
-import de.mpg.imeji.logic.service.ImejiServiceAbstract;
-import de.mpg.imeji.logic.storage.Storage;
+import de.mpg.imeji.logic.service.ImejiControllerAbstract;
 import de.mpg.imeji.logic.util.LicenseUtil;
-import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataUtil;
 
 /**
@@ -32,7 +30,7 @@ import de.mpg.imeji.logic.vo.util.MetadataUtil;
  * @author saquet
  *
  */
-public class ItemController extends ImejiServiceAbstract {
+public class ItemController extends ImejiControllerAbstract<Item> {
   private static final Logger LOGGER = Logger.getLogger(ItemService.class);
   private final ReaderFacade READER;
   private final WriterFacade WRITER;
@@ -42,109 +40,58 @@ public class ItemController extends ImejiServiceAbstract {
     WRITER = new WriterFacade(Imeji.imageModel);
   }
 
-  /**
-   * Create a {@link List} of {@link Item} in a {@link CollectionImeji}. This method is faster than
-   * using create(Item item, URI coll) when creating many items
-   *
-   * @param items
-   * @param coll
-   * @throws ImejiException
-   */
-  public void create(Collection<Item> items, CollectionImeji collection, User user)
-      throws ImejiException {
-    for (final Item item : items) {
-      prepareCreate(item, user);
-      item.setFilename(FilenameUtils.getName(item.getFilename()));
-      if (collection != null) {
-        item.setStatus(collection.getStatus());
-        item.setCollection(collection.getId());
-        collection.getImages().add(item.getId());
-      }
-    }
-    cleanItem(items);
-    WRITER.create(J2JHelper.cast2ObjectList((List<?>) items), user);
-    // Update the collection
-    // cc.update(cc.retrieve(coll, user), Imeji.adminUser);
-  }
-
-  /**
-   * Create an {@link Item} in a {@link CollectionImeji}
-   *
-   * @param item
-   * @param coll
-   * @param user
-   * @throws ImejiException
-   * @return
-   */
-  public Item create(Item item, CollectionImeji coll, User user) throws ImejiException {
-    create(Arrays.asList(item), coll, user);
+  @Override
+  public Item create(Item item, User user) throws ImejiException {
+    createBatch(Arrays.asList(item), user);
     return item;
   }
 
-  /**
-   * User ObjectLoader to load image
-   *
-   * @param imgUri
-   * @return
-   * @throws ImejiException
-   */
-  public Item retrieve(URI imgUri, User user) throws ImejiException {
-    return (Item) READER.read(imgUri.toString(), user, new Item());
+  @Override
+  public List<Item> createBatch(List<Item> l, User user) throws ImejiException {
+    for (final Item item : l) {
+      prepareCreate(item, user);
+      item.setFilename(FilenameUtils.getName(item.getFilename()));
+    }
+    cleanItem(l);
+    WRITER.create(J2JHelper.cast2ObjectList(l), user);
+    return null;
   }
 
-  public Item retrieveLazy(URI imgUri, User user) throws ImejiException {
-    return (Item) READER.readLazy(imgUri.toString(), user, new Item());
+  @Override
+  public Item retrieve(String id, User user) throws ImejiException {
+    return (Item) READER.read(id, user, new Item());
   }
 
-  /**
-   * Retrieve the items lazy (without the metadata)
-   *
-   * @param uris
-   * @param limit
-   * @param offset
-   * @return
-   * @throws ImejiException
-   */
-  public Collection<Item> retrieveBatch(List<String> uris, int limit, int offset, User user)
-      throws ImejiException {
-    final List<Item> items = uris2Items(uris, limit, offset);
+  @Override
+  public Item retrieveLazy(String id, User user) throws ImejiException {
+    return (Item) READER.readLazy(id, user, new Item());
+  }
+
+  @Override
+  public List<Item> retrieveBatch(List<String> ids, User user) throws ImejiException {
+    final List<Item> items = initializeEmptyItems(ids);
     READER.read(J2JHelper.cast2ObjectList(items), user);
     return items;
   }
 
-  /**
-   * Retrieve the items fully (with all metadata)
-   *
-   * @param uris
-   * @param limit
-   * @param offset
-   * @param user
-   * @return
-   * @throws ImejiException
-   */
-  public Collection<Item> retrieveBatchLazy(List<String> uris, int limit, int offset, User user)
-      throws ImejiException {
-    final List<Item> items = uris2Items(uris, limit, offset);
+  @Override
+  public List<Item> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
+    final List<Item> items = initializeEmptyItems(ids);
     READER.readLazy(J2JHelper.cast2ObjectList(items), user);
     return items;
   }
 
-  /**
-   * Update a {@link Collection} of {@link Item}
-   *
-   * @param items
-   * @param user
-   * @throws ImejiException
-   */
-  public void updateBatch(Collection<Item> items, User user) throws ImejiException {
-    if (items != null && !items.isEmpty()) {
-      for (final Item item : items) {
+  @Override
+  public List<Item> updateBatch(List<Item> l, User user) throws ImejiException {
+    if (l != null && !l.isEmpty()) {
+      for (final Item item : l) {
         prepareUpdate(item, user);
         item.setFilename(FilenameUtils.getName(item.getFilename()));
       }
-      cleanItem(items);
-      WRITER.update(J2JHelper.cast2ObjectList((List<?>) items), user, true);
+      cleanItem(l);
+      WRITER.update(J2JHelper.cast2ObjectList(l), user, true);
     }
+    return l;
   }
 
   /**
@@ -160,16 +107,9 @@ public class ItemController extends ImejiServiceAbstract {
     WRITER.updateWithoutValidation(new ArrayList<>(items), user);
   }
 
-  /**
-   * Delete a {@link List} of {@link Item} inclusive all files stored in the {@link Storage}
-   *
-   * @param items
-   * @param user
-   * @return
-   * @throws ImejiException
-   */
-  public void delete(List<Item> items, User user) throws ImejiException {
-    WRITER.delete(new ArrayList<Object>(items), user);
+  @Override
+  public void deleteBatch(List<Item> l, User user) throws ImejiException {
+    WRITER.delete(new ArrayList<Object>(l), user);
   }
 
   /**
@@ -225,25 +165,13 @@ public class ItemController extends ImejiServiceAbstract {
   }
 
   /**
-   * Transform a list of uris into a list of Item
+   * Initialized a list of empty item
    *
-   * @param uris
-   * @param limit
-   * @param offset
+   * @param ids
    * @return
    */
-  private List<Item> uris2Items(List<String> uris, int limit, int offset) {
-    List<String> retrieveUris;
-    if (limit < 0) {
-      retrieveUris = uris;
-    } else {
-      retrieveUris = uris.size() > 0 && limit > 0
-          ? uris.subList(offset, getMin(offset + limit, uris.size())) : new ArrayList<String>();
-    }
-    final List<Item> items = new ArrayList<Item>();
-    for (final String s : retrieveUris) {
-      items.add((Item) J2JHelper.setId(new Item(), URI.create(s)));
-    }
-    return items;
+  private List<Item> initializeEmptyItems(List<String> ids) {
+    return ids.stream().map(id -> ImejiFactory.newItem().setId(id).build())
+        .collect(Collectors.toList());
   }
 }

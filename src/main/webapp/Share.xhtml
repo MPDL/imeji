@@ -5,22 +5,23 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:share="http://java.sun.com/jsf/composite/components/share">
-	
-	<ui:param name="headline" value="#{lbl.share.toString().trim()}:"/>
-	<ui:param name="headlineSecondRow" value="#{ShareBean.title}"/>
-	<ui:param name="currentMainMenu" value="#{ShareBean.type}"/>
-	<ui:param name="contUrl" value="#{ShareBean.type == 'COLLECTION' ? Navigation.collectionUrl : Navigation.albumUrl}"/>
-	<ui:param name="imejiResource" value="#{ShareBean.sharedObject}"/>
-	<ui:param name="iconStatusDisplayStatusOnly" value="true"/>
-	
-		
+
+	<ui:param name="headline" value="#{lbl.share.toString().trim()}:" />
+	<ui:param name="headlineSecondRow" value="#{ShareBean.title}" />
+	<ui:param name="currentMainMenu" value="#{ShareBean.type}" />
+	<ui:param name="contUrl"
+		value="#{ShareBean.type == 'COLLECTION' ? Navigation.collectionUrl : Navigation.albumUrl}" />
+	<ui:param name="imejiResource" value="#{ShareBean.sharedObject}" />
+	<ui:param name="iconStatusDisplayStatusOnly" value="true" />
+
+
 	<ui:define name="mainContent">
 		<div class="imj_backPanel">
 			<h:outputLink value="#{ShareBean.backUrl}">
-				<h:outputText value="#{lbl.back_to}: #{ShareBean.title}"/>
+				<h:outputText value="#{lbl.back_to}: #{ShareBean.title}" />
 			</h:outputLink>
-		</div>		
+		</div>
 		<!-- ID must not be changed. The share page would not work anymore -->
-		<share:share id="share"/>
+		<share:share id="share" />
 	</ui:define>
 </ui:composition>

@@ -9,7 +9,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import com.hp.hpl.jena.query.Dataset;
 
-import de.mpg.imeji.logic.batch.executors.NightlyExecutor;
 import de.mpg.imeji.logic.concurrency.locks.LocksSurveyor;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiProperties;
@@ -32,7 +31,6 @@ public class Imeji {
   public static String userModel;
   public static String profileModel;
   public static String statementModel;
-  public static String spaceModel;
   public static String contentModel;
   public static Dataset dataset;
   public static User adminUser;
@@ -60,10 +58,7 @@ public class Imeji {
    */
   private static ThreadPoolExecutor CONTENT_EXTRACTION_EXECUTOR =
       (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-  /**
-   * Executes jobs over night
-   */
-  private static NightlyExecutor NIGHTLY_EXECUTOR = new NightlyExecutor();
+
   /**
    * Executor used to transform files by the internal storage
    */
@@ -105,16 +100,6 @@ public class Imeji {
       return INTERNAL_STORAGE_EXECUTOR = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
     }
     return INTERNAL_STORAGE_EXECUTOR;
-  }
-
-  /**
-   * @return the nIGHTLY_EXECUTOR
-   */
-  public static NightlyExecutor getNIGHTLY_EXECUTOR() {
-    if (NIGHTLY_EXECUTOR.isShutdown()) {
-      NIGHTLY_EXECUTOR = new NightlyExecutor();
-    }
-    return NIGHTLY_EXECUTOR;
   }
 
 }

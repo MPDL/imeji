@@ -72,7 +72,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    * @throws ImejiException
    */
   public List<Statement> retrieveBatch(List<String> ids, User user) throws ImejiException {
-    List<Statement> l = controller.retrieveBatch(ids, user);
+    final List<Statement> l = controller.retrieveBatch(ids, user);
     l.sort((s1, s2) -> s1.getIndex().compareToIgnoreCase(s2.getIndex()));
     return l;
   }

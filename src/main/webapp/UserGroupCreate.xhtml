@@ -7,19 +7,23 @@
 
 
 	<ui:param name="headline" value="#{lbl.admin_userGroup_new}" />
-	<ui:param name="currentMainMenu" value="admin"/>
-	
+	<ui:param name="currentMainMenu" value="admin" />
+
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}" downloadEnabled="false" actionEnabled="false"/>
+		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"
+			downloadEnabled="false" actionEnabled="false" />
 	</ui:define>
-	
+
 	<ui:define name="mainContent">
-		<!-- Are You Admin? -->	
-		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
-			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}"/>
-			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}"/>
+		<!-- Are You Admin? -->
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
+			rendered="#{!Auth.sysAdmin}">
+			<h:outputText value="#{lbl.view_page_disallowed}"
+				styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
+			<h:outputText value="#{lbl.view_page_disallowed2}"
+				styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
 		</h:panelGroup>
-			
+
 		<ui:fragment rendered="#{Auth.sysAdmin}">
 			<div class="imj_userConfig">
 				<div class="imj_administrationTiledList imj_maxWidth">
@@ -27,29 +31,33 @@
 						<div class="imj_adminPanel imj_userConfig">
 							<div class="imj_headline">
 								<h2>
-									<h:outputText value="#{lbl.admin_userGroup_new}"/>
+									<h:outputText value="#{lbl.admin_userGroup_new}" />
 								</h2>
 							</div>
 							<h:form>
-								<div class="imj_content">						
-								<!-- AdminDataList - Email -->
+								<div class="imj_content">
+									<!-- AdminDataList - Email -->
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="Name"/>
+											<h:outputText value="Name" />
 											<span class="imj_invisible">: </span>
 										</div>
 										<div class="imj_admindataValue">
 											<div class="imj_admindataValueEntry">
-												<h:inputText styleClass="imj_admindataEdit" value="#{UserGroup.userGroup.name}"/>
+												<h:inputText styleClass="imj_admindataEdit"
+													value="#{UserGroup.userGroup.name}" />
 											</div>
 										</div>
 									</h:panelGroup>
 								</div>
 								<div class="imj_submitPanel">
-									<h:outputLink value="#{HistorySession.previousPage.completeUrl}" styleClass="imj_cancelButton">
+									<h:outputLink
+										value="#{HistorySession.previousPage.completeUrl}"
+										styleClass="imj_cancelButton">
 										<h:outputText value="#{lbl.cancel}" />
 									</h:outputLink>
-									<h:commandButton action="#{UserGroup.create()}" value="#{lbl.save}" styleClass="imj_submitButton"/> 
+									<h:commandButton action="#{UserGroup.create()}"
+										value="#{lbl.save}" styleClass="imj_submitButton" />
 								</div>
 							</h:form>
 						</div>

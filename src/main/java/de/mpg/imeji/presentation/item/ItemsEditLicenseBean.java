@@ -13,7 +13,7 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -70,7 +70,7 @@ public class ItemsEditLicenseBean extends SuperBean {
       }
       return false;
     } else {
-      return !new CollectionController()
+      return !new CollectionService()
           .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, collectionId), getSessionUser())
           .getStatus().equals(Status.PENDING);
     }
@@ -169,7 +169,7 @@ public class ItemsEditLicenseBean extends SuperBean {
     final ItemService controller = new ItemService();
     final List<String> uris =
         controller.search(ObjectHelper.getURI(CollectionImeji.class, collectionId), null, null,
-            getSessionUser(), getSpaceId(), -1, 0).getResults();
+            getSessionUser(), -1, 0).getResults();
     return (List<Item>) controller.retrieveBatch(uris, -1, 0, getSessionUser());
   }
 

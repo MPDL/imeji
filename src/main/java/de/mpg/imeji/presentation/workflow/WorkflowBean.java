@@ -64,7 +64,7 @@ public class WorkflowBean implements Serializable {
       return false;
     }
   }
-  
+
   /**
    * True if the Object can be Released
    *
@@ -75,7 +75,7 @@ public class WorkflowBean implements Serializable {
     try {
       validator.isCreateDOIAllowed(p);
       return true;
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       return false;
     }
   }

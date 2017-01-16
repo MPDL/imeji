@@ -17,19 +17,14 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.content.ContentController;
 import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
-import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticAlbum;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticContent;
-import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFolder;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticItem;
-import de.mpg.imeji.logic.search.elasticsearch.model.ElasticSpace;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUser;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -38,7 +33,6 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 
@@ -211,16 +205,13 @@ public class ElasticIndexer implements SearchIndexer {
    */
   private static Object toESEntity(Object obj, String dataType, String index) {
     if (obj instanceof Item) {
-      return new ElasticItem((Item) obj, getSpace((Item) obj, ElasticTypes.folders.name(), index));
+      return new ElasticItem((Item) obj);
     }
     if (obj instanceof CollectionImeji) {
       return new ElasticFolder((CollectionImeji) obj);
     }
     if (obj instanceof Album) {
       return new ElasticAlbum((Album) obj);
-    }
-    if (obj instanceof Space) {
-      return new ElasticSpace((Space) obj);
     }
     if (obj instanceof User) {
       return new ElasticUser((User) obj);
@@ -285,38 +276,6 @@ public class ElasticIndexer implements SearchIndexer {
       LOGGER.error("Error initializing the Elastic Search Mapping " + mappingFile, e);
     }
   }
-
-
-  /**
-   * Retrieve the space of the Item depending of its folder
-   *
-   * @param item
-   * @return
-   */
-  private static String getSpace(Item item, String dataType, String index) {
-    return ElasticSearchFactoryUtil.readFieldAsString(item.getCollection().toString(),
-        ElasticFields.SPACE, dataType, index);
-  }
-
-
-  /**
-   * Return the content of an item
-   *
-   * @param item
-   * @return
-   */
-  private static ContentVO getContentVO(Item item) {
-    if (!StringHelper.isNullOrEmptyTrim(item.getContentId())) {
-      try {
-        return new ContentController().read(item.getContentId());
-      } catch (final ImejiException e) {
-        return null;
-      }
-    }
-    return null;
-
-  }
-
 
   @Override
   public void updatePartial(String id, Object obj) {

@@ -50,9 +50,6 @@ public class ElasticSearch implements Search {
       case ALBUM:
         this.type = ElasticTypes.albums;
         break;
-      case SPACE:
-        this.type = ElasticTypes.spaces;
-        break;
       case USER:
         this.type = ElasticTypes.users;
         break;
@@ -77,12 +74,12 @@ public class ElasticSearch implements Search {
 
   @Override
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
-      String spaceId, int from, int size) {
+      int from, int size) {
     size = size == -1 ? size = SEARCH_MAX_SIZE : size;
     if (size < SEARCH_MAX_SIZE) {
-      return searchSinglePage(query, sortCri, user, folderUri, spaceId, from, size);
+      return searchSinglePage(query, sortCri, user, folderUri, from, size);
     } else {
-      return searchWithScroll(query, sortCri, user, folderUri, spaceId, from, size);
+      return searchWithScroll(query, sortCri, user, folderUri, from, size);
     }
   }
 
@@ -94,14 +91,13 @@ public class ElasticSearch implements Search {
    * @param sortCri
    * @param user
    * @param folderUri
-   * @param spaceId
    * @param from
    * @param size
    * @return
    */
   private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
-      String folderUri, String spaceId, int from, int size) {
-    final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, spaceId, user, type);
+      String folderUri, int from, int size) {
+    final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
     final SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setNoFields().setQuery(QueryBuilders.matchAllQuery()).setPostFilter(f).setTypes(getTypes())
         .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri)).execute()
@@ -116,14 +112,13 @@ public class ElasticSearch implements Search {
    * @param sortCri
    * @param user
    * @param folderUri
-   * @param spaceId
    * @param from
    * @param size
    * @return
    */
   private SearchResult searchWithScroll(SearchQuery query, SortCriterion sortCri, User user,
-      String folderUri, String spaceId, int from, int size) {
-    final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, spaceId, user, type);
+      String folderUri, int from, int size) {
+    final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
     SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setScroll(new TimeValue(60000)).setNoFields().setQuery(QueryBuilders.matchAllQuery())
         .setPostFilter(f).setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).setFrom(from)
@@ -143,8 +138,8 @@ public class ElasticSearch implements Search {
   }
 
   @Override
-  public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, List<String> uris,
-      String spaceId) {
+  public SearchResult search(SearchQuery query, SortCriterion sortCri, User user,
+      List<String> uris) {
     // Not needed for Elasticsearch. This method is used for sparql search
     return null;
   }

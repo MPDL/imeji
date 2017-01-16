@@ -13,7 +13,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -25,7 +25,6 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.item.ItemsBean;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * {@link ItemsBean} to browse {@link Item} of a {@link CollectionImeji}
@@ -64,11 +63,10 @@ public class CollectionItemsBean extends ItemsBean {
     try {
       id = UrlHelper.getParameterValue("id");
       uri = ObjectHelper.getURI(CollectionImeji.class, id);
-      collection = new CollectionController().retrieveLazy(uri, getSessionUser());
+      collection = new CollectionService().retrieveLazy(uri, getSessionUser());
       browseContext = getNavigationString() + id;
       update();
-      actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale(),
-          getSelectedSpaceString());
+      actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
     } catch (final Exception e) {
       LOGGER.error("Error initializing collectionItemsBean", e);
     }
@@ -80,14 +78,13 @@ public class CollectionItemsBean extends ItemsBean {
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
     final ItemService controller = new ItemService();
-    return controller.search(uri, searchQuery, sortCriterion, getSessionUser(), null, limit,
-        offset);
+    return controller.search(uri, searchQuery, sortCriterion, getSessionUser(), limit, offset);
   }
 
 
   @Override
   public String getNavigationString() {
-    return SessionBean.getPrettySpacePage("pretty:collectionBrowse", getSpaceId());
+    return "pretty:collectionBrowse";
   }
 
   @Override
@@ -112,7 +109,7 @@ public class CollectionItemsBean extends ItemsBean {
     if (collection == null) {
       return "";
     }
-    return getNavigation().getApplicationSpaceUrl() + "collection/" + this.id + "/";
+    return getNavigation().getApplicationUrl() + "collection/" + this.id + "/";
   }
 
   /**
@@ -162,6 +159,7 @@ public class CollectionItemsBean extends ItemsBean {
     this.actionMenu = actionMenu;
   }
 
+  @Override
   public String getCollectionId() {
     return collection.getId().toString();
   }

@@ -11,10 +11,9 @@ import java.util.List;
 public interface SearchIndexer {
 
   /**
-   * Index an object. SpaceId can be null.
+   * Index an object.
    *
    * @param obj
-   * @param spaceId
    */
   public void index(Object obj);
 

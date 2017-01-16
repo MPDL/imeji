@@ -278,7 +278,7 @@ public class Java2Jena {
         addURIResource(s, obj, f);
       } else if (obj instanceof LocalizedString) {
         addLabel(s, (LocalizedString) obj);
-      } else if (J2JHelper.isList(f)) {
+      } else if (J2JHelper.isList(f) || J2JHelper.isLazyList(f)) {
         addLiteral(s, obj, f);
       } else {
         LOGGER.error("Not adding field " + f);

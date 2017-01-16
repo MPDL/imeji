@@ -1,12 +1,13 @@
-<ui:composition template="templates/sub_template/template_image.xhtml" 
+<ui:composition template="templates/sub_template/template_image.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
-	
-	<ui:param name="itemBean" value="#{ItemBean}"/>
-	<ui:param name="currentMainMenu" value="mediaEntry"/>
-	<ui:param name="browseToAllItemsUrl" value="#{Navigation.browseUrl}?q=#{ItemBean.browse.query}"/>
-	<ui:param name="imejiResource" value="#{ItemBean.image}"/>
-	
+
+	<ui:param name="itemBean" value="#{ItemBean}" />
+	<ui:param name="currentMainMenu" value="mediaEntry" />
+	<ui:param name="browseToAllItemsUrl"
+		value="#{Navigation.browseUrl}?q=#{ItemBean.browse.query}" />
+	<ui:param name="imejiResource" value="#{ItemBean.image}" />
+
 </ui:composition>

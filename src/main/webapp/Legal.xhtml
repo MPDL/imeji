@@ -3,11 +3,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
-	
-	<ui:param name="headline" value="#{lbl.legal}"/>
-	
+
+	<ui:param name="headline" value="#{lbl.legal}" />
+
 	<ui:define name="mainContent">
-		<h:panelGroup layout="block" id="imj_ajaxWrapper" class="imj_legalPage">
+		<h:panelGroup layout="block" id="imj_ajaxWrapper"
+			class="imj_legalPage">
 			<!-- Main Content -->
 			<h:outputText escape="false" value="#{StaticContent.legalContent}" />
 		</h:panelGroup>

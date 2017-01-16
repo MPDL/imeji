@@ -21,7 +21,7 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -65,14 +65,14 @@ public class ItemTestBase extends ImejiTestBase {
       collectionTO = (CollectionTO) RestProcessUtils.buildTOFromJSON(
           getStringFromPath("src/test/resources/rest/createCollection.json"), CollectionTO.class);
 
-      CollectionController cc = new CollectionController();
+      CollectionService cc = new CollectionService();
       CollectionImeji ci = new CollectionImeji();
       ci.setProfile(profile.getId());
       ReverseTransferObjectFactory.transferCollection(collectionTO, ci,
           ReverseTransferObjectFactory.TRANSFER_MODE.CREATE, JenaUtil.testUser);
 
       collectionId = ObjectHelper.getId(cc.create(ci, profile, JenaUtil.testUser,
-          CollectionController.MetadataProfileCreationMethod.REFERENCE, null).getId());
+          CollectionService.MetadataProfileCreationMethod.REFERENCE, null).getId());
     } catch (Exception e) {
       LOGGER.error("Cannot init Collection", e);
     }
@@ -213,7 +213,7 @@ public class ItemTestBase extends ImejiTestBase {
   }
 
   protected static void createItem() throws Exception {
-    CollectionController cc = new CollectionController();
+    CollectionService cc = new CollectionService();
     ItemService ic = new ItemService();
     CollectionImeji coll =
         cc.retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId), JenaUtil.testUser);

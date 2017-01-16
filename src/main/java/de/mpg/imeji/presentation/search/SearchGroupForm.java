@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
@@ -69,10 +69,10 @@ public class SearchGroupForm implements Serializable {
    * @param collectionId
    * @throws ImejiException
    */
-  public SearchGroupForm(SearchGroup searchGroup, MetadataLabels metadataLabels, User user,
-      String space) throws ImejiException {
+  public SearchGroupForm(SearchGroup searchGroup, MetadataLabels metadataLabels, User user)
+      throws ImejiException {
     this();
-    initStatementsMenu(new ArrayList<>(), metadataLabels, user, space);
+    initStatementsMenu(new ArrayList<>(), metadataLabels, user);
   }
 
   /**
@@ -129,7 +129,7 @@ public class SearchGroupForm implements Serializable {
    * @throws ImejiException
    */
   public void initStatementsMenu(List<Statement> statements, MetadataLabels metadataLabels,
-      User user, String space) throws ImejiException {
+      User user) throws ImejiException {
     for (final Statement st : statements) {
       final String stName = metadataLabels.getInternationalizedLabels().get(st.getId());
       statementMenu.add(new SelectItem(st.getId().toString(), stName));
@@ -144,15 +144,14 @@ public class SearchGroupForm implements Serializable {
    * @return
    * @throws ImejiException
    */
-  private List<SelectItem> getCollectionsMenu(Locale locale, User user, String space)
-      throws ImejiException {
-    final CollectionController cc = new CollectionController();
+  private List<SelectItem> getCollectionsMenu(Locale locale, User user) throws ImejiException {
+    final CollectionService collectionService = new CollectionService();
     final SearchQuery q = new SearchQuery();
     final List<SelectItem> l = new ArrayList<SelectItem>();
     l.add(new SelectItem(null,
         Imeji.RESOURCE_BUNDLE.getLabel("adv_search_collection_restrict", locale)));
-    for (final String uri : cc.search(q, null, -1, 0, user, space).getResults()) {
-      final CollectionImeji c = cc.retrieveLazy(URI.create(uri), user);
+    for (final String uri : collectionService.search(q, null, user, -1, 0).getResults()) {
+      final CollectionImeji c = collectionService.retrieveLazy(URI.create(uri), user);
       l.add(new SelectItem(c.getId().toString(), c.getMetadata().getTitle()));
     }
     return l;

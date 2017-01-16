@@ -227,7 +227,7 @@ public class AlbumController extends ImejiServiceAbstract {
     final ItemService itemController = new ItemService();
     // Get the item of the album
     final List<String> albumItems =
-        itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0).getResults();
+        itemController.search(album.getId(), null, null, Imeji.adminUser, -1, 0).getResults();
     // Add Items which are not already in the album
     final Set<String> albumItemsSet = new HashSet<>(albumItems);
     // Retrieve the uris, to check that the items all exist
@@ -246,8 +246,7 @@ public class AlbumController extends ImejiServiceAbstract {
     // We do not update Items of the Album!!!
     // itemController.updateBatch(items, Imeji.adminUser);
     // return all items of the album
-    return itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0)
-        .getResults();
+    return itemController.search(album.getId(), null, null, Imeji.adminUser, -1, 0).getResults();
   }
 
   /**
@@ -263,7 +262,7 @@ public class AlbumController extends ImejiServiceAbstract {
     final ItemService itemController = new ItemService();
     // Get the item of the album
     final List<String> albumItems =
-        itemController.search(album.getId(), null, null, Imeji.adminUser, null, -1, 0).getResults();
+        itemController.search(album.getId(), null, null, Imeji.adminUser, -1, 0).getResults();
     final int beforeSize = albumItems.size();
     // Retrieving Items to check if there will be some not existing item
     itemController.retrieveBatch(toDelete, -1, 0, user);
@@ -283,8 +282,8 @@ public class AlbumController extends ImejiServiceAbstract {
     // We do not update items of the album
     // itemController.updateBatch(items, Imeji.adminUser);
     // Get the new size of the album
-    final int afterSize = itemController
-        .search(album.getId(), null, null, Imeji.adminUser, null, -1, 0).getNumberOfRecords();
+    final int afterSize = itemController.search(album.getId(), null, null, Imeji.adminUser, -1, 0)
+        .getNumberOfRecords();
     // Return how many items have been deleted
     return beforeSize - afterSize;
   }
@@ -300,8 +299,8 @@ public class AlbumController extends ImejiServiceAbstract {
    * @return
    */
   public SearchResult search(SearchQuery searchQuery, User user, SortCriterion sortCri, int size,
-      int offset, String spaceId) {
-    return search.search(searchQuery, sortCri, user, null, spaceId, offset, size);
+      int offset) {
+    return search.search(searchQuery, sortCri, user, null, offset, size);
   }
 
   /**
@@ -312,12 +311,12 @@ public class AlbumController extends ImejiServiceAbstract {
    * @return
    * @throws ImejiException
    */
-  public List<Album> searchAndretrieveLazy(User user, String q, String spaceId, int offset,
-      int size) throws ImejiException {
+  public List<Album> searchAndretrieveLazy(User user, String q, int offset, int size)
+      throws ImejiException {
     try {
       final List<String> results =
           search(!isNullOrEmptyTrim(q) ? SearchQueryParser.parseStringQuery(q) : null, user, null,
-              size, offset, spaceId).getResults();
+              size, offset).getResults();
       return retrieveBatchLazy(results, user, -1, 0);
     } catch (final Exception e) {
       throw new UnprocessableError("Cannot retrieve albums:", e);

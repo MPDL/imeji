@@ -199,7 +199,7 @@ public final class StorageController implements Serializable {
 
   /**
    * Rotate the thumbnail, Web and full resolution
-   * 
+   *
    * @param degree @throws ImejiException @throws
    * @throws Exception
    * @throws IOException

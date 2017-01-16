@@ -59,7 +59,7 @@ public class SearchForm implements Serializable {
    * @param profilesMap
    * @throws ImejiException
    */
-  public SearchForm(SearchQuery searchQuery, MetadataLabels metadataLabels, User user, String space)
+  public SearchForm(SearchQuery searchQuery, MetadataLabels metadataLabels, User user)
       throws ImejiException {
     this();
     this.licenseSearchGroup =
@@ -212,7 +212,7 @@ public class SearchForm implements Serializable {
    * @param pos
    * @throws ImejiException
    */
-  public void changeSearchGroup(int pos, MetadataLabels metadataLabels, User user, String space)
+  public void changeSearchGroup(int pos, MetadataLabels metadataLabels, User user)
       throws ImejiException {
     final SearchGroupForm group = groups.get(pos);
     group.getStatementMenu().clear();

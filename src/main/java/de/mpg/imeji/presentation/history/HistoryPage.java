@@ -11,7 +11,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.user.UserService;
@@ -82,7 +82,7 @@ public class HistoryPage implements Serializable {
     if (uri != null) {
       final String uriStr = UrlHelper.decode(uri.toString());
       if (ImejiPages.COLLECTION_HOME.matches(uriStr)) {
-        return new CollectionController().retrieveLazy(uri, user).getMetadata().getTitle();
+        return new CollectionService().retrieveLazy(uri, user).getMetadata().getTitle();
       } else if (ImejiPages.ALBUM_HOME.matches(uriStr)) {
         return new AlbumController().retrieveLazy(uri, user).getMetadata().getTitle();
       } else if (ImejiPages.ITEM_DETAIL.matches(uriStr)) {
@@ -95,8 +95,7 @@ public class HistoryPage implements Serializable {
         if (user != null && email.equals(user.getEmail())) {
           return user.getPerson().getCompleteName();
         } else {
-          return new UserService().retrieve(email, Imeji.adminUser).getPerson()
-              .getCompleteName();
+          return new UserService().retrieve(email, Imeji.adminUser).getPerson().getCompleteName();
         }
       }
     }

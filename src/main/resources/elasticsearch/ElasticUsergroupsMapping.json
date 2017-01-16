@@ -1,36 +1,36 @@
 {
-   "usergroups":{
-      "properties":{
-         "id":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-        "name":{
-            "type":"string",
-            "fields":{
-               "suggest":{
-                  "type":"string",
-                  "analyzer":"edgegram_analyzer",
-                  "search_analyzer":"standard",
-                  "include_in_all":false
-               },
-               "sort":{
-                  "type":"string",
-                  "analyzer":"XXX_ANALYSER_XXX"
-               }
-            }
-         },
-	     "read":{
-	       "type":"string",
-	       "index":"not_analyzed", 
-	       "include_in_all": false
-	      },
-	      "upload":{
-	       "type":"string",
-	       "index":"not_analyzed", 
-	       "include_in_all": false
-	      }
-      }
-   }
+	"usergroups": {
+		"properties": {
+			"id": {
+				"type": "string",
+				"index": "not_analyzed",
+				"include_in_all": false
+			},
+			"name": {
+				"type": "string",
+				"fields": {
+					"suggest": {
+						"type": "string",
+						"analyzer": "edgegram_analyzer",
+						"search_analyzer": "standard",
+						"include_in_all": false
+					},
+					"sort": {
+						"type": "string",
+						"analyzer": "XXX_ANALYSER_XXX"
+					}
+				}
+			},
+			"read": {
+				"type": "string",
+				"index": "not_analyzed",
+				"include_in_all": false
+			},
+			"upload": {
+				"type": "string",
+				"index": "not_analyzed",
+				"include_in_all": false
+			}
+		}
+	}
 }

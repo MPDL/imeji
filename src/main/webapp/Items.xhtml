@@ -10,14 +10,15 @@
 
 	<ui:param name="paginatorListSessionBean" value="#{ItemsBean}" />
 	<ui:param name="headline" value=" " />
-	<ui:param name="displayQuery" value="#{paginatorListSessionBean.simpleQuery != ''}"/>
+	<ui:param name="displayQuery"
+		value="#{paginatorListSessionBean.simpleQuery != ''}" />
 	<ui:param name="currentMainMenu" value="mediaEntry" />
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.browseUrl}?q=" />
 
 	<ui:define name="searchQuery">
 		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}"
 			navBean="#{Navigation}"
-			rendered="#{paginatorListSessionBean.simpleQuery != ''}" 
-			label="#{lbl.search_for} #{lbl.items}"/>
+			rendered="#{paginatorListSessionBean.simpleQuery != ''}"
+			label="#{lbl.search_for} #{lbl.items}" />
 	</ui:define>
 </ui:composition>

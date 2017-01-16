@@ -19,7 +19,6 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.Space;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 
@@ -36,7 +35,7 @@ public class Authorization implements Serializable {
 
   /**
    * True if the {@link User} has the grant to create a collection in imeji
-   * 
+   *
    * @param user
    * @return
    */
@@ -47,19 +46,19 @@ public class Authorization implements Serializable {
 
   /**
    * True if the {@link User} is a system administrator
-   * 
+   *
    * @param user
    * @return
    */
   public boolean isSysAdmin(User user) {
-    // return true;
-    return user != null && hasGrant(user.getGrants(),
-        new Grant(GrantType.ADMIN, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI));
+    return true;
+    // return user != null && hasGrant(user.getGrants(),
+    // new Grant(GrantType.ADMIN, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI));
   }
 
   /**
    * True if the user can create the object
-   * 
+   *
    * @param user
    * @param obj
    * @return
@@ -125,18 +124,17 @@ public class Authorization implements Serializable {
 
   /**
    * Transform a list of String (with the format: GrantType,GrantFor) to a list of {@link Grant}
-   * 
+   *
    * @param grants
    * @return
    */
   public Collection<Grant> toGrantList(Collection<String> grants) {
-    return grants.stream().map(s -> new Grant(GrantType.valueOf(s.split(",")[0]), s.split(",")[1]))
-        .collect(Collectors.toList());
+    return grants.stream().map(s -> new Grant(s)).collect(Collectors.toList());
   }
 
   /**
    * True if the {@link Grant} is found in the collection
-   * 
+   *
    * @param grants
    * @param grant
    * @return
@@ -148,7 +146,7 @@ public class Authorization implements Serializable {
 
   /**
    * True if the User has either Read, Edit of Admin Grant for this uri
-   * 
+   *
    * @param grants
    * @param uri
    * @return
@@ -159,7 +157,7 @@ public class Authorization implements Serializable {
 
   /**
    * True if the User has either Edit of Admin Grant for this uri
-   * 
+   *
    * @param grants
    * @param uri
    * @return
@@ -172,7 +170,7 @@ public class Authorization implements Serializable {
 
   /**
    * True if the User has Admin Grant for this uri
-   * 
+   *
    * @param grants
    * @param uri
    * @return
@@ -189,20 +187,20 @@ public class Authorization implements Serializable {
    * @return
    */
   public List<String> getAllGrants(User user) {
-    List<String> grants = new ArrayList<>(user.getGrants());
+    final List<String> grants = new ArrayList<>(user.getGrants());
     grants.addAll(getAllUserGroupGrants(user));
     return grants;
   }
 
   /**
    * Return all Grants the user have via its Usergroups
-   * 
+   *
    * @param user
    * @return
    */
   public List<String> getAllUserGroupGrants(User user) {
-    List<String> grants = new ArrayList<>();
-    for (UserGroup group : user.getGroups()) {
+    final List<String> grants = new ArrayList<>();
+    for (final UserGroup group : user.getGroups()) {
       grants.addAll(group.getGrants());
     }
     return grants;
@@ -264,8 +262,6 @@ public class Authorization implements Serializable {
       return isPublicStatus(((Item) obj).getStatus());
     } else if (obj instanceof Container) {
       return isPublicStatus(((Container) obj).getStatus());
-    } else if (obj instanceof Space) {
-      return isPublicStatus(((Space) obj).getStatus());
     } else if (obj instanceof Person) {
       return true;
     }
@@ -283,8 +279,6 @@ public class Authorization implements Serializable {
       return isDiscardedStatus(((Item) obj).getStatus());
     } else if (obj instanceof Container) {
       return isDiscardedStatus(((Container) obj).getStatus());
-    } else if (obj instanceof Space) {
-      return isDiscardedStatus(((Space) obj).getStatus());
     } else if (obj instanceof Person) {
       return false;
     } else if (obj instanceof Organization) {

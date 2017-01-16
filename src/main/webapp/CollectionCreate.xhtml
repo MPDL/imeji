@@ -1,15 +1,16 @@
-<ui:composition template="templates/sub_template/template_metadata_mediaContainer.xhtml"
+<ui:composition
+	template="templates/sub_template/template_metadata_mediaContainer.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
-	
-	<ui:param name="metadataBean" value="#{CreateCollectionBean}"/>
-	<ui:param name="metadataContextBean" value="#{metadataBean.collection}"/>
-	<ui:param name="headline" value="#{lbl.collection_create}"/>
-	<ui:param name="currentMainMenu" value="collection"/>
-	<ui:param name="containerHeadline" value="#{lbl.collection_info}"/>
-	<ui:param name="showProfileSelector" value="true"/>
-	
+
+	<ui:param name="metadataBean" value="#{CreateCollectionBean}" />
+	<ui:param name="metadataContextBean" value="#{metadataBean.collection}" />
+	<ui:param name="headline" value="#{lbl.collection_create}" />
+	<ui:param name="currentMainMenu" value="collection" />
+	<ui:param name="containerHeadline" value="#{lbl.collection_info}" />
+	<ui:param name="showProfileSelector" value="true" />
+
 </ui:composition>

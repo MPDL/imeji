@@ -40,7 +40,7 @@ public class CellComponent implements Serializable {
 
   /**
    * Get the index for this cell
-   * 
+   *
    * @return
    */
   public String getIndex() {
@@ -56,7 +56,7 @@ public class CellComponent implements Serializable {
 
   /**
    * Add a metadata
-   * 
+   *
    * @param metadata
    */
   public void addValue(Metadata metadata) {

@@ -120,7 +120,7 @@ public class FileServlet extends HttpServlet {
   }
 
   private String retrieveUrlOfContent(String contentId, String resolution) throws ImejiException {
-    ContentVO content = contentController.readLazy(contentId);
+    final ContentVO content = contentController.readLazy(contentId);
     switch (resolution) {
       case "thumbnail":
         return content.getThumbnail();
@@ -150,11 +150,9 @@ public class FileServlet extends HttpServlet {
       throws Exception {
     resp.setHeader("Content-disposition", "attachment;");
     boolean isExternalStorage = false;
-    if (!StorageUtil.isSpaceUrl(url)) {
-      final Item fileItem = getItem(url, user);
-      NotificationUtils.notifyByItemDownload(user, fileItem, Locale.ENGLISH);
-      isExternalStorage = StringHelper.isNullOrEmptyTrim(fileItem.getContentId());
-    }
+    final Item fileItem = getItem(url, user);
+    NotificationUtils.notifyByItemDownload(user, fileItem, Locale.ENGLISH);
+    isExternalStorage = StringHelper.isNullOrEmptyTrim(fileItem.getContentId());
     readFile(url, resp, isExternalStorage, user);
 
   }

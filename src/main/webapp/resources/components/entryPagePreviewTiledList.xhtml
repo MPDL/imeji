@@ -36,16 +36,6 @@
 						</h:panelGroup>
 					</div>
 				</h:outputLink>
-					<ui:fragment rendered="#{cc.attrs.mediaLogicBean.items.size() == 0  and cc.attrs.mediaLogicBean.type == 'COLLECTION'}">
-					<h2 class="imj_headline">
-  					   <h:outputText value="#{lbl.no_item_collection}"/>
-					    <br/>
-						<h:outputLink value="#{cc.attrs.mediaLogicBean.id}/#{Navigation.uploadPath}?init=1" rendered="#{Auth.createContent(cc.attrs.mediaLogicBean.container) and cc.attrs.mediaLogicBean.items.size() == 0 and cc.attrs.mediaLogicBean.type == 'COLLECTION'}">
-								<span class="imj_entryPagePreviewTiledListLinkArrow"> </span>
-								<h:outputText value ="#{lbl.upload_images}"/>
-						</h:outputLink>
-					</h2>
-				</ui:fragment>
 				<ui:fragment rendered="#{cc.attrs.mediaLogicBean.items.size() == 0 and cc.attrs.mediaLogicBean.type == 'ALBUM'}">
 					<h:panelGroup  styleClass="imj_entryPagePreviewTiledListItem" rendered="#{cc.attrs.mediaLogicBean.privateCount==0}">
 						<h2>

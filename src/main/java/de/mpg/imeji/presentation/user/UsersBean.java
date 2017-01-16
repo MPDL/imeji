@@ -171,15 +171,15 @@ public class UsersBean extends SuperBean {
    * Removes a {@link User}, but does not delete him
    */
   public void removeUser() {
-    String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .get("email");
-    UserService service = new UserService();
+    final String email = FacesContext.getCurrentInstance().getExternalContext()
+        .getRequestParameterMap().get("email");
+    final UserService service = new UserService();
     try {
-      User user = service.retrieve(email, getSessionUser());
+      final User user = service.retrieve(email, getSessionUser());
       user.setUserStatus(UserStatus.REMOVED);
       service.update(user, getSessionUser());
       doSearch();
-    } catch (ImejiException e) {
+    } catch (final ImejiException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }

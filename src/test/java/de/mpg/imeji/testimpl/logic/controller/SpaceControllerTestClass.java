@@ -21,7 +21,7 @@ import org.junit.runners.MethodSorters;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.controller.SpaceController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Space;
@@ -38,14 +38,14 @@ public class SpaceControllerTestClass extends ControllerTest {
   public static final int COL_NUM = 100;
 
   private static SpaceController sc;
-  private static CollectionController cc;
+  private static CollectionService cc;
   private static URI spaceId;
   private static Space space;
 
   @BeforeClass
   public static void specificSetup() {
     sc = new SpaceController();
-    cc = new CollectionController();
+    cc = new CollectionService();
   }
 
   @Test

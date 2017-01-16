@@ -44,17 +44,11 @@ public enum ImejiPages {
                                                                                   "collection_create",
                                                                                   ".*/createcollection.*"), CREATE_ALBUM(
                                                                                       "album_create",
-                                                                                      ".*/createalbum"), SPACES(
-                                                                                          "spaces",
-                                                                                          ".*/spaces"), CREATE_SPACE(
-                                                                                              "admin_space_create",
-                                                                                              ".*/createspace"), EDIT_SPACE(
-                                                                                                  "admin_space_edit",
-                                                                                                  ".*/space/.*/editspace"), PROFILE(
-                                                                                                      "metadata_profile",
-                                                                                                      ".*/(profile|metadataProfile)/([a-zA-Z_0-9-]+).*"), HOME(
-                                                                                                          "history_home",
-                                                                                                          "/");
+                                                                                      ".*/createalbum"), PROFILE(
+                                                                                          "metadata_profile",
+                                                                                          ".*/(profile|metadataProfile)/([a-zA-Z_0-9-]+).*"), HOME(
+                                                                                              "history_home",
+                                                                                              "/");
 
   /**
    * The key to the label

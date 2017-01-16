@@ -66,7 +66,7 @@ public class AlbumAPIService implements APIService<AlbumTO> {
     final ItemService controller = new ItemService();
     final SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC).search(
         SearchQueryParser.parseStringQuery(q), null, u,
-        ObjectHelper.getURI(Album.class, id).toString(), null, offset, size);
+        ObjectHelper.getURI(Album.class, id).toString(), offset, size);
     for (final Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
       final DefaultItemTO to = new DefaultItemTO();
       TransferObjectFactory.transferDefaultItem(vo, to);
@@ -168,7 +168,7 @@ public class AlbumAPIService implements APIService<AlbumTO> {
     final List<AlbumTO> tos = new ArrayList<>();
     final SearchResult result =
         SearchFactory.create(SearchObjectTypes.ALBUM, SEARCH_IMPLEMENTATIONS.ELASTIC)
-            .search(SearchQueryParser.parseStringQuery(q), null, u, null, null, offset, size);
+            .search(SearchQueryParser.parseStringQuery(q), null, u, null, offset, size);
     for (final Album vo : controller.retrieveBatchLazy(result.getResults(), u, -1, 0)) {
       final AlbumTO to = new AlbumTO();
       TransferObjectFactory.transferAlbum(vo, to);

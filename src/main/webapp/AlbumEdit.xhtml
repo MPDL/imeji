@@ -1,13 +1,14 @@
-<ui:composition template="templates/sub_template/template_metadata_mediaContainer.xhtml"
+<ui:composition
+	template="templates/sub_template/template_metadata_mediaContainer.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
-	<ui:param name="metadataBean" value="#{EditAlbumBean}"/>
-	<ui:param name="metadataContextBean" value="#{metadataBean.album}"/>
-	<ui:param name="headline" value="#{lbl.edit}: #{metadataBean.title}"/>
-	<ui:param name="currentMainMenu" value="album"/>
-	<ui:param name="containerHeadline" value="#{lbl.album_information}"/>
-	<ui:param name="imejiResource" value="#{metadataBean.album}"/>
-	
+	<ui:param name="metadataBean" value="#{EditAlbumBean}" />
+	<ui:param name="metadataContextBean" value="#{metadataBean.album}" />
+	<ui:param name="headline" value="#{lbl.edit}: #{metadataBean.title}" />
+	<ui:param name="currentMainMenu" value="album" />
+	<ui:param name="containerHeadline" value="#{lbl.album_information}" />
+	<ui:param name="imejiResource" value="#{metadataBean.album}" />
+
 </ui:composition>

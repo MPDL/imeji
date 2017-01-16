@@ -30,7 +30,7 @@ public final class ElasticItem extends ElasticProperties {
    *
    * @param item
    */
-  public ElasticItem(Item item, String space) {
+  public ElasticItem(Item item) {
     super(item);
     this.folder = item.getCollection().toString();
     this.name = item.getFilename();

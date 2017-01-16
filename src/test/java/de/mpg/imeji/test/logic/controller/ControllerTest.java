@@ -7,8 +7,8 @@ import org.junit.BeforeClass;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.collection.CollectionController;
-import de.mpg.imeji.logic.collection.CollectionController.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.collection.CollectionService.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
@@ -45,7 +45,7 @@ public class ControllerTest {
    * @throws ImejiException
    */
   protected static CollectionImeji createCollection() throws ImejiException {
-    CollectionController controller = new CollectionController();
+    CollectionService controller = new CollectionService();
     collection = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
     return controller.create(collection, profile, JenaUtil.testUser,
         MetadataProfileCreationMethod.COPY, null);

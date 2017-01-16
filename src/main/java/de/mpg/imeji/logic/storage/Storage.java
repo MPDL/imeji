@@ -105,7 +105,7 @@ public interface Storage extends Serializable {
 
   /**
    * Update the file defined by the url with a new file
-   * 
+   *
    * @param url
    * @param file
    * @throws IOException
@@ -114,7 +114,7 @@ public interface Storage extends Serializable {
 
   /**
    * Rotate the file
-   * 
+   *
    * @param originalUrl
    * @param degrees
    * @throws ImejiException
@@ -125,7 +125,7 @@ public interface Storage extends Serializable {
 
   /**
    * Returns the width of the image at the url
-   * 
+   *
    * @param url
    * @return
    */
@@ -133,7 +133,7 @@ public interface Storage extends Serializable {
 
   /**
    * Returns the height of the image at the url
-   * 
+   *
    * @param url
    * @return
    */

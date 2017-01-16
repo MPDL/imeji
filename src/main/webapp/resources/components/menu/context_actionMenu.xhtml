@@ -24,13 +24,13 @@
 	
 	<composite:implementation>
 		<ui:param name="adminVO" value="#{Auth.admin(cc.attrs.vo)}"/>
-		<ui:param name="deleteContentVO" value="#{Auth.deleteContent(cc.attrs.vo)}"/>
+		<ui:param name="deleteContentVO" value="#{Auth.update(cc.attrs.vo)}"/>
 		<ui:param name="deleteVO" value="#{Auth.delete(cc.attrs.vo)}"/>
 		<ui:param name="updateVO" value="#{Auth.update(cc.attrs.vo)}"/>
 		<ui:param name="updateContentVO" value="#{Auth.updateContent(cc.attrs.vo)}"/>
 
 		<div class="#{cc.attrs.menuClass.trim()}">
-			<ui:fragment rendered="#{Auth.loggedIn and (Auth.isAllowedToCreateCollection(SessionBean.user) or Configuration.albumsEnabled)}">
+			<ui:fragment rendered="#{Auth.loggedIn and (Auth.createCollection or Configuration.albumsEnabled)}">
 				<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item">
 					<div class="imj_menuHeader">
                         <span class="fa fa-plus">&#160;</span>
@@ -38,7 +38,7 @@
 					</div>
 					<div class="imj_menuBody">
 						<ul class="imj_overlayMenuList">
-							<ui:fragment rendered="#{Auth.isAllowedToCreateCollection(SessionBean.user)}">
+							<ui:fragment rendered="#{Auth.createCollection}">
 								<li>
 									<h:outputLink value="#{Navigation.createCollectionUrl}?init=1" title="#{lbl.collection_create}">
 										<h:outputText value="#{lbl.collection_create}"/>
@@ -54,12 +54,12 @@
 							</ui:fragment>
 							<ui:fragment rendered="#{Auth.sysAdmin}">
 								<li>
-									<a href="#{Navigation.applicationSpaceUrl}createuser" title="#{lbl.admin_user_new}">
+									<a href="#{Navigation.applicationUrl}createuser" title="#{lbl.admin_user_new}">
 										<h:outputText value="#{lbl.admin_user_new}"/>
 									</a>
 								</li>
 								<li>
-									<a href="#{Navigation.applicationSpaceUrl}createusergroup" title="#{lbl.admin_group_new}">
+									<a href="#{Navigation.applicationUrl}createusergroup" title="#{lbl.admin_group_new}">
 										<h:outputText value="#{lbl.admin_userGroup_new}" />
 									</a>
 								</li>
@@ -154,14 +154,14 @@
 									</ui:fragment>
 									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and paginatorListSessionBean!= null and cc.attrs.hasContent and updateContentVO}">	
 										<li class="#{curMenuClass}Item">
-											<h:outputLink  value="#{Navigation.applicationSpaceUrl}edit?type=all&amp;c=#{cc.attrs.vo.id}&amp;q=#{paginatorListSessionBean.query}" id="lnkSelectEdit2">
+											<h:outputLink  value="#{Navigation.applicationUrl}edit?type=all&amp;c=#{cc.attrs.vo.id}&amp;q=#{paginatorListSessionBean.query}" id="lnkSelectEdit2">
 												<h:outputText value="#{lbl.edit_all}"/>
 											</h:outputLink>
 										</li>
 									</ui:fragment>
 									<ui:fragment rendered="#{cc.attrs.curMainMenu == 'collection' and paginatorListSessionBean!= null and cc.attrs.hasContent and updateContentVO}">	
 										<li class="#{curMenuClass}Item">
-											<h:outputLink  value="#{Navigation.applicationSpaceUrl}edit/license?collection=#{paginatorListSessionBean.id}" id="lnkEditItemLicense">
+											<h:outputLink  value="#{Navigation.applicationUrl}edit/license?collection=#{paginatorListSessionBean.id}" id="lnkEditItemLicense">
 												<h:outputText value="#{lbl.edit_all_licenses}"/>
 											</h:outputLink>
 										</li>

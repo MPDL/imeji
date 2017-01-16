@@ -7,7 +7,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.Authorization;
-import de.mpg.imeji.logic.collection.CollectionController;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.doi.models.DOICollection;
 import de.mpg.imeji.logic.doi.util.DOIUtil;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -24,7 +24,7 @@ import de.mpg.imeji.logic.vo.User;
 public final class DoiService {
 
   public static final String DOI_URL_RESOLVER = "http://dx.doi.org/";
-  private final CollectionController collectionController = new CollectionController();
+  private final CollectionService collectionController = new CollectionService();
   private final Authorization authorization = new Authorization();
 
   /**

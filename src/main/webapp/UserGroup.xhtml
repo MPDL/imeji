@@ -4,40 +4,45 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
-	
-	<ui:param name="headline" value="#{lbl.admin_userGroup} #{UserGroup.userGroup.name}" />
-	<ui:param name="currentMainMenu" value="admin"/>
-	
+
+	<ui:param name="headline"
+		value="#{lbl.admin_userGroup} #{UserGroup.userGroup.name}" />
+	<ui:param name="currentMainMenu" value="admin" />
+
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}" downloadEnabled="false" actionEnabled="false"/>
+		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"
+			downloadEnabled="false" actionEnabled="false" />
 	</ui:define>
-	
+
 	<ui:define name="mainContent">
 		<ui:fragment rendered="#{!Auth.sysAdmin}">
 			<ui:include src="./include/LoginFormular.xhtml" />
 		</ui:fragment>
-		
-		
+
+
 		<ui:fragment rendered="#{Auth.sysAdmin}">
 			<h:panelGroup layout="block" styleClass="imj_backPanel">
-				<a href="#{Navigation.applicationSpaceUrl}usergroups" title="#{lbl.admin_groups_view}">
-					<h:outputText value="#{lbl.admin_userGroups_view}"/>
+				<a href="#{Navigation.applicationUrl}usergroups"
+					title="#{lbl.admin_groups_view}"> <h:outputText
+						value="#{lbl.admin_userGroups_view}" />
 				</a>
 			</h:panelGroup>
-		
+
 			<div class="imj_userConfig">
-				
+
 				<!-- Admin - TiledList -->
 				<div class="imj_administrationTiledList imj_maxWidth">
-				
-					<div class="imj_listBody">			
-		
+
+					<div class="imj_listBody">
+
 						<div class="imj_adminPanel imj_userConfig">
-						
+
 							<div class="imj_headline">
-								<h2><h:outputText value="#{UserGroup.userGroup.name}"/></h2>
+								<h2>
+									<h:outputText value="#{UserGroup.userGroup.name}" />
+								</h2>
 							</div>
-							
+
 							<div class="imj_content">
 								<script type="text/javascript">
 								function hide_input_area_show_Links() {
@@ -63,76 +68,96 @@
 									$(showElements).show();
 								}
 								</script>
-								
-								<h:form id="userForm">			
+
+								<h:form id="userForm">
 									<div class="imj_userGlobalInformation">
-											<!-- User Edit - Email -->
-											<div class="imj_admindataSet">
-												<div class="imj_admindataLabel">
-													<h:outputText value="#{lbl.title}"/>
-													<span class="imj_invisible">: </span>
-												</div>
-												<div class="imj_admindataValue">
-													<div class="imj_admindataValueEntry">
-														<h:outputText value="#{UserGroup.userGroup.name}"/>
-													</div>
-													<div class="imj_admindataSetEdit">
-														<h:inputText value="#{UserGroup.userGroup.name}" styleClass="imj_admindataEdit imj_noDisplay"/>
-													</div>
-												</div>												
-											</div>
-											<div class="imj_submitPanel">
-												<h:outputLink id="lnkEditUserdata" value="#" onclick="hide_input_area_show_Links(); $(this).hide();" styleClass="imj_editButton">
-													<h:outputText value="#{lbl.edit}"/>
-												</h:outputLink>
-												<h:outputLink id="lnkCancelEditUserdata" value="#" onclick="cancelUserEdit(); $(this).hide();" styleClass="imj_cancelButton imj_noDisplay">
-													<h:outputText value="#{lbl.cancel}"/>
-												</h:outputLink>
-												<h:commandButton action="#{UserGroup.save()}" type="submit" value="#{lbl.save}" styleClass="imj_submitButton imj_noDisplay"/>
-											</div>
-									</div>						
-									<div class="imj_admindataSetEdit">									
+										<!-- User Edit - Email -->
+										<div class="imj_admindataSet">
 											<div class="imj_admindataLabel">
-												<h:outputText value="#{lbl.users}"/>
-											</div>																				
+												<h:outputText value="#{lbl.title}" />
+												<span class="imj_invisible">: </span>
+											</div>
 											<div class="imj_admindataValue">
 												<div class="imj_admindataValueEntry">
-													<h:form>
-														<ui:repeat  var="user" value="#{UserGroup.users}" rows="0">
-															<div class="imj_userGrantList">
-																<h:outputText value="#{user.person.completeName} (#{user.email})" />
-																<h:commandButton value="#{lbl.remove}" action="#{UserGroup.removeUserGromGroup(user.id)}" styleClass="imj_cancelButton"/>
-															</div>
-															<br/>
-														</ui:repeat>
-													</h:form>
+													<h:outputText value="#{UserGroup.userGroup.name}" />
+												</div>
+												<div class="imj_admindataSetEdit">
+													<h:inputText value="#{UserGroup.userGroup.name}"
+														styleClass="imj_admindataEdit imj_noDisplay" />
 												</div>
 											</div>
-											<div class="imj_submitPanel">											
-												<h:outputLink value="#{Navigation.applicationSpaceUrl}users?group=#{UserGroup.userGroup.id}" styleClass="imj_submitButton">
-														<h:outputText value="#{lbl.add_user}" />
-												</h:outputLink>											
-											</div>									
-									</div>	
+										</div>
+										<div class="imj_submitPanel">
+											<h:outputLink id="lnkEditUserdata" value="#"
+												onclick="hide_input_area_show_Links(); $(this).hide();"
+												styleClass="imj_editButton">
+												<h:outputText value="#{lbl.edit}" />
+											</h:outputLink>
+											<h:outputLink id="lnkCancelEditUserdata" value="#"
+												onclick="cancelUserEdit(); $(this).hide();"
+												styleClass="imj_cancelButton imj_noDisplay">
+												<h:outputText value="#{lbl.cancel}" />
+											</h:outputLink>
+											<h:commandButton action="#{UserGroup.save()}" type="submit"
+												value="#{lbl.save}"
+												styleClass="imj_submitButton imj_noDisplay" />
+										</div>
+									</div>
+									<div class="imj_admindataSetEdit">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.users}" />
+										</div>
+										<div class="imj_admindataValue">
+											<div class="imj_admindataValueEntry">
+												<h:form>
+													<ui:repeat var="user" value="#{UserGroup.users}" rows="0">
+														<div class="imj_userGrantList">
+															<h:outputText
+																value="#{user.person.completeName} (#{user.email})" />
+															<h:commandButton value="#{lbl.remove}"
+																action="#{UserGroup.removeUserGromGroup(user.id)}"
+																styleClass="imj_cancelButton" />
+														</div>
+														<br />
+													</ui:repeat>
+												</h:form>
+											</div>
+										</div>
+										<div class="imj_submitPanel">
+											<h:outputLink
+												value="#{Navigation.applicationUrl}users?group=#{UserGroup.userGroup.id}"
+												styleClass="imj_submitButton">
+												<h:outputText value="#{lbl.add_user}" />
+											</h:outputLink>
+										</div>
+									</div>
 									<div class="imj_admindataSetEdit"></div>
 								</h:form>
-								
-								<h3 class="imj_headline"><h:outputText value="#{lbl.grant_for_group}" styleClass="imj_admindataValueEntry"/></h3>
+
+								<h3 class="imj_headline">
+									<h:outputText value="#{lbl.grant_for_group}"
+										styleClass="imj_admindataValueEntry" />
+								</h3>
 								<div class="imj_admindataSetEdit">
 									<div class="imj_admindataValue">
 										<div class="imj_admindataValueEntry">
 											<h:form>
 												<ui:repeat var="sh" value="#{UserGroup.roles}">
-													<ui:param name="roles" value="#{sh.type == 'COLLECTION' ? ShareBean.shareCollectionGrantItems : ShareBean.shareAlbumGrantItems}"/>
-													<ui:param name="roles" value="#{sh.type == 'ITEM' ? ShareBean.shareItemGrantItems : roles}"/>
+													<ui:param name="roles"
+														value="#{sh.type == 'COLLECTION' ? ShareBean.shareCollectionGrantItems : ShareBean.shareAlbumGrantItems}" />
+													<ui:param name="roles"
+														value="#{sh.type == 'ITEM' ? ShareBean.shareItemGrantItems : roles}" />
 													<div>
-														<h:outputText value=" #{sh.typeLabel}: #{sh.title}" styleClass="imj_admindataValueEntry"/>
-														<h:commandButton action="#{UserGroup.revokeGrants(sh)}" value="#{lbl.revoke}" styleClass="imj_cancelButton"/>
-														<h:selectManyCheckbox id="role" value="#{sh.roles}" disabled="true" layout="pageDirection">
+														<h:outputText value=" #{sh.typeLabel}: #{sh.title}"
+															styleClass="imj_admindataValueEntry" />
+														<h:commandButton action="#{UserGroup.revokeGrants(sh)}"
+															value="#{lbl.revoke}" styleClass="imj_cancelButton" />
+														<h:selectManyCheckbox id="role" value="#{sh.roles}"
+															disabled="true" layout="pageDirection">
 															<f:selectItems value="#{sh.rolesMenu}" />
 														</h:selectManyCheckbox>
 													</div>
-													<br/>
+													<br />
 												</ui:repeat>
 											</h:form>
 										</div>

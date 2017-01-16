@@ -1,33 +1,44 @@
-<ui:composition template="templates/sub_template/template_bibliographicList.xhtml"
+<ui:composition
+	template="templates/sub_template/template_bibliographicList.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components">
-	
-	<ui:param name="paginatorListSessionBean" value="#{CollectionsBean}"/>
-	<ui:param name="headline" value=" "/>
-	<ui:param name="displayQuery" value="#{paginatorListSessionBean.simpleQuery != ''}"/>
-	<ui:param name="currentMainMenu" value="collection"/>
-	<ui:param name="browseToAllItemsUrl" value="?q=&amp;f=all"/>
-	<ui:param name="releaseItemConfirmationText" value="#{msg.confirmation_release_collection}?"/>
-	<ui:param name="deleteItemConfirmationText" value="#{msg.confirmation_delete_collection}?"/>
-	<ui:param name="deleteSelectedItemsConfirmationText" value="#{lbl.delete_selected_collections}?"/>
-	<ui:param name="withdrawItemConfirmationText" value="#{msg.confirmation_withdraw_collection}"/>
-	<ui:param name="filterBeanHasQuery" value="yes"/>
-	<ui:param name="isActivatable" value="no"/>
-	<ui:param name="globalDisplayLinkText" value="#{lbl.all_items}"/>
-	<ui:param name="globalDeleteLinkText" value="#{lbl.delete_selected_collections}"/>
-	<ui:param name="metadataNavigationURL" value="#{Navigation.collectionUrl}"/>
-	<ui:param name="objectLabel" value="#{lbl.collections}"/>
-	
-	
+
+	<ui:param name="paginatorListSessionBean" value="#{CollectionsBean}" />
+	<ui:param name="headline" value=" " />
+	<ui:param name="displayQuery"
+		value="#{paginatorListSessionBean.simpleQuery != ''}" />
+	<ui:param name="currentMainMenu" value="collection" />
+	<ui:param name="browseToAllItemsUrl" value="?q=&amp;f=all" />
+	<ui:param name="releaseItemConfirmationText"
+		value="#{msg.confirmation_release_collection}?" />
+	<ui:param name="deleteItemConfirmationText"
+		value="#{msg.confirmation_delete_collection}?" />
+	<ui:param name="deleteSelectedItemsConfirmationText"
+		value="#{lbl.delete_selected_collections}?" />
+	<ui:param name="withdrawItemConfirmationText"
+		value="#{msg.confirmation_withdraw_collection}" />
+	<ui:param name="filterBeanHasQuery" value="yes" />
+	<ui:param name="isActivatable" value="no" />
+	<ui:param name="globalDisplayLinkText" value="#{lbl.all_items}" />
+	<ui:param name="globalDeleteLinkText"
+		value="#{lbl.delete_selected_collections}" />
+	<ui:param name="metadataNavigationURL"
+		value="#{Navigation.collectionUrl}" />
+	<ui:param name="objectLabel" value="#{lbl.collections}" />
+
+
 	<ui:define name="actionsMenu">
-		<menu:actionMenuCollections rendered="#{!empty SessionBean.user}"/>
+		<menu:actionMenuCollections rendered="#{!empty SessionBean.user}" />
 	</ui:define>
-	
+
 	<ui:define name="searchQuery">
-		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}" navBean="#{Navigation}"  rendered="#{paginatorListSessionBean.simpleQuery != ''}" label="#{lbl.search_for} #{lbl.collections}"/>
+		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}"
+			navBean="#{Navigation}"
+			rendered="#{paginatorListSessionBean.simpleQuery != ''}"
+			label="#{lbl.search_for} #{lbl.collections}" />
 	</ui:define>
 </ui:composition>
