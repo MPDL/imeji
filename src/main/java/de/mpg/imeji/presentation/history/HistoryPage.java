@@ -6,6 +6,7 @@ package de.mpg.imeji.presentation.history;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -19,7 +20,6 @@ import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * An imeji web page
@@ -33,6 +33,7 @@ public class HistoryPage implements Serializable {
   private int pos = 0;
   private String url;
   private String title;
+  private Locale locale;
   private final ImejiPages imejiPage;
   private Map<String, String[]> params;
   private static final Logger LOGGER = Logger.getLogger(HistoryPage.class);
@@ -46,7 +47,8 @@ public class HistoryPage implements Serializable {
    * @param user
    * @throws Exception
    */
-  public HistoryPage(String url, Map<String, String[]> params, User user) throws Exception {
+  public HistoryPage(String url, Map<String, String[]> params, User user, Locale locale)
+      throws Exception {
     this.params = params;
     this.url = url;
     this.imejiPage = HistoryUtil.getImejiPage(getCompleteUrl());
@@ -125,8 +127,7 @@ public class HistoryPage implements Serializable {
 
   public String getInternationalizedName() {
     try {
-      final String inter =
-          Imeji.RESOURCE_BUNDLE.getLabel(imejiPage.getLabel(), BeanHelper.getLocale());
+      final String inter = Imeji.RESOURCE_BUNDLE.getLabel(imejiPage.getLabel(), locale);
       return title != null ? inter + " " + title : inter;
     } catch (final Exception e) {
       return imejiPage.getLabel();

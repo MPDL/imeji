@@ -28,10 +28,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
@@ -41,9 +42,11 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.content.ContentService;
+import de.mpg.imeji.logic.item.ItemController;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.storage.StorageController;
+import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 
@@ -55,14 +58,9 @@ import de.mpg.imeji.logic.vo.User;
  * @version $Revision$ $LastChangedDate$
  */
 public class ZIPExport extends Export {
-  protected List<String> filteredResources = new ArrayList<String>();
   protected String modelURI;
   private static final Logger LOGGER = Logger.getLogger(ZIPExport.class);
-
-
-
   private final Map<URI, Integer> itemsPerCollection;
-
 
   /**
    * @param type
@@ -103,10 +101,6 @@ public class ZIPExport extends Export {
     return "application/zip";
   }
 
-  protected void filterResources(SearchResult sr, User user) {
-    // TODO Auto-generated method stub
-  }
-
   /**
    * This method exports all images of the current browse page as a zip file
    *
@@ -116,41 +110,33 @@ public class ZIPExport extends Export {
    * @throws URISyntaxException
    */
   public void exportAllImages(SearchResult sr, OutputStream out, User user) throws ImejiException {
-    final List<String> source = sr.getResults();
     final ZipOutputStream zip = new ZipOutputStream(out);
     try {
+      final List<Item> items = new ItemController().retrieveBatchLazy(sr.getResults(), user);
+      // TODO to the map by filename
+      final Map<String, ContentVO> contentMap = retrieveContents(items);
+      updateMetrics(items);
       // Create the ZIP file
-      for (int i = 0; i < source.size(); i++) {
-        final ItemService ic = new ItemService();
-        Item item = null;
-        StorageController sc = null;
+      for (String filename : contentMap.keySet()) {
         try {
-          item = ic.retrieve(new URI(source.get(i)), user);
-          updateMetrics(item);
-          sc = new StorageController();
-          zip.putNextEntry(new ZipEntry(item.getFilename()));
-          // sc.read(item.getFullImageUrl().toString(), zip, false);
-          // Complete the entry
+          zip.putNextEntry(new ZipEntry(filename));
+          new StorageController().read(contentMap.get(filename).getOriginal(), zip, false);
           zip.closeEntry();
         } catch (final ZipException ze) {
           if (ze.getMessage().contains("duplicate entry")) {
-            final String name = i + "_" + item.getFilename();
+            final String name = System.currentTimeMillis() + "_" + filename;
             zip.putNextEntry(new ZipEntry(name));
-            // sc.read(item.getFullImageUrl().toString(), zip, false);
+            new StorageController().read(contentMap.get(filename).getOriginal(), zip, false);
             // Complete the entry
             zip.closeEntry();
+          } else {
+            LOGGER.error("Error zip export", ze);
           }
-          LOGGER.error("Error zip export", ze);
-        } catch (final ImejiException e) {
-          LOGGER.info("Could not retrieve Item for export!", e);
-        } catch (final URISyntaxException eui) {
-          LOGGER.info("Could not create URI during retrieval and export! ", eui);
         }
       }
     } catch (final IOException e) {
       LOGGER.info("Some IO Exception when exporting all images!", e);
     }
-
     try {
       // Complete the ZIP file
       zip.close();
@@ -159,20 +145,26 @@ public class ZIPExport extends Export {
     }
   }
 
-  private void updateMetrics(Item item) {
+  private void updateMetrics(List<Item> items) {
     // only images for the moment!
-    if (modelURI.equals(Imeji.imageModel)) {
-      if (itemsPerCollection.containsKey(item.getCollection())) {
-        final int newVal = itemsPerCollection.get(item.getCollection()).intValue() + 1;
-        itemsPerCollection.put(item.getCollection(), Integer.valueOf(newVal));
-      } else {
-        itemsPerCollection.put(item.getCollection(), new Integer(1));
-      }
-    }
+    // if (modelURI.equals(Imeji.imageModel)) {
+    // if (itemsPerCollection.containsKey(item.getCollection())) {
+    // final int newVal = itemsPerCollection.get(item.getCollection()).intValue() + 1;
+    // itemsPerCollection.put(item.getCollection(), Integer.valueOf(newVal));
+    // } else {
+    // itemsPerCollection.put(item.getCollection(), new Integer(1));
+    // }
+    // }
   }
 
   public Map<URI, Integer> getItemsPerCollection() {
     return itemsPerCollection;
+  }
+
+  private Map<String, ContentVO> retrieveContents(List<Item> items) throws ImejiException {
+    List<String> contentIds = items.stream().map(Item::getContentId).collect(Collectors.toList());
+    return new ContentService().retrieveBatchLazy(contentIds).stream()
+        .collect(Collectors.toMap(ContentVO::getItemId, Function.identity()));
   }
 
 

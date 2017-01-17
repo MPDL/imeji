@@ -76,7 +76,7 @@ public class AlbumBean extends ContainerBean {
    * @param album
    * @throws Exception
    */
-  public AlbumBean(Album album, User user, Album activeAlbum) throws Exception {
+  public AlbumBean(Album album, User user, Album activeAlbum) {
     this.album = album;
     setSessionUser(user);
     if (album != null) {
@@ -101,7 +101,7 @@ public class AlbumBean extends ContainerBean {
           thumbnail = new ThumbnailBean();
           thumbnail.setLink(album.getLogoUrl().toString());
         } else if (!getItems().isEmpty()) {
-          thumbnail = new ThumbnailBean(getItems().get(0), false);
+          thumbnail = new ThumbnailBean(getItems().get(0));
         }
       }
     }

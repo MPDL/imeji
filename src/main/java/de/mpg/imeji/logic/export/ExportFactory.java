@@ -55,7 +55,7 @@ public class ExportFactory {
    * @return
    * @throws HttpResponseException
    */
-  public static ExplainExport buidExplain(String type) throws HttpResponseException {
+  private static ExplainExport buidExplain(String type) throws HttpResponseException {
     if ("search".equals(type)) {
       return new SearchExplainExport();
     }

@@ -145,9 +145,7 @@ public class UploadServlet extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
-    System.out.println("GET !!!!!!!! Upload Servlet !!!!!!!");
-  }
+      throws ServletException, IOException {}
 
   /**
    * Return the {@link SessionBean} form the {@link HttpSession}

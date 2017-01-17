@@ -57,7 +57,7 @@ public class ThumbnailBean implements Serializable {
    * @param initMetadata if true, will read the metadata
    * @throws Exception
    */
-  public ThumbnailBean(Item item, boolean initMetadata) throws Exception {
+  public ThumbnailBean(Item item) {
     this.uri = item.getId();
     this.collectionUri = item.getCollection();
     this.id = ObjectHelper.getId(getUri());
@@ -68,13 +68,11 @@ public class ThumbnailBean implements Serializable {
     this.modified = DateHelper.printDate(item.getModified());
     this.shortFileType = StorageUtils.getExtension(fileType);
     this.metadata = item.getMetadata();
-    if (initMetadata) {
-      final SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-      this.caption = findCaption();
-      this.selected = sessionBean.getSelected().contains(uri.toString());
-      if (sessionBean.getActiveAlbum() != null) {
-        this.isInActiveAlbum = sessionBean.getActiveAlbum().getImages().contains(item.getId());
-      }
+    final SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
+    this.caption = findCaption();
+    this.selected = sessionBean.getSelected().contains(uri.toString());
+    if (sessionBean.getActiveAlbum() != null) {
+      this.isInActiveAlbum = sessionBean.getActiveAlbum().getImages().contains(item.getId());
     }
   }
 
@@ -99,7 +97,7 @@ public class ThumbnailBean implements Serializable {
    * @return
    * @throws ImejiException
    */
-  private String findCaption() throws ImejiException {
+  private String findCaption() {
     return getFilename();
   }
 

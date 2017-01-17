@@ -25,7 +25,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.content.ContentController;
+import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.impl.InternalStorage;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -74,7 +74,7 @@ public class DataViewerServlet extends HttpServlet {
         // along with the fileExtensionName
 
         resp.sendRedirect(
-            viewGenericUrl(new ContentController().readLazy(item.getContentId()).getOriginal(),
+            viewGenericUrl(new ContentService().readLazy(item.getContentId()).getOriginal(),
                 fileExtensionName, dataViewerUrl));
       } else
 
@@ -101,7 +101,7 @@ public class DataViewerServlet extends HttpServlet {
     // in any other case, download the temporary file and send it to the
     // data viewer
     final InternalStorage ist = new InternalStorage();
-    final File file = ist.read(new ContentController().readLazy(item.getContentId()).getOriginal());
+    final File file = ist.read(new ContentService().readLazy(item.getContentId()).getOriginal());
 
     // Data Viewer File Parameter is always named "file1" not filename
     final FileDataBodyPart filePart = new FileDataBodyPart("file1", file);

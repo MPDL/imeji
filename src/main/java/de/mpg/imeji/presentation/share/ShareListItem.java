@@ -16,7 +16,7 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.share.invitation.Invitation;
-import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
@@ -157,7 +157,7 @@ public class ShareListItem implements Serializable {
    */
   public void updateInvitation() throws ImejiException {
     if (invitation != null) {
-      final InvitationBusinessController invitationService = new InvitationBusinessController();
+      final InvitationService invitationService = new InvitationService();
       if (role == null) {
         invitationService.cancel(invitation.getId());
       } else {

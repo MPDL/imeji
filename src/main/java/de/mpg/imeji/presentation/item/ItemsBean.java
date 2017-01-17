@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -40,7 +41,6 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
 import de.mpg.imeji.presentation.util.CookieUtils;
-import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
  * The bean for all list of images
@@ -156,7 +156,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       // Init the labels for the item
       metadataLabels = new MetadataLabels((List<Item>) items, getLocale());
       // Return the item as thumbnailBean
-      return ListUtils.itemListToThumbList(items, getSessionUser());
+      return items.stream().map(item -> new ThumbnailBean(item)).collect(Collectors.toList());
     } catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
     }

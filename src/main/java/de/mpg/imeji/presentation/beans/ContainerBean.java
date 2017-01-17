@@ -37,10 +37,10 @@ import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
@@ -146,7 +146,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    *
    * @throws ImejiException
    */
-  protected void loadItems(User user, int size) throws ImejiException {
+  protected void loadItems(User user, int size) {
     setItems(new ArrayList<Item>());
     if (getContainer() != null) {
       final List<String> uris = new ArrayList<String>();
@@ -154,7 +154,12 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
         uris.add(uri.toString());
       }
       final ItemService ic = new ItemService();
-      setItems((List<Item>) ic.retrieveBatchLazy(uris, size, 0, user));
+      try {
+        setItems((List<Item>) ic.retrieveBatchLazy(uris, size, 0, user));
+      } catch (ImejiException e) {
+        LOGGER.error("Error loading items of container");
+        BeanHelper.error("Error reading items of " + getContainer().getMetadata().getTitle());
+      }
     }
   }
 

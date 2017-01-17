@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.presentation.lang.InternationalizationBean;
 
 /**
  * Helper to work with jsf beans
@@ -328,14 +327,4 @@ public class BeanHelper {
   public static void addMessage(String message) {
     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(message));
   }
-
-  /**
-   * Return the Current Locale from the SessionBean
-   *
-   * @return
-   */
-  public static Locale getLocale() {
-    return ((InternationalizationBean) getSessionBean(InternationalizationBean.class)).getLocale();
-  }
-
 }

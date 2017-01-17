@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.share.invitation.Invitation;
-import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.vo.User;
@@ -23,13 +23,13 @@ import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.controller.ControllerTest;
 
 /**
- * Unit test for {@link InvitationBusinessController}
+ * Unit test for {@link InvitationService}
  * 
  * @author bastiens
  *
  */
 public class InvitationBusinessControllerTest extends ControllerTest {
-  private InvitationBusinessController invitationBC = new InvitationBusinessController();
+  private InvitationService invitationBC = new InvitationService();
   private static final Logger LOGGER = Logger.getLogger(InvitationBusinessControllerTest.class);
   private static final String UNKNOWN_EMAIL = "unknown@imeji.org";
 
@@ -83,7 +83,7 @@ public class InvitationBusinessControllerTest extends ControllerTest {
     List<Invitation> invitationsBefore = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
     KeyValueStoreService.stopAllStores();
     KeyValueStoreService.startAllStores();
-    invitationBC = new InvitationBusinessController();
+    invitationBC = new InvitationService();
     List<Invitation> invitations = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
     // Check the invitation is here
     Assert.assertEquals(invitationsBefore.size(), invitations.size());

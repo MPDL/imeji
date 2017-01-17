@@ -26,7 +26,7 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
-import de.mpg.imeji.logic.content.ContentController;
+import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
@@ -185,7 +185,7 @@ public class ItemBean extends SuperBean {
    */
   public void initViewTechnicalMetadata() throws ImejiException {
     techMd = new ArrayList<>();
-    final ContentVO content = new ContentController().read(item.getContentId());
+    final ContentVO content = new ContentService().read(item.getContentId());
     for (final TechnicalMetadata tmd : content.getTechnicalMetadata()) {
       techMd.add(tmd.getName() + ": " + tmd.getValue());
     }
@@ -204,7 +204,7 @@ public class ItemBean extends SuperBean {
       throw new NotFoundException("LoadImage: empty");
     }
     try {
-      content = new ContentController().readLazy(item.getContentId());
+      content = new ContentService().readLazy(item.getContentId());
       this.preview = content.getPreview();
       this.thumbnail = content.getThumbnail();
       this.fullResolution = content.getFull();

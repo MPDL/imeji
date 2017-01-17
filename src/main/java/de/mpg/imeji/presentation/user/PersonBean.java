@@ -25,7 +25,6 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.ContainerBean;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.edit.MetadataWrapper;
 import de.mpg.imeji.presentation.registration.RegistrationBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -62,8 +61,6 @@ public class PersonBean extends SuperBean implements Serializable {
       l.set(position, person.clone());
     } else if (bean instanceof UserBean) {
       ((UserBean) bean).getUser().setPerson(person.clone());
-    } else if (bean instanceof MetadataWrapper) {
-      ((MetadataWrapper) bean).setPerson(person);
     }
     return ":";
   }
@@ -90,10 +87,6 @@ public class PersonBean extends SuperBean implements Serializable {
     } else if (bean instanceof UserBean) {
       final List<Organization> l =
           (List<Organization>) ((UserBean) bean).getUser().getPerson().getOrganizations();
-      l.set(positionOrga, orga);
-    } else if (bean instanceof MetadataWrapper) {
-      final List<Organization> l =
-          (List<Organization>) ((MetadataWrapper) bean).getPerson().getOrganizations();
       l.set(positionOrga, orga);
     } else if (bean instanceof RegistrationBean) {
       final List<Organization> l =

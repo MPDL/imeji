@@ -20,7 +20,7 @@ import de.mpg.imeji.logic.registration.Registration;
 import de.mpg.imeji.logic.registration.RegistrationBusinessController;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
-import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
@@ -143,7 +143,7 @@ public class RegistrationBean extends SuperBean {
    */
   private boolean checkInvitations() {
     try {
-      return !new InvitationBusinessController().retrieveInvitationOfUser(user.getEmail())
+      return !new InvitationService().retrieveInvitationOfUser(user.getEmail())
           .isEmpty();
     } catch (final ImejiException e) {
       LOGGER.error("Error checking user invitations", e);

@@ -45,7 +45,7 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.presentation.servlet.ExportServlet;
+import de.mpg.imeji.presentation.export.ExportServlet;
 
 /**
  * Filter for the content negociation

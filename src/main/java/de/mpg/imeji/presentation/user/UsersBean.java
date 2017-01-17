@@ -20,7 +20,7 @@ import de.mpg.imeji.logic.authorization.util.PasswordGenerator;
 import de.mpg.imeji.logic.registration.RegistrationBusinessController;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
-import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -223,7 +223,7 @@ public class UsersBean extends SuperBean {
     BeanHelper.cleanMessages();
     BeanHelper.info("Sending activation email and new password.");
     NotificationUtils.sendActivationNotification(toActivateUser, getLocale(),
-        !new InvitationBusinessController().retrieveInvitationOfUser(email).isEmpty());
+        !new InvitationService().retrieveInvitationOfUser(email).isEmpty());
     if (FacesContext.getCurrentInstance().getMessageList().size() > 1) {
       BeanHelper.cleanMessages();
       BeanHelper.info(

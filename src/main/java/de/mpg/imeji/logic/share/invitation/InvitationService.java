@@ -19,7 +19,7 @@ import de.mpg.imeji.logic.vo.User;
  * @author bastiens
  *
  */
-public class InvitationBusinessController {
+public class InvitationService {
   private final UserService userController = new UserService();
   private final ShareService shareBC = new ShareService();
   private static final KeyValueStoreService KEY_VALUE_STORE_BC =

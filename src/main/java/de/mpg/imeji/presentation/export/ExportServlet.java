@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.servlet;
+package de.mpg.imeji.presentation.export;
 
 import java.io.IOException;
 import java.util.Date;
@@ -14,6 +14,7 @@ import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,12 +22,13 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.http.client.HttpResponseException;
 
-import de.mpg.imeji.logic.export.ExportManager;
+import de.mpg.imeji.logic.export.ExportService;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.notification.NotificationUtils;
 import de.mpg.imeji.presentation.session.SessionBean;
 
+@WebServlet("/exportServlet")
 public class ExportServlet extends HttpServlet {
   private static final long serialVersionUID = -777947169051357999L;
 
@@ -41,28 +43,24 @@ public class ExportServlet extends HttpServlet {
     final User user = session.getUser();
 
     try {
-      final ExportManager exportManager = new ExportManager(resp.getOutputStream(), user,
+      final ExportService exportService = new ExportService(resp.getOutputStream(), user,
           req.getParameterMap(), session.getSelected());
       String exportName = instanceName + "_";
       exportName += new Date().toString().replace(" ", "_").replace(":", "-");
-      if (exportManager.getContentType().equalsIgnoreCase("application/xml")) {
+      if (exportService.getContentType().equalsIgnoreCase("application/xml")) {
         exportName += ".xml";
       }
-      if (exportManager.getContentType().equalsIgnoreCase("application/zip")) {
+      if (exportService.getContentType().equalsIgnoreCase("application/zip")) {
         exportName += ".zip";
       }
       resp.setHeader("Connection", "close");
-      resp.setHeader("Content-Type", exportManager.getContentType() + ";charset=UTF-8");
+      resp.setHeader("Content-Type", exportService.getContentType() + ";charset=UTF-8");
       resp.setHeader("Content-disposition", "filename=" + exportName);
       resp.setStatus(HttpServletResponse.SC_OK);
-      final SearchResult result = exportManager.search();
-      exportManager.export(result, user);
-
-      NotificationUtils.notifyByExport(user, exportManager.getExport(), session);
-
+      final SearchResult result = exportService.search();
+      exportService.export(result, user);
+      NotificationUtils.notifyByExport(user, exportService.getExport(), session);
       resp.getOutputStream().flush();
-
-
     } catch (final HttpResponseException he) {
       resp.sendError(he.getStatusCode(), he.getMessage());
     } catch (final Exception e) {

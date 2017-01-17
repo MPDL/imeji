@@ -18,7 +18,7 @@ import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
-import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -198,7 +198,7 @@ public class ShareBean extends SuperBean implements Serializable {
    * @throws ImejiException
    */
   public void cancelInvitation(ShareListItem item) throws ImejiException {
-    new InvitationBusinessController().cancel(item.getInvitation().getId());
+    new InvitationService().cancel(item.getInvitation().getId());
     reloadPage();
   }
 

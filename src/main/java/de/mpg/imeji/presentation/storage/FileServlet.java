@@ -21,7 +21,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.authentication.factory.AuthenticationFactory;
-import de.mpg.imeji.logic.content.ContentController;
+import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -49,7 +49,7 @@ public class FileServlet extends HttpServlet {
   private static final long serialVersionUID = 5502546330318540997L;
   private static final Logger LOGGER = Logger.getLogger(FileServlet.class);
   private final StorageController storageController = new StorageController();
-  private final ContentController contentController = new ContentController();
+  private final ContentService contentController = new ContentService();
   private final ExternalStorage externalStorage = new ExternalStorage();
   private final Navigation navivation = new Navigation();;
   private String domain;

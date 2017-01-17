@@ -36,12 +36,6 @@
         <async-supported>true</async-supported>
     </servlet>
     <servlet>
-        <servlet-name>Export Servlet</servlet-name>
-        <servlet-class>de.mpg.imeji.presentation.servlet.ExportServlet</servlet-class>
-        <load-on-startup>4</load-on-startup>
-        <async-supported>true</async-supported>
-    </servlet>
-    <servlet>
         <servlet-name>Data Viewer Servlet</servlet-name>
         <servlet-class>de.mpg.imeji.presentation.servlet.DataViewerServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
@@ -155,10 +149,6 @@
      <servlet-mapping>
         <servlet-name>Upload Logo Servlet</servlet-name>
         <url-pattern>/uploadlogo/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Export Servlet</servlet-name>
-        <url-pattern>/export</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Data Viewer Servlet</servlet-name>

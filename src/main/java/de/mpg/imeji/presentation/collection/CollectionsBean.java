@@ -6,6 +6,7 @@ package de.mpg.imeji.presentation.collection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -20,7 +21,6 @@ import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.presentation.beans.SuperContainerBean;
-import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
  * Bean for the collections page
@@ -63,7 +63,8 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
     search(offset, limit);
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
     collections = controller.retrieve(searchResult.getResults(), getSessionUser());
-    return ListUtils.collectionListToListItem(collections, getSessionUser());
+    return collections.stream().map(c -> new CollectionListItem(c, getSessionUser()))
+        .collect(Collectors.toList());
   }
 
 

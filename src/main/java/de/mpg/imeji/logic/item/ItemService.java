@@ -25,7 +25,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.content.ContentController;
+import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
@@ -110,7 +110,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
       throw new UnprocessableError("Filename must not be empty!");
     }
     validateChecksum(c.getId(), f, false);
-    final ContentController contentController = new ContentController();
+    final ContentService contentController = new ContentService();
     final ContentVO content = contentController.create(item, f, c, user);
 
     item = copyContent(item, content);
@@ -167,7 +167,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     } else {
       final ContentVO content = new ContentVO();
       content.setOriginal(externalFileUrl);
-      final ContentController contentController = new ContentController();
+      final ContentService contentController = new ContentService();
       contentController.create(item, content);
       item = copyContent(item, content);
       item.setFilename(filename);
@@ -340,7 +340,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
   public Item updateFile(Item item, CollectionImeji col, File f, String filename, User user)
       throws ImejiException {
     validateChecksum(item.getCollection(), f, true);
-    final ContentController contentController = new ContentController();
+    final ContentService contentController = new ContentService();
     ContentVO content;
     if (StringHelper.isNullOrEmptyTrim(item.getContentId())) {
       content = contentController.create(item, f, col, user);
@@ -381,7 +381,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
       // Reference the file
       final ContentVO content = new ContentVO();
       content.setOriginal(externalFileUrl);
-      final ContentController contentController = new ContentController();
+      final ContentService contentController = new ContentService();
       contentController.create(item, content);
       item = update(item, u);
     }
@@ -561,7 +561,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     int countPart = 1;
     final List<Item> itemToUpdate = new ArrayList<>();
     List<ContentVO> contents = new ArrayList<>();
-    final ContentController contentController = new ContentController();
+    final ContentService contentController = new ContentService();
     for (final Item item : allItems) {
       try {
         ContentVO contentVO = toContentVO(item);
@@ -654,7 +654,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param id
    */
   private void removeFileFromStorage(Item item) {
-    final ContentController contentController = new ContentController();
+    final ContentService contentController = new ContentService();
     try {
       contentController.delete(item.getContentId());
     } catch (final Exception e) {

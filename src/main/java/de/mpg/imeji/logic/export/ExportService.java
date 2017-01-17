@@ -33,14 +33,14 @@ import de.mpg.imeji.logic.vo.User;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class ExportManager {
+public class ExportService {
   private final OutputStream out;
   private final Export export;
   private final User user;
   private List<String> selectedItemsToExport = new ArrayList<String>();
 
   /**
-   * Create a new {@link ExportManager} with url parameters, and perform the {@link Export} in the
+   * Create a new {@link ExportService} with url parameters, and perform the {@link Export} in the
    * specified {@link OutputStream}
    *
    * @param out
@@ -48,7 +48,7 @@ public class ExportManager {
    * @param params
    * @throws HttpResponseException
    */
-  public ExportManager(OutputStream out, User user, Map<String, String[]> params,
+  public ExportService(OutputStream out, User user, Map<String, String[]> params,
       List<String> selectedItems) throws HttpResponseException {
     this.out = out;
     this.user = user;

@@ -27,7 +27,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  */
 public abstract class EditMetadataAbstract extends SuperBean {
   private static final long serialVersionUID = -8870761990852602492L;
-  private static final Logger LOGGER = Logger.getLogger(EditItemMetadataBean.class);
+  private static final Logger LOGGER = Logger.getLogger(EditMetadataAbstract.class);
   protected ItemService itemService = new ItemService();
   protected StatementService statementService = new StatementService();
   private final List<SelectItem> statementMenu = new ArrayList<>();

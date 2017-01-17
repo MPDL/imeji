@@ -6,6 +6,7 @@ package de.mpg.imeji.presentation.album;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -19,7 +20,6 @@ import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.presentation.beans.SuperContainerBean;
-import de.mpg.imeji.presentation.util.ListUtils;
 
 /**
  * Bean for the Albums page
@@ -61,7 +61,8 @@ public class AlbumsBean extends SuperContainerBean<AlbumBean> {
     search(offset, limit);
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
     albums = controller.retrieveBatchLazy(searchResult.getResults(), getSessionUser(), -1, offset);
-    return ListUtils.albumListToAlbumBeanList(albums, getSessionUser(), getActiveAlbum());
+    return albums.stream().map(a -> new AlbumBean(a, getSessionUser(), activeAlbum))
+        .collect(Collectors.toList());
   }
 
   @Override

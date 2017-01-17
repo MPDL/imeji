@@ -16,7 +16,7 @@ import de.mpg.imeji.logic.registration.RegistrationBusinessController;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.share.invitation.Invitation;
-import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
@@ -147,7 +147,7 @@ public class RegistrationBusinessControllerTest extends ControllerTest {
     // create a collection
     createCollection();
     // invite the user to
-    InvitationBusinessController invitationBusinessController = new InvitationBusinessController();
+    InvitationService invitationBusinessController = new InvitationService();
     invitationBusinessController.invite(new Invitation(user.getEmail(),
         collection.getId().toString(), ShareService.rolesAsList(ShareRoles.READ)));
     // Register

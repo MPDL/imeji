@@ -41,7 +41,7 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
-import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -109,7 +109,7 @@ public class UserService {
         break;
     }
     u = controller.create(u);
-    new InvitationBusinessController().consume(u);
+    new InvitationService().consume(u);
     try {
       u.setApiKey(APIKeyAuthentication.generateKey(u.getId(), Integer.MAX_VALUE));
       controller.update(u);

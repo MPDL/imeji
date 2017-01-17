@@ -1,18 +1,6 @@
 package de.mpg.imeji.presentation.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import de.mpg.imeji.logic.vo.Album;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.album.AlbumBean;
-import de.mpg.imeji.presentation.collection.CollectionListItem;
-import de.mpg.imeji.presentation.item.ThumbnailBean;
 
 /**
  * Utility class for List
@@ -21,7 +9,6 @@ import de.mpg.imeji.presentation.item.ThumbnailBean;
  *
  */
 public class ListUtils {
-  private static final Logger LOGGER = Logger.getLogger(ListUtils.class);
 
   private ListUtils() {
     // private Constructor
@@ -37,58 +24,5 @@ public class ListUtils {
     l1.sort(null);
     l2.sort(null);
     return l1.equals(l2);
-  }
-
-  /**
-   * Transform a {@link List} of {@link Item} to a {@link List} of {@link ThumbnailBean}
-   *
-   * @param itemList
-   * @return
-   */
-  public static List<ThumbnailBean> itemListToThumbList(Collection<Item> itemList, User user) {
-    final List<ThumbnailBean> beanList = new ArrayList<ThumbnailBean>();
-    for (final Item item : itemList) {
-      try {
-        beanList.add(new ThumbnailBean(item, true));
-      } catch (final Exception e) {
-        LOGGER.error("Error creating ThumbnailBean list", e);
-      }
-    }
-    return beanList;
-  }
-
-  /**
-   * Transform a {@link List} of {@link Album} to a {@link List} of {@link AlbumBean}
-   *
-   * @param albumList
-   * @return
-   * @throws Exception
-   */
-  public static List<AlbumBean> albumListToAlbumBeanList(Collection<Album> albumList, User user,
-      Album activeAlbum) throws Exception {
-    final List<AlbumBean> beanList = new ArrayList<AlbumBean>();
-    for (final Album album : albumList) {
-      beanList.add(new AlbumBean(album, user, activeAlbum));
-    }
-    return beanList;
-  }
-
-  /**
-   * Transform a {@link List} of {@link CollectionImeji} to a {@link List} of
-   * {@link CollectionListItem}
-   *
-   * @param collList
-   * @param user
-   * @return
-   */
-  public static List<CollectionListItem> collectionListToListItem(
-      Collection<CollectionImeji> collList, User user) {
-    final List<CollectionListItem> l = new ArrayList<CollectionListItem>();
-    if (collList != null) {
-      for (final CollectionImeji c : collList) {
-        l.add(new CollectionListItem(c, user));
-      }
-    }
-    return l;
   }
 }

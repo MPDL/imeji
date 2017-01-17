@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.content.ContentController;
+import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 
@@ -23,7 +23,7 @@ public class CleanContentVOsJob implements Callable<Integer> {
     LOGGER.info("Cleaning contents...");
     final List<String> contentIds = ImejiSPARQL.exec(JenaCustomQueries.selectUnusedContent(), null);
     LOGGER.info(contentIds.size() + " content found to be removed");
-    final ContentController controller = new ContentController();
+    final ContentService controller = new ContentService();
     for (final String id : contentIds) {
       try {
         controller.delete(id);

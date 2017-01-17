@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.logic.content.ContentController;
+import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -35,7 +35,7 @@ public class RefreshFileSizeJob implements Callable<Integer> {
     LOGGER.info("...done!");
     LOGGER.info("Retrieving all items...");
     final ItemService itemController = new ItemService();
-    final ContentController contentService = new ContentController();
+    final ContentService contentService = new ContentService();
     final InternalStorageManager storageManager = new InternalStorageManager();
     final Collection<Item> items = itemController.retrieveAll(Imeji.adminUser);
     LOGGER.info("...done (found  " + items.size() + ")");

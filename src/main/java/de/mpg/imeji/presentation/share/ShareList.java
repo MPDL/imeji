@@ -14,7 +14,7 @@ import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.share.invitation.Invitation;
-import de.mpg.imeji.logic.share.invitation.InvitationBusinessController;
+import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.vo.User;
@@ -104,7 +104,7 @@ public final class ShareList implements Serializable {
    */
   private void retrieveInvitations(String sharedObjectUri, User currentUser, Locale locale)
       throws ImejiException {
-    final InvitationBusinessController invitationBC = new InvitationBusinessController();
+    final InvitationService invitationBC = new InvitationService();
     for (final Invitation invitation : invitationBC.retrieveInvitationsOfObject(sharedObjectUri)) {
       invitations.add(new ShareListItem(invitation, sharedObjectUri, currentUser, locale));
     }

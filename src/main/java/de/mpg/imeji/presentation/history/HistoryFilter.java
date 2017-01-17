@@ -35,6 +35,7 @@ import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.lang.InternationalizationBean;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.ServletUtil;
 
@@ -118,6 +119,7 @@ public class HistoryFilter implements Filter {
     getFacesContext(request, resp);
     final SessionBean session = getSessionBean(request, resp);
     final HistorySession hs = getHistorySession(request, resp);
+    final InternationalizationBean inter = getInternationalationBean(request, resp);
     if (session != null && hs != null) {
       final String url = navigation.getApplicationUri()
           + PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
@@ -126,7 +128,7 @@ public class HistoryFilter implements Filter {
       if (params.containsKey("h")) {
         params.remove("h");
       }
-      final HistoryPage p = new HistoryPage(url, params, session.getUser());
+      final HistoryPage p = new HistoryPage(url, params, session.getUser(), inter.getLocale());
       hs.addPage(p);
     }
 
@@ -154,6 +156,18 @@ public class HistoryFilter implements Filter {
    */
   private SessionBean getSessionBean(HttpServletRequest req, ServletResponse resp) {
     return (SessionBean) getBean(SessionBean.class, req, resp);
+
+  }
+
+  /**
+   * Return the {@link SessionBean}
+   *
+   * @param req
+   * @return
+   */
+  private InternationalizationBean getInternationalationBean(HttpServletRequest req,
+      ServletResponse resp) {
+    return (InternationalizationBean) getBean(InternationalizationBean.class, req, resp);
 
   }
 

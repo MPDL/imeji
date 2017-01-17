@@ -44,6 +44,15 @@ public class ImejiFactory {
   }
 
   /**
+   * Return the Factory to create ContentVO
+   * 
+   * @return
+   */
+  public static ContentFactory newContent() {
+    return new ContentFactory();
+  }
+
+  /**
    * Return a {@link CollectionFactory}
    *
    * @return
