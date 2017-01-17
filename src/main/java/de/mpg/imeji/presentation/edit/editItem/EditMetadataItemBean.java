@@ -16,6 +16,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
 import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
+import de.mpg.imeji.presentation.license.LicenseEditor;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -31,6 +32,7 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
   private static Logger LOGGER = Logger.getLogger(EditMetadataItemBean.class);
   private List<SelectStatementWithInputComponent> rows = new ArrayList<>();
   private Item item;
+  private LicenseEditor licenseEditor;
 
   public EditMetadataItemBean() {
     super();
@@ -41,6 +43,7 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
     final String id = UrlHelper.getParameterValue("id");
     try {
       this.item = itemService.retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
+      this.licenseEditor = new LicenseEditor(getLocale(), item);
       for (final Metadata metadata : item.getMetadata()) {
         rows.add(new SelectStatementWithInputComponent(metadata, statementMap));
       }
@@ -58,6 +61,7 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
       metadataList.add(row.getInput().getMetadata());
     }
     item.setMetadata(metadataList);
+    item.getLicenses().add(licenseEditor.getLicense());
     itemList.add(item);
     return itemList;
   }
@@ -96,5 +100,21 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
   public void setRows(List<SelectStatementWithInputComponent> rows) {
     this.rows = rows;
   }
+
+  /**
+   * @return the licenseEditor
+   */
+  public LicenseEditor getLicenseEditor() {
+    return licenseEditor;
+  }
+
+  /**
+   * @param licenseEditor the licenseEditor to set
+   */
+  public void setLicenseEditor(LicenseEditor licenseEditor) {
+    this.licenseEditor = licenseEditor;
+  }
+
+
 
 }

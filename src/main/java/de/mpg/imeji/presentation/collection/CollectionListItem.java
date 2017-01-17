@@ -3,6 +3,7 @@
  */
 package de.mpg.imeji.presentation.collection;
 
+import java.io.Serializable;
 import java.net.URI;
 
 import javax.faces.event.ValueChangeEvent;
@@ -19,7 +20,8 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.ContainerBean.CONTAINER_TYPE;
-import de.mpg.imeji.presentation.item.ThumbnailBean;
+import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.CommonUtils;
 
 /**
@@ -27,7 +29,9 @@ import de.mpg.imeji.presentation.util.CommonUtils;
  *
  * @author saquet
  */
-public class CollectionListItem {
+public class CollectionListItem implements Serializable {
+  private static final long serialVersionUID = -782035871566935720L;
+  private static final Logger LOGGER = Logger.getLogger(CollectionListItem.class);
   private String title = "";
   private String description = "";
   private String descriptionFull = "";
@@ -37,15 +41,11 @@ public class CollectionListItem {
   private String id = null;
   private URI uri = null;
   private String discardComment = "";
-  // dates
-  // private String creationDate = null;
   private String lastModificationDate = null;
-  private static final Logger LOGGER = Logger.getLogger(CollectionListItem.class);
-  private ThumbnailBean thumbnail = null;
   private String selectedGrant;
-  private URI profileURI;
   private boolean isOwner = false;
   private CollectionImeji collection;
+  private String logoUrl;
   /**
    * Maximum number of character displayed in the list for the description
    */
@@ -72,7 +72,6 @@ public class CollectionListItem {
         }
         authors += p.getFamilyName() + ", " + p.getGivenName();
       }
-      profileURI = collection.getProfile();
       uri = collection.getId();
       setId(ObjectHelper.getId(uri));
       status = collection.getStatus().toString();
@@ -80,7 +79,7 @@ public class CollectionListItem {
       // creationDate = collection.getCreated().getTime().toString();
       lastModificationDate = collection.getModified().getTime().toString();
       // initializations
-      initThumbnail(collection, user);
+      initLogo(collection, user);
       initSize(collection, user);
       if (user != null) {
         isOwner = collection.getCreatedBy().equals(user.getId());
@@ -98,18 +97,21 @@ public class CollectionListItem {
    * @throws ImejiException
    * @throws Exception
    */
-  private void initThumbnail(CollectionImeji collection, User user)
-      throws ImejiException, Exception {
+  private void initLogo(CollectionImeji collection, User user) throws ImejiException, Exception {
     if (collection.getLogoUrl() != null) {
-      thumbnail = new ThumbnailBean();
-      thumbnail.setLink(collection.getLogoUrl().toString());
+      this.logoUrl = collection.getLogoUrl().toString();
     } else {
-      final ItemService ic = new ItemService();
-      final Container searchedContainer = ic.searchAndSetContainerItems(collection, user, 1, 0);
+      final ItemService itemService = new ItemService();
+      final Container searchedContainer =
+          itemService.searchAndSetContainerItems(collection, user, 1, 0);
       if (searchedContainer.getImages().iterator().hasNext()) {
         final URI uri = searchedContainer.getImages().iterator().next();
         if (uri != null) {
-          this.thumbnail = new ThumbnailBean(ic.retrieveLazy(uri, user), false);
+          final Navigation navigation =
+              (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+          String contentId = itemService.retrieveLazy(uri, user).getContentId();
+          this.logoUrl =
+              navigation.getFileUrl() + "?content=" + contentId + "&amp;resolution=thumbnail";
         }
       }
     }
@@ -184,14 +186,6 @@ public class CollectionListItem {
     this.discardComment = discardComment;
   }
 
-  // public String getCreationDate() {
-  // return creationDate;
-  // }
-  //
-  // public void setCreationDate(String creationDate) {
-  // this.creationDate = creationDate;
-  // }
-
   public String getLastModificationDate() {
     return lastModificationDate;
   }
@@ -216,14 +210,6 @@ public class CollectionListItem {
     return id;
   }
 
-  public ThumbnailBean getThumbnail() {
-    return thumbnail;
-  }
-
-  public void setThumbnail(ThumbnailBean thumbnail) {
-    this.thumbnail = thumbnail;
-  }
-
   public String getDescriptionFull() {
     return descriptionFull;
   }
@@ -238,14 +224,6 @@ public class CollectionListItem {
 
   public void setSelectedGrant(String selectedGrant) {
     this.selectedGrant = selectedGrant;
-  }
-
-  public URI getProfileURI() {
-    return profileURI;
-  }
-
-  public void setProfileURI(URI profileURI) {
-    this.profileURI = profileURI;
   }
 
   public boolean isOwner() {
@@ -264,4 +242,7 @@ public class CollectionListItem {
     return collection;
   }
 
+  public String getLogoUrl() {
+    return logoUrl;
+  }
 }

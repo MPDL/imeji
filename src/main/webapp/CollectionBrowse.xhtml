@@ -8,15 +8,11 @@
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
 
-	<ui:param name="paginatorListSessionBean"
-		value="#{CollectionItemsBean}" />
-	<ui:param name="headline"
-		value="#{CollectionItemsBean.collection.metadata.title}" />
+	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}" />
+	<ui:param name="headline" value="#{CollectionItemsBean.collection.metadata.title}" />
 	<ui:param name="currentMainMenu" value="collection" />
-	<ui:param name="browseToAllItemsUrl"
-		value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/browse?q=" />
-	<ui:param name="imejiResource"
-		value="#{CollectionItemsBean.collection}" />
+	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/browse?q=" />
+	<ui:param name="imejiResource" value="#{CollectionItemsBean.collection}" />
 
 
 	<ui:define name="modalDialogs_from_site">

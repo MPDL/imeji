@@ -6,35 +6,27 @@
 	  xmlns:imjc="http://java.sun.com/jsf/composite/components">
 	
 	<composite:interface>
-		<composite:attribute name="itemClass" required="true"/>
 		<composite:attribute name="item" required="true"/>
-		<composite:attribute name="itemIndex" required="true"/>
-		<composite:attribute name="releaseItemConfirmationText" required="true"/>
-		<composite:attribute name="deleteItemConfirmationText" required="true"/>
-		<composite:attribute name="withdrawConfirmationText" required="true"/>
 		<composite:attribute name="metadataNavigationURL" type="java.lang.String" required="true"/>
 		<composite:attribute name="isActivatable"/>
 	</composite:interface>
 	
 	<composite:implementation>
-		<ui:param name="withdrawID" value="listItem-#{cc.attrs.itemIndex}-dialDiscardContainer-dialogWithdraw"/>
-		<li class="#{cc.attrs.itemClass}#{cc.attrs.isActivatable == 'yes' and cc.attrs.item.active ? ' imj_active' : ''}">
+		<li class="imj_bibliographicListItem #{cc.attrs.isActivatable == 'yes' and cc.attrs.item.active ? ' imj_active' : ''}">
 		 <div class="imj_previewArea">
 				<div class="imj_previewImage imj_imageStack">			
-					<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}/#{Navigation.browsePath}?q=">
-						<h:graphicImage value="#{cc.attrs.item.thumbnail.link}" alt="preview picture" 
-										rendered="#{cc.attrs.item.thumbnail.link != null and cc.attrs.item.status!='WITHDRAWN'}"/>
-						<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/discarded.png" alt="preview picture" 
-										rendered="#{cc.attrs.item.status =='WITHDRAWN'}"/>
+					<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}?q=">
+						<h:graphicImage value="#{cc.attrs.item.logoUrl}" alt="preview picture" rendered="#{cc.attrs.item.logoUrl != null and cc.attrs.item.status!='WITHDRAWN'}"/>
+						<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/discarded.png" alt="preview picture" rendered="#{cc.attrs.item.status =='WITHDRAWN'}"/>
 						<ui:fragment rendered="#{cc.attrs.item.type == 'ALBUM' and  cc.attrs.item.status!='WITHDRAWN'}">
 							<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/empty.png" alt="preview picture" 
-										rendered="#{cc.attrs.item.thumbnail.link == null and cc.attrs.item.privateCount == 0}" title="#{lbl.ContainerEmpty}"/>
+										rendered="#{cc.attrs.item.logoUrl == null and cc.attrs.item.privateCount == 0}" title="#{lbl.ContainerEmpty}"/>
 							<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/private_grey.png" alt="#{lbl.ContainerPrivate}" 
-										rendered="#{cc.attrs.item.thumbnail.link == null and cc.attrs.item.privateCount &gt; 0}"  title="#{lbl.ContainerPrivate}"/>
+										rendered="#{cc.attrs.item.logoUrl == null and cc.attrs.item.privateCount &gt; 0}"  title="#{lbl.ContainerPrivate}"/>
 						</ui:fragment>
 						<ui:fragment rendered="#{cc.attrs.item.type == 'COLLECTION' and  cc.attrs.item.status!='WITHDRAWN'}">
 							<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/empty.png" alt="preview picture" 
-										rendered="#{cc.attrs.item.thumbnail.link == null}" title="#{lbl.ContainerEmpty}"/>
+										rendered="#{cc.attrs.item.logoUrl == null}" title="#{lbl.ContainerEmpty}"/>
 						</ui:fragment>
 					</h:outputLink>
 					<h:outputText value="#{cc.attrs.item.size} #{lbl.images}" class="imj_itemCount"/>
@@ -50,7 +42,7 @@
 				<!-- description area - includes default values - START -->
 				<div class="imj_itemHeadline">
 					<h3>
-						<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}/#{Navigation.browsePath}?q=" title="#{cc.attrs.item.title}">
+						<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}?q=" title="#{cc.attrs.item.title}">
 							<h:outputText value="#{cc.attrs.item.title}"/>
 						</h:outputLink>
 					</h3>
@@ -63,7 +55,6 @@
 						
 						<p class="imj_descriptionArea" title="#{cc.attrs.item.description}">
 							<h:outputText value="#{cc.attrs.item.description.trim()}"/>
-							
 							<ui:fragment rendered="#{cc.attrs.item.descriptionFull.trim().length() &gt; cc.attrs.item.description.trim().length()}">
 								<button class="imj_expand fa fa-plus imj_containerDescExpand" onclick="event.preventDefault();$(this).parent().hide();$(this).parent().next().show();">
 									<h:outputText value="&#160;"/>
@@ -85,25 +76,10 @@
 					<div class="imj_itemActionArea">
 						<ul>
 							<li>
-								<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}">
+								<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}/about">
 									<h:outputText value="#{lbl.about}"/>
 								</h:outputLink>
-							</li>	
-							<ui:fragment rendered="#{cc.attrs.item.type != 'ALBUM'}">
-							<li>
-								<h:outputLink id="lnkViewMetadataDetail" value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}/#{Navigation.infosPath}?init=1">
-									<h:outputText value="#{lbl.metadata_profile}"/>
-								</h:outputLink>
 							</li>
-							</ui:fragment>
-							<ui:fragment rendered="#{cc.attrs.metadataNavigationURL.contains('collection') and Auth.update(cc.attrs.item) and cc.attrs.item.status != 'WITHDRAWN'}">
-								<li>
-									<h:outputLink id="lnkUploadImages" value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}/#{Navigation.uploadPath}?init=1">
-										<h:outputText value="#{lbl.upload_images}"/>
-									</h:outputLink>
-								</li>
-							</ui:fragment>
-
 							<ui:fragment rendered="#{cc.attrs.isActivatable == 'yes'}">
 								<li style="float:right">
 									<ui:fragment rendered="#{Auth.update(cc.attrs.item)}">				

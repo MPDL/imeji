@@ -3,6 +3,7 @@ package de.mpg.imeji.presentation.share;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,8 +35,9 @@ public class ShareListItem implements Serializable {
   private Invitation invitation;
   private User user;
   private UserGroup group;
-  private String shareToUri;
-  private String role;
+  private final String shareToUri;
+  private String role = ShareRoles.READ.name();
+  private List<SelectItem> rolesMenu;
   private String title;
   private Locale locale;
   private boolean creator = false;
@@ -86,6 +88,7 @@ public class ShareListItem implements Serializable {
     this.title = title;
     this.currentUser = currentUser;
     this.creator = creator;
+    this.shareToUri = uri;
     init(ShareService.findRole(user.getGrants(), uri), uri, locale);
   }
 
@@ -116,6 +119,10 @@ public class ShareListItem implements Serializable {
   private void init(String role, String uri, Locale locale) {
     this.role = role;
     this.locale = locale;
+    this.rolesMenu = Arrays.asList(
+        new SelectItem(ShareRoles.READ.name(), Imeji.RESOURCE_BUNDLE.getLabel("read", locale)),
+        new SelectItem(ShareRoles.EDIT.name(), Imeji.RESOURCE_BUNDLE.getLabel("edit", locale)),
+        new SelectItem(ShareRoles.ADMIN.name(), Imeji.RESOURCE_BUNDLE.getLabel("admin", locale)));
   }
 
   /**
@@ -135,7 +142,7 @@ public class ShareListItem implements Serializable {
         roleBefore = ShareService.findRole(group.getGrants(), shareToUri);
         sbc.shareToGroup(currentUser, group, shareToUri, role);
       }
-      return !role.equals(roleBefore);
+      return role == null || !role.equals(roleBefore);
     } catch (final ImejiException e) {
       LOGGER.error("Error updating grants: ", e);
       BeanHelper.error("Error during sharing: " + e.getMessage());
@@ -193,11 +200,6 @@ public class ShareListItem implements Serializable {
     return users;
   }
 
-  public List<SelectItem> getRolesMenu() {
-    return ShareUtil.getRoleMenu(locale);
-  }
-
-
   /**
    * @return the group
    */
@@ -218,14 +220,6 @@ public class ShareListItem implements Serializable {
   public String getShareToUri() {
     return shareToUri;
   }
-
-  /**
-   * @param shareToUri the shareToUri to set
-   */
-  public void setShareToUri(String shareToUri) {
-    this.shareToUri = shareToUri;
-  }
-
 
   /**
    * @return the title
@@ -269,6 +263,20 @@ public class ShareListItem implements Serializable {
    */
   public void setRole(String role) {
     this.role = role;
+  }
+
+  /**
+   * @return the rolesMenu
+   */
+  public List<SelectItem> getRolesMenu() {
+    return rolesMenu;
+  }
+
+  /**
+   * @param rolesMenu the rolesMenu to set
+   */
+  public void setRolesMenu(List<SelectItem> rolesMenu) {
+    this.rolesMenu = rolesMenu;
   }
 
 

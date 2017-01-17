@@ -43,7 +43,6 @@ public class ShareBean extends SuperBean implements Serializable {
   private URI owner;
   private String title;
   private String backUrl;
-  private String profileUri;
   private boolean isAdmin;
   private boolean sendEmail = false;
   private UserGroup userGroup;
@@ -76,14 +75,11 @@ public class ShareBean extends SuperBean implements Serializable {
   public void initShareCollection() {
     try {
       this.shareTo = null;
-      this.profileUri = null;
       this.uri = ObjectHelper.getURI(CollectionImeji.class, getId());
       final CollectionImeji collection =
           new CollectionService().retrieveLazy(uri, getSessionUser());
       if (collection != null) {
         this.shareTo = collection;
-        this.profileUri =
-            collection.getProfile() != null ? collection.getProfile().toString() : null;
         this.title = collection.getMetadata().getTitle();
         this.owner = collection.getCreatedBy();
         this.backUrl = getNavigation().getCollectionUrl() + collection.getIdString();
@@ -95,8 +91,6 @@ public class ShareBean extends SuperBean implements Serializable {
       BeanHelper.error("Error initializing page: " + e.getMessage());
     }
   }
-
-
 
   /**
    * Init method for {@link ShareBean}
@@ -281,7 +275,7 @@ public class ShareBean extends SuperBean implements Serializable {
     for (final User user : item.getUsers()) {
       final ShareEmailMessage emailMessage =
           new ShareEmailMessage(user.getPerson().getCompleteName(), title, getLinkToSharedObject(),
-              getShareToUri(), profileUri, item.getRole(), getSessionUser(), getLocale());
+              getShareToUri(), item.getRole(), getSessionUser(), getLocale());
       sendEmail(user.getEmail(), subject.replaceAll("XXX_INSTANCE_NAME_XXX", instanceName),
           emailMessage.getBody());
     }

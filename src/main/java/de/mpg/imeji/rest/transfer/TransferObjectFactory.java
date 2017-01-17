@@ -89,11 +89,6 @@ public class TransferObjectFactory {
    */
   public static void transferCollection(CollectionImeji vo, CollectionTO to) {
     transferContainer(vo, to);
-    // in output jsen reference to mdprofile
-    if (vo.getProfile() != null) {
-      to.getProfile().setId(CommonUtils.extractIDFromURI(vo.getProfile()));
-      to.getProfile().setMethod("");
-    }
   }
 
   /**

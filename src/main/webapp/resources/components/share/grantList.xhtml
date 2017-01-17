@@ -16,56 +16,48 @@
 			<h2 class="imj_sectionHeadline">
 				<h:outputText value="#{cc.attrs.title}"/>
 			</h2>
-			<h:form id="grantListForm">
-				<table id="history" class="imj_rightsTable">
-					<thead>
-						<tr>
+			<table id="history" class="imj_rightsTable">
+				<thead>
+					<tr>
+						<th>
+							<h:outputText value="&#160;"/>
+						</th>
+						<ui:repeat var="tableHead" value="#{cc.attrs.rolesMenu}">
 							<th>
-								<h:outputText value="&#160;"/>
+								<h:outputText value="#{tableHead.label}"/>
 							</th>
-							<ui:repeat var="tableHead" value="#{cc.attrs.rolesMenu}">
-								<th>
-									<h:outputText value="#{tableHead.label}"/>
-								</th>
-							</ui:repeat>
-							<th>
-								<h:outputText value="&#160;"/>
-							</th>
-						</tr>
-					</thead>				
-					<tbody>
-						<ui:repeat id="list" var="sh" value="#{cc.attrs.list}" rows="0" varStatus="pos">
-							<tr>
-								<td class="imj_rightsTableUser">
-									<h:outputText value="#{sh.user.person.completeName}" rendered="#{sh.user != null}"/>
-									<h:outputText value="#{sh.invitation.inviteeEmail}" rendered="#{sh.invitation != null}"/>
-									<h:outputText value="#{sh.group.name}" rendered="#{sh.group != null}"/>
-									<h:outputText value=" (#{lbl.role_owner})" rendered="#{sh.creator}"/>
-								</td>
-								<td colspan="#{cc.attrs.rolesMenu.size()}">
-									<h:selectManyCheckbox id="role" value="#{sh.roles}" styleClass="imj_rightsTable" enabledClass="imj_noDisplay" disabledClass="imj_noDisplay" layout="lineDirection" onclick="checkRoles(this.id);" disabled="#{cc.attrs.readOnly or sh.creator}">
-										<f:selectItems value="#{cc.attrs.rolesMenu}"/>
-									</h:selectManyCheckbox>
-									<h:commandButton id="checkGrants" value="Check Grants" action="#{sh.checkRoles}" styleClass="imj_noDisplay">
-										<f:ajax execute="@form" render="@form"/>
-									</h:commandButton>
-								</td>
-								<ui:fragment rendered="#{!cc.attrs.readOnly and !sh.creator}">
-									<td class="imj_rightsAction ">
-										<h:commandLink title="#{lbl.remove}" action="#{ShareBean.unshare(sh)}" style="" styleClass=" fa fa-trash fa-size-2"/>
-									</td>
-								</ui:fragment>
-							</tr>
 						</ui:repeat>
-					</tbody>
-				</table>
-			</h:form>
+						<th>
+							<h:outputText value="&#160;"/>
+						</th>
+					</tr>
+				</thead>				
+				<tbody>
+					<ui:repeat id="list" var="sh" value="#{cc.attrs.list}" rows="0" varStatus="pos">
+						<tr>
+							<td class="imj_rightsTableUser">
+								<h:outputText value="#{sh.user.person.completeName}" rendered="#{sh.user != null}"/>
+								<h:outputText value="#{sh.invitation.inviteeEmail}" rendered="#{sh.invitation != null}"/>
+								<h:outputText value="#{sh.group.name}" rendered="#{sh.group != null}"/>
+								<h:outputText value=" (#{lbl.role_owner})" rendered="#{sh.creator}"/>
+							</td>
+							<td colspan="#{cc.attrs.rolesMenu.size()}">
+								<h:selectOneRadio id="role" value="#{sh.role}" styleClass="imj_rightsTable" enabledClass="imj_noDisplay" disabledClass="imj_noDisplay" layout="lineDirection"  disabled="#{cc.attrs.readOnly or sh.creator}">
+									<f:selectItems value="#{cc.attrs.rolesMenu}"/>
+								</h:selectOneRadio>
+							</td>
+							<ui:fragment rendered="#{!cc.attrs.readOnly and !sh.creator}">
+								<td class="imj_rightsAction ">
+									<h:commandLink title="#{lbl.remove}" action="#{ShareBean.unshare(sh)}" style="" styleClass=" fa fa-trash fa-size-2">
+										<f:ajax render="@form"/>
+									</h:commandLink>
+								</td>
+							</ui:fragment>
+						</tr>
+					</ui:repeat>
+				</tbody>
+			</table>
 		</div>
-	<script>
-		function checkRoles(id){
-			var buttonId = id.split('role:')[0] + 'checkGrants';
-			document.getElementById(buttonId).click();
-		}
-	</script>
+
 	</composite:implementation>
 </html>

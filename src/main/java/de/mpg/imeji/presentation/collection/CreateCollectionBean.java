@@ -78,24 +78,6 @@ public class CreateCollectionBean extends CollectionBean {
   }
 
   /**
-   * Method for save&editProfile button. Create the {@link CollectionImeji} according to the form
-   *
-   * @return
-   * @throws Exception
-   */
-  public String saveAndEditProfile() {
-    if (createCollection()) {
-      try {
-        redirect(getNavigation().getProfileUrl() + extractIDFromURI(getCollection().getProfile())
-            + "/edit?init=1&col=" + getCollection().getIdString());
-      } catch (final IOException e) {
-        LOGGER.error("Error redirect after create collection", e);
-      }
-    }
-    return "";
-  }
-
-  /**
    * Create the collection and its profile
    *
    * @return

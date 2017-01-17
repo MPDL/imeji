@@ -6,11 +6,8 @@
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:share="http://java.sun.com/jsf/composite/components/share">
 
-	<ui:param name="headline" value="#{lbl.share.toString().trim()}:" />
-	<ui:param name="headlineSecondRow" value="#{ShareBean.title}" />
-	<ui:param name="currentMainMenu" value="#{ShareBean.type}" />
-	<ui:param name="contUrl"
-		value="#{ShareBean.type == 'COLLECTION' ? Navigation.collectionUrl : Navigation.albumUrl}" />
+	<ui:param name="headline" value="#{lbl.share.toString().trim()}: #{ShareBean.title}" />
+	<ui:param name="contUrl" value="#{Navigation.collectionUrl}" />
 	<ui:param name="imejiResource" value="#{ShareBean.sharedObject}" />
 	<ui:param name="iconStatusDisplayStatusOnly" value="true" />
 

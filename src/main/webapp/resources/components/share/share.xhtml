@@ -7,7 +7,6 @@
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	
 	<composite:interface>
-		<composite:attribute name="type"/>
 	</composite:interface>
 	
 	<composite:implementation>
@@ -68,12 +67,9 @@
 						<h:form prependId="false">
 							<h:panelGroup layout="block" styleClass="imj_metadataValue">
 								<div class="imj_metadataSet">
-									<h:selectManyCheckbox styleClass="imj_rightsTableForNewUser" value="#{ShareBean.input.menu.roles}" layout="lineDirection" onclick="document.getElementById('share:checkGrantsForGroup').click();">
+									<h:selectBooleanCheckbox styleClass="imj_rightsTableForNewUser" value="#{ShareBean.input.menu.role}" layout="lineDirection">
 										<f:selectItems value="#{rolesMenu}"/>
-									</h:selectManyCheckbox>
-									<h:commandButton id="checkGrantsForGroup" value="Check Grants" action="#{ShareBean.input.menu.checkRoles}" styleClass="imj_noDisplay">
-										<f:ajax execute="@form" render="@form"/>
-									</h:commandButton>
+									</h:selectBooleanCheckbox>
 								</div>
 								<div class="imj_submitPanel">
 									<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmailToGroup"/>
@@ -101,12 +97,9 @@
 							<div class="imj_metadataSet">
 								<div class="imj_metadataLabel"></div>
 								<h:panelGroup layout="block" id="shareOptions" styleClass="imj_metadataValue">
-									<h:selectManyCheckbox id="selectedGrants" styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{ShareBean.input.menu.roles}" layout="lineDirection" onclick="document.getElementById('share:checkGrants').click();">
+									<h:selectOneRadio  id="selectedGrants" styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{ShareBean.input.menu.role}" layout="lineDirection">
 										<f:selectItems value="#{rolesMenu}"/>
-									</h:selectManyCheckbox>
-									<h:commandButton id="checkGrants" value="Check Grants" action="#{ShareBean.input.menu.checkRoles}" styleClass="imj_noDisplay">
-										<f:ajax execute="@form" render="shareOptions"/>
-									</h:commandButton>
+									</h:selectOneRadio >
 								</h:panelGroup>
 							</div>
 							<div class="imj_submitPanel">
@@ -139,47 +132,26 @@
 						</h:form>
 					</ul>
 				</h:panelGroup>	
-				
-				<ui:fragment rendered="#{!ShareBean.shareList.sizeEmpty}">
-					<h2 class="imj_shareRightsOverview imj_sectionHeadline"> </h2>
-				</ui:fragment>
-				
-				<!-- user table which shows all user with existing rights -->
-				<ui:fragment rendered="#{ShareBean.shareList.items.size() > 0}">
-					<share:grantList id="shareList" rolesMenu="#{rolesMenu}" list="#{ShareBean.shareList.items}" title="#{lbl.shared_with}"/>
-				</ui:fragment>
-				
-				<!-- Invitation list -->
-				<ui:fragment rendered="#{ShareBean.shareList.invitations.size() > 0}">
-					<share:grantList id="invitationList" rolesMenu="#{rolesMenu}" list="#{ShareBean.shareList.invitations}" title="#{lbl.pending_invitations}"/>
-				</ui:fragment>
-				
-				<ui:fragment rendered="#{ShareBean.shareList.invitations.size() > 0 or ShareBean.shareList.items.size() > 0}">		
-					<div class="imj_submitPanel">
-						<h:form>
+				<h:form>		
+					<!-- user table which shows all user with existing rights -->
+					<ui:fragment rendered="#{ShareBean.shareList.items.size() > 0}">
+						<share:grantList id="shareList" rolesMenu="#{rolesMenu}" list="#{ShareBean.shareList.items}" title="#{lbl.shared_with}"/>
+					</ui:fragment>
+					
+					<!-- Invitation list -->
+					<ui:fragment rendered="#{ShareBean.shareList.invitations.size() > 0}">
+						<share:grantList id="invitationList" rolesMenu="#{rolesMenu}" list="#{ShareBean.shareList.invitations}" title="#{lbl.pending_invitations}"/>
+					</ui:fragment>
+					
+					<ui:fragment rendered="#{ShareBean.shareList.invitations.size() > 0 or ShareBean.shareList.items.size() > 0}">		
+						<div class="imj_submitPanel imj_shareRightsOverview">
 							<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmailUpdate"/>
 							<h:outputLabel for="selSendEmailUpdate" value="#{lbl.user_send_mail}"/>
 							<h:commandButton value="#{lbl.reset_changes}" action="#{ShareBean.reloadPage}" styleClass="imj_cancelButton"/>
-							<h:commandButton value="#{lbl.save}" action="#{ShareBean.update}" styleClass="imj_submitButton" rendered="#{cc.attrs.type != 'item'}"/>
-						</h:form>
-					</div>				
-				</ui:fragment>	
-			
-				<!-- Only for share item page: list of users-group -->
-				<ui:fragment rendered="#{ShareBean.shareListCollection != null and !ShareBean.shareListCollection.sizeEmpty}">
-					<br/><br/><br/>
-					<h2 class="imj_shareRightsOverview imj_sectionHeadline">#{lbl.share_via_collection} <span style="font-style: italic;">#{ShareBean.collectionName}</span></h2>
-					<ui:fragment rendered="#{ShareBean.shareListCollection.items.size() > 0}">
-						<share:grantList id="collectionShareList" rolesMenu="#{ShareBean.shareListCollection.items[0].rolesMenu}" list="#{ShareBean.shareListCollection.items}" title="#{lbl.shared_with}" readOnly="true"/>
+							<h:commandButton value="#{lbl.save}" action="#{ShareBean.update}" styleClass="imj_submitButton"/>
+						</div>				
 					</ui:fragment>
-					<ui:fragment rendered="#{ShareBean.shareListCollection.invitations.size() > 0}">
-						<share:grantList id="collectioninvitationList" rolesMenu="#{ShareBean.shareListCollection.invitations[0].rolesMenu}" list="#{ShareBean.shareListCollection.invitations}" title="#{lbl.pending_invitations}" readOnly="true"/>
-					</ui:fragment>
-					<div class="imj_submitPanel">
-						<a href="#{ShareBean.collectionShareUrl}" class="imj_submitButton">#{lbl.edit}</a>
-					</div>
-				</ui:fragment>
-								
+				</h:form>							
 			</div>
 		</ui:fragment>
 

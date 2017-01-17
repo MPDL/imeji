@@ -24,20 +24,10 @@ import de.mpg.imeji.j2j.annotations.j2jResource;
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class CollectionImeji extends Container implements Serializable {
   private static final long serialVersionUID = -4689209760815149573L;
-  @j2jResource("http://imeji.org/terms/mdprofile")
-  private URI profile = null;
   @j2jResource("http://imeji.org/terms/space")
   private URI space;
 
   private Collection<URI> images = new ArrayList<URI>();
-
-  public URI getProfile() {
-    return profile;
-  }
-
-  public void setProfile(URI profile) {
-    this.profile = profile;
-  }
 
   @Override
   public void setImages(Collection<URI> images) {

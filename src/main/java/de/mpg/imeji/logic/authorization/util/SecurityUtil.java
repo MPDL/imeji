@@ -27,6 +27,7 @@ package de.mpg.imeji.logic.authorization.util;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.mpg.imeji.logic.authorization.Authorization;
@@ -89,8 +90,9 @@ public class SecurityUtil {
    */
   public static Grant getGrantForObject(Collection<String> grants, String id) {
     try {
-      return grants.stream().filter(s -> s.split(",")[1].equals(id)).map(s -> new Grant(s))
-          .findFirst().get();
+      Optional<Grant> optional = grants.stream().map(s -> new Grant(s))
+          .filter(s -> s.getGrantFor() != null && s.getGrantFor().equals(id)).findFirst();
+      return optional.isPresent() ? optional.get() : null;
     } catch (final NoSuchElementException e) {
       return null;
     }

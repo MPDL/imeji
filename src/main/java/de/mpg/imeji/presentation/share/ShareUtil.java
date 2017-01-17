@@ -2,18 +2,13 @@ package de.mpg.imeji.presentation.share;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
-import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
-import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
@@ -33,18 +28,6 @@ public class ShareUtil {
     // private constructor
   }
 
-
-  /**
-   * Menu the Role Menu for sharing
-   *
-   * @return
-   */
-  public static List<SelectItem> getRoleMenu(Locale locale) {
-    return Arrays.asList(
-        new SelectItem(ShareRoles.READ, Imeji.RESOURCE_BUNDLE.getLabel("read", locale)),
-        new SelectItem(ShareRoles.EDIT, Imeji.RESOURCE_BUNDLE.getLabel("edit", locale)),
-        new SelectItem(ShareRoles.ADMIN, Imeji.RESOURCE_BUNDLE.getLabel("admin", locale)));
-  }
 
   /**
    * Read the role of the {@link User}

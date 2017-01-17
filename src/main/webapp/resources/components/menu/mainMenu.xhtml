@@ -27,11 +27,6 @@
 					</h:outputLink>
 				</li>
 			</ui:fragment>
-			<li class="#{cc.attrs.menuClass.trim()}Item#{ (cc.attrs.curMainMenu == 'upload') ? ' imj_active' : ''}">
-				<h:outputLink id="lnkUpload" title="#{lbl.goto_upload}" value="#{cc.attrs.navBean.singleUploadUrl}?init=1">
-					<h:outputText value="#{lbl.header_upload}"/>
-				</h:outputLink>
-			</li>
 			<ui:fragment rendered="#{cc.attrs.userHasAdminRights}">
 				<li class="#{cc.attrs.menuClass.trim()}Item#{ (cc.attrs.curMainMenu == 'admin') ? ' imj_active' : ''}">
 					<h:outputLink id="lnkAdmin" title="#{lbl.goto_admin}" value="#{cc.attrs.navBean.adminUrl}">

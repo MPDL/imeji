@@ -1,0 +1,49 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+	
+	<composite:interface>		
+		<composite:attribute name="collectionBean"/>								
+	</composite:interface>
+	
+	<composite:implementation>
+		<button id="upload" value="#{lbl.upload}" class="imj_menuButton">
+			#{lbl.upload}
+		</button>
+		<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton">
+			<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
+		</a>
+		<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share" class="imj_menuButton">
+			<span class="fa fa-users"/> <span>#{lbl.collection_share}</span>
+		</a>
+		<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionCollectionMore">
+			<div class="imj_menuHeader">
+                  <span class="fa fa-bars"/>
+                  <span class="imj_headerEntry"> #{lbl.more}</span>
+			</div>
+			<div class="imj_menuBody">
+				<ul class="imj_overlayMenuList">
+					<h:form>
+						<li>
+							<h:commandLink action="#{cc.attrs.collectionBean.delete}">
+								 <span class="fa fa-globe"/> <span>#{lbl.collection_release}</span>
+							</h:commandLink>
+						</li>
+						<li>
+							<h:commandLink action="#{cc.attrs.collectionBean.delete}">
+								 <span class="fa fa-trash"/> <span>#{lbl.collection_delete}</span>
+							</h:commandLink>
+						</li>
+						<li>
+							<a href="#{Navigation.applicationUrl}download?m=id&amp;id=#{cc.attrs.collectionBean.id}">
+								<span class="fa fa-download"/> <span>#{lbl.collection_download}</span>
+							</a>
+						</li>
+					</h:form>
+				</ul>
+			</div>
+		</div>
+	</composite:implementation>
+</html>

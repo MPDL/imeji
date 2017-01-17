@@ -38,7 +38,9 @@ public class Grant implements Serializable {
   /**
    * Constructor: no ids is created with this constructor
    */
-  public Grant() {}
+  public Grant() {
+
+  }
 
   /**
    * Create a {@link Grant} of type {@link GrantType} for the object with the {@link URI} grantfor.
@@ -58,7 +60,7 @@ public class Grant implements Serializable {
    * @param grantString
    */
   public Grant(String grantString) {
-    if (StringHelper.isNullOrEmptyTrim(grantString)) {
+    if (!StringHelper.isNullOrEmptyTrim(grantString)) {
       final String[] s = grantString.split(",");
       if (s.length == 2) {
         this.grantType = s[0];

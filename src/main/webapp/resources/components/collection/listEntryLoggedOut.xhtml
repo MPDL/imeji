@@ -3,11 +3,10 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:composite="http://java.sun.com/jsf/composite"
-	xmlns:list="http://java.sun.com/jsf/composite/components/list">
+	xmlns:col="http://java.sun.com/jsf/composite/components/collection">
 	
 	<composite:interface>
 		<composite:attribute name="mediaList"/>
-		<composite:attribute name="globalDisplayLinkText"/>
 		<composite:attribute name="metadataNavigationURL"/>
 	</composite:interface>
 	
@@ -16,11 +15,10 @@
 			<h:panelGroup id="ajaxList" styleClass="imj_listBody">
 				<ul>
 					<ui:repeat var="container" value="#{cc.attrs.mediaList.currentPartList}" id="list" rows="0"  varStatus="index">
-					    <list:bibListItem_draft itemClass="imj_bibliographicListItem" item="#{container}" metadataNavigationURL="#{cc.attrs.metadataNavigationURL}" />
-						<!-- <list:bibListItem_released itemClass="imj_bibliographicListItem" item="#{container}" metadataNavigationURL="#{cc.attrs.metadataNavigationURL}"/> -->
+					    <col:bibListItem_draft item="#{container}" metadataNavigationURL="#{cc.attrs.metadataNavigationURL}" />					
 					</ui:repeat>
 				</ul>
 			</h:panelGroup>						
-		</div> <!-- END OF BIBLIOGRAPHIC LIST -->
+		</div>
 	</composite:implementation>
 </html>

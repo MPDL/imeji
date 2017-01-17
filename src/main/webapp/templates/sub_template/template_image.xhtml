@@ -1,16 +1,18 @@
-<ui:composition template="../template_site.xhtml"  xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition template="../template_site.xhtml"  
+	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
+	
 	<ui:param name="headline" value="#{itemBean.image != null ? itemBean.image.filename: ''}"/>
 	<ui:param name="backwardClass" value="#{itemBean.browse.previous == null ? 'previousItem imj_deactivated' : 'previousItem'}"/>
 	<ui:param name="forwardClass" value="#{itemBean.browse.next == null ? 'nextItem imj_deactivated' : 'nextItem'}"/>
 	
 	<ui:define name="actionsMenu">
-		<menu:actionMenuItem itemBean="#{itemBean}"/>
+		<menu:actionItem itemBean="#{itemBean}"/>
 	</ui:define>
 	
 	<!-- Main Content - Image Detail View -->
@@ -47,11 +49,11 @@
 							</ui:fragment>
 						</span>
 						<h:panelGroup styleClass="imj_simplePageBrowser">
-							<h:outputLink  value="#{itemBean.browse.previous}&amp;tab=#{itemBean.tab}" styleClass="#{backwardClass}" disabled="#{itemBean.browse.previous == null}">
+							<h:outputLink  value="#{itemBean.browse.previous}" styleClass="#{backwardClass}" disabled="#{itemBean.browse.previous == null}">
 								<h:outputText value="#{lbl.paginator_previous}"/>
 							</h:outputLink>
 							
-							<h:outputLink style="text-align: left" value="#{itemBean.browse.next}&amp;tab=#{itemBean.tab}" styleClass="#{forwardClass}" disabled="#{itemBean.browse.next == null}">
+							<h:outputLink style="text-align: left" value="#{itemBean.browse.next}" styleClass="#{forwardClass}" disabled="#{itemBean.browse.next == null}">
 								<h:outputText value="#{lbl.paginator_next}"/>
 							</h:outputLink>
 						</h:panelGroup>
@@ -60,10 +62,10 @@
 				</ui:fragment>
 			</h:panelGroup>
 			
-		<dialog:confirmationDialog submitAction="makePublic" bean="#{itemBean}" confirmationText="#{msg.confirmation_make_public}?" submitLabel="#{lbl.make_public}" dialogId="makePublicMenuItemDialog" rendered="#{Auth.admin(itemBean.image)}"/>
-		<dialog:confirmationDialog submitAction="makePrivate" bean="#{itemBean}" confirmationText="#{msg.confirmation_make_private}?" submitLabel="#{lbl.make_private}" dialogId="makePrivateMenuItemDialog" rendered="#{Auth.admin(itemBean.image)}"/>
-		<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete(itemBean.image)}"/>
-		<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" rendered="#{Auth.admin(itemBean.image) and WorkflowBean.withdraw(itemBean.image)}"/>
+			<dialog:confirmationDialog submitAction="makePublic" bean="#{itemBean}" confirmationText="#{msg.confirmation_make_public}?" submitLabel="#{lbl.make_public}" dialogId="makePublicMenuItemDialog" rendered="#{Auth.admin(itemBean.image)}"/>
+			<dialog:confirmationDialog submitAction="makePrivate" bean="#{itemBean}" confirmationText="#{msg.confirmation_make_private}?" submitLabel="#{lbl.make_private}" dialogId="makePrivateMenuItemDialog" rendered="#{Auth.admin(itemBean.image)}"/>
+			<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete(itemBean.image)}"/>
+			<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" rendered="#{Auth.admin(itemBean.image) and WorkflowBean.withdraw(itemBean.image)}"/>
 		
 		</ui:fragment>
 		

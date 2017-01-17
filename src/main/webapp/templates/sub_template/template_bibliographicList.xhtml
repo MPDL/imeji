@@ -4,6 +4,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
+	xmlns:col="http://java.sun.com/jsf/composite/components/collection"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
 	
 	<ui:define name="modalDialogs_from_template">
@@ -15,9 +16,6 @@
 	<!-- Main Content - bibliographic grid list - START -->
 	<ui:define name="mainContent">
 		<h:panelGroup layout="block" id ="ajaxWrapper">
-			
-			<!-- Page Browser GotoBox -->
-			<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes"/>
 			
 			<!-- Selection Info Panel -->
 			<imjc:filterInfoPanel fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
@@ -38,10 +36,10 @@
 			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
 				<div id="imj_listBody">
 					<ui:fragment rendered="#{!Auth.loggedIn}">
-						<imjc:bibliographicList_loggedOut mediaList="#{paginatorListSessionBean}" globalDisplayLinkText="#{globalDisplayLinkText}" metadataNavigationURL="#{metadataNavigationURL}"/>
+						<col:listEntryLoggedOut mediaList="#{paginatorListSessionBean}" globalDisplayLinkText="#{globalDisplayLinkText}" metadataNavigationURL="#{metadataNavigationURL}"/>
 					</ui:fragment>
 					<ui:fragment rendered="#{Auth.loggedIn}">
-						<imjc:bibliographicList_loggedIn mediaList="#{paginatorListSessionBean}" isActivatable="#{isActivatable}" 
+						<col:listEntryLoggedIn mediaList="#{paginatorListSessionBean}" isActivatable="#{isActivatable}" 
 														 metadataNavigationURL="#{metadataNavigationURL}" releaseItemConfirmationText="#{releaseItemConfirmationText}" 
 														 deleteItemConfirmationText="#{deleteItemConfirmationText}"
 														 globalDeleteDialogId="#{currentMainMenu}List-selected-deleteDialog" 

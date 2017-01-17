@@ -9,19 +9,19 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<h:outputText value="#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}"/>
+		<h:outputText value="#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}"/>:
 		<a href="#{Navigation.applicationUrl}editselected" class="imj_menuButton">
-			<span class="fa fa-pencil"/> #{lbl.edit}
+			<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
 		</a>
 		<h:form>
 			<h:commandLink action="#{cc.attrs.itemsBean.deleteSelected}" styleClass="imj_menuButton">
-				 <span class="fa fa-trash"/> #{lbl.delete}
+				 <span class="fa fa-trash"/>  <span>#{lbl.delete}</span>
 			</h:commandLink>
 		</h:form>
 			<a href="#{Navigation.applicationUrl}download?m=selected" class="imj_menuButton">
-			<span class="fa fa-download"/> #{lbl.download}
+			<span class="fa fa-download"/>  <span>#{lbl.download}</span>
 		</a>
-		<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionMenu">
+		<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionSelectedMore">
 			<div class="imj_menuHeader">
                   <span class="fa fa-bars"></span>
                   <span class="imj_headerEntry"> #{lbl.more}</span>
@@ -29,13 +29,13 @@
 			<div class="imj_menuBody">
 				<ul class="imj_overlayMenuList">
 					<li>
-						<a href="#{Navigation.applicationUrl}edit/license" id="lnkSelectEditLicense" class="imj_menuButton">
-							 #{lbl.edit_selected_license}
+						<a href="#{Navigation.applicationUrl}edit/license" id="lnkSelectEditLicense">
+							  <span class="fa fa-copyright"/> <span>#{lbl.edit_selected_license}</span>
 						</a>
 					</li>
 					<li>
-						<a href="#{Navigation.applicationUrl}moveSelected" id="lnkMoveTo" class="imj_menuButton">
-							#{lbl.move_to}...
+						<a href="#{Navigation.applicationUrl}moveSelected" id="lnkMoveTo">
+							 <span class="fa fa-clone"/> <span>#{lbl.move_to}...</span>
 						</a>
 					</li>
 				</ul>

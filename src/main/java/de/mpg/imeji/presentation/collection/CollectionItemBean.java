@@ -37,7 +37,7 @@ public class CollectionItemBean extends ItemBean {
   }
 
   @Override
-  public void initBrowsing() {
+  protected void initBrowsing() {
     if (getImage() != null) {
       setBrowse(new ItemDetailsBrowse(getImage(), "collection",
           ObjectHelper.getURI(CollectionImeji.class, collectionId).toString(), getSessionUser()));
@@ -47,8 +47,7 @@ public class CollectionItemBean extends ItemBean {
   @Override
   public void redirectToBrowsePage() {
     try {
-      redirect(getNavigation().getCollectionUrl() + collectionId + "/"
-          + getNavigation().getBrowsePath());
+      redirect(getNavigation().getCollectionUrl() + collectionId);
     } catch (final IOException e) {
       LOGGER.error("Error redirect to browse page", e);
     }

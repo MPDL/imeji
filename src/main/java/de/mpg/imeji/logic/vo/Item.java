@@ -18,7 +18,6 @@ import org.joda.time.chrono.AssembledChronology.Fields;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLazyList;
-import de.mpg.imeji.j2j.annotations.j2jLazyLiteral;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
@@ -45,7 +44,7 @@ public class Item extends Properties implements Serializable {
   private String filetype;
   @j2jLiteral("http://imeji.org/terms/fileSize")
   private long fileSize;
-  @j2jLazyLiteral("http://imeji.org/terms/contentId")
+  @j2jLiteral("http://imeji.org/terms/contentId")
   private String contentId;
   @j2jLazyList("http://imeji.org/terms/license")
   private List<License> licenses = new ArrayList<>();

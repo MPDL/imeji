@@ -25,12 +25,14 @@
     </ui:define>
 
 	<ui:define name="actionsMenu">
-		<menu:actionItems id="actionItems" rendered="#{empty SessionBean.selected}"/>
-		<menu:actionSelectedItems rendered="#{not empty SessionBean.selected}" itemsBean="#{paginatorListSessionBean}"/>
+		<menu:actionItems id="actionItems" rendered="#{currentMainMenu == 'items' and empty SessionBean.selected}"/>
+		<menu:actionCollection id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and empty SessionBean.selected and Auth.update(paginatorListSessionBean)}"/>
+		<menu:actionSelectedItems id="actionSelectedItems" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}" />
 	</ui:define>
 	
     <!-- Main Content - Image tiled list - START -->
     <ui:define name="mainContent">
+		
         <h:panelGroup layout="block" id="ajaxWrapper">
 			<script>menuRightOffset();</script>
             <!-- Selection Info Panel -->

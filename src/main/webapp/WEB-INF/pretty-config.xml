@@ -47,15 +47,11 @@
 	<!-- Collection pages -->
 	<url-mapping id="collection">
 		<pattern value="/collection/#{ id }" />
-		<view-id>/jsf/CollectionEntryPage.xhtml</view-id>
-	</url-mapping>
-	<url-mapping id="collectionInfos">
-		<pattern value="/collection/#{ id }/infos" />
-		<view-id>/jsf/CollectionView.xhtml</view-id>
-	</url-mapping>
-	<url-mapping id="collectionBrowse">
-		<pattern value="/collection/#{ id }/browse" />
 		<view-id>/jsf/CollectionBrowse.xhtml</view-id>
+	</url-mapping>
+	<url-mapping id="collectionAbout">
+		<pattern value="/collection/#{ id }/about" />
+		<view-id>/jsf/CollectionAbout.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="collectionItem">
 		<pattern

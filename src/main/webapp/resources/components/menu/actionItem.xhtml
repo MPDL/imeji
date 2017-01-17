@@ -10,26 +10,25 @@
 	
 	<composite:implementation>
 		<h:form>
-			<h:commandLink action="#{cc.attrs.itemBean.edit}" styleClass="imj_menuButton">
-				 <span class="fa fa-pencil"/> #{lbl.edit}
+			<h:commandLink action="#{cc.attrs.itemBean.showEditor}" styleClass="imj_menuButton">
+				 <span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
 			</h:commandLink>
 			<h:commandLink action="#{cc.attrs.itemBean.delete}" styleClass="imj_menuButton">
-				 <span class="fa fa-trash"/> #{lbl.delete}
+				 <span class="fa fa-trash"/> <span>#{lbl.delete}</span>
 			</h:commandLink>
 		</h:form>
 			<a href="#{Navigation.applicationUrl}download?m=id&amp;id=#{cc.attrs.itemBean.item.id}" class="imj_menuButton">
-			<span class="fa fa-download"/> #{lbl.download}
+			<span class="fa fa-download"/> <span>#{lbl.download}</span>
 		</a>
 		<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionMenu">
 			<div class="imj_menuHeader">
-                  <span class="fa fa-bars"></span>
-                  <span class="imj_headerEntry"> #{lbl.more}</span>
+                  <span class="fa fa-bars"></span> <span>#{lbl.more}</span>
 			</div>
 			<div class="imj_menuBody">
 				<ul class="imj_overlayMenuList">
 					<li>
-						<a href="#{Navigation.applicationUrl}moveSelected" id="lnkMoveTo" class="imj_menuButton">
-							#{lbl.move_to}...
+						<a href="#{Navigation.applicationUrl}moveSelected" id="lnkMoveTo">
+							 <span class="fa fa-clone"/> <span>#{lbl.move_to}...</span>
 						</a>
 					</li>
 				</ul>

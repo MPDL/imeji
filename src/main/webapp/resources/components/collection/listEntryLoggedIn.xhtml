@@ -1,0 +1,25 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:col="http://java.sun.com/jsf/composite/components/collection">
+	
+	<composite:interface>
+		<composite:attribute name="mediaList"/>
+		<composite:attribute name="isActivatable"/>
+		<composite:attribute name="metadataNavigationURL"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		<div class="imj_bibliographicList">			
+			<h:panelGroup id="ajaxList" styleClass="imj_listBody">
+				<ul>
+					<ui:repeat var="container" value="#{cc.attrs.mediaList.currentPartList}" id="list" rows="0">
+						<col:bibListItem_draft item="#{container}" isActivatable="#{cc.attrs.isActivatable}" metadataNavigationURL="#{cc.attrs.metadataNavigationURL}" />
+ 					</ui:repeat>
+				</ul>
+			</h:panelGroup>
+	   </div>
+	</composite:implementation>
+</html>

@@ -23,7 +23,6 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
@@ -54,7 +53,6 @@ import de.mpg.imeji.logic.vo.TechnicalMetadata;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.edit.SingleEditorWrapper;
 import de.mpg.imeji.presentation.history.HistoryPage;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
@@ -70,14 +68,13 @@ import de.mpg.imeji.presentation.session.SessionObjectsController;
 @ViewScoped
 public class ItemBean extends SuperBean {
   private static final long serialVersionUID = -4957755233785015759L;
-  private String tab;
+  private static final Logger LOGGER = Logger.getLogger(ItemBean.class);
   private Item item;
   private ContentVO content;
   private String id;
   private boolean selected;
   private CollectionImeji collection;
   private List<String> techMd;
-  private SingleEditorWrapper edit;
   protected String prettyLink;
   private ItemDetailsBrowse browse = null;
   private List<Album> relatedAlbums;
@@ -90,13 +87,13 @@ public class ItemBean extends SuperBean {
   private List<String> selectedItems;
   @ManagedProperty(value = "#{SessionBean.activeAlbum}")
   private Album activeAlbum;
-  private static final Logger LOGGER = Logger.getLogger(ItemBean.class);
   private int rotation;
   private int lastRotation = 0;
   private String thumbnail;
   private String preview;
   private String fullResolution;
   private String originalFile;
+  private boolean edit = false;
 
   /**
    * Construct a default {@link ItemBean}
@@ -116,24 +113,15 @@ public class ItemBean extends SuperBean {
   @PostConstruct
   public void init() {
     this.id = UrlHelper.getParameterValue("id");
-    tab = UrlHelper.getParameterValue("tab");
-    if ("".equals(tab)) {
-      tab = null;
-    }
     try {
       loadImage();
       if (item != null) {
-        if ("techmd".equals(tab)) {
-          initViewTechnicalMetadata();
-        } else if ("util".equals(tab)) {
-          initUtilTab();
-        } else {
-          initViewMetadataTab();
-        }
+        loadCollection(getSessionUser());
+        metadataLabels = new MetadataLabels(item, getLocale());
         initBrowsing();
+        initRelatedAlbums();
+        initImageUploader();
         selected = getSelectedItems().contains(item.getId().toString());
-      } else {
-        edit = null;
       }
     } catch (final NotFoundException e) {
       LOGGER.error("Error loading item", e);
@@ -149,26 +137,28 @@ public class ItemBean extends SuperBean {
     }
   }
 
-  public String getOpenseadragonUrl() {
-    return getNavigation().getOpenseadragonUrl() + "?id=" + content.getOriginal();
+  protected void initBrowsing() {
+    browse = new ItemDetailsBrowse(item, "item", null, getSessionUser());
   }
 
-
   /**
-   * Initialize the util tab
-   *
-   * @throws ImejiException @
+   * Search and Retrieve the related albums
    */
-  private void initUtilTab() throws ImejiException {
-    relatedAlbums = new ArrayList<Album>();
-    final AlbumController ac = new AlbumController();
-    final SearchQuery q = new SearchQuery();
-    q.addPair(new SearchPair(SearchIndex.SearchFields.member, SearchOperators.EQUALS,
-        getImage().getId().toString(), false));
-    // TODO NB: check if related albums should be space restricted?
-    relatedAlbums = ac.retrieveBatchLazy(ac.search(q, getSessionUser(), null, -1, 0).getResults(),
-        getSessionUser(), -1, 0);
-    initImageUploader();
+  private void initRelatedAlbums() {
+    try {
+      final AlbumController ac = new AlbumController();
+      final SearchQuery q = new SearchQuery();
+      q.addPair(new SearchPair(SearchIndex.SearchFields.member, SearchOperators.EQUALS,
+          getImage().getId().toString(), false));
+      relatedAlbums = ac.retrieveBatchLazy(ac.search(q, getSessionUser(), null, -1, 0).getResults(),
+          getSessionUser(), -1, 0);
+    } catch (Exception e) {
+      LOGGER.error("Error retrieving related albums", e);
+    }
+  }
+
+  public String getOpenseadragonUrl() {
+    return getNavigation().getOpenseadragonUrl() + "?id=" + content.getOriginal();
   }
 
   /**
@@ -187,22 +177,6 @@ public class ItemBean extends SuperBean {
   }
 
   /**
-   * Initialize the metadata information when the "view metadata" tab is called.
-   *
-   * @throws ImejiException
-   *
-   * @
-   */
-  public void initViewMetadataTab() throws ImejiException {
-    if (item != null) {
-      this.discardComment = null;
-      loadCollection(getSessionUser());
-      metadataLabels = new MetadataLabels(item, getLocale());
-      edit = new SingleEditorWrapper(item, getSessionUser(), getLocale());
-    }
-  }
-
-  /**
    * Initialize the technical metadata when the "technical metadata" tab is called
    *
    * @throws ImejiException
@@ -214,17 +188,6 @@ public class ItemBean extends SuperBean {
     final ContentVO content = new ContentController().read(item.getContentId());
     for (final TechnicalMetadata tmd : content.getTechnicalMetadata()) {
       techMd.add(tmd.getName() + ": " + tmd.getValue());
-    }
-  }
-
-  /**
-   * Initialize the {@link ItemDetailsBrowse} for this {@link ItemBean}
-   *
-   * @
-   */
-  public void initBrowsing() {
-    if (item != null) {
-      browse = new ItemDetailsBrowse(item, "item", null, getSessionUser());
     }
   }
 
@@ -343,27 +306,15 @@ public class ItemBean extends SuperBean {
     this.id = id;
   }
 
-  public String getTab() {
-    return tab;
-  }
-
-  public void setTab(String tab) {
-    this.tab = tab.toUpperCase();
-  }
-
   public String getNavigationString() {
     return "pretty:item";
   }
 
   public void saveEditor() throws IOException {
     try {
-      edit.getEditor().save();
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_editor_image", getLocale()));
       redirect(getHistory().getCurrentPage().getCompleteUrl());
-    } catch (final UnprocessableError e) {
-      BeanHelper.error(e, getLocale());
-      LOGGER.error("Error saving item metadata", e);
-    } catch (final ImejiException e) {
+    } catch (Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()));
       LOGGER.error("Error saving item metadata", e);
     }
@@ -374,7 +325,7 @@ public class ItemBean extends SuperBean {
   }
 
   public void showEditor() {
-
+    this.edit = true;
   }
 
   /**
@@ -517,14 +468,6 @@ public class ItemBean extends SuperBean {
       statementMenu.add(new SelectItem(s.getId(), s.getDefaultName()));
     }
     return statementMenu;
-  }
-
-  public SingleEditorWrapper getEdit() {
-    return edit;
-  }
-
-  public void setEdit(SingleEditorWrapper edit) {
-    this.edit = edit;
   }
 
   public boolean isLocked() {
@@ -870,4 +813,19 @@ public class ItemBean extends SuperBean {
   public String getOriginalFile() {
     return originalFile;
   }
+
+  /**
+   * @return the edit
+   */
+  public boolean isEdit() {
+    return edit;
+  }
+
+  /**
+   * @param edit the edit to set
+   */
+  public void setEdit(boolean edit) {
+    this.edit = edit;
+  }
+
 }

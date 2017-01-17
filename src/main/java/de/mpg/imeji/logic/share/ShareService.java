@@ -193,13 +193,15 @@ public class ShareService {
    * @return
    */
   public static ShareRoles transformGrantToRole(Grant g) {
-    switch (GrantType.valueOf(g.getGrantType())) {
-      case READ:
-        return ShareRoles.READ;
-      case EDIT:
-        return ShareRoles.READ;
-      case ADMIN:
-        return ShareRoles.READ;
+    if (g != null) {
+      switch (GrantType.valueOf(g.getGrantType())) {
+        case READ:
+          return ShareRoles.READ;
+        case EDIT:
+          return ShareRoles.EDIT;
+        case ADMIN:
+          return ShareRoles.ADMIN;
+      }
     }
     return null;
   }
@@ -212,13 +214,15 @@ public class ShareService {
    * @return
    */
   public static Grant toGrant(String role, String grantFor) {
-    switch (ShareRoles.valueOf(role)) {
-      case READ:
-        return new Grant(GrantType.READ, grantFor);
-      case EDIT:
-        return new Grant(GrantType.EDIT, grantFor);
-      case ADMIN:
-        return new Grant(GrantType.ADMIN, grantFor);
+    if (role != null) {
+      switch (ShareRoles.valueOf(role)) {
+        case READ:
+          return new Grant(GrantType.READ, grantFor);
+        case EDIT:
+          return new Grant(GrantType.EDIT, grantFor);
+        case ADMIN:
+          return new Grant(GrantType.ADMIN, grantFor);
+      }
     }
     return null;
   }

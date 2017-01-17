@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
-import de.mpg.imeji.j2j.annotations.j2jLazyList;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
@@ -40,7 +39,7 @@ public class User implements Serializable {
   private String encryptedPassword;
   @j2jLiteral("http://xmlns.com/foaf/0.1/person")
   private Person person = new Person();
-  @j2jLazyList("http://imeji.org/terms/grant")
+  @j2jList("http://imeji.org/terms/grant")
   private List<String> grants = new ArrayList<String>();
   @j2jLiteral("http://imeji.org/terms/quota")
   private long quota = -1;
