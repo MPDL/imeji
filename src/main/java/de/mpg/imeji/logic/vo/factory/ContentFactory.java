@@ -11,7 +11,7 @@ import de.mpg.imeji.logic.vo.ContentVO;
  *
  */
 public class ContentFactory {
-  private ContentVO content;
+  private ContentVO content = new ContentVO();
 
   public ContentVO build() {
     return content;

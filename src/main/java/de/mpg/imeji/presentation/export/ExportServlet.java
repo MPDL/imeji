@@ -4,7 +4,7 @@
 package de.mpg.imeji.presentation.export;
 
 import java.io.IOException;
-import java.util.Date;
+import java.util.List;
 
 import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
@@ -21,9 +21,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.client.HttpResponseException;
+import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.export.ExportService;
-import de.mpg.imeji.logic.search.model.SearchResult;
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.export.ExportAbstract;
+import de.mpg.imeji.logic.export.FileExport;
+import de.mpg.imeji.logic.export.SitemapExport;
+import de.mpg.imeji.logic.export.ZIPExport;
+import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.notification.NotificationUtils;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -31,7 +40,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @WebServlet("/exportServlet")
 public class ExportServlet extends HttpServlet {
   private static final long serialVersionUID = -777947169051357999L;
-
+  private static final Logger LOGGER = Logger.getLogger(ExportServlet.class);
 
   /**
    * {@inheritDoc}
@@ -39,35 +48,96 @@ public class ExportServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     final SessionBean session = getSessionBean(req, resp);
-    final String instanceName = session.getInstanceName();
-    final User user = session.getUser();
-
     try {
-      final ExportService exportService = new ExportService(resp.getOutputStream(), user,
-          req.getParameterMap(), session.getSelected());
-      String exportName = instanceName + "_";
-      exportName += new Date().toString().replace(" ", "_").replace(":", "-");
-      if (exportService.getContentType().equalsIgnoreCase("application/xml")) {
-        exportName += ".xml";
-      }
-      if (exportService.getContentType().equalsIgnoreCase("application/zip")) {
-        exportName += ".zip";
-      }
+      final ExportAbstract export = doExport(req, resp, session);
       resp.setHeader("Connection", "close");
-      resp.setHeader("Content-Type", exportService.getContentType() + ";charset=UTF-8");
-      resp.setHeader("Content-disposition", "filename=" + exportName);
+      resp.setHeader("Content-Type", export.getContentType() + ";charset=UTF-8");
+      resp.setHeader("Content-disposition", "attachment; filename=\"" + export.getName() + "\"");
+      resp.setHeader("Content-length", export.getSize());
       resp.setStatus(HttpServletResponse.SC_OK);
-      final SearchResult result = exportService.search();
-      exportService.export(result, user);
-      NotificationUtils.notifyByExport(user, exportService.getExport(), session);
+      export.export(resp.getOutputStream());
       resp.getOutputStream().flush();
+      NotificationUtils.notifyByExport(export, session, req.getParameter("q"),
+          req.getParameter("col"));
     } catch (final HttpResponseException he) {
+      LOGGER.error("Error export", he);
       resp.sendError(he.getStatusCode(), he.getMessage());
     } catch (final Exception e) {
+      LOGGER.error("Error export", e);
       resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
     }
   }
 
+
+  /**
+   * Perform the export from the request parameters
+   * 
+   * @param req
+   * @param resp
+   * @param session
+   * @return
+   * @throws ImejiException
+   * @throws IOException
+   */
+  private ExportAbstract doExport(HttpServletRequest req, HttpServletResponse resp,
+      SessionBean session) throws ImejiException, IOException {
+    final User user = session.getUser();
+    final String format = req.getParameter("format");
+    ExportAbstract export = null;
+    if (format != null) {
+      switch (format) {
+        case "zip":
+          export = new ZIPExport(getItemIds(req, session), user);
+          break;
+        case "file":
+          export = new FileExport(req.getParameter("id"), user);
+          break;
+        case "sitemap":
+          export = new SitemapExport(req.getParameter("q"), req.getParameter("priority"), user);
+          break;
+      }
+    } else {
+      throw new UnprocessableError(
+          "Unknown format parameter. Possible values: files,selected, sitemap, item");
+    }
+    return export;
+  }
+
+  /**
+   * Return the item ids to be exported. Default, return the selected items in the session
+   * 
+   * @param req
+   * @param session
+   * @return
+   * @throws UnprocessableError
+   */
+  private List<String> getItemIds(HttpServletRequest req, SessionBean session)
+      throws UnprocessableError {
+    final String query = req.getParameter("q");
+    final String collectionId = req.getParameter("col");
+    if (query != null || collectionId != null) {
+      return new ItemService()
+          .search(collectionId != null ? ObjectHelper.getURI(CollectionImeji.class, collectionId)
+              : null, SearchQueryParser.parseStringQuery(query), null, session.getUser(), -1, 0)
+          .getResults();
+    } else {
+      return session.getSelected();
+    }
+  }
+
+
+  /**
+   * Return the extension of the exported file according to the mimeType
+   * 
+   * @param mimetype
+   * @return
+   */
+  private String getExportExtension(String mimetype) {
+    if (mimetype.equalsIgnoreCase("application/zip")) {
+      return ".zip";
+    }
+    return ".zip";
+  }
 
   /**
    * Get the {@link SessionBean} from the {@link HttpSession}

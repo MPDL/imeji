@@ -6,7 +6,6 @@ package de.mpg.imeji.presentation.storage;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -35,7 +34,6 @@ import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.Navigation;
-import de.mpg.imeji.presentation.notification.NotificationUtils;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
@@ -77,7 +75,6 @@ public class FileServlet extends HttpServlet {
       throws ServletException, IOException {
     String url = req.getParameter("id");
     final String contentId = req.getParameter("content");
-    final boolean download = "1".equals(req.getParameter("download"));
     User user;
     try {
       final SessionBean session = getSession(req);
@@ -93,11 +90,7 @@ public class FileServlet extends HttpServlet {
       if ("NO_THUMBNAIL_URL".equals(url)) {
         externalStorage.read(RESOURCE_EMTPY_ICON_URL, resp.getOutputStream(), true);
       } else {
-        if (download) {
-          downloadFile(resp, url, session, user);
-        } else {
-          readFile(url, resp, false, user);
-        }
+        readFile(url, resp, false, user);
       }
     } catch (final Exception e) {
       if (e instanceof NotAllowedError) {
@@ -144,17 +137,6 @@ public class FileServlet extends HttpServlet {
     } catch (ImejiException | IOException e) {
       LOGGER.error("Error reading default thumbnail", e);
     }
-  }
-
-  private void downloadFile(HttpServletResponse resp, String url, SessionBean session, User user)
-      throws Exception {
-    resp.setHeader("Content-disposition", "attachment;");
-    boolean isExternalStorage = false;
-    final Item fileItem = getItem(url, user);
-    NotificationUtils.notifyByItemDownload(user, fileItem, Locale.ENGLISH);
-    isExternalStorage = StringHelper.isNullOrEmptyTrim(fileItem.getContentId());
-    readFile(url, resp, isExternalStorage, user);
-
   }
 
   /**

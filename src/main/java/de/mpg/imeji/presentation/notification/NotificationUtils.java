@@ -14,8 +14,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
-import de.mpg.imeji.logic.export.format.Export;
-import de.mpg.imeji.logic.export.format.ZIPExport;
+import de.mpg.imeji.logic.export.ExportAbstract;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.user.UserService;
@@ -63,7 +62,8 @@ public class NotificationUtils {
 
   /**
    * Send email notifications to all users which checked "Send notification email by item download"
-   * feature for collection of item
+   * feature for collection of item <br/>
+   * Method runs asynchronously
    *
    * @param user
    * @param export
@@ -72,20 +72,17 @@ public class NotificationUtils {
    * @throws java.io.IOException
    * @throws java.net.URISyntaxException
    */
-  public static void notifyByExport(User user, Export export, SessionBean session)
-      throws ImejiException, IOException, URISyntaxException {
-    // notify by zip export
-    if ("zip".equals(export.getParam("format"))) {
-      // only for images
-      if ("image".equals(export.getParam("type"))) {
-        final Map<String, String> msgsPerEmail = new HashMap<>();
-        final Map<String, User> usersPerEmail = new HashMap<>();
-        final String q =
-            !isNullOrEmpty(export.getParam("q")) ? "/browse?q=" + export.getParam("q") : "";
-        for (final Map.Entry<URI, Integer> entry : ((ZIPExport) export).getItemsPerCollection()
-            .entrySet()) {
-          final CollectionImeji c = cc.retrieve(entry.getKey(), Imeji.adminUser);
-          for (final User u : uc.searchUsersToBeNotified(user, c)) {
+  public static void notifyByExport(ExportAbstract export, SessionBean session, String query,
+      String col) {
+    new Thread(() -> {
+      final Map<String, String> msgsPerEmail = new HashMap<>();
+      final Map<String, User> usersPerEmail = new HashMap<>();
+      final String q = !isNullOrEmpty(query) ? "/browse?q=" + query : "";
+      for (final Map.Entry<String, Integer> entry : export.getExportedItemsPerCollection()
+          .entrySet()) {
+        try {
+          CollectionImeji c = cc.retrieve(URI.create(entry.getKey()), Imeji.adminUser);
+          for (final User u : uc.searchUsersToBeNotified(session.getUser(), c)) {
             final String key = u.getEmail();
             msgsPerEmail.put(key,
                 (msgsPerEmail.containsKey(key) ? msgsPerEmail.get(key) + "\r\n" : "")
@@ -94,21 +91,27 @@ public class NotificationUtils {
                     + ", XXX_ITEMS_COUNT_XXX: " + entry.getValue().intValue());
             usersPerEmail.put(key, u);
           }
-        }
-        final String url = reconstructQueryUrl((ZIPExport) export, session);
-        for (final Map.Entry<String, String> entry : msgsPerEmail.entrySet()) {
-          final User u = usersPerEmail.get(entry.getKey());
-          emailClient.sendMail(u.getEmail(), null,
-              EmailMessages.getEmailOnZipDownload_Subject(Locale.ENGLISH), EmailMessages
-                  .getEmailOnZipDownload_Body(u, user, entry.getValue(), url, Locale.ENGLISH));
-          LOGGER.info("Sent notification email to user: " + u.getPerson().getCompleteName() + "<"
-              + u.getEmail() + ">;" + " zip download query: <" + url + ">; message: <"
-              + entry.getValue().replaceAll("[\\r\\n]]", ";") + ">");
+        } catch (ImejiException e) {
+          LOGGER.error("Error retrieving collection", e);
         }
       }
-    }
+      final String url = reconstructQueryUrl(export, session, query, col);
+      for (final Map.Entry<String, String> entry : msgsPerEmail.entrySet()) {
+        final User u = usersPerEmail.get(entry.getKey());
+        try {
+          emailClient.sendMail(u.getEmail(), null,
+              EmailMessages.getEmailOnZipDownload_Subject(Locale.ENGLISH),
+              EmailMessages.getEmailOnZipDownload_Body(u, session.getUser(), entry.getValue(), url,
+                  Locale.ENGLISH));
+        } catch (ImejiException e) {
+          LOGGER.error("Error sending Email", e);
+        }
+        LOGGER.info("Sent notification email to user: " + u.getPerson().getCompleteName() + "<"
+            + u.getEmail() + ">;" + " zip download query: <" + url + ">; message: <"
+            + entry.getValue().replaceAll("[\\r\\n]]", ";") + ">");
+      }
+    }).start();
   }
-
 
   /**
    * Reconstructs Query Url on hand of request parameters saved in export instance
@@ -117,15 +120,14 @@ public class NotificationUtils {
    * @param session
    * @return
    */
-  private static String reconstructQueryUrl(ZIPExport export, SessionBean session) {
+  private static String reconstructQueryUrl(ExportAbstract export, SessionBean session,
+      String query, String col) {
     String q = "?q=", path = "browse";
-    if (!isNullOrEmpty(export.getParam("q"))) {
-      q += export.getParam("q");
+    if (!isNullOrEmpty(query)) {
+      q += query;
     }
-    if (!isNullOrEmpty(export.getParam("col"))) {
-      path = "collection/" + export.getParam("col") + "/" + path;
-    } else if (!isNullOrEmpty(export.getParam("album"))) {
-      path = "album/" + export.getParam("album") + "/" + path;
+    if (!isNullOrEmpty(col)) {
+      path = "collection/" + col + "/" + path;
     }
     return session.getApplicationUrl() + path + q;
   }

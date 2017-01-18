@@ -18,8 +18,8 @@
 				 <span class="fa fa-trash"/>  <span>#{lbl.delete}</span>
 			</h:commandLink>
 		</h:form>
-			<a href="#{Navigation.applicationUrl}download?m=selected" class="imj_menuButton">
-			<span class="fa fa-download"/>  <span>#{lbl.download}</span>
+		<a id="download" href="#{Navigation.applicationUrl}exportServlet?format=zip" class="imj_menuButton" target="_blank">
+			<span class="fa fa-download"/> <span>#{lbl.download}</span>
 		</a>
 		<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionSelectedMore">
 			<div class="imj_menuHeader">

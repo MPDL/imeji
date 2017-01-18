@@ -17,7 +17,7 @@
 				 <span class="fa fa-trash"/> <span>#{lbl.delete}</span>
 			</h:commandLink>
 		</h:form>
-			<a href="#{Navigation.applicationUrl}download?m=id&amp;id=#{cc.attrs.itemBean.item.id}" class="imj_menuButton">
+		<a href="#{Navigation.applicationUrl}exportServlet?format=file&amp;id=#{cc.attrs.itemBean.item.id}" class="imj_menuButton" target="_blank">
 			<span class="fa fa-download"/> <span>#{lbl.download}</span>
 		</a>
 		<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionMenu">

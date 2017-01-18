@@ -37,10 +37,17 @@
 							</h:commandLink>
 						</li>
 						<li>
-							<a href="#{Navigation.applicationUrl}download?m=id&amp;id=#{cc.attrs.collectionBean.id}">
+							<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}" target="_blank">
 								<span class="fa fa-download"/> <span>#{lbl.collection_download}</span>
 							</a>
 						</li>
+						<ui:fragment rendered="#{not empty cc.attrs.collectionBean.query}">
+							<li>
+								<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}&amp;q=#{cc.attrs.collectionBean.query}" target="_blank">
+									<span class="fa fa-download"/> <span>#{lbl.download_search}</span>
+								</a>
+							</li>
+						</ui:fragment>
 					</h:form>
 				</ul>
 			</div>

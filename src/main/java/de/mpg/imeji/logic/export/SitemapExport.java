@@ -1,35 +1,44 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.logic.export.format;
+package de.mpg.imeji.logic.export;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.vo.User;
 
 /**
- * {@link Export} into SiteMap Format
+ * {@link ExportAbstract} into SiteMap Format
  *
  * @author saquet
  */
-public class SitemapExport extends Export {
-  private double priority = 0.5;
+public class SitemapExport extends ExportAbstract {
+  private final double priority;
   private static final Logger LOGGER = Logger.getLogger(SitemapExport.class);
+  private final String query;
 
-  @Override
-  public void init() {
-    readPriority();
+  public SitemapExport(String query, String priority, User user) {
+    super(user);
+    this.query = query;
+    this.priority = priority != null ? Integer.parseInt(priority) : 0.5;
+    this.name = "sitemap.xml";
   }
 
   @Override
-  public void export(OutputStream out, SearchResult sr, User user) {
+  public void export(OutputStream out) throws UnprocessableError {
+    final SearchResult sr = search(query);
     final StringWriter writer = new StringWriter();
     writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     writer.append("<urlset xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
@@ -49,6 +58,18 @@ public class SitemapExport extends Export {
     return "application/xml";
   }
 
+  /**
+   * Search for collections
+   * 
+   * @param query
+   * @return
+   * @throws UnprocessableError
+   */
+  private SearchResult search(String query) throws UnprocessableError {
+    return new CollectionService().search(SearchQueryParser.parseStringQuery(query), null, user, -1,
+        0);
+  }
+
   private void writeURLs(StringWriter writer, SearchResult sr) {
     if (sr != null) {
       for (final String url : sr.getResults()) {
@@ -59,20 +80,19 @@ public class SitemapExport extends Export {
 
   private void writeURL(StringWriter writer, String url) {
     writer.append("<url>");
-    writer.append("<loc>" + getReaUrl(url) + "</loc>");
+    writer.append("<loc>" + getRealUrl(url) + "</loc>");
     writer.append("<priority>" + priority + "</priority>");
     writer.append("</url>");
   }
 
-  private void readPriority() {
-    final String p = getParam("priority");
-    if (p != null) {
-      priority = Double.parseDouble(p);
-    }
-  }
-
-  private String getReaUrl(String url) {
+  private String getRealUrl(String url) {
     final URI uri = URI.create(url);
     return Imeji.PROPERTIES.getApplicationURI() + uri.getPath();
   }
+
+  @Override
+  public Map<String, Integer> getExportedItemsPerCollection() {
+    return new HashMap<>();
+  }
+
 }

@@ -748,14 +748,12 @@ public class ItemService extends SearchServiceAbstract<Item> {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, User user, int size,
       int offset) {
-    // TODO Auto-generated method stub
-    return null;
+    return search(null, searchQuery, sortCri, user, size, offset);
   }
 
   @Override
   public List<Item> retrieve(List<String> ids, User user) throws ImejiException {
-    // TODO Auto-generated method stub
-    return null;
+    return itemController.retrieveBatch(ids, user);
   }
 
   @Override
