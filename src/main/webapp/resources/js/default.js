@@ -787,6 +787,15 @@ function resizeMenu(){
  * 
  ******************************************************************************/
 
+
+function lockPage(){
+	$(".loaderWrapper").show();
+}
+
+function unlockPage(){
+	$(".loaderWrapper").hide();
+}
+
 // LOADER
 function startLoader(){
 	$(".loaderWrapper").show();

@@ -78,7 +78,6 @@
 					  	bottom: 0;
 					  	right: 0;
 					  	width: 100%;
-						overflow: auto;
 					  	background: #292929;
 					  	z-index: 1000;
 					  	height: 100%;
@@ -86,7 +85,16 @@
 					  	position: fixed;
 					  	overflow: hidden;
 					  	opacity: 0.5;
-					  	display: none;
+					  	display: none;  
+					}
+					.loaderWrapperText{
+						position: absolute;
+						top: 45%;
+						left: 40%;
+						font-size: 2em;
+						opacity: 1;
+						z-index: 1001;
+						display: none;
 					}
 					.loader {
 					   	position: absolute;
@@ -242,6 +250,7 @@
 	                </div>
 	                
 	               	<div class="loaderWrapper"/>
+	               		<div class="loaderWrapperText"/>
 	               		<div class="loader"/>
 	             	</div>
 	             	

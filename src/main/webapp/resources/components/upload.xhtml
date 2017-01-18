@@ -38,6 +38,7 @@
 							},				
 							FilesAdded: function(up, files) {
 								totalFiles =  files.length;
+								lockPage();
 								addUploadStatusMessage(0,totalFiles);	
 								uploader.start();							
 							},
@@ -68,6 +69,8 @@
 					}
 					
 					function addUploadStatusMessage(uploaded, total, filename, percent){
+						$(".loaderWrapperText").show();
+						$(".loaderWrapperText").text('#{lbl.uploading} ' + uploaded + ' / ' + total + ' #{lbl.files}.');
 						if(document.getElementById('uploadStatus') == null){
 							document.getElementById('imj_pageMessageArea').innerHTML += '<div id="uploadStatus" class="imj_message"><span class="imj_messageAreaCloseBtn"  onclick="this.parentElement.style.display=\'none\';">x</span><span id="uploadStatusContent"></span></div>';
 						}
@@ -78,6 +81,7 @@
 						}
 					}
 					function addUploadStatusMessageDone(){
+						$(".loaderWrapperText").hide();
 						document.getElementById('uploadStatus').style.display='block';
 						document.getElementById('uploadStatusContent').innerHTML +=  ' #{lbl.done}!';
 					}
