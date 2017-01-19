@@ -17,8 +17,8 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
-import de.mpg.imeji.logic.vo.ContainerMetadata;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Organization;
@@ -28,7 +28,6 @@ import de.mpg.imeji.logic.vo.factory.MetadataFactory;
 import de.mpg.imeji.rest.to.AlbumTO;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.ContainerAdditionalInformationTO;
-import de.mpg.imeji.rest.to.ContainerTO;
 import de.mpg.imeji.rest.to.IdentifierTO;
 import de.mpg.imeji.rest.to.ItemTO;
 import de.mpg.imeji.rest.to.MetadataTO;
@@ -54,7 +53,11 @@ public class ReverseTransferObjectFactory {
    */
   public static void transferCollection(CollectionTO to, CollectionImeji vo, TRANSFER_MODE mode,
       User u) {
-    vo.setMetadata(transferContainerMetatadata(to, mode, u));
+    vo.setTitle(to.getTitle());
+    vo.setDescription(to.getDescription());
+    vo.setAdditionalInformations(transferAdditionalInfos(to.getAdditionalInfos()));
+    // set contributors
+    transferCollectionContributors(to.getContributors(), vo, u, mode);
   }
 
   /**
@@ -66,27 +69,13 @@ public class ReverseTransferObjectFactory {
    * @param u
    */
   public static void transferAlbum(AlbumTO to, Album vo, TRANSFER_MODE mode, User u) {
-    vo.setMetadata(transferContainerMetatadata(to, mode, u));
+    vo.setTitle(to.getTitle());
+    vo.setDescription(to.getDescription());
+    vo.setAdditionalInformations(transferAdditionalInfos(to.getAdditionalInfos()));
+    // set contributors
+    transferCollectionContributors(to.getContributors(), vo, u, mode);
   }
 
-  /**
-   * Transfer the ContainerTO into a ContainerMedatata
-   *
-   * @param to
-   * @param mode
-   * @param u
-   * @return
-   */
-  private static ContainerMetadata transferContainerMetatadata(ContainerTO to, TRANSFER_MODE mode,
-      User u) {
-    final ContainerMetadata metadata = new ContainerMetadata();
-    metadata.setTitle(to.getTitle());
-    metadata.setDescription(to.getDescription());
-    metadata.setAdditionalInformations(transferAdditionalInfos(to.getAdditionalInfos()));
-    // set contributors
-    transferCollectionContributors(to.getContributors(), metadata, u, mode);
-    return metadata;
-  }
 
   /**
    * Transfer the list of ContainerAdditionalInformationTO to List of ContainerAdditionalInfo
@@ -202,8 +191,8 @@ public class ReverseTransferObjectFactory {
   }
 
 
-  public static void transferCollectionContributors(List<PersonTO> persons,
-      ContainerMetadata metadata, User u, TRANSFER_MODE mode) {
+  public static void transferCollectionContributors(List<PersonTO> persons, Container vo, User u,
+      TRANSFER_MODE mode) {
     for (final PersonTO pTO : persons) {
       final Person person = new Person();
       person.setFamilyName(pTO.getFamilyName());
@@ -221,10 +210,10 @@ public class ReverseTransferObjectFactory {
       }
       // set organizations
       transferContributorOrganizations(pTO.getOrganizations(), person, mode);
-      metadata.getPersons().add(person);
+      vo.getPersons().add(person);
     }
 
-    if (metadata.getPersons().size() == 0 && TRANSFER_MODE.CREATE.equals(mode) && u != null) {
+    if (vo.getPersons().size() == 0 && TRANSFER_MODE.CREATE.equals(mode) && u != null) {
       final Person personU = new Person();
       final PersonTO pTo = new PersonTO();
       personU.setFamilyName(u.getPerson().getFamilyName());
@@ -238,7 +227,7 @@ public class ReverseTransferObjectFactory {
       }
       personU.setOrganizations(u.getPerson().getOrganizations());
       personU.setRole(URI.create(pTo.getRole()));
-      metadata.getPersons().add(personU);
+      vo.getPersons().add(personU);
     }
 
   }

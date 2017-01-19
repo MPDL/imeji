@@ -33,7 +33,7 @@
 			<div id="metadata" class="imj_listBody">	
 				<div id="description" class="imj_infodataSet">				
 					<h:graphicImage style="float:left; margin-right:1em;" rendered="#{cc.attrs.infoLogicBean.container.logoUrl != null}" styleClass="imj_entryPagePreviewPicture" value="#{cc.attrs.infoLogicBean.container.logoUrl.toString()}"/>
-					<h:outputText  escape="false" value="#{cc.attrs.infoLogicBean.container.metadata.description}"/>
+					<h:outputText  escape="false" value="#{cc.attrs.infoLogicBean.container.description}"/>
 				</div>
 				<br/>
 				<div class="imj_metadataSubPanel">
@@ -49,7 +49,7 @@
 						<h:outputText value="#{cc.attrs.infoLogicBean.authorsWithOrg}"/>
 					</span>
 				</div>
-				<ui:repeat var="info" value="#{cc.attrs.infoLogicBean.container.metadata.additionalInformations}">
+				<ui:repeat var="info" value="#{cc.attrs.infoLogicBean.container.additionalInformations}">
 					<div class="imj_infodataSet">
 						<span class="imj_infodataLabel">
 							<h:outputText value="#{info.label}"/>

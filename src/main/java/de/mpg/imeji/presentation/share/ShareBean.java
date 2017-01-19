@@ -13,9 +13,9 @@ import org.apache.log4j.Logger;
 import com.ocpsoft.pretty.PrettyContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.share.invitation.InvitationService;
@@ -80,7 +80,7 @@ public class ShareBean extends SuperBean implements Serializable {
           new CollectionService().retrieveLazy(uri, getSessionUser());
       if (collection != null) {
         this.shareTo = collection;
-        this.title = collection.getMetadata().getTitle();
+        this.title = collection.getTitle();
         this.owner = collection.getCreatedBy();
         this.backUrl = getNavigation().getCollectionUrl() + collection.getIdString();
         this.sharedObject = collection;

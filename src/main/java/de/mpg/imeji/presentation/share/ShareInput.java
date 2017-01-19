@@ -8,13 +8,13 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.share.invitation.Invitation;
 import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**

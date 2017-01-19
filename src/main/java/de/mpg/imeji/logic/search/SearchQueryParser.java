@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
 import de.mpg.imeji.logic.search.model.SearchGroup;

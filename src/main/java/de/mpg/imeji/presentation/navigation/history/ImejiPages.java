@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.history;
+package de.mpg.imeji.presentation.navigation.history;
 
 /**
  * Pages of imeji. This pages are used by the {@link HistoryFilter}

@@ -92,22 +92,7 @@ public class ImejiFactory {
 
   public static Album newAlbum() {
     final Album album = new Album();
-    album.setMetadata(newContainerMetadata());
     return album;
-  }
-
-  public static CollectionImeji newCollectionOld() {
-    final CollectionImeji coll = new CollectionImeji();
-    coll.setMetadata(newContainerMetadata());
-    return coll;
-  }
-
-  public static CollectionImeji newCollection(String title, String firstAuthorFamilyName,
-      String firstAuthorGivenName, String firstAuthorOrganization) {
-    final CollectionImeji coll = new CollectionImeji();
-    coll.setMetadata(newContainerMetadata(title, firstAuthorFamilyName, firstAuthorGivenName,
-        firstAuthorOrganization));
-    return coll;
   }
 
   public static ContainerMetadata newContainerMetadata() {

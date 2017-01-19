@@ -10,7 +10,7 @@ import org.mapdb.DBMaker;
 import org.mapdb.HTreeMap;
 import org.mapdb.Serializer;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStore;
 import de.mpg.imeji.logic.util.StringHelper;
 

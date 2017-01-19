@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.rest.MyApplication;
 import de.mpg.imeji.rest.version.exception.DeprecatedAPIVersionException;
 import de.mpg.imeji.rest.version.exception.UnknowAPIVersionException;

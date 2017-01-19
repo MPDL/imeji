@@ -10,7 +10,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.vo.CollectionImeji;

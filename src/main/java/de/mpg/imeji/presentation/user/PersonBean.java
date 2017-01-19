@@ -17,7 +17,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
@@ -56,8 +56,7 @@ public class PersonBean extends SuperBean implements Serializable {
     if (bean instanceof UserCreationBean) {
       ((UserCreationBean) bean).getUser().setPerson(person.clone());
     } else if (bean instanceof ContainerBean) {
-      final List<Person> l =
-          (List<Person>) ((ContainerBean) bean).getContainer().getMetadata().getPersons();
+      final List<Person> l = (List<Person>) ((ContainerBean) bean).getContainer().getPersons();
       l.set(position, person.clone());
     } else if (bean instanceof UserBean) {
       ((UserBean) bean).getUser().setPerson(person.clone());
@@ -80,8 +79,7 @@ public class PersonBean extends SuperBean implements Serializable {
           (List<Organization>) ((UserCreationBean) bean).getUser().getPerson().getOrganizations();
       l.set(positionOrga, orga);
     } else if (bean instanceof ContainerBean) {
-      final List<Person> pl =
-          (List<Person>) ((ContainerBean) bean).getContainer().getMetadata().getPersons();
+      final List<Person> pl = (List<Person>) ((ContainerBean) bean).getContainer().getPersons();
       final List<Organization> l = (List<Organization>) pl.get(positionUser).getOrganizations();
       l.set(positionOrga, orga.clone());
     } else if (bean instanceof UserBean) {

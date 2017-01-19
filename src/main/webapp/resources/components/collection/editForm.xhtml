@@ -26,7 +26,7 @@
                         <label class="imj_metadataLabel"> <h:outputText
                                 value="#{lbl.title} *" /> <span class="imj_noDisplay">: </span>
                         </label>
-                        <h:inputText id="inputTitleText" styleClass="imj_metadataValue"  value="#{cc.attrs.formularContextBean.metadata.title}" html5:autofocus="true" />
+                        <h:inputText id="inputTitleText" styleClass="imj_metadataValue"  value="#{cc.attrs.formularContextBean.title}" html5:autofocus="true" />
                     </div>
 
                     <!-- Description -->
@@ -35,14 +35,14 @@
                             <h:outputText value="#{lbl.description}" /> <span class="imj_noDisplay">:
                             </span>
                         </label>
-                        <h:inputTextarea id="inputDescription" styleClass="imj_metadataValue"  value="#{cc.attrs.formularContextBean.metadata.description}" />
+                        <h:inputTextarea id="inputDescription" styleClass="imj_metadataValue"  value="#{cc.attrs.formularContextBean.description}" />
                     </div>
 
                     <h:outputText value="* #{lbl.mandatory}" />
 
 					<h:panelGroup id="authors">
 	                    <!-- Author data -->
-	                    <ui:repeat id="persons" var="creator" value="#{cc.attrs.formularContextBean.metadata.persons}" varStatus="indexA">
+	                    <ui:repeat id="persons" var="creator" value="#{cc.attrs.formularContextBean.persons}" varStatus="indexA">
 	                        <div class="imj_authorMetadataSet">
 	                            <div class="imj_sectionHeadline">
 	                                <h4>
@@ -74,7 +74,7 @@
                              <h4><h:outputText value="#{lbl.colUtil}"/></h4>
                              <span class="imj_noDisplay">: </span>
                          </div>
-	                    <ui:repeat id="list" var="info" value="#{cc.attrs.formularContextBean.metadata.additionalInformations}" varStatus="indexA">
+	                    <ui:repeat id="list" var="info" value="#{cc.attrs.formularContextBean.additionalInformations}" varStatus="indexA">
                             <div class="imj_sectionHeadline">
                                  <!-- Add/Remove Author buttons -->
                                  <span class="imj_inlineButtonGroup">
@@ -109,7 +109,7 @@
 	                    </ui:repeat>
 	                    <div class="imj_sectionHeadline">
 	                        <span class="imj_inlineButtonGroup">
-	                            <h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.metadata.additionalInformations.size())}">
+	                            <h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.additionalInformations.size())}">
 	                                <f:ajax execute="editContainer:mediaContainerForm:additionalInfos" render="editContainer:mediaContainerForm:additionalInfos" />
 	                            </h:commandLink>
 	                        </span>

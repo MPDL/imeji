@@ -26,7 +26,7 @@
 
 	<ui:define name="actionsMenu">
 		<menu:actionItems id="actionItems" itemsBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'items' and empty SessionBean.selected}"/>
-		<menu:actionCollection id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and empty SessionBean.selected and Auth.update(paginatorListSessionBean)}"/>
+		<menu:actionCollection id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and empty SessionBean.selected}" />
 		<menu:actionSelectedItems id="actionSelectedItems" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}" />
 	</ui:define>
 	

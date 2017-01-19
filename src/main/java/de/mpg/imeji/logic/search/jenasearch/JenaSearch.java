@@ -11,7 +11,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.mpg.imeji.j2j.helper.J2JHelper;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.jenasearch.util.CollectionUtils;

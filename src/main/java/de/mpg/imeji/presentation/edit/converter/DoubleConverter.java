@@ -1,17 +1,19 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.converter;
+package de.mpg.imeji.presentation.edit.converter;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import javax.faces.convert.FacesConverter;
 
 /**
  * Converter for Double: Display NaN as empty string, and transform empty String as NaN
  *
  * @author saquet
  */
+@FacesConverter("DoubleConverter")
 public class DoubleConverter implements Converter {
   @Override
   public Object getAsObject(FacesContext arg0, UIComponent arg1, String arg2) {

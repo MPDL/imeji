@@ -83,7 +83,7 @@ public class DefaultAuthenticationTest {
     String password = generator.generatePassword();
     User user = new User();
     user.setEmail("inactive_user@unit-test-imeji.org");
-    user.setEncryptedPassword(StringHelper.convertToMD5(password));
+    user.setEncryptedPassword(StringHelper.md5(password));
     user.setPerson(ImejiFactory.newPerson("fam", "giv", "org"));
     user = controller.create(user, UserService.USER_TYPE.INACTIVE);
     Authentication simpAuth = new DefaultAuthentication(user.getEmail(), password);

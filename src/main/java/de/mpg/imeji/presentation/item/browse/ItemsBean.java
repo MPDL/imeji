@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.item;
+package de.mpg.imeji.presentation.item.browse;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import javax.faces.model.SelectItem;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -37,6 +37,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
 import de.mpg.imeji.presentation.facet.FacetsJob;
+import de.mpg.imeji.presentation.item.ThumbnailBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;

@@ -11,9 +11,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
-import de.mpg.imeji.logic.config.ImejiLicenses;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
@@ -22,6 +21,7 @@ import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -121,8 +121,7 @@ public class CollectionActionMenu implements Serializable {
     final CollectionService cc = new CollectionService();
     try {
       cc.delete(collection, user);
-      BeanHelper.info(
-          getSuccessCollectionDeleteMessage(this.collection.getMetadata().getTitle(), locale));
+      BeanHelper.info(getSuccessCollectionDeleteMessage(this.collection.getTitle(), locale));
     } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getLocalizedMessage(), locale));
       LOGGER.error("Error delete collection", e);

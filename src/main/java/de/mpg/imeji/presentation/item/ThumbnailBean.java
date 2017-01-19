@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;

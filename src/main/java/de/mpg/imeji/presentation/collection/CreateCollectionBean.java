@@ -19,8 +19,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
@@ -54,9 +54,8 @@ public class CreateCollectionBean extends CollectionBean {
   public void init() {
     vocabularyHelper = new VocabularyHelper(getLocale());
     setCollectionCreateMode(true);
-    setCollection(ImejiFactory.newCollectionOld());
-    ((List<Person>) getCollection().getMetadata().getPersons()).set(0,
-        getSessionUser().getPerson().clone());
+    setCollection(
+        ImejiFactory.newCollection().setPerson(getSessionUser().getPerson().clone()).build());
     containerEditorSession.setUploadedLogoPath(null);
   }
 
@@ -88,7 +87,7 @@ public class CreateCollectionBean extends CollectionBean {
       final CollectionService collectionController = new CollectionService();
       int pos = 0;
       // Set the position of the persons and organizations (used for the sorting later)
-      for (final Person p : getCollection().getMetadata().getPersons()) {
+      for (final Person p : getCollection().getPersons()) {
         p.setPos(pos);
         pos++;
         int pos2 = 0;

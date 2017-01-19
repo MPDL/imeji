@@ -1,10 +1,10 @@
 package de.mpg.imeji.logic.validation.impl;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.util.LicenseUtil;
 
 /**
  * {@link Validator} for an {@link Item}. Only working when {@link MetadataProfile} is passed

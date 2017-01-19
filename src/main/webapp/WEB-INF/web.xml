@@ -1,17 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- CDDL HEADER START The contents of this file are subject to the terms
-	of the Common Development and Distribution License, Version 1.0 only (the
-	"License"). You may not use this file except in compliance with the License.
-	You can obtain a copy of the license at license/ESCIDOC.LICENSE or http://www.escidoc.de/license. asasasa
-	See the License for the specific language governing permissions and limitations
-	under the License. When distributing Covered Code, include this CDDL HEADER
-	in each file and include the License file at license/ESCIDOC.LICENSE. If
-	applicable, add the following below this CDDL HEADER, with the fields enclosed
-	by brackets "[]" replaced with your own identifying information: Portions
-	Copyright [yyyy] [name of copyright owner] CDDL HEADER END Copyright 2006-2007
-	Fachinformationszentrum Karlsruhe Gesellschaft für wissenschaftlich-technische
-	Information mbH and Max-Planck- Gesellschaft zur Förderung der Wissenschaft
-	e.V. All rights reserved. Use is subject to license terms. -->
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://java.sun.com/xml/ns/javaee"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
@@ -23,37 +10,6 @@
         <load-on-startup>2</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
-    <servlet>
-        <servlet-name>Initializer Servlet</servlet-name>
-        <servlet-class>de.mpg.imeji.presentation.servlet.InitializerServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-        <async-supported>true</async-supported>
-    </servlet>
-    <servlet>
-        <servlet-name>File Servlet</servlet-name>
-        <servlet-class>de.mpg.imeji.presentation.storage.FileServlet</servlet-class>
-        <load-on-startup>3</load-on-startup>
-        <async-supported>true</async-supported>
-    </servlet>
-    <servlet>
-        <servlet-name>Data Viewer Servlet</servlet-name>
-        <servlet-class>de.mpg.imeji.presentation.servlet.DataViewerServlet</servlet-class>
-        <load-on-startup>5</load-on-startup>
-        <async-supported>true</async-supported>
-    </servlet>
-    <servlet>
-        <servlet-name>imeji SPARQL End Point</servlet-name>
-        <servlet-class>de.mpg.imeji.presentation.servlet.SPARQLEndpointServlet</servlet-class>
-        <load-on-startup>5</load-on-startup>
-        <async-supported>true</async-supported>
-    </servlet>   
-     <servlet>
-        <servlet-name>Upload Logo Servlet</servlet-name>
-        <servlet-class>de.mpg.imeji.presentation.servlet.UploadLogoServlet</servlet-class>
-        <load-on-startup>5</load-on-startup>
-        <async-supported>true</async-supported>
-    </servlet>
-
 	 
     <servlet>
         <servlet-name>imeji REST Service</servlet-name>
@@ -69,105 +25,15 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <!-- Filters (order is important) -->
-
-
-    <filter>
-        <filter-name>Encoder Filter</filter-name>
-        <filter-class>de.mpg.imeji.presentation.util.EncoderFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-     <filter>
-        <filter-name>Modus Filter</filter-name>
-        <filter-class>de.mpg.imeji.presentation.modus.ModusFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-    <filter>
-        <filter-name>Authentication Filter</filter-name>
-        <filter-class>de.mpg.imeji.presentation.authentication.AuthenticationFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-    <filter>
-        <filter-name>Content Negotiation Filter</filter-name>
-        <filter-class>de.mpg.imeji.presentation.contentNegotiation.ContentNegotiationFilter
-        </filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-    <filter>
-		<filter-name>API Version Filter</filter-name>
-		<filter-class>de.mpg.imeji.rest.version.APIVersionFilter</filter-class>
-		<async-supported>true</async-supported>
-	</filter>
-    <filter>
-        <filter-name>History Filter</filter-name>
-        <filter-class>de.mpg.imeji.presentation.history.HistoryFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-
-
     <!-- Mappings -->
-
-
-    <filter-mapping>
-        <filter-name>Encoder Filter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>Content Negotiation Filter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>Authentication Filter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-     <filter-mapping>
-        <filter-name>Modus Filter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-		<filter-name>API Version Filter</filter-name>
-		<url-pattern>/rest/*</url-pattern>
-	</filter-mapping>
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>/jsf/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>File Servlet</servlet-name>
-        <url-pattern>/file</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>File Servlet</servlet-name>
-        <url-pattern>/file/*</url-pattern>
-    </servlet-mapping>
-     <servlet-mapping>
-        <servlet-name>Upload Logo Servlet</servlet-name>
-        <url-pattern>/uploadlogo/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Data Viewer Servlet</servlet-name>
-        <url-pattern>/dataviewer</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>imeji REST Service</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>imeji SPARQL End Point</servlet-name>
-        <url-pattern>/sparql</url-pattern>
-    </servlet-mapping>
-    <filter-mapping>
-        <filter-name>History Filter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
     <!-- Pretty Faces Parameters -->
      <context-param>
         <param-name>com.ocpsoft.pretty.BASE_PACKAGES</param-name>

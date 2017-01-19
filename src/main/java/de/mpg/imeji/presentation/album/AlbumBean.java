@@ -17,7 +17,7 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.user.UserService;
@@ -88,7 +88,7 @@ public class AlbumBean extends ContainerBean {
         findItems(user, 1);
         loadItems(user, 1);
         countItems();
-        description = album.getMetadata().getDescription();
+        description = album.getDescription();
         descriptionFull = description;
         description = CommonUtils.removeTags(description);
         if (description != null && description.length() > DESCRIPTION_MAX_SIZE) {
@@ -241,7 +241,7 @@ public class AlbumBean extends ContainerBean {
   @Override
   public String getPersonString() {
     String personString = "";
-    for (final Person p : album.getMetadata().getPersons()) {
+    for (final Person p : album.getPersons()) {
       if (!"".equals(personString)) {
         personString += "; ";
       }
@@ -303,7 +303,7 @@ public class AlbumBean extends ContainerBean {
         sessionBean.deactivateAlbum();
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_delete", getLocale())
-          .replace("XXX_albumName_XXX", this.album.getMetadata().getTitle()));
+          .replace("XXX_albumName_XXX", this.album.getTitle()));
     } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_delete", getLocale()));
       BeanHelper.error(e.getMessage());
@@ -411,7 +411,7 @@ public class AlbumBean extends ContainerBean {
    */
   public String getTitle() {
     if (getContainer() != null) {
-      return getContainer().getMetadata().getTitle();
+      return getContainer().getTitle();
     }
     return null;
   }

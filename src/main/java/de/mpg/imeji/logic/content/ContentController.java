@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.service.ImejiControllerAbstract;

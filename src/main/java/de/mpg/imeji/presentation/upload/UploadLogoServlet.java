@@ -1,9 +1,10 @@
-package de.mpg.imeji.presentation.servlet;
+package de.mpg.imeji.presentation.upload;
 
 import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +27,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @author bastiens
  *
  */
+@WebServlet("/uploadlogo/*")
 public class UploadLogoServlet extends HttpServlet {
   private static final long serialVersionUID = 8271914066699208201L;
   private static final Logger LOGGER = Logger.getLogger(UploadLogoServlet.class);

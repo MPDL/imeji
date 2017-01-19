@@ -9,10 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.presentation.util.CommonUtils;
@@ -26,6 +28,8 @@ import de.mpg.imeji.presentation.util.CommonUtils;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@ManagedBean(name = "SuggestBean")
+@ViewScoped
 public class SuggestBean {
   /**
    * The current {@link Suggest}

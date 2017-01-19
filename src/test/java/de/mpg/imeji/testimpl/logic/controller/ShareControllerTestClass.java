@@ -9,8 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.share.ShareService;

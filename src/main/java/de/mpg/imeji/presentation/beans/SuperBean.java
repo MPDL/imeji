@@ -10,8 +10,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.authorization.AuthorizationBean;
-import de.mpg.imeji.presentation.history.HistorySession;
+import de.mpg.imeji.presentation.navigation.Navigation;
+import de.mpg.imeji.presentation.navigation.history.HistorySession;
 
 /**
  * This bean is a utility Bean. It can be extended to get some basic session information
@@ -31,8 +31,6 @@ public class SuperBean implements Serializable {
   private Navigation navigation;
   @ManagedProperty(value = "#{HistorySession}")
   private HistorySession history;
-  @ManagedProperty(value = "#{Auth}")
-  private AuthorizationBean auth;
 
   /**
    * Redirect to the passed url
@@ -100,18 +98,18 @@ public class SuperBean implements Serializable {
     this.locale = locale;
   }
 
-  /**
-   * @return Authentication Bean
-   */
-  public AuthorizationBean getAuth() {
-    return auth;
-  }
-
-  /**
-   *
-   * @param auth the Authentication Bean to set
-   */
-  public void setAuth(AuthorizationBean auth) {
-    this.auth = auth;
-  }
+  // /**
+  // * @return Authentication Bean
+  // */
+  // public AuthorizationBean getAuth() {
+  // return auth;
+  // }
+  //
+  // /**
+  // *
+  // * @param auth the Authentication Bean to set
+  // */
+  // public void setAuth(AuthorizationBean auth) {
+  // this.auth = auth;
+  // }
 }

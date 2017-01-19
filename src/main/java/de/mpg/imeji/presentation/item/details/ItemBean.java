@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.item;
+package de.mpg.imeji.presentation.item.details;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -23,9 +23,10 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
@@ -53,7 +54,7 @@ import de.mpg.imeji.logic.vo.TechnicalMetadata;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.history.HistoryPage;
+import de.mpg.imeji.presentation.navigation.history.HistoryPage;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
 
@@ -687,7 +688,7 @@ public class ItemBean extends SuperBean {
    * @throws IOException
    */
   public void updateRotation() throws IOException, Exception {
-    if (getAuth().update(getImage())) {
+    if (SecurityUtil.authorization().update(getSessionUser(), getImage())) {
       final StorageController storageController = new StorageController();
       final int degrees = (rotation - lastRotation + 360) % 360;
       lastRotation = rotation;

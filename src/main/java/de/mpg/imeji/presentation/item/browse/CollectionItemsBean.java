@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.collection;
+package de.mpg.imeji.presentation.item.browse;
 
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
@@ -23,8 +23,8 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.presentation.collection.CollectionActionMenu;
 import de.mpg.imeji.presentation.facet.FacetsJob;
-import de.mpg.imeji.presentation.item.ItemsBean;
 
 /**
  * {@link ItemsBean} to browse {@link Item} of a {@link CollectionImeji}

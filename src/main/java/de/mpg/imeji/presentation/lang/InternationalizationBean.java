@@ -17,8 +17,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.presentation.history.HistorySession;
+import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.presentation.navigation.history.HistorySession;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.CookieUtils;
 

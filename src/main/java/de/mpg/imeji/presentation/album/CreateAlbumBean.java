@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Person;
@@ -68,8 +68,7 @@ public class CreateAlbumBean extends AlbumBean {
   @PostConstruct
   public void init() {
     setAlbum(ImejiFactory.newAlbum());
-    ((List<Person>) getAlbum().getMetadata().getPersons()).set(0,
-        getSessionUser().getPerson().clone());
+    ((List<Person>) getAlbum().getPersons()).set(0, getSessionUser().getPerson().clone());
     containerEditorSession.setUploadedLogoPath(null);
   }
 

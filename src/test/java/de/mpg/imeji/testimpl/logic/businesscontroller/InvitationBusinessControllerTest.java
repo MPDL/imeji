@@ -9,8 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;

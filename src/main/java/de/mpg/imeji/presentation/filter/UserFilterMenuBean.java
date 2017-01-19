@@ -11,7 +11,7 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;

@@ -19,9 +19,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
 import de.mpg.imeji.logic.config.util.PropertyReader;

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.api.ProfileService;

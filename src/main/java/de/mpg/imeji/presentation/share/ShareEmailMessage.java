@@ -2,7 +2,7 @@ package de.mpg.imeji.presentation.share;
 
 import java.util.Locale;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.vo.User;

@@ -55,8 +55,8 @@ public class ViewCollectionBean extends CollectionBean {
         setSendEmailNotification(getSessionUser().getObservedCollections().contains(getId()));
       }
       if (getCollection() != null) {
-        persons = new ArrayList<Person>(getCollection().getMetadata().getPersons().size());
-        for (final Person p : getCollection().getMetadata().getPersons()) {
+        persons = new ArrayList<Person>(getCollection().getPersons().size());
+        for (final Person p : getCollection().getPersons()) {
           final List<Organization> orgs = new ArrayList<Organization>(p.getOrganizations().size());
           for (final Organization o : p.getOrganizations()) {
             orgs.add(o);
@@ -64,7 +64,7 @@ public class ViewCollectionBean extends CollectionBean {
           p.setOrganizations(orgs);
           persons.add(p);
         }
-        getCollection().getMetadata().setPersons(persons);
+        getCollection().setPersons(persons);
         setActionMenu(new CollectionActionMenu(getCollection(), getSessionUser(), getLocale()));
       }
     } catch (final ImejiException e) {
@@ -86,14 +86,13 @@ public class ViewCollectionBean extends CollectionBean {
   }
 
   public String getSmallDescription() {
-    if (this.getCollection() == null
-        || this.getCollection().getMetadata().getDescription() == null) {
+    if (this.getCollection() == null || this.getCollection().getDescription() == null) {
       return "No Description";
     }
-    if (this.getCollection().getMetadata().getDescription().length() > 100) {
-      return this.getCollection().getMetadata().getDescription().substring(0, 100) + "...";
+    if (this.getCollection().getDescription().length() > 100) {
+      return this.getCollection().getDescription().substring(0, 100) + "...";
     } else {
-      return this.getCollection().getMetadata().getDescription();
+      return this.getCollection().getDescription();
     }
   }
 

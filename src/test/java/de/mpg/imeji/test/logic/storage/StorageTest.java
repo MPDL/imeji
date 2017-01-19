@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.storage.Storage;

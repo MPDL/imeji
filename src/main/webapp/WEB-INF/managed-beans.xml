@@ -1,56 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- CDDL HEADER START The contents of this file are subject to the terms 
-	of the Common Development and Distribution License, Version 1.0 only (the 
-	"License"). You may not use this file except in compliance with the License. 
-	You can obtain a copy of the license at license/ESCIDOC.LICENSE or http://www.escidoc.de/license. 
-	See the License for the specific language governing permissions and limitations 
-	under the License. When distributing Covered Code, include this CDDL HEADER 
-	in each file and include the License file at license/ESCIDOC.LICENSE. If 
-	applicable, add the following below this CDDL HEADER, with the fields enclosed 
-	by brackets "[]" replaced with your own identifying information: Portions 
-	Copyright [yyyy] [name of copyright owner] CDDL HEADER END Copyright 2006-2009 
-	Fachinformationszentrum Karlsruhe Gesellschaft für wissenschaftlich-technische 
-	Information mbH and Max-Planck- Gesellschaft zur Förderung der Wissenschaft 
-	e.V. All rights reserved. Use is subject to license terms. -->
 <faces-config xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
 	version="2.0">
-
-	<!-- Collections Bean -->
-	<managed-bean>
-		<managed-bean-name>CollectionSession</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.collection.CollectionSessionBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<!-- Other Beans -->
-	<managed-bean>
-		<managed-bean-name>HistorySession</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.history.HistorySession</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>Navigation</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.beans.Navigation</managed-bean-class>
-		<managed-bean-scope>application</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>StaticContent</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.beans.StaticContentBean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>AdminBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.admin.AdminBean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>SuggestBean</managed-bean-name>
-		<managed-bean-class>de.mpg.imeji.presentation.metadata.util.SuggestBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<converter>
-		<converter-id>DoubleConverter</converter-id>
-		<converter-class>de.mpg.imeji.presentation.converter.DoubleConverter</converter-class>
-	</converter>
 </faces-config>

@@ -43,10 +43,12 @@ public class ShareUtil {
     for (final String grantString : user.getGrants()) {
       try {
         final Grant grant = new Grant(grantString);
-        final CollectionImeji col =
-            collectionController.retrieveLazy(URI.create(grant.getGrantFor()), sessionUser);
-        roles.add(new ShareListItem(user, col.getId().toString(), col.getMetadata().getTitle(),
-            sessionUser, locale, false));
+        if (grant.getGrantFor().contains("/collection/")) {
+          final CollectionImeji col =
+              collectionController.retrieveLazy(URI.create(grant.getGrantFor()), sessionUser);
+          roles.add(new ShareListItem(user, col.getId().toString(), col.getTitle(), sessionUser,
+              locale, false));
+        }
       } catch (final Exception e) {
         LOGGER.error("Error reading grants of user ", e);
       }
@@ -69,8 +71,8 @@ public class ShareUtil {
         final Grant grant = new Grant(grantString);
         final CollectionImeji col =
             collectionController.retrieveLazy(URI.create(grant.getGrantFor()), sessionUser);
-        roles.add(new ShareListItem(group, col.getId().toString(), col.getMetadata().getTitle(),
-            sessionUser, locale));
+        roles.add(
+            new ShareListItem(group, col.getId().toString(), col.getTitle(), sessionUser, locale));
       } catch (final Exception e) {
         LOGGER.error("Error reading grants of user ", e);
       }

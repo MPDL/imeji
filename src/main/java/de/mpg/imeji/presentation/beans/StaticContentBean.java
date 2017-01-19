@@ -9,7 +9,10 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import de.mpg.imeji.logic.Imeji;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 
 /**
@@ -17,6 +20,8 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
  *
  * @author saquet
  */
+@ManagedBean(name = "StaticContent")
+@RequestScoped
 public class StaticContentBean {
 
   /**

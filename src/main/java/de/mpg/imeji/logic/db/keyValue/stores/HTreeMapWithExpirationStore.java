@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**

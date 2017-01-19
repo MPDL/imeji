@@ -15,7 +15,7 @@ import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.j2j.transaction.CRUDTransaction;
 import de.mpg.imeji.j2j.transaction.CRUDTransaction.CRUDTransactionType;
 import de.mpg.imeji.j2j.transaction.Transaction;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.writer.JenaWriter;
 import de.mpg.imeji.logic.vo.User;
 

@@ -12,7 +12,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.transaction.SPARQLUpdateTransaction;
 import de.mpg.imeji.j2j.transaction.SearchTransaction;
 import de.mpg.imeji.j2j.transaction.ThreadedTransaction;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 
 /**
  * Manage search (sparql) transaction

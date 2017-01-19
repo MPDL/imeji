@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.servlet;
+package de.mpg.imeji.presentation.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,15 +12,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.lf5.util.StreamUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.ReadMaxPlanckIPMappingJob;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.init.ImejiInitializer;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.util.IdentifierUtil;
@@ -31,6 +32,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  *
  * @author saquet
  */
+@WebServlet(value = "/initialize", loadOnStartup = 0)
 public class InitializerServlet extends HttpServlet {
   private static final long serialVersionUID = -3826737851602585061L;
   private static final Logger LOGGER = Logger.getLogger(InitializerServlet.class);

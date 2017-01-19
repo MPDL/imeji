@@ -8,8 +8,8 @@ import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -238,7 +238,7 @@ public class EmailMessages {
         .replace("XXX_USER_NAME_XXX", to.getPerson().getCompleteName())
         .replace("XXX_ITEM_ID_XXX", ObjectHelper.getId(item.getId()))
         .replace("XXX_ITEM_LINK_XXX", item.getId().toString())
-        .replace("XXX_COLLECTION_NAME_XXX", c.getMetadata().getTitle())
+        .replace("XXX_COLLECTION_NAME_XXX", c.getTitle())
         .replace("XXX_COLLECTION_LINK_XXX", c.getId().toString())
         .replace("XXX_ACTOR_NAME_XXX",
             (actor != null ? actor.getPerson().getCompleteName() : "non_logged_in_user"))

@@ -12,9 +12,9 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.QuotaExceededException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.collection.CollectionService.MetadataProfileCreationMethod;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;

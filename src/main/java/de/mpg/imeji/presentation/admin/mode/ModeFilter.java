@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.modus;
+package de.mpg.imeji.presentation.admin.mode;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -6,30 +6,33 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Map;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ocpsoft.pretty.PrettyContext;
 
-import de.mpg.imeji.logic.Imeji;
-import de.mpg.imeji.presentation.beans.Navigation;
-import de.mpg.imeji.presentation.history.HistoryUtil;
+import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.presentation.navigation.Navigation;
+import de.mpg.imeji.presentation.navigation.history.HistoryUtil;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.ServletUtil;
 
 /**
- * Filter for imeji Modus
+ * Filter for imeji mode (private/normal)
  *
  * @author bastiens
  *
  */
-public class ModusFilter implements Filter {
+@WebFilter(urlPatterns = "/*", dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD})
+public class ModeFilter implements Filter {
   private static final Navigation navigation = new Navigation();
   private static final String REDIRECT_AFTER_LOGIN_PARAM = "redirectAfterLogin";
 

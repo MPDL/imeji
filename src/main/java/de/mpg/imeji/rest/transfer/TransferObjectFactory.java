@@ -109,10 +109,10 @@ public class TransferObjectFactory {
    */
   private static void transferContainer(Container vo, ContainerTO to) {
     transferProperties(vo, to);
-    to.setTitle(vo.getMetadata().getTitle());
-    to.setDescription(vo.getMetadata().getDescription());
-    to.setAdditionalInfos(transferAdditionalInfos(vo.getMetadata().getAdditionalInformations()));
-    for (final Person p : vo.getMetadata().getPersons()) {
+    to.setTitle(vo.getTitle());
+    to.setDescription(vo.getDescription());
+    to.setAdditionalInfos(transferAdditionalInfos(vo.getAdditionalInformations()));
+    for (final Person p : vo.getPersons()) {
       final PersonTO pto = new PersonTO();
       transferPerson(p, pto);
       to.getContributors().add(pto);

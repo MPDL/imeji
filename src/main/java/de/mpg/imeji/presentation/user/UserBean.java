@@ -21,9 +21,9 @@ import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.share.ShareService;
@@ -80,8 +80,6 @@ public class UserBean extends SuperBean {
       newPassword = null;
       repeatedPassword = null;
       retrieveUser();
-      new ShareService().shareSysAdmin(user, user);
-      retrieveUser();
       if (user != null) {
         this.roles = ShareUtil.getAllRoles(user, getSessionUser(), getLocale());
         this.setEdit(false);
@@ -120,7 +118,7 @@ public class UserBean extends SuperBean {
   public void changePassword() throws ImejiException {
     if (user != null && newPassword != null && !"".equals(newPassword)) {
       if (newPassword.equals(repeatedPassword)) {
-        user.setEncryptedPassword(StringHelper.convertToMD5(newPassword));
+        user.setEncryptedPassword(StringHelper.md5(newPassword));
         updateUser();
         BeanHelper
             .info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));

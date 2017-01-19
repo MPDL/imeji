@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.config;
+package de.mpg.imeji.logic.vo;
 
 /**
  * List of predefined licenses for imeji

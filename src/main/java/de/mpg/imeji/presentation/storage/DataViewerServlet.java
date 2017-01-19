@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.servlet;
+package de.mpg.imeji.presentation.storage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +25,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.impl.InternalStorage;
@@ -34,13 +35,13 @@ import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
- * SErvlet to call Data viewer service
+ * Servlet to call Data viewer service
  *
  * @author saquet
  *
  */
+@WebServlet("/dataviewer")
 public class DataViewerServlet extends HttpServlet {
-
   private static final long serialVersionUID = -4602021617386831403L;
   private static final Logger LOGGER = Logger.getLogger(DataViewerServlet.class);
 

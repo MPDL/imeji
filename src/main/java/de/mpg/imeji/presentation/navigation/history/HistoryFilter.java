@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.history;
+package de.mpg.imeji.presentation.navigation.history;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -14,6 +14,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
+import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -21,6 +22,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
@@ -34,8 +36,8 @@ import com.ocpsoft.pretty.PrettyContext;
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.presentation.beans.Navigation;
 import de.mpg.imeji.presentation.lang.InternationalizationBean;
+import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.ServletUtil;
 
@@ -46,6 +48,9 @@ import de.mpg.imeji.presentation.util.ServletUtil;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+
+@WebFilter(urlPatterns = "/*", dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD},
+    asyncSupported = true)
 public class HistoryFilter implements Filter {
   private FilterConfig filterConfig = null;
   private static final Logger LOGGER = Logger.getLogger(HistoryFilter.class);

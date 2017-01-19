@@ -14,7 +14,7 @@ import java.util.Properties;
 
 import javax.faces.model.SelectItem;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 
 /**

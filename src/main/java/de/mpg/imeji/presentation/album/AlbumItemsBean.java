@@ -14,7 +14,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -25,7 +25,7 @@ import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.presentation.item.ItemsBean;
+import de.mpg.imeji.presentation.item.browse.ItemsBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
 
@@ -255,7 +255,7 @@ public class AlbumItemsBean extends ItemsBean {
         getSessionBean().deactivateAlbum();
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_album_delete", getLocale())
-          .replace("XXX_albumName_XXX", this.album.getMetadata().getTitle()));
+          .replace("XXX_albumName_XXX", this.album.getTitle()));
     } catch (final Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_album_delete", getLocale()));
       BeanHelper.error(e.getMessage());

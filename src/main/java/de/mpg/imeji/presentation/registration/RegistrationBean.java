@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.registration.Registration;
 import de.mpg.imeji.logic.registration.RegistrationBusinessController;
 import de.mpg.imeji.logic.share.email.EmailMessages;

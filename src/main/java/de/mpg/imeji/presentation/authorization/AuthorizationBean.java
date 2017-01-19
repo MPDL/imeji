@@ -7,10 +7,7 @@ import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.logic.authorization.Authorization;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.album.AlbumBean;
-import de.mpg.imeji.presentation.collection.CollectionListItem;
-import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
+import de.mpg.imeji.presentation.beans.SuperBean;
 
 /**
  * JSF Bean for imeji authorization. Can be call in the xhtml pages by: <br/>
@@ -25,14 +22,59 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 @ManagedBean(name = "Auth")
 @ViewScoped
-public class AuthorizationBean implements Serializable {
+public class AuthorizationBean extends SuperBean implements Serializable {
   private static final long serialVersionUID = 4905896901833448372L;
   private final Authorization authorization = new Authorization();
-  private User sessionUser;
+  private boolean read = false;
+  private boolean update = false;
+  private boolean admin = false;
+  private boolean sysadmin = false;
+  private boolean createCollection = false;
 
-  public AuthorizationBean() {
-    this.sessionUser = ((SessionBean) BeanHelper.getSessionBean(SessionBean.class)).getUser();
+  public void init() {
+    sysadmin = isSysAdmin(getSessionUser());
+    System.out.println(sysadmin);
+    createCollection = createCollection(getSessionUser());
   }
+
+  /**
+   * Initialize the authorization for one object (better performance than calling each time the
+   * Authorization)
+   * 
+   * @param obj
+   */
+  public void init(Object obj) {
+    read = read(obj);
+    update = update(obj);
+    admin = admin(obj);
+  }
+
+  /**
+   * @return the read
+   */
+  public boolean isRead() {
+    return read;
+  }
+
+
+
+  /**
+   * @return the update
+   */
+  public boolean isUpdate() {
+    return update;
+  }
+
+
+
+  /**
+   * @return the admin
+   */
+  public boolean isAdmin() {
+    return admin;
+  }
+
+
 
   /**
    * True if the {@link User} can read the object
@@ -42,7 +84,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean read(User user, Object obj) {
-    return authorization.read(user, extractVO(obj));
+    return authorization.read(user, obj);
   }
 
   /**
@@ -53,7 +95,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean update(User user, Object obj) {
-    return authorization.update(user, extractVO(obj));
+    return authorization.update(user, obj);
   }
 
   /**
@@ -64,7 +106,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean delete(User user, Object obj) {
-    return authorization.delete(user, extractVO(obj));
+    return authorization.delete(user, obj);
   }
 
   /**
@@ -75,7 +117,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean admin(User user, Object obj) {
-    return authorization.administrate(user, extractVO(obj));
+    return authorization.administrate(user, obj);
   }
 
   /**
@@ -86,7 +128,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean read(Object obj) {
-    return authorization.read(sessionUser, extractVO(obj));
+    return authorization.read(getSessionUser(), obj);
   }
 
   /**
@@ -97,7 +139,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean create(Object obj) {
-    return authorization.create(sessionUser, extractVO(obj));
+    return authorization.create(getSessionUser(), obj);
   }
 
   /**
@@ -108,7 +150,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean update(Object obj) {
-    return authorization.update(sessionUser, extractVO(obj));
+    return authorization.update(getSessionUser(), obj);
   }
 
   /**
@@ -119,7 +161,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean delete(Object obj) {
-    return authorization.delete(sessionUser, extractVO(obj));
+    return authorization.delete(getSessionUser(), obj);
   }
 
   /**
@@ -130,7 +172,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean admin(Object obj) {
-    return authorization.administrate(sessionUser, extractVO(obj));
+    return authorization.administrate(getSessionUser(), obj);
   }
 
 
@@ -144,7 +186,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean isSysAdmin() {
-    return authorization.isSysAdmin(sessionUser);
+    return sysadmin;
   }
 
   /**
@@ -174,7 +216,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean isCreateCollection() {
-    return authorization.hasCreateCollectionGrant(getSessionUser());
+    return createCollection;
   }
 
   /**
@@ -183,37 +225,7 @@ public class AuthorizationBean implements Serializable {
    * @return
    */
   public boolean isLoggedIn() {
-    return sessionUser != null;
-  }
-
-  /**
-   * @return the sessionUser
-   */
-  public User getSessionUser() {
-    return sessionUser;
-  }
-
-  /**
-   * @param sessionUser the sessionUser to set
-   */
-  public void setSessionUser(User sessionUser) {
-    this.sessionUser = sessionUser;
-  }
-
-  /**
-   * Extract the VO out of the object, to be abble to use {@link Authorization}
-   *
-   * @param obj
-   * @return
-   */
-  private Object extractVO(Object obj) {
-    if (obj instanceof CollectionListItem) {
-      return ((CollectionListItem) obj).getCollection();
-    }
-    if (obj instanceof AlbumBean) {
-      return ((AlbumBean) obj).getAlbum();
-    }
-    return obj;
+    return getSessionUser() != null;
   }
 
 }

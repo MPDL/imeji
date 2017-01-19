@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.search.Search;

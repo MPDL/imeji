@@ -3,10 +3,10 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Metadata;
+import de.mpg.imeji.logic.vo.util.LicenseUtil;
 
 /**
  * The object which is indexed in Elastic search <br/>

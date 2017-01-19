@@ -11,7 +11,7 @@ import javax.faces.event.ValueChangeEvent;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -20,7 +20,7 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.ContainerBean.CONTAINER_TYPE;
-import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.CommonUtils;
 
@@ -60,13 +60,13 @@ public class CollectionListItem implements Serializable {
   public CollectionListItem(CollectionImeji collection, User user) {
     try {
       this.collection = collection;
-      title = collection.getMetadata().getTitle();
-      description = CommonUtils.removeTags(collection.getMetadata().getDescription());
+      title = collection.getTitle();
+      description = CommonUtils.removeTags(collection.getDescription());
       descriptionFull = description;
       if (description != null && description.length() > DESCRIPTION_MAX_SIZE) {
         description = description.substring(0, DESCRIPTION_MAX_SIZE) + "...";
       }
-      for (final Person p : collection.getMetadata().getPersons()) {
+      for (final Person p : collection.getPersons()) {
         if (!"".equals(authors)) {
           authors += "; ";
         }

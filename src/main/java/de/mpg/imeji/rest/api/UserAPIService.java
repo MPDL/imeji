@@ -1,6 +1,6 @@
 package de.mpg.imeji.rest.api;
 
-import static de.mpg.imeji.logic.Imeji.adminUser;
+import static de.mpg.imeji.logic.config.Imeji.adminUser;
 
 import java.net.URI;
 import java.util.List;
@@ -9,8 +9,8 @@ import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;

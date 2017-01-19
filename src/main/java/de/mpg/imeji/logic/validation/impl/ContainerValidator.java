@@ -23,17 +23,17 @@ public abstract class ContainerValidator extends ObjectValidator {
     if (isDelete()) {
       return;
     }
-    if (StringHelper.hasInvalidTags(c.getMetadata().getDescription())) {
+    if (StringHelper.hasInvalidTags(c.getDescription())) {
       setException(new UnprocessableError("error_bad_format_description", getException()));
     }
-    if (isNullOrEmpty(c.getMetadata().getTitle().trim())) {
+    if (isNullOrEmpty(c.getTitle().trim())) {
       setException(new UnprocessableError("error_collection_need_title", getException()));
     }
     validateAdditionalInfos(c);
   }
 
   private void validateAdditionalInfos(Container c) {
-    for (final ContainerAdditionalInfo info : c.getMetadata().getAdditionalInformations()) {
+    for (final ContainerAdditionalInfo info : c.getAdditionalInformations()) {
       if (isNullOrEmpty(info.getLabel())) {
         setException(new UnprocessableError("error_additionalinfo_need_label", getException()));
       }

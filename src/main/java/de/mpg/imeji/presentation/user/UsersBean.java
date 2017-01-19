@@ -15,8 +15,8 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.PasswordGenerator;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.registration.RegistrationBusinessController;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
@@ -115,7 +115,7 @@ public class UsersBean extends SuperBean {
     try {
       final User user = controller.retrieve(email, getSessionUser());
       final String newPassword = generator.generatePassword();
-      user.setEncryptedPassword(StringHelper.convertToMD5(newPassword));
+      user.setEncryptedPassword(StringHelper.md5(newPassword));
       controller.update(user, getSessionUser());
       sendEmail(email, newPassword, user.getPerson().getCompleteName());
       BeanHelper

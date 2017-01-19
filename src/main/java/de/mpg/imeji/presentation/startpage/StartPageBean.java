@@ -9,7 +9,7 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;

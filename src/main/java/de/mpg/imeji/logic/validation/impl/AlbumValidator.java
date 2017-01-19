@@ -30,7 +30,7 @@ public class AlbumValidator extends ContainerValidator implements Validator<Albu
 
     final List<Person> pers = new ArrayList<Person>();
 
-    for (final Person c : album.getMetadata().getPersons()) {
+    for (final Person c : album.getPersons()) {
       final List<Organization> orgs = new ArrayList<Organization>();
       for (final Organization o : c.getOrganizations()) {
         if (!isNullOrEmpty(o.getName().trim())) {

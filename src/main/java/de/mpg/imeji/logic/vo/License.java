@@ -6,7 +6,6 @@ import java.net.URI;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
-import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.util.DateHelper;
 

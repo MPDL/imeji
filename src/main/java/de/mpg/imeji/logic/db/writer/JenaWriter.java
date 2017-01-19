@@ -14,7 +14,7 @@ import de.mpg.imeji.j2j.transaction.CRUDTransaction;
 import de.mpg.imeji.j2j.transaction.CRUDTransaction.CRUDTransactionType;
 import de.mpg.imeji.j2j.transaction.ThreadedTransaction;
 import de.mpg.imeji.j2j.transaction.Transaction;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.JenaReader;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;

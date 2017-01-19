@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.item;
+package de.mpg.imeji.presentation.item.details;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -22,7 +22,8 @@ import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.item.browse.ItemsBean;
+import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.CookieUtils;
 

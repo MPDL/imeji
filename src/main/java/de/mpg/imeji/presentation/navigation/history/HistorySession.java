@@ -1,12 +1,14 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.history;
+package de.mpg.imeji.presentation.navigation.history;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.SessionScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpServletRequest;
 
 import de.mpg.imeji.presentation.util.ServletUtil;
@@ -18,6 +20,8 @@ import de.mpg.imeji.presentation.util.ServletUtil;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@ManagedBean(name = "HistorySession")
+@SessionScoped
 public class HistorySession implements Serializable {
   private static final long serialVersionUID = 28762010528555885L;
   /**

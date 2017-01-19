@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.history;
+package de.mpg.imeji.presentation.navigation.history;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;

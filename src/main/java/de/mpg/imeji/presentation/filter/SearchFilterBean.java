@@ -7,7 +7,7 @@ import javax.faces.bean.ViewScoped;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.history.HistoryPage;
+import de.mpg.imeji.presentation.navigation.history.HistoryPage;
 
 @ManagedBean(name = "SearchFilterBean")
 @ViewScoped

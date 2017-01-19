@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.NotAllowedError;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Grant;
@@ -51,9 +51,8 @@ public class Authorization implements Serializable {
    * @return
    */
   public boolean isSysAdmin(User user) {
-    return true;
-    // return user != null && hasGrant(user.getGrants(),
-    // new Grant(GrantType.ADMIN, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI));
+    return user != null && hasGrant(user.getGrants(),
+        new Grant(GrantType.ADMIN, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI));
   }
 
   /**

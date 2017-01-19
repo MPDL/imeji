@@ -48,7 +48,7 @@ public class StringHelper {
    * @throws UnsupportedEncodingException
    * @throws Exception
    */
-  public static String convertToMD5(String pass) throws ImejiException {
+  public static String md5(String pass) throws ImejiException {
     try {
       final MessageDigest dig = MessageDigest.getInstance("MD5");
       dig.update(pass.getBytes("UTF-8"));

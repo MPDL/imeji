@@ -40,7 +40,6 @@ public class Properties implements Serializable {
   private URI status = URI.create(Status.PENDING.getUriString());
   @j2jLiteral(ImejiNamespaces.DISCARD_COMMENT)
   private String discardComment;
-
   private static final Logger LOGGER = Logger.getLogger(Properties.class);
 
   @XmlEnum(String.class)

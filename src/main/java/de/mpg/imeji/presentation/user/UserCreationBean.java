@@ -14,8 +14,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.PasswordGenerator;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.user.UserService;
@@ -92,7 +92,7 @@ public class UserCreationBean extends SuperBean {
     final UserService uc = new UserService();
     final PasswordGenerator generator = new PasswordGenerator();
     final String password = generator.generatePassword();
-    user.setEncryptedPassword(StringHelper.convertToMD5(password));
+    user.setEncryptedPassword(StringHelper.md5(password));
     user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
     uc.create(user, allowedToCreateCollection ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED);
     return password;

@@ -1,6 +1,6 @@
 package de.mpg.imeji.testimpl.logic.controller;
 
-import static de.mpg.imeji.logic.Imeji.adminUser;
+import static de.mpg.imeji.logic.config.Imeji.adminUser;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;

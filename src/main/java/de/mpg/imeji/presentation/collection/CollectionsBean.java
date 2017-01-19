@@ -14,8 +14,8 @@ import javax.faces.bean.ViewScoped;
 
 import com.hp.hpl.jena.sparql.pfunction.library.container;
 
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;

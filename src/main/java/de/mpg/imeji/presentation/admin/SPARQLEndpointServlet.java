@@ -1,8 +1,9 @@
-package de.mpg.imeji.presentation.servlet;
+package de.mpg.imeji.presentation.admin;
 
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,8 +21,8 @@ import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 import com.hp.hpl.jena.tdb.TDB;
 
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
@@ -30,13 +31,9 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @author saquet
  *
  */
+@WebServlet("/sparql")
 public class SPARQLEndpointServlet extends HttpServlet {
-
   private static final Logger LOGGER = Logger.getLogger(SPARQLEndpointServlet.class);
-
-  /**
-   *
-   */
   private static final long serialVersionUID = 2718460776590689258L;
 
   @Override

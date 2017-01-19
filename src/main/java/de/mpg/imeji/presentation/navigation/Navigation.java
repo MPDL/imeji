@@ -1,13 +1,16 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.beans;
+package de.mpg.imeji.presentation.navigation;
 
 import java.io.Serializable;
 
+import javax.faces.bean.ApplicationScoped;
+import javax.faces.bean.ManagedBean;
+
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.util.StringHelper;
 
@@ -19,6 +22,8 @@ import de.mpg.imeji.logic.util.StringHelper;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@ManagedBean(name = "Navigation")
+@ApplicationScoped
 public class Navigation implements Serializable {
   private static final Logger LOGGER = Logger.getLogger(Navigation.class);
   private static final long serialVersionUID = -4318697194892200726L;

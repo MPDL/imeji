@@ -10,7 +10,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;

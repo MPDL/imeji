@@ -26,7 +26,7 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 
 /**
  * Client to send email

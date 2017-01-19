@@ -37,7 +37,7 @@ import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.notification.NotificationUtils;
 import de.mpg.imeji.presentation.session.SessionBean;
 
-@WebServlet("/exportServlet")
+@WebServlet(urlPatterns = "/exportServlet", asyncSupported = true)
 public class ExportServlet extends HttpServlet {
   private static final long serialVersionUID = -777947169051357999L;
   private static final Logger LOGGER = Logger.getLogger(ExportServlet.class);

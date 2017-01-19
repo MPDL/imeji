@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.collection;
+package de.mpg.imeji.presentation.item.details;
 
 import java.io.IOException;
 
@@ -13,8 +13,6 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.presentation.item.ItemBean;
-import de.mpg.imeji.presentation.item.ItemDetailsBrowse;
 
 /**
  * Bean for the detail item page when viewed within a collection

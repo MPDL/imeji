@@ -3,7 +3,6 @@
  */
 package de.mpg.imeji.logic.vo;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
 
@@ -22,23 +21,12 @@ import de.mpg.imeji.j2j.annotations.j2jResource;
  */
 @j2jResource("http://imeji.org/terms/container")
 @j2jId(getMethod = "getId", setMethod = "setId")
-public abstract class Container extends Properties implements Serializable {
+public abstract class Container extends BasisMetadata {
   private static final long serialVersionUID = -5314334939747696614L;
-  @j2jResource("http://imeji.org/terms/container/metadata")
-  private ContainerMetadata metadata = new ContainerMetadata();
   @j2jLiteral("http://imeji.org/terms/doi")
   private String doi;
   @j2jResource("http://imeji.org/terms/logoUrl")
   private URI logoUrl;
-
-
-  public void setMetadata(ContainerMetadata metadata) {
-    this.metadata = metadata;
-  }
-
-  public ContainerMetadata getMetadata() {
-    return metadata;
-  }
 
   public abstract void setImages(Collection<URI> images);
 

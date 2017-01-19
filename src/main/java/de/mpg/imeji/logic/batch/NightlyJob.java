@@ -2,7 +2,7 @@ package de.mpg.imeji.logic.batch;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.executors.NightlyExecutor;
 
 /**

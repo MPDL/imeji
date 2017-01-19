@@ -24,7 +24,7 @@ import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -35,6 +35,9 @@ import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchOperators;
+import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -42,7 +45,6 @@ import de.mpg.imeji.logic.service.SearchServiceAbstract;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
-import de.mpg.imeji.logic.util.LicenseUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
@@ -54,6 +56,7 @@ import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.logic.vo.util.LicenseUtil;
 
 /**
  * Implements CRUD and Search methods for {@link Item}
@@ -398,7 +401,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public void delete(List<Item> items, User user) throws ImejiException {
-    itemController.delete((Item) items, user);
+    itemController.deleteBatch(items, user);
     for (final Item item : items) {
       removeFileFromStorage(item);
     }
@@ -720,9 +723,10 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @return
    */
   private boolean checksumExistsInCollection(URI collectionId, String checksum) {
-    final Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
-    return s.searchString(JenaCustomQueries.selectItemByChecksum(collectionId, checksum), null,
-        null, 0, -1).getNumberOfRecords() > 0;
+    final SearchQuery q = SearchQuery.toSearchQuery(
+        new SearchPair(SearchFields.checksum, SearchOperators.EQUALS, checksum, false));
+    return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1)
+        .getNumberOfRecords() > 0;
   }
 
 

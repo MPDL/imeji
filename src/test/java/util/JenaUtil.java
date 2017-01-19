@@ -17,8 +17,8 @@ import com.hp.hpl.jena.tdb.sys.SystemTDB;
 import com.hp.hpl.jena.tdb.sys.TDBMaker;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.init.ImejiInitializer;
@@ -154,7 +154,7 @@ public class JenaUtil {
     userPerson.setOrganizations(orgCol);
     user.setPerson(userPerson);
     user.setQuota(Long.MAX_VALUE);
-    user.setEncryptedPassword(StringHelper.convertToMD5(pwd));
+    user.setEncryptedPassword(StringHelper.md5(pwd));
     user.setGrants(AuthorizationPredefinedRoles.defaultUser(user.getId().toString()));
     return user;
   }

@@ -41,7 +41,7 @@ import com.hp.hpl.jena.sparql.pfunction.library.container;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.UrlHelper;

@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
@@ -158,7 +158,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
         setItems((List<Item>) ic.retrieveBatchLazy(uris, size, 0, user));
       } catch (ImejiException e) {
         LOGGER.error("Error loading items of container");
-        BeanHelper.error("Error reading items of " + getContainer().getMetadata().getTitle());
+        BeanHelper.error("Error reading items of " + getContainer().getTitle());
       }
     }
   }
@@ -191,7 +191,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    */
   public String getPersonString() {
     String personString = "";
-    for (final Person p : getContainer().getMetadata().getPersons()) {
+    for (final Person p : getContainer().getPersons()) {
       if (!"".equalsIgnoreCase(personString)) {
         personString += ", ";
       }
@@ -205,7 +205,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    */
   public String getAuthorsWithOrg() {
     String personString = "";
-    for (final Person p : getContainer().getMetadata().getPersons()) {
+    for (final Person p : getContainer().getPersons()) {
       if (!"".equalsIgnoreCase(personString)) {
         personString += ", ";
       }
@@ -219,8 +219,8 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
 
   public String getCitation() {
     final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
-    return getAuthorsWithOrg() + ". " + getContainer().getMetadata().getTitle() + ". <a href=\""
-        + url + "\">" + url + "</a>";
+    return getAuthorsWithOrg() + ". " + getContainer().getTitle() + ". <a href=\"" + url + "\">"
+        + url + "</a>";
   }
 
   /**
@@ -239,8 +239,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @param pos
    */
   public void addAdditionalInfo(int pos) {
-    getContainer().getMetadata().getAdditionalInformations().add(pos,
-        new ContainerAdditionalInfo("", "", ""));
+    getContainer().getAdditionalInformations().add(pos, new ContainerAdditionalInfo("", "", ""));
   }
 
   /**
@@ -249,7 +248,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @param pos
    */
   public void removeAdditionalInfo(int pos) {
-    getContainer().getMetadata().getAdditionalInformations().remove(pos);
+    getContainer().getAdditionalInformations().remove(pos);
   }
 
   /**
@@ -259,7 +258,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   public String addAuthor(int authorPosition) {
-    final List<Person> c = (List<Person>) getContainer().getMetadata().getPersons();
+    final List<Person> c = (List<Person>) getContainer().getPersons();
     final Person p = ImejiFactory.newPerson();
     p.setPos(authorPosition + 1);
     c.add(authorPosition + 1, p);
@@ -272,7 +271,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   public String removeAuthor(int authorPosition) {
-    final List<Person> c = (List<Person>) getContainer().getMetadata().getPersons();
+    final List<Person> c = (List<Person>) getContainer().getPersons();
     if (c.size() > 1) {
       c.remove(authorPosition);
     } else {
@@ -289,7 +288,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   public String addOrganization(int authorPosition, int organizationPosition) {
-    final List<Person> persons = (List<Person>) getContainer().getMetadata().getPersons();
+    final List<Person> persons = (List<Person>) getContainer().getPersons();
     final List<Organization> orgs =
         (List<Organization>) persons.get(authorPosition).getOrganizations();
     final Organization o = ImejiFactory.newOrganization();
@@ -304,7 +303,7 @@ public abstract class ContainerBean extends SuperBean implements Serializable {
    * @return
    */
   public String removeOrganization(int authorPosition, int organizationPosition) {
-    final List<Person> persons = (List<Person>) getContainer().getMetadata().getPersons();
+    final List<Person> persons = (List<Person>) getContainer().getPersons();
     final List<Organization> orgs =
         (List<Organization>) persons.get(authorPosition).getOrganizations();
     if (orgs.size() > 1) {

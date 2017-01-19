@@ -10,8 +10,8 @@ import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.util.PasswordGenerator;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.db.keyValue.stores.HTreeMapStore;
 import de.mpg.imeji.logic.user.UserService;
@@ -84,7 +84,7 @@ public class RegistrationBusinessController {
       throw new AlreadyExistsException(user.getEmail() + " has already an account");
     }
     final String password = new PasswordGenerator().generatePassword();
-    user.setEncryptedPassword(StringHelper.convertToMD5(password));
+    user.setEncryptedPassword(StringHelper.md5(password));
     final Registration registration =
         new Registration(IdentifierUtil.newUniversalUniqueId(), user, password);
     KEY_VALUE_STORE_BC.put(registration.getKey(), registration);

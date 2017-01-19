@@ -15,7 +15,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 import com.hp.hpl.jena.util.iterator.Filter;
 
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
@@ -35,6 +34,7 @@ import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Grant;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
@@ -273,8 +273,8 @@ public class ElasticQueryFactory {
         return contentQuery(
             fieldQuery(ElasticFields.FULLTEXT, pair.getValue(), pair.getOperator(), pair.isNot()));
       case checksum:
-        return fieldQuery(ElasticFields.CHECKSUM, pair.getValue(), pair.getOperator(),
-            pair.isNot());
+        return contentQuery(
+            fieldQuery(ElasticFields.CHECKSUM, pair.getValue(), pair.getOperator(), pair.isNot()));
       case citation:
         return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
             pair.isNot());

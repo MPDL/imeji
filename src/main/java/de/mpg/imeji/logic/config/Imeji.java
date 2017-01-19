@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.logic;
+package de.mpg.imeji.logic.config;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,10 +10,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import com.hp.hpl.jena.query.Dataset;
 
 import de.mpg.imeji.logic.concurrency.locks.LocksSurveyor;
-import de.mpg.imeji.logic.config.ImejiConfiguration;
-import de.mpg.imeji.logic.config.ImejiProperties;
-import de.mpg.imeji.logic.config.ImejiResourceBundle;
-import de.mpg.imeji.logic.config.ImejiStartupConfig;
 import de.mpg.imeji.logic.vo.User;
 
 /**

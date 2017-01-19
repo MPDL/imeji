@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -16,12 +19,12 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.annotations.j2jId;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.batch.CleanContentVOsJob;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
 import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
 import de.mpg.imeji.logic.batch.StorageUsageAnalyseJob;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
@@ -49,6 +52,8 @@ import de.mpg.imeji.presentation.beans.SuperBean;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@ManagedBean(name = "AdminBean")
+@ViewScoped
 public class AdminBean extends SuperBean {
   private static final long serialVersionUID = 777808298937503532L;
   private static final Logger LOGGER = Logger.getLogger(AdminBean.class);

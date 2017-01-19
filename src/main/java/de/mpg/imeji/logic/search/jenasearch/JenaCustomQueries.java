@@ -26,8 +26,8 @@ package de.mpg.imeji.logic.search.jenasearch;
 
 import java.net.URI;
 
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.ImejiNamespaces;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;

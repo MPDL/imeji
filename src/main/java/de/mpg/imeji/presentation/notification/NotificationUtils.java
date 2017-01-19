@@ -12,8 +12,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.export.ExportAbstract;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
@@ -34,8 +34,6 @@ public class NotificationUtils {
 
   private static EmailMessages msgs = new EmailMessages();
   private static final EmailService emailClient = new EmailService();
-  private static UserService uc = new UserService();
-  private static CollectionService cc = new CollectionService();
 
   /**
    * Send email notifications to all users which checked "Send notification email by item download"
@@ -50,6 +48,8 @@ public class NotificationUtils {
    */
   public static void notifyByItemDownload(User user, Item fileItem, Locale locale)
       throws ImejiException, IOException, URISyntaxException {
+    final UserService uc = new UserService();
+    final CollectionService cc = new CollectionService();
     final CollectionImeji c = cc.retrieve(fileItem.getCollection(), Imeji.adminUser);
     for (final User u : uc.searchUsersToBeNotified(user, c)) {
       emailClient.sendMail(u.getEmail(), null,
@@ -75,6 +75,8 @@ public class NotificationUtils {
   public static void notifyByExport(ExportAbstract export, SessionBean session, String query,
       String col) {
     new Thread(() -> {
+      final UserService uc = new UserService();
+      final CollectionService cc = new CollectionService();
       final Map<String, String> msgsPerEmail = new HashMap<>();
       final Map<String, User> usersPerEmail = new HashMap<>();
       final String q = !isNullOrEmpty(query) ? "/browse?q=" + query : "";

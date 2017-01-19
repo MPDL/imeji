@@ -2,7 +2,7 @@ package de.mpg.imeji.presentation.notification;
 
 import java.util.Locale;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 
 /**
  * Helper class for common messages support

@@ -21,10 +21,10 @@ import com.ocpsoft.pretty.PrettyContext;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.InactiveAuthenticationError;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authentication.Authentication;
 import de.mpg.imeji.logic.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;

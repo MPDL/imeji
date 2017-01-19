@@ -3,7 +3,7 @@ package de.mpg.imeji.logic.authorization;
 import java.util.Arrays;
 import java.util.List;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.User;

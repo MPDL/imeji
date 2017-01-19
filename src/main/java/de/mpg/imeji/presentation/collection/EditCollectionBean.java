@@ -20,8 +20,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -52,10 +52,10 @@ public class EditCollectionBean extends CollectionBean {
             .retrieve(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
         setSendEmailNotification(getSessionUser().getObservedCollections().contains(getId()));
         final LinkedList<Person> persons = new LinkedList<Person>();
-        if (getCollection().getMetadata().getPersons().size() == 0) {
-          getCollection().getMetadata().getPersons().add(new Person());
+        if (getCollection().getPersons().size() == 0) {
+          getCollection().getPersons().add(new Person());
         }
-        for (final Person p : getCollection().getMetadata().getPersons()) {
+        for (final Person p : getCollection().getPersons()) {
           final LinkedList<Organization> orgs = new LinkedList<Organization>();
           for (final Organization o : p.getOrganizations()) {
             orgs.add(o);
@@ -63,7 +63,7 @@ public class EditCollectionBean extends CollectionBean {
           p.setOrganizations(orgs);
           persons.add(p);
         }
-        getCollection().getMetadata().setPersons(persons);
+        getCollection().setPersons(persons);
       } catch (final ImejiException e) {
         BeanHelper.error("Error initiatilzing page: " + e.getMessage());
         LOGGER.error("Error init edit collection page", e);

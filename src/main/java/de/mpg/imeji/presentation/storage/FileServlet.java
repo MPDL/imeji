@@ -8,6 +8,7 @@ import java.net.URI;
 import java.util.List;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +34,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.Navigation;
+import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
@@ -43,6 +44,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@WebServlet(urlPatterns = {"/file", "/file/*"}, asyncSupported = true)
 public class FileServlet extends HttpServlet {
   private static final long serialVersionUID = 5502546330318540997L;
   private static final Logger LOGGER = Logger.getLogger(FileServlet.class);

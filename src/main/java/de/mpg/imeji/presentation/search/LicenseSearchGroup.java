@@ -11,8 +11,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.mpg.imeji.logic.config.ImejiLicenses;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 

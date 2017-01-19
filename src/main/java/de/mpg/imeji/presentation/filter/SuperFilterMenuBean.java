@@ -14,7 +14,7 @@ import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.history.HistoryPage;
+import de.mpg.imeji.presentation.navigation.history.HistoryPage;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**

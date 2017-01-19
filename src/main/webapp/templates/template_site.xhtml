@@ -14,6 +14,7 @@
             <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
         </h:head>
         <h:body lang="#{InternationalizationBean.locale}">
+       		#{Auth.init()}
         	<!-- NEW STYLE - TO BE ADDED TO CSS -->
              <style>
 					.edit_selected_table_wrapper{
@@ -87,14 +88,21 @@
 					  	opacity: 0.5;
 					  	display: none;  
 					}
-					.loaderWrapperText{
-						position: absolute;
-						top: 45%;
-						left: 40%;
-						font-size: 2em;
-						opacity: 1;
-						z-index: 1001;
-						display: none;
+					.uploadPanel{
+					    position: fixed;
+					    top: 50%;
+					    left: 50%;
+					    font-size: 2em;
+					    z-index: 1001;
+					    display: none;
+					    width: 30em;
+					    height: 5em;
+					    margin-top: -9em;
+					    margin-left: -15em;
+					    background-color: #444444;
+					    text-align: center;
+					    vertical-align: middle;
+					    padding-top: 3em;
 					}
 					.loader {
 					   	position: absolute;
@@ -210,6 +218,8 @@
             </h:panelGroup>
             <div class="#{siteWrapperClass}">
             	<div class="imj_allContentWrapper">
+            		
+            	 	<ui:insert name="authorization"/>
 	                <ui:insert name="init"/>
 	                <ui:include src="component/header/header_default.xhtml"/>
 	                
@@ -250,7 +260,7 @@
 	                </div>
 	                
 	               	<div class="loaderWrapper"/>
-	               		<div class="loaderWrapperText"/>
+	               		
 	               		<div class="loader"/>
 	             	</div>
 	             	

@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.servlet;
+package de.mpg.imeji.presentation.edit;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -39,9 +39,9 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 @WebServlet(
     description = "act as bridge for front javascript query since javascript cannot query cross domain, e.g., from imeji to google",
-    urlPatterns = {"/autocompleter"})
-public class autocompleter extends HttpServlet {
-  private static final long serialVersionUID = 1L;
+    urlPatterns = {"/autocompleter"}, asyncSupported = true)
+public class AutocompleterServlet extends HttpServlet {
+  private static final long serialVersionUID = -5503792080963195242L;
   private final Pattern conePattern =
       Pattern.compile("http.*/cone/.*?format=json.*", Pattern.CASE_INSENSITIVE);
   private final Pattern coneAuthorPattern =
@@ -54,7 +54,7 @@ public class autocompleter extends HttpServlet {
   /**
    * @see HttpServlet#HttpServlet()
    */
-  public autocompleter() {
+  public AutocompleterServlet() {
     super();
   }
 

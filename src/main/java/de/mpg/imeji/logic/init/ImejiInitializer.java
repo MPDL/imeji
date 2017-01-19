@@ -22,12 +22,10 @@ import com.hp.hpl.jena.tdb.sys.TDBMaker;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.j2j.annotations.j2jModel;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authentication.ImejiRsaKeys;
 import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
-import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
@@ -167,13 +165,10 @@ public class ImejiInitializer {
     try {
       // Init the User
       Imeji.adminUser = new User();
-      Imeji.adminUser.setPerson(ImejiFactory.newPerson("Admin", "imeji", "imeji community"));
+      Imeji.adminUser
+          .setPerson(ImejiFactory.newPerson("Admin", "imeji", "Max Planck Digital Library"));
       Imeji.adminUser.setEmail(Imeji.ADMIN_EMAIL_INIT);
-      Imeji.adminUser.setEncryptedPassword(StringHelper.convertToMD5(Imeji.ADMIN_PASSWORD_INIT));
-      Imeji.adminUser.getGrants().addAll(
-          AuthorizationPredefinedRoles.imejiAdministrator(Imeji.adminUser.getId().toString()));
-      System.out.println("+++++++++++++++++++++++ GRANTS " + Imeji.adminUser.getGrants().size()
-          + " - " + Imeji.adminUser.getGrants());
+      Imeji.adminUser.setEncryptedPassword(StringHelper.md5(Imeji.ADMIN_PASSWORD_INIT));
       Imeji.adminUser
           .setApiKey(APIKeyAuthentication.generateKey(Imeji.adminUser.getId(), Integer.MAX_VALUE));
       // create
@@ -181,31 +176,22 @@ public class ImejiInitializer {
       final UserService uc = new UserService();
       final List<User> admins = uc.retrieveAllAdmins();
       if (admins.size() == 0) {
-        try {
-          LOGGER.info("... No admin found! Creating one.");
-          final User admin = uc.retrieve(Imeji.adminUser.getEmail(), Imeji.adminUser);
-          LOGGER.warn(admin.getEmail() + " already exists: " + admin.getId());
-          LOGGER.error(
-              "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-          LOGGER.error(
-              "!!!! Something went wrong: No users with admin rights found, but default admin user found !!!!!");
-          LOGGER.warn("Creating a new sysadmin");
-          LOGGER.warn("Use this user to recover your system");
-          final String newEmail = System.currentTimeMillis() + Imeji.adminUser.getEmail();
-          LOGGER.warn("EMAIL: " + newEmail);
-          LOGGER.warn("PASSWORD: " + Imeji.ADMIN_PASSWORD_INIT);
-          LOGGER.error(
-              "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-          Imeji.adminUser.setEmail(newEmail);
-          Imeji.adminUser
-              .setEncryptedPassword(StringHelper.convertToMD5(Imeji.ADMIN_PASSWORD_INIT));
-          Imeji.adminUser = uc.create(Imeji.adminUser, USER_TYPE.ADMIN);
-        } catch (final NotFoundException e) {
-          LOGGER.info(
-              "!!! IMPORTANT !!! Create admin@imeji.org as system administrator with password admin. !!! CHANGE PASSWORD !!!");
-          Imeji.adminUser = uc.create(Imeji.adminUser, USER_TYPE.ADMIN);
-          LOGGER.info("Created admin user successfully:" + Imeji.adminUser.getEmail(), e);
-        }
+        final String newEmail = System.currentTimeMillis() + Imeji.adminUser.getEmail();
+        LOGGER.error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        LOGGER.error(" ");
+        LOGGER.warn("CREATING NEW SYSADMIN");
+        LOGGER.warn("Use this user to recover your system");
+        LOGGER.error(" ");
+        LOGGER.warn("EMAIL: " + newEmail);
+        LOGGER.warn("PASSWORD: " + Imeji.ADMIN_PASSWORD_INIT);
+        Imeji.adminUser.setEmail(newEmail);
+        Imeji.adminUser = uc.create(Imeji.adminUser, USER_TYPE.ADMIN);
+        LOGGER.error(" ");
+        LOGGER.info("Created admin user successfully!");
+        LOGGER.error(" ");
+        LOGGER.info("PLEASE CHANGE USER AND PASSWORD IMMEDIATELY");
+        LOGGER.error(" ");
+        LOGGER.error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       } else {
         LOGGER.info("Admin users found:");
         for (final User admin : admins) {

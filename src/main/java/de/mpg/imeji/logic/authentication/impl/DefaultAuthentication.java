@@ -29,8 +29,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.InactiveAuthenticationError;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authentication.Authentication;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.User;
@@ -78,7 +78,7 @@ public final class DefaultAuthentication implements Authentication {
           "Not active user: please activate your account with the limk sent after your registration");
     }
     try {
-      if (user.getEncryptedPassword().equals(StringHelper.convertToMD5(getUserPassword()))) {
+      if (user.getEncryptedPassword().equals(StringHelper.md5(getUserPassword()))) {
         return user;
       }
     } catch (final Exception e) {

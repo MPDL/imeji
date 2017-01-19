@@ -44,9 +44,9 @@ public class DOIUtil {
 
   public static DOICollection transformToDO(CollectionImeji col) {
     final DOICollection dcol = new DOICollection();
-    final DOITitle title = new DOITitle(col.getMetadata().getTitle());
+    final DOITitle title = new DOITitle(col.getTitle());
     final List<DOICreators> creators = new ArrayList<DOICreators>();
-    for (final Person author : col.getMetadata().getPersons()) {
+    for (final Person author : col.getPersons()) {
       creators.add(new DOICreators(author.getCompleteName()));
     }
 

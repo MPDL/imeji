@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;

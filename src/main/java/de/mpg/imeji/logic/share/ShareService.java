@@ -12,9 +12,9 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.vo.Grant;

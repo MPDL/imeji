@@ -3,7 +3,7 @@ package de.mpg.imeji.logic.search.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
 import de.mpg.imeji.logic.search.Search;
 

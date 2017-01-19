@@ -48,7 +48,7 @@ public class CollectionValidator extends ContainerValidator implements Validator
    */
   private void validateCollectionPersons(CollectionImeji c) {
     final List<Person> validPersons = new ArrayList<Person>();
-    for (final Person p : c.getMetadata().getPersons()) {
+    for (final Person p : c.getPersons()) {
       if (validatePerson(p)) {
         validPersons.add(p);
       }

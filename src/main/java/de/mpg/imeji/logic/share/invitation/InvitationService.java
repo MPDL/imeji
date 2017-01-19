@@ -6,7 +6,7 @@ import java.util.List;
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.Imeji;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.db.keyValue.stores.HTreeMapStore;
 import de.mpg.imeji.logic.share.ShareService;

@@ -17,8 +17,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.Imeji;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
@@ -152,7 +152,7 @@ public class SearchGroupForm implements Serializable {
         Imeji.RESOURCE_BUNDLE.getLabel("adv_search_collection_restrict", locale)));
     for (final String uri : collectionService.search(q, null, user, -1, 0).getResults()) {
       final CollectionImeji c = collectionService.retrieveLazy(URI.create(uri), user);
-      l.add(new SelectItem(c.getId().toString(), c.getMetadata().getTitle()));
+      l.add(new SelectItem(c.getId().toString(), c.getTitle()));
     }
     return l;
   }

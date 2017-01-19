@@ -30,13 +30,13 @@ public class ElasticContainerProperties extends ElasticProperties {
    */
   public ElasticContainerProperties(Container c) {
     super(c);
-    this.name = c.getMetadata().getTitle();
-    this.description = c.getMetadata().getDescription();
+    this.name = c.getTitle();
+    this.description = c.getDescription();
     this.pid = c.getDoi() != null ? Arrays.asList(c.getDoi()) : new ArrayList<String>();
-    for (final Person p : c.getMetadata().getPersons()) {
+    for (final Person p : c.getPersons()) {
       author.add(new ElasticPerson(p));
     }
-    for (final ContainerAdditionalInfo i : c.getMetadata().getAdditionalInformations()) {
+    for (final ContainerAdditionalInfo i : c.getAdditionalInformations()) {
       info.add(new ElasticContainerAdditionalInfo(i));
     }
   }
