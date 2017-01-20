@@ -110,7 +110,7 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return;
     }
-    checkSecurity(objects, user, false);
+    checkSecurity(objects, user, true);
     validate(objects, Validator.Method.CREATE);
     writer.create(objects, user);
     indexer.indexBatch(objects);

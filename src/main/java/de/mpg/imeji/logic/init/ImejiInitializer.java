@@ -186,6 +186,7 @@ public class ImejiInitializer {
         LOGGER.warn("PASSWORD: " + Imeji.ADMIN_PASSWORD_INIT);
         Imeji.adminUser.setEmail(newEmail);
         Imeji.adminUser = uc.create(Imeji.adminUser, USER_TYPE.ADMIN);
+        Imeji.STARTUP.setReindex(true);
         LOGGER.error(" ");
         LOGGER.info("Created admin user successfully!");
         LOGGER.error(" ");

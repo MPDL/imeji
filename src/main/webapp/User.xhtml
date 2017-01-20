@@ -276,7 +276,7 @@
 											<div class="imj_admindataSet">
 												<div class="imj_admindataLabel">
 													<h:outputText
-														value="#{shareHistory.typeLabel}: #{shareHistory.title}"
+														value="#{lbl.collection}: #{shareHistory.title}"
 														title="#{shareHistory.title}" />
 
 													<div class="imj_submitPanel">
@@ -293,11 +293,7 @@
 														dialogId="revokeDialog#{row.index}" />
 												</div>
 												<div class="imj_admindataValueEntry">
-													<h:selectManyCheckbox id="role"
-														value="#{shareHistory.roles}" disabled="true"
-														layout="pageDirection">
-														<f:selectItems value="#{shareHistory.rolesMenu}" />
-													</h:selectManyCheckbox>
+													#{shareHistory.role}
 												</div>
 											</div>
 										</ui:repeat>

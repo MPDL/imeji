@@ -11,6 +11,10 @@
 	<ui:param name="backwardClass" value="#{itemBean.browse.previous == null ? 'previousItem imj_deactivated' : 'previousItem'}"/>
 	<ui:param name="forwardClass" value="#{itemBean.browse.next == null ? 'nextItem imj_deactivated' : 'nextItem'}"/>
 	
+	<ui:define name="authorization">
+		#{Auth.init(itemBean.image.collection)}
+	</ui:define>
+	
 	<ui:define name="actionsMenu">
 		<menu:actionItem itemBean="#{itemBean}"/>
 	</ui:define>
@@ -25,7 +29,7 @@
 					<imjc:selectionInfoPanel fSession="#{FacetFiltersSession}" facetBean="#{itemBean}" currentMainMenu="#{currentMainMenu}" browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="0" showSelectMenu="false"/>
 				</h:panelGroup>
 				
-				<ui:fragment rendered="#{Auth.read(itemBean.image)}">
+				<ui:fragment rendered="#{Auth.read}">
 				
 					<!-- pagination top -->
 					<h:panelGroup layout="block" id="paginatorTop" styleClass="imj_paginator">
@@ -62,10 +66,10 @@
 				</ui:fragment>
 			</h:panelGroup>
 			
-			<dialog:confirmationDialog submitAction="makePublic" bean="#{itemBean}" confirmationText="#{msg.confirmation_make_public}?" submitLabel="#{lbl.make_public}" dialogId="makePublicMenuItemDialog" rendered="#{Auth.admin(itemBean.image)}"/>
-			<dialog:confirmationDialog submitAction="makePrivate" bean="#{itemBean}" confirmationText="#{msg.confirmation_make_private}?" submitLabel="#{lbl.make_private}" dialogId="makePrivateMenuItemDialog" rendered="#{Auth.admin(itemBean.image)}"/>
-			<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete(itemBean.image)}"/>
-			<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" rendered="#{Auth.admin(itemBean.image) and WorkflowBean.withdraw(itemBean.image)}"/>
+			<dialog:confirmationDialog submitAction="makePublic" bean="#{itemBean}" confirmationText="#{msg.confirmation_make_public}?" submitLabel="#{lbl.make_public}" dialogId="makePublicMenuItemDialog" rendered="#{Auth.admin}"/>
+			<dialog:confirmationDialog submitAction="makePrivate" bean="#{itemBean}" confirmationText="#{msg.confirmation_make_private}?" submitLabel="#{lbl.make_private}" dialogId="makePrivateMenuItemDialog" rendered="#{Auth.admin}"/>
+			<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete}"/>
+			<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" rendered="#{Auth.admin and WorkflowBean.withdraw(itemBean.image)}"/>
 		
 		</ui:fragment>
 		

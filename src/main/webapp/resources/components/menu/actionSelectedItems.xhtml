@@ -9,37 +9,46 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<h:outputText value="#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}"/>:
-		<a href="#{Navigation.applicationUrl}editselected" class="imj_menuButton">
-			<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
-		</a>
-		<h:form>
-			<h:commandLink action="#{cc.attrs.itemsBean.deleteSelected}" styleClass="imj_menuButton">
-				 <span class="fa fa-trash"/>  <span>#{lbl.delete}</span>
-			</h:commandLink>
-		</h:form>
-		<a id="download" href="#{Navigation.applicationUrl}exportServlet?format=zip" class="imj_menuButton" target="_blank">
+		#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}:
+		<ui:fragment rendered="#{Auth.update}">
+			<a href="#{Navigation.applicationUrl}editselected" class="imj_menuButton imj_overlayMenu">
+				<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
+			</a>
+			<h:form>
+				<h:commandLink action="#{cc.attrs.itemsBean.deleteSelected}" styleClass="imj_overlayMenu imj_menuButton">
+					 <span class="fa fa-trash"/><span>#{lbl.delete}</span>
+				</h:commandLink>
+			</h:form>
+		</ui:fragment>
+		<a id="download" href="#{Navigation.applicationUrl}exportServlet?format=zip" class="imj_overlayMenu imj_menuButton" target="_blank">
 			<span class="fa fa-download"/> <span>#{lbl.download}</span>
 		</a>
-		<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionSelectedMore">
-			<div class="imj_menuHeader">
-                  <span class="fa fa-bars"></span>
-                  <span class="imj_headerEntry"> #{lbl.more}</span>
+		<ui:fragment rendered="#{Auth.update}">
+			<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionSelectedMore">
+				<div class="imj_menuHeader">
+	                  <span class="fa fa-bars"></span>
+	                  <span class="imj_headerEntry"> #{lbl.more}</span>
+				</div>
+				<div class="imj_menuBody">
+					<ul class="imj_overlayMenuList">
+						<li>
+							<a href="#{Navigation.applicationUrl}edit/license" id="lnkSelectEditLicense">
+								  <span class="fa fa-copyright"/> <span>#{lbl.edit_selected_license}</span>
+							</a>
+						</li>
+						<li>
+							<a href="#{Navigation.applicationUrl}moveSelected" id="lnkMoveTo">
+								 <span class="fa fa-clone"/> <span>#{lbl.move_to}...</span>
+							</a>
+						</li>
+					</ul>
+				</div>
 			</div>
-			<div class="imj_menuBody">
-				<ul class="imj_overlayMenuList">
-					<li>
-						<a href="#{Navigation.applicationUrl}edit/license" id="lnkSelectEditLicense">
-							  <span class="fa fa-copyright"/> <span>#{lbl.edit_selected_license}</span>
-						</a>
-					</li>
-					<li>
-						<a href="#{Navigation.applicationUrl}moveSelected" id="lnkMoveTo">
-							 <span class="fa fa-clone"/> <span>#{lbl.move_to}...</span>
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>
+		</ui:fragment>
+		<ui:fragment rendered="#{!Auth.update and Auth.read}">
+			<a href="#{Navigation.applicationUrl}moveSelected" id="lnkMoveTo" class="imj_overlayMenu imj_menuButton">
+				 <span class="fa fa-clone"/> <span>#{lbl.move_to}...</span>
+			</a>
+		</ui:fragment>
 	</composite:implementation>
 </html>

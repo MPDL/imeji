@@ -1,7 +1,7 @@
 /**
  * License: src/main/resources/license/escidoc.license
  */
-package de.mpg.imeji.presentation.util;
+package de.mpg.imeji.logic.init;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +22,6 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.ReadMaxPlanckIPMappingJob;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.init.ImejiInitializer;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.StringHelper;

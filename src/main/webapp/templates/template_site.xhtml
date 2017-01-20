@@ -239,10 +239,6 @@
 	                 <div class="imj_siteContentHeadline">
 	                    <h1>
 	                        #{headline.toString().trim()}
-	                        <ui:fragment rendered="#{headlineSecondRow != null and headlineSecondRow.toString().trim().length() > 0}">
-	                            <br/>
-	                            #{headlineSecondRow.toString().trim()}
-	                        </ui:fragment>
 	                    </h1>
 	                </div>
 	                <div class="imj_siteContentStatus #{headline.toString().trim().length() == 0 ? 'imj_invisible' : ''}">

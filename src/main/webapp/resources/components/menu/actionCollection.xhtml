@@ -11,14 +11,14 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{Auth.update}">
-			<button id="upload" value="#{lbl.upload}" class="imj_menuButton">
+			<button id="upload" value="#{lbl.upload}" class="imj_menuButton imj_menuButton">
 				#{lbl.upload}
 			</button>
-			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton">
+			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton imj_menuButton">
 				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
 			</a>
 			<ui:fragment rendered="#{Auth.admin}">
-				<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share" class="imj_menuButton">
+				<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share" class="imj_menuButton imj_menuButton">
 					<span class="fa fa-users"/> <span>#{lbl.collection_share}</span>
 				</a>
 				<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionCollectionMore">
@@ -57,14 +57,24 @@
 				</div>
 			</ui:fragment>
 			<ui:fragment rendered="#{!Auth.admin and Auth.update}">
-				<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}" target="_blank">
+				<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}" target="_blank" class="imj_overlayMenu imj_menuButton">
 					<span class="fa fa-download"/> <span>#{lbl.collection_download}</span>
 				</a>
 				<ui:fragment rendered="#{not empty cc.attrs.collectionBean.query}">
-					<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}&amp;q=#{cc.attrs.collectionBean.query}" target="_blank">
+					<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}&amp;q=#{cc.attrs.collectionBean.query}" target="_blank" class="imj_overlayMenu imj_menuButton">
 						<span class="fa fa-download"/> <span>#{lbl.download_search}</span>
 					</a>
 				</ui:fragment>
+			</ui:fragment>	
+		</ui:fragment>
+		<ui:fragment rendered="#{!Auth.update and Auth.read}">
+			<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}" target="_blank" class="imj_overlayMenu imj_menuButton">
+				<span class="fa fa-download"/> <span> #{lbl.collection_download}</span>
+			</a>
+			<ui:fragment rendered="#{not empty cc.attrs.collectionBean.query}">
+				<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}&amp;q=#{cc.attrs.collectionBean.query}" target="_blank" class="imj_overlayMenu imj_menuButton">
+					<span class="fa fa-download"/> <span> #{lbl.download_search}</span>
+				</a>
 			</ui:fragment>
 		</ui:fragment>
 	</composite:implementation>

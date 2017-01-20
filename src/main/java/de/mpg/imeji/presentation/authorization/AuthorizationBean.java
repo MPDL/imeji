@@ -27,13 +27,14 @@ public class AuthorizationBean extends SuperBean implements Serializable {
   private final Authorization authorization = new Authorization();
   private boolean read = false;
   private boolean update = false;
+  private boolean delete = false;
   private boolean admin = false;
   private boolean sysadmin = false;
   private boolean createCollection = false;
 
   public void init() {
+    System.out.println("INIT AUTH");
     sysadmin = isSysAdmin(getSessionUser());
-    System.out.println(sysadmin);
     createCollection = createCollection(getSessionUser());
   }
 
@@ -47,6 +48,7 @@ public class AuthorizationBean extends SuperBean implements Serializable {
     read = read(obj);
     update = update(obj);
     admin = admin(obj);
+    delete = delete(obj);
   }
 
   /**
@@ -65,7 +67,12 @@ public class AuthorizationBean extends SuperBean implements Serializable {
     return update;
   }
 
-
+  /**
+   * @return the delete
+   */
+  public boolean isDelete() {
+    return delete;
+  }
 
   /**
    * @return the admin

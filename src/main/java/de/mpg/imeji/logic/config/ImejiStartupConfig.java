@@ -84,4 +84,8 @@ public class ImejiStartupConfig {
     return Boolean.parseBoolean(config.getProperty(ENTRIES.REINDEX.name()));
   }
 
+  public void setReindex(boolean b) {
+    config.setProperty(ENTRIES.REINDEX.name(), Boolean.toString(b));
+  }
+
 }
