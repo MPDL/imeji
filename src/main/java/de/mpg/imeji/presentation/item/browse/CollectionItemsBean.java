@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -42,7 +43,8 @@ public class CollectionItemsBean extends ItemsBean {
   private CollectionImeji collection;
   private SearchQuery searchQuery = new SearchQuery();
   private CollectionActionMenu actionMenu;
-  private String authors = "";;
+  private String authors = "";
+  private int size;
 
   /**
    * Initialize the bean
@@ -63,12 +65,17 @@ public class CollectionItemsBean extends ItemsBean {
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
       collection.getPersons().stream().map(p -> p.AsFullText())
-          .forEach(a -> authors = authors.equals("") ? a : "; " + a);;
+          .forEach(a -> authors = authors.equals("") ? a : "; " + a);
+      size = getQuery().isEmpty() ? getTotalNumberOfRecords() : getCollectionSize();
     } catch (final Exception e) {
       LOGGER.error("Error initializing collectionItemsBean", e);
     }
   }
 
+  private int getCollectionSize() {
+    return new ItemService().search(collection.getId(), null, null, Imeji.adminUser, 1, -1)
+        .getNumberOfRecords();
+  }
 
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
@@ -183,7 +190,7 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   public int getSize() {
-    return getTotalNumberOfRecords();
+    return size;
   }
 
 }

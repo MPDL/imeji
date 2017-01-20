@@ -10,16 +10,23 @@
 	
 	<composite:implementation>
 		<div class="imj_searchQueryDisplay" >
+			
 			<h:outputText value="#{cc.attrs.label}: "/>
 			
 			<span class="imj_searchQueryText">
-				<h:outputText value="#{cc.attrs.searchBean.simpleQuery}"/>
+				<h:outputText value="#{cc.attrs.searchBean.simpleQuery} "/>
 			</span>
 			
 			<h:outputLink value="#{cc.attrs.navBean.searchUrl}?q=#{cc.attrs.searchBean.query}" styleClass="imj_submitButton" rendered="false">
 				<h:outputText value="#{lbl.search_revise}"/>
 			</h:outputLink>
+
+			<h:outputLink styleClass="imj_removeFacetButton" value="#{SearchFilterBean.clearFilterAndSearchQuery}">		
+				 <i class="fa fa-times fa-size-1"></i>
+			</h:outputLink>
+			
 		</div>
+		
 		
 	</composite:implementation>
 </html>
