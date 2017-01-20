@@ -204,6 +204,17 @@
 						margin-left: 0;
 						margin-right: 10px;
 					}
+					.collectionAbout{
+						width: 80%;
+						font-size: 1.3em;
+					}
+					.collectionAbout span{
+						margin-right: 5px;
+					}
+					.collectionAboutHidden{
+						width: 80%;
+						display:none;
+					}
                 </style>
                 <!-- NEW SCIPT - TO BE ADDED TO JS -->
                
@@ -240,6 +251,7 @@
 	                    <h1>
 	                        #{headline.toString().trim()}
 	                    </h1>
+	                    <ui:insert name="collectionAbout"/>
 	                </div>
 	                <div class="imj_siteContentStatus #{headline.toString().trim().length() == 0 ? 'imj_invisible' : ''}">
 	                	<imjc:iconStatus id="status" imejiResource="#{imejiResource}"/>

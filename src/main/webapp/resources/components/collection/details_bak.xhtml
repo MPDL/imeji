@@ -1,0 +1,178 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+	
+	<composite:interface>
+		<composite:attribute name="metadataContextBean" required="true"/>
+		<composite:attribute name="metadata" required="true"/>
+		<composite:attribute name="headline" required="true"/>
+		<composite:attribute name="navigationContextURL" />
+	</composite:interface>
+	
+	<composite:implementation>
+		<div class="imj_metadataListMediaContainer">
+			<div class="imj_listHeader">
+				<h3 class="imj_headline">
+					<h:outputText value="#{cc.attrs.headline}"/>
+				</h3>
+				
+				<div class="imj_listHeaderMenu">
+					<!-- EDIT -->
+					<h:outputLink value="#{cc.attrs.navigationContextURL}#{cc.attrs.metadata.id}/#{Navigation.editPath}?init=1" styleClass="imj_editMetadataButton" rendered="#{Auth.update(cc.attrs.metadataContextBean) and cc.attrs.metadataContextBean.status != 'WITHDRAWN'}">
+						<h:outputText value="#{lbl.edit}"/>
+					</h:outputLink>
+				</div>
+			</div>
+			<div class="imj_listBody">
+
+				<!-- Status -->
+				<div class="imj_metadataSet">
+					<label class="imj_metadataLabel">
+						<h:outputText value="#{lbl.status}"/>
+						<span class="imj_noDisplay">:</span>
+					</label>
+					<span class="imj_metadataValue">
+						<span class="imj_statusArea">
+							<ui:fragment rendered="#{cc.attrs.metadataContextBean.status == 'PENDING'}">
+								<span class="imj_statusIconArea">
+									<h:panelGroup styleClass="fa fa-lock fa-size-3"/>
+								</span>
+								<h:outputText value="#{lbl['private']}"/>
+							</ui:fragment>
+							
+							<ui:fragment rendered="#{cc.attrs.metadataContextBean.status == 'RELEASED'}">
+								<span class="imj_statusIconArea">
+									<h:panelGroup styleClass="fa fa-globe fa-size-3"/>
+								</span>
+								<h:outputText value="#{lbl.published}"/>
+							</ui:fragment>
+							
+							<ui:fragment rendered="#{cc.attrs.metadataContextBean.status == 'WITHDRAWN'}">
+								<span class="imj_statusIconArea">
+									<h:panelGroup styleClass="fa fa-trash-o fa-size-3"/>
+								</span>
+								<h:outputText value="#{lbl.withdrawn}"/>
+							</ui:fragment>
+						</span>
+					</span>
+				</div>
+					
+				<!-- Title -->
+				<div class="imj_metadataSet">
+					<label class="imj_metadataLabel">
+						<h:outputText value="#{lbl.title}"/>
+						<span class="imj_noDisplay">: </span>
+					</label>
+					<h:outputText styleClass="imj_metadataValue" value="#{cc.attrs.metadataContextBean.metadata.title}"/>
+				</div>
+				
+				<!-- Description -->
+				<div class="imj_metadataSet">
+					<label class="imj_metadataLabel">
+						<h:outputText value="#{lbl.description}"/>
+						<span class="imj_noDisplay">: </span>
+					</label>
+					<p class="imj_metadataValue">
+						<h:outputText value="#{cc.attrs.metadataContextBean.metadata.description}" escape="false"/>
+					</p>
+				</div>
+				
+				<ui:fragment rendered="#{cc.attrs.metadataContextBean.logoUrl != null}">
+				<div class="imj_metadataSet" >
+					<label class="imj_metadataLabel" >
+						<h:outputText value="#{lbl.logo}"/>
+						<span class="imj_noDisplay">: </span>
+					</label>
+					<div class="imj_metadataValue">
+						<img alt="Logo" src="#{cc.attrs.metadataContextBean.logoUrl}" height="50em" class="imj_community_logo"/>
+					</div>
+				</div>
+				</ui:fragment>
+				
+				<!-- Authors -->
+				<div class="imj_metadataSet">
+					<label class="imj_metadataLabel">
+						<h:outputText value="#{lbl.authors}"/>
+						<span class="imj_noDisplay">: </span>
+					</label>
+					
+					<div class="imj_metadataValue">
+						<table class="imj_metadataAuthorList">
+							<thead>
+								<tr>
+									<th><h:outputText value="#{lbl.family_name}"/></th>
+									<th><h:outputText value="#{lbl.first_name}"/></th>
+									<th><h:outputText value=" #{lbl.organization}"/></th>
+								</tr>
+							</thead>
+							<tbody>
+								<ui:repeat var="creator" value="#{cc.attrs.metadataContextBean.metadata.persons}">
+									<tr>
+										<td>
+											<h:outputText value="#{creator.familyName}"/>
+										</td>
+										
+										<td>
+											<h:outputText value="#{creator.givenName}"/>
+										</td>
+										
+										<td>
+											<ui:repeat var="organization" value="#{creator.organizations}" varStatus="orga">
+												<h:outputText value=";  " rendered="#{orga.index > 0}"/>
+												<h:outputText value="#{organization.name}"/>
+											</ui:repeat>
+										</td>
+									</tr>
+								</ui:repeat>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<!-- URL -->
+				<ui:fragment rendered="#{cc.attrs.metadataContextBean.status == 'RELEASED'}">
+					<div class="imj_metadataSet">
+						<label class="imj_metadataLabel">
+							<h:outputText value="URL"/>
+							<h:outputText value=": " styleClass="imj_noDisplay"/>
+						</label>
+						<span class="imj_metadataValue">
+							<h:outputLink value="#{cc.attrs.navigationContextURL}#{cc.attrs.metadata.id}">
+								<h:outputText value="#{cc.attrs.navigationContextURL}#{cc.attrs.metadata.id}"/>
+							</h:outputLink>
+						</span>
+					</div>
+				</ui:fragment>
+				
+				<!-- DOI -->
+				<ui:fragment rendered="#{cc.attrs.metadataContextBean.status == 'RELEASED' and cc.attrs.metadata.type == 'COLLECTION'}">
+					<div class="imj_metadataSet">
+						<label class="imj_metadataLabel">
+							<h:outputText value="#{lbl.doi}"/>
+							<h:outputText value=": " styleClass="imj_noDisplay"/>
+						</label>
+						<span class="imj_metadataValue">
+							<h:outputText value="#{cc.attrs.metadataContextBean.DOI}"/>
+						</span>
+					</div>
+				</ui:fragment>
+				
+				<ui:fragment rendered="#{cc.attrs.metadata.type == 'COLLECTION'}">
+	                <ui:fragment rendered="#{cc.attrs.metadata.sendEmailNotification}">
+	                    <div class="imj_metadataSet">
+	                        <label class="imj_metadataLabel">
+	                            <h:outputText value="#{lbl.notifications}"/>
+	                            <h:outputText value=": " styleClass="imj_noDisplay"/>
+	                        </label>
+							<span class="imj_metadataValue">
+	                            <h:outputText value="#{lbl.send_email_on_download}"/>
+							</span>
+	                    </div>
+	                </ui:fragment>
+                </ui:fragment>
+
+			</div>
+		</div>
+	</composite:implementation>
+</html>

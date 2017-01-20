@@ -6,7 +6,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
-	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:col="http://java.sun.com/jsf/composite/components/collection">
 
 	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}" />
 	<ui:param name="headline" value="#{CollectionItemsBean.collection.title}" />
@@ -16,6 +17,17 @@
 
 	 <ui:define name="authorization">
 		 #{Auth.init(CollectionItemsBean.collection)}
+	 </ui:define>
+	 
+	  <ui:define name="collectionAbout">
+		<div class="collectionAbout">
+			<span>#{lbl.by} #{CollectionItemsBean.authors}</span> 
+			<span class="fa fa-caret-down " onclick="$('.collectionAboutHidden').slideDown(500);$('.fa-caret-up').show(); $(this).hide();"/>
+			<span class="fa fa-caret-up" style="display:none;" onclick="$('.collectionAboutHidden').slideUp(500);$('.fa-caret-down').show(); $(this).hide();"/>
+		</div>
+		<div class="collectionAboutHidden">
+			<col:details bean="#{CollectionItemsBean}" applicationUrl="#{Navigation.applicationUrl}" lbl="#{lbl}"/>
+		</div>
 	 </ui:define>
 
 	<ui:define name="modalDialogs_from_site">

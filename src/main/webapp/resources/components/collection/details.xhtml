@@ -1,178 +1,162 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:composite="http://java.sun.com/jsf/composite">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
 	
 	<composite:interface>
-		<composite:attribute name="metadataContextBean" required="true"/>
-		<composite:attribute name="metadata" required="true"/>
-		<composite:attribute name="headline" required="true"/>
-		<composite:attribute name="navigationContextURL" />
+		<composite:attribute name="bean" required="false"/>
+		<composite:attribute name="applicationUrl" required="false"/>
+		<composite:attribute name="lbl" required="false"/>
 	</composite:interface>
 	
 	<composite:implementation>
-		<div class="imj_metadataListMediaContainer">
-			<div class="imj_listHeader">
-				<h3 class="imj_headline">
-					<h:outputText value="#{cc.attrs.headline}"/>
-				</h3>
-				
-				<div class="imj_listHeaderMenu">
-					<!-- EDIT -->
-					<h:outputLink value="#{cc.attrs.navigationContextURL}#{cc.attrs.metadata.id}/#{Navigation.editPath}?init=1" styleClass="imj_editMetadataButton" rendered="#{Auth.update(cc.attrs.metadataContextBean) and cc.attrs.metadataContextBean.status != 'WITHDRAWN'}">
-						<h:outputText value="#{lbl.edit}"/>
-					</h:outputLink>
+	
+		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/qrcode.js"></script>
+		<script type="text/javascript">
+			var draw_qrcode = function(text, typeNumber, errorCorrectLevel) {
+				document.write(create_qrcode(text, typeNumber, errorCorrectLevel) );
+			};
+			var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
+				var qr = qrcode(typeNumber || 20, errorCorrectLevel || 'M');
+				qr.addData(text);
+				qr.make();
+				// return qr.createTableTag();
+				return qr.createImgTag();
+			};
+		</script>
+	
+		<div>
+			<!-- MetaDataList - LIST BODY START -->		
+			<div id="metadata" class="imj_listBody">	
+				<div id="description" class="imj_infodataSet">				
+					<h:graphicImage style="float:left; margin-right:1em;" rendered="#{cc.attrs.bean.collection.logoUrl != null}" styleClass="imj_entryPagePreviewPicture" value="#{cc.attrs.bean.collection.logoUrl.toString()}"/>
+					<h:outputText  escape="false" value="#{cc.attrs.bean.collection.description}"/>
 				</div>
-			</div>
-			<div class="imj_listBody">
-
-				<!-- Status -->
-				<div class="imj_metadataSet">
-					<label class="imj_metadataLabel">
-						<h:outputText value="#{lbl.status}"/>
-						<span class="imj_noDisplay">:</span>
-					</label>
-					<span class="imj_metadataValue">
-						<span class="imj_statusArea">
-							<ui:fragment rendered="#{cc.attrs.metadataContextBean.status == 'PENDING'}">
-								<span class="imj_statusIconArea">
-									<h:panelGroup styleClass="fa fa-lock fa-size-3"/>
-								</span>
-								<h:outputText value="#{lbl['private']}"/>
+				<br/>
+				<ui:repeat var="info" value="#{cc.attrs.bean.collection.additionalInformations}">
+					<div class="imj_infodataSet">
+						<span class="imj_infodataLabel">
+							<h:outputText value="#{info.label}"/>
+							<span class="imj_invisible">: </span>
+						</span>
+						<span class="imj_infodataValue">
+							<ui:fragment rendered="#{info.url != null and info.url != '' and info.text != null and info.text != ''}">
+								<h:outputLink value="#{info.url}" target="_blank">
+									<pre>#{info.text}</pre>
+								</h:outputLink>
 							</ui:fragment>
-							
-							<ui:fragment rendered="#{cc.attrs.metadataContextBean.status == 'RELEASED'}">
-								<span class="imj_statusIconArea">
-									<h:panelGroup styleClass="fa fa-globe fa-size-3"/>
-								</span>
-								<h:outputText value="#{lbl.published}"/>
+							<ui:fragment rendered="#{info.url == null || info.url == ''}">
+								<pre>#{info.text}</pre>
 							</ui:fragment>
-							
-							<ui:fragment rendered="#{cc.attrs.metadataContextBean.status == 'WITHDRAWN'}">
-								<span class="imj_statusIconArea">
-									<h:panelGroup styleClass="fa fa-trash-o fa-size-3"/>
-								</span>
-								<h:outputText value="#{lbl.withdrawn}"/>
+							<ui:fragment rendered="#{info.text == null || info.text == ''}">
+								<h:outputLink value="#{info.url}" target="_blank">
+									#{info.url}
+								</h:outputLink>
 							</ui:fragment>
 						</span>
+					</div>
+				</ui:repeat>
+				
+				<!--  Citation -->
+				<div class="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.cite}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<h:outputText value="#{cc.attrs.bean.citation}" escape="false"/>
 					</span>
 				</div>
-					
-				<!-- Title -->
-				<div class="imj_metadataSet">
-					<label class="imj_metadataLabel">
-						<h:outputText value="#{lbl.title}"/>
-						<span class="imj_noDisplay">: </span>
-					</label>
-					<h:outputText styleClass="imj_metadataValue" value="#{cc.attrs.metadataContextBean.metadata.title}"/>
-				</div>
 				
-				<!-- Description -->
-				<div class="imj_metadataSet">
-					<label class="imj_metadataLabel">
-						<h:outputText value="#{lbl.description}"/>
-						<span class="imj_noDisplay">: </span>
-					</label>
-					<p class="imj_metadataValue">
-						<h:outputText value="#{cc.attrs.metadataContextBean.metadata.description}" escape="false"/>
-					</p>
+				<!--  Number of items -->
+				<div class="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.colNumItems}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<h:outputText value="#{cc.attrs.bean.size}"/>
+					</span>
 				</div>
-				
-				<ui:fragment rendered="#{cc.attrs.metadataContextBean.logoUrl != null}">
-				<div class="imj_metadataSet" >
-					<label class="imj_metadataLabel" >
-						<h:outputText value="#{lbl.logo}"/>
-						<span class="imj_noDisplay">: </span>
-					</label>
-					<div class="imj_metadataValue">
-						<img alt="Logo" src="#{cc.attrs.metadataContextBean.logoUrl}" height="50em" class="imj_community_logo"/>
-					</div>
-				</div>
-				</ui:fragment>
-				
-				<!-- Authors -->
-				<div class="imj_metadataSet">
-					<label class="imj_metadataLabel">
-						<h:outputText value="#{lbl.authors}"/>
-						<span class="imj_noDisplay">: </span>
-					</label>
-					
-					<div class="imj_metadataValue">
-						<table class="imj_metadataAuthorList">
-							<thead>
-								<tr>
-									<th><h:outputText value="#{lbl.family_name}"/></th>
-									<th><h:outputText value="#{lbl.first_name}"/></th>
-									<th><h:outputText value=" #{lbl.organization}"/></th>
-								</tr>
-							</thead>
-							<tbody>
-								<ui:repeat var="creator" value="#{cc.attrs.metadataContextBean.metadata.persons}">
-									<tr>
-										<td>
-											<h:outputText value="#{creator.familyName}"/>
-										</td>
-										
-										<td>
-											<h:outputText value="#{creator.givenName}"/>
-										</td>
-										
-										<td>
-											<ui:repeat var="organization" value="#{creator.organizations}" varStatus="orga">
-												<h:outputText value=";  " rendered="#{orga.index > 0}"/>
-												<h:outputText value="#{organization.name}"/>
-											</ui:repeat>
-										</td>
-									</tr>
-								</ui:repeat>
-							</tbody>
-						</table>
-					</div>
-				</div>
-				
-				<!-- URL -->
-				<ui:fragment rendered="#{cc.attrs.metadataContextBean.status == 'RELEASED'}">
-					<div class="imj_metadataSet">
-						<label class="imj_metadataLabel">
-							<h:outputText value="URL"/>
-							<h:outputText value=": " styleClass="imj_noDisplay"/>
-						</label>
-						<span class="imj_metadataValue">
-							<h:outputLink value="#{cc.attrs.navigationContextURL}#{cc.attrs.metadata.id}">
-								<h:outputText value="#{cc.attrs.navigationContextURL}#{cc.attrs.metadata.id}"/>
-							</h:outputLink>
-						</span>
-					</div>
-				</ui:fragment>
 				
 				<!-- DOI -->
-				<ui:fragment rendered="#{cc.attrs.metadataContextBean.status == 'RELEASED' and cc.attrs.metadata.type == 'COLLECTION'}">
-					<div class="imj_metadataSet">
-						<label class="imj_metadataLabel">
-							<h:outputText value="#{lbl.doi}"/>
-							<h:outputText value=": " styleClass="imj_noDisplay"/>
-						</label>
-						<span class="imj_metadataValue">
-							<h:outputText value="#{cc.attrs.metadataContextBean.DOI}"/>
-						</span>
-					</div>
-				</ui:fragment>
-				
-				<ui:fragment rendered="#{cc.attrs.metadata.type == 'COLLECTION'}">
-	                <ui:fragment rendered="#{cc.attrs.metadata.sendEmailNotification}">
-	                    <div class="imj_metadataSet">
-	                        <label class="imj_metadataLabel">
-	                            <h:outputText value="#{lbl.notifications}"/>
-	                            <h:outputText value=": " styleClass="imj_noDisplay"/>
-	                        </label>
-							<span class="imj_metadataValue">
-	                            <h:outputText value="#{lbl.send_email_on_download}"/>
-							</span>
-	                    </div>
-	                </ui:fragment>
-                </ui:fragment>
-
-			</div>
-		</div>
+				<h:panelGroup styleClass="imj_infodataSet" rendered="#{cc.attrs.bean.type == 'COLLECTION' and cc.attrs.bean.collection.status == 'RELEASED' and cc.attrs.bean.collection.doi != ''}">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.doi}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<a href="http://dx.doi.org/#{cc.attrs.bean.collection.doi}" target="_blank">http://dx.doi.org/#{cc.attrs.bean.collection.doi}</a>
+					</span>
+				</h:panelGroup>
+							
+				<!--  Dates -->
+				<div class="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.date_creation}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<h:outputText value="#{cc.attrs.bean.collection.created.time}"/>
+					</span>
+				</div>
+				<div class="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.date_last_modification}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<h:outputText value="#{cc.attrs.bean.collection.modified.time}"/>
+					</span>
+				</div>
+				<h:panelGroup styleClass="imj_infodataSet" rendered="#{cc.attrs.item.status == 'RELEASED'}">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.date_released}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<h:outputText value="#{cc.attrs.bean.collection.versionDate.time}"/>
+					</span>
+				</h:panelGroup>
+				<h:panelGroup styleClass="imj_infodataSet" rendered="#{cc.attrs.item.status == 'WITHDRAWN'}">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.date_withdraw}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<h:outputText value="#{cc.attrs.bean.collection.versionDate.time}"/>
+					</span>
+				</h:panelGroup>
+								
+				<!--  Permalink -->
+				<div class="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.permalink}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<h:outputText value="#{cc.attrs.bean.pageUrl}"/>
+					</span>
+				</div>
+		
+				<!--  QR-Tag -->
+				<h:panelGroup styleClass="imj_infodataSet">
+					<span class="imj_infodataLabel">
+						<h:outputText value="#{lbl.qrcode}"/>
+						<span class="imj_invisible">: </span>
+					</span>
+					<span class="imj_infodataValue">
+						<span class="qr" id="qr"></span>
+						<br/>
+						<ui:fragment rendered="#{cc.attrs.bean.type == 'COLLECTION' and Auth.createCollection}">
+							#{lbl.qr_code_for} <a href="http://labcam.mpdl.mpg.de/" target="_blank">LabCam</a>
+						</ui:fragment>
+					</span>
+					<h:outputScript>var qrHtml = document.getElementById('qr'); qrHtml.innerHTML = create_qrcode('{key:"#{SessionBean.user.apiKey}",col:"#{cc.attrs.bean.collection.id}"}');</h:outputScript>
+				</h:panelGroup>
+			</div>					 
+		</div> 
 	</composite:implementation>
 </html>

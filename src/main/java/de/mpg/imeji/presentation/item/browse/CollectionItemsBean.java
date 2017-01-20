@@ -7,13 +7,13 @@ import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -42,6 +42,7 @@ public class CollectionItemsBean extends ItemsBean {
   private CollectionImeji collection;
   private SearchQuery searchQuery = new SearchQuery();
   private CollectionActionMenu actionMenu;
+  private String authors = "";;
 
   /**
    * Initialize the bean
@@ -53,12 +54,6 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   @Override
-  @PostConstruct
-  public void init() {
-    super.init();
-  }
-
-  @Override
   public void initSpecific() {
     try {
       id = UrlHelper.getParameterValue("id");
@@ -67,11 +62,12 @@ public class CollectionItemsBean extends ItemsBean {
       browseContext = getNavigationString() + id;
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
+      collection.getPersons().stream().map(p -> p.AsFullText())
+          .forEach(a -> authors = authors.equals("") ? a : "; " + a);;
     } catch (final Exception e) {
       LOGGER.error("Error initializing collectionItemsBean", e);
     }
   }
-
 
 
   @Override
@@ -163,4 +159,32 @@ public class CollectionItemsBean extends ItemsBean {
   public String getCollectionId() {
     return collection.getId().toString();
   }
+
+  public String getAuthors() {
+    return authors;
+  }
+
+  public String getCitation() {
+    final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
+    return authors + ". " + collection.getTitle() + ". <a href=\"" + url + "\">" + url + "</a>";
+  }
+
+  /**
+   * The Url to view the DOI
+   *
+   * @return
+   */
+  public String getDoiUrl() {
+    return collection.getDoi().isEmpty() ? "" : DoiService.DOI_URL_RESOLVER + collection.getDoi();
+  }
+
+  public String getPageUrl() {
+    return getNavigation().getCollectionUrl() + id;
+  }
+
+  public int getSize() {
+    return getTotalNumberOfRecords();
+  }
+
 }
+
