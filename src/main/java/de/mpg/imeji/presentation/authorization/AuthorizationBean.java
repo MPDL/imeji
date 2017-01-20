@@ -33,7 +33,6 @@ public class AuthorizationBean extends SuperBean implements Serializable {
   private boolean createCollection = false;
 
   public void init() {
-    System.out.println("INIT AUTH");
     sysadmin = isSysAdmin(getSessionUser());
     createCollection = createCollection(getSessionUser());
   }
@@ -57,8 +56,6 @@ public class AuthorizationBean extends SuperBean implements Serializable {
   public boolean isRead() {
     return read;
   }
-
-
 
   /**
    * @return the update

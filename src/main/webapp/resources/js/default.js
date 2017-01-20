@@ -834,3 +834,7 @@ $(function(){
             .scrollLeft($(".edit_selected_table_wrapper").scrollLeft());
     });
 });
+//Close success message after 2s
+setTimeout(function() {
+    $('.imj_messageSuccess').fadeOut(1000);
+}, 2000);
