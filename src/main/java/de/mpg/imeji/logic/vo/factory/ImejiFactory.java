@@ -195,7 +195,6 @@ public class ImejiFactory {
       String title, String filetype) {
     item.setFilename(title);
     item.setFiletype(filetype);
-    item.setContentId(item.getContentId());
     if (collection.getStatus() == Status.RELEASED) {
       item.setStatus(Status.RELEASED);
     }

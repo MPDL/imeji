@@ -120,10 +120,12 @@ public class ItemController extends ImejiControllerAbstract<Item> {
    */
   private void cleanItem(Collection<Item> l) {
     for (final Item item : l) {
-      final List<Metadata> cleanMetadata =
-          item.getMetadata().stream().filter(md -> !MetadataUtil.isEmpty(md))
-              .map(md -> MetadataUtil.cleanMetadata(md)).collect(Collectors.toList());
-      item.setMetadata(cleanMetadata);
+      if (item.getMetadata() != null) {
+        final List<Metadata> cleanMetadata =
+            item.getMetadata().stream().filter(md -> !MetadataUtil.isEmpty(md))
+                .map(md -> MetadataUtil.cleanMetadata(md)).collect(Collectors.toList());
+        item.setMetadata(cleanMetadata);
+      }
       cleanLicenses(item);
     }
   }
@@ -135,6 +137,9 @@ public class ItemController extends ImejiControllerAbstract<Item> {
    * @throws ImejiException
    */
   private void cleanLicenses(Item item) {
+    if (item.getLicenses() == null) {
+      return;
+    }
     final long start = System.currentTimeMillis();
     item.setLicenses(LicenseUtil.removeDuplicates(item.getLicenses()));
     final License active = LicenseUtil.getActiveLicense(item);

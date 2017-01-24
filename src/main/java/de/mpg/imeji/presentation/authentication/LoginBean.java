@@ -102,7 +102,6 @@ public class LoginBean extends SuperBean {
     try {
       final User user = auth.doLogin();
       sessionBean.setUser(user);
-      sessionBean.checkIfHasUploadRights();
       BeanHelper.cleanMessages();
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_in", getLocale()));
     } catch (final InactiveAuthenticationError e) {

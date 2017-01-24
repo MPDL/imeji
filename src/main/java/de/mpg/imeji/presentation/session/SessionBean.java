@@ -8,7 +8,9 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -20,7 +22,6 @@ import org.apache.commons.lang.StringUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
@@ -54,17 +55,17 @@ public class SessionBean implements Serializable {
   }
 
   private User user = null;
-  private List<String> selected;
+  private List<String> selected = new ArrayList<String>();;
+  private Set<String> clipboard = new HashSet<>();
   private Album activeAlbum;
   private String selectedImagesContext = null;
   private Style selectedCss = Style.NONE;
-  private boolean hasUploadRights = false;
   private String applicationUrl;
   private String selectedBrowseListView;
 
 
   /*
-   * Specific variables for the May Planck Institute
+   * Specific variables for the Max Planck Institute
    */
   public String institute;
   public String instituteId;
@@ -73,8 +74,6 @@ public class SessionBean implements Serializable {
    * The session Bean for imeji
    */
   public SessionBean() {
-    selected = new ArrayList<String>();
-    // locale = InternationalizationBean.getUserLocale();
     initCssWithCookie();
     initApplicationUrl();
     initBrowseViewWithCookieOrConfig();
@@ -157,9 +156,7 @@ public class SessionBean implements Serializable {
 
   public void reloadUser() throws Exception {
     if (user != null) {
-      final UserService c = new UserService();
-      user = c.retrieve(user.getId(), Imeji.adminUser);
-      checkIfHasUploadRights();
+      user = new UserService().retrieve(user.getId(), Imeji.adminUser);
     }
   }
 
@@ -412,32 +409,6 @@ public class SessionBean implements Serializable {
   }
 
   /**
-   * True if the current user has either right to create a collection or to upload items in at least
-   * one collection
-   *
-   * @return
-   */
-  public boolean isHasUploadRights() {
-    return hasUploadRights;
-  }
-
-  /**
-   * Check and set isHasUploadRights
-   */
-  public void checkIfHasUploadRights() {
-    hasUploadRights = false;
-    if (SecurityUtil.authorization().hasCreateCollectionGrant(user)) {
-      hasUploadRights = true;
-    } else {
-      // Replace by a query by grant "update"
-      final List<String> collectionUris =
-          new CollectionService().search(null, null, user, -1, 0).getResults();
-      hasUploadRights =
-          collectionUris.stream().anyMatch(uri -> SecurityUtil.authorization().update(user, uri));
-    }
-  }
-
-  /**
    * Return the {@link SessionBean} form the {@link HttpSession}
    *
    * @param req
@@ -445,5 +416,35 @@ public class SessionBean implements Serializable {
    */
   public static SessionBean getSessionBean(HttpServletRequest req) {
     return (SessionBean) ServletUtil.getSession(req, SessionBean.class.getSimpleName());
+  }
+
+
+  /**
+   * @return the clipboard
+   */
+  public Set<String> getClipboard() {
+    return clipboard;
+  }
+
+
+  /**
+   * @param clipboard the clipboard to set
+   */
+  public void setClipboard(Set<String> clipboard) {
+    this.clipboard = clipboard;
+  }
+
+  /**
+   * Add selected items to the clipboard
+   */
+  public void addToClipBoard() {
+    this.clipboard.addAll(selected);
+  }
+
+  /**
+   * Clear the clipbord
+   */
+  public void clearClipboard() {
+    this.clipboard.clear();
   }
 }

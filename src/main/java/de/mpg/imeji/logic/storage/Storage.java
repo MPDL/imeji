@@ -94,6 +94,14 @@ public interface Storage extends Serializable {
   public void delete(String url);
 
   /**
+   * Copy the file to a new location. All resolution of this file will copy as well
+   * 
+   * @param storageId
+   * @throws IOException
+   */
+  public UploadResult copy(String url, String collectionId) throws IOException;
+
+  /**
    * Update the file stored in the passed url with a new original resolution (original resolution is
    * not updated)
    *

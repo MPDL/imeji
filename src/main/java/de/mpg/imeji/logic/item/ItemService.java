@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
@@ -23,6 +25,7 @@ import com.google.common.collect.Collections2;
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.exceptions.QuotaExceededException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.ContentService;
@@ -45,6 +48,8 @@ import de.mpg.imeji.logic.service.SearchServiceAbstract;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
@@ -113,16 +118,12 @@ public class ItemService extends SearchServiceAbstract<Item> {
       throw new UnprocessableError("Filename must not be empty!");
     }
     validateChecksum(c.getId(), f, false);
-    final ContentService contentController = new ContentService();
-    final ContentVO content = contentController.create(item, f, c, user);
-
-    item = copyContent(item, content);
+    QuotaUtil.checkQuota(user, f, c);
     item.setFilename(filename);
-    if (c.getStatus() == Status.RELEASED) {
-      item.setStatus(Status.RELEASED);
-    }
+    item.setFileSize(f.length());
+    item.setFiletype(StorageUtils.getMimeType(f));
     item = create(item, c, user);
-    contentController.extractFileContentAndUpdateContentVOAsync(item.getId().toString(), content);
+    new ContentService().create(item, f, user);
     return item;
   }
 
@@ -168,13 +169,10 @@ public class ItemService extends SearchServiceAbstract<Item> {
       final File tmp = readFile(externalFileUrl);
       item = createWithFile(item, tmp, filename, c, user);
     } else {
-      final ContentVO content = new ContentVO();
-      content.setOriginal(externalFileUrl);
-      final ContentService contentController = new ContentService();
-      contentController.create(item, content);
-      item = copyContent(item, content);
       item.setFilename(filename);
+      item.setFiletype(StorageUtils.getMimeType(FilenameUtils.getExtension(externalFileUrl)));
       item = create(item, c, user);
+      new ContentService().create(item, externalFileUrl, user);
     }
     return item;
   }
@@ -343,19 +341,17 @@ public class ItemService extends SearchServiceAbstract<Item> {
   public Item updateFile(Item item, CollectionImeji col, File f, String filename, User user)
       throws ImejiException {
     validateChecksum(item.getCollection(), f, true);
-    final ContentService contentController = new ContentService();
-    ContentVO content;
-    if (StringHelper.isNullOrEmptyTrim(item.getContentId())) {
-      content = contentController.create(item, f, col, user);
-    } else {
-      content = contentController.update(item.getContentId(), f, col, user);
-    }
     if (filename != null) {
       item.setFilename(filename);
     }
-    item = copyContent(item, content);
     item = update(item, user);
-    contentController.extractFileContentAndUpdateContentVOAsync(item.getId().toString(), content);
+    final ContentService contentController = new ContentService();
+    ContentVO content = contentController.read(item);
+    if (content == null) {
+      content = contentController.create(item, f, user);
+    } else {
+      content = contentController.update(item, f, user);
+    }
     return item;
   }
 
@@ -380,13 +376,11 @@ public class ItemService extends SearchServiceAbstract<Item> {
       final File tmp = readFile(externalFileUrl);
       item = updateFile(item, col, tmp, filename, u);
     } else {
-      removeFileFromStorage(item);
-      // Reference the file
-      final ContentVO content = new ContentVO();
-      content.setOriginal(externalFileUrl);
-      final ContentService contentController = new ContentService();
-      contentController.create(item, content);
+      if(filename != null){
+        item.setFilename(filename);
+      }
       item = update(item, u);
+      new ContentService().update(item, externalFileUrl, u);
     }
     return item;
 
@@ -540,20 +534,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
   }
 
   /**
-   * Copy the value of the contentVO to the item
-   *
-   * @param item
-   * @param content
-   * @return
-   */
-  private Item copyContent(Item item, ContentVO content) {
-    item.setContentId(content.getId().toString());
-    item.setFiletype(content.getMimetype());
-    item.setFileSize(content.getFileSize());
-    return item;
-  }
-
-  /**
    * Update the fulltext and the technical metadata of all items
    *
    * @throws ImejiException
@@ -602,6 +582,44 @@ public class ItemService extends SearchServiceAbstract<Item> {
     LOGGER.info("Updating " + itemToUpdate.size() + " items with new Content");
     itemController.updateBatchForce(itemToUpdate, Imeji.adminUser);
     LOGGER.info("... done!");
+  }
+
+  /**
+   * Copy Items to another collection
+   * 
+   * @param items
+   * @param collectionId
+   * @param user
+   * @throws ImejiException
+   */
+  public void copyItems(List<String> ids, CollectionImeji destCol, User user)
+      throws ImejiException {
+    List<Item> items = retrieve(ids, user);
+    List<Item> copy = new ArrayList<>(items.size());
+    ContentService contentService = new ContentService();
+    for (Item item : items) {
+      ContentVO srcContent = contentService.read(item.getContentId());
+      if (!checksumExistsInCollection(destCol.getId(), srcContent.getChecksum())) {
+        Item copiedItem = new Item(item);
+        ContentVO content = contentService.copy(copiedItem, srcContent, destCol.getIdString());
+        copiedItem.setContentId(content.getId().toString());
+        copy.add(copiedItem);
+      }
+    }
+    create(copy, destCol, user);
+  }
+
+  /**
+   * Copy Items to another collection and remove the original items
+   * 
+   * @param items
+   * @param collectionId
+   * @param user
+   * @throws ImejiException
+   */
+  public void moveItems(List<String> ids, CollectionImeji col, User user) throws ImejiException {
+    copyItems(ids, col, user);
+    delete(retrieve(ids, user), user);
   }
 
   /**
@@ -659,7 +677,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
   private void removeFileFromStorage(Item item) {
     final ContentService contentController = new ContentService();
     try {
-      contentController.delete(item.getContentId());
+      contentController.delete(item);
     } catch (final Exception e) {
       LOGGER.error("error deleting file", e);
     }
@@ -716,6 +734,14 @@ public class ItemService extends SearchServiceAbstract<Item> {
     }
   }
 
+  private void validateFileFormat(File file) {
+    final StorageController sc = new StorageController();
+    final String guessedNotAllowedFormat = sc.guessNotAllowedFormat(file);
+    if (StorageUtils.BAD_FORMAT.equals(guessedNotAllowedFormat)) {
+      throw new UnprocessableError("upload_format_not_allowed");
+    }
+  }
+
   /**
    * True if the checksum already exists within another {@link Item} in this {@link CollectionImeji}
    *
@@ -766,4 +792,39 @@ public class ItemService extends SearchServiceAbstract<Item> {
     LOGGER.info(uris.size() + " items found, retrieving...");
     return (List<Item>) retrieveBatch(uris, -1, 0, Imeji.adminUser);
   }
-}
+
+  /**
+   * Check user disk space quota. Quota is calculated for user of target collection.
+   *
+   * @param file
+   * @param col
+   * @throws ImejiException
+   * @return remained disk space after successfully uploaded <code>file</code>; <code>-1</code> will
+   *         be returned for unlimited quota
+   */
+  public static long checkQuota(User user, File file, CollectionImeji col) throws ImejiException {
+    final User targetCollectionUser = col == null || user.getId().equals(col.getCreatedBy()) ? user
+        : new UserService().retrieve(col.getCreatedBy(), Imeji.adminUser);
+
+    final Search search = SearchFactory.create();
+    final List<String> results =
+        search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null,
+            null, 0, -1).getResults();
+    long currentDiskUsage = 0L;
+    try {
+      currentDiskUsage = Long.parseLong(results.get(0).toString());
+    } catch (final NumberFormatException e) {
+      throw new UnprocessableError("Cannot parse currentDiskSpaceUsage " + results.get(0).toString()
+          + "; requested by user: " + user.getEmail() + "; targetCollectionUser: "
+          + targetCollectionUser.getEmail(), e);
+    }
+    final long needed = currentDiskUsage + file.length();
+    if (needed > targetCollectionUser.getQuota()) {
+      throw new QuotaExceededException("Data quota ("
+          + QuotaUtil.getQuotaHumanReadable(targetCollectionUser.getQuota(), Locale.ENGLISH)
+          + " allowed) has been exceeded (" + FileUtils.byteCountToDisplaySize(currentDiskUsage)
+          + " used)");
+    }
+    return targetCollectionUser.getQuota() - needed;
+  }
+}}

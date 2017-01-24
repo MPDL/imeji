@@ -54,7 +54,6 @@ import de.mpg.imeji.logic.vo.TechnicalMetadata;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.navigation.history.HistoryPage;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
 
@@ -205,6 +204,7 @@ public class ItemBean extends SuperBean {
       throw new NotFoundException("LoadImage: empty");
     }
     try {
+      System.out.println(item.getContentId());
       content = new ContentService().readLazy(item.getContentId());
       this.preview = content.getPreview();
       this.thumbnail = content.getThumbnail();
@@ -249,27 +249,8 @@ public class ItemBean extends SuperBean {
     this.techMd = md;
   }
 
-  private HistoryPage getPage() {
-    return getHistory().getCurrentPage().copy();
-  }
-
   public String getPageUrl() {
-    final HistoryPage p = getPage();
-    p.getParams().remove("tab");
-    return p.getCompleteUrl();
-    // return getNavigation().getItemUrl() + id + g;
-  }
-
-  public String getTechnicalMetadataUrl() {
-    final HistoryPage p = getPage();
-    p.getParams().put("tab", new String[] {"techmd"});
-    return p.getCompleteUrl();
-  }
-
-  public String getUtilitiesUrl() {
-    final HistoryPage p = getPage();
-    p.getParams().put("tab", new String[] {"util"});
-    return p.getCompleteUrl();
+    return getHistory().getCurrentPage().getCompleteUrl();
   }
 
   public CollectionImeji getCollection() {

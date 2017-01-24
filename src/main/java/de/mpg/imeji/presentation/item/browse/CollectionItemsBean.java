@@ -4,6 +4,7 @@
 package de.mpg.imeji.presentation.item.browse;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,11 +22,13 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.collection.CollectionActionMenu;
 import de.mpg.imeji.presentation.facet.FacetsJob;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * {@link ItemsBean} to browse {@link Item} of a {@link CollectionImeji}
@@ -66,9 +69,36 @@ public class CollectionItemsBean extends ItemsBean {
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
       collection.getPersons().stream().map(p -> p.AsFullText())
           .forEach(a -> authors = authors.equals("") ? a : "; " + a);
-      size = getQuery().isEmpty() ? getTotalNumberOfRecords() : getCollectionSize();
+      size = StringHelper.isNullOrEmptyTrim(getQuery()) ? getTotalNumberOfRecords()
+          : getCollectionSize();
     } catch (final Exception e) {
       LOGGER.error("Error initializing collectionItemsBean", e);
+    }
+  }
+
+  /**
+   * Copy the items from clipboard in this collection
+   */
+  public void paste() {
+    try {
+      new ItemService().copyItems(new ArrayList<>(getSessionBean().getClipboard()), collection,
+          getSessionUser());
+    } catch (ImejiException e) {
+      BeanHelper.error("Error copying items " + e.getMessage());
+      LOGGER.error("Error copying items ", e);
+    }
+  }
+
+  /**
+   * Move the items from clipboard in this collection
+   */
+  public void move() {
+    try {
+      new ItemService().moveItems(new ArrayList<>(getSessionBean().getClipboard()), collection,
+          getSessionUser());
+    } catch (ImejiException e) {
+      BeanHelper.error("Error moving items " + e.getMessage());
+      LOGGER.error("Error moving items ", e);
     }
   }
 

@@ -10,9 +10,7 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.extraction.ContentExtractionResult;
 import de.mpg.imeji.logic.content.extraction.ContentExtractorFactory;
@@ -28,13 +26,12 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.service.SearchServiceAbstract;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.UploadResult;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
-import de.mpg.imeji.logic.user.util.QuotaUtil;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 
 /**
  * Controller for {@link ContentVO}
@@ -61,38 +58,39 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    * @throws ImejiException
    */
-  public ContentVO create(Item item, File file, CollectionImeji c, User user)
-      throws ImejiException {
-    ContentVO contentVO = new ContentVO();
-    contentVO = uploadFileToContentVO(file, contentVO, user, c);
-    contentVO = create(item, contentVO);
+  public ContentVO create(Item item, File file, User user) throws ImejiException {
+    ContentVO contentVO = ImejiFactory.newContent().setId(item.getId().toString())
+        .setFilesize(item.getFileSize()).setMimetype(item.getFiletype()).build();
+    contentVO = uploadFile(item, file, user);
+    contentVO = controller.create(contentVO, Imeji.adminUser);
+    analyzeFile(contentVO);
     return contentVO;
   }
 
   /**
-   * Create a ContentVO.
-   *
-   * @param contentVO
+   * Create a ContentVO for an external file. File will not be downloaded and thus not analyzed
+   * 
+   * @param item
+   * @param externalFileUrl
+   * @param user
    * @return
    * @throws ImejiException
    */
-  public ContentVO create(Item item, ContentVO contentVO) throws ImejiException {
-    if (item.getId() != null) {
-      contentVO.setItemId(item.getId().toString());
-    }
-    return controller.create(contentVO, Imeji.adminUser);
+  public ContentVO create(Item item, String externalFileUrl, User user) throws ImejiException {
+    ContentVO contentVO =
+        ImejiFactory.newContent().setId(item.getId().toString()).setFilesize(item.getFileSize())
+            .setMimetype(item.getFiletype()).setOriginal(externalFileUrl).build();
+    return controller.create(contentVO, user);
   }
 
-
   /**
-   * Read a {@link ContentVO}
-   *
-   * @param contentId
+   * Read the content of an Item
+   * 
+   * @param item
    * @return
-   * @throws ImejiException
    */
-  public ContentVO read(String contentId) throws ImejiException {
-    return controller.retrieve(contentId, Imeji.adminUser);
+  public ContentVO read(Item item) {
+    return null;
   }
 
   /**
@@ -139,12 +137,8 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    * @throws ImejiException
    */
-  public ContentVO update(String contentId, File file, CollectionImeji c, User user)
-      throws ImejiException {
-    if (StringHelper.isNullOrEmptyTrim(contentId)) {
-      throw new UnprocessableError("Error updating content: Id is null");
-    }
-    ContentVO contentVO = read(contentId);
+  public ContentVO update(Item item, File file, User user) throws ImejiException {
+    ContentVO contentVO = read(item);
     final StorageController storageController = new StorageController();
     try {
       storageController.delete(contentVO.getOriginal());
@@ -154,8 +148,26 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
       // Delete file should not stop update process
       LOGGER.error("Error deleting file", e);
     }
-    contentVO = uploadFileToContentVO(file, contentVO, user, c);
-    return controller.update(contentVO, Imeji.adminUser);
+    contentVO = uploadFile(item, file, user);
+    contentVO = controller.update(contentVO, Imeji.adminUser);
+    analyzeFile(contentVO);
+    return contentVO;
+  }
+
+  /**
+   * Update a content with an external file url
+   * 
+   * @param item
+   * @param externalFileUrl
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public ContentVO update(Item item, String externalFileUrl, User user) throws ImejiException {
+    ContentVO contentVO =
+        ImejiFactory.newContent().setId(item.getId().toString()).setFilesize(item.getFileSize())
+            .setMimetype(item.getFiletype()).setOriginal(externalFileUrl).build();
+    return controller.update(contentVO, user);
   }
 
   /**
@@ -175,9 +187,9 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @param contentId
    * @throws ImejiException
    */
-  public void delete(String contentId) throws ImejiException {
+  public void delete(Item item) throws ImejiException {
     final StorageController storageController = new StorageController();
-    final ContentVO contentVO = read(contentId);
+    final ContentVO contentVO = read(item);
     try {
       storageController.delete(contentVO.getOriginal());
       storageController.delete(contentVO.getPreview());
@@ -185,6 +197,25 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     } finally {
       controller.delete(contentVO, Imeji.adminUser);
     }
+  }
+
+  /**
+   * Copy a {@link ContentVO} to another collection
+   * 
+   * @param contentId
+   * @param collectionId
+   * @return
+   * @throws ImejiException
+   */
+  public ContentVO copy(Item item, String collectionId) throws ImejiException {
+    final StorageController storageController = new StorageController();
+    ContentVO contentVO = read(item);
+    UploadResult result = storageController.copy(contentVO.getOriginal(), collectionId);
+    contentVO.setPreview(result.getWeb());
+    contentVO.setThumbnail(result.getThumb());
+    contentVO.setFull(result.getFull());
+    contentVO.setOriginal(result.getFull());
+    return controller.create(contentVO, Imeji.adminUser);
   }
 
   /**
@@ -198,20 +229,15 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    * @throws ImejiException
    */
-  private ContentVO uploadFileToContentVO(File file, ContentVO contentVO, User user,
-      CollectionImeji c) throws ImejiException {
+  private ContentVO uploadFile(Item item, File file, User user) throws ImejiException {
+    ContentVO contentVO = new ContentVO();
+    if (item.getId() == null) {
+      throw new UnprocessableError(
+          "Item id is null: Cannot upload a File to a non-existing Content");
+    }
     final StorageController sc = new StorageController();
-    if (!SecurityUtil.authorization().update(user, c)) {
-      throw new NotAllowedError(
-          "User not Allowed to upload files in collection " + c.getIdString());
-    }
-    final String guessedNotAllowedFormat = sc.guessNotAllowedFormat(file);
-    if (StorageUtils.BAD_FORMAT.equals(guessedNotAllowedFormat)) {
-      throw new UnprocessableError("upload_format_not_allowed");
-    }
-    QuotaUtil.checkQuota(user, file, c);
     final UploadResult uploadResult =
-        sc.upload(file.getName(), file, c != null ? c.getIdString() : user.getId().toString());
+        sc.upload(file.getName(), file, ObjectHelper.getId(item.getCollection()));
     contentVO.setOriginal(uploadResult.getOrginal());
     contentVO.setPreview(uploadResult.getWeb());
     contentVO.setThumbnail(uploadResult.getThumb());
@@ -220,7 +246,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     contentVO.setFileSize(uploadResult.getFileSize());
     contentVO.setHeight(uploadResult.getHeight());
     contentVO.setWidth(uploadResult.getWidth());
-    contentVO.setMimetype(StorageUtils.getMimeType(guessedNotAllowedFormat));
+    contentVO.setMimetype(item.getFiletype());
     return contentVO;
   }
 
@@ -232,10 +258,8 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    * @throws ImejiException
    */
-  public void extractFileContentAndUpdateContentVOAsync(String itemId, ContentVO contentVO)
-      throws ImejiException {
-    Imeji.getCONTENT_EXTRACTION_EXECUTOR()
-        .submit(new ExtractFileContentAndUpdateTask(itemId, contentVO));
+  public void analyzeFile(ContentVO contentVO) throws ImejiException {
+    Imeji.getCONTENT_EXTRACTION_EXECUTOR().submit(new ExtractFileContentAndUpdateTask(contentVO));
   }
 
   /**
@@ -299,23 +323,20 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    */
   private class ExtractFileContentAndUpdateTask implements Callable<Integer> {
     private final ContentVO contentVO;
-    private final String itemId;
 
-    public ExtractFileContentAndUpdateTask(String itemId, ContentVO contentVO) {
+    public ExtractFileContentAndUpdateTask(ContentVO contentVO) {
       this.contentVO = contentVO;
-      this.itemId = itemId;
     }
 
     @Override
     public Integer call() throws Exception {
-      if (itemId != null && !StringHelper.isNullOrEmptyTrim(contentVO.getId())) {
+      if (!StringHelper.isNullOrEmptyTrim(contentVO.getId())) {
         try {
           extractContent(contentVO);
-          contentVO.setItemId(itemId);
           controller.update(contentVO, Imeji.adminUser);
         } catch (final Exception e) {
-          LOGGER.warn("Error extracting fulltext/metadata from file of file " + itemId
-              + " with content id " + contentVO.getId().toString(), e);
+          LOGGER.warn("Error extracting fulltext/metadata from file of file "
+              + contentVO.getItemId() + " with content id " + contentVO.getId().toString(), e);
         }
       }
       return 1;

@@ -17,6 +17,16 @@
 			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton imj_menuButton">
 				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
 			</a>
+			<ui:fragment rendered="#{! empty SessionBean.clipboard}">
+				<h:form>
+					<h:commandLink id="paste"  action="#{cc.attrs.collectionBean.paste}" styleClass="imj_overlayMenu imj_menuButton">
+						 <span class="fa fa-copy"/><span>#{lbl.paste}</span>
+					</h:commandLink>
+					<h:commandLink id="move" action="#{cc.attrs.collectionBean.move}" styleClass="imj_overlayMenu imj_menuButton">
+						 <span class="fa fa-scissors"/><span>#{lbl.move}</span>
+					</h:commandLink>
+				</h:form>
+			</ui:fragment>
 			<ui:fragment rendered="#{Auth.admin}">
 				<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share" class="imj_menuButton imj_menuButton">
 					<span class="fa fa-users"/> <span>#{lbl.collection_share}</span>

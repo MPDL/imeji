@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.storage.Storage;
@@ -161,6 +162,29 @@ public class InternalStorage implements Storage {
     }
   }
 
+  @Override
+  public UploadResult copy(String url, String collectionId) throws IOException {
+    File srcDir = manager.getDirectory(url);
+    File destDir = manager.createNewDirectory(collectionId);
+    System.out.println("copying " + srcDir + " to " + destDir);
+    FileUtils.copyDirectory(srcDir, destDir);
+    return initUploadResult(destDir);
+  }
+
+
+  /**
+   * Initialize an {@link UploadResult} for a directory
+   * 
+   * @param dir
+   * @return
+   */
+  private UploadResult initUploadResult(File dir) {
+    InternalStorageItem item = manager.initInternalStorageItem(dir);
+    String id = manager.getStorageId(item.getFullUrl());
+    return new UploadResult(id, item.getOriginalUrl(), item.getWebUrl(), item.getThumbnailUrl(),
+        item.getFullUrl());
+  }
+
   /*
    * (non-Javadoc)
    *
@@ -235,4 +259,6 @@ public class InternalStorage implements Storage {
     final File file = read(url);
     return ImageUtils.getImageHeight(file);
   }
+
+
 }

@@ -76,6 +76,21 @@ public class ElasticIndexer implements SearchIndexer {
     try {
       final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
       for (final Object obj : l) {
+        if (obj instanceof ContentVO) {
+          if (((ContentVO) obj).getId().toString()
+              .equals("http://imeji.org/content/sgejte_1fEtDWEql")) {
+            System.out.println(getId(obj));
+            System.out.println(getParent(obj));
+            System.out.println(toJson(obj, dataType, index));
+          }
+          if (((ContentVO) obj).getId().toString()
+              .equals("http://imeji.org/content/Cmnt2vUBdx3thT0Q")) {
+            System.out.println("valid:");
+            System.out.println(getId(obj));
+            System.out.println(getParent(obj));
+            System.out.println(toJson(obj, dataType, index));
+          }
+        }
         bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, index), getParent(obj)));
         // indexJSON(getId(obj), toJson(obj, dataType, index));
       }

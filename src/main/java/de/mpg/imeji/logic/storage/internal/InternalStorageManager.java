@@ -114,6 +114,7 @@ public class InternalStorageManager implements Serializable {
     }
   }
 
+
   public void replaceFile(String url, File file) throws IOException {
     removeFile(url);
     copy(file, transformUrlToPath(url));
@@ -353,6 +354,59 @@ public class InternalStorageManager implements Serializable {
   }
 
   /**
+   * Return the Directory of this file
+   * 
+   * @param url
+   * @return
+   */
+  public File getDirectory(String url) {
+    return new File(transformUrlToPath(url)).getParentFile().getParentFile();
+  }
+
+  /**
+   * Create a new Directory for this collection
+   * 
+   * @param collectionId
+   * @return
+   */
+  public File createNewDirectory(String collectionId) {
+    File f = new File(storagePath + StringHelper.fileSeparator + generateId(collectionId, 0));
+    if (!f.exists()) {
+      f.mkdirs();
+    }
+    return f;
+  }
+
+  /**
+   * Initialize an InterstorageItem for this directory
+   * 
+   * @param dir
+   * @return
+   */
+  public InternalStorageItem initInternalStorageItem(File dir) {
+    InternalStorageItem item = new InternalStorageItem();
+    for (File f : FileUtils.listFiles(dir, null, true)) {
+      if (f.isFile()) {
+        switch (getResolution(f.getAbsolutePath())) {
+          case ORIGINAL:
+            item.setOriginalUrl(transformPathToUrl(f.getAbsolutePath()));
+            break;
+          case FULL:
+            item.setFullUrl(transformPathToUrl(f.getAbsolutePath()));
+            break;
+          case THUMBNAIL:
+            item.setThumbnailUrl(transformPathToUrl(f.getAbsolutePath()));
+            break;
+          case WEB:
+            item.setWebUrl(transformPathToUrl(f.getAbsolutePath()));
+            break;
+        }
+      }
+    }
+    return item;
+  }
+
+  /**
    * Inner class to transform and write the files in the storage asynchronously
    *
    * @author saquet
@@ -443,5 +497,20 @@ public class InternalStorageManager implements Serializable {
    */
   private boolean exists(String id) {
     return new File(id).exists();
+  }
+
+  /**
+   * Return the resolution for this path
+   * 
+   * @param path
+   * @return
+   */
+  private FileResolution getResolution(String path) {
+    for (FileResolution resolution : FileResolution.values()) {
+      if (path.contains(resolution.name().toLowerCase())) {
+        return resolution;
+      }
+    }
+    return FileResolution.ORIGINAL;
   }
 }

@@ -164,11 +164,13 @@ public class StatusComponent extends UINamingContainer {
    */
   private List<User> findAllUsersWithReadGrant(Properties p) {
     final UserService uc = new UserService();
-    final List<User> l = uc.searchAndRetrieveLazy(getReadQuery(p.getId().toString()), null,
-        Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE);
+    final List<User> l = new ArrayList<>();
     if (p instanceof Item) {
       l.addAll(uc.searchAndRetrieveLazy(getReadQuery(((Item) p).getCollection().toString()), null,
           Imeji.adminUser, 0, COLLABORATOR_LIST_MAX_SIZE));
+    } else {
+      l.addAll(uc.searchAndRetrieveLazy(getReadQuery(p.getId().toString()), null, Imeji.adminUser,
+          0, COLLABORATOR_LIST_MAX_SIZE));
     }
     return l;
   }

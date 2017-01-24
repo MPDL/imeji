@@ -37,18 +37,20 @@
 							</a>
 						</li>
 						<li>
-							<a href="#{Navigation.applicationUrl}moveSelected" id="lnkMoveTo">
-								 <span class="fa fa-clone"/> <span>#{lbl.move_to}...</span>
-							</a>
+						<h:form>
+							<h:commandLink action="#{SessionBean.addToClipBoard}" id="lnkAddToClipBoard">
+								 <span class="fa fa-clone"/> <span>#{lbl.copy}</span>
+							</h:commandLink>
+						</h:form>
 						</li>
 					</ul>
 				</div>
 			</div>
 		</ui:fragment>
 		<ui:fragment rendered="#{!Auth.update and Auth.read}">
-			<a href="#{Navigation.applicationUrl}moveSelected" id="lnkMoveTo" class="imj_overlayMenu imj_menuButton">
-				 <span class="fa fa-clone"/> <span>#{lbl.move_to}...</span>
-			</a>
+			<h:commandLink action="#{SessionBean.addToClipBoard}" id="lnkAddToClipBoard2" styleClass="imj_overlayMenu imj_menuButton">
+				 <span class="fa fa-clone"/> <span>#{lbl.copy}</span>
+			</h:commandLink>
 		</ui:fragment>
 	</composite:implementation>
 </html>

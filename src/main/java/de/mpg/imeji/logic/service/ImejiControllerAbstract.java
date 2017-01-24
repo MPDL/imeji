@@ -12,8 +12,8 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.user.UserController;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties;
@@ -68,7 +68,7 @@ public abstract class ImejiControllerAbstract<T> {
    * @return
    */
   public T update(T t, User user) throws ImejiException {
-    return createBatch(Arrays.asList(t), user).get(0);
+    return updateBatch(Arrays.asList(t), user).get(0);
   }
 
   /**

@@ -37,8 +37,10 @@ public final class ElasticItem extends ElasticProperties {
     this.license = getLicenseName(item);
     this.size = item.getFileSize();
     this.filetype = item.getFiletype();
-    for (final Metadata md : item.getMetadata()) {
-      metadata.add(new ElasticMetadata(md));
+    if (item.getMetadata() != null) {
+      for (final Metadata md : item.getMetadata()) {
+        metadata.add(new ElasticMetadata(md));
+      }
     }
   }
 
