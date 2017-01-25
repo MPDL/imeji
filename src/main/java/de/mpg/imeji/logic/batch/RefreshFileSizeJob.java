@@ -46,8 +46,9 @@ public class RefreshFileSizeJob implements Callable<Integer> {
     for (final Item item : items) {
       try {
         LOGGER.info(count + "/" + items.size());
-        path = storageManager
-            .transformUrlToPath(contentService.readLazy(item.getContentId()).getOriginal());
+        final String contentId = contentService.findContentId(item.getId().toString());
+        path =
+            storageManager.transformUrlToPath(contentService.retrieveLazy(contentId).getOriginal());
         f = new File(path);
         final Dimension d = ImageUtils.getImageDimension(f);
         if (d != null && d.width > 0 && d.height > 0) {

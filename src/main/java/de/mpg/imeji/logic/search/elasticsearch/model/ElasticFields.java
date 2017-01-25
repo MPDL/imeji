@@ -24,7 +24,8 @@ public enum ElasticFields {
                                                           "info.text"), INFO_URL(
                                                               "info.url"), EMAIL, TECHNICAL, TECHNICAL_NAME(
                                                                   "technical.name"), TECHNICAL_VALUE(
-                                                                      "technical.value");
+                                                                      "technical.value"), PARENT(
+                                                                          "_parent");
   /**
    * The field which must be used to search in elasticsearch
    */

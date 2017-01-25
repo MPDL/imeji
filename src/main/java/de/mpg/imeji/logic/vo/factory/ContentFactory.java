@@ -22,13 +22,8 @@ public class ContentFactory {
     return this;
   }
 
-  public ContentFactory setFilesize(long fileSize) {
-    content.setFileSize(fileSize);
-    return this;
-  }
-
-  public ContentFactory setMimetype(String mimetype) {
-    content.setMimetype(mimetype);
+  public ContentFactory setItemId(String itemId) {
+    content.setItemId(itemId);
     return this;
   }
 

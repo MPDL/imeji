@@ -85,7 +85,7 @@ public class ThumbnailBean implements Serializable {
   private String initThumbnailLink(Item item) {
     final Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     return Status.WITHDRAWN != item.getStatus()
-        ? navigation.getFileUrl() + "?content=" + item.getContentId() + "&amp;resolution=thumbnail"
+        ? navigation.getFileUrl() + "?item=" + item.getId() + "&amp;resolution=thumbnail"
         : navigation.getApplicationUrl() + "resources/icon/discarded.png";
   }
 

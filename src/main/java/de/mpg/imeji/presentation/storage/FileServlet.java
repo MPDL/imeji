@@ -77,14 +77,17 @@ public class FileServlet extends HttpServlet {
       throws ServletException, IOException {
     String url = req.getParameter("id");
     final String contentId = req.getParameter("content");
+    final String itemId = req.getParameter("item");
     User user;
     try {
       final SessionBean session = getSession(req);
       user = getUser(req, session);
       if (url == null && contentId != null) {
         url = retrieveUrlOfContent(contentId, req.getParameter("resolution"));
-      }
-      if (url == null && contentId == null) {
+      } else if (url == null && itemId != null) {
+        url = retrieveUrlOfContent(new ContentService().findContentId(itemId),
+            req.getParameter("resolution"));
+      } else if (url == null) {
         url = domain + req.getRequestURI();
       }
       resp.setContentType(StorageUtils.getMimeType(StringHelper.getFileExtension(url)));
@@ -115,7 +118,7 @@ public class FileServlet extends HttpServlet {
   }
 
   private String retrieveUrlOfContent(String contentId, String resolution) throws ImejiException {
-    final ContentVO content = contentController.readLazy(contentId);
+    final ContentVO content = contentController.retrieveLazy(contentId);
     switch (resolution) {
       case "thumbnail":
         return content.getThumbnail();

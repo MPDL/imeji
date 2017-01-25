@@ -185,7 +185,7 @@ public class ItemBean extends SuperBean {
    */
   public void initViewTechnicalMetadata() throws ImejiException {
     techMd = new ArrayList<>();
-    final ContentVO content = new ContentService().read(item.getContentId());
+    content = new ContentService().retrieve(content.getId().toString());
     for (final TechnicalMetadata tmd : content.getTechnicalMetadata()) {
       techMd.add(tmd.getName() + ": " + tmd.getValue());
     }
@@ -204,8 +204,8 @@ public class ItemBean extends SuperBean {
       throw new NotFoundException("LoadImage: empty");
     }
     try {
-      System.out.println(item.getContentId());
-      content = new ContentService().readLazy(item.getContentId());
+      ContentService service = new ContentService();
+      content = service.retrieve(service.findContentId(item.getId().toString()));
       this.preview = content.getPreview();
       this.thumbnail = content.getThumbnail();
       this.fullResolution = content.getFull();

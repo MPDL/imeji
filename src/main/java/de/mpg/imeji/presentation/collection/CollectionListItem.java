@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -109,7 +110,7 @@ public class CollectionListItem implements Serializable {
         if (uri != null) {
           final Navigation navigation =
               (Navigation) BeanHelper.getApplicationBean(Navigation.class);
-          String contentId = itemService.retrieveLazy(uri, user).getContentId();
+          String contentId = new ContentService().findContentId(uri.toString());
           this.logoUrl =
               navigation.getFileUrl() + "?content=" + contentId + "&amp;resolution=thumbnail";
         }

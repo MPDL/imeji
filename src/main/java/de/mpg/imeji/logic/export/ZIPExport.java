@@ -1,39 +1,14 @@
-/*
- *
- * CDDL HEADER START
- *
- * The contents of this file are subject to the terms of the Common Development and Distribution
- * License, Version 1.0 only (the "License"). You may not use this file except in compliance with
- * the License.
- *
- * You can obtain a copy of the license at license/ESCIDOC.LICENSE or http://www.escidoc.de/license.
- * See the License for the specific language governing permissions and limitations under the
- * License.
- *
- * When distributing Covered Code, include this CDDL HEADER in each file and include the License
- * file at license/ESCIDOC.LICENSE. If applicable, add the following below this CDDL HEADER, with
- * the fields enclosed by brackets "[]" replaced with your own identifying information: Portions
- * Copyright [yyyy] [name of copyright owner]
- *
- * CDDL HEADER END
- */
-/*
- * Copyright 2006-2007 Fachinformationszentrum Karlsruhe Gesellschaft für
- * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
- * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
- */
 package de.mpg.imeji.logic.export;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
@@ -89,13 +64,12 @@ public class ZIPExport extends ExportAbstract {
       throws ImejiException {
     final ZipOutputStream zip = new ZipOutputStream(out);
     final Map<String, Item> itemMap = retrieveItems(ids);
-    final Map<String, ContentVO> contentMap = retrieveContents(itemMap.values());
+    final List<ContentVO> contents = retrieveContents(itemMap.values());
     createItemsPerCollection(itemMap.values());
     // Create the ZIP file
-    for (String contentId : contentMap.keySet()) {
+    for (ContentVO content : contents) {
       try {
-        addZipEntry(zip, itemMap.get(contentId).getFilename(),
-            contentMap.get(contentId).getOriginal(), 0);
+        addZipEntry(zip, itemMap.get(content.getItemId()).getFilename(), content.getOriginal(), 0);
       } catch (Exception e) {
         LOGGER.error("Error zip export", e);
       }
@@ -154,17 +128,18 @@ public class ZIPExport extends ExportAbstract {
    * @return
    * @throws ImejiException
    */
-  private Map<String, ContentVO> retrieveContents(Collection<Item> items) throws ImejiException {
-    List<String> contentIds = items.stream().map(Item::getContentId).collect(Collectors.toList());
-    Map<String, ContentVO> map = new HashMap<>();
-    for (ContentVO c : new ContentService().retrieveBatchLazy(contentIds)) {
-      map.put(c.getId().toString(), c);
+  private List<ContentVO> retrieveContents(Collection<Item> items) throws ImejiException {
+    List<ContentVO> l = new ArrayList<>();
+    ContentService service = new ContentService();
+    for (Item item : items) {
+      ContentVO content = service.retrieveLazy(service.findContentId(item.getId().toString()));
+      l.add(content);
     }
-    return map;
+    return l;
   }
 
   /**
-   * Retrieve the items as a Map [contentId,Item]
+   * Retrieve the items as a Map [itemId,Item]
    * 
    * @param result
    * @return
@@ -172,7 +147,11 @@ public class ZIPExport extends ExportAbstract {
    */
   private Map<String, Item> retrieveItems(List<String> ids) throws ImejiException {
     final List<Item> items = new ItemController().retrieveBatchLazy(ids, user);
-    return items.stream().collect(Collectors.toMap(Item::getContentId, Function.identity()));
+    Map<String, Item> map = new HashMap<>(items.size());
+    for (Item item : items) {
+      map.put(item.getId().toString(), item);
+    }
+    return map;
   }
 
   @Override

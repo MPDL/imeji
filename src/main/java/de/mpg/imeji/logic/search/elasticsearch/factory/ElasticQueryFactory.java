@@ -34,8 +34,8 @@ import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 
@@ -484,6 +484,9 @@ public class ElasticQueryFactory {
       case email:
         return fieldQuery(ElasticFields.EMAIL, pair.getValue(), SearchOperators.REGEX,
             pair.isNot());
+      case itemId:
+        return QueryBuilders.hasParentQuery(ElasticTypes.items.name(),
+            fieldQuery(ElasticFields.ID, pair.getValue(), pair.getOperator(), pair.isNot()));
       default:
         break;
     }

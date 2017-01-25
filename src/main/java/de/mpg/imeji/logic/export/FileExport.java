@@ -34,7 +34,7 @@ public class FileExport extends ExportAbstract {
       Item item = retrieveItem(itemId);
       ContentVO content = retrieveContent(item);
       this.collectionId = item.getCollection().toString();
-      this.size = content.getFileSize();
+      this.size = item.getFileSize();
       this.name = item.getFilename();
       this.fileUrl = content.getOriginal();
     } catch (Exception e) {
@@ -71,7 +71,8 @@ public class FileExport extends ExportAbstract {
    * @throws ImejiException
    */
   private ContentVO retrieveContent(Item item) throws ImejiException {
-    return new ContentService().readLazy(item.getContentId());
+    final ContentService service = new ContentService();
+    return service.retrieveLazy(service.findContentId(item.getId().toString()));
   }
 
   @Override

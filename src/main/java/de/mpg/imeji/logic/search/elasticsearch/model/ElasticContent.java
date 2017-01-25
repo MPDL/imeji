@@ -13,8 +13,6 @@ import de.mpg.imeji.logic.vo.TechnicalMetadata;
  *
  */
 public class ElasticContent {
-  private final String filetype;
-  private final long size;
   private final String checksum;
   private final long width;
   private final long height;
@@ -27,8 +25,6 @@ public class ElasticContent {
    * @param contentVO
    */
   public ElasticContent(ContentVO contentVO) {
-    this.filetype = contentVO.getMimetype();
-    this.size = contentVO.getFileSize();
     this.height = contentVO.getHeight();
     this.width = contentVO.getWidth();
     this.fulltext = contentVO.getFulltext();
@@ -36,20 +32,6 @@ public class ElasticContent {
     for (final TechnicalMetadata md : contentVO.getTechnicalMetadata()) {
       technical.add(new ElasticTechnicalMetadata(md));
     }
-  }
-
-  /**
-   * @return the filetype
-   */
-  public String getFiletype() {
-    return filetype;
-  }
-
-  /**
-   * @return the size
-   */
-  public long getSize() {
-    return size;
   }
 
   /**

@@ -39,12 +39,8 @@ public class ContentVO implements Serializable {
   private String full;
   @j2jLiteral("http://imeji.org/terms/original")
   private String original;
-  @j2jLiteral("http://imeji.org/terms/mimetype")
-  private String mimetype;
   @j2jLiteral("http://imeji.org/terms/checksum")
   private String checksum;
-  @j2jLiteral("http://imeji.org/terms/fileSize")
-  private long fileSize;
   @j2jLiteral("http://www.w3.org/2003/12/exif/ns#width")
   private long width;
   @j2jLiteral("http://www.w3.org/2003/12/exif/ns#height")
@@ -152,19 +148,6 @@ public class ContentVO implements Serializable {
     this.checksum = checksum;
   }
 
-  /**
-   * @return the fileSize
-   */
-  public long getFileSize() {
-    return fileSize;
-  }
-
-  /**
-   * @param fileSize the fileSize to set
-   */
-  public void setFileSize(long fileSize) {
-    this.fileSize = fileSize;
-  }
 
   /**
    * @return the width
@@ -192,20 +175,6 @@ public class ContentVO implements Serializable {
    */
   public void setHeight(long height) {
     this.height = height;
-  }
-
-  /**
-   * @return the mimetype
-   */
-  public String getMimetype() {
-    return mimetype;
-  }
-
-  /**
-   * @param mimetype the mimetype to set
-   */
-  public void setMimetype(String mimetype) {
-    this.mimetype = mimetype;
   }
 
   /**

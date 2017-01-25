@@ -30,6 +30,7 @@ import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.impl.InternalStorage;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -73,10 +74,10 @@ public class DataViewerServlet extends HttpServlet {
       if (isPublicItem) {
         // if item is public, simply send the URL to the Data Viewer,
         // along with the fileExtensionName
-
-        resp.sendRedirect(
-            viewGenericUrl(new ContentService().readLazy(item.getContentId()).getOriginal(),
-                fileExtensionName, dataViewerUrl));
+        final ContentService contentService = new ContentService();
+        final ContentVO content =
+            contentService.retrieveLazy(contentService.findContentId(item.getId().toString()));
+        resp.sendRedirect(viewGenericUrl(content.getOriginal(), fileExtensionName, dataViewerUrl));
       } else
 
       {
@@ -102,7 +103,10 @@ public class DataViewerServlet extends HttpServlet {
     // in any other case, download the temporary file and send it to the
     // data viewer
     final InternalStorage ist = new InternalStorage();
-    final File file = ist.read(new ContentService().readLazy(item.getContentId()).getOriginal());
+    final ContentService contentService = new ContentService();
+    final ContentVO content =
+        contentService.retrieveLazy(contentService.findContentId(item.getId().toString()));
+    final File file = ist.read(content.getOriginal());
 
     // Data Viewer File Parameter is always named "file1" not filename
     final FileDataBodyPart filePart = new FileDataBodyPart("file1", file);
