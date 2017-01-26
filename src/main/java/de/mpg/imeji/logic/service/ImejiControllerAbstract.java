@@ -79,7 +79,7 @@ public abstract class ImejiControllerAbstract<T> {
    * @return
    */
   public void delete(T t, User user) throws ImejiException {
-    createBatch(Arrays.asList(t), user).get(0);
+    deleteBatch(Arrays.asList(t), user);
   }
 
   /**

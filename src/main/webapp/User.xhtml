@@ -6,7 +6,7 @@
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components">
-	<ui:param name="headline" value="User Page" />
+	<ui:param name="headline" value="#{UserBean.user.person.completeName}" />
 	<ui:param name="currentMainMenu" value="admin" />
 
 	<ui:define name="actionsMenu">
@@ -38,312 +38,283 @@
 
 					<div class="imj_listBody">
 
-						<h:panelGroup layout="block"
-							styleClass="imj_adminPanel imj_userConfig">
-
-							<div class="imj_headline">
-								<h2>
-									<h:outputText
-										value="Hier #{headline} - #{UserBean.user.person.completeName}" />
-								</h2>
-							</div>
-
-							<div class="imj_content">
-
-								<h:form id="userForm">
-
-									<h:panelGroup layout="block" id="userInfos"
-										class="imj_userGlobalInformation">
-										<!-- User Edit - Email -->
-										<h:panelGroup layout="block" styleClass="imj_admindataSet">
-											<div class="imj_admindataLabel">
-												<h:outputText value="#{lbl.email}" />
-												<span class="imj_invisible">: </span>
-											</div>
-											<div class="imj_admindataValue">
-												<h:panelGroup class="imj_admindataValueEntry"
-													rendered="#{!UserBean.edit}">
-													<h:outputText value="#{UserBean.user.email}" />
-												</h:panelGroup>
-												<h:panelGroup class="imj_admindataSetEdit"
-													rendered="#{UserBean.edit}">
-													<h:inputText class="imj_admindataEdit"
-														value="#{UserBean.user.email}" />
-												</h:panelGroup>
-											</div>
-										</h:panelGroup>
-
-										<!-- User Edit - Username -->
-										<h:panelGroup layout="block" styleClass="imj_admindataSet"
-											rendered="#{!UserBean.edit}">
-											<div class="imj_admindataLabel">
-												<h:outputText value="#{lbl.complete_name}" />
-												<span class="imj_invisible">: </span>
-											</div>
-											<div class="imj_admindataValue">
-												<h:panelGroup class="imj_admindataValueEntry">
-													<h:outputText value="#{UserBean.user.person.completeName}" />
-												</h:panelGroup>
-											</div>
-										</h:panelGroup>
-
-
-										<h:panelGroup layout="block" styleClass="imj_admindataSet"
-											rendered="#{!UserBean.edit}">
-											<div class="imj_admindataLabel">
-												<h:outputText value="#{lbl.organization}" />
-												<span class="imj_invisible">: </span>
-											</div>
-											<div class="imj_admindataValue">
-												<h:panelGroup class="imj_admindataValueEntry">
-													<ui:repeat var="org"
-														value="#{UserBean.user.person.organizations}"
-														varStatus="index">
-														<h:outputText value=", " rendered="#{index.index > 0}" />
-														<h:outputText value="#{org.name}" />
-													</ui:repeat>
-												</h:panelGroup>
-											</div>
-										</h:panelGroup>
-
-										<!-- The user of the person -->
-										<imjc:person person="#{UserBean.user.person}"
-											bean="#{UserBean}" position="0" rendered="#{UserBean.edit}" />
-
-										<!-- Disk space quota -->
-										<div class="imj_admindataSet">
-											<div class="imj_admindataLabel">
-												<h:outputText value="#{lbl.quota}"
-													rendered="#{!UserBean.edit or Auth.sysAdmin}" />
-												<h:outputText value="#{lbl.quota_input}"
-													rendered="#{UserBean.edit and Auth.sysAdmin}" />
-												<span class="imj_invisible">: </span>
-											</div>
-											<div class="imj_admindataValue">
-												<h:panelGroup class="imj_admindataValueEntry"
-													rendered="#{!UserBean.edit}">
-													<h:outputText value="#{UserBean.quota.humanReadableQuota}" />
-												</h:panelGroup>
-												<h:panelGroup class="imj_admindataSetEdit"
-													rendered="#{UserBean.edit and Auth.sysAdmin}">
-													<h:selectOneMenu value="#{UserBean.quota.quota}">
-														<f:selectItems value="#{UserBean.quota.quotaMenu}" />
-													</h:selectOneMenu>
-												</h:panelGroup>
-											</div>
+						<div class="imj_adminPanel imj_userConfig">
+							<h:form id="userForm">
+								<h:panelGroup layout="block" id="userInfos" class="imj_userGlobalInformation">
+									<!-- User Edit - Email -->
+									<div class="imj_metadataSet">
+										<div class="imj_metadataLabel">
+											<h:outputText value="#{lbl.email}" />
+											<span class="imj_invisible">: </span>
 										</div>
+										<div class="imj_metadataValue">
+											<h:panelGroup class="imj_metadataValueEntry" rendered="#{!UserBean.edit}">
+												<h:outputText value="#{UserBean.user.email}" />
+											</h:panelGroup>
+											<h:panelGroup class="imj_metadataSetEdit" rendered="#{UserBean.edit}">
+												<h:inputText class="imj_admindataEdit" value="#{UserBean.user.email}" />
+											</h:panelGroup>
+										</div>
+									</div>
 
-										<!-- API Key -->
-										<ui:fragment rendered="#{!UserBean.edit}">
-											<div class="imj_admindataSet">
-												<div class="imj_admindataLabel">
-													<h:outputText value="#{lbl.api_key}" />
-													<span class="imj_invisible">: </span>
-												</div>
-												<div class="imj_admindataValue">
-													<span class="imj_admindataValueEntry"> <h:inputTextarea
-															cols="60" rows="10" value="#{UserBean.user.apiKey}"
-															onclick="this.select();" />
-													</span> <span class="imj_admindataValueEntry"> <h:commandLink
-															action="#{UserBean.generateNewApiKey}"
-															value="#{lbl.api_key_generate}">
-															<f:ajax execute="@this" render=":userForm:userInfos" />
-														</h:commandLink>
-													</span>
-												</div>
-											</div>
-										</ui:fragment>
+									<!-- User Edit - Username -->
+									<h:panelGroup layout="block" styleClass="imj_metadataSet" rendered="#{!UserBean.edit}">
+										<div class="imj_metadataLabel">
+											<h:outputText value="#{lbl.complete_name}" />
+											<span class="imj_invisible">: </span>
+										</div>
+										<div class="imj_metadataValue">
+											<h:panelGroup class="imj_metadataValueEntry">
+												<h:outputText value="#{UserBean.user.person.completeName}" />
+											</h:panelGroup>
+										</div>
+									</h:panelGroup>
 
-										<!-- submit panel -->
-										<div class="imj_submitPanel">
-											<h:commandLink id="lnkEditUserdata"
-												action="#{UserBean.toggleEdit}" value="#{lbl.edit}"
-												rendered="#{!UserBean.edit}" styleClass="imj_editButton"
-												type="submit">
+
+									<h:panelGroup layout="block" styleClass="imj_metadataSet" rendered="#{!UserBean.edit}">
+										<div class="imj_metadataLabel">
+											<h:outputText value="#{lbl.organization}" />
+											<span class="imj_invisible">: </span>
+										</div>
+										<div class="imj_metadataValue">
+											<h:panelGroup class="imj_metadataValueEntry">
+												<ui:repeat var="org"
+													value="#{UserBean.user.person.organizations}"
+													varStatus="index">
+													<h:outputText value=", " rendered="#{index.index > 0}" />
+													<h:outputText value="#{org.name}" />
+												</ui:repeat>
+											</h:panelGroup>
+										</div>
+									</h:panelGroup>
+
+									<!-- The user of the person -->
+									<imjc:person person="#{UserBean.user.person}"
+										bean="#{UserBean}" position="0" rendered="#{UserBean.edit}" />
+
+									<!-- Disk space quota -->
+									<div class="imj_metadataSet">
+										<div class="imj_metadataLabel">
+											<h:outputText value="#{lbl.quota}"
+												rendered="#{!UserBean.edit or Auth.sysAdmin}" />
+											<h:outputText value="#{lbl.quota_input}"
+												rendered="#{UserBean.edit and Auth.sysAdmin}" />
+											<span class="imj_invisible">: </span>
+										</div>
+										<div class="imj_metadataValue">
+											<h:panelGroup class="imj_metadataValueEntry"
+												rendered="#{!UserBean.edit}">
+												<h:outputText value="#{UserBean.quota.humanReadableQuota}" />
+											</h:panelGroup>
+											<h:panelGroup class="imj_metadataSetEdit"
+												rendered="#{UserBean.edit and Auth.sysAdmin}">
+												<h:selectOneMenu value="#{UserBean.quota.quota}">
+													<f:selectItems value="#{UserBean.quota.quotaMenu}" />
+												</h:selectOneMenu>
+											</h:panelGroup>
+										</div>
+									</div>
+									
+									<!-- submit panel -->
+									<div class="imj_metadataSet">
+										<div class="imj_metadataLabel">
+											<span class="imj_invisible">: </span>
+										</div>
+										<div class="imj_metadataValue">
+											<h:commandLink id="lnkEditUserdata" action="#{UserBean.toggleEdit}" value="#{lbl.edit}" rendered="#{!UserBean.edit}" styleClass="imj_editButton" type="submit">
 												<f:ajax execute="@this" render=":userForm:userInfos" />
 											</h:commandLink>
-											<h:outputLink id="lnkCancelUserdata"
-												value="#{UserBean.userPageUrl}" rendered="#{UserBean.edit}"
-												styleClass="imj_cancelButton" type="submit">
+											<h:outputLink id="lnkCancelUserdata" value="#{UserBean.userPageUrl}" rendered="#{UserBean.edit}" styleClass="imj_cancelButton" type="submit">
 												<h:outputText value="#{lbl.cancel}" />
 											</h:outputLink>
-											<h:commandLink action="#{UserBean.updateUser}"
-												value="#{lbl.save}" styleClass="imj_submitButton"
-												rendered="#{UserBean.edit}" type="submit">
-												<f:ajax execute="@form"
-													render=":userForm:userInfos :imj_pageMessageArea" />
+											<h:commandLink action="#{UserBean.updateUser}" value="#{lbl.save}" styleClass="imj_submitButton" rendered="#{UserBean.edit}" type="submit">
+												<f:ajax execute="@form" render=":userForm:userInfos :imj_pageMessageArea" />
 											</h:commandLink>
 										</div>
-
-									</h:panelGroup>
-									<!-- END user infos -->
-
-									<!-- User Edit - Password -->
-									<div class="imj_admindataSetEdit">
-										<div class="imj_admindataSetEdit">
-											<div class="imj_admindataLabel">
-												<h:outputLabel for="inputPassword"
-													value="#{lbl.password_new}" />
+									</div>
+									<br/><br/>
+									<!-- API Key -->
+									<ui:fragment rendered="#{!UserBean.edit}">
+										<div class="imj_metadataSet">
+											<div class="imj_metadataLabel">
+												<h:outputText value="#{lbl.api_key}" />
 												<span class="imj_invisible">: </span>
 											</div>
-											<div class="imj_admindataValue">
-												<div class="imj_admindataValueEntry">
-													<h:inputSecret id="inputPassword"
-														value="#{UserBean.newPassword}"
-														styleClass="imj_admindataEdit" />
-												</div>
+											<div class="imj_metadataValue">
+												<span class="imj_metadataValueEntry"> 
+													<h:inputTextarea cols="60" rows="10" value="#{UserBean.user.apiKey}" onclick="this.select();" />
+												</span> 
 											</div>
 										</div>
-										<div class="imj_admindataSetEdit">
-											<div class="imj_admindataLabel">
-												<h:outputLabel for="inputRespeated"
-													value="#{lbl.password_repeat}" />
+										<div class="imj_metadataSet">
+											<div class="imj_metadataLabel">
 												<span class="imj_invisible">: </span>
 											</div>
-											<div class="imj_admindataValue">
-												<div class="imj_admindataValueEntry">
-													<h:inputSecret id="inputRespeated"
-														value="#{UserBean.repeatedPassword}"
-														styleClass="imj_admindataEdit" />
-												</div>
-												<h:commandButton action="#{UserBean.changePassword}"
-													value="#{lbl.password_change}" styleClass="imj_editButton"
-													type="submit">
-													<f:ajax execute="@form" render="@none" />
-												</h:commandButton>
+											<div class="imj_metadataValue">
+												<h:commandLink action="#{UserBean.generateNewApiKey}" value="#{lbl.api_key_generate}">
+													<f:ajax execute="@this" render=":userForm:userInfos" />
+												</h:commandLink>
 											</div>
 										</div>
-									</div>
-								</h:form>
-
-								<h:form id="grantForm">
-									<!-- User Grants -->
-									<h:panelGroup layout="block"
-										styleClass="imj_admindataSetEdit imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText
-												value="#{UserBean.user.person.completeName} #{lbl.grants_has_following}:" />
-										</div>
-										<div class="imj_admindataValue">
-											<div class="imj_admindataValueEntry">
-												<ui:fragment rendered="#{Auth.sysAdmin}">
-													<div class="imj_admindataSet">
-														<h:selectBooleanCheckbox id="createcollectioncheck"
-															value="#{Auth.createCollection(UserBean.user)}"
-															readonly="true" styleClass="imj_admindataCheckbox"
-															onchange="document.getElementById('grantForm:toggleCreate').click()"
-															disabled="#{Auth.isSysAdmin(UserBean.user)}" />
-														<label for="grantForm:createcollectioncheck"><h:outputText
-																value="#{lbl.allowedToCreateCollection}" /></label> <span
-															class="imj_invisible">: </span>
-													</div>
-													<div class="imj_admindataSet">
-														<h:selectBooleanCheckbox id="admincheck1" readonly="true"
-															title="#{UserBean.sysAdmin and UserBean.uniqueAdmin ? lbl.user_unique_admin : lbl.user_toggle_admin_role}"
-															value="#{UserBean.sysAdmin}"
-															styleClass="imj_admindataCheckbox"
-															onchange="openDialog('general');"
-															disabled="#{UserBean.sysAdmin and UserBean.uniqueAdmin}" />
-														<label for="grantForm:admincheck"><h:outputText
-																value="#{lbl.isAdmin}" /></label> <span class="imj_invisible">:
-														</span>
-														<dialog:confirmationDialog submitAction="toggleAdmin"
-															bean="#{UserBean}"
-															confirmationText="#{UserBean.sysAdmin ? msg.admin_to_user : msg.user_to_admin}"
-															submitLabel="#{lbl.confirm}" dialogId="general" />
-													</div>
-												</ui:fragment>
-											</div>
-										</div>
-									</h:panelGroup>
-									<h:commandButton id="toggleCreate"
-										action="#{UserBean.toggleCreateCollection}"
-										value="toggle create col" styleClass="imj_noDisplay"
-										type="submit">
-										<f:ajax render="@form" />
-									</h:commandButton>
-								</h:form>
-
-								<h:panelGroup layout="block" styleClass="imj_admindataSetEdit">
-									<h3 class="imj_headline">
-										<h:outputText value="#{lbl.grant_for}"
-											styleClass="imj_admindataValueEntry" />
-									</h3>
-
-									<div class="imj_admindataValue">
-										<ui:repeat var="shareHistory" value="#{UserBean.roles}"
-											rows="0" varStatus="row">
-											<div class="imj_admindataSet">
-												<div class="imj_admindataLabel">
-													<h:outputText
-														value="#{lbl.collection}: #{shareHistory.title}"
-														title="#{shareHistory.title}" />
-
-													<div class="imj_submitPanel">
-														<h:outputLink value="#" styleClass="imj_cancelButton"
-															title="#{lbl.revoke} #{lbl.grant_for} #{shareHistory.title}"
-															onclick="openDialog('revokeDialog#{row.index}');">
-															<h:outputText value="#{lbl.revoke}" />
-														</h:outputLink>
-													</div>
-													<dialog:confirmationDialog submitAction="revokeGrants"
-														bean="#{shareHistory}"
-														confirmationText="#{msg.confirmation_revoke_grant} &quot;#{shareHistory.title}&quot; ?"
-														submitLabel="#{lbl.revoke}"
-														dialogId="revokeDialog#{row.index}" />
-												</div>
-												<div class="imj_admindataValueEntry">
-													#{shareHistory.role}
-												</div>
-											</div>
-										</ui:repeat>
-									</div>
+									</ui:fragment>
 								</h:panelGroup>
+								<!-- END user infos -->
+								<br/><br/>
+								<!-- User Edit - Password -->
+								<div class="imj_metadataSet">
+									<div class="imj_metadataSetEdit">
+										<div class="imj_metadataLabel">
+											<h:outputLabel for="inputPassword" value="#{lbl.password_new}" />
+											<span class="imj_invisible">: </span>
+										</div>
+										<div class="imj_metadataValue">
+											<div class="imj_metadataValueEntry">
+												<h:inputSecret id="inputPassword" value="#{UserBean.newPassword}" styleClass="imj_admindataEdit" />
+											</div>
+										</div>
+									</div>
+									<div class="imj_metadataSet">
+										<div class="imj_metadataLabel">
+											<h:outputLabel for="inputRespeated" value="#{lbl.password_repeat}" />
+											<span class="imj_invisible">: </span>
+										</div>
+										<div class="imj_metadataValue">
+											<div class="imj_metadataValueEntry">
+												<h:inputSecret id="inputRespeated" value="#{UserBean.repeatedPassword}" styleClass="imj_admindataEdit" />
+											</div>
+										</div>
+									</div>
+									<div class="imj_metadataSet">
+										<div class="imj_metadataLabel">
+											<span class="imj_invisible">: </span>
+										</div>
+										<div class="imj_metadataValue">
+											<h:commandButton action="#{UserBean.changePassword}" value="#{lbl.password_change}" styleClass="imj_editButton" type="submit">
+												<f:ajax execute="@form" render="@none" />
+											</h:commandButton>
+										</div>
+									</div>
+								</div>
+							</h:form>
+
+							<h:form id="grantForm">
+								<!-- User Grants -->
+								<div class="imj_metadataSetEdit imj_metadataSet">
+									<div class="imj_metadataLabel">
+										<h:outputText
+											value="#{UserBean.user.person.completeName} #{lbl.grants_has_following}:" />
+									</div>
+									<div class="imj_metadataValue">
+										<div class="imj_metadataValueEntry">
+											<ui:fragment rendered="#{Auth.sysAdmin}">
+												<div class="imj_metadataSet">
+													<h:selectBooleanCheckbox id="createcollectioncheck"
+														value="#{Auth.createCollection(UserBean.user)}"
+														readonly="true" styleClass="imj_admindataCheckbox"
+														onchange="document.getElementById('grantForm:toggleCreate').click()"
+														disabled="#{Auth.isSysAdmin(UserBean.user)}" />
+													<label for="grantForm:createcollectioncheck">#{lbl.allowedToCreateCollection}</label> 
+													<span class="imj_invisible">: </span>
+												</div>
+												<div class="imj_metadataSet">
+													<h:selectBooleanCheckbox id="admincheck1" readonly="true"
+														title="#{UserBean.sysAdmin and UserBean.uniqueAdmin ? lbl.user_unique_admin : lbl.user_toggle_admin_role}"
+														value="#{UserBean.sysAdmin}"
+														styleClass="imj_admindataCheckbox"
+														onchange="openDialog('general');"
+														disabled="#{UserBean.sysAdmin and UserBean.uniqueAdmin}" />
+													<label for="grantForm:admincheck">#{lbl.isAdmin}</label>
+													<span class="imj_invisible">: </span>
+													<dialog:confirmationDialog submitAction="toggleAdmin" bean="#{UserBean}"
+														confirmationText="#{UserBean.sysAdmin ? msg.admin_to_user : msg.user_to_admin}"
+														submitLabel="#{lbl.confirm}" dialogId="general" />
+												</div>
+											</ui:fragment>
+										</div>
+									</div>
+								</div>
+								<h:commandButton id="toggleCreate" action="#{UserBean.toggleCreateCollection}" value="toggle create col" styleClass="imj_noDisplay" type="submit">
+									<f:ajax render="@form" />
+								</h:commandButton>
+							</h:form>
+
+							<h:panelGroup layout="block" styleClass="imj_metadataSetEdit">
+								<h3 class="imj_headline">
+									<h:outputText value="#{lbl.grant_for}" styleClass="imj_metadataValueEntry" />
+								</h3>
+
+								<div class="imj_metadataValue">
+									<ui:repeat var="shareHistory" value="#{UserBean.roles}"
+										rows="0" varStatus="row">
+										<div class="imj_metadataSet">
+											<div class="imj_metadataLabel">
+												<h:outputText
+													value="#{lbl.collection}: #{shareHistory.title}"
+													title="#{shareHistory.title}" />
+
+												<div class="imj_submitPanel">
+													<h:outputLink value="#" styleClass="imj_cancelButton"
+														title="#{lbl.revoke} #{lbl.grant_for} #{shareHistory.title}"
+														onclick="openDialog('revokeDialog#{row.index}');">
+														<h:outputText value="#{lbl.revoke}" />
+													</h:outputLink>
+												</div>
+												<dialog:confirmationDialog submitAction="revokeGrants"
+													bean="#{shareHistory}"
+													confirmationText="#{msg.confirmation_revoke_grant} &quot;#{shareHistory.title}&quot; ?"
+													submitLabel="#{lbl.revoke}"
+													dialogId="revokeDialog#{row.index}" />
+											</div>
+											<div class="imj_metadataValueEntry">
+												#{shareHistory.role}
+											</div>
+										</div>
+									</ui:repeat>
+								</div>
+							</h:panelGroup>
 
 
-								<h:form id="userGroups">
-									<!-- usergroups -->
-									<div
-										class="imj_admindataSetEdit imj_admindataSet imj_connectedUserGroups">
-										<h3 class="imj_headline">
-											<h:outputText value=" #{lbl.in_following_user_groups}"
-												styleClass="imj_admindataValueEntry" />
-										</h3>
-										<ui:repeat var="ug" value="#{UserBean.user.groups}" rows="0">
-											<div class="imj_admindataValueEntry">
-												<h4 class="imj_admindataValueEntry">
-													<h:outputText value="#{lbl.admin_userGroup}: #{ug.name}"
-														styleClass="imj_admindataValueEntry" />
-												</h4>
-												<div class="imj_admindataSetEdit">
-													<div class="imj_admindataValue">
-														<div class="imj_admindataValueEntry">
-															<h:form>
-																<ui:repeat var="sh"
-																	value="#{UserBean.getGroupRoles(ug)}">
-																	<div>
-																		<h4 class="imj_admindataValueEntry">
-																			<h:outputText value="#{sh.typeLabel}: #{sh.title}" />
-																		</h4>
-																		<h:selectManyCheckbox id="role" value="#{sh.roles}"
-																			disabled="true" layout="pageDirection">
-																			<f:selectItems value="#{sh.rolesMenu}" />
-																		</h:selectManyCheckbox>
-																	</div>
-																	<br />
-																</ui:repeat>
-															</h:form>
-														</div>
+							<h:form id="userGroups">
+								<!-- usergroups -->
+								<div
+									class="imj_metadataSetEdit imj_metadataSet imj_connectedUserGroups">
+									<h3 class="imj_headline">
+										<h:outputText value=" #{lbl.in_following_user_groups}"
+											styleClass="imj_metadataValueEntry" />
+									</h3>
+									<ui:repeat var="ug" value="#{UserBean.user.groups}" rows="0">
+										<div class="imj_metadataValueEntry">
+											<h4 class="imj_metadataValueEntry">
+												<h:outputText value="#{lbl.admin_userGroup}: #{ug.name}"
+													styleClass="imj_metadataValueEntry" />
+											</h4>
+											<div class="imj_metadataSetEdit">
+												<div class="imj_metadataValue">
+													<div class="imj_metadataValueEntry">
+														<h:form>
+															<ui:repeat var="sh"
+																value="#{UserBean.getGroupRoles(ug)}">
+																<div>
+																	<h4 class="imj_metadataValueEntry">
+																		<h:outputText value="#{sh.typeLabel}: #{sh.title}" />
+																	</h4>
+																	<h:selectManyCheckbox id="role" value="#{sh.roles}"
+																		disabled="true" layout="pageDirection">
+																		<f:selectItems value="#{sh.rolesMenu}" />
+																	</h:selectManyCheckbox>
+																</div>
+																<br />
+															</ui:repeat>
+														</h:form>
 													</div>
 												</div>
 											</div>
-										</ui:repeat>
-									</div>
-								</h:form>
-							</div>
+										</div>
+									</ui:repeat>
+								</div>
+							</h:form>
 							<!-- END CONTENT -->
-
-						</h:panelGroup>
+						</div>
 
 					</div>
 					<!-- END LIST BODY -->

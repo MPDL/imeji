@@ -46,7 +46,6 @@
 	                        <div class="imj_authorMetadataSet">
 	                            <div class="imj_sectionHeadline">
 	                                <h4>
-	                                    <!-- Add/Remove Author buttons -->
 	                                    <span class="imj_inlineButtonGroup">
 	                                        <h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAuthor(indexA.index)}">
 	                                            <f:ajax execute="@this" render="editContainer:mediaContainerForm:authors" />
@@ -59,10 +58,7 @@
 	                                    <span class="imj_noDisplay">: </span>
 	                                </h4>
 	                            </div>
-	
-	                            <!-- The user of the person -->
 	                            <imjc:person id="collectionAuthor" person="#{creator}" bean="#{cc.attrs.formularBean}" position="#{indexA.index}" />
-	
 	                        </div>
 	                    </ui:repeat>
               		</h:panelGroup>

@@ -622,10 +622,10 @@ public class ElasticQueryFactory {
    * @param statement
    * @return
    */
-  private static QueryBuilder metadataQuery(QueryBuilder valueQuery, URI statement) {
+  private static QueryBuilder metadataQuery(QueryBuilder valueQuery, String statement) {
     return QueryBuilders.nestedQuery(ElasticFields.METADATA.field(),
         QueryBuilders.boolQuery().must(valueQuery).must(fieldQuery(ElasticFields.METADATA_STATEMENT,
-            ObjectHelper.getId(statement), SearchOperators.EQUALS, false)));
+            statement, SearchOperators.EQUALS, false)));
 
   }
 

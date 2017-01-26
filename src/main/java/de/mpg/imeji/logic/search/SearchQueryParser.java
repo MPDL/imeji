@@ -6,13 +6,11 @@ package de.mpg.imeji.logic.search;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -31,7 +29,6 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchSimpleMetadata;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.StringParser;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Statement;
 
 /**
@@ -191,8 +188,8 @@ public class SearchQueryParser {
             value = value + "\"";
           }
           final SearchFields field = SearchFields.valueOf(mdParser.getGroup(2));
-          final URI statementId = ObjectHelper.getURI(Statement.class, mdParser.getGroup(1));
-          searchQuery.addPair(new SearchMetadata(field, operator, value, statementId, not));
+          final String index = mdParser.getGroup(1);
+          searchQuery.addPair(new SearchMetadata(field, operator, value, index, not));
           not = false;
           scString = "";
         } else if (pairParser.find(scString)) {
@@ -337,8 +334,8 @@ public class SearchQueryParser {
    * @param index
    * @return
    */
-  public static String transformStatementToIndex(URI statement, SearchFields field) {
-    return ObjectHelper.getId(statement) + ":" + field;
+  public static String transformStatementToIndex(String index, SearchFields field) {
+    return index + ":" + field;
   }
 
   /**
@@ -378,12 +375,11 @@ public class SearchQueryParser {
    * @param sq
    * @return
    */
-  public static String searchQuery2PrettyQuery(SearchQuery sq, Locale locale,
-      Map<URI, String> metadataLabelMap) {
+  public static String searchQuery2PrettyQuery(SearchQuery sq, Locale locale) {
     if (sq == null) {
       return "";
     }
-    return searchElements2PrettyQuery(sq.getElements(), locale, metadataLabelMap);
+    return searchElements2PrettyQuery(sq.getElements(), locale);
   }
 
   /**
@@ -412,23 +408,19 @@ public class SearchQueryParser {
    * @param group
    * @return
    */
-  private static String searchGroup2PrettyQuery(SearchGroup group, Locale locale,
-      Map<URI, String> metadataLabelMap) {
+  private static String searchGroup2PrettyQuery(SearchGroup group, Locale locale) {
     String str = "";
     final int groupSize = group.getElements().size();
     if (isSearchGroupForComplexMetadata(group)) {
       for (final SearchElement md : group.getElements()) {
         if (md instanceof SearchMetadata) {
-          str += searchMetadata2PrettyQuery((SearchMetadata) md, locale, metadataLabelMap);
+          str += searchMetadata2PrettyQuery((SearchMetadata) md, locale);
         } else if (md instanceof SearchLogicalRelation) {
           str += searchLogicalRelation2PrettyQuery((SearchLogicalRelation) md, locale);
         }
       }
-      // str =
-      // searchMetadata2PrettyQuery((SearchMetadata)group.getElements().get(0));
-      // groupSize = 1;
     } else {
-      str = searchElements2PrettyQuery(group.getElements(), locale, metadataLabelMap);
+      str = searchElements2PrettyQuery(group.getElements(), locale);
     }
     if ("".equals(str)) {
       return "";
@@ -495,8 +487,7 @@ public class SearchQueryParser {
    * @param els
    * @return
    */
-  private static String searchElements2PrettyQuery(List<SearchElement> els, Locale locale,
-      Map<URI, String> metadataLabelMap) {
+  private static String searchElements2PrettyQuery(List<SearchElement> els, Locale locale) {
     String q = "";
     for (final SearchElement el : els) {
       switch (el.getType()) {
@@ -504,13 +495,13 @@ public class SearchQueryParser {
           q += searchPair2PrettyQuery((SearchPair) el, locale);
           break;
         case GROUP:
-          q += searchGroup2PrettyQuery((SearchGroup) el, locale, metadataLabelMap);
+          q += searchGroup2PrettyQuery((SearchGroup) el, locale);
           break;
         case LOGICAL_RELATIONS:
           q += searchLogicalRelation2PrettyQuery((SearchLogicalRelation) el, locale);
           break;
         case METADATA:
-          q += searchMetadata2PrettyQuery((SearchMetadata) el, locale, metadataLabelMap);
+          q += searchMetadata2PrettyQuery((SearchMetadata) el, locale);
           break;
         case TECHNICAL_METADATA:
           q += searchLTechnicalMetadata2PrettyQuery((SearchTechnicalMetadata) el, locale);
@@ -605,11 +596,10 @@ public class SearchQueryParser {
    * @param group
    * @return
    */
-  private static String searchMetadata2PrettyQuery(SearchMetadata md, Locale locale,
-      Map<URI, String> metadataLabelMap) {
-    String label = metadataLabelMap.get(md.getStatement());
+  private static String searchMetadata2PrettyQuery(SearchMetadata md, Locale locale) {
+    String label = md.getStatement();
     if (label == null) {
-      label = "Metadata-" + indexNamespace2PrettyQuery(md.getStatement().toString());
+      label = "Metadata-" + indexNamespace2PrettyQuery(md.getStatement());
     }
     switch (md.getField()) {
       case coordinates:

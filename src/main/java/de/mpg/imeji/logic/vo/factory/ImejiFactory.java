@@ -112,7 +112,6 @@ public class ImejiFactory {
 
   public static Person newPerson() {
     final Person pers = new Person();
-    pers.setAlternativeName("");
     pers.setFamilyName("");
     pers.setGivenName("");
     pers.getOrganizations().add(newOrganization());
@@ -121,7 +120,6 @@ public class ImejiFactory {
 
   public static Person newPerson(String familyName, String givenName, String firstOrganization) {
     final Person pers = new Person();
-    pers.setAlternativeName("");
     pers.setFamilyName(familyName);
     pers.setGivenName(givenName);
     pers.getOrganizations().add(newOrganization(firstOrganization));

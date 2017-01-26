@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.content;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,7 +9,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.service.ImejiControllerAbstract;
-import de.mpg.imeji.logic.util.IdentifierUtil;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
@@ -19,9 +20,31 @@ public class ContentController extends ImejiControllerAbstract<ContentVO> {
 
   @Override
   public List<ContentVO> createBatch(List<ContentVO> l, User user) throws ImejiException {
-    l.stream().forEach(c -> c.setId(IdentifierUtil.newURI(ContentVO.class)));
+    l.stream().forEach(c -> c.setId(createID(c)));
     WRITER.create(toObjectList(l), user);
     return l;
+  }
+
+  /**
+   * Create the ID of the content with the same value than its item: <br/>
+   * * Item ID: http://imeji.org/item/abc123 <br/>
+   * * Content ID: http://imeji.org/content/abc123
+   * 
+   * @param content
+   * @return
+   */
+  private URI createID(ContentVO content) {
+    return getContentId(URI.create(content.getItemId()));
+  }
+
+  /**
+   * Return the contentId of an item
+   * 
+   * @param itemId
+   * @return
+   */
+  public URI getContentId(URI itemId) {
+    return ObjectHelper.getURI(ContentVO.class, ObjectHelper.getId(itemId));
   }
 
   @Override

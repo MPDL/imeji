@@ -23,7 +23,6 @@ import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -39,7 +38,6 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 public class AdvancedSearchBean extends SuperBean {
   private static final long serialVersionUID = -3989020231445922611L;
   private SearchForm formular = new SearchForm();
-  private MetadataLabels metadataLabels;
   // Menus
   private List<SelectItem> profilesMenu;
   private List<SelectItem> collectionsMenu;
@@ -70,8 +68,7 @@ public class AdvancedSearchBean extends SuperBean {
    * @throws ImejiException
    */
   public String getNewSearch() throws ImejiException {
-    metadataLabels = new MetadataLabels(getLocale());
-    formular = new SearchForm(new SearchQuery(), metadataLabels, getSessionUser());
+    formular = new SearchForm(new SearchQuery(), getLocale(), getSessionUser());
     initMenus();
     try {
       final String query = UrlHelper.getParameterValue("q");
@@ -104,8 +101,7 @@ public class AdvancedSearchBean extends SuperBean {
    * @throws Exception
    */
   public void initForm(SearchQuery searchQuery) throws Exception {
-    metadataLabels = new MetadataLabels(getLocale());
-    formular = new SearchForm(searchQuery, metadataLabels, getSessionUser());
+    formular = new SearchForm(searchQuery, getLocale(), getSessionUser());
     if (formular.getGroups().size() == 0) {
       formular.addSearchGroup(0);
     }
@@ -160,7 +156,7 @@ public class AdvancedSearchBean extends SuperBean {
   public void changeGroup() throws ImejiException {
     final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("gPos"));
-    formular.changeSearchGroup(gPos, metadataLabels, getSessionUser());
+    formular.changeSearchGroup(gPos, getSessionUser());
   }
 
   /**
@@ -246,7 +242,7 @@ public class AdvancedSearchBean extends SuperBean {
       return "";
     }
     return SearchQueryParser.searchQuery2PrettyQuery(formular.getFormularAsSearchQuery(),
-        getLocale(), metadataLabels.getInternationalizedLabels());
+        getLocale());
   }
 
   /**
@@ -326,7 +322,4 @@ public class AdvancedSearchBean extends SuperBean {
     this.collectionsMenu = collectionsMenu;
   }
 
-  public MetadataLabels getMetadataLabels() {
-    return metadataLabels;
-  }
 }

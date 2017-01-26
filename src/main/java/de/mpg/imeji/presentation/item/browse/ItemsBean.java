@@ -34,7 +34,6 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
 import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.item.ThumbnailBean;
@@ -61,7 +60,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private SearchQuery searchQuery = new SearchQuery();
   private String discardComment;
   private SearchResult searchResult;
-  protected MetadataLabels metadataLabels;
   public static final String ITEM_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
   public static final String ITEM_SORT_COOKIE = "ITEM_SORT_COOKIE";
   private static final int DEFAULT_ELEMENTS_PER_PAGE = 18;
@@ -96,7 +94,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public void initSpecific() {
     browseContext = getNavigationString();
-    metadataLabels = new MetadataLabels(new ArrayList<>(), getLocale());
     isSimpleSearch = SearchQueryParser.isSimpleSearch(searchQuery);
     if (UrlHelper.getParameterBoolean("add_selected")) {
       try {
@@ -154,8 +151,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       totalNumberOfRecords = searchResult.getNumberOfRecords();
       // load the item
       final Collection<Item> items = loadImages(searchResult.getResults());
-      // Init the labels for the item
-      metadataLabels = new MetadataLabels((List<Item>) items, getLocale());
       // Return the item as thumbnailBean
       return items.stream().map(item -> new ThumbnailBean(item)).collect(Collectors.toList());
     } catch (final ImejiException e) {
@@ -246,8 +241,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     final String q = UrlHelper.getParameterValue("q");
     if (!StringHelper.isNullOrEmptyTrim(q)) {
       final SearchQuery query = SearchQueryParser.parseStringQuery(q);
-      return SearchQueryParser.searchQuery2PrettyQuery(query, getLocale(),
-          metadataLabels.getInternationalizedLabels());
+      return SearchQueryParser.searchQuery2PrettyQuery(query, getLocale());
     }
     return "";
   }
@@ -567,10 +561,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   public void setAllSelected(boolean b) {
     // do nothing
-  }
-
-  public MetadataLabels getMetadataLabels() {
-    return metadataLabels;
   }
 
   public SessionBean getSessionBean() {

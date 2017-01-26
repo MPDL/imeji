@@ -1,8 +1,6 @@
 package de.mpg.imeji.rest.to;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -16,7 +14,7 @@ import de.mpg.imeji.rest.to.defaultItemTO.DefaultOrganizationTO;
 @XmlRootElement
 @XmlType(propOrder = {
     // "position",
-    "id", "name", "description", "identifiers", "city", "country"})
+    "id", "name",})
 @JsonInclude(Include.NON_NULL)
 public class OrganizationTO implements Serializable {
 
@@ -30,18 +28,12 @@ public class OrganizationTO implements Serializable {
 
   private String name;
 
-  private String description;
-
-  private List<IdentifierTO> identifiers = new ArrayList<IdentifierTO>();
-
-  private String city;
-
-  private String country;
-
   /**
    * Default constructor
    */
-  public OrganizationTO() {}
+  public OrganizationTO() {
+
+  }
 
   /**
    * Constructor with a {@link DefaultOrganizationTO}
@@ -50,9 +42,6 @@ public class OrganizationTO implements Serializable {
    */
   public OrganizationTO(DefaultOrganizationTO dTO) {
     this.name = dTO.getName();
-    this.description = dTO.getDescription();
-    this.city = dTO.getCity();
-    this.country = dTO.getCountry();
   }
 
   public int getPosition() {
@@ -78,39 +67,4 @@ public class OrganizationTO implements Serializable {
   public void setName(String name) {
     this.name = name;
   }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public List<IdentifierTO> getIdentifiers() {
-    return identifiers;
-  }
-
-  public void setIdentifiers(List<IdentifierTO> identifiers) {
-    this.identifiers = identifiers;
-  }
-
-  public String getCity() {
-    return city;
-  }
-
-  public void setCity(String city) {
-    this.city = city;
-  }
-
-  public String getCountry() {
-    return country;
-  }
-
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
-
-
 }

@@ -20,9 +20,6 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchOperators;
-import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -137,13 +134,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @throws NotFoundException
    */
   public String findContentId(String itemId) throws NotFoundException {
-    SearchQuery q = SearchQuery
-        .toSearchQuery(new SearchPair(SearchFields.itemId, SearchOperators.EQUALS, itemId, false));
-    SearchResult r = search(q, null, Imeji.adminUser, 1, -1);
-    if (r.getNumberOfRecords() == 1) {
-      return r.getResults().get(0);
-    }
-    throw new NotFoundException("Not Content found for item " + itemId);
+    return controller.getContentId(URI.create(itemId)).toString();
   }
 
   /**

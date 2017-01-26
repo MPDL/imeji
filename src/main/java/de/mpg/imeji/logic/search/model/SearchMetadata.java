@@ -1,6 +1,5 @@
 package de.mpg.imeji.logic.search.model;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
  */
 public class SearchMetadata extends SearchPair {
   private static final long serialVersionUID = -7422025148855635937L;
-  private final URI statement;
+  private final String statement;
 
   /**
    * Default Constructor
@@ -24,8 +23,8 @@ public class SearchMetadata extends SearchPair {
     this.statement = null;
   }
 
-  public SearchMetadata(SearchFields field, SearchOperators operator, String value, URI statement,
-      boolean not) {
+  public SearchMetadata(SearchFields field, SearchOperators operator, String value,
+      String statement, boolean not) {
     super(field, operator, value, not);
     this.statement = statement;
   }
@@ -40,7 +39,7 @@ public class SearchMetadata extends SearchPair {
     return new ArrayList<>();
   }
 
-  public URI getStatement() {
+  public String getStatement() {
     return statement;
   }
 }

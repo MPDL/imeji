@@ -4,7 +4,6 @@
 package de.mpg.imeji.presentation.search;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -261,42 +260,35 @@ public class SearchMetadataForm implements Serializable {
     try {
       final SearchGroup group = new SearchGroup();
       if (namespace != null) {
-        final URI ns = URI.create(namespace);
         switch (statement.getType()) {
           case DATE:
             if (!isEmtpyValue(searchValue)) {
-              group.addPair(new SearchMetadata(SearchFields.time, operator, searchValue, ns, not));
+              group.addPair(new SearchMetadata(SearchFields.time, operator, searchValue,
+                  statement.getIndex(), not));
             }
             break;
           case GEOLOCATION:
             if (!isEmtpyValue(searchValue + latitude + longitude)) {
               group.setNot(not);
               if (!isEmtpyValue(searchValue)) {
-                group.addPair(
-                    new SearchMetadata(SearchFields.location, operator, searchValue, ns, false));
+                group.addPair(new SearchMetadata(SearchFields.location, operator, searchValue,
+                    statement.getIndex(), false));
               }
               if (!isEmtpyValue(latitude) && !isEmtpyValue(longitude)) {
                 if (!group.isEmpty()) {
                   group.addLogicalRelation(LOGICAL_RELATIONS.AND);
                 }
-                group.addPair(new SearchMetadata(SearchFields.coordinates, SearchOperators.GEO,
-                    Double.parseDouble(latitude) + "," + Double.parseDouble(longitude) + ","
-                        + distance,
-                    ns, false));
+                group.addPair(new SearchMetadata(SearchFields.coordinates,
+                    SearchOperators.GEO, Double.parseDouble(latitude) + ","
+                        + Double.parseDouble(longitude) + "," + distance,
+                    statement.getIndex(), false));
               }
             }
             break;
-          /*
-           * case LICENSE: if (!isEmtpyValue(searchValue + uri)) { if (!isEmtpyValue(searchValue)) {
-           * group.addPair( new SearchMetadata(SearchFields.license, operator, searchValue, ns,
-           * not)); } if (!isEmtpyValue(uri)) { if (!group.isEmpty()) {
-           * group.addLogicalRelation(LOGICAL_RELATIONS.AND); } group.addPair(new
-           * SearchMetadata(SearchFields.url, operator, uri, ns, not)); } } break;
-           */
           case NUMBER:
             if (!isEmtpyValue(searchValue)) {
-              group
-                  .addPair(new SearchMetadata(SearchFields.number, operator, searchValue, ns, not));
+              group.addPair(new SearchMetadata(SearchFields.number, operator, searchValue,
+                  statement.getIndex(), not));
             }
             break;
           case PERSON:
@@ -304,53 +296,56 @@ public class SearchMetadataForm implements Serializable {
               group.setNot(not);
               if (!isEmtpyValue(searchValue)) {
                 group.addPair(new SearchMetadata(SearchFields.person_completename, operator,
-                    searchValue, ns, false));
+                    searchValue, statement.getIndex(), false));
               }
               if (!isEmtpyValue(familyName)) {
                 if (!group.isEmpty()) {
                   group.addLogicalRelation(LOGICAL_RELATIONS.AND);
                 }
                 group.addPair(new SearchMetadata(SearchFields.person_family, operator, familyName,
-                    ns, false));
+                    statement.getIndex(), false));
               }
               if (!isEmtpyValue(givenName)) {
                 if (!group.isEmpty()) {
                   group.addLogicalRelation(LOGICAL_RELATIONS.AND);
                 }
-                group.addPair(
-                    new SearchMetadata(SearchFields.person_given, operator, givenName, ns, false));
+                group.addPair(new SearchMetadata(SearchFields.person_given, operator, givenName,
+                    statement.getIndex(), false));
               }
               if (!isEmtpyValue(uri)) {
                 if (!group.isEmpty()) {
                   group.addLogicalRelation(LOGICAL_RELATIONS.AND);
                 }
-                group.addPair(new SearchMetadata(SearchFields.person_id, operator, uri, ns, false));
+                group.addPair(new SearchMetadata(SearchFields.person_id, operator, uri,
+                    statement.getIndex(), false));
               }
               if (!isEmtpyValue(orgName)) {
                 if (!group.isEmpty()) {
                   group.addLogicalRelation(LOGICAL_RELATIONS.AND);
                 }
-                group.addPair(
-                    new SearchMetadata(SearchFields.person_org_name, operator, orgName, ns, false));
+                group.addPair(new SearchMetadata(SearchFields.person_org_name, operator, orgName,
+                    statement.getIndex(), false));
               }
             }
             break;
           case TEXT:
             if (!isEmtpyValue(searchValue)) {
-              group.addPair(new SearchMetadata(SearchFields.text, operator, searchValue, ns, not));
+              group.addPair(new SearchMetadata(SearchFields.text, operator, searchValue,
+                  statement.getIndex(), not));
             }
             break;
           case URL:
             if (!isEmtpyValue(searchValue + uri)) {
               if (!isEmtpyValue(searchValue)) {
-                group.addPair(
-                    new SearchMetadata(SearchFields.label, operator, searchValue, ns, not));
+                group.addPair(new SearchMetadata(SearchFields.label, operator, searchValue,
+                    statement.getIndex(), not));
               }
               if (!isEmtpyValue(uri)) {
                 if (!group.isEmpty()) {
                   group.addLogicalRelation(LOGICAL_RELATIONS.AND);
                 }
-                group.addPair(new SearchMetadata(SearchFields.url, operator, uri, ns, not));
+                group.addPair(
+                    new SearchMetadata(SearchFields.url, operator, uri, statement.getIndex(), not));
               }
             }
             break;

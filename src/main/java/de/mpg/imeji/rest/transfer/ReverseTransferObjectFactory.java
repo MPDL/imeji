@@ -2,7 +2,6 @@ package de.mpg.imeji.rest.transfer;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -180,11 +179,8 @@ public class ReverseTransferObjectFactory {
       ito.setValue(pto.getIdentifiers().isEmpty() ? null : pto.getIdentifiers().get(0).getValue());
       p.setIdentifier(ito.getValue());
     }
-    p.setRole(URI.create(pto.getRole()));
     p.setFamilyName(pto.getFamilyName());
     p.setGivenName(pto.getGivenName());
-    p.setCompleteName(pto.getCompleteName());
-    p.setAlternativeName(pto.getAlternativeName());
     // set organizations
     transferContributorOrganizations(pto.getOrganizations(), p, mode);
     return p;
@@ -197,9 +193,6 @@ public class ReverseTransferObjectFactory {
       final Person person = new Person();
       person.setFamilyName(pTO.getFamilyName());
       person.setGivenName(pTO.getGivenName());
-      person.setCompleteName(pTO.getCompleteName());
-      person.setAlternativeName(pTO.getAlternativeName());
-      person.setRole(URI.create(pTO.getRole()));
       if (pTO.getIdentifiers().size() == 1) {
         // set the identifier of current person
         final IdentifierTO ito = new IdentifierTO();
@@ -215,18 +208,14 @@ public class ReverseTransferObjectFactory {
 
     if (vo.getPersons().size() == 0 && TRANSFER_MODE.CREATE.equals(mode) && u != null) {
       final Person personU = new Person();
-      final PersonTO pTo = new PersonTO();
       personU.setFamilyName(u.getPerson().getFamilyName());
       personU.setGivenName(u.getPerson().getGivenName());
-      personU.setCompleteName(u.getPerson().getCompleteName());
-      personU.setAlternativeName(u.getPerson().getAlternativeName());
       if (!isNullOrEmpty(u.getPerson().getIdentifier())) {
         final IdentifierTO ito = new IdentifierTO();
         ito.setValue(u.getPerson().getIdentifier());
         personU.setIdentifier(ito.getValue());
       }
       personU.setOrganizations(u.getPerson().getOrganizations());
-      personU.setRole(URI.create(pTo.getRole()));
       vo.getPersons().add(personU);
     }
 
@@ -236,25 +225,7 @@ public class ReverseTransferObjectFactory {
       TRANSFER_MODE mode) {
     for (final OrganizationTO orgTO : orgs) {
       final Organization org = new Organization();
-
-      if (mode == TRANSFER_MODE.CREATE) {
-        // TODO: Organization can have only one identifier, why
-        // OrganizationTO has many?
-        // get only first one!
-        if (orgTO.getIdentifiers().size() > 0) {
-          final IdentifierTO ito = new IdentifierTO();
-          ito.setValue(orgTO.getIdentifiers().get(0).getValue());
-          org.setIdentifier(ito.getValue());
-          if (orgTO.getIdentifiers().size() > 1) {
-            LOGGER.info("Have more organization identifiers than needed");
-          }
-        }
-      }
-
       org.setName(orgTO.getName());
-      org.setDescription(orgTO.getDescription());
-      org.setCity(orgTO.getCity());
-      org.setCountry(orgTO.getCountry());
       person.getOrganizations().add(org);
     }
   }

@@ -14,8 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @XmlRootElement
 @XmlType(propOrder = {
     // "position",
-    "id", "familyName", "givenName", "completeName", "alternativeName", "role", "identifiers",
-    "organizations"})
+    "id", "familyName", "givenName", "identifiers", "organizations"})
 @JsonInclude(Include.NON_NULL)
 public class PersonTO implements Serializable {
 
@@ -29,12 +28,6 @@ public class PersonTO implements Serializable {
   private String familyName;
 
   private String givenName;
-
-  private String completeName;
-
-  private String alternativeName;
-
-  private String role = "author";
 
   private List<IdentifierTO> identifiers = new ArrayList<IdentifierTO>();
 
@@ -72,30 +65,6 @@ public class PersonTO implements Serializable {
 
   public void setGivenName(String givenName) {
     this.givenName = givenName;
-  }
-
-  public String getCompleteName() {
-    return completeName;
-  }
-
-  public void setCompleteName(String completeName) {
-    this.completeName = completeName;
-  }
-
-  public String getAlternativeName() {
-    return alternativeName;
-  }
-
-  public void setAlternativeName(String alternativeName) {
-    this.alternativeName = alternativeName;
-  }
-
-  public String getRole() {
-    return role;
-  }
-
-  public void setRole(String role) {
-    this.role = role;
   }
 
   public List<IdentifierTO> getIdentifiers() {

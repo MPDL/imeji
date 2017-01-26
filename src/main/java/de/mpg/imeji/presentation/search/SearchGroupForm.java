@@ -28,7 +28,6 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.MetadataLabels;
 
 /**
  * A {@link SearchGroupForm} is a group of {@link SearchMetadataForm}
@@ -69,10 +68,9 @@ public class SearchGroupForm implements Serializable {
    * @param collectionId
    * @throws ImejiException
    */
-  public SearchGroupForm(SearchGroup searchGroup, MetadataLabels metadataLabels, User user)
-      throws ImejiException {
+  public SearchGroupForm(SearchGroup searchGroup, User user) throws ImejiException {
     this();
-    initStatementsMenu(new ArrayList<>(), metadataLabels, user);
+    initStatementsMenu(new ArrayList<>(), user);
   }
 
   /**
@@ -128,11 +126,9 @@ public class SearchGroupForm implements Serializable {
    * @param p
    * @throws ImejiException
    */
-  public void initStatementsMenu(List<Statement> statements, MetadataLabels metadataLabels,
-      User user) throws ImejiException {
+  public void initStatementsMenu(List<Statement> statements, User user) throws ImejiException {
     for (final Statement st : statements) {
-      final String stName = metadataLabels.getInternationalizedLabels().get(st.getId());
-      statementMenu.add(new SelectItem(st.getId().toString(), stName));
+      statementMenu.add(new SelectItem(st.getId().toString(), st.getIndex()));
     }
   }
 

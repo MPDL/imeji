@@ -52,7 +52,6 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.TechnicalMetadata;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.MetadataLabels;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
@@ -82,7 +81,6 @@ public class ItemBean extends SuperBean {
   private String newFilename;
   private String imageUploader;
   private String discardComment;
-  private MetadataLabels metadataLabels;
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItems;
   @ManagedProperty(value = "#{SessionBean.activeAlbum}")
@@ -117,7 +115,6 @@ public class ItemBean extends SuperBean {
       loadImage();
       if (item != null) {
         loadCollection(getSessionUser());
-        metadataLabels = new MetadataLabels(item, getLocale());
         initBrowsing();
         initRelatedAlbums();
         initImageUploader();
@@ -612,9 +609,6 @@ public class ItemBean extends SuperBean {
     this.discardComment = discardComment;
   }
 
-  public MetadataLabels getMetadataLabels() {
-    return metadataLabels;
-  }
 
   public List<String> getSelectedItems() {
     return selectedItems;

@@ -24,7 +24,6 @@ import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.MetadataLabels;
 
 /**
  * The form for the Advanced search. Is composed of {@link SearchGroupForm}
@@ -59,13 +58,10 @@ public class SearchForm implements Serializable {
    * @param profilesMap
    * @throws ImejiException
    */
-  public SearchForm(SearchQuery searchQuery, MetadataLabels metadataLabels, User user)
-      throws ImejiException {
+  public SearchForm(SearchQuery searchQuery, Locale locale, User user) throws ImejiException {
     this();
-    this.licenseSearchGroup =
-        new LicenseSearchGroup(Locale.forLanguageTag(metadataLabels.getLang()));
-    this.fileTypeSearchGroup =
-        new FileTypeSearchGroup(Locale.forLanguageTag(metadataLabels.getLang()));
+    this.licenseSearchGroup = new LicenseSearchGroup(locale);
+    this.fileTypeSearchGroup = new FileTypeSearchGroup(locale);
     this.setTechnicalMetadataSearchGroup(new TechnicalMetadataSearchGroup());
     for (final SearchElement se : searchQuery.getElements()) {
       if (se.getType().equals(SEARCH_ELEMENTS.GROUP)) {
@@ -73,12 +69,10 @@ public class SearchForm implements Serializable {
       }
       if (se.getType().equals(SEARCH_ELEMENTS.PAIR)) {
         if (((SearchPair) se).getField() == SearchFields.filetype) {
-          fileTypeSearchGroup = new FileTypeSearchGroup(((SearchPair) se).getValue(),
-              Locale.forLanguageTag(metadataLabels.getLang()));
+          fileTypeSearchGroup = new FileTypeSearchGroup(((SearchPair) se).getValue(), locale);
         }
         if (((SearchPair) se).getField() == SearchFields.license) {
-          licenseSearchGroup = new LicenseSearchGroup(((SearchPair) se).getValue(),
-              Locale.forLanguageTag(metadataLabels.getLang()));
+          licenseSearchGroup = new LicenseSearchGroup(((SearchPair) se).getValue(), locale);
         }
       }
       parseAllFieldSearch(se);
@@ -212,8 +206,7 @@ public class SearchForm implements Serializable {
    * @param pos
    * @throws ImejiException
    */
-  public void changeSearchGroup(int pos, MetadataLabels metadataLabels, User user)
-      throws ImejiException {
+  public void changeSearchGroup(int pos, User user) throws ImejiException {
     final SearchGroupForm group = groups.get(pos);
     group.getStatementMenu().clear();
     group.setSearchElementForms(new ArrayList<SearchMetadataForm>());

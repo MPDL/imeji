@@ -160,9 +160,6 @@ public class TransferObjectFactory {
     pto.setId(CommonUtils.extractIDFromURI(p.getId()));
     pto.setFamilyName(p.getFamilyName());
     pto.setGivenName(p.getGivenName());
-    pto.setCompleteName(p.getCompleteName());
-    pto.setAlternativeName(p.getAlternativeName());
-    pto.setRole(p.getRole() == null ? "" : p.getRole().toString());
     final IdentifierTO ito = new IdentifierTO();
     ito.setValue(p.getIdentifier());
     pto.getIdentifiers().add(ito);
@@ -195,9 +192,6 @@ public class TransferObjectFactory {
    */
   public static void transferDefaultOrganization(Organization o, DefaultOrganizationTO oTO) {
     oTO.setName(o.getName());
-    oTO.setDescription(o.getDescription());
-    oTO.setCity(o.getCity());
-    oTO.setCountry(o.getCountry());
   }
 
   public static void transferContributorOrganizations(Collection<Organization> orgas,
@@ -206,12 +200,6 @@ public class TransferObjectFactory {
       final OrganizationTO oto = new OrganizationTO();
       oto.setId(CommonUtils.extractIDFromURI(orga.getId()));
       oto.setName(orga.getName());
-      oto.setDescription(orga.getDescription());
-      final IdentifierTO ito = new IdentifierTO();
-      ito.setValue(orga.getIdentifier());
-      oto.getIdentifiers().add(ito);
-      oto.setCity(orga.getCity());
-      oto.setCountry(orga.getCountry());
       pto.getOrganizations().add(oto);
     }
 

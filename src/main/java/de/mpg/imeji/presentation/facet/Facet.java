@@ -7,7 +7,6 @@ import java.net.URI;
 import java.util.Locale;
 
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.presentation.beans.MetadataLabels;
 
 /**
  * The Facet used by the Faceted search in the browse item page
@@ -23,7 +22,6 @@ public class Facet {
   private FacetType type;
   protected URI metadataURI;
   protected String internationalizedLabel;
-  protected MetadataLabels metadataLabels;
 
   /**
    * The type of the {@link Facet}. Depends on which page is displayed the {@link Facet}
@@ -46,14 +44,12 @@ public class Facet {
    * @param type
    * @param metadataURI
    */
-  public Facet(URI uri, String label, int count, FacetType type, URI metadataURI, Locale locale,
-      MetadataLabels metadataLabels) {
+  public Facet(URI uri, String label, int count, FacetType type, URI metadataURI, Locale locale) {
     this.count = count;
     this.label = label;
     this.uri = uri;
     this.type = type;
     this.metadataURI = metadataURI;
-    this.metadataLabels = metadataLabels;
     initInternationalLabel(locale);
   }
 
@@ -64,8 +60,6 @@ public class Facet {
     if (FacetType.TECHNICAL.name().equals(type.name())) {
       internationalizedLabel =
           Imeji.RESOURCE_BUNDLE.getLabel("facet_" + label.toLowerCase(), locale);
-    } else if (FacetType.COLLECTION.name().equals(type.name())) {
-      internationalizedLabel = metadataLabels.getInternationalizedLabels().get(metadataURI);
     } else if (FacetType.SEARCH.name().equals(type.name())) {
       internationalizedLabel = Imeji.RESOURCE_BUNDLE.getLabel("search", locale);
     }
@@ -190,7 +184,7 @@ public class Facet {
    * @return
    */
   public String getNotDefineType() {
-    return metadataLabels.getInternationalizedLabels().get(metadataURI);
+    return "";
   }
 
 }
