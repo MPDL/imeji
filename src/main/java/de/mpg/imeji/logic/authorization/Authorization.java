@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
@@ -223,8 +222,8 @@ public class Authorization implements Serializable {
       if (obj instanceof Item) {
         return ((Item) obj).getCollection().toString();
       }
-      if (obj instanceof Container) {
-        return ((Container) obj).getId().toString();
+      if (obj instanceof CollectionImeji) {
+        return ((CollectionImeji) obj).getId().toString();
       }
       if (obj instanceof User) {
         return ((User) obj).getId().toString();
@@ -259,8 +258,8 @@ public class Authorization implements Serializable {
       return false;
     } else if (obj instanceof Item) {
       return isPublicStatus(((Item) obj).getStatus());
-    } else if (obj instanceof Container) {
-      return isPublicStatus(((Container) obj).getStatus());
+    } else if (obj instanceof CollectionImeji) {
+      return isPublicStatus(((CollectionImeji) obj).getStatus());
     } else if (obj instanceof Person) {
       return true;
     }
@@ -276,8 +275,8 @@ public class Authorization implements Serializable {
   private boolean isDiscarded(Object obj) {
     if (obj instanceof Item) {
       return isDiscardedStatus(((Item) obj).getStatus());
-    } else if (obj instanceof Container) {
-      return isDiscardedStatus(((Container) obj).getStatus());
+    } else if (obj instanceof CollectionImeji) {
+      return isDiscardedStatus(((CollectionImeji) obj).getStatus());
     } else if (obj instanceof Person) {
       return false;
     } else if (obj instanceof Organization) {

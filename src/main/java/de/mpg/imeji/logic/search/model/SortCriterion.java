@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.logic.search.model;
 
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;

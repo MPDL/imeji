@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.content.ContentService;
-import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
@@ -15,7 +14,6 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 
@@ -39,7 +37,6 @@ public class ElasticReIndexJob implements Callable<Integer> {
       addAllMappings(index);
       reindexUsers(index);
       reindexUserGroups(index);
-      reindexAlbums(index);
       reindexItems(index);
       reindexContents(index);
       reindexFolders(index);
@@ -72,16 +69,6 @@ public class ElasticReIndexJob implements Callable<Integer> {
   private void reindexFolders(String index) throws ImejiException {
     final CollectionService c = new CollectionService();
     c.reindex(index);
-  }
-
-  /**
-   * Reindex all the {@link Album} stored in the database
-   *
-   * @throws ImejiException
-   */
-  private void reindexAlbums(String index) throws ImejiException {
-    final AlbumController controller = new AlbumController();
-    controller.reindex(index);
   }
 
   /**

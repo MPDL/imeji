@@ -11,7 +11,7 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<ui:param name="gotoLabel" value="#{cc.attrs.mediaLogicBean.type == 'COLLECTION' ? cc.attrs.lbl.collection_view_all_images : cc.attrs.lbl.album_view_all_images}"/>
+		<ui:param name="gotoLabel" value="cc.attrs.lbl.collection_view_all_images"/>
 
 		<div class="imj_entryPagePreviewTiledList">
 			<ui:fragment rendered="#{cc.attrs.mediaLogicBean.container.status != 'WITHDRAWN'}">
@@ -31,27 +31,10 @@
 						
 						<h:panelGroup styleClass="imj_entryPagePreviewTiledListLink">sss
 							<h:outputText value ="#{cc.attrs.lbl.collection_view_all_images}" rendered="#{cc.attrs.mediaLogicBean.type == 'COLLECTION'}"/>
-							<h:outputText value ="#{cc.attrs.lbl.album_view_all_images}" rendered="#{cc.attrs.mediaLogicBean.type == 'ALBUM'}"/>
 							<span class="fa fa-arrow-right "> </span>
 						</h:panelGroup>
 					</div>
 				</h:outputLink>
-				<ui:fragment rendered="#{cc.attrs.mediaLogicBean.items.size() == 0 and cc.attrs.mediaLogicBean.type == 'ALBUM'}">
-					<h:panelGroup  styleClass="imj_entryPagePreviewTiledListItem" rendered="#{cc.attrs.mediaLogicBean.privateCount==0}">
-						<h2>
-							<h:outputText value="#{lbl.no_item_album}"/>
-							<h:outputText value="#{lbl.discarded_item_album}" rendered="#{cc.attrs.mediaLogicBean.sizeDiscarded>0}"/>
-						</h2>
-					</h:panelGroup>
-					<h:panelGroup  styleClass="imj_entryPagePreviewTiledListItem" rendered="#{cc.attrs.mediaLogicBean.privateCount>0}">
-						<h2><h:outputText value="#{lbl.no_item_album_private_content} "/></h2>
-					</h:panelGroup>
-					<h:panelGroup  styleClass="imj_entryPagePreviewTiledListItem" rendered="#{cc.attrs.mediaLogicBean.sizeDiscarded >0 and cc.attrs.mediaLogicBean.items.size()==0}">
-						<h:outputLink value='#{Navigation.albumUrl}#{cc.attrs.mediaLogicBean.id}/#{Navigation.browsePath}?q=status="WITHDRAWN"'>
-								<h2><h:outputText value="#{lbl.view_discarded_images}"/></h2>
-						</h:outputLink>
-					</h:panelGroup>
-				</ui:fragment>
 			</ui:fragment>
 			<ui:fragment rendered="#{cc.attrs.mediaLogicBean.container.status == 'WITHDRAWN'}">
 				<h:panelGroup styleClass="imj_mediaWithdrawn" rendered="#{cc.attrs.mediaLogicBean.container.discardComment.toString().length() > 0 and cc.attrs.mediaLogicBean.container.status.toString().toUpperCase() == 'WITHDRAWN'}">

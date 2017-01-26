@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.upload;
 
 import java.io.File;

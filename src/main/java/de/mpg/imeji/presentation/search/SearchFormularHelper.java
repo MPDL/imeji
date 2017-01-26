@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.search;
 
 import de.mpg.imeji.logic.search.model.SearchElement;

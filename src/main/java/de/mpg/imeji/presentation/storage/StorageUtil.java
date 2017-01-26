@@ -2,11 +2,9 @@ package de.mpg.imeji.presentation.storage;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.collection.CollectionService;
-import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
@@ -30,8 +28,7 @@ public class StorageUtil {
    */
   public static boolean isAllowedToViewFile(String fileUrl, User user) {
     return StorageUtil.isAllowedToViewItemOfFile(fileUrl, user)
-        || isAllowedToViewCollectionOfFile(fileUrl, user)
-        || isAllowedToViewAlbumOfFile(fileUrl, user);
+        || isAllowedToViewCollectionOfFile(fileUrl, user);
   }
 
   /**
@@ -63,24 +60,6 @@ public class StorageUtil {
       final String collectionId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
       new CollectionService().retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId),
           user);
-      return true;
-    } catch (final Exception e) {
-      return false;
-    }
-  }
-
-  /**
-   * True if the filerurl is associated an {@link Album} which can be read by the user (usefull for
-   * album logos)
-   *
-   * @param fileUrl
-   * @param user
-   * @return
-   */
-  private static boolean isAllowedToViewAlbumOfFile(String fileUrl, User user) {
-    final String albumId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
-    try {
-      new AlbumController().retrieve(ObjectHelper.getURI(Album.class, albumId), user);
       return true;
     } catch (final Exception e) {
       return false;

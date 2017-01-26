@@ -23,8 +23,8 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import de.mpg.imeji.presentation.beans.ContainerBean;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.collection.CollectionBean;
 import de.mpg.imeji.presentation.registration.RegistrationBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -55,8 +55,8 @@ public class PersonBean extends SuperBean implements Serializable {
     final Person person = loadPerson(personURI);
     if (bean instanceof UserCreationBean) {
       ((UserCreationBean) bean).getUser().setPerson(person.clone());
-    } else if (bean instanceof ContainerBean) {
-      final List<Person> l = (List<Person>) ((ContainerBean) bean).getContainer().getPersons();
+    } else if (bean instanceof CollectionBean) {
+      final List<Person> l = (List<Person>) ((CollectionBean) bean).getCollection().getPersons();
       l.set(position, person.clone());
     } else if (bean instanceof UserBean) {
       ((UserBean) bean).getUser().setPerson(person.clone());
@@ -78,8 +78,8 @@ public class PersonBean extends SuperBean implements Serializable {
       final List<Organization> l =
           (List<Organization>) ((UserCreationBean) bean).getUser().getPerson().getOrganizations();
       l.set(positionOrga, orga);
-    } else if (bean instanceof ContainerBean) {
-      final List<Person> pl = (List<Person>) ((ContainerBean) bean).getContainer().getPersons();
+    } else if (bean instanceof CollectionBean) {
+      final List<Person> pl = (List<Person>) ((CollectionBean) bean).getCollection().getPersons();
       final List<Organization> l = (List<Organization>) pl.get(positionUser).getOrganizations();
       l.set(positionOrga, orga.clone());
     } else if (bean instanceof UserBean) {

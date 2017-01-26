@@ -1,14 +1,7 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.logic.vo.factory;
 
-import org.apache.log4j.Logger;
-
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.ContainerMetadata;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Organization;
@@ -25,7 +18,6 @@ import de.mpg.imeji.logic.vo.User;
  * @version $Revision$ $LastChangedDate$
  */
 public class ImejiFactory {
-  private static final Logger LOGGER = Logger.getLogger(ImejiFactory.class);
 
   /**
    * Private Constructor
@@ -87,27 +79,6 @@ public class ImejiFactory {
    */
   public static MetadataFactory newMetadata() {
     return new MetadataFactory();
-  }
-
-
-  public static Album newAlbum() {
-    final Album album = new Album();
-    return album;
-  }
-
-  public static ContainerMetadata newContainerMetadata() {
-    final ContainerMetadata cm = new ContainerMetadata();
-    cm.getPersons().add(newPerson());
-    return cm;
-  }
-
-  public static ContainerMetadata newContainerMetadata(String title, String firstAuthorFamilyName,
-      String firstAuthorGivenName, String firstAuthorOrganization) {
-    final ContainerMetadata cm = new ContainerMetadata();
-    cm.setTitle(title);
-    cm.getPersons()
-        .add(newPerson(firstAuthorFamilyName, firstAuthorGivenName, firstAuthorOrganization));
-    return cm;
   }
 
   public static Person newPerson() {

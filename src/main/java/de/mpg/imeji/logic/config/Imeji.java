@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.logic.config;
 
 import java.util.concurrent.ExecutorService;
@@ -22,7 +19,6 @@ import de.mpg.imeji.logic.vo.User;
 public class Imeji {
   public static String tdbPath = null;
   public static String collectionModel;
-  public static String albumModel;
   public static String imageModel;
   public static String userModel;
   public static String profileModel;

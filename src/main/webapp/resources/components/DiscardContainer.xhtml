@@ -15,10 +15,8 @@
 				<div class="imj_confirmationText">
 					<p>
 						<h:outputText value="#{msg.confirmation_withdraw_collection}" rendered="#{(HistorySession.currentPage.type == 'COLLECTION_HOME' or HistorySession.currentPage.type == 'COLLECTIONS' or HistorySession.currentPage.type == 'COLLECTION_IMAGES') and Auth.loggedIn}"/>
-						<h:outputText value="#{msg.confirmation_withdraw_album}" rendered="#{(HistorySession.currentPage.type == 'ALBUM_HOME' or HistorySession.currentPage.type == 'ALBUM_IMAGES') and Auth.loggedIn}"/>
 						<h:outputText id="errorMessage" styleClass="quad_area0_p0 messageError" value=""/>
 						<h:outputText value="#{lbl.images_withdraw_comment_col}" styleClass="messageError" rendered="#{(HistorySession.currentPage.type == 'COLLECTION_HOME' or HistorySession.currentPage.type == 'COLLECTIONS' or HistorySession.currentPage.type == 'COLLECTION_IMAGES') and Auth.loggedIn}"/>
-						<h:outputText value="#{lbl.images_withdraw_comment_alb}" styleClass="messageError" rendered="#{(HistorySession.currentPage.type == 'ALBUM_HOME' or HistorySession.currentPage.type == 'ALBUM_IMAGES') and Auth.loggedIn}"/>
 					</p>				
 				</div>
 				<h:inputTextarea id="discardComment" value="#{cc.attrs.discardComment}" valueChangeListener="#{cc.attrs.bean.discardCommentListener}" rows="2" styleClass="imj_dialogReasonText">

@@ -35,7 +35,7 @@
 						<li class="imj_tileItem">
 							<ui:param name="uri" value="#{item.uri}"/>
 							<h:form id="itemSelectForm">
-								<h:panelGroup layout="block" id="imgFrame" styleClass="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea #{item.inActiveAlbum ? 'inAlbum' : ''}">
+								<h:panelGroup layout="block" id="imgFrame" styleClass="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea">
 									<!-- Image with link to the details view -->
 									<h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;pos=#{cc.attrs.picList.offset + index.index}">
 										<h:graphicImage alt="#{item.caption}" title="#{item.caption}" id="thumbnail" url="#{item.link}"/>		

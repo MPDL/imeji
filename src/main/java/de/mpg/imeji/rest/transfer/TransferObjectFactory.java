@@ -9,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
@@ -22,7 +20,6 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.rest.helper.CommonUtils;
 import de.mpg.imeji.rest.helper.UserNameCache;
-import de.mpg.imeji.rest.to.AlbumTO;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.ContainerAdditionalInformationTO;
 import de.mpg.imeji.rest.to.ContainerTO;
@@ -92,22 +89,12 @@ public class TransferObjectFactory {
   }
 
   /**
-   * Transfer an Album to an AlbumTO
-   *
-   * @param vo
-   * @param to
-   */
-  public static void transferAlbum(Album vo, AlbumTO to) {
-    transferContainer(vo, to);
-  }
-
-  /**
    * Transfer a container to a containerTO
    *
    * @param vo
    * @param to
    */
-  private static void transferContainer(Container vo, ContainerTO to) {
+  private static void transferContainer(CollectionImeji vo, ContainerTO to) {
     transferProperties(vo, to);
     to.setTitle(vo.getTitle());
     to.setDescription(vo.getDescription());

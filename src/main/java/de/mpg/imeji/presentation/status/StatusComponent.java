@@ -22,7 +22,6 @@ import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
-import de.mpg.imeji.presentation.album.AlbumBean;
 import de.mpg.imeji.presentation.collection.CollectionListItem;
 import de.mpg.imeji.presentation.navigation.Navigation;
 
@@ -71,8 +70,6 @@ public class StatusComponent extends UINamingContainer {
       initialize((Properties) o);
     } else if (o instanceof CollectionListItem) {
       initialize(((CollectionListItem) o).getCollection());
-    } else if (o instanceof AlbumBean) {
-      initialize(((AlbumBean) o).getAlbum());
     }
   }
 

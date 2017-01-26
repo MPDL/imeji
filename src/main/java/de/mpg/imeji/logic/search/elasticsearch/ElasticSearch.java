@@ -47,9 +47,6 @@ public class ElasticSearch implements Search {
       case COLLECTION:
         this.type = ElasticTypes.folders;
         break;
-      case ALBUM:
-        this.type = ElasticTypes.albums;
-        break;
       case USER:
         this.type = ElasticTypes.users;
         break;

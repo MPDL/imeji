@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.admin;
 
 import java.io.IOException;
@@ -38,7 +35,6 @@ import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Statement;
@@ -275,18 +271,6 @@ public class AdminBean extends SuperBean {
       final WriterFacade writer = new WriterFacade(modelName);
       writer.delete(l, getSessionUser());
     }
-  }
-
-  /**
-   * return count of all {@link Album}
-   *
-   * @return
-   */
-  public int getAllAlbumsSize() {
-    final Search search =
-        SearchFactory.create(SearchObjectTypes.ALBUM, SEARCH_IMPLEMENTATIONS.JENA);
-    return search.searchString(JenaCustomQueries.selectAlbumAll(), null, null, 0, -1)
-        .getNumberOfRecords();
   }
 
   /**

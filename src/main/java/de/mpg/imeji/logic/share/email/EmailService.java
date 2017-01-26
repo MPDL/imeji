@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.logic.share.email;
 
 import static com.google.common.base.Strings.isNullOrEmpty;

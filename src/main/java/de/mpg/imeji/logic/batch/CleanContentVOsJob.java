@@ -26,7 +26,7 @@ public class CleanContentVOsJob implements Callable<Integer> {
     final ContentService controller = new ContentService();
     for (final String id : contentIds) {
       try {
-        controller.delete(id);
+        // controller.delete(id);
       } catch (final Exception e) {
         LOGGER.error("Error removing content " + id, e);
       }

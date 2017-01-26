@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.collection;
 
 import java.io.Serializable;
@@ -16,11 +13,9 @@ import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.presentation.beans.ContainerBean.CONTAINER_TYPE;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.CommonUtils;
@@ -103,10 +98,9 @@ public class CollectionListItem implements Serializable {
       this.logoUrl = collection.getLogoUrl().toString();
     } else {
       final ItemService itemService = new ItemService();
-      final Container searchedContainer =
-          itemService.searchAndSetContainerItems(collection, user, 1, 0);
-      if (searchedContainer.getImages().iterator().hasNext()) {
-        final URI uri = searchedContainer.getImages().iterator().next();
+      final CollectionImeji col = itemService.searchAndSetContainerItems(collection, user, 1, 0);
+      if (col.getImages().iterator().hasNext()) {
+        final URI uri = col.getImages().iterator().next();
         if (uri != null) {
           final Navigation navigation =
               (Navigation) BeanHelper.getApplicationBean(Navigation.class);
@@ -233,10 +227,6 @@ public class CollectionListItem implements Serializable {
 
   public void setOwner(boolean isOwner) {
     this.isOwner = isOwner;
-  }
-
-  public String getType() {
-    return CONTAINER_TYPE.COLLECTION.name();
   }
 
   public CollectionImeji getCollection() {

@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.item;
 
 import java.io.Serializable;
@@ -37,7 +34,6 @@ public class ThumbnailBean implements Serializable {
   private URI uri = null;
   private String id;
   private boolean selected = false;
-  private boolean isInActiveAlbum = false;
   private URI collectionUri;
   private String fileType;
   private String shortFileType;
@@ -71,9 +67,6 @@ public class ThumbnailBean implements Serializable {
     final SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     this.caption = findCaption();
     this.selected = sessionBean.getSelected().contains(uri.toString());
-    if (sessionBean.getActiveAlbum() != null) {
-      this.isInActiveAlbum = sessionBean.getActiveAlbum().getImages().contains(item.getId());
-    }
   }
 
   /**
@@ -205,24 +198,6 @@ public class ThumbnailBean implements Serializable {
    */
   public void setSelected(boolean selected) {
     this.selected = selected;
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
-  public boolean isInActiveAlbum() {
-    return isInActiveAlbum;
-  }
-
-  /**
-   * setter
-   *
-   * @param isInActiveAlbum
-   */
-  public void setInActiveAlbum(boolean isInActiveAlbum) {
-    this.isInActiveAlbum = isInActiveAlbum;
   }
 
   /**

@@ -249,25 +249,6 @@
 								</ul>
 							</div>
 						</div>
-						<ui:fragment rendered="#{itemBean.relatedAlbums != null and !empty itemBean.relatedAlbums and Configuration.albumsEnabled}">
-							<div class="imj_metadataSet">
-								<div class="imj_metadataLabel">
-									#{lbl.relatedAlbum}
-									<span class="imj_invisible">: </span>
-								</div>
-								<div class="imj_metadataValue">
-									<ui:repeat var="albums" value="#{itemBean.relatedAlbums}">
-										<ul class="imj_optionList">
-											<li>
-												<h:outputLink value="#{Navigation.albumUrl}#{albums.idString}">
-													<h:outputText value="#{albums.metadata.title}"/>
-												</h:outputLink>
-											</li>
-										</ul>
-									</ui:repeat>
-								</div>
-							</div>
-						</ui:fragment>
 						<ui:fragment rendered="#{itemBean.image.status == 'RELEASED'}">
 							<div class="imj_metadataSet">
 								<div class="imj_metadataLabel">

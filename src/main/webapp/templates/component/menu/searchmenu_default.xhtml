@@ -16,7 +16,7 @@
 					<div class="imj_menuSimpleSearch">
 						<span class="imj_menuText" style="display: block;"> #{lbl.search_for} ...</span>
 						<ul class="imj_bodyContextSearch" >
-							<ui:fragment rendered="#{HistorySession.currentPage.imejiPage == 'COLLECTION_ITEMS' or HistorySession.currentPage.imejiPage == 'ALBUM_ITEMS'}" >
+							<ui:fragment rendered="#{HistorySession.currentPage.imejiPage == 'COLLECTION_ITEMS'}" >
 								<li id="simpleSearchForThisCollection" data-url="" data-placeholder="#{HistorySession.currentPage.internationalizedName}">
 									<a href="#">#{HistorySession.currentPage.internationalizedName}</a>
 								</li>
@@ -27,11 +27,6 @@
 							<li id="simpleSearchForCollections" data-url="#{Navigation.collectionsUrl}" data-placeholder="#{lbl.search_for} #{lbl.search_for_collections}">
 								<a href="#"> #{lbl.search_for_collections}</a>
 							</li>
-							<ui:fragment rendered="#{Configuration.albumsEnabled}" >
-								<li id="simpleSearchForAlbums" data-url="#{Navigation.albumsUrl}" data-placeholder="#{lbl.search_for} #{lbl.search_for_albums}">
-									 <a href="#"> #{lbl.search_for_albums}</a>
-								</li>
-							</ui:fragment>
 							<ui:fragment rendered="#{Auth.sysAdmin}">
 								<li id="simpleSearchForUsers" data-url="#{Navigation.usersUrl}" data-placeholder="#{lbl.search_for} #{lbl.users}">
 									 <a href="#"> #{lbl.users}</a>

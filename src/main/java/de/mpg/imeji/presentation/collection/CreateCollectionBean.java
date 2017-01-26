@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.collection;
 
 import java.io.File;
@@ -134,7 +131,7 @@ public class CreateCollectionBean extends CollectionBean {
     return getNavigation().getCollectionsUrl() + "?q=";
   }
 
-  @Override
+
   protected String getNavigationString() {
     return "pretty:createCollection";
   }

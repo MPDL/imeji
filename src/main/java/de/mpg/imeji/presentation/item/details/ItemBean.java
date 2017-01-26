@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.item.details;
 
 import java.io.IOException;
@@ -28,24 +25,18 @@ import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.ContentService;
-import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.search.model.SearchIndex;
-import de.mpg.imeji.logic.search.model.SearchOperators;
-import de.mpg.imeji.logic.search.model.SearchPair;
-import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
@@ -76,15 +67,12 @@ public class ItemBean extends SuperBean {
   private List<String> techMd;
   protected String prettyLink;
   private ItemDetailsBrowse browse = null;
-  private List<Album> relatedAlbums;
   private String dateCreated;
   private String newFilename;
   private String imageUploader;
   private String discardComment;
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItems;
-  @ManagedProperty(value = "#{SessionBean.activeAlbum}")
-  private Album activeAlbum;
   private int rotation;
   private int lastRotation = 0;
   private String thumbnail;
@@ -116,7 +104,6 @@ public class ItemBean extends SuperBean {
       if (item != null) {
         loadCollection(getSessionUser());
         initBrowsing();
-        initRelatedAlbums();
         initImageUploader();
         selected = getSelectedItems().contains(item.getId().toString());
       }
@@ -138,21 +125,6 @@ public class ItemBean extends SuperBean {
     browse = new ItemDetailsBrowse(item, "item", null, getSessionUser());
   }
 
-  /**
-   * Search and Retrieve the related albums
-   */
-  private void initRelatedAlbums() {
-    try {
-      final AlbumController ac = new AlbumController();
-      final SearchQuery q = new SearchQuery();
-      q.addPair(new SearchPair(SearchIndex.SearchFields.member, SearchOperators.EQUALS,
-          getImage().getId().toString(), false));
-      relatedAlbums = ac.retrieveBatchLazy(ac.search(q, getSessionUser(), null, -1, 0).getResults(),
-          getSessionUser(), -1, 0);
-    } catch (Exception e) {
-      LOGGER.error("Error retrieving related albums", e);
-    }
-  }
 
   public String getOpenseadragonUrl() {
     return getNavigation().getOpenseadragonUrl() + "?id=" + content.getOriginal();
@@ -308,32 +280,6 @@ public class ItemBean extends SuperBean {
   }
 
   /**
-   * Add the current {@link Item} to the active {@link Album}
-   *
-   * @return
-   * @throws ImejiException @
-   */
-  public String addToActiveAlbum() throws ImejiException {
-    final SessionObjectsController soc = new SessionObjectsController();
-    final List<String> l = new ArrayList<String>();
-    l.add(item.getId().toString());
-    final int sizeBeforeAdd = getActiveAlbum().getImages().size();
-    soc.addToActiveAlbum(l);
-    final int sizeAfterAdd = getActiveAlbum().getImages().size();
-    final boolean added = sizeAfterAdd > sizeBeforeAdd;
-    if (!added) {
-      BeanHelper
-          .error(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
-              + " " + Imeji.RESOURCE_BUNDLE.getMessage("already_in_active_album", getLocale()));
-    } else {
-      BeanHelper
-          .info(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
-              + " " + Imeji.RESOURCE_BUNDLE.getMessage("added_to_active_album", getLocale()));
-    }
-    return "";
-  }
-
-  /**
    * Remove the {@link Item} from the database. If the item was in the current {@link Album}, remove
    * the {@link Item} from it
    *
@@ -342,9 +288,6 @@ public class ItemBean extends SuperBean {
    * @
    */
   public void delete() throws ImejiException {
-    if (getIsInActiveAlbum()) {
-      removeFromActiveAlbum();
-    }
     new ItemService().delete(Arrays.asList(item), getSessionUser());
     new SessionObjectsController().unselectItem(item.getId().toString());
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
@@ -373,40 +316,6 @@ public class ItemBean extends SuperBean {
    */
   public void discardCommentListener(ValueChangeEvent event) {
     this.discardComment = event.getNewValue().toString();
-  }
-
-  /**
-   * Remove the {@link Item} from the active {@link Album}
-   *
-   * @return @
-   * @throws ImejiException
-   */
-  public String removeFromActiveAlbum() throws ImejiException {
-    new SessionObjectsController().removeFromActiveAlbum(Arrays.asList(item.getId().toString()));
-    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
-        + " " + Imeji.RESOURCE_BUNDLE.getMessage("success_album_remove_from", getLocale()));
-    return "pretty:";
-  }
-
-  /**
-   * Return true if the {@link Item} is in the active {@link Album}
-   *
-   * @return
-   */
-  public boolean getIsInActiveAlbum() {
-    if (getActiveAlbum() != null && item != null) {
-      return getActiveAlbum().getImages().contains(item.getId());
-    }
-    return false;
-  }
-
-  /**
-   * True if the current item page is part of the current album
-   *
-   * @return
-   */
-  public boolean getIsActiveAlbum() {
-    return false;
   }
 
   /**
@@ -463,15 +372,6 @@ public class ItemBean extends SuperBean {
 
   public String getDescription() {
     return item.getFilename();
-  }
-
-  /**
-   * Returns a list of all albums this image is added to.
-   *
-   * @return @
-   */
-  public List<Album> getRelatedAlbums() {
-    return relatedAlbums;
   }
 
   /**
@@ -616,14 +516,6 @@ public class ItemBean extends SuperBean {
 
   public void setSelectedItems(List<String> selectedItems) {
     this.selectedItems = selectedItems;
-  }
-
-  public Album getActiveAlbum() {
-    return activeAlbum;
-  }
-
-  public void setActiveAlbum(Album activeAlbum) {
-    this.activeAlbum = activeAlbum;
   }
 
   /**

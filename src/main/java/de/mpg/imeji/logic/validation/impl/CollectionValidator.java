@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 
@@ -18,15 +20,10 @@ import de.mpg.imeji.logic.vo.Person;
  * @author saquet
  *
  */
-public class CollectionValidator extends ContainerValidator implements Validator<CollectionImeji> {
+public class CollectionValidator extends ObjectValidator implements Validator<CollectionImeji> {
 
   private UnprocessableError exception = new UnprocessableError();
   private static final Pattern DOI_VALIDATION_PATTERN = Pattern.compile("10\\.\\d+\\/\\S+");
-
-  @Override
-  protected UnprocessableError getException() {
-    return exception;
-  }
 
   @Override
   public void validate(CollectionImeji collection, Method m) throws UnprocessableError {
@@ -37,6 +34,30 @@ public class CollectionValidator extends ContainerValidator implements Validator
     validateDOI(collection.getDoi());
     if (exception.hasMessages()) {
       throw exception;
+    }
+  }
+
+  protected void validateContainerMetadata(CollectionImeji c) {
+    if (isDelete()) {
+      return;
+    }
+    if (StringHelper.hasInvalidTags(c.getDescription())) {
+      setException(new UnprocessableError("error_bad_format_description", getException()));
+    }
+    if (isNullOrEmpty(c.getTitle().trim())) {
+      setException(new UnprocessableError("error_collection_need_title", getException()));
+    }
+    validateAdditionalInfos(c);
+  }
+
+  private void validateAdditionalInfos(CollectionImeji c) {
+    for (final ContainerAdditionalInfo info : c.getAdditionalInformations()) {
+      if (isNullOrEmpty(info.getLabel())) {
+        setException(new UnprocessableError("error_additionalinfo_need_label", getException()));
+      }
+      if (isNullOrEmpty(info.getText()) && isNullOrEmpty(info.getUrl())) {
+        setException(new UnprocessableError("error_additionalinfo_need_value", getException()));
+      }
     }
   }
 
@@ -104,9 +125,11 @@ public class CollectionValidator extends ContainerValidator implements Validator
 
   }
 
-  @Override
-  protected void setException(UnprocessableError e) {
+  private void setException(UnprocessableError e) {
     this.exception = e;
   }
 
+  private UnprocessableError getException() {
+    return exception;
+  }
 }

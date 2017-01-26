@@ -40,12 +40,6 @@
 								</h:outputLink>
 							</ui:fragment>
 							
-							<ui:fragment rendered="#{currentMainMenu == 'album'}">
-								<h:outputLink value="#{browseToAllItemsUrl}" title="#{lbl.album_back_to_images}">
-									<h:outputText value="#{lbl.album_back_to_images}"/>
-								</h:outputLink>
-							</ui:fragment>
-							
 							<ui:fragment rendered="#{currentMainMenu == 'collection'}">
 								<h:outputLink value="#{browseToAllItemsUrl}" title="#{lbl.collection_back_to_images}">
 									<h:outputText value="#{lbl.collection_back_to_images}"/>

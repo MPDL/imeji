@@ -14,9 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
@@ -24,7 +22,6 @@ import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.MetadataFactory;
-import de.mpg.imeji.rest.to.AlbumTO;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.ContainerAdditionalInformationTO;
 import de.mpg.imeji.rest.to.IdentifierTO;
@@ -58,23 +55,6 @@ public class ReverseTransferObjectFactory {
     // set contributors
     transferCollectionContributors(to.getContributors(), vo, u, mode);
   }
-
-  /**
-   * Transfer an {@link AlbumTO} to an {@link Album}
-   *
-   * @param to
-   * @param vo
-   * @param mode
-   * @param u
-   */
-  public static void transferAlbum(AlbumTO to, Album vo, TRANSFER_MODE mode, User u) {
-    vo.setTitle(to.getTitle());
-    vo.setDescription(to.getDescription());
-    vo.setAdditionalInformations(transferAdditionalInfos(to.getAdditionalInfos()));
-    // set contributors
-    transferCollectionContributors(to.getContributors(), vo, u, mode);
-  }
-
 
   /**
    * Transfer the list of ContainerAdditionalInformationTO to List of ContainerAdditionalInfo
@@ -187,8 +167,8 @@ public class ReverseTransferObjectFactory {
   }
 
 
-  public static void transferCollectionContributors(List<PersonTO> persons, Container vo, User u,
-      TRANSFER_MODE mode) {
+  public static void transferCollectionContributors(List<PersonTO> persons, CollectionImeji vo,
+      User u, TRANSFER_MODE mode) {
     for (final PersonTO pTO : persons) {
       final Person person = new Person();
       person.setFamilyName(pTO.getFamilyName());

@@ -1,27 +1,3 @@
-/*
- *
- * CDDL HEADER START
- *
- * The contents of this file are subject to the terms of the Common Development and Distribution
- * License, Version 1.0 only (the "License"). You may not use this file except in compliance with
- * the License.
- *
- * You can obtain a copy of the license at license/ESCIDOC.LICENSE or http://www.escidoc.de/license.
- * See the License for the specific language governing permissions and limitations under the
- * License.
- *
- * When distributing Covered Code, include this CDDL HEADER in each file and include the License
- * file at license/ESCIDOC.LICENSE. If applicable, add the following below this CDDL HEADER, with
- * the fields enclosed by brackets "[]" replaced with your own identifying information: Portions
- * Copyright [yyyy] [name of copyright owner]
- *
- * CDDL HEADER END
- */
-/*
- * Copyright 2006-2007 Fachinformationszentrum Karlsruhe Gesellschaft für
- * wissenschaftlich-technische Information mbH and Max-Planck- Gesellschaft zur Förderung der
- * Wissenschaft e.V. All rights reserved. Use is subject to license terms.
- */
 package de.mpg.imeji.logic.db.writer;
 
 import java.net.URI;
@@ -43,7 +19,7 @@ import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.validation.ValidatorFactory;
 import de.mpg.imeji.logic.validation.impl.Validator;
-import de.mpg.imeji.logic.vo.Container;
+import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.vo.User;
@@ -72,10 +48,6 @@ public class WriterFacade {
           SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
     } else if (modelURI.equals(Imeji.collectionModel)) {
       indexer = SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.ELASTIC)
-          .getIndexer();
-
-    } else if (modelURI.equals(Imeji.albumModel)) {
-      indexer = SearchFactory.create(SearchObjectTypes.ALBUM, SEARCH_IMPLEMENTATIONS.ELASTIC)
           .getIndexer();
 
     } else if (modelURI.equals(Imeji.userModel)) {
@@ -237,8 +209,8 @@ public class WriterFacade {
   public static URI extractID(Object o) {
     if (o instanceof Item) {
       return ((Item) o).getId();
-    } else if (o instanceof Container) {
-      return ((Container) o).getId();
+    } else if (o instanceof CollectionImeji) {
+      return ((CollectionImeji) o).getId();
     } else if (o instanceof User) {
       return ((User) o).getId();
     } else if (o instanceof UserGroup) {

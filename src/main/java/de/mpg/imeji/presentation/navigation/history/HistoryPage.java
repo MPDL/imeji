@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.navigation.history;
 
 import java.io.Serializable;
@@ -13,7 +10,6 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
@@ -85,8 +81,6 @@ public class HistoryPage implements Serializable {
       final String uriStr = UrlHelper.decode(uri.toString());
       if (ImejiPages.COLLECTION_HOME.matches(uriStr)) {
         return new CollectionService().retrieveLazy(uri, user).getTitle();
-      } else if (ImejiPages.ALBUM_HOME.matches(uriStr)) {
-        return new AlbumController().retrieveLazy(uri, user).getTitle();
       } else if (ImejiPages.ITEM_DETAIL.matches(uriStr)) {
         return new ItemService().retrieveLazy(uri, user).getFilename();
       } else if (ImejiPages.USER_GROUP == imejiPage) {

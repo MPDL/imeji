@@ -30,7 +30,7 @@
 		<ui:param name="updateContentVO" value="#{Auth.updateContent(cc.attrs.vo)}"/>
 
 		<div class="#{cc.attrs.menuClass.trim()}">
-			<ui:fragment rendered="#{Auth.loggedIn and (Auth.createCollection or Configuration.albumsEnabled)}">
+			<ui:fragment rendered="#{Auth.loggedIn and Auth.createCollection}">
 				<div class="imj_overlayMenu #{cc.attrs.menuClass.trim()}Item">
 					<div class="imj_menuHeader">
                         <span class="fa fa-plus">&#160;</span>
@@ -45,13 +45,7 @@
 									</h:outputLink>
 								</li>
 							</ui:fragment>
-							<ui:fragment rendered="#{Configuration.albumsEnabled}">
-								<li>
-									<h:outputLink value="#{Navigation.createAlbumUrl}?init=1" title="#{lbl.album_create}">
-										<h:outputText value="#{lbl.album_create}"/>
-									</h:outputLink>
-								</li>
-							</ui:fragment>
+							
 							<ui:fragment rendered="#{Auth.sysAdmin}">
 								<li>
 									<a href="#{Navigation.applicationUrl}createuser" title="#{lbl.admin_user_new}">

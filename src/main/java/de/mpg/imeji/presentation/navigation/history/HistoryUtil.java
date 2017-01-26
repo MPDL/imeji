@@ -1,6 +1,4 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
+
 package de.mpg.imeji.presentation.navigation.history;
 
 import java.io.UnsupportedEncodingException;
@@ -12,7 +10,6 @@ import java.util.regex.Pattern;
 
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
@@ -28,7 +25,6 @@ import de.mpg.imeji.logic.vo.UserGroup;
 public class HistoryUtil {
   private static Pattern findItemId = Pattern.compile(ImejiPages.ITEM_DETAIL.getRegex());
   private static Pattern findCollectionId = Pattern.compile(ImejiPages.COLLECTION_HOME.getRegex());
-  private static Pattern findAlbumId = Pattern.compile(ImejiPages.ALBUM_HOME.getRegex());
   private static Pattern findUserGroupId = Pattern.compile(ImejiPages.USER_GROUP.getRegex());
   private static Pattern findUserId = Pattern.compile(ImejiPages.USER.getRegex());
 
@@ -43,10 +39,6 @@ public class HistoryUtil {
     m = findCollectionId.matcher(url);
     if (m.find()) {
       return ObjectHelper.getURI(CollectionImeji.class, m.group(1));
-    }
-    m = findAlbumId.matcher(url);
-    if (m.find()) {
-      return ObjectHelper.getURI(Album.class, m.group(1));
     }
     m = findUserId.matcher(url);
     if (m.find()) {

@@ -18,15 +18,8 @@
 					<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}?q=">
 						<h:graphicImage value="#{cc.attrs.item.logoUrl}" alt="preview picture" rendered="#{cc.attrs.item.logoUrl != null and cc.attrs.item.status!='WITHDRAWN'}"/>
 						<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/discarded.png" alt="preview picture" rendered="#{cc.attrs.item.status =='WITHDRAWN'}"/>
-						<ui:fragment rendered="#{cc.attrs.item.type == 'ALBUM' and  cc.attrs.item.status!='WITHDRAWN'}">
-							<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/empty.png" alt="preview picture" 
-										rendered="#{cc.attrs.item.logoUrl == null and cc.attrs.item.privateCount == 0}" title="#{lbl.ContainerEmpty}"/>
-							<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/private_grey.png" alt="#{lbl.ContainerPrivate}" 
-										rendered="#{cc.attrs.item.logoUrl == null and cc.attrs.item.privateCount &gt; 0}"  title="#{lbl.ContainerPrivate}"/>
-						</ui:fragment>
-						<ui:fragment rendered="#{cc.attrs.item.type == 'COLLECTION' and  cc.attrs.item.status!='WITHDRAWN'}">
-							<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/empty.png" alt="preview picture" 
-										rendered="#{cc.attrs.item.logoUrl == null}" title="#{lbl.ContainerEmpty}"/>
+						<ui:fragment rendered="#{cc.attrs.item.status!='WITHDRAWN'}">
+							<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/empty.png" alt="preview picture"  rendered="#{cc.attrs.item.logoUrl == null}" title="#{lbl.ContainerEmpty}"/>
 						</ui:fragment>
 					</h:outputLink>
 					<h:outputText value="#{cc.attrs.item.size} #{lbl.images}" class="imj_itemCount"/>
@@ -80,21 +73,6 @@
 									<h:outputText value="#{lbl.about}"/>
 								</h:outputLink>
 							</li>
-							<ui:fragment rendered="#{cc.attrs.isActivatable == 'yes'}">
-								<li style="float:right">
-									<ui:fragment rendered="#{Auth.update(cc.attrs.item)}">				
-										<h:commandButton id="btnActivate" value="#{lbl.make_active}" action="#{SessionBean.activateAlbum(cc.attrs.item.album.id)}" styleClass="imj_submitButton" rendered="#{!cc.attrs.item.active and cc.attrs.item.status!='WITHDRAWN'}">
-											<f:ajax/>
-										</h:commandButton>
-										<h:commandButton id="btnDeactivate" value="#{lbl.make_inactive}" action="#{SessionBean.deactivateAlbum()}" styleClass="imj_submitButton" rendered="#{cc.attrs.item.active}">
-											<f:ajax/>
-										</h:commandButton>
-									</ui:fragment>
-									<ui:fragment rendered="#{!Auth.update(cc.attrs.item) and !cc.attrs.item.active}">
-										<h:outputText value="#{lbl.only_view_allowed}"/>
-									</ui:fragment>
-								</li>
-							</ui:fragment>
 						</ul>
 					</div>
 			   </div>

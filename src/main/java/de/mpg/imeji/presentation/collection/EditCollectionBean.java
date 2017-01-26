@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.collection;
 
 import java.io.File;
@@ -43,7 +40,6 @@ public class EditCollectionBean extends CollectionBean {
   @PostConstruct
   public void init() {
     setId(UrlHelper.getParameterValue("id"));
-    setTab(TabType.COLLECTION);
     setCollectionCreateMode(false);
     getProfileSelect();
     if (getId() != null) {
@@ -128,7 +124,7 @@ public class EditCollectionBean extends CollectionBean {
         + getNavigation().getInfosPath() + "?init=1";
   }
 
-  @Override
+
   protected String getNavigationString() {
     return "pretty:editCollection";
   }

@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.logic.search.jenasearch;
 
 import java.net.URI;
@@ -25,7 +22,6 @@ import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.util.SortHelper;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
@@ -236,9 +232,6 @@ public class JenaSearch implements Search {
       if (containerURI.equals(ObjectHelper.getURI(CollectionImeji.class, id).toString())) {
         specificQuery = "?s <http://imeji.org/terms/collection> <" + containerURI + ">  .";
         // specificQuery = "FILTER (?c=<" + containerURI + ">) .";
-      } else if (containerURI.equals(ObjectHelper.getURI(Album.class, id).toString())) {
-        type = SearchObjectTypes.ALL;
-        specificQuery = "<" + containerURI + "> <http://imeji.org/terms/item> ?s .";
       }
     }
     if (SearchObjectTypes.ITEM.equals(type) || SearchObjectTypes.ALL.equals(type)) {
@@ -266,8 +259,6 @@ public class JenaSearch implements Search {
         return Imeji.imageModel;
       case COLLECTION:
         return Imeji.collectionModel;
-      case ALBUM:
-        return Imeji.albumModel;
       case PROFILE:
         return Imeji.profileModel;
       case USER:
@@ -289,8 +280,6 @@ public class JenaSearch implements Search {
     switch (type) {
       case COLLECTION:
         return J2JHelper.getResourceNamespace(new CollectionImeji());
-      case ALBUM:
-        return J2JHelper.getResourceNamespace(new Album());
       default:
         return J2JHelper.getResourceNamespace(new Item());
     }

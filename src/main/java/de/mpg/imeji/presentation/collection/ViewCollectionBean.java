@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.collection;
 
 import java.net.URI;
@@ -80,7 +77,6 @@ public class ViewCollectionBean extends CollectionBean {
     this.persons = persons;
   }
 
-  @Override
   protected String getNavigationString() {
     return "pretty:collectionInfos";
   }

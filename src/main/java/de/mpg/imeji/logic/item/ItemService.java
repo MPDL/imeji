@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.logic.item;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -54,7 +51,6 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
@@ -433,7 +429,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param c
    * @param user
    */
-  public Container searchAndSetContainerItems(Container c, User user, int limit, int offset) {
+  public CollectionImeji searchAndSetContainerItems(CollectionImeji c, User user, int limit,
+      int offset) {
     final List<String> newUris = search(c.getId(), null, null, user, limit, 0).getResults();
     c.getImages().clear();
     for (final String s : newUris) {

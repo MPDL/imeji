@@ -21,14 +21,12 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
-import de.mpg.imeji.logic.search.elasticsearch.model.ElasticAlbum;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticContent;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFolder;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticItem;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUser;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
@@ -209,9 +207,6 @@ public class ElasticIndexer implements SearchIndexer {
     }
     if (obj instanceof CollectionImeji) {
       return new ElasticFolder((CollectionImeji) obj);
-    }
-    if (obj instanceof Album) {
-      return new ElasticAlbum((Album) obj);
     }
     if (obj instanceof User) {
       return new ElasticUser((User) obj);

@@ -9,8 +9,7 @@
 	<ui:param name="currentMainMenu" value="admin" />
 
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"
-			downloadEnabled="false" actionEnabled="false" />
+
 	</ui:define>
 
 	<ui:define name="mainContent">
@@ -62,7 +61,7 @@
 											<option value="" selected="selected">All (Union)</option>
 											<option value="item">Item</option>
 											<option value="collection">Collection</option>
-											<option value="album">Album</option>
+											<option value="content">Content</option>
 											<option value="user">User</option>
 											<option value="statement">Statement</option>
 										</select>
@@ -164,27 +163,6 @@
 											value="#{lbl.admin_advanced_clean}"
 											title="#{lbl.admin_advanced_clean}"
 											styleClass="imj_cancelButton">
-											<f:ajax />
-										</h:commandLink>
-									</h:panelGroup>
-								</h:form>
-							</div>
-
-							<!-- Admin - Import escidoc Pictures to imeji internal Storage -->
-							<div class="imj_headline">
-								<h2>
-									<h:outputText value="#{lbl.import_to_internal}" />
-								</h2>
-							</div>
-
-							<div class="imj_content">
-								<h:outputText value="#{lbl.import_to_internal_warning}" />
-								<h:form>
-									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton"
-											action="#{AdminBean.importToInternalStorage}"
-											value="#{lbl.import_to_internal}: #{AdminBean.internalStorageLocation}"
-											onclick="openDialog('dialogWait');">
 											<f:ajax />
 										</h:commandLink>
 									</h:panelGroup>

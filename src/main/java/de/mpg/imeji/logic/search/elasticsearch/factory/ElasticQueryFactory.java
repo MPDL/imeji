@@ -199,13 +199,7 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder buildContainerFilter(String containerUri) {
     if (containerUri != null) {
-      if (isFolderUri(containerUri)) {
-        return fieldQuery(ElasticFields.FOLDER, containerUri, SearchOperators.EQUALS, false);
-      } else {
-        return QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
-            .lookupIndex(ElasticService.DATA_ALIAS).lookupId(containerUri)
-            .lookupType(ElasticTypes.albums.name()).lookupPath(ElasticFields.MEMBER.field());
-      }
+      return fieldQuery(ElasticFields.FOLDER, containerUri, SearchOperators.EQUALS, false);
     }
     return QueryBuilders.matchAllQuery();
   }

@@ -1,11 +1,8 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
+
 package de.mpg.imeji.presentation.session;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,18 +17,14 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 
-import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.controller.AlbumController;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.MaxPlanckInstitutUtils;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.util.CookieUtils;
 import de.mpg.imeji.presentation.util.ServletUtil;
@@ -57,7 +50,6 @@ public class SessionBean implements Serializable {
   private User user = null;
   private List<String> selected = new ArrayList<String>();;
   private Set<String> clipboard = new HashSet<>();
-  private Album activeAlbum;
   private String selectedImagesContext = null;
   private Style selectedCss = Style.NONE;
   private String applicationUrl;
@@ -200,68 +192,6 @@ public class SessionBean implements Serializable {
   public int getSelectedSize() {
     return selected.size();
   }
-
-
-  /**
-   * setter
-   *
-   * @param activeAlbum
-   */
-  public void setActiveAlbum(Album activeAlbum) {
-    this.activeAlbum = activeAlbum;
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
-  public Album getActiveAlbum() {
-    if (activeAlbum != null && (!SecurityUtil.authorization().read(getUser(), activeAlbum.getId())
-        || !SecurityUtil.authorization().create(getUser(), activeAlbum.getId()))) {
-      setActiveAlbum(null);
-    }
-    return activeAlbum;
-  }
-
-  /**
-   * Make the passed album active
-   *
-   * @param albumId
-   * @throws ImejiException
-   */
-  public String activateAlbum(String albumId) throws ImejiException {
-    this.activeAlbum = new AlbumController().retrieve(URI.create(albumId), user);
-    return "pretty:";
-  }
-
-  /**
-   * Deactivate the album
-   */
-  public String deactivateAlbum() {
-    this.activeAlbum = null;
-    return "pretty:";
-  }
-
-  /**
-   * setter
-   *
-   * @return
-   */
-  public String getActiveAlbumId() {
-    return ObjectHelper.getId(activeAlbum.getId());
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
-  public int getActiveAlbumSize() {
-    return activeAlbum.getImages().size();
-  }
-
-
 
   /**
    * Check if the selected CSS is correct according to the configuration value. If errors are found,

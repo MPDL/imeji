@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.search.model.SearchIndex;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.export.ExportServlet;
@@ -116,11 +115,6 @@ public class ContentNegotiationFilter implements Filter {
     if (path.startsWith("/collection/")) {
       return "q=" + SearchIndex.SearchFields.col.name() + "==\""
           + ObjectHelper.getURI(CollectionImeji.class, getID(path)) + "\"";
-    }
-    if (path.startsWith("/album/")) {
-      return "q=" + SearchIndex.SearchFields.alb.name() + "==\""
-          + URLEncoder.encode(ObjectHelper.getURI(Album.class, getID(path)).toString(), "UTF-8")
-          + "\"";
     }
     return request.getQueryString();
   }

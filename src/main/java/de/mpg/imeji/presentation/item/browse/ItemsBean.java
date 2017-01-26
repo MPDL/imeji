@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.presentation.item.browse;
 
 import java.net.URLEncoder;
@@ -10,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -32,14 +28,12 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
 import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.item.ThumbnailBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
-import de.mpg.imeji.presentation.session.SessionObjectsController;
 import de.mpg.imeji.presentation.util.CookieUtils;
 
 /**
@@ -95,13 +89,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   public void initSpecific() {
     browseContext = getNavigationString();
     isSimpleSearch = SearchQueryParser.isSimpleSearch(searchQuery);
-    if (UrlHelper.getParameterBoolean("add_selected")) {
-      try {
-        addSelectedToActiveAlbum();
-      } catch (final ImejiException e) {
-        LOGGER.error("Error initializing itemsbean", e);
-      }
-    }
     update();
   }
 
@@ -266,30 +253,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   }
 
   /**
-   * Add all select {@link Item} to the active {@link Album}, and unselect all {@link Item} from
-   * session
-   *
-   * @return @
-   * @throws ImejiException
-   */
-  public String addSelectedToActiveAlbum() throws ImejiException {
-    addToActiveAlbum(sessionBean.getSelected());
-    selectNone();
-    return "pretty:";
-  }
-
-  /**
-   * Add all {@link Item} of the current {@link ItemsBean} (i.e. browse page) to the active album
-   *
-   * @return @
-   * @throws ImejiException
-   */
-  public String addAllToActiveAlbum() throws ImejiException {
-    addToActiveAlbum(search(searchQuery, null, 0, -1).getResults());
-    return "pretty:";
-  }
-
-  /**
    * Delete selected {@link Item}
    *
    * @return @
@@ -388,38 +351,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     sessionBean.getSelected().removeAll(uris);
   }
 
-  /**
-   * Add a {@link List} of uris to the active album, and write an info message in the
-   * {@link FacesMessage}
-   *
-   * @param uris @
-   * @throws ImejiException
-   */
-  private void addToActiveAlbum(List<String> uris) throws ImejiException {
-    final int sizeToAdd = uris.size();
-    final int sizeBefore = sessionBean.getActiveAlbum().getImages().size();
-    final SessionObjectsController soc = new SessionObjectsController();
-    soc.addToActiveAlbum(uris);
-    final int sizeAfter = sessionBean.getActiveAlbum().getImages().size();
-    final int added = sizeAfter - sizeBefore;
-    final int notAdded = sizeToAdd - added;
-    String message = "";
-    String error = "";
-    if (added > 0) {
-      message = " " + added + " "
-          + Imeji.RESOURCE_BUNDLE.getMessage("images_added_to_active_album", getLocale());
-    }
-    if (notAdded > 0) {
-      error += " " + notAdded + " "
-          + Imeji.RESOURCE_BUNDLE.getMessage("already_in_active_album", getLocale());
-    }
-    if (!"".equals(message)) {
-      BeanHelper.info(message);
-    }
-    if (!"".equals(error)) {
-      BeanHelper.error(error);
-    }
-  }
 
   public String getInitComment() {
     setDiscardComment("");

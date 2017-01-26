@@ -1,6 +1,3 @@
-/**
- * License: src/main/resources/license/escidoc.license
- */
 package de.mpg.imeji.logic.service;
 
 import java.io.File;
@@ -20,12 +17,10 @@ import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
 import de.mpg.imeji.logic.user.UserController;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.Album;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Container;
 import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties;
@@ -146,19 +141,18 @@ public abstract class ImejiServiceAbstract {
    * @throws ImejiException
    * @throws URISyntaxException
    */
-  protected Container setLogo(Container container, File f)
+  protected CollectionImeji setLogo(CollectionImeji col, File f)
       throws ImejiException, IOException, URISyntaxException {
     final InternalStorageManager ism = new InternalStorageManager();
     if (f != null) {
-      final String url =
-          ism.generateUrl(container.getIdString(), f.getName(), FileResolution.THUMBNAIL);
-      container.setLogoUrl(URI.create(url));
+      final String url = ism.generateUrl(col.getIdString(), f.getName(), FileResolution.THUMBNAIL);
+      col.setLogoUrl(URI.create(url));
       ism.replaceFile(url, f);
     } else {
-      ism.removeFile(container.getLogoUrl().toString());
-      container.setLogoUrl(null);
+      ism.removeFile(col.getLogoUrl().toString());
+      col.setLogoUrl(null);
     }
-    return container;
+    return col;
   }
 
   public static int getMin(int a, int b) {

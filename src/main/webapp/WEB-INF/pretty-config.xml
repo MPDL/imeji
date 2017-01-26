@@ -12,10 +12,6 @@
 		<pattern value="/" />
 		<view-id>/jsf/StartPage.xhtml</view-id>
 	</url-mapping>
-	<url-mapping id="albums">
-		<pattern value="/albums" />
-		<view-id>/jsf/Albums.xhtml</view-id>
-	</url-mapping>
 	<url-mapping id="collections">
 		<pattern value="/collections" />
 		<view-id>/jsf/Collections.xhtml</view-id>
@@ -70,36 +66,6 @@
 	<url-mapping id="createStatement">
 		<pattern value="/createstatement" />
 		<view-id>/jsf/StatementCreate.xhtml</view-id>
-	</url-mapping>
-	<!-- Album Pages -->
-	<url-mapping id="createalbum">
-		<pattern value="/createalbum" />
-		<view-id>/jsf/AlbumCreate.xhtml</view-id>
-	</url-mapping>
-
-	<url-mapping id="editAlbum">
-		<pattern value="/album/#{ id }/edit" />
-		<view-id>/jsf/AlbumEdit.xhtml</view-id>
-	</url-mapping>
-
-	<url-mapping id="album">
-		<pattern value="/album/#{ id }" />
-		<view-id>/jsf/AlbumEntryPage.xhtml</view-id>
-	</url-mapping>
-
-	<url-mapping id="albumInfos">
-		<pattern value="/album/#{ id }/infos" />
-		<view-id>/jsf/AlbumView.xhtml</view-id>
-	</url-mapping>
-
-	<url-mapping id="albumBrowse">
-		<pattern value="/album/#{ id }/browse" />
-		<view-id>/jsf/AlbumBrowse.xhtml</view-id>
-	</url-mapping>
-
-	<url-mapping id="albumItem">
-		<pattern value="/album/#{ albumId }/item/#{ id }" />
-		<view-id>/jsf/AlbumImage.xhtml</view-id>
 	</url-mapping>
 
 	<!-- Search Pages -->

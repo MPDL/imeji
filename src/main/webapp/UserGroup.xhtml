@@ -143,17 +143,11 @@
 										<div class="imj_admindataValueEntry">
 											<h:form>
 												<ui:repeat var="sh" value="#{UserGroup.roles}">
-													<ui:param name="roles"
-														value="#{sh.type == 'COLLECTION' ? ShareBean.shareCollectionGrantItems : ShareBean.shareAlbumGrantItems}" />
-													<ui:param name="roles"
-														value="#{sh.type == 'ITEM' ? ShareBean.shareItemGrantItems : roles}" />
+													<ui:param name="roles" value="#{ShareBean.shareCollectionGrantItems}" />
 													<div>
-														<h:outputText value=" #{sh.typeLabel}: #{sh.title}"
-															styleClass="imj_admindataValueEntry" />
-														<h:commandButton action="#{UserGroup.revokeGrants(sh)}"
-															value="#{lbl.revoke}" styleClass="imj_cancelButton" />
-														<h:selectManyCheckbox id="role" value="#{sh.roles}"
-															disabled="true" layout="pageDirection">
+														<h:outputText value=" #{sh.typeLabel}: #{sh.title}" styleClass="imj_admindataValueEntry" />
+														<h:commandButton action="#{UserGroup.revokeGrants(sh)}" value="#{lbl.revoke}" styleClass="imj_cancelButton" />
+														<h:selectManyCheckbox id="role" value="#{sh.roles}" disabled="true" layout="pageDirection">
 															<f:selectItems value="#{sh.rolesMenu}" />
 														</h:selectManyCheckbox>
 													</div>
