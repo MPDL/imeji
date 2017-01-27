@@ -118,7 +118,7 @@ public class UploadServlet extends HttpServlet {
         final InputStream stream = fis.openStream();
         if (!fis.isFormField()) {
           final String name = fis.getName();
-          final File tmp = TempFileUtil.createTempFile("upload", ".jpg");
+          final File tmp = TempFileUtil.createTempFile("upload", null);
           StorageUtils.writeInOut(stream, new FileOutputStream(tmp), true);
           return new UploadItem(tmp, name);
         }
