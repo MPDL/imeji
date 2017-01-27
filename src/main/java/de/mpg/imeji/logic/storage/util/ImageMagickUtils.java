@@ -76,9 +76,10 @@ public class ImageMagickUtils {
     final ConvertCmd cmd = getConvert();
     // create the operation, add images and operators/options
     final IMOperation op = new IMOperation();
-    if (isImage(extension)) {
-      op.colorspace(findColorSpace(tmp));
+    if (!isImage(extension)) {
+      return null;
     }
+    op.colorspace(findColorSpace(tmp));
     op.strip();
     op.flatten();
     op.addImage(path);

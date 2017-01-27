@@ -448,6 +448,18 @@ public class JenaCustomQueries {
     return "SELECT ?s WHERE { ?s a <http://imeji.org/terms/statement>}";
   }
 
+  public static final String getFullUrlByItem(String itemId) {
+    return "SELECT ?s " + "WHERE{<" + itemId + "> <http://imeji.org/terms/fullImageUrl> ?s}";
+  }
+
+  public static final String getWebUrlByItem(String itemId) {
+    return "SELECT ?s " + "WHERE{<" + itemId + "> <http://imeji.org/terms/webImageUrl> ?s}";
+  }
+
+  public static final String getThumbnailUrlByItem(String itemId) {
+    return "SELECT ?s " + "WHERE{<" + itemId + "> <http://imeji.org/terms/thumbnailImageUrl> ?s}";
+  }
+
   /**
    * Select all {@link Item} available imeji
    *

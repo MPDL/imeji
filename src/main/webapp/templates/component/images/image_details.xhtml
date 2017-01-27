@@ -325,28 +325,28 @@
       	    	}]
   			};
 
-  			var viewer = OpenSeadragon({
-  
-      		id: "seadragon-viewer",
-      		prefixUrl: "#{Navigation.applicationUrl}/resources/openseadragon/images/",
-      		tileSources: img,
-      		showRotationControl: true,
-      		fullPageButton: "fullscreenButton",
-      		homeButton: "homeButton",
-      		zoomInButton: "zoominButton",
-      		zoomOutButton: "zoomoutButton",
-      		rotateRightButton: "rotateRightButton",
-      		rotateLeftButton: "rotateLeftButton",
-      		gestureSettingsTouch: {
-         		 pinchRotate: true
-      		}
-      		
-  		});
-  			
-		viewer.addHandler('rotate',function(){
-			 document.getElementById("rotationForm:inputTextRotation").value= viewer.viewport.getRotation();
-			 document.getElementById("rotationForm:buttonUpdateRotation").click();
-      		});
+    			var viewer = OpenSeadragon({
+    
+        		id: "seadragon-viewer",
+        		prefixUrl: "#{Navigation.applicationUrl}/resources/openseadragon/images/",
+        		tileSources: img,
+        		showRotationControl: true,
+        		fullPageButton: "fullscreenButton",
+        		homeButton: "homeButton",
+        		zoomInButton: "zoominButton",
+        		zoomOutButton: "zoomoutButton",
+        		rotateRightButton: "rotateRightButton",
+        		rotateLeftButton: "rotateLeftButton",
+        		gestureSettingsTouch: {
+           		 pinchRotate: true
+        		}
+        		
+    		});
+    			
+				viewer.addHandler('rotate',function(){
+					 document.getElementById("rotationForm:inputTextRotation").value= viewer.viewport.getRotation();
+					 document.getElementById("rotationForm:buttonUpdateRotation").click();
+        		});
 
 	</script>
 	<script type="text/javascript">$(function(){highlighter();});</script>	

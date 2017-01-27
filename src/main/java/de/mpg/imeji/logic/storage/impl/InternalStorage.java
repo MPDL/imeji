@@ -17,6 +17,7 @@ import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.internal.InternalStorageItem;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
+import de.mpg.imeji.logic.storage.transform.ImageGeneratorManager;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.logic.storage.util.ImageUtils;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
@@ -237,4 +238,16 @@ public class InternalStorage implements Storage {
   }
 
 
+
+  @Override
+  public void recalculateWebAndThumbnail(String fullUrl, String webUrl, String thumbnailUrl)
+      throws IOException, Exception {
+    File full = read(fullUrl);
+    String guessedExtension = StorageUtils.guessExtension(full);
+    ImageGeneratorManager manager = new ImageGeneratorManager();
+    File thumbnail = manager.generateThumbnail(full, guessedExtension);
+    File web = manager.generateWebResolution(full, guessedExtension);
+    update(webUrl, web);
+    update(thumbnailUrl, thumbnail);
+  }
 }

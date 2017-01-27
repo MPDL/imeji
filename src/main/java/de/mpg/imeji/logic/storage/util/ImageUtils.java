@@ -23,6 +23,7 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.util.TempFileUtil;
@@ -443,9 +444,9 @@ public final class ImageUtils {
       throws IOException, URISyntaxException {
     switch (resolution) {
       case THUMBNAIL:
-        return Integer.parseInt(PropertyReader.getProperty("xsd.resolution.thumbnail"));
+        return Integer.parseInt(Imeji.CONFIG.getThumbnailWidth());
       case WEB:
-        return Integer.parseInt(PropertyReader.getProperty("xsd.resolution.web"));
+        return Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
       default:
         return 0;
     }

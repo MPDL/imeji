@@ -203,6 +203,18 @@ public final class StorageController implements Serializable {
   }
 
   /**
+   * Recalculates the thumbnail and the web resolution Image
+   * 
+   * @param fullUrl
+   * @throws IOException
+   * @throws Exception
+   */
+  public void recalculateWebAndThumbnail(String fullUrl, String webUrl, String thumbnailUrl)
+      throws IOException, Exception {
+    storage.recalculateWebAndThumbnail(fullUrl, webUrl, thumbnailUrl);
+  }
+
+  /**
    * True if the file format related to the passed extension can be download
    *
    * @param extension

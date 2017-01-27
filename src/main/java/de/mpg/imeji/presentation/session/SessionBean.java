@@ -54,6 +54,7 @@ public class SessionBean implements Serializable {
   private Style selectedCss = Style.NONE;
   private String applicationUrl;
   private String selectedBrowseListView;
+  private int divWidth;
 
 
   /*
@@ -377,4 +378,14 @@ public class SessionBean implements Serializable {
   public void clearClipboard() {
     this.clipboard.clear();
   }
+
+  public int getDivWidth() {
+    return divWidth;
+  }
+
+  public void setDivWidth(int divWidth) {
+    this.divWidth = divWidth;
+  }
+
+
 }
