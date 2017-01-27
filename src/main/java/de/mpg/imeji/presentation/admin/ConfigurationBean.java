@@ -579,4 +579,20 @@ public class ConfigurationBean extends SuperBean {
   public void setTechnicalMetadata(String technicalMetadata) {
     Imeji.CONFIG.setTechnicalMetadata(technicalMetadata);
   }
+
+  public String getThumbnailWidth() {
+    return Imeji.CONFIG.getThumbnailWidth();
+  }
+
+  public void setThumbnailWidth(String thumbnailWidth) {
+    Imeji.CONFIG.setThumbnailWidth(thumbnailWidth);
+  }
+
+  public String getWebResolutionWidth() {
+    return Imeji.CONFIG.getWebResolutionWidth();
+  }
+
+  public void setWebResolutionWidth(String webResolutionWidth) {
+    Imeji.CONFIG.setWebResolutionWidth(webResolutionWidth);
+  }
 }

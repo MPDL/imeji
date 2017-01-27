@@ -8,8 +8,10 @@
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
 	
 	<ui:param name="headline" value="#{itemBean.image != null ? itemBean.image.filename: ''}"/>
+	<ui:param name="title" value="#{headline}"/>
 	<ui:param name="backwardClass" value="#{itemBean.browse.previous == null ? 'previousItem imj_deactivated' : 'previousItem'}"/>
 	<ui:param name="forwardClass" value="#{itemBean.browse.next == null ? 'nextItem imj_deactivated' : 'nextItem'}"/>
+	
 	
 	<ui:define name="authorization">
 		#{Auth.init(itemBean.image.collection)}

@@ -121,7 +121,6 @@ public class HistoryFilter implements Filter {
     getFacesContext(request, resp);
     final SessionBean session = getSessionBean(request, resp);
     final HistorySession hs = getHistorySession(request, resp);
-    final InternationalizationBean inter = getInternationalationBean(request, resp);
     if (session != null && hs != null) {
       final String url = navigation.getApplicationUri()
           + PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
@@ -130,7 +129,7 @@ public class HistoryFilter implements Filter {
       if (params.containsKey("h")) {
         params.remove("h");
       }
-      final HistoryPage p = new HistoryPage(url, params, session.getUser(), inter.getLocale());
+      final HistoryPage p = new HistoryPage(url, params, session.getUser());
       hs.addPage(p);
     }
 

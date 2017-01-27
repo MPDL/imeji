@@ -9,8 +9,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -20,7 +18,6 @@ import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.InactiveAuthenticationError;
 import de.mpg.imeji.logic.authentication.Authentication;
 import de.mpg.imeji.logic.authentication.factory.AuthenticationFactory;
-import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -59,9 +56,6 @@ public class LoginBean extends SuperBean {
   public void init() {
     initRequestUrl();
     try {
-      if (UrlHelper.getParameterBoolean("logout")) {
-        logout();
-      }
       final String login = UrlHelper.getParameterValue("login");
       if (!isNullOrEmptyTrim(login)) {
         setLogin(login);
@@ -116,20 +110,6 @@ public class LoginBean extends SuperBean {
       }
     }
     redirect(redirect);
-  }
-
-  /**
-   * Logout and redirect to the home page
-   *
-   * @throws IOException
-   */
-  public void logout() throws IOException {
-    final FacesContext fc = FacesContext.getCurrentInstance();
-    Locks.unlockAll(sessionBean.getUser().getEmail());
-    final HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
-    session.invalidate();
-    sessionBean.setUser(null);
-    redirect(getNavigation().getHomeUrl() + "?logout=1");
   }
 
   private void initRequestUrl() {

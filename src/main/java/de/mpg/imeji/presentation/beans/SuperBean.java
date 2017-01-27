@@ -32,6 +32,7 @@ public class SuperBean implements Serializable {
   @ManagedProperty(value = "#{HistorySession}")
   private HistorySession history;
 
+
   /**
    * Redirect to the passed url
    *

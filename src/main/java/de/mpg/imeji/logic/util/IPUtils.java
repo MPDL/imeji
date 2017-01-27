@@ -5,6 +5,8 @@ import java.net.UnknownHostException;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.net.InetAddresses;
+
 /**
  * Utility Classs for IP operations
  *
@@ -65,12 +67,10 @@ public class IPUtils {
         ip += s;
       }
     }
-    try {
-      return InetAddress.getByName(ip);
-    } catch (final UnknownHostException e) {
-      // if some error return the locahost IP
-      return InetAddress.getLocalHost();
+    if (InetAddresses.isInetAddress(ip.trim())) {
+      return InetAddresses.forString(ip.trim());
     }
+    return InetAddress.getLocalHost();
   }
 
   /**
@@ -94,12 +94,10 @@ public class IPUtils {
         ip += s;
       }
     }
-    try {
-      return InetAddress.getByName(ip);
-    } catch (final UnknownHostException e) {
-      // if some error return the locahost IP
-      return InetAddress.getLocalHost();
+    if (InetAddresses.isInetAddress(ip.trim())) {
+      return InetAddresses.forString(ip.trim());
     }
+    return InetAddress.getLocalHost();
   }
 
   /**

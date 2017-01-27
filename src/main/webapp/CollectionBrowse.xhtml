@@ -11,6 +11,7 @@
 
 	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}" />
 	<ui:param name="headline" value="#{CollectionItemsBean.collection.title}" />
+	<ui:param name="title" value="#{headline}" />
 	<ui:param name="currentMainMenu" value="collection" />
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/browse?q=" />
 	<ui:param name="imejiResource" value="#{CollectionItemsBean.collection}" />
@@ -71,7 +72,7 @@
 		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}"
 			navBean="#{Navigation}"
 			rendered="#{paginatorListSessionBean.simpleQuery != ''}"
-			label="#{lbl.search_for} #{HistorySession.currentPage.internationalizedName}" />
+			label="#{lbl.search_for} #{HistorySession.currentPage.getInternationalizedName(InternationalizationBean.locale)}" />
 	</ui:define>
 
 </ui:composition>

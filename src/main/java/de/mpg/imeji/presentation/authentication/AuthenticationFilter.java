@@ -58,6 +58,9 @@ public class AuthenticationFilter implements Filter {
     try {
       final HttpServletRequest request = (HttpServletRequest) serv;
       final SessionBean session = getSession(request);
+      if (session != null && "1".equals(request.getParameter("logout"))) {
+        request.getSession().invalidate();
+      }
       if (session != null && session.getUser() == null) {
         final HttpAuthentication httpAuthentification = new HttpAuthentication(request);
         if (httpAuthentification.hasLoginInfos()) {

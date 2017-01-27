@@ -27,7 +27,7 @@
 						<h:commandButton id="lnkLogin2" title="#{lbl.login}" value="#{lbl.login}" action="#{LoginBean.doLogin}" styleClass="imj_metaMenuItem"/>
 					</span>
 				</h:panelGroup>
-				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationUrl}login?logout=1" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
+				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationUrl}?logout=1" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
 					<h:outputText value="#{lbl.logout}"/>
 				</h:outputLink>
 			</h:form>

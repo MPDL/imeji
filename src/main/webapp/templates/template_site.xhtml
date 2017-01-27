@@ -16,7 +16,7 @@
         <h:body lang="#{InternationalizationBean.locale}" onload="readWidth()">
         	<h:form id="widthForm">
 				<h:inputHidden id="inputDivWidth" value="#{SessionBean.divWidth}" />
-				<h:commandButton id="buttonUpdateDivWidth" value="update Width hidden"   styleClass="imj_noDisplay">
+				<h:commandButton id="buttonUpdateDivWidth" value="update Width hidden" styleClass="imj_noDisplay">
 					<f:ajax render="@none" execute="@form"/>
 				</h:commandButton>
 			</h:form>
@@ -288,7 +288,7 @@
 	             	</div>
 	             	
                 <!-- footer -->
-                <ui:include src="component/footer/footer_default.xhtml"/>
+             
             </div>
             
             <!-- modal dialogs -->

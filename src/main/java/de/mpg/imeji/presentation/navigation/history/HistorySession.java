@@ -33,7 +33,9 @@ public class HistorySession implements Serializable {
   /**
    * Create new {@link HistorySession}
    */
-  public HistorySession() {}
+  public HistorySession() {
+    // creates...
+  }
 
   /**
    * Return the {@link HistorySession}

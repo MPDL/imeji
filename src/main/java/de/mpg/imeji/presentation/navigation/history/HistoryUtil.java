@@ -24,7 +24,7 @@ import de.mpg.imeji.logic.vo.UserGroup;
  */
 public class HistoryUtil {
   private static Pattern findItemId = Pattern.compile(ImejiPages.ITEM_DETAIL.getRegex());
-  private static Pattern findCollectionId = Pattern.compile(ImejiPages.COLLECTION_HOME.getRegex());
+  private static Pattern findCollectionId = Pattern.compile(ImejiPages.COLLECTION.getRegex());
   private static Pattern findUserGroupId = Pattern.compile(ImejiPages.USER_GROUP.getRegex());
   private static Pattern findUserId = Pattern.compile(ImejiPages.USER.getRegex());
 

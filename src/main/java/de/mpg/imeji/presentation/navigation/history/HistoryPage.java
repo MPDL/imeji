@@ -1,20 +1,11 @@
 package de.mpg.imeji.presentation.navigation.history;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
-import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.usergroup.UserGroupService;
-import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
 
 /**
@@ -28,11 +19,9 @@ public class HistoryPage implements Serializable {
   private static final long serialVersionUID = -6620054520723398563L;
   private int pos = 0;
   private String url;
-  private String title;
-  private Locale locale;
+  private String title = "";
   private final ImejiPages imejiPage;
   private Map<String, String[]> params;
-  private static final Logger LOGGER = Logger.getLogger(HistoryPage.class);
 
 
   /**
@@ -43,12 +32,10 @@ public class HistoryPage implements Serializable {
    * @param user
    * @throws Exception
    */
-  public HistoryPage(String url, Map<String, String[]> params, User user, Locale locale)
-      throws Exception {
+  public HistoryPage(String url, Map<String, String[]> params, User user) throws Exception {
     this.params = params;
     this.url = url;
     this.imejiPage = HistoryUtil.getImejiPage(getCompleteUrl());
-    this.title = loadTitle(HistoryUtil.extractURI(getCompleteUrl()), user);
   }
 
   private HistoryPage(String url, Map<String, String[]> params, String title,
@@ -66,37 +53,6 @@ public class HistoryPage implements Serializable {
     return new HistoryPage(new String(url), new HashMap<>(params), new String(title), imejiPage);
   }
 
-  /**
-   * Load the title the object of the current page according to its id
-   *
-   * @param uri
-   * @return
-   * @throws Exception
-   */
-  private String loadTitle(URI uri, User user) throws Exception {
-    // TODO: find better way to "touch" objects for necessary information with permissions
-    // or change when the title of the history page should be loaded (after successful request)
-    // otherwise the redirect to proper pages comes from here in addition
-    if (uri != null) {
-      final String uriStr = UrlHelper.decode(uri.toString());
-      if (ImejiPages.COLLECTION_HOME.matches(uriStr)) {
-        return new CollectionService().retrieveLazy(uri, user).getTitle();
-      } else if (ImejiPages.ITEM_DETAIL.matches(uriStr)) {
-        return new ItemService().retrieveLazy(uri, user).getFilename();
-      } else if (ImejiPages.USER_GROUP == imejiPage) {
-        final String groupUri = UrlHelper.decode(ObjectHelper.getId(uri));
-        return new UserGroupService().read(URI.create(groupUri), user).getName();
-      } else if (ImejiPages.USER == imejiPage) {
-        final String email = UrlHelper.decode(ObjectHelper.getId(uri));
-        if (user != null && email.equals(user.getEmail())) {
-          return user.getPerson().getCompleteName();
-        } else {
-          return new UserService().retrieve(email, Imeji.adminUser).getPerson().getCompleteName();
-        }
-      }
-    }
-    return "";
-  }
 
   /**
    * Compares 2 {@link HistoryPage}
@@ -119,7 +75,7 @@ public class HistoryPage implements Serializable {
     return url == null;
   }
 
-  public String getInternationalizedName() {
+  public String getInternationalizedName(Locale locale) {
     try {
       final String inter = Imeji.RESOURCE_BUNDLE.getLabel(imejiPage.getLabel(), locale);
       return title != null ? inter + " " + title : inter;

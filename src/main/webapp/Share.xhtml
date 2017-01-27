@@ -7,6 +7,7 @@
 	xmlns:share="http://java.sun.com/jsf/composite/components/share">
 
 	<ui:param name="headline" value="#{lbl.share.toString().trim()}: #{ShareBean.title}" />
+	<ui:param name="title" value="#{headline}" />
 	<ui:param name="contUrl" value="#{Navigation.collectionUrl}" />
 	<ui:param name="imejiResource" value="#{ShareBean.sharedObject}" />
 	<ui:param name="iconStatusDisplayStatusOnly" value="true" />
