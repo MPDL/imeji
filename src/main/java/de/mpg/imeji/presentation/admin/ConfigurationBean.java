@@ -595,4 +595,12 @@ public class ConfigurationBean extends SuperBean {
   public void setWebResolutionWidth(String webResolutionWidth) {
     Imeji.CONFIG.setWebResolutionWidth(webResolutionWidth);
   }
+
+  public String getStatements() {
+    return Imeji.CONFIG.getStatements();
+  }
+
+  public void setStatements(String s) {
+    Imeji.CONFIG.setStatements(s);
+  }
 }

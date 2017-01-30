@@ -15,11 +15,8 @@ import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
-import de.mpg.imeji.logic.user.UserController;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
@@ -61,17 +58,6 @@ public abstract class ImejiServiceAbstract {
     WORKFLOW_MANAGER.prepareCreate(properties, user);
   }
 
-  /**
-   * Update the grants of the user who created the objects
-   *
-   * @param user
-   * @param uri
-   * @throws ImejiException
-   */
-  protected void updateCreatorGrants(User user, String uri) throws ImejiException {
-    user.getGrants().add(new Grant(GrantType.ADMIN, uri).toGrantString());
-    new UserController().update(user);
-  }
 
   /**
    * Add the {@link Properties} to an imeji object when it is updated

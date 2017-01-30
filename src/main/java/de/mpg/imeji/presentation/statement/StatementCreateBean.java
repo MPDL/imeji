@@ -37,8 +37,8 @@ public class StatementCreateBean extends SuperBean {
    */
   public void save() {
     final StatementService service = new StatementService();
-    final Statement statement = ImejiFactory.newStatement().setIndex(name).addName(name)
-        .setType(StatementType.valueOf(type)).build();
+    final Statement statement =
+        ImejiFactory.newStatement().setIndex(name).setType(StatementType.valueOf(type)).build();
     try {
       service.create(statement, getSessionUser());
     } catch (final ImejiException e) {

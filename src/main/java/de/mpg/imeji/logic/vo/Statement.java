@@ -13,7 +13,6 @@ import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
-import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
@@ -36,16 +35,13 @@ public class Statement implements Serializable, Cloneable {
   private String index;
   @j2jLiteral("http://purl.org/dc/terms/type")
   private String typeString = type.name();
-  @j2jList("http://purl.org/dc/terms/name")
-  private List<String> names = new ArrayList<>();
   @j2jResource("http://purl.org/dc/dcam/VocabularyEncodingScheme")
   private URI vocabulary;
   @j2jList("http://imeji.org/terms/literalConstraint")
   private Collection<String> literalConstraints = new ArrayList<String>();
 
   public Statement() {
-    this.id = IdentifierUtil.newUniversalUniqueId();
-    this.uri = ObjectHelper.getURI(Statement.class, id);
+
   }
 
   public StatementType getType() {
@@ -56,20 +52,6 @@ public class Statement implements Serializable, Cloneable {
   public void setType(StatementType type) {
     this.type = type;
     this.typeString = type.name();
-  }
-
-  /**
-   * @return the names
-   */
-  public List<String> getNames() {
-    return names;
-  }
-
-  /**
-   * @param names the names to set
-   */
-  public void setNames(List<String> names) {
-    this.names = names;
   }
 
   /**
@@ -84,15 +66,7 @@ public class Statement implements Serializable, Cloneable {
    */
   public void setIndex(String index) {
     this.index = index;
-  }
-
-  /**
-   * Return the default label (english if exists, otherwise the 1st one)
-   *
-   * @return
-   */
-  public String getDefaultName() {
-    return names.get(0);
+    setId(index);
   }
 
   public URI getVocabulary() {
@@ -146,7 +120,6 @@ public class Statement implements Serializable, Cloneable {
   @Override
   public Statement clone() {
     final Statement clone = new Statement();
-    clone.names = new ArrayList<>(names);
     clone.literalConstraints = literalConstraints;
     clone.index = index;
     clone.type = type;

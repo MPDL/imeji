@@ -14,7 +14,13 @@ import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 
-public class ContentController extends ImejiControllerAbstract<ContentVO> {
+/**
+ * Contoller for {@link ContentVO}
+ * 
+ * @author saquet
+ *
+ */
+class ContentController extends ImejiControllerAbstract<ContentVO> {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.contentModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.contentModel);
 

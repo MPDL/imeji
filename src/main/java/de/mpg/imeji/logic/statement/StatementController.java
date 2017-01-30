@@ -3,6 +3,8 @@ package de.mpg.imeji.logic.statement;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -18,13 +20,14 @@ import de.mpg.imeji.logic.vo.User;
  * @author saquet
  *
  */
-public class StatementController extends ImejiControllerAbstract<Statement> {
+class StatementController extends ImejiControllerAbstract<Statement> {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.statementModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.statementModel);
 
   @Override
   public List<Statement> createBatch(List<Statement> l, User user) throws ImejiException {
-    WRITER.create(toObjectList(l), user);
+
+    WRITER.create(toObjectList(filterDuplicate(l)), user);
     return l;
   }
 
@@ -42,13 +45,24 @@ public class StatementController extends ImejiControllerAbstract<Statement> {
 
   @Override
   public List<Statement> updateBatch(List<Statement> l, User user) throws ImejiException {
-    WRITER.update(toObjectList(l), user, true);
+    WRITER.update(toObjectList(filterDuplicate(l)), user, true);
     return l;
   }
 
   @Override
   public void deleteBatch(List<Statement> l, User user) throws ImejiException {
-    WRITER.delete(toObjectList(l), user);
+    WRITER.delete(toObjectList(filterDuplicate(l)), user);
+  }
+
+  /**
+   * Filter all duplicate statements (i.e. same index) of this list out
+   * 
+   * @param l
+   * @return
+   */
+  private List<Statement> filterDuplicate(List<Statement> l) {
+    return new ArrayList<>(
+        l.stream().collect(Collectors.toMap(Statement::getId, Function.identity())).values());
   }
 
   /**

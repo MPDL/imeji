@@ -90,6 +90,16 @@ public class StatementService extends SearchServiceAbstract<Statement> {
   }
 
   /**
+   * Return the index for the passed statement id
+   * 
+   * @param id
+   * @return
+   */
+  public String getIndex(String id) {
+    return "";
+  }
+
+  /**
    * Merge statement1 into statement2
    *
    * @param statement1

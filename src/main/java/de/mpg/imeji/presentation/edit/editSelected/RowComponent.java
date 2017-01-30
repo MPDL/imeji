@@ -35,17 +35,20 @@ public class RowComponent implements Serializable {
     }
   }
 
+  /**
+   * Return all the Metadata of an Item for this state,ent
+   * 
+   * @param item
+   * @param statement
+   * @return
+   */
   private List<Metadata> getMetadataForStatement(Item item, Statement statement) {
-    final List<Metadata> l = new ArrayList<>();
     if (statement != null) {
-      for (final Metadata metadata : item.getMetadata()) {
-        if (metadata.getStatementId().equals(statement.getIndex())
-            && !MetadataUtil.isEmpty(metadata)) {
-          l.add(metadata);
-        }
-      }
+      return item.getMetadata().stream()
+          .filter(md -> md.getStatementId().equals(statement.getId()) && !MetadataUtil.isEmpty(md))
+          .collect(Collectors.toList());
     }
-    return l;
+    return new ArrayList<>();
   }
 
   /**

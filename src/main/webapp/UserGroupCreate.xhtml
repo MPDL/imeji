@@ -4,15 +4,11 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
-
-
 	<ui:param name="headline" value="#{lbl.admin_userGroup_new}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="currentMainMenu" value="admin" />
 
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"
-			downloadEnabled="false" actionEnabled="false" />
 	</ui:define>
 
 	<ui:define name="mainContent">

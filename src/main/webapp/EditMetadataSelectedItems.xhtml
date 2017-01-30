@@ -31,34 +31,34 @@
 						onclick="startLoader();">
 						<f:ajax execute="@form" render="@form" />
 					</h:commandLink>
+					<h:panelGroup id="selectMetadataWrapper">
+						<md:select
+							component="#{EditMetadataSelectedItemsBean.newStatement}"
+							menu="#{EditMetadataSelectedItemsBean.filteredStatementMenu}"
+							render=":editSelectedForm:selectMetadataWrapper" />
+						<h:commandLink
+							action="#{EditMetadataSelectedItemsBean.addColumn}"
+							value=" #{lbl.add}" title="#{lbl.add}"
+							rendered="#{!empty EditMetadataSelectedItemsBean.newStatement.index}"
+							onclick="startLoader();">
+							<f:ajax execute="@form" render="@form" />
+						</h:commandLink>
+					</h:panelGroup>
 					<br />
+					
 					<br /> #{lbl.edit_selected_filter_columns}:
 					<div class="edit_selected_table_button">
-						<h:selectManyCheckbox for="filterColumns"
-							value="#{EditMetadataSelectedItemsBean.displayedColumns}">
-							<f:selectItems value="#{EditMetadataSelectedItemsBean.columns}"
-								var="column" itemLabel="#{column.index}"
-								itemValue="#{column.index}" />
+						<h:selectManyCheckbox for="filterColumns" value="#{EditMetadataSelectedItemsBean.displayedColumns}">
+							<f:selectItems value="#{EditMetadataSelectedItemsBean.columns}" var="column" itemLabel="#{column.index}" itemValue="#{column.index}" />
 							<f:ajax event="change" execute="@this" render="@form" />
 						</h:selectManyCheckbox>
 					</div>
+					
 				</div>
 				<div class="edit_selected_table_wrapper">
 					<table class="edit_selected_table">
 						<tr>
-							<th><h:panelGroup id="selectMetadataWrapper">
-									<md:select
-										component="#{EditMetadataSelectedItemsBean.newStatement}"
-										menu="#{EditMetadataSelectedItemsBean.filteredStatementMenu}"
-										render=":editSelectedForm:selectMetadataWrapper" />
-									<h:commandLink
-										action="#{EditMetadataSelectedItemsBean.addColumn}"
-										value=" #{lbl.add}" title="#{lbl.add}"
-										rendered="#{!empty EditMetadataSelectedItemsBean.newStatement.index}"
-										onclick="startLoader();">
-										<f:ajax execute="@form" render="@form" />
-									</h:commandLink>
-								</h:panelGroup></th>
+							<th>#{lbl.filename}</th>
 							<ui:repeat value="#{EditMetadataSelectedItemsBean.columns}"
 								var="column" varStatus="status">
 								<ui:fragment

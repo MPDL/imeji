@@ -25,9 +25,6 @@ public class CellComponent implements Serializable {
     for (final Metadata m : metadata) {
       inputs.add(new MetadataInputComponent(m, statement));
     }
-    if (inputs.isEmpty()) {
-      // addValue();
-    }
   }
 
   public List<Metadata> toMetadataList() {

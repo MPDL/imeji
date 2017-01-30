@@ -11,8 +11,11 @@
 	<ui:param name="currentMainMenu" value="admin" />
 
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"
-			downloadEnabled="false" actionEnabled="false" />
+		<form action="#{Navigation.homeUrl}/createusergroup">
+			<button id="createUsergroup" class="imj_menuButton">
+				#{lbl.admin_userGroup_new}
+			</button >
+		</form>
 	</ui:define>
 
 	<ui:define name="mainContent">

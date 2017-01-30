@@ -8,8 +8,9 @@
 	xmlns:imjc="http://java.sun.com/jsf/composite/components">
 	<ui:param name="headline" value="#{lbl.statement_create}" />
 	<ui:param name="currentMainMenu" value="admin" />
+
 	<ui:define name="mainContent">
-		<sta:statementForm formBean="#{StatementCreateBean}" />
+		<sta:statementForm formBean="#{StatementEditBean}" />
 	</ui:define>
 </ui:composition>
 

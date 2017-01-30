@@ -9,7 +9,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.user.UserController;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
@@ -160,7 +160,7 @@ public abstract class ImejiControllerAbstract<T> {
    */
   protected void updateCreatorGrants(User user, String uri) throws ImejiException {
     user.getGrants().add(new Grant(GrantType.ADMIN, uri).toGrantString());
-    new UserController().update(user);
+    new UserService().update(user, Imeji.adminUser);
   }
 
   /**

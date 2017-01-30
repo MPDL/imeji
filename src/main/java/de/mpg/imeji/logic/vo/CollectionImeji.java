@@ -26,6 +26,8 @@ public class CollectionImeji extends BasisMetadata implements Serializable {
   private String doi;
   @j2jResource("http://imeji.org/terms/logoUrl")
   private URI logoUrl;
+  @j2jLiteral("http://imeji.org/terms/statements")
+  private String statements;
 
   private Collection<URI> images = new ArrayList<URI>();
 
@@ -53,4 +55,11 @@ public class CollectionImeji extends BasisMetadata implements Serializable {
     return images;
   }
 
+  public String getStatements() {
+    return statements;
+  }
+
+  public void setStatements(String statements) {
+    this.statements = statements;
+  }
 }

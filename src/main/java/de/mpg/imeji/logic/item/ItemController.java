@@ -30,7 +30,7 @@ import de.mpg.imeji.logic.vo.util.MetadataUtil;
  * @author saquet
  *
  */
-public class ItemController extends ImejiControllerAbstract<Item> {
+class ItemController extends ImejiControllerAbstract<Item> {
   private static final Logger LOGGER = Logger.getLogger(ItemService.class);
   private final ReaderFacade READER;
   private final WriterFacade WRITER;

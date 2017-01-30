@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.content.ContentService;
-import de.mpg.imeji.logic.item.ItemController;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
@@ -146,7 +146,7 @@ public class ZIPExport extends ExportAbstract {
    * @throws ImejiException
    */
   private Map<String, Item> retrieveItems(List<String> ids) throws ImejiException {
-    final List<Item> items = new ItemController().retrieveBatchLazy(ids, user);
+    final List<Item> items = (List<Item>) new ItemService().retrieveBatchLazy(ids, -1, 0, user);
     Map<String, Item> map = new HashMap<>(items.size());
     for (Item item : items) {
       map.put(item.getId().toString(), item);

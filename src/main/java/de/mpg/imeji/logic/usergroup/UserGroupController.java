@@ -20,7 +20,7 @@ import de.mpg.imeji.logic.vo.UserGroup;
  * @author saquet
  *
  */
-public class UserGroupController {
+class UserGroupController {
   private static final Logger LOGGER = Logger.getLogger(UserGroupController.class);
   private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
   private static final WriterFacade WRITER =

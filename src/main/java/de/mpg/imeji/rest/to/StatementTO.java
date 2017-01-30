@@ -17,7 +17,6 @@ public class StatementTO implements Serializable {
   private static final long serialVersionUID = -5987536340352396442L;
   private String id;
   private String type;
-  private List<String> labels = new ArrayList<>();
   private URI vocabulary;
   private List<LiteralConstraintTO> literalConstraints = new ArrayList<LiteralConstraintTO>();
   private String minOccurs;
@@ -40,13 +39,6 @@ public class StatementTO implements Serializable {
     this.type = type;
   }
 
-  public List<String> getLabels() {
-    return labels;
-  }
-
-  public void setLabels(List<String> labels) {
-    this.labels = labels;
-  }
 
   public URI getVocabulary() {
     return vocabulary;

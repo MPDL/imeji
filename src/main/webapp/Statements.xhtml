@@ -1,0 +1,44 @@
+<ui:composition template="templates/template_site.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	xmlns:imjc="http://java.sun.com/jsf/composite/components">
+
+	<ui:param name="headline" value="#{lbl.statements}" />
+	<ui:param name="title" value="#{headline}" />
+	<ui:param name="currentMainMenu" value="admin" />
+
+	<ui:define name="actionsMenu">
+		<form action="#{Navigation.homeUrl}/createstatement">
+			<button id="createStatement" class="imj_menuButton">
+				#{lbl.new_statement}
+			</button >
+		</form>
+	</ui:define>
+
+	<ui:define name="mainContent">
+		<!-- Are You Admin? -->
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
+			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
+			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
+		</h:panelGroup>
+
+		<!-- Only for Admins -->
+		<ui:fragment rendered="#{Auth.sysAdmin}">
+			<!-- AdminDataList - Back Button -->
+			<div class="imj_backPanel">
+				<a href="#{Navigation.adminUrl}">#{lbl.back_to_admin}</a>
+			</div>
+			<div class="imj_mainContentWrapper">
+				<ui:repeat var="statement" value="#{StatementsBean.statements}">
+					<div class="imj_itemContent imj_itemHeadline">
+						#{statement.index} <a href="#{Navigation.homeUrl}/statement/#{statement.id}/edit">#{lbl.edit}</a>
+					</div>
+				</ui:repeat>
+			</div>
+		</ui:fragment>
+	</ui:define>
+</ui:composition>

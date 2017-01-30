@@ -28,7 +28,7 @@ import de.mpg.imeji.util.DateHelper;
  * @author saquet
  *
  */
-public class UserController {
+class UserController {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel);
 

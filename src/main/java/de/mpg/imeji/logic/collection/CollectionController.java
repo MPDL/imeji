@@ -12,7 +12,13 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 
-public class CollectionController extends ImejiControllerAbstract<CollectionImeji> {
+/**
+ * Controller for {@link CollectionImeji}
+ * 
+ * @author saquet
+ *
+ */
+class CollectionController extends ImejiControllerAbstract<CollectionImeji> {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.collectionModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.collectionModel);
 

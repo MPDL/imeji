@@ -66,7 +66,6 @@ public class TransferObjectFactory {
       sto.setId(t.getId());
       sto.setIndex(t.getIndex());
       sto.setType(t.getType().name());
-      sto.setLabels(new ArrayList<>(t.getNames()));
       sto.setVocabulary(t.getVocabulary());
       for (final String s : t.getLiteralConstraints()) {
         final LiteralConstraintTO lcto = new LiteralConstraintTO();

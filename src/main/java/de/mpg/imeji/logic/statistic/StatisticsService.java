@@ -6,7 +6,6 @@ import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
-import de.mpg.imeji.logic.service.ImejiServiceAbstract;
 
 /**
  * Controller for all actions which are related to statistics
@@ -14,7 +13,7 @@ import de.mpg.imeji.logic.service.ImejiServiceAbstract;
  * @author saquet
  *
  */
-public class StatisticsService extends ImejiServiceAbstract {
+public class StatisticsService {
 
   /**
    * Return the all institute names (define by the suffix of emails users)
