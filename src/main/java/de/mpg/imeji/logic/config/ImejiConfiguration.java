@@ -58,8 +58,6 @@ public class ImejiConfiguration {
   private static final String DEFAULT_USER_QUOTA_LIST = "1, 10, 20";
   public static final String QUOTA_UNLIMITED = "unlimited";
   public static final String DEFAULT_ALBUMS_ENABLED = "true";
-  public static final String DEFAULT_STATEMENTS =
-      "Title,Description,Creator,Subject,Date,Contributor,Type";
   public static final String DEFAULT_HELP_URL =
       "https://raw.githubusercontent.com/imeji-community/imeji-help/master/imeji-help-default.html";
   public static final String DEFAULT_TECHNICAL_METADATA =
@@ -143,7 +141,6 @@ public class ImejiConfiguration {
     initPropertyWithDefaultValue(CONFIGURATION.QUOTA_LIMITS, DEFAULT_USER_QUOTA_LIST);
     initPropertyWithDefaultValue(CONFIGURATION.HELP_URL, DEFAULT_HELP_URL);
     initPropertyWithDefaultValue(CONFIGURATION.TECHNICAL_METADATA, DEFAULT_TECHNICAL_METADATA);
-    initPropertyWithDefaultValue(CONFIGURATION.STATEMENTS, DEFAULT_STATEMENTS);
   }
 
 

@@ -123,7 +123,7 @@ public abstract class EditMetadataAbstract extends SuperBean {
    * @return
    */
   private Map<String, Statement> statementListToMap(List<Statement> l) {
-    return l.stream().collect(Collectors.toMap(Statement::getId, Function.identity()));
+    return l.stream().collect(Collectors.toMap(Statement::getIndex, Function.identity()));
   }
 
   /**

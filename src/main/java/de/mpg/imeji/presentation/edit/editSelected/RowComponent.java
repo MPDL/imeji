@@ -45,7 +45,8 @@ public class RowComponent implements Serializable {
   private List<Metadata> getMetadataForStatement(Item item, Statement statement) {
     if (statement != null) {
       return item.getMetadata().stream()
-          .filter(md -> md.getStatementId().equals(statement.getId()) && !MetadataUtil.isEmpty(md))
+          .filter(
+              md -> md.getStatementId().equals(statement.getIndex()) && !MetadataUtil.isEmpty(md))
           .collect(Collectors.toList());
     }
     return new ArrayList<>();

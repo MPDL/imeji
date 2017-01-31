@@ -11,6 +11,7 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.service.SearchServiceAbstract;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 
@@ -59,8 +60,21 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    * @return
    * @throws ImejiException
    */
-  public Statement retrieve(String id, User user) throws ImejiException {
-    return controller.retrieve(id, user);
+  public Statement retrieve(String uri, User user) throws ImejiException {
+    return controller.retrieve(uri, user);
+  }
+
+  /**
+   * Retrieve a Statement according to its index
+   * 
+   * @param index
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public Statement retrieveByIndex(String index, User user) throws ImejiException {
+    return retrieve(
+        ObjectHelper.getURI(Statement.class, StatementUtil.encodeIndex(index)).toString(), user);
   }
 
   /**
@@ -71,8 +85,8 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    * @return
    * @throws ImejiException
    */
-  public List<Statement> retrieveBatch(List<String> ids, User user) throws ImejiException {
-    final List<Statement> l = controller.retrieveBatch(ids, user);
+  public List<Statement> retrieveBatch(List<String> uris, User user) throws ImejiException {
+    final List<Statement> l = controller.retrieveBatch(uris, user);
     l.sort((s1, s2) -> s1.getIndex().compareToIgnoreCase(s2.getIndex()));
     return l;
   }
@@ -87,6 +101,17 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    */
   public Statement update(Statement statement, User user) throws ImejiException {
     return controller.update(statement, user);
+  }
+
+  /**
+   * Delete the statement
+   * 
+   * @param s
+   * @param user
+   * @throws ImejiException
+   */
+  public void delete(Statement s, User user) throws ImejiException {
+    controller.delete(s, user);
   }
 
   /**

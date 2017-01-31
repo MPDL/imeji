@@ -62,7 +62,7 @@ class StatementController extends ImejiControllerAbstract<Statement> {
    */
   private List<Statement> filterDuplicate(List<Statement> l) {
     return new ArrayList<>(
-        l.stream().collect(Collectors.toMap(Statement::getId, Function.identity())).values());
+        l.stream().collect(Collectors.toMap(Statement::getIndex, Function.identity())).values());
   }
 
   /**

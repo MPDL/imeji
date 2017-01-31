@@ -63,7 +63,7 @@ public class TransferObjectFactory {
     to.getStatements().clear();
     for (final Statement t : statements) {
       final StatementTO sto = new StatementTO();
-      sto.setId(t.getId());
+      sto.setId(t.getIndex());
       sto.setIndex(t.getIndex());
       sto.setType(t.getType().name());
       sto.setVocabulary(t.getVocabulary());

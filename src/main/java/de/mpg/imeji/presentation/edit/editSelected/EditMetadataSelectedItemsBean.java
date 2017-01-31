@@ -82,8 +82,8 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
     }
     Map<String, Statement> defaultStatement = getDefaultStatements();
     for (Statement s : defaultStatement.values()) {
-      map.putIfAbsent(s.getId(),
-          new SelectStatementWithInputComponent(s.getId(), defaultStatement));
+      map.putIfAbsent(s.getIndex(),
+          new SelectStatementWithInputComponent(s.getIndex(), defaultStatement));
     }
     columns = new ArrayList<>(map.values());
     columns.sort((c1, c2) -> c1.getIndex().compareToIgnoreCase(c2.getIndex()));

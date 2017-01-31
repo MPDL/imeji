@@ -1,11 +1,12 @@
 package de.mpg.imeji.logic.vo;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
@@ -13,6 +14,7 @@ import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
@@ -28,7 +30,6 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 @j2jId(getMethod = "getUri", setMethod = "setUri")
 public class Statement implements Serializable, Cloneable {
   private static final long serialVersionUID = -7950561563075491540L;
-  private String id;
   private StatementType type = StatementType.TEXT;
   private URI uri;
   @j2jLiteral("http://imeji.org/terms/index")
@@ -61,12 +62,16 @@ public class Statement implements Serializable, Cloneable {
     return index;
   }
 
+  public String getIndexUrlEncoded() throws UnsupportedEncodingException {
+    return URLEncoder.encode(StatementUtil.encodeIndex(index), "UTF-8");
+  }
+
   /**
    * @param index the index to set
    */
   public void setIndex(String index) {
     this.index = index;
-    setId(index);
+    this.uri = ObjectHelper.getURI(Statement.class, StatementUtil.encodeIndex(index));
   }
 
   public URI getVocabulary() {
@@ -79,7 +84,7 @@ public class Statement implements Serializable, Cloneable {
 
   public Collection<String> getLiteralConstraints() {
     final List<String> constraints = new ArrayList<String>(literalConstraints);
-    Collections.sort(constraints, new SortIgnoreCase());
+    Collections.sort(constraints, (a, b) -> a.compareToIgnoreCase(b));
     literalConstraints = constraints;
     return literalConstraints;
   }
@@ -90,26 +95,10 @@ public class Statement implements Serializable, Cloneable {
 
   public void setUri(URI uri) {
     this.uri = uri;
-    this.id = ObjectHelper.getId(uri);
   }
 
   public URI getUri() {
     return uri;
-  }
-
-  /**
-   * @return the id
-   */
-  public String getId() {
-    return id;
-  }
-
-  /**
-   * @param id the id to set
-   */
-  public void setId(String id) {
-    this.id = id;
-    this.uri = ObjectHelper.getURI(Statement.class, id);
   }
 
   /*
@@ -127,25 +116,4 @@ public class Statement implements Serializable, Cloneable {
     return clone;
   }
 
-  /**
-   * Comparator to sort String ignoring the case
-   *
-   * @author saquet (initial creation)
-   * @author $Author$ (last modification)
-   * @version $Revision$ $LastChangedDate$
-   */
-  public class SortIgnoreCase implements Comparator<Object> {
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
-    @Override
-    public int compare(Object o1, Object o2) {
-      if ("".equals(o1)) {
-        return 1;
-      }
-      return ((String) o1).compareToIgnoreCase((String) o2);
-    }
-  }
 }

@@ -1,5 +1,9 @@
 package de.mpg.imeji.presentation.statement;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -30,13 +34,13 @@ public class StatementEditBean extends StatementCreateBean {
 
   @PostConstruct
   public void init() {
-    String id = UrlHelper.getParameterValue("id");
     try {
+      String id = URLDecoder.decode(UrlHelper.getParameterValue("id"), "UTF-8");
       Statement s =
           service.retrieve(ObjectHelper.getURI(Statement.class, id).toString(), getSessionUser());
       setType(s.getType().name());
       setName(s.getIndex());
-    } catch (ImejiException e) {
+    } catch (ImejiException | UnsupportedEncodingException e) {
       LOGGER.error("Error retrieving statement: ", e);
     }
   }
@@ -47,7 +51,8 @@ public class StatementEditBean extends StatementCreateBean {
         .setType(StatementType.valueOf(getType())).build();
     try {
       service.update(statement, getSessionUser());
-    } catch (final ImejiException e) {
+      redirect(getHistory().getPreviousPage().getCompleteUrlWithHistory());
+    } catch (final ImejiException | IOException e) {
       BeanHelper.error("Error creating statement");
       LOGGER.error("Error creating statement", e);
     }

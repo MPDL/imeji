@@ -1,5 +1,6 @@
 package de.mpg.imeji.presentation.statement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +42,8 @@ public class StatementCreateBean extends SuperBean {
         ImejiFactory.newStatement().setIndex(name).setType(StatementType.valueOf(type)).build();
     try {
       service.create(statement, getSessionUser());
-    } catch (final ImejiException e) {
+      redirect(getHistory().getPreviousPage().getCompleteUrlWithHistory());
+    } catch (final ImejiException | IOException e) {
       BeanHelper.error("Error creating statement");
       LOGGER.error("Error creating statement", e);
     }

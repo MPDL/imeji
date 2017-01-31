@@ -39,7 +39,7 @@
 						<span class="imj_noDisplay">: </span>
 					</div>
 					<div class="imj_admindataValue">
-						<h:inputText id="defaultStatements" value="#{StatementsBean.defaultStatementsString}" styleClass="imj_admindataEdit" />
+						<h:inputText id="defaultStatements" value="#{StatementsBean.defaultStatementsString}" styleClass="imj_admindataEdit" readonly="true"/>
 					</div>
 				</div>
 				<div class="imj_admindataSet">
@@ -59,17 +59,20 @@
 								<span class="imj_noDisplay">: </span>
 							</div>
 							<div class="imj_admindataValue">
-								<a href="#{Navigation.homeUrl}/statement/#{statement.id}/edit">
+								<a href="#{Navigation.homeUrl}/statement/#{statement.indexUrlEncoded}/edit" class="imj_overlayMenu imj_menuButton">
 									<span class="fa fa-pencil"/> #{lbl.edit}
 								</a>
 								<h:form>
-									<h:commandLink action="#{StatementsBean.addToDefaultStatements(statement.index)}" rendered="#{!StatementsBean.isDefaultStatement(statement.index)}">
+									<h:commandLink action="#{StatementsBean.addToDefaultStatements(statement.uri.toString())}" rendered="#{!StatementsBean.isDefaultStatement(statement.uri.toString())}" styleClass="imj_overlayMenu imj_menuButton">
 										<f:ajax render=":defaultStatements @form"/>
 										<span class="fa fa-star-o"/> #{lbl.statement_default}
 									</h:commandLink>
-									<h:commandLink action="#{StatementsBean.removeFromDefaultStatements(statement.index)}" rendered="#{StatementsBean.isDefaultStatement(statement.index)}">
+									<h:commandLink action="#{StatementsBean.removeFromDefaultStatements(statement.uri.toString())}" rendered="#{StatementsBean.isDefaultStatement(statement.uri.toString())}" styleClass="imj_overlayMenu imj_menuButton">
 										<f:ajax render=":defaultStatements @form"/>
-										<span class="fa fa-star"/> #{lbl.statement_not_default}
+										<span class="fa fa-star"/> #{lbl.statement_default}
+									</h:commandLink>
+									<h:commandLink action="#{StatementsBean.delete(statement.uri.toString())}" styleClass="imj_overlayMenu imj_menuButton">
+										<span class="fa fa-trash"/> #{lbl.delete}
 									</h:commandLink>
 								</h:form>
 							</div>
