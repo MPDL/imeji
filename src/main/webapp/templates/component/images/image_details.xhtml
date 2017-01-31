@@ -27,7 +27,9 @@
 				<h:outputLink id="rotateRightButton" class="fa fa-rotate-right fa-size-3 imj_mediaEditPanelItem" />
 			
 			<center>
-				<div id="seadragon-viewer" style="width:#{itemBean.webResolutionMaxLength}px; height:#{itemBean.webResolutionMaxLength}px;"></div>
+				<div id="seadragon-viewer-full" style="width:#{itemBean.webResolutionMaxLength}px; height:#{itemBean.webResolutionMaxLength}px;position:relative">
+					<h:graphicImage id="picWebResolutionAlt" style="position:absolute;top:#{itemBean.webResolutionTop}px;left:#{itemBean.webResolutionLeft}px;" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.fileUrl}#{itemBean.image.webImageUrl}" />
+				</div>
 			</center>
 			</ui:fragment>
 			<h:outputLink id="lnkPicInternalDigilib" value="#{ItemBean.digilibUrl}" target="_blank" rendered="#{itemBean.viewInDigilib}">
@@ -463,10 +465,22 @@
 			
 			<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.js"></script>
 			<script type="text/javascript">
-
-    			var img = {
-    			type: 'legacy-image-pyramid',
+			
+			var open=false;
+				
+    			var imgFull = {
+    			type: 'image',
+    			url: '#{Navigation.fileUrl}#{itemBean.image.fullImageUrl}'
+    			};
+    			
+    			/*var imgWeb = {
+    	    			type: 'image',
+    	    			url: '#{Navigation.fileUrl}#{itemBean.image.webImageUrl}'
+    	    			};*/
     	   
+    	    	var img={
+    	    	type: 'legacy-image-pyramid',			
+    	    			
     	    	levels: [
     	    		/*{	
         	    		url: '#{Navigation.fileUrl}#{itemBean.image.thumbnailImageUrl}',    	    	
@@ -485,11 +499,12 @@
         	    	}]
     			};
 
-    			var viewer = OpenSeadragon({
+    			var viewerFull = OpenSeadragon({
     
-        		id: "seadragon-viewer",
+        		id: "seadragon-viewer-full",
         		prefixUrl: "#{Navigation.applicationUrl}/resources/openseadragon/images/",
-        		tileSources: img,
+        		tileSources: imgFull,
+        		minZoomLevel:1,
         		showRotationControl: true,
         		fullPageButton: "fullscreenButton",
         		homeButton: "homeButton",
@@ -502,12 +517,18 @@
         		}
         		
     		});
-    			
-				viewer.addHandler('rotate',function(){
-					 document.getElementById("rotationForm:inputTextRotation").value= viewer.viewport.getRotation();
+
+    			viewerFull.addHandler('rotate',function(){
+					 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
 					 document.getElementById("rotationForm:buttonUpdateRotation").click();
         		});
-
+    			
+    			
+    			viewerFull.addHandler('open',function(){
+    				document.getElementById("picWebResolutionAlt").style.display='none';
+    			});
+    			
+ 				
 			</script>
 			
 		</h:panelGroup><!-- END LISTBODY -->

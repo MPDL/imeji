@@ -180,8 +180,24 @@ public class UsersBean extends SuperBean {
       controller.update(user, getSessionUser());
       doSearch();
     } catch (ImejiException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("Error removing user", e);
+    }
+  }
+
+  /**
+   * Removes a {@link User}, but does not delete him
+   */
+  public void reactivateUser() {
+    String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+        .get("email");
+    UserBusinessController controller = new UserBusinessController();
+    try {
+      User user = controller.retrieve(email, getSessionUser());
+      user.setUserStatus(UserStatus.ACTIVE);
+      controller.update(user, getSessionUser());
+      doSearch();
+    } catch (ImejiException e) {
+      LOGGER.error("Error reactivating user", e);
     }
   }
 

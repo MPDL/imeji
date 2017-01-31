@@ -62,7 +62,8 @@ public final class ImageUtils {
       throws IOException, Exception {
     // If it is original resolution, don't touch the file, otherwise resize
     if (!FileResolution.ORIGINAL.equals(resolution)) {
-      BufferedImage image = JpegUtils.readJpeg(file);
+      // BufferedImage image = JpegUtils.readJpeg(file);
+      BufferedImage image = ImageIO.read(file);
       return toFile(scaleImage(image, resolution), StorageUtils.getMimeType("jpg"));
     }
     return file;
@@ -140,8 +141,6 @@ public final class ImageUtils {
           throw new Exception("Invaild number of degrees: " + degrees);
       }
       ImageIO.write(res, "jpg", file);
-
-      System.out.println("Done rotating");
     } catch (Exception e) {
       LOGGER.info("Image could not be rotated: ", e);
     }

@@ -449,10 +449,6 @@ public class AdminBean extends SuperBean {
 
   public void recalculateWebAndThumbnail() {
     ResizeWebAndThumbnailJob job = new ResizeWebAndThumbnailJob();
-    try {
-      job.call();
-    } catch (Exception e) {
-      LOGGER.error("Error recalculating Thumbnail and Web", e);
-    }
+    Imeji.getEXECUTOR().submit(job);
   }
 }

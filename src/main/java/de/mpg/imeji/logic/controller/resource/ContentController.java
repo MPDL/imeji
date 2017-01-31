@@ -141,6 +141,7 @@ public class ContentController extends ImejiController {
       storageController.delete(contentVO.getOriginal());
       storageController.delete(contentVO.getPreview());
       storageController.delete(contentVO.getThumbnail());
+      storageController.delete(contentVO.getFull());
     } catch (Exception e) {
       // Delete file should not stop update process
       LOGGER.error("Error deleting file", e);

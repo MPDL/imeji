@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -102,6 +103,7 @@ public class ItemBean extends SuperBean {
   private static final Logger LOGGER = Logger.getLogger(ItemBean.class);
   private int rotation;
   private int lastRotation = 0;
+  private RotationThread rotationThread;
 
   /**
    * Construct a default {@link ItemBean}
@@ -122,6 +124,7 @@ public class ItemBean extends SuperBean {
   public void init() {
     this.id = UrlHelper.getParameterValue("id");
     tab = UrlHelper.getParameterValue("tab");
+    rotationThread = new RotationThread();
     if ("".equals(tab)) {
       tab = null;
     }
@@ -140,9 +143,6 @@ public class ItemBean extends SuperBean {
       } else {
         edit = null;
       }
-
-      System.out.println("Wdith: " + getWebResolutionWidth());
-      System.out.println(("Height: " + getWebResolutionHeight()));
     } catch (NotFoundException e) {
       LOGGER.error("Error loading item", e);
       try {
@@ -826,9 +826,7 @@ public class ItemBean extends SuperBean {
    * @return
    */
   public int getThumbnailWidth() {
-    return Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
-
-
+    return Integer.parseInt(Imeji.CONFIG.getThumbnailWidth());
   }
 
   @PreDestroy
@@ -844,13 +842,63 @@ public class ItemBean extends SuperBean {
    * @throws IOException
    */
   public void updateRotation() throws IOException, Exception {
-
-
     if (getAuth().update(getImage())) {
-      StorageController storageController = new StorageController();
+
       int degrees = (rotation - lastRotation + 360) % 360;
       lastRotation = rotation;
+      if (rotationThread.isAlive()) {
+        rotationThread.addTask(new RotationJob(degrees));
+      } else {
+        rotationThread = new RotationThread();
+        rotationThread.addTask(new RotationJob(degrees));
+        rotationThread.start();
+      }
+    }
+  }
+
+  private class RotationJob implements Callable<Integer> {
+    int degrees;
+
+    public RotationJob(int degrees) {
+      this.degrees = degrees;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+      StorageController storageController = new StorageController();
       storageController.rotate(getImage().getFullImageUrl().getPath(), degrees);
+
+      long width = getContent().getWidth();
+      getContent().setWidth(getContent().getHeight());
+      getContent().setHeight(width);
+      setContent((new ContentController()).update(getContent()));
+
+      System.out.println("Rotated");
+
+      return 1;
+    }
+  }
+
+  private class RotationThread extends Thread {
+    private ArrayList<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>();
+
+    public RotationThread() {
+
+    }
+
+    public void addTask(Callable<Integer> callable) {
+      tasks.add(callable);
+    }
+
+    public void run() {
+      while (tasks.size() != 0) {
+        try {
+          tasks.get(0).call();
+          tasks.remove(0);
+        } catch (Exception e) {
+          LOGGER.error("Error rotating image", e);
+        }
+      }
     }
   }
 
@@ -861,19 +909,22 @@ public class ItemBean extends SuperBean {
    * @throws IOException
    */
   public int getWebResolutionWidth() throws IOException {
-    /*
-     * int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web")); int
-     * imgWidth = (int) getContent().getWidth(); int imgHeight = (int) getContent().getHeight();
-     * 
-     * 
-     * 
-     * if (imgWidth <= imgHeight) { return webSize; } return (int) (imgWidth * 1.0 / imgHeight *
-     * webSize);
-     */
+    int webSize = Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
+    int imgWidth = (int) getContent().getWidth();
+    int imgHeight = (int) getContent().getHeight();
+
+    if (imgWidth >= imgHeight) {
+      return webSize;
+    }
+    return (int) (imgWidth * 1.0 / imgHeight * webSize);
+  }
+
+  public int getWebResolutionWidthOld() throws IOException {
     if (!isImageFile() || isSVGFile())
       return 0;
     StorageController storageController = new StorageController();
     return storageController.getStorage().getImageWidth(getImage().getWebImageUrl().getPath());
+
   }
 
   /**
@@ -883,17 +934,25 @@ public class ItemBean extends SuperBean {
    * @throws IOException
    */
   public int getWebResolutionHeight() throws IOException {
-    /*
-     * int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web")); int
-     * imgWidth = (int) getContent().getWidth(); int imgHeight = (int) getContent().getHeight();
-     * 
-     * if (imgWidth <= imgHeight) { return (int) (imgHeight * 1.0 / imgWidth * webSize); } return
-     * webSize;
-     */
+
+
+    int webSize = Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
+    int imgWidth = (int) getContent().getWidth();
+    int imgHeight = (int) getContent().getHeight();
+
+    if (imgWidth >= imgHeight) {
+      return (int) (imgHeight * 1.0 / imgWidth * webSize);
+    }
+    return webSize;
+  }
+
+  public int getWebResolutionHeightOld() throws IOException {
+
     if (!isImageFile() || isSVGFile())
       return 0;
     StorageController storageController = new StorageController();
     return storageController.getStorage().getImageHeight(getImage().getWebImageUrl().getPath());
+
   }
 
   /**
@@ -907,17 +966,19 @@ public class ItemBean extends SuperBean {
   }
 
   public int getFullResolutionWidth() throws IOException {
-    if (!isImageFile() || isSVGFile())
-      return 0;
-    StorageController storageController = new StorageController();
-    return storageController.getStorage().getImageWidth(getImage().getFullImageUrl().getPath());
+    return (int) getContent().getWidth();
   }
 
   public int getFullResolutionHeight() throws IOException {
-    if (!isImageFile() || isSVGFile())
-      return 0;
-    StorageController storageController = new StorageController();
-    return storageController.getStorage().getImageHeight(getImage().getFullImageUrl().getPath());
+    return (int) getContent().getHeight();
+  }
+
+  public int getWebResolutionTop() throws IOException {
+    return (getWebResolutionMaxLength() - getWebResolutionHeight()) / 2;
+  }
+
+  public int getWebResolutionLeft() throws IOException {
+    return (getWebResolutionMaxLength() - getWebResolutionWidth()) / 2;
   }
 
   public int getRotation() {

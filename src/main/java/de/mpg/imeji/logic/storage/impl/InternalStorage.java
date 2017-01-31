@@ -32,6 +32,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
@@ -143,23 +144,42 @@ public class InternalStorage implements Storage {
 
   @Override
   public void rotate(String fullUrl, int degrees) throws IOException, Exception {
-    String thumbnailUrl = getThumbnailUrl(fullUrl);
-    String webUrl = getWebResolutionUrl(fullUrl);
-    File thumbnail = read(thumbnailUrl);
-    File web = read(webUrl);
-    File full = read(fullUrl);
+    RotationJob job = new RotationJob(fullUrl, degrees);
+    job.call();
+  }
 
-    if (ImageMagickUtils.jpegtranEnabled) {
-      ImageMagickUtils.rotateJPEG(thumbnail, degrees);
-      ImageMagickUtils.rotateJPEG(web, degrees);
-      ImageMagickUtils.rotateJPEG(full, degrees);
-    } else {
-      ImageUtils.rotate(full, degrees);
-      web = ImageUtils.resizeJPEG(full, FileResolution.WEB);
-      thumbnail = ImageUtils.resizeJPEG(full, FileResolution.THUMBNAIL);
-      update(webUrl, web);
-      update(thumbnailUrl, thumbnail);
+  private class RotationJob implements Callable<Integer> {
+
+    String fullUrl;
+    int degrees;
+
+    public RotationJob(String fullUrl, int degrees) {
+      this.fullUrl = fullUrl;
+      this.degrees = degrees;
     }
+
+    @Override
+    public Integer call() throws Exception {
+      String thumbnailUrl = getThumbnailUrl(fullUrl);
+      String webUrl = getWebResolutionUrl(fullUrl);
+      File thumbnail = read(thumbnailUrl);
+      File web = read(webUrl);
+      File full = read(fullUrl);
+
+      if (ImageMagickUtils.jpegtranEnabled) {
+        ImageMagickUtils.rotateJPEG(thumbnail, degrees);
+        ImageMagickUtils.rotateJPEG(web, degrees);
+        ImageMagickUtils.rotateJPEG(full, degrees);
+      } else {
+        ImageUtils.rotate(full, degrees);
+        web = ImageUtils.resizeJPEG(full, FileResolution.WEB);
+        thumbnail = ImageUtils.resizeJPEG(full, FileResolution.THUMBNAIL);
+        update(webUrl, web);
+        update(thumbnailUrl, thumbnail);
+      }
+      return 1;
+    }
+
   }
 
 
