@@ -19,6 +19,7 @@ import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.statement.StatementService;
+import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
@@ -72,17 +73,19 @@ public abstract class EditMetadataAbstract extends SuperBean {
    * 
    * @return
    */
-  protected void addDefaultStatements(Map<String, Statement> statementMap) {
+  protected Map<String, Statement> getDefaultStatements() {
+    final Map<String, Statement> map = new HashMap<>();
     try {
       // add from config
-      statementMap.putAll(statementListToMap(retrieveInstanceDefaultStatements()));
+      map.putAll(statementListToMap(retrieveInstanceDefaultStatements()));
       // add from item collections
       for (CollectionImeji c : getItemsCollections()) {
-        statementMap.putAll(getStatementMapForCollection(c));
+        map.putAll(getStatementMapForCollection(c));
       }
     } catch (Exception e) {
       LOGGER.error("Error adding default statement to editor", e);
     }
+    return map;
   }
 
   /**
@@ -92,9 +95,10 @@ public abstract class EditMetadataAbstract extends SuperBean {
    * @throws ImejiException
    */
   private List<Statement> retrieveInstanceDefaultStatements() throws ImejiException {
-    return statementService.retrieveBatch(Arrays.asList(Imeji.CONFIG.getStatements().split(",")),
-        getSessionUser());
+    return statementService.retrieveBatch(
+        StatementUtil.toStatementUriList(Imeji.CONFIG.getStatements()), getSessionUser());
   }
+
 
   /**
    * Return the statement map for one collection as defined as default statement for this collection

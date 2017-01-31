@@ -18,6 +18,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
+import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
 import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -78,6 +79,11 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
         map.putIfAbsent(md.getStatementId(),
             new SelectStatementWithInputComponent(md.getStatementId(), statementMap));
       }
+    }
+    Map<String, Statement> defaultStatement = getDefaultStatements();
+    for (Statement s : defaultStatement.values()) {
+      map.putIfAbsent(s.getId(),
+          new SelectStatementWithInputComponent(s.getId(), defaultStatement));
     }
     columns = new ArrayList<>(map.values());
     columns.sort((c1, c2) -> c1.getIndex().compareToIgnoreCase(c2.getIndex()));

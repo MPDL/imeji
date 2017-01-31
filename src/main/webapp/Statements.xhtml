@@ -14,7 +14,7 @@
 	<ui:define name="actionsMenu">
 		<form action="#{Navigation.homeUrl}/createstatement">
 			<button id="createStatement" class="imj_menuButton">
-				#{lbl.new_statement}
+				#{lbl.statement_new}
 			</button >
 		</form>
 	</ui:define>
@@ -32,10 +32,48 @@
 			<div class="imj_backPanel">
 				<a href="#{Navigation.adminUrl}">#{lbl.back_to_admin}</a>
 			</div>
-			<div class="imj_mainContentWrapper">
+			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
+				<div class="imj_admindataSet">
+					<div class="imj_admindataLabel">
+						#{lbl.statement_default}
+						<span class="imj_noDisplay">: </span>
+					</div>
+					<div class="imj_admindataValue">
+						<h:inputText id="defaultStatements" value="#{StatementsBean.defaultStatementsString}" styleClass="imj_admindataEdit" />
+					</div>
+				</div>
+				<div class="imj_admindataSet">
+					<div class="imj_admindataLabel">
+						#{lbl.name}
+						<span class="imj_noDisplay">: </span>
+					</div>
+					<div class="imj_admindataValue">
+						#{lbl.actions}
+					</div>
+				</div>
 				<ui:repeat var="statement" value="#{StatementsBean.statements}">
 					<div class="imj_itemContent imj_itemHeadline">
-						#{statement.index} <a href="#{Navigation.homeUrl}/statement/#{statement.id}/edit">#{lbl.edit}</a>
+						<div class="imj_admindataSet">
+							<div class="imj_admindataLabel">
+								#{statement.index}
+								<span class="imj_noDisplay">: </span>
+							</div>
+							<div class="imj_admindataValue">
+								<a href="#{Navigation.homeUrl}/statement/#{statement.id}/edit">
+									<span class="fa fa-pencil"/> #{lbl.edit}
+								</a>
+								<h:form>
+									<h:commandLink action="#{StatementsBean.addToDefaultStatements(statement.index)}" rendered="#{!StatementsBean.isDefaultStatement(statement.index)}">
+										<f:ajax render=":defaultStatements @form"/>
+										<span class="fa fa-star-o"/> #{lbl.statement_default}
+									</h:commandLink>
+									<h:commandLink action="#{StatementsBean.removeFromDefaultStatements(statement.index)}" rendered="#{StatementsBean.isDefaultStatement(statement.index)}">
+										<f:ajax render=":defaultStatements @form"/>
+										<span class="fa fa-star"/> #{lbl.statement_not_default}
+									</h:commandLink>
+								</h:form>
+							</div>
+						</div>
 					</div>
 				</ui:repeat>
 			</div>
