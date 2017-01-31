@@ -20,12 +20,12 @@ import de.mpg.imeji.logic.batch.CleanContentVOsJob;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
 import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
+import de.mpg.imeji.logic.batch.ResizeWebAndThumbnailJob;
 import de.mpg.imeji.logic.batch.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
-import de.mpg.imeji.logic.jobs.ResizeWebAndThumbnailJob;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -359,10 +359,6 @@ public class AdminBean extends SuperBean {
 
   public void recalculateWebAndThumbnail() {
     ResizeWebAndThumbnailJob job = new ResizeWebAndThumbnailJob();
-    try {
-      job.call();
-    } catch (Exception e) {
-      LOGGER.error("Error recalculating Thumbnail and Web", e);
-    }
+    Imeji.getEXECUTOR().submit(job);
   }
 }

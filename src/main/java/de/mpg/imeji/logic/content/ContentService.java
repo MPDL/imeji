@@ -191,6 +191,10 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     return controller.updateBatch(contents, Imeji.adminUser);
   }
 
+  public ContentVO update(ContentVO content) throws ImejiException {
+    return controller.update(content, Imeji.adminUser);
+  }
+
   public void delete(String contentId) throws ImejiException {
     final StorageController storageController = new StorageController();
     final ContentVO contentVO = retrieveLazy(contentId);

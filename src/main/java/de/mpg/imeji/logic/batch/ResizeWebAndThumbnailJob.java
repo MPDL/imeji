@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.jobs;
+package de.mpg.imeji.logic.batch;
 
 import java.util.List;
 import java.util.concurrent.Callable;

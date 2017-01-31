@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -80,6 +81,7 @@ public class ItemBean extends SuperBean {
   private String fullResolution;
   private String originalFile;
   private boolean edit = false;
+  private RotationThread rotationThread;
 
   /**
    * Construct a default {@link ItemBean}
@@ -540,8 +542,6 @@ public class ItemBean extends SuperBean {
 
   public int getThumbnailWidth() {
     return Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.thumbnail"));
-
-
   }
 
 
@@ -554,10 +554,58 @@ public class ItemBean extends SuperBean {
    */
   public void updateRotation() throws IOException, Exception {
     if (SecurityUtil.authorization().update(getSessionUser(), getImage())) {
-      final StorageController storageController = new StorageController();
-      final int degrees = (rotation - lastRotation + 360) % 360;
+      int degrees = (rotation - lastRotation + 360) % 360;
       lastRotation = rotation;
-      storageController.rotate(content.getOriginal(), degrees);
+      if (rotationThread.isAlive()) {
+        rotationThread.addTask(new RotationJob(degrees));
+      } else {
+        rotationThread = new RotationThread();
+        rotationThread.addTask(new RotationJob(degrees));
+        rotationThread.start();
+      }
+    }
+  }
+
+  private class RotationJob implements Callable<Integer> {
+    int degrees;
+
+    public RotationJob(int degrees) {
+      this.degrees = degrees;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+      StorageController storageController = new StorageController();
+      storageController.rotate(getContent().getFull(), degrees);
+
+      long width = getContent().getWidth();
+      getContent().setWidth(getContent().getHeight());
+      getContent().setHeight(width);
+      setContent(new ContentService().update(getContent()));
+      return 1;
+    }
+  }
+
+  private class RotationThread extends Thread {
+    private ArrayList<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>();
+
+    public RotationThread() {
+
+    }
+
+    public void addTask(Callable<Integer> callable) {
+      tasks.add(callable);
+    }
+
+    public void run() {
+      while (tasks.size() != 0) {
+        try {
+          tasks.get(0).call();
+          tasks.remove(0);
+        } catch (Exception e) {
+          LOGGER.error("Error rotating image", e);
+        }
+      }
     }
   }
 
@@ -568,20 +616,14 @@ public class ItemBean extends SuperBean {
    * @throws IOException
    */
   public int getWebResolutionWidth() throws IOException {
-    /*
-     * int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web")); int
-     * imgWidth = (int) getContent().getWidth(); int imgHeight = (int) getContent().getHeight();
-     *
-     *
-     *
-     * if (imgWidth <= imgHeight) { return webSize; } return (int) (imgWidth * 1.0 / imgHeight *
-     * webSize);
-     */
-    if (!isImageFile() || isSVGFile()) {
-      return 0;
+    int webSize = Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
+    int imgWidth = (int) getContent().getWidth();
+    int imgHeight = (int) getContent().getHeight();
+
+    if (imgWidth >= imgHeight) {
+      return webSize;
     }
-    final StorageController storageController = new StorageController();
-    return storageController.getStorage().getImageWidth(content.getPreview());
+    return (int) (imgWidth * 1.0 / imgHeight * webSize);
   }
 
   /**
@@ -591,18 +633,13 @@ public class ItemBean extends SuperBean {
    * @throws IOException
    */
   public int getWebResolutionHeight() throws IOException {
-    /*
-     * int webSize = Integer.parseInt(Imeji.PROPERTIES.getProperty("xsd.resolution.web")); int
-     * imgWidth = (int) getContent().getWidth(); int imgHeight = (int) getContent().getHeight();
-     *
-     * if (imgWidth <= imgHeight) { return (int) (imgHeight * 1.0 / imgWidth * webSize); } return
-     * webSize;
-     */
-    if (!isImageFile() || isSVGFile()) {
-      return 0;
+    int webSize = Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
+    int imgWidth = (int) getContent().getWidth();
+    int imgHeight = (int) getContent().getHeight();
+    if (imgWidth >= imgHeight) {
+      return (int) (imgHeight * 1.0 / imgWidth * webSize);
     }
-    final StorageController storageController = new StorageController();
-    return storageController.getStorage().getImageHeight(content.getPreview());
+    return webSize;
   }
 
   /**
@@ -616,19 +653,19 @@ public class ItemBean extends SuperBean {
   }
 
   public int getFullResolutionWidth() throws IOException {
-    if (!isImageFile() || isSVGFile()) {
-      return 0;
-    }
-    final StorageController storageController = new StorageController();
-    return storageController.getStorage().getImageWidth(content.getOriginal());
+    return (int) getContent().getWidth();
   }
 
   public int getFullResolutionHeight() throws IOException {
-    if (!isImageFile() || isSVGFile()) {
-      return 0;
-    }
-    final StorageController storageController = new StorageController();
-    return storageController.getStorage().getImageHeight(content.getOriginal());
+    return (int) getContent().getHeight();
+  }
+
+  public int getWebResolutionTop() throws IOException {
+    return (getWebResolutionMaxLength() - getWebResolutionHeight()) / 2;
+  }
+
+  public int getWebResolutionLeft() throws IOException {
+    return (getWebResolutionMaxLength() - getWebResolutionWidth()) / 2;
   }
 
   public int getRotation() {
@@ -693,5 +730,6 @@ public class ItemBean extends SuperBean {
   public void setEdit(boolean edit) {
     this.edit = edit;
   }
+
 
 }
