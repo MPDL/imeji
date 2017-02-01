@@ -40,8 +40,9 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   private List<RowComponent> rows = new ArrayList<>();
   private SelectStatementWithInputComponent newStatement;
   private List<String> displayedColumns = new ArrayList<>();
+  private String editedColumn = "";
 
-  public EditMetadataSelectedItemsBean() {
+  public EditMetadataSelectedItemsBean() throws ImejiException {
     super();
     this.newStatement = new SelectStatementWithInputComponent(statementMap);
   }
@@ -172,7 +173,13 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
     return getHistory().getPreviousPage().getCompleteUrlWithHistory();
   }
 
+  public void setEditedColumn(String editedColumn) {
+    this.editedColumn = editedColumn;
+  }
 
+  public String getEditedColumn() {
+    return editedColumn;
+  }
 
   /**
    * Retrieve the Items

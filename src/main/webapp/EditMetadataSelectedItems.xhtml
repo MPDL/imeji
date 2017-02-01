@@ -59,37 +59,43 @@
 					<table class="edit_selected_table">
 						<tr>
 							<th>#{lbl.filename}</th>
-							<ui:repeat value="#{EditMetadataSelectedItemsBean.columns}"
-								var="column" varStatus="status">
-								<ui:fragment
-									rendered="#{EditMetadataSelectedItemsBean.displayedColumns.contains(column.index)}">
+							<ui:repeat value="#{EditMetadataSelectedItemsBean.columns}" var="column" varStatus="status">
+								<ui:fragment rendered="#{EditMetadataSelectedItemsBean.displayedColumns.contains(column.index)}">
 									<th class="column_#{status.index}">
 										<div class="edit_selected_table_button">
-											#{column.index}
+											<h:outputText value="#{column.index}" rendered="#{EditMetadataSelectedItemsBean.editedColumn != column.index}"/>
 											<div>
 												<md:input id="batchInput"
 													metadataInputComponent="#{column.input}"
 													rendered="#{!empty column.input}" />
+												<h:inputText value="#{column.index}" rendered="#{EditMetadataSelectedItemsBean.editedColumn == column.index}"/>
+												<ui:fragment rendered="#{empty column.input and EditMetadataSelectedItemsBean.editedColumn != column.index}">
 												<h:commandLink
-													styleClass="fa fa-pencil edit_selected_table_icon"
+													styleClass="fa fa-magic edit_selected_table_icon"
 													action="#{column.addInput}" value=""
-													title="#{lbl.edit_all}" rendered="#{empty column.input}">
+													title="#{lbl.edit_all}" >
+													<f:ajax execute="@form" render="@form" />
+												</h:commandLink>
+												<h:commandLink
+													styleClass="fa fa-cog edit_selected_table_icon"
+													action="#{EditMetadataSelectedItemsBean.setEditedColumn(column.index)}" value=""
+													title="#{lbl.edit_metadata_name}">
 													<f:ajax execute="@form" render="@form" />
 												</h:commandLink>
 												<h:commandLink
 													styleClass="fa fa-times edit_selected_table_icon"
 													action="#{EditMetadataSelectedItemsBean.clearColumn(status.index)}"
-													value="" title="#{lbl.clear}"
-													rendered="#{empty column.input}">
+													value="" title="#{lbl.clear}">
 													<f:ajax execute="@form" render="@form" />
 												</h:commandLink>
+												
 												<h:commandLink
 													styleClass="fa fa-trash edit_selected_table_icon"
 													action="#{EditMetadataSelectedItemsBean.removeColumn(column.index)}"
-													value="" title="#{lbl.remove}"
-													rendered="#{empty column.input}">
+													value="" title="#{lbl.remove}">
 													<f:ajax execute="@form" render="@form" />
 												</h:commandLink>
+												</ui:fragment>
 											</div>
 											<div class="edit_selected_table_button">
 												<h:commandLink
