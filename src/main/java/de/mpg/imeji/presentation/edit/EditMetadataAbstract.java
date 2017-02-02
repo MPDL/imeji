@@ -60,7 +60,7 @@ public abstract class EditMetadataAbstract extends SuperBean {
    */
   public void save() {
     try {
-      statementService.createBatchIfNotExists(getStatements(), getSessionUser());
+      statementService.createBatchIfNotExists(getAllStatements(), getSessionUser());
       itemService.updateBatch(toItemList(), getSessionUser());
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
     } catch (final ImejiException e) {
@@ -119,20 +119,22 @@ public abstract class EditMetadataAbstract extends SuperBean {
   public abstract List<Item> toItemList();
 
   /**
-   * Return all Statement used by all items as a {@link SelectStatementComponent} list
-   *
+   * Return all Statement which are used by at least one metadata in at least one item
+   * 
    * @return
    */
-  public abstract List<SelectStatementWithInputComponent> getAllStatements();
+  public abstract List<Statement> getAllStatements();
 
   /**
    * Return all statements which are not already existing
    *
    * @return
    */
-  private List<Statement> getStatements() {
-    return getAllStatements().stream().map(s -> s.asStatement()).collect(Collectors.toList());
-  }
+  // private List<Statement> getStatements() {
+  // System.out.println("All: " + getAllStatements().stream()
+  // .map(SelectStatementWithInputComponent::getIndex).collect(Collectors.joining(",")));
+  // return getAllStatements().stream().map(s -> s.asStatement()).collect(Collectors.toList());
+  // }
 
 
   public List<SelectItem> getStatementMenu() {

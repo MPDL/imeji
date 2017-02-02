@@ -104,10 +104,14 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
     return rows.stream().map(RowComponent::toItem).collect(Collectors.toList());
   }
 
+
   @Override
-  public List<SelectStatementWithInputComponent> getAllStatements() {
-    return columns.stream().filter(c -> !(c.getInput() == null || c.getInput().isEmpty()))
-        .collect(Collectors.toList());
+  public List<Statement> getAllStatements() {
+    return rows.stream().flatMap(row -> row.getCells().stream())
+        .filter(cell -> cell.getInputs() != null)
+        .collect(
+            Collectors.toMap(CellComponent::getIndex, cell -> cell.getStatement(), (a, b) -> a))
+        .values().stream().collect(Collectors.toList());
   }
 
   /**

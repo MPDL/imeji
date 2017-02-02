@@ -1,7 +1,10 @@
 package de.mpg.imeji.presentation.edit.editItem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -14,7 +17,9 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
+import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
+import de.mpg.imeji.presentation.edit.MetadataInputComponent;
 import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
 import de.mpg.imeji.presentation.license.LicenseEditor;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -44,9 +49,9 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
     try {
       this.item = itemService.retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
       this.licenseEditor = new LicenseEditor(getLocale(), item);
-      for (final Metadata metadata : item.getMetadata()) {
-        rows.add(new SelectStatementWithInputComponent(metadata, statementMap));
-      }
+      rows = item.getMetadata().stream()
+          .map(md -> new SelectStatementWithInputComponent(md, statementMap))
+          .collect(Collectors.toList());
     } catch (final ImejiException e) {
       BeanHelper.error("Error retrieving item");
       LOGGER.error("Error retrieving Item with id " + id, e);
@@ -55,20 +60,18 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
 
   @Override
   public List<Item> toItemList() {
-    final List<Item> itemList = new ArrayList<>();
-    final List<Metadata> metadataList = new ArrayList<>();
-    for (final SelectStatementWithInputComponent row : rows) {
-      metadataList.add(row.getInput().getMetadata());
-    }
-    item.setMetadata(metadataList);
+    item.setMetadata(rows.stream().map(SelectStatementWithInputComponent::getInput)
+        .map(MetadataInputComponent::getMetadata).collect(Collectors.toList()));
     item.getLicenses().add(licenseEditor.getLicense());
-    itemList.add(item);
-    return itemList;
+    return Arrays.asList(item);
   }
 
   @Override
-  public List<SelectStatementWithInputComponent> getAllStatements() {
-    return rows;
+  public List<Statement> getAllStatements() {
+    return rows.stream().filter(row -> row.getInput() != null && !row.getInput().isEmpty())
+        .map(SelectStatementWithInputComponent::getInput).map(MetadataInputComponent::getStatement)
+        .collect(Collectors.toMap(Statement::getIndex, Function.identity(), (a, b) -> a)).values()
+        .stream().collect(Collectors.toList());
   }
 
   /**
