@@ -68,7 +68,15 @@
 												<md:input id="batchInput"
 													metadataInputComponent="#{column.input}"
 													rendered="#{!empty column.input}" />
-												<h:inputText value="#{column.index}" rendered="#{EditMetadataSelectedItemsBean.editedColumn == column.index}"/>
+												<ui:fragment rendered="#{EditMetadataSelectedItemsBean.editedColumn == column.index}">
+													<h:inputText class="combobox" onfocus="$('#statementList').show();" value="#{column.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}"/>
+													<h:commandLink
+														styleClass="fa fa-check edit_selected_table_icon"
+														action="#{EditMetadataSelectedItemsBean.changeColumnName(status.index)}" value=""
+														title="#{lbl.save}" >
+														<f:ajax execute="@form" render="@form" />
+													</h:commandLink>
+												</ui:fragment>
 												<ui:fragment rendered="#{empty column.input and EditMetadataSelectedItemsBean.editedColumn != column.index}">
 												<h:commandLink
 													styleClass="fa fa-magic edit_selected_table_icon"

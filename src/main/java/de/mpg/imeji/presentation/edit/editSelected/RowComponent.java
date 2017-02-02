@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.util.MetadataUtil;
-import de.mpg.imeji.presentation.edit.SelectStatementComponent;
 import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
 
 /**
@@ -29,27 +27,11 @@ public class RowComponent implements Serializable {
       List<SelectStatementWithInputComponent> columns) {
     this.item = item;
     this.filename = item.getFilename();
-    for (final SelectStatementComponent column : columns) {
-      cells.add(new CellComponent(statementMap.get(column.getIndex()),
-          getMetadataForStatement(item, statementMap.get(column.getIndex()))));
-    }
-  }
+    System.out.println(columns.stream().map(SelectStatementWithInputComponent::getIndex)
+        .collect(Collectors.toList()));
 
-  /**
-   * Return all the Metadata of an Item for this state,ent
-   * 
-   * @param item
-   * @param statement
-   * @return
-   */
-  private List<Metadata> getMetadataForStatement(Item item, Statement statement) {
-    if (statement != null) {
-      return item.getMetadata().stream()
-          .filter(
-              md -> md.getStatementId().equals(statement.getIndex()) && !MetadataUtil.isEmpty(md))
-          .collect(Collectors.toList());
-    }
-    return new ArrayList<>();
+    cells = columns.stream().map(c -> new CellComponent(c.asStatement(), item.getMetadata()))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -71,6 +53,17 @@ public class RowComponent implements Serializable {
     final List<Metadata> l = new ArrayList<>();
     l.add(metadata);
     cells.add(new CellComponent(statement, l));
+  }
+
+  /**
+   * Change the Statement of all metadata with the following index
+   * 
+   * @param index
+   * @param newStatement
+   */
+  public void changeStatement(String index, Statement newStatement) {
+    cells.stream().filter(c -> c.getStatement().getIndex().equals(index))
+        .forEach(c -> c.changeStatement(newStatement));
   }
 
   /**
