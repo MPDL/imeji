@@ -1,6 +1,8 @@
 package de.mpg.imeji.logic.statement;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -50,6 +52,31 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    */
   public List<Statement> createBatch(List<Statement> l, User user) throws ImejiException {
     return controller.createBatch(l, user);
+  }
+
+  /**
+   * Create only the statements which don't exists
+   * 
+   * @param l
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public List<Statement> createBatchIfNotExists(List<Statement> l, User user)
+      throws ImejiException {
+    return createBatch(filterNotExistingStatement(l), user);
+  }
+
+  /**
+   * Return only the Statements which don't exists
+   * 
+   * @param l
+   * @return
+   * @throws ImejiException
+   */
+  private List<Statement> filterNotExistingStatement(List<Statement> l) throws ImejiException {
+    Map<String, Statement> map = StatementUtil.statementListToMap(retrieveAll());
+    return l.stream().filter(s -> !map.containsKey(s.getIndex())).collect(Collectors.toList());
   }
 
   /**

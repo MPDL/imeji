@@ -61,6 +61,7 @@ public class CellComponent implements Serializable {
    */
   public void changeStatement(Statement s) {
     if (s.getType().equals(statement.getType())) {
+      statement.setIndex(s.getIndex());;
       inputs.stream().peek(i -> i.getMetadata().setStatementId(s.getIndex()))
           .forEach(i -> i.setStatement(s));
     }

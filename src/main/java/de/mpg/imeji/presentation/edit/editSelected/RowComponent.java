@@ -27,9 +27,6 @@ public class RowComponent implements Serializable {
       List<SelectStatementWithInputComponent> columns) {
     this.item = item;
     this.filename = item.getFilename();
-    System.out.println(columns.stream().map(SelectStatementWithInputComponent::getIndex)
-        .collect(Collectors.toList()));
-
     cells = columns.stream().map(c -> new CellComponent(c.asStatement(), item.getMetadata()))
         .collect(Collectors.toList());
   }

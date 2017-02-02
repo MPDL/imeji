@@ -74,14 +74,14 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
    */
   private void initColumns(List<Item> items) {
     // Create a Map of the columns from the existing Metadata of the item
-    final Map<String, SelectStatementWithInputComponent> columnMap =
-        items.stream().flatMap(item -> item.getMetadata().stream())
-            .collect(Collectors.toMap(Metadata::getStatementId,
-                md -> new SelectStatementWithInputComponent(md.getStatementId(), statementMap),
-                (s1, s2) -> s1));
+    final Map<String, SelectStatementWithInputComponent> columnMap = items.stream()
+        .flatMap(item -> item.getMetadata().stream()).filter(md -> md.getStatementId().length() > 0)
+        .collect(Collectors.toMap(Metadata::getStatementId,
+            md -> new SelectStatementWithInputComponent(md.getStatementId(), statementMap),
+            (s1, s2) -> s1));
 
     // Get the default statement of this instance
-    Map<String, Statement> defaultStatement = getDefaultStatements();
+    final Map<String, Statement> defaultStatement = getDefaultStatements();
 
     // Add the default Statement to the columns
     columnMap.putAll(getDefaultStatements().values().stream()
@@ -106,7 +106,8 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
 
   @Override
   public List<SelectStatementWithInputComponent> getAllStatements() {
-    return columns;
+    return columns.stream().filter(c -> !(c.getInput() == null || c.getInput().isEmpty()))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -127,11 +128,16 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
    * @param position
    */
   public void changeColumnName(int position) {
+    // Get the Statement to change the name
     SelectStatementWithInputComponent column = columns.get(position);
-    Statement st = statementMap.get(editedColumn);
+    Statement st = column.asStatement();
+    // Change the statement name
     st.setIndex(column.getIndex());
+    // Change the statement name for all rows
     rows.stream().forEach(r -> r.changeStatement(editedColumn, st));
+    // Add the new name to the displayed statement
     displayedColumns.set(displayedColumns.indexOf(editedColumn), st.getIndex());
+    // Reset the edited column value
     editedColumn = null;
   }
 

@@ -3,6 +3,8 @@ package de.mpg.imeji.logic.statement;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -54,5 +56,15 @@ public class StatementUtil {
    */
   public static String encodeIndex(String index) {
     return new String(index.replace(" ", "_").toLowerCase());
+  }
+
+  /**
+   * Transform a list of statement to a map of statement with its id as key
+   * 
+   * @param l
+   * @return
+   */
+  public static Map<String, Statement> statementListToMap(List<Statement> l) {
+    return l.stream().collect(Collectors.toMap(Statement::getIndex, Function.identity()));
   }
 }

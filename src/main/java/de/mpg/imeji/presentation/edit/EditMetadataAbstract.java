@@ -1,13 +1,11 @@
 package de.mpg.imeji.presentation.edit;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -41,10 +39,13 @@ public abstract class EditMetadataAbstract extends SuperBean {
   private List<SelectItem> statementMenu = new ArrayList<>();
   protected Map<String, Statement> statementMap = new HashMap<>();
 
+  /**
+   * Default constructor
+   */
   public EditMetadataAbstract() {
     final StatementService statementService = new StatementService();
     try {
-      statementMap = statementListToMap(
+      statementMap = StatementUtil.statementListToMap(
           statementService.searchAndRetrieve(null, null, getSessionUser(), -1, 0));
       statementMenu =
           statementMap.keySet().stream().map(s -> new SelectItem(s)).collect(Collectors.toList());
@@ -59,7 +60,7 @@ public abstract class EditMetadataAbstract extends SuperBean {
    */
   public void save() {
     try {
-      statementService.createBatch(getNewStatements(), getSessionUser());
+      statementService.createBatchIfNotExists(getStatements(), getSessionUser());
       itemService.updateBatch(toItemList(), getSessionUser());
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
     } catch (final ImejiException e) {
@@ -77,11 +78,7 @@ public abstract class EditMetadataAbstract extends SuperBean {
     final Map<String, Statement> map = new HashMap<>();
     try {
       // add from config
-      map.putAll(statementListToMap(retrieveInstanceDefaultStatements()));
-      // add from item collections
-      for (CollectionImeji c : getItemsCollections()) {
-        map.putAll(getStatementMapForCollection(c));
-      }
+      map.putAll(StatementUtil.statementListToMap(retrieveInstanceDefaultStatements()));
     } catch (Exception e) {
       LOGGER.error("Error adding default statement to editor", e);
     }
@@ -97,33 +94,6 @@ public abstract class EditMetadataAbstract extends SuperBean {
   private List<Statement> retrieveInstanceDefaultStatements() throws ImejiException {
     return statementService.retrieveBatch(
         StatementUtil.toStatementUriList(Imeji.CONFIG.getStatements()), getSessionUser());
-  }
-
-
-  /**
-   * Return the statement map for one collection as defined as default statement for this collection
-   * 
-   * @param c
-   * @return
-   * @throws ImejiException
-   */
-  protected Map<String, Statement> getStatementMapForCollection(CollectionImeji c)
-      throws ImejiException {
-    if (c.getStatements() == null) {
-      return new HashMap<>();
-    }
-    return statementListToMap(statementService
-        .retrieveBatch(Arrays.asList(c.getStatements().split(",")), getSessionUser()));
-  }
-
-  /**
-   * Transform a list of statement to a map of statement with its id as key
-   * 
-   * @param l
-   * @return
-   */
-  private Map<String, Statement> statementListToMap(List<Statement> l) {
-    return l.stream().collect(Collectors.toMap(Statement::getIndex, Function.identity()));
   }
 
   /**
@@ -160,14 +130,8 @@ public abstract class EditMetadataAbstract extends SuperBean {
    *
    * @return
    */
-  private List<Statement> getNewStatements() {
-    final List<Statement> newStatements = new ArrayList<>();
-    for (final SelectStatementComponent component : getAllStatements()) {
-      if (!component.isExists()) {
-        newStatements.add(component.asStatement());
-      }
-    }
-    return newStatements;
+  private List<Statement> getStatements() {
+    return getAllStatements().stream().map(s -> s.asStatement()).collect(Collectors.toList());
   }
 
 
