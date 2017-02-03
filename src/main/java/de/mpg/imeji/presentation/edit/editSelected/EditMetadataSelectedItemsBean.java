@@ -49,9 +49,17 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   @PostConstruct
   public void init() {
     try {
+      long a = System.currentTimeMillis();
       final List<Item> itemList = retrieveItems();
+      long b = System.currentTimeMillis();
       initColumns(itemList);
+      long c = System.currentTimeMillis();
       initRows(itemList);
+      long d = System.currentTimeMillis();
+      System.out.println("Total: " + (d - a));
+      System.out.println("retrieve: " + (b - a));
+      System.out.println("columns: " + (c - b));
+      System.out.println("rows: " + (d - c));
     } catch (final ImejiException e) {
       BeanHelper.error("Error initialiting page:" + e.getCause());
       LOGGER.error("Error initializing bean", e);

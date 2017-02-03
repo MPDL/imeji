@@ -70,7 +70,18 @@ public class ThreadedTransaction implements Callable<Integer> {
    * @throws Exception
    */
   public static void run(ThreadedTransaction t) throws ImejiException {
-    final Future<Integer> f = EXECUTOR.submit(t);
+    run(t, EXECUTOR);
+  }
+
+  /**
+   * Run a {@link ThreadedTransaction} with the {@link ExecutorService} of imeji
+   *
+   * @param t
+   * @throws Exception
+   */
+  public static void run(ThreadedTransaction t, ExecutorService executor) throws ImejiException {
+    final Future<Integer> f = executor.submit(t);
+
     // wait for the transaction to be finished
     try {
       f.get();
@@ -79,4 +90,6 @@ public class ThreadedTransaction implements Callable<Integer> {
     }
     t.throwException();
   }
+
+
 }

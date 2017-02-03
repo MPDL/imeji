@@ -2,6 +2,8 @@ package de.mpg.imeji.logic.db.writer;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.hp.hpl.jena.Jena;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -30,6 +32,7 @@ import de.mpg.imeji.logic.vo.User;
  */
 public class JenaWriter implements Writer {
   private final String modelURI;
+  private static final ExecutorService WRITE_EXECUTOR = Executors.newSingleThreadExecutor();
 
   /**
    * Construct one {@link JenaWriter} for one {@link Model}
@@ -108,6 +111,6 @@ public class JenaWriter implements Writer {
       throws ImejiException {
     final Transaction t = new CRUDTransaction(objects, type, modelURI, lazy);
     // Write Transaction needs to be added in a new Thread
-    ThreadedTransaction.run(new ThreadedTransaction(t, Imeji.tdbPath));
+    ThreadedTransaction.run(new ThreadedTransaction(t, Imeji.tdbPath), WRITE_EXECUTOR);
   }
 }
