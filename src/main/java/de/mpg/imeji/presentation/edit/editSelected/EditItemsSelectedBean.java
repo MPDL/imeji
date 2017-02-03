@@ -28,11 +28,11 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  * @author saquet
  *
  */
-@ManagedBean(name = "EditMetadataSelectedItemsBean")
+@ManagedBean(name = "EditItemsSelectedBean")
 @ViewScoped
-public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
+public class EditItemsSelectedBean extends EditMetadataAbstract {
   private static final long serialVersionUID = -5474571536513587078L;
-  private static final Logger LOGGER = Logger.getLogger(EditMetadataSelectedItemsBean.class);
+  private static final Logger LOGGER = Logger.getLogger(EditItemsSelectedBean.class);
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItemsIds = new ArrayList<>();
   private List<SelectStatementWithInputComponent> columns = new ArrayList<>();
@@ -41,7 +41,7 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   private List<String> displayedColumns = new ArrayList<>();
   private String editedColumn = "";
 
-  public EditMetadataSelectedItemsBean() throws ImejiException {
+  public EditItemsSelectedBean() throws ImejiException {
     super();
     this.newStatement = new SelectStatementWithInputComponent(statementMap);
   }
@@ -49,17 +49,9 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   @PostConstruct
   public void init() {
     try {
-      long a = System.currentTimeMillis();
       final List<Item> itemList = retrieveItems();
-      long b = System.currentTimeMillis();
       initColumns(itemList);
-      long c = System.currentTimeMillis();
       initRows(itemList);
-      long d = System.currentTimeMillis();
-      System.out.println("Total: " + (d - a));
-      System.out.println("retrieve: " + (b - a));
-      System.out.println("columns: " + (c - b));
-      System.out.println("rows: " + (d - c));
     } catch (final ImejiException e) {
       BeanHelper.error("Error initialiting page:" + e.getCause());
       LOGGER.error("Error initializing bean", e);

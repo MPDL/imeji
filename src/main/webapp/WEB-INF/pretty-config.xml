@@ -24,13 +24,13 @@
 		<pattern value="/edit/license"></pattern>
 		<view-id>/jsf/ItemsEditLicense.xhtml</view-id>
 	</url-mapping>
-	<url-mapping id="editPage">
-		<pattern value="/edit"></pattern>
-		<view-id>/jsf/BatchEdit.xhtml</view-id>
-	</url-mapping>
-	<url-mapping id="editSelectedItems">
+	<url-mapping id="editItemsSelected">
 		<pattern value="/editselected"></pattern>
-		<view-id>/jsf/EditMetadataSelectedItems.xhtml</view-id>
+		<view-id>/jsf/EditItemsSelected.xhtml</view-id>
+	</url-mapping>
+	<url-mapping id="editItemsBatch">
+		<pattern value="/editbatch"></pattern>
+		<view-id>/jsf/EditItemsBatch.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="item">
 		<pattern value="/item/#{ id }" />

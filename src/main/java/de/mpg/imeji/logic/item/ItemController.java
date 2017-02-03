@@ -128,6 +128,7 @@ class ItemController extends ImejiControllerAbstract<Item> {
       }
       cleanLicenses(item);
     }
+
   }
 
   /**

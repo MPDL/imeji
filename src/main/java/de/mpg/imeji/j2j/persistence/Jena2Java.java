@@ -69,7 +69,7 @@ public class Jena2Java {
       javaObject = createJavaObjectFromDataType(subject);
     }
     for (final Field f : J2JHelper.getAllObjectFields(javaObject.getClass())) {
-      Object object = J2JHelper.getFieldAsJavaObject(f, javaObject);
+      Object object = J2JHelper.getFieldAsJavaObjectNonNull(f, javaObject);
       object = loadObject(subject, f, object, 0, null);
       setField(javaObject, f, object);
     }
@@ -143,9 +143,9 @@ public class Jena2Java {
     if (st != null) {
       final URI uri = URI.create(st.getObject().toString());
       J2JHelper.setId(object, uri);
-      object = loadResource(object);
+      return loadResource(object);
     }
-    return object;
+    return null;
   }
 
   /**

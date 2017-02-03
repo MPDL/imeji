@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -18,6 +19,7 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
 import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
@@ -36,14 +38,13 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   private static final Logger LOGGER = Logger.getLogger(EditItemsBatchBean.class);
   private String collectionId;
   private String query;
-  private SelectStatementWithInputComponent input;
+  private SelectStatementWithInputComponent statementSelector;
   private List<Item> items = new ArrayList<>();
 
   @PostConstruct
   public void init() {
     collectionId = UrlHelper.getParameterValue("col");
-    query = UrlHelper.getParameterValue("q") == null ? "" : UrlHelper.getParameterValue("q");
-    setInput(new SelectStatementWithInputComponent(statementMap));
+    statementSelector = new SelectStatementWithInputComponent(statementMap);
   }
 
 
@@ -53,6 +54,8 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   public void append() {
     try {
       retrieveItems();
+      items.stream()
+          .forEach(item -> item.getMetadata().add(statementSelector.getInput().getMetadata()));
       save();
     } catch (Exception e) {
       BeanHelper.error("Error saving editor: " + e.getMessage());
@@ -65,12 +68,31 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
    */
   public void fill() {
     try {
-      retrieveItems();
+      items = retrieveItems();
+      Metadata metadata = statementSelector.getInput().getMetadata();
+      System.out
+          .println("Filling: " + metadata.getStatementId() + " with value " + metadata.getText());
+      items.stream()
+          .filter(item -> item.getMetadata().stream()
+              .noneMatch(md -> md.getStatementId().equals(statementSelector.getIndex())))
+          .sequential().forEach(item -> item.getMetadata().add(metadata));
+      System.out.println("result");
+      for (Item item : items) {
+        System.out.println("Item:" + item.getFilename());
+        for (Metadata m : item.getMetadata()) {
+          System.out.println(m.getUri() + "-" + m.getStatementId() + "-" + m.getText());
+        }
+      }
       save();
+      init();
     } catch (Exception e) {
       BeanHelper.error("Error saving editor: " + e.getMessage());
       LOGGER.error("Error saving batch editor");
     }
+  }
+
+  private boolean hasStatement(Item item, Statement s) {
+    return item.getMetadata().stream().anyMatch(md -> md.getStatementId().equals(s.getIndex()));
   }
 
   /**
@@ -79,6 +101,11 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   public void overwrite() {
     try {
       retrieveItems();
+      items.stream()
+          .peek(item -> item.getMetadata().stream()
+              .filter(md -> !md.getStatementId().equals(statementSelector.getIndex()))
+              .collect(Collectors.toList()))
+          .forEach(item -> item.getMetadata().add(statementSelector.getInput().getMetadata()));
       save();
     } catch (Exception e) {
       BeanHelper.error("Error saving editor: " + e.getMessage());
@@ -86,14 +113,14 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
     }
   }
 
-  private void retrieveItems() throws ImejiException, IOException {
+
+  private List<Item> retrieveItems() throws ImejiException, IOException {
     SearchQuery q = SearchQueryParser.parseStringQuery(query);
     if (collectionId != null) {
-      items =
-          itemService.searchAndRetrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId), q,
-              null, getSessionUser(), 0, -1);
+      return itemService.searchAndRetrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId),
+          q, null, getSessionUser(), 0, -1);
     } else {
-      items = itemService.searchAndRetrieve(q, null, getSessionUser(), -1, 0);
+      return itemService.searchAndRetrieve(q, null, getSessionUser(), -1, 0);
     }
   }
 
@@ -104,21 +131,23 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
 
   @Override
   public List<Statement> getAllStatements() {
-    return Arrays.asList(input.getInput().getStatement());
+    return Arrays.asList(statementSelector.getInput().getStatement());
+  }
+
+
+  /**
+   * @return the statementSelector
+   */
+  public SelectStatementWithInputComponent getStatementSelector() {
+    return statementSelector;
   }
 
   /**
-   * @return the input
+   * @param statementSelector the statementSelector to set
    */
-  public SelectStatementWithInputComponent getInput() {
-    return input;
+  public void setStatementSelector(SelectStatementWithInputComponent statementSelector) {
+    this.statementSelector = statementSelector;
   }
 
-  /**
-   * @param input the input to set
-   */
-  public void setInput(SelectStatementWithInputComponent input) {
-    this.input = input;
-  }
 
 }
