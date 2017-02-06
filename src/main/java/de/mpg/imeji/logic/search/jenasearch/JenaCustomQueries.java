@@ -272,8 +272,9 @@ public class JenaCustomQueries {
    */
   public static final String selectItemIdOfFileUrl(String fileUrl) {
     String path = URI.create(fileUrl).getPath();
-    return X_PATH_FUNCTIONS_DECLARATION + "  SELECT DISTINCT ?s WHERE {"
-        + "?s <http://imeji.org/terms/webImageUrl> ?url1 . ?s <http://imeji.org/terms/thumbnailImageUrl> ?url2 . ?s <http://imeji.org/terms/fullImageUrl> ?url3 . FILTER(REGEX(str(?url1), '"
+    return X_PATH_FUNCTIONS_DECLARATION
+        + "  SELECT DISTINCT(str(?item) AS ?s) WHERE {?content <http://imeji.org/terms/itemId> ?item . "
+        + "?content <http://imeji.org/terms/preview>  ?url1 . ?content <http://imeji.org/terms/thumbnail> ?url2 . ?content <http://imeji.org/terms/original>  ?url3 . FILTER(REGEX(str(?url1), '"
         + path + "', 'i') || REGEX(str(?url2), '" + path + "', 'i') || REGEX(str(?url3), '" + path
         + "', 'i'))} LIMIT 1 ";
   }
