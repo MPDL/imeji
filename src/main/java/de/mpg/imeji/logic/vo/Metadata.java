@@ -6,6 +6,7 @@ import java.net.URI;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.util.IdentifierUtil;
 
 /**
  * A metadata for imeji object
@@ -17,7 +18,7 @@ import de.mpg.imeji.j2j.annotations.j2jResource;
 @j2jId(getMethod = "getUri", setMethod = "setUri")
 public class Metadata implements Serializable {
   private static final long serialVersionUID = 8758936270562178555L;
-  private URI uri;
+  private URI uri = IdentifierUtil.newURI(Metadata.class, "universal");
   @j2jLiteral("http://imeji.org/terms/statement")
   private String statementId;
   @j2jLiteral("http://imeji.org/terms/text")
@@ -32,6 +33,20 @@ public class Metadata implements Serializable {
   private double longitude = Double.NaN;
   @j2jLiteral("http://xmlns.com/foaf/0.1/person")
   private Person person;
+
+  public Metadata copy() {
+    Metadata copy = new Metadata();
+    copy.setStatementId(statementId);
+    copy.setText(text);
+    copy.setNumber(number);
+    copy.setUrl(url);
+    if (person != null) {
+      copy.setPerson(person.clone());
+    }
+    copy.setLongitude(longitude);
+    copy.setLatitude(latitude);
+    return copy;
+  }
 
   /**
    * @return the uri
@@ -144,4 +159,6 @@ public class Metadata implements Serializable {
   public void setPerson(Person person) {
     this.person = person;
   }
+
+
 }

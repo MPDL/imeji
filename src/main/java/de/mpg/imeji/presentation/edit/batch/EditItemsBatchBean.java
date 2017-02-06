@@ -47,15 +47,13 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
     statementSelector = new SelectStatementWithInputComponent(statementMap);
   }
 
-
   /**
    * Append a new metadata to all items
    */
   public void append() {
     try {
       retrieveItems();
-      items.stream()
-          .forEach(item -> item.getMetadata().add(statementSelector.getInput().getMetadata()));
+      items.stream().forEach(item -> item.getMetadata().add(getMetadata()));
       save();
     } catch (Exception e) {
       BeanHelper.error("Error saving editor: " + e.getMessage());
@@ -69,30 +67,16 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   public void fill() {
     try {
       items = retrieveItems();
-      Metadata metadata = statementSelector.getInput().getMetadata();
-      System.out
-          .println("Filling: " + metadata.getStatementId() + " with value " + metadata.getText());
       items.stream()
           .filter(item -> item.getMetadata().stream()
               .noneMatch(md -> md.getStatementId().equals(statementSelector.getIndex())))
-          .sequential().forEach(item -> item.getMetadata().add(metadata));
-      System.out.println("result");
-      for (Item item : items) {
-        System.out.println("Item:" + item.getFilename());
-        for (Metadata m : item.getMetadata()) {
-          System.out.println(m.getUri() + "-" + m.getStatementId() + "-" + m.getText());
-        }
-      }
+          .sequential().forEach(item -> item.getMetadata().add(getMetadata()));
       save();
       init();
     } catch (Exception e) {
       BeanHelper.error("Error saving editor: " + e.getMessage());
       LOGGER.error("Error saving batch editor");
     }
-  }
-
-  private boolean hasStatement(Item item, Statement s) {
-    return item.getMetadata().stream().anyMatch(md -> md.getStatementId().equals(s.getIndex()));
   }
 
   /**
@@ -105,7 +89,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
           .peek(item -> item.getMetadata().stream()
               .filter(md -> !md.getStatementId().equals(statementSelector.getIndex()))
               .collect(Collectors.toList()))
-          .forEach(item -> item.getMetadata().add(statementSelector.getInput().getMetadata()));
+          .forEach(item -> item.getMetadata().add(getMetadata()));
       save();
     } catch (Exception e) {
       BeanHelper.error("Error saving editor: " + e.getMessage());
@@ -113,7 +97,22 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
     }
   }
 
+  /**
+   * Return a copy of the Metadata in the {@link SelectStatementWithInputComponent}
+   * 
+   * @return
+   */
+  private Metadata getMetadata() {
+    return statementSelector.getInput().getMetadata().copy();
+  }
 
+  /**
+   * Retrive the current items
+   * 
+   * @return
+   * @throws ImejiException
+   * @throws IOException
+   */
   private List<Item> retrieveItems() throws ImejiException, IOException {
     SearchQuery q = SearchQueryParser.parseStringQuery(query);
     if (collectionId != null) {

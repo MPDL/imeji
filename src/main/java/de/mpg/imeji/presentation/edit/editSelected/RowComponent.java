@@ -48,7 +48,7 @@ public class RowComponent implements Serializable {
    */
   public void addCell(Statement statement, Metadata metadata) {
     final List<Metadata> l = new ArrayList<>();
-    l.add(metadata);
+    l.add(metadata.copy());
     cells.add(new CellComponent(statement, l));
   }
 
