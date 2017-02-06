@@ -68,7 +68,8 @@ public class ListUtils {
    */
   private static MetadataProfile findItemProfileFromList(List<MetadataProfile> profiles,
       Item item) {
-    if (profiles == null || item == null || item.getMetadataSet().getProfile() == null) {
+    if (profiles == null || item == null || profiles.size() == 0
+        || item.getMetadataSet().getProfile() == null) {
       return null;
     }
     for (MetadataProfile profile : profiles) {

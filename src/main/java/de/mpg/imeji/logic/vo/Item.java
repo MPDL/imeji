@@ -73,7 +73,7 @@ public class Item extends Properties implements Serializable {
    * Default constructor
    */
   public Item() {
-    // Do nothing
+    metadataSets = new ArrayList<MetadataSet>();
   }
 
   public Item(Item im) {
