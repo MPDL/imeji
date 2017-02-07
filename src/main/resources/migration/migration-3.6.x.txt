@@ -1,0 +1,34 @@
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+
+WITH <http://imeji.org/item>
+DELETE{<http://imeji.org/terms/metadata#license> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.License"}
+INSERT{<http://imeji.org/terms/metadata#link> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.Link"}
+USING <http://imeji.org/item>
+WHERE{<http://imeji.org/terms/metadata#license> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "de.mpg.imeji.logic.vo.predefinedMetadata.License"};
+
+WITH <http://imeji.org/metadataProfile>
+DELETE{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#license>}
+INSERT{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#link>}
+USING <http://imeji.org/metadataProfile>
+WHERE{?s <http://purl.org/dc/terms/type> <http://imeji.org/terms/metadata#license>};
+
+WITH <http://imeji.org/item>
+DELETE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#license> . ?s <http://imeji.org/terms/license> ?licenseName . ?s <http://purl.org/dc/elements/1.1/identifier>  ?licenseUrl}
+INSERT{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#link> . ?s <http://www.w3.org/2000/01/rdf-schema#label> ?licenseName . ?s <http://imeji.org/terms/uri> ?licenseUrl}
+USING <http://imeji.org/item>
+WHERE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#license> . OPTIONAL{ ?s <http://imeji.org/terms/license> ?licenseName} . OPTIONAL {?s <http://purl.org/dc/elements/1.1/identifier>  ?licenseUrl}};
+
+WITH <http://imeji.org/item>
+INSERT{?s  <http://imeji.org/terms/uri> <https://example.org/>}
+USING <http://imeji.org/item>
+WHERE{?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/metadata#link> . not exists {?s <http://imeji.org/terms/uri> ?url}};
+
+WITH <http://imeji.org/item>
+DELETE{?item <http://imeji.org/terms/license> ?lic}
+USING <http://imeji.org/item>
+WHERE{?item <http://imeji.org/terms/license> ?lic . not exists{?lic ?p ?o}};
+
+WITH <http://imeji.org/metadataProfile>
+DELETE {?s <http://imeji.org/terms/parent> ?o}
+WHERE{?s <http://imeji.org/terms/parent> ?o};
