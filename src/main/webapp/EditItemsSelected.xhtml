@@ -1,0 +1,135 @@
+<ui:composition template="templates/template_site.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+
+	<ui:param name="headline" value="#{lbl.edit_selected_items}" />
+	<ui:param name="title" value="#{headline}" />
+
+	<ui:define name="mainContent">
+		<style>
+		body {
+			overflow: hidden;
+		}
+		</style>
+		<script>
+		 	$( document ).ready(function() {
+		 		stopLoader();
+		 	});
+	 	</script>
+		<div class="loaderWrapper show" />
+		<div class="loader show" />
+		<h:form id="editSelectedForm" prependId="false">
+			<div class="editSelectedWrapper">
+				<div class="editSelectedHeader">
+					<h:outputLink value="#{EditItemsSelectedBean.backUrl}">#{lbl.back_to_pictures}</h:outputLink>
+					<h:commandLink type="submit" styleClass="imj_submitButton"
+						action="#{EditItemsSelectedBean.save}" value="#{lbl.save}"
+						onclick="startLoader();">
+						<f:ajax execute="@form" render="@form" />
+					</h:commandLink>
+					<h:panelGroup id="selectMetadataWrapper">
+						<md:select
+							component="#{EditItemsSelectedBean.newStatement}"
+							menu="#{EditItemsSelectedBean.filteredStatementMenu}"
+							render=":selectMetadataWrapper" />
+						<h:commandLink
+							action="#{EditItemsSelectedBean.addColumn}"
+							value=" #{lbl.add}" title="#{lbl.add}"
+							rendered="#{!empty EditItemsSelectedBean.newStatement.index}"
+							onclick="startLoader();">
+							<f:ajax execute="@form" render="@form" />
+						</h:commandLink>
+					</h:panelGroup>
+					<br />
+					
+					<br /> #{lbl.edit_selected_filter_columns}:
+					<div class="edit_selected_table_button">
+						<h:selectManyCheckbox for="filterColumns" value="#{EditItemsSelectedBean.displayedColumns}" onclick="startLoader();">
+							<f:selectItems value="#{EditItemsSelectedBean.columns}" var="column" itemLabel="#{column.index}" itemValue="#{column.index}"  />
+							<f:ajax event="change" execute="@this" render="@form" />
+						</h:selectManyCheckbox>
+					</div>
+					
+				</div>
+				<div class="edit_selected_table_wrapper">
+					<table class="edit_selected_table">
+						<tr>
+							<th>#{lbl.filename}</th>
+							<ui:repeat id="list" value="#{EditItemsSelectedBean.columns}" var="column" varStatus="status">
+								<ui:fragment rendered="#{EditItemsSelectedBean.displayedColumns.contains(column.index)}">
+									<th class="column_#{status.index}">
+										<h:panelGroup id="head" layout="block" class="edit_selected_table_button">
+											<h:outputText value="#{column.index}" rendered="#{EditItemsSelectedBean.editedColumn != column.index}"/>
+											<div>
+												<md:input id="batchInput" metadataInputComponent="#{column.input}" rendered="#{!empty column.input}" />
+												<ui:fragment rendered="#{EditItemsSelectedBean.editedColumn == column.index}">
+													<h:inputText class="combobox" onfocus="$('#statementList').show();" value="#{column.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}"/>
+													<h:commandLink styleClass="fa fa-check edit_selected_table_icon" action="#{EditItemsSelectedBean.changeColumnName(status.index)}" value=""
+														title="#{lbl.save}" onclick="startLoader();">
+														<f:ajax execute="@form" render="@form" />
+													</h:commandLink>
+												</ui:fragment>
+												<ui:fragment rendered="#{empty column.input and EditItemsSelectedBean.editedColumn != column.index}">
+												<h:commandLink styleClass="fa fa-magic edit_selected_table_icon" action="#{column.addInput}" value="" title="#{lbl.edit_all}" >
+													<f:ajax execute="@this" render=":list:#{status.index}:head" />
+												</h:commandLink>
+												<h:commandLink
+													styleClass="fa fa-cog edit_selected_table_icon"
+													action="#{EditItemsSelectedBean.setEditedColumn(column.index)}" value=""
+													title="#{lbl.edit_metadata_name}">
+													<f:ajax execute="@this" render=":list:#{status.index}:head" />
+												</h:commandLink>
+												<h:commandLink
+													styleClass="fa fa-times edit_selected_table_icon"
+													action="#{EditItemsSelectedBean.clearColumn(status.index)}"
+													value="" title="#{lbl.clear}"  onclick="startLoader();">
+													<f:ajax execute="@form" render="@form" />
+												</h:commandLink>
+												<h:commandLink styleClass="fa fa-trash edit_selected_table_icon" action="#{EditItemsSelectedBean.removeColumn(column.index)}"
+													value="" title="#{lbl.remove}"  onclick="startLoader();">
+													<f:ajax execute="@form" render="@form" />
+												</h:commandLink>
+												</ui:fragment>
+											</div>
+											<h:panelGroup layout="block" class="edit_selected_table_button" rendered="#{!empty column.input}">
+												<h:commandLink action="#{EditItemsSelectedBean.addMetadataToColumn(status.index)}" value="#{lbl.add_to_all}" title="#{lbl.add_to_all}"  onclick="startLoader();">
+													<f:ajax execute="@form" render="@form" />
+												</h:commandLink>
+											</h:panelGroup>
+										</h:panelGroup>
+									</th>
+								</ui:fragment>
+							</ui:repeat>
+						</tr>
+
+						<ui:repeat id="item" value="#{EditItemsSelectedBean.rows}" var="row" varStatus="itemStatus">
+							<tr>
+								<th>#{row.filename}</th>
+								<ui:repeat id="metadata" value="#{row.cells}" var="cell" varStatus="status">
+									<ui:fragment rendered="#{EditItemsSelectedBean.displayedColumns.contains(cell.statement.index)}">
+										<td class="column_#{status.index}">
+											<h:panelGroup id="cellInput">
+												<ui:repeat id="value" value="#{cell.inputs}" var="input">
+													<md:input id="input" metadataInputComponent="#{input}" />
+												</ui:repeat>
+											</h:panelGroup>
+											<div class="edit_selected_table_button">
+												<h:commandLink type="submit" styleClass="fa fa-plus" action="#{cell.addValue}" value="" title="#{lbl.add_metadata}">
+													<f:ajax execute=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput"
+														render=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput" />
+												</h:commandLink>
+											</div></td>
+									</ui:fragment>
+								</ui:repeat>
+							</tr>
+						</ui:repeat>
+					</table>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

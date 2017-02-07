@@ -19,7 +19,7 @@ public class MetadataInputComponent implements Serializable {
   private boolean emtpy = false;
 
   public MetadataInputComponent(Metadata metadata, Statement statement) {
-    this.metadata = metadata;
+    this.metadata = metadata.copy();
     this.statement = statement;
     emtpy = MetadataUtil.isEmpty(metadata);
   }

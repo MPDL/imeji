@@ -356,7 +356,7 @@ public class ItemBean extends SuperBean {
     final List<SelectItem> statementMenu = new ArrayList<SelectItem>();
     for (final Statement s : new StatementService().searchAndRetrieve(null, null, getSessionUser(),
         -1, 0)) {
-      statementMenu.add(new SelectItem(s.getId(), s.getIndex()));
+      statementMenu.add(new SelectItem(s.getIndex(), s.getIndex()));
     }
     return statementMenu;
   }

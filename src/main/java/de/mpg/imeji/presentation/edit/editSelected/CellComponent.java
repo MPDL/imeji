@@ -3,7 +3,9 @@ package de.mpg.imeji.presentation.edit.editSelected;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
@@ -22,9 +24,9 @@ public class CellComponent implements Serializable {
 
   public CellComponent(Statement statement, List<Metadata> metadata) {
     this.statement = statement;
-    for (final Metadata m : metadata) {
-      inputs.add(new MetadataInputComponent(m, statement));
-    }
+    // Init the input only for the metadata of this statement
+    inputs = metadata.stream().filter(md -> md.getStatementId().equals(statement.getIndex()))
+        .map(md -> new MetadataInputComponent(md, statement)).collect(Collectors.toList());
   }
 
   public List<Metadata> toMetadataList() {
@@ -49,6 +51,20 @@ public class CellComponent implements Serializable {
    */
   public void addValue() {
     inputs.add(new MetadataInputComponent(ImejiFactory.newMetadata(statement).build(), statement));
+  }
+
+  /**
+   * Change the Statement of this input
+   * 
+   * @param s
+   * @throws UnprocessableError
+   */
+  public void changeStatement(Statement s) {
+    if (s.getType().equals(statement.getType())) {
+      statement.setIndex(s.getIndex());;
+      inputs.stream().peek(i -> i.getMetadata().setStatementId(s.getIndex()))
+          .forEach(i -> i.setStatement(s));
+    }
   }
 
   /**

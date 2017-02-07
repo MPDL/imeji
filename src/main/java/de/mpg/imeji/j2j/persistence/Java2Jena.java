@@ -207,10 +207,12 @@ public class Java2Jena {
     for (final Field f : J2JHelper.getAllObjectFields(o.getClass())) {
       try {
         final Object r = J2JHelper.getFieldAsJavaObject(f, o);
-        if (r instanceof List<?>) {
-          addList2Resource(s, ((List<?>) r), f);
-        } else {
-          addProperty(s, r, f);
+        if (r != null) {
+          if (r instanceof List<?>) {
+            addList2Resource(s, ((List<?>) r), f);
+          } else {
+            addProperty(s, r, f);
+          }
         }
       } catch (final Exception e) {
         throw new RuntimeException(
@@ -364,7 +366,7 @@ public class Java2Jena {
     for (final Field f : J2JHelper.getAllObjectFields(r.getClass())) {
       if (!(lazy && J2JHelper.isLazyList(f))) {
         try {
-          final Object r2 = J2JHelper.getFieldAsJavaObject(f, r);
+          final Object r2 = J2JHelper.getFieldAsJavaObjectNonNull(f, r);
           if (J2JHelper.isResource(r2) && exists(r2)) {
             final Resource o = model.getResource(J2JHelper.getId(r2).toString());
             l.add(o);

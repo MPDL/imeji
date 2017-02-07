@@ -30,19 +30,15 @@
 		</h:panelGroup>
 
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-			<!-- Only for Admins -->
-
+			<!-- Only for Admins --><br /><br />
 			<div class="imj_userConfig">
-
 				<!-- Admin - TiledList -->
 				<div class="imj_administrationTiledList imj_maxWidth">
 
 					<div class="imj_listBody">
 
-						<h:panelGroup layout="block"
-							styleClass="imj_adminPanel imj_userConfig"
-							rendered="#{Auth.sysAdmin}">
-
+						<h:panelGroup layout="block" styleClass="imj_adminPanel imj_userConfig" rendered="#{Auth.sysAdmin}">
+							
 							<h:outputText value="#{lbl.admin_tools_warning}" />
 							<br />
 							<!-- Admin - SPARQL -->

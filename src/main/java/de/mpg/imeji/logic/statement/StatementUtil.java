@@ -1,7 +1,10 @@
 package de.mpg.imeji.logic.statement;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -31,5 +34,37 @@ public class StatementUtil {
     return Arrays.asList(str.split(",")).stream()
         .map(s -> ObjectHelper.getURI(Statement.class, s.toLowerCase()).toString())
         .collect(Collectors.toList());
+  }
+
+  /**
+   * Return a list of statement as a String of all their names separated by a comma
+   * 
+   * @param statements
+   * @return
+   */
+  public static String toStatementNamesString(List<Statement> statements) {
+    return statements.stream().map(s -> ObjectHelper.getId(s.getUri()))
+        .collect(Collectors.joining(","));
+  }
+
+  /**
+   * Format the index in a case insensitive UrlFriendly manner (but not url encoded!)
+   * 
+   * @param index
+   * @return
+   * @throws UnsupportedEncodingException
+   */
+  public static String encodeIndex(String index) {
+    return new String(index.replace(" ", "_").toLowerCase());
+  }
+
+  /**
+   * Transform a list of statement to a map of statement with its id as key
+   * 
+   * @param l
+   * @return
+   */
+  public static Map<String, Statement> statementListToMap(List<Statement> l) {
+    return l.stream().collect(Collectors.toMap(Statement::getIndex, Function.identity()));
   }
 }

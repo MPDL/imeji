@@ -10,8 +10,7 @@
 	<ui:param name="currentMainMenu" value="admin" />
 
 	<ui:define name="actionsMenu">
-		<menu:context_actionMenu id="action" curMainMenu="#{currentMainMenu}"
-			downloadEnabled="false" actionEnabled="false" />
+
 	</ui:define>
 
 	<ui:define name="mainContent">
@@ -33,7 +32,6 @@
 
 		<ui:fragment rendered="#{Auth.sysAdmin}">
 			<!-- Only for Admins -->
-
 			<!-- Admin - TiledList -->
 			<div class="imj_administrationTiledList imj_maxWidth">
 
@@ -51,7 +49,6 @@
 								<h:outputText value="#{lbl.storage_space_per_institute}" />
 							</h2>
 						</div>
-
 						<div class="imj_content">
 							<!-- Table -->
 							<ui:repeat var="institute"
@@ -68,22 +65,13 @@
 									</div>
 								</h:panelGroup>
 							</ui:repeat>
-
-
 						</div>
 						<!-- END CONTENT -->
 					</h:panelGroup>
-
-
-
 				</div>
 				<!-- END LIST BODY -->
-
 			</div>
 			<!-- END ADMIN LIST -->
-
-
-
 		</ui:fragment>
 
 	</ui:define>

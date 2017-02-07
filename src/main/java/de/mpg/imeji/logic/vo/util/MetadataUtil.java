@@ -16,9 +16,8 @@ public class MetadataUtil {
 
   public static Metadata getDefaultValueMetadata(Statement statement)
       throws UnprocessableError, IllegalAccessException, InstantiationException {
-    final String type = statement.getType().toString();
     final Metadata md = new Metadata();
-    md.setStatementId(statement.getId());
+    md.setStatementId(statement.getIndex());
     switch (statement.getType()) {
       case TEXT:
         md.setText("Textual value");
@@ -60,8 +59,8 @@ public class MetadataUtil {
   public static boolean isEmpty(Metadata md) {
     return StringHelper.isNullOrEmptyTrim(md.getText()) && Double.isNaN(md.getLatitude())
         && Double.isNaN(md.getLongitude()) && Double.isNaN(md.getNumber())
-        && StringHelper.isNullOrEmptyTrim(md.getUrl())
-        && (md.getPerson() == null || StringHelper.isNullOrEmptyTrim(md.getPerson().AsFullText()));
+        && StringHelper.isNullOrEmptyTrim(md.getUrl()) && (md.getPerson() == null
+            || StringHelper.isNullOrEmptyTrim(md.getPerson().getFamilyName()));
   }
 
   public static Statement findStatementByLabel(String label) {

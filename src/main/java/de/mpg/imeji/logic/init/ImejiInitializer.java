@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.jena.atlas.lib.AlarmClock;
@@ -31,6 +32,8 @@ import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
+import de.mpg.imeji.logic.statement.StatementService;
+import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -38,6 +41,7 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 
@@ -109,8 +113,9 @@ public class ImejiInitializer {
     LOGGER.info("... models done!");
     Imeji.CONFIG = new ImejiConfiguration();
     KeyValueStoreService.startAllStores();
-    ImejiInitializer.initRsaKeys();
-    ImejiInitializer.initadminUser();
+    initRsaKeys();
+    initadminUser();
+    initDefaultStatements();
   }
 
 
@@ -200,6 +205,29 @@ public class ImejiInitializer {
       LOGGER.warn(Imeji.adminUser.getEmail() + " already exists", e);
     } catch (final Exception e) {
       LOGGER.error("Error initializing Admin user! ", e);
+    }
+  }
+
+  /**
+   * Initialize the default Statements of the instance
+   */
+  public static void initDefaultStatements() {
+    List<Statement> l = new ArrayList<>();
+    l.add(ImejiFactory.newStatement().setIndex("Title").setType(StatementType.TEXT).build());
+    l.add(ImejiFactory.newStatement().setIndex("Description").setType(StatementType.TEXT).build());
+    l.add(ImejiFactory.newStatement().setIndex("Date").setType(StatementType.DATE).build());
+    l.add(ImejiFactory.newStatement().setIndex("Location").setType(StatementType.GEOLOCATION)
+        .build());
+    l.add(ImejiFactory.newStatement().setIndex("Link").setType(StatementType.URL).build());
+    StatementService service = new StatementService();
+    try {
+      if (service.search(null, null, Imeji.adminUser, 0, -1).getNumberOfRecords() == 0) {
+        service.createBatch(l, Imeji.adminUser);
+        Imeji.CONFIG.setStatements(StatementUtil.toStatementNamesString(l));
+        Imeji.CONFIG.saveConfig();
+      }
+    } catch (Exception e) {
+      LOGGER.error("Error creating default statements", e);
     }
   }
 

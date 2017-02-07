@@ -24,13 +24,13 @@
 		<pattern value="/edit/license"></pattern>
 		<view-id>/jsf/ItemsEditLicense.xhtml</view-id>
 	</url-mapping>
-	<url-mapping id="editPage">
-		<pattern value="/edit"></pattern>
-		<view-id>/jsf/BatchEdit.xhtml</view-id>
-	</url-mapping>
-	<url-mapping id="editSelectedItems">
+	<url-mapping id="editItemsSelected">
 		<pattern value="/editselected"></pattern>
-		<view-id>/jsf/EditMetadataSelectedItems.xhtml</view-id>
+		<view-id>/jsf/EditItemsSelected.xhtml</view-id>
+	</url-mapping>
+	<url-mapping id="editItemsBatch">
+		<pattern value="/editbatch"></pattern>
+		<view-id>/jsf/EditItemsBatch.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="item">
 		<pattern value="/item/#{ id }" />
@@ -50,8 +50,7 @@
 		<view-id>/jsf/CollectionAbout.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="collectionItem">
-		<pattern
-			value="/collection/#{ collectionId }/item/#{ id }" />
+		<pattern value="/collection/#{ collectionId }/item/#{ id }" />
 		<view-id>/jsf/CollectionImage.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="editCollection">
@@ -81,7 +80,39 @@
 		<pattern value="/search"></pattern>
 		<view-id>/jsf/SearchAdvanced.xhtml</view-id>
 	</url-mapping>
+	
+	<!-- Admin pages -->	
+	<url-mapping id="administration">
+		<pattern value="/admin"></pattern>
+		<view-id>/jsf/AdminOverview.xhtml</view-id>
+	</url-mapping>
+	
+	<url-mapping id="config">
+		<pattern value="/admin/config"></pattern>
+		<view-id>/jsf/AdminConfig.xhtml</view-id>
+	</url-mapping>
+	
+	<url-mapping id="adminTools">
+		<pattern value="/admin/tools"></pattern>
+		<view-id>/jsf/AdminTools.xhtml</view-id>
+	</url-mapping>
+	
+	<url-mapping id="adminStatistics">
+		<pattern value="/admin/statistics"></pattern>
+		<view-id>/jsf/AdminStatistics.xhtml</view-id>
+	</url-mapping>
+	
+	<url-mapping id="adminStorageUsage">
+		<pattern value="/admin/storageusage"></pattern>
+		<view-id>/jsf/AdminStorageUsage.xhtml</view-id>
+	</url-mapping>
 
+	<!-- User pages -->
+	<url-mapping id="createUser">
+		<pattern value="/createuser"></pattern>
+		<view-id>/jsf/UserCreate.xhtml</view-id>
+	</url-mapping>
+	
 	<url-mapping id="help">
 		<pattern value="/help"></pattern>
 		<view-id>/jsf/Help.xhtml</view-id>
@@ -90,26 +121,6 @@
 	<url-mapping id="userPage">
 		<pattern value="/user"></pattern>
 		<view-id>/jsf/User.xhtml</view-id>
-	</url-mapping>
-	
-	<url-mapping id="administration">
-		<pattern value="/admin"></pattern>
-		<view-id>/jsf/AdminOverview.xhtml</view-id>
-	</url-mapping>
-	
-	<url-mapping id="storageTools">
-		<pattern value="/admin/storage/tools"></pattern>
-		<view-id>/jsf/AdminStorage.xhtml</view-id>
-	</url-mapping>
-	
-	<url-mapping id="storageDetails">
-		<pattern value="/admin/storage/details"></pattern>
-		<view-id>/jsf/AdminInterface.xhtml</view-id>
-	</url-mapping>
-
-	<url-mapping id="createUser">
-		<pattern value="/createuser"></pattern>
-		<view-id>/jsf/UserCreate.xhtml</view-id>
 	</url-mapping>
 
 	<url-mapping id="users">
@@ -131,17 +142,8 @@
 		<pattern value="/createusergroup" ></pattern>
 		<view-id>/jsf/UserGroupCreate.xhtml</view-id>
 	</url-mapping>
-
-	<url-mapping id="admin">
-		<pattern value="/admin"></pattern>
-		<view-id>/jsf/UserAdministrationPage.xhtml</view-id>
-	</url-mapping>
-
-	<url-mapping id="config">
-		<pattern value="/config"></pattern>
-		<view-id>/jsf/Config.xhtml</view-id>
-	</url-mapping>
-
+	
+	
 	<url-mapping id="imprint">
 		<pattern value="/imprint"></pattern>
 		<view-id>/jsf/Imprint.xhtml</view-id>
@@ -162,9 +164,6 @@
 		<view-id>/jsf/Register.xhtml</view-id>
 	</url-mapping>
 	
-	<url-mapping id="storageStatistics">
-		<pattern value="/admin/storage/statistics"></pattern>
-		<view-id>/jsf/StorageStatistics.xhtml</view-id>
-	</url-mapping>
+	
 
  </pretty-config>

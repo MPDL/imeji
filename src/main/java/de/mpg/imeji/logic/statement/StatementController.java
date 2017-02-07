@@ -11,6 +11,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.service.ImejiControllerAbstract;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 
@@ -26,7 +27,6 @@ class StatementController extends ImejiControllerAbstract<Statement> {
 
   @Override
   public List<Statement> createBatch(List<Statement> l, User user) throws ImejiException {
-
     WRITER.create(toObjectList(filterDuplicate(l)), user);
     return l;
   }
@@ -61,8 +61,8 @@ class StatementController extends ImejiControllerAbstract<Statement> {
    * @return
    */
   private List<Statement> filterDuplicate(List<Statement> l) {
-    return new ArrayList<>(
-        l.stream().collect(Collectors.toMap(Statement::getId, Function.identity())).values());
+    return new ArrayList<>(l.stream().filter(s -> !StringHelper.isNullOrEmptyTrim(s.getIndex()))
+        .collect(Collectors.toMap(Statement::getIndex, Function.identity())).values());
   }
 
   /**

@@ -125,7 +125,7 @@ public class SearchGroupForm implements Serializable {
    */
   public void initStatementsMenu(List<Statement> statements, User user) throws ImejiException {
     for (final Statement st : statements) {
-      statementMenu.add(new SelectItem(st.getId().toString(), st.getIndex()));
+      statementMenu.add(new SelectItem(st.getIndex(), st.getIndex()));
     }
   }
 

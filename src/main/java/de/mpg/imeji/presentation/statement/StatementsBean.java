@@ -1,7 +1,7 @@
 package de.mpg.imeji.presentation.statement;
 
-import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +15,8 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.statement.StatementUtil;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
 
 /**
@@ -31,13 +31,16 @@ public class StatementsBean extends SuperBean {
   private static final long serialVersionUID = 3215418612370596545L;
   private static final Logger LOGGER = Logger.getLogger(StatementsBean.class);
   private StatementService service = new StatementService();
-  private List<Statement> statements = new ArrayList<>();
+  private LinkedHashMap<String, Statement> statements = new LinkedHashMap<>();
   private List<String> defaultStatements = new ArrayList<>();
 
   @PostConstruct
   public void init() {
     try {
-      setStatements(service.retrieveAll());
+      List<Statement> list = service.retrieveAll();
+      for (Statement s : list) {
+        statements.putIfAbsent(s.getUri().toString(), s);
+      }
       defaultStatements = StatementUtil.toStatementUriList(Imeji.CONFIG.getStatements());
     } catch (ImejiException e) {
       LOGGER.error("Error retrieving statements", e);
@@ -45,17 +48,24 @@ public class StatementsBean extends SuperBean {
   }
 
   /**
-   * @return the statements
+   * Delete the Statement for this index
+   * 
+   * @param index
+   * @throws ImejiException
    */
-  public List<Statement> getStatements() {
-    return statements;
+  public void delete(String index) throws ImejiException {
+    Statement s = ImejiFactory.newStatement().setIndex(index).build();
+    s = service.retrieve(s.getUri().toString(), getSessionUser());
+    service.delete(s, getSessionUser());
+    removeFromDefaultStatements(index);
+    init();
   }
 
   /**
-   * @param statements the statements to set
+   * @return the statements
    */
-  public void setStatements(List<Statement> statements) {
-    this.statements = statements;
+  public List<Statement> getStatements() {
+    return new ArrayList<>(statements.values());
   }
 
   /**
@@ -63,9 +73,9 @@ public class StatementsBean extends SuperBean {
    * 
    * @param index
    */
-  public void addToDefaultStatements(String index) {
-    if (!isDefaultStatement(index)) {
-      defaultStatements.add(ObjectHelper.getURI(Statement.class, index).toString());
+  public void addToDefaultStatements(String uri) {
+    if (!isDefaultStatement(uri)) {
+      defaultStatements.add(uri);
       saveDefaultStatements();
     }
   }
@@ -75,9 +85,9 @@ public class StatementsBean extends SuperBean {
    * 
    * @param index
    */
-  public void removeFromDefaultStatements(String index) {
-    if (isDefaultStatement(index)) {
-      defaultStatements.remove(ObjectHelper.getURI(Statement.class, index).toString());
+  public void removeFromDefaultStatements(String uri) {
+    if (isDefaultStatement(uri)) {
+      defaultStatements.remove(uri);
       saveDefaultStatements();
     }
   }
@@ -96,7 +106,7 @@ public class StatementsBean extends SuperBean {
    * @return
    */
   public String getDefaultStatementsString() {
-    return defaultStatements.stream().map(s -> ObjectHelper.getId(URI.create(s)))
+    return defaultStatements.stream().distinct().map(s -> statements.get(s).getIndex())
         .collect(Collectors.joining(","));
   }
 
@@ -106,7 +116,7 @@ public class StatementsBean extends SuperBean {
    * @param index
    * @return
    */
-  public boolean isDefaultStatement(String index) {
-    return defaultStatements.contains(ObjectHelper.getURI(Statement.class, index).toString());
+  public boolean isDefaultStatement(String uri) {
+    return defaultStatements.contains(uri);
   }
 }

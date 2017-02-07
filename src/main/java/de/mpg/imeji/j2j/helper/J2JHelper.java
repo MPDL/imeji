@@ -361,7 +361,7 @@ public class J2JHelper {
    * @param o
    * @return
    */
-  public static Object getFieldAsJavaObject(Field f, Object o) {
+  public static Object getFieldAsJavaObjectNonNull(Field f, Object o) {
     f.setAccessible(true);
     try {
       Object object = f.get(o);
@@ -369,6 +369,23 @@ public class J2JHelper {
         object = f.getType().newInstance();
       }
       return object;
+    } catch (final Exception e) {
+      return null;
+    }
+  }
+
+  /**
+   * Return a {@link Field} as a {@link Object} of the same {@link Class} as the {@link Object}
+   * passed as parameter
+   *
+   * @param f
+   * @param o
+   * @return
+   */
+  public static Object getFieldAsJavaObject(Field f, Object o) {
+    f.setAccessible(true);
+    try {
+      return f.get(o);
     } catch (final Exception e) {
       return null;
     }

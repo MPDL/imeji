@@ -30,98 +30,97 @@
 			<div class="imj_administrationTiledList">
 
 				<div class="imj_listBody">
-
-					<h:panelGroup layout="block"
-						styleClass="imj_adminPanel imj_userConfig">
+					<div class="imj_adminPanel imj_userConfig">
 						<div class="imj_headline">
 							<h2>
-								<h:outputText value="#{lbl.admin_user_info}" />
+								<h:outputText value="#{lbl.users}" />
 							</h2>
 						</div>
 						<div class="imj_content">
 							<ul>
-								<li><a href="#{Navigation.applicationUrl}createuser"
-									title="#{lbl.admin_user_new}"> <h:outputText
-											value="#{lbl.admin_user_new}" />
-								</a></li>
-								<li><a href="#{Navigation.applicationUrl}users"
-									title="#{lbl.admin_user_view}"> <h:outputText
-											value="#{lbl.admin_user_view}" />
-								</a></li>
-								<li><a href="#{Navigation.applicationUrl}usergroups"
-									title="#{lbl.admin_groups_view}"> <h:outputText
-											value="#{lbl.admin_userGroups_view}" />
-								</a></li>
-								<li><a
-									href="#{Navigation.applicationUrl}createusergroup"
-									title="#{lbl.admin_group_new}"> <h:outputText
-											value="#{lbl.admin_userGroup_new}" />
-								</a></li>
+								<li>
+									<a href="#{Navigation.applicationUrl}createuser" title="#{lbl.create}">#{lbl.create}</a>
+								</li>
+								<li>
+									<a href="#{Navigation.applicationUrl}users" title="#{lbl.browse}">#{lbl.browse}</a>
+								</li>
 							</ul>
 						</div>
-					</h:panelGroup>
+					</div>
+					
+					<div class="imj_adminPanel imj_userConfig">
+						<div class="imj_headline">
+							<h2>
+								<h:outputText value="#{lbl.userGroups}" />
+							</h2>
+						</div>
+						<div class="imj_content">
+							<ul>
+								<li>
+									<a href="#{Navigation.applicationUrl}createusergroup" title="#{lbl.create}">#{lbl.create}</a>
+								</li>
+								<li>
+									<a href="#{Navigation.applicationUrl}usergroups" title="#{lbl.browse}">#{lbl.browse}</a>
+								</li>
+							</ul>
+						</div>
+					</div>
 
-					<h:panelGroup layout="block" styleClass="imj_adminPanel imj_config">
+					<div class="imj_adminPanel imj_userConfig">
+						<div class="imj_headline">
+							<h2>
+								<h:outputText value="#{lbl.statements}" />
+							</h2>
+						</div>
+						<div class="imj_content">
+							<ul>
+								<li>
+									<a href="#{Navigation.applicationUrl}createstatement" title="#{lbl.create}">#{lbl.create}</a>
+								</li>
+								<li>
+									<a href="#{Navigation.applicationUrl}statements" title="#{lbl.browse}">#{lbl.browse}</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="imj_adminPanel imj_config">
+						<div class="imj_headline">
+							<h2>
+								<h:outputText value="#{lbl.configuration}" />
+							</h2>
+						</div>
+						<div class="imj_content">
+							<ul>
+								<li>
+									<a href="#{Navigation.applicationUri}/admin/config" title="#{lbl.edit}">#{lbl.edit}</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+
+					<div class="imj_adminPanel imj_storageConfig">
 						<ui:fragment rendered="#{Auth.sysAdmin}">
 							<div class="imj_headline">
 								<h2>
-									<h:outputText value="#{lbl.configuration}" />
+									<h:outputText value="#{lbl.storage}" />
 								</h2>
 							</div>
 							<div class="imj_content">
 								<ul>
-									<li><a href="#{Navigation.applicationUri}/config"
-										title="#{lbl.edit}"> <h:outputText value="#{lbl.edit}" />
-									</a></li>
+									<li>
+										<a href="#{Navigation.applicationUrl}admin/statistics" title="#{lbl.statistics}">#{lbl.statistics}</a>
+									</li>
+									<li>
+										<a href="#{Navigation.applicationUrl}admin/storageusage" title="#{lbl.storage_usage}">#{lbl.usage}</a>
+									</li>
+									<li>
+										<a href="#{Navigation.applicationUrl}admin/tools" title="#{lbl.tools}">#{lbl.tools}</a>
+									</li>
 								</ul>
 							</div>
 						</ui:fragment>
-					</h:panelGroup>
-
-
-					<h:panelGroup layout="block"
-						styleClass="imj_adminPanel imj_storageConfig">
-						<ui:fragment rendered="#{Auth.sysAdmin}">
-							<div class="imj_headline">
-								<h2>
-									<h:outputText value="#{lbl.administration_storage}" />
-								</h2>
-							</div>
-							<div class="imj_content">
-								<ul>
-									<li><a
-										href="#{Navigation.applicationUrl}admin/storage/details"
-										title="#{lbl.view_detail}"> <h:outputText
-												value="#{lbl.view_detail}" />
-									</a></li>
-									<li><a
-										href="#{Navigation.applicationUrl}admin/storage/statistics"
-										title="#{lbl.storage_statistics}"> <h:outputText
-												value="#{lbl.storage_statistics}" />
-									</a></li>
-
-									<li><a
-										href="#{Navigation.applicationUrl}admin/storage/tools"
-										title="#{lbl.storage_tools}"> <h:outputText
-												value="#{lbl.storage_tools}" />
-									</a></li>
-								</ul>
-							</div>
-						</ui:fragment>
-					</h:panelGroup>
-
-					<h:panelGroup layout="block"
-						styleClass="imj_adminPanel imj_advancedConfig" rendered="false">
-						<ui:fragment rendered="#{Auth.sysAdmin}">
-							<div class="imj_headline">
-								<h2>
-									<h:outputText value="#{lbl.administration_advanced}" />
-								</h2>
-							</div>
-							<div class="imj_content"></div>
-						</ui:fragment>
-					</h:panelGroup>
-
+					</div>
 				</div>
 				<!-- END LIST BODY -->
 

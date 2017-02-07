@@ -1,7 +1,6 @@
 package de.mpg.imeji.presentation.edit.editSelected;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,19 +28,20 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  * @author saquet
  *
  */
-@ManagedBean(name = "EditMetadataSelectedItemsBean")
+@ManagedBean(name = "EditItemsSelectedBean")
 @ViewScoped
-public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
+public class EditItemsSelectedBean extends EditMetadataAbstract {
   private static final long serialVersionUID = -5474571536513587078L;
-  private static final Logger LOGGER = Logger.getLogger(EditMetadataSelectedItemsBean.class);
+  private static final Logger LOGGER = Logger.getLogger(EditItemsSelectedBean.class);
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItemsIds = new ArrayList<>();
   private List<SelectStatementWithInputComponent> columns = new ArrayList<>();
   private List<RowComponent> rows = new ArrayList<>();
   private SelectStatementWithInputComponent newStatement;
   private List<String> displayedColumns = new ArrayList<>();
+  private String editedColumn = "";
 
-  public EditMetadataSelectedItemsBean() {
+  public EditItemsSelectedBean() throws ImejiException {
     super();
     this.newStatement = new SelectStatementWithInputComponent(statementMap);
   }
@@ -70,23 +70,31 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   }
 
   /**
-   * Initialize the columns of the editor
+   * Initialize the columns of the editor for this items
    */
   private void initColumns(List<Item> items) {
-    final Map<String, SelectStatementWithInputComponent> map = new HashMap<>();
-    for (final Item item : items) {
-      for (final Metadata md : item.getMetadata()) {
-        map.putIfAbsent(md.getStatementId(),
-            new SelectStatementWithInputComponent(md.getStatementId(), statementMap));
-      }
-    }
-    Map<String, Statement> defaultStatement = getDefaultStatements();
-    for (Statement s : defaultStatement.values()) {
-      map.putIfAbsent(s.getId(),
-          new SelectStatementWithInputComponent(s.getId(), defaultStatement));
-    }
-    columns = new ArrayList<>(map.values());
-    columns.sort((c1, c2) -> c1.getIndex().compareToIgnoreCase(c2.getIndex()));
+    // Create a Map of the columns from the existing Metadata of the item
+    final Map<String, SelectStatementWithInputComponent> columnMap = items.stream()
+        .flatMap(item -> item.getMetadata().stream()).filter(md -> md.getStatementId().length() > 0)
+        .collect(Collectors.toMap(Metadata::getStatementId,
+            md -> new SelectStatementWithInputComponent(md.getStatementId(), statementMap),
+            (s1, s2) -> s1));
+
+    // Get the default statement of this instance
+    final Map<String, Statement> defaultStatement = getDefaultStatements();
+
+    // Add the default Statement to the columns
+    columnMap.putAll(getDefaultStatements().values().stream()
+        .collect(Collectors.toMap(Statement::getIndex,
+            st -> new SelectStatementWithInputComponent(st.getIndex(), defaultStatement),
+            (s1, s2) -> s1)));
+
+    // Get the Column Map as a List sorted by index
+    columns = columnMap.values().stream()
+        .sorted((c1, c2) -> c1.getIndex().compareToIgnoreCase(c2.getIndex()))
+        .collect(Collectors.toList());
+
+    // Add all Columns to the displayed columns
     displayedColumns = columns.stream().map(SelectStatementWithInputComponent::getIndex)
         .collect(Collectors.toList());
   }
@@ -96,9 +104,14 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
     return rows.stream().map(RowComponent::toItem).collect(Collectors.toList());
   }
 
+
   @Override
-  public List<SelectStatementWithInputComponent> getAllStatements() {
-    return columns;
+  public List<Statement> getAllStatements() {
+    return rows.stream().flatMap(row -> row.getCells().stream())
+        .filter(cell -> cell.getInputs() != null)
+        .collect(
+            Collectors.toMap(CellComponent::getIndex, cell -> cell.getStatement(), (a, b) -> a))
+        .values().stream().collect(Collectors.toList());
   }
 
   /**
@@ -110,6 +123,28 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
     return getStatementMenu().stream().filter(s -> !displayedColumns.contains(s.getLabel()))
         .collect(Collectors.toList());
   }
+
+  /**
+   * Change the column name: <br/>
+   * * Change the statement index of the column<br/>
+   * * Change the Statement of all Entries of this column
+   * 
+   * @param position
+   */
+  public void changeColumnName(int position) {
+    // Get the Statement to change the name
+    SelectStatementWithInputComponent column = columns.get(position);
+    Statement st = column.asStatement();
+    // Change the statement name
+    st.setIndex(column.getIndex());
+    // Change the statement name for all rows
+    rows.stream().forEach(r -> r.changeStatement(editedColumn, st));
+    // Add the new name to the displayed statement
+    displayedColumns.set(displayedColumns.indexOf(editedColumn), st.getIndex());
+    // Reset the edited column value
+    editedColumn = null;
+  }
+
 
   /**
    * Add the Metadata defined in the column to all cell of this column
@@ -148,9 +183,7 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
   public void addColumn() {
     newStatement.setInput(null);
     columns.add(newStatement);
-    for (final RowComponent row : rows) {
-      row.addCell(newStatement.asStatement());
-    }
+    rows.stream().forEach(r -> r.addCell(newStatement.asStatement()));
     displayedColumns.add(newStatement.getIndex());
     newStatement = new SelectStatementWithInputComponent(statementMap);
   }
@@ -172,7 +205,13 @@ public class EditMetadataSelectedItemsBean extends EditMetadataAbstract {
     return getHistory().getPreviousPage().getCompleteUrlWithHistory();
   }
 
+  public void setEditedColumn(String editedColumn) {
+    this.editedColumn = editedColumn;
+  }
 
+  public String getEditedColumn() {
+    return editedColumn;
+  }
 
   /**
    * Retrieve the Items
