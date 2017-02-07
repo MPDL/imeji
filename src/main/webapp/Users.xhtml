@@ -175,13 +175,7 @@
 												dialogId="activateUser#{row.index}" identifierName="email"
 												identifierValue="#{user.email}" />
 
-											<!-- AdminDataList - Remove User -->
-											<h:outputLink value="#" styleClass="imj_editButton"
-												title="#{lbl.remove}"
-												onclick="openDialog('removeUser#{row.index}');"
-												rendered="#{not user.removed}">
-												<h:outputText value="#{lbl.remove}" />
-											</h:outputLink>
+											<!-- AdminDataList - Deactivate User -->
 											<h:outputLink value="#" styleClass="imj_editButton" title="#{lbl.remove}" onclick="openDialog('removeUser#{row.index}');" rendered="#{not user.removed}">
 												<h:outputText value="#{lbl.deactivate}"/>
 											</h:outputLink>
@@ -200,9 +194,6 @@
 											<dialog:confirmationDialog submitAction="reactivateUser" bean="#{UsersBean}" confirmationText="#{msg.confirmation_activate_user}" submitLabel="#{lbl.activate}" dialogId="reactivateUser#{row.index}" identifierName="email" identifierValue="#{user.email}"/>
 
 											<!-- AdminDataList - Delete User -->
-											<h:outputLink value="#" styleClass="imj_cancelButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteUser#{row.index}');">
-												<h:outputText value="#{lbl.user_admin_delete}" />
-											</h:outputLink>
 											<h:outputLink value="#" styleClass="imj_cancelButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteUser#{row.index}');" rendered="#{user.removed}">
 												<h:outputText value="#{lbl.user_admin_delete}"/>
 											</h:outputLink>

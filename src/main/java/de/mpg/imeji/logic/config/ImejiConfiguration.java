@@ -64,6 +64,8 @@ public class ImejiConfiguration {
       "https://raw.githubusercontent.com/imeji-community/imeji-help/master/imeji-help-default.html";
   public static final String DEFAULT_TECHNICAL_METADATA =
       "Make,Model,Exposure Time,Date/Time Digitized,Color Space,Artist,Model";
+  public static final String DEFAULT_THUMBNAIL_WIDTH = "103";
+  public static final String DEFAULT_PREVIEW_WIDTH = "357";
   private String dataViewerUrl;
 
   public enum BROWSE_VIEW {
@@ -144,6 +146,8 @@ public class ImejiConfiguration {
     initPropertyWithDefaultValue(CONFIGURATION.HELP_URL, DEFAULT_HELP_URL);
     initPropertyWithDefaultValue(CONFIGURATION.TECHNICAL_METADATA, DEFAULT_TECHNICAL_METADATA);
     initPropertyWithDefaultValue(CONFIGURATION.STATEMENTS, DEFAULT_STATEMENTS);
+    initPropertyWithDefaultValue(CONFIGURATION.THUMBNAIL_WIDTH, DEFAULT_THUMBNAIL_WIDTH);
+    initPropertyWithDefaultValue(CONFIGURATION.WEB_RESOLUTION_WIDTH, DEFAULT_PREVIEW_WIDTH);
   }
 
 

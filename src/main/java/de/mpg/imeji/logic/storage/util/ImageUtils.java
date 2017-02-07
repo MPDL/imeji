@@ -58,7 +58,7 @@ public final class ImageUtils {
   public static File resizeJPEG(File file, FileResolution resolution)
       throws IOException, Exception {
     // If it is original resolution, don't touch the file, otherwise resize
-    if (!FileResolution.ORIGINAL.equals(resolution)) {
+    if (!FileResolution.ORIGINAL.equals(resolution) || !FileResolution.FULL.equals(resolution)) {
       final BufferedImage image = JpegUtils.readJpeg(file);
       return toFile(scaleImage(image, resolution), StorageUtils.getMimeType("jpg"));
     }
@@ -411,7 +411,7 @@ public final class ImageUtils {
   }
 
   /**
-   * cale the image if too big for the size
+   * scale the image if too big for the size
    *
    * @param image
    * @param resolution
