@@ -595,4 +595,12 @@ public class ConfigurationBean extends SuperBean {
   public void setWebResolutionWidth(String webResolutionWidth) {
     Imeji.CONFIG.setWebResolutionWidth(webResolutionWidth);
   }
+
+  public String getNumberOfLinesInThumbnailList() {
+    return Imeji.CONFIG.getNumberOfLinesInThumbnailList();
+  }
+
+  public void setNumberOfLinesInThumbnailList(String lines) {
+    Imeji.CONFIG.setNumberOFLinesInThumbnailList(lines);
+  }
 }

@@ -28,25 +28,6 @@
 					</div>
 				</div>
 			</ui:fragment>
-			<script>
-					var lastHeight=0;
-					var elementsPerLine=0;
-					var done=false;
-					function checkHeight(){
-						if(!done){
-							var height=document.getElementById("listDiv").clientHeight;
-							if(elementsPerLine==0){
-								lastHeight=height;
-							}
-							if(height>lastHeight){
-								done=true;
-							}
-							else{
-								elementsPerLine++;
-							}
-					}
-					}
-			</script>
 			<div class="imj_listBody" id="listDiv">
 				<ul id="imj_listBody">
 					<!-- Images -->	
@@ -74,7 +55,6 @@
 								<imj:thumbnailPopup item="#{item}"/>
 							</div>
 						</li>
-						<script>checkHeight();</script>
 					</ui:repeat>
 					<!-- End images -->
 					<!-- 
@@ -87,10 +67,28 @@
 		<div id="log"></div>
 		
 		<script>
-		document.cookie="BODY_WIDTH_COOKIE="+document.body.clientWidth;
-		if(done){
-			document.cookie="ELEMENTS_PER_LINE_COOKIE="+elementsPerLine;
+		var count= 0;
+		var position = 0;
+		$(".imj_tileItem").each(function() {
+			var newTop = $( this ).position().top;		
+			if(position > 0 &amp;&amp; newTop > position){
+				count =$(".imj_tileItem").index( this );
+				return false;
+			}
+			position = newTop;
+		});
+		var date=new Date();
+		date.setTime(+date+(365*24*3600*1000));
+		if(count > 0){
+			document.cookie="ELEMENTS_PER_LINE_COOKIE="+count+"; expires="+date.toGMTString()+"; path=/";
 		}
+		else{
+			var firstLeft=$(".imj_tileItem:nth-child(1)").position().left;
+			var secondLeft=$(".imj_tileItem:nth-child(2)").position().left;
+			var width=$(".imj_mainContentWrapper").first().width();
+			document.cookie="ELEMENTS_PER_LINE_COOKIE="+Math.round(width/(secondLeft-firstLeft))+"; expires="+date.toGMTString()+"; path=/";
+		}
+		
 		</script>
 	</composite:implementation>
 </div>
