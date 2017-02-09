@@ -3570,7 +3570,7 @@ iframe#twitter-widget-0 div.root div.stream { height: 20em !important; }
 .imj_tiledMediaList .imj_listHeader { min-height: 2em; }
 .imj_tiledMediaList .imj_listHeader .imj_overlayMenu .imj_menuBody { border: 0.18182em outset #F0F0F0; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px; }
 .imj_tiledMediaList > .imj_listBody { margin: 1em 0 0 0; }
-.imj_tiledMediaList > .imj_listBody .imj_tileItem { display: inline-block; width: 15.75%; max-width: 11.545454em; padding-bottom: 2em; margin: 0 1.775% 0 0; vertical-align: top; /* general bug fix for webkit browser, because of wrong interpretation in responsive image scaling */ }
+.imj_tiledMediaList > .imj_listBody .imj_tileItem { display: inline-block; width: 15.75%; max-width: 11.545454px; padding-bottom: 2em; margin: 0 1.775% 0 0; vertical-align: top; /* general bug fix for webkit browser, because of wrong interpretation in responsive image scaling */ }
 .imj_tiledMediaList > .imj_listBody .imj_tileItem label { max-width: 100%; overflow-x: hidden; text-overflow: ellipsis; display: inline-block; }
 .imj_tiledMediaList > .imj_listBody .imj_tileItem label.imj_optionLabel { white-space: nowrap; }
 .imj_tiledMediaList > .imj_listBody .imj_tileItem .imj_optionCheckbox + label.imj_optionLabel { max-width: 88%; display: inline-block; text-overflow: ellipsis; white-space: nowrap; }

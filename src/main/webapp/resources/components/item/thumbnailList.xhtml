@@ -28,14 +28,33 @@
 					</div>
 				</div>
 			</ui:fragment>
-			<div class="imj_listBody">
+			<script>
+					var lastHeight=0;
+					var elementsPerLine=0;
+					var done=false;
+					function checkHeight(){
+						if(!done){
+							var height=document.getElementById("listDiv").clientHeight;
+							if(elementsPerLine==0){
+								lastHeight=height;
+							}
+							if(height>lastHeight){
+								done=true;
+							}
+							else{
+								elementsPerLine++;
+							}
+					}
+					}
+			</script>
+			<div class="imj_listBody" id="listDiv">
 				<ul id="imj_listBody">
 					<!-- Images -->	
 					<ui:repeat id="pictureList" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
-						<li class="imj_tileItem">
+						<li class="imj_tileItem" style="max-width:#{item.thumbnailWidth}px;">
 							<ui:param name="uri" value="#{item.uri}"/>
 							<h:form id="itemSelectForm">
-								<h:panelGroup layout="block" id="imgFrame" styleClass="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea">
+								<h:panelGroup layout="block" id="imgFrame" styleClass="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea" >
 									<!-- Image with link to the details view -->
 									<h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;pos=#{cc.attrs.picList.offset + index.index}">
 										<h:graphicImage alt="#{item.caption}" title="#{item.caption}" id="thumbnail" url="#{item.link}"/>		
@@ -55,6 +74,7 @@
 								<imj:thumbnailPopup item="#{item}"/>
 							</div>
 						</li>
+						<script>checkHeight();</script>
 					</ui:repeat>
 					<!-- End images -->
 					<!-- 
@@ -62,7 +82,15 @@
 					-->
 				</ul>
 			</div>
+			
 		</h:panelGroup>
 		<div id="log"></div>
+		
+		<script>
+		document.cookie="BODY_WIDTH_COOKIE="+document.body.clientWidth;
+		if(done){
+			document.cookie="ELEMENTS_PER_LINE_COOKIE="+elementsPerLine;
+		}
+		</script>
 	</composite:implementation>
 </div>
