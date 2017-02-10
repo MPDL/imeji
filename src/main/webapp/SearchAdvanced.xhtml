@@ -82,18 +82,23 @@
 									<md:input metadataInputComponent="#{entry.input}"/>
 								</div>
 								<!-- END of imj_searchInput -->
-
-								<div class="imj_submitPanel">
-									<h:panelGroup styleClass="imj_inlineButtonGroup">
-										<!-- This panelGroup is needed for IE -->
-										<h:commandLink value="" action="#{AdvancedSearchBean.formular.metadataSearchGroup.addEntry(index.index + 1)}" styleClass="fa fa-plus-square-o">
-											<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea" />
-										</h:commandLink>
-										<h:commandLink rendered="#{AdvancedSearchBean.formular.metadataSearchGroup.entries.size() &gt; 1}" value="" action="#{AdvancedSearchBean.formular.metadataSearchGroup.removeEntry(index.index)}" styleClass="fa fa-minus-square-o">
-											<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea" />
-										</h:commandLink>
-									</h:panelGroup>
+								
+								<div class="imj_submitPanel imj_inlineButtonGroup">
+									<!-- This panelGroup is needed for IE -->
+									<h:commandLink value="" action="#{AdvancedSearchBean.formular.metadataSearchGroup.addEntry(index.index + 1)}" styleClass="fa fa-plus-square-o">
+										<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea" />
+									</h:commandLink>
+									<h:commandLink rendered="#{AdvancedSearchBean.formular.metadataSearchGroup.entries.size() &gt; 1}" value="" action="#{AdvancedSearchBean.formular.metadataSearchGroup.removeEntry(index.index)}" styleClass="fa fa-minus-square-o">
+										<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea" />
+									</h:commandLink>
 								</div>
+								<ui:fragment rendered="#{!index.last}">
+									<div class="imj_logicalDetailConnector">
+										<h:selectOneMenu id="selLogicalRelation" value="#{entry.logicalRelation}" styleClass="tiny_marginLExcl small_area0">
+											<f:selectItems value="#{AdvancedSearchBean.operatorsMenu}"/>
+										</h:selectOneMenu>
+									</div>
+								</ui:fragment>
 							</ui:fragment>
 						</div>
 					</h:panelGroup>	

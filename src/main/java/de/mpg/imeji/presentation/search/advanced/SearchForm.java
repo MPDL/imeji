@@ -97,6 +97,7 @@ public class SearchForm implements Serializable {
       factory.addElement(fileTypeSearchGroup.toSearchElement(), LOGICAL_RELATIONS.AND);
       factory.addElement(licenseSearchGroup.toSearchElement(), LOGICAL_RELATIONS.AND);
       factory.addElement(technicalMetadataSearchGroup.toSearchElement(), LOGICAL_RELATIONS.AND);
+      System.out.println("q=" + SearchQueryParser.transform2URL(factory.build()));
       return factory.build();
     } catch (final UnprocessableError e) {
       LOGGER.error("Error transforming search form to searchquery", e);

@@ -39,7 +39,7 @@ public class MetadataSearchGroupEntry implements Serializable {
   private SearchOperators operator;
   private Statement statement;
   private boolean not = false;
-  private LOGICAL_RELATIONS logicalRelation;
+  private LOGICAL_RELATIONS logicalRelation = LOGICAL_RELATIONS.OR;
   private List<SelectItem> operatorMenu;
   private MetadataInputComponent input;
 
@@ -85,37 +85,38 @@ public class MetadataSearchGroupEntry implements Serializable {
    */
   private List<SearchElement> getAllSearchElements() {
     List<SearchElement> l = new LinkedList<>();
+    Metadata metadata = input.getMetadata();
     if (!StringHelper.isNullOrEmptyTrim(metadata.getText())) {
-      l.add(new SearchMetadata(metadata.getStatementId(), SearchFields.text, operator,
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.text, operator,
           metadata.getText(), false));
     }
     if (!StringHelper.isNullOrEmptyTrim(metadata.getUrl())) {
-      l.add(new SearchMetadata(metadata.getStatementId(), SearchFields.url, operator,
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.url, operator,
           metadata.getUrl(), false));
     }
-    if (metadata.getNumber() != Double.NaN) {
-      l.add(new SearchMetadata(metadata.getStatementId(), SearchFields.number, operator,
+    if (!Double.isNaN(metadata.getNumber())) {
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.number, operator,
           Double.toString(metadata.getNumber()), false));
     }
-    if (metadata.getLatitude() != Double.NaN && metadata.getLongitude() != Double.NaN) {
-      l.add(new SearchMetadata(metadata.getStatementId(), SearchFields.number, operator,
+    if (!Double.isNaN(metadata.getLatitude()) && !Double.isNaN(metadata.getLongitude())) {
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.number, operator,
           Double.toString(metadata.getNumber()), false));
-      l.add(new SearchMetadata(metadata.getStatementId(), SearchFields.coordinates,
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.coordinates,
           SearchOperators.GEO, Double.toString(metadata.getLatitude()) + ","
               + Double.toString(metadata.getLongitude()) + "," + distance,
           false));
     }
     if (metadata.getPerson() != null) {
       if (!StringHelper.isNullOrEmptyTrim(metadata.getPerson().getFamilyName())) {
-        l.add(new SearchMetadata(metadata.getStatementId(), SearchFields.person_family, operator,
-            metadata.getPerson().getFamilyName(), false));
+        l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.person_family,
+            operator, metadata.getPerson().getFamilyName(), false));
       }
       if (!StringHelper.isNullOrEmptyTrim(metadata.getPerson().getGivenName())) {
-        l.add(new SearchMetadata(metadata.getStatementId(), SearchFields.person_given, operator,
-            metadata.getPerson().getGivenName(), false));
+        l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.person_given,
+            operator, metadata.getPerson().getGivenName(), false));
       }
       if (!metadata.getPerson().getOrganizations().isEmpty()) {
-        l.add(new SearchMetadata(metadata.getStatementId(), SearchFields.person_org, operator,
+        l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.person_org, operator,
             metadata.getPerson().getOrganizationString(), false));
       }
     }

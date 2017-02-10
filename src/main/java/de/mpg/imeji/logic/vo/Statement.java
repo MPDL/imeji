@@ -62,8 +62,17 @@ public class Statement implements Serializable, Cloneable {
     return index;
   }
 
-  public String getIndexUrlEncoded() throws UnsupportedEncodingException {
-    return URLEncoder.encode(StatementUtil.encodeIndex(index), "UTF-8");
+  /**
+   * Get the Version of the index which should be used for the search
+   * 
+   * @return
+   */
+  public String getIndexUrlEncoded() {
+    try {
+      return URLEncoder.encode(StatementUtil.encodeIndex(index), "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      return index;
+    }
   }
 
   /**

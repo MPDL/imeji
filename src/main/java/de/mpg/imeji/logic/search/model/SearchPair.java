@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.util.StringHelper;
 
 /**
  * Define a pair of a {@link SearchIndex} with a {@link String} value, related by a
@@ -71,6 +72,11 @@ public class SearchPair extends SearchElement {
     return new ArrayList<SearchElement>();
   }
 
+
+  @Override
+  public boolean isEmpty() {
+    return StringHelper.isNullOrEmptyTrim(value);
+  }
 
   public boolean isNot() {
     return not;
