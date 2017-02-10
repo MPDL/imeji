@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.edit.editItem;
+package de.mpg.imeji.presentation.edit.single;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +37,7 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
   private static Logger LOGGER = Logger.getLogger(EditMetadataItemBean.class);
   private List<SelectStatementWithInputComponent> rows = new ArrayList<>();
   private Item item;
+  private String filename;
   private LicenseEditor licenseEditor;
 
   public EditMetadataItemBean() {
@@ -49,6 +50,7 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
     try {
       this.item = itemService.retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
       this.licenseEditor = new LicenseEditor(getLocale(), item);
+      this.filename = item.getFilename();
       rows = item.getMetadata().stream()
           .map(md -> new SelectStatementWithInputComponent(md, statementMap))
           .collect(Collectors.toList());
@@ -60,6 +62,7 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
 
   @Override
   public List<Item> toItemList() {
+    item.setFilename(filename);
     item.setMetadata(rows.stream().map(SelectStatementWithInputComponent::getInput)
         .map(MetadataInputComponent::getMetadata).collect(Collectors.toList()));
     item.getLicenses().add(licenseEditor.getLicense());
@@ -116,6 +119,20 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
    */
   public void setLicenseEditor(LicenseEditor licenseEditor) {
     this.licenseEditor = licenseEditor;
+  }
+
+  /**
+   * @return the filename
+   */
+  public String getFilename() {
+    return filename;
+  }
+
+  /**
+   * @param filename the filename to set
+   */
+  public void setFilename(String filename) {
+    this.filename = filename;
   }
 
 

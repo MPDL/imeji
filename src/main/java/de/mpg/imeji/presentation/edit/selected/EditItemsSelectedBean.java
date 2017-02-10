@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.edit.editSelected;
+package de.mpg.imeji.presentation.edit.selected;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -28,7 +28,6 @@ import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.search.model.SearchSimpleMetadata;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.util.DateFormatter;
@@ -248,8 +247,6 @@ public class ElasticQueryFactory {
       return metadataFilter((SearchMetadata) pair);
     } else if (pair instanceof SearchTechnicalMetadata) {
       return technicalMetadataQuery((SearchTechnicalMetadata) pair);
-    } else if (pair instanceof SearchSimpleMetadata) {
-      simpleMetadataQuery((SearchSimpleMetadata) pair);
     }
     final SearchFields index = pair.getField();
     switch (index) {
@@ -305,7 +302,8 @@ public class ElasticQueryFactory {
         // not indexed
         break;
       case created:
-        return timeQuery(ElasticFields.CREATED, pair.getValue(), pair.getOperator(), pair.isNot());
+        return timeQuery(ElasticFields.CREATED.name(), pair.getValue(), pair.getOperator(),
+            pair.isNot());
       case creator_id:
         // not indexed
         break;
@@ -320,7 +318,7 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.READ, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
       case date:
-        return timeQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), pair.getOperator(),
+        return timeQuery(ElasticFields.METADATA_NUMBER.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
       case editor:
         // not indexed
@@ -373,7 +371,8 @@ public class ElasticQueryFactory {
         // not indexed
         break;
       case modified:
-        return timeQuery(ElasticFields.MODIFIED, pair.getValue(), pair.getOperator(), pair.isNot());
+        return timeQuery(ElasticFields.MODIFIED.name(), pair.getValue(), pair.getOperator(),
+            pair.isNot());
       case number:
         return fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -443,7 +442,7 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case time:
-        return timeQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), pair.getOperator(),
+        return timeQuery(ElasticFields.METADATA_NUMBER.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
       case location:
         // not indexed
@@ -494,44 +493,49 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder metadataFilter(SearchMetadata md) {
+
+    if (md.getField() == null) {
+      return metadataQuery(
+          fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
+          md.getIndex());
+    }
     switch (md.getField()) {
       case text:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
-            md.getStatement());
+            md.getIndex());
       case citation:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
-            md.getStatement());
+            md.getIndex());
       case number:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_NUMBER, md.getValue(), md.getOperator(), md.isNot()),
-            md.getStatement());
+            md.getIndex());
       case date:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
-            md.getStatement());
+            md.getIndex());
       case url:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_URI, md.getValue(), md.getOperator(), md.isNot()),
-            md.getStatement());
+            md.getIndex());
       case person_family:
         return metadataQuery(fieldQuery(ElasticFields.METADATA_FAMILYNAME, md.getValue(),
-            md.getOperator(), md.isNot()), md.getStatement());
+            md.getOperator(), md.isNot()), md.getIndex());
       case person_given:
         return metadataQuery(fieldQuery(ElasticFields.METADATA_GIVENNAME, md.getValue(),
-            md.getOperator(), md.isNot()), md.getStatement());
+            md.getOperator(), md.isNot()), md.getIndex());
       case coordinates:
         return metadataQuery(fieldQuery(ElasticFields.METADATA_LOCATION, md.getValue(),
-            md.getOperator(), md.isNot()), md.getStatement());
+            md.getOperator(), md.isNot()), md.getIndex());
       case time:
-        return metadataQuery(
-            timeQuery(ElasticFields.METADATA_NUMBER, md.getValue(), md.getOperator(), md.isNot()),
-            md.getStatement());
+        return metadataQuery(timeQuery(ElasticFields.METADATA_NUMBER.field(), md.getValue(),
+            md.getOperator(), md.isNot()), md.getIndex());
       default:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
-            md.getStatement());
+            md.getIndex());
     }
   }
 
@@ -545,6 +549,19 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder fieldQuery(ElasticFields field, String value,
       SearchOperators operator, boolean not) {
+    return fieldQuery(field.field(), value, operator, not);
+  }
+
+  /**
+   * Create a {@link QueryBuilder}
+   *
+   * @param index
+   * @param value
+   * @param operator
+   * @return
+   */
+  private static QueryBuilder fieldQuery(String fieldName, String value, SearchOperators operator,
+      boolean not) {
     QueryBuilder q = null;
 
     if (operator == null) {
@@ -552,23 +569,23 @@ public class ElasticQueryFactory {
     }
     switch (operator) {
       case REGEX:
-        q = matchFieldQuery(field, ElasticSearchFactoryUtil.escape(value));
+        q = matchFieldQuery(fieldName, ElasticSearchFactoryUtil.escape(value));
         break;
       case EQUALS:
-        q = exactFieldQuery(field, value);
+        q = matchFieldQuery(fieldName, ElasticSearchFactoryUtil.escape(value));
         break;
       case GREATER:
-        q = greaterThanQuery(field, value);
+        q = greaterThanQuery(fieldName, value);
         break;
       case LESSER:
-        q = lessThanQuery(field, value);
+        q = lessThanQuery(fieldName, value);
         break;
       case GEO:
         q = geoQuery(value);
         break;
       default:
         // default is REGEX
-        q = matchFieldQuery(field, value);
+        q = matchFieldQuery(fieldName, value);
         break;
     }
     return negate(q, not);
@@ -583,8 +600,8 @@ public class ElasticQueryFactory {
    * @param not
    * @return
    */
-  private static QueryBuilder timeQuery(ElasticFields field, String dateString,
-      SearchOperators operator, boolean not) {
+  private static QueryBuilder timeQuery(String field, String dateString, SearchOperators operator,
+      boolean not) {
     QueryBuilder q = null;
     if (operator == null) {
       operator = SearchOperators.REGEX;
@@ -597,7 +614,7 @@ public class ElasticQueryFactory {
         q = lessThanQuery(field, Long.toString(DateFormatter.getTime(dateString)));
         break;
       default:
-        q = QueryBuilders.rangeQuery(field.field())
+        q = QueryBuilders.rangeQuery(field)
             .gte(Long.toString(DateFormatter.parseDate(dateString).getTime()))
             .lte(Long.toString(DateFormatter.parseDate2(dateString).getTime()));
         break;
@@ -641,45 +658,18 @@ public class ElasticQueryFactory {
   }
 
   /**
-   * Query for metadata via metadata label (label="value")
-   *
-   * @param label
-   * @param value
-   * @param not
-   * @return
-   */
-  private static QueryBuilder simpleMetadataQuery(SearchSimpleMetadata smd) {
-    return QueryBuilders.boolQuery()
-        .must(
-            fieldQuery(ElasticFields.TECHNICAL_NAME, smd.getLabel(), SearchOperators.EQUALS, false))
-        .must(fieldQuery(ElasticFields.TECHNICAL_VALUE, smd.getValue(), smd.getOperator(),
-            smd.isNot()));
-  }
-
-  /**
-   * Search for the exact value of a field
-   *
-   * @param field
-   * @param value
-   * @return
-   */
-  private static QueryBuilder exactFieldQuery(ElasticFields field, String value) {
-    return QueryBuilders.termQuery(field.fieldExact(), value);
-  }
-
-  /**
    * Search for a match (not the exact value)
    *
    * @param field
    * @param value
    * @return
    */
-  private static QueryBuilder matchFieldQuery(ElasticFields field, String value) {
-    if (field == ElasticFields.ALL) {
+  private static QueryBuilder matchFieldQuery(String fieldName, String value) {
+    if (ElasticFields.ALL.name().equals(fieldName)) {
       return QueryBuilders
           .queryStringQuery(value + " " + ElasticFields.NAME.field() + ".suggest:" + value);
     }
-    return QueryBuilders.queryStringQuery(field.field() + ":" + value);
+    return QueryBuilders.queryStringQuery(fieldName + ":" + value);
   }
 
   /**
@@ -689,9 +679,9 @@ public class ElasticQueryFactory {
    * @param value
    * @return
    */
-  private static QueryBuilder greaterThanQuery(ElasticFields field, String value) {
+  private static QueryBuilder greaterThanQuery(String fieldName, String value) {
     if (NumberUtils.isNumber(value)) {
-      return QueryBuilders.rangeQuery(field.field()).gte(Double.parseDouble(value));
+      return QueryBuilders.rangeQuery(fieldName).gte(Double.parseDouble(value));
     }
     return matchNothing();
   }
@@ -703,9 +693,9 @@ public class ElasticQueryFactory {
    * @param value
    * @return
    */
-  private static QueryBuilder lessThanQuery(ElasticFields field, String value) {
+  private static QueryBuilder lessThanQuery(String fieldName, String value) {
     if (NumberUtils.isNumber(value)) {
-      return QueryBuilders.rangeQuery(field.field()).lte(Double.parseDouble(value));
+      return QueryBuilders.rangeQuery(fieldName).lte(Double.parseDouble(value));
     }
     return matchNothing();
   }

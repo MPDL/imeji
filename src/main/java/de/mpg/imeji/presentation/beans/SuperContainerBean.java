@@ -207,7 +207,6 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
     final SortCriterion sortCriterion = new SortCriterion();
     sortCriterion.setIndex(SearchIndexes.getIndex(getSelectedSortCriterion()));
     sortCriterion.setSortOrder(SortOrder.valueOf(getSelectedSortOrder()));
-
     searchResult = search(searchQuery, sortCriterion, myOffset, limit);
     setSearchQuery(searchQuery);
     searchResult.setQuery(getQuery());

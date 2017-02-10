@@ -5,7 +5,6 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -23,10 +22,8 @@ import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.search.model.SearchSimpleMetadata;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.StringParser;
-import de.mpg.imeji.logic.vo.Statement;
 
 /**
  * Static methods to manipulate imeji url search queries
@@ -124,7 +121,6 @@ public class SearchQueryParser {
     }
     final StringReader reader = new StringReader(query);
     int c = 0;
-    final StringParser simpleMdParser = new StringParser(SEARCH_METADATA_SIMPLE_PATTERN);
     final StringParser mdParser = new StringParser(SEARCH_METADATA_PATTERN);
     final StringParser pairParser = new StringParser(SEARCH_PAIR_PATTERN);
     final StringParser technicalMdParser = new StringParser(SEARCH_TECHNICAL_METADATA_PATTERN);
@@ -162,19 +158,12 @@ public class SearchQueryParser {
             subQuery = "";
           }
         }
-        if (simpleMdParser.find(scString)) {
-          searchQuery.addPair(new SearchSimpleMetadata(simpleMdParser.getGroup(1),
-              stringOperator2SearchOperator(simpleMdParser.getGroup(2)), simpleMdParser.getGroup(3),
-              not));
-          not = false;
-          scString = "";
-        } else if (technicalMdParser.find(scString)) {
+        if (technicalMdParser.find(scString)) {
           final SearchOperators operator =
               stringOperator2SearchOperator(technicalMdParser.getGroup(2));
           final String label = technicalMdParser.getGroup(1);
           final String value = technicalMdParser.getGroup(3);
-          searchQuery.addPair(
-              new SearchTechnicalMetadata(SearchFields.technical, operator, value, label, not));
+          searchQuery.addPair(new SearchTechnicalMetadata(operator, value, label, not));
           not = false;
           scString = "";
         } else if (mdParser.find(scString)) {
@@ -186,7 +175,7 @@ public class SearchQueryParser {
           }
           final SearchFields field = SearchFields.valueOf(mdParser.getGroup(2));
           final String index = mdParser.getGroup(1);
-          searchQuery.addPair(new SearchMetadata(field, operator, value, index, not));
+          searchQuery.addPair(new SearchMetadata(index, operator, value, not));
           not = false;
           scString = "";
         } else if (pairParser.find(scString)) {
@@ -274,49 +263,23 @@ public class SearchQueryParser {
    */
   public static String transform2URL(SearchQuery searchQuery) {
     String query = "";
-    String logical = "";
     for (final SearchElement se : searchQuery.getElements()) {
+      query = query.isEmpty() ? query : query + " ";
       switch (se.getType()) {
         case GROUP:
-          if (((SearchGroup) se).isNot()) {
-            query += " NOT";
-          }
-          final String g = transform2URL(new SearchQuery(((SearchGroup) se).getGroup()));
-          if (!"".equals(g)) {
-            query += logical + "(" + g + ")";
-          }
+          query += searchGroupToStringQuery((SearchGroup) se);
           break;
         case LOGICAL_RELATIONS:
-          logical = " " + ((SearchLogicalRelation) se).getLogicalRelation().name() + " ";
+          query += ((SearchLogicalRelation) se).getLogicalRelation().name();
           break;
         case PAIR:
-          if ("".equals(((SearchPair) se).getValue())) {
-            break;
-          }
-          if (((SearchPair) se).isNot()) {
-            query += " NOT";
-          }
-          query += logical + ((SearchPair) se).getField()
-              + operator2URL(((SearchPair) se).getOperator()) + searchValue2URL(((SearchPair) se));
+          query += searchPairToStringQuery((SearchPair) se);
           break;
         case METADATA:
-          if (((SearchMetadata) se).isNot()) {
-            query += " NOT";
-          }
-          query += logical
-              + transformStatementToIndex(((SearchMetadata) se).getStatement(),
-                  ((SearchPair) se).getField())
-              + operator2URL(((SearchMetadata) se).getOperator())
-              + searchValue2URL(((SearchMetadata) se));
+          query += searchMetadataToStringQuery((SearchMetadata) se);
           break;
         case TECHNICAL_METADATA:
-          if (((SearchTechnicalMetadata) se).isNot()) {
-            query += " NOT";
-          }
-          query +=
-              logical + SearchFields.technical + "[" + ((SearchTechnicalMetadata) se).getLabel()
-                  + "]=\"" + ((SearchTechnicalMetadata) se).getValue() + "\"";
-          break;
+          query += searchTechnicalMetadataToStringQuery((SearchTechnicalMetadata) se);
         default:
           break;
       }
@@ -325,14 +288,49 @@ public class SearchQueryParser {
   }
 
   /**
-   * Transform a {@link Statement} to an index
+   * Transform a {@link SearchGroup} to a String query
+   * 
+   * @param sg
+   * @return
+   */
+  private static String searchGroupToStringQuery(SearchGroup sg) {
+    String q = transform2URL(new SearchQuery(sg.getGroup()));
+    return "".equals(q.trim()) ? "" : (sg.isNot() ? "NOT" : "") + "(" + q + ")";
+  }
+
+  /**
+   * Transform a SearchPair to String query
+   * 
+   * @param pair
+   * @return
+   */
+  private static String searchPairToStringQuery(SearchPair pair) {
+    return (pair.isNot() ? "NOT" : "") + pair.getField() + operator2URL(pair.getOperator())
+        + searchValue2URL(pair);
+  }
+
+  /**
+   * Transforma a {@link SearchTechnicalMetadata} to String query
+   * 
+   * @param stm
+   * @return
+   */
+  private static String searchTechnicalMetadataToStringQuery(SearchTechnicalMetadata stm) {
+    return (stm.isNot() ? "NOT" : "") + SearchFields.technical + "[" + stm.getLabel() + "]"
+        + operator2URL(stm.getOperator()) + searchValue2URL(stm);
+  }
+
+  /**
+   * Transform a {@link SearchMetadata} to a string query
    *
    * @param statement
    * @param index
    * @return
    */
-  public static String transformStatementToIndex(String index, SearchFields field) {
-    return index + ":" + field;
+  private static String searchMetadataToStringQuery(SearchMetadata smd) {
+    return (smd.isNot() ? "NOT" : "") + SearchFields.md.name() + "." + smd.getIndex()
+        + (smd.getField() == null ? "" : "." + smd.getField().name())
+        + operator2URL(smd.getOperator()) + searchValue2URL(smd);
   }
 
   /**
@@ -438,16 +436,16 @@ public class SearchQueryParser {
    * @return
    */
   private static boolean isSearchGroupForComplexMetadata(SearchGroup group) {
-    final List<String> statementUris = new ArrayList<String>();
-    for (final SearchElement el : group.getElements()) {
-      if (el.getType().equals(SEARCH_ELEMENTS.METADATA)) {
-        final SearchMetadata md = (SearchMetadata) el;
-        if (statementUris.contains(md.getStatement().toString())) {
-          return true;
-        }
-        statementUris.add(md.getStatement().toString());
-      }
-    }
+    // final List<String> statementUris = new ArrayList<String>();
+    // for (final SearchElement el : group.getElements()) {
+    // if (el.getType().equals(SEARCH_ELEMENTS.METADATA)) {
+    // final SearchMetadata md = (SearchMetadata) el;
+    // if (statementUris.contains(md.getStatement().toString())) {
+    // return true;
+    // }
+    // statementUris.add(md.getStatement().toString());
+    // }
+    // }
     return false;
   }
 
@@ -594,33 +592,7 @@ public class SearchQueryParser {
    * @return
    */
   private static String searchMetadata2PrettyQuery(SearchMetadata md, Locale locale) {
-    String label = md.getStatement();
-    if (label == null) {
-      label = "Metadata-" + indexNamespace2PrettyQuery(md.getStatement());
-    }
-    switch (md.getField()) {
-      case coordinates:
-        label += "(" + Imeji.RESOURCE_BUNDLE.getLabel("geolocation_location", locale) + ")";
-        break;
-      case person_family:
-        label += "(" + Imeji.RESOURCE_BUNDLE.getLabel("family_name", locale) + ")";
-        break;
-      case person_given:
-        label += "(" + Imeji.RESOURCE_BUNDLE.getLabel("first_name", locale) + ")";
-        break;
-      case person_id:
-        label += "( " + Imeji.RESOURCE_BUNDLE.getLabel("identifier", locale) + ")";
-        break;
-      case person_org_name:
-        label += "(" + Imeji.RESOURCE_BUNDLE.getLabel("organization", locale) + ")";
-        break;
-      case url:
-        label += "(" + Imeji.RESOURCE_BUNDLE.getLabel("url", locale) + ")";
-        break;
-      default:
-        break;
-    }
-    return label + " " + negation2PrettyQuery(md.isNot())
+    return md.getIndex() + " " + negation2PrettyQuery(md.isNot())
         + searchOperator2PrettyQuery(md.getOperator()) + " " + md.getValue();
   }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.vo.Metadata;
 
 /**
  * Specific {@link SearchPair} for {@link Metadata} search
@@ -14,20 +15,58 @@ import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
  */
 public class SearchMetadata extends SearchPair {
   private static final long serialVersionUID = -7422025148855635937L;
-  private final String statement;
+  private final String index;
 
   /**
-   * Default Constructor
+   * Constructor with default value for operator (REGEX) and not (false)
+   * 
+   * @param index
+   * @param value
    */
-  public SearchMetadata() {
-    this.statement = null;
+  public SearchMetadata(String index, String value) {
+    super(null, value);
+    this.index = index;
   }
 
-  public SearchMetadata(SearchFields field, SearchOperators operator, String value,
-      String statement, boolean not) {
-    super(field, operator, value, not);
-    this.statement = statement;
+  /**
+   * Search for a particular SearchField of a metadata (for instance familyName)
+   * 
+   * @param index
+   * @param f
+   * @param value
+   */
+  public SearchMetadata(String index, SearchFields f, String value) {
+    super(f, value);
+    this.index = index;
   }
+
+  /**
+   * Search for a {@link Metadata}
+   * 
+   * @param index
+   * @param operator
+   * @param value
+   * @param not
+   */
+  public SearchMetadata(String index, SearchOperators operator, String value, boolean not) {
+    super(null, operator, value, not);
+    this.index = index;
+  }
+
+  /**
+   * Search for a {@link Metadata} for a particular field (for instance family)
+   * 
+   * @param index
+   * @param operator
+   * @param value
+   * @param not
+   */
+  public SearchMetadata(String index, SearchFields f, SearchOperators operator, String value,
+      boolean not) {
+    super(f, operator, value, not);
+    this.index = index;
+  }
+
 
   @Override
   public SEARCH_ELEMENTS getType() {
@@ -39,7 +78,11 @@ public class SearchMetadata extends SearchPair {
     return new ArrayList<>();
   }
 
-  public String getStatement() {
-    return statement;
+  /**
+   * @return the index
+   */
+  public String getIndex() {
+    return index;
   }
+
 }

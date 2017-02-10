@@ -11,8 +11,9 @@
 	<composite:implementation>
 		<ui:fragment rendered="#{Auth.update}">
 			<h:form>
-				<h:commandLink action="#{cc.attrs.itemBean.showEditor}" styleClass="imj_menuButton imj_overlayMenu">
+				<h:commandLink action="#{cc.attrs.itemBean.showEditor}" styleClass="imj_menuButton imj_overlayMenu" onclick=" window.location.hash = '#itemMetadata';">
 					 <span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
+					 <f:ajax render=":metadata"/>
 				</h:commandLink>
 				<h:commandLink action="#{cc.attrs.itemBean.delete}" styleClass="imj_menuButton imj_overlayMenu">
 					 <span class="fa fa-trash"/> <span>#{lbl.delete}</span>

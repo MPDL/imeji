@@ -40,6 +40,11 @@
 						<ul class="imj_overlayMenuList">
 							<h:form>
 								<li>
+									<a href="#{Navigation.applicationUrl}editbatch?col=#{cc.attrs.collectionBean.id}">
+										<span class="fa fa-pencil"/> <span>#{lbl.edit_all}</span>
+									</a>
+								</li>
+								<li>
 									<h:commandLink action="#{cc.attrs.collectionBean.delete}">
 										 <span class="fa fa-globe"/> <span>#{lbl.collection_release}</span>
 									</h:commandLink>

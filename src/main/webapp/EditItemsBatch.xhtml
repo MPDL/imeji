@@ -6,7 +6,7 @@
 	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
-	<ui:param name="headline" value="#{lbl.edit_selected_items}" />
+	<ui:param name="headline" value="#{lbl.edit_all}" />
 	<ui:param name="title" value="#{headline}" />
 
 	<ui:define name="mainContent">
@@ -18,7 +18,7 @@
 		<div class="loaderWrapper show" />
 		<div class="loader show" />
 		<h:form id="editBatchForm">
-			<h:outputLink value="#{History.previousPage.completeUrlWithHistory}">#{lbl.back_to_pictures}</h:outputLink>
+			<h:outputLink value="#{EditItemsBatchBean.backUrl}">#{lbl.back_to_pictures}</h:outputLink>
 			<br/><br/>
 			<div class="imj_metadataSet">
 				<div class="imj_metadataLabel">
@@ -31,9 +31,9 @@
 			</div>
 			
 			<h:commandButton type="submit"
-						action="#{EditItemsBatchBean.append}" value="#{lbl.add_metadata_to_all}"
+						action="#{EditItemsBatchBean.append}" value="#{lbl.add_metadata_append}"
 						onclick="startLoader();">
-				<f:ajax execute="@form" render="@form" />
+				<f:ajax execute="@form" render=":imj_pageMessageArea @form " />
 			</h:commandButton>
 			<h:commandButton type="submit" styleClass="imj_submitButton"
 						action="#{EditItemsBatchBean.fill}" value="#{lbl.add_metadata_absent}"

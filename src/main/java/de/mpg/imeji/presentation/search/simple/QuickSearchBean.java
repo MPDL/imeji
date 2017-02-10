@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.search;
+package de.mpg.imeji.presentation.search.simple;
 
 import java.io.IOException;
 import java.io.Serializable;

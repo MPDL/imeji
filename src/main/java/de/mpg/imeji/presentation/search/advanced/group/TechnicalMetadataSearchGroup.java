@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.search;
+package de.mpg.imeji.presentation.search.advanced.group;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,10 +6,12 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.search.model.SearchGroup;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
@@ -21,7 +23,9 @@ import de.mpg.imeji.logic.util.StringHelper;
  * @author saquet
  *
  */
-public class TechnicalMetadataSearchGroup implements Serializable {
+public class TechnicalMetadataSearchGroup extends AbstractAdvancedSearchFormGroup
+    implements Serializable {
+  private static final Logger LOGGER = Logger.getLogger(TechnicalMetadataSearchGroup.class);
   private static final long serialVersionUID = -8685239131773216610L;
   private List<SelectItem> menu;
   private List<TechnicalMetadataElement> list = new ArrayList<>();
@@ -33,6 +37,7 @@ public class TechnicalMetadataSearchGroup implements Serializable {
    *
    */
   public class TechnicalMetadataElement implements Serializable {
+
     private static final long serialVersionUID = 1956745139187896361L;
     private String index;
     private String value;
@@ -41,6 +46,15 @@ public class TechnicalMetadataSearchGroup implements Serializable {
     public TechnicalMetadataElement(String index, String value) {
       this.index = index;
       this.value = value;
+    }
+
+    /**
+     * Return the {@link TechnicalMetadataElement} as {@link SearchTechnicalMetadata}
+     * 
+     * @return
+     */
+    public SearchTechnicalMetadata toSearchTechnicalMetadata() {
+      return new SearchTechnicalMetadata(SearchOperators.REGEX, value, index, false);
     }
 
     /**
@@ -107,24 +121,24 @@ public class TechnicalMetadataSearchGroup implements Serializable {
     return (String) menu.get(0).getValue();
   }
 
-  /**
-   * Return the technical metadata group as a {@link SearchGroup}
-   *
-   * @return
-   * @throws UnprocessableError
-   */
-  public SearchGroup asSearchGroup() throws UnprocessableError {
-    final SearchGroup group = new SearchGroup();
+
+  @Override
+  public SearchElement toSearchElement() {
+    SearchFactory factory = new SearchFactory();
     for (final TechnicalMetadataElement el : list) {
-      if (!StringHelper.isNullOrEmptyTrim(el.value)) {
-        if (!group.isEmpty()) {
-          group.addLogicalRelation(el.getRelation());
-        }
-        group.addPair(new SearchTechnicalMetadata(SearchFields.technical, SearchOperators.REGEX,
-            el.getValue(), el.getIndex(), false));
+      try {
+        factory.addElement(el.toSearchTechnicalMetadata(), el.getRelation());
+      } catch (UnprocessableError e) {
+        LOGGER.error("Error adding SearchTechnicalMetadata to factory", e);
       }
     }
-    return group;
+    return factory.buildAsGroup();
+  }
+
+  @Override
+  public void validate() {
+    // TODO Auto-generated method stub
+
   }
 
   /**
@@ -170,4 +184,5 @@ public class TechnicalMetadataSearchGroup implements Serializable {
   public void setMenu(List<SelectItem> menu) {
     this.menu = menu;
   }
+
 }

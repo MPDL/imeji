@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.search;
+package de.mpg.imeji.presentation.search.advanced.group;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
+import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
@@ -22,11 +23,9 @@ import de.mpg.imeji.logic.search.model.SearchPair;
  * @author saquet
  *
  */
-public class FileTypeSearchGroup implements Serializable {
+public class FileTypeSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
   private static final long serialVersionUID = 1439809243185106214L;
   private List<String> selected;
-  private final SearchPair pair =
-      new SearchPair(SearchFields.filetype, SearchOperators.REGEX, "", false);
   private List<SelectItem> menu;
 
   public FileTypeSearchGroup(Locale locale) {
@@ -36,6 +35,18 @@ public class FileTypeSearchGroup implements Serializable {
   public FileTypeSearchGroup(String value, Locale locale) {
     this(locale);
     initSelected(value, locale);
+  }
+
+
+  @Override
+  public SearchElement toSearchElement() {
+    return new SearchPair(SearchFields.filetype, SearchOperators.REGEX,
+        StringUtils.join(selected, " OR "), false);
+  }
+
+  @Override
+  public void validate() {
+
   }
 
   private void initMenu(Locale locale) {
@@ -63,7 +74,6 @@ public class FileTypeSearchGroup implements Serializable {
   @SuppressWarnings("unchecked")
   public void listener(ValueChangeEvent event) {
     selected = (List<String>) event.getNewValue();
-    pair.setValue(StringUtils.join(selected, " OR "));
   }
 
   /**
@@ -90,13 +100,6 @@ public class FileTypeSearchGroup implements Serializable {
   }
 
   /**
-   * @return the pair
-   */
-  public SearchPair getPair() {
-    return pair;
-  }
-
-  /**
    * @return the menu
    */
   public List<SelectItem> getMenu() {
@@ -109,4 +112,5 @@ public class FileTypeSearchGroup implements Serializable {
   public void setMenu(List<SelectItem> menu) {
     this.menu = menu;
   }
+
 }

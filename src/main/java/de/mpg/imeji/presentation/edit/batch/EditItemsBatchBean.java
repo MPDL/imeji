@@ -38,12 +38,21 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   private static final Logger LOGGER = Logger.getLogger(EditItemsBatchBean.class);
   private String collectionId;
   private String query;
+  private String backUrl;
   private SelectStatementWithInputComponent statementSelector;
   private List<Item> items = new ArrayList<>();
 
   @PostConstruct
   public void init() {
     collectionId = UrlHelper.getParameterValue("col");
+    this.setBackUrl(getNavigation().getCollectionUrl() + collectionId);
+    reset();
+  }
+
+  /**
+   * Reset the editor
+   */
+  public void reset() {
     statementSelector = new SelectStatementWithInputComponent(statementMap);
   }
 
@@ -55,6 +64,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
       retrieveItems();
       items.stream().forEach(item -> item.getMetadata().add(getMetadata()));
       save();
+      reset();
     } catch (Exception e) {
       BeanHelper.error("Error saving editor: " + e.getMessage());
       LOGGER.error("Error saving batch editor");
@@ -66,13 +76,13 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
    */
   public void fill() {
     try {
-      items = retrieveItems();
+      retrieveItems();
       items.stream()
           .filter(item -> item.getMetadata().stream()
               .noneMatch(md -> md.getStatementId().equals(statementSelector.getIndex())))
           .sequential().forEach(item -> item.getMetadata().add(getMetadata()));
       save();
-      init();
+      reset();
     } catch (Exception e) {
       BeanHelper.error("Error saving editor: " + e.getMessage());
       LOGGER.error("Error saving batch editor");
@@ -86,11 +96,12 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
     try {
       retrieveItems();
       items.stream()
-          .peek(item -> item.getMetadata().stream()
+          .peek(item -> item.setMetadata(item.getMetadata().stream()
               .filter(md -> !md.getStatementId().equals(statementSelector.getIndex()))
-              .collect(Collectors.toList()))
+              .collect(Collectors.toList())))
           .forEach(item -> item.getMetadata().add(getMetadata()));
       save();
+      reset();
     } catch (Exception e) {
       BeanHelper.error("Error saving editor: " + e.getMessage());
       LOGGER.error("Error saving batch editor");
@@ -113,13 +124,14 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
    * @throws ImejiException
    * @throws IOException
    */
-  private List<Item> retrieveItems() throws ImejiException, IOException {
+  private void retrieveItems() throws ImejiException, IOException {
     SearchQuery q = SearchQueryParser.parseStringQuery(query);
     if (collectionId != null) {
-      return itemService.searchAndRetrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId),
-          q, null, getSessionUser(), 0, -1);
+      items =
+          itemService.searchAndRetrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId), q,
+              null, getSessionUser(), 0, -1);
     } else {
-      return itemService.searchAndRetrieve(q, null, getSessionUser(), -1, 0);
+      items = itemService.searchAndRetrieve(q, null, getSessionUser(), -1, 0);
     }
   }
 
@@ -148,5 +160,18 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
     this.statementSelector = statementSelector;
   }
 
+  /**
+   * @return the backUrl
+   */
+  public String getBackUrl() {
+    return backUrl;
+  }
+
+  /**
+   * @param backUrl the backUrl to set
+   */
+  public void setBackUrl(String backUrl) {
+    this.backUrl = backUrl;
+  }
 
 }

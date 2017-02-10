@@ -19,6 +19,10 @@ public class SearchGroup extends SearchElement {
     group = new ArrayList<SearchElement>();
   }
 
+  public SearchGroup(List<SearchElement> elements) {
+    group = elements;
+  }
+
   public void setGroup(List<SearchElement> group) {
     this.group = group;
   }

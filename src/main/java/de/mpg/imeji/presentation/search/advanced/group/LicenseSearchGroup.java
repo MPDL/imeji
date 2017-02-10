@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.search;
+package de.mpg.imeji.presentation.search.advanced.group;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,10 +11,11 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.StringUtils;
 
+import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 
 /**
  * Search group for licenses
@@ -22,7 +23,7 @@ import de.mpg.imeji.logic.search.model.SearchPair;
  * @author saquet
  *
  */
-public class LicenseSearchGroup implements Serializable {
+public class LicenseSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
   private static final long serialVersionUID = -2822491289836043116L;
   private List<String> selected = new ArrayList<>();
   private List<SelectItem> menu;
@@ -42,12 +43,8 @@ public class LicenseSearchGroup implements Serializable {
     selected = Arrays.asList(value.split(" OR "));
   }
 
-  /**
-   * return the grooup as a search pair
-   *
-   * @return
-   */
-  public SearchPair asSearchPair() {
+  @Override
+  public SearchElement toSearchElement() {
     if ("true".equals(hasLicense)) {
       return new SearchPair(SearchFields.license, SearchOperators.REGEX, "*", false);
     } else if ("false".equals(hasLicense)) {
@@ -56,6 +53,12 @@ public class LicenseSearchGroup implements Serializable {
       return new SearchPair(SearchFields.license, SearchOperators.REGEX,
           StringUtils.join(selected, " OR "), false);
     }
+  }
+
+  @Override
+  public void validate() {
+    // TODO Auto-generated method stub
+
   }
 
   public boolean isEmpty() {
@@ -115,5 +118,7 @@ public class LicenseSearchGroup implements Serializable {
   public void setHasLicense(String hasLicense) {
     this.hasLicense = hasLicense;
   }
+
+
 
 }

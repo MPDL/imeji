@@ -9,19 +9,12 @@ import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
  *
  */
 public class SearchTechnicalMetadata extends SearchPair {
-  /**
-   *
-   */
   private static final long serialVersionUID = -2241342408739861614L;
   private final String label;
 
-  public SearchTechnicalMetadata() {
-    this.label = null;
-  }
-
-  public SearchTechnicalMetadata(SearchFields field, SearchOperators operator, String value,
-      String label, boolean not) {
-    super(field, operator, value, not);
+  public SearchTechnicalMetadata(SearchOperators operator, String value, String label,
+      boolean not) {
+    super(SearchFields.technical, operator, value, not);
     this.label = label;
   }
 

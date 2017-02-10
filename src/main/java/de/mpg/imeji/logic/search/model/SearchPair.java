@@ -16,20 +16,36 @@ import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
  */
 public class SearchPair extends SearchElement {
   private static final long serialVersionUID = -1522952540004708017L;
-  private boolean not = false;
-  private SearchIndex index;
-  private SearchOperators operator;
-  private String value;
-  private SearchFields field;
-
+  private final boolean not;
+  private final SearchOperators operator;
+  private final String value;
+  private final SearchFields field;
 
   /**
-   * Default constructor
+   * Construct an empty Pair
    */
   public SearchPair() {
-
+    this(null, null, null, false);
   }
 
+  /**
+   * Constructor with default value for the operator (regex) and for not (false)
+   * 
+   * @param field
+   * @param value
+   */
+  public SearchPair(SearchFields field, String value) {
+    this(field, SearchOperators.REGEX, value, false);
+  }
+
+  /**
+   * Constructor
+   * 
+   * @param field
+   * @param operator
+   * @param value
+   * @param not
+   */
   public SearchPair(SearchFields field, SearchOperators operator, String value, boolean not) {
     this.operator = operator;
     this.value = value;
@@ -37,24 +53,8 @@ public class SearchPair extends SearchElement {
     this.field = field;
   }
 
-  public SearchIndex getIndex() {
-    return index;
-  }
-
-  public void setIndex(SearchIndex index) {
-    this.index = index;
-  }
-
   public SearchOperators getOperator() {
     return operator;
-  }
-
-  public void setOperator(SearchOperators operator) {
-    this.operator = operator;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
   }
 
   public String getValue() {
@@ -71,9 +71,6 @@ public class SearchPair extends SearchElement {
     return new ArrayList<SearchElement>();
   }
 
-  public void setNot(boolean not) {
-    this.not = not;
-  }
 
   public boolean isNot() {
     return not;
@@ -84,13 +81,6 @@ public class SearchPair extends SearchElement {
    */
   public SearchFields getField() {
     return field;
-  }
-
-  /**
-   * @param field the field to set
-   */
-  public void setField(SearchFields field) {
-    this.field = field;
   }
 
   @Override

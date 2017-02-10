@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.search;
+package de.mpg.imeji.presentation.search.advanced;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,7 +7,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
@@ -16,7 +15,6 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.SearchQueryParser;
-import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -34,7 +32,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class AdvancedSearchBean extends SuperBean {
   private static final long serialVersionUID = -3989020231445922611L;
-  private SearchForm formular = new SearchForm();
+  private SearchForm formular;
   // Menus
   private List<SelectItem> profilesMenu;
   private List<SelectItem> collectionsMenu;
@@ -99,9 +97,6 @@ public class AdvancedSearchBean extends SuperBean {
    */
   public void initForm(SearchQuery searchQuery) throws Exception {
     formular = new SearchForm(searchQuery, getLocale(), getSessionUser());
-    if (formular.getGroups().size() == 0) {
-      formular.addSearchGroup(0);
-    }
   }
 
 
@@ -140,92 +135,6 @@ public class AdvancedSearchBean extends SuperBean {
     } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error invalid search form", e);
-    }
-  }
-
-
-
-  /**
-   * Change the {@link SearchGroup}
-   *
-   * @throws ImejiException
-   */
-  public void changeGroup() throws ImejiException {
-    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("gPos"));
-    formular.changeSearchGroup(gPos, getSessionUser());
-  }
-
-  /**
-   * Add a new {@link SearchGroupForm}
-   */
-  public void addGroup() {
-    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("gPos"));
-    formular.addSearchGroup(gPos);
-  }
-
-  /**
-   * Remove a {@link SearchGroupForm}
-   */
-  public void removeGroup() {
-    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("gPos"));
-    formular.removeSearchGroup(gPos);
-    if (formular.getGroups().size() == 0) {
-      formular.addSearchGroup(0);
-    }
-  }
-
-  /**
-   * Change a {@link SearchMetadataForm}. The search value is removed
-   */
-  public void changeElement() {
-    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("gPos"));
-    final int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("elPos"));
-    formular.changeElement(gPos, elPos, false, getLocale());
-  }
-
-  /**
-   * Update a {@link SearchMetadataForm}. The search value is keeped
-   */
-  public void updateElement() {
-    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("gPos"));
-    final int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("elPos"));
-    formular.changeElement(gPos, elPos, true, getLocale());
-  }
-
-  public void updateForm() {
-
-  }
-
-  /**
-   * Add a new {@link SearchMetadataForm}
-   */
-  public void addElement() {
-    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("gPos"));
-    final int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("elPos"));
-    formular.addElement(gPos, elPos, getLocale());
-  }
-
-  /**
-   * Remove a new {@link SearchMetadataForm}
-   */
-  public void removeElement() {
-    final int gPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("gPos"));
-    final int elPos = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("elPos"));
-    formular.removeElement(gPos, elPos);
-    if (formular.getGroups().get(gPos).getSearchElementForms().size() == 0) {
-      formular.removeSearchGroup(gPos);
-      formular.addSearchGroup(gPos);
     }
   }
 
