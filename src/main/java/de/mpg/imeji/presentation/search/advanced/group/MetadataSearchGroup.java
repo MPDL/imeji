@@ -27,13 +27,15 @@ public class MetadataSearchGroup extends AbstractAdvancedSearchFormGroup impleme
   private static final Logger LOGGER = Logger.getLogger(MetadataSearchGroup.class);
   private Map<String, Statement> statementMap;
   private final List<MetadataSearchGroupEntry> entries;
+  private final Locale locale;
 
 
   public MetadataSearchGroup(Locale locale) {
-    entries = new ArrayList<>();
+    this.entries = new ArrayList<>();
+    this.locale = locale;
     try {
       statementMap = StatementUtil.statementListToMap(new StatementService().retrieveAll());
-      addEntry(0, locale);
+      addEntry(0);
     } catch (ImejiException e) {
       LOGGER.error("Error reading statements", e);
     }
@@ -65,7 +67,7 @@ public class MetadataSearchGroup extends AbstractAdvancedSearchFormGroup impleme
    * 
    * @param position
    */
-  public void addEntry(int position, Locale locale) {
+  public void addEntry(int position) {
     entries.add(position, new MetadataSearchGroupEntry(statementMap, locale));
   }
 

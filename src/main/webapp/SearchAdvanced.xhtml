@@ -78,7 +78,7 @@
 									</h:selectOneMenu>
 								</div>
 
-								<div class="imj_searchInput">#{entry.statement.index}
+								<div class="imj_searchInput">
 									<md:input metadataInputComponent="#{entry.input}"/>
 								</div>
 								<!-- END of imj_searchInput -->
@@ -86,58 +86,15 @@
 								<div class="imj_submitPanel">
 									<h:panelGroup styleClass="imj_inlineButtonGroup">
 										<!-- This panelGroup is needed for IE -->
-										<h:commandLink value=""
-											action="#{AdvancedSearchBean.addElement}"
-											render="imj_ajaxWrapper, imj_searchQueryMessageArea"
-											styleClass="fa fa-plus-square-o">
-											<f:ajax execute="@form"
-												render="@form :imj_searchQueryMessageArea" />
-											<f:param name="gPos" value="#{gIndex.index}" />
-											<f:param name="elPos" value="#{elIndex.index}" />
+										<h:commandLink value="" action="#{AdvancedSearchBean.formular.metadataSearchGroup.addEntry(index.index + 1)}" styleClass="fa fa-plus-square-o">
+											<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea" />
 										</h:commandLink>
-										<h:commandLink value=""
-											action="#{AdvancedSearchBean.removeElement}"
-											render="imj_ajaxWrapper, imj_searchQueryMessageArea"
-											styleClass="fa fa-minus-square-o">
-											<f:ajax execute="@form"
-												render="@form :imj_searchQueryMessageArea" />
-											<f:param name="gPos" value="#{gIndex.index}" />
-											<f:param name="elPos" value="#{elIndex.index}" />
+										<h:commandLink rendered="#{AdvancedSearchBean.formular.metadataSearchGroup.entries.size() &gt; 1}" value="" action="#{AdvancedSearchBean.formular.metadataSearchGroup.removeEntry(index.index)}" styleClass="fa fa-minus-square-o">
+											<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea" />
 										</h:commandLink>
 									</h:panelGroup>
 								</div>
 							</ui:fragment>
-						</div>
-							<!-- END of imj_searchDetails -->
-
-							<h:panelGroup layout="block"
-								styleClass="imj_logicalDetailConnector"
-								rendered="#{elIndex.index &lt; (g.size - 1)}">
-								<h:selectOneMenu id="selLogicalRelation"
-									value="#{el.logicalRelation}"
-									styleClass="tiny_marginLExcl small_area0"
-									onchange="document.getElementById('advancedSearchForm:groups:' + #{gIndex.index} +':els:'+ #{elIndex.index} +':updateEl').click();">
-									<f:selectItems value="#{AdvancedSearchBean.operatorsMenu}" />
-								</h:selectOneMenu>
-							</h:panelGroup>
-
-						<div class="imj_inlineButtonGroup">
-							<h:commandLink value="" action="#{AdvancedSearchBean.addGroup}"
-								render="imj_ajaxWrapper :imj_searchQueryMessageArea"
-								styleClass="fa fa-plus-square-o" title="#{lbl.add_collection}">
-								<f:ajax execute="@form"
-									render="@form :imj_searchQueryMessageArea" />
-								<f:param name="gPos" value="#{gIndex.index}" />
-							</h:commandLink>
-							<h:commandLink value=""
-								action="#{AdvancedSearchBean.removeGroup}"
-								render="imj_ajaxWrapper :imj_searchQueryMessageArea"
-								styleClass="fa fa-minus-square-o"
-								title="#{lbl.remove_collection}">
-								<f:ajax execute="@form"
-									render="@form :imj_searchQueryMessageArea" />
-								<f:param name="gPos" value="#{gIndex.index}" />
-							</h:commandLink>
 						</div>
 					</h:panelGroup>	
 					<!-- END of imj_searchUnit -->
