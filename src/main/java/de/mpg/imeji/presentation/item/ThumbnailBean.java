@@ -7,6 +7,7 @@ import java.util.List;
 import javax.faces.event.ValueChangeEvent;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Item;
@@ -268,5 +269,9 @@ public class ThumbnailBean implements Serializable {
    */
   public void setMetadata(List<Metadata> metadata) {
     this.metadata = metadata;
+  }
+
+  public int getThumbnailWidth() {
+    return Integer.parseInt(Imeji.CONFIG.getThumbnailWidth());
   }
 }

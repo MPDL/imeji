@@ -63,7 +63,7 @@
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 
-			<h:outputLink id="lnkOriginalData" value="#{itemBean.originalFile}" target="_blank" rendered="#{!itemBean.viewInDataViewer}" >
+			<h:outputLink id="lnkOriginalData" value="#{itemBean.originalFile}" target="_blank" rendered="#{!itemBean.viewInDataViewer and !itemBean.viewInOpenseadragon}" >
 				<span class="fa fa-expand fa-size-4 imj_mediaEditPanelItem" />
 			</h:outputLink>
 		</div>	
@@ -331,23 +331,13 @@
 				
     			var imgFull = {
     			type: 'image',
-    			url: '#{itemBean.fullResolution}'
+    			url: '#{itemBean.fullResolution}',
     			};
-    			
-    			/*var imgWeb = {
-    	    			type: 'image',
-    	    			url: '#{Navigation.fileUrl}#{itemBean.content.preview}'
-    	    			};*/
-    	   
+   
     	    	var img={
     	    	type: 'legacy-image-pyramid',			
     	    			
     	    	levels: [
-    	    		/*{	
-        	    		url: '#{Navigation.fileUrl}#{itemBean.content.thumbnail}',    	    	
-        	    		height: #{itemBean.thumbnailWidth},
-        	    		width: #{itemBean.thumbnailWidth}
-        	    	},*/
         	    	{	
         	    		url: '#{itemBean.preview}',   	    	
         	    		height: #{itemBean.webResolutionHeight},
@@ -363,9 +353,7 @@
     			var viewerFull = OpenSeadragon({
     
         		id: "seadragon-viewer-full",
-        		prefixUrl: "#{Navigation.applicationUrl}/resources/openseadragon/images/",
         		tileSources: imgFull,
-        		minZoomLevel:1,
         		showRotationControl: true,
         		fullPageButton: "fullscreenButton",
         		homeButton: "homeButton",
@@ -387,6 +375,10 @@
     			
     			viewerFull.addHandler('open',function(){
     				document.getElementById("picWebResolutionAlt").style.display='none';
+    			});
+    			
+    			viewerFull.addHandler("tile-drawn",function(){
+    				alert("Here");
     			});
     			
  				

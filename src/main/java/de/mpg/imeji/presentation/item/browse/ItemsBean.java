@@ -56,7 +56,9 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private SearchResult searchResult;
   public static final String ITEM_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
   public static final String ITEM_SORT_COOKIE = "ITEM_SORT_COOKIE";
+  public static final String ELEMENTS_PER_LINE_COOKIE = "ELEMENTS_PER_LINE_COOKIE";
   private static final int DEFAULT_ELEMENTS_PER_PAGE = 18;
+  private static final int DEFAULT_ELEMENTS_PER_LINE = 6;
   // From session
   @ManagedProperty(value = "#{SessionBean}")
   private SessionBean sessionBean;
@@ -120,14 +122,23 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     setElementsPerPage(
         Integer.parseInt(CookieUtils.readNonNull(SuperPaginatorBean.numberOfItemsPerPageCookieName,
             Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
-    try {
-      final String options = Imeji.PROPERTIES.getProperty("imeji.image.list.size.options");
-      for (final String option : options.split(",")) {
-        getElementsPerPageSelectItems().add(new SelectItem(option));
-      }
-    } catch (final Exception e) {
-      LOGGER.error("Error reading property imeji.image.list.size.options", e);
+
+    final String options = Imeji.CONFIG.getNumberOfLinesInThumbnailList();
+    int itemsPerLine = Integer.parseInt(
+        CookieUtils.readNonNull(ELEMENTS_PER_LINE_COOKIE, "" + DEFAULT_ELEMENTS_PER_LINE));
+    if (itemsPerLine == 0) {
+      itemsPerLine = DEFAULT_ELEMENTS_PER_LINE;
     }
+    for (final String option : options.split(",")) {
+      int opt = Integer.parseInt(option) * itemsPerLine;
+      getElementsPerPageSelectItems().add(new SelectItem(opt));
+    }
+    setElementsPerPage(getElementsPerPage() / itemsPerLine * itemsPerLine);
+    if (getElementsPerPage() == 0) {
+      setElementsPerPage(itemsPerLine);
+    }
+
+
   }
 
   @Override

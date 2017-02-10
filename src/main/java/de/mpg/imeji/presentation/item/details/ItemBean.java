@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -81,7 +83,7 @@ public class ItemBean extends SuperBean {
   private String fullResolution;
   private String originalFile;
   private boolean edit = false;
-  private RotationThread rotationThread;
+  private ExecutorService rotationService;
 
   /**
    * Construct a default {@link ItemBean}
@@ -101,6 +103,7 @@ public class ItemBean extends SuperBean {
   @PostConstruct
   public void init() {
     this.id = UrlHelper.getParameterValue("id");
+    rotationService = Executors.newSingleThreadExecutor();
     try {
       loadImage();
       if (item != null) {
@@ -556,13 +559,7 @@ public class ItemBean extends SuperBean {
     if (SecurityUtil.authorization().update(getSessionUser(), getImage())) {
       int degrees = (rotation - lastRotation + 360) % 360;
       lastRotation = rotation;
-      if (rotationThread.isAlive()) {
-        rotationThread.addTask(new RotationJob(degrees));
-      } else {
-        rotationThread = new RotationThread();
-        rotationThread.addTask(new RotationJob(degrees));
-        rotationThread.start();
-      }
+      rotationService.submit(new RotationJob(degrees));
     }
   }
 
@@ -586,29 +583,6 @@ public class ItemBean extends SuperBean {
     }
   }
 
-  private class RotationThread extends Thread {
-    private ArrayList<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>();
-
-    public RotationThread() {
-
-    }
-
-    public void addTask(Callable<Integer> callable) {
-      tasks.add(callable);
-    }
-
-    public void run() {
-      while (tasks.size() != 0) {
-        try {
-          tasks.get(0).call();
-          tasks.remove(0);
-        } catch (Exception e) {
-          LOGGER.error("Error rotating image", e);
-        }
-      }
-    }
-  }
-
   /**
    * Gets the width of the web resolution
    *
@@ -619,7 +593,9 @@ public class ItemBean extends SuperBean {
     int webSize = Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
     int imgWidth = (int) getContent().getWidth();
     int imgHeight = (int) getContent().getHeight();
-
+    if (imgWidth < webSize && imgHeight < webSize) {
+      return imgWidth;
+    }
     if (imgWidth >= imgHeight) {
       return webSize;
     }
@@ -636,6 +612,9 @@ public class ItemBean extends SuperBean {
     int webSize = Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
     int imgWidth = (int) getContent().getWidth();
     int imgHeight = (int) getContent().getHeight();
+    if (imgWidth < webSize && imgHeight < webSize) {
+      return imgHeight;
+    }
     if (imgWidth >= imgHeight) {
       return (int) (imgHeight * 1.0 / imgWidth * webSize);
     }
