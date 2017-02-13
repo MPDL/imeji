@@ -20,7 +20,7 @@ import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import de.mpg.imeji.test.logic.controller.ControllerTest;
+import de.mpg.imeji.test.logic.controller.SuperServiceTest;
 
 /**
  * Unit test for {@link InvitationService}
@@ -28,7 +28,7 @@ import de.mpg.imeji.test.logic.controller.ControllerTest;
  * @author bastiens
  *
  */
-public class InvitationBusinessControllerTest extends ControllerTest {
+public class InvitationBusinessControllerTest extends SuperServiceTest {
   private InvitationService invitationBC = new InvitationService();
   private static final Logger LOGGER = Logger.getLogger(InvitationBusinessControllerTest.class);
   private static final String UNKNOWN_EMAIL = "unknown@imeji.org";

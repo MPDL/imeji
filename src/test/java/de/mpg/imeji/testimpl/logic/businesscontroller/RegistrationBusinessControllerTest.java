@@ -20,9 +20,9 @@ import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import de.mpg.imeji.test.logic.controller.ControllerTest;
+import de.mpg.imeji.test.logic.controller.SuperServiceTest;
 
-public class RegistrationBusinessControllerTest extends ControllerTest {
+public class RegistrationBusinessControllerTest extends SuperServiceTest {
 
   private RegistrationBusinessController registrationBC = new RegistrationBusinessController();
   private static final Logger LOGGER = Logger.getLogger(RegistrationBusinessControllerTest.class);

@@ -15929,6 +15929,7 @@ $.Tile.prototype = {
             size.y
         );
 
+
         context.restore();
     },
 
@@ -16784,8 +16785,17 @@ $.Drawer.prototype = {
             var context = this._getContext(useSketch);
             scale = scale || 1;
             tile.drawCanvas(context, drawingHandler, scale, translate);
+            
         } else {
             tile.drawHTML( this.canvas );
+        }
+        //console.log(context.getImageData(250,250,1,1).data);
+        //console.log(context.canvas.width);
+        var midWidth=Math.round(context.canvas.width/2);
+        var midHeight=Math.round(context.canvas.height/2);
+        var data=context.getImageData(midWidth,midHeight,1,1).data;
+        if(data[0]==0 && data[1]==0 && data[2]==0 && data[3]==0){
+        	this.viewer.raiseEvent("my-draw-failed");
         }
     },
 
@@ -16924,6 +16934,7 @@ $.Drawer.prototype = {
                 widthExt = Math.round(widthDiff / 2);
                 heightExt = Math.round(heightDiff / 2);
             }
+
             this.context.drawImage(
                 this.sketchCanvas,
                 position.x - widthExt * scale,

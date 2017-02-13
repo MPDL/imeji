@@ -18,7 +18,7 @@ import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.test.logic.controller.ControllerTest;
+import de.mpg.imeji.test.logic.controller.SuperServiceTest;
 import util.JenaUtil;
 
 /**
@@ -27,7 +27,7 @@ import util.JenaUtil;
  * @author saquet
  *
  */
-public class ShareControllerTestClass extends ControllerTest {
+public class ShareControllerTestClass extends SuperServiceTest {
 
   private static final Logger LOGGER = Logger.getLogger(ShareControllerTestClass.class);
 

@@ -19,17 +19,20 @@
 			</h:form>
 		
 			<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
-			
+				<div id="buttons">
 				<h:outputLink id="zoominButton" class="fa fa-search-plus fa-size-3 imj_mediaEditPanelItem" /> &#160;
 				<h:outputLink id="zoomoutButton" class="fa fa-search-minus fa-size-3 imj_mediaEditPanelItem" /> &#160;
 				<h:outputLink id="fullscreenButton" class="fa fa-expand fa-size-3 imj_mediaEditPanelItem" /> &#160;
 				<h:outputLink id="homeButton" class="fa fa-home fa-size-3 imj_mediaEditPanelItem" /> &#160;
 				<h:outputLink id="rotateLeftButton" class="fa fa-rotate-left fa-size-3 imj_mediaEditPanelItem" /> &#160;
 				<h:outputLink id="rotateRightButton" class="fa fa-rotate-right fa-size-3 imj_mediaEditPanelItem" />
+				</div>
 			
 			<center>
 				<div id="seadragon-viewer-full" style="width:#{itemBean.webResolutionMaxLength}px; height:#{itemBean.webResolutionMaxLength}px;position:relative">
+				<h:outputLink id="lnkPicFullResolutionAlt" value="#{itemBean.originalFile}" target="_blank">
 					<h:graphicImage id="picWebResolutionAlt" style="position:absolute;top:#{itemBean.webResolutionTop}px;left:#{itemBean.webResolutionLeft}px;" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
+				</h:outputLink>
 				</div>
 			</center>
 			</ui:fragment>
@@ -366,6 +369,7 @@
         		}
         		
     		});
+    	    	
 
     			viewerFull.addHandler('rotate',function(){
 					 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
@@ -377,8 +381,21 @@
     				document.getElementById("picWebResolutionAlt").style.display='none';
     			});
     			
-    			viewerFull.addHandler("tile-drawn",function(){
+    			viewerFull.addHandler("open-failed",function(){
+    				useAlternatePicture();
     			});
+    			
+    			//Needed for Firefox
+    			viewerFull.addHandler("my-draw-failed",function(){
+    				useAlternatePicture();
+    			});
+    			
+    			
+    			function useAlternatePicture(){
+    				document.getElementById("picWebResolutionAlt").style.display='';
+    				viewerFull.setVisible(false);
+    				document.getElementById("buttons").style.display='none';
+    			}
     			
  				
 	</script>

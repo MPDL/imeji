@@ -17,6 +17,6 @@ import util.SuperTestSuite;
     ShareControllerTestClass.class, /* SpaceControllerTestClass.class, */
     StatisticsControllerTestClass.class, UserControllerTestClass.class,
     RegistrationBusinessControllerTest.class})
-public class ControllerTestSuite extends SuperTestSuite {
+public class ServiceTestSuite extends SuperTestSuite {
 
 }
