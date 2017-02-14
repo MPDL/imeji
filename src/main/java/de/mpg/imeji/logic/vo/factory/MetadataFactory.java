@@ -32,7 +32,7 @@ public class MetadataFactory {
   }
 
   public MetadataFactory setStatementId(String statementId) {
-    metadata.setStatementId(statementId);
+    metadata.setIndex(statementId);
     return this;
   }
 

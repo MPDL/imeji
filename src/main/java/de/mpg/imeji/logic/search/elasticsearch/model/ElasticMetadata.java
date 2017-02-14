@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.elasticsearch.model;
 
 import de.mpg.imeji.logic.vo.Metadata;
+import de.mpg.imeji.logic.vo.factory.StatementFactory;
 
 
 /**
@@ -12,11 +13,10 @@ import de.mpg.imeji.logic.vo.Metadata;
  *
  */
 public final class ElasticMetadata extends ElasticPerson {
-  private final String statement;
+  private final String index;
   private final String text;
   private final double number;
   private final String uri;
-  private final String type;
   private final String location;
 
 
@@ -27,8 +27,7 @@ public final class ElasticMetadata extends ElasticPerson {
    */
   public ElasticMetadata(Metadata md) {
     super(md.getPerson());
-    this.statement = md.getStatementId();
-    this.type = null;// TODO
+    this.index = new StatementFactory().setIndex(md.getIndex()).build().getIndexUrlEncoded();
     this.text = md.getText();
     this.number = md.getNumber();
     this.uri = md.getUrl();
@@ -38,10 +37,9 @@ public final class ElasticMetadata extends ElasticPerson {
   /**
    * @return the statement
    */
-  public String getStatement() {
-    return statement;
+  public String getIndex() {
+    return index;
   }
-
 
   /**
    * @return the text
@@ -57,23 +55,12 @@ public final class ElasticMetadata extends ElasticPerson {
     return number;
   }
 
-
-
   /**
    * @return the uri
    */
   public String getUri() {
     return uri;
   }
-
-
-  /**
-   * @return the type
-   */
-  public String getType() {
-    return type;
-  }
-
 
   /**
    * @return the location

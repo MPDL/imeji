@@ -1,7 +1,6 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory;
 
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,8 +19,8 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.model.SearchElement;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchGroup;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
@@ -31,7 +30,6 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.util.DateFormatter;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
@@ -46,7 +44,6 @@ import de.mpg.imeji.logic.vo.User;
  */
 public class ElasticQueryFactory {
   private static final Logger LOGGER = Logger.getLogger(ElasticQueryFactory.class);
-  private static final float FULLTEXT_MIN_SCORE = 0.5f;
 
   /**
    * Build a {@link QueryBuilder} from a {@link SearchQuery}
@@ -250,63 +247,36 @@ public class ElasticQueryFactory {
     }
     final SearchFields index = pair.getField();
     switch (index) {
-      case alb:
-        break;
       case all:
-        final BoolQueryBuilder f = QueryBuilders.boolQuery()
-            .should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.REGEX, false));
-        if (NumberUtils.isNumber(pair.getValue())) {
-          f.should(fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(),
-              SearchOperators.EQUALS, false));
-        }
-        return negate(f, pair.isNot());
+        return allQuery(pair);
       case fulltext:
         return contentQuery(
             fieldQuery(ElasticFields.FULLTEXT, pair.getValue(), pair.getOperator(), pair.isNot()));
       case checksum:
         return contentQuery(
             fieldQuery(ElasticFields.CHECKSUM, pair.getValue(), pair.getOperator(), pair.isNot()));
-      case citation:
-        return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
-            pair.isNot());
       case col:
         return fieldQuery(ElasticFields.FOLDER, pair.getValue(), pair.getOperator(), pair.isNot());
-      case cone:
-        // not indexed
-        break;
       case description:
         return fieldQuery(ElasticFields.DESCRIPTION, pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case cont_md:
-        // not indexed
-        break;
-      case cont_person:
-        // not indexed
-        break;
       case author_familyname:
-        // not indexed
-        break;
+        return fieldQuery(ElasticFields.AUTHOR_FAMILYNAME, pair.getValue(), pair.getOperator(),
+            pair.isNot());
       case author_givenname:
-        // not indexed
-        break;
-      case author_name:
-        // not indexed
-        break;
-      case cont_person_org:
-        return fieldQuery(ElasticFields.AUTHOR_ORGANIZATION_NAME, pair.getValue(),
-            pair.getOperator(), pair.isNot());
-      case author_org_name:
-        // not indexed
-        break;
+        return fieldQuery(ElasticFields.AUTHOR_GIVENNAME, pair.getValue(), pair.getOperator(),
+            pair.isNot());
+      case author:
+        return fieldQuery(ElasticFields.AUTHOR_COMPLETENAME, pair.getValue(), pair.getOperator(),
+            pair.isNot());
+      case author_org:
+        return fieldQuery(ElasticFields.AUTHOR_ORGANIZATION, pair.getValue(), pair.getOperator(),
+            pair.isNot());
       case title:
-        // not indexed
-        break;
+        return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case created:
         return timeQuery(ElasticFields.CREATED.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case creator_id:
-        // not indexed
-        break;
       case creator:
         return fieldQuery(ElasticFields.CREATOR,
             ElasticSearchFactoryUtil.getUserId(pair.getValue()), pair.getOperator(), pair.isNot());
@@ -320,26 +290,15 @@ public class ElasticQueryFactory {
       case date:
         return timeQuery(ElasticFields.METADATA_NUMBER.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case editor:
-        // not indexed
-        break;
       case filename:
         return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case filetype:
-        final BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
-        for (final String ext : SearchUtils.parseFileTypesAsExtensionList(pair.getValue())) {
-          filetypeQuery.should(
-              fieldQuery(ElasticFields.NAME, "\"." + ext + "\"", SearchOperators.REGEX, false));
-        }
-        return filetypeQuery;
+        return fileTypeQuery(pair);
       case grant:
         // same as grant_type
         final GrantType grant = pair.getValue().equals("upload") ? GrantType.EDIT
             : GrantType.valueOf(pair.getValue().toUpperCase());
         return buildGrantQuery(user, grant);
-      case grant_for:
-        // not indexed
-        break;
       case grant_type:
         // same as grant
         final GrantType grantType = pair.getValue().equals("upload") ? GrantType.EDIT
@@ -347,29 +306,8 @@ public class ElasticQueryFactory {
         return buildGrantQuery(user, grantType);
       case member:
         return fieldQuery(ElasticFields.MEMBER, pair.getValue(), pair.getOperator(), pair.isNot());
-      case label:
-        // not indexed
-        break;
       case license:
-        final BoolQueryBuilder licenseQuery = QueryBuilders.boolQuery();
-        for (final String licenseName : pair.getValue().split(" OR ")) {
-          if (ImejiLicenses.NO_LICENSE.equals(licenseName)) {
-            licenseQuery.should(QueryBuilders.boolQuery()
-                .mustNot(QueryBuilders.existsQuery(ElasticFields.LICENSE.field())));
-          } else if ("*".equals(licenseName)) {
-            licenseQuery.should(QueryBuilders.existsQuery(ElasticFields.LICENSE.field()));
-          } else {
-            licenseQuery.should(
-                fieldQuery(ElasticFields.LICENSE, licenseName, SearchOperators.REGEX, false));
-          }
-        }
-        return licenseQuery;
-      case md:
-        // not indexed
-        break;
-      case mds:
-        // not indexed
-        break;
+        return licenseQuery(pair);
       case modified:
         return timeQuery(ElasticFields.MODIFIED.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -377,66 +315,19 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case person:
-        // not indexed
-        break;
+        return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
+            pair.isNot());
       case person_family:
         return fieldQuery(ElasticFields.METADATA_FAMILYNAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case person_given:
         return fieldQuery(ElasticFields.METADATA_GIVENNAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case person_id:
-        // not indexed
-        break;
-      case person_completename:
-        // not indexed
-        break;
       case person_org:
-        // not indexed
-        break;
-      case person_org_city:
-        // not indexed
-        break;
-      case person_org_country:
-        // not indexed
-        break;
-      case person_org_description:
-        // not indexed
-        break;
-      case person_org_id:
-        // not indexed
-        break;
-      case person_org_name:
-        // not indexed
-        break;
-      case person_role:
-        // not indexed
-        break;
-      case prof:
-        return fieldQuery(ElasticFields.PROFILE, pair.getValue(), pair.getOperator(), pair.isNot());
-      case prop:
-        // not indexed
-        break;
-      case statement:
-        final String statementID = ObjectHelper.getId(URI.create(pair.getValue()));
-        return fieldQuery(ElasticFields.METADATA_STATEMENT, statementID, pair.getOperator(),
+        return fieldQuery(ElasticFields.METADATA_FAMILYNAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case status:
-        // transform http://imeji.org/terms/status#RELEASED into RELEASED
-        String status = pair.getValue();
-        if (status.contains("#")) {
-          status = status.split("#")[1];
-        }
-        if ("private".equals(status)) {
-          status = Status.PENDING.name();
-        }
-        if ("public".equals(status)) {
-          status = Status.RELEASED.name();
-        }
-        if ("discarded".equals(status)) {
-          status = Status.WITHDRAWN.name();
-        }
-        return fieldQuery(ElasticFields.STATUS, status.toUpperCase(), pair.getOperator(),
+        return fieldQuery(ElasticFields.STATUS, formatStatusSearchValue(pair), pair.getOperator(),
             pair.isNot());
       case text:
         return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
@@ -445,8 +336,8 @@ public class ElasticQueryFactory {
         return timeQuery(ElasticFields.METADATA_NUMBER.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
       case location:
-        // not indexed
-        break;
+        return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
+            pair.isNot());
       case metadatatype:
         return fieldQuery(ElasticFields.METADATA_TYPE, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -454,12 +345,7 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.METADATA_URI, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case hasgrant:
-        // TODO: with current indexed data, it is only possible to search for the creator. Grants
-        // should be indexed to get all objects where the user has grant for
         return fieldQuery(ElasticFields.CREATOR, pair.getValue(), pair.getOperator(), pair.isNot());
-      case visibility:
-        // not indexed
-        break;
       case coordinates:
         return fieldQuery(ElasticFields.METADATA_LOCATION, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -475,13 +361,11 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.INFO_URL, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case email:
-        return fieldQuery(ElasticFields.EMAIL, pair.getValue(), SearchOperators.REGEX,
+        return fieldQuery(ElasticFields.EMAIL, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
       case itemId:
         return QueryBuilders.hasParentQuery(ElasticTypes.items.name(),
             fieldQuery(ElasticFields.ID, pair.getValue(), pair.getOperator(), pair.isNot()));
-      default:
-        break;
     }
     return matchNothing();
   }
@@ -493,7 +377,6 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder metadataFilter(SearchMetadata md) {
-
     if (md.getField() == null) {
       return metadataQuery(
           fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
@@ -501,10 +384,6 @@ public class ElasticQueryFactory {
     }
     switch (md.getField()) {
       case text:
-        return metadataQuery(
-            fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
-            md.getIndex());
-      case citation:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
@@ -527,8 +406,9 @@ public class ElasticQueryFactory {
         return metadataQuery(fieldQuery(ElasticFields.METADATA_GIVENNAME, md.getValue(),
             md.getOperator(), md.isNot()), md.getIndex());
       case coordinates:
-        return metadataQuery(fieldQuery(ElasticFields.METADATA_LOCATION, md.getValue(),
-            md.getOperator(), md.isNot()), md.getIndex());
+        // return metadataQuery(fieldQuery(ElasticFields.METADATA_LOCATION, md.getValue(),
+        // md.getOperator(), md.isNot()), md.getIndex());
+        return metadataQuery(geoQuery(md.getValue()), md.getIndex());
       case time:
         return metadataQuery(timeQuery(ElasticFields.METADATA_NUMBER.field(), md.getValue(),
             md.getOperator(), md.isNot()), md.getIndex());
@@ -565,12 +445,9 @@ public class ElasticQueryFactory {
     QueryBuilder q = null;
 
     if (operator == null) {
-      operator = SearchOperators.REGEX;
+      operator = SearchOperators.EQUALS;
     }
     switch (operator) {
-      case REGEX:
-        q = matchFieldQuery(fieldName, ElasticSearchFactoryUtil.escape(value));
-        break;
       case EQUALS:
         q = matchFieldQuery(fieldName, ElasticSearchFactoryUtil.escape(value));
         break;
@@ -579,9 +456,6 @@ public class ElasticQueryFactory {
         break;
       case LESSER:
         q = lessThanQuery(fieldName, value);
-        break;
-      case GEO:
-        q = geoQuery(value);
         break;
       default:
         // default is REGEX
@@ -604,7 +478,7 @@ public class ElasticQueryFactory {
       boolean not) {
     QueryBuilder q = null;
     if (operator == null) {
-      operator = SearchOperators.REGEX;
+      operator = SearchOperators.EQUALS;
     }
     switch (operator) {
       case GREATER:
@@ -635,8 +509,8 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder metadataQuery(QueryBuilder valueQuery, String statement) {
     return QueryBuilders.nestedQuery(ElasticFields.METADATA.field(),
-        QueryBuilders.boolQuery().must(valueQuery).must(fieldQuery(ElasticFields.METADATA_STATEMENT,
-            statement, SearchOperators.EQUALS, false)));
+        QueryBuilders.boolQuery().must(valueQuery).must(
+            fieldQuery(ElasticFields.METADATA_INDEX, statement, SearchOperators.EQUALS, false)));
 
   }
 
@@ -720,7 +594,7 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder negate(QueryBuilder f, boolean not) {
-    return not ? QueryBuilders.notQuery(f) : f;
+    return not ? QueryBuilders.boolQuery().mustNot(f) : f;
   }
 
   /**
@@ -729,7 +603,7 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder matchNothing() {
-    return QueryBuilders.notQuery(QueryBuilders.matchAllQuery());
+    return QueryBuilders.boolQuery().mustNot(QueryBuilders.matchAllQuery());
   }
 
   /**
@@ -803,7 +677,89 @@ public class ElasticQueryFactory {
     return q;
   }
 
+  /**
+   * Build Query for all terms
+   * 
+   * @param pair
+   * @return
+   */
+  private static QueryBuilder allQuery(SearchPair pair) {
+    final BoolQueryBuilder f = QueryBuilders.boolQuery()
+        .should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.EQUALS, false));
+    if (NumberUtils.isNumber(pair.getValue())) {
+      f.should(fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), SearchOperators.EQUALS,
+          false));
+    }
+    return negate(f, pair.isNot());
+  }
+
+  /**
+   * Search for content
+   * 
+   * @param q
+   * @return
+   */
   private static QueryBuilder contentQuery(QueryBuilder q) {
     return QueryBuilders.hasChildQuery(ElasticTypes.content.name(), q);
+  }
+
+  /**
+   * Make a query for license
+   * 
+   * @param pair
+   * @return
+   */
+  private static QueryBuilder licenseQuery(SearchPair pair) {
+    final BoolQueryBuilder licenseQuery = QueryBuilders.boolQuery();
+    for (final String licenseName : pair.getValue().split(" OR ")) {
+      if (ImejiLicenses.NO_LICENSE.equals(licenseName)) {
+        licenseQuery.should(QueryBuilders.boolQuery()
+            .mustNot(QueryBuilders.existsQuery(ElasticFields.LICENSE.field())));
+      } else if ("*".equals(licenseName)) {
+        licenseQuery.should(QueryBuilders.existsQuery(ElasticFields.LICENSE.field()));
+      } else {
+        licenseQuery
+            .should(fieldQuery(ElasticFields.LICENSE, licenseName, SearchOperators.EQUALS, false));
+      }
+    }
+    return licenseQuery;
+  }
+
+  /**
+   * Build a query to search for filetypes
+   * 
+   * @param pair
+   * @return
+   */
+  private static QueryBuilder fileTypeQuery(SearchPair pair) {
+    final BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
+    for (final String ext : SearchUtils.parseFileTypesAsExtensionList(pair.getValue())) {
+      filetypeQuery.should(
+          fieldQuery(ElasticFields.NAME, "\"." + ext + "\"", SearchOperators.EQUALS, false));
+    }
+    return filetypeQuery;
+  }
+
+  /**
+   * Format the search value for the status, as indexed
+   * 
+   * @param pair
+   * @return
+   */
+  private static String formatStatusSearchValue(SearchPair pair) {
+    String status = pair.getValue();
+    if (status.contains("#")) {
+      status = status.split("#")[1];
+    }
+    if ("private".equals(status)) {
+      status = Status.PENDING.name();
+    }
+    if ("public".equals(status)) {
+      status = Status.RELEASED.name();
+    }
+    if ("discarded".equals(status)) {
+      status = Status.WITHDRAWN.name();
+    }
+    return status.toUpperCase();
   }
 }

@@ -129,9 +129,6 @@ public class JenaSearch implements Search {
     if (sq == null) {
       sq = new SearchQuery();
     }
-    if (sortCri == null) {
-      sortCri = new SortCriterion();
-    }
     List<String> results = null;
     if (previousResults == null) {
       results = new ArrayList<String>();
@@ -240,9 +237,6 @@ public class JenaSearch implements Search {
       // if (containerURI == null && user != null)
       // specificQuery += "?s <http://imeji.org/terms/collection> ?c .";
     }
-    if (SearchObjectTypes.PROFILE.equals(type)) {
-      specificQuery = "";
-    }
     return specificQuery;
   }
 
@@ -259,8 +253,6 @@ public class JenaSearch implements Search {
         return Imeji.imageModel;
       case COLLECTION:
         return Imeji.collectionModel;
-      case PROFILE:
-        return Imeji.profileModel;
       case USER:
         return Imeji.userModel;
       case CONTENT:

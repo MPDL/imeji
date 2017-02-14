@@ -258,8 +258,9 @@ public class JenaCustomQueries {
    * @return
    */
   public static final String selectItemOfFile(String fileUrl) {
-    return X_PATH_FUNCTIONS_DECLARATION + XSD_DECLARATION + "SELECT DISTINCT ?s WHERE { ?s ?p <"
-        + fileUrl + "> } limit 1";
+    return X_PATH_FUNCTIONS_DECLARATION + XSD_DECLARATION
+        + "SELECT DISTINCT  (str(?id) AS ?s) WHERE {?content ?p \"" + fileUrl
+        + "\"^^<http://www.w3.org/2001/XMLSchema#string> . ?content <http://imeji.org/terms/itemId> ?id} limit 1";
   }
 
   /**

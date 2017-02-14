@@ -20,8 +20,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
-import de.mpg.imeji.logic.search.model.SearchIndex;
-import de.mpg.imeji.logic.search.model.SearchIndexes;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -96,24 +95,22 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   @Override
   public void initSortMenu() {
-    setSelectedSortCriterion(SearchIndex.SearchFields
-        .valueOf(
-            CookieUtils.readNonNull(ITEM_SORT_COOKIE, SearchIndex.SearchFields.modified.name()))
-        .name());
+    setSelectedSortCriterion(SearchFields
+        .valueOf(CookieUtils.readNonNull(ITEM_SORT_COOKIE, SearchFields.modified.name())).name());
     setSelectedSortOrder(SortOrder
         .valueOf(CookieUtils.readNonNull(ITEM_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name()))
         .name());
     setSortMenu(new ArrayList<SelectItem>());
     if (getSelectedSortCriterion() == null) {
-      setSelectedSortCriterion(SearchIndex.SearchFields.modified.name());
+      setSelectedSortCriterion(SearchFields.modified.name());
     }
-    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.modified,
+    getSortMenu().add(new SelectItem(SearchFields.modified,
         Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", getLocale())));
-    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.filename,
+    getSortMenu().add(new SelectItem(SearchFields.filename,
         Imeji.RESOURCE_BUNDLE.getLabel("filename", getLocale())));
-    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.filesize,
+    getSortMenu().add(new SelectItem(SearchFields.filesize,
         Imeji.RESOURCE_BUNDLE.getLabel("file_size", getLocale())));
-    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.filetype,
+    getSortMenu().add(new SelectItem(SearchFields.filetype,
         Imeji.RESOURCE_BUNDLE.getLabel("file_type", getLocale())));
   }
 
@@ -153,6 +150,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       return items.stream().map(item -> new ThumbnailBean(item)).collect(Collectors.toList());
     } catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
+      LOGGER.error("Error retrieving items", e);
     }
     return new ArrayList<>();
   }
@@ -225,7 +223,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
 
   public SortCriterion getSortCriterion() {
-    return new SortCriterion(SearchIndexes.getIndex(getSelectedSortCriterion()),
+    return new SortCriterion(SearchFields.valueOf(getSelectedSortCriterion()),
         SortOrder.valueOf(getSelectedSortOrder()));
   }
 

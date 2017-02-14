@@ -1,6 +1,5 @@
 package de.mpg.imeji.logic.statement;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -47,16 +46,6 @@ public class StatementUtil {
         .collect(Collectors.joining(","));
   }
 
-  /**
-   * Format the index in a case insensitive UrlFriendly manner (but not url encoded!)
-   * 
-   * @param index
-   * @return
-   * @throws UnsupportedEncodingException
-   */
-  public static String encodeIndex(String index) {
-    return new String(index.replace(" ", "_").toLowerCase());
-  }
 
   /**
    * Transform a list of statement to a map of statement with its id as key

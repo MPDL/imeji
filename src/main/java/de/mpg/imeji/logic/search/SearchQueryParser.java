@@ -5,17 +5,18 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchGroup;
-import de.mpg.imeji.logic.search.model.SearchIndex;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
@@ -24,6 +25,8 @@ import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.StringParser;
+import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.vo.TechnicalMetadata;
 
 /**
  * Static methods to manipulate imeji url search queries
@@ -37,20 +40,18 @@ public class SearchQueryParser {
    * Regex to match: statementid:field="value"
    */
   private static final String SEARCH_METADATA_REGEX =
-      "([a-zA-Z0-9-_]+):([a-z_]+)([=<>@]{1,2})\"(.+)\"";
+      SearchFields.md.name() + "\\.([a-zA-Z0-9-_]+)(\\.([a-z_]+)){0,1}([=<>@]{1,2})\"(.+)\"";
   /**
    * Regex to match: field="value"
    */
   private static final String SEARCH_PAIR_REGEX = "([a-zA-Z_]+)([=<>@]{1,2})\"(.+)\"";
+
+
   /**
    * Search for technical metadata technical:index="value"
    */
-  private static String SEARCH_TECHNICAL_METADATA_REGEX =
+  private static final String SEARCH_TECHNICAL_METADATA_REGEX =
       "technical\\[(.+)\\]([=<>@]{1,2})\"(.+)\"";
-  /**
-   * Regex to match md:label="value"
-   */
-  private static String SEARCH_METADATA_SIMPLE_REGEX = "metadata\\[(.+)\\]([=<>@]{1,2})\"(.+)\"";
   /**
    * PAttern for SEARCH_METADATA_REGEX
    */
@@ -59,24 +60,32 @@ public class SearchQueryParser {
    * Pattern for SEARCH_PAIR_REGEX
    */
   private static final Pattern SEARCH_PAIR_PATTERN = Pattern.compile(SEARCH_PAIR_REGEX);
-  /**
-   * Pattern for SEARCH_METADATA_SIMPLE_REGEX
-   */
-  private static Pattern SEARCH_METADATA_SIMPLE_PATTERN =
-      Pattern.compile(SEARCH_METADATA_SIMPLE_REGEX);
 
   /**
    * Pattern for SEARCH_TECHNICAL_METADATA_REGEX
    */
-  private static Pattern SEARCH_TECHNICAL_METADATA_PATTERN =
+  private final static Pattern SEARCH_TECHNICAL_METADATA_PATTERN =
       Pattern.compile(SEARCH_TECHNICAL_METADATA_REGEX);
+
+
+
+  private static String PAIR_REGEX = "([a-zA-Z0-9-_\\.]+)([=<>]{1,2})(.+)";
+  private static Pattern PAIR_PATTERN = Pattern.compile(PAIR_REGEX);
+  private static String METADATA_REGEX =
+      SearchFields.md.name() + "\\.([a-zA-Z0-9-_\\.]+)([=<>]{1,2})(.+)";
+  private static Pattern METADATA_PATTERN = Pattern.compile(METADATA_REGEX);
+  private static final String TECHNICAL_REGEX =
+      SearchFields.technical.name() + "\\[(.+)\\]([=<>@]{1,2})\"(.+)\"";
+  private static Pattern TECHNICAL_PATTERN = Pattern.compile(TECHNICAL_REGEX);
+
 
   /**
    * Private Constructor
    */
   private SearchQueryParser() {
-    // Avoid creation
+
   }
+
 
   /**
    * Parse a url search query into a {@link SearchQuery}. Decode the query with UTF-8
@@ -93,10 +102,166 @@ public class SearchQueryParser {
     String decodedQuery;
     try {
       decodedQuery = URLDecoder.decode(query, "UTF-8");
-      return parseStringQueryDecoded(decodedQuery);
+      return parsedecoded(decodedQuery);
     } catch (final IOException e) {
       throw new UnprocessableError("Query could not be parsed: " + query);
     }
+  }
+
+
+  public static void main(String[] args) throws UnprocessableError {
+    String q =
+        "author=bas OR (title=this is an example AND (description=\"Super Description\" OR created=2000) OR (md.description=\"Other Description\" OR (md.created.number>=2000 AND md.created.number<50)))";
+    SearchQuery sq = parsedecoded(q);
+    System.out.println(q);
+    System.out.println(transform2URL(sq));
+    q = "(md.title.text=hi OR md.description.text=Bob OR md.date.text=2017-02-08)";
+    sq = parsedecoded(q);
+    System.out.println(q);
+    System.out.println(transform2URL(sq));
+    q = "md.location.coordinates=5.0,7.0";
+    sq = parsedecoded(q);
+    System.out.println(q);
+    System.out.println(transform2URL(sq));
+  }
+
+  public static SearchQuery parsedecoded(final String query) throws UnprocessableError {
+    return new SearchFactory().addElement(parseGroup(query), LOGICAL_RELATIONS.AND).build();
+  }
+
+  private static SearchGroup parseGroup(String group) throws UnprocessableError {
+    final StringReader reader = new StringReader(group);
+    final SearchFactory factory = new SearchFactory();
+    int c = 0;
+    String part = "";
+    int brackets = 0;
+    boolean inBracket = false;
+    LOGICAL_RELATIONS relation = LOGICAL_RELATIONS.AND;
+    try {
+      while ((c = reader.read()) != -1) {
+        part += (char) c;
+        if (c == '(') {
+          brackets++;
+          inBracket = true;
+        } else if (c == ')') {
+          brackets--;
+        }
+        if (inBracket && brackets == 0) {
+          factory.addElement(parseGroup(part.substring(1, part.length())), relation);
+          part = "";
+          inBracket = false;
+        } else if (!inBracket && endsWithStopWord(part)) {
+          factory.addElement(parsePair(removeStopWord(part)), relation);
+          relation = readRelation(part);
+          part = "";
+        }
+      }
+      if (!StringHelper.isNullOrEmptyTrim(part)) {
+        factory.addElement(parsePair(removeStopWord(part)), relation);
+      }
+    } catch (Exception e) {
+      throw new UnprocessableError(e);
+    }
+    return factory.buildAsGroup();
+  }
+
+  /**
+   * Parse a string as a pair: index=value
+   * 
+   * @param s
+   * @return
+   */
+  private static SearchPair parsePair(String s) {
+    if (new StringParser(METADATA_PATTERN).find(s)) {
+      return parseMetadata(s);
+    } else if (new StringParser(TECHNICAL_PATTERN).find(s)) {
+      return parseTechnical(s);
+    } else {
+      return parseSearchPair(s);
+    }
+  }
+
+  /**
+   * Parse to a {@link SearchPair} following string: index=value
+   * 
+   * @param s
+   * @return
+   */
+  private static SearchPair parseSearchPair(String s) {
+    StringParser parser = new StringParser(PAIR_PATTERN);
+    if (parser.find(s)) {
+      String index = parser.getGroup(1);
+      SearchOperators operator = stringOperator2SearchOperator(parser.getGroup(2));
+      String value = parser.getGroup(3);
+      return new SearchPair(SearchFields.valueOf(index), operator, value, false);
+    }
+    return new SearchPair();
+  }
+
+  /**
+   * Parse to a {@link SearchMetadata} following strings: md.statement.index=value
+   * 
+   * @param s
+   * @return
+   */
+  private static SearchPair parseMetadata(String s) {
+    StringParser parser = new StringParser(METADATA_PATTERN);
+    if (parser.find(s)) {
+      String index = parser.getGroup(1);
+      SearchOperators operator = stringOperator2SearchOperator(parser.getGroup(2));
+      String value = parser.getGroup(3);
+      String[] indexes = index.split("\\.");
+      return new SearchMetadata(indexes[0],
+          indexes.length > 1 ? SearchFields.valueOf(indexes[1]) : null, operator, value, false);
+    }
+    return new SearchPair();
+  }
+
+  /**
+   * Parse to a {@link TechnicalMetadata} following strings: technical[label]=value
+   * 
+   * @param s
+   * @return
+   */
+  private static SearchPair parseTechnical(String s) {
+    StringParser parser = new StringParser(TECHNICAL_PATTERN);
+    if (parser.find(s)) {
+      String index = parser.getGroup(1);
+      SearchOperators operator = stringOperator2SearchOperator(parser.getGroup(2));
+      String value = parser.getGroup(3);
+      return new SearchTechnicalMetadata(operator, value, index, false);
+    }
+    return new SearchPair();
+  }
+
+  /**
+   * True if the String is equals to AND of OR
+   * 
+   * @param s
+   * @return
+   */
+  private static LOGICAL_RELATIONS readRelation(String s) {
+    return s.endsWith("OR") ? LOGICAL_RELATIONS.OR : LOGICAL_RELATIONS.AND;
+  }
+
+  /**
+   * Remove the stop words from this string
+   * 
+   * @param s
+   * @return
+   */
+  private static String removeStopWord(String s) {
+    return s.replace("AND", "").replace("OR", "").replace(")", "").trim();
+  }
+
+  /**
+   * True if the String is ended with a Search Query Stop word.
+   * 
+   * @param s
+   * @return
+   */
+  private static boolean endsWithStopWord(String s) {
+    return s.endsWith("AND") || s.endsWith("OR") || s.endsWith(")");
   }
 
   /**
@@ -167,15 +332,16 @@ public class SearchQueryParser {
           not = false;
           scString = "";
         } else if (mdParser.find(scString)) {
+          final String index = mdParser.getGroup(1);
           final SearchOperators operator = stringOperator2SearchOperator(mdParser.getGroup(3));
           String value = mdParser.getGroup(4);
           if (value.startsWith("\"")) {
             reader.read();
             value = value + "\"";
           }
-          final SearchFields field = SearchFields.valueOf(mdParser.getGroup(2));
-          final String index = mdParser.getGroup(1);
-          searchQuery.addPair(new SearchMetadata(index, operator, value, not));
+          final SearchFields field =
+              mdParser.getGroup(2) != null ? SearchFields.valueOf(mdParser.getGroup(2)) : null;
+          searchQuery.addPair(new SearchMetadata(index, field, operator, value, not));
           not = false;
           scString = "";
         } else if (pairParser.find(scString)) {
@@ -196,10 +362,10 @@ public class SearchQueryParser {
     }
     if (!"".equals(query) && searchQuery.isEmpty()) {
       searchQuery
-          .addPair(new SearchPair(SearchFields.all, SearchOperators.REGEX, query.trim(), false));
+          .addPair(new SearchPair(SearchFields.all, SearchOperators.EQUALS, query.trim(), false));
       searchQuery.addLogicalRelation(LOGICAL_RELATIONS.OR);
       searchQuery.addPair(
-          new SearchPair(SearchFields.fulltext, SearchOperators.REGEX, query.trim(), false));
+          new SearchPair(SearchFields.fulltext, SearchOperators.EQUALS, query.trim(), false));
     }
     return searchQuery;
   }
@@ -212,17 +378,17 @@ public class SearchQueryParser {
    */
   private static SearchOperators stringOperator2SearchOperator(String str) {
     if ("=".equals(str)) {
-      return SearchOperators.REGEX;
-    } else if ("==".equals(str)) {
       return SearchOperators.EQUALS;
-    } else if (">=".equals(str)) {
+    } else if (">".equals(str)) {
       return SearchOperators.GREATER;
-    } else if ("<=".equals(str)) {
+    } else if ("<".equals(str)) {
       return SearchOperators.LESSER;
-    } else if ("@".equals(str)) {
-      return SearchOperators.GEO;
+    } else if (">=".equals(str)) {
+      return SearchOperators.GREATER_EQUALS;
+    } else if ("<=".equals(str)) {
+      return SearchOperators.LESSER_EQUALS;
     }
-    return SearchOperators.REGEX;
+    return SearchOperators.EQUALS;
   }
 
   /**
@@ -292,8 +458,13 @@ public class SearchQueryParser {
    * 
    * @param sg
    * @return
+   * @throws UnprocessableError
    */
   private static String searchGroupToStringQuery(SearchGroup sg) {
+    if (sg.getElements().size() == 1) {
+      SearchElement el = sg.getElements().iterator().next();
+      return transform2URL(new SearchQuery(Arrays.asList(el)));
+    }
     String q = transform2URL(new SearchQuery(sg.getGroup()));
     return "".equals(q.trim()) ? "" : (sg.isNot() ? "NOT" : "") + "(" + q + ")";
   }
@@ -340,7 +511,7 @@ public class SearchQueryParser {
    * @return
    */
   private static String searchValue2URL(SearchPair pair) {
-    return "\"" + pair.getValue() + "\"";
+    return pair.getValue();
   }
 
   /**
@@ -352,15 +523,17 @@ public class SearchQueryParser {
   private static String operator2URL(SearchOperators op) {
     switch (op) {
       case GREATER:
-        return ">=";
+        return ">";
       case LESSER:
+        return "<";
+      case GREATER_EQUALS:
+        return ">=";
+      case LESSER_EQUALS:
         return "<=";
-      case REGEX:
+      case EQUALS:
         return "=";
-      case GEO:
-        return "@";
       default:
-        return "==";
+        return "=";
     }
   }
 
@@ -371,10 +544,11 @@ public class SearchQueryParser {
    * @return
    */
   public static String searchQuery2PrettyQuery(SearchQuery sq, Locale locale) {
-    if (sq == null) {
-      return "";
+    try {
+      return URLDecoder.decode(transform2URL(sq), "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      return transform2URL(sq);
     }
-    return searchElements2PrettyQuery(sq.getElements(), locale);
   }
 
   /**
@@ -566,7 +740,7 @@ public class SearchQueryParser {
       case LESSER:
         return "<=";
       case EQUALS:
-        return "==";
+        return "=";
       default:
         return "=";
     }

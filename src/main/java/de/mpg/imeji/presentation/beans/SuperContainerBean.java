@@ -8,8 +8,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.SearchQueryParser;
-import de.mpg.imeji.logic.search.model.SearchIndex;
-import de.mpg.imeji.logic.search.model.SearchIndexes;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -78,18 +77,18 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
 
   @Override
   public void initSortMenu() {
-    setSelectedSortCriterion(SearchIndex.SearchFields.valueOf(
-        CookieUtils.readNonNull(CONTAINER_SORT_COOKIE, SearchIndex.SearchFields.modified.name()))
+    setSelectedSortCriterion(SearchFields
+        .valueOf(CookieUtils.readNonNull(CONTAINER_SORT_COOKIE, SearchFields.modified.name()))
         .name());
     setSelectedSortOrder(SortOrder
         .valueOf(CookieUtils.readNonNull(CONTAINER_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name()))
         .name());
     setSortMenu(new ArrayList<SelectItem>());
-    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.title.name(),
+    getSortMenu().add(new SelectItem(SearchFields.title.name(),
         Imeji.RESOURCE_BUNDLE.getLabel("sort_title", getLocale())));
-    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.modified.name(),
+    getSortMenu().add(new SelectItem(SearchFields.modified.name(),
         Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", getLocale())));
-    getSortMenu().add(new SelectItem(SearchIndex.SearchFields.creator_id.name(),
+    getSortMenu().add(new SelectItem(SearchFields.creator_id.name(),
         Imeji.RESOURCE_BUNDLE.getLabel("sort_author", getLocale())));
   }
 
@@ -204,9 +203,9 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
       myOffset = 0;
     }
 
-    final SortCriterion sortCriterion = new SortCriterion();
-    sortCriterion.setIndex(SearchIndexes.getIndex(getSelectedSortCriterion()));
-    sortCriterion.setSortOrder(SortOrder.valueOf(getSelectedSortOrder()));
+    final SortCriterion sortCriterion =
+        new SortCriterion(SearchFields.valueOf(getSelectedSortCriterion()),
+            SortOrder.valueOf(getSelectedSortOrder()));
     searchResult = search(searchQuery, sortCriterion, myOffset, limit);
     setSearchQuery(searchQuery);
     searchResult.setQuery(getQuery());

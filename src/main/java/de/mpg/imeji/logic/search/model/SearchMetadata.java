@@ -3,7 +3,6 @@ package de.mpg.imeji.logic.search.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.vo.Metadata;
 
 /**
@@ -41,19 +40,6 @@ public class SearchMetadata extends SearchPair {
   }
 
   /**
-   * Search for a {@link Metadata}
-   * 
-   * @param index
-   * @param operator
-   * @param value
-   * @param not
-   */
-  public SearchMetadata(String index, SearchOperators operator, String value, boolean not) {
-    super(null, operator, value, not);
-    this.index = index;
-  }
-
-  /**
    * Search for a {@link Metadata} for a particular field (for instance family)
    * 
    * @param index
@@ -66,7 +52,6 @@ public class SearchMetadata extends SearchPair {
     super(f, operator, value, not);
     this.index = index;
   }
-
 
   @Override
   public SEARCH_ELEMENTS getType() {

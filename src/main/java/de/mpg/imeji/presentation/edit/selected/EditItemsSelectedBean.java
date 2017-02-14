@@ -75,9 +75,9 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   private void initColumns(List<Item> items) {
     // Create a Map of the columns from the existing Metadata of the item
     final Map<String, SelectStatementWithInputComponent> columnMap = items.stream()
-        .flatMap(item -> item.getMetadata().stream()).filter(md -> md.getStatementId().length() > 0)
-        .collect(Collectors.toMap(Metadata::getStatementId,
-            md -> new SelectStatementWithInputComponent(md.getStatementId(), statementMap),
+        .flatMap(item -> item.getMetadata().stream()).filter(md -> md.getIndex().length() > 0)
+        .collect(Collectors.toMap(Metadata::getIndex,
+            md -> new SelectStatementWithInputComponent(md.getIndex(), statementMap),
             (s1, s2) -> s1));
 
     // Get the default statement of this instance

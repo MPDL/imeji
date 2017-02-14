@@ -3,7 +3,6 @@ package de.mpg.imeji.logic.search.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**
@@ -36,7 +35,7 @@ public class SearchPair extends SearchElement {
    * @param value
    */
   public SearchPair(SearchFields field, String value) {
-    this(field, SearchOperators.REGEX, value, false);
+    this(field, SearchOperators.EQUALS, value, false);
   }
 
   /**

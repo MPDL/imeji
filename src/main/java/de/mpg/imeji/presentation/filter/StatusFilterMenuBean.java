@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.SearchQueryParser;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -37,15 +37,15 @@ public class StatusFilterMenuBean extends SuperFilterMenuBean {
     final List<SelectItem> menu = new ArrayList<SelectItem>();
     menu.add(new SelectItem(
         SearchQueryParser.transform2URL(SearchQuery.toSearchQuery(
-            new SearchPair(SearchFields.status, SearchOperators.REGEX, "private", false))),
+            new SearchPair(SearchFields.status, SearchOperators.EQUALS, "private", false))),
         Imeji.RESOURCE_BUNDLE.getLabel("only_private", getLocale())));
     menu.add(new SelectItem(
         SearchQueryParser.transform2URL(SearchQuery.toSearchQuery(
-            new SearchPair(SearchFields.status, SearchOperators.REGEX, "public", false))),
+            new SearchPair(SearchFields.status, SearchOperators.EQUALS, "public", false))),
         Imeji.RESOURCE_BUNDLE.getLabel("only_public", getLocale())));
     menu.add(new SelectItem(
         SearchQueryParser.transform2URL(SearchQuery.toSearchQuery(
-            new SearchPair(SearchFields.status, SearchOperators.REGEX, "discarded", false))),
+            new SearchPair(SearchFields.status, SearchOperators.EQUALS, "discarded", false))),
         Imeji.RESOURCE_BUNDLE.getLabel("only_withdrawn", getLocale())));
     return menu;
   }

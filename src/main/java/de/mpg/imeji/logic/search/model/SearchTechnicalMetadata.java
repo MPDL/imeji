@@ -1,7 +1,5 @@
 package de.mpg.imeji.logic.search.model;
 
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-
 /**
  * Search element for technical metadata
  *

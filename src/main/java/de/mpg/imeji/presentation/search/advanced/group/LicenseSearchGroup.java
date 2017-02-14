@@ -12,7 +12,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang3.StringUtils;
 
 import de.mpg.imeji.logic.search.model.SearchElement;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
@@ -46,11 +46,11 @@ public class LicenseSearchGroup extends AbstractAdvancedSearchFormGroup implemen
   @Override
   public SearchElement toSearchElement() {
     if ("true".equals(hasLicense)) {
-      return new SearchPair(SearchFields.license, SearchOperators.REGEX, "*", false);
+      return new SearchPair(SearchFields.license, SearchOperators.EQUALS, "*", false);
     } else if ("false".equals(hasLicense)) {
-      return new SearchPair(SearchFields.license, SearchOperators.REGEX, "no_license", false);
+      return new SearchPair(SearchFields.license, SearchOperators.EQUALS, "no_license", false);
     } else {
-      return new SearchPair(SearchFields.license, SearchOperators.REGEX,
+      return new SearchPair(SearchFields.license, SearchOperators.EQUALS,
           StringUtils.join(selected, " OR "), false);
     }
   }

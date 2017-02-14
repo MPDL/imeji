@@ -20,7 +20,7 @@ public class Metadata implements Serializable {
   private static final long serialVersionUID = 8758936270562178555L;
   private URI uri = IdentifierUtil.newURI(Metadata.class, "universal");
   @j2jLiteral("http://imeji.org/terms/statement")
-  private String statementId;
+  private String index;
   @j2jLiteral("http://imeji.org/terms/text")
   private String text = null;
   @j2jLiteral("http://imeji.org/terms/number")
@@ -36,7 +36,7 @@ public class Metadata implements Serializable {
 
   public Metadata copy() {
     Metadata copy = new Metadata();
-    copy.setStatementId(statementId);
+    copy.setIndex(index);
     copy.setText(text);
     copy.setNumber(number);
     copy.setUrl(url);
@@ -65,15 +65,15 @@ public class Metadata implements Serializable {
   /**
    * @return the statementId
    */
-  public String getStatementId() {
-    return statementId;
+  public String getIndex() {
+    return index;
   }
 
   /**
    * @param statementId the statementId to set
    */
-  public void setStatementId(String statementId) {
-    this.statementId = statementId;
+  public void setIndex(String statementId) {
+    this.index = statementId;
   }
 
   /**

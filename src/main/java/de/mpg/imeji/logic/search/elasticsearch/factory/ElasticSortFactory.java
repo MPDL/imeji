@@ -5,7 +5,7 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 
 /**
@@ -34,10 +34,10 @@ public class ElasticSortFactory {
    * @return
    */
   public static SortBuilder build(SortCriterion sort) {
-    if (sort == null || sort.getIndex() == null || sort.getIndex().getName() == null) {
+    if (sort == null) {
       return defaultSort;
     }
-    final SearchFields index = SearchFields.valueOf(sort.getIndex().getName());
+    final SearchFields index = sort.getField();
     switch (index) {
       case text:
         return makeBuilder(ElasticFields.METADATA_TEXT.field() + SORT_INDEX, sort);

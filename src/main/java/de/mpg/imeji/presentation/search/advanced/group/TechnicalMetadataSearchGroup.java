@@ -54,7 +54,7 @@ public class TechnicalMetadataSearchGroup extends AbstractAdvancedSearchFormGrou
      * @return
      */
     public SearchTechnicalMetadata toSearchTechnicalMetadata() {
-      return new SearchTechnicalMetadata(SearchOperators.REGEX, value, index, false);
+      return new SearchTechnicalMetadata(SearchOperators.EQUALS, value, index, false);
     }
 
     /**

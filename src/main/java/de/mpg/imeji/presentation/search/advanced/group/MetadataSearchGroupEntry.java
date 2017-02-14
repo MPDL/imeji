@@ -13,8 +13,8 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchGroup;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchOperators;
@@ -99,11 +99,10 @@ public class MetadataSearchGroupEntry implements Serializable {
           Double.toString(metadata.getNumber()), false));
     }
     if (!Double.isNaN(metadata.getLatitude()) && !Double.isNaN(metadata.getLongitude())) {
-      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.number, operator,
-          Double.toString(metadata.getNumber()), false));
       l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.coordinates,
-          SearchOperators.GEO, Double.toString(metadata.getLatitude()) + ","
-              + Double.toString(metadata.getLongitude()) + "," + distance,
+          SearchOperators.EQUALS,
+          Double.toString(metadata.getLatitude()) + "," + Double.toString(metadata.getLongitude())
+              + (StringHelper.isNullOrEmptyTrim(distance) ? "" : "," + distance),
           false));
     }
     if (metadata.getPerson() != null) {
@@ -145,7 +144,7 @@ public class MetadataSearchGroupEntry implements Serializable {
         operatorMenu.add(new SelectItem(SearchOperators.LESSER, "<="));
         break;
       default:
-        operatorMenu.add(new SelectItem(SearchOperators.REGEX, "--"));
+        operatorMenu.add(new SelectItem(SearchOperators.EQUALS, "--"));
         operatorMenu.add(new SelectItem(SearchOperators.EQUALS,
             Imeji.RESOURCE_BUNDLE.getLabel("exactly", locale)));
     }

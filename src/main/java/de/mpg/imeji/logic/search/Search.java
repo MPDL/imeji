@@ -23,7 +23,7 @@ public interface Search {
    * @version $Revision$ $LastChangedDate$
    */
   public static enum SearchObjectTypes {
-    ITEM, COLLECTION, PROFILE, USER, USERGROUPS, ALL, CONTENT, STATEMENT;
+    ITEM, COLLECTION, USER, USERGROUPS, ALL, CONTENT, STATEMENT;
   }
 
   /**

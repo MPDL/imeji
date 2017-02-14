@@ -1,8 +1,6 @@
 package de.mpg.imeji.presentation.storage;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,17 +17,12 @@ import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.content.ContentService;
-import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.search.Search;
-import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.impl.ExternalStorage;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.ContentVO;
-import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -105,7 +98,7 @@ public class FileServlet extends HttpServlet {
         resp.sendError(HttpServletResponse.SC_NOT_FOUND,
             "The resource you are trying to retrieve does not exist!");
       } else {
-        LOGGER.error(e.getMessage());
+        LOGGER.error(e.getMessage(), e);
         sendEmptyThumbnail(resp);
         if (!resp.isCommitted()) {
           resp.sendError(422, "Unprocessable entity!");
@@ -218,25 +211,6 @@ public class FileServlet extends HttpServlet {
       return user;
     }
     return null;
-  }
-
-  /**
-   * Find the {@link Item} which is owner of the file
-   *
-   * @param url
-   * @return
-   * @throws Exception
-   */
-  private Item getItem(String url, User user) throws Exception {
-    final Search s = SearchFactory.create();
-    final List<String> r = s
-        .searchString(JenaCustomQueries.selectItemIdOfFileUrl(url), null, null, 0, -1).getResults();
-    if (!r.isEmpty() && r.get(0) != null) {
-      final ItemService c = new ItemService();
-      return c.retrieveLazy(URI.create(r.get(0)), user);
-    } else {
-      throw new NotFoundException("Can not find the resource requested");
-    }
   }
 
   /**

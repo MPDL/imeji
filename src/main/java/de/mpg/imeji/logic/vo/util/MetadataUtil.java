@@ -17,7 +17,7 @@ public class MetadataUtil {
   public static Metadata getDefaultValueMetadata(Statement statement)
       throws UnprocessableError, IllegalAccessException, InstantiationException {
     final Metadata md = new Metadata();
-    md.setStatementId(statement.getIndex());
+    md.setIndex(statement.getIndex());
     switch (statement.getType()) {
       case TEXT:
         md.setText("Textual value");

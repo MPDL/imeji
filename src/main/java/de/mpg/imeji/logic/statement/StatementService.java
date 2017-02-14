@@ -13,9 +13,9 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.service.SearchServiceAbstract;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.StatementFactory;
 
 /**
  * Service for {@link Statement}
@@ -100,8 +100,8 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    * @throws ImejiException
    */
   public Statement retrieveByIndex(String index, User user) throws ImejiException {
-    return retrieve(
-        ObjectHelper.getURI(Statement.class, StatementUtil.encodeIndex(index)).toString(), user);
+    Statement s = new StatementFactory().setIndex(index).build();
+    return retrieve(s.getUri().toString(), user);
   }
 
   /**
