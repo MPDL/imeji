@@ -46,7 +46,7 @@ public class MetadataSearchGroup extends AbstractAdvancedSearchFormGroup impleme
     SearchFactory factory = new SearchFactory();
     for (MetadataSearchGroupEntry entry : entries) {
       try {
-        factory.addElement(entry.getSearchGroup(), entry.getLogicalRelation());
+        factory.addElement(entry.getSearchElement(), entry.getLogicalRelation());
       } catch (UnprocessableError e) {
         LOGGER.error("Error Adding a MetadataSearchGroupEntry to the query", e);
       }

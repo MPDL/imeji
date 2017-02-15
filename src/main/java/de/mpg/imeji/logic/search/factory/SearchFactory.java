@@ -57,6 +57,7 @@ public class SearchFactory {
     }
   }
 
+
   /**
    * Add the elements in the query with an AND relation
    * 

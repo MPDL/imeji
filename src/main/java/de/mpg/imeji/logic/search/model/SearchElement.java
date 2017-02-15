@@ -15,6 +15,7 @@ import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
  */
 public abstract class SearchElement implements Serializable {
   private static final long serialVersionUID = -7678082315474306307L;
+  private boolean not;
 
   public enum SEARCH_ELEMENTS {
     LOGICAL_RELATIONS, PAIR, GROUP, QUERY, METADATA, SIMPLE_METADATA, TECHNICAL_METADATA;
@@ -23,6 +24,7 @@ public abstract class SearchElement implements Serializable {
   public abstract SEARCH_ELEMENTS getType();
 
   public abstract List<SearchElement> getElements();
+
 
   /**
    * Add a {@link LOGICAL_RELATIONS} after a {@link SearchElement}
@@ -121,4 +123,19 @@ public abstract class SearchElement implements Serializable {
   private boolean hasElements() {
     return getType().equals(SEARCH_ELEMENTS.QUERY) || getType().equals(SEARCH_ELEMENTS.GROUP);
   }
+
+  /**
+   * @return the not
+   */
+  public boolean isNot() {
+    return not;
+  }
+
+  /**
+   * @param not the not to set
+   */
+  public void setNot(boolean not) {
+    this.not = not;
+  }
+
 }

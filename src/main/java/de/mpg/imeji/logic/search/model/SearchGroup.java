@@ -13,7 +13,6 @@ import java.util.List;
 public class SearchGroup extends SearchElement {
   private static final long serialVersionUID = 3563281809630416673L;
   private List<SearchElement> group;
-  private boolean not;
 
   public SearchGroup() {
     group = new ArrayList<SearchElement>();
@@ -41,13 +40,6 @@ public class SearchGroup extends SearchElement {
     return group;
   }
 
-  public void setNot(boolean not) {
-    this.not = not;
-  }
-
-  public boolean isNot() {
-    return not;
-  }
 
   @Override
   public boolean isSame(SearchElement element) {

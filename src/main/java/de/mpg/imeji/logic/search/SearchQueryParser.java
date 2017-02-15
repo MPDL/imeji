@@ -5,7 +5,6 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -152,7 +151,7 @@ public class SearchQueryParser {
         } else if (c == ')') {
           brackets--;
         }
-        if ("NOT".equals(part)) {
+        if ("NOT".equals(part.trim())) {
           not = true;
           part = "";
         }
@@ -176,6 +175,7 @@ public class SearchQueryParser {
         }
       }
       if (!StringHelper.isNullOrEmptyTrim(part)) {
+        part = part.trim();
         factory.addElement(parsePair(removeStopWord(part), not), relation);
       }
     } catch (Exception e) {
@@ -480,12 +480,13 @@ public class SearchQueryParser {
    * @throws UnprocessableError
    */
   private static String searchGroupToStringQuery(SearchGroup sg) {
-    if (sg.getElements().size() == 1) {
-      SearchElement el = sg.getElements().iterator().next();
-      return transform2URL(new SearchQuery(Arrays.asList(el)));
-    }
+    // if (sg.getElements().size() == 1) {
+    // SearchElement el = sg.getElements().iterator().next();
+    // el.setNot(el.isNot() ? true : sg.isNot());
+    // return transform2URL(new SearchQuery(Arrays.asList(el)));
+    // }
     String q = transform2URL(new SearchQuery(sg.getGroup()));
-    return "".equals(q.trim()) ? "" : (sg.isNot() ? "NOT" : "") + "(" + q + ")";
+    return "".equals(q.trim()) ? "" : (sg.isNot() ? "NOT " : "") + "(" + q + ")";
   }
 
   /**
@@ -495,7 +496,7 @@ public class SearchQueryParser {
    * @return
    */
   private static String searchPairToStringQuery(SearchPair pair) {
-    return (pair.isNot() ? "NOT" : "") + pair.getField() + operator2URL(pair.getOperator())
+    return (pair.isNot() ? "NOT " : "") + pair.getField() + operator2URL(pair.getOperator())
         + searchValue2URL(pair);
   }
 
@@ -506,7 +507,7 @@ public class SearchQueryParser {
    * @return
    */
   private static String searchTechnicalMetadataToStringQuery(SearchTechnicalMetadata stm) {
-    return (stm.isNot() ? "NOT" : "") + SearchFields.technical + "[" + stm.getLabel() + "]"
+    return (stm.isNot() ? "NOT " : "") + SearchFields.technical + "[" + stm.getLabel() + "]"
         + operator2URL(stm.getOperator()) + searchValue2URL(stm);
   }
 
@@ -518,7 +519,7 @@ public class SearchQueryParser {
    * @return
    */
   private static String searchMetadataToStringQuery(SearchMetadata smd) {
-    return (smd.isNot() ? "NOT" : "") + SearchFields.md.name() + "." + smd.getIndex()
+    return (smd.isNot() ? "NOT " : "") + SearchFields.md.name() + "." + smd.getIndex()
         + (smd.getField() == null ? "" : "." + smd.getField().name())
         + operator2URL(smd.getOperator()) + searchValue2URL(smd);
   }
