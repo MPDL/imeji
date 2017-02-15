@@ -95,7 +95,6 @@ public class ElasticSearch implements Search {
   private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, int from, int size) {
     final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
-    System.out.println(f);
     final SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setNoFields().setQuery(QueryBuilders.matchAllQuery()).setPostFilter(f).setTypes(getTypes())
         .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri)).execute()

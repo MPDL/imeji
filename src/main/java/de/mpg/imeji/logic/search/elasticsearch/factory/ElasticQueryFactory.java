@@ -157,10 +157,11 @@ public class ElasticQueryFactory {
         OR = ((SearchLogicalRelation) el).getLogicalRelation() == LOGICAL_RELATIONS.OR ? true
             : false;
       } else if (el instanceof SearchGroup) {
+        boolean not = ((SearchGroup) el).isNot();
         if (OR) {
-          q.should(buildSearchQuery(((SearchGroup) el).getElements(), user));
+          q.should(negate(buildSearchQuery(((SearchGroup) el).getElements(), user), not));
         } else {
-          q.must(buildSearchQuery(((SearchGroup) el).getElements(), user));
+          q.must(negate(buildSearchQuery(((SearchGroup) el).getElements(), user), not));
         }
       }
     }
@@ -735,7 +736,7 @@ public class ElasticQueryFactory {
     final BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
     for (final String ext : SearchUtils.parseFileTypesAsExtensionList(pair.getValue())) {
       filetypeQuery.should(
-          fieldQuery(ElasticFields.NAME, "\"." + ext + "\"", SearchOperators.EQUALS, false));
+          fieldQuery(ElasticFields.NAME, "*\"." + ext + "\"", SearchOperators.EQUALS, false));
     }
     return filetypeQuery;
   }
