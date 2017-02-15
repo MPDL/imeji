@@ -19,10 +19,10 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import de.mpg.imeji.test.logic.controller.ControllerTest;
+import de.mpg.imeji.test.logic.controller.SuperServiceTest;
 import util.JenaUtil;
 
-public class StatisticsControllerTestClass extends ControllerTest {
+public class StatisticsControllerTestClass extends SuperServiceTest {
 
 
   @Test

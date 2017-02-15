@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.presentation.admin.ConfigurationBean;
 import de.mpg.imeji.presentation.storage.StorageUtil;
-import de.mpg.imeji.test.logic.controller.ControllerTest;
+import de.mpg.imeji.test.logic.controller.SuperServiceTest;
 import util.JenaUtil;
 
 /**
@@ -24,7 +24,7 @@ import util.JenaUtil;
  * @author bastiens
  *
  */
-public class FileAuthorizationTest extends ControllerTest {
+public class FileAuthorizationTest extends SuperServiceTest {
 
   @After
   public void reset() throws IOException, URISyntaxException, ImejiException {

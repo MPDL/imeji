@@ -22,11 +22,11 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import de.mpg.imeji.test.logic.controller.ControllerTest;
+import de.mpg.imeji.test.logic.controller.SuperServiceTest;
 import de.mpg.imeji.testimpl.ImejiTestResources;
 import util.JenaUtil;
 
-public class UserControllerTestClass extends ControllerTest {
+public class UserControllerTestClass extends SuperServiceTest {
 
   private static final Logger LOGGER = Logger.getLogger(UserControllerTestClass.class);
 
