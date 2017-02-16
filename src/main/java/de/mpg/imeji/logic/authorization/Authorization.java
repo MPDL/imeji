@@ -105,7 +105,10 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean delete(User user, Object obj) {
-    return update(user, obj);
+    if (obj instanceof Item) {
+      return update(user, obj);
+    }
+    return administrate(user, obj);
   }
 
   /**

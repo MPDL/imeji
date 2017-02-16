@@ -147,8 +147,7 @@ public class AdvancedSearchBean extends SuperBean {
     if (formular == null) {
       return "";
     }
-    return SearchQueryParser.searchQuery2PrettyQuery(formular.getFormularAsSearchQuery(),
-        getLocale());
+    return SearchQueryParser.searchQuery2PrettyQuery(formular.getFormularAsSearchQuery());
   }
 
   /**

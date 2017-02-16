@@ -88,7 +88,7 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
         Imeji.RESOURCE_BUNDLE.getLabel("sort_title", getLocale())));
     getSortMenu().add(new SelectItem(SearchFields.modified.name(),
         Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", getLocale())));
-    getSortMenu().add(new SelectItem(SearchFields.creator_id.name(),
+    getSortMenu().add(new SelectItem(SearchFields.creatorid.name(),
         Imeji.RESOURCE_BUNDLE.getLabel("sort_author", getLocale())));
   }
 

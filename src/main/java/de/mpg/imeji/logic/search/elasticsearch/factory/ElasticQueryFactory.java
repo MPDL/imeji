@@ -30,6 +30,8 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.util.DateFormatter;
+import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
@@ -208,22 +210,22 @@ public class ElasticQueryFactory {
    * @param grants
    * @return
    */
-  private static QueryBuilder buildGrantQuery(User user, GrantType grantType) {
+  private static QueryBuilder buildGrantQuery(User user, GrantType role) {
     final Collection<Grant> grants =
         SecurityUtil.authorization().toGrantList(SecurityUtil.authorization().getAllGrants(user));
     final BoolQueryBuilder q = QueryBuilders.boolQuery();
     // Add query for all release objects
-    if (grantType == null) {
+    if (role == null) {
       q.should(
           fieldQuery(ElasticFields.STATUS, Status.RELEASED.name(), SearchOperators.EQUALS, false));
+
     }
-    // if grantType is null, set it to READ
-    grantType = grantType == null ? GrantType.READ : grantType;
     // Add query for each read grant
     for (final Grant g : grants) {
-      if (g.asGrantType() == grantType) {
-        q.should(fieldQuery(ElasticFields.FOLDER, g.getGrantFor().toString(),
-            SearchOperators.EQUALS, false));
+      if (g.getGrantFor().contains(ObjectHelper.getURI(CollectionImeji.class, "").toString())) {
+        if (role == null || g.asGrantType().equals(role))
+          q.should(fieldQuery(ElasticFields.FOLDER, g.getGrantFor().toString(),
+              SearchOperators.EQUALS, false));
         q.should(fieldQuery(ElasticFields.ID, g.getGrantFor().toString(), SearchOperators.EQUALS,
             false));
       }
@@ -283,8 +285,6 @@ public class ElasticQueryFactory {
             ElasticSearchFactoryUtil.getUserId(pair.getValue()), pair.getOperator(), pair.isNot());
       case collaborator:
         return roleQueryWithoutCreator(ElasticFields.READ, pair.getValue(), pair.isNot());
-      case uploader:
-        return roleQuery(ElasticFields.UPLOAD, pair.getValue(), pair.isNot());
       case read:
         return fieldQuery(ElasticFields.READ, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
@@ -295,16 +295,11 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case filetype:
         return fileTypeQuery(pair);
-      case grant:
+      case role:
         // same as grant_type
         final GrantType grant = pair.getValue().equals("upload") ? GrantType.EDIT
             : GrantType.valueOf(pair.getValue().toUpperCase());
         return buildGrantQuery(user, grant);
-      case grant_type:
-        // same as grant
-        final GrantType grantType = pair.getValue().equals("upload") ? GrantType.EDIT
-            : GrantType.valueOf(pair.getValue().toUpperCase());
-        return buildGrantQuery(user, grantType);
       case member:
         return fieldQuery(ElasticFields.MEMBER, pair.getValue(), pair.getOperator(), pair.isNot());
       case license:
@@ -339,14 +334,9 @@ public class ElasticQueryFactory {
       case location:
         return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case metadatatype:
-        return fieldQuery(ElasticFields.METADATA_TYPE, pair.getValue(), pair.getOperator(),
-            pair.isNot());
       case url:
         return fieldQuery(ElasticFields.METADATA_URI, pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case hasgrant:
-        return fieldQuery(ElasticFields.CREATOR, pair.getValue(), pair.getOperator(), pair.isNot());
       case coordinates:
         return fieldQuery(ElasticFields.METADATA_LOCATION, pair.getValue(), pair.getOperator(),
             pair.isNot());

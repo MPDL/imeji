@@ -45,7 +45,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
   /**
    * Create a list of {@link Statement}
    *
-   * @param statement
+   * @param index
    * @param user
    * @return
    * @throws ImejiException

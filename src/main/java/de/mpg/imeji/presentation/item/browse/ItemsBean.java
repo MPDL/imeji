@@ -237,7 +237,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     final String q = UrlHelper.getParameterValue("q");
     if (!StringHelper.isNullOrEmptyTrim(q)) {
       final SearchQuery query = SearchQueryParser.parseStringQuery(q);
-      return SearchQueryParser.searchQuery2PrettyQuery(query, getLocale());
+      return SearchQueryParser.searchQuery2PrettyQuery(query);
     }
     return "";
   }
