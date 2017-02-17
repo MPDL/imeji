@@ -2,6 +2,7 @@ package de.mpg.imeji.logic.vo.factory;
 
 import java.net.URI;
 
+import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.vo.ContentVO;
 
 /**
@@ -15,6 +16,31 @@ public class ContentFactory {
 
   public ContentVO build() {
     return content;
+  }
+
+  /**
+   * Initialize the Factory with a {@link ContentVO}
+   * 
+   * @param content
+   * @return
+   */
+  public ContentFactory init(ContentVO content) {
+    this.content = content;
+    return this;
+  }
+
+  /**
+   * Set all the Files from an {@link UploadResult}
+   * 
+   * @param uploadResult
+   * @return
+   */
+  public ContentFactory setFiles(UploadResult uploadResult) {
+    content.setPreview(uploadResult.getWeb());
+    content.setThumbnail(uploadResult.getThumb());
+    content.setFull(uploadResult.getFull());
+    content.setOriginal(uploadResult.getFull());
+    return this;
   }
 
   public ContentFactory setId(String id) {

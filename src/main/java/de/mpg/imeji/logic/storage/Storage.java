@@ -78,6 +78,16 @@ public interface Storage extends Serializable {
   public UploadResult copy(String url, String collectionId) throws IOException;
 
   /**
+   * Move a File to another collection
+   * 
+   * @param url
+   * @param collectionId
+   * @return
+   * @throws IOException
+   */
+  public UploadResult move(String url, String collectionId) throws IOException;
+
+  /**
    * Update the file stored in the passed url with a new original resolution (original resolution is
    * not updated)
    *

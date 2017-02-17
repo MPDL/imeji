@@ -218,7 +218,6 @@ public class ElasticQueryFactory {
     if (role == null) {
       q.should(
           fieldQuery(ElasticFields.STATUS, Status.RELEASED.name(), SearchOperators.EQUALS, false));
-
     }
     // Add query for each read grant
     for (final Grant g : grants) {

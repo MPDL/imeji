@@ -203,6 +203,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     return totalNumberOfRecords;
   }
 
+
   /**
    * Parse the search query in the url, as defined by the parameter q
    *
@@ -350,6 +351,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       BeanHelper.error(e.getMessage());
     }
   }
+
+
 
   /**
    * Unselect a list of {@link Item}

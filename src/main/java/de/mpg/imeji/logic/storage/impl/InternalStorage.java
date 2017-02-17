@@ -143,11 +143,17 @@ public class InternalStorage implements Storage {
   public UploadResult copy(String url, String collectionId) throws IOException {
     File srcDir = manager.getDirectory(url);
     File destDir = manager.createNewDirectory(collectionId);
-    System.out.println("copying " + srcDir + " to " + destDir);
     FileUtils.copyDirectory(srcDir, destDir);
     return initUploadResult(destDir);
   }
 
+  @Override
+  public UploadResult move(String url, String collectionId) throws IOException {
+    File srcDir = manager.getDirectory(url);
+    File destDir = manager.getCollectionDirectory(collectionId);
+    FileUtils.moveDirectory(srcDir, destDir);
+    return initUploadResult(destDir);
+  }
 
   /**
    * Initialize an {@link UploadResult} for a directory
@@ -250,4 +256,6 @@ public class InternalStorage implements Storage {
     update(webUrl, web);
     update(thumbnailUrl, thumbnail);
   }
+
+
 }

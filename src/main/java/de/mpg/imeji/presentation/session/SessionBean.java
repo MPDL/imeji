@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -49,7 +47,6 @@ public class SessionBean implements Serializable {
 
   private User user = null;
   private List<String> selected = new ArrayList<String>();;
-  private Set<String> clipboard = new HashSet<>();
   private String selectedImagesContext = null;
   private Style selectedCss = Style.NONE;
   private String applicationUrl;
@@ -347,36 +344,6 @@ public class SessionBean implements Serializable {
    */
   public static SessionBean getSessionBean(HttpServletRequest req) {
     return (SessionBean) ServletUtil.getSession(req, SessionBean.class.getSimpleName());
-  }
-
-
-  /**
-   * @return the clipboard
-   */
-  public Set<String> getClipboard() {
-    return clipboard;
-  }
-
-
-  /**
-   * @param clipboard the clipboard to set
-   */
-  public void setClipboard(Set<String> clipboard) {
-    this.clipboard = clipboard;
-  }
-
-  /**
-   * Add selected items to the clipboard
-   */
-  public void addToClipBoard() {
-    this.clipboard.addAll(selected);
-  }
-
-  /**
-   * Clear the clipbord
-   */
-  public void clearClipboard() {
-    this.clipboard.clear();
   }
 
   public int getDivWidth() {
