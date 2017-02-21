@@ -79,7 +79,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
       retrieveItems();
       items.stream()
           .filter(item -> item.getMetadata().stream()
-              .noneMatch(md -> md.getStatementId().equals(statementSelector.getIndex())))
+              .noneMatch(md -> md.getIndex().equals(statementSelector.getIndex())))
           .sequential().forEach(item -> item.getMetadata().add(getMetadata()));
       save();
       reset();
@@ -97,7 +97,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
       retrieveItems();
       items.stream()
           .peek(item -> item.setMetadata(item.getMetadata().stream()
-              .filter(md -> !md.getStatementId().equals(statementSelector.getIndex()))
+              .filter(md -> !md.getIndex().equals(statementSelector.getIndex()))
               .collect(Collectors.toList())))
           .forEach(item -> item.getMetadata().add(getMetadata()));
       save();

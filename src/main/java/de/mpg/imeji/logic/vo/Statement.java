@@ -14,7 +14,6 @@ import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
-import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
@@ -63,13 +62,24 @@ public class Statement implements Serializable, Cloneable {
   }
 
   /**
+   * Format the index in a case insensitive UrlFriendly manner (but not url encoded!)
+   * 
+   * @param index
+   * @return
+   * @throws UnsupportedEncodingException
+   */
+  private String encodeIndex(String index) {
+    return new String(index.replace(" ", "_").toLowerCase());
+  }
+
+  /**
    * Get the Version of the index which should be used for the search
    * 
    * @return
    */
   public String getIndexUrlEncoded() {
     try {
-      return URLEncoder.encode(StatementUtil.encodeIndex(index), "UTF-8");
+      return URLEncoder.encode(encodeIndex(index), "UTF-8");
     } catch (UnsupportedEncodingException e) {
       return index;
     }
@@ -80,7 +90,7 @@ public class Statement implements Serializable, Cloneable {
    */
   public void setIndex(String index) {
     this.index = index;
-    this.uri = ObjectHelper.getURI(Statement.class, StatementUtil.encodeIndex(index));
+    this.uri = ObjectHelper.getURI(Statement.class, encodeIndex(index));
   }
 
   public URI getVocabulary() {

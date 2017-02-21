@@ -27,8 +27,8 @@ public class StorageUtil {
    * @return
    */
   public static boolean isAllowedToViewFile(String fileUrl, User user) {
-    return StorageUtil.isAllowedToViewItemOfFile(fileUrl, user)
-        || isAllowedToViewCollectionOfFile(fileUrl, user);
+    return isAllowedToViewCollectionOfFile(fileUrl, user)
+        || StorageUtil.isAllowedToViewItemOfFile(fileUrl, user);
   }
 
   /**
@@ -58,7 +58,7 @@ public class StorageUtil {
   private static boolean isAllowedToViewCollectionOfFile(String fileUrl, User user) {
     try {
       final String collectionId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
-      new CollectionService().retrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId),
+      new CollectionService().retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, collectionId),
           user);
       return true;
     } catch (final Exception e) {

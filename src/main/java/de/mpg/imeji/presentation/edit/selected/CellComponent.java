@@ -25,7 +25,7 @@ public class CellComponent implements Serializable {
   public CellComponent(Statement statement, List<Metadata> metadata) {
     this.statement = statement;
     // Init the input only for the metadata of this statement
-    inputs = metadata.stream().filter(md -> md.getStatementId().equals(statement.getIndex()))
+    inputs = metadata.stream().filter(md -> md.getIndex().equals(statement.getIndex()))
         .map(md -> new MetadataInputComponent(md, statement)).collect(Collectors.toList());
   }
 
@@ -62,7 +62,7 @@ public class CellComponent implements Serializable {
   public void changeStatement(Statement s) {
     if (s.getType().equals(statement.getType())) {
       statement.setIndex(s.getIndex());;
-      inputs.stream().peek(i -> i.getMetadata().setStatementId(s.getIndex()))
+      inputs.stream().peek(i -> i.getMetadata().setIndex(s.getIndex()))
           .forEach(i -> i.setStatement(s));
     }
   }

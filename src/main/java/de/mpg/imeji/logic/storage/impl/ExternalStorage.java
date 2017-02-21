@@ -190,4 +190,10 @@ public class ExternalStorage implements Storage {
     // TODO Auto-generated method stub
 
   }
+
+  @Override
+  public UploadResult move(String url, String collectionId) throws IOException {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
 import de.mpg.imeji.logic.search.model.SearchElement;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 
@@ -40,7 +40,7 @@ public class FileTypeSearchGroup extends AbstractAdvancedSearchFormGroup impleme
 
   @Override
   public SearchElement toSearchElement() {
-    return new SearchPair(SearchFields.filetype, SearchOperators.REGEX,
+    return new SearchPair(SearchFields.filetype, SearchOperators.EQUALS,
         StringUtils.join(selected, " OR "), false);
   }
 

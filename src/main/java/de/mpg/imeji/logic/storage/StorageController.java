@@ -151,6 +151,22 @@ public final class StorageController implements Serializable {
   }
 
   /**
+   * Move a file with all its resolution to another collection
+   * 
+   * @param url
+   * @param collectionId
+   * @return
+   * @throws ImejiException
+   */
+  public UploadResult move(String url, String collectionId) throws ImejiException {
+    try {
+      return storage.move(url, collectionId);
+    } catch (IOException e) {
+      throw new ImejiException("Error copying storage file", e);
+    }
+  }
+
+  /**
    * Return the {@link StorageAdministrator} of the current {@link Storage}
    *
    * @return

@@ -31,6 +31,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.ContentFactory;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 
 /**
@@ -133,7 +134,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    * @throws NotFoundException
    */
-  public String findContentId(String itemId) throws NotFoundException {
+  public String findContentId(String itemId) {
     return controller.getContentId(URI.create(itemId)).toString();
   }
 
@@ -225,6 +226,24 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     contentVO.setOriginal(result.getFull());
     return controller.create(contentVO, Imeji.adminUser);
   }
+
+  /**
+   * Move Contents to another collection
+   * 
+   * @param item
+   * @param collectionId
+   * @return
+   * @throws ImejiException
+   */
+  public List<ContentVO> move(List<ContentVO> contents, String collectionId) throws ImejiException {
+    StorageController storageController = new StorageController();
+    for (ContentVO content : contents) {
+      content = new ContentFactory().init(content)
+          .setFiles(storageController.move(content.getOriginal(), collectionId)).build();
+    }
+    return updateBatch(contents);
+  }
+
 
   /**
    * Upload a File to the storage and add upload result to the contentVO

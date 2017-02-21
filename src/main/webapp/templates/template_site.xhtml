@@ -226,6 +226,10 @@
 					.imj_administrationTiledList .imj_listBody{
 						text-align: left;
 					}
+					.imj_moveItemsDialogBox{
+						top: 5em;
+						font-size: 1em;
+					}
                 </style>
                 <!-- NEW SCIPT - TO BE ADDED TO JS -->
                
@@ -254,16 +258,6 @@
 		                	</div>
 		                </ui:repeat>
 	                </div>
-	                <ui:fragment rendered="#{!empty SessionBean.clipboard}">
-	                	<div class="imj_searchQueryDisplay" >
-	                		#{lbl.clipboard}: #{SessionBean.clipboard.size()} #{lbl.items}
-	                		<h:form>
-		                		<h:commandLink styleClass="imj_removeFacetButton" action="#{SessionBean.clearClipboard}">		
-									 <i class="fa fa-trash fa-size-1"></i>
-								</h:commandLink>
-							</h:form>
-	                	</div>
-	                </ui:fragment>
 	                 <!-- Search Query -->
 	                <ui:insert name="searchQuery"/>
 		                 <!-- headline -->

@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Locale;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;

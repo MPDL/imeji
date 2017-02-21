@@ -9,6 +9,7 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
 import de.mpg.imeji.logic.search.model.SearchElement;
+import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
@@ -46,10 +47,16 @@ public class SearchFactory {
    * @return
    */
   public SearchGroup buildAsGroup() {
-    SearchGroup group = new SearchGroup();
-    group.setGroup(query.getElements());
-    return group;
+    if (query.getElements().size() == 1
+        && query.getElements().get(0).getType().equals(SEARCH_ELEMENTS.GROUP)) {
+      return (SearchGroup) query.getElements().get(0);
+    } else {
+      SearchGroup group = new SearchGroup();
+      group.setGroup(query.getElements());
+      return group;
+    }
   }
+
 
   /**
    * Add the elements in the query with an AND relation
@@ -62,6 +69,19 @@ public class SearchFactory {
     for (SearchElement element : elements) {
       addElement(element, LOGICAL_RELATIONS.AND);
     }
+    return this;
+  }
+
+  /**
+   * Set the Not for the whole Query
+   * 
+   * @param not
+   * @return
+   */
+  public SearchFactory setNot(boolean not) {
+    SearchGroup g = buildAsGroup();
+    g.setNot(not);
+    query = new SearchQuery(g.getElements());
     return this;
   }
 

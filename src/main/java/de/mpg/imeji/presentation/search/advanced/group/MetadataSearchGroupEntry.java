@@ -13,8 +13,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
-import de.mpg.imeji.logic.search.model.SearchGroup;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchOperators;
@@ -62,8 +61,13 @@ public class MetadataSearchGroupEntry implements Serializable {
    * @return
    * @throws UnprocessableError
    */
-  public SearchGroup getSearchGroup() throws UnprocessableError {
-    return new SearchFactory().and(getAllSearchElements()).buildAsGroup();
+  public SearchElement getSearchElement() throws UnprocessableError {
+    List<SearchElement> els = getAllSearchElements();
+    if (els.size() == 1) {
+      return els.get(0);
+    } else {
+      return new SearchFactory().and(getAllSearchElements()).buildAsGroup();
+    }
   }
 
   /**
@@ -88,36 +92,35 @@ public class MetadataSearchGroupEntry implements Serializable {
     Metadata metadata = input.getMetadata();
     if (!StringHelper.isNullOrEmptyTrim(metadata.getText())) {
       l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.text, operator,
-          metadata.getText(), false));
+          metadata.getText(), not));
     }
     if (!StringHelper.isNullOrEmptyTrim(metadata.getUrl())) {
       l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.url, operator,
-          metadata.getUrl(), false));
+          metadata.getUrl(), not));
     }
     if (!Double.isNaN(metadata.getNumber())) {
       l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.number, operator,
-          Double.toString(metadata.getNumber()), false));
+          Double.toString(metadata.getNumber()), not));
     }
     if (!Double.isNaN(metadata.getLatitude()) && !Double.isNaN(metadata.getLongitude())) {
-      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.number, operator,
-          Double.toString(metadata.getNumber()), false));
       l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.coordinates,
-          SearchOperators.GEO, Double.toString(metadata.getLatitude()) + ","
-              + Double.toString(metadata.getLongitude()) + "," + distance,
-          false));
+          SearchOperators.EQUALS,
+          Double.toString(metadata.getLatitude()) + "," + Double.toString(metadata.getLongitude())
+              + (StringHelper.isNullOrEmptyTrim(distance) ? "" : "," + distance),
+          not));
     }
     if (metadata.getPerson() != null) {
       if (!StringHelper.isNullOrEmptyTrim(metadata.getPerson().getFamilyName())) {
         l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.person_family,
-            operator, metadata.getPerson().getFamilyName(), false));
+            operator, metadata.getPerson().getFamilyName(), not));
       }
       if (!StringHelper.isNullOrEmptyTrim(metadata.getPerson().getGivenName())) {
         l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.person_given,
-            operator, metadata.getPerson().getGivenName(), false));
+            operator, metadata.getPerson().getGivenName(), not));
       }
       if (!metadata.getPerson().getOrganizations().isEmpty()) {
         l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.person_org, operator,
-            metadata.getPerson().getOrganizationString(), false));
+            metadata.getPerson().getOrganizationString(), not));
       }
     }
     return l;
@@ -145,7 +148,7 @@ public class MetadataSearchGroupEntry implements Serializable {
         operatorMenu.add(new SelectItem(SearchOperators.LESSER, "<="));
         break;
       default:
-        operatorMenu.add(new SelectItem(SearchOperators.REGEX, "--"));
+        operatorMenu.add(new SelectItem(SearchOperators.EQUALS, "--"));
         operatorMenu.add(new SelectItem(SearchOperators.EQUALS,
             Imeji.RESOURCE_BUNDLE.getLabel("exactly", locale)));
     }

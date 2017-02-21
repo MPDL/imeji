@@ -2,7 +2,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:composite="http://java.sun.com/jsf/composite">
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
 	
 	<composite:interface>		
 		<composite:attribute name="itemBean"/>								
@@ -23,8 +24,12 @@
 		<a href="#{Navigation.applicationUrl}exportServlet?format=file&amp;id=#{cc.attrs.itemBean.item.id}" class="imj_menuButton imj_overlayMenu" target="_blank">
 			<span class="fa fa-download"/> <span>#{lbl.download}</span>
 		</a>
-		<a href="#{Navigation.applicationUrl}moveSelected" id="lnkMoveTo" class="imj_menuButton imj_overlayMenu">
-			 <span class="fa fa-clone"/> <span>#{lbl.move_to}...</span>
-		</a>
+		<h:form>
+			<h:commandLink id="moveItems" styleClass="imj_menuButton imj_overlayMenu" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemBean.item.collection.toString())}" onclick="openDialog('moveItemsDialog');">
+				<span class="fa fa-hand-o-right"/> <span>#{lbl.move}..</span>
+				<f:ajax render=":actionItem:moveItemsComponent:moveItemsForm"/>
+			</h:commandLink>
+		</h:form>
+		<dialog:moveItemsDialog id="moveItemsComponent" itemId="#{cc.attrs.itemBean.item.id.toString()}" colId="#{cc.attrs.itemBean.item.collection.toString()}" parentId=":actionItem:moveItemsComponent"/>
 	</composite:implementation>
 </html>

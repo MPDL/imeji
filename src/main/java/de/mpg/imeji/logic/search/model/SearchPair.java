@@ -3,7 +3,6 @@ package de.mpg.imeji.logic.search.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**
@@ -17,7 +16,6 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class SearchPair extends SearchElement {
   private static final long serialVersionUID = -1522952540004708017L;
-  private final boolean not;
   private final SearchOperators operator;
   private final String value;
   private final SearchFields field;
@@ -36,7 +34,7 @@ public class SearchPair extends SearchElement {
    * @param value
    */
   public SearchPair(SearchFields field, String value) {
-    this(field, SearchOperators.REGEX, value, false);
+    this(field, SearchOperators.EQUALS, value, false);
   }
 
   /**
@@ -50,8 +48,8 @@ public class SearchPair extends SearchElement {
   public SearchPair(SearchFields field, SearchOperators operator, String value, boolean not) {
     this.operator = operator;
     this.value = value;
-    this.not = not;
     this.field = field;
+    setNot(not);
   }
 
   public SearchOperators getOperator() {
@@ -76,10 +74,6 @@ public class SearchPair extends SearchElement {
   @Override
   public boolean isEmpty() {
     return StringHelper.isNullOrEmptyTrim(value);
-  }
-
-  public boolean isNot() {
-    return not;
   }
 
   /**

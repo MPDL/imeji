@@ -19,7 +19,7 @@ public class SearchResult {
   private int numberOfRecords = 0;
   private List<String> results = new ArrayList<String>();
   private String query = null;
-  private SortCriterion sort = new SortCriterion();
+  private SortCriterion sort;
 
   /**
    * Create a new {@link SearchResult} from a {@link List} of String, and sort it if a
@@ -32,10 +32,6 @@ public class SearchResult {
   public SearchResult(List<String> unsortedResults, SortCriterion sort) {
     numberOfRecords = unsortedResults.size();
     if (sort != null) {
-      if (sort.getIndex() != null
-          && sort.getIndex().getName().equals(SearchIndex.SearchFields.title.name())) {
-        sort.toggle();
-      }
       this.sort = sort;
       results = SortHelper.sort(unsortedResults, this.sort.getSortOrder());
     } else {

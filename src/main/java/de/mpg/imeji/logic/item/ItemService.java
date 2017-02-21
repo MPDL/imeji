@@ -9,8 +9,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -35,7 +38,7 @@ import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -254,7 +257,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public Item retrieveLazyForFile(String fileUrl, User user) throws ImejiException {
-    final Search s = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
+    final Search s = SearchFactory.create(SearchObjectTypes.ALL, SEARCH_IMPLEMENTATIONS.JENA);
     final List<String> r =
         s.searchString(JenaCustomQueries.selectItemOfFile(fileUrl), null, null, 0, -1).getResults();
     if (!r.isEmpty() && r.get(0) != null) {
@@ -537,24 +540,25 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param user
    * @throws ImejiException
    */
-  public int copyItems(List<String> ids, CollectionImeji destCol, User user) throws ImejiException {
+  public List<String> copyItems(List<String> ids, CollectionImeji destCol, User user)
+      throws ImejiException {
     List<Item> items = retrieve(ids, user);
     // Check checksum
     ContentService contentService = new ContentService();
     StorageController storageController = new StorageController();
-    int count = 0;
+    List<String> copied = new LinkedList<String>();
     for (Item item : items) {
       ContentVO c =
           contentService.retrieveLazy(contentService.findContentId(item.getId().toString()));
       File f = storageController.read(c.getOriginal());
       try {
         createWithFile(item, f, item.getFilename(), destCol, user);
-        count++;
+        copied.add(item.getId().toString());
       } catch (Exception e) {
         LOGGER.error("Can not copied item", e);
       }
     }
-    return count;
+    return copied;
   }
 
   /**
@@ -565,9 +569,49 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param user
    * @throws ImejiException
    */
-  public void moveItems(List<String> ids, CollectionImeji col, User user) throws ImejiException {
-    copyItems(ids, col, user);
-    delete(retrieve(ids, user), user);
+  public List<Item> moveItems(List<String> ids, CollectionImeji col, User user)
+      throws ImejiException {
+    List<Item> items = retrieve(ids, user);
+    List<ContentVO> contents = retrieveContentBatchLazy(items);
+    contents = filterContentsIfChecksumAlreadyExists(contents, col);
+    List<ContentVO> moved = new ContentService().move(contents, col.getIdString());
+    if (moved.size() > 0) {
+      Set<String> movedSet = moved.stream().map(c -> c.getItemId()).collect(Collectors.toSet());
+      items = items.stream().filter(item -> movedSet.contains(item.getId().toString()))
+          .peek(item -> item.setCollection(col.getId())).collect(Collectors.toList());
+      updateBatch(items, user);
+      return items;
+    }
+    return new ArrayList<>();
+  }
+
+  /**
+   * Retrieve the contents of the Items
+   * 
+   * @param items
+   * @return
+   * @throws ImejiException
+   */
+  private List<ContentVO> retrieveContentBatchLazy(List<Item> items) throws ImejiException {
+    ContentService contentService = new ContentService();
+    List<String> contentIds =
+        items.stream().map(item -> contentService.findContentId(item.getId().toString()))
+            .collect(Collectors.toList());
+    return contentService.retrieveBatchLazy(contentIds);
+  }
+
+  /**
+   * Filter the contents if their checksum exists already in the passed collection
+   * 
+   * @param items
+   * @param col
+   * @return
+   */
+  private List<ContentVO> filterContentsIfChecksumAlreadyExists(List<ContentVO> contents,
+      CollectionImeji col) {
+    return contents.stream()
+        .filter(content -> !checksumExistsInCollection(col.getId(), content.getChecksum()))
+        .collect(Collectors.toList());
   }
 
   /**

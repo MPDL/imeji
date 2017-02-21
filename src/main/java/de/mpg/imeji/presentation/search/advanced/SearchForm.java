@@ -13,7 +13,7 @@ import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -97,7 +97,6 @@ public class SearchForm implements Serializable {
       factory.addElement(fileTypeSearchGroup.toSearchElement(), LOGICAL_RELATIONS.AND);
       factory.addElement(licenseSearchGroup.toSearchElement(), LOGICAL_RELATIONS.AND);
       factory.addElement(technicalMetadataSearchGroup.toSearchElement(), LOGICAL_RELATIONS.AND);
-      System.out.println("q=" + SearchQueryParser.transform2URL(factory.build()));
       return factory.build();
     } catch (final UnprocessableError e) {
       LOGGER.error("Error transforming search form to searchquery", e);

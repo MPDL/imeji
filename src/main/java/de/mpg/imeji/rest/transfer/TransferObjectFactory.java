@@ -247,7 +247,7 @@ public class TransferObjectFactory {
       to.setPerson(transferPerson(vo.getPerson(), new PersonTO()));
       to.setLatitude(vo.getLatitude());
       to.setLongitude(vo.getLongitude());
-      to.setStatementId(vo.getStatementId());
+      to.setStatementId(vo.getIndex());
       tos.add(to);
     }
     return tos;

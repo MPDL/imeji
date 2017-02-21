@@ -13,8 +13,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchGroup;
-import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
@@ -59,7 +59,7 @@ public class UserFilterMenuBean extends SuperFilterMenuBean {
    * @return
    */
   private SearchQuery getCreatedByMeQuery() {
-    return SearchQuery.toSearchQuery(new SearchPair(SearchFields.creator, SearchOperators.REGEX,
+    return SearchQuery.toSearchQuery(new SearchPair(SearchFields.creator, SearchOperators.EQUALS,
         getSessionUser().getEmail(), false));
   }
 
@@ -70,7 +70,7 @@ public class UserFilterMenuBean extends SuperFilterMenuBean {
    */
   private SearchQuery getSharedWithMeQuery() {
     return SearchQuery.toSearchQuery(new SearchPair(SearchFields.collaborator,
-        SearchOperators.REGEX, getSessionUser().getEmail(), false));
+        SearchOperators.EQUALS, getSessionUser().getEmail(), false));
   }
 
   /**
@@ -81,10 +81,10 @@ public class UserFilterMenuBean extends SuperFilterMenuBean {
    */
   private SearchQuery getCreatedByMeOrSharedWithMeQuery() throws UnprocessableError {
     final SearchGroup q = new SearchGroup();
-    q.addPair(new SearchPair(SearchFields.creator, SearchOperators.REGEX,
+    q.addPair(new SearchPair(SearchFields.creator, SearchOperators.EQUALS,
         getSessionUser().getEmail(), false));
     q.addLogicalRelation(LOGICAL_RELATIONS.OR);
-    q.addPair(new SearchPair(SearchFields.collaborator, SearchOperators.REGEX,
+    q.addPair(new SearchPair(SearchFields.collaborator, SearchOperators.EQUALS,
         getSessionUser().getEmail(), false));
     return SearchQuery.toSearchQuery(q);
   }

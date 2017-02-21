@@ -27,8 +27,8 @@ public class SelectStatementWithInputComponent extends SelectStatementComponent
   }
 
   public SelectStatementWithInputComponent(Metadata metadata, Map<String, Statement> statementMap) {
-    super(metadata.getStatementId(), statementMap);
-    this.input = new MetadataInputComponent(metadata, statementMap.get(metadata.getStatementId()));
+    super(metadata.getIndex(), statementMap);
+    this.input = new MetadataInputComponent(metadata, statementMap.get(metadata.getIndex()));
   }
 
   /**

@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.search.model.SearchIndex;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
@@ -108,12 +108,12 @@ public class ContentNegotiationFilter implements Filter {
   private String getQuery(HttpServletRequest request) throws UnsupportedEncodingException {
     final String path = request.getServletPath();
     if (path.startsWith("/item/")) {
-      return "q=" + SearchIndex.SearchFields.member.name() + "==\""
+      return "q=" + SearchFields.member.name() + "==\""
           + URLEncoder.encode(ObjectHelper.getURI(Item.class, getID(path)).toString(), "UTF-8")
           + "\"";
     }
     if (path.startsWith("/collection/")) {
-      return "q=" + SearchIndex.SearchFields.col.name() + "==\""
+      return "q=" + SearchFields.col.name() + "==\""
           + ObjectHelper.getURI(CollectionImeji.class, getID(path)) + "\"";
     }
     return request.getQueryString();

@@ -346,11 +346,21 @@ public class InternalStorageManager implements Serializable {
    * @return
    */
   public File createNewDirectory(String collectionId) {
-    File f = new File(storagePath + StringHelper.fileSeparator + generateId(collectionId, 0));
+    File f = getCollectionDirectory(collectionId);
     if (!f.exists()) {
       f.mkdirs();
     }
     return f;
+  }
+
+  /**
+   * Return a the directory of the collection as a {@link File}
+   * 
+   * @param collectionId
+   * @return
+   */
+  public File getCollectionDirectory(String collectionId) {
+    return new File(storagePath + StringHelper.fileSeparator + generateId(collectionId, 0));
   }
 
   /**
