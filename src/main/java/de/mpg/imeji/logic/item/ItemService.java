@@ -113,6 +113,9 @@ public class ItemService extends SearchServiceAbstract<Item> {
     if (StringHelper.isNullOrEmptyTrim(filename)) {
       throw new UnprocessableError("Filename must not be empty!");
     }
+    if (c == null || c.getId() == null) {
+      throw new UnprocessableError("Collection and Collection Id must not be null");
+    }
     validateChecksum(c.getId(), f, false);
     validateFileFormat(f);
     QuotaUtil.checkQuota(user, f, c);

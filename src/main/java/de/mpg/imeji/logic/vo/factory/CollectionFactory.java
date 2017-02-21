@@ -42,4 +42,9 @@ public class CollectionFactory {
     return this;
   }
 
+  public CollectionFactory setTitle(String title) {
+    collection.setTitle(title);
+    return this;
+  }
+
 }

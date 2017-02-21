@@ -20,7 +20,7 @@ import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import de.mpg.imeji.test.logic.controller.SuperServiceTest;
+import de.mpg.imeji.test.logic.service.SuperServiceTest;
 
 /**
  * Unit test for {@link InvitationService}

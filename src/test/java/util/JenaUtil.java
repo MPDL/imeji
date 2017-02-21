@@ -42,8 +42,10 @@ public class JenaUtil {
   private static Logger LOGGER = Logger.getLogger(JenaUtil.class);
   public static User testUser;
   public static User testUser2;
+  public static User adminTestUser;
   public static String TEST_USER_EMAIL = "test@imeji.org";
   public static String TEST_USER_EMAIL_2 = "test2@imeji.org";
+  public static String ADMIN_USER_EMAIL = "admin@imeji.org";
   public static String TEST_USER_NAME = "Test User";
   public static String TEST_USER_PWD = "password";
   public static String TDB_PATH;
@@ -93,10 +95,12 @@ public class JenaUtil {
   private static void initTestUser() throws Exception {
     ElasticInitializer.reset();
     new UserService().reindex(ElasticService.DATA_ALIAS);
-    testUser = getMockupUser(TEST_USER_EMAIL, TEST_USER_NAME, TEST_USER_PWD);
-    testUser2 = getMockupUser(TEST_USER_EMAIL_2, TEST_USER_NAME, TEST_USER_PWD);
+    testUser = getMockupUser(TEST_USER_EMAIL, TEST_USER_NAME, TEST_USER_PWD, false);
+    testUser2 = getMockupUser(TEST_USER_EMAIL_2, TEST_USER_NAME, TEST_USER_PWD, false);
+    adminTestUser = getMockupUser(ADMIN_USER_EMAIL, TEST_USER_NAME, TEST_USER_PWD, true);
     testUser = createUser(testUser);
     testUser2 = createUser(testUser2);
+    adminTestUser = createUser(adminTestUser);
   }
 
 
@@ -111,14 +115,16 @@ public class JenaUtil {
   }
 
   /**
-   * REturn a Mockup User with default rights
+   * REturn a Mockup User
    * 
    * @param email
    * @param name
    * @param pwd
+   * @param isAdmin admin rights if true, default rights if false
    * @throws Exception
    */
-  private static User getMockupUser(String email, String name, String pwd) throws ImejiException {
+  private static User getMockupUser(String email, String name, String pwd, boolean isAdmin)
+      throws ImejiException {
     User user = new User();
     user.setEmail(email);
     Person userPerson = user.getPerson();
@@ -131,9 +137,14 @@ public class JenaUtil {
     user.setPerson(userPerson);
     user.setQuota(Long.MAX_VALUE);
     user.setEncryptedPassword(StringHelper.md5(pwd));
-    user.setGrants(AuthorizationPredefinedRoles.defaultUser(user.getId().toString()));
+    if (isAdmin) {
+      user.setGrants(AuthorizationPredefinedRoles.imejiAdministrator(user.getId().toString()));
+    } else {
+      user.setGrants(AuthorizationPredefinedRoles.defaultUser(user.getId().toString()));
+    }
     return user;
   }
+
 
   private static void deleteTDBDirectory() throws IOException {
     File f = new File(TDB_PATH);

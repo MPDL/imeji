@@ -46,6 +46,7 @@ public class ImejiStartupConfig {
     config = new Properties();
     configFile = new File(PropertyReader.getProperty("imeji.tdb.path") + "/startup.properties");
     if (!configFile.exists()) {
+      configFile.getParentFile().mkdirs();
       configFile.createNewFile();
       setDefaultConfig();
     }
