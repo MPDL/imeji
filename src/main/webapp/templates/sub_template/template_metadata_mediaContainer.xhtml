@@ -7,19 +7,23 @@
 	
 	<!-- Main Content - bibliographic grid list - START -->
 	<ui:define name="mainContent">
-		
-		<!-- EntryPagePreviewTiledList -->
-		<ui:fragment rendered="#{metadataContextBean.id == null or Auth.read(metadataContextBean)}">
-			
-			<!-- AJAX Wrapper - START -->
-			<h:panelGroup layout="block" id="imj_ajaxWrapper">
-				<ui:fragment rendered="#{Auth.loggedIn and metadataView != 'yes'}">
-					<col:editForm id="editContainer" formularContextBean="#{metadataContextBean}" formularBean="#{metadataBean}" headline="#{containerHeadline}" showProfileSelector="#{showProfileSelector}"/>
-				</ui:fragment>
-				<ui:fragment rendered="#{metadataView == 'yes'}">
-					<col:details metadataContextBean="#{metadataContextBean}" metadata="#{metadataBean}" headline="#{containerHeadline}" navigationContextURL="#{navigationContextURL}"/>
-				</ui:fragment>
-			</h:panelGroup>
+		<ui:fragment rendered="#{!Auth.loggedIn}">
+	 		<ui:include src="../../include/LoginFormular.xhtml" />
+	 	</ui:fragment>
+	 	<ui:fragment rendered="#{Auth.loggedIn}">
+			<!-- EntryPagePreviewTiledList -->
+			<ui:fragment rendered="#{metadataContextBean.id == null or Auth.read(metadataContextBean)}">
+				
+				<!-- AJAX Wrapper - START -->
+				<h:panelGroup layout="block" id="imj_ajaxWrapper">
+					<ui:fragment rendered="#{Auth.loggedIn and metadataView != 'yes'}">
+						<col:editForm id="editContainer" formularContextBean="#{metadataContextBean}" formularBean="#{metadataBean}" headline="#{containerHeadline}" showProfileSelector="#{showProfileSelector}"/>
+					</ui:fragment>
+					<ui:fragment rendered="#{metadataView == 'yes'}">
+						<col:details metadataContextBean="#{metadataContextBean}" metadata="#{metadataBean}" headline="#{containerHeadline}" navigationContextURL="#{navigationContextURL}"/>
+					</ui:fragment>
+				</h:panelGroup>
+			</ui:fragment>
 		</ui:fragment>
 	</ui:define>
 </ui:composition>
