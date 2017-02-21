@@ -27,6 +27,7 @@ import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.User;
@@ -83,10 +84,15 @@ public class UploadServlet extends HttpServlet {
       throws ServletException, IOException {
     final UploadItem upload = doUpload(req);
     final SessionBean session = getSession(req);
+    final String uploadId = req.getParameter("uploadId");
     try {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
-      itemService.createWithFile(null, upload.getFile(), upload.getFilename(), col, user);
+      if (!StringHelper.isNullOrEmptyTrim(uploadId)) {
+        itemService.uploadToStaging(uploadId, upload.getFile(), upload.getFilename(), col, user);
+      } else {
+        itemService.createWithFile(null, upload.getFile(), upload.getFilename(), col, user);
+      }
     } catch (final AuthenticationError e) {
       writeResponse(resp, e.getMessage());
       resp.setStatus(HttpServletResponse.SC_FORBIDDEN);

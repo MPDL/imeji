@@ -11,9 +11,12 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{Auth.update}">
-			<button id="upload" value="#{lbl.upload}" class="imj_menuButton imj_menuButton">
-				#{lbl.upload}
-			</button>
+			<form action="#{Navigation.applicationUrl}upload?col=cc.attrs.collectionBean.id">
+				<input type="text" name="col" value="#{cc.attrs.collectionBean.id}" style="display:none"/>
+				<button id="upload" class="imj_menuButton">
+					#{lbl.upload}
+				</button >
+			</form>
 			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton imj_menuButton">
 				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
 			</a>

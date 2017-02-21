@@ -40,6 +40,10 @@
 		<pattern value="/#{ type }/#{ id }/share"/>
 		<view-id>/jsf/Share.xhtml</view-id>
 	</url-mapping>
+	<url-mapping id="upload">
+		<pattern value="/upload"/>
+		<view-id>/jsf/Upload.xhtml</view-id>
+	</url-mapping>
 	<!-- Collection pages -->
 	<url-mapping id="collection">
 		<pattern value="/collection/#{ id }" />
