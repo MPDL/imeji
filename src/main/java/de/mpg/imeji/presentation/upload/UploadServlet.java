@@ -40,7 +40,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-@WebServlet(urlPatterns = "/uploadServlet", asyncSupported = true)
+@WebServlet(urlPatterns = "/uploadServlet", asyncSupported = true, loadOnStartup = 5)
 public class UploadServlet extends HttpServlet {
   private static final long serialVersionUID = -4879871986174193049L;
   private static final Logger LOGGER = Logger.getLogger(UploadServlet.class);
