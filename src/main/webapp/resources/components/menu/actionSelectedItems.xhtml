@@ -15,11 +15,16 @@
 			<a href="#{Navigation.applicationUrl}editselected" class="imj_menuButton imj_overlayMenu">
 				<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
 			</a>
-			<h:form>
-				<h:commandLink action="#{cc.attrs.itemsBean.deleteSelected}" styleClass="imj_overlayMenu imj_menuButton">
-					 <span class="fa fa-trash"/><span>#{lbl.delete}</span>
-				</h:commandLink>
-			</h:form>
+			<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
+				<a href="#" class="imj_menuButton imj_overlayMenu"  onclick="openDialog('deleteSelectedItems');">
+					<span class="fa fa-trash"/> <span>#{lbl.delete}</span>
+				</a>
+			</ui:fragment>
+		</ui:fragment>
+		<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(cc.attrs.itemsBean.collection)}">
+			<a href="#" class="imj_menuButton imj_overlayMenu"  onclick="openDialog('withdrawSelectedItems');">
+				<span class="fa fa-ban"/> <span>#{lbl.withdraw}</span>
+			</a>
 		</ui:fragment>
 		<a id="download" href="#{Navigation.applicationUrl}exportServlet?format=zip" class="imj_overlayMenu imj_menuButton" target="_blank">
 			<span class="fa fa-download"/> <span>#{lbl.download}</span>
@@ -34,10 +39,10 @@
 					<ul class="imj_overlayMenuList">
 						<li>
 							<a href="#{Navigation.applicationUrl}edit/license" id="lnkSelectEditLicense">
-								  <span class="fa fa-copyright"/> <span>#{lbl.edit_selected_license}</span>
+								<span class="fa fa-copyright"/> <span>#{lbl.edit_selected_license}</span>
 							</a>
 						</li>
-						<ui:fragment rendered="#{cc.attrs.itemsBean.type == 'COLLECTION_ITEMS'}">
+						<ui:fragment rendered="#{cc.attrs.itemsBean.type == 'COLLECTION_ITEMS' and WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
 							<li>
 								<h:form>
 									<h:commandLink id="moveItems" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemsBean.collection.id.toString())}" onclick="openDialog('moveItemsDialog');">
@@ -57,6 +62,8 @@
 				 <span class="fa fa-clone"/> <span>#{lbl.copy}</span>
 			</h:commandLink>
 		</ui:fragment>
+		<dialog:confirmationReasonedDialog submitAction="withdrawSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_withdraw_selected_item}?" submitLabel="#{lbl.withdraw_selected}" dialogId="withdrawSelectedItems"/>
+		<dialog:confirmationDialog submitAction="deleteSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_delete_selected_item}?" submitLabel="#{lbl.delete_selectedImages}" dialogId="deleteSelectedItems" />
 		<dialog:moveItemsDialog id="moveItemsComponent" colId="#{cc.attrs.itemsBean.collection.id.toString()}" parentId=":actionSelectedItems:moveItemsComponent" />
 	</composite:implementation>
 </html>

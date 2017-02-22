@@ -85,7 +85,6 @@ public class DOIUtil {
     // Trim to avoid errors due to unwanted spaces
     doiServiceUrl = doiServiceUrl.trim();
     validateURL(doiServiceUrl);
-
     final Response response = client.target(doiServiceUrl).queryParam("url", url)
         .register(HttpAuthenticationFeature.basic(doiUser, doiPassword))
         .register(MultiPartFeature.class).register(JacksonFeature.class)
