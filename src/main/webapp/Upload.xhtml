@@ -20,29 +20,13 @@
 	 		<ui:include src="./include/LoginFormular.xhtml" />
 	 	</ui:fragment>
 	 	<ui:fragment rendered="#{Auth.loggedIn}">
-			 <h:form id="uploadForm">
-			 	<ui:fragment rendered="#{not empty UploadBean.collectionId}">
-			 		<a href="#{UploadBean.collectionUrl}">#{lbl.collection_back_to_images}</a>
-			 		<br/><br/>
-			 	</ui:fragment>
-			 	<ui:fragment rendered="#{not empty UploadBean.collections}">
-			 	#{lbl.select_collection} 
-				 	<h:selectOneMenu value="#{UploadBean.collectionId}">
-				 		<f:selectItems var="col" value="#{UploadBean.collections}" itemValue="#{col.id.toString()}" itemLabel="#{col.title}"/>
-				 		<f:ajax render="@form"/>
-				 	</h:selectOneMenu>
-			 	<br/><br/>
-			 	</ui:fragment>
-			 	<div id="uploadArea" class="itemsArea imj_dragOver" ondragover="this.style.opacity = .5 " ondragleave="this.style.opacity = 1">
-			 		<div id="uploadTitle" class="uploadDragAndDropTitle">
-						<span class="fa fa-upload"/> #{lbl.uploadFile}
-					</div>
-			 	</div>
-		 		<h:commandButton id="create" action="#{UploadBean.create}" style="display: none" onclick="startLoader();">
-		 			<f:ajax render="@form"/>
-		 		</h:commandButton>
-		 		<imjc:upload browseButtonId="uploadArea" collectionId="#{UploadBean.collectionId}" updateButtonId="uploadForm:create" dropElementId="uploadArea" uploadId="#{UploadBean.uploadId}"/>
-		 	</h:form>
+			 <h:panelGroup id="list">
+				<ui:repeat var="col" value="#{UploadBean.collections}">
+					<p>
+						<a href="#{Navigation.collectionUrl}#{col.idString}?showUpload=1">#{col.title}</a>
+					</p>
+				</ui:repeat>
+			</h:panelGroup>
 	 	</ui:fragment>
 	 </ui:define>
 	

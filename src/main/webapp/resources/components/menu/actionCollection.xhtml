@@ -150,13 +150,9 @@
 			<script>
 				jQuery(document).ready(function() {
 					if(#{cc.attrs.collectionBean.showUpload}){
-						showUpload();
+						openDialog('uploadDialog');
 					}
-				});
-				function showUpload(){
-					openDialog('releaseCollection');
-				}
-					
+				});					
 			</script>
 	</composite:implementation>
 </html>
