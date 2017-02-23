@@ -40,6 +40,7 @@
 							},				
 							FilesAdded: function(up, files) {
 								totalFiles =  files.length;
+								closeDialog('uploadDialog');
 								lockPage();
 								addUploadStatusMessage(0,totalFiles);
 								uploader.start();							
@@ -63,12 +64,9 @@
 						}
 					});
 					uploader.init();
-					function closeUploadMessageArea(){
-						$("#closeUploadMessageArea").click(function(){
-							$("##{cc.attrs.messageAreaId}").hide();
-						});
-					}
-					
+					setTimeout(function() {
+					    $('.imj_messageSuccess').fadeOut(1000);
+					}, 2000);
 					function addUploadStatusMessage(uploaded, total, filename, percent){
 						$(".uploadPanel").show();
 						$(".uploadPanel").html('<pre>#{lbl.uploading} ' + uploaded + ' / ' + total + ' #{lbl.files}.</pre>');

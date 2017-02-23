@@ -3,7 +3,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:composite="http://java.sun.com/jsf/composite"
-	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	xmlns:upload="http://java.sun.com/jsf/composite/components/upload">
 	
 	<composite:interface>		
 		<composite:attribute name="collectionBean"/>
@@ -12,12 +13,14 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{Auth.update}">
-			<form action="#{Navigation.applicationUrl}upload?col=cc.attrs.collectionBean.id">
-				<input type="text" name="col" value="#{cc.attrs.collectionBean.id}" style="display:none"/>
-				<button id="upload" class="imj_menuButton">
+			<form action="#">
+				<button id="upload" class="imj_menuButton" onClick="openDialog('uploadDialog');">
 					#{lbl.upload}
 				</button >
 			</form>
+			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton imj_menuButton">
+				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
+			</a>
 			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton imj_menuButton">
 				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
 			</a>
@@ -143,5 +146,17 @@
 			bean="#{cc.attrs.collectionBean.actionMenu}"
 			confirmationText="#{logicBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}"
 			submitLabel="#{lbl.save}" dialogId="doiInput"/>
+			<upload:dialog colId="#{cc.attrs.collectionBean.collection.id.toString()}" id="uploadDialog" bean="#{cc.attrs.collectionBean}"/>
+			<script>
+				jQuery(document).ready(function() {
+					if(#{cc.attrs.collectionBean.showUpload}){
+						showUpload();
+					}
+				});
+				function showUpload(){
+					openDialog('releaseCollection');
+				}
+					
+			</script>
 	</composite:implementation>
 </html>

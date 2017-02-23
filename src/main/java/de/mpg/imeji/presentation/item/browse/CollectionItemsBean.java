@@ -43,6 +43,7 @@ public class CollectionItemsBean extends ItemsBean {
   private CollectionActionMenu actionMenu;
   private String authors = "";
   private int size;
+  private boolean showUpload = false;
 
   /**
    * Initialize the bean
@@ -58,6 +59,7 @@ public class CollectionItemsBean extends ItemsBean {
     try {
       id = UrlHelper.getParameterValue("id");
       uri = ObjectHelper.getURI(CollectionImeji.class, id);
+      setShowUpload(UrlHelper.getParameterBoolean("showUpload"));
       collection = new CollectionService().retrieveLazy(uri, getSessionUser());
       browseContext = getNavigationString() + id;
       update();
@@ -190,6 +192,20 @@ public class CollectionItemsBean extends ItemsBean {
 
   public int getSize() {
     return size;
+  }
+
+  /**
+   * @return the showUpload
+   */
+  public boolean isShowUpload() {
+    return showUpload;
+  }
+
+  /**
+   * @param showUpload the showUpload to set
+   */
+  public void setShowUpload(boolean showUpload) {
+    this.showUpload = showUpload;
   }
 
 }

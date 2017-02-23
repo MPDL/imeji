@@ -46,30 +46,20 @@
                                       rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
                   
 	
-			<div id="itemsArea" class="itemsArea #{paginatorListSessionBean.totalNumberOfElements != 0 || not empty paginatorListSessionBean.query ? '' : 'imj_dragOver'}" ondragover="this.style.opacity = .5 " ondragleave="this.style.opacity = 1">
+			<div id="itemsArea" class="itemsArea">
 				
 				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
            		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
            		
            		<div id="uploadTitle" class="uploadDragAndDropTitle">
-	           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0 and not empty paginatorListSessionBean.query}">
+	           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0}">
 	           			<span class="fa fa-exclamation-triangle"/> #{msg.no_images_found}!
-	           		</ui:fragment>
-	           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0 and empty paginatorListSessionBean.query}">
-	           			<span class="fa fa-upload"/> #{lbl.uploadFile}	
 	           		</ui:fragment>
            		</div>
            		
 			</div>
 			<!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
-
-            <h:form id="updatePageForm">
-	           <h:commandButton id="updateItems" value="update" action="#{paginatorListSessionBean.update}" style="display:none">
-	           		<f:ajax execute="@this" render=":ajaxWrapper"/>
-	           </h:commandButton>
-           </h:form>
-           <imjc:upload collectionId="#{paginatorListSessionBean.collectionId}" updateButtonId="updatePageForm:updateItems" dropElementId="itemsArea"/>
         </h:panelGroup>
     </ui:define>
     <!-- Main Content - END -->

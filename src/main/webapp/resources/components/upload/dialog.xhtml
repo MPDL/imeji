@@ -1,0 +1,34 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:upload="http://java.sun.com/jsf/composite/components/upload">
+	
+	<composite:interface>
+		<composite:attribute name="colId" />
+		<composite:attribute name="bean" />
+	</composite:interface>
+	
+	<composite:implementation>
+		<div id="uploadDialog" class="imj_modalDialogBox uploadDialog" style="display:none;" >
+			<div class="uploadDialogHeadArea">
+				<button id="closeUploadDialog" onclick="closeDialog('uploadDialog');" class="imj_cancelButton">
+					#{lbl.cancel}
+				</button>
+			</div>
+			<div id="uploadDialogDropArea" class="imj_dragOver uploadDialogDropArea"  ondragover="this.style.opacity = .5 " ondragleave="this.style.opacity = 1">
+				<div id="uploadTitle" class="uploadDragAndDropTitle">
+					<span class="fa fa-upload"/> #{lbl.uploadFile}
+				</div>
+		 	</div>
+		</div>
+		<h:form id="uploadForm">
+           <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.update}" style="display:none" onclick="closeDialog('uploadDialog');startLoader();">
+           		<f:ajax execute="@this" render="@form :ajaxWrapper"/>
+           </h:commandButton>
+	 		<upload:upload browseButtonId="uploadDialogDropArea" collectionId="#{cc.attrs.colId}" updateButtonId="actionCollection:uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>
+	 	</h:form>
+	</composite:implementation>
+</html>
