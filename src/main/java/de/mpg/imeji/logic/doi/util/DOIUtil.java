@@ -23,7 +23,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.doi.models.DOICollection;
-import de.mpg.imeji.logic.doi.models.DOICreators;
+import de.mpg.imeji.logic.doi.models.DOICreator;
 import de.mpg.imeji.logic.doi.models.DOIIdentifier;
 import de.mpg.imeji.logic.doi.models.DOITitle;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -45,15 +45,13 @@ public class DOIUtil {
   public static DOICollection transformToDO(CollectionImeji col) {
     DOICollection dcol = new DOICollection();
     DOITitle title = new DOITitle(col.getMetadata().getTitle());
-    List<DOICreators> creators = new ArrayList<DOICreators>();
+    List<DOICreator> creators = new ArrayList<>();
     for (Person author : col.getMetadata().getPersons()) {
-      creators.add(new DOICreators(author.getCompleteName()));
+      creators.add(new DOICreator(author.getCompleteName()));
     }
-
     dcol.setIdentifier(new DOIIdentifier());
     dcol.getTitles().add(title);
-    dcol.setPublisher("MPG");
-    dcol.setCreators(creators);
+    dcol.getCreators().setCreator(creators);
     dcol.setPublicationYear(String.valueOf(col.getCreated().get(Calendar.YEAR)));
 
     return dcol;
@@ -71,7 +69,7 @@ public class DOIUtil {
           "http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd");
       m.marshal(dcol, sw);
     } catch (JAXBException e) {
-      throw new ImejiException("Error occured, when contacting DOxI.");
+      throw new ImejiException("Error occured, when contacting DOxI.", e);
     }
 
     String xml = sw.toString().trim();

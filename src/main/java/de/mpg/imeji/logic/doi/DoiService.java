@@ -12,8 +12,8 @@ import de.mpg.imeji.logic.doi.util.DOIUtil;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.User;
 
 /**
  * Service for using MPDL DOI Service

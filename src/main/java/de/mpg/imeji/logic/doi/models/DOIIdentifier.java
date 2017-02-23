@@ -1,20 +1,22 @@
 package de.mpg.imeji.logic.doi.models;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 @XmlType
-public class DOIIdentifier {
-
-
+public class DOIIdentifier implements Serializable {
+  private static final long serialVersionUID = -3885850011298834578L;
   private String identifierType = "DOI";
 
   @XmlValue
   private String identifier = "";
 
+  public DOIIdentifier() {
 
-  public DOIIdentifier() {}
+  }
 
 
   @XmlAttribute
