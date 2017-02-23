@@ -110,8 +110,12 @@ public class KeyValueStoreService {
     for (final byte[] b : store.getList(keyPattern)) {
       try {
         list.add(clazz.cast(deserialize(b)));
-      } catch (ClassNotFoundException | IOException e) {
-        throw new ImejiException("Error reading date from " + store.getName(), e);
+      } catch (ClassNotFoundException e) {
+        LOGGER.error(
+            "Error deserializing value " + new String(b) + " from store " + store.getName(), e);
+      } catch (IOException e) {
+        throw new ImejiException(
+            "Error deserializing value " + new String(b) + " from store " + store.getName(), e);
       }
     }
     return list;

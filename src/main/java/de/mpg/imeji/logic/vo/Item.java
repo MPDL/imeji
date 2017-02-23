@@ -51,7 +51,7 @@ public class Item extends Properties implements Serializable {
    * Default constructor
    */
   public Item() {
-    // Do nothing
+
   }
 
   public Item(Item im) {

@@ -23,17 +23,17 @@
 					
 					<h:form>
 						<h:outputText value="#{lbl.sort_by}: " styleClass="imj_active"/>
-						<h:commandLink id="lnkSortAsc" value="&#160;" styleClass="fa fa-sort-asc fa-pull-right fa-size-3" action="#{cc.attrs.facetBean.toggleSortOrder}" rendered="#{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING'}" onclick="setContentLoadingStatus();">
+						<h:commandLink id="lnkSortAsc" value="&#160;" styleClass="fa fa-sort-asc fa-pull-right fa-size-2" action="#{cc.attrs.facetBean.toggleSortOrder}" rendered="#{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING'}" onclick="setContentLoadingStatus();">
 							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 						</h:commandLink>
-						<h:commandLink id="lnkSortDesc" value="&#160;" styleClass="fa fa-sort-desc fa-pull-right fa-size-3" action="#{cc.attrs.facetBean.toggleSortOrder}" rendered="#{cc.attrs.facetBean.selectedSortOrder != 'ASCENDING'}" onclick="setContentLoadingStatus();">
+						<h:commandLink id="lnkSortDesc" value="&#160;" styleClass="fa fa-sort-desc fa-pull-right fa-size-2" action="#{cc.attrs.facetBean.toggleSortOrder}" rendered="#{cc.attrs.facetBean.selectedSortOrder != 'ASCENDING'}" onclick="setContentLoadingStatus();">
 							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 						</h:commandLink>
 						
-						<ul>
+						<ul class="imj_overlayMenuList">
 							<ui:repeat var="sortItem" value="#{cc.attrs.facetBean.sortMenu}" varStatus="spos">
-								<li>
-									<h:commandLink action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" styleClass="#{(cc.attrs.facetBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}" onclick="setContentLoadingStatus();">
+								<li class="imj_overlayMenuListItem">
+									<h:commandLink value="#{sortItem.label}" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"  styleClass="#{(cc.attrs.facetBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}" onclick="setContentLoadingStatus();">
 										<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 									</h:commandLink>
 								</li>

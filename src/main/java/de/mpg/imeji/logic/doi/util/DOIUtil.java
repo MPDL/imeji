@@ -23,7 +23,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.doi.models.DOICollection;
-import de.mpg.imeji.logic.doi.models.DOICreators;
+import de.mpg.imeji.logic.doi.models.DOICreator;
 import de.mpg.imeji.logic.doi.models.DOIIdentifier;
 import de.mpg.imeji.logic.doi.models.DOITitle;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -43,19 +43,16 @@ public class DOIUtil {
   }
 
   public static DOICollection transformToDO(CollectionImeji col) {
-    final DOICollection dcol = new DOICollection();
-    final DOITitle title = new DOITitle(col.getTitle());
-    final List<DOICreators> creators = new ArrayList<DOICreators>();
-    for (final Person author : col.getPersons()) {
-      creators.add(new DOICreators(author.getCompleteName()));
+    DOICollection dcol = new DOICollection();
+    DOITitle title = new DOITitle(col.getTitle());
+    List<DOICreator> creators = new ArrayList<>();
+    for (Person author : col.getPersons()) {
+      creators.add(new DOICreator(author.getCompleteName()));
     }
-
     dcol.setIdentifier(new DOIIdentifier());
     dcol.getTitles().add(title);
-    dcol.setPublisher("MPG");
-    dcol.setCreators(creators);
+    dcol.getCreators().setCreator(creators);
     dcol.setPublicationYear(String.valueOf(col.getCreated().get(Calendar.YEAR)));
-
     return dcol;
   }
 
