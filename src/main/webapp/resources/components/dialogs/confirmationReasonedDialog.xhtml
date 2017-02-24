@@ -36,7 +36,7 @@
 				 						action="#{cc.attrs.bean[cc.attrs.submitAction]}"  
 				 						value="#{cc.attrs.submitLabel}" 
 				 						styleClass="#{cc.attrs.bean.discardComment == ''  ? 'imj_disabledButton' : 'imj_submitButton'}" 
-				 						onclick="return #{cc.attrs.bean.discardComment != ''};"/>
+				 						onclick="if(#{cc.attrs.bean.discardComment != ''}){closeDialog('#{cc.attrs.dialogId}');startLoader(); return true;}else{return false;}"/>
 					</h:panelGroup>
 				</h:form>
 			</div>

@@ -24,6 +24,7 @@
 					#{cc.attrs.confirmationText}
 				</div>
 				<ui:fragment rendered="#{not empty cc.attrs.confirmationText2}">
+					<br/>
 					<div class="imj_confirmationText">
 						#{cc.attrs.confirmationText2}
 						<ui:fragment rendered="#{not empty cc.attrs.confirmationTextLicense}">
@@ -39,7 +40,7 @@
 						<ui:fragment rendered="#{not empty cc.attrs.identifierName and not empty cc.attrs.identifierValue}">
 							<input type="hidden" name="#{cc.attrs.identifierName}" value="#{cc.attrs.identifierValue}"/>
 						</ui:fragment>
-				 		<h:commandButton action="#{cc.attrs.bean[cc.attrs.submitAction]}" value="#{cc.attrs.submitLabel}" styleClass="imj_submitButton"/>
+				 		<h:commandButton action="#{cc.attrs.bean[cc.attrs.submitAction]}" value="#{cc.attrs.submitLabel}" styleClass="imj_submitButton" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();"/>
 				 	</h:form>
 				</div>
 			</div>

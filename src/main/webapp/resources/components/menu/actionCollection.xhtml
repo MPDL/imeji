@@ -19,9 +19,6 @@
 			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton imj_menuButton">
 				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
 			</a>
-			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton imj_menuButton">
-				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
-			</a>
 			<ui:fragment rendered="#{Auth.admin}">
 				<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share" class="imj_menuButton imj_menuButton">
 					<span class="fa fa-users"/> <span>#{lbl.collection_share}</span>
@@ -39,7 +36,11 @@
 										<span class="fa fa-pencil"/> <span>#{lbl.edit_all}</span>
 									</a>
 								</li>
-								
+								<li>
+									<a href="#{Navigation.applicationUrl}edit/license?collection=#{cc.attrs.collectionBean.id}">
+										<span class="fa fa-copyright"/> <span>#{lbl.edit_all_licenses}</span>
+									</a>
+								</li>
 								<ui:fragment rendered="#{WorkflowBean.release(cc.attrs.collectionBean.collection)}">
 									<li>
 										<h:outputLink value="#" onclick="openDialog('releaseCollection');">
@@ -115,8 +116,8 @@
 		<dialog:confirmationDialog submitAction="release"
 			bean="#{cc.attrs.collectionBean.actionMenu}"
 			confirmationText="#{msg.confirmation_release_collection}"
-			confirmationText2="#{logicBean.actionMenu.releaseMessage} "
-			confirmationTextLicense="#{logicBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}"
+			confirmationText2="#{cc.attrs.collectionBean.actionMenu.releaseMessage} "
+			confirmationTextLicense="#{cc.attrs.collectionBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}"
 			submitLabel="#{lbl.release}" dialogId="releaseCollection"/>
 		<dialog:confirmationDialog submitAction="delete"
 			bean="#{cc.attrs.collectionBean.actionMenu}"

@@ -35,7 +35,7 @@
 				 		<h:commandButton id="btnDiscardContainer" type="submit"
 				 						action="#{cc.attrs.bean.createDOI}"  
 				 						value="#{cc.attrs.submitLabel}" 
-				 						styleClass="#{'imj_submitButton'}"> 
+				 						styleClass="#{'imj_submitButton'}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();"> 
 				 						<f:param name="doi" value="#{cc.attrs.col.doi}" />
 				 		</h:commandButton>
 					</h:panelGroup>

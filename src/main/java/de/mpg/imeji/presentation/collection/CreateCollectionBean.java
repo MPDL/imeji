@@ -19,6 +19,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
@@ -43,12 +44,14 @@ public class CreateCollectionBean extends CollectionBean {
   private boolean createProfile = false;
   @ManagedProperty(value = "#{ContainerEditorSession}")
   private ContainerEditorSession containerEditorSession;
+  private boolean showUpload = false;
 
   /**
    * Method called when paged is loaded
    */
   @PostConstruct
   public void init() {
+    showUpload = UrlHelper.getParameterBoolean("showUpload");
     vocabularyHelper = new VocabularyHelper(getLocale());
     setCollectionCreateMode(true);
     setCollection(
@@ -62,15 +65,15 @@ public class CreateCollectionBean extends CollectionBean {
    * @return
    * @throws Exception
    */
-  public String save() {
+  public void save() {
     if (createCollection()) {
       try {
-        redirect(getNavigation().getCollectionUrl() + getCollection().getIdString());
+        redirect(getNavigation().getCollectionUrl() + getCollection().getIdString()
+            + (showUpload ? "?showUpload=1" : ""));
       } catch (final IOException e) {
         LOGGER.error("Error redirecting after saving collection", e);
       }
     }
-    return "";
   }
 
   /**

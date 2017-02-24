@@ -8,29 +8,38 @@
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
-
 	<ui:param name="headline" value="#{lbl.upload_select_collection}" />
-
 	 <ui:define name="mainContent">
 	 	<ui:fragment rendered="#{!Auth.loggedIn}">
 	 		<ui:include src="./include/LoginFormular.xhtml" />
 	 	</ui:fragment>
 	 	<ui:fragment rendered="#{Auth.loggedIn}">
-	 		<h:form id="filterCollections">
-				<h:inputText value="#{UploadBean.query}" html5:placeholder="#{lbl.filter}" >
-					<f:ajax render=":list" event="keyup" listener="#{UploadBean.filterCollections}"/>
-				</h:inputText>
-			</h:form>
-			 <h:panelGroup id="list">
-				<ui:repeat var="col" value="#{UploadBean.collections}">
-					<div class="imj_headline imj_detailList">
-					<h2>
+	 		<form action="#{Navigation.createCollectionUrl}?showUpload=1">
+	 			<input type="text" name="showUpload" value="1" style="display:none;"/>
+				<button id="createCollection" class="imj_menuButton">
+					#{lbl.collection_create}
+				</button >
+			</form>
+			<br/>#{lbl.or_big}<br/>
+			<div class="imj_metadataSet">
+				<div class="imj_metadataLabel">
+					 <h:form id="filterCollections">
+						<h:inputText value="#{UploadBean.query}" html5:placeholder="#{lbl.select_collection}" >
+							<f:ajax render=":list" event="keyup" listener="#{UploadBean.filterCollections}"/>
+						</h:inputText>
+					</h:form>
+					<span class="imj_invisible">: </span>
+				</div>
+				 <h:panelGroup layout="block" id="list" styleClass="imj_metadataValue">
+					 <ui:fragment rendered="#{empty UploadBean.collections}">
+					 #{lbl.upload_no_collection_found}
+					 </ui:fragment>
+					<ui:repeat var="col" value="#{UploadBean.collections}">
 						<a href="#{Navigation.collectionUrl}#{col.idString}?showUpload=1">#{col.title}</a>
-					</h2>
-					</div>
-				</ui:repeat>
-			</h:panelGroup>
+						<br/>
+					</ui:repeat>
+				</h:panelGroup>
+			</div>
 	 	</ui:fragment>
 	 </ui:define>
-	
 </ui:composition>

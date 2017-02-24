@@ -10,35 +10,23 @@
     <composite:interface>
         <composite:attribute name="formularBean" required="true" />
         <composite:attribute name="formularContextBean" required="true" />
-        <composite:attribute name="headline" required="true" />
-        <composite:attribute name="showProfileSelector" default="false"/>
     </composite:interface>
 
     <composite:implementation>
         <h:form id="mediaContainerForm" onkeyup="if (event.keyCode == 13) {document.getElementById('editContainer:mediaContainerForm:btn_saveCollection').click(); return false;}">
-            <div class="imj_headline">
-                <br/>
-            </div>
             <div class="imj_descriptionArea">
-                  <!-- Title -->
-                   <div class="imj_metadataSet">
-                       <label class="imj_metadataLabel"> <h:outputText
-                               value="#{lbl.title} *" /> <span class="imj_noDisplay">: </span>
-                       </label>
-                       <h:inputText id="inputTitleText" styleClass="imj_metadataValue"  value="#{cc.attrs.formularContextBean.title}" html5:autofocus="true" />
-                   </div>
-
-                   <!-- Description -->
-                   <div class="imj_metadataSet">
-                       <label class="imj_metadataLabel">
-                           <h:outputText value="#{lbl.description}" /> <span class="imj_noDisplay">:
-                           </span>
-                       </label>
-                       <h:inputTextarea id="inputDescription" styleClass="imj_metadataValue"  value="#{cc.attrs.formularContextBean.description}" />
-                   </div>
-
-                   <h:outputText value="* #{lbl.mandatory}" />
-
+                <div class="imj_metadataSet">
+                    <label class="imj_metadataLabel">#{lbl.title} *<span class="imj_noDisplay">: </span>
+                    </label>
+                    <h:inputText id="inputTitleText" styleClass="imj_metadataValue"  value="#{cc.attrs.formularContextBean.title}" html5:autofocus="true" />
+                </div>
+                <div class="imj_metadataSet">
+                    <label class="imj_metadataLabel">
+                        <h:outputText value="#{lbl.description}" /> <span class="imj_noDisplay">:
+                        </span>
+                    </label>
+                    <h:inputTextarea id="inputDescription" styleClass="imj_metadataValue"  value="#{cc.attrs.formularContextBean.description}" />
+                </div>
 				<h:panelGroup id="authors">
                     <!-- Author data -->
                     <ui:repeat id="persons" var="creator" value="#{cc.attrs.formularContextBean.persons}" varStatus="indexA">
@@ -64,12 +52,11 @@
              		
              		<!-- additional Infos -->
              		<h:panelGroup id="additionalInfos">
-             		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/combobox.js"/>
              			<div class="imj_sectionHeadline">
                             <h4><h:outputText value="#{lbl.colUtil}"/></h4>
                             <span class="imj_noDisplay">: </span>
                         </div>
-                    <ui:repeat id="list" var="info" value="#{cc.attrs.formularContextBean.additionalInformations}" varStatus="indexA">
+	                    <ui:repeat id="list" var="info" value="#{cc.attrs.formularContextBean.additionalInformations}" varStatus="indexA">
                            <div class="imj_sectionHeadline">
                                 <!-- Add/Remove Author buttons -->
                                 <span class="imj_inlineButtonGroup">
@@ -82,25 +69,25 @@
                                 </span>
                                 <span class="imj_noDisplay">: </span>
                            </div>
-                        <div class="imj_metadataSet">
-	                        <label class="imj_metadataLabel">
-	                       	 	<h:outputText value="#{lbl.label} *" /> <span class="imj_noDisplay">: </span>
-	                        </label>
-	                        <h:inputText id="inputInfoLabel" styleClass="imj_metadataValue fa-list" autocomplete="off" value="#{info.label}" html5:placeholder="#{lbl.placeholder_additional_info_label}"/>
-	                   	</div>
-	                   	<div class="imj_metadataSet">
-	                        <label class="imj_metadataLabel">
-	                        	<h:outputText  value="#{lbl.text}" /> 
-	                        	<span class="imj_noDisplay">: </span>
-	                        </label>
-	                        <h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue" value="#{info.text}" html5:placeholder="#{lbl.placeholder_text}"/>
-	                   	</div>
-	                   	<div class="imj_metadataSet">
-	                        <label class="imj_metadataLabel">
-	                        	<h:outputText  value="#{lbl.url}" /> <span class="imj_noDisplay">: </span>
-	                        </label>
-	                        <h:inputText id="inputInfoUrl" styleClass="imj_metadataValue" value="#{info.url}" html5:placeholder="#{lbl.placeholder_url}"/>
-	                   	</div>
+	                        <div class="imj_metadataSet">
+		                        <label class="imj_metadataLabel">
+		                       	 	<h:outputText value="#{lbl.label} *" /> <span class="imj_noDisplay">: </span>
+		                        </label>
+		                        <h:inputText id="inputInfoLabel" styleClass="imj_metadataValue fa-list" autocomplete="off" value="#{info.label}" html5:placeholder="#{lbl.placeholder_additional_info_label}"/>
+		                   	</div>
+		                   	<div class="imj_metadataSet">
+		                        <label class="imj_metadataLabel">
+		                        	<h:outputText  value="#{lbl.text}" /> 
+		                        	<span class="imj_noDisplay">: </span>
+		                        </label>
+		                        <h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue" value="#{info.text}" html5:placeholder="#{lbl.placeholder_text}"/>
+		                   	</div>
+		                   	<div class="imj_metadataSet">
+		                        <label class="imj_metadataLabel">
+		                        	<h:outputText  value="#{lbl.url}" /> <span class="imj_noDisplay">: </span>
+		                        </label>
+		                        <h:inputText id="inputInfoUrl" styleClass="imj_metadataValue" value="#{info.url}" html5:placeholder="#{lbl.placeholder_url}"/>
+		                   	</div>
                     </ui:repeat>
                     <div class="imj_sectionHeadline">
                         <span class="imj_inlineButtonGroup">
@@ -198,14 +185,8 @@
                                                    },
                                                }
                                            });
-
                                            uploader.init();
-
-
                                            function report() {
-                                               //window.location.href = location.pathname ;
-
-                                               //reset uploader 
                                                uploader.splice();
                                            }
                                        </script>
@@ -224,12 +205,13 @@
                                </div>
                            </ui:fragment>
                        </div>
-                   <br/>
-                <div id="submitButtonPanel" class="imj_submitPanel">
+                <div id="submitButtonPanel" class="imj_submitPanel"> 
+                	<h:outputText value="* #{lbl.mandatory}" />
                     <h:outputLink value="#{HistorySession.previousPage.completeUrlWithHistory}" styleClass="imj_cancelButton">
                         <h:outputText value="#{lbl.cancel}"/>
                     </h:outputLink>
-                    <h:commandButton id="btn_saveCollection" action="#{cc.attrs.formularBean.save()}" value="#{lbl.save}" styleClass="imj_submitButton" onclick="openDialog('dialogWait');"/>
+                    <h:commandButton id="btn_saveCollection" action="#{cc.attrs.formularBean.save}" value="#{lbl.save}" styleClass="imj_submitButton" onclick="startLoader();">
+                    </h:commandButton>
                 </div>
             </div>
         </h:form>

@@ -112,7 +112,7 @@
 						<h:commandLink styleClass="imj_cancelButton" action="#{itemBean.cancelEditor}">
 							<h:outputText value="#{lbl.cancel}"/>
 						</h:commandLink>
-						<h:commandLink type="submit" styleClass="imj_submitButton" action="#{EditMetadataItemBean.save}" value="#{lbl.save}" actionListener="#{itemBean.cancelEditor}">
+						<h:commandLink type="submit" styleClass="imj_submitButton" action="#{EditMetadataItemBean.save}" value="#{lbl.save}" actionListener="#{itemBean.cancelEditor}" onclick="startLoader();">
 						</h:commandLink>
 					</div>
 				</h:form>
