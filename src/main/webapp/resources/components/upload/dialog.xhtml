@@ -13,9 +13,12 @@
 	
 	<composite:implementation>
 		<div id="uploadDialog" class="imj_modalDialogBox uploadDialog" style="display:none;" >
-			<div class="uploadDialogHeadArea">
+			<div class="uploadDialogHeadArea imj_submitPanel">
 				<button id="closeUploadDialog" onclick="closeDialog('uploadDialog');" class="imj_cancelButton">
 					#{lbl.cancel}
+				</button>
+				<button id="selectFiles" class="imj_submitButton" style="position: initial !important">
+					#{lbl.select_files}
 				</button>
 			</div>
 			<div id="uploadDialogDropArea" class="imj_dragOver uploadDialogDropArea"  ondragover="this.style.opacity = .5 " ondragleave="this.style.opacity = 1">
@@ -28,7 +31,7 @@
            <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.update}" style="display:none" onclick="closeDialog('uploadDialog');startLoader();">
            		<f:ajax execute="@this" render="@form :ajaxWrapper"/>
            </h:commandButton>
-	 		<upload:upload browseButtonId="uploadDialogDropArea" collectionId="#{cc.attrs.colId}" updateButtonId="actionCollection:uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>
+	 		<upload:upload browseButtonId="selectFiles" collectionId="#{cc.attrs.colId}" updateButtonId="actionCollection:uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>
 	 	</h:form>
 	</composite:implementation>
 </html>
