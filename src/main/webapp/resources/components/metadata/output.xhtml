@@ -29,7 +29,7 @@
 		</ui:fragment>
 		
 		<ui:fragment rendered="#{isPerson}">
-			<span class="imj_metadataValueEntry">#{cc.attrs.metadata.person.completeName}</span>
+			<span class="imj_metadataValueEntry">#{cc.attrs.metadata.person.completeName} (#{cc.attrs.metadata.person.organizationString})</span>
 		</ui:fragment>
 		
 		<ui:fragment rendered="#{isNumber}">

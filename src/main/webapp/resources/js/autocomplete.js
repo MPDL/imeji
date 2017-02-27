@@ -126,11 +126,13 @@ $(function() {
 			}
 			// Write the value of the current input
 			setInputValue(this.id, ui.item.value);
-			setInputValue(inputId + "inputIdentifier", ui.item.id);
-			setInputValue(inputId + "inputLatitude", ui.item.latitude);
-			setInputValue(inputId + "inputLongitude", ui.item.longitude);
-			setInputValue(inputId + "inputLicenseId", ui.item.licenseId);
-			
+			setInputValue(inputId + "identifier", ui.item.id);
+			setInputValue(inputId + "given", ui.item.givenname);
+			setInputValue(inputId + "family", ui.item.family);
+			setInputValue(inputId + "identifier", ui.item.id);
+			setInputValue(inputId + "organization", ui.item.organization);
+			setInputValue(inputId + "latitude", ui.item.latitude);
+			setInputValue(inputId + "longitude", ui.item.longitude);
 			return false;
 		}
 	}).focus(function() {

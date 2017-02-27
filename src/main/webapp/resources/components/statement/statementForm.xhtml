@@ -20,18 +20,66 @@
                 <!-- Index -->
                 <div class="imj_metadataSet">
                     <label class="imj_metadataLabel"> 
-						#{lbl.index}<span class="imj_noDisplay">: </span>
+						#{lbl.name}<span class="imj_noDisplay">: </span>
                     </label>
-                    <h:inputText id="inputStatementIndex" styleClass="imj_metadataValue"  value="#{cc.attrs.formBean.name}" html5:autofocus="true"/>
+                    <h:inputText id="inputStatementName" styleClass="imj_metadataValue"  value="#{cc.attrs.formBean.name}" html5:autofocus="true"/>
                 </div>
-                 <div class="imj_metadataSet">
+                <div class="imj_metadataSet">
                     <label class="imj_metadataLabel"> 
 						#{lbl.type}<span class="imj_noDisplay">: </span>
                     </label>
                     <h:selectOneMenu id="selStatementType" value="#{cc.attrs.formBean.type}">
 						<f:selectItems value="#{cc.attrs.formBean.statementTypeMenu}"/>
+						<f:ajax render="@form" execute="@form"/>
 					</h:selectOneMenu>
                  </div>
+                 <div class="imj_metadataSet">
+                    <label class="imj_metadataLabel"> 
+						#{lbl.namespace}<span class="imj_noDisplay">: </span>
+                    </label>
+                    <h:inputText id="inputStatementNamespace" styleClass="imj_metadataValue"  value="#{cc.attrs.formBean.namespace}" />
+                 </div>
+                 <ui:fragment rendered="#{cc.attrs.formBean.type == 'TEXT'}">
+	                  <div class="imj_metadataSet">
+	                    <label class="imj_metadataLabel"> 
+							#{lbl.predefined_values}<span class="imj_noDisplay">: </span>
+	                    </label>
+	                    <div class="imj_metadataValue" >
+		                    <ui:repeat var="value" value="#{cc.attrs.formBean.predefinedValues}" varStatus="varStatus">
+		                    	<h:inputText id="inputPredefined" styleClass=""  value="#{value}" valueChangeListener="#{cc.attrs.formBean.predefinedValuesListener}">
+		                    		<f:attribute name="position" value="#{varStatus.index}"/>
+		                    	</h:inputText>
+		                    	 <h:commandLink value="" action="#{cc.attrs.formBean.removePredefinedValue(varStatus.index)}" styleClass="fa fa-minus-square-o">
+									<f:ajax execute="@form" render="@form" />
+								</h:commandLink>
+								<br/><br/>
+			                </ui:repeat>
+		                    <h:commandLink value="" action="#{cc.attrs.formBean.addPredefinedValue}" styleClass="fa fa-plus-square-o">
+								<f:ajax execute="@form" render="@form" />
+							</h:commandLink>
+						</div>
+	                 </div>
+                 </ui:fragment>
+                 <ui:fragment rendered="#{cc.attrs.formBean.type == 'GEOLOCATION' and not empty Configuration.googleMapsApi}">
+	                  <div class="imj_metadataSet">
+	                    <label class="imj_metadataLabel"> 
+							#{lbl.use_google_maps}<span class="imj_noDisplay">: </span>
+	                    </label>
+	                    <div class="imj_metadataValue" >
+		                	<h:selectBooleanCheckbox value="#{cc.attrs.formBean.useGoogleMapsAPI}" />
+						</div>
+	                 </div>
+                 </ui:fragment>
+                  <ui:fragment rendered="#{cc.attrs.formBean.type == 'PERSON' and not empty Configuration.coneAuthors}">
+	                  <div class="imj_metadataSet">
+	                    <label class="imj_metadataLabel"> 
+							#{lbl.use_max_planck_authors}<span class="imj_noDisplay">: </span>
+	                    </label>
+	                    <div class="imj_metadataValue" >
+		                	<h:selectBooleanCheckbox value="#{cc.attrs.formBean.useMaxPlanckAuthors}" />
+						</div>
+	                 </div>
+                 </ui:fragment>
                 <div id="submitButtonPanel" class="imj_submitPanel">
                     <h:outputLink value="#{HistorySession.previousPage.completeUrlWithHistory}" styleClass="imj_cancelButton">
                         <h:outputText value="#{lbl.cancel}"/>

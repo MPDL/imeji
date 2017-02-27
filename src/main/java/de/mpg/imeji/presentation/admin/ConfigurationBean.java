@@ -603,4 +603,20 @@ public class ConfigurationBean extends SuperBean {
   public void setNumberOfLinesInThumbnailList(String lines) {
     Imeji.CONFIG.setNumberOFLinesInThumbnailList(lines);
   }
+
+  public String getGoogleMapsApi() {
+    return Imeji.CONFIG.getGoogleMapsApi();
+  }
+
+  public void setGoogleMapsApi(String url) {
+    Imeji.CONFIG.setGoogleMapsApi(url);
+  }
+
+  public String getConeAuthors() {
+    return Imeji.CONFIG.getConeAuthors();
+  }
+
+  public void setConeAuthors(String url) {
+    Imeji.CONFIG.setConeAuthors(url);
+  }
 }
