@@ -3,7 +3,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:composite="http://java.sun.com/jsf/composite"
-	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	xmlns:item="http://java.sun.com/jsf/composite/components/item">
 	
 	<composite:interface>		
 		<composite:attribute name="itemBean"/>								
@@ -33,7 +34,7 @@
 				</h:commandLink>
 			</h:form>
 		</ui:fragment>
-		<dialog:moveItemsDialog id="moveItemsComponent" itemId="#{cc.attrs.itemBean.item.id.toString()}" colId="#{cc.attrs.itemBean.item.collection.toString()}" parentId=":actionItem:moveItemsComponent"/>
+		<item:move id="moveItemsComponent" itemId="#{cc.attrs.itemBean.item.id.toString()}" colId="#{cc.attrs.itemBean.item.collection.toString()}" parentId=":actionItem:moveItemsComponent" hasLicense="#{not empty cc.attrs.itemBean.image.licenses}"/>
 		<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteItem" />
 		<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawItem"/>	
 	</composite:implementation>

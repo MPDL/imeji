@@ -3,7 +3,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:composite="http://java.sun.com/jsf/composite"
-	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	xmlns:item="http://java.sun.com/jsf/composite/components/item">
 	
 	<composite:interface>		
 		<composite:attribute name="itemsBean"/>								
@@ -59,6 +60,6 @@
 		</ui:fragment>
 		<dialog:confirmationReasonedDialog submitAction="withdrawSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_withdraw_selected_item}?" submitLabel="#{lbl.withdraw_selected}" dialogId="withdrawSelectedItems"/>
 		<dialog:confirmationDialog submitAction="deleteSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_delete_selected_item}?" submitLabel="#{lbl.delete_selectedImages}" dialogId="deleteSelectedItems" />
-		<dialog:moveItemsDialog id="moveItemsComponent" colId="#{cc.attrs.itemsBean.collection.id.toString()}" parentId=":actionSelectedItems:moveItemsComponent" />
+		<item:move id="moveItemsComponent" colId="#{cc.attrs.itemsBean.collection.id.toString()}" parentId=":actionSelectedItems:moveItemsComponent" />
 	</composite:implementation>
 </html>

@@ -597,7 +597,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param user
    * @throws ImejiException
    */
-  public List<Item> moveItems(List<String> ids, CollectionImeji col, User user)
+  public List<Item> moveItems(List<String> ids, CollectionImeji col, User user, License license)
       throws ImejiException {
     List<Item> items = retrieve(ids, user);
     List<ContentVO> contents = retrieveContentBatchLazy(items);
@@ -606,11 +606,29 @@ public class ItemService extends SearchServiceAbstract<Item> {
     if (moved.size() > 0) {
       Set<String> movedSet = moved.stream().map(c -> c.getItemId()).collect(Collectors.toSet());
       items = items.stream().filter(item -> movedSet.contains(item.getId().toString()))
-          .peek(item -> item.setCollection(col.getId())).collect(Collectors.toList());
+          .filter(item -> item.getStatus().equals(Status.PENDING))
+          .peek(item -> prepareMoveItem(item, col, license)).collect(Collectors.toList());
       updateBatch(items, user);
       return items;
     }
     return new ArrayList<>();
+  }
+
+  /**
+   * Prepare an item for move
+   * 
+   * @param item
+   * @param col
+   * @param license
+   * @return
+   */
+  private Item prepareMoveItem(Item item, CollectionImeji col, License license) {
+    item.setCollection(col.getId());
+    item.setStatus(col.getStatus());
+    if (license != null && !license.isEmtpy() && LicenseUtil.getActiveLicense(item) == null) {
+      item.setLicenses(Arrays.asList(license.clone()));
+    }
+    return item;
   }
 
   /**
