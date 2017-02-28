@@ -4,7 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:composite="http://java.sun.com/jsf/composite"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
-	xmlns:upload="http://java.sun.com/jsf/composite/components/upload">
+	xmlns:upload="http://java.sun.com/jsf/composite/components/upload"
+	xmlns:license="http://java.sun.com/jsf/composite/components/license">
 	
 	<composite:interface>
 		<composite:attribute name="colId" />
@@ -12,26 +13,30 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<div id="uploadDialog" class="imj_modalDialogBox uploadDialog" style="display:none;" >
-			<div class="uploadDialogHeadArea imj_submitPanel">
-				<button id="closeUploadDialog" onclick="closeDialog('uploadDialog');" class="imj_cancelButton">
-					#{lbl.cancel}
-				</button>
-				<button id="selectFiles" class="imj_submitButton" style="position: initial !important">
-					#{lbl.select_files}
-				</button>
-			</div>
-			<div id="uploadDialogDropArea" class="imj_dragOver uploadDialogDropArea"  ondragover="this.style.opacity = .5 " ondragleave="this.style.opacity = 1">
-				<div id="uploadTitle" class="uploadDragAndDropTitle">
-					<span class="fa fa-upload"/> #{lbl.uploadFile}
-				</div>
-		 	</div>
-		</div>
 		<h:form id="uploadForm">
+			<div id="uploadDialog" class="imj_modalDialogBox uploadDialog" style="display:none;" >
+				<ui:fragment rendered="#{cc.attrs.bean.collection.status == 'RELEASED'}">
+					#{lbl.move_collection_released}<br/><br/>
+					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":actionSelectedItems:moveItemsComponent:moveItemsForm"/>
+				</ui:fragment>
+				<div class="uploadDialogHeadArea imj_submitPanel">
+					<a id="closeUploadDialog" onclick="closeDialog('uploadDialog');" class="imj_cancelButton">
+						#{lbl.cancel}
+					</a>
+					<button id="selectFiles" class="imj_submitButton" style="position: initial !important">
+						#{lbl.select_files}
+					</button>
+				</div>
+				<div id="uploadDialogDropArea" class="imj_dragOver uploadDialogDropArea"  ondragover="this.style.opacity = .5 " ondragleave="this.style.opacity = 1">
+					<div id="uploadTitle" class="uploadDragAndDropTitle">
+						<span class="fa fa-upload"/> #{lbl.uploadFile}
+					</div>
+			 	</div>
+			</div>
            <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.update}" style="display:none" onclick="closeDialog('uploadDialog');startLoader();">
            		<f:ajax execute="@this" render="@form :ajaxWrapper"/>
            </h:commandButton>
-	 		<upload:upload browseButtonId="selectFiles" collectionId="#{cc.attrs.colId}" updateButtonId="actionCollection:uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>
+	 		<upload:upload browseButtonId="selectFiles" license="#{cc.attrs.bean.licenseEditor.license}" collectionId="#{cc.attrs.colId}" updateButtonId="actionCollection:uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>
 	 	</h:form>
 	</composite:implementation>
 </html>

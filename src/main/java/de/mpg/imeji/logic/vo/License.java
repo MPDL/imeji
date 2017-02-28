@@ -2,6 +2,8 @@ package de.mpg.imeji.logic.vo;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Arrays;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
@@ -33,6 +35,26 @@ public class License implements Serializable {
 
   public License() {
 
+  }
+
+  public void initWithSerializedString(String s) {
+    if (s != null) {
+      String[] entries = s.split(",");
+      if (entries.length == 3) {
+        label = entries[0];
+        name = entries[1];
+        url = entries[2];
+      }
+    }
+  }
+
+  public String toSerializedString() {
+    try {
+      return Arrays.asList(URLEncoder.encode(label, "UTF-8"), URLEncoder.encode(name, "UTF-8"),
+          URLEncoder.encode(url, "UTF-8")).toString();
+    } catch (Exception e) {
+      return "";
+    }
   }
 
   @Override

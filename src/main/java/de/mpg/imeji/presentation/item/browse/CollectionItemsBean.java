@@ -22,8 +22,10 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.collection.CollectionActionMenu;
 import de.mpg.imeji.presentation.facet.FacetsJob;
+import de.mpg.imeji.presentation.license.LicenseEditor;
 
 /**
  * {@link ItemsBean} to browse {@link Item} of a {@link CollectionImeji}
@@ -44,6 +46,7 @@ public class CollectionItemsBean extends ItemsBean {
   private String authors = "";
   private int size;
   private boolean showUpload = false;
+  private LicenseEditor licenseEditor;
 
   /**
    * Initialize the bean
@@ -68,6 +71,7 @@ public class CollectionItemsBean extends ItemsBean {
           .forEach(a -> authors = authors.equals("") ? a : "; " + a);
       size = StringHelper.isNullOrEmptyTrim(getQuery()) ? getTotalNumberOfRecords()
           : getCollectionSize();
+      setLicenseEditor(new LicenseEditor(getLocale(), collection.getStatus().equals(Status.PENDING)));
     } catch (final Exception e) {
       LOGGER.error("Error initializing collectionItemsBean", e);
     }
@@ -206,6 +210,20 @@ public class CollectionItemsBean extends ItemsBean {
    */
   public void setShowUpload(boolean showUpload) {
     this.showUpload = showUpload;
+  }
+
+  /**
+   * @return the licenseEditor
+   */
+  public LicenseEditor getLicenseEditor() {
+    return licenseEditor;
+  }
+
+  /**
+   * @param licenseEditor the licenseEditor to set
+   */
+  public void setLicenseEditor(LicenseEditor licenseEditor) {
+    this.licenseEditor = licenseEditor;
   }
 
 }

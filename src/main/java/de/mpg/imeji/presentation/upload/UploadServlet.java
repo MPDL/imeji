@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,7 +31,10 @@ import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
@@ -85,13 +89,16 @@ public class UploadServlet extends HttpServlet {
     final UploadItem upload = doUpload(req);
     final SessionBean session = getSession(req);
     final String uploadId = req.getParameter("uploadId");
+    final License license = getLicense(req);
     try {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
       if (!StringHelper.isNullOrEmptyTrim(uploadId)) {
         itemService.uploadToStaging(uploadId, upload.getFile(), upload.getFilename(), col, user);
       } else {
-        itemService.createWithFile(null, upload.getFile(), upload.getFilename(), col, user);
+        Item item = ImejiFactory.newItem(col);
+        item.setLicenses(Arrays.asList(license));
+        itemService.createWithFile(item, upload.getFile(), upload.getFilename(), col, user);
       }
     } catch (final AuthenticationError e) {
       writeResponse(resp, e.getMessage());
@@ -101,6 +108,19 @@ public class UploadServlet extends HttpServlet {
       writeResponse(resp, e.getMessage());
       resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
+  }
+
+  /**
+   * Create a Licence from the request
+   * 
+   * @param req
+   * @return
+   */
+  private License getLicense(HttpServletRequest req) {
+    final License license = new License();
+    license.initWithSerializedString(req.getParameter("license"));
+    license.setStart(System.currentTimeMillis());
+    return license;
   }
 
   private void writeResponse(HttpServletResponse resp, String errorMessage) throws IOException {
