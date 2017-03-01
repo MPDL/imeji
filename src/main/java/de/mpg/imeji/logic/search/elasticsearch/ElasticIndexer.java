@@ -68,6 +68,13 @@ public class ElasticIndexer implements SearchIndexer {
 
   @Override
   public void indexBatch(List<?> l) {
+    updateIndexBatch(l);
+    commit();
+  }
+
+  @Override
+  public void updateIndexBatch(List<?> l) {
+    System.out.println("update");
     if (l.isEmpty()) {
       return;
     }
@@ -75,16 +82,12 @@ public class ElasticIndexer implements SearchIndexer {
       final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
       for (final Object obj : l) {
         bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, index), getParent(obj)));
-        // indexJSON(getId(obj), toJson(obj, dataType, index));
       }
       bulkRequest.get();
-      commit();
     } catch (final Exception e) {
       LOGGER.error("error indexing object ", e);
     }
   }
-
-
 
   @Override
   public void delete(Object obj) {
@@ -180,7 +183,7 @@ public class ElasticIndexer implements SearchIndexer {
    * immediately available for other tasks
    */
   public void commit() {
-    // Check if refresh is needed: cost are very high
+    // Check if refresh is needed: cost is very high
     ElasticService.getClient().admin().indices().prepareRefresh(index).execute().actionGet();
   }
 

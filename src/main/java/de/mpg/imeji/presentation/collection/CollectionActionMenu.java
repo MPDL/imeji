@@ -37,7 +37,7 @@ public class CollectionActionMenu implements Serializable {
   private final CollectionImeji collection;
   private final User user;
   private final Locale locale;
-  private int itemsWithoutLicense = 1;
+  private int itemsWithoutLicense = 0;
 
   public CollectionActionMenu(CollectionImeji collection, User user, Locale locale) {
     this.collection = collection;

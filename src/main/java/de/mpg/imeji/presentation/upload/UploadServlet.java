@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -121,6 +120,7 @@ public class UploadServlet extends HttpServlet {
         item.setLicenses(Arrays.asList(license));
         itemService.createWithFile(item, upload.getFile(), upload.getFilename(), col, user);
       }
+      writeResponse(resp, "");
     } catch (final AuthenticationError e) {
       writeResponse(resp, e.getMessage());
       resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -149,7 +149,8 @@ public class UploadServlet extends HttpServlet {
   }
 
   private void writeResponse(HttpServletResponse resp, String errorMessage) throws IOException {
-    resp.getOutputStream().write(errorMessage.getBytes(Charset.forName("UTF-8")));
+    resp.getOutputStream()
+        .write(("<error>" + errorMessage + "</error>").getBytes(Charset.forName("UTF-8")));
   }
 
   /**
@@ -167,11 +168,10 @@ public class UploadServlet extends HttpServlet {
       UploadItem uploadItem = new UploadItem();
       while (iter.hasNext()) {
         final FileItemStream fis = iter.next();
-        final InputStream stream = fis.openStream();
         if (!fis.isFormField()) {
           uploadItem.setFilename(fis.getName());
           final File tmp = TempFileUtil.createTempFile("upload", null);
-          StorageUtils.writeInOut(stream, new FileOutputStream(tmp), true);
+          StorageUtils.writeInOut(fis.openStream(), new FileOutputStream(tmp), true);
           uploadItem.setFile(tmp);
         } else {
           ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -183,7 +183,7 @@ public class UploadServlet extends HttpServlet {
     } catch (final Exception e) {
       LOGGER.error("Error file upload", e);
     }
-    return null;
+    return new UploadItem();
   }
 
   private CollectionImeji retrieveCollection(HttpServletRequest req, User user) {

@@ -21,7 +21,8 @@
 				font-size: small;
 			}
 		</style>
-		<div class="uploadPanel"/>
+		
+		
 		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/plupload/2.1.2/js/plupload.full.min.js"></script>
 				<script type="text/javascript">
 					var totalFiles = 0
@@ -48,6 +49,7 @@
 								totalFiles =  files.length;
 								closeDialog('uploadDialog');
 								lockPage();
+								$(".uploadPanel").show();
 								addUploadStatusMessage(0,totalFiles);
 								uploader.start();							
 							},
@@ -74,7 +76,7 @@
 					    $('.imj_messageSuccess').fadeOut(1000);
 					}, 2000);
 					function addUploadStatusMessage(uploaded, total, filename, percent){
-						$(".uploadPanel").show();
+					
 						$(".uploadPanel").html('<pre>#{lbl.uploading} ' + uploaded + ' / ' + total + ' #{lbl.files}.</pre>');
 						if(filename != null){
 							$(".uploadPanel").html('<pre>#{lbl.uploading} ' + uploaded + ' / ' + total + ' #{lbl.files}. \n\n' +filename + '(' + percent + '%)</pre>');

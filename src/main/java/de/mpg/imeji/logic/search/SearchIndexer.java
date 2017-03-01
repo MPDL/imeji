@@ -28,6 +28,16 @@ public interface SearchIndexer {
   public void indexBatch(List<?> l);
 
   /**
+   * Update a list of Object. This method might be faster for multiple objects, than using the index
+   * method for single objects. <br/>
+   * The spaceId will be the same for all objects. <br/>
+   * The spaceId can be null.
+   *
+   * @param l
+   */
+  public void updateIndexBatch(List<?> l);
+
+  /**
    * Delete an object from the Index
    *
    * @param obj
