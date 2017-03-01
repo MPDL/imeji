@@ -47,7 +47,7 @@
 					<span class="fa fa-exclamation-triangle"/>
 					#{lbl.move_collection_released}
 					<br/><br/>
-					<license:licenseEditor licenseEditor="#{MoveItemsBean.licenseEditor}" containerId=":actionSelectedItems:moveItemsComponent:moveItemsForm"/>
+					<license:licenseEditor licenseEditor="#{MoveItemsBean.licenseEditor}" containerId="#{cc.attrs.parentId}:moveItemsForm"/>
 					<br/>
 					<a href="" onclick="closeDialog('moveItemsDialog');" class="imj_cancelButton">
 						#{lbl.cancel}

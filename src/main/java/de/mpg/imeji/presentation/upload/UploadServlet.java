@@ -1,5 +1,6 @@
 package de.mpg.imeji.presentation.upload;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,6 +8,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -58,11 +61,21 @@ public class UploadServlet extends HttpServlet {
    *
    */
   private class UploadItem {
-    private final File file;
-    private final String filename;
+    private File file;
+    private String filename;
+    private Map<String, String> params = new HashMap<String, String>();
 
-    public UploadItem(File file, String filename) {
+    /**
+     * @param file the file to set
+     */
+    public void setFile(File file) {
       this.file = file;
+    }
+
+    /**
+     * @param filename the filename to set
+     */
+    public void setFilename(String filename) {
       this.filename = filename;
     }
 
@@ -73,6 +86,14 @@ public class UploadServlet extends HttpServlet {
     public String getFilename() {
       return filename;
     }
+
+    /**
+     * @return the params
+     */
+    public Map<String, String> getParams() {
+      return params;
+    }
+
   }
 
   @Override
@@ -89,7 +110,7 @@ public class UploadServlet extends HttpServlet {
     final UploadItem upload = doUpload(req);
     final SessionBean session = getSession(req);
     final String uploadId = req.getParameter("uploadId");
-    final License license = getLicense(req);
+    final License license = getLicense(upload);
     try {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
@@ -115,10 +136,14 @@ public class UploadServlet extends HttpServlet {
    * 
    * @param req
    * @return
+   * @throws ServletException
+   * @throws IOException
    */
-  private License getLicense(HttpServletRequest req) {
+  private License getLicense(UploadItem uploadItem) throws IOException, ServletException {
     final License license = new License();
-    license.initWithSerializedString(req.getParameter("license"));
+    license.setLabel(uploadItem.getParams().get("licenseLabel"));
+    license.setName(uploadItem.getParams().get("licenseName"));
+    license.setUrl(uploadItem.getParams().get("licenseUrl"));
     license.setStart(System.currentTimeMillis());
     return license;
   }
@@ -139,16 +164,22 @@ public class UploadServlet extends HttpServlet {
     try {
       final ServletFileUpload upload = new ServletFileUpload();
       final FileItemIterator iter = upload.getItemIterator(req);
+      UploadItem uploadItem = new UploadItem();
       while (iter.hasNext()) {
         final FileItemStream fis = iter.next();
         final InputStream stream = fis.openStream();
         if (!fis.isFormField()) {
-          final String name = fis.getName();
+          uploadItem.setFilename(fis.getName());
           final File tmp = TempFileUtil.createTempFile("upload", null);
           StorageUtils.writeInOut(stream, new FileOutputStream(tmp), true);
-          return new UploadItem(tmp, name);
+          uploadItem.setFile(tmp);
+        } else {
+          ByteArrayOutputStream out = new ByteArrayOutputStream();
+          StorageUtils.writeInOut(fis.openStream(), out, true);
+          uploadItem.getParams().put(fis.getFieldName(), out.toString("UTF-8"));
         }
       }
+      return uploadItem;
     } catch (final Exception e) {
       LOGGER.error("Error file upload", e);
     }

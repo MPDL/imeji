@@ -13,11 +13,11 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<h:form id="uploadForm">
-			<div id="uploadDialog" class="imj_modalDialogBox uploadDialog" style="display:none;" >
+		<div id="uploadDialog" class="imj_modalDialogBox uploadDialog" style="display:none;" >
+			<h:form id="uploadForm">
 				<ui:fragment rendered="#{cc.attrs.bean.collection.status == 'RELEASED'}">
 					#{lbl.move_collection_released}<br/><br/>
-					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":actionSelectedItems:moveItemsComponent:moveItemsForm"/>
+					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":actionCollection:uploadDialog:uploadForm"/>
 				</ui:fragment>
 				<div class="uploadDialogHeadArea imj_submitPanel">
 					<a id="closeUploadDialog" onclick="closeDialog('uploadDialog');" class="imj_cancelButton">
@@ -32,11 +32,11 @@
 						<span class="fa fa-upload"/> #{lbl.uploadFile}
 					</div>
 			 	</div>
-			</div>
-           <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.update}" style="display:none" onclick="closeDialog('uploadDialog');startLoader();">
-           		<f:ajax execute="@this" render="@form :ajaxWrapper"/>
-           </h:commandButton>
-	 		<upload:upload browseButtonId="selectFiles" license="#{cc.attrs.bean.licenseEditor.license}" collectionId="#{cc.attrs.colId}" updateButtonId="actionCollection:uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>
-	 	</h:form>
+	           <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.update}" style="display:none" onclick="closeDialog('uploadDialog');startLoader();">
+	           		<f:ajax execute="@this" render="@form :ajaxWrapper"/>
+	           </h:commandButton>
+		 		<upload:upload browseButtonId="selectFiles" license="#{cc.attrs.bean.licenseEditor.license}" collectionId="#{cc.attrs.colId}" updateButtonId="actionCollection:uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>
+	 		</h:form>
+ 		</div>
 	</composite:implementation>
 </html>
