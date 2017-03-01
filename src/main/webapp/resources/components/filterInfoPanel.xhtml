@@ -29,12 +29,16 @@
 				<div class="imj_menuBody">
 					<h:form>
 						<h:outputText value="#{lbl.sort_by}: " styleClass="imj_active"/>
-						<h:commandLink id="lnkSortAsc" value="&#160;" styleClass="fa fa-sort-asc fa-pull-right" action="#{cc.attrs.filterBean.toggleSortOrder}" rendered="#{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING'}"/>
-						<h:commandLink id="lnkSortDesc" value="&#160;" styleClass="fa fa-sort-desc fa-pull-right" action="#{cc.attrs.filterBean.toggleSortOrder}" rendered="#{cc.attrs.filterBean.selectedSortOrder != 'ASCENDING'}"/>	
+						<h:commandLink id="lnkSortAsc" value="&#160;" styleClass="fa fa-sort-asc fa-pull-right" action="#{cc.attrs.filterBean.toggleSortOrder}" rendered="#{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING'}" onclick="startLoader();">
+							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+						</h:commandLink>
+						<h:commandLink id="lnkSortDesc" value="&#160;" styleClass="fa fa-sort-desc fa-pull-right" action="#{cc.attrs.filterBean.toggleSortOrder}" rendered="#{cc.attrs.filterBean.selectedSortOrder != 'ASCENDING'}" onclick="startLoader();">
+							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+						</h:commandLink>	
 						<ul>
 							<ui:repeat var="sortItem" value="#{cc.attrs.filterBean.sortMenu}" varStatus="spos">
 								<li>
-									<h:commandLink action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" styleClass="#{(cc.attrs.filterBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}">
+									<h:commandLink action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" styleClass="#{(cc.attrs.filterBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}" onclick="startLoader();">
 										<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 									</h:commandLink>
 								</li>

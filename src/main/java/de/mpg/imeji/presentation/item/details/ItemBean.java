@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -179,7 +180,7 @@ public class ItemBean extends SuperBean {
     }
     try {
       ContentService service = new ContentService();
-      content = service.retrieve(service.findContentId(item.getId().toString()));
+      content = service.retrieveLazy(service.findContentId(item.getId().toString()));
       this.preview = content.getPreview();
       this.thumbnail = content.getThumbnail();
       this.fullResolution = content.getFull();
@@ -213,6 +214,17 @@ public class ItemBean extends SuperBean {
       return "";
     }
     return URLEncoder.encode(item.getFilename(), "UTF-8");
+  }
+
+  public void showTechnicalMetadata() {
+    ContentService service = new ContentService();
+    try {
+      content = service.retrieve(service.findContentId(item.getId().toString()));
+      techMd = content.getTechnicalMetadata().stream()
+          .map(tmd -> tmd.getName() + ": " + tmd.getValue()).collect(Collectors.toList());
+    } catch (ImejiException e) {
+      LOGGER.error("Erro loading technical metadata", e);
+    }
   }
 
   public List<String> getTechMd() {

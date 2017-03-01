@@ -159,7 +159,7 @@
 							</div>
 							<div class="imj_metadataValue">
 								<a href="#{Navigation.collectionUrl}#{itemBean.collection.idString}">
-									#{itemBean.collection.title}"
+									#{itemBean.collection.title}
 								</a>
 							</div>
 						</div>
@@ -261,9 +261,7 @@
 									<span class="imj_invisible">: </span>
 								</div>
 								<div class="imj_metadataValue">
-									<textarea class="imj_infodataValueEntryEmbed" onclick="this.select();">
-										"&lt;a href='#{itemBean.pageUrl}' title='#{itemBean.image.filename}'&gt; &lt;img src='#{itemBean.preview}' alt='#{itemBean.image.filename}' title='#{itemBean.image.filename}'&gt;&lt;/a&gt;
-									</textarea>
+									<textarea class="imj_infodataValueEntryEmbed" onclick="this.select();">&lt;a href='#{itemBean.pageUrl}' title='#{itemBean.image.filename}'&gt; &lt;img src='#{itemBean.preview}' alt='#{itemBean.image.filename}' title='#{itemBean.image.filename}'&gt;&lt;/a&gt;</textarea>
 								</div>
 							</div>
 						</ui:fragment>
@@ -276,10 +274,23 @@
 								<span class="imj_infodataValue" id="qr"> </span>
 							</div>
 						</div>
-						<div id="techmetadata" class="imj_techdataList">
-							<ui:repeat id="techMd" var="techMd" value="#{itemBean.techMd}">
-								<h:outputText value="#{techMd}" styleClass="imj_techdataEntry"/>
-							</ui:repeat>
+						<div class="imj_metadataSet">
+							<div class="imj_metadataLabel">
+								#{lbl.technical_metadata}
+								<span class="imj_invisible">: </span>
+							</div>
+							<div class="imj_metadataValue">
+								<h:form>
+									<h:commandLink rendered="#{itemBean.techMd == null}" value="show tech md" action="#{itemBean.showTechnicalMetadata}" onclick=" window.location.hash = '#techmetadata';">
+										<f:ajax render="@form"/>
+									</h:commandLink>
+									<div id="techmetadata" class="imj_techdataList">
+										<ui:repeat id="techMd" var="techMd" value="#{itemBean.techMd}">
+											<h:outputText value="#{techMd}" styleClass="imj_techdataEntry"/>
+										</ui:repeat>
+									</div>
+								</h:form>
+							</div>
 						</div>
 					</div>
 				</div>

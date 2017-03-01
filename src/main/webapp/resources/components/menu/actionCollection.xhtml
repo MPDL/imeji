@@ -43,9 +43,10 @@
 								</li>
 								<ui:fragment rendered="#{WorkflowBean.release(cc.attrs.collectionBean.collection)}">
 									<li>
-										<h:outputLink value="#" onclick="openDialog('releaseCollection');">
-											 <span class="fa fa-globe"/> <span>#{lbl.collection_release}</span>
-										</h:outputLink>
+										<h:commandLink action="#{cc.attrs.collectionBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');">
+											<f:ajax render=":actionCollection:releaseCollection:confirmationDialogForm"/>
+											<span class="fa fa-globe"/> <span>#{lbl.collection_release}</span>
+										</h:commandLink>
 									</li>
 								</ui:fragment>
 								<ui:fragment rendered="#{WorkflowBean.withdraw(cc.attrs.collectionBean.collection)}">
@@ -86,7 +87,7 @@
 											<span class="fa fa-download"/> <span>#{lbl.download_search}</span>
 										</a>
 									</li>
-								</ui:fragment>
+								</ui:fragment>								
 							</h:form>
 						</ul>
 					</div>
@@ -113,7 +114,8 @@
 				</a>
 			</ui:fragment>
 		</ui:fragment>
-		<dialog:confirmationDialog submitAction="release"
+	
+		<dialog:confirmationDialog submitAction="release" id="releaseCollection"
 			bean="#{cc.attrs.collectionBean.actionMenu}"
 			confirmationText="#{msg.confirmation_release_collection}"
 			confirmationText2="#{cc.attrs.collectionBean.actionMenu.releaseMessage} "

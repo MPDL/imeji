@@ -71,7 +71,8 @@ public class CollectionItemsBean extends ItemsBean {
           .forEach(a -> authors = authors.equals("") ? a : "; " + a);
       size = StringHelper.isNullOrEmptyTrim(getQuery()) ? getTotalNumberOfRecords()
           : getCollectionSize();
-      setLicenseEditor(new LicenseEditor(getLocale(), collection.getStatus().equals(Status.PENDING)));
+      setLicenseEditor(
+          new LicenseEditor(getLocale(), collection.getStatus().equals(Status.PENDING)));
     } catch (final Exception e) {
       LOGGER.error("Error initializing collectionItemsBean", e);
     }
