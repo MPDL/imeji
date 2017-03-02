@@ -2,7 +2,9 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:composite="http://java.sun.com/jsf/composite">
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	xmlns:upload="http://java.sun.com/jsf/composite/components/upload">
 	
 	<composite:interface>		
 		<composite:attribute name="collectionBean"/>
@@ -11,9 +13,9 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{Auth.update}">
-			<button id="upload" value="#{lbl.upload}" class="imj_menuButton imj_menuButton">
+			<button id="upload" class="imj_menuButton" onClick="openDialog('uploadDialog');">
 				#{lbl.upload}
-			</button>
+			</button >
 			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton imj_menuButton">
 				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
 			</a>
@@ -35,15 +37,45 @@
 									</a>
 								</li>
 								<li>
-									<h:commandLink action="#{cc.attrs.collectionBean.delete}">
-										 <span class="fa fa-globe"/> <span>#{lbl.collection_release}</span>
-									</h:commandLink>
+									<a href="#{Navigation.applicationUrl}edit/license?collection=#{cc.attrs.collectionBean.id}">
+										<span class="fa fa-copyright"/> <span>#{lbl.edit_all_licenses}</span>
+									</a>
 								</li>
-								<li>
-									<h:commandLink action="#{cc.attrs.collectionBean.delete}">
-										 <span class="fa fa-trash"/> <span>#{lbl.collection_delete}</span>
-									</h:commandLink>
-								</li>
+								<ui:fragment rendered="#{WorkflowBean.release(cc.attrs.collectionBean.collection)}">
+									<li>
+										<h:commandLink action="#{cc.attrs.collectionBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');">
+											<f:ajax render=":actionCollection:releaseCollection:confirmationDialogForm"/>
+											<span class="fa fa-globe"/> <span>#{lbl.collection_release}</span>
+										</h:commandLink>
+									</li>
+								</ui:fragment>
+								<ui:fragment rendered="#{WorkflowBean.withdraw(cc.attrs.collectionBean.collection)}">
+									<li>
+										<h:outputLink value="#" onclick="openDialog('withdrawCollection');">
+											 <span class="fa fa-globe"/> <span>#{lbl.collection_withdraw}</span>
+										</h:outputLink>
+									</li>
+								</ui:fragment>
+								<ui:fragment rendered="#{Auth.delete and WorkflowBean.delete(cc.attrs.collectionBean.collection)}">
+									<li>
+										<h:outputLink value="#" onclick="openDialog('deleteCollection');">
+											 <span class="fa fa-trash"/> <span>#{lbl.collection_delete}</span>
+										</h:outputLink>
+									</li>
+								</ui:fragment>
+								<ui:fragment rendered ="#{Auth.admin and WorkflowBean.createDOI(cc.attrs.collectionBean.collection)}">
+									<li>
+										<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{cc.attrs.hasDoi}">
+											 <span class="fa fa-link"/> <span>#{lbl.change_doi}</span>
+										</h:outputLink>
+										<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog('createDOI');" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and !cc.attrs.hasDoi}">
+											 <span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
+										</h:outputLink>
+										<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl == null or Configuration.doiServiceUrl == ''  and !cc.attrs.hasDoi}">
+											<span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
+										</h:outputLink>
+									</li>
+								</ui:fragment>
 								<li>
 									<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}" target="_blank">
 										<span class="fa fa-download"/> <span>#{lbl.collection_download}</span>
@@ -55,7 +87,7 @@
 											<span class="fa fa-download"/> <span>#{lbl.download_search}</span>
 										</a>
 									</li>
-								</ui:fragment>
+								</ui:fragment>								
 							</h:form>
 						</ul>
 					</div>
@@ -82,5 +114,46 @@
 				</a>
 			</ui:fragment>
 		</ui:fragment>
+	
+		<dialog:confirmationDialog submitAction="release" id="releaseCollection"
+			bean="#{cc.attrs.collectionBean.actionMenu}"
+			confirmationText="#{msg.confirmation_release_collection}"
+			confirmationText2="#{cc.attrs.collectionBean.actionMenu.releaseMessage} "
+			confirmationTextLicense="#{cc.attrs.collectionBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}"
+			submitLabel="#{lbl.release}" dialogId="releaseCollection"/>
+		<dialog:confirmationDialog submitAction="delete"
+			bean="#{cc.attrs.collectionBean.actionMenu}"
+			confirmationText="#{msg.confirmation_delete_collection}?"
+			submitLabel="#{lbl.delete}" dialogId="deleteCollection" />
+		<dialog:confirmationReasonedDialog submitAction="withdraw"
+			bean="#{cc.attrs.collectionBean.actionMenu}"
+			confirmationText="#{msg.confirmation_withdraw_collection}"
+			submitLabel="#{lbl.withdraw}" dialogId="withdrawCollection"/>
+		<dialog:dialogOptionDialog  bean="#{cc.attrs.collectionBean.actionMenu}"
+			col="#{cc.attrs.collectionBean.collection}"
+			submitId1="doiInput"
+			submitId2="getDOIDialog"
+			confirmationText="#{logicBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}"
+			submitLabel1="#{lbl.createDOI_manually}"
+			submitLabel2="#{lbl.createDOI_from_service}"
+			dialogId="createDOI"/>
+		<dialog:confirmationDialog submitAction="createDOI"
+		    col="#{cc.attrs.collectionBean.collection}"
+			bean="#{cc.attrs.collectionBean.actionMenu}"
+			confirmationText="#{msg.confirmation_create_DOI}"
+			submitLabel="#{lbl.createDOI}" dialogId="getDOI"/>
+		<dialog:doiInputDialog 
+			col="#{cc.attrs.collectionBean.collection}"
+			bean="#{cc.attrs.collectionBean.actionMenu}"
+			confirmationText="#{logicBean.collection.doi == '' ? '' : msg.collection_has_doi_warning}"
+			submitLabel="#{lbl.save}" dialogId="doiInput"/>
+			<upload:dialog colId="#{cc.attrs.collectionBean.collection.id.toString()}" id="uploadDialog" bean="#{cc.attrs.collectionBean}"/>
+			<script>
+				jQuery(document).ready(function() {
+					if(#{cc.attrs.collectionBean.showUpload}){
+						openDialog('uploadDialog');
+					}
+				});					
+			</script>
 	</composite:implementation>
 </html>

@@ -87,7 +87,7 @@ public class FileAuthorizationTest extends SuperServiceTest {
     createCollection();
     createItemWithFile();
     ShareService c = new ShareService();
-    c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, collection.getId().toString(),
+    c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, collectionBasic.getId().toString(),
         ShareService.rolesAsList(ShareRoles.READ));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
     Assert.assertTrue(
@@ -136,7 +136,7 @@ public class FileAuthorizationTest extends SuperServiceTest {
 
   private void releaseCollection() throws ImejiException {
     CollectionService c = new CollectionService();
-    c.releaseWithDefaultLicense(collection, JenaUtil.testUser);
+    c.releaseWithDefaultLicense(collectionBasic, JenaUtil.testUser);
   }
 
   private void releaseItem() throws ImejiException {

@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.storage;
 
+import java.io.Serializable;
 
 /**
  * Result of an Upload
@@ -8,7 +9,8 @@ package de.mpg.imeji.logic.storage;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class UploadResult {
+public class UploadResult implements Serializable {
+  private static final long serialVersionUID = 6034637101322062652L;
   private String id;
   private String orginal;
   private String full;

@@ -11,12 +11,13 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.StatementType;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.StatementFactory;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -40,6 +41,14 @@ public class StatementEditBean extends StatementCreateBean {
           service.retrieve(ObjectHelper.getURI(Statement.class, id).toString(), getSessionUser());
       setType(s.getType().name());
       setName(s.getIndex());
+      setNamespace(s.getNamespace());
+      if (s.getVocabulary() != null) {
+        setUseGoogleMapsAPI(s.getVocabulary().toString().equals(Imeji.CONFIG.getGoogleMapsApi()));
+        setUseMaxPlanckAuthors(s.getVocabulary().toString().equals(Imeji.CONFIG.getConeAuthors()));
+      }
+      if (s.getLiteralConstraints() != null) {
+        getPredefinedValues().addAll(s.getLiteralConstraints());
+      }
     } catch (ImejiException | UnsupportedEncodingException e) {
       LOGGER.error("Error retrieving statement: ", e);
     }
@@ -47,8 +56,10 @@ public class StatementEditBean extends StatementCreateBean {
 
   @Override
   public void save() {
-    final Statement statement = ImejiFactory.newStatement().setIndex(getName())
-        .setType(StatementType.valueOf(getType())).build();
+    StatementFactory factory = new StatementFactory().setIndex(getName())
+        .setType(StatementType.valueOf(getType())).setNamespace(getNamespace())
+        .setVocabulary(getVocabulary()).setLiteralsConstraints(getPredefinedValues());
+    final Statement statement = factory.build();
     try {
       service.update(statement, getSessionUser());
       redirect(getHistory().getPreviousPage().getCompleteUrlWithHistory());

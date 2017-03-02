@@ -29,6 +29,7 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.license.LicenseEditor;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 
@@ -41,6 +42,12 @@ public class MoveItemsBean extends SuperBean {
   @ManagedProperty(value = "#{SessionBean}")
   private SessionBean sessionBean;
   private String query = "";
+  private LicenseEditor licenseEditor;
+  private String destinationId;
+
+  public MoveItemsBean() {
+    // TODO Auto-generated constructor stub
+  }
 
   /**
    * Load all the collection for which the user has at least edit role
@@ -48,6 +55,7 @@ public class MoveItemsBean extends SuperBean {
    * @throws ImejiException
    */
   public void searchCollectionsForMove(String collectionSrcId) throws ImejiException {
+    licenseEditor = new LicenseEditor(getLocale(), false);
     SearchFactory factory = new SearchFactory();
     factory.addElement(new SearchPair(SearchFields.title, query + "*"), OR);
     if (!new Authorization().isSysAdmin(getSessionUser())) {
@@ -85,6 +93,27 @@ public class MoveItemsBean extends SuperBean {
   }
 
   /**
+   * Move the selected items to the collection "destination"
+   * 
+   * @param collectionId
+   * @throws IOException
+   */
+  public void moveSelectedTo() throws IOException {
+    moveSelectedTo(destinationId);
+  }
+
+  /**
+   * Move a single Item to the collection "destination"
+   * 
+   * @param collectionId
+   * @param id
+   * @throws IOException
+   */
+  public void moveItemTo(String id) throws IOException {
+    moveItemTo(destinationId);
+  }
+
+  /**
    * Move the items (defined by a list of their ids) to the collection
    * 
    * @param collectionId
@@ -94,7 +123,8 @@ public class MoveItemsBean extends SuperBean {
     try {
       CollectionImeji col = collectionsForMove.stream()
           .filter(c -> c.getId().toString().equals(collectionId)).findAny().get();
-      List<Item> moved = new ItemService().moveItems(ids, col, getSessionUser());
+      List<Item> moved =
+          new ItemService().moveItems(ids, col, getSessionUser(), licenseEditor.getLicense());
       if (moved.size() > 0) {
         BeanHelper.addMessage(moved.size() + " "
             + (moved.size() > 1 ? Imeji.RESOURCE_BUNDLE.getLabel("items", getLocale())
@@ -115,6 +145,13 @@ public class MoveItemsBean extends SuperBean {
     }
   }
 
+  public void setDestinationId(String colId) {
+    this.destinationId = colId;;
+  }
+
+  public String getDestinationId() {
+    return destinationId;
+  }
 
   /**
    * List of all Collection where the user could move items into
@@ -145,5 +182,19 @@ public class MoveItemsBean extends SuperBean {
    */
   public void setQuery(String query) {
     this.query = query;
+  }
+
+  /**
+   * @return the licenseEditor
+   */
+  public LicenseEditor getLicenseEditor() {
+    return licenseEditor;
+  }
+
+  /**
+   * @param licenseEditor the licenseEditor to set
+   */
+  public void setLicenseEditor(LicenseEditor licenseEditor) {
+    this.licenseEditor = licenseEditor;
   }
 }

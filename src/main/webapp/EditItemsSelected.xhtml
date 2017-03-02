@@ -19,7 +19,51 @@
 		 	$( document ).ready(function() {
 		 		stopLoader();
 		 	});
+		 	function indexExists(index){
+		 		var found = false;
+		 		$('#statementList').children('option').each(function() {
+		 			if($( this ).val() == index){
+		 				found = true;
+		 				return false;
+		 			}
+				});
+		 		return found;
+		 	};
+		 	function findInList(listId, index){
+		 		var found = false;
+		 		$('#' + listId).children('option').each(function() {
+		 			if($( this ).val().toLowerCase().trim() == index.toLowerCase().trim()){
+		 				found = true;
+		 				return false;
+		 			}
+				});
+		 		return found;
+		 	};
+		 	function editColumnName(id, index){
+		 		var button = document.getElementById(id);
+		 		var notUsed = findInList('statementList',index);
+		 		var exists = findInList('statementListAll', index);
+		 		var errorSpan = button.nextSibling.nextSibling;
+		 		errorSpan.innerHTML = '';
+		 		if(exists){
+		 			if(notUsed){
+		 				button.innerHTML = '#{lbl.change}';
+		 			}else{
+		 				button.innerHTML = '';
+		 				errorSpan.innerHTML = '#{lbl.metadata_already_used}';
+		 			}
+		 		}
+		 		else{
+		 			button.innerHTML = '#{lbl.create}';
+		 		}		 		
+		 	}
 	 	</script>
+
+	 	<datalist id="statementListAll" class="comboboxDataList">
+			<ui:repeat var="statement" value="#{EditItemsSelectedBean.statementMenu}">
+		   		<option>#{statement.value}</option>
+		   	</ui:repeat>
+		</datalist>
 		<div class="loaderWrapper show" />
 		<div class="loader show" />
 		<h:form id="editSelectedForm" prependId="false">
@@ -55,6 +99,8 @@
 					</div>
 					
 				</div>
+				
+				
 				<div class="edit_selected_table_wrapper">
 					<table class="edit_selected_table">
 						<tr>
@@ -66,33 +112,37 @@
 											<h:outputText value="#{column.index}" rendered="#{EditItemsSelectedBean.editedColumn != column.index}"/>
 											<div>
 												<md:input id="batchInput" metadataInputComponent="#{column.input}" rendered="#{!empty column.input}" />
-												<ui:fragment rendered="#{EditItemsSelectedBean.editedColumn == column.index}">
-													<h:inputText class="combobox" onfocus="$('#statementList').show();" value="#{column.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}"/>
-													<h:commandLink styleClass="fa fa-check edit_selected_table_icon" action="#{EditItemsSelectedBean.changeColumnName(status.index)}" value=""
-														title="#{lbl.save}" onclick="startLoader();">
+												<h:panelGroup rendered="#{EditItemsSelectedBean.editedColumn == column.index}">
+													<h:inputText id="inputColumnName" class="combobox" html5:oninput="editColumnName('list:#{status.index}:changeColumn', this.value);" onfocus="$('#statementList').show();" value="#{column.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
+													</h:inputText>
+													<div>
+														<h:commandLink id="changeColumn" styleClass="edit_selected_table_icon" action="#{EditItemsSelectedBean.changeColumnName(status.index)}" 
+															value="inner" title="#{lbl.save}" onclick="startLoader();">
+															<f:ajax execute="@form" render="@form" />
+														</h:commandLink>
+														<span id="changeColumnError"></span>
+													</div>
+												</h:panelGroup>
+												<ui:fragment rendered="#{empty column.input and EditItemsSelectedBean.editedColumn != column.index}">
+													<h:commandLink styleClass="fa fa-magic edit_selected_table_icon" action="#{column.addInput}" value="" title="#{lbl.edit_all}" >
+														<f:ajax execute="@this" render=":list:#{status.index}:head" />
+													</h:commandLink>
+													<h:commandLink
+														styleClass="fa fa-cog edit_selected_table_icon"
+														action="#{EditItemsSelectedBean.setEditedColumn(column.index)}" value=""
+														title="#{lbl.edit_metadata_name}">
+														<f:ajax execute="@this" render=":list:#{status.index}:head" />
+													</h:commandLink>
+													<h:commandLink
+														styleClass="fa fa-times edit_selected_table_icon"
+														action="#{EditItemsSelectedBean.clearColumn(status.index)}"
+														value="" title="#{lbl.clear}"  onclick="startLoader();">
 														<f:ajax execute="@form" render="@form" />
 													</h:commandLink>
-												</ui:fragment>
-												<ui:fragment rendered="#{empty column.input and EditItemsSelectedBean.editedColumn != column.index}">
-												<h:commandLink styleClass="fa fa-magic edit_selected_table_icon" action="#{column.addInput}" value="" title="#{lbl.edit_all}" >
-													<f:ajax execute="@this" render=":list:#{status.index}:head" />
-												</h:commandLink>
-												<h:commandLink
-													styleClass="fa fa-cog edit_selected_table_icon"
-													action="#{EditItemsSelectedBean.setEditedColumn(column.index)}" value=""
-													title="#{lbl.edit_metadata_name}">
-													<f:ajax execute="@this" render=":list:#{status.index}:head" />
-												</h:commandLink>
-												<h:commandLink
-													styleClass="fa fa-times edit_selected_table_icon"
-													action="#{EditItemsSelectedBean.clearColumn(status.index)}"
-													value="" title="#{lbl.clear}"  onclick="startLoader();">
-													<f:ajax execute="@form" render="@form" />
-												</h:commandLink>
-												<h:commandLink styleClass="fa fa-trash edit_selected_table_icon" action="#{EditItemsSelectedBean.removeColumn(column.index)}"
-													value="" title="#{lbl.remove}"  onclick="startLoader();">
-													<f:ajax execute="@form" render="@form" />
-												</h:commandLink>
+													<h:commandLink styleClass="fa fa-trash edit_selected_table_icon" action="#{EditItemsSelectedBean.removeColumn(column.index)}"
+														value="" title="#{lbl.remove}"  onclick="startLoader();">
+														<f:ajax execute="@form" render="@form" />
+													</h:commandLink>
 												</ui:fragment>
 											</div>
 											<h:panelGroup layout="block" class="edit_selected_table_button" rendered="#{!empty column.input}">

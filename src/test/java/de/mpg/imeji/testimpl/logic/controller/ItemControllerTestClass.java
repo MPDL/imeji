@@ -65,7 +65,7 @@ public class ItemControllerTestClass extends SuperServiceTest {
   public void replaceItemFile() throws ImejiException, IOException {
     ItemService controller = new ItemService();
     try {
-      item = controller.updateFile(item, collection, getThumbnailfile(), "test.tmp",
+      item = controller.updateFile(item, collectionBasic, getThumbnailfile(), "test.tmp",
           JenaUtil.testUser);
     } catch (ImejiException e) {
       Assert.fail("File could not be replaced. " + e.getMessage());

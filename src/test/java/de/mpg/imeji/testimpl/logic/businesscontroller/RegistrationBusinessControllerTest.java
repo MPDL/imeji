@@ -149,7 +149,7 @@ public class RegistrationBusinessControllerTest extends SuperServiceTest {
     // invite the user to
     InvitationService invitationBusinessController = new InvitationService();
     invitationBusinessController.invite(new Invitation(user.getEmail(),
-        collection.getId().toString(), ShareService.rolesAsList(ShareRoles.READ)));
+        collectionBasic.getId().toString(), ShareService.rolesAsList(ShareRoles.READ)));
     // Register
     Registration registration = registrationBC.register(user);
     Assert.assertNotNull(registrationBC.retrieveByToken(registration.getToken()));

@@ -1,0 +1,61 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:item="http://java.sun.com/jsf/composite/components/item"
+	xmlns:license="http://java.sun.com/jsf/composite/components/license">
+	
+	<composite:interface>
+		<composite:attribute name="colId" required="true" type="java.lang.Object"/>
+		<composite:attribute name="parentId" required="true" type="java.lang.Object"/>
+		<composite:attribute name="itemId" required="false" type="java.lang.Object"/>
+		<composite:attribute name="hasLicense" default="false" required="false" type="java.lang.Boolean"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		<div id="moveItemsDialog" class="imj_modalDialogBox imj_moveItemsDialogBox" style="display:none;">
+			<h:form id="moveItemsForm">
+				<ui:fragment rendered="#{MoveItemsBean.destinationId == null}">
+					#{lbl.move_to}
+					<h:inputText value="#{MoveItemsBean.query}" html5:placeholder="#{lbl.search}">
+						<f:ajax render="#{cc.attrs.parentId}:moveItemsForm:list" event="keyup" listener="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.colId)}"/>
+					</h:inputText>
+					<a onclick="closeDialog('moveItemsDialog');" class="imj_cancelButton">
+						#{lbl.cancel}
+					</a>
+					<h:panelGroup id="list">
+						<ui:repeat var="col" value="#{MoveItemsBean.collectionsForMove}">
+							<p>
+								<ui:fragment rendered="#{col.status == 'RELEASED' and !cc.attrs.hasLicense}">
+									<span class="fa fa-globe fa-size-3">&#160;</span>
+									<h:commandLink value="#{col.title}" action="#{MoveItemsBean.setDestinationId(col.id.toString())}">
+										<f:ajax render="@form"/>
+									</h:commandLink>	
+								</ui:fragment>
+								<ui:fragment rendered="#{col.status == 'PENDING' or cc.attrs.hasLicense}">
+									<span class="fa fa-globe fa-size-3" style="#{col.status == 'RELEASED' ? '' : 'visibility: hidden'}">&#160;</span>
+									<h:commandLink rendered="#{cc.attrs.itemId != null}" value="#{col.title}" action="#{MoveItemsBean.moveItemTo(col.id.toString(), cc.attrs.itemId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>	
+									<h:commandLink rendered="#{cc.attrs.itemId == null}" value="#{col.title}" action="#{MoveItemsBean.moveSelectedTo(col.id.toString())}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>
+								</ui:fragment>				 
+							</p>
+						</ui:repeat>
+					</h:panelGroup>
+				</ui:fragment>
+				<ui:fragment rendered="#{MoveItemsBean.destinationId != null}">
+					<span class="fa fa-exclamation-triangle"/>
+					#{lbl.move_collection_released}
+					<br/><br/>
+					<license:licenseEditor licenseEditor="#{MoveItemsBean.licenseEditor}" containerId="#{cc.attrs.parentId}:moveItemsForm"/>
+					<br/>
+					<a href="" onclick="closeDialog('moveItemsDialog');" class="imj_cancelButton">
+						#{lbl.cancel}
+					</a>
+					<h:commandButton rendered="#{cc.attrs.itemId != null}" class="" value="#{lbl.move}" action="#{MoveItemsBean.moveItemTo(cc.attrs.itemId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>	
+					<h:commandButton rendered="#{cc.attrs.itemId == null}" class="" value="#{lbl.move}" action="#{MoveItemsBean.moveSelectedTo()}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>						
+				</ui:fragment>
+			</h:form>
+		</div>
+	</composite:implementation>
+</html>

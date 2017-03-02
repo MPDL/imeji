@@ -14,16 +14,4 @@
 	<ui:param name="containerHeadline" value="#{lbl.collection_info}" />
 	<ui:param name="imejiResource" value="#{EditCollectionBean.collection}" />
 
-	<ui:define name="actionsMenu">
-		<ui:fragment rendered="#{Auth.read(metadataContextBean)}">
-			<menu:context_subNavigation
-				contextId="#{metadataContextBean.idString}"
-				contextUrl="#{Navigation.collectionUrl}"
-				curMainMenu="#{currentMainMenu}"
-				userHasAdminRights="#{Auth.sysAdmin}"
-				userHasUploadRights="#{Auth.update(metadataContextBean) and metadataContextBean.status != 'WITHDRAWN'}"
-				navBean="#{Navigation}" activeMenu="start" />
-
-		</ui:fragment>
-	</ui:define>
 </ui:composition>

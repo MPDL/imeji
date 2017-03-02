@@ -188,6 +188,9 @@ public class Authorization implements Serializable {
    * @return
    */
   public List<String> getAllGrants(User user) {
+    if (user == null) {
+      return new ArrayList<>();
+    }
     final List<String> grants = new ArrayList<>(user.getGrants());
     grants.addAll(getAllUserGroupGrants(user));
     return grants;

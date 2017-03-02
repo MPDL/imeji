@@ -34,8 +34,8 @@ public class ContentServiceTest extends SuperServiceTest {
     ContentService service = new ContentService();
     ItemService itemService = new ItemService();
     try {
-      Item item2 = ImejiFactory.newItem(collection);
-      itemService.create(item2, collection, JenaUtil.testUser);
+      Item item2 = ImejiFactory.newItem(collectionBasic);
+      itemService.create(item2, collectionBasic, JenaUtil.testUser);
       ContentVO content =
           service.create(item2, ImejiTestResources.getTest2Jpg(), JenaUtil.testUser);
       Assert.assertEquals("Content should have right ID of Item", item2.getId().toString(),

@@ -120,7 +120,7 @@ public class WriterFacade {
     }
     validate(objects, Validator.Method.UPDATE);
     writer.update(objects, user);
-    indexer.indexBatch(objects);
+    indexer.updateIndexBatch(objects);
   }
 
   /**
@@ -138,7 +138,7 @@ public class WriterFacade {
         SecurityUtil.authorization().administrate(user, Imeji.PROPERTIES.getBaseURI()),
         "Only admin ca use update wihout validation");
     writer.update(objects, user);
-    indexer.indexBatch(objects);
+    indexer.updateIndexBatch(objects);
   }
 
   /*

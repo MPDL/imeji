@@ -78,19 +78,30 @@ public class QuotaUtil {
   public static long checkQuota(User user, File file, CollectionImeji col) throws ImejiException {
     final User targetCollectionUser = col == null || user.getId().equals(col.getCreatedBy()) ? user
         : new UserService().retrieve(col.getCreatedBy(), Imeji.adminUser);
-
-    final Search search = SearchFactory.create();
-    final List<String> results =
-        search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null,
-            null, 0, -1).getResults();
     long currentDiskUsage = 0L;
     try {
-      currentDiskUsage = Long.parseLong(results.get(0).toString());
+      currentDiskUsage = getUsedQuota(user);
     } catch (final NumberFormatException e) {
-      throw new UnprocessableError("Cannot parse currentDiskSpaceUsage " + results.get(0).toString()
-          + "; requested by user: " + user.getEmail() + "; targetCollectionUser: "
-          + targetCollectionUser.getEmail(), e);
+      throw new UnprocessableError("Cannot parse currentDiskSpaceUsage " + "; requested by user: "
+          + user.getEmail() + "; targetCollectionUser: " + targetCollectionUser.getEmail(), e);
     }
+    return checkQuota(currentDiskUsage, targetCollectionUser, file, col);
+  }
+
+  /**
+   * Check user disk space quota. Quota is calculated for user of target collection.
+   * 
+   * @param currentDiskUsage
+   * @param user
+   * @param file
+   * @param col
+   * @return
+   * @throws ImejiException
+   */
+  public static long checkQuota(long currentDiskUsage, User user, File file, CollectionImeji col)
+      throws ImejiException {
+    final User targetCollectionUser = col == null || user.getId().equals(col.getCreatedBy()) ? user
+        : new UserService().retrieve(col.getCreatedBy(), Imeji.adminUser);
     final long needed = currentDiskUsage + file.length();
     if (needed > targetCollectionUser.getQuota()) {
       throw new QuotaExceededException("Data quota ("
@@ -100,4 +111,19 @@ public class QuotaUtil {
     }
     return targetCollectionUser.getQuota() - needed;
   }
+
+  /**
+   * Return the size of the used storage by the user
+   * 
+   * @param user
+   * @return
+   */
+  public static long getUsedQuota(User user) {
+    final Search search = SearchFactory.create();
+    final List<String> results =
+        search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null,
+            null, 0, -1).getResults();
+    return Long.parseLong(results.get(0).toString());
+  }
+
 }

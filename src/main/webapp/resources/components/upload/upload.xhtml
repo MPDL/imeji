@@ -10,6 +10,8 @@
 		<composite:attribute name="collectionId"/>
 		<composite:attribute name="updateButtonId"/>
 		<composite:attribute name="dropElementId"/>
+		<composite:attribute name="uploadId"/>
+		<composite:attribute name="license"/>
 	</composite:interface>
 	
 	<composite:implementation>
@@ -19,7 +21,8 @@
 				font-size: small;
 			}
 		</style>
-		<div class="uploadPanel"/>
+		
+		
 		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/plupload/2.1.2/js/plupload.full.min.js"></script>
 				<script type="text/javascript">
 					var totalFiles = 0
@@ -32,6 +35,11 @@
 						multi_selection : true,
 						dragdrop: true,
 						drop_element: '#{cc.attrs.dropElementId}',
+						multipart_params: {
+							licenseName: '#{cc.attrs.license.name}',
+							licenseLabel: '#{cc.attrs.license.label}',
+							licenseUrl: '#{cc.attrs.license.url}',
+							},
 						init: {
 							PostInit: function() {
 								totalFiles = 0
@@ -39,7 +47,9 @@
 							},				
 							FilesAdded: function(up, files) {
 								totalFiles =  files.length;
+								closeDialog('uploadDialog');
 								lockPage();
+								$(".uploadPanel").show();
 								addUploadStatusMessage(0,totalFiles);
 								uploader.start();							
 							},
@@ -62,14 +72,11 @@
 						}
 					});
 					uploader.init();
-					function closeUploadMessageArea(){
-						$("#closeUploadMessageArea").click(function(){
-							$("##{cc.attrs.messageAreaId}").hide();
-						});
-					}
-					
+					setTimeout(function() {
+					    $('.imj_messageSuccess').fadeOut(1000);
+					}, 2000);
 					function addUploadStatusMessage(uploaded, total, filename, percent){
-						$(".uploadPanel").show();
+					
 						$(".uploadPanel").html('<pre>#{lbl.uploading} ' + uploaded + ' / ' + total + ' #{lbl.files}.</pre>');
 						if(filename != null){
 							$(".uploadPanel").html('<pre>#{lbl.uploading} ' + uploaded + ' / ' + total + ' #{lbl.files}. \n\n' +filename + '(' + percent + '%)</pre>');
@@ -77,9 +84,10 @@
 					}
 					function addUploadStatusMessageDone(uploaded){
 						$(".uploadPanel").hide();
-						if ( uploaded != '0'){
+						if(uploaded != '0'){
 							document.getElementById('imj_pageMessageArea').innerHTML += '<div id="uploadStatus" class="imj_message imj_messageSuccess" style="display=block;">' + uploaded + ' #{lbl.files} #{lbl.uploaded}.<span class="imj_messageAreaCloseBtn"  onclick="this.parentElement.style.display=\'none\'; setTimeout(function() {$(this).fadeOut(1000); }, 2000);">x</span><span id="uploadStatusContent"></span></div>';
 						}
+	
 					}
 					function addUploadErrorMessage(filename, error){
 						document.getElementById('imj_pageMessageArea').innerHTML += '<div  class="imj_message imj_messageError	"><span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display=\'none\';">x</span>'+ filename + ' #{lbl.not_uploaded}: ' + error +'</div>';

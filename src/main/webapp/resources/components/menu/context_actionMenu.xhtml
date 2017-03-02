@@ -304,7 +304,7 @@
 						<div class="imj_menuBody">
 							<ul class="imj_overlayMenuList">
 							<h:form>
-								<h:outputText styleClass="imj_menuText" value="#{lbl.size}: #{SessionBean.activeAlbum.images.size()} #{lbl.items} "/>
+								<h:outputText styleClass="imj_menuText" style="padding-left:0em;" value="#{lbl.size}: #{SessionBean.activeAlbum.images.size()} #{lbl.items} "/>
 								<li>
 									<h:outputLink value="#{Navigation.albumUrl}#{SessionBean.activeAlbum.idString}/#{Navigation.browsePath}?q=" title="#{lbl.view}">
 										<h:outputText value="#{lbl.album_view} "/>

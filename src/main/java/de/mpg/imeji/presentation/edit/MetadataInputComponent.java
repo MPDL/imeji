@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.MetadataUtil;
 
 /**
@@ -19,7 +20,11 @@ public class MetadataInputComponent implements Serializable {
   private boolean emtpy = false;
 
   public MetadataInputComponent(Metadata metadata, Statement statement) {
+
     this.metadata = metadata.copy();
+    if (metadata.getPerson() == null) {
+      this.metadata.setPerson(ImejiFactory.newPerson());
+    }
     this.statement = statement;
     emtpy = MetadataUtil.isEmpty(metadata);
   }

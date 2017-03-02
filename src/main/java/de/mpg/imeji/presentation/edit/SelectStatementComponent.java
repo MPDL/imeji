@@ -54,6 +54,9 @@ public class SelectStatementComponent implements Serializable {
   }
 
   public Statement asStatement() {
+    if (statementMap.containsKey(index)) {
+      return statementMap.get(index);
+    }
     return new StatementFactory().setIndex(index).setType(type).build();
   }
 

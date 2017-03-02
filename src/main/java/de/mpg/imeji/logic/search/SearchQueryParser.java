@@ -5,6 +5,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -74,7 +75,7 @@ public class SearchQueryParser {
 
   public static void main(String[] args) throws UnprocessableError {
     String q =
-        "author=bas OR (title=this is an example AND (description=\"Super Description\" OR created=2000) OR (md.description=\"Other Description\" OR (md.created.number>=2000 AND md.created.number<50)))";
+        "rinew du tounbt OR (title=this is an example AND (description=\"Super Description\" OR created=2000) OR (md.description=\"Other Description\" OR (md.created.number>=2000 AND md.created.number<50)))";
     SearchQuery sq;
     // sq = parsedecoded(q);
     // System.out.println(q);
@@ -87,7 +88,7 @@ public class SearchQueryParser {
     // sq = parsedecoded(q);
     // System.out.println(q);
     // System.out.println(transform2URL(sq));
-    q = "NOT (filename=Tulips.jpg AND filename=Desert.jpg)";
+    // q = "NOT (filename=Tulips.jpg AND filename=Desert.jpg)";
     sq = parsedecoded(q);
     System.out.println(q);
     System.out.println(transform2URL(sq));
@@ -153,14 +154,20 @@ public class SearchQueryParser {
    * 
    * @param s
    * @return
+   * @throws UnprocessableError
    */
-  private static SearchPair parsePair(String s, boolean not) {
+  private static SearchElement parsePair(String s, boolean not) throws UnprocessableError {
     if (new StringParser(METADATA_PATTERN).find(s)) {
       return parseMetadata(s, not);
     } else if (new StringParser(TECHNICAL_PATTERN).find(s)) {
       return parseTechnical(s, not);
-    } else {
+    } else if (new StringParser(PAIR_PATTERN).find(s)) {
       return parseSearchPair(s, not);
+    } else {
+      return new SearchFactory()
+          .or(Arrays.asList(new SearchPair(SearchFields.all, SearchOperators.EQUALS, s, not),
+              new SearchPair(SearchFields.fulltext, SearchOperators.EQUALS, s, not)))
+          .buildAsGroup();
     }
   }
 

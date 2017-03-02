@@ -9,7 +9,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -27,8 +26,11 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.QuotaExceededException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.ContentService;
+import de.mpg.imeji.logic.content.ContentService.ItemWithStagedFile;
+import de.mpg.imeji.logic.item.StagingService.StagingFile;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
@@ -60,6 +62,7 @@ import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.logic.vo.factory.ItemFactory;
 import de.mpg.imeji.logic.vo.util.LicenseUtil;
 
 /**
@@ -74,7 +77,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
   public static final String NO_THUMBNAIL_URL = "NO_THUMBNAIL_URL";
   private final Search search =
       SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC);
-
   private final ItemController itemController = new ItemController();
 
   /**
@@ -113,21 +115,77 @@ public class ItemService extends SearchServiceAbstract<Item> {
     if (item == null) {
       item = ImejiFactory.newItem(c);
     }
-    if (StringHelper.isNullOrEmptyTrim(filename)) {
-      throw new UnprocessableError("Filename must not be empty!");
-    }
-    if (c == null || c.getId() == null) {
-      throw new UnprocessableError("Collection and Collection Id must not be null");
-    }
-    validateChecksum(c.getId(), f, false);
-    validateFileFormat(f);
-    QuotaUtil.checkQuota(user, f, c);
+    preValidateUpload(filename, c, f, user);
     item.setFilename(filename);
     item.setFileSize(f.length());
     item.setFiletype(StorageUtils.getMimeType(f));
     item = create(item, c, user);
     new ContentService().create(item, f, user);
     return item;
+  }
+
+  /**
+   * Check if the file ca be uploaded
+   * 
+   * @param filename
+   * @param c
+   * @param f
+   * @param user
+   * @throws ImejiException
+   */
+  private void preValidateUpload(String filename, CollectionImeji c, File f, User user)
+      throws ImejiException {
+    if (StringHelper.isNullOrEmptyTrim(filename)) {
+      throw new UnprocessableError("Filename must not be empty!");
+    }
+    validateChecksum(c.getId(), f, false);
+    validateFileFormat(f);
+    QuotaUtil.checkQuota(user, f, c);
+  }
+
+  /**
+   * Upload a File to the staging area. Will not be created as Item.
+   * 
+   * @param uploadId
+   * @param f
+   * @param filename
+   * @param c
+   * @param user
+   * @throws ImejiException
+   */
+  public void uploadToStaging(String uploadId, File f, String filename, CollectionImeji c,
+      User user) throws ImejiException {
+    StagingService service = new StagingService();
+    validateFileFormat(f);
+    long quota = service.getUsedQuota(uploadId, user);
+    QuotaUtil.checkQuota(quota, user, f, c);
+    String checksum = StorageUtils.calculateChecksum(f);
+    service.validateChecksum(uploadId, checksum);
+    validateChecksum(checksum, c.getId(), f, false);
+    service.add(uploadId, new ItemFactory().setCollection(c.getId().toString())
+        .setFilename(filename).setFile(f).build(), f, quota);
+  }
+
+  /**
+   * Create the items from the file in the staging
+   * 
+   * @param uploadId
+   * @param user
+   * @throws ImejiException
+   */
+  public void createFromStaging(String uploadId, User user) throws ImejiException {
+    List<StagingFile> stagingFiles = new StagingService().retrieveAndRemove(uploadId);
+    if (stagingFiles != null && stagingFiles.size() > 0) {
+      CollectionImeji col =
+          new CollectionService().retrieveLazy(stagingFiles.get(0).getItem().getCollection(), user);
+      List<Item> items = stagingFiles.stream().map(a -> a.getItem()).collect(Collectors.toList());
+      create(items, col, user);
+      ContentService contentService = new ContentService();
+      List<ItemWithStagedFile> itemWithFileList = stagingFiles.stream()
+          .map(a -> contentService.new ItemWithStagedFile(a.getItem(), a.getUploadResult()))
+          .collect(Collectors.toList());
+      contentService.createBatch(itemWithFileList, user);
+    }
   }
 
   /**
@@ -531,36 +589,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
     LOGGER.info("Items reindexed!");
   }
 
-
-  /**
-   * Copy Items to another collection
-   * 
-   * @param items
-   * @param collectionId
-   * @param user
-   * @throws ImejiException
-   */
-  public List<String> copyItems(List<String> ids, CollectionImeji destCol, User user)
-      throws ImejiException {
-    List<Item> items = retrieve(ids, user);
-    // Check checksum
-    ContentService contentService = new ContentService();
-    StorageController storageController = new StorageController();
-    List<String> copied = new LinkedList<String>();
-    for (Item item : items) {
-      ContentVO c =
-          contentService.retrieveLazy(contentService.findContentId(item.getId().toString()));
-      File f = storageController.read(c.getOriginal());
-      try {
-        createWithFile(item, f, item.getFilename(), destCol, user);
-        copied.add(item.getId().toString());
-      } catch (Exception e) {
-        LOGGER.error("Can not copied item", e);
-      }
-    }
-    return copied;
-  }
-
   /**
    * Copy Items to another collection and remove the original items
    * 
@@ -569,7 +597,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param user
    * @throws ImejiException
    */
-  public List<Item> moveItems(List<String> ids, CollectionImeji col, User user)
+  public List<Item> moveItems(List<String> ids, CollectionImeji col, User user, License license)
       throws ImejiException {
     List<Item> items = retrieve(ids, user);
     List<ContentVO> contents = retrieveContentBatchLazy(items);
@@ -578,11 +606,29 @@ public class ItemService extends SearchServiceAbstract<Item> {
     if (moved.size() > 0) {
       Set<String> movedSet = moved.stream().map(c -> c.getItemId()).collect(Collectors.toSet());
       items = items.stream().filter(item -> movedSet.contains(item.getId().toString()))
-          .peek(item -> item.setCollection(col.getId())).collect(Collectors.toList());
+          .filter(item -> item.getStatus().equals(Status.PENDING))
+          .peek(item -> prepareMoveItem(item, col, license)).collect(Collectors.toList());
       updateBatch(items, user);
       return items;
     }
     return new ArrayList<>();
+  }
+
+  /**
+   * Prepare an item for move
+   * 
+   * @param item
+   * @param col
+   * @param license
+   * @return
+   */
+  private Item prepareMoveItem(Item item, CollectionImeji col, License license) {
+    item.setCollection(col.getId());
+    item.setStatus(col.getStatus());
+    if (license != null && !license.isEmtpy() && LicenseUtil.getActiveLicense(item) == null) {
+      item.setLicenses(Arrays.asList(license.clone()));
+    }
+    return item;
   }
 
   /**
@@ -688,7 +734,23 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   private void validateChecksum(URI collectionURI, File file, Boolean isUpdate)
       throws UnprocessableError, ImejiException {
-    if (checksumExistsInCollection(collectionURI, StorageUtils.calculateChecksum(file))) {
+    validateChecksum(StorageUtils.calculateChecksum(file), collectionURI, file, isUpdate);
+  }
+
+  /**
+   * Throws an {@link Exception} if the file cannot be uploaded. The validation will only occur when
+   * the file has been stored locally)
+   * 
+   * @param checksum
+   * @param collectionURI
+   * @param file
+   * @param isUpdate
+   * @throws UnprocessableError
+   * @throws ImejiException
+   */
+  private void validateChecksum(String checksum, URI collectionURI, File file, Boolean isUpdate)
+      throws UnprocessableError, ImejiException {
+    if (checksumExistsInCollection(collectionURI, checksum)) {
       throw new UnprocessableError((!isUpdate)
           ? "Same file already exists in the collection (with same checksum). Please choose another file."
           : "Same file already exists in the collection or you are trying to upload same file for the item (with same checksum). Please choose another file.");

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
@@ -17,15 +18,19 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
 import de.mpg.imeji.testimpl.ImejiTestResources;
@@ -35,36 +40,139 @@ import util.JenaUtil;
 public class ItemServiceTest extends SuperServiceTest {
   private static final Logger LOGGER = Logger.getLogger(ItemControllerTestClass.class);
 
+  private static CollectionImeji collectionPrivate;
+  private static CollectionImeji collectionReleased;
+  private static CollectionImeji collectionWithdrawn;
+
+  private static User userAdmin;
+  private static User userReadGrant;
+  private static User userEditGrant;
+  private static User userNoGrant;
 
   @BeforeClass
   public static void specificSetup() {
     try {
       createCollection();
       createItemWithFile();
+      init();
     } catch (ImejiException e) {
       LOGGER.error("Error initializing collection or item", e);
     }
   }
 
+  private static void init() throws ImejiException {
+    UserService userService = new UserService();
+    userAdmin = ImejiFactory.newUser().setEmail("admin@test.org").setPerson("admin", "admin", "org")
+        .setPassword("password").setQuota(Long.MAX_VALUE).build();
+    userReadGrant = ImejiFactory.newUser().setEmail("read@test.org")
+        .setPerson("read", "read", "org").setPassword("password").setQuota(Long.MAX_VALUE).build();
+    userEditGrant = ImejiFactory.newUser().setEmail("edit@test.org")
+        .setPerson("edit", "edit", "org").setPassword("password").setQuota(Long.MAX_VALUE).build();
+    userNoGrant = ImejiFactory.newUser().setEmail("no@test.org").setPerson("no", "no", "org")
+        .setPassword("password").setQuota(Long.MAX_VALUE).build();
+    userService.create(userAdmin, USER_TYPE.ADMIN);
+    userService.create(userReadGrant, USER_TYPE.DEFAULT);
+    userService.create(userEditGrant, USER_TYPE.DEFAULT);
+    userService.create(userNoGrant, USER_TYPE.DEFAULT);
+
+    CollectionService collectionService = new CollectionService();
+    collectionPrivate = ImejiFactory.newCollection().setTitle("Private Collection")
+        .setPerson("Max", "Planck", "MPDL").build();
+    collectionReleased = ImejiFactory.newCollection().setTitle("Private Collection")
+        .setPerson("Max", "Planck", "MPDL").build();
+    collectionWithdrawn = ImejiFactory.newCollection().setTitle("Private Collection")
+        .setPerson("Max", "Planck", "MPDL").build();
+    collectionService.create(collectionPrivate, userAdmin);
+    collectionService.create(collectionReleased, userAdmin);
+    collectionService.create(collectionWithdrawn, userAdmin);
+
+    userReadGrant.getGrants()
+        .add(new Grant(GrantType.READ, collectionPrivate.getId().toString()).toGrantString());
+    userEditGrant.getGrants()
+        .add(new Grant(GrantType.EDIT, collectionPrivate.getId().toString()).toGrantString());
+
+    ItemService itemService = new ItemService();
+    itemService.createWithFile(null, ImejiTestResources.getTestJpg(), "Test.jpg", collectionPrivate,
+        userAdmin);
+    itemService.createWithFile(null, ImejiTestResources.getTestJpg(), "Test.jpg",
+        collectionReleased, userAdmin);
+    itemService.createWithFile(null, ImejiTestResources.getTestJpg(), "Test.jpg",
+        collectionWithdrawn, userAdmin);
+
+    collectionService.releaseWithDefaultLicense(collectionReleased, userAdmin);
+    collectionService.releaseWithDefaultLicense(collectionWithdrawn, userAdmin);
+    collectionWithdrawn.setDiscardComment("Default discard comment");
+    collectionService.withdraw(collectionWithdrawn, userAdmin);
+  }
+
   @Test
-  public void createWithFile_And_delete_Regular() {
+  public void create() {
+    try {
+      createTest("Private collection, Edit user", ImejiFactory.newItem(collectionPrivate),
+          collectionPrivate, userEditGrant, true, null);
+      createTest("Private collection, Read user", ImejiFactory.newItem(collectionPrivate),
+          collectionPrivate, userReadGrant, false, NotAllowedError.class);
+      createTest("Private collection, No grant user", ImejiFactory.newItem(collectionPrivate),
+          collectionPrivate, userNoGrant, false, NotAllowedError.class);
+      createTest("Released collection, no grant user", ImejiFactory.newItem(collectionReleased),
+          collectionReleased, userNoGrant, true, null);
+    } catch (UnprocessableError e) {
+      Assert.fail(e.getMessage());
+    }
+  }
+
+  private void createTest(String msg, Item item, CollectionImeji coll, User user, boolean created,
+      Class exception) {
     ItemService service = new ItemService();
     try {
-      Item item2 = ImejiFactory.newItem(collection);
+      service.create(item, coll, user);
+      if (!created) {
+        Assert.fail(msg + ", No exception has been thrown");
+      }
+    } catch (Exception e) {
+      if (!e.getClass().equals(exception)) {
+        Assert.fail(msg + ", " + e.getMessage());
+      }
+    } finally {
+      try {
+        if (item.getId() == null) {
+          Assert.assertEquals(msg + ", item id should only be null, when the item was not created",
+              created, false);
+        } else {
+          Item result = service.retrieve(item.getId(), userAdmin);
+          Assert.assertEquals(msg + ", item shound be in correct collection",
+              coll.getId().toString(), result.getCollection().toString());
+
+          service.delete(Arrays.asList(item), userAdmin);
+        }
+      } catch (ImejiException e) {
+        if (!(e instanceof NotFoundException)) {
+          Assert.fail(msg + ", " + e.getMessage());
+        }
+      }
+    }
+  }
+
+  // @Test
+  public void createWithFile_WithEditGrant() {
+    ItemService service = new ItemService();
+    try {
+      Item item2 = ImejiFactory.newItem(collectionBasic);
       File file = ImejiTestResources.getTest2Jpg();
       String checksum = StorageUtils.calculateChecksum(file);
-      service.createWithFile(item2, file, file.getName(), collection, JenaUtil.testUser);
-      Assert.assertEquals("Check collection", collection.getId(), item2.getCollection());
+      service.createWithFile(item2, file, file.getName(), collectionBasic, JenaUtil.testUser);
+      Assert.assertEquals("Check collection", collectionBasic.getId(), item2.getCollection());
       Assert.assertEquals("Cheksum of the original", checksum, getOriginalChecksum(item2));
       service.delete(item2.getIdString(), JenaUtil.testUser);
-      Assert.assertEquals("Item should be deleted", false,
-          doesCollectionContainItemWithChecksum(service.retrieveAll(JenaUtil.testUser), checksum));
+      Assert.assertEquals("Item should be deleted", false, doesCollectionContainItemWithChecksum(
+          service.retrieveAll(JenaUtil.adminTestUser), checksum));
     } catch (ImejiException | IOException e) {
       Assert.fail(e.getMessage());
     }
   }
 
-  @Test
+
+  // @Test
   public void createWithFile_CollectionNull() {
     ItemService service = new ItemService();
     Item item2 = new Item();
@@ -89,7 +197,7 @@ public class ItemServiceTest extends SuperServiceTest {
     }
   }
 
-  @Test
+  // @Test
   public void createWithFile_CollectionNoId() {
     CollectionImeji collection2 = ImejiFactory.newCollection().setTitle("Test2").build();
     ItemService service = new ItemService();
@@ -115,7 +223,7 @@ public class ItemServiceTest extends SuperServiceTest {
     }
   }
 
-  @Test
+  // Test
   public void createWithFile_CollectionInvalidId() {
     CollectionImeji collection2 = ImejiFactory.newCollection().setTitle("Test2").build();
     ItemService service = new ItemService();
@@ -142,14 +250,14 @@ public class ItemServiceTest extends SuperServiceTest {
     }
   }
 
-  @Test
+  // @Test
   public void createWithFile_UserUnauthorized() {
     ItemService service = new ItemService();
     Item item2 = new Item();
     File file = ImejiTestResources.getTest2Jpg();
     removeTestUser2Grant();
     try {
-      service.createWithFile(item2, file, file.getName(), collection, JenaUtil.testUser2);
+      service.createWithFile(item2, file, file.getName(), collectionBasic, JenaUtil.testUser2);
       Assert.fail("No exception has been thrown");
     } catch (NotAllowedError e) {
       // Thats correct, do nothing
@@ -168,13 +276,13 @@ public class ItemServiceTest extends SuperServiceTest {
     }
   }
 
-  @Test
+  // @Test
   public void createWithFile_ChecksumAlreadyExists() {
     ItemService service = new ItemService();
     try {
       Item item2 = new Item();
       File file = ImejiTestResources.getTestJpg();
-      service.createWithFile(item2, file, file.getName(), collection, JenaUtil.testUser);
+      service.createWithFile(item2, file, file.getName(), collectionBasic, JenaUtil.testUser);
       Assert.fail("No exception has been thrown");
     } catch (UnprocessableError e) {
       // That's correct, do nothing
@@ -193,9 +301,8 @@ public class ItemServiceTest extends SuperServiceTest {
 
 
   // Tests retrieve, retrieveLazy and retrieveLazyForFile
-  // Always check also for unauthorized User
 
-  public void retrieve_Regular() {
+  public void retrieve_WithReadGrant() {
     ItemService service = new ItemService();
     try {
       Item retrieved = service.retrieve(item.getId(), JenaUtil.testUser);
@@ -210,29 +317,13 @@ public class ItemServiceTest extends SuperServiceTest {
       retrieved = service.retrieveLazyForFile(content.getOriginal(), JenaUtil.testUser);
       Assert.assertEquals("Checksums should be equal", getOriginalChecksum(retrieved),
           getOriginalChecksum(item));
-      removeTestUser2Grant();
-      try {
-        retrieved = service.retrieve(item.getId(), JenaUtil.testUser2);
-        Assert.fail("No exception has been thrown");
-      } catch (NotAllowedError e) {
-      }
-      try {
-        retrieved = service.retrieveLazy(item.getId(), JenaUtil.testUser2);
-        Assert.fail("No exception has been thrown");
-      } catch (NotAllowedError e) {
-      }
-      try {
-        retrieved = service.retrieveLazyForFile(content.getOriginal(), JenaUtil.testUser2);
-        Assert.fail("No exception has been thrown");
-      } catch (NotAllowedError e) {
-      }
     } catch (ImejiException | IOException e) {
       Assert.fail(e.getMessage());
     }
   }
 
 
-  @Test
+  // @Test
   public void retrieveBatch_And_retrieveAll_Regular() {
     ItemService service = new ItemService();
     Item item2 = null;
@@ -244,10 +335,12 @@ public class ItemServiceTest extends SuperServiceTest {
       for (int i = 0; i < 3; i++) {
         checksums[i] = StorageUtils.calculateChecksum(files[i]);
       }
-      item2 = ImejiFactory.newItem(collection);
-      item3 = ImejiFactory.newItem(collection);
-      service.createWithFile(item2, files[1], files[1].getName(), collection, JenaUtil.testUser);
-      service.createWithFile(item3, files[2], files[2].getName(), collection, JenaUtil.testUser);
+      item2 = ImejiFactory.newItem(collectionBasic);
+      item3 = ImejiFactory.newItem(collectionBasic);
+      service.createWithFile(item2, files[1], files[1].getName(), collectionBasic,
+          JenaUtil.testUser);
+      service.createWithFile(item3, files[2], files[2].getName(), collectionBasic,
+          JenaUtil.testUser);
 
       ArrayList<String> uris = new ArrayList<String>();
       uris.add(item.getId().toString());
@@ -272,12 +365,21 @@ public class ItemServiceTest extends SuperServiceTest {
       Assert.fail(e.getMessage());
     } finally {
       try {
-        service.delete(item2.getIdString(), JenaUtil.testUser);
-        service.delete(item3.getIdString(), JenaUtil.testUser);
+        service.delete(item2.getIdString(), JenaUtil.adminTestUser);
+        service.delete(item3.getIdString(), JenaUtil.adminTestUser);
       } catch (ImejiException e) {
         Assert.fail(e.getMessage());
       }
     }
+  }
+
+  /**
+   * Check for: item created by User 1 in collection not visible to user 2 item created by user 2 in
+   * collection not visible to user 2
+   */
+  // @Test
+  public void retrieveBatch_MultipleUsers() {
+
   }
 
   // @Test
@@ -286,7 +388,7 @@ public class ItemServiceTest extends SuperServiceTest {
     File newFile = ImejiTestResources.getTest3Jpg();
     try {
       String checksum = StorageUtils.calculateChecksum(newFile);
-      service.updateFile(item, collection, newFile, newFile.getName(), JenaUtil.testUser);
+      service.updateFile(item, collectionBasic, newFile, newFile.getName(), JenaUtil.testUser);
       Assert.assertEquals("Checksum should be equal", getOriginalChecksum(item), checksum);
     } catch (ImejiException | IOException e) {
       Assert.fail(e.getMessage());
@@ -315,7 +417,7 @@ public class ItemServiceTest extends SuperServiceTest {
 
   private void removeTestUser2Grant() {
     JenaUtil.testUser2.getGrants()
-        .remove(new Grant(GrantType.ADMIN, collection.getId().toString()).toGrantString());
+        .remove(new Grant(GrantType.ADMIN, collectionBasic.getId().toString()).toGrantString());
   }
 
   private boolean doesCollectionContainItemWithChecksum(Collection<Item> collection,

@@ -43,7 +43,6 @@ public class CollectionActionMenu implements Serializable {
     this.collection = collection;
     this.user = user;
     this.locale = locale;
-    searchItemsWihoutLicense();
   }
 
   /**
@@ -72,7 +71,7 @@ public class CollectionActionMenu implements Serializable {
   /**
    * Search the number of items wihout any license
    */
-  protected void searchItemsWihoutLicense() {
+  public void searchItemsWihoutLicense() {
     final ItemService controller = new ItemService();
     itemsWithoutLicense =
         controller

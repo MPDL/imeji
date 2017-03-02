@@ -36,6 +36,15 @@ public class ImejiFactory {
   }
 
   /**
+   * Return the Factory to create user
+   * 
+   * @return
+   */
+  public static UserFactory newUser() {
+    return new UserFactory();
+  }
+
+  /**
    * Return the Factory to create ContentVO
    * 
    * @return

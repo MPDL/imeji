@@ -21,7 +21,9 @@ import util.JenaUtil;
  */
 public class SuperServiceTest {
 
-  protected static CollectionImeji collection = null;
+  protected static CollectionImeji collectionBasic = null;
+  protected static CollectionImeji collectionReleased = null;
+  protected static CollectionImeji collectionWithdrawn = null;
   protected static Item item = null;
 
   @BeforeClass
@@ -44,9 +46,9 @@ public class SuperServiceTest {
     CollectionService service = new CollectionService();
     CollectionFactory factory = ImejiFactory.newCollection();
     factory.setPerson("Max", "Planck", "MPG");
-    collection = factory.build();
-    collection.setTitle("Test");
-    return service.create(collection, JenaUtil.testUser);
+    collectionBasic = factory.build();
+    collectionBasic.setTitle("Test");
+    return service.create(collectionBasic, JenaUtil.testUser);
   }
 
   /**
@@ -57,7 +59,8 @@ public class SuperServiceTest {
    */
   protected static Item createItem() throws ImejiException {
     ItemService service = new ItemService();
-    item = service.create(ImejiFactory.newItem(collection), collection, JenaUtil.testUser);
+    item =
+        service.create(ImejiFactory.newItem(collectionBasic), collectionBasic, JenaUtil.testUser);
     return item;
   }
 
@@ -66,10 +69,10 @@ public class SuperServiceTest {
   }
 
   protected static Item createItemWithFile(File file) throws ImejiException {
-    if (collection == null) {
+    if (collectionBasic == null) {
       createCollection();
     }
-    return createItemWithFile(file, collection, JenaUtil.testUser);
+    return createItemWithFile(file, collectionBasic, JenaUtil.testUser);
   }
 
   protected static Item createItemWithFile(File file, CollectionImeji collection, User user)

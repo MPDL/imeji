@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.doi.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,21 +8,18 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "resource")
-public class DOICollection {
-
+public class DOICollection implements Serializable {
+  private static final long serialVersionUID = 5767739527817909134L;
   private DOIIdentifier identifier;
-  private List<DOICreators> creators = new ArrayList<DOICreators>();
-  private List<DOITitle> titles = new ArrayList<DOITitle>();
-  private String publisher;
+  private final DOICreators creators = new DOICreators();
+  private final List<DOITitle> titles = new ArrayList<DOITitle>();
+  private final String publisher = "Max-Planck-Gesellschaft zur Förderung der Wissenschaften e. V.";
   private String publicationYear;
 
-  @XmlElement(name = "creators")
-  public List<DOICreators> getCreators() {
-    return creators;
-  }
 
-  public void setCreators(List<DOICreators> creators) {
-    this.creators = creators;
+  @XmlElement(name = "creators")
+  public DOICreators getCreators() {
+    return creators;
   }
 
   @XmlElement(name = "titles")
@@ -29,16 +27,9 @@ public class DOICollection {
     return titles;
   }
 
-  public void setTitles(List<DOITitle> titles) {
-    this.titles = titles;
-  }
-
+  @XmlElement(name = "publisher")
   public String getPublisher() {
     return publisher;
-  }
-
-  public void setPublisher(String publisher) {
-    this.publisher = publisher;
   }
 
   public String getPublicationYear() {

@@ -160,9 +160,7 @@
 					    cursor: pointer;
 					    transition: 0.3s;
 					}
-					.imj_dragOver{
-						border: 2px dashed #6CAE2F;
-					}
+					
 					.itemsArea{
 						max-width : 96%;
 					}
@@ -230,6 +228,21 @@
 						top: 5em;
 						font-size: 1em;
 					}
+					.uploadDialog{
+						font-size: 1em;
+						width: 60vh;
+					}
+					.uploadDialogHeadArea{
+						height: 8%;
+						margin-bottom: 1em;
+						position: initial !important;
+					}
+					.uploadDialogDropArea{
+						cursor: pointer;
+					}
+					.imj_dragOver{
+						border: 2px dashed #6CAE2F;
+					}
                 </style>
                 <!-- NEW SCIPT - TO BE ADDED TO JS -->
                
@@ -250,14 +263,14 @@
 	                <ui:include src="component/header/header_default.xhtml"/>
 	                
 	               <!-- Messages -->
-	                <div id="imj_pageMessageArea">
+	                <h:panelGroup layout="block" id="imj_pageMessageArea">
 		                <ui:repeat var="message" value="#{MessagesBean.messages}">
 		                	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
 		                		<span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display='none';">x</span>
 		                		#{message.detail}
 		                	</div>
 		                </ui:repeat>
-	                </div>
+	                </h:panelGroup>
 	                 <!-- Search Query -->
 	                <ui:insert name="searchQuery"/>
 		                 <!-- headline -->

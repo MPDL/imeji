@@ -26,7 +26,7 @@
 					<h:commandLink styleClass="imj_cancelButton"
 						action="#{ItemsEditLicenseBean.cancel}" value="#{lbl.cancel}" />
 					<h:commandLink type="submit" styleClass="imj_submitButton"
-						action="#{ItemsEditLicenseBean.save}" value="#{lbl.save}" />
+						action="#{ItemsEditLicenseBean.save}" value="#{lbl.save}" onclick=";startLoader();"/>
 				</div>
 			</h:form>
 		</div>

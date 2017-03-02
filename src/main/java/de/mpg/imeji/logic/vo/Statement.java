@@ -35,6 +35,8 @@ public class Statement implements Serializable, Cloneable {
   private String index;
   @j2jLiteral("http://purl.org/dc/terms/type")
   private String typeString = type.name();
+  @j2jLiteral("http://imeji.org/terms/namespace")
+  private String namespace;
   @j2jResource("http://purl.org/dc/dcam/VocabularyEncodingScheme")
   private URI vocabulary;
   @j2jList("http://imeji.org/terms/literalConstraint")
@@ -118,6 +120,20 @@ public class Statement implements Serializable, Cloneable {
 
   public URI getUri() {
     return uri;
+  }
+
+  /**
+   * @return the namespace
+   */
+  public String getNamespace() {
+    return namespace;
+  }
+
+  /**
+   * @param namespace the namespace to set
+   */
+  public void setNamespace(String namespace) {
+    this.namespace = namespace;
   }
 
   /*

@@ -6,6 +6,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -45,6 +46,30 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
   private static final Logger LOGGER = Logger.getLogger(ContentService.class);
   private final ContentController controller = new ContentController();
 
+  public class ItemWithStagedFile {
+    private final Item item;
+    private final UploadResult uploadResult;
+
+    public ItemWithStagedFile(Item item, UploadResult uploadResult) {
+      this.item = item;
+      this.uploadResult = uploadResult;
+    }
+
+    /**
+     * @return the item
+     */
+    public Item getItem() {
+      return item;
+    }
+
+    /**
+     * @return the file
+     */
+    public UploadResult getUploadResult() {
+      return uploadResult;
+    }
+  }
+
   public ContentService() {
     super(SearchObjectTypes.CONTENT);
   }
@@ -66,6 +91,26 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     analyzeFile(contentVO);
     return contentVO;
   }
+
+  /**
+   * Batch create {@link ContentVO}
+   * 
+   * @param itemWithFileList
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public List<ContentVO> createBatch(List<ItemWithStagedFile> itemWithFileList, User user)
+      throws ImejiException {
+    List<ContentVO> contents = itemWithFileList.stream()
+        .map(i -> toContentVO(i.getItem().getId().toString(), i.getUploadResult()))
+        .collect(Collectors.toList());
+    controller.createBatch(contents, user);
+    contents.stream().forEach(c -> analyzeFile(c));
+    return contents;
+  }
+
+
 
   /**
    * Create a ContentVO for an external file. File will not be downloaded and thus not analyzed
@@ -261,6 +306,18 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     final StorageController sc = new StorageController();
     final UploadResult uploadResult =
         sc.upload(file.getName(), file, ObjectHelper.getId(collection));
+    return toContentVO(itemId, uploadResult);
+  }
+
+  /**
+   * Transform an uploadresult to a contentvo
+   * 
+   * @param itemId
+   * @param uploadResult
+   * @return
+   */
+  private ContentVO toContentVO(String itemId, UploadResult uploadResult) {
+    ContentVO contentVO = new ContentVO();
     contentVO.setItemId(itemId);
     contentVO.setOriginal(uploadResult.getOrginal());
     contentVO.setPreview(uploadResult.getWeb());
@@ -280,7 +337,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    * @throws ImejiException
    */
-  private void analyzeFile(ContentVO contentVO) throws ImejiException {
+  private void analyzeFile(ContentVO contentVO) {
     Imeji.getCONTENT_EXTRACTION_EXECUTOR().submit(new ExtractFileContentAndUpdateTask(contentVO));
   }
 

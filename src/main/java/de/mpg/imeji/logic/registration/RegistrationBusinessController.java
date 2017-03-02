@@ -204,7 +204,7 @@ public class RegistrationBusinessController {
       return true;
     }
     for (final String suffix : rwl.split(",")) {
-      if (email.endsWith(suffix)) {
+      if (email.trim().endsWith(suffix)) {
         return true;
       }
     }

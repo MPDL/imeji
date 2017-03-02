@@ -14,7 +14,7 @@
 	
 	
 	<ui:define name="authorization">
-		#{Auth.init(itemBean.image.collection)}
+		#{Auth.init(itemBean.item)}
 	</ui:define>
 	
 	<ui:define name="actionsMenu">
@@ -62,11 +62,6 @@
 				</ui:fragment>
 			</h:panelGroup>
 			
-			<dialog:confirmationDialog submitAction="makePublic" bean="#{itemBean}" confirmationText="#{msg.confirmation_make_public}?" submitLabel="#{lbl.make_public}" dialogId="makePublicMenuItemDialog" rendered="#{Auth.admin}"/>
-			<dialog:confirmationDialog submitAction="makePrivate" bean="#{itemBean}" confirmationText="#{msg.confirmation_make_private}?" submitLabel="#{lbl.make_private}" dialogId="makePrivateMenuItemDialog" rendered="#{Auth.admin}"/>
-			<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteMenuItemDialog" rendered="#{Auth.delete}"/>
-			<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawMenuItemDialog" rendered="#{Auth.admin and WorkflowBean.withdraw(itemBean.image)}"/>
-		
 		</ui:fragment>
 		
 		 <ui:fragment rendered="#{itemBean.image == null}">

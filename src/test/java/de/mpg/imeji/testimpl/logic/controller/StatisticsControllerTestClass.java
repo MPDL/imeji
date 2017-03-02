@@ -61,8 +61,8 @@ public class StatisticsControllerTestClass extends SuperServiceTest {
 
   private CollectionImeji createCollection(User user) throws ImejiException {
     CollectionService controller = new CollectionService();
-    collection = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
-    return controller.create(collection, profile, user, MetadataProfileCreationMethod.COPY, null);
+    collectionBasic = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
+    return controller.create(collectionBasic, profile, user, MetadataProfileCreationMethod.COPY, null);
   }
 
   private Item createItemWithFile(CollectionImeji col, File file, User user) throws ImejiException {

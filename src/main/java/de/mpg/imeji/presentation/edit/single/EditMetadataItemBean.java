@@ -2,7 +2,9 @@ package de.mpg.imeji.presentation.edit.single;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -13,11 +15,14 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.factory.MetadataFactory;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
 import de.mpg.imeji.presentation.edit.MetadataInputComponent;
 import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
@@ -54,6 +59,10 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
       rows = item.getMetadata().stream()
           .map(md -> new SelectStatementWithInputComponent(md, statementMap))
           .collect(Collectors.toList());
+      rows.addAll(retrieveInstanceDefaultStatements().stream()
+          .map(s -> new SelectStatementWithInputComponent(
+              new MetadataFactory().setStatementId(s.getIndex()).build(), statementMap))
+          .collect(Collectors.toList()));
     } catch (final ImejiException e) {
       BeanHelper.error("Error retrieving item");
       LOGGER.error("Error retrieving Item with id " + id, e);
@@ -75,6 +84,33 @@ public class EditMetadataItemBean extends EditMetadataAbstract {
         .map(SelectStatementWithInputComponent::getInput).map(MetadataInputComponent::getStatement)
         .collect(Collectors.toMap(Statement::getIndex, Function.identity(), (a, b) -> a)).values()
         .stream().collect(Collectors.toList());
+  }
+
+  /**
+   * Return the default Statement for the current items
+   * 
+   * @return
+   */
+  protected Map<String, Statement> getDefaultStatements() {
+    final Map<String, Statement> map = new HashMap<>();
+    try {
+      // add from config
+      map.putAll(StatementUtil.statementListToMap(retrieveInstanceDefaultStatements()));
+    } catch (Exception e) {
+      LOGGER.error("Error adding default statement to editor", e);
+    }
+    return map;
+  }
+
+  /**
+   * Retrieve the default statements defined for the whole instance
+   * 
+   * @return
+   * @throws ImejiException
+   */
+  private List<Statement> retrieveInstanceDefaultStatements() throws ImejiException {
+    return statementService.retrieveBatch(
+        StatementUtil.toStatementUriList(Imeji.CONFIG.getStatements()), getSessionUser());
   }
 
   /**

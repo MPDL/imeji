@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.item;
+package de.mpg.imeji.presentation.license;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +22,6 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.license.LicenseEditor;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**

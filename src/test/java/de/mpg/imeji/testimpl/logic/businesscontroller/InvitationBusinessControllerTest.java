@@ -57,14 +57,14 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
   public void inviteAndConsume() throws ImejiException {
     List<String> roles =
         ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
-    Invitation invitation = new Invitation(UNKNOWN_EMAIL, collection.getId().toString(), roles);
+    Invitation invitation = new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString(), roles);
     invitationBC.invite(invitation);
     UserService userController = new UserService();
     userController.create(getRegisteredUser(), USER_TYPE.DEFAULT);
     User user = userController.retrieve(UNKNOWN_EMAIL, Imeji.adminUser);
-    Assert.assertTrue(SecurityUtil.authorization().read(user, collection));
-    Assert.assertTrue(SecurityUtil.authorization().update(user, collection));
-    Assert.assertTrue(SecurityUtil.authorization().createContent(user, collection));
+    Assert.assertTrue(SecurityUtil.authorization().read(user, collectionBasic));
+    Assert.assertTrue(SecurityUtil.authorization().update(user, collectionBasic));
+    Assert.assertTrue(SecurityUtil.authorization().createContent(user, collectionBasic));
     // Check the invitation has been deleted
     Assert.assertEquals(0, invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL).size());
   }
@@ -78,7 +78,7 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
   public void inviteStopAndStartStore() throws ImejiException {
     List<String> roles =
         ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
-    Invitation invitation = new Invitation(UNKNOWN_EMAIL, collection.getId().toString(), roles);
+    Invitation invitation = new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString(), roles);
     invitationBC.invite(invitation);
     List<Invitation> invitationsBefore = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
     KeyValueStoreService.stopAllStores();
@@ -98,7 +98,7 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
     int numberOfInvitations = 15;
     for (int i = 0; i < numberOfInvitations; i++) {
       Invitation invitation =
-          new Invitation(UNKNOWN_EMAIL, collection.getId().toString() + i, roles);
+          new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString() + i, roles);
       invitationBC.invite(invitation);
     }
     List<Invitation> invitations = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
@@ -108,7 +108,7 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
     // numberOfInvitations +1
     for (int i = 0; i < numberOfInvitations + 1; i++) {
       Invitation invitation =
-          new Invitation(UNKNOWN_EMAIL, collection.getId().toString() + i, roles);
+          new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString() + i, roles);
       invitationBC.invite(invitation);
     }
     invitations = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
@@ -123,19 +123,19 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
     int numberOfInvitations = 15;
     for (int i = 0; i < numberOfInvitations; i++) {
       Invitation invitation =
-          new Invitation(i + UNKNOWN_EMAIL, collection.getId().toString(), roles);
+          new Invitation(i + UNKNOWN_EMAIL, collectionBasic.getId().toString(), roles);
       invitationBC.invite(invitation);
     }
     List<Invitation> invitations =
-        invitationBC.retrieveInvitationsOfObject(collection.getId().toString());
+        invitationBC.retrieveInvitationsOfObject(collectionBasic.getId().toString());
     Assert.assertEquals(numberOfInvitations, invitations.size());
     // Re-send same invitations for one object
     for (int i = 0; i < numberOfInvitations; i++) {
       Invitation invitation =
-          new Invitation(i + UNKNOWN_EMAIL, collection.getId().toString(), roles);
+          new Invitation(i + UNKNOWN_EMAIL, collectionBasic.getId().toString(), roles);
       invitationBC.invite(invitation);
     }
-    invitations = invitationBC.retrieveInvitationsOfObject(collection.getId().toString());
+    invitations = invitationBC.retrieveInvitationsOfObject(collectionBasic.getId().toString());
     Assert.assertEquals(numberOfInvitations, invitations.size());
   }
 

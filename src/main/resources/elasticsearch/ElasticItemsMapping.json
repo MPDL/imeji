@@ -22,12 +22,13 @@
 			},
 			"name": {
 				"type": "string",
+				"include_in_all": true,
 				"fields": {
 					"suggest": {
 						"type": "string",
 						"analyzer": "edgegram_analyzer",
 						"search_analyzer": "standard",
-						"include_in_all": false
+						"include_in_all": true
 					},
 					"sort": {
 						"type": "string",

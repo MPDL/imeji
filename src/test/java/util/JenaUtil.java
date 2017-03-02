@@ -45,7 +45,7 @@ public class JenaUtil {
   public static User adminTestUser;
   public static String TEST_USER_EMAIL = "test@imeji.org";
   public static String TEST_USER_EMAIL_2 = "test2@imeji.org";
-  public static String ADMIN_USER_EMAIL = "admin@imeji.org";
+  public static String ADMIN_USER_EMAIL = "adminTest@imeji.org";
   public static String TEST_USER_NAME = "Test User";
   public static String TEST_USER_PWD = "password";
   public static String TDB_PATH;
@@ -98,16 +98,21 @@ public class JenaUtil {
     testUser = getMockupUser(TEST_USER_EMAIL, TEST_USER_NAME, TEST_USER_PWD, false);
     testUser2 = getMockupUser(TEST_USER_EMAIL_2, TEST_USER_NAME, TEST_USER_PWD, false);
     adminTestUser = getMockupUser(ADMIN_USER_EMAIL, TEST_USER_NAME, TEST_USER_PWD, true);
-    testUser = createUser(testUser);
-    testUser2 = createUser(testUser2);
-    adminTestUser = createUser(adminTestUser);
+    testUser = createUser(testUser, false);
+    testUser2 = createUser(testUser2, false);
+    adminTestUser = createUser(adminTestUser, true);
   }
 
 
-  private static User createUser(User u) throws ImejiException {
+  private static User createUser(User u, boolean isAdmin) throws ImejiException {
     UserService c = new UserService();
     try {
-      return c.create(u, USER_TYPE.DEFAULT);
+      if (isAdmin) {
+        return c.create(u, USER_TYPE.ADMIN);
+      } else {
+        return c.create(u, USER_TYPE.DEFAULT);
+      }
+
     } catch (Exception e) {
       LOGGER.info(u.getEmail() + " already exists. Must not be created");
       return c.retrieve(u.getEmail(), Imeji.adminUser);

@@ -20,7 +20,7 @@
 	<composite:implementation>
 		<ui:fragment rendered="#{Auth.loggedIn}">
 			
-			<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox" style="display:none;">
+			<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox" style="display:none;width: 40em;">
 				<div class="imj_confirmationText">
 					<h:outputText value="#{cc.attrs.confirmationText}"/>
 				</div>
@@ -33,11 +33,9 @@
 						<h:outputText value="#{cc.attrs.submitLabel1}"/>
 					</button>
 					
-					<button onclick="closeDialog('#{cc.attrs.dialogId}');openDialog('#{cc.attrs.submitId2}');" class="imj_submitButton">
+					<button onclick="closeDialog('#{cc.attrs.dialogId}');openDialog('#{cc.attrs.submitId2}');" class="imj_submitButton" >
 						<h:outputText value="#{cc.attrs.submitLabel2}"/>
 					</button>
-					
-
 				</div>
 			</div>
 		</ui:fragment>

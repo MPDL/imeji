@@ -1,11 +1,14 @@
 package de.mpg.imeji.presentation.upload;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,9 +30,13 @@ import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
@@ -39,7 +46,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-@WebServlet(urlPatterns = "/uploadServlet", asyncSupported = true)
+@WebServlet(urlPatterns = "/uploadServlet", asyncSupported = true, loadOnStartup = 5)
 public class UploadServlet extends HttpServlet {
   private static final long serialVersionUID = -4879871986174193049L;
   private static final Logger LOGGER = Logger.getLogger(UploadServlet.class);
@@ -53,11 +60,21 @@ public class UploadServlet extends HttpServlet {
    *
    */
   private class UploadItem {
-    private final File file;
-    private final String filename;
+    private File file;
+    private String filename;
+    private Map<String, String> params = new HashMap<String, String>();
 
-    public UploadItem(File file, String filename) {
+    /**
+     * @param file the file to set
+     */
+    public void setFile(File file) {
       this.file = file;
+    }
+
+    /**
+     * @param filename the filename to set
+     */
+    public void setFilename(String filename) {
       this.filename = filename;
     }
 
@@ -68,6 +85,14 @@ public class UploadServlet extends HttpServlet {
     public String getFilename() {
       return filename;
     }
+
+    /**
+     * @return the params
+     */
+    public Map<String, String> getParams() {
+      return params;
+    }
+
   }
 
   @Override
@@ -83,10 +108,19 @@ public class UploadServlet extends HttpServlet {
       throws ServletException, IOException {
     final UploadItem upload = doUpload(req);
     final SessionBean session = getSession(req);
+    final String uploadId = req.getParameter("uploadId");
+    final License license = getLicense(upload);
     try {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
-      itemService.createWithFile(null, upload.getFile(), upload.getFilename(), col, user);
+      if (!StringHelper.isNullOrEmptyTrim(uploadId)) {
+        itemService.uploadToStaging(uploadId, upload.getFile(), upload.getFilename(), col, user);
+      } else {
+        Item item = ImejiFactory.newItem(col);
+        item.setLicenses(Arrays.asList(license));
+        itemService.createWithFile(item, upload.getFile(), upload.getFilename(), col, user);
+      }
+      writeResponse(resp, "");
     } catch (final AuthenticationError e) {
       writeResponse(resp, e.getMessage());
       resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -97,8 +131,26 @@ public class UploadServlet extends HttpServlet {
     }
   }
 
+  /**
+   * Create a Licence from the request
+   * 
+   * @param req
+   * @return
+   * @throws ServletException
+   * @throws IOException
+   */
+  private License getLicense(UploadItem uploadItem) throws IOException, ServletException {
+    final License license = new License();
+    license.setLabel(uploadItem.getParams().get("licenseLabel"));
+    license.setName(uploadItem.getParams().get("licenseName"));
+    license.setUrl(uploadItem.getParams().get("licenseUrl"));
+    license.setStart(System.currentTimeMillis());
+    return license;
+  }
+
   private void writeResponse(HttpServletResponse resp, String errorMessage) throws IOException {
-    resp.getOutputStream().write(errorMessage.getBytes(Charset.forName("UTF-8")));
+    resp.getOutputStream()
+        .write(("<error>" + errorMessage + "</error>").getBytes(Charset.forName("UTF-8")));
   }
 
   /**
@@ -113,20 +165,25 @@ public class UploadServlet extends HttpServlet {
     try {
       final ServletFileUpload upload = new ServletFileUpload();
       final FileItemIterator iter = upload.getItemIterator(req);
+      UploadItem uploadItem = new UploadItem();
       while (iter.hasNext()) {
         final FileItemStream fis = iter.next();
-        final InputStream stream = fis.openStream();
         if (!fis.isFormField()) {
-          final String name = fis.getName();
+          uploadItem.setFilename(fis.getName());
           final File tmp = TempFileUtil.createTempFile("upload", null);
-          StorageUtils.writeInOut(stream, new FileOutputStream(tmp), true);
-          return new UploadItem(tmp, name);
+          StorageUtils.writeInOut(fis.openStream(), new FileOutputStream(tmp), true);
+          uploadItem.setFile(tmp);
+        } else {
+          ByteArrayOutputStream out = new ByteArrayOutputStream();
+          StorageUtils.writeInOut(fis.openStream(), out, true);
+          uploadItem.getParams().put(fis.getFieldName(), out.toString("UTF-8"));
         }
       }
+      return uploadItem;
     } catch (final Exception e) {
       LOGGER.error("Error file upload", e);
     }
-    return null;
+    return new UploadItem();
   }
 
   private CollectionImeji retrieveCollection(HttpServletRequest req, User user) {
