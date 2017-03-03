@@ -21,6 +21,7 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
 import de.mpg.imeji.presentation.edit.MetadataInputComponent;
 import de.mpg.imeji.presentation.edit.SelectStatementComponent;
@@ -51,11 +52,18 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
     reset();
   }
 
+  public void initInput() {
+    Statement statement = statementSelector.getStatement() != null
+        ? statementSelector.getStatement() : statementSelector.getStatementForm().asStatement();
+    input = new MetadataInputComponent(ImejiFactory.newMetadata(statement).build(), statement);
+  }
+
   /**
    * Reset the editor
    */
   public void reset() {
     statementSelector = new SelectStatementComponent(statementMap);
+    input = null;
   }
 
   /**
@@ -176,4 +184,17 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
     this.backUrl = backUrl;
   }
 
+  /**
+   * @return the input
+   */
+  public MetadataInputComponent getInput() {
+    return input;
+  }
+
+  /**
+   * @param input the input to set
+   */
+  public void setInput(MetadataInputComponent input) {
+    this.input = input;
+  }
 }

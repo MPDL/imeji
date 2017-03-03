@@ -11,13 +11,14 @@
 	<composite:attribute name="component" required="true" />
 	<composite:attribute name="bean" />
 	<composite:attribute name="submitAction" />
+	<composite:attribute name="containerId" />
 </composite:interface>
 
 <composite:implementation>
 	<div id="createStatementDialog" class="imj_modalDialogBox imj_moveItemsDialogBox"
 		style="display: none;">
 		<h:panelGroup id="statementForm">
-			<statement:form form="#{cc.attrs.component.statementForm}" render=":selectStatement:dialog:statementForm" />
+			<statement:form form="#{cc.attrs.component.statementForm}" render="#{cc.attrs.containerId}:dialog:statementForm" />
 		</h:panelGroup>
 		<div id="submitButtonPanel" class="imj_submitPanel">
 			<button type="reset"

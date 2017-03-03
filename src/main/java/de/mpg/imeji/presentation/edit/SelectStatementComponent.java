@@ -45,7 +45,6 @@ public class SelectStatementComponent implements Serializable {
    * Listener when the value of the component has been changed
    */
   public void listener() {
-    System.out.println(index);
     init(index);
   }
 
