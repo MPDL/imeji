@@ -93,7 +93,7 @@ public abstract class EditMetadataAbstract extends SuperBean {
    */
   private List<Statement> retrieveInstanceDefaultStatements() throws ImejiException {
     return statementService.retrieveBatch(
-        StatementUtil.toStatementUriList(Imeji.CONFIG.getStatements()), getSessionUser());
+        StatementUtil.toStatementUriList(Imeji.CONFIG.getStatements()), Imeji.adminUser);
   }
 
   /**

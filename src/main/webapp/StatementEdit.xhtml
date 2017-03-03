@@ -4,13 +4,21 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
-	xmlns:sta="http://java.sun.com/jsf/composite/components/statement"
+	xmlns:statement="http://java.sun.com/jsf/composite/components/statement"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components">
 	<ui:param name="headline" value="#{lbl.statement_edit}" />
 	<ui:param name="currentMainMenu" value="admin" />
 
 	<ui:define name="mainContent">
-		<sta:statementForm formBean="#{StatementEditBean}" />
+		<h:form>
+			<statement:form formBean="#{StatementEditBean}" render="@form"/>
+			<div id="submitButtonPanel" class="imj_submitPanel">
+                 <h:outputLink value="#{HistorySession.previousPage.completeUrlWithHistory}" styleClass="imj_cancelButton">
+                     <h:outputText value="#{lbl.cancel}"/>
+                 </h:outputLink>
+                 <h:commandButton id="btnCreateStatement" action="#{StatementEditBean.save()}" value="#{lbl.save}" styleClass="imj_submitButton"/>
+             </div>
+		</h:form>
 	</ui:define>
 </ui:composition>
 

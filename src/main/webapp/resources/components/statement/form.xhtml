@@ -1,0 +1,97 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:imjc="http://java.sun.com/jsf/composite/components"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+
+<composite:interface>
+	<composite:attribute name="form" required="true" />
+	<composite:attribute name="render" required="true" />
+</composite:interface>
+
+<composite:implementation>
+	<div class="imj_headline">
+		<br />
+	</div>
+	<div class="imj_descriptionArea">
+		<!-- Index -->
+		<div class="imj_metadataSet">
+			<label class="imj_metadataLabel"> #{lbl.name}<span
+				class="imj_noDisplay">: </span>
+			</label>
+			<h:inputText id="inputStatementName" styleClass="imj_metadataValue"
+				value="#{cc.attrs.form.name}" html5:autofocus="true" />
+		</div>
+		<div class="imj_metadataSet">
+			<label class="imj_metadataLabel"> #{lbl.type}<span
+				class="imj_noDisplay">: </span>
+			</label>
+			<h:selectOneMenu id="selStatementType" value="#{cc.attrs.form.type}">
+				<f:selectItems value="#{cc.attrs.form.statementTypeMenu}" />
+				<f:ajax render="#{cc.attrs.render}" execute="#{cc.attrs.render}" />
+			</h:selectOneMenu>
+		</div>
+		<div class="imj_metadataSet">
+			<label class="imj_metadataLabel"> #{lbl.namespace}<span
+				class="imj_noDisplay">: </span>
+			</label>
+			<h:inputText id="inputStatementNamespace"
+				styleClass="imj_metadataValue" value="#{cc.attrs.form.namespace}" />
+		</div>
+		<ui:fragment rendered="#{cc.attrs.form.type == 'TEXT'}">
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel"> #{lbl.predefined_values}<span
+					class="imj_noDisplay">: </span>
+				</label>
+				<div class="imj_metadataValue">
+					<ui:repeat var="value" value="#{cc.attrs.form.predefinedValues}"
+						varStatus="varStatus">
+						<h:inputText id="inputPredefined" styleClass="" value="#{value}"
+							valueChangeListener="#{cc.attrs.form.predefinedValuesListener}">
+							<f:attribute name="position" value="#{varStatus.index}" />
+						</h:inputText>
+						<h:commandLink value=""
+							action="#{cc.attrs.form.removePredefinedValue(varStatus.index)}"
+							styleClass="fa fa-minus-square-o">
+							<f:ajax execute="#{cc.attrs.render}" render="#{cc.attrs.render}" />
+						</h:commandLink>
+						<br />
+						<br />
+					</ui:repeat>
+					<h:commandLink value=""
+						action="#{cc.attrs.form.addPredefinedValue}"
+						styleClass="fa fa-plus-square-o">
+						<f:ajax execute="#{cc.attrs.render}" render="#{cc.attrs.render}" />
+					</h:commandLink>
+				</div>
+			</div>
+		</ui:fragment>
+		<ui:fragment
+			rendered="#{cc.attrs.form.type == 'GEOLOCATION' and not empty Configuration.googleMapsApi}">
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel"> #{lbl.use_google_maps}<span
+					class="imj_noDisplay">: </span>
+				</label>
+				<div class="imj_metadataValue">
+					<h:selectBooleanCheckbox value="#{cc.attrs.form.useGoogleMapsAPI}" />
+				</div>
+			</div>
+		</ui:fragment>
+		<ui:fragment
+			rendered="#{cc.attrs.form.type == 'PERSON' and not empty Configuration.coneAuthors}">
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel">
+					#{lbl.use_max_planck_authors}<span class="imj_noDisplay">: </span>
+				</label>
+				<div class="imj_metadataValue">
+					<h:selectBooleanCheckbox
+						value="#{cc.attrs.form.useMaxPlanckAuthors}" />
+				</div>
+			</div>
+		</ui:fragment>
+	</div>
+</composite:implementation>
+</html>

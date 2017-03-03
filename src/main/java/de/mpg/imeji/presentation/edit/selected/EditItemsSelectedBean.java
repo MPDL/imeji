@@ -1,5 +1,7 @@
 package de.mpg.imeji.presentation.edit.selected;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +21,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
-import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
+import de.mpg.imeji.presentation.edit.SelectStatementComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -35,22 +37,22 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   private static final Logger LOGGER = Logger.getLogger(EditItemsSelectedBean.class);
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItemsIds = new ArrayList<>();
-  private List<SelectStatementWithInputComponent> columns = new ArrayList<>();
+  private List<HeaderComponent> headers = new ArrayList<>();
   private List<RowComponent> rows = new ArrayList<>();
-  private SelectStatementWithInputComponent newStatement;
+  private SelectStatementComponent newStatement;
   private List<String> displayedColumns = new ArrayList<>();
   private String editedColumn = "";
 
   public EditItemsSelectedBean() throws ImejiException {
     super();
-    this.newStatement = new SelectStatementWithInputComponent(statementMap);
+    this.newStatement = new SelectStatementComponent(statementMap);
   }
 
   @PostConstruct
   public void init() {
     try {
       final List<Item> itemList = retrieveItems();
-      initColumns(itemList);
+      initHeaders(itemList);
       initRows(itemList);
     } catch (final ImejiException e) {
       BeanHelper.error("Error initialiting page:" + e.getCause());
@@ -65,43 +67,40 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    */
   private void initRows(List<Item> items) {
     for (final Item item : items) {
-      rows.add(new RowComponent(item, statementMap, columns));
+      rows.add(new RowComponent(item, statementMap, headers));
     }
   }
 
   /**
    * Initialize the columns of the editor for this items
    */
-  private void initColumns(List<Item> items) {
+  private void initHeaders(List<Item> items) {
     // Create a Map of the columns from the existing Metadata of the item
-    final Map<String, SelectStatementWithInputComponent> columnMap = items.stream()
+    final Map<String, HeaderComponent> headerMap = items.stream()
         .flatMap(item -> item.getMetadata().stream()).filter(md -> md.getIndex().length() > 0)
         .collect(Collectors.toMap(Metadata::getIndex,
-            md -> new SelectStatementWithInputComponent(md.getIndex(), statementMap),
+            md -> new HeaderComponent(statementMap.get(md.getIndex()), statementMap),
             (s1, s2) -> s1));
 
     // Get the default statement of this instance
     final Map<String, Statement> defaultStatement = getDefaultStatements();
 
     // Add the default Statement to the columns
-    columnMap.putAll(getDefaultStatements().values().stream()
-        .collect(Collectors.toMap(Statement::getIndex,
-            st -> new SelectStatementWithInputComponent(st.getIndex(), defaultStatement),
-            (s1, s2) -> s1)));
+    headerMap.putAll(getDefaultStatements().values().stream().collect(Collectors.toMap(
+        Statement::getIndex, st -> new HeaderComponent(st, defaultStatement), (s1, s2) -> s1)));
 
     // Get the Column Map as a List sorted by index
-    columns = columnMap.values().stream()
-        .sorted((c1, c2) -> c1.getIndex().compareToIgnoreCase(c2.getIndex()))
-        .collect(Collectors.toList());
+    headers = headerMap.values().stream().sorted(
+        (c1, c2) -> c1.getStatement().getIndex().compareToIgnoreCase(c2.getStatement().getIndex()))
+        .collect(toList());
 
     // Add all Columns to the displayed columns
-    displayedColumns = columns.stream().map(SelectStatementWithInputComponent::getIndex)
-        .collect(Collectors.toList());
+    displayedColumns = headers.stream().map(h -> h.getStatement().getIndex()).collect(toList());
   }
 
   @Override
   public List<Item> toItemList() {
-    return rows.stream().map(RowComponent::toItem).collect(Collectors.toList());
+    return rows.stream().map(RowComponent::toItem).collect(toList());
   }
 
 
@@ -111,7 +110,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
         .filter(cell -> cell.getInputs() != null)
         .collect(
             Collectors.toMap(CellComponent::getIndex, cell -> cell.getStatement(), (a, b) -> a))
-        .values().stream().collect(Collectors.toList());
+        .values().stream().collect(toList());
   }
 
   /**
@@ -121,7 +120,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    */
   public List<SelectItem> getFilteredStatementMenu() {
     return getStatementMenu().stream().filter(s -> !displayedColumns.contains(s.getLabel()))
-        .collect(Collectors.toList());
+        .collect(toList());
   }
 
   /**
@@ -133,10 +132,8 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    */
   public void changeColumnName(int position) {
     // Get the Statement to change the name
-    SelectStatementWithInputComponent column = columns.get(position);
-    Statement st = column.asStatement();
-    // Change the statement name
-    st.setIndex(column.getIndex());
+    HeaderComponent header = headers.get(position);
+    Statement st = header.getStatement();
     // Change the statement name for all rows
     rows.stream().forEach(r -> r.changeStatement(editedColumn, st));
     // Add the new name to the displayed statement
@@ -151,9 +148,9 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    *
    * @param column
    */
-  public void addMetadataToAll(SelectStatementWithInputComponent column) {
+  public void addMetadataToAll(HeaderComponent header) {
     rows.stream().forEach(
-        row -> row.addCell(column.getInput().getStatement(), column.getInput().getMetadata()));
+        row -> row.addCell(header.getInput().getStatement(), header.getInput().getMetadata()));
   }
 
   /**
@@ -163,8 +160,8 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    */
   public void addMetadataToColumn(int index) {
     rows.stream().forEach(
-        row -> row.getCells().get(index).addValue(columns.get(index).getInput().getMetadata()));
-    columns.get(index).setInput(null);
+        row -> row.getCells().get(index).addValue(headers.get(index).getInput().getMetadata()));
+    headers.get(index).setInput(null);
   }
 
 
@@ -181,11 +178,12 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    * Add a column to the table
    */
   public void addColumn() {
-    newStatement.setInput(null);
-    columns.add(newStatement);
-    rows.stream().forEach(r -> r.addCell(newStatement.asStatement()));
-    displayedColumns.add(newStatement.getIndex());
-    newStatement = new SelectStatementWithInputComponent(statementMap);
+    Statement statement = newStatement.getStatement() != null ? newStatement.getStatement()
+        : newStatement.getStatementForm().asStatement();
+    headers.add(new HeaderComponent(statement, statementMap));
+    rows.stream().forEach(r -> r.addCell(statement));
+    displayedColumns.add(statement.getIndex());
+    newStatement = new SelectStatementComponent(statementMap);
   }
 
   /**
@@ -196,7 +194,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   public void removeColumn(String index) {
     if (!StringHelper.isNullOrEmptyTrim(index)) {
       rows.stream().forEach(row -> row.removeCell(index));
-      columns = columns.stream().filter(column -> !index.equals(column.getIndex()))
+      headers = headers.stream().filter(h -> !index.equals(h.getStatement().getIndex()))
           .collect(Collectors.toList());
     }
   }
@@ -252,31 +250,6 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   }
 
   /**
-   * @param newStatement the newStatement to set
-   */
-  public void setNewStatement(SelectStatementWithInputComponent newStatement) {
-    this.newStatement = newStatement;
-  }
-
-  public SelectStatementWithInputComponent getNewStatement() {
-    return newStatement;
-  }
-
-  /**
-   * @return the columns
-   */
-  public List<SelectStatementWithInputComponent> getColumns() {
-    return columns;
-  }
-
-  /**
-   * @param columns the columns to set
-   */
-  public void setColumns(List<SelectStatementWithInputComponent> columns) {
-    this.columns = columns;
-  }
-
-  /**
    * @return the displayedColumns
    */
   public List<String> getDisplayedColumns() {
@@ -288,6 +261,34 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    */
   public void setDisplayedColumns(List<String> displayedColumns) {
     this.displayedColumns = displayedColumns;
+  }
+
+  /**
+   * @return the headers
+   */
+  public List<HeaderComponent> getHeaders() {
+    return headers;
+  }
+
+  /**
+   * @param headers the headers to set
+   */
+  public void setHeaders(List<HeaderComponent> headers) {
+    this.headers = headers;
+  }
+
+  /**
+   * @return the newStatement
+   */
+  public SelectStatementComponent getNewStatement() {
+    return newStatement;
+  }
+
+  /**
+   * @param newStatement the newStatement to set
+   */
+  public void setNewStatement(SelectStatementComponent newStatement) {
+    this.newStatement = newStatement;
   }
 
 }

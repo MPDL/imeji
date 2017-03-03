@@ -20,7 +20,6 @@ public class MetadataInputComponent implements Serializable {
   private boolean emtpy = false;
 
   public MetadataInputComponent(Metadata metadata, Statement statement) {
-
     this.metadata = metadata.copy();
     if (metadata.getPerson() == null) {
       this.metadata.setPerson(ImejiFactory.newPerson());

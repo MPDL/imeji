@@ -16,8 +16,6 @@ import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.StatementType;
-import de.mpg.imeji.logic.vo.factory.StatementFactory;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -39,15 +37,17 @@ public class StatementEditBean extends StatementCreateBean {
       String id = URLDecoder.decode(UrlHelper.getParameterValue("id"), "UTF-8");
       Statement s =
           service.retrieve(ObjectHelper.getURI(Statement.class, id).toString(), getSessionUser());
-      setType(s.getType().name());
-      setName(s.getIndex());
-      setNamespace(s.getNamespace());
+      getStatementForm().setType(s.getType().name());
+      getStatementForm().setName(s.getIndex());
+      getStatementForm().setNamespace(s.getNamespace());
       if (s.getVocabulary() != null) {
-        setUseGoogleMapsAPI(s.getVocabulary().toString().equals(Imeji.CONFIG.getGoogleMapsApi()));
-        setUseMaxPlanckAuthors(s.getVocabulary().toString().equals(Imeji.CONFIG.getConeAuthors()));
+        getStatementForm().setUseGoogleMapsAPI(
+            s.getVocabulary().toString().equals(Imeji.CONFIG.getGoogleMapsApi()));
+        getStatementForm().setUseMaxPlanckAuthors(
+            s.getVocabulary().toString().equals(Imeji.CONFIG.getConeAuthors()));
       }
       if (s.getLiteralConstraints() != null) {
-        getPredefinedValues().addAll(s.getLiteralConstraints());
+        getStatementForm().getPredefinedValues().addAll(s.getLiteralConstraints());
       }
     } catch (ImejiException | UnsupportedEncodingException e) {
       LOGGER.error("Error retrieving statement: ", e);
@@ -56,12 +56,8 @@ public class StatementEditBean extends StatementCreateBean {
 
   @Override
   public void save() {
-    StatementFactory factory = new StatementFactory().setIndex(getName())
-        .setType(StatementType.valueOf(getType())).setNamespace(getNamespace())
-        .setVocabulary(getVocabulary()).setLiteralsConstraints(getPredefinedValues());
-    final Statement statement = factory.build();
     try {
-      service.update(statement, getSessionUser());
+      service.update(getStatementForm().asStatement(), getSessionUser());
       redirect(getHistory().getPreviousPage().getCompleteUrlWithHistory());
     } catch (final ImejiException | IOException e) {
       BeanHelper.error("Error creating statement");

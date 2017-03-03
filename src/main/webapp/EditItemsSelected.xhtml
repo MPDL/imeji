@@ -75,61 +75,62 @@
 						onclick="startLoader();">
 						<f:ajax execute="@form" render="@form" />
 					</h:commandLink>
+				</div>
+				<div class="imj_searchQueryDisplay">
+					<span class="fa fa-plus"></span> #{lbl.add_column} :   
+					
+					<md:select id="selectStatement"
+						component="#{EditItemsSelectedBean.newStatement}"
+						menu="#{EditItemsSelectedBean.filteredStatementMenu}"
+						render=":selectMetadataWrapper" bean="#{EditItemsSelectedBean}" submitAction="addColumn"/>
 					<h:panelGroup id="selectMetadataWrapper">
-						<md:select
-							component="#{EditItemsSelectedBean.newStatement}"
-							menu="#{EditItemsSelectedBean.filteredStatementMenu}"
-							render=":selectMetadataWrapper" />
-						<h:commandLink
+						<h:commandLink id="addColumn" rendered="#{not empty EditItemsSelectedBean.newStatement.statement}"
 							action="#{EditItemsSelectedBean.addColumn}"
 							value=" #{lbl.add}" title="#{lbl.add}"
-							rendered="#{!empty EditItemsSelectedBean.newStatement.index}"
 							onclick="startLoader();">
 							<f:ajax execute="@form" render="@form" />
 						</h:commandLink>
 					</h:panelGroup>
-					<br />
-					
-					<br /> #{lbl.edit_selected_filter_columns}:
+				</div>
+				<div class="editSelectedHeader">
+					#{lbl.hide_or_show_filter_columns}
 					<div class="edit_selected_table_button">
 						<h:selectManyCheckbox for="filterColumns" value="#{EditItemsSelectedBean.displayedColumns}" onclick="startLoader();">
-							<f:selectItems value="#{EditItemsSelectedBean.columns}" var="column" itemLabel="#{column.index}" itemValue="#{column.index}"  />
+							<f:selectItems value="#{EditItemsSelectedBean.headers}" var="head" itemLabel="#{head.statement.index}" itemValue="#{head.statement.index}"  />
 							<f:ajax event="change" execute="@this" render="@form" />
 						</h:selectManyCheckbox>
 					</div>
-					
-				</div>
-				
-				
+				</div>	
 				<div class="edit_selected_table_wrapper">
 					<table class="edit_selected_table">
 						<tr>
 							<th>#{lbl.filename}</th>
-							<ui:repeat id="list" value="#{EditItemsSelectedBean.columns}" var="column" varStatus="status">
-								<ui:fragment rendered="#{EditItemsSelectedBean.displayedColumns.contains(column.index)}">
+							<ui:repeat id="list" value="#{EditItemsSelectedBean.headers}" var="head" varStatus="status">
+								
+								<ui:fragment rendered="#{EditItemsSelectedBean.displayedColumns.contains(head.statement.index)}">
 									<th class="column_#{status.index}">
 										<h:panelGroup id="head" layout="block" class="edit_selected_table_button">
-											<h:outputText value="#{column.index}" rendered="#{EditItemsSelectedBean.editedColumn != column.index}"/>
+											<h:outputText value="#{head.statement.index}" rendered="#{EditItemsSelectedBean.editedColumn != head.statement.index}"/>
 											<div>
-												<md:input id="batchInput" metadataInputComponent="#{column.input}" rendered="#{!empty column.input}" />
-												<h:panelGroup rendered="#{EditItemsSelectedBean.editedColumn == column.index}">
-													<h:inputText id="inputColumnName" class="combobox" html5:oninput="editColumnName('list:#{status.index}:changeColumn', this.value);" onfocus="$('#statementList').show();" value="#{column.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
+												<md:input id="batchInput" metadataInputComponent="#{head.input}" rendered="#{!empty head.input}" />
+												<h:panelGroup rendered="#{EditItemsSelectedBean.editedColumn == head.statement.index}">
+													<h:inputText id="inputColumnName" class="combobox" html5:oninput="editColumnName('list:#{status.index}:changeColumn', this.value);" onfocus="$('#statementList').show();" value="#{head.statement.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
 													</h:inputText>
 													<div>
 														<h:commandLink id="changeColumn" styleClass="edit_selected_table_icon" action="#{EditItemsSelectedBean.changeColumnName(status.index)}" 
-															value="inner" title="#{lbl.save}" onclick="startLoader();">
+															value="#{lbl.save}" title="#{lbl.save}" onclick="startLoader();">
 															<f:ajax execute="@form" render="@form" />
 														</h:commandLink>
 														<span id="changeColumnError"></span>
 													</div>
 												</h:panelGroup>
-												<ui:fragment rendered="#{empty column.input and EditItemsSelectedBean.editedColumn != column.index}">
-													<h:commandLink styleClass="fa fa-magic edit_selected_table_icon" action="#{column.addInput}" value="" title="#{lbl.edit_all}" >
+												<ui:fragment rendered="#{empty head.input and EditItemsSelectedBean.editedColumn != head.statement.index}">
+													<h:commandLink styleClass="fa fa-magic edit_selected_table_icon" action="#{head.initInput}" value="" title="#{lbl.edit_all}" >
 														<f:ajax execute="@this" render=":list:#{status.index}:head" />
 													</h:commandLink>
 													<h:commandLink
 														styleClass="fa fa-cog edit_selected_table_icon"
-														action="#{EditItemsSelectedBean.setEditedColumn(column.index)}" value=""
+														action="#{EditItemsSelectedBean.setEditedColumn(head.statement.index)}" value=""
 														title="#{lbl.edit_metadata_name}">
 														<f:ajax execute="@this" render=":list:#{status.index}:head" />
 													</h:commandLink>
@@ -139,13 +140,13 @@
 														value="" title="#{lbl.clear}"  onclick="startLoader();">
 														<f:ajax execute="@form" render="@form" />
 													</h:commandLink>
-													<h:commandLink styleClass="fa fa-trash edit_selected_table_icon" action="#{EditItemsSelectedBean.removeColumn(column.index)}"
+													<h:commandLink styleClass="fa fa-trash edit_selected_table_icon" action="#{EditItemsSelectedBean.removeColumn(head.statement.index)}"
 														value="" title="#{lbl.remove}"  onclick="startLoader();">
 														<f:ajax execute="@form" render="@form" />
 													</h:commandLink>
 												</ui:fragment>
 											</div>
-											<h:panelGroup layout="block" class="edit_selected_table_button" rendered="#{!empty column.input}">
+											<h:panelGroup layout="block" class="edit_selected_table_button" rendered="#{!empty head.input}">
 												<h:commandLink action="#{EditItemsSelectedBean.addMetadataToColumn(status.index)}" value="#{lbl.add_to_all}" title="#{lbl.add_to_all}"  onclick="startLoader();">
 													<f:ajax execute="@form" render="@form" />
 												</h:commandLink>

@@ -93,7 +93,7 @@
 							<span class="imj_invisible">: </span>
 						</div>
 						<div class="imj_metadataValue">
-							<h:inputText value="#{EditMetadataItemBean.filename}"/>
+							<h:inputText value="#{itemBean.editor.filename}"/>
 						</div>					
 					</div>
 					<div class="imj_metadataSet">
@@ -103,16 +103,16 @@
 						</div>
 						<div class="imj_metadataValue">
 							<h:panelGroup id="licenseEditor">
-								<lic:licenseEditor licenseEditor="#{EditMetadataItemBean.licenseEditor}" containerId=":editItem:licenseEditor"/>
+								<lic:licenseEditor licenseEditor="#{itemBean.editor.licenseEditor}" containerId=":editItem:licenseEditor"/>
 							</h:panelGroup>
 						</div>
 					</div>
-					<item:editMetadata formBean="#{EditMetadataItemBean}"/>
+					<item:editMetadata id="metadata" formBean="#{itemBean.editor}"/>
 					<div class="imj_submitPanel">
 						<h:commandLink styleClass="imj_cancelButton" action="#{itemBean.cancelEditor}">
 							<h:outputText value="#{lbl.cancel}"/>
 						</h:commandLink>
-						<h:commandLink type="submit" styleClass="imj_submitButton" action="#{EditMetadataItemBean.save}" value="#{lbl.save}" actionListener="#{itemBean.cancelEditor}" onclick="startLoader();">
+						<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.editor.save}" value="#{lbl.save}" actionListener="#{itemBean.cancelEditor}" onclick="startLoader();">
 						</h:commandLink>
 					</div>
 				</h:form>

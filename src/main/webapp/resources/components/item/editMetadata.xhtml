@@ -1,35 +1,49 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:composite="http://java.sun.com/jsf/composite"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:md="http://java.sun.com/jsf/composite/components/metadata">
-	<composite:interface>
-		<composite:attribute name="formBean" required="true"/>
-	</composite:interface>
-	
-	<composite:implementation>
-		<ui:repeat var="row" value="#{cc.attrs.formBean.rows}" varStatus="position">
-			<div class="imj_metadataSet">
-				<div class="imj_metadataLabel">
-					<ui:fragment rendered="#{!row.exists}">
-						<md:select component="#{row}" menu="#{cc.attrs.formBean.statementMenu}" renderForm="true"/>
-					</ui:fragment>
-					<ui:fragment rendered="#{row.exists}">
-						<h:outputText value="#{row.index}"/>
-					</ui:fragment>
-					<span class="imj_invisible">: </span>
-				</div>
-				<div class="imj_metadataValue">
-					<md:input metadataInputComponent="#{row.input}"/>
-					<h:commandLink type="submit" rendered="#{!metadata.isEmpty()}" styleClass="fa fa-minus-square-o" action="#{cc.attrs.formBean.removeMetadata(position.index)}" value="" title="#{lbl.remove_metadata}">
-						<f:ajax execute="@form" render="@form"/>
-					</h:commandLink>
-				</div>
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:md="http://java.sun.com/jsf/composite/components/metadata">
+<composite:interface>
+	<composite:attribute name="formBean" required="true" />
+</composite:interface>
+
+<composite:implementation>
+	<ui:repeat id="list" var="entry" value="#{cc.attrs.formBean.entries}"
+		varStatus="position">
+		<div class="imj_metadataSet">
+			<div class="imj_metadataLabel">
+				<ui:fragment rendered="#{empty entry.input}">
+					<md:select id="select" bean="#{entry}" submitAction="initInput"
+						component="#{entry.select}"
+						menu="#{cc.attrs.formBean.statementMenu}"
+						render=":editItem:metadata:list:#{position.index}:value" 
+						containerId=":editItem:metadata:list:#{position.index}:select"/>
+				</ui:fragment>
+				<ui:fragment rendered="#{not empty entry.input}">
+					<h:outputText value="#{entry.input.statement.index}" />
+				</ui:fragment>
+				<span class="imj_invisible">: </span>
 			</div>
-		</ui:repeat>
-		<h:commandLink type="submit" styleClass="fa fa-plus-square-o" action="#{cc.attrs.formBean.addMetadata()}" value="#{lbl.add_metadata}" title="#{lbl.add_metadata}">
-			<f:ajax execute="@form" render="@form"/>
-		</h:commandLink>
-	</composite:implementation>
+			<h:panelGroup id="value" layout="block" class="imj_metadataValue">
+				<h:commandLink value="#{lbl.add}" action="#{entry.initInput}"
+					rendered="#{empty entry.input and not empty entry.select.statement}">
+					<f:ajax render=":editItem:metadata:list:#{position.index}:value" />
+				</h:commandLink>
+				<md:input metadataInputComponent="#{entry.input}" />
+				<h:commandLink type="submit" rendered="#{not empty entry.input}"
+					styleClass="fa fa-minus-square-o"
+					action="#{cc.attrs.formBean.removeMetadata(position.index)}"
+					value="" title="#{lbl.remove_metadata}">
+					<f:ajax execute="@form" render="@form" />
+				</h:commandLink>
+			</h:panelGroup>
+		</div>
+	</ui:repeat>
+	<h:commandLink type="submit" styleClass="fa fa-plus-square-o"
+		action="#{cc.attrs.formBean.addMetadata()}"
+		value="#{lbl.add_metadata}" title="#{lbl.add_metadata}">
+		<f:ajax execute="@form" render="@form" />
+	</h:commandLink>
+</composite:implementation>
 </html>
