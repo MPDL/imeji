@@ -7,7 +7,7 @@ import java.util.Map;
 
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.StatementType;
-import de.mpg.imeji.logic.vo.factory.StatementFactory;
+import de.mpg.imeji.presentation.statement.StatementForm;
 
 /**
  * HTML Component for Statement
@@ -18,12 +18,11 @@ import de.mpg.imeji.logic.vo.factory.StatementFactory;
 public class SelectStatementComponent implements Serializable {
   private static final long serialVersionUID = 2521052242334769127L;
   private String index;
-  private StatementType type;
-  private boolean exists = false;
+  private Statement statement;
   private final Map<String, Statement> statementMap;
+  private StatementForm statementForm = new StatementForm();
 
   public SelectStatementComponent(Map<String, Statement> statementMap) {
-    this.type = StatementType.TEXT;
     this.statementMap = statementMap;
   }
 
@@ -39,11 +38,7 @@ public class SelectStatementComponent implements Serializable {
    */
   private void init(String index) {
     this.index = index;
-    final Statement s = statementMap.get(index);
-    this.exists = s != null;
-    if (exists) {
-      this.type = s.getType();
-    }
+    statement = statementMap.get(index);
   }
 
   /**
@@ -51,13 +46,6 @@ public class SelectStatementComponent implements Serializable {
    */
   public void listener() {
     init(index);
-  }
-
-  public Statement asStatement() {
-    if (statementMap.containsKey(index)) {
-      return statementMap.get(index);
-    }
-    return new StatementFactory().setIndex(index).setType(type).build();
   }
 
   /**
@@ -75,28 +63,43 @@ public class SelectStatementComponent implements Serializable {
   }
 
   /**
-   * @return the type
-   */
-  public StatementType getType() {
-    return type;
-  }
-
-  /**
-   * @param type the type to set
-   */
-  public void setType(StatementType type) {
-    this.type = type;
-  }
-
-  /**
    * @return the exists
    */
   public boolean isExists() {
-    return exists;
+    return statement != null;
   }
 
   public List<StatementType> getTypes() {
     return Arrays.asList(StatementType.values());
   }
+
+  /**
+   * @return the statementForm
+   */
+  public StatementForm getStatementForm() {
+    return statementForm;
+  }
+
+  /**
+   * @param statementForm the statementForm to set
+   */
+  public void setStatementForm(StatementForm statementForm) {
+    this.statementForm = statementForm;
+  }
+
+  /**
+   * @return the statement
+   */
+  public Statement getStatement() {
+    return statement;
+  }
+
+  /**
+   * @param statement the statement to set
+   */
+  public void setStatement(Statement statement) {
+    this.statement = statement;
+  }
+
 
 }

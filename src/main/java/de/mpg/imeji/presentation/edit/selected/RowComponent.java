@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
 
 /**
  * A row of the edit select item page
@@ -24,10 +23,10 @@ public class RowComponent implements Serializable {
   private final Item item;
 
   public RowComponent(Item item, Map<String, Statement> statementMap,
-      List<SelectStatementWithInputComponent> columns) {
+      List<HeaderComponent> headers) {
     this.item = item;
     this.filename = item.getFilename();
-    cells = columns.stream().map(c -> new CellComponent(c.asStatement(), item.getMetadata()))
+    cells = headers.stream().map(h -> new CellComponent(h.getStatement(), item.getMetadata()))
         .collect(Collectors.toList());
   }
 

@@ -74,7 +74,6 @@ public class ElasticIndexer implements SearchIndexer {
 
   @Override
   public void updateIndexBatch(List<?> l) {
-    System.out.println("update");
     if (l.isEmpty()) {
       return;
     }

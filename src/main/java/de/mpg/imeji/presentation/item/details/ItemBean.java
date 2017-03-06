@@ -48,6 +48,7 @@ import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.TechnicalMetadata;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.edit.single.EditItemComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
 
@@ -85,6 +86,7 @@ public class ItemBean extends SuperBean {
   private String originalFile;
   private boolean edit = false;
   private ExecutorService rotationService;
+  private EditItemComponent editor;
 
   /**
    * Construct a default {@link ItemBean}
@@ -125,6 +127,15 @@ public class ItemBean extends SuperBean {
       LOGGER.error("Error initialitzing item page", e);
       BeanHelper.error("Error initializing page" + e.getMessage());
     }
+  }
+
+  public void cancelEditor() throws Exception {
+    redirect(getHistory().getCurrentPage().getCompleteUrl());
+  }
+
+  public void showEditor() throws ImejiException {
+    this.edit = true;
+    setEditor(new EditItemComponent(item));
   }
 
   protected void initBrowsing() {
@@ -288,13 +299,7 @@ public class ItemBean extends SuperBean {
     }
   }
 
-  public void cancelEditor() throws Exception {
-    redirect(getHistory().getCurrentPage().getCompleteUrl());
-  }
 
-  public void showEditor() {
-    this.edit = true;
-  }
 
   /**
    * Remove the {@link Item} from the database. If the item was in the current {@link Album}, remove
@@ -724,6 +729,20 @@ public class ItemBean extends SuperBean {
    */
   public void setEdit(boolean edit) {
     this.edit = edit;
+  }
+
+  /**
+   * @return the editor
+   */
+  public EditItemComponent getEditor() {
+    return editor;
+  }
+
+  /**
+   * @param editor the editor to set
+   */
+  public void setEditor(EditItemComponent editor) {
+    this.editor = editor;
   }
 
 

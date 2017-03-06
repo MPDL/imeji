@@ -11,38 +11,41 @@
 
 	<ui:define name="mainContent">
 		<script>
-		 	$( document ).ready(function() {
-		 		stopLoader();
-		 	});
-	 	</script>
+			$(document).ready(function() {
+				stopLoader();
+			});
+		</script>
 		<div class="loaderWrapper show" />
 		<div class="loader show" />
 		<h:form id="editBatchForm">
 			<h:outputLink value="#{EditItemsBatchBean.backUrl}">#{lbl.back_to_pictures}</h:outputLink>
-			<br/><br/>
+			<br />
+			<br />
 			<div class="imj_metadataSet">
 				<div class="imj_metadataLabel">
-					<md:select component="#{EditItemsBatchBean.statementSelector}"
-								menu="#{EditItemsBatchBean.statementMenu}" />
+					<md:select id="select"
+						component="#{EditItemsBatchBean.statementSelector}"
+						menu="#{EditItemsBatchBean.statementMenu}" render="@form"
+						containerId=":editBatchForm:select" submitAction="initInput" bean="#{EditItemsBatchBean}" />
 				</div>
 				<div class="imj_metadataValue">
-					<md:input metadataInputComponent="#{EditItemsBatchBean.statementSelector.input}"/>
+					<md:input metadataInputComponent="#{EditItemsBatchBean.input}" />
 				</div>
+				
 			</div>
-			
-			<h:commandButton type="submit"
-						action="#{EditItemsBatchBean.append}" value="#{lbl.add_metadata_append}"
-						onclick="startLoader();">
+
+			<h:commandButton type="submit" action="#{EditItemsBatchBean.append}"
+				value="#{lbl.add_metadata_append}" onclick="startLoader();">
 				<f:ajax execute="@form" render=":imj_pageMessageArea @form " />
 			</h:commandButton>
 			<h:commandButton type="submit" styleClass="imj_submitButton"
-						action="#{EditItemsBatchBean.fill}" value="#{lbl.add_metadata_absent}"
-						onclick="startLoader();">
+				action="#{EditItemsBatchBean.fill}"
+				value="#{lbl.add_metadata_absent}" onclick="startLoader();">
 				<f:ajax execute="@form" render="@form" />
 			</h:commandButton>
 			<h:commandButton type="submit" styleClass="imj_submitButton"
-						action="#{EditItemsBatchBean.overwrite}" value="#{lbl.add_metadata_overwrite}"
-						onclick="startLoader();">
+				action="#{EditItemsBatchBean.overwrite}"
+				value="#{lbl.add_metadata_overwrite}" onclick="startLoader();">
 				<f:ajax execute="@form" render="@form" />
 			</h:commandButton>
 		</h:form>

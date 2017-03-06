@@ -1,43 +1,54 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:composite="http://java.sun.com/jsf/composite"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
-      xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
-	
-	<composite:interface>
-		<composite:attribute name="menu" required="true"/>
-		<composite:attribute name="component" required="true"/>
-		<composite:attribute name="listener"/>
-		<composite:attribute name="render"/>
-	</composite:interface>
-	
-	<composite:implementation>
-		<h:panelGroup id="selectMetadata" class="metadataSelector">
-			<ui:fragment rendered="#{empty cc.attrs.render}">
-				<h:inputText class="combobox" onfocus="$('#statementList').show();" value="#{cc.attrs.component.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
-					<f:ajax event="change" render="@form" listener="#{cc.attrs.component.listener}"/>
-					<f:ajax event="select" render="@form" listener="#{cc.attrs.component.listener}"/>
-				</h:inputText>
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
+	xmlns:statement="http://java.sun.com/jsf/composite/components/statement"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+
+<composite:interface>
+	<composite:attribute name="menu" required="true" />
+	<composite:attribute name="component" required="true" />
+	<composite:attribute name="render" />
+	<composite:attribute name="containerId" />
+	<composite:attribute name="bean" />
+	<composite:attribute name="submitAction" />
+</composite:interface>
+
+<composite:implementation>
+	<h:panelGroup id="selectMetadata" class="metadataSelector">
+		<h:inputText class="combobox" onfocus="$('#statementList').show();"
+			value="#{cc.attrs.component.index}" html5:list="statementList"
+			html5:placeholder="#{lbl.select_metadata}">
+			<f:ajax event="keyup" render="#{cc.attrs.containerId}:buttons"
+				listener="#{cc.attrs.component.listener}" />
+			<f:ajax event="select" render="#{cc.attrs.containerId}:buttons"
+				listener="#{cc.attrs.component.listener}" />
+		</h:inputText>
+		<h:panelGroup id="buttons">
+			<ui:fragment rendered="#{not empty cc.attrs.component.statement}">
+				<h:commandLink id="btnCreateStatement"
+					action="#{cc.attrs.bean[cc.attrs.submitAction]}"
+					value="#{lbl.select}">
+					<f:ajax execute="@form" render="@form" />
+				</h:commandLink>
 			</ui:fragment>
-			<ui:fragment rendered="#{not empty cc.attrs.render}">
-				<h:inputText class="combobox" onfocus="$('#statementList').show();" value="#{cc.attrs.component.index}" html5:list="statementList" html5:placeholder="#{lbl.add_metadata}">
-					<f:ajax event="change" render="#{cc.attrs.render}" listener="#{cc.attrs.component.listener}"/>
-					<f:ajax event="select" render="#{cc.attrs.render}" listener="#{cc.attrs.component.listener}"/>
-				</h:inputText>
-			</ui:fragment>			
-			<datalist id="statementList" class="comboboxDataList">
-				<ui:repeat var="statement" value="#{cc.attrs.menu}">
-			   		<option>#{statement.value}</option>
-			   	</ui:repeat>
-			</datalist>
-			<ui:fragment rendered="#{not cc.attrs.component.exists and not empty cc.attrs.component.index}">
-				<h:selectOneMenu value="#{cc.attrs.component.type}">
-					<f:selectItems value="#{cc.attrs.component.types}" var="type" itemValue="#{type}" itemLabel="#{type.name().toLowerCase()}" />
-					<f:ajax event="change" render="@form" listener="#{cc.attrs.component.listener}"/>			
-				</h:selectOneMenu>
+			<ui:fragment rendered="#{empty cc.attrs.component.statement}">
+					#{lbl.or_big}
+					<a href=""
+					onclick="openDialog('createStatementDialog'); return false;">
+					#{lbl.metadata_create} </a>
 			</ui:fragment>
 		</h:panelGroup>
-	</composite:implementation>
+		<datalist id="statementList" class="comboboxDataList">
+			<ui:repeat var="statement" value="#{cc.attrs.menu}">
+				<option>#{statement.value}</option>
+			</ui:repeat>
+		</datalist>
+	</h:panelGroup>
+	<statement:createDialog id="dialog" component="#{cc.attrs.component}"
+		bean="#{cc.attrs.bean}" submitAction="#{cc.attrs.submitAction}"
+		containerId="#{cc.attrs.containerId}" />
+</composite:implementation>
 </html>

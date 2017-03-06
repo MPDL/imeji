@@ -21,8 +21,10 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
-import de.mpg.imeji.presentation.edit.SelectStatementWithInputComponent;
+import de.mpg.imeji.presentation.edit.MetadataInputComponent;
+import de.mpg.imeji.presentation.edit.SelectStatementComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -39,7 +41,8 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   private String collectionId;
   private String query;
   private String backUrl;
-  private SelectStatementWithInputComponent statementSelector;
+  private SelectStatementComponent statementSelector;
+  private MetadataInputComponent input;
   private List<Item> items = new ArrayList<>();
 
   @PostConstruct
@@ -49,11 +52,18 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
     reset();
   }
 
+  public void initInput() {
+    Statement statement = statementSelector.getStatement() != null
+        ? statementSelector.getStatement() : statementSelector.getStatementForm().asStatement();
+    input = new MetadataInputComponent(ImejiFactory.newMetadata(statement).build(), statement);
+  }
+
   /**
    * Reset the editor
    */
   public void reset() {
-    statementSelector = new SelectStatementWithInputComponent(statementMap);
+    statementSelector = new SelectStatementComponent(statementMap);
+    input = null;
   }
 
   /**
@@ -114,7 +124,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
    * @return
    */
   private Metadata getMetadata() {
-    return statementSelector.getInput().getMetadata().copy();
+    return input.getMetadata().copy();
   }
 
   /**
@@ -142,21 +152,21 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
 
   @Override
   public List<Statement> getAllStatements() {
-    return Arrays.asList(statementSelector.getInput().getStatement());
+    return Arrays.asList(input.getStatement());
   }
 
 
   /**
    * @return the statementSelector
    */
-  public SelectStatementWithInputComponent getStatementSelector() {
+  public SelectStatementComponent getStatementSelector() {
     return statementSelector;
   }
 
   /**
    * @param statementSelector the statementSelector to set
    */
-  public void setStatementSelector(SelectStatementWithInputComponent statementSelector) {
+  public void setStatementSelector(SelectStatementComponent statementSelector) {
     this.statementSelector = statementSelector;
   }
 
@@ -174,4 +184,17 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
     this.backUrl = backUrl;
   }
 
+  /**
+   * @return the input
+   */
+  public MetadataInputComponent getInput() {
+    return input;
+  }
+
+  /**
+   * @param input the input to set
+   */
+  public void setInput(MetadataInputComponent input) {
+    this.input = input;
+  }
 }

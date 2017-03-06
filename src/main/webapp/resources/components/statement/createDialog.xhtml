@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:lic="http://java.sun.com/jsf/composite/components/license"
+	xmlns:statement="http://java.sun.com/jsf/composite/components/statement"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+
+<composite:interface>
+	<composite:attribute name="component" required="true" />
+	<composite:attribute name="bean" />
+	<composite:attribute name="submitAction" />
+	<composite:attribute name="containerId" />
+</composite:interface>
+
+<composite:implementation>
+	<div id="createStatementDialog" class="imj_modalDialogBox imj_moveItemsDialogBox"
+		style="display: none;">
+		<h:panelGroup id="statementForm">
+			<statement:form form="#{cc.attrs.component.statementForm}" render="#{cc.attrs.containerId}:dialog:statementForm" />
+		</h:panelGroup>
+		<div id="submitButtonPanel" class="imj_submitPanel">
+			<button type="reset"
+				onclick="closeDialog('createStatementDialog'); return false;"
+				class="imj_cancelButton">#{lbl.cancel}</button>
+			<h:commandButton id="btnCreateStatement"
+				onclick="closeDialog('createStatementDialog');startLoader();"
+				action="#{cc.attrs.bean[cc.attrs.submitAction]}"
+				value="#{lbl.save}" class="imj_submitButton">
+				<f:ajax execute="@form" render="@form"/>
+			</h:commandButton>
+		</div>
+	</div>
+</composite:implementation>
+</html>
