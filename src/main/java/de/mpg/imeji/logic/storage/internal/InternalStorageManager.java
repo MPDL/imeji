@@ -293,17 +293,33 @@ public class InternalStorageManager implements Serializable {
   public String generateUrl(String id, String filename, FileResolution resolution) {
     filename = StringHelper.normalizeFilename(filename);
     final String extension = getExtension(filename);
-    if (resolution != FileResolution.ORIGINAL && (resolution != FileResolution.FULL
-        || isImage(extension) && !extension.equals("svg") && !extension.equals("gif"))) {
-      filename = removeExtension(filename) + (extension.equals("gif") ? ".gif" : ".jpg");
+    if (resolution != FileResolution.ORIGINAL
+        && (resolution != FileResolution.FULL || isTransformableImage(extension))) {
+      filename = removeExtension(filename) + ".jpg";
     }
     return storageUrl + id + StringHelper.urlSeparator + resolution.name().toLowerCase()
         + StringHelper.urlSeparator + filename;
   }
 
-  private boolean isImage(String extension) {
-    return StorageUtils.getMimeType(extension).contains("image");
+  private boolean isTransformableImage(String extension) {
+    if (!StorageUtils.getMimeType(extension).contains("image")) {
+      return false;
+    }
+    if (extension.equals("gif")) {
+      return false;
+    }
+    if (extension.equals("svg")) {
+      return false;
+    }
+    if (extension.equals("tif")) {
+      return false;
+    }
+    if (extension.equals("tiff")) {
+      return false;
+    }
+    return true;
   }
+
 
 
   /**
@@ -318,7 +334,7 @@ public class InternalStorageManager implements Serializable {
     // write original file in storage
     final String extension = getExtension(StringHelper.normalizeFilename(item.getFileName()));
     copy(file, transformUrlToPath(item.getOriginalUrl()));
-    if (isImage(extension) && !extension.equals("gif") && !extension.equals("svg")) {
+    if (isTransformableImage(extension)) {
       copy(ImageUtils.toJpeg(file, StorageUtils.getMimeType(extension)),
           transformUrlToPath(item.getFullUrl()));
     } else {

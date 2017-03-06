@@ -17,7 +17,6 @@
 					<f:ajax render="@none" execute="@form"/>
 				</h:commandButton>
 			</h:form>
-		
 			<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
 				<div id="buttons">
 				<h:outputLink id="zoominButton" class="fa fa-search-plus fa-size-3 imj_mediaEditPanelItem" /> &#160;
@@ -77,7 +76,6 @@
 				<h:graphicImage id="picWebResolution_Withdrawn" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.applicationUrl}resources/icon/discarded.png"/>
 		</h:outputLink>
 	</h:panelGroup>
-
 		
 	<span id="itemMetadata"/>
 	<!-- MetaDataList - START -->
@@ -320,26 +318,7 @@
 	<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.js"></script>
 	<script type="text/javascript">
 
-  			var img = {
-  			type: 'legacy-image-pyramid',
-  	   
-  	    	levels: [
-  	    		{	
-      	    		url: '#{itemBean.thumbnail}',    	    	
-      	    		height: #{itemBean.thumbnailWidth},
-      	    		width: #{itemBean.thumbnailWidth}
-      	    	},
-  	    		{	
-  	    		url: '#{itemBean.preview}',    	    	
-  	    		height: #{itemBean.webResolutionHeight},
-  	    		width: #{itemBean.webResolutionWidth}
-  	    	    },
-      	    	{	
-      	    		url: '#{itemBean.fullResolution}',    	    	
-      	    		height: #{itemBean.fullResolutionHeight},
-      	    		width: #{itemBean.fullResolutionWidth}
-      	    	}]
-  			};
+
 			
 			var open=false;
 				
@@ -348,22 +327,6 @@
     			url: '#{itemBean.fullResolution}',
     			};
    
-    	    	var img={
-    	    	type: 'legacy-image-pyramid',			
-    	    			
-    	    	levels: [
-        	    	{	
-        	    		url: '#{itemBean.preview}',   	    	
-        	    		height: #{itemBean.webResolutionHeight},
-        	    		width: #{itemBean.webResolutionWidth}
-        	    	    },
-        	    	{	
-        	    		url: '#{itemBean.fullResolution}',    	    	
-        	    		height: #{itemBean.fullResolutionHeight},
-        	    		width: #{itemBean.fullResolutionWidth}
-        	    	}]
-    			};
-
     			var viewerFull = OpenSeadragon({
     
         		id: "seadragon-viewer-full",

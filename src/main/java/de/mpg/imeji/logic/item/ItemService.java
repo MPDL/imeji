@@ -247,6 +247,9 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public void create(Collection<Item> items, CollectionImeji col, User user) throws ImejiException {
+    if (col == null || col.getId() == null) {
+      throw new UnprocessableError("Collection and Collection id have to be non-null");
+    }
     items.stream().forEach(item -> {
       item.setStatus(col.getStatus());
       item.setCollection(col.getId());

@@ -668,7 +668,7 @@ public class ItemBean extends SuperBean {
   }
 
   public boolean isViewInOpenseadragon() {
-    return !isViewInDataViewer() && isImageFile() && !isSVGFile() && !isGIFFile();
+    return !isViewInDataViewer() && isImageFile() && !isSVGFile() && !isGIFFile() && !isTIFFile();
   }
 
   /**
@@ -678,6 +678,10 @@ public class ItemBean extends SuperBean {
    */
   public boolean isGIFFile() {
     return "gif".equals(FilenameUtils.getExtension(content.getOriginal()));
+  }
+
+  public boolean isTIFFile() {
+    return "tiff".equals(FilenameUtils.getExtension(content.getOriginal()));
   }
 
   /**
