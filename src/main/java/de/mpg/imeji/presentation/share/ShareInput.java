@@ -56,7 +56,7 @@ public class ShareInput implements Serializable {
     parseInput();
     if (invalidEntries.isEmpty()) {
       shareWithValidEmails();
-      return unknownEmails.isEmpty();
+      return true;
     }
     return false;
   }
@@ -98,14 +98,6 @@ public class ShareInput implements Serializable {
         .replace("XXX_INSTANCE_NAME_XXX", instanceName);
   }
 
-  /**
-   * Return the existing users as list of {@link ShareListItem}
-   *
-   * @return
-   */
-  public List<ShareListItem> getExistingUsersAsShareListItems() {
-    return toShareListItem(validEmails);
-  }
 
   /**
    * Remove an unknow Email from the list (no invitation will be sent to him)
@@ -121,21 +113,14 @@ public class ShareInput implements Serializable {
    * Share with existing users
    */
   private void shareWithValidEmails() {
-    for (final ShareListItem shareListItem : toShareListItem(validEmails)) {
+    for (final ShareListItem shareListItem : asShareListItem()) {
       shareListItem.update();
     }
   }
 
-
-  /**
-   * Create a ShareListItem for an Email according to the current selected roles
-   *
-   * @param emails
-   * @return
-   */
-  private List<ShareListItem> toShareListItem(List<String> emails) {
+  public List<ShareListItem> asShareListItem() {
     final List<ShareListItem> listItems = new ArrayList<ShareListItem>();
-    for (final String email : emails) {
+    for (final String email : validEmails) {
       final ShareListItem item =
           new ShareListItem(retrieveUser(email), objectUri, null, user, locale, false);
       item.setRole(menu.getRole());
@@ -143,6 +128,7 @@ public class ShareInput implements Serializable {
     }
     return listItems;
   }
+
 
 
   /**

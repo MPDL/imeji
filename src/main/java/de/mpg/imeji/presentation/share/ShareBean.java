@@ -179,7 +179,7 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   private void sendEmailForInput() {
     if (sendEmail) {
-      for (final ShareListItem item : input.getExistingUsersAsShareListItems()) {
+      for (final ShareListItem item : input.asShareListItem()) {
         sendEmailForShare(item, title);
       }
     }
