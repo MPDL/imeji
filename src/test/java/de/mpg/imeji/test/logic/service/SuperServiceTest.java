@@ -1,4 +1,4 @@
-package de.mpg.imeji.test.logic.controller;
+package de.mpg.imeji.test.logic.service;
 
 import java.io.File;
 
@@ -7,11 +7,11 @@ import org.junit.BeforeClass;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.collection.CollectionService;
-import de.mpg.imeji.logic.collection.CollectionService.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.CollectionFactory;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.testimpl.ImejiTestResources;
 import util.JenaUtil;
@@ -21,7 +21,9 @@ import util.JenaUtil;
  */
 public class SuperServiceTest {
 
-  protected static CollectionImeji collection = null;
+  protected static CollectionImeji collectionBasic = null;
+  protected static CollectionImeji collectionReleased = null;
+  protected static CollectionImeji collectionWithdrawn = null;
   protected static Item item = null;
 
   @BeforeClass
@@ -41,10 +43,12 @@ public class SuperServiceTest {
    * @throws ImejiException
    */
   protected static CollectionImeji createCollection() throws ImejiException {
-    CollectionService controller = new CollectionService();
-    collection = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
-    return controller.create(collection, JenaUtil.testUser, MetadataProfileCreationMethod.COPY,
-        null);
+    CollectionService service = new CollectionService();
+    CollectionFactory factory = ImejiFactory.newCollection();
+    factory.setPerson("Max", "Planck", "MPG");
+    collectionBasic = factory.build();
+    collectionBasic.setTitle("Test");
+    return service.create(collectionBasic, JenaUtil.testUser);
   }
 
   /**
@@ -54,8 +58,9 @@ public class SuperServiceTest {
    * @throws ImejiException
    */
   protected static Item createItem() throws ImejiException {
-    ItemService controller = new ItemService();
-    item = controller.create(ImejiFactory.newItem(collection), collection, JenaUtil.testUser);
+    ItemService service = new ItemService();
+    item =
+        service.create(ImejiFactory.newItem(collectionBasic), collectionBasic, JenaUtil.testUser);
     return item;
   }
 
@@ -64,17 +69,17 @@ public class SuperServiceTest {
   }
 
   protected static Item createItemWithFile(File file) throws ImejiException {
-    if (collection == null) {
+    if (collectionBasic == null) {
       createCollection();
     }
-    return createItemWithFile(file, collection, JenaUtil.testUser);
+    return createItemWithFile(file, collectionBasic, JenaUtil.testUser);
   }
 
   protected static Item createItemWithFile(File file, CollectionImeji collection, User user)
       throws ImejiException {
-    ItemService controller = new ItemService();
+    ItemService service = new ItemService();
     item = ImejiFactory.newItem(collection);
-    item = controller.createWithFile(item, file, file.getName(), collection, user);
+    item = service.createWithFile(item, file, file.getName(), collection, user);
     return item;
   }
 

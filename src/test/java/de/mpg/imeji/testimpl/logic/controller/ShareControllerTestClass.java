@@ -18,7 +18,7 @@ import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.test.logic.controller.SuperServiceTest;
+import de.mpg.imeji.test.logic.service.SuperServiceTest;
 import util.JenaUtil;
 
 /**
@@ -65,9 +65,9 @@ public class ShareControllerTestClass extends SuperServiceTest {
       Assert.fail("User shouldn't be abble to delete the profile");
       profileController.release(profile, user2);
       Assert.fail("User shouldn't be abble to release the profile");
-      collectionController.delete(collection, user2);
+      collectionController.delete(collectionBasic, user2);
       Assert.fail("User shouldn't be abble to delete the collection");
-      collectionController.releaseWithDefaultLicense(collection, user2);
+      collectionController.releaseWithDefaultLicense(collectionBasic, user2);
       Assert.fail("User shouldn't be abble to release the collection");
       profileController.update(profile, user2);
     } catch (Exception e) {
@@ -81,31 +81,31 @@ public class ShareControllerTestClass extends SuperServiceTest {
     User user = userController.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     User user2 = userController.retrieve(JenaUtil.TEST_USER_EMAIL_2, Imeji.adminUser);
     ShareService controller = new ShareService();
-    controller.shareToUser(user, user2, collection.getId().toString(),
+    controller.shareToUser(user, user2, collectionBasic.getId().toString(),
         (List<String>) ShareService.rolesAsList(ShareRoles.READ));
     ProfileController profileController = new ProfileController();
     CollectionService collectionController = new CollectionService();
     MetadataProfile collectionProfile = null;
     try {
-      collectionController.retrieve(collection.getId(), user2);
-      collectionProfile = profileController.retrieve(collection.getProfile(), user2);
+      collectionController.retrieve(collectionBasic.getId(), user2);
+      collectionProfile = profileController.retrieve(collectionBasic.getProfile(), user2);
     } catch (Exception e) {
       Assert.fail(e.getMessage());
     }
     try {
-      collectionController.update(collection, user2);
+      collectionController.update(collectionBasic, user2);
       Assert.fail("User shouldn't be abble to update the collection");
     } catch (Exception e) {
       // OK
     }
     try {
-      collectionController.delete(collection, user2);
+      collectionController.delete(collectionBasic, user2);
       Assert.fail("User shouldn't be abble to delete the collection");
     } catch (Exception e) {
       // OK
     }
     try {
-      collectionController.releaseWithDefaultLicense(collection, user2);
+      collectionController.releaseWithDefaultLicense(collectionBasic, user2);
       Assert.fail("User shouldn't be abble to release the collection");
     } catch (Exception e) {
       // OK
@@ -136,26 +136,26 @@ public class ShareControllerTestClass extends SuperServiceTest {
     User user = userController.retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     User user2 = userController.retrieve(JenaUtil.TEST_USER_EMAIL_2, Imeji.adminUser);
     ShareService controller = new ShareService();
-    controller.shareToUser(user, user2, collection.getId().toString(),
+    controller.shareToUser(user, user2, collectionBasic.getId().toString(),
         (List<String>) ShareService.rolesAsList(ShareRoles.EDIT));
     ProfileController profileController = new ProfileController();
     CollectionService collectionController = new CollectionService();
     MetadataProfile collectionProfile = null;
     try {
-      collectionController.retrieve(collection.getId(), user2);
-      collectionController.update(collection, user2);
-      collectionProfile = profileController.retrieve(collection.getProfile(), user2);
+      collectionController.retrieve(collectionBasic.getId(), user2);
+      collectionController.update(collectionBasic, user2);
+      collectionProfile = profileController.retrieve(collectionBasic.getProfile(), user2);
     } catch (Exception e) {
       Assert.fail(e.getMessage());
     }
     try {
-      collectionController.delete(collection, user2);
+      collectionController.delete(collectionBasic, user2);
       Assert.fail("User shouldn't be abble to delete the collection");
     } catch (Exception e) {
       // OK
     }
     try {
-      collectionController.releaseWithDefaultLicense(collection, user2);
+      collectionController.releaseWithDefaultLicense(collectionBasic, user2);
       Assert.fail("User shouldn't be abble to release the collection");
     } catch (Exception e) {
       // OK
@@ -198,13 +198,13 @@ public class ShareControllerTestClass extends SuperServiceTest {
     ShareService shareController = new ShareService();
     // First share...
     shareController.shareToUser(JenaUtil.testUser, JenaUtil.testUser2,
-        collection.getId().toString(), ShareService.rolesAsList(ShareRoles.READ));
+        collectionBasic.getId().toString(), ShareService.rolesAsList(ShareRoles.READ));
     // ... then unshare
     shareController.shareToUser(JenaUtil.testUser, JenaUtil.testUser2,
-        collection.getId().toString(), new ArrayList<String>());
+        collectionBasic.getId().toString(), new ArrayList<String>());
     CollectionService collectionController = new CollectionService();
     try {
-      collectionController.retrieve(collection.getId(), JenaUtil.testUser2);
+      collectionController.retrieve(collectionBasic.getId(), JenaUtil.testUser2);
       Assert.fail("Unshare of collection not working");
     } catch (Exception e) {
       // good

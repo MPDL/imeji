@@ -19,7 +19,7 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import de.mpg.imeji.test.logic.controller.SuperServiceTest;
+import de.mpg.imeji.test.logic.service.SuperServiceTest;
 import util.JenaUtil;
 
 public class StatisticsControllerTestClass extends SuperServiceTest {
@@ -61,8 +61,8 @@ public class StatisticsControllerTestClass extends SuperServiceTest {
 
   private CollectionImeji createCollection(User user) throws ImejiException {
     CollectionService controller = new CollectionService();
-    collection = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
-    return controller.create(collection, profile, user, MetadataProfileCreationMethod.COPY, null);
+    collectionBasic = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
+    return controller.create(collectionBasic, profile, user, MetadataProfileCreationMethod.COPY, null);
   }
 
   private Item createItemWithFile(CollectionImeji col, File file, User user) throws ImejiException {

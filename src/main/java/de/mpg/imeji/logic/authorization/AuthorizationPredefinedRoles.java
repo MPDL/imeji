@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.authorization;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,8 +28,9 @@ public class AuthorizationPredefinedRoles {
    * @return
    */
   public static List<String> defaultUser(String uri) {
-    return Arrays.asList(new Grant(GrantType.EDIT, IMEJI_GLOBAL_URI).toGrantString(),
-        new Grant(GrantType.ADMIN, uri).toGrantString());
+    return new ArrayList<String>(
+        Arrays.asList(new Grant(GrantType.EDIT, IMEJI_GLOBAL_URI).toGrantString(),
+            new Grant(GrantType.ADMIN, uri).toGrantString()));
   }
 
   /**
@@ -38,8 +40,9 @@ public class AuthorizationPredefinedRoles {
    * @return
    */
   public static List<String> restrictedUser(String uri) {
-    return Arrays.asList(new Grant(GrantType.READ, IMEJI_GLOBAL_URI).toGrantString(),
-        new Grant(GrantType.ADMIN, uri).toGrantString());
+    return new ArrayList<String>(
+        Arrays.asList(new Grant(GrantType.READ, IMEJI_GLOBAL_URI).toGrantString(),
+            new Grant(GrantType.ADMIN, uri).toGrantString()));
   }
 
   /**
@@ -48,7 +51,7 @@ public class AuthorizationPredefinedRoles {
    * @return
    */
   public static List<String> imejiAdministrator(String uri) {
-    return Arrays.asList(new Grant(GrantType.ADMIN, uri).toGrantString(),
-        new Grant(GrantType.ADMIN, IMEJI_GLOBAL_URI).toGrantString());
+    return new ArrayList<String>(Arrays.asList(new Grant(GrantType.ADMIN, uri).toGrantString(),
+        new Grant(GrantType.ADMIN, IMEJI_GLOBAL_URI).toGrantString()));
   }
 }

@@ -2,9 +2,11 @@ package de.mpg.imeji.logic.vo.factory;
 
 import java.io.File;
 import java.net.URI;
+import java.util.List;
 
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.License;
 
 /**
  * Factory for Item
@@ -42,6 +44,11 @@ public class ItemFactory {
 
   public ItemFactory setCollection(String collectionId) {
     item.setCollection(URI.create(collectionId));
+    return this;
+  }
+
+  public ItemFactory setLicenses(List<License> list) {
+    item.setLicenses(list);
     return this;
   }
 }

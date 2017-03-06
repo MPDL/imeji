@@ -20,7 +20,7 @@ import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import de.mpg.imeji.test.logic.controller.SuperServiceTest;
+import de.mpg.imeji.test.logic.service.SuperServiceTest;
 
 public class RegistrationBusinessControllerTest extends SuperServiceTest {
 
@@ -149,7 +149,7 @@ public class RegistrationBusinessControllerTest extends SuperServiceTest {
     // invite the user to
     InvitationService invitationBusinessController = new InvitationService();
     invitationBusinessController.invite(new Invitation(user.getEmail(),
-        collection.getId().toString(), ShareService.rolesAsList(ShareRoles.READ)));
+        collectionBasic.getId().toString(), ShareService.rolesAsList(ShareRoles.READ)));
     // Register
     Registration registration = registrationBC.register(user);
     Assert.assertNotNull(registrationBC.retrieveByToken(registration.getToken()));
