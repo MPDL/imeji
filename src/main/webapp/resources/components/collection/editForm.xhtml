@@ -35,10 +35,10 @@
                                 <h4>
                                     <span class="imj_inlineButtonGroup">
                                         <h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAuthor(indexA.index)}">
-                                            <f:ajax execute="@this" render="editContainer:mediaContainerForm:authors" />
+                                            <f:ajax execute=":editContainer:mediaContainerForm:authors" render=":editContainer:mediaContainerForm:authors" />
                                         </h:commandLink>
                                         <h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_author}" action="#{cc.attrs.formularBean.removeAuthor(indexA.index)}">
-                                            <f:ajax execute="@this" render="editContainer:mediaContainerForm:authors" />
+                                            <f:ajax execute=":editContainer:mediaContainerForm:authors" render=":editContainer:mediaContainerForm:authors" />
                                         </h:commandLink>
                                     </span>
                                     <h:outputText value=" #{lbl.authors}" />

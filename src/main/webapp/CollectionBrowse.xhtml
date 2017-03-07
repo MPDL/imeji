@@ -28,8 +28,8 @@
 			<span class="collectionAboutAuthor">#{lbl.by} #{CollectionItemsBean.authors}</span>
 			<span>
 				<a href="" onclick="return false;">
-					<span class="fa fa-caret-down" style="font-size:0.85em;" onclick="$('.collectionAboutHidden').slideDown(500);$('.fa-caret-up').show(); $(this).hide();"> More</span>
-					<span class="fa fa-caret-up" style="display:none;font-size:0.85em;" onclick="$('.collectionAboutHidden').slideUp(500);$('.fa-caret-down').show(); $(this).hide();"> Less</span>
+					<span class="fa fa-caret-down" style="font-size:0.85em;" onclick="$('.collectionAboutHidden').slideDown(500);$('.fa-caret-up').show(); $(this).hide();"> #{lbl.more}</span>
+					<span class="fa fa-caret-up" style="display:none;font-size:0.85em;" onclick="$('.collectionAboutHidden').slideUp(500);$('.fa-caret-down').show(); $(this).hide();"> #{lbl.less}</span>
 				</a>
 			</span>
 			<ui:fragment rendered="#{CollectionItemsBean.collection.status == 'WITHDRAWN'}">
