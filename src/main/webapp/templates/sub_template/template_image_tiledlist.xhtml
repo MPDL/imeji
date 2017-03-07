@@ -7,23 +7,6 @@
                 xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
                 xmlns:item="http://java.sun.com/jsf/composite/components/item">
 	
-  
-    <ui:define name="modalDialogs_from_template">
-        <!-- Confirmation Pages -->
-        <ui:include src="../../confirmationPages/AllDelete.xhtml">
-            <ui:param name="bean" value="#{paginatorListSessionBean}"/>
-        </ui:include>
-        <ui:include src="../../confirmationPages/AllWithdraw.xhtml">
-            <ui:param name="bean" value="#{paginatorListSessionBean}"/>
-        </ui:include>
-        <ui:include src="../../confirmationPages/SelectedDelete.xhtml">
-            <ui:param name="bean" value="#{paginatorListSessionBean}"/>
-        </ui:include>
-        <ui:include src="../../confirmationPages/SelectedWithdraw.xhtml">
-            <ui:param name="bean" value="#{paginatorListSessionBean}"/>
-        </ui:include>
-    </ui:define>
-
 	<ui:define name="actionsMenu">
 		<menu:actionItems id="actionItems" itemsBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'items' and empty SessionBean.selected}"/>
 		<menu:actionCollection id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and empty SessionBean.selected}" />
@@ -47,7 +30,6 @@
             
 	
 			<div id="itemsArea" class="itemsArea">
-				
 				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
            		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
            		

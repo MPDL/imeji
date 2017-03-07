@@ -67,8 +67,8 @@ public class CollectionItemsBean extends ItemsBean {
       browseContext = getNavigationString() + id;
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
-      collection.getPersons().stream().map(p -> p.AsFullText())
-          .forEach(a -> authors = authors.equals("") ? a : "; " + a);
+      collection.getPersons().stream().map(p -> p.getCompleteName())
+          .forEach(a -> authors += authors.equals("") ? a : "; " + a);
       size = StringHelper.isNullOrEmptyTrim(getQuery()) ? getTotalNumberOfRecords()
           : getCollectionSize();
       setLicenseEditor(

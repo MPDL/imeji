@@ -210,12 +210,30 @@
 					.collectionAbout{
 						width: 80%;
 						font-size: 1.2em;
+						padding-bottom: 10px;
+					}
+					.collectionAboutTitle{
+					    font-size: 160%;
+					    font-weight: bold;
+					    letter-spacing: 0.045em;
+					    line-height: 1.3em;
+					    text-overflow: ellipsis;
+					    overflow: hidden;
+					}
+					.collectionAboutAuthor{
+						text-overflow: ellipsis;
+						max-width: 80%;
+						line-height: 1.4em;
+						 font-size: 0.9em;
+						white-space: nowrap;
+  						overflow: hidden;
+  						float:left;
 					}
 					.collectionAbout span{
 						margin-right: 5px;
 					}
 					.collectionAboutHidden{
-						width: 80%;
+						width: 90%;
 						display:none;
 					}
 					.imj_adminPanel.imj_userConfig{
@@ -250,6 +268,12 @@
 					.imj_dragOver{
 						border: 2px dashed #6CAE2F;
 					}
+					small {
+					    font-size: smaller;
+					}
+					.imj_mediaWithdrawn {
+					    text-align: left;
+					}
                 </style>
                 <!-- NEW SCIPT - TO BE ADDED TO JS -->
                
@@ -281,15 +305,18 @@
 	                 <!-- Search Query -->
 	                <ui:insert name="searchQuery"/>
 		                 <!-- headline -->
+		               
 	                 <div class="imj_siteContentHeadline">
 	                    <h1>
-	                        #{headline.toString().trim()}
+	                        #{headline.toString().trim()} 
 	                    </h1>
 	                    <ui:insert name="collectionAbout"/>
+	                    <span class="imj_siteContentStatus #{headline.toString().trim().length() == 0 ? 'imj_invisible' : ''}">
+			                <imjc:iconStatus id="status" imejiResource="#{imejiResource}"/>
+			            </span>
 	                </div>
-	                <div class="imj_siteContentStatus #{headline.toString().trim().length() == 0 ? 'imj_invisible' : ''}">
-	                	<imjc:iconStatus id="status" imejiResource="#{imejiResource}"/>
-	                </div>
+	              
+	              
 	               
 	                <!-- Actions Menu -->
 	                <h:panelGroup layout="block" id="actionsMenuArea" class="imj_actionMenuArea">
