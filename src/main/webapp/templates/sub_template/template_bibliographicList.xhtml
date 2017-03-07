@@ -18,10 +18,10 @@
 		<h:panelGroup layout="block" id ="ajaxWrapper">
 			
 			<!-- Selection Info Panel -->
-			<imjc:filterInfoPanel fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
+			<col:filters fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
 									 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
 									 filterBeanHasQuery="#{filterBeanHasQuery}"
-									 objectLabel="#{objectLabel}"/>
+									 objectLabel="#{lbl.collections}"/>
 			
 			
 			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords == 0}">
@@ -35,17 +35,7 @@
 			<h:form>
 			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
 				<div id="imj_listBody">
-					<ui:fragment rendered="#{!Auth.loggedIn}">
-						<col:listEntryLoggedOut mediaList="#{paginatorListSessionBean}" globalDisplayLinkText="#{globalDisplayLinkText}" metadataNavigationURL="#{metadataNavigationURL}"/>
-					</ui:fragment>
-					<ui:fragment rendered="#{Auth.loggedIn}">
-						<col:listEntryLoggedIn mediaList="#{paginatorListSessionBean}" isActivatable="#{isActivatable}" 
-														 metadataNavigationURL="#{metadataNavigationURL}" releaseItemConfirmationText="#{releaseItemConfirmationText}" 
-														 deleteItemConfirmationText="#{deleteItemConfirmationText}"
-														 globalDeleteDialogId="#{currentMainMenu}List-selected-deleteDialog" 
-														 withdrawItemConfirmationText="#{withdrawItemConfirmationText}"
-														 globalDeleteLinkText="#{globalDeleteLinkText}" globalDisplayLinkText="#{globalDisplayLinkText}"/>
-					</ui:fragment>
+					<col:list mediaList="#{paginatorListSessionBean}"/>
 				</div>
 			</ui:fragment>
 			</h:form>

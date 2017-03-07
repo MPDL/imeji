@@ -7,7 +7,6 @@
 	
 	<composite:interface>
 		<composite:attribute name="mediaList"/>
-		<composite:attribute name="metadataNavigationURL"/>
 	</composite:interface>
 	
 	<composite:implementation>		
@@ -15,7 +14,7 @@
 			<h:panelGroup id="ajaxList" styleClass="imj_listBody">
 				<ul>
 					<ui:repeat var="container" value="#{cc.attrs.mediaList.currentPartList}" id="list" rows="0"  varStatus="index">
-					    <col:bibListItem_draft item="#{container}" metadataNavigationURL="#{cc.attrs.metadataNavigationURL}" />					
+					    <col:listEntry item="#{container}"/>					
 					</ui:repeat>
 				</ul>
 			</h:panelGroup>						

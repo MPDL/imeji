@@ -19,7 +19,8 @@
 						menu="#{cc.attrs.formBean.statementMenu}"
 						render=":editItem:metadata:list:#{position.index}:value" 
 						containerId=":editItem:metadata:list:#{position.index}:select"
-						resetAction="resetInput"/>
+						resetAction="resetInput"
+						compact="true"/>
 				</ui:fragment>
 				<ui:fragment rendered="#{not empty entry.input}">
 					<h:outputText value="#{entry.input.statement.index}" />

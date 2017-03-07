@@ -14,7 +14,8 @@
 	<composite:attribute name="containerId" />
 	<composite:attribute name="bean" />
 	<composite:attribute name="submitAction" />
-	<composite:attribute name="restAction" />
+	<composite:attribute name="resetAction" />
+	<composite:attribute name="compact" default="true" type="java.lang.Boolean" />
 </composite:interface>
 
 <composite:implementation>
@@ -27,7 +28,9 @@
 			<f:ajax event="select" render="#{cc.attrs.containerId}:buttons"
 				listener="#{cc.attrs.component.listener}" />
 		</h:inputText>
-	
+		<ui:fragment rendered="#{cc.attrs.compact}">
+			<br/>
+		</ui:fragment>
 		<h:panelGroup id="buttons">
 			<ui:fragment rendered="#{not empty cc.attrs.component.statement}">
 				<h:commandLink id="btnCreateStatement"
