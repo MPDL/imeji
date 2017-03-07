@@ -7,7 +7,6 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.Statement;
@@ -139,11 +138,8 @@ public class JenaCustomQueries {
    */
   public static final String selectUserSysAdmin() {
     return X_PATH_FUNCTIONS_DECLARATION
-        + "  SELECT DISTINCT ?s WHERE {OPTIONAL{ ?s <http://imeji.org/terms/grant> ?g . ?g <http://imeji.org/terms/grantType> \""
-        + GrantType.ADMIN.name()
-        + "\"^^<http://www.w3.org/2001/XMLSchema#string> . ?g <http://imeji.org/terms/grantFor> <"
-        + Imeji.PROPERTIES.getBaseURI()
-        + ">} . filter(bound(?g)) . ?s a <http://imeji.org/terms/user>}";
+        + " SELECT DISTINCT ?s WHERE {?s <http://imeji.org/terms/grant>  \"ADMIN,"
+        + Imeji.PROPERTIES.getBaseURI() + "\"^^<http://www.w3.org/2001/XMLSchema#string>}";
   }
 
   /**
@@ -229,17 +225,6 @@ public class JenaCustomQueries {
   }
 
   /**
-   * Find the profile of a collection and return its uri
-   *
-   * @param collectionUri
-   * @return
-   */
-  public static final String selectProfileIdOfCollection(String collectionUri) {
-    return " SELECT DISTINCT ?s WHERE {<" + collectionUri
-        + "> <http://imeji.org/terms/mdprofile> ?s} LIMIT 1 ";
-  }
-
-  /**
    * @param fileUrl
    * @return
    */
@@ -274,16 +259,6 @@ public class JenaCustomQueries {
         + ImejiNamespaces.STORAGE_ID + "> '" + storageId + "'^^xsd:string . ?s <"
         + ImejiNamespaces.STATUS + "> <" + Status.RELEASED.getUriString() + ">} limit 1";
   }
-
-  /**
-   * @param fileUrl
-   * @return
-   */
-  public static final String selectSpaceIdOfFileOrCollection(String fileUrl) {
-    return X_PATH_FUNCTIONS_DECLARATION + "  SELECT DISTINCT ?s WHERE {"
-        + "?s <http://imeji.org/terms/logoUrl> <" + fileUrl + "> } LIMIT 1 ";
-  }
-
 
   /**
    * Select all {@link Metadata} which are not related to a statement. Happens when a
@@ -629,9 +604,10 @@ public class JenaCustomQueries {
    * @return
    */
   public static final String selectUserCompleteName(URI uri) {
-    return "SELECT (str(?cn) as ?s) WHERE{ <" + uri.toString() + "> "
-        + "<http://xmlns.com/foaf/0.1/person> ?o "
-        + ". ?o <http://purl.org/escidoc/metadata/terms/0.1/complete-name> ?cn}";
+    return "SELECT (str(?f + ', ' + ?g) as ?s) WHERE{ <" + uri.toString()
+        + "> <http://xmlns.com/foaf/0.1/person>  ?p  .  "
+        + "?p  <http://purl.org/escidoc/metadata/terms/0.1/family-name> ?f . "
+        + "?p  <http://purl.org/escidoc/metadata/terms/0.1/given-name>  ?g}";
   }
 
   /**

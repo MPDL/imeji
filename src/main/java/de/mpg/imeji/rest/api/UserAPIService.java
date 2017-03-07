@@ -4,6 +4,7 @@ import static de.mpg.imeji.logic.config.Imeji.adminUser;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 
 import org.jose4j.lang.JoseException;
 
@@ -11,9 +12,6 @@ import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.search.Search;
-import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.rest.to.SearchResultTO;
@@ -40,11 +38,7 @@ public class UserAPIService implements APIService<UserTO> {
   }
 
   public String getCompleteName(URI uri) throws ImejiException {
-    final Search search = SearchFactory.create();
-    final List<String> results =
-        search.searchString(JenaCustomQueries.selectUserCompleteName(uri), null, null, 0, -1)
-            .getResults();
-    return results.size() == 1 ? results.get(0) : null;
+    return new UserService().getCompleteName(uri, Locale.ENGLISH);
   }
 
   @Override
