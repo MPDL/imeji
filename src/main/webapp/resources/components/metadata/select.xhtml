@@ -14,6 +14,7 @@
 	<composite:attribute name="containerId" />
 	<composite:attribute name="bean" />
 	<composite:attribute name="submitAction" />
+	<composite:attribute name="restAction" />
 </composite:interface>
 
 <composite:implementation>
@@ -26,11 +27,18 @@
 			<f:ajax event="select" render="#{cc.attrs.containerId}:buttons"
 				listener="#{cc.attrs.component.listener}" />
 		</h:inputText>
+	
 		<h:panelGroup id="buttons">
 			<ui:fragment rendered="#{not empty cc.attrs.component.statement}">
 				<h:commandLink id="btnCreateStatement"
 					action="#{cc.attrs.bean[cc.attrs.submitAction]}"
-					value="#{lbl.select}">
+					value=" #{lbl.select}" onclick="startLoader();">
+					<f:ajax execute="@form" render="@form" />
+				</h:commandLink>
+				#{lbl.or_big}
+				<h:commandLink id="resetSelectMd"
+					action="#{cc.attrs.bean[cc.attrs.resetAction]}"
+					value=" #{lbl.clear}">
 					<f:ajax execute="@form" render="@form" />
 				</h:commandLink>
 			</ui:fragment>
@@ -40,15 +48,17 @@
 					onclick="openDialog('createStatementDialog'); return false;">
 					#{lbl.metadata_create} </a>
 			</ui:fragment>
+			<statement:createDialog id="dialog" component="#{cc.attrs.component}"
+		bean="#{cc.attrs.bean}" submitAction="#{cc.attrs.submitAction}"
+		containerId="#{cc.attrs.containerId}" />
 		</h:panelGroup>
 		<datalist id="statementList" class="comboboxDataList">
 			<ui:repeat var="statement" value="#{cc.attrs.menu}">
 				<option>#{statement.value}</option>
 			</ui:repeat>
 		</datalist>
+		
 	</h:panelGroup>
-	<statement:createDialog id="dialog" component="#{cc.attrs.component}"
-		bean="#{cc.attrs.bean}" submitAction="#{cc.attrs.submitAction}"
-		containerId="#{cc.attrs.containerId}" />
+	
 </composite:implementation>
 </html>

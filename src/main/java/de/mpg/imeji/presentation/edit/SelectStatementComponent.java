@@ -24,6 +24,7 @@ public class SelectStatementComponent implements Serializable {
 
   public SelectStatementComponent(Map<String, Statement> statementMap) {
     this.statementMap = statementMap;
+    this.index = null;
   }
 
   public SelectStatementComponent(String index, Map<String, Statement> statementMap) {
@@ -39,6 +40,12 @@ public class SelectStatementComponent implements Serializable {
   private void init(String index) {
     this.index = index;
     statement = statementMap.get(index);
+    statementForm.setName(index);
+  }
+
+  public void reset() {
+    this.index = null;
+    this.statement = null;
   }
 
   /**

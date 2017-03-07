@@ -7,10 +7,19 @@
 	<ui:param name="headline" value="#{lbl.view_page_disallowed}"/>
 	<div>
 		<h3 class="imj_headline">
-			<h:outputText rendered="#{!Auth.loggedIn}" value="#{lbl.view_page_disallowed}"/>
+			<ui:fragment rendered="#{!Auth.loggedIn}">
+				<ui:fragment rendered="#{Configuration.registrationEnabled}">
+				<a href="#{Navigation.registrationUrl}">#{lbl.register}</a>
+				<br/>
+				#{lbl.or_big}<br/>
+				</ui:fragment>
+				<h:outputText value="#{lbl.view_page_disallowed}"/>
+				<br/><br/>
+			</ui:fragment>
 			<h:outputText rendered="#{Auth.loggedIn}" value="#{lbl.view_page_disallowed2}"/>
 		</h3>
 		<h:form>
+			
 			<div class="imj_metadataSet">
 				<h:outputLabel for="inputEmail" styleClass="imj_metadataLabel" value="Email"/>
 				<h:inputText id="inputEmail" styleClass="imj_metadataValue" value="#{LoginBean.login}"/>

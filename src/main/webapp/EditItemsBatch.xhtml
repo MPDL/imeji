@@ -26,10 +26,26 @@
 					<md:select id="select"
 						component="#{EditItemsBatchBean.statementSelector}"
 						menu="#{EditItemsBatchBean.statementMenu}" render="@form"
-						containerId=":editBatchForm:select" submitAction="initInput" bean="#{EditItemsBatchBean}" />
+						containerId=":editBatchForm:select" 
+						submitAction="initInput" 
+						resetAction="reset"
+						bean="#{EditItemsBatchBean}" 
+						rendered="#{empty EditItemsBatchBean.input}"/>
+					<ui:fragment rendered="#{not empty EditItemsBatchBean.input}">
+						<h1>
+						#{EditItemsBatchBean.input.statement.index}
+						<small>
+						(<h:commandLink action="#{EditItemsBatchBean.reset}" value="#{lbl.select_another_metadata}" >
+							<f:ajax execute="@form" render="@form" />
+						</h:commandLink>)
+						</small>
+						</h1>
+					</ui:fragment>
 				</div>
 				<div class="imj_metadataValue">
 					<md:input metadataInputComponent="#{EditItemsBatchBean.input}" />
+					
+					
 				</div>
 				
 			</div>

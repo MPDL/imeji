@@ -80,12 +80,12 @@ body {
 				</div>
 				<div class="imj_searchQueryDisplay">
 					<span class="fa fa-plus"></span> #{lbl.add_column} :
-
 					<md:select id="selectStatement"
 						component="#{EditItemsSelectedBean.newStatement}"
 						menu="#{EditItemsSelectedBean.filteredStatementMenu}"
 						render=":selectMetadataWrapper" bean="#{EditItemsSelectedBean}"
-						submitAction="addColumn" containerId=":selectStatement"/>
+						submitAction="addColumn" containerId=":selectStatement"
+						resetAction="resetNewStatement"/>
 
 					<h:panelGroup id="selectMetadataWrapper">
 						<h:commandLink id="addColumn"
