@@ -227,7 +227,6 @@
 								<span class="imj_invisible">: </span>
 							</div>
 							<div class="imj_metadataValue">
-								#{itemBean.image.created.time.toString()}
 								<ul class="imj_optionList">
 									<li>
 										<h:outputLink value="#{itemBean.thumbnail}" target="_blank">
@@ -316,19 +315,13 @@
 		};
 	</script>
 	<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.js"></script>
-	<script type="text/javascript">
-
-
-			
-			var open=false;
-				
+	<script type="text/javascript">				
     			var imgFull = {
     			type: 'image',
     			url: '#{itemBean.fullResolution}',
     			};
    
-    			var viewerFull = OpenSeadragon({
-    
+    			var viewerFull = OpenSeadragon({    
         		id: "seadragon-viewer-full",
         		tileSources: imgFull,
         		showRotationControl: true,
@@ -340,8 +333,7 @@
         		rotateLeftButton: "rotateLeftButton",
         		gestureSettingsTouch: {
            		 pinchRotate: true
-        		}
-        		
+        		}       		
     		});
     	    	
 

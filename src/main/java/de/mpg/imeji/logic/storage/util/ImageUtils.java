@@ -175,48 +175,6 @@ public final class ImageUtils {
     return result;
   }
 
-  public static int getImageWidth(File file) {
-    try (ImageInputStream in = ImageIO.createImageInputStream(file)) {
-      if (in == null) {
-        return 0;
-      }
-      final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-      if (readers.hasNext()) {
-        final ImageReader reader = readers.next();
-        try {
-          reader.setInput(in);
-          return reader.getWidth(0);
-        } finally {
-          reader.dispose();
-        }
-      }
-    } catch (final IOException e) {
-      e.printStackTrace();
-    }
-    return 0;
-  }
-
-  public static int getImageHeight(File file) {
-    try (ImageInputStream in = ImageIO.createImageInputStream(file)) {
-      if (in == null) {
-        return 0;
-      }
-      final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-      if (readers.hasNext()) {
-        final ImageReader reader = readers.next();
-        try {
-          reader.setInput(in);
-          return reader.getHeight(0);
-        } finally {
-          reader.dispose();
-        }
-      }
-    } catch (final IOException e) {
-      e.printStackTrace();
-    }
-    return 0;
-  }
-
 
   /**
    * Scale a {@link BufferedImage} to new size. Is faster than the basic {@link ImageUtils}

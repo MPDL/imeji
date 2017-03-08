@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.storage.impl;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -232,17 +233,10 @@ public class InternalStorage implements Storage {
   }
 
   @Override
-  public int getImageWidth(String url) throws IOException {
+  public Dimension getImageDimension(String url) throws IOException {
     final File file = read(url);
-    return ImageUtils.getImageWidth(file);
+    return ImageUtils.getImageDimension(file);
   }
-
-  @Override
-  public int getImageHeight(String url) throws IOException {
-    final File file = read(url);
-    return ImageUtils.getImageHeight(file);
-  }
-
 
 
   @Override
