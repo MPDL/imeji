@@ -28,11 +28,13 @@
 					<ui:fragment id="formArea">
 						<h:form id="userForm"
 							rendered="#{!RegistrationBean.registration_success}">
-							<!-- The person component -->
-							<div class="imj_admindataSet">
-								<div class="imj_admindataLabel imj_requiredMarker">#{lbl.email}</div>
-								<div class="imj_admindataValue">
-									<div class="imj_admindataValueEntry">
+							<div class="imj_metadataSet">
+								<div class="imj_metadataLabel">
+									<h:outputText value="#{lbl.email} *"/>
+									<span class="imj_noDisplay">: </span>
+								</div>
+								<div class="imj_metadataValue">
+									<div class="imj_metadataValueEntry">
 										<h:inputText type="text" name="email"
 											value="#{RegistrationBean.user.email}"
 											styleClass="imj_admindataEdit" />
@@ -41,8 +43,7 @@
 							</div>
 							<imjc:person id="userPersonRegister"
 								person="#{RegistrationBean.user.person}"
-								bean="#{RegistrationBean}" position="0" userSource=""
-								minimized="true" />
+								bean="#{RegistrationBean}" position="0" userSource=""/>
 
 							<ui:fragment
 								rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">

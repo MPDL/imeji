@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:upload="http://java.sun.com/jsf/composite/components/upload"
+	xmlns:license="http://java.sun.com/jsf/composite/components/license">
+	
+	<composite:interface>
+		<composite:attribute name="bean" />
+	</composite:interface>
+	
+	<composite:implementation>
+		<div id="shareWithUsersDialog" class="imj_noDisplay imj_modalDialogBox imj_shareDialogBox">
+			<h:form>
+				<ui:fragment rendered="#{empty cc.attrs.bean.input.unknownEmails}">
+					<h2 class="imj_sectionHeadline">
+						<h:outputText value="#{lbl.share_with}"/>
+					</h2>	
+					<div class="imj_shareEmailInput">		
+						<div class="imj_metadataSet">
+							<h:outputLabel for="emailInput" styleClass="imj_metadataLabel" value="#{lbl.share_email}"/>
+							<h:inputTextarea id="emailInput" value="#{cc.attrs.bean.input.input}" styleClass="imj_metadataValue" html5:placeholder="e.g. email@example.com;..."/>	
+						</div>
+						<div class="imj_metadataSet">
+							<div class="imj_metadataLabel"></div>
+							<h:panelGroup layout="block" id="shareOptions" styleClass="imj_metadataValue">
+								<h:selectOneRadio  id="selectedGrants" styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{cc.attrs.bean.input.menu.role}" layout="lineDirection">
+									<f:selectItems value="#{rolesMenu}"/>
+								</h:selectOneRadio >
+							</h:panelGroup>
+						</div>
+						<div class="imj_submitPanel">
+							<h:selectBooleanCheckbox value="#{cc.attrs.bean.sendEmail}" id="selSendEmail"/>
+							<h:outputLabel for="selSendEmail" value="#{lbl.user_send_mail}"/>
+							<h:commandButton value="#{lbl.cancel}" action="#{cc.attrs.bean.reloadPage}" styleClass="imj_cancelButton"/>
+							<h:commandButton value="#{lbl.share}" action="#{cc.attrs.bean.share}" styleClass="imj_submitButton">
+								<f:ajax render="@form" execute="@form"/>
+							</h:commandButton>
+						</div>
+					</div>
+				</ui:fragment>
+				<h:panelGroup  styleClass="imj_pageMessageArea" id="unknownEmails" rendered="#{!empty cc.attrs.bean.input.unknownEmails}">
+					<div class="imj_messageTitleInfo">#{lbl.share_confirm_invitation_title}</div>		
+					<ul class="imj_messageList">
+						<li class="imj_messageInfo"><br/>#{cc.attrs.bean.labelConfirmInvitation}<br/></li>
+						<ui:repeat var="email" value="#{cc.attrs.bean.input.unknownEmails}" varStatus="status">
+							<li>
+								<h:outputText value="#{email} "/>
+								<h:commandLink action="#{cc.attrs.bean.input.removeUnknownEmail(status.index)}" style="padding:0 1em;" styleClass="imj_rightsAction fa fa-trash" >
+									<f:ajax render="@form"/>
+								</h:commandLink>
+							</li>
+						</ui:repeat>
+					</ul>
+					<div class="imj_submitPanel">
+						<h:commandButton value="#{lbl.cancel}" action="#{cc.attrs.bean.reloadPage}" styleClass="imj_cancelButton"/>
+						<h:commandButton action="#{cc.attrs.bean.invite}" styleClass="imj_submitButton" value="#{lbl.invite}"/>
+					</div>
+				</h:panelGroup>
+			</h:form>
+		</div>
+	</composite:implementation>
+</html>

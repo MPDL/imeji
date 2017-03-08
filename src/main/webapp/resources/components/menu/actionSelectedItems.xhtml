@@ -11,7 +11,13 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}:
+		<h:form>
+			#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}
+			<small>
+			(<h:commandLink action="#{cc.attrs.itemsBean.selectNone}" id="lnkSelectNone" title="#{lbl.select_none}" value="clear" >
+				<f:ajax execute="@this" render=":ajaxWrapper :actionsMenuArea"/>
+			</h:commandLink>)</small>
+		</h:form>
 		<ui:fragment rendered="#{Auth.update}">
 			<a href="#{Navigation.applicationUrl}editselected" class="imj_menuButton imj_overlayMenu">
 				<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>

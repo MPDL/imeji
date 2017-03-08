@@ -69,7 +69,7 @@ public class ElasticIndexer implements SearchIndexer {
   @Override
   public void indexBatch(List<?> l) {
     updateIndexBatch(l);
-    commit();
+    // commit();
   }
 
   @Override
@@ -86,6 +86,7 @@ public class ElasticIndexer implements SearchIndexer {
     } catch (final Exception e) {
       LOGGER.error("error indexing object ", e);
     }
+    commit();
   }
 
   @Override

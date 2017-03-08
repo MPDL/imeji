@@ -35,6 +35,12 @@ public class EditItemEntry implements Serializable {
     input = new MetadataInputComponent(ImejiFactory.newMetadata(statement).build(), statement);
   }
 
+  public void resetInput() {
+    input = null;
+    select.setIndex(null);
+    select.setStatement(null);
+  }
+
   /**
    * @return the select
    */

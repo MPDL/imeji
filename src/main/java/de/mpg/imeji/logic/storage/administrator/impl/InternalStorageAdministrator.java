@@ -101,9 +101,7 @@ public class InternalStorageAdministrator implements StorageAdministrator {
       if (f.isFile()) {
         final InternalStorageManager m = new InternalStorageManager();
         final String url = m.transformPathToUrl(f.getPath());
-        if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFileUrl(url), null).size() == 0
-            && ImejiSPARQL.exec(JenaCustomQueries.selectSpaceIdOfFileOrCollection(url), null)
-                .size() == 0) {
+        if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFileUrl(url), null).size() == 0) {
           // file doesn't exist, remove it
           m.removeFile(url);
           deleted++;

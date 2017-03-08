@@ -18,121 +18,27 @@
 		<ui:fragment rendered="#{Auth.admin(ShareBean.shareTo)}">
 			<div class="imj_shareForm">
 				<ui:fragment rendered="#{ShareBean.userGroup == null and empty ShareBean.input.unknownEmails}">
-					<div id="shareButtons" class="imj_submitPanel">
+					<br/>
+					<h2 class="imj_sectionHeadline">
+						 
+					</h2>
+					<div id="shareButtons">
 						<span id="userShareButton">
-							<h:commandButton value="#{lbl.share_new}" action="#" styleClass="imj_submitButton" type="button" onclick="$('#share').show();$('#shareGroup').hide();$('#userShareButton').hide();$('#groupShareButton').show();$('#or_big').hide()" id="userShare"/>	
+							<h:commandButton value="#{lbl.share_new}" action="#" styleClass="imj_submitButton" type="button" onclick="openDialog('shareWithUsersDialog');" id="userShare"/>	
 						</span>
 						<ui:fragment rendered="#{!empty ShareBean.userGroupsBean.userGroups}">
 							<span id="or_big" class="imj_submitPanelSeparator">
 								#{lbl.or_big}
 							</span>
 							<span id="groupShareButton">
-								<h:commandButton value="#{lbl.share_with_group}" action="#" styleClass="imj_submitButton" type="button" onclick="$('#shareGroup').show();$('#share').hide();$('#groupShareButton').hide();$('#userShareButton').show();$('#or_big').hide()" id="userGroupShare"/>
+								<h:commandButton value="#{lbl.share_with_group}" action="#" styleClass="imj_submitButton" onclick="openDialog('shareWithGroupDialog');" id="userGroupShare"/>
 							</span>
 						</ui:fragment>
 					</div>
 				</ui:fragment>
-				<div id="shareGroup" class="imj_noDisplay">
-					<h2 class="imj_sectionHeadline">
-						<h:outputText value="#{lbl.admin_userGroups}"/>
-					</h2>
-					<table class="imj_rightsTable">
-						<tbody>
-							<ui:repeat var="group" value="#{ShareBean.userGroupsBean.userGroups}" rendered="#{ShareBean.userGroupsBean != null}">
-								<tr>
-									<td>
-										<h2>#{group.name}</h2>								
-									</td>
-									<td class="imj_rightsAction">
-										<h:outputLink value="share?group=#{group.id}" styleClass="imj_editButton" rendered="#{cc.attrs.type != 'item'}">
-											<h:outputText value="#{lbl.select}"/>
-										</h:outputLink>	
-										<h:outputLink value="?tab=share&amp;group=#{group.id}" styleClass="imj_editButton" rendered="#{cc.attrs.type == 'item'}">
-											<h:outputText value="#{lbl.select}"/>
-										</h:outputLink>													
-									</td>						
-								</tr>
-							</ui:repeat>
-						</tbody>
-					</table>
-				</div>
-				<ui:fragment rendered="#{ShareBean.userGroup != null}">
-					<h2 class="imj_sectionHeadline">
-						<h:outputText value="#{lbl.share_with}: "/>
-					</h2>
-					<div class="imj_metadataSet">
-						<div class="imj_metadataLabel">
-							#{ShareBean.userGroup.name}
-						</div>
-						<h:form prependId="false">
-							<h:panelGroup layout="block" styleClass="imj_metadataValue">
-								<div class="imj_metadataSet">
-									<h:selectBooleanCheckbox styleClass="imj_rightsTableForNewUser" value="#{ShareBean.input.menu.role}" layout="lineDirection">
-										<f:selectItems value="#{rolesMenu}"/>
-									</h:selectBooleanCheckbox>
-								</div>
-								<div class="imj_submitPanel">
-									<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmailToGroup"/>
-									<h:outputLabel for="selSendEmailToGroup" value="#{lbl.user_send_mail}"/>
-									<h:outputLink value="#{Navigation.applicationUri}#{ShareBean.pageUrl}" styleClass="imj_cancelButton" title="#{lbl.reset}">
-										<h:outputText value="#{lbl.cancel}"/>
-									</h:outputLink>
-									<h:commandButton value="#{lbl.share}" action="#{ShareBean.shareWithGroup}" styleClass="imj_submitButton"/>
-								</div>
-							</h:panelGroup>
-						</h:form>
-					</div>
-				</ui:fragment>
-				
-				<div id="share" class="imj_noDisplay">
-					<h2 class="imj_sectionHeadline">
-						<h:outputText value="#{lbl.share_with}"/>
-					</h2>
-					<h:form prependId="false">		
-						<div class="imj_shareEmailInput">		
-							<div class="imj_metadataSet">
-								<h:outputLabel for="emailInput" styleClass="imj_metadataLabel" value="#{lbl.share_email}"/>
-								<h:inputTextarea id="emailInput" value="#{ShareBean.input.input}" styleClass="imj_metadataValue" html5:placeholder="e.g. email@example.com;..."/>	
-							</div>
-							<div class="imj_metadataSet">
-								<div class="imj_metadataLabel"></div>
-								<h:panelGroup layout="block" id="shareOptions" styleClass="imj_metadataValue">
-									<h:selectOneRadio  id="selectedGrants" styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{ShareBean.input.menu.role}" layout="lineDirection">
-										<f:selectItems value="#{rolesMenu}"/>
-									</h:selectOneRadio >
-								</h:panelGroup>
-							</div>
-							<div class="imj_submitPanel">
-								<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmail"/>
-								<h:outputLabel for="selSendEmail" value="#{lbl.user_send_mail}"/>
-								<h:commandButton value="#{lbl.cancel}" action="#{ShareBean.reloadPage}" styleClass="imj_cancelButton"/>
-								<h:commandButton value="#{lbl.share}" action="#{ShareBean.share}" styleClass="imj_submitButton"/>
-							</div>
-						</div>
-					</h:form>
-				</div>
-				
-				<h:panelGroup  styleClass="imj_pageMessageArea" id="unknownEmails" rendered="#{!empty ShareBean.input.unknownEmails}">
-					<div class="imj_messageTitleInfo"><h:outputText value="#{lbl.share_confirm_invitation_title}"/></div>		
-					<ul class="imj_messageList">
-						<li class="imj_messageInfo"><br/>#{ShareBean.labelConfirmInvitation}<br/></li>
-						<h:form>
-							<ui:repeat var="email" value="#{ShareBean.input.unknownEmails}" varStatus="status">
-								<li>
-									<h:outputText value="#{email} "/>
-									<h:commandLink action="#{ShareBean.input.removeUnknownEmail(status.index)}" style="padding:0 1em;" styleClass="imj_rightsAction fa fa-trash" >
-										<f:ajax render="@form"/>
-									</h:commandLink>
-								</li>
-							</ui:repeat>
-							<div class="imj_submitPanel">
-								<h:commandButton value="#{lbl.cancel}" action="#{ShareBean.reloadPage}" styleClass="imj_cancelButton"/>
-								<h:commandButton action="#{ShareBean.invite}" styleClass="imj_submitButton" value="#{lbl.invite}"/>
-							</div>
-						</h:form>
-					</ul>
-				</h:panelGroup>	
-				<h:form>		
+				<share:shareWithGroupDialog bean="#{ShareBean}"/>
+				<share:shareWithUsersDialog bean="#{ShareBean}"/>
+				<h:form id="shareListForm" styleClass="shareListForm">		
 					<!-- user table which shows all user with existing rights -->
 					<ui:fragment rendered="#{ShareBean.shareList.items.size() > 0}">
 						<share:grantList id="shareList" rolesMenu="#{rolesMenu}" list="#{ShareBean.shareList.items}" title="#{lbl.shared_with}"/>

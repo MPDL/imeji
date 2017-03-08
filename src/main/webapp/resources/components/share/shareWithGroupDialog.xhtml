@@ -1,0 +1,62 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:upload="http://java.sun.com/jsf/composite/components/upload"
+	xmlns:license="http://java.sun.com/jsf/composite/components/license">
+	
+	<composite:interface>
+		<composite:attribute name="bean" />
+	</composite:interface>
+	
+	<composite:implementation>
+		<div id="shareWithGroupDialog" class="imj_noDisplay imj_modalDialogBox imj_shareDialogBox">
+			<h:form>
+				<h2 class="imj_sectionHeadline">
+					<h:outputText value="#{lbl.share_with_group}"/> <h:outputText value=" #{cc.attrs.bean.userGroup.name}" rendered="#{cc.attrs.bean.userGroup != null}"/> 
+				</h2>
+				<ui:fragment rendered="#{cc.attrs.bean.userGroup == null}">
+					<table class="imj_rightsTable">
+						<tbody>
+							<ui:repeat var="group" value="#{cc.attrs.bean.userGroupsBean.userGroups}" rendered="#{cc.attrs.bean.userGroupsBean != null}">
+								<tr>
+									<td>
+										<h2>#{group.name}</h2>								
+									</td>
+									<td>
+										<h:commandButton value="#{lbl.select}" action="#{cc.attrs.bean.selectGroup(group.id)}" styleClass="imj_editButton">
+											<f:ajax render="@form"/>
+										</h:commandButton>										
+									</td>						
+								</tr>
+							</ui:repeat>
+						</tbody>
+					</table>
+					<div class="imj_submitPanel">
+				 	<h:commandButton value="#{lbl.cancel}" action="#{cc.attrs.bean.reloadPage}" styleClass="imj_cancelButton"/>
+				</div>
+				</ui:fragment>
+				<ui:fragment rendered="#{cc.attrs.bean.userGroup != null}">
+					<h:panelGroup layout="block" styleClass="imj_metadataValue">
+						<div class="imj_metadataSet">
+							<h:selectOneRadio  styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{cc.attrs.bean.input.menu.role}" layout="lineDirection">
+								<f:selectItems value="#{rolesMenu}"/>
+							</h:selectOneRadio >
+						</div>
+						<div class="imj_submitPanel">
+							<h:selectBooleanCheckbox value="#{cc.attrs.bean.sendEmail}" id="selSendEmailToGroup"/>
+							<h:outputLabel for="selSendEmailToGroup" value="#{lbl.user_send_mail}"/>
+							<h:outputLink value="#{Navigation.applicationUri}#{cc.attrs.bean.pageUrl}" styleClass="imj_cancelButton" title="#{lbl.reset}">
+								<h:outputText value="#{lbl.cancel}"/>
+							</h:outputLink>
+							<h:commandButton value="#{lbl.share}" action="#{cc.attrs.bean.shareWithGroup}" styleClass="imj_submitButton">
+							</h:commandButton>
+						</div>
+					</h:panelGroup>
+				</ui:fragment>
+			</h:form>
+		</div>
+	</composite:implementation>
+</html>

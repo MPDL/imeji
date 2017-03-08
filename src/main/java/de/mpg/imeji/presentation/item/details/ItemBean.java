@@ -31,14 +31,10 @@ import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.search.Search;
-import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
-import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
-import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -152,15 +148,7 @@ public class ItemBean extends SuperBean {
    * Find the user name of the user who upload the file
    */
   private void initImageUploader() {
-    final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
-    final List<String> users =
-        search.searchString(JenaCustomQueries.selectUserCompleteName(item.getCreatedBy()), null,
-            Imeji.adminUser, 0, 1).getResults();
-    if (users != null && users.size() > 0) {
-      imageUploader = users.get(0);
-    } else {
-      imageUploader = Imeji.RESOURCE_BUNDLE.getLabel("unknown_user", getLocale());
-    }
+    imageUploader = new UserService().getCompleteName(item.getCreatedBy(), getLocale());
   }
 
   /**

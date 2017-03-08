@@ -104,20 +104,13 @@ public class ShareBean extends SuperBean implements Serializable {
     pageUrl = PrettyContext.getCurrentInstance().getRequestURL().toString()
         + PrettyContext.getCurrentInstance().getRequestQueryString();
     pageUrl = pageUrl.split("[&\\?]group=")[0];
-    initShareWithGroup();
+
   }
 
-  /**
-   * Check in the url if a {@link UserGroup} should be shared with the currentContainer
-   */
-  private void initShareWithGroup() {
-    this.userGroup = null;
-    final String groupToShareWithUri = UrlHelper.getParameterValue("group");
-    if (groupToShareWithUri != null) {
-      final UserGroup group = retrieveGroup(groupToShareWithUri);
-      if (group != null) {
-        userGroup = group;
-      }
+  public void selectGroup(String id) {
+    final UserGroup group = retrieveGroup(id);
+    if (group != null) {
+      userGroup = group;
     }
   }
 
@@ -186,7 +179,7 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   private void sendEmailForInput() {
     if (sendEmail) {
-      for (final ShareListItem item : input.getExistingUsersAsShareListItems()) {
+      for (final ShareListItem item : input.asShareListItem()) {
         sendEmailForShare(item, title);
       }
     }
@@ -205,8 +198,10 @@ public class ShareBean extends SuperBean implements Serializable {
 
   /**
    * Called when user share with a group
+   * 
+   * @throws ImejiException
    */
-  public void shareWithGroup() {
+  public void shareWithGroup() throws ImejiException {
     final ShareListItem groupListItem =
         new ShareListItem(userGroup, uri.toString(), null, getSessionUser(), getLocale());
     groupListItem.setRole(input.getMenu().getRole());

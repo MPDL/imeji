@@ -273,6 +273,25 @@ public class UserService {
     return new ArrayList<>();
   }
 
+  /**
+   * Return the complete name of a user
+   * 
+   * @param uri
+   * @param locale
+   * @return
+   */
+  public String getCompleteName(URI uri, Locale locale) {
+    final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+    final List<String> users = search
+        .searchString(JenaCustomQueries.selectUserCompleteName(uri), null, Imeji.adminUser, 0, 1)
+        .getResults();
+    if (users != null && users.size() > 0) {
+      return users.get(0);
+    } else {
+      return Imeji.RESOURCE_BUNDLE.getLabel("unknown_user", locale);
+    }
+  }
+
 
   /**
    * Search for users

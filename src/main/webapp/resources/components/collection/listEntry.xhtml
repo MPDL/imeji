@@ -7,15 +7,13 @@
 	
 	<composite:interface>
 		<composite:attribute name="item" required="true"/>
-		<composite:attribute name="metadataNavigationURL" type="java.lang.String" required="true"/>
-		<composite:attribute name="isActivatable"/>
 	</composite:interface>
 	
 	<composite:implementation>
-		<li class="imj_bibliographicListItem #{cc.attrs.isActivatable == 'yes' and cc.attrs.item.active ? ' imj_active' : ''}">
+		<li class="imj_bibliographicListItem">
 		 <div class="imj_previewArea">
 				<div class="imj_previewImage imj_imageStack">			
-					<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}?q=">
+					<h:outputLink value="#{Navigation.collectionUrl}#{cc.attrs.item.id}?q=">
 						<h:graphicImage value="#{cc.attrs.item.logoUrl}" alt="preview picture" rendered="#{cc.attrs.item.logoUrl != null and cc.attrs.item.status!='WITHDRAWN'}"/>
 						<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/discarded.png" alt="preview picture" rendered="#{cc.attrs.item.status =='WITHDRAWN'}"/>
 						<ui:fragment rendered="#{cc.attrs.item.status!='WITHDRAWN'}">
@@ -35,7 +33,7 @@
 				<!-- description area - includes default values - START -->
 				<div class="imj_itemHeadline">
 					<h3>
-						<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}?q=" title="#{cc.attrs.item.title}">
+						<h:outputLink value="#{Navigation.collectionUrl}#{cc.attrs.item.id}?q=" title="#{cc.attrs.item.title}">
 							<h:outputText value="#{cc.attrs.item.title}"/>
 						</h:outputLink>
 					</h3>
@@ -65,16 +63,6 @@
 							</p>
 						</ui:fragment>
 					</h:panelGroup>
-					
-					<div class="imj_itemActionArea">
-						<ul>
-							<li>
-								<h:outputLink value="#{cc.attrs.metadataNavigationURL}#{cc.attrs.item.id}/about">
-									<h:outputText value="#{lbl.about}"/>
-								</h:outputLink>
-							</li>
-						</ul>
-					</div>
 			   </div>
 			</div>		
 		</li>

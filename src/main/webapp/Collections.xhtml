@@ -6,32 +6,13 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components">
-
 	<ui:param name="paginatorListSessionBean" value="#{CollectionsBean}" />
 	<ui:param name="headline" value=" " />
 	<ui:param name="title" value="#{lbl.collections}"/>
 	<ui:param name="displayQuery"
 		value="#{paginatorListSessionBean.simpleQuery != ''}" />
 	<ui:param name="currentMainMenu" value="collection" />
-	<ui:param name="browseToAllItemsUrl" value="?q=&amp;f=all" />
-	<ui:param name="releaseItemConfirmationText"
-		value="#{msg.confirmation_release_collection}?" />
-	<ui:param name="deleteItemConfirmationText"
-		value="#{msg.confirmation_delete_collection}?" />
-	<ui:param name="deleteSelectedItemsConfirmationText"
-		value="#{lbl.delete_selected_collections}?" />
-	<ui:param name="withdrawItemConfirmationText"
-		value="#{msg.confirmation_withdraw_collection}" />
-	<ui:param name="filterBeanHasQuery" value="yes" />
-	<ui:param name="isActivatable" value="no" />
-	<ui:param name="globalDisplayLinkText" value="#{lbl.all_items}" />
-	<ui:param name="globalDeleteLinkText"
-		value="#{lbl.delete_selected_collections}" />
-	<ui:param name="metadataNavigationURL"
-		value="#{Navigation.collectionUrl}" />
-	<ui:param name="objectLabel" value="#{lbl.collections}" />
-
-
+	
 	<ui:define name="actionsMenu">
 		<menu:actionMenuCollections rendered="#{!empty SessionBean.user}" />
 	</ui:define>

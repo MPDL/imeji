@@ -18,7 +18,9 @@
 						component="#{entry.select}"
 						menu="#{cc.attrs.formBean.statementMenu}"
 						render=":editItem:metadata:list:#{position.index}:value" 
-						containerId=":editItem:metadata:list:#{position.index}:select"/>
+						containerId=":editItem:metadata:list:#{position.index}:select"
+						resetAction="resetInput"
+						compact="true"/>
 				</ui:fragment>
 				<ui:fragment rendered="#{not empty entry.input}">
 					<h:outputText value="#{entry.input.statement.index}" />
@@ -26,10 +28,6 @@
 				<span class="imj_invisible">: </span>
 			</div>
 			<h:panelGroup id="value" layout="block" class="imj_metadataValue">
-				<h:commandLink value="#{lbl.add}" action="#{entry.initInput}"
-					rendered="#{empty entry.input and not empty entry.select.statement}">
-					<f:ajax render=":editItem:metadata:list:#{position.index}:value" />
-				</h:commandLink>
 				<md:input metadataInputComponent="#{entry.input}" />
 				<h:commandLink type="submit" rendered="#{not empty entry.input}"
 					styleClass="fa fa-minus-square-o"

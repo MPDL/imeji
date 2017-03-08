@@ -277,6 +277,10 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
     this.headers = headers;
   }
 
+  public void resetNewStatement() {
+    this.newStatement = new SelectStatementComponent(statementMap);
+  }
+
   /**
    * @return the newStatement
    */

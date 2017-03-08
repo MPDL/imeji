@@ -67,6 +67,16 @@
 			</span>
 		</div>
 		
+		<div class="imj_infodataSet">
+			<span class="imj_infodataLabel">
+				<h:outputText value="#{lbl.authors}"/>
+				<span class="imj_invisible">: </span>
+			</span>
+			<span class="imj_infodataValue">
+				<h:outputText value="#{cc.attrs.bean.authors}"/>
+			</span>
+		</div>
+		
 		<!--  Number of items -->
 		<div class="imj_infodataSet">
 			<span class="imj_infodataLabel">
@@ -85,7 +95,7 @@
 				<span class="imj_invisible">: </span>
 			</span>
 			<span class="imj_infodataValue">
-				<a href="http://dx.doi.org/#{cc.attrs.bean.collection.doi}" target="_blank">http://dx.doi.org/#{cc.attrs.bean.collection.doi}</a>
+				<a href="http://dx.doi.org/#{cc.attrs.bean.collection.doi}" target="_blank">https://dx.doi.org/#{cc.attrs.bean.collection.doi}</a>
 			</span>
 		</h:panelGroup>
 					

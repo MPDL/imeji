@@ -44,6 +44,7 @@ public class CollectionItemsBean extends ItemsBean {
   private SearchQuery searchQuery = new SearchQuery();
   private CollectionActionMenu actionMenu;
   private String authors = "";
+  private String authorsShort = "";
   private int size;
   private boolean showUpload = false;
   private LicenseEditor licenseEditor;
@@ -67,8 +68,13 @@ public class CollectionItemsBean extends ItemsBean {
       browseContext = getNavigationString() + id;
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
-      collection.getPersons().stream().map(p -> p.AsFullText())
-          .forEach(a -> authors = authors.equals("") ? a : "; " + a);
+      collection.getPersons().stream().map(p -> p.getCompleteName())
+          .forEach(a -> authors += authors.equals("") ? a : "; " + a);
+      authorsShort = collection.getPersons().iterator().next().getCompleteName();
+      if (collection.getPersons().size() > 1) {
+        authorsShort += " & " + (collection.getPersons().size() - 1) + " "
+            + Imeji.RESOURCE_BUNDLE.getLabel("more_authors", getLocale());
+      }
       size = StringHelper.isNullOrEmptyTrim(getQuery()) ? getTotalNumberOfRecords()
           : getCollectionSize();
       setLicenseEditor(
@@ -226,6 +232,21 @@ public class CollectionItemsBean extends ItemsBean {
   public void setLicenseEditor(LicenseEditor licenseEditor) {
     this.licenseEditor = licenseEditor;
   }
+
+  /**
+   * @return the authorsShort
+   */
+  public String getAuthorsShort() {
+    return authorsShort;
+  }
+
+  /**
+   * @param authorsShort the authorsShort to set
+   */
+  public void setAuthorsShort(String authorsShort) {
+    this.authorsShort = authorsShort;
+  }
+
 
 }
 
