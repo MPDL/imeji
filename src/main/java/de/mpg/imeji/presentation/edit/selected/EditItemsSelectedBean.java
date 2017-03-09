@@ -142,7 +142,6 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
     editedColumn = null;
   }
 
-
   /**
    * Add the Metadata defined in the column to all cell of this column
    *
@@ -178,8 +177,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    * Add a column to the table
    */
   public void addColumn() {
-    Statement statement = newStatement.getStatement() != null ? newStatement.getStatement()
-        : newStatement.getStatementForm().asStatement();
+    Statement statement = newStatement.asStatement();
     headers.add(new HeaderComponent(statement, statementMap));
     rows.stream().forEach(r -> r.addCell(statement));
     displayedColumns.add(statement.getIndex());

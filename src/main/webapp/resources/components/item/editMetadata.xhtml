@@ -11,17 +11,16 @@
 <composite:implementation>
 	<ui:repeat id="list" var="entry" value="#{cc.attrs.formBean.entries}"
 		varStatus="position">
+		<ui:fragment rendered="#{empty entry.input}">
+			<md:select id="select" bean="#{entry}" submitAction="initInput"
+				component="#{entry.select}"
+				menu="#{cc.attrs.formBean.statementMenu}"
+				render=":editItem:metadata:list:#{position.index}:value" 
+				containerId=":editItem:metadata:list:#{position.index}:select"
+				resetAction="resetInput"/>
+		</ui:fragment>
 		<div class="imj_metadataSet">
 			<div class="imj_metadataLabel">
-				<ui:fragment rendered="#{empty entry.input}">
-					<md:select id="select" bean="#{entry}" submitAction="initInput"
-						component="#{entry.select}"
-						menu="#{cc.attrs.formBean.statementMenu}"
-						render=":editItem:metadata:list:#{position.index}:value" 
-						containerId=":editItem:metadata:list:#{position.index}:select"
-						resetAction="resetInput"
-						compact="true"/>
-				</ui:fragment>
 				<ui:fragment rendered="#{not empty entry.input}">
 					<h:outputText value="#{entry.input.statement.index}" />
 				</ui:fragment>

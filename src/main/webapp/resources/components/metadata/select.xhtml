@@ -15,22 +15,54 @@
 	<composite:attribute name="bean" />
 	<composite:attribute name="submitAction" />
 	<composite:attribute name="resetAction" />
-	<composite:attribute name="compact" default="true" type="java.lang.Boolean" />
+		type="java.lang.Boolean" />
 </composite:interface>
 
 <composite:implementation>
+	<style>
+		.selectMd {
+			position: relative;
+			display: inline-block;
+		}
+		.selectMd input {
+			margin:  6px 8px;
+		}
+		.selectMetadata-content {
+			display: none;
+			position: absolute;
+			background-color: #444444;
+			overflow: auto;
+			box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+			z-index: 1000000;
+		}
+		.selectMetadata-content a {
+			padding: 6px 8px;
+			text-decoration: none;
+			display: block;
+		}
+		.selectMd a:hover {
+			background-color: #ddd
+		}
+		
+		</style>
 	<h:panelGroup id="selectMetadata" class="metadataSelector">
-		<h:inputText class="combobox" onfocus="$('#statementList').show();"
-			value="#{cc.attrs.component.index}" html5:list="statementList"
-			html5:placeholder="#{lbl.select_metadata}">
-			<f:ajax event="keyup" render="#{cc.attrs.containerId}:buttons"
-				listener="#{cc.attrs.component.listener}" />
-			<f:ajax event="select" render="#{cc.attrs.containerId}:buttons"
-				listener="#{cc.attrs.component.listener}" />
-		</h:inputText>
-		<ui:fragment rendered="#{cc.attrs.compact}">
-			<br/>
-		</ui:fragment>
+		<div class="selectMd">
+			<button onclick=" $('.selectMetadata-content').show(); return false;" class="imj_submitButton">#{lbl.select_metadata}</button>
+			<div class="selectMetadata-content">
+				<h:inputText value="#{cc.attrs.component.index}" html5:placeholder="#{lbl.filter}...">
+					<f:ajax event="keyup" render="#{cc.attrs.containerId}:statementList"
+						listener="#{cc.attrs.component.listener}" />
+				</h:inputText>
+				<h:panelGroup id="statementList">
+					<ui:repeat var="index" value="#{cc.attrs.component.searchForIndex(cc.attrs.menu)}">
+						<h:commandLink value="#{index}" action="#{cc.attrs.bean[cc.attrs.submitAction]}" onclick="startLoader();">
+							<f:setPropertyActionListener target="#{cc.attrs.component.index}" value="#{index}" />
+							<f:ajax execute="@form" render="@form" />
+						</h:commandLink>
+					</ui:repeat>
+				</h:panelGroup>
+			</div>
+		</div>
 		<h:panelGroup id="buttons">
 			<ui:fragment rendered="#{not empty cc.attrs.component.statement}">
 				<h:commandLink id="btnCreateStatement"
@@ -52,16 +84,12 @@
 					#{lbl.metadata_create} </a>
 			</ui:fragment>
 			<statement:createDialog id="dialog" component="#{cc.attrs.component}"
-		bean="#{cc.attrs.bean}" submitAction="#{cc.attrs.submitAction}"
-		containerId="#{cc.attrs.containerId}" />
+				bean="#{cc.attrs.bean}" submitAction="#{cc.attrs.submitAction}"
+				containerId="#{cc.attrs.containerId}" />
 		</h:panelGroup>
-		<datalist id="statementList" class="comboboxDataList">
-			<ui:repeat var="statement" value="#{cc.attrs.menu}">
-				<option>#{statement.value}</option>
-			</ui:repeat>
-		</datalist>
-		
+
+
 	</h:panelGroup>
-	
+
 </composite:implementation>
 </html>

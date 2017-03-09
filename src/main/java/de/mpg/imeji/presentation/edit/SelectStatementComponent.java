@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.StatementType;
@@ -37,11 +40,22 @@ public class SelectStatementComponent implements Serializable {
    *
    * @param index
    */
-  private void init(String index) {
+  public void init(String index) {
     this.index = index;
     statement = statementMap.get(index);
     statementForm.setName(index);
   }
+
+  public List<String> searchForIndex(List<SelectItem> statementMenu) {
+    if (index == null) {
+      return statementMenu.stream().limit(10).map(i -> i.getValue().toString())
+          .collect(Collectors.toList());
+    }
+    return statementMenu.stream().map(i -> i.getValue().toString())
+        .filter(s -> s.toLowerCase().contains(index.toLowerCase())).limit(10)
+        .collect(Collectors.toList());
+  }
+
 
   public void reset() {
     this.index = null;
@@ -92,6 +106,10 @@ public class SelectStatementComponent implements Serializable {
    */
   public void setStatementForm(StatementForm statementForm) {
     this.statementForm = statementForm;
+  }
+
+  public Statement asStatement() {
+    return statementMap.containsKey(index) ? statementMap.get(index) : statementForm.asStatement();
   }
 
   /**

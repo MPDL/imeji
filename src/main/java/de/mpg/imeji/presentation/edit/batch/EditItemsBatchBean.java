@@ -54,8 +54,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   }
 
   public void initInput() {
-    Statement statement = statementSelector.getStatement() != null
-        ? statementSelector.getStatement() : statementSelector.getStatementForm().asStatement();
+    Statement statement = statementSelector.asStatement();
     input = new MetadataInputComponent(ImejiFactory.newMetadata(statement).build(), statement);
   }
 

@@ -21,9 +21,7 @@
 			<h:outputLink value="#{EditItemsBatchBean.backUrl}">#{lbl.back_to_pictures}</h:outputLink>
 			<br />
 			<br />
-			<div class="imj_metadataSet">
-				<div class="imj_metadataLabel">
-					<md:select id="select"
+			<md:select id="select"
 						component="#{EditItemsBatchBean.statementSelector}"
 						menu="#{EditItemsBatchBean.statementMenu}" render="@form"
 						containerId=":editBatchForm:select" 
@@ -31,40 +29,39 @@
 						resetAction="reset"
 						bean="#{EditItemsBatchBean}" 
 						rendered="#{empty EditItemsBatchBean.input}"
-						compact="true"/>
-					<ui:fragment rendered="#{not empty EditItemsBatchBean.input}">
-						<h1>
-						#{EditItemsBatchBean.input.statement.index}
-						<small>
-						(<h:commandLink action="#{EditItemsBatchBean.reset}" value="#{lbl.select_another_metadata}" >
-							<f:ajax execute="@form" render="@form" />
-						</h:commandLink>)
-						</small>
-						</h1>
-					</ui:fragment>
+						compact="false"/>
+			<ui:fragment rendered="#{not empty EditItemsBatchBean.input}">
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+							<h1>
+							#{EditItemsBatchBean.input.statement.index}
+							<small>
+								(<h:commandLink action="#{EditItemsBatchBean.reset}" value="#{lbl.select_another_metadata}" >
+									<f:ajax execute="@form" render="@form" />
+								</h:commandLink>)
+							</small>
+							</h1>
+					</div>
+					<div class="imj_metadataValue">
+						<md:input metadataInputComponent="#{EditItemsBatchBean.input}" />
+					</div>
 				</div>
-				<div class="imj_metadataValue">
-					<md:input metadataInputComponent="#{EditItemsBatchBean.input}" />
-					
-					
-				</div>
-				
-			</div>
-
-			<h:commandButton type="submit" action="#{EditItemsBatchBean.append}"
-				value="#{lbl.add_metadata_append}" onclick="startLoader();">
-				<f:ajax execute="@form" render=":imj_pageMessageArea @form " />
-			</h:commandButton>
-			<h:commandButton type="submit" styleClass="imj_submitButton"
-				action="#{EditItemsBatchBean.fill}"
-				value="#{lbl.add_metadata_absent}" onclick="startLoader();">
-				<f:ajax execute="@form" render=":imj_pageMessageArea @form" />
-			</h:commandButton>
-			<h:commandButton type="submit" styleClass="imj_submitButton"
-				action="#{EditItemsBatchBean.overwrite}"
-				value="#{lbl.add_metadata_overwrite}" onclick="startLoader();">
-				<f:ajax execute="@form" render=":imj_pageMessageArea @form" />
-			</h:commandButton>
+	
+				<h:commandButton type="submit" action="#{EditItemsBatchBean.append}"
+					value="#{lbl.add_metadata_append}" onclick="startLoader();">
+					<f:ajax execute="@form" render=":imj_pageMessageArea @form " />
+				</h:commandButton>
+				<h:commandButton type="submit" styleClass="imj_submitButton"
+					action="#{EditItemsBatchBean.fill}"
+					value="#{lbl.add_metadata_absent}" onclick="startLoader();">
+					<f:ajax execute="@form" render=":imj_pageMessageArea @form" />
+				</h:commandButton>
+				<h:commandButton type="submit" styleClass="imj_submitButton"
+					action="#{EditItemsBatchBean.overwrite}"
+					value="#{lbl.add_metadata_overwrite}" onclick="startLoader();">
+					<f:ajax execute="@form" render=":imj_pageMessageArea @form" />
+				</h:commandButton>
+			</ui:fragment>
 		</h:form>
 	</ui:define>
 </ui:composition>

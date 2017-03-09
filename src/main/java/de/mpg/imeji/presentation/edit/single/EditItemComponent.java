@@ -69,8 +69,6 @@ public class EditItemComponent extends EditMetadataAbstract {
         .stream().collect(Collectors.toList());
   }
 
-
-
   /**
    * Add a new empty row
    */
