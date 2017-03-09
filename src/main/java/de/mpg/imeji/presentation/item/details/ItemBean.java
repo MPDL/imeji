@@ -131,7 +131,7 @@ public class ItemBean extends SuperBean {
 
   public void showEditor() throws ImejiException {
     this.edit = true;
-    setEditor(new EditItemComponent(item));
+    setEditor(new EditItemComponent(item, getSessionUser(), getLocale()));
   }
 
   protected void initBrowsing() {

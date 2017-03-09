@@ -31,58 +31,6 @@ public class JenaCustomQueries {
   }
 
   /**
-   * Select default {@link MetadataProfile}
-   *
-   * @return
-   */
-  public static final String selectDefaultMetadataProfile() {
-    return X_PATH_FUNCTIONS_DECLARATION + "  SELECT DISTINCT ?s WHERE { "
-        + "?s a <http://imeji.org/terms/mdprofile> . ?s <http://imeji.org/terms/default> true"
-        + "}";
-  }
-
-  /**
-   * Select {@link MetadataProfile} which are not used by any {@link CollectionImeji}
-   *
-   * @return
-   */
-  public static final String selectUnusedMetadataProfiles() {
-    return " SELECT DISTINCT ?s WHERE { "
-        + "?s a <http://imeji.org/terms/mdprofile> . not exists{?c <http://imeji.org/terms/mdprofile> ?s}"
-        + "}";
-  }
-
-  /**
-   * Checks if provided {@link MetadataProfile} uri has other references than the reference in the
-   * provided resource {@link CollectionImeji}
-   *
-   * @return
-   */
-  public static final String hasOtherMetadataProfileReferences(String profileUri,
-      String resourceUri) {
-    final String q = " SELECT ?s WHERE { ?s ?p ?o ." + "?s <http://imeji.org/terms/mdprofile> <"
-        + profileUri + ">." + " FILTER (?s != <" + resourceUri + ">  && ?s != <" + profileUri
-        + ">) " + " NOT EXISTS { " + "?item <http://imeji.org/terms/metadataSet> ?s. "
-        + "?s <http://imeji.org/terms/mdprofile> ?o. "
-        + "?item <http://imeji.org/terms/collection> ?collection." + "FILTER (?collection = <"
-        + resourceUri + ">) }" + "} LIMIT 1";
-    return q;
-
-  }
-
-  /**
-   * Checks if provided {@link MetadataProfile} uri has any collection references
-   * {@link CollectionImeji}
-   *
-   * @return
-   */
-  public static final String hasMetadataProfileReferences(String profileUri) {
-    return " SELECT ?s WHERE { " + "?s <http://imeji.org/terms/mdprofile> <" + profileUri + ">."
-        + " FILTER (?s != <" + profileUri + "> )} LIMIT 1";
-
-  }
-
-  /**
    * Select all {@link Username}
    *
    * @return
@@ -174,17 +122,6 @@ public class JenaCustomQueries {
         + user.getId().toString() + ">}";
   }
 
-  /**
-   * Select {@link CollectionImeji} of space
-   *
-   * @param uri
-   * @return
-   */
-  public static final String selectCollectionImejiOfSpace(String uri) {
-    return X_PATH_FUNCTIONS_DECLARATION
-        + "  SELECT DISTINCT ?s WHERE {?s a <http://imeji.org/terms/collection> . ?s <http://imeji.org/terms/space> <"
-        + uri + ">}";
-  }
 
   /**
    * Select Users to be notified by file download Note: Current <code>user</code> is excluded from

@@ -61,7 +61,7 @@ public class CollectionItemsBean extends ItemsBean {
   @Override
   public void initSpecific() {
     try {
-      id = UrlHelper.getParameterValue("id");
+      id = UrlHelper.getParameterValue("collectionId");
       uri = ObjectHelper.getURI(CollectionImeji.class, id);
       setShowUpload(UrlHelper.getParameterBoolean("showUpload"));
       collection = new CollectionService().retrieveLazy(uri, getSessionUser());

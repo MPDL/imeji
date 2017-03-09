@@ -12,10 +12,8 @@
 		<pattern value="/" />
 		<view-id>/jsf/StartPage.xhtml</view-id>
 	</url-mapping>
-	<url-mapping id="collections">
-		<pattern value="/collections" />
-		<view-id>/jsf/Collections.xhtml</view-id>
-	</url-mapping>
+	
+	<!-- Item pages -->
 	<url-mapping id="browse">
 		<pattern value="/browse" />
 		<view-id>/jsf/Items.xhtml</view-id>
@@ -36,42 +34,44 @@
 		<pattern value="/item/#{ id }" />
 		<view-id>/jsf/Item.xhtml</view-id>
 	</url-mapping>
-	<url-mapping id="share">
-		<pattern value="/#{ type }/#{ id }/share"/>
-		<view-id>/jsf/Share.xhtml</view-id>
-	</url-mapping>
 	<url-mapping id="upload">
 		<pattern value="/upload"/>
 		<view-id>/jsf/Upload.xhtml</view-id>
 	</url-mapping>
+	
 	<!-- Collection pages -->
-	<url-mapping id="collection">
-		<pattern value="/collection/#{ id }" />
-		<view-id>/jsf/CollectionBrowse.xhtml</view-id>
+	<url-mapping id="collections">
+		<pattern value="/collections" />
+		<view-id>/jsf/Collections.xhtml</view-id>
 	</url-mapping>
-	<url-mapping id="collectionAbout">
-		<pattern value="/collection/#{ id }/about" />
-		<view-id>/jsf/CollectionAbout.xhtml</view-id>
+	<url-mapping id="collection">
+		<pattern value="/collection/#{ collectionId }" />
+		<view-id>/jsf/CollectionBrowse.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="collectionItem">
 		<pattern value="/collection/#{ collectionId }/item/#{ id }" />
 		<view-id>/jsf/CollectionImage.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="editCollection">
-		<pattern value="/collection/#{ id }/edit" />
+		<pattern value="/collection/#{ collectionId }/edit" />
 		<view-id>/jsf/CollectionEdit.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="createCollection">
 		<pattern value="/createcollection" />
 		<view-id>/jsf/CollectionCreate.xhtml</view-id>
 	</url-mapping>
+	<url-mapping id="share">
+		<pattern value="/collection/#{ collectionId }/share"/>
+		<view-id>/jsf/Share.xhtml</view-id>
+	</url-mapping>
+	
 	<!-- Statement pages -->
 	<url-mapping id="createStatement">
 		<pattern value="/createstatement" />
 		<view-id>/jsf/StatementCreate.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="editStatement">
-		<pattern value="/statement/#{ id }/edit" />
+		<pattern value="/statement/#{ statementId }/edit" />
 		<view-id>/jsf/StatementEdit.xhtml</view-id>
 	</url-mapping>
 	<url-mapping id="statements">
@@ -90,22 +90,18 @@
 		<pattern value="/admin"></pattern>
 		<view-id>/jsf/AdminOverview.xhtml</view-id>
 	</url-mapping>
-	
 	<url-mapping id="config">
 		<pattern value="/admin/config"></pattern>
 		<view-id>/jsf/AdminConfig.xhtml</view-id>
 	</url-mapping>
-	
 	<url-mapping id="adminTools">
 		<pattern value="/admin/tools"></pattern>
 		<view-id>/jsf/AdminTools.xhtml</view-id>
 	</url-mapping>
-	
 	<url-mapping id="adminStatistics">
 		<pattern value="/admin/statistics"></pattern>
 		<view-id>/jsf/AdminStatistics.xhtml</view-id>
 	</url-mapping>
-	
 	<url-mapping id="adminStorageUsage">
 		<pattern value="/admin/storageusage"></pattern>
 		<view-id>/jsf/AdminStorageUsage.xhtml</view-id>
@@ -116,58 +112,45 @@
 		<pattern value="/createuser"></pattern>
 		<view-id>/jsf/UserCreate.xhtml</view-id>
 	</url-mapping>
-	
-	<url-mapping id="help">
-		<pattern value="/help"></pattern>
-		<view-id>/jsf/Help.xhtml</view-id>
-	</url-mapping>
-
 	<url-mapping id="userPage">
 		<pattern value="/user"></pattern>
 		<view-id>/jsf/User.xhtml</view-id>
 	</url-mapping>
-
 	<url-mapping id="users">
 		<pattern value="/users"></pattern>
 		<view-id>/jsf/Users.xhtml</view-id>
 	</url-mapping>
-	
 	<url-mapping id="userGroup">
 		<pattern value="/usergroup"></pattern>
 		<view-id>/jsf/UserGroup.xhtml</view-id>
 	</url-mapping>
-	
 	<url-mapping id="userGroups">
 		<pattern value="/usergroups"></pattern>
 		<view-id>/jsf/UserGroups.xhtml</view-id>
 	</url-mapping>
-	
 	<url-mapping id="createUserGroup" >
 		<pattern value="/createusergroup" ></pattern>
 		<view-id>/jsf/UserGroupCreate.xhtml</view-id>
 	</url-mapping>
-	
-	
-	<url-mapping id="imprint">
-		<pattern value="/imprint"></pattern>
-		<view-id>/jsf/Imprint.xhtml</view-id>
-	</url-mapping>
-	
-	<url-mapping id="termsOfUse">
-		<pattern value="/terms_of_use"></pattern>
-		<view-id>/jsf/TermsOfUse.xhtml</view-id>
-	</url-mapping>
-	
 	<url-mapping id="loginFormular">
 		<pattern value="/login" />
 		<view-id>/jsf/Login.xhtml</view-id>
 	</url-mapping>
-	
 	<url-mapping id="registerFormular">
 		<pattern value="/register"/>
 		<view-id>/jsf/Register.xhtml</view-id>
 	</url-mapping>
-	
-	
-
+	<!-- Other pages -->
+	<url-mapping id="termsOfUse">
+		<pattern value="/terms_of_use"></pattern>
+		<view-id>/jsf/TermsOfUse.xhtml</view-id>
+	</url-mapping>
+	<url-mapping id="help">
+		<pattern value="/help"></pattern>
+		<view-id>/jsf/Help.xhtml</view-id>
+	</url-mapping>
+	<url-mapping id="imprint">
+		<pattern value="/imprint"></pattern>
+		<view-id>/jsf/Imprint.xhtml</view-id>
+	</url-mapping>
  </pretty-config>

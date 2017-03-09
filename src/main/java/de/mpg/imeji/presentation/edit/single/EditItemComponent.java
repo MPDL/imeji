@@ -3,6 +3,7 @@ package de.mpg.imeji.presentation.edit.single;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.MetadataFactory;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
 import de.mpg.imeji.presentation.edit.MetadataInputComponent;
@@ -30,10 +32,14 @@ public class EditItemComponent extends EditMetadataAbstract {
   private Item item;
   private String filename;
   private LicenseEditor licenseEditor;
+  private final User user;
+  private final Locale locale;
 
-  public EditItemComponent(Item item) throws ImejiException {
+  public EditItemComponent(Item item, User user, Locale locale) throws ImejiException {
     super();
     this.item = item;
+    this.user = user;
+    this.locale = locale;
     this.licenseEditor = new LicenseEditor(getLocale(), item);
     this.filename = item.getFilename();
     entries = item.getMetadata().stream().map(md -> new EditItemEntry(md, statementMap))
@@ -121,5 +127,15 @@ public class EditItemComponent extends EditMetadataAbstract {
    */
   public void setFilename(String filename) {
     this.filename = filename;
+  }
+
+  @Override
+  public User getSessionUser() {
+    return this.user;
+  }
+
+  @Override
+  public Locale getLocale() {
+    return this.locale;
   }
 }

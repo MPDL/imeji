@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.authorization;
+package de.mpg.imeji.presentation.security;
 
 import java.io.Serializable;
 

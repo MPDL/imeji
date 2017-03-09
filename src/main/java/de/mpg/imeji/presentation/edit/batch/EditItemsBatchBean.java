@@ -45,6 +45,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   private MetadataInputComponent input;
   private List<Item> items = new ArrayList<>();
 
+
   @PostConstruct
   public void init() {
     collectionId = UrlHelper.getParameterValue("col");
@@ -77,7 +78,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
       reset();
     } catch (Exception e) {
       BeanHelper.error("Error saving editor: " + e.getMessage());
-      LOGGER.error("Error saving batch editor");
+      LOGGER.error("Error saving batch editor", e);
     }
   }
 

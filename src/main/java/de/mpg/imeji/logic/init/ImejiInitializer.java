@@ -26,6 +26,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.logic.authentication.ImejiRsaKeys;
 import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.batch.executors.NightlyExecutor;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
@@ -173,6 +174,8 @@ public class ImejiInitializer {
       Imeji.adminUser.setEncryptedPassword(StringHelper.md5(Imeji.ADMIN_PASSWORD_INIT));
       Imeji.adminUser
           .setApiKey(APIKeyAuthentication.generateKey(Imeji.adminUser.getId(), Integer.MAX_VALUE));
+      Imeji.adminUser.setGrants(
+          AuthorizationPredefinedRoles.imejiAdministrator(Imeji.PROPERTIES.getBaseURI()));
       // create
       LOGGER.info("Checking admin users..");
       final UserService uc = new UserService();

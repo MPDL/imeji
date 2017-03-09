@@ -39,7 +39,7 @@ public class EditCollectionBean extends CollectionBean {
 
   @PostConstruct
   public void init() {
-    setId(UrlHelper.getParameterValue("id"));
+    setId(UrlHelper.getParameterValue("collectionId"));
     setCollectionCreateMode(false);
     getProfileSelect();
     if (getId() != null) {

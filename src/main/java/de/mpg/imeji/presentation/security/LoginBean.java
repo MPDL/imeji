@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.authentication;
+package de.mpg.imeji.presentation.security;
 
 import static de.mpg.imeji.logic.util.StringHelper.isNullOrEmptyTrim;
 

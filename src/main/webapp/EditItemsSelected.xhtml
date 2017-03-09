@@ -8,13 +8,12 @@
 
 	<ui:param name="headline" value="#{lbl.edit_selected}" />
 	<ui:param name="title" value="#{headline}" />
-
 	<ui:define name="mainContent">
 		<style>
-body {
-	overflow: hidden;
-}
-</style>
+			body {
+				overflow: hidden;
+			}
+		</style>
 		<script>
 			$(document).ready(function() {
 				stopLoader();
@@ -59,7 +58,7 @@ body {
 				}
 			}
 		</script>
-
+		
 		<datalist id="statementListAll" class="comboboxDataList">
 			<ui:repeat var="statement"
 				value="#{EditItemsSelectedBean.statementMenu}">
@@ -70,6 +69,14 @@ body {
 		<div class="loader show" />
 		<h:form id="editSelectedForm" prependId="false">
 			<div class="editSelectedWrapper">
+				<h:panelGroup layout="block" id="imj_pageMessageAreaFullScreen">
+		           <ui:repeat var="message" value="#{MessagesBean.messages}">
+		           	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
+		           		<span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display='none';">x</span>
+		           		#{message.detail}
+		           	</div>
+		           </ui:repeat>
+		        </h:panelGroup>
 				<div class="editSelectedHeader">
 					<h:outputLink value="#{EditItemsSelectedBean.backUrl}">#{lbl.back_to_pictures}</h:outputLink>
 					<h:commandLink type="submit" styleClass="imj_submitButton"

@@ -61,7 +61,7 @@ public class ShareBean extends SuperBean implements Serializable {
 
   @PostConstruct
   public void construct() {
-    this.id = UrlHelper.getParameterValue("id");
+    this.id = UrlHelper.getParameterValue("collectionId");
     initShareCollection();
   }
 
