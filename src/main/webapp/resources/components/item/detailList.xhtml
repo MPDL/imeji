@@ -12,7 +12,7 @@
     <composite:implementation>
         
         <!-- param to control the classes for every column, in case of logged in / out -->
-        <ui:param name="colClasses" value="#{Auth.loggedIn ? 'imj_colCheckbox,imj_colFileIcon,imj_colFilename,imj_colFiletype,imj_colFiletype,imj_colDate' : 'imj_colFileIcon,imj_colFilename,imj_colFiletype,imj_colFiletype,imj_colDate'}"/>
+        <ui:param name="colClasses" value="imj_colCheckbox,imj_colFileIcon,imj_colFilename,imj_colFiletype,imj_colFiletype,imj_colDate"/>
 
         <h:form>
         	<div id="imj_listBody">
@@ -23,7 +23,7 @@
                          rowClasses="order-table-odd-row,order-table-even-row"
                          columnClasses="#{colClasses}" rendered="#{cc.attrs.listBean.totalNumberOfElements != 0}"  binding="#{table}">
 				
-                <h:column rendered="#{Auth.loggedIn}">
+                <h:column>
                     <f:facet name="header">
                         <h:selectBooleanCheckbox  value="#{cc.attrs.listBean.allSelected}" valueChangeListener="#{cc.attrs.listBean.changeAllSelected}">
                         	<f:ajax event="change" execute="@this" render="@form :actionsMenuArea"/>

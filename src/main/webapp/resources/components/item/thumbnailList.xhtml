@@ -9,25 +9,24 @@
 	</composite:interface>
 	<composite:implementation>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfElements != 0}">
-			<ui:fragment rendered="#{Auth.loggedIn}">
-				<div class="imj_listHeader">
-					<div class="imj_overlayMenu">
-						<h:form id="selectMenuForm">
-							<div class="imj_menuHeader">
-								<h:commandLink action="#{cc.attrs.picList.selectAll}"  id="lnkSelectAllOnPage" title="#{lbl.select_all}"  styleClass="selectAll" rendered="#{!cc.attrs.picList.allSelected}">
-									<h:outputText value="#{lbl.select_all}"/>
-									<f:ajax execute="this" render=":ajaxWrapper :actionsMenuArea"/>
-								</h:commandLink>
-								<h:commandLink action="#{cc.attrs.picList.selectNone}" id="lnkSelectNone" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{cc.attrs.picList.allSelected}">
-									<h:outputText value="#{lbl.select_none}"/>
-									<f:ajax execute="this" render=":ajaxWrapper :actionsMenuArea"/>
-								</h:commandLink>
-		                        &#160;
-							</div>
-						</h:form>
-					</div>
+			<div class="imj_listHeader">
+				<div class="imj_overlayMenu">
+					<h:form id="selectMenuForm">
+						<div class="imj_menuHeader">
+							<h:commandLink action="#{cc.attrs.picList.selectAll}"  id="lnkSelectAllOnPage" title="#{lbl.select_all}"  styleClass="selectAll" rendered="#{!cc.attrs.picList.allSelected}">
+								<h:outputText value="#{lbl.select_all}"/>
+								<f:ajax execute="this" render=":ajaxWrapper :actionsMenuArea"/>
+							</h:commandLink>
+							<h:commandLink action="#{cc.attrs.picList.selectNone}" id="lnkSelectNone" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{cc.attrs.picList.allSelected}">
+								<h:outputText value="#{lbl.select_none}"/>
+								<f:ajax execute="this" render=":ajaxWrapper :actionsMenuArea"/>
+							</h:commandLink>
+	                        &#160;
+						</div>
+					</h:form>
 				</div>
-			</ui:fragment>
+			</div>
+
 			<div class="imj_listBody" id="listDiv">
 				<ul id="imj_listBody">
 					<!-- Images -->	
@@ -43,11 +42,9 @@
 								</h:panelGroup>
 								<!-- Browse / Search Result / All Pictures of one Person Pages / resource -->
 								<span class="imj_optionSet">
-									<ui:fragment rendered="#{Auth.loggedIn}">
-										<h:selectBooleanCheckbox styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
-											<f:ajax event="change" execute="@this" render="@form :actionsMenuArea"/>
-										</h:selectBooleanCheckbox>
-									</ui:fragment>
+									<h:selectBooleanCheckbox styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
+										<f:ajax event="change" execute="@this" render="@form :actionsMenuArea"/>
+									</h:selectBooleanCheckbox>
 									<h:outputLabel for="pictureCheckbox" value="#{item.caption}" title="#{item.caption}" styleClass="imj_optionLabel"/>
 								</span>
 							</h:form>
