@@ -38,7 +38,7 @@ public class ImejiConfiguration {
    * @version $Revision$ $LastChangedDate$
    */
   private enum CONFIGURATION {
-    SNIPPET, CSS_DEFAULT, CSS_ALT, MAX_FILE_SIZE, FILE_TYPES, STARTPAGE_HTML, DATA_VIEWER_FORMATS, DATA_VIEWER_URL, AUTOSUGGEST_USERS, AUTOSUGGEST_ORGAS, STARTPAGE_FOOTER_LOGOS, META_DESCRIPTION, INSTANCE_NAME, CONTACT_EMAIL, EMAIL_SERVER, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD, EMAIL_SERVER_ENABLE_AUTHENTICATION, EMAIL_SERVER_SENDER, EMAIL_SERVER_PORT, STARTPAGE_CAROUSEL_ENABLED, STARTPAGE_CAROUSEL_QUERY, STARTPAGE_CAROUSEL_QUERY_ORDER, UPLOAD_WHITE_LIST, UPLOAD_BLACK_LIST, LANGUAGES, IMPRESSUM_URL, IMPRESSUM_TEXT, FAVICON_URL, LOGO, REGISTRATION_TOKEN_EXPIRY, REGISTRATION_ENABLED, DEFAULT_QUOTA, RSA_PUBLIC_KEY, RSA_PRIVATE_KEY, BROWSE_DEFAULT_VIEW, DOI_SERVICE_URL, DOI_USER, DOI_PASSWORD, QUOTA_LIMITS, PRIVATE_MODUS, REGISTRATION_WHITE_LIST, REGISTRATION_SNIPPET, HELP_URL, MAINTENANCE_MESSAGE, TERMS_OF_USE, TERMS_OF_USE_URL, DEFAULT_LICENSE, TECHNICAL_METADATA, THUMBNAIL_WIDTH, WEB_RESOLUTION_WIDTH, STATEMENTS, NUMBER_OF_LINES_IN_THUMBNAIL_LIST, GOOGLE_MAPS_API, CONE_AUTHORS;
+    SNIPPET, CSS_DEFAULT, CSS_ALT, MAX_FILE_SIZE, FILE_TYPES, STARTPAGE_HTML, DATA_VIEWER_FORMATS, DATA_VIEWER_URL, AUTOSUGGEST_USERS, AUTOSUGGEST_ORGAS, STARTPAGE_FOOTER_LOGOS, META_DESCRIPTION, INSTANCE_NAME, CONTACT_EMAIL, EMAIL_SERVER, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD, EMAIL_SERVER_ENABLE_AUTHENTICATION, EMAIL_SERVER_SENDER, EMAIL_SERVER_PORT, UPLOAD_WHITE_LIST, UPLOAD_BLACK_LIST, LANGUAGES, IMPRESSUM_URL, IMPRESSUM_TEXT, FAVICON_URL, LOGO, REGISTRATION_TOKEN_EXPIRY, REGISTRATION_ENABLED, DEFAULT_QUOTA, RSA_PUBLIC_KEY, RSA_PRIVATE_KEY, BROWSE_DEFAULT_VIEW, DOI_SERVICE_URL, DOI_USER, DOI_PASSWORD, QUOTA_LIMITS, PRIVATE_MODUS, REGISTRATION_WHITE_LIST, REGISTRATION_SNIPPET, HELP_URL, MAINTENANCE_MESSAGE, TERMS_OF_USE, TERMS_OF_USE_URL, DEFAULT_LICENSE, TECHNICAL_METADATA, THUMBNAIL_WIDTH, WEB_RESOLUTION_WIDTH, STATEMENTS, NUMBER_OF_LINES_IN_THUMBNAIL_LIST, GOOGLE_MAPS_API, CONE_AUTHORS;
   }
 
   private static Properties config;
@@ -53,11 +53,9 @@ public class ImejiConfiguration {
       "386,aru,atm,aut,bat,bin,bkd,blf,bll,bmw,boo,bqf,buk,bxz,cc,ce0,ceo,cfxxe,chm,cih,cla,class,cmd,com,cpl,cxq,cyw,dbd,dev,dlb,dli,dll,dllx,dom,drv,dx,dxz,dyv,dyz,eml,exe,exe1,exe_renamed,ezt,fag,fjl,fnr,fuj,hlp,hlw,hsq,hts,ini,iva,iws,jar,js,kcd,let,lik,lkh,lnk,lok,mfu,mjz,nls,oar,ocx,osa,ozd,pcx,pgm,php2,php3,pid,pif,plc,pr,qit,rhk,rna,rsc_tmp,s7p,scr,scr,shs,ska,smm,smtmp,sop,spam,ssy,swf,sys,tko,tps,tsa,tti,txs,upa,uzy,vb,vba,vbe,vbs,vbx,vexe,vsd,vxd,vzr,wlpginstall,wmf,ws,wsc,wsf,wsh,wss,xdu,xir,xlv,xnt,zix,zvz";
   private static final String DEFAULT_LANGUAGE_LIST = "en,de,ja,es";
   private static final String DEFAULT_REGISTRATION_TOKEN_EXPIRATION_IN_DAYS = "1";
-  private static final String DEFAULT_CAROUSEL_SHOW = "true";
   private static final String DEFAULT_USER_QUOTA = "1";
   private static final String DEFAULT_USER_QUOTA_LIST = "1, 10, 20";
   public static final String QUOTA_UNLIMITED = "unlimited";
-  public static final String DEFAULT_ALBUMS_ENABLED = "true";
   public static final String DEFAULT_HELP_URL =
       "https://raw.githubusercontent.com/imeji-community/imeji-help/master/imeji-help-default.html";
   public static final String DEFAULT_TECHNICAL_METADATA =
@@ -143,7 +141,6 @@ public class ImejiConfiguration {
     initPropertyWithDefaultValue(CONFIGURATION.UPLOAD_BLACK_LIST, DEFAULT_FILE_BLACKLIST);
     initPropertyWithDefaultValue(CONFIGURATION.LANGUAGES, DEFAULT_LANGUAGE_LIST);
     initPropertyWithDefaultValue(CONFIGURATION.BROWSE_DEFAULT_VIEW, predefinedBrowseView.name());
-    initPropertyWithDefaultValue(CONFIGURATION.STARTPAGE_CAROUSEL_ENABLED, DEFAULT_CAROUSEL_SHOW);
     initPropertyWithDefaultValue(CONFIGURATION.DEFAULT_QUOTA, DEFAULT_USER_QUOTA);
     initPropertyWithDefaultValue(CONFIGURATION.QUOTA_LIMITS, DEFAULT_USER_QUOTA_LIST);
     initPropertyWithDefaultValue(CONFIGURATION.HELP_URL, DEFAULT_HELP_URL);
@@ -616,23 +613,6 @@ public class ImejiConfiguration {
     return (String) config.get(CONFIGURATION.EMAIL_SERVER_PORT.name());
   }
 
-
-  public void setStartPageCarouselQuery(String s) {
-    setProperty(CONFIGURATION.STARTPAGE_CAROUSEL_QUERY.name(), s);
-  }
-
-  public String getStartPageCarouselQuery() {
-    return (String) config.get(CONFIGURATION.STARTPAGE_CAROUSEL_QUERY.name());
-  }
-
-  public void setStartPageCarouselQueryOrder(String s) {
-    setProperty(CONFIGURATION.STARTPAGE_CAROUSEL_QUERY_ORDER.name(), s);
-  }
-
-  public String getStartPageCarouselQueryOrder() {
-    return (String) config.get(CONFIGURATION.STARTPAGE_CAROUSEL_QUERY_ORDER.name());
-  }
-
   public void setUploadBlackList(String s) {
     setProperty(CONFIGURATION.UPLOAD_BLACK_LIST.name(), s);
   }
@@ -811,15 +791,6 @@ public class ImejiConfiguration {
     final String limitString =
         (String) config.get(CONFIGURATION.QUOTA_LIMITS.name()) + "," + QUOTA_UNLIMITED;
     return Arrays.asList(limitString.split(","));
-  }
-
-  public void setStartPageCarouselEnabled(boolean input) {
-    setProperty(CONFIGURATION.STARTPAGE_CAROUSEL_ENABLED.name(), String.valueOf(input));
-  }
-
-  public boolean getStartPageCarouselEnabled() {
-    return Boolean.valueOf(config.getProperty(CONFIGURATION.STARTPAGE_CAROUSEL_ENABLED.name()))
-        && !getPrivateModus();
   }
 
   public String getRegistrationWhiteList() {

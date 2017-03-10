@@ -135,13 +135,6 @@ public class ConfigurationBean extends SuperBean {
     Imeji.CONFIG.setFileTypes(types);
   }
 
-  public void setStartPageCarouselEnabled(boolean input) {
-    Imeji.CONFIG.setStartPageCarouselEnabled(input);
-  }
-
-  public boolean getStartPageCarouselEnabled() {
-    return Imeji.CONFIG.getStartPageCarouselEnabled();
-  }
 
   /**
    * Get the html snippet for a specified lang
@@ -364,22 +357,6 @@ public class ConfigurationBean extends SuperBean {
 
   public String getEmailServerPort() {
     return Imeji.CONFIG.getEmailServerPort();
-  }
-
-  public void setStartPageCarouselQuery(String s) {
-    Imeji.CONFIG.setStartPageCarouselQuery(s);
-  }
-
-  public String getStartPageCarouselQuery() {
-    return Imeji.CONFIG.getStartPageCarouselQuery();
-  }
-
-  public void setStartPageCarouselQueryOrder(String s) {
-    Imeji.CONFIG.setStartPageCarouselQueryOrder(s);
-  }
-
-  public String getStartPageCarouselQueryOrder() {
-    return Imeji.CONFIG.getStartPageCarouselQueryOrder();
   }
 
   public void setUploadBlackList(String s) {

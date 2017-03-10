@@ -11,7 +11,7 @@
 
 	<ui:define name="mainContent">
 		<h:form>
-			<statement:form formBean="#{StatementEditBean}" render="@form"/>
+			<statement:form form="#{StatementEditBean.statementForm}" render="@form"/>
 			<div id="submitButtonPanel" class="imj_submitPanel">
                  <h:outputLink value="#{HistorySession.previousPage.completeUrlWithHistory}" styleClass="imj_cancelButton">
                      <h:outputText value="#{lbl.cancel}"/>

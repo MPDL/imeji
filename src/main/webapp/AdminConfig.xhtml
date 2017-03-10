@@ -223,9 +223,6 @@
 												<f:selectItems value="#{Configuration.licenseMenu}" />
 											</h:selectOneMenu>
 										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue textarea"
-											class="imj_clearInput fa fa-times"> </a>
 									</div>
 									<h:commandButton action="#{Configuration.saveConfig}"
 										title="#{lbl.configuration_save_all}"
@@ -721,53 +718,6 @@
 												class="imj_clearInput fa fa-times"> </a>
 										</h:panelGroup>
 									</ui:repeat>
-									<!-- TODO -->
-
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.enable_carousel}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:selectOneRadio
-												value="#{Configuration.startPageCarouselEnabled}">
-												<f:selectItem itemLabel="#{lbl.no}" itemValue="false" />
-												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true" />
-											</h:selectOneRadio>
-										</div>
-									</div>
-
-
-
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.carousel_search_query}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputTextarea
-												value="#{Configuration.startPageCarouselQuery}"
-												styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
-										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue textarea"
-											class="imj_clearInput fa fa-times"> </a>
-									</h:panelGroup>
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.carousel_search_query_order}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputText
-												value="#{Configuration.startPageCarouselQueryOrder}"
-												styleClass="imj_admindataEdit" />
-										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue input"
-											class="imj_clearInput fa fa-times"> </a>
-									</h:panelGroup>
-
 								</div>
 							</div>
 

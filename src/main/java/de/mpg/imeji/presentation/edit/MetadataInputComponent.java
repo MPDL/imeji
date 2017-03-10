@@ -17,7 +17,6 @@ public class MetadataInputComponent implements Serializable {
   private static final long serialVersionUID = 4723925226621344678L;
   private Metadata metadata;
   private Statement statement;
-  private boolean emtpy = false;
 
   public MetadataInputComponent(Metadata metadata, Statement statement) {
     this.metadata = metadata.copy();
@@ -25,7 +24,6 @@ public class MetadataInputComponent implements Serializable {
       this.metadata.setPerson(ImejiFactory.newPerson());
     }
     this.statement = statement;
-    emtpy = MetadataUtil.isEmpty(metadata);
   }
 
   /**
@@ -34,7 +32,7 @@ public class MetadataInputComponent implements Serializable {
    * @return
    */
   public boolean isEmpty() {
-    return emtpy;
+    return MetadataUtil.isEmpty(metadata);
   }
 
   /**
@@ -64,6 +62,4 @@ public class MetadataInputComponent implements Serializable {
   public void setStatement(Statement statement) {
     this.statement = statement;
   }
-
-
 }

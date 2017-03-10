@@ -31,10 +31,14 @@ public class StatementEditBean extends StatementCreateBean {
   private static final Logger LOGGER = Logger.getLogger(StatementEditBean.class);
   private StatementService service = new StatementService();
 
+  public StatementEditBean() {
+
+  }
+
   @PostConstruct
   public void init() {
     try {
-      String id = URLDecoder.decode(UrlHelper.getParameterValue("id"), "UTF-8");
+      String id = URLDecoder.decode(UrlHelper.getParameterValue("statementId"), "UTF-8");
       Statement s =
           service.retrieve(ObjectHelper.getURI(Statement.class, id).toString(), getSessionUser());
       getStatementForm().setType(s.getType().name());

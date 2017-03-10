@@ -57,8 +57,9 @@ public class MetadataUtil {
    * @return
    */
   public static boolean isEmpty(Metadata md) {
-    return StringHelper.isNullOrEmptyTrim(md.getText()) && Double.isNaN(md.getLatitude())
-        && Double.isNaN(md.getLongitude()) && Double.isNaN(md.getNumber())
+    return StringHelper.isNullOrEmptyTrim(md.getText()) && Double.isNaN(md.getNumber())
+        && ((Double.isNaN(md.getLongitude()) || md.getLongitude() == 0)
+            && (Double.isNaN(md.getNumber()) || md.getLatitude() == 0))
         && StringHelper.isNullOrEmptyTrim(md.getUrl()) && (md.getPerson() == null
             || StringHelper.isNullOrEmptyTrim(md.getPerson().getFamilyName()));
   }

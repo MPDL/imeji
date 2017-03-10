@@ -87,9 +87,9 @@ public class SecurityFilter implements Filter {
       throws IOException, ServletException {
     try {
       final HttpServletRequest request = (HttpServletRequest) serv;
-      User user = login(request);
       if (ServletUtil.isGetRequest(serv)) {
-        // checkReadAuthorization(request, user);
+        User user = login(request);
+        checkReadAuthorization(request, user);
       }
     } catch (NotFoundException e) {
       ((HttpServletResponse) resp).sendError(Status.NOT_FOUND.getStatusCode(),
