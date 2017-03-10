@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.im4java.core.ConvertCmd;
@@ -57,6 +56,7 @@ public class ImageMagickUtils {
   }
 
 
+
   /**
    * User imagemagick to convert any image into a jpeg
    *
@@ -69,35 +69,46 @@ public class ImageMagickUtils {
    */
   public static File convertToJPEG(File tmp, String extension)
       throws IOException, URISyntaxException, InterruptedException, IM4JavaException {
+    // Image Magic can't convert from tiff to jpg directly, thus use workaround and first convert to
+    // bmp, than to jpg
+    if (extension.equals("tif") || extension.equals("tiff")) {
+      File bmp = convert(tmp, extension, ".bmp");
+      return convert(bmp, ".bmp", ".jpg");
+    }
+    return convert(tmp, extension, ".jpg");
+  }
+
+  private static File convert(File tmp, String extensionIn, String extensionOut)
+      throws IOException, URISyntaxException, InterruptedException, IM4JavaException {
     // In case the file is made of many frames, (for instance videos), generate only the frames from
     // 0 to 48 to
     // avoid high memory consumption
     final String path = tmp.getAbsolutePath() + "[0-48]";
     final ConvertCmd cmd = getConvert();
     // create the operation, add images and operators/options
-    final IMOperation op = new IMOperation();
-    if (!isImage(extension)) {
+    IMOperation op = new IMOperation();
+    if (!isImage(extensionIn)) {
       return null;
     }
     op.colorspace(findColorSpace(tmp));
     op.strip();
     op.flatten();
-    op.addImage(path);
+    op.addImage(tmp.getAbsolutePath());
     // op.colorspace("RGB");
-    final File jpeg = TempFileUtil.createTempFile("uploadMagick", ".jpg");
+    final File jpeg = TempFileUtil.createTempFile("uploadMagick", extensionOut);
     try {
       op.addImage(jpeg.getAbsolutePath());
       cmd.run(op);
       final int frame = getNonBlankFrame(jpeg.getAbsolutePath());
       if (frame >= 0) {
         final File f = new File(FilenameUtils.getFullPath(jpeg.getAbsolutePath())
-            + FilenameUtils.getBaseName(jpeg.getAbsolutePath()) + "-" + frame + ".jpg");
+            + FilenameUtils.getBaseName(jpeg.getAbsolutePath()) + "-" + frame + extensionOut);
         return f;
       }
       return jpeg;
     } finally {
       removeFilesCreatedByImageMagick(jpeg.getAbsolutePath());
-      FileUtils.deleteQuietly(jpeg);
+      // FileUtils.deleteQuietly(jpeg);
     }
   }
 

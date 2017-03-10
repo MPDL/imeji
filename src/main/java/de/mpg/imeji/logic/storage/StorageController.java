@@ -219,6 +219,17 @@ public final class StorageController implements Serializable {
   }
 
   /**
+   * Returns the dimension of the image
+   * 
+   * @param url
+   * @return
+   * @throws IOException
+   */
+  public Dimension getImageDimension(String url) throws IOException {
+    return storage.getImageDimension(url);
+  }
+
+  /**
    * Recalculates the thumbnail and the web resolution Image
    * 
    * @param fullUrl

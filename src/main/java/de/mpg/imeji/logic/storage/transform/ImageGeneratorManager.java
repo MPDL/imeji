@@ -67,6 +67,22 @@ public final class ImageGeneratorManager {
   }
 
   /**
+   * Generate a full resolution image. Convert the original to jpeg if possible, otherwise return
+   * the original
+   * 
+   * @param file
+   * @param extension
+   * @return
+   */
+  public File generateFullResolution(File file, String extension) {
+    File res = (new SimpleImageGenerator()).generateJPG(file, extension);
+    if (res == null) {
+      res = (new MagickImageGenerator()).generateJPG(file, extension);
+    }
+    return res == null ? file : res;
+  }
+
+  /**
    * Generate an image (only jpg and gif supported here) into a smaller image according to the
    * {@link FileResolution}
    *
@@ -96,7 +112,8 @@ public final class ImageGeneratorManager {
   private File generateJpeg(File file, String extension, FileResolution resolution) {
     // Make a jpg out of the file
     try {
-      return ImageUtils.resizeJPEG(toJpeg(file, extension), resolution);
+      File jpeg = toJpeg(file, extension);
+      return ImageUtils.resizeJPEG(jpeg, resolution);
     } catch (final Exception e) {
       LOGGER.error("Error generating JPEG from File: ", e);
     }

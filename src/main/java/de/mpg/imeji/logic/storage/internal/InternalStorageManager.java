@@ -27,7 +27,6 @@ import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.administrator.impl.InternalStorageAdministrator;
 import de.mpg.imeji.logic.storage.transform.ImageGeneratorManager;
-import de.mpg.imeji.logic.storage.util.ImageUtils;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -311,12 +310,6 @@ public class InternalStorageManager implements Serializable {
     if (extension.equals("svg")) {
       return false;
     }
-    if (extension.equals("tif")) {
-      return false;
-    }
-    if (extension.equals("tiff")) {
-      return false;
-    }
     return true;
   }
 
@@ -334,14 +327,9 @@ public class InternalStorageManager implements Serializable {
     // write original file in storage
     final String extension = getExtension(StringHelper.normalizeFilename(item.getFileName()));
     copy(file, transformUrlToPath(item.getOriginalUrl()));
-    if (isTransformableImage(extension)) {
-      copy(ImageUtils.toJpeg(file, StorageUtils.getMimeType(extension)),
-          transformUrlToPath(item.getFullUrl()));
-    } else {
-      copy(file, transformUrlToPath(item.getFullUrl()));
-    }
-    // Create thumbnail and Preview file
-    Imeji.getINTERNAL_STORAGE_EXECUTOR().submit(new GenerateThumbnailAndPreviewTask(item, file));
+    // Create thumbnail,prieview and full
+    Imeji.getINTERNAL_STORAGE_EXECUTOR()
+        .submit(new GenerateThumbnailPreviewAndFullTask(item, file));
     return item;
   }
 
@@ -414,11 +402,11 @@ public class InternalStorageManager implements Serializable {
    * @author saquet
    *
    */
-  private class GenerateThumbnailAndPreviewTask implements Callable<Integer> {
+  private class GenerateThumbnailPreviewAndFullTask implements Callable<Integer> {
     private final InternalStorageItem item;
     private final File file;
 
-    public GenerateThumbnailAndPreviewTask(InternalStorageItem item, File file) {
+    public GenerateThumbnailPreviewAndFullTask(InternalStorageItem item, File file) {
       this.item = item;
       this.file = file;
     }
@@ -429,9 +417,8 @@ public class InternalStorageManager implements Serializable {
         final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
         // write web resolution file in storage
         final String calculatedExtension = guessExtension(file);
-        final String webResolutionPath =
-            write(generatorManager.generateWebResolution(file, calculatedExtension),
-                transformUrlToPath(item.getWebUrl()));
+        File resFile = generatorManager.generateWebResolution(file, calculatedExtension);
+        final String webResolutionPath = write(resFile, transformUrlToPath(item.getWebUrl()));
         // Use Web resolution to generate Thumbnail (avoid to read the original
         // file again)
         final File webResolutionFile = new File(webResolutionPath);
@@ -439,6 +426,9 @@ public class InternalStorageManager implements Serializable {
             generatorManager.generateThumbnail(webResolutionFile,
                 FilenameUtils.getExtension(webResolutionPath)),
             transformUrlToPath(item.getThumbnailUrl()));
+
+        File fullRes = generatorManager.generateFullResolution(file, calculatedExtension);
+        write(fullRes, transformUrlToPath(item.getFullUrl()));
 
       } catch (final Exception e) {
         LOGGER.error("Error transforming and writing file in internal storage ", e);

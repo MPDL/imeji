@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.storage.impl;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -166,17 +167,6 @@ public class ExternalStorage implements Storage {
     // Not implemented
   }
 
-  @Override
-  public int getImageWidth(String url) throws IOException {
-    // Not implemented
-    return 0;
-  }
-
-  @Override
-  public int getImageHeight(String url) throws IOException {
-    // Not implemented
-    return 0;
-  }
 
   @Override
   public UploadResult copy(String url, String collectionId) {
@@ -193,6 +183,12 @@ public class ExternalStorage implements Storage {
 
   @Override
   public UploadResult move(String url, String collectionId) throws IOException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Dimension getImageDimension(String url) throws IOException {
     // TODO Auto-generated method stub
     return null;
   }

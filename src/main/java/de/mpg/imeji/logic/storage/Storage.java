@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.storage;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -118,20 +119,13 @@ public interface Storage extends Serializable {
   public void rotate(String originalUrl, int degrees) throws ImejiException, IOException, Exception;
 
   /**
-   * Returns the width of the image at the url
-   *
+   * Returns the dimension of the image stored in the url
+   * 
    * @param url
    * @return
+   * @throws IOException
    */
-  public int getImageWidth(String url) throws IOException;
-
-  /**
-   * Returns the height of the image at the url
-   *
-   * @param url
-   * @return
-   */
-  public int getImageHeight(String url) throws IOException;
+  public Dimension getImageDimension(String url) throws IOException;
 
   /**
    * Return a {@link StorageAdministrator} for this {@link Storage}

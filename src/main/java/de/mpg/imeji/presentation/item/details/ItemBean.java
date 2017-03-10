@@ -1,5 +1,6 @@
 package de.mpg.imeji.presentation.item.details;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -598,6 +599,16 @@ public class ItemBean extends SuperBean {
     int webSize = Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
     int imgWidth = (int) getContent().getWidth();
     int imgHeight = (int) getContent().getHeight();
+    if (isViewInOpenseadragon() && imgWidth == 0 && imgHeight == 0) {
+      StorageController controller = new StorageController();
+      Dimension dim = controller.getImageDimension(getContent().getFull());
+      getContent().setWidth((long) dim.getWidth());
+      getContent().setHeight((long) dim.getHeight());
+
+      imgWidth = (int) getContent().getWidth();
+      imgHeight = (int) getContent().getHeight();
+    }
+
     if (imgWidth < webSize && imgHeight < webSize) {
       return imgWidth;
     }
@@ -617,6 +628,15 @@ public class ItemBean extends SuperBean {
     int webSize = Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
     int imgWidth = (int) getContent().getWidth();
     int imgHeight = (int) getContent().getHeight();
+    if (isViewInOpenseadragon() && imgWidth == 0 && imgHeight == 0) {
+      StorageController controller = new StorageController();
+      Dimension dim = controller.getImageDimension(getContent().getFull());
+      getContent().setWidth((long) dim.getWidth());
+      getContent().setHeight((long) dim.getHeight());
+
+      imgWidth = (int) getContent().getWidth();
+      imgHeight = (int) getContent().getHeight();
+    }
     if (imgWidth < webSize && imgHeight < webSize) {
       return imgHeight;
     }
@@ -660,12 +680,13 @@ public class ItemBean extends SuperBean {
     this.rotation = rotation;
   }
 
+  // Show in osd iff it was possible to convert original to jpg
   public boolean isViewInOpenseadragon() {
-    return !isViewInDataViewer() && isImageFile() && !isSVGFile() && !isGIFFile() && !isTIFFile();
+    return "jpg".equals(FilenameUtils.getExtension(content.getFull()));
   }
 
   /**
-   * True if the file ia a gif
+   * True if the file is a gif
    *
    * @return
    */
