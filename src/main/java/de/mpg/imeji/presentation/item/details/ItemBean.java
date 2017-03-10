@@ -127,7 +127,7 @@ public class ItemBean extends SuperBean {
   }
 
   public void cancelEditor() throws Exception {
-    redirect(getHistory().getCurrentPage().getCompleteUrl());
+    redirect(getCurrentPage().getCompleteUrl());
   }
 
   public void showEditor() throws ImejiException {
@@ -236,7 +236,7 @@ public class ItemBean extends SuperBean {
   }
 
   public String getPageUrl() {
-    return getHistory().getCurrentPage().getCompleteUrl();
+    return getCurrentPage().getCompleteUrl();
   }
 
   public CollectionImeji getCollection() {
@@ -281,7 +281,7 @@ public class ItemBean extends SuperBean {
   public void saveEditor() throws IOException {
     try {
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_editor_image", getLocale()));
-      redirect(getHistory().getCurrentPage().getCompleteUrl());
+      redirect(getCurrentPage().getCompleteUrl());
     } catch (Exception e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()));
       LOGGER.error("Error saving item metadata", e);

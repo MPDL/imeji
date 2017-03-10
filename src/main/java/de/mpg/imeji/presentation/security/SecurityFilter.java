@@ -87,7 +87,7 @@ public class SecurityFilter implements Filter {
       throws IOException, ServletException {
     try {
       final HttpServletRequest request = (HttpServletRequest) serv;
-      if (ServletUtil.isGetRequest(serv)) {
+      if (ServletUtil.isGetRequest(serv) && !logout(request, resp)) {
         User user = login(request);
         checkReadAuthorization(request, user);
       }
@@ -193,6 +193,15 @@ public class SecurityFilter implements Filter {
     }
   }
 
+  public boolean logout(HttpServletRequest request, ServletResponse resp) throws IOException {
+    if ("1".equals(request.getParameter("logout"))) {
+      request.getSession().invalidate();
+      redirectToHome(resp);
+      return true;
+    }
+    return false;
+  }
+
   /**
    * Login the user according to the request and what is in the session
    * 
@@ -202,9 +211,7 @@ public class SecurityFilter implements Filter {
    */
   private User login(HttpServletRequest request) throws Exception {
     final SessionBean session = getSession(request);
-    if (session != null && "1".equals(request.getParameter("logout"))) {
-      request.getSession().invalidate();
-    }
+
     if (session != null && session.getUser() == null) {
       final HttpAuthentication httpAuthentification = new HttpAuthentication(request);
       if (httpAuthentification.hasLoginInfos()) {
@@ -236,6 +243,19 @@ public class SecurityFilter implements Filter {
     ((HttpServletResponse) resp)
         .sendRedirect(serv.getServletContext().getContextPath() + "/login?redirect="
             + URLEncoder.encode(url + HistoryUtil.paramsMapToString(params), "UTF-8"));
+
+  }
+
+  /**
+   * Redirect the request to the login page
+   *
+   * @param serv
+   * @param resp
+   * @throws IOException
+   * @throws UnsupportedEncodingException
+   */
+  private void redirectToHome(ServletResponse resp) throws IOException {
+    ((HttpServletResponse) resp).sendRedirect(NAVIGATION.getHomeUrl());
 
   }
 

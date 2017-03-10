@@ -72,7 +72,7 @@ public class EditCollectionBean extends CollectionBean {
 
   public void save() throws Exception {
     if (saveEditedCollection()) {
-      redirect(getHistory().getPreviousPage().getCompleteUrl());
+      redirect(getPreviousPage().getCompleteUrl());
     }
   }
 

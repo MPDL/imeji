@@ -198,7 +198,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   }
 
   public String getBackUrl() {
-    return getHistory().getPreviousPage().getCompleteUrlWithHistory();
+    return getPreviousPage().getCompleteUrlWithHistory();
   }
 
   public void setEditedColumn(String editedColumn) {

@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
@@ -308,17 +307,6 @@ public class SessionBean implements Serializable {
       ipAddress = ipAddress.split(",")[0];
     }
     return ipAddress;
-  }
-
-  /**
-   * Logout and redirect to the home page
-   *
-   * @throws IOException
-   */
-  private void logoutFromSpot() {
-    if (getUser() != null && !SecurityUtil.authorization().isSysAdmin(user)) {
-      setUser(null);
-    }
   }
 
   public String getSelectedBrowseListView() {

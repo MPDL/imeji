@@ -11,7 +11,7 @@ import javax.faces.context.FacesContext;
 
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.navigation.Navigation;
-import de.mpg.imeji.presentation.navigation.history.HistorySession;
+import de.mpg.imeji.presentation.navigation.history.HistoryPage;
 
 /**
  * This bean is a utility Bean. It can be extended to get some basic session information
@@ -29,8 +29,10 @@ public class SuperBean implements Serializable {
   private Locale locale;
   @ManagedProperty(value = "#{Navigation}")
   private Navigation navigation;
-  @ManagedProperty(value = "#{HistorySession}")
-  private HistorySession history;
+  @ManagedProperty(value = "#{HistorySession.previousPage}")
+  private HistoryPage previousPage;
+  @ManagedProperty(value = "#{HistorySession.currentPage}")
+  private HistoryPage currentPage;
 
 
   /**
@@ -41,20 +43,6 @@ public class SuperBean implements Serializable {
    */
   protected void redirect(String url) throws IOException {
     FacesContext.getCurrentInstance().getExternalContext().redirect(url);
-  }
-
-  /**
-   * @return the history
-   */
-  public HistorySession getHistory() {
-    return history;
-  }
-
-  /**
-   * @param history the history to set
-   */
-  public void setHistory(HistorySession history) {
-    this.history = history;
   }
 
   /**
@@ -99,18 +87,33 @@ public class SuperBean implements Serializable {
     this.locale = locale;
   }
 
-  // /**
-  // * @return Authentication Bean
-  // */
-  // public AuthorizationBean getAuth() {
-  // return auth;
-  // }
-  //
-  // /**
-  // *
-  // * @param auth the Authentication Bean to set
-  // */
-  // public void setAuth(AuthorizationBean auth) {
-  // this.auth = auth;
-  // }
+  /**
+   * @return the previousPage
+   */
+  public HistoryPage getPreviousPage() {
+    return previousPage;
+  }
+
+  /**
+   * @param previousPage the previousPage to set
+   */
+  public void setPreviousPage(HistoryPage previousPage) {
+    this.previousPage = previousPage;
+  }
+
+  /**
+   * @return the currentPage
+   */
+  public HistoryPage getCurrentPage() {
+    return currentPage;
+  }
+
+  /**
+   * @param currentPage the currentPage to set
+   */
+  public void setCurrentPage(HistoryPage currentPage) {
+    this.currentPage = currentPage;
+  }
+
+
 }

@@ -178,7 +178,7 @@ public class ItemsEditLicenseBean extends SuperBean {
    * @throws IOException
    */
   public void cancel() throws IOException {
-    redirect(getHistory().getPreviousPage().getCompleteUrlWithHistory());
+    redirect(getPreviousPage().getCompleteUrlWithHistory());
   }
 
   /**

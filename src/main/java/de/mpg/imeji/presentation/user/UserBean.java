@@ -63,7 +63,7 @@ public class UserBean extends SuperBean {
 
   @PostConstruct
   public void init() {
-    init(UrlHelper.getParameterValue("id"));
+    init(UrlHelper.getParameterValue("email"));
   }
 
   /**
@@ -267,7 +267,7 @@ public class UserBean extends SuperBean {
    * @return
    */
   public String getUserPageUrl() {
-    return getNavigation().getUserUrl() + "?id=" + user.getEmail();
+    return getNavigation().getUserUrl() + "?email=" + user.getEmail();
   }
 
   public User getUser() {

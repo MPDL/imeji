@@ -28,7 +28,7 @@
 			<h:panelGroup layout="block" id="imj_ajaxWrapper" styleClass="imj_mediaEntryDetailPage">
 				<h:panelGroup layout="block" id="selectionInfoPanel">
 					<!-- Selection Info Panel -->
-					<imeji:selectionInfoPanel fSession="#{FacetFiltersSession}" facetBean="#{itemBean}" currentMainMenu="#{currentMainMenu}" browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="0" showSelectMenu="false"/>
+					<item:filters fSession="#{FacetFiltersSession}" facetBean="#{itemBean}" currentMainMenu="#{currentMainMenu}" browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="0" showSelectMenu="false"/>
 				</h:panelGroup>
 				
 				<ui:fragment rendered="#{Auth.read}">

@@ -6,9 +6,6 @@ import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
-import javax.servlet.http.HttpServletRequest;
-
-import de.mpg.imeji.presentation.util.ServletUtil;
 
 /**
  * JavaBean for the http session object related to the history
@@ -35,16 +32,6 @@ public class HistorySession implements Serializable {
    */
   public HistorySession() {
     // creates...
-  }
-
-  /**
-   * Return the {@link HistorySession}
-   *
-   * @param req
-   * @return
-   */
-  public static HistorySession getHistorySession(HttpServletRequest req) {
-    return (HistorySession) ServletUtil.getSession(req, HistorySession.class.getSimpleName());
   }
 
   /**

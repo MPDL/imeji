@@ -76,7 +76,7 @@ public class MoveItemsBean extends SuperBean {
   public void moveSelectedTo(String collectionId) throws IOException {
     moveTo(collectionId, sessionBean.getSelected());
     sessionBean.getSelected().clear();
-    redirect(getHistory().getCurrentPage().getCompleteUrl());
+    redirect(getCurrentPage().getCompleteUrl());
   }
 
   /**

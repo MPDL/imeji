@@ -217,16 +217,18 @@ public class ImejiInitializer {
   public static void initDefaultStatements() {
     List<Statement> l = new ArrayList<>();
     l.add(ImejiFactory.newStatement().setIndex("Title").setType(StatementType.TEXT).build());
-    l.add(ImejiFactory.newStatement().setIndex("Description").setType(StatementType.TEXT).build());
+    l.add(ImejiFactory.newStatement().setIndex("Author").setType(StatementType.PERSON).build());
     l.add(ImejiFactory.newStatement().setIndex("Date").setType(StatementType.DATE).build());
+    l.add(ImejiFactory.newStatement().setIndex("Description").setType(StatementType.TEXT).build());
     l.add(ImejiFactory.newStatement().setIndex("Location").setType(StatementType.GEOLOCATION)
         .build());
     l.add(ImejiFactory.newStatement().setIndex("Link").setType(StatementType.URL).build());
+
     StatementService service = new StatementService();
     try {
       if (service.search(null, null, Imeji.adminUser, 0, -1).getNumberOfRecords() == 0) {
         service.createBatch(l, Imeji.adminUser);
-        Imeji.CONFIG.setStatements(StatementUtil.toStatementNamesString(l));
+        Imeji.CONFIG.setStatements(StatementUtil.toStatementNamesString(l.subList(0, 1)));
         Imeji.CONFIG.saveConfig();
       }
     } catch (Exception e) {

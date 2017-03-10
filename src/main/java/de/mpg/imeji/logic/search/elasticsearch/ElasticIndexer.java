@@ -86,7 +86,9 @@ public class ElasticIndexer implements SearchIndexer {
     } catch (final Exception e) {
       LOGGER.error("error indexing object ", e);
     }
-    commit();
+    if (!(l.get(0) instanceof ContentVO)) {
+      commit();
+    }
   }
 
   @Override
@@ -111,7 +113,9 @@ public class ElasticIndexer implements SearchIndexer {
       }
     }
     bulkRequest.get();
-    commit();
+    if (!(l.get(0) instanceof ContentVO)) {
+      commit();
+    }
   }
 
   /**

@@ -29,7 +29,7 @@
 				<h:inputSecret id="inputPasswd" styleClass="imj_metadataValue" value="#{LoginBean.passwd}"/>
 			</div>
 			<div class="imj_submitPanel">
-				<h:commandLink id="lnkLogin" styleClass="imj_submitButton" value="#{lbl.login}" action ="#{LoginBean.doLogin}"/>
+				<h:commandLink id="lnkLogin" styleClass="imj_submitButton" value="#{lbl.login}" action ="#{LoginBean.doLogin(SessionBean)}"/>
 			</div>
 		</h:form>
 	</div>

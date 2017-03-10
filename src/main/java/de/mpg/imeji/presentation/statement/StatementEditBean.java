@@ -62,7 +62,7 @@ public class StatementEditBean extends StatementCreateBean {
   public void save() {
     try {
       service.update(getStatementForm().asStatement(), getSessionUser());
-      redirect(getHistory().getPreviousPage().getCompleteUrlWithHistory());
+      redirect(getPreviousPage().getCompleteUrlWithHistory());
     } catch (final ImejiException | IOException e) {
       BeanHelper.error("Error creating statement");
       LOGGER.error("Error creating statement", e);

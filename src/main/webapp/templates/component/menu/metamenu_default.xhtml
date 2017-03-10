@@ -11,7 +11,7 @@
 			
 			<!-- Username if logged in -->
 			<ui:fragment rendered="#{Auth.loggedIn}">
-				<h:outputLink id="txtAccountUserName" title="#{lbl.goto_user_profile}" styleClass="imj_metaMenuItem" value="#{Navigation.applicationUrl}user?id=#{Auth.sessionUser.email}">
+				<h:outputLink id="txtAccountUserName" title="#{lbl.goto_user_profile}" styleClass="imj_metaMenuItem" value="#{Navigation.applicationUrl}user?email=#{Auth.sessionUser.email}">
 					<h:outputText value="#{Auth.sessionUser.person.completeName}"/>
 				</h:outputLink>
 				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>
