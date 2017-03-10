@@ -5,12 +5,13 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:imjc="http://java.sun.com/jsf/composite/components"
                 xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
-                xmlns:item="http://java.sun.com/jsf/composite/components/item">
+                xmlns:item="http://java.sun.com/jsf/composite/components/item"
+                xmlns:collection="http://java.sun.com/jsf/composite/components/collection">
 	
 	<ui:define name="actionsMenu">
-		<menu:actionItems id="actionItems" itemsBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'items' and empty SessionBean.selected}"/>
-		<menu:actionCollection id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and empty SessionBean.selected}" />
-		<menu:actionSelectedItems id="actionSelectedItems" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}" />
+		<item:browseActionMenu id="actionItems" itemsBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'items' and empty SessionBean.selected}"/>
+		<collection:actionMenu id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and empty SessionBean.selected and paginatorListSessionBean.collection.status.name() != 'WITHDRAWN'}" />
+		<item:selectedActionMenu id="actionSelectedItems" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}" />
 	</ui:define>
 	
     <!-- Main Content - Image tiled list - START -->
@@ -26,7 +27,7 @@
                                       browseToAllUrl="#{browseToAllItemsUrl}" 
                                       numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}"
                                       containerId="#{containerId}" showSortMenu="true" objectLabel="#{lbl.images}"
-                                      rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
+                                      />
             
 	
 			<div id="itemsArea" class="itemsArea">

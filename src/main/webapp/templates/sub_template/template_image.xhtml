@@ -3,8 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:imjc="http://java.sun.com/jsf/composite/components"
-	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:imeji="http://java.sun.com/jsf/composite/components"
+	xmlns:item="http://java.sun.com/jsf/composite/components/item"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
 	
 	<ui:param name="headline" value="#{itemBean.image != null ? itemBean.image.filename: ''}"/>
@@ -18,7 +18,7 @@
 	</ui:define>
 	
 	<ui:define name="actionsMenu">
-		<menu:actionItem id="actionItem" itemBean="#{itemBean}"/>
+		<item:actionMenu id="actionItem" itemBean="#{itemBean}" rendered="#{itemBean.item.status.name() != 'WITHDRAWN'}"/>
 	</ui:define>
 	
 	<!-- Main Content - Image Detail View -->
@@ -28,7 +28,7 @@
 			<h:panelGroup layout="block" id="imj_ajaxWrapper" styleClass="imj_mediaEntryDetailPage">
 				<h:panelGroup layout="block" id="selectionInfoPanel">
 					<!-- Selection Info Panel -->
-					<imjc:selectionInfoPanel fSession="#{FacetFiltersSession}" facetBean="#{itemBean}" currentMainMenu="#{currentMainMenu}" browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="0" showSelectMenu="false"/>
+					<imeji:selectionInfoPanel fSession="#{FacetFiltersSession}" facetBean="#{itemBean}" currentMainMenu="#{currentMainMenu}" browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="0" showSelectMenu="false"/>
 				</h:panelGroup>
 				
 				<ui:fragment rendered="#{Auth.read}">

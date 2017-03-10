@@ -4,8 +4,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
-	xmlns:imjc="http://java.sun.com/jsf/composite/components">
+	xmlns:collection="http://java.sun.com/jsf/composite/components/collection"
+	xmlns:imeji="http://java.sun.com/jsf/composite/components">
 	<ui:param name="paginatorListSessionBean" value="#{CollectionsBean}" />
 	<ui:param name="headline" value=" " />
 	<ui:param name="title" value="#{lbl.collections}"/>
@@ -14,11 +14,11 @@
 	<ui:param name="currentMainMenu" value="collection" />
 	
 	<ui:define name="actionsMenu">
-		<menu:actionMenuCollections rendered="#{!empty SessionBean.user}" />
+		<collection:browseActionMenu rendered="#{!empty SessionBean.user}" />
 	</ui:define>
 
 	<ui:define name="searchQuery">
-		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}"
+		<imeji:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}"
 			navBean="#{Navigation}"
 			rendered="#{paginatorListSessionBean.simpleQuery != ''}"
 			label="#{lbl.search_for} #{lbl.collections}" />

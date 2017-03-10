@@ -36,7 +36,7 @@ public class WorkflowBean implements Serializable {
   }
 
   /**
-   * True if the Object ca be released
+   * True if the Object can be released
    *
    * @param p
    * @return
@@ -79,4 +79,5 @@ public class WorkflowBean implements Serializable {
       return false;
     }
   }
+
 }
