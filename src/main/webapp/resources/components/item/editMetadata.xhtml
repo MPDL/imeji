@@ -18,7 +18,7 @@
 				<span class="imj_invisible">: </span>
 			</div>
 			<div class="imj_metadataValue">
-				<h:inputText value="#{cc.attrs.formBean.filename}"/>
+				<h:inputText value="#{cc.attrs.formBean.filename}"  styleClass="imj_mdInput"/>
 			</div>					
 		</div>
 		<div class="imj_metadataSet">
@@ -28,7 +28,7 @@
 			</div>
 			<div class="imj_metadataValue">
 				<h:panelGroup id="licenseEditor">
-					<license:licenseEditor licenseEditor="#{cc.attrs.formBean.licenseEditor}" containerId=":editItem:licenseEditor"/>
+					<license:licenseEditor licenseEditor="#{cc.attrs.formBean.licenseEditor}" containerId=":editor:editItem:licenseEditor"/>
 				</h:panelGroup>
 			</div>
 		</div>

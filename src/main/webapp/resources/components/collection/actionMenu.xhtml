@@ -19,6 +19,9 @@
 			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton imj_menuButton">
 				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
 			</a>
+			<a href="#{Navigation.applicationUrl}editbatch?col=#{cc.attrs.collectionBean.id}" class="imj_menuButton imj_menuButton">
+				<span class="fa fa-tags"/> <span>#{lbl.describe_items}</span>
+			</a>
 			<ui:fragment rendered="#{Auth.admin}">
 				<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share" class="imj_menuButton imj_menuButton">
 					<span class="fa fa-users"/> <span>#{lbl.collection_share}</span>
@@ -32,9 +35,7 @@
 						<ul class="imj_overlayMenuList">
 							<h:form>
 								<li>
-									<a href="#{Navigation.applicationUrl}editbatch?col=#{cc.attrs.collectionBean.id}">
-										<span class="fa fa-pencil"/> <span>#{lbl.edit_all}</span>
-									</a>
+									
 								</li>
 								<li>
 									<a href="#{Navigation.applicationUrl}edit/license?collection=#{cc.attrs.collectionBean.id}">
@@ -52,7 +53,7 @@
 								<ui:fragment rendered="#{WorkflowBean.withdraw(cc.attrs.collectionBean.collection)}">
 									<li>
 										<h:outputLink value="#" onclick="openDialog('withdrawCollection');">
-											 <span class="fa fa-globe"/> <span>#{lbl.collection_withdraw}</span>
+											 <span class="fa fa-ban"/> <span>#{lbl.collection_withdraw}</span>
 										</h:outputLink>
 									</li>
 								</ui:fragment>

@@ -1,9 +1,13 @@
 package de.mpg.imeji.presentation.edit.single;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,21 +46,20 @@ public class EditItemComponent extends EditMetadataAbstract {
     this.locale = locale;
     this.licenseEditor = new LicenseEditor(getLocale(), item);
     this.filename = item.getFilename();
-    entries = item.getMetadata().stream().map(md -> new EditItemEntry(md, statementMap))
-        .collect(Collectors.toList());
-    entries
-        .addAll(
-            getDefaultStatements().values().stream()
-                .map(s -> new EditItemEntry(
-                    new MetadataFactory().setStatementId(s.getIndex()).build(), statementMap))
-                .collect(Collectors.toList()));
+    Map<String, EditItemEntry> entriesMap = getDefaultStatements().values().stream()
+        .collect(toMap(Statement::getIndex,
+            s -> new EditItemEntry(new MetadataFactory().setStatementId(s.getIndex()).build(),
+                statementMap)));
+    entriesMap.putAll(item.getMetadata().stream()
+        .collect(toMap(Metadata::getIndex, md -> new EditItemEntry(md, statementMap))));
+    entries = entriesMap.values().stream().collect(toList());
   }
 
   @Override
   public List<Item> toItemList() {
     item.setFilename(filename);
     item.setMetadata(entries.stream().map(EditItemEntry::getInput)
-        .map(MetadataInputComponent::getMetadata).collect(Collectors.toList()));
+        .map(MetadataInputComponent::getMetadata).collect(toList()));
     item.getLicenses().add(licenseEditor.getLicense());
     return Arrays.asList(item);
   }
@@ -65,8 +68,8 @@ public class EditItemComponent extends EditMetadataAbstract {
   public List<Statement> getAllStatements() {
     return entries.stream().filter(row -> row.getInput() != null && !row.getInput().isEmpty())
         .map(EditItemEntry::getInput).map(MetadataInputComponent::getStatement)
-        .collect(Collectors.toMap(Statement::getIndex, Function.identity(), (a, b) -> a)).values()
-        .stream().collect(Collectors.toList());
+        .collect(toMap(Statement::getIndex, Function.identity(), (a, b) -> a)).values().stream()
+        .collect(Collectors.toList());
   }
 
   /**

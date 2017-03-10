@@ -13,7 +13,7 @@
 	<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/autocomplete.js"></script>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'TEXT'}">
 			<h:inputTextarea id="text" value="#{cc.attrs.metadataInputComponent.metadata.text}" styleClass="imj_mdInput" rendered="#{empty cc.attrs.metadataInputComponent.statement.literalConstraints}"/>
-			<h:selectOneMenu id="selectText" value="#{cc.attrs.metadataInputComponent.metadata.text}" rendered="#{not empty cc.attrs.metadataInputComponent.statement.literalConstraints}">
+			<h:selectOneMenu id="selectText" value="#{cc.attrs.metadataInputComponent.metadata.text}" rendered="#{not empty cc.attrs.metadataInputComponent.statement.literalConstraints}" styleClass="imj_mdInput">
 				<f:selectItems value="#{cc.attrs.metadataInputComponent.statement.literalConstraints}"/>
 			</h:selectOneMenu>
 		</ui:fragment>

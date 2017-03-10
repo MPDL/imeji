@@ -20,21 +20,16 @@
 		</h:form>
 		<ui:fragment rendered="#{Auth.update}">
 			<a href="#{Navigation.applicationUrl}editselected" class="imj_menuButton imj_overlayMenu">
-				<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
+				<span class="fa fa-tags"/> <span>#{lbl.describe_items}</span>
 			</a>
 			<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
 				<a href="#" class="imj_menuButton imj_overlayMenu"  onclick="openDialog('deleteSelectedItems');">
-					<span class="fa fa-trash"/> <span>#{lbl.delete}</span>
+					<span class="fa fa-trash"/> <span>#{lbl.images_delete}</span>
 				</a>
 			</ui:fragment>
 		</ui:fragment>
-		<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(cc.attrs.itemsBean.collection)}">
-			<a href="#" class="imj_menuButton imj_overlayMenu"  onclick="openDialog('withdrawSelectedItems');">
-				<span class="fa fa-ban"/> <span>#{lbl.withdraw}</span>
-			</a>
-		</ui:fragment>
 		<a id="download" href="#{Navigation.applicationUrl}exportServlet?format=zip" class="imj_overlayMenu imj_menuButton" target="_blank">
-			<span class="fa fa-download"/> <span>#{lbl.download}</span>
+			<span class="fa fa-download"/> <span>#{lbl.download_files}</span>
 		</a>
 		<ui:fragment rendered="#{Auth.update}">
 			<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionSelectedMore">
@@ -46,9 +41,16 @@
 					<ul class="imj_overlayMenuList">
 						<li>
 							<a href="#{Navigation.applicationUrl}edit/license" id="lnkSelectEditLicense">
-								<span class="fa fa-copyright"/> <span>#{lbl.edit_selected_license}</span>
+								<span class="fa fa-copyright"/> <span>#{lbl.edit_all_licenses}</span>
 							</a>
 						</li>
+						<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(cc.attrs.itemsBean.collection)}">
+							<li>
+								<a href="#" onclick="openDialog('withdrawSelectedItems');">
+									<span class="fa fa-ban"/> <span>#{lbl.items_withdraw}</span>
+								</a>
+							</li>
+						</ui:fragment>
 						<ui:fragment rendered="#{cc.attrs.itemsBean.type == 'COLLECTION_ITEMS' and WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
 							<li>
 								<h:form>
