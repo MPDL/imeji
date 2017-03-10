@@ -26,7 +26,7 @@
 		<a href="#{Navigation.applicationUrl}exportServlet?format=file&amp;id=#{cc.attrs.itemBean.item.id}" class="imj_menuButton imj_overlayMenu" target="_blank">
 			<span class="fa fa-download"/> <span>#{lbl.download}</span>
 		</a>
-		<ui:fragment rendered="#{Auth.delete}">
+		<ui:fragment rendered="#{Auth.delete and WorkflowBean.delete(cc.attrs.itemBean.item)}">
 			<h:form>
 				<h:commandLink id="moveItems" styleClass="imj_menuButton imj_overlayMenu" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemBean.item.collection.toString())}" onclick="openDialog('moveItemsDialog');">
 					<span class="fa fa-hand-o-right"/> <span>#{lbl.move}..</span>
