@@ -1,0 +1,209 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
+	xmlns:license="http://java.sun.com/jsf/composite/components/license">
+<composite:interface>
+	<composite:attribute name="cc.attrs.itemBean" required="true" />
+</composite:interface>
+
+<composite:implementation>
+	<div class="imj_metadataWrapper">
+			<div class="imj_globalMetadataSet">
+				<h:panelGroup layout="block" styleClass="imj_metadataSet" style="color:red;" rendered="#{cc.attrs.itemBean.image.status == 'WITHDRAWN'}">
+					<div class="imj_metadataLabel">
+						#{lbl.withdraw_comment}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						#{cc.attrs.itemBean.image.discardComment}
+					</div>
+				</h:panelGroup>
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+						#{lbl.filename}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						#{cc.attrs.itemBean.image.filename}
+					</div>					
+				</div>
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+						#{lbl.license}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						<ui:repeat var="license" value="#{LicenseViewer.getLicensesSortedByDate(cc.attrs.itemBean.image.licenses)}">
+							<license:licenseViewer license="#{license}" showLogo="#{license.end &lt; 0}"/>
+							<br/>
+						</ui:repeat>
+						<h:outputText value="#{lbl.no_license}" rendered="#{empty cc.attrs.itemBean.image.licenses}"/>
+					</div>
+				</div>
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+						#{lbl.collection}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						<a href="#{Navigation.collectionUrl}#{cc.attrs.itemBean.collection.idString}">
+							#{cc.attrs.itemBean.collection.title}
+						</a>
+					</div>
+				</div>
+				<!-- MetaDataList - File Size -->
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+						#{lbl.file_size}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						#{cc.attrs.itemBean.image.fileSizeHumanReadable}
+					</div>
+				</div>
+				<!-- MetaDataList - image dimension Size -->
+				<h:panelGroup layout="block" styleClass="imj_metadataSet" rendered="#{cc.attrs.itemBean.content.width &gt; 0 and cc.attrs.itemBean.content.height &gt; 0}">
+					<div class="imj_metadataLabel">
+						#{lbl.width} x #{lbl.height}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						#{cc.attrs.itemBean.content.width} x #{cc.attrs.itemBean.content.height}
+					</div>
+				</h:panelGroup>
+				<ui:repeat var="metadata" value="#{cc.attrs.itemBean.item.metadata}" rows="0">
+					<div class="imj_metadataSet">
+						<div class="imj_metadataLabel">
+							#{metadata.index}
+							<span class="imj_invisible">: </span>
+						</div>
+						<div class="imj_metadataValue">
+							<md:output metadata="#{metadata}"/>
+						</div>
+					</div>
+				</ui:repeat>
+				<!-- InfoDataList - MD5 -->
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+						#{lbl.checksum} (MD5)
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						#{cc.attrs.itemBean.content.checksum}
+						<a href="#{Navigation.browseUrl}?q=checksum=%22#{cc.attrs.itemBean.content.checksum}%22"> [#{lbl.search_for_duplicate}]</a>
+					</div>
+				</div>
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+						#{lbl.imageUploader}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						#{cc.attrs.itemBean.imageUploader}
+					</div>
+				</div>
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+						#{lbl.imageUploadDate}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						#{cc.attrs.itemBean.image.created.time.toString()}
+					</div>
+				</div>
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+						#{lbl.files}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						#{cc.attrs.itemBean.image.created.time.toString()}
+						<ul class="imj_optionList">
+							<li>
+								<h:outputLink value="#{cc.attrs.itemBean.thumbnail}" target="_blank">
+									<h:outputText value="#{lbl.imageSizesThumb}"/>
+								</h:outputLink>
+							</li>
+							<li>
+								<h:outputLink value="#{cc.attrs.itemBean.preview}" target="_blank">
+									<h:outputText value="#{lbl.imageSizesWeb}"/>
+								</h:outputLink>
+							</li>
+							<li>
+								<h:outputLink value="#{cc.attrs.itemBean.fullResolution}" target="_blank">
+									<h:outputText value="#{lbl.imageSizesFull}"/>
+								</h:outputLink>
+							</li>
+							<li>
+								<h:outputLink value="#{cc.attrs.itemBean.originalFile}" target="_blank">
+									<h:outputText value="#{lbl.imageSizesOrg}"/>
+								</h:outputLink>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<ui:fragment rendered="#{cc.attrs.itemBean.image.status == 'RELEASED'}">
+					<div class="imj_metadataSet">
+						<div class="imj_metadataLabel">
+							#{lbl.embed}
+							<span class="imj_invisible">: </span>
+						</div>
+						<div class="imj_metadataValue">
+							<textarea class="imj_infodataValueEntryEmbed" onclick="this.select();">&lt;a href='#{cc.attrs.itemBean.pageUrl}' title='#{cc.attrs.itemBean.image.filename}'&gt; &lt;img src='#{cc.attrs.itemBean.preview}' alt='#{cc.attrs.itemBean.image.filename}' title='#{cc.attrs.itemBean.image.filename}'&gt;&lt;/a&gt;</textarea>
+						</div>
+					</div>
+				</ui:fragment>
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+						#{lbl.qrcode}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						<span class="imj_infodataValue" id="qr"> </span>
+					</div>
+				</div>
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+						#{lbl.technical_metadata}
+						<span class="imj_invisible">: </span>
+					</div>
+					<div class="imj_metadataValue">
+						<h:form>
+							<h:commandLink rendered="#{cc.attrs.itemBean.techMd == null}" value="show tech md" action="#{cc.attrs.itemBean.showTechnicalMetadata}" onclick=" window.location.hash = '#techmetadata';">
+								<f:ajax render="@form"/>
+							</h:commandLink>
+							<div id="techmetadata" class="imj_techdataList">
+								<ui:repeat id="techMd" var="techMd" value="#{cc.attrs.itemBean.techMd}">
+									<h:outputText value="#{techMd}" styleClass="imj_techdataEntry"/>
+								</ui:repeat>
+							</div>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/qrcode.js"> </script>
+		<script type="text/javascript">
+			jQuery(document).ready(function() {
+				var qrHtml = document.getElementById('qr');
+				if (qrHtml != null) {
+					qrHtml.innerHTML = create_qrcode('#{cc.attrs.itemBean.pageUrl}');
+				}
+			});
+			
+			var draw_qrcode = function(text, typeNumber, errorCorrectLevel) {
+				document.write(create_qrcode(text, typeNumber, errorCorrectLevel) );
+			};
+			var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
+				var qr = qrcode(typeNumber || 10, errorCorrectLevel || 'L');
+				qr.addData(text);
+				qr.make();
+				// return qr.createTableTag();
+				return qr.createImgTag();
+			};
+		</script>
+	</composite:implementation>
+</html>

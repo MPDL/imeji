@@ -19,14 +19,13 @@
 			</h:form>
 			<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
 				<div id="buttons">
-				<h:outputLink id="zoominButton" class="fa fa-search-plus fa-size-3 imj_mediaEditPanelItem" /> &#160;
-				<h:outputLink id="zoomoutButton" class="fa fa-search-minus fa-size-3 imj_mediaEditPanelItem" /> &#160;
-				<h:outputLink id="fullscreenButton" class="fa fa-expand fa-size-3 imj_mediaEditPanelItem" /> &#160;
-				<h:outputLink id="homeButton" class="fa fa-home fa-size-3 imj_mediaEditPanelItem" /> &#160;
-				<h:outputLink id="rotateLeftButton" class="fa fa-rotate-left fa-size-3 imj_mediaEditPanelItem" /> &#160;
-				<h:outputLink id="rotateRightButton" class="fa fa-rotate-right fa-size-3 imj_mediaEditPanelItem" />
-				</div>
-			
+					<h:outputLink id="zoominButton" class="fa fa-search-plus fa-size-3 imj_mediaEditPanelItem" /> &#160;
+					<h:outputLink id="zoomoutButton" class="fa fa-search-minus fa-size-3 imj_mediaEditPanelItem" /> &#160;
+					<h:outputLink id="fullscreenButton" class="fa fa-expand fa-size-3 imj_mediaEditPanelItem" /> &#160;
+					<h:outputLink id="homeButton" class="fa fa-home fa-size-3 imj_mediaEditPanelItem" /> &#160;
+					<h:outputLink id="rotateLeftButton" class="fa fa-rotate-left fa-size-3 imj_mediaEditPanelItem" /> &#160;
+					<h:outputLink id="rotateRightButton" class="fa fa-rotate-right fa-size-3 imj_mediaEditPanelItem" />
+				</div>	
 			<center>
 				<div id="seadragon-viewer-full" style="width:#{itemBean.webResolutionMaxLength}px; height:#{itemBean.webResolutionMaxLength}px;position:relative">
 				<h:outputLink id="lnkPicFullResolutionAlt" value="#{itemBean.originalFile}" target="_blank">
@@ -70,256 +69,24 @@
 			</h:outputLink>
 		</div>	
 	</h:panelGroup>
-
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status == 'WITHDRAWN'}">
 		<h:outputLink id="lnkPicFullResolution_Withdrawn" value="#">
-				<h:graphicImage id="picWebResolution_Withdrawn" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.applicationUrl}resources/icon/discarded.png"/>
+			<h:graphicImage id="picWebResolution_Withdrawn" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.applicationUrl}resources/icon/discarded.png"/>
 		</h:outputLink>
 	</h:panelGroup>
-		
 	<span id="itemMetadata"/>
 	<!-- MetaDataList - START -->
 	<div class="imj_metadataList">
 		<!-- MetaDataList - LIST BODY START -->
 		<h:panelGroup id="metadata" layout="block" styleClass="imj_listBody">
 			<!-- Edit Metadata -->
-			<ui:fragment rendered="#{itemBean.edit and !itemBean.locked}">
-				<h:form id="editItem">
-					<div class="imj_metadataSet">
-						<div class="imj_metadataLabel">
-							#{lbl.filename}
-							<span class="imj_invisible">: </span>
-						</div>
-						<div class="imj_metadataValue">
-							<h:inputText value="#{itemBean.editor.filename}"/>
-						</div>					
-					</div>
-					<div class="imj_metadataSet">
-						<div class="imj_metadataLabel">
-							#{lbl.license}
-							<span class="imj_invisible">: </span>
-						</div>
-						<div class="imj_metadataValue">
-							<h:panelGroup id="licenseEditor">
-								<lic:licenseEditor licenseEditor="#{itemBean.editor.licenseEditor}" containerId=":editItem:licenseEditor"/>
-							</h:panelGroup>
-						</div>
-					</div>
-					<item:editMetadata id="metadata" formBean="#{itemBean.editor}"/>
-					<div class="imj_submitPanel">
-						<h:commandLink styleClass="imj_cancelButton" action="#{itemBean.cancelEditor}">
-							<h:outputText value="#{lbl.cancel}"/>
-						</h:commandLink>
-						<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.editor.save}" value="#{lbl.save}" actionListener="#{itemBean.cancelEditor}" onclick="startLoader();">
-						</h:commandLink>
-					</div>
-				</h:form>
-			</ui:fragment> 
+			<item:editMetadata id="editor" formBean="#{itemBean.editor}" itemBean="#{itemBean}" rendered="#{itemBean.edit and !itemBean.locked}"/>
 			<!-- View metadata -->
-			<ui:fragment rendered="#{!itemBean.edit}">
-				<div class="imj_metadataWrapper">
-					<div class="imj_globalMetadataSet">
-						<h:panelGroup layout="block" styleClass="imj_metadataSet" style="color:red;" rendered="#{itemBean.image.status == 'WITHDRAWN'}">
-							<div class="imj_metadataLabel">
-								#{lbl.withdraw_comment}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								#{itemBean.image.discardComment}
-							</div>
-						</h:panelGroup>
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
-								#{lbl.filename}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								#{itemBean.image.filename}
-							</div>					
-						</div>
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
-								#{lbl.license}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								<ui:repeat var="license" value="#{LicenseViewer.getLicensesSortedByDate(itemBean.image.licenses)}">
-									<lic:licenseViewer license="#{license}" showLogo="#{license.end &lt; 0}"/>
-									<br/>
-								</ui:repeat>
-								<h:outputText value="#{lbl.no_license}" rendered="#{empty itemBean.image.licenses}"/>
-							</div>
-						</div>
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
-								#{lbl.collection}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								<a href="#{Navigation.collectionUrl}#{itemBean.collection.idString}">
-									#{itemBean.collection.title}
-								</a>
-							</div>
-						</div>
-						<!-- MetaDataList - File Size -->
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
-								#{lbl.file_size}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								#{itemBean.image.fileSizeHumanReadable}
-							</div>
-						</div>
-						<!-- MetaDataList - image dimension Size -->
-						<h:panelGroup layout="block" styleClass="imj_metadataSet" rendered="#{itemBean.content.width &gt; 0 and itemBean.content.height &gt; 0}">
-							<div class="imj_metadataLabel">
-								#{lbl.width} x #{lbl.height}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								#{itemBean.content.width} x #{itemBean.content.height}
-							</div>
-						</h:panelGroup>
-						<ui:repeat var="metadata" value="#{itemBean.item.metadata}" rows="0">
-							<div class="imj_metadataSet">
-								<div class="imj_metadataLabel">
-									#{metadata.index}
-									<span class="imj_invisible">: </span>
-								</div>
-								<div class="imj_metadataValue">
-									<md:output metadata="#{metadata}"/>
-								</div>
-							</div>
-						</ui:repeat>
-						<!-- InfoDataList - MD5 -->
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
-								#{lbl.checksum} (MD5)
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								#{itemBean.content.checksum}
-								<a href="#{Navigation.browseUrl}?q=checksum=%22#{itemBean.content.checksum}%22"> [#{lbl.search_for_duplicate}]</a>
-							</div>
-						</div>
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
-								#{lbl.imageUploader}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								#{itemBean.imageUploader}
-							</div>
-						</div>
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
-								#{lbl.imageUploadDate}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								#{itemBean.image.created.time.toString()}
-							</div>
-						</div>
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
-								#{lbl.files}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								#{itemBean.image.created.time.toString()}
-								<ul class="imj_optionList">
-									<li>
-										<h:outputLink value="#{itemBean.thumbnail}" target="_blank">
-											<h:outputText value="#{lbl.imageSizesThumb}"/>
-										</h:outputLink>
-									</li>
-									<li>
-										<h:outputLink value="#{itemBean.preview}" target="_blank">
-											<h:outputText value="#{lbl.imageSizesWeb}"/>
-										</h:outputLink>
-									</li>
-									<li>
-										<h:outputLink value="#{itemBean.fullResolution}" target="_blank">
-											<h:outputText value="#{lbl.imageSizesFull}"/>
-										</h:outputLink>
-									</li>
-									<li>
-										<h:outputLink value="#{itemBean.originalFile}" target="_blank">
-											<h:outputText value="#{lbl.imageSizesOrg}"/>
-										</h:outputLink>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<ui:fragment rendered="#{itemBean.image.status == 'RELEASED'}">
-							<div class="imj_metadataSet">
-								<div class="imj_metadataLabel">
-									#{lbl.embed}
-									<span class="imj_invisible">: </span>
-								</div>
-								<div class="imj_metadataValue">
-									<textarea class="imj_infodataValueEntryEmbed" onclick="this.select();">&lt;a href='#{itemBean.pageUrl}' title='#{itemBean.image.filename}'&gt; &lt;img src='#{itemBean.preview}' alt='#{itemBean.image.filename}' title='#{itemBean.image.filename}'&gt;&lt;/a&gt;</textarea>
-								</div>
-							</div>
-						</ui:fragment>
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
-								#{lbl.qrcode}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								<span class="imj_infodataValue" id="qr"> </span>
-							</div>
-						</div>
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
-								#{lbl.technical_metadata}
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								<h:form>
-									<h:commandLink rendered="#{itemBean.techMd == null}" value="show tech md" action="#{itemBean.showTechnicalMetadata}" onclick=" window.location.hash = '#techmetadata';">
-										<f:ajax render="@form"/>
-									</h:commandLink>
-									<div id="techmetadata" class="imj_techdataList">
-										<ui:repeat id="techMd" var="techMd" value="#{itemBean.techMd}">
-											<h:outputText value="#{techMd}" styleClass="imj_techdataEntry"/>
-										</ui:repeat>
-									</div>
-								</h:form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</ui:fragment>
+			<item:viewMetadata id="viewer" itemBean="#{itemBean}"  rendered="#{!itemBean.edit}"/>
 		</h:panelGroup>
 	</div>
-	<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/qrcode.js"> </script>
-	<script type="text/javascript">
-		jQuery(document).ready(function() {
-			var qrHtml = document.getElementById('qr');
-			if (qrHtml != null) {
-				qrHtml.innerHTML = create_qrcode('#{itemBean.pageUrl}');
-			}
-		});
-		
-		var draw_qrcode = function(text, typeNumber, errorCorrectLevel) {
-			document.write(create_qrcode(text, typeNumber, errorCorrectLevel) );
-		};
-		var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
-			var qr = qrcode(typeNumber || 10, errorCorrectLevel || 'L');
-			qr.addData(text);
-			qr.make();
-			// return qr.createTableTag();
-			return qr.createImgTag();
-		};
-	</script>
 	<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.js"></script>
 	<script type="text/javascript">
-
-
-			
 			var open=false;
 				
     			var imgFull = {
@@ -343,8 +110,6 @@
         		}
         		
     		});
-    	    	
-
     			viewerFull.addHandler('rotate',function(){
 					 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
 					 document.getElementById("rotationForm:buttonUpdateRotation").click();
@@ -364,14 +129,10 @@
     				useAlternatePicture();
     			});
     			
-    			
     			function useAlternatePicture(){
     				document.getElementById("picWebResolutionAlt").style.display='';
     				viewerFull.setVisible(false);
     				document.getElementById("buttons").style.display='none';
     			}
-    			
- 				
 	</script>
-	<script type="text/javascript">$(function(){highlighter();});</script>	
 </ui:composition>

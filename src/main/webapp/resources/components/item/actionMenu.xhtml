@@ -5,14 +5,13 @@
 	xmlns:composite="http://java.sun.com/jsf/composite"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
 	xmlns:item="http://java.sun.com/jsf/composite/components/item">
-	
 	<composite:interface>		
 		<composite:attribute name="itemBean"/>								
 	</composite:interface>
 	
 	<composite:implementation>
 			<h:form>
-				<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" styleClass="imj_menuButton imj_overlayMenu" onclick=" window.location.hash = '#itemMetadata';">
+				<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" styleClass="imj_menuButton imj_overlayMenu" onclick=" window.location.hash = '#itemMetadata'; startLoader();">
 					 <span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
 					 <f:ajax render=":metadata"/>
 				</h:commandLink>
