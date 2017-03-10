@@ -65,13 +65,13 @@
 								</ui:fragment>
 								<ui:fragment rendered ="#{Auth.admin and WorkflowBean.createDOI(cc.attrs.collectionBean.collection)}">
 									<li>
-										<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{cc.attrs.hasDoi}">
+										<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{Auth.sysAdmin and cc.attrs.hasDoi}">
 											 <span class="fa fa-link"/> <span>#{lbl.change_doi}</span>
 										</h:outputLink>
-										<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog('createDOI');" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and !cc.attrs.hasDoi}">
+										<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog(#{Auth.sysAdmin ? '\'createDOI\'' : '\'getDOIDialog\''});" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and !cc.attrs.hasDoi}">
 											 <span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
 										</h:outputLink>
-										<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl == null or Configuration.doiServiceUrl == ''  and !cc.attrs.hasDoi}">
+										<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Auth.sysAdmin and empty Configuration.doiServiceUrl and !cc.attrs.hasDoi}">
 											<span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
 										</h:outputLink>
 									</li>
@@ -141,7 +141,7 @@
 		    col="#{cc.attrs.collectionBean.collection}"
 			bean="#{cc.attrs.collectionBean.actionMenu}"
 			confirmationText="#{msg.confirmation_create_DOI}"
-			submitLabel="#{lbl.createDOI}" dialogId="getDOI"/>
+			submitLabel="#{lbl.createDOI}" dialogId="getDOIDialog"/>
 		<dialog:doiInputDialog 
 			col="#{cc.attrs.collectionBean.collection}"
 			bean="#{cc.attrs.collectionBean.actionMenu}"
