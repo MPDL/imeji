@@ -56,4 +56,25 @@ public class StatementUtil {
   public static Map<String, Statement> statementListToMap(List<Statement> l) {
     return l.stream().collect(Collectors.toMap(Statement::getIndex, Function.identity()));
   }
+
+  /**
+   * Format an index to store it
+   * 
+   * @param index
+   * @return
+   */
+  public static String formatIndex(String index) {
+    return new String(index.replace(" ", "_").toLowerCase());
+  }
+
+  /**
+   * True if 2 index are equals
+   * 
+   * @param index1
+   * @param index2
+   * @return
+   */
+  public static boolean indexEquals(String index1, String index2) {
+    return formatIndex(index1).equals(formatIndex(index2));
+  }
 }

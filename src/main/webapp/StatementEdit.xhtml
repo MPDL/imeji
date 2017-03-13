@@ -10,20 +10,18 @@
 	<ui:param name="currentMainMenu" value="admin" />
 
 	<ui:define name="mainContent">
+		
 		<h:form>
-			<statement:form form="#{StatementEditBean.statementForm}" render="@form"/>
+			<statement:form form="#{StatementEditBean.statementForm}" render="@form" used="#{StatementEditBean.used}"/>
 			<div id="submitButtonPanel" class="imj_submitPanel">
-                 <h:outputLink value="#{HistorySession.previousPage.completeUrlWithHistory}" styleClass="imj_cancelButton">
+			 <a href="#{Navigation.applicationUrl}browse?q=index=#{StatementEditBean.statement.indexUrlEncoded}" target="_blank"  class="imj_overlayMenu imj_menuButton"> 
+					<span class="fa fa-search "/> #{lbl.view_items_with_statement}
+				</a>
+                 <h:outputLink value="#{Navigation.applicationUrl}statements" styleClass="imj_cancelButton">
                      <h:outputText value="#{lbl.cancel}"/>
                  </h:outputLink>
-                 <h:commandButton id="btnCreateStatement" action="#{StatementEditBean.save()}" value="#{lbl.save}" styleClass="imj_submitButton"/>
+                 <h:commandButton id="btnCreateStatement" action="#{StatementEditBean.save()}" value="#{lbl.save}" styleClass="imj_submitButton"/>       
              </div>
 		</h:form>
 	</ui:define>
 </ui:composition>
-
-
-
-
-
-

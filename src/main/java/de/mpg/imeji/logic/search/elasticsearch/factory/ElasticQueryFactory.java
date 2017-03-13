@@ -345,6 +345,9 @@ public class ElasticQueryFactory {
       case itemId:
         return QueryBuilders.hasParentQuery(ElasticTypes.items.name(),
             fieldQuery(ElasticFields.ID, pair.getValue(), pair.getOperator(), pair.isNot()));
+      case index:
+        return fieldQuery(ElasticFields.METADATA_INDEX, pair.getValue(), SearchOperators.EQUALS,
+            pair.isNot());
     }
     return matchNothing();
   }

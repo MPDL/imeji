@@ -10,6 +10,7 @@
 <composite:interface>
 	<composite:attribute name="form" required="true" />
 	<composite:attribute name="render" required="true" />
+	<composite:attribute name="used" default="false" type="java.lang.Boolean" />
 </composite:interface>
 
 <composite:implementation>
@@ -29,7 +30,7 @@
 			<label class="imj_metadataLabel"> #{lbl.type}<span
 				class="imj_noDisplay">: </span>
 			</label>
-			<h:selectOneMenu id="selStatementType" value="#{cc.attrs.form.type}">
+			<h:selectOneMenu id="selStatementType" value="#{cc.attrs.form.type}" disabled="#{cc.attrs.used}">
 				<f:selectItems value="#{cc.attrs.form.statementTypeMenu}" />
 				<f:ajax render="#{cc.attrs.render}" execute="#{cc.attrs.render}" />
 			</h:selectOneMenu>

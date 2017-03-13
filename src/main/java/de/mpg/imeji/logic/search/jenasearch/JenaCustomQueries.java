@@ -139,18 +139,6 @@ public class JenaCustomQueries {
   }
 
   /**
-   * @param fileUrl
-   * @return
-   */
-  public static final String selectCollectionIdOfFile(String fileUrl) {
-    return X_PATH_FUNCTIONS_DECLARATION + "  SELECT DISTINCT ?s WHERE {" + "optional{"
-        + "?it <http://imeji.org/terms/webImageUrl> <" + fileUrl
-        + ">} . optional {?it <http://imeji.org/terms/thumbnailImageUrl> <" + fileUrl
-        + ">} . optional{ ?it <http://imeji.org/terms/fullImageUrl> <" + fileUrl + ">}"
-        + " . ?it <http://imeji.org/terms/collection> ?s . } LIMIT 1 ";
-  }
-
-  /**
    * Find the collection of an item and return its uri
    *
    * @param fileUrl
@@ -183,43 +171,6 @@ public class JenaCustomQueries {
     return X_PATH_FUNCTIONS_DECLARATION + XSD_DECLARATION
         + "SELECT DISTINCT  (str(?id) AS ?s) WHERE {?content ?p \"" + fileUrl
         + "\"^^<http://www.w3.org/2001/XMLSchema#string> . ?content <http://imeji.org/terms/itemId> ?id} limit 1";
-  }
-
-  /**
-   * Select the Status of the item which got this file
-   *
-   * @param fileUrl
-   * @return
-   */
-  public static final String selectItemStatusOfFile(String storageId) {
-    return X_PATH_FUNCTIONS_DECLARATION + XSD_DECLARATION + "SELECT DISTINCT ?s WHERE { ?s <"
-        + ImejiNamespaces.STORAGE_ID + "> '" + storageId + "'^^xsd:string . ?s <"
-        + ImejiNamespaces.STATUS + "> <" + Status.RELEASED.getUriString() + ">} limit 1";
-  }
-
-  /**
-   * Select all {@link Metadata} which are not related to a statement. Happens when a
-   * {@link Statement} is removed from a {@link MetadataProfile}
-   *
-   * @return
-   */
-  public static final String selectMetadataUnbounded() {
-    return X_PATH_FUNCTIONS_DECLARATION + "  SELECT DISTINCT ?s ?sort0 WHERE {?mds <"
-        + ImejiNamespaces.METADATA + "> ?s"
-        + " . ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?sort0 . ?s <http://imeji.org/terms/statement> ?st"
-        + " . not exists{?p a <http://imeji.org/terms/mdprofile> . ?p <http://imeji.org/terms/statement> ?st}}";
-  }
-
-  /**
-   * Select all {@link Statement} which are not bounded to a {@link MetadataProfile}. Should not
-   * happen...
-   *
-   * @return
-   */
-  public static final String selectStatementUnbounded() {
-    return X_PATH_FUNCTIONS_DECLARATION
-        + "  SELECT DISTINCT ?s WHERE {?s <http://purl.org/dc/terms/type> ?type"
-        + " . not exists{ ?p a <http://imeji.org/terms/mdprofile> . ?p <http://imeji.org/terms/statement> ?s}}";
   }
 
   /**
@@ -389,23 +340,6 @@ public class JenaCustomQueries {
    */
   public static final String selectUserAll() {
     return "SELECT ?s WHERE { ?s a <http://imeji.org/terms/user>}";
-  }
-
-  /**
-   * Update all {@link Item}. Remove the {@link Metadata} which have a non existing
-   * {@link Statement}
-   *
-   * @return
-   */
-  public static final String updateRemoveAllMetadataWithoutStatement(String profileURI) {
-    final String profileQuery = profileURI != null ? "<" + profileURI + ">" : "?profile";
-    return "WITH <http://imeji.org/item> " + "DELETE {?mds <" + ImejiNamespaces.METADATA
-        + "> ?s . ?s ?p ?o } " + "USING <http://imeji.org/item> "
-        + "USING <http://imeji.org/metadataProfile> "
-        + "WHERE {?mds <http://imeji.org/terms/mdprofile> " + profileQuery + " . ?mds <"
-        + ImejiNamespaces.METADATA + "> ?s . ?s <http://imeji.org/terms/statement> ?st"
-        + " . NOT EXISTS{" + profileQuery + " <http://imeji.org/terms/statement> ?st}"
-        + " . ?s ?p ?o }";
   }
 
   /**

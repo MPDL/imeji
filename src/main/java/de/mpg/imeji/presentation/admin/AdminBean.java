@@ -38,7 +38,6 @@ import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.SuperBean;
 
@@ -169,7 +168,6 @@ public class AdminBean extends SuperBean {
    * @
    */
   private void invokeCleanMethods() throws ImejiException {
-    cleanStatement();
     cleanGrants();
     cleanContent();
   }
@@ -178,23 +176,6 @@ public class AdminBean extends SuperBean {
     if (clean) {
       Imeji.getEXECUTOR().submit(new CleanContentVOsJob());
     }
-  }
-
-  /**
-   * Clean {@link Statement} which are not bound a {@link MetadataProfile}
-   *
-   * @throws ImejiException
-   *
-   * @
-   */
-  private void cleanStatement() throws ImejiException {
-    LOGGER.info("Searching for statement without profile...");
-    final Search search = SearchFactory.create();
-    final List<String> uris = search
-        .searchString(JenaCustomQueries.selectStatementUnbounded(), null, null, 0, -1).getResults();
-    LOGGER.info("...found " + uris.size());
-    cleanDatabaseReport += "Statement without any profile " + uris.size() + " found  <br/> ";
-    removeResources(uris, Imeji.profileModel, new Statement());
   }
 
   /**

@@ -19,7 +19,6 @@ public class StatementCreateBean extends SuperBean {
   private StatementForm statementForm = new StatementForm();
   private static Logger LOGGER = Logger.getLogger(StatementCreateBean.class);
 
-
   /**
    * Create a new statement
    */
@@ -27,7 +26,7 @@ public class StatementCreateBean extends SuperBean {
     final StatementService service = new StatementService();
     try {
       service.create(statementForm.asStatement(), getSessionUser());
-      redirect(getPreviousPage().getCompleteUrlWithHistory());
+      redirect(getNavigation().getApplicationUrl() + "statements");
     } catch (final ImejiException | IOException e) {
       BeanHelper.error("Error creating statement");
       LOGGER.error("Error creating statement", e);

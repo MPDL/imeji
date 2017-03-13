@@ -14,6 +14,7 @@ import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
@@ -71,7 +72,7 @@ public class Statement implements Serializable, Cloneable {
    * @throws UnsupportedEncodingException
    */
   private String encodeIndex(String index) {
-    return new String(index.replace(" ", "_").toLowerCase());
+    return StatementUtil.formatIndex(index);
   }
 
   /**

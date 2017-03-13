@@ -74,6 +74,9 @@
 									<h:commandLink action="#{StatementsBean.delete(statement.uri.toString())}" styleClass="imj_overlayMenu imj_menuButton">
 										<span class="fa fa-trash"/> #{lbl.delete}
 									</h:commandLink>
+									<a href="#{Navigation.applicationUrl}browse?q=index=#{statement.indexUrlEncoded}" target="_blank"  class="imj_overlayMenu imj_menuButton"> 
+										<span class="fa fa-search "/> #{lbl.view_items_with_statement}
+									</a>
 								</h:form>
 							</div>
 						</div>

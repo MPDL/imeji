@@ -10,9 +10,9 @@
 	<ui:param name="currentMainMenu" value="admin" />
 	<ui:define name="mainContent">
 		<h:form>
-			<statement:form form="#{StatementCreateBean}" render="@form"/>
+			<statement:form form="#{StatementCreateBean.statementForm}" render="@form"/>
 			 <div id="submitButtonPanel" class="imj_submitPanel">
-                 <h:outputLink value="#{HistorySession.previousPage.completeUrlWithHistory}" styleClass="imj_cancelButton">
+                 <h:outputLink value="#{Navigation.applicationUrl}statements" styleClass="imj_cancelButton">
                      <h:outputText value="#{lbl.cancel}"/>
                  </h:outputLink>
                  <h:commandButton id="btnCreateStatement" action="#{StatementCreateBean.save()}" value="#{lbl.save}" styleClass="imj_submitButton"/>
