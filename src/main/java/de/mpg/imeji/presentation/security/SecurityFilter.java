@@ -98,8 +98,6 @@ public class SecurityFilter implements Filter {
       redirectToLoginPage(serv, resp);
     } catch (NotAllowedError e) {
       ((HttpServletResponse) resp).sendError(Status.FORBIDDEN.getStatusCode(), "FORBIDDEN");
-    } catch (BadRequestException e) {
-      ((HttpServletResponse) resp).sendError(Status.BAD_REQUEST.getStatusCode(), "BAD_REQUEST");
     } catch (Exception e) {
       LOGGER.error("Error in security Filter", e);
       ((HttpServletResponse) resp).sendError(Status.INTERNAL_SERVER_ERROR.getStatusCode(),

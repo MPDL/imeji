@@ -41,7 +41,6 @@ public class UploadBean extends SuperBean {
     }
   }
 
-
   public void filterCollections() throws ImejiException {
     SearchFactory factory = new SearchFactory();
     factory.addElement(new SearchPair(SearchFields.title, query + "*"), OR);

@@ -1,7 +1,6 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory;
 
 
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
@@ -30,9 +29,6 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.util.DateFormatter;
-import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Properties.Status;
@@ -211,23 +207,16 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder buildGrantQuery(User user, GrantType role) {
-    final Collection<Grant> grants =
-        SecurityUtil.authorization().toGrantList(SecurityUtil.authorization().getAllGrants(user));
     final BoolQueryBuilder q = QueryBuilders.boolQuery();
     // Add query for all release objects
     if (role == null) {
       q.should(
           fieldQuery(ElasticFields.STATUS, Status.RELEASED.name(), SearchOperators.EQUALS, false));
     }
-    // Add query for each read grant
-    for (final Grant g : grants) {
-      if (g.getGrantFor().contains(ObjectHelper.getURI(CollectionImeji.class, "").toString())) {
-        if (role == null || g.asGrantType().equals(role))
-          q.should(fieldQuery(ElasticFields.FOLDER, g.getGrantFor().toString(),
-              SearchOperators.EQUALS, false));
-        q.should(fieldQuery(ElasticFields.ID, g.getGrantFor().toString(), SearchOperators.EQUALS,
-            false));
-      }
+    if (role == GrantType.EDIT) {
+      q.should(roleQuery(ElasticFields.UPLOAD, user.getEmail(), false));
+    } else {
+      q.should(roleQuery(ElasticFields.READ, user.getEmail(), false));
     }
     return q;
   }
