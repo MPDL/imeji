@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.storage.util.ImageUtils;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StringHelper;
 
 /**
  * {@link ImageGenerator} for all unknown/unsupported format. It creates a default image
@@ -50,6 +51,7 @@ public class RawFileImageGenerator implements ImageGenerator {
     try {
       icon = ImageIO.read(new FileImageInputStream(new File(RawFileImageGenerator.class
           .getClassLoader().getResource(PATH_TO_DEFAULT_IMAGE).toURI())));
+      System.out.println("EEEEEEEEEEEE " + extension);
       icon = writeTextOnImage(icon, extension, file.getName());
       return ImageUtils.toFile(icon, StorageUtils.getMimeType("jpg"));
     } catch (IOException | URISyntaxException e) {
@@ -74,15 +76,9 @@ public class RawFileImageGenerator implements ImageGenerator {
     g2d.setPaint(Color.WHITE);
     g2d.setFont(FONT);
     final FontMetrics fm = g2d.getFontMetrics();
-
-    // display the filename extension.
-    // if filename extension is null, simply show the mimetype (if recognized) which comes with the
-    // extension parameter of the method.
-    final String fileNameExtension = FilenameUtils.getExtension(fileName);
-    if (!fileNameExtension.equals("")) {
-      extension = fileNameExtension;
+    if (StringHelper.isNullOrEmptyTrim(extension)) {
+      extension = FilenameUtils.getExtension(fileName);
     }
-
     extension = formatExtension(extension);
     g2d.drawString(extension, TEXT_POSITION_X - fm.stringWidth(extension), TEXT_POSITION_Y);
     g2d.dispose();

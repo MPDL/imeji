@@ -27,9 +27,13 @@
 			};
 		</script>
 		<br/>	
-		<div id="description" class="imj_infodataSet">				
-			<h:graphicImage style="float:left; margin-right:1em;" rendered="#{cc.attrs.bean.collection.logoUrl != null}" styleClass="imj_entryPagePreviewPicture" value="#{cc.attrs.bean.collection.logoUrl.toString()}"/>
-			<h:outputText  escape="false" value="#{cc.attrs.bean.collection.description}"/>
+		<div id="description" class="imj_infodataSet" >
+			<ui:fragment rendered="#{cc.attrs.bean.collection.logoUrl != null}">		
+				<img style="float:left; margin-right:1em; max-height:200px;" class="imj_entryPagePreviewPicture" src="#{cc.attrs.bean.collection.logoUrl.toString()}"/>
+			</ui:fragment>
+			<pre style="white-space: pre-line;">
+			<h:outputText escape="false" value="#{cc.attrs.bean.collection.description}"/>
+			</pre>
 		</div>
 		
 		<ui:repeat var="info" value="#{cc.attrs.bean.collection.additionalInformations}">

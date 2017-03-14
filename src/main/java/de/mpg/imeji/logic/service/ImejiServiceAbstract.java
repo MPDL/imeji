@@ -135,7 +135,7 @@ public abstract class ImejiServiceAbstract {
     if (f != null) {
       final String url = ism.generateUrl(col.getIdString(), f.getName(), FileResolution.THUMBNAIL);
       File jpeg =
-          (new ImageGeneratorManager()).generateFullResolution(f, StorageUtils.guessExtension(f));
+          new ImageGeneratorManager().generateWebResolution(f, StorageUtils.guessExtension(f));
       if (jpeg == null) {
         throw new UnprocessableError("Unable to use this file as logo");
       }

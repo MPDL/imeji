@@ -139,6 +139,9 @@
                                                url: '#{Navigation.applicationUrl}uploadlogo',
                                                max_file_size: '#{Configuration.uploadMaxFileSize}kb',
                                                multi_selection: false,
+                                               filters : [
+                                                          {title : "Image files", extensions : "jpg,png"},
+                                               ],
                                                init: {
                                                    PostInit: function () {
                                                        document.getElementById('filelist').innerHTML = '';
