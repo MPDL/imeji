@@ -312,6 +312,15 @@ public class JenaCustomQueries {
     return "SELECT ?s WHERE { ?s a <http://imeji.org/terms/statement>}";
   }
 
+  /**
+   * Select all statements which are not used by any metadata
+   * 
+   * @return
+   */
+  public static final String selectStatementNotUsed() {
+    return "SELECT DISTINCT ?s WHERE {?s <http://imeji.org/terms/index>  ?index . ?md <http://imeji.org/terms/statement> ?index }";
+  }
+
   public static final String getFullUrlByItem(String itemId) {
     return "SELECT ?s " + "WHERE{<" + itemId + "> <http://imeji.org/terms/fullImageUrl> ?s}";
   }

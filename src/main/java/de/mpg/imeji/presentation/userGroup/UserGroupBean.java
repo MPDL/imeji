@@ -47,7 +47,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
 
   @PostConstruct
   public void init() {
-    final String groupId = UrlHelper.getParameterValue("id");
+    final String groupId = UrlHelper.getParameterValue("groupId");
     if (groupId != null) {
       final UserGroupService c = new UserGroupService();
       try {
@@ -114,7 +114,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @throws IOException
    */
   private void reload() throws IOException {
-    redirect(getNavigation().getApplicationUrl() + "usergroup?id=" + userGroup.getId());
+    redirect(getNavigation().getApplicationUrl() + "usergroup?groupId=" + userGroup.getId());
   }
 
   /**

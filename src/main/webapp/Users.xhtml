@@ -20,13 +20,10 @@
 	</ui:define>
 
 	<ui:define name="searchQuery">
-		<imjc:searchQueryDisplayArea searchBean="#{UsersBean}"
-			navBean="#{Navigation}" rendered="#{UsersBean.query != ''}"
-			label="#{lbl.search_for} #{lbl.users}" />
+		<imjc:searchQueryDisplayArea searchBean="#{UsersBean}" navBean="#{Navigation}" rendered="#{UsersBean.query != ''}" label="#{lbl.search_for} #{lbl.users}" />
 	</ui:define>
 
 	<ui:define name="mainContent">
-		<!-- Are You Admin? -->
 		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
 			rendered="#{!Auth.sysAdmin}">
 			<h:outputText value="#{lbl.view_page_disallowed}"
@@ -34,8 +31,6 @@
 			<h:outputText value="#{lbl.view_page_disallowed2}"
 				styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
 		</h:panelGroup>
-
-		<!-- Only for Admins -->
 		<ui:fragment rendered="#{Auth.sysAdmin}">
 			<!-- AdminDataList - Back Button -->
 			<h:panelGroup layout="block" styleClass="imj_backPanel">
@@ -43,191 +38,102 @@
 					<h:outputText value="#{lbl.back_to_admin}" />
 				</h:outputLink>
 			</h:panelGroup>
-
-
-			<div class="imj_userConfig">
-
-				<!-- Admin - TiledList -->
-				<div class="imj_administrationTiledList imj_maxWidth">
-
-					<div class="imj_listHeader">
+			
+			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
+				<div class="imj_admindataSet">
+					<div class="imj_admindataLabel">
 						#{UsersBean.users.size()} #{lbl.users} #{lbl.found}
-						<div class="imj_overlayMenu">
-							<h:outputLink styleClass="imj_removeFacetButton"
-								value="#{Navigation.applicationUrl}users?group=#{UsersBean.group.id}"
-								rendered="#{UsersBean.query != ''}">
-								<span class=" fa fa-times"></span>
-								#{lbl.clear}
-							</h:outputLink>
+						<span class="imj_noDisplay">: </span>
+					</div>
+					<div class="imj_admindataValue">
+					</div>
+				</div>
+				
+				<ui:repeat id="userList" var="user" value="#{UsersBean.users}" rows="0" varStatus="row">
+					<div class="imj_itemContent imj_itemHeadline">
+						<div class="imj_admindataSet">
+							<div class="imj_admindataLabel" style="padding: 10px 0 10px 0;">
+								#{user.person.completeName} (#{user.email})
+								<h:panelGroup class="alert" rendered="#{not user.active}">
+									<br/>
+									<h:outputText value="#{lbl.inactive_user}" rendered="#{not user.active and not user.removed}" />
+									<h:outputText value="#{lbl.removed_user}" rendered="#{user.removed}" />
+								</h:panelGroup>
+							</div>
+							<ui:fragment rendered="#{UsersBean.group == null}">
+								<!-- AdminDataList - User Email -->
+								<div class="imj_admindataValue">
+									<h:outputLink value="#{Navigation.applicationUrl}user?email=#{user.email}" styleClass="imj_overlayMenu imj_menuButton">
+										<span class="fa fa-newspaper-o"/> #{lbl.view_detail}
+									</h:outputLink>
+									<!-- AdminDataList - Activate User -->
+									<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton"
+										title="#{lbl.activate}"
+										onclick="openDialog('activateUser#{row.index}');"
+										rendered="#{not user.active and not user.removed}">
+										<span class="fa fa-toggle-off"/> #{lbl.activate}
+									</h:outputLink>
+									<dialog:confirmationDialog submitAction="activateUser"
+										bean="#{UsersBean}"
+										confirmationText="#{msg.confirmation_activate_user}"
+										submitLabel="#{lbl.activate}"
+										dialogId="activateUser#{row.index}" identifierName="email"
+										identifierValue="#{user.email}" />
+
+									<!-- AdminDataList - Deactivate User -->
+									<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.remove}" onclick="openDialog('removeUser#{row.index}');" 
+										rendered="#{not user.removed}">
+										<span class="fa fa-toggle-on"/> #{lbl.deactivate}
+									</h:outputLink>
+									<dialog:confirmationDialog submitAction="removeUser" bean="#{UsersBean}" confirmationText="#{msg.confirmation_deactivate_user}" submitLabel="#{lbl.deactivate}" dialogId="removeUser#{row.index}" identifierName="email" identifierValue="#{user.email}"/>
+									<!-- AdminDataList - Reactivate User -->
+									<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.activate}" onclick="openDialog('reactivateUser#{row.index}');" 
+										rendered="#{user.removed}">
+										<span class="fa fa-toggle-off"/> #{lbl.activate}
+									</h:outputLink>
+									<dialog:confirmationDialog submitAction="removeUser"
+										bean="#{UsersBean}"
+										confirmationText="#{msg.confirmation_remove_user}"
+										submitLabel="#{lbl.remove}"
+										dialogId="removeUser#{row.index}" identifierName="email"
+										identifierValue="#{user.email}" />
+									<dialog:confirmationDialog submitAction="reactivateUser" bean="#{UsersBean}" confirmationText="#{msg.confirmation_activate_user}" submitLabel="#{lbl.activate}" dialogId="reactivateUser#{row.index}" identifierName="email" identifierValue="#{user.email}"/>
+									<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteUser#{row.index}');" rendered="#{user.removed}">
+										<span class="fa fa-trash"/>  #{lbl.delete}
+									</h:outputLink>
+									<dialog:confirmationDialog submitAction="deleteUser"
+										bean="#{UsersBean}"
+										confirmationText="#{msg.confirmation_delete_user}: #{user.person.completeName} (#{user.email})?"
+										submitLabel="#{lbl.user_admin_delete}"
+										dialogId="deleteUser#{row.index}" identifierName="email"
+										identifierValue="#{user.email}" />
+									<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton"
+										title="#{lbl.user_admin_newPwd}"
+										onclick="openDialog('sendNewPassword#{row.index}');"
+										rendered="#{not user.removed}">
+										<span class="fa fa-refresh"/> #{lbl.user_admin_newPwd}
+									</h:outputLink>
+									<dialog:confirmationDialog submitAction="sendPassword"
+										bean="#{UsersBean}"
+										confirmationText="#{msg.confirmation_new_password}"
+										submitLabel="#{lbl.user_admin_newPwd}"
+										dialogId="sendNewPassword#{row.index}"
+										identifierName="email" identifierValue="#{user.email}" />	
+								</div>
+							</ui:fragment>
+							<ui:fragment rendered="#{UsersBean.group != null}">
+								<h:form>
+									<h:commandLink styleClass="imj_editButton"
+										action="#{UsersBean.addToGroup}"
+										value="#{lbl.add_to_group} #{UsersBean.group.name}">
+										<f:param name="email" value="#{user.email}" />
+									</h:commandLink>
+								</h:form>
+							</ui:fragment>
 						</div>
 					</div>
-
-					<div class="imj_listBody">
-						<ui:repeat id="inactiveUserList" var="user"
-							value="#{UsersBean.inactiveUsers}" rows="0" varStatus="row">
-							<div class="imj_adminPanel imj_userConfig">
-								<div class="imj_admindataSet">
-									<div class="imj_headline">
-										<h2>
-											<h:outputText
-												value="#{user.person.completeName} (#{user.email})" />
-										</h2>
-										<div>
-											<h:outputText value="#{user.person.organizationString}" />
-										</div>
-										<div class="imj_messageError">
-											<h2>#{lbl.inactive_user}</h2>
-										</div>
-										<span class="imj_invisible">: </span>
-									</div>
-									<div class="imj_adminEditPanel">
-										<!-- AdminDataList - Activate User -->
-										<h:outputLink value="#" styleClass="imj_editButton"
-											title="#{lbl.activate}"
-											onclick="openDialog('activateUser#{row.index}');">
-											<h:outputText value="#{lbl.activate}" />
-										</h:outputLink>
-										<dialog:confirmationDialog submitAction="activateUser"
-											bean="#{UsersBean}"
-											confirmationText="#{msg.confirmation_activate_user}"
-											submitLabel="#{lbl.activate}"
-											dialogId="activateUser#{row.index}" identifierName="email"
-											identifierValue="#{user.email}" />
-
-										<!-- AdminDataList - Delete User -->
-										<h:outputLink value="#" styleClass="imj_cancelButton"
-											title="#{lbl.user_admin_delete}"
-											onclick="openDialog('deleteUser#{row.index}');">
-											<h:outputText value="#{lbl.revoke_registration}" />
-										</h:outputLink>
-										<dialog:confirmationDialog submitAction="cancelInvitation"
-											bean="#{UsersBean}"
-											confirmationText="#{msg.confirmation_revoke_registration}"
-											submitLabel="#{lbl.revoke_registration}"
-											dialogId="deleteUser#{row.index}" identifierName="email"
-											identifierValue="#{user.email}" />
-									</div>
-								</div>
-							</div>
-
-						</ui:repeat>
-						<ui:repeat id="userList" var="user" value="#{UsersBean.users}"
-							rows="0" varStatus="row">
-							<div class="imj_adminPanel imj_userConfig">
-								<!-- AdminDataList - Users List - Name -->
-								<div class="imj_admindataSet">
-									<div class="imj_headline">
-										<h2>
-											<h:outputText
-												value="#{user.person.completeName} (#{user.email})" />
-										</h2>
-										<div>
-											<h:outputText value="#{user.person.organizationString}" />
-										</div>
-										<h:panelGroup class="imj_messageError"
-											rendered="#{not user.active}">
-											<h2>
-												<h:outputText value="#{lbl.inactive_user}"
-													rendered="#{not user.active and not user.removed}" />
-											</h2>
-											<h2>
-												<h:outputText value="#{lbl.removed_user}"
-													rendered="#{user.removed}" />
-											</h2>
-										</h:panelGroup>
-										<span class="imj_invisible">: </span>
-									</div>
-									<ui:fragment rendered="#{UsersBean.group == null}">
-										<!-- AdminDataList - User Email -->
-										<div class="imj_adminEditPanel">
-											<h:outputLink
-												value="#{Navigation.applicationUrl}user?id=#{user.email}"
-												rendered="#{not user.removed}">
-												<h:outputText value="#{lbl.view_detail}"
-													styleClass="imj_editButton" />
-											</h:outputLink>
-
-											<!-- AdminDataList - User Password -->
-											<h:outputLink value="#" styleClass="imj_editButton"
-												title="#{lbl.user_admin_newPwd}"
-												onclick="openDialog('sendNewPassword#{row.index}');"
-												rendered="#{not user.removed}">
-												<h:outputText value="#{lbl.user_admin_newPwd}" />
-											</h:outputLink>
-											<dialog:confirmationDialog submitAction="sendPassword"
-												bean="#{UsersBean}"
-												confirmationText="#{msg.confirmation_new_password}"
-												submitLabel="#{lbl.user_admin_newPwd}"
-												dialogId="sendNewPassword#{row.index}"
-												identifierName="email" identifierValue="#{user.email}" />
-
-											<!-- AdminDataList - Activate User -->
-											<h:outputLink value="#" styleClass="imj_editButton"
-												title="#{lbl.activate}"
-												onclick="openDialog('activateUser#{row.index}');"
-												rendered="#{not user.active and not user.removed}">
-												<h:outputText value="#{lbl.activate}" />
-											</h:outputLink>
-											<dialog:confirmationDialog submitAction="activateUser"
-												bean="#{UsersBean}"
-												confirmationText="#{msg.confirmation_activate_user}"
-												submitLabel="#{lbl.activate}"
-												dialogId="activateUser#{row.index}" identifierName="email"
-												identifierValue="#{user.email}" />
-
-											<!-- AdminDataList - Deactivate User -->
-											<h:outputLink value="#" styleClass="imj_editButton" title="#{lbl.remove}" onclick="openDialog('removeUser#{row.index}');" rendered="#{not user.removed}">
-												<h:outputText value="#{lbl.deactivate}"/>
-											</h:outputLink>
-											<dialog:confirmationDialog submitAction="removeUser" bean="#{UsersBean}" confirmationText="#{msg.confirmation_deactivate_user}" submitLabel="#{lbl.deactivate}" dialogId="removeUser#{row.index}" identifierName="email" identifierValue="#{user.email}"/>
-											
-											<!-- AdminDataList - Reactivate User -->
-											<h:outputLink value="#" styleClass="imj_editButton" title="#{lbl.activate}" onclick="openDialog('reactivateUser#{row.index}');" rendered="#{user.removed}">
-												<h:outputText value="#{lbl.activate}"/>
-											</h:outputLink>
-											<dialog:confirmationDialog submitAction="removeUser"
-												bean="#{UsersBean}"
-												confirmationText="#{msg.confirmation_remove_user}"
-												submitLabel="#{lbl.remove}"
-												dialogId="removeUser#{row.index}" identifierName="email"
-												identifierValue="#{user.email}" />
-											<dialog:confirmationDialog submitAction="reactivateUser" bean="#{UsersBean}" confirmationText="#{msg.confirmation_activate_user}" submitLabel="#{lbl.activate}" dialogId="reactivateUser#{row.index}" identifierName="email" identifierValue="#{user.email}"/>
-
-											<!-- AdminDataList - Delete User -->
-											<h:outputLink value="#" styleClass="imj_cancelButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteUser#{row.index}');" rendered="#{user.removed}">
-												<h:outputText value="#{lbl.user_admin_delete}"/>
-											</h:outputLink>
-											<dialog:confirmationDialog submitAction="deleteUser"
-												bean="#{UsersBean}"
-												confirmationText="#{msg.confirmation_delete_user}: #{user.person.completeName} (#{user.email})?"
-												submitLabel="#{lbl.user_admin_delete}"
-												dialogId="deleteUser#{row.index}" identifierName="email"
-												identifierValue="#{user.email}" />
-										</div>
-									</ui:fragment>
-									<ui:fragment rendered="#{UsersBean.group != null}">
-										<h:form>
-											<h:commandLink styleClass="imj_editButton"
-												action="#{UsersBean.addToGroup}"
-												value="#{lbl.add_to_group} #{UsersBean.group.name}">
-												<f:param name="email" value="#{user.email}" />
-											</h:commandLink>
-										</h:form>
-									</ui:fragment>
-								</div>
-							</div>
-						</ui:repeat>
-
-					</div>
-					<!-- END LIST BODY -->
-
-				</div>
-				<!-- END ADMIN LIST -->
-
+				</ui:repeat>
 			</div>
-			<!-- END USER CONFIG -->
-
-
 		</ui:fragment>
 	</ui:define>
 </ui:composition>

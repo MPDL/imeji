@@ -4,7 +4,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
-	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	xmlns:imeji="http://java.sun.com/jsf/composite/components">
 
 	<ui:param name="headline" value="#{lbl.admin_userGroups_view}" />
 	<ui:param name="title" value="#{headline}" />
@@ -17,7 +18,13 @@
 			</button >
 		</form>
 	</ui:define>
-
+	
+	<ui:remove>
+		<ui:define name="searchQuery">
+			<imeji:searchQueryDisplayArea searchBean="#{UserGroups}" navBean="#{Navigation}" rendered="#{UserGroups.query != ''}" label="#{lbl.search_for} #{lbl.usergroups}" />
+		</ui:define>
+	</ui:remove>
+	
 	<ui:define name="mainContent">
 		<!-- Are You Admin? -->
 		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
@@ -34,79 +41,53 @@
 					<h:outputText value="#{lbl.back_to_admin}" />
 				</h:outputLink>
 			</h:panelGroup>
-
-			<div class="imj_userConfig">
-
-				<!-- Admin - TiledList -->
-				<div class="imj_administrationTiledList imj_maxWidth">
-					<div class="imj_listHeader">
-						<div class="imj_headline">
-							<h2>
-								<h:outputText value="#{lbl.admin_userGroups_view}" />
-							</h2>
-						</div>
-						<div class="imj_simpleSearch">
-							<h:outputText
-								value="(#{UserGroups.userGroups.size()} #{lbl.admin_userGroups})"
-								styleClass="imj_searchInfoText" />
-							<h:form id="new">
-								<h:inputText value="#{UserGroups.query}"
-									styleClass="imj_simpleSearchInput" />
-								<h:commandButton action="#{UserGroups.search()}" type="submit"
-									value="#{lbl.search}" styleClass="imj_simpleSearchButtonSubmit" />
-							</h:form>
-							<h:outputLink
-								value="#{Navigation.applicationUrl}usergroups?back=#{UserGroups.backContainerUrl}"
-								title="#{lbl.clear}" rendered="#{UserGroups.query != ''}"
-								styleClass="imj_cancelButton">
-								<h:outputText value="#{lbl.clear}" />
-							</h:outputLink>
-						</div>
+			
+			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
+				<div class="imj_admindataSet">
+					<div class="imj_admindataLabel">
+						#{UserGroups.userGroups.size()} #{lbl.userGroups} #{lbl.found}
 					</div>
-
-					<div class="imj_listBody">
-						<ui:repeat var="group" value="#{UserGroups.userGroups}" rows="0"
-							varStatus="row">
-							<div class="imj_adminPanel imj_userConfig">
-								<!-- AdminDataList - Users List - Name -->
-								<div class="imj_admindataSet">
-									<div class="imj_headline">
-										<h2>
-											<h:outputText value="#{group.name}" />
-										</h2>
-										<span class="imj_invisible">: </span>
-									</div>
-									<div class="imj_adminEditPanel">
-										<h:outputLink
-											value="#{UserGroups.backContainerUrl}group=#{group.id}"
-											styleClass="imj_editButton"
-											rendered="#{UserGroups.backContainerUrl != null}">
-											<h:outputText value="#{lbl.share_with}" />
-										</h:outputLink>
-										<h:outputLink
-											value="#{Navigation.applicationUrl}usergroup?id=#{group.id}"
-											styleClass="imj_editButton" rendered="#{Auth.sysAdmin}">
-											<h:outputText value="#{lbl.view_detail}" />
-										</h:outputLink>
-										<!-- AdminDataList - Delete User -->
-										<h:outputLink value="#" styleClass="imj_cancelButton"
-											title="#{lbl.user_admin_delete}"
-											onclick="openDialog('deleteUserGroup#{row.index}');"
-											rendered="#{Auth.sysAdmin}">
-											<h:outputText value="#{lbl.delete}" />
-										</h:outputLink>
-										<dialog:confirmationDialog submitAction="remove"
-											bean="#{UserGroups}"
-											confirmationText="#{msg.confirmation_delete_user_group}"
-											submitLabel="#{lbl.delete}"
-											dialogId="deleteUserGroup#{row.index}" identifierName="group"
-											identifierValue="#{group.id}" />
-									</div>
-								</div>
-							</div>
-						</ui:repeat>
+					<div class="imj_admindataValue">
 					</div>
 				</div>
+
+				<ui:repeat var="group" value="#{UserGroups.userGroups}" rows="0" varStatus="row">
+					<div class="imj_itemContent imj_itemHeadline">
+						<!-- AdminDataList - Users List - Name -->
+						<div class="imj_admindataSet">
+							<div class="imj_admindataLabel" style="padding: 10px 0 10px 0;">
+								#{group.name}
+								<span class="imj_invisible">: </span>
+							</div>
+							<div class="imj_admindataValue">
+								<h:outputLink
+									value="#{UserGroups.backContainerUrl}group=#{group.id}"
+									styleClass="imj_overlayMenu imj_menuButton"
+									rendered="#{UserGroups.backContainerUrl != null}">
+									<h:outputText value="#{lbl.share_with}" />
+								</h:outputLink>
+								<h:outputLink
+									value="#{Navigation.applicationUrl}usergroup?id=#{group.id}"
+									styleClass="imj_overlayMenu imj_menuButton" rendered="#{Auth.sysAdmin}">
+									<span class="fa fa-newspaper-o"/> #{lbl.view_detail}
+								</h:outputLink>
+								<!-- AdminDataList - Delete User -->
+								<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton"
+									title="#{lbl.user_admin_delete}"
+									onclick="openDialog('deleteUserGroup#{row.index}');"
+									rendered="#{Auth.sysAdmin}">
+										<span class="fa fa-trash"/>  #{lbl.delete}
+								</h:outputLink>
+								<dialog:confirmationDialog submitAction="remove"
+									bean="#{UserGroups}"
+									confirmationText="#{msg.confirmation_delete_user_group}"
+									submitLabel="#{lbl.delete}"
+									dialogId="deleteUserGroup#{row.index}" identifierName="group"
+									identifierValue="#{group.id}" />
+							</div>
+						</div>
+					</div>
+				</ui:repeat>
 			</div>
 		</ui:fragment>
 	</ui:define>

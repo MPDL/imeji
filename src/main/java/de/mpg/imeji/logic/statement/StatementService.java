@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.NotAllowedError;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -172,7 +174,26 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    * @throws ImejiException
    */
   public void delete(Statement s, User user) throws ImejiException {
+    if (isUsed(s)) {
+      throw new NotAllowedError("Statement " + s.getIndex()
+          + " is used by at least one item and therefore can't be deleted");
+    }
     controller.delete(s, user);
+  }
+
+  /**
+   * True if the Statement is used by any Item
+   * 
+   * @param s
+   * @return
+   * @throws UnprocessableError
+   */
+  public boolean isUsed(Statement s) throws UnprocessableError {
+    ItemService itemService = new ItemService();
+    SearchQuery q =
+        new SearchFactory().addElement(new SearchPair(SearchFields.index, s.getIndexUrlEncoded()),
+            LOGICAL_RELATIONS.AND).build();
+    return itemService.search(q, null, Imeji.adminUser, 0, 0).getNumberOfRecords() > 0;
   }
 
   /**
@@ -213,6 +234,12 @@ public class StatementService extends SearchServiceAbstract<Statement> {
   public List<Statement> retrieveAll() throws ImejiException {
     final List<String> uris =
         ImejiSPARQL.exec(JenaCustomQueries.selectStatementAll(), Imeji.statementModel);
+    return retrieveBatch(uris, Imeji.adminUser);
+  }
+
+
+  public List<Statement> retrieveNotUsedStatements() throws ImejiException {
+    final List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectStatementNotUsed(), null);
     return retrieveBatch(uris, Imeji.adminUser);
   }
 }

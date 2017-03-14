@@ -1,13 +1,17 @@
 package de.mpg.imeji.presentation.statement;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
@@ -16,8 +20,8 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * JSF Bean for the Statements page
@@ -32,6 +36,7 @@ public class StatementsBean extends SuperBean {
   private static final Logger LOGGER = Logger.getLogger(StatementsBean.class);
   private StatementService service = new StatementService();
   private LinkedHashMap<String, Statement> statements = new LinkedHashMap<>();
+  private Set<String> notUsed = new HashSet<>();
   private List<String> defaultStatements = new ArrayList<>();
 
   @PostConstruct
@@ -42,6 +47,8 @@ public class StatementsBean extends SuperBean {
         statements.putIfAbsent(s.getUri().toString(), s);
       }
       defaultStatements = StatementUtil.toStatementUriList(Imeji.CONFIG.getStatements());
+      notUsed = service.retrieveNotUsedStatements().stream().map(s -> s.getIndex())
+          .collect(Collectors.toSet());
     } catch (ImejiException e) {
       LOGGER.error("Error retrieving statements", e);
     }
@@ -52,13 +59,21 @@ public class StatementsBean extends SuperBean {
    * 
    * @param index
    * @throws ImejiException
+   * @throws IOException
    */
-  public void delete(String index) throws ImejiException {
-    Statement s = ImejiFactory.newStatement().setIndex(index).build();
-    s = service.retrieve(s.getUri().toString(), getSessionUser());
-    service.delete(s, getSessionUser());
-    removeFromDefaultStatements(index);
-    init();
+  public void delete() throws ImejiException, IOException {
+    try {
+      final String uri = FacesContext.getCurrentInstance().getExternalContext()
+          .getRequestParameterMap().get("uri");
+      Statement s = service.retrieve(uri, getSessionUser());
+      service.delete(s, getSessionUser());
+      removeFromDefaultStatements(s.getIndex());
+      redirect(getNavigation().getApplicationUrl() + "statements");
+    } catch (Exception e) {
+      LOGGER.error("Error deleting statement", e);
+      BeanHelper.error("Error deleting statement: " + e.getMessage());
+    }
+
   }
 
   /**
@@ -119,4 +134,19 @@ public class StatementsBean extends SuperBean {
   public boolean isDefaultStatement(String uri) {
     return defaultStatements.contains(uri);
   }
+
+  /**
+   * @return the notUsed
+   */
+  public Set<String> getNotUsed() {
+    return notUsed;
+  }
+
+  /**
+   * @param notUsed the notUsed to set
+   */
+  public void setNotUsed(Set<String> notUsed) {
+    this.notUsed = notUsed;
+  }
+
 }

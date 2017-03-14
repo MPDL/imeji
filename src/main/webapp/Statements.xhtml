@@ -48,13 +48,13 @@
 						<span class="imj_noDisplay">: </span>
 					</div>
 					<div class="imj_admindataValue">
-						#{lbl.actions}
+
 					</div>
 				</div>
-				<ui:repeat var="statement" value="#{StatementsBean.statements}">
+				<ui:repeat var="statement" value="#{StatementsBean.statements}" varStatus="row">
 					<div class="imj_itemContent imj_itemHeadline">
 						<div class="imj_admindataSet">
-							<div class="imj_admindataLabel">
+							<div class="imj_admindataLabel" style="padding: 10px 0 10px 0;">
 								#{statement.index}
 								<span class="imj_noDisplay">: </span>
 							</div>
@@ -71,9 +71,20 @@
 										<f:ajax render=":defaultStatements @form"/>
 										<span class="fa fa-star"/> #{lbl.statement_default}
 									</h:commandLink>
-									<h:commandLink action="#{StatementsBean.delete(statement.uri.toString())}" styleClass="imj_overlayMenu imj_menuButton">
-										<span class="fa fa-trash"/> #{lbl.delete}
-									</h:commandLink>
+									<h:outputLink rendered="#{!StatementsBean.notUsed.contains(statement.index)}" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteStatement#{row.index}'); return false;">
+										<span class="fa fa-trash"/>  #{lbl.delete}
+									</h:outputLink>
+									<ui:fragment rendered="#{StatementsBean.notUsed.contains(statement.index)}">
+										<div class="imj_overlayMenu imj_menuButton" title="#{lbl.statement_used}">
+											<span class="fa fa-lock"/> <span>#{lbl.locked}</span>
+										</div>
+									</ui:fragment>
+									<dialog:confirmationDialog submitAction="delete"
+										bean="#{StatementsBean}"
+										confirmationText="#{msg.confirmation_delete_statement}"
+										submitLabel="#{lbl.delete}"
+										dialogId="deleteStatement#{row.index}" identifierName="uri"
+										identifierValue="#{statement.uri.toString()}" />
 									<a href="#{Navigation.applicationUrl}browse?q=index=#{statement.indexUrlEncoded}" target="_blank"  class="imj_overlayMenu imj_menuButton"> 
 										<span class="fa fa-search "/> #{lbl.view_items_with_statement}
 									</a>
