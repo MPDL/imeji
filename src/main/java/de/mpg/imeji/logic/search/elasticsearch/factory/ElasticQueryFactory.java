@@ -716,8 +716,8 @@ public class ElasticQueryFactory {
   private static QueryBuilder fileTypeQuery(SearchPair pair) {
     final BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
     for (final String ext : SearchUtils.parseFileTypesAsExtensionList(pair.getValue())) {
-      filetypeQuery.should(
-          fieldQuery(ElasticFields.NAME, "*\"." + ext + "\"", SearchOperators.EQUALS, false));
+      filetypeQuery.should(fieldQuery(ElasticFields.NAME.field() + ".suggest", "*." + ext + "",
+          SearchOperators.EQUALS, false));
     }
     return filetypeQuery;
   }

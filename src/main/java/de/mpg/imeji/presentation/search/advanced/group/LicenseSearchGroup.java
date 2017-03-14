@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
+import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
@@ -25,6 +28,7 @@ import de.mpg.imeji.logic.vo.ImejiLicenses;
  */
 public class LicenseSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
   private static final long serialVersionUID = -2822491289836043116L;
+  private static final Logger LOGGER = Logger.getLogger(LicenseSearchGroup.class);
   private List<String> selected = new ArrayList<>();
   private List<SelectItem> menu;
   private String hasLicense = "all";
@@ -50,8 +54,14 @@ public class LicenseSearchGroup extends AbstractAdvancedSearchFormGroup implemen
     } else if ("false".equals(hasLicense)) {
       return new SearchPair(SearchFields.license, SearchOperators.EQUALS, "no_license", false);
     } else {
-      return new SearchPair(SearchFields.license, SearchOperators.EQUALS,
-          StringUtils.join(selected, " OR "), false);
+      try {
+        return new SearchFactory().or(selected.stream()
+            .map(s -> new SearchPair(SearchFields.license, s)).collect(Collectors.toList()))
+            .buildAsGroup();
+      } catch (UnprocessableError e) {
+        LOGGER.error("Error building license query", e);
+        return new SearchPair();
+      }
     }
   }
 

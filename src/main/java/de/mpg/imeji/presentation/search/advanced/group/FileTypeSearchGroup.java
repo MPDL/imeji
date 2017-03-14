@@ -4,17 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes.Type;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 
 /**
@@ -25,7 +27,8 @@ import de.mpg.imeji.logic.search.model.SearchPair;
  */
 public class FileTypeSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
   private static final long serialVersionUID = 1439809243185106214L;
-  private List<String> selected;
+  private static Logger LOGGER = Logger.getLogger(FileTypeSearchGroup.class);
+  private List<String> selected = new ArrayList<>();
   private List<SelectItem> menu;
 
   public FileTypeSearchGroup(Locale locale) {
@@ -40,8 +43,14 @@ public class FileTypeSearchGroup extends AbstractAdvancedSearchFormGroup impleme
 
   @Override
   public SearchElement toSearchElement() {
-    return new SearchPair(SearchFields.filetype, SearchOperators.EQUALS,
-        StringUtils.join(selected, " OR "), false);
+    try {
+      return new SearchFactory().or(selected.stream()
+          .map(s -> new SearchPair(SearchFields.filetype, s)).collect(Collectors.toList()))
+          .buildAsGroup();
+    } catch (UnprocessableError e) {
+      LOGGER.error("Error building file type query", e);
+      return new SearchPair();
+    }
   }
 
   @Override
