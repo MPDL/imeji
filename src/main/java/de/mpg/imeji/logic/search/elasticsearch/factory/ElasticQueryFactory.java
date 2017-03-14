@@ -521,7 +521,7 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder matchFieldQuery(String fieldName, String value) {
-    if (ElasticFields.ALL.name().equals(fieldName)) {
+    if (ElasticFields.ALL.field().equalsIgnoreCase(fieldName)) {
       return QueryBuilders
           .queryStringQuery(value + " " + ElasticFields.NAME.field() + ".suggest:" + value);
     }
