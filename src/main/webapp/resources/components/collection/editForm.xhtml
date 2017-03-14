@@ -130,7 +130,6 @@
                                        <div id="container">
                                            <a id="pickfiles" href="javascript:;">[#{lbl.uploadLogo}]</a>
                                        </div>
-
                                        <script type="text/javascript" src="#{Navigation.applicationUrl}resources/plupload/2.1.2/js/plupload.full.min.js"></script>
                                        <script type="text/javascript">
                                            var uploader = new plupload.Uploader({
@@ -161,6 +160,7 @@
                                                        uploader.bind('FileUploaded', function (up, file, response) {
 
                                                            response = jQuery.parseJSON(response.response);
+                                                           console.log(response);
 
                                                            if (response.error.code) {
                                                                uploader.trigger('Error', {

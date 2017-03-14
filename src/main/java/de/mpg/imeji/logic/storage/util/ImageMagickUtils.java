@@ -53,6 +53,7 @@ public class ImageMagickUtils {
       return false;
     }
     return true;
+
   }
 
 

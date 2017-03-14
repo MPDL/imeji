@@ -29,6 +29,8 @@ import de.mpg.imeji.logic.storage.util.StorageUtils;
  */
 public final class ImageGeneratorManager {
   private final List<ImageGenerator> generators;
+  // Only generators that will convert file to jpg with equivalent content
+  private final List<ImageGenerator> fullGenerators;
   private static final Logger LOGGER = Logger.getLogger(ImageGeneratorManager.class);
 
   /**
@@ -42,6 +44,10 @@ public final class ImageGeneratorManager {
     generators.add(new SimpleImageGenerator());
     generators.add(new NiceRawFileImageGenerator());
     generators.add(new RawFileImageGenerator());
+
+    fullGenerators = new ArrayList<ImageGenerator>();
+    fullGenerators.add(new MagickImageGenerator());
+    fullGenerators.add(new SimpleImageGenerator());
   }
 
   /**
@@ -68,18 +74,24 @@ public final class ImageGeneratorManager {
 
   /**
    * Generate a full resolution image. Convert the original to jpeg if possible, otherwise return
-   * the original
+   * null
    * 
    * @param file
    * @param extension
    * @return
    */
   public File generateFullResolution(File file, String extension) {
-    File res = (new SimpleImageGenerator()).generateJPG(file, extension);
-    if (res == null) {
-      res = (new MagickImageGenerator()).generateJPG(file, extension);
+    for (ImageGenerator generator : fullGenerators) {
+      try {
+        File jpeg = generator.generateJPG(file, extension);
+        if (jpeg != null && jpeg.length() > 0) {
+          return jpeg;
+        }
+      } catch (ImejiException e) {
+        LOGGER.warn("Error generating image (generator: " + generator.getClass().getName(), e);
+      }
     }
-    return res == null ? file : res;
+    return null;
   }
 
   /**

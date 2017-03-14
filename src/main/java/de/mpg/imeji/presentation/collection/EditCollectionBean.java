@@ -88,6 +88,11 @@ public class EditCollectionBean extends CollectionBean {
       collectionController.update(getCollection(), user);
       final UserService uc = new UserService();
       uc.update(user, user);
+      if (containerEditorSession.getErrorMessage() != "") {
+        String msg = containerEditorSession.getErrorMessage();
+        containerEditorSession.setErrorMessage("");
+        throw new UnprocessableError(msg);
+      }
       if (containerEditorSession.getUploadedLogoPath() != null) {
         collectionController.updateLogo(getCollection(),
             new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
