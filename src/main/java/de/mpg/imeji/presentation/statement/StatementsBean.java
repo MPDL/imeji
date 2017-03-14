@@ -121,8 +121,8 @@ public class StatementsBean extends SuperBean {
    * @return
    */
   public String getDefaultStatementsString() {
-    return defaultStatements.stream().distinct().map(s -> statements.get(s).getIndex())
-        .collect(Collectors.joining(","));
+    return defaultStatements.stream().distinct().filter(s -> statements.containsKey(s))
+        .map(s -> statements.get(s).getIndex()).collect(Collectors.joining(","));
   }
 
   /**
