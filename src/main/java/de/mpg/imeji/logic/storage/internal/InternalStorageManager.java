@@ -27,6 +27,7 @@ import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.administrator.impl.InternalStorageAdministrator;
 import de.mpg.imeji.logic.storage.transform.ImageGeneratorManager;
+import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -292,6 +293,7 @@ public class InternalStorageManager implements Serializable {
   public String generateUrl(String id, String filename, FileResolution resolution) {
     filename = StringHelper.normalizeFilename(filename);
     final String extension = getExtension(filename);
+    // Wen always convert thumbnail and preview to jpg, so we can change the extension
     if (resolution != FileResolution.ORIGINAL
         && (resolution != FileResolution.FULL || isTransformableImage(extension))) {
       filename = removeExtension(filename) + ".jpg";
@@ -300,6 +302,9 @@ public class InternalStorageManager implements Serializable {
         + StringHelper.urlSeparator + filename;
   }
 
+
+  // Tries to predict if we are able to convert the image to jpg. Should be removed later in favor
+  // of something that checks after the conversion
   private boolean isTransformableImage(String extension) {
     if (!StorageUtils.getMimeType(extension).contains("image")) {
       return false;
@@ -310,10 +315,12 @@ public class InternalStorageManager implements Serializable {
     if (extension.equals("svg")) {
       return false;
     }
+    if (!ImageMagickUtils.imageMagickEnabled
+        && (extension.equals("tif") || extension.equals("tiff"))) {
+      return false;
+    }
     return true;
   }
-
-
 
   /**
    * Write a new file for the 3 resolution of one file
@@ -427,9 +434,13 @@ public class InternalStorageManager implements Serializable {
                 FilenameUtils.getExtension(webResolutionPath)),
             transformUrlToPath(item.getThumbnailUrl()));
 
+        // Tries to calculate a jpg for the full resolution.
         File fullRes = generatorManager.generateFullResolution(file, calculatedExtension);
-        write(fullRes, transformUrlToPath(item.getFullUrl()));
-
+        if (fullRes != null) {
+          write(fullRes, transformUrlToPath(item.getFullUrl()));
+        } else {
+          copy(file, transformUrlToPath(item.getFullUrl()));
+        }
       } catch (final Exception e) {
         LOGGER.error("Error transforming and writing file in internal storage ", e);
       } finally {

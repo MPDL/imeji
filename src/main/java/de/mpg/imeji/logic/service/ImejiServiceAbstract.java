@@ -15,6 +15,8 @@ import de.mpg.imeji.logic.concurrency.locks.Locks;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
+import de.mpg.imeji.logic.storage.transform.ImageGeneratorManager;
+import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
@@ -132,8 +134,13 @@ public abstract class ImejiServiceAbstract {
     final InternalStorageManager ism = new InternalStorageManager();
     if (f != null) {
       final String url = ism.generateUrl(col.getIdString(), f.getName(), FileResolution.THUMBNAIL);
+      File jpeg =
+          (new ImageGeneratorManager()).generateFullResolution(f, StorageUtils.guessExtension(f));
+      if (jpeg == null) {
+        throw new UnprocessableError("Unable to use this file as logo");
+      }
       col.setLogoUrl(URI.create(url));
-      ism.replaceFile(url, f);
+      ism.replaceFile(url, jpeg);
     } else {
       ism.removeFile(col.getLogoUrl().toString());
       col.setLogoUrl(null);

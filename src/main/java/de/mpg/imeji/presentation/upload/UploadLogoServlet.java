@@ -17,6 +17,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.TypeNotAllowedException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -51,12 +52,14 @@ public class UploadLogoServlet extends HttpServlet {
       } catch (FileUploadException | TypeNotAllowedException e) {
         LOGGER.error("Error uploading logo", e);
         resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error uploading logo");
+      } catch (UnprocessableError e) {
+        getContainerEditorSession(req).setErrorMessage(e.getMessage());
       }
     }
   }
 
   private File uploadLogo(HttpServletRequest request, HttpServletResponse response)
-      throws FileUploadException, TypeNotAllowedException, IOException {
+      throws FileUploadException, TypeNotAllowedException, IOException, UnprocessableError {
     File tmp = null;
     final boolean isMultipart = ServletFileUpload.isMultipartContent(request);
     if (isMultipart) {
@@ -69,6 +72,7 @@ public class UploadLogoServlet extends HttpServlet {
           return tmp;
         }
       }
+      throw new UnprocessableError("This file cannot be used as logo. No image file.");
     }
     return null;
   }

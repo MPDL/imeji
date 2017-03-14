@@ -16,6 +16,15 @@ import javax.faces.bean.SessionScoped;
 public class ContainerEditorSession implements Serializable {
   private static final long serialVersionUID = -4891856418594298289L;
   private String uploadedLogoPath;
+  private String errorMessage = "";
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
+
+  public void setErrorMessage(String errorMessage) {
+    this.errorMessage = errorMessage;
+  }
 
   /**
    * @return the uploadedLogoPath
