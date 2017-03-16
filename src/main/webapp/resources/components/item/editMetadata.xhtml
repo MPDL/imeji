@@ -34,6 +34,7 @@
 		</div>
 		<ui:repeat id="list" var="entry" value="#{cc.attrs.formBean.entries}"  varStatus="position">
 			<ui:fragment rendered="#{empty entry.input}">
+				<span class="fa fa-plus-square-o"> #{lbl.add_metadata}</span>
 				<md:select id="select" bean="#{entry}" submitAction="initInput"
 					component="#{entry.select}"
 					menu="#{cc.attrs.formBean.statementMenu}"
@@ -59,11 +60,6 @@
 				</h:panelGroup>
 			</div>
 		</ui:repeat>
-		<h:commandLink type="submit" styleClass="fa fa-plus-square-o"
-			action="#{cc.attrs.formBean.addMetadata()}"
-			value="#{lbl.add_metadata}" title="#{lbl.add_metadata}">
-			<f:ajax execute="@form" render="@form" />
-		</h:commandLink>
 		<div class="imj_submitPanel">
 			<h:commandLink styleClass="imj_cancelButton" action="#{cc.attrs.itemBean.cancelEditor}" onclick="startLoader(); window.location.hash = '#';">
 				<h:outputText value="#{lbl.cancel}"/>

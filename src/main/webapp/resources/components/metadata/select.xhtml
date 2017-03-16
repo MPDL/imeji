@@ -23,9 +23,14 @@
 		.selectMd {
 			position: relative;
 			display: inline-block;
+			width: 1
 		}
 		.selectMd input {
 			margin:  6px 8px;
+		}
+		.selectMd button {
+			margin: 0;
+			width:100%;
 		}
 		.selectMetadata-content {
 			display: none;
@@ -34,6 +39,7 @@
 			overflow: auto;
 			box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 			z-index: 1000000;
+			width:100%;
 		}
 		.selectMetadata-content a {
 			padding: 6px 8px;
@@ -43,53 +49,36 @@
 		.selectMd a:hover {
 			background-color: #ddd
 		}
-		
 		</style>
 	<h:panelGroup id="selectMetadata" class="metadataSelector">
 		<div class="selectMd">
-			<button onclick=" $('.selectMetadata-content').show(); return false;" class="imj_submitButton">#{lbl.select_metadata}</button>
+			<button onclick="$('.selectMetadata-content').show(); return false;" class="imj_submitButton">#{lbl.select_metadata}</button>
 			<div class="selectMetadata-content">
-				<h:inputText value="#{cc.attrs.component.index}" html5:placeholder="#{lbl.filter}...">
-					<f:ajax event="keyup" render="#{cc.attrs.containerId}:statementList"
+				<h:inputText value="#{cc.attrs.component.index}" html5:placeholder="#{lbl.search}..." autocomplete="off">
+					<f:ajax event="keyup" render="#{cc.attrs.containerId}:statementList #{cc.attrs.containerId}:buttons"
 						listener="#{cc.attrs.component.listener}" />
 				</h:inputText>
 				<h:panelGroup id="statementList">
+					<ui:fragment rendered="#{not empty cc.attrs.component.index}">
+						<a href="" onclick="openDialog('createStatementDialog'); $('.selectMetadata-content').hide(); return false;">
+							#{cc.attrs.component.index}
+						</a>
+					</ui:fragment>
 					<ui:repeat var="index" value="#{cc.attrs.component.searchForIndex(cc.attrs.menu)}">
 						<h:commandLink value="#{index}" action="#{cc.attrs.bean[cc.attrs.submitAction]}" onclick="startLoader();">
 							<f:setPropertyActionListener target="#{cc.attrs.component.index}" value="#{index}" />
 							<f:ajax execute="@form" render="@form" />
 						</h:commandLink>
 					</ui:repeat>
+					
 				</h:panelGroup>
 			</div>
 		</div>
 		<h:panelGroup id="buttons">
-			<ui:fragment rendered="#{not empty cc.attrs.component.statement}">
-				<h:commandLink id="btnCreateStatement"
-					action="#{cc.attrs.bean[cc.attrs.submitAction]}"
-					value=" #{lbl.select}" onclick="startLoader();">
-					<f:ajax execute="@form" render="@form" />
-				</h:commandLink>
-				#{lbl.or_big}
-				<h:commandLink id="resetSelectMd"
-					action="#{cc.attrs.bean[cc.attrs.resetAction]}"
-					value=" #{lbl.clear}">
-					<f:ajax execute="@form" render="@form" />
-				</h:commandLink>
-			</ui:fragment>
-			<ui:fragment rendered="#{empty cc.attrs.component.statement}">
-					#{lbl.or_big}
-					<a href=""
-					onclick="openDialog('createStatementDialog'); return false;">
-					#{lbl.metadata_create} </a>
-			</ui:fragment>
 			<statement:createDialog id="dialog" component="#{cc.attrs.component}"
-				bean="#{cc.attrs.bean}" submitAction="#{cc.attrs.submitAction}"
-				containerId="#{cc.attrs.containerId}" />
+						bean="#{cc.attrs.bean}" submitAction="#{cc.attrs.submitAction}"
+						containerId="#{cc.attrs.containerId}" />
 		</h:panelGroup>
-
-
 	</h:panelGroup>
-
 </composite:implementation>
 </html>

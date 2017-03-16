@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 
 /**
  * JavaBean for the http session object related to the history
@@ -15,7 +15,7 @@ import javax.faces.bean.ManagedBean;
  * @version $Revision$ $LastChangedDate$
  */
 @ManagedBean(name = "HistorySession")
-@SessionScoped
+@ViewScoped
 public class HistorySession implements Serializable {
   private static final long serialVersionUID = 28762010528555885L;
   /**

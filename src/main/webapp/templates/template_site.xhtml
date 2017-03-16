@@ -13,7 +13,7 @@
             <ui:include src="component/header/html_head_default.xhtml"/>
             <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
         </h:head>
-        <h:body lang="#{InternationalizationBean.locale}">    
+        <h:body lang="#{InternationalizationBean.locale}"> 
        		#{Auth.init()}
         	<!-- NEW STYLE - TO BE ADDED TO CSS -->
              <style>
@@ -24,6 +24,10 @@
 						float:left;
 						clear: both;
 						width:100%;
+					}
+					textarea.imj_mdInput {
+						height:2.5em;;
+						resize: vertical;
 					}
 					.edit_selected_table_wrapper{
 						width: 100%;
@@ -41,14 +45,17 @@
 						margin: 2px;
 					}
 					.edit_selected_table textarea, .edit_selected_table input[type]:not(.combobox) {
-					   	width:90%;
+					   	padding:0;
+					   	borders: 1px;
+					   	margin-bottom: 0.5em;
+					   	max-width: 92% !important;
 					}
 					.edit_selected_table td{
 						vertical-align: middle;
 						border: 1px solid #444444; 
 						max-width: 15.6em;
 						min-width: 15.6em;
-						padding:5px;
+						padding:3px;
 					}
 					.edit_selected_table_button{
 						width: 100%;
@@ -60,6 +67,8 @@
 						margin:0;
 						text-align: center;
 						background-color: #444444;
+						max-width: 15.6em;
+						min-width: 15.6em;
 					}
 					.edit_selected_table_icon{
 						margin-left: 0.5em;
@@ -283,8 +292,8 @@
                 <!-- NEW SCIPT - TO BE ADDED TO JS -->
                
             <!-- default necessary scripts, because of use in body-load context -->
-            <h:outputScript library="jquery" name="jquery-1.11.1.min.js"/>
-            <h:outputScript library="jquery/ui" name="1.10.4/jquery-ui.min.js"/>
+            <h:outputScript name="jquery/jquery-1.11.1.min.js"/>
+            <h:outputScript name="jquery/ui/1.10.4/jquery-ui.min.js"/>
             <!-- optional header scripts, which must load before -->
             <ui:insert name="additonalHeaderScripts"/>          
             <!-- global page wrapper -->
@@ -346,7 +355,7 @@
             <ui:insert name="modalDialogs_from_template"/>
             <ui:insert name="modalDialogs_from_site"/>
             <script type="text/javascript">var homeURL = '#{Navigation.applicationUrl}';</script>
-            <h:outputScript library="js/" name="default.js"/>
+            <h:outputScript name="js/default.js"/>
 
             <div id="additonalFooterScripts" class="imj_noDisplay">
                 <ui:insert name="additonalFooterScripts"/> 

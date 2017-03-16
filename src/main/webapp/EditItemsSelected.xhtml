@@ -207,9 +207,19 @@
 										rendered="#{EditItemsSelectedBean.displayedColumns.contains(cell.statement.index)}">
 										<td class="column_#{status.index}"><h:panelGroup
 												id="cellInput">
-												<ui:repeat id="value" value="#{cell.inputs}" var="input">
-													<md:input id="input" metadataInputComponent="#{input}" />
+												<ui:repeat id="value" value="#{cell.inputs}" var="input" varstatus="inputStatus">
+													<div class="edit_selected_table_button">
+														<md:input id="input" metadataInputComponent="#{input}" compact="true"/>
+														<h:commandLink type="submit" styleClass="float:left; fa fa-times"
+															action="#{cell.removeValue(inputStatus.index)}" value=""
+															title="#{lbl.remove_metadata}">
+															<f:ajax
+																execute=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput"
+																render=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput" />
+														</h:commandLink>
+													</div>
 												</ui:repeat>
+												
 											</h:panelGroup>
 											<div class="edit_selected_table_button">
 												<h:commandLink type="submit" styleClass="fa fa-plus"

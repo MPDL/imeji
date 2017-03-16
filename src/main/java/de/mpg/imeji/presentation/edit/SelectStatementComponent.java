@@ -56,7 +56,6 @@ public class SelectStatementComponent implements Serializable {
         .collect(Collectors.toList());
   }
 
-
   public void reset() {
     this.index = null;
     this.statement = null;

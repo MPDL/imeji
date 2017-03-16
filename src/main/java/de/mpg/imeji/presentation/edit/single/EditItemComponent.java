@@ -53,6 +53,7 @@ public class EditItemComponent extends EditMetadataAbstract {
     entriesMap.putAll(item.getMetadata().stream()
         .collect(toMap(Metadata::getIndex, md -> new EditItemEntry(md, statementMap))));
     entries = entriesMap.values().stream().collect(toList());
+    addMetadata();
   }
 
   @Override
@@ -92,6 +93,9 @@ public class EditItemComponent extends EditMetadataAbstract {
    * @return the rows
    */
   public List<EditItemEntry> getEntries() {
+    if (!entries.stream().filter(e -> e.getInput() == null).findAny().isPresent()) {
+      addMetadata();
+    }
     return entries;
   }
 

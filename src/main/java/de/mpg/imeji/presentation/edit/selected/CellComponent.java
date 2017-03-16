@@ -54,6 +54,13 @@ public class CellComponent implements Serializable {
   }
 
   /**
+   * Add an empty value
+   */
+  public void removeValue(int position) {
+    inputs.remove(position);
+  }
+
+  /**
    * Change the Statement of this input
    * 
    * @param s

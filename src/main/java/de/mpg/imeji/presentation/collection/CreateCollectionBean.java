@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 
@@ -26,7 +25,6 @@ import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.util.VocabularyHelper;
 
 /**
  * Java Bean for the create Collection Page
@@ -40,7 +38,6 @@ import de.mpg.imeji.presentation.util.VocabularyHelper;
 public class CreateCollectionBean extends CollectionBean {
   private static final Logger LOGGER = Logger.getLogger(CreateCollectionBean.class);
   private static final long serialVersionUID = 1257698224590957642L;
-  private VocabularyHelper vocabularyHelper;
   private boolean createProfile = false;
   @ManagedProperty(value = "#{ContainerEditorSession}")
   private ContainerEditorSession containerEditorSession;
@@ -52,7 +49,6 @@ public class CreateCollectionBean extends CollectionBean {
   @PostConstruct
   public void init() {
     showUpload = UrlHelper.getParameterBoolean("showUpload");
-    vocabularyHelper = new VocabularyHelper(getLocale());
     setCollectionCreateMode(true);
     setCollection(
         ImejiFactory.newCollection().setPerson(getSessionUser().getPerson().clone()).build());
@@ -137,15 +133,6 @@ public class CreateCollectionBean extends CollectionBean {
 
   protected String getNavigationString() {
     return "pretty:createCollection";
-  }
-
-  public String getVocabularyLabel(URI id) {
-    for (final SelectItem item : vocabularyHelper.getVocabularies()) {
-      if (id.toString().equals(item.getValue().toString())) {
-        return item.getLabel();
-      }
-    }
-    return "";
   }
 
   public boolean isCreateProfile() {

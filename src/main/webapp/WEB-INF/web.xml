@@ -10,7 +10,7 @@
         <load-on-startup>2</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
-	 
+
     <servlet>
         <servlet-name>imeji REST Service</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
@@ -25,6 +25,7 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+	
     <!-- Mappings -->
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
@@ -98,7 +99,6 @@
         <param-name>com.sun.faces.compressViewState</param-name>
         <param-value>true</param-value>
     </context-param>
-     
     <session-config>
         <session-timeout>180</session-timeout>
     </session-config>

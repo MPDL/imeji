@@ -15,7 +15,7 @@
     </ui:fragment>
 
     <h:outputText value="#{SessionBean.checkCss(Configuration.defaultCss, Configuration.alternativeCss)}" />
-    <h:outputStylesheet library="css/theme_default" name="app.css" id="themeDefault" rendered="#{SessionBean.selectedCss == 'NONE'}"/>
+    <h:outputStylesheet name="css/theme_default/app.css" id="themeDefault" rendered="#{SessionBean.selectedCss == 'NONE'}"/>
     <ui:fragment rendered="#{SessionBean.selectedCss != 'NONE'}">
         <ui:fragment rendered="#{SessionBean.selectedCss == 'DEFAULT'}">
             <link type="text/css" rel="stylesheet" href="#{Configuration.defaultCss}" id="themeDefault"/>
