@@ -1,0 +1,8 @@
+title: "Imeji - Publish Your Scientific Media Data "
+description: imeji is designed to create citable research assets by storing, describing, enriching, sharing, exposing and linking data”
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
