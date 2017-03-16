@@ -1,5 +1,5 @@
-title: "Imeji - Publish Your Scientific Media Data "
-description: imeji is designed to create citable research assets by storing, describing, enriching, sharing, exposing and linking data”
+title: "Imeji - A lightweight research data repository"
+description: imeji a free and open source web application to manage and publish any research data
 google_analytics: 
 show_downloads: true
 theme: jekyll-theme-cayman
