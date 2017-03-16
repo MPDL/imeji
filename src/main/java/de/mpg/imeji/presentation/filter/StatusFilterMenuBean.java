@@ -17,6 +17,8 @@ import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.util.UrlHelper;
 
 @ManagedBean(name = "StatusFilterMenuBean")
 @ViewScoped
@@ -27,18 +29,20 @@ public class StatusFilterMenuBean extends SuperFilterMenuBean {
   @PostConstruct
   public void init() {
     try {
-      init(initMenu());
+      init(initMenu(!StringHelper.isNullOrEmptyTrim(UrlHelper.getParameterValue("collectionId"))));
     } catch (final UnprocessableError e) {
       LOGGER.error("Error initializing StatusFilterMenuBean", e);
     }
   }
 
-  private List<SelectItem> initMenu() throws UnprocessableError {
+  private List<SelectItem> initMenu(boolean isCollectionFilter) throws UnprocessableError {
     final List<SelectItem> menu = new ArrayList<SelectItem>();
-    menu.add(new SelectItem(
-        SearchQueryParser.transform2URL(SearchQuery.toSearchQuery(
-            new SearchPair(SearchFields.status, SearchOperators.EQUALS, "private", false))),
-        Imeji.RESOURCE_BUNDLE.getLabel("only_private", getLocale())));
+    if (!isCollectionFilter) {
+      menu.add(new SelectItem(
+          SearchQueryParser.transform2URL(SearchQuery.toSearchQuery(
+              new SearchPair(SearchFields.status, SearchOperators.EQUALS, "private", false))),
+          Imeji.RESOURCE_BUNDLE.getLabel("only_private", getLocale())));
+    }
     menu.add(new SelectItem(
         SearchQueryParser.transform2URL(SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.status, SearchOperators.EQUALS, "public", false))),
@@ -49,5 +53,4 @@ public class StatusFilterMenuBean extends SuperFilterMenuBean {
         Imeji.RESOURCE_BUNDLE.getLabel("only_withdrawn", getLocale())));
     return menu;
   }
-
 }

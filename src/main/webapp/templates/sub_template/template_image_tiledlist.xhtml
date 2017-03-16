@@ -21,15 +21,11 @@
 			<script>menuRightOffset();</script>
             <!-- Selection Info Panel -->
             <item:filters id="selPanel" 
-                                      fSession="#{FacetFiltersSession}" 
-                                      facetBean="#{paginatorListSessionBean}" 
-                                      currentMainMenu="mediaEntry" 
-                                      browseToAllUrl="#{browseToAllItemsUrl}" 
-                                      numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}"
-                                      containerId="#{containerId}" showSortMenu="true" objectLabel="#{lbl.images}"
-                                      />
+            	facetBean="#{paginatorListSessionBean}"  
+            	numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
+            	showSortMenu="true"
+            	showFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"/>
             
-	
 			<div id="itemsArea" class="itemsArea">
 				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
            		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
