@@ -15,8 +15,6 @@ imeji is actively developed by the [Max Planck Digital Library](http://mpdl.mpg.
 ... coming soon
 
 
-imeji is a free and open source web application to manage and publish any research data. 
-
 
 
 
