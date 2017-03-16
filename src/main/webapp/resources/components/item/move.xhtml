@@ -18,18 +18,23 @@
 		<div id="moveItemsDialog" class="imj_modalDialogBox imj_moveItemsDialogBox" style="display:none;">
 			<h:form id="moveItemsForm">
 				<ui:fragment rendered="#{MoveItemsBean.destinationId == null}">
-					#{lbl.move_to}
-					<h:inputText value="#{MoveItemsBean.query}" html5:placeholder="#{lbl.search}">
-						<f:ajax render="#{cc.attrs.parentId}:moveItemsForm:list" event="keyup" listener="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.colId)}"/>
-					</h:inputText>
-					<a onclick="closeDialog('moveItemsDialog');" class="imj_cancelButton">
-						#{lbl.cancel}
-					</a>
-					<h:panelGroup id="list">
+					<div style="margin-bottom: 2em;">
+						<span class="fa fa-globe fa-size-3" style="visibility: hidden">&#160;</span>
+						<span>#{lbl.move_to_collection}</span>
+						<a style="float:right" onclick="closeDialog('moveItemsDialog');" class="imj_cancelButton">
+							#{lbl.cancel}
+						</a>
+					</div>
+					<div>
+						<span class="fa fa-globe fa-size-3" style="visibility: hidden">&#160;</span>
+						<h:inputText value="#{MoveItemsBean.query}" html5:placeholder="#{lbl.filter}">
+							<f:ajax render="#{cc.attrs.parentId}:moveItemsForm:list" event="keyup" listener="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.colId)}"/>
+						</h:inputText>
+					</div>
+					<h:panelGroup id="list" style="font-size:1em;">
 						<ui:repeat var="col" value="#{MoveItemsBean.collectionsForMove}">
 							<p>
 								<ui:fragment rendered="#{col.status == 'RELEASED' and !cc.attrs.hasLicense}">
-									<span class="fa fa-globe fa-size-3">&#160;</span>
 									<h:commandLink value="#{col.title}" action="#{MoveItemsBean.setDestinationId(col.id.toString())}">
 										<f:ajax render="@form"/>
 									</h:commandLink>	

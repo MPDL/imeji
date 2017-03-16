@@ -59,7 +59,7 @@ public class EditItemComponent extends EditMetadataAbstract {
   @Override
   public List<Item> toItemList() {
     item.setFilename(filename);
-    item.setMetadata(entries.stream().map(EditItemEntry::getInput)
+    item.setMetadata(entries.stream().map(EditItemEntry::getInput).filter(in -> in != null)
         .map(MetadataInputComponent::getMetadata).collect(toList()));
     item.getLicenses().add(licenseEditor.getLicense());
     return Arrays.asList(item);

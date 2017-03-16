@@ -8,37 +8,37 @@
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
-	<ui:param name="headline" value="#{lbl.upload_select_collection}" />
+	<ui:param name="headline" value="#{lbl.upload_in}..." />
 	 <ui:define name="mainContent">
 	 	<ui:fragment rendered="#{!Auth.loggedIn}">
 	 		<ui:include src="./include/LoginFormular.xhtml" />
 	 	</ui:fragment>
 	 	<ui:fragment rendered="#{Auth.loggedIn}">
-	 		<form action="#{Navigation.createCollectionUrl}?showUpload=1">
+			<form action="#{Navigation.createCollectionUrl}?showUpload=1">
 	 			<input type="text" name="showUpload" value="1" style="display:none;"/>
 				<button id="createCollection" class="imj_menuButton">
-					#{lbl.collection_create}
+					#{lbl.new_collection}
 				</button >
 			</form>
-			<br/>#{lbl.or_big}<br/>
-			<div class="imj_metadataSet">
-				<div class="imj_metadataLabel">
-					 <h:form id="filterCollections">
-						<h:inputText value="#{UploadBean.query}" html5:placeholder="#{lbl.select_collection}" >
-							<f:ajax render=":list" event="keyup" listener="#{UploadBean.filterCollections}"/>
-						</h:inputText>
-					</h:form>
-					<span class="imj_invisible">: </span>
+			 <span class="imj_menuButton">#{lbl.or_big}</span>
+			<div class="selectMd">
+				<button onclick="$('.selectMetadata-content').show(); return false;" class="imj_submitButton">#{lbl.select_collection}</button>
+					<div class="selectMetadata-content">
+						<h:form id="filterCollections">
+							<h:inputText value="#{UploadBean.query}" html5:placeholder="#{lbl.filter}" >
+								<f:ajax render=":list" event="keyup" listener="#{UploadBean.filterCollections}"/>
+							</h:inputText>
+						</h:form>
+					<br/>
+					 <h:panelGroup id="list">
+						 <ui:fragment rendered="#{empty UploadBean.collections}">
+						 #{lbl.upload_no_collection_found}
+						 </ui:fragment>
+						<ui:repeat var="col" value="#{UploadBean.collections}">
+							<a href="#{Navigation.collectionUrl}#{col.idString}?showUpload=1">#{col.title}</a>
+						</ui:repeat>
+					</h:panelGroup>
 				</div>
-				 <h:panelGroup layout="block" id="list" styleClass="imj_metadataValue">
-					 <ui:fragment rendered="#{empty UploadBean.collections}">
-					 #{lbl.upload_no_collection_found}
-					 </ui:fragment>
-					<ui:repeat var="col" value="#{UploadBean.collections}">
-						<a href="#{Navigation.collectionUrl}#{col.idString}?showUpload=1">#{col.title}</a>
-						<br/>
-					</ui:repeat>
-				</h:panelGroup>
 			</div>
 	 	</ui:fragment>
 	 </ui:define>
