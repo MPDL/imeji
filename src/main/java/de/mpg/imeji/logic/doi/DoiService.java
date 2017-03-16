@@ -23,7 +23,7 @@ import de.mpg.imeji.logic.vo.User;
  */
 public final class DoiService {
 
-  public static final String DOI_URL_RESOLVER = "http://dx.doi.org/";
+  public static final String DOI_URL_RESOLVER = "https://dx.doi.org/";
   private final CollectionService collectionController = new CollectionService();
   private final Authorization authorization = new Authorization();
 

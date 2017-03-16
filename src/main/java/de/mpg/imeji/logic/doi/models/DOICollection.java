@@ -7,13 +7,15 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import de.mpg.imeji.logic.config.Imeji;
+
 @XmlRootElement(name = "resource")
 public class DOICollection implements Serializable {
   private static final long serialVersionUID = 5767739527817909134L;
   private DOIIdentifier identifier;
   private final DOICreators creators = new DOICreators();
   private final List<DOITitle> titles = new ArrayList<DOITitle>();
-  private final String publisher = "Max-Planck-Gesellschaft zur Förderung der Wissenschaften e. V.";
+  private final String publisher = Imeji.CONFIG.getDoiPublisher();
   private String publicationYear;
 
 

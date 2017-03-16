@@ -1,6 +1,7 @@
 package de.mpg.imeji.presentation.item.browse;
 
 import java.net.URI;
+import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -69,7 +70,7 @@ public class CollectionItemsBean extends ItemsBean {
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
       collection.getPersons().stream().map(p -> p.getCompleteName())
-          .forEach(a -> authors += authors.equals("") ? a : "; " + a);
+          .forEach(a -> authors += authors.equals("") ? a : ", " + a);
       authorsShort = collection.getPersons().iterator().next().getCompleteName();
       if (collection.getPersons().size() > 1) {
         authorsShort += " & " + (collection.getPersons().size() - 1) + " "
@@ -185,7 +186,11 @@ public class CollectionItemsBean extends ItemsBean {
 
   public String getCitation() {
     final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
-    return authors + ". " + collection.getTitle() + ". <a href=\"" + url + "\">" + url + "</a>";
+    return authors
+        + (collection.getStatus().equals(Status.RELEASED)
+            ? " (" + collection.getVersionDate().get(Calendar.YEAR) + ")" : "")
+        + ". " + collection.getTitle() + ". " + Imeji.CONFIG.getDoiPublisher() + ". <a href=\""
+        + url + "\">" + url + "</a>";
   }
 
   /**

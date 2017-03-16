@@ -13,11 +13,11 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.vo.Item;
@@ -291,8 +291,8 @@ public abstract class CollectionBean extends SuperBean {
 
   public String getCitation() {
     final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
-    return getAuthorsWithOrg() + ". " + collection.getTitle() + ". <a href=\"" + url + "\">" + url
-        + "</a>";
+    return getPersonString() + ". " + collection.getTitle() + ". Publisher" + ". <a href=\"" + url
+        + "\">" + url + "</a>";
   }
 
   /**

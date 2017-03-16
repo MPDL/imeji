@@ -31,6 +31,8 @@ public class Properties implements Serializable {
   private URI modifiedBy = URI.create("");;
   @j2jLiteral(ImejiNamespaces.DATE_CREATED)
   private Calendar created = Calendar.getInstance();
+  @j2jLiteral(ImejiNamespaces.VERSION_DATE)
+  private Calendar versionDate = Calendar.getInstance();
   @j2jLiteral(ImejiNamespaces.LAST_MODIFICATION_DATE)
   private Calendar modified = Calendar.getInstance();
   @j2jResource(ImejiNamespaces.STATUS)
@@ -117,6 +119,20 @@ public class Properties implements Serializable {
 
   public URI getId() {
     return id;
+  }
+
+  /**
+   * @return the versionDate
+   */
+  public Calendar getVersionDate() {
+    return versionDate;
+  }
+
+  /**
+   * @param versionDate the versionDate to set
+   */
+  public void setVersionDate(Calendar versionDate) {
+    this.versionDate = versionDate;
   }
 
   /**

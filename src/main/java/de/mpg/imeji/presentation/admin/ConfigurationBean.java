@@ -383,6 +383,14 @@ public class ConfigurationBean extends SuperBean {
     Imeji.CONFIG.setLanguages(value);
   }
 
+  public String getDoiPublisher() {
+    return Imeji.CONFIG.getDoiPublisher();
+  }
+
+  public void setDoiPublisher(String s) {
+    Imeji.CONFIG.setDoiPublisher(s);
+  }
+
   public String getDoiUser() {
     return Imeji.CONFIG.getDoiUser();
   }

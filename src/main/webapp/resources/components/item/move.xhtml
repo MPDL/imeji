@@ -31,10 +31,11 @@
 							<f:ajax render="#{cc.attrs.parentId}:moveItemsForm:list" event="keyup" listener="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.colId)}"/>
 						</h:inputText>
 					</div>
-					<h:panelGroup id="list" style="font-size:1em;">
+					<h:panelGroup id="list" style="font-size:0.9em;">
 						<ui:repeat var="col" value="#{MoveItemsBean.collectionsForMove}">
 							<p>
 								<ui:fragment rendered="#{col.status == 'RELEASED' and !cc.attrs.hasLicense}">
+									<span class="fa fa-globe fa-size-3">&#160;</span>
 									<h:commandLink value="#{col.title}" action="#{MoveItemsBean.setDestinationId(col.id.toString())}">
 										<f:ajax render="@form"/>
 									</h:commandLink>	

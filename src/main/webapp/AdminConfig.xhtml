@@ -780,7 +780,7 @@
 										title="#{lbl.configuration_save_all}"
 										value="#{lbl.configuration_save_all}"
 										styleClass="imj_submitButton" />
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
+									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
 											<h:outputText value="#{lbl.doiService}" />
 											<span class="imj_noDisplay">: </span>
@@ -789,8 +789,8 @@
 											<h:inputText value="#{Configuration.doiServiceUrl}"
 												styleClass="imj_admindataEdit" />
 										</div>
-									</h:panelGroup>
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
+									</div>
+									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
 											<h:outputText value="#{lbl.doiUser}" />
 											<span class="imj_noDisplay">: </span>
@@ -799,8 +799,8 @@
 											<h:inputText value="#{Configuration.doiUser}"
 												styleClass="imj_admindataEdit" />
 										</div>
-									</h:panelGroup>
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
+									</div>
+									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
 											<h:outputText value="#{lbl.doiPassword}" />
 											<span class="imj_noDisplay">: </span>
@@ -809,7 +809,17 @@
 											<h:inputSecret value="#{Configuration.doiPassword}"
 												styleClass="imj_admindataEdit" redisplay="true" />
 										</div>
-									</h:panelGroup>
+									</div>
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="Publisher" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputText value="#{Configuration.doiPublisher}"
+												styleClass="imj_admindataEdit"/>
+										</div>
+									</div>
 
 								</div>
 

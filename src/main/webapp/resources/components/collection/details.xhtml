@@ -122,6 +122,17 @@
 				<h:outputText value="#{cc.attrs.bean.collection.modified.time}"/>
 			</span>
 		</div>
+		<ui:fragment rendered="#{not empty cc.attrs.bean.collection.versionDate}">
+			<div class="imj_infodataSet">
+				<span class="imj_infodataLabel">
+					<h:outputText value="#{lbl.date_released}"/>
+					<span class="imj_invisible">: </span>
+				</span>
+				<span class="imj_infodataValue">
+					<h:outputText value="#{cc.attrs.bean.collection.versionDate.time}"/>
+				</span>
+			</div>
+		</ui:fragment>
 		<h:panelGroup styleClass="imj_infodataSet" rendered="#{cc.attrs.item.status == 'RELEASED'}">
 			<span class="imj_infodataLabel">
 				<h:outputText value="#{lbl.date_released}"/>
