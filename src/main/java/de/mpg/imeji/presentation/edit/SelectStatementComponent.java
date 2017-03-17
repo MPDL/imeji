@@ -52,8 +52,13 @@ public class SelectStatementComponent implements Serializable {
           .collect(Collectors.toList());
     }
     return statementMenu.stream().map(i -> i.getValue().toString())
-        .filter(s -> s.toLowerCase().contains(index.toLowerCase())).limit(10)
+        .filter(s -> s.toLowerCase().startsWith(index.toLowerCase())).limit(10)
         .collect(Collectors.toList());
+  }
+
+  public boolean indexExists(List<SelectItem> statementMenu) {
+    return statementMenu.stream().filter(i -> i.getValue().toString().equalsIgnoreCase(index))
+        .findAny().isPresent();
   }
 
   public void reset() {

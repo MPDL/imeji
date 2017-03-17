@@ -25,7 +25,7 @@ public class HistorySession implements Serializable {
   /**
    * The maximum count of {@link HistoryPage} stored in the history
    */
-  private static int HISTORY_SIZE = 10;
+  private static int HISTORY_SIZE = 2;
 
   /**
    * Create new {@link HistorySession}
@@ -68,20 +68,6 @@ public class HistorySession implements Serializable {
   }
 
   /**
-   * Remove a {@link HistoryPage} of the history according to its position in the history
-   *
-   * @param pos
-   */
-  public void remove(int pos) {
-    for (int i = 0; i < pages.size(); i++) {
-      if (i > pos) {
-        pages.remove(i);
-        i--;
-      }
-    }
-  }
-
-  /**
    * Return the current {@link HistoryPage}
    *
    * @return
@@ -103,32 +89,5 @@ public class HistorySession implements Serializable {
       return pages.size() > 2 ? pages.get(pages.size() - 2) : pages.get(0);
     }
     return null;
-  }
-
-  /**
-   * Return the size of the history
-   *
-   * @return
-   */
-  public int getHistorySize() {
-    return pages.size();
-  }
-
-  /**
-   * Getter- Return the {@link List} of {@link HistoryPage} of the history
-   *
-   * @return
-   */
-  public List<HistoryPage> getPages() {
-    return pages;
-  }
-
-  /**
-   * setter
-   *
-   * @param pages
-   */
-  public void setPages(List<HistoryPage> pages) {
-    this.pages = pages;
   }
 }
