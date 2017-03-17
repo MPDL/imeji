@@ -32,7 +32,7 @@ public class Properties implements Serializable {
   @j2jLiteral(ImejiNamespaces.DATE_CREATED)
   private Calendar created = Calendar.getInstance();
   @j2jLiteral(ImejiNamespaces.VERSION_DATE)
-  private Calendar versionDate = Calendar.getInstance();
+  private Calendar versionDate;
   @j2jLiteral(ImejiNamespaces.LAST_MODIFICATION_DATE)
   private Calendar modified = Calendar.getInstance();
   @j2jResource(ImejiNamespaces.STATUS)
