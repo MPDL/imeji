@@ -44,6 +44,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
   private Collection<User> users;
   private static final Logger LOGGER = Logger.getLogger(UserGroupsBean.class);
   private List<ShareListItem> roles = new ArrayList<ShareListItem>();
+  private boolean edit = false;
 
   @PostConstruct
   public void init() {
@@ -195,4 +196,19 @@ public class UserGroupBean extends SuperBean implements Serializable {
   public void setRoles(List<ShareListItem> roles) {
     this.roles = roles;
   }
+
+  /**
+   * @return the edit
+   */
+  public boolean isEdit() {
+    return edit;
+  }
+
+  /**
+   * @param edit the edit to set
+   */
+  public void setEdit(boolean edit) {
+    this.edit = edit;
+  }
+
 }

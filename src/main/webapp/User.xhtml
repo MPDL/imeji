@@ -253,66 +253,49 @@
 												<h:outputText
 													value="#{lbl.collection}: #{shareHistory.title}"
 													title="#{shareHistory.title}" />
-
-												<div class="imj_submitPanel">
-													<h:outputLink value="#" styleClass="imj_cancelButton"
+											</div>
+											<div class="imj_metadataValueEntry">
+												#{shareHistory.role} 
+												<h:outputLink value="#" styleClass="fa fa-times"
 														title="#{lbl.revoke} #{lbl.grant_for} #{shareHistory.title}"
 														onclick="openDialog('revokeDialog#{row.index}');">
-														<h:outputText value="#{lbl.revoke}" />
 													</h:outputLink>
-												</div>
-												<dialog:confirmationDialog submitAction="revokeGrants"
+													<dialog:confirmationDialog submitAction="revokeGrants"
 													bean="#{shareHistory}"
 													confirmationText="#{msg.confirmation_revoke_grant} &quot;#{shareHistory.title}&quot; ?"
 													submitLabel="#{lbl.revoke}"
 													dialogId="revokeDialog#{row.index}" />
 											</div>
-											<div class="imj_metadataValueEntry">
-												#{shareHistory.role}
-											</div>
 										</div>
 									</ui:repeat>
 								</div>
 							</h:panelGroup>
-
-
 							<h:form id="userGroups">
 								<!-- usergroups -->
-								<div
-									class="imj_metadataSetEdit imj_metadataSet imj_connectedUserGroups">
-									<h3 class="imj_headline">
+								<div class="imj_metadataSetEdit imj_metadataSet imj_connectedUserGroups">
+									<h3 class="imj_metadataLabel">
 										<h:outputText value=" #{lbl.in_following_user_groups}"
-											styleClass="imj_metadataValueEntry" />
+											styleClass="" />
 									</h3>
-									<ui:repeat var="ug" value="#{UserBean.user.groups}" rows="0">
-										<div class="imj_metadataValueEntry">
-											<h4 class="imj_metadataValueEntry">
-												<h:outputText value="#{lbl.admin_userGroup}: #{ug.name}"
-													styleClass="imj_metadataValueEntry" />
-											</h4>
-											<div class="imj_metadataSetEdit">
+									<div class="imj_metadataValue">
+										<ui:repeat var="ug" value="#{UserBean.user.groups}" rows="0">
+											<div class="imj_metadataSet">
+												<h4 class="imj_metadataLabel">
+													<h:outputText value="#{lbl.admin_userGroup}: #{ug.name}" />
+												</h4>
 												<div class="imj_metadataValue">
-													<div class="imj_metadataValueEntry">
-														<h:form>
-															<ui:repeat var="sh"
-																value="#{UserBean.getGroupRoles(ug)}">
-																<div>
-																	<h4 class="imj_metadataValueEntry">
-																		<h:outputText value="#{sh.typeLabel}: #{sh.title}" />
-																	</h4>
-																	<h:selectManyCheckbox id="role" value="#{sh.roles}"
-																		disabled="true" layout="pageDirection">
-																		<f:selectItems value="#{sh.rolesMenu}" />
-																	</h:selectManyCheckbox>
-																</div>
-																<br />
-															</ui:repeat>
-														</h:form>
-													</div>
+													<ui:repeat var="sh"
+															value="#{UserBean.getGroupRoles(ug)}">
+															<div>
+																<h4 class="imj_metadataValueEntry">
+																	<h:outputText value="#{sh.role}: #{sh.title} " />
+																</h4>
+															</div>
+													</ui:repeat>
 												</div>
 											</div>
-										</div>
-									</ui:repeat>
+										</ui:repeat>
+									</div>
 								</div>
 							</h:form>
 							<!-- END CONTENT -->

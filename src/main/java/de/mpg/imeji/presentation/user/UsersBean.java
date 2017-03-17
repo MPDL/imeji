@@ -261,7 +261,7 @@ public class UsersBean extends SuperBean {
       final UserGroupService c = new UserGroupService();
       c.update(group, getSessionUser());
       FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(getNavigation().getApplicationUrl() + "usergroup?id=" + group.getId());
+          .redirect(getNavigation().getApplicationUrl() + "usergroup?groupId=" + group.getId());
     } catch (final Exception e) {
       BeanHelper.error(e.getMessage());
     }
