@@ -188,7 +188,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     if (sessionBean.getSelectedImagesContext() != null
         && !sessionBean.getSelectedImagesContext().equals(browseContext)) {
       selectNone();
-      update();
     }
     sessionBean.setSelectedImagesContext(browseContext);
   }

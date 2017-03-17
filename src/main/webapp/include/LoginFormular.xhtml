@@ -2,35 +2,57 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
 	<ui:param name="headline" value="#{lbl.view_page_disallowed}"/>
-	<div>
-		<h3 class="imj_headline">
-			<ui:fragment rendered="#{!Auth.loggedIn}">
-				<ui:fragment rendered="#{Configuration.registrationEnabled}">
-				<a href="#{Navigation.registrationUrl}">#{lbl.register}</a>
-				<br/>
-				#{lbl.or_big}<br/>
-				</ui:fragment>
-				<h:outputText value="#{lbl.view_page_disallowed}"/>
-				<br/><br/>
-			</ui:fragment>
-			<h:outputText rendered="#{Auth.loggedIn}" value="#{lbl.view_page_disallowed2}"/>
-		</h3>
-		<h:form>
-			
-			<div class="imj_metadataSet">
-				<h:outputLabel for="inputEmail" styleClass="imj_metadataLabel" value="Email"/>
-				<h:inputText id="inputEmail" styleClass="imj_metadataValue" value="#{LoginBean.login}"/>
+	<ui:fragment rendered="#{!Auth.loggedIn and Configuration.registrationEnabled}">
+		<div class="imj_metadataSet">
+			<div class="imj_metadataLabel">
+				<span class="imj_noDisplay">: </span>
 			</div>
-			<div class="imj_metadataSet">
-				<h:outputLabel for="inputPasswd" styleClass="imj_metadataLabel " value="#{lbl.admin_pwd}"/>
-				<h:inputSecret id="inputPasswd" styleClass="imj_metadataValue" value="#{LoginBean.passwd}"/>
+			<div class="imj_metadataValue">
+				<form action="#{Navigation.registrationUrl}">
+					<button id="register" class="imj_menuButton">
+						#{lbl.register}
+					</button>
+				</form>
 			</div>
-			<div class="imj_submitPanel">
-				<h:commandLink id="lnkLogin" styleClass="imj_submitButton" value="#{lbl.login}" action ="#{LoginBean.doLogin(SessionBean)}"/>
+		</div>
+		<div class="imj_metadataSet">
+			<div class="imj_metadataLabel">
+				<span class="imj_noDisplay">: </span>
 			</div>
-		</h:form>
-	</div>
+			<div class="imj_metadataValue">
+				#{lbl.or_big}
+			</div>
+		</div>
+	</ui:fragment>
+	<h:form>
+		<div class="imj_metadataSet">
+			<div class="imj_metadataLabel">
+				<span class="imj_noDisplay">: </span>
+			</div>
+			<div class="imj_metadataValue">
+				<h:inputText id="inputEmail" styleClass="imj_admindataEdit" value="#{LoginBean.login}" html5:placeholder="#{lbl.email}"/>
+			</div>
+		</div>
+		<div class="imj_metadataSet">
+			<div class="imj_metadataLabel">
+				<span class="imj_noDisplay">: </span>
+			</div>
+			<div class="imj_metadataValue">
+				<h:inputSecret id="inputPassword" styleClass="imj_admindataEdit" value="#{LoginBean.passwd}" html5:placeholder="#{lbl.password}"/>
+			</div>
+		</div>
+		<div class="imj_metadataSet">
+			<div class="imj_metadataLabel">
+				<span class="imj_noDisplay">: </span>
+			</div>
+			<div class="imj_metadataValue">
+				<h:commandButton id="lnkLogin" styleClass="" value="#{lbl.login}" action ="#{LoginBean.doLogin}"/>
+			</div>
+		</div>
+	</h:form>
+	
 </ui:composition>
