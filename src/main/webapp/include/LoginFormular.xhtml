@@ -6,7 +6,7 @@
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
 	<ui:param name="headline" value="#{lbl.view_page_disallowed}"/>
-	<ui:fragment rendered="#{!Auth.loggedIn and Configuration.registrationEnabled}">
+	<ui:fragment rendered="#{!Auth.loggedIn and Configuration.registrationEnabled and !hideRegister}">
 		<div class="imj_metadataSet">
 			<form action="#{Navigation.registrationUrl}">
 				<button id="register" class="imj_menuButton">
