@@ -14,39 +14,33 @@
 	
 	<composite:implementation>
 		<h:panelGroup layout="block" id="selectionInfoPanel" styleClass="imj_selectionInfoPanel">
-
-			<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu}">
-				<div class="imj_menuHeader">
-                    <span class="fa fa-sort">&#160;</span>
-					<h:outputText id="txtSort" value="#{lbl.sorting}" styleClass="imj_headerEntry"/>
-				</div>
-				<div class="imj_menuBody">
-					
-					<h:form>
-						<h:outputText value="#{lbl.sort_by}: " styleClass="imj_active"/>
-						<h:commandLink id="lnkSortAsc" value="&#160;" styleClass="fa fa-sort-asc fa-pull-right fa-size-2" action="#{cc.attrs.facetBean.toggleSortOrder}" rendered="#{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING'}" onclick="startLoader();">
+			<h:form>
+				<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu}">
+					<div class="imj_menuHeader">
+	                    <h:commandLink id="lnkSortAsc" value=" #{lbl.sort_by} #{cc.attrs.facetBean.selectedSortCriterionLabel}" styleClass="fa #{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING' ? 'fa-arrow-up' : 'fa-arrow-down' }" action="#{cc.attrs.facetBean.toggleSortOrder}" onclick="startLoader();">
 							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 						</h:commandLink>
-						<h:commandLink id="lnkSortDesc" value="&#160;" styleClass="fa fa-sort-desc fa-pull-right fa-size-2" action="#{cc.attrs.facetBean.toggleSortOrder}" rendered="#{cc.attrs.facetBean.selectedSortOrder != 'ASCENDING'}" onclick="startLoader();">
-							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
-						</h:commandLink>
-						
+					</div>
+					<div class="imj_menuBody">
 						<ul class="imj_overlayMenuList">
 							<ui:repeat var="sortItem" value="#{cc.attrs.facetBean.sortMenu}" varStatus="spos">
-								<li class="imj_overlayMenuListItem">
-									<h:commandLink value="#{sortItem.label}" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"  styleClass="#{(cc.attrs.facetBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}" onclick="startLoader();">
-										<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
-									</h:commandLink>
-								</li>
+								<ui:fragment rendered="#{cc.attrs.facetBean.selectedSortCriterion != sortItem.value}">
+									<li class="imj_overlayMenuListItem">
+										<h:commandLink value="#{sortItem.label}" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
+											<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+										</h:commandLink>
+									</li>
+								</ui:fragment>
 							</ui:repeat>
 						</ul>
-					</h:form>
-				</div>
-			</h:panelGroup>
+					</div>
+				</h:panelGroup>
+			</h:form>
 			<ui:fragment rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu}">
 				<menu:StatusFilterMenu rendered="#{!Configuration.privateModus and cc.attrs.showFilterMenu}"/>
 				<menu:UserFilterMenu/>
 			</ui:fragment>
+			
 		</h:panelGroup>
 	</composite:implementation>
 </html>

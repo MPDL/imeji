@@ -91,11 +91,13 @@ public class HistoryUtil {
   public static String paramsMapToString(Map<String, String[]> params) {
     String s = "";
     for (final String key : params.keySet()) {
-      final String delim = "".equals(s) ? "?" : "&";
-      try {
-        s += delim + key + "=" + URLEncoder.encode(params.get(key)[0], "UTF-8");
-      } catch (final UnsupportedEncodingException e) {
-        throw new RuntimeException("Error encoding " + params.get(key)[0], e);
+      if (!"showUpload".equals(key)) {
+        final String delim = "".equals(s) ? "?" : "&";
+        try {
+          s += delim + key + "=" + URLEncoder.encode(params.get(key)[0], "UTF-8");
+        } catch (final UnsupportedEncodingException e) {
+          throw new RuntimeException("Error encoding " + params.get(key)[0], e);
+        }
       }
     }
     return s;

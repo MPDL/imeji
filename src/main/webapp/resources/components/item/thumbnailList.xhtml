@@ -10,11 +10,12 @@
 	<composite:implementation>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfElements != 0}">
 			<div class="imj_listHeader">
+			#{cc.attrs.picList.totalNumberOfElements} #{lbl.items} #{lbl.found}
 				<div class="imj_overlayMenu">
 					<h:form id="selectMenuForm">
 						<div class="imj_menuHeader">
-							<h:commandLink action="#{cc.attrs.picList.selectAll}"  id="lnkSelectAllOnPage" title="#{lbl.select_all}"  styleClass="selectAll" rendered="#{!cc.attrs.picList.allSelected}">
-								<h:outputText value="#{lbl.select_all}"/>
+							<h:commandLink action="#{cc.attrs.picList.selectAll}"  id="lnkSelectAllOnPage" title="#{lbl.select_all_on_page}"  styleClass="selectAll" rendered="#{!cc.attrs.picList.allSelected}">
+								<h:outputText value="#{lbl.select_all_on_page}"/>
 								<f:ajax execute="this" render=":ajaxWrapper :actionsMenuArea"/>
 							</h:commandLink>
 							<h:commandLink action="#{cc.attrs.picList.selectNone}" id="lnkSelectNone" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{cc.attrs.picList.allSelected}">

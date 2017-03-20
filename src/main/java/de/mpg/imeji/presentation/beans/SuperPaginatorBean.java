@@ -2,6 +2,7 @@ package de.mpg.imeji.presentation.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -343,13 +344,11 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
   }
 
   public void changeSelectedSortCriterion(String selectedSortCriterion) {
-    System.out.println(selectedSortCriterion);
     if (!this.selectedSortCriterion.equals(selectedSortCriterion)) {
       this.selectedSortCriterion = selectedSortCriterion;
       setCookieSortValue(this.selectedSortCriterion);
       update();
     } else {
-      System.out.println("toggle");
       toggleSortOrder();
     }
   }
@@ -372,7 +371,14 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
     setCookieSortOrder(selectedSortOrder);
   }
 
-
+  public String getSelectedSortCriterionLabel() {
+    Optional<SelectItem> selected = sortMenu.stream()
+        .filter(i -> i.getValue().toString().equals(selectedSortCriterion)).findAny();
+    if (selected.isPresent()) {
+      return selected.get().getLabel();
+    }
+    return selectedSortCriterion;
+  }
 
   /**
    * Inner class pf which an instance represents an paginator button. Used by the iterator in jsf.

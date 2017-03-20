@@ -104,7 +104,7 @@ public class HistoryPage implements Serializable {
   }
 
   public String getCompleteUrlWithHistory() {
-    final String delim = params.isEmpty() ? "?" : "&";
+    final String delim = HistoryUtil.paramsMapToString(params).isEmpty() ? "?" : "&";
     return getCompleteUrl() + delim + "h=" + pos;
   }
 

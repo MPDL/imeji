@@ -13,36 +13,32 @@
 	<composite:implementation>		
 		<div id="filterInfoPanel" class="imj_selectionInfoPanel" >
 			<h:outputText value=" #{cc.attrs.filterBean.totalNumberOfElements} #{lbl.collection}"/>
-			
-			<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item">
-				<div class="imj_menuHeader">
-	                   <span class="fa fa-sort">&#160;</span>
-					<h:outputText id="txtSort" value="#{lbl.sorting}" styleClass="imj_headerEntry"/>
-				</div>
-				
-				<div class="imj_menuBody">
-					<h:form>
-						<h:outputText value="#{lbl.sort_by}: " styleClass="imj_active"/>
-						<h:commandLink id="lnkSortAsc" value="&#160;" styleClass="fa fa-sort-asc fa-pull-right" action="#{cc.attrs.filterBean.toggleSortOrder}" rendered="#{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING'}" onclick="startLoader();">
+			<h:form>
+				<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item">
+					<div class="imj_menuHeader">
+						<h:commandLink id="lnkSortAsc" value=" #{lbl.sort_by} #{cc.attrs.filterBean.selectedSortCriterionLabel}" styleClass="fa #{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING' ? 'fa-arrow-up' : 'fa-arrow-down' }" action="#{cc.attrs.filterBean.toggleSortOrder}" onclick="startLoader();">
 							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 						</h:commandLink>
-						<h:commandLink id="lnkSortDesc" value="&#160;" styleClass="fa fa-sort-desc fa-pull-right" action="#{cc.attrs.filterBean.toggleSortOrder}" rendered="#{cc.attrs.filterBean.selectedSortOrder != 'ASCENDING'}" onclick="startLoader();">
-							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
-						</h:commandLink>	
+					</div>
+					
+					<div class="imj_menuBody">
 						<ul>
 							<ui:repeat var="sortItem" value="#{cc.attrs.filterBean.sortMenu}" varStatus="spos">
-								<li>
-									<h:commandLink action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" styleClass="#{(cc.attrs.filterBean.selectedSortCriterion == sortItem.value) ? 'imj_active' : ''}" onclick="startLoader();">
-										<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
-									</h:commandLink>
-								</li>
+								<ui:fragment rendered="#{cc.attrs.filterBean.selectedSortCriterion != sortItem.value}">
+									<li>
+										<h:commandLink action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" onclick="startLoader();">
+											<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+										</h:commandLink>
+									</li>
+								</ui:fragment>
 							</ui:repeat>
 						</ul>
-					</h:form>
-				</div>
-			</h:panelGroup>
+					</div>
+				</h:panelGroup>
+			</h:form>
 			<menu:StatusFilterMenu rendered="#{!Configuration.privateModus}"/>
 			<menu:UserFilterMenu/>
+			
 		</div>
 	</composite:implementation>
 </html>
