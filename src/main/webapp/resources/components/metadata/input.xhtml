@@ -24,7 +24,7 @@
 			<h:inputText id="url" value="#{cc.attrs.metadataInputComponent.metadata.url}" html5:type="url" html5:placeholder="#{lbl.url}" styleClass="imj_mdInput"/>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'NUMBER'}">
-			<h:inputText id="number" value="#{cc.attrs.metadataInputComponent.metadata.number}" html5:type="number" html5:step="any" html5:placeholder="#{lbl.number}" styleClass="imj_mdInput"/>
+			<h:inputText id="number" value="#{cc.attrs.metadataInputComponent.metadata.number}" html5:type="number" html5:step="any" html5:placeholder="#{lbl.placeholder_number}" styleClass="imj_mdInput"/>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'GEOLOCATION'}">
 			<h:inputTextarea id="location" value="#{cc.attrs.metadataInputComponent.metadata.text}" styleClass="imj_mdInput autocomplete_js" onfocus="getDatasourceUrl('#{cc.attrs.metadataInputComponent.statement.vocabulary}', '#{Navigation.autocompleteUrl}'); "/>
