@@ -18,6 +18,7 @@ import de.mpg.imeji.logic.export.ExportAbstract;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
@@ -89,7 +90,8 @@ public class NotificationUtils {
             msgsPerEmail.put(key,
                 (msgsPerEmail.containsKey(key) ? msgsPerEmail.get(key) + "\r\n" : "")
                     + "XXX_COLLECTION_XXX URI" + (isNullOrEmpty(q) ? ": " : " (XXX_FILTERED_XXX): ")
-                    + UrlHelper.encodeQuery(entry.getKey().toString() + q)
+                    + UrlHelper.encodeQuery(Imeji.PROPERTIES.getApplicationURL() + "collection/"
+                        + ObjectHelper.getId(URI.create(entry.getKey())) + q)
                     + ", XXX_ITEMS_COUNT_XXX: " + entry.getValue().intValue());
             usersPerEmail.put(key, u);
           }

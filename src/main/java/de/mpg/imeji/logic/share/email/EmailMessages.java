@@ -234,9 +234,11 @@ public class EmailMessages {
     return getBundle("email_item_downloaded_body", locale)
         .replace("XXX_USER_NAME_XXX", to.getPerson().getCompleteName())
         .replace("XXX_ITEM_ID_XXX", ObjectHelper.getId(item.getId()))
-        .replace("XXX_ITEM_LINK_XXX", item.getId().toString())
+        .replace("XXX_ITEM_LINK_XXX",
+            Imeji.PROPERTIES.getApplicationURL() + "item/" + ObjectHelper.getId(item.getId()))
         .replace("XXX_COLLECTION_NAME_XXX", c.getTitle())
-        .replace("XXX_COLLECTION_LINK_XXX", c.getId().toString())
+        .replace("XXX_COLLECTION_LINK_XXX",
+            Imeji.PROPERTIES.getApplicationURL() + "collection/" + ObjectHelper.getId(c.getId()))
         .replace("XXX_ACTOR_NAME_XXX",
             (actor != null ? actor.getPerson().getCompleteName() : "non_logged_in_user"))
         .replace("XXX_ACTOR_EMAIL_XXX", (actor != null ? actor.getEmail() : ""))
