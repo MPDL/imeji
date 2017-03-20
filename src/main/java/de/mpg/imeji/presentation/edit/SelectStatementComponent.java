@@ -2,12 +2,16 @@ package de.mpg.imeji.presentation.edit;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
+import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.presentation.statement.StatementForm;
@@ -47,13 +51,28 @@ public class SelectStatementComponent implements Serializable {
   }
 
   public List<String> searchForIndex(List<SelectItem> statementMenu) {
-    if (index == null) {
-      return statementMenu.stream().limit(10).map(i -> i.getValue().toString())
+    if (StringHelper.isNullOrEmptyTrim(index)) {
+      Set<String> defaultSet =
+          new HashSet<>(Arrays.asList(Imeji.CONFIG.getStatements().split(",")));
+      return statementMenu.stream().map(i -> i.getValue().toString())
+          .filter(s -> defaultSet.contains(s))
+          .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(5)
           .collect(Collectors.toList());
     }
     return statementMenu.stream().map(i -> i.getValue().toString())
-        .filter(s -> s.toLowerCase().startsWith(index.toLowerCase())).limit(10)
+        .filter(s -> s.toLowerCase().startsWith(index.toLowerCase()))
+        .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(5)
         .collect(Collectors.toList());
+  }
+
+  /**
+   * Remove the first ":" form the containerId to reuse it in javascript methods
+   * 
+   * @param containerId
+   * @return
+   */
+  public String normalizeContainerId(String containerId) {
+    return containerId.startsWith(":") ? containerId.substring(1) : containerId;
   }
 
   public boolean indexExists(List<SelectItem> statementMenu) {

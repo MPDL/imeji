@@ -18,30 +18,33 @@
 </composite:interface>
 
 <composite:implementation>
-	<style>
-		
-		</style>
+	<ui:param name="containerIdNormalized" value="#{cc.attrs.component.normalizeContainerId(cc.attrs.containerId)}"/>
 	<h:panelGroup id="selectMetadata" class="metadataSelector">
 		<div class="selectMd">
-			<button onclick="$('.selectMetadata-content').show(); return false;" class="imj_submitButton">#{lbl.select_metadata}</button>
+			<button onclick="$('.selectMetadata-content').show(); document.getElementById('#{containerIdNormalized}:filterMd').focus(); return false;" class="imj_submitButton">#{lbl.select_metadata}</button>
 			<div class="selectMetadata-content">
-				<h:inputText value="#{cc.attrs.component.index}" html5:placeholder="#{lbl.search}..." autocomplete="off">
+				<h:inputText id="filterMd" styleClass="inptSelMd" value="#{cc.attrs.component.index}" html5:placeholder="#{lbl.search}..." autocomplete="off">
 					<f:ajax event="keyup" render="#{cc.attrs.containerId}:statementList #{cc.attrs.containerId}:buttons"
 						listener="#{cc.attrs.component.listener}" />
 				</h:inputText>
-				<h:panelGroup id="statementList">
+				<h:panelGroup layout="block" id="statementList">
 					<ui:fragment rendered="#{not empty cc.attrs.component.index and !cc.attrs.component.indexExists(cc.attrs.menu)}">
-						<a href="" onclick="openDialog('createStatementDialog'); $('.selectMetadata-content').hide(); return false;">
-							<small>[#{lbl.new_big}] </small>
-							#{cc.attrs.component.index}
+						<a class="fa fa-plus" href="" title="#{lbl.create}" onclick="openDialog('createStatementDialog'); $('.selectMetadata-content').hide(); return false;">
+							 #{cc.attrs.component.index}
 						</a>
 					</ui:fragment>
-					<ui:repeat var="index" value="#{cc.attrs.component.searchForIndex(cc.attrs.menu)}">
+					<ui:fragment rendered="#{empty cc.attrs.component.index}">
+						<span>#{lbl.example}: </span>
+					</ui:fragment>
+					<ui:repeat var="index" value="#{cc.attrs.component.searchForIndex(cc.attrs.menu)}" varStatus="statusVar">
 						<h:commandLink value="#{index}" action="#{cc.attrs.bean[cc.attrs.submitAction]}" onclick="startLoader();">
 							<f:setPropertyActionListener target="#{cc.attrs.component.index}" value="#{index}" />
 							<f:ajax execute="@form" render="@form" />
 						</h:commandLink>
 					</ui:repeat>
+					<ui:fragment rendered="#{empty cc.attrs.component.searchForIndex(cc.attrs.menu)}">
+						<span>#{lbl.metadata_not_found}!</span>
+					</ui:fragment>
 					
 				</h:panelGroup>
 			</div>

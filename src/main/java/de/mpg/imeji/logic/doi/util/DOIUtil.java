@@ -17,6 +17,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.log4j.Logger;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -36,6 +37,7 @@ import de.mpg.imeji.logic.vo.Person;
  *
  */
 public class DOIUtil {
+  private static final Logger LOGGER = Logger.getLogger(DOIUtil.class);
   private static final Client client = ClientBuilder.newClient();
 
   private DOIUtil() {
@@ -78,7 +80,6 @@ public class DOIUtil {
 
   public static String makeDOIRequest(String doiServiceUrl, String doiUser, String doiPassword,
       String url, String xml) throws ImejiException {
-
     // Trim to avoid errors due to unwanted spaces
     doiServiceUrl = doiServiceUrl.trim();
     validateURL(doiServiceUrl);
@@ -91,6 +92,7 @@ public class DOIUtil {
 
     // throw Exception if the DOI service request fails
     if (statusCode != HttpStatus.SC_CREATED) {
+      LOGGER.error("Error creating doi with xml " + xml);
       throw new ImejiException("Error occured, when contacting DOxI. StatusCode=" + statusCode
           + " - " + HttpStatus.getStatusText(statusCode) + " - " + response.readEntity(String.class)
           + ". Please contact your admin");
