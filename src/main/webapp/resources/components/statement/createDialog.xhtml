@@ -17,6 +17,11 @@
 <composite:implementation>
 	<div id="createStatementDialog" class="imj_modalDialogBox imj_moveItemsDialogBox"
 		style="display: none;">
+		<div class="imj_metadataSet">
+			<label class="imj_metadataLabel">#{lbl.metadata_create}<span
+				class="imj_noDisplay">: </span>
+			</label>			
+		</div>
 		<h:panelGroup id="statementForm">
 			<statement:form form="#{cc.attrs.component.statementForm}" render="#{cc.attrs.containerId}:dialog:statementForm" />
 		</h:panelGroup>
