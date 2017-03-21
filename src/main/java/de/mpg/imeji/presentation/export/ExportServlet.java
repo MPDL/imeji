@@ -29,6 +29,7 @@ import de.mpg.imeji.logic.export.ZIPExport;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.notification.NotificationUtils;
@@ -112,10 +113,12 @@ public class ExportServlet extends HttpServlet {
       throws UnprocessableError {
     final String query = req.getParameter("q");
     final String collectionId = req.getParameter("col");
-    if (query != null || collectionId != null) {
+    if (query != null || !StringHelper.isNullOrEmptyTrim(collectionId)) {
       return new ItemService()
-          .search(collectionId != null ? ObjectHelper.getURI(CollectionImeji.class, collectionId)
-              : null, SearchQueryParser.parseStringQuery(query), null, session.getUser(), -1, 0)
+          .search(
+              !StringHelper.isNullOrEmptyTrim(collectionId)
+                  ? ObjectHelper.getURI(CollectionImeji.class, collectionId) : null,
+              SearchQueryParser.parseStringQuery(query), null, session.getUser(), -1, 0)
           .getResults();
     } else {
       return session.getSelected();
