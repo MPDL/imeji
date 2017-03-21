@@ -9,9 +9,11 @@
                 xmlns:collection="http://java.sun.com/jsf/composite/components/collection">
 	
 	<ui:define name="actionsMenu">
-		<item:browseActionMenu id="actionItems" itemsBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'items' and empty SessionBean.selected}"/>
-		<collection:actionMenu id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and empty SessionBean.selected and paginatorListSessionBean.collection.status.name() != 'WITHDRAWN'}" />
+		<item:browseActionMenu id="actionItems" itemsBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'items'}"/>
+		<collection:actionMenu id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status.name() != 'WITHDRAWN'}" />
 		<item:selectedActionMenu id="actionSelectedItems" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}" />
+		<item:downloadMenu id="actionDownload" itemsBean="#{paginatorListSessionBean}" rendered="#{paginatorListSessionBean.totalNumberOfElements > 0}" />
+
 	</ui:define>
 	
     <!-- Main Content - Image tiled list - START -->
@@ -24,7 +26,8 @@
             	facetBean="#{paginatorListSessionBean}"  
             	numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
             	showSortMenu="true"
-            	showFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"/>
+            	showFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"
+            	rendered="#{paginatorListSessionBean.totalNumberOfElements > 0}"/>
             
 			<div id="itemsArea" class="itemsArea">
 				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>

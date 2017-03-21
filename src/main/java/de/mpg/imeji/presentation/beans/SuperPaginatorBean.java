@@ -78,7 +78,7 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
    * @version $Revision$ $LastChangedDate$
    */
   public enum PAGINATOR_TYPE {
-    ITEMS, COLLECTIONS, ALBUMS, ALBUM_ITEMS, COLLECTION_ITEMS, PRIVATE;
+    ITEMS, COLLECTIONS, COLLECTION_ITEMS, PRIVATE;
   }
 
   /**

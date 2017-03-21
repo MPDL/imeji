@@ -620,6 +620,9 @@ public class ElasticQueryFactory {
       q.should(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
           .lookupIndex(ElasticService.DATA_ALIAS).lookupId(group)
           .lookupType(ElasticTypes.usergroups.name()).lookupPath(role.field()));
+      q.should(QueryBuilders.termsLookupQuery(ElasticFields.FOLDER.field())
+          .lookupIndex(ElasticService.DATA_ALIAS).lookupId(group)
+          .lookupType(ElasticTypes.usergroups.name()).lookupPath(role.field()));
     }
     return q;
   }

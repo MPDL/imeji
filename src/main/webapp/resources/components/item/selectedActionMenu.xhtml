@@ -11,34 +11,31 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<h:form>
-			#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}
-			<small>
-			(<h:commandLink action="#{cc.attrs.itemsBean.selectNone}" id="lnkSelectNone" title="#{lbl.select_none}" value="clear" >
-				<f:ajax execute="@this" render=":ajaxWrapper :actionsMenuArea"/>
-			</h:commandLink>)</small>
-		</h:form>
-		<ui:fragment rendered="#{Auth.update}">
-			<a href="#{Navigation.applicationUrl}editselected" class="imj_menuButton imj_overlayMenu">
-				<span class="fa fa-tags"/> <span>#{lbl.describe_items}</span>
-			</a>
-			<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
-				<a href="#" class="imj_menuButton imj_overlayMenu"  onclick="openDialog('deleteSelectedItems');">
-					<span class="fa fa-trash"/> <span>#{lbl.delete_images}</span>
-				</a>
-			</ui:fragment>
-		</ui:fragment>
-		<a id="download" href="#{Navigation.applicationUrl}exportServlet?format=zip" class="imj_overlayMenu imj_menuButton" target="_blank">
-			<span class="fa fa-download"/> <span>#{lbl.download_files}</span>
-		</a>
-		<ui:fragment rendered="#{Auth.update}">
-			<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionSelectedMore">
+		<ui:fragment rendered="#{Auth.update and cc.attrs.itemsBean.totalNumberOfElements > 0}">
+			<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="menuItems">
+			
 				<div class="imj_menuHeader">
-	                  <span class="fa fa-bars"></span>
-	                  <span class="imj_headerEntry"> #{lbl.more}</span>
+	                  <span class="fa fa-files-o"/>
+	                  <span class="imj_headerEntry"> 
+	                  	#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}
+	                  </span>
+	                   <span class="fa fa-angle-down"/>
 				</div>
+				
 				<div class="imj_menuBody">
 					<ul class="imj_overlayMenuList">
+						<li>
+							<a href="#{Navigation.applicationUrl}editselected">
+								<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
+							</a>
+						</li>
+						<li>
+							<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
+								<a href="#"  onclick="openDialog('deleteSelectedItems');">
+									<span class="fa fa-trash"/> <span>#{lbl.delete}</span>
+								</a>
+							</ui:fragment>
+						</li>
 						<li>
 							<a href="#{Navigation.applicationUrl}edit/license" id="lnkSelectEditLicense">
 								<span class="fa fa-copyright"/> <span>#{lbl.edit_all_licenses}</span>
@@ -60,7 +57,6 @@
 									</h:commandLink>
 								</h:form>
 							</li>
-						
 						</ui:fragment>
 					</ul>
 				</div>

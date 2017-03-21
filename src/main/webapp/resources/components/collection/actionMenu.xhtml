@@ -13,109 +13,109 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{Auth.update}">
-			<button id="upload" class="imj_menuButton" onClick="openDialog('uploadDialog');">
-				#{lbl.upload}
-			</button >
-			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" class="imj_menuButton imj_menuButton">
-				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
-			</a>
-			<a href="#{Navigation.applicationUrl}editbatch?col=#{cc.attrs.collectionBean.id}" class="imj_menuButton imj_menuButton">
-				<span class="fa fa-tags"/> <span>#{lbl.describe_items}</span>
-			</a>
-			<ui:fragment rendered="#{Auth.admin}">
-				<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share" class="imj_menuButton imj_menuButton">
-					<span class="fa fa-users"/> <span>#{lbl.collection_share}</span>
-				</a>
-				<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="actionCollectionMore">
+			<h:commandButton id="upload" action="#{cc.attrs.collectionBean.setShowUpload(false)}" value="#{lbl.upload}" styleClass="imj_menuButton" onclick="openDialog('uploadDialog');">
+				<f:ajax/>
+			</h:commandButton>
+			<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="menuCollection">
+				<div class="imj_menuHeader">
+	                  <span class="fa fa-folder-o"/>
+	                  <span class="imj_headerEntry"> #{lbl.collection}</span>
+	                  <span class="fa fa-angle-down"/>
+				</div>
+				<div class="imj_menuBody">
+					<ul class="imj_overlayMenuList">
+						<li>
+							<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" >
+								<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
+							</a>
+						</li>
+						<ui:fragment rendered="#{Auth.admin}">
+							<li>
+								<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share">
+									<span class="fa fa-users"/> <span>#{lbl.share}</span>
+								</a>
+							</li>
+							<ui:fragment rendered="#{WorkflowBean.release(cc.attrs.collectionBean.collection)}">
+								<li>
+									<h:form>
+										<h:commandLink action="#{cc.attrs.collectionBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');">
+											<f:ajax render=":actionCollection:releaseCollection:confirmationDialogForm"/>
+											<span class="fa fa-globe"/> <span>#{lbl.release}</span>
+										</h:commandLink>
+									</h:form>
+								</li>
+							</ui:fragment>
+							<ui:fragment rendered="#{WorkflowBean.withdraw(cc.attrs.collectionBean.collection)}">
+								<li>
+									<h:outputLink value="#" onclick="openDialog('withdrawCollection');">
+										 <span class="fa fa-ban"/> <span>#{lbl.withdraw}</span>
+									</h:outputLink>
+								</li>
+							</ui:fragment>
+						</ui:fragment>
+						<ui:fragment rendered="#{Auth.delete and WorkflowBean.delete(cc.attrs.collectionBean.collection)}">
+							<li>
+								<h:outputLink value="#" onclick="openDialog('deleteCollection');">
+									 <span class="fa fa-trash"/> <span>#{lbl.delete}</span>
+								</h:outputLink>
+							</li>
+						</ui:fragment>
+						<ui:fragment rendered ="#{Auth.admin and WorkflowBean.createDOI(cc.attrs.collectionBean.collection)}">
+							<li>
+								<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{Auth.sysAdmin and cc.attrs.hasDoi}">
+									 <span class="fa fa-link"/> <span>#{lbl.change_doi}</span>
+								</h:outputLink>
+								<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog(#{Auth.sysAdmin ? '\'createDOI\'' : '\'getDOIDialog\''});" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and !cc.attrs.hasDoi}">
+									 <span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
+								</h:outputLink>
+								<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Auth.sysAdmin and empty Configuration.doiServiceUrl and !cc.attrs.hasDoi}">
+									<span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
+								</h:outputLink>
+							</li>
+						</ui:fragment>
+					</ul>
+				</div>
+			</div>
+			<ui:fragment rendered="#{empty SessionBean.selected and cc.attrs.collectionBean.totalNumberOfElements > 0}">
+				<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="menuItems">
 					<div class="imj_menuHeader">
-		                  <span class="fa fa-bars"/>
-		                  <span class="imj_headerEntry"> #{lbl.more}</span>
+		                  <span class="fa fa-files-o"/>
+		                  <span class="imj_headerEntry">#{cc.attrs.collectionBean.totalNumberOfElements} #{lbl.items}</span>
+		                   <span class="fa fa-angle-down"/>
 					</div>
 					<div class="imj_menuBody">
 						<ul class="imj_overlayMenuList">
 							<h:form>
 								<li>
-									
+									<a href="#{Navigation.applicationUrl}editbatch?col=#{cc.attrs.collectionBean.id}">
+										<span class="fa fa-pencil"/> <span>#{lbl.edit_all}</span>
+									</a>
 								</li>
 								<li>
 									<a href="#{Navigation.applicationUrl}edit/license?collection=#{cc.attrs.collectionBean.id}">
 										<span class="fa fa-copyright"/> <span>#{lbl.edit_all_licenses}</span>
 									</a>
 								</li>
-								<ui:fragment rendered="#{WorkflowBean.release(cc.attrs.collectionBean.collection)}">
+								<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.collectionBean.collection)}">
 									<li>
-										<h:commandLink action="#{cc.attrs.collectionBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');">
-											<f:ajax render=":actionCollection:releaseCollection:confirmationDialogForm"/>
-											<span class="fa fa-globe"/> <span>#{lbl.collection_release}</span>
-										</h:commandLink>
-									</li>
-								</ui:fragment>
-								<ui:fragment rendered="#{WorkflowBean.withdraw(cc.attrs.collectionBean.collection)}">
-									<li>
-										<h:outputLink value="#" onclick="openDialog('withdrawCollection');">
-											 <span class="fa fa-ban"/> <span>#{lbl.collection_withdraw}</span>
+										<h:outputLink value="#" onclick="openDialog('deleteItems');">
+											 <span class="fa fa-trash"/> <span>#{lbl.delete_all}</span>
 										</h:outputLink>
 									</li>
 								</ui:fragment>
-								<ui:fragment rendered="#{Auth.delete and WorkflowBean.delete(cc.attrs.collectionBean.collection)}">
-									<li>
-										<h:outputLink value="#" onclick="openDialog('deleteCollection');">
-											 <span class="fa fa-trash"/> <span>#{lbl.collection_delete}</span>
-										</h:outputLink>
-									</li>
-								</ui:fragment>
-								<ui:fragment rendered ="#{Auth.admin and WorkflowBean.createDOI(cc.attrs.collectionBean.collection)}">
-									<li>
-										<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{Auth.sysAdmin and cc.attrs.hasDoi}">
-											 <span class="fa fa-link"/> <span>#{lbl.change_doi}</span>
-										</h:outputLink>
-										<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog(#{Auth.sysAdmin ? '\'createDOI\'' : '\'getDOIDialog\''});" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and !cc.attrs.hasDoi}">
-											 <span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
-										</h:outputLink>
-										<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Auth.sysAdmin and empty Configuration.doiServiceUrl and !cc.attrs.hasDoi}">
-											<span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
-										</h:outputLink>
-									</li>
-								</ui:fragment>
+								<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(cc.attrs.collectionBean.collection)}">
 								<li>
-									<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}" target="_blank">
-										<span class="fa fa-download"/> <span>#{lbl.collection_download}</span>
-									</a>
+									<h:outputLink value="#" onclick="openDialog('discardItems');">
+										 <span class="fa fa-ban"/> <span>#{lbl.withdraw_all}</span>
+									</h:outputLink>
 								</li>
-								<ui:fragment rendered="#{not empty cc.attrs.collectionBean.query}">
-									<li>
-										<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}&amp;q=#{cc.attrs.collectionBean.query}" target="_blank">
-											<span class="fa fa-download"/> <span>#{lbl.download_search}</span>
-										</a>
-									</li>
-								</ui:fragment>								
+								</ui:fragment>
 							</h:form>
 						</ul>
 					</div>
 				</div>
 			</ui:fragment>
-			<ui:fragment rendered="#{!Auth.admin and Auth.update}">
-				<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}" target="_blank" class="imj_overlayMenu imj_menuButton">
-					<span class="fa fa-download"/> <span>#{lbl.collection_download}</span>
-				</a>
-				<ui:fragment rendered="#{not empty cc.attrs.collectionBean.query}">
-					<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}&amp;q=#{cc.attrs.collectionBean.query}" target="_blank" class="imj_overlayMenu imj_menuButton">
-						<span class="fa fa-download"/> <span>#{lbl.download_search}</span>
-					</a>
-				</ui:fragment>
-			</ui:fragment>	
 		</ui:fragment>
-		<ui:fragment rendered="#{!Auth.update and Auth.read}">
-			<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}" target="_blank" class="imj_overlayMenu imj_menuButton">
-				<span class="fa fa-download"/> <span> #{lbl.collection_download}</span>
-			</a>
-			<ui:fragment rendered="#{not empty cc.attrs.collectionBean.query}">
-				<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{cc.attrs.collectionBean.id}&amp;q=#{cc.attrs.collectionBean.query}" target="_blank" class="imj_overlayMenu imj_menuButton">
-					<span class="fa fa-download"/> <span> #{lbl.download_search}</span>
-				</a>
-			</ui:fragment>
-		</ui:fragment>
-	
 		<dialog:confirmationDialog submitAction="release" id="releaseCollection"
 			bean="#{cc.attrs.collectionBean.actionMenu}"
 			confirmationText="#{msg.confirmation_release_collection}"
@@ -126,6 +126,10 @@
 			bean="#{cc.attrs.collectionBean.actionMenu}"
 			confirmationText="#{msg.confirmation_delete_collection}?"
 			submitLabel="#{lbl.delete}" dialogId="deleteCollection" />
+		<dialog:confirmationDialog submitAction="deleteAll"
+			bean="#{cc.attrs.collectionBean}"
+			confirmationText="#{msg.confirmation_delete_items}?"
+			submitLabel="#{lbl.delete}" dialogId="deleteItems" />
 		<dialog:confirmationReasonedDialog submitAction="withdraw"
 			bean="#{cc.attrs.collectionBean.actionMenu}"
 			confirmationText="#{msg.confirmation_withdraw_collection}"

@@ -51,23 +51,25 @@ public class SelectStatementComponent implements Serializable {
   }
 
   public List<String> searchForIndex(List<SelectItem> statementMenu) {
-    if (StringHelper.isNullOrEmptyTrim(index)) {
-      if (StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getStatements())) {
-        return statementMenu.stream().map(i -> i.getValue().toString())
-            .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(3)
-            .collect(Collectors.toList());
-      }
+    if (!StringHelper.isNullOrEmptyTrim(index)) {
+      return statementMenu.stream().map(i -> i.getValue().toString())
+          .filter(s -> s.toLowerCase().startsWith(index.toLowerCase()))
+          .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(5)
+          .collect(Collectors.toList());
+    } else {
       Set<String> defaultSet =
           new HashSet<>(Arrays.asList(Imeji.CONFIG.getStatements().split(",")));
-      return statementMenu.stream().map(i -> i.getValue().toString())
+      List<String> indexes = statementMenu.stream().map(i -> i.getValue().toString())
           .filter(s -> defaultSet.contains(s))
           .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(5)
           .collect(Collectors.toList());
+      if (indexes.isEmpty()) {
+        indexes = statementMenu.stream().map(i -> i.getValue().toString())
+            .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(3)
+            .collect(Collectors.toList());
+      }
+      return indexes;
     }
-    return statementMenu.stream().map(i -> i.getValue().toString())
-        .filter(s -> s.toLowerCase().startsWith(index.toLowerCase()))
-        .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(5)
-        .collect(Collectors.toList());
   }
 
   /**

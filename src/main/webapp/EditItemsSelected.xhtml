@@ -205,8 +205,8 @@
 									varStatus="status">
 									<ui:fragment
 										rendered="#{EditItemsSelectedBean.displayedColumns.contains(cell.statement.index)}">
-										<td class="column_#{status.index}"><h:panelGroup
-												id="cellInput">
+										<td class="column_#{status.index}">
+											<h:panelGroup id="cellInput">
 												<ui:repeat id="value" value="#{cell.inputs}" var="input" varstatus="inputStatus">
 													<div class="edit_selected_table_button">
 														<md:input id="input" metadataInputComponent="#{input}" compact="true"/>
@@ -219,17 +219,17 @@
 														</h:commandLink>
 													</div>
 												</ui:repeat>
-												
+												<div class="edit_selected_table_button">
+													<h:commandLink type="submit" styleClass="fa fa-plus"
+														action="#{cell.addValue}" value=""
+														title="#{lbl.add_metadata}">
+														<f:ajax
+															execute=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput"
+															render=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput" />
+													</h:commandLink>
+												</div>
 											</h:panelGroup>
-											<div class="edit_selected_table_button">
-												<h:commandLink type="submit" styleClass="fa fa-plus"
-													action="#{cell.addValue}" value=""
-													title="#{lbl.add_metadata}">
-													<f:ajax
-														execute=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput"
-														render=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput" />
-												</h:commandLink>
-											</div></td>
+										</td>
 									</ui:fragment>
 								</ui:repeat>
 							</tr>

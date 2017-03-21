@@ -123,7 +123,6 @@ public class InternationalizationBean implements Serializable {
    * @return
    */
   public static boolean isSupported(String langString) {
-
     for (int i = 0; i < SUPPORTED_LANGUAGES.length; i++) {
       if (SUPPORTED_LANGUAGES[i].equals(langString)) {
         return true;

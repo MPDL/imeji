@@ -14,10 +14,5 @@
 				#{lbl.upload}
 			</button >
 		</form>
-		<ui:fragment rendered="#{not empty cc.attrs.itemsBean.query}">
-			<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;q=#{cc.attrs.itemsBean.query}" target="_blank" class="imj_menuButton">
-				<span class="fa fa-download"/> <span>#{lbl.download_search}</span>
-			</a>
-		</ui:fragment>
 	</composite:implementation>
 </html>
