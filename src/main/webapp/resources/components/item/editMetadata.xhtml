@@ -34,13 +34,19 @@
 		</div>
 		<ui:repeat id="list" var="entry" value="#{cc.attrs.formBean.entries}"  varStatus="position">
 			<ui:fragment rendered="#{empty entry.input}">
-				<span class="fa fa-plus-square-o"> #{lbl.add_metadata}</span>
-				<md:select id="select" bean="#{entry}" submitAction="initInput"
-					component="#{entry.select}"
-					menu="#{cc.attrs.formBean.statementMenu}"
-					render=":editor:editItem:list:#{position.index}:value" 
-					containerId=":editor:editItem:list:#{position.index}:select"
-					resetAction="resetInput"/>
+				<div class="imj_metadataSet">
+					<div class="imj_metadataLabel">
+					</div>
+					<div class="imj_metadataValue">
+					<md:select id="select" bean="#{entry}" submitAction="initInput"
+						component="#{entry.select}"
+						menu="#{cc.attrs.formBean.statementMenu}"
+						render=":editor:editItem:list:#{position.index}:value" 
+						containerId=":editor:editItem:list:#{position.index}:select"
+						resetAction="resetInput"
+						title=" #{lbl.add_metadata} "/>
+					</div>
+				</div>
 			</ui:fragment>
 			<div class="imj_metadataSet">
 				<div class="imj_metadataLabel">

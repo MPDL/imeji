@@ -44,13 +44,20 @@
 								</h:form>
 							</li>
 						</ui:fragment>
-						<li>
-							<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
+						<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
+							<li>
 								<a href="#"  onclick="openDialog('deleteSelectedItems');">
 									<span class="fa fa-trash"/> <span>#{lbl.delete}</span>
 								</a>
-							</ui:fragment>
-						</li>
+							</li>
+						</ui:fragment>
+						<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(cc.attrs.itemsBean.collection)}">
+							<li>
+								<a href="#" onclick="openDialog('withdrawSelectedItems');">
+									<span class="fa fa-ban"/> <span>#{lbl.items_withdraw}</span>
+								</a>
+							</li>
+						</ui:fragment>
 					</ul>
 				</div>
 			</div>

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -152,8 +153,7 @@ public class ShareInput implements Serializable {
           unknownEmails.add(value);
         }
       } else {
-        invalidEntries.add(Imeji.RESOURCE_BUNDLE.getMessage("error_share_invalid_email", locale)
-            .replace("XXX_VALUE_XXX", value));
+        invalidEntries.add(value);
       }
     }
   }
@@ -192,6 +192,10 @@ public class ShareInput implements Serializable {
    */
   public List<String> getInvalidEntries() {
     return invalidEntries;
+  }
+
+  public String getInvalidEntriesAsString() {
+    return invalidEntries.stream().collect(Collectors.joining(", "));
   }
 
   /**

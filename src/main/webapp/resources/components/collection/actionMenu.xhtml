@@ -103,13 +103,6 @@
 										</h:outputLink>
 									</li>
 								</ui:fragment>
-								<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(cc.attrs.collectionBean.collection)}">
-								<li>
-									<h:outputLink value="#" onclick="openDialog('discardItems');">
-										 <span class="fa fa-ban"/> <span>#{lbl.withdraw_all}</span>
-									</h:outputLink>
-								</li>
-								</ui:fragment>
 							</h:form>
 						</ul>
 					</div>

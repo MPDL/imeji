@@ -93,7 +93,7 @@
 		</div>
 		
 		<!-- DOI -->
-		<h:panelGroup styleClass="imj_infodataSet" rendered="#{cc.attrs.bean.type == 'COLLECTION' and cc.attrs.bean.collection.status == 'RELEASED' and cc.attrs.bean.collection.doi != ''}">
+		<h:panelGroup styleClass="imj_infodataSet" rendered="#{cc.attrs.bean.collection.doi != ''}">
 			<span class="imj_infodataLabel">
 				<h:outputText value="#{lbl.doi}"/>
 				<span class="imj_invisible">: </span>
