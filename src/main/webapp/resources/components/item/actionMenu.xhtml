@@ -10,18 +10,12 @@
 	</composite:interface>
 	
 	<composite:implementation>
-			<h:form>
-				<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" styleClass="imj_menuButton imj_overlayMenu" onclick=" window.location.hash = '#itemMetadata'; startLoader();">
-					 <span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
-					 <f:ajax render=":metadata"/>
-				</h:commandLink>
-				<h:outputLink value="#" onclick="openDialog('deleteItem');" styleClass="imj_menuButton imj_overlayMenu"  rendered="#{Auth.delete and WorkflowBean.delete(itemBean.item)}">
-					<span class="fa fa-trash"/> <span>#{lbl.delete}</span>
-				</h:outputLink>
-				<h:outputLink value="#" onclick="openDialog('withdrawItem');" styleClass="imj_menuButton imj_overlayMenu"  rendered="#{Auth.delete and WorkflowBean.withdraw(itemBean.item)}">
-					<span class="fa fa-ban"/> <span>#{lbl.withdraw}</span>
-				</h:outputLink>
-			</h:form>
+		<h:form>
+			<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" styleClass="imj_menuButton imj_overlayMenu" onclick=" window.location.hash = '#itemMetadata'; startLoader();">
+				 <span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
+				 <f:ajax render=":metadata"/>
+			</h:commandLink>
+		</h:form>
 		<a href="#{Navigation.applicationUrl}exportServlet?format=file&amp;id=#{cc.attrs.itemBean.item.id}" class="imj_menuButton imj_overlayMenu" target="_blank">
 			<span class="fa fa-download"/> <span>#{lbl.download}</span>
 		</a>
@@ -33,6 +27,12 @@
 				</h:commandLink>
 			</h:form>
 		</ui:fragment>
+		<h:outputLink value="#" onclick="openDialog('deleteItem');" styleClass="imj_menuButton imj_overlayMenu"  rendered="#{Auth.delete and WorkflowBean.delete(itemBean.item)}">
+					<span class="fa fa-trash"/> <span>#{lbl.delete}</span>
+		</h:outputLink>
+		<h:outputLink value="#" onclick="openDialog('withdrawItem');" styleClass="imj_menuButton imj_overlayMenu"  rendered="#{Auth.delete and WorkflowBean.withdraw(itemBean.item)}">
+			<span class="fa fa-ban"/> <span>#{lbl.withdraw}</span>
+		</h:outputLink>
 		<item:move id="moveItemsComponent" itemId="#{cc.attrs.itemBean.item.id.toString()}" colId="#{cc.attrs.itemBean.item.collection.toString()}" parentId=":actionItem:moveItemsComponent" hasLicense="#{not empty cc.attrs.itemBean.image.licenses}"/>
 		<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteItem" />
 		<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawItem"/>	

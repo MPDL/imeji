@@ -69,39 +69,12 @@
 		<div class="loader show" />
 		<h:form id="editSelectedForm" prependId="false">
 			<div class="editSelectedWrapper">
-				<h:panelGroup layout="block" id="imj_pageMessageAreaFullScreen">
-		           <ui:repeat var="message" value="#{MessagesBean.messages}">
-		           	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
-		           		<span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display='none';">x</span>
-		           		#{message.detail}
-		           	</div>
-		           </ui:repeat>
-		        </h:panelGroup>
 				<div class="editSelectedHeader">
-					<h:outputLink value="#{EditItemsSelectedBean.backUrl}">#{lbl.back_to_pictures} </h:outputLink>
+					<a href="#{EditItemsSelectedBean.backUrl}" class="imj_resetButton" onclick="startLoader();">#{lbl.cancel}</a>
 					<h:commandLink type="submit" styleClass="imj_submitButton"
 						action="#{EditItemsSelectedBean.save}" value="#{lbl.save}"
 						onclick="startLoader();">
-						<f:ajax execute="@form" render="@form" />
 					</h:commandLink>
-				</div>
-				<div class="imj_searchQueryDisplay">
-					<span class="fa fa-plus"></span> #{lbl.add_column} :
-					<md:select id="selectStatement"
-						component="#{EditItemsSelectedBean.newStatement}"
-						menu="#{EditItemsSelectedBean.filteredStatementMenu}"
-						render=":selectMetadataWrapper" bean="#{EditItemsSelectedBean}"
-						submitAction="addColumn" containerId=":selectStatement"
-						resetAction="resetNewStatement" compact="false"/>
-
-					<h:panelGroup id="selectMetadataWrapper">
-						<h:commandLink id="addColumn"
-							rendered="#{not empty EditItemsSelectedBean.newStatement.statement}"
-							action="#{EditItemsSelectedBean.addColumn}" value=" #{lbl.add}"
-							title="#{lbl.add}" onclick="startLoader();">
-							<f:ajax execute="@form" render="@form" />
-						</h:commandLink>
-					</h:panelGroup>
 				</div>
 				<div class="editSelectedHeader">
 					#{lbl.hide_or_show_filter_columns}
@@ -119,7 +92,14 @@
 				<div class="edit_selected_table_wrapper">
 					<table class="edit_selected_table">
 						<tr>
-							<th>#{lbl.filename}</th>
+							<th>
+								<md:select id="selectStatement"
+									component="#{EditItemsSelectedBean.newStatement}"
+									menu="#{EditItemsSelectedBean.filteredStatementMenu}"
+									render=":selectMetadataWrapper" bean="#{EditItemsSelectedBean}"
+									submitAction="addColumn" containerId=":selectStatement"
+									resetAction="resetNewStatement" compact="false" title="#{lbl.add_column}"/>
+							</th>
 							<ui:repeat id="list" value="#{EditItemsSelectedBean.headers}"
 								var="head" varStatus="status">
 
@@ -164,7 +144,7 @@
 													<h:commandLink
 														styleClass="fa fa-cog edit_selected_table_icon"
 														action="#{EditItemsSelectedBean.setEditedColumn(head.statement.index)}"
-														value="" title="#{lbl.edit_metadata_name}">
+														value="" title="#{lbl.change_column_name}">
 														<f:ajax execute="@this"
 															render=":list:#{status.index}:head" />
 													</h:commandLink>
@@ -210,7 +190,7 @@
 												<ui:repeat id="value" value="#{cell.inputs}" var="input" varstatus="inputStatus">
 													<div class="edit_selected_table_button">
 														<md:input id="input" metadataInputComponent="#{input}" compact="true"/>
-														<h:commandLink type="submit" styleClass="float:left; fa fa-times"
+														<h:commandLink type="submit" styleClass="fa fa-times"
 															action="#{cell.removeValue(inputStatus.index)}" value=""
 															title="#{lbl.remove_metadata}">
 															<f:ajax

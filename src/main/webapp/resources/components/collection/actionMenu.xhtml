@@ -45,6 +45,19 @@
 									</h:form>
 								</li>
 							</ui:fragment>
+							<ui:fragment rendered ="#{Auth.admin and WorkflowBean.createDOI(cc.attrs.collectionBean.collection)}">
+								<li>
+									<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{Auth.sysAdmin and cc.attrs.hasDoi}">
+										 <span class="fa fa-link"/> <span>#{lbl.change_doi}</span>
+									</h:outputLink>
+									<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog(#{Auth.sysAdmin ? '\'createDOI\'' : '\'getDOIDialog\''});" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and !cc.attrs.hasDoi}">
+										 <span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
+									</h:outputLink>
+									<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Auth.sysAdmin and empty Configuration.doiServiceUrl and !cc.attrs.hasDoi}">
+										<span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
+									</h:outputLink>
+								</li>
+							</ui:fragment>
 							<ui:fragment rendered="#{WorkflowBean.withdraw(cc.attrs.collectionBean.collection)}">
 								<li>
 									<h:outputLink value="#" onclick="openDialog('withdrawCollection');">
@@ -57,19 +70,6 @@
 							<li>
 								<h:outputLink value="#" onclick="openDialog('deleteCollection');">
 									 <span class="fa fa-trash"/> <span>#{lbl.delete}</span>
-								</h:outputLink>
-							</li>
-						</ui:fragment>
-						<ui:fragment rendered ="#{Auth.admin and WorkflowBean.createDOI(cc.attrs.collectionBean.collection)}">
-							<li>
-								<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{Auth.sysAdmin and cc.attrs.hasDoi}">
-									 <span class="fa fa-link"/> <span>#{lbl.change_doi}</span>
-								</h:outputLink>
-								<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog(#{Auth.sysAdmin ? '\'createDOI\'' : '\'getDOIDialog\''});" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and !cc.attrs.hasDoi}">
-									 <span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
-								</h:outputLink>
-								<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Auth.sysAdmin and empty Configuration.doiServiceUrl and !cc.attrs.hasDoi}">
-									<span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
 								</h:outputLink>
 							</li>
 						</ui:fragment>

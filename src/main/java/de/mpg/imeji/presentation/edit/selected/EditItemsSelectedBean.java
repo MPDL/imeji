@@ -2,6 +2,7 @@ package de.mpg.imeji.presentation.edit.selected;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,16 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   private void initRows(List<Item> items) {
     for (final Item item : items) {
       rows.add(new RowComponent(item, statementMap, headers));
+    }
+  }
+
+  @Override
+  public void save() {
+    super.save();
+    try {
+      redirect(getPreviousPage().getCompleteUrl());
+    } catch (IOException e) {
+      LOGGER.error("Error redirect after save", e);
     }
   }
 

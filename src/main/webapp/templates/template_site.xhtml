@@ -17,8 +17,10 @@
        		#{Auth.init()}
         	<!-- NEW STYLE - TO BE ADDED TO CSS -->
              <style>
-             		.imj_cancelButton, .imj_submitButton { 
+             		.imj_cancelButton, .imj_resetButton, .imj_submitButton { 
 					    margin: 0 1em 0 0 !important;
+					    display: inline !important;
+					    padding: 5px 20px 5px 20px !important;
 					}
 					.imj_submitPanel .imj_cancelButton, .imj_submitPanel .imj_submitButton { 
 					    margin: 0 1em 0 1em !important;
@@ -38,6 +40,7 @@
 					.edit_selected_table_wrapper{
 						width: 100%;
 						overflow: auto;
+						min-height: 50em;
 					}
 					.edit_selected_table{
 						border-collapse: collapse;
@@ -51,22 +54,25 @@
 						margin: 2px;
 					}
 					.edit_selected_table textarea, .edit_selected_table input[type]:not(.combobox) {
-					   	padding:0;
 					   	borders: 1px;
 					   	margin-bottom: 0.5em;
-					   	max-width: 92% !important;
+					   	max-width: 70% !important;
 					}
 					.edit_selected_table td{
 						vertical-align: middle;
 						border: 1px solid #444444; 
-						max-width: 15.6em;
-						min-width: 15.6em;
-						padding:3px;
+						max-width: 12em;
+						min-width: 12em;
+						padding:0 1em;
+						height: 4em;
 					}
 					.edit_selected_table_button{
 						width: 100%;
 						text-align: center;
 						float: left;
+					}
+					.edit_selected_table_button label{
+						text-align: left;
 					}
 					.edit_selected_table th{
 						vertical-align: middle;
@@ -75,6 +81,7 @@
 						background-color: #444444;
 						max-width: 15.6em;
 						min-width: 15.6em;
+						overflow-wrap: break-word;
 					}
 					.edit_selected_table_icon{
 						margin-left: 0.5em;
@@ -298,13 +305,16 @@
 					.imj_mediaWithdrawn {
 					    text-align: left;
 					}
+					.metadataSelector{
+						text-align: left;
+					}
 					.selectMd {
 						position: relative;
 						display: inline-block;
 						width: 1
 					}
 					.selectMd input {
-						margin:  6px 8px;
+						//margin:  6px 8px;
 					}
 					.selectMd button {
 						margin: 0;
