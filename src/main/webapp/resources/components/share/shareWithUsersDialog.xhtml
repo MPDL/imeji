@@ -42,9 +42,10 @@
 					</div>
 				</ui:fragment>
 				<h:panelGroup  styleClass="imj_pageMessageArea" id="unknownEmails" rendered="#{!empty cc.attrs.bean.input.unknownEmails}">
-					<div class="imj_messageTitleInfo">#{lbl.share_confirm_invitation_title}</div>		
+					<div class="imj_messageTitleInfo">#{lbl.share_confirm_invitation_title}</div>
+					<div class="imj_messageTitleInfo">#{cc.attrs.bean.labelConfirmInvitation}</div>
 					<ul class="imj_messageList">
-						<li class="imj_messageInfo"><br/>#{cc.attrs.bean.labelConfirmInvitation}<br/></li>
+						
 						<ui:repeat var="email" value="#{cc.attrs.bean.input.unknownEmails}" varStatus="status">
 							<li>
 								<h:outputText value="#{email} "/>

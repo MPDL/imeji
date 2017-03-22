@@ -56,7 +56,8 @@ public class ShareInput implements Serializable {
     parseInput();
     if (invalidEntries.isEmpty()) {
       shareWithValidEmails();
-      return true;
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_share", locale));
+      return this.unknownEmails.isEmpty();
     }
     return false;
   }
@@ -77,6 +78,7 @@ public class ShareInput implements Serializable {
         LOGGER.error("Error sending invitation:", e);
       }
     }
+    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_share", locale));
   }
 
   /**

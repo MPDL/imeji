@@ -104,7 +104,6 @@ public class ShareBean extends SuperBean implements Serializable {
     pageUrl = PrettyContext.getCurrentInstance().getRequestURL().toString()
         + PrettyContext.getCurrentInstance().getRequestQueryString();
     pageUrl = pageUrl.split("[&\\?]group=")[0];
-
   }
 
   public void selectGroup(String id) {
@@ -208,6 +207,7 @@ public class ShareBean extends SuperBean implements Serializable {
     if (groupListItem.update() && sendEmail) {
       sendEmailForShare(groupListItem, title);
     }
+    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_share", getLocale()));
     reloadPage();
   }
 

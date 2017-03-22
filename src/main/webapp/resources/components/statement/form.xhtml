@@ -11,6 +11,7 @@
 	<composite:attribute name="form" required="true" />
 	<composite:attribute name="render" required="true" />
 	<composite:attribute name="used" default="false" type="java.lang.Boolean" />
+	<composite:attribute name="compact" default="false" type="java.lang.Boolean" />
 </composite:interface>
 
 <composite:implementation>
@@ -33,13 +34,15 @@
 				<f:ajax render="#{cc.attrs.render}" execute="#{cc.attrs.render}" />
 			</h:selectOneMenu>
 		</div>
-		<div class="imj_metadataSet">
-			<label class="imj_metadataLabel"> #{lbl.namespace}<span
-				class="imj_noDisplay">: </span>
-			</label>
-			<h:inputText id="inputStatementNamespace"
-				styleClass="imj_metadataValue" value="#{cc.attrs.form.namespace}" />
-		</div>
+		<ui:fragment rendered="#{!cc.attrs.compact}">
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel"> #{lbl.namespace}<span
+					class="imj_noDisplay">: </span>
+				</label>
+				<h:inputText id="inputStatementNamespace"
+					styleClass="imj_metadataValue" value="#{cc.attrs.form.namespace}" />
+			</div>
+		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.form.type == 'TEXT'}">
 			<div class="imj_metadataSet">
 				<label class="imj_metadataLabel"> #{lbl.predefined_values}<span
