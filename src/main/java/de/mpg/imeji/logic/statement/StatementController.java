@@ -27,7 +27,7 @@ class StatementController extends ImejiControllerAbstract<Statement> {
 
   @Override
   public List<Statement> createBatch(List<Statement> l, User user) throws ImejiException {
-    WRITER.create(toObjectList(filterDuplicate(l)), user);
+    WRITER.create(toObjectList(filterDuplicate(l)), Imeji.adminUser);
     return l;
   }
 

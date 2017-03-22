@@ -129,17 +129,36 @@
 															onclick="startLoader();">
 															<f:ajax execute="@form" render="@form" />
 														</h:commandLink>
+														<h:commandLink
+															styleClass="edit_selected_table_icon"
+															action="#{EditItemsSelectedBean.setEditedColumn('')}"
+															value="#{lbl.cancel}" title="#{lbl.change_column_name}">
+															<f:ajax execute="@this"
+																render=":list:#{status.index}:head" />
+													</h:commandLink>
 														<span id="changeColumnError"></span>
 													</div>
 												</h:panelGroup>
 												<ui:fragment
 													rendered="#{empty head.input and EditItemsSelectedBean.editedColumn != head.statement.index}">
 													<h:commandLink
-														styleClass="fa fa-magic edit_selected_table_icon"
+														styleClass="fa fa-pencil-square-o edit_selected_table_icon"
 														action="#{head.initInput}" value=""
 														title="#{lbl.edit_all}">
 														<f:ajax execute="@this"
 															render=":list:#{status.index}:head" />
+													</h:commandLink>
+													<h:commandLink
+														styleClass="fa fa-times edit_selected_table_icon"
+														action="#{EditItemsSelectedBean.clearColumn(status.index)}"
+														value="" title="#{lbl.clear_all_values}" onclick="startLoader();">
+														<f:ajax execute="@form" render="@form" />
+													</h:commandLink>
+													<h:commandLink
+														styleClass="fa fa-trash edit_selected_table_icon"
+														action="#{EditItemsSelectedBean.removeColumn(head.statement.index)}"
+														value="" title="#{lbl.remove_column}" onclick="startLoader();">
+														<f:ajax execute="@form" render="@form" />
 													</h:commandLink>
 													<h:commandLink
 														styleClass="fa fa-cog edit_selected_table_icon"
@@ -148,29 +167,24 @@
 														<f:ajax execute="@this"
 															render=":list:#{status.index}:head" />
 													</h:commandLink>
-													<h:commandLink
-														styleClass="fa fa-times edit_selected_table_icon"
-														action="#{EditItemsSelectedBean.clearColumn(status.index)}"
-														value="" title="#{lbl.clear}" onclick="startLoader();">
-														<f:ajax execute="@form" render="@form" />
-													</h:commandLink>
-													<h:commandLink
-														styleClass="fa fa-trash edit_selected_table_icon"
-														action="#{EditItemsSelectedBean.removeColumn(head.statement.index)}"
-														value="" title="#{lbl.remove}" onclick="startLoader();">
-														<f:ajax execute="@form" render="@form" />
-													</h:commandLink>
 												</ui:fragment>
 											</div>
 											<h:panelGroup layout="block"
 												class="edit_selected_table_button"
 												rendered="#{!empty head.input}">
-												<h:commandLink
+												<h:commandLink 
 													action="#{EditItemsSelectedBean.addMetadataToColumn(status.index)}"
 													value="#{lbl.add_to_all}" title="#{lbl.add_to_all}"
 													onclick="startLoader();">
 													<f:ajax execute="@form" render="@form" />
 												</h:commandLink>
+												<h:commandLink
+														style="margin-left:1em;"
+														action="#{head.setInput(null)}" value="#{lbl.cancel}"
+														title="#{lbl.cancel}">
+														<f:ajax execute="@this"
+															render=":list:#{status.index}:head" />
+													</h:commandLink>
 											</h:panelGroup>
 										</h:panelGroup></th>
 								</ui:fragment>
