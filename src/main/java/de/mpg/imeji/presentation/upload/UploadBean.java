@@ -6,13 +6,16 @@ import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELA
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.authorization.Authorization;
+import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchPair;
@@ -25,6 +28,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class UploadBean extends SuperBean {
   private static final long serialVersionUID = 4632180647351059603L;
+  private Logger LOGGER = Logger.getLogger(UploadBean.class);
   private List<CollectionImeji> collections = new ArrayList<>();
   private String query = "";
 
@@ -32,12 +36,22 @@ public class UploadBean extends SuperBean {
 
   }
 
-  @PostConstruct
   public void init() {
     try {
-      filterCollections();
+      if (getSessionUser() != null) {
+        filterCollections();
+        if (collections.isEmpty()
+            && SecurityUtil.authorization().hasCreateCollectionGrant(getSessionUser())) {
+          redirect(getNavigation().getCreateCollectionUrl() + "?showUpload=1");
+        } else if (collections.isEmpty()
+            && !SecurityUtil.authorization().hasCreateCollectionGrant(getSessionUser())) {
+          BeanHelper
+              .error(Imeji.RESOURCE_BUNDLE.getMessage("cannot_create_collection", getLocale()));
+        }
+      }
     } catch (Exception e) {
       BeanHelper.error("Error initializing page: " + e.getMessage());
+      LOGGER.error("Error initializing upload page", e);
     }
   }
 

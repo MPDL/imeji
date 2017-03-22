@@ -211,9 +211,15 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   /**
+   * If true, set to false to avoid to show the upload dialog on each ajax request
+   * 
    * @return the showUpload
    */
   public boolean isShowUpload() {
+    if (showUpload) {
+      showUpload = false;
+      return true;
+    }
     return showUpload;
   }
 

@@ -9,18 +9,26 @@
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	<ui:param name="headline" value="#{lbl.upload_in}..." />
+	 
+	 <ui:define name="init">
+	 	<h:outputText value="#{UploadBean.init()}"/>
+	 </ui:define>
+	 
 	 <ui:define name="mainContent">
+	 	
 	 	<ui:fragment rendered="#{!Auth.loggedIn}">
 	 		<ui:include src="./include/LoginFormular.xhtml" />
 	 	</ui:fragment>
 	 	<ui:fragment rendered="#{Auth.loggedIn}">
-			<form action="#{Navigation.createCollectionUrl}?showUpload=1">
-	 			<input type="text" name="showUpload" value="1" style="display:none;"/>
-				<button id="createCollection" class="imj_menuButton">
-					#{lbl.new_collection}
-				</button >
-			</form>
-			 <span class="imj_menuButton">#{lbl.or_big}</span>
+	 		<ui:fragment rendered="#{Auth.createCollection}">
+				<form action="#{Navigation.createCollectionUrl}?showUpload=1">
+		 			<input type="text" name="showUpload" value="1" style="display:none;"/>
+					<button id="createCollection" class="imj_menuButton">
+						#{lbl.new_collection}
+					</button >
+				</form>
+				<span class="imj_menuButton">#{lbl.or_big}</span>
+			</ui:fragment>
 			<div class="selectMd">
 				<button onclick="$('.selectMetadata-content').show(); return false;" class="imj_submitButton">#{lbl.select_collection}</button>
 					<div class="selectMetadata-content">

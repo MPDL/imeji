@@ -8,10 +8,12 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<form action="#{Navigation.createCollectionUrl}">
-			<button id="createCollection" class="imj_menuButton">
-				#{lbl.new_collection}
-			</button >
-		</form>
+		<ui:fragment rendered="#{Auth.createCollection}">
+			<form action="#{Navigation.createCollectionUrl}">
+				<button id="createCollection" class="imj_menuButton">
+					#{lbl.new_collection}
+				</button >
+			</form>
+		</ui:fragment>
 	</composite:implementation>
 </html>

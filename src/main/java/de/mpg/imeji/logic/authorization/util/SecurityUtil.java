@@ -45,18 +45,6 @@ public class SecurityUtil {
 
 
   /**
-   * Return the {@link List} of uri of all {@link Album}, the {@link User} is allowed to see
-   *
-   * @param user
-   * @return
-   */
-  public static List<String> getListOfAllowedAlbums(User user) {
-    return authorization().toGrantList(authorization().getAllGrants(user)).stream()
-        .filter(g -> g.getGrantFor().contains("/album/")).map(Grant::getGrantFor)
-        .collect(Collectors.toList());
-  }
-
-  /**
    * Return the Grant for the object id. If no grant found, return null
    *
    * @param grants
