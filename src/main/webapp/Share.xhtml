@@ -15,8 +15,8 @@
 
 	<ui:define name="mainContent">
 		<div class="imj_backPanel">
-			<h:outputLink value="#{ShareBean.backUrl}">
-				<h:outputText value="#{lbl.back_to}: #{ShareBean.title}" />
+			<h:outputLink styleClass="fa fa-arrow-circle-o-left" value="#{ShareBean.backUrl}">
+				<h:outputText value=" #{lbl.back_to} #{ShareBean.title}" />
 			</h:outputLink>
 		</div>
 		<!-- ID must not be changed. The share page would not work anymore -->

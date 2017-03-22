@@ -26,8 +26,7 @@
             	facetBean="#{paginatorListSessionBean}"  
             	numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
             	showSortMenu="true"
-            	showFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"
-            	rendered="#{paginatorListSessionBean.totalNumberOfElements > 0}"/>
+            	showFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"/>
             
 			<div id="itemsArea" class="itemsArea">
 				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
