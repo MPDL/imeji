@@ -131,7 +131,7 @@ public class NotificationUtils {
       q += query;
     }
     if (!isNullOrEmpty(col)) {
-      path = "collection/" + col + "/" + path;
+      path = "collection/" + col;
     }
     return session.getApplicationUrl() + path + q;
   }

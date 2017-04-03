@@ -305,8 +305,16 @@ public class ItemService extends SearchServiceAbstract<Item> {
     return itemController.retrieve(imgUri.toString(), user);
   }
 
+  public Item retrieve(String imgUri, User user) throws ImejiException {
+    return itemController.retrieve(imgUri, user);
+  }
+
   public Item retrieveLazy(URI imgUri, User user) throws ImejiException {
     return itemController.retrieveLazy(imgUri.toString(), user);
+  }
+
+  public Item retrieveLazy(String imgUri, User user) throws ImejiException {
+    return itemController.retrieveLazy(imgUri, user);
   }
 
   /**
