@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,11 +22,18 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.ProxyHelper;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.model.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
+import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
+import de.mpg.imeji.logic.vo.User;
 
 /**
  * Servlet implementation class autocompleter
@@ -105,12 +113,21 @@ public class AutocompleterServlet extends HttpServlet {
   private String autoCompleteForInternalUsers(String suggest) {
     final UserService uc = new UserService();
     String responseString = "";
-    final Collection<Person> persons = uc.searchPersonByName(suggest);
-    for (final Person p : persons) {
-      responseString = appendResponseForInternalSuggestion(responseString,
-          p.getCompleteName() + "(" + p.getOrganizationString() + ")", p.getId().toString());
+    try {
+      Collection<User> users = uc.searchAndRetrieveLazy(new SearchFactory()
+          .addElement(new SearchPair(SearchFields.family, suggest + "*"), LOGICAL_RELATIONS.AND)
+          .build(), null, Imeji.adminUser, 0, 5);
+      final Collection<Person> persons =
+          users.stream().map(u -> u.getPerson()).collect(Collectors.toList());
+      for (final Person p : persons) {
+        responseString = appendResponseForInternalSuggestion(responseString,
+            p.getCompleteName() + "(" + p.getOrganizationString() + ")", p.getId().toString());
+      }
+      return "[" + responseString + "]";
+    } catch (UnprocessableError e) {
+      LOGGER.error("Error doing autosuggest for imeji users");
     }
-    return "[" + responseString + "]";
+    return "[]";
   }
 
   /**

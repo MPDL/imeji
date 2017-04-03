@@ -13,7 +13,7 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<ui:fragment rendered="#{cc.attrs.userSource != ''}">
+		<ui:fragment rendered="#{not empty cc.attrs.userSource}">
 			<script>
 				var userSource;
 				function setUserSource(src) {
@@ -51,7 +51,7 @@
 				});
 			</script>
 		</ui:fragment>
-		<ui:fragment rendered="#{cc.attrs.orgsSource != ''}">
+		<ui:fragment rendered="#{not empty cc.attrs.orgsSource}">
 			<script>
 				var orgaSource;
 				function setOrgaSource(src) {
@@ -102,8 +102,8 @@
 			</div>
 			<div class="imj_metadataValue">
 				<div class="imj_metadataValueEntry">
-					<h:inputText id="inputFamilyNameText" styleClass="imj_admindataEdit autocomplete_person" value="#{cc.attrs.person.familyName}" onfocus="setUserSource('#{cc.attrs.userSource}')" rendered="#{cc.attrs.userSource != ''}"/>
-					<h:inputText id="inputFamilyNameText1" styleClass="imj_admindataEdit autocomplete_person" value="#{cc.attrs.person.familyName}" rendered="#{cc.attrs.userSource == ''}"/>
+					<h:inputText id="inputFamilyNameText" styleClass="imj_admindataEdit autocomplete_person" value="#{cc.attrs.person.familyName}" onfocus="setUserSource('#{cc.attrs.userSource}')" rendered="#{not empty cc.attrs.userSource}"/>
+					<h:inputText id="inputFamilyNameText1" styleClass="imj_admindataEdit autocomplete_person" value="#{cc.attrs.person.familyName}" rendered="#{empty cc.attrs.userSource}"/>
 				</div>
 			</div>
 		</div>
@@ -114,8 +114,7 @@
 			</div>
 			<div class="imj_metadataValue">
 				<div class="imj_metadataValueEntry">
-					<h:inputText id="inputGiveNameText" styleClass="imj_admindataEdit autocomplete_person" value="#{cc.attrs.person.givenName}" onfocus="setUserSource('#{cc.attrs.userSource}')" rendered="#{cc.attrs.userSource != ''}"/>
-					<h:inputText id="inputGiveNameText1" styleClass="imj_admindataEdit autocomplete_person" value="#{cc.attrs.person.givenName}" rendered="#{cc.attrs.userSource == ''}"/>
+					<h:inputText id="inputGiveNameText" styleClass="imj_admindataEdit" value="#{cc.attrs.person.givenName}"/>
 				</div>
 			</div>
 		</div>
@@ -126,8 +125,7 @@
 			</div>
 			<div class="imj_metadataValue">
 				<div class="imj_metadataValueEntry">
-					<h:inputText id="inputIdentifier" styleClass="imj_admindataEdit" value="#{cc.attrs.person.identifier}" onfocus="setUserSource('#{cc.attrs.userSource}')" rendered="#{cc.attrs.userSource != ''}"/>
-					<h:inputText id="inputIdentifier1" styleClass="imj_admindataEdit" value="#{cc.attrs.person.identifier}" rendered="#{cc.attrs.userSource == ''}"/>
+					<h:inputText id="inputIdentifier" styleClass="imj_admindataEdit" value="#{cc.attrs.person.identifier}"/>
 				</div>
 			</div>
 		</div>
