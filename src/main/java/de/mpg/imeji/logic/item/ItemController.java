@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
@@ -49,6 +50,8 @@ class ItemController extends ImejiControllerAbstract<Item> {
   @Override
   public List<Item> createBatch(List<Item> l, User user) throws ImejiException {
     for (final Item item : l) {
+      (new CollectionService()).retrieve(item.getCollection(), user); // To check if the collection
+                                                                      // exists.
       prepareCreate(item, user);
       item.setFilename(FilenameUtils.getName(item.getFilename()));
     }

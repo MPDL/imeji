@@ -342,4 +342,5 @@ public class AdminBean extends SuperBean {
     ResizeWebAndThumbnailJob job = new ResizeWebAndThumbnailJob();
     Imeji.getEXECUTOR().submit(job);
   }
+
 }
