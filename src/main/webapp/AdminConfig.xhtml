@@ -625,7 +625,7 @@
 																	value=" " title="#{lbl.remove}"
 																	styleClass="fa fa-trash"
 																	action="#{Configuration.fileTypes.removeType(var.index)}">
-																	<f:ajax execute="@this" render="configForm:searchPanel" />
+																	<f:ajax execute="@form" render="configForm:searchPanel" />
 																</h:commandLink></td>
 														</tr>
 													</ui:repeat>
@@ -635,7 +635,7 @@
 												<h:commandLink styleClass="imj_submitButton"
 													value="#{lbl.add}"
 													action="#{Configuration.fileTypes.addType(Configuration.fileTypes.types.size())}">
-													<f:ajax execute="@this" render="configForm:searchPanel" />
+													<f:ajax execute="@form" render="configForm:searchPanel" />
 												</h:commandLink>
 											</div>
 										</div>
