@@ -37,7 +37,7 @@ public class ElasticService {
   }
 
   public enum ElasticAnalysers {
-    standard, ducet_sort, simple;
+    standard, ducet_sort, simple, keyword;
   }
 
   public static Client getClient() {
