@@ -338,19 +338,6 @@ public class UserService {
     return retrieveBatchLazy(search.search(q, sort, user, null, offset, size).getResults(), size);
   }
 
-
-
-  /**
-   * Search for all {@link Person} by their names. The search looks within the {@link User} and the
-   * {@link Collection} what {@link Person} are already existing.
-   *
-   * @param name
-   * @return
-   */
-  public Collection<Person> searchPersonByName(String name) {
-    return searchPersonByNameInUsers(name);
-  }
-
   /**
    * Load a {@link User} by its uri
    *
@@ -394,6 +381,7 @@ public class UserService {
    *
    * @param name
    * @return
+   * @throws UnprocessableError
    */
   public Collection<Organization> searchOrganizationByName(String name) {
     final Collection<Organization> l = searchOrganizationByNameInUsers(name);
@@ -403,19 +391,6 @@ public class UserService {
       map.put(o.getName().toLowerCase(), o);
     }
     return map.values();
-  }
-
-  /**
-   * Search all {@link Person} which are defined in a {@link User}
-   *
-   * @param name
-   * @return
-   */
-  private Collection<Person> searchPersonByNameInUsers(String name) {
-    final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
-    return loadPersons(search
-        .searchString(JenaCustomQueries.selectPersonByName(name), null, null, 0, -1).getResults(),
-        Imeji.userModel);
   }
 
 

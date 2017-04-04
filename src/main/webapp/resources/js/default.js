@@ -682,7 +682,7 @@ $( document ).ready(function() {
 });
 
 function changePlaceholder(){
-	var placeholder = $("ul.imj_bodyContextSearch li:nth-child(" + selectedSearch + ")").data('placeholder').trim().split(" ").splice(0,3).join(" ");
+	var placeholder = $("ul.imj_bodyContextSearch li:nth-child(" + selectedSearch + ")").data('placeholder');
 	$("#quickSearchString").attr("placeholder", placeholder);
 }
 
@@ -739,11 +739,16 @@ $( document ).ready(function() {
 
 function resizeMenu(){
 	var width = $(".imj_menuHeader").outerWidth(true);
+	console.log(width);
+	$(".imj_menuSimpleSearch").css({
+	     "width": width
+	 });
+	/*
 	var left = $(".imj_menuHeader").offset().left;
 	var menuWidth = $(".imj_menuSimpleSearch").outerWidth(true);
 	var offset = menuWidth > width ? menuWidth - width : 0;
 	width = menuWidth > width ? menuWidth : width;
-	if(offset > 0){
+	if(offset > 0 || false){
 		$(".imj_menuSimpleSearch").css({
 			"width": width,
 		     "left": (left -offset)
@@ -753,7 +758,7 @@ function resizeMenu(){
 		$(".imj_menuSimpleSearch").css({
 		     "width": width
 		 });
-	}
+	}*/
 }
 
 

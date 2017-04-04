@@ -263,6 +263,15 @@ public class ElasticQueryFactory {
       case author_org:
         return fieldQuery(ElasticFields.AUTHOR_ORGANIZATION, pair.getValue(), pair.getOperator(),
             pair.isNot());
+      case family:
+        return fieldQuery(ElasticFields.FAMILYNAME, pair.getValue(), pair.getOperator(),
+            pair.isNot());
+      case given:
+        return fieldQuery(ElasticFields.GIVENNAME, pair.getValue(), pair.getOperator(),
+            pair.isNot());
+      case org:
+        return fieldQuery(ElasticFields.ORGANIZATION, pair.getValue(), pair.getOperator(),
+            pair.isNot());
       case title:
         return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case created:

@@ -13,19 +13,18 @@ import de.mpg.imeji.logic.vo.User;
  * @author saquet
  *
  */
-public class ElasticUser {
+public class ElasticUser extends ElasticPerson {
   private final String id;
   private final String email;
   private final String apiKey;
-  private final ElasticPerson person;
   private final List<String> read;
   private final List<String> upload;
 
   public ElasticUser(User user) {
+    super(user.getPerson());
     this.id = user.getId().toString();
     this.email = user.getEmail();
     this.apiKey = user.getApiKey();
-    this.person = new ElasticPerson(user.getPerson());
     this.read = new ArrayList<>();
     this.upload = new ArrayList<>();
     for (final String g : user.getGrants()) {
@@ -43,10 +42,6 @@ public class ElasticUser {
 
   public String getEmail() {
     return email;
-  }
-
-  public ElasticPerson getPerson() {
-    return person;
   }
 
   public String getApiKey() {

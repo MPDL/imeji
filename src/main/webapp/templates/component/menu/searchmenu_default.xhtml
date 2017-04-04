@@ -18,7 +18,7 @@
 						<ul class="imj_bodyContextSearch" >
 							<ui:fragment rendered="#{HistorySession.currentPage.imejiPage == 'COLLECTION'}" >
 								<li id="simpleSearchForThisCollection" data-url="" data-placeholder="#{lbl.search_for_items} #{lbl.of} #{title}">
-									<a href="#">#{lbl.search_for_items} #{lbl.of} #{title}</a>
+									<a href="#" title="#{lbl.search_for} #{lbl.items} #{lbl.of} #{title}">#{lbl.search_for_items} #{lbl.of} #{title}</a>
 								</li>
 							</ui:fragment>
 							<li id="simpleSearchForItems" class="defaultSearchType hovered"  data-url="#{Navigation.browseUrl}" data-placeholder="#{lbl.search_for} #{lbl.search_for_items}">  
