@@ -47,6 +47,33 @@ public class License implements Serializable {
     return clone;
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj.getClass().equals(this.getClass()))) {
+      return false;
+    }
+    License o = (License) obj;
+    if (!o.getId().equals(id)) {
+      return false;
+    }
+    if (!o.getLabel().equals(label)) {
+      return false;
+    }
+    if (!o.getName().equals(name)) {
+      return false;
+    }
+    if (!o.getUrl().equals(url)) {
+      return false;
+    }
+    if (o.getStart() != start) {
+      return false;
+    }
+    if (o.getEnd() != end) {
+      return false;
+    }
+    return true;
+  }
+
   public License(ImejiLicenses lic) {
     this.name = lic.name();
     this.url = lic.getUrl();

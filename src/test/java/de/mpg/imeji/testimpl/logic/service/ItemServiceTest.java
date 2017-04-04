@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import javax.ws.rs.NotAllowedException;
 
@@ -17,6 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
@@ -43,7 +45,6 @@ import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
 import de.mpg.imeji.testimpl.ImejiTestResources;
 import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
-import util.JenaUtil;
 
 public class ItemServiceTest extends SuperServiceTest {
   private static final Logger LOGGER = Logger.getLogger(ItemControllerTestClass.class);
@@ -163,7 +164,7 @@ public class ItemServiceTest extends SuperServiceTest {
       create_Test("Null Collection", ImejiFactory.newItem(collectionPrivate), null, userEditGrant,
           false, Status.PENDING, UnprocessableError.class);
       create_Test("user not logged in", ImejiFactory.newItem(collectionPrivate), collectionPrivate,
-          null, false, Status.PENDING, NullPointerException.class);
+          null, false, Status.PENDING, AuthenticationError.class);
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
     }
@@ -595,21 +596,6 @@ public class ItemServiceTest extends SuperServiceTest {
   }
 
 
-
-  // @Test
-  public void updateFile_Regular() {
-    ItemService service = new ItemService();
-    File newFile = ImejiTestResources.getTest3Jpg();
-    try {
-      String checksum = StorageUtils.calculateChecksum(newFile);
-      service.updateFile(item, collectionBasic, newFile, newFile.getName(), JenaUtil.testUser);
-      Assert.assertEquals("Checksum should be equal", getOriginalChecksum(item), checksum);
-    } catch (ImejiException | IOException e) {
-      Assert.fail(e.getMessage());
-    }
-  }
-
-
   @Test
   public void delete() {
     try {
@@ -625,7 +611,7 @@ public class ItemServiceTest extends SuperServiceTest {
 
   }
 
-  public void delete_Test(String msg, Item item, User user, Class exception) {
+  private void delete_Test(String msg, Item item, User user, Class exception) {
     ItemService service = new ItemService();
     try {
       File file = null;
@@ -647,7 +633,7 @@ public class ItemServiceTest extends SuperServiceTest {
         // That is correct
       }
       if (file != null) {
-        Assert.assertEquals("File should not exist after delete", false, file.exists());
+        Assert.assertEquals(msg + ": File should not exist after delete", false, file.exists());
       }
     } catch (ImejiException e) {
       if (exception == null || !e.getClass().equals(exception)) {
@@ -661,6 +647,138 @@ public class ItemServiceTest extends SuperServiceTest {
       }
     }
   }
+
+  @Test
+  public void release() {
+    try {
+      ItemService service = new ItemService();
+      Item itemToRelease = ImejiFactory.newItem(collectionPrivate);
+      service.create(itemToRelease, collectionPrivate, userAdmin);
+      Item itemToRelease2 = ImejiFactory.newItem(collectionPrivate);
+      service.create(itemToRelease2, collectionPrivate, userAdmin);
+
+      release_Test("Read grant user, not yet released item, no licence",
+          Arrays.asList(itemToRelease), userEditGrant, getDefaultLicense(), getDefaultLicense(),
+          AuthenticationError.class);
+
+      release_Test("Edit grant user, not yet released item, no licence",
+          Arrays.asList(itemToRelease), userEditGrant, getDefaultLicense(), getDefaultLicense(),
+          AuthenticationError.class);
+
+      release_Test("Admin grant user, not yet released item, no licence",
+          Arrays.asList(itemToRelease, itemToRelease2), userAdmin, getDefaultLicense(),
+          getDefaultLicense(), null);
+      service.withdraw(Arrays.asList(itemToRelease), "standart comment", userAdmin);
+      service.withdraw(Arrays.asList(itemToRelease2), "standart comment", userAdmin);
+
+      itemToRelease = ImejiFactory.newItem(collectionPrivate);
+      License lic = getDefaultLicense();
+      lic.setName("Different License");
+      itemToRelease.getLicenses().add(lic);
+      service.create(itemToRelease, collectionPrivate, userAdmin);
+      release_Test("Edit grant user, not yet released item, item already has license",
+          Arrays.asList(itemToRelease), userEditGrant, getDefaultLicense(), lic, null);
+      service.withdraw(Arrays.asList(itemToRelease), "standart comment", userAdmin);
+
+
+
+    } catch (ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
+  }
+
+  private void release_Test(String msg, List<Item> items, User user, License defaultLicense,
+      License expectedLicense, Class exception) {
+    ItemService service = new ItemService();
+    try {
+      service.release(items, user, defaultLicense);
+    } catch (Exception e) {
+      if (!e.getClass().equals(exception)) {
+        Assert.fail(msg + ": " + e.getMessage());
+      }
+    }
+    if (exception != null) {
+      Assert.fail(msg + ": No exception has been thrown");
+    }
+    for (Item i : items) {
+      Assert.assertEquals(msg + ": Status should be released", i.getStatus(), Status.RELEASED);
+      boolean itemHasLicense = false;
+      for (License l : i.getLicenses()) {
+        if (l.getName().equals(expectedLicense.getName())) {
+          itemHasLicense = true;
+          break;
+        }
+      }
+      Assert.assertEquals(msg + ": Item should have correct license", true, itemHasLicense);
+    }
+  }
+
+  @Test
+  public void withdraw() {
+    ItemService service = new ItemService();
+    try {
+      Item withdrawPrivate = ImejiFactory.newItem(collectionPrivate);
+      Item withdrawReleased = ImejiFactory.newItem(collectionPrivate);
+      service.createWithFile(withdrawPrivate, ImejiTestResources.getTest3Jpg(), "Test3.jpg",
+          collectionPrivate, userAdmin);
+      service.createWithFile(withdrawReleased, ImejiTestResources.getTest4Jpg(), "Test4.jpg",
+          collectionPrivate, userAdmin);
+      service.releaseWithDefaultLicense(Arrays.asList(withdrawReleased), userAdmin);
+
+      // withdraw_Test("pending item, admin user", withdrawPrivate, userAdmin,
+      // UnprocessableError.class);
+      withdraw_Test("released item, edit user", withdrawReleased, userEditGrant, null);
+
+      withdrawReleased = ImejiFactory.newItem(collectionPrivate);
+      service.create(withdrawReleased, collectionPrivate, userAdmin);
+      service.createWithFile(withdrawReleased, ImejiTestResources.getTest4Jpg(), "Test4.jpg",
+          collectionPrivate, userAdmin);
+      withdraw_Test("released item, admin user", withdrawReleased, userAdmin, null);
+    } catch (ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
+  }
+
+  private void withdraw_Test(String msg, Item i, User user, Class exception) {
+    ItemService service = new ItemService();
+    try {
+      File file = null;
+      try {
+        String url = getOriginalUrl(i);
+        String path = url.replace("http://localhost:9998/imeji/file/", "C:/data/imeji_test/files/");
+        file = new File(path);
+      } catch (ImejiException e) {
+
+      }
+      service.withdraw(Arrays.asList(i), "default comment", user);
+      if (exception != null) {
+        Assert.fail(msg + ", no exception has been thrown");
+      }
+      Assert.assertEquals(msg + ": Status should be Withdrawn", i.getStatus(), Status.WITHDRAWN);
+      if (file != null) {
+        Assert.assertEquals(msg + ": File should not exist after delete", false, file.exists());
+      }
+    } catch (ImejiException e) {
+      if (exception == null || !e.getClass().equals(exception)) {
+        Assert.fail(msg + ", " + e.getMessage());
+      }
+    } finally {
+      try {
+        service.withdraw(Arrays.asList(i), "default comment", userAdmin);
+      } catch (ImejiException e) {
+      }
+      try {
+        service.delete(Arrays.asList(i), userAdmin);
+      } catch (ImejiException e) {
+      }
+    }
+  }
+
+  @Test
+  public void moveItems() {
+
+  }
+
 
   private String getOriginalChecksum(Item i) throws NotFoundException, ImejiException, IOException {
     StorageController sController = new StorageController();
