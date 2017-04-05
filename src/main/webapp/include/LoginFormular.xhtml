@@ -9,7 +9,7 @@
 	<ui:fragment rendered="#{!Auth.loggedIn and Configuration.registrationEnabled and !hideRegister}">
 		<div class="imj_metadataSet">
 			<form action="#{Navigation.registrationUrl}">
-				<button id="register" class="imj_menuButton">
+				<button id="register" class="imj_submitButton">
 					#{lbl.register}
 				</button>
 			</form>
@@ -26,7 +26,7 @@
 			<h:inputSecret id="inputPassword" styleClass="imj_admindataEdit" value="#{LoginBean.passwd}" html5:placeholder="#{lbl.password}"/>
 		</div>
 		<div class="imj_metadataSet">
-			<h:commandButton id="lnkLogin" styleClass="" value="#{lbl.login}" action ="#{LoginBean.doLogin}"/>
+			<h:commandButton id="lnkLogin" styleClass="imj_submitButton" value="#{lbl.login}" action ="#{LoginBean.doLogin}"/>
 		</div>
 	</h:form>
 </ui:composition>

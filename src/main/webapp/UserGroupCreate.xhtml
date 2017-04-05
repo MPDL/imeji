@@ -22,44 +22,43 @@
 		</h:panelGroup>
 
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-			<div class="imj_userConfig">
-				<div class="imj_administrationTiledList imj_maxWidth">
-					<div class="imj_listBody">
-						<div class="imj_adminPanel imj_userConfig">
-							<div class="imj_headline">
-								<h2>
-									<h:outputText value="#{lbl.admin_userGroup_new}" />
-								</h2>
+			<div class="imj_listBody">
+				<h:form>
+					<div class="imj_content">
+						<!-- AdminDataList - Email -->
+						<div class="imj_metadataSet">
+							<div class="imj_metadataLabel">
+								<h:outputText value="Name" />
+								<span class="imj_invisible">: </span>
 							</div>
-							<h:form>
-								<div class="imj_content">
-									<!-- AdminDataList - Email -->
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="Name" />
-											<span class="imj_invisible">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<div class="imj_admindataValueEntry">
-												<h:inputText styleClass="imj_admindataEdit"
-													value="#{UserGroup.userGroup.name}" />
-											</div>
-										</div>
-									</h:panelGroup>
+							<div class="imj_metadataValue">
+								<div class="imj_metadataValue">
+									<h:inputText styleClass="imj_admindataEdit"
+										value="#{UserGroup.userGroup.name}" />
 								</div>
-								<div class="imj_submitPanel">
-									<h:outputLink
-										value="#{HistorySession.previousPage.completeUrl}"
-										styleClass="imj_cancelButton">
-										<h:outputText value="#{lbl.cancel}" />
-									</h:outputLink>
+							</div>
+						</div>
+					
+						<div class="imj_metadataSet">
+								<div class="imj_metadataLabel">
+									
+									<span class="imj_noDisplay">: </span>
+								</div>
+							<div class="imj_metadataValue">
+								<div class="imj_metadataValueEntry">
+									<a href="#{HistorySession.previousPage.completeUrl}"
+										class="imj_cancelButton">
+										#{lbl.cancel}
+									</a>
 									<h:commandButton action="#{UserGroup.create()}"
-										value="#{lbl.save}" styleClass="imj_submitButton" />
+									 value="#{lbl.save}"
+									styleClass="imj_submitButton" />
+									
 								</div>
-							</h:form>
+							</div>
 						</div>
 					</div>
-				</div>
+				</h:form>
 			</div>
 		</ui:fragment>
 	</ui:define>

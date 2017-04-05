@@ -35,17 +35,7 @@
 			<name>Bastien Saquet</name>
 			<email>saquet@mpdl.mpg.de</email>
 			<roles>
-				<role>Software developer</role>
-			</roles>
-			<organization>Max Planck Digital Library</organization>
-			<timezone>+2</timezone>
-		</developer>
-		<developer>
-			<id>kleinfercher</id>
-			<name>Friederike Kleinfercher</name>
-			<email>kleinfercher@mpdl.mpg.de</email>
-			<roles>
-				<role>Software developer</role>
+				<role>Software architect</role>
 			</roles>
 			<organization>Max Planck Digital Library</organization>
 			<timezone>+2</timezone>
@@ -61,21 +51,11 @@
 			<timezone>+2</timezone>
 		</developer>
 		<developer>
-			<id>YanYao</id>
-			<name>Yan Yao</name>
-			<email>yao@mpdl.mpg.de</email>
+			<id>CatherinaHofmann</id>
+			<name>Catherina Hofmann</name>
+			<email>hofmann@mpdl.mpg.de</email>
 			<roles>
 				<role>Test Manager</role>
-			</roles>
-			<organization>Max Planck Digital Library</organization>
-			<timezone>+2</timezone>
-		</developer>
-		<developer>
-			<id>MarcoSchlender</id>
-			<name>Marco Schlender</name>
-			<email>schlender@mpdl.mpg.de</email>
-			<roles>
-				<role>Web developer</role>
 			</roles>
 			<organization>Max Planck Digital Library</organization>
 			<timezone>+2</timezone>
@@ -304,6 +284,36 @@
 						</pluginExecutions>
 					</lifecycleMappingMetadata>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.samaxes.maven</groupId>
+				<artifactId>minify-maven-plugin</artifactId>
+				<version>1.7.6</version>
+				<executions>
+					<execution>
+						<id>default-minify</id>
+						<configuration>
+							<charset>UTF-8</charset>
+							<webappSourceDir>${basedir}/src/main/webapp/resources</webappSourceDir>
+							<webappTargetDir>${basedir}/src/main/webapp/resources</webappTargetDir>
+							<cssSourceFiles>
+								<cssSourceFile>basic.css</cssSourceFile>
+								<cssSourceFile>theme_default/app.css</cssSourceFile>
+							</cssSourceFiles>
+							<jsSourceFiles>
+								<jsSourceFile>autocomplete.js</jsSourceFile>
+								<jsSourceFile>datepicker.js</jsSourceFile>
+								<jsSourceFile>default.js</jsSourceFile>
+								<jsSourceFile>qrcode_SJIS.js</jsSourceFile>
+								<jsSourceFile>qrcode.js</jsSourceFile>
+							</jsSourceFiles>
+							<jsEngine>CLOSURE</jsEngine>
+						</configuration>
+						<goals>
+							<goal>minify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 

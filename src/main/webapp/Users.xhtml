@@ -13,7 +13,7 @@
 
 	<ui:define name="actionsMenu">
 		<form action="#{Navigation.homeUrl}/createuser">
-			<button id="createUser" class="imj_menuButton">
+			<button id="createUser" class="imj_submitButton">
 				#{lbl.admin_user_new}
 			</button >
 		</form>
@@ -123,7 +123,7 @@
 							</ui:fragment>
 							<ui:fragment rendered="#{UsersBean.group != null}">
 								<h:form>
-									<h:commandLink styleClass="imj_editButton"
+									<h:commandLink styleClass="imj_submitButton"
 										action="#{UsersBean.addToGroup}"
 										value="#{lbl.add_to_group} #{UsersBean.group.name}">
 										<f:param name="email" value="#{user.email}" />

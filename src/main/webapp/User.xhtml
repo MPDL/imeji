@@ -123,7 +123,7 @@
 											<span class="imj_invisible">: </span>
 										</div>
 										<div class="imj_metadataValue">
-											<h:commandLink id="lnkEditUserdata" action="#{UserBean.toggleEdit}" value="#{lbl.edit}" rendered="#{!UserBean.edit}" styleClass="imj_editButton" type="submit">
+											<h:commandLink id="lnkEditUserdata" action="#{UserBean.toggleEdit}" value="#{lbl.edit}" rendered="#{!UserBean.edit}" styleClass="imj_submitButton" type="submit">
 												<f:ajax execute="@this" render=":userForm:userInfos" />
 											</h:commandLink>
 											<h:outputLink id="lnkCancelUserdata" value="#{UserBean.userPageUrl}" rendered="#{UserBean.edit}" styleClass="imj_cancelButton" type="submit">
@@ -191,7 +191,7 @@
 											<span class="imj_invisible">: </span>
 										</div>
 										<div class="imj_metadataValue">
-											<h:commandButton action="#{UserBean.changePassword}" value="#{lbl.password_change}" styleClass="imj_editButton" type="submit">
+											<h:commandButton action="#{UserBean.changePassword}" value="#{lbl.password_change}" styleClass="imj_submitButton" type="submit">
 												<f:ajax execute="@form" render="@none" />
 											</h:commandButton>
 										</div>

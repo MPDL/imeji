@@ -74,7 +74,7 @@
 										</select>
 									</p>
 									<input type="submit" value="#{lbl.execute}" formtarget="_blank"
-										class="imj_editButton" />
+										class="imj_submitButton" />
 								</FORM>
 							</div>
 
@@ -89,7 +89,7 @@
 								<h:outputText value="#{lbl.admin_clean_storage_description}" />
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton"
+										<h:commandLink styleClass="imj_submitButton"
 											action="#{AdminBean.cleanStorage}"
 											value="#{lbl.clean}: #{AdminBean.internalStorageLocation}"
 											onclick="openDialog('dialogWait');">
@@ -100,7 +100,7 @@
 								<h:outputText value="#{lbl.admin_refresh_file_size_description}" />
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton"
+										<h:commandLink styleClass="imj_submitButton"
 											action="#{AdminBean.refreshFileSize}" value="#{lbl.refresh}" />
 									</h:panelGroup>
 								</h:form>
@@ -108,7 +108,7 @@
 									value="#{lbl.admin_extract_fulltext_and_technical_metadata}" />
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton"
+										<h:commandLink styleClass="imj_submitButton"
 											action="#{AdminBean.extractFulltextAndTechnicalMetadata}"
 											value="#{lbl.extract}" />
 									</h:panelGroup>
@@ -116,7 +116,7 @@
 								<h:outputText value="#{lbl.admin_recalculate_web_and_thumbnail}"/>							
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton" action="#{AdminBean.recalculateWebAndThumbnail}" value="#{lbl.recalculate}"/>
+										<h:commandLink styleClass="imj_submitButton" action="#{AdminBean.recalculateWebAndThumbnail}" value="#{lbl.recalculate}"/>
 									</h:panelGroup>	
 								</h:form>
 							</div>
@@ -131,7 +131,7 @@
 							<div class="imj_content">
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink styleClass="imj_editButton"
+										<h:commandLink styleClass="imj_submitButton"
 											action="#{AdminBean.reindex}" value="#{lbl.admin_reindex}" />
 									</h:panelGroup>
 								</h:form>
@@ -150,7 +150,7 @@
 										<h:commandLink action="#{AdminBean.status}"
 											value="#{lbl.admin_advanced_state}"
 											title="#{lbl.admin_advanced_state}"
-											styleClass="imj_editButton">
+											styleClass="imj_submitButton">
 										</h:commandLink>
 									</h:panelGroup>
 								</h:form>

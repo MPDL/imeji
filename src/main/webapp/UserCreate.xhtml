@@ -32,9 +32,7 @@
 
 					<div class="imj_listBody">
 
-						<h:panelGroup layout="block"
-							styleClass="imj_adminPanel imj_userConfig"
-							rendered="#{Auth.sysAdmin}">
+						<h:panelGroup layout="block" rendered="#{Auth.sysAdmin}">
 							<h:form id="userForm">
 								<div class="imj_content">
 									<!-- AdminDataList - Email -->
@@ -101,25 +99,20 @@
 									</h:panelGroup>
 									<div class="imj_metadataSet">
 										<div class="imj_metadataLabel">
-											
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_metadataValue">
 											<div class="imj_metadataValueEntry">
-											<h:outputLink
-											value="#{HistorySession.previousPage.completeUrl}"
-											styleClass="imj_cancelButton">
-											<h:outputText value="#{lbl.cancel}" />
-										</h:outputLink>
-											<h:commandButton action="#{UserCreationBean.create}"
-											type="submit" value="#{lbl.save}"
-											styleClass="imj_submitButton" />
+												<a href="#{HistorySession.previousPage.completeUrl}"
+													class="imj_cancelButton">
+													#{lbl.cancel}
+												</a>
+												<h:commandButton action="#{UserCreationBean.create}"
+												 value="#{lbl.save}"
+												styleClass="imj_submitButton" />
+												
 											</div>
 										</div>
-									</div>
-									<div class="imj_admindataSet imj_submitPanel">
-										
-										
 									</div>
 								</div>
 							</h:form>

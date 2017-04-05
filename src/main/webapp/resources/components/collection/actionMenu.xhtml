@@ -13,7 +13,7 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{Auth.update}">
-			<h:commandButton id="upload" action="#{cc.attrs.collectionBean.setShowUpload(false)}" value="#{lbl.upload}" styleClass="imj_menuButton" onclick="openDialog('uploadDialog');">
+			<h:commandButton id="upload" action="#{cc.attrs.collectionBean.setShowUpload(false)}" value="#{lbl.upload}" styleClass="imj_submitButton" onclick="openDialog('uploadDialog');">
 				<f:ajax/>
 			</h:commandButton>
 			<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="menuCollection">

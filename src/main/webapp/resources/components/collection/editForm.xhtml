@@ -272,11 +272,10 @@
 			<div class="imj_submitPanel imj_metadataSet">
 				<label class="imj_metadataLabel"> </label>
 				<div class="imj_metadataValue">
-					<h:outputLink
-						value="#{HistorySession.previousPage.completeUrlWithHistory}"
-						styleClass="imj_cancelButton">
-						<h:outputText value="#{lbl.cancel}" />
-					</h:outputLink>
+					<a href="#{HistorySession.previousPage.completeUrlWithHistory}"
+						class="imj_cancelButton">
+						#{lbl.cancel}
+					</a>
 					<h:commandButton id="btn_saveCollection"
 						action="#{cc.attrs.formularBean.save}" value="#{lbl.save}"
 						styleClass="imj_submitButton" onclick="startLoader();">

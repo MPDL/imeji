@@ -13,15 +13,25 @@
 		
 		<h:form>
 			<statement:form form="#{StatementEditBean.statementForm}" render="@form" used="#{StatementEditBean.used}"/>
-			<div id="submitButtonPanel" class="imj_submitPanel">
-			 <a href="#{Navigation.applicationUrl}browse?q=index=#{StatementEditBean.statement.indexUrlEncoded}" target="_blank"  class="imj_overlayMenu imj_menuButton"> 
+            <div class="imj_metadataSet">
+				<div class="imj_metadataLabel">
+					<span class="imj_noDisplay">: </span>
+				</div>
+				<div class="imj_metadataValue">
+					<div class="imj_metadataValueEntry">
+						<a href="#{Navigation.applicationUrl}statements"
+							class="imj_cancelButton">
+							#{lbl.cancel}
+						</a>
+						<h:commandButton id="btnSaveStatement" action="#{StatementEditBean.save()}"
+						 value="#{lbl.save}"
+						styleClass="imj_submitButton" />
+						<a href="#{Navigation.applicationUrl}browse?q=index=#{StatementEditBean.statement.indexUrlEncoded}" target="_blank"  class="imj_overlayMenu imj_menuButton"> 
 					<span class="fa fa-search "/> #{lbl.view_items_with_statement}
 				</a>
-                 <h:outputLink value="#{Navigation.applicationUrl}statements" styleClass="imj_cancelButton">
-                     <h:outputText value="#{lbl.cancel}"/>
-                 </h:outputLink>
-                 <h:commandButton id="btnCreateStatement" action="#{StatementEditBean.save()}" value="#{lbl.save}" styleClass="imj_submitButton"/>       
-             </div>
+					</div>
+				</div>
+			</div>			
 		</h:form>
 	</ui:define>
 </ui:composition>

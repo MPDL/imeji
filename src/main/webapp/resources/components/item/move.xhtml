@@ -58,8 +58,8 @@
 					<a href="" onclick="closeDialog('moveItemsDialog');" class="imj_cancelButton">
 						#{lbl.cancel}
 					</a>
-					<h:commandButton rendered="#{cc.attrs.itemId != null}" class="" value="#{lbl.move}" action="#{MoveItemsBean.moveItemTo(cc.attrs.itemId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>	
-					<h:commandButton rendered="#{cc.attrs.itemId == null}" class="" value="#{lbl.move}" action="#{MoveItemsBean.moveSelectedTo()}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>						
+					<h:commandButton rendered="#{cc.attrs.itemId != null}" class="imj_submitButton" value="#{lbl.move}" action="#{MoveItemsBean.moveItemTo(cc.attrs.itemId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>	
+					<h:commandButton rendered="#{cc.attrs.itemId == null}" class="imj_submitButton" value="#{lbl.move}" action="#{MoveItemsBean.moveSelectedTo()}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>						
 				</ui:fragment>
 			</h:form>
 		</div>
