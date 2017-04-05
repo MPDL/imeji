@@ -10,12 +10,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.ws.rs.NotAllowedException;
-
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
@@ -553,7 +550,6 @@ public class ItemServiceTest extends SuperServiceTest {
    */
   // Null Pointer exception in content service, test is skipped
   @Test
-  @Ignore
   public void updateFile() {
     updateFile_Test("Normal", itemPrivate, ImejiTestResources.getTest2Jpg(), "Test2.jpg",
         userEditGrant, null);
@@ -603,8 +599,7 @@ public class ItemServiceTest extends SuperServiceTest {
       (new ItemService()).createWithFile(item, ImejiTestResources.getTest2Jpg(), "Test2.jpg",
           collectionPrivate, userAdmin);
       delete_Test("private collection, edit user", item, userEditGrant, null);
-      delete_Test("private collection, no grant user", item, userNoGrant,
-          NotAllowedException.class);
+      delete_Test("private collection, no grant user", item, userNoGrant, NotAllowedError.class);
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
     }
@@ -725,8 +720,8 @@ public class ItemServiceTest extends SuperServiceTest {
           collectionPrivate, userAdmin);
       service.releaseWithDefaultLicense(Arrays.asList(withdrawReleased), userAdmin);
 
-      // withdraw_Test("pending item, admin user", withdrawPrivate, userAdmin,
-      // UnprocessableError.class);
+      withdraw_Test("pending item, admin user", withdrawPrivate, userAdmin,
+          UnprocessableError.class);
       withdraw_Test("released item, edit user", withdrawReleased, userEditGrant, null);
 
       withdrawReleased = ImejiFactory.newItem(collectionPrivate);

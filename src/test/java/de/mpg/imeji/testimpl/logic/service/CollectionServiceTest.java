@@ -1,6 +1,10 @@
 package de.mpg.imeji.testimpl.logic.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -11,8 +15,12 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
+import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.storage.StorageController;
+import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -22,6 +30,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
+import de.mpg.imeji.testimpl.ImejiTestResources;
 import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
 
 public class CollectionServiceTest extends SuperServiceTest {
@@ -97,7 +106,7 @@ public class CollectionServiceTest extends SuperServiceTest {
     create_Test("restricted user", testCreate, restrictedUser, NotAllowedError.class);
   }
 
-  public void create_Test(String msg, CollectionImeji col, User user, Class exception) {
+  private void create_Test(String msg, CollectionImeji col, User user, Class exception) {
     CollectionService service = new CollectionService();
     try {
       try {
@@ -137,7 +146,7 @@ public class CollectionServiceTest extends SuperServiceTest {
         collectionReleased.getIdString(), collectionReleased.getTitle(), null);
   }
 
-  public void retrieve_Test(String msg, URI uri, User user, String expectedIDString,
+  private void retrieve_Test(String msg, URI uri, User user, String expectedIDString,
       String expectedName, Class exception) {
     CollectionService service = new CollectionService();
     CollectionImeji res = null, res2 = null;
@@ -168,7 +177,7 @@ public class CollectionServiceTest extends SuperServiceTest {
         "Private Collection", null);
   }
 
-  public void update_Test(String msg, CollectionImeji col, User user, String oldTitle,
+  private void update_Test(String msg, CollectionImeji col, User user, String oldTitle,
       Class exception) {
     CollectionService service = new CollectionService();
     try {
@@ -197,6 +206,136 @@ public class CollectionServiceTest extends SuperServiceTest {
     }
   }
 
+  @Test
+  public void updateLogo() {
+    try {
+      updateLogo_Test("collectionPrivate, edit grant user", collectionPrivate,
+          ImejiTestResources.getTest1Jpg(), userEditGrant, null, null);
+
+      updateLogo_Test("collectionPrivate, edit grant user, invalid logo", collectionPrivate,
+          ImejiTestResources.getTestExe(), userEditGrant,
+          StorageUtils.calculateChecksum(ImejiTestResources.getTest1Jpg()),
+          UnprocessableError.class);
+
+
+      updateLogo_Test("collectionPrivate, read grant user", collectionPrivate,
+          ImejiTestResources.getTest2Jpg(), userEditGrant,
+          StorageUtils.calculateChecksum(ImejiTestResources.getTest1Jpg()), NotAllowedError.class);
+
+
+      // Check extra for removing logo
+      try {
+        (new CollectionService()).updateLogo(collectionPrivate, null, userEditGrant);
+        if (collectionPrivate.getLogoUrl() != null) {
+          Assert.fail("Remove collection: URL should be null");
+        }
+      } catch (IOException | URISyntaxException e) {
+        Assert.fail(e.getMessage());
+      }
+    } catch (ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
+  }
+
+  private void updateLogo_Test(String msg, CollectionImeji col, File file, User user,
+      String previousChecksum, Class exception) {
+    CollectionService service = new CollectionService();
+    boolean exc = false;
+    try {
+      service.updateLogo(col, file, user);
+    } catch (Exception e) {
+      exc = true;
+      if (!e.getClass().equals(exception)) {
+        Assert.fail(msg + ": " + e.getMessage());
+      }
+    }
+    if (exception != null && !exc) {
+      Assert.fail(msg + ": No exception has been thrown");
+    }
+    try {
+      // Just check if the checksum changed, don't compare it with the checksum of the uploaded
+      // file, because we want to allow modification, e.g resizing
+      Assert.assertEquals(
+          msg + ": If there should be no exception, the checksum should have changed",
+          getLogoChecksum(col).equals(previousChecksum), exception != null);
+    } catch (IOException | ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void delete() {
+    CollectionService collectionService = new CollectionService();
+    ItemService itemService = new ItemService();
+    CollectionImeji collectionToDelete =
+        ImejiFactory.newCollection().setTitle("Delete").setPerson("p", "p", "o").build();
+    try {
+      collectionService.create(collectionToDelete, defaultUser);
+      Item itemToDelete = ImejiFactory.newItem(collectionToDelete);
+      itemService.create(itemToDelete, collectionToDelete, defaultUser);
+
+      delete_Test("private Collection, edit grant user", collectionToDelete, userEditGrant,
+          NotAllowedError.class);
+      delete_Test("private Collection, collection admin user", collectionToDelete, defaultUser,
+          null);
+      delete_Test("released Collection, collection admin use", collectionReleased, defaultUser,
+          UnprocessableError.class);
+    } catch (ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
+
+  }
+
+  private void delete_Test(String msg, CollectionImeji col, User user, Class exception) {
+    CollectionService service = new CollectionService();
+    ItemService itemService = new ItemService();
+    URI collectionID = col.getId();
+    Collection<URI> itemIDs = col.getImages();
+    boolean exc = false;
+    try {
+      service.delete(col, user);
+    } catch (ImejiException e) {
+      exc = true;
+      if (!e.getClass().equals(exception)) {
+        Assert.fail(msg + ": " + e.getMessage());
+      }
+    }
+    if (exception != null && !exc) {
+      Assert.fail(msg + ": No exception has been thrown");
+    }
+    if (exception == null) {
+      try {
+        service.retrieve(collectionID, sysadmin);
+        Assert.fail(msg + ": It was possible to retrive collection after delete");
+      } catch (ImejiException e) {
+        if (!(e instanceof NotFoundException)) {
+          Assert.fail(e.getMessage());
+        }
+      }
+      for (URI id : itemIDs) {
+        try {
+          itemService.retrieve(id, sysadmin);
+          Assert.fail(msg + ": It was possible to retrive item after delete");
+        } catch (ImejiException e) {
+          if (!(e instanceof NotFoundException)) {
+            Assert.fail(e.getMessage());
+          }
+        }
+      }
+    } else {
+      try {
+        service.retrieve(collectionID, sysadmin);
+        for (URI id : itemIDs) {
+          itemService.retrieve(id, sysadmin);
+        }
+      } catch (ImejiException e) {
+        Assert.fail(e.getMessage());
+      }
+    }
+  }
+
+
+
   /**
    * True if the {@link Grant} is found in the collection
    *
@@ -206,6 +345,14 @@ public class CollectionServiceTest extends SuperServiceTest {
    */
   private boolean hasGrant(Collection<String> grants, Grant grant) {
     return grants != null && grants.contains(grant.toGrantString());
+  }
+
+  private String getLogoChecksum(CollectionImeji c) throws IOException, ImejiException {
+    StorageController sController = new StorageController();
+    File storedFile = File.createTempFile("testFile", null);
+    FileOutputStream fos = new FileOutputStream(storedFile);
+    sController.read(c.getLogoUrl().toString(), fos, true);
+    return StorageUtils.calculateChecksum(storedFile);
   }
 
 }
