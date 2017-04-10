@@ -14,12 +14,12 @@
 		<ui:param name="col" value="#{cc.attrs.itemsBean.type == 'COLLECTION_ITEMS' ? cc.attrs.itemsBean.id : ''}"/>
 		<ui:fragment rendered="#{empty SessionBean.selected}">
 			<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{col}&amp;q=#{cc.attrs.itemsBean.query}" target="_blank" class="imj_menuButton">
-				<span class="fa fa-download"/> <span>#{lbl.download_files} (#{cc.attrs.itemsBean.totalNumberOfElements} #{lbl.files})</span>
+				<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download_files} (#{cc.attrs.itemsBean.totalNumberOfElements} #{lbl.files})</span>
 			</a>
 		</ui:fragment>
 		<ui:fragment rendered="#{not empty SessionBean.selected}">
 			<a href="#{Navigation.applicationUrl}exportServlet?format=zip" target="_blank" class="imj_menuButton">
-				<span class="fa fa-download"/> <span>#{lbl.download_selected} (#{SessionBean.selected.size()} #{lbl.files})</span>
+				<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download_selected} (#{SessionBean.selected.size()} #{lbl.files})</span>
 			</a>	
 		</ui:fragment>
 	</composite:implementation>

@@ -32,7 +32,7 @@
 				<ul id="imj_listBody">
 					<!-- Images -->	
 					<ui:repeat id="pictureList" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
-						<li class="imj_tileItem" style="max-width:#{item.thumbnailWidth}px;">
+						<li class="imj_tileItem">
 							<ui:param name="uri" value="#{item.uri}"/>
 							<h:form id="itemSelectForm">
 								<h:panelGroup layout="block" id="imgFrame" styleClass="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea" >

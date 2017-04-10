@@ -6,27 +6,29 @@
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
 	<ui:param name="headline" value="#{lbl.view_page_disallowed}"/>
-	<ui:fragment rendered="#{!Auth.loggedIn and Configuration.registrationEnabled and !hideRegister}">
-		<div class="imj_metadataSet">
-			<form action="#{Navigation.registrationUrl}">
-				<button id="register" class="imj_submitButton">
-					#{lbl.register}
-				</button>
-			</form>
-		</div>
-		<div class="imj_metadataSet">
-			#{lbl.or_big}
-		</div>
-	</ui:fragment>
-	<h:form>
-		<div class="imj_metadataSet">
-			<h:inputText id="inputEmail" styleClass="imj_admindataEdit" value="#{LoginBean.login}" html5:placeholder="#{lbl.email}"/>
-		</div>
-		<div class="imj_metadataSet">
-			<h:inputSecret id="inputPassword" styleClass="imj_admindataEdit" value="#{LoginBean.passwd}" html5:placeholder="#{lbl.password}"/>
-		</div>
-		<div class="imj_metadataSet">
-			<h:commandButton id="lnkLogin" styleClass="imj_submitButton" value="#{lbl.login}" action ="#{LoginBean.doLogin}"/>
-		</div>
-	</h:form>
+	<div class="loginArea">
+		<ui:fragment rendered="#{!Auth.loggedIn and Configuration.registrationEnabled and !hideRegister}">
+			<div class="imj_metadataSet">
+				<form action="#{Navigation.registrationUrl}">
+					<button id="register" class="imj_submitButton">
+						#{lbl.register}
+					</button>
+				</form>
+			</div>
+			<div class="imj_metadataSet">
+				#{lbl.or_big}
+			</div>
+		</ui:fragment>
+		<h:form>
+			<div class="imj_metadataSet">
+				<h:inputText id="inputEmail" styleClass="imj_admindataEdit" value="#{LoginBean.login}" html5:placeholder="#{lbl.email}"/>
+			</div>
+			<div class="imj_metadataSet">
+				<h:inputSecret id="inputPassword" styleClass="imj_admindataEdit" value="#{LoginBean.passwd}" html5:placeholder="#{lbl.password}"/>
+			</div>
+			<div class="imj_metadataSet">
+				<h:commandButton id="lnkLogin" styleClass="imj_submitButton" value="#{lbl.login}" action ="#{LoginBean.doLogin}"/>
+			</div>
+		</h:form>
+	</div>
 </ui:composition>

@@ -31,13 +31,12 @@
 			<div id="itemsArea" class="itemsArea">
 				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
            		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
-           		
-           		<div id="uploadTitle" class="uploadDragAndDropTitle">
-	           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0}">
-	           			<span class="fa fa-exclamation-triangle"/> #{msg.no_images_found}!
-	           		</ui:fragment>
-           		</div>
-           		
+
+           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0}">
+           			<div  class="uploadDragAndDropTitle">
+           				<span class=" fa fa-exclamation-triangle"/> #{msg.no_images_found}!
+           			</div>
+           		</ui:fragment>
 			</div>
 			<!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>

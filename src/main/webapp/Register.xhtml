@@ -25,8 +25,8 @@
 
 					<h:outputText value="#{Configuration.registrationSnippet}"
 						escape="false" />
-
-					<ui:fragment id="formArea">
+					
+					<div class="loginArea">
 						<h:form id="userForm"
 							rendered="#{!RegistrationBean.registration_success}">
 							<div class="imj_metadataSet">
@@ -46,33 +46,38 @@
 								person="#{RegistrationBean.user.person}"
 								bean="#{RegistrationBean}" position="0" userSource=""/>
 
-							<ui:fragment
-								rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
-								<h:selectBooleanCheckbox id="accept_terms"
-									value="#{RegistrationBean.termsAccepted}" />
-				 		    	#{lbl.agree_to}
-					 		     <h:outputLink title="#{lbl.terms_of_use}" target="_blank"
-									value="#{Configuration.termsOfUseUrl}"
-									rendered="#{Configuration.termsOfUseUrl != ''}">
-									<h:outputText value="#{lbl.terms_of_use}" />
-								</h:outputLink>
-								<h:outputLink title="#{lbl.terms_of_use}" target="_blank"
-									value="#{Navigation.termsOfUseUrl}"
-									rendered="#{Configuration.termsOfUseUrl == ''}">
-									<h:outputText value="#{lbl.terms_of_use}" />
-								</h:outputLink>
-
-							</ui:fragment>
-
-							<div class="imj_submitPanel">
-								<h:commandButton action="#{RegistrationBean.register}"
+							
+							<div class="imj_metadataSet">
+								<div class="imj_metadataLabel">
+								<ui:fragment rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
+									<h:selectBooleanCheckbox id="accept_terms"
+										value="#{RegistrationBean.termsAccepted}" />
+					 		    	#{lbl.agree_to}
+						 		     <h:outputLink title="#{lbl.terms_of_use}" target="_blank"
+										value="#{Configuration.termsOfUseUrl}"
+										rendered="#{Configuration.termsOfUseUrl != ''}">
+										<h:outputText value="#{lbl.terms_of_use}" />
+									</h:outputLink>
+									<h:outputLink title="#{lbl.terms_of_use}" target="_blank"
+										value="#{Navigation.termsOfUseUrl}"
+										rendered="#{Configuration.termsOfUseUrl == ''}">
+										<h:outputText value="#{lbl.terms_of_use}" />
+									</h:outputLink>
+	
+								</ui:fragment>
+									<span class="imj_noDisplay">: </span>
+								</div>
+								<div class="imj_metadataValue">
+									<h:commandButton action="#{RegistrationBean.register}"
 									type="submit" value="#{lbl.register_now}"
 									styleClass="imj_submitButton" />
 								#{lbl.required_marker} #{lbl.required}
+								</div>
 							</div>
 
+
 						</h:form>
-					</ui:fragment>
+					</div>
 
 				</ui:fragment>
 
@@ -80,7 +85,7 @@
 				<ui:fragment
 					rendered="#{RegistrationBean.registration_submitted and RegistrationBean.registration_success}">
 					<ul class="imj_registerSteps">
-						<li class="imj_active imj_submitted">1. #{lbl.register}</li>
+						<li class="imj_active">1. #{lbl.register}</li>
 						<li>2. #{lbl.register_activate}</li>
 					</ul>
 					<p>#{msg.registration_thank_you}</p>
@@ -93,20 +98,14 @@
 				<h2 class="imj_headline">#{lbl.register_activation}</h2>
 				<ul class="imj_registerSteps">
 					<li>1. #{lbl.register}</li>
-					<ui:fragment rendered="#{RegistrationBean.activation_success}">
-						<li class="imj_active imj_submitted">2.
-							#{lbl.register_activate}</li>
-					</ui:fragment>
-					<ui:fragment rendered="#{!RegistrationBean.activation_success}">
-						<li class="imj_active">2. #{lbl.register_activate}</li>
-					</ui:fragment>
+					<li class="imj_active">2. #{lbl.register_activate}</li>
 				</ul>
 
 				<p>
-					<h:outputText styleClass="imj_messageStatus"
+					<h:outputText 
 						value="#{RegistrationBean.activation_message}"
 						rendered="#{RegistrationBean.activation_success}" />
-					<h:outputText styleClass="imj_messageError"
+					<h:outputText 
 						value="#{RegistrationBean.activation_message}"
 						rendered="#{!RegistrationBean.activation_success}" />
 				</p>
