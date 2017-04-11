@@ -11,7 +11,7 @@
 	
 	<composite:implementation>
 		<h:form>
-			<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" styleClass="imj_menuButton imj_overlayMenu" onclick=" window.location.hash = '#itemMetadata'; startLoader();">
+			<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" styleClass="imj_menuButton imj_overlayMenu" onclick=" window.location.href = '#itemMetadata'; startLoader();">
 				 <span class="fa fa-pencil"/>
 				  <span class="imj_headerEntry">#{lbl.edit}</span>
 				 <f:ajax render=":metadata"/>

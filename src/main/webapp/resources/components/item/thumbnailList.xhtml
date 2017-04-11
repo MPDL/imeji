@@ -8,6 +8,7 @@
 		<composite:attribute name="picList"/>
 	</composite:interface>
 	<composite:implementation>
+		<style>.imj_tileItem {width: #{Configuration.thumbnailWidth}px !important;}</style>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfElements != 0}">
 			<div class="imj_listHeader">
 				<div class="imj_overlayMenu">
@@ -31,6 +32,7 @@
 			<div class="imj_listBody" id="listDiv">
 				<ul id="imj_listBody">
 					<!-- Images -->	
+					
 					<ui:repeat id="pictureList" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
 						<li class="imj_tileItem">
 							<ui:param name="uri" value="#{item.uri}"/>

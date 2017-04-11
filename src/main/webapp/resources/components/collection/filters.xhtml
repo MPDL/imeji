@@ -16,8 +16,10 @@
 			<h:form>
 				<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item">
 					<div class="imj_menuHeader">
-						<h:commandLink id="lnkSortAsc" value=" #{lbl.sort_by} #{cc.attrs.filterBean.selectedSortCriterionLabel}" styleClass="fa #{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING' ? 'fa-arrow-up' : 'fa-arrow-down' }" action="#{cc.attrs.filterBean.toggleSortOrder}" onclick="startLoader();">
+						<h:commandLink id="lnkSortAsc" value=""  action="#{cc.attrs.filterBean.toggleSortOrder}" onclick="startLoader();">
 							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+							<span class="fa #{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING' ? 'fa-arrow-up' : 'fa-arrow-down' }"></span>
+							#{lbl.sort_by} #{cc.attrs.filterBean.selectedSortCriterionLabel}
 						</h:commandLink>
 					</div>
 					

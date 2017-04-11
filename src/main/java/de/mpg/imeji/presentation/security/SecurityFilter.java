@@ -334,5 +334,4 @@ public class SecurityFilter implements Filter {
     return (SessionBean) req.getSession(true).getAttribute(SessionBean.class.getSimpleName());
   }
 
-
 }

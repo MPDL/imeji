@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -380,12 +379,11 @@ public class ImejiConfiguration {
    *
    * @return
    */
-  public List<HtmlSnippet> getSnippets(List<SelectItem> languages) {
+  public List<HtmlSnippet> getSnippets(List<String> languages) {
     final List<HtmlSnippet> snippets = new ArrayList<>();
-    for (final SelectItem lang : languages) {
-      final String html =
-          (String) config.get(CONFIGURATION.STARTPAGE_HTML.name() + "_" + lang.getValue());
-      snippets.add(new HtmlSnippet((String) lang.getValue(), html != null ? html : ""));
+    for (final String lang : languages) {
+      final String html = (String) config.get(CONFIGURATION.STARTPAGE_HTML.name() + "_" + lang);
+      snippets.add(new HtmlSnippet((String) lang, html != null ? html : ""));
     }
     return snippets;
   }

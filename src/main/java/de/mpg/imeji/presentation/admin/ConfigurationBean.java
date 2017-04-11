@@ -3,6 +3,7 @@ package de.mpg.imeji.presentation.admin;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -17,7 +18,6 @@ import de.mpg.imeji.logic.config.ImejiFileTypes;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.lang.InternationalizationBean;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -169,9 +169,7 @@ public class ConfigurationBean extends SuperBean {
    * @return
    */
   public List<HtmlSnippet> getSnippets() {
-    final de.mpg.imeji.presentation.lang.InternationalizationBean internationalizationBean =
-        (InternationalizationBean) BeanHelper.getApplicationBean(InternationalizationBean.class);
-    return Imeji.CONFIG.getSnippets(internationalizationBean.getLanguages());
+    return Imeji.CONFIG.getSnippets(Arrays.asList(Imeji.CONFIG.getLanguages().split(",")));
   }
 
   /**
