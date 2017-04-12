@@ -201,7 +201,7 @@
 										rendered="#{EditItemsSelectedBean.displayedColumns.contains(cell.statement.index)}">
 										<td class="column_#{status.index}">
 											<h:panelGroup id="cellInput">
-												<ui:repeat id="value" value="#{cell.inputs}" var="input" varstatus="inputStatus">
+												<ui:repeat id="value" value="#{cell.inputs}" var="input" varStatus="inputStatus">
 													<div class="edit_selected_table_button">
 														<md:input id="input" metadataInputComponent="#{input}" compact="true"/>
 														<h:commandLink type="submit" styleClass="fa fa-times"
