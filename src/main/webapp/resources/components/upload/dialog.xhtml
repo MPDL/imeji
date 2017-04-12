@@ -17,7 +17,7 @@
 			<h:form id="uploadForm">
 				<ui:fragment rendered="#{cc.attrs.bean.collection.status == 'RELEASED'}">
 					#{lbl.move_collection_released}<br/><br/>
-					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":actionCollection:uploadDialog:uploadForm"/>
+					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":actionCollection:uploadDialog:uploadForm" render=":actionCollection:uploadDialog:uploadForm:uploader:licenseVariables"/>
 				</ui:fragment>
 				<div class="uploadDialogHeadArea imj_submitPanel">
 					<a id="closeUploadDialog" onclick="closeDialog('uploadDialog');" class="imj_cancelButton">
@@ -35,7 +35,7 @@
 	           <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.update}" style="display:none" onclick="closeDialog('uploadDialog');startLoader();">
 	           		<f:ajax execute="@this" render="@form :ajaxWrapper :actionsMenuArea"/>
 	           </h:commandButton>
-		 		<upload:upload browseButtonId="selectFiles" license="#{cc.attrs.bean.licenseEditor.license}" collectionId="#{cc.attrs.colId}" updateButtonId="actionCollection:uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>
+		 		<upload:upload id="uploader" browseButtonId="selectFiles" license="#{cc.attrs.bean.licenseEditor.license}" collectionId="#{cc.attrs.colId}" updateButtonId="actionCollection:uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>		
 	 		</h:form>
  		</div>
  		<div class="uploadPanel"/>

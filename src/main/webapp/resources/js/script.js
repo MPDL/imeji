@@ -125,12 +125,13 @@ $(function() {
 				inputId = inputId + idEls[i] + ":";
 			}
 			// Write the value of the current input
+			console.log(inputId);
 			setInputValue(this.id, ui.item.value);
 			setInputValue(inputId + "identifier", ui.item.id);
 			setInputValue(inputId + "given", ui.item.givenname);
 			setInputValue(inputId + "family", ui.item.family);
 			setInputValue(inputId + "identifier", ui.item.id);
-			setInputValue(inputId + "organization", ui.item.organization);
+			setInputValue(inputId + "organization:0:name", ui.item.organization);
 			setInputValue(inputId + "latitude", ui.item.latitude);
 			setInputValue(inputId + "longitude", ui.item.longitude);
 			return false;
@@ -899,26 +900,9 @@ $( document ).ready(function() {
 
 function resizeMenu(){
 	var width = $(".imj_menuHeader").outerWidth(true);
-	console.log(width);
 	$(".imj_menuSimpleSearch").css({
 	     "width": width
 	 });
-	/*
-	var left = $(".imj_menuHeader").offset().left;
-	var menuWidth = $(".imj_menuSimpleSearch").outerWidth(true);
-	var offset = menuWidth > width ? menuWidth - width : 0;
-	width = menuWidth > width ? menuWidth : width;
-	if(offset > 0 || false){
-		$(".imj_menuSimpleSearch").css({
-			"width": width,
-		     "left": (left -offset)
-		 });
-	}
-	else{
-		$(".imj_menuSimpleSearch").css({
-		     "width": width
-		 });
-	}*/
 }
 
 

@@ -7,6 +7,7 @@
 	<composite:interface>
 		<composite:attribute name="licenseEditor"/>
 		<composite:attribute name="containerId"/>
+		<composite:attribute name="render" default="@none"/>
 	</composite:interface>
 	
 	<composite:implementation>
@@ -24,13 +25,13 @@
 				<div class="imj_metadataSet">
 					<h:outputLabel value="#{lbl.name}" styleClass="imj_metadataLabel"/>
 					<h:inputText value="#{cc.attrs.licenseEditor.customLicenseName}" styleClass="imj_metadataValue" >
-						<f:ajax  render="@none"/>
+						<f:ajax listener="#{cc.attrs.licenseEditor.licenseInputListener}" render="#{cc.attrs.render}"/>
 					</h:inputText>
 				</div>
 				<div class="imj_metadataSet">
 					<h:outputLabel value="#{lbl.url}" styleClass="imj_metadataLabel"/>
 					<h:inputText value="#{cc.attrs.licenseEditor.customLicenseUrl}" styleClass="imj_metadataValue">
-						<f:ajax render="@none"/>
+						<f:ajax listener="#{cc.attrs.licenseEditor.licenseInputListener}" render="#{cc.attrs.render}"/>
 					</h:inputText>
 				</div>
 			</ui:fragment>
