@@ -42,17 +42,22 @@
 	                 <!-- Search Query -->
 	                <ui:insert name="searchQuery"/>
 		           	
-		           	<!-- headline -->   
-	                 <div class="imj_siteContentHeadline">
-	                 	<span class="imj_siteContentStatus">
-			                <imjc:iconStatus id="status" imejiResource="#{imejiResource}" rendered="#{not empty imejiResource}"/>
-			            </span>
-	                    <h1>
-	                        #{headline.toString().trim()} 
-	                    </h1>
-	                    <ui:insert name="collectionAbout"/>
-	                    
-	                </div>
+		           	<!-- headline --> 
+		           	<ui:fragment rendered="#{not empty headline or not empty imejiResource}">
+		                <div class="imj_siteContentHeadline">
+		                  	<ui:fragment rendered="#{not empty imejiResource}">
+			                 	<span class="imj_siteContentStatus">
+					                <imjc:iconStatus id="status" imejiResource="#{imejiResource}"/>
+					            </span>
+				            </ui:fragment>
+				            <ui:fragment rendered="#{not empty headline}">
+			                    <h1>
+			                        #{headline.toString().trim()}
+			                    </h1>
+		                    </ui:fragment>
+		                    <ui:insert name="collectionAbout"/>
+		                </div>
+	                </ui:fragment>
 	                <!-- Actions Menu -->
 	                <h:panelGroup layout="block" id="actionsMenuArea" class="imj_actionMenuArea">
 	               		<ui:insert name="actionsMenu"/>

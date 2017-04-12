@@ -9,9 +9,7 @@
 	<ui:param name="title" value="#{lbl.home}"/>
 	<ui:param name="currentMainMenu" value="welcome"/>
 	
-	<ui:define name="actionsMenu">
-		<menu:actionMenuStartPage/>
-	</ui:define>
+
 	
 	<ui:define name="init">
 		<f:metadata>
@@ -34,6 +32,10 @@
 						<p>imeji a free and open source web application to manage and publish any research data.</p>
 						<p>imeji is actively developed by the <a href="http://mpdl.mpg.de" target="_blank">Max Planck Digital Library</a> <span class="fa fa-external-link"/></p>
 						<p><a href="http://mpdl.github.io/imeji/" target="_blank">View code source</a> <span class="fa fa-external-link"/></p>
+						<p>What do you want to do?</p>
+						<p><a href="#{Navigation.homeUrl}/upload" class="imj_submitButton"><span class="fa fa-upload"></span> Upload data</a></p>
+						<p><a href="#{Navigation.homeUrl}/createcollection" class="imj_submitButton"><span class="fa fa-plus"></span> Create a collection</a></p>
+						<p><a href="#{Navigation.homeUrl}/collections" class="imj_submitButton"><span class="fa fa-search"></span> Explore existing collections</a></p>
 					</div>
 				</ui:fragment>	
 				<ui:fragment rendered="#{Configuration.getStartPageHTML('de') == '' and InternationalizationBean.locale == 'de'}">
@@ -42,6 +44,10 @@
 						<p>imeji a free and open source web application to manage and publish any research data.</p>
 						<p>imeji is actively developed by the <a href="http://mpdl.mpg.de" target="_blank">Max Planck Digital Library</a> <span class="fa fa-external-link"/></p>
 						<p><a href="http://mpdl.github.io/imeji/" target="_blank">View code source</a> <span class="fa fa-external-link"/></p>
+						<p>What do you want to do?</p>
+						<p><a href="#{Navigation.homeUrl}/upload" class="imj_submitButton"><span class="fa fa-upload"></span> Upload data</a></p>
+						<p><a href="#{Navigation.homeUrl}/createcollection" class="imj_submitButton"><span class="fa fa-plus"></span> Create a collection</a></p>
+						<p><a href="#{Navigation.homeUrl}/collections" class="imj_submitButton"><span class="fa fa-search"></span> Explore existing collections</a></p>
 					</div>
 				</ui:fragment>
 			</div>

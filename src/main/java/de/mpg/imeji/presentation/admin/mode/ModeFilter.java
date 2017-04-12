@@ -34,7 +34,7 @@ import de.mpg.imeji.presentation.util.ServletUtil;
 @WebFilter(urlPatterns = "/*", dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD})
 public class ModeFilter implements Filter {
   private static final Navigation navigation = new Navigation();
-  private static final String REDIRECT_AFTER_LOGIN_PARAM = "redirectAfterLogin";
+  private static final String REDIRECT_AFTER_LOGIN_PARAM = "redirect";
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
@@ -46,7 +46,7 @@ public class ModeFilter implements Filter {
       throws IOException, ServletException {
     if (ServletUtil.isGetRequest(request)) {
       if (isPrivate((HttpServletRequest) request)) {
-        redirectToStartPage(request, resp);
+        redirectToLogin(request, resp);
         return;
       } else if (isRedirected((HttpServletRequest) request)) {
         redirect(request, resp);
@@ -96,7 +96,7 @@ public class ModeFilter implements Filter {
     final String path = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
     return Navigation.HELP.hasSamePath(path) || Navigation.HOME.hasSamePath(path)
         || Navigation.REGISTRATION.hasSamePath(path) || Navigation.IMPRINT.hasSamePath(path)
-        || Navigation.TERMS_OF_USE.hasSamePath(path);
+        || Navigation.TERMS_OF_USE.hasSamePath(path) || Navigation.LOGIN.hasSamePath(path);
   }
 
   /**
@@ -121,22 +121,14 @@ public class ModeFilter implements Filter {
     return Imeji.CONFIG.getPrivateModus();
   }
 
-  /**
-   * Redirect to the start Page
-   *
-   * @param serv
-   * @param resp
-   * @throws UnsupportedEncodingException
-   * @throws IOException
-   */
-  private void redirectToStartPage(ServletRequest serv, ServletResponse resp)
+  private void redirectToLogin(ServletRequest serv, ServletResponse resp)
       throws UnsupportedEncodingException, IOException {
     final String url = navigation.getApplicationUri()
         + PrettyContext.getCurrentInstance((HttpServletRequest) serv).getRequestURL().toURL();
     final Map<String, String[]> params = PrettyContext.getCurrentInstance((HttpServletRequest) serv)
         .getRequestQueryString().getParameterMap();
     ((HttpServletResponse) resp)
-        .sendRedirect(navigation.getApplicationUri() + "?" + REDIRECT_AFTER_LOGIN_PARAM + "="
+        .sendRedirect(navigation.getApplicationUrl() + "login?" + REDIRECT_AFTER_LOGIN_PARAM + "="
             + URLEncoder.encode(url + HistoryUtil.paramsMapToString(params), "UTF-8"));
   }
 
