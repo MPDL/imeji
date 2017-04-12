@@ -125,12 +125,13 @@ $(function() {
 				inputId = inputId + idEls[i] + ":";
 			}
 			// Write the value of the current input
+			console.log(inputId);
 			setInputValue(this.id, ui.item.value);
 			setInputValue(inputId + "identifier", ui.item.id);
 			setInputValue(inputId + "given", ui.item.givenname);
 			setInputValue(inputId + "family", ui.item.family);
 			setInputValue(inputId + "identifier", ui.item.id);
-			setInputValue(inputId + "organization", ui.item.organization);
+			setInputValue(inputId + "organization:0:name", ui.item.organization);
 			setInputValue(inputId + "latitude", ui.item.latitude);
 			setInputValue(inputId + "longitude", ui.item.longitude);
 			return false;

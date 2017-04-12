@@ -43,8 +43,8 @@
 			<h:outputLabel value="#{lbl.first_name}" for="given" styleClass="imj_mdInputLabel"/>
 			<h:inputText id="given" value="#{cc.attrs.metadataInputComponent.metadata.person.givenName}" html5:placeholder="#{lbl.first_name}" styleClass="imj_mdInput"/>
 			<h:outputLabel value="#{lbl.organization}" styleClass="imj_mdInputLabel"/>
-			<ui:repeat value="#{cc.attrs.metadataInputComponent.metadata.person.organizations}" var="org">
-				<h:inputText id="organization" value="#{org.name}" html5:placeholder="#{lbl.organization}" styleClass="imj_mdInput"/>
+			<ui:repeat id="organization" value="#{cc.attrs.metadataInputComponent.metadata.person.organizations}" var="org">
+				<h:inputText id="name" value="#{org.name}" html5:placeholder="#{lbl.organization}" styleClass="imj_mdInput"/>
 			</ui:repeat>
 		</ui:fragment>
 	</composite:implementation>
