@@ -63,7 +63,6 @@ public class SessionBean implements Serializable {
    * The session Bean for imeji
    */
   public SessionBean() {
-    System.out.println("SESSIONBEAN");
     initCssWithCookie();
     initApplicationUrl();
     initBrowseViewWithCookieOrConfig();

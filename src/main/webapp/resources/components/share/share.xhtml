@@ -26,9 +26,6 @@
 							<h:commandButton value="#{lbl.share_new}" action="#" styleClass="imj_submitButton" type="button" onclick="openDialog('shareWithUsersDialog');" id="userShare"/>	
 						</span>
 						<ui:fragment rendered="#{!empty ShareBean.userGroupsBean.userGroups}">
-							<span id="or_big" class="imj_submitPanelSeparator imj_menuButton">
-								#{lbl.or_big}
-							</span>
 							<span id="groupShareButton">
 								<h:commandButton value="#{lbl.share_with_group}" action="#" styleClass="imj_submitButton" onclick="openDialog('shareWithGroupDialog');" id="userGroupShare"/>
 							</span>

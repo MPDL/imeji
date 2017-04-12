@@ -45,7 +45,6 @@ public class InternationalizationBean implements Serializable {
    * Constructor
    */
   public InternationalizationBean() {
-    System.out.println("INTERNA");
     SUPPORTED_LANGUAGES = Imeji.CONFIG.getLanguages().split(",");
 
     isolanguages = new Iso639_1Helper().getList();

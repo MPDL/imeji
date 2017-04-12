@@ -25,8 +25,14 @@
 			<div class="collectionAboutTitle">#{CollectionItemsBean.collection.title}</div>
 			<span class="collectionAboutAuthor">#{lbl.by} #{CollectionItemsBean.authorsShort}</span>
 			<a href="" onclick="return false;">
-				<span class="fa fa-caret-down" style="font-size:0.85em;" onclick="$('.collectionAboutHidden').slideDown(500);$('.fa-caret-up').show(); $(this).hide();"> #{lbl.more}</span>
-				<span class="fa fa-caret-up" style="display:none;font-size:0.85em;" onclick="$('.collectionAboutHidden').slideUp(500);$('.fa-caret-down').show(); $(this).hide();"> #{lbl.less}</span>
+				<span class="moreCollection" style="font-size:0.85em;" onclick="$('.collectionAboutHidden').slideDown(500);$('.lessCollection').show(); $(this).hide();">
+					<span class="fa fa-caret-down" /> 
+					#{lbl.more}
+				</span>
+				<span class="lessCollection" style="display:none;font-size:0.85em;" onclick="$('.collectionAboutHidden').slideUp(500);$('.moreCollection').show(); $(this).hide();">
+					<span class="fa fa-caret-up" /> 
+					#{lbl.less}
+				</span>
 			</a>
 			<ui:fragment rendered="#{CollectionItemsBean.collection.status == 'WITHDRAWN'}">
 				<div class="imj_infodataSet imj_mediaWithdrawn">
