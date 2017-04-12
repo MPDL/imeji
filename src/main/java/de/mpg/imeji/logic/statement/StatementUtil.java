@@ -31,7 +31,7 @@ public class StatementUtil {
    */
   public static List<String> toStatementUriList(String str) {
     return Arrays.asList(str.split(",")).stream()
-        .map(s -> ObjectHelper.getURI(Statement.class, s.toLowerCase()).toString())
+        .map(s -> ObjectHelper.getURI(Statement.class, formatIndex(s)).toString())
         .collect(Collectors.toList());
   }
 

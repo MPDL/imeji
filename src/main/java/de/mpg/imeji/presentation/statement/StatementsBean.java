@@ -67,7 +67,7 @@ public class StatementsBean extends SuperBean {
           .getRequestParameterMap().get("uri");
       Statement s = service.retrieve(uri, getSessionUser());
       service.delete(s, getSessionUser());
-      removeFromDefaultStatements(s.getIndex());
+      removeFromDefaultStatements(s.getUri().toString());
       redirect(getNavigation().getApplicationUrl() + "statements");
     } catch (Exception e) {
       LOGGER.error("Error deleting statement", e);
