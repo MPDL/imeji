@@ -24,14 +24,14 @@
 
 
 		<ui:fragment rendered="#{Auth.admin(UserBean.user)}">
-			<h:panelGroup layout="block" styleClass="imj_backPanel"
+			<h:panelGroup layout="block" styleClass="imj_backPanel" 
 				rendered="#{Auth.sysAdmin}">
 				<a href="#{Navigation.applicationUrl}users"
 					title="#{lbl.admin_user_view}"> <h:outputText
 						value="#{lbl.admin_user_view}" />
 				</a>
 			</h:panelGroup>
-
+			
 			<div class="imj_userConfig">
 
 				<!-- Admin - TiledList -->

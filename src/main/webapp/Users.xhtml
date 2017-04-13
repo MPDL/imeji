@@ -133,6 +133,49 @@
 						</div>
 					</div>
 				</ui:repeat>
+				<div class="imj_admindataSet">
+					<div class="imj_admindataLabel">
+						#{UsersBean.inactiveUsers.size()} #{lbl.registration} #{lbl.found}
+						<span class="imj_noDisplay">: </span>
+					</div>
+					<div class="imj_admindataValue">
+					</div>
+				</div>
+				<ui:repeat id="registrationList" var="user" value="#{UsersBean.inactiveUsers}" rows="0" varStatus="row">
+					<div class="imj_itemContent imj_itemHeadline">
+						<div class="imj_admindataSet">
+							<div class="imj_admindataLabel" style="padding: 10px 0 10px 0;">
+								#{user.person.completeName} (#{user.email})
+							</div>
+							<ui:fragment rendered="#{UsersBean.group == null}">
+								<!-- AdminDataList - User Email -->
+								<div class="imj_admindataValue">
+									<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton"
+										title="#{lbl.register_activate}"
+										onclick="openDialog('register#{row.index}');">
+										<span class="fa fa-check"/> #{lbl.register_activate}
+									</h:outputLink>
+										<dialog:confirmationDialog submitAction="register"
+										bean="#{UsersBean}"
+										confirmationText="#{msg.confirmation_register_user}  (#{user.person.completeName}, #{user.email})"
+										submitLabel="#{lbl.register_activate}"
+										dialogId="register#{row.index}" identifierName="email"
+										identifierValue="#{user.email}" />
+									<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.revoke_registration}" onclick="openDialog('revokeRegistration#{row.index}');">
+										<span class="fa fa-ban"/>  #{lbl.revoke_registration}
+									</h:outputLink>
+									<dialog:confirmationDialog submitAction="cancelInvitation"
+										bean="#{UsersBean}"
+										confirmationText="#{msg.confirmation_revoke_registration} (#{user.person.completeName}, #{user.email})"
+										submitLabel="#{lbl.revoke_registration}"
+										dialogId="revokeRegistration#{row.index}" identifierName="email"
+										identifierValue="#{user.email}" />
+								</div>
+							</ui:fragment>
+						</div>
+					</div>
+				</ui:repeat>
+				
 			</div>
 		</ui:fragment>
 	</ui:define>

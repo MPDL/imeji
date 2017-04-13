@@ -215,12 +215,12 @@ public class UsersBean extends SuperBean {
   }
 
   /**
-   * Activat4e a {@link User}
+   * Activatee a {@link User}
    *
    * @return
    * @throws ImejiException
    */
-  public String activateUser() throws ImejiException {
+  public String register() throws ImejiException {
     final RegistrationBusinessController registrationBC = new RegistrationBusinessController();
     final String email = FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("email");
