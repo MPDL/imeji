@@ -53,18 +53,12 @@
 			<ui:fragment rendered="#{InternationalizationBean.internationalizedLanguages.size() > 1}">
 				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>
 				<h:form id="langForm">
-					<div class="imj_customSelectbox">
-						<div class="imj_showSelection">
-	                        <div class="imj_selectionText"></div>
-	                        <a href="javascript:void(0);" class="fa fa-angle-down"> </a>
-						</div>
-						<h:selectOneMenu value="#{InternationalizationBean.currentLanguage}" onchange="document.getElementById('Header:langForm:submitLang').click();" valueChangeListener="#{InternationalizationBean.currentlanguageListener}" styleClass="imj_metaMenuItemSelect">
-							<f:selectItems value="#{InternationalizationBean.internationalizedLanguages}"/>
-						</h:selectOneMenu>
-						<h:commandButton id="submitLang" action="#{InternationalizationBean.changeLanguage}" value="Change language" styleClass="imj_noDisplay">
-							<f:ajax execute="@form" render="@none"/>
-						</h:commandButton>
-					</div>
+					<h:selectOneMenu value="#{InternationalizationBean.currentLanguage}" onchange="document.getElementById('Header:langForm:submitLang').click();" valueChangeListener="#{InternationalizationBean.currentlanguageListener}" styleClass="imj_metaMenuItemSelect">
+						<f:selectItems value="#{InternationalizationBean.internationalizedLanguages}"/>
+					</h:selectOneMenu>
+					<h:commandButton id="submitLang" action="#{InternationalizationBean.changeLanguage}" value="Change language" styleClass="imj_noDisplay">
+						<f:ajax execute="@form" render="@none"/>
+					</h:commandButton>
 				</h:form>
 			</ui:fragment>
 			

@@ -19,7 +19,7 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{Auth.loggedIn}">
-			<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox" style="display:none;width: 40em;">
+			<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox" style="display:none;">
 				<div class="imj_confirmationText">
 					<h:outputText value="#{cc.attrs.confirmationText}"/>
 				</div>

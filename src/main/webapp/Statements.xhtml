@@ -71,7 +71,7 @@
 										<f:ajax render=":defaultStatements @form"/>
 										<span class="fa fa-star"/> #{lbl.statement_default}
 									</h:commandLink>
-									<h:outputLink rendered="#{!StatementsBean.notUsed.contains(statement.index)}" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteStatement#{row.index}'); return false;">
+									<h:outputLink value="#"  rendered="#{!StatementsBean.notUsed.contains(statement.index)}" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteStatement#{row.index}');">
 										<span class="fa fa-trash"/>  #{lbl.delete}
 									</h:outputLink>
 									<ui:fragment rendered="#{StatementsBean.notUsed.contains(statement.index)}">
