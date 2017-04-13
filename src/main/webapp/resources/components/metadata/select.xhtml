@@ -22,7 +22,7 @@
 	<ui:param name="containerIdNormalized" value="#{cc.attrs.component.normalizeContainerId(cc.attrs.containerId)}"/>
 	<h:panelGroup id="selectMetadata" class="metadataSelector">
 		<div class="selectMd">
-			<button onclick="$('.selectMetadata-content').show(); document.getElementById('#{containerIdNormalized}:filterMd').focus(); return false;" class="imj_submitButton">#{empty cc.attrs.title ? lbl.select_metadata : cc.attrs.title}</button>
+			<button  onclick="showAndFocus('#{containerIdNormalized}:filterMd', 'selectMetadata-content');return false;" class="selectMdButton imj_submitButton">#{empty cc.attrs.title ? lbl.select_metadata : cc.attrs.title}</button>
 			<div class="selectMetadata-content">
 				<h:inputText id="filterMd" styleClass="inptSelMd" value="#{cc.attrs.component.index}" html5:placeholder="#{lbl.search}..." autocomplete="off">
 					<f:ajax event="keyup" render="#{cc.attrs.containerId}:statementList #{cc.attrs.containerId}:buttons"

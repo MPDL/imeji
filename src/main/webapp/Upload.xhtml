@@ -30,10 +30,10 @@
 				<span class="imj_menuButton">#{lbl.or_big}</span>
 			</ui:fragment>
 			<div class="selectMd">
-				<button onclick="$('.selectMetadata-content').show(); return false;" class="imj_submitButton">#{lbl.select_collection}</button>
+				<button onclick="showAndFocus('filterCollections:filterCollection', 'selectMetadata-content');return false;" class="imj_submitButton">#{lbl.select_collection}</button>
 					<div class="selectMetadata-content">
 						<h:form id="filterCollections">
-							<h:inputText value="#{UploadBean.query}" html5:placeholder="#{lbl.filter}" >
+							<h:inputText id="filterCollection" value="#{UploadBean.query}" html5:placeholder="#{lbl.filter}" >
 								<f:ajax render=":list" event="keyup" listener="#{UploadBean.filterCollections}"/>
 							</h:inputText>
 						</h:form>
