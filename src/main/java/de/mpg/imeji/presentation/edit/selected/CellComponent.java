@@ -23,10 +23,10 @@ public class CellComponent implements Serializable {
   private final Statement statement;
 
   public CellComponent(Statement statement, List<Metadata> metadata) {
-    this.statement = statement;
+    this.statement = statement.clone();
     // Init the input only for the metadata of this statement
-    inputs = metadata.stream().filter(md -> md.getIndex().equals(statement.getIndex()))
-        .map(md -> new MetadataInputComponent(md, statement)).collect(Collectors.toList());
+    inputs = metadata.stream().filter(md -> md.getIndex().equals(this.statement.getIndex()))
+        .map(md -> new MetadataInputComponent(md, this.statement)).collect(Collectors.toList());
   }
 
   public List<Metadata> toMetadataList() {

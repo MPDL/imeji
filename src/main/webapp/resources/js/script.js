@@ -339,152 +339,6 @@ function highlighter() {
 
 };
 
-/*******************************************************************************
- * START : Function for the Metadata Profile pages:
- ******************************************************************************/
-/**
- * JQUERY UI Drag and drop for metadata
- */
-function dragAndDrop() {
-	jQuery(function() {
-		var dragged;
-		jQuery(".draggable").draggable({
-			zIndex : 100,
-			opacity : 0.1,
-			cursor : "move",
-			axis : "y",
-			revert : 'invalid'
-		});
-		jQuery(".draggable").on("dragstart", function(event, ui) {
-			dragged = jQuery(this).attr('id') + 'DragButton';
-			hide_non_droppable_area(parseId(jQuery(this).attr('class')));
-		});
-		jQuery(".draggable").on("dragstop", function(event, ui) {
-			show_all_droppable_elements();
-		});
-		jQuery(".dropMetadata").droppable({
-			hoverClass : "drop-hover",
-			accept : '.draggable',
-			activeClass : "dropMetadataActive",
-			greedy : true,
-			drop : function(event, ui) {
-				setOpacity();
-				var id = jQuery(this).attr('id') + "Button";
-				document.getElementById(dragged).click();
-				document.getElementById(id).click();
-			}
-		});
-		jQuery(".dropChild").droppable(
-				{
-					hoverClass : "drop-hover",
-					accept : '.draggable',
-					activeClass : "dropChildActive",
-					drop : function(event, ui) {
-						setOpacity();
-						var id = jQuery(this).attr('id').replace("metadata",
-								"dropChildButton");
-						document.getElementById(dragged).click();
-						document.getElementById(id).click();
-					}
-				});
-	});
-}
-/**
- * 
- * @param index
- */
-function unSelectUnique(index) {
-	var i = 0;
-	while (document
-			.getElementById('profileForm:profile:' + i + ':uniqueSelect') != null) {
-		if (index !== i) {
-			document.getElementById('profileForm:profile:' + i
-					+ ':uniqueSelect').checked = false;
-			document.getElementById('profileForm:profile:' + i
-					+ ':radioDescription:0').checked = false;
-		} else if (document.getElementById('profileForm:profile:' + i
-				+ ':uniqueSelect').checked) {
-			document.getElementById('profileForm:profile:' + i
-					+ ':uniqueSelect').checked = false;
-			document.getElementById('profileForm:profile:' + i
-					+ ':radioDescription:0').checked = false;
-		} else {
-			document.getElementById('profileForm:profile:' + i
-					+ ':uniqueSelect').checked = true;
-			document.getElementById('profileForm:profile:' + i
-					+ ':radioDescription:0').checked = true;
-		}
-		i++;
-	}
-}
-/**
- * Write the options a of drop down menu *
- * 
- * @param select -
- *            the drop down menu
- * @param value
- * @param optionsString -
- *            the options as string
- */
-function write_options(select, value, optionsString) {
-	select.innerHTML = '';
-	var options = optionsString.split('|');
-	for (var i = 0; i < options.length; i++) {
-		var option = document.createElement("option");
-		option.value = options[i].split(',')[0];
-		option.text = options[i].split(',')[1];
-		if (option.value !== '') {
-			select.appendChild(option);
-		}
-		if (option.value === value) {
-			option.selected = 'selected';
-		}
-	}
-	select.value = value;
-}
-/**
- * Set the whole form opacity
- */
-function setOpacity() {
-	document.getElementById('profileForm:ajaxArea').style.opacity = '0.2';
-}
-/**
- * Show the area which are droppable
- */
-function show_all_droppable_elements() {
-	$('.statement_area').css('visibility', 'visible');
-}
-/**
- * Hide all areas where is is not possible to drop a metadata
- * 
- * @param statementId
- */
-function hide_non_droppable_area(statementId) {
-	var area = $('.statement_area_id_' + statementId);
-	area.each(function() {
-		jQuery(this).css('visibility', 'hidden');
-		hide_childs(statementId);
-	});
-}
-/**
- * Hide the metadata which are the child the one with the passed id
- * 
- * @param id
- */
-function hide_childs(id) {
-	var childs = jQuery('.statement_area_parent_' + id);
-	childs.css('visibility', 'hidden');
-	childs.each(function() {
-		// find all non space character after the string "id_"
-		var childId = parseId(jQuery(this).attr('class'));
-		hide_childs(childId);
-	});
-}
-
-/*******************************************************************************
- * END : Function for the Metadata Profile pages:
- ******************************************************************************/
-
 /**
  * When a confirmation is confirmed, make the panel emty until the method called
  * is done
@@ -695,49 +549,6 @@ function removeViewState(form) {
 
 /** END * */
 
-function updateCustomSelectbox(selectbox) {
-	var customSelectbox, select, val, textContainer, icon, textWidth;
-	select = selectbox;
-	customSelectbox = select.parents(".imj_customSelectbox");
-	customSelectbox.width(select.width());
-
-	text = customSelectbox.find(".imj_selectionText");
-	icon = customSelectbox.find(".fa.fa-angle-down");
-
-	val = select.val(); // is the logic value of the current selectbox, but not
-						// the text which is displayed
-
-	select.find("option").each(function(i, opt) { // find the right option to
-													// get the right text value
-		if ($(opt).val() == val) {
-			val = $(opt).text(); // is now the option text
-			$(opt).parent().attr("title", val);
-		}
-	});
-	text.text(val);
-	textWidth = select.width() - icon.width()
-			- Math.round(Number(icon.css("margin-left").replace("px", "")));
-	text.width(textWidth);
-}
-
-/*
- * this function updates the selectText container with the selected item of
- * selectbox
- */
-function customSelectbox(obj) {
-	if (obj) {
-		// implement the onchange functionality
-	} else {
-		$(".imj_customSelectbox select").each(function(i) { // search for every
-															// select inside of
-															// .imj_customSelectbox
-															// in DOM and update
-															// the text
-			updateCustomSelectbox($(this));
-		});
-	}
-}
-
 /**
  * call init
  * -----------------------------------------------------------------------------
@@ -772,7 +583,6 @@ function menuRightOffset(){
  * Method called when page is ready
  */
 jQuery(document).ready(function() {
-	customSelectbox();
 	highlighter();
 	menuRightOffset();
 });
@@ -963,7 +773,18 @@ $(function(){
 //Close success message after 2s
 setTimeout(function() {
     $('.imj_messageSuccess').fadeOut(1000);
-}, 2000);//---------------------------------------------------------------------
+}, 2000);
+
+
+function showAndFocus(focusid, showClass){
+	$(".selectMetadata-content").show();
+	document.getElementById(focusid).focus();
+	$("."+showClass).focusout(function(event) {
+		$("."+showClass).delay(200).hide(0);
+	});
+}
+
+//---------------------------------------------------------------------
 //
 // QR Code Generator for JavaScript SJIS Support (optional)
 //

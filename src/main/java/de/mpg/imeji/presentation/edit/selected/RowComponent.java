@@ -57,8 +57,8 @@ public class RowComponent implements Serializable {
    * @param index
    * @param newStatement
    */
-  public void changeStatement(String index, Statement newStatement) {
-    cells.stream().filter(c -> c.getStatement().getIndex().equals(index))
+  public void changeStatement(String orginalIndex, Statement newStatement) {
+    cells.stream().filter(c -> c.getStatement().getIndex().equals(orginalIndex))
         .forEach(c -> c.changeStatement(newStatement));
   }
 

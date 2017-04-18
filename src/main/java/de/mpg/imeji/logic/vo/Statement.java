@@ -149,6 +149,9 @@ public class Statement implements Serializable, Cloneable {
     clone.index = index;
     clone.type = type;
     clone.vocabulary = vocabulary;
+    clone.uri = uri;
+    clone.typeString = typeString;
+    clone.namespace = namespace;
     return clone;
   }
 

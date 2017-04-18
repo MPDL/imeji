@@ -21,6 +21,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
 import de.mpg.imeji.presentation.edit.SelectStatementComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -42,7 +43,6 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   private List<RowComponent> rows = new ArrayList<>();
   private SelectStatementComponent newStatement;
   private List<String> displayedColumns = new ArrayList<>();
-  private String editedColumn = "";
 
   public EditItemsSelectedBean() throws ImejiException {
     super();
@@ -87,18 +87,14 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    */
   private void initHeaders(List<Item> items) {
     // Create a Map of the columns from the existing Metadata of the item
-    final Map<String, HeaderComponent> headerMap = items.stream()
-        .flatMap(item -> item.getMetadata().stream()).filter(md -> md.getIndex().length() > 0)
-        .collect(Collectors.toMap(Metadata::getIndex,
-            md -> new HeaderComponent(statementMap.get(md.getIndex()), statementMap),
-            (s1, s2) -> s1));
-
-    // Get the default statement of this instance
-    final Map<String, Statement> defaultStatement = getDefaultStatements();
+    final Map<String, HeaderComponent> headerMap =
+        items.stream().flatMap(item -> item.getMetadata().stream())
+            .filter(md -> md.getIndex().length() > 0).collect(Collectors.toMap(Metadata::getIndex,
+                md -> new HeaderComponent(statementMap.get(md.getIndex())), (s1, s2) -> s1));
 
     // Add the default Statement to the columns
-    headerMap.putAll(getDefaultStatements().values().stream().collect(Collectors.toMap(
-        Statement::getIndex, st -> new HeaderComponent(st, defaultStatement), (s1, s2) -> s1)));
+    headerMap.putAll(getDefaultStatements().values().stream().collect(
+        Collectors.toMap(Statement::getIndex, st -> new HeaderComponent(st), (s1, s2) -> s1)));
 
     // Get the Column Map as a List sorted by index
     headers = headerMap.values().stream().sorted(
@@ -141,16 +137,30 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    * 
    * @param position
    */
-  public void changeColumnName(int position) {
-    // Get the Statement to change the name
-    HeaderComponent header = headers.get(position);
-    Statement st = header.getStatement();
-    // Change the statement name for all rows
-    rows.stream().forEach(r -> r.changeStatement(editedColumn, st));
-    // Add the new name to the displayed statement
-    displayedColumns.set(displayedColumns.indexOf(editedColumn), st.getIndex());
-    // Reset the edited column value
-    editedColumn = null;
+  public void changeColumnName(HeaderComponent header) {
+    if (isValidStatementName(header.getInputName(), header.getStatement().getType())) {
+      Statement newStatement = header.getStatement().clone();
+      newStatement.setIndex(header.getInputName());
+      // Change the statement name for all rows
+      rows.stream().forEach(r -> r.changeStatement(header.getStatement().getIndex(), newStatement));
+      // Change the statement of the header
+      header.getStatement().setIndex(header.getInputName());
+      // Remove the old name to the displayed statement
+      displayedColumns.add(newStatement.getIndex());
+      header.setEdit(false);
+      header.setInvalidName(false);
+    } else {
+      header.setInvalidName(true);
+    }
+  }
+
+  private boolean isValidStatementName(String newName, StatementType type) {
+    try {
+      Statement s = statementService.retrieveByIndex(newName, getSessionUser());
+      return s.getType().equals(type);
+    } catch (ImejiException e) {
+      return true;
+    }
   }
 
   /**
@@ -189,7 +199,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    */
   public void addColumn() {
     Statement statement = newStatement.asStatement();
-    headers.add(new HeaderComponent(statement, statementMap));
+    headers.add(new HeaderComponent(statement));
     rows.stream().forEach(r -> r.addCell(statement));
     displayedColumns.add(statement.getIndex());
     newStatement = new SelectStatementComponent(statementMap);
@@ -210,14 +220,6 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
 
   public String getBackUrl() {
     return getPreviousPage().getCompleteUrlWithHistory();
-  }
-
-  public void setEditedColumn(String editedColumn) {
-    this.editedColumn = editedColumn;
-  }
-
-  public String getEditedColumn() {
-    return editedColumn;
   }
 
   /**

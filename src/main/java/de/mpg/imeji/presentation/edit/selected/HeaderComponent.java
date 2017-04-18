@@ -1,12 +1,10 @@
 package de.mpg.imeji.presentation.edit.selected;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.edit.MetadataInputComponent;
-import de.mpg.imeji.presentation.edit.SelectStatementComponent;
 
 /**
  * Header of the edit selected table
@@ -17,12 +15,14 @@ import de.mpg.imeji.presentation.edit.SelectStatementComponent;
 public class HeaderComponent implements Serializable {
   private static final long serialVersionUID = -2261479826163433985L;
   private MetadataInputComponent input;
-  private SelectStatementComponent selectStatementComponent;
-  private Statement statement;
+  private final Statement statement;
+  private boolean edit = false;
+  private boolean invalidName = false;
+  private String inputName;
 
-  public HeaderComponent(Statement statement, Map<String, Statement> statementMap) {
-    this.statement = statement;
-    selectStatementComponent = new SelectStatementComponent(statement.getIndex(), statementMap);
+  public HeaderComponent(Statement statement) {
+    this.statement = statement.clone();
+    this.setInputName(new String(statement.getIndex()));
   }
 
   public void initInput() {
@@ -44,30 +44,52 @@ public class HeaderComponent implements Serializable {
   }
 
   /**
-   * @return the selectStatementComponent
-   */
-  public SelectStatementComponent getSelect() {
-    return selectStatementComponent;
-  }
-
-  /**
-   * @param selectStatementComponent the selectStatementComponent to set
-   */
-  public void setSelect(SelectStatementComponent selectStatementComponent) {
-    this.selectStatementComponent = selectStatementComponent;
-  }
-
-  /**
    * @return the statement
    */
   public Statement getStatement() {
     return statement;
   }
 
+
   /**
-   * @param statement the statement to set
+   * @return the invalidName
    */
-  public void setStatement(Statement statement) {
-    this.statement = statement;
+  public boolean isInvalidName() {
+    return invalidName;
+  }
+
+  /**
+   * @param invalidName the invalidName to set
+   */
+  public void setInvalidName(boolean invalidName) {
+    this.invalidName = invalidName;
+  }
+
+  /**
+   * @return the edit
+   */
+  public boolean isEdit() {
+    return edit;
+  }
+
+  /**
+   * @param edit the edit to set
+   */
+  public void setEdit(boolean edit) {
+    this.edit = edit;
+  }
+
+  /**
+   * @return the inputName
+   */
+  public String getInputName() {
+    return inputName;
+  }
+
+  /**
+   * @param inputName the inputName to set
+   */
+  public void setInputName(String inputName) {
+    this.inputName = inputName;
   }
 }
