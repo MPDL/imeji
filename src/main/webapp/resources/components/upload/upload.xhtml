@@ -15,6 +15,11 @@
 	</composite:interface>
 	
 	<composite:implementation>
+		<h:panelGroup id="licenseVariables">
+			<h:inputHidden id="name" value="#{cc.attrs.license.name}"/>
+			<h:inputHidden id="label" value="#{cc.attrs.license.label}"/>
+			<h:inputHidden id="url" value="#{cc.attrs.license.url}"/>
+		</h:panelGroup>
 		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/plupload/2.1.2/js/plupload.full.min.js"></script>
 		<script>
 			var totalFiles = 0;
@@ -29,8 +34,8 @@
 				drop_element: '#{cc.attrs.dropElementId}',
 				multipart_params: {
 					licenseName: document.getElementById('actionCollection:uploadDialog:uploadForm:uploader:name').value,
-					licenseLabel:  '#{cc.attrs.license.label}',
-					licenseUrl:  '#{cc.attrs.license.url}',
+					licenseLabel:  document.getElementById('actionCollection:uploadDialog:uploadForm:uploader:label').value,
+					licenseUrl:  document.getElementById('actionCollection:uploadDialog:uploadForm:uploader:url').value,
 					},
 				init: {	
 					PostInit: function() {
@@ -92,10 +97,6 @@
 			    $('.imj_messageSuccess').fadeOut(1000);
 			}, 2000);
 		</script>
-		<h:panelGroup id="licenseVariables">
-			<h:inputHidden id="name" value="#{cc.attrs.license.name}"/>
-			<h:inputHidden id="label" value="#{cc.attrs.license.label}"/>
-			<h:inputHidden id="url" value="#{cc.attrs.license.url}"/>
-		</h:panelGroup>
+		
 	</composite:implementation>
 </html>
