@@ -9,7 +9,7 @@
                 xmlns:collection="http://java.sun.com/jsf/composite/components/collection">
 	
 	<ui:define name="actionsMenu">
-		<item:browseActionMenu id="actionItems" itemsBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'items'}"/>
+		<menu:defaultActionMenu id="actionItems" rendered="#{currentMainMenu == 'items'}"/>
 		<collection:actionMenu id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status.name() != 'WITHDRAWN'}" />
 		<item:selectedActionMenu id="actionSelectedItems" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}" />
 		<item:downloadMenu id="actionDownload" itemsBean="#{paginatorListSessionBean}" rendered="#{paginatorListSessionBean.totalNumberOfElements > 0}" />

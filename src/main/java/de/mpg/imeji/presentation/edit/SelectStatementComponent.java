@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.StatementType;
@@ -53,7 +54,8 @@ public class SelectStatementComponent implements Serializable {
   public List<String> searchForIndex(List<SelectItem> statementMenu) {
     if (!StringHelper.isNullOrEmptyTrim(index)) {
       return statementMenu.stream().map(i -> i.getValue().toString())
-          .filter(s -> s.toLowerCase().startsWith(index.toLowerCase()))
+          .filter(s -> StatementUtil.formatIndex(s)
+              .startsWith(StatementUtil.formatIndex(index.toLowerCase())))
           .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(5)
           .collect(Collectors.toList());
     } else {
@@ -82,9 +84,9 @@ public class SelectStatementComponent implements Serializable {
     return containerId.startsWith(":") ? containerId.substring(1) : containerId;
   }
 
-  public boolean indexExists(List<SelectItem> statementMenu) {
-    return statementMenu.stream().filter(i -> i.getValue().toString().equalsIgnoreCase(index))
-        .findAny().isPresent();
+  public boolean indexExists() {
+    return statementMap.values().stream()
+        .filter(i -> StatementUtil.indexEquals(i.getIndex(), index)).findAny().isPresent();
   }
 
   public void reset() {

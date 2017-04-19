@@ -4,17 +4,22 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:collection="http://java.sun.com/jsf/composite/components/collection"
-	xmlns:imeji="http://java.sun.com/jsf/composite/components">
+	xmlns:imeji="http://java.sun.com/jsf/composite/components"
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	
 	<ui:param name="paginatorListSessionBean" value="#{CollectionsBean}" />
-	<ui:param name="headline" value=" " />
+	<ui:param name="headline" value="" />
 	<ui:param name="title" value="#{lbl.collections}"/>
-	<ui:param name="displayQuery"
-		value="#{paginatorListSessionBean.simpleQuery != ''}" />
+	<ui:param name="displayQuery" value="#{paginatorListSessionBean.simpleQuery != ''}" />
 	<ui:param name="currentMainMenu" value="collection" />
 	
 	<ui:define name="actionsMenu">
-		<collection:browseActionMenu rendered="#{!empty SessionBean.user}" />
+		<menu:defaultActionMenu/>
+		<ui:fragment rendered="#{Auth.createCollection}">
+			<a href="#{Navigation.createCollectionUrl}" class="imj_menuButton imj_overlayMenu">
+				<span class="fa fa-plus"/> <span class="imj_headerEntry"> #{lbl.new_collection}</span>
+			</a>
+		</ui:fragment>
 	</ui:define>
 
 	<ui:define name="searchQuery">
