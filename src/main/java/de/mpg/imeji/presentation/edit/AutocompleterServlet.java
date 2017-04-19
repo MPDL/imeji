@@ -5,7 +5,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -244,17 +246,21 @@ public class AutocompleterServlet extends HttpServlet {
     final Object obj = JSONValue.parse(cone);
     final JSONArray array = (JSONArray) obj;
     final JSONArray result = new JSONArray();
+    Set<String> identifierSet = new HashSet<>();
     for (int i = 0; i < array.size(); ++i) {
       final JSONObject parseObject = (JSONObject) array.get(i);
       final JSONObject sendObject = new JSONObject();
-      sendObject.put("label", parseObject.get("http_purl_org_dc_elements_1_1_title"));
-      sendObject.put("value", parseObject.toJSONString());
-      sendObject.put("family", parseObject.get("http_xmlns_com_foaf_0_1_family_name"));
-      sendObject.put("givenname", parseObject.get("http_xmlns_com_foaf_0_1_givenname"));
-      sendObject.put("id", parseObject.get("id"));
-      sendObject.put("organization", parseConeAuthorOrgs(JSONValue
-          .toJSONString(parseObject.get("http_purl_org_escidoc_metadata_terms_0_1_position"))));
-      result.add(sendObject);
+      if (!identifierSet.contains(parseObject.get("id").toString())) {
+        sendObject.put("label", parseObject.get("http_purl_org_dc_elements_1_1_title"));
+        sendObject.put("value", parseObject.toJSONString());
+        sendObject.put("family", parseObject.get("http_xmlns_com_foaf_0_1_family_name"));
+        sendObject.put("givenname", parseObject.get("http_xmlns_com_foaf_0_1_givenname"));
+        sendObject.put("id", parseObject.get("id"));
+        sendObject.put("organization", parseConeAuthorOrgs(JSONValue
+            .toJSONString(parseObject.get("http_purl_org_escidoc_metadata_terms_0_1_position"))));
+        identifierSet.add(parseObject.get("id").toString());
+        result.add(sendObject);
+      }
     }
     final StringWriter out = new StringWriter();
     JSONArray.writeJSONString(result, out);
