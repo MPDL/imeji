@@ -34,7 +34,6 @@ public class AdvancedSearchBean extends SuperBean {
   private static final long serialVersionUID = -3989020231445922611L;
   private SearchForm formular;
   // Menus
-  private List<SelectItem> profilesMenu;
   private List<SelectItem> collectionsMenu;
   private List<SelectItem> operatorsMenu;
 
@@ -150,23 +149,6 @@ public class AdvancedSearchBean extends SuperBean {
     return SearchQueryParser.searchQuery2PrettyQuery(formular.getFormularAsSearchQuery());
   }
 
-  /**
-   * Getter
-   *
-   * @return
-   */
-  public List<SelectItem> getProfilesMenu() {
-    return profilesMenu;
-  }
-
-  /**
-   * Setter
-   *
-   * @param collectionsMenu
-   */
-  public void setProfilesMenu(List<SelectItem> profilesMenu) {
-    this.profilesMenu = profilesMenu;
-  }
 
   /**
    * Getter

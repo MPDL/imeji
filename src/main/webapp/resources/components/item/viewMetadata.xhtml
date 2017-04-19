@@ -86,16 +86,18 @@
 					</div>
 				</ui:repeat>
 				<!-- InfoDataList - MD5 -->
-				<div class="imj_metadataSet">
-					<div class="imj_metadataLabel">
-						#{lbl.checksum} (MD5)
-						<span class="imj_invisible">: </span>
+				<ui:fragment rendered="#{cc.attrs.itemBean.item.status != 'WITHDRAWN'}">
+					<div class="imj_metadataSet">
+						<div class="imj_metadataLabel">
+							#{lbl.checksum} (MD5)
+							<span class="imj_invisible">: </span>
+						</div>
+						<div class="imj_metadataValue">
+							#{cc.attrs.itemBean.content.checksum}
+							<a href="#{Navigation.browseUrl}?q=checksum=%22#{cc.attrs.itemBean.content.checksum}%22"> [#{lbl.search_for_duplicate}]</a>
+						</div>
 					</div>
-					<div class="imj_metadataValue">
-						#{cc.attrs.itemBean.content.checksum}
-						<a href="#{Navigation.browseUrl}?q=checksum=%22#{cc.attrs.itemBean.content.checksum}%22"> [#{lbl.search_for_duplicate}]</a>
-					</div>
-				</div>
+				</ui:fragment>
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel">
 						#{lbl.imageUploader}
@@ -114,37 +116,39 @@
 						#{cc.attrs.itemBean.image.created.time.toString()}
 					</div>
 				</div>
-				<div class="imj_metadataSet">
-					<div class="imj_metadataLabel">
-						#{lbl.files}
-						<span class="imj_invisible">: </span>
+				<ui:fragment rendered="#{cc.attrs.itemBean.item.status != 'WITHDRAWN'}">
+					<div class="imj_metadataSet">
+						<div class="imj_metadataLabel">
+							#{lbl.files}
+							<span class="imj_invisible">: </span>
+						</div>
+						<div class="imj_metadataValue">
+							#{cc.attrs.itemBean.image.created.time.toString()}
+							<ul class="imj_optionList">
+								<li>
+									<h:outputLink value="#{cc.attrs.itemBean.thumbnail}" target="_blank">
+										<h:outputText value="#{lbl.imageSizesThumb}"/>
+									</h:outputLink>
+								</li>
+								<li>
+									<h:outputLink value="#{cc.attrs.itemBean.preview}" target="_blank">
+										<h:outputText value="#{lbl.imageSizesWeb}"/>
+									</h:outputLink>
+								</li>
+								<li>
+									<h:outputLink value="#{cc.attrs.itemBean.fullResolution}" target="_blank">
+										<h:outputText value="#{lbl.imageSizesFull}"/>
+									</h:outputLink>
+								</li>
+								<li>
+									<h:outputLink value="#{cc.attrs.itemBean.originalFile}" target="_blank">
+										<h:outputText value="#{lbl.imageSizesOrg}"/>
+									</h:outputLink>
+								</li>
+							</ul>
+						</div>
 					</div>
-					<div class="imj_metadataValue">
-						#{cc.attrs.itemBean.image.created.time.toString()}
-						<ul class="imj_optionList">
-							<li>
-								<h:outputLink value="#{cc.attrs.itemBean.thumbnail}" target="_blank">
-									<h:outputText value="#{lbl.imageSizesThumb}"/>
-								</h:outputLink>
-							</li>
-							<li>
-								<h:outputLink value="#{cc.attrs.itemBean.preview}" target="_blank">
-									<h:outputText value="#{lbl.imageSizesWeb}"/>
-								</h:outputLink>
-							</li>
-							<li>
-								<h:outputLink value="#{cc.attrs.itemBean.fullResolution}" target="_blank">
-									<h:outputText value="#{lbl.imageSizesFull}"/>
-								</h:outputLink>
-							</li>
-							<li>
-								<h:outputLink value="#{cc.attrs.itemBean.originalFile}" target="_blank">
-									<h:outputText value="#{lbl.imageSizesOrg}"/>
-								</h:outputLink>
-							</li>
-						</ul>
-					</div>
-				</div>
+				</ui:fragment>
 				<ui:fragment rendered="#{cc.attrs.itemBean.image.status == 'RELEASED'}">
 					<div class="imj_metadataSet">
 						<div class="imj_metadataLabel">
@@ -155,34 +159,39 @@
 							<textarea class="imj_infodataValueEntryEmbed" onclick="this.select();">&lt;a href='#{cc.attrs.itemBean.pageUrl}' title='#{cc.attrs.itemBean.image.filename}'&gt; &lt;img src='#{cc.attrs.itemBean.preview}' alt='#{cc.attrs.itemBean.image.filename}' title='#{cc.attrs.itemBean.image.filename}'&gt;&lt;/a&gt;</textarea>
 						</div>
 					</div>
+					<div class="imj_metadataSet">
+						<div class="imj_metadataLabel">
+							#{lbl.qrcode}
+							<span class="imj_invisible">: </span>
+						</div>
+						<div class="imj_metadataValue">
+							<span class="imj_infodataValue" id="qr"> </span>
+						</div>
+					</div>
 				</ui:fragment>
-				<div class="imj_metadataSet">
-					<div class="imj_metadataLabel">
-						#{lbl.qrcode}
-						<span class="imj_invisible">: </span>
+				<ui:fragment rendered="#{cc.attrs.itemBean.item.status != 'WITHDRAWN'}">
+					<div class="imj_metadataSet">
+						<div class="imj_metadataLabel">
+							#{lbl.technical_metadata}
+							<span class="imj_invisible">: </span>
+						</div>
+						<div class="imj_metadataValue">
+							<h:form>
+								<h:commandLink rendered="#{cc.attrs.itemBean.techMd == null}" value="#{lbl.show_tech_md}" action="#{cc.attrs.itemBean.showTechnicalMetadata}" onclick=" window.location.hash = '#techmetadata';">
+									<f:ajax render="@form"/>
+								</h:commandLink>
+								<h:commandLink rendered="#{cc.attrs.itemBean.techMd != null}" value="#{lbl.hide_tech_md}" action="#{cc.attrs.itemBean.hideTechnicalMetadata}" onclick=" window.location.hash = '#';">
+									<f:ajax render="@form"/>
+								</h:commandLink>
+								<div id="techmetadata" class="imj_techdataList">
+									<ui:repeat id="techMd" var="techMd" value="#{cc.attrs.itemBean.techMd}">
+										<h:outputText value="#{techMd}" styleClass="imj_techdataEntry"/>
+									</ui:repeat>
+								</div>
+							</h:form>
+						</div>
 					</div>
-					<div class="imj_metadataValue">
-						<span class="imj_infodataValue" id="qr"> </span>
-					</div>
-				</div>
-				<div class="imj_metadataSet">
-					<div class="imj_metadataLabel">
-						#{lbl.technical_metadata}
-						<span class="imj_invisible">: </span>
-					</div>
-					<div class="imj_metadataValue">
-						<h:form>
-							<h:commandLink rendered="#{cc.attrs.itemBean.techMd == null}" value="show tech md" action="#{cc.attrs.itemBean.showTechnicalMetadata}" onclick=" window.location.hash = '#techmetadata';">
-								<f:ajax render="@form"/>
-							</h:commandLink>
-							<div id="techmetadata" class="imj_techdataList">
-								<ui:repeat id="techMd" var="techMd" value="#{cc.attrs.itemBean.techMd}">
-									<h:outputText value="#{techMd}" styleClass="imj_techdataEntry"/>
-								</ui:repeat>
-							</div>
-						</h:form>
-					</div>
-				</div>
+				</ui:fragment>
 			</div>
 		</div>
 		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/qrcode.js"> </script>

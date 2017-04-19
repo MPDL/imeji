@@ -57,7 +57,7 @@
 						<div class="imj_searchDetails">
 							<div class="imj_searchStatement">
 								<h:selectOneMenu id="selStatement" value="#{entry.statementIndex}">
-									<f:selectItems value="#{AdvancedSearchBean.formular.metadataSearchGroup.statementMap.values()}" 
+									<f:selectItems value="#{AdvancedSearchBean.formular.metadataSearchGroup.statementList}" 
 										var="s" itemLabel="#{s.index}" itemValue="#{s.index}" />
 										<f:ajax event="change" listener="#{entry.changeStatement}" render=":advancedSearchForm:metadata:#{index.index}:entry"/>
 								</h:selectOneMenu>

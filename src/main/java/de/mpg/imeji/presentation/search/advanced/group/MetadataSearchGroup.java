@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -26,6 +27,7 @@ public class MetadataSearchGroup extends AbstractAdvancedSearchFormGroup impleme
   private static final long serialVersionUID = -3036463292453331294L;
   private static final Logger LOGGER = Logger.getLogger(MetadataSearchGroup.class);
   private Map<String, Statement> statementMap;
+  private List<Statement> statementList;
   private final List<MetadataSearchGroupEntry> entries;
   private final Locale locale;
 
@@ -35,6 +37,9 @@ public class MetadataSearchGroup extends AbstractAdvancedSearchFormGroup impleme
     this.locale = locale;
     try {
       statementMap = StatementUtil.statementListToMap(new StatementService().retrieveAll());
+      statementList = statementMap.values().stream()
+          .sorted((s1, s2) -> s1.getIndex().compareToIgnoreCase(s2.getIndex()))
+          .collect(Collectors.toList());
       addEntry(0);
     } catch (ImejiException e) {
       LOGGER.error("Error reading statements", e);
@@ -84,6 +89,20 @@ public class MetadataSearchGroup extends AbstractAdvancedSearchFormGroup impleme
    */
   public List<MetadataSearchGroupEntry> getEntries() {
     return entries;
+  }
+
+  /**
+   * @return the statementList
+   */
+  public List<Statement> getStatementList() {
+    return statementList;
+  }
+
+  /**
+   * @param statementList the statementList to set
+   */
+  public void setStatementList(List<Statement> statementList) {
+    this.statementList = statementList;
   }
 
 

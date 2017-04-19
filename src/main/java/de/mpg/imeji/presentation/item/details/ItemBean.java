@@ -227,6 +227,10 @@ public class ItemBean extends SuperBean {
     }
   }
 
+  public void hideTechnicalMetadata() {
+    techMd = null;
+  }
+
   public List<String> getTechMd() {
     return techMd;
   }
