@@ -30,7 +30,8 @@
 				</h:inputText>
 				<h:panelGroup layout="block" id="statementList">
 					<ui:fragment rendered="#{not empty cc.attrs.component.index and !cc.attrs.component.indexExists()}">
-						<a class="fa fa-plus" href="" title="#{lbl.create}" onclick="openDialog('createStatementDialog'); $('.selectMetadata-content').hide(); return false;">
+						<a  href="" title="#{lbl.create}" onclick="openDialog('createStatementDialog'); $('.selectMetadata-content').hide(); return false;">
+							<i class="fa fa-plus"/>
 							 #{cc.attrs.component.index}
 						</a>
 					</ui:fragment>

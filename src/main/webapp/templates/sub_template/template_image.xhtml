@@ -32,7 +32,8 @@
 					<h:panelGroup layout="block" id="paginatorTop" styleClass="imj_paginator">
 						<span class="imj_backPanel">
 							<ui:fragment rendered="#{currentMainMenu == 'mediaEntry' }">
-								<h:outputLink styleClass="fa fa-arrow-circle-o-left" value="#{browseToAllItemsUrl}" title="#{lbl.images_all}">
+								<h:outputLink value="#{browseToAllItemsUrl}" title="#{lbl.images_all}">
+									<span class="fa fa-arrow-circle-o-left"/>
 									<h:outputText value=" #{lbl.images_all}"/>
 								</h:outputLink>
 							</ui:fragment>

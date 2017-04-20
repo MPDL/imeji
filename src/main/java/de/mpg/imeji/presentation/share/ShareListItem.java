@@ -120,7 +120,8 @@ public class ShareListItem implements Serializable {
     this.role = role;
     this.locale = locale;
     this.rolesMenu = Arrays.asList(
-        new SelectItem(ShareRoles.READ.name(), Imeji.RESOURCE_BUNDLE.getLabel("read", locale)),
+        new SelectItem(ShareRoles.READ.name(),
+            Imeji.RESOURCE_BUNDLE.getLabel("collection_share_read", locale)),
         new SelectItem(ShareRoles.EDIT.name(), Imeji.RESOURCE_BUNDLE.getLabel("edit", locale)),
         new SelectItem(ShareRoles.ADMIN.name(), Imeji.RESOURCE_BUNDLE.getLabel("admin", locale)));
   }

@@ -15,7 +15,8 @@
 
 	<ui:define name="mainContent">
 		<div class="imj_backPanel">
-			<h:outputLink styleClass="fa fa-arrow-circle-o-left" value="#{ShareBean.backUrl}">
+			<h:outputLink value="#{ShareBean.backUrl}">
+				<span class="fa fa-arrow-circle-o-left"/>
 				<h:outputText value=" #{lbl.back_to} #{ShareBean.title}" />
 			</h:outputLink>
 		</div>
