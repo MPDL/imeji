@@ -3,23 +3,32 @@ package de.mpg.imeji.logic.item;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.service.ImejiControllerAbstract;
+import de.mpg.imeji.logic.statement.StatementService;
+import de.mpg.imeji.logic.statement.StatementUtil;
+import de.mpg.imeji.logic.validation.impl.MetadataValidator;
+import de.mpg.imeji.logic.validation.impl.Validator.Method;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.util.LicenseUtil;
@@ -49,13 +58,18 @@ class ItemController extends ImejiControllerAbstract<Item> {
 
   @Override
   public List<Item> createBatch(List<Item> l, User user) throws ImejiException {
+    Set<String> collectionIds = new HashSet<>();
     for (final Item item : l) {
-      (new CollectionService()).retrieve(item.getCollection(), user); // To check if the collection
-                                                                      // exists.
+      if (!collectionIds.contains(item.getCollection().toString())) {
+        // check if the collection exists.
+        new CollectionService().retrieve(item.getCollection(), user);
+        collectionIds.add(item.getCollection().toString());
+      }
       prepareCreate(item, user);
       item.setFilename(FilenameUtils.getName(item.getFilename()));
     }
     cleanItem(l);
+    validateMetadata(l, Method.CREATE);
     WRITER.create(J2JHelper.cast2ObjectList(l), user);
     return null;
   }
@@ -92,6 +106,7 @@ class ItemController extends ImejiControllerAbstract<Item> {
         item.setFilename(FilenameUtils.getName(item.getFilename()));
       }
       cleanItem(l);
+      validateMetadata(l, Method.UPDATE);
       WRITER.update(J2JHelper.cast2ObjectList(l), user, true);
     }
     return l;
@@ -182,5 +197,54 @@ class ItemController extends ImejiControllerAbstract<Item> {
   private List<Item> initializeEmptyItems(List<String> ids) {
     return ids.stream().map(id -> ImejiFactory.newItem().setId(id).build())
         .collect(Collectors.toList());
+  }
+
+
+  /**
+   * Validate the Metadata of the item
+   * 
+   * @param items
+   * @param m
+   * @throws ImejiException
+   */
+  private void validateMetadata(List<Item> items, Method m) throws ImejiException {
+    MetadataValidator metadataValidator = new MetadataValidator();
+    Map<String, Statement> statementMap =
+        StatementUtil.statementListToMap(retrieveStatements(items));
+    UnprocessableError error = new UnprocessableError();
+    for (Metadata md : items.stream().flatMap(item -> item.getMetadata().stream())
+        .collect(Collectors.toList())) {
+      try {
+        metadataValidator.validate(md, statementMap.get(md.getIndex()), m);
+      } catch (UnprocessableError e) {
+        error = new UnprocessableError(e.getMessages(), error);
+      }
+    }
+    if (error.hasMessages()) {
+      throw error;
+    }
+  }
+
+
+  /**
+   * Retrieve all statements used by these items
+   * 
+   * @param items
+   * @return
+   * @throws ImejiException
+   */
+  private List<Statement> retrieveStatements(List<Item> items) throws ImejiException {
+    return new StatementService().retrieveBatch(extractStatementIds(items), Imeji.adminUser);
+  }
+
+  /**
+   * Extract all statement uri used by these items
+   * 
+   * @param items
+   * @return
+   */
+  private List<String> extractStatementIds(List<Item> items) {
+    return items.stream().flatMap(item -> item.getMetadata().stream())
+        .map(md -> StatementUtil.toUri(md.getIndex())).collect(Collectors.toList());
   }
 }

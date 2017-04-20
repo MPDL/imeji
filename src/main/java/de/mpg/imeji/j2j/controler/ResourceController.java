@@ -91,8 +91,7 @@ public class ResourceController {
   public void update(Object o) throws NotFoundException {
     if (!java2rdf.exists(o)) {
       throw new NotFoundException("Error updating resource " + o.toString() + " with id \""
-          + J2JHelper.getId(o).getPath().replace("imeji/", "")
-          + "\". Resource doesn't exists in model " + model.toString());
+          + J2JHelper.getId(o) + "\". Resource doesn't exists in model " + model.toString());
     }
     java2rdf.update(o);
   }

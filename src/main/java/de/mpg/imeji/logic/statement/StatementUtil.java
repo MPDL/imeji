@@ -30,9 +30,7 @@ public class StatementUtil {
    * @return
    */
   public static List<String> toStatementUriList(String str) {
-    return Arrays.asList(str.split(",")).stream()
-        .map(s -> ObjectHelper.getURI(Statement.class, formatIndex(s)).toString())
-        .collect(Collectors.toList());
+    return Arrays.asList(str.split(",")).stream().map(s -> toUri(s)).collect(Collectors.toList());
   }
 
   /**
@@ -54,7 +52,8 @@ public class StatementUtil {
    * @return
    */
   public static Map<String, Statement> statementListToMap(List<Statement> l) {
-    return l.stream().collect(Collectors.toMap(Statement::getIndex, Function.identity()));
+    return l.stream()
+        .collect(Collectors.toMap(Statement::getIndex, Function.identity(), (s1, s2) -> s1));
   }
 
   /**
@@ -76,5 +75,15 @@ public class StatementUtil {
    */
   public static boolean indexEquals(String index1, String index2) {
     return formatIndex(index1).equals(formatIndex(index2));
+  }
+
+  /**
+   * Return an index as an uri
+   * 
+   * @param index
+   * @return
+   */
+  public static String toUri(String index) {
+    return ObjectHelper.getURI(Statement.class, formatIndex(index)).toString();
   }
 }

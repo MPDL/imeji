@@ -20,13 +20,17 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
 
   @Override
   public void validate(Metadata md, Method m) throws UnprocessableError {
+    validate(md, null, m);
+  }
+
+  public void validate(Metadata md, Statement statement, Method m) throws UnprocessableError {
     setValidateForMethod(m);
     if (isDelete()) {
       return;
     }
-    final Statement s = null; // TODO
-    validataMetadata(md, s);
+    validataMetadata(md, statement);
   }
+
 
   /**
    * Validate the {@link Metadata} for the differents types
@@ -43,14 +47,17 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
         if (!isAllowedValueString(md.getText(), s)) {
           e = new UnprocessableError("error_metadata_invalid_value" + md.getText(), e);
         }
+        break;
       case NUMBER:
         if (!isAllowedValueDouble(md.getNumber(), s)) {
           e = new UnprocessableError("error_metadata_invalid_value" + md.getNumber(), e);
         }
+        break;
       case DATE:
         if (!isValidDate(md.getText())) {
           e = new UnprocessableError("error_date_format" + md.getText(), e);
         }
+        break;
       case URL:
         if (md.getUrl() == null) {
           e = new UnprocessableError("error_metadata_url_empty", e);
@@ -58,18 +65,21 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
         if (!isAllowedValueString(md.getUrl(), s)) {
           e = new UnprocessableError("error_metadata_invalid_value" + md.getUrl(), e);
         }
+        break;
       case GEOLOCATION:
         try {
           new GeolocationValidator().validate(md, validateForMethod);
         } catch (final UnprocessableError e2) {
           e = new UnprocessableError(e2.getMessages(), e);
         }
+        break;
       case PERSON:
         try {
           new PersonValidator().validate(md.getPerson(), validateForMethod);
         } catch (final UnprocessableError e1) {
           e = new UnprocessableError(e1.getMessages(), e);
         }
+        break;
     }
 
     if (e.hasMessages()) {

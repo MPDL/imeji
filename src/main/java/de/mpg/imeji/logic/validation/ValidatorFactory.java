@@ -34,7 +34,7 @@ public class ValidatorFactory {
    * @return
    */
   public static Validator<?> newValidator(Object obj, Validator.Method method) {
-    Validator<?> validator = new PseudoValidator();;
+    Validator<?> validator = new PseudoValidator();
     // For now, do not do anything with Delete, just a possibility
     if (Validator.Method.DELETE.equals(method)) {
       return validator;
