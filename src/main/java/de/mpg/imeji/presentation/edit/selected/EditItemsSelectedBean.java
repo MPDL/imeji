@@ -17,6 +17,7 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
@@ -126,7 +127,10 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    * @return
    */
   public List<SelectItem> getFilteredStatementMenu() {
-    return getStatementMenu().stream().filter(s -> !displayedColumns.contains(s.getLabel()))
+    return getStatementMenu().stream()
+        .filter(s -> !headers.stream()
+            .filter(h -> StatementUtil.indexEquals(h.getStatement().getIndex(), s.getLabel()))
+            .findAny().isPresent())
         .collect(toList());
   }
 

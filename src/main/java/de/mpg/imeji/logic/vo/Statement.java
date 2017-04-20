@@ -92,8 +92,8 @@ public class Statement implements Serializable, Cloneable {
    * @param index the index to set
    */
   public void setIndex(String index) {
-    this.index = index;
-    this.uri = ObjectHelper.getURI(Statement.class, encodeIndex(index));
+    this.index = index.trim();
+    this.uri = ObjectHelper.getURI(Statement.class, encodeIndex(this.index));
   }
 
   public URI getVocabulary() {

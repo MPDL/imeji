@@ -29,7 +29,7 @@
 						listener="#{cc.attrs.component.listener}" />
 				</h:inputText>
 				<h:panelGroup layout="block" id="statementList">
-					<ui:fragment rendered="#{not empty cc.attrs.component.index and !cc.attrs.component.indexExists}">
+					<ui:fragment rendered="#{not empty cc.attrs.component.index and !cc.attrs.component.indexExists()}">
 						<a class="fa fa-plus" href="" title="#{lbl.create}" onclick="openDialog('createStatementDialog'); $('.selectMetadata-content').hide(); return false;">
 							 #{cc.attrs.component.index}
 						</a>
