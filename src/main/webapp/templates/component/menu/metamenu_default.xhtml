@@ -22,7 +22,7 @@
 				<h:panelGroup rendered="#{!Auth.loggedIn}" styleClass="imj_metaMenuItem imj_loginFormHidden">
 					<a href="#" id="lnkshowLogin" class="imj_metaMenuItem" onclick="showLogin(); return false;">#{lbl.login}</a>
 					<span class="imj_loginFormDisplay">
-						<h:inputText value="#{LoginBean.login}"  p:placeholder="#{lbl.admin_user}"/>
+						<h:inputText value="#{LoginBean.login}" p:type="email" p:placeholder="#{lbl.admin_user}"/>
 						<h:inputSecret value="#{LoginBean.passwd}" p:placeholder="#{lbl.password}"/>
 						<h:commandButton id="lnkLogin2" title="#{lbl.login}" value="#{lbl.login}" action="#{LoginBean.doLogin}" styleClass="imj_metaMenuItem"/>
 					</span>

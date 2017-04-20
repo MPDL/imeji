@@ -3,7 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
-	xmlns:f="http://xmlns.jcp.org/jsf/core">
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
 	<ui:param name="headline" value="#{lbl.register}" />
 	<ui:param name="title" value="#{headline}" />
@@ -36,7 +37,7 @@
 								</div>
 								<div class="imj_metadataValue">
 									<div class="imj_metadataValueEntry">
-										<h:inputText type="text" name="email"
+										<h:inputText type="text" name="email" html5:type="email"
 											value="#{RegistrationBean.user.email}"
 											styleClass="imj_admindataEdit" />
 									</div>
