@@ -15,14 +15,11 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @XmlType(propOrder = {
     // "position",
     "id", "familyName", "givenName", "identifiers", "organizations"})
-@JsonInclude(Include.NON_NULL)
+@JsonInclude(Include.NON_EMPTY)
 public class PersonTO implements Serializable {
-
   private static final long serialVersionUID = 2752588435466650389L;
-
   @JsonIgnore
   private int position;
-
   private String id;
 
   private String familyName;

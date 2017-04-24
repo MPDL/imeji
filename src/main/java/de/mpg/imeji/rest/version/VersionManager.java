@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.rest.MyApplication;
+import de.mpg.imeji.rest.ImejiRestService;
 import de.mpg.imeji.rest.version.exception.DeprecatedAPIVersionException;
 import de.mpg.imeji.rest.version.exception.UnknowAPIVersionException;
 
@@ -17,7 +17,7 @@ import de.mpg.imeji.rest.version.exception.UnknowAPIVersionException;
  *
  */
 public class VersionManager {
-  private int requestedVersion = MyApplication.CURRENT_VERSION;
+  private int requestedVersion = ImejiRestService.CURRENT_VERSION;
   private final Pattern p = Pattern.compile(".*/rest/v([0-9]+)/.*");
   private String path;
   private boolean hasVersion = false;
@@ -42,11 +42,11 @@ public class VersionManager {
     if (!isAnExistingVersion()) {
       throw new UnknowAPIVersionException("API version v" + requestedVersion
           + " is not a valid version. Please use the latest version v"
-          + MyApplication.CURRENT_VERSION + ". For more information see " + linkToAPIDoc());
+          + ImejiRestService.CURRENT_VERSION + ". For more information see " + linkToAPIDoc());
     } else if (isOldVersion()) {
       throw new DeprecatedAPIVersionException("API version v" + requestedVersion
           + " is no longer supported. Please use the latest version v"
-          + MyApplication.CURRENT_VERSION + ". For more information see " + linkToAPIDoc());
+          + ImejiRestService.CURRENT_VERSION + ". For more information see " + linkToAPIDoc());
     }
     // everything fine!
   }
@@ -84,7 +84,7 @@ public class VersionManager {
       return Integer.parseInt(m.group(1));
     }
     hasVersion = false;
-    return MyApplication.CURRENT_VERSION;
+    return ImejiRestService.CURRENT_VERSION;
   }
 
   /**
@@ -93,7 +93,7 @@ public class VersionManager {
    * @return
    */
   private boolean isOldVersion() {
-    return MyApplication.CURRENT_VERSION > requestedVersion;
+    return ImejiRestService.CURRENT_VERSION > requestedVersion;
   }
 
   /**
@@ -102,7 +102,7 @@ public class VersionManager {
    * @return
    */
   private boolean isAnExistingVersion() {
-    return MyApplication.CURRENT_VERSION >= requestedVersion;
+    return ImejiRestService.CURRENT_VERSION >= requestedVersion;
   }
 
   /**
@@ -111,7 +111,7 @@ public class VersionManager {
    * @return
    */
   public boolean isCurrentVersion() {
-    return MyApplication.CURRENT_VERSION == requestedVersion;
+    return ImejiRestService.CURRENT_VERSION == requestedVersion;
   }
 
   public boolean hasVersion() {

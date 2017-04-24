@@ -28,7 +28,10 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import de.mpg.imeji.rest.process.ItemProcess;
 import de.mpg.imeji.rest.process.RestProcessUtils;
+import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -59,25 +62,18 @@ public class ItemResource implements ImejiResource {
 
   @POST
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @ApiOperation(value = "Create new item with a File",
+  @ApiOperation(value = "Create new item with a File", response = DefaultItemTO.class,
       notes = "Create an item with a file. File can be defined either as (by order of priority):"
-          + "<br/> 1) form parameter (multipart/form-data)<br/> 2) json parameter: \"fetchUrl\" : \"http://example.org/myFile.png\" (myFile.png will be uploaded in imeji) "
-          + "<br/> 3) json parameter \"referenceUrl\" : \"http://example.org/myFile.png\" (myFile.png will be only referenced in imeji, i.e. not uploaded)"
-          + "<br/><br/>" + "You can get a json template by using"
-          + "<br/><br/><a href=\"#!/collections/readCollectionItemTemplate\" target=\"_blank\">this method</a> "
-          + "<br/><br/>or using the following basic json exmaple"
-          + "<br/><br/><div class=\"json_example\">" + "{"
-          + "<br/>\"collectionId\" : \"abc123\", (required)"
-          + "<br/>\"fetchUrl\" : \"http://example.org/myFile.png\", (optional)"
-          + "<br/>\"referenceUrl\" : \"http://example.org/myFile.png\", (optional)"
-          + "<br/>\"filename\" : \"new filename\", (optional)" + "<br/>\"metadata\" : [] (optional)"
-          + "<br/> }</div>")
+          + "<div> 1) form parameter (multipart/form-data)</div>"
+          + "<div> 2) json parameter: \"fetchUrl\" : \"http://example.org/myFile.png\" (myFile.png will be uploaded in imeji) </div>"
+          + "<div> 3) json parameter \"referenceUrl\" : \"http://example.org/myFile.png\" (myFile.png will be only referenced in imeji, i.e. not uploaded)</div>")
   @Produces(MediaType.APPLICATION_JSON)
+  @ApiImplicitParams({@ApiImplicitParam(name = "json", value = "json", required = true,
+      dataType = "string", defaultValue = "{\"collectionId\":\"\"}", paramType = "form")})
   public Response create(@Context HttpServletRequest req, @FormDataParam("file") InputStream file,
-      @ApiParam(required = true, value = " item json",
-          defaultValue = "{default}") @FormDataParam("json") String json,
       @ApiParam(value = "File details", required = false,
-          hidden = true) @FormDataParam("file") FormDataContentDisposition fileDetail) {
+          hidden = true) @FormDataParam("file") FormDataContentDisposition fileDetail,
+      @ApiParam(value = "json", hidden = true) @FormDataParam(value = "json") String json) {
     final String origName = fileDetail != null ? fileDetail.getFileName() : null;
     return RestProcessUtils.buildJSONResponse(createItem(req, file, json, origName));
   }
@@ -85,25 +81,19 @@ public class ItemResource implements ImejiResource {
   @PUT
   @Path("/{id}")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @ApiOperation(value = "Update an item",
+  @ApiOperation(value = "Update an item", response = DefaultItemTO.class,
       notes = "Update an item with (optional) a file. File can be defined either as (by order of priority):"
-          + "<br/> 1) form parameter (multipart/form-data)<br/> 2) json parameter: \"fetchUrl\" : \"http://example.org/myFile.png\" (myFile.png will be uploaded in imeji) "
-          + "<br/> 3) json parameter \"referenceUrl\" : \"http://example.org/myFile.png\" (myFile.png will be only referenced in imeji, i.e. not uploaded)"
-          + "<br/><br/>" + "You can get a json template by using"
-          + "<br/><br/><a href=\"#!/collections/readCollectionItemTemplate\" target=\"_blank\">this method</a> "
-          + "<br/><br/>or using the following basic json exmaple"
-          + "<br/><br/><div class=\"json_example\">" + "{"
-          + "<br/>\"collectionId\" : \"abc123\", (required)"
-          + "<br/>\"fetchUrl\" : \"http://example.org/myFile.png\", (optional)"
-          + "<br/>\"referenceUrl\" : \"http://example.org/myFile.png\", (optional)"
-          + "<br/>\"filename\" : \"new filename\", (optional)" + "<br/>\"metadata\" : [] (optional)"
-          + "<br/> }</div>")
+          + "<div> 1) form parameter (multipart/form-data)</div>"
+          + "<div> 2) json parameter: \"fetchUrl\" : \"http://example.org/myFile.png\" (myFile.png will be uploaded in imeji) </div>"
+          + "<div> 3) json parameter \"referenceUrl\" : \"http://example.org/myFile.png\" (myFile.png will be only referenced in imeji, i.e. not uploaded)</div>")
   @Produces(MediaType.APPLICATION_JSON)
+  @ApiImplicitParams({@ApiImplicitParam(name = "json", value = "json", required = true,
+      dataType = "string", defaultValue = "{\"collectionId\":\"\"}", paramType = "form")})
   public Response update(@Context HttpServletRequest req, @FormDataParam("file") InputStream file,
-      @ApiParam(required = true) @FormDataParam("json") String json,
+      @ApiParam(required = true, hidden = true) @FormDataParam("json") String json,
       @ApiParam(value = "File details", required = false,
           hidden = true) @FormDataParam("file") FormDataContentDisposition fileDetail,
-      @PathParam("id") String id) {
+      @ApiParam(required = true, value = "Item id") @PathParam("id") String id) {
     final String filename = fileDetail != null ? fileDetail.getFileName() : null;
     return RestProcessUtils.buildJSONResponse(updateItem(req, id, file, json, filename));
   }

@@ -69,6 +69,7 @@ class ContentController extends ImejiControllerAbstract<ContentVO> {
 
   @Override
   public List<ContentVO> updateBatch(List<ContentVO> l, User user) throws ImejiException {
+    l.stream().forEach(c -> c.setId(createID(c)));
     WRITER.update(toObjectList(l), user, true);
     return l;
   }

@@ -2,6 +2,9 @@ package de.mpg.imeji.rest.to;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import de.mpg.imeji.logic.vo.Metadata;
 
 /**
@@ -10,28 +13,29 @@ import de.mpg.imeji.logic.vo.Metadata;
  * @author saquet
  *
  */
+@JsonInclude(Include.NON_DEFAULT)
 public class MetadataTO implements Serializable {
   private static final long serialVersionUID = 1852898329656765285L;
-  private String statementId;
-  private String text;
-  private double number;
-  private String url;
-  private double latitude;
-  private double longitude;
+  private String index;
+  private String text = "";
+  private double number = Double.NaN;
+  private String url = "";
+  private double latitude = Double.NaN;
+  private double longitude = Double.NaN;
   private PersonTO person;
 
   /**
    * @return the statementId
    */
-  public String getStatementId() {
-    return statementId;
+  public String getIndex() {
+    return index;
   }
 
   /**
    * @param statementId the statementId to set
    */
-  public void setStatementId(String statementId) {
-    this.statementId = statementId;
+  public void setIndex(String index) {
+    this.index = index;
   }
 
   /**

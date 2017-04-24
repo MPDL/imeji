@@ -26,7 +26,7 @@ import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.predefinedMetadata.Metadata.Types;
-import de.mpg.imeji.rest.MyApplication;
+import de.mpg.imeji.rest.ImejiRestService;
 import de.mpg.imeji.rest.api.AlbumAPIService;
 import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.api.ItemAPIService;
@@ -62,12 +62,12 @@ public class ImejiTestBase extends JerseyTest {
   protected static DefaultItemTO itemTO;
   private static final Logger LOGGER = Logger.getLogger(ImejiTestBase.class);
 
-  private static MyApplication app = null;
+  private static ImejiRestService app = null;
 
   @Override
   protected Application configure() {
     if (app == null) {
-      app = new MyApplication();
+      app = new ImejiRestService();
     }
     return app;
   }

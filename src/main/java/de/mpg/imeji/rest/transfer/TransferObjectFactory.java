@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.vo.Item;
@@ -143,15 +144,18 @@ public class TransferObjectFactory {
    * @param pto
    */
   public static PersonTO transferPerson(Person p, PersonTO pto) {
-    pto.setId(CommonUtils.extractIDFromURI(p.getId()));
-    pto.setFamilyName(p.getFamilyName());
-    pto.setGivenName(p.getGivenName());
-    final IdentifierTO ito = new IdentifierTO();
-    ito.setValue(p.getIdentifier());
-    pto.getIdentifiers().add(ito);
-    // set oganizations
-    transferContributorOrganizations(p.getOrganizations(), pto);
-    return pto;
+    if (p != null && !StringHelper.isNullOrEmptyTrim(p.getFamilyName())) {
+      pto.setId(CommonUtils.extractIDFromURI(p.getId()));
+      pto.setFamilyName(p.getFamilyName());
+      pto.setGivenName(p.getGivenName());
+      final IdentifierTO ito = new IdentifierTO();
+      ito.setValue(p.getIdentifier());
+      pto.getIdentifiers().add(ito);
+      // set oganizations
+      transferContributorOrganizations(p.getOrganizations(), pto);
+      return pto;
+    }
+    return null;
   }
 
   /**
@@ -242,12 +246,14 @@ public class TransferObjectFactory {
     for (final Metadata vo : metadata) {
       final MetadataTO to = new MetadataTO();
       to.setText(vo.getText());
-      to.setNumber(vo.getNumber());
+      if (Double.isNaN(vo.getNumber())) {
+        to.setNumber(vo.getNumber());
+      }
       to.setUrl(vo.getUrl());
       to.setPerson(transferPerson(vo.getPerson(), new PersonTO()));
       to.setLatitude(vo.getLatitude());
       to.setLongitude(vo.getLongitude());
-      to.setStatementId(vo.getIndex());
+      to.setIndex(vo.getIndex());
       tos.add(to);
     }
     return tos;

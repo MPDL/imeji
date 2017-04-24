@@ -138,7 +138,7 @@ public class ReverseTransferObjectFactory {
     final List<Metadata> voMDs = vo.getMetadata();
     voMDs.clear();
     for (final MetadataTO mdTO : to.getMetadata()) {
-      final Metadata mdVO = new MetadataFactory().setStatementId(mdTO.getStatementId())
+      final Metadata mdVO = new MetadataFactory().setStatementId(mdTO.getIndex())
           .setText(mdTO.getText()).setNumber(mdTO.getNumber()).setUrl(mdTO.getUrl())
           .setPerson(transferPerson(mdTO.getPerson(), new Person(), mode))
           .setLatitude(mdTO.getLatitude()).setLongitude(mdTO.getLongitude()).build();
