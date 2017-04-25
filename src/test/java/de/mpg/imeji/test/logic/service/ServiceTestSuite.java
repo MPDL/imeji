@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 
 import de.mpg.imeji.testimpl.logic.service.CollectionServiceTest;
 import de.mpg.imeji.testimpl.logic.service.ItemServiceTest;
-import util.SuperTestSuite;
+import de.mpg.imeji.util.SuperTestSuite;
 
 
 

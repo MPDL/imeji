@@ -19,7 +19,7 @@ import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.MetadataProfile;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import util.JenaUtil;
+import de.mpg.imeji.util.JenaUtil;
 
 /**
  * Test the {@link ShareService}

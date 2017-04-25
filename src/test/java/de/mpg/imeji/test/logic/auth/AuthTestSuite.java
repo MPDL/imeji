@@ -5,8 +5,8 @@ import org.junit.runners.Suite;
 
 import de.mpg.imeji.testimpl.logic.auth.FileAuthorizationTest;
 import de.mpg.imeji.testimpl.logic.auth.HttpAuthenticationTest;
+import de.mpg.imeji.util.SuperTestSuite;
 import de.mpg.imeji.testimpl.logic.auth.DefaultAuthenticationTest;
-import util.SuperTestSuite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({DefaultAuthenticationTest.class, HttpAuthenticationTest.class,

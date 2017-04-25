@@ -26,7 +26,7 @@ import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.SearchResultTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
-import util.JenaUtil;
+import de.mpg.imeji.util.JenaUtil;
 
 public class ItemRead extends ItemTestBase {
 
@@ -36,7 +36,7 @@ public class ItemRead extends ItemTestBase {
 
   @Before
   public void specificSetup() throws Exception {
-    initCollectionWithProfile(getBasicStatements());
+    initCollection();
     initItem();
   }
 
@@ -46,8 +46,6 @@ public class ItemRead extends ItemTestBase {
     Response response = (target(PATH_PREFIX).path("/" + itemId).register(authAsUser)
         .register(MultiPartFeature.class).request(MediaType.APPLICATION_JSON_TYPE)).get();
     assertEquals(Status.OK.getStatusCode(), response.getStatus());
-    System.out.println(response.toString());
-    // System.out.println(response.readEntity(String.class));
     DefaultItemTO itemWithFileTO = response.readEntity(DefaultItemTO.class);
     assertEquals(itemId, itemWithFileTO.getId());
   }

@@ -1,12 +1,8 @@
 package de.mpg.imeji.test.rest.resources.test.integration;
 
-import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -15,27 +11,19 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
-// import org.apache.tika.metadata.Metadata;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 import de.mpg.imeji.logic.collection.CollectionService;
-import de.mpg.imeji.logic.controller.resource.ProfileController;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.MetadataProfile;
-import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import de.mpg.imeji.rest.process.RestProcessUtils;
-import de.mpg.imeji.rest.to.CollectionTO;
-import de.mpg.imeji.rest.transfer.ReverseTransferObjectFactory;
-import de.mpg.imeji.testimpl.ImejiTestResources;
-import de.mpg.imeji.util.LocalizedString;
-import util.JenaUtil;
+import de.mpg.imeji.util.ImejiTestResources;
+import de.mpg.imeji.util.JenaUtil;
 
 /**
  * Created by vlad on 10.06.15.
@@ -44,173 +32,9 @@ public class ItemTestBase extends ImejiTestBase {
 
   private static Logger LOGGER = Logger.getLogger(ItemTestBase.class);
 
-  public static MetadataProfile profile;
   public static Item item;
   private static final String TARGET_PATH_PREFIX = "/rest/items";
 
-  protected static ProfileController pc = new ProfileController();
-
-  protected static void initCollectionWithProfile(Collection<Statement> statements)
-      throws Exception {
-
-    MetadataProfile p = ImejiFactory.newProfile();
-    p.setTitle("test");
-    p.setStatements(statements);
-    profile = pc.create(p, JenaUtil.testUser);
-    pc.release(profile, JenaUtil.testUser);
-    profileId = ObjectHelper.getId(profile.getId());
-
-    try {
-
-      collectionTO = (CollectionTO) RestProcessUtils.buildTOFromJSON(
-          getStringFromPath("src/test/resources/rest/createCollection.json"), CollectionTO.class);
-
-      CollectionService cc = new CollectionService();
-      CollectionImeji ci = new CollectionImeji();
-      ci.setProfile(profile.getId());
-      ReverseTransferObjectFactory.transferCollection(collectionTO, ci,
-          ReverseTransferObjectFactory.TRANSFER_MODE.CREATE, JenaUtil.testUser);
-
-      collectionId = ObjectHelper.getId(cc.create(ci, profile, JenaUtil.testUser,
-          CollectionService.MetadataProfileCreationMethod.REFERENCE, null).getId());
-    } catch (Exception e) {
-      LOGGER.error("Cannot init Collection", e);
-    }
-
-  }
-
-  protected static Collection<Statement> getDefaultBasicStatements() {
-    Collection<Statement> statements = new ArrayList<Statement>();
-    Statement st;
-    for (String type : new String[] {"text", "number", "conePerson", "geolocation", "date",
-        "license", "link", "publication"}) {
-      st = new Statement();
-      st.setType(URI.create("http://imeji.org/terms/metadata#" + type));
-      st.getLabels().add(new LocalizedString(type, "en"));
-      statements.add(st);
-    }
-    return statements;
-  }
-
-
-  protected static Collection<Statement> getDefaultHierarchicalStatements() {
-    Collection<Statement> statements = new ArrayList<Statement>();
-    Statement st;
-
-    for (String type : new String[] {"text", "number", "conePerson", "geolocation", "date",
-        "license", "link", "publication"}) {
-      st = new Statement();
-      st.setType(URI.create("http://imeji.org/terms/metadata#" + type));
-      st.getLabels().add(new LocalizedString(type, "en"));
-      if (type.equals("text") || type.equals("number")) {
-        st.setMaxOccurs("unbounded");
-      }
-
-      statements.add(st);
-
-      if (type.equals("text") || type.equals("number")) {
-        // text and number are multiple, text is parent of date and License, number is parent of
-        // conePerson and geo and text
-        for (String typeChild : new String[] {"date", "license", "conePerson", "text",
-            "geolocation"}) {
-          Statement stChild = new Statement();
-          stChild.setType(URI.create("http://imeji.org/terms/metadata#" + typeChild));
-          stChild.getLabels().add(new LocalizedString(typeChild + "Child", "en"));
-          if ((type.equals("text") && (typeChild.equals("date") || typeChild.equals("license")))
-              || (type.equals("number") && (typeChild.equals("text")
-                  || typeChild.equals("conePerson") || typeChild.equals("geolocation")))) {
-            stChild.setParent(st.getId());
-            statements.add(stChild);
-          }
-        }
-      }
-
-    }
-
-    return statements;
-  }
-
-  protected static Collection<Statement> getDefaultHierarchicalStatementsMultipleH() {
-    Collection<Statement> statements = new ArrayList<Statement>();
-    Statement st;
-
-    for (String type : new String[] {"text", "number", "conePerson", "geolocation", "date",
-        "license", "link", "publication"}) {
-      st = new Statement();
-      st.setType(URI.create("http://imeji.org/terms/metadata#" + type));
-      st.getLabels().add(new LocalizedString(type, "en"));
-      if (type.equals("text") || type.equals("number")) {
-        st.setMaxOccurs("unbounded");
-      }
-
-      statements.add(st);
-
-      if (type.equals("text") || type.equals("number")) {
-        // text and number are multiple, text is parent of date and License, number is parent of
-        // conePerson and geo and text
-        for (String typeChild : new String[] {"date", "license", "conePerson", "text",
-            "geolocation"}) {
-          Statement stChild = new Statement();
-          stChild.setType(URI.create("http://imeji.org/terms/metadata#" + typeChild));
-          stChild.getLabels().add(new LocalizedString(typeChild + "Child", "en"));
-          if ((type.equals("text") && (typeChild.equals("date") || typeChild.equals("license")))
-              || (type.equals("number") && (typeChild.equals("text")
-                  || typeChild.equals("conePerson") || typeChild.equals("geolocation")))) {
-            stChild.setParent(st.getId());
-            if (typeChild.equals("text")) {
-              stChild.setMaxOccurs("unbounded");
-            }
-            statements.add(stChild);
-          }
-
-          if (typeChild.equals("text") && type.equals("number")) {
-            // text and number are multiple, text is in addition parent of date and text
-            for (String typeChildChild : new String[] {"date", "text"}) {
-              Statement stChildChild = new Statement();
-              stChildChild.setType(URI.create("http://imeji.org/terms/metadata#" + typeChildChild));
-              stChildChild.getLabels()
-                  .add(new LocalizedString(typeChildChild + "ChildChild", "en"));
-              stChildChild.setParent(stChild.getId());
-              if (typeChildChild.equals("date")) {
-                stChildChild.setMaxOccurs("unbounded");
-              }
-              statements.add(stChildChild);
-            }
-          }
-        }
-      }
-    }
-    return statements;
-  }
-
-  protected static Collection<Statement> getBasicStatements() {
-    Collection<Statement> statements = new ArrayList<Statement>();
-    Statement st;
-    for (String type : new String[] {"text", "number", "conePerson", "geolocation", "date",
-        "license", "link", "publication"}) {
-      st = new Statement();
-      st.setType(URI.create("http://imeji.org/terms/metadata#" + type));
-      st.getLabels().add(new LocalizedString(type, "en"));
-      statements.add(st);
-    }
-    return statements;
-  }
-
-  protected static Collection<Statement> getMultipleStatements() {
-    Collection<Statement> statements = new ArrayList<Statement>();
-    Statement st;
-    for (String type : new String[] {"text", "number", "conePerson", "geolocation", "date",
-        "license", "link", "publication"}) {
-      st = new Statement();
-      st.setType(URI.create("http://imeji.org/terms/metadata#" + type));
-      st.getLabels().add(new LocalizedString(type, "en"));
-      if (type.equals("text") || type.equals("number")) {
-        st.setMaxOccurs("unbounded");
-      }
-      statements.add(st);
-    }
-    return statements;
-  }
 
   protected static void createItem() throws Exception {
     CollectionService cc = new CollectionService();

@@ -1,6 +1,7 @@
 package de.mpg.imeji.rest.transfer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,6 @@ import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.rest.helper.CommonUtils;
 import de.mpg.imeji.rest.helper.UserNameCache;
@@ -25,14 +25,11 @@ import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.ContainerAdditionalInformationTO;
 import de.mpg.imeji.rest.to.ContainerTO;
 import de.mpg.imeji.rest.to.IdentifierTO;
-import de.mpg.imeji.rest.to.LiteralConstraintTO;
-import de.mpg.imeji.rest.to.MetadataProfileTO;
 import de.mpg.imeji.rest.to.MetadataTO;
 import de.mpg.imeji.rest.to.OrganizationTO;
 import de.mpg.imeji.rest.to.PersonTO;
 import de.mpg.imeji.rest.to.PersonTOBasic;
 import de.mpg.imeji.rest.to.PropertiesTO;
-import de.mpg.imeji.rest.to.StatementTO;
 import de.mpg.imeji.rest.to.UserTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultOrganizationTO;
@@ -42,41 +39,6 @@ public class TransferObjectFactory {
   private static UserNameCache userNameCache = new UserNameCache();
   private static final Logger LOGGER = LoggerFactory.getLogger(TransferObjectFactory.class);
 
-  /**
-   * Transfer a {@link DefaultItemTO} into an {@link ItemTO} according to {@link MetadataProfileTO}
-   *
-   * @param profileTO
-   * @param easyTO
-   * @param itemTO
-   * @throws BadRequestException
-   * @throws JsonParseException
-   * @throws JsonMappingException
-   */
-
-
-  /**
-   * Transfer a list Statement in to MetadataProfileTO
-   *
-   * @param statements
-   * @param to
-   */
-  private static void transferStatements(Collection<Statement> statements, MetadataProfileTO to) {
-    to.getStatements().clear();
-    for (final Statement t : statements) {
-      final StatementTO sto = new StatementTO();
-      sto.setId(t.getIndex());
-      sto.setIndex(t.getIndex());
-      sto.setType(t.getType().name());
-      sto.setVocabulary(t.getVocabulary());
-      for (final String s : t.getLiteralConstraints()) {
-        final LiteralConstraintTO lcto = new LiteralConstraintTO();
-        lcto.setValue(s);
-        sto.getLiteralConstraints().add(lcto);
-      }
-      to.getStatements().add(sto);
-    }
-
-  }
 
   /**
    * Transfer an CollectionImeji to a CollectionTO
@@ -148,9 +110,11 @@ public class TransferObjectFactory {
       pto.setId(CommonUtils.extractIDFromURI(p.getId()));
       pto.setFamilyName(p.getFamilyName());
       pto.setGivenName(p.getGivenName());
-      final IdentifierTO ito = new IdentifierTO();
-      ito.setValue(p.getIdentifier());
-      pto.getIdentifiers().add(ito);
+      if (!StringHelper.isNullOrEmptyTrim(p.getIdentifier())) {
+        final IdentifierTO ito = new IdentifierTO();
+        ito.setValue(p.getIdentifier());
+        pto.setIdentifiers(Arrays.asList(ito));
+      }
       // set oganizations
       transferContributorOrganizations(p.getOrganizations(), pto);
       return pto;
@@ -246,7 +210,10 @@ public class TransferObjectFactory {
     for (final Metadata vo : metadata) {
       final MetadataTO to = new MetadataTO();
       to.setText(vo.getText());
-      if (Double.isNaN(vo.getNumber())) {
+      to.setDate(vo.getDate());
+      to.setName(vo.getName());
+      to.setTitle(vo.getTitle());
+      if (!Double.isNaN(vo.getNumber())) {
         to.setNumber(vo.getNumber());
       }
       to.setUrl(vo.getUrl());

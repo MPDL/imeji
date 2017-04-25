@@ -1,4 +1,4 @@
-package util;
+package de.mpg.imeji.util;
 
 import java.net.UnknownHostException;
 

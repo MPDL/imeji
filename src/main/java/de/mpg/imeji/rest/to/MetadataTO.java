@@ -18,6 +18,9 @@ public class MetadataTO implements Serializable {
   private static final long serialVersionUID = 1852898329656765285L;
   private String index;
   private String text = "";
+  private String date = "";
+  private String title = "";
+  private String name = "";
   private double number = Double.NaN;
   private String url = "";
   private double latitude = Double.NaN;
@@ -122,6 +125,46 @@ public class MetadataTO implements Serializable {
     this.person = person;
   }
 
+  /**
+   * @return the date
+   */
+  public String getDate() {
+    return date;
+  }
 
+  /**
+   * @param date the date to set
+   */
+  public void setDate(String date) {
+    this.date = date;
+  }
+
+  /**
+   * @return the title
+   */
+  public String getTitle() {
+    return title;
+  }
+
+  /**
+   * @param title the title to set
+   */
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  /**
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * @param name the name to set
+   */
+  public void setName(String name) {
+    this.name = name;
+  }
 
 }

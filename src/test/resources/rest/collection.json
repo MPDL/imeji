@@ -1,0 +1,54 @@
+{
+  "title": "TestCollection",
+  "description": "some description",
+  "additionalInfos": [
+        {
+          "label": "Label1",
+          "text": "This is the text of Label 1",
+          "url": "http://example.org"
+        },
+        {
+          "label": "Label2",
+          "text": "This is the text of Label2",
+          "url": ""
+        },
+        {
+          "label": "Label3",
+          "text": "",
+          "url": "http://example3.org"
+        }
+      ],
+  "contributors": [
+    {
+      "familyName": "Makarenko",
+      "givenName": "Vlad",
+      "identifiers": [
+        {
+          "type": "other"
+        }
+      ],
+      "organizations": [
+        {
+          "name": "Max-Planck Digital Library(MPDL)"
+        },
+        {
+          "name": "Organization 2"
+        }
+      ]
+    },
+    {
+      "familyName": "Bulatovic",
+      "givenName": "Natasa",
+      "identifiers": [
+        {
+          "type": "imeji"
+        }
+      ],
+      "organizations": [
+        {
+          "name": "MPDL"
+        }
+      ]
+    }
+  ]
+}

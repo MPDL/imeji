@@ -20,7 +20,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import util.JenaUtil;
+import de.mpg.imeji.util.JenaUtil;
 
 public class StatisticsControllerTestClass extends SuperServiceTest {
 

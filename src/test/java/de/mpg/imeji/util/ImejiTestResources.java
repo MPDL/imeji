@@ -1,4 +1,4 @@
-package de.mpg.imeji.testimpl;
+package de.mpg.imeji.util;
 
 import java.io.File;
 

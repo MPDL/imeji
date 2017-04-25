@@ -19,7 +19,7 @@ import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import util.JenaUtil;
+import de.mpg.imeji.util.JenaUtil;
 
 /**
  * Unit Tests for the {@link ItemService}

@@ -3,7 +3,7 @@ package de.mpg.imeji.test.rest.resources.test.integration;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import util.SuperTestSuite;
+import de.mpg.imeji.util.SuperTestSuite;
 
 
 @RunWith(Suite.class)

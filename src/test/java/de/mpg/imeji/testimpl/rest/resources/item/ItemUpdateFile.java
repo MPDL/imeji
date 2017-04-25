@@ -36,7 +36,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
-import de.mpg.imeji.testimpl.ImejiTestResources;
+import de.mpg.imeji.util.ImejiTestResources;
 
 /**
  * Created by vlad on 09.12.14.
@@ -127,8 +127,7 @@ public class ItemUpdateFile extends ImejiTestBase {
     assertThat("Reference URL does not match", storedFileURL,
         equalTo(itemWithFileTO.getFileUrl().toString()));
     assertThat("Should be link to NO_THUMBNAIL image:",
-        itemWithFileTO.getWebResolutionUrlUrl().toString(),
-        endsWith(ItemService.NO_THUMBNAIL_URL));
+        itemWithFileTO.getWebResolutionUrlUrl().toString(), endsWith(ItemService.NO_THUMBNAIL_URL));
     assertThat("Should be link to NO_THUMBNAIL image:", itemWithFileTO.getThumbnailUrl().toString(),
         endsWith(ItemService.NO_THUMBNAIL_URL));
   }

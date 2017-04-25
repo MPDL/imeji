@@ -65,4 +65,19 @@ public class MetadataFactory {
     metadata.setLongitude(longitude);
     return this;
   }
+
+  public MetadataFactory setName(String name) {
+    metadata.setName(name);
+    return this;
+  }
+
+  public MetadataFactory setTitle(String title) {
+    metadata.setTitle(title);
+    return this;
+  }
+
+  public MetadataFactory setDate(String date) {
+    metadata.setDate(date);
+    return this;
+  }
 }

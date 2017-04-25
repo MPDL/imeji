@@ -23,10 +23,18 @@ public class Metadata implements Serializable {
   private String index;
   @j2jLiteral("http://imeji.org/terms/text")
   private String text = null;
+  @j2jLiteral("http://imeji.org/terms/date")
+  private String date = null;
   @j2jLiteral("http://imeji.org/terms/number")
   private double number = Double.NaN;
+  // Title of the url
+  @j2jLiteral("http://imeji.org/terms/title")
+  private String title = null;
   @j2jLiteral("http://imeji.org/terms/url")
   private String url = null;
+  // Name of the goelocation
+  @j2jLiteral("http://imeji.org/terms/name")
+  private String name = null;
   @j2jLiteral("http://imeji.org/terms/latitude")
   private double latitude = Double.NaN;
   @j2jLiteral("http://imeji.org/terms/longitude")
@@ -39,10 +47,13 @@ public class Metadata implements Serializable {
     copy.setIndex(index);
     copy.setText(text);
     copy.setNumber(number);
+    copy.setDate(date);
     copy.setUrl(url);
+    copy.setTitle(title);
     if (person != null) {
       copy.setPerson(person.clone());
     }
+    copy.setName(name);
     copy.setLongitude(longitude);
     copy.setLatitude(latitude);
     return copy;
@@ -158,6 +169,48 @@ public class Metadata implements Serializable {
    */
   public void setPerson(Person person) {
     this.person = person;
+  }
+
+  /**
+   * @return the date
+   */
+  public String getDate() {
+    return date;
+  }
+
+  /**
+   * @param date the date to set
+   */
+  public void setDate(String date) {
+    this.date = date;
+  }
+
+  /**
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * @param name the name to set
+   */
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  /**
+   * @return the title
+   */
+  public String getTitle() {
+    return title;
+  }
+
+  /**
+   * @param title the title to set
+   */
+  public void setTitle(String title) {
+    this.title = title;
   }
 
 

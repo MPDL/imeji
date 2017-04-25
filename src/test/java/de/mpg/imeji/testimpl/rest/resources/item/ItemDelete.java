@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
-import util.JenaUtil;
+import de.mpg.imeji.util.JenaUtil;
 
 public class ItemDelete extends ImejiTestBase {
   private static final Logger LOGGER = LoggerFactory.getLogger(ItemDelete.class);

@@ -12,9 +12,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @XmlRootElement
-@XmlType(propOrder = {
-    // "position",
-    "id", "familyName", "givenName", "identifiers", "organizations"})
+@XmlType(propOrder = {"id", "familyName", "givenName", "identifiers", "organizations"})
 @JsonInclude(Include.NON_EMPTY)
 public class PersonTO implements Serializable {
   private static final long serialVersionUID = 2752588435466650389L;
@@ -26,7 +24,7 @@ public class PersonTO implements Serializable {
 
   private String givenName;
 
-  private List<IdentifierTO> identifiers = new ArrayList<IdentifierTO>();
+  private List<IdentifierTO> identifiers = null;
 
   private List<OrganizationTO> organizations = new ArrayList<OrganizationTO>();
 

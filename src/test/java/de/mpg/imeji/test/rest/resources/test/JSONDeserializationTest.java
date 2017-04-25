@@ -28,7 +28,7 @@ public class JSONDeserializationTest {
 
   @Test
   public void testBuildDefaultItemTOFromJSON() throws IOException, BadRequestException {
-    String jsonStringIn = getStringFromPath("src/test/resources/rest/itemFullDefault.json");
+    String jsonStringIn = getStringFromPath("src/test/resources/rest/item.json");
     DefaultItemTO item =
         (DefaultItemTO) RestProcessUtils.buildTOFromJSON(jsonStringIn, DefaultItemTO.class);
     ObjectMapper mapper = new ObjectMapper();

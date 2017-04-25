@@ -1,0 +1,50 @@
+{
+  "collectionId": "___COLLECTION_ID___",
+  "filename": "___FILENAME___",
+  "fetchUrl": "___FETCH_URL___",
+  "referenceUrl": "___REFERENCE_URL___",
+   "licenses": [
+        {
+          "label": "Dummy License",
+          "name": "Dummy",
+          "url": "http://example.org"
+        }
+      ],
+  "metadata":[
+      {
+         "index":"Number",
+		 "number": 1.2345678E7
+      },
+      {
+         "index":"Text",
+         "text":"title text"
+      },
+      {
+         "index":"Person",
+         "person":{
+            "familyName":"Planck",
+            "givenName":"Max",
+            "organizations":[
+               {
+                  "name":"Max Planck Society"
+               }
+            ]
+         }
+      },
+      {
+         "index":"Date",
+         "date":"2017-04-13"
+      },
+      {
+         "index":"Link",
+         "title":"Title of the link",
+         "url":"http://example.org"
+      },
+      {
+         "index":"Geolocation",
+         "name":"Amalienstraße 33, 80799 München, Germany",
+         "latitude":48.1479011,
+         "longitude":11.5766797
+      }
+   ]
+}
