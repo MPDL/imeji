@@ -413,9 +413,12 @@ public class ItemService extends SearchServiceAbstract<Item> {
   public Item updateFile(Item item, CollectionImeji col, File f, String filename, User user)
       throws ImejiException {
     validateChecksum(item.getCollection(), f, true);
+    preValidateUpload(filename, col, f, user);
     if (filename != null) {
       item.setFilename(filename);
     }
+    item.setFileSize(f.length());
+    item.setFiletype(StorageUtils.getMimeType(f));
     item = update(item, user);
     new ContentService().update(item, f, user);
     return item;

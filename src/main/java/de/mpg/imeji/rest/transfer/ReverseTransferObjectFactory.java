@@ -87,7 +87,6 @@ public class ReverseTransferObjectFactory {
   public static void transferDefaultItem(DefaultItemTO to, Item vo, User u, TRANSFER_MODE mode)
       throws ImejiException {
     if (mode == TRANSFER_MODE.CREATE) {
-
       if (!isNullOrEmpty(to.getCollectionId())) {
         vo.setCollection(ObjectHelper.getURI(CollectionImeji.class, to.getCollectionId()));
       }
@@ -96,7 +95,6 @@ public class ReverseTransferObjectFactory {
       vo.setFilename(to.getFilename());
     }
     vo.getLicenses().addAll(transferLicenses(to.getLicenses()));
-
     transferItemMetadata(to, vo, u, mode);
   }
 
@@ -174,24 +172,29 @@ public class ReverseTransferObjectFactory {
 
   public static void transferCollectionContributors(List<PersonTO> persons, CollectionImeji vo,
       User u, TRANSFER_MODE mode) {
+    vo.setPersons(new ArrayList<>());
     for (final PersonTO pTO : persons) {
       final Person person = new Person();
       person.setFamilyName(pTO.getFamilyName());
       person.setGivenName(pTO.getGivenName());
-      if (pTO.getIdentifiers().size() == 1) {
-        // set the identifier of current person
-        final IdentifierTO ito = new IdentifierTO();
-        ito.setValue(pTO.getIdentifiers().get(0).getValue());
-        person.setIdentifier(ito.getValue());
-      } else if (pTO.getIdentifiers().size() > 1) {
-        LOGGER.warn("Multiple identifiers found for Person: " + pTO.getId());
+      if (pTO.getIdentifiers() != null) {
+        if (pTO.getIdentifiers().size() == 1) {
+          // set the identifier of current person
+          final IdentifierTO ito = new IdentifierTO();
+          ito.setValue(pTO.getIdentifiers().get(0).getValue());
+          person.setIdentifier(ito.getValue());
+        } else if (pTO.getIdentifiers().size() > 1) {
+          LOGGER.warn("Multiple identifiers found for Person: " + pTO.getId());
+        }
       }
       // set organizations
       transferContributorOrganizations(pTO.getOrganizations(), person, mode);
       vo.getPersons().add(person);
     }
 
-    if (vo.getPersons().size() == 0 && TRANSFER_MODE.CREATE.equals(mode) && u != null) {
+    if (vo.getPersons().size() == 0 && TRANSFER_MODE.CREATE.equals(mode) && u != null)
+
+    {
       final Person personU = new Person();
       personU.setFamilyName(u.getPerson().getFamilyName());
       personU.setGivenName(u.getPerson().getGivenName());

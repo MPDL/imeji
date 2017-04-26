@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.QuotaExceededException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
@@ -76,8 +77,15 @@ public class QuotaUtil {
    *         be returned for unlimited quota
    */
   public static long checkQuota(User user, File file, CollectionImeji col) throws ImejiException {
-    final User targetCollectionUser = col == null || user.getId().equals(col.getCreatedBy()) ? user
-        : new UserService().retrieve(col.getCreatedBy(), Imeji.adminUser);
+    User targetCollectionUser = null;
+    try {
+      targetCollectionUser = col == null || user.getId().equals(col.getCreatedBy()) ? user
+          : new UserService().retrieve(col.getCreatedBy(), Imeji.adminUser);
+    } catch (NotFoundException e) {
+      throw new UnprocessableError(
+          "Collection owner unknown: Cannot check quota. Please contact your admin", e);
+    }
+
     long currentDiskUsage = 0L;
     try {
       currentDiskUsage = getUsedQuota(user);

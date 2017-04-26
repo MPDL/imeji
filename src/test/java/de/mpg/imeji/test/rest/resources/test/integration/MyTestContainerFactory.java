@@ -68,7 +68,7 @@ public class MyTestContainerFactory implements TestContainerFactory {
 
       @Override
       public void stop() {
-        this.server.stop();
+        this.server.shutdownNow();
       }
     };
 

@@ -1,5 +1,6 @@
 package de.mpg.imeji.rest.transfer;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,6 +10,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
@@ -197,6 +199,8 @@ public class TransferObjectFactory {
     to.setMimetype(vo.getFiletype());
     to.setLicenses(transferLicense(vo.getLicenses()));
     to.setMetadata(transferMetadata(vo.getMetadata()));
+    to.setFileUrl(URI.create(Imeji.PROPERTIES.getApplicationURL() + "file?itemId="
+        + vo.getIdString() + "&resolution=original"));
   }
 
   /**

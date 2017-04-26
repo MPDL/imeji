@@ -10,7 +10,9 @@ public class PersonTOBasic implements Serializable {
 
   private String userId;
 
-  public PersonTOBasic() {};
+  public PersonTOBasic() {
+
+  }
 
   public PersonTOBasic(String fullname, String userId) {
     this.fullname = fullname;

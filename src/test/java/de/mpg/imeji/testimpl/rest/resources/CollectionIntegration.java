@@ -30,11 +30,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
@@ -46,7 +46,6 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.rest.to.CollectionTO;
-import de.mpg.imeji.rest.to.IdentifierTO;
 import de.mpg.imeji.rest.to.OrganizationTO;
 import de.mpg.imeji.rest.to.PersonTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
@@ -141,26 +140,6 @@ public class CollectionIntegration extends ImejiTestBase {
   }
 
   @Test
-  public void test_2_ReadCollection_6_AllItems_WithQuery() throws Exception {
-    final int ITEM_AMOUNT = 6;
-    for (int i = 1; i <= ITEM_AMOUNT; i++) {
-      initItem("test" + i);
-    }
-    Response response = target(pathPrefix).path(collectionId + "/items")
-        // .queryParam("q", "test1.jpg test2.jpg test3.jpg test4.jpg test5.jpg test6.jpg")
-        .register(authAsUser).request(MediaType.APPLICATION_JSON).get();
-    assertEquals(OK.getStatusCode(), response.getStatus());
-    String jsonStr = response.readEntity(String.class);
-    assertThat(jsonStr, not(isEmptyOrNullString()));
-    // check how many times "filename" appears in the result (it should be 6, for all 6 newly
-    // created items)
-    System.out.println(jsonStr);
-    assertThat(StringUtils.countMatches(jsonStr, "filename"), equalTo(ITEM_AMOUNT));
-
-  }
-
-
-  @Test
   public void test_3_ReleaseCollection_1_WithAuth() throws ImejiException {
     initCollection();
     ItemAPIService service = new ItemAPIService();
@@ -195,42 +174,14 @@ public class CollectionIntegration extends ImejiTestBase {
     assertEquals("PENDING", itemService.read(itemId, JenaUtil.testUser).getStatus());
   }
 
+  // TODO move to collection service test
+  @Ignore
   @Test
   public void test_3_ReleaseCollection_3_EmptyCollection() {
     initCollection();
     Response response = target(pathPrefix).path("/" + collectionId + "/release")
         .register(authAsUser).request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
     assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
-  }
-
-  @Test
-  public void test_3_ReleaseCollection_4_WithOutUser() {
-
-    Response response = target(pathPrefix).path("/" + collectionId + "/release")
-        .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
-    assertEquals(UNAUTHORIZED.getStatusCode(), response.getStatus());
-
-    response = target(pathPrefix).path("/" + collectionId + "/release").register(authAsUserFalse)
-        .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
-    assertEquals(UNAUTHORIZED.getStatusCode(), response.getStatus());
-  }
-
-  @Test
-  public void test_3_ReleaseCollection_5_ReleaseCollectionTwice() throws ImejiException {
-    initItem();
-    CollectionAPIService s = new CollectionAPIService();
-    s.release(collectionId, JenaUtil.testUser);
-    assertEquals("RELEASED", s.read(collectionId, JenaUtil.testUser).getStatus());
-    Response response = target(pathPrefix).path("/" + collectionId + "/release")
-        .register(authAsUser).request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
-    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
-  }
-
-  @Test
-  public void test_3_ReleaseCollection_6_nonExistingCollection() {
-    Response response = target(pathPrefix).path("/" + collectionId + "i_do_not_exist/release")
-        .register(authAsUser).request(MediaType.APPLICATION_JSON_TYPE).put(Entity.json("{}"));
-    assertEquals(NOT_FOUND.getStatusCode(), response.getStatus());
   }
 
   @Test
@@ -314,27 +265,6 @@ public class CollectionIntegration extends ImejiTestBase {
     Form form = new Form();
     form.param("discardComment",
         "test_4_WithdrawCollection_4_NotReleasedCollection_" + System.currentTimeMillis());
-    Response response = target(pathPrefix).path("/" + collectionId + "/discard")
-        .register(authAsUser).request((MediaType.APPLICATION_JSON_TYPE))
-        .put(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
-
-    assertEquals(HttpStatus.SC_UNPROCESSABLE_ENTITY, response.getStatus());
-  }
-
-  @Test
-  public void test_4_WithdrawCollection_5_WithdrawCollectionTwice() throws ImejiException {
-
-    initItem();
-    CollectionAPIService s = new CollectionAPIService();
-    s.release(collectionId, JenaUtil.testUser);
-    s.withdraw(collectionId, JenaUtil.testUser,
-        "test_4_WithdrawCollection_5_WithdrawCollectionTwice_" + System.currentTimeMillis());
-
-    assertEquals("WITHDRAWN", s.read(collectionId, JenaUtil.testUser).getStatus());
-
-    Form form = new Form();
-    form.param("discardComment", "test_4_WithdrawCollection_5_WithdrawCollectionTwice_SecondTime_"
-        + System.currentTimeMillis());
     Response response = target(pathPrefix).path("/" + collectionId + "/discard")
         .register(authAsUser).request((MediaType.APPLICATION_JSON_TYPE))
         .put(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
@@ -450,10 +380,6 @@ public class CollectionIntegration extends ImejiTestBase {
     for (PersonTO p : collectionTO.getContributors()) {
       p.setFamilyName(p.getFamilyName() + CHANGED);
       p.setGivenName(p.getGivenName() + CHANGED);
-      for (IdentifierTO i : p.getIdentifiers()) {
-        i.setType(i.getType() + CHANGED);
-        i.setValue(i.getValue() + CHANGED);
-      }
       for (OrganizationTO o : p.getOrganizations()) {
         o.setName(o.getName() + CHANGED);
       }
@@ -476,10 +402,6 @@ public class CollectionIntegration extends ImejiTestBase {
     for (PersonTO p : uc.getContributors()) {
       assertThat(p.getFamilyName(), endsWith(CHANGED));
       assertThat(p.getGivenName(), endsWith(CHANGED));
-      for (IdentifierTO i : p.getIdentifiers()) {
-        assertThat(i.getType(), not(endsWith(CHANGED)));
-        assertThat(i.getValue(), endsWith(CHANGED));
-      }
       for (OrganizationTO o : p.getOrganizations()) {
         assertThat(o.getName(), endsWith(CHANGED));
       }
@@ -521,8 +443,7 @@ public class CollectionIntegration extends ImejiTestBase {
   @Test
   public void test_6_UpdateCollection_1_AdditionalInfos()
       throws ImejiException, UnsupportedEncodingException, IOException {
-    String originalJsonString =
-        getStringFromPath(STATIC_CONTEXT_REST + "/createCollectionAdditionalInfos.json");
+    String originalJsonString = getStringFromPath(STATIC_CONTEXT_REST + "/collection.json");
 
     // Create the collection
     Response response = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class)

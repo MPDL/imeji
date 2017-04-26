@@ -21,8 +21,10 @@ import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.impl.ExternalStorage;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.ContentVO;
+import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -67,15 +69,16 @@ public class FileServlet extends HttpServlet {
       throws ServletException, IOException {
     String url = req.getParameter("id");
     final String contentId = req.getParameter("content");
-    final String itemId = req.getParameter("item");
+    final String itemUri = req.getParameter("itemId") == null ? req.getParameter("item")
+        : ObjectHelper.getURI(Item.class, req.getParameter("itemId")).toString();
     User user;
     try {
       final SessionBean session = getSession(req);
       user = getUser(req, session);
       if (url == null && contentId != null) {
         url = retrieveUrlOfContent(contentId, req.getParameter("resolution"));
-      } else if (url == null && itemId != null) {
-        url = retrieveUrlOfContent(new ContentService().findContentId(itemId),
+      } else if (url == null && itemUri != null) {
+        url = retrieveUrlOfContent(new ContentService().findContentId(itemUri),
             req.getParameter("resolution"));
       } else if (url == null) {
         url = domain + req.getRequestURI();
