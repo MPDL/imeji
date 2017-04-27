@@ -41,8 +41,8 @@ import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import de.mpg.imeji.testimpl.ImejiTestResources;
 import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
+import de.mpg.imeji.util.ImejiTestResources;
 
 /**
  * Tests ItemService. Currently not tested: uploadToStaging, createFromStaging,

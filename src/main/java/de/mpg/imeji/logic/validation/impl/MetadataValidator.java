@@ -54,7 +54,7 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
         }
         break;
       case DATE:
-        if (!isValidDate(md.getText())) {
+        if (!isValidDate(md.getDate())) {
           e = new UnprocessableError("error_date_format" + md.getText(), e);
         }
         break;

@@ -15,7 +15,7 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<div id="moveItemsDialog" class="imj_modalDialogBox imj_moveItemsDialogBox" style="display:none;">
+		<div id="moveItemsDialog" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText" style="display:none;">
 			<h:form id="moveItemsForm">
 				<ui:fragment rendered="#{MoveItemsBean.destinationId == null}">
 					<div style="margin-bottom: 2em;">
@@ -31,7 +31,7 @@
 							<f:ajax render="#{cc.attrs.parentId}:moveItemsForm:list" event="keyup" listener="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.colId)}"/>
 						</h:inputText>
 					</div>
-					<h:panelGroup id="list" style="font-size:0.9em;">
+					<h:panelGroup layout="block" id="list">
 						<ui:repeat var="col" value="#{MoveItemsBean.collectionsForMove}">
 							<p>
 								<ui:fragment rendered="#{col.status == 'RELEASED' and !cc.attrs.hasLicense}">

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.io.ByteStreams;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
@@ -107,30 +105,8 @@ public class RestProcessUtils {
     }
   }
 
-  public static <T> List<T> buildTOListFromJSON(String jsonSting, final Class<T> type)
-      throws BadRequestException {
-    final ObjectReader reader = new ObjectMapper().reader()
-        .withType(TypeFactory.defaultInstance().constructCollectionType(List.class, type));
-    try {
-      return reader.readValue(jsonSting);
-    } catch (final Exception e) {
-      throw new BadRequestException("Cannot parse json:", e);
-    }
-  }
-
   public static String buildJSONFromObject(Object obj) throws BadRequestException {
     final ObjectWriter ow = new ObjectMapper().writer().with(SerializationFeature.INDENT_OUTPUT);
-    try {
-      return ow.writeValueAsString(obj);
-    } catch (final Exception e) {
-      throw new BadRequestException("Cannot parse json: ", e);
-    }
-  }
-
-  public static String buildJSONFromObject(Object obj, TypeReference<?> typeReference)
-      throws BadRequestException {
-    final ObjectWriter ow =
-        new ObjectMapper().writerWithType(typeReference).with(SerializationFeature.INDENT_OUTPUT);
     try {
       return ow.writeValueAsString(obj);
     } catch (final Exception e) {

@@ -1,0 +1,91 @@
+{
+   "id":"m_XvheVKKOtg6aO",
+   "createdBy":{
+      "fullname":"Yao",
+      "userId":"n8lwIPNI4WCdVA7k"
+   },
+   "modifiedBy":{
+      "fullname":"Yao",
+      "userId":"n8lwIPNI4WCdVA7k"
+   },
+   "createdDate":"2015-01-13T14:57:67 +0100",
+   "modifiedDate":"2015-01-13T16:08:496 +0100",
+   "versionDate":"2015-01-13T16:08:496 +0100",
+   "status":"RELEASED",
+   "version":1,
+   "discardComment":"",
+   "collectionId":"___COLLECTION_ID___",
+   "filename":"Emotion-Masks-760100.jpg",
+   "mimetype":"application/octet-stream",
+   "checksumMd5":"c33c70705df8c1f1f2f29db5bc6004db",
+   "licenses":[
+      {
+         "label":"Dummy License",
+         "name":"Dummy",
+         "url":"http://example.org"
+      }
+   ],
+   "fileSize":0,
+   "webResolutionUrlUrl":"http://qa-imeji.mpdl.mpg.de/imeji/file/_FAfwLZ9Vy3LUSM/f7/a5/84/a3-ca3f-4116-9b05-34c49892c17d/0/web/cb6faf2b3b358438e2b670548168dd10.jpg",
+   "thumbnailUrl":"http://qa-imeji.mpdl.mpg.de/imeji/file/_FAfwLZ9Vy3LUSM/f7/a5/84/a3-ca3f-4116-9b05-34c49892c17d/0/thumbnail/cb6faf2b3b358438e2b670548168dd10.jpg",
+   "fileUrl":"http://qa-imeji.mpdl.mpg.de/imeji/file/_FAfwLZ9Vy3LUSM/f7/a5/84/a3-ca3f-4116-9b05-34c49892c17d/0/original/cb6faf2b3b358438e2b670548168dd10.jpg",
+   "metadata":[
+      {
+         "index":"Number",
+         "number":1.2345678E7
+      },
+      {
+         "index":"Text",
+         "text":"title text"
+      },
+      {
+         "index":"Text",
+         "text":"title text value 2"
+      },
+      {
+         "index":"Person",
+         "person":{
+            "familyName":"Planck",
+            "givenName":"Max",
+            "organizations":[
+               {
+                  "name":"Max Planck Society"
+               }
+            ]
+         }
+      },
+      {
+         "index":"Person",
+         "person":{
+            "familyName":"Einstein",
+            "givenName":"Albert",
+            "organizations":[
+               {
+                  "name":" Patentamt Bern"
+               },
+               {
+                  "name":"Kaiser-Wilhelm-Gesellschaft."
+               },
+               {
+                  "name":"Princeton University"
+               }
+            ]
+         }
+      },
+      {
+         "index":"Date",
+         "date":"2017-04-13"
+      },
+      {
+         "index":"Link",
+         "title":"Title of the link",
+         "url":"http://example.org"
+      },
+      {
+         "index":"Geolocation",
+         "name":"Amalienstraße 33, 80799 München, Germany",
+         "latitude":48.1479011,
+         "longitude":11.5766797
+      }
+   ]
+}

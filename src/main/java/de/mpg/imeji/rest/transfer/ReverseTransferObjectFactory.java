@@ -138,10 +138,11 @@ public class ReverseTransferObjectFactory {
     final List<Metadata> voMDs = vo.getMetadata();
     voMDs.clear();
     for (final MetadataTO mdTO : to.getMetadata()) {
-      final Metadata mdVO = new MetadataFactory().setStatementId(mdTO.getStatementId())
+      final Metadata mdVO = new MetadataFactory().setStatementId(mdTO.getIndex())
           .setText(mdTO.getText()).setNumber(mdTO.getNumber()).setUrl(mdTO.getUrl())
           .setPerson(transferPerson(mdTO.getPerson(), new Person(), mode))
-          .setLatitude(mdTO.getLatitude()).setLongitude(mdTO.getLongitude()).build();
+          .setLatitude(mdTO.getLatitude()).setLongitude(mdTO.getLongitude()).setDate(mdTO.getDate())
+          .setName(mdTO.getName()).setTitle(mdTO.getTitle()).build();
       vo.getMetadata().add(mdVO);
     }
   }
@@ -154,16 +155,20 @@ public class ReverseTransferObjectFactory {
    * @param mode
    */
   public static Person transferPerson(PersonTO pto, Person p, TRANSFER_MODE mode) {
-    if (mode == TRANSFER_MODE.CREATE) {
-      final IdentifierTO ito = new IdentifierTO();
-      ito.setValue(pto.getIdentifiers().isEmpty() ? null : pto.getIdentifiers().get(0).getValue());
-      p.setIdentifier(ito.getValue());
+    if (pto != null) {
+      if (mode == TRANSFER_MODE.CREATE) {
+        final IdentifierTO ito = new IdentifierTO();
+        ito.setValue(
+            pto.getIdentifiers().isEmpty() ? null : pto.getIdentifiers().get(0).getValue());
+        p.setIdentifier(ito.getValue());
+      }
+      p.setFamilyName(pto.getFamilyName());
+      p.setGivenName(pto.getGivenName());
+      // set organizations
+      transferContributorOrganizations(pto.getOrganizations(), p, mode);
+      return p;
     }
-    p.setFamilyName(pto.getFamilyName());
-    p.setGivenName(pto.getGivenName());
-    // set organizations
-    transferContributorOrganizations(pto.getOrganizations(), p, mode);
-    return p;
+    return null;
   }
 
 

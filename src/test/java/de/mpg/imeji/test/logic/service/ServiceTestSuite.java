@@ -8,7 +8,7 @@ import de.mpg.imeji.testimpl.logic.service.ContentServiceTest;
 import de.mpg.imeji.testimpl.logic.service.ItemServiceTest;
 import de.mpg.imeji.testimpl.logic.service.UserServiceTest;
 import de.mpg.imeji.testimpl.logic.service.UsergroupServiceTest;
-import util.SuperTestSuite;
+import de.mpg.imeji.util.SuperTestSuite;
 
 
 

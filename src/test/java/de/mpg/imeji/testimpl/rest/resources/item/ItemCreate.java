@@ -36,8 +36,8 @@ import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
-import de.mpg.imeji.testimpl.ImejiTestResources;
-import util.JenaUtil;
+import de.mpg.imeji.util.ImejiTestResources;
+import de.mpg.imeji.util.JenaUtil;
 
 /**
  * Created by vlad on 09.12.14.
@@ -52,14 +52,14 @@ public class ItemCreate extends ItemTestBase {
 
   @BeforeClass
   public static void specificSetup() throws Exception {
-    initCollectionWithProfile(getDefaultBasicStatements());
-    itemJSON = getStringFromPath("src/test/resources/rest/createItemBasic.json");
+    initCollection();
+    itemJSON = getStringFromPath("src/test/resources/rest/itemCreateBasic.json");
   }
 
 
   @Test
   public void createItemWithEmptyFilename() throws Exception {
-    initCollectionWithProfile(getDefaultBasicStatements());
+    initCollection();
     FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestPng());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
@@ -355,7 +355,7 @@ public class ItemCreate extends ItemTestBase {
 
   @Test
   public void createItemChecksumTest() throws Exception {
-    initCollectionWithProfile(getBasicStatements());
+    initCollection();
     initItem();
     // init Item creates already one item with test.png file , thus checksum
     // is expected

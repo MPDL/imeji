@@ -44,7 +44,7 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     if (StringHelper.hasInvalidTags(c.getDescription())) {
       setException(new UnprocessableError("error_bad_format_description", getException()));
     }
-    if (isNullOrEmpty(c.getTitle().trim())) {
+    if (isNullOrEmpty(c.getTitle())) {
       setException(new UnprocessableError("error_collection_need_title", getException()));
     }
     validateAdditionalInfos(c);

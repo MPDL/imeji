@@ -1,24 +1,26 @@
 package de.mpg.imeji.rest;
 
+import javax.ws.rs.ApplicationPath;
+
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import de.mpg.imeji.rest.resources.ImejiResource;
 import io.swagger.jaxrs.config.BeanConfig;
 
-public class MyApplication extends ResourceConfig {
-  Logger LOGGER = Logger.getLogger(MyApplication.class);
+@ApplicationPath("/rest/*")
+public class ImejiRestService extends ResourceConfig {
+  Logger LOGGER = Logger.getLogger(ImejiRestService.class);
 
-  public static final int CURRENT_VERSION = 1;
+  public static final int CURRENT_VERSION = 2;
 
-  public MyApplication() {
+  public ImejiRestService() {
+    super(MultiPartFeature.class);
     packages(ImejiResource.class.getPackage().getName());
-    if (LOGGER.isDebugEnabled()) {
-      register(LoggingFilter.class);
-    }
-    register(MultiPartFeature.class);
+    // register(MultiPartFeature.class);
+    register(io.swagger.jaxrs.listing.ApiListingResource.class);
+    register(io.swagger.jaxrs.listing.SwaggerSerializers.class);
     final BeanConfig beanConfig = new BeanConfig();
     beanConfig.setTitle("imeji API");
     beanConfig.setVersion("v" + CURRENT_VERSION);
@@ -26,4 +28,5 @@ public class MyApplication extends ResourceConfig {
     beanConfig.setResourcePackage(ImejiResource.class.getPackage().getName());
     beanConfig.setScan(true);
   }
+
 }

@@ -119,9 +119,7 @@
 					<span class="imj_inlineButtonGroup"> <h:commandLink
 							styleClass="fa fa-plus-square-o" title="#{lbl.add_author}"
 							action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.additionalInformations.size())}">
-							<f:ajax
-								execute="editContainer:mediaContainerForm:additionalInfos"
-								render="editContainer:mediaContainerForm:additionalInfos" />
+							<f:ajax execute="@form" render="@form" />
 						</h:commandLink>
 					</span> <span class="imj_noDisplay">: </span>
 				</div>
@@ -171,8 +169,6 @@
 									{
 										runtimes : 'html5,flash,silverlight,html4',
 										browse_button : 'pickfiles', // you can pass in id...
-										container : document
-												.getElementById('container'), // ... or DOM Element itself
 										url : '#{Navigation.applicationUrl}uploadlogo',
 										max_file_size : '#{Configuration.uploadMaxFileSize}kb',
 										multi_selection : false,

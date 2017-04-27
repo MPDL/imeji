@@ -35,12 +35,12 @@
 					</h:inputText>
 				</div>
 			</ui:fragment>
-			<span class="imj_metadataSet">
+			<div class="imj_metadataSet">
 				#{lbl.or_big}
 				<h:commandLink value="#{cc.attrs.licenseEditor.showInput ? lbl.choose_license : lbl.enter_own_license}" action="#{cc.attrs.licenseEditor.toggleShowInput}">
 					<f:ajax render="#{cc.attrs.containerId}"/>
 				</h:commandLink>
-			</span>		
+			</div>		
 		</div>
 	</composite:implementation>
 </html>

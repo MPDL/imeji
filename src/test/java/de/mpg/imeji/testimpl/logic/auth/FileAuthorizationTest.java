@@ -16,7 +16,7 @@ import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.presentation.admin.ConfigurationBean;
 import de.mpg.imeji.presentation.storage.StorageUtil;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import util.JenaUtil;
+import de.mpg.imeji.util.JenaUtil;
 
 /**
  * Regression Test for File Authorization

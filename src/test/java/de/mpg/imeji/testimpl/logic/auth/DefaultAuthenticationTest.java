@@ -14,7 +14,7 @@ import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import util.JenaUtil;
+import de.mpg.imeji.util.JenaUtil;
 
 /**
  * Test the simple {@link Authentication}

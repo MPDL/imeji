@@ -1,6 +1,7 @@
 package de.mpg.imeji.rest.transfer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.vo.Item;
@@ -16,7 +18,6 @@ import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.rest.helper.CommonUtils;
 import de.mpg.imeji.rest.helper.UserNameCache;
@@ -24,14 +25,11 @@ import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.ContainerAdditionalInformationTO;
 import de.mpg.imeji.rest.to.ContainerTO;
 import de.mpg.imeji.rest.to.IdentifierTO;
-import de.mpg.imeji.rest.to.LiteralConstraintTO;
-import de.mpg.imeji.rest.to.MetadataProfileTO;
 import de.mpg.imeji.rest.to.MetadataTO;
 import de.mpg.imeji.rest.to.OrganizationTO;
 import de.mpg.imeji.rest.to.PersonTO;
 import de.mpg.imeji.rest.to.PersonTOBasic;
 import de.mpg.imeji.rest.to.PropertiesTO;
-import de.mpg.imeji.rest.to.StatementTO;
 import de.mpg.imeji.rest.to.UserTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultOrganizationTO;
@@ -41,41 +39,6 @@ public class TransferObjectFactory {
   private static UserNameCache userNameCache = new UserNameCache();
   private static final Logger LOGGER = LoggerFactory.getLogger(TransferObjectFactory.class);
 
-  /**
-   * Transfer a {@link DefaultItemTO} into an {@link ItemTO} according to {@link MetadataProfileTO}
-   *
-   * @param profileTO
-   * @param easyTO
-   * @param itemTO
-   * @throws BadRequestException
-   * @throws JsonParseException
-   * @throws JsonMappingException
-   */
-
-
-  /**
-   * Transfer a list Statement in to MetadataProfileTO
-   *
-   * @param statements
-   * @param to
-   */
-  private static void transferStatements(Collection<Statement> statements, MetadataProfileTO to) {
-    to.getStatements().clear();
-    for (final Statement t : statements) {
-      final StatementTO sto = new StatementTO();
-      sto.setId(t.getIndex());
-      sto.setIndex(t.getIndex());
-      sto.setType(t.getType().name());
-      sto.setVocabulary(t.getVocabulary());
-      for (final String s : t.getLiteralConstraints()) {
-        final LiteralConstraintTO lcto = new LiteralConstraintTO();
-        lcto.setValue(s);
-        sto.getLiteralConstraints().add(lcto);
-      }
-      to.getStatements().add(sto);
-    }
-
-  }
 
   /**
    * Transfer an CollectionImeji to a CollectionTO
@@ -143,15 +106,20 @@ public class TransferObjectFactory {
    * @param pto
    */
   public static PersonTO transferPerson(Person p, PersonTO pto) {
-    pto.setId(CommonUtils.extractIDFromURI(p.getId()));
-    pto.setFamilyName(p.getFamilyName());
-    pto.setGivenName(p.getGivenName());
-    final IdentifierTO ito = new IdentifierTO();
-    ito.setValue(p.getIdentifier());
-    pto.getIdentifiers().add(ito);
-    // set oganizations
-    transferContributorOrganizations(p.getOrganizations(), pto);
-    return pto;
+    if (p != null && !StringHelper.isNullOrEmptyTrim(p.getFamilyName())) {
+      pto.setId(CommonUtils.extractIDFromURI(p.getId()));
+      pto.setFamilyName(p.getFamilyName());
+      pto.setGivenName(p.getGivenName());
+      if (!StringHelper.isNullOrEmptyTrim(p.getIdentifier())) {
+        final IdentifierTO ito = new IdentifierTO();
+        ito.setValue(p.getIdentifier());
+        pto.setIdentifiers(Arrays.asList(ito));
+      }
+      // set oganizations
+      transferContributorOrganizations(p.getOrganizations(), pto);
+      return pto;
+    }
+    return null;
   }
 
   /**
@@ -242,12 +210,17 @@ public class TransferObjectFactory {
     for (final Metadata vo : metadata) {
       final MetadataTO to = new MetadataTO();
       to.setText(vo.getText());
-      to.setNumber(vo.getNumber());
+      to.setDate(vo.getDate());
+      to.setName(vo.getName());
+      to.setTitle(vo.getTitle());
+      if (!Double.isNaN(vo.getNumber())) {
+        to.setNumber(vo.getNumber());
+      }
       to.setUrl(vo.getUrl());
       to.setPerson(transferPerson(vo.getPerson(), new PersonTO()));
       to.setLatitude(vo.getLatitude());
       to.setLongitude(vo.getLongitude());
-      to.setStatementId(vo.getIndex());
+      to.setIndex(vo.getIndex());
       tos.add(to);
     }
     return tos;
