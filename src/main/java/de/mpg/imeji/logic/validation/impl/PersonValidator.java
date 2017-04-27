@@ -22,12 +22,10 @@ public class PersonValidator extends ObjectValidator implements Validator<Person
     if (!hasAtLeastOneOrganisation(p)) {
       e = new UnprocessableError("error_author_need_one_organization", e);
     }
-    for (final Organization org : p.getOrganizations()) {
-      if (!isValidOrganization(org)) {
-        e = new UnprocessableError("error_organization_need_name", e);
-        break;
-      }
-    }
+    /*
+     * for (final Organization org : p.getOrganizations()) { if (!isValidOrganization(org)) { e =
+     * new UnprocessableError("error_organization_need_name", e); break; } }
+     */
     if (e.hasMessages()) {
       throw e;
     }
