@@ -25,8 +25,8 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import de.mpg.imeji.testimpl.ImejiTestResources;
 import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
+import de.mpg.imeji.util.ImejiTestResources;
 
 /**
  * Tests ContentService. Currently not tested: create ContentVO for external file, update (b/c it
