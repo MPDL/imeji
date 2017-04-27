@@ -618,14 +618,12 @@
 																	class="imj_fileTypeInput" /></td>
 															<td><h:inputText value="#{type.extensions}"
 																	class="imj_fileTypeValueInput" /></td>
-															<td class="imj_inlineButtonGroup"><a
-																href="javascript: void(0);"
-																data-target="tr .imj_fileTypeValueInput"
-																class="imj_clearInput fa fa-times"> </a> <h:commandLink
+															<td class="imj_inlineButtonGroup">
+																<h:commandLink
 																	value=" " title="#{lbl.remove}"
 																	styleClass="fa fa-trash"
 																	action="#{Configuration.fileTypes.removeType(var.index)}">
-																	<f:ajax execute="@form" render="configForm:searchPanel" />
+																	<f:ajax execute=":configForm:searchPanel" render=":configForm:searchPanel" />
 																</h:commandLink></td>
 														</tr>
 													</ui:repeat>
@@ -635,7 +633,7 @@
 												<h:commandLink styleClass="imj_submitButton"
 													value="#{lbl.add}"
 													action="#{Configuration.fileTypes.addType(Configuration.fileTypes.types.size())}">
-													<f:ajax execute="@form" render="configForm:searchPanel" />
+													<f:ajax execute=":configForm:searchPanel" render=":configForm:searchPanel" />
 												</h:commandLink>
 											</div>
 										</div>
