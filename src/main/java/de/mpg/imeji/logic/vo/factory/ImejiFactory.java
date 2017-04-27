@@ -179,6 +179,10 @@ public class ImejiFactory {
     return item;
   }
 
+  public static UserGroupFactory newUserGroup() {
+    return new UserGroupFactory();
+  }
+
 
 
 }

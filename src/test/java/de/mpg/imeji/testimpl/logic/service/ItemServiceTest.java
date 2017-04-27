@@ -20,6 +20,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.ContentService;
@@ -43,6 +44,14 @@ import de.mpg.imeji.test.logic.service.SuperServiceTest;
 import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
 import de.mpg.imeji.util.ImejiTestResources;
 
+/**
+ * Tests ItemService. Currently not tested: uploadToStaging, createFromStaging,
+ * createWithExternalFile, create using external file and url, updateWithExternalFile,search (and
+ * related),reindex
+ * 
+ * @author jandura
+ *
+ */
 public class ItemServiceTest extends SuperServiceTest {
   private static final Logger LOGGER = Logger.getLogger(ItemControllerTestClass.class);
 
@@ -63,8 +72,6 @@ public class ItemServiceTest extends SuperServiceTest {
   @BeforeClass
   public static void specificSetup() {
     try {
-      // createCollection();
-      // createItemWithFile();
       init();
     } catch (ImejiException e) {
       LOGGER.error("Error initializing collection or item", e);
@@ -151,13 +158,14 @@ public class ItemServiceTest extends SuperServiceTest {
           ImejiFactory.newCollection().setPerson("m", "p", "d").build(), userEditGrant, false,
           Status.PENDING, UnprocessableError.class);
       // fails the test
-      /*
-       * CollectionImeji collectionWrongId = ImejiFactory.newCollection().setPerson("m", "p",
-       * "d").setId("wrongId").build(); userEditGrant.getGrants() .add(new Grant(GrantType.EDIT,
-       * collectionWrongId.getId().toString()).toGrantString()); create_Test("Wrong id Collection",
-       * ImejiFactory.newItem(collectionPrivate), collectionWrongId, userEditGrant, false,
-       * Status.PENDING, UnprocessableError.class);
-       */
+
+      CollectionImeji collectionWrongId =
+          ImejiFactory.newCollection().setPerson("m", "p", "d").setId("wrongId").build();
+      userEditGrant.getGrants()
+          .add(new Grant(GrantType.EDIT, collectionWrongId.getId().toString()).toGrantString());
+      create_Test("Wrong id Collection", ImejiFactory.newItem(collectionPrivate), collectionWrongId,
+          userEditGrant, false, Status.PENDING, NotFoundException.class);
+
       create_Test("Null Collection", ImejiFactory.newItem(collectionPrivate), null, userEditGrant,
           false, Status.PENDING, UnprocessableError.class);
       create_Test("user not logged in", ImejiFactory.newItem(collectionPrivate), collectionPrivate,
@@ -306,7 +314,7 @@ public class ItemServiceTest extends SuperServiceTest {
    * Test ItemService.retrive() and ItemService.retrieveLazy() and ItemService.retriveLazyForFile()
    */
   @Test
-  public void retrive() {
+  public void retriveRetriveLazyRetriveLazyForFile() {
     try {
       retrieve_Test("readGrantUser, privateCollection", itemPrivate.getId(),
           getOriginalUrl(itemPrivate), userReadGrant, itemPrivate.getIdString(), null);
@@ -353,15 +361,19 @@ public class ItemServiceTest extends SuperServiceTest {
       }
     }
 
-    // Test wird im Moment nicht bestanden
-    // RetrieveLazyForFile
-    /*
-     * try { Item item = service.retrieveLazyForFile(fileUrl, user); Assert.assertEquals(msg +
-     * ", LazyForFile: ids should be Equal", expectedIdString, item.getIdString()); if (exception !=
-     * null) { Assert.fail(msg + ", LazyForFile: No exception has been thrown"); } } catch
-     * (ImejiException e) { if (exception == null || !e.getClass().equals(exception)) {
-     * Assert.fail(msg + ", LazyForFile: " + e.getMessage()); } }
-     */
+    try {
+      Item item = service.retrieveLazyForFile(fileUrl, user);
+      Assert.assertEquals(msg + ", LazyForFile: ids should be Equal", expectedIdString,
+          item.getIdString());
+      if (exception != null) {
+        Assert.fail(msg + ", LazyForFile: No exception has been thrown");
+      }
+    } catch (ImejiException e) {
+      if (exception == null || !e.getClass().equals(exception)) {
+        Assert.fail(msg + ", LazyForFile: " + e.getMessage());
+      }
+    }
+
   }
 
 
@@ -548,19 +560,19 @@ public class ItemServiceTest extends SuperServiceTest {
   /**
    * Assumes that ItemService.updateFile() uses ItemService.update()
    */
-  // Null Pointer exception in content service, test is skipped
   @Test
   public void updateFile() {
-    updateFile_Test("Normal", itemPrivate, ImejiTestResources.getTest2Jpg(), "Test2.jpg",
-        userEditGrant, null);
-    updateFile_Test("No Filename", itemPrivate, ImejiTestResources.getTest2Jpg(), "", userEditGrant,
-        UnprocessableError.class);
-    updateFile_Test("Nonexisting file", itemPrivate, new File("nonexisting.jpg"), "nonexisting.jpg",
-        userEditGrant, UnprocessableError.class);
-    updateFile_Test("exe file", itemPrivate, ImejiTestResources.getTestExe(), "test.exe",
-        userEditGrant, UnprocessableError.class);
-
     try {
+      (new ItemService()).createWithFile(itemPrivate, ImejiTestResources.getTest5Jpg(), "Test1.jpg",
+          collectionPrivate, userAdmin);
+      updateFile_Test("Normal", itemPrivate, ImejiTestResources.getTest2Jpg(), "Test2.jpg",
+          userEditGrant, null);
+      updateFile_Test("No Filename", itemPrivate, ImejiTestResources.getTest2Jpg(), "",
+          userEditGrant, UnprocessableError.class);
+      updateFile_Test("Nonexisting file", itemPrivate, new File("nonexisting.jpg"),
+          "nonexisting.jpg", userEditGrant, UnprocessableError.class);
+      updateFile_Test("exe file", itemPrivate, ImejiTestResources.getTestExe(), "test.exe",
+          userEditGrant, UnprocessableError.class);
       Item item2 = ImejiFactory.newItem(collectionPrivate);
       (new ItemService()).createWithFile(item2, ImejiTestResources.getTest1Jpg(), "test1.jpg",
           collectionPrivate, userAdmin);
@@ -600,6 +612,8 @@ public class ItemServiceTest extends SuperServiceTest {
           collectionPrivate, userAdmin);
       delete_Test("private collection, edit user", item, userEditGrant, null);
       delete_Test("private collection, no grant user", item, userNoGrant, NotAllowedError.class);
+      delete_Test("released collection, admin user", itemReleased, userAdmin,
+          WorkflowException.class);
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
     }
@@ -652,13 +666,15 @@ public class ItemServiceTest extends SuperServiceTest {
       Item itemToRelease2 = ImejiFactory.newItem(collectionPrivate);
       service.create(itemToRelease2, collectionPrivate, userAdmin);
 
+
       release_Test("Read grant user, not yet released item, no licence",
           Arrays.asList(itemToRelease), userEditGrant, getDefaultLicense(), getDefaultLicense(),
-          AuthenticationError.class);
+          NotAllowedError.class);
 
       release_Test("Edit grant user, not yet released item, no licence",
           Arrays.asList(itemToRelease), userEditGrant, getDefaultLicense(), getDefaultLicense(),
-          AuthenticationError.class);
+          NotAllowedError.class);
+
 
       release_Test("Admin grant user, not yet released item, no licence",
           Arrays.asList(itemToRelease, itemToRelease2), userAdmin, getDefaultLicense(),
@@ -720,14 +736,16 @@ public class ItemServiceTest extends SuperServiceTest {
           collectionPrivate, userAdmin);
       service.releaseWithDefaultLicense(Arrays.asList(withdrawReleased), userAdmin);
 
+
       withdraw_Test("pending item, admin user", withdrawPrivate, userAdmin,
           UnprocessableError.class);
+
       withdraw_Test("released item, edit user", withdrawReleased, userEditGrant, null);
 
       withdrawReleased = ImejiFactory.newItem(collectionPrivate);
-      service.create(withdrawReleased, collectionPrivate, userAdmin);
       service.createWithFile(withdrawReleased, ImejiTestResources.getTest4Jpg(), "Test4.jpg",
           collectionPrivate, userAdmin);
+      service.releaseWithDefaultLicense(Arrays.asList(withdrawReleased), userAdmin);
       withdraw_Test("released item, admin user", withdrawReleased, userAdmin, null);
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
@@ -749,7 +767,7 @@ public class ItemServiceTest extends SuperServiceTest {
       if (exception != null) {
         Assert.fail(msg + ", no exception has been thrown");
       }
-      Assert.assertEquals(msg + ": Status should be Withdrawn", i.getStatus(), Status.WITHDRAWN);
+      Assert.assertEquals(msg + ": Status should be Withdrawn", Status.WITHDRAWN, i.getStatus());
       if (file != null) {
         Assert.assertEquals(msg + ": File should not exist after delete", false, file.exists());
       }
@@ -771,7 +789,62 @@ public class ItemServiceTest extends SuperServiceTest {
 
   @Test
   public void moveItems() {
+    CollectionImeji col1 =
+        ImejiFactory.newCollection().setTitle("Col1").setPerson("m", "p", "g").build();
+    CollectionImeji col2 =
+        ImejiFactory.newCollection().setTitle("Col2").setPerson("m", "p", "g").build();
+    try {
+      User user =
+          ImejiFactory.newUser().setEmail("extra@test.org").setPerson("extra", "extra", "org")
+              .setPassword("password").setQuota(Long.MAX_VALUE).build();
+      Item itemToMove = ImejiFactory.newItem(col1);
+      (new CollectionService()).create(col1, userAdmin);
+      (new CollectionService()).create(col2, userAdmin);
+      (new UserService()).create(user, USER_TYPE.DEFAULT);
+      (new ItemService()).createWithFile(itemToMove, ImejiTestResources.getTest1Jpg(), "Test1.jpg",
+          col1, userAdmin);
 
+      user.getGrants().add(new Grant(GrantType.EDIT, col1.getId().toString()).toGrantString());
+      move_Test("only edit grant on col 1", itemToMove, col2, user, NotAllowedError.class);
+      user.setGrants(new ArrayList<String>());
+      user.getGrants().add(new Grant(GrantType.EDIT, col2.getId().toString()).toGrantString());
+      move_Test("only edit grant on col 2", itemToMove, col2, user, NotAllowedError.class);
+      user.getGrants().add(new Grant(GrantType.EDIT, col1.getId().toString()).toGrantString());
+      move_Test("normal", itemToMove, col2, user, null);
+      (new CollectionService()).release(col2, userAdmin, getDefaultLicense());
+      move_Test("collection released", itemToMove, col1, user, UnprocessableError.class);
+
+    } catch (ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
+
+
+  }
+
+  private void move_Test(String msg, Item item, CollectionImeji col, User user, Class exception) {
+    ItemService service = new ItemService();
+    try {
+      service.moveItems(Arrays.asList(item.getId().toString()), col, user, getDefaultLicense());
+      if (exception != null) {
+        Assert.fail(msg + ": No exception was thrown");
+      }
+    } catch (ImejiException e) {
+      if (!e.getClass().equals(exception)) {
+        Assert.fail(msg + ": " + e.getMessage());
+      }
+    }
+    try {
+      Item ret = service.retrieve(item.getId().toString(), userAdmin);
+      if (exception == null) {
+        Assert.assertEquals(msg + ": Item should be in new collection", col.getId().toString(),
+            ret.getCollection().toString());
+      } else {
+        Assert.assertEquals(msg + ": Item should be in old collection",
+            item.getCollection().toString(), ret.getCollection().toString());
+      }
+    } catch (ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
   }
 
 

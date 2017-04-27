@@ -123,8 +123,15 @@
     			});
     			
     			//Needed for Firefox
+    			var myDraw=false;
     			viewerFull.addHandler("my-draw-failed",function(){
-    				useAlternatePicture();
+    				if(!myDraw){
+    					useAlternatePicture();
+    				}
+    			});
+    			
+    			viewerFull.addHandler("my-draw",function(){
+    				myDraw=true;
     			});
     			
     			function useAlternatePicture(){

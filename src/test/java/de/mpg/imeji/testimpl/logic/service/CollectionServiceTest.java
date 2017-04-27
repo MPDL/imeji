@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
@@ -17,29 +18,44 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.concurrency.locks.Lock;
+import de.mpg.imeji.logic.concurrency.locks.Locks;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.License;
+import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
 import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
 import de.mpg.imeji.util.ImejiTestResources;
 
+
+/**
+ * Tests CollectionService. Currently not tested: search, reindex
+ * 
+ * @author jandura
+ *
+ */
 public class CollectionServiceTest extends SuperServiceTest {
   private static final Logger LOGGER = Logger.getLogger(ItemControllerTestClass.class);
 
   private static User defaultUser;
-  public static User userEditGrant;
-  public static User userReadGrant;
-  public static User userNoGrant;
+  private static User userEditGrant;
+  private static User userReadGrant;
+  private static User userNoGrant;
   private static User restrictedUser;
   private static User sysadmin;
 
@@ -137,7 +153,7 @@ public class CollectionServiceTest extends SuperServiceTest {
   }
 
   @Test
-  public void retrieveAndRetrieveLazy() {
+  public void retrieveRetrieveLazyAndRetrieveBatch() {
     retrieve_Test("No grant user, private collection", collectionPrivate.getId(), userNoGrant,
         collectionPrivate.getIdString(), collectionPrivate.getTitle(), NotAllowedError.class);
     retrieve_Test("Read grant user, private collection", collectionPrivate.getId(), userReadGrant,
@@ -149,10 +165,11 @@ public class CollectionServiceTest extends SuperServiceTest {
   private void retrieve_Test(String msg, URI uri, User user, String expectedIDString,
       String expectedName, Class exception) {
     CollectionService service = new CollectionService();
-    CollectionImeji res = null, res2 = null;
+    CollectionImeji res = null, res2 = null, res3 = null;
     try {
       res = service.retrieve(uri, user);
       res2 = service.retrieveLazy(uri, user);
+      res3 = service.retrieve(Arrays.asList(uri.toString()), user).get(0);
     } catch (ImejiException e) {
       if (e.getClass().equals(exception)) {
         return;
@@ -166,31 +183,46 @@ public class CollectionServiceTest extends SuperServiceTest {
     Assert.assertEquals(msg + ": Name should be equal", expectedName, res.getTitle());
     Assert.assertEquals(msg + " lazy: ID should be equal", expectedIDString, res2.getIdString());
     Assert.assertEquals(msg + " lazy: Name should be equal", expectedName, res2.getTitle());
+    Assert.assertEquals(msg + " batch: ID should be equal", expectedIDString, res3.getIdString());
+    Assert.assertEquals(msg + " batch: Name should be equal", expectedName, res3.getTitle());
   }
 
   @Test
   public void update() {
     collectionPrivate.setTitle("TestTitle");
-    update_Test("private colection, user read grant", collectionPrivate, userReadGrant,
-        "Private Collection", NotAllowedError.class);
-    update_Test("private colection, user edit grant", collectionPrivate, userEditGrant,
-        "Private Collection", null);
+    try {
+      Item item = ImejiFactory.newItem(collectionPrivate);
+      (new ItemService()).createWithFile(item, ImejiTestResources.getTest1Jpg(), "Test1.jpg",
+          collectionPrivate, defaultUser);
+      item.setFilename("New_filename.jpg");
+      update_Test("private colection, user read grant", collectionPrivate, item, userReadGrant,
+          "Private Collection", "Test1.jpg", NotAllowedError.class);
+      update_Test("private colection, user edit grant", collectionPrivate, item, userEditGrant,
+          "Private Collection", "Test1.jpg", null);
+    } catch (ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
   }
 
-  private void update_Test(String msg, CollectionImeji col, User user, String oldTitle,
-      Class exception) {
+  private void update_Test(String msg, CollectionImeji col, Item item, User user,
+      String oldCollectionTitle, String oldItemFilename, Class exception) {
     CollectionService service = new CollectionService();
     try {
       service.update(col, user);
     } catch (ImejiException e) {
       if (e.getClass().equals(exception)) {
         CollectionImeji res = null;
+        Item resItem = null;
         try {
           res = service.retrieve(col.getId(), sysadmin);
+          resItem = (new ItemService()).retrieve(item.getId().toString(), sysadmin);
         } catch (ImejiException e1) {
           Assert.fail(msg + ": " + e.getMessage());
         }
-        Assert.assertEquals(msg + ": Title should not have changed", oldTitle, res.getTitle());
+        Assert.assertEquals(msg + ":Collection title should not have changed", oldCollectionTitle,
+            res.getTitle());
+        Assert.assertEquals(msg + ":Item filename should not have changed", oldItemFilename,
+            resItem.getFilename());
         return;
       }
       Assert.fail(msg + ": " + e.getMessage());
@@ -200,7 +232,13 @@ public class CollectionServiceTest extends SuperServiceTest {
     }
     try {
       CollectionImeji res = service.retrieve(col.getId(), user);
-      Assert.assertEquals(msg + ": Title should be updated", col.getTitle(), res.getTitle());
+      Item resItem = (new ItemService()).retrieve(item.getId().toString(), sysadmin);
+      Assert.assertEquals(msg + ": Collection title should be updated", col.getTitle(),
+          res.getTitle());
+
+      Assert.assertEquals(msg + ": Item filename should be updated", item.getFilename(),
+          resItem.getFilename());
+
     } catch (ImejiException e) {
       Assert.fail(msg + ": " + e.getMessage());
     }
@@ -211,6 +249,7 @@ public class CollectionServiceTest extends SuperServiceTest {
     try {
       updateLogo_Test("collectionPrivate, edit grant user", collectionPrivate,
           ImejiTestResources.getTest1Jpg(), userEditGrant, null, null);
+
 
       updateLogo_Test("collectionPrivate, edit grant user, invalid logo", collectionPrivate,
           ImejiTestResources.getTestExe(), userEditGrant,
@@ -273,13 +312,18 @@ public class CollectionServiceTest extends SuperServiceTest {
       collectionService.create(collectionToDelete, defaultUser);
       Item itemToDelete = ImejiFactory.newItem(collectionToDelete);
       itemService.create(itemToDelete, collectionToDelete, defaultUser);
-
       delete_Test("private Collection, edit grant user", collectionToDelete, userEditGrant,
           NotAllowedError.class);
+      Lock lock = new Lock(itemToDelete.getId().toString(), null);
+      Locks.lock(lock);
+      delete_Test("private Collection, collection admin user,itemLocked", collectionToDelete,
+          defaultUser, UnprocessableError.class);
+      Locks.unLock(lock);
       delete_Test("private Collection, collection admin user", collectionToDelete, defaultUser,
           null);
       delete_Test("released Collection, collection admin use", collectionReleased, defaultUser,
           UnprocessableError.class);
+
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
     }
@@ -334,6 +378,183 @@ public class CollectionServiceTest extends SuperServiceTest {
     }
   }
 
+  @Test
+  public void release() {
+    CollectionService service = new CollectionService();
+    CollectionImeji collectionToRelease =
+        ImejiFactory.newCollection().setTitle("To Release").setPerson("m", "p", "g").build();
+    try {
+      service.create(collectionToRelease, defaultUser);
+
+      release_Test("Empty collection", collectionToRelease, null, defaultUser, getDefaultLicense(),
+          getDefaultLicense(), UnprocessableError.class);
+
+
+      Item itemToRelease = ImejiFactory.newItem(collectionToRelease);
+      itemToRelease.getLicenses().add(getDefaultLicense());
+      (new ItemService()).create(itemToRelease, collectionToRelease, defaultUser);
+      userEditGrant.getGrants()
+          .add(new Grant(GrantType.READ, collectionToRelease.getId().toString()).toGrantString());
+      (new UserService()).update(userEditGrant, sysadmin);
+
+      release_Test("Unauthorized user", collectionToRelease, itemToRelease, userEditGrant,
+          getDefaultLicense(), getDefaultLicense(), NotAllowedError.class);
+
+
+      Lock lock = new Lock(itemToRelease.getId().toString(), null);
+      Locks.lock(lock);
+
+      release_Test("Locked item", collectionToRelease, itemToRelease, defaultUser,
+          getDefaultLicense(), getDefaultLicense(), UnprocessableError.class);
+
+      Locks.unLock(lock);
+
+
+      release_Test("pending collection, collection admin", collectionToRelease, itemToRelease,
+          defaultUser, getDefaultLicense(), getDefaultLicense(), null);
+
+      release_Test("Already released collection", collectionToRelease, itemToRelease, defaultUser,
+          getDefaultLicense(), getDefaultLicense(), WorkflowException.class);
+
+    } catch (ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
+
+  }
+
+  private void release_Test(String msg, CollectionImeji col, Item item, User user,
+      License defaultLicense, License expectedLicense, Class exception) {
+    CollectionService service = new CollectionService();
+    Status previousColStatus = col.getStatus();
+    Status previousItemStatus = item == null ? null : item.getStatus();
+    try {
+      service.release(col, user, defaultLicense);
+      if (exception != null) {
+        Assert.fail(msg + ": No exception has been thrown");
+      }
+    } catch (ImejiException e) {
+      if (!e.getClass().equals(exception)) {
+        Assert.fail(msg + ": " + e.getMessage());
+      }
+    }
+    if (exception == null) {
+      Assert.assertEquals(msg + ": Status of collection should be released", Status.RELEASED,
+          col.getStatus());
+      if (item != null) {
+        Assert.assertEquals(msg + "item status should be released", Status.RELEASED,
+            item.getStatus());
+        Assert.assertEquals(msg + "item license name should be as expected",
+            expectedLicense.getName(), item.getLicenses().get(0).getName());
+      }
+    } else {
+      Assert.assertEquals(msg + ": Status of collection should be unchanged", previousColStatus,
+          col.getStatus());
+      if (item != null) {
+        Assert.assertEquals(msg + "item status should be unchanged", previousItemStatus,
+            item.getStatus());
+        if (expectedLicense != null) {
+          Assert.assertEquals(msg + "item license name should be unchanged",
+              expectedLicense.getName(), item.getLicenses().get(0).getName());
+        } else {
+          Assert.assertEquals(msg + ": item should have no license", 0, item.getLicenses().size());
+        }
+      }
+    }
+  }
+
+  @Test
+  public void withdraw() {
+    CollectionService service = new CollectionService();
+    CollectionImeji collectionToWithdraw =
+        ImejiFactory.newCollection().setTitle("To Withdraw").setPerson("m", "p", "g").build();
+    collectionToWithdraw.setDiscardComment("discard test");
+    try {
+      service.create(collectionToWithdraw, defaultUser);
+      Item itemToWithdraw = ImejiFactory.newItem(collectionToWithdraw);
+      (new ItemService()).create(itemToWithdraw, collectionToWithdraw, defaultUser);
+
+      withdraw_Test("collection pending", collectionToWithdraw, defaultUser,
+          WorkflowException.class);
+      service.release(collectionToWithdraw, defaultUser, getDefaultLicense());
+      Lock lock = new Lock(itemToWithdraw.getId().toString(), null);
+      Locks.lock(lock);
+      withdraw_Test("locked item", collectionToWithdraw, defaultUser, UnprocessableError.class);
+      Locks.unLock(lock);
+
+      userEditGrant.getGrants()
+          .add(new Grant(GrantType.EDIT, collectionToWithdraw.getId().toString()).toGrantString());
+      (new UserService()).update(userEditGrant, sysadmin);
+      withdraw_Test("user edit grant", collectionToWithdraw, userEditGrant, NotAllowedError.class);
+
+      collectionToWithdraw.setDiscardComment(null);
+      withdraw_Test("No discard comment", collectionToWithdraw, defaultUser,
+          WorkflowException.class);
+      collectionToWithdraw.setDiscardComment("discard test");
+      withdraw_Test("released collection, collection admin user", collectionToWithdraw, defaultUser,
+          null);
+      withdraw_Test("collection already withdrawn", collectionToWithdraw, defaultUser,
+          WorkflowException.class);
+
+    } catch (ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
+  }
+
+  private void withdraw_Test(String msg, CollectionImeji collection, User user, Class exception) {
+    CollectionService service = new CollectionService();
+    Status collectionPreviousStatus = collection.getStatus();
+    try {
+      service.withdraw(collection, user);
+      if (exception != null) {
+        Assert.fail(msg + ": no exception has been thrown");
+      }
+    } catch (ImejiException e) {
+      if (!e.getClass().equals(exception)) {
+        Assert.fail(msg + ": " + e.getMessage());
+      }
+    }
+    if (exception == null) {
+      Assert.assertEquals(msg + "collection status should be withdrawn", Status.WITHDRAWN,
+          collection.getStatus());
+      for (URI uri : collection.getImages()) {
+        try {
+          Item item = (new ItemService()).retrieve(uri.toString(), sysadmin);
+          Assert.assertEquals(msg + "item status should be withdrawn", Status.WITHDRAWN,
+              item.getStatus());
+          Assert.assertEquals(msg + " item discard comment should be collection discard comment",
+              collection.getDiscardComment(), item.getDiscardComment());
+        } catch (ImejiException e) {
+          Assert.fail(e.getMessage());
+        }
+      }
+    } else {
+
+      Assert.assertEquals(msg + ": Collection Status should still be unchanged",
+          collectionPreviousStatus, collection.getStatus());
+
+    }
+  }
+
+  @Test
+  public void retrieveAll() {
+    try {
+      List<CollectionImeji> res = (new CollectionService()).retrieveAll();
+      boolean containsPrivate = false;
+      boolean containsReleased = false;
+      for (CollectionImeji c : res) {
+        if (c.getIdString().equals(collectionPrivate.getIdString())) {
+          containsPrivate = true;
+        }
+        if (c.getIdString().equals(collectionReleased.getIdString())) {
+          containsReleased = true;
+        }
+      }
+      Assert.assertTrue("Both collections should be found", containsPrivate && containsReleased);
+    } catch (ImejiException e) {
+      Assert.fail(e.getMessage());
+    }
+  }
+
 
 
   /**
@@ -353,6 +574,21 @@ public class CollectionServiceTest extends SuperServiceTest {
     FileOutputStream fos = new FileOutputStream(storedFile);
     sController.read(c.getLogoUrl().toString(), fos, true);
     return StorageUtils.calculateChecksum(storedFile);
+  }
+
+  /**
+   * Get the instance default instance
+   *
+   * @return
+   */
+  private License getDefaultLicense() {
+    final ImejiLicenses lic = StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getDefaultLicense())
+        ? ImejiLicenses.CC0 : ImejiLicenses.valueOf(Imeji.CONFIG.getDefaultLicense());
+    final License license = new License();
+    license.setName(lic.name());
+    license.setLabel(lic.getLabel());
+    license.setUrl(lic.getUrl());
+    return license;
   }
 
 }

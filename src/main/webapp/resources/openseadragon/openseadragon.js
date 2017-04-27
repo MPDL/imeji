@@ -16796,6 +16796,8 @@ $.Drawer.prototype = {
         var data=context.getImageData(midWidth,midHeight,1,1).data;
         if(data[0]==0 && data[1]==0 && data[2]==0 && data[3]==0){
         	this.viewer.raiseEvent("my-draw-failed");
+        }else{
+        	this.viewer.raiseEvent("my-draw");
         }
     },
 
