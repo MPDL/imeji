@@ -92,15 +92,14 @@ public class CreateCollectionBean extends CollectionBean {
           pos2++;
         }
       }
-
       setCollection(collectionController.create(getCollection(), getSessionUser()));
+      setId(getCollection().getIdString());
       if (containerEditorSession.getUploadedLogoPath() != null) {
         collectionController.updateLogo(getCollection(),
             new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
       }
       setSendEmailNotification(isSendEmailNotification());
-      final UserService uc = new UserService();
-      uc.update(getSessionUser(), getSessionUser());
+      new UserService().update(getSessionUser(), getSessionUser());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_create", getLocale()));
       return true;
     } catch (final UnprocessableError e) {

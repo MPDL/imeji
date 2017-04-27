@@ -41,7 +41,6 @@ public class EditCollectionBean extends CollectionBean {
   public void init() {
     setId(UrlHelper.getParameterValue("collectionId"));
     setCollectionCreateMode(false);
-    getProfileSelect();
     if (getId() != null) {
       try {
         setCollection(new CollectionService()
@@ -86,8 +85,7 @@ public class EditCollectionBean extends CollectionBean {
       final CollectionService collectionController = new CollectionService();
       final User user = getSessionUser();
       collectionController.update(getCollection(), user);
-      final UserService uc = new UserService();
-      uc.update(user, user);
+      new UserService().update(user, user);
       if (containerEditorSession.getErrorMessage() != "") {
         String msg = containerEditorSession.getErrorMessage();
         containerEditorSession.setErrorMessage("");
@@ -134,33 +132,7 @@ public class EditCollectionBean extends CollectionBean {
     return "pretty:editCollection";
   }
 
-  /**
-   * Method called on the html page to trigger the initialization of the bean
-   *
-   * @return
-   */
-  public String getProfileSelect() {
-    if (UrlHelper.getParameterBoolean("profileSelect")) {
-      setProfileSelectMode(true);
-    } else {
-      setProfileSelectMode(false);
-    }
-    return "";
-  }
 
-  /**
-   * Method for save&editProfile button. Create the {@link MetadataProfile} according to the form
-   *
-   * @return
-   * @throws Exception
-   */
-  public String saveAndEditProfile() throws Exception {
-    if (saveEditedCollection()) {
-      redirect(getNavigation().getProfileUrl() + getProfileId() + "/edit?init=1&col="
-          + getCollection().getIdString());
-    }
-    return "";
-  }
 
   @Override
   protected List<URI> getSelectedCollections() {

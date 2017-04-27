@@ -140,8 +140,11 @@ class ItemController extends ImejiControllerAbstract<Item> {
     for (final Item item : l) {
       if (item.getMetadata() != null) {
         final List<Metadata> cleanMetadata =
-            item.getMetadata().stream().filter(md -> !MetadataUtil.isEmpty(md))
-                .map(md -> MetadataUtil.cleanMetadata(md)).collect(Collectors.toList());
+            item.getMetadata().stream().sequential().map(md -> MetadataUtil.cleanMetadata(md))
+                .filter(md -> !MetadataUtil.isEmpty(md)).collect(Collectors.toList());
+        for (Metadata md : item.getMetadata()) {
+          md = MetadataUtil.cleanMetadata(md);
+        }
         item.setMetadata(cleanMetadata);
       }
       cleanLicenses(item);

@@ -57,7 +57,10 @@ public class MetadataUtil {
    * @return
    */
   public static boolean isEmpty(Metadata md) {
-    return StringHelper.isNullOrEmptyTrim(md.getText()) && Double.isNaN(md.getNumber())
+    return StringHelper.isNullOrEmptyTrim(md.getText())
+        && StringHelper.isNullOrEmptyTrim(md.getDate())
+        && StringHelper.isNullOrEmptyTrim(md.getTitle())
+        && StringHelper.isNullOrEmptyTrim(md.getName()) && Double.isNaN(md.getNumber())
         && ((Double.isNaN(md.getLongitude()) || md.getLongitude() == 0)
             && (Double.isNaN(md.getNumber()) || md.getLatitude() == 0))
         && StringHelper.isNullOrEmptyTrim(md.getUrl()) && (md.getPerson() == null
@@ -77,6 +80,11 @@ public class MetadataUtil {
    */
   public static Metadata cleanMetadata(Metadata md) {
     md.setText(md.getText() != null ? md.getText().trim() : null);
+    md.setPerson(
+        md.getPerson() != null && StringHelper.isNullOrEmptyTrim(md.getPerson().getFamilyName())
+            && StringHelper.isNullOrEmptyTrim(md.getPerson().getGivenName())
+            && StringHelper.isNullOrEmptyTrim(md.getPerson().getOrganizationString()) ? null
+                : md.getPerson());
     return md;
   }
 }
