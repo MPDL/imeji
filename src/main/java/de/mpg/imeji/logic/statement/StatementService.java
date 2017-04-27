@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.statement;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -141,8 +142,25 @@ public class StatementService extends SearchServiceAbstract<Statement> {
       after = controller.create(after, user);
       controller.delete(before, user);
       updateItemIndex(before, after, user);
+      changeDefaultStatement(before, after);
       return after;
     }
+  }
+
+  /**
+   * Change the configuration with the new default statement
+   * 
+   * @param before
+   * @param after
+   */
+  private void changeDefaultStatement(Statement before, Statement after) {
+    List<String> defaultStatements = Arrays.asList(Imeji.CONFIG.getStatements().split(","));
+    defaultStatements = defaultStatements.stream()
+        .map(s -> s = StatementUtil.indexEquals(s, before.getIndex()) ? after.getIndex() : s)
+        .collect(Collectors.toList());
+    String defaultStatementstring = defaultStatements.stream().collect(Collectors.joining(","));
+    Imeji.CONFIG.setStatements(defaultStatementstring);
+    Imeji.CONFIG.saveConfig();
   }
 
   /**

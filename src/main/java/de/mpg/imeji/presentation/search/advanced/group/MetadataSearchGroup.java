@@ -73,7 +73,7 @@ public class MetadataSearchGroup extends AbstractAdvancedSearchFormGroup impleme
    * @param position
    */
   public void addEntry(int position) {
-    entries.add(position, new MetadataSearchGroupEntry(statementMap, locale));
+    entries.add(position, new MetadataSearchGroupEntry(statementList.get(0), statementMap, locale));
   }
 
   /**

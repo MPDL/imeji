@@ -47,9 +47,10 @@ public class MetadataSearchGroupEntry implements Serializable {
    * @param statements
    * @param locale
    */
-  public MetadataSearchGroupEntry(final Map<String, Statement> statements, Locale locale) {
+  public MetadataSearchGroupEntry(Statement statement, final Map<String, Statement> statements,
+      Locale locale) {
     this.statements = statements;
-    this.statement = statements.values().iterator().next();
+    this.statement = statement;
     this.metadata = new MetadataFactory().setStatementId(statement.getIndex()).build();
     this.setInput(new MetadataInputComponent(metadata, statement));
     initOperatorMenu(locale);

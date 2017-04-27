@@ -75,9 +75,11 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
 
   @Override
   public void save() {
-    super.save();
     try {
+      super.save();
       redirect(getPreviousPage().getCompleteUrl());
+    } catch (ImejiException e1) {
+      LOGGER.error("Edit updating items", e1);
     } catch (IOException e) {
       LOGGER.error("Error redirect after save", e);
     }

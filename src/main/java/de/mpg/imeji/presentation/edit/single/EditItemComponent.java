@@ -69,6 +69,7 @@ public class EditItemComponent extends EditMetadataAbstract {
   public List<Statement> getAllStatements() {
     return entries.stream().filter(row -> row.getInput() != null && !row.getInput().isEmpty())
         .map(EditItemEntry::getInput).map(MetadataInputComponent::getStatement)
+        .filter(s -> s != null)
         .collect(toMap(Statement::getIndex, Function.identity(), (a, b) -> a)).values().stream()
         .collect(Collectors.toList());
   }

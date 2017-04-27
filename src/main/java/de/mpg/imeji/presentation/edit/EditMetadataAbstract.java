@@ -57,16 +57,19 @@ public abstract class EditMetadataAbstract extends SuperBean {
 
   /**
    * Save the items
+   * 
+   * @throws ImejiException
    */
-  public void save() {
-    try {
-      statementService.createBatchIfNotExists(getAllStatements(), getSessionUser());
-      itemService.updateBatch(toItemList(), getSessionUser());
-      BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
-    } catch (final ImejiException e) {
-      BeanHelper.error("Error editing metadata");
-      LOGGER.error("Edit updating items", e);
-    }
+  public void save() throws ImejiException {
+    statementService.createBatchIfNotExists(getAllStatements(), getSessionUser());
+    itemService.updateBatch(toItemList(), getSessionUser());
+    BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
+    // try {
+    //
+    // } catch (final ImejiException e) {
+    // BeanHelper.error("Error editing metadata");
+    // LOGGER.error("Edit updating items", e);
+    // }
   }
 
   /**
