@@ -24,6 +24,7 @@ import de.mpg.imeji.rest.helper.CommonUtils;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.SearchResultTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
+import de.mpg.imeji.rest.transfer.ReverseTransferObjectFactory.TRANSFER_MODE;
 import de.mpg.imeji.rest.transfer.TransferObjectFactory;
 
 /**
@@ -95,6 +96,7 @@ public class CollectionAPIService implements APIService<CollectionTO> {
   public CollectionTO update(CollectionTO to, User u) throws ImejiException {
     final CollectionService cc = new CollectionService();
     final CollectionImeji vo = getCollectionVO(to.getId(), u);
+    transferCollection(to, vo, TRANSFER_MODE.UPDATE, u);
     final CollectionImeji updatedCollection = cc.update(vo, u);
     final CollectionTO newTO = new CollectionTO();
     TransferObjectFactory.transferCollection(updatedCollection, newTO);

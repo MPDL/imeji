@@ -40,6 +40,9 @@ public class WorkflowValidator implements Serializable {
    * @throws WorkflowException
    */
   public void isCreateAllowed(Properties p) throws WorkflowException {
+    if (p.getStatus() == Status.WITHDRAWN) {
+      throw new WorkflowException("Can not create discarded object");
+    }
     if (Imeji.CONFIG.getPrivateModus() && p.getStatus() != Status.PENDING) {
       throw new WorkflowException("Object publication is disabled!");
     }

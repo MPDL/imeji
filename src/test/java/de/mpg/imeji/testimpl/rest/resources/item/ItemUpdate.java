@@ -7,13 +7,11 @@ import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -30,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.exceptions.BadRequestException;
+import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.test.rest.resources.test.integration.ItemTestBase;
 import de.mpg.imeji.util.ImejiTestResources;
@@ -46,7 +45,7 @@ public class ItemUpdate extends ItemTestBase {
   private static String updateJSON;
   private static final String PATH_PREFIX = "/rest/items";
   private static final String UPDATED_FILE_NAME = "updated_filename.png";
-  private final String UPDATE_ITEM_FILE_JSON = STATIC_CONTEXT_REST + "/easyUpdateItemBasic.json";
+  private final String UPDATE_ITEM_FILE_JSON = STATIC_CONTEXT_REST + "/item.json";
   private static final String referenceUrl =
       "http://th03.deviantart.net/fs71/PRE/i/2012/242/1/f/png_moon_by_paradise234-d5czhdo.png";
 
@@ -61,8 +60,8 @@ public class ItemUpdate extends ItemTestBase {
   @Test
   public void test_1_UpdateItem_1_Basic() throws IOException, BadRequestException {
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart.field("json", updateJSON.replace("___FILE_NAME___", UPDATED_FILE_NAME)
-        .replace("___ITEM_ID___", itemId).replace("___COLLECTION_ID___", collectionId));
+    itemTO.setFilename(UPDATED_FILE_NAME);
+    multiPart.field("json", RestProcessUtils.buildJSONFromObject(itemTO));
     Response response =
         target(PATH_PREFIX).path("/" + itemId).register(authAsUser).register(MultiPartFeature.class)
             .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE)
@@ -75,12 +74,11 @@ public class ItemUpdate extends ItemTestBase {
 
   }
 
-
   @Test
-  public void test_1_UpdateItem_2_NotAllowedUser() throws IOException {
+  public void test_1_UpdateItem_2_NotAllowedUser() throws Exception {
+    createItem();
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart.field("json", updateJSON.replace("___FILE_NAME___", UPDATED_FILE_NAME)
-        .replace("___ITEM_ID___", itemId).replace("___COLLECTION_ID___", collectionId));
+    multiPart.field("json", RestProcessUtils.buildJSONFromObject(itemTO));
     Response response = target(PATH_PREFIX).path("/" + itemId).register(authAsUser2)
         .register(MultiPartFeature.class).register(JacksonFeature.class)
         .request(MediaType.APPLICATION_JSON_TYPE)
@@ -89,10 +87,11 @@ public class ItemUpdate extends ItemTestBase {
   }
 
   @Test
-  public void test_1_UpdateItem_3_NotFoundItem() throws IOException {
+  public void test_1_UpdateItem_3_NotFoundItem() throws Exception {
+    createItem();
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart.field("json", updateJSON.replace("___ITEM_ID___", itemId + "_not_exist_item")
-        .replace("___COLLECTION_ID___", collectionId));
+    itemTO.setId(itemId + "_not_exist_item");
+    multiPart.field("json", RestProcessUtils.buildJSONFromObject(itemTO));
 
     Response response = target(PATH_PREFIX).path("/" + itemId + "_not_exist_item")
         .register(authAsUser).register(MultiPartFeature.class).register(JacksonFeature.class)
@@ -102,11 +101,12 @@ public class ItemUpdate extends ItemTestBase {
   }
 
   @Test
-  public void test_1_UpdateItem_4_Unauthorized() throws IOException {
+  public void test_1_UpdateItem_4_Unauthorized() throws Exception {
+    createItem();
     FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart.field("json", updateJSON.replace("___FILE_NAME___", UPDATED_FILE_NAME)
-        .replace("___ITEM_ID___", itemId).replace("___COLLECTION_ID___", collectionId));
-
+    // multiPart.field("json", updateJSON.replace("___FILE_NAME___", UPDATED_FILE_NAME)
+    // .replace("___ITEM_ID___", itemId).replace("___COLLECTION_ID___", collectionId));
+    multiPart.field("json", RestProcessUtils.buildJSONFromObject(itemTO));
     Response response = target(PATH_PREFIX).path("/" + itemId).register(MultiPartFeature.class)
         .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE)
         .put(Entity.entity(multiPart, multiPart.getMediaType()));
@@ -124,7 +124,6 @@ public class ItemUpdate extends ItemTestBase {
 
   @Test
   public void test_2_UpdateItem_SyntaxInvalidJSONFile() throws Exception {
-
     FileDataBodyPart filePart = new FileDataBodyPart("file", ImejiTestResources.getTestJpg());
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
@@ -141,53 +140,6 @@ public class ItemUpdate extends ItemTestBase {
 
     assertEquals(BAD_REQUEST.getStatusCode(), response.getStatus());
 
-  }
-
-  @Test
-  public void test_2_UpdateItem_WrongID() throws Exception {
-    FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart.field("json",
-        getStringFromPath(UPDATE_ITEM_FILE_JSON).replace("___ITEM_ID___", "12345"));
-
-    Response response =
-        target(PATH_PREFIX).path("/" + itemId).register(authAsUser).register(MultiPartFeature.class)
-            .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE)
-            .put(Entity.entity(multiPart, multiPart.getMediaType()));
-
-    assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-  }
-
-
-  @Test
-  public void test_1_updateItem_updateMetadata_empty() throws IOException, BadRequestException {
-    FormDataMultiPart multiPart = new FormDataMultiPart();
-    multiPart.field("json",
-        updateJSON.replace("\"___COLLECTION_ID___\",", "\"" + collectionId + "\", ").replaceAll(
-            "\"metadata\"\\s*:\\s*\\{[\\d\\D]*\\}", "\"referenceUrl\":\"" + referenceUrl + "\" }"));
-    Response response = getTargetAuth().put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    DefaultItemTO defaultItemTO = response.readEntity(DefaultItemTO.class);
-    assertThat(defaultItemTO.getMetadata(), hasSize(0));
-  }
-
-
-  @Test
-  public void test_2_updateItem_deleteAllMetadata() throws IOException, BadRequestException {
-
-    FormDataMultiPart multiPart = new FormDataMultiPart();
-    String jsonNew = updateJSON.replace("___COLLECTION_ID___", collectionId)
-        .replaceAll("\"metadata\"\\s*:\\s*\\{[\\d\\D]*\\}", "\"metadata\":{}}");
-
-    multiPart.field("json", jsonNew);
-    Response response = getTargetAuth().put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    DefaultItemTO defaultItemTO = response.readEntity(DefaultItemTO.class);
-    assertThat(defaultItemTO.getMetadata(), hasSize(0));
-  }
-
-  private Invocation.Builder getTargetAuth() {
-    return target(PATH_PREFIX).register(authAsUser).register(MultiPartFeature.class)
-        .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE);
   }
 
 }
