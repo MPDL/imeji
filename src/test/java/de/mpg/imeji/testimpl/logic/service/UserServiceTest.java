@@ -1,5 +1,10 @@
 package de.mpg.imeji.testimpl.logic.service;
 
+import static junit.framework.TestCase.fail;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -12,20 +17,25 @@ import org.junit.Test;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.exceptions.QuotaExceededException;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
+import de.mpg.imeji.util.ImejiTestResources;
+import de.mpg.imeji.util.JenaUtil;
 
 public class UserServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(ItemControllerTestClass.class);
+  private static final Logger LOGGER = Logger.getLogger(UserServiceTest.class);
 
   private static User adminUser;
   private static User defaultUser;
@@ -70,6 +80,18 @@ public class UserServiceTest extends SuperServiceTest {
     Assert.assertEquals("Restricted grants should be as expected",
         AuthorizationPredefinedRoles.restrictedUser(restrictedUser.getId().toString()),
         restrictedUser.getGrants());
+  }
+
+  @Test
+  public void createAlreadyExistingUserTest() {
+    try {
+      UserService c = new UserService();
+      // Create a new user with a new id but with the same email
+      c.create(defaultUser, USER_TYPE.DEFAULT);
+      Assert.fail("User should not be created, since User exists already");
+    } catch (Exception e1) {
+      // OK
+    }
   }
 
   @Test
@@ -179,6 +201,21 @@ public class UserServiceTest extends SuperServiceTest {
           retAdmin.getPerson().getGivenName());
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void updateUserWithEmailAlreadyUsedByAnotherUser() {
+    try {
+      UserService c = new UserService();
+      // Set Email of user2 to user
+      defaultUser.setEmail(restrictedUser.getEmail());
+      c.update(defaultUser, Imeji.adminUser);
+      Assert.fail("User should not be updated, since the email is already used by another user");
+    } catch (ImejiException e1) {
+      // OK
+    } finally {
+      defaultUser.setEmail("default@test.org");
     }
   }
 
@@ -302,7 +339,45 @@ public class UserServiceTest extends SuperServiceTest {
     } catch (ImejiException e) {
       e.printStackTrace();
     }
+  }
 
+  @Test
+  public void testUserDiskSpaceQuota() throws ImejiException {
+    // create user
+    User user = new User();
+    user.setEmail("quotaUser@imeji.org");
+    user.getPerson().setFamilyName(JenaUtil.TEST_USER_NAME);
+    user.getPerson().setOrganizations(JenaUtil.testUser.getPerson().getOrganizations());
+
+    UserService c = new UserService();
+    User u = c.create(user, USER_TYPE.DEFAULT);
+
+    // change quota
+    long NEW_QUOTA = 25 * 1024;
+    user.setQuota(NEW_QUOTA);
+    user = c.update(user, Imeji.adminUser);
+    assertThat(u.getQuota(), equalTo(NEW_QUOTA));
+
+    // try to exceed quota
+    CollectionService cc = new CollectionService();
+    CollectionImeji col =
+        ImejiFactory.newCollection().setTitle("test").setPerson("m", "p", "g").build();
+    URI uri = cc.create(col, user).getId();
+    col = cc.retrieve(uri, user);
+
+    item = ImejiFactory.newItem(col);
+    user.setQuota(ImejiTestResources.getTestJpg().length());
+    ItemService itemController = new ItemService();
+    item = itemController.createWithFile(item, ImejiTestResources.getTestJpg(),
+        ImejiTestResources.getTestJpg().getName(), col, user);
+
+    Item item2 = ImejiFactory.newItem(col);
+    try {
+      item2 = itemController.createWithFile(item2, ImejiTestResources.getTest2Jpg(),
+          ImejiTestResources.getTest2Jpg().getName(), col, user);
+      fail("Disk Quota should be exceeded!");
+    } catch (QuotaExceededException e) {
+    }
   }
 
 }

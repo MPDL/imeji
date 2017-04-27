@@ -10,9 +10,12 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.content.ContentService;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
+import de.mpg.imeji.logic.vo.ContentVO;
+import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.admin.ConfigurationBean;
 import de.mpg.imeji.presentation.storage.StorageUtil;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
@@ -35,9 +38,10 @@ public class FileAuthorizationTest extends SuperServiceTest {
   public void notLoggedInReadPrivateItem() throws ImejiException {
     createCollection();
     createItemWithFile();
-    Assert.assertFalse(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), null));
-    Assert.assertFalse(StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), null));
-    Assert.assertFalse(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), null));
+    Assert.assertFalse(StorageUtil.isAllowedToViewFile(getContent(item).getFull(), null));
+    Assert.assertFalse(StorageUtil.isAllowedToViewFile(getContent(item).getThumbnail(), null));
+    Assert.assertFalse(StorageUtil.isAllowedToViewFile(getContent(item).getPreview(), null));
+    Assert.assertFalse(StorageUtil.isAllowedToViewFile(getContent(item).getOriginal(), null));
   }
 
   @Test
@@ -45,9 +49,10 @@ public class FileAuthorizationTest extends SuperServiceTest {
     createCollection();
     createItemWithFile();
     releaseCollection();
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), null));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), null));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), null));
+    Assert.assertTrue(StorageUtil.isAllowedToViewFile(getContent(item).getFull(), null));
+    Assert.assertTrue(StorageUtil.isAllowedToViewFile(getContent(item).getThumbnail(), null));
+    Assert.assertTrue(StorageUtil.isAllowedToViewFile(getContent(item).getPreview(), null));
+    Assert.assertFalse(StorageUtil.isAllowedToViewFile(getContent(item).getOriginal(), null));
 
   }
 
@@ -56,30 +61,34 @@ public class FileAuthorizationTest extends SuperServiceTest {
     createCollection();
     createItemWithFile();
     releaseItem();
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), null));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), null));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), null));
+    Assert.assertTrue(StorageUtil.isAllowedToViewFile(getContent(item).getFull(), null));
+    Assert.assertTrue(StorageUtil.isAllowedToViewFile(getContent(item).getThumbnail(), null));
+    Assert.assertTrue(StorageUtil.isAllowedToViewFile(getContent(item).getPreview(), null));
+    Assert.assertFalse(StorageUtil.isAllowedToViewFile(getContent(item).getOriginal(), null));
   }
 
   @Test
   public void loggedInReadPrivateItemOfOwnCollection() throws ImejiException {
     createCollection();
     createItemWithFile();
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser));
+    Assert
+        .assertTrue(StorageUtil.isAllowedToViewFile(getContent(item).getFull(), JenaUtil.testUser));
     Assert.assertTrue(
-        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser));
+        StorageUtil.isAllowedToViewFile(getContent(item).getThumbnail(), JenaUtil.testUser));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(getContent(item).getPreview(), JenaUtil.testUser));
   }
 
   @Test
   public void loggedInReadPrivateItemOfForbiddenCollection() throws ImejiException {
     createCollection();
     createItemWithFile();
-    Assert
-        .assertFalse(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
     Assert.assertFalse(
-        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
-    Assert.assertFalse(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser2));
+        StorageUtil.isAllowedToViewFile(getContent(item).getFull(), JenaUtil.testUser2));
+    Assert.assertFalse(
+        StorageUtil.isAllowedToViewFile(getContent(item).getThumbnail(), JenaUtil.testUser2));
+    Assert.assertFalse(
+        StorageUtil.isAllowedToViewFile(getContent(item).getPreview(), JenaUtil.testUser2));
   }
 
   @Test
@@ -88,11 +97,13 @@ public class FileAuthorizationTest extends SuperServiceTest {
     createItemWithFile();
     ShareService c = new ShareService();
     c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, collectionBasic.getId().toString(),
-        ShareService.rolesAsList(ShareRoles.READ));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
+        ShareRoles.READ.name());
     Assert.assertTrue(
-        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser2));
+        StorageUtil.isAllowedToViewFile(getContent(item).getFull(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(getContent(item).getThumbnail(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(getContent(item).getPreview(), JenaUtil.testUser2));
   }
 
   @Test
@@ -100,12 +111,14 @@ public class FileAuthorizationTest extends SuperServiceTest {
     createCollection();
     createItemWithFile();
     ShareService c = new ShareService();
-    c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, item.getId().toString(),
-        ShareService.rolesAsList(ShareRoles.READ));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
+    c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, getContent(item).getId().toString(),
+        ShareRoles.READ.name());
     Assert.assertTrue(
-        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser2));
+        StorageUtil.isAllowedToViewFile(getContent(item).getFull(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(getContent(item).getThumbnail(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(getContent(item).getPreview(), JenaUtil.testUser2));
   }
 
   @Test
@@ -115,10 +128,12 @@ public class FileAuthorizationTest extends SuperServiceTest {
     createItemWithFile();
     releaseItem();
     enablePrivateMode();
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
     Assert.assertTrue(
-        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser2));
+        StorageUtil.isAllowedToViewFile(getContent(item).getFull(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(getContent(item).getThumbnail(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(getContent(item).getPreview(), JenaUtil.testUser2));
   }
 
   @Test
@@ -128,10 +143,12 @@ public class FileAuthorizationTest extends SuperServiceTest {
     createItemWithFile();
     releaseCollection();
     enablePrivateMode();
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getFullImageLink(), JenaUtil.testUser2));
     Assert.assertTrue(
-        StorageUtil.isAllowedToViewFile(item.getThumbnailImageLink(), JenaUtil.testUser2));
-    Assert.assertTrue(StorageUtil.isAllowedToViewFile(item.getWebImageLink(), JenaUtil.testUser2));
+        StorageUtil.isAllowedToViewFile(getContent(item).getFull(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(getContent(item).getThumbnail(), JenaUtil.testUser2));
+    Assert.assertTrue(
+        StorageUtil.isAllowedToViewFile(getContent(item).getPreview(), JenaUtil.testUser2));
   }
 
   private void releaseCollection() throws ImejiException {
@@ -152,5 +169,11 @@ public class FileAuthorizationTest extends SuperServiceTest {
   private void disabledPrivateMode() throws IOException, URISyntaxException, ImejiException {
     ConfigurationBean configurationBean = new ConfigurationBean();
     configurationBean.setPrivateModus(false);
+  }
+
+  private ContentVO getContent(Item i) throws ImejiException {
+    ContentService service = new ContentService();
+    String id = service.findContentId(i.getId().toString());
+    return service.retrieve(id);
   }
 }

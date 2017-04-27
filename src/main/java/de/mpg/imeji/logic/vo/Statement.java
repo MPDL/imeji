@@ -155,4 +155,15 @@ public class Statement implements Serializable, Cloneable {
     return clone;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof Statement)) {
+      return false;
+    }
+    Statement s = (Statement) o;
+    return s.getLiteralConstraints().equals(literalConstraints) && s.getIndex().equals(index)
+        && s.getType().equals(type) && s.getVocabulary().equals(vocabulary)
+        && s.getUri().equals(uri) && s.getNamespace().equals(namespace);
+  }
+
 }

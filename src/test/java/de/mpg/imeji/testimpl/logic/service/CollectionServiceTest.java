@@ -39,7 +39,6 @@ import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
 import de.mpg.imeji.util.ImejiTestResources;
 
 
@@ -50,7 +49,7 @@ import de.mpg.imeji.util.ImejiTestResources;
  *
  */
 public class CollectionServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(ItemControllerTestClass.class);
+  private static final Logger LOGGER = Logger.getLogger(CollectionServiceTest.class);
 
   private static User defaultUser;
   private static User userEditGrant;
