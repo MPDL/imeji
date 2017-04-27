@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.concurrency.locks.Locks;
@@ -282,12 +283,17 @@ public class ItemBean extends SuperBean {
     return "pretty:item";
   }
 
-  public void saveEditor() throws IOException {
+  public void save() throws IOException {
     try {
+      editor.save();
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_editor_image", getLocale()));
       redirect(getCurrentPage().getCompleteUrl());
-    } catch (Exception e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()));
+    } catch (UnprocessableError e) {
+      BeanHelper.error(e, getLocale());
+      LOGGER.error("Error saving item metadata", e);
+    } catch (ImejiException e) {
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()) + ": "
+          + e.getMessage());
       LOGGER.error("Error saving item metadata", e);
     }
   }
