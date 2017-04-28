@@ -34,11 +34,11 @@
 			
 			<!-- List -->
 			<h:form>
-			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
-				<div id="imj_listBody">
-					<col:list mediaList="#{paginatorListSessionBean}"/>
-				</div>
-			</ui:fragment>
+				<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
+					<div id="imj_listBody">
+						<col:list mediaList="#{paginatorListSessionBean}"/>
+					</div>
+				</ui:fragment>
 			</h:form>
 			
 			<!-- Page Browser GotoBox -->
