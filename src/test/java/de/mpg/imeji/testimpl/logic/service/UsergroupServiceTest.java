@@ -19,10 +19,9 @@ import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
 
 public class UsergroupServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(ItemControllerTestClass.class);
+  private static final Logger LOGGER = Logger.getLogger(UsergroupServiceTest.class);
 
   private static User defaultUser1;
   private static User defaultUser2;

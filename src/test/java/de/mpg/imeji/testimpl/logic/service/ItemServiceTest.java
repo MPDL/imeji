@@ -41,7 +41,6 @@ import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
 import de.mpg.imeji.util.ImejiTestResources;
 
 /**
@@ -53,7 +52,7 @@ import de.mpg.imeji.util.ImejiTestResources;
  *
  */
 public class ItemServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(ItemControllerTestClass.class);
+  private static final Logger LOGGER = Logger.getLogger(ItemServiceTest.class);
 
   private static CollectionImeji collectionPrivate;
   private static CollectionImeji collectionReleased;
@@ -250,46 +249,46 @@ public class ItemServiceTest extends SuperServiceTest {
     }
   }
 
-  private void createWithFile_Test(String msg, Item item, File file, String filename,
+  private void createWithFile_Test(String msg, Item i, File file, String filename,
       CollectionImeji coll, User user, boolean created, String expectedFilename, Class exception) {
     ItemService service = new ItemService();
     try {
-      service.createWithFile(item, file, filename, coll, user);
+      service.createWithFile(i, file, filename, coll, user);
       if (!created) {
         Assert.fail(msg + ", no exception has been thrown");
       }
-      Item result = service.retrieve(item.getId(), userAdmin);
+      Item result = service.retrieve(i.getId(), userAdmin);
       String checksum = getOriginalChecksum(result);
       Assert.assertEquals(msg + ", checksum should be equal", StorageUtils.calculateChecksum(file),
           checksum);
       Assert.assertEquals("Filename should be the expected filename", expectedFilename,
-          item.getFilename());
+          i.getFilename());
 
     } catch (Exception e) {
       if (!e.getClass().equals(exception)) {
         Assert.fail(msg + ", " + e.getMessage());
       }
-    } finally {
-      try {
-        if (item.getId() == null) {
-          Assert.assertEquals(msg + ", item id should only be null, when the item was not created",
-              created, false);
-        } else {
-          Item result = service.retrieve(item.getId(), userAdmin);
-          if (!created && result != null) {
-            Assert.fail(msg
-                + ", Something was retrieved, even though the item should not have been created");
-          }
-          if (result.getStatus().equals(Status.PENDING)) {
-            service.delete(Arrays.asList(item), userAdmin);
-          }
+    }
+    try {
+      if (i.getId() == null) {
+        Assert.assertEquals(msg + ", item id should only be null, when the item was not created",
+            created, false);
+      } else {
+        Item result = service.retrieve(i.getId(), userAdmin);
+        if (!created && result != null) {
+          Assert.fail(
+              msg + ", Something was retrieved, even though the item should not have been created");
         }
-      } catch (ImejiException e) {
-        if (!(e instanceof NotFoundException)) {
-          Assert.fail(msg + ", " + e.getMessage());
+        if (result.getStatus().equals(Status.PENDING)) {
+          service.delete(Arrays.asList(i), userAdmin);
         }
       }
+    } catch (ImejiException e) {
+      if (!(e instanceof NotFoundException)) {
+        Assert.fail(msg + ", " + e.getMessage());
+      }
     }
+
   }
 
 
@@ -563,11 +562,11 @@ public class ItemServiceTest extends SuperServiceTest {
   @Test
   public void updateFile() {
     try {
-      (new ItemService()).createWithFile(itemPrivate, ImejiTestResources.getTest5Jpg(), "Test1.jpg",
+      (new ItemService()).createWithFile(itemPrivate, ImejiTestResources.getTest5Jpg(), "Test5.jpg",
           collectionPrivate, userAdmin);
-      updateFile_Test("Normal", itemPrivate, ImejiTestResources.getTest2Jpg(), "Test2.jpg",
+      updateFile_Test("Normal", itemPrivate, ImejiTestResources.getTest3Jpg(), "Test3.jpg",
           userEditGrant, null);
-      updateFile_Test("No Filename", itemPrivate, ImejiTestResources.getTest2Jpg(), "",
+      updateFile_Test("No Filename", itemPrivate, ImejiTestResources.getTest3Jpg(), "",
           userEditGrant, UnprocessableError.class);
       updateFile_Test("Nonexisting file", itemPrivate, new File("nonexisting.jpg"),
           "nonexisting.jpg", userEditGrant, UnprocessableError.class);
@@ -576,7 +575,7 @@ public class ItemServiceTest extends SuperServiceTest {
       Item item2 = ImejiFactory.newItem(collectionPrivate);
       (new ItemService()).createWithFile(item2, ImejiTestResources.getTest1Jpg(), "test1.jpg",
           collectionPrivate, userAdmin);
-      updateFile_Test("File already existst", item2, ImejiTestResources.getTest2Jpg(), "Test2.jpg",
+      updateFile_Test("File already existst", item2, ImejiTestResources.getTest3Jpg(), "Test3.jpg",
           userEditGrant, UnprocessableError.class);
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
@@ -588,7 +587,8 @@ public class ItemServiceTest extends SuperServiceTest {
       Class exception) {
     ItemService service = new ItemService();
     try {
-      service.updateFile(item, null, file, filename, user);
+      CollectionImeji col = (new CollectionService()).retrieve(item.getCollection(), userAdmin);
+      service.updateFile(item, col, file, filename, user);
       if (exception != null) {
         Assert.fail(msg + ", no exception has been thrown");
       }

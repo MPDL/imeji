@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.collection.CollectionService;
-import de.mpg.imeji.logic.collection.CollectionService.MetadataProfileCreationMethod;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
@@ -51,8 +50,8 @@ public class StatisticsControllerTestClass extends SuperServiceTest {
     result = controller.getUsedStorageSizeForInstitute("imeji.org");
     assertEquals(totalFileSize, result);
     // Upload by another user
-    new ShareService().shareToUser(JenaUtil.testUser, JenaUtil.testUser2,
-        col2.getId().toString(), ShareService.rolesAsList(ShareRoles.CREATE));
+    new ShareService().shareToUser(JenaUtil.testUser, JenaUtil.testUser2, col2.getId().toString(),
+        ShareRoles.ADMIN.name());
     Item item4 = createItemWithFile(col2, getThumbnailfile(), JenaUtil.testUser2);
     totalFileSize = totalFileSize + FileUtils.sizeOf(getThumbnailfile());;
     result = controller.getUsedStorageSizeForInstitute("imeji.org");
@@ -61,8 +60,9 @@ public class StatisticsControllerTestClass extends SuperServiceTest {
 
   private CollectionImeji createCollection(User user) throws ImejiException {
     CollectionService controller = new CollectionService();
-    collectionBasic = ImejiFactory.newCollection("test", "Planck", "Max", "MPG");
-    return controller.create(collectionBasic, profile, user, MetadataProfileCreationMethod.COPY, null);
+    collectionBasic =
+        ImejiFactory.newCollection().setTitle("test").setPerson("m", "p", "g").build();
+    return controller.create(collectionBasic, user);
   }
 
   private Item createItemWithFile(CollectionImeji col, File file, User user) throws ImejiException {

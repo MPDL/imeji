@@ -25,7 +25,6 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
-import de.mpg.imeji.testimpl.logic.controller.ItemControllerTestClass;
 import de.mpg.imeji.util.ImejiTestResources;
 
 /**
@@ -36,7 +35,7 @@ import de.mpg.imeji.util.ImejiTestResources;
  *
  */
 public class ContentServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(ItemControllerTestClass.class);
+  private static final Logger LOGGER = Logger.getLogger(ContentServiceTest.class);
 
   private static Item item;
   private static CollectionImeji collection;
