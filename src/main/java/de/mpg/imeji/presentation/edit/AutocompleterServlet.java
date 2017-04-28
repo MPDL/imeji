@@ -45,7 +45,7 @@ import de.mpg.imeji.logic.vo.User;
     urlPatterns = {"/autocompleter"}, asyncSupported = true)
 public class AutocompleterServlet extends HttpServlet {
   private static final long serialVersionUID = -5503792080963195242L;
-  private static Logger LOGGER = Logger.getLogger(AutocompleterServlet.class);
+  private static final Logger LOGGER = Logger.getLogger(AutocompleterServlet.class);
   private final Pattern conePattern =
       Pattern.compile("http.*/cone/.*?format=json.*", Pattern.CASE_INSENSITIVE);
   private final Pattern coneAuthorPattern =

@@ -28,7 +28,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class UploadBean extends SuperBean {
   private static final long serialVersionUID = 4632180647351059603L;
-  private Logger LOGGER = Logger.getLogger(UploadBean.class);
+  private static final Logger LOGGER = Logger.getLogger(UploadBean.class);
   private List<CollectionImeji> collections = new ArrayList<>();
   private String query = "";
 
@@ -51,7 +51,7 @@ public class UploadBean extends SuperBean {
       }
     } catch (Exception e) {
       BeanHelper.error("Error initializing page: " + e.getMessage());
-      LOGGER.error("Error initializing upload page", e);
+      // LOGGER.error("Error initializing upload page", e);
     }
   }
 

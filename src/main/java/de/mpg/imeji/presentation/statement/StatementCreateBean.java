@@ -17,7 +17,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 public class StatementCreateBean extends SuperBean {
   private static final long serialVersionUID = 3080933791853851564L;
   private StatementForm statementForm = new StatementForm();
-  private static Logger LOGGER = Logger.getLogger(StatementCreateBean.class);
+  private static final Logger LOGGER = Logger.getLogger(StatementCreateBean.class);
 
   /**
    * Create a new statement

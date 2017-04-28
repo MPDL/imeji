@@ -19,7 +19,7 @@ public abstract class Transaction {
   private final String modelURI;
   private boolean isException;
   private ImejiException exception;
-  private static Logger LOGGER = Logger.getLogger(Transaction.class);
+  private static final Logger LOGGER = Logger.getLogger(Transaction.class);
 
   /**
    * Construct a {@link Transaction} for one model defined by its uri

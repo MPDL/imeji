@@ -18,7 +18,7 @@ import de.mpg.imeji.logic.search.model.SearchPair;
  *
  */
 public class TextSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
-  private static Logger LOGGER = Logger.getLogger(TextSearchGroup.class);
+  private static final Logger LOGGER = Logger.getLogger(TextSearchGroup.class);
   private static final long serialVersionUID = -6588304080472017223L;
   private String query;
   private boolean includeFulltext = true;

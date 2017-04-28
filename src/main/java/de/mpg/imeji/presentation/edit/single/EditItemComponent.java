@@ -31,7 +31,7 @@ import de.mpg.imeji.presentation.license.LicenseEditor;
  */
 public class EditItemComponent extends EditMetadataAbstract {
   private static final long serialVersionUID = 4116466458089234630L;
-  private static Logger LOGGER = Logger.getLogger(EditItemComponent.class);
+  private static final Logger LOGGER = Logger.getLogger(EditItemComponent.class);
   private List<EditItemEntry> entries = new ArrayList<>();
   private Item item;
   private String filename;

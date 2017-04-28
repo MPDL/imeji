@@ -32,7 +32,7 @@ import de.mpg.imeji.util.JenaUtil;
  */
 public class ItemTestBase extends ImejiTestBase {
 
-  private static Logger LOGGER = Logger.getLogger(ItemTestBase.class);
+  private static final LoggerLOGGER = Logger.getLogger(ItemTestBase.class);
 
   public static Item item;
   private static final String TARGET_PATH_PREFIX = "/rest/items";

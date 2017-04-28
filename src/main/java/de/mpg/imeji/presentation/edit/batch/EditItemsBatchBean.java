@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -76,6 +77,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
       items.stream().forEach(item -> item.getMetadata().add(getMetadata()));
       save();
       reset();
+      BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
     } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
     } catch (ImejiException | IOException e) {
@@ -96,6 +98,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
           .sequential().forEach(item -> item.getMetadata().add(getMetadata()));
       save();
       reset();
+      BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
     } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
     } catch (ImejiException | IOException e) {
@@ -117,6 +120,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
           .forEach(item -> item.getMetadata().add(getMetadata()));
       save();
       reset();
+      BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
     } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
     } catch (ImejiException | IOException e) {

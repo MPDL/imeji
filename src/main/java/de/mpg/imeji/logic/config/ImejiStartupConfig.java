@@ -22,7 +22,7 @@ public class ImejiStartupConfig {
     REINDEX;
   }
 
-  private static Logger LOGGER = Logger.getLogger(ImejiStartupConfig.class);
+  private static final Logger LOGGER = Logger.getLogger(ImejiStartupConfig.class);
   private static Properties config;
   private static File configFile;
 

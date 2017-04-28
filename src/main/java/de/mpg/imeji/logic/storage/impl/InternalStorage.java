@@ -32,7 +32,7 @@ import de.mpg.imeji.logic.storage.util.StorageUtils;
  */
 public class InternalStorage implements Storage {
   private static final long serialVersionUID = 7865121663793602621L;
-  private static Logger LOGGER = Logger.getLogger(InternalStorage.class);
+  private static final Logger LOGGER = Logger.getLogger(InternalStorage.class);
   private static final String name = "internal";
   protected InternalStorageManager manager;
 

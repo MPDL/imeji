@@ -34,7 +34,7 @@ import de.mpg.imeji.util.LocalizedString;
 public class Jena2Java {
   private final Model model;
   private boolean lazy = false;
-  private static Logger LOGGER = Logger.getLogger(Jena2Java.class);
+  private static final Logger LOGGER = Logger.getLogger(Jena2Java.class);
 
   public Jena2Java(Model model, boolean lazy) {
     this.model = model;
