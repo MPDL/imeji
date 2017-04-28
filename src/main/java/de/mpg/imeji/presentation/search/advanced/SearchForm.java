@@ -75,7 +75,6 @@ public class SearchForm implements Serializable {
    */
   public void validate() throws UnprocessableError {
     final Set<String> messages = new HashSet<>();
-
     if (!messages.isEmpty()) {
       throw new UnprocessableError(messages);
     }

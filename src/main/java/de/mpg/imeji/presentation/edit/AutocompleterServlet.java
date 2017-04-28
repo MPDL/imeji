@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -52,7 +53,7 @@ public class AutocompleterServlet extends HttpServlet {
       Pattern.compile("http.*/cone/persons/.*?format=json.*", Pattern.CASE_INSENSITIVE);
   private final Pattern googleGeoAPIPattern = Pattern.compile(
       "https://maps.googleapis.com/maps/api/geocode/json.*address=", Pattern.CASE_INSENSITIVE);
-  private final HttpClient client = new HttpClient();
+  private final HttpClient client = new HttpClient(new MultiThreadedHttpConnectionManager());
 
   /**
    * @see HttpServlet#HttpServlet()

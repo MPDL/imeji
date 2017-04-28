@@ -50,9 +50,12 @@ public class EditItemComponent extends EditMetadataAbstract {
         .collect(toMap(Statement::getIndex,
             s -> new EditItemEntry(new MetadataFactory().setStatementId(s.getIndex()).build(),
                 statementMap)));
-    entriesMap.putAll(item.getMetadata().stream()
-        .collect(toMap(Metadata::getIndex, md -> new EditItemEntry(md, statementMap))));
+    entriesMap.keySet()
+        .removeAll(item.getMetadata().stream().map(Metadata::getIndex).collect(toList()));
+
     entries = entriesMap.values().stream().collect(toList());
+    entries.addAll(item.getMetadata().stream().map(md -> new EditItemEntry(md, statementMap))
+        .collect(toList()));
     addMetadata();
   }
 

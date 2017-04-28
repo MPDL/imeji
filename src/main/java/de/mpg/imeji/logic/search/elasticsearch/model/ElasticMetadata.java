@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.search.elasticsearch.model;
 
+import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.factory.StatementFactory;
 
@@ -15,7 +16,10 @@ import de.mpg.imeji.logic.vo.factory.StatementFactory;
 public final class ElasticMetadata extends ElasticPerson {
   private final String index;
   private final String text;
+  private final String name;
+  private final String title;
   private final double number;
+  private final double time;
   private final String uri;
   private final String location;
 
@@ -29,8 +33,11 @@ public final class ElasticMetadata extends ElasticPerson {
     super(md.getPerson());
     this.index = new StatementFactory().setIndex(md.getIndex()).build().getIndexUrlEncoded();
     this.text = md.getText();
+    this.name = md.getName();
+    this.title = md.getTitle();
     this.number = md.getNumber();
     this.uri = md.getUrl();
+    this.time = DateFormatter.getTime(md.getDate());
     this.location = md.getLatitude() + "," + md.getLongitude();
   }
 
@@ -69,5 +76,25 @@ public final class ElasticMetadata extends ElasticPerson {
     return location;
   }
 
+  /**
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * @return the title
+   */
+  public String getTitle() {
+    return title;
+  }
+
+  /**
+   * @return the time
+   */
+  public double getTime() {
+    return time;
+  }
 
 }
