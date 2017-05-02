@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
@@ -17,6 +18,7 @@ import de.mpg.imeji.logic.vo.Person;
 public final class ElasticFolder extends ElasticProperties {
   private final String name;
   private final String description;
+  private final String creators;
   private final List<String> pid;
   private final List<ElasticPerson> person = new ArrayList<>();
   private final List<ElasticContainerAdditionalInfo> info = new ArrayList<>();
@@ -26,6 +28,8 @@ public final class ElasticFolder extends ElasticProperties {
     this.name = c.getTitle();
     this.description = c.getDescription();
     this.pid = c.getDoi() != null ? Arrays.asList(c.getDoi()) : new ArrayList<String>();
+    this.creators =
+        c.getPersons().stream().map(p -> p.getCompleteName()).collect(Collectors.joining(";"));
     for (final Person p : c.getPersons()) {
       person.add(new ElasticPerson(p));
     }
@@ -58,6 +62,13 @@ public final class ElasticFolder extends ElasticProperties {
 
   public List<String> getPid() {
     return pid;
+  }
+
+  /**
+   * @return the creators
+   */
+  public String getCreators() {
+    return creators;
   }
 
 }

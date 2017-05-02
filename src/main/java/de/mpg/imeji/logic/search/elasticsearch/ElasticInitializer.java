@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.elasticsearch;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -8,10 +9,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
+import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
@@ -43,14 +45,22 @@ public class ElasticInitializer {
     ElasticService.CLUSTER_DIR = PropertyReader.getProperty("elastic.cluster.home");
     ElasticService.ANALYSER =
         ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
-    LOGGER.info("Connecting Node to " + ElasticService.CLUSTER_NAME + " (local="
-        + ElasticService.CLUSTER_LOCAL + ", data=" + ElasticService.CLUSTER_DATA + ")");
-    ElasticService.setNODE(NodeBuilder.nodeBuilder().data(ElasticService.CLUSTER_DATA)
-        .local(ElasticService.CLUSTER_LOCAL).clusterName(ElasticService.CLUSTER_NAME)
-        .settings(Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)).node());
-    ElasticService.setClient(ElasticService.getNODE().client());
+    /*
+     * LOGGER.info("Connecting Node to " + ElasticService.CLUSTER_NAME + " (local=" +
+     * ElasticService.CLUSTER_LOCAL + ", data=" + ElasticService.CLUSTER_DATA + ")");
+     * ElasticService.setNODE(NodeBuilder.nodeBuilder().data(ElasticService.CLUSTER_DATA)
+     * .local(ElasticService.CLUSTER_LOCAL).clusterName(ElasticService.CLUSTER_NAME)
+     * .settings(Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)).node());
+     */
+    TransportClient tc = TransportClient.builder()
+        .settings(Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)
+            .put("cluster.name", ElasticService.CLUSTER_NAME))
+        .build();
+    tc.addTransportAddress(
+        new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
+    ElasticService.setClient(tc);
     initializeIndex();
-    LOGGER.info("Add elasticsearch mappings..." + ElasticService.getNODE().isClosed());
+    LOGGER.info("Add elasticsearch mappings...");
     for (final ElasticTypes type : ElasticTypes.values()) {
       new ElasticIndexer(ElasticService.DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
     }
@@ -59,7 +69,9 @@ public class ElasticInitializer {
 
   public static void shutdown() {
     LOGGER.warn("SHUTTING DOWN ELASTICSEARCH...");
-    ElasticService.getNODE().close();
+    if (ElasticService.getNODE() != null) {
+      ElasticService.getNODE().close();
+    }
     LOGGER.warn("... DONE!");
 
   }
@@ -107,18 +119,21 @@ public class ElasticInitializer {
    * @return
    */
   public synchronized static String getIndexNameFromAliasName(final String aliasName) {
-    final ImmutableOpenMap<String, List<AliasMetaData>> map = ElasticService.getClient().admin()
-        .indices().getAliases(new GetAliasesRequest(aliasName)).actionGet().getAliases();
-    if (map.keys().size() > 1) {
-      LOGGER.error("Alias " + aliasName
-          + " has more than one index. This is forbidden: All indexes will be removed, please reindex!!!");
-      reset();
-      return null;
-    } else if (map.keys().size() == 1) {
-      return map.keys().iterator().next().value;
-    } else {
-      return null;
+    try {
+      final ImmutableOpenMap<String, List<AliasMetaData>> map = ElasticService.getClient().admin()
+          .indices().getAliases(new GetAliasesRequest(aliasName)).actionGet().getAliases();
+      if (map.keys().size() > 1) {
+        LOGGER.error("Alias " + aliasName
+            + " has more than one index. This is forbidden: All indexes will be removed, please reindex!!!");
+        reset();
+        return null;
+      } else if (map.keys().size() == 1) {
+        return map.keys().iterator().next().value;
+      }
+    } catch (Exception e) {
+      LOGGER.error("getIndexNameFromAliasName error", e);
     }
+    return null;
   }
 
   /**
@@ -156,6 +171,7 @@ public class ElasticInitializer {
           Files.readAllBytes(
               Paths.get(ElasticIndexer.class.getClassLoader().getResource(settingsName).toURI())),
           "UTF-8");
+      System.out.println(settingsJson);
       ElasticService.getClient().admin().indices().prepareCreate(indexName)
           .setSettings(settingsJson).execute().actionGet();
       return indexName;

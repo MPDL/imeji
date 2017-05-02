@@ -54,7 +54,7 @@ public class ElasticSortFactory {
       case filesize:
         return makeBuilder(ElasticFields.SIZE.field(), sort);
       case creatorid:
-        return makeBuilder(ElasticFields.AUTHOR_COMPLETENAME.field() + SORT_INDEX, sort);
+        return makeBuilder(ElasticFields.CREATORS.field() + SORT_INDEX, sort);
       case status:
         return makeBuilder(ElasticFields.STATUS.field(), sort);
       default:

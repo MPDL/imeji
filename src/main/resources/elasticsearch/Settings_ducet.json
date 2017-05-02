@@ -3,6 +3,7 @@
 		"analysis": {
 			"analyzer": {
 				"ducet_sort": {
+				    "type" : "custom",
 					"tokenizer": "keyword",
 					"filter": [
 						"icu_collation"
