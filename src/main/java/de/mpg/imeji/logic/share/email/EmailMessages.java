@@ -135,7 +135,7 @@ public class EmailMessages {
    */
   private static String getEmailOnAccountAction_Body(String password, String email, String username,
       String message_bundle, Locale locale) {
-    final String userPage = Imeji.PROPERTIES.getApplicationURL() + "user?id=" + email;
+    final String userPage = Imeji.PROPERTIES.getApplicationURL() + "user?email=" + email;
     String emailMessage = getBundle(message_bundle, locale);
     if ("email_new_user".equals(message_bundle)) {
       emailMessage =

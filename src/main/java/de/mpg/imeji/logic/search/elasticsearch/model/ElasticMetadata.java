@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.elasticsearch.model;
 
 import de.mpg.imeji.logic.util.DateFormatter;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.factory.StatementFactory;
 
@@ -18,10 +19,10 @@ public final class ElasticMetadata extends ElasticPerson {
   private final String text;
   private final String name;
   private final String title;
-  private final double number;
-  private final double time;
+  private double number;
+  private double time;
   private final String uri;
-  private final String location;
+  private String location;
 
 
   /**
@@ -35,10 +36,16 @@ public final class ElasticMetadata extends ElasticPerson {
     this.text = md.getText();
     this.name = md.getName();
     this.title = md.getTitle();
-    this.number = md.getNumber();
+    if (!Double.isNaN(md.getNumber())) {
+      this.number = md.getNumber();
+    }
     this.uri = md.getUrl();
-    this.time = DateFormatter.getTime(md.getDate());
-    this.location = md.getLatitude() + "," + md.getLongitude();
+    if (!StringHelper.isNullOrEmptyTrim(md.getDate())) {
+      this.time = DateFormatter.getTime(md.getDate());
+    }
+    if (!Double.isNaN(md.getLatitude()) && !Double.isNaN(md.getLongitude())) {
+      this.location = md.getLatitude() + "," + md.getLongitude();
+    }
   }
 
   /**
