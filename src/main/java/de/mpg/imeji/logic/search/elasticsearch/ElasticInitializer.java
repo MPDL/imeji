@@ -171,7 +171,6 @@ public class ElasticInitializer {
           Files.readAllBytes(
               Paths.get(ElasticIndexer.class.getClassLoader().getResource(settingsName).toURI())),
           "UTF-8");
-      System.out.println(settingsJson);
       ElasticService.getClient().admin().indices().prepareCreate(indexName)
           .setSettings(settingsJson).execute().actionGet();
       return indexName;

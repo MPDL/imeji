@@ -10,32 +10,11 @@
         <load-on-startup>2</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
-
-    <!-- <servlet>
-        <servlet-name>imeji REST Service</servlet-name>
-        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-        <init-param>
-            <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>io.swagger.jaxrs.listing,de.mpg.imeji.rest.resources</param-value>
-        </init-param>
-        <init-param>
-            <param-name>javax.ws.rs.Application</param-name>
-            <param-value>de.mpg.imeji.rest.MyApplication</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
- -->
-	
     <!-- Mappings -->
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>/jsf/*</url-pattern>
     </servlet-mapping>
-  <!--    <servlet-mapping>
-        <servlet-name>imeji REST Service</servlet-name>
-        <url-pattern>/rest/*</url-pattern>
-    </servlet-mapping>-->
-    <!-- Pretty Faces Parameters -->
      <context-param>
         <param-name>com.ocpsoft.pretty.BASE_PACKAGES</param-name>
         <param-value>de.mpg.imeji</param-value>
