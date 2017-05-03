@@ -56,15 +56,16 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
   @Test
   public void inviteAndConsume() throws ImejiException {
     List<String> roles =
-        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
-    Invitation invitation = new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString(), roles);
+        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.ADMIN);
+    Invitation invitation =
+        new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString(), ShareRoles.ADMIN.name());
     invitationBC.invite(invitation);
     UserService userController = new UserService();
     userController.create(getRegisteredUser(), USER_TYPE.DEFAULT);
     User user = userController.retrieve(UNKNOWN_EMAIL, Imeji.adminUser);
     Assert.assertTrue(SecurityUtil.authorization().read(user, collectionBasic));
     Assert.assertTrue(SecurityUtil.authorization().update(user, collectionBasic));
-    Assert.assertTrue(SecurityUtil.authorization().createContent(user, collectionBasic));
+    Assert.assertTrue(SecurityUtil.authorization().administrate(user, collectionBasic));
     // Check the invitation has been deleted
     Assert.assertEquals(0, invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL).size());
   }
@@ -77,8 +78,9 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
   @Test
   public void inviteStopAndStartStore() throws ImejiException {
     List<String> roles =
-        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
-    Invitation invitation = new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString(), roles);
+        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.ADMIN);
+    Invitation invitation =
+        new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString(), ShareRoles.ADMIN.name());
     invitationBC.invite(invitation);
     List<Invitation> invitationsBefore = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
     KeyValueStoreService.stopAllStores();
@@ -94,11 +96,11 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
   public void getAllinvitationsOfUser() throws ImejiException {
     // create many invitations for different object for one user
     List<String> roles =
-        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
+        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.ADMIN);
     int numberOfInvitations = 15;
     for (int i = 0; i < numberOfInvitations; i++) {
-      Invitation invitation =
-          new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString() + i, roles);
+      Invitation invitation = new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString() + i,
+          ShareRoles.ADMIN.name());
       invitationBC.invite(invitation);
     }
     List<Invitation> invitations = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
@@ -107,8 +109,8 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
     // Re-invite the user to the same objects, + one new objects -> allinvitations should return
     // numberOfInvitations +1
     for (int i = 0; i < numberOfInvitations + 1; i++) {
-      Invitation invitation =
-          new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString() + i, roles);
+      Invitation invitation = new Invitation(UNKNOWN_EMAIL, collectionBasic.getId().toString() + i,
+          ShareRoles.ADMIN.name());
       invitationBC.invite(invitation);
     }
     invitations = invitationBC.retrieveInvitationOfUser(UNKNOWN_EMAIL);
@@ -119,11 +121,11 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
   public void getAllInvitationsOfObject() throws ImejiException {
     // create many invitations for one object
     List<String> roles =
-        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.CREATE);
+        ShareService.rolesAsList(ShareRoles.READ, ShareRoles.EDIT, ShareRoles.ADMIN);
     int numberOfInvitations = 15;
     for (int i = 0; i < numberOfInvitations; i++) {
-      Invitation invitation =
-          new Invitation(i + UNKNOWN_EMAIL, collectionBasic.getId().toString(), roles);
+      Invitation invitation = new Invitation(i + UNKNOWN_EMAIL, collectionBasic.getId().toString(),
+          ShareRoles.ADMIN.name());
       invitationBC.invite(invitation);
     }
     List<Invitation> invitations =
@@ -131,8 +133,8 @@ public class InvitationBusinessControllerTest extends SuperServiceTest {
     Assert.assertEquals(numberOfInvitations, invitations.size());
     // Re-send same invitations for one object
     for (int i = 0; i < numberOfInvitations; i++) {
-      Invitation invitation =
-          new Invitation(i + UNKNOWN_EMAIL, collectionBasic.getId().toString(), roles);
+      Invitation invitation = new Invitation(i + UNKNOWN_EMAIL, collectionBasic.getId().toString(),
+          ShareRoles.ADMIN.name());
       invitationBC.invite(invitation);
     }
     invitations = invitationBC.retrieveInvitationsOfObject(collectionBasic.getId().toString());
