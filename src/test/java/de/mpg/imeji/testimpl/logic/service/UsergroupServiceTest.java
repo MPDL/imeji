@@ -68,11 +68,7 @@ public class UsergroupServiceTest extends SuperServiceTest {
 
   @Test
   public void create() {
-    // Check that the users have the requested grants
-    Assert.assertTrue("defaultUser1 should have grant",
-        defaultUser1.getGrants().contains(FOO_GRANT));
-    Assert.assertTrue("defaultUser2 should have grant",
-        defaultUser2.getGrants().contains(FOO_GRANT));
+    Assert.assertTrue("group should have grant", userGroup.getGrants().contains(FOO_GRANT));
 
     // Check that defaultUser is not allowed to create user group
     UserGroup userGroup2 = ImejiFactory.newUserGroup().setName("UserGroup2")
@@ -132,14 +128,7 @@ public class UsergroupServiceTest extends SuperServiceTest {
       try {
         UserGroup ret = (new UserGroupService()).retrieve(userGroup.getId().toString(), adminUser);
         Assert.assertEquals("The name should have changed", userGroup.getName(), ret.getName());
-        Assert.assertTrue("defaultUser3 should have fooGrant2",
-            defaultUser3.getGrants().contains("fooGrant2"));
-        Assert.assertTrue("defaultUser3 should have fooGrant",
-            defaultUser3.getGrants().contains(FOO_GRANT));
-        Assert.assertTrue("defaultUser1 should have fooGrant2",
-            defaultUser1.getGrants().contains("fooGrant2"));
-        Assert.assertTrue("defaultUser1 should have fooGrant",
-            defaultUser1.getGrants().contains(FOO_GRANT));
+        Assert.assertTrue("Group should have fooGrant2", ret.getGrants().contains("fooGrant2"));
       } finally {
         userGroup.getUsers().remove(defaultUser3);
         (new UserGroupService()).update(userGroup, adminUser);

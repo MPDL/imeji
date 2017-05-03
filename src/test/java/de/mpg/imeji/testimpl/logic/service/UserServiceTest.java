@@ -329,8 +329,10 @@ public class UserServiceTest extends SuperServiceTest {
         ImejiFactory.newCollection().setTitle("Title").setPerson(defaultUser.getPerson()).build();
     try {
       (new CollectionService()).create(collection, defaultUser);
-      defaultUser.addObservedCollection(collection.getId().toString());
+      defaultUser.addObservedCollection(collection.getIdString());
       (new UserService()).update(defaultUser, adminUser);
+
+      User ret = (new UserService()).retrieve(defaultUser.getId(), adminUser);
 
       List<User> users = (new UserService()).searchUsersToBeNotified(adminUser, collection);
       Assert.assertEquals("There is exactly one user to notify", 1, users.size());

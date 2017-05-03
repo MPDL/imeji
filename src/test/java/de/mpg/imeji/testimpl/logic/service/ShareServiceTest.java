@@ -180,20 +180,17 @@ public class ShareServiceTest extends SuperServiceTest {
 
     try {
       defaultUser2.getGrants().add(editGrant.toGrantString());
-      shareToUserGroup_Test("User 2 not allowed, read grant", defaultUser2, group, defaultUser1,
-          readGrant, NotAllowedError.class);
-      shareToUserGroup_Test("User 2 not allowed, edit grant", defaultUser2, group, defaultUser1,
-          editGrant, NotAllowedError.class);
-      shareToUserGroup_Test("User 2 not allowed, admin grant", defaultUser2, group, defaultUser1,
-          adminGrant, NotAllowedError.class);
+      shareToUserGroup_Test("User 2 not allowed, read grant", defaultUser2, group, readGrant,
+          NotAllowedError.class);
+      shareToUserGroup_Test("User 2 not allowed, edit grant", defaultUser2, group, editGrant,
+          NotAllowedError.class);
+      shareToUserGroup_Test("User 2 not allowed, admin grant", defaultUser2, group, adminGrant,
+          NotAllowedError.class);
 
       defaultUser2.getGrants().add(adminGrant.toGrantString());
-      shareToUserGroup_Test("User 2  allowed, read grant", defaultUser2, group, defaultUser1,
-          readGrant, null);
-      shareToUserGroup_Test("User 2  allowed, edit grant", defaultUser2, group, defaultUser1,
-          editGrant, null);
-      shareToUserGroup_Test("User 2  allowed, admin grant", defaultUser2, group, defaultUser1,
-          adminGrant, null);
+      shareToUserGroup_Test("User 2  allowed, read grant", defaultUser2, group, readGrant, null);
+      shareToUserGroup_Test("User 2  allowed, edit grant", defaultUser2, group, editGrant, null);
+      shareToUserGroup_Test("User 2  allowed, admin grant", defaultUser2, group, adminGrant, null);
     } finally {
       defaultUser2.getGrants().remove(editGrant.toGrantString());
       defaultUser2.getGrants().remove(adminGrant.toGrantString());
@@ -201,8 +198,8 @@ public class ShareServiceTest extends SuperServiceTest {
 
   }
 
-  private void shareToUserGroup_Test(String msg, User fromUser, UserGroup group, User testUser,
-      Grant grant, Class exception) {
+  private void shareToUserGroup_Test(String msg, User fromUser, UserGroup group, Grant grant,
+      Class exception) {
     ShareService service = new ShareService();
     try {
       service.shareToGroup(fromUser, group, grant.getGrantFor(), grant.getGrantType());
@@ -215,13 +212,13 @@ public class ShareServiceTest extends SuperServiceTest {
       }
     }
     try {
-      User retUser = (new UserService()).retrieve(testUser.getId(), sysadmin);
+      UserGroup retGroup = (new UserGroupService()).retrieve(group.getId().toString(), sysadmin);
       if (exception == null) {
         Assert.assertTrue(msg + ": User should have grant",
-            retUser.getGrants().contains(grant.toGrantString()));
+            retGroup.getGrants().contains(grant.toGrantString()));
       } else {
         Assert.assertFalse(msg + ": User should not have grant",
-            retUser.getGrants().contains(grant.toGrantString()));
+            retGroup.getGrants().contains(grant.toGrantString()));
       }
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());

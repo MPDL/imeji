@@ -360,6 +360,7 @@ public class ItemServiceTest extends SuperServiceTest {
       }
     }
 
+    // Retrieve Lazy for file
     try {
       Item item = service.retrieveLazyForFile(fileUrl, user);
       Assert.assertEquals(msg + ", LazyForFile: ids should be Equal", expectedIdString,

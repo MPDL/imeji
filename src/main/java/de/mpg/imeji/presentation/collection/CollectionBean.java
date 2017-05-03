@@ -162,6 +162,7 @@ public abstract class CollectionBean extends SuperBean {
     }
   }
 
+
   public boolean isCollectionCreateMode() {
     return collectionCreateMode;
   }

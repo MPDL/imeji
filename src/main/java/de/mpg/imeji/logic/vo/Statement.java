@@ -161,9 +161,27 @@ public class Statement implements Serializable, Cloneable {
       return false;
     }
     Statement s = (Statement) o;
-    return s.getLiteralConstraints().equals(literalConstraints) && s.getIndex().equals(index)
-        && s.getType().equals(type) && s.getVocabulary().equals(vocabulary)
-        && s.getUri().equals(uri) && s.getNamespace().equals(namespace);
+    if (!(s.getLiteralConstraints() == null ? literalConstraints == null
+        : s.getLiteralConstraints().equals(literalConstraints))) {
+      return false;
+    }
+    if (!(s.getIndex() == null ? index == null : s.getIndex().equals(index))) {
+      return false;
+    }
+    if (!(s.getType() == null ? type == null : s.getType().equals(type))) {
+      return false;
+    }
+    if (!(s.getVocabulary() == null ? vocabulary == null : s.getVocabulary().equals(vocabulary))) {
+      return false;
+    }
+    if (!(s.getUri() == null ? uri == null : s.getUri().equals(uri))) {
+      return false;
+    }
+    if (!(s.getNamespace() == null ? namespace == null : s.getNamespace().equals(namespace))) {
+      return false;
+    }
+
+    return true;
   }
 
 }

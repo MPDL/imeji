@@ -11,6 +11,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -211,6 +212,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
     SearchQuery q =
         new SearchFactory().addElement(new SearchPair(SearchFields.index, s.getIndexUrlEncoded()),
             LOGICAL_RELATIONS.AND).build();
+    String url = SearchQueryParser.transform2UTF8URL(q);
     return itemService.search(q, null, Imeji.adminUser, 0, 0).getNumberOfRecords() > 0;
   }
 
