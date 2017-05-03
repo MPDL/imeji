@@ -64,7 +64,7 @@
 					"number": {
 						"type": "double"
 					},
-					"statement": {
+					"index": {
 						"type": "string",
 						"index": "not_analyzed"
 					},
@@ -81,6 +81,12 @@
 							}
 						}
 					},
+					"name": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
 					"uri": {
 						"type": "string",
 						"index": "not_analyzed"
@@ -88,6 +94,9 @@
 					"type": {
 						"type": "string",
 						"index": "not_analyzed"
+					},
+					"time": {
+						"type": "long"
 					},
 					"location": {
 						"type": "geo_point",

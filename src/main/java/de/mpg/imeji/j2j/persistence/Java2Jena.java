@@ -33,7 +33,7 @@ import de.mpg.imeji.util.LocalizedString;
 public class Java2Jena {
   private final Model model;
   private final LiteralHelper literalHelper;
-  private static Logger LOGGER = Logger.getLogger(Java2Jena.class);
+  private static final Logger LOGGER = Logger.getLogger(Java2Jena.class);
   private boolean lazy = false;
 
   /**

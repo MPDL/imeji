@@ -328,8 +328,8 @@ public class ElasticQueryFactory {
       case time:
         return timeQuery(ElasticFields.METADATA_NUMBER.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case location:
-        return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
+      case name:
+        return fieldQuery(ElasticFields.METADATA_NAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case url:
         return fieldQuery(ElasticFields.METADATA_URI, pair.getValue(), pair.getOperator(),
@@ -378,14 +378,21 @@ public class ElasticQueryFactory {
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
+      case name:
+        return metadataQuery(
+            fieldQuery(ElasticFields.METADATA_NAME, md.getValue(), md.getOperator(), md.isNot()),
+            md.getIndex());
+      case title:
+        return metadataQuery(
+            fieldQuery(ElasticFields.METADATA_title, md.getValue(), md.getOperator(), md.isNot()),
+            md.getIndex());
       case number:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_NUMBER, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
       case date:
-        return metadataQuery(
-            fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
-            md.getIndex());
+        return metadataQuery(timeQuery(ElasticFields.METADATA_TIME.field(), md.getValue(),
+            md.getOperator(), md.isNot()), md.getIndex());
       case url:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_URI, md.getValue(), md.getOperator(), md.isNot()),
@@ -397,11 +404,9 @@ public class ElasticQueryFactory {
         return metadataQuery(fieldQuery(ElasticFields.METADATA_GIVENNAME, md.getValue(),
             md.getOperator(), md.isNot()), md.getIndex());
       case coordinates:
-        // return metadataQuery(fieldQuery(ElasticFields.METADATA_LOCATION, md.getValue(),
-        // md.getOperator(), md.isNot()), md.getIndex());
         return metadataQuery(geoQuery(md.getValue()), md.getIndex());
       case time:
-        return metadataQuery(timeQuery(ElasticFields.METADATA_NUMBER.field(), md.getValue(),
+        return metadataQuery(timeQuery(ElasticFields.METADATA_TIME.field(), md.getValue(),
             md.getOperator(), md.isNot()), md.getIndex());
       default:
         return metadataQuery(
@@ -567,11 +572,14 @@ public class ElasticQueryFactory {
 
   private static QueryBuilder geoQuery(String value) {
     final String[] values = value.split(",");
-    String distance = "1km";
+    String distance = "1cm";
     final double lat = Double.parseDouble(values[0]);
     final double lon = Double.parseDouble(values[1]);
     if (values.length == 3) {
-      distance = values[2];
+      System.out.println(values[2]);
+      System.out.println(values[2].matches("[0]+[a-zA-Z]{1}$"));
+      distance =
+          (values[2].equals("0") || values[2].matches("[0]+[a-zA-Z]{1,2}$")) ? distance : values[2];
     }
     return QueryBuilders.geoDistanceQuery(ElasticFields.METADATA_LOCATION.field())
         .distance(distance).point(lat, lon);

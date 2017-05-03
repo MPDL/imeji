@@ -32,7 +32,7 @@
 							<h:inputText
 								value="#{AdvancedSearchBean.formular.textSearchGroup.query}" />
 						</div>
-						<h:selectBooleanCheckbox
+						<h:selectBooleanCheckbox style="margin-left: 50px;"
 							value="#{AdvancedSearchBean.formular.textSearchGroup.includeFulltext}">
 							<f:ajax render=":imj_searchQueryMessageArea" />
 						</h:selectBooleanCheckbox>
@@ -53,7 +53,14 @@
 						<ui:fragment rendered="#{gIndex.index > 0}">
 							<div class="imj_logicalConnector">#{lbl.or_big}</div>
 						</ui:fragment>
-						
+						<ui:fragment rendered="#{index.index > 0}">
+							<div class="imj_logicalDetailConnector">
+								<h:selectOneMenu id="selLogicalRelation" value="#{entry.logicalRelation}" styleClass="tiny_marginLExcl small_area0">
+									<f:selectItems value="#{AdvancedSearchBean.operatorsMenu}"/>
+									<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea" />
+								</h:selectOneMenu>
+							</div>
+						</ui:fragment>
 						<div class="imj_searchDetails">
 							<div class="imj_searchStatement">
 								<h:selectOneMenu id="selStatement" value="#{entry.statementIndex}">
@@ -69,12 +76,13 @@
 										<f:selectItem itemValue="true" itemLabel="#{lbl.is} #{lbl.NOT}" />
 									</h:selectOneMenu>
 								</div>
-
-								<h:outputText value=" = " styleClass="imj_noDisplay" rendered="#{el.operatorMenu == null}" />
-
+								
 								<div class="imj_logicalSearchGroup">
 									<h:selectOneMenu id="selFilter" value="#{entry.operator}" rendered="#{entry.operatorMenu != null}">
 										<f:selectItems value="#{entry.operatorMenu}" />
+									</h:selectOneMenu>
+									<h:selectOneMenu id="selDistance" value="#{entry.distance}" rendered="#{entry.distanceMenu != null}">
+										<f:selectItems value="#{entry.distanceMenu}" />
 									</h:selectOneMenu>
 								</div>
 
@@ -83,7 +91,7 @@
 								</div>
 								<!-- END of imj_searchInput -->
 								
-								<div class="imj_submitPanel imj_inlineButtonGroup">
+								<div class="imj_inlineButtonGroup" style="margin-left:50px;">
 									<!-- This panelGroup is needed for IE -->
 									<h:commandLink value="" action="#{AdvancedSearchBean.formular.metadataSearchGroup.addEntry(index.index + 1)}" styleClass="fa fa-plus-square-o">
 										<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea" />
@@ -92,13 +100,7 @@
 										<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea" />
 									</h:commandLink>
 								</div>
-								<ui:fragment rendered="#{!index.last}">
-									<div class="imj_logicalDetailConnector">
-										<h:selectOneMenu id="selLogicalRelation" value="#{entry.logicalRelation}" styleClass="tiny_marginLExcl small_area0">
-											<f:selectItems value="#{AdvancedSearchBean.operatorsMenu}"/>
-										</h:selectOneMenu>
-									</div>
-								</ui:fragment>
+								
 							</ui:fragment>
 						</div>
 					</h:panelGroup>	
@@ -193,7 +195,7 @@
 									<h:inputText value="#{tmd.value}"
 										styleClass="imj_searchInputValue" />
 								</div>
-								<div class="imj_inlineButtonGroup">
+								<div class="imj_inlineButtonGroup" style="margin-left: 50px;">
 									<h:commandLink value=""
 										action="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.add(pos.index)}"
 										render="imj_ajaxWrapper, imj_searchQueryMessageArea"
@@ -201,7 +203,7 @@
 										<f:ajax execute="@form"
 											render="@form :imj_searchQueryMessageArea" />
 									</h:commandLink>
-									<h:commandLink value=""
+									<h:commandLink value="" rendered="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.list.size() > 1}"
 										action="#{AdvancedSearchBean.formular.technicalMetadataSearchGroup.remove(pos.index)}"
 										render="imj_ajaxWrapper, imj_searchQueryMessageArea"
 										styleClass="fa fa-minus-square-o">

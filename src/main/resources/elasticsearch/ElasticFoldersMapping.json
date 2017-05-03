@@ -79,6 +79,15 @@
 					}
 				}
 			},
+			"creators": {
+				"type": "string",
+				"fields": {
+					"sort": {
+						"type": "string",
+						"analyzer": "XXX_ANALYSER_XXX"
+					}
+				}
+			},
 			"author": {
 				"properties": {
 					"familyname": {

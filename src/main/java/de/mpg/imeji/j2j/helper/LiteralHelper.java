@@ -18,7 +18,7 @@ import com.hp.hpl.jena.rdf.model.Model;
  */
 public class LiteralHelper {
   private final Model model;
-  private static Logger LOGGER = Logger.getLogger(LiteralHelper.class);
+  private static final Logger LOGGER = Logger.getLogger(LiteralHelper.class);
 
   /**
    * Cosntructor for one model

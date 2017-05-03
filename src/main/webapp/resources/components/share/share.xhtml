@@ -49,7 +49,7 @@
 						<div class="imj_submitPanel imj_shareRightsOverview">
 							<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmailUpdate"/>
 							<h:outputLabel for="selSendEmailUpdate" value="#{lbl.user_send_mail}"/>
-							<h:commandButton value="#{lbl.reset_changes}" action="#{ShareBean.reloadPage}" styleClass="imj_cancelButton"/>
+							<h:commandButton value="#{lbl.cancel}" action="#{ShareBean.reloadPage}" styleClass="imj_cancelButton"/>
 							<h:commandButton value="#{lbl.save}" action="#{ShareBean.update}" styleClass="imj_submitButton"/>
 						</div>				
 					</ui:fragment>

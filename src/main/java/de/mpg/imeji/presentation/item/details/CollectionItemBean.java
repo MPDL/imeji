@@ -23,7 +23,7 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 public class CollectionItemBean extends ItemBean {
   private static final long serialVersionUID = -6273094031705225499L;
   private final String collectionId;
-  private static Logger LOGGER = Logger.getLogger(CollectionItemBean.class);
+  private static final Logger LOGGER = Logger.getLogger(CollectionItemBean.class);
 
   public CollectionItemBean() {
     super();

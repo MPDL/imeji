@@ -11,6 +11,7 @@
 		<style>.imj_tileItem {width: #{Configuration.thumbnailWidth}px !important;}</style>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfElements != 0}">
 			<div class="imj_listHeader">
+				#{cc.attrs.picList.totalNumberOfElements} #{cc.attrs.picList.totalNumberOfElements > 1 ? lbl.items : lbl.item}
 				<div class="imj_overlayMenu">
 					<h:form id="selectMenuForm">
 						<div class="imj_menuHeader">

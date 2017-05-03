@@ -40,6 +40,7 @@ public class MetadataSearchGroupEntry implements Serializable {
   private boolean not = false;
   private LOGICAL_RELATIONS logicalRelation = LOGICAL_RELATIONS.OR;
   private List<SelectItem> operatorMenu;
+  private List<SelectItem> distanceMenu;
   private MetadataInputComponent input;
 
   /**
@@ -78,6 +79,7 @@ public class MetadataSearchGroupEntry implements Serializable {
     statement = statements.get(statementIndex);
     this.metadata = new MetadataFactory().setStatementId(statement.getIndex()).build();
     this.setInput(new MetadataInputComponent(metadata, statement));
+    initOperatorMenu(Locale.ENGLISH);
   }
 
   /**
@@ -95,6 +97,19 @@ public class MetadataSearchGroupEntry implements Serializable {
       l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.text, operator,
           metadata.getText(), not));
     }
+    if (!StringHelper.isNullOrEmptyTrim(metadata.getName())) {
+      this.operator = SearchOperators.EQUALS;
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.name, operator,
+          metadata.getName(), not));
+    }
+    if (!StringHelper.isNullOrEmptyTrim(metadata.getTitle())) {
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.title, operator,
+          metadata.getTitle(), not));
+    }
+    if (!StringHelper.isNullOrEmptyTrim(metadata.getDate())) {
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.date, operator,
+          metadata.getDate(), not));
+    }
     if (!StringHelper.isNullOrEmptyTrim(metadata.getUrl())) {
       l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.url, operator,
           metadata.getUrl(), not));
@@ -104,6 +119,9 @@ public class MetadataSearchGroupEntry implements Serializable {
           Double.toString(metadata.getNumber()), not));
     }
     if (!Double.isNaN(metadata.getLatitude()) && !Double.isNaN(metadata.getLongitude())) {
+      this.operator = SearchOperators.EQUALS;
+      // first, remove the search by name, since geosearch is currently done
+      l = new LinkedList<>();
       l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.coordinates,
           SearchOperators.EQUALS,
           Double.toString(metadata.getLatitude()) + "," + Double.toString(metadata.getLongitude())
@@ -134,6 +152,7 @@ public class MetadataSearchGroupEntry implements Serializable {
    */
   private void initOperatorMenu(Locale locale) {
     operatorMenu = new ArrayList<SelectItem>();
+    distanceMenu = null;
     if (statement == null) {
       return;
     }
@@ -147,6 +166,18 @@ public class MetadataSearchGroupEntry implements Serializable {
         operatorMenu.add(new SelectItem(SearchOperators.EQUALS, "="));
         operatorMenu.add(new SelectItem(SearchOperators.GREATER, ">="));
         operatorMenu.add(new SelectItem(SearchOperators.LESSER, "<="));
+        break;
+      case GEOLOCATION:
+        operatorMenu = null;
+        distanceMenu = new ArrayList<>();
+        distanceMenu.add(new SelectItem("0", "="));
+        distanceMenu.add(new SelectItem("100m", "< 100 m"));
+        distanceMenu.add(new SelectItem("1km", "< 1 km"));
+        distanceMenu.add(new SelectItem("5km", "< 5 km"));
+        distanceMenu.add(new SelectItem("10km", "< 10 km"));
+        distanceMenu.add(new SelectItem("50km", "< 50 km"));
+        distanceMenu.add(new SelectItem("100km", "< 100 km"));
+        distanceMenu.add(new SelectItem("500km", "< 500 km"));
         break;
       default:
         operatorMenu.add(new SelectItem(SearchOperators.EQUALS, "--"));
@@ -298,5 +329,21 @@ public class MetadataSearchGroupEntry implements Serializable {
   public void setInput(MetadataInputComponent input) {
     this.input = input;
   }
+
+  /**
+   * @return the distanceMenu
+   */
+  public List<SelectItem> getDistanceMenu() {
+    return distanceMenu;
+  }
+
+  /**
+   * @param distanceMenu the distanceMenu to set
+   */
+  public void setDistanceMenu(List<SelectItem> distanceMenu) {
+    this.distanceMenu = distanceMenu;
+  }
+
+
 
 }

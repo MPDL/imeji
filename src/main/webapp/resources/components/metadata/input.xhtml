@@ -33,9 +33,13 @@
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'GEOLOCATION'}">
 			<h:inputTextarea id="location" value="#{cc.attrs.metadataInputComponent.metadata.name}" styleClass="imj_mdInput autocomplete_js" onfocus="getDatasourceUrl('#{cc.attrs.metadataInputComponent.statement.vocabulary}', '#{Navigation.autocompleteUrl}'); "/>
 			<h:outputLabel value="#{lbl.geolocation_latitude}" for="latitude" styleClass="imj_mdInputLabel"/>
-			<h:inputText id="latitude" value="#{cc.attrs.metadataInputComponent.metadata.latitude}" html5:type="number" html5:step="any" html5:min="-90" html5:max="90" html5:placeholder="#{lbl.placeholder_geolocation_latitude}" styleClass="imj_mdInput"/>
+			<h:inputText id="latitude" value="#{cc.attrs.metadataInputComponent.metadata.latitude}" html5:type="number" html5:step="any" html5:min="-90" html5:max="90" html5:placeholder="#{lbl.placeholder_geolocation_latitude}" styleClass="imj_mdInput">
+				<f:converter converterId="DoubleConverter"/>
+			</h:inputText>
 			<h:outputLabel value="#{lbl.geolocation_longitude}" for="longitude" styleClass="imj_mdInputLabel"/>
-			<h:inputText id="longitude" value="#{cc.attrs.metadataInputComponent.metadata.longitude}" html5:type="number" html5:step="any" html5:min="-180" html5:max="180" html5:placeholder="#{lbl.placeholder_geolocation_longitude}" styleClass="imj_mdInput"/>
+			<h:inputText id="longitude" value="#{cc.attrs.metadataInputComponent.metadata.longitude}" html5:type="number" html5:step="any" html5:min="-180" html5:max="180" html5:placeholder="#{lbl.placeholder_geolocation_longitude}" styleClass="imj_mdInput">
+				<f:converter converterId="DoubleConverter"/>
+			</h:inputText>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'DATE'}">
 			<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/datepicker.js"/>

@@ -521,11 +521,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
+		<!--  <dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch-analysis-icu</artifactId>
 			<version>2.7.0</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>

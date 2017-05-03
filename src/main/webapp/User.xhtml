@@ -132,6 +132,7 @@
 											<h:commandLink action="#{UserBean.updateUser}" value="#{lbl.save}" styleClass="imj_submitButton" rendered="#{UserBean.edit}" type="submit">
 												<f:ajax execute="@form" render=":userForm:userInfos :imj_pageMessageArea" />
 											</h:commandLink>
+											<h:outputText value="* #{lbl.required}" rendered="#{UserBean.edit}"/>
 										</div>
 									</div>
 									<br/><br/>

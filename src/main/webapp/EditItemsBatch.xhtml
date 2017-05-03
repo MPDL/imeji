@@ -18,7 +18,10 @@
 		<div class="loaderWrapper show" />
 		<div class="loader show" />
 		<h:form id="editBatchForm">
-			<a href="#{EditItemsBatchBean.backUrl}" class="fa fa-arrow-circle-o-left"> #{lbl.back_to_pictures}</a>
+			<a href="#{EditItemsBatchBean.backUrl}">
+				<span  class="fa fa-arrow-circle-o-left"></span>
+				 #{lbl.back_to_pictures}
+			</a>
 			<br />
 			<br />
 			<md:select id="select"

@@ -142,10 +142,6 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
       if (currentPageNumber == 0) {
         setCurrentPageNumber(1);
       }
-      if (currentPageNumber < 0 || currentPageNumber > getPaginatorPageSize()) {
-        setCurrentPageNumber(1);
-        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_page_not_exists", getLocale()));
-      }
       setGoToPage(Integer.toString(currentPageNumber));
       currentPartList.clear();
       currentPartList = retrieveList(getOffset(), elementsPerPage);
@@ -153,6 +149,11 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
       paginatorPageList.clear();
       for (int i = 0; i < ((getTotalNumberOfElements() - 1) / elementsPerPage) + 1; i++) {
         paginatorPageList.add(new PaginatorPage(i + 1));
+      }
+      if (currentPageNumber < 0 || currentPageNumber > getPaginatorPageSize()) {
+        setCurrentPageNumber(1);
+        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_page_not_exists", getLocale()));
+        update();
       }
     } catch (final Exception e) {
       BeanHelper.error(e.getMessage());

@@ -17,6 +17,7 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Item;
@@ -78,6 +79,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
     try {
       super.save();
       redirect(getPreviousPage().getCompleteUrl());
+      BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
     } catch (ImejiException e1) {
       LOGGER.error("Edit updating items", e1);
     } catch (IOException e) {

@@ -27,7 +27,7 @@ import de.mpg.imeji.logic.search.model.SearchPair;
  */
 public class FileTypeSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
   private static final long serialVersionUID = 1439809243185106214L;
-  private static Logger LOGGER = Logger.getLogger(FileTypeSearchGroup.class);
+  private static final Logger LOGGER = Logger.getLogger(FileTypeSearchGroup.class);
   private List<String> selected = new ArrayList<>();
   private List<SelectItem> menu;
 

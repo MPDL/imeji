@@ -24,7 +24,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ManagedBean(name = "StartPageBean")
 @ViewScoped
 public class StartPageBean extends SuperBean implements Serializable {
-  private static Logger LOGGER = Logger.getLogger(StartPageBean.class);
+  private static final Logger LOGGER = Logger.getLogger(StartPageBean.class);
   private static final long serialVersionUID = 5267521759370584976L;
 
   @PostConstruct
