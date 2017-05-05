@@ -164,7 +164,7 @@
 									<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.revoke_registration}" onclick="openDialog('revokeRegistration#{row.index}');">
 										<span class="fa fa-ban"/>  #{lbl.revoke_registration}
 									</h:outputLink>
-									<dialog:confirmationDialog submitAction="cancelInvitation"
+									<dialog:confirmationDialog submitAction="revokeRegistration"
 										bean="#{UsersBean}"
 										confirmationText="#{msg.confirmation_revoke_registration} (#{user.person.completeName}, #{user.email})"
 										submitLabel="#{lbl.revoke_registration}"

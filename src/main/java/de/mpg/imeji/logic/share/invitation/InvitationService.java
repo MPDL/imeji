@@ -1,7 +1,11 @@
 package de.mpg.imeji.logic.share.invitation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -20,6 +24,7 @@ import de.mpg.imeji.logic.vo.User;
  *
  */
 public class InvitationService {
+  private static final Logger LOGGER = Logger.getLogger(InvitationService.class);
   private final UserService userController = new UserService();
   private final ShareService shareBC = new ShareService();
   private static final KeyValueStoreService KEY_VALUE_STORE_BC =
@@ -115,6 +120,23 @@ public class InvitationService {
    */
   public List<Invitation> retrieveAll() throws ImejiException {
     return KEY_VALUE_STORE_BC.getList(".*", Invitation.class);
+  }
+
+  /**
+   * Search for invitation
+   * 
+   * @param q
+   * @return
+   * @throws ImejiException
+   */
+  public List<Invitation> search(String q) {
+    try {
+      return retrieveAll().stream().filter(inv -> inv.getInviteeEmail().contains(q))
+          .collect(Collectors.toList());
+    } catch (ImejiException e) {
+      LOGGER.error("Error search for invitations", e);
+      return new ArrayList<>();
+    }
   }
 
   /**

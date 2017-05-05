@@ -17,6 +17,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.registration.RegistrationBusinessController;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
+import de.mpg.imeji.logic.share.invitation.Invitation;
 import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
@@ -42,6 +43,7 @@ public class UsersBean extends SuperBean {
   private static final long serialVersionUID = 909531319532057429L;
   private List<User> users;
   private List<User> inactiveUsers;
+  private List<Invitation> invitations;
   private UserGroup group;
   private String query;
   private static final Logger LOGGER = Logger.getLogger(UserBean.class);
@@ -76,6 +78,7 @@ public class UsersBean extends SuperBean {
   public void doSearch() {
     users = (List<User>) new UserService().searchUserByName(query);
     inactiveUsers = new RegistrationBusinessController().searchInactiveUsers(query);
+    // setInvitations(new InvitationService().search(query));
   }
 
   /**
@@ -201,7 +204,7 @@ public class UsersBean extends SuperBean {
   /**
    * Cancel a pending invitation
    */
-  public void cancelInvitation() {
+  public void revokeRegistration() {
     final String email = FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("email");
     final RegistrationBusinessController registrationBC = new RegistrationBusinessController();
@@ -316,5 +319,19 @@ public class UsersBean extends SuperBean {
 
   public List<User> getInactiveUsers() {
     return inactiveUsers;
+  }
+
+  /**
+   * @return the invitations
+   */
+  public List<Invitation> getInvitations() {
+    return invitations;
+  }
+
+  /**
+   * @param invitations the invitations to set
+   */
+  public void setInvitations(List<Invitation> invitations) {
+    this.invitations = invitations;
   }
 }
