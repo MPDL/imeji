@@ -110,7 +110,7 @@ public class MoveItemsBean extends SuperBean {
    * @throws IOException
    */
   public void moveItemTo(String id) throws IOException {
-    moveItemTo(destinationId);
+    moveItemTo(destinationId, id);
   }
 
   /**

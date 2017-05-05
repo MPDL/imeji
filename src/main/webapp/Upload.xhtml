@@ -37,7 +37,7 @@
 			</ui:fragment>
 			<ui:fragment rendered="#{not empty UploadBean.collections}">
 				<div class="selectMd">
-					<button onclick="showAndFocus('filterCollections:filterCollection', 'selectMetadata-content');return false;" class="imj_submitButton">#{lbl.select_collection}</button>
+					<button onclick="openDialog('selectColForUpdateDialog');/*showAndFocus('filterCollections:filterCollection', 'selectMetadata-content');*/return false;" class="imj_submitButton">#{lbl.select_collection}</button>
 						<div class="selectMetadata-content">
 							<h:form id="filterCollections">
 								<h:inputText id="filterCollection" value="#{UploadBean.query}" html5:placeholder="#{lbl.filter}" >
@@ -50,7 +50,11 @@
 								 #{lbl.upload_no_collection_found}
 							 </ui:fragment>
 							<ui:repeat var="col" value="#{UploadBean.collections}">
-								<a href="#{Navigation.collectionUrl}#{col.idString}?showUpload=1">#{col.title}</a>
+								<span>
+									<a href="#{Navigation.collectionUrl}#{col.idString}?showUpload=1">
+										<span class="fa fa-globe" style="#{col.status == 'RELEASED' ? '' : 'visibility: hidden'}"/><span>#{col.title}</span>
+									</a>
+								</span>
 							</ui:repeat>
 						</h:panelGroup>
 					</div>
@@ -58,5 +62,34 @@
 			</ui:fragment>
 			
 	 	</ui:fragment>
+	 	 <div  id="actionsMenuArea" class="imj_actionMenuArea">
+		 	<div id="selectColForUpdateDialog" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText" style="display:none;">
+				<h:form id="selectCollectionForm">
+					<div style="margin-bottom: 2em;">
+						<span class="fa fa-globe fa-size-3" style="visibility: hidden">&#160;</span>
+						<span>#{lbl.upload_in}</span>
+						<a style="float:right" onclick="closeDialog('selectColForUpdateDialog');" class="imj_cancelButton">
+							#{lbl.cancel}
+						</a>
+					</div>
+					<div>
+						<span class="fa fa-globe fa-size-3" style="visibility: hidden">&#160;</span>
+						<h:inputText id="filterCollection" value="#{UploadBean.query}" html5:placeholder="#{lbl.filter}" >
+							<f:ajax render="#{cc.attrs.parentId}:selectCollectionForm:list" event="keyup" listener="#{UploadBean.filterCollections}"/>
+						</h:inputText>
+					</div>
+					<h:panelGroup layout="block" id="list">
+						<ui:repeat var="col" value="#{UploadBean.collections}">
+							<p>
+								<a href="#{Navigation.collectionUrl}#{col.idString}?showUpload=1">
+									<span class="fa fa-globe" style="#{col.status == 'RELEASED' ? '' : 'visibility: hidden'}"/>
+									#{col.title}
+								</a>
+							</p>
+						</ui:repeat>
+					</h:panelGroup>
+				</h:form>
+			</div>
+		</div>
 	 </ui:define>
 </ui:composition>
