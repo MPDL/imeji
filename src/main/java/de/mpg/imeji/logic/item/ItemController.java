@@ -69,6 +69,7 @@ class ItemController extends ImejiControllerAbstract<Item> {
       item.setFilename(FilenameUtils.getName(item.getFilename()));
     }
     cleanItem(l);
+    createMissingStatement(l);
     validateMetadata(l, Method.CREATE);
     WRITER.create(J2JHelper.cast2ObjectList(l), user);
     return null;
@@ -106,6 +107,7 @@ class ItemController extends ImejiControllerAbstract<Item> {
         item.setFilename(FilenameUtils.getName(item.getFilename()));
       }
       cleanItem(l);
+      createMissingStatement(l);
       validateMetadata(l, Method.UPDATE);
       WRITER.update(J2JHelper.cast2ObjectList(l), user, true);
     }
@@ -202,6 +204,21 @@ class ItemController extends ImejiControllerAbstract<Item> {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Get all statement of all metadata of all items and create the statement which don't exists
+   * already
+   * 
+   * @param items
+   * @throws ImejiException
+   */
+  private void createMissingStatement(List<Item> items) throws ImejiException {
+    List<Statement> l = items.stream().flatMap(i -> i.getMetadata().stream())
+        .map(md -> ImejiFactory.newStatement().initFromMetadata(md).build())
+        .collect(Collectors.toList());
+    StatementUtil.statementListToMap(l).values();
+    new StatementService().createBatchIfNotExists(
+        new ArrayList<>(StatementUtil.statementListToMap(l).values()), Imeji.adminUser);
+  }
 
   /**
    * Validate the Metadata of the item
@@ -237,7 +254,9 @@ class ItemController extends ImejiControllerAbstract<Item> {
    * @throws ImejiException
    */
   private List<Statement> retrieveStatements(List<Item> items) throws ImejiException {
-    return new StatementService().retrieveBatch(extractStatementIds(items), Imeji.adminUser);
+    return new StatementService().retrieveBatchOnlyExistingStatemment(extractStatementIds(items),
+        Imeji.adminUser);
+    // return new StatementService().retrieveBatch(extractStatementIds(items), Imeji.adminUser);
   }
 
   /**

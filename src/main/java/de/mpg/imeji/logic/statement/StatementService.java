@@ -1,5 +1,8 @@
 package de.mpg.imeji.logic.statement;
 
+import static java.util.stream.Collectors.toList;
+
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +28,7 @@ import de.mpg.imeji.logic.service.SearchServiceAbstract;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.logic.vo.factory.StatementFactory;
 
 /**
@@ -124,6 +128,24 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    */
   public List<Statement> retrieveBatch(List<String> uris, User user) throws ImejiException {
     final List<Statement> l = controller.retrieveBatch(uris, user);
+    l.sort((s1, s2) -> s1.getIndex().compareToIgnoreCase(s2.getIndex()));
+    return l;
+  }
+
+  /**
+   * Filter the list with only the existing statement and retrieve it as a list of {@link Statement}
+   *
+   * @param ids
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public List<Statement> retrieveBatchOnlyExistingStatemment(List<String> uris, User user)
+      throws ImejiException {
+    List<Statement> statements = filterNotExistingStatement(uris.stream()
+        .map(uri -> ImejiFactory.newStatement().setUri(URI.create(uri)).build()).collect(toList()));
+    final List<Statement> l = controller
+        .retrieveBatch(statements.stream().map(s -> s.getUri().toString()).collect(toList()), user);
     l.sort((s1, s2) -> s1.getIndex().compareToIgnoreCase(s2.getIndex()));
     return l;
   }

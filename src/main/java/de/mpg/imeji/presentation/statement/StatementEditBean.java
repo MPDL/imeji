@@ -88,8 +88,8 @@ public class StatementEditBean extends StatementCreateBean {
       service.update(statement, getStatementForm().asStatement(), getSessionUser());
       redirect(getNavigation().getApplicationUrl() + "statements");
     } catch (final ImejiException | IOException e) {
-      BeanHelper.error("Error creating statement");
-      LOGGER.error("Error creating statement", e);
+      BeanHelper.error("Error editing statement: " + e.getMessage());
+      LOGGER.error("Error editing statement", e);
     }
   }
 
