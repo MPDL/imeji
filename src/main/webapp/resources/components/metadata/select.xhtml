@@ -84,10 +84,10 @@
 				<ui:fragment rendered="#{empty statementList}">
 					<p>#{lbl.metadata_not_found}!</p>
 				</ui:fragment>
-				<ui:fragment rendered="#{not empty cc.attrs.component.index and !cc.attrs.component.indexExists()}">
-					<button class="selectMdButton imj_submitButton" title="#{lbl.create}" onclick="openDialog('createStatementDialog'); $('.selectMetadata-content').hide(); return false;">
+				<ui:fragment rendered="#{!cc.attrs.component.indexExists()}">
+					<button class="selectMdButton imj_submitButton" title="#{lbl.create}" onclick="closeDialog('selectStatementDialog');openDialog('createStatementDialog'); $('.selectMetadata-content').hide(); return false;">
 						<i class="fa fa-plus"/>
-						 #{lbl.metadata_create}: #{cc.attrs.component.index}
+						 #{lbl.add_metadata}#{empty cc.attrs.component.index? '' : ':'} #{cc.attrs.component.index}
 					</button>
 				</ui:fragment>
 			</h:panelGroup>
