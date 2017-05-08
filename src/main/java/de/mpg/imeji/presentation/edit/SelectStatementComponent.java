@@ -52,11 +52,12 @@ public class SelectStatementComponent implements Serializable {
   }
 
   public List<String> searchForIndex(List<SelectItem> statementMenu) {
-    if (!StringHelper.isNullOrEmptyTrim(index)) {
+    index = index == null ? "" : index;
+    if (true || !StringHelper.isNullOrEmptyTrim(index)) {
       return statementMenu.stream().map(i -> i.getValue().toString())
           .filter(s -> StatementUtil.formatIndex(s)
               .startsWith(StatementUtil.formatIndex(index.toLowerCase())))
-          .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(5)
+          .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase()))
           .collect(Collectors.toList());
     } else {
       Set<String> defaultSet =
