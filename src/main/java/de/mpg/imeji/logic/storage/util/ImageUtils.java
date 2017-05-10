@@ -453,7 +453,6 @@ public final class ImageUtils {
           return new Dimension(reader.getWidth(0), reader.getHeight(0));
         } finally {
           reader.dispose();
-          in.close();
         }
       }
     } catch (final Exception e) {
