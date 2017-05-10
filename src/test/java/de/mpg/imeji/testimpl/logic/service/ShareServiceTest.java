@@ -101,7 +101,7 @@ public class ShareServiceTest extends SuperServiceTest {
 
       // Admin unshares
       try {
-        service.shareSysAdmin(sysadmin, defaultUser1);
+        service.unshareSysAdmin(sysadmin, defaultUser1);
       } catch (ImejiException e) {
         Assert.fail(e.getMessage());
       }

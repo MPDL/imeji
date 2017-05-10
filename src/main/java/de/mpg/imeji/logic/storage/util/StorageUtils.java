@@ -322,7 +322,10 @@ public class StorageUtils {
    */
   public static String calculateChecksum(File file) throws ImejiException {
     try {
-      return DigestUtils.md5Hex(new FileInputStream(file));
+      FileInputStream in = new FileInputStream(file);
+      String checksum = DigestUtils.md5Hex(in);
+      in.close();
+      return checksum;
     } catch (final Exception e) {
       throw new UnprocessableError("Error calculating the cheksum of the file: ", e);
     }

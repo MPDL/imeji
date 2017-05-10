@@ -201,6 +201,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
       storageController.delete(contentVO.getOriginal());
       storageController.delete(contentVO.getPreview());
       storageController.delete(contentVO.getThumbnail());
+      storageController.delete(contentVO.getFull());
     } catch (final Exception e) {
       // Delete file should not stop update process
       LOGGER.error("Error deleting file", e);
@@ -248,6 +249,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
       storageController.delete(contentVO.getOriginal());
       storageController.delete(contentVO.getPreview());
       storageController.delete(contentVO.getThumbnail());
+      storageController.delete(contentVO.getFull());
     } finally {
       controller.delete(contentVO, Imeji.adminUser);
     }
@@ -268,7 +270,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     contentVO.setPreview(result.getWeb());
     contentVO.setThumbnail(result.getThumb());
     contentVO.setFull(result.getFull());
-    contentVO.setOriginal(result.getFull());
+    contentVO.setOriginal(result.getOrginal());
     return controller.create(contentVO, Imeji.adminUser);
   }
 
