@@ -777,14 +777,36 @@ setTimeout(function() {
 
 
 function showAndFocus(focusid, showClass){
-	$(".selectMetadata-content").show();
+	$("."+ showClass).toggle();
 	document.getElementById(focusid).focus();
-	$("."+showClass).focusout(function(event) {
-		$("."+showClass).delay(200).hide(0);
-	});
+	/*$("." + showClass).focusout(function(event) {
+		$("." + showClass).hide(0);
+		$("." + showClass).delay(500).hide(0);
+	});	*/
 }
 
-//---------------------------------------------------------------------
+$(".selectMetadata-content").click(function(e) {
+	  e.stopPropagation(); //stops click event from reaching document
+	});
+
+$(document).click(function() {
+  $(".selectMetadata-content").hide(); //click came from somewhere else
+});
+
+function hideOnFocusOut(showClass){
+	/*$("." + showClass).focusout(function(event) {
+		console.log('focusout');
+		$("."+ showClass).delay(0).queue(function() {
+	        $(this).css('visibility', 'hidden').dequeue();
+	    });
+		//$("." + showClass).delay(200).hide(0);
+	});	*/
+}
+
+$(".selectMetadata-content").focusout(function(event) {
+	console.log('focusout');
+	$(this).delay(200).hide(0);
+});	//---------------------------------------------------------------------
 //
 // QR Code Generator for JavaScript SJIS Support (optional)
 //
