@@ -190,12 +190,6 @@ public class UserServiceTest extends SuperServiceTest {
       Assert.assertEquals("Default users person shoud be modified", "modified",
           retDefault.getPerson().getGivenName());
 
-      try {
-        service.update(adminUser, defaultUser);
-        Assert.fail("No exception was thrown");
-      } catch (NotAllowedError e) {
-        // correct
-      }
       User retAdmin = service.retrieve(adminUser.getId(), adminUser);
       Assert.assertEquals("Admin should not have been modified by default user", previousGivenName,
           retAdmin.getPerson().getGivenName());

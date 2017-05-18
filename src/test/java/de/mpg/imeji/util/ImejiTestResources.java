@@ -25,6 +25,8 @@ public class ImejiTestResources {
   private static final File TEST2_PNG = new File("src/test/resources/storage/test2.png");
   private static final File TEST2_WRONG_EXT = new File("src/test/resources/storage/test2.wrongext");
   private static final File TEST_EXE = new File("src/test/resources/storage/test.exe");
+  private static final File TEST_TXT = new File("src/test/resources/storage/textfile.txt");
+
 
   public static File getTestPng() {
     return copyFile(TEST_PNG);
@@ -113,9 +115,14 @@ public class ImejiTestResources {
     return copyFile(TEST_EXE);
   }
 
+  public static File getTestTxt() {
+    return copyFile(TEST_TXT);
+  }
+
   private static synchronized File copyFile(File f) {
     try {
-      File tmp = File.createTempFile(f.getName(), "." + FilenameUtils.getExtension(f.getName()));
+      File tmp = File.createTempFile(f.getName().replace(".", ""),
+          "." + FilenameUtils.getExtension(f.getName()));
       // File copyWithSameName = new File(tmp.getAbsolutePath().replace(tmp.getName(),
       // f.getName()));
       // FileUtils.copyFile(f, copyWithSameName);

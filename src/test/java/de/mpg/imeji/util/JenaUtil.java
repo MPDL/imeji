@@ -39,7 +39,7 @@ import de.mpg.imeji.logic.vo.User;
  * @version $Revision$ $LastChangedDate$
  */
 public class JenaUtil {
-  private static final LoggerLOGGER = Logger.getLogger(JenaUtil.class);
+  private static final Logger LOGGER = Logger.getLogger(JenaUtil.class);
   public static User testUser;
   public static User testUser2;
   public static User adminTestUser;
