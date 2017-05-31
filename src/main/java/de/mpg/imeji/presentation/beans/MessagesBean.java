@@ -18,4 +18,10 @@ public class MessagesBean {
   public List<FacesMessage> getMessages() {
     return FacesContext.getCurrentInstance().getMessageList();
   }
+
+  public String getDetails(FacesMessage msg) {
+    return msg.getDetail()
+        .replaceAll("XXX_PWDRESET_START_XXX", "<a onclick=\"openDialog('testDialog');\">")
+        .replaceAll("XXX_PWDRESET_END_XXX", "</a>");
+  }
 }

@@ -61,7 +61,13 @@ public class EmailService {
   public void sendMail(String to, String from, String subject, String message)
       throws ImejiException {
     try {
-      sendMail(to, from, null, subject, message);
+      System.out.println("Email to " + to);
+      System.out.println("Subject: " + subject);
+      System.out.println("Message: \n" + message);
+      // Just to not generate an error while testing
+      if (Imeji.CONFIG.getEmailServer() != null && !Imeji.CONFIG.getEmailServer().equals("")) {
+        sendMail(to, from, null, subject, message);
+      }
     } catch (IOException | URISyntaxException e) {
       throw new ImejiException("Error sending email");
     }

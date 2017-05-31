@@ -34,12 +34,16 @@
 		<ui:fragment rendered="#{Auth.sysAdmin}">
 			<!-- AdminDataList - Back Button -->
 			<h:panelGroup layout="block" styleClass="imj_backPanel">
-				<h:outputLink value="#{Navigation.adminUrl}">
+				<h:outputLink value="#{Navigation.adminUrl}" rendered="#{UsersBean.group==null}">
 					<h:outputText value="#{lbl.back_to_admin}" />
+				</h:outputLink>
+				<h:outputLink value="#{Navigation.applicationUrl}usergroup?groupId=#{UsersBean.group.id}" rendered="#{UsersBean.group!=null}">
+					<h:outputText value="#{lbl.back_to_usergroup}" />
 				</h:outputLink>
 			</h:panelGroup>
 			
 			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
+				
 				<div class="imj_admindataSet">
 					<div class="imj_admindataLabel">
 						#{UsersBean.users.size()} #{lbl.users} #{lbl.found}
@@ -124,8 +128,15 @@
 							<ui:fragment rendered="#{UsersBean.group != null}">
 								<h:form>
 									<h:commandLink styleClass="imj_submitButton"
+										rendered="#{not UsersBean.group.users.contains(user.id)}"
 										action="#{UsersBean.addToGroup}"
 										value="#{lbl.add_to_group} #{UsersBean.group.name}">
+										<f:param name="email" value="#{user.email}" />
+									</h:commandLink>
+									<h:commandLink styleClass="imj_cancelButton"
+										rendered="#{UsersBean.group.users.contains(user.id)}"
+										action="#{UsersBean.removeFromGroup}"
+										value="#{lbl.remove_from_group}#{UsersBean.group.name}">
 										<f:param name="email" value="#{user.email}" />
 									</h:commandLink>
 								</h:form>

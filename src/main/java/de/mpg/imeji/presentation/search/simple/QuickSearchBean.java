@@ -68,4 +68,12 @@ public class QuickSearchBean implements Serializable {
   public String getSearchString() {
     return searchString;
   }
+
+  public String getUrlParameters() {
+    String group = UrlHelper.getParameterValue("group");
+    if (group == null) {
+      return "";
+    }
+    return "?group=" + group;
+  }
 }

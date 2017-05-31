@@ -96,6 +96,15 @@ public class UserGroupBean extends SuperBean implements Serializable {
     save();
   }
 
+  public boolean isUserInGroup(URI user) {
+    for (User u : users) {
+      if (u.getId().equals(user)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * Unshare the {@link Container} for one {@link UserGroup} (i.e, remove all {@link Grant} of this
    * {@link User} related to the {@link container})

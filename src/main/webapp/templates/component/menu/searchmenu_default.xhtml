@@ -38,7 +38,7 @@
 							<a href="#"> #{lbl.search_for_collections}</a>
 						</li>
 						<ui:fragment rendered="#{Auth.sysAdmin}">
-							<li id="simpleSearchForUsers" data-url="#{Navigation.usersUrl}" data-placeholder="#{lbl.search_for} #{lbl.users}">
+							<li id="simpleSearchForUsers" data-url="#{Navigation.usersUrl}#{QuickSearchBean.urlParameters}" data-placeholder="#{lbl.search_for} #{lbl.users}">
 								 <a href="#"> #{lbl.users}</a>
 							</li>
 						</ui:fragment>

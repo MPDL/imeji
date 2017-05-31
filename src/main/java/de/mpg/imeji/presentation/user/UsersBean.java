@@ -15,6 +15,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.authorization.util.PasswordGenerator;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.registration.RegistrationBusinessController;
+import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.share.invitation.Invitation;
@@ -46,6 +47,9 @@ public class UsersBean extends SuperBean {
   private List<Invitation> invitations;
   private UserGroup group;
   private String query;
+
+
+
   private static final Logger LOGGER = Logger.getLogger(UserBean.class);
 
   /**
@@ -264,11 +268,32 @@ public class UsersBean extends SuperBean {
       final UserGroupService c = new UserGroupService();
       c.update(group, getSessionUser());
       FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(getNavigation().getApplicationUrl() + "usergroup?groupId=" + group.getId());
+          .redirect(getNavigation().getApplicationUrl() + "users?group=" + group.getId());
     } catch (final Exception e) {
       BeanHelper.error(e.getMessage());
     }
     return "";
+  }
+
+  public String removeFromGroup() {
+    final String email = FacesContext.getCurrentInstance().getExternalContext()
+        .getRequestParameterMap().get("email");
+    try {
+      final UserService uc = new UserService();
+      final User user = uc.retrieve(email, Imeji.adminUser);
+      group.getUsers().remove(user.getId());
+      final UserGroupService c = new UserGroupService();
+      c.update(group, getSessionUser());
+      FacesContext.getCurrentInstance().getExternalContext()
+          .redirect(getNavigation().getApplicationUrl() + "users?group=" + group.getId());
+    } catch (final Exception e) {
+      BeanHelper.error(e.getMessage());
+    }
+    return "";
+  }
+
+  public void filter() {
+    SearchQuery q = new SearchQuery();
   }
 
   /**
@@ -334,4 +359,6 @@ public class UsersBean extends SuperBean {
   public void setInvitations(List<Invitation> invitations) {
     this.invitations = invitations;
   }
+
+
 }

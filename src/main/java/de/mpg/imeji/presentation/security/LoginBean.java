@@ -125,4 +125,6 @@ public class LoginBean extends SuperBean {
   public void setSessionBean(SessionBean sessionBean) {
     this.sessionBean = sessionBean;
   }
+
+
 }

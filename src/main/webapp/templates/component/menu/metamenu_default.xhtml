@@ -3,7 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
 	<div class="imj_metaMenuStandardSingleLine">
 		
 		<div class="imj_metaMenuItemsAlign">
@@ -24,12 +25,13 @@
 					<span class="imj_loginFormDisplay">
 						<h:inputText value="#{LoginBean.login}" p:type="email" p:placeholder="#{lbl.admin_user}"/>
 						<h:inputSecret value="#{LoginBean.passwd}" p:placeholder="#{lbl.password}"/>
-						<h:commandButton id="lnkLogin2" title="#{lbl.login}" value="#{lbl.login}" action="#{LoginBean.doLogin}" styleClass="imj_metaMenuItem"/>
+						<h:commandButton id="lnkLogin2" title="#{lbl.login}" value="#{lbl.login}" action="#{LoginBean.doLogin}" styleClass="imj_metaMenuItem"/>		
 					</span>
 				</h:panelGroup>
 				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationUrl}?logout=1" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
 					<h:outputText value="#{lbl.logout}"/>
 				</h:outputLink>
+				<dialog:passwordResetDialog dialogId="testDialog"/>
 			</h:form>
 						
 			<!-- Register -->
@@ -70,7 +72,9 @@
 				</h:outputLink>
 			</ui:fragment>
 		</div>
+		
 	</div>
+	
 	<script>
 		$(document).ready(function() {
 			$('.imj_loginFormDisplay').hide();

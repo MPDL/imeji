@@ -455,7 +455,12 @@ $(".imj_bodyContextSearch li").click(function(){
  * @param type
  */
 function goToSearch(index) {
-	window.open($('.imj_bodyContextSearch li:nth-child('+ index +')').data('url') + '?q=' + encodeURIComponent($('.imj_simpleSearchInput').val()),
+	var appendChar="?";
+	var url=$('.imj_bodyContextSearch li:nth-child('+ index +')').data('url');
+	if(url.includes("?")){
+		appendChar="&";
+	}
+	window.open(url + appendChar+'q=' + encodeURIComponent($('.imj_simpleSearchInput').val()),
 	"_self");
 };
 

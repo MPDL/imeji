@@ -49,6 +49,7 @@ public class Navigation implements Serializable {
   public static final Page TERMS_OF_USE = new Page("Terms of use", "terms_of_use");
 
 
+
   /**
    * Application bean managing navigation
    *
