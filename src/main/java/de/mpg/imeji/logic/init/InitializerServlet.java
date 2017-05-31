@@ -83,14 +83,18 @@ public class InitializerServlet extends HttpServlet {
       LOGGER.info("No " + f.getAbsolutePath() + " found, no migration runs");
     }
     if (in != null) {
-      String migrationRequests = new String(StreamUtils.getBytes(in), "UTF-8");
-      migrationRequests =
-          migrationRequests.replaceAll("XXX_BASE_URI_XXX", Imeji.PROPERTIES.getBaseURI());
-      migrationRequests = addNewIdToMigration(migrationRequests);
-      LOGGER.info("Running migration with query: ");
-      LOGGER.info(migrationRequests);
-      ImejiSPARQL.execUpdate(migrationRequests);
-      LOGGER.info("Migration done!");
+      String migrationRequest = new String(StreamUtils.getBytes(in), "UTF-8");
+      migrationRequest =
+          migrationRequest.replaceAll("XXX_BASE_URI_XXX", Imeji.PROPERTIES.getBaseURI());
+      migrationRequest = addNewIdToMigration(migrationRequest);
+
+      String[] migrationRequests = migrationRequest.split("# NEW QUERY");
+      for (String r : migrationRequests) {
+        LOGGER.info("Running migration with query: ");
+        LOGGER.info(r);
+        ImejiSPARQL.execUpdate(r);
+        LOGGER.info("Migration done!");
+      }
     }
   }
 

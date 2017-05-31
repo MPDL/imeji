@@ -11,7 +11,7 @@
 	</composite:interface>
 	
 	<composite:implementation>
-	<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/autocomplete.js"></script>
+		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/autocomplete.js"></script>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'TEXT'}">
 			<h:inputTextarea id="text" value="#{cc.attrs.metadataInputComponent.metadata.text}" styleClass="imj_mdInput" rendered="#{empty cc.attrs.metadataInputComponent.statement.literalConstraints}"/>
 			<h:selectOneMenu id="selectText" value="#{cc.attrs.metadataInputComponent.metadata.text}" rendered="#{not empty cc.attrs.metadataInputComponent.statement.literalConstraints}" styleClass="imj_mdInput">
@@ -26,7 +26,7 @@
 			</h:inputText>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'NUMBER'}">
-			<h:inputText id="number" value="#{cc.attrs.metadataInputComponent.metadata.number}" html5:oninput="validateInputNumber(this);" html5:type="number" html5:step="any" html5:placeholder="#{lbl.placeholder_number}" styleClass="imj_mdInput">
+			<h:inputText id="number" value="#{cc.attrs.metadataInputComponent.metadata.number}" html5:oninput="validateInputNumber(this);" html5:placeholder="#{lbl.placeholder_number}" styleClass="imj_mdInput">
 				<f:converter converterId="DoubleConverter"/>
 			</h:inputText>
 		</ui:fragment>

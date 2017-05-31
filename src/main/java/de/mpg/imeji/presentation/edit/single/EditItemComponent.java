@@ -52,7 +52,6 @@ public class EditItemComponent extends EditMetadataAbstract {
                 statementMap)));
     entriesMap.keySet()
         .removeAll(item.getMetadata().stream().map(Metadata::getIndex).collect(toList()));
-
     entries = entriesMap.values().stream().collect(toList());
     entries.addAll(item.getMetadata().stream().map(md -> new EditItemEntry(md, statementMap))
         .collect(toList()));
