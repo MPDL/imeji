@@ -147,7 +147,7 @@ public class NotificationUtils {
       // send to support
       emailClient.sendMail(Imeji.CONFIG.getContactEmail(), null,
           EmailMessages.getEmailOnAccountActivation_Subject(user, locale),
-          EmailMessages.getEmailOnAccountActivation_Body(user, locale, invitation));
+          EmailMessages.getEmailOnAccountActivation_Body(user, locale));
     } catch (final Exception e) {
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("error", locale)
           + ": Account activation email not sent");

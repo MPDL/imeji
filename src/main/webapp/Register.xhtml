@@ -9,48 +9,50 @@
 	<ui:param name="headline" value="#{lbl.register}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="hideRegister" value="true" />
+	
+	<f:metadata>
+		<f:viewParam name="token" value="#{PasswordChangeBean.token}" />
+	</f:metadata>
 
 	<ui:define name="mainContent">
 		<h:panelGroup style="width:96%" layout="block" id="registerArea"
 			rendered="#{RegistrationBean.registrationEnabled}">
 
-			<ui:fragment rendered="#{!RegistrationBean.activation_submitted}">
+			<ui:fragment rendered="#{PasswordChangeBean.token==null}">
 				<h2 class="imj_headline">#{lbl.registration}</h2>
 
-				<ui:fragment
-					rendered="#{!RegistrationBean.activation_submitted and !RegistrationBean.registration_success}">
-					<ul class="imj_registerSteps">
-						<li class="imj_active">1. #{lbl.register}</li>
-						<li>2. #{lbl.register_activate}</li>
-					</ul>
+				<ul class="imj_registerSteps">
+					<li class="imj_active">1. #{lbl.register}</li>
+					<li>2. #{lbl.register_activate}</li>
+				</ul>
 
-					<h:outputText value="#{Configuration.registrationSnippet}"
-						escape="false" />
-					
-					<div class="loginArea">
-						<h:form id="userForm"
-							rendered="#{!RegistrationBean.registration_success}">
-							<div class="imj_metadataSet">
-								<div class="imj_metadataLabel">
-									<h:outputText value="#{lbl.email} *"/>
-									<span class="imj_noDisplay">: </span>
-								</div>
-								<div class="imj_metadataValue">
-									<div class="imj_metadataValueEntry">
-										<h:inputText type="text" name="email" html5:type="email"
-											value="#{RegistrationBean.user.email}"
-											styleClass="imj_admindataEdit" />
-									</div>
+				<h:outputText value="#{Configuration.registrationSnippet}"
+					escape="false" />
+
+				<div class="loginArea">
+					<h:form id="userForm">
+						<div class="imj_metadataSet">
+							<div class="imj_metadataLabel">
+								<h:outputText value="#{lbl.email} *" />
+								<span class="imj_noDisplay">: </span>
+							</div>
+							<div class="imj_metadataValue">
+								<div class="imj_metadataValueEntry">
+									<h:inputText type="text" name="email" html5:type="email"
+										value="#{RegistrationBean.user.email}"
+										styleClass="imj_admindataEdit" />
 								</div>
 							</div>
-							<imjc:person id="userPersonRegister"
-								person="#{RegistrationBean.user.person}"
-								bean="#{RegistrationBean}" position="0" userSource=""/>
+						</div>
+						<imjc:person id="userPersonRegister"
+							person="#{RegistrationBean.user.person}"
+							bean="#{RegistrationBean}" position="0" userSource="" />
 
-							
-							<div class="imj_metadataSet">
-								<div class="imj_metadataLabel">
-								<ui:fragment rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
+
+						<div class="imj_metadataSet">
+							<div class="imj_metadataLabel">
+								<ui:fragment
+									rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
 									<h:selectBooleanCheckbox id="accept_terms"
 										value="#{RegistrationBean.termsAccepted}" />
 					 		    	#{lbl.agree_to}
@@ -64,57 +66,32 @@
 										rendered="#{Configuration.termsOfUseUrl == ''}">
 										<h:outputText value="#{lbl.terms_of_use}" />
 									</h:outputLink>
-	
+
 								</ui:fragment>
-									<span class="imj_noDisplay">: </span>
-								</div>
-								<div class="imj_metadataValue">
-									<h:commandButton action="#{RegistrationBean.register}"
+								<span class="imj_noDisplay">: </span>
+							</div>
+							<div class="imj_metadataValue">
+								<h:commandButton action="#{RegistrationBean.register}"
 									type="submit" value="#{lbl.register_now}"
 									styleClass="imj_submitButton" />
 								#{lbl.required_marker} #{lbl.required}
-								</div>
 							</div>
+						</div>
 
 
-						</h:form>
-					</div>
+					</h:form>
+				</div>
 
-				</ui:fragment>
-
-				<!-- Registration was successfull -->
-				<ui:fragment
-					rendered="#{RegistrationBean.registration_submitted and RegistrationBean.registration_success}">
-					<ul class="imj_registerSteps">
-						<li class="imj_active">1. #{lbl.register}</li>
-						<li>2. #{lbl.register_activate}</li>
-					</ul>
-					<p>#{msg.registration_thank_you}</p>
-					<p>#{msg.registration_check_email}</p>
-				</ui:fragment>
 			</ui:fragment>
+			<ui:fragment rendered="#{!(PasswordChangeBean.token==null)}">
+				<h2 class="imj_headline">#{lbl.activate}</h2>
 
-			<!-- Activation (positive/negative) -->
-			<ui:fragment rendered="#{RegistrationBean.activation_submitted}">
-				<h2 class="imj_headline">#{lbl.register_activation}</h2>
 				<ul class="imj_registerSteps">
 					<li>1. #{lbl.register}</li>
 					<li class="imj_active">2. #{lbl.register_activate}</li>
 				</ul>
-
-				<p>
-					<h:outputText 
-						value="#{RegistrationBean.activation_message}"
-						rendered="#{RegistrationBean.activation_success}" />
-					<h:outputText 
-						value="#{RegistrationBean.activation_message}"
-						rendered="#{!RegistrationBean.activation_success}" />
-				</p>
-				<!-- LogIn -->
-				<ui:fragment rendered="#{RegistrationBean.activation_success}">
-					<ui:include src="./include/LoginFormular.xhtml" />
-				</ui:fragment>
-
+				<imjc:password submitFunction="#{PasswordChangeBean.activate()}" submitText="#{lbl.activate}"/>
+				
 			</ui:fragment>
 
 		</h:panelGroup>

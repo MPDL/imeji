@@ -103,7 +103,8 @@ public class LoginBean extends SuperBean {
     }
     if (isNullOrEmptyTrim(redirect)) {
       // HistoryPage current = getHistory().getCurrentPage();
-      if (!requestUrl.equals(getNavigation().getRegistrationUrl())) {
+      if (!requestUrl.equals(getNavigation().getRegistrationUrl())
+          && !requestUrl.equals(getNavigation().getLoginUrl())) {
         redirect = requestUrl;
       } else {
         redirect = getNavigation().getHomeUrl();

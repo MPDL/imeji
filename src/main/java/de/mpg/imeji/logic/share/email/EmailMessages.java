@@ -184,15 +184,13 @@ public class EmailMessages {
    * @param session @return
    * @param navigationUrl
    */
-  public static String getEmailOnRegistrationRequest_Body(User to, String token, String password,
-      String contactEmail, Locale locale, String navigationUrl) {
+  public static String getEmailOnRegistrationRequest_Body(User to, String url, String contactEmail,
+      String expirationDate, Locale locale, String navigationUrl) {
     return getBundle("email_registration_request_body", locale)
         .replace("XXX_USER_NAME_XXX", to.getPerson().getCompleteName())
-        .replace("XXX_LOGIN_XXX", to.getEmail())
-        .replace("XXX_USER_PLAIN_TEXT_PASSWORD_XXX", password)
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
-        .replaceAll("XXX_CONTACT_EMAIL_XXX", contactEmail).replace("XXX_ACTIVATION_LINK_XXX",
-            navigationUrl + "?token=" + token + "&login=" + to.getEmail());
+        .replaceAll("XXX_CONTACT_EMAIL_XXX", contactEmail).replace("XXX_ACTIVATION_LINK_XXX", url)
+        .replaceAll("XXX_EXPIRATION_DATE_XXX", expirationDate);
   }
 
   /**
@@ -206,16 +204,14 @@ public class EmailMessages {
         u.getPerson().getCompleteName());
   }
 
-  public static String getEmailOnAccountActivation_Body(User u, Locale locale, boolean invitation) {
+  public static String getEmailOnAccountActivation_Body(User u, Locale locale) {
     return getBundle("email_account_activation_body", locale)
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
         .replace("XXX_USER_NAME_XXX", u.getPerson().getCompleteName())
         .replace("XXX_USER_EMAIL_XXX", u.getEmail())
         .replace("XXX_ORGANIZATION_XXX", u.getPerson().getOrganizationString())
-        .replace("XXX_TIME_XXX", new Date().toString())
-        .replace("XXX_CREATE_COLLECTIONS_XXX",
-            Boolean.toString(SecurityUtil.authorization().hasCreateCollectionGrant(u)))
-        .replace("XXX_INVITATION_XXX", Boolean.toString(invitation));
+        .replace("XXX_TIME_XXX", new Date().toString()).replace("XXX_CREATE_COLLECTIONS_XXX",
+            Boolean.toString(SecurityUtil.authorization().hasCreateCollectionGrant(u)));
   }
 
 

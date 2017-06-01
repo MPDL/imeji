@@ -20,8 +20,6 @@ public class MessagesBean {
   }
 
   public String getDetails(FacesMessage msg) {
-    return msg.getDetail()
-        .replaceAll("XXX_PWDRESET_START_XXX", "<a onclick=\"openDialog('testDialog');\">")
-        .replaceAll("XXX_PWDRESET_END_XXX", "</a>");
+    return msg.getDetail();
   }
 }

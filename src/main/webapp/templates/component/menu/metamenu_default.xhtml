@@ -21,12 +21,7 @@
 			<!-- LogIn, LogOut -->
 			<h:form id="loginForm">
 				<h:panelGroup rendered="#{!Auth.loggedIn}" styleClass="imj_metaMenuItem imj_loginFormHidden">
-					<a href="#" id="lnkshowLogin" class="imj_metaMenuItem" onclick="showLogin(); return false;">#{lbl.login}</a>
-					<span class="imj_loginFormDisplay">
-						<h:inputText value="#{LoginBean.login}" p:type="email" p:placeholder="#{lbl.admin_user}"/>
-						<h:inputSecret value="#{LoginBean.passwd}" p:placeholder="#{lbl.password}"/>
-						<h:commandButton id="lnkLogin2" title="#{lbl.login}" value="#{lbl.login}" action="#{LoginBean.doLogin}" styleClass="imj_metaMenuItem"/>		
-					</span>
+					<a href="#{Navigation.loginUrl}?redirect=#{SuperBean.currentPage.url}" id="lnkshowLogin" class="imj_metaMenuItem">#{lbl.login}</a>
 				</h:panelGroup>
 				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationUrl}?logout=1" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
 					<h:outputText value="#{lbl.logout}"/>

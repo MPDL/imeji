@@ -44,6 +44,8 @@ public class Navigation implements Serializable {
   public static final Page OPENSEADRAGON = new Page("Openseadragon", "openseadragon");
   public static final Page SINGLEUPLOAD = new Page("Single upload", "singleupload");
   public static final Page REGISTRATION = new Page("Registration", "register");
+  public static final Page PASSWORD_RESET = new Page("Password Reset", "pwdreset");
+
   public static final Page LOGIN = new Page("Login", "login");
   public static final Page IMPRINT = new Page("IMPRINT", "imprint");
   public static final Page TERMS_OF_USE = new Page("Terms of use", "terms_of_use");
@@ -165,6 +167,14 @@ public class Navigation implements Serializable {
 
   public String getTermsOfUseUrl() {
     return applicationUrl + TERMS_OF_USE.path;
+  }
+
+  public String getLoginUrl() {
+    return applicationUrl + LOGIN.path;
+  }
+
+  public String getPasswordReserUrl() {
+    return applicationUrl + PASSWORD_RESET.path;
   }
 
   /*

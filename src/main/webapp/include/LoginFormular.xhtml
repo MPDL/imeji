@@ -3,7 +3,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
-	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
 
 	<ui:param name="headline" value="#{lbl.view_page_disallowed}"/>
 	<div class="loginArea">
@@ -29,6 +30,8 @@
 			<div class="imj_metadataSet">
 				<h:commandButton id="lnkLogin" styleClass="imj_submitButton" value="#{lbl.login}" action ="#{LoginBean.doLogin}"/>
 			</div>
+			<h:outputLink value="#" onclick="openDialog('passwordResetDialog')">#{lbl.forgot_password}</h:outputLink>
 		</h:form>
+		<dialog:passwordResetDialog dialogId="passwordResetDialog" />
 	</div>
 </ui:composition>
