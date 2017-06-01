@@ -51,7 +51,6 @@ public class RawFileImageGenerator implements ImageGenerator {
     try {
       icon = ImageIO.read(new FileImageInputStream(new File(RawFileImageGenerator.class
           .getClassLoader().getResource(PATH_TO_DEFAULT_IMAGE).toURI())));
-      System.out.println("EEEEEEEEEEEE " + extension);
       icon = writeTextOnImage(icon, extension, file.getName());
       return ImageUtils.toFile(icon, StorageUtils.getMimeType("jpg"));
     } catch (IOException | URISyntaxException e) {

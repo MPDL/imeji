@@ -452,11 +452,10 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
       if (extracted) {
         countPart++;
         contents.add(contentVO);
-        LOGGER
-            .info(count + "/" + allContents.size() + " extracted (" + contentVO.getItemId() + ")");
+        LOGGER.info(count + "/" + allContents.size() + " extracted (" + contentVO.getId() + ")");
       } else {
-        LOGGER.info(
-            count + "/" + allContents.size() + " NOT extracted (" + contentVO.getItemId() + ")");
+        LOGGER
+            .info(count + "/" + allContents.size() + " NOT extracted (" + contentVO.getId() + ")");
       }
       if (countPart > 100) {
         // Update after 100 extraction to avoid to high memory consumption
