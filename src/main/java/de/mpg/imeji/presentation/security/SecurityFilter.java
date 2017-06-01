@@ -185,7 +185,7 @@ public class SecurityFilter implements Filter {
     SearchResult result = JENA_SEARCH
         .searchString(JenaCustomQueries.selectCollectionIdOfItem(uri.toString()), null, null, 0, 1);
     if (result.getNumberOfRecords() < 1) {
-      throw new BadRequestException(uri.getPath() + " has not collection");
+      throw new BadRequestException(uri + " hasn't a collection");
     } else {
       return URI.create(result.getResults().get(0));
     }

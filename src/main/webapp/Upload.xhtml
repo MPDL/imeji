@@ -37,27 +37,8 @@
 			</ui:fragment>
 			<ui:fragment rendered="#{not empty UploadBean.collections}">
 				<div class="selectMd">
-					<button onclick="openDialog('selectColForUpdateDialog');/*showAndFocus('filterCollections:filterCollection', 'selectMetadata-content');*/return false;" class="imj_submitButton">#{lbl.select_collection}</button>
-						<div class="selectMetadata-content">
-							<h:form id="filterCollections">
-								<h:inputText id="filterCollection" value="#{UploadBean.query}" html5:placeholder="#{lbl.filter}" >
-									<f:ajax render=":list" event="keyup" listener="#{UploadBean.filterCollections}"/>
-								</h:inputText>
-							</h:form>
-						<br/>
-						 <h:panelGroup id="list">
-							 <ui:fragment rendered="#{empty UploadBean.collections}">
-								 #{lbl.upload_no_collection_found}
-							 </ui:fragment>
-							<ui:repeat var="col" value="#{UploadBean.collections}">
-								<span>
-									<a href="#{Navigation.collectionUrl}#{col.idString}?showUpload=1">
-										<span class="fa fa-globe" style="#{col.status == 'RELEASED' ? '' : 'visibility: hidden'}"/><span>#{col.title}</span>
-									</a>
-								</span>
-							</ui:repeat>
-						</h:panelGroup>
-					</div>
+					<button onclick="openDialog('selectColForUpdateDialog');return false;" class="imj_submitButton">#{lbl.select_collection}</button>
+						
 				</div>
 			</ui:fragment>
 			
