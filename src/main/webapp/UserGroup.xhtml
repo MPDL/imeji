@@ -3,7 +3,9 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:ug="http://java.sun.com/jsf/composite/components/usergroup">
 
 	<ui:param name="headline" value="#{lbl.admin_userGroup} #{UserGroup.userGroup.name}" />
 	<ui:param name="title" value="#{headline}" />
@@ -67,10 +69,8 @@
 								<h:outputText value="#{lbl.users}" />
 							</div>
 							<div class="imj_metadataValue">
-								<h:outputLink
-									value="#{Navigation.applicationUrl}users?group=#{UserGroup.userGroup.id}">
-									<span class="fa fa-plus"></span> #{lbl.add_user}
-								</h:outputLink>
+								<ug:add></ug:add>
+								
 								<h:form>
 									<ui:repeat var="user" value="#{UserGroup.users}" rows="0">
 										<br />

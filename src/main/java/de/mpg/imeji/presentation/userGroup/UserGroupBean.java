@@ -6,6 +6,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -36,6 +37,10 @@ import de.mpg.imeji.presentation.share.ShareUtil;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+/**
+ * @author jandura
+ *
+ */
 @ManagedBean(name = "UserGroup")
 @ViewScoped
 public class UserGroupBean extends SuperBean implements Serializable {
@@ -46,6 +51,9 @@ public class UserGroupBean extends SuperBean implements Serializable {
   private List<ShareListItem> roles = new ArrayList<ShareListItem>();
   private boolean edit = false;
 
+  // properties for add-user dialog
+  private String index = "";
+
   @PostConstruct
   public void init() {
     final String groupId = UrlHelper.getParameterValue("groupId");
@@ -55,6 +63,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
         this.userGroup = c.retrieve(groupId, getSessionUser());
         this.users = loadUsers(userGroup);
         this.roles = ShareUtil.getAllRoles(userGroup, getSessionUser(), getLocale());
+
       } catch (final ImejiException e) {
         BeanHelper.error("Error reading user group " + groupId);
         LOGGER.error("Error initializing UserGroupBean", e);
@@ -219,5 +228,41 @@ public class UserGroupBean extends SuperBean implements Serializable {
   public void setEdit(boolean edit) {
     this.edit = edit;
   }
+
+  public String getIndex() {
+    return index;
+  }
+
+  public void setIndex(String index) {
+    this.index = index;
+  }
+
+  public List<User> searchForIndex() throws ImejiException {
+    List<User> allUsers = (new UserService()).retrieveAll();
+    return allUsers.stream().filter(u -> filter(u, index)).sorted((u1, u2) -> u1.getPerson()
+        .getCompleteName().compareToIgnoreCase(u2.getPerson().getCompleteName()))
+        .collect(Collectors.toList());
+  }
+
+  private boolean filter(User user, String index) {
+    return user.getEmail().toLowerCase().startsWith(index.toLowerCase())
+        || user.getPerson().getFamilyName().toLowerCase().startsWith(index.toLowerCase())
+        || user.getPerson().getGivenName().toLowerCase().startsWith(index.toLowerCase());
+  }
+
+  public String getUserText(String email) throws ImejiException {
+    User user = (new UserService()).retrieve(email, getSessionUser());
+    String text = user.getPerson().getCompleteName() + "(" + user.getEmail() + ")";
+    if (isUserInGroup(user.getId())) {
+      text += "   Already a member of the group";
+    }
+    return text;
+  }
+
+  public void addUser(User user) throws ImejiException, IOException {
+    userGroup.getUsers().add(user.getId());
+    save();
+  }
+
 
 }
