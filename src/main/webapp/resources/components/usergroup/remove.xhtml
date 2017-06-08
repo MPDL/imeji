@@ -11,11 +11,10 @@
 	<composite:attribute name="dialogId" required="true" />
 </composite:interface>
 
-
 <composite:implementation>
 	<h:panelGroup id="userSelector" class="metadataSelector">
 		<h:outputLink value="#" onclick="openDialog('#{cc.attrs.dialogId}');">
-			<span class="fa fa-plus"></span> #{lbl.add_user}
+			<span class="fa fa-trash"></span> #{lbl.remove_user}
 		</h:outputLink>
 		
 		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText" style="display:none;">
@@ -31,7 +30,7 @@
 			
 
 			<h:panelGroup layout="block" id="userList">
-				<ui:param name="userList" value="#{UserGroup.searchForIndex()}"/>
+				<ui:param name="userList" value="#{UserGroup.users}"/>
 				<ui:fragment rendered="#{not empty userList}">
 					<p>
 						#{lbl.choose_user_from_list}:
@@ -40,10 +39,8 @@
 				
 				<ui:repeat var="user" value="#{userList}" varStatus="statusVar">
 					<p>
-						<h:commandLink value="#{user.person.completeName} (#{user.email})" rendered="#{not UserGroup.isUserInGroup(user.id)}" action="#{UserGroup.addUser(user)}" onclick="closeDialog('#{cc.attrs.dialogId}');">
+						<h:commandLink value="#{user.person.completeName} (#{user.email})" action="#{UserGroup.removeUserFromGroup(user.id)}" onclick="closeDialog('#{cc.attrs.dialogId}');">
 						</h:commandLink>
-						<h:outputText value="#{user.person.completeName} (#{user.email}) 	(#{lbl.user_already_member})" rendered="#{UserGroup.isUserInGroup(user.id)}">
-						</h:outputText>
 					</p>
 				</ui:repeat>
 				<ui:fragment rendered="#{empty userList}">

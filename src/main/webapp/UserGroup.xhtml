@@ -69,9 +69,17 @@
 								<h:outputText value="#{lbl.users}" />
 							</div>
 							<div class="imj_metadataValue">
-								<ug:add></ug:add>
-								
-								<h:form>
+								<ug:add dialogId="addUser"/>
+								<ug:remove dialogId="removeUser"/>
+																
+								<h:outputLink id="hideUserButton" value="#" onclick="hideUsers();" style="display:#{UserGroup.getHideUsersButtonStyle()};">
+									<span class="fa fa-angle-up"></span> #{lbl.hide_users}
+								</h:outputLink>
+								<h:outputLink id="showUserButton" value="#" onclick="showUsers();" style="display:#{UserGroup.getShowUsersButtonStyle()};">
+									<span class="fa fa-angle-down"></span> #{lbl.show_users}
+								</h:outputLink>
+
+								<h:form id="userList" style="display:#{UserGroup.getHideUsersButtonStyle()};">
 									<ui:repeat var="user" value="#{UserGroup.users}" rows="0">
 										<br />
 										<h:outputText
@@ -99,6 +107,22 @@
 					</div>
 				</div>
 			</div>
+			
+			<script>
+				function hideUsers(){
+					$("#userList").css("display","none");
+					$("#hideUserButton").css("display","none");
+					$("#showUserButton").css("display","block");
+					document.cookie="showUsers=false";
+				}
+				
+				function showUsers(){
+					$("#userList").css("display","block");
+					$("#hideUserButton").css("display","block");
+					$("#showUserButton").css("display","none");
+					document.cookie="showUsers=true";
+				}
+			</script>
 		</ui:fragment>
 	</ui:define>
 </ui:composition>

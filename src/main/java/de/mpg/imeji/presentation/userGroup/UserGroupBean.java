@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.servlet.http.Cookie;
 
 import org.apache.log4j.Logger;
 
@@ -29,6 +30,7 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.share.ShareListItem;
 import de.mpg.imeji.presentation.share.ShareUtil;
+import de.mpg.imeji.presentation.util.CookieUtils;
 
 /**
  * Bean to create a
@@ -100,7 +102,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @return
    * @throws IOException
    */
-  public void removeUserGromGroup(URI remove) throws IOException {
+  public void removeUserFromGroup(URI remove) throws IOException {
     userGroup.getUsers().remove(remove);
     save();
   }
@@ -262,6 +264,16 @@ public class UserGroupBean extends SuperBean implements Serializable {
   public void addUser(User user) throws ImejiException, IOException {
     userGroup.getUsers().add(user.getId());
     save();
+  }
+
+  public String getHideUsersButtonStyle() {
+    Cookie cookie = CookieUtils.readCookie("showUsers");
+    return cookie == null || "true".equals(cookie.getValue()) ? "block" : "none";
+  }
+
+  public String getShowUsersButtonStyle() {
+    Cookie cookie = CookieUtils.readCookie("showUsers");
+    return cookie == null || "true".equals(cookie.getValue()) ? "none" : "block";
   }
 
 
