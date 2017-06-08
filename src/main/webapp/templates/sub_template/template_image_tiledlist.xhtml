@@ -12,7 +12,7 @@
 		<menu:defaultActionMenu id="actionItems" rendered="#{currentMainMenu == 'items'}"/>
 		<collection:actionMenu id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status.name() != 'WITHDRAWN'}" />
 		<item:selectedActionMenu id="actionSelectedItems" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}" />
-		<item:downloadMenu id="actionDownload" itemsBean="#{paginatorListSessionBean}" rendered="#{((currentMainMenu == 'collection' and  paginatorListSessionBean.collection.status != 'WITHDRAWN') or not empty SessionBean.selected) and paginatorListSessionBean.totalNumberOfElements > 0 }" />
+		<item:downloadMenu id="actionDownload" itemsBean="#{paginatorListSessionBean}" rendered="#{((currentMainMenu == 'collection' or not empty SessionBean.selected)and paginatorListSessionBean.collection.status != 'WITHDRAWN') and paginatorListSessionBean.totalNumberOfElements > 0 }" />
 	</ui:define>
 	
     <!-- Main Content - Image tiled list - START -->

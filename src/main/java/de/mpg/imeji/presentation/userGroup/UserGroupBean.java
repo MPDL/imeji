@@ -240,10 +240,8 @@ public class UserGroupBean extends SuperBean implements Serializable {
   }
 
   public List<User> searchForIndex() throws ImejiException {
-    List<User> allUsers = (new UserService()).retrieveAll();
-    return allUsers.stream().filter(u -> filter(u, index)).sorted((u1, u2) -> u1.getPerson()
-        .getCompleteName().compareToIgnoreCase(u2.getPerson().getCompleteName()))
-        .collect(Collectors.toList());
+    Collection<User> allUsers = (new UserService()).searchUserByName("");
+    return allUsers.stream().filter(u -> filter(u, index)).collect(Collectors.toList());
   }
 
   private boolean filter(User user, String index) {
