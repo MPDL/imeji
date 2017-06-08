@@ -126,20 +126,7 @@
 				<span class="imj_noDisplay">: </span>
 			</h:panelGroup>
 
-			<div class="imj_metadataSet">
-				<label class="imj_metadataLabel">#{lbl.notifications}<span
-					class="imj_noDisplay">: </span>
-				</label>
-				<div class="imj_metadataValue">
-					<h:selectBooleanCheckbox id="notificationCheckBox"
-						value="#{cc.attrs.formularBean.sendEmailNotification}" />
-					<h:outputLabel styleClass="imj_metadataLabel"
-						for="notificationCheckBox">
-						<h:outputText value="#{lbl.send_email_on_download}" />
-						<span class="imj_noDisplay">: </span>
-					</h:outputLabel>
-				</div>
-			</div>
+			
 
 			<div class="imj_metadataSet">
 				<label class="imj_metadataLabel">#{lbl.logo}</label>
@@ -265,6 +252,22 @@
 					
 				</div>
 			</div>
+			
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel">#{lbl.notifications}<span
+					class="imj_noDisplay">: </span>
+				</label>
+				<div class="imj_metadataValue">
+					<h:selectBooleanCheckbox id="notificationCheckBox"
+						value="#{cc.attrs.formularBean.sendEmailNotification}" />
+					<h:outputLabel styleClass="imj_metadataLabel"
+						for="notificationCheckBox">
+						<h:outputText value="#{lbl.send_email_on_download}" />
+						<span class="imj_noDisplay">: </span>
+					</h:outputLabel>
+				</div>
+			</div>
+			
 			<div class="imj_metadataSet">
 				<label class="imj_metadataLabel"> </label>
 				<div class="imj_metadataValue">
