@@ -2,8 +2,6 @@ package de.mpg.imeji.presentation.item.browse;
 
 import java.net.URI;
 import java.util.Calendar;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -14,7 +12,6 @@ import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -25,7 +22,6 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.collection.CollectionActionMenu;
-import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.license.LicenseEditor;
 
 /**
@@ -42,7 +38,6 @@ public class CollectionItemsBean extends ItemsBean {
   private String id = null;
   private URI uri;
   private CollectionImeji collection;
-  private SearchQuery searchQuery = new SearchQuery();
   private CollectionActionMenu actionMenu;
   private String authors = "";
   private String authorsShort = "";
@@ -101,20 +96,6 @@ public class CollectionItemsBean extends ItemsBean {
   @Override
   public String getNavigationString() {
     return "pretty:collectionBrowse";
-  }
-
-  @Override
-  public void initFacets() {
-    try {
-      searchQuery = SearchQueryParser.parseStringQuery(getQuery());
-      final SearchResult searchRes = search(getSearchQuery(), null, 0, -1);
-      setFacets(new FacetsJob(collection, searchQuery, searchRes, getSessionUser(), getLocale()));
-      final ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-      executor.submit(getFacets());
-      executor.shutdown();
-    } catch (final Exception e) {
-      LOGGER.error("Error initialising the facets", e);
-    }
   }
 
   /**

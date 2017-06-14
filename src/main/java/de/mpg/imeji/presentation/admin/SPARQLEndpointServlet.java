@@ -88,12 +88,14 @@ public class SPARQLEndpointServlet extends HttpServlet {
       return Imeji.collectionModel;
     } else if ("statement".equals(name)) {
       return Imeji.statementModel;
+    } else if ("facet".equals(name)) {
+      return Imeji.facetModel;
     } else if ("user".equals(name)) {
       return Imeji.userModel;
     } else if ("content".equals(name)) {
       return Imeji.contentModel;
     }
-    return null;
+    return name;
   }
 
   private ResultsFormat getFormat(String format) {

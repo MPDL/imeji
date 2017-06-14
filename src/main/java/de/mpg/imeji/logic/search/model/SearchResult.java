@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.hp.hpl.jena.Jena;
 
+import de.mpg.imeji.logic.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
 import de.mpg.imeji.logic.search.util.SortHelper;
 
@@ -20,6 +21,7 @@ public class SearchResult {
   private List<String> results = new ArrayList<String>();
   private String query = null;
   private SortCriterion sort;
+  private List<FacetResult> facets;
 
   /**
    * Create a new {@link SearchResult} from a {@link List} of String, and sort it if a
@@ -55,6 +57,12 @@ public class SearchResult {
     results = ids;
   }
 
+  public SearchResult(List<String> ids, long numberOfRecords, List<FacetResult> facetResults) {
+    this.numberOfRecords = (int) numberOfRecords;
+    this.results = ids;
+    this.facets = facetResults;
+  }
+
   public int getNumberOfRecords() {
     return numberOfRecords;
   }
@@ -85,5 +93,19 @@ public class SearchResult {
 
   public void setSort(SortCriterion sort) {
     this.sort = sort;
+  }
+
+  /**
+   * @return the facets
+   */
+  public List<FacetResult> getFacets() {
+    return facets;
+  }
+
+  /**
+   * @param facets the facets to set
+   */
+  public void setFacets(List<FacetResult> facets) {
+    this.facets = facets;
   }
 }

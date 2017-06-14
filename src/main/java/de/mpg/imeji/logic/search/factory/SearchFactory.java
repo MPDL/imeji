@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.factory;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -30,6 +31,14 @@ public class SearchFactory {
 
   public enum SEARCH_IMPLEMENTATIONS {
     JENA, ELASTIC;
+  }
+
+  public SearchFactory() {
+    query = new SearchQuery();
+  }
+
+  public SearchFactory(SearchQuery query) {
+    this.query = new SearchQuery(query != null ? query.getElements() : new ArrayList<>());
   }
 
   /**
