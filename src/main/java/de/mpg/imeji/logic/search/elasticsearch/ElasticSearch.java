@@ -13,6 +13,7 @@ import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.bucket.filter.InternalFilter;
 import org.elasticsearch.search.aggregations.bucket.global.InternalGlobal;
+import org.elasticsearch.search.aggregations.bucket.nested.InternalNested;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 
@@ -200,30 +201,35 @@ public class ElasticSearch implements Search {
     if (resp != null && resp.getAggregations() != null
         && resp.getAggregations().get("agg") != null) {
       InternalGlobal agg = resp.getAggregations().get("agg");
-      for (Aggregation aggregation : agg.getAggregations()) {
-        if (aggregation instanceof InternalFilter) {
-          Aggregation mdAggregation =
-              ((InternalFilter) aggregation).getAggregations().asList().get(0);
-          FacetResult facetResult =
-              new FacetResult(mdAggregation.getName(), mdAggregation.getName());
-          if (mdAggregation instanceof StringTerms) {
-            for (Bucket bucket : ((StringTerms) mdAggregation).getBuckets()) {
-              SearchQuery facetQuery = new SearchQuery();
-              try {
-                facetQuery = new SearchFactory(query)
-                    .addElement(new SearchMetadata(facetResult.getIndex(), SearchFields.text,
-                        "\"" + bucket.getKeyAsString() + "\""), LOGICAL_RELATIONS.AND)
-                    .build();
-              } catch (UnprocessableError e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+      for (Aggregation nestedAgg : agg.getAggregations()) {
+        if (nestedAgg instanceof InternalNested) {
+          for (Aggregation filterAgg : ((InternalNested) nestedAgg).getAggregations()) {
+            if (filterAgg instanceof InternalFilter) {
+              Aggregation mdAggregation =
+                  ((InternalFilter) filterAgg).getAggregations().asList().get(0);
+              FacetResult facetResult =
+                  new FacetResult(mdAggregation.getName(), mdAggregation.getName());
+              if (mdAggregation instanceof StringTerms) {
+                for (Bucket bucket : ((StringTerms) mdAggregation).getBuckets()) {
+                  SearchQuery facetQuery = new SearchQuery();
+                  try {
+                    facetQuery = new SearchFactory(query)
+                        .addElement(new SearchMetadata(facetResult.getIndex(), SearchFields.text,
+                            "\"" + bucket.getKeyAsString() + "\""), LOGICAL_RELATIONS.AND)
+                        .build();
+                  } catch (UnprocessableError e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                  }
+                  facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(),
+                      bucket.getDocCount(), SearchQueryParser.transform2UTF8URL(facetQuery)));
+                }
               }
-              facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(),
-                  bucket.getDocCount(), SearchQueryParser.transform2UTF8URL(facetQuery)));
+              facetResults.add(facetResult);
             }
           }
-          facetResults.add(facetResult);
         }
+
       }
     }
     return facetResults;

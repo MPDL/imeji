@@ -1,0 +1,26 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:imjc="http://java.sun.com/jsf/composite/components"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+
+<composite:interface>
+	<composite:attribute name="itemsBean"/>
+</composite:interface>
+
+<composite:implementation>
+	<ui:repeat var="facet" value="#{cc.attrs.itemsBean.searchResult.facets}" varStatus="row">
+		<ui:fragment rendered="#{facet.hasValue()}">
+			<div>
+				<div>#{facet.name}</div>
+				<ui:repeat var="value" value="#{facet.values}">
+					<div><a href="?q=#{value.query}">#{value.value} (#{value.count})</a></div>
+				</ui:repeat>
+			</div>
+		</ui:fragment>
+	</ui:repeat>
+</composite:implementation>
+</html>

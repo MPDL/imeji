@@ -1,0 +1,36 @@
+<ui:composition template="templates/template_site.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:component="http://java.sun.com/jsf/composite/components">
+	<ui:param name="headline" value="#{lbl.facet_edit}" />
+	<ui:param name="currentMainMenu" value="admin" />
+	<ui:define name="mainContent">
+		<h:form>
+			<component:facetForm form="#{EditFacetBean}"/>
+			<div class="imj_metadataSet">
+				<div class="imj_metadataLabel">
+					<span class="imj_noDisplay">: </span>
+				</div>
+				<div class="imj_metadataValue">
+					<div class="imj_metadataValueEntry">
+						<a href="#{Navigation.applicationUrl}facets"
+							class="imj_cancelButton">
+							#{lbl.cancel}
+						</a>
+						<h:commandButton id="btnCreateStatement" action="#{EditFacetBean.save()}"
+						 value="#{lbl.save}"
+						styleClass="imj_submitButton" />
+					</div>
+				</div>
+			</div>			
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+
+
+
+
+
