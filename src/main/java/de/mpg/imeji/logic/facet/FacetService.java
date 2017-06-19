@@ -118,7 +118,7 @@ public class FacetService extends SearchServiceAbstract<Facet> {
    * @param index
    * @return
    */
-  public Facet retrieveByIndeyFromCache(String index) {
+  public Facet retrieveByIndexFromCache(String index) {
     return cachedFacetsMapByIndex.get(index);
   }
 

@@ -379,9 +379,19 @@ public class SearchQueryParser {
    * @return
    */
   private static String searchMetadataToStringQuery(SearchMetadata smd) {
-    return (smd.isNot() ? "NOT " : "") + SearchFields.md.name() + "." + smd.getIndex()
-        + (smd.getField() == null ? "" : "." + smd.getField().name())
-        + operator2URL(smd.getOperator()) + searchValue2URL(smd);
+    return (smd.isNot() ? "NOT " : "") + getMetadataIndex(smd) + operator2URL(smd.getOperator())
+        + searchValue2URL(smd);
+  }
+
+  /**
+   * Return the SearchMetadata index as used in the search syntatx
+   * 
+   * @param smd
+   * @return
+   */
+  public static String getMetadataIndex(SearchMetadata smd) {
+    return SearchFields.md.name() + "." + smd.getIndex()
+        + (smd.getField() == null ? "" : "." + smd.getField().name());
   }
 
   /**

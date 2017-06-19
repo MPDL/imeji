@@ -25,16 +25,45 @@ public class ElasticAggregationFactory {
     List<Facet> facets = new FacetService().retrieveAllFromCache();
     GlobalBuilder gb = AggregationBuilders.global("agg");
     for (Facet facet : facets) {
-      NestedBuilder nb = AggregationBuilders.nested("nested" + facet.getIndex()).path("metadata");
-      FilterAggregationBuilder fb = AggregationBuilders.filter("index" + facet.getIndex())
-          .filter(QueryBuilders.boolQuery().must(queryBuilder)
-              .must(QueryBuilders.termQuery("metadata.index", facet.getIndex())));
-      if ("TEXT".equals(facet.getType())) {
-        fb.subAggregation(AggregationBuilders.terms(facet.getName()).field("metadata.text.exact"));
+      String metadataField = getMetadataField(facet.getIndex());
+      if (metadataField != null) {
+        NestedBuilder nb = AggregationBuilders.nested("nested" + facet.getIndex()).path("metadata");
+        FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex())
+            .filter(QueryBuilders.boolQuery().must(queryBuilder).must(QueryBuilders
+                .termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex()))));
+        fb.subAggregation(
+            AggregationBuilders.terms(facet.getName()).field(getMetadataField(facet.getIndex())));
+        nb.subAggregation(fb);
+        gb.subAggregation(nb);
       }
-      nb.subAggregation(fb);
-      gb.subAggregation(nb);
     }
     return gb;
+  }
+
+  /**
+   * Extract from the search index (for ex: md.title.text) the statement index and return it
+   * 
+   * @param searchIndex
+   * @return
+   */
+  private static String getMetadataStatementIndex(String searchIndex) {
+    return searchIndex.startsWith("md.") ? searchIndex.split("\\.")[1] : searchIndex;
+  }
+
+  /**
+   * Return the field in elasticsearch
+   * 
+   * @param searchIndex
+   * @return
+   */
+  private static String getMetadataField(String searchIndex) {
+    if (searchIndex.startsWith("md.")) {
+      String field = searchIndex.split("\\.").length == 2 ? "text" : searchIndex.split("\\.")[2];
+      if ("text".equals(field)) {
+        return "metadata." + field + ".exact";
+      }
+      return "metadata." + field;
+    }
+    return null;
   }
 }

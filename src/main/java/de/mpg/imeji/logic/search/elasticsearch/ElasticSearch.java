@@ -197,6 +197,7 @@ public class ElasticSearch implements Search {
   }
 
   private List<FacetResult> parseAggregations(SearchResponse resp, SearchQuery query) {
+    System.out.println(resp);
     List<FacetResult> facetResults = new ArrayList<>();
     if (resp != null && resp.getAggregations() != null
         && resp.getAggregations().get("agg") != null) {
@@ -210,6 +211,7 @@ public class ElasticSearch implements Search {
               FacetResult facetResult =
                   new FacetResult(mdAggregation.getName(), mdAggregation.getName());
               if (mdAggregation instanceof StringTerms) {
+
                 for (Bucket bucket : ((StringTerms) mdAggregation).getBuckets()) {
                   SearchQuery facetQuery = new SearchQuery();
                   try {

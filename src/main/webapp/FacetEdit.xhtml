@@ -3,12 +3,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:component="http://java.sun.com/jsf/composite/components">
+	xmlns:facet="http://java.sun.com/jsf/composite/components/facet">
 	<ui:param name="headline" value="#{lbl.facet_edit}" />
 	<ui:param name="currentMainMenu" value="admin" />
 	<ui:define name="mainContent">
 		<h:form>
-			<component:facetForm form="#{EditFacetBean}"/>
+			<facet:facetForm form="#{EditFacetBean}"/>
 			<div class="imj_metadataSet">
 				<div class="imj_metadataLabel">
 					<span class="imj_noDisplay">: </span>

@@ -1,6 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	  xmlns:h="http://java.sun.com/jsf/html"
-	  xmlns:composite="http://java.sun.com/jsf/composite">
+	  xmlns:composite="http://java.sun.com/jsf/composite"
+	  xmlns:ui="http://java.sun.com/jsf/facelets">
 	
 	<composite:interface>
 		<composite:attribute name="searchBean" type="java.lang.Object" required="true" shortDescription="@type: Object, bean which includes the searchFilter, query, simpleQuery and simpleSearch"/>
@@ -24,6 +25,13 @@
 			<h:outputLink styleClass="imj_removeFacetButton" value="#{SearchFilterBean.clearFilterAndSearchQuery}">		
 				 <i class="fa fa-times fa-size-1"></i>
 			</h:outputLink>
+			
+			 <ui:repeat var="entry" value="#{SearchBreadcrumb.entries}">
+				<div>
+					#{entry.label}
+					<a href="#{entry.removeQuery}"><span class=" fa fa-times"></span></a>
+				</div>
+			</ui:repeat>
 			
 		</div>
 		
