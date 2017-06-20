@@ -163,7 +163,7 @@ public class PasswordChangeBean extends SuperBean {
         EmailMessages.getEmailOnAccountActivation_Body(user, getLocale()));
     loginBean.setLogin(user.getEmail());
     resetFinished = true;
-    reloadPage();
+    redirect(getNavigation().getHomeUrl());
   }
 
 

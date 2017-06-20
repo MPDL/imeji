@@ -30,6 +30,8 @@ public class NightlyJob implements Runnable {
     Imeji.getEXECUTOR().submit(new CleanUserGroupsJob());
     Imeji.getEXECUTOR().submit(new CleanContentVOsJob());
     Imeji.getEXECUTOR().submit(new CleanPasswordResetsJob());
+    Imeji.getEXECUTOR().submit(new SendSubscribtionEmailJob());
+
   }
 
 }

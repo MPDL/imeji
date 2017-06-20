@@ -12,8 +12,8 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<ui:fragment rendered="#{Auth.update}">
-			<h:commandButton id="upload" action="#{cc.attrs.collectionBean.setShowUpload(false)}" value="#{lbl.upload}" styleClass="imj_submitButton" onclick="openDialog('uploadDialog');">
+		<ui:fragment rendered="#{Auth.loggedIn}">
+			<h:commandButton id="upload" rendered="#{Auth.update}" action="#{cc.attrs.collectionBean.setShowUpload(false)}" value="#{lbl.upload}" styleClass="imj_submitButton" onclick="openDialog('uploadDialog');">
 				<f:ajax/>
 			</h:commandButton>
 			<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="menuCollection">
@@ -24,11 +24,13 @@
 				</div>
 				<div class="imj_menuBody">
 					<ul class="imj_overlayMenuList">
+						<ui:fragment rendered="#{Auth.update}">
 						<li>
 							<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/edit" >
 								<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
 							</a>
 						</li>
+						</ui:fragment>
 						<ui:fragment rendered="#{Auth.admin}">
 							<li>
 								<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share">
@@ -73,10 +75,20 @@
 								</h:outputLink>
 							</li>
 						</ui:fragment>
+						<li>
+							<h:outputLink value="#" rendered="#{not cc.attrs.collectionBean.isSubscribed()}" onclick="openDialog('subscribe');">
+								<span class="fa fa-envelope"/> <span>#{lbl.subscribe}</span>
+							</h:outputLink>
+						</li>
+						<li>
+							<h:outputLink value="#" rendered="#{cc.attrs.collectionBean.isSubscribed()}" onclick="openDialog('unsubscribe');">
+								<span class="fa fa-times"/> <span>#{lbl.unsubscribe}</span>
+							</h:outputLink>
+						</li>
 					</ul>
 				</div>
 			</div>
-			<ui:fragment rendered="#{empty SessionBean.selected and cc.attrs.collectionBean.totalNumberOfElements > 0}">
+			<ui:fragment rendered="#{Auth.update and empty SessionBean.selected and cc.attrs.collectionBean.totalNumberOfElements > 0}">
 				<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="menuItems">
 					<div class="imj_menuHeader">
 		                  <span class="fa fa-files-o"/>
@@ -140,6 +152,14 @@
 			bean="#{cc.attrs.collectionBean.actionMenu}"
 			confirmationText="#{msg.confirmation_create_DOI}"
 			submitLabel="#{lbl.createDOI}" dialogId="getDOIDialog"/>
+		<dialog:confirmationDialog submitAction="subscribe"
+			bean="#{cc.attrs.collectionBean}"
+			confirmationText="#{msg.confirmation_subscribe}"
+			submitLabel="#{lbl.subscribe}" dialogId="subscribe" />
+		<dialog:confirmationDialog submitAction="unsubscribe"
+			bean="#{cc.attrs.collectionBean}"
+			confirmationText="#{msg.confirmation_unsubscribe}"
+			submitLabel="#{lbl.unsubscribe}" dialogId="unsubscribe" />
 		<dialog:doiInputDialog 
 			col="#{cc.attrs.collectionBean.collection}"
 			bean="#{cc.attrs.collectionBean.actionMenu}"
