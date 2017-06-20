@@ -78,6 +78,20 @@
 		<pattern value="/statements" />
 		<view-id>/jsf/Statements.xhtml</view-id>
 	</url-mapping>
+	
+	<!-- Facet pages -->
+	<url-mapping id="createFacet">
+		<pattern value="/createfacet" />
+		<view-id>/jsf/FacetCreate.xhtml</view-id>
+	</url-mapping>
+	<url-mapping id="createStatement">
+		<pattern value="/facet/#{ facetId }/edit" />
+		<view-id>/jsf/FacetEdit.xhtml</view-id>
+	</url-mapping>
+	<url-mapping id="facets">
+		<pattern value="/facets" />
+		<view-id>/jsf/Facets.xhtml</view-id>
+	</url-mapping>
 
 	<!-- Search Pages -->
 	<url-mapping id="search">

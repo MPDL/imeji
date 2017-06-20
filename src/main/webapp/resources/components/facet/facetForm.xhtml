@@ -1,0 +1,40 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:imjc="http://java.sun.com/jsf/composite/components"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+
+<composite:interface>
+	<composite:attribute name="form" required="true" />
+</composite:interface>
+
+<composite:implementation>
+	<div>
+		<div class="imj_metadataSet">
+			<label class="imj_metadataLabel"> #{lbl.name}<span
+				class="imj_noDisplay">: </span>
+			</label>
+			<h:inputText id="inputFacetName" styleClass="imj_metadataValue"
+				value="#{cc.attrs.form.name}" html5:autofocus="true" />
+		</div>
+		<div class="imj_metadataSet">
+			<label class="imj_metadataLabel"> #{lbl.index}<span
+				class="imj_noDisplay">: </span>
+			</label>
+			<h:inputText id="inputFacetIndex" styleClass="imj_metadataValue"
+				value="#{cc.attrs.form.index}" html5:autofocus="true" />
+		</div>
+		<div class="imj_metadataSet">
+			<label class="imj_metadataLabel"> #{lbl.type}<span
+				class="imj_noDisplay">: </span>
+			</label>
+			<h:selectOneMenu id="selFacetType" value="#{cc.attrs.form.type}" >
+				<f:selectItem itemValue="TEXT" />
+			</h:selectOneMenu>
+		</div>
+	</div>
+</composite:implementation>
+</html>

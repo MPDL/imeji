@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.vo.Metadata;
+import de.mpg.imeji.logic.vo.factory.StatementFactory;
 
 /**
  * Specific {@link SearchPair} for {@link Metadata} search
@@ -36,7 +37,7 @@ public class SearchMetadata extends SearchPair {
    */
   public SearchMetadata(String index, SearchFields f, String value) {
     super(f, value);
-    this.index = index;
+    this.index = new StatementFactory().setIndex(index).build().getIndexUrlEncoded();;
   }
 
   /**

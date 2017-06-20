@@ -1,0 +1,73 @@
+<ui:composition template="templates/template_site.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	xmlns:facet="http://java.sun.com/jsf/composite/components/facet">
+
+	<ui:param name="headline" value="#{lbl.facets}" />
+	<ui:param name="title" value="#{headline}" />
+	<ui:param name="currentMainMenu" value="admin" />
+
+	<ui:define name="actionsMenu">
+		<form action="#{Navigation.homeUrl}/createfacet">
+			<button id="createFacet" class="imj_submitButton">
+				#{lbl.facet_new}
+			</button >
+		</form>
+	</ui:define>
+
+	<ui:define name="mainContent">
+		<!-- Are You Admin? -->
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
+			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
+			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
+		</h:panelGroup>
+
+		<!-- Only for Admins -->
+		<ui:fragment rendered="#{Auth.sysAdmin}">
+			<!-- AdminDataList - Back Button -->
+			<div class="imj_backPanel">
+				<a href="#{Navigation.adminUrl}">#{lbl.back_to_admin}</a>
+			</div>
+			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
+				<div class="imj_admindataSet">
+					<div class="imj_admindataLabel">
+						#{lbl.name}
+						<span class="imj_noDisplay">: </span>
+					</div>
+					<div class="imj_admindataValue">
+
+					</div>
+				</div>
+				<ui:repeat var="facet" value="#{FacetsBean.facets}" varStatus="row">
+					<div class="imj_itemContent imj_itemHeadline">
+						<div class="imj_admindataSet">
+							<div class="imj_admindataLabel" style="padding: 10px 0 10px 0;">
+								#{facet.name}
+								<span class="imj_noDisplay">: </span>
+							</div>
+							<div class="imj_admindataValue">
+								<a href="#{Navigation.homeUrl}/facet/#{facet.idString}/edit" class="imj_overlayMenu imj_menuButton">
+									<span class="fa fa-pencil"/> #{lbl.edit}
+								</a>
+								<h:form>
+									<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteFacet#{row.index}');">
+										<span class="fa fa-trash"/>  #{lbl.delete}
+									</h:outputLink>
+									<dialog:confirmationDialog submitAction="delete"
+										bean="#{FacetsBean}"
+										confirmationText="#{lbl.confirmation_delete_facet}"
+										submitLabel="#{lbl.delete}"
+										dialogId="deleteFacet#{row.index}" identifierName="uri"
+										identifierValue="#{facet.uri.toString()}" />
+								</h:form>
+							</div>
+						</div>
+					</div>
+				</ui:repeat>
+			</div>
+		</ui:fragment>
+	</ui:define>
+</ui:composition>

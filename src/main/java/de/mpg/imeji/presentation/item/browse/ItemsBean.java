@@ -29,7 +29,6 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
-import de.mpg.imeji.presentation.facet.FacetsJob;
 import de.mpg.imeji.presentation.item.ThumbnailBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -47,7 +46,6 @@ import de.mpg.imeji.presentation.util.CookieUtils;
 public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private static final long serialVersionUID = -5564640316578205957L;
   private int totalNumberOfRecords;
-  private FacetsJob facets;
   private String query;
   private boolean isSimpleSearch;
   private SearchQuery searchQuery = new SearchQuery();
@@ -253,15 +251,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   }
 
   /**
-   * When the page starts to load, clean all facets to avoid displaying wrong facets
-   */
-  public void cleanFacets() {
-    if (facets != null) {
-      facets.getFacets().clear();
-    }
-  }
-
-  /**
    * Delete selected {@link Item}
    *
    * @return @
@@ -391,13 +380,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     return getNavigation().getBrowseUrl();
   }
 
-  public FacetsJob getFacets() {
-    return facets;
-  }
-
-  public void setFacets(FacetsJob facets) {
-    this.facets = facets;
-  }
 
   public void setQuery(String query) {
     this.query = query;

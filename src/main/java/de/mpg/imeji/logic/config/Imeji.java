@@ -23,6 +23,7 @@ public class Imeji {
   public static String userModel;
   public static String profileModel;
   public static String statementModel;
+  public static String facetModel;
   public static String contentModel;
   public static Dataset dataset;
   public static User adminUser;

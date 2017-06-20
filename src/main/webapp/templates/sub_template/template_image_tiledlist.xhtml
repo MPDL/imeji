@@ -6,6 +6,7 @@
                 xmlns:imjc="http://java.sun.com/jsf/composite/components"
                 xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
                 xmlns:item="http://java.sun.com/jsf/composite/components/item"
+                xmlns:facet="http://java.sun.com/jsf/composite/components/facet"
                 xmlns:collection="http://java.sun.com/jsf/composite/components/collection">
 	
 	<ui:define name="actionsMenu">
@@ -26,7 +27,9 @@
             	numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
             	showSortMenu="true"
             	showFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"/>
-            
+            <div id="facetsArea" class="facetsArea">
+            	<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" />
+            </div>
 			<div id="itemsArea" class="itemsArea">
 				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
            		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
