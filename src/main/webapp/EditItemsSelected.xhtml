@@ -30,6 +30,14 @@
 		<div class="loader show" />
 		<h:form id="editSelectedForm" prependId="false">
 			<div class="editSelectedWrapper">
+			<h:panelGroup layout="block" id="editItemsSelect_MessageArea">
+		                <ui:repeat var="message" value="#{MessagesBean.messages}">
+		                	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
+		                		<span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display='none';">x</span>
+		                		<h:outputText value="#{MessagesBean.getDetails(message)}" escape="false"/>
+		                	</div>
+		                </ui:repeat>
+	                </h:panelGroup>
 				<div class="editSelectedHeader">
 					<a href="#{EditItemsSelectedBean.backUrl}" class="imj_resetButton" onclick="startLoader();">#{lbl.cancel}</a>
 					<h:commandLink type="submit" styleClass="imj_submitButton"
@@ -191,6 +199,21 @@
 							</tr>
 						</ui:repeat>
 					</table>
+				</div>
+				<div id="notAllowedItemsDialog" class="imj_modalDialogBox" style="display:none;">
+					<div class="imj_confirmationText">
+						#{msg.not_permitted_to_edit}:
+					<p>
+					<ui:repeat id="forbidden" value="#{EditItemsSelectedBean.notAllowedItemNames}" var="name" varStatus="forbiddenStatus">
+						#{name} <br/>
+					</ui:repeat>
+					</p>
+					</div>
+					<div class="imj_submitPanel">
+						<button onclick="closeDialog('notAllowedItemsDialog');" class="imj_cancelButton">
+							#{lbl.close}
+						</button>
+					</div>
 				</div>
 			</div>
 		</h:form>

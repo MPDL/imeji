@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.authorization.Authorization;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.SuperBean;
@@ -230,6 +231,10 @@ public class AuthorizationBean extends SuperBean implements Serializable {
    */
   public boolean isLoggedIn() {
     return getSessionUser() != null;
+  }
+
+  public boolean isUpdateAtLeastOneCollection() throws ImejiException {
+    return authorization.updateAtLeastOneCollection(getSessionUser());
   }
 
 }
