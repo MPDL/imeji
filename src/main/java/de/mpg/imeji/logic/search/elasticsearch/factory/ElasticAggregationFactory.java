@@ -53,7 +53,9 @@ public class ElasticAggregationFactory {
           filetypeAggregation.filter(type.getName(null), filetypeQuery);
         }
         systemAggregations.subAggregation(filetypeAggregation);
-
+      } else if (SearchFields.col.name().equals(facet.getIndex())) {
+        systemAggregations.subAggregation(
+            AggregationBuilders.terms(SearchFields.col.name()).field(SearchFields.col.name()));
       }
     }
     aggregations.add(metadataAggregations);
