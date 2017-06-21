@@ -17,7 +17,9 @@
 			<div>
 				<div>#{facet.name}</div>
 				<ui:repeat var="value" value="#{facet.values}">
-					<div><a href="?q=#{value.query}">#{value.value} (#{value.count})</a></div>
+					<div>
+						<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.addQuery(cc.attrs.itemsBean.facetQuery)}">#{value.value} (#{value.count})</a>
+					</div>
 				</ui:repeat>
 			</div>
 		</ui:fragment>

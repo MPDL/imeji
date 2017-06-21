@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.facet;
+package de.mpg.imeji.presentation.search.facet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +7,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.facet.FacetService;
-import de.mpg.imeji.logic.facet.model.Facet;
+import de.mpg.imeji.logic.search.facet.FacetService;
+import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.presentation.beans.SuperBean;
 
 @ManagedBean(name = "FacetsBean")

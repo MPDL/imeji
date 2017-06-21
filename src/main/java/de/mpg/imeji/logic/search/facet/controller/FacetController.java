@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.facet.controller;
+package de.mpg.imeji.logic.search.facet.controller;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
-import de.mpg.imeji.logic.facet.model.Facet;
+import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.service.ImejiControllerAbstract;
 import de.mpg.imeji.logic.vo.User;
 

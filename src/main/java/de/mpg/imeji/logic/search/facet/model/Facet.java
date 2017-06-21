@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.facet.model;
+package de.mpg.imeji.logic.search.facet.model;
 
 import java.io.Serializable;
 import java.net.URI;

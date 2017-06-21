@@ -7,11 +7,11 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.global.GlobalBuilder;
+import org.elasticsearch.search.aggregations.bucket.filters.FiltersAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedBuilder;
 
-import de.mpg.imeji.logic.facet.FacetService;
-import de.mpg.imeji.logic.facet.model.Facet;
+import de.mpg.imeji.logic.search.facet.FacetService;
+import de.mpg.imeji.logic.search.facet.model.Facet;
 
 /**
  * Factory class to buid an {@link AbstractAggregationBuilder}
@@ -23,21 +23,21 @@ public class ElasticAggregationFactory {
 
   public static AbstractAggregationBuilder build(QueryBuilder queryBuilder) {
     List<Facet> facets = new FacetService().retrieveAllFromCache();
-    GlobalBuilder gb = AggregationBuilders.global("agg");
+    FiltersAggregationBuilder all =
+        AggregationBuilders.filters("agg").filter("all", QueryBuilders.matchAllQuery());
+    NestedBuilder nb = AggregationBuilders.nested("metadata").path("metadata");
     for (Facet facet : facets) {
       String metadataField = getMetadataField(facet.getIndex());
       if (metadataField != null) {
-        NestedBuilder nb = AggregationBuilders.nested("nested" + facet.getIndex()).path("metadata");
-        FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex())
-            .filter(QueryBuilders.boolQuery().must(queryBuilder).must(QueryBuilders
-                .termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex()))));
+        FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
+            QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
         fb.subAggregation(
             AggregationBuilders.terms(facet.getName()).field(getMetadataField(facet.getIndex())));
         nb.subAggregation(fb);
-        gb.subAggregation(nb);
       }
     }
-    return gb;
+    all.subAggregation(nb);
+    return all;
   }
 
   /**
@@ -46,7 +46,7 @@ public class ElasticAggregationFactory {
    * @param searchIndex
    * @return
    */
-  private static String getMetadataStatementIndex(String searchIndex) {
+  public static String getMetadataStatementIndex(String searchIndex) {
     return searchIndex.startsWith("md.") ? searchIndex.split("\\.")[1] : searchIndex;
   }
 
@@ -56,7 +56,7 @@ public class ElasticAggregationFactory {
    * @param searchIndex
    * @return
    */
-  private static String getMetadataField(String searchIndex) {
+  public static String getMetadataField(String searchIndex) {
     if (searchIndex.startsWith("md.")) {
       String field = searchIndex.split("\\.").length == 2 ? "text" : searchIndex.split("\\.")[2];
       if ("text".equals(field)) {

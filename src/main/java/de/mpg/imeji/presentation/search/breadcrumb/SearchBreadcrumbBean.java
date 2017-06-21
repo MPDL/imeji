@@ -10,13 +10,11 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.facet.FacetService;
-import de.mpg.imeji.logic.facet.model.Facet;
 import de.mpg.imeji.logic.search.SearchQueryParser;
-import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.facet.FacetService;
+import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchGroup;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -82,12 +80,6 @@ public class SearchBreadcrumbBean extends SuperBean {
       }
     }
     return SearchQueryParser.transform2UTF8URL(new SearchQuery(elements));
-  }
-
-  public String getAddFacetQuery(String index, String value) throws UnprocessableError {
-    SearchQuery q = new SearchFactory(facetQuery)
-        .addElement(new SearchMetadata(index, value), LOGICAL_RELATIONS.AND).build();
-    return SearchQueryParser.transform2UTF8URL(q);
   }
 
   /**

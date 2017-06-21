@@ -20,6 +20,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
@@ -49,6 +50,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private String query;
   private boolean isSimpleSearch;
   private SearchQuery searchQuery = new SearchQuery();
+  private SearchQuery facetQuery = new SearchQuery();
   private String discardComment;
   private SearchResult searchResult;
   public static final String ITEM_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
@@ -132,8 +134,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     if (getElementsPerPage() == 0) {
       setElementsPerPage(itemsPerLine);
     }
-
-
   }
 
   @Override
@@ -209,9 +209,13 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private void parseSearchQuery() {
     try {
       final String q = UrlHelper.getParameterValue("q");
-      if (q != null) {
+      final String fq = UrlHelper.getParameterValue("fq");
+      if (q != null || fq != null) {
         setQuery(URLEncoder.encode(q, "UTF-8"));
-        setSearchQuery(SearchQueryParser.parseStringQuery(query));
+        facetQuery = SearchQueryParser.parseStringQuery(fq);
+        final SearchQuery sq = new SearchFactory(SearchQueryParser.parseStringQuery(q))
+            .and(facetQuery.getElements()).build();
+        setSearchQuery(sq);
       }
     } catch (final Exception e) {
       BeanHelper.error("Error parsing query: " + e.getMessage());
@@ -219,6 +223,19 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     }
   }
 
+  /**
+   * @return the facetQuery
+   */
+  public SearchQuery getFacetQuery() {
+    return facetQuery;
+  }
+
+  /**
+   * @param facetQuery the facetQuery to set
+   */
+  public void setFacetQuery(SearchQuery facetQuery) {
+    this.facetQuery = facetQuery;
+  }
 
   public SortCriterion getSortCriterion() {
     return new SortCriterion(SearchFields.valueOf(getSelectedSortCriterion()),
@@ -241,14 +258,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   }
 
 
-  /**
-   * Methods called at the end of the page loading, which initialize the facets
-   *
-   * @return @
-   */
-  public void initFacets() {
-    // No Facets for browse page
-  }
 
   /**
    * Delete selected {@link Item}

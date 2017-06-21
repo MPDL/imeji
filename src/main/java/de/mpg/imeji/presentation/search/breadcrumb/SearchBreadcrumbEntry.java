@@ -2,7 +2,7 @@ package de.mpg.imeji.presentation.search.breadcrumb;
 
 import java.io.Serializable;
 
-import de.mpg.imeji.logic.facet.model.Facet;
+import de.mpg.imeji.logic.search.facet.model.Facet;
 
 /**
  * An entry of the {@link SearchBreadcrumbBean}
