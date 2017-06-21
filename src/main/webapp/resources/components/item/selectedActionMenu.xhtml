@@ -11,7 +11,7 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<ui:fragment rendered="#{Auth.update and cc.attrs.itemsBean.totalNumberOfElements > 0}">
+		<ui:fragment rendered="#{Auth.updateAtLeastOneCollection and cc.attrs.itemsBean.totalNumberOfElements > 0}">
 			<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="menuItems">
 			
 				<div class="imj_menuHeader">
@@ -29,6 +29,7 @@
 								<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
 							</a>
 						</li>
+						<ui:fragment rendered="#{Auth.update}">
 						<li>
 							<a href="#{Navigation.applicationUrl}edit/license" id="lnkSelectEditLicense">
 								<span class="fa fa-copyright"/> <span>#{lbl.edit_all_licenses}</span>
@@ -57,6 +58,7 @@
 									<span class="fa fa-ban"/> <span>#{lbl.items_withdraw}</span>
 								</a>
 							</li>
+						</ui:fragment>
 						</ui:fragment>
 					</ul>
 				</div>

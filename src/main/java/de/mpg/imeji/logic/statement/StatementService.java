@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
-import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -227,9 +226,9 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    * 
    * @param s
    * @return
-   * @throws UnprocessableError
+   * @throws ImejiException
    */
-  public boolean isUsed(Statement s) throws UnprocessableError {
+  public boolean isUsed(Statement s) throws ImejiException {
     ItemService itemService = new ItemService();
     SearchQuery q =
         new SearchFactory().addElement(new SearchPair(SearchFields.index, s.getIndexUrlEncoded()),
@@ -281,7 +280,13 @@ public class StatementService extends SearchServiceAbstract<Statement> {
 
 
   public List<Statement> retrieveNotUsedStatements() throws ImejiException {
-    final List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectStatementNotUsed(), null);
-    return retrieveBatch(uris, Imeji.adminUser);
+    return retrieveAll().stream().filter(s -> {
+      try {
+        return isUsed(s);
+      } catch (ImejiException e) {
+        return true;
+      }
+    }).collect(Collectors.toList());
+
   }
 }

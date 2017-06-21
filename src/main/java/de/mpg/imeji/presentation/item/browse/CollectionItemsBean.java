@@ -15,6 +15,7 @@ import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -23,6 +24,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.collection.CollectionActionMenu;
 import de.mpg.imeji.presentation.license.LicenseEditor;
+import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
  * {@link ItemsBean} to browse {@link Item} of a {@link CollectionImeji}
@@ -237,6 +239,22 @@ public class CollectionItemsBean extends ItemsBean {
    */
   public void setAuthorsShort(String authorsShort) {
     this.authorsShort = authorsShort;
+  }
+
+  public void subscribe() throws ImejiException {
+    getSessionUser().subscribeToCollection(getCollectionId());
+    (new UserService()).update(getSessionUser(), getSessionUser());
+    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("subscribe_success", getLocale()));
+  }
+
+  public void unsubscribe() throws ImejiException {
+    getSessionUser().unsubscribeFromCollection(getCollectionId());
+    (new UserService()).update(getSessionUser(), getSessionUser());
+    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("unsubscribe_success", getLocale()));
+  }
+
+  public boolean isSubscribed() {
+    return getSessionUser().getSubscriptionCollections().contains(getCollectionId());
   }
 
 

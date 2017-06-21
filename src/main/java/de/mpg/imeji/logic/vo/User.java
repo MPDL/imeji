@@ -64,6 +64,9 @@ public class User implements Serializable {
   @j2jList("http://imeji.org/terms/observedCollections")
   private Collection<String> observedCollections = new ArrayList<String>();
 
+  @j2jList("http://imeji.org/terms/subscriptionCollections")
+  private Collection<String> subscriptionCollections = new ArrayList<String>();
+
 
   public String getEmail() {
     return email;
@@ -157,6 +160,24 @@ public class User implements Serializable {
    */
   public void setObservedCollections(Collection<String> observedCollections) {
     this.observedCollections = observedCollections;
+  }
+
+
+
+  public Collection<String> getSubscriptionCollections() {
+    return subscriptionCollections;
+  }
+
+  public void setSubscriptionCollections(Collection<String> subscriptionCollections) {
+    this.subscriptionCollections = subscriptionCollections;
+  }
+
+  public void subscribeToCollection(String id) {
+    subscriptionCollections.add(id);
+  }
+
+  public void unsubscribeFromCollection(String id) {
+    subscriptionCollections.remove(id);
   }
 
   /**

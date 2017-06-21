@@ -83,6 +83,19 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
   }
 
   /**
+   * Retrieve a complete {@link CollectionImeji} (inclusive its {@link Item}: slow for huge
+   * {@link CollectionImeji})
+   *
+   * @param uri
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public CollectionImeji retrieve(String uri, User user) throws ImejiException {
+    return controller.retrieve(uri, user);
+  }
+
+  /**
    * Retrieve the {@link CollectionImeji} without its {@link Item}
    *
    * @param uri

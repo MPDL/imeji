@@ -222,6 +222,11 @@ public class ShareListItem implements Serializable {
     return shareToUri;
   }
 
+  public String getShareToUriString() {
+    String[] split = shareToUri.split("/");
+    return split[split.length - 1];
+  }
+
   /**
    * @return the title
    */

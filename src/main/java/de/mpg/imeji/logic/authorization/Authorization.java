@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
@@ -131,6 +133,23 @@ public class Authorization implements Serializable {
    */
   public Collection<Grant> toGrantList(Collection<String> grants) {
     return grants.stream().map(s -> new Grant(s)).collect(Collectors.toList());
+  }
+
+  /**
+   * True if there is one {@link CollectionImeji} that the {@link User} can update
+   * 
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public boolean updateAtLeastOneCollection(User user) throws ImejiException {
+    List<CollectionImeji> collections = new CollectionService().retrieveAll();
+    for (CollectionImeji c : collections) {
+      if (update(user, c)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

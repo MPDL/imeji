@@ -17,6 +17,7 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.authorization.Authorization;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -45,6 +46,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   private List<RowComponent> rows = new ArrayList<>();
   private SelectStatementComponent newStatement;
   private List<String> displayedColumns = new ArrayList<>();
+  private List<String> notAllowedItemNames = new ArrayList<>();
 
   public EditItemsSelectedBean() throws ImejiException {
     super();
@@ -54,7 +56,16 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   @PostConstruct
   public void init() {
     try {
-      final List<Item> itemList = retrieveItems();
+      Authorization auth = new Authorization();
+      List<Item> itemList = retrieveItems();
+      notAllowedItemNames = itemList.stream().filter(i -> !auth.update(getSessionUser(), i))
+          .map(i -> i.getFilename()).collect(Collectors.toList());
+      itemList = itemList.stream().filter(i -> auth.update(getSessionUser(), i))
+          .collect(Collectors.toList());
+      if (!notAllowedItemNames.isEmpty()) {
+        BeanHelper
+            .error(Imeji.RESOURCE_BUNDLE.getMessage("edit_selected_not_allowed", getLocale()));
+      }
       initHeaders(itemList);
       initRows(itemList);
     } catch (final ImejiException e) {
@@ -313,5 +324,15 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   public void setNewStatement(SelectStatementComponent newStatement) {
     this.newStatement = newStatement;
   }
+
+  public List<String> getNotAllowedItemNames() {
+    return notAllowedItemNames;
+  }
+
+  public void setNotAllowedItemNames(List<String> notAllowedItemNames) {
+    this.notAllowedItemNames = notAllowedItemNames;
+  }
+
+
 
 }

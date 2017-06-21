@@ -11,13 +11,21 @@
 	<ui:param name="contUrl" value="#{Navigation.collectionUrl}" />
 	<ui:param name="imejiResource" value="#{ShareBean.sharedObject}" />
 	<ui:param name="iconStatusDisplayStatusOnly" value="true" />
+	
+	<f:metadata>
+		<f:viewParam name="email" value="email"/>
+	</f:metadata>
 
 
 	<ui:define name="mainContent">
 		<div class="imj_backPanel">
-			<h:outputLink value="#{ShareBean.backUrl}">
+			<h:outputLink value="#{ShareBean.backUrl}" rendered="#{email==''}">
 				<span class="fa fa-arrow-circle-o-left"/>
 				<h:outputText value=" #{lbl.back_to} #{ShareBean.title}" />
+			</h:outputLink>
+			<h:outputLink value="#{Navigation.userUrl}?email=#{email}" rendered="#{email!=''}">
+				<span class="fa fa-arrow-circle-o-left"/>
+				<h:outputText value=" #{lbl.back_to} #{lbl.user}" />
 			</h:outputLink>
 		</div>
 		<!-- ID must not be changed. The share page would not work anymore -->
