@@ -4,17 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.aggregations.bucket.filter.Filter;
-import org.elasticsearch.search.aggregations.bucket.filters.Filters;
-import org.elasticsearch.search.aggregations.bucket.nested.Nested;
-import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.search.Search;
@@ -23,9 +19,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticQueryFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
-import de.mpg.imeji.logic.search.facet.model.FacetResult;
-import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
-import de.mpg.imeji.logic.search.model.SearchMetadata;
+import de.mpg.imeji.logic.search.elasticsearch.factory.util.AggregationsParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -105,10 +99,16 @@ public class ElasticSearch implements Search {
   private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, int from, int size) {
     final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
-    final AbstractAggregationBuilder agg = ElasticAggregationFactory.build(f);
-    final SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
-        .setNoFields().setQuery(f).setTypes(getTypes()).setSize(size).setFrom(from)
-        .addSort(ElasticSortFactory.build(sortCri)).addAggregation(agg).execute().actionGet();
+    final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build(f);
+    SearchRequestBuilder request = ElasticService.getClient()
+        .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setQuery(f).setTypes(getTypes())
+        .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri));
+    for (AbstractAggregationBuilder agg : aggregations) {
+      request.addAggregation(agg);
+    }
+    System.out.println(request);
+    final SearchResponse resp = request.execute().actionGet();
+    System.out.println(resp);
     return toSearchResult(resp, query);
   }
 
@@ -186,33 +186,7 @@ public class ElasticSearch implements Search {
     for (final SearchHit hit : resp.getHits()) {
       ids.add(hit.getId());
     }
-    return new SearchResult(ids, resp.getHits().getTotalHits(), parseAggregations(resp, query));
-  }
-
-  private List<FacetResult> parseAggregations(SearchResponse resp, SearchQuery query) {
-    List<FacetResult> facetResults = new ArrayList<>();
-    if (resp != null && resp.getAggregations() != null
-        && resp.getAggregations().get("agg") != null) {
-      Filters agg = resp.getAggregations().get("agg");
-      Nested nested = agg.getBucketByKey("all").getAggregations().get("metadata");
-      for (Aggregation mdAgg : nested.getAggregations()) {
-        FacetResult facetResult = new FacetResult(mdAgg.getName(), mdAgg.getName());
-        if (mdAgg instanceof Filter) {
-          Aggregation terms = ((Filter) mdAgg).getAggregations().asList().get(0);
-          if (terms instanceof StringTerms) {
-            for (org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket bucket : ((StringTerms) terms)
-                .getBuckets()) {
-              SearchMetadata smd =
-                  new SearchMetadata(mdAgg.getName().replace("md.", ""), bucket.getKeyAsString());
-              facetResult.getValues()
-                  .add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount(), smd));
-            }
-          }
-        }
-        facetResults.add(facetResult);
-      }
-    }
-    return facetResults;
+    return new SearchResult(ids, resp.getHits().getTotalHits(), AggregationsParser.parse(resp));
   }
 
   /**

@@ -63,6 +63,14 @@ public class ImejiFileTypes {
       return regex;
     }
 
+    public List<String> getAsRegexList() {
+      List<String> regexList = new ArrayList<>();
+      for (final String extension : extensions.split(",")) {
+        regexList.add("." + extension);
+      }
+      return regexList;
+    }
+
     public String[] getExtensionArray() {
       return extensions.split(",");
     }

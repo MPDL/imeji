@@ -1,7 +1,9 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
@@ -10,8 +12,12 @@ import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuil
 import org.elasticsearch.search.aggregations.bucket.filters.FiltersAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedBuilder;
 
+import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.config.ImejiFileTypes;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
+import de.mpg.imeji.logic.search.model.SearchFields;
 
 /**
  * Factory class to buid an {@link AbstractAggregationBuilder}
@@ -21,11 +27,12 @@ import de.mpg.imeji.logic.search.facet.model.Facet;
  */
 public class ElasticAggregationFactory {
 
-  public static AbstractAggregationBuilder build(QueryBuilder queryBuilder) {
+  public static List<AbstractAggregationBuilder> build(QueryBuilder queryBuilder) {
+    List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
     List<Facet> facets = new FacetService().retrieveAllFromCache();
-    FiltersAggregationBuilder all =
-        AggregationBuilders.filters("agg").filter("all", QueryBuilders.matchAllQuery());
-    NestedBuilder nb = AggregationBuilders.nested("metadata").path("metadata");
+    FiltersAggregationBuilder systemAggregations =
+        AggregationBuilders.filters("system").filter("all", QueryBuilders.matchAllQuery());
+    NestedBuilder metadataAggregations = AggregationBuilders.nested("metadata").path("metadata");
     for (Facet facet : facets) {
       String metadataField = getMetadataField(facet.getIndex());
       if (metadataField != null) {
@@ -33,11 +40,26 @@ public class ElasticAggregationFactory {
             QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
         fb.subAggregation(
             AggregationBuilders.terms(facet.getName()).field(getMetadataField(facet.getIndex())));
-        nb.subAggregation(fb);
+        metadataAggregations.subAggregation(fb);
+      } else if (SearchFields.filetype.name().equals(facet.getIndex())) {
+        FiltersAggregationBuilder filetypeAggregation =
+            AggregationBuilders.filters(SearchFields.filetype.name());
+
+        for (ImejiFileTypes.Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
+          BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
+          for (String ext : type.getExtensionArray()) {
+            filetypeQuery.should(QueryBuilders
+                .queryStringQuery(ElasticFields.NAME.field() + ".suggest:" + "*." + ext));
+          }
+          filetypeAggregation.filter(type.getName(null), filetypeQuery);
+        }
+        systemAggregations.subAggregation(filetypeAggregation);
+
       }
     }
-    all.subAggregation(nb);
-    return all;
+    aggregations.add(metadataAggregations);
+    aggregations.add(systemAggregations);
+    return aggregations;
   }
 
   /**
