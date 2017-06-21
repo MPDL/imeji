@@ -76,11 +76,22 @@ public class ElasticSearch implements Search {
   @Override
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
       int from, int size) {
+    return search(query, sortCri, user, folderUri, from, size, false);
+  }
+
+  @Override
+  public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user,
+      String folderUri, int from, int size) {
+    return search(query, sortCri, user, folderUri, from, size, true);
+  }
+
+  private SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+      int from, int size, boolean addFacets) {
     size = size == -1 ? size = SEARCH_MAX_SIZE : size;
     if (size < SEARCH_MAX_SIZE) {
-      return searchSinglePage(query, sortCri, user, folderUri, from, size);
+      return searchSinglePage(query, sortCri, user, folderUri, from, size, addFacets);
     } else {
-      return searchWithScroll(query, sortCri, user, folderUri, from, size);
+      return searchWithScroll(query, sortCri, user, folderUri, from, size, addFacets);
     }
   }
 
@@ -97,19 +108,25 @@ public class ElasticSearch implements Search {
    * @return
    */
   private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
-      String folderUri, int from, int size) {
+      String folderUri, int from, int size, boolean addFacets) {
     final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
-    final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build(f);
+
     SearchRequestBuilder request = ElasticService.getClient()
         .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setQuery(f).setTypes(getTypes())
         .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri));
+    if (addFacets) {
+      request = addAggregations(request);
+    }
+    final SearchResponse resp = request.execute().actionGet();
+    return toSearchResult(resp, query);
+  }
+
+  private SearchRequestBuilder addAggregations(SearchRequestBuilder request) {
+    final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build();
     for (AbstractAggregationBuilder agg : aggregations) {
       request.addAggregation(agg);
     }
-    System.out.println(request);
-    final SearchResponse resp = request.execute().actionGet();
-    System.out.println(resp);
-    return toSearchResult(resp, query);
+    return request;
   }
 
   /**
@@ -124,12 +141,16 @@ public class ElasticSearch implements Search {
    * @return
    */
   private SearchResult searchWithScroll(SearchQuery query, SortCriterion sortCri, User user,
-      String folderUri, int from, int size) {
+      String folderUri, int from, int size, boolean addFacets) {
     final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
-    SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
-        .setScroll(new TimeValue(60000)).setNoFields().setQuery(QueryBuilders.matchAllQuery())
-        .setPostFilter(f).setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).setFrom(from)
-        .addSort(ElasticSortFactory.build(sortCri)).execute().actionGet();
+    SearchRequestBuilder request = ElasticService.getClient()
+        .prepareSearch(ElasticService.DATA_ALIAS).setScroll(new TimeValue(60000)).setNoFields()
+        .setQuery(QueryBuilders.matchAllQuery()).setPostFilter(f).setTypes(getTypes())
+        .setSize(SEARCH_MAX_SIZE).setFrom(from).addSort(ElasticSortFactory.build(sortCri));
+    if (addFacets) {
+      request = addAggregations(request);
+    }
+    SearchResponse resp = request.execute().actionGet();
     SearchResult result = toSearchResult(resp, query);
     while (true) {
       resp = ElasticService.getClient().prepareSearchScroll(resp.getScrollId())

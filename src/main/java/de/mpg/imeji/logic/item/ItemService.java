@@ -36,6 +36,7 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -497,6 +498,23 @@ public class ItemService extends SearchServiceAbstract<Item> {
   public SearchResult search(URI containerUri, SearchQuery searchQuery, SortCriterion sortCri,
       User user, int size, int offset) {
     return search.search(searchQuery, sortCri, user,
+        containerUri != null ? containerUri.toString() : null, offset, size);
+  }
+
+  /**
+   * Search and add {@link Facet} to the {@link SearchResult}
+   * 
+   * @param containerUri
+   * @param searchQuery
+   * @param sortCri
+   * @param user
+   * @param size
+   * @param offset
+   * @return
+   */
+  public SearchResult searchWithFacets(URI containerUri, SearchQuery searchQuery,
+      SortCriterion sortCri, User user, int size, int offset) {
+    return search.searchWithFacets(searchQuery, sortCri, user,
         containerUri != null ? containerUri.toString() : null, offset, size);
   }
 

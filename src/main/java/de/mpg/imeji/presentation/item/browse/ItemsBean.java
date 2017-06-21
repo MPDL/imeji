@@ -162,8 +162,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int size) {
-    final ItemService controller = new ItemService();
-    return controller.search(null, searchQuery, sortCriterion, getSessionUser(), size, offset);
+    return new ItemService().searchWithFacets(null, searchQuery, sortCriterion, getSessionUser(),
+        size, offset);
   }
 
   /**

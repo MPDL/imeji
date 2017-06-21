@@ -2,6 +2,7 @@ package de.mpg.imeji.logic.search;
 
 import java.util.List;
 
+import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -39,6 +40,20 @@ public interface Search {
    */
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
       int offset, int size);
+
+  /**
+   * Search and set {@link Facet} to the {@link SearchResult}
+   * 
+   * @param query
+   * @param sortCri
+   * @param user
+   * @param folderUri
+   * @param offset
+   * @param size
+   * @return
+   */
+  public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user,
+      String folderUri, int offset, int size);
 
   /**
    * Get the {@link SearchIndexer} for this {@link Search} implementation

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -27,7 +26,7 @@ import de.mpg.imeji.logic.search.model.SearchFields;
  */
 public class ElasticAggregationFactory {
 
-  public static List<AbstractAggregationBuilder> build(QueryBuilder queryBuilder) {
+  public static List<AbstractAggregationBuilder> build() {
     List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
     List<Facet> facets = new FacetService().retrieveAllFromCache();
     FiltersAggregationBuilder systemAggregations =
