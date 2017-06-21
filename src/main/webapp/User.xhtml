@@ -257,9 +257,14 @@
 											</div>
 											<div class="imj_metadataValueEntry">
 												#{shareHistory.role} 
-												<h:outputLink value="#" styleClass="fa fa-times"
+													<h:outputLink value="#{Navigation.collectionUrl}#{shareHistory.shareToUriString}/share?email=#{UserBean.user.email}"
+														title="#{lbl.change} #{lbl.grant_for} #{shareHistory.title}">
+														<span class="fa fa-mail-forward"></span>#{lbl.change} 
+													</h:outputLink>
+													<h:outputLink value="#"
 														title="#{lbl.revoke} #{lbl.grant_for} #{shareHistory.title}"
 														onclick="openDialog('revokeDialog#{row.index}');">
+														<span class="fa fa-times"></span>#{lbl.revoke} 
 													</h:outputLink>
 													<dialog:confirmationDialog submitAction="revokeGrants"
 													bean="#{shareHistory}"
