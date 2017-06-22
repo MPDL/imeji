@@ -9,7 +9,9 @@ import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.filters.FiltersAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes;
@@ -17,6 +19,7 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.model.SearchFields;
+import de.mpg.imeji.logic.vo.StatementType;
 
 /**
  * Factory class to buid an {@link AbstractAggregationBuilder}
@@ -33,17 +36,13 @@ public class ElasticAggregationFactory {
         AggregationBuilders.filters("system").filter("all", QueryBuilders.matchAllQuery());
     NestedBuilder metadataAggregations = AggregationBuilders.nested("metadata").path("metadata");
     for (Facet facet : facets) {
-      String metadataField = getMetadataField(facet.getIndex());
+      String metadataField = getMetadataField(facet);
+      System.out.println(metadataField + " " + facet.getIndex());
       if (metadataField != null) {
-        FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
-            QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
-        fb.subAggregation(
-            AggregationBuilders.terms(facet.getName()).field(getMetadataField(facet.getIndex())));
-        metadataAggregations.subAggregation(fb);
+        metadataAggregations.subAggregation(getMetadataAggregation(facet, metadataField));
       } else if (SearchFields.filetype.name().equals(facet.getIndex())) {
         FiltersAggregationBuilder filetypeAggregation =
             AggregationBuilders.filters(SearchFields.filetype.name());
-
         for (ImejiFileTypes.Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
           BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
           for (String ext : type.getExtensionArray()) {
@@ -54,13 +53,65 @@ public class ElasticAggregationFactory {
         }
         systemAggregations.subAggregation(filetypeAggregation);
       } else if (SearchFields.col.name().equals(facet.getIndex())) {
-        systemAggregations.subAggregation(
-            AggregationBuilders.terms(SearchFields.col.name()).field(SearchFields.col.name()));
+        TermsBuilder collectionAgg =
+            AggregationBuilders.terms(SearchFields.col.name()).field(ElasticFields.FOLDER.field());
+        systemAggregations.subAggregation(collectionAgg);
       }
     }
     aggregations.add(metadataAggregations);
     aggregations.add(systemAggregations);
     return aggregations;
+  }
+
+  /**
+   * Return the aggregation for metadata
+   * 
+   * @param facet
+   * @param metadataField
+   * @return
+   */
+  private static AbstractAggregationBuilder getMetadataAggregation(Facet facet,
+      String metadataField) {
+    switch (StatementType.valueOf(facet.getType())) {
+      case TEXT:
+        return getMetadataTextAggregation(facet, metadataField);
+      case DATE:
+        return getMetadataDateAggregation(facet, metadataField);
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Create aggregation for Date
+   * 
+   * @param facet
+   * @param metadataField
+   * @return
+   */
+  private static FilterAggregationBuilder getMetadataDateAggregation(Facet facet,
+      String metadataField) {
+    FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
+        QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
+    fb.subAggregation(AggregationBuilders.dateHistogram(facet.getIndex())
+        .field(getMetadataField(facet)).interval(DateHistogramInterval.YEAR).format("yyyy"));
+
+    return fb;
+  }
+
+  /**
+   * Create Aggregation for metadata of type TEXT
+   * 
+   * @param facet
+   * @param metadataField
+   * @return
+   */
+  private static FilterAggregationBuilder getMetadataTextAggregation(Facet facet,
+      String metadataField) {
+    FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
+        QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
+    fb.subAggregation(AggregationBuilders.terms(facet.getName()).field(getMetadataField(facet)));
+    return fb;
   }
 
   /**
@@ -79,14 +130,16 @@ public class ElasticAggregationFactory {
    * @param searchIndex
    * @return
    */
-  public static String getMetadataField(String searchIndex) {
-    if (searchIndex.startsWith("md.")) {
-      String field = searchIndex.split("\\.").length == 2 ? "text" : searchIndex.split("\\.")[2];
-      if ("text".equals(field)) {
-        return "metadata." + field + ".exact";
-      }
-      return "metadata." + field;
+  public static String getMetadataField(Facet f) {
+    switch (StatementType.valueOf(f.getType())) {
+      case TEXT:
+        return "metadata.text.exact";
+      case DATE:
+        return "metadata.date";
+      case NUMBER:
+        return "metadata.number";
+      default:
+        return null;
     }
-    return null;
   }
 }

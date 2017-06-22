@@ -21,6 +21,7 @@ public final class ElasticMetadata extends ElasticPerson {
   private final String title;
   private double number;
   private double time;
+  private String date;
   private final String uri;
   private String location;
 
@@ -42,6 +43,7 @@ public final class ElasticMetadata extends ElasticPerson {
     this.uri = md.getUrl();
     if (!StringHelper.isNullOrEmptyTrim(md.getDate())) {
       this.time = DateFormatter.getTime(md.getDate());
+      this.date = md.getDate();
     }
     if (!Double.isNaN(md.getLatitude()) && !Double.isNaN(md.getLongitude())) {
       this.location = md.getLatitude() + "," + md.getLongitude();
@@ -102,6 +104,10 @@ public final class ElasticMetadata extends ElasticPerson {
    */
   public double getTime() {
     return time;
+  }
+
+  public String getDate() {
+    return date;
   }
 
 }

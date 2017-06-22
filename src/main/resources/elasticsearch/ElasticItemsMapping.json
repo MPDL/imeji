@@ -98,6 +98,9 @@
 					"time": {
 						"type": "long"
 					},
+					"date":{
+						"type": "date"
+					},
 					"location": {
 						"type": "geo_point",
 						"lat_lon": "true"

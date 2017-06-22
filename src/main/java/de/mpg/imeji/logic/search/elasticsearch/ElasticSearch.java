@@ -116,8 +116,10 @@ public class ElasticSearch implements Search {
         .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri));
     if (addFacets) {
       request = addAggregations(request);
+      System.out.println(request);
     }
     final SearchResponse resp = request.execute().actionGet();
+    System.out.println(resp);
     return toSearchResult(resp, query);
   }
 
