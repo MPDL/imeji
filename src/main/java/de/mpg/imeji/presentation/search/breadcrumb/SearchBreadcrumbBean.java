@@ -52,14 +52,16 @@ public class SearchBreadcrumbBean extends SuperBean {
         Facet f = facetService
             .retrieveByIndexFromCache(SearchQueryParser.getMetadataIndex((SearchMetadata) el));
         if (f != null) {
-          l.add(new SearchBreadcrumbEntry(f, ((SearchMetadata) el).getValue(),
-              getRemoveQuery(facetQuery, el)));
+          l.add(new SearchBreadcrumbEntry(f,
+              SearchQueryParser.operator2URL(((SearchMetadata) el).getOperator()),
+              ((SearchMetadata) el).getValue(), getRemoveQuery(facetQuery, el)));
         }
       } else if (el instanceof SearchPair) {
         Facet f = facetService.retrieveByIndexFromCache(((SearchPair) el).getField().name());
         if (f != null) {
-          l.add(new SearchBreadcrumbEntry(f, ((SearchPair) el).getValue(),
-              getRemoveQuery(facetQuery, el)));
+          l.add(new SearchBreadcrumbEntry(f,
+              SearchQueryParser.operator2URL(((SearchMetadata) el).getOperator()),
+              ((SearchPair) el).getValue(), getRemoveQuery(facetQuery, el)));
         }
       } else if (el instanceof SearchGroup) {
         l.addAll(initEntries(el.getElements()));

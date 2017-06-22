@@ -14,13 +14,15 @@ public class SearchBreadcrumbEntry implements Serializable {
   private static final long serialVersionUID = 2936538556616876085L;
   private final String index;
   private final String label;
+  private final String operator;
   private final String value;
   private final String removeQuery;
 
-  public SearchBreadcrumbEntry(Facet facet, String value, String removeQuery) {
+  public SearchBreadcrumbEntry(Facet facet, String operator, String value, String removeQuery) {
     this.index = facet.getIndex();
     this.value = value;
     this.label = facet.getName();
+    this.operator = operator;
     this.removeQuery = removeQuery;
   }
 
@@ -50,6 +52,13 @@ public class SearchBreadcrumbEntry implements Serializable {
    */
   public String getLabel() {
     return label;
+  }
+
+  /**
+   * @return the operator
+   */
+  public String getOperator() {
+    return operator;
   }
 
 }

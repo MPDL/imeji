@@ -28,7 +28,7 @@
 			
 			 <ui:repeat var="entry" value="#{SearchBreadcrumb.entries}">
 				<div>
-					#{entry.label}=#{entry.value}
+					<span>#{entry.label} #{entry.operator} #{entry.value}</span>
 					<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.searchBean.query}&amp;fq=#{entry.removeQuery}"><span class=" fa fa-times"></span></a>
 				</div>
 			</ui:repeat>

@@ -19,6 +19,7 @@ import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
 import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
+import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 
 /**
@@ -71,6 +72,10 @@ public class AggregationsParser {
                   yearEnd = b.getKeyAsString();
                   SearchMetadata smd = new SearchMetadata(mdAgg.getName().replace("md.", ""),
                       SearchFields.date, yearStart + yearEnd);
+                  if (yearStart.equals("Before ")) {
+                    smd = new SearchMetadata(mdAgg.getName().replace("md.", ""), SearchFields.date,
+                        SearchOperators.LESSER, yearEnd, false);
+                  }
                   facetResult.getValues()
                       .add(new FacetResultValue(yearStart + yearEnd, intervalDocCount, smd));
                   intervalDocCount = (int) b.getDocCount();
@@ -79,7 +84,7 @@ public class AggregationsParser {
                 }
               }
               SearchMetadata smd = new SearchMetadata(mdAgg.getName().replace("md.", ""),
-                  SearchFields.date, yearStart + yearEnd);
+                  SearchFields.date, SearchOperators.GREATER, yearEnd, false);
               facetResult.getValues()
                   .add(new FacetResultValue("After " + yearEnd, intervalDocCount, smd));
             } else {
