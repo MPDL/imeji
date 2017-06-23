@@ -17,10 +17,6 @@ import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
-import de.mpg.imeji.logic.search.model.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchMetadata;
-import de.mpg.imeji.logic.search.model.SearchOperators;
-import de.mpg.imeji.logic.search.model.SearchPair;
 
 /**
  * Parse elasticSearchAggregation created by {@link ElasticAggregationFactory}
@@ -52,10 +48,8 @@ public class AggregationsParser {
             Aggregation terms = ((Filter) mdAgg).getAggregations().asList().get(0);
             if (terms instanceof StringTerms) {
               for (Terms.Bucket bucket : ((StringTerms) terms).getBuckets()) {
-                SearchMetadata smd =
-                    new SearchMetadata(mdAgg.getName().replace("md.", ""), bucket.getKeyAsString());
                 facetResult.getValues()
-                    .add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount(), smd));
+                    .add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
               }
             } else if (terms instanceof Histogram) {
               int valueCount = 5;
@@ -70,28 +64,19 @@ public class AggregationsParser {
                   counter++;
                 } else {
                   yearEnd = b.getKeyAsString();
-                  SearchMetadata smd = new SearchMetadata(mdAgg.getName().replace("md.", ""),
-                      SearchFields.date, yearStart + yearEnd);
-                  if (yearStart.equals("Before ")) {
-                    smd = new SearchMetadata(mdAgg.getName().replace("md.", ""), SearchFields.date,
-                        SearchOperators.LESSER, yearEnd, false);
-                  }
                   facetResult.getValues()
-                      .add(new FacetResultValue(yearStart + yearEnd, intervalDocCount, smd));
+                      .add(new FacetResultValue(yearStart + yearEnd, intervalDocCount));
                   intervalDocCount = (int) b.getDocCount();
                   yearStart = b.getKeyAsString() + " to ";
                   counter = 0;
                 }
               }
-              SearchMetadata smd = new SearchMetadata(mdAgg.getName().replace("md.", ""),
-                  SearchFields.date, SearchOperators.GREATER, yearEnd, false);
               facetResult.getValues()
-                  .add(new FacetResultValue("After " + yearEnd, intervalDocCount, smd));
+                  .add(new FacetResultValue("After " + yearEnd, intervalDocCount));
             } else {
-              System.out.println(terms);
+              System.out.println("NOT PARSED  METADATA AGGREGATION: " + terms);
             }
           }
-
           facetResults.add(facetResult);
         }
         Filters system = resp.getAggregations().get("system");
@@ -100,15 +85,13 @@ public class AggregationsParser {
             FacetResult facetResult = new FacetResult(getFacetName(agg.getName()), agg.getName());
             if (agg instanceof Filters) {
               for (Filters.Bucket bucket : ((Filters) agg).getBuckets()) {
-                SearchPair pair = new SearchPair(SearchFields.filetype, bucket.getKeyAsString());
                 facetResult.getValues()
-                    .add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount(), pair));
+                    .add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
               }
             } else if (agg instanceof StringTerms) {
               for (Terms.Bucket bucket : ((StringTerms) agg).getBuckets()) {
-                SearchPair pair = new SearchPair(SearchFields.col, bucket.getKeyAsString());
                 facetResult.getValues()
-                    .add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount(), pair));
+                    .add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
               }
 
             }

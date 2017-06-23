@@ -12,19 +12,16 @@
 </composite:interface>
 
 <composite:implementation>
-	<ui:repeat var="facet" value="#{cc.attrs.itemsBean.searchResult.facets}" varStatus="row">
-		<ui:fragment rendered="#{facet.hasValue() and !SearchBreadcrumb.isSelected(facet)}">
-			<div>
-				<div>#{facet.name}</div>
-				<ui:repeat var="value" value="#{facet.values}">
-					<ui:fragment rendered="true">
-						<div>
-							<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.addQuery(cc.attrs.itemsBean.facetQuery)}">#{value.value} (#{value.count})</a>
-						</div>
-					</ui:fragment>
-				</ui:repeat>
-			</div>
-		</ui:fragment>
+	#{FacetSelectorBean.init(cc.attrs.itemsBean.searchResult)}
+	<ui:repeat var="facetName" value="#{FacetSelectorBean.entries.keySet().toArray()}" varStatus="row">
+		<div>
+			<div>#{facetName}</div>
+			<ui:repeat var="entry" value="#{FacetSelectorBean.entries.get(facetName)}">
+				<div>
+					<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{entry.addQuery(cc.attrs.itemsBean.facetQuery)}">#{entry.label} (#{entry.count})</a>
+				</div>
+			</ui:repeat>
+		</div>
 	</ui:repeat>
 </composite:implementation>
 </html>

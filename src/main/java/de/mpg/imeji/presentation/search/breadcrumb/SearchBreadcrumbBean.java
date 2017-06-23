@@ -60,7 +60,7 @@ public class SearchBreadcrumbBean extends SuperBean {
         Facet f = facetService.retrieveByIndexFromCache(((SearchPair) el).getField().name());
         if (f != null) {
           l.add(new SearchBreadcrumbEntry(f,
-              SearchQueryParser.operator2URL(((SearchMetadata) el).getOperator()),
+              SearchQueryParser.operator2URL(((SearchPair) el).getOperator()),
               ((SearchPair) el).getValue(), getRemoveQuery(facetQuery, el)));
         }
       } else if (el instanceof SearchGroup) {

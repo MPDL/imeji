@@ -37,7 +37,6 @@ public class ElasticAggregationFactory {
     NestedBuilder metadataAggregations = AggregationBuilders.nested("metadata").path("metadata");
     for (Facet facet : facets) {
       String metadataField = getMetadataField(facet);
-      System.out.println(metadataField + " " + facet.getIndex());
       if (metadataField != null) {
         metadataAggregations.subAggregation(getMetadataAggregation(facet, metadataField));
       } else if (SearchFields.filetype.name().equals(facet.getIndex())) {
@@ -56,6 +55,8 @@ public class ElasticAggregationFactory {
         TermsBuilder collectionAgg =
             AggregationBuilders.terms(SearchFields.col.name()).field(ElasticFields.FOLDER.field());
         systemAggregations.subAggregation(collectionAgg);
+      } else {
+        System.out.println("NOT CREATED AGGREGATION FOR FACET " + facet.getIndex());
       }
     }
     aggregations.add(metadataAggregations);
@@ -77,9 +78,27 @@ public class ElasticAggregationFactory {
         return getMetadataTextAggregation(facet, metadataField);
       case DATE:
         return getMetadataDateAggregation(facet, metadataField);
+      case NUMBER:
+        return getMetadataNumberAggregation(facet, metadataField);
       default:
         return null;
     }
+  }
+
+  /**
+   * Create aggregation for Date
+   * 
+   * @param facet
+   * @param metadataField
+   * @return
+   */
+  private static FilterAggregationBuilder getMetadataNumberAggregation(Facet facet,
+      String metadataField) {
+    FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
+        QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
+    fb.subAggregation(AggregationBuilders.stats(facet.getIndex()).field(getMetadataField(facet)));
+
+    return fb;
   }
 
   /**
@@ -131,6 +150,9 @@ public class ElasticAggregationFactory {
    * @return
    */
   public static String getMetadataField(Facet f) {
+    if (!f.getIndex().startsWith("md.")) {
+      return null;
+    }
     switch (StatementType.valueOf(f.getType())) {
       case TEXT:
         return "metadata.text.exact";
