@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.facet;
+package de.mpg.imeji.logic.search.facet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,9 +12,9 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.facet.controller.FacetController;
-import de.mpg.imeji.logic.facet.model.Facet;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.facet.controller.FacetController;
+import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;

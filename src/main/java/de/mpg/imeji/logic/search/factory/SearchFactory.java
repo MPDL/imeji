@@ -7,6 +7,7 @@ import java.util.List;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
 import de.mpg.imeji.logic.search.model.SearchElement;
@@ -47,7 +48,56 @@ public class SearchFactory {
    * @return
    */
   public SearchQuery build() {
-    return query;
+    return cleanQuery(query);
+  }
+
+  /**
+   * Return a clean Search Query
+   * 
+   * @param query
+   * @return
+   */
+  private SearchQuery cleanQuery(SearchQuery query) {
+    return new SearchQuery(cleanElements(query.getElements()));
+  }
+
+  /**
+   * Clean the elements
+   * 
+   * @param elements
+   * @return
+   */
+  private List<SearchElement> cleanElements(List<SearchElement> elements) {
+    List<SearchElement> cleaned = new ArrayList<>();
+    for (SearchElement element : elements) {
+      if (SEARCH_ELEMENTS.GROUP.equals(element.getType())) {
+        cleaned.addAll(cleanElements(element.getElements()));
+      } else {
+        cleaned.add(cleanElement(element));
+      }
+
+    }
+    return cleaned;
+  }
+
+  /**
+   * Clean a single element
+   * 
+   * @param element
+   * @return
+   */
+  private SearchElement cleanElement(SearchElement element) {
+    if (SEARCH_ELEMENTS.GROUP.equals(element.getType()) && element.getElements().size() == 1) {
+      return cleanElement(element.getElements().get(0));
+    }
+    return element;
+  }
+
+  public static void main(String[] args) throws UnprocessableError {
+    String q = "((md.title.text%3DMes+premières+photos)+AND+md.album.text%3D1+Album+au+hasard)";
+    SearchQuery sq = SearchQueryParser.parseStringQuery(q);
+    sq = new SearchFactory(sq).build();
+    System.out.println(SearchQueryParser.transform2URL(sq));
   }
 
   /**

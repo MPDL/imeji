@@ -410,7 +410,7 @@ public class SearchQueryParser {
    * @param op
    * @return
    */
-  private static String operator2URL(SearchOperators op) {
+  public static String operator2URL(SearchOperators op) {
     switch (op) {
       case GREATER:
         return ">";

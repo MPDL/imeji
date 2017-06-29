@@ -4,34 +4,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.aggregations.bucket.filter.InternalFilter;
-import org.elasticsearch.search.aggregations.bucket.global.InternalGlobal;
-import org.elasticsearch.search.aggregations.bucket.nested.InternalNested;
-import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.facet.model.FacetResult;
-import de.mpg.imeji.logic.facet.model.FacetResultValue;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchIndexer;
-import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticQueryFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
-import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.model.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
-import de.mpg.imeji.logic.search.model.SearchMetadata;
+import de.mpg.imeji.logic.search.elasticsearch.factory.util.AggregationsParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -88,11 +76,22 @@ public class ElasticSearch implements Search {
   @Override
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
       int from, int size) {
+    return search(query, sortCri, user, folderUri, from, size, false);
+  }
+
+  @Override
+  public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user,
+      String folderUri, int from, int size) {
+    return search(query, sortCri, user, folderUri, from, size, true);
+  }
+
+  private SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+      int from, int size, boolean addFacets) {
     size = size == -1 ? size = SEARCH_MAX_SIZE : size;
     if (size < SEARCH_MAX_SIZE) {
-      return searchSinglePage(query, sortCri, user, folderUri, from, size);
+      return searchSinglePage(query, sortCri, user, folderUri, from, size, addFacets);
     } else {
-      return searchWithScroll(query, sortCri, user, folderUri, from, size);
+      return searchWithScroll(query, sortCri, user, folderUri, from, size, addFacets);
     }
   }
 
@@ -109,14 +108,27 @@ public class ElasticSearch implements Search {
    * @return
    */
   private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
-      String folderUri, int from, int size) {
+      String folderUri, int from, int size, boolean addFacets) {
     final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
-    final AbstractAggregationBuilder agg = ElasticAggregationFactory.build(f);
-    final SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
-        .setNoFields().setQuery(QueryBuilders.matchAllQuery()).setPostFilter(f).setTypes(getTypes())
-        .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri)).addAggregation(agg)
-        .execute().actionGet();
+
+    SearchRequestBuilder request = ElasticService.getClient()
+        .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setQuery(f).setTypes(getTypes())
+        .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri));
+    if (addFacets) {
+      request = addAggregations(request);
+      System.out.println(request);
+    }
+    final SearchResponse resp = request.execute().actionGet();
+    System.out.println(resp);
     return toSearchResult(resp, query);
+  }
+
+  private SearchRequestBuilder addAggregations(SearchRequestBuilder request) {
+    final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build();
+    for (AbstractAggregationBuilder agg : aggregations) {
+      request.addAggregation(agg);
+    }
+    return request;
   }
 
   /**
@@ -131,12 +143,16 @@ public class ElasticSearch implements Search {
    * @return
    */
   private SearchResult searchWithScroll(SearchQuery query, SortCriterion sortCri, User user,
-      String folderUri, int from, int size) {
+      String folderUri, int from, int size, boolean addFacets) {
     final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
-    SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
-        .setScroll(new TimeValue(60000)).setNoFields().setQuery(QueryBuilders.matchAllQuery())
-        .setPostFilter(f).setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).setFrom(from)
-        .addSort(ElasticSortFactory.build(sortCri)).execute().actionGet();
+    SearchRequestBuilder request = ElasticService.getClient()
+        .prepareSearch(ElasticService.DATA_ALIAS).setScroll(new TimeValue(60000)).setNoFields()
+        .setQuery(QueryBuilders.matchAllQuery()).setPostFilter(f).setTypes(getTypes())
+        .setSize(SEARCH_MAX_SIZE).setFrom(from).addSort(ElasticSortFactory.build(sortCri));
+    if (addFacets) {
+      request = addAggregations(request);
+    }
+    SearchResponse resp = request.execute().actionGet();
     SearchResult result = toSearchResult(resp, query);
     while (true) {
       resp = ElasticService.getClient().prepareSearchScroll(resp.getScrollId())
@@ -193,48 +209,7 @@ public class ElasticSearch implements Search {
     for (final SearchHit hit : resp.getHits()) {
       ids.add(hit.getId());
     }
-    return new SearchResult(ids, resp.getHits().getTotalHits(), parseAggregations(resp, query));
-  }
-
-  private List<FacetResult> parseAggregations(SearchResponse resp, SearchQuery query) {
-    System.out.println(resp);
-    List<FacetResult> facetResults = new ArrayList<>();
-    if (resp != null && resp.getAggregations() != null
-        && resp.getAggregations().get("agg") != null) {
-      InternalGlobal agg = resp.getAggregations().get("agg");
-      for (Aggregation nestedAgg : agg.getAggregations()) {
-        if (nestedAgg instanceof InternalNested) {
-          for (Aggregation filterAgg : ((InternalNested) nestedAgg).getAggregations()) {
-            if (filterAgg instanceof InternalFilter) {
-              Aggregation mdAggregation =
-                  ((InternalFilter) filterAgg).getAggregations().asList().get(0);
-              FacetResult facetResult =
-                  new FacetResult(mdAggregation.getName(), mdAggregation.getName());
-              if (mdAggregation instanceof StringTerms) {
-
-                for (Bucket bucket : ((StringTerms) mdAggregation).getBuckets()) {
-                  SearchQuery facetQuery = new SearchQuery();
-                  try {
-                    facetQuery = new SearchFactory(query)
-                        .addElement(new SearchMetadata(facetResult.getIndex(), SearchFields.text,
-                            "\"" + bucket.getKeyAsString() + "\""), LOGICAL_RELATIONS.AND)
-                        .build();
-                  } catch (UnprocessableError e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                  }
-                  facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(),
-                      bucket.getDocCount(), SearchQueryParser.transform2UTF8URL(facetQuery)));
-                }
-              }
-              facetResults.add(facetResult);
-            }
-          }
-        }
-
-      }
-    }
-    return facetResults;
+    return new SearchResult(ids, resp.getHits().getTotalHits(), AggregationsParser.parse(resp));
   }
 
   /**

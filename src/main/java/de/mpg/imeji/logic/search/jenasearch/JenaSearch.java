@@ -87,6 +87,12 @@ public class JenaSearch implements Search {
     return new SearchResult(advanced(uris, sq, sortCri, user), sortCri);
   }
 
+  @Override
+  public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user,
+      String folderUri, int from, int size) {
+    return search(query, sortCri, user, folderUri, from, size);
+  }
+
   /**
    * Search for with query following sparql syntax
    *
@@ -276,4 +282,6 @@ public class JenaSearch implements Search {
         return J2JHelper.getResourceNamespace(new Item());
     }
   }
+
+
 }

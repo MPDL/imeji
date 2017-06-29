@@ -71,4 +71,14 @@ public class SearchMetadata extends SearchPair {
     return index;
   }
 
+  @Override
+  public boolean isSame(SearchElement element) {
+    if (SEARCH_ELEMENTS.METADATA == element.getType()) {
+      SearchMetadata smd = (SearchMetadata) element;
+      return smd.getIndex().equals(index) && smd.getField().equals(getField())
+          && smd.getValue().equals(getValue()) && smd.getOperator().equals(getOperator());
+    }
+    return false;
+  }
+
 }

@@ -484,9 +484,16 @@ public class ElasticQueryFactory {
         q = lessThanQuery(field, Long.toString(DateFormatter.getTime(dateString)));
         break;
       default:
-        q = QueryBuilders.rangeQuery(field)
-            .gte(Long.toString(DateFormatter.parseDate(dateString).getTime()))
-            .lte(Long.toString(DateFormatter.parseDate2(dateString).getTime()));
+        String[] dates = dateString.split(" to ");
+        if (dates.length == 2) {
+          q = QueryBuilders.rangeQuery(field)
+              .gte(Long.toString(DateFormatter.parseDate(dates[0]).getTime()))
+              .lte(Long.toString(DateFormatter.parseDate2(dates[1]).getTime()));
+        } else {
+          q = QueryBuilders.rangeQuery(field)
+              .gte(Long.toString(DateFormatter.parseDate(dateString).getTime()))
+              .lte(Long.toString(DateFormatter.parseDate2(dateString).getTime()));
+        }
         break;
     }
     return negate(q, not);
@@ -569,6 +576,7 @@ public class ElasticQueryFactory {
     }
     return matchNothing();
   }
+
 
   private static QueryBuilder geoQuery(String value) {
     final String[] values = value.split(",");

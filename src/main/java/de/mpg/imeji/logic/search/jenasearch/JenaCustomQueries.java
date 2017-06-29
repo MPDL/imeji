@@ -4,7 +4,7 @@ import java.net.URI;
 
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.facet.model.Facet;
+import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
