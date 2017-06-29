@@ -1,6 +1,8 @@
 package de.mpg.imeji.presentation.navigation.history;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -114,6 +116,10 @@ public class HistoryPage implements Serializable {
 
   public String getUrl() {
     return url;
+  }
+
+  public String getUrlEncoded() throws UnsupportedEncodingException {
+    return URLEncoder.encode(url, "UTF-8");
   }
 
   public void setUrl(String url) {

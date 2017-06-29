@@ -58,6 +58,7 @@ public class ShareBean extends SuperBean implements Serializable {
   private String collectionShareUrl;
   private String collectionName;
   private Object sharedObject;
+  private String userEmail;
 
   @PostConstruct
   public void construct() {
@@ -493,4 +494,14 @@ public class ShareBean extends SuperBean implements Serializable {
   public Object getSharedObject() {
     return sharedObject;
   }
+
+  public String getUserEmail() {
+    return userEmail;
+  }
+
+  public void setUserEmail(String userEmail) {
+    this.userEmail = userEmail;
+  }
+
+
 }

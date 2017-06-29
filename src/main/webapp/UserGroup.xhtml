@@ -71,22 +71,25 @@
 							<div class="imj_metadataValue">
 								<ug:add dialogId="addUser"/>
 								<ug:remove dialogId="removeUser"/>
-																
-								<h:outputLink id="hideUserButton" value="#" onclick="hideUsers();" style="display:#{UserGroup.getHideUsersButtonStyle()};">
-									<span class="fa fa-angle-up"></span> #{lbl.hide_users}
-								</h:outputLink>
+								
+								<p>								
+								
 								<h:outputLink id="showUserButton" value="#" onclick="showUsers();" style="display:#{UserGroup.getShowUsersButtonStyle()};">
 									<span class="fa fa-angle-down"></span> #{lbl.show_users}
 								</h:outputLink>
 
 								<h:form id="userList" style="display:#{UserGroup.getHideUsersButtonStyle()};">
+								<h:outputLink id="hideUserButton" value="#" onclick="hideUsers();" style="display:#{UserGroup.getHideUsersButtonStyle()};">
+									<span class="fa fa-angle-up"></span> #{lbl.hide_users}
+								</h:outputLink>
 									<ui:repeat var="user" value="#{UserGroup.users}" rows="0">
-										<br />
 										<h:outputText
 												value="#{user.person.completeName} (#{user.email}) " />
-											<h:commandLink  action="#{UserGroup.removeUserGromGroup(user.id)}" styleClass="fa fa-times"/>
+											<h:commandLink  action="#{UserGroup.removeUserFromGroup(user.id)}" styleClass="fa fa-times"/>
+											<br />
 									</ui:repeat>
 								</h:form>
+								</p>
 							</div>
 						</div>
 						<div class="imj_metadataSet">

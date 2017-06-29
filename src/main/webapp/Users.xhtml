@@ -110,19 +110,7 @@
 										confirmationText="#{msg.confirmation_delete_user}: #{user.person.completeName} (#{user.email})?"
 										submitLabel="#{lbl.user_admin_delete}"
 										dialogId="deleteUser#{row.index}" identifierName="email"
-										identifierValue="#{user.email}" />
-									<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton"
-										title="#{lbl.user_admin_newPwd}"
-										onclick="openDialog('sendNewPassword#{row.index}');"
-										rendered="#{not user.removed}">
-										<span class="fa fa-refresh"/> #{lbl.user_admin_newPwd}
-									</h:outputLink>
-									<dialog:confirmationDialog submitAction="sendPassword"
-										bean="#{UsersBean}"
-										confirmationText="#{msg.confirmation_new_password}"
-										submitLabel="#{lbl.user_admin_newPwd}"
-										dialogId="sendNewPassword#{row.index}"
-										identifierName="email" identifierValue="#{user.email}" />	
+										identifierValue="#{user.email}" />	
 								</div>
 							</ui:fragment>
 							<ui:fragment rendered="#{UsersBean.group != null}">

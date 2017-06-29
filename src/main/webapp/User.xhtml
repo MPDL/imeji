@@ -249,6 +249,7 @@
 								<div class="imj_metadataValue">
 									<ui:repeat var="shareHistory" value="#{UserBean.roles}"
 										rows="0" varStatus="row">
+										<ui:fragment rendered="#{shareHistory.role!=null}">
 										<div class="imj_metadataSet">
 											<div class="imj_metadataLabel">
 												<h:outputText
@@ -256,16 +257,21 @@
 													title="#{shareHistory.title}" />
 											</div>
 											<div class="imj_metadataValueEntry">
-												#{shareHistory.role} 
-													<h:outputLink value="#{Navigation.collectionUrl}#{shareHistory.shareToUriString}/share?email=#{UserBean.user.email}"
+											<table>
+											<tr>
+											<td width="60px">
+												#{shareHistory.role} </td>
+													<td style="padding:0px 5px 0px 5px;"><h:outputLink value="#{Navigation.collectionUrl}#{shareHistory.shareToUriString}/share?email=#{UserBean.user.email}"
 														title="#{lbl.change} #{lbl.grant_for} #{shareHistory.title}">
 														<span class="fa fa-mail-forward"></span>#{lbl.change} 
-													</h:outputLink>
-													<h:outputLink value="#"
+													</h:outputLink></td>
+													<td><h:outputLink value="#"
 														title="#{lbl.revoke} #{lbl.grant_for} #{shareHistory.title}"
 														onclick="openDialog('revokeDialog#{row.index}');">
 														<span class="fa fa-times"></span>#{lbl.revoke} 
-													</h:outputLink>
+													</h:outputLink></td>
+													</tr>
+												</table>
 													<dialog:confirmationDialog submitAction="revokeGrants"
 													bean="#{shareHistory}"
 													confirmationText="#{msg.confirmation_revoke_grant} &quot;#{shareHistory.title}&quot; ?"
@@ -273,6 +279,7 @@
 													dialogId="revokeDialog#{row.index}" />
 											</div>
 										</div>
+										</ui:fragment>
 									</ui:repeat>
 								</div>
 							</h:panelGroup>
@@ -319,9 +326,3 @@
 		</ui:fragment>
 	</ui:define>
 </ui:composition>
-
-
-
-
-
-

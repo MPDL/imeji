@@ -21,6 +21,7 @@ import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
 import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
 import de.mpg.imeji.logic.batch.ResizeWebAndThumbnailJob;
+import de.mpg.imeji.logic.batch.SendSubscribtionEmailJob;
 import de.mpg.imeji.logic.batch.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
@@ -341,6 +342,10 @@ public class AdminBean extends SuperBean {
   public void recalculateWebAndThumbnail() {
     ResizeWebAndThumbnailJob job = new ResizeWebAndThumbnailJob();
     Imeji.getEXECUTOR().submit(job);
+  }
+
+  public void test() {
+    Imeji.getEXECUTOR().submit(new SendSubscribtionEmailJob());
   }
 
 }
