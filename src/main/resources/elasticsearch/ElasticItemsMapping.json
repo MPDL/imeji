@@ -5,6 +5,11 @@
 				"type": "string",
 				"index": "not_analyzed"
 			},
+			"idstring": {
+				"type": "string",
+				"index": "not_analyzed",
+				"include_in_all": false
+			},
 			"checksum": {
 				"type": "string",
 				"index": "not_analyzed"

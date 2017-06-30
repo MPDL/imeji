@@ -60,7 +60,10 @@ public final class ElasticMetadata extends ElasticPerson {
     } else if (!StringHelper.isNullOrEmptyTrim(md.getName())) {
       s = md.getName();
     } else if (!StringHelper.isNullOrEmptyTrim(md.getTitle())) {
-      s = md.getText();
+      s = md.getTitle();
+    } else if (StringHelper.isNullOrEmptyTrim(md.getTitle())
+        && !StringHelper.isNullOrEmptyTrim(md.getUrl())) {
+      s = md.getUrl();
     } else if (!Double.isNaN(md.getNumber())) {
       s = Double.toString(md.getNumber());
     }

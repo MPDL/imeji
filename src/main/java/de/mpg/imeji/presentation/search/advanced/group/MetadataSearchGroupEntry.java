@@ -99,7 +99,7 @@ public class MetadataSearchGroupEntry implements Serializable {
     }
     if (!StringHelper.isNullOrEmptyTrim(metadata.getName())) {
       this.operator = SearchOperators.EQUALS;
-      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.name, operator,
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.placename, operator,
           metadata.getName(), not));
     }
     if (!StringHelper.isNullOrEmptyTrim(metadata.getTitle())) {

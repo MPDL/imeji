@@ -77,9 +77,9 @@ public class FacetSelectorEntryValue implements Serializable {
         case DATE:
           return buildMetadataDateQuery(facet, value);
         case PERSON:
-          return new SearchQuery();
+          return buildMetadataTextQuery(facet, value);
         case URL:
-          return new SearchQuery();
+          return buildMetadataTextQuery(facet, value);
         case GEOLOCATION:
           return new SearchQuery();
       }

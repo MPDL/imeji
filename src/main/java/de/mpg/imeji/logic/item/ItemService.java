@@ -625,7 +625,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * Copy Items to another collection and remove the original items
    * 
    * @param items
-   * @param collectionId
+   * @param collectionid
    * @param user
    * @throws ImejiException
    */

@@ -2,6 +2,8 @@ package de.mpg.imeji.logic.search.elasticsearch.factory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -11,7 +13,6 @@ import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuil
 import org.elasticsearch.search.aggregations.bucket.filters.FiltersAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedBuilder;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes;
@@ -19,6 +20,7 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.model.SearchFields;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.StatementType;
 
 /**
@@ -40,21 +42,13 @@ public class ElasticAggregationFactory {
       if (metadataField != null) {
         metadataAggregations.subAggregation(getMetadataAggregation(facet, metadataField));
       } else if (SearchFields.filetype.name().equals(facet.getIndex())) {
-        FiltersAggregationBuilder filetypeAggregation =
-            AggregationBuilders.filters(SearchFields.filetype.name());
-        for (ImejiFileTypes.Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
-          BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
-          for (String ext : type.getExtensionArray()) {
-            filetypeQuery.should(QueryBuilders
-                .queryStringQuery(ElasticFields.NAME.field() + ".suggest:" + "*." + ext));
-          }
-          filetypeAggregation.filter(type.getName(null), filetypeQuery);
-        }
-        systemAggregations.subAggregation(filetypeAggregation);
+        systemAggregations.subAggregation(getFiletypeAggregation(facet));
       } else if (SearchFields.col.name().equals(facet.getIndex())) {
-        TermsBuilder collectionAgg =
-            AggregationBuilders.terms(SearchFields.col.name()).field(ElasticFields.FOLDER.field());
-        systemAggregations.subAggregation(collectionAgg);
+        systemAggregations.subAggregation(getCollectionAggregation(facet));
+      } else if (SearchFields.license.name().equals(facet.getIndex())) {
+        systemAggregations.subAggregation(getLicenseAggregation(facet));
+      } else if (SearchFields.organization.name().equals(facet.getIndex())) {
+
       } else {
         System.out.println("NOT CREATED AGGREGATION FOR FACET " + facet.getIndex());
       }
@@ -63,6 +57,51 @@ public class ElasticAggregationFactory {
     aggregations.add(systemAggregations);
     return aggregations;
   }
+
+
+  /**
+   * Create the aggregation for the license
+   * 
+   * @param facet
+   * @return
+   */
+  private static AbstractAggregationBuilder getLicenseAggregation(Facet facet) {
+    List<String> licenses =
+        Stream.of(ImejiLicenses.values()).map(l -> l.name()).collect(Collectors.toList());
+    return AggregationBuilders.terms(SearchFields.license.name())
+        .field(ElasticFields.LICENSE.field()).include(licenses.toArray(new String[0]));
+  }
+
+  /**
+   * Create the aggregation for filetype
+   * 
+   * @param facet
+   * @return
+   */
+  private static AbstractAggregationBuilder getFiletypeAggregation(Facet facet) {
+    FiltersAggregationBuilder filetypeAggregation =
+        AggregationBuilders.filters(SearchFields.filetype.name());
+    for (ImejiFileTypes.Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
+      BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
+      for (String ext : type.getExtensionArray()) {
+        filetypeQuery.should(
+            QueryBuilders.queryStringQuery(ElasticFields.NAME.field() + ".suggest:" + "*." + ext));
+      }
+      filetypeAggregation.filter(type.getName(null), filetypeQuery);
+    }
+    return filetypeAggregation;
+  }
+
+  /**
+   * Create the aggregation for the collection
+   * 
+   * @param facet
+   * @return
+   */
+  private static AbstractAggregationBuilder getCollectionAggregation(Facet facet) {
+    return AggregationBuilders.terms(SearchFields.col.name()).field(ElasticFields.FOLDER.field());
+  }
+
 
   /**
    * Return the aggregation for metadata
@@ -75,11 +114,15 @@ public class ElasticAggregationFactory {
       String metadataField) {
     switch (StatementType.valueOf(facet.getType())) {
       case TEXT:
-        return getMetadataTextAggregation(facet, metadataField);
+        return getMetadataTextAggregation(facet);
       case DATE:
         return getMetadataDateAggregation(facet, metadataField);
       case NUMBER:
         return getMetadataNumberAggregation(facet, metadataField);
+      case URL:
+        return getMetadataTextAggregation(facet);
+      case PERSON:
+        return getMetadataTextAggregation(facet);
       default:
         return null;
     }
@@ -125,8 +168,7 @@ public class ElasticAggregationFactory {
    * @param metadataField
    * @return
    */
-  private static FilterAggregationBuilder getMetadataTextAggregation(Facet facet,
-      String metadataField) {
+  private static FilterAggregationBuilder getMetadataTextAggregation(Facet facet) {
     FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
         QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
     fb.subAggregation(AggregationBuilders.terms(facet.getName()).field(getMetadataField(facet)));
@@ -160,6 +202,10 @@ public class ElasticAggregationFactory {
         return "metadata.date";
       case NUMBER:
         return "metadata.number";
+      case URL:
+        return "metadata.text.exact";
+      case PERSON:
+        return "metadata.text.exact";
       default:
         return null;
     }

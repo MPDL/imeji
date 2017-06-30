@@ -29,6 +29,8 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.util.DateFormatter;
+import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Properties.Status;
@@ -248,6 +250,11 @@ public class ElasticQueryFactory {
             fieldQuery(ElasticFields.CHECKSUM, pair.getValue(), pair.getOperator(), pair.isNot()));
       case col:
         return fieldQuery(ElasticFields.FOLDER, pair.getValue(), pair.getOperator(), pair.isNot());
+      case collectionid: {
+        return fieldQuery(ElasticFields.FOLDER,
+            ObjectHelper.getURI(CollectionImeji.class, pair.getValue()).toString(),
+            pair.getOperator(), pair.isNot());
+      }
       case description:
         return fieldQuery(ElasticFields.DESCRIPTION, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -269,7 +276,7 @@ public class ElasticQueryFactory {
       case given:
         return fieldQuery(ElasticFields.GIVENNAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case org:
+      case organization:
         return fieldQuery(ElasticFields.ORGANIZATION, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case title:
@@ -316,12 +323,26 @@ public class ElasticQueryFactory {
       case email:
         return fieldQuery(ElasticFields.EMAIL, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
-      case itemId:
-        return QueryBuilders.hasParentQuery(ElasticTypes.items.name(),
-            fieldQuery(ElasticFields.ID, pair.getValue(), pair.getOperator(), pair.isNot()));
       case index:
         return fieldQuery(ElasticFields.METADATA_INDEX, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
+      case completename:
+        break;
+      case creatorid:
+        break;
+      case editor:
+        break;
+      case filesize:
+        break;
+      case id:
+        return fieldQuery(ElasticFields.IDSTRING, pair.getValue(), SearchOperators.EQUALS,
+            pair.isNot());
+      case md:
+        break;
+      case technical:
+        break;
+      default:
+        break;
     }
     return matchNothing();
   }
@@ -347,7 +368,7 @@ public class ElasticQueryFactory {
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
-      case name:
+      case placename:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_NAME, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());

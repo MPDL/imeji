@@ -32,11 +32,7 @@
 				class="imj_noDisplay">: </span>
 			</label>
 			<h:selectOneMenu id="selFacetType" value="#{cc.attrs.form.type}" >
-				<f:selectItem itemValue="TEXT" />
-				<f:selectItem itemValue="NUMBER" />
-				<f:selectItem itemValue="DATE" />
-				<f:selectItem itemValue="LINK" />
-				<f:selectItem itemValue="PERSON" />
+				<f:selectItems value="#{cc.attrs.form.typeList}"/>
 			</h:selectOneMenu>
 		</div>
 	</div>

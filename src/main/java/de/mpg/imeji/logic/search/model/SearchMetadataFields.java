@@ -7,5 +7,5 @@ package de.mpg.imeji.logic.search.model;
  *
  */
 public enum SearchMetadataFields {
-  exact, text, number, date, time, name, coordinates, url, title, familyname, completename, givenname, identifier, organisation;
+  exact, text, number, date, time, placename, coordinates, url, title, familyname, completename, givenname, identifier, organisation;
 }

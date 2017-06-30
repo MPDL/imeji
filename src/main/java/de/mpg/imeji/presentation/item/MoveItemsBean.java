@@ -95,7 +95,7 @@ public class MoveItemsBean extends SuperBean {
   /**
    * Move the selected items to the collection "destination"
    * 
-   * @param collectionId
+   * @param collectionid
    * @throws IOException
    */
   public void moveSelectedTo() throws IOException {
@@ -105,7 +105,7 @@ public class MoveItemsBean extends SuperBean {
   /**
    * Move a single Item to the collection "destination"
    * 
-   * @param collectionId
+   * @param collectionid
    * @param id
    * @throws IOException
    */

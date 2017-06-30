@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Metadata;
@@ -35,6 +36,7 @@ public final class ElasticItem extends ElasticProperties {
     this.folder = item.getCollection().toString();
     this.name = item.getFilename();
     this.license = getLicenseName(item);
+    System.out.println(license);
     this.size = item.getFileSize();
     this.filetype = item.getFiletype();
     if (item.getMetadata() != null) {
@@ -47,7 +49,11 @@ public final class ElasticItem extends ElasticProperties {
 
   private String getLicenseName(Item item) {
     final License license = LicenseUtil.getActiveLicense(item);
-    return license != null ? license.getName() : null;
+    if (license != null) {
+      return !StringHelper.isNullOrEmptyTrim(license.getName()) ? license.getName()
+          : license.getUrl();
+    }
+    return null;
   }
 
   /**
