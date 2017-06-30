@@ -16,17 +16,7 @@ import de.mpg.imeji.logic.vo.factory.StatementFactory;
 public class SearchMetadata extends SearchPair {
   private static final long serialVersionUID = -7422025148855635937L;
   private final String index;
-
-  /**
-   * Constructor with default value for operator (REGEX) and not (false)
-   * 
-   * @param index
-   * @param value
-   */
-  public SearchMetadata(String index, String value) {
-    super(null, value);
-    this.index = index;
-  }
+  private final SearchMetadataFields metadataField;
 
   /**
    * Search for a particular SearchField of a metadata (for instance familyName)
@@ -35,9 +25,10 @@ public class SearchMetadata extends SearchPair {
    * @param f
    * @param value
    */
-  public SearchMetadata(String index, SearchFields f, String value) {
-    super(f, value);
-    this.index = new StatementFactory().setIndex(index).build().getIndexUrlEncoded();;
+  public SearchMetadata(String index, SearchMetadataFields f, String value) {
+    super(null, value);
+    this.index = new StatementFactory().setIndex(index).build().getIndexUrlEncoded();
+    this.metadataField = f;
   }
 
   /**
@@ -48,10 +39,11 @@ public class SearchMetadata extends SearchPair {
    * @param value
    * @param not
    */
-  public SearchMetadata(String index, SearchFields f, SearchOperators operator, String value,
-      boolean not) {
-    super(f, operator, value, not);
+  public SearchMetadata(String index, SearchMetadataFields f, SearchOperators operator,
+      String value, boolean not) {
+    super(null, operator, value, not);
     this.index = index;
+    this.metadataField = f;
   }
 
   @Override
@@ -75,10 +67,17 @@ public class SearchMetadata extends SearchPair {
   public boolean isSame(SearchElement element) {
     if (SEARCH_ELEMENTS.METADATA == element.getType()) {
       SearchMetadata smd = (SearchMetadata) element;
-      return smd.getIndex().equals(index) && smd.getField().equals(getField())
+      return smd.getIndex().equals(index) && smd.getMetadataField().equals(getMetadataField())
           && smd.getValue().equals(getValue()) && smd.getOperator().equals(getOperator());
     }
     return false;
+  }
+
+  /**
+   * @return the metadataField
+   */
+  public SearchMetadataFields getMetadataField() {
+    return metadataField;
   }
 
 }

@@ -13,15 +13,17 @@
 
 <composite:implementation>
 	#{FacetSelectorBean.init(cc.attrs.itemsBean.searchResult)}
-	<ui:repeat var="facetName" value="#{FacetSelectorBean.entries.keySet().toArray()}" varStatus="row">
-		<div>
-			<div>#{facetName}</div>
-			<ui:repeat var="entry" value="#{FacetSelectorBean.entries.get(facetName)}">
-				<div>
-					<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{entry.addQuery(cc.attrs.itemsBean.facetQuery)}">#{entry.label} (#{entry.count})</a>
-				</div>
-			</ui:repeat>
-		</div>
+	<ui:repeat var="entry" value="#{FacetSelectorBean.entries}" varStatus="row">
+		<ui:fragment rendered="#{!SearchBreadcrumb.isSelected(entry.facet.index)}">
+			<div>
+				<div>#{entry.facet.name}</div>
+				<ui:repeat var="value" value="#{entry.values}">
+					<div>
+						<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.addQuery}">#{value.label} (#{value.count})</a>
+					</div>
+				</ui:repeat>
+			</div>
+		</ui:fragment>
 	</ui:repeat>
 </composite:implementation>
 </html>

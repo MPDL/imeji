@@ -13,7 +13,6 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
-import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
@@ -70,8 +69,8 @@ public class SearchBreadcrumbBean extends SuperBean {
     return l;
   }
 
-  public boolean isSelected(FacetResult f) {
-    return entries.stream().anyMatch(e -> e.getIndex().equals(f.getIndex()));
+  public boolean isSelected(String index) {
+    return entries.stream().anyMatch(e -> e.getIndex().equals(index));
   }
 
   /**

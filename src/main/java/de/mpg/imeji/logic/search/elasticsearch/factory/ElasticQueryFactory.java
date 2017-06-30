@@ -285,9 +285,6 @@ public class ElasticQueryFactory {
       case read:
         return fieldQuery(ElasticFields.READ, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
-      case date:
-        return timeQuery(ElasticFields.METADATA_NUMBER.name(), pair.getValue(), pair.getOperator(),
-            pair.isNot());
       case filename:
         return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case filetype:
@@ -297,45 +294,13 @@ public class ElasticQueryFactory {
         final GrantType grant = pair.getValue().equals("upload") ? GrantType.EDIT
             : GrantType.valueOf(pair.getValue().toUpperCase());
         return buildGrantQuery(user, grant);
-      case member:
-        return fieldQuery(ElasticFields.MEMBER, pair.getValue(), pair.getOperator(), pair.isNot());
       case license:
         return licenseQuery(pair);
       case modified:
         return timeQuery(ElasticFields.MODIFIED.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case number:
-        return fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case person:
-        return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case person_family:
-        return fieldQuery(ElasticFields.METADATA_FAMILYNAME, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case person_given:
-        return fieldQuery(ElasticFields.METADATA_GIVENNAME, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case person_org:
-        return fieldQuery(ElasticFields.METADATA_FAMILYNAME, pair.getValue(), pair.getOperator(),
-            pair.isNot());
       case status:
         return fieldQuery(ElasticFields.STATUS, formatStatusSearchValue(pair), pair.getOperator(),
-            pair.isNot());
-      case text:
-        return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case time:
-        return timeQuery(ElasticFields.METADATA_NUMBER.name(), pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case name:
-        return fieldQuery(ElasticFields.METADATA_NAME, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case url:
-        return fieldQuery(ElasticFields.METADATA_URI, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case coordinates:
-        return fieldQuery(ElasticFields.METADATA_LOCATION, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case pid:
         return fieldQuery(ElasticFields.PID, pair.getValue(), pair.getOperator(), pair.isNot());
@@ -368,12 +333,16 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder metadataFilter(SearchMetadata md) {
-    if (md.getField() == null) {
+    if (md.getMetadataField() == null) {
       return metadataQuery(
           fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
           md.getIndex());
     }
-    switch (md.getField()) {
+    switch (md.getMetadataField()) {
+      case exact:
+        return metadataQuery(
+            fieldQuery(ElasticFields.METADATA_EXACT, md.getValue(), md.getOperator(), md.isNot()),
+            md.getIndex());
       case text:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
@@ -384,7 +353,7 @@ public class ElasticQueryFactory {
             md.getIndex());
       case title:
         return metadataQuery(
-            fieldQuery(ElasticFields.METADATA_title, md.getValue(), md.getOperator(), md.isNot()),
+            fieldQuery(ElasticFields.METADATA_TITLE, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
       case number:
         return metadataQuery(
@@ -397,10 +366,10 @@ public class ElasticQueryFactory {
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_URI, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
-      case person_family:
+      case familyname:
         return metadataQuery(fieldQuery(ElasticFields.METADATA_FAMILYNAME, md.getValue(),
             md.getOperator(), md.isNot()), md.getIndex());
-      case person_given:
+      case givenname:
         return metadataQuery(fieldQuery(ElasticFields.METADATA_GIVENNAME, md.getValue(),
             md.getOperator(), md.isNot()), md.getIndex());
       case coordinates:
