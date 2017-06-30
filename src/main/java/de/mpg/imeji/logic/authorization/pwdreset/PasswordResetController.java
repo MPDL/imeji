@@ -82,14 +82,30 @@ public class PasswordResetController {
     try {
       token = (PasswordResetToken) tokens.get(StringHelper.md5(tokenString));
       token.getUser().setEncryptedPassword(StringHelper.md5(password));
-      final USER_TYPE type =
-          isAuthorizedEmail(token.getUser().getEmail()) ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED;
+    } catch (Exception e) {
+      throw new UnprocessableError("The token was not found");
+    }
+    final USER_TYPE type =
+        isAuthorizedEmail(token.getUser().getEmail()) ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED;
+    boolean exists = false;
+    try {
+      new UserService().retrieve(token.getUser().getEmail(), Imeji.adminUser);
+      exists = true;
+    } catch (ImejiException e) {
+      // This is correct
+    }
+    if (exists) {
+      throw new UnprocessableError("This user is already activated");
+    }
+    try {
       (new UserService()).create(token.getUser(), type);
       tokens.delete(token.getEncryptedToken());
-      return token.getUser();
     } catch (Exception e) {
-      throw new UnprocessableError("The token or the user was not found");
+      throw new UnprocessableError(
+          "An error happend while trying to activate the user. Please try again.");
     }
+    return token.getUser();
+
   }
 
 

@@ -3,7 +3,9 @@ package de.mpg.imeji.presentation.security;
 import static de.mpg.imeji.logic.util.StringHelper.isNullOrEmptyTrim;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -41,7 +43,7 @@ public class LoginBean extends SuperBean {
   private String passwd;
   @ManagedProperty(value = "#{SessionBean}")
   private SessionBean sessionBean;
-  private String redirect;
+  private String redirect = null;
   private static final Logger LOGGER = Logger.getLogger(LoginBean.class);
   private String requestUrl;
 
@@ -126,6 +128,19 @@ public class LoginBean extends SuperBean {
   public void setSessionBean(SessionBean sessionBean) {
     this.sessionBean = sessionBean;
   }
+
+  public String getRedirect() {
+    return redirect;
+  }
+
+  public void setRedirect(String redirect) {
+    this.redirect = redirect;
+  }
+
+  public String getEncodedRedirect() throws UnsupportedEncodingException {
+    return URLEncoder.encode(UrlHelper.getParameterValue("redirect"), "UTF-8");
+  }
+
 
 
 }

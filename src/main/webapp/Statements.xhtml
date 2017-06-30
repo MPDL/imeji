@@ -12,11 +12,13 @@
 	<ui:param name="currentMainMenu" value="admin" />
 
 	<ui:define name="actionsMenu">
+		<ui:fragment rendered="#{Auth.sysAdmin}">
 		<form action="#{Navigation.homeUrl}/createstatement">
 			<button id="createStatement" class="imj_submitButton">
 				#{lbl.statement_new}
 			</button >
 		</form>
+		</ui:fragment>
 	</ui:define>
 
 	<ui:define name="mainContent">

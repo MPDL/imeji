@@ -138,7 +138,6 @@ public final class ImageUtils {
       }
       ImageIO.write(res, "jpg", file);
 
-      System.out.println("Done rotating");
     } catch (final Exception e) {
       LOGGER.info("Image could not be rotated: ", e);
     }

@@ -127,8 +127,9 @@ public class RegistrationBean extends SuperBean {
       // send to requester
       emailClient.sendMail(getUser().getEmail(), Imeji.CONFIG.getEmailServerSender(),
           EmailMessages.getEmailOnRegistrationRequest_Subject(getLocale()),
-          EmailMessages.getEmailOnRegistrationRequest_Body(getUser(), url, exprirationDate,
-              Imeji.CONFIG.getContactEmail(), getLocale(), getNavigation().getRegistrationUrl()));
+          EmailMessages.getEmailOnRegistrationRequest_Body(getUser(), url,
+              Imeji.CONFIG.getContactEmail(), exprirationDate, getLocale(),
+              getNavigation().getRegistrationUrl()));
     } catch (final Exception e) {
       LOGGER.error("Error sending email", e);
       BeanHelper.error("Error: Email not sent");

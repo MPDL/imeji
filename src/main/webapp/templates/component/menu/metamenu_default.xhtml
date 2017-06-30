@@ -5,6 +5,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
+	
 	<div class="imj_metaMenuStandardSingleLine">
 		
 		<div class="imj_metaMenuItemsAlign">
@@ -20,8 +21,9 @@
 			
 			<!-- LogIn, LogOut -->
 			<h:form id="loginForm">
+				<ui:param name="redirectUrl" value="#{LoginBean.redirect==null?SuperBean.currentPage.urlEncoded:LoginBean.encodedRedirect}"/>
 				<h:panelGroup rendered="#{!Auth.loggedIn}" styleClass="imj_metaMenuItem imj_loginFormHidden">
-					<a href="#{Navigation.loginUrl}?redirect=#{SuperBean.currentPage.url}" id="lnkshowLogin" class="imj_metaMenuItem">#{lbl.login}</a>
+					<a href="#{Navigation.loginUrl}?redirect=#{redirectUrl}" id="lnkshowLogin" class="imj_metaMenuItem">#{lbl.login}</a>
 				</h:panelGroup>
 				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationUrl}?logout=1" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
 					<h:outputText value="#{lbl.logout}"/>
@@ -69,15 +71,5 @@
 		</div>
 		
 	</div>
-	
-	<script>
-		$(document).ready(function() {
-			$('.imj_loginFormDisplay').hide();
-		    $('#lnkshowLogin').click(function() {
-		         $('.imj_loginFormDisplay').toggle();
-		         $(this).hide();
-		    });
-		});
-	</script>
 	<!-- meta Menu ends here -->
 </ui:composition>

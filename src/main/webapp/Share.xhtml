@@ -13,17 +13,17 @@
 	<ui:param name="iconStatusDisplayStatusOnly" value="true" />
 	
 	<f:metadata>
-		<f:viewParam name="email" value="email"/>
+		<f:viewParam name="email" value="#{ShareBean.userEmail}"/>
 	</f:metadata>
 
 
 	<ui:define name="mainContent">
 		<div class="imj_backPanel">
-			<h:outputLink value="#{ShareBean.backUrl}" rendered="#{email==''}">
+			<h:outputLink value="#{ShareBean.backUrl}" rendered="#{ShareBean.userEmail==null}">
 				<span class="fa fa-arrow-circle-o-left"/>
 				<h:outputText value=" #{lbl.back_to} #{ShareBean.title}" />
 			</h:outputLink>
-			<h:outputLink value="#{Navigation.userUrl}?email=#{email}" rendered="#{email!=''}">
+			<h:outputLink value="#{Navigation.userUrl}?email=#{ShareBean.userEmail}" rendered="#{ShareBean.userEmail!=null}">
 				<span class="fa fa-arrow-circle-o-left"/>
 				<h:outputText value=" #{lbl.back_to} #{lbl.user}" />
 			</h:outputLink>

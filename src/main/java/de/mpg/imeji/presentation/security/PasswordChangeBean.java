@@ -146,7 +146,7 @@ public class PasswordChangeBean extends SuperBean {
     if (token == null || !(new PasswordResetController()).isValidToken(token)) {
       BeanHelper
           .error(Imeji.RESOURCE_BUNDLE.getMessage("error_password_link_invalid", getLocale()));
-      redirect(getNavigation().getRegistrationUrl());
+      redirect(getNavigation().getHomeUrl());
     }
     if (newPassword == null || newPassword.equals("")) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_empty_password", getLocale()));
@@ -156,7 +156,14 @@ public class PasswordChangeBean extends SuperBean {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_user_repeat_password", getLocale()));
       reloadPage();
     }
-    User user = (new PasswordResetController()).activate(token, newPassword);
+    User user = null;
+    try {
+      user = (new PasswordResetController()).activate(token, newPassword);
+    } catch (Exception e) {
+      BeanHelper.error(e.getMessage());
+      redirect(getNavigation().getHomeUrl());
+      return;
+    }
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("account_activated", getLocale()));
     (new EmailService()).sendMail(user.getEmail(), null,
         EmailMessages.getEmailOnAccountActivation_Subject(user, getLocale()),
