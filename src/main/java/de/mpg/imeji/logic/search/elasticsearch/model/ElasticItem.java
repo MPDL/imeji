@@ -36,7 +36,6 @@ public final class ElasticItem extends ElasticProperties {
     this.folder = item.getCollection().toString();
     this.name = item.getFilename();
     this.license = getLicenseName(item);
-    System.out.println(license);
     this.size = item.getFileSize();
     this.filetype = item.getFiletype();
     if (item.getMetadata() != null) {

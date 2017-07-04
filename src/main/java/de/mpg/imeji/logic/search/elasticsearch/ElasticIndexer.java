@@ -26,6 +26,8 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFolder;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticItem;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUser;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
+import de.mpg.imeji.logic.search.elasticsearch.script.CollectionPostIndexScript;
+import de.mpg.imeji.logic.search.elasticsearch.script.ItemPostIndexScript;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.ContentVO;
@@ -88,6 +90,23 @@ public class ElasticIndexer implements SearchIndexer {
     }
     if (!(l.get(0) instanceof ContentVO)) {
       commit();
+    }
+    updateIndexBatchPostProcessing(l);
+  }
+
+  /**
+   * 
+   * @param l
+   */
+  private void updateIndexBatchPostProcessing(List<?> l) {
+    if (l.isEmpty()) {
+      return;
+    }
+    ItemPostIndexScript.run(l, index);
+    for (Object o : l) {
+      if (o instanceof CollectionImeji) {
+        CollectionPostIndexScript.run((CollectionImeji) o, index);
+      }
     }
   }
 
@@ -237,6 +256,8 @@ public class ElasticIndexer implements SearchIndexer {
     if (obj instanceof ContentVO) {
       return StringHelper.isNullOrEmptyTrim(((ContentVO) obj).getItemId()) ? null
           : ((ContentVO) obj).getItemId();
+    } else if (obj instanceof Item) {
+      return ((Item) obj).getCollection().toString();
     }
     return null;
   }

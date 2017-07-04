@@ -255,6 +255,8 @@ public class ElasticQueryFactory {
             ObjectHelper.getURI(CollectionImeji.class, pair.getValue()).toString(),
             pair.getOperator(), pair.isNot());
       }
+      case title:
+        return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case description:
         return fieldQuery(ElasticFields.DESCRIPTION, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -267,9 +269,21 @@ public class ElasticQueryFactory {
       case author:
         return fieldQuery(ElasticFields.AUTHOR_COMPLETENAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case author_org:
+      case author_organization:
         return fieldQuery(ElasticFields.AUTHOR_ORGANIZATION, pair.getValue(), pair.getOperator(),
             pair.isNot());
+      case collection_title:
+        return parentCollectionQuery(
+            fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot()));
+      case collection_description:
+        return parentCollectionQuery(fieldQuery(ElasticFields.AUTHOR_COMPLETENAME, pair.getValue(),
+            pair.getOperator(), pair.isNot()));
+      case collection_author:
+        return fieldQuery(ElasticFields.AUTHORS_OF_COLLECTION, pair.getValue(), pair.getOperator(),
+            pair.isNot());
+      case collection_author_organisation:
+        return fieldQuery(ElasticFields.ORGANIZATION_OF_COLLECTION, pair.getValue(),
+            pair.getOperator(), pair.isNot());
       case family:
         return fieldQuery(ElasticFields.FAMILYNAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -279,8 +293,7 @@ public class ElasticQueryFactory {
       case organization:
         return fieldQuery(ElasticFields.ORGANIZATION, pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case title:
-        return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
+
       case created:
         return timeQuery(ElasticFields.CREATED.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -574,8 +587,6 @@ public class ElasticQueryFactory {
     final double lat = Double.parseDouble(values[0]);
     final double lon = Double.parseDouble(values[1]);
     if (values.length == 3) {
-      System.out.println(values[2]);
-      System.out.println(values[2].matches("[0]+[a-zA-Z]{1}$"));
       distance =
           (values[2].equals("0") || values[2].matches("[0]+[a-zA-Z]{1,2}$")) ? distance : values[2];
     }
@@ -723,6 +734,10 @@ public class ElasticQueryFactory {
       }
     }
     return licenseQuery;
+  }
+
+  private static QueryBuilder parentCollectionQuery(QueryBuilder qb) {
+    return QueryBuilders.hasParentQuery(ElasticTypes.folders.name(), qb);
   }
 
   /**

@@ -56,6 +56,7 @@ public class FacetSelectorEntryValue implements Serializable {
 
   private SearchQuery buildEntryQuery(Facet facet, String value) {
     boolean isMetadataFacet = facet.getIndex().startsWith("md.");
+    value = "\"" + value + "\"";
     return isMetadataFacet ? buildMetadataQuery(facet, value) : buildSystemQuery(facet, value);
 
   }
@@ -120,7 +121,8 @@ public class FacetSelectorEntryValue implements Serializable {
   private SearchQuery buildSystemQuery(Facet facet, String value) {
     try {
       return new SearchFactory()
-          .addElement(new SearchPair(SearchFields.valueOf(facet.getIndex()), value), AND).build();
+          .addElement(new SearchPair(SearchFields.valueOfIndex(facet.getIndex()), value), AND)
+          .build();
     } catch (UnprocessableError e) {
       LOGGER.error("Error building facet system query", e);
       return new SearchQuery();

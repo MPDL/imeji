@@ -20,7 +20,7 @@ public final class ElasticFolder extends ElasticProperties {
   private final String description;
   private final String creators;
   private final List<String> pid;
-  private final List<ElasticPerson> person = new ArrayList<>();
+  private final List<ElasticPerson> author = new ArrayList<>();
   private final List<ElasticContainerAdditionalInfo> info = new ArrayList<>();
 
   public ElasticFolder(CollectionImeji c) {
@@ -31,7 +31,7 @@ public final class ElasticFolder extends ElasticProperties {
     this.creators =
         c.getPersons().stream().map(p -> p.getCompleteName()).collect(Collectors.joining(";"));
     for (final Person p : c.getPersons()) {
-      person.add(new ElasticPerson(p));
+      author.add(new ElasticPerson(p));
     }
     for (final ContainerAdditionalInfo i : c.getAdditionalInformations()) {
       info.add(new ElasticContainerAdditionalInfo(i));
@@ -56,8 +56,8 @@ public final class ElasticFolder extends ElasticProperties {
     return description;
   }
 
-  public List<ElasticPerson> getPerson() {
-    return person;
+  public List<ElasticPerson> getAuthor() {
+    return author;
   }
 
   public List<String> getPid() {

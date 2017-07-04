@@ -47,8 +47,11 @@ public class ElasticAggregationFactory {
         systemAggregations.subAggregation(getCollectionAggregation(facet));
       } else if (SearchFields.license.name().equals(facet.getIndex())) {
         systemAggregations.subAggregation(getLicenseAggregation(facet));
-      } else if (SearchFields.organization.name().equals(facet.getIndex())) {
-
+      } else if (SearchFields
+          .valueOfIndex(facet.getIndex()) == SearchFields.collection_author_organisation) {
+        systemAggregations.subAggregation(getOrganizationsOfCollectionAggregation(facet));
+      } else if (SearchFields.valueOfIndex(facet.getIndex()) == SearchFields.collection_author) {
+        systemAggregations.subAggregation(getAuthorsOfCollectionAggregation(facet));
       } else {
         System.out.println("NOT CREATED AGGREGATION FOR FACET " + facet.getIndex());
       }
@@ -102,6 +105,16 @@ public class ElasticAggregationFactory {
     return AggregationBuilders.terms(SearchFields.col.name()).field(ElasticFields.FOLDER.field());
   }
 
+  private static AbstractAggregationBuilder getAuthorsOfCollectionAggregation(Facet facet) {
+    return AggregationBuilders.terms(facet.getIndex())
+        .field(ElasticFields.AUTHORS_OF_COLLECTION.field());
+  }
+
+
+  private static AbstractAggregationBuilder getOrganizationsOfCollectionAggregation(Facet facet) {
+    return AggregationBuilders.terms(facet.getIndex())
+        .field(ElasticFields.ORGANIZATION_OF_COLLECTION.field());
+  }
 
   /**
    * Return the aggregation for metadata
