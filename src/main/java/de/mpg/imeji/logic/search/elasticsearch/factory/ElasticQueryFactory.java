@@ -9,6 +9,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 
 import com.hp.hpl.jena.util.iterator.Filter;
 
@@ -30,6 +31,7 @@ import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
@@ -390,9 +392,8 @@ public class ElasticQueryFactory {
             fieldQuery(ElasticFields.METADATA_TITLE, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
       case number:
-        return metadataQuery(
-            fieldQuery(ElasticFields.METADATA_NUMBER, md.getValue(), md.getOperator(), md.isNot()),
-            md.getIndex());
+        return metadataQuery(numberQuery(ElasticFields.METADATA_NUMBER.field(), md.getValue(),
+            md.getOperator(), md.isNot()), md.getIndex());
       case date:
         return metadataQuery(timeQuery(ElasticFields.METADATA_TIME.field(), md.getValue(),
             md.getOperator(), md.isNot()), md.getIndex());
@@ -502,7 +503,36 @@ public class ElasticQueryFactory {
     return negate(q, not);
   }
 
-
+  private static QueryBuilder numberQuery(String field, String number, SearchOperators operator,
+      boolean not) {
+    QueryBuilder q = null;
+    if (operator == null) {
+      operator = SearchOperators.EQUALS;
+    }
+    switch (operator) {
+      case GREATER:
+        q = greaterThanQuery(field, number);
+        break;
+      case LESSER:
+        q = lessThanQuery(field, number);
+        break;
+      default:
+        int fromIndex = number.indexOf("from");
+        int toIndex = number.indexOf("to");
+        String from = number.substring(fromIndex + "from".length(), toIndex);
+        String to = number.substring(toIndex + "to".length());
+        RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
+        if (!StringHelper.isNullOrEmptyTrim(from)) {
+          rq.gte(from);
+        }
+        if (!StringHelper.isNullOrEmptyTrim(to)) {
+          rq.lt(to);
+        }
+        q = rq;
+        break;
+    }
+    return negate(q, not);
+  }
 
   /**
    * Create a {@link QueryBuilder} - used to sarch for metadata which are defined with a statement
