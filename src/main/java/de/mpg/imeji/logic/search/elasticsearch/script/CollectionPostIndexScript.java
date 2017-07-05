@@ -1,10 +1,8 @@
 package de.mpg.imeji.logic.search.elasticsearch.script;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
@@ -13,7 +11,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.SearchHit;
@@ -21,6 +18,7 @@ import org.elasticsearch.search.SearchHit;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
+import de.mpg.imeji.logic.search.elasticsearch.script.misc.CollectionFields;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 
 /**
@@ -60,7 +58,7 @@ public class CollectionPostIndexScript {
       return;
     }
     final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
-    final XContentBuilder json = buildJSONWithAuthorAndOrganization(c);
+    final XContentBuilder json = new CollectionFields(c).toXContentBuilder();
     for (final String id : ids) {
       final UpdateRequestBuilder req =
           ElasticService.getClient().prepareUpdate(index, ElasticTypes.items.name(), id)
@@ -73,19 +71,6 @@ public class CollectionPostIndexScript {
         LOGGER.error(resp.buildFailureMessage());
       }
     }
-  }
-
-  private static XContentBuilder buildJSONWithAuthorAndOrganization(CollectionImeji c)
-      throws IOException {
-    XContentBuilder xcb = XContentFactory.jsonBuilder().startObject();
-    xcb.field("authorsOfCollection",
-        c.getPersons().stream().map(p -> p.getCompleteName()).collect(Collectors.toList()))
-        .field("organizationsOfCollection",
-            c.getPersons().stream().flatMap(p -> p.getOrganizations().stream())
-                .map(o -> o.getName()).collect(Collectors.toList()));
-
-    xcb.endObject();
-    return xcb;
   }
 
   /**

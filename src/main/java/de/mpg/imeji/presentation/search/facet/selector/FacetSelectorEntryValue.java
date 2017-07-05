@@ -37,11 +37,27 @@ public class FacetSelectorEntryValue implements Serializable {
 
   public FacetSelectorEntryValue(FacetResultValue resultValue, Facet facet,
       SearchQuery facetsQuery) {
-    this.label = resultValue.getLabel();
+    this.label = readLabel(resultValue, facet);
     this.count = resultValue.getCount();
     this.index = facet.getIndex();
     this.type = facet.getType();
-    this.addQuery = buildAddQuery(buildEntryQuery(facet, resultValue.getLabel()), facetsQuery);
+    this.addQuery =
+        buildAddQuery(buildEntryQuery(facet, readQueryValue(resultValue, facet)), facetsQuery);
+  }
+
+  private String readLabel(FacetResultValue resultValue, Facet facet) {
+    if (facet.getIndex().equals(SearchFields.col.getIndex())) {
+      String[] f = resultValue.getLabel().split(" ", 2);
+      return resultValue.getLabel().split(" ", 2)[1];
+    }
+    return resultValue.getLabel();
+  }
+
+  private String readQueryValue(FacetResultValue resultValue, Facet facet) {
+    if (facet.getIndex().equals(SearchFields.col.getIndex())) {
+      return resultValue.getLabel().split(" ", 2)[0];
+    }
+    return resultValue.getLabel();
   }
 
   private String buildAddQuery(SearchQuery entryQuery, SearchQuery facetsQuery) {

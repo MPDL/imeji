@@ -22,6 +22,7 @@ import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.StatementType;
+import de.mpg.imeji.util.DateHelper;
 
 /**
  * Entry of the {@link FacetSelectorBean}
@@ -73,8 +74,20 @@ public class FacetSelectorEntry implements Serializable {
     return facet.getIndex().replace("md.", "").split("\\.")[0];
   }
 
+  /**
+   * True if the input is valid
+   * 
+   * @return
+   */
   private boolean isValidInput() {
-    return NumberUtils.isNumber(from) && NumberUtils.isNumber(to);
+    switch (StatementType.valueOf(facet.getType())) {
+      case NUMBER:
+        return NumberUtils.isNumber(from) && NumberUtils.isNumber(to);
+      case DATE:
+        return DateHelper.isValidDate(from) && DateHelper.isValidDate(to);
+      default:
+        return false;
+    }
   }
 
   private String getIntervalSearchValue() {

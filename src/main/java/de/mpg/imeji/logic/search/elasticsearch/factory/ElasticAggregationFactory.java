@@ -102,7 +102,8 @@ public class ElasticAggregationFactory {
    * @return
    */
   private static AbstractAggregationBuilder getCollectionAggregation(Facet facet) {
-    return AggregationBuilders.terms(SearchFields.col.name()).field(ElasticFields.FOLDER.field());
+    return AggregationBuilders.terms(facet.getIndex())
+        .field(ElasticFields.TITLE_WITH_ID_OF_COLLECTION.field());
   }
 
   private static AbstractAggregationBuilder getAuthorsOfCollectionAggregation(Facet facet) {

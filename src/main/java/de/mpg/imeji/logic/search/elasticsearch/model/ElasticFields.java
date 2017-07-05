@@ -30,7 +30,8 @@ public enum ElasticFields {
                                                                                   "technical.value"), PARENT(
                                                                                       "_parent"), AUTHORS_OF_COLLECTION(
                                                                                           "authorsOfCollection"), ORGANIZATION_OF_COLLECTION(
-                                                                                              "organizationsOfCollection");
+                                                                                              "organizationsOfCollection"), TITLE_WITH_ID_OF_COLLECTION(
+                                                                                                  "titleWithIdOfCollection");
   /**
    * The field which must be used to search in elasticsearch
    */

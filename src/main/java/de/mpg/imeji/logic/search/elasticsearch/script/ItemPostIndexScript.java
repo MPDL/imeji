@@ -1,6 +1,5 @@
 package de.mpg.imeji.logic.search.elasticsearch.script;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,7 +9,6 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -37,7 +35,7 @@ public class ItemPostIndexScript {
       try {
         CollectionFields fields = retrieveCollectionFields(item, index);
         if (fields != null) {
-          final XContentBuilder json = buildJSONWithAuthorAndOrganization(fields);
+          final XContentBuilder json = fields.toXContentBuilder();
           final UpdateRequestBuilder req = ElasticService.getClient()
               .prepareUpdate(index, ElasticTypes.items.name(), item.getId().toString()).setDoc(json)
               .setParent(item.getCollection().toString());
@@ -56,24 +54,17 @@ public class ItemPostIndexScript {
     }
   }
 
-  private static XContentBuilder buildJSONWithAuthorAndOrganization(CollectionFields fields)
-      throws IOException {
-    XContentBuilder xcb = XContentFactory.jsonBuilder().startObject();
-    xcb.field("authorsOfCollection", fields.getAuthors()).field("organizationsOfCollection",
-        fields.getOrganizations());
-    xcb.endObject();
-    return xcb;
-  }
-
   private static CollectionFields retrieveCollectionFields(Item item, String index) {
     GetResponse resp = ElasticService.getClient()
         .prepareGet(index, ElasticTypes.folders.name(), item.getCollection().toString())
         .setFields(ElasticFields.AUTHOR_COMPLETENAME.field(),
-            ElasticFields.AUTHOR_ORGANIZATION.field())
+            ElasticFields.AUTHOR_ORGANIZATION.field(), ElasticFields.ID.field(),
+            ElasticFields.NAME.field())
         .get();
     if (resp.isExists()) {
       return new CollectionFields(resp.getField(ElasticFields.AUTHOR_COMPLETENAME.field()),
-          resp.getField(ElasticFields.AUTHOR_ORGANIZATION.field()));
+          resp.getField(ElasticFields.AUTHOR_ORGANIZATION.field()),
+          resp.getField(ElasticFields.ID.field()), resp.getField(ElasticFields.NAME.field()));
     }
     return null;
   }

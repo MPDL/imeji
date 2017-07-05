@@ -30,7 +30,15 @@
 						<h:commandButton value="#{lbl.go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}"/>
 					</h:form>
 				</ui:fragment>
-				
+				<ui:fragment rendered="#{entry.facet.type == 'DATE'}">
+					<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/datepicker.js"/>
+					<h:form>
+						<h:inputText value="#{entry.from}" html5:placeholder="#{lbl.from}"  styleClass="datepicker"/>
+						- 
+						<h:inputText value="#{entry.to}" html5:placeholder="#{lbl.to}"  styleClass="datepicker"/>
+						<h:commandButton value="#{lbl.go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}"/>
+					</h:form>
+				</ui:fragment>
 			</div>
 			
 		</ui:fragment>

@@ -488,20 +488,22 @@ public class ElasticQueryFactory {
         q = lessThanQuery(field, Long.toString(DateFormatter.getTime(dateString)));
         break;
       default:
-        String[] dates = dateString.split(" to ");
-        if (dates.length == 2) {
-          q = QueryBuilders.rangeQuery(field)
-              .gte(Long.toString(DateFormatter.parseDate(dates[0]).getTime()))
-              .lte(Long.toString(DateFormatter.parseDate2(dates[1]).getTime()));
-        } else {
-          q = QueryBuilders.rangeQuery(field)
-              .gte(Long.toString(DateFormatter.parseDate(dateString).getTime()))
-              .lte(Long.toString(DateFormatter.parseDate2(dateString).getTime()));
+        String from = parseFromValue(dateString);
+        String to = parseToValue(dateString);
+        RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
+        if (!StringHelper.isNullOrEmptyTrim(from)) {
+          rq.gte(DateFormatter.getTime(from));
         }
+        if (!StringHelper.isNullOrEmptyTrim(to)) {
+          rq.lt(DateFormatter.getTime(to));
+        }
+        q = rq;
         break;
     }
     return negate(q, not);
   }
+
+
 
   private static QueryBuilder numberQuery(String field, String number, SearchOperators operator,
       boolean not) {
@@ -517,21 +519,46 @@ public class ElasticQueryFactory {
         q = lessThanQuery(field, number);
         break;
       default:
-        int fromIndex = number.indexOf("from");
-        int toIndex = number.indexOf("to");
-        String from = number.substring(fromIndex + "from".length(), toIndex);
-        String to = number.substring(toIndex + "to".length());
+        String from = parseFromValue(number);
+        String to = parseToValue(number);
         RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
         if (!StringHelper.isNullOrEmptyTrim(from)) {
           rq.gte(from);
         }
         if (!StringHelper.isNullOrEmptyTrim(to)) {
-          rq.lt(to);
+          rq.lte(to);
         }
         q = rq;
         break;
     }
     return negate(q, not);
+  }
+
+
+  /**
+   * Parse the from value in a query with the format: from 123 to 456
+   * 
+   * @param fromToQueryString
+   * @return
+   */
+  private static String parseFromValue(String fromToQueryString) {
+    int fromIndex = fromToQueryString.indexOf("from");
+    int toIndex = fromToQueryString.indexOf("to");
+    toIndex = toIndex != -1 ? toIndex : fromToQueryString.length();
+    return fromIndex != -1 ? fromToQueryString.substring(fromIndex + "from".length(), toIndex)
+        : null;
+  }
+
+
+  /**
+   * Parse the to value in a query with the format: from 123 to 456
+   * 
+   * @param fromToQueryString
+   * @return
+   */
+  private static String parseToValue(String fromToQueryString) {
+    int toIndex = fromToQueryString.indexOf("to");
+    return toIndex != -1 ? fromToQueryString.substring(toIndex + "to".length()) : null;
   }
 
   /**
