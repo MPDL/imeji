@@ -5,26 +5,24 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
 	<f:subview id="Header">
-		<div class="imj_siteHeader">
-			<!-- import meta menu here -->
-			<ui:include src="../menu/metamenu_default.xhtml"/>
+		<!-- import meta menu here -->
+		<ui:include src="../menu/metamenu_default.xhtml"/>
 
-			<h:outputLink id="lnkStartPage" title="#{lbl.goto_startpage}" value="#{Navigation.homeUrl}">
-				<!-- default imeji logo set in the css -->
-				<h:panelGroup styleClass="imj_logo" rendered="#{Configuration.logoUrl == null or Configuration.logoUrl == ''}" />
-				<!-- custom Logo not recommended -->
-                <h:panelGroup  styleClass="imj_logo_alt" rendered="#{Configuration.logoUrl !=null and Configuration.logoUrl != ''}" >
-					<h:graphicImage value="#{Configuration.logoUrl}" alt="{Configuration.instanceName} Logo" />
-			    </h:panelGroup>
-			</h:outputLink>
-			<ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
-				<div class="imj_siteHeaderMenuSearchSection">
-					<!-- place main menu here -->
-					<menu:mainMenu id="mainMenu" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>			
-					<!-- import search here-->
-					<ui:include src="../menu/searchmenu_default.xhtml"/>
-				</div>
-			</ui:fragment>
-		</div>
+		<h:outputLink id="lnkStartPage" title="#{lbl.goto_startpage}" value="#{Navigation.homeUrl}">
+			<!-- default imeji logo set in the css -->
+			<h:panelGroup styleClass="imj_logo" rendered="#{Configuration.logoUrl == null or Configuration.logoUrl == ''}" />
+			<!-- custom Logo not recommended -->
+               <h:panelGroup  styleClass="imj_logo_alt" rendered="#{Configuration.logoUrl !=null and Configuration.logoUrl != ''}" >
+				<h:graphicImage value="#{Configuration.logoUrl}" alt="{Configuration.instanceName} Logo" />
+		    </h:panelGroup>
+		</h:outputLink>
+		<ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
+			<div class="imj_siteHeaderMenuSearchSection">
+				<!-- place main menu here -->
+				<menu:mainMenu id="mainMenu" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>			
+				<!-- import search here-->
+				<ui:include src="../menu/searchmenu_default.xhtml"/>
+			</div>
+		</ui:fragment>
 	</f:subview>
 </ui:composition>

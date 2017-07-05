@@ -3,56 +3,54 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
-	<div class="imj_siteFooter">
-		<!-- begin: footer section-->
-		<div class="imj_startpageFooterLogos">
-			<div class="imj_poweredby_software">
-				<div class="imj_poweredby_software_text">
-					<h:outputText value="Powered by " />
-				</div>
-				<div class="imj_poweredby_software_image">
-					<h:outputLink target="_blank" value="http://imeji.org">
-						<img alt="imeji community logo" src="#{Navigation.applicationUrl}resources/icon/logo-imeji.png" class="imj_community_logo"/>
-					</h:outputLink>
-				</div>
+	<!-- begin: footer section-->
+	<div class="imj_startpageFooterLogos">
+		<div class="imj_poweredby_software">
+			<div class="imj_poweredby_software_text">
+				<h:outputText value="Powered by " />
 			</div>
-			<div class="imj_poweredby_institution">
-				<ui:fragment rendered="#{Configuration.startPageFooterLogos != ''}">
-							<h:outputText value="#{Configuration.startPageFooterLogos}" escape="false"/>
-				</ui:fragment>
-				<ui:fragment rendered="#{Configuration.startPageFooterLogos == ''}">
-				  <h:outputLink title="Max Planck Digital Library" target="_blank" value="http://mpdl.mpg.de">
-				  		<img class="imj_community_logo" src="/imeji/resources/imj_iconset/mpdl.png" alt="MPDL logo"/>
-				  </h:outputLink>
-				</ui:fragment>
-			</div>
-			<div id="poweredBy" class="imj_poweredby_imprint">
-				<ui:fragment rendered="#{Configuration.impressumText != '' or Configuration.impressumUrl != ''}">
-		 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Configuration.impressumUrl}" rendered="#{Configuration.impressumUrl != ''}">
-		 		    	<h:outputText value="#{lbl.imprint}" />
-		 		    </h:outputLink>
-		 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Navigation.imprintUrl}" rendered="#{Configuration.impressumUrl ==''}">
-		 		    	<h:outputText value="#{lbl.imprint}" />
-		 		    </h:outputLink>
-		 		</ui:fragment>
-		 		<ui:fragment rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
-		 		    <h:outputText value=" - " rendered="#{Configuration.impressumText != '' or Configuration.impressumUrl != ''}"/>
-		 		     <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Configuration.termsOfUseUrl}" rendered="#{Configuration.termsOfUseUrl != ''}">
-		 		    	<h:outputText value="#{lbl.terms_of_use}" />
-		 		    </h:outputLink>
-		 		    <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Navigation.termsOfUseUrl}" rendered="#{Configuration.termsOfUseUrl == ''}">
-		 		    	<h:outputText value="#{lbl.terms_of_use}" />
-		 		    </h:outputLink>
-	 		    </ui:fragment>
-	 		    - <a href="#{Navigation.applicationUrl}api/index.html" target="_blank">API</a>
-			</div>
-			
-			<div id="imejiVersion" class="imj_poweredby_imprint">
-				#{SessionBean.version}
+			<div class="imj_poweredby_software_image">
+				<h:outputLink target="_blank" value="http://imeji.org">
+					<img alt="imeji community logo" src="#{Navigation.applicationUrl}resources/icon/logo-imeji.png" class="imj_community_logo"/>
+				</h:outputLink>
 			</div>
 		</div>
-		<!-- end: footer section -->
+		<div class="imj_poweredby_institution">
+			<ui:fragment rendered="#{Configuration.startPageFooterLogos != ''}">
+						<h:outputText value="#{Configuration.startPageFooterLogos}" escape="false"/>
+			</ui:fragment>
+			<ui:fragment rendered="#{Configuration.startPageFooterLogos == ''}">
+			  <h:outputLink title="Max Planck Digital Library" target="_blank" value="http://mpdl.mpg.de">
+			  		<img class="imj_community_logo" src="/imeji/resources/imj_iconset/mpdl.png" alt="MPDL logo"/>
+			  </h:outputLink>
+			</ui:fragment>
+		</div>
+		<div id="poweredBy" class="imj_poweredby_imprint">
+			<ui:fragment rendered="#{Configuration.impressumText != '' or Configuration.impressumUrl != ''}">
+	 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Configuration.impressumUrl}" rendered="#{Configuration.impressumUrl != ''}">
+	 		    	<h:outputText value="#{lbl.imprint}" />
+	 		    </h:outputLink>
+	 		    <h:outputLink title="#{lbl.imprint}" target="_blank" value="#{Navigation.imprintUrl}" rendered="#{Configuration.impressumUrl ==''}">
+	 		    	<h:outputText value="#{lbl.imprint}" />
+	 		    </h:outputLink>
+	 		</ui:fragment>
+	 		<ui:fragment rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
+	 		    <h:outputText value=" - " rendered="#{Configuration.impressumText != '' or Configuration.impressumUrl != ''}"/>
+	 		     <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Configuration.termsOfUseUrl}" rendered="#{Configuration.termsOfUseUrl != ''}">
+	 		    	<h:outputText value="#{lbl.terms_of_use}" />
+	 		    </h:outputLink>
+	 		    <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Navigation.termsOfUseUrl}" rendered="#{Configuration.termsOfUseUrl == ''}">
+	 		    	<h:outputText value="#{lbl.terms_of_use}" />
+	 		    </h:outputLink>
+ 		    </ui:fragment>
+ 		    - <a href="#{Navigation.applicationUrl}api/index.html" target="_blank">API</a>
+		</div>
+		
+		<div id="imejiVersion" class="imj_poweredby_imprint">
+			#{SessionBean.version}
+		</div>
 	</div>
+	<!-- end: footer section -->
 	<h:inputHidden id="instituteNameForIP" value="#{SessionBean.instituteNameByIP}"/>
 	<h:inputHidden id="instituteIdForIP" value="#{SessionBean.instituteIdByIP}"/>
 	<h:inputHidden id="instituteNameForUser" value="#{SessionBean.instituteByUser}"/>

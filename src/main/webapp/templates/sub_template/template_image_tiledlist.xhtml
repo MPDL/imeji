@@ -28,9 +28,7 @@
             	showSortMenu="true"
             	showStatusFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"
             	showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
-            <div id="facetsArea" class="facetsArea">
-            	<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" />
-            </div>
+           
 			<div id="itemsArea" class="itemsArea">
 				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
            		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
@@ -45,6 +43,10 @@
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
         </h:panelGroup>
     </ui:define>
+    
+     <ui:define name="facets">
+        <facet:facetsSelector itemsBean="#{paginatorListSessionBean}" />
+     </ui:define>
     <!-- Main Content - END -->
     <script>
         $('form input[type=text]').die('keydown').keydown(function (e) {

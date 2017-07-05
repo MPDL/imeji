@@ -13,34 +13,34 @@
 
 <composite:implementation>
 	#{FacetSelectorBean.init(cc.attrs.itemsBean.searchResult)}
+	<ui:fragment rendered="#{FacetSelectorBean.entries.size() > 0}">
+		<span class="imj_menuTitle"><span class="fa fa-filter"></span> #{lbl.filters}</span>
+	</ui:fragment>
 	<ui:repeat var="entry" value="#{FacetSelectorBean.entries}" varStatus="row">
 		<ui:fragment rendered="#{!SearchBreadcrumb.isSelected(entry.facet.index)}">
-			<div>
-				<div>#{entry.facet.name}</div>
+			<div class="imj_facet">
+				<div class="imj_facetName">#{entry.facet.name}</div>
 				<ui:repeat var="value" value="#{entry.values}">
-					<div>
+					<div class="imj_facetValue">
 						<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.addQuery}">#{value.label} (#{value.count})</a>
 					</div>
 				</ui:repeat>
 				<ui:fragment rendered="#{entry.facet.type == 'NUMBER'}">
 					<h:form>
-						<h:inputText value="#{entry.from}" html5:placeholder="#{lbl.from}" html5:type="number"/>
-						- 
-						<h:inputText value="#{entry.to}" html5:placeholder="#{lbl.to}" html5:type="number"/>
-						<h:commandButton value="#{lbl.go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}"/>
+						<h:inputText styleClass="imj_facetInput" value="#{entry.from}" html5:placeholder="#{lbl.from}" />
+						<h:inputText styleClass="imj_facetInput" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
+						<h:commandLink styleClass="imj_facetValue" value="#{lbl.go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}"/>
 					</h:form>
 				</ui:fragment>
 				<ui:fragment rendered="#{entry.facet.type == 'DATE'}">
 					<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/datepicker.js"/>
 					<h:form>
-						<h:inputText value="#{entry.from}" html5:placeholder="#{lbl.from}"  styleClass="datepicker"/>
-						- 
-						<h:inputText value="#{entry.to}" html5:placeholder="#{lbl.to}"  styleClass="datepicker"/>
-						<h:commandButton value="#{lbl.go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}"/>
+						<h:inputText styleClass="imj_facetInput datepicker" value="#{entry.from}" html5:placeholder="#{lbl.from}"/>
+						<h:inputText styleClass="imj_facetInput datepicker" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
+						<h:commandLink styleClass="imj_facetValue" value="#{lbl.go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}"/>
 					</h:form>
 				</ui:fragment>
 			</div>
-			
 		</ui:fragment>
 	</ui:repeat>
 </composite:implementation>

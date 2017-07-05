@@ -9,8 +9,7 @@
 	<div class="imj_metaMenuStandardSingleLine">
 		
 		<div class="imj_metaMenuItemsAlign">
-			
-			
+		
 			<!-- Username if logged in -->
 			<ui:fragment rendered="#{Auth.loggedIn}">
 				<h:outputLink id="txtAccountUserName" title="#{lbl.goto_user_profile}" styleClass="imj_metaMenuItem" value="#{Navigation.applicationUrl}user?email=#{Auth.sessionUser.email}">
@@ -38,8 +37,6 @@
 					<h:outputText value="#{lbl.register}"/>
 				</h:outputLink>
 			</h:form>
-			
-			
 			<!-- CSS Switcher -->
 			<ui:fragment rendered="#{Configuration.alternativeCss != null and Configuration.alternativeCss != ''}">
 				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>	

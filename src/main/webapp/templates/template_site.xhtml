@@ -28,9 +28,11 @@
             	<div class="imj_allContentWrapper">
             	 	<ui:insert name="authorization"/>
 	                <ui:insert name="init"/>
-	                <ui:include src="component/header/header_default.xhtml"/>
+	                <div class="imj_siteHeader">
+	                	<ui:include src="component/header/header_default.xhtml"/>
+	                </div>
 	                
-	               <!-- Messages -->
+	                <!-- Messages -->
 	                <h:panelGroup layout="block" id="imj_pageMessageArea">
 		                <ui:repeat var="message" value="#{MessagesBean.messages}">
 		                	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
@@ -39,40 +41,57 @@
 		                	</div>
 		                </ui:repeat>
 	                </h:panelGroup>
-	                 <!-- Search Query -->
-	                <ui:insert name="searchQuery"/>
-		           	<!-- headline --> 
-		           	<ui:fragment rendered="#{not empty headline or not empty imejiResource}">
-		                <div class="imj_siteContentHeadline">
-		                  	<ui:fragment rendered="#{not empty imejiResource}">
-			                 	<span class="imj_siteContentStatus">
-					                <imjc:iconStatus id="status" imejiResource="#{imejiResource}"/>
-					            </span>
-				            </ui:fragment>
-				            <ui:fragment rendered="#{not empty headline}">
-			                    <h1>
-			                        #{headline.toString().trim()}
-			                    </h1>
-		                    </ui:fragment>
-		                    <ui:insert name="collectionAbout"/>
-		                </div>
-	                </ui:fragment>
-	                <!-- Actions Menu -->
-	                <h:panelGroup layout="block" id="actionsMenuArea" class="imj_actionMenuArea">
-	               		<ui:insert name="actionsMenu"/>
-	                </h:panelGroup>
-	       
-	                <!-- content wrapper -->
-	                <div class="imj_mainContentWrapper">
-	                    <ui:insert name="mainContent"/>
-	                </div>
 	                
-	               	<div class="loaderWrapper"/>
-	               		<div class="loader"/>
-	             	</div>
-	             	
-                <!-- footer -->
-              <ui:include src="component/footer/footer_default.xhtml"/>
+	              
+	                <div class="imj_siteContent">
+	                	<div class="imj_siteContentLeft">
+	                		<div class="imj_menuEntry">
+	                			<ui:include src="component/content/left/Navigation.xhtml"/>
+	                		</div>
+		                	<div class="imj_menuEntry">
+		                		<ui:include src="component/content/left/Facets.xhtml"/>
+		                	</div>
+		                	
+		                </div>
+		                <div class="imj_siteContentRight">
+		                	<!-- Search Query -->
+		                	<ui:insert name="searchQuery"/>
+		                		<!-- headline --> 
+				           	<ui:fragment rendered="#{not empty headline or not empty imejiResource}">
+				                <div class="imj_siteContentHeadline">
+				                  	<ui:fragment rendered="#{not empty imejiResource}">
+					                 	<span class="imj_siteContentStatus">
+							                <imjc:iconStatus id="status" imejiResource="#{imejiResource}"/>
+							            </span>
+						            </ui:fragment>
+						            <ui:fragment rendered="#{not empty headline}">
+					                    <h1>
+					                        #{headline.toString().trim()}
+					                    </h1>
+				                    </ui:fragment>
+				                    <ui:insert name="collectionAbout"/>
+				                </div>
+			                </ui:fragment>
+			                <!-- Actions Menu -->
+			                <h:panelGroup layout="block" id="actionsMenuArea" class="imj_actionMenuArea">
+			               		<ui:insert name="actionsMenu"/>
+			                </h:panelGroup>
+			       
+			                <!-- content wrapper -->
+			                <div class="imj_mainContentWrapper">
+			                    <ui:insert name="mainContent"/>
+			                </div>
+			                
+			               	<div class="loaderWrapper"/>
+			               		<div class="loader"/>
+			             	</div>
+		                </div>
+	                	
+	                </div>
+	                <div class="imj_siteFooter">
+	                	 <ui:include src="component/footer/footer_default.xhtml"/>
+	                </div>
+             
             </div>
             
             <!-- modal dialogs -->

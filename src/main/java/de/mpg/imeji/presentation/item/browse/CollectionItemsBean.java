@@ -91,7 +91,8 @@ public class CollectionItemsBean extends ItemsBean {
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
     final ItemService controller = new ItemService();
-    return controller.search(uri, searchQuery, sortCriterion, getSessionUser(), limit, offset);
+    return controller.searchWithFacets(uri, searchQuery, sortCriterion, getSessionUser(), limit,
+        offset);
   }
 
 
