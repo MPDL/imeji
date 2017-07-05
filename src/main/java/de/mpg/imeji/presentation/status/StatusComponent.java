@@ -46,6 +46,7 @@ public class StatusComponent extends UINamingContainer {
   private User sessionUser;
   private Locale locale;
   private String applicationUrl;
+  private boolean sharedWithUser = false;
 
   public StatusComponent() {
     // do nothing
@@ -84,6 +85,7 @@ public class StatusComponent extends UINamingContainer {
         users = getUserSharedWith(properties);
         groups = getGroupSharedWith(properties);
         showManage = SecurityUtil.authorization().administrate(sessionUser, properties);
+        sharedWithUser = SecurityUtil.authorization().isShared(sessionUser, properties);
       }
       linkToSharePage = initLinkToSharePage(properties.getId());
       show = true;
@@ -260,6 +262,15 @@ public class StatusComponent extends UINamingContainer {
   public boolean isHasMoreCollaborator() {
     return hasMoreCollaborator;
   }
+
+  public boolean isSharedWithUser() {
+    return sharedWithUser;
+  }
+
+  public void setSharedWithUser(boolean sharedWithUser) {
+    this.sharedWithUser = sharedWithUser;
+  }
+
 
 
 }

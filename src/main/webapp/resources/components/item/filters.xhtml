@@ -9,7 +9,8 @@
 	<composite:interface>
 		<composite:attribute name="facetBean" required="false"/>
 		<composite:attribute name="showSortMenu" required="false" default="false"/>
-		<composite:attribute name="showFilterMenu" type="java.lang.Boolean" default="false"/>
+		<composite:attribute name="showStatusFilterMenu" type="java.lang.Boolean" default="false"/>
+		<composite:attribute name="showUserFilterMenu" type="java.lang.Boolean" default="false"/>
 	</composite:interface>
 	
 	<composite:implementation>
@@ -39,8 +40,8 @@
 				</h:panelGroup>
 			</h:form>
 			<ui:fragment rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu}">
-				<menu:StatusFilterMenu rendered="#{!Configuration.privateModus and cc.attrs.showFilterMenu}"/>
-				<menu:UserFilterMenu/>
+				<menu:StatusFilterMenu rendered="#{!Configuration.privateModus and cc.attrs.showStatusFilterMenu}"/>
+				<menu:UserFilterMenu rendered="#{cc.attrs.showUserFilterMenu}"/>
 			</ui:fragment>
 			
 		</h:panelGroup>

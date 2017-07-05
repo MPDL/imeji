@@ -26,7 +26,8 @@
             	facetBean="#{paginatorListSessionBean}"  
             	numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
             	showSortMenu="true"
-            	showFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"/>
+            	showStatusFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"
+            	showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
             <div id="facetsArea" class="facetsArea">
             	<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" />
             </div>
