@@ -153,6 +153,20 @@ public class Authorization implements Serializable {
   }
 
   /**
+   * True if the object is shared with the user. Even if the object is public, this does not have to
+   * be true.
+   * 
+   * @param user
+   * @param obj
+   * @return
+   */
+  public boolean isShared(User user, Object obj) {
+    return hasReadGrant(getAllGrants(user), getId(obj))
+        || hasEditGrant(getAllGrants(user), getId(obj))
+        || hasAdminGrant(getAllGrants(user), getId(obj));
+  }
+
+  /**
    * True if the {@link Grant} is found in the collection
    *
    * @param grants

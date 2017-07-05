@@ -21,8 +21,7 @@
 			<col:filters fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
 									 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
 									 filterBeanHasQuery="#{filterBeanHasQuery}"
-									 objectLabel="#{lbl.collections}"
-									 rendered="#{paginatorListSessionBean.totalNumberOfElements > 0}"/>
+									 objectLabel="#{lbl.collections}"/>
 			
 			
 			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords == 0}">

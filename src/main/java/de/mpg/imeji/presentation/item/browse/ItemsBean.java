@@ -28,6 +28,7 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
+import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
 import de.mpg.imeji.presentation.item.ThumbnailBean;
@@ -505,6 +506,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   }
 
   public String getCollectionId() {
+    return null;
+  }
+
+  public CollectionImeji getCollection() {
     return null;
   }
 
