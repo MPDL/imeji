@@ -67,7 +67,11 @@ public class DateHelper {
    * @return
    */
   public static boolean isValidDate(String dateString) {
-    return DateFormatter.format(dateString) != null;
+    try {
+      return DateFormatter.format(dateString) != null;
+    } catch (Exception e) {
+      return false;
+    }
   }
 
   /**

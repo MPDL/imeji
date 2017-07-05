@@ -52,27 +52,27 @@ public class AggregationsParser {
                     .add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
               }
             } else if (terms instanceof Histogram) {
-              int valueCount = 5;
-              int intervalSize = ((Histogram) terms).getBuckets().size() / valueCount;
-              int intervalDocCount = 0;
-              int counter = 0;
-              String yearStart = "Before ";
-              String yearEnd = "";
-              for (Histogram.Bucket b : ((Histogram) terms).getBuckets()) {
-                if (counter < intervalSize) {
-                  intervalDocCount += b.getDocCount();
-                  counter++;
-                } else {
-                  yearEnd = b.getKeyAsString();
-                  facetResult.getValues()
-                      .add(new FacetResultValue(yearStart + yearEnd, intervalDocCount));
-                  intervalDocCount = (int) b.getDocCount();
-                  yearStart = b.getKeyAsString() + " to ";
-                  counter = 0;
-                }
-              }
-              facetResult.getValues()
-                  .add(new FacetResultValue("After " + yearEnd, intervalDocCount));
+              // int valueCount = 5;
+              // int intervalSize = ((Histogram) terms).getBuckets().size() / valueCount;
+              // int intervalDocCount = 0;
+              // int counter = 0;
+              // String yearStart = "Before ";
+              // String yearEnd = "";
+              // for (Histogram.Bucket b : ((Histogram) terms).getBuckets()) {
+              // if (counter < intervalSize) {
+              // intervalDocCount += b.getDocCount();
+              // counter++;
+              // } else {
+              // yearEnd = b.getKeyAsString();
+              // facetResult.getValues()
+              // .add(new FacetResultValue(yearStart + yearEnd, intervalDocCount));
+              // intervalDocCount = (int) b.getDocCount();
+              // yearStart = b.getKeyAsString() + " to ";
+              // counter = 0;
+              // }
+              // }
+              // facetResult.getValues()
+              // .add(new FacetResultValue("After " + yearEnd, intervalDocCount));
             } else {
               System.out.println("NOT PARSED  METADATA AGGREGATION: " + terms);
             }

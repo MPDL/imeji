@@ -133,7 +133,7 @@ public class DateFormatter {
       final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
       return sdf.format(d);
     } else {
-      throw new RuntimeException("Wrong date format");
+      throw new RuntimeException("Wrong date format:" + str);
     }
   }
 

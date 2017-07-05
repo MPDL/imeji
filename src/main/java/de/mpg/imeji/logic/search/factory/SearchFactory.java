@@ -70,7 +70,7 @@ public class SearchFactory {
   private List<SearchElement> cleanElements(List<SearchElement> elements) {
     List<SearchElement> cleaned = new ArrayList<>();
     for (SearchElement element : elements) {
-      if (SEARCH_ELEMENTS.GROUP.equals(element.getType())) {
+      if (SEARCH_ELEMENTS.GROUP.equals(element.getType()) && elements.size() == 1) {
         cleaned.addAll(cleanElements(element.getElements()));
       } else {
         cleaned.add(cleanElement(element));

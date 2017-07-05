@@ -47,7 +47,6 @@ public class FacetSelectorEntryValue implements Serializable {
 
   private String readLabel(FacetResultValue resultValue, Facet facet) {
     if (facet.getIndex().equals(SearchFields.col.getIndex())) {
-      String[] f = resultValue.getLabel().split(" ", 2);
       return resultValue.getLabel().split(" ", 2)[1];
     }
     return resultValue.getLabel();
@@ -108,8 +107,7 @@ public class FacetSelectorEntryValue implements Serializable {
 
   private SearchQuery buildMetadataTextQuery(Facet facet, String value) throws UnprocessableError {
     String mdIndex = facet.getIndex().replace("md.", "").split("\\.")[0];
-    SearchMetadata smd =
-        new SearchMetadata(mdIndex, SearchMetadataFields.exact, "\"" + value + "\"");
+    SearchMetadata smd = new SearchMetadata(mdIndex, SearchMetadataFields.exact, value);
     return new SearchFactory().addElement(smd, AND).build();
   }
 

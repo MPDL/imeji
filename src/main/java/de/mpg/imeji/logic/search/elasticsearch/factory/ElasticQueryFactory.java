@@ -146,7 +146,7 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder buildSearchQuery(List<SearchElement> elements, User user) {
-    boolean OR = true;
+    boolean OR = isORSearchGroup(elements);
     final BoolQueryBuilder q = QueryBuilders.boolQuery();
     for (final SearchElement el : elements) {
       if (el instanceof SearchPair) {
@@ -168,6 +168,16 @@ public class ElasticQueryFactory {
       }
     }
     return q;
+  }
+
+  private static boolean isORSearchGroup(List<SearchElement> elements) {
+    for (final SearchElement el : elements) {
+      if (el instanceof SearchLogicalRelation) {
+        return ((SearchLogicalRelation) el).getLogicalRelation() == LOGICAL_RELATIONS.OR ? true
+            : false;
+      }
+    }
+    return true;
   }
 
   /**

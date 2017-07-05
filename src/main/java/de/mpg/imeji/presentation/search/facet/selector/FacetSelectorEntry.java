@@ -49,7 +49,7 @@ public class FacetSelectorEntry implements Serializable {
 
   public void search(String url, String q) throws IOException {
     String fq = buildFromToQuery();
-    if (q != null) {
+    if (fq != null) {
       FacesContext.getCurrentInstance().getExternalContext()
           .redirect(url + "?q=" + q + "&fq=" + fq);
     }
@@ -82,9 +82,9 @@ public class FacetSelectorEntry implements Serializable {
   private boolean isValidInput() {
     switch (StatementType.valueOf(facet.getType())) {
       case NUMBER:
-        return NumberUtils.isNumber(from) && NumberUtils.isNumber(to);
+        return NumberUtils.isNumber(from) || NumberUtils.isNumber(to);
       case DATE:
-        return DateHelper.isValidDate(from) && DateHelper.isValidDate(to);
+        return DateHelper.isValidDate(from) || DateHelper.isValidDate(to);
       default:
         return false;
     }

@@ -14,7 +14,6 @@ public class FacetResultValue implements Serializable {
   private final long count;
 
   public FacetResultValue(String label, long count) {
-    System.out.println("label" + label);
     this.label = label;
     this.count = count;
   }

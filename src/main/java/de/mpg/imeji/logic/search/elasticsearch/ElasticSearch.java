@@ -114,12 +114,11 @@ public class ElasticSearch implements Search {
     SearchRequestBuilder request = ElasticService.getClient()
         .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setQuery(f).setTypes(getTypes())
         .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri));
+
     if (addFacets) {
       request = addAggregations(request);
-      System.out.println(request);
     }
     final SearchResponse resp = request.execute().actionGet();
-    System.out.println(resp);
     return toSearchResult(resp, query);
   }
 

@@ -76,20 +76,12 @@ public class SearchQueryParser {
 
   public static void main(String[] args) throws UnprocessableError {
     String q =
-        "rinew du tounbt OR (title=this is an example AND (description=\"Super Description\" OR created=2000) OR (md.description=\"Other Description\" OR (md.created.number>=2000 AND md.created.number<50)))";
+        "rien du tout OR (title=this is an example AND ((description=\"Super Description\" OR created=2000)) OR (md.description=\"Other Description\" OR (md.created.number>=2000 AND md.created.number<50)))";
     SearchQuery sq;
-    // sq = parsedecoded(q);
-    // System.out.println(q);
-    // System.out.println(transform2URL(sq));
-    // q = "(md.title.text=hi OR md.description.text=Bob OR md.date.text=2017-02-08)";
-    // sq = parsedecoded(q);
-    // System.out.println(q);
-    // System.out.println(transform2URL(sq));
-    // q = "md.location.coordinates=5.0,7.0";
-    // sq = parsedecoded(q);
-    // System.out.println(q);
-    // System.out.println(transform2URL(sq));
-    // q = "NOT (filename=Tulips.jpg AND filename=Desert.jpg)";
+    sq = parsedecoded(q);
+    System.out.println(q);
+    System.out.println(transform2URL(sq));
+    q = "md.date.date= to 2000 AND md.number.number= to 50";
     sq = parsedecoded(q);
     System.out.println(q);
     System.out.println(transform2URL(sq));
