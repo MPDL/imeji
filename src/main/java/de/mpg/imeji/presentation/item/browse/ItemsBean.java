@@ -239,7 +239,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   }
 
   public SortCriterion getSortCriterion() {
-    return new SortCriterion(SearchFields.valueOf(getSelectedSortCriterion()),
+    return new SortCriterion(SearchFields.valueOfIndex(getSelectedSortCriterion()),
         SortOrder.valueOf(getSelectedSortOrder()));
   }
 

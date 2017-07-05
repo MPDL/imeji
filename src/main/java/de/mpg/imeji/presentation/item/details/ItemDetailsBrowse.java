@@ -92,7 +92,7 @@ public class ItemDetailsBrowse implements Serializable {
         CookieUtils.readNonNull(ItemsBean.ITEM_SORT_COOKIE, SearchFields.modified.name());
     final String orderFieldName =
         CookieUtils.readNonNull(ItemsBean.ITEM_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name());
-    return new SortCriterion(SearchFields.valueOf(sortFieldName),
+    return new SortCriterion(SearchFields.valueOfIndex(sortFieldName),
         SortOrder.valueOf(orderFieldName));
   }
 

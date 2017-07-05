@@ -9,6 +9,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 
 import com.hp.hpl.jena.util.iterator.Filter;
 
@@ -29,6 +30,9 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.util.DateFormatter;
+import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Properties.Status;
@@ -248,6 +252,13 @@ public class ElasticQueryFactory {
             fieldQuery(ElasticFields.CHECKSUM, pair.getValue(), pair.getOperator(), pair.isNot()));
       case col:
         return fieldQuery(ElasticFields.FOLDER, pair.getValue(), pair.getOperator(), pair.isNot());
+      case collectionid: {
+        return fieldQuery(ElasticFields.FOLDER,
+            ObjectHelper.getURI(CollectionImeji.class, pair.getValue()).toString(),
+            pair.getOperator(), pair.isNot());
+      }
+      case title:
+        return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case description:
         return fieldQuery(ElasticFields.DESCRIPTION, pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -260,20 +271,31 @@ public class ElasticQueryFactory {
       case author:
         return fieldQuery(ElasticFields.AUTHOR_COMPLETENAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case author_org:
+      case author_organization:
         return fieldQuery(ElasticFields.AUTHOR_ORGANIZATION, pair.getValue(), pair.getOperator(),
             pair.isNot());
+      case collection_title:
+        return parentCollectionQuery(
+            fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot()));
+      case collection_description:
+        return parentCollectionQuery(fieldQuery(ElasticFields.AUTHOR_COMPLETENAME, pair.getValue(),
+            pair.getOperator(), pair.isNot()));
+      case collection_author:
+        return fieldQuery(ElasticFields.AUTHORS_OF_COLLECTION, pair.getValue(), pair.getOperator(),
+            pair.isNot());
+      case collection_author_organisation:
+        return fieldQuery(ElasticFields.ORGANIZATION_OF_COLLECTION, pair.getValue(),
+            pair.getOperator(), pair.isNot());
       case family:
         return fieldQuery(ElasticFields.FAMILYNAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case given:
         return fieldQuery(ElasticFields.GIVENNAME, pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case org:
+      case organization:
         return fieldQuery(ElasticFields.ORGANIZATION, pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case title:
-        return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
+
       case created:
         return timeQuery(ElasticFields.CREATED.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
@@ -285,9 +307,6 @@ public class ElasticQueryFactory {
       case read:
         return fieldQuery(ElasticFields.READ, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
-      case date:
-        return timeQuery(ElasticFields.METADATA_NUMBER.name(), pair.getValue(), pair.getOperator(),
-            pair.isNot());
       case filename:
         return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case filetype:
@@ -297,45 +316,13 @@ public class ElasticQueryFactory {
         final GrantType grant = pair.getValue().equals("upload") ? GrantType.EDIT
             : GrantType.valueOf(pair.getValue().toUpperCase());
         return buildGrantQuery(user, grant);
-      case member:
-        return fieldQuery(ElasticFields.MEMBER, pair.getValue(), pair.getOperator(), pair.isNot());
       case license:
         return licenseQuery(pair);
       case modified:
         return timeQuery(ElasticFields.MODIFIED.name(), pair.getValue(), pair.getOperator(),
             pair.isNot());
-      case number:
-        return fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case person:
-        return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case person_family:
-        return fieldQuery(ElasticFields.METADATA_FAMILYNAME, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case person_given:
-        return fieldQuery(ElasticFields.METADATA_GIVENNAME, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case person_org:
-        return fieldQuery(ElasticFields.METADATA_FAMILYNAME, pair.getValue(), pair.getOperator(),
-            pair.isNot());
       case status:
         return fieldQuery(ElasticFields.STATUS, formatStatusSearchValue(pair), pair.getOperator(),
-            pair.isNot());
-      case text:
-        return fieldQuery(ElasticFields.METADATA_TEXT, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case time:
-        return timeQuery(ElasticFields.METADATA_NUMBER.name(), pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case name:
-        return fieldQuery(ElasticFields.METADATA_NAME, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case url:
-        return fieldQuery(ElasticFields.METADATA_URI, pair.getValue(), pair.getOperator(),
-            pair.isNot());
-      case coordinates:
-        return fieldQuery(ElasticFields.METADATA_LOCATION, pair.getValue(), pair.getOperator(),
             pair.isNot());
       case pid:
         return fieldQuery(ElasticFields.PID, pair.getValue(), pair.getOperator(), pair.isNot());
@@ -351,12 +338,26 @@ public class ElasticQueryFactory {
       case email:
         return fieldQuery(ElasticFields.EMAIL, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
-      case itemId:
-        return QueryBuilders.hasParentQuery(ElasticTypes.items.name(),
-            fieldQuery(ElasticFields.ID, pair.getValue(), pair.getOperator(), pair.isNot()));
       case index:
         return fieldQuery(ElasticFields.METADATA_INDEX, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
+      case completename:
+        break;
+      case creatorid:
+        break;
+      case editor:
+        break;
+      case filesize:
+        break;
+      case id:
+        return fieldQuery(ElasticFields.IDSTRING, pair.getValue(), SearchOperators.EQUALS,
+            pair.isNot());
+      case md:
+        break;
+      case technical:
+        break;
+      default:
+        break;
     }
     return matchNothing();
   }
@@ -368,28 +369,31 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder metadataFilter(SearchMetadata md) {
-    if (md.getField() == null) {
+    if (md.getMetadataField() == null) {
       return metadataQuery(
           fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
           md.getIndex());
     }
-    switch (md.getField()) {
+    switch (md.getMetadataField()) {
+      case exact:
+        return metadataQuery(
+            fieldQuery(ElasticFields.METADATA_EXACT, md.getValue(), md.getOperator(), md.isNot()),
+            md.getIndex());
       case text:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
-      case name:
+      case placename:
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_NAME, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
       case title:
         return metadataQuery(
-            fieldQuery(ElasticFields.METADATA_title, md.getValue(), md.getOperator(), md.isNot()),
+            fieldQuery(ElasticFields.METADATA_TITLE, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
       case number:
-        return metadataQuery(
-            fieldQuery(ElasticFields.METADATA_NUMBER, md.getValue(), md.getOperator(), md.isNot()),
-            md.getIndex());
+        return metadataQuery(numberQuery(ElasticFields.METADATA_NUMBER.field(), md.getValue(),
+            md.getOperator(), md.isNot()), md.getIndex());
       case date:
         return metadataQuery(timeQuery(ElasticFields.METADATA_TIME.field(), md.getValue(),
             md.getOperator(), md.isNot()), md.getIndex());
@@ -397,10 +401,10 @@ public class ElasticQueryFactory {
         return metadataQuery(
             fieldQuery(ElasticFields.METADATA_URI, md.getValue(), md.getOperator(), md.isNot()),
             md.getIndex());
-      case person_family:
+      case familyname:
         return metadataQuery(fieldQuery(ElasticFields.METADATA_FAMILYNAME, md.getValue(),
             md.getOperator(), md.isNot()), md.getIndex());
-      case person_given:
+      case givenname:
         return metadataQuery(fieldQuery(ElasticFields.METADATA_GIVENNAME, md.getValue(),
             md.getOperator(), md.isNot()), md.getIndex());
       case coordinates:
@@ -484,22 +488,78 @@ public class ElasticQueryFactory {
         q = lessThanQuery(field, Long.toString(DateFormatter.getTime(dateString)));
         break;
       default:
-        String[] dates = dateString.split(" to ");
-        if (dates.length == 2) {
-          q = QueryBuilders.rangeQuery(field)
-              .gte(Long.toString(DateFormatter.parseDate(dates[0]).getTime()))
-              .lte(Long.toString(DateFormatter.parseDate2(dates[1]).getTime()));
-        } else {
-          q = QueryBuilders.rangeQuery(field)
-              .gte(Long.toString(DateFormatter.parseDate(dateString).getTime()))
-              .lte(Long.toString(DateFormatter.parseDate2(dateString).getTime()));
+        String from = parseFromValue(dateString);
+        String to = parseToValue(dateString);
+        RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
+        if (!StringHelper.isNullOrEmptyTrim(from)) {
+          rq.gte(DateFormatter.getTime(from));
         }
+        if (!StringHelper.isNullOrEmptyTrim(to)) {
+          rq.lt(DateFormatter.getTime(to));
+        }
+        q = rq;
         break;
     }
     return negate(q, not);
   }
 
 
+
+  private static QueryBuilder numberQuery(String field, String number, SearchOperators operator,
+      boolean not) {
+    QueryBuilder q = null;
+    if (operator == null) {
+      operator = SearchOperators.EQUALS;
+    }
+    switch (operator) {
+      case GREATER:
+        q = greaterThanQuery(field, number);
+        break;
+      case LESSER:
+        q = lessThanQuery(field, number);
+        break;
+      default:
+        String from = parseFromValue(number);
+        String to = parseToValue(number);
+        RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
+        if (!StringHelper.isNullOrEmptyTrim(from)) {
+          rq.gte(from);
+        }
+        if (!StringHelper.isNullOrEmptyTrim(to)) {
+          rq.lte(to);
+        }
+        q = rq;
+        break;
+    }
+    return negate(q, not);
+  }
+
+
+  /**
+   * Parse the from value in a query with the format: from 123 to 456
+   * 
+   * @param fromToQueryString
+   * @return
+   */
+  private static String parseFromValue(String fromToQueryString) {
+    int fromIndex = fromToQueryString.indexOf("from");
+    int toIndex = fromToQueryString.indexOf("to");
+    toIndex = toIndex != -1 ? toIndex : fromToQueryString.length();
+    return fromIndex != -1 ? fromToQueryString.substring(fromIndex + "from".length(), toIndex)
+        : null;
+  }
+
+
+  /**
+   * Parse the to value in a query with the format: from 123 to 456
+   * 
+   * @param fromToQueryString
+   * @return
+   */
+  private static String parseToValue(String fromToQueryString) {
+    int toIndex = fromToQueryString.indexOf("to");
+    return toIndex != -1 ? fromToQueryString.substring(toIndex + "to".length()) : null;
+  }
 
   /**
    * Create a {@link QueryBuilder} - used to sarch for metadata which are defined with a statement
@@ -584,8 +644,6 @@ public class ElasticQueryFactory {
     final double lat = Double.parseDouble(values[0]);
     final double lon = Double.parseDouble(values[1]);
     if (values.length == 3) {
-      System.out.println(values[2]);
-      System.out.println(values[2].matches("[0]+[a-zA-Z]{1}$"));
       distance =
           (values[2].equals("0") || values[2].matches("[0]+[a-zA-Z]{1,2}$")) ? distance : values[2];
     }
@@ -733,6 +791,10 @@ public class ElasticQueryFactory {
       }
     }
     return licenseQuery;
+  }
+
+  private static QueryBuilder parentCollectionQuery(QueryBuilder qb) {
+    return QueryBuilders.hasParentQuery(ElasticTypes.folders.name(), qb);
   }
 
   /**

@@ -1,193 +1,178 @@
 {
-	"items": {
-		"properties": {
-			"id": {
-				"type": "string",
-				"index": "not_analyzed"
-			},
-			"checksum": {
-				"type": "string",
-				"index": "not_analyzed"
-			},
-			"created": {
-				"type": "long"
-			},
-			"creator": {
-				"type": "string",
-				"index": "not_analyzed"
-			},
-			"lasteditor": {
-				"type": "string",
-				"index": "not_analyzed"
-			},
-			"name": {
-				"type": "string",
-				"include_in_all": true,
-				"fields": {
-					"suggest": {
-						"type": "string",
-						"analyzer": "edgegram_analyzer",
-						"search_analyzer": "standard",
-						"include_in_all": true
-					},
-					"sort": {
-						"type": "string",
-						"analyzer": "XXX_ANALYSER_XXX"
-					}
-				}
-			},
-			"license": {
-				"type": "string",
-				"index": "not_analyzed",
-				"include_in_all": false
-			},
-			"filetype": {
-				"type": "string",
-				"index": "not_analyzed"
-			},
-			"folder": {
-				"type": "string",
-				"index": "not_analyzed"
-			},
-			"album": {
-				"type": "string",
-				"index": "not_analyzed"
-			},
-			"space": {
-				"type": "string",
-				"index": "not_analyzed"
-			},
-			"metadata": {
-				"type": "nested",
-				"include_in_parent": true,
-				"properties": {
-					"number": {
-						"type": "double"
-					},
-					"index": {
-						"type": "string",
-						"index": "not_analyzed"
-					},
-					"text": {
-						"type": "string",
-						"fields": {
-							"exact": {
-								"type": "string",
-								"index": "not_analyzed"
-							},
-							"sort": {
-								"type": "string",
-								"analyzer": "XXX_ANALYSER_XXX"
-							}
-						}
-					},
-					"name": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"uri": {
-						"type": "string",
-						"index": "not_analyzed"
-					},
-					"type": {
-						"type": "string",
-						"index": "not_analyzed"
-					},
-					"time": {
-						"type": "long"
-					},
-					"date":{
-						"type": "date"
-					},
-					"location": {
-						"type": "geo_point",
-						"lat_lon": "true"
-					},
-					"familyname": {
-						"type": "string",
-						"fields": {
-							"sort": {
-								"type": "string",
-								"analyzer": "XXX_ANALYSER_XXX"
-							}
-						}
-					},
-					"givenname": {
-						"type": "string",
-						"fields": {
-							"sort": {
-								"type": "string",
-								"analyzer": "XXX_ANALYSER_XXX"
-							}
-						}
-					},
-					"completename": {
-						"type": "string",
-						"fields": {
-							"sort": {
-								"type": "string",
-								"analyzer": "XXX_ANALYSER_XXX"
-							}
-						}
-					},
-					"identifier": {
-						"type": "string",
-						"index": "not_analyzed"
-					},
-					"organization": {
-						"properties": {
-							"name": {
-								"type": "string",
-								"fields": {
-									"sort": {
-										"type": "string",
-										"analyzer": "XXX_ANALYSER_XXX"
-									}
-								}
-							},
-							"description": {
-								"type": "string",
-								"fields": {
-									"sort": {
-										"type": "string",
-										"analyzer": "XXX_ANALYSER_XXX"
-									}
-								}
-							},
-							"city": {
-								"type": "string",
-								"fields": {
-									"sort": {
-										"type": "string",
-										"analyzer": "XXX_ANALYSER_XXX"
-									}
-								}
-							},
-							"country": {
-								"type": "string",
-								"fields": {
-									"sort": {
-										"type": "string",
-										"analyzer": "XXX_ANALYSER_XXX"
-									}
-								}
-							}
-						}
-					}
-				}
-			},
-			"modified": {
-				"type": "long"
-			},
-			"status": {
-				"type": "string",
-				"index": "not_analyzed"
-			},
-			"size": {
-				"type": "long"
-			}
-		}
-	}
+   "items":{
+      "_parent":{
+         "type":"folders"
+      },
+      "properties":{
+         "id":{
+            "type":"string",
+            "index":"not_analyzed"
+         },
+         "idstring":{
+            "type":"string",
+            "index":"not_analyzed",
+            "include_in_all":false
+         },
+         "checksum":{
+            "type":"string",
+            "index":"not_analyzed"
+         },
+         "created":{
+            "type":"long"
+         },
+         "creator":{
+            "type":"string",
+            "index":"not_analyzed"
+         },
+         "lasteditor":{
+            "type":"string",
+            "index":"not_analyzed"
+         },
+         "authorsOfCollection":{
+            "type":"string",
+            "index":"not_analyzed"
+         },
+         "organizationsOfCollection":{
+            "type":"string",
+            "index":"not_analyzed"
+         },
+         "titleWithIdOfCollection":{
+          	"type":"string",
+            "index":"not_analyzed"
+         },
+         "name":{
+            "type":"string",
+            "include_in_all":true,
+            "fields":{
+               "suggest":{
+                  "type":"string",
+                  "analyzer":"edgegram_analyzer",
+                  "search_analyzer":"standard",
+                  "include_in_all":true
+               },
+               "sort":{
+                  "type":"string",
+                  "analyzer":"XXX_ANALYSER_XXX"
+               }
+            }
+         },
+         "license":{
+            "type":"string",
+            "index":"not_analyzed",
+            "include_in_all":false
+         },
+         "filetype":{
+            "type":"string",
+            "index":"not_analyzed"
+         },
+         "folder":{
+            "type":"string",
+            "index":"not_analyzed"
+         },
+         "metadata":{
+            "type":"nested",
+            "include_in_parent":true,
+            "properties":{
+               "number":{
+                  "type":"double"
+               },
+               "index":{
+                  "type":"string",
+                  "index":"not_analyzed"
+               },
+               "text":{
+                  "type":"string",
+                  "fields":{
+                     "exact":{
+                        "type":"string",
+                        "index":"not_analyzed"
+                     },
+                     "sort":{
+                        "type":"string",
+                        "analyzer":"XXX_ANALYSER_XXX"
+                     }
+                  }
+               },
+               "name":{
+                  "type":"string"
+               },
+               "title":{
+                  "type":"string"
+               },
+               "uri":{
+                  "type":"string",
+                  "index":"not_analyzed"
+               },
+               "type":{
+                  "type":"string",
+                  "index":"not_analyzed"
+               },
+               "time":{
+                  "type":"long"
+               },
+               "date":{
+                  "type":"date"
+               },
+               "location":{
+                  "type":"geo_point",
+                  "lat_lon":"true"
+               },
+               "familyname":{
+                  "type":"string",
+                  "fields":{
+                     "sort":{
+                        "type":"string",
+                        "analyzer":"XXX_ANALYSER_XXX"
+                     }
+                  }
+               },
+               "givenname":{
+                  "type":"string",
+                  "fields":{
+                     "sort":{
+                        "type":"string",
+                        "analyzer":"XXX_ANALYSER_XXX"
+                     }
+                  }
+               },
+               "completename":{
+                  "type":"string",
+                  "fields":{
+                     "sort":{
+                        "type":"string",
+                        "analyzer":"XXX_ANALYSER_XXX"
+                     }
+                  }
+               },
+               "identifier":{
+                  "type":"string",
+                  "index":"not_analyzed"
+               },
+               "organization":{
+                  "type":"string",
+                  "fields":{
+                     "sort":{
+                        "type":"string",
+                        "analyzer":"XXX_ANALYSER_XXX"
+                     },
+                     "exact":{
+                        "type":"string",
+                        "index":"not_analyzed"
+                     }
+                  }
+               }
+            }
+         },
+         "modified":{
+            "type":"long"
+         },
+         "status":{
+            "type":"string",
+            "index":"not_analyzed"
+         },
+         "size":{
+            "type":"long"
+         }
+      }
+   }
 }

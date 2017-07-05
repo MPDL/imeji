@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import de.mpg.imeji.logic.util.DateFormatter;
+
 /**
  * Methods related to {@link Date}
  *
@@ -56,6 +58,16 @@ public class DateHelper {
           "Error parsing date " + dateString + ": Format should be yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
           e);
     }
+  }
+
+  /**
+   * True if the string is a well formed date
+   * 
+   * @param dateString
+   * @return
+   */
+  public static boolean isValidDate(String dateString) {
+    return DateFormatter.format(dateString) != null;
   }
 
   /**

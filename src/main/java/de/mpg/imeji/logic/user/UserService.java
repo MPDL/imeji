@@ -265,7 +265,7 @@ public class UserService {
   public Collection<User> searchUserByName(String name) {
     try {
       return retrieveBatchLazy(search.search(SearchQueryParser.parseStringQuery(name),
-          new SortCriterion(SearchFields.person_family, SortOrder.ASCENDING), Imeji.adminUser, null,
+          new SortCriterion(SearchFields.completename, SortOrder.ASCENDING), Imeji.adminUser, null,
           0, -1).getResults(), -1);
     } catch (final UnprocessableError e) {
       LOGGER.error("Error search users", e);

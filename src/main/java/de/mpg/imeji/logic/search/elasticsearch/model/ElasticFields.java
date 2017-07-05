@@ -7,28 +7,31 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
  *
  */
 public enum ElasticFields {
-  ALL, ID, NAME, DESCRIPTION, FULLTEXT, LICENSE, READ, UPLOAD, USERS, STATUS, LASTEDITOR, CREATOR, CREATORS, CREATED, MODIFIED, FAMILYNAME, GIVENNAME, ORGANIZATION, MEMBER, PID, FILETYPE, SIZE, FOLDER, PROFILE, ALBUM, CHECKSUM, METADATA, METADATA_TEXT(
-      "metadata.text",
-      true), METADATA_NAME("metadata.name"), METADATA_title("metadata.title"), METADATA_NUMBER(
-          "metadata.number"), METADATA_TIME("metadata.time"), METADATA_LOCATION(
-              "metadata.location"), METADATA_URI("metadata.uri"), METADATA_ORGANIZATION(
-                  "metadata.organization"), METADATA_FAMILYNAME(
-                      "metadata.familyname"), METADATA_GIVENNAME(
-                          "metadata.givenname"), METADATA_LONGITUDE(
-                              "metadata.longitude"), METADATA_LATITUDE(
-                                  "metadata.latitude"), METADATA_INDEX(
-                                      "metadata.index"), METADATA_TYPE(
-                                          "metadata.type"), AUTHOR_FAMILYNAME(
-                                              "author.familyname"), AUTHOR_GIVENNAME(
-                                                  "author.givenname"), AUTHOR_COMPLETENAME(
-                                                      "author.completename"), AUTHOR_ORGANIZATION(
-                                                          "author.organization"), INFO_LABEL(
-                                                              "info.label"), INFO_TEXT(
-                                                                  "info.text"), INFO_URL(
-                                                                      "info.url"), EMAIL, TECHNICAL, TECHNICAL_NAME(
-                                                                          "technical.name"), TECHNICAL_VALUE(
-                                                                              "technical.value"), PARENT(
-                                                                                  "_parent");
+  ALL, ID, IDSTRING, NAME, DESCRIPTION, FULLTEXT, LICENSE, READ, UPLOAD, USERS, STATUS, LASTEDITOR, CREATOR, CREATORS, CREATED, MODIFIED, FAMILYNAME, GIVENNAME, ORGANIZATION, MEMBER, PID, FILETYPE, SIZE, FOLDER, PROFILE, ALBUM, CHECKSUM, METADATA, METADATA_EXACT(
+      "metadata.text.exact"), METADATA_TEXT("metadata.text",
+          true), METADATA_NAME("metadata.name"), METADATA_TITLE("metadata.title"), METADATA_NUMBER(
+              "metadata.number"), METADATA_TIME("metadata.time"), METADATA_LOCATION(
+                  "metadata.location"), METADATA_URI("metadata.uri"), METADATA_ORGANIZATION(
+                      "metadata.organization"), METADATA_FAMILYNAME(
+                          "metadata.familyname"), METADATA_GIVENNAME(
+                              "metadata.givenname"), METADATA_LONGITUDE(
+                                  "metadata.longitude"), METADATA_LATITUDE(
+                                      "metadata.latitude"), METADATA_INDEX(
+                                          "metadata.index"), METADATA_TYPE(
+                                              "metadata.type"), AUTHOR_FAMILYNAME(
+                                                  "author.familyname"), AUTHOR_GIVENNAME(
+                                                      "author.givenname"), AUTHOR_COMPLETENAME(
+                                                          "author.completename"), AUTHOR_ORGANIZATION(
+                                                              "author.organization"), INFO_LABEL(
+                                                                  "info.label"), INFO_TEXT(
+                                                                      "info.text"), INFO_URL(
+                                                                          "info.url"), EMAIL, TECHNICAL, TECHNICAL_NAME(
+                                                                              "technical.name"), TECHNICAL_VALUE(
+                                                                                  "technical.value"), PARENT(
+                                                                                      "_parent"), AUTHORS_OF_COLLECTION(
+                                                                                          "authorsOfCollection"), ORGANIZATION_OF_COLLECTION(
+                                                                                              "organizationsOfCollection"), TITLE_WITH_ID_OF_COLLECTION(
+                                                                                                  "titleWithIdOfCollection");
   /**
    * The field which must be used to search in elasticsearch
    */

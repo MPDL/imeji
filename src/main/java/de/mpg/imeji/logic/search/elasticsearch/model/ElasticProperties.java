@@ -12,6 +12,7 @@ import de.mpg.imeji.logic.vo.Properties;
  */
 public class ElasticProperties {
   private String id;
+  private String idstring;
   private String creator;
   private Date created;
   private Date modified;
@@ -25,6 +26,7 @@ public class ElasticProperties {
   public ElasticProperties(Properties p) {
     if (p != null) {
       this.id = p.getId().toString();
+      this.idstring = p.getIdString();
       this.created = p.getCreated().getTime();
       this.creator = p.getCreatedBy().toString();
       this.modified = p.getModified().getTime();
@@ -65,5 +67,9 @@ public class ElasticProperties {
    */
   public String getStatus() {
     return status;
+  }
+
+  public String getIdstring() {
+    return idstring;
   }
 }

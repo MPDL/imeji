@@ -1,5 +1,9 @@
 package de.mpg.imeji.presentation.search.facet;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -8,6 +12,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
+import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -81,6 +86,10 @@ public class CreateFacetBean extends SuperBean {
     this.type = type;
   }
 
+  public List<String> getTypeList() {
+    return Stream.of(StatementType.values()).filter(t -> t != StatementType.GEOLOCATION)
+        .map(Enum::name).collect(Collectors.toList());
+  }
 
 
 }

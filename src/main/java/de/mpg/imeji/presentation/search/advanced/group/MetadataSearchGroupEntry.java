@@ -13,9 +13,9 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
-import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
+import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Metadata;
@@ -94,35 +94,35 @@ public class MetadataSearchGroupEntry implements Serializable {
     List<SearchElement> l = new LinkedList<>();
     Metadata metadata = input.getMetadata();
     if (!StringHelper.isNullOrEmptyTrim(metadata.getText())) {
-      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.text, operator,
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.text, operator,
           metadata.getText(), not));
     }
     if (!StringHelper.isNullOrEmptyTrim(metadata.getName())) {
       this.operator = SearchOperators.EQUALS;
-      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.name, operator,
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.placename, operator,
           metadata.getName(), not));
     }
     if (!StringHelper.isNullOrEmptyTrim(metadata.getTitle())) {
-      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.title, operator,
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.title, operator,
           metadata.getTitle(), not));
     }
     if (!StringHelper.isNullOrEmptyTrim(metadata.getDate())) {
-      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.date, operator,
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.date, operator,
           metadata.getDate(), not));
     }
     if (!StringHelper.isNullOrEmptyTrim(metadata.getUrl())) {
-      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.url, operator,
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.url, operator,
           metadata.getUrl(), not));
     }
     if (!Double.isNaN(metadata.getNumber())) {
-      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.number, operator,
-          Double.toString(metadata.getNumber()), not));
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.number,
+          operator, Double.toString(metadata.getNumber()), not));
     }
     if (!Double.isNaN(metadata.getLatitude()) && !Double.isNaN(metadata.getLongitude())) {
       this.operator = SearchOperators.EQUALS;
       // first, remove the search by name, since geosearch is currently done
       l = new LinkedList<>();
-      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.coordinates,
+      l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.coordinates,
           SearchOperators.EQUALS,
           Double.toString(metadata.getLatitude()) + "," + Double.toString(metadata.getLongitude())
               + (StringHelper.isNullOrEmptyTrim(distance) ? "" : "," + distance),
@@ -130,16 +130,16 @@ public class MetadataSearchGroupEntry implements Serializable {
     }
     if (metadata.getPerson() != null) {
       if (!StringHelper.isNullOrEmptyTrim(metadata.getPerson().getFamilyName())) {
-        l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.person_family,
+        l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.familyname,
             operator, metadata.getPerson().getFamilyName(), not));
       }
       if (!StringHelper.isNullOrEmptyTrim(metadata.getPerson().getGivenName())) {
-        l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.person_given,
+        l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.givenname,
             operator, metadata.getPerson().getGivenName(), not));
       }
       if (!metadata.getPerson().getOrganizations().isEmpty()) {
-        l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchFields.person_org, operator,
-            metadata.getPerson().getOrganizationString(), not));
+        l.add(new SearchMetadata(statement.getIndexUrlEncoded(), SearchMetadataFields.organisation,
+            operator, metadata.getPerson().getOrganizationString(), not));
       }
     }
     return l;

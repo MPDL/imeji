@@ -1,133 +1,156 @@
 package de.mpg.imeji.presentation.search.facet.selector;
 
-import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS.AND;
-
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import javax.faces.context.FacesContext;
+
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
-import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
+import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
-import de.mpg.imeji.logic.search.model.SearchOperators;
-import de.mpg.imeji.logic.search.model.SearchPair;
+import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.StatementType;
+import de.mpg.imeji.util.DateHelper;
 
+/**
+ * Entry of the {@link FacetSelectorBean}
+ * 
+ * @author saquet
+ *
+ */
 public class FacetSelectorEntry implements Serializable {
-  private static final long serialVersionUID = -5562614379983226471L;
+  private static final long serialVersionUID = -982329261816788783L;
   private static final Logger LOGGER = Logger.getLogger(FacetSelectorEntry.class);
-  private final String label;
-  private final long count;
-  private final SearchQuery query;
-  private final String type;
+  private final Facet facet;
+  private final List<FacetSelectorEntryValue> values;
+  private final SearchQuery facetsQuery;
+  private String from;
+  private String to;
 
-  public FacetSelectorEntry(FacetResultValue resultValue, Facet facet) {
-    this.label = resultValue.getLabel();
-    this.count = resultValue.getCount();
-    this.type = facet.getType();
-    this.query = buildQuery(facet, resultValue.getLabel());
+  public FacetSelectorEntry(FacetResult facetResult, SearchQuery facetsQuery) {
+    FacetService facetService = new FacetService();
+    this.facetsQuery = facetsQuery;
+    this.facet = facetService.retrieveByIndexFromCache(facetResult.getIndex());
+    this.values = facetResult.getValues().stream()
+        .map(v -> new FacetSelectorEntryValue(v, facet, facetsQuery)).collect(Collectors.toList());
   }
 
-  private SearchQuery buildQuery(Facet facet, String value) {
-    boolean isMetadataFacet = facet.getIndex().startsWith("md.");
-    return isMetadataFacet ? buildMetadataQuery(facet, value) : buildSystemQuery(facet, value);
-
+  public void search(String url, String q) throws IOException {
+    String fq = buildFromToQuery();
+    if (q != null) {
+      FacesContext.getCurrentInstance().getExternalContext()
+          .redirect(url + "?q=" + q + "&fq=" + fq);
+    }
   }
 
-  /**
-   * Build the SearchQuery for the user metadata
-   * 
-   * @param facet
-   * @param value
-   * @return
-   */
-  private SearchQuery buildMetadataQuery(Facet facet, String value) {
-    try {
-      switch (StatementType.valueOf(facet.getType())) {
-        case TEXT:
-          return buildMetadataTextQuery(facet, value);
-        case NUMBER:
-        case DATE:
-          return buildMetadataDateQuery(facet, value);
-        case PERSON:
-          return new SearchQuery();
-        case URL:
-          return new SearchQuery();
-        case GEOLOCATION:
-          return new SearchQuery();
-
+  private String buildFromToQuery() {
+    if (isValidInput()) {
+      try {
+        SearchMetadata sm = new SearchMetadata(getIndex(), getSearchMetadataFieldsForFacet(),
+            getIntervalSearchValue());
+        return SearchQueryParser
+            .transform2UTF8URL(new SearchFactory(facetsQuery).and(Arrays.asList(sm)).build());
+      } catch (UnprocessableError e) {
+        LOGGER.error("Error searching for interval", e);
+        return "";
       }
-    } catch (Exception e) {
-      LOGGER.error("Error building facet metadata query", e);
     }
-    return new SearchQuery();
+    return null;
   }
 
-  private SearchQuery buildMetadataTextQuery(Facet facet, String value) throws UnprocessableError {
-    SearchMetadata smd = new SearchMetadata(facet.getIndex().replace("md.", ""), value);
-    return new SearchFactory().addElement(smd, AND).build();
-  }
-
-  private SearchQuery buildMetadataDateQuery(Facet facet, String value) throws UnprocessableError {
-    String dateValue = value.replace("Before", "").replace("After", "").trim();
-    SearchOperators operator = SearchOperators.EQUALS;
-    if (value.contains("Before")) {
-      operator = SearchOperators.LESSER;
-    } else if (value.contains("After")) {
-      operator = SearchOperators.GREATER;
-    }
-    SearchMetadata smd = new SearchMetadata(facet.getIndex().replace("md.", ""), SearchFields.date,
-        operator, dateValue, false);
-    return new SearchFactory().addElement(smd, AND).build();
+  private String getIndex() {
+    return facet.getIndex().replace("md.", "").split("\\.")[0];
   }
 
   /**
-   * Build the SearchQuery for system metadata
+   * True if the input is valid
    * 
-   * @param facet
-   * @param value
    * @return
-   * @throws UnprocessableError
    */
-  private SearchQuery buildSystemQuery(Facet facet, String value) {
-    try {
-      return new SearchFactory()
-          .addElement(new SearchPair(SearchFields.valueOf(facet.getIndex()), value), AND).build();
-    } catch (UnprocessableError e) {
-      LOGGER.error("Error building facet system query", e);
-      return new SearchQuery();
+  private boolean isValidInput() {
+    switch (StatementType.valueOf(facet.getType())) {
+      case NUMBER:
+        return NumberUtils.isNumber(from) && NumberUtils.isNumber(to);
+      case DATE:
+        return DateHelper.isValidDate(from) && DateHelper.isValidDate(to);
+      default:
+        return false;
     }
   }
 
-  public String addQuery(SearchQuery fq) throws UnprocessableError {
-    return SearchQueryParser
-        .transform2UTF8URL(new SearchFactory(fq).and(query.getElements()).build());
+  private String getIntervalSearchValue() {
+    return (StringHelper.isNullOrEmptyTrim(from) ? "" : "from " + from)
+        + (StringHelper.isNullOrEmptyTrim(to) ? "" : " to " + to);
   }
 
   /**
-   * @return the label
+   * REturn the {@link SearchMetadataFields} needed for the current facet
+   * 
+   * @return
    */
-  public String getLabel() {
-    return label;
+  private SearchMetadataFields getSearchMetadataFieldsForFacet() {
+    switch (StatementType.valueOf(facet.getType())) {
+      case NUMBER:
+        return SearchMetadataFields.number;
+      case DATE:
+        return SearchMetadataFields.date;
+      default:
+        return null;
+    }
   }
 
   /**
-   * @return the count
+   * @return the facet
    */
-  public long getCount() {
-    return count;
+  public Facet getFacet() {
+    return facet;
   }
 
   /**
-   * @return the type
+   * @return the values
    */
-  public String getType() {
-    return type;
+  public List<FacetSelectorEntryValue> getValues() {
+    return values;
+  }
+
+  /**
+   * @return the from
+   */
+  public String getFrom() {
+    return from;
+  }
+
+  /**
+   * @param from the from to set
+   */
+  public void setFrom(String from) {
+    this.from = from;
+  }
+
+  /**
+   * @return the to
+   */
+  public String getTo() {
+    return to;
+  }
+
+  /**
+   * @param to the to to set
+   */
+  public void setTo(String to) {
+    this.to = to;
   }
 
 }

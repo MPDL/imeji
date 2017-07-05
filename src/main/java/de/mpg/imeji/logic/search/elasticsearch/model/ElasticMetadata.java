@@ -34,7 +34,6 @@ public final class ElasticMetadata extends ElasticPerson {
   public ElasticMetadata(Metadata md) {
     super(md.getPerson());
     this.index = new StatementFactory().setIndex(md.getIndex()).build().getIndexUrlEncoded();
-    this.text = md.getText();
     this.name = md.getName();
     this.title = md.getTitle();
     if (!Double.isNaN(md.getNumber())) {
@@ -48,6 +47,27 @@ public final class ElasticMetadata extends ElasticPerson {
     if (!Double.isNaN(md.getLatitude()) && !Double.isNaN(md.getLongitude())) {
       this.location = md.getLatitude() + "," + md.getLongitude();
     }
+    text = initText(md);
+  }
+
+  private String initText(Metadata md) {
+    String s = md.getText();
+    if (md.getPerson() != null
+        && !StringHelper.isNullOrEmptyTrim(md.getPerson().getCompleteName())) {
+      s = md.getPerson().getCompleteName();
+    } else if (!StringHelper.isNullOrEmptyTrim(md.getDate())) {
+      s = md.getDate();
+    } else if (!StringHelper.isNullOrEmptyTrim(md.getName())) {
+      s = md.getName();
+    } else if (!StringHelper.isNullOrEmptyTrim(md.getTitle())) {
+      s = md.getTitle();
+    } else if (StringHelper.isNullOrEmptyTrim(md.getTitle())
+        && !StringHelper.isNullOrEmptyTrim(md.getUrl())) {
+      s = md.getUrl();
+    } else if (!Double.isNaN(md.getNumber())) {
+      s = Double.toString(md.getNumber());
+    }
+    return s;
   }
 
   /**

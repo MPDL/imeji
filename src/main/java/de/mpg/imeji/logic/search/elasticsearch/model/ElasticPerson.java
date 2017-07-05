@@ -17,7 +17,7 @@ public class ElasticPerson {
   private final String givenname;
   private final String completename;
   private final String identifier;
-  private final List<ElasticOrganization> organization = new ArrayList<>();
+  private final List<String> organization = new ArrayList<>();
 
   public ElasticPerson() {
     this.familyname = null;
@@ -43,7 +43,7 @@ public class ElasticPerson {
       this.identifier = p.getIdentifier();
       this.completename = p.getCompleteName();
       for (final Organization org : p.getOrganizations()) {
-        organization.add(new ElasticOrganization(org));
+        organization.add(org.getName());
       }
     }
   }
@@ -80,7 +80,7 @@ public class ElasticPerson {
   /**
    * @return the organisation
    */
-  public List<ElasticOrganization> getOrganization() {
+  public List<String> getOrganization() {
     return organization;
   }
 

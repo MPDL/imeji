@@ -17,6 +17,7 @@ import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
+import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -183,7 +184,7 @@ public class SearchQueryParser {
       String index = parser.getGroup(1);
       SearchOperators operator = stringOperator2SearchOperator(parser.getGroup(2));
       String value = parser.getGroup(3);
-      return new SearchPair(SearchFields.valueOf(index), operator, value, not);
+      return new SearchPair(SearchFields.valueOfIndex(index), operator, value, not);
     }
     return new SearchPair();
   }
@@ -202,7 +203,8 @@ public class SearchQueryParser {
       String value = parser.getGroup(3);
       String[] indexes = index.split("\\.");
       return new SearchMetadata(indexes[0],
-          indexes.length > 1 ? SearchFields.valueOf(indexes[1]) : null, operator, value, not);
+          indexes.length > 1 ? SearchMetadataFields.valueOfIndex(indexes[1]) : null, operator,
+          value, not);
     }
     return new SearchPair();
   }
@@ -356,8 +358,8 @@ public class SearchQueryParser {
    * @return
    */
   private static String searchPairToStringQuery(SearchPair pair) {
-    return (pair.isNot() ? "NOT " : "") + pair.getField() + operator2URL(pair.getOperator())
-        + searchValue2URL(pair);
+    return (pair.isNot() ? "NOT " : "") + pair.getField().getIndex()
+        + operator2URL(pair.getOperator()) + searchValue2URL(pair);
   }
 
   /**
@@ -391,7 +393,7 @@ public class SearchQueryParser {
    */
   public static String getMetadataIndex(SearchMetadata smd) {
     return SearchFields.md.name() + "." + smd.getIndex()
-        + (smd.getField() == null ? "" : "." + smd.getField().name());
+        + (smd.getMetadataField() == null ? "" : "." + smd.getMetadataField().name());
   }
 
   /**

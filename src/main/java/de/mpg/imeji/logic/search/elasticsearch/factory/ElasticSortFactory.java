@@ -39,12 +39,8 @@ public class ElasticSortFactory {
     }
     final SearchFields index = sort.getField();
     switch (index) {
-      case text:
-        return makeBuilder(ElasticFields.METADATA_TEXT.field() + SORT_INDEX, sort);
       case title:
         return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort);
-      case date:
-        return makeBuilder(ElasticFields.METADATA_TEXT.field() + SORT_INDEX, sort);
       case modified:
         return makeBuilder(ElasticFields.MODIFIED.field(), sort);
       case filename:
