@@ -5,6 +5,7 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:composite="http://java.sun.com/jsf/composite"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
+	xmlns:facet="http://java.sun.com/jsf/composite/components/facet"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
 <composite:interface>
@@ -20,20 +21,52 @@
 			<h:inputText id="inputFacetName" styleClass="imj_metadataValue"
 				value="#{cc.attrs.form.name}" html5:autofocus="true" />
 		</div>
+		<ui:fragment rendered="#{not empty cc.attrs.form.index}">
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel"> #{lbl.index}<span
+					class="imj_noDisplay">: </span>
+				</label>
+				<h:outputText styleClass="imj_metadataValue"
+					value="#{cc.attrs.form.index}"/>
+			</div>
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel"> #{lbl.type}<span
+					class="imj_noDisplay">: </span>
+				</label>
+				<h:outputText  styleClass="imj_metadataValue"
+					value="#{cc.attrs.form.type}"/>
+			</div>
+		</ui:fragment>
+		
 		<div class="imj_metadataSet">
-			<label class="imj_metadataLabel"> #{lbl.index}<span
+			<label class="imj_metadataLabel">#{lbl.select}<span
 				class="imj_noDisplay">: </span>
 			</label>
-			<h:inputText id="inputFacetIndex" styleClass="imj_metadataValue"
-				value="#{cc.attrs.form.index}" html5:autofocus="true" />
-		</div>
-		<div class="imj_metadataSet">
-			<label class="imj_metadataLabel"> #{lbl.type}<span
-				class="imj_noDisplay">: </span>
-			</label>
-			<h:selectOneMenu id="selFacetType" value="#{cc.attrs.form.type}" >
-				<f:selectItems value="#{cc.attrs.form.typeList}"/>
-			</h:selectOneMenu>
+			<div class="imj_metadataValue">
+				<ui:fragment rendered="#{empty cc.attrs.form.index}">
+					<ui:repeat var="systemFacet" value="#{cc.attrs.form.systemFacets}">
+						<ui:fragment rendered="#{cc.attrs.form.isUsed(systemFacet.index)}">
+							<span class="fa fa-lock"/>  <span> #{lbl.facet_used}: </span>
+						</ui:fragment>
+						<h:commandLink value="#{systemFacet.label}" action="#{cc.attrs.form.initFacet(systemFacet.index, systemFacet.type)}" disabled="#{cc.attrs.form.isUsed(systemFacet.index)}">
+							<f:ajax render="@form" execute="@form"/>
+						</h:commandLink>
+						<br/>
+					</ui:repeat>
+					#{lbl.or_big}
+					<br/>
+					<a href="#" onclick="openDialog('selectStatementDialog'); return false;">
+						<span class="fa fa-hand-o-right"/>
+						#{lbl.select_metadata}
+					</a>
+					<facet:selectStatement bean="#{cc.attrs.form}" id="selectStatement"/>
+				</ui:fragment>
+				<ui:fragment rendered="#{not empty cc.attrs.form.index}">
+					<h:commandLink value="#{lbl.reset}" action="#{cc.attrs.form.initFacet('', '')}" styleClass="imj_metadataValue">
+						<f:ajax render="@form" execute="@form"/>
+					</h:commandLink>
+				</ui:fragment>
+			</div>
 		</div>
 	</div>
 </composite:implementation>

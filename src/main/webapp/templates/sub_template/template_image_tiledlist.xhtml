@@ -28,8 +28,12 @@
             	showSortMenu="true"
             	showStatusFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"
             	showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
+          
            
 			<div id="itemsArea" class="itemsArea">
+				<div id="facetsArea" class="imj_facetsArea">
+	           		<facet:facetsSelector itemsBean="#{paginatorListSessionBean}"/> 
+	           </div>
 				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
            		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 
@@ -38,6 +42,7 @@
            				<span class=" fa fa-exclamation-triangle"/> #{msg.no_images_found}!
            			</div>
            		</ui:fragment>
+           		
 			</div>
 			<!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>

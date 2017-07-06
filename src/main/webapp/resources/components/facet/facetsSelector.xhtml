@@ -14,7 +14,7 @@
 <composite:implementation>
 	#{FacetSelectorBean.init(cc.attrs.itemsBean.searchResult)}
 	<ui:fragment rendered="#{FacetSelectorBean.entries.size() > 0}">
-		<span class="imj_menuTitle"><span class="fa fa-filter"></span> #{lbl.filters}</span>
+		<span class="imj_menuTitle"><span class="fa fa-filter"></span> #{lbl.filter_by}</span>
 	</ui:fragment>
 	<ui:repeat var="entry" value="#{FacetSelectorBean.entries}" varStatus="row">
 		<ui:fragment rendered="#{!SearchBreadcrumb.isSelected(entry.facet.index)}">
@@ -29,7 +29,7 @@
 					<h:form>
 						<h:inputText styleClass="imj_facetInput" value="#{entry.from}" html5:placeholder="#{lbl.from}" />
 						<h:inputText styleClass="imj_facetInput" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
-						<h:commandLink styleClass="imj_facetValue" value="#{lbl.go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}"/>
+						<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}"/>
 					</h:form>
 				</ui:fragment>
 				<ui:fragment rendered="#{entry.facet.type == 'DATE'}">
@@ -37,7 +37,7 @@
 					<h:form>
 						<h:inputText styleClass="imj_facetInput datepicker" value="#{entry.from}" html5:placeholder="#{lbl.from}"/>
 						<h:inputText styleClass="imj_facetInput datepicker" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
-						<h:commandLink styleClass="imj_facetValue" value="#{lbl.go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}"/>
+						<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}"/>
 					</h:form>
 				</ui:fragment>
 			</div>

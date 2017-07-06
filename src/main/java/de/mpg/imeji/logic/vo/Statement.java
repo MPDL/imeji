@@ -14,6 +14,8 @@ import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.search.model.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 
@@ -76,7 +78,7 @@ public class Statement implements Serializable, Cloneable {
   }
 
   /**
-   * Get the Version of the index which should be used for the search
+   * Get the index encoded in UTF-8
    * 
    * @return
    */
@@ -85,6 +87,26 @@ public class Statement implements Serializable, Cloneable {
       return URLEncoder.encode(encodeIndex(index), "UTF-8");
     } catch (UnsupportedEncodingException e) {
       return index;
+    }
+  }
+
+  /**
+   * Return the index which can be used for the search
+   * 
+   * @return
+   */
+  public String getSearchIndex() {
+    return SearchFields.md.getIndex() + "." + getIndexUrlEncoded() + "." + getMetadataField();
+  }
+
+  private String getMetadataField() {
+    switch (getType()) {
+      case DATE:
+        return SearchMetadataFields.date.getIndex();
+      case NUMBER:
+        return SearchMetadataFields.number.getIndex();
+      default:
+        return SearchMetadataFields.exact.getIndex();
     }
   }
 

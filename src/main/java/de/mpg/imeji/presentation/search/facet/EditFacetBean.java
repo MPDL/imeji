@@ -1,5 +1,7 @@
 package de.mpg.imeji.presentation.search.facet;
 
+import java.io.IOException;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -44,7 +46,8 @@ public class EditFacetBean extends CreateFacetBean {
     facet.setType(getType());
     try {
       new FacetService().update(facet, getSessionUser());
-    } catch (ImejiException e) {
+      redirect(getNavigation().getApplicationUrl() + "facets");
+    } catch (ImejiException | IOException e) {
       LOGGER.error("Error updateing Facet ", e);
       BeanHelper.error("Error saving Facet", e.getMessage());
     }

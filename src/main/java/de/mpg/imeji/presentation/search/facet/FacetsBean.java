@@ -45,10 +45,12 @@ public class FacetsBean extends SuperBean {
       Facet f = facetService.retrieveByIndexFromCache(index);
       facetService.delete(f, getSessionUser());
       BeanHelper.info("Facet " + f.getName() + " successfully deleted");
+      facets = facetService.retrieveAll();
     } catch (ImejiException e) {
       BeanHelper.error("Error deleting facet: " + e.getMessage());
       LOGGER.error("Error deleting facet: ", e);
     }
+
   }
 
   /**

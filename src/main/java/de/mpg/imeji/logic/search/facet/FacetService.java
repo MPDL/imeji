@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -44,15 +45,34 @@ public class FacetService extends SearchServiceAbstract<Facet> {
   private final FacetController controller = new FacetController();
 
   public Facet create(Facet facet, User user) throws ImejiException {
+    checkUniqueIndex(facet);
     facet = controller.create(facet, user);
     retrieveAll();// renew Cache
     return facet;
   }
 
   public Facet update(Facet facet, User user) throws ImejiException {
+    checkUniqueIndex(facet);
     facet = controller.update(facet, user);
     retrieveAll();// renew Cache
     return facet;
+  }
+
+  private void checkUniqueIndex(Facet facet) throws AlreadyExistsException {
+    if (exists(facet.getIndex())) {
+      throw new AlreadyExistsException("Index " + facet.getIndex()
+          + " is already used by another facet, please choose another facet/metadata");
+    }
+  }
+
+  /**
+   * True if the index exists already
+   * 
+   * @param facet
+   * @return
+   */
+  public boolean exists(String index) {
+    return cachedFacetsMapByIndex.containsKey(index);
   }
 
   public Facet read(String id) throws ImejiException {
@@ -76,7 +96,8 @@ public class FacetService extends SearchServiceAbstract<Facet> {
 
   @Override
   public List<Facet> retrieve(List<String> ids, User user) throws ImejiException {
-    return controller.retrieveBatch(ids, Imeji.adminUser);
+    return controller.retrieveBatch(ids, Imeji.adminUser).stream()
+        .sorted((f1, f2) -> f1.getName().compareTo(f2.getName())).collect(Collectors.toList());
   }
 
   @Override
@@ -89,10 +110,10 @@ public class FacetService extends SearchServiceAbstract<Facet> {
 
   private void resetCache(List<Facet> facets) {
     cachedFacets = facets;
-    cachedFacetsMapByIndex =
-        cachedFacets.stream().collect(Collectors.toMap(Facet::getIndex, Function.identity()));
-    cachedFacetsMapByName =
-        cachedFacets.stream().collect(Collectors.toMap(Facet::getName, Function.identity()));
+    cachedFacetsMapByIndex = cachedFacets.stream()
+        .collect(Collectors.toMap(Facet::getIndex, Function.identity(), (i1, i2) -> i1));
+    cachedFacetsMapByName = cachedFacets.stream()
+        .collect(Collectors.toMap(Facet::getName, Function.identity(), (i1, i2) -> i1));
   }
 
   /**

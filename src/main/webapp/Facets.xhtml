@@ -58,7 +58,7 @@
 									</h:outputLink>
 									<dialog:confirmationDialog submitAction="delete"
 										bean="#{FacetsBean}"
-										confirmationText="#{lbl.confirmation_delete_facet}"
+										confirmationText="#{msg.confirmation_delete_facet} (#{facet.name}) ?"
 										submitLabel="#{lbl.delete}"
 										dialogId="deleteFacet#{row.index}" identifierName="index"
 										identifierValue="#{facet.index}" />

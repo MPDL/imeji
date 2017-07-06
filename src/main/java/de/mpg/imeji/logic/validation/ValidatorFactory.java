@@ -1,6 +1,8 @@
 package de.mpg.imeji.logic.validation;
 
+import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.validation.impl.CollectionValidator;
+import de.mpg.imeji.logic.validation.impl.FacetValidator;
 import de.mpg.imeji.logic.validation.impl.ItemValidator;
 import de.mpg.imeji.logic.validation.impl.MetadataValidator;
 import de.mpg.imeji.logic.validation.impl.PseudoValidator;
@@ -49,6 +51,8 @@ public class ValidatorFactory {
       validator = new UserValidator();
     } else if (obj instanceof UserGroup) {
       validator = new UserGroupValidator();
+    } else if (obj instanceof Facet) {
+      validator = new FacetValidator();
     }
     return validator;
   }
