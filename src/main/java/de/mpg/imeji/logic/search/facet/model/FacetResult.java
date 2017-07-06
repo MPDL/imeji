@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.search.model.SearchQuery;
-
 /**
  * An entry of a {@link FacetResult}
  * 
@@ -22,7 +20,7 @@ public class FacetResult implements Serializable {
     this.name = name;
     this.index = index;
   }
-  
+
 
   /**
    * @return the name

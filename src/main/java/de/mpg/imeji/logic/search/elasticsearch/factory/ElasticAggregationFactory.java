@@ -71,6 +71,7 @@ public class ElasticAggregationFactory {
   private static AbstractAggregationBuilder getLicenseAggregation(Facet facet) {
     List<String> licenses =
         Stream.of(ImejiLicenses.values()).map(l -> l.name()).collect(Collectors.toList());
+    licenses.add(ImejiLicenses.NO_LICENSE);
     return AggregationBuilders.terms(SearchFields.license.name())
         .field(ElasticFields.LICENSE.field()).include(licenses.toArray(new String[0]));
   }

@@ -39,7 +39,8 @@ public class FacetSelectorBean extends SuperBean {
   }
 
   public String init(SearchResult result) {
-    entries = result.getFacets().stream().map(r -> new FacetSelectorEntry(r, facetQuery))
+    entries = result.getFacets().stream()
+        .map(r -> new FacetSelectorEntry(r, facetQuery, result.getNumberOfRecords()))
         .collect(Collectors.toList());
     return "";
   }

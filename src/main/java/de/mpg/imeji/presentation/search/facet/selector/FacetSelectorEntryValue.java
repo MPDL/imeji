@@ -17,6 +17,7 @@ import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.StatementType;
 
 /**
@@ -49,12 +50,20 @@ public class FacetSelectorEntryValue implements Serializable {
     if (facet.getIndex().equals(SearchFields.col.getIndex())) {
       return resultValue.getLabel().split(" ", 2)[1];
     }
+    if (facet.getIndex().equals(SearchFields.license.getIndex())
+        && resultValue.getLabel().equals(ImejiLicenses.NO_LICENSE)) {
+      return "None";
+    }
     return resultValue.getLabel();
   }
 
   private String readQueryValue(FacetResultValue resultValue, Facet facet) {
     if (facet.getIndex().equals(SearchFields.col.getIndex())) {
       return resultValue.getLabel().split(" ", 2)[0];
+    }
+    if (facet.getIndex().equals(SearchFields.license.getIndex())
+        && "Any".equalsIgnoreCase(resultValue.getLabel())) {
+      return "*";
     }
     return resultValue.getLabel();
   }
@@ -71,7 +80,9 @@ public class FacetSelectorEntryValue implements Serializable {
 
   private SearchQuery buildEntryQuery(Facet facet, String value) {
     boolean isMetadataFacet = facet.getIndex().startsWith("md.");
-    value = "\"" + value + "\"";
+    if (!"*".equals(value)) {
+      value = "\"" + value + "\"";
+    }
     return isMetadataFacet ? buildMetadataQuery(facet, value) : buildSystemQuery(facet, value);
 
   }

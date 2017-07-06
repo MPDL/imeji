@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
 import de.mpg.imeji.logic.vo.Metadata;
@@ -52,7 +53,7 @@ public final class ElasticItem extends ElasticProperties {
       return !StringHelper.isNullOrEmptyTrim(license.getName()) ? license.getName()
           : license.getUrl();
     }
-    return null;
+    return ImejiLicenses.NO_LICENSE;
   }
 
   /**

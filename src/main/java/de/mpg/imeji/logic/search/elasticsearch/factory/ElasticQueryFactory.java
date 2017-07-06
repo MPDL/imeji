@@ -790,10 +790,9 @@ public class ElasticQueryFactory {
   private static QueryBuilder licenseQuery(SearchPair pair) {
     final BoolQueryBuilder licenseQuery = QueryBuilders.boolQuery();
     for (final String licenseName : pair.getValue().split(" OR ")) {
-      if (ImejiLicenses.NO_LICENSE.equals(licenseName)) {
-        licenseQuery.should(QueryBuilders.boolQuery()
-            .mustNot(QueryBuilders.existsQuery(ElasticFields.LICENSE.field())));
-      } else if ("*".equals(licenseName)) {
+      if ("*".equals(licenseName)) {
+        licenseQuery.mustNot(fieldQuery(ElasticFields.LICENSE, ImejiLicenses.NO_LICENSE,
+            SearchOperators.EQUALS, false));
         licenseQuery.should(QueryBuilders.existsQuery(ElasticFields.LICENSE.field()));
       } else {
         licenseQuery

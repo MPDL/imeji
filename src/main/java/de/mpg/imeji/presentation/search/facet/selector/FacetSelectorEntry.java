@@ -16,11 +16,14 @@ import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResult;
+import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.util.DateHelper;
 
@@ -34,17 +37,31 @@ public class FacetSelectorEntry implements Serializable {
   private static final long serialVersionUID = -982329261816788783L;
   private static final Logger LOGGER = Logger.getLogger(FacetSelectorEntry.class);
   private final Facet facet;
-  private final List<FacetSelectorEntryValue> values;
+  private List<FacetSelectorEntryValue> values;
   private final SearchQuery facetsQuery;
   private String from;
   private String to;
 
-  public FacetSelectorEntry(FacetResult facetResult, SearchQuery facetsQuery) {
+  public FacetSelectorEntry(FacetResult facetResult, SearchQuery facetsQuery, int countAll) {
     FacetService facetService = new FacetService();
     this.facetsQuery = facetsQuery;
     this.facet = facetService.retrieveByIndexFromCache(facetResult.getIndex());
     this.values = facetResult.getValues().stream()
         .map(v -> new FacetSelectorEntryValue(v, facet, facetsQuery)).collect(Collectors.toList());
+    addAnyLicense(facetResult, facet, facetsQuery, countAll);
+  }
+
+  private void addAnyLicense(FacetResult facetResult, Facet facet, SearchQuery facetsQuery,
+      int countAll) {
+    if (facet.getIndex().equals(SearchFields.license.getIndex())) {
+      long countNone = facetResult.getValues().stream()
+          .filter(r -> r.getLabel().equals(ImejiLicenses.NO_LICENSE)).map(r -> r.getCount())
+          .findFirst().orElse((long) countAll);
+      FacetResultValue v = new FacetResultValue("Any", countAll - countNone);
+      values.add(new FacetSelectorEntryValue(v, facet, facetsQuery));
+      values = values.stream().sorted((v1, v2) -> Long.compare(v2.getCount(), v1.getCount()))
+          .collect(Collectors.toList());
+    }
   }
 
   public void search(String url, String q) throws IOException {
