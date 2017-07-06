@@ -258,9 +258,16 @@
 												</h:selectOneRadio>
 											</div>
 										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue textarea"
-											class="imj_clearInput fa fa-times"> </a>
+									</div>
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.facets_displayed}" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputText value="#{Configuration.facetDisplayed}"
+												styleClass="imj_admindataEdit" />
+										</div>
 									</div>
 									<!-- Admin - Snippet Insert -->
 									<div class="imj_admindataSet">

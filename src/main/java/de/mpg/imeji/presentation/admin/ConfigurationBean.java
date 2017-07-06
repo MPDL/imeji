@@ -602,4 +602,13 @@ public class ConfigurationBean extends SuperBean {
   public void setConeAuthors(String url) {
     Imeji.CONFIG.setConeAuthors(url);
   }
+
+  public String getFacetDisplayed() {
+    return Imeji.CONFIG.getFacetDisplayed();
+  }
+
+  public void setFacetDisplayed(String str) {
+    Imeji.CONFIG.setFacetDisplayed(str);
+  }
+
 }

@@ -41,6 +41,7 @@ public class FacetSelectorEntry implements Serializable {
   private final SearchQuery facetsQuery;
   private String from;
   private String to;
+  private boolean showMore = false;
 
   public FacetSelectorEntry(FacetResult facetResult, SearchQuery facetsQuery, int countAll) {
     FacetService facetService = new FacetService();
@@ -57,10 +58,13 @@ public class FacetSelectorEntry implements Serializable {
       long countNone = facetResult.getValues().stream()
           .filter(r -> r.getLabel().equals(ImejiLicenses.NO_LICENSE)).map(r -> r.getCount())
           .findFirst().orElse((long) countAll);
-      FacetResultValue v = new FacetResultValue("Any", countAll - countNone);
-      values.add(new FacetSelectorEntryValue(v, facet, facetsQuery));
-      values = values.stream().sorted((v1, v2) -> Long.compare(v2.getCount(), v1.getCount()))
-          .collect(Collectors.toList());
+      long countAny = countAll - countNone;
+      if (countAny > 0) {
+        FacetResultValue v = new FacetResultValue("Any", countAll - countNone);
+        values.add(new FacetSelectorEntryValue(v, facet, facetsQuery));
+        values = values.stream().sorted((v1, v2) -> Long.compare(v2.getCount(), v1.getCount()))
+            .collect(Collectors.toList());
+      }
     }
   }
 
@@ -168,6 +172,14 @@ public class FacetSelectorEntry implements Serializable {
    */
   public void setTo(String to) {
     this.to = to;
+  }
+
+  public boolean isShowMore() {
+    return showMore;
+  }
+
+  public void toggleShowMore() {
+    showMore = showMore ? false : true;
   }
 
 }
