@@ -119,7 +119,7 @@ public class HistoryPage implements Serializable {
   }
 
   public String getUrlEncoded() throws UnsupportedEncodingException {
-    return URLEncoder.encode(url, "UTF-8");
+    return URLEncoder.encode(getCompleteUrl(), "UTF-8");
   }
 
   public void setUrl(String url) {
