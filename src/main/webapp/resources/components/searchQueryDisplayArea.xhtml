@@ -12,25 +12,28 @@
 	<composite:implementation>
 		<div class="imj_searchQueryDisplay" >
 			
-			<h:outputText value="#{cc.attrs.label}: "/>
+			<ui:fragment rendered="#{not empty cc.attrs.searchBean.simpleQuery}">
+				<h:outputText value="#{cc.attrs.label}: "/>
+				
+				<span class="imj_searchQueryText">
+					<h:outputText value="#{cc.attrs.searchBean.simpleQuery}"/>
+				</span>
+				<h:outputLink value="#{cc.attrs.navBean.searchUrl}?q=#{cc.attrs.searchBean.query}" styleClass="imj_submitButton" rendered="false">
+					<h:outputText value="#{lbl.search_revise}"/>
+				</h:outputLink>
+	
+				<h:outputLink styleClass="imj_removeFacetButton" value="#{SearchFilterBean.clearFilterAndSearchQuery}">		
+					 <i class="fa fa-times fa-size-1"></i>
+				</h:outputLink>
+			</ui:fragment>
 			
-			<span class="imj_searchQueryText">
-				<h:outputText value="#{cc.attrs.searchBean.simpleQuery} "/>
-			</span>
-			
-			<h:outputLink value="#{cc.attrs.navBean.searchUrl}?q=#{cc.attrs.searchBean.query}" styleClass="imj_submitButton" rendered="false">
-				<h:outputText value="#{lbl.search_revise}"/>
-			</h:outputLink>
-
-			<h:outputLink styleClass="imj_removeFacetButton" value="#{SearchFilterBean.clearFilterAndSearchQuery}">		
-				 <i class="fa fa-times fa-size-1"></i>
-			</h:outputLink>
-			
-			 <ui:repeat var="entry" value="#{SearchBreadcrumb.entries}">
-				<div>
-					<span>#{entry.label} #{entry.operator} #{entry.value}</span>
-					<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.searchBean.query}&amp;fq=#{entry.removeQuery}"><span class=" fa fa-times"></span></a>
-				</div>
+			 <ui:repeat var="entry" value="#{SearchBreadcrumb.entries}" varStatus="varStatus">
+			 	<h:outputText value=" #{lbl.and_big} " rendered="#{varStatus.index > 0 or not empty cc.attrs.searchBean.simpleQuery}"/>
+				<span class="imj_searchQueryText">
+					<span> #{entry.label} #{entry.operator} #{entry.value}</span>
+					<a class="imj_removeFacetButton"  href="#{HistorySession.currentPage.url}?q=#{cc.attrs.searchBean.query}&amp;fq=#{entry.removeQuery}"><span class=" fa fa-times"></span></a>
+				</span>
+				
 			</ui:repeat>
 			
 		</div>
