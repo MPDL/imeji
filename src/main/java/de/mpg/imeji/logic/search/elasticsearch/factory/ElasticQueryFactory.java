@@ -814,11 +814,14 @@ public class ElasticQueryFactory {
    */
   private static QueryBuilder fileTypeQuery(SearchPair pair) {
     final BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
-    for (final String ext : SearchUtils.parseFileTypesAsExtensionList(pair.getValue())) {
+    for (final String ext : SearchUtils
+        .parseFileTypesAsExtensionList(pair.getValue().replace("\"", ""))) {
+
       filetypeQuery.should(fieldQuery(ElasticFields.NAME.field() + ".suggest", "*." + ext + "",
           SearchOperators.EQUALS, false));
     }
     return filetypeQuery;
+
   }
 
   /**

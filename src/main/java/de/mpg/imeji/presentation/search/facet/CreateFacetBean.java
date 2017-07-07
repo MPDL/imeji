@@ -159,10 +159,11 @@ public class CreateFacetBean extends SuperBean {
     COLLECTION("Collection", SearchFields.col.name(),
         StatementType.TEXT.name()), AUTHORS_OF_COLLECTION("Collection's authors",
             SearchFields.collection_author.getIndex(),
-            StatementType.TEXT.name()), ORGANIZATION_OF_COLLECTION("Collection's organizations",
-                SearchFields.collection_author_organisation.getIndex(),
-                StatementType.TEXT.name()), LICENSE("License", SearchFields.license.getIndex(),
-                    StatementType.TEXT.name());
+            StatementType.TEXT.name()), FILETYPE("Filetype", SearchFields.filetype.getIndex(),
+                StatementType.TEXT.name()), ORGANIZATION_OF_COLLECTION("Collection's organizations",
+                    SearchFields.collection_author_organisation.getIndex(),
+                    StatementType.TEXT.name()), LICENSE("License", SearchFields.license.getIndex(),
+                        StatementType.TEXT.name());
 
     private final String label;
     private final String index;

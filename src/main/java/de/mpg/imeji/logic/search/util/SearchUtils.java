@@ -22,6 +22,7 @@ public class SearchUtils {
    * @return
    */
   public static List<String> parseFileTypesAsExtensionList(String fileTypes) {
+    System.out.println(fileTypes);
     final List<String> extensions = new ArrayList<>();
     for (final String typeName : fileTypes.split(" OR ")) {
       final Type type = Imeji.CONFIG.getFileTypes().getType(typeName);

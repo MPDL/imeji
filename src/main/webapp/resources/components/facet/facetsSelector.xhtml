@@ -19,7 +19,7 @@
 
 		<ui:repeat var="entry" value="#{FacetSelectorBean.entries}" varStatus="row">
 		
-			<ui:fragment rendered="#{!SearchBreadcrumb.isSelected(entry.facet.index)}">
+			<ui:fragment rendered="#{!SearchBreadcrumb.isSelected(entry.facet.index) and entry.values.size() > 0}">
 				<h:form>
 				<div class="imj_facet">
 					<div class="imj_facetName">#{entry.facet.name}</div>
