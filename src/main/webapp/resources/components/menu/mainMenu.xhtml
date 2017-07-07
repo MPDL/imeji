@@ -20,6 +20,11 @@
 					<h:outputText value="#{lbl.header_collections}"/>
 				</h:outputLink>
 			</li>
+			<li class="#{cc.attrs.menuClass.trim()}Item#{ (cc.attrs.curMainMenu == 'items') ? ' imj_active' : ''}">
+				<h:outputLink id="lnkItems" title="#{lbl.goto_items}" value="#{cc.attrs.navBean.browseUrl}?q=">
+					<h:outputText value="#{lbl.items}"/>
+				</h:outputLink>
+			</li>
 			<ui:fragment rendered="#{cc.attrs.userHasAdminRights}">
 				<li class="#{cc.attrs.menuClass.trim()}Item#{ (cc.attrs.curMainMenu == 'admin') ? ' imj_active' : ''}">
 					<h:outputLink id="lnkAdmin" title="#{lbl.goto_admin}" value="#{cc.attrs.navBean.adminUrl}">
