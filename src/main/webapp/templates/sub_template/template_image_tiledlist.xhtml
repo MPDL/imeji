@@ -22,21 +22,23 @@
         <h:panelGroup layout="block" id="ajaxWrapper">
 			<script>menuRightOffset();</script>
             <!-- Selection Info Panel -->
-            <item:filters id="selPanel" 
-            	facetBean="#{paginatorListSessionBean}"  
-            	numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
-            	showSortMenu="true"
-            	showStatusFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"
-            	showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
+           
           
            
 			<div id="itemsArea" class="itemsArea">
-				<div id="facetsArea" class="imj_facetsArea">
+				<div id="facetsArea" class="imj_itemsAreaFacets">
 	           		<facet:facetsSelector itemsBean="#{paginatorListSessionBean}"/> 
-	           </div>
-				<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
-           		<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
-
+	           	</div>
+	        	<div  class="imj_itemsAreaContent">
+	        	 	<item:filters id="selPanel" 
+            			facetBean="#{paginatorListSessionBean}"  
+            			numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
+            			showSortMenu="true"
+            			showStatusFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"
+            			showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
+					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
+           			<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
+				</div>
            		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0}">
            			<div  class="uploadDragAndDropTitle">
            				<span class=" fa fa-exclamation-triangle"/> #{msg.no_images_found}!
