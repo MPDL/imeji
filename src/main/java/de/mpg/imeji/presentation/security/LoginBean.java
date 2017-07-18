@@ -84,7 +84,7 @@ public class LoginBean extends SuperBean {
     return passwd;
   }
 
-  public void doLogin() throws IOException {
+  public void doLogin() {
     final String instanceName = Imeji.CONFIG.getInstanceName();
     if (StringHelper.isNullOrEmptyTrim(getLogin())) {
       return;
@@ -109,7 +109,12 @@ public class LoginBean extends SuperBean {
         redirect = getNavigation().getHomeUrl();
       }
     }
-    redirect(redirect);
+
+    try {
+      redirect(redirect);
+    } catch (IOException e) {
+      LOGGER.error("Error redirect after login", e);
+    }
   }
 
   private void initRequestUrl() {

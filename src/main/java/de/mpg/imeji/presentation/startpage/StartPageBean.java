@@ -38,16 +38,20 @@ public class StartPageBean extends SuperBean implements Serializable {
    *
    * @throws IOException
    */
-  public void onload() throws IOException {
-    if (UrlHelper.hasParameter("redirectAfterLogin")) {
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("view_page_disallowed", getLocale()));
-    }
-    if (UrlHelper.getParameterBoolean("uploadForbidden")) {
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("upload_forbidden", getLocale()));
-    }
-    if (UrlHelper.getParameterBoolean("logout")) {
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_out", getLocale()));
-      redirect(getNavigation().getHomeUrl());
+  public void onload() {
+    try {
+      if (UrlHelper.hasParameter("redirectAfterLogin")) {
+        BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("view_page_disallowed", getLocale()));
+      }
+      if (UrlHelper.getParameterBoolean("uploadForbidden")) {
+        BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("upload_forbidden", getLocale()));
+      }
+      if (UrlHelper.getParameterBoolean("logout")) {
+        BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_out", getLocale()));
+        redirect(getNavigation().getHomeUrl());
+      }
+    } catch (Exception e) {
+      LOGGER.error("Error on startpage", e);
     }
   }
 
