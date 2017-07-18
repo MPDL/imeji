@@ -23,9 +23,11 @@
 						<li class="imj_active">1. #{lbl.register}</li>
 						<li>2. #{lbl.register_activate}</li>
 					</ul>
-
-					<h:outputText value="#{Configuration.registrationSnippet}"
-						escape="false" />
+					
+					<div class="imj_registerText">
+						<h:outputText value="#{Configuration.registrationSnippet}"
+							escape="false" />
+					</div>
 					
 					<div class="loginArea">
 						<h:form id="userForm"
