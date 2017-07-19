@@ -33,7 +33,6 @@ import com.ocpsoft.pretty.PrettyContext;
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.presentation.lang.InternationalizationBean;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.util.ServletUtil;
@@ -119,8 +118,16 @@ public class HistoryFilter implements Filter {
    */
   private void dofilterImpl(HttpServletRequest request, ServletResponse resp) throws Exception {
     getFacesContext(request, resp);
-    final SessionBean session = getSessionBean(request, resp);
-    final HistorySession hs = getHistorySession(request, resp);
+    SessionBean session = null;
+    HistorySession hs = null;
+    try {
+      session = getSessionBean(request, resp);
+      hs = getHistorySession(request, resp);
+    } catch (Exception e) {
+      LOGGER.error("Error getting Sessions", e);
+      return;
+    }
+
     if (session != null && hs != null) {
       final String url = navigation.getApplicationUri()
           + PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
@@ -160,17 +167,6 @@ public class HistoryFilter implements Filter {
 
   }
 
-  /**
-   * Return the {@link SessionBean}
-   *
-   * @param req
-   * @return
-   */
-  private InternationalizationBean getInternationalationBean(HttpServletRequest req,
-      ServletResponse resp) {
-    return (InternationalizationBean) getBean(InternationalizationBean.class, req, resp);
-
-  }
 
   /**
    * Get the {@link HistorySession} from the {@link FacesContext}
@@ -221,23 +217,25 @@ public class HistoryFilter implements Filter {
    * @return
    */
   private FacesContext getFacesContext(ServletRequest request, ServletResponse response) {
-    final ServletContext servletContext =
-        ((HttpServletRequest) request).getSession().getServletContext();
-    // Try to get it first
     FacesContext facesContext = FacesContext.getCurrentInstance();
-    // if (facesContext != null) return facesContext;
-    final FacesContextFactory contextFactory =
-        (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
-    final LifecycleFactory lifecycleFactory =
-        (LifecycleFactory) FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
-    final Lifecycle lifecycle = lifecycleFactory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
-    facesContext = contextFactory.getFacesContext(servletContext, request, response, lifecycle);
-    // Set using our inner class
-    InnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
-    // set a new viewRoot, otherwise context.getViewRoot returns null
-    final UIViewRoot view =
-        facesContext.getApplication().getViewHandler().createView(facesContext, "imeji");
-    facesContext.setViewRoot(view);
+    try {
+      final ServletContext servletContext =
+          ((HttpServletRequest) request).getSession(true).getServletContext();
+      final FacesContextFactory contextFactory =
+          (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+      final LifecycleFactory lifecycleFactory =
+          (LifecycleFactory) FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
+      final Lifecycle lifecycle = lifecycleFactory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
+      facesContext = contextFactory.getFacesContext(servletContext, request, response, lifecycle);
+      // Set using our inner class
+      InnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
+      // set a new viewRoot, otherwise context.getViewRoot returns null
+      final UIViewRoot view =
+          facesContext.getApplication().getViewHandler().createView(facesContext, "imeji");
+      facesContext.setViewRoot(view);
+    } catch (Exception e) {
+      LOGGER.error("Error creating Faces context", e);
+    }
     return facesContext;
   }
 
