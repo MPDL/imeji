@@ -86,7 +86,7 @@
 		else{
 			var firstLeft=$(".imj_tileItem:nth-child(1)").position().left;
 			var secondLeft=$(".imj_tileItem:nth-child(2)").position().left;
-			var width=$(".imj_mainContentWrapper").first().width();
+			var width=$(".imj_listBody").first().width();
 			var count2=Math.round(width/(secondLeft-firstLeft));
 			//This count is either exactly the number of thumbnaisl per line or, due to borders, one more
 			if(count2-1!=getElementsPerLineCookie()){	

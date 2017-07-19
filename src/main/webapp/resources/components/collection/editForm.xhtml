@@ -14,7 +14,7 @@
 
 <composite:implementation>
 	<h:form id="mediaContainerForm"
-		onkeyup="if (event.keyCode == 13) {document.getElementById('editContainer:mediaContainerForm:btn_saveCollection').click(); return false;}">
+		onkeyup="if (event.keyCode == 13 &amp;&amp; document.activeElement.id!='editContainer:mediaContainerForm:inputDescription'){document.getElementById('editContainer:mediaContainerForm:btn_saveCollection').click();return false;}">
 		<div class="imj_descriptionArea">
 			<div class="imj_metadataSet">
 				<label class="imj_metadataLabel">#{lbl.title} *<span
@@ -284,5 +284,6 @@
 			</div>
 		</div>
 	</h:form>
+	
 </composite:implementation>
 </html>
