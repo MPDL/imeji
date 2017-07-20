@@ -63,7 +63,9 @@ public class UserGroupBean extends SuperBean implements Serializable {
       final UserGroupService c = new UserGroupService();
       try {
         this.userGroup = c.retrieve(groupId, getSessionUser());
-        this.users = loadUsers(userGroup);
+        this.users =
+            loadUsers(userGroup).stream().sorted((u1, u2) -> u1.getPerson().getCompleteName()
+                .compareTo(u2.getPerson().getCompleteName())).collect(Collectors.toList());
         this.roles = ShareUtil.getAllRoles(userGroup, getSessionUser(), getLocale());
 
       } catch (final ImejiException e) {
@@ -241,7 +243,9 @@ public class UserGroupBean extends SuperBean implements Serializable {
 
   public List<User> searchForIndex() throws ImejiException {
     Collection<User> allUsers = (new UserService()).searchUserByName("");
-    return allUsers.stream().filter(u -> filter(u, index)).collect(Collectors.toList());
+    return allUsers.stream().filter(u -> filter(u, index)).sorted(
+        (u1, u2) -> u1.getPerson().getCompleteName().compareTo(u2.getPerson().getCompleteName()))
+        .collect(Collectors.toList());
   }
 
   private boolean filter(User user, String index) {

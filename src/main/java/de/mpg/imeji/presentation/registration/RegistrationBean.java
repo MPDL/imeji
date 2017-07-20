@@ -88,7 +88,7 @@ public class RegistrationBean extends SuperBean {
     }
     if (registration_success) {
       BeanHelper.cleanMessages();
-      BeanHelper.info("Sending registration email.");
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("sending_registration_email", getLocale()));
       Calendar expirationDate = DateHelper.getCurrentDate();
       expirationDate.add(Calendar.DAY_OF_MONTH,
           Integer.valueOf(Imeji.CONFIG.getRegistrationTokenExpiry()));
