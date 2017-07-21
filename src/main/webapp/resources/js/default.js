@@ -441,7 +441,7 @@ var numberOfContext = $('.imj_bodyContextSearch li').length;
  * @returns {Boolean}
  */
 function submitSimpleSearch() {
-	if ($('.imj_simpleSearchInput').val() != '') {
+	if ($('#simpleSearchInputText').val() != '') {
 		goToSearch(selectedSearch);
 	}
 	return false;
@@ -460,14 +460,14 @@ function goToSearch(index) {
 	if(url.includes("?")){
 		appendChar="&";
 	}
-	window.open(url + appendChar+'q=' + encodeURIComponent($('.imj_simpleSearchInput').val()),
+	window.open(url + appendChar+'q=' + encodeURIComponent($('#simpleSearchInputText').val()),
 	"_self");
 };
 
 /**
  * Actions for the search menu: open, navigate with array keys
  */
-$(".imj_simpleSearchInput").focusin(function() {
+$("#simpleSearchInput").focusin(function() {
 	$(".imj_menuSimpleSearch").show();
 }).keyup(function(event) {
 	if (event.which == 40) {
@@ -498,7 +498,7 @@ $( document ).ready(function() {
 
 function changePlaceholder(){
 	var placeholder = $("ul.imj_bodyContextSearch li:nth-child(" + selectedSearch + ")").data('placeholder');
-	$("#quickSearchString").attr("placeholder", placeholder);
+	$("#simpleSearchInputText").attr("placeholder", placeholder);
 }
 
 /**
@@ -544,22 +544,6 @@ function decrementSelectedSearch() {
 		selectedSearch = selectedSearch - 1;
 	}
 }
-
-/**
- * Resize the simple saerch menu to fit the complete text
- */
-$( document ).ready(function() {
-	resizeMenu();
-});
-
-function resizeMenu(){
-	var width = $(".imj_menuHeader").outerWidth(true);
-	$(".imj_menuSimpleSearch").css({
-	     "width": width
-	 });
-}
-
-
 
 /*******************************************************************************
  * 

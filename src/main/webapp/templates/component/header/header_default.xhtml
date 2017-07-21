@@ -6,23 +6,63 @@
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
 	<f:subview id="Header">
 		<!-- import meta menu here -->
-		<ui:include src="../menu/metamenu_default.xhtml"/>
-
-		<h:outputLink id="lnkStartPage" title="#{lbl.goto_startpage}" value="#{Navigation.homeUrl}">
-			<!-- default imeji logo set in the css -->
-			<h:panelGroup styleClass="imj_logo" rendered="#{Configuration.logoUrl == null or Configuration.logoUrl == ''}" />
-			<!-- custom Logo not recommended -->
-               <h:panelGroup  styleClass="imj_logo_alt" rendered="#{Configuration.logoUrl !=null and Configuration.logoUrl != ''}" >
-				<h:graphicImage value="#{Configuration.logoUrl}" alt="{Configuration.instanceName} Logo" />
-		    </h:panelGroup>
-		</h:outputLink>
-		
+		<div class="imj_topHeader">
+			<ui:include src="../menu/metamenu_default.xhtml"/>
+			
+			<div class="imj_logoContainer">
+				<h:outputLink id="lnkStartPage" title="#{lbl.goto_startpage}" value="#{Navigation.homeUrl}">
+					<!-- default imeji logo set in the css -->
+					<h:panelGroup styleClass="imj_logo" rendered="#{Configuration.logoUrl == null or Configuration.logoUrl == ''}" />
+					<!-- custom Logo not recommended -->
+		               <h:panelGroup  styleClass="imj_logo_alt" rendered="#{Configuration.logoUrl !=null and Configuration.logoUrl != ''}" >
+						<h:graphicImage value="#{Configuration.logoUrl}" alt="{Configuration.instanceName} Logo" />
+				    </h:panelGroup>
+				</h:outputLink>
+			</div>
+			<div class="imj_simpleSearch">
+				<form id="simpleSearch" onsubmit="return submitSimpleSearch();">
+					<div id="simpleSearchInput">
+						<input type="text" id="simpleSearchInputText" placeholder="#{lbl.search_for}" value="#{QuickSearchBean.searchString}" autocomplete="off" />
+						
+						<div class="imj_menuSimpleSearch" >
+							<span class="imj_menuText"> #{lbl.search_for} ...</span>
+							<ul class="imj_bodyContextSearch" >
+								<ui:fragment rendered="#{HistorySession.currentPage.imejiPage == 'COLLECTION'}" >
+									<li id="simpleSearchForThisCollection" data-url="" data-placeholder="#{lbl.search_for_items} #{lbl.of} #{title}">
+										<a href="#" title="#{lbl.search_for} #{lbl.items} #{lbl.of} #{title}">#{lbl.search_for_items} #{lbl.of} #{title}</a>
+									</li>
+								</ui:fragment>
+								<li id="simpleSearchForItems" class="defaultSearchType hovered"  data-url="#{Navigation.browseUrl}" data-placeholder="#{lbl.search_for} #{lbl.search_for_items}">  
+									<a href="#"> #{lbl.search_for_items}</a>
+								</li>
+								<li id="simpleSearchForCollections" data-url="#{Navigation.collectionsUrl}" data-placeholder="#{lbl.search_for} #{lbl.search_for_collections}">
+									<a href="#"> #{lbl.search_for_collections}</a>
+								</li>
+								<ui:fragment rendered="#{Auth.sysAdmin}">
+									<li id="simpleSearchForUsers" data-url="#{Navigation.usersUrl}#{QuickSearchBean.urlParameters}" data-placeholder="#{lbl.search_for} #{lbl.users}">
+										 <a href="#"> #{lbl.users}</a>
+									</li>
+								</ui:fragment>
+							</ul>
+						</div>
+					</div>
+					<button id="btnSimpleSearch" title="#{lbl.search_for}"   formaction="#">
+						<span class="fa fa-search"/>
+					</button>
+				</form>
+				<div class="imj_searchAdvancedLink">
+					<a id="lnkAdvancedSearch" title="#{lbl.goto_adv_search}"  href="#{Navigation.searchUrl}">
+			   			#{lbl.advanced_search}
+			   		</a>
+		   		</div>
+			</div>
+		</div>
 		<ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
-			<div class="imj_siteHeaderMenuSearchSection">
+			<div class="imj_navigation">
 				<!-- place main menu here -->
 				<menu:mainMenu id="mainMenu" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>			
 				<!-- import search here-->
-			 	<ui:include src="../menu/searchmenu_default.xhtml"/>
+			 	<ui:remove><ui:include src="../menu/searchmenu_default.xhtml"/></ui:remove>
 			</div>
 		</ui:fragment>
 	</f:subview>

@@ -9,7 +9,7 @@
 	<div class="imj_metaMenuStandardSingleLine">
 		
 		<div class="imj_metaMenuItemsAlign">
-
+			
 			<!-- Username if logged in -->
 			<ui:fragment rendered="#{Auth.loggedIn}">
 				<h:outputLink id="txtAccountUserName" title="#{lbl.goto_user_profile}" styleClass="imj_metaMenuItem" value="#{Navigation.applicationUrl}user?email=#{Auth.sessionUser.email}">
