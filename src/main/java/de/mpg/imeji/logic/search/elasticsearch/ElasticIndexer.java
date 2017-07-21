@@ -82,7 +82,8 @@ public class ElasticIndexer implements SearchIndexer {
     try {
       final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
       for (final Object obj : l) {
-        bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, index), getParent(obj)));
+        bulkRequest.add(
+            getIndexRequest(getId(obj), toJson(obj, dataType, index), getParent(obj), dataType));
       }
       bulkRequest.get();
     } catch (final Exception e) {
@@ -145,11 +146,14 @@ public class ElasticIndexer implements SearchIndexer {
    * @param parent
    * @return
    */
-  private IndexRequestBuilder getIndexRequest(String id, String json, String parent) {
+  private IndexRequestBuilder getIndexRequest(String id, String json, String parent, String type) {
     final IndexRequestBuilder builder =
         ElasticService.getClient().prepareIndex(index, dataType).setId(id).setSource(json);
     if (parent != null) {
       builder.setParent(parent);
+    }
+    if (type != null) {
+      builder.setType(type);
     }
     return builder;
   }
@@ -197,7 +201,7 @@ public class ElasticIndexer implements SearchIndexer {
    */
   public void indexJSON(String id, String json, String parent) {
     if (id != null) {
-      getIndexRequest(id, json, parent).execute().actionGet();
+      getIndexRequest(id, json, parent, dataType).execute().actionGet();
     }
   }
 

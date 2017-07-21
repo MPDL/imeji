@@ -305,9 +305,8 @@ public class ElasticQueryFactory {
       case organization:
         return fieldQuery(ElasticFields.ORGANIZATION, pair.getValue(), pair.getOperator(),
             pair.isNot());
-
       case created:
-        return timeQuery(ElasticFields.CREATED.name(), pair.getValue(), pair.getOperator(),
+        return timeQuery(ElasticFields.CREATED.field(), pair.getValue(), pair.getOperator(),
             pair.isNot());
       case creator:
         return fieldQuery(ElasticFields.CREATOR,
@@ -329,7 +328,7 @@ public class ElasticQueryFactory {
       case license:
         return licenseQuery(pair);
       case modified:
-        return timeQuery(ElasticFields.MODIFIED.name(), pair.getValue(), pair.getOperator(),
+        return timeQuery(ElasticFields.MODIFIED.field(), pair.getValue(), pair.getOperator(),
             pair.isNot());
       case status:
         return fieldQuery(ElasticFields.STATUS, formatStatusSearchValue(pair), pair.getOperator(),

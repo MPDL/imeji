@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.authorization.Authorization;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.statement.StatementUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Item;
@@ -333,6 +334,12 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
     this.notAllowedItemNames = notAllowedItemNames;
   }
 
+
+  public boolean isDefaultStatement(String index) throws ImejiException {
+    Statement s = new StatementService().retrieveByIndex(index, getSessionUser());
+    return StatementUtil.toStatementUriList(Imeji.CONFIG.getStatements())
+        .contains(s.getUri().toString());
+  }
 
 
 }
