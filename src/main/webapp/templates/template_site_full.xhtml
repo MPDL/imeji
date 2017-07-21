@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<f:view encoding="UTF-8" locale="#{InternationalizationBean.locale}" 
+        xmlns:f="http://java.sun.com/jsf/core" 
+        xmlns:h="http://java.sun.com/jsf/html" 
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:imjc="http://java.sun.com/jsf/composite/components">
+    <f:loadBundle var="lbl" basename="labels"/>
+    <f:loadBundle var="msg" basename="messages"/>
+    <ui:param name="siteWrapperClass" value="#{Auth.sysAdmin ? 'imj_siteWrapper imj_isAdmin' : 'imj_siteWrapper'}" />
+
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <h:head>
+            <ui:include src="component/header/html_head_default.xhtml"/>
+            <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+        </h:head>
+        <h:body lang="#{InternationalizationBean.locale}"> 
+       		#{Auth.init()}
+            <!-- default necessary scripts, because of use in body-load context -->
+            <h:outputScript name="jquery/jquery-1.11.1.min.js"/>
+            <h:outputScript name="jquery/ui/1.10.4/jquery-ui.min.js"/>
+            <!-- optional header scripts, which must load before -->
+            <ui:insert name="additonalHeaderScripts"/>          
+            <!-- global page wrapper -->
+            <h:panelGroup id="imeji_maintenance" layout="block" styleClass="imj_message imj_messageError" style="width:100%; padding:0.5em" rendered="#{Configuration.maintenanceMessage != ''}">
+            	<h:outputText value="#{Configuration.maintenanceMessage}" escape="false"/>
+            </h:panelGroup>
+            <div class="#{siteWrapperClass}">
+            	<div class="imj_allContentWrapper">
+            	 	<ui:insert name="authorization"/>
+	                <ui:insert name="init"/>
+  					<ui:insert name="mainContent"/>
+	                
+	               	<div class="loaderWrapper"/>
+	               		<div class="loader"/>
+	             	</div>
+            </div>
+            
+            <!-- modal dialogs -->
+            <div class="imj_modalDialogBackground">&#160;</div>
+            <ui:insert name="modalDialogs_from_template"/>
+            <ui:insert name="modalDialogs_from_site"/>
+            <script type="text/javascript">var homeURL = '#{Navigation.applicationUrl}';</script>
+            <h:outputScript name="js/default.js"/>
+
+            <div id="additonalFooterScripts" class="imj_noDisplay">
+                <ui:insert name="additonalFooterScripts"/> 
+            </div>
+            
+        </h:body>
+    </html>
+</f:view>
