@@ -199,4 +199,5 @@ public class FacetSelectorEntry implements Serializable {
     showMore = showMore ? false : true;
   }
 
+
 }

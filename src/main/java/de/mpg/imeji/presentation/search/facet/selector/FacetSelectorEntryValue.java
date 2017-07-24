@@ -7,7 +7,6 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -33,7 +32,10 @@ public class FacetSelectorEntryValue implements Serializable {
   private final String index;
   private final long count;
   private final String type;
-  private final String addQuery;
+  private String addQuery;
+  private String removeQuery;
+  private final SearchQuery entryQuery;
+  private boolean selected = false;
 
 
   public FacetSelectorEntryValue(FacetResultValue resultValue, Facet facet,
@@ -42,8 +44,7 @@ public class FacetSelectorEntryValue implements Serializable {
     this.count = resultValue.getCount();
     this.index = facet.getIndex();
     this.type = facet.getType();
-    this.addQuery =
-        buildAddQuery(buildEntryQuery(facet, readQueryValue(resultValue, facet)), facetsQuery);
+    this.entryQuery = buildEntryQuery(facet, readQueryValue(resultValue, facet));
   }
 
   private String readLabel(FacetResultValue resultValue, Facet facet) {
@@ -66,16 +67,6 @@ public class FacetSelectorEntryValue implements Serializable {
       return "*";
     }
     return resultValue.getLabel();
-  }
-
-  private String buildAddQuery(SearchQuery entryQuery, SearchQuery facetsQuery) {
-    try {
-      return SearchQueryParser
-          .transform2UTF8URL(new SearchFactory(facetsQuery).and(entryQuery.getElements()).build());
-    } catch (UnprocessableError e) {
-      LOGGER.error("Error building add query for facet " + label, e);
-      return "";
-    }
   }
 
   private SearchQuery buildEntryQuery(Facet facet, String value) {
@@ -175,6 +166,33 @@ public class FacetSelectorEntryValue implements Serializable {
     return type;
   }
 
+
+
+  /**
+   * @return the index
+   */
+  public String getIndex() {
+    return index;
+  }
+
+  /**
+   * @return the selected
+   */
+  public boolean isSelected() {
+    return selected;
+  }
+
+  /**
+   * @param selected the selected to set
+   */
+  public void setSelected(boolean selected) {
+    this.selected = selected;
+  }
+
+  public SearchQuery getEntryQuery() {
+    return entryQuery;
+  }
+
   /**
    * @return the addQuery
    */
@@ -182,11 +200,17 @@ public class FacetSelectorEntryValue implements Serializable {
     return addQuery;
   }
 
-  /**
-   * @return the index
-   */
-  public String getIndex() {
-    return index;
+
+  public void setAddQuery(String addQuery) {
+    this.addQuery = addQuery;
+  }
+
+  public String getRemoveQuery() {
+    return removeQuery;
+  }
+
+  public void setRemoveQuery(String removeQuery) {
+    this.removeQuery = removeQuery;
   }
 
 }

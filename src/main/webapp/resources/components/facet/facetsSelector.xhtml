@@ -19,14 +19,22 @@
 
 		<ui:repeat var="entry" value="#{FacetSelectorBean.entries}" varStatus="row">
 		
-			<ui:fragment rendered="#{!SearchBreadcrumb.isSelected(entry.facet.index) and (entry.values.size() > 0 or entry.facet.type == 'NUMBER' or entry.facet.type == 'DATE')}">
+			<ui:fragment rendered="true">
 				<h:form>
 					<div class="imj_facet">
 						<div class="imj_facetName">#{entry.facet.name}</div>
 						<ui:repeat var="value" value="#{entry.values}" varStatus="varStatus">
 							<ui:fragment rendered="#{varStatus.index &lt; Configuration.facetDisplayed or Configuration.facetDisplayed &lt; 0 or entry.showMore}">
-								<div class="imj_facetValue">
-									<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.addQuery}">#{value.label} (#{value.count})</a>
+								<div class="imj_facetValue"> 
+									<ui:fragment rendered="#{!value.selected}">
+										<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.addQuery}">#{value.label} (#{value.count})</a>
+									</ui:fragment>
+									<ui:fragment rendered="#{value.selected}">
+										<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.removeQuery}">
+											#{value.label} (#{value.count})
+											<span class="fa fa-times"/>
+										</a>
+									</ui:fragment>
 								</div>
 							</ui:fragment>
 						</ui:repeat>
