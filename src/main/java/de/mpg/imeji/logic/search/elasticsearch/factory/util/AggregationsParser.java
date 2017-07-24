@@ -10,6 +10,7 @@ import org.elasticsearch.search.aggregations.bucket.filters.Filters;
 import org.elasticsearch.search.aggregations.bucket.nested.Nested;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.metrics.stats.InternalStats;
 
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory;
 import de.mpg.imeji.logic.search.facet.FacetService;
@@ -50,6 +51,12 @@ public class AggregationsParser {
                 facetResult.getValues()
                     .add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
               }
+            } else if (terms instanceof InternalStats) {
+              FacetResultValue result =
+                  new FacetResultValue(terms.getName(), ((InternalStats) terms).getCount());
+              result.setMax(((InternalStats) terms).getMaxAsString());
+              result.setMin(((InternalStats) terms).getMinAsString());
+              facetResult.getValues().add(result);
             } else {
               System.out.println("NOT PARSED  METADATA AGGREGATION: " + terms);
             }

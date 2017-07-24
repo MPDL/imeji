@@ -16,6 +16,7 @@ import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.util.DateFormatter;
 import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.logic.vo.StatementType;
 
@@ -36,6 +37,8 @@ public class FacetSelectorEntryValue implements Serializable {
   private String removeQuery;
   private final SearchQuery entryQuery;
   private boolean selected = false;
+  private final String max;
+  private final String min;
 
 
   public FacetSelectorEntryValue(FacetResultValue resultValue, Facet facet,
@@ -44,6 +47,10 @@ public class FacetSelectorEntryValue implements Serializable {
     this.count = resultValue.getCount();
     this.index = facet.getIndex();
     this.type = facet.getType();
+    this.min = facet.getType().equals(StatementType.DATE.name())
+        ? DateFormatter.format(resultValue.getMin()) : resultValue.getMin();
+    this.max = facet.getType().equals(StatementType.DATE.name())
+        ? DateFormatter.format(resultValue.getMax()) : resultValue.getMax();
     this.entryQuery = buildEntryQuery(facet, readQueryValue(resultValue, facet));
   }
 
@@ -211,6 +218,20 @@ public class FacetSelectorEntryValue implements Serializable {
 
   public void setRemoveQuery(String removeQuery) {
     this.removeQuery = removeQuery;
+  }
+
+  /**
+   * @return the max
+   */
+  public String getMax() {
+    return max;
+  }
+
+  /**
+   * @return the min
+   */
+  public String getMin() {
+    return min;
   }
 
 }

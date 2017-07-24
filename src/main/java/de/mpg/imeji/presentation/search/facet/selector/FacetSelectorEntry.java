@@ -42,6 +42,7 @@ public class FacetSelectorEntry implements Serializable {
   private String from;
   private String to;
   private boolean showMore = false;
+  private final long count;
 
   public FacetSelectorEntry(FacetResult facetResult, SearchQuery facetsQuery, int countAll) {
     FacetService facetService = new FacetService();
@@ -51,6 +52,12 @@ public class FacetSelectorEntry implements Serializable {
         .map(v -> new FacetSelectorEntryValue(v, facet, facetsQuery)).collect(Collectors.toList());
     addAnyLicense(facetResult, facet, facetsQuery, countAll);
     cleanFileTypeFacet(facet);
+    this.count = values.stream().collect(Collectors.summingLong(v -> v.getCount()));
+    if (count > 0) {
+      this.from = values.get(0).getMin();
+      this.to = values.get(0).getMax();
+
+    }
   }
 
   /**
@@ -76,6 +83,7 @@ public class FacetSelectorEntry implements Serializable {
       }
     }
   }
+
 
   private void cleanFileTypeFacet(Facet facet) {
     if (facet.getIndex().equals(SearchFields.filetype.getIndex())) {
@@ -199,5 +207,8 @@ public class FacetSelectorEntry implements Serializable {
     showMore = showMore ? false : true;
   }
 
+  public long getCount() {
+    return count;
+  }
 
 }

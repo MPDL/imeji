@@ -131,7 +131,8 @@ public class ElasticAggregationFactory {
       case TEXT:
         return getMetadataTextAggregation(facet);
       case DATE:
-        return getMetadataDateAggregation(facet, metadataField);
+        return getMetadataNumberAggregation(facet, metadataField);
+      // return getMetadataDateAggregation(facet, metadataField);
       case NUMBER:
         return getMetadataNumberAggregation(facet, metadataField);
       case URL:
