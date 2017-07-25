@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -28,17 +29,17 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 @ManagedBean(name = "FacetSelectorBean")
 @ViewScoped
 public class FacetSelectorBean extends SuperBean {
-  private static final long serialVersionUID = -1071527421059585519L;
+  private static final long serialVersionUID = 4953953758406265116L;
+  private static final Logger LOGGER = Logger.getLogger(FacetSelectorBean.class);
   private List<FacetSelectorEntry> entries = new ArrayList<>();
   private List<String> selectedValueQueries = new ArrayList<>();
   private SearchQuery facetQuery = new SearchQuery();
-  private static final Logger LOGGER = Logger.getLogger(FacetSelectorBean.class);
 
-  public FacetSelectorBean() {
+  @PostConstruct
+  private void init() {
     try {
       facetQuery = SearchQueryParser.parseStringQuery(UrlHelper.getParameterValue("fq"));
-      parseSelectedValueQueries();
-    } catch (UnprocessableError e) {
+    } catch (Exception e) {
       LOGGER.error("Error parsing facet query " + UrlHelper.getParameterValue("fq"), e);
     }
   }
@@ -54,6 +55,7 @@ public class FacetSelectorBean extends SuperBean {
     entries = result.getFacets().stream()
         .map(r -> new FacetSelectorEntry(r, facetQuery, result.getNumberOfRecords()))
         .collect(Collectors.toList());
+    parseSelectedValueQueries();
     setAddQuery();
     setRemoveQuery();
     setSelectedEntries();
@@ -114,5 +116,9 @@ public class FacetSelectorBean extends SuperBean {
    */
   public List<FacetSelectorEntry> getEntries() {
     return entries;
+  }
+
+  public void setEntries(List<FacetSelectorEntry> entries) {
+    this.entries = entries;
   }
 }

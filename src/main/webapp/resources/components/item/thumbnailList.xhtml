@@ -8,6 +8,7 @@
 		<composite:attribute name="picList"/>
 	</composite:interface>
 	<composite:implementation>
+		
 		<style>.imj_tileItem {width: #{Configuration.thumbnailWidth}px !important;}</style>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfElements != 0}">
 			<div class="imj_listHeader">
@@ -35,15 +36,24 @@
 					<!-- Images -->	
 					
 					<ui:repeat id="pictureList" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
+						
 						<li class="imj_tileItem">
 							<ui:param name="uri" value="#{item.uri}"/>
+							
 							<h:form id="itemSelectForm">
+							
 								<h:panelGroup layout="block" id="imgFrame" styleClass="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea" >
 									<!-- Image with link to the details view -->
-									<h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;pos=#{cc.attrs.picList.offset + index.index}">
-										<h:graphicImage alt="#{item.caption}" title="#{item.caption}" id="thumbnail" url="#{item.link}"/>		
-									</h:outputLink>
+									<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;pos=#{cc.attrs.picList.offset + index.index}">
+										<img src="#{item.link}" />
+									</a>
+									<ui:remove>
+										<h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;pos=#{cc.attrs.picList.offset + index.index}">
+											<h:graphicImage alt="#{item.caption}" title="#{item.caption}" id="thumbnail" url="#{item.link}"/>		
+										</h:outputLink>
+									</ui:remove>
 								</h:panelGroup>
+								
 								<!-- Browse / Search Result / All Pictures of one Person Pages / resource -->
 								<span class="imj_optionSet">
 									<h:selectBooleanCheckbox styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
@@ -52,11 +62,14 @@
 									<h:outputLabel for="pictureCheckbox" value="#{item.caption}" title="#{item.caption}" styleClass="imj_optionLabel"/>
 								</span>
 							</h:form>
+							
 							<div class="imj_tooltip">
 								<imj:thumbnailPopup item="#{item}"/>
 							</div>
 						</li>
+						
 					</ui:repeat>
+					
 					<!-- End images -->
 					<!-- 
 						Show/hide metadata popup Needs to be defined in ajax area to rebind the DOM objects
@@ -65,6 +78,7 @@
 			</div>
 			
 		</h:panelGroup>
+	
 		<div id="log"></div>
 		
 		<script>

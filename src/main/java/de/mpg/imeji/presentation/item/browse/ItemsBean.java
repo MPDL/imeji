@@ -146,7 +146,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       // load the item
       final Collection<Item> items = loadImages(searchResult.getResults());
       // Return the item as thumbnailBean
-      return items.stream().map(item -> new ThumbnailBean(item)).collect(Collectors.toList());
+      return items.stream().map(item -> new ThumbnailBean(item, getSessionBean(), getNavigation()))
+          .collect(Collectors.toList());
     } catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error retrieving items", e);

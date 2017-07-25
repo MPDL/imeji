@@ -43,7 +43,7 @@ public class FileServlet extends HttpServlet {
   private final StorageController storageController = new StorageController();
   private final ContentService contentController = new ContentService();
   private final ExternalStorage externalStorage = new ExternalStorage();
-  private final Navigation navivation = new Navigation();;
+  private final Navigation navivation = new Navigation();
   private String domain;
 
   private static final String RESOURCE_EMTPY_ICON_URL =
@@ -72,6 +72,7 @@ public class FileServlet extends HttpServlet {
     final String itemUri = req.getParameter("itemId") == null ? req.getParameter("item")
         : ObjectHelper.getURI(Item.class, req.getParameter("itemId")).toString();
     User user;
+
     try {
       final SessionBean session = getSession(req);
       user = getUser(req, session);
@@ -92,19 +93,19 @@ public class FileServlet extends HttpServlet {
       }
     } catch (final Exception e) {
       if (e instanceof NotAllowedError) {
-        resp.sendError(HttpServletResponse.SC_FORBIDDEN,
-            "imeji security: You are not allowed to view this file");
+        // resp.sendError(HttpServletResponse.SC_FORBIDDEN,
+        // "imeji security: You are not allowed to view this file");
       } else if (e instanceof AuthenticationError) {
-        resp.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-            "imeji security: You need to be signed-in to view this file.");
+        // resp.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+        // "imeji security: You need to be signed-in to view this file.");
       } else if (e instanceof NotFoundException) {
-        resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-            "The resource you are trying to retrieve does not exist!");
+        // resp.sendError(HttpServletResponse.SC_NOT_FOUND,
+        // "The resource you are trying to retrieve does not exist!");
       } else {
         LOGGER.error(e.getMessage(), e);
         sendEmptyThumbnail(resp);
         if (!resp.isCommitted()) {
-          resp.sendError(422, "Unprocessable entity!");
+          // resp.sendError(422, "Unprocessable entity!");
         }
       }
     }

@@ -14,7 +14,6 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.navigation.Navigation;
-import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
 import de.mpg.imeji.util.DateHelper;
@@ -42,10 +41,6 @@ public class ThumbnailBean implements Serializable {
   private String modified;
   private List<Metadata> metadata;
 
-  public ThumbnailBean() {
-    // Empty thumbnail
-  }
-
   /**
    * Bean for Thumbnail list elements. Each element of a list with thumbnail is an instance of a
    * {@link ThumbnailBean}
@@ -54,20 +49,19 @@ public class ThumbnailBean implements Serializable {
    * @param initMetadata if true, will read the metadata
    * @throws Exception
    */
-  public ThumbnailBean(Item item) {
+  public ThumbnailBean(Item item, SessionBean session, Navigation navigation) {
     this.uri = item.getId();
     this.collectionUri = item.getCollection();
     this.id = ObjectHelper.getId(getUri());
-    this.link = initThumbnailLink(item);
+    this.link = initThumbnailLink(item, navigation);
     this.filename = item.getFilename();
     this.fileType = item.getFiletype();
     this.fileSize = item.getFileSizeHumanReadable();
     this.modified = DateHelper.printDate(item.getModified());
     this.shortFileType = StorageUtils.getExtension(fileType);
     this.metadata = item.getMetadata();
-    final SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
     this.caption = findCaption();
-    this.selected = sessionBean.getSelected().contains(uri.toString());
+    this.selected = session.getSelected().contains(uri.toString());
   }
 
   /**
@@ -76,10 +70,9 @@ public class ThumbnailBean implements Serializable {
    * @param item
    * @return
    */
-  private String initThumbnailLink(Item item) {
-    final Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+  private String initThumbnailLink(Item item, Navigation navigation) {
     return Status.WITHDRAWN != item.getStatus()
-        ? navigation.getFileUrl() + "?item=" + item.getId() + "&amp;resolution=thumbnail"
+        ? navigation.getFileUrl() + "?item=" + item.getId() + "&resolution=thumbnail"
         : navigation.getApplicationUrl() + "resources/icon/discarded.png";
   }
 
