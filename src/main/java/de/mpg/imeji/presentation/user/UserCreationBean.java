@@ -1,6 +1,7 @@
 package de.mpg.imeji.presentation.user;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -11,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.authorization.pwdreset.PasswordResetController;
 import de.mpg.imeji.logic.authorization.util.PasswordGenerator;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.share.email.EmailMessages;
@@ -24,6 +26,7 @@ import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
+import de.mpg.imeji.util.DateHelper;
 
 /**
  * Java Bean for the Create new user page
@@ -64,9 +67,9 @@ public class UserCreationBean extends SuperBean {
    */
   public String create() {
     try {
-      final String password = createNewUser();
+      final String token = createNewUser();
       if (sendEmail) {
-        sendNewAccountEmail(password);
+        sendNewAccountEmail(token);
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_user_create", getLocale()));
       reloadUserPage();
@@ -92,7 +95,7 @@ public class UserCreationBean extends SuperBean {
     user.setEncryptedPassword(StringHelper.md5(password));
     user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
     uc.create(user, allowedToCreateCollection ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED);
-    return password;
+    return (new PasswordResetController()).generateResetToken(user);
   }
 
   /**
@@ -100,13 +103,19 @@ public class UserCreationBean extends SuperBean {
    *
    * @param password
    */
-  public void sendNewAccountEmail(String password) {
+  public void sendNewAccountEmail(String token) {
     final EmailService emailClient = new EmailService();
+    String url = getNavigation().getRegistrationUrl() + "?token=" + token;
+    Calendar expirationDate = DateHelper.getCurrentDate();
+    expirationDate.add(Calendar.DAY_OF_MONTH,
+        Integer.valueOf(Imeji.CONFIG.getRegistrationTokenExpiry()));
     try {
-      emailClient.sendMail(user.getEmail(), null,
-          EmailMessages.getEmailOnAccountAction_Subject(true, getLocale()),
-          EmailMessages.getNewAccountMessage(password, user.getEmail(),
-              user.getPerson().getCompleteName(), getLocale()));
+      // send to requester
+      emailClient.sendMail(getUser().getEmail(), Imeji.CONFIG.getEmailServerSender(),
+          EmailMessages.getEmailOnRegistrationRequest_Subject(getLocale()),
+          EmailMessages.getEmailOnRegistrationRequest_Body(getUser(), url,
+              Imeji.CONFIG.getContactEmail(), DateHelper.printDate(expirationDate), getLocale(),
+              getNavigation().getRegistrationUrl()));
     } catch (final Exception e) {
       LOGGER.error("Error sending email", e);
       BeanHelper.error("Error: Email not sent");

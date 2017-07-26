@@ -89,23 +89,21 @@ public class PasswordResetController {
         isAuthorizedEmail(token.getUser().getEmail()) ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED;
     boolean exists = false;
     try {
-      new UserService().retrieve(token.getUser().getEmail(), Imeji.adminUser);
+      new UserService().update(token.getUser(), Imeji.adminUser);
       exists = true;
     } catch (ImejiException e) {
       // This is correct
     }
-    if (exists) {
-      throw new UnprocessableError("This user is already activated");
-    }
-    try {
-      (new UserService()).create(token.getUser(), type);
-      tokens.delete(token.getEncryptedToken());
-    } catch (Exception e) {
-      throw new UnprocessableError(
-          "An error happend while trying to activate the user. Please try again.");
+    if (!exists) {
+      try {
+        (new UserService()).create(token.getUser(), type);
+        tokens.delete(token.getEncryptedToken());
+      } catch (Exception e) {
+        throw new UnprocessableError(
+            "An error happend while trying to activate the user. Please try again.");
+      }
     }
     return token.getUser();
-
   }
 
 
