@@ -21,6 +21,8 @@ public class Facet implements Serializable {
   @j2jLiteral("http://imeji.org/terms/index")
   private String index;
   private URI uri = IdentifierUtil.newURI(Facet.class);
+  @j2jLiteral("http://imeji.org/terms/position")
+  private int position =0;
 
   /**
    * @return the name
@@ -83,6 +85,14 @@ public class Facet implements Serializable {
       return uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
     }
     return "";
+  }
+
+  public int getPosition() {
+    return position;
+  }
+
+  public void setPosition(int position) {
+    this.position = position;
   }
 
 }
