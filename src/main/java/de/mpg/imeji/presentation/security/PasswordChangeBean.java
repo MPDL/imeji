@@ -165,7 +165,7 @@ public class PasswordChangeBean extends SuperBean {
       return;
     }
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("account_activated", getLocale()));
-    (new EmailService()).sendMail(user.getEmail(), null,
+    (new EmailService()).sendMail(Imeji.CONFIG.getContactEmail(), null,
         EmailMessages.getEmailOnAccountActivation_Subject(user, getLocale()),
         EmailMessages.getEmailOnAccountActivation_Body(user, getLocale()));
     loginBean.setLogin(user.getEmail());
