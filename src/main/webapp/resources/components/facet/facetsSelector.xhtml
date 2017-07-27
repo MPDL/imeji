@@ -20,22 +20,26 @@
 	<ui:repeat var="entry" value="#{FacetSelectorBean.entries}" varStatus="row">
 		<ui:fragment rendered="#{entry.count &gt; 0}">
 			<h:form>
-				<div class="imj_facet">
+				<div class="imj_facet"  data-count="(dssd)">
 					<div class="imj_facetName">#{entry.facet.name} (#{entry.count})</div>
 					<ui:repeat var="value" value="#{entry.values}" varStatus="varStatus">
 						<ui:fragment rendered="#{varStatus.index &lt; Configuration.facetDisplayed or Configuration.facetDisplayed &lt; 0 or entry.showMore}">
 							<div class="imj_facetValue"> 
 								<ui:fragment rendered="#{entry.facet.type != 'DATE' and entry.facet.type != 'NUMBER'}">
 									<ui:fragment rendered="#{!value.selected}">
-										<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.addQuery}">#{value.label} (#{value.count})</a>
+										<a title="#{value.label}" data-count="(#{value.count})" href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.addQuery}">
+											<span class="fa fa-square-o"/>
+											#{value.label}
+										</a>
 									</ui:fragment>
 									<ui:fragment rendered="#{value.selected}">
-										<a href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.removeQuery}">
-											#{value.label} (#{value.count})
-											<span class="fa fa-times"/>
+										<a title="#{value.label}" data-count="(#{value.count})" href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.removeQuery}">
+											<span class="fa fa-check-square-o"/>
+											<span class="imj_facetValueText">#{value.label}</span> <span class="imj_facetValueCount">(#{value.count})</span>
 										</a>
 									</ui:fragment>
 								</ui:fragment>
+								
 							</div>
 						</ui:fragment>
 					</ui:repeat>
