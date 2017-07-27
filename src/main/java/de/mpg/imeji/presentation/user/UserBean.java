@@ -20,6 +20,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -28,6 +29,7 @@ import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
+import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
@@ -52,6 +54,7 @@ public class UserBean extends SuperBean {
   private QuotaUICompoment quota;
   @ManagedProperty(value = "#{LoginBean}")
   private LoginBean loginBean;
+  private String toUnsubscribe;
 
   public UserBean() {
     // mandatory for JSF initialization
@@ -353,4 +356,26 @@ public class UserBean extends SuperBean {
   public void setLoginBean(LoginBean loginBean) {
     this.loginBean = loginBean;
   }
+
+  public List<CollectionImeji> getSubscribedCollections() throws ImejiException {
+    return new CollectionService()
+        .retrieve(new ArrayList<String>(user.getSubscriptionCollections()), user);
+  }
+
+  public String getToUnsubscribe() {
+    return toUnsubscribe;
+  }
+
+  public void setToUnsubscribe(String toUnsubscribe) {
+    this.toUnsubscribe = toUnsubscribe;
+  }
+
+  public void unsubscribe() throws ImejiException {
+    user.unsubscribeFromCollection(toUnsubscribe);
+    new UserService().update(user, getSessionUser());
+    String title = new CollectionService().retrieve(toUnsubscribe, Imeji.adminUser).getTitle();
+    BeanHelper.info(
+        Imeji.RESOURCE_BUNDLE.getMessage("successfully_unsubscribed_from", getLocale()) + title);
+  }
+
 }
