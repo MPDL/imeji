@@ -64,8 +64,8 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
       itemList = itemList.stream().filter(i -> auth.update(getSessionUser(), i))
           .collect(Collectors.toList());
       if (!notAllowedItemNames.isEmpty()) {
-        BeanHelper
-            .error(Imeji.RESOURCE_BUNDLE.getMessage("edit_selected_not_allowed", getLocale()));
+        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("edit_selected_not_allowed", getLocale())
+            .replaceAll("XXX_NUMBER_XXX", notAllowedItemNames.size() + ""));
       }
       initHeaders(itemList);
       initRows(itemList);
