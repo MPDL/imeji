@@ -58,8 +58,18 @@ public class FacetService extends SearchServiceAbstract<Facet> {
     return facet;
   }
 
+  public List<Facet> update(List<Facet> facets, User user) throws ImejiException {
+    for (Facet f : facets) {
+      checkUniqueIndex(f);
+    }
+    controller.updateBatch(facets, user);
+    retrieveAll();
+    return facets;
+  }
+
   private void checkUniqueIndex(Facet facet) throws AlreadyExistsException {
-    if (exists(facet.getIndex())) {
+    if (exists(facet.getIndex()) && !cachedFacetsMapByIndex.get(facet.getIndex()).getUri()
+        .toString().equals(facet.getUri().toString())) {
       throw new AlreadyExistsException("Index " + facet.getIndex()
           + " is already used by another facet, please choose another facet/metadata");
     }
@@ -97,7 +107,8 @@ public class FacetService extends SearchServiceAbstract<Facet> {
   @Override
   public List<Facet> retrieve(List<String> ids, User user) throws ImejiException {
     return controller.retrieveBatch(ids, Imeji.adminUser).stream()
-        .sorted((f1, f2) -> f1.getName().compareTo(f2.getName())).collect(Collectors.toList());
+        .sorted((f1, f2) -> Integer.compare(f1.getPosition(), f2.getPosition()))
+        .collect(Collectors.toList());
   }
 
   @Override

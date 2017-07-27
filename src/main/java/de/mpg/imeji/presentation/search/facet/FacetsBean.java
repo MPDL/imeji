@@ -1,6 +1,7 @@
 package de.mpg.imeji.presentation.search.facet;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -32,9 +33,21 @@ public class FacetsBean extends SuperBean {
   public void init() {
     try {
       facets = facetService.retrieveAll();
+      setPosition();
     } catch (ImejiException e) {
       BeanHelper.error("Error retrieving facets: " + e.getMessage());
       LOGGER.error("Error retrieving facets ", e);
+    }
+  }
+
+  /**
+   * Set the position of the item of the list
+   */
+  private void setPosition() {
+    int i = 0;
+    for (Facet f : facets) {
+      f.setPosition(i);
+      i++;
     }
   }
 
@@ -50,7 +63,32 @@ public class FacetsBean extends SuperBean {
       BeanHelper.error("Error deleting facet: " + e.getMessage());
       LOGGER.error("Error deleting facet: ", e);
     }
+  }
 
+  /**
+   * Move the facet in the position to the top. i.e., get a lower position to appear one position
+   * higher in the list
+   * 
+   * @param facet
+   * @throws ImejiException
+   */
+  public void moveUp(Facet facet) throws ImejiException {
+    Collections.swap(facets, facet.getPosition(), facet.getPosition() - 1);
+    setPosition();
+    facetService.update(facets, getSessionUser());
+  }
+
+  /**
+   * Move the facet to the bottom of the list, i.e. get a higher position to appear one position
+   * lower in the list
+   * 
+   * @param facet
+   * @throws ImejiException
+   */
+  public void moveDown(Facet facet) throws ImejiException {
+    Collections.swap(facets, facet.getPosition(), facet.getPosition() + 1);
+    setPosition();
+    facetService.update(facets, getSessionUser());
   }
 
   /**
