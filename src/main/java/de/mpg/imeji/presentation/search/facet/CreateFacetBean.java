@@ -156,7 +156,7 @@ public class CreateFacetBean extends SuperBean {
   }
 
   public enum SystemFacets {
-    COLLECTION("Collection", SearchFields.col.name(),
+    COLLECTION("Collection", SearchFields.collection.name(),
         StatementType.TEXT.name()), AUTHORS_OF_COLLECTION("Collection's authors",
             SearchFields.collection_author.getIndex(),
             StatementType.TEXT.name()), FILETYPE("Filetype", SearchFields.filetype.getIndex(),

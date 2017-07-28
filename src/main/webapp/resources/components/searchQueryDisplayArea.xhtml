@@ -10,11 +10,8 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<div class="imj_searchQueryDisplay" >
-			
-			<ui:fragment rendered="#{not empty cc.attrs.searchBean.simpleQuery}">
-
-				
+		<div class="imj_searchQueryDisplay" >	
+			<ui:fragment rendered="#{not empty cc.attrs.searchBean.simpleQuery}">	
 				<span class="imj_searchQueryText">
 					<h:outputText value="#{cc.attrs.searchBean.simpleQuery}"/>
 				
@@ -22,7 +19,7 @@
 					<h:outputText value="#{lbl.search_revise}"/>
 				</h:outputLink>
 	
-				<h:outputLink style="font-size: 0.9em;" value="#{SearchFilterBean.clearFilterAndSearchQuery}">		
+				<h:outputLink style="font-size: 0.9em;" value="#{SearchFilterBean.clearFilterAndSearchQuery}" onclick="startLoader();">		
 					 <i class="fa fa-times"></i>
 				</h:outputLink>
 				</span>
@@ -30,15 +27,11 @@
 			
 			 <ui:repeat var="entry" value="#{SearchBreadcrumb.entries}" varStatus="varStatus">
 				<span class="imj_searchQueryText">
-					<span> #{entry.label} #{entry.operator} #{entry.value}</span>
-					<a style="font-size: 0.9em;"  href="#{HistorySession.currentPage.url}?q=#{cc.attrs.searchBean.query}&amp;fq=#{entry.removeQuery}"><span class="fa fa-times"></span></a>
-				</span>
-				
+					<span> #{entry.index} #{entry.operator} #{entry.value}</span>
+					<a style="font-size: 0.9em;"  href="#{HistorySession.currentPage.url}?q=#{cc.attrs.searchBean.query}&amp;fq=#{entry.removeQuery}"  onclick="startLoader();"><span class="fa fa-times"></span></a>
+				</span>	
 			</ui:repeat>
-			
 		</div>
-		
-		
 	</composite:implementation>
 </html>
 

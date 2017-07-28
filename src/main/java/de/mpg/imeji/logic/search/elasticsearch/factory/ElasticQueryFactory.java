@@ -262,11 +262,11 @@ public class ElasticQueryFactory {
             fieldQuery(ElasticFields.CHECKSUM, pair.getValue(), pair.getOperator(), pair.isNot()));
       case col:
         return fieldQuery(ElasticFields.FOLDER, pair.getValue(), pair.getOperator(), pair.isNot());
-      case collectionid: {
-        return fieldQuery(ElasticFields.FOLDER,
-            ObjectHelper.getURI(CollectionImeji.class, pair.getValue()).toString(),
+      case collectionid:
+      case collection:
+        return fieldQuery(ElasticFields.FOLDER, "\"" + ObjectHelper
+            .getURI(CollectionImeji.class, pair.getValue().replaceAll("\"", "")).toString() + "\"",
             pair.getOperator(), pair.isNot());
-      }
       case title:
         return fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case description:

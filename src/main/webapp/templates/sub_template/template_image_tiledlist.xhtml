@@ -26,10 +26,16 @@
           
            
 			<div id="itemsArea" class="itemsArea">
+				
 				<div id="facetsArea" class="imj_itemsAreaFacets">
 	           		<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" selector="#{FacetSelectorBean}"/>
 	           	</div>
 	        	<div  class="imj_itemsAreaContent">
+	        		
+	        		<a href="#" class="imj_openFilter  imj_listHeader" onclick="document.getElementById('facetsArea').style.width = '70%'; return false;">
+	        			<span class="fa fa-filter"/> #{lbl.filter}
+	        		</a>
+	        		
 	        	
 	        	 	<item:filters id="selPanel" 
             			facetBean="#{paginatorListSessionBean}"  
@@ -37,7 +43,7 @@
             			showSortMenu="true"
             			showStatusFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"
             			showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
-            			
+            		
 					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
 					<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 				

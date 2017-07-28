@@ -10,7 +10,7 @@ import java.util.stream.Stream;
  * @version $Revision$ $LastChangedDate$
  */
 public enum SearchFields {
-  id, collectionid, creatorid, creator, collaborator, role, read, editor, created, modified, status, filename, col, family, given, organization, title, description, author, author_familyname(
+  id, collection, collectionid, creatorid, creator, collaborator, role, read, editor, created, modified, status, filename, col, family, given, organization, title, description, author, author_familyname(
       "author.familyname"), author_givenname("author.givenname"), author_organization(
           "author.organization"), md, index, all, license, checksum, filetype, filesize, pid, info_label, info_text, info_url, email, technical, fulltext, completename, collection_title(
               "collection.title"), collection_description(

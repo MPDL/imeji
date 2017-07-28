@@ -55,7 +55,7 @@ public class FacetSelectorEntryValue implements Serializable {
   }
 
   private String readLabel(FacetResultValue resultValue, Facet facet) {
-    if (facet.getIndex().equals(SearchFields.col.getIndex())) {
+    if (facet.getIndex().equals(SearchFields.collection.getIndex())) {
       return resultValue.getLabel().split(" ", 2)[1];
     }
     if (facet.getIndex().equals(SearchFields.license.getIndex())
@@ -66,7 +66,7 @@ public class FacetSelectorEntryValue implements Serializable {
   }
 
   private String readQueryValue(FacetResultValue resultValue, Facet facet) {
-    if (facet.getIndex().equals(SearchFields.col.getIndex())) {
+    if (facet.getIndex().equals(SearchFields.collection.getIndex())) {
       return resultValue.getLabel().split(" ", 2)[0];
     }
     if (facet.getIndex().equals(SearchFields.license.getIndex())
@@ -78,7 +78,7 @@ public class FacetSelectorEntryValue implements Serializable {
 
   private SearchQuery buildEntryQuery(Facet facet, String value) {
     boolean isMetadataFacet = facet.getIndex().startsWith("md.");
-    if (!"*".equals(value)) {
+    if (!"*".equals(value) && !facet.getIndex().equals(SearchFields.collection.getIndex())) {
       value = "\"" + value + "\"";
     }
     return isMetadataFacet ? buildMetadataQuery(facet, value) : buildSystemQuery(facet, value);

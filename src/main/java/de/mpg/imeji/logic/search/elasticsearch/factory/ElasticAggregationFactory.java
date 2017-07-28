@@ -43,7 +43,7 @@ public class ElasticAggregationFactory {
         metadataAggregations.subAggregation(getMetadataAggregation(facet, metadataField));
       } else if (SearchFields.filetype.name().equals(facet.getIndex())) {
         systemAggregations.subAggregation(getFiletypeAggregation(facet));
-      } else if (SearchFields.col.name().equals(facet.getIndex())) {
+      } else if (SearchFields.collection.name().equals(facet.getIndex())) {
         systemAggregations.subAggregation(getCollectionAggregation(facet));
       } else if (SearchFields.license.name().equals(facet.getIndex())) {
         systemAggregations.subAggregation(getLicenseAggregation(facet));
