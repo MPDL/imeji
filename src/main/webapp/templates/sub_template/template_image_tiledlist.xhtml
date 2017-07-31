@@ -13,7 +13,7 @@
 		<menu:defaultActionMenu id="actionItems" rendered="#{currentMainMenu == 'items'}"/>
 		<collection:actionMenu id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status.name() != 'WITHDRAWN'}" />
 		<item:selectedActionMenu id="actionSelectedItems" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}" />
-		<item:downloadMenu id="actionDownload" itemsBean="#{paginatorListSessionBean}" rendered="#{((currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'WITHDRAWN') or (not currentMainMenu == 'collection' and not empty SessionBean.selected)) and paginatorListSessionBean.totalNumberOfElements > 0 }" />
+		<item:downloadMenu id="actionDownload" itemsBean="#{paginatorListSessionBean}" rendered="#{((currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'WITHDRAWN') or (currentMainMenu != 'collection' and not empty SessionBean.selected)) and paginatorListSessionBean.totalNumberOfElements > 0 }" />
 	</ui:define>
 	
     <!-- Main Content - Image tiled list - START -->
@@ -35,7 +35,6 @@
 	        		<a href="#" class="imj_openFilter  imj_listHeader" onclick="document.getElementById('facetsArea').style.width = '70%'; return false;">
 	        			<span class="fa fa-filter"/> #{lbl.filter}
 	        		</a>
-	        		
 	        	
 	        	 	<item:filters id="selPanel" 
             			facetBean="#{paginatorListSessionBean}"  
