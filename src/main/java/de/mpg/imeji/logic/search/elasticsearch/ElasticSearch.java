@@ -119,6 +119,7 @@ public class ElasticSearch implements Search {
       request = addAggregations(request);
     }
     final SearchResponse resp = request.execute().actionGet();
+
     return toSearchResult(resp, query);
   }
 

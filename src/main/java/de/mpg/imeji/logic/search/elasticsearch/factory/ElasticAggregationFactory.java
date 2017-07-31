@@ -31,6 +31,8 @@ import de.mpg.imeji.logic.vo.StatementType;
  */
 public class ElasticAggregationFactory {
 
+  private final static int BUCKETS_MAX_SIZE = 100;
+
   public static List<AbstractAggregationBuilder> build() {
     List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
     List<Facet> facets = new FacetService().retrieveAllFromCache();
@@ -103,18 +105,18 @@ public class ElasticAggregationFactory {
    * @return
    */
   private static AbstractAggregationBuilder getCollectionAggregation(Facet facet) {
-    return AggregationBuilders.terms(facet.getIndex())
+    return AggregationBuilders.terms(facet.getIndex()).size(BUCKETS_MAX_SIZE)
         .field(ElasticFields.TITLE_WITH_ID_OF_COLLECTION.field());
   }
 
   private static AbstractAggregationBuilder getAuthorsOfCollectionAggregation(Facet facet) {
-    return AggregationBuilders.terms(facet.getIndex())
+    return AggregationBuilders.terms(facet.getIndex()).size(BUCKETS_MAX_SIZE)
         .field(ElasticFields.AUTHORS_OF_COLLECTION.field());
   }
 
 
   private static AbstractAggregationBuilder getOrganizationsOfCollectionAggregation(Facet facet) {
-    return AggregationBuilders.terms(facet.getIndex())
+    return AggregationBuilders.terms(facet.getIndex()).size(BUCKETS_MAX_SIZE)
         .field(ElasticFields.ORGANIZATION_OF_COLLECTION.field());
   }
 
@@ -187,7 +189,8 @@ public class ElasticAggregationFactory {
   private static FilterAggregationBuilder getMetadataTextAggregation(Facet facet) {
     FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
         QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
-    fb.subAggregation(AggregationBuilders.terms(facet.getName()).field(getMetadataField(facet)));
+    fb.subAggregation(AggregationBuilders.terms(facet.getName()).field(getMetadataField(facet))
+        .size(BUCKETS_MAX_SIZE));
     return fb;
   }
 
