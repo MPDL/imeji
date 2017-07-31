@@ -22,7 +22,7 @@
 		<ui:fragment rendered="#{entry.count &gt; 0}">
 			<h:form>
 				<div class="imj_facet" >
-					<div class="imj_facetName">#{entry.facet.name} (#{entry.count})</div>
+					<div class="imj_facetName">#{entry.facet.name}</div>
 					<ui:repeat var="value" value="#{entry.values}" varStatus="varStatus">
 						<ui:fragment rendered="#{varStatus.index &lt; Configuration.facetDisplayed or Configuration.facetDisplayed &lt; 0 or entry.showMore}">
 							<div class="imj_facetValue"> 
@@ -36,24 +36,11 @@
 									<ui:fragment rendered="#{value.selected}">
 										<a title="#{value.label}" data-count="(#{value.count})" href="#{HistorySession.currentPage.url}?q=#{cc.attrs.itemsBean.query}&amp;fq=#{value.removeQuery}" onclick="startLoader();">
 											<span class="fa fa-check-square-o"/>
-											<span class="imj_facetValueText">#{value.label}</span> <span class="imj_facetValueCount">(#{value.count})</span>
+											#{value.label}
 										</a>
 									</ui:fragment>
 								</ui:fragment>
-								
-							</div>
-						</ui:fragment>
-					</ui:repeat>
-
-					<ui:fragment rendered="#{entry.values.size() >  Configuration.facetDisplayed}">
-						<div class="imj_facetValue">
-							<h:commandLink  value="#{entry.showMore ? lbl.less : lbl.more}" action="#{entry.toggleShowMore}" onclick="this.innerHTML =''; this.className='fa fa-spinner fa-spin fa-3x fa-fw'">
-								<f:ajax render="@form"/>
-								<span class="#{entry.showMore ? 'fa fa-caret-up'  : 'fa fa-caret-down'}"></span>
-							</h:commandLink>
-						</div>
-					</ui:fragment>
-					<ui:fragment rendered="#{entry.facet.type == 'NUMBER'}">
+								<ui:fragment rendered="#{entry.facet.type == 'NUMBER'}">
 						<div class="imj_facetInputContainer">
 							<label for="from">#{lbl.from}</label>
 							<h:inputText name="from" styleClass="imj_facetInput"  value="#{entry.from}" html5:placeholder="#{lbl.from}" />
@@ -63,7 +50,7 @@
 							<h:inputText name="to"  styleClass="imj_facetInput" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
 						</div>
 						<div class="imj_facetGoLinkContainer">
-							<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}" onclick="startLoader();">
+							<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go} (#{entry.count})" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}" onclick="startLoader();">
 								<f:ajax execute="@form" render="@none"/>
 							</h:commandLink>
 						</div>
@@ -80,11 +67,25 @@
 							<h:inputText name="to"  styleClass="imj_facetInput datepicker" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
 						</div>
 						<div class="imj_facetGoLinkContainer">
-							<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go}" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}" onclick="startLoader();">
+							<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go} (#{entry.count})" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}" onclick="startLoader();">
 								<f:ajax execute="@form" render="@none"/>
+							</h:commandLink> 
+						</div>
+					</ui:fragment>
+								
+							</div>
+						</ui:fragment>
+					</ui:repeat>
+
+					<ui:fragment rendered="#{entry.values.size() >  Configuration.facetDisplayed}">
+						<div class="imj_facetValue">
+							<h:commandLink  value="#{entry.showMore ? lbl.less : lbl.more}" action="#{entry.toggleShowMore}" onclick="this.innerHTML =''; this.className='fa fa-spinner fa-spin fa-3x fa-fw'">
+								<f:ajax render="@form"/>
+								<span class="#{entry.showMore ? 'fa fa-caret-up'  : 'fa fa-caret-down'}"></span>
 							</h:commandLink>
 						</div>
 					</ui:fragment>
+					
 				</div>
 			</h:form>
 		</ui:fragment>

@@ -2,6 +2,7 @@ package de.mpg.imeji.presentation.item.browse;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -215,8 +217,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       if (q != null || fq != null) {
         setQuery(URLEncoder.encode(q, "UTF-8"));
         facetQuery = SearchQueryParser.parseStringQuery(fq);
-        final SearchQuery sq = new SearchFactory(SearchQueryParser.parseStringQuery(q))
-            .and(facetQuery.getElements()).build();
+        final SearchQuery sq = new SearchFactory()
+            .and(Arrays.asList(new SearchGroup(SearchQueryParser.parseStringQuery(q).getElements()),
+                new SearchGroup(facetQuery.getElements())))
+            .build();
         setSearchQuery(sq);
       }
     } catch (final Exception e) {

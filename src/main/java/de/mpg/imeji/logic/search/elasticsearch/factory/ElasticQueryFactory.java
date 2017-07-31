@@ -504,7 +504,7 @@ public class ElasticQueryFactory {
           rq.gte(DateFormatter.getTime(from));
         }
         if (!StringHelper.isNullOrEmptyTrim(to)) {
-          rq.lt(DateFormatter.getTime(to));
+          rq.lte(DateFormatter.getTime(to));
         }
         q = rq;
         break;
