@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.authorization.Authorization;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.statement.StatementUtil;
@@ -92,8 +93,11 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
       super.save();
       redirect(getPreviousPage().getCompleteUrl());
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
+    } catch (UnprocessableError e) {
+      BeanHelper.error(e, getLocale());
     } catch (ImejiException e1) {
       LOGGER.error("Edit updating items", e1);
+      BeanHelper.error(e1.getMessage());
     } catch (IOException e) {
       LOGGER.error("Error redirect after save", e);
     }
