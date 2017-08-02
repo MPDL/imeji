@@ -663,7 +663,7 @@ public class ItemBean extends SuperBean {
    * @throws IOException
    */
   public int getWebResolutionMaxLength() throws IOException {
-    return Math.max(getWebResolutionWidth(), getWebResolutionHeight());
+    return Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
   }
 
   public int getFullResolutionWidth() throws IOException {
