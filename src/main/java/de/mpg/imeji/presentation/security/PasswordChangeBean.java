@@ -19,6 +19,7 @@ import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
+import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.user.UserBean;
 import de.mpg.imeji.util.DateHelper;
 
@@ -34,8 +35,9 @@ public class PasswordChangeBean extends SuperBean {
   private String token;
   private boolean resetFinished;
 
-  @ManagedProperty(value = "#{LoginBean}")
-  private LoginBean loginBean;
+  @ManagedProperty(value = "#{SessionBean}")
+  private SessionBean sessionBean;
+
 
   public PasswordChangeBean() {
 
@@ -81,13 +83,6 @@ public class PasswordChangeBean extends SuperBean {
     this.resetEmail = resetEmail;
   }
 
-  public LoginBean getLoginBean() {
-    return loginBean;
-  }
-
-  public void setLoginBean(LoginBean loginBean) {
-    this.loginBean = loginBean;
-  }
 
   public boolean isResetFinished() {
     return resetFinished;
@@ -95,6 +90,16 @@ public class PasswordChangeBean extends SuperBean {
 
   public void setResetFinished(boolean resetFinished) {
     this.resetFinished = resetFinished;
+  }
+
+
+
+  public SessionBean getSessionBean() {
+    return sessionBean;
+  }
+
+  public void setSessionBean(SessionBean sessionBean) {
+    this.sessionBean = sessionBean;
   }
 
   public void sendResetEmail() throws ImejiException, IOException {
@@ -137,7 +142,6 @@ public class PasswordChangeBean extends SuperBean {
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("password_changed", getLocale()));
     (new EmailService()).sendMail(user.getEmail(), null, getResetConfirmEmailSubject(),
         getResetConfirmEmailBody(user));
-    loginBean.setLogin(user.getEmail());
     resetFinished = true;
     redirect(getNavigation().getHomeUrl());
   }
@@ -165,10 +169,10 @@ public class PasswordChangeBean extends SuperBean {
       return;
     }
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("account_activated", getLocale()));
+    sessionBean.setUser(user);
     (new EmailService()).sendMail(Imeji.CONFIG.getContactEmail(), null,
         EmailMessages.getEmailOnAccountActivation_Subject(user, getLocale()),
         EmailMessages.getEmailOnAccountActivation_Body(user, getLocale()));
-    loginBean.setLogin(user.getEmail());
     resetFinished = true;
     redirect(getNavigation().getHomeUrl());
   }
