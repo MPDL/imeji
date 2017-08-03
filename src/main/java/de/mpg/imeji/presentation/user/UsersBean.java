@@ -121,7 +121,7 @@ public class UsersBean extends SuperBean {
       final String newPassword = generator.generatePassword();
       user.setEncryptedPassword(StringHelper.md5(newPassword));
       controller.update(user, getSessionUser());
-      sendEmail(email, newPassword, user.getPerson().getCompleteName());
+      sendEmail(email, newPassword, user.getPerson().getFirstnameLastname());
       BeanHelper
           .info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
     } catch (final Exception e) {

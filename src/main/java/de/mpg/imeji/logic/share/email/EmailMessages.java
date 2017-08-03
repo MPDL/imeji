@@ -187,7 +187,7 @@ public class EmailMessages {
   public static String getEmailOnRegistrationRequest_Body(User to, String url, String contactEmail,
       String expirationDate, Locale locale, String navigationUrl) {
     return getBundle("email_registration_request_body", locale)
-        .replace("XXX_USER_NAME_XXX", to.getPerson().getCompleteName())
+        .replace("XXX_USER_NAME_XXX", to.getPerson().getFirstnameLastname())
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
         .replaceAll("XXX_CONTACT_EMAIL_XXX", contactEmail).replace("XXX_ACTIVATION_LINK_XXX", url)
         .replaceAll("XXX_EXPIRATION_DATE_XXX", expirationDate);
@@ -201,13 +201,13 @@ public class EmailMessages {
    */
   public static String getEmailOnAccountActivation_Subject(User u, Locale locale) {
     return getBundle("email_account_activation_subject", locale).replace("XXX_USER_NAME_XXX",
-        u.getPerson().getCompleteName());
+        u.getPerson().getFirstnameLastname());
   }
 
   public static String getEmailOnAccountActivation_Body(User u, Locale locale) {
     return getBundle("email_account_activation_body", locale)
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
-        .replace("XXX_USER_NAME_XXX", u.getPerson().getCompleteName())
+        .replace("XXX_USER_NAME_XXX", u.getPerson().getFirstnameLastname())
         .replace("XXX_USER_EMAIL_XXX", u.getEmail())
         .replace("XXX_ORGANIZATION_XXX", u.getPerson().getOrganizationString())
         .replace("XXX_TIME_XXX", new Date().toString()).replace("XXX_CREATE_COLLECTIONS_XXX",
@@ -228,7 +228,7 @@ public class EmailMessages {
   public static String getEmailOnItemDownload_Body(User to, User actor, Item item,
       CollectionImeji c, Locale locale) {
     return getBundle("email_item_downloaded_body", locale)
-        .replace("XXX_USER_NAME_XXX", to.getPerson().getCompleteName())
+        .replace("XXX_USER_NAME_XXX", to.getPerson().getFirstnameLastname())
         .replace("XXX_ITEM_ID_XXX", ObjectHelper.getId(item.getId()))
         .replace("XXX_ITEM_LINK_XXX",
             Imeji.PROPERTIES.getApplicationURL() + "item/" + ObjectHelper.getId(item.getId()))
@@ -266,7 +266,7 @@ public class EmailMessages {
   public static String getEmailOnZipDownload_Body(User to, User actor, String itemsDownloaded,
       String url, Locale locale) {
     return getBundle("email_zip_images_downloaded_body", locale)
-        .replace("XXX_USER_NAME_XXX", to.getPerson().getCompleteName())
+        .replace("XXX_USER_NAME_XXX", to.getPerson().getFirstnameLastname())
         .replace("XXX_ACTOR_NAME_XXX",
             (actor != null ? actor.getPerson().getCompleteName() : "non_logged_in_user"))
         .replace("XXX_ACTOR_EMAIL_XXX", (actor != null ? actor.getEmail() : ""))

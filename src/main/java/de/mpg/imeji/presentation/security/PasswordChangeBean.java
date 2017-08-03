@@ -185,7 +185,7 @@ public class PasswordChangeBean extends SuperBean {
 
   private String getResetRequestEmailBody(String url, User user, String expirationDate) {
     return Imeji.RESOURCE_BUNDLE.getMessage("email_password_reset_body", getLocale())
-        .replace("XXX_USER_NAME_XXX", user.getPerson().getCompleteName())
+        .replace("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname())
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
         .replaceAll("XXX_CONTACT_EMAIL_XXX", Imeji.CONFIG.getContactEmail())
         .replaceAll("XXX_PWD_RESET_LINK_XXX", url)
@@ -200,7 +200,7 @@ public class PasswordChangeBean extends SuperBean {
   private String getResetConfirmEmailBody(User user) {
     return Imeji.RESOURCE_BUNDLE.getMessage("email_new_password", getLocale())
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
-        .replace("XXX_USER_NAME_XXX", user.getPerson().getCompleteName());
+        .replace("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname());
   }
 
 }

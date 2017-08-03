@@ -32,7 +32,7 @@ public class ShareEmailMessage {
       String shareToUri, String role, User user, Locale locale) {
     this.user = user;
     this.locale = locale;
-    body = EmailMessages.getSharedCollectionMessage(user.getPerson().getCompleteName(),
+    body = EmailMessages.getSharedCollectionMessage(user.getPerson().getFirstnameLastname(),
         addresseeName, sharedObjectName, sharedObjectLink, locale);
     final String messageRoles = getMessageForShareCollection(role);
     body = body.replaceAll("XXX_RIGHTS_XXX", messageRoles.trim());

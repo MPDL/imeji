@@ -128,4 +128,8 @@ public class Person implements Cloneable, Serializable {
   public String getCompleteName() {
     return familyName + ", " + givenName;
   }
+
+  public String getFirstnameLastname() {
+    return givenName + " " + familyName;
+  }
 }

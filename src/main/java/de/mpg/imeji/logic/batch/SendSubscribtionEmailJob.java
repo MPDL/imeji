@@ -96,7 +96,7 @@ public class SendSubscribtionEmailJob implements Callable<Integer> {
                 .replace("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
         String body = Imeji.RESOURCE_BUNDLE.getMessage("email_subscribtion_body", Locale.ENGLISH)
             .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
-            .replaceAll("XXX_USER_NAME_XXX", u.getPerson().getCompleteName())
+            .replaceAll("XXX_USER_NAME_XXX", u.getPerson().getFirstnameLastname())
             .replace("XXX_TEXT_XXX", emailText);
         new EmailService().sendMail(u.getEmail(), null, subject, body);
       }
