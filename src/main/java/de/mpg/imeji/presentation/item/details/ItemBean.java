@@ -3,6 +3,7 @@ package de.mpg.imeji.presentation.item.details;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,6 +96,17 @@ public class ItemBean extends SuperBean {
     prettyLink = "pretty:editImage";
   }
 
+  public void preRenderView() throws IOException {
+    id = UrlHelper.getParameterValue("id");
+    URI uri = ObjectHelper.getURI(Item.class, id);
+    try {
+      new ItemService().retrieve(uri, getSessionUser());
+    } catch (ImejiException e) {
+      FacesContext.getCurrentInstance().getExternalContext().responseSendError(404,
+          "404_NOT_FOUND");
+    }
+  }
+
   /**
    * Initialize the {@link ItemBean}
    *
@@ -115,12 +127,6 @@ public class ItemBean extends SuperBean {
       }
     } catch (final NotFoundException e) {
       LOGGER.error("Error loading item", e);
-      try {
-        FacesContext.getCurrentInstance().getExternalContext().responseSendError(404,
-            "404_NOT_FOUND");
-      } catch (final IOException e1) {
-        LOGGER.error("Error sending error", e1);;
-      }
     } catch (final Exception e) {
       LOGGER.error("Error initialitzing item page", e);
       BeanHelper.error("Error initializing page" + e.getMessage());

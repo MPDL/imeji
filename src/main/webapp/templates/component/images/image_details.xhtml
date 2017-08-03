@@ -8,6 +8,11 @@
 	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
 	xmlns:item="http://java.sun.com/jsf/composite/components/item">
 	
+	<f:metadata>
+		<f:event listener="#{ItemBean.preRenderView}"
+             type="preRenderView" />
+	</f:metadata>
+	
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">

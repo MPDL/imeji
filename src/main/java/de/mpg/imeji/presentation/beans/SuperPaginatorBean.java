@@ -485,8 +485,12 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
    * @return
    */
   public void goToPage() {
-    currentPageNumber = Integer.parseInt(getGoToPage());
-    update();
+    try {
+      currentPageNumber = Integer.parseInt(getGoToPage());
+      update();
+    } catch (NumberFormatException e) {
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_page_not_exists", getLocale()));
+    }
   }
 
   /**

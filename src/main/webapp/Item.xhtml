@@ -8,5 +8,10 @@
 	<ui:param name="currentMainMenu" value="mediaEntry" />
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.browseUrl}?q=#{ItemBean.browse.query}" />
 	<ui:param name="imejiResource" value="#{ItemBean.collection}" />
+	
+	<f:metadata>
+		<f:event listener="#{ItemBean.preRenderView}"
+             type="preRenderView" />
+	</f:metadata>
 
 </ui:composition>
