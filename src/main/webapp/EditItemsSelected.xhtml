@@ -49,9 +49,7 @@ body {
 						onclick="startLoader();">
 					</h:commandLink>
 				</div>
-<<<<<<< HEAD
 				<ui:fragment rendered="#{not (EditItemsSelectedBean.displayedColumns.size()==EditItemsSelectedBean.headers.size())}">
-=======
 				<h:panelGroup layout="block" id="imj_pageMessageArea">
 		           <ui:repeat var="message" value="#{MessagesBean.messages}">
 		           	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
@@ -60,7 +58,6 @@ body {
 		           	</div>
 		           </ui:repeat>
 		         </h:panelGroup>
->>>>>>> refs/remotes/origin/develop
 				<div class="editSelectedHeader">
 					#{lbl.show_hidden_columns}
 					<div>
