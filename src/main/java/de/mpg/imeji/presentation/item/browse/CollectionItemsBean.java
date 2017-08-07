@@ -194,6 +194,12 @@ public class CollectionItemsBean extends ItemsBean {
     return size;
   }
 
+  public String getLogo() {
+    return collection.getLogoUrl() != null ? collection.getLogoUrl().toString()
+        : getCurrentPartList().get(0).getLink();
+  }
+
+
   /**
    * If true, set to false to avoid to show the upload dialog on each ajax request
    * 

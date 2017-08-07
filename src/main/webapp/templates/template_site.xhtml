@@ -44,8 +44,7 @@
 	                
 	              
 	                <div class="imj_siteContent">
-		                	<!-- Search Query -->
-		                	<ui:insert name="searchQuery"/>
+		                	
 		                		<!-- headline --> 
 				           	<ui:fragment rendered="#{not empty headline or not empty imejiResource}">
 				                <div class="imj_siteContentHeadline">
@@ -66,9 +65,12 @@
 			                <h:panelGroup layout="block" id="actionsMenuArea" class="imj_actionMenuArea">
 			               		<ui:insert name="actionsMenu"/>
 			                </h:panelGroup>
-			       
+			                
+			      			 <!-- Search Query -->
+		                	
 			                <!-- content wrapper -->
 			                <div class="imj_mainContentWrapper">
+			                	<ui:insert name="searchQuery"/>
 			                    <ui:insert name="mainContent"/>
 			                </div>
 			                

@@ -8,10 +8,15 @@
 	</composite:interface>
 	
 	<composite:implementation>
+		<ui:remove>
 		<form action="#{Navigation.applicationUrl}upload">
 			<button id="upload" class="imj_submitButton">
 				#{lbl.upload}
 			</button>
 		</form>
+		</ui:remove>
+		<a href="#{Navigation.applicationUrl}upload" class="imj_overlayMenu imj_menuButton">
+			<span class="fa fa-upload"/> <span class="imj_headerEntry">	#{lbl.upload}</span>
+		</a>
 	</composite:implementation>
 </html>

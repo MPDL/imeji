@@ -11,8 +11,8 @@
 		
 		<style>.imj_tileItem {width: #{Configuration.thumbnailWidth}px !important;}</style>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfElements != 0}">
+			<ui:remove>
 			<div class="imj_listHeader">
-				#{cc.attrs.picList.totalNumberOfElements} #{cc.attrs.picList.totalNumberOfElements > 1 ? lbl.items : lbl.item}
 				<div class="imj_overlayMenu">
 					<h:form id="selectMenuForm">
 						<div class="imj_menuHeader">
@@ -30,9 +30,9 @@
 					</h:form>
 				</div>
 			</div>
-
-			<div class="imj_listBody" id="listDiv">
-				<ul id="imj_listBody">
+			</ui:remove>
+			<div class="imj_listBody" id="listDiv" style=" text-align: justify;  text-align-last: justify;">
+				<ul id="imj_listBody"> 
 					<!-- Images -->	
 					
 					<ui:repeat id="pictureList" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
@@ -65,8 +65,12 @@
 						</li>
 						
 					</ui:repeat>
-					
 					<!-- End images -->
+					<ui:repeat id="emptyPictureList" var="nothing" value="#{cc.attrs.picList.emptyList}">
+						<li class="imj_tileItem">
+						</li>
+					</ui:repeat>
+					
 					<!-- 
 						Show/hide metadata popup Needs to be defined in ajax area to rebind the DOM objects
 					-->

@@ -52,17 +52,21 @@
 				</form>
 				<div class="imj_searchAdvancedLink">
 					<a id="lnkAdvancedSearch" title="#{lbl.goto_adv_search}"  href="#{Navigation.searchUrl}">
-			   			#{lbl.advanced_search}
+			   			<span class="fa fa-sliders fa-size-2"></span>
 			   		</a>
 		   		</div>
 			</div>
 		</div>
 		<ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
-			<div class="imj_navigation">
+			<ui:remove><div class="imj_navigation">
 				<!-- place main menu here -->
-				<menu:mainMenu id="mainMenu" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>			
+				<menu:mainMenu id="mainMenu" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>
 				<!-- import search here-->
 			 	<ui:remove><ui:include src="../menu/searchmenu_default.xhtml"/></ui:remove>
+			</div></ui:remove>
+			<div class="imj_navigation2">
+				<!-- place main menu here -->
+				<menu:mainMenu id="navigation" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>
 			</div>
 		</ui:fragment>
 	</f:subview>

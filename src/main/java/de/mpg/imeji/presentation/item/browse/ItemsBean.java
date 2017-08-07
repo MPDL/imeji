@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,6 +138,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     if (getElementsPerPage() == 0) {
       setElementsPerPage(itemsPerLine);
     }
+  }
+
+  public List<String> getEmptyList() {
+    return Collections.nCopies(getElementsPerPage() - getCurrentPartList().size(), "");
   }
 
   @Override

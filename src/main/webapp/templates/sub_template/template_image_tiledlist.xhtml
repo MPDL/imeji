@@ -23,26 +23,19 @@
 			<script>menuRightOffset();</script>
             <!-- Selection Info Panel -->
            
-          
-           
 			<div id="itemsArea" class="itemsArea">
-				
-				<div id="facetsArea" class="imj_itemsAreaFacets">
-	           		<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" selector="#{FacetSelectorBean}"/>
-	           	</div>
-	        	<div  class="imj_itemsAreaContent">
-	        		
-	        		<a href="#" class="imj_openFilter  imj_listHeader" onclick="document.getElementById('facetsArea').style.width = '70%'; return false;">
-	        			<span class="fa fa-filter"/> #{lbl.filter}
-	        		</a>
 	        	
-	        	 	<item:filters id="selPanel" 
+	        	<item:filters id="selPanel" 
             			facetBean="#{paginatorListSessionBean}"  
             			numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
             			showSortMenu="true"
             			showStatusFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"
             			showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
-            		
+            
+				<div id="facetsArea" class="imj_itemsAreaFacets">
+	           		<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" selector="#{FacetSelectorBean}"/>
+	           	</div>
+	        	<div  class="imj_itemsAreaContent">
 					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
 					<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 				

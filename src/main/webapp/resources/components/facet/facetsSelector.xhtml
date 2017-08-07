@@ -15,9 +15,6 @@
 <composite:implementation>
 	#{FacetSelectorBean.init(cc.attrs.itemsBean.searchResult)}
 	<a href="javascript:void(0)" class="imj_closeFilter fa fa-times" onclick="document.getElementById('facetsArea').style.width = '0'; return false;"></a>
-	<ui:fragment rendered="#{FacetSelectorBean.entries.size() > 0}">
-		<span class="imj_menuTitle"><span class="fa fa-filter"></span> #{lbl.filter_by}</span>
-	</ui:fragment>
 	<ui:repeat var="entry" value="#{FacetSelectorBean.entries}" varStatus="row">
 		<ui:fragment rendered="#{entry.count &gt; 0}">
 			<h:form>
