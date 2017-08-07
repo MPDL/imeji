@@ -33,6 +33,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
 import de.mpg.imeji.presentation.item.ThumbnailBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -416,7 +417,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public void selectAll() {
     for (final ThumbnailBean bean : getCurrentPartList()) {
-      if (!(sessionBean.getSelected().contains(bean.getUri().toString()))) {
+      if (!(sessionBean.getSelected().contains(bean.getUri().toString()))
+          && !bean.getStatus().equals(Status.WITHDRAWN.toString())) {
         sessionBean.getSelected().add(bean.getUri().toString());
         bean.setSelected(true);
       }

@@ -25,7 +25,7 @@
 				
                 <h:column>
                     <f:facet name="header">
-                        <h:selectBooleanCheckbox  value="#{cc.attrs.listBean.allSelected}" valueChangeListener="#{cc.attrs.listBean.changeAllSelected}">
+                        <h:selectBooleanCheckbox onclick="startLoader();"  value="#{cc.attrs.listBean.allSelected}" valueChangeListener="#{cc.attrs.listBean.changeAllSelected}">
                         	<f:ajax event="change" execute="@this" render="@form :actionsMenuArea"/>
                         </h:selectBooleanCheckbox>
                         &#160;

@@ -11,26 +11,6 @@
 		
 		<style>.imj_tileItem {width: #{Configuration.thumbnailWidth}px !important;}</style>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfElements != 0}">
-			<ui:remove>
-			<div class="imj_listHeader">
-				<div class="imj_overlayMenu">
-					<h:form id="selectMenuForm">
-						<div class="imj_menuHeader">
-							<h:commandLink action="#{cc.attrs.picList.selectAll}"  id="lnkSelectAllOnPage" title="#{lbl.select_all_on_page}"  styleClass="selectAll" rendered="#{!cc.attrs.picList.allSelected}" style="margin-right: 1em;">
-								<h:outputText value="#{lbl.select_all_on_page}"/>
-								<f:ajax execute="@this" render=":ajaxWrapper :actionsMenuArea"/>
-							</h:commandLink>
-							<h:commandLink action="#{cc.attrs.picList.selectNone}" id="lnkSelectNone" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{not empty SessionBean.selected}">
-								<h:outputText value="#{lbl.select_none}"/>
-								<f:ajax execute="@this" render=":ajaxWrapper :actionsMenuArea"/>
-							</h:commandLink>
-							
-	                        &#160;
-						</div>
-					</h:form>
-				</div>
-			</div>
-			</ui:remove>
 			<div class="imj_listBody" id="listDiv" style=" text-align: justify;  text-align-last: justify;">
 				<ul id="imj_listBody"> 
 					<!-- Images -->	
@@ -48,7 +28,7 @@
 										<img src="#{item.link}" />
 									</a>
 									<span class="imj_optionSet">
-										<h:selectBooleanCheckbox styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
+										<h:selectBooleanCheckbox rendered="#{item.status != 'WITHDRAWN'}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
 											<f:ajax event="change" execute="@this" render=":ajaxWrapper :actionsMenuArea"/>
 										</h:selectBooleanCheckbox>
 										<h:outputLabel for="pictureCheckbox" value="#{item.caption}" title="#{item.caption}" styleClass="imj_optionLabel"/>

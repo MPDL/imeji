@@ -40,6 +40,7 @@ public class ThumbnailBean implements Serializable {
   private String fileSize;
   private String modified;
   private List<Metadata> metadata;
+  private String status;
 
   /**
    * Bean for Thumbnail list elements. Each element of a list with thumbnail is an instance of a
@@ -62,6 +63,7 @@ public class ThumbnailBean implements Serializable {
     this.metadata = item.getMetadata();
     this.caption = findCaption();
     this.selected = session.getSelected().contains(uri.toString());
+    this.status = item.getStatus().toString();
   }
 
   /**
@@ -266,5 +268,9 @@ public class ThumbnailBean implements Serializable {
 
   public int getThumbnailWidth() {
     return Integer.parseInt(Imeji.CONFIG.getThumbnailWidth());
+  }
+
+  public String getStatus() {
+    return status;
   }
 }
