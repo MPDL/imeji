@@ -1,5 +1,6 @@
 package de.mpg.imeji.presentation.item.browse;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
 
@@ -54,6 +55,17 @@ public class CollectionItemsBean extends ItemsBean {
    */
   public CollectionItemsBean() {
     super();
+  }
+
+  public void preRenderView() throws IOException {
+    id = UrlHelper.getParameterValue("collectionId");
+    uri = ObjectHelper.getURI(CollectionImeji.class, id);
+    try {
+      new CollectionService().retrieveLazy(uri, getSessionUser());
+    } catch (ImejiException e) {
+      FacesContext.getCurrentInstance().getExternalContext().responseSendError(404,
+          "404_NOT_FOUND");
+    }
   }
 
   @Override

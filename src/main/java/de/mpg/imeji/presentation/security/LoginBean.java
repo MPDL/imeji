@@ -143,6 +143,10 @@ public class LoginBean extends SuperBean {
   }
 
   public String getEncodedRedirect() throws UnsupportedEncodingException {
+    String redirect = UrlHelper.getParameterValue("redirect");
+    if (redirect == null) {
+      return "";
+    }
     return URLEncoder.encode(UrlHelper.getParameterValue("redirect"), "UTF-8");
   }
 
