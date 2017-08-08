@@ -361,9 +361,11 @@ function submitPanel(panelId, message) {
 function openDialog(id) {
 	/* set the dialog in center of the screen */
 	var dialog = $(document.getElementById(id));
-	dialog.css("left", Math.max(0, Math.round(($(window).width() - $(dialog)
-			.outerWidth()) / 2)
-			+ $(window).scrollLeft())
+	dialog.css("left", Math.max(0,
+			Math
+					.round(($(window).width() - $(dialog)
+							.outerWidth()) / 2)
+					+ $(window).scrollLeft())
 			+ "px");
 	/* open the dialog */
 	dialog.show();
@@ -761,7 +763,7 @@ $(function(){
 });
 //Close success message after 2s
 setTimeout(function() {
-    $('.imj_messageSuccess').fadeOut(1000);
+    $('.imj_messageSuccess').slideUp(200);
 }, 2000);
 
 

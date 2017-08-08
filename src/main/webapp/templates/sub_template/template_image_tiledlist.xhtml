@@ -31,7 +31,13 @@
             			showSortMenu="true"
             			showStatusFilterMenu="#{currentMainMenu == 'items' or (currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING')}"
             			showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
-            
+           		
+           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0}">
+           			<div  class="uploadDragAndDropTitle">
+           				<span class=" fa fa-meh-o fa-size-2"/> <br/><span> #{msg.no_images_found}!</span>
+           			</div>
+           		</ui:fragment>
+				
 				<div id="facetsArea" class="imj_itemsAreaFacets">
 	           		<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" selector="#{FacetSelectorBean}"/>
 	           	</div>
@@ -40,11 +46,7 @@
 					<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 				
 				</div>
-           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0}">
-           			<div  class="uploadDragAndDropTitle">
-           				<span class=" fa fa-exclamation-triangle"/> #{msg.no_images_found}!
-           			</div>
-           		</ui:fragment>
+           		
            		
 			</div>
 			<!-- Page Browser GotoBox -->
