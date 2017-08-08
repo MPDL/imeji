@@ -37,8 +37,8 @@ public class ItemPostIndexScript {
         if (fields != null) {
           final XContentBuilder json = fields.toXContentBuilder();
           final UpdateRequestBuilder req = ElasticService.getClient()
-              .prepareUpdate(index, ElasticTypes.items.name(), item.getId().toString()).setDoc(json)
-              .setParent(item.getCollection().toString());
+              .prepareUpdate(index, ElasticTypes.items.name(), item.getId().toString())
+              .setDoc(json);
           bulkRequest.add(req);
         }
       } catch (Exception e) {

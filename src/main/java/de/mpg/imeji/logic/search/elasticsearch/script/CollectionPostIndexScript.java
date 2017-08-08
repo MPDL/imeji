@@ -60,9 +60,8 @@ public class CollectionPostIndexScript {
     final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
     final XContentBuilder json = new CollectionFields(c).toXContentBuilder();
     for (final String id : ids) {
-      final UpdateRequestBuilder req =
-          ElasticService.getClient().prepareUpdate(index, ElasticTypes.items.name(), id)
-              .setDoc(json).setParent(c.getId().toString());
+      final UpdateRequestBuilder req = ElasticService.getClient()
+          .prepareUpdate(index, ElasticTypes.items.name(), id).setDoc(json);
       bulkRequest.add(req);
     }
     if (bulkRequest.numberOfActions() > 0) {

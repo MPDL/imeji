@@ -110,7 +110,6 @@ public class ElasticSearch implements Search {
   private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, int from, int size, boolean addFacets) {
     final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
-
     SearchRequestBuilder request = ElasticService.getClient()
         .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setQuery(f).setTypes(getTypes())
         .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri));
@@ -118,8 +117,8 @@ public class ElasticSearch implements Search {
     if (addFacets) {
       request = addAggregations(request);
     }
-    final SearchResponse resp = request.execute().actionGet();
 
+    final SearchResponse resp = request.execute().actionGet();
     return toSearchResult(resp, query);
   }
 

@@ -29,7 +29,7 @@
             			facetBean="#{paginatorListSessionBean}"  
             			numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
             			showSortMenu="true"
-            			showStatusFilterMenu="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING'}"
+            			showStatusFilterMenu="#{currentMainMenu == 'items' or (currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING')}"
             			showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
             
 				<div id="facetsArea" class="imj_itemsAreaFacets">

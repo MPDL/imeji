@@ -1,8 +1,5 @@
 {
    "items":{
-      "_parent":{
-         "type":"folders"
-      },
       "properties":{
          "id":{
             "type":"string",

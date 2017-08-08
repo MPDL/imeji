@@ -261,7 +261,7 @@ public class ElasticIndexer implements SearchIndexer {
       return StringHelper.isNullOrEmptyTrim(((ContentVO) obj).getItemId()) ? null
           : ((ContentVO) obj).getItemId();
     } else if (obj instanceof Item) {
-      return ((Item) obj).getCollection().toString();
+      // return ((Item) obj).getCollection().toString();
     }
     return null;
   }
