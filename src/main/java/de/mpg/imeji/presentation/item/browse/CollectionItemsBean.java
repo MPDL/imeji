@@ -78,8 +78,10 @@ public class CollectionItemsBean extends ItemsBean {
       browseContext = getNavigationString() + id;
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
-      collection.getPersons().stream().map(p -> p.getCompleteName())
-          .forEach(a -> authors += authors.equals("") ? a : ", " + a);
+      collection.getPersons().stream()
+          .forEach(a -> authors +=
+              authors.equals("") ? a.getCompleteName() + " (" + a.getOrganizationString() + ")"
+                  : ", " + a.getCompleteName() + " (" + a.getOrganizationString() + ")");
       authorsShort = collection.getPersons().iterator().next().getCompleteName();
       if (collection.getPersons().size() > 1) {
         authorsShort += " & " + (collection.getPersons().size() - 1) + " "

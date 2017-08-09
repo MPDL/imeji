@@ -24,7 +24,7 @@
 				<h:panelGroup rendered="#{!Auth.loggedIn}" styleClass="imj_metaMenuItem imj_loginFormHidden">
 					<a href="#{Navigation.loginUrl}?redirect=#{redirectUrl}" id="lnkshowLogin" class="imj_metaMenuItem">#{lbl.login}</a>
 				</h:panelGroup>
-				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationUrl}?logout=1" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
+				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationUrl}logout" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
 					<h:outputText value="#{lbl.logout}"/>
 				</h:outputLink>
 				<dialog:passwordResetDialog dialogId="testDialog"/>

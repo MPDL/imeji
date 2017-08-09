@@ -87,7 +87,7 @@ public class SecurityFilter implements Filter {
       throws IOException, ServletException {
     try {
       final HttpServletRequest request = (HttpServletRequest) serv;
-      if (ServletUtil.isGetRequest(serv) && !logout(request, resp)) {
+      if (ServletUtil.isGetRequest(serv)) {
         User user = login(request);
         checkReadAuthorization(request, user);
       }
@@ -189,15 +189,6 @@ public class SecurityFilter implements Filter {
     } else {
       return URI.create(result.getResults().get(0));
     }
-  }
-
-  public boolean logout(HttpServletRequest request, ServletResponse resp) throws IOException {
-    if ("1".equals(request.getParameter("logout"))) {
-      request.getSession().invalidate();
-      redirectToHome(resp);
-      return true;
-    }
-    return false;
   }
 
   /**

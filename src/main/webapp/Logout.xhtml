@@ -1,0 +1,15 @@
+<ui:composition template="templates/template_site.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<ui:param name="headline" value=" " />
+	<ui:param name="title" value="#{lbl.logout}" />
+
+	<ui:define name="init">
+		<f:metadata>
+		  <f:viewAction action="#{LogoutBean.logout}"/>
+		</f:metadata>
+	</ui:define>
+</ui:composition>

@@ -150,6 +150,10 @@
 		<pattern value="/login" />
 		<view-id>/jsf/Login.xhtml</view-id>
 	</url-mapping>
+	<url-mapping id="logout">
+		<pattern value="/logout" />
+		<view-id>/jsf/Logout.xhtml</view-id>
+	</url-mapping>
 	<url-mapping id="registerFormular">
 		<pattern value="/register"/>
 		<view-id>/jsf/Register.xhtml</view-id>
