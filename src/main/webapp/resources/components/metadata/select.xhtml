@@ -55,7 +55,7 @@
 					<p>#{lbl.metadata_not_found}!</p>
 				</ui:fragment>
 				<ui:fragment rendered="#{!cc.attrs.component.indexExists()}">
-					<button class="selectMdButton imj_submitButton" title="#{lbl.create}" onclick="closeDialog('selectStatementDialog');openDialog('createStatementDialog'); return false;">
+					 <button type="button" class="selectMdButton imj_submitButton" title="#{lbl.create}" onclick="closeDialog('selectStatementDialog');openDialog('createStatementDialog'); return false;">
 						<i class="fa fa-plus"/>
 						 #{lbl.add_metadata}#{empty cc.attrs.component.index? '' : ':'} #{cc.attrs.component.index}
 					</button>
