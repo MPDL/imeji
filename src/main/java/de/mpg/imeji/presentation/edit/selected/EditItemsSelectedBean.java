@@ -91,7 +91,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   public void save() {
     try {
       super.save();
-      redirect(getPreviousPage().getCompleteUrl());
+      goBack();
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
     } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
@@ -245,7 +245,8 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   }
 
   public String getBackUrl() {
-    return getPreviousPage().getCompleteUrlWithHistory();
+    return !StringHelper.isNullOrEmptyTrim(super.getBackUrl()) ? super.getBackUrl()
+        : getPreviousPage().getCompleteUrlWithHistory();
   }
 
   /**

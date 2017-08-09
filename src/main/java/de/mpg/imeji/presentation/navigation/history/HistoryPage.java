@@ -23,7 +23,7 @@ public class HistoryPage implements Serializable {
   private String url;
   private String title = "";
   private final ImejiPages imejiPage;
-  private Map<String, String[]> params;
+  private final Map<String, String[]> params;
 
 
   /**
@@ -35,7 +35,7 @@ public class HistoryPage implements Serializable {
    * @throws Exception
    */
   public HistoryPage(String url, Map<String, String[]> params, User user) throws Exception {
-    this.params = params;
+    this.params = new HashMap<>(params);
     this.url = url;
     this.imejiPage = HistoryUtil.getImejiPage(getCompleteUrl());
   }
@@ -124,14 +124,6 @@ public class HistoryPage implements Serializable {
 
   public void setUrl(String url) {
     this.url = url;
-  }
-
-  public void setParams(Map<String, String[]> params) {
-    this.params = params;
-  }
-
-  public Map<String, String[]> getParams() {
-    return params;
   }
 
   public String getTitle() {

@@ -2,6 +2,7 @@ package de.mpg.imeji.presentation.beans;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URLDecoder;
 import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
@@ -9,6 +10,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.navigation.history.HistoryPage;
@@ -33,6 +36,12 @@ public class SuperBean implements Serializable {
   private HistoryPage previousPage;
   @ManagedProperty(value = "#{HistorySession.currentPage}")
   private HistoryPage currentPage;
+  private final String backUrl;
+
+  public SuperBean() {
+    this.backUrl = UrlHelper.getParameterValue("back");
+
+  }
 
 
   /**
@@ -43,6 +52,16 @@ public class SuperBean implements Serializable {
    */
   protected void redirect(String url) throws IOException {
     FacesContext.getCurrentInstance().getExternalContext().redirect(url);
+  }
+
+  /**
+   * Go to the previsous page, either as defined in the url or via the history
+   * 
+   * @throws IOException
+   */
+  protected void goBack() throws IOException {
+    redirect(!StringHelper.isNullOrEmptyTrim(backUrl) ? URLDecoder.decode(backUrl, "UTF-8")
+        : getPreviousPage().getCompleteUrl());
   }
 
   /**
@@ -115,5 +134,8 @@ public class SuperBean implements Serializable {
     this.currentPage = currentPage;
   }
 
+  public String getBackUrl() {
+    return backUrl;
+  }
 
 }

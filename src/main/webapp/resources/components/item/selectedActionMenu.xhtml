@@ -11,6 +11,7 @@
 	</composite:interface>
 	
 	<composite:implementation>
+	
 		<ui:fragment rendered="#{Auth.updateAtLeastOneCollection and cc.attrs.itemsBean.totalNumberOfElements > 0}">
 			<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="menuItems">
 			
@@ -25,7 +26,7 @@
 				<div class="imj_menuBody">
 					<ul class="imj_overlayMenuList">
 						<li>
-							<a href="#{Navigation.applicationUrl}editselected">
+							<a href="#{Navigation.applicationUrl}editselected?back=#{HistorySession.currentPage.urlEncoded}">
 								<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
 							</a>
 						</li>

@@ -6,7 +6,7 @@
 
 	<ui:param name="itemBean" value="#{ItemBean}" />
 	<ui:param name="currentMainMenu" value="items" />
-	<ui:param name="browseToAllItemsUrl" value="#{Navigation.browseUrl}?q=#{ItemBean.browse.query}" />
+	<ui:param name="browseToAllItemsUrl" value="#{Navigation.browseUrl}?q=#{ItemBean.browse.query}&amp;fq=#{ItemBean.browse.facetQuery}" />
 	<ui:param name="imejiResource" value="#{ItemBean.collection}" />
 	
 	<f:metadata>

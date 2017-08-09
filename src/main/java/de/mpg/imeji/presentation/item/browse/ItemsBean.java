@@ -53,6 +53,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private static final long serialVersionUID = -5564640316578205957L;
   private int totalNumberOfRecords;
   private String query;
+  private String facetQueryString;
   private boolean isSimpleSearch;
   private SearchQuery searchQuery = new SearchQuery();
   private SearchQuery facetQuery = new SearchQuery();
@@ -221,7 +222,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       final String q = UrlHelper.getParameterValue("q");
       final String fq = UrlHelper.getParameterValue("fq");
       if (q != null || fq != null) {
-        setQuery(URLEncoder.encode(q, "UTF-8"));
+        query = q != null ? URLEncoder.encode(q, "UTF-8") : "";
+        facetQueryString = fq != null ? URLEncoder.encode(fq, "UTF-8") : "";
         facetQuery = SearchQueryParser.parseStringQuery(fq);
         final SearchQuery sq = new SearchFactory()
             .and(Arrays.asList(new SearchGroup(SearchQueryParser.parseStringQuery(q).getElements()),
@@ -523,6 +525,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   public CollectionImeji getCollection() {
     return null;
+  }
+
+  public String getFacetQueryString() {
+    return facetQueryString;
   }
 
 }

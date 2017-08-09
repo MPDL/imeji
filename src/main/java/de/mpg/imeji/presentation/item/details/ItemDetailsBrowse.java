@@ -3,6 +3,7 @@ package de.mpg.imeji.presentation.item.details;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -10,7 +11,10 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchFields;
+import de.mpg.imeji.logic.search.model.SearchGroup;
+import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -33,7 +37,8 @@ import de.mpg.imeji.presentation.util.CookieUtils;
 public class ItemDetailsBrowse implements Serializable {
   private static final long serialVersionUID = -1627171360319925422L;
   private static final Logger LOGGER = Logger.getLogger(ItemDetailsBrowse.class);
-  private String query;
+  private final String query;
+  private final String facetQuery;
   private final String containerUri;
   private final int currentPosition;
   private final SortCriterion sortCriterion;
@@ -53,6 +58,7 @@ public class ItemDetailsBrowse implements Serializable {
    */
   public ItemDetailsBrowse(Item item, String type, String containerUri, User user) {
     this.query = UrlHelper.hasParameter("q") ? UrlHelper.getParameterValue("q") : "";
+    this.facetQuery = UrlHelper.hasParameter("fq") ? UrlHelper.getParameterValue("fq") : "";
     this.containerUri = containerUri;
     this.currentItem = item;
     this.sortCriterion = initSortCriterion();
@@ -72,14 +78,25 @@ public class ItemDetailsBrowse implements Serializable {
   private List<String> searchPreviousAndNextItem(User user) {
     final ItemService controller = new ItemService();
     try {
-      return controller
-          .search(containerUri != null ? URI.create(containerUri) : null,
-              SearchQueryParser.parseStringQuery(query), sortCriterion, user, SIZE, getOffset())
-          .getResults();
+      return controller.search(containerUri != null ? URI.create(containerUri) : null,
+          getSearchQuery(), sortCriterion, user, SIZE, getOffset()).getResults();
     } catch (final UnprocessableError e) {
       LOGGER.error("Error retrieving items", e);
     }
     return new ArrayList<>();
+  }
+
+  /**
+   * Return the searchquery according the search and facet queries.
+   * 
+   * @return
+   * @throws UnprocessableError
+   */
+  private SearchQuery getSearchQuery() throws UnprocessableError {
+    return new SearchFactory()
+        .and(Arrays.asList(new SearchGroup(SearchQueryParser.parseStringQuery(query).getElements()),
+            new SearchGroup(SearchQueryParser.parseStringQuery(facetQuery).getElements())))
+        .build();
   }
 
   /**
@@ -127,12 +144,12 @@ public class ItemDetailsBrowse implements Serializable {
     final String nextItem = nextItem(items);
     final String previousItem = previousItem(items);
     if (nextItem != null) {
-      next = baseUrl + ObjectHelper.getId(URI.create(nextItem)) + "?q=" + this.query + "&pos="
-          + (this.currentPosition + 1);
+      next = baseUrl + ObjectHelper.getId(URI.create(nextItem)) + "?q=" + this.query + "&fq="
+          + facetQuery + "&pos=" + (this.currentPosition + 1);
     }
     if (previousItem != null) {
       previous = baseUrl + ObjectHelper.getId(URI.create(previousItem)) + "?q=" + this.query
-          + "&pos=" + (this.currentPosition - 1);
+          + "&fq=" + facetQuery + "&pos=" + (this.currentPosition - 1);
     }
   }
 
@@ -183,10 +200,10 @@ public class ItemDetailsBrowse implements Serializable {
   }
 
   /**
-   * @param query the query to set
+   * @return the facetQuery
    */
-  public void setQuery(String query) {
-    this.query = query;
+  public String getFacetQuery() {
+    return facetQuery;
   }
 
 

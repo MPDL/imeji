@@ -50,9 +50,9 @@ public class HistorySession implements Serializable {
       } else {
         // If the page is the same, it might be that the params have
         // been changed
-        if (!page.getParams().containsKey("edituploaded")) {
-          getCurrentPage().setParams(page.getParams());
-        }
+        pages.remove(pages.size() - 1);
+        page.setPos(pages.size());
+        pages.add(page);
       }
     }
   }

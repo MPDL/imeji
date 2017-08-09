@@ -26,7 +26,7 @@ public class SearchFilterBean extends SuperBean {
    * @return
    */
   public String getClearFilterAndSearchQuery() {
-    final HistoryPage page = getCurrentPage();
+    final HistoryPage page = getCurrentPage().copy();
     page.setParamValue("q", "");
     return page.getCompleteUrl();
   }
