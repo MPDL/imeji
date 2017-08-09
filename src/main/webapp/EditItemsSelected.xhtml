@@ -98,7 +98,7 @@ body {
 													rendered="#{!empty head.input}" />
 												<h:panelGroup id="changeName" rendered="#{head.edit}">
 													<h:inputText id="inputColumnName" value="#{head.inputName}"
-														autocomplete="off">
+														autocomplete="off" onkeydown="if(event.keyCode==13){document.getElementById('list:'+#{status.index}+':changeColumn').click();}">
 													</h:inputText>
 
 													<div>
@@ -182,12 +182,6 @@ body {
 											</h:panelGroup>
 										</h:panelGroup></th>
 								</ui:fragment>
-								<!--  <ui:fragment
-									rendered="#{not EditItemsSelectedBean.displayedColumns.contains(head.statement.index)}">
-									<th style="min-with:0em;width:1em">
-										Hidden
-									</th>
-								</ui:fragment>-->
 							</ui:repeat>
 						</tr>
 
@@ -226,10 +220,6 @@ body {
 												</div>
 											</h:panelGroup></td>
 									</ui:fragment>
-									<!-- <ui:fragment
-										rendered="#{not EditItemsSelectedBean.displayedColumns.contains(cell.statement.index)}">
-										<td></td>
-									</ui:fragment> -->
 								</ui:repeat>
 							</tr>
 						</ui:repeat>

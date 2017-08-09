@@ -17,8 +17,8 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.authorization.Authorization;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.authorization.Authorization;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.statement.StatementService;
 import de.mpg.imeji.logic.statement.StatementUtil;
@@ -222,11 +222,13 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    * Add a column to the table
    */
   public void addColumn() {
-    Statement statement = newStatement.asStatement();
-    headers.add(new HeaderComponent(statement));
-    rows.stream().forEach(r -> r.addCell(statement));
-    displayedColumns.add(statement.getIndex());
-    newStatement = new SelectStatementComponent(statementMap);
+    if (newStatement.getIndex() != null && !"".equals(newStatement.getIndex())) {
+      Statement statement = newStatement.asStatement();
+      headers.add(new HeaderComponent(statement));
+      rows.stream().forEach(r -> r.addCell(statement));
+      displayedColumns.add(statement.getIndex());
+      newStatement = new SelectStatementComponent(statementMap);
+    }
   }
 
   /**
@@ -339,10 +341,14 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   }
 
 
-  public boolean isDefaultStatement(String index) throws ImejiException {
-    Statement s = new StatementService().retrieveByIndex(index, getSessionUser());
-    return StatementUtil.toStatementUriList(Imeji.CONFIG.getStatements())
-        .contains(s.getUri().toString());
+  public boolean isDefaultStatement(String index) {
+    try {
+      Statement s = new StatementService().retrieveByIndex(index, getSessionUser());
+      return StatementUtil.toStatementUriList(Imeji.CONFIG.getStatements())
+          .contains(s.getUri().toString());
+    } catch (Exception e) {
+      return false;
+    }
   }
 
 
