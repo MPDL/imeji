@@ -24,7 +24,7 @@
 								<div id="imgFrame" class="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea" >
 									<!-- Image with link to the details view -->
 									<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;fq=#{cc.attrs.picList.facetQueryString}&amp;pos=#{cc.attrs.picList.offset + index.index}">
-										<img src="#{item.link}" />
+										<img src="#{item.link}" alt="#{item.caption}"/>
 									</a>
 									<span class="imj_optionSet">
 										<h:selectBooleanCheckbox rendered="#{item.status != 'WITHDRAWN'}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
