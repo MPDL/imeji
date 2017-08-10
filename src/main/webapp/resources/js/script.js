@@ -125,7 +125,6 @@ $(function() {
 				inputId = inputId + idEls[i] + ":";
 			}
 			// Write the value of the current input
-			console.log(inputId);
 			setInputValue(this.id, ui.item.value);
 			setInputValue(inputId + "identifier", ui.item.id);
 			setInputValue(inputId + "given", ui.item.givenname);
@@ -148,17 +147,6 @@ $(function() {
 		}
 
 	});
-});/**
- * Datepicker from jqueryUI
- */
-$(function() {
-	$(".datepicker").datepicker({
-		changeMonth : true,
-		changeYear : true,
-		dateFormat : "yy-mm-dd",
-		firstDay : 1
-	});
-	
 });/**
  * HELPER FUNCTIONS FOR FORM INPUT
  * -----------------------------------------------------------------------------
@@ -213,7 +201,7 @@ function sortOptionsByText() {
 
 /*
  * global function to load content via ajax, function use jQuery the callback
- * function get the target and returndata
+ * function get the target and return data
  */
 function loadContent(loadURL, target, callback) {
 	$.ajax({
@@ -244,120 +232,9 @@ function validateInputNumber(input) {
 	}
 }
 
-/**
- * Parse the id define in the css class by id_class
- * 
- * @param classname
- * @param [classRef]
- * @returns
- */
-function parseId(classname, classRef) {
-	var ptn;
-	if (classRef) {
-		ptn = new RegExp(classRef + '(\\S*)');
-	} else {
-		ptn = /id_(\S*)/;
-	}
-	ptn.exec(classname);
-	if (RegExp.$1 !== "") {
-		return RegExp.$1;
-	} else {
-		return false;
-	}
-};
 
-/**
- * check if items given with the parent id. It's triggered through mouse-over
- * event in highlighter function.
- * 
- * @param id
- */
-function checkForChilds(id) {
-	var childs, curId;
-	// all childs have a parent-class with the parent id
-	childs = jQuery('.parent_' + id);
 
-	if (childs.length > 0) { // if childs given
-		childs.each(function(i, obj) { // loop through the childs an check if
-			// themselves have also childs
-			jQuery(this).addClass('imj_highlightDependencies');
-			curId = parseId(jQuery(this).attr('class'));
-			if (curId) {
-				checkForChilds(curId);
-			}
-		});
-	}
-};
-
-/**
- * Highlight the element with id passed in the parameter. If it has children
- * highlight them. This method should be triggered on mouse over. This element
- * is then recognized by the css class "id_ +id"
- * 
- * @param id
- * @param [alter]
- */
-function highlight(id, alter) {
-	var items;
-	items = (alter) ? $('.' + alter + id) : $('.id_' + id);
-	items.addClass("imj_highlightDependencies");
-};
-/**
- * Reset highlighted element to their original value. Should be triggered on
- * mouse out DELETE FUNCTION HIGHLIGHT + DEPENDENCIES and create/use css
- * definitions
- */
-function reset_highlight() {
-	$('.imj_highlightDependencies').removeClass("imj_highlightDependencies");
-};
-/**
- * JQuery event for Highlight methods used in:
- * templates/component/images/image_details.xhtml, used in:
- * templates/sub_template/template_metadata_profileEdit.xhtml
- */
-function highlighter() {
-
-	var areas = $(".highlight_area");
-
-	// in case of ajax reloading and other dynamics
-	// remove the old mouseover/mouseout events and attach them new
-	areas.off("mouseover");
-	areas.off("mouseout");
-	areas.mouseover(function() {
-		var itemId = parseId(jQuery(this).attr('class'));
-		var prntId = parseId(jQuery(this).attr('class'), 'parent_');
-		highlight(itemId); // highlight the current element
-		checkForChilds(itemId);// highlight the child elements - recursive
-		// - of the current item, if it's given
-		if (prntId) { // check if the current item is a child of another
-			highlight(prntId, 'id_'); // hightlight the next parent item,
-			// if the current item is a child
-		}
-	}).mouseout(function() {
-		reset_highlight();
-	});
-
-};
-
-/**
- * When a confirmation is confirmed, make the panel emty until the method called
- * is done
- * 
- * @param panelId
- * @param message
- */
-// seems to be unused - March 31th, 2014
-function submitPanel(panelId, message) {
-	var panel = document.getElementById(panelId);
-	if (panel != null) {
-		panel.innerHTML = '<h2><span class="free_area0_p8 xTiny_marginLExcl">'
-				+ message + '</span></h2>';
-	}
-}
-
-/*
- * open a dialog functions are shifted and modified from old template.xhtml
- */
+// START - DIALOGS
 function openDialog(id) {
 	/* set the dialog in center of the screen */
 	var dialog = $(document.getElementById(id));
@@ -390,6 +267,8 @@ $(window).resize(
 						+ "px");
 			}
 		});
+
+// END - DIALOGS
 
 // Initialize a global swc object for easy handling
 var swcObject = {};
@@ -471,7 +350,7 @@ function handleDisableButton(data) {
 	}
 }
 
-/** START * */
+//  START - JSF stuff 
 if (typeof jsf !== 'undefined') {
 	jsf.ajax.addOnEvent(function(data) {
 		if (data.status === "success") {
@@ -510,7 +389,6 @@ function getViewState(responseXML) {
 			return update.firstChild.nodeValue;
 		}
 	}
-
 	return null;
 }
 
@@ -533,7 +411,6 @@ function createViewState(form, viewState) {
 		hidden = document.createElement("input");
 		hidden.setAttribute("name", "javax.faces.ViewState");
 	}
-
 	hidden.setAttribute("type", "hidden");
 	hidden.setAttribute("value", viewState);
 	hidden.setAttribute("autocomplete", "off");
@@ -549,46 +426,7 @@ function removeViewState(form) {
 	}
 }
 
-/** END * */
-
-/**
- * call init
- * -----------------------------------------------------------------------------
- */
-/*
- * Extended usability function to set the content width of overlay menu to the
- * minimum of the trigger width. It will be called one time after page loading
- * is finished
- */
-$(function() {
-	$('.imj_overlayMenu').each(function(i, obj) {
-		var menuHeaderWidth = $(this).find(".imj_menuHeader").width();
-		var menuBody = $(this).find(".imj_menuBody");
-		if (menuHeaderWidth > menuBody.width()) {
-			menuBody.width(menuHeaderWidth);
-		}
-	});
-});
-/*
- * For menu on the right side: set the margin of the body to avoid to be out of page
- */
-function menuRightOffset(){
-	$('.imj_overlayMenu.imj_menuRight').each(function(i, obj) {
-		var menuHeaderWidth = $(this).find(".imj_menuHeader").width();
-		var menuBodyWidth = $(this).find(".imj_menuBody").width();
-		var width = menuHeaderWidth - menuBodyWidth;
-		$(this).find(".imj_menuBody").css("margin-left",width + "px");
-	});
-}
-
-/**
- * Method called when page is ready
- */
-jQuery(document).ready(function() {
-	highlighter();
-	menuRightOffset();
-});
-
+// END - JSF stuff 
 
 /*******************************************************************************
  * 
@@ -714,7 +552,7 @@ function decrementSelectedSearch() {
  * 
  ******************************************************************************/
 
-
+// START- loader methods
 function lockPage(){
 	$(".loaderWrapper").show();
 }
@@ -723,17 +561,16 @@ function unlockPage(){
 	$(".loaderWrapper").hide();
 }
 
-// LOADER
 function startLoader(){
 	$(".loaderWrapper").show();
 	$(".loader").show();
 }
 
-//LOADER
 function stopLoader(){
 	$(".loaderWrapper").hide();
 	$(".loader").hide();
 }
+// END - loader methods
 
 // JSF AJAX EVENTS
 jsf.ajax.addOnEvent(function(data) {
@@ -744,7 +581,6 @@ jsf.ajax.addOnEvent(function(data) {
         case "complete":
         	stopLoader();
         	break;
-
         case "success":
             break;
     }
@@ -761,6 +597,7 @@ $(function(){
             .scrollLeft($(".edit_selected_table_wrapper").scrollLeft());
     });
 });
+
 //Close success message after 2s
 setTimeout(function() {
     $('.imj_messageSuccess').slideUp(200);
@@ -773,36 +610,40 @@ setTimeout(function() {
 	
 }
 
-function showAndFocus(focusid, showClass){
-	$("."+ showClass).toggle();
-	document.getElementById(focusid).focus();
-	/*$("." + showClass).focusout(function(event) {
-		$("." + showClass).hide(0);
-		$("." + showClass).delay(500).hide(0);
-	});	*/
-}
-
-$(".selectMetadata-content").click(function(e) {
-	  e.stopPropagation(); //stops click event from reaching document
+// START - set number of items pro line cookie
+$( document ).ready(function() {
+	var count= 0;
+	var position = 0;
+	$(".imj_tileItem").each(function() {
+		var newTop = $( this ).position().top;		
+		if(position > 0 && newTop > position){
+			count =$(".imj_tileItem").index( this );
+			return false;
+		}
+		position = newTop;
 	});
-
-$(document).click(function() {
-  $(".selectMetadata-content").hide(); //click came from somewhere else
+	var date=new Date();
+	date.setTime(+date+(365*24*3600*1000));
+	if(count > 0){
+		document.cookie="ELEMENTS_PER_LINE_COOKIE="+count+"; expires="+date.toGMTString()+"; path=/";
+	}
 });
 
-function hideOnFocusOut(showClass){
-	/*$("." + showClass).focusout(function(event) {
-		console.log('focusout');
-		$("."+ showClass).delay(0).queue(function() {
-	        $(this).css('visibility', 'hidden').dequeue();
-	    });
-		//$("." + showClass).delay(200).hide(0);
-	});	*/
+function getElementsPerLineCookie(){
+	return document.cookie.replace(/(?:(?:^|.*;\s*)ELEMENTS_PER_LINE_COOKIE\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 }
 
-$(".selectMetadata-content").focusout(function(event) {
-	$(this).delay(200).hide(0);
-});	//---------------------------------------------------------------------
+//END - set number of items pro line cookie
+
+// DEfine datepicker
+$(function() {
+	$(".datepicker").datepicker({
+		changeMonth : true,
+		changeYear : true,
+		dateFormat : "yy-mm-dd",
+		firstDay : 1
+	});
+});//---------------------------------------------------------------------
 //
 // QR Code Generator for JavaScript SJIS Support (optional)
 //
