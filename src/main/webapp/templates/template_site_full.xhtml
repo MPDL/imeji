@@ -11,7 +11,6 @@
     <html xmlns="http://www.w3.org/1999/xhtml">
         <h:head>
             <ui:include src="component/header/html_head_default.xhtml"/>
-            <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
         </h:head>
         <h:body lang="#{InternationalizationBean.locale}"> 
        		#{Auth.init()}
@@ -32,19 +31,13 @@
 	               		<div class="loader"/>
 	             	</div>
             </div>
-            
-            <!-- modal dialogs -->
             <div class="imj_modalDialogBackground">&#160;</div>
             <ui:insert name="modalDialogs_from_template"/>
             <ui:insert name="modalDialogs_from_site"/>
-            <script src="#{Navigation.applicationUrl}resources/jquery/jquery-1.11.1.min.js"/>
-	        <script src="#{Navigation.applicationUrl}resources/jquery/ui/1.10.4/jquery-ui.min.js"/>
-            <h:outputScript name="js/default.js"/>
-
+             <ui:include src="component/footer/footer_imports.xhtml"/>
             <div id="additonalFooterScripts" class="imj_noDisplay">
                 <ui:insert name="additonalFooterScripts"/> 
             </div>
-            
         </h:body>
     </html>
 </f:view>

@@ -13,7 +13,6 @@
     <ui:fragment rendered="#{Configuration.metaDescription != ''}">
         <meta name="description" content="#{Configuration.metaDescription}"/>
     </ui:fragment>
-
     <h:outputText value="#{SessionBean.checkCss(Configuration.defaultCss, Configuration.alternativeCss)}" />
     <h:outputStylesheet name="css/theme_default/app.css" id="themeDefault" rendered="#{SessionBean.selectedCss == 'NONE'}"/>
     <ui:fragment rendered="#{SessionBean.selectedCss != 'NONE'}">
@@ -24,5 +23,5 @@
             <link type="text/css" rel="stylesheet" href="#{Configuration.alternativeCss}" id="themeDefault"/>
         </ui:fragment>
     </ui:fragment>
-  	<link rel="stylesheet" type="text/css" href="#{Navigation.applicationUrl}resources/css/font-awesome/css/font-awesome.min.css"/>
+  
 </ui:composition>

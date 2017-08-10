@@ -110,22 +110,23 @@
 					</div>
 				</div>
 			</div>
-			
-			<script>
+		</ui:fragment>
+	</ui:define>
+	<ui:define name="additonalFooterScripts">
+		<script>
 				function hideUsers(){
-					$("#userList").css("display","none");
-					$("#hideUserButton").css("display","none");
-					$("#showUserButton").css("display","block");
+					$("#userList").hide();
+					$("#hideUserButton").hide();
+					$("#showUserButton").show();
 					document.cookie="showUsers=false";
 				}
 				
 				function showUsers(){
-					$("#userList").css("display","block");
-					$("#hideUserButton").css("display","block");
-					$("#showUserButton").css("display","none");
+					$("#userList").show();
+					$("#hideUserButton").show();
+					$("#showUserButton").hide();
 					document.cookie="showUsers=true";
 				}
 			</script>
-		</ui:fragment>
 	</ui:define>
 </ui:composition>

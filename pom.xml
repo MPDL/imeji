@@ -302,7 +302,6 @@
 							</cssSourceFiles>
 							<jsSourceFiles>
 								<jsSourceFile>autocomplete.js</jsSourceFile>
-								<jsSourceFile>datepicker.js</jsSourceFile>
 								<jsSourceFile>default.js</jsSourceFile>
 								<jsSourceFile>qrcode_SJIS.js</jsSourceFile>
 								<jsSourceFile>qrcode.js</jsSourceFile>

@@ -155,10 +155,13 @@ public class ReverseTransferObjectFactory {
   public static Person transferPerson(PersonTO pto, Person p, TRANSFER_MODE mode) {
     if (pto != null) {
       if (mode == TRANSFER_MODE.CREATE) {
-        final IdentifierTO ito = new IdentifierTO();
-        ito.setValue(
-            pto.getIdentifiers().isEmpty() ? null : pto.getIdentifiers().get(0).getValue());
-        p.setIdentifier(ito.getValue());
+        final String id = pto.getIdentifiers() == null || pto.getIdentifiers().isEmpty() ? null
+            : pto.getIdentifiers().get(0).getValue();
+        /*
+         * final IdentifierTO ito = new IdentifierTO(); ito.setValue(pto.getIdentifiers() == null ||
+         * pto.getIdentifiers().isEmpty() ? null : pto.getIdentifiers().get(0).getValue());
+         */
+        p.setIdentifier(id);
       }
       p.setFamilyName(pto.getFamilyName());
       p.setGivenName(pto.getGivenName());
@@ -168,7 +171,6 @@ public class ReverseTransferObjectFactory {
     }
     return null;
   }
-
 
   public static void transferCollectionContributors(List<PersonTO> persons, CollectionImeji vo,
       User u, TRANSFER_MODE mode) {
