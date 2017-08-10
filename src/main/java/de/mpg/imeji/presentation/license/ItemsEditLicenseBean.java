@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.collection.CollectionService;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -82,11 +83,23 @@ public class ItemsEditLicenseBean extends SuperBean {
    * @throws IOException
    */
   public void save() throws ImejiException, IOException {
-    final List<Item> items = !StringHelper.isNullOrEmptyTrim(collectionId)
+    List<Item> items = !StringHelper.isNullOrEmptyTrim(collectionId)
         ? retrieveAllCollectionsItem(collectionId) : retrieveSelectedItems();
-    addLicense(items);
+    items = addLicense(items);
     save(items);
+    BeanHelper.addMessage(
+        getLicenseName() + " " + Imeji.RESOURCE_BUNDLE.getLabel("licenses_added_to", getLocale())
+            + " " + items.size() + " " + Imeji.RESOURCE_BUNDLE.getLabel("items", getLocale()));
+
     cancel();
+  }
+
+  private String getLicenseName() {
+    if (StringHelper.isNullOrEmptyTrim(licenseEditor.getLicense().getName())) {
+      return LicenseEditor.NO_LICENSE;
+    }
+    return StringHelper.isNullOrEmptyTrim(licenseEditor.getLicense().getLabel())
+        ? licenseEditor.getLicense().getUrl() : licenseEditor.getLicense().getLabel();
   }
 
   /**

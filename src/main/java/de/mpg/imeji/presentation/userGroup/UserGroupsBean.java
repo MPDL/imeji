@@ -1,7 +1,6 @@
 package de.mpg.imeji.presentation.userGroup;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
 
@@ -18,7 +17,7 @@ import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
-import de.mpg.imeji.presentation.navigation.Navigation;
+import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -30,7 +29,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  */
 @ManagedBean(name = "UserGroups")
 @ViewScoped
-public class UserGroupsBean implements Serializable {
+public class UserGroupsBean extends SuperBean {
   private static final long serialVersionUID = -7449016567355739362L;
   private Collection<UserGroup> userGroups;
   @ManagedProperty(value = "#{SessionBean.user}")
@@ -59,10 +58,9 @@ public class UserGroupsBean implements Serializable {
    * Trigger the search to users Groups
    */
   public void search() {
-    final Navigation nav = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     try {
 
-      String redirectTo = nav.getApplicationUrl() + "usergroups?q=" + query
+      String redirectTo = getNavigation().getApplicationUrl() + "usergroups?q=" + query
           + (backContainerUrl != null ? "&back=" + backContainerUrl : "");
 
       if (redirectTo.endsWith("?")) {
@@ -73,7 +71,7 @@ public class UserGroupsBean implements Serializable {
         redirectTo = redirectTo.substring(0, redirectTo.lastIndexOf("?"));
       }
 
-      FacesContext.getCurrentInstance().getExternalContext().redirect(redirectTo);
+      redirect(redirectTo);
     } catch (final IOException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error(e);

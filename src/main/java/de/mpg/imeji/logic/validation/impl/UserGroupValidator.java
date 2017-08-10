@@ -31,7 +31,7 @@ public class UserGroupValidator extends ObjectValidator implements Validator<Use
    * @return
    */
   public boolean groupNameAlreadyExists(UserGroup g) {
-    for (final String id : ImejiSPARQL.exec(JenaCustomQueries.selectUserGroupAll(g.getName()),
+    for (final String id : ImejiSPARQL.exec(JenaCustomQueries.selectUserGroupByName(g.getName()),
         null)) {
       if (!id.equals(g.getId().toString())) {
         return true;

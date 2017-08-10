@@ -32,7 +32,7 @@ public class LicenseEditor implements Serializable {
   private boolean showInput = false;
   private String customLicenseName;
   private String customLicenseUrl;
-  private static final String NO_LICENSE = "no_license";
+  public static final String NO_LICENSE = "no_license";
 
   /**
    * Constructor

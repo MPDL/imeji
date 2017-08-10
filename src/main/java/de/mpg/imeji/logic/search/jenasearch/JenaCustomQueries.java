@@ -102,6 +102,12 @@ public class JenaCustomQueries {
         + name + "','i'))}";
   }
 
+  public static final String selectUserGroupByName(String name) {
+    return X_PATH_FUNCTIONS_DECLARATION
+        + "  SELECT DISTINCT ?s WHERE {?s a <http://imeji.org/terms/userGroup> . ?s <http://xmlns.com/foaf/0.1/name> \""
+        + name + "\"^^<http://www.w3.org/2001/XMLSchema#string>}";
+  }
+
   /**
    * Select all {@link UserGroup}
    *
