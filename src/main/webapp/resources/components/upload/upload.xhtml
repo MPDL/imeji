@@ -14,12 +14,15 @@
 		<composite:attribute name="license"/>
 	</composite:interface>
 	
-	<composite:implementation>#{cc.attrs.uploadId}
+	<composite:implementation>
 		<h:panelGroup id="licenseVariables">
 			<h:inputHidden id="name" value="#{cc.attrs.license.name}"/>
 			<h:inputHidden id="label" value="#{cc.attrs.license.label}"/>
 			<h:inputHidden id="url" value="#{cc.attrs.license.url}"/>
 		</h:panelGroup>
+		<script src="#{Navigation.applicationUrl}resources/jquery/jquery-1.11.1.min.js"/>
+        <script src="#{Navigation.applicationUrl}resources/jquery/ui/1.10.4/jquery-ui.min.js"/>
+        <script src="#{Navigation.applicationUrl}resources/js/default.js"/>
 		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/plupload/2.1.2/js/plupload.full.min.js"></script>
 		<script>
 			var totalFiles = 0;
@@ -73,9 +76,6 @@
 				}
 			});
 			uploader.init();
-			$('.imj_openUploadDialog').on('click', function (){
-				uploader.refresh();
-			});
 			closeSuccessMessage();
 			function addUploadStatusMessage(uploaded, total, filename, percent){
 				$(".uploadPanelContent").html('<pre>#{lbl.uploading} ' + uploaded + ' / ' + total + ' #{lbl.files}.</pre>');

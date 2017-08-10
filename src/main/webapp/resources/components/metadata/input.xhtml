@@ -11,7 +11,9 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/autocomplete.js"></script>
+			
+	        <script src="#{Navigation.applicationUrl}resources/js/default.js"/>
+	        <script src="#{Navigation.applicationUrl}resources/js/autocomplete.js"/>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'TEXT'}">
 			<h:inputTextarea id="text" value="#{cc.attrs.metadataInputComponent.metadata.text}" styleClass="imj_mdInput" rendered="#{empty cc.attrs.metadataInputComponent.statement.literalConstraints}"/>
 			<h:selectOneMenu id="selectText" value="#{cc.attrs.metadataInputComponent.metadata.text}" rendered="#{not empty cc.attrs.metadataInputComponent.statement.literalConstraints}" styleClass="imj_mdInput">
@@ -42,7 +44,6 @@
 			</h:inputText>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'DATE'}">
-			<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/datepicker.js"/>
 			<h:inputText id="date" value="#{cc.attrs.metadataInputComponent.metadata.date}" html5:type="date" html5:placeholder="YYYY-MM-DD" styleClass="imj_mdInput datepicker"/>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'PERSON'}">

@@ -8,13 +8,17 @@
 
 	<ui:param name="headline" value="#{lbl.edit_all}" />
 	<ui:param name="title" value="#{headline}" />
-
-	<ui:define name="mainContent">
+	
+	<ui:define name="additonalFooterScripts">
 		<script type="text/javascript">
 			$(document).ready(function() {
 				stopLoader();
 			});
 		</script>
+	</ui:define>
+
+	<ui:define name="mainContent">
+		
 		<div class="loaderWrapper show" />
 		<div class="loader show" />
 		<h:form id="editBatchForm">

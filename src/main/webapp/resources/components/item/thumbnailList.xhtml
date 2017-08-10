@@ -8,7 +8,6 @@
 		<composite:attribute name="picList"/>
 	</composite:interface>
 	<composite:implementation>
-		
 		<style>.imj_tileItem {width: #{Configuration.thumbnailWidth}px !important;}</style>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfElements != 0}">
 			<div class="imj_listBody" id="listDiv" style=" text-align: justify;  text-align-last: justify;">
@@ -56,13 +55,11 @@
 					-->
 				</ul>
 			</div>
-			
 		</h:panelGroup>
-	
 		<div id="log"></div>
 		
 		<script>
-		var count= 0;
+		/*var count= 0;
 		var position = 0;
 		$(".imj_tileItem").each(function() {
 			var newTop = $( this ).position().top;		
@@ -90,7 +87,7 @@
 		
 		function getElementsPerLineCookie(){
 			return document.cookie.replace(/(?:(?:^|.*;\s*)ELEMENTS_PER_LINE_COOKIE\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-		}
+		}*/
 		
 		</script>
 	</composite:implementation>

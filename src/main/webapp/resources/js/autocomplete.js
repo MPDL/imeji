@@ -125,7 +125,6 @@ $(function() {
 				inputId = inputId + idEls[i] + ":";
 			}
 			// Write the value of the current input
-			console.log(inputId);
 			setInputValue(this.id, ui.item.value);
 			setInputValue(inputId + "identifier", ui.item.id);
 			setInputValue(inputId + "given", ui.item.givenname);

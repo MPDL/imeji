@@ -16,8 +16,6 @@
         <h:body lang="#{InternationalizationBean.locale}"> 
        		#{Auth.init()}
             <!-- default necessary scripts, because of use in body-load context -->
-            <h:outputScript name="jquery/jquery-1.11.1.min.js"/>
-            <h:outputScript name="jquery/ui/1.10.4/jquery-ui.min.js"/>
             <!-- optional header scripts, which must load before -->
             <ui:insert name="additonalHeaderScripts"/>          
             <!-- global page wrapper -->
@@ -39,7 +37,8 @@
             <div class="imj_modalDialogBackground">&#160;</div>
             <ui:insert name="modalDialogs_from_template"/>
             <ui:insert name="modalDialogs_from_site"/>
-            <script type="text/javascript">var homeURL = '#{Navigation.applicationUrl}';</script>
+            <script src="#{Navigation.applicationUrl}resources/jquery/jquery-1.11.1.min.js"/>
+	        <script src="#{Navigation.applicationUrl}resources/jquery/ui/1.10.4/jquery-ui.min.js"/>
             <h:outputScript name="js/default.js"/>
 
             <div id="additonalFooterScripts" class="imj_noDisplay">

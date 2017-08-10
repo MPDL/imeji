@@ -168,13 +168,6 @@
 			bean="#{cc.attrs.collectionBean.actionMenu}"
 			confirmationText="#{empty cc.attrs.collectionBean.collection.doi ? '' : msg.collection_has_doi_warning}"
 			submitLabel="#{lbl.save}" dialogId="doiInput"/>
-			<upload:dialog colId="#{cc.attrs.collectionBean.collection.id.toString()}" id="uploadDialog" bean="#{cc.attrs.collectionBean}"/>
-			<script>
-				jQuery(document).ready(function() {
-					if(#{cc.attrs.collectionBean.showUpload}){
-						openDialog('uploadDialog');
-					}
-				});					
-			</script>
+		<upload:dialog colId="#{cc.attrs.collectionBean.collection.id.toString()}" id="uploadDialog" bean="#{cc.attrs.collectionBean}"/>
 	</composite:implementation>
 </html>

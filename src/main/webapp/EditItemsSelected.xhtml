@@ -8,18 +8,21 @@
 
 	<ui:param name="headline" value="#{lbl.edit_selected}" />
 	<ui:param name="title" value="#{headline}" />
+	
+	<ui:define name="additonalFooterScripts">
+		<script type="text/javascript">
+			$(document).ready(function() {
+				stopLoader();
+			});
+		</script>
+	</ui:define>
+	
 	<ui:define name="mainContent">
 		<style>
 		body {
 			overflow: hidden;
 		}
 		</style>
-		<script>
-			$(document).ready(function() {
-				stopLoader();
-			});
-		</script>
-
 		<datalist id="statementListAll" class="comboboxDataList">
 			<ui:repeat var="statement"
 				value="#{EditItemsSelectedBean.statementMenu}">

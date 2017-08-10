@@ -766,6 +766,12 @@ setTimeout(function() {
     $('.imj_messageSuccess').slideUp(200);
 }, 2000);
 
+function closeSuccessMessage(){
+setTimeout(function() {
+    $('.imj_messageSuccess').slideUp(200);
+}, 2000);
+	
+}
 
 function showAndFocus(focusid, showClass){
 	$("."+ showClass).toggle();
@@ -795,7 +801,6 @@ function hideOnFocusOut(showClass){
 }
 
 $(".selectMetadata-content").focusout(function(event) {
-	console.log('focusout');
 	$(this).delay(200).hide(0);
 });	//---------------------------------------------------------------------
 //

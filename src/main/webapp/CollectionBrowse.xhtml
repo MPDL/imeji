@@ -10,8 +10,7 @@
 	xmlns:col="http://java.sun.com/jsf/composite/components/collection">
 
 	<f:metadata>
-		<f:event listener="#{CollectionItemsBean.preRenderView}"
-             type="preRenderView" />
+		<f:event listener="#{CollectionItemsBean.preRenderView}"  type="preRenderView" />
 	</f:metadata>
 
 	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}" />
@@ -60,5 +59,15 @@
 			label="#{lbl.search_for} #{HistorySession.currentPage.getInternationalizedName(InternationalizationBean.locale)}" />
 	</ui:define>
 	
-
+	<ui:define name="additonalFooterScripts">
+		<script>
+			jQuery(document).ready(function() {
+				if(#{CollectionItemsBean.showUpload}){
+					openDialog('uploadDialog');
+				}
+			});	
+			var qrHtml = document.getElementById('qr'); 
+			qrHtml.innerHTML = create_qrcode('{key:"#{SessionBean.user.apiKey}",col:"#{CollectionItemsBean.collection.id}"}');
+		</script>
+	</ui:define>
 </ui:composition>

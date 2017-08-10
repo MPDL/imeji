@@ -20,7 +20,6 @@
     <ui:define name="mainContent">
 	
         <h:panelGroup layout="block" id="ajaxWrapper">
-			<script>menuRightOffset();</script>
             <!-- Selection Info Panel -->
 			<div id="itemsArea" class="itemsArea">
 	        	
@@ -43,7 +42,6 @@
 	        	<div  class="imj_itemsAreaContent">
 					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
 					<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
-				
 				</div>
            		
            		
@@ -53,15 +51,5 @@
         </h:panelGroup>
         
     </ui:define>
-    
-    <!-- Main Content - END -->
-    <script>
-        $('form input[type=text]').die('keydown').keydown(function (e) {
-            if (e.keyCode == 13) {
-                $('form\\:submitButton').click();
-                return false;
-            }
-        });
-    </script>
 
 </ui:composition>

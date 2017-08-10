@@ -176,7 +176,6 @@
 					#{lbl.qr_code_for} <a href="http://labcam.mpdl.mpg.de/" target="_blank">LabCam</a>
 				</ui:fragment>
 			</span>
-			<h:outputScript>var qrHtml = document.getElementById('qr'); qrHtml.innerHTML = create_qrcode('{key:"#{SessionBean.user.apiKey}",col:"#{cc.attrs.bean.collection.id}"}');</h:outputScript>
 		</h:panelGroup>			 
 	</composite:implementation>
 </html>

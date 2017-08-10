@@ -38,38 +38,35 @@
 									</ui:fragment>
 								</ui:fragment>
 								<ui:fragment rendered="#{entry.facet.type == 'NUMBER'}">
-						<div class="imj_facetInputContainer">
-							<label for="from">#{lbl.from}</label>
-							<h:inputText name="from" styleClass="imj_facetInput"  value="#{entry.from}" html5:placeholder="#{lbl.from}" />
-						</div>
-						<div class="imj_facetInputContainer">
-							<label for="to">#{lbl.to}</label>
-							<h:inputText name="to"  styleClass="imj_facetInput" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
-						</div>
-						<div class="imj_facetGoLinkContainer">
-							<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go} (#{entry.count})" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}" onclick="startLoader();">
-								<f:ajax execute="@form" render="@none"/>
-							</h:commandLink>
-						</div>
-					</ui:fragment>
-					<ui:fragment rendered="#{entry.facet.type == 'DATE'}">
-						<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/datepicker.js"/>
-						
-						<div class="imj_facetInputContainer">
-							<label for="from">#{lbl.from}</label>
-							<h:inputText name="from" styleClass="imj_facetInput datepicker"  value="#{entry.from}" html5:placeholder="#{lbl.from}" />
-						</div>
-						<div class="imj_facetInputContainer">
-							<label for="to">#{lbl.to}</label>
-							<h:inputText name="to"  styleClass="imj_facetInput datepicker" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
-						</div>
-						<div class="imj_facetGoLinkContainer">
-							<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go} (#{entry.count})" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}" onclick="startLoader();">
-								<f:ajax execute="@form" render="@none"/>
-							</h:commandLink> 
-						</div>
-					</ui:fragment>
-								
+									<div class="imj_facetInputContainer">
+										<label for="from">#{lbl.from}</label>
+										<h:inputText name="from" styleClass="imj_facetInput"  value="#{entry.from}" html5:placeholder="#{lbl.from}" />
+									</div>
+									<div class="imj_facetInputContainer">
+										<label for="to">#{lbl.to}</label>
+										<h:inputText name="to"  styleClass="imj_facetInput" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
+									</div>
+									<div class="imj_facetGoLinkContainer">
+										<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go} (#{entry.count})" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}" onclick="startLoader();">
+											<f:ajax execute="@form" render="@none"/>
+										</h:commandLink>
+									</div>
+								</ui:fragment>
+								<ui:fragment rendered="#{entry.facet.type == 'DATE'}">
+									<div class="imj_facetInputContainer">
+										<label for="from">#{lbl.from}</label>
+										<h:inputText name="from" styleClass="imj_facetInput datepicker"  value="#{entry.from}" html5:placeholder="#{lbl.from}" />
+									</div>
+									<div class="imj_facetInputContainer">
+										<label for="to">#{lbl.to}</label>
+										<h:inputText name="to"  styleClass="imj_facetInput datepicker" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
+									</div>
+									<div class="imj_facetGoLinkContainer">
+										<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go} (#{entry.count})" action="#{entry.search(HistorySession.currentPage.url, cc.attrs.itemsBean.query)}" onclick="startLoader();">
+											<f:ajax execute="@form" render="@none"/>
+										</h:commandLink> 
+									</div>
+								</ui:fragment>
 							</div>
 						</ui:fragment>
 					</ui:repeat>

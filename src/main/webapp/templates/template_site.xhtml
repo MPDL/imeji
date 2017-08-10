@@ -11,13 +11,12 @@
     <html xmlns="http://www.w3.org/1999/xhtml">
         <h:head>
             <ui:include src="component/header/html_head_default.xhtml"/>
-            <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+            <link rel="stylesheet" type="text/css" href="http://localhost:8080/imeji/resources/css/font-awesome/css/font-awesome.min.css"/>
         </h:head>
         <h:body lang="#{InternationalizationBean.locale}"> 
        		#{Auth.init()}
             <!-- default necessary scripts, because of use in body-load context -->
-            <h:outputScript name="jquery/jquery-1.11.1.min.js"/>
-            <h:outputScript name="jquery/ui/1.10.4/jquery-ui.min.js"/>
+          
             <!-- optional header scripts, which must load before -->
             <ui:insert name="additonalHeaderScripts"/>          
             <!-- global page wrapper -->
@@ -30,7 +29,7 @@
 	                <ui:insert name="init"/>
 	           		
 	                <ui:include src="component/header/header_default.xhtml"/>
-	                <div class="imj_siteContent">
+	                <div class="imj_siteContent">		                
 			           	<ui:fragment rendered="#{not empty headline or not empty imejiResource}">
 			                <div class="imj_siteContentHeadline">
 			                  	<ui:fragment rendered="#{not empty imejiResource}">
@@ -74,13 +73,13 @@
             <div class="imj_modalDialogBackground">&#160;</div>
             <ui:insert name="modalDialogs_from_template"/>
             <ui:insert name="modalDialogs_from_site"/>
-            <script type="text/javascript">var homeURL = '#{Navigation.applicationUrl}';</script>
-            <h:outputScript name="js/default.js"/>
-
+           	<script src="#{Navigation.applicationUrl}resources/jquery/jquery-1.11.1.min.js"/>
+	        <script src="#{Navigation.applicationUrl}resources/jquery/ui/1.10.4/jquery-ui.min.js"/>
+	        <script src="#{Navigation.applicationUrl}resources/js/default.js"/>
+	        <script src="#{Navigation.applicationUrl}resources/js/autocomplete.js"/>
             <div id="additonalFooterScripts" class="imj_noDisplay">
                 <ui:insert name="additonalFooterScripts"/> 
             </div>
-            
         </h:body>
     </html>
 </f:view>
