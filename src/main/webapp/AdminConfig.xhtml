@@ -8,7 +8,9 @@
 
 	<ui:param name="headline" value="#{lbl.configuration}" />
 	<ui:param name="title" value="#{lbl.configuration}"/>
-
+	<ui:param name="backLink1" value="#{Navigation.adminUrl}"/>
+	<ui:param name="backlinkTitle1" value="Admin"/>
+	
 	<ui:define name="additonalFooterScripts">
 		<script type="text/javascript">
 			$('.imj_clearInput').click(function(evt){
@@ -54,12 +56,6 @@
 		<!-- Only for Admins -->
 		<ui:fragment rendered="#{Auth.sysAdmin}">
 
-			<!-- AdminDataList - Back Button -->
-			<h:panelGroup layout="block" styleClass="imj_backPanel">
-				<h:outputLink value="#{Navigation.adminUrl}">
-					<h:outputText value="#{lbl.back_to_admin}" />
-				</h:outputLink>
-			</h:panelGroup>
 			<div class="imj_setupConfig">
 
 				<!-- Admin - TiledList -->

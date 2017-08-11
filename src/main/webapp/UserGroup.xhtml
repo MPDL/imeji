@@ -10,7 +10,10 @@
 	<ui:param name="headline" value="#{lbl.admin_userGroup} #{UserGroup.userGroup.name}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="currentMainMenu" value="admin" />
-
+	<ui:param name="backLink1" value="#{Navigation.adminUrl}"/>
+	<ui:param name="backlinkTitle1" value="Admin"/>
+	<ui:param name="backLink2" value="#{Navigation.adminUrl}/userGroups"/>
+	<ui:param name="backlinkTitle2" value="#{lbl.userGroups}"/>
 
 	<ui:define name="mainContent">
 		<ui:fragment rendered="#{!Auth.sysAdmin}">
@@ -19,13 +22,7 @@
 
 
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-			<div class="imj_backPanel">
-				<a href="#{Navigation.applicationUrl}usergroups" title="#{lbl.admin_groups_view}">
-					#{lbl.admin_userGroups_view}
-				</a>
-			</div>
-			<br/>
-			<div class="">
+			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
 				<div class=" ">
 					<div class="">
 						<h:form id="groupForm">

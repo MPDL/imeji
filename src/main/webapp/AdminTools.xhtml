@@ -5,20 +5,16 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
 
-	<ui:param name="headline" value="Administration" />
+	<ui:param name="headline" value="Tools" />
 	<ui:param name="currentMainMenu" value="admin" />
+	<ui:param name="backLink1" value="#{Navigation.adminUrl}"/>
+	<ui:param name="backlinkTitle1" value="Admin"/>
 
 	<ui:define name="actionsMenu">
 
 	</ui:define>
 
 	<ui:define name="mainContent">
-		<!-- AdminDataList - Back Button -->
-		<h:panelGroup layout="block" styleClass="imj_backPanel">
-			<h:outputLink value="#{Navigation.adminUrl}">
-				<h:outputText value="#{lbl.back_to_admin}" />
-			</h:outputLink>
-		</h:panelGroup>
 
 		<!-- Are You Admin? -->
 		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
@@ -30,7 +26,7 @@
 		</h:panelGroup>
 
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-			<!-- Only for Admins --><br /><br />
+			<!-- Only for Admins -->
 			<div class="imj_userConfig">
 				<!-- Admin - TiledList -->
 				<div class="imj_administrationTiledList imj_maxWidth">

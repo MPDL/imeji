@@ -10,7 +10,9 @@
 	<ui:param name="headline" value="#{lbl.admin_users_head}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="currentMainMenu" value="admin" />
-
+	<ui:param name="backLink1" value="#{Navigation.adminUrl}"/>
+	<ui:param name="backlinkTitle1" value="Admin"/>
+	
 	<ui:define name="actionsMenu">
 		<form action="#{Navigation.homeUrl}/createuser">
 			<button id="createUser" class="imj_submitButton">
@@ -32,16 +34,6 @@
 				styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
 		</h:panelGroup>
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-			<!-- AdminDataList - Back Button -->
-			<h:panelGroup layout="block" styleClass="imj_backPanel">
-				<h:outputLink value="#{Navigation.adminUrl}" rendered="#{UsersBean.group==null}">
-					<h:outputText value="#{lbl.back_to_admin}" />
-				</h:outputLink>
-				<h:outputLink value="#{Navigation.applicationUrl}usergroup?groupId=#{UsersBean.group.id}" rendered="#{UsersBean.group!=null}">
-					<h:outputText value="#{lbl.back_to_usergroup}" />
-				</h:outputLink>
-			</h:panelGroup>
-			
 			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
 				
 				<div class="imj_admindataSet">

@@ -35,7 +35,7 @@ public class FacetSelectorEntryValue implements Serializable {
   private final String type;
   private String addQuery;
   private String removeQuery;
-  private final SearchQuery entryQuery;
+  private SearchQuery entryQuery;
   private boolean selected = false;
   private final String max;
   private final String min;

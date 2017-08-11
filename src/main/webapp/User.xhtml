@@ -9,6 +9,10 @@
 	<ui:param name="headline" value="#{UserBean.user.person.completeName}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="currentMainMenu" value="admin" />
+	<ui:param name="backLink1" value="#{Auth.sysAdmin ? Navigation.adminUrl : ''}"/>
+	<ui:param name="backlinkTitle1" value="Admin"/>
+	<ui:param name="backLink2" value="#{Auth.sysAdmin ? Navigation.usersUrl : ''}"/>
+	<ui:param name="backlinkTitle2" value="#{lbl.users}"/>
 
 	<ui:define name="actionsMenu">
 
@@ -24,16 +28,7 @@
 
 
 		<ui:fragment rendered="#{Auth.admin(UserBean.user)}">
-			<h:panelGroup layout="block" styleClass="imj_backPanel"
-				rendered="#{Auth.sysAdmin}">
-				<a href="#{Navigation.applicationUrl}users"
-					title="#{lbl.admin_user_view}"> <h:outputText
-						value="#{lbl.admin_user_view}" />
-				</a>
-			</h:panelGroup>
-
 			<div class="imj_userConfig">
-
 				<!-- Admin - TiledList -->
 				<div class="imj_administrationTiledList imj_maxWidth">
 

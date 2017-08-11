@@ -1,7 +1,9 @@
 package de.mpg.imeji.presentation.item.details;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,8 +39,8 @@ import de.mpg.imeji.presentation.util.CookieUtils;
 public class ItemDetailsBrowse implements Serializable {
   private static final long serialVersionUID = -1627171360319925422L;
   private static final Logger LOGGER = Logger.getLogger(ItemDetailsBrowse.class);
-  private final String query;
-  private final String facetQuery;
+  private String query;
+  private String facetQuery;
   private final String containerUri;
   private final int currentPosition;
   private final SortCriterion sortCriterion;
@@ -57,15 +59,26 @@ public class ItemDetailsBrowse implements Serializable {
    * @param containerId
    */
   public ItemDetailsBrowse(Item item, String type, String containerUri, User user) {
-    this.query = UrlHelper.hasParameter("q") ? UrlHelper.getParameterValue("q") : "";
-    this.facetQuery = UrlHelper.hasParameter("fq") ? UrlHelper.getParameterValue("fq") : "";
+    try {
+      this.query = URLEncoder
+          .encode(UrlHelper.hasParameter("q") ? UrlHelper.getParameterValue("q") : "", "UTF-8");
+      this.facetQuery = URLEncoder
+          .encode(UrlHelper.hasParameter("fq") ? UrlHelper.getParameterValue("fq") : "", "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      LOGGER.error("Error encoding facetQuery and/or query", e);
+    }
     this.containerUri = containerUri;
     this.currentItem = item;
     this.sortCriterion = initSortCriterion();
     this.currentPosition =
         UrlHelper.hasParameter("pos") ? Integer.parseInt(UrlHelper.getParameterValue("pos")) : -1;
     final List<String> items = searchPreviousAndNextItem(user);
-    init(items, type, containerUri);
+    try {
+      init(items, type, containerUri);
+    } catch (Exception e) {
+      LOGGER.error("Error initializing browse item", e);
+    }
+
   }
 
   /**
@@ -129,8 +142,10 @@ public class ItemDetailsBrowse implements Serializable {
    *        (item)
    * @param path - the id (not the uri) of the current container ({@link Album} or
    *        {@link CollectionImeji})
+   * @throws UnsupportedEncodingException
    */
-  public void init(List<String> items, String type, String containerUri) {
+  public void init(List<String> items, String type, String containerUri)
+      throws UnsupportedEncodingException {
     String baseUrl = new String();
     if (type == "collection") {
       baseUrl = ((Navigation) BeanHelper.getApplicationBean(Navigation.class)).getCollectionUrl()
@@ -144,12 +159,12 @@ public class ItemDetailsBrowse implements Serializable {
     final String nextItem = nextItem(items);
     final String previousItem = previousItem(items);
     if (nextItem != null) {
-      next = baseUrl + ObjectHelper.getId(URI.create(nextItem)) + "?q=" + this.query + "&fq="
+      next = baseUrl + ObjectHelper.getId(URI.create(nextItem)) + "?q=" + query + "&fq="
           + facetQuery + "&pos=" + (this.currentPosition + 1);
     }
     if (previousItem != null) {
-      previous = baseUrl + ObjectHelper.getId(URI.create(previousItem)) + "?q=" + this.query
-          + "&fq=" + facetQuery + "&pos=" + (this.currentPosition - 1);
+      previous = baseUrl + ObjectHelper.getId(URI.create(previousItem)) + "?q=" + query + "&fq="
+          + facetQuery + "&pos=" + (this.currentPosition - 1);
     }
   }
 

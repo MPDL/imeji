@@ -9,6 +9,8 @@
 	<ui:param name="headline" value="#{lbl.facets}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="currentMainMenu" value="admin" />
+	<ui:param name="backLink1" value="#{Navigation.adminUrl}"/>
+	<ui:param name="backlinkTitle1" value="Admin"/>
 
 	<ui:define name="actionsMenu">
 		<form action="#{Navigation.homeUrl}/createfacet">
@@ -27,10 +29,6 @@
 
 		<!-- Only for Admins -->
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-			<!-- AdminDataList - Back Button -->
-			<div class="imj_backPanel">
-				<a href="#{Navigation.adminUrl}">#{lbl.back_to_admin}</a>
-			</div>
 			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
 				<div class="imj_admindataSet">
 					<div class="imj_admindataLabel">

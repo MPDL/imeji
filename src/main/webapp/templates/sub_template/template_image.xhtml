@@ -23,6 +23,7 @@
 	
 	<!-- Main Content - Image Detail View -->
 	<ui:define name="mainContent">
+
 		<ui:fragment rendered="#{itemBean.image != null}">
 			<!-- AJAX Wrapper - START -->
 			<h:panelGroup layout="block" id="imj_ajaxWrapper" styleClass="imj_mediaEntryDetailPage">
@@ -30,21 +31,6 @@
 				
 					<!-- pagination top -->
 					<h:panelGroup layout="block" id="paginatorTop" styleClass="imj_paginator">
-						<span class="imj_backPanel">
-							<ui:fragment rendered="#{currentMainMenu == 'items' }">
-								<h:outputLink value="#{browseToAllItemsUrl}" title="#{lbl.images_all}">
-									<span class="fa fa-arrow-circle-o-left"/>
-									<h:outputText value=" #{lbl.images_all}"/>
-								</h:outputLink>
-							</ui:fragment>
-							
-							<ui:fragment rendered="#{currentMainMenu == 'collection'}">
-								<h:outputLink  value="#{browseToAllItemsUrl}" title="#{lbl.collection_back_to_images}">
-									<h:outputText styleClass="fa fa-arrow-circle-o-left"/>
-									<h:outputText value=" #{lbl.collection_back_to_images}"/>
-								</h:outputLink>
-							</ui:fragment>
-						</span>
 						<h:panelGroup styleClass="imj_simplePageBrowser">
 							<h:outputLink  value="#{itemBean.browse.previous}" styleClass="#{backwardClass}" disabled="#{itemBean.browse.previous == null}">
 								<h:outputText value="#{lbl.paginator_previous}"/>

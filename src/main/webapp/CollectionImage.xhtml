@@ -9,4 +9,8 @@
 	<ui:param name="currentMainMenu" value="collection" />
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemBean.collectionId}?q=#{CollectionItemBean.browse.query}&amp;fq=#{CollectionItemBean.browse.facetQuery}" />
 	<ui:param name="imejiResource" value="#{CollectionItemBean.collection}" />
+	<ui:param name="backLink1" value="#{Navigation.collectionUrl}#{CollectionItemBean.collectionId}?q="/>
+	<ui:param name="backlinkTitle1" value="#{CollectionItemBean.collection.title}"/>
+	<ui:param name="backLink2" value="#{not empty CollectionItemBean.browse.query or not empty CollectionItemBean.browse.facetQuery ? browseToAllItemsUrl  : ''}"/>
+	<ui:param name="backlinkTitle2" value="#{not empty CollectionItemBean.browse.query or not empty CollectionItemBean.browse.facetQuery ? lbl.search_results : ''}"/>
 </ui:composition>

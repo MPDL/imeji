@@ -38,7 +38,7 @@
 					</div>
 				</ui:fragment>
 			
-				<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu}">
+				<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu and cc.attrs.numberOfElements > 0}">
 					<div class="imj_menuHeader">
 	                    <h:commandLink id="lnkSortAsc" value="" action="#{cc.attrs.facetBean.toggleSortOrder}" onclick="startLoader();">
 	                    	<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>

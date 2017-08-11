@@ -5,7 +5,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
 
-	<ui:param name="headline" value="" />
+	<ui:param name="headline" value="#{lbl.admin}" />
 	<ui:param name="title" value="#{lbl.admin}" />
 	<ui:param name="currentMainMenu" value="admin" />
 
@@ -101,7 +101,7 @@
 						</div>
 					</div>
 					
-					<div class="imj_adminPanel imj_config">
+					<div class="imj_adminPanel imj_userConfig">
 						<div class="imj_headline">
 							<h2>
 								<h:outputText value="#{lbl.configuration}" />
@@ -117,7 +117,7 @@
 					</div>
 
 
-					<div class="imj_adminPanel imj_storageConfig">
+					<div class="imj_adminPanel imj_userConfig">
 						<ui:fragment rendered="#{Auth.sysAdmin}">
 							<div class="imj_headline">
 								<h2>

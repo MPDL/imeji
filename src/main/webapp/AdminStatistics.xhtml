@@ -3,17 +3,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core">
-	<ui:param name="headline" value="Administration" />
+	<ui:param name="headline" value="#{lbl.database_infos} - #{lbl.storage_infos}" />
 	<ui:param name="currentMainMenu" value="admin" />
-
+	<ui:param name="backLink1" value="#{Navigation.adminUrl}"/>
+	<ui:param name="backlinkTitle1" value="Admin"/>
+	
 	<ui:define name="mainContent">
-		<h:panelGroup layout="block" styleClass="imj_backPanel">
-			<h:outputLink value="#{Navigation.adminUrl}">
-				<h:outputText value="#{lbl.back_to_admin}" />
-			</h:outputLink>
-		</h:panelGroup>
-
-
 		<!-- Are You Admin? -->
 		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
 			rendered="#{!Auth.sysAdmin}">
@@ -28,15 +23,6 @@
 
 			<!-- Admin - TiledList -->
 			<div class="imj_administrationTiledList imj_maxWidth">
-
-				<div class="imj_listHeader">
-					<div class="imj_headline">
-						<h2>
-							<h:outputText
-								value="#{lbl.database_infos} - #{lbl.storage_infos}" />
-						</h2>
-					</div>
-				</div>
 
 				<div class="imj_listBody">
 

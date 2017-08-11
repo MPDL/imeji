@@ -15,19 +15,25 @@
 
 	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}" />
 	<ui:param name="headline" value="" />
-	<ui:param name="title" value="#{CollectionItemsBean.collection.title}" />
+	<ui:param name="title" value="#{not empty CollectionItemsBean.query or not empty CollectionItemsBean.facetQueryString ? lbl.search_results : CollectionItemsBean.collection.title}" />
 	<ui:param name="currentMainMenu" value="collection" />
-	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/browse?q=" />
+	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}?q=" />
 	<ui:param name="imejiResource" value="#{CollectionItemsBean.collection}" />
+	<ui:param name="backLink1" value="#{not empty CollectionItemsBean.query or not empty CollectionItemsBean.facetQueryString ? browseToAllItemsUrl : ''}"/>
+	<ui:param name="backlinkTitle1" value="#{CollectionItemsBean.collection.title}"/>
 
 	 <ui:define name="authorization">
 		 #{Auth.init(CollectionItemsBean.collection)}
 	 </ui:define>
 	 
 	  <ui:define name="collectionAbout">
-
 		<div class="collectionAbout">
-			<div class="collectionAboutTitle">#{CollectionItemsBean.collection.title}</div>
+			<div class="collectionAboutTitle">
+				<ui:fragment rendered="#{not empty backLink1   and not empty backlinkTitle1}">
+				     <a href="#{backLink1}" title="#{backlinkTitle1}">#{backlinkTitle1}</a><span> > </span>
+				</ui:fragment>
+				<span>#{title}</span>
+			</div>
 			<span class="collectionAboutAuthor">#{lbl.by} #{CollectionItemsBean.authorsShort}</span>
 			<a href="" onclick="return false;">
 				<span class="moreCollection" style="font-size:0.85em;" onclick="$('.collectionAboutHidden').slideDown(500);$('.lessCollection').show(); $(this).hide();">

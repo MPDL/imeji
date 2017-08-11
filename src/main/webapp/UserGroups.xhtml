@@ -10,6 +10,8 @@
 	<ui:param name="headline" value="#{lbl.admin_userGroups_view}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="currentMainMenu" value="admin" />
+	<ui:param name="backLink1" value="#{Navigation.adminUrl}"/>
+	<ui:param name="backlinkTitle1" value="Admin"/>
 
 	<ui:define name="actionsMenu">
 		<form action="#{Navigation.homeUrl}/createusergroup">
@@ -33,15 +35,7 @@
 				styleClass="imj_messageInfo" />
 		</h:panelGroup>
 
-		<ui:fragment rendered="#{Auth.loggedIn}">
-			<!-- AdminDataList - Back Button -->
-			<h:panelGroup layout="block" styleClass="imj_backPanel"
-				rendered="#{Auth.sysAdmin and UserGroups.backContainerUrl == null}">
-				<h:outputLink value="#{Navigation.adminUrl}">
-					<h:outputText value="#{lbl.back_to_admin}" />
-				</h:outputLink>
-			</h:panelGroup>
-			
+		<ui:fragment rendered="#{Auth.loggedIn}">			
 			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
 				<div class="imj_admindataSet">
 					<div class="imj_admindataLabel">
