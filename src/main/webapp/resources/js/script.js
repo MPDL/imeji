@@ -598,15 +598,15 @@ $(function(){
     });
 });
 
-//Close success message after 2s
+//Close success message after 4s
 setTimeout(function() {
     $('.imj_messageSuccess').slideUp(200);
-}, 2000);
+}, 4000);
 
 function closeSuccessMessage(){
 setTimeout(function() {
     $('.imj_messageSuccess').slideUp(200);
-}, 2000);
+}, 4000);
 	
 }
 

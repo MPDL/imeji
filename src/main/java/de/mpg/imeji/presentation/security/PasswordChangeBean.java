@@ -103,12 +103,19 @@ public class PasswordChangeBean extends SuperBean {
   }
 
   public void sendResetEmail() throws ImejiException, IOException {
+    if (!EmailService.isValidEmail(resetEmail)) {
+      BeanHelper.error(
+          resetEmail + " " + Imeji.RESOURCE_BUNDLE.getLabel("reset_invalid_email", getLocale()));
+      redirect(getNavigation().getLoginUrl());
+      return;
+    }
     User user;
     try {
       user = (new UserService()).retrieve(resetEmail, Imeji.adminUser);
     } catch (ImejiException e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_user_not_found", getLocale()));
-      redirect(getNavigation().getHomeUrl());
+      BeanHelper.error(resetEmail + ": "
+          + Imeji.RESOURCE_BUNDLE.getMessage("error_user_not_found", getLocale()));
+      redirect(getNavigation().getLoginUrl());
       return;
     }
     String url = getNavigation().getApplicationUrl() + "pwdreset?token="
