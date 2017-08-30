@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.util.DateFormatter;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Metadata;
 import de.mpg.imeji.logic.vo.Statement;
 
@@ -74,10 +75,8 @@ public class MetadataValidator extends ObjectValidator implements Validator<Meta
         }
         break;
       case PERSON:
-        try {
-          new PersonValidator().validate(md.getPerson(), validateForMethod);
-        } catch (final UnprocessableError e1) {
-          e = new UnprocessableError(e1.getMessages(), e);
+        if (StringHelper.isNullOrEmptyTrim(md.getPerson().getFamilyName())) {
+          e = new UnprocessableError("error_author_need_one_family_name", e);
         }
         break;
     }

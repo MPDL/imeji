@@ -98,8 +98,8 @@ public class RegistrationBean extends SuperBean {
         BeanHelper.info(
             "User account has been registered, but verification email could not be sent! Please contact service administrators!");
       }
+      redirect(getNavigation().getHomeUrl());
     }
-    redirect(getNavigation().getHomeUrl());
   }
 
 
