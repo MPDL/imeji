@@ -21,6 +21,7 @@ import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.share.invitation.InvitationService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Properties;
@@ -42,7 +43,7 @@ public class ShareBean extends SuperBean implements Serializable {
   // the user whom the shared object belongs
   private URI owner;
   private String title;
-  private String backUrl;
+  private String collectionUrl;
   private boolean isAdmin;
   private boolean sendEmail = false;
   private UserGroup userGroup;
@@ -55,14 +56,20 @@ public class ShareBean extends SuperBean implements Serializable {
   private ShareInput input;
   private ShareList shareList;
   private ShareList shareListCollection;
-  private String collectionShareUrl;
   private String collectionName;
   private Object sharedObject;
   private String userEmail;
+  private String q;
+  private String fq;
+  private String searchResultUrl;
 
   @PostConstruct
   public void construct() {
     this.id = UrlHelper.getParameterValue("collectionId");
+    this.fq = UrlHelper.getParameterValue("fq");
+    this.q = UrlHelper.getParameterValue("q");
+    this.fq = fq == null ? "" : fq;
+    this.q = q == null ? "" : q;
     initShareCollection();
   }
 
@@ -83,8 +90,11 @@ public class ShareBean extends SuperBean implements Serializable {
         this.shareTo = collection;
         this.title = collection.getTitle();
         this.owner = collection.getCreatedBy();
-        this.backUrl = getNavigation().getCollectionUrl() + collection.getIdString();
+        this.collectionUrl = getNavigation().getCollectionUrl() + collection.getIdString() + "?q=";
         this.sharedObject = collection;
+        this.searchResultUrl =
+            !StringHelper.isNullOrEmptyTrim(q) || !StringHelper.isNullOrEmptyTrim(fq)
+                ? collectionUrl + q + "&fq=" + fq : null;
       }
       this.init();
     } catch (final Exception e) {
@@ -431,19 +441,10 @@ public class ShareBean extends SuperBean implements Serializable {
     this.shareList = shareList;
   }
 
-  /**
-   * @return the backurl
-   */
-  public String getBackUrl() {
-    return backUrl;
+  public String getCollectionUrl() {
+    return collectionUrl;
   }
 
-  /**
-   * @param backurl the backurl to set
-   */
-  public void setBackUrl(String backurl) {
-    this.backUrl = backurl;
-  }
 
   /**
    * @return the shareListCollection
@@ -457,10 +458,6 @@ public class ShareBean extends SuperBean implements Serializable {
    */
   public void setShareListCollection(ShareList shareListCollection) {
     this.shareListCollection = shareListCollection;
-  }
-
-  public String getCollectionShareUrl() {
-    return collectionShareUrl;
   }
 
   /**
@@ -503,5 +500,8 @@ public class ShareBean extends SuperBean implements Serializable {
     this.userEmail = userEmail;
   }
 
+  public String getSearchResultUrl() {
+    return searchResultUrl;
+  }
 
 }

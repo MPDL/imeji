@@ -36,7 +36,7 @@
 						</ui:fragment>
 						<ui:fragment rendered="#{Auth.admin}">
 							<li>
-								<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share">
+								<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share?q=#{cc.attrs.collectionBean.query}&amp;fq=#{cc.attrs.collectionBean.facetQueryString}">
 									<span class="fa fa-users"/> <span>#{lbl.share}</span>
 								</a>
 							</li>

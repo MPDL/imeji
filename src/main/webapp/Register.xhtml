@@ -15,7 +15,7 @@
 	</f:metadata>
 
 	<ui:define name="mainContent">
-		<h:panelGroup style="width:96%" layout="block" id="registerArea"
+		<h:panelGroup  layout="block" id="registerArea"
 			rendered="#{RegistrationBean.registrationEnabled}">
 
 			<ui:fragment rendered="#{PasswordChangeBean.token==null}">
@@ -52,7 +52,7 @@
 
 
 						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel">
+							<div class="imj_metadataLabel" style="font-size: 0.9em;">
 								<ui:fragment
 									rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
 									<h:selectBooleanCheckbox id="accept_terms"

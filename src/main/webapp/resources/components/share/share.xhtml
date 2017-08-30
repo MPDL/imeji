@@ -37,7 +37,7 @@
 				<h:form id="shareListForm" styleClass="shareListForm">		
 					<!-- user table which shows all user with existing rights -->
 					<ui:fragment rendered="#{ShareBean.shareList.items.size() > 0}">
-						<share:grantList id="shareList" rolesMenu="#{rolesMenu}" list="#{ShareBean.shareList.items}" title="#{lbl.shared_with}"/>
+						<share:grantList id="shareList" rolesMenu="#{rolesMenu}" list="#{ShareBean.shareList.items}" title="#{lbl.shared_with}:"/>
 					</ui:fragment>
 					
 					<!-- Invitation list -->
@@ -49,8 +49,8 @@
 						<div class="imj_submitPanel imj_shareRightsOverview">
 							<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmailUpdate"/>
 							<h:outputLabel for="selSendEmailUpdate" value="#{lbl.user_send_mail}"/>
-							<h:commandButton value="#{lbl.cancel}" action="#{ShareBean.reloadPage}" styleClass="imj_cancelButton"/>
-							<h:commandButton value="#{lbl.save}" action="#{ShareBean.update}" styleClass="imj_submitButton"/>
+							<h:commandButton value="#{lbl.reset_changes}" action="#{ShareBean.reloadPage}" styleClass="imj_cancelButton"/>
+							<h:commandButton value="#{lbl.update} #{lbl.list}" action="#{ShareBean.update}" styleClass="imj_submitButton" style="margin-right:0 !important;"/>
 						</div>				
 					</ui:fragment>
 				</h:form>							

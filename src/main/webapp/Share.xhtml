@@ -6,28 +6,20 @@
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:share="http://java.sun.com/jsf/composite/components/share">
 
-	<ui:param name="headline" value="#{lbl.share.toString().trim()}: #{ShareBean.title}" />
+	<ui:param name="headline" value="#{lbl.share.toString().trim()}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="contUrl" value="#{Navigation.collectionUrl}" />
 	<ui:param name="imejiResource" value="#{ShareBean.sharedObject}" />
 	<ui:param name="iconStatusDisplayStatusOnly" value="true" />
-	
+	<ui:param name="backLink1" value="#{ShareBean.collectionUrl}"/>
+	<ui:param name="backlinkTitle1" value="#{ShareBean.title}"/>
+	<ui:param name="backLink2" value="#{ShareBean.searchResultUrl}"/>
+	<ui:param name="backlinkTitle2" value="#{lbl.search_results}"/>
 	<f:metadata>
 		<f:viewParam name="email" value="#{ShareBean.userEmail}"/>
 	</f:metadata>
-
-
+	
 	<ui:define name="mainContent">
-		<div class="imj_backPanel">
-			<h:outputLink value="#{ShareBean.backUrl}" rendered="#{ShareBean.userEmail==null}">
-				<span class="fa fa-arrow-circle-o-left"/>
-				<h:outputText value=" #{lbl.back_to} #{ShareBean.title}" />
-			</h:outputLink>
-			<h:outputLink value="#{Navigation.userUrl}?email=#{ShareBean.userEmail}" rendered="#{ShareBean.userEmail!=null}">
-				<span class="fa fa-arrow-circle-o-left"/>
-				<h:outputText value=" #{lbl.back_to} #{lbl.user}" />
-			</h:outputLink>
-		</div>
 		<!-- ID must not be changed. The share page would not work anymore -->
 		<share:share id="share" />
 	</ui:define>
