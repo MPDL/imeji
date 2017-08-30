@@ -9,13 +9,6 @@
 	<ui:param name="title" value="#{lbl.search_advanced}" />
 
 	<ui:define name="searchQuery">
-		<h:panelGroup id="imj_searchQueryMessageArea"
-			styleClass="imj_searchQueryDisplay">
-			#{lbl.search_query} #{lbl.for_type} #{lbl.type_items}:
-			<span class="imj_searchQueryText"> 
-				<h:outputText value="#{AdvancedSearchBean.simpleQuery}" styleClass="#{AdvancedSearchBean.errorQuery ? 'imj_messageError' : ''}" />
-			</span>
-		</h:panelGroup>
 	</ui:define>
 
 	<ui:define name="mainContent">
@@ -23,6 +16,7 @@
 		<h:panelGroup layout="block" id="imj_ajaxWrapper"
 			class="imj_advancedSearch">
 			<h:form id="advancedSearchForm" onkeyup="if (event.keyCode == 13) {document.getElementById('advancedSearchForm:submit').click(); return false;}">
+				
 				<div class="imj_searchUnit">
 					<div class="imj_searchDetails">
 						<h:outputText value="#{lbl.all_fields}" />

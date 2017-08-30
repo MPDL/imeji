@@ -70,7 +70,6 @@ public class AutocompleterServlet extends HttpServlet {
       throws ServletException, IOException {
     String suggest = request.getParameter("searchkeyword");
     final String datasource = request.getParameter("datasource");
-
     String responseString = "";
     if (suggest == null || suggest.isEmpty()) {
       suggest = "a";
@@ -98,6 +97,7 @@ public class AutocompleterServlet extends HttpServlet {
 
     }
     response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
     final PrintWriter out = response.getWriter();
     try {
       out.print(responseString);
