@@ -59,12 +59,13 @@
 			</div>
 			</ui:fragment>
 		</ui:fragment>
+		
 		<ui:fragment rendered="#{itemBean.videoFile}">
-			<video id="imejiVideoPlayer" src="#{itemBean.originalFile}" controls="controls" 
-			poster="#{itemBean.preview}" preload="auto" height="264"></video>
+			<video id="imejiVideoPlayer"  src="#{itemBean.originalFile}" controls="controls" 
+			poster="#{itemBean.preview}" preload="metadata" height="264"></video>
 		</ui:fragment>
 		<ui:fragment rendered="#{itemBean.audioFile}">
-			<audio id="imejiAudioPlayer" src="#{itemBean.originalFile}" controls="controls" preload="auto">
+			<audio id="imejiAudioPlayer"  src="#{itemBean.originalFile}" controls="controls" preload="metadata" >
 				<h:outputText value="#{lbl.playing} #{itemBean.image.filename} " />
 			</audio>
 		</ui:fragment>
@@ -95,59 +96,61 @@
 			<item:viewMetadata id="viewer" itemBean="#{itemBean}"  rendered="#{!itemBean.edit}"/>
 		</h:panelGroup>
 	</div>
-	<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.min.js"></script>				
-	<script type="text/javascript">				
-    			var imgFull = {
-    			type: 'image',
-    			url: '#{itemBean.fullResolution}',
-    			};
-   
-    			var viewerFull = OpenSeadragon({
-    
-        		id: "seadragon-viewer-full",
-        		tileSources: imgFull,
-        		showRotationControl: true,
-        		fullPageButton: "fullscreenButton",
-        		homeButton: "homeButton",
-        		zoomInButton: "zoominButton",
-        		zoomOutButton: "zoomoutButton",
-        		rotateRightButton: "rotateRightButton",
-        		rotateLeftButton: "rotateLeftButton",
-        		gestureSettingsTouch: {
-           		 pinchRotate: true
-        		}
-        		
-    		});
-    			viewerFull.addHandler('rotate',function(){
-					 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
-					 document.getElementById("rotationForm:buttonUpdateRotation").click();
-        		});
-    			
-    			
-    			viewerFull.addHandler('open',function(){
-    				document.getElementById("picWebResolutionAlt").style.display='none';
-    			});
-    			
-    			viewerFull.addHandler("open-failed",function(){
-    				useAlternatePicture();
-    			});
-    			
-    			//Needed for Firefox
-    			var myDraw=false;
-    			viewerFull.addHandler("my-draw-failed",function(){
-    				if(!myDraw){
-    					useAlternatePicture();
-    				}
-    			});
-    			
-    			viewerFull.addHandler("my-draw",function(){
-    				myDraw=true;
-    			});
-    			
-    			function useAlternatePicture(){
-    				document.getElementById("picWebResolutionAlt").style.display='';
-    				viewerFull.setVisible(false);
-    				document.getElementById("buttons").style.display='none';
-    			}
-	</script>
+	<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
+		<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.min.js"></script>				
+		<script type="text/javascript">				
+	    			var imgFull = {
+	    			type: 'image',
+	    			url: '#{itemBean.fullResolution}',
+	    			};
+	   
+	    			var viewerFull = OpenSeadragon({
+	    
+	        		id: "seadragon-viewer-full",
+	        		tileSources: imgFull,
+	        		showRotationControl: true,
+	        		fullPageButton: "fullscreenButton",
+	        		homeButton: "homeButton",
+	        		zoomInButton: "zoominButton",
+	        		zoomOutButton: "zoomoutButton",
+	        		rotateRightButton: "rotateRightButton",
+	        		rotateLeftButton: "rotateLeftButton",
+	        		gestureSettingsTouch: {
+	           		 pinchRotate: true
+	        		}
+	        		
+	    		});
+	    			viewerFull.addHandler('rotate',function(){
+						 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
+						 document.getElementById("rotationForm:buttonUpdateRotation").click();
+	        		});
+	    			
+	    			
+	    			viewerFull.addHandler('open',function(){
+	    				document.getElementById("picWebResolutionAlt").style.display='none';
+	    			});
+	    			
+	    			viewerFull.addHandler("open-failed",function(){
+	    				useAlternatePicture();
+	    			});
+	    			
+	    			//Needed for Firefox
+	    			var myDraw=false;
+	    			viewerFull.addHandler("my-draw-failed",function(){
+	    				if(!myDraw){
+	    					useAlternatePicture();
+	    				}
+	    			});
+	    			
+	    			viewerFull.addHandler("my-draw",function(){
+	    				myDraw=true;
+	    			});
+	    			
+	    			function useAlternatePicture(){
+	    				document.getElementById("picWebResolutionAlt").style.display='';
+	    				viewerFull.setVisible(false);
+	    				document.getElementById("buttons").style.display='none';
+	    			}
+		</script>
+	</ui:fragment>
 </ui:composition>

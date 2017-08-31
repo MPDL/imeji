@@ -69,6 +69,7 @@ public class FileServlet extends HttpServlet {
       throws ServletException, IOException {
     String url = req.getParameter("id");
     final String contentId = req.getParameter("content");
+    final String range = req.getHeader("range");
     final String itemUri = req.getParameter("itemId") == null ? req.getParameter("item")
         : ObjectHelper.getURI(Item.class, req.getParameter("itemId")).toString();
     User user;
@@ -84,10 +85,18 @@ public class FileServlet extends HttpServlet {
       } else if (url == null) {
         url = domain + req.getRequestURI();
       }
+      long contentLength = (long) storageController.getStorage().getContentLenght(url);
       resp.setContentType(StorageUtils.getMimeType(StringHelper.getFileExtension(url)));
-
+      resp.setCharacterEncoding("UTF-8");
+      resp.setHeader("Accept-Ranges", "none");
+      resp.setContentLengthLong(contentLength);
       if ("NO_THUMBNAIL_URL".equals(url)) {
         externalStorage.read(RESOURCE_EMTPY_ICON_URL, resp.getOutputStream(), true);
+      } else if (range != null) {
+        // experimental, not working
+        readPartFile(url, resp, false, user, range);
+        resp.setHeader("range", range);
+        resp.setStatus(206);
       } else {
         readFile(url, resp, false, user);
       }
@@ -156,6 +165,17 @@ public class FileServlet extends HttpServlet {
     }
   }
 
+  private void readPartFile(String url, HttpServletResponse resp, boolean isExternalStorage,
+      User user, String range) throws ImejiException, IOException {
+    range = range.replace("bytes=", "").trim();
+    long offset = Long.parseLong(range.split("-")[0]);
+    if (isExternalStorage) {
+      readExternalFile(url, resp);
+    } else {
+      readStoragePartFile(url, resp, user, offset, -1);
+    }
+  }
+
   /**
    * Read a File from the current storage
    *
@@ -167,7 +187,13 @@ public class FileServlet extends HttpServlet {
   private void readStorageFile(String url, HttpServletResponse resp, User user)
       throws ImejiException, IOException {
     checkSecurity(url, user);
-    storageController.read(url, resp.getOutputStream(), true);
+    storageController.read(url, resp.getOutputStream(), false);
+  }
+
+  private void readStoragePartFile(String url, HttpServletResponse resp, User user, long offset,
+      long length) throws ImejiException, IOException {
+    checkSecurity(url, user);
+    storageController.readPart(url, resp.getOutputStream(), false, offset, length);
   }
 
   /**

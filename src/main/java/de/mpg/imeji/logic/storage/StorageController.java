@@ -103,6 +103,11 @@ public final class StorageController implements Serializable {
     storage.read(url, out, close);
   }
 
+  public void readPart(String url, OutputStream out, boolean close, long offset, long length)
+      throws ImejiException {
+    storage.readPart(url, out, close, offset, length);
+  }
+
   /**
    * Return the file for the url
    *

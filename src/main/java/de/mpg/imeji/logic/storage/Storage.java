@@ -55,6 +55,19 @@ public interface Storage extends Serializable {
   public void read(String url, OutputStream out, boolean close) throws ImejiException;
 
   /**
+   * Read a part of the file stored in the passed url
+   * 
+   * @param url
+   * @param out
+   * @param close
+   * @param offset
+   * @param length
+   * @throws ImejiException
+   */
+  public void readPart(String url, OutputStream out, boolean close, long offset, long length)
+      throws ImejiException;
+
+  /**
    * Read the file stored in the passed url
    *
    * @param url
@@ -167,5 +180,13 @@ public interface Storage extends Serializable {
    */
   public void recalculateWebAndThumbnail(String fullUrl, String webUrl, String thumbnailUrl)
       throws IOException, Exception;
+
+  /**
+   * Return the length of the file
+   * 
+   * @param url
+   * @return
+   */
+  public double getContentLenght(String url);
 
 }

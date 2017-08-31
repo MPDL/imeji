@@ -115,6 +115,29 @@ public class StorageUtils {
   }
 
   /**
+   * Read only a part of a file
+   * 
+   * @param in
+   * @param out
+   * @param close
+   * @param offset
+   * @param length
+   */
+  public static void writeInOut(InputStream in, OutputStream out, boolean close, long offset,
+      long length) {
+    try {
+      IOUtils.copyLarge(in, out, offset, length);
+    } catch (final IOException e) {
+      throw new RuntimeException("Error writing inputstream in outputstream: ", e);
+    } finally {
+      IOUtils.closeQuietly(in);
+      if (close) {
+        IOUtils.closeQuietly(out);
+      }
+    }
+  }
+
+  /**
    * Return a {@link HttpClient} to be used in {@link Get}
    *
    * @return

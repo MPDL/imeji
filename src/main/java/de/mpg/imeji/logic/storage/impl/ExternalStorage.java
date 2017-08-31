@@ -192,4 +192,15 @@ public class ExternalStorage implements Storage {
     // TODO Auto-generated method stub
     return null;
   }
+
+  @Override
+  public double getContentLenght(String url) {
+    return 0;
+  }
+
+  @Override
+  public void readPart(String url, OutputStream out, boolean close, long offset, long length)
+      throws ImejiException {
+    read(url, out, close);
+  }
 }
