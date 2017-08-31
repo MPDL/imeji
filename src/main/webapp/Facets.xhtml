@@ -40,8 +40,9 @@
 					</div>
 				</div>
 				<h:panelGroup id="facets">
-					<h:form>
+					
 						<ui:repeat var="facet" value="#{FacetsBean.facets}" varStatus="row">
+							<h:form>
 							<div class="imj_itemContent imj_itemHeadline">
 								<div class="imj_admindataSet">
 									<div class="imj_admindataLabel" style="padding: 10px 0 10px 0;">
@@ -55,13 +56,6 @@
 										<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteFacet#{row.index}');">
 											<span class="fa fa-trash"/>  #{lbl.delete}
 										</h:outputLink>
-										<dialog:confirmationDialog submitAction="delete"
-											bean="#{FacetsBean}"
-											confirmationText="#{msg.confirmation_delete_facet} (#{facet.name}) ?"
-											submitLabel="#{lbl.delete}"
-											dialogId="deleteFacet#{row.index}" identifierName="index"
-											identifierValue="#{facet.index}" />
-										
 										<div class="imj_overlayMenu ">
 											<h:commandLink value=" "  action="#{FacetsBean.moveUp(facet)}" rendered="#{row.index != 0}" onclick="startLoader();">
 												<f:ajax render=":facets"/>
@@ -76,8 +70,15 @@
 									</div>
 								</div>
 							</div>
+							</h:form>
+							<dialog:confirmationDialog submitAction="delete"
+											bean="#{FacetsBean}"
+											confirmationText="#{msg.confirmation_delete_facet} (#{facet.name}) ?"
+											submitLabel="#{lbl.delete}"
+											dialogId="deleteFacet#{row.index}" identifierName="index"
+											identifierValue="#{facet.index}" />
 						</ui:repeat>
-					</h:form>
+					
 				</h:panelGroup>
 			</div>
 		</ui:fragment>
