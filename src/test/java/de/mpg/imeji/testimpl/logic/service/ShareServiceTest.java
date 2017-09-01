@@ -8,6 +8,7 @@ import org.junit.Test;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.share.ShareService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.user.UserService.USER_TYPE;
@@ -123,8 +124,6 @@ public class ShareServiceTest extends SuperServiceTest {
 
   @Test
   public void shareToUser() {
-    ShareService service = new ShareService();
-
     try {
       defaultUser2.getGrants().add(editGrant.toGrantString());
       shareToUser_Test("User 2 not allowed, read grant", defaultUser2, defaultUser1, readGrant,
@@ -134,11 +133,14 @@ public class ShareServiceTest extends SuperServiceTest {
       shareToUser_Test("User 2 not allowed, admin grant", defaultUser2, defaultUser1, adminGrant,
           NotAllowedError.class);
 
-      defaultUser2.getGrants().add(adminGrant.toGrantString());
+      new ShareService().shareToUser(Imeji.adminUser, defaultUser2, adminGrant.getGrantFor(),
+          adminGrant.getGrantType());
       shareToUser_Test("User 2  allowed, read grant", defaultUser2, defaultUser1, readGrant, null);
       shareToUser_Test("User 2  allowed, edit grant", defaultUser2, defaultUser1, editGrant, null);
       shareToUser_Test("User 2  allowed, admin grant", defaultUser2, defaultUser1, adminGrant,
           null);
+    } catch (ImejiException e) {
+      Assert.fail("Error giving collection admin grant to defaultUser2 with imeji.adminuser");
     } finally {
       defaultUser2.getGrants().remove(editGrant.toGrantString());
       defaultUser2.getGrants().remove(adminGrant.toGrantString());

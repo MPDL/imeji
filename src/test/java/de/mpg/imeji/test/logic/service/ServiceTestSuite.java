@@ -20,6 +20,7 @@ import de.mpg.imeji.util.SuperTestSuite;
 
 @Suite.SuiteClasses({ShareServiceTest.class, StatementServiceTest.class, UsergroupServiceTest.class,
     UserServiceTest.class, ItemServiceTest.class, CollectionServiceTest.class,
+
     ContentServiceTest.class})
 
 

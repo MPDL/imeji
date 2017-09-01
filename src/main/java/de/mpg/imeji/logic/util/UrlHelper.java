@@ -38,8 +38,12 @@ public class UrlHelper {
    * @return
    */
   public static String getParameterValue(String parameterName) {
-    return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
-        .get(parameterName);
+    try {
+      return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+          .get(parameterName);
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   /**

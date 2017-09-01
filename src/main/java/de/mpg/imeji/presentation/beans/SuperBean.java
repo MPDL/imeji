@@ -40,7 +40,6 @@ public class SuperBean implements Serializable {
 
   public SuperBean() {
     this.backUrl = UrlHelper.getParameterValue("back");
-
   }
 
 

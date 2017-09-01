@@ -164,22 +164,6 @@ public class ContentServiceTest extends SuperServiceTest {
   }
 
   @Test
-  public void copy() {
-    CollectionImeji collection2 =
-        ImejiFactory.newCollection().setTitle("Collection 2").setPerson("m", "p", "mpdl").build();
-    try {
-      (new CollectionService()).create(collection2, defaultUser);
-      ContentVO copy = (new ContentService()).copy(item, collection2.getIdString());
-      Assert.assertTrue("New full url should be correct",
-          copy.getFull().contains(collection2.getIdString()));
-    } catch (ImejiException e) {
-      LOGGER.error(e);
-      Assert.fail(e.getMessage());
-    }
-  }
-
-
-  @Test
   public void move() {
     ContentService service = new ContentService();
     CollectionImeji collection2 =

@@ -189,39 +189,27 @@ public class CollectionServiceTest extends SuperServiceTest {
   @Test
   public void update() {
     collectionPrivate.setTitle("TestTitle");
-    try {
-      Item item = ImejiFactory.newItem(collectionPrivate);
-      (new ItemService()).createWithFile(item, ImejiTestResources.getTest1Jpg(), "Test1.jpg",
-          collectionPrivate, defaultUser);
-      item.setFilename("New_filename.jpg");
-      update_Test("private colection, user read grant", collectionPrivate, item, userReadGrant,
-          "Private Collection", "Test1.jpg", NotAllowedError.class);
-      update_Test("private colection, user edit grant", collectionPrivate, item, userEditGrant,
-          "Private Collection", "Test1.jpg", null);
-    } catch (ImejiException e) {
-      Assert.fail(e.getMessage());
-    }
+    update_Test("private collection, user read grant", collectionPrivate, userReadGrant,
+        "Private Collection", NotAllowedError.class);
+    update_Test("private collection, user edit grant", collectionPrivate, userEditGrant,
+        "Private Collection", null);
   }
 
-  private void update_Test(String msg, CollectionImeji col, Item item, User user,
-      String oldCollectionTitle, String oldItemFilename, Class exception) {
+  private void update_Test(String msg, CollectionImeji col, User user, String oldCollectionTitle,
+      Class exception) {
     CollectionService service = new CollectionService();
     try {
       service.update(col, user);
     } catch (ImejiException e) {
       if (e.getClass().equals(exception)) {
         CollectionImeji res = null;
-        Item resItem = null;
         try {
           res = service.retrieve(col.getId(), sysadmin);
-          resItem = (new ItemService()).retrieve(item.getId().toString(), sysadmin);
         } catch (ImejiException e1) {
           Assert.fail(msg + ": " + e.getMessage());
         }
         Assert.assertEquals(msg + ":Collection title should not have changed", oldCollectionTitle,
             res.getTitle());
-        Assert.assertEquals(msg + ":Item filename should not have changed", oldItemFilename,
-            resItem.getFilename());
         return;
       }
       Assert.fail(msg + ": " + e.getMessage());
@@ -231,13 +219,8 @@ public class CollectionServiceTest extends SuperServiceTest {
     }
     try {
       CollectionImeji res = service.retrieve(col.getId(), user);
-      Item resItem = (new ItemService()).retrieve(item.getId().toString(), sysadmin);
       Assert.assertEquals(msg + ": Collection title should be updated", col.getTitle(),
           res.getTitle());
-
-      Assert.assertEquals(msg + ": Item filename should be updated", item.getFilename(),
-          resItem.getFilename());
-
     } catch (ImejiException e) {
       Assert.fail(msg + ": " + e.getMessage());
     }

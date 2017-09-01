@@ -256,25 +256,6 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
   }
 
   /**
-   * Copy a {@link ContentVO} to another collection
-   * 
-   * @param contentId
-   * @param collectionId
-   * @return
-   * @throws ImejiException
-   */
-  public ContentVO copy(Item item, String collectionId) throws ImejiException {
-    final StorageController storageController = new StorageController();
-    ContentVO contentVO = retrieve(findContentId(item.getId().toString()));
-    UploadResult result = storageController.copy(contentVO.getOriginal(), collectionId);
-    contentVO.setPreview(result.getWeb());
-    contentVO.setThumbnail(result.getThumb());
-    contentVO.setFull(result.getFull());
-    contentVO.setOriginal(result.getOrginal());
-    return controller.create(contentVO, Imeji.adminUser);
-  }
-
-  /**
    * Move Contents to another collection
    * 
    * @param item

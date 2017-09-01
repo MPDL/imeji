@@ -105,6 +105,7 @@ public class ShareService {
   public User shareToUser(User fromUser, User toUser, String sharedObjectUri, String role)
       throws ImejiException {
     if (toUser != null) {
+      fromUser = new UserService().retrieve(fromUser.getEmail(), Imeji.adminUser);
       final Grant grant = toGrant(role, sharedObjectUri);
       toUser = addGrantToUser(fromUser, toUser, sharedObjectUri, grant);
     }
