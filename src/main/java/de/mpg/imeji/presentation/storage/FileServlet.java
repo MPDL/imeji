@@ -45,6 +45,7 @@ public class FileServlet extends HttpServlet {
   private final ExternalStorage externalStorage = new ExternalStorage();
   private final Navigation navivation = new Navigation();
   private String domain;
+  private final static int MAX_RANGE_LENGTH = 1000000;
 
   private static final String RESOURCE_EMTPY_ICON_URL =
       "http://localhost:8080/imeji/resources/icon/empty.png";
@@ -87,16 +88,12 @@ public class FileServlet extends HttpServlet {
       }
       long contentLength = (long) storageController.getStorage().getContentLenght(url);
       resp.setContentType(StorageUtils.getMimeType(StringHelper.getFileExtension(url)));
-      resp.setCharacterEncoding("UTF-8");
-      resp.setHeader("Accept-Ranges", "none");
+      resp.setHeader("Accept-Ranges", isFirefox(req) ? "none" : "bytes");
       resp.setContentLengthLong(contentLength);
       if ("NO_THUMBNAIL_URL".equals(url)) {
         externalStorage.read(RESOURCE_EMTPY_ICON_URL, resp.getOutputStream(), true);
-      } else if (range != null) {
-        // experimental, not working
-        readPartFile(url, resp, false, user, range);
-        resp.setHeader("range", range);
-        resp.setStatus(206);
+      } else if (range != null && !isFirefox(req)) {
+        doRangeRequest(req, resp, user, range, url, contentLength);
       } else {
         readFile(url, resp, false, user);
       }
@@ -119,6 +116,12 @@ public class FileServlet extends HttpServlet {
       }
     }
   }
+
+  private boolean isFirefox(HttpServletRequest req) {
+    return req.getHeader("User-Agent").contains("Firefox");
+  }
+
+
 
   private String retrieveUrlOfContent(String contentId, String resolution) throws ImejiException {
     final ContentVO content = contentController.retrieveLazy(contentId);
@@ -165,15 +168,76 @@ public class FileServlet extends HttpServlet {
     }
   }
 
+
+  /**
+   * Do a Range Request: Force the response to to smaller than MAX_RANGE_LENGTH
+   * 
+   * @param resp
+   * @param user
+   * @param range
+   * @param url
+   * @param contentLength
+   * @throws ImejiException
+   * @throws IOException
+   */
+  private void doRangeRequest(HttpServletRequest req, HttpServletResponse resp, User user,
+      String range, String url, long contentLength) throws ImejiException, IOException {
+    // First parse request
+    int rangeStart = parseRangeStart(range);
+    int rangeEnd = parseRangeEnd(range);
+    if (isFirefox(req)) {
+      System.out.println("Firefox");
+      // Firefox doensn't support smaller part than requested part (for now, see
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=570755)
+      resp.setContentLengthLong(contentLength - rangeStart);
+      resp.setHeader("Content-Range",
+          "bytes " + rangeStart + "-" + (rangeEnd > 0 ? rangeEnd : "" + "/" + contentLength));
+    } else {
+      System.out.println("OTHER");
+      // For all other browsers, set the rangeEnd according the MAX_RANGE_LENGTH, in order to limit
+      // the response size
+      rangeEnd = rangeStart + MAX_RANGE_LENGTH;
+      // If the rangeEnd is bigger than the content length, initialize the rangeEnd with the
+      // contentLength
+      rangeEnd =
+          (int) (rangeStart + MAX_RANGE_LENGTH > contentLength ? contentLength : rangeEnd) - 1;
+      resp.setContentLengthLong(rangeEnd - rangeStart + 1);
+      resp.setHeader("Content-Range",
+          "bytes " + rangeStart + "-" + (rangeEnd > 0 ? rangeEnd : "") + "/" + contentLength);
+    }
+    resp.setStatus(206);
+    readPartFile(url, resp, false, user, rangeStart, rangeEnd + 1 - rangeStart);
+
+  }
+
+  /**
+   * Read Firefox
+   * 
+   * @param url
+   * @param resp
+   * @param isExternalStorage
+   * @param user
+   * @param offset
+   * @param length
+   * @throws ImejiException
+   * @throws IOException
+   */
   private void readPartFile(String url, HttpServletResponse resp, boolean isExternalStorage,
-      User user, String range) throws ImejiException, IOException {
-    range = range.replace("bytes=", "").trim();
-    long offset = Long.parseLong(range.split("-")[0]);
+      User user, int offset, int length) throws ImejiException, IOException {
     if (isExternalStorage) {
       readExternalFile(url, resp);
     } else {
-      readStoragePartFile(url, resp, user, offset, -1);
+      readStoragePartFile(url, resp, user, offset, length);
     }
+  }
+
+  private int parseRangeStart(String range) {
+    return Integer.parseInt(range.replace("bytes=", "").trim().split("-")[0]);
+  }
+
+  private int parseRangeEnd(String range) {
+    String[] ranges = range.replace("bytes=", "").trim().split("-");
+    return ranges.length < 2 ? -1 : Integer.parseInt(ranges[1]);
   }
 
   /**

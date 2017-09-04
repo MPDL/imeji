@@ -61,11 +61,11 @@
 		</ui:fragment>
 		
 		<ui:fragment rendered="#{itemBean.videoFile}">
-			<video id="imejiVideoPlayer"  src="#{itemBean.originalFile}" controls="controls" 
-			poster="#{itemBean.preview}" preload="metadata" height="264"></video>
+			<video id="imejiVideoPlayer" src="#{itemBean.originalFile}" controls="controls" 
+			 preload="auto" height="264"></video>
 		</ui:fragment>
 		<ui:fragment rendered="#{itemBean.audioFile}">
-			<audio id="imejiAudioPlayer"  src="#{itemBean.originalFile}" controls="controls" preload="metadata" >
+			<audio id="imejiAudioPlayer"  src="#{itemBean.originalFile}" controls="controls" preload="auto" >
 				<h:outputText value="#{lbl.playing} #{itemBean.image.filename} " />
 			</audio>
 		</ui:fragment>

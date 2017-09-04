@@ -72,7 +72,8 @@ public class InternalStorage implements Storage {
       final FileInputStream fis = new FileInputStream(path);
       StorageUtils.writeInOut(fis, out, close);
     } catch (final Exception e) {
-      throw new RuntimeException("Error reading file " + path + " in internal storage: ", e);
+      LOGGER.error("Erro reading file in internal storage: " + e.getMessage());
+      // throw new RuntimeException("Error reading file " + path + " in internal storage: ", e);
     }
   }
 
@@ -84,12 +85,6 @@ public class InternalStorage implements Storage {
       final FileInputStream fis = new FileInputStream(path);
       StorageUtils.writeInOut(fis, out, close, offset, length);
     } catch (final Exception e) {
-      try {
-        out.close();
-      } catch (IOException e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
-      }
       throw new RuntimeException("Error reading file " + path + " in internal storage: ", e);
     }
   }
