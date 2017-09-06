@@ -53,10 +53,7 @@ public class ImageMagickUtils {
       return false;
     }
     return true;
-
   }
-
-
 
   /**
    * User imagemagick to convert any image into a jpeg
@@ -79,23 +76,138 @@ public class ImageMagickUtils {
     return convert(tmp, extension, ".jpg");
   }
 
+  /**
+   * Resize a jpg to another size, defined by the resolution
+   * 
+   * @param file
+   * @param extension
+   * @param resolution
+   * @return
+   */
+  public static File resizeJpg(File file, String extension, FileResolution resolution) {
+    try {
+      switch (resolution) {
+        case ORIGINAL:
+          return file;
+        case FULL:
+          return StorageUtils.compareExtension(extension, "jpg") ? file
+              : convertToJPEG(file, extension);
+        case WEB:
+          return resize(file, extension, ImageUtils.getResolution(FileResolution.WEB));
+        case THUMBNAIL:
+          return cropCenter(file, extension, ImageUtils.getResolution(FileResolution.THUMBNAIL));
+      }
+    } catch (Exception e) {
+      LOGGER.error("Error resizing jpg with Imagemagick for file " + file.getAbsolutePath()
+          + " with extension " + extension, e);
+    }
+    return null;
+  }
+
+  /**
+   * Resize a file as a jpeg
+   * 
+   * @param file
+   * @param extension
+   * @return
+   * @throws IOException
+   * @throws InterruptedException
+   * @throws IM4JavaException
+   * @throws URISyntaxException
+   */
+  private static File resize(File file, String extension, int resolution)
+      throws IOException, InterruptedException, IM4JavaException, URISyntaxException {
+    final File resized = TempFileUtil.createTempFile("magickResize", ".jpg");
+    final ConvertCmd cmd = getConvert();
+    IMOperation op = new IMOperation();
+    if (!isImage(extension)) {
+      file = convertToJPEG(file, extension);
+    }
+    op.quality(80.0);
+    op.thumbnail(resolution, resolution, "");
+    op.addImage(file.getAbsolutePath());
+    op.addImage(resized.getAbsolutePath());
+    cmd.run(op);
+    return resized;
+  }
+
+  /**
+   * Crop in the middle a File as a jpg
+   * 
+   * @param file
+   * @param extension
+   * @param resolution
+   * @return
+   * @throws IOException
+   * @throws URISyntaxException
+   * @throws InterruptedException
+   * @throws IM4JavaException
+   */
+  private static File cropCenter(File file, String extension, int resolution)
+      throws IOException, URISyntaxException, InterruptedException, IM4JavaException {
+    final File resized = TempFileUtil.createTempFile("magickCrop", ".jpg");
+    final ConvertCmd cmd = getConvert();
+    IMOperation op = new IMOperation();
+    if (!isImage(extension)) {
+      file = convertToJPEG(file, extension);
+    }
+    op.quality(80.0);
+    op.thumbnail(resolution, resolution, "^");
+    op.gravity("center");
+    op.extent(resolution, resolution);
+    op.addImage(file.getAbsolutePath());
+    op.addImage(resized.getAbsolutePath());
+    cmd.run(op);
+    return resized;
+  }
+
+  /**
+   * Convert a File from a file format (extensionIn) to another File format (extensionOut)
+   * 
+   * @param tmp
+   * @param extensionIn
+   * @param extensionOut
+   * @return
+   * @throws IOException
+   * @throws URISyntaxException
+   * @throws InterruptedException
+   * @throws IM4JavaException
+   */
   private static File convert(File tmp, String extensionIn, String extensionOut)
       throws IOException, URISyntaxException, InterruptedException, IM4JavaException {
+    // if (!FilenameUtils.getExtension(tmp.getName()).equals(extensionIn)) {
+    // File tmpWithOrginalExtension = new File(tmp.getAbsolutePath() + "." + extensionIn);
+    // tmp.renameTo(tmpWithOrginalExtension);
+    // tmp = tmpWithOrginalExtension;
+    // }
     // In case the file is made of many frames, (for instance videos), generate only the frames from
-    // 0 to 48 to
-    // avoid high memory consumption
-    final String path = tmp.getAbsolutePath() + "[0-48]";
+    // 0 to 48 to avoid high memory consumption
+    String path = tmp.getAbsolutePath() + "[0-48]";
     final ConvertCmd cmd = getConvert();
     // create the operation, add images and operators/options
     IMOperation op = new IMOperation();
-    if (!isImage(extensionIn)) {
+    if (!isImage(extensionIn) && !isVideo(extensionIn)) {
       return null;
     }
-    op.colorspace(findColorSpace(tmp));
-    op.strip();
-    op.flatten();
-    op.addImage(tmp.getAbsolutePath());
-    // op.colorspace("RGB");
+    if (isVideo(extensionIn)) {
+      op.flatten();
+      op.strip();
+      op.quality(70.0);
+    }
+    if (isImage(extensionIn)) {
+      // do convert -sampling-factor 4:2:0 -strip -quality 80 -interlace JPEG -colorspace RGB
+      // -gaussian-blur 0.05
+      op.strip();
+      op.flatten();
+      op.quality(70.0);
+      // Next operation are disabled due to performance issues
+      // op.samplingFactor(4.0, 2.0);
+      // op.colorspace("RGB");
+      // op.colorspace(findColorSpace(tmp));
+      // op.interlace("JPEG");
+      // op.gaussianBlur(0.005);
+    }
+    op.addImage(path);
     final File jpeg = TempFileUtil.createTempFile("uploadMagick", extensionOut);
     try {
       op.addImage(jpeg.getAbsolutePath());
@@ -197,6 +309,10 @@ public class ImageMagickUtils {
    */
   private static boolean isImage(String extension) {
     return StorageUtils.getMimeType(extension).contains("image");
+  }
+
+  private static boolean isVideo(String extension) {
+    return StorageUtils.getMimeType(extension).contains("video");
   }
 
   /**

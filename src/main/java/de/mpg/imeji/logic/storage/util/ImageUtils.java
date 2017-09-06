@@ -65,6 +65,7 @@ public final class ImageUtils {
     return file;
   }
 
+
   /**
    * Transform an image in jpeg. Useful to reduce size of thumbnail and web resolution images. If
    * the format of the image is not supported, return null

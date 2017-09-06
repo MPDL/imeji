@@ -18,7 +18,6 @@ import java.net.URI;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.config.Imeji;
@@ -425,23 +424,21 @@ public class InternalStorageManager implements Serializable {
         final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
         // write web resolution file in storage
         final String calculatedExtension = guessExtension(file);
-        File resFile = generatorManager.generateWebResolution(file, calculatedExtension);
-        final String webResolutionPath = write(resFile, transformUrlToPath(item.getWebUrl()));
-        // Use Web resolution to generate Thumbnail (avoid to read the original
-        // file again)
-        final File webResolutionFile = new File(webResolutionPath);
-        write(
-            generatorManager.generateThumbnail(webResolutionFile,
-                FilenameUtils.getExtension(webResolutionPath)),
-            transformUrlToPath(item.getThumbnailUrl()));
+        File fullResolution = generatorManager.generateFullResolution(file, calculatedExtension);
+        write(fullResolution, transformUrlToPath(item.getFullUrl()));
+        // if (fullResolution != null) {
+        // write(fullResolution, transformUrlToPath(item.getFullUrl()));
+        // } else {
+        // fullResolution = file;
+        // copy(file, transformUrlToPath(item.getFullUrl()));
+        // }
 
-        // Tries to calculate a jpg for the full resolution.
-        File fullRes = generatorManager.generateFullResolution(file, calculatedExtension);
-        if (fullRes != null) {
-          write(fullRes, transformUrlToPath(item.getFullUrl()));
-        } else {
-          copy(file, transformUrlToPath(item.getFullUrl()));
-        }
+        // Generate and write Web resolution
+        write(generatorManager.generateWebResolution(fullResolution, calculatedExtension),
+            transformUrlToPath(item.getWebUrl()));
+        // Generate and write Thumbnail resolution
+        write(generatorManager.generateThumbnail(fullResolution, calculatedExtension),
+            transformUrlToPath(item.getThumbnailUrl()));
       } catch (final Exception e) {
         LOGGER.error("Error transforming and writing file in internal storage ", e);
       } finally {

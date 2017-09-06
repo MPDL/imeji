@@ -2,6 +2,7 @@ package de.mpg.imeji.logic.storage.transform.generator;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.apache.log4j.Logger;
 
@@ -23,14 +24,18 @@ public class NiceRawFileImageGenerator implements ImageGenerator {
   @Override
   public File generateJPG(File file, String extension) throws ImejiException {
     try {
-      File res = new File(RawFileImageGenerator.class.getClassLoader()
-          .getResource(PATH_TO_ICONS + extension + ".jpg").toURI());
-      if (res.exists()) {
-        return res;
+      URL urlResource = RawFileImageGenerator.class.getClassLoader()
+          .getResource(PATH_TO_ICONS + extension + ".jpg");
+      if (urlResource != null) {
+        File res = new File(RawFileImageGenerator.class.getClassLoader()
+            .getResource(PATH_TO_ICONS + extension + ".jpg").toURI());
+        if (res.exists()) {
+          return res;
+        }
       }
       return null;
     } catch (URISyntaxException e) {
-      LOGGER.error("Error creating icon", e);
+      LOGGER.error("Error creating icon for " + extension, e);
       return null;
     }
   }

@@ -291,6 +291,8 @@ public class StorageUtils {
       return "image/jpx";
     } else if ("mpg".equals(extension)) {
       return "video/mpeg";
+    } else if ("mpga".equals(extension)) {
+      return "audio/mpeg";
     } else if ("nef".equals(extension)) {
       return "image/x-nikon-nef";
     } else if ("mp4".equals(extension)) {

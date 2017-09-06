@@ -61,7 +61,7 @@
 		</ui:fragment>
 		
 		<ui:fragment rendered="#{itemBean.videoFile}">
-			<video id="imejiVideoPlayer" src="#{itemBean.originalFile}" controls="controls" 
+			<video id="imejiVideoPlayer" poster="#{itemBean.preview}" src="#{itemBean.originalFile}" controls="controls" 
 			 preload="auto" height="264"></video>
 		</ui:fragment>
 		<ui:fragment rendered="#{itemBean.audioFile}">

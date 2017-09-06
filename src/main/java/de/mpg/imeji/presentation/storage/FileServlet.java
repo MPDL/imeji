@@ -186,14 +186,12 @@ public class FileServlet extends HttpServlet {
     int rangeStart = parseRangeStart(range);
     int rangeEnd = parseRangeEnd(range);
     if (isFirefox(req)) {
-      System.out.println("Firefox");
       // Firefox doensn't support smaller part than requested part (for now, see
       // https://bugzilla.mozilla.org/show_bug.cgi?id=570755)
       resp.setContentLengthLong(contentLength - rangeStart);
       resp.setHeader("Content-Range",
           "bytes " + rangeStart + "-" + (rangeEnd > 0 ? rangeEnd : "" + "/" + contentLength));
     } else {
-      System.out.println("OTHER");
       // For all other browsers, set the rangeEnd according the MAX_RANGE_LENGTH, in order to limit
       // the response size
       rangeEnd = rangeStart + MAX_RANGE_LENGTH;
@@ -207,7 +205,6 @@ public class FileServlet extends HttpServlet {
     }
     resp.setStatus(206);
     readPartFile(url, resp, false, user, rangeStart, rangeEnd + 1 - rangeStart);
-
   }
 
   /**

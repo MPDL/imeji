@@ -17,7 +17,6 @@ import de.mpg.imeji.logic.storage.transform.generator.RawFileImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.SimpleAudioImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.SimpleImageGenerator;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
-import de.mpg.imeji.logic.storage.util.ImageUtils;
 import de.mpg.imeji.logic.storage.util.StorageUtils;
 
 /**
@@ -91,7 +90,7 @@ public final class ImageGeneratorManager {
         LOGGER.warn("Error generating image (generator: " + generator.getClass().getName(), e);
       }
     }
-    return null;
+    return file;
   }
 
   /**
@@ -124,8 +123,24 @@ public final class ImageGeneratorManager {
   private File generateJpeg(File file, String extension, FileResolution resolution) {
     // Make a jpg out of the file
     try {
-      File jpeg = toJpeg(file, extension);
-      return ImageUtils.resizeJPEG(jpeg, resolution);
+      // File jpeg = ImageMagickUtils.resizeToJpg(file, extension, resolution);
+      // if (jpeg != null) {
+      // return jpeg;
+      // }
+      return ImageMagickUtils.resizeJpg(toJpeg(file, extension), "jpg", resolution);
+      // long a = System.currentTimeMillis();
+      // File jpeg = toJpeg(file, extension);
+      // long b = System.currentTimeMillis();
+      // File f = ImageUtils.resizeJPEG(jpeg, resolution);
+      // long c = System.currentTimeMillis();
+      // return ImageMagickUtils.resizeToJpg(file, extension, resolution);
+      /*
+       * File fMagick = ImageMagickUtils.resizeToJpg(file, extension, resolution); long d =
+       * System.currentTimeMillis(); System.out.println("To jpeg: " + (b - a));
+       * System.out.println("Resize: " + (c - b)); System.out.println("Resize magick: " + (d - c));
+       * System.out.println("Magick result for " + resolution + ": " + fMagick.getAbsolutePath());
+       */
+      // return f;
     } catch (final Exception e) {
       LOGGER.error("Error generating JPEG from File: ", e);
     }
