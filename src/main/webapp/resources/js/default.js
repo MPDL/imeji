@@ -309,7 +309,6 @@ $(".imj_bodyContextSearch li").click(function(){
 function goToSearch(index) {
 	var appendChar="?";
 	var url=$('.imj_bodyContextSearch li:nth-child('+ index +')').data('url');
-	console.log("url: " + url);
 	if(url.indexOf("?") >= 0){
 		appendChar="&";
 	}
@@ -339,6 +338,7 @@ $("#simpleSearchInput").focusin(function() {
 // Set the correct context for the search according to the current page
 $( document ).ready(function() {
 	selectedSearch = 1;
+	
 	var path = window.location.pathname;
 	$("ul.imj_bodyContextSearch li" ).each(function( index ) {
 		if($(this).data('url').indexOf(path) !== -1){

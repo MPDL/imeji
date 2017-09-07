@@ -15,7 +15,7 @@
 		<ui:fragment rendered="#{Auth.loggedIn}">
 			<h:form id="showUploadForm">
 				<h:commandLink id="upload" rendered="#{Auth.update}" action="#{cc.attrs.collectionBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_openUploadDialog" onclick="openDialog('uploadDialog');">
-					<f:ajax/>
+					<f:ajax render=":additonalFooterScripts"/>
 						<span class="fa fa-upload"/> <span>#{lbl.upload}</span>
 				</h:commandLink>
 			</h:form>
