@@ -309,7 +309,8 @@ $(".imj_bodyContextSearch li").click(function(){
 function goToSearch(index) {
 	var appendChar="?";
 	var url=$('.imj_bodyContextSearch li:nth-child('+ index +')').data('url');
-	if(url.includes("?")){
+	console.log("url: " + url);
+	if(url.indexOf("?") >= 0){
 		appendChar="&";
 	}
 	window.open(url + appendChar+'q=' + encodeURIComponent($('#simpleSearchInputText').val()),
