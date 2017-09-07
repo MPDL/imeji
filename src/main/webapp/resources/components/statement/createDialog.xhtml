@@ -33,7 +33,7 @@
 				onclick="closeDialog('createStatementDialog');startLoader();"
 				action="#{cc.attrs.bean[cc.attrs.submitAction]}"
 				value="#{lbl.save}" class="imj_submitButton">
-				<f:ajax execute="@form" render="@form"/>
+				<f:ajax execute="@form" render="@form :additonalFooterScripts"/>
 			</h:commandButton>
 		</div>
 	</div>

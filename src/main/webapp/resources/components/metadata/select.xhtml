@@ -47,7 +47,7 @@
 					<p>
 						<h:commandLink value="#{index}" action="#{cc.attrs.bean[cc.attrs.submitAction]}" onclick="closeDialog('selectStatementDialog');startLoader();">
 							<f:setPropertyActionListener target="#{cc.attrs.component.index}" value="#{index}" />
-							<f:ajax execute="@form" render="@form" />
+							<f:ajax execute="@form" render="@form :additonalFooterScripts" />
 						</h:commandLink>
 					</p>
 				</ui:repeat>
