@@ -41,7 +41,6 @@ public class ElasticReIndexJob implements Callable<Integer> {
       reindexContents(index);
       reindexFolders(index);
       ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
-      // IMPORTANT: Albums must be reindex after Items
       LOGGER.info("Reindex done!");
     } catch (final Exception e) {
       LOGGER.error("Error by reindex", e);

@@ -29,7 +29,7 @@
 					"type": "edge_ngram",
 					"min_gram": 2,
 					"max_gram": 100,
-					"token_chars": []
+					"token_chars": ["letter", "digit", "punctuation", "symbol"]
 				}
 			}
 		}

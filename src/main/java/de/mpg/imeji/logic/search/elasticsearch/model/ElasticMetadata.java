@@ -43,7 +43,6 @@ public final class ElasticMetadata extends ElasticPerson {
     if (!StringHelper.isNullOrEmptyTrim(md.getDate())) {
       this.time = DateFormatter.getTime(md.getDate());
       this.date = md.getDate();
-      System.out.println(date + ": " + time);
     }
     if (!Double.isNaN(md.getLatitude()) && !Double.isNaN(md.getLongitude())) {
       this.location = md.getLatitude() + "," + md.getLongitude();
