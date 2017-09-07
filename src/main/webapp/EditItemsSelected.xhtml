@@ -33,7 +33,6 @@
 		<div class="loaderWrapper show" />
 		<div class="loader show" />
 		<h:form id="editSelectedForm" prependId="false">
-		
 			<div class="editSelectedWrapper">
 				<h:panelGroup layout="block" id="editItemsSelect_MessageArea">
 					<ui:repeat var="message" value="#{MessagesBean.messages}">
@@ -99,7 +98,7 @@
 									<ui:fragment
 										rendered="#{not EditItemsSelectedBean.displayedColumns.contains(head.statement.index)}">
 										<th class="column_#{status.index} columnHidden">
-											<h:commandLink class="fa fa-expand" title="#{head.statement.index}"
+											<h:commandLink class="fa fa-expand" title="#{lbl.show} #{head.statement.index}"
 												action="#{EditItemsSelectedBean.displayedColumns.add(head.statement.index)}"
 												onclick="startLoader();" >
 												<f:ajax render="@form :additonalFooterScripts"/>

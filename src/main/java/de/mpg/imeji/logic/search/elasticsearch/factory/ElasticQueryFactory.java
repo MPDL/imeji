@@ -499,14 +499,18 @@ public class ElasticQueryFactory {
       default:
         String from = parseFromValue(dateString);
         String to = parseToValue(dateString);
-        RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
-        if (!StringHelper.isNullOrEmptyTrim(from)) {
-          rq.gte(DateFormatter.getTime(from));
+        if (!StringHelper.isNullOrEmptyTrim(from) || !StringHelper.isNullOrEmptyTrim(to)) {
+          RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
+          if (!StringHelper.isNullOrEmptyTrim(from)) {
+            rq.gte(DateFormatter.getTime(from));
+          }
+          if (!StringHelper.isNullOrEmptyTrim(to)) {
+            rq.lte(DateFormatter.getTime(to));
+          }
+          q = rq;
+        } else {
+          q = QueryBuilders.termQuery(field, DateFormatter.getTime(dateString));
         }
-        if (!StringHelper.isNullOrEmptyTrim(to)) {
-          rq.lte(DateFormatter.getTime(to));
-        }
-        q = rq;
         break;
     }
     return negate(q, not);
@@ -530,14 +534,18 @@ public class ElasticQueryFactory {
       default:
         String from = parseFromValue(number);
         String to = parseToValue(number);
-        RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
-        if (!StringHelper.isNullOrEmptyTrim(from)) {
-          rq.gte(from);
+        if (!StringHelper.isNullOrEmptyTrim(from) || !StringHelper.isNullOrEmptyTrim(to)) {
+          RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
+          if (!StringHelper.isNullOrEmptyTrim(from)) {
+            rq.gte(from);
+          }
+          if (!StringHelper.isNullOrEmptyTrim(to)) {
+            rq.lte(to);
+          }
+          q = rq;
+        } else {
+          q = QueryBuilders.termQuery(field, number);
         }
-        if (!StringHelper.isNullOrEmptyTrim(to)) {
-          rq.lte(to);
-        }
-        q = rq;
         break;
     }
     return negate(q, not);
