@@ -15,17 +15,17 @@
 			<h:form>
 				<h:panelGroup rendered="#{cc.attrs.showSwitchListView}" class="imj_rangeSelector">
 				 	<h:commandLink id="switchListView" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"  title="thumbnail list" styleClass="fa fa-th fa-size-2 #{SessionBean.selectedBrowseListView == 'THUMBNAIL' ? 'disabled' : ''}" value="&#160;" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}">
-                    	<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+                    	<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
                     </h:commandLink>
                 	<h:commandLink title="detail list"  rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}" styleClass="fa fa-list-alt fa-size-2 #{SessionBean.selectedBrowseListView == 'LIST' ? 'disabled' : ''}" value="&#160;" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'LIST'}">
-                	    <f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+                	    <f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
                 	</h:commandLink>
                 	&#160;
 				</h:panelGroup>
 			 	<div id="imj_rangeSelector" class="imj_rangeSelector">
 			 		<h:selectOneMenu id="extSelectTop" value="#{cc.attrs.paginatorBean.elementsPerPage}" valueChangeListener="#{cc.attrs.paginatorBean.elementsPerPageListener}" onchange="startLoader();">
 			 			<f:selectItems value="#{cc.attrs.paginatorBean.elementsPerPageSelectItems}"/>
-			 			<f:ajax execute="@form" event="change" render=":ajaxWrapper :imj_pageMessageArea"/>
+			 			<f:ajax execute="@form" event="change" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 			 		</h:selectOneMenu>
 					<h:outputLabel id="lblItemList_ObjectsPerPage" for="extSelectTop" value="#{lbl.paginator_objectsPerPage}" styleClass="imj_rangeSelectorLabel"/>  
 			 	</div>
@@ -33,13 +33,13 @@
 			 		<label id="lblPage" class="imj_noDisplay">Page: </label>
 
 			 		<h:commandLink id="btPartListSizeAjax" onclick="startLoader(); window.location.href = '#';"  styleClass="fa fa-step-backward" value=" " title="#{lbl.paginator_results} 1 - #{cc.attrs.paginatorBean.partListSize}" action="#{cc.attrs.paginatorBean.goToFirstPage}" rendered="#{cc.attrs.paginatorBean.currentPageNumber != 1}">
-			 			<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+			 			<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 			 		</h:commandLink>
 			 		<h:panelGroup styleClass="fa fa-step-backward imj_deactivated" rendered="#{cc.attrs.paginatorBean.currentPageNumber == 1}">
 			 			<h:outputText value=" "/>
 			 		</h:panelGroup>
 			 		<h:commandLink id="btList_lkPreviousAjax" onclick="startLoader(); window.location.href = '#';"  styleClass="fa fa-chevron-left" value=" " title="#{lbl.paginator_results} #{cc.attrs.paginatorBean.offset + 1 - cc.attrs.paginatorBean.elementsPerPage} - #{cc.attrs.paginatorBean.offset}" action="#{cc.attrs.paginatorBean.goToPreviousPage}" rendered="#{cc.attrs.paginatorBean.currentPageNumber != 1}">
-			 			<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+			 			<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 			 		</h:commandLink>
 			 		<h:panelGroup styleClass="fa fa-chevron-left imj_deactivated" rendered="#{cc.attrs.paginatorBean.currentPageNumber == 1}"/>
 			 		
@@ -53,7 +53,7 @@
 				 			</h:panelGroup>
 				 			
 				 			<h:commandButton id="btPageNumberAjax" onclick="startLoader(); window.location.href = '#';" styleClass="imj_pageNumber" value="#{paginatorPage.number}" title="#{lbl.paginator_results} #{(paginatorPage.number-1) * cc.attrs.paginatorBean.elementsPerPage +1} -  #{paginatorPage.number*cc.attrs.paginatorBean.elementsPerPage}" action="#{cc.attrs.paginatorBean.gotoPageNumber(paginatorPage.number)}" rendered="#{paginatorPage.number != cc.attrs.paginatorBean.currentPageNumber}">
-				 				<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+				 				<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 				 			</h:commandButton>
 				 			
 				 			<h:outputText value="|" styleClass="imj_separator" rendered="#{!var.last}"/>
@@ -66,21 +66,21 @@
 			 						 title="#{lbl.paginator_results} #{cc.attrs.paginatorBean.offset + 1 + cc.attrs.paginatorBean.elementsPerPage} -  #{cc.attrs.paginatorBean.offset + 1 + 2*cc.attrs.paginatorBean.elementsPerPage}" 
 			 						 action="#{cc.attrs.paginatorBean.goToNextPage}" 
 			 						 rendered="#{cc.attrs.paginatorBean.currentPageNumber != cc.attrs.paginatorBean.paginatorPageSize and (cc.attrs.paginatorBean.offset + 1 + 2*cc.attrs.paginatorBean.elementsPerPage lt cc.attrs.paginatorBean.totalNumberOfElements)}">
-			 			<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+			 			<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 			 		</h:commandLink>
 			 		<!-- Paginator next button if next >= cc.attrs.paginatorBean.totalNumberOfElements -->
 			 		<h:commandLink id="btList_lkNextAjax2"  styleClass="fa fa-chevron-right" value=" " alt="#{lbl.paginator_next}" onclick="startLoader(); window.location.href = '#';"
 			 						 title="#{lbl.paginator_results} #{cc.attrs.paginatorBean.offset + 1 + cc.attrs.paginatorBean.elementsPerPage} -  #{cc.attrs.paginatorBean.totalNumberOfElements}" 
 			 						 action="#{cc.attrs.paginatorBean.goToNextPage}" 
 			 						 rendered="#{cc.attrs.paginatorBean.currentPageNumber != cc.attrs.paginatorBean.paginatorPageSize and (cc.attrs.paginatorBean.offset + 1 + 2*cc.attrs.paginatorBean.elementsPerPage ge cc.attrs.paginatorBean.totalNumberOfElements)}">
-			 			<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+			 			<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 			 		</h:commandLink>
 			 		<h:panelGroup styleClass="fa fa-chevron-right imj_deactivated" rendered="#{cc.attrs.paginatorBean.currentPageNumber == cc.attrs.paginatorBean.paginatorPageSize}"/>
 			 		
 			 		
 			 		<ui:fragment rendered="#{cc.attrs.paginatorBean.currentPageNumber != cc.attrs.paginatorBean.paginatorPageSize}">
 				 		<h:commandLink id="btLinkForLastPageAjax" onclick="startLoader(); window.location.href = '#';" styleClass="fa fa-step-forward" value=" " title="#{lbl.paginator_results} #{((cc.attrs.paginatorBean.paginatorPageSize-1) * cc.attrs.paginatorBean.elementsPerPage + 1)} - #{cc.attrs.paginatorBean.totalNumberOfElements}" action="#{cc.attrs.paginatorBean.goToLastPage}">
-				 			<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+				 			<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 				 		</h:commandLink>
 				 	</ui:fragment>
 			 		<h:panelGroup styleClass="fa fa-step-forward imj_deactivated" rendered="#{cc.attrs.paginatorBean.currentPageNumber == cc.attrs.paginatorBean.paginatorPageSize}"/>
@@ -92,7 +92,7 @@
 			 		<h:outputText id="lblItemList_of" value="#{lbl.paginator_of} "/>
 			 		<h:outputText id="lblPaginatorPageSize" value="#{cc.attrs.paginatorBean.paginatorPageSize}"/>
 			 		<h:commandButton type="submit" onclick="startLoader(); window.location.href = '#';" id="btList_btGo" styleClass="imj_noDisplay" value="#{lbl.paginator_go}" title="#{tip.List_btGo}" action="#{cc.attrs.paginatorBean.goToPage}" >
-			 			<f:ajax execute="@form" render=":ajaxWrapper :imj_pageMessageArea"/>
+			 			<f:ajax execute="@form" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 			 		</h:commandButton>
 			 	</h:form>
 			 </div>

@@ -36,6 +36,8 @@ public class ElasticSearch implements Search {
   private ElasticTypes type = null;
   private ElasticIndexer indexer = null;
   private static final int SEARCH_MAX_SIZE = 500;
+  private static final int ELASTIC_FROM_SIZE_LIMIT = 10000;
+
 
   /**
    * Construct an Elastic Search Query for on data type. If type is null, search for all types
@@ -88,7 +90,7 @@ public class ElasticSearch implements Search {
   private SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
       int from, int size, boolean addFacets) {
     size = size == -1 ? size = SEARCH_MAX_SIZE : size;
-    if (size < SEARCH_MAX_SIZE) {
+    if (size < SEARCH_MAX_SIZE && from + size < ELASTIC_FROM_SIZE_LIMIT) {
       return searchSinglePage(query, sortCri, user, folderUri, from, size, addFacets);
     } else {
       return searchWithScroll(query, sortCri, user, folderUri, from, size, addFacets);

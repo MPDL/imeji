@@ -42,7 +42,7 @@
 				<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu and cc.attrs.numberOfElements > 0}">
 					<div class="imj_menuHeader">
 	                    <h:commandLink id="lnkSortAsc" value="" action="#{cc.attrs.facetBean.toggleSortOrder}" onclick="startLoader();">
-	                    	<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+	                    	<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 							<span class="fa #{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING' ? 'fa-arrow-up' : 'fa-arrow-down' }"></span>
 							#{lbl.sort_by} #{cc.attrs.facetBean.selectedSortCriterionLabel}
 						</h:commandLink>
@@ -53,7 +53,7 @@
 								<ui:fragment rendered="#{cc.attrs.facetBean.selectedSortCriterion != sortItem.value}">
 									<li class="imj_overlayMenuListItem">
 										<h:commandLink value="#{sortItem.label}" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
-											<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+											<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 										</h:commandLink>
 									</li>
 								</ui:fragment>

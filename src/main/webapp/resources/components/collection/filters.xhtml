@@ -17,7 +17,7 @@
 				<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item">
 					<div class="imj_menuHeader">
 						<h:commandLink id="lnkSortAsc" value=""  action="#{cc.attrs.filterBean.toggleSortOrder}" onclick="startLoader();">
-							<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+							<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 							<span class="fa #{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING' ? 'fa-arrow-up' : 'fa-arrow-down' }"></span>
 							#{lbl.sort_by} #{cc.attrs.filterBean.selectedSortCriterionLabel}
 						</h:commandLink>
@@ -29,7 +29,7 @@
 								<ui:fragment rendered="#{cc.attrs.filterBean.selectedSortCriterion != sortItem.value}">
 									<li>
 										<h:commandLink action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" onclick="startLoader();">
-											<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
+											<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 										</h:commandLink>
 									</li>
 								</ui:fragment>

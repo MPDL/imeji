@@ -97,6 +97,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     browseContext = getNavigationString();
     isSimpleSearch = SearchQueryParser.isSimpleSearch(searchQuery);
     update();
+    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("error_page_not_exists", getLocale()));
   }
 
   @Override
