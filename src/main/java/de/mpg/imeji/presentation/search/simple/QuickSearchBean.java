@@ -46,7 +46,6 @@ public class QuickSearchBean implements Serializable {
   }
 
   public String reduceTitle(String title) {
-    System.out.println(title);
     int TITLE_MAX_LENGTH = 30;
     return title.length() < TITLE_MAX_LENGTH ? title : title.substring(0, TITLE_MAX_LENGTH) + "...";
   }

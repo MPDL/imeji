@@ -52,6 +52,7 @@ public class AdvancedSearchBean extends SuperBean {
       BeanHelper.error("Error initializing page: " + e.getMessage());
       LOGGER.error("Error initializing advanced search", e);
     }
+    resetSelectedItems();
   }
 
   /**

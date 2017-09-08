@@ -45,7 +45,7 @@ public class SessionBean implements Serializable {
   }
 
   private User user = null;
-  private List<String> selected = new ArrayList<String>();;
+  private List<String> selected = new ArrayList<String>();
   private String selectedImagesContext = null;
   private Style selectedCss = Style.NONE;
   private String applicationUrl;

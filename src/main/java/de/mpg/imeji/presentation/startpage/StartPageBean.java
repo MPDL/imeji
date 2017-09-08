@@ -29,7 +29,7 @@ public class StartPageBean extends SuperBean implements Serializable {
 
   @PostConstruct
   public void init() {
-
+    resetSelectedItems();
   }
 
   /**

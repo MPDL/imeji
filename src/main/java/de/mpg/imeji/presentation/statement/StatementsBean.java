@@ -41,6 +41,7 @@ public class StatementsBean extends SuperBean {
 
   @PostConstruct
   public void init() {
+    resetSelectedItems();
     try {
       List<Statement> list = service.retrieveAll();
       for (Statement s : list) {

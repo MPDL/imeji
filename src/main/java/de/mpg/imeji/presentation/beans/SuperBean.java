@@ -3,6 +3,7 @@ package de.mpg.imeji.presentation.beans;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
@@ -36,12 +37,18 @@ public class SuperBean implements Serializable {
   private HistoryPage previousPage;
   @ManagedProperty(value = "#{HistorySession.currentPage}")
   private HistoryPage currentPage;
+  @ManagedProperty(value = "#{SessionBean.selected}")
+  private List<String> selectedItems;
   private final String backUrl;
 
   public SuperBean() {
     this.backUrl = UrlHelper.getParameterValue("back");
   }
 
+  protected void resetSelectedItems() {
+    System.out.println("Reset");
+    selectedItems.clear();
+  }
 
   /**
    * Redirect to the passed url
@@ -136,5 +143,20 @@ public class SuperBean implements Serializable {
   public String getBackUrl() {
     return backUrl;
   }
+
+  /**
+   * @return the selected
+   */
+  public List<String> getSelectedItems() {
+    return selectedItems;
+  }
+
+  /**
+   * @param selected the selected to set
+   */
+  public void setSelectedItems(List<String> selected) {
+    this.selectedItems = selected;
+  }
+
 
 }
