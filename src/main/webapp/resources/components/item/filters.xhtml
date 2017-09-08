@@ -21,7 +21,8 @@
 	        </a>
 	        <div class="itemsCount">#{cc.attrs.numberOfElements} #{cc.attrs.numberOfElements > 1 ? lbl.items : lbl.item}</div>
 			<h:form>
-				<ui:fragment rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}">
+				
+				<ui:fragment rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL' and cc.attrs.facetBean.collection.status != 'WITHDRAWN'}">
 					<div class="imj_overlayMenu">
 						<div class="imj_menuHeader">
 							<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectAll}"  id="lnkSelectAllOnPage" title="#{lbl.select_all_on_page}"  styleClass="selectAll" rendered="#{!cc.attrs.facetBean.allSelected}" style="margin-right: 1em;">
