@@ -139,8 +139,8 @@
 				</h:commandButton>
 			
 				<div class="imj_metadataSet">
-					<div class="imj_metadataLabel imj_requiredMarker">
-						<h:outputText value="#{lbl.organization}"/>
+					<div class="imj_metadataLabel">
+						<h:outputText value="#{lbl.organization}"/><h:outputText value="*" rendered="#{index.index == 0}"/>
 						<span class="imj_noDisplay">: </span>
 					</div>
 					<div class="imj_metadataValue">
