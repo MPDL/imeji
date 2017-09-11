@@ -22,7 +22,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.core.Response.Status;
 
@@ -31,6 +30,7 @@ import org.apache.log4j.Logger;
 import com.ocpsoft.pretty.PrettyContext;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
+import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.presentation.navigation.Navigation;

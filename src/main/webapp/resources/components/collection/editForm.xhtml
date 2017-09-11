@@ -13,6 +13,12 @@
 </composite:interface>
 
 <composite:implementation>
+	<style>
+		 .moxie-shim-html5{
+		 	position: relative !important;
+		 	height: auto !important;
+		 }
+	</style>
 	<h:form id="mediaContainerForm"
 		onkeyup="if (event.keyCode == 13 &amp;&amp; document.activeElement.id!='editContainer:mediaContainerForm:inputDescription'){document.getElementById('editContainer:mediaContainerForm:btn_saveCollection').click();return false;}">
 		<div class="imj_descriptionArea">
@@ -125,9 +131,6 @@
 				</div>
 				<span class="imj_noDisplay">: </span>
 			</h:panelGroup>
-
-			
-
 			<div class="imj_metadataSet">
 				<label class="imj_metadataLabel">#{lbl.logo}</label>
 				<div class="imj_metadataValue">
@@ -149,7 +152,43 @@
 						<div id="container">
 							<a id="pickfiles" href="javascript:;">[#{lbl.uploadLogo}]</a>
 						</div>
-						<script type="text/javascript"
+						
+					</div>
+					
+				</div>
+			</div>
+			
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel">#{lbl.notifications}<span
+					class="imj_noDisplay">: </span>
+				</label>
+				<div class="imj_metadataValue">
+					<h:selectBooleanCheckbox id="notificationCheckBox"
+						value="#{cc.attrs.formularBean.sendEmailNotification}" />
+					<h:outputLabel styleClass="imj_metadataLabel"
+						for="notificationCheckBox">
+						<h:outputText value="#{lbl.send_email_on_download}" />
+						<span class="imj_noDisplay">: </span>
+					</h:outputLabel>
+				</div>
+			</div>
+			
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel"> </label>
+				<div class="imj_metadataValue">
+					<a href="#{HistorySession.previousPage.completeUrlWithHistory}"
+						class="imj_cancelButton">
+						#{lbl.cancel}
+					</a>
+					<h:commandButton id="btn_saveCollection"
+						action="#{cc.attrs.formularBean.save}" value="#{lbl.save}"
+						styleClass="imj_submitButton" onclick="startLoader();">
+					</h:commandButton>
+					* #{lbl.required}
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript"
 							src="#{Navigation.applicationUrl}resources/plupload/2.1.2/js/plupload.full.min.js"></script>
 						<script type="text/javascript">
 							var uploader = new plupload.Uploader(
@@ -248,41 +287,6 @@
 								uploader.splice();
 							}
 						</script>
-					</div>
-					
-				</div>
-			</div>
-			
-			<div class="imj_metadataSet">
-				<label class="imj_metadataLabel">#{lbl.notifications}<span
-					class="imj_noDisplay">: </span>
-				</label>
-				<div class="imj_metadataValue">
-					<h:selectBooleanCheckbox id="notificationCheckBox"
-						value="#{cc.attrs.formularBean.sendEmailNotification}" />
-					<h:outputLabel styleClass="imj_metadataLabel"
-						for="notificationCheckBox">
-						<h:outputText value="#{lbl.send_email_on_download}" />
-						<span class="imj_noDisplay">: </span>
-					</h:outputLabel>
-				</div>
-			</div>
-			
-			<div class="imj_metadataSet">
-				<label class="imj_metadataLabel"> </label>
-				<div class="imj_metadataValue">
-					<a href="#{HistorySession.previousPage.completeUrlWithHistory}"
-						class="imj_cancelButton">
-						#{lbl.cancel}
-					</a>
-					<h:commandButton id="btn_saveCollection"
-						action="#{cc.attrs.formularBean.save}" value="#{lbl.save}"
-						styleClass="imj_submitButton" onclick="startLoader();">
-					</h:commandButton>
-					* #{lbl.required}
-				</div>
-			</div>
-		</div>
 	</h:form>
 	
 </composite:implementation>

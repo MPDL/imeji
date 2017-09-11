@@ -46,7 +46,6 @@ public class SuperBean implements Serializable {
   }
 
   protected void resetSelectedItems() {
-    System.out.println("Reset");
     selectedItems.clear();
   }
 

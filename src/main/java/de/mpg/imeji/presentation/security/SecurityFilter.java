@@ -30,6 +30,7 @@ import com.ocpsoft.pretty.PrettyContext;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.BadRequestException;
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.authentication.impl.HttpAuthentication;
@@ -117,12 +118,14 @@ public class SecurityFilter implements Filter {
    * @throws NotAllowedError
    * @throws BadRequestException
    */
-  private void checkReadAuthorization(HttpServletRequest request, User user)
-      throws NotFoundException, AuthenticationError, NotAllowedError, BadRequestException {
+  private void checkReadAuthorization(HttpServletRequest request, User user) throws ImejiException {
     URI uri = getCollectionURI(request);
     if (uri != null) {
-      // uri found in the request -> check if the can see it
-      if (SecurityUtil.authorization().read(user, uri)) {
+      // uri found in the request -> check if user can see it
+      if (SecurityUtil.authorization().isSysAdmin(user)) {
+        // Check if public in order to check if the collection really exists
+        isPublic(uri);
+      } else if (SecurityUtil.authorization().read(user, uri)) {
         // user can read -> OK
         return;
       } else if (isPublic(uri)) {
@@ -163,7 +166,7 @@ public class SecurityFilter implements Filter {
    * @return
    * @throws BadRequestException
    */
-  private URI getCollectionURI(HttpServletRequest request) throws BadRequestException {
+  private URI getCollectionURI(HttpServletRequest request) throws NotFoundException {
     final String collectionId = request.getParameter("collectionId");
     final String itemId = request.getParameter("id");
     if (collectionId != null) {
@@ -181,11 +184,11 @@ public class SecurityFilter implements Filter {
    * @return
    * @throws BadRequestException
    */
-  private URI getCollectionOfItem(URI uri) throws BadRequestException {
+  private URI getCollectionOfItem(URI uri) throws NotFoundException {
     SearchResult result = JENA_SEARCH
         .searchString(JenaCustomQueries.selectCollectionIdOfItem(uri.toString()), null, null, 0, 1);
     if (result.getNumberOfRecords() < 1) {
-      throw new BadRequestException(uri + " hasn't a collection");
+      throw new NotFoundException(uri + " hasn't a collection");
     } else {
       return URI.create(result.getResults().get(0));
     }

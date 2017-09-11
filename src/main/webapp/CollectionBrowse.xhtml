@@ -9,10 +9,6 @@
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:col="http://java.sun.com/jsf/composite/components/collection">
 
-	<f:metadata>
-		<f:event listener="#{CollectionItemsBean.preRenderView}"  type="preRenderView" />
-	</f:metadata>
-
 	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}" />
 	<ui:param name="headline" value="" />
 	<ui:param name="title" value="#{not empty CollectionItemsBean.query or not empty CollectionItemsBean.facetQueryString ? lbl.search_results : CollectionItemsBean.collection.title}" />

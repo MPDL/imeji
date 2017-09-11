@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import javax.faces.bean.ManagedBean;
 
-import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.vo.Properties;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
 
@@ -30,7 +28,7 @@ public class WorkflowBean implements Serializable {
     try {
       validator.isReleaseAllowed(p);
       return true;
-    } catch (final ImejiException e) {
+    } catch (final Exception e) {
       return false;
     }
   }
@@ -45,7 +43,7 @@ public class WorkflowBean implements Serializable {
     try {
       validator.isWithdrawAllowed(p);
       return true;
-    } catch (final ImejiException e) {
+    } catch (final Exception e) {
       return false;
     }
   }
@@ -60,7 +58,7 @@ public class WorkflowBean implements Serializable {
     try {
       validator.isDeleteAllowed(p);
       return true;
-    } catch (final WorkflowException e) {
+    } catch (final Exception e) {
       return false;
     }
   }
@@ -75,7 +73,7 @@ public class WorkflowBean implements Serializable {
     try {
       validator.isCreateDOIAllowed(p);
       return true;
-    } catch (final ImejiException e) {
+    } catch (final Exception e) {
       return false;
     }
   }
