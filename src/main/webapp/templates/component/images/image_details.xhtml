@@ -14,7 +14,7 @@
 	</f:metadata>
 	
 	<!-- MediaDisplayContainer - START -->
-	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
+	<h:panelGroup layout="block" style="max-heigth:#{itemBean.webResolutionMaxLength}px; " styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
 			<h:form id="rotationForm">
 				<h:inputHidden id="inputTextRotation" value="#{itemBean.rotation}" />
@@ -31,12 +31,12 @@
 					<a id="homeButton" class="fa fa-home fa-size-2 imj_mediaEditPanelItem" />
 					<a id="rotateLeftButton" class="fa fa-rotate-left fa-size-2 imj_mediaEditPanelItem" />
 					<a id="rotateRightButton" class="fa fa-rotate-right fa-size-2 imj_mediaEditPanelItem" />
-				</div>
-				<div id="seadragon-viewer-full" class="imj_previewContainer" style="width:#{itemBean.webResolutionMaxLength}px; height:#{itemBean.webResolutionMaxLength}px;position:relative">
+				</div>				
+				<div id="seadragon-viewer-full" style="height:#{itemBean.webResolutionMaxLength}px;" >
 					<a id="lnkPicFullResolutionAlt" href="#{itemBean.originalFile}" target="_blank">
-						<h:graphicImage id="picWebResolutionAlt" style="position:absolute;top:#{itemBean.webResolutionTop}px;left:#{itemBean.webResolutionLeft}px;" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
+						<h:graphicImage id="picWebResolutionAlt" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
 					</a>
-				</div>
+				</div>	
 			</center>
 			</ui:fragment>
 			<ui:fragment rendered="#{!itemBean.viewInOpenseadragon}">
@@ -49,14 +49,14 @@
 					<span class="fa fa-expand fa-size-2" />
 				</h:outputLink>
 			</center>
-			<div class="imj_previewContainer" style="width:#{itemBean.webResolutionMaxLength}px; height:#{itemBean.webResolutionMaxLength}px;position:relative">
-				<h:outputLink id="lnkPicInternalDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" target="_blank" rendered="#{itemBean.viewInDataViewer}">
-					<h:graphicImage title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
-				</h:outputLink>
-				<h:outputLink id="lnkPicFullResolution" value="#{itemBean.originalFile}" target="_blank" rendered="#{!itemBean.viewInOpenseadragon and !itemBean.viewInDataViewer}">
-					 <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" /> 
-				</h:outputLink>
-			</div>
+			
+			<h:outputLink id="lnkPicInternalDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" target="_blank" rendered="#{itemBean.viewInDataViewer}">
+				<h:graphicImage title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
+			</h:outputLink>
+			<h:outputLink id="lnkPicFullResolution" value="#{itemBean.originalFile}" target="_blank" rendered="#{!itemBean.viewInOpenseadragon and !itemBean.viewInDataViewer}">
+				 <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" /> 
+			</h:outputLink>
+			 
 			</ui:fragment>
 		</ui:fragment>
 		

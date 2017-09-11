@@ -103,12 +103,12 @@ public final class ImageGeneratorManager {
    * @return
    */
   public File generate(File file, String extension, FileResolution resolution) {
-    if (StorageUtils.compareExtension("gif", extension)) {
-      final File gifFile = ImageMagickUtils.resizeAnimatedGif(file, resolution);
-      if (gifFile != null) {
-        return gifFile;
-      }
-    }
+    // if (StorageUtils.compareExtension("gif", extension)) {
+    // final File gifFile = ImageMagickUtils.resizeAnimatedGif(file, resolution);
+    // if (gifFile != null) {
+    // return gifFile;
+    // }
+    // }
     return generateJpeg(file, extension, resolution);
   }
 
