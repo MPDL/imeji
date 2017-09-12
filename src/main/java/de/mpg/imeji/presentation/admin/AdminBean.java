@@ -16,12 +16,12 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.logic.batch.AggregateMessages;
 import de.mpg.imeji.logic.batch.CleanContentVOsJob;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
 import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
 import de.mpg.imeji.logic.batch.ResizeWebAndThumbnailJob;
-import de.mpg.imeji.logic.batch.SendSubscribtionEmailJob;
 import de.mpg.imeji.logic.batch.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
@@ -344,8 +344,8 @@ public class AdminBean extends SuperBean {
     Imeji.getEXECUTOR().submit(job);
   }
 
-  public void test() {
-    Imeji.getEXECUTOR().submit(new SendSubscribtionEmailJob());
+  public void aggregateMessages() {
+    Imeji.getEXECUTOR().submit(new AggregateMessages());
   }
 
 }

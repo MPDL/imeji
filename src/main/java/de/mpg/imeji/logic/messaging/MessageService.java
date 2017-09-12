@@ -40,9 +40,39 @@ public class MessageService {
    * @param objectId
    * @return
    */
-  public List<Message> readAndDeleteForObject(String objectId) {
+  public List<Message> readForObject(String objectId) {
     try {
       return QUEUE.getList(objectId + ":*", Message.class);
+    } catch (ImejiException e) {
+      LOGGER.error("Error reading message queue for object " + objectId, e);
+    }
+    return new ArrayList<>();
+  }
+
+  /**
+   * Read all messages
+   * 
+   * @return
+   */
+  public List<Message> readAll() {
+    try {
+      return QUEUE.getList(".*", Message.class);
+    } catch (ImejiException e) {
+      LOGGER.error("Error reading message queue ", e);
+    }
+    return new ArrayList<>();
+  }
+
+  /**
+   * Read and delete all messages for a specific object between 2 times
+   * 
+   * @param objectId
+   * @return
+   */
+  public List<Message> readForObject(String objectId, long from, long to) {
+    try {
+      return QUEUE.getList(objectId + ":.*", Message.class).stream()
+          .filter(m -> m.getTime() > from && m.getTime() < to).collect(Collectors.toList());
     } catch (ImejiException e) {
       LOGGER.error("Error reading message queue for object " + objectId, e);
     }
@@ -63,6 +93,21 @@ public class MessageService {
       }
     } catch (ImejiException e) {
       LOGGER.error("Error deleting message before " + timestamp, e);
+    }
+  }
+
+  /**
+   * Delete all the messages
+   * 
+   * @param messages
+   */
+  public void deleteMessages(List<Message> messages) {
+    for (Message m : messages) {
+      try {
+        QUEUE.delete(m.getMessageId());
+      } catch (ImejiException e) {
+        LOGGER.error("Error deleting message from queue", e);
+      }
     }
   }
 }

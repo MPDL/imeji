@@ -634,7 +634,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     List<Item> items = retrieve(ids, user);
     List<ContentVO> contents = retrieveContentBatchLazy(items);
     contents = filterContentsIfChecksumAlreadyExists(contents, col);
-    List<ContentVO> moved = new ContentService().move(contents, col.getIdString());
+    List<ContentVO> moved = new ContentService().move(items, contents, col.getIdString());
     if (moved.size() > 0) {
       Set<String> movedSet = moved.stream().map(c -> c.getItemId()).collect(Collectors.toSet());
       items = items.stream().filter(item -> movedSet.contains(item.getId().toString()))

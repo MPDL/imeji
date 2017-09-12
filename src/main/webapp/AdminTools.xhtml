@@ -166,6 +166,19 @@
 									</h:panelGroup>
 								</h:form>
 							</div>
+							<div class="imj_content">
+								<h:outputText value="Send pending notifications" />
+								<h:form>
+									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
+										<h:commandButton action="#{AdminBean.aggregateMessages}"
+											value="Send"
+											title="Send pending notification"
+											styleClass="imj_submitButton">
+											<f:ajax />
+										</h:commandButton>
+									</h:panelGroup>
+								</h:form>
+							</div>
 						</h:panelGroup>
 
 					</div>

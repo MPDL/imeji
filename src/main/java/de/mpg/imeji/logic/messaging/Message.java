@@ -1,6 +1,9 @@
 package de.mpg.imeji.logic.messaging;
 
 import java.io.Serializable;
+import java.util.Map;
+
+import de.mpg.imeji.logic.util.IdentifierUtil;
 
 /**
  * An imeji Message
@@ -11,36 +14,25 @@ import java.io.Serializable;
 public class Message implements Serializable {
   private static final long serialVersionUID = 7333376188527222587L;
 
-  public enum MESSAGE_TYPES {
-    UPLOAD_FILE, CHANGE_FILE;
+  public enum MessageType {
+    UPLOAD_FILE, CHANGE_FILE, MOVE_ITEM;
   }
 
-  private final MESSAGE_TYPES type;
+  private final MessageType type;
   private final long time;
   private final String objectId;
-  private final String content;
+  private final Map<String, String> content;
+  private final String id = IdentifierUtil.newRandomId();
 
-  /**
-   * Create a new Message. Ensure not to create one message for the same object at the same time
-   * 
-   * @param type
-   * @param objecdId
-   * @param content
-   * @return
-   */
-  public static synchronized Message mewMessage(MESSAGE_TYPES type, String objecdId,
-      String content) {
-    return new Message(type, objecdId, content);
-  }
 
   /**
    * Create a new Message
    * 
-   * @param type a {@link MESSAGE_TYPES}
+   * @param type a {@link MessageType}
    * @param objecdId The Id of the object
    * @param content The specific content to this message
    */
-  private Message(MESSAGE_TYPES type, String objecdId, String content) {
+  public Message(MessageType type, String objecdId, Map<String, String> content) {
     this.type = type;
     this.objectId = objecdId;
     this.content = content;
@@ -48,13 +40,13 @@ public class Message implements Serializable {
   }
 
   public String getMessageId() {
-    return objectId + ":" + time;
+    return objectId + ":" + time + ":" + id;
   }
 
   /**
    * @return the type
    */
-  public MESSAGE_TYPES getType() {
+  public MessageType getType() {
     return type;
   }
 
@@ -75,7 +67,7 @@ public class Message implements Serializable {
   /**
    * @return the content
    */
-  public String getContent() {
+  public Map<String, String> getContent() {
     return content;
   }
 
