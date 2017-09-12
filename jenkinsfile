@@ -25,5 +25,5 @@ node {
     		echo "deploy to qa":
     		break;
     	default:
-    		echo "No deployment";
+    		echo "no deployment";
 }
