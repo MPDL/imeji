@@ -170,12 +170,12 @@ public class ContentServiceTest extends SuperServiceTest {
         ImejiFactory.newCollection().setTitle("Collection 2").setPerson("m", "p", "mpdl").build();
     try {
       (new CollectionService()).create(collection2, defaultUser);
-      service.move(Arrays.asList(content), collection2.getIdString());
+      service.move(Arrays.asList(item), Arrays.asList(content), collection2.getIdString());
       Assert.assertEquals("New full url should be correct",
           content.getFull().replaceAll(collection.getIdString(), collection2.getIdString()),
           content.getFull());
       // Move back
-      service.move(Arrays.asList(content), collection.getIdString());
+      service.move(Arrays.asList(item), Arrays.asList(content), collection.getIdString());
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
     }
