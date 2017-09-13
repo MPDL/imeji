@@ -6,7 +6,7 @@ node {
 
 	stage ('Build'){	
 		// Build with maven
-		withMaven(jdk: 'Java 8', maven: 'M3') {
+		withMaven(jdk: 'Java 8', maven: 'M339') {
 		   sh 'mvn -Dmaven.test.failure.ignore=true clean install'
 		}
 	}
