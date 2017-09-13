@@ -165,7 +165,9 @@ public final class StorageController implements Serializable {
    */
   public UploadResult move(String url, String collectionId) throws ImejiException {
     try {
-      return storage.move(url, collectionId);
+      UploadResult r = storage.copy(url, collectionId);
+      storage.delete(url);
+      return r;
     } catch (IOException e) {
       throw new ImejiException("Error copying storage file", e);
     }

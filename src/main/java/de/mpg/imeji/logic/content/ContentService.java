@@ -290,18 +290,24 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
   public List<ContentVO> move(List<Item> items, List<ContentVO> contents, String collectionId)
       throws ImejiException {
     StorageController storageController = new StorageController();
+    List<ContentVO> newContents = new ArrayList<>();
     for (ContentVO content : contents) {
-      content = new ContentFactory().init(content)
-          .setFiles(storageController.move(content.getOriginal(), collectionId)).build();
+      try {
+        newContents.add(new ContentFactory().init(content)
+            .setFiles(storageController.move(content.getOriginal(), collectionId)).build());
+      } catch (Exception e) {
+        LOGGER.error("Error moving file of content " + content.getId(), e);
+      }
     }
-    contents = updateBatch(contents);
+    contents = updateBatch(newContents);
+    // write message in queue
     Map<String, Item> itemMap =
         items.stream().collect(Collectors.toMap(Item::getIdString, Function.identity()));
-    contents.stream()
+    newContents.stream()
         .forEach(c -> messageService.add(new Message(MessageType.MOVE_ITEM, collectionId,
             createMessageContent(itemMap.get(ObjectHelper.getId(URI.create(c.getItemId())))))));
 
-    return contents;
+    return newContents;
   }
 
 
