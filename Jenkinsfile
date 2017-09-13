@@ -17,8 +17,10 @@ node {
 	    switch (env.BRANCH_NAME){
 	    	case 'dev':
 	    		echo "Deploy to dev";
-		   		sshagent(credentials: ['59cb9a3a-7463-44b4-befe-457eac3bd014'], ignoreMissing: true) {
-				   sh "scp target/imeji.war dev-imeji.mpdl.mpg.de:/var/lib/tomcat8/webapps"
+		   		sshagent(credentials: ['59cb9a3a-7463-44b4-befe-457eac3bd014']) {
+		   		   sh 'echo SSH_AUTH_SOCK=$SSH_AUTH_SOCK'
+       			   sh 'ls -al $SSH_AUTH_SOCK || true'
+				   sh "scp -vvv -o StrictHostKeyChecking=no target/imeji.war dev-imeji.mpdl.mpg.de:/var/lib/tomcat8/webapps"
 				}
 	    		break;
 	    	case 'qa':
