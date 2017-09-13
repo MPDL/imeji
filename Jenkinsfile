@@ -1,6 +1,6 @@
 pipeline {
 	 tools {
-        maven 'M§'
+        maven 'M3'
         jdk 'Java 8'
     }
   	stages {
