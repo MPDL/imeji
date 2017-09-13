@@ -7,7 +7,7 @@ node {
 	stage ('Build'){	
 		// Build with maven
 		withMaven(jdk: 'Java 8', maven: 'M339') {
-		   sh 'mvn -Dmaven.test.failure.ignore=true clean install'
+		   sh 'mvn -Dmaven.test.failure.ignore=true clean install'		   
 		}
 	}
 	
@@ -17,6 +17,8 @@ node {
 	    switch (env.BRANCH_NAME){
 	    	case 'dev':
 	    		echo "Deploy to dev";
+	    		pwd();
+		   		sh "ls";
 	    		break;
 	    	case 'qa':
 	    		echo "deploy to qa";
