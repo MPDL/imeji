@@ -17,7 +17,7 @@ node {
 	    switch (env.BRANCH_NAME){
 	    	case 'dev':
 	    		echo "Deploy to dev";
-		   		sshagent(['a3e9e7ed-94a4-4fb9-ba79-8864a382b684']) {
+		   		sshagent(['29b4ac97-0fcf-4aa5-b592-70da4a50f995']) {
 				   sh "scp target/imeji.war dev-imeji.mpdl.mpg.de:/var/lib/tomcat8/webapps"
 				}
 	    		break;
