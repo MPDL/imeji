@@ -79,21 +79,21 @@ public class DailyUploadOrUpdateFileMessageAggregation implements MessageAggrega
       Map<String, List<Message>> modifiedFiles) {
     String text = "";
     if (!uploadedFiles.isEmpty() || !modifiedFiles.isEmpty()) {
+      String subject =
+          Imeji.RESOURCE_BUNDLE.getMessage("email_subscribtion_subject", Locale.ENGLISH)
+              .replace("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
+      String body = "";
       for (String collectionId : uploadedFiles.keySet()) {
         text += "\n\n" + buildTextWithListOfFiles(collectionId, uploadedFiles, modifiedFiles);
-
-        String subject =
-            Imeji.RESOURCE_BUNDLE.getMessage("email_subscribtion_subject", Locale.ENGLISH)
-                .replace("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
-        String body = Imeji.RESOURCE_BUNDLE.getMessage("email_subscribtion_body", Locale.ENGLISH)
+        body = Imeji.RESOURCE_BUNDLE.getMessage("email_subscribtion_body", Locale.ENGLISH)
             .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
             .replaceAll("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname())
             .replace("XXX_TEXT_XXX", text);
-        try {
-          new EmailService().sendMail(user.getEmail(), null, subject, body);
-        } catch (ImejiException e) {
-          LOGGER.error("Error sending Email to user", e);
-        }
+      }
+      try {
+        new EmailService().sendMail(user.getEmail(), null, subject, body);
+      } catch (ImejiException e) {
+        LOGGER.error("Error sending Email to user", e);
       }
     }
   }
@@ -168,13 +168,12 @@ public class DailyUploadOrUpdateFileMessageAggregation implements MessageAggrega
 
   private String getCollectionText(CollectionImeji c) {
     return Imeji.RESOURCE_BUNDLE.getLabel("collection", Locale.ENGLISH) + " " + c.getTitle() + " ("
-        + Imeji.PROPERTIES.getApplicationURL() + "/collection/" + c.getIdString() + c.getIdString()
-        + ")";
+        + Imeji.PROPERTIES.getApplicationURL() + "collection/" + c.getIdString() + ")";
   }
 
   private String getItemText(CollectionImeji c, Message m) {
     return "* " + m.getContent().get(FILENAME) + " (" + Imeji.PROPERTIES.getApplicationURL()
-        + "/item/" + m.getContent().get(ITEM_ID) + ")";
+        + "item/" + m.getContent().get(ITEM_ID) + ")";
   }
 
   /**
