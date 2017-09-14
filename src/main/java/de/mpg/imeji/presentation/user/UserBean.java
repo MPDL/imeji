@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -54,7 +55,6 @@ public class UserBean extends SuperBean {
   private QuotaUICompoment quota;
   @ManagedProperty(value = "#{LoginBean}")
   private LoginBean loginBean;
-  private String toUnsubscribe;
 
   public UserBean() {
     // mandatory for JSF initialization
@@ -362,20 +362,21 @@ public class UserBean extends SuperBean {
         .retrieve(new ArrayList<String>(user.getSubscriptionCollections()), user);
   }
 
-  public String getToUnsubscribe() {
-    return toUnsubscribe;
-  }
+  public void unsubscribe() {
+    final String colId = FacesContext.getCurrentInstance().getExternalContext()
+        .getRequestParameterMap().get("colId");
+    user.unsubscribeFromCollection(colId);
+    try {
+      new UserService().update(user, getSessionUser());
+      String title = new CollectionService().retrieve(colId, Imeji.adminUser).getTitle();
+      BeanHelper.info(
+          Imeji.RESOURCE_BUNDLE.getMessage("successfully_unsubscribed_from", getLocale()) + title);
+    } catch (ImejiException e) {
+      LOGGER.error("Error Unsubscribe user " + user.getEmail() + " from collection " + colId);
+      BeanHelper.error(e.getMessage());
 
-  public void setToUnsubscribe(String toUnsubscribe) {
-    this.toUnsubscribe = toUnsubscribe;
-  }
-
-  public void unsubscribe() throws ImejiException {
-    user.unsubscribeFromCollection(toUnsubscribe);
-    new UserService().update(user, getSessionUser());
-    String title = new CollectionService().retrieve(toUnsubscribe, Imeji.adminUser).getTitle();
-    BeanHelper.info(
-        Imeji.RESOURCE_BUNDLE.getMessage("successfully_unsubscribed_from", getLocale()) + title);
+    }
+    reloadPage();
   }
 
 }
