@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -49,6 +50,13 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
   private SelectStatementComponent newStatement;
   private List<String> displayedColumns = new ArrayList<>();
   private List<String> notAllowedItemNames = new ArrayList<>();
+  // Pagination
+  private int tableLenght = 40;
+  private int tableSize = tableLenght;
+  private int tableOffset = 0;
+  private int pageNumber = 1;
+  private List<Integer> pageList;
+  int paginationLength = 20;
 
   public EditItemsSelectedBean() throws ImejiException {
     super();
@@ -64,12 +72,9 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
           .map(i -> i.getFilename()).collect(Collectors.toList());
       itemList = itemList.stream().filter(i -> auth.update(getSessionUser(), i))
           .collect(Collectors.toList());
-      if (!notAllowedItemNames.isEmpty()) {
-        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("edit_selected_not_allowed", getLocale())
-            .replaceAll("XXX_NUMBER_XXX", notAllowedItemNames.size() + ""));
-      }
       initHeaders(itemList);
       initRows(itemList);
+      tableSize = rows.size() > tableSize ? tableSize : rows.size();
     } catch (final ImejiException e) {
       BeanHelper.error("Error initialiting page:" + e.getCause());
       LOGGER.error("Error initializing bean", e);
@@ -352,5 +357,82 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
     }
   }
 
+  /**
+   * @return the tableSize
+   */
+  public int getTableSize() {
+    return tableSize;
+  }
 
+  /**
+   * @param tableSize the tableSize to set
+   */
+  public void setTableSize(int tableSize) {
+    this.tableSize = tableSize;
+  }
+
+  /**
+   * @return the tableOffset
+   */
+  public int getTableOffset() {
+    return tableOffset;
+  }
+
+  /**
+   * @param tableOffset the tableOffset to set
+   */
+  public void setTableOffset(int tableOffset) {
+    this.tableOffset = tableOffset;
+  }
+
+  public void gotToPage(int pageNumber) {
+    if (pageNumber <= getTotalNumberOfPages()) {
+      tableOffset = tableLenght * (pageNumber - 1);
+      tableSize = tableLenght + tableOffset < rows.size() ? tableLenght + tableOffset : rows.size();
+      this.pageNumber = pageNumber;
+      initPageList();
+    }
+  }
+
+  public int getTotalNumberOfPages() {
+    return (rows.size() + tableLenght - 1) / tableLenght;
+  }
+
+  /**
+   * @return the pageNumber
+   */
+  public int getPageNumber() {
+    return pageNumber;
+  }
+
+  /**
+   * @param pageNumber the pageNumber to set
+   */
+  public void setPageNumber(int pageNumber) {
+    this.pageNumber = pageNumber;
+  }
+
+  public int getPaginationLength() {
+    return paginationLength;
+  }
+
+  public List<Integer> getPageList() {
+    if (pageList == null) {
+      initPageList();
+    }
+    return pageList;
+
+  }
+
+  private void initPageList() {
+    int start = pageNumber - (paginationLength / 2);
+    if (start < 1) {
+      start = 1;
+    } else if (start + paginationLength > getTotalNumberOfPages()) {
+      start = getTotalNumberOfPages() - paginationLength;
+    }
+    int end = start + paginationLength < getTotalNumberOfPages() ? start + paginationLength
+        : getTotalNumberOfPages();
+    pageList = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+  }
 }

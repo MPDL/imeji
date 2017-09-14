@@ -20,6 +20,7 @@ import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.Organization;
 import de.mpg.imeji.logic.vo.Person;
 import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.vo.UserGroup;
 
@@ -274,6 +275,9 @@ public class Authorization implements Serializable {
         return obj.toString();
       }
       if (obj instanceof UserGroup) {
+        return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
+      }
+      if (obj instanceof Statement) {
         return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
       }
       LOGGER.fatal("Invalid Object type: " + obj.getClass());

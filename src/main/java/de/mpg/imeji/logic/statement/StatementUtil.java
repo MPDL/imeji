@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.Statement;
 
 /**
@@ -30,7 +31,8 @@ public class StatementUtil {
    * @return
    */
   public static List<String> toStatementUriList(String str) {
-    return Arrays.asList(str.split(",")).stream().map(s -> toUri(s)).collect(Collectors.toList());
+    return Arrays.asList(str.split(",")).stream().filter(s -> !StringHelper.isNullOrEmptyTrim(str))
+        .map(s -> toUri(s)).collect(Collectors.toList());
   }
 
   /**

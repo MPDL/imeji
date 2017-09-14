@@ -4,7 +4,9 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
-	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 	<ui:param name="headline" value="#{lbl.edit_selected}" />
 	<ui:param name="title" value="#{headline}" />
@@ -14,7 +16,6 @@
 			$(document).ready(function() {
 				stopLoader();
 			});
-			
 		</script>
 	</ui:define>
 	
@@ -32,19 +33,17 @@
 		</datalist>
 		<div class="loaderWrapper show" />
 		<div class="loader show" />
-		<h:form id="editSelectedForm" prependId="false">
-			<div class="editSelectedWrapper">
-				<h:panelGroup layout="block" id="editItemsSelect_MessageArea">
+		<div class="editSelectedWrapper">
+			<h:form id="editForm" prependId="false">
+				<div id="editItemsSelect_MessageArea">
 					<ui:repeat var="message" value="#{MessagesBean.messages}">
-						<div
-							class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
+						<div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
 							<span class="imj_messageAreaCloseBtn"
 								onclick="this.parentElement.style.display='none';">x</span>
-							<h:outputText value="#{MessagesBean.getDetails(message)}"
-								escape="false" />
+							<h:outputText value="#{MessagesBean.getDetails(message)}" escape="false" />a
 						</div>
 					</ui:repeat>
-				</h:panelGroup>
+				</div>
 				<div id="imj_tableButtons" class="editSelectedHeader">
 					<a href="#{EditItemsSelectedBean.backUrl}" class="imj_cancelButton"
 						onclick="startLoader();">#{lbl.cancel}</a>
@@ -52,42 +51,44 @@
 						action="#{EditItemsSelectedBean.save}" value="#{lbl.save}"
 						onclick="startLoader();">
 					</h:commandLink>
+					#{EditItemsSelectedBean.rows.size()} #{lbl.items}. 
+					<ui:fragment rendered="#{EditItemsSelectedBean.notAllowedItemNames.size() > 0}"> 
+						(#{lbl.not_allowed_to_edit}  #{EditItemsSelectedBean.notAllowedItemNames.size()} #{lbl.of} #{SessionBean.selected.size()}  #{lbl.selected_items}. 
+						<a href="#" onclick="openDialog('notAllowedItemsDialog');">#{lbl.show_forbidden_items}</a>).
+					</ui:fragment>
+					<h:panelGroup rendered="#{EditItemsSelectedBean.totalNumberOfPages > 1}">
+						 #{lbl.view_page}:  
+						<ui:repeat var="number" value="#{EditItemsSelectedBean.pageList}">
+							<h:commandLink onclick="startLoader();" disabled="#{EditItemsSelectedBean.pageNumber == number}" action="#{EditItemsSelectedBean.gotToPage(number)}">
+								<f:ajax execute="@form" render="@form"/>
+								<span> #{number} </span>
+							</h:commandLink>
+						</ui:repeat> 
+						<ui:fragment rendered="#{EditItemsSelectedBean.totalNumberOfPages - EditItemsSelectedBean.pageNumber > EditItemsSelectedBean.paginationLength / 2 }">
+								...
+								<h:commandLink onclick="startLoader();" action="#{EditItemsSelectedBean.gotToPage(EditItemsSelectedBean.totalNumberOfPages)}">
+									<f:ajax execute="@form" render="@form"/>
+									<span> #{EditItemsSelectedBean.totalNumberOfPages} </span>
+								</h:commandLink>
+							</ui:fragment>
+					</h:panelGroup>
 				</div>
 				<ui:fragment rendered="#{not (EditItemsSelectedBean.displayedColumns.size()==EditItemsSelectedBean.headers.size())}">
-				<h:panelGroup layout="block" id="imj_pageMessageArea">
-		           <ui:repeat var="message" value="#{MessagesBean.messages}">
-		           	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
-		           		<span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display='none';">x</span>
-		           		#{message.detail}
-		           	</div>
-		           </ui:repeat>
-		         </h:panelGroup>
-		         <ui:remove>
-				<div class="editSelectedHeader">
-					#{lbl.show_hidden_columns}
-					<div>
-						
-						<ui:repeat value="#{EditItemsSelectedBean.headers}"
-							var="head" varStatus="status">
-							<ui:fragment
-								rendered="#{not EditItemsSelectedBean.displayedColumns.contains(head.statement.index)}">
-								<h:commandLink title="{head.statement.index}" value="#{head.statement.index} "
-									action="#{EditItemsSelectedBean.displayedColumns.add(head.statement.index)}"
-									onclick="startLoader();" />
-							</ui:fragment>
-						</ui:repeat>
-					</div>
-				</div>
-				</ui:remove>
+					<div id="imj_pageMessageArea">
+			           <ui:repeat var="message" value="#{MessagesBean.messages}">
+			           	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
+			           		<span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display='none';">x</span>
+			           		#{message.detail}s
+			           	</div>
+			           </ui:repeat>
+			         </div>
 				</ui:fragment>
 				<div class="edit_selected_table_wrapper">
 					<table class="edit_selected_table" id="editItemsTable" style="table-layout: auto;">
 						<thead style="display: block; ">
 							<tr>
 								<th>
-									<md:select id="selectStatement"
-										component="#{EditItemsSelectedBean.newStatement}"
-										menu="#{EditItemsSelectedBean.filteredStatementMenu}"
+									<md:select id="selectStatement" component="#{EditItemsSelectedBean.newStatement}" menu="#{EditItemsSelectedBean.filteredStatementMenu}"
 										render=":selectMetadataWrapper s" bean="#{EditItemsSelectedBean}"
 										submitAction="addColumn" containerId=":selectStatement"
 										resetAction="resetNewStatement" compact="false"
@@ -97,7 +98,7 @@
 									var="head" varStatus="status">
 									<ui:fragment
 										rendered="#{not EditItemsSelectedBean.displayedColumns.contains(head.statement.index)}">
-										<th class="column_#{status.index} columnHidden">
+										<th class="columnHidden">
 											<h:commandLink class="fa fa-expand" title="#{lbl.show} #{head.statement.index}"
 												action="#{EditItemsSelectedBean.displayedColumns.add(head.statement.index)}"
 												onclick="startLoader();" >
@@ -105,19 +106,14 @@
 											</h:commandLink>
 										</th>
 									</ui:fragment>
-									<ui:fragment
-										rendered="#{EditItemsSelectedBean.displayedColumns.contains(head.statement.index)}">
-										<th class="column_#{status.index}"><h:panelGroup id="head"
-												layout="block" class="edit_selected_table_button">
-												<h:outputText value="#{head.statement.index}"
-													rendered="#{!head.edit}" />
+									<ui:fragment rendered="#{EditItemsSelectedBean.displayedColumns.contains(head.statement.index)}">
+										<th>
+										  <h:panelGroup id="h" layout="block" class="tableBtn">
+												<h:outputText value="#{head.statement.index}" rendered="#{!head.edit}" />
 												<div>
-													<md:input id="batchInput"
-														metadataInputComponent="#{head.input}"
-														rendered="#{!empty head.input}" />
+													<md:input id="batchInput" metadataInputComponent="#{head.input}" rendered="#{!empty head.input}" />
 													<h:panelGroup id="changeName" rendered="#{head.edit}">
-														<h:inputText id="inputColumnName" value="#{head.inputName}"
-															autocomplete="off" onkeydown="if(event.keyCode==13){document.getElementById('list:'+#{status.index}+':changeColumn').click();}">
+														<h:inputText id="inputColumnName" value="#{head.inputName}" autocomplete="off" onkeydown="if(event.keyCode==13){document.getElementById('list:'+#{status.index}+':changeColumn').click();}">
 														</h:inputText>
 	
 														<div>
@@ -132,7 +128,7 @@
 																action="#{head.setEdit(false)}" value="#{lbl.cancel}"
 																title="#{lbl.change_column_name}">
 																<f:ajax execute="@this"
-																	render=":list:#{status.index}:head" />
+																	render=":list:#{status.index}:h" />
 															</h:commandLink>
 															<ui:fragment rendered="#{head.invalidName}">
 																<div>
@@ -150,7 +146,7 @@
 															action="#{head.initInput}" value=""
 															title="#{lbl.edit_all}">
 															<f:ajax execute="@this"
-																render=":list:#{status.index}:head" />
+																render=":list:#{status.index}:h" />
 														</h:commandLink>
 														<h:commandLink
 															styleClass="fa fa-times edit_selected_table_icon"
@@ -172,7 +168,7 @@
 															action="#{head.setEdit(true)}" value=""
 															title="#{lbl.change_column_name}">
 															<f:ajax execute="@this"
-																render=":list:#{status.index}:head" />
+																render=":list:#{status.index}:h" />
 														</h:commandLink>
 														<h:commandLink
 															styleClass="fa fa-compress edit_selected_table_icon"
@@ -184,7 +180,7 @@
 													</ui:fragment>
 												</div>
 												<h:panelGroup layout="block"
-													class="edit_selected_table_button"
+													class="tableBtn"
 													rendered="#{!empty head.input}">
 													<h:commandLink
 														action="#{EditItemsSelectedBean.addMetadataToColumn(status.index)}"
@@ -195,53 +191,48 @@
 													<h:commandLink style="margin-left:1em;"
 														action="#{head.setInput(null)}" value="#{lbl.cancel}"
 														title="#{lbl.cancel}">
-														<f:ajax execute="@this" render=":list:#{status.index}:head" />
+														<f:ajax execute="@this" render=":list:#{status.index}:h" />
 													</h:commandLink>
 												</h:panelGroup>
-											</h:panelGroup></th>
+											</h:panelGroup>
+										</th>
 									</ui:fragment>
 								</ui:repeat>
 							</tr>
 						</thead>
 						<tbody style="display: block; ">
-							<ui:repeat id="item" value="#{EditItemsSelectedBean.rows}"
-								var="row" varStatus="itemStatus">
-								<tr>
+							<ui:repeat id="i" value="#{EditItemsSelectedBean.rows}"
+								var="row" varStatus="itemStatus" offset="#{EditItemsSelectedBean.tableOffset}" size="#{EditItemsSelectedBean.tableSize}">
+								<tr title="#{lbl.filename} &quot;#{row.filename}&quot;">
 									<th>#{row.filename}</th>
-									<ui:repeat id="metadata" value="#{row.cells}" var="cell"
-										varStatus="status">
+									<ui:repeat id="m" value="#{row.cells}" var="cell" varStatus="status">
 										<ui:fragment rendered="#{not EditItemsSelectedBean.displayedColumns.contains(cell.statement.index)}">
-											<td class="column_#{status.index} columnHidden">
-											</td>
+											<td class="columnHidden"/>
 										</ui:fragment>
 										<ui:fragment
 											rendered="#{EditItemsSelectedBean.displayedColumns.contains(cell.statement.index)}">
-											<td class="column_#{status.index}" title="#{lbl.filename} &quot;#{row.filename}&quot;">
-												<h:panelGroup id="cellInput">
-													<ui:repeat id="value" value="#{cell.inputs}" var="input"
-														varStatus="inputStatus">
-														<div class="edit_selected_table_button">
-															<md:input id="input" metadataInputComponent="#{input}"
-																compact="true" />
-															<h:commandLink type="submit" styleClass="fa fa-times"
-																action="#{cell.removeValue(inputStatus.index)}" value=""
-																title="#{lbl.remove} &quot;#{cell.statement.index}&quot;">
-																<f:ajax
-																	execute=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput"
-																	render=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput" />
-															</h:commandLink>
-														</div>
-													</ui:repeat>
-													<div class="edit_selected_table_button">
-														<h:commandLink type="submit" styleClass="fa fa-plus"
-															action="#{cell.addValue}" value=""
-															title="#{lbl.add} &quot;#{cell.statement.index}&quot;" >
+											<td jsf:id="c">
+												<ui:repeat id="v" value="#{cell.inputs}" var="input"
+													varStatus="inputStatus">
+													<div class="tableBtn">
+														<md:input id="in" metadataInputComponent="#{input}" compact="true"/>
+														<h:commandLink type="submit" id="del" styleClass="fa fa-times"
+															action="#{cell.removeValue(inputStatus.index)}" value=""
+															title="#{lbl.remove}">
 															<f:ajax
-																execute=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput"
-																render=":item:#{itemStatus.index}:metadata:#{status.index}:cellInput" />
+																execute=":i:#{itemStatus.index}:m:#{status.index}:c"
+																render=":i:#{itemStatus.index}:m:#{status.index}:c" />
 														</h:commandLink>
 													</div>
-												</h:panelGroup></td>
+												</ui:repeat>
+												<h:commandLink type="submit" id="add" styleClass="fa fa-plus tableBtn"
+													action="#{cell.addValue}" value=""
+													title="#{lbl.add}" >
+													<f:ajax
+														execute=":i:#{itemStatus.index}:m:#{status.index}:c"
+														render=":i:#{itemStatus.index}:m:#{status.index}:c" />
+												</h:commandLink>
+											</td>
 										</ui:fragment>
 									</ui:repeat>
 								</tr>
@@ -249,24 +240,23 @@
 						</tbody>
 					</table>
 				</div>
-				<div id="notAllowedItemsDialog" class="imj_modalDialogBox"
-					style="display: none;">
-					<div class="imj_confirmationText">
-						#{msg.not_permitted_to_edit}:
-						<p>
-							<ui:repeat id="forbidden"
-								value="#{EditItemsSelectedBean.notAllowedItemNames}" var="name"
-								varStatus="forbiddenStatus">
-						#{name} <br />
-							</ui:repeat>
-						</p>
-					</div>
-					<div class="imj_submitPanel">
-						<button onclick="closeDialog('notAllowedItemsDialog');"
-							class="imj_cancelButton">#{lbl.close}</button>
-					</div>
-				</div>
+			</h:form>
+		</div>
+		<div id="notAllowedItemsDialog" class="imj_modalDialogBox" style="display: none;">
+			<div class="imj_confirmationText">
+				#{msg.not_permitted_to_edit}:
+				<p>
+					<ui:repeat id="forbidden"
+						value="#{EditItemsSelectedBean.notAllowedItemNames}" var="name"
+						varStatus="forbiddenStatus">
+				#{name} <br />
+					</ui:repeat>
+				</p>
 			</div>
-		</h:form>
+			<div class="imj_submitPanel">
+				<button onclick="closeDialog('notAllowedItemsDialog');"
+					class="imj_cancelButton">#{lbl.close}</button>
+			</div>
+		</div>
 	</ui:define>
 </ui:composition>

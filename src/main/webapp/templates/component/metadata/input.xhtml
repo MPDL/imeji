@@ -1,0 +1,53 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+	
+	<ui:fragment rendered="#{metadataInputComponent.statement.type == 'TEXT'}">
+			<h:inputTextarea id="text" value="#{metadataInputComponent.metadata.text}" styleClass="imj_mdInput" rendered="#{empty metadataInputComponent.statement.literalConstraints}"/>
+			<h:selectOneMenu id="selectText" value="#{metadataInputComponent.metadata.text}" rendered="#{not empty metadataInputComponent.statement.literalConstraints}" styleClass="imj_mdInput">
+				<f:selectItems value="#{metadataInputComponent.statement.literalConstraints}"/>
+			</h:selectOneMenu>
+		</ui:fragment>
+		<ui:fragment rendered="#{metadataInputComponent.statement.type == 'URL'}">
+			<h:inputTextarea id="urlText" value="#{metadataInputComponent.metadata.title}" html5:placeholder="#{lbl.title}" styleClass="imj_mdInput"/>
+			<h:outputLabel value="#{lbl.url}" for="url" rendered="#{!compact}"/>
+			<h:inputText id="url" value="#{metadataInputComponent.metadata.url}" html5:type="url" html5:placeholder="#{lbl.url}" styleClass="imj_mdInput">
+				<f:converter converterId="URIConverter"/>
+			</h:inputText>
+		</ui:fragment>
+		<ui:fragment rendered="#{metadataInputComponent.statement.type == 'NUMBER'}">
+		 	<script src="#{Navigation.applicationUrl}resources/js/default.js"/>
+			<h:inputText id="number" value="#{metadataInputComponent.metadata.number}" html5:oninput="validateInputNumber(this);" html5:placeholder="#{lbl.placeholder_number}" styleClass="imj_mdInput">
+				<f:converter converterId="DoubleConverter"/>
+			</h:inputText>
+		</ui:fragment>
+		<ui:fragment rendered="#{metadataInputComponent.statement.type == 'GEOLOCATION'}">
+			<h:inputTextarea id="location" value="#{metadataInputComponent.metadata.name}" styleClass="imj_mdInput autocomplete_js" onfocus="getDatasourceUrl('#{metadataInputComponent.statement.vocabulary}', '#{Navigation.autocompleteUrl}'); "/>
+			<h:outputLabel value="#{lbl.geolocation_latitude}" for="latitude" styleClass="imj_mdInputLabel"/>
+			<h:inputText id="latitude" value="#{metadataInputComponent.metadata.latitude}" html5:type="number" html5:step="any" html5:min="-90" html5:max="90" html5:placeholder="#{lbl.placeholder_geolocation_latitude}" styleClass="imj_mdInput">
+				<f:converter converterId="DoubleConverter"/>
+			</h:inputText>
+			<h:outputLabel value="#{lbl.geolocation_longitude}" for="longitude" styleClass="imj_mdInputLabel"/>
+			<h:inputText id="longitude" value="#{metadataInputComponent.metadata.longitude}" html5:type="number" html5:step="any" html5:min="-180" html5:max="180" html5:placeholder="#{lbl.placeholder_geolocation_longitude}" styleClass="imj_mdInput">
+				<f:converter converterId="DoubleConverter"/>
+			</h:inputText>
+		</ui:fragment>
+		<ui:fragment rendered="#{metadataInputComponent.statement.type == 'DATE'}">
+			<h:inputText id="date" value="#{metadataInputComponent.metadata.date}" html5:type="date" html5:placeholder="YYYY-MM-DD" styleClass="imj_mdInput datepicker"/>
+		</ui:fragment>
+		<ui:fragment rendered="#{metadataInputComponent.statement.type == 'PERSON'}">
+			  <script src="#{Navigation.applicationUrl}resources/js/autocomplete.js"/>
+			<h:outputLabel value="#{lbl.family_name}" for="family" styleClass="imj_mdInputLabel"/>
+			<h:inputText id="family" value="#{metadataInputComponent.metadata.person.familyName}" html5:placeholder="#{lbl.family_name}" styleClass="imj_mdInput autocomplete_js" onfocus="getDatasourceUrl('#{metadataInputComponent.statement.vocabulary}', '#{Navigation.autocompleteUrl}'); "/>
+			<h:outputLabel value="#{lbl.first_name}" for="given" styleClass="imj_mdInputLabel"/>
+			<h:inputText id="given" value="#{metadataInputComponent.metadata.person.givenName}" html5:placeholder="#{lbl.first_name}" styleClass="imj_mdInput"/>
+			<h:outputLabel value="#{lbl.organization}" styleClass="imj_mdInputLabel"/>
+			<ui:repeat id="organization" value="#{metadataInputComponent.metadata.person.organizations}" var="org">
+				<h:inputText id="name" value="#{org.name}" html5:placeholder="#{lbl.organization}" styleClass="imj_mdInput"/>
+			</ui:repeat>
+		</ui:fragment>
+	
+</ui:composition>

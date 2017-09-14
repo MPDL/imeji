@@ -11,9 +11,6 @@
 	</composite:interface>
 	
 	<composite:implementation>
-			
-	        <script src="#{Navigation.applicationUrl}resources/js/default.js"/>
-	        <script src="#{Navigation.applicationUrl}resources/js/autocomplete.js"/>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'TEXT'}">
 			<h:inputTextarea id="text" value="#{cc.attrs.metadataInputComponent.metadata.text}" styleClass="imj_mdInput" rendered="#{empty cc.attrs.metadataInputComponent.statement.literalConstraints}"/>
 			<h:selectOneMenu id="selectText" value="#{cc.attrs.metadataInputComponent.metadata.text}" rendered="#{not empty cc.attrs.metadataInputComponent.statement.literalConstraints}" styleClass="imj_mdInput">
@@ -28,11 +25,13 @@
 			</h:inputText>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'NUMBER'}">
+		 	<script src="#{Navigation.applicationUrl}resources/js/default.js"/>
 			<h:inputText id="number" value="#{cc.attrs.metadataInputComponent.metadata.number}" html5:oninput="validateInputNumber(this);" html5:placeholder="#{lbl.placeholder_number}" styleClass="imj_mdInput">
 				<f:converter converterId="DoubleConverter"/>
 			</h:inputText>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'GEOLOCATION'}">
+			<script src="#{Navigation.applicationUrl}resources/js/autocomplete.js"/>
 			<h:inputTextarea id="location" value="#{cc.attrs.metadataInputComponent.metadata.name}" styleClass="imj_mdInput autocomplete_js" onfocus="getDatasourceUrl('#{cc.attrs.metadataInputComponent.statement.vocabulary}', '#{Navigation.autocompleteUrl}'); "/>
 			<h:outputLabel value="#{lbl.geolocation_latitude}" for="latitude" styleClass="imj_mdInputLabel"/>
 			<h:inputText id="latitude" value="#{cc.attrs.metadataInputComponent.metadata.latitude}" html5:type="number" html5:step="any" html5:min="-90" html5:max="90" html5:placeholder="#{lbl.placeholder_geolocation_latitude}" styleClass="imj_mdInput">
@@ -44,9 +43,11 @@
 			</h:inputText>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'DATE'}">
+			 <script src="#{Navigation.applicationUrl}resources/js/default.js"/>
 			<h:inputText id="date" value="#{cc.attrs.metadataInputComponent.metadata.date}" html5:type="date" html5:placeholder="YYYY-MM-DD" styleClass="imj_mdInput datepicker"/>
 		</ui:fragment>
 		<ui:fragment rendered="#{cc.attrs.metadataInputComponent.statement.type == 'PERSON'}">
+			  <script src="#{Navigation.applicationUrl}resources/js/autocomplete.js"/>
 			<h:outputLabel value="#{lbl.family_name}" for="family" styleClass="imj_mdInputLabel"/>
 			<h:inputText id="family" value="#{cc.attrs.metadataInputComponent.metadata.person.familyName}" html5:placeholder="#{lbl.family_name}" styleClass="imj_mdInput autocomplete_js" onfocus="getDatasourceUrl('#{cc.attrs.metadataInputComponent.statement.vocabulary}', '#{Navigation.autocompleteUrl}'); "/>
 			<h:outputLabel value="#{lbl.first_name}" for="given" styleClass="imj_mdInputLabel"/>
