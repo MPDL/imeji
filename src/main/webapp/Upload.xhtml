@@ -13,15 +13,13 @@
 	 <ui:define name="init">
 	 	<h:outputText value="#{UploadBean.init()}"/>
 	 </ui:define>
-	 
-	 <ui:define name="actionsMenu">
-		<ui:fragment rendered="#{empty UploadBean.collections and Auth.loggedIn}">
-			<a href="mailto:#{ConfigurationBean.contactEmail}" class="imj_submitButton"><span class="fa fa-envelope-o"/>  #{lbl.contact_support_team}</a>
-		</ui:fragment>
-	</ui:define>
+
 	 
 	 <ui:define name="mainContent">
-	 	
+	 	<ui:fragment rendered="#{empty UploadBean.collections and Auth.loggedIn}">
+			<a href="mailto:#{Configuration.contactEmail}" class="imj_submitButton"><span class="fa fa-envelope-o"/>  #{lbl.contact_support_team}</a>
+		</ui:fragment>
+		
 	 	<ui:fragment rendered="#{!Auth.loggedIn}">
 	 		<ui:include src="./include/LoginFormular.xhtml" />
 	 	</ui:fragment>

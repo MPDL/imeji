@@ -357,9 +357,14 @@ public class UserBean extends SuperBean {
     this.loginBean = loginBean;
   }
 
-  public List<CollectionImeji> getSubscribedCollections() throws ImejiException {
-    return new CollectionService()
-        .retrieve(new ArrayList<String>(user.getSubscriptionCollections()), user);
+  public List<CollectionImeji> getSubscribedCollections() {
+    try {
+      return new CollectionService()
+          .retrieve(new ArrayList<String>(user.getSubscriptionCollections()), user);
+    } catch (ImejiException e) {
+      LOGGER.error("Error reading subscribed collection of user " + user.getEmail(), e);
+      return new ArrayList<>();
+    }
   }
 
   public void unsubscribe() {
