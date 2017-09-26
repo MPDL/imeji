@@ -15,7 +15,7 @@ public class Message implements Serializable {
   private static final long serialVersionUID = 7333376188527222587L;
 
   public enum MessageType {
-    UPLOAD_FILE, CHANGE_FILE, MOVE_ITEM;
+    UPLOAD_FILE, CHANGE_FILE, MOVE_ITEM, DELETE_COLLECTION;
   }
 
   private final MessageType type;

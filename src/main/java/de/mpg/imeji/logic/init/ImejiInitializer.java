@@ -32,6 +32,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
+import de.mpg.imeji.logic.messaging.subscription.SubscriptionService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.statement.StatementService;
@@ -120,6 +121,7 @@ public class ImejiInitializer {
     initRsaKeys();
     initadminUser();
     initDefaultStatements();
+    new SubscriptionService().init();
   }
 
 

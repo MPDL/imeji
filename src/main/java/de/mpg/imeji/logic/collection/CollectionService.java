@@ -14,6 +14,9 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.messaging.Message;
+import de.mpg.imeji.logic.messaging.Message.MessageType;
+import de.mpg.imeji.logic.messaging.MessageService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
@@ -27,6 +30,7 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.service.SearchServiceAbstract;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.License;
@@ -46,6 +50,7 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
   private final Search search =
       SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.ELASTIC);
   private final CollectionController controller = new CollectionController();
+  private final MessageService messageService = new MessageService();
 
   /**
    * Default constructor
@@ -162,6 +167,8 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
       }
       itemService.delete(items, user);
       controller.delete(collection, user);
+      messageService.add(
+          new Message(MessageType.DELETE_COLLECTION, ObjectHelper.getId(collection.getId()), null));
     }
   }
 

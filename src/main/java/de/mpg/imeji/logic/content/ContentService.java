@@ -20,9 +20,8 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.content.extraction.ContentExtractionResult;
 import de.mpg.imeji.logic.content.extraction.ContentExtractorFactory;
 import de.mpg.imeji.logic.messaging.Message;
-import de.mpg.imeji.logic.messaging.Message.MessageType;
 import de.mpg.imeji.logic.messaging.MessageService;
-import de.mpg.imeji.logic.messaging.aggregation.DailyUploadOrUpdateFileMessageAggregation;
+import de.mpg.imeji.logic.messaging.Message.MessageType;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
@@ -35,6 +34,7 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.service.SearchServiceAbstract;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.UploadResult;
+import de.mpg.imeji.logic.user.messaging.aggregations.NotifyUsersOnFileUploadAggregation;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.vo.ContentVO;
@@ -497,9 +497,9 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    */
   private Map<String, String> createMessageContent(Item item) {
-    return ImmutableMap.of(DailyUploadOrUpdateFileMessageAggregation.COUNT, "1",
-        DailyUploadOrUpdateFileMessageAggregation.FILENAME, item.getFilename(),
-        DailyUploadOrUpdateFileMessageAggregation.ITEM_ID, item.getIdString());
+    return ImmutableMap.of(NotifyUsersOnFileUploadAggregation.COUNT, "1",
+        NotifyUsersOnFileUploadAggregation.FILENAME, item.getFilename(),
+        NotifyUsersOnFileUploadAggregation.ITEM_ID, item.getIdString());
   }
 
 }

@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.messaging.aggregation;
+package de.mpg.imeji.logic.user.messaging.aggregations;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.messaging.Message;
 import de.mpg.imeji.logic.messaging.Message.MessageType;
 import de.mpg.imeji.logic.messaging.MessageService;
+import de.mpg.imeji.logic.messaging.aggregation.Aggregation;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -25,14 +26,13 @@ import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.User;
 
 /**
- * {@link MessageAggregation} for all files which have been uploaded or modified over one day
+ * {@link Aggregation} for all files which have been uploaded or modified over one day
  * 
  * @author saquet
  *
  */
-public class DailyUploadOrUpdateFileMessageAggregation implements MessageAggregation {
-  private static final Logger LOGGER =
-      Logger.getLogger(DailyUploadOrUpdateFileMessageAggregation.class);
+public class NotifyUsersOnFileUploadAggregation implements Aggregation {
+  private static final Logger LOGGER = Logger.getLogger(NotifyUsersOnFileUploadAggregation.class);
   private final MessageService messageService = new MessageService();
   public final static String COUNT = "count";
   public final static String ITEM_ID = "itemId";
@@ -51,21 +51,6 @@ public class DailyUploadOrUpdateFileMessageAggregation implements MessageAggrega
           aggregateMessagesByCollection(
               retrieveAllMessagesForUser(user, from, now, MessageType.CHANGE_FILE)));
     }
-  }
-
-  /**
-   * Delete all UPLOAD_FILE and CHANGE_FILE messages created before now
-   * 
-   * @Override
-   */
-
-  public void postProcessing() {
-    List<Message> toDelete = messageService.readAll().stream()
-        .filter(m -> Arrays
-            .asList(MessageType.UPLOAD_FILE, MessageType.CHANGE_FILE, MessageType.MOVE_ITEM)
-            .contains(m.getType()) && m.getTime() < now)
-        .collect(Collectors.toList());
-    messageService.deleteMessages(toDelete);
   }
 
   /**

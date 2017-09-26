@@ -3,7 +3,7 @@ package de.mpg.imeji.logic.batch;
 import java.util.concurrent.Callable;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.messaging.aggregation.DailyUploadOrUpdateFileMessageAggregation;
+import de.mpg.imeji.logic.messaging.aggregation.AggregationService;
 
 /**
  * For each collection that has changed, send email to subscribed user with changes. (Only one email
@@ -16,10 +16,7 @@ public class AggregateMessages implements Callable<Integer> {
 
   @Override
   public Integer call() throws ImejiException {
-    DailyUploadOrUpdateFileMessageAggregation aggregation =
-        new DailyUploadOrUpdateFileMessageAggregation();
-    aggregation.aggregate();
-    aggregation.postProcessing();
+    new AggregationService().runAllAggregations();
     return 1;
   }
 
