@@ -11,11 +11,13 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.service.ImejiControllerAbstract;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.vo.Item;
 import de.mpg.imeji.logic.vo.User;
@@ -28,7 +30,7 @@ import de.mpg.imeji.util.DateHelper;
  * @author saquet
  *
  */
-class UserController {
+class UserController extends ImejiControllerAbstract<User> {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel);
 
@@ -45,6 +47,42 @@ class UserController {
       }
     }
   };
+
+
+  @Override
+  public List<User> createBatch(List<User> l, User user) throws ImejiException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  @Override
+  public List<User> retrieveBatch(List<String> ids, User user) throws ImejiException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  @Override
+  public List<User> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  @Override
+  public List<User> updateBatch(List<User> l, User user) throws ImejiException {
+    l.stream().forEach(u -> u.setModified(DateHelper.getCurrentDate()));
+    WRITER.update(J2JHelper.cast2ObjectList(l), Imeji.adminUser, true);
+    return l;
+  }
+
+
+  @Override
+  public void deleteBatch(List<User> l, User user) throws ImejiException {
+    // TODO Auto-generated method stub
+
+  }
 
   public User create(User user) throws ImejiException {
     final Calendar now = DateHelper.getCurrentDate();
@@ -128,20 +166,6 @@ class UserController {
     return users;
   }
 
-
-  /**
-   * Update a {@link User}
-   *
-   * @param updatedUser : The user who is updated in the database
-   * @param currentUser
-   * @throws ImejiException
-   * @return
-   */
-  public User update(User updatedUser) throws ImejiException {
-    updatedUser.setModified(DateHelper.getCurrentDate());
-    WRITER.update(WriterFacade.toList(updatedUser), Imeji.adminUser, true);
-    return updatedUser;
-  }
 
   /**
    * Delete a {@link User}

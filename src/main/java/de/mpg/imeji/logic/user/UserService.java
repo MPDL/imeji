@@ -109,7 +109,7 @@ public class UserService {
     new InvitationService().consume(u);
     try {
       u.setApiKey(APIKeyAuthentication.generateKey(u.getId(), Integer.MAX_VALUE));
-      controller.update(u);
+      controller.update(u, Imeji.adminUser);
     } catch (final JoseException e) {
       LOGGER.error("Error creating API Key during user creation", e);
     }
@@ -197,7 +197,11 @@ public class UserService {
    * @return
    */
   public User update(User updatedUser, User currentUser) throws ImejiException {
-    return controller.update(updatedUser);
+    return controller.update(updatedUser, currentUser);
+  }
+
+  public List<User> updateBatch(List<User> users, User currentUser) throws ImejiException {
+    return controller.updateBatch(users, currentUser);
   }
 
   /**

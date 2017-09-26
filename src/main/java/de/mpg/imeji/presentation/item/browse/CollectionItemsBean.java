@@ -263,9 +263,8 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   public boolean isSubscribed() {
-    return getSessionUser().getSubscriptionCollections().contains(getCollectionId());
+    return collection != null
+        ? getSessionUser().getSubscriptionCollections().contains(getCollectionId()) : false;
   }
-
-
 }
 

@@ -21,9 +21,12 @@ public abstract class Subscriber implements Callable<Integer> {
   }
 
   /**
-   * Call Subscriber
+   * Send the {@link Message} to the Subscriber, which can then be called
    */
-  public abstract void send(Message message);
+  public void send(Message message) {
+    this.message = message;
+  }
+
 
   public MessageType getMessageType() {
     return messageType;
