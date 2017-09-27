@@ -13,7 +13,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.registration.Registration;
-import de.mpg.imeji.logic.registration.RegistrationBusinessController;
+import de.mpg.imeji.logic.registration.RegistrationService;
 import de.mpg.imeji.logic.share.ShareService.ShareRoles;
 import de.mpg.imeji.logic.share.invitation.Invitation;
 import de.mpg.imeji.logic.share.invitation.InvitationService;
@@ -26,7 +26,7 @@ import de.mpg.imeji.test.logic.service.SuperServiceTest;
 
 public class RegistrationBusinessControllerTest extends SuperServiceTest {
 
-  private RegistrationBusinessController registrationBC = new RegistrationBusinessController();
+  private RegistrationService registrationBC = new RegistrationService();
   private static final Logger LOGGER = Logger.getLogger(RegistrationBusinessControllerTest.class);
   private Grant defaultImejiGrant =
       new Grant(GrantType.EDIT, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);

@@ -14,8 +14,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.authorization.pwdreset.PasswordResetController;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.registration.RegistrationService;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.share.invitation.InvitationService;
@@ -40,30 +40,70 @@ import de.mpg.imeji.util.DateHelper;
 public class RegistrationBean extends SuperBean {
   private static final long serialVersionUID = -993770106648303808L;
   private static final Logger LOGGER = Logger.getLogger(RegistrationBean.class);
-
   private User user = new User();
   private boolean isInvited = false;
   private boolean termsAccepted = StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getTermsOfUse())
       && StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getTermsOfUseUrl());
   @ManagedProperty(value = "#{LoginBean}")
   private LoginBean loginBean;
+  private final RegistrationService registrationService = new RegistrationService();
 
   @PostConstruct
   public void init() {
-    this.user.setPerson(ImejiFactory.newPerson());;
-    // get token etc
+    this.user.setPerson(ImejiFactory.newPerson());
     this.user.setEmail(UrlHelper.getParameterValue("login"));
     this.isInvited = checkInvitations();
-    if (getSessionUser() != null)
+    if (getSessionUser() != null) {
       try {
         redirect(getNavigation().getHomeUrl());
       } catch (final IOException e) {
         BeanHelper.error(e.getLocalizedMessage());
         LOGGER.error("Error redirect", e);
       }
+    } else if (hasValidToken()) {
+      activateUser();
+    }
   }
 
+  /**
+   * Activate the user, login with this user and redirect to the resetpassword page
+   */
+  private void activateUser() {
+    String token = UrlHelper.getParameterValue("token");
+    try {
+      User user = registrationService.activate(registrationService.retrieveByToken(token));
+      loginBean.getSessionBean().setUser(user);
+      redirect(getNavigation().getHomeUrl() + "/pwdreset?register=1");
+    } catch (Exception e) {
+      LOGGER.error("Error activating user", e);
+      BeanHelper.error("Error during user activation");
+    }
+  }
 
+  /**
+   * True if a valid token is set in the url
+   * 
+   * @return
+   */
+  private boolean hasValidToken() {
+    String token = UrlHelper.getParameterValue("token");
+    if (token != null) {
+      try {
+        registrationService.retrieveByToken(token);
+        return true;
+      } catch (ImejiException e) {
+        // invalid token
+      }
+    }
+    return false;
+
+  }
+
+  /**
+   * Trigger registration
+   * 
+   * @throws IOException
+   */
   public void register() throws IOException {
     if (!termsAccepted) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_accept_terms_of_use", getLocale()));
@@ -73,7 +113,7 @@ public class RegistrationBean extends SuperBean {
     boolean registration_success = false;
     try {
       passwordUrl = getNavigation().getRegistrationUrl() + "?token="
-          + (new PasswordResetController()).register(user);
+          + registrationService.register(user).getToken();
       registration_success = true;
     } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());

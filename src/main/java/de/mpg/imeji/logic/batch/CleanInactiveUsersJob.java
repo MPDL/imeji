@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.registration.RegistrationBusinessController;
+import de.mpg.imeji.logic.registration.RegistrationService;
 import de.mpg.imeji.logic.vo.Item;
 
 /**
@@ -21,7 +21,7 @@ public class CleanInactiveUsersJob implements Callable<Integer> {
   @Override
   public Integer call() throws ImejiException {
     LOGGER.info(" Cleaning expiered registration Users...");
-    new RegistrationBusinessController().deleteExpiredRegistration();
+    new RegistrationService().deleteExpiredRegistration();
     LOGGER.info("...done!");
     return 1;
   }

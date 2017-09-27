@@ -85,17 +85,18 @@
 				</div>
 
 			</ui:fragment>
-			<ui:fragment rendered="#{!(PasswordChangeBean.token==null)}">
-				<h2 class="imj_headline">#{lbl.activate}</h2>
-
-				<ul class="imj_registerSteps">
-					<li>1. #{lbl.register}</li>
-					<li class="imj_active">2. #{lbl.register_activate}</li>
-				</ul>
-				<imjc:password submitFunction="#{PasswordChangeBean.activate()}" submitText="#{lbl.activate}"/>
-				
-			</ui:fragment>
-
+			<ui:remove>
+				<ui:fragment rendered="#{!(PasswordChangeBean.token==null)}">
+					<h2 class="imj_headline">#{lbl.activate}</h2>
+	
+					<ul class="imj_registerSteps">
+						<li>1. #{lbl.register}</li>
+						<li class="imj_active">2. #{lbl.register_activate}</li>
+					</ul>
+					<imjc:password submitFunction="#{RegistrationBean.activate()}" submitText="#{lbl.activate}"/>
+					
+				</ui:fragment>
+			</ui:remove>
 		</h:panelGroup>
 	</ui:define>
 

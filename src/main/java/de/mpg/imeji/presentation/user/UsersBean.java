@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.authorization.util.PasswordGenerator;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.registration.RegistrationBusinessController;
+import de.mpg.imeji.logic.registration.RegistrationService;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.share.email.EmailMessages;
 import de.mpg.imeji.logic.share.email.EmailService;
@@ -47,9 +47,6 @@ public class UsersBean extends SuperBean {
   private List<Invitation> invitations;
   private UserGroup group;
   private String query;
-
-
-
   private static final Logger LOGGER = Logger.getLogger(UserBean.class);
 
   /**
@@ -81,8 +78,8 @@ public class UsersBean extends SuperBean {
    */
   public void doSearch() {
     users = (List<User>) new UserService().searchUserByName(query);
-    inactiveUsers = new RegistrationBusinessController().searchInactiveUsers(query);
-    // setInvitations(new InvitationService().search(query));
+    inactiveUsers = new RegistrationService().searchInactiveUsers(query);
+    setInvitations(new InvitationService().search(query));
   }
 
   /**
@@ -211,7 +208,7 @@ public class UsersBean extends SuperBean {
   public void revokeRegistration() {
     final String email = FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("email");
-    final RegistrationBusinessController registrationBC = new RegistrationBusinessController();
+    final RegistrationService registrationBC = new RegistrationService();
     try {
       registrationBC.delete(registrationBC.retrieveByEmail(email));
     } catch (final Exception e) {
@@ -228,7 +225,7 @@ public class UsersBean extends SuperBean {
    * @throws ImejiException
    */
   public String register() throws ImejiException {
-    final RegistrationBusinessController registrationBC = new RegistrationBusinessController();
+    final RegistrationService registrationBC = new RegistrationService();
     final String email = FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("email");
     User toActivateUser = null;

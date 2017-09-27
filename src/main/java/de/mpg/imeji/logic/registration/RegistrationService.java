@@ -29,8 +29,8 @@ import de.mpg.imeji.util.DateHelper;
  * @author bastiens
  *
  */
-public class RegistrationBusinessController {
-  private static final Logger LOGGER = Logger.getLogger(RegistrationBusinessController.class);
+public class RegistrationService {
+  private static final Logger LOGGER = Logger.getLogger(RegistrationService.class);
   private static final KeyValueStoreService KEY_VALUE_STORE_BC =
       new KeyValueStoreService(new HTreeMapStore("registrationStore"));
 
