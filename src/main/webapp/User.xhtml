@@ -249,31 +249,29 @@
 							
 
 							<h3 class="imj_headline">
-									<h:outputText value="#{lbl.grant_for}"
-										styleClass="imj_metadataValueEntry" />
-								</h3>
-
-							<h:form id="grantForm">
-								<!-- User Grants -->
-								<div class="imj_metadataSetEdit imj_metadataSet">
-									<div class="imj_metadataLabel">
-										<h:outputText
-											value="#{UserBean.user.person.completeName} #{lbl.grants_has_following}:" />
-									</div>
-									<div class="imj_metadataValue">
-										<div class="imj_metadataValueEntry">
-											<ui:fragment rendered="#{Auth.sysAdmin}">
+								<h:outputText value="#{lbl.grant_for}" styleClass="imj_metadataValueEntry" />
+							</h3>
+							<!-- User Grants -->
+							<div class="imj_metadataSetEdit imj_metadataSet">
+								<div class="imj_metadataLabel">
+									<h:outputText
+										value="#{UserBean.user.person.completeName} #{lbl.grants_has_following}:" />
+								</div>
+								<div class="imj_metadataValue">
+									<div class="imj_metadataValueEntry">
+										<ui:fragment rendered="#{Auth.sysAdmin}">
+											<h:form id="grantForm">
 												<div class="imj_metadataSet">
-													<h:selectBooleanCheckbox id="createcollectioncheck"
-														value="#{Auth.createCollection(UserBean.user)}"
-														readonly="true" styleClass="imj_admindataCheckbox"
+													<h:selectBooleanCheckbox id="createcollectioncheck" 
+														value="#{Auth.createCollection(UserBean.user)}" 
+														styleClass="imj_admindataCheckbox"
 														onchange="document.getElementById('grantForm:toggleCreate').click()"
-														disabled="#{Auth.isSysAdmin(UserBean.user)}" />
+														disabled="#{Auth.isSysAdmin(UserBean.user)}"/>
 													<label for="grantForm:createcollectioncheck">#{lbl.allowedToCreateCollection}</label>
 													<span class="imj_invisible">: </span>
 												</div>
 												<div class="imj_metadataSet">
-													<h:selectBooleanCheckbox id="admincheck1" readonly="true"
+													<h:selectBooleanCheckbox id="admincheck1" 
 														title="#{UserBean.sysAdmin and UserBean.uniqueAdmin ? lbl.user_unique_admin : lbl.user_toggle_admin_role}"
 														value="#{UserBean.sysAdmin}"
 														styleClass="imj_admindataCheckbox"
@@ -281,22 +279,20 @@
 														disabled="#{UserBean.sysAdmin and UserBean.uniqueAdmin}" />
 													<label for="grantForm:admincheck">#{lbl.isAdmin}</label> <span
 														class="imj_invisible">: </span>
-													<dialog:confirmationDialog submitAction="toggleAdmin"
-														bean="#{UserBean}"
+												</div>
+												<h:commandButton id="toggleCreate" action="#{UserBean.toggleCreateCollection}" value="toggle create col" styleClass="imj_noDisplay" >
+													<f:ajax render="@none" execute="@this"/>
+												</h:commandButton>		
+											</h:form>
+											<dialog:confirmationDialog submitAction="toggleAdmin" bean="#{UserBean}"
 														confirmationText="#{UserBean.sysAdmin ? msg.admin_to_user : msg.user_to_admin}"
 														submitLabel="#{lbl.confirm}" dialogId="general" />
-												</div>
-											</ui:fragment>
-										</div>
+										</ui:fragment>
 									</div>
 								</div>
-								<h:commandButton id="toggleCreate"
-									action="#{UserBean.toggleCreateCollection}"
-									value="toggle create col" styleClass="imj_noDisplay"
-									type="submit">
-									<f:ajax render="@form" />
-								</h:commandButton>
-							</h:form>
+							</div>
+												
+							
 
 							<div class="imj_metadataSetEdit">
 								<div class="imj_metadataValue">
