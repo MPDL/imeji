@@ -35,6 +35,7 @@
 				if($(this).next('.imj_content').css("display") === "none"){
 					$('.imj_administrationTiledList .imj_adminPanel .imj_content').css({"display":"none"});
 					$(this).next('.imj_content').css({"display" : "block"});
+					$('html, body').animate({scrollTop: $(this).next('.imj_content').offset().top}, 100);
 				}else{
 					$('.imj_administrationTiledList .imj_adminPanel .imj_content').css({"display":"none"});
 				}
