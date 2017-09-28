@@ -31,6 +31,15 @@ public class DateHelper {
         }
       };
 
+  private static final ThreadLocal<SimpleDateFormat> formatDateAndTime =
+      new ThreadLocal<SimpleDateFormat>() {
+        @Override
+        protected SimpleDateFormat initialValue() {
+          return new SimpleDateFormat("yyyy-MM-dd', 'HH:mm", Locale.getDefault());
+        }
+      };
+
+
   /**
    * Return the current {@link Calendar} from the system
    *
@@ -75,13 +84,24 @@ public class DateHelper {
   }
 
   /**
-   * Print a Date into a String
+   * Print a Date into a String: 2017-09.07
    *
    * @param c
    * @return
    */
   public static String printDate(Calendar c) {
     return formatSmall.get().format(c.getTime());
+  }
+
+
+  /**
+   * Print a date so: 2017-09.07, 09:31
+   * 
+   * @param c
+   * @return
+   */
+  public static String printDateWithTime(Calendar c) {
+    return formatDateAndTime.get().format(c.getTime());
   }
 
   /**

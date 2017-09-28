@@ -13,6 +13,7 @@ import de.mpg.imeji.logic.authorization.pwdreset.PasswordResetController;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.share.email.EmailService;
 import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -29,6 +30,7 @@ public class PasswordChangeBean extends SuperBean {
   private String token;
   private boolean resetFinished;
   private final PasswordResetController passwordresetService = new PasswordResetController();
+  private String from;
 
   @ManagedProperty(value = "#{SessionBean}")
   private SessionBean sessionBean;
@@ -38,6 +40,7 @@ public class PasswordChangeBean extends SuperBean {
     newPassword = null;
     repeatedPassword = null;
     resetFinished = false;
+    from = UrlHelper.getParameterValue("from");
   }
 
   /**
@@ -96,10 +99,10 @@ public class PasswordChangeBean extends SuperBean {
       }
       user = passwordresetService.resetPassword(token, newPassword);
       sessionBean.setUser(user);
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("password_changed", getLocale()));
       new EmailService().sendMail(user.getEmail(), null, getResetConfirmEmailSubject(),
           getResetConfirmEmailBody(user));
     }
+    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("password_changed", getLocale()));
     resetFinished = true;
     redirect(getNavigation().getHomeUrl());
   }
@@ -154,7 +157,6 @@ public class PasswordChangeBean extends SuperBean {
     this.resetEmail = resetEmail;
   }
 
-
   public boolean isResetFinished() {
     return resetFinished;
   }
@@ -163,8 +165,6 @@ public class PasswordChangeBean extends SuperBean {
     this.resetFinished = resetFinished;
   }
 
-
-
   public SessionBean getSessionBean() {
     return sessionBean;
   }
@@ -172,8 +172,6 @@ public class PasswordChangeBean extends SuperBean {
   public void setSessionBean(SessionBean sessionBean) {
     this.sessionBean = sessionBean;
   }
-
-
 
   private void reloadPage() throws IOException {
     redirect(getNavigation().getHomeUrl() + "/pwdreset?token=" + token);
@@ -203,5 +201,10 @@ public class PasswordChangeBean extends SuperBean {
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
         .replace("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname());
   }
+
+  public String getFrom() {
+    return from;
+  }
+
 
 }

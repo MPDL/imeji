@@ -73,7 +73,7 @@ public class RegistrationBean extends SuperBean {
     try {
       User user = registrationService.activate(registrationService.retrieveByToken(token));
       loginBean.getSessionBean().setUser(user);
-      redirect(getNavigation().getHomeUrl() + "/pwdreset?register=1");
+      redirect(getNavigation().getHomeUrl() + "/pwdreset?from=registration");
     } catch (Exception e) {
       LOGGER.error("Error activating user", e);
       BeanHelper.error("Error during user activation");
@@ -132,7 +132,7 @@ public class RegistrationBean extends SuperBean {
       Calendar expirationDate = DateHelper.getCurrentDate();
       expirationDate.add(Calendar.DAY_OF_MONTH,
           Integer.valueOf(Imeji.CONFIG.getRegistrationTokenExpiry()));
-      sendRegistrationNotification(passwordUrl, DateHelper.printDate(expirationDate));
+      sendRegistrationNotification(passwordUrl, DateHelper.printDateWithTime(expirationDate));
       if (FacesContext.getCurrentInstance().getMessageList().size() > 1) {
         BeanHelper.cleanMessages();
         BeanHelper.info(
