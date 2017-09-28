@@ -43,7 +43,9 @@ public class SubscriptionService {
   public void register(Subscriber subscriber) {
     List<Subscriber> l = subscriptions.getOrDefault(subscriber.getMessageType(), new ArrayList<>());
     l.add(subscriber);
-    subscriptions.put(subscriber.getMessageType(), l);
+    for (MessageType m : subscriber.getMessageType()) {
+      subscriptions.put(m, l);
+    }
   }
 
   /**

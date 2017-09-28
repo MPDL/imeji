@@ -10,13 +10,17 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.messaging.Message.MessageType;
 import de.mpg.imeji.logic.messaging.subscription.Subscriber;
 import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.vo.CollectionImeji;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
  * {@link Subscriber} to unsubscribe users of deleted collection
@@ -25,8 +29,7 @@ import de.mpg.imeji.logic.vo.User;
  *
  */
 public class DeletedCollectionSubscriber extends Subscriber {
-  private UserService userService = new UserService();
-
+  private final UserService userService = new UserService();
   private static final Logger LOGGER = Logger.getLogger(DeletedCollectionSubscriber.class);
 
 
@@ -39,13 +42,47 @@ public class DeletedCollectionSubscriber extends Subscriber {
     try {
       List<User> allUsers = userService.retrieveAll();
       Map<String, User> modifiedUsers = new HashMap<>();
-      modifiedUsers = unsubscribe(allUsers, message.getObjectId(), modifiedUsers);
-      modifiedUsers = unshare(allUsers, message.getObjectId(), modifiedUsers);
+      modifiedUsers = unsubscribe(allUsers, getMessage().getObjectId(), modifiedUsers);
+      modifiedUsers = unshare(allUsers, getMessage().getObjectId(), modifiedUsers);
       userService.updateBatch(new ArrayList<>(modifiedUsers.values()), Imeji.adminUser);
+      unshareUserGroup(getMessage().getObjectId());
     } catch (Exception e) {
       LOGGER.error("Error unsubscribing users", e);
     }
     return 1;
+  }
+
+  /**
+   * Unshare the collection to the group
+   * 
+   * @param collectionId
+   * @throws ImejiException
+   */
+  private void unshareUserGroup(String collectionId) throws ImejiException {
+    UserGroupService groupService = new UserGroupService();
+    List<UserGroup> groups = (List<UserGroup>) groupService.retrieveAll();
+    for (UserGroup group : groups) {
+      if (hasGrantFor((List<String>) group.getGrants(), collectionId)) {
+        List<String> newGrants = group.getGrants().stream().map(s -> new Grant(s))
+            .filter(g -> !ObjectHelper.getId(URI.create(g.getGrantFor())).equals(collectionId))
+            .map(g -> g.toGrantString()).collect(Collectors.toList());
+        group.setGrants(newGrants);
+        groupService.update(group, Imeji.adminUser);
+      }
+    }
+  }
+
+  /**
+   * True if one the grant is for the collection
+   * 
+   * @param grants
+   * @param collectionId
+   * @return
+   */
+  private boolean hasGrantFor(List<String> grants, String collectionId) {
+    String collectionUri = ObjectHelper.getURI(CollectionImeji.class, collectionId).toString();
+    return grants.stream().map(s -> new Grant(s))
+        .anyMatch(g -> g.getGrantFor().equals(collectionUri));
   }
 
   /**

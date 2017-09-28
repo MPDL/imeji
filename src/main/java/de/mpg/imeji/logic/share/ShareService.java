@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.share;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -7,13 +8,19 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.ImmutableMap;
+
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.messaging.Message;
+import de.mpg.imeji.logic.messaging.Message.MessageType;
+import de.mpg.imeji.logic.messaging.MessageService;
 import de.mpg.imeji.logic.user.UserService;
 import de.mpg.imeji.logic.usergroup.UserGroupService;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.vo.Grant;
 import de.mpg.imeji.logic.vo.Grant.GrantType;
 import de.mpg.imeji.logic.vo.User;
@@ -28,6 +35,7 @@ import de.mpg.imeji.logic.vo.UserGroup;
  */
 public class ShareService {
   private static final Logger LOGGER = Logger.getLogger(ShareService.class);
+  private final MessageService messageService = new MessageService();
 
   /**
    * The Roles which can be shared to every object
@@ -108,6 +116,11 @@ public class ShareService {
       fromUser = new UserService().retrieve(fromUser.getEmail(), Imeji.adminUser);
       final Grant grant = toGrant(role, sharedObjectUri);
       toUser = addGrantToUser(fromUser, toUser, sharedObjectUri, grant);
+      if (role == null) {
+        messageService
+            .add(new Message(MessageType.UNSHARE, ObjectHelper.getId(URI.create(sharedObjectUri)),
+                ImmutableMap.of("email", toUser.getEmail())));
+      }
     }
     return toUser;
   }
@@ -126,6 +139,11 @@ public class ShareService {
     if (toGroup != null) {
       final Grant grant = toGrant(role, sharedObjectUri);
       shareGrantsToGroup(fromUser, toGroup, sharedObjectUri, grant);
+      if (role == null) {
+        messageService
+            .add(new Message(MessageType.UNSHARE, ObjectHelper.getId(URI.create(sharedObjectUri)),
+                ImmutableMap.of("group", ObjectHelper.getId(toGroup.getId()))));
+      }
     }
   }
 

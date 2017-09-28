@@ -15,7 +15,7 @@ public class Message implements Serializable {
   private static final long serialVersionUID = 7333376188527222587L;
 
   public enum MessageType {
-    UPLOAD_FILE, CHANGE_FILE, MOVE_ITEM, DELETE_COLLECTION;
+    UPLOAD_FILE, CHANGE_FILE, MOVE_ITEM, DELETE_COLLECTION, UNSHARE;
   }
 
   private final MessageType type;
@@ -23,7 +23,6 @@ public class Message implements Serializable {
   private final String objectId;
   private final Map<String, String> content;
   private final String id = IdentifierUtil.newRandomId();
-
 
   /**
    * Create a new Message

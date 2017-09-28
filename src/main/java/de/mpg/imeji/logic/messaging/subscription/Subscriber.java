@@ -13,10 +13,10 @@ import de.mpg.imeji.logic.messaging.Message.MessageType;
  *
  */
 public abstract class Subscriber implements Callable<Integer> {
-  private final MessageType messageType;
-  protected Message message;
+  private final MessageType[] messageType;
+  private Message message;
 
-  public Subscriber(MessageType messageType) {
+  public Subscriber(MessageType... messageType) {
     this.messageType = messageType;
   }
 
@@ -27,8 +27,11 @@ public abstract class Subscriber implements Callable<Integer> {
     this.message = message;
   }
 
+  public Message getMessage() {
+    return message;
+  }
 
-  public MessageType getMessageType() {
+  public MessageType[] getMessageType() {
     return messageType;
   }
 
