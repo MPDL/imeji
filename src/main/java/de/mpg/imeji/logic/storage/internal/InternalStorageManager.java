@@ -1,10 +1,10 @@
 package de.mpg.imeji.logic.storage.internal;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static de.mpg.imeji.logic.storage.util.StorageUtils.getMimeType;
-import static de.mpg.imeji.logic.storage.util.StorageUtils.guessExtension;
-import static de.mpg.imeji.logic.storage.util.StorageUtils.replaceExtension;
-import static de.mpg.imeji.logic.storage.util.StorageUtils.writeInOut;
+import static de.mpg.imeji.logic.util.StorageUtils.getMimeType;
+import static de.mpg.imeji.logic.util.StorageUtils.guessExtension;
+import static de.mpg.imeji.logic.util.StorageUtils.replaceExtension;
+import static de.mpg.imeji.logic.util.StorageUtils.writeInOut;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 
@@ -22,15 +22,15 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
+import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.administrator.impl.InternalStorageAdministrator;
 import de.mpg.imeji.logic.storage.transform.ImageGeneratorManager;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
 import de.mpg.imeji.logic.util.IdentifierUtil;
+import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.Item;
 
 /**
  * Manage internal storage in file system

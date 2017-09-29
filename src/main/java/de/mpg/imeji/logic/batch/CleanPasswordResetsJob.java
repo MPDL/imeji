@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.authorization.pwdreset.PasswordResetController;
+import de.mpg.imeji.logic.security.user.pwdreset.PasswordResetController;
 
 public class CleanPasswordResetsJob implements Callable<Integer> {
   private static final Logger LOGGER = Logger.getLogger(CleanInactiveUsersJob.class);

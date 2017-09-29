@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.factory.MetadataFactory;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.factory.MetadataFactory;
 import de.mpg.imeji.presentation.edit.EditMetadataAbstract;
 import de.mpg.imeji.presentation.edit.MetadataInputComponent;
 import de.mpg.imeji.presentation.license.LicenseEditor;

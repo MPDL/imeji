@@ -1,13 +1,16 @@
 package de.mpg.imeji.presentation.security;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.authorization.Authorization;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.core.collection.CollectionService;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.presentation.beans.SuperBean;
 
 /**
@@ -233,8 +236,20 @@ public class AuthorizationBean extends SuperBean implements Serializable {
     return getSessionUser() != null;
   }
 
+  /**
+   * True if the user can update at least one collection
+   * 
+   * @return
+   * @throws ImejiException
+   */
   public boolean isUpdateAtLeastOneCollection() throws ImejiException {
-    return authorization.updateAtLeastOneCollection(getSessionUser());
+    List<CollectionImeji> collections = new CollectionService().retrieveAll();
+    for (CollectionImeji c : collections) {
+      if (authorization.update(getSessionUser(), c)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

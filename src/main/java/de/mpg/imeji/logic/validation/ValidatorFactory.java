@@ -1,5 +1,10 @@
 package de.mpg.imeji.logic.validation;
 
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.validation.impl.CollectionValidator;
 import de.mpg.imeji.logic.validation.impl.FacetValidator;
@@ -9,11 +14,6 @@ import de.mpg.imeji.logic.validation.impl.PseudoValidator;
 import de.mpg.imeji.logic.validation.impl.UserGroupValidator;
 import de.mpg.imeji.logic.validation.impl.UserValidator;
 import de.mpg.imeji.logic.validation.impl.Validator;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
  * Factory for {@link Validator}

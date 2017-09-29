@@ -3,8 +3,8 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.vo.Organization;
-import de.mpg.imeji.logic.vo.Person;
+import de.mpg.imeji.logic.model.Organization;
+import de.mpg.imeji.logic.model.Person;
 
 /**
  * The Elastic representation of a {@link Person}

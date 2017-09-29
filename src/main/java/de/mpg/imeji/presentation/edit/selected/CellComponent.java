@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.presentation.edit.MetadataInputComponent;
 
 /**

@@ -9,16 +9,16 @@ import java.util.Locale;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.search.model.SearchFields;
+import de.mpg.imeji.logic.model.SearchFields;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.share.invitation.Invitation;
-import de.mpg.imeji.logic.share.invitation.InvitationService;
-import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.usergroup.UserGroupService;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.UserGroup;
+import de.mpg.imeji.logic.security.sharing.invitation.Invitation;
+import de.mpg.imeji.logic.security.sharing.invitation.InvitationService;
+import de.mpg.imeji.logic.security.user.UserService;
+import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 
 /**
  * List of all entities with grant for one resource

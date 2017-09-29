@@ -8,11 +8,11 @@ import javax.faces.event.ValueChangeEvent;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;

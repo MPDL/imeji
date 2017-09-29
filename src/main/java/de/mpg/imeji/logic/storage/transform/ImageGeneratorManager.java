@@ -17,7 +17,7 @@ import de.mpg.imeji.logic.storage.transform.generator.RawFileImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.SimpleAudioImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.SimpleImageGenerator;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StorageUtils;
 
 /**
  * Implements all process to generate the images

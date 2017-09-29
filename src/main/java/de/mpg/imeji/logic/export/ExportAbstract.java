@@ -4,7 +4,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
 
 /**
  * Export of data

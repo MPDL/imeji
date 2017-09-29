@@ -9,8 +9,8 @@ import javax.faces.bean.RequestScoped;
 
 import org.apache.commons.lang3.EnumUtils;
 
-import de.mpg.imeji.logic.vo.ImejiLicenses;
-import de.mpg.imeji.logic.vo.License;
+import de.mpg.imeji.logic.model.ImejiLicenses;
+import de.mpg.imeji.logic.model.License;
 
 /**
  * Backing bean for the LicenseViewer component

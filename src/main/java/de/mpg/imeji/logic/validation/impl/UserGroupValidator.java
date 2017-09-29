@@ -1,10 +1,10 @@
 package de.mpg.imeji.logic.validation.impl;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
  * Validator for UserGroup

@@ -12,8 +12,8 @@ import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.statement.StatementService;
-import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.core.statement.StatementService;
+import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.presentation.util.CommonUtils;
 
 /**

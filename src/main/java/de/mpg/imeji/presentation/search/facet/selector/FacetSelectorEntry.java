@@ -12,19 +12,19 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.model.ImejiLicenses;
+import de.mpg.imeji.logic.model.SearchFields;
+import de.mpg.imeji.logic.model.SearchMetadataFields;
+import de.mpg.imeji.logic.model.StatementType;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
-import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.ImejiLicenses;
-import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.util.DateHelper;
 
 /**

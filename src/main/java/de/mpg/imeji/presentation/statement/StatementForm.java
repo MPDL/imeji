@@ -9,9 +9,9 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.StatementType;
-import de.mpg.imeji.logic.vo.factory.StatementFactory;
+import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.StatementType;
+import de.mpg.imeji.logic.model.factory.StatementFactory;
 
 
 public class StatementForm implements Serializable {

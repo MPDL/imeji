@@ -10,6 +10,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
+import de.mpg.imeji.logic.util.StorageUtils;
+
 public final class PdfUtils {
 
   private PdfUtils() {

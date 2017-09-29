@@ -21,8 +21,8 @@ import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 import com.hp.hpl.jena.tdb.TDB;
 
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**

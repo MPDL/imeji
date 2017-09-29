@@ -18,6 +18,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.ContentVO;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Properties;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -29,12 +35,6 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
 import de.mpg.imeji.logic.search.elasticsearch.script.CollectionPostIndexScript;
 import de.mpg.imeji.logic.search.elasticsearch.script.ItemPostIndexScript;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.ContentVO;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.UserGroup;
 
 /**
  * Indexer for ElasticSearch

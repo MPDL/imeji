@@ -4,10 +4,10 @@ import java.net.URI;
 import java.util.Collection;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.util.DateFormatter;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.util.DateFormatter;
 
 
 /**

@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.JSONResponse;

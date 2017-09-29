@@ -11,11 +11,11 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.core.statement.StatementService;
+import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.util.StatementUtil;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
-import de.mpg.imeji.logic.statement.StatementService;
-import de.mpg.imeji.logic.statement.StatementUtil;
-import de.mpg.imeji.logic.vo.Statement;
 
 /**
  * The Search Group of the advanced Serach for the metadata Search

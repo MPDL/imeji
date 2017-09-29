@@ -9,17 +9,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
-import de.mpg.imeji.logic.share.ShareService;
-import de.mpg.imeji.logic.share.ShareService.ShareRoles;
-import de.mpg.imeji.logic.share.invitation.Invitation;
-import de.mpg.imeji.logic.share.invitation.InvitationService;
-import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.user.UserService.USER_TYPE;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.security.sharing.ShareService;
+import de.mpg.imeji.logic.security.sharing.ShareService.ShareRoles;
+import de.mpg.imeji.logic.security.sharing.invitation.Invitation;
+import de.mpg.imeji.logic.security.sharing.invitation.InvitationService;
+import de.mpg.imeji.logic.security.user.UserService;
+import de.mpg.imeji.logic.security.user.UserService.USER_TYPE;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
 
 /**

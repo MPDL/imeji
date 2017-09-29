@@ -5,15 +5,15 @@ import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
-import de.mpg.imeji.logic.authorization.Authorization;
-import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.doi.models.DOICollection;
 import de.mpg.imeji.logic.doi.util.DOIUtil;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.User;
 
 /**
  * Service for using MPDL DOI Service

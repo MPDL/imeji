@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.content.ContentService;
+import de.mpg.imeji.logic.core.content.ContentService;
 
 /**
  * Job to extract fulltext and technical metadata for all files

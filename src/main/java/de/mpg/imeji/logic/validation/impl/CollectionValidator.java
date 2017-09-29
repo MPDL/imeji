@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
+import de.mpg.imeji.logic.model.Organization;
+import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
-import de.mpg.imeji.logic.vo.Organization;
-import de.mpg.imeji.logic.vo.Person;
 
 /**
  * {@link Validator} for {@link CollectionImeji}

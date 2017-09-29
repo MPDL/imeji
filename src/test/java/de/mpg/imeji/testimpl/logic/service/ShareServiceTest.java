@@ -7,17 +7,17 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
-import de.mpg.imeji.logic.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.share.ShareService;
-import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.user.UserService.USER_TYPE;
-import de.mpg.imeji.logic.usergroup.UserGroupService;
-import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.Grant.GrantType;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.UserGroup;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.logic.model.Grant;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.model.Grant.GrantType;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
+import de.mpg.imeji.logic.security.sharing.ShareService;
+import de.mpg.imeji.logic.security.user.UserService;
+import de.mpg.imeji.logic.security.user.UserService.USER_TYPE;
+import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
 
 public class ShareServiceTest extends SuperServiceTest {

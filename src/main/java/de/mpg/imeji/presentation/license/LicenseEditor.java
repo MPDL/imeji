@@ -11,11 +11,11 @@ import org.apache.commons.lang3.EnumUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.vo.ImejiLicenses;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.License;
-import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.util.LicenseUtil;
+import de.mpg.imeji.logic.model.ImejiLicenses;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.License;
+import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.util.LicenseUtil;
 
 /**
  * Editor to edit the license of an item

@@ -7,13 +7,13 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.InactiveAuthenticationError;
-import de.mpg.imeji.logic.authentication.Authentication;
-import de.mpg.imeji.logic.authentication.impl.DefaultAuthentication;
-import de.mpg.imeji.logic.authorization.util.PasswordGenerator;
-import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.security.authentication.Authentication;
+import de.mpg.imeji.logic.security.authentication.impl.DefaultAuthentication;
+import de.mpg.imeji.logic.security.authorization.util.PasswordGenerator;
+import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.util.JenaUtil;
 
 /**

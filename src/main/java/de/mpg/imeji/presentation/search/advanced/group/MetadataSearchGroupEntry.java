@@ -11,16 +11,16 @@ import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.SearchMetadataFields;
+import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.factory.MetadataFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
-import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.factory.MetadataFactory;
 import de.mpg.imeji.presentation.edit.MetadataInputComponent;
 
 /**

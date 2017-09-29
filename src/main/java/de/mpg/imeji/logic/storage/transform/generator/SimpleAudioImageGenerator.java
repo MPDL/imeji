@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StorageUtils;
 
 /**
  * Generate a simple icon for an audio file

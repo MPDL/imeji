@@ -12,12 +12,12 @@ import org.junit.Test;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.user.UserService.USER_TYPE;
-import de.mpg.imeji.logic.usergroup.UserGroupService;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.UserGroup;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.security.user.UserService;
+import de.mpg.imeji.logic.security.user.UserService.USER_TYPE;
+import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
 
 public class UsergroupServiceTest extends SuperServiceTest {

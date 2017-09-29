@@ -28,15 +28,15 @@ import org.json.simple.JSONValue;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.ProxyHelper;
+import de.mpg.imeji.logic.model.Organization;
+import de.mpg.imeji.logic.model.Person;
+import de.mpg.imeji.logic.model.SearchFields;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.model.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchPair;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
-import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.vo.Organization;
-import de.mpg.imeji.logic.vo.Person;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
+import de.mpg.imeji.logic.security.user.UserService;
+import de.mpg.imeji.logic.util.StorageUtils;
 
 /**
  * Servlet implementation class autocompleter

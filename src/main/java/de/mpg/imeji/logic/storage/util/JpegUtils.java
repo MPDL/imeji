@@ -27,6 +27,7 @@ import org.apache.sanselan.common.byteSources.ByteSourceFile;
 import org.apache.sanselan.formats.jpeg.JpegImageParser;
 import org.apache.sanselan.formats.jpeg.segments.UnknownSegment;
 
+import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**

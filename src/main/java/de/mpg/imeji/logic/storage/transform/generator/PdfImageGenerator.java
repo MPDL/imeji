@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.storage.util.PdfUtils;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StorageUtils;
 
 /**
  * {@link ImageGenerator} to generate image out of pdf

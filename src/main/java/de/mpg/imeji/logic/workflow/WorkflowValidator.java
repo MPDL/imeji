@@ -5,8 +5,8 @@ import java.io.Serializable;
 import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.Properties.Status;
+import de.mpg.imeji.logic.model.Properties;
+import de.mpg.imeji.logic.model.Properties.Status;
 
 /**
  * Check update and delete Operation against the imeji Workflow. If not compliant, throw an error

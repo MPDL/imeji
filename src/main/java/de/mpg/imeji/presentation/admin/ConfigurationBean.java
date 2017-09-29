@@ -14,9 +14,9 @@ import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration.HtmlSnippet;
+import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.config.ImejiFileTypes;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
-import de.mpg.imeji.logic.vo.ImejiLicenses;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;

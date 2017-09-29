@@ -26,13 +26,13 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.content.ContentService;
-import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.core.content.ContentService;
+import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.model.ContentVO;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.storage.impl.InternalStorage;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.ContentVO;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**

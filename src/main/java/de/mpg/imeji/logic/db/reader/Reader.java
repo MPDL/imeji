@@ -3,7 +3,7 @@ package de.mpg.imeji.logic.db.reader;
 import java.util.List;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
 
 /**
  * Object reader interface for imeji. Important: {@link Reader} doens't check Authorization. Please

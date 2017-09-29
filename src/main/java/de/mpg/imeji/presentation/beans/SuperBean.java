@@ -11,9 +11,9 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.navigation.history.HistoryPage;
 

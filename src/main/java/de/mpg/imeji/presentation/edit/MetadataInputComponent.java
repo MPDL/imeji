@@ -2,10 +2,10 @@ package de.mpg.imeji.presentation.edit;
 
 import java.io.Serializable;
 
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
-import de.mpg.imeji.logic.vo.util.MetadataUtil;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.model.util.MetadataUtil;
 
 /**
  * Component for the html input of {@link Metadata}

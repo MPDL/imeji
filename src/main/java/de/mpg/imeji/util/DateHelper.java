@@ -6,8 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import de.mpg.imeji.logic.util.DateFormatter;
-
 /**
  * Methods related to {@link Date}
  *

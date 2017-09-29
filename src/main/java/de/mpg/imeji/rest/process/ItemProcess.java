@@ -18,11 +18,11 @@ import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.storage.StorageController;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.rest.to.JSONResponse;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;

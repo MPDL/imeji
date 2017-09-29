@@ -1,7 +1,7 @@
 package de.mpg.imeji.logic.validation.impl;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.vo.Metadata;
+import de.mpg.imeji.logic.model.Metadata;
 
 /**
  * Validator for geolocation

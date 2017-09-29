@@ -3,7 +3,7 @@ package de.mpg.imeji.logic.storage.transform.generator;
 import java.io.File;
 
 import de.mpg.imeji.logic.storage.util.ImageUtils;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StorageUtils;
 
 /**
  * {@link ImageGenerator} for basics format. Doesn't need any dependency

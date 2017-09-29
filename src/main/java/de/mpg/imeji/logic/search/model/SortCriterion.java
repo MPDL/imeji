@@ -2,6 +2,7 @@ package de.mpg.imeji.logic.search.model;
 
 import java.io.Serializable;
 
+import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
 
 /**

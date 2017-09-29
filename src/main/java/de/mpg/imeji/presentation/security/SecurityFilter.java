@@ -1,6 +1,6 @@
 package de.mpg.imeji.presentation.security;
 
-import static de.mpg.imeji.logic.vo.Properties.Status.PENDING;
+import static de.mpg.imeji.logic.model.Properties.Status.PENDING;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -33,18 +33,18 @@ import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.authentication.impl.HttpAuthentication;
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
 import de.mpg.imeji.logic.search.model.SearchResult;
-import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.security.authentication.impl.HttpAuthentication;
+import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.logic.workflow.status.StatusUtil;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.navigation.history.HistoryUtil;

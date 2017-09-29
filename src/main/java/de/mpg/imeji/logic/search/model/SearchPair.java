@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.search.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**

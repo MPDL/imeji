@@ -13,15 +13,15 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.core.statement.StatementService;
+import de.mpg.imeji.logic.model.SearchFields;
+import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.model.SearchFields;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchPair;
-import de.mpg.imeji.logic.statement.StatementService;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.logic.vo.Statement;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**

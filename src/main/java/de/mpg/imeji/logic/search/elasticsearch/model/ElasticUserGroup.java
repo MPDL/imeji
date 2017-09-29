@@ -4,8 +4,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.vo.Grant.GrantType;
-import de.mpg.imeji.logic.vo.UserGroup;
+import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.model.Grant.GrantType;
 
 /**
  * Elastic Object for UserGroup

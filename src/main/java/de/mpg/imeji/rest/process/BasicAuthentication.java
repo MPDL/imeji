@@ -3,9 +3,9 @@ package de.mpg.imeji.rest.process;
 import javax.servlet.http.HttpServletRequest;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
-import de.mpg.imeji.logic.authentication.Authentication;
-import de.mpg.imeji.logic.authentication.factory.AuthenticationFactory;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.security.authentication.Authentication;
+import de.mpg.imeji.logic.security.authentication.factory.AuthenticationFactory;
 
 /**
  * Helper the manage the authentication in the API

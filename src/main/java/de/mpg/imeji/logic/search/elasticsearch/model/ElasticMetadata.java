@@ -1,9 +1,9 @@
 package de.mpg.imeji.logic.search.elasticsearch.model;
 
-import de.mpg.imeji.logic.util.DateFormatter;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.factory.StatementFactory;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.factory.StatementFactory;
+import de.mpg.imeji.util.DateFormatter;
 
 
 /**

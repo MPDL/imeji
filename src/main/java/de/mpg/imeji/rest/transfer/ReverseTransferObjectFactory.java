@@ -12,16 +12,16 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.Organization;
+import de.mpg.imeji.logic.model.Person;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.factory.MetadataFactory;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.Organization;
-import de.mpg.imeji.logic.vo.Person;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.factory.MetadataFactory;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.ContainerAdditionalInformationTO;
 import de.mpg.imeji.rest.to.IdentifierTO;
@@ -104,12 +104,12 @@ public class ReverseTransferObjectFactory {
    * @param licenseTOs
    * @return
    */
-  private static List<de.mpg.imeji.logic.vo.License> transferLicenses(
+  private static List<de.mpg.imeji.logic.model.License> transferLicenses(
       List<de.mpg.imeji.rest.to.LicenseTO> licenseTOs) {
-    final List<de.mpg.imeji.logic.vo.License> licenses = new ArrayList<>();
+    final List<de.mpg.imeji.logic.model.License> licenses = new ArrayList<>();
     if (licenseTOs != null) {
       for (final de.mpg.imeji.rest.to.LicenseTO licTO : licenseTOs) {
-        final de.mpg.imeji.logic.vo.License lic = new de.mpg.imeji.logic.vo.License();
+        final de.mpg.imeji.logic.model.License lic = new de.mpg.imeji.logic.model.License();
         lic.setLabel(
             StringHelper.isNullOrEmptyTrim(licTO.getLabel()) ? licTO.getName() : licTO.getLabel());
         lic.setName(licTO.getName());

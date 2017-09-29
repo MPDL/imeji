@@ -13,15 +13,15 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.item.ItemService;
-import de.mpg.imeji.logic.statement.StatementService;
-import de.mpg.imeji.logic.statement.StatementUtil;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.core.collection.CollectionService;
+import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.core.statement.StatementService;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.util.StatementUtil;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 

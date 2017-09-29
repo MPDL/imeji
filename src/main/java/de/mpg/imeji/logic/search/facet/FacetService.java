@@ -13,6 +13,8 @@ import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.generic.SearchServiceAbstract;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.facet.controller.FacetController;
 import de.mpg.imeji.logic.search.facet.model.Facet;
@@ -21,9 +23,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
-import de.mpg.imeji.logic.service.SearchServiceAbstract;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.User;
 
 /**
  * Service for the Facets

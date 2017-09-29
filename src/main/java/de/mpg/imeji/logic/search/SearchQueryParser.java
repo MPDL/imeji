@@ -9,22 +9,22 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.model.SearchFields;
+import de.mpg.imeji.logic.model.SearchMetadataFields;
+import de.mpg.imeji.logic.model.TechnicalMetadata;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
-import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
-import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
-import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
+import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.util.StringParser;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.TechnicalMetadata;
 
 /**
  * Static methods to manipulate imeji url search queries

@@ -8,9 +8,9 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
+import de.mpg.imeji.logic.generic.ImejiControllerAbstract;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.facet.model.Facet;
-import de.mpg.imeji.logic.service.ImejiControllerAbstract;
-import de.mpg.imeji.logic.vo.User;
 
 public class FacetController extends ImejiControllerAbstract<Facet> {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.facetModel);

@@ -16,12 +16,12 @@ import org.elasticsearch.search.aggregations.bucket.nested.NestedBuilder;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes;
+import de.mpg.imeji.logic.model.ImejiLicenses;
+import de.mpg.imeji.logic.model.SearchFields;
+import de.mpg.imeji.logic.model.StatementType;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
-import de.mpg.imeji.logic.search.model.SearchFields;
-import de.mpg.imeji.logic.vo.ImejiLicenses;
-import de.mpg.imeji.logic.vo.StatementType;
 
 /**
  * Factory class to buid an {@link AbstractAggregationBuilder}

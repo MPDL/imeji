@@ -19,10 +19,10 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiConfiguration.BROWSE_VIEW;
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.user.UserService;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.util.MaxPlanckInstitutUtils;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.util.CookieUtils;
 import de.mpg.imeji.presentation.util.ServletUtil;
 

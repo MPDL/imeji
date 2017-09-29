@@ -11,16 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.Organization;
+import de.mpg.imeji.logic.model.Person;
+import de.mpg.imeji.logic.model.Properties;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.Organization;
-import de.mpg.imeji.logic.vo.Person;
-import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.rest.helper.CommonUtils;
 import de.mpg.imeji.rest.helper.UserNameCache;
 import de.mpg.imeji.rest.to.CollectionTO;
@@ -237,9 +237,9 @@ public class TransferObjectFactory {
    * @return
    */
   private static List<de.mpg.imeji.rest.to.LicenseTO> transferLicense(
-      List<de.mpg.imeji.logic.vo.License> licenses) {
+      List<de.mpg.imeji.logic.model.License> licenses) {
     final List<de.mpg.imeji.rest.to.LicenseTO> licenseTOs = new ArrayList<>();
-    for (final de.mpg.imeji.logic.vo.License lic : licenses) {
+    for (final de.mpg.imeji.logic.model.License lic : licenses) {
       final de.mpg.imeji.rest.to.LicenseTO licTO = new de.mpg.imeji.rest.to.LicenseTO();
       licTO.setName(lic.getName());
       licTO.setLabel(lic.getLabel());

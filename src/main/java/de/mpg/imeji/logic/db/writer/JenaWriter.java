@@ -15,9 +15,9 @@ import de.mpg.imeji.j2j.transaction.ThreadedTransaction;
 import de.mpg.imeji.j2j.transaction.Transaction;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.JenaReader;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.vo.User;
 
 /**
  * imeji WRITE operations (create/delete/update) in {@link Jena} <br/>

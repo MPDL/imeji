@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.statement.StatementUtil;
+import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.StatementType;
+import de.mpg.imeji.logic.model.util.StatementUtil;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.StatementType;
 import de.mpg.imeji.presentation.statement.StatementForm;
 
 /**

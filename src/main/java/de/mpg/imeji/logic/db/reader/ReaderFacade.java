@@ -8,9 +8,9 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
-import de.mpg.imeji.logic.authorization.Authorization;
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.security.authorization.Authorization;
+import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 
 /**
  * Facade for using {@link Reader}. Check {@link Authorization} to readen objects

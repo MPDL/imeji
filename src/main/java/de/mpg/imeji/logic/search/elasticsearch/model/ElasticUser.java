@@ -3,9 +3,9 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.vo.Grant;
-import de.mpg.imeji.logic.vo.Grant.GrantType;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.Grant;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.Grant.GrantType;
 
 /**
  * Indexed user

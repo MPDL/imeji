@@ -2,10 +2,10 @@ package de.mpg.imeji.logic.workflow.status.impl;
 
 import java.util.List;
 
+import de.mpg.imeji.logic.model.Properties;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
-import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.Properties.Status;
 import de.mpg.imeji.logic.workflow.status.StatusUtil;
 import de.mpg.imeji.logic.workflow.status.VersionReader;
 

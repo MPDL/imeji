@@ -6,8 +6,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import com.hp.hpl.jena.query.Dataset;
 
-import de.mpg.imeji.logic.concurrency.locks.LocksSurveyor;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.concurrency.LocksSurveyor;
+import de.mpg.imeji.logic.model.User;
 
 /**
  * imeji object.

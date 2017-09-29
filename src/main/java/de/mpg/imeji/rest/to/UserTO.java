@@ -3,7 +3,7 @@ package de.mpg.imeji.rest.to;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
 
 /**
  * TO for {@link User}

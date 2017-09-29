@@ -12,10 +12,10 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.util.ProxyHelper;
+import de.mpg.imeji.logic.model.UploadResult;
 import de.mpg.imeji.logic.storage.Storage;
-import de.mpg.imeji.logic.storage.UploadResult;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**

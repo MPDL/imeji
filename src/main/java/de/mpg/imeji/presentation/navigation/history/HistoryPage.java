@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
 
 /**
  * An imeji web page

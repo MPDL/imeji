@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
 
 public class SelectUserComponent implements Serializable {
   private static final long serialVersionUID = -8610625477511815078L;

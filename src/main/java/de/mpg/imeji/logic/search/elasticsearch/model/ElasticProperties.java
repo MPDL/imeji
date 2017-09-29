@@ -2,7 +2,7 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
 
 import java.util.Date;
 
-import de.mpg.imeji.logic.vo.Properties;
+import de.mpg.imeji.logic.model.Properties;
 
 /**
  * Elastic Search Entity for {@link Properties}

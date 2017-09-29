@@ -25,18 +25,18 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.authentication.factory.AuthenticationFactory;
-import de.mpg.imeji.logic.collection.CollectionService;
-import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.core.collection.CollectionService;
+import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.License;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.security.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.storage.Storage;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.License;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**

@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.TypeNotAllowedException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
+import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.presentation.beans.ContainerEditorSession;
 import de.mpg.imeji.presentation.session.SessionBean;
 

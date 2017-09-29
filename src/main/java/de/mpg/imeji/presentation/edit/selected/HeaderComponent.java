@@ -2,8 +2,8 @@ package de.mpg.imeji.presentation.edit.selected;
 
 import java.io.Serializable;
 
-import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.presentation.edit.MetadataInputComponent;
 
 /**

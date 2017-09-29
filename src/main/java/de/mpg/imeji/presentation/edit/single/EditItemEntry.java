@@ -3,9 +3,9 @@ package de.mpg.imeji.presentation.edit.single;
 import java.io.Serializable;
 import java.util.Map;
 
-import de.mpg.imeji.logic.vo.Metadata;
-import de.mpg.imeji.logic.vo.Statement;
-import de.mpg.imeji.logic.vo.factory.ImejiFactory;
+import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.presentation.edit.MetadataInputComponent;
 import de.mpg.imeji.presentation.edit.SelectStatementComponent;
 

@@ -5,9 +5,9 @@ import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.content.ContentService;
+import de.mpg.imeji.logic.core.content.ContentService;
+import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.storage.StorageController;
-import de.mpg.imeji.logic.vo.ContentVO;
 
 public class ResizeWebAndThumbnailJob implements Callable<Integer> {
 

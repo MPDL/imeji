@@ -10,8 +10,8 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.user.util.QuotaUtil;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.security.user.util.QuotaUtil;
 
 /**
  * Super class to implements quota methods, which can be reused by JSF Bean displaying quota menu

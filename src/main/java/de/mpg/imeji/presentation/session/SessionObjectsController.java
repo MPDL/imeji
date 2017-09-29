@@ -2,7 +2,7 @@ package de.mpg.imeji.presentation.session;
 
 import java.util.List;
 
-import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.model.Item;
 
 /**
  * SEt of methods to control objects that are stored in the {@link SessionBean}

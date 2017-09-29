@@ -1,6 +1,6 @@
 package de.mpg.imeji.logic.search.elasticsearch.model;
 
-import de.mpg.imeji.logic.vo.ContainerAdditionalInfo;
+import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
 
 /**
  * Elastic Object for {@link ContainerAdditionalInfo}

@@ -12,15 +12,15 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.authorization.Authorization;
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.collection.CollectionService;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.core.collection.CollectionService;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.SearchFields;
+import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchPair;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.Grant.GrantType;
+import de.mpg.imeji.logic.security.authorization.Authorization;
+import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 

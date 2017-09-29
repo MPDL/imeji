@@ -8,20 +8,20 @@ import java.util.Locale;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UINamingContainer;
 
-import de.mpg.imeji.logic.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.search.model.SearchFields;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Properties;
+import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.SearchFields;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.usergroup.UserGroupService;
+import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.security.user.UserService;
+import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.vo.Item;
-import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.UserGroup;
 import de.mpg.imeji.presentation.collection.CollectionListItem;
 import de.mpg.imeji.presentation.navigation.Navigation;
 
@@ -81,11 +81,11 @@ public class StatusComponent extends UINamingContainer {
     reset();
     if (properties != null) {
       status = properties.getStatus();
-      if (SecurityUtil.authorization().read(sessionUser, properties)) {
+      sharedWithUser = SecurityUtil.authorization().isShared(sessionUser, properties);
+      if (isSharedWithUser()) {
         users = getUserSharedWith(properties);
         groups = getGroupSharedWith(properties);
         showManage = SecurityUtil.authorization().administrate(sessionUser, properties);
-        sharedWithUser = SecurityUtil.authorization().isShared(sessionUser, properties);
       }
       linkToSharePage = initLinkToSharePage(properties.getId());
       show = true;

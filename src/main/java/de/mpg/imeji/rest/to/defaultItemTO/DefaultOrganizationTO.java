@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import de.mpg.imeji.logic.vo.Organization;
+import de.mpg.imeji.logic.model.Organization;
 
 /**
  * The default TO for an {@link Organization}

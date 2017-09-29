@@ -7,18 +7,18 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.model.ImejiLicenses;
+import de.mpg.imeji.logic.model.SearchFields;
+import de.mpg.imeji.logic.model.SearchMetadataFields;
+import de.mpg.imeji.logic.model.StatementType;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.model.SearchFields;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
-import de.mpg.imeji.logic.search.model.SearchMetadataFields;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.util.DateFormatter;
-import de.mpg.imeji.logic.vo.ImejiLicenses;
-import de.mpg.imeji.logic.vo.StatementType;
+import de.mpg.imeji.util.DateFormatter;
 
 /**
  * Value of a {@link FacetSelectorEntry}

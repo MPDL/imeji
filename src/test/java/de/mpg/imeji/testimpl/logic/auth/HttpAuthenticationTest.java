@@ -12,12 +12,12 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.authentication.ImejiRsaKeys;
-import de.mpg.imeji.logic.authentication.factory.AuthenticationFactory;
-import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.security.authentication.ImejiRsaKeys;
+import de.mpg.imeji.logic.security.authentication.factory.AuthenticationFactory;
+import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.rest.process.AdminProcess;
 import de.mpg.imeji.util.JenaUtil;
 

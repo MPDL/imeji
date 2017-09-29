@@ -1,6 +1,6 @@
 package de.mpg.imeji.logic.search.elasticsearch.model;
 
-import de.mpg.imeji.logic.vo.TechnicalMetadata;
+import de.mpg.imeji.logic.model.TechnicalMetadata;
 
 /**
  * Elastic object for technical metadata

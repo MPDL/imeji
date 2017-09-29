@@ -5,7 +5,7 @@ import java.util.List;
 import javax.ws.rs.NotSupportedException;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.rest.to.SearchResultTO;
 
 

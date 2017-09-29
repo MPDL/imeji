@@ -1,7 +1,7 @@
 package de.mpg.imeji.testimpl.rest.resources;
 
-import static de.mpg.imeji.logic.storage.util.StorageUtils.calculateChecksum;
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
+import static de.mpg.imeji.logic.util.StorageUtils.calculateChecksum;
 import static de.mpg.imeji.rest.process.RestProcessUtils.jsonToPOJO;
 import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_PATH;
 import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_REST;
@@ -47,7 +47,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.api.ItemAPIService;
 import de.mpg.imeji.rest.process.RestProcessUtils;

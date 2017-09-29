@@ -5,7 +5,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.vo.Statement;
+import de.mpg.imeji.logic.model.Statement;
 
 /**
  * TO for {@link Statement}

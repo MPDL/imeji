@@ -5,8 +5,8 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.registration.RegistrationService;
-import de.mpg.imeji.logic.vo.Item;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.security.registration.RegistrationService;
 
 /**
  * Job which read all Items, read for each {@link Item} the size of the original File, and write the

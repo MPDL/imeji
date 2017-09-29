@@ -23,16 +23,16 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.export.ExportAbstract;
 import de.mpg.imeji.logic.export.FileExport;
 import de.mpg.imeji.logic.export.SitemapExport;
 import de.mpg.imeji.logic.export.ZIPExport;
-import de.mpg.imeji.logic.item.ItemService;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.logic.vo.CollectionImeji;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.notification.NotificationUtils;
 import de.mpg.imeji.presentation.session.SessionBean;
 

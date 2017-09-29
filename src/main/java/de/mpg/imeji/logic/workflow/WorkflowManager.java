@@ -5,10 +5,10 @@ import java.util.Calendar;
 import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
+import de.mpg.imeji.logic.model.Properties;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.util.IdentifierUtil;
-import de.mpg.imeji.logic.vo.Properties;
-import de.mpg.imeji.logic.vo.Properties.Status;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.util.DateHelper;
 
 /**

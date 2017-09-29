@@ -10,10 +10,10 @@ import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.rest.to.SearchResultTO;
 import de.mpg.imeji.rest.to.UserTO;
 import de.mpg.imeji.rest.transfer.TransferObjectFactory;

@@ -3,8 +3,8 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mpg.imeji.logic.vo.ContentVO;
-import de.mpg.imeji.logic.vo.TechnicalMetadata;
+import de.mpg.imeji.logic.model.ContentVO;
+import de.mpg.imeji.logic.model.TechnicalMetadata;
 
 /**
  * Elastic Object for contentVO

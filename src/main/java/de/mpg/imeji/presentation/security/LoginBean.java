@@ -18,12 +18,12 @@ import com.ocpsoft.pretty.PrettyContext;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.InactiveAuthenticationError;
-import de.mpg.imeji.logic.authentication.Authentication;
-import de.mpg.imeji.logic.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.security.authentication.Authentication;
+import de.mpg.imeji.logic.security.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
-import de.mpg.imeji.logic.vo.User;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;

@@ -3,9 +3,9 @@ package de.mpg.imeji.presentation.share;
 import java.util.Locale;
 
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.share.ShareService.ShareRoles;
-import de.mpg.imeji.logic.share.email.EmailMessages;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.security.sharing.ShareService.ShareRoles;
+import de.mpg.imeji.logic.security.sharing.email.EmailMessages;
 
 /**
  * Email Message when sharing an object

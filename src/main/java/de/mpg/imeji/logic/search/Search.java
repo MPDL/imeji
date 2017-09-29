@@ -2,11 +2,11 @@ package de.mpg.imeji.logic.search;
 
 import java.util.List;
 
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
-import de.mpg.imeji.logic.vo.User;
 
 /**
  * Search Interface for imeji

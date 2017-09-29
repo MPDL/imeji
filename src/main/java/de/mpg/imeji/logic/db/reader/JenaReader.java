@@ -14,7 +14,7 @@ import de.mpg.imeji.j2j.transaction.CRUDTransaction.CRUDTransactionType;
 import de.mpg.imeji.j2j.transaction.Transaction;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.writer.JenaWriter;
-import de.mpg.imeji.logic.vo.User;
+import de.mpg.imeji.logic.model.User;
 
 /**
  * imeji READ operations in {@link Jena} <br/>

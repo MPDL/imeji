@@ -13,13 +13,13 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.share.ShareService;
-import de.mpg.imeji.logic.share.ShareService.ShareRoles;
-import de.mpg.imeji.logic.share.invitation.Invitation;
-import de.mpg.imeji.logic.share.invitation.InvitationService;
-import de.mpg.imeji.logic.user.UserService;
-import de.mpg.imeji.logic.vo.User;
-import de.mpg.imeji.logic.vo.UserGroup;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.security.sharing.ShareService;
+import de.mpg.imeji.logic.security.sharing.ShareService.ShareRoles;
+import de.mpg.imeji.logic.security.sharing.invitation.Invitation;
+import de.mpg.imeji.logic.security.sharing.invitation.InvitationService;
+import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**

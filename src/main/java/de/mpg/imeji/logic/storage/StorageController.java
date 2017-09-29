@@ -1,8 +1,8 @@
 package de.mpg.imeji.logic.storage;
 
-import static de.mpg.imeji.logic.storage.util.StorageUtils.calculateChecksum;
-import static de.mpg.imeji.logic.storage.util.StorageUtils.compareExtension;
-import static de.mpg.imeji.logic.storage.util.StorageUtils.guessExtension;
+import static de.mpg.imeji.logic.util.StorageUtils.calculateChecksum;
+import static de.mpg.imeji.logic.util.StorageUtils.compareExtension;
+import static de.mpg.imeji.logic.util.StorageUtils.guessExtension;
 
 import java.awt.Dimension;
 import java.io.File;
@@ -17,10 +17,11 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.UploadResult;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.util.ImageUtils;
-import de.mpg.imeji.logic.storage.util.StorageUtils;
-import de.mpg.imeji.logic.vo.CollectionImeji;
+import de.mpg.imeji.logic.util.StorageUtils;
 
 /**
  * Controller for the {@link Storage} objects
