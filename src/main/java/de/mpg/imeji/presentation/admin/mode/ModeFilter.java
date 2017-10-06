@@ -46,7 +46,7 @@ public class ModeFilter implements Filter {
       throws IOException, ServletException {
     if (ServletUtil.isGetRequest(request)) {
       if (isPrivate((HttpServletRequest) request)) {
-        // redirectToLogin(request, resp);
+        redirectToLogin(request, resp);
         return;
       } else if (isRedirected((HttpServletRequest) request)) {
         // redirect(request, resp);
