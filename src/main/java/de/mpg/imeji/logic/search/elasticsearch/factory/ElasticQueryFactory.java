@@ -14,11 +14,11 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 import com.hp.hpl.jena.util.iterator.Filter;
 
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.ImejiLicenses;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.Grant.GrantType;
-import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
@@ -26,12 +26,12 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -509,7 +509,10 @@ public class ElasticQueryFactory {
           }
           q = rq;
         } else {
-          q = QueryBuilders.termQuery(field, DateFormatter.getTime(dateString));
+          q = QueryBuilders.rangeQuery(field)
+              .gte(Long.toString(DateFormatter.parseDate(dateString).getTime()))
+              .lte(Long.toString(DateFormatter.parseDate2(dateString).getTime()));
+          // q = QueryBuilders.termQuery(field, DateFormatter.getTime(dateString));
         }
         break;
     }
