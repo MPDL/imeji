@@ -40,6 +40,7 @@
                "suggest":{
                   "type":"string",
                   "analyzer":"edgegram_analyzer",
+                  "search_analyzer": "standard",
                   "include_in_all":false
                },
                "sort":{
