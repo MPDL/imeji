@@ -1,7 +1,6 @@
 package de.mpg.imeji.logic.model;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,18 +63,17 @@ public class Statement implements Serializable, Cloneable {
   }
 
   /**
-   * Format the index in a case insensitive UrlFriendly manner (but not url encoded!)
+   * Get the index encoded in UTF-8
    * 
-   * @param index
    * @return
-   * @throws UnsupportedEncodingException
    */
-  private String encodeIndex(String index) {
+  public String getIndexFormatted() {
     return StatementUtil.formatIndex(index);
   }
 
   /**
-   * Get the index encoded in UTF-8
+   * Return the Index url encoded. Can be useful to create a search query manually. Don't use it if
+   * using the Searchfactory, since queries created by the searchfactory are encoded
    * 
    * @return
    */
@@ -89,7 +87,7 @@ public class Statement implements Serializable, Cloneable {
    * @return
    */
   public String getSearchIndex() {
-    return SearchFields.md.getIndex() + "." + getIndexUrlEncoded() + "." + getMetadataField();
+    return SearchFields.md.getIndex() + "." + getIndexFormatted() + "." + getMetadataField();
   }
 
   private String getMetadataField() {
@@ -108,7 +106,7 @@ public class Statement implements Serializable, Cloneable {
    */
   public void setIndex(String index) {
     this.index = index.trim();
-    this.uri = ObjectHelper.getURI(Statement.class, encodeIndex(this.index));
+    this.uri = ObjectHelper.getURI(Statement.class, StatementUtil.formatIndex(index));
   }
 
   public URI getVocabulary() {

@@ -12,9 +12,9 @@ import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.util.StatementUtil;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 
 /**
  * Triggered when a statement is changed
@@ -47,7 +47,7 @@ public class StatementChangedSubscriber extends Subscriber {
   private void updateItemIndex(String oldIndex, String newIndex, User user) throws ImejiException {
     ItemService itemService = new ItemService();
     SearchQuery q = new SearchFactory()
-        .addElement(new SearchPair(SearchFields.index, StatementUtil.getIndexUrlEncoded(oldIndex)),
+        .addElement(new SearchPair(SearchFields.index, StatementUtil.formatIndex(oldIndex)),
             LOGICAL_RELATIONS.AND)
         .build();
     List<Item> items = itemService.searchAndRetrieve(q, null, user, -1, 0);

@@ -33,7 +33,7 @@ public final class ElasticMetadata extends ElasticPerson {
    */
   public ElasticMetadata(Metadata md) {
     super(md.getPerson());
-    this.index = new StatementFactory().setIndex(md.getIndex()).build().getIndexUrlEncoded();
+    this.index = new StatementFactory().setIndex(md.getIndex()).build().getIndexFormatted();
     this.name = md.getName();
     this.title = md.getTitle();
     if (!Double.isNaN(md.getNumber())) {

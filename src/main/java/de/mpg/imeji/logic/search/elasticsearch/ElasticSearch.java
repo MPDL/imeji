@@ -119,7 +119,7 @@ public class ElasticSearch implements Search {
     if (addFacets) {
       request = addAggregations(request);
     }
-
+    System.out.println(request);
     final SearchResponse resp = request.execute().actionGet();
     return toSearchResult(resp, query);
   }

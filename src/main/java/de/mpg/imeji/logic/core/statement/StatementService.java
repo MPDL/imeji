@@ -216,7 +216,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    */
   public boolean isUsed(Statement s) throws ImejiException {
     SearchQuery q =
-        new SearchFactory().addElement(new SearchPair(SearchFields.index, s.getIndexUrlEncoded()),
+        new SearchFactory().addElement(new SearchPair(SearchFields.index, s.getIndexFormatted()),
             LOGICAL_RELATIONS.AND).build();
     Search search = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC);
     return search.search(q, null, Imeji.adminUser, null, 0, 1).getNumberOfRecords() > 0;

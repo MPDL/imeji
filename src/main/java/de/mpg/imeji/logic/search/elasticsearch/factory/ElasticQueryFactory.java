@@ -19,6 +19,7 @@ import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.util.StatementUtil;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
@@ -348,8 +349,8 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.EMAIL, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
       case index:
-        return fieldQuery(ElasticFields.METADATA_INDEX, pair.getValue(), SearchOperators.EQUALS,
-            pair.isNot());
+        return fieldQuery(ElasticFields.METADATA_INDEX, StatementUtil.formatIndex(pair.getValue()),
+            SearchOperators.EQUALS, pair.isNot());
       case completename:
         break;
       case creatorid:

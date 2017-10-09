@@ -97,5 +97,6 @@ public class StatementUtil {
     } catch (UnsupportedEncodingException e) {
       return index;
     }
+
   }
 }

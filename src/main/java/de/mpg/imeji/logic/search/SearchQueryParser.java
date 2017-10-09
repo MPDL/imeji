@@ -14,15 +14,15 @@ import de.mpg.imeji.logic.model.SearchMetadataFields;
 import de.mpg.imeji.logic.model.TechnicalMetadata;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchElement;
+import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
-import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.util.StringParser;
 import de.mpg.imeji.logic.util.StringHelper;
 
@@ -37,7 +37,7 @@ public class SearchQueryParser {
   private static String PAIR_REGEX = "([a-zA-Z0-9-_\\.]+)([=<>]{1,2})(.+)";
   private static Pattern PAIR_PATTERN = Pattern.compile(PAIR_REGEX);
   private static String METADATA_REGEX =
-      SearchFields.md.name() + "\\.([a-zA-Z0-9-_\\.]+)([=<>]{1,2})(.+)";
+      SearchFields.md.name() + "\\.([a-zA-Z0-9-:_\\.]+)([=<>]{1,2})(.+)";
   private static Pattern METADATA_PATTERN = Pattern.compile(METADATA_REGEX);
   private static final String TECHNICAL_REGEX =
       SearchFields.technical.name() + "\\[(.+)\\]([=<>@]{1,2})(.+)";

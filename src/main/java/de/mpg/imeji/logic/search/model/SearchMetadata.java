@@ -28,7 +28,7 @@ public class SearchMetadata extends SearchPair {
    */
   public SearchMetadata(String index, SearchMetadataFields f, String value) {
     super(null, value);
-    this.index = new StatementFactory().setIndex(index).build().getIndexUrlEncoded();
+    this.index = new StatementFactory().setIndex(index).build().getIndexFormatted();
     this.metadataField = f;
   }
 

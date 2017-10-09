@@ -76,7 +76,7 @@ public class StatementEditBean extends StatementCreateBean {
    */
   private boolean searchIfUsed(Statement s) throws UnprocessableError {
     SearchFactory factory = new SearchFactory();
-    factory.addElement(new SearchPair(SearchFields.index, s.getIndexUrlEncoded()),
+    factory.addElement(new SearchPair(SearchFields.index, s.getIndexFormatted()),
         LOGICAL_RELATIONS.AND);
     return new ItemService().search(factory.build(), null, Imeji.adminUser, 0, 1)
         .getNumberOfRecords() > 0;
