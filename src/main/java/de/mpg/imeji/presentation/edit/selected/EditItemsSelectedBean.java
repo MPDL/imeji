@@ -115,7 +115,8 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
     // Create a Map of the columns from the existing Metadata of the item
     final Map<String, HeaderComponent> headerMap =
         items.stream().flatMap(item -> item.getMetadata().stream())
-            .filter(md -> md.getIndex().length() > 0).collect(Collectors.toMap(Metadata::getIndex,
+            .filter(md -> md.getIndex().length() > 0 && statementMap.get(md.getIndex()) != null)
+            .collect(Collectors.toMap(Metadata::getIndex,
                 md -> new HeaderComponent(statementMap.get(md.getIndex())), (s1, s2) -> s1));
 
     // Add the default Statement to the columns
