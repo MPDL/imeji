@@ -67,10 +67,10 @@
 			</div>
 		</ui:repeat>
 		<div class="imj_submitPanel">
-			<h:commandLink styleClass="imj_cancelButton" action="#{cc.attrs.itemBean.cancelEditor}" onclick="startLoader(); window.location.hash = '#';">
+			<h:commandLink styleClass="imj_cancelButton" action="#{cc.attrs.itemBean.cancelEditor}" onclick="startLoader(); window.location.hash = '#pageTitle';">
 				<h:outputText value="#{lbl.cancel}"/>
 			</h:commandLink>
-			<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.save}" value="#{lbl.save}" onclick="startLoader();window.location.hash = '#';">
+			<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.save}" value="#{lbl.save}" onclick="startLoader();window.location.hash = '#pageTitle';">
 			</h:commandLink>
 		</div>
 	</h:form>

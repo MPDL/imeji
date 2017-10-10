@@ -59,7 +59,7 @@
                     	 &#160;
                     	<h:outputText value="&#160;" styleClass="#{cc.attrs.listBean.selectedSortOrder == 'ASCENDING' ? 'fa fa-sort-asc fa-push-right' : 'fa fa-sort-desc fa-push-left'}" rendered="#{cc.attrs.listBean.selectedSortCriterion == 'filename'}"/>
                     </f:facet>
-                    <h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.listBean.imageBaseUrl}item/#{o.id}?q=#{cc.attrs.listBean.query}&amp;pos=#{cc.attrs.listBean.offset + table.rowIndex}" title="#{o.filename}">
+                    <h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.listBean.imageBaseUrl}item/#{o.id}?q=#{cc.attrs.listBean.query}&amp;pos=#{cc.attrs.listBean.offset + table.rowIndex}#pageTitle" title="#{o.filename}">
                         #{o.filename}
                     </h:outputLink>
 

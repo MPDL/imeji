@@ -32,11 +32,11 @@
 					<!-- pagination top -->
 					<h:panelGroup layout="block" id="paginatorTop" styleClass="imj_paginator">
 						<h:panelGroup styleClass="imj_simplePageBrowser">
-							<h:outputLink  value="#{itemBean.browse.previous}" styleClass="#{backwardClass}" disabled="#{itemBean.browse.previous == null}">
+							<h:outputLink  value="#{itemBean.browse.previous}#pageTitle" styleClass="#{backwardClass}" disabled="#{itemBean.browse.previous == null}">
 								<h:outputText value="#{lbl.paginator_previous}"/>
 							</h:outputLink>
 							
-							<h:outputLink style="text-align: left" value="#{itemBean.browse.next}" styleClass="#{forwardClass}" disabled="#{itemBean.browse.next == null}">
+							<h:outputLink style="text-align: left" value="#{itemBean.browse.next}#pageTitle" styleClass="#{forwardClass}" disabled="#{itemBean.browse.next == null}">
 								<h:outputText value="#{lbl.paginator_next}"/>
 							</h:outputLink>
 						</h:panelGroup>

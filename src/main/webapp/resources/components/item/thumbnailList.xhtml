@@ -13,7 +13,6 @@
 			<div class="imj_listBody" id="listDiv" style=" text-align: justify;  text-align-last: justify;">
 				<ul id="imj_listBody"> 
 					<!-- Images -->	
-					
 					<ui:repeat id="pictureList" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
 						
 						<li class="imj_tileItem">
@@ -23,7 +22,7 @@
 							
 								<div id="imgFrame" class="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea" >
 									<!-- Image with link to the details view -->
-									<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;fq=#{cc.attrs.picList.facetQueryString}&amp;pos=#{cc.attrs.picList.offset + index.index}">
+									<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;fq=#{cc.attrs.picList.facetQueryString}&amp;pos=#{cc.attrs.picList.offset + index.index}#pageTitle">
 										<img src="#{item.link}" alt="#{item.caption}"/>
 									</a>
 									<span class="imj_optionSet">
