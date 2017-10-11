@@ -22,8 +22,8 @@ import de.mpg.imeji.logic.core.content.extraction.ContentExtractionResult;
 import de.mpg.imeji.logic.core.content.extraction.ContentExtractorFactory;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
 import de.mpg.imeji.logic.messaging.Message;
-import de.mpg.imeji.logic.messaging.MessageService;
 import de.mpg.imeji.logic.messaging.Message.MessageType;
+import de.mpg.imeji.logic.messaging.MessageService;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.UploadResult;
@@ -498,7 +498,8 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    */
   private Map<String, String> createMessageContent(Item item) {
     return ImmutableMap.of(NotifyUsersOnFileUploadAggregation.COUNT, "1",
-        NotifyUsersOnFileUploadAggregation.FILENAME, item.getFilename(),
+        NotifyUsersOnFileUploadAggregation.FILENAME,
+        item.getFilename() != null ? item.getFilename() : "",
         NotifyUsersOnFileUploadAggregation.ITEM_ID, item.getIdString());
   }
 

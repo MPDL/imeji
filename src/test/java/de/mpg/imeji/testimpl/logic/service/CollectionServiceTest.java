@@ -26,12 +26,12 @@ import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Grant;
+import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
-import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.user.UserService.USER_TYPE;
@@ -261,6 +261,7 @@ public class CollectionServiceTest extends SuperServiceTest {
     } catch (Exception e) {
       exc = true;
       if (!e.getClass().equals(exception)) {
+        e.printStackTrace();
         Assert.fail(msg + ": " + e.getMessage());
       }
     }

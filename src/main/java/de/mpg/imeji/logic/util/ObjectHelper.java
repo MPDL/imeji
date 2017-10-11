@@ -86,8 +86,13 @@ public class ObjectHelper {
     if (m.matches()) {
       return m.group(2);
     }
-    return uri.toString().substring(uri.toString().lastIndexOf("/"), uri.toString().length())
-        .replace("/", "");
+    try {
+      return uri.toString().substring(uri.toString().lastIndexOf("/"), uri.toString().length())
+          .replace("/", "");
+    } catch (Exception e) {
+      return uri.toString();
+    }
+
   }
 
   /**

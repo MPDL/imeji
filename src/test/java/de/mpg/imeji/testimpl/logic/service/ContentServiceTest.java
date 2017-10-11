@@ -51,10 +51,10 @@ public class ContentServiceTest extends SuperServiceTest {
       (new UserService()).create(defaultUser, USER_TYPE.DEFAULT);
       collection = ImejiFactory.newCollection().setTitle("Test Collection")
           .setPerson("m", "p", "mpdl").build();
-      (new CollectionService()).create(collection, defaultUser);
+      new CollectionService().create(collection, defaultUser);
       item = ImejiFactory.newItem(collection);
-      (new ItemService()).create(item, collection, defaultUser);
-      content = (new ContentService()).create(item, ImejiTestResources.getTest1Jpg(), defaultUser);
+      new ItemService().create(item, collection, defaultUser);
+      content = new ContentService().create(item, ImejiTestResources.getTest1Jpg(), defaultUser);
       int a = 5;
       a++;
     } catch (ImejiException e) {

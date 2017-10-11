@@ -93,7 +93,8 @@ class ItemController extends ImejiControllerAbstract<Item> {
   private void checkIfCollectionExists(String collectionId)
       throws NotFoundException, UnprocessableError {
     SearchQuery q = new SearchFactory()
-        .addElement(new SearchPair(SearchFields.id, collectionId), LOGICAL_RELATIONS.AND).build();
+        .addElement(new SearchPair(SearchFields.id, collectionId), LOGICAL_RELATIONS.AND)
+        .addElement(new SearchPair(SearchFields.status, "*"), LOGICAL_RELATIONS.AND).build();
     if (searchForCollection.search(q, null, Imeji.adminUser, null, 0, 1)
         .getNumberOfRecords() == 0) {
       throw new NotFoundException("Collection " + collectionId + " not found");

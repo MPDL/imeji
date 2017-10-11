@@ -28,12 +28,12 @@ import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Grant;
+import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
-import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.user.UserService.USER_TYPE;
@@ -174,6 +174,17 @@ public class ItemServiceTest extends SuperServiceTest {
     }
   }
 
+  /**
+   * Create a item in the collection
+   * 
+   * @param msg
+   * @param item
+   * @param coll
+   * @param user
+   * @param created
+   * @param itemStatus
+   * @param exception
+   */
   private void create_Test(String msg, Item item, CollectionImeji coll, User user, boolean created,
       Status itemStatus, Class exception) {
     ItemService service = new ItemService();
@@ -189,6 +200,7 @@ public class ItemServiceTest extends SuperServiceTest {
           result.getStatus().name());
     } catch (Exception e) {
       if (!e.getClass().equals(exception)) {
+        e.printStackTrace();
         Assert.fail(msg + ", " + e.getMessage());
       }
     } finally {

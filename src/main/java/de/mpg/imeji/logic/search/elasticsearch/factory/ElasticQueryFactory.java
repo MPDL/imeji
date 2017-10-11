@@ -120,7 +120,6 @@ public class ElasticQueryFactory {
       return fieldQuery(ElasticFields.STATUS, Status.WITHDRAWN.name(), SearchOperators.EQUALS,
           true);
     }
-
   }
 
   /**

@@ -6,8 +6,8 @@ import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.model.Properties;
-import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.util.DateHelper;
 
@@ -33,8 +33,10 @@ public class WorkflowManager {
     workflowValidator.isCreateAllowed(p);
     J2JHelper.setId(p, IdentifierUtil.newURI(p.getClass()));
     final Calendar now = DateHelper.getCurrentDate();
-    p.setCreatedBy(user.getId());
-    p.setModifiedBy(user.getId());
+    if (user != null) {
+      p.setCreatedBy(user.getId());
+      p.setModifiedBy(user.getId());
+    }
     p.setCreated(now);
     p.setModified(now);
     if (p.getStatus() == null) {
