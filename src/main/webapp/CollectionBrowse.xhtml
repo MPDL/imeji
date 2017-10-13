@@ -7,11 +7,12 @@
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
-	xmlns:col="http://java.sun.com/jsf/composite/components/collection">
+	xmlns:col="http://java.sun.com/jsf/composite/components/collection"
+	xmlns:upload="http://java.sun.com/jsf/composite/components/upload">
 
 	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}" />
-	<ui:param name="headline" value="" />
 	<ui:param name="title" value="#{not empty CollectionItemsBean.query or not empty CollectionItemsBean.facetQueryString ? lbl.search_results : CollectionItemsBean.collection.title}" />
+	<ui:param name="headline" value="#{title}" />
 	<ui:param name="currentMainMenu" value="collection" />
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}?q=" />
 	<ui:param name="imejiResource" value="#{CollectionItemsBean.collection}" />
@@ -24,34 +25,92 @@
 	 
 	  <ui:define name="collectionAbout">
 		<div class="collectionAbout">
-			<div class="collectionAboutTitle">
-				<ui:fragment rendered="#{not empty backLink1   and not empty backlinkTitle1}">
-				     <a href="#{backLink1}" title="#{backlinkTitle1}">#{backlinkTitle1}</a><span> > </span>
+			<div class="gradientOpacity"/>
+			<div class="collectionAboutContent">
+				<ui:fragment rendered="#{CollectionItemsBean.collection.status == 'WITHDRAWN'}">
+					<div class="imj_infodataSet imj_mediaWithdrawn">
+						#{lbl.withdrawn}<br/>
+						<h:outputText value="#{CollectionItemsBean.collection.discardComment}" escape="false"/>
+					</div>
 				</ui:fragment>
-				<span>#{title}</span>
+				<col:details bean="#{CollectionItemsBean}" applicationUrl="#{Navigation.applicationUrl}" lbl="#{lbl}"/>
 			</div>
-			<span class="collectionAboutAuthor">#{lbl.by} #{CollectionItemsBean.authorsShort}</span>
-			<a href="" onclick="return false;">
-				<span class="moreCollection" style="font-size:0.85em;" onclick="$('.collectionAboutHidden').slideDown(500);$('.lessCollection').show(); $(this).hide();">
-					<span class="fa fa-caret-down" /> 
-					#{lbl.more}
-				</span>
-				<span class="lessCollection" style="display:none;font-size:0.85em;" onclick="$('.collectionAboutHidden').slideUp(500);$('.moreCollection').show(); $(this).hide();">
-					<span class="fa fa-caret-up" /> 
-					#{lbl.less}
-				</span>
+			<div class="collectionAboutMore">
+				<a href="" onclick="return false;">
+					<span class="moreCollection"  onclick="$('.gradientOpacity').hide();$('.collectionAboutContent').animate({height:'100%'});$('.lessCollection').show(); $(this).hide();">
+						#{lbl.view_more}
+						<span class="fa fa-caret-down" /> 
+					</span>
+					<span class="lessCollection" style="display:none;" onclick="$('.collectionAboutContent').animate({height:'5em'},0);$('.gradientOpacity').show();$('.moreCollection').show(); $(this).hide();">
+						<span class="fa fa-caret-up" /> 
+						#{lbl.view_less}
+					</span>
+				</a>
+			</div>
+		</div>
+	 </ui:define>
+	 
+	 <ui:define name="actionsMenu">
+	 	<ui:fragment rendered="#{Auth.update}">
+			<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/edit" class="imj_menuButton imj_overlayMenu">
+				<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
 			</a>
-			<ui:fragment rendered="#{CollectionItemsBean.collection.status == 'WITHDRAWN'}">
-				<div class="imj_infodataSet imj_mediaWithdrawn">
-					#{lbl.withdrawn}<br/>
-					<h:outputText value="#{CollectionItemsBean.collection.discardComment}" escape="false"/>
-				</div>
+		</ui:fragment>
+		<ui:fragment rendered="#{Auth.admin}">
+			<a href="#{Navigation.collectionUrl}#{cc.attrs.collectionBean.id}/share?q=#{CollectionItemsBean.query}&amp;fq=#{cc.attrs.collectionBean.facetQueryString}" class="imj_menuButton imj_overlayMenu">
+				<span class="fa fa-users"/> <span>#{lbl.share}</span>
+			</a>
+			<ui:fragment rendered="#{WorkflowBean.release(cc.attrs.collectionBean.collection)}">
+				<h:form>
+					<h:commandLink action="#{CollectionItemsBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');" styleClass="imj_menuButton imj_openUploadDialog">
+						<f:ajax render=":actionCollection:releaseCollection:confirmationDialogForm"/>
+						<span class="fa fa-globe"/> <span>#{lbl.release}</span>
+					</h:commandLink>
+				</h:form>
+			</ui:fragment>
+			<ui:fragment rendered ="#{Auth.admin and WorkflowBean.createDOI(CollectionItemsBean.collection)}">
+				<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{Auth.sysAdmin and not empty CollectionItemsBean.collection.doi}" class="imj_menuButton imj_overlayMenu">
+					 <span class="fa fa-link"/> <span>#{lbl.change_doi}</span>
+				</h:outputLink>
+				<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog(#{Auth.sysAdmin ? '\'createDOI\'' : '\'getDOIDialog\''});" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and empty CollectionItemsBean.collection.doi}" class="imj_menuButton imj_overlayMenu">
+					 <span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
+				</h:outputLink>
+				<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Auth.sysAdmin and empty Configuration.doiServiceUrl and empty CollectionItemsBean.collection.doi}" class="imj_menuButton imj_overlayMenu">
+					<span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
+				</h:outputLink>
+			</ui:fragment>
+			<ui:fragment rendered="#{WorkflowBean.withdraw(CollectionItemsBean.collection)}">
+				<h:outputLink value="#" onclick="openDialog('withdrawCollection');" class="imj_menuButton imj_overlayMenu">
+					 <span class="fa fa-ban"/> <span>#{lbl.withdraw}</span>
+				</h:outputLink>
+			</ui:fragment>
+		</ui:fragment>
+	 </ui:define>
+	 
+	 <ui:define name="itemActions">
+	 	<div id="itemActions" class="imj_actionMenuArea">
+	 		<ui:fragment rendered="#{Auth.update}">
+				<h:form id="showUploadForm">
+					<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_openUploadDialog" onclick="openDialog('uploadDialog');">
+						<f:ajax render=":additonalFooterScripts"/>
+							<span class="fa fa-upload"/> <span>#{lbl.upload}</span>
+					</h:commandLink>
+				</h:form>
+				<a href="#{Navigation.applicationUrl}editbatch?col=#{CollectionItemsBean.id}" class="imj_menuButton imj_overlayMenu">
+					<span class="fa fa-pencil"/> <span>#{lbl.edit_all}</span>
+				</a>
+				<a href="#{Navigation.applicationUrl}edit/license?collection=#{CollectionItemsBean.id}"  class="imj_menuButton imj_overlayMenu">
+					<span class="fa fa-copyright"/> <span>#{lbl.edit_all_licenses}</span>
+				</a>
+			</ui:fragment>
+			<ui:fragment rendered="#{WorkflowBean.delete(CollectionItemsBean.collection)}">
+					<a href="#" onclick="openDialog('deleteItems');"  class="imj_menuButton imj_overlayMenu">
+						 <span class="fa fa-trash"/> <span>#{lbl.delete_all}</span>
+					</a>
 			</ui:fragment>
 		</div>
-		
-		<div class="collectionAboutHidden">
-			<col:details bean="#{CollectionItemsBean}" applicationUrl="#{Navigation.applicationUrl}" lbl="#{lbl}"/>
-		</div>
+		<dialog:confirmationDialog submitAction="deleteAll" bean="#{CollectionItemsBean}" confirmationText="#{msg.confirmation_delete_items}?" submitLabel="#{lbl.delete}" dialogId="deleteItems" />
+		<upload:dialog colId="#{cc.attrs.collectionBean.collection.id.toString()}" id="uploadDialog" bean="#{cc.attrs.collectionBean}"/>
 	 </ui:define>
 
 	<ui:define name="searchQuery">
@@ -71,5 +130,6 @@
 			var qrHtml = document.getElementById('qr'); 
 			qrHtml.innerHTML = create_qrcode('{key:"#{SessionBean.user.apiKey}",col:"#{CollectionItemsBean.collection.id}"}');
 		</script>
+		
 	</ui:define>
 </ui:composition>

@@ -9,20 +9,20 @@
                 xmlns:facet="http://java.sun.com/jsf/composite/components/facet"
                 xmlns:collection="http://java.sun.com/jsf/composite/components/collection">
 	
-	<ui:define name="actionsMenu">
-		<menu:defaultActionMenu id="actionItems" rendered="#{currentMainMenu == 'items'}"/>
-		<collection:actionMenu id="actionCollection" collectionBean="#{paginatorListSessionBean}" rendered="#{currentMainMenu == 'collection' and paginatorListSessionBean.collection.status.name() != 'WITHDRAWN'}" />
-		<item:selectedActionMenu id="actionSelectedItems" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}" />
-		<item:downloadMenu id="actionDownload" itemsBean="#{paginatorListSessionBean}" rendered="#{((currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'WITHDRAWN') or (currentMainMenu != 'collection' and not empty SessionBean.selected)) and paginatorListSessionBean.totalNumberOfElements > 0 }" />
-	</ui:define>
+	
 	
     <!-- Main Content - Image tiled list - START -->
     <ui:define name="mainContent">
-	
+    	<ui:fragment rendered="#{currentMainMenu == 'collection'}">
+    		<div class="imj_sectionTitle">#{paginatorListSessionBean.totalNumberOfElements} #{lbl.items}</div>  
+    	</ui:fragment>
         <h:panelGroup layout="block" id="ajaxWrapper">
             <!-- Selection Info Panel -->
-			<div id="itemsArea" class="itemsArea">
-	        	
+			<div id="itemsArea" class="itemsArea #{currentMainMenu == 'collection' ? 'imj_section' : ''}">
+			  	<ui:insert name="itemActions"/>
+			  	<h:panelGroup layout="block" id="selItemActions" styleClass="imj_actionMenuArea selectedItems">
+			  		<item:selectedActionMenu id="actionSelectedItems" context="#{currentMainMenu}" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}" />
+			  	</h:panelGroup>
 	        	<item:filters id="selPanel" 
             			facetBean="#{paginatorListSessionBean}"  
             			numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
@@ -43,8 +43,6 @@
 					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
 					<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 				</div>
-           		
-           		
 			</div>
 			<!-- Page Browser GotoBox -->
             <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>

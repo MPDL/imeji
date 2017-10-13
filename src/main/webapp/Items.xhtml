@@ -6,10 +6,11 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
-	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+    xmlns:item="http://java.sun.com/jsf/composite/components/item">
 
 	<ui:param name="paginatorListSessionBean" value="#{ItemsBean}" />
-	<ui:param name="headline" value="" />
+	<ui:param name="headline" value="#{paginatorListSessionBean.totalNumberOfElements} #{lbl.items}" />
 	<ui:param name="displayQuery" value="#{paginatorListSessionBean.simpleQuery != ''}" />
 	<ui:param name="currentMainMenu" value="items" />
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.browseUrl}?q=" />
@@ -21,4 +22,8 @@
 			rendered="#{paginatorListSessionBean.simpleQuery != '' or !paginatorListSessionBean.facetQuery.isEmpty()}"
 			label="#{lbl.search_for} #{lbl.items}" />
 	</ui:define>
+	<ui:define name="actionsMenu">
+		<menu:defaultActionMenu id="actionItems"/>
+	</ui:define>
+
 </ui:composition>

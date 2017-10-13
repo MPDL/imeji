@@ -12,30 +12,16 @@
 	</composite:interface>
 	
 	<composite:implementation>
-	
-		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/qrcode.js"></script>
-		<script type="text/javascript">
-			var draw_qrcode = function(text, typeNumber, errorCorrectLevel) {
-				document.write(create_qrcode(text, typeNumber, errorCorrectLevel) );
-			};
-			var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
-				var qr = qrcode(typeNumber || 20, errorCorrectLevel || 'M');
-				qr.addData(text);
-				qr.make();
-				// return qr.createTableTag();
-				return qr.createImgTag();
-			};
-		</script>
-		<br/>	
-		<div id="description" class="imj_infodataSet" >
-			<ui:fragment rendered="#{cc.attrs.bean.collection.logoUrl != null}">		
-				<img style="float:left; margin-right:1em; max-height:200px;" class="imj_entryPagePreviewPicture" src="#{cc.attrs.bean.collection.logoUrl.toString()}"/>
-			</ui:fragment>
-			<pre style="white-space: pre-line;">
-			<h:outputText escape="false" value="#{cc.attrs.bean.collection.description}"/>
-			</pre>
-		</div>
-		
+		<ui:fragment rendered="#{not empty cc.attrs.bean.collection.description or not empty cc.attrs.bean.collection.logoUrl}">
+			<div id="description" class="imj_infodataSet" >
+				<ui:fragment rendered="#{not empty cc.attrs.bean.collection.logoUrl}">		
+					<img style="float:left; margin-right:1em; max-height:5em;" class="imj_entryPagePreviewPicture" src="#{cc.attrs.bean.collection.logoUrl.toString()}"/>
+				</ui:fragment>
+				<pre style="white-space: pre-line;">
+					<h:outputText escape="false" value="#{cc.attrs.bean.collection.description}"/>
+				</pre>
+			</div>
+		</ui:fragment>
 		<ui:repeat var="info" value="#{cc.attrs.bean.collection.additionalInformations}">
 			<div class="imj_infodataSet">
 				<span class="imj_infodataLabel">
@@ -59,7 +45,15 @@
 				</span>
 			</div>
 		</ui:repeat>
-		
+		<div class="imj_infodataSet">
+			<span class="imj_infodataLabel">
+				<h:outputText value="#{lbl.authors}"/>
+				<span class="imj_invisible">: </span>
+			</span>
+			<span class="imj_infodataValue">
+				<h:outputText value="#{cc.attrs.bean.authors}"/>
+			</span>
+		</div>
 		<!--  Citation -->
 		<div class="imj_infodataSet">
 			<span class="imj_infodataLabel">
@@ -68,16 +62,6 @@
 			</span>
 			<span class="imj_infodataValue">
 				<h:outputText value="#{cc.attrs.bean.citation}" escape="false"/>
-			</span>
-		</div>
-		
-		<div class="imj_infodataSet">
-			<span class="imj_infodataLabel">
-				<h:outputText value="#{lbl.authors}"/>
-				<span class="imj_invisible">: </span>
-			</span>
-			<span class="imj_infodataValue">
-				<h:outputText value="#{cc.attrs.bean.authors}"/>
 			</span>
 		</div>
 		
@@ -176,6 +160,20 @@
 					#{lbl.qr_code_for} <a href="http://labcam.mpdl.mpg.de/" target="_blank">LabCam</a>
 				</ui:fragment>
 			</span>
-		</h:panelGroup>			 
+		</h:panelGroup>
+			
+		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/qrcode.js"></script>
+		<script type="text/javascript">
+			var draw_qrcode = function(text, typeNumber, errorCorrectLevel) {
+				document.write(create_qrcode(text, typeNumber, errorCorrectLevel) );
+			};
+			var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
+				var qr = qrcode(typeNumber || 20, errorCorrectLevel || 'M');
+				qr.addData(text);
+				qr.make();
+				// return qr.createTableTag();
+				return qr.createImgTag();
+			};
+		</script>	 
 	</composite:implementation>
 </html>
