@@ -17,7 +17,7 @@
 	<composite:implementation>
 		<h:panelGroup layout="block" id="selectionInfoPanel" styleClass="imj_selectionInfoPanel">
 			<a href="#" class="imj_openFilter imj_listHeader" onclick="document.getElementById('facetsArea').style.width = '70%'; return false;">
-	        			<span class="fa fa-bars"/>
+	        	<span class="fa fa-bars"/>
 	        </a>
 	        <div class="itemsCount">&#160;</div>
 			<h:form>
@@ -43,10 +43,11 @@
 	                    <h:commandLink id="lnkSortAsc" value="" action="#{cc.attrs.facetBean.toggleSortOrder}" onclick="startLoader();">
 	                    	<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 							<span class="fa #{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING' ? 'fa-arrow-up' : 'fa-arrow-down' }"></span>
-							#{lbl.sort_by} #{cc.attrs.facetBean.selectedSortCriterionLabel}
+							 #{cc.attrs.facetBean.selectedSortCriterionLabel}
 						</h:commandLink>
 					</div>
 					<div class="imj_menuBody">
+					#{lbl.sort_by}:
 						<ul class="imj_overlayMenuList">
 							<ui:repeat var="sortItem" value="#{cc.attrs.facetBean.sortMenu}" varStatus="spos">
 								<ui:fragment rendered="#{cc.attrs.facetBean.selectedSortCriterion != sortItem.value}">

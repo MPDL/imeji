@@ -11,7 +11,7 @@
 	<f:metadata>
 		<f:event listener="#{ItemBean.preRenderView}" type="preRenderView" />
 	</f:metadata>
-	
+
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block" style="max-heigth:#{itemBean.webResolutionMaxLength}px; " styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
@@ -22,21 +22,24 @@
 				</h:commandButton>
 			</h:form>
 			<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
-			<center>
-				<div id="seaDragonsButtons">
-					<a id="zoominButton" class="fa fa-search-plus fa-size-2 imj_mediaEditPanelItem" />
-					<a id="zoomoutButton" class="fa fa-search-minus fa-size-2 imj_mediaEditPanelItem" />
-					<a id="fullscreenButton" class="fa fa-expand fa-size-2 imj_mediaEditPanelItem" />
-					<a id="homeButton" class="fa fa-home fa-size-2 imj_mediaEditPanelItem" />
-					<a id="rotateLeftButton" class="fa fa-rotate-left fa-size-2 imj_mediaEditPanelItem" />
-					<a id="rotateRightButton" class="fa fa-rotate-right fa-size-2 imj_mediaEditPanelItem" />
-				</div>				
-				<div id="seadragon-viewer-full" style="height:#{itemBean.webResolutionMaxLength}px;" >
-					<a id="lnkPicFullResolutionAlt" href="#{itemBean.originalFile}" target="_blank">
-						<h:graphicImage id="picWebResolutionAlt" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
-					</a>
-				</div>	
-			</center>
+				<center>
+					<a onclick="openImageViewer();">Open</a>
+					<div id="seaDragonsButtons">
+						<link rel="stylesheet" type="text/css" href="#{Navigation.applicationUrl}resources/css/font-awesome/css/font-awesome.min.css"/>
+						<a id="zoominButton" class="fa fa-search-plus imj_mediaEditPanelItem" />
+						<a id="zoomoutButton" class="fa fa-search-minus imj_mediaEditPanelItem"/>
+						<a id="homeButton" class="fa fa-home imj_mediaEditPanelItem" />
+						<a id="rotateLeftButton" class="fa fa-rotate-left imj_mediaEditPanelItem" />
+						<a id="rotateRightButton" class="fa fa-rotate-right imj_mediaEditPanelItem" />
+						<a id="fullscreenButton" class="fa fa-times imj_mediaEditPanelItem" />
+					</div>
+					
+					<div id="seadragon-viewer-full" style="height:#{itemBean.webResolutionMaxLength}px;" >			
+						<a id="lnkPicFullResolutionAlt" href="#{itemBean.originalFile}" target="_blank">
+							<h:graphicImage id="picWebResolutionAlt" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
+						</a>
+					</div>	
+				</center>
 			</ui:fragment>
 			<ui:fragment rendered="#{!itemBean.viewInOpenseadragon}">
 			<center>
@@ -97,59 +100,89 @@
 	</div>
 	<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
 		<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.min.js"></script>				
-		<script type="text/javascript">				
-	    			var imgFull = {
-	    			type: 'image',
-	    			url: '#{itemBean.fullResolution}',
-	    			};
-	   
-	    			var viewerFull = OpenSeadragon({
-	    
-	        		id: "seadragon-viewer-full",
-	        		tileSources: imgFull,
-	        		showRotationControl: true,
-	        		fullPageButton: "fullscreenButton",
-	        		homeButton: "homeButton",
-	        		zoomInButton: "zoominButton",
-	        		zoomOutButton: "zoomoutButton",
-	        		rotateRightButton: "rotateRightButton",
-	        		rotateLeftButton: "rotateLeftButton",
-	        		gestureSettingsTouch: {
-	           		 pinchRotate: true
-	        		}
-	        		
-	    		});
-	    			viewerFull.addHandler('rotate',function(){
-						 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
-						 document.getElementById("rotationForm:buttonUpdateRotation").click();
-	        		});
-	    			
-	    			
-	    			viewerFull.addHandler('open',function(){
-	    				document.getElementById("picWebResolutionAlt").style.display='none';
-	    			});
-	    			
-	    			viewerFull.addHandler("open-failed",function(){
-	    				useAlternatePicture();
-	    			});
-	    			
-	    			//Needed for Firefox
-	    			var myDraw=false;
-	    			viewerFull.addHandler("my-draw-failed",function(){
-	    				if(!myDraw){
-	    					useAlternatePicture();
-	    				}
-	    			});
-	    			
-	    			viewerFull.addHandler("my-draw",function(){
-	    				myDraw=true;
-	    			});
-	    			
-	    			function useAlternatePicture(){
-	    				document.getElementById("picWebResolutionAlt").style.display='';
-	    				viewerFull.setVisible(false);
-	    				document.getElementById("buttons").style.display='none';
-	    			}
+		<script type="text/javascript">
+			var imgFull = {
+				type: 'image',
+				url: '#{itemBean.fullResolution}',
+			};
+
+			function openImageViewer(){
+				var viewerFull = OpenSeadragon({
+		        		id: "seadragon-viewer-full",
+		        		tileSources: imgFull,
+		        		toolbar:  "seaDragonsButtons",
+		        		showRotationControl: true,
+		        		fullPageButton: "fullscreenButton",
+		        		homeButton: "homeButton",
+		        		zoomInButton: "zoominButton",
+		        		zoomOutButton: "zoomoutButton",
+		        		rotateRightButton: "rotateRightButton",
+		        		rotateLeftButton: "rotateLeftButton",
+		        		showFullPageControl: true,
+		        		gestureSettingsTouch: {
+		           		 pinchRotate: false
+		        		}
+        		
+    				});
+					viewerFull.setFullScreen(true);
+					
+					
+					viewerFull.addHandler("full-screen",function(data){
+		   				if(data.fullScreen) {
+		   					document.getElementById("seaDragonsButtons").style.display='block';
+		   					document.getElementById("picWebResolutionAlt").style.display='none';
+		   				}
+		   				else{
+		   					console.log('before');
+		   					document.getElementById("seaDragonsButtons").style.display='none';
+		   					console.log('buttons');
+		   					$('.openseadragon-container').hide();
+		   					//document.getElementById("openseadragon-container").style.display='none';
+		   					console.log('container');
+		   					document.getElementById("picWebResolutionAlt").style.display='block';
+		   					console.log('pic');
+		   				}
+						
+		   			});
+					
+					viewerFull.addHandler('rotate',function(){
+						// document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
+						// document.getElementById("rotationForm:buttonUpdateRotation").click();
+		       		});
+		   			
+		   			viewerFull.addHandler('open',function(){
+		   				document.getElementById("picWebResolutionAlt").style.display='none';
+		   			});
+		   			
+		   			viewerFull.addHandler('close',function(){
+		   				console.log('close');
+		   			});
+	   			
+		   			viewerFull.addHandler("open-failed",function(){
+		   				useAlternatePicture();
+		   			});
+	   			
+		   			//Needed for Firefox
+		   			var myDraw=false;
+		   			viewerFull.addHandler("my-draw-failed",function(){
+		   				if(!myDraw){
+		   					useAlternatePicture();
+		   				}
+		   			});
+	   			
+		   			viewerFull.addHandler("my-draw",function(){
+		   				myDraw=true;
+		   			});
+		   			
+		   			
+					
+				}
+			
+    			function useAlternatePicture(){
+    				document.getElementById("picWebResolutionAlt").style.display='';
+    				viewerFull.setVisible(false);
+    				document.getElementById("buttons").style.display='none';
+    			}
 		</script>
 	</ui:fragment>
 </ui:composition>

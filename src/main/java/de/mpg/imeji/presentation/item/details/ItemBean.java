@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -37,7 +36,6 @@ import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Statement;
-import de.mpg.imeji.logic.model.TechnicalMetadata;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.security.user.UserService;
@@ -68,7 +66,6 @@ public class ItemBean extends SuperBean {
   private String id;
   private boolean selected;
   private CollectionImeji collection;
-  private List<String> techMd;
   protected String prettyLink;
   private ItemDetailsBrowse browse = null;
   private String dateCreated;
@@ -166,11 +163,7 @@ public class ItemBean extends SuperBean {
    * @
    */
   public void initViewTechnicalMetadata() throws ImejiException {
-    techMd = new ArrayList<>();
     content = new ContentService().retrieve(content.getId().toString());
-    for (final TechnicalMetadata tmd : content.getTechnicalMetadata()) {
-      techMd.add(tmd.getName() + ": " + tmd.getValue());
-    }
   }
 
   /**
@@ -227,23 +220,13 @@ public class ItemBean extends SuperBean {
     ContentService service = new ContentService();
     try {
       content = service.retrieve(service.findContentId(item.getId().toString()));
-      techMd = content.getTechnicalMetadata().stream()
-          .map(tmd -> tmd.getName() + ": " + tmd.getValue()).collect(Collectors.toList());
     } catch (ImejiException e) {
       LOGGER.error("Erro loading technical metadata", e);
     }
   }
 
   public void hideTechnicalMetadata() {
-    techMd = null;
-  }
-
-  public List<String> getTechMd() {
-    return techMd;
-  }
-
-  public void setTechMd(List<String> md) {
-    this.techMd = md;
+    // techMd = null;
   }
 
   public String getPageUrl() {

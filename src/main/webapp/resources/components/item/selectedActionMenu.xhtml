@@ -13,7 +13,7 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{cc.attrs.itemsBean.totalNumberOfElements > 0}">
-			#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}:
+			<span class="title">#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}:</span>
 			<br/>
 			<a href="#{Navigation.applicationUrl}exportServlet?format=zip" target="_blank" class="imj_menuButton imj_overlayMenu">
 				<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download_files} #{lbl.files}</span>
