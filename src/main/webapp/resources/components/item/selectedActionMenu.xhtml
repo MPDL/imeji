@@ -13,8 +13,7 @@
 	
 	<composite:implementation>
 		<ui:fragment rendered="#{cc.attrs.itemsBean.totalNumberOfElements > 0}">
-			<span class="title">#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}:</span>
-			<br/>
+			
 			<a href="#{Navigation.applicationUrl}exportServlet?format=zip" target="_blank" class="imj_menuButton imj_overlayMenu">
 				<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download_files} #{lbl.files}</span>
 			</a>
@@ -46,6 +45,15 @@
 					</a>
 				</ui:fragment>
 			</ui:fragment>
+			<div class="title imj_menuRight">
+				<span>#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}</span>
+				<h:form>
+					<h:commandLink onclick="startLoader();" action="#{cc.attrs.itemsBean.selectNone}" id="lnkSelectNone" >
+						<span class="fa fa-times"/>
+						<f:ajax execute="@this" render=":ajaxWrapper :actionsMenuArea"/>
+					</h:commandLink>
+				</h:form>
+			</div>
 		</ui:fragment>
 		<dialog:confirmationReasonedDialog submitAction="withdrawSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_withdraw_selected_item}?" submitLabel="#{lbl.withdraw_selected}" dialogId="withdrawSelectedItems"/>
 		<dialog:confirmationDialog submitAction="deleteSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_delete_selected_item}?" submitLabel="#{lbl.delete_selectedImages}" dialogId="deleteSelectedItems" />

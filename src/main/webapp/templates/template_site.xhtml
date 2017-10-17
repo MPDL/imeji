@@ -28,7 +28,15 @@
 	                <ui:insert name="init"/>
 	           		
 	                <ui:include src="component/header/header_default.xhtml"/>
-	                <div class="imj_siteContent">          
+	                <div id="content" class="imj_siteContent">          
+	                	
+	                	<h:panelGroup layout="block" id="actionsMenuArea" class="imj_actionMenuArea">
+		               		<ui:insert name="actionsMenu"/>
+		               		
+		                </h:panelGroup>
+		                
+		                <div class="imj_section"/>
+	                
 			           	<ui:fragment rendered="#{not empty headline or not empty imejiResource}">
 			           		
 			                <div id="pageTitle" class="imj_siteContentHeadline">
@@ -47,13 +55,14 @@
 				                      	</ui:fragment>
 				                      	<span>#{headline.toString().trim()}</span>
 				                    </h1>
+				                    <div class="subHeadline">
+				                    	<ui:insert name="subHeadline"/>
+				                    </div>
 			                    </ui:fragment>
 			                </div>
 		                </ui:fragment>
 		                <!-- Actions Menu -->
-		                <h:panelGroup layout="block" id="actionsMenuArea" class="imj_actionMenuArea">
-		               		<ui:insert name="actionsMenu"/>
-		                </h:panelGroup>
+		                
 		                
 		              
 		      			 <!-- Search Query -->
