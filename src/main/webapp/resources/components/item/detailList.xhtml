@@ -26,13 +26,13 @@
                 <h:column>
                     <f:facet name="header">
                         <h:selectBooleanCheckbox disabled="#{cc.attrs.listBean.collection.status == 'WITHDRAWN'}" onclick="startLoader();"  value="#{cc.attrs.listBean.allSelected}" valueChangeListener="#{cc.attrs.listBean.changeAllSelected}">
-                        	<f:ajax event="change" execute="@this" render="@form :actionsMenuArea"/>
+                        	<f:ajax event="change" execute="@this" render="@form :actions"/>
                         </h:selectBooleanCheckbox>
                         &#160;
                     </f:facet>
 
                     <h:selectBooleanCheckbox disabled="#{o.status == 'WITHDRAWN'}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{o.selected}" valueChangeListener="#{o.selectedChanged}">
-                        <f:ajax event="change" execute="@this" render=":actionsMenuArea"/>
+                        <f:ajax event="change" execute="@this" render=":actions"/>
                     </h:selectBooleanCheckbox>
                 </h:column>
 
@@ -59,7 +59,7 @@
                     	 &#160;
                     	<h:outputText value="&#160;" styleClass="#{cc.attrs.listBean.selectedSortOrder == 'ASCENDING' ? 'fa fa-sort-asc fa-push-right' : 'fa fa-sort-desc fa-push-left'}" rendered="#{cc.attrs.listBean.selectedSortCriterion == 'filename'}"/>
                     </f:facet>
-                    <h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.listBean.imageBaseUrl}item/#{o.id}?q=#{cc.attrs.listBean.query}&amp;pos=#{cc.attrs.listBean.offset + table.rowIndex}#pageTitle" title="#{o.filename}">
+                    <h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.listBean.imageBaseUrl}item/#{o.id}?q=#{cc.attrs.listBean.query}&amp;pos=#{cc.attrs.listBean.offset + table.rowIndex}#actions" title="#{o.filename}">
                         #{o.filename}
                     </h:outputLink>
 

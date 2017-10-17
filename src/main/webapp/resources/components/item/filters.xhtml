@@ -26,11 +26,11 @@
 						<div class="imj_menuHeader">
 							<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectAll}"  id="lnkSelectAllOnPage" title="#{lbl.select_all_on_page}"  styleClass="selectAll" rendered="#{!cc.attrs.facetBean.allSelected}" style="margin-right: 1em;">
 								<h:outputText value="#{lbl.select_all_on_page}"/>
-								<f:ajax execute="@this" render=":ajaxWrapper :actionsMenuArea"/>
+								<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
 							</h:commandLink>
 							<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectNone}" id="lnkSelectNone" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{not empty SessionBean.selected}">
 								<h:outputText value="#{lbl.select_none}"/>
-								<f:ajax execute="@this" render=":ajaxWrapper :actionsMenuArea"/>
+								<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
 							</h:commandLink>
 							
 	                        &#160;

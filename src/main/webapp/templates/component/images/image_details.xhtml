@@ -23,15 +23,18 @@
 			</h:form>
 			<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
 				<center>
-					<a onclick="openImageViewer();">Open</a>
 					<div id="seaDragonsButtons">
 						<link rel="stylesheet" type="text/css" href="#{Navigation.applicationUrl}resources/css/font-awesome/css/font-awesome.min.css"/>
-						<a id="zoominButton" class="fa fa-search-plus imj_mediaEditPanelItem" />
-						<a id="zoomoutButton" class="fa fa-search-minus imj_mediaEditPanelItem"/>
-						<a id="homeButton" class="fa fa-home imj_mediaEditPanelItem" />
-						<a id="rotateLeftButton" class="fa fa-rotate-left imj_mediaEditPanelItem" />
-						<a id="rotateRightButton" class="fa fa-rotate-right imj_mediaEditPanelItem" />
-						<a id="fullscreenButton" class="fa fa-times imj_mediaEditPanelItem" />
+						<a id="fullscreenButton">
+							<span class="fa fa-search-plus hideFullScreen"/>
+							<span class="fa fa-times showFullScreen"/>
+						</a>
+						<a id="zoominButton" class="fa fa-search-plus imj_mediaEditPanelItem showFullScreen" />
+						<a id="zoomoutButton" class="fa fa-search-minus imj_mediaEditPanelItem showFullScreen"/>
+						<a id="homeButton" class="fa fa-home imj_mediaEditPanelItem showFullScreen" />
+						<a id="rotateLeftButton" class="fa fa-rotate-left imj_mediaEditPanelItem hideFullScreen" />
+						<a id="rotateRightButton" class="fa fa-rotate-right imj_mediaEditPanelItem hideFullScreen" />
+						
 					</div>
 					
 					<div id="seadragon-viewer-full" style="height:#{itemBean.webResolutionMaxLength}px;" >			
@@ -106,83 +109,80 @@
 				url: '#{itemBean.fullResolution}',
 			};
 
-			function openImageViewer(){
-				var viewerFull = OpenSeadragon({
-		        		id: "seadragon-viewer-full",
-		        		tileSources: imgFull,
-		        		toolbar:  "seaDragonsButtons",
-		        		showRotationControl: true,
-		        		fullPageButton: "fullscreenButton",
-		        		homeButton: "homeButton",
-		        		zoomInButton: "zoominButton",
-		        		zoomOutButton: "zoomoutButton",
-		        		rotateRightButton: "rotateRightButton",
-		        		rotateLeftButton: "rotateLeftButton",
-		        		showFullPageControl: true,
-		        		gestureSettingsTouch: {
-		           		 pinchRotate: false
-		        		}
-        		
-    				});
-					viewerFull.setFullScreen(true);
-					
-					
-					viewerFull.addHandler("full-screen",function(data){
-		   				if(data.fullScreen) {
-		   					document.getElementById("seaDragonsButtons").style.display='block';
-		   					document.getElementById("picWebResolutionAlt").style.display='none';
-		   				}
-		   				else{
-		   					console.log('before');
-		   					document.getElementById("seaDragonsButtons").style.display='none';
-		   					console.log('buttons');
-		   					$('.openseadragon-container').hide();
-		   					//document.getElementById("openseadragon-container").style.display='none';
-		   					console.log('container');
-		   					document.getElementById("picWebResolutionAlt").style.display='block';
-		   					console.log('pic');
-		   				}
-						
-		   			});
-					
-					viewerFull.addHandler('rotate',function(){
-						// document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
-						// document.getElementById("rotationForm:buttonUpdateRotation").click();
-		       		});
-		   			
-		   			viewerFull.addHandler('open',function(){
-		   				document.getElementById("picWebResolutionAlt").style.display='none';
-		   			});
-		   			
-		   			viewerFull.addHandler('close',function(){
-		   				console.log('close');
-		   			});
-	   			
-		   			viewerFull.addHandler("open-failed",function(){
-		   				useAlternatePicture();
-		   			});
-	   			
-		   			//Needed for Firefox
-		   			var myDraw=false;
-		   			viewerFull.addHandler("my-draw-failed",function(){
-		   				if(!myDraw){
-		   					useAlternatePicture();
-		   				}
-		   			});
-	   			
-		   			viewerFull.addHandler("my-draw",function(){
-		   				myDraw=true;
-		   			});
-		   			
-		   			
-					
-				}
+			var viewerFull = OpenSeadragon({
+        		id: "seadragon-viewer-full",
+        		tileSources: imgFull,
+        		toolbar:  "seaDragonsButtons",
+        		showRotationControl: true,
+        		fullPageButton: "fullscreenButton",
+        		homeButton: "homeButton",
+        		zoomInButton: "zoominButton",
+        		zoomOutButton: "zoomoutButton",
+        		rotateRightButton: "rotateRightButton",
+        		rotateLeftButton: "rotateLeftButton",
+        		showFullPageControl: true,
+        		gestureSettingsTouch: {
+           		 	pinchRotate: false,
+           		 	scrollToZoom: false,
+        		},
+        		gestureSettingsMouse:{
+        			scrollToZoom: false,
+        			clickToZoom: false,
+        		}
+    		
+			});
 			
-    			function useAlternatePicture(){
-    				document.getElementById("picWebResolutionAlt").style.display='';
-    				viewerFull.setVisible(false);
-    				document.getElementById("buttons").style.display='none';
-    			}
+			viewerFull.addHandler("full-screen",function(data){
+   				if(data.fullScreen) {
+   					viewerFull.gestureSettingsMouse.scrollToZoom = true;
+   					viewerFull.gestureSettingsTouch.scrollToZoom = true;
+   				}
+   				else{
+   					viewerFull.gestureSettingsMouse.scrollToZoom = false;
+   					viewerFull.gestureSettingsTouch.scrollToZoom = false;
+   				}
+   				viewerFull.viewport.goHome(true);
+				
+   			});
+   			
+   			//viewerFull.setMouseNavEnabled(false);
+			
+			viewerFull.addHandler('rotate',function(){
+				 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
+				 document.getElementById("rotationForm:buttonUpdateRotation").click();
+       		});
+   			
+   			viewerFull.addHandler('open',function(){
+   				document.getElementById("picWebResolutionAlt").style.display='none';
+   			});
+   			
+   			viewerFull.addHandler('close',function(){
+   				console.log('close');
+   			});
+  			
+   			viewerFull.addHandler("open-failed",function(){
+   				useAlternatePicture();
+   			});
+  			
+   			//Needed for Firefox
+   			var myDraw=false;
+   			viewerFull.addHandler("my-draw-failed",function(){
+   				if(!myDraw){
+   					useAlternatePicture();
+   				}
+   			});
+  			
+   			
+   			viewerFull.addHandler("my-draw",function(){
+   				myDraw=true;
+   			});
+   			
+			
+   			function useAlternatePicture(){
+   				document.getElementById("picWebResolutionAlt").style.display='';
+   				viewerFull.setVisible(false);
+   				document.getElementById("buttons").style.display='none';
+   			}
 		</script>
 	</ui:fragment>
 </ui:composition>
