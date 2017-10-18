@@ -30,9 +30,8 @@
 	                <ui:include src="component/header/header_default.xhtml"/>
 	                <div id="content" class="imj_siteContent">          
 	                	
-	                	<h:panelGroup layout="block" id="actions" class="imj_actionMenuArea">
+	                	<h:panelGroup layout="block" id="actions" class="imj_actionMenuArea responsiveMenu">
 		               		<ui:insert name="actionsMenu"/>
-		               		
 		                </h:panelGroup>
 		                
 		                <div class="imj_section"/>
@@ -45,6 +44,9 @@
 						                <imjc:iconStatus id="status" imejiResource="#{imejiResource}"/>
 						            </span>
 					            </ui:fragment>
+					            
+					            <a href="#" class="fa fa-ellipsis-h responsiveMenuBtn" data-menu="actions"></a>
+					            
 					            <ui:fragment rendered="#{not empty headline}">
 				                    <h1>
 				                    	<ui:fragment rendered="#{not empty backLink1   and not empty backlinkTitle1}">
