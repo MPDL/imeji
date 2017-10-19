@@ -45,9 +45,7 @@
 						            </span>
 					            </ui:fragment>
 					            
-					            <a href="#" class="fa fa-ellipsis-h responsiveMenuBtn" data-menu="actions"></a>
-					            
-					            <ui:fragment rendered="#{not empty headline}">
+								<ui:fragment rendered="#{not empty headline}">
 				                    <h1>
 				                    	<ui:fragment rendered="#{not empty backLink1   and not empty backlinkTitle1}">
 				                     	 	<a href="#{backLink1}" title="#{backlinkTitle1}">#{backlinkTitle1}</a><span> > </span>
@@ -56,6 +54,7 @@
 					                      	</ui:fragment>
 				                      	</ui:fragment>
 				                      	<span>#{headline.toString().trim()}</span>
+				                      	<a href="#" class="fa fa-ellipsis-h responsiveMenuBtn" data-menu="actions" style="margin-top: 6px;"/>
 				                    </h1>
 				                    <div class="subHeadline">
 				                    	<ui:insert name="subHeadline"/>
@@ -63,12 +62,6 @@
 			                    </ui:fragment>
 			                </div>
 		                </ui:fragment>
-		                <!-- Actions Menu -->
-		                
-		                
-		              
-		      			 <!-- Search Query -->
-	                		
 	                	
 		                <!-- content wrapper -->
 		                <div class="imj_mainContentWrapper">

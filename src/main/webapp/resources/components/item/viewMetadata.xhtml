@@ -4,7 +4,8 @@
 	xmlns:composite="http://java.sun.com/jsf/composite"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
-	xmlns:license="http://java.sun.com/jsf/composite/components/license">
+	xmlns:license="http://java.sun.com/jsf/composite/components/license"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 <composite:interface>
 	<composite:attribute name="cc.attrs.itemBean" required="true" />
 </composite:interface>
@@ -15,16 +16,16 @@
 			<div class="imj_sectionTitle">
 	   			<span>#{lbl.informations}</span>
 	    		<a  onclick="return false;">
-					<span class="showInfos" style="display:none;"  onclick="$('#itemInfos').slideDown(300);$('.hideInfos').show(); $(this).hide();">
+					<span class="showSection showSectionInfos" data-section="itemInfos">
 						<span class="fa fa-angle-right" />
 					</span>
-					<span class="hideInfos"  onclick="$('#itemInfos').slideUp(300);$('.showInfos').show(); $(this).hide();">
+					<span class="hideSection hideSectionInfos" data-section="itemInfos">
 						<span class="fa fa-angle-down" /> 
 					</span>
 				</a>
 	   		</div>  
 			<div  class="imj_section"/><br/>
-			<div id="itemInfos">
+			<div id="itemInfos" class="itemInfos">
 				<h:panelGroup layout="block" styleClass="imj_metadataSet" style="color:red;" rendered="#{cc.attrs.itemBean.image.status == 'WITHDRAWN'}">
 					<div class="imj_metadataLabel">
 						#{lbl.withdraw_comment}
@@ -92,16 +93,16 @@
 			<div class="imj_sectionTitle">
 	   			<span>#{lbl.metadata}</span>
 	    		<a  onclick="return false;">
-					<span class="showMd" style="display:none;"  onclick="$('#itemDescriptiveMd').slideDown(300);$('.hideMd').show(); $(this).hide();">
+					<span class="showSection" data-section="itemDescriptiveMd" style="display:none;">
 						<span class="fa fa-angle-right" />
 					</span>
-					<span class="hideMd"  onclick="$('#itemDescriptiveMd').slideUp(300);$('.showMd').show(); $(this).hide();">
+					<span class="hideSection"   data-section="itemDescriptiveMd">
 						<span class="fa fa-angle-down" /> 
 					</span>
 				</a>
 	   		</div>  
 			<div  class="imj_section"/><br/>
-			<div id="itemDescriptiveMd">
+			<div id="itemDescriptiveMd" class="itemDescriptiveMd">
 				<ui:repeat var="metadata" value="#{cc.attrs.itemBean.item.metadata}" rows="0">
 					<div class="imj_metadataSet">
 						<div class="imj_metadataLabel">
@@ -116,17 +117,17 @@
 			</div>
 			<div class="imj_sectionTitle">
 	   			<span>#{lbl.utilities}</span>
-	    		<a  onclick="return false;">
-					<span class="showUtil" style="display:none;"  onclick="$('#itemUtility').slideDown(300);$('.hideUtil').show(); $(this).hide();">
+	    		<a onclick="return false;">
+					<span class="showSection showSectionUtility" data-section="itemUtility">
 						<span class="fa fa-angle-right" />
 					</span>
-					<span class="hideUtil"  onclick="$('#itemUtility').slideUp(300);$('.showUtil').show(); $(this).hide();">
+					<span class="hideSection hideSectionUtility" data-section="itemUtility">
 						<span class="fa fa-angle-down" /> 
 					</span>
 				</a>
 	   		</div>  
 			<div  class="imj_section"/><br/>
-			<div id="itemUtility">
+			<div id="itemUtility" class="itemUtility">
 				<!-- InfoDataList - MD5 -->
 				<ui:fragment rendered="#{cc.attrs.itemBean.item.status != 'WITHDRAWN'}">
 					<div class="imj_metadataSet">
@@ -215,27 +216,27 @@
 			<div class="imj_sectionTitle">
 	   			<span>#{lbl.technical_metadata}</span>
 	   			<h:form>
-					<h:commandLink class="showTech"  action="#{cc.attrs.itemBean.showTechnicalMetadata}" onclick="$('.itemTechMd').slideDown(300);$('.hideTech').show(); $('.showTech').hide(); window.location.hash = '#techmetadata';">
+					<h:commandLink class="showSection" html5:data-section="itemTechMd"  action="#{cc.attrs.itemBean.showTechnicalMetadata}" onclick="window.location.hash = '#techmetadata';">
 						<f:ajax render=":viewer:itemTechMd"/>
 						<span class="fa fa-angle-right" />
 					</h:commandLink>
 				</h:form>
-				<a class="hideTech" style="display:none"  onclick="$('.itemTechMd').slideUp(300);$('.showTech').show(); $(this).hide();">
+				<a class="hideSection" style="display:none" data-section="itemTechMd" >
 					<span class="fa fa-angle-down" /> 
 				</a>
 	   		</div>  
-			<div  class="imj_section"/><br/>
+			<div class="imj_section"/><br/>
 			<h:panelGroup layout="block" id="itemTechMd" class="itemTechMd">
 				<ui:fragment rendered="#{cc.attrs.itemBean.item.status != 'WITHDRAWN'}">
 					<div class="imj_metadataSet">
 						<ui:repeat id="techMd" var="techMd" value="#{cc.attrs.itemBean.content.technicalMetadata}">
-						<div class="imj_metadataLabel">
-							<h:outputText value="#{techMd.name}" styleClass="imj_techdataEntry"/>
-							<span class="imj_invisible">: </span>
-						</div>
-						<div class="imj_metadataValue">
-							<h:outputText value="#{techMd.value}" styleClass="imj_techdataEntry"/>
-						</div>
+							<div class="imj_metadataLabel">
+								<h:outputText value="#{techMd.name}" styleClass="imj_techdataEntry"/>
+								<span class="imj_invisible">: </span>
+							</div>
+							<div class="imj_metadataValue">
+								<h:outputText value="#{techMd.value}" styleClass="imj_techdataEntry"/>
+							</div>
 						</ui:repeat>
 					</div>
 				</ui:fragment>

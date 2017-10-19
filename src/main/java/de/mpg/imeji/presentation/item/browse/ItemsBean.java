@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -22,8 +23,8 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
-import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -62,7 +63,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   public static final String ITEM_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
   public static final String ITEM_SORT_COOKIE = "ITEM_SORT_COOKIE";
   public static final String ELEMENTS_PER_LINE_COOKIE = "ELEMENTS_PER_LINE_COOKIE";
-  private static final int DEFAULT_ELEMENTS_PER_PAGE = 18;
+  private static final int DEFAULT_ELEMENTS_PER_PAGE = 24;
   private static final int DEFAULT_ELEMENTS_PER_LINE = 6;
   // From session
   @ManagedProperty(value = "#{SessionBean}")
@@ -127,24 +128,12 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
         Integer.parseInt(CookieUtils.readNonNull(SuperPaginatorBean.numberOfItemsPerPageCookieName,
             Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
 
-    final String options = Imeji.CONFIG.getNumberOfLinesInThumbnailList();
-    int itemsPerLine = Integer.parseInt(
-        CookieUtils.readNonNull(ELEMENTS_PER_LINE_COOKIE, "" + DEFAULT_ELEMENTS_PER_LINE));
-    if (itemsPerLine == 0) {
-      itemsPerLine = DEFAULT_ELEMENTS_PER_LINE;
-    }
-    for (final String option : options.split(",")) {
-      int opt = Integer.parseInt(option) * itemsPerLine;
-      getElementsPerPageSelectItems().add(new SelectItem(opt));
-    }
-    setElementsPerPage(getElementsPerPage() / itemsPerLine * itemsPerLine);
-    if (getElementsPerPage() == 0) {
-      setElementsPerPage(itemsPerLine);
-    }
+    setElementsPerPageSelectItems(Stream.of("12,24,48,96".split(",")).map(s -> new SelectItem(s))
+        .collect(Collectors.toList()));
   }
 
   public List<String> getEmptyList() {
-    return Collections.nCopies(getElementsPerPage() - getCurrentPartList().size(), "");
+    return Collections.nCopies(6 - (getTotalNumberOfRecords() % 6), "");
   }
 
   @Override

@@ -588,6 +588,14 @@ public class ItemBean extends SuperBean {
     }
   }
 
+
+  public long getViewerHeight() {
+    int webSize = Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
+    int imgWidth = (int) getContent().getWidth();
+    int imgHeight = (int) getContent().getHeight();
+    return imgHeight > imgWidth ? webSize : (content.getHeight() * webSize / content.getWidth());
+  }
+
   /**
    * Gets the width of the web resolution
    *

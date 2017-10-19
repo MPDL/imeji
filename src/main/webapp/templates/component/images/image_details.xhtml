@@ -13,7 +13,7 @@
 	</f:metadata>
 
 	<!-- MediaDisplayContainer - START -->
-	<h:panelGroup layout="block" style="max-heigth:#{itemBean.webResolutionMaxLength}px; " styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
+	<h:panelGroup layout="block" style="max-heigth:#{itemBean.webResolutionMaxLength}px;" styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
 			<h:form id="rotationForm">
 				<h:inputHidden id="inputTextRotation" value="#{itemBean.rotation}" />
@@ -36,10 +36,9 @@
 						<a id="rotateRightButton" class="fa fa-rotate-right imj_mediaEditPanelItem hideFullScreen" />
 						
 					</div>
-					
-					<div id="seadragon-viewer-full" style="height:#{itemBean.webResolutionMaxLength}px;" >			
+					<div id="seadragon-viewer-full" style="height:#{itemBean.viewerHeight}px;/*height:#{itemBean.webResolutionMaxLength}px;*/" >			
 						<a id="lnkPicFullResolutionAlt" href="#{itemBean.originalFile}" target="_blank">
-							<h:graphicImage id="picWebResolutionAlt" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
+							<h:graphicImage style="display: block !important;" id="picWebResolutionAlt" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
 						</a>
 					</div>	
 				</center>
@@ -121,13 +120,35 @@
         		rotateRightButton: "rotateRightButton",
         		rotateLeftButton: "rotateLeftButton",
         		showFullPageControl: true,
+        		visibilityRatio: 1.0,
+        		constrainDuringPan: true,
         		gestureSettingsTouch: {
            		 	pinchRotate: false,
+           		    clickToZoom: false,
            		 	scrollToZoom: false,
+           			flickEnabled: false,
+           			dblClickToZoom: false
         		},
         		gestureSettingsMouse:{
         			scrollToZoom: false,
         			clickToZoom: false,
+        			flickEnabled: false,
+        			dblClickToZoom: false,
+        			pinchRotate: false
+        		},
+        		gestureSettingsPen:{
+        			scrollToZoom: false,
+        			clickToZoom: false,
+        			flickEnabled: false,
+        			dblClickToZoom: false,
+        			pinchRotate: false
+        		},
+        		gestureSettingsUnknown:{
+        			scrollToZoom: false,
+        			clickToZoom: false,
+        			flickEnabled: false,
+        			dblClickToZoom: false,
+        			pinchRotate: false
         		}
     		
 			});

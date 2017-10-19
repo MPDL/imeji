@@ -270,65 +270,6 @@ $(window).resize(
 
 // END - DIALOGS
 
-// Initialize a global swc object for easy handling
-var swcObject = {};
-
-/*
- * initialize the rendering of a SWC file @param swcdata: swc file content in
- * clear format
- */
-function initSWC(swcdomelement) {
-	var shark, canvas, placeholder;
-	swcObject.data = $(swcdomelement).text();
-	swcObject.json = swc_parser(swcObject.data);
-	canvas = document.createElement('canvas');
-
-	if (window.WebGLRenderingContext
-			&& (canvas.getContext("webgl") || canvas
-					.getContext("experimental-webgl"))) {
-		placeholder = $('*[id*=' + swcObject.placeholderID + ']');
-		placeholder.get(0).style.display = "none";
-		shark = new SharkViewer({
-			swc : swcObject.json,
-			dom_element : swcObject.displayID,
-			WIDTH : swcObject.width,
-			HEIGHT : swcObject.height,
-			center_node : -1,
-			show_stats : false,
-			screenshot : false
-		});
-		shark.init();
-		shark.animate();
-	} else {
-		document.getElementById(swcObject.failedMsgID).style.display = "block";
-	}
-}
-
-/*
- * start function to load the SWC file @param src: dom-source element with
- * parameter
- */
-function loadSWC(src, element_name) {
-	var source, swc;
-	source = $(src);
-	swcObject = {
-		domSource : src,
-		dataURL : source.data("swc-source") || undefined,
-		serviceURL : source.data("swc-service") || undefined,
-		elementID : element_name,
-		displayID : (source.data("target-id")[0] === '#') ? source.data(
-				"target-id").substring(1) : source.data("target-id"),
-		width : source.data("target-width"),
-		height : source.data("target-height"),
-		placeholderID : (source.data("placeholder-id")[0] === '#') ? source
-				.data("placeholder-id").substring(1) : source
-				.data("placeholder-id"),
-		failedMsgID : (source.data("failed-msg-id")[0] === '#') ? source.data(
-				"failed-msg-id").substring(1) : source.data("failed-msg-id")
-	};
-	// loadContent(swcObject.dataURL, '#'+swcObject.elementID, initSWC);
-	initSWC('#' + swcObject.elementID);
-}
 
 /**
  * Avoid double click submit for all submit buttons
@@ -611,32 +552,10 @@ setTimeout(function() {
 	
 }
 
-// START - set number of items pro line cookie
-$( document ).ready(function() {
-	var count= 0;
-	var position = 0;
-	$(".imj_tileItem").each(function() {
-		var newTop = $( this ).position().top;		
-		if(position > 0 && newTop > position){
-			count =$(".imj_tileItem").index( this );
-			return false;
-		}
-		position = newTop;
-	});
-	var date=new Date();
-	date.setTime(+date+(365*24*3600*1000));
-	if(count > 0){
-		document.cookie="ELEMENTS_PER_LINE_COOKIE="+count+"; expires="+date.toGMTString()+"; path=/";
-	}
-});
-
-function getElementsPerLineCookie(){
-	return document.cookie.replace(/(?:(?:^|.*;\s*)ELEMENTS_PER_LINE_COOKIE\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-}
 
 //END - set number of items pro line cookie
 
-// DEfine datepicker
+// Define datepicker
 $(function() {
 	$(".datepicker").datepicker({
 		changeMonth : true,
@@ -644,7 +563,39 @@ $(function() {
 		dateFormat : "yy-mm-dd",
 		firstDay : 1
 	});
-});//---------------------------------------------------------------------
+});
+
+// Responsive menu show/hide
+$(".responsiveMenuBtn").click(function() {
+		$("#" +  $(this).data('menu')).slideToggle('slow', function() {
+			$(this).toggleClass("show");
+		});
+	});
+
+$(document).click(function(event) {
+	if (!event.target.matches('.responsiveMenuBtn')) {
+		$(".show").slideToggle('slow', function() {
+			$(this).toggleClass("show");
+		});
+	  }
+});
+
+// SECTIONS
+//show
+$(".showSection").click(function() {
+	var section = $(this).data('section');
+	console.log(section);
+	$("." +  section).slideToggle('fast');
+	$("*[data-section='" + section + "']").toggle();
+});
+// hide
+$(".hideSection").click(function() {
+	var section = $(this).data('section');
+	console.log(section);
+	$("." +  section).slideToggle('fast');
+	$("*[data-section='" + section + "']").toggle();
+});
+//---------------------------------------------------------------------
 //
 // QR Code Generator for JavaScript SJIS Support (optional)
 //

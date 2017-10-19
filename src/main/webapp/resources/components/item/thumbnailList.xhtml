@@ -8,7 +8,7 @@
 		<composite:attribute name="picList"/>
 	</composite:interface>
 	<composite:implementation>
-		<style>.imj_tileItem {width: #{Configuration.thumbnailWidth}px !important;}</style>
+	
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfElements != 0}">
 			<div class="imj_listBody" id="listDiv" style=" text-align: justify;  text-align-last: justify;">
 				<ul id="imj_listBody"> 
@@ -45,8 +45,7 @@
 					</ui:repeat>
 					<!-- End images -->
 					<ui:repeat id="emptyPictureList" var="nothing" value="#{cc.attrs.picList.emptyList}">
-						<li class="imj_tileItem">
-						</li>
+						<li class="imj_tileItem"/>
 					</ui:repeat>
 					
 					<!-- 

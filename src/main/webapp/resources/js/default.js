@@ -403,28 +403,6 @@ setTimeout(function() {
 	
 }
 
-// START - set number of items pro line cookie
-$( document ).ready(function() {
-	var count= 0;
-	var position = 0;
-	$(".imj_tileItem").each(function() {
-		var newTop = $( this ).position().top;		
-		if(position > 0 && newTop > position){
-			count =$(".imj_tileItem").index( this );
-			return false;
-		}
-		position = newTop;
-	});
-	var date=new Date();
-	date.setTime(+date+(365*24*3600*1000));
-	if(count > 0){
-		document.cookie="ELEMENTS_PER_LINE_COOKIE="+count+"; expires="+date.toGMTString()+"; path=/";
-	}
-});
-
-function getElementsPerLineCookie(){
-	return document.cookie.replace(/(?:(?:^|.*;\s*)ELEMENTS_PER_LINE_COOKIE\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-}
 
 //END - set number of items pro line cookie
 
@@ -438,13 +416,33 @@ $(function() {
 	});
 });
 
-// Responsive menu show/hide{
+// Responsive menu show/hide
 $(".responsiveMenuBtn").click(function() {
-		$("#" +  $(this).data('menu')).slideToggle();
+		$("#" +  $(this).data('menu')).slideToggle('slow', function() {
+			$(this).toggleClass("show");
+		});
 	});
 
 $(document).click(function(event) {
 	if (!event.target.matches('.responsiveMenuBtn')) {
-		$(".responsiveMenu").hide();
+		$(".show").slideToggle('slow', function() {
+			$(this).toggleClass("show");
+		});
 	  }
+});
+
+// SECTIONS
+//show
+$(".showSection").click(function() {
+	var section = $(this).data('section');
+	console.log(section);
+	$("." +  section).slideToggle('fast');
+	$("*[data-section='" + section + "']").toggle();
+});
+// hide
+$(".hideSection").click(function() {
+	var section = $(this).data('section');
+	console.log(section);
+	$("." +  section).slideToggle('fast');
+	$("*[data-section='" + section + "']").toggle();
 });
