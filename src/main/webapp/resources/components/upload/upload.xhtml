@@ -36,9 +36,9 @@
 				dragdrop: true,
 				drop_element: '#{cc.attrs.dropElementId}',
 				multipart_params: {
-					licenseName: document.getElementById('actionCollection:uploadDialog:uploadForm:uploader:name').value,
-					licenseLabel:  document.getElementById('actionCollection:uploadDialog:uploadForm:uploader:label').value,
-					licenseUrl:  document.getElementById('actionCollection:uploadDialog:uploadForm:uploader:url').value,
+					licenseName: document.getElementById('uploadDialog:uploadForm:uploader:name').value,
+					licenseLabel:  document.getElementById('uploadDialog:uploadForm:uploader:label').value,
+					licenseUrl:  document.getElementById('uploadDialog:uploadForm:uploader:url').value,
 					},
 				init: {	
 					PostInit: function() {
@@ -51,9 +51,9 @@
 						lockPage();
 						$(".uploadPanel").show();
 						addUploadStatusMessage(0,totalFiles);
-						var licenseName = document.getElementById('actionCollection:uploadDialog:uploadForm:uploader:name').value;
-						var licenseLabel = document.getElementById('actionCollection:uploadDialog:uploadForm:uploader:label').value;
-						var licenseUrl = document.getElementById('actionCollection:uploadDialog:uploadForm:uploader:url').value;
+						var licenseName = document.getElementById('uploadDialog:uploadForm:uploader:name').value;
+						var licenseLabel = document.getElementById('uploadDialog:uploadForm:uploader:label').value;
+						var licenseUrl = document.getElementById('uploadDialog:uploadForm:uploader:url').value;
 						uploader.settings.multipart_params = { licenseName: licenseName, licenseLabel: licenseLabel, licenseUrl: licenseUrl};
 						uploader.start();							
 					},

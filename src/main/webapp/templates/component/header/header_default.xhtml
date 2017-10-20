@@ -20,6 +20,9 @@
 				</h:outputLink>
 			</div>
 			<div id="simpleSearchWrapper" class="imj_simpleSearch responsiveMenu">
+				<a href="#" class="responsiveMenuCloseBtn responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="simpleSearchWrapper" >
+					<span class="fa fa-times"/> <span>#{lbl.close}</span>
+				</a>
 				<form id="simpleSearch" onsubmit="return submitSimpleSearch();">
 					<div id="simpleSearchInput">
 						<input type="text" id="simpleSearchInputText" placeholder="#{lbl.search_for}" value="#{QuickSearchBean.searchString}" autocomplete="off" />
@@ -55,6 +58,7 @@
 			   			<span class="fa fa-sliders fa-size-2"></span>
 			   		</a>
 		   		</div>
+		   		
 			</div>
 		</div>
 		<span id="navTop"/>
