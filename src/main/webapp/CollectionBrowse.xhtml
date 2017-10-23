@@ -68,6 +68,10 @@
 	 
 	 <ui:define name="actions">
 		<span id="actionsReponsive" class="responsiveMenu">
+
+			<a style="float:right; text-align: right;" href="#"  class="responsiveMenuCloseBtn responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="actionsReponsive" >
+				<span class="fa fa-times"/> <span>#{lbl.close}</span>
+			</a>
 			
 		 	<ui:fragment rendered="#{Auth.update}">
 		 		
@@ -161,6 +165,7 @@
 			<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download_files}</span>
 		</a>
 		<a href="#" class="fa fa-ellipsis-h responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="actionsReponsive" />
+		<a href="#" class="fa fa-filter responsiveMenuBtn imj_menuButton imj_overlayMenu" style="float:right" data-menu="facetsArea" />
 
 	 </ui:define>
 	 

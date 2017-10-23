@@ -14,7 +14,9 @@
 
 <composite:implementation>
 	#{FacetSelectorBean.init(cc.attrs.itemsBean.searchResult)}
-	<a href="javascript:void(0)" class="imj_closeFilter fa fa-times" onclick="document.getElementById('facetsArea').style.width = '0'; return false;"></a>
+	<a href="#" class="responsiveMenuCloseBtn responsiveMenuBtn" data-menu="facetsArea" >
+		<span class="fa fa-times"/> <span>#{lbl.close}</span>
+	</a>
 	<ui:repeat var="entry" value="#{FacetSelectorBean.entries}" varStatus="row">
 		<ui:fragment rendered="#{entry.count &gt; 0}">
 			<h:form>

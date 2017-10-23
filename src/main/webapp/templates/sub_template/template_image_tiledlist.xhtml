@@ -46,7 +46,7 @@
 					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
 					<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 				</div>
-				 <imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
+				<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
 				
 			</div>
 			<!-- Page Browser GotoBox -->

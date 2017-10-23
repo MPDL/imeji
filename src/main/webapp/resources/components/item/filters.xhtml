@@ -16,9 +16,6 @@
 	
 	<composite:implementation>
 		<h:panelGroup layout="block" id="selectionInfoPanel" styleClass="imj_selectionInfoPanel">
-			<a href="#" class="imj_openFilter imj_listHeader" onclick="document.getElementById('facetsArea').style.width = '70%'; return false;">
-	        	<span class="fa fa-bars"/>
-	        </a>
 	        <div class="itemsCount">&#160;</div>
 			<h:form>
 				<ui:fragment rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL' and cc.attrs.facetBean.collection.status != 'WITHDRAWN'}">

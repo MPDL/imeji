@@ -572,14 +572,6 @@ $(".responsiveMenuBtn").click(function() {
 		});
 	});
 
-$(document).click(function(event) {
-	if (!event.target.matches('.responsiveMenuBtn')) {
-		$(".show").slideToggle('slow', function() {
-			$(this).toggleClass("show");
-		});
-	  }
-});
-
 // SECTIONS
 //show
 $(".showSection").click(function() {

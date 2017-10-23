@@ -6,7 +6,19 @@
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
 	
-	<div class="imj_metaMenuStandardSingleLine">
+	<div class="" style="float:right; margin-left: 1.5em; font-size: 1.5em;">
+		<a href="#" class="fa fa-bars responsiveMenuBtn" data-menu="headerMenu"/>
+	</div>
+	
+	<div style="float:right; font-size: 1.5em;">
+			<a href="#" class="fa fa-search responsiveMenuBtn" data-menu="simpleSearchWrapper" />
+	</div>
+	
+	<div class="imj_metaMenuStandardSingleLine" id="headerMenu">
+		
+		<a href="#" class="responsiveMenuCloseBtn responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="headerMenu" >
+			<span class="fa fa-times"/> <span>#{lbl.close}</span>
+		</a>
 		
 		<div class="imj_metaMenuItemsAlign">
 			
