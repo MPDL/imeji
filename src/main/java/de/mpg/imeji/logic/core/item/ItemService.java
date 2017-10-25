@@ -11,8 +11,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -30,12 +28,11 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
 import de.mpg.imeji.logic.model.CollectionImeji;
-import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.model.factory.ItemFactory;
 import de.mpg.imeji.logic.model.util.LicenseUtil;
@@ -597,76 +594,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
     LOGGER.info("Items reindexed!");
   }
 
-  /**
-   * Copy Items to another collection and remove the original items
-   * 
-   * @param items
-   * @param collectionid
-   * @param user
-   * @throws ImejiException
-   */
-  public List<Item> moveItems(List<String> ids, CollectionImeji col, User user, License license)
-      throws ImejiException {
-    List<Item> items = retrieve(ids, user);
-    List<ContentVO> contents = retrieveContentBatchLazy(items);
-    contents = filterContentsIfChecksumAlreadyExists(contents, col);
-    List<ContentVO> moved = new ContentService().move(items, contents, col.getIdString());
-    if (moved.size() > 0) {
-      Set<String> movedSet = moved.stream().map(c -> c.getItemId()).collect(Collectors.toSet());
-      items = items.stream().filter(item -> movedSet.contains(item.getId().toString()))
-          .filter(item -> item.getStatus().equals(Status.PENDING))
-          .peek(item -> prepareMoveItem(item, col, license)).collect(Collectors.toList());
-      updateBatch(items, user);
-      return items;
-    }
-    return new ArrayList<>();
-  }
-
-  /**
-   * Prepare an item for move
-   * 
-   * @param item
-   * @param col
-   * @param license
-   * @return
-   */
-  private Item prepareMoveItem(Item item, CollectionImeji col, License license) {
-    item.setCollection(col.getId());
-    item.setStatus(col.getStatus());
-    if (license != null && !license.isEmtpy() && LicenseUtil.getActiveLicense(item) == null) {
-      item.setLicenses(Arrays.asList(license.clone()));
-    }
-    return item;
-  }
-
-  /**
-   * Retrieve the contents of the Items
-   * 
-   * @param items
-   * @return
-   * @throws ImejiException
-   */
-  private List<ContentVO> retrieveContentBatchLazy(List<Item> items) throws ImejiException {
-    ContentService contentService = new ContentService();
-    List<String> contentIds =
-        items.stream().map(item -> contentService.findContentId(item.getId().toString()))
-            .collect(Collectors.toList());
-    return contentService.retrieveBatchLazy(contentIds);
-  }
-
-  /**
-   * Filter the contents if their checksum exists already in the passed collection
-   * 
-   * @param items
-   * @param col
-   * @return
-   */
-  private List<ContentVO> filterContentsIfChecksumAlreadyExists(List<ContentVO> contents,
-      CollectionImeji col) {
-    return contents.stream()
-        .filter(content -> !checksumExistsInCollection(col.getId(), content.getChecksum()))
-        .collect(Collectors.toList());
-  }
 
   /**
    * Return a new filtered List of only item with the requested {@link Status}
@@ -779,7 +706,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param filename
    * @return
    */
-  private boolean checksumExistsInCollection(URI collectionId, String checksum) {
+  public boolean checksumExistsInCollection(URI collectionId, String checksum) {
     final SearchQuery q = SearchQuery.toSearchQuery(
         new SearchPair(SearchFields.checksum, SearchOperators.EQUALS, checksum, false));
     return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1)

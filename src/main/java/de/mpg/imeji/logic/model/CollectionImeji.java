@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
@@ -20,16 +22,55 @@ import de.mpg.imeji.j2j.annotations.j2jResource;
 @j2jResource("http://imeji.org/terms/collection")
 @j2jModel("collection")
 @j2jId(getMethod = "getId", setMethod = "setId")
-public class CollectionImeji extends BasisMetadata implements Serializable {
+public class CollectionImeji extends Properties implements Serializable {
   private static final long serialVersionUID = -4689209760815149573L;
+  @j2jResource("http://imeji.org/terms/collection")
+  private URI collection;
+  @j2jLiteral("http://purl.org/dc/elements/1.1/title")
+  private String title;
+  @j2jLiteral("http://purl.org/dc/elements/1.1/description")
+  private String description;
+  @j2jList("http://xmlns.com/foaf/0.1/person")
+  protected Collection<Person> persons = new ArrayList<Person>();
+  @j2jList("http://imeji.org/AdditionalInfo")
+  private List<ContainerAdditionalInfo> additionalInformations = new ArrayList<>();
   @j2jLiteral("http://imeji.org/terms/doi")
   private String doi;
   @j2jResource("http://imeji.org/terms/logoUrl")
   private URI logoUrl;
-  @j2jLiteral("http://imeji.org/terms/statements")
-  private String statements;
-
   private Collection<URI> images = new ArrayList<URI>();
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public Collection<Person> getPersons() {
+    return persons;
+  }
+
+  public void setPersons(Collection<Person> person) {
+    this.persons = person;
+  }
+
+  public List<ContainerAdditionalInfo> getAdditionalInformations() {
+    return additionalInformations;
+  }
+
+  public void setAdditionalInformations(List<ContainerAdditionalInfo> additionalInformations) {
+    this.additionalInformations = additionalInformations;
+  }
 
   public URI getLogoUrl() {
     return this.logoUrl;
@@ -51,15 +92,23 @@ public class CollectionImeji extends BasisMetadata implements Serializable {
     this.images = images;
   }
 
+  @Deprecated
+  // TODO remove
   public Collection<URI> getImages() {
     return images;
   }
 
-  public String getStatements() {
-    return statements;
+  /**
+   * @return the collection
+   */
+  public URI getCollection() {
+    return collection;
   }
 
-  public void setStatements(String statements) {
-    this.statements = statements;
+  /**
+   * @param collection the collection to set
+   */
+  public void setCollection(URI collection) {
+    this.collection = collection;
   }
 }

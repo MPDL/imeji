@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -287,8 +286,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    * @throws ImejiException
    */
-  public List<ContentVO> move(List<Item> items, List<ContentVO> contents, String collectionId)
-      throws ImejiException {
+  public List<ContentVO> move(List<ContentVO> contents, String collectionId) throws ImejiException {
     StorageController storageController = new StorageController();
     List<ContentVO> newContents = new ArrayList<>();
     for (ContentVO content : contents) {
@@ -300,13 +298,6 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
       }
     }
     contents = updateBatch(newContents);
-    // write message in queue
-    Map<String, Item> itemMap =
-        items.stream().collect(Collectors.toMap(Item::getIdString, Function.identity()));
-    newContents.stream()
-        .forEach(c -> messageService.add(new Message(MessageType.MOVE_ITEM, collectionId,
-            createMessageContent(itemMap.get(ObjectHelper.getId(URI.create(c.getItemId())))))));
-
     return newContents;
   }
 

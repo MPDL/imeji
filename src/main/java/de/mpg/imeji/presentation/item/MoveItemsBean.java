@@ -19,11 +19,12 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
+import de.mpg.imeji.logic.core.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.SearchFields;
-import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.security.authorization.Authorization;
@@ -44,10 +45,8 @@ public class MoveItemsBean extends SuperBean {
   private String query = "";
   private LicenseEditor licenseEditor;
   private String destinationId;
-
-  public MoveItemsBean() {
-    // TODO Auto-generated constructor stub
-  }
+  private final HierarchyService hierarchyService = new HierarchyService();
+  private final ItemService itemService = new ItemService();
 
   /**
    * Load all the collection for which the user has at least edit role
@@ -123,8 +122,9 @@ public class MoveItemsBean extends SuperBean {
     try {
       CollectionImeji col = collectionsForMove.stream()
           .filter(c -> c.getId().toString().equals(collectionId)).findAny().get();
+      List<Item> items = (List<Item>) itemService.retrieveBatchLazy(ids, 0, -1, getSessionUser());
       List<Item> moved =
-          new ItemService().moveItems(ids, col, getSessionUser(), licenseEditor.getLicense());
+          hierarchyService.moveItems(items, col, getSessionUser(), licenseEditor.getLicense());
       if (moved.size() > 0) {
         BeanHelper.addMessage(moved.size() + " "
             + (moved.size() > 1 ? Imeji.RESOURCE_BUNDLE.getLabel("items", getLocale())

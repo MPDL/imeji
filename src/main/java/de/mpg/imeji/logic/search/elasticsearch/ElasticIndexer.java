@@ -313,7 +313,6 @@ public class ElasticIndexer implements SearchIndexer {
       } catch (final UnprocessableError e) {
         LOGGER.error("Error index partial update ", e);
       }
-
     }
   }
 }

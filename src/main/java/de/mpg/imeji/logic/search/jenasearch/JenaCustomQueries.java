@@ -7,10 +7,10 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
-import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.util.ObjectHelper;
 
@@ -261,6 +261,35 @@ public class JenaCustomQueries {
         + "USING <http://imeji.org/user> "
         + " WHERE {?user <http://imeji.org/terms/grant> ?s . ?s <http://imeji.org/terms/grantFor> <"
         + uri + "> . ?s ?p ?o}";
+  }
+
+  /**
+   * Update the <http://imeji.org/terms/collection> with the new uri
+   * 
+   * @param oldUri
+   * @param newUri
+   * @return
+   */
+  public static final String updateCollectionParent(String oldUri, String newUri) {
+    return "WITH <http://imeji.org/collection> "
+        + "DELETE {?s <http://imeji.org/terms/collection>  <" + oldUri + ">} "
+        + "INSERT {?s <http://imeji.org/terms/collection>  <" + newUri + ">} "
+        + "USING <http://imeji.org/collection> "
+        + " WHERE {?s <http://imeji.org/terms/collection>  <" + oldUri + ">}";
+  }
+
+  /**
+   * Update the <http://imeji.org/terms/collection> with the new uri
+   * 
+   * @param oldUri
+   * @param newUri
+   * @return
+   */
+  public static final String updateItemCollection(String oldUri, String newUri) {
+    return "WITH <http://imeji.org/item> " + "DELETE {?s <http://imeji.org/terms/collection>  <"
+        + oldUri + ">} " + "INSERT {?s <http://imeji.org/terms/collection>  <" + newUri + ">} "
+        + "USING <http://imeji.org/item> " + " WHERE {?s <http://imeji.org/terms/collection>  <"
+        + oldUri + ">}";
   }
 
   /**
