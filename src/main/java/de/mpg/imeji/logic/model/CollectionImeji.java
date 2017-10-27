@@ -11,6 +11,7 @@ import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 
 /**
  * imeji collection has one {@link MetadataProfile} and contains {@link Item}
@@ -22,7 +23,7 @@ import de.mpg.imeji.j2j.annotations.j2jResource;
 @j2jResource("http://imeji.org/terms/collection")
 @j2jModel("collection")
 @j2jId(getMethod = "getId", setMethod = "setId")
-public class CollectionImeji extends Properties implements Serializable {
+public class CollectionImeji extends Properties implements Serializable, CollectionObject {
   private static final long serialVersionUID = -4689209760815149573L;
   @j2jResource("http://imeji.org/terms/collection")
   private URI collection;
@@ -110,5 +111,29 @@ public class CollectionImeji extends Properties implements Serializable {
    */
   public void setCollection(URI collection) {
     this.collection = collection;
+  }
+
+  /**
+   * True if this collection is subcollection, i.e. if it has a parent collection
+   * 
+   * @return
+   */
+  public boolean isSubCollection() {
+    return getCollection() != null;
+  }
+
+  @Override
+  public String getName() {
+    return title;
+  }
+
+  @Override
+  public String getUri() {
+    return getId().toString();
+  }
+
+  @Override
+  public ObjectType getType() {
+    return ObjectType.COLLECTION;
   }
 }

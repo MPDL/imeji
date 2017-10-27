@@ -134,19 +134,19 @@ public class SearchTransaction extends Transaction {
       }
       return addSortValue(qs.getResource("s").toString(), sortValue);
     }
-    final RDFNode node = qs.get("s");
+    final RDFNode sVariable = qs.get("s");
+    final RDFNode oVariable = qs.get("o");
 
-    /*
-     * Was causing internal Server error when node was Null (i.e. there were no results),
-     *
-     * see https://github.com/imeji-community/imeji/issues/1010
-     */
-    if (node != null) {
-      return node.isURIResource() ? node.asResource().getURI() : node.asLiteral().toString();
-    } else {
-      return null;
+    String result = null;
+    if (sVariable != null) {
+      result = sVariable.isURIResource() ? sVariable.asResource().getURI()
+          : sVariable.asLiteral().toString();
     }
-
+    if (oVariable != null) {
+      result += "|" + (oVariable.isURIResource() ? oVariable.asResource().getURI()
+          : oVariable.asLiteral().toString());
+    }
+    return result;
   }
 
   @Override

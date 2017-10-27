@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -54,8 +53,8 @@ public class InternalStorage implements Storage {
    * @see de.mpg.imeji.logic.storage.Storage#upload(byte[])
    */
   @Override
-  public UploadResult upload(String filename, File file, String collectionId) {
-    final InternalStorageItem item = manager.createItem(file, filename, collectionId);
+  public UploadResult upload(String filename, File file) {
+    final InternalStorageItem item = manager.createItem(file, filename);
     return new UploadResult(item.getId(), item.getOriginalUrl(), item.getWebUrl(),
         item.getThumbnailUrl(), item.getFullUrl());
   }
@@ -152,22 +151,6 @@ public class InternalStorage implements Storage {
       update(webUrl, web);
       update(thumbnailUrl, thumbnail);
     }
-  }
-
-  @Override
-  public UploadResult copy(String url, String collectionId) throws IOException {
-    File srcDir = manager.getDirectory(url);
-    File destDir = manager.createNewDirectory(collectionId);
-    FileUtils.copyDirectory(srcDir, destDir);
-    return initUploadResult(destDir);
-  }
-
-  @Override
-  public UploadResult move(String url, String collectionId) throws IOException {
-    File srcDir = manager.getDirectory(url);
-    File destDir = manager.getCollectionDirectory(collectionId);
-    FileUtils.moveDirectory(srcDir, destDir);
-    return initUploadResult(destDir);
   }
 
   /**

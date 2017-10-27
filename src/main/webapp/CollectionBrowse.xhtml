@@ -74,16 +74,25 @@
 			</a>
 			
 		 	<ui:fragment rendered="#{Auth.update}">
-		 		
 		 		<h:form id="showUploadForm">
-						<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_openUploadDialog" onclick="openDialog('uploadDialog');">
-							<f:ajax render=":additonalFooterScripts"/>
-							<span class="fa fa-upload"/> <span>#{lbl.upload}</span>
-						</h:commandLink>
+					<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_openUploadDialog" onclick="openDialog('uploadDialog');">
+						<f:ajax render=":additonalFooterScripts"/>
+						<span class="fa fa-upload"/> <span>#{lbl.upload}</span>
+					</h:commandLink>
 				</h:form>
-				<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/edit" class="imj_menuButton imj_overlayMenu">
-					<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
+				<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('addSubCollection');">
+					<span class="fa fa-plus"/> <span>#{lbl.add_subcollection}</span>
 				</a>
+				<ui:fragment rendered="#{CollectionItemsBean.collection.isSubCollection()}">
+					<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('editSubCollection');">
+						<span class="fa fa-pencil"/> <span>#{lbl.edit_subcollection}</span>
+					</a>
+				</ui:fragment>
+				<ui:fragment rendered="#{!CollectionItemsBean.collection.isSubCollection()}">
+					<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/edit" class="imj_menuButton imj_overlayMenu">
+						<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
+					</a>
+				</ui:fragment>
 			</ui:fragment>
 			<ui:fragment rendered="#{Auth.admin}">
 				<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/share?q=#{CollectionItemsBean.query}&amp;fq=#{CollectionItemsBean.facetQueryString}" class="imj_menuButton imj_overlayMenu">
@@ -172,6 +181,8 @@
 	 <ui:define name="modalDialogs_from_site">
 	 	<upload:dialog colId="#{CollectionItemsBean.collection.id.toString()}" id="uploadDialog" bean="#{CollectionItemsBean}"/>
 	 	<dialog:confirmationDialog submitAction="deleteAll" bean="#{CollectionItemsBean}" confirmationText="#{msg.confirmation_delete_items}?" submitLabel="#{lbl.delete}" dialogId="deleteItems" />
+	 	<col:subCollectionForm dialogId="addSubCollection" parentCollection="#{CollectionItemsBean.collection}"/>
+	 	<col:subCollectionForm dialogId="editSubCollection" collection="#{CollectionItemsBean.collection}"/>
 	 	<dialog:confirmationDialog submitAction="release" id="releaseCollection" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_release_collection}" confirmationText2="#{CollectionItemsBean.actionMenu.releaseMessage} " confirmationTextLicense="#{CollectionItemsBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}" submitLabel="#{lbl.release}" dialogId="releaseCollection"/>
 	 	<dialog:confirmationDialog submitAction="delete" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_delete_collection}?" submitLabel="#{lbl.delete}" dialogId="deleteCollection" />
 	 	<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_withdraw_collection}" submitLabel="#{lbl.withdraw}" dialogId="withdrawCollection"/>

@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response.Status;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
-import de.mpg.imeji.logic.messaging.MessageService;
+import de.mpg.imeji.logic.events.MessageService;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.storage.StorageController;

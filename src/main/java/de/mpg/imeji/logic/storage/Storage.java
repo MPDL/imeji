@@ -43,7 +43,7 @@ public interface Storage extends Serializable {
    * @param file
    * @return - the url of the uploaded File
    */
-  public UploadResult upload(String filename, File file, String collectionId);
+  public UploadResult upload(String filename, File file);
 
 
   /**
@@ -83,24 +83,6 @@ public interface Storage extends Serializable {
    * @param url
    */
   public void delete(String url);
-
-  /**
-   * Copy the file to a new location. All resolution of this file will copy as well
-   * 
-   * @param storageId
-   * @throws IOException
-   */
-  public UploadResult copy(String url, String collectionId) throws IOException;
-
-  /**
-   * Move a File to another collection
-   * 
-   * @param url
-   * @param collectionId
-   * @return
-   * @throws IOException
-   */
-  public UploadResult move(String url, String collectionId) throws IOException;
 
   /**
    * Update the file stored in the passed url with a new original resolution (original resolution is

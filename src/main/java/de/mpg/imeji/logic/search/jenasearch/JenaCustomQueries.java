@@ -278,6 +278,10 @@ public class JenaCustomQueries {
         + " WHERE {?s <http://imeji.org/terms/collection>  <" + oldUri + ">}";
   }
 
+  public static final String selectAllSubcollections() {
+    return "SELECT distinct ?s ?o WHERE{?s <http://imeji.org/terms/collection> ?o} ";
+  }
+
   /**
    * Update the <http://imeji.org/terms/collection> with the new uri
    * 

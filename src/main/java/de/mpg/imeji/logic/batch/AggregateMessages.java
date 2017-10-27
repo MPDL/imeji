@@ -3,7 +3,7 @@ package de.mpg.imeji.logic.batch;
 import java.util.concurrent.Callable;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.messaging.aggregation.AggregationService;
+import de.mpg.imeji.logic.events.aggregation.AggregationService;
 
 /**
  * For each collection that has changed, send email to subscribed user with changes. (Only one email

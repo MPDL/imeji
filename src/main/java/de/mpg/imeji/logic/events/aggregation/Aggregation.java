@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.messaging.aggregation;
+package de.mpg.imeji.logic.events.aggregation;
 
 /**
  * An Aggregation process messages from the message queue. Aggregation are called via the

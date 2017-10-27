@@ -13,6 +13,7 @@ import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 
 /**
  * imeji item. Can be an image, a video, a sound, etc.
@@ -24,7 +25,7 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 @j2jResource("http://imeji.org/terms/item")
 @j2jModel("item")
 @j2jId(getMethod = "getId", setMethod = "setId")
-public class Item extends Properties implements Serializable {
+public class Item extends Properties implements Serializable, CollectionObject {
   private static final long serialVersionUID = 3989965275269803885L;
   @j2jResource("http://imeji.org/terms/collection")
   private URI collection;
@@ -115,5 +116,18 @@ public class Item extends Properties implements Serializable {
     this.metadata = metadata;
   }
 
+  @Override
+  public String getName() {
+    return filename;
+  }
 
+  @Override
+  public String getUri() {
+    return getId().toString();
+  }
+
+  @Override
+  public ObjectType getType() {
+    return ObjectType.ITEM;
+  }
 }

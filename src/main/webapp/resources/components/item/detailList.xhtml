@@ -47,8 +47,8 @@
                     <h:panelGroup styleClass="fa fa-simplybuilt fa-size-2" rendered="#{o.fileType.endsWith('octet-stream')}">&#160;</h:panelGroup>
                     <h:panelGroup styleClass="fa fa-music fa-size-2" rendered="#{o.fileType.startsWith('audio')}">&#160;</h:panelGroup>
                     <h:panelGroup styleClass="fa fa-film fa-size-2" rendered="#{o.fileType.startsWith('video')}">&#160;</h:panelGroup>
-
-                    <h:panelGroup styleClass="fa fa-file fa-size-2" rendered="#{!(o.fileType.startsWith('image') || o.fileType.startsWith('text') || o.fileType.endsWith('pdf') || o.shortFileType.startsWith('doc') || o.shortFileType.startsWith('ppt') || o.shortFileType.startsWith('xls') || o.fileType.endsWith('octet-stream') || o.fileType.startsWith('video') || o.fileType.startsWith('audio'))}">&#160;</h:panelGroup>
+					<h:panelGroup styleClass="fa fa-folder-open-o fa-size-2" rendered="#{o.isCollection()}">&#160;</h:panelGroup>
+                    <h:panelGroup styleClass="fa fa-file fa-size-2" rendered="#{!(o.isCollection() || o.fileType.startsWith('image') || o.fileType.startsWith('text') || o.fileType.endsWith('pdf') || o.shortFileType.startsWith('doc') || o.shortFileType.startsWith('ppt') || o.shortFileType.startsWith('xls') || o.fileType.endsWith('octet-stream') || o.fileType.startsWith('video') || o.fileType.startsWith('audio'))}">&#160;</h:panelGroup>
                 </h:column>
 
                 <h:column>
@@ -59,9 +59,16 @@
                     	 &#160;
                     	<h:outputText value="&#160;" styleClass="#{cc.attrs.listBean.selectedSortOrder == 'ASCENDING' ? 'fa fa-sort-asc fa-push-right' : 'fa fa-sort-desc fa-push-left'}" rendered="#{cc.attrs.listBean.selectedSortCriterion == 'filename'}"/>
                     </f:facet>
-                    <h:outputLink id="lnkPicDetailBrowse" value="#{cc.attrs.listBean.imageBaseUrl}item/#{o.id}?q=#{cc.attrs.listBean.query}&amp;pos=#{cc.attrs.listBean.offset + table.rowIndex}#actions" title="#{o.filename}">
-                        #{o.filename}
-                    </h:outputLink>
+                     <ui:fragment rendered="#{!o.isCollection()}">
+	                    <a id="lnkPicDetailBrowse" href="#{cc.attrs.listBean.imageBaseUrl}item/#{o.id}?q=#{cc.attrs.listBean.query}&amp;pos=#{cc.attrs.listBean.offset + table.rowIndex}#actions" title="#{o.filename}">
+	                        #{o.filename}
+	                    </a>
+					</ui:fragment>
+					<ui:fragment rendered="#{o.isCollection()}">
+						<a href="#{Navigation.collectionUrl}#{o.id}">
+						 #{o.filename}
+						</a>
+					</ui:fragment>
 
                 </h:column>
 

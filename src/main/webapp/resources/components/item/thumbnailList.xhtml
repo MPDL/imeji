@@ -8,7 +8,16 @@
 		<composite:attribute name="picList"/>
 	</composite:interface>
 	<composite:implementation>
-	
+		<style>
+			.folderIcon{
+				width: 96%;
+			}
+			.folderIcon:before{
+				content: "";
+				display: block;
+				padding-top: 100%; 	/* initial ratio of 1:1*/
+			}
+		</style>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfElements != 0}">
 			<div class="imj_listBody" id="listDiv" style=" text-align: justify;  text-align-last: justify;">
 				<ul id="imj_listBody"> 
@@ -22,9 +31,16 @@
 							
 								<div id="imgFrame" class="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea" >
 									<!-- Image with link to the details view -->
-									<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;fq=#{cc.attrs.picList.facetQueryString}&amp;pos=#{cc.attrs.picList.offset + index.index}#actions">
-										<img src="#{item.link}" alt="#{item.caption}"/>
-									</a>
+									<ui:fragment rendered="#{!item.isCollection()}">
+										<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;fq=#{cc.attrs.picList.facetQueryString}&amp;pos=#{cc.attrs.picList.offset + index.index}#actions">
+											<img src="#{item.link}" alt="#{item.caption}"/>
+										</a>
+									</ui:fragment>
+									<ui:fragment rendered="#{item.isCollection()}">
+										<a href="#{Navigation.collectionUrl}#{item.id}">
+											<span class="folderIcon fa fa-folder-open-o fa-size-2"/>
+										</a>
+									</ui:fragment>
 									<span class="imj_optionSet">
 										<h:selectBooleanCheckbox rendered="#{item.status != 'WITHDRAWN'}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
 											<f:ajax event="change" execute="@this" render=":ajaxWrapper :actions"/>

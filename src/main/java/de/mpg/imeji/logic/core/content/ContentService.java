@@ -19,15 +19,14 @@ import de.mpg.imeji.logic.batch.messageAggregations.NotifyUsersOnFileUploadAggre
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.content.extraction.ContentExtractionResult;
 import de.mpg.imeji.logic.core.content.extraction.ContentExtractorFactory;
+import de.mpg.imeji.logic.events.Message;
+import de.mpg.imeji.logic.events.MessageService;
+import de.mpg.imeji.logic.events.Message.MessageType;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
-import de.mpg.imeji.logic.messaging.Message;
-import de.mpg.imeji.logic.messaging.Message.MessageType;
-import de.mpg.imeji.logic.messaging.MessageService;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.UploadResult;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.factory.ContentFactory;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
@@ -93,8 +92,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @throws ImejiException
    */
   public ContentVO create(Item item, File file, User user) throws ImejiException {
-    ContentVO contentVO =
-        uploadFile(new ContentVO(), item.getId().toString(), item.getCollection(), file, user);
+    ContentVO contentVO = uploadFile(new ContentVO(), item.getId().toString(), file, user);
     contentVO = controller.create(contentVO, Imeji.adminUser);
     analyzeFile(contentVO);
     messageService.add(new Message(MessageType.UPLOAD_FILE,
@@ -224,7 +222,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
       // Delete file should not stop update process
       LOGGER.error("Error deleting file", e);
     }
-    contentVO = uploadFile(contentVO, item.getId().toString(), item.getCollection(), file, user);
+    contentVO = uploadFile(contentVO, item.getId().toString(), file, user);
     contentVO = controller.update(contentVO, Imeji.adminUser);
     analyzeFile(contentVO);
     messageService.add(new Message(MessageType.CHANGE_FILE,
@@ -279,30 +277,6 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
   }
 
   /**
-   * Move Contents to another collection
-   * 
-   * @param item
-   * @param collectionId
-   * @return
-   * @throws ImejiException
-   */
-  public List<ContentVO> move(List<ContentVO> contents, String collectionId) throws ImejiException {
-    StorageController storageController = new StorageController();
-    List<ContentVO> newContents = new ArrayList<>();
-    for (ContentVO content : contents) {
-      try {
-        newContents.add(new ContentFactory().init(content)
-            .setFiles(storageController.move(content.getOriginal(), collectionId)).build());
-      } catch (Exception e) {
-        LOGGER.error("Error moving file of content " + content.getId(), e);
-      }
-    }
-    contents = updateBatch(newContents);
-    return newContents;
-  }
-
-
-  /**
    * Upload a File to the storage and add upload result to the contentVO
    *
    * @param file
@@ -313,11 +287,10 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    * @throws ImejiException
    */
-  private ContentVO uploadFile(ContentVO contentVO, String itemId, URI collection, File file,
-      User user) throws ImejiException {
+  private ContentVO uploadFile(ContentVO contentVO, String itemId, File file, User user)
+      throws ImejiException {
     final StorageController sc = new StorageController();
-    final UploadResult uploadResult =
-        sc.upload(file.getName(), file, ObjectHelper.getId(collection));
+    final UploadResult uploadResult = sc.upload(file.getName(), file);
     return toContentVO(itemId, uploadResult);
   }
 

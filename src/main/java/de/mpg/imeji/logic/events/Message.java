@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.messaging;
+package de.mpg.imeji.logic.events;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -15,7 +15,7 @@ public class Message implements Serializable {
   private static final long serialVersionUID = 7333376188527222587L;
 
   public enum MessageType {
-    UPLOAD_FILE, CHANGE_FILE, MOVE_ITEM, DELETE_COLLECTION, UNSHARE, STATEMENT_CHANGED;
+    UPLOAD_FILE, CHANGE_FILE, MOVE_ITEM, DELETE_COLLECTION, UNSHARE, STATEMENT_CHANGED, MOVE_COLLECTION, CREATE_COLLECTION;
   }
 
   private final MessageType type;

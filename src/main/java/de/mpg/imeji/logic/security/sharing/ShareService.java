@@ -13,8 +13,9 @@ import com.google.common.collect.ImmutableMap;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.messaging.Message;
-import de.mpg.imeji.logic.messaging.Message.MessageType;
+import de.mpg.imeji.logic.events.Message;
+import de.mpg.imeji.logic.events.MessageService;
+import de.mpg.imeji.logic.events.Message.MessageType;
 import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
@@ -23,7 +24,6 @@ import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.usergroup.UserGroupService;
-import de.mpg.imeji.logic.messaging.MessageService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**

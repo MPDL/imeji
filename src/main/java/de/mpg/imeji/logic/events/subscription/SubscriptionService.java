@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.messaging.subscription;
+package de.mpg.imeji.logic.events.subscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.messaging.Message;
-import de.mpg.imeji.logic.messaging.Message.MessageType;
+import de.mpg.imeji.logic.events.Message;
+import de.mpg.imeji.logic.events.Message.MessageType;
 
 /**
  * Service managing message subscription

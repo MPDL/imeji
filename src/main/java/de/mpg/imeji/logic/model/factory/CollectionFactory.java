@@ -47,4 +47,9 @@ public class CollectionFactory {
     return this;
   }
 
+  public CollectionFactory setCollection(String collectionUri) {
+    collection.setCollection(URI.create(collectionUri));
+    return this;
+  }
+
 }

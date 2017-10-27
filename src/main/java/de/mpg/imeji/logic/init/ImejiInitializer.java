@@ -30,7 +30,7 @@ import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.core.statement.StatementService;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
-import de.mpg.imeji.logic.messaging.subscription.SubscriptionService;
+import de.mpg.imeji.logic.events.subscription.SubscriptionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;

@@ -53,7 +53,7 @@ public class ExternalStorage implements Storage {
    * @see de.mpg.imeji.logic.storage.Storage#upload(byte[])
    */
   @Override
-  public UploadResult upload(String filename, File file, String collectionId) {
+  public UploadResult upload(String filename, File file) {
     // Not implemented
     return null;
   }
@@ -169,22 +169,10 @@ public class ExternalStorage implements Storage {
 
 
   @Override
-  public UploadResult copy(String url, String collectionId) {
-    // Not implemented
-    return null;
-  }
-
-  @Override
   public void recalculateWebAndThumbnail(String fullUrl, String webUrl, String thumbnailUrl)
       throws IOException, Exception {
     // TODO Auto-generated method stub
 
-  }
-
-  @Override
-  public UploadResult move(String url, String collectionId) throws IOException {
-    // TODO Auto-generated method stub
-    return null;
   }
 
   @Override

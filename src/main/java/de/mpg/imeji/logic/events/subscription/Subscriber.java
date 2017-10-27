@@ -1,9 +1,9 @@
-package de.mpg.imeji.logic.messaging.subscription;
+package de.mpg.imeji.logic.events.subscription;
 
 import java.util.concurrent.Callable;
 
-import de.mpg.imeji.logic.messaging.Message;
-import de.mpg.imeji.logic.messaging.Message.MessageType;
+import de.mpg.imeji.logic.events.Message;
+import de.mpg.imeji.logic.events.Message.MessageType;
 
 /**
  * A Subscriber to a particular MessageType is called as soon as one message with the same

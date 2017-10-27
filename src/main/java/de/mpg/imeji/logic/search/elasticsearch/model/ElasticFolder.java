@@ -17,6 +17,7 @@ import de.mpg.imeji.logic.model.Person;
  */
 public final class ElasticFolder extends ElasticProperties {
   private final String name;
+  private final String folder;
   private final String description;
   private final String creators;
   private final List<String> pid;
@@ -28,6 +29,7 @@ public final class ElasticFolder extends ElasticProperties {
     this.name = c.getTitle();
     this.description = c.getDescription();
     this.pid = c.getDoi() != null ? Arrays.asList(c.getDoi()) : new ArrayList<String>();
+    this.folder = c.getCollection() != null ? c.getCollection().toString() : null;;
     this.creators =
         c.getPersons().stream().map(p -> p.getCompleteName()).collect(Collectors.joining(";"));
     for (final Person p : c.getPersons()) {
@@ -69,6 +71,13 @@ public final class ElasticFolder extends ElasticProperties {
    */
   public String getCreators() {
     return creators;
+  }
+
+  /**
+   * @return the folder
+   */
+  public String getFolder() {
+    return folder;
   }
 
 }

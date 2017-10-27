@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.messaging.aggregation;
+package de.mpg.imeji.logic.events.aggregation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 
-import de.mpg.imeji.logic.messaging.MessageService;
+import de.mpg.imeji.logic.events.MessageService;
 
 /**
  * Service managing {@link Aggregation}

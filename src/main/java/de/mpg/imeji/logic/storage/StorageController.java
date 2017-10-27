@@ -75,10 +75,9 @@ public final class StorageController implements Serializable {
    * @return
    * @throws ImejiException
    */
-  public UploadResult upload(String filename, File file, String collectionId)
-      throws ImejiException {
+  public UploadResult upload(String filename, File file) throws ImejiException {
     filename = FilenameUtils.getName(filename);
-    final UploadResult result = storage.upload(filename, file, collectionId);
+    final UploadResult result = storage.upload(filename, file);
     final File storageFile = storage.read(result.getOrginal());
     result.setChecksum(calculateChecksum(storageFile));
     result.setFileSize(storageFile.length());
@@ -137,41 +136,6 @@ public final class StorageController implements Serializable {
    */
   public void update(String url, File file) {
     storage.changeThumbnail(url, file);
-  }
-
-  /**
-   * Copya file and all resolution of this file to another collection
-   * 
-   * @param url
-   * @param filename
-   * @param collectionId
-   * @return
-   * @throws ImejiException
-   */
-  public UploadResult copy(String url, String collectionId) throws ImejiException {
-    try {
-      return storage.copy(url, collectionId);
-    } catch (IOException e) {
-      throw new ImejiException("Error copying storage file", e);
-    }
-  }
-
-  /**
-   * Move a file with all its resolution to another collection
-   * 
-   * @param url
-   * @param collectionId
-   * @return
-   * @throws ImejiException
-   */
-  public UploadResult move(String url, String collectionId) throws ImejiException {
-    try {
-      UploadResult r = storage.copy(url, collectionId);
-      storage.delete(url);
-      return r;
-    } catch (IOException e) {
-      throw new ImejiException("Error copying storage file", e);
-    }
   }
 
   /**

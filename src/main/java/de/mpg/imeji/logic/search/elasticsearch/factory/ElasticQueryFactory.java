@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory;
 
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
@@ -13,6 +14,7 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 
 import com.hp.hpl.jena.util.iterator.Filter;
 
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.ImejiLicenses;
@@ -56,10 +58,11 @@ public class ElasticQueryFactory {
    * @return
    */
   public static QueryBuilder build(SearchQuery query, String folderUri, User user,
-      ElasticTypes type) {
+      ElasticTypes... types) {
     final BoolQueryBuilder q = QueryBuilders.boolQuery();
     final QueryBuilder searchQuery = buildSearchQuery(query, user);
-    final QueryBuilder containerQuery = buildContainerFilter(folderUri);
+    final QueryBuilder containerQuery =
+        buildContainerFilter(folderUri, query == null || query.isEmpty(), types);
     final QueryBuilder securityQuery = buildSecurityQuery(user, folderUri);
     final QueryBuilder statusQuery = buildStatusQuery(query, user);
     if (!isMatchAll(searchQuery)) {
@@ -71,7 +74,7 @@ public class ElasticQueryFactory {
     if (!isMatchAll(securityQuery)) {
       q.must(securityQuery);
     }
-    if (type != ElasticTypes.users && !isMatchAll(statusQuery)) {
+    if (types.length == 1 && types[0] == ElasticTypes.users && !isMatchAll(statusQuery)) {
       q.must(statusQuery);
     }
     return q;
@@ -206,13 +209,24 @@ public class ElasticQueryFactory {
    * @param containerUri
    * @return
    */
-  private static QueryBuilder buildContainerFilter(String containerUri) {
-    if (containerUri != null) {
+  private static QueryBuilder buildContainerFilter(String containerUri, boolean emptyQuery,
+      ElasticTypes... types) {
+    if (containerUri != null && !emptyQuery) {
+      BoolQueryBuilder bq = QueryBuilders.boolQuery();
+      for (String uri : new HierarchyService().findAllSubcollections(containerUri)) {
+        bq.should(fieldQuery(ElasticFields.FOLDER, uri, SearchOperators.EQUALS, false));
+      }
+      return bq
+          .should(fieldQuery(ElasticFields.FOLDER, containerUri, SearchOperators.EQUALS, false));
+    } else if (containerUri != null && emptyQuery) {
       return fieldQuery(ElasticFields.FOLDER, containerUri, SearchOperators.EQUALS, false);
+    } else if (emptyQuery && Arrays.asList(types).contains(ElasticTypes.folders)) {
+      return QueryBuilders.boolQuery()
+          .mustNot(QueryBuilders.existsQuery(ElasticFields.FOLDER.field()));
+    } else {
+      return QueryBuilders.matchAllQuery();
     }
-    return QueryBuilders.matchAllQuery();
   }
-
 
   /**
    * Build the query with all Read grants

@@ -41,6 +41,7 @@ public class ThumbnailBean implements Serializable {
   private String modified;
   private List<Metadata> metadata;
   private String status;
+  private final boolean isCollection;
 
   /**
    * Bean for Thumbnail list elements. Each element of a list with thumbnail is an instance of a
@@ -64,6 +65,7 @@ public class ThumbnailBean implements Serializable {
     this.caption = findCaption();
     this.selected = session.getSelected().contains(uri.toString());
     this.status = item.getStatus().toString();
+    this.isCollection = uri.toString().contains("/collection/");
   }
 
   /**
@@ -272,5 +274,9 @@ public class ThumbnailBean implements Serializable {
 
   public String getStatus() {
     return status;
+  }
+
+  public boolean isCollection() {
+    return isCollection;
   }
 }

@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.messaging;
+package de.mpg.imeji.logic.events;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.db.keyValue.stores.HTreeMapStore;
-import de.mpg.imeji.logic.messaging.subscription.SubscriptionService;
+import de.mpg.imeji.logic.events.subscription.SubscriptionService;
 
 /**
  * SErvice to manage {@link Message}

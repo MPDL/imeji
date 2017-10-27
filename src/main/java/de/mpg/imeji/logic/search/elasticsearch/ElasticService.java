@@ -3,6 +3,8 @@ package de.mpg.imeji.logic.search.elasticsearch;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
 
+import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+
 
 /**
  * elasticsearch service for spot
@@ -34,6 +36,29 @@ public class ElasticService {
    */
   public enum ElasticTypes {
     content, items, folders, users, usergroups;
+
+    /**
+     * Map a {@link SearchObjectTypes} to an ElasticTypes
+     * 
+     * @param type
+     * @return
+     */
+    public static ElasticTypes toElasticTypes(SearchObjectTypes type) {
+      switch (type) {
+        case ITEM:
+          return ElasticTypes.items;
+        case COLLECTION:
+          return ElasticTypes.folders;
+        case USER:
+          return ElasticTypes.users;
+        case USERGROUPS:
+          return ElasticTypes.usergroups;
+        case CONTENT:
+          return ElasticTypes.content;
+        default:
+          return ElasticTypes.items;
+      }
+    }
   }
 
   public enum ElasticAnalysers {

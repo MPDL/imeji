@@ -2,6 +2,8 @@ package de.mpg.imeji.presentation.item.browse;
 
 import java.net.URI;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -10,6 +12,7 @@ import javax.faces.context.FacesContext;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
+import de.mpg.imeji.logic.core.facade.SearchAndRetrieveFacade;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -92,9 +95,17 @@ public class CollectionItemsBean extends ItemsBean {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
-    final ItemService controller = new ItemService();
-    return controller.searchWithFacets(uri, searchQuery, sortCriterion, getSessionUser(), limit,
-        offset);
+    final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
+    return facade.search(searchQuery, collection, getSessionUser(), sortCriterion, limit, offset);
+    // final ItemService controller = new ItemService();
+    // return controller.searchWithFacets(uri, searchQuery, sortCriterion, getSessionUser(), limit,
+    // offset);
+  }
+
+  @Override
+  public Collection<Item> loadImages(List<String> uris) throws ImejiException {
+    final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
+    return facade.retrieveItemsAndCollectionsAsItems(uris, getSessionUser());
   }
 
 

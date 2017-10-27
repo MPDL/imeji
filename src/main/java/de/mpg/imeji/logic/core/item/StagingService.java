@@ -13,7 +13,6 @@ import de.mpg.imeji.logic.model.UploadResult;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.security.user.util.QuotaUtil;
 import de.mpg.imeji.logic.storage.StorageController;
-import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
  * Staging service to upload data in a staging area
@@ -76,8 +75,7 @@ class StagingService implements Serializable {
     if (!stagingFiles.containsKey(uploadId)) {
       stagingFiles.put(uploadId, new ArrayList<>());
     }
-    UploadResult uploadResult = new StorageController().upload(item.getFilename(), file,
-        ObjectHelper.getId(item.getCollection()));
+    UploadResult uploadResult = new StorageController().upload(item.getFilename(), file);
     stagingFiles.get(uploadId).add(new StagingFile(item, uploadResult, quota + file.length()));
   }
 

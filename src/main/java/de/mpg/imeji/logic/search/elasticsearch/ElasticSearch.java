@@ -3,6 +3,8 @@ package de.mpg.imeji.logic.search.elasticsearch;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -26,14 +28,14 @@ import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 
 /**
- * {@link Search} implemtation for ElasticSearch
+ * {@link Search} implementation for ElasticSearch
  *
  * @author bastiens
  *
  */
 public class ElasticSearch implements Search {
 
-  private ElasticTypes type = null;
+  private ElasticTypes[] type = null;
   private ElasticIndexer indexer = null;
   private static final int SEARCH_MAX_SIZE = 500;
   private static final int ELASTIC_FROM_SIZE_LIMIT = 10000;
@@ -45,30 +47,13 @@ public class ElasticSearch implements Search {
    * @param type
    * @throws ImejiException
    */
-  public ElasticSearch(SearchObjectTypes type) {
-    switch (type) {
-      case ITEM:
-        this.type = ElasticTypes.items;
-        break;
-      case COLLECTION:
-        this.type = ElasticTypes.folders;
-        break;
-      case USER:
-        this.type = ElasticTypes.users;
-        break;
-      case USERGROUPS:
-        this.type = ElasticTypes.usergroups;
-        break;
-      case CONTENT:
-        this.type = ElasticTypes.content;
-        break;
-      default:
-        this.type = ElasticTypes.items;
-        break;
-    }
+  public ElasticSearch(SearchObjectTypes... types) {
+    this.type = Stream.of(types).map(t -> ElasticTypes.toElasticTypes(t))
+        .collect(Collectors.toList()).toArray(new ElasticTypes[types.length]);
     this.indexer =
-        new ElasticIndexer(ElasticService.DATA_ALIAS, this.type, ElasticService.ANALYSER);
+        new ElasticIndexer(ElasticService.DATA_ALIAS, this.type[0], ElasticService.ANALYSER);
   }
+
 
   @Override
   public SearchIndexer getIndexer() {
@@ -186,17 +171,16 @@ public class ElasticSearch implements Search {
   }
 
 
-
   /**
    * Get the datatype to search for
    *
    * @return
    */
   private String[] getTypes() {
-    if (type == null) {
+    if (type == null || type.length == 0) {
       return Arrays.stream(ElasticTypes.values()).map(ElasticTypes::name).toArray(String[]::new);
     }
-    return (String[]) Arrays.asList(type.name()).toArray();
+    return Stream.of(type).map(ElasticTypes::name).toArray(String[]::new);
   }
 
   /**

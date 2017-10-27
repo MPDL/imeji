@@ -80,9 +80,9 @@ public class InternalStorageManager implements Serializable {
    * @param filename
    * @return
    */
-  public InternalStorageItem createItem(File file, String filename, String collectionId) {
+  public InternalStorageItem createItem(File file, String filename) {
     try {
-      final InternalStorageItem item = generateInternalStorageItem(file, filename, collectionId);
+      final InternalStorageItem item = generateInternalStorageItem(file, filename);
       return writeItemFiles(item, file);
     } catch (final Exception e) {
       throw new RuntimeException(e);
@@ -232,9 +232,8 @@ public class InternalStorageManager implements Serializable {
    * @return
    * @throws UnsupportedEncodingException
    */
-  public InternalStorageItem generateInternalStorageItem(File file, String fileName,
-      String collectionId) {
-    final String id = generateIdWithVersion(collectionId);
+  public InternalStorageItem generateInternalStorageItem(File file, String fileName) {
+    final String id = generateIdWithVersion();
     final InternalStorageItem item = new InternalStorageItem();
     item.setId(id);
     item.setFileName(fileName);
@@ -254,12 +253,12 @@ public class InternalStorageManager implements Serializable {
    * @param collectionId
    * @return
    */
-  private String generateIdWithVersion(String collectionId) {
+  private String generateIdWithVersion() {
     int version = 0;
-    String id = generateId(collectionId, version);
+    String id = generateId(version);
     while (exists(id)) {
       version++;
-      id = generateId(collectionId, version);
+      id = generateId(version);
     }
     return id;
   }
@@ -267,17 +266,14 @@ public class InternalStorageManager implements Serializable {
   /**
    * Generate the id of a file. This id is used to store the file in the filesystem
    *
-   * @param collectionId
    * @return
    */
-  private String generateId(String collectionId, int version) {
+  private String generateId(int version) {
     final String uuid = IdentifierUtil.newUniversalUniqueId();
-    // split the uuid to split the number of subdirectories for each
-    // collection
-    return collectionId + StringHelper.urlSeparator + uuid.substring(0, 2)
-        + StringHelper.urlSeparator + uuid.substring(2, 4) + StringHelper.urlSeparator
-        + uuid.substring(4, 6) + StringHelper.urlSeparator + uuid.substring(6)
-        + StringHelper.urlSeparator + version;
+    // split the uuid to split the number of subdirectories
+    return uuid.substring(0, 2) + StringHelper.urlSeparator + uuid.substring(2, 4)
+        + StringHelper.urlSeparator + uuid.substring(4, 6) + StringHelper.urlSeparator
+        + uuid.substring(6) + StringHelper.urlSeparator + version;
   }
 
   /**
@@ -350,29 +346,6 @@ public class InternalStorageManager implements Serializable {
     return new File(transformUrlToPath(url)).getParentFile().getParentFile();
   }
 
-  /**
-   * Create a new Directory for this collection
-   * 
-   * @param collectionId
-   * @return
-   */
-  public File createNewDirectory(String collectionId) {
-    File f = getCollectionDirectory(collectionId);
-    if (!f.exists()) {
-      f.mkdirs();
-    }
-    return f;
-  }
-
-  /**
-   * Return a the directory of the collection as a {@link File}
-   * 
-   * @param collectionId
-   * @return
-   */
-  public File getCollectionDirectory(String collectionId) {
-    return new File(storagePath + StringHelper.fileSeparator + generateId(collectionId, 0));
-  }
 
   /**
    * Initialize an InterstorageItem for this directory
