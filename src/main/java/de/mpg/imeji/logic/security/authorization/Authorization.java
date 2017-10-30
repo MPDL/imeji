@@ -11,16 +11,17 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Grant;
+import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
-import de.mpg.imeji.logic.model.Grant.GrantType;
-import de.mpg.imeji.logic.model.Properties.Status;
 
 /**
  * Authorization rules for imeji objects (defined by their uri) for one {@link User}
@@ -32,6 +33,7 @@ import de.mpg.imeji.logic.model.Properties.Status;
 public class Authorization implements Serializable {
   private static final long serialVersionUID = -4745899890554497793L;
   private static final Logger LOGGER = Logger.getLogger(Authorization.class);
+  private HierarchyService hierarchyService = new HierarchyService();
 
   /**
    * True if the {@link User} has the grant to create a collection in imeji
@@ -121,7 +123,8 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean administrate(User user, Object obj) {
-    return isSysAdmin(user) || hasAdminGrant(getAllGrants(user), getId(obj));
+    return !isSubcollection(obj)
+        && (isSysAdmin(user) || hasAdminGrant(getAllGrants(user), getId(obj)));
   }
 
   /**
@@ -241,19 +244,19 @@ public class Authorization implements Serializable {
         return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
       }
       if (obj instanceof Item) {
-        return ((Item) obj).getCollection().toString();
+        return getLastParent(obj);
       }
       if (obj instanceof CollectionImeji) {
-        return ((CollectionImeji) obj).getId().toString();
+        return getLastParent(obj);
       }
       if (obj instanceof User) {
         return ((User) obj).getId().toString();
       }
       if (obj instanceof URI) {
-        return obj.toString();
+        return getLastParent(obj.toString());
       }
       if (obj instanceof String) {
-        return obj.toString();
+        return getLastParent(obj.toString());
       }
       if (obj instanceof UserGroup) {
         return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
@@ -267,6 +270,26 @@ public class Authorization implements Serializable {
       LOGGER.error("Error get security URI", e);
       return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
     }
+  }
+
+  /**
+   * Return the last parent. Works only for items and collections
+   * 
+   * @param obj
+   * @return
+   */
+  private String getLastParent(Object obj) {
+    if (obj instanceof Item) {
+      return hierarchyService.getLastParent(((Item) obj).getCollection().toString());
+    }
+    if (obj instanceof CollectionImeji) {
+      return hierarchyService.getLastParent(((CollectionImeji) obj).getId().toString());
+    }
+    return null;
+  }
+
+  private String getLastParent(String uri) {
+    return hierarchyService.getLastParent(uri);
   }
 
   /**
@@ -288,6 +311,16 @@ public class Authorization implements Serializable {
       return true;
     }
     return false;
+  }
+
+  /**
+   * True if the object is a subcollection
+   * 
+   * @param o
+   * @return
+   */
+  private boolean isSubcollection(Object o) {
+    return o instanceof CollectionImeji && ((CollectionImeji) o).isSubCollection();
   }
 
   /**

@@ -1,7 +1,6 @@
 package de.mpg.imeji.logic.hierarchy;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +51,6 @@ public class HierarchyService implements Serializable {
   private final ItemService itemService = new ItemService();
   private final CollectionService collectionService = new CollectionService();
   private final MessageService messageService = new MessageService();
-  private final Authorization authorization = new Authorization();
   private final WorkflowValidator workflowValidator = new WorkflowValidator();
   private static Hierarchy hierarchy = new Hierarchy();
 
@@ -151,6 +149,50 @@ public class HierarchyService implements Serializable {
         .collect(Collectors.toList()) : new ArrayList<>();
   }
 
+  /**
+   * Find the list of all parents of the objects
+   * 
+   * @param o
+   * @return
+   */
+  public List<String> findAllParents(Object o) {
+    List<String> l = new ArrayList<>();
+    String uri = getParentUri(o);
+    if (uri != null) {
+      l.addAll(findAllParents(uri));
+      l.add(uri);
+      return l;
+    }
+    return l;
+  }
+
+  /**
+   * Return the list of all parents of the object with this uri
+   * 
+   * @param parentUri
+   * @return
+   */
+  public List<String> findAllParents(String uri) {
+    List<String> l = new ArrayList<>();
+    String parent = getParent(uri);
+    if (parent != null) {
+      l.addAll(findAllParents(parent));
+      l.add(parent);
+    }
+    return l;
+  }
+
+  /**
+   * Return the Parent uri of the passed uri
+   * 
+   * @param uri
+   * @return
+   */
+  public String getParent(String uri) {
+    Node n = hierarchy.getNodes().get(uri);
+    return n != null ? n.getParent() : null;
+  }
+
 
   /**
    * Return the last parent of the object
@@ -159,12 +201,9 @@ public class HierarchyService implements Serializable {
    * @return
    */
   public String getLastParent(Object o) {
-    if (o instanceof Item) {
-      return getLastParent(((Item) o).getCollection().toString());
-    }
-    if (o instanceof CollectionImeji) {
-      URI uri = ((CollectionImeji) o).getCollection();
-      return uri != null ? getLastParent(((CollectionImeji) o).getCollection().toString()) : null;
+    String uri = getParentUri(o);
+    if (uri != null) {
+      return getLastParent(uri);
     }
     return null;
   }
@@ -219,6 +258,23 @@ public class HierarchyService implements Serializable {
   }
 
   /**
+   * If the object is an Item or a collection and has a parent, return the uri of its parent
+   * 
+   * @param o
+   * @return
+   */
+  private String getParentUri(Object o) {
+    if (o instanceof Item) {
+      return ((Item) o).getCollection().toString();
+    }
+    if (o instanceof CollectionImeji) {
+      return ((CollectionImeji) o).getCollection() != null
+          ? ((CollectionImeji) o).getCollection().toString() : null;
+    }
+    return null;
+  }
+
+  /**
    * Create the Message content for moved items
    * 
    * @param item
@@ -247,7 +303,7 @@ public class HierarchyService implements Serializable {
    * <li>the user can not update the collection and therefore not add new objects
    * <li>the user can not delete the objects
    * <li>if the collection is released, the user has no admin rights on the objects
-   * <li>The objects can be deleted
+   * <li>The objects can't be deleted (for instance released)
    * 
    * @param items
    * @param collection
@@ -257,6 +313,7 @@ public class HierarchyService implements Serializable {
    */
   private void checkIfUserCanMoveObjectsToCollection(List<Object> objects,
       CollectionImeji collection, User user) throws NotAllowedError, WorkflowException {
+    final Authorization authorization = new Authorization();
     if (!authorization.update(user, collection)
         || objects.stream().filter(o -> !authorization.delete(user, o)).findAny().isPresent()
         || (collection.getStatus().equals(Status.RELEASED) && objects.stream()

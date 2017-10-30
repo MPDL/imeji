@@ -38,11 +38,11 @@
 									</ui:fragment>
 									<ui:fragment rendered="#{item.isCollection()}">
 										<a href="#{Navigation.collectionUrl}#{item.id}">
-											<span class="folderIcon fa fa-folder-open-o fa-size-2"/>
+											<img src="../resources/icon/folder.png" alt="#{item.caption}"/>
 										</a>
 									</ui:fragment>
 									<span class="imj_optionSet">
-										<h:selectBooleanCheckbox rendered="#{item.status != 'WITHDRAWN'}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
+										<h:selectBooleanCheckbox rendered="#{item.status != 'WITHDRAWN' and !item.isCollection()}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
 											<f:ajax event="change" execute="@this" render=":ajaxWrapper :actions"/>
 										</h:selectBooleanCheckbox>
 										<h:outputLabel for="pictureCheckbox" value="#{item.caption}" title="#{item.caption}" styleClass="imj_optionLabel"/>

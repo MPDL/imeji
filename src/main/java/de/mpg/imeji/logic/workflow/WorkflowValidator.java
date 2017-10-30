@@ -5,6 +5,7 @@ import java.io.Serializable;
 import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Properties.Status;
 
@@ -57,7 +58,7 @@ public class WorkflowValidator implements Serializable {
    */
 
   public void isCreateDOIAllowed(Properties p) throws WorkflowException {
-    if (Imeji.CONFIG.getPrivateModus()) {
+    if (Imeji.CONFIG.getPrivateModus() && !isSubcollection(p)) {
       throw new WorkflowException("DOI is not allowed in private mode");
     }
     if (p.getStatus() != Status.RELEASED) {
@@ -77,7 +78,7 @@ public class WorkflowValidator implements Serializable {
    * @throws NotSupportedMethodException
    */
   public void isReleaseAllowed(Properties p) throws WorkflowException, NotSupportedMethodException {
-    if (Imeji.CONFIG.getPrivateModus()) {
+    if (Imeji.CONFIG.getPrivateModus() && !isSubcollection(p)) {
       throw new NotSupportedMethodException("Object publication is disabled!");
     }
     if (p.getStatus() != Status.PENDING) {
@@ -98,5 +99,9 @@ public class WorkflowValidator implements Serializable {
     if (p.getStatus() != Status.RELEASED) {
       throw new WorkflowException("Only RELEASED objects can be withdrawn");
     }
+  }
+
+  private boolean isSubcollection(Properties p) {
+    return p instanceof CollectionImeji && ((CollectionImeji) p).isSubCollection();
   }
 }

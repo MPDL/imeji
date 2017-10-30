@@ -28,13 +28,12 @@
 	                <ui:insert name="init"/>
 	           		
 	                <ui:include src="component/header/header_default.xhtml"/>
-	                <div id="content" class="imj_siteContent">          
+	                <div id="content" class="imj_siteContent">
 	                	
-	                	<h:panelGroup layout="block" id="actions" class="imj_actionMenuArea">
+		                <h:panelGroup layout="block" id="actions" class="imj_actionMenuArea">
 		               		<ui:insert name="actionsMenu"/>
-		               		
+		               		<div class="shadow"/>
 		                </h:panelGroup>
-		                
 	                
 			           	<ui:fragment rendered="#{not empty headline or not empty imejiResource}">
 			           		
@@ -47,6 +46,10 @@
 					            
 								<ui:fragment rendered="#{not empty headline}">
 				                    <h1>
+				                   	 	#{BreadcrumbBean.init(imejiResource)}
+				                    	<ui:repeat var="entry" value="#{BreadcrumbBean.entries}">
+				                    		<a href="#{entry.link}" title="#{entry.label}">#{entry.label}</a><span class="del">></span>
+				                    	</ui:repeat>
 				                    	<ui:fragment rendered="#{not empty backLink1   and not empty backlinkTitle1}">
 				                     	 	<a href="#{backLink1}" title="#{backlinkTitle1}">#{backlinkTitle1}</a><span> > </span>
 				                     	 	<ui:fragment rendered="#{not empty backLink2 and not empty backlinkTitle2}">
