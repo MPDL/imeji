@@ -13,15 +13,7 @@
 
 		<div class="imj_paginator">
 			<h:form>
-				<h:panelGroup rendered="#{cc.attrs.showSwitchListView}" class="imj_rangeSelector">
-				 	<h:commandLink id="switchListView" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"  title="thumbnail list" styleClass="fa fa-th fa-size-2 #{SessionBean.selectedBrowseListView == 'THUMBNAIL' ? 'disabled' : ''}" value="&#160;" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}">
-                    	<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
-                    </h:commandLink>
-                	<h:commandLink title="detail list"  rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}" styleClass="fa fa-list-alt fa-size-2 #{SessionBean.selectedBrowseListView == 'LIST' ? 'disabled' : ''}" value="&#160;" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'LIST'}">
-                	    <f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
-                	</h:commandLink>
-                	&#160;
-				</h:panelGroup>
+				
 			 	<div id="imj_rangeSelector" class="imj_rangeSelector">
 			 		<h:selectOneMenu id="extSelectTop" value="#{cc.attrs.paginatorBean.elementsPerPage}" valueChangeListener="#{cc.attrs.paginatorBean.elementsPerPageListener}" onchange="startLoader();">
 			 			<f:selectItems value="#{cc.attrs.paginatorBean.elementsPerPageSelectItems}"/>

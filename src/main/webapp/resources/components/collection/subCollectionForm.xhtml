@@ -2,7 +2,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:composite="http://java.sun.com/jsf/composite">
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	
 	<composite:interface>
 		<composite:attribute name="parentCollection"/>
@@ -11,22 +12,17 @@
 	</composite:interface>
 	
 	<composite:implementation>
-
+	#{SubCollectionFormBean.setName(cc.attrs.collection.title)}
 		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox" style="display:none;">
 			<h:form id="discardForm">
-				<div class="imj_confirmationText">
-					<p>
-						<h:outputText value="#{cc.attrs.collection == null ? lbl.add_subCollection : lbl.edit_name}"/>
-					</p>
-				</div>
-				<h:inputText value="#{SubCollectionFormBean.name}"/>
+				<h:inputText html5:placeholder="#{lbl.name}" class="imj_mdInput" value="#{SubCollectionFormBean.name}"/>
 				<div class="imj_submitPanel" id="buttonDiscard">
 					<button onclick="closeDialog('#{cc.attrs.dialogId}'); return false;" class="imj_cancelButton">
 						#{lbl.cancel}
 					</button>
-			 		<h:commandButton id="btnCreateSubcollection"  action="#{SubCollectionFormBean.create(cc.attrs.parentCollection)}"  value="#{lbl.add}" 
+			 		<h:commandButton id="btnCreateSubcollection"  action="#{SubCollectionFormBean.create(cc.attrs.parentCollection)}"  value="#{lbl.add_subcollection}" 
 			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null}"/>
-			 		<h:commandButton id="btnEditSubcollection"  action="#{SubCollectionFormBean.edit(collection)}" value="#{lbl.change_name}" 
+			 		<h:commandButton id="btnEditSubcollection"  action="#{SubCollectionFormBean.edit(collection)}" value="#{lbl.edit_subcollection}" 
 			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection != null}"/>
 				</div>
 			</h:form>
