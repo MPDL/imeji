@@ -16,8 +16,7 @@
 	
 	<composite:implementation>
 		<h:panelGroup layout="block" id="selectionInfoPanel" styleClass="imj_selectionInfoPanel">
-	        <div class="itemsCount">&#160;</div>
-			<h:form>
+	        <h:form>
 				<ui:fragment rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL' and cc.attrs.facetBean.collection.status != 'WITHDRAWN'}">
 					<div class="imj_overlayMenu">
 						<div class="imj_menuHeader">
@@ -34,36 +33,51 @@
 						</div>
 					</div>
 				</ui:fragment>
-			
-				<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu and cc.attrs.numberOfElements > 0}">
-					<div class="imj_menuHeader">
-	                    <h:commandLink id="lnkSortAsc" value="" action="#{cc.attrs.facetBean.toggleSortOrder}" onclick="startLoader();">
-	                    	<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
-							<span class="fa #{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING' ? 'fa-arrow-up' : 'fa-arrow-down' }"></span>
-							 #{cc.attrs.facetBean.selectedSortCriterionLabel}
-						</h:commandLink>
-					</div>
-					<div class="imj_menuBody">
-					#{lbl.sort_by}:
-						<ul class="imj_overlayMenuList">
-							<ui:repeat var="sortItem" value="#{cc.attrs.facetBean.sortMenu}" varStatus="spos">
-								<ui:fragment rendered="#{cc.attrs.facetBean.selectedSortCriterion != sortItem.value}">
-									<li class="imj_overlayMenuListItem">
-										<h:commandLink value="#{sortItem.label}" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
-											<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
-										</h:commandLink>
-									</li>
-								</ui:fragment>
-							</ui:repeat>
-						</ul>
-					</div>
-				</h:panelGroup>
 			</h:form>
-			<ui:fragment rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu}">
-				<menu:StatusFilterMenu rendered="#{!Configuration.privateModus and cc.attrs.showStatusFilterMenu}"/>
-				<menu:UserFilterMenu rendered="#{cc.attrs.showUserFilterMenu}"/>
-			</ui:fragment>
-			
+	        <div class="listActionMenu itemlist">
+	        	<div class="listActionMenuTitle">
+                    <a class="fa fa-cog"></a>
+				</div>
+		        <div class="listActionMenuContent" >
+		        	<h:form>
+		        		<div class="listActionMenuContentSection">
+		        			<div class="imj_menuHeader">
+								#{lbl.sort_by}
+							</div>
+		        			<div class="imj_menuBody">
+								<ul class="imj_overlayMenuList">
+									<ui:repeat var="sortItem" value="#{cc.attrs.facetBean.sortMenu}" varStatus="spos">
+										<li class="imj_overlayMenuListItem">
+											<span style="margin:0; padding:0; #{cc.attrs.facetBean.selectedSortCriterion != sortItem.value ?  'visibility: hidden' : ''} " class="fa fa-check" />
+											<h:commandLink value="#{sortItem.label}" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
+												<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
+											</h:commandLink>
+										</li>
+									</ui:repeat>
+								</ul>
+							</div>
+							<h:commandLink value="" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
+								<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
+								<span class="imj_radio fa #{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING' ? 'fa-dot-circle-o' : 'fa-circle-o' }" ></span>
+							</h:commandLink>
+							<span>#{lbl.ascending}</span>
+							<h:commandLink value="" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
+								<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
+								<span class="imj_radio  fa #{cc.attrs.facetBean.selectedSortOrder == 'DESCENDING' ? 'fa-dot-circle-o' : 'fa-circle-o' }" ></span>
+							</h:commandLink>
+							<span>#{lbl.descending}</span>
+		        		</div>
+		        		<ui:fragment rendered="#{cc.attrs.facetBean != null and cc.attrs.showSortMenu}">
+		        			<div class="listActionMenuContentSection">
+								<menu:StatusFilterMenu rendered="#{!Configuration.privateModus and cc.attrs.showStatusFilterMenu}"/>
+							</div>
+							<div class="listActionMenuContentSection">
+								<menu:UserFilterMenu rendered="#{cc.attrs.showUserFilterMenu}"/>
+							</div>
+						</ui:fragment>
+		        	</h:form>
+				</div>
+			 </div>
 		</h:panelGroup>
 	</composite:implementation>
 </html>

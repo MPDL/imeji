@@ -20,7 +20,6 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
-import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.Item;
@@ -45,8 +44,8 @@ public class MoveItemsBean extends SuperBean {
   private String query = "";
   private LicenseEditor licenseEditor;
   private String destinationId;
-  private final HierarchyService hierarchyService = new HierarchyService();
   private final ItemService itemService = new ItemService();
+
 
   /**
    * Load all the collection for which the user has at least edit role
@@ -124,7 +123,7 @@ public class MoveItemsBean extends SuperBean {
           .filter(c -> c.getId().toString().equals(collectionId)).findAny().get();
       List<Item> items = (List<Item>) itemService.retrieveBatchLazy(ids, 0, -1, getSessionUser());
       List<Item> moved =
-          hierarchyService.moveItems(items, col, getSessionUser(), licenseEditor.getLicense());
+          itemService.moveItems(items, col, getSessionUser(), licenseEditor.getLicense());
       if (moved.size() > 0) {
         BeanHelper.addMessage(moved.size() + " "
             + (moved.size() > 1 ? Imeji.RESOURCE_BUNDLE.getLabel("items", getLocale())

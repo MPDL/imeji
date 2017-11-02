@@ -8,20 +8,11 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight" rendered="#{Auth.loggedIn}">
+		<h:panelGroup layout="block" styleClass="listActionMenuContentSection" rendered="#{Auth.loggedIn}">
 			<div class="imj_menuHeader">
-				<ui:fragment rendered="#{StatusFilterMenuBean.selected == null}">
-	                <span class="fa fa-lock">&#160;</span>
-					<h:outputText id="txtFilter" value="#{lbl.status}" styleClass="imj_headerEntry"/>
-				</ui:fragment>
-				<h:outputLink id="txtFilter2" value="#{StatusFilterMenuBean.removeFilterUrl}" styleClass="imj_headerEntry" rendered="#{StatusFilterMenuBean.selected != null}">
-					<span class="fa fa-times"/>
-					#{StatusFilterMenuBean.selected.label}
-				</h:outputLink>
-				<span>&#160;</span>
+				#{lbl.state}:
 			</div>
 			<div class="imj_menuBody">
-			#{lbl.filter_by}:
 				<ul>
 					<ui:fragment rendered="#{StatusFilterMenuBean.selected != null}">
 						<li>

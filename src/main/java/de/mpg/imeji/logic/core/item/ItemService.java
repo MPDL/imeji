@@ -26,6 +26,7 @@ import de.mpg.imeji.exceptions.QuotaExceededException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.content.ContentService;
+import de.mpg.imeji.logic.core.facade.MoveFacade;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
@@ -575,6 +576,22 @@ public class ItemService extends SearchServiceAbstract<Item> {
     for (final Item item : items) {
       removeFileFromStorage(item);
     }
+  }
+
+  /**
+   * Move a {@link List} of {@link Item} to a {@link CollectionImeji}. If the collection is
+   * released, add the license to all items
+   * 
+   * @param items
+   * @param collection
+   * @param user
+   * @param license
+   * @return
+   * @throws ImejiException
+   */
+  public List<Item> moveItems(List<Item> items, CollectionImeji collection, User user,
+      License license) throws ImejiException {
+    return new MoveFacade().moveItems(items, collection, user, license);
   }
 
   /**

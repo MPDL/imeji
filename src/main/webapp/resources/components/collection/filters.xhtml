@@ -12,34 +12,44 @@
 	
 	<composite:implementation>		
 		<div id="filterInfoPanel" class="imj_selectionInfoPanel" >
-			<h:form>
-				<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item">
-					<div class="imj_menuHeader">
-						<h:commandLink id="lnkSortAsc" value=""  action="#{cc.attrs.filterBean.toggleSortOrder}" onclick="startLoader();">
-							<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
-							<span class="fa #{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING' ? 'fa-arrow-up' : 'fa-arrow-down' }"></span>
-							#{lbl.sort_by} #{cc.attrs.filterBean.selectedSortCriterionLabel}
-						</h:commandLink>
-					</div>
-					
-					<div class="imj_menuBody">
-						<ul>
-							<ui:repeat var="sortItem" value="#{cc.attrs.filterBean.sortMenu}" varStatus="spos">
-								<ui:fragment rendered="#{cc.attrs.filterBean.selectedSortCriterion != sortItem.value}">
-									<li>
-										<h:commandLink action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" onclick="startLoader();">
-											<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
-										</h:commandLink>
-									</li>
-								</ui:fragment>
-							</ui:repeat>
-						</ul>
-					</div>
-				</h:panelGroup>
-			</h:form>
-			<menu:StatusFilterMenu rendered="#{!Configuration.privateModus}"/>
-			<menu:UserFilterMenu/>
-			
+		 	<div class="listActionMenu">
+		  		<div class="listActionMenuTitle">
+                    <a class="fa fa-cog"></a>
+				</div>
+		        <div class="listActionMenuContent">
+		        	<h:form>
+						<div class="listActionMenuContentSection">
+							<div class="imj_menuHeader">
+								#{lbl.sort_by}
+							</div>
+							<div class="imj_menuBody">
+								<ul>
+									<ui:repeat var="sortItem" value="#{cc.attrs.filterBean.sortMenu}" varStatus="spos">
+										<li class="imj_overlayMenuListItem">
+											<span style="margin:0; padding:0; #{cc.attrs.filterBean.selectedSortCriterion != sortItem.value ?  'visibility: hidden' : ''} " class="fa fa-check" />
+											<h:commandLink action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" onclick="startLoader();">
+												<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
+											</h:commandLink>
+										</li>
+									</ui:repeat>
+								</ul>
+							</div>
+							<h:commandLink value="" action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
+								<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
+								<span class="imj_radio fa #{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING' ? 'fa-dot-circle-o' : 'fa-circle-o' }" ></span>
+							</h:commandLink>
+							<span>#{lbl.ascending}</span>
+							<h:commandLink value="" action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
+								<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
+								<span class="imj_radio  fa #{cc.attrs.filterBean.selectedSortOrder == 'DESCENDING' ? 'fa-dot-circle-o' : 'fa-circle-o' }" ></span>
+							</h:commandLink>
+							<span>#{lbl.descending}</span>
+						</div>
+					</h:form>
+					<menu:StatusFilterMenu rendered="#{!Configuration.privateModus}"/>
+					<menu:UserFilterMenu/>
+		        </div>
+		    </div>
 		</div>
 	</composite:implementation>
 </html>

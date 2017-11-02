@@ -12,6 +12,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.core.facade.MoveFacade;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.events.Message;
 import de.mpg.imeji.logic.events.Message.MessageType;
@@ -241,6 +242,21 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
       itemController.withdraw(items, coll.getDiscardComment(), user);
       update(coll, user);
     }
+  }
+
+  /**
+   * Move the collection to another collection. If the new parent collection is released, release
+   * the moved collection and to its items the license
+   * 
+   * @param collection
+   * @param parent
+   * @param user
+   * @param license
+   * @throws ImejiException
+   */
+  public void moveCollection(CollectionImeji collection, CollectionImeji parent, User user,
+      License license) throws ImejiException {
+    new MoveFacade().moveCollection(collection, parent, user, license);
   }
 
   @Override

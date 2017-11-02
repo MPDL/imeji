@@ -8,20 +8,11 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<h:panelGroup layout="block" styleClass="imj_overlayMenu imj_menuRight #{cc.attrs.menuClass.trim()}Item" rendered="#{Auth.loggedIn}">
+		<h:panelGroup layout="block" styleClass="listActionMenuContentSection" rendered="#{Auth.loggedIn}">
 			<div class="imj_menuHeader">
-				<ui:fragment rendered="#{UserFilterMenuBean.selected == null}">
-	                <span class="fa fa-filter">&#160;</span>
-					<h:outputText id="txtFilter" value="#{lbl.filter}" styleClass="imj_headerEntry"/>
-				</ui:fragment>
-				<h:outputLink id="txtFilter2" value="#{UserFilterMenuBean.removeFilterUrl}" styleClass="imj_headerEntry" rendered="#{UserFilterMenuBean.selected != null}">
-					<span class="fa fa-times"/>
-					#{UserFilterMenuBean.selected.label}
-				</h:outputLink>
-				<span>&#160;</span>
+				#{lbl.filter_by}:
 			</div>
 			<div class="imj_menuBody">
-				#{lbl.filter_by}:
 				<ul>
 					<ui:fragment rendered="#{UserFilterMenuBean.selected != null}">
 						<li>
