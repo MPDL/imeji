@@ -80,6 +80,23 @@ public class ElasticQueryFactory {
     return q;
   }
 
+  public static QueryBuilder buildBasisQuery(SearchQuery query, String folderUri, User user,
+      ElasticTypes... types) {
+    if (query == null || query.isEmpty()) {
+      final BoolQueryBuilder q = QueryBuilders.boolQuery();
+      final QueryBuilder containerQuery = buildContainerFilter(folderUri, false, types);
+      final QueryBuilder securityQuery = buildSecurityQuery(user, folderUri);
+      if (!isMatchAll(containerQuery)) {
+        q.must(containerQuery);
+      }
+      if (!isMatchAll(securityQuery)) {
+        q.must(securityQuery);
+      }
+      return q;
+    }
+    return null;
+  }
+
   /**
    * True if the query is a match all query
    *

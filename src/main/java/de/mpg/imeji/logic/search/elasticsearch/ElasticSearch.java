@@ -96,10 +96,16 @@ public class ElasticSearch implements Search {
    */
   private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, int from, int size, boolean addFacets) {
-    final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
+    final QueryBuilder q = ElasticQueryFactory.build(query, folderUri, user, type);
+    final QueryBuilder f = ElasticQueryFactory.buildBasisQuery(query, folderUri, user, type);
     SearchRequestBuilder request = ElasticService.getClient()
-        .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setQuery(f).setTypes(getTypes())
-        .setSize(size).setFrom(from).addSort(ElasticSortFactory.build(sortCri));
+        .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setTypes(getTypes()).setSize(size)
+        .setFrom(from).addSort(ElasticSortFactory.build(sortCri));
+    if (f != null) {
+      request.setQuery(f).setPostFilter(q);
+    } else {
+      request.setQuery(q);
+    }
 
     if (addFacets) {
       request = addAggregations(request);
