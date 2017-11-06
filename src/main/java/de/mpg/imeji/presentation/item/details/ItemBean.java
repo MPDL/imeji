@@ -593,7 +593,9 @@ public class ItemBean extends SuperBean {
     int webSize = Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth());
     int imgWidth = (int) getContent().getWidth();
     int imgHeight = (int) getContent().getHeight();
-    return imgHeight > imgWidth ? webSize : (content.getHeight() * webSize / content.getWidth());
+    return content == null || content.getWidth() == 0
+        ? Integer.parseInt(Imeji.CONFIG.getWebResolutionWidth())
+        : (imgHeight > imgWidth ? webSize : (content.getHeight() * webSize / content.getWidth()));
   }
 
   /**
@@ -689,7 +691,7 @@ public class ItemBean extends SuperBean {
 
   // Show in osd iff it was possible to convert original to jpg
   public boolean isViewInOpenseadragon() {
-    return "jpg".equals(FilenameUtils.getExtension(content.getFull()));
+    return content != null && "jpg".equals(FilenameUtils.getExtension(content.getFull()));
   }
 
   /**

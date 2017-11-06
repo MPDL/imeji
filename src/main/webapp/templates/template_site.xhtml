@@ -32,10 +32,8 @@
 	                	
 		                <h:panelGroup layout="block" id="actions" class="imj_actionMenuArea">
 		               		<ui:insert name="actionsMenu"/>
-		               		<div class="shadow"/>
 		                </h:panelGroup>
-	                
-			           	<ui:fragment rendered="#{not empty headline or not empty imejiResource}">
+			           	<ui:fragment rendered="#{not empty headline.trim() or not empty imejiResource}">
 			           		
 			                <div id="pageTitle" class="imj_siteContentHeadline">
 			                  	<ui:fragment rendered="#{not empty imejiResource}">

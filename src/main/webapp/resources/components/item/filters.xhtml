@@ -16,27 +16,29 @@
 	
 	<composite:implementation>
 		<h:panelGroup layout="block" id="selectionInfoPanel" styleClass="imj_selectionInfoPanel">
-	        <h:form>
-				<ui:fragment rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL' and cc.attrs.facetBean.collection.status != 'WITHDRAWN'}">
-					<div class="imj_overlayMenu">
-						<div class="imj_menuHeader">
-							<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectAll}"  id="lnkSelectAllOnPage" title="#{lbl.select_all_on_page}"  styleClass="selectAll" rendered="#{!cc.attrs.facetBean.allSelected}" style="margin-right: 1em;">
-								<h:outputText value="#{lbl.select_all_on_page}"/>
-								<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
-							</h:commandLink>
-							<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectNone}" id="lnkSelectNone" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{not empty SessionBean.selected}">
-								<h:outputText value="#{lbl.select_none}"/>
-								<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
-							</h:commandLink>
-							
-	                        &#160;
-						</div>
+
+			<ui:fragment rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL' and cc.attrs.facetBean.collection.status != 'WITHDRAWN'}">
+				<div class="imj_overlayMenu">
+					<div class="imj_menuHeader">
+					  <h:form>
+						<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectAll}"  id="lnkSelectAllOnPage" title="#{lbl.select_all_on_page}"  styleClass="selectAll" rendered="#{!cc.attrs.facetBean.allSelected}" style="margin-right: 1em;">
+							<h:outputText value="#{lbl.select_all_on_page}"/>
+							<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
+						</h:commandLink>
+						<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectNone}" id="lnkSelectNone" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{not empty SessionBean.selected}">
+							<h:outputText value="#{lbl.select_none}"/>
+							<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
+						</h:commandLink>
+						
+                      	</h:form>
 					</div>
-				</ui:fragment>
-			</h:form>
-	        <div class="listActionMenu itemlist">
+				</div>
+			</ui:fragment>
+			
+			<div class="listActionMenu itemlist">
 	        	<div class="listActionMenuTitle">
-                    <a class="fa fa-cog"></a>
+	        		<span>#{cc.attrs.numberOfElements}  #{cc.attrs.numberOfElements > 1 ? lbl.items : lbl.item} </span>
+                    <a href="#" class="fa fa-cog"></a>
 				</div>
 		        <div class="listActionMenuContent" >
 		        	<h:form>
@@ -77,27 +79,28 @@
 						</ui:fragment>
 		        	</h:form>
 		        	<div class="listActionMenuContentSection">
-					 	<h:form>
-						 	<div class="imj_menuHeader">
-								#{lbl.view_options}
-							</div>
-							<span>
-					        <h:commandLink id="switchListView"  title="thumbnail list" value="" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}">
-		                    	<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
-		                    	<span class="fa fa-th"/>
-		                    </h:commandLink>
-		                    <span style="margin-right: 1em !important;">#{lbl.thumbnails}</span>
-		                    <h:commandLink title="detail list" value="" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'LIST'}">
-		                	    <f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
-		                	    <span class="fa fa-list-alt" />
-		                	</h:commandLink>
-		                	<span>#{lbl.list}</span>
-		                	</span>
-						</h:form>
+					 	<div class="imj_menuHeader">
+							#{lbl.view_options}
+						</div>
+						<span>
+							<h:form>
+						        <h:commandLink id="switchListView"  title="thumbnail list" value="" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}">
+			                    	<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
+			                    	<span class="fa fa-th"/>
+			                    </h:commandLink>
+			                    <span style="margin-right: 1em !important;">#{lbl.thumbnails}</span>
+			                    <h:commandLink title="detail list" value="" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'LIST'}">
+			                	    <f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
+			                	    <span class="fa fa-list-alt" />
+			                	</h:commandLink>
+			                	
+			                	<span>#{lbl.list}</span>
+		                	</h:form>
+	                	</span>
 			 		</div>
 				</div>
 			 </div>
-			
+		
 		</h:panelGroup>
 	</composite:implementation>
 </html>

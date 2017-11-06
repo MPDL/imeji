@@ -18,7 +18,7 @@
 				<ui:fragment rendered="#{cc.status != 'PENDING'}">
 					<div class="imj_overlayMenu imj_menuRight">
 						<div class="imj_menuHeader">
-		                    <span class="#{cc.status == 'RELEASED' ? 'fa fa-globe' : 'fa fa-minus-circle'} fa-size-3">&#160;</span>
+		                    <span class="#{cc.status == 'RELEASED' ? 'fa fa-globe' : 'fa fa-minus-circle'} fa-size-2">&#160;</span>
 						</div>
 						<div class="imj_menuBody">
 							<ul class="imj_overlayMenuList">
@@ -32,7 +32,7 @@
 				<ui:fragment rendered="#{(!empty cc.users or !empty cc.groups) and cc.sharedWithUser and !displayStatusOnly}">
 					<div class="imj_overlayMenu imj_menuRight">
 						<div class="imj_menuHeader">
-		                    <span class="fa fa-users fa-size-3">&#160;</span>
+		                    <span class="fa fa-users fa-size-2">&#160;</span>
 						</div>
 						<div class="imj_menuBody">
 							<ul class="imj_overlayMenuList">

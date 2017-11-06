@@ -53,7 +53,7 @@ public class MoveTree implements Serializable {
     int index = nodes.indexOf(node);
     nodes.addAll(index,
         new HierarchyService().getFullHierarchy().getTree()
-            .get(node.getCollection().getId().toString()).stream()
+            .get(node.getCollection().getId().toString()).stream().filter(id -> map.get(id) != null)
             .map(id -> new MoveTreeNode(map.get(id), map)).collect(Collectors.toList()));
   }
 

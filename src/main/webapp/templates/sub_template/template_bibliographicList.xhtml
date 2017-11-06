@@ -16,14 +16,7 @@
 	<!-- Main Content - bibliographic grid list - START -->
 	<ui:define name="mainContent">
 		<h:panelGroup layout="block" id ="ajaxWrapper">
-			
-			<!-- Selection Info Panel -->
-			<col:filters fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
-									 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
-									 filterBeanHasQuery="#{filterBeanHasQuery}"
-									 objectLabel="#{lbl.collections}"/>
-			
-			
+		
 			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords == 0}">
 				<div class="imj_bibliographicList" style="font-size:130%">
 					<span class="fa fa-exclamation-triangle"/>

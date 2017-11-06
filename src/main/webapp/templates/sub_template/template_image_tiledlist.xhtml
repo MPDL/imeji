@@ -32,6 +32,7 @@
             			showSortMenu="true"
             			showStatusFilterMenu="#{currentMainMenu == 'items' or (currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING')}"
             			showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
+					
            		
            		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0}">
            			<div  class="uploadDragAndDropTitle">
@@ -39,11 +40,11 @@
            			</div>
            		</ui:fragment>
 				
-				<div id="facetsArea" class="imj_itemsAreaFacets">
+				<div id="facetsArea" class="imj_itemsAreaFacets" style="#{SessionBean.selectedBrowseListView == 'LIST' ? 'margin-top: 17px;' :''}">
 	           		<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" selector="#{FacetSelectorBean}"/>
 	           	</div>
 	        	<div  class="imj_itemsAreaContent">
-					<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
+	        		<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
 					<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 				</div>
 				<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>

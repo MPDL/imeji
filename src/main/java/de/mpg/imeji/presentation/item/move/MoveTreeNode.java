@@ -40,7 +40,7 @@ public class MoveTreeNode {
     List<String> childrenIds =
         new HierarchyService().getFullHierarchy().getTree().get(collection.getId().toString());
     if (childrenIds != null) {
-      children = childrenIds.stream()
+      children = childrenIds.stream().filter(id -> collectionsMap.get(id) != null)
           .map(id -> new MoveTreeNode(this, collectionsMap.get(id), collectionsMap))
           .collect(Collectors.toList());
     }

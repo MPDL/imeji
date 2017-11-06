@@ -5,7 +5,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:imeji="http://java.sun.com/jsf/composite/components"
-	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:col="http://java.sun.com/jsf/composite/components/collection">
 	
 	<ui:param name="paginatorListSessionBean" value="#{CollectionsBean}" />
 	<ui:param name="headline" value="#{CollectionsBean.totalNumberOfElements} #{CollectionsBean.totalNumberOfElements > 1 ? lbl.collections : lbl.collection}" />
@@ -20,6 +21,11 @@
 				<span class="fa fa-plus"/> <span class="imj_headerEntry"> #{lbl.new_collection}</span>
 			</a>
 		</ui:fragment>
+		<!-- Selection Info Panel -->
+			<col:filters fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
+									 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
+									 filterBeanHasQuery="#{filterBeanHasQuery}"
+									 objectLabel="#{lbl.collections}"/>
 	</ui:define>
 
 	<ui:define name="searchQuery">
