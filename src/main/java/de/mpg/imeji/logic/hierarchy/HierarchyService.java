@@ -36,6 +36,15 @@ public class HierarchyService implements Serializable {
   }
 
   /**
+   * REturn the complete Hierarchy
+   * 
+   * @return
+   */
+  public Hierarchy getFullHierarchy() {
+    return hierarchy;
+  }
+
+  /**
    * Find all Subcollection of the collection/subcollection
    * 
    * @param collectionUri
@@ -45,6 +54,17 @@ public class HierarchyService implements Serializable {
     return hierarchy.getTree().get(collectionUri) != null ? hierarchy.getTree().get(collectionUri)
         .stream().flatMap(s -> Stream.concat(Stream.of(s), findAllSubcollections(s).stream()))
         .collect(Collectors.toList()) : new ArrayList<>();
+  }
+
+  /**
+   * True if the collectionId is a child of the parentId
+   * 
+   * @param collectionId
+   * @param parentId
+   * @return
+   */
+  public boolean isChildOf(String collectionId, String parentId) {
+    return findAllSubcollections(parentId).contains(collectionId);
   }
 
   /**

@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.item;
+package de.mpg.imeji.presentation.item.move;
 
 import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS.AND;
 import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS.OR;
@@ -39,6 +39,7 @@ public class MoveItemsBean extends SuperBean {
   private static final long serialVersionUID = 2230148128355260199L;
   private static final Logger LOGGER = Logger.getLogger(MoveItemsBean.class);
   private List<CollectionImeji> collectionsForMove = new ArrayList<>();
+  private MoveTree tree;
   @ManagedProperty(value = "#{SessionBean}")
   private SessionBean sessionBean;
   private String query = "";
@@ -60,10 +61,12 @@ public class MoveItemsBean extends SuperBean {
       factory.addElement(new SearchPair(SearchFields.role, GrantType.EDIT.name().toLowerCase()),
           AND);
     }
-    collectionsForMove = new CollectionService()
-        .searchAndRetrieve(factory.build(), null, getSessionUser(), -1, 0).stream()
-        .filter(c -> !c.getId().toString().equals(collectionSrcId)).collect(Collectors.toList());
+    collectionsForMove =
+        new CollectionService().searchAndRetrieve(factory.build(), null, getSessionUser(), -1, 0)
+            .stream().collect(Collectors.toList());
+    tree = new MoveTree(collectionsForMove);
   }
+
 
   /**
    * Move the selected items to the collection
@@ -195,5 +198,9 @@ public class MoveItemsBean extends SuperBean {
    */
   public void setLicenseEditor(LicenseEditor licenseEditor) {
     this.licenseEditor = licenseEditor;
+  }
+
+  public MoveTree getTree() {
+    return tree;
   }
 }

@@ -1,0 +1,57 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:imeji="http://java.sun.com/jsf/composite/components"
+	xmlns:item="http://java.sun.com/jsf/composite/components/item"
+	xmlns:license="http://java.sun.com/jsf/composite/components/license">
+	<cc:interface >
+		<cc:attribute name="tree"/>
+		<cc:attribute name="colId"/>
+		<cc:attribute name="itemId"/>
+		<cc:attribute name="hasLicense"/>
+	</cc:interface>
+	
+	<cc:implementation>
+		
+		<ui:repeat var="node" value="#{cc.attrs.tree.nodes}">
+			<div style="margin-left: #{node.depth *2}em; font-size: 0.8em; padding: 1px;">
+				<span class="fa fa-globe fa-size" style="#{node.collection.status == 'RELEASED' and not node.hasParent() ? '' : 'visibility: hidden'}">&#160;</span>
+				<span class="fa fa-globe fa-folder-open-o" style="#{node.hasParent() ? '' : 'display:none'}">&#160;</span>
+				<ui:fragment rendered="#{node.collection.status == 'RELEASED' and !cc.attrs.hasLicense}">
+					<h:commandLink value="#{node.collection.title}"  disabled="#{cc.attrs.colId == node.collection.id.toString()}" action="#{MoveItemsBean.setDestinationId(node.collection.id.toString())}">
+						<f:ajax render="@form"/>
+					</h:commandLink>	
+				</ui:fragment>
+				<ui:fragment rendered="#{node.collection.status == 'PENDING' or cc.attrs.hasLicense}">
+					<h:commandLink rendered="#{cc.attrs.itemId != null}"  disabled="#{cc.attrs.colId == node.collection.id.toString()}" value="#{node.collection.title}" action="#{MoveItemsBean.moveItemTo(node.collection.id.toString(), cc.attrs.itemId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>	
+					<h:commandLink rendered="#{cc.attrs.itemId == null}"  disabled="#{cc.attrs.colId == node.collection.id.toString()}" value="#{node.collection.title}" action="#{MoveItemsBean.moveSelectedTo(node.collection.id.toString())}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>
+				</ui:fragment>
+			</div>
+		</ui:repeat>
+		
+	<ui:remove>
+		<h:panelGroup layout="block" id="tree" style="margin-left: 10px;">
+			<ui:repeat var="node" value="#{cc.attrs.tree}">
+				<p>
+					<ui:fragment rendered="#{node.collection.status == 'RELEASED' and !cc.attrs.hasLicense}">
+						<span class="fa fa-globe fa-size-3">&#160;</span>
+						<h:commandLink value="#{node.collection.title}" action="#{MoveItemsBean.setDestinationId(node.collection.id.toString())}">
+							<f:ajax render="@form"/>
+						</h:commandLink>	
+					</ui:fragment>
+					<ui:fragment rendered="#{node.collection.status == 'PENDING' or cc.attrs.hasLicense}">
+						<span class="fa fa-globe fa-size-3" style="#{node.collection.status == 'RELEASED' ? '' : 'visibility: hidden'}">&#160;</span>
+						<h:commandLink rendered="#{cc.attrs.itemId != null}" value="#{node.collection.title}" action="#{MoveItemsBean.moveItemTo(node.collection.id.toString(), cc.attrs.itemId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>	
+						<h:commandLink rendered="#{cc.attrs.itemId == null}" value="#{node.collection.title}" action="#{MoveItemsBean.moveSelectedTo(node.collection.id.toString())}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>
+					</ui:fragment>
+				</p>
+				
+				
+			</ui:repeat>
+		</h:panelGroup>
+		</ui:remove>
+	</cc:implementation>
+</html>

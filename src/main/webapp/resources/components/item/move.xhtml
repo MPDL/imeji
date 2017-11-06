@@ -5,6 +5,7 @@
 	xmlns:composite="http://java.sun.com/jsf/composite"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:item="http://java.sun.com/jsf/composite/components/item"
+	xmlns:imeji="http://java.sun.com/jsf/composite/components"
 	xmlns:license="http://java.sun.com/jsf/composite/components/license">
 	
 	<composite:interface>
@@ -31,6 +32,7 @@
 							<f:ajax render="#{cc.attrs.parentId}:moveItemsForm:list" event="keyup" listener="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.colId)}"/>
 						</h:inputText>
 					</div>
+					<ui:remove>
 					<h:panelGroup layout="block" id="list">
 						<ui:repeat var="col" value="#{MoveItemsBean.collectionsForMove}">
 							<p>
@@ -44,9 +46,35 @@
 									<span class="fa fa-globe fa-size-3" style="#{col.status == 'RELEASED' ? '' : 'visibility: hidden'}">&#160;</span>
 									<h:commandLink rendered="#{cc.attrs.itemId != null}" value="#{col.title}" action="#{MoveItemsBean.moveItemTo(col.id.toString(), cc.attrs.itemId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>	
 									<h:commandLink rendered="#{cc.attrs.itemId == null}" value="#{col.title}" action="#{MoveItemsBean.moveSelectedTo(col.id.toString())}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>
-								</ui:fragment>				 
+								</ui:fragment>
 							</p>
 						</ui:repeat>
+					</h:panelGroup>
+					</ui:remove>
+					<h:panelGroup layout="block" id="tree">
+						<imeji:moveTree tree="#{MoveItemsBean.tree}" colId="#{cc.attrs.colId}" itemId="#{cc.attrs.itemId}" hasLicense="#{cc.attrs.hasLicense}"/>
+						
+						<ui:remove>
+						<ui:repeat var="node" value="#{MoveItemsBean.moveTree}">
+							<p>
+								<ui:fragment rendered="#{node.collection.status == 'RELEASED' and !cc.attrs.hasLicense}">
+									<span class="fa fa-globe fa-size-3">&#160;</span>
+									<h:commandLink value="#{node.collection.title}" action="#{MoveItemsBean.setDestinationId(node.collection.id.toString())}">
+										<f:ajax render="@form"/>
+									</h:commandLink>	
+								</ui:fragment>
+								<ui:fragment rendered="#{node.collection.status == 'PENDING' or cc.attrs.hasLicense}">
+									<span class="fa fa-globe fa-size-3" style="#{node.collection.status == 'RELEASED' ? '' : 'visibility: hidden'}">&#160;</span>
+									<h:commandLink rendered="#{cc.attrs.itemId != null}" value="#{node.collection.title}" action="#{MoveItemsBean.moveItemTo(node.collection.id.toString(), cc.attrs.itemId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>	
+									<h:commandLink rendered="#{cc.attrs.itemId == null}" value="#{node.collection.title}" action="#{MoveItemsBean.moveSelectedTo(node.collection.id.toString())}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>
+								</ui:fragment>
+								<h:commandLink rendered="#{not empty node.children}" value="" action="#{MoveItemsBean.showChildren(node)}">
+									<f:ajax render="@form"/>
+									<span class="fa fa-plus"></span>
+								</h:commandLink>					 
+							</p>
+						</ui:repeat>
+						</ui:remove>
 					</h:panelGroup>
 				</ui:fragment>
 				<ui:fragment rendered="#{MoveItemsBean.destinationId != null}">
