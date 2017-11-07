@@ -17,7 +17,7 @@
 				 <f:ajax render=":metadata"/>
 			</h:commandLink>
 		</h:form>
-		<a href="#{Navigation.applicationUrl}exportServlet?format=file&amp;id=#{cc.attrs.itemBean.item.id}" class="imj_menuButton imj_overlayMenu" target="_blank">
+		<a href="#{Navigation.applicationUrl}exportServlet?format=file&amp;id=#{cc.attrs.itemBean.item.id}" class="imj_menuButton imj_overlayMenu #{Auth.loggedIn ? '' : 'ghostButton'}" target="_blank">
 			<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download}</span>
 		</a>
 		<ui:fragment rendered="#{Auth.delete and WorkflowBean.delete(cc.attrs.itemBean.item)}">

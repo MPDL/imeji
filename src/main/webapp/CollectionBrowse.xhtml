@@ -75,22 +75,22 @@
 			
 		 	<ui:fragment rendered="#{Auth.update}">
 		 		<h:form id="showUploadForm">
-					<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_openUploadDialog" onclick="openDialog('uploadDialog');">
+					<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_overlayMenu imj_openUploadDialog" onclick="openDialog('uploadDialog');">
 						<f:ajax render=":additonalFooterScripts"/>
 						<span class="fa fa-upload"/> <span>#{lbl.upload}</span>
 					</h:commandLink>
 				</h:form>
 				<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('addSubCollection');">
-					<span class="fa fa-plus"/> <span>#{lbl.add_subcollection}</span>
+					<span class="fa fa-plus"/> <span>#{lbl.subcollection}</span>
 				</a>
 				<ui:fragment rendered="#{CollectionItemsBean.collection.isSubCollection()}">
 					<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('editSubCollection');">
-						<span class="fa fa-pencil"/> <span>#{lbl.edit_subcollection}</span>
+						<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
 					</a>
 				</ui:fragment>
 				<ui:fragment rendered="#{!CollectionItemsBean.collection.isSubCollection()}">
 					<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/edit" class="imj_menuButton imj_overlayMenu">
-						<span class="fa fa-pencil"/> <span>#{lbl.collection_edit_metadata}</span>
+						<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
 					</a>
 				</ui:fragment>
 			</ui:fragment>
@@ -170,7 +170,7 @@
 				</div>
 			</ui:fragment>
 		</span>
-		<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{CollectionItemsBean.collection}&amp;q=#{CollectionItemsBean.query}" target="_blank" class="imj_menuButton">
+		<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{CollectionItemsBean.collection}&amp;q=#{CollectionItemsBean.query}" target="_blank" class="imj_menuButton imj_overlayMenu #{Auth.loggedIn ? '' : 'ghostButton'}">
 			<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download_files}</span>
 		</a>
 		<a href="#" class="fa fa-ellipsis-h responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="actionsReponsive" />

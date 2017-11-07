@@ -7,6 +7,7 @@
 	xmlns:share="http://java.sun.com/jsf/composite/components/share">
 
 	<ui:param name="headline" value="#{lbl.share.toString().trim()}" />
+	<ui:param name="currentMainMenu" value="collection" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="contUrl" value="#{Navigation.collectionUrl}" />
 	<ui:param name="imejiResource" value="#{ShareBean.sharedObject}" />
@@ -21,12 +22,12 @@
 	
 	<ui:define name="actionsMenu">
 	 	<span id="userShareButton">
-			<a  href="#" class="imj_menuButton" onclick="openDialog('shareWithUsersDialog');" id="userShare">
+			<a  href="#" class="imj_menuButton ghostButton imj_overlayMenu" onclick="openDialog('shareWithUsersDialog');" id="userShare">
 				<span class="fa fa-user"></span> #{lbl.share_new}
 			</a>	
 		</span>
 		<ui:fragment rendered="#{!empty ShareBean.userGroupsBean.userGroups}">
-			<a href="#" class="imj_menuButton"  onclick="openDialog('shareWithGroupDialog');" id="userGroupShare">
+			<a href="#" class="imj_menuButton ghostButton imj_overlayMenu"  onclick="openDialog('shareWithGroupDialog');" id="userGroupShare">
 				<span class="fa fa-users"></span> #{lbl.share_with_group}
 			</a>
 		</ui:fragment>

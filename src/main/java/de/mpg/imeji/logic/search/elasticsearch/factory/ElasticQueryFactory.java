@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.search.elasticsearch.factory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -16,6 +17,7 @@ import com.hp.hpl.jena.util.iterator.Filter;
 
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.model.Properties.Status;
@@ -63,7 +65,7 @@ public class ElasticQueryFactory {
     final QueryBuilder searchQuery = buildSearchQuery(query, user);
     final QueryBuilder containerQuery =
         buildContainerFilter(folderUri, query == null || query.isEmpty(), types);
-    final QueryBuilder securityQuery = buildSecurityQuery(user, folderUri);
+    final QueryBuilder securityQuery = buildSecurityQuery(user, folderUri, types);
     final QueryBuilder statusQuery = buildStatusQuery(query, user);
     if (!isMatchAll(searchQuery)) {
       q.must(searchQuery);
@@ -85,7 +87,7 @@ public class ElasticQueryFactory {
     if (query == null || query.isEmpty()) {
       final BoolQueryBuilder q = QueryBuilders.boolQuery();
       final QueryBuilder containerQuery = buildContainerFilter(folderUri, false, types);
-      final QueryBuilder securityQuery = buildSecurityQuery(user, folderUri);
+      final QueryBuilder securityQuery = buildSecurityQuery(user, folderUri, types);
       final QueryBuilder statusQuery = buildStatusQuery(query, user);
       if (!isMatchAll(containerQuery)) {
         q.must(containerQuery);
@@ -210,13 +212,21 @@ public class ElasticQueryFactory {
    * @param user
    * @return
    */
-  private static QueryBuilder buildSecurityQuery(User user, String folderUri) {
+  private static QueryBuilder buildSecurityQuery(User user, String folderUri,
+      ElasticTypes... types) {
     if (user != null) {
+      boolean isItemSearch = Arrays.asList(types).contains(ElasticTypes.items);
       if (SecurityUtil.authorization().isSysAdmin(user)) {
         // Admin: can view everything
         return QueryBuilders.matchAllQuery();
+      } else if (isItemSearch) {
+        BoolQueryBuilder bq = QueryBuilders.boolQuery();
+        for (String collectionUri : user.getGrants().stream().map(s -> new Grant(s))
+            .map(g -> g.getGrantFor()).collect(Collectors.toList())) {
+          bq.should(buildContainerFilter(collectionUri, false, ElasticTypes.folders));
+        }
+        return bq;
       } else {
-        // normal user
         return buildGrantQuery(user, null);
       }
     }
