@@ -74,7 +74,7 @@ public class ElasticQueryFactory {
     if (!isMatchAll(securityQuery)) {
       q.must(securityQuery);
     }
-    if (types.length == 1 && types[0] == ElasticTypes.users && !isMatchAll(statusQuery)) {
+    if (types.length == 1 && types[0] != ElasticTypes.users && !isMatchAll(statusQuery)) {
       q.must(statusQuery);
     }
     return q;
@@ -86,11 +86,15 @@ public class ElasticQueryFactory {
       final BoolQueryBuilder q = QueryBuilders.boolQuery();
       final QueryBuilder containerQuery = buildContainerFilter(folderUri, false, types);
       final QueryBuilder securityQuery = buildSecurityQuery(user, folderUri);
+      final QueryBuilder statusQuery = buildStatusQuery(query, user);
       if (!isMatchAll(containerQuery)) {
         q.must(containerQuery);
       }
       if (!isMatchAll(securityQuery)) {
         q.must(securityQuery);
+      }
+      if (types[0] != ElasticTypes.users && !isMatchAll(statusQuery)) {
+        q.must(statusQuery);
       }
       return q;
     }

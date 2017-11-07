@@ -180,6 +180,7 @@ public class JenaCustomQueries {
         + "\"^^<http://www.w3.org/2001/XMLSchema#string> . ?content <http://imeji.org/terms/itemId> ?id} limit 1";
   }
 
+
   /**
    * Select all {@link Grant} which are not valid anymore. For instance, when a {@link User}, or an
    * object ( {@link CollectionImeji}, {@link Album}) is deleted, some related {@link Grant} might

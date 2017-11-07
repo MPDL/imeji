@@ -10,7 +10,7 @@
     xmlns:item="http://java.sun.com/jsf/composite/components/item">
 
 	<ui:param name="paginatorListSessionBean" value="#{ItemsBean}" />
-	<ui:param name="headline" value="#{paginatorListSessionBean.totalNumberOfElements} #{lbl.items}" />
+	<ui:param name="headline" value="#{paginatorListSessionBean.totalNumberOfRecords} #{lbl.items}" />
 	<ui:param name="displayQuery" value="#{paginatorListSessionBean.simpleQuery != ''}" />
 	<ui:param name="currentMainMenu" value="items" />
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.browseUrl}?q=" />

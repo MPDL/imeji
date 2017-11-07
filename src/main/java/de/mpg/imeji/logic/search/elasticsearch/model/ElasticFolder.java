@@ -21,6 +21,7 @@ public final class ElasticFolder extends ElasticProperties {
   private final String description;
   private final String creators;
   private final List<String> pid;
+  private final String filetype = "text/directory";
   private final List<ElasticPerson> author = new ArrayList<>();
   private final List<ElasticContainerAdditionalInfo> info = new ArrayList<>();
 

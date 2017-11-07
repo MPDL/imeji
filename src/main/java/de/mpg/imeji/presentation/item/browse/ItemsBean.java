@@ -521,4 +521,12 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     return facetQueryString;
   }
 
+  public int getNumberOfItems() {
+    return getTotalNumberOfRecords();
+  }
+
+  public int getNumberOfSubCollections() {
+    return 0;
+  }
+
 }

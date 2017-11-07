@@ -724,10 +724,17 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @return
    */
   public boolean checksumExistsInCollection(URI collectionId, String checksum) {
-    final SearchQuery q = SearchQuery.toSearchQuery(
-        new SearchPair(SearchFields.checksum, SearchOperators.EQUALS, checksum, false));
-    return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1)
-        .getNumberOfRecords() > 0;
+    try {
+      final SearchQuery q = new SearchFactory().and(Arrays.asList(
+          new SearchPair(SearchFields.checksum, SearchOperators.EQUALS, checksum, false),
+          new SearchPair(SearchFields.col, SearchOperators.EQUALS, collectionId.toString(), false)))
+          .build();
+      return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1)
+          .getNumberOfRecords() > 0;
+    } catch (UnprocessableError e) {
+      LOGGER.error("Error checking checksum of collection " + collectionId, e);
+    }
+    return true;
   }
 
 

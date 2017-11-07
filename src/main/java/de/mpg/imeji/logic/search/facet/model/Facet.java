@@ -22,7 +22,17 @@ public class Facet implements Serializable {
   private String index;
   private URI uri = IdentifierUtil.newURI(Facet.class);
   @j2jLiteral("http://imeji.org/terms/position")
-  private int position =0;
+  private int position = 0;
+
+  /**
+   * Reserved Facet Name to count the items of a collection
+   */
+  public static final String ITEMS = "count_all_collection_items";
+  /**
+   * Reserved Facet name to count the subcollections of a collection
+   */
+  public static final String SUBCOLLECTIONS = "count_all_collection_subcollections";
+
 
   /**
    * @return the name

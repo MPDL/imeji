@@ -7,6 +7,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.bucket.filter.Filter;
 import org.elasticsearch.search.aggregations.bucket.filters.Filters;
+import org.elasticsearch.search.aggregations.bucket.filters.Filters.Bucket;
 import org.elasticsearch.search.aggregations.bucket.nested.Nested;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
@@ -65,7 +66,8 @@ public class AggregationsParser {
         }
         Filters system = resp.getAggregations().get("system");
         if (system != null) {
-          for (Aggregation agg : system.getBucketByKey("all").getAggregations()) {
+          Bucket systemBucket = system.getBucketByKey("all");
+          for (Aggregation agg : systemBucket.getAggregations()) {
             FacetResult facetResult = new FacetResult(getFacetName(agg.getName()), agg.getName());
             if (agg instanceof Filters) {
               for (Filters.Bucket bucket : ((Filters) agg).getBuckets()) {
@@ -82,10 +84,27 @@ public class AggregationsParser {
             facetResults.add(facetResult);
           }
         }
+        facetResults.add(parseInternalFacet(resp, Facet.ITEMS));
+        facetResults.add(parseInternalFacet(resp, Facet.SUBCOLLECTIONS));
       }
     }
     return facetResults;
   }
+
+  /**
+   * Parse the internal facets
+   * 
+   * @param resp
+   * @param facetName
+   * @return
+   */
+  private static FacetResult parseInternalFacet(SearchResponse resp, String facetName) {
+    FacetResult f = new FacetResult(facetName, facetName);
+    f.getValues().add(new FacetResultValue("count",
+        ((Filters) resp.getAggregations().get(facetName)).getBucketByKey(facetName).getDocCount()));
+    return f;
+  }
+
 
   private static String getFacetName(String index) {
     final FacetService service = new FacetService();

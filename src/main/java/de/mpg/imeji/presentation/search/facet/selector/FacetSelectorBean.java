@@ -13,10 +13,11 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
-import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 
@@ -54,6 +55,8 @@ public class FacetSelectorBean extends SuperBean {
   public String init(SearchResult result) {
     if (result != null) {
       entries = result.getFacets().stream()
+          .filter(
+              f -> !f.getName().equals(Facet.ITEMS) && !f.getName().equals(Facet.SUBCOLLECTIONS))
           .map(r -> new FacetSelectorEntry(r, facetQuery, result.getNumberOfRecords()))
           .sorted(
               (f1, f2) -> Integer.compare(f1.getFacet().getPosition(), f2.getFacet().getPosition()))

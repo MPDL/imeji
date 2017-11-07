@@ -28,13 +28,14 @@
 			  	
 	        	<item:filters id="selPanel" 
             			facetBean="#{paginatorListSessionBean}"  
-            			numberOfElements="#{paginatorListSessionBean.totalNumberOfElements}" 
+            			numberOfItems="#{paginatorListSessionBean.numberOfItems}"
+            			numberOfSubCollections="#{paginatorListSessionBean.numberOfSubCollections}" 
             			showSortMenu="true"
             			showStatusFilterMenu="#{currentMainMenu == 'items' or (currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING')}"
             			showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
 					
            		
-           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfElements == 0}">
+           		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords == 0}">
            			<div  class="uploadDragAndDropTitle">
            				<span class=" fa fa-meh-o fa-size-2"/> <br/><span> #{msg.no_images_found}!</span>
            			</div>
@@ -47,7 +48,7 @@
 	        		<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
 					<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 				</div>
-				<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfElements != 0}"/>
+				<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfRecords != 0}"/>
 				
 			</div>
 			<!-- Page Browser GotoBox -->

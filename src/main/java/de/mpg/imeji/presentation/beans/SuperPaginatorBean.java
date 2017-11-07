@@ -64,7 +64,7 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
    * The total number of elements that are in the complete list (without any limit or offset
    * filters). corresponding BaseListRetrieverRequestBean.
    */
-  private int totalNumberOfElements = 0;
+  // private int totalNumberOfElements = 0;
 
   private List<SelectItem> sortMenu;
   private String selectedSortCriterion;
@@ -145,9 +145,8 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
       setGoToPage(Integer.toString(currentPageNumber));
       currentPartList.clear();
       currentPartList = retrieveList(getOffset(), elementsPerPage);
-      totalNumberOfElements = getTotalNumberOfRecords();
       paginatorPageList.clear();
-      for (int i = 0; i < ((getTotalNumberOfElements() - 1) / elementsPerPage) + 1; i++) {
+      for (int i = 0; i < ((getTotalNumberOfRecords() - 1) / elementsPerPage) + 1; i++) {
         paginatorPageList.add(new PaginatorPage(i + 1));
       }
       if (currentPageNumber < 0 || currentPageNumber > getPaginatorPageSize()) {
@@ -179,14 +178,6 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
    */
   public int getPartListSize() {
     return getCurrentPartList().size();
-  }
-
-  /**
-   * Returns the total number of elements, without offset and limit filters. Drawn from
-   * BaseRetrieverRequestBean
-   */
-  public int getTotalNumberOfElements() {
-    return totalNumberOfElements;
   }
 
   /**

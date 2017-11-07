@@ -14,8 +14,6 @@
         </h:head>
         <h:body lang="#{InternationalizationBean.locale}"> 
        		#{Auth.init()}
-            <!-- default necessary scripts, because of use in body-load context -->
-          
             <!-- optional header scripts, which must load before -->
             <ui:insert name="additonalHeaderScripts"/>          
             <!-- global page wrapper -->

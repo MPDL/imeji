@@ -91,11 +91,11 @@
 					</ul>
 				</div>
 			</div>
-			<ui:fragment rendered="#{Auth.update and empty SessionBean.selected and cc.attrs.collectionBean.totalNumberOfElements > 0}">
+			<ui:fragment rendered="#{Auth.update and empty SessionBean.selected and cc.attrs.collectionBean.totalNumberOfRecords > 0}">
 				<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="menuItems">
 					<div class="imj_menuHeader">
 		                  <span class="fa fa-files-o"/>
-		                  <span class="imj_headerEntry">#{cc.attrs.collectionBean.totalNumberOfElements} #{lbl.items}</span>
+		                  <span class="imj_headerEntry">#{cc.attrs.collectionBean.totalNumberOfRecords} #{lbl.items}</span>
 		                   <span class="fa fa-angle-down"/>
 					</div>
 					<div class="imj_menuBody">

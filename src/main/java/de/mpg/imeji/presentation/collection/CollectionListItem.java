@@ -8,13 +8,15 @@ import javax.faces.event.ValueChangeEvent;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Person;
-import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -116,10 +118,12 @@ public class CollectionListItem implements Serializable {
    * Count the size of the collection
    *
    * @param user
+   * @throws UnprocessableError
    */
-  private void initSize(CollectionImeji collection, User user) {
+  private void initSize(CollectionImeji collection, User user) throws UnprocessableError {
     final ItemService ic = new ItemService();
-    size = ic.search(collection.getId(), null, null, Imeji.adminUser, 0, 0).getNumberOfRecords();
+    size = ic.search(collection.getId(), SearchQueryParser.parsedecoded("*"), null, Imeji.adminUser,
+        0, 0).getNumberOfRecords();
   }
 
   /**

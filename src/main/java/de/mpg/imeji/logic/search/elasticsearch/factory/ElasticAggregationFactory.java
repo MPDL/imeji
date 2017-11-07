@@ -19,6 +19,7 @@ import de.mpg.imeji.logic.config.ImejiFileTypes;
 import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.StatementType;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
@@ -60,6 +61,10 @@ public class ElasticAggregationFactory {
     }
     aggregations.add(metadataAggregations);
     aggregations.add(systemAggregations);
+    aggregations.add(AggregationBuilders.filters(Facet.ITEMS).filter(Facet.ITEMS,
+        QueryBuilders.typeQuery(ElasticService.ElasticTypes.items.name())));
+    aggregations.add(AggregationBuilders.filters(Facet.SUBCOLLECTIONS).filter(Facet.SUBCOLLECTIONS,
+        QueryBuilders.typeQuery(ElasticService.ElasticTypes.folders.name())));
     return aggregations;
   }
 

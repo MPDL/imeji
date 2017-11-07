@@ -24,10 +24,10 @@
 	 </ui:define>
 	 
 	 <ui:define name="subHeadline">
-	 	<span>#{CollectionItemsBean.totalNumberOfElements} #{CollectionItemsBean.totalNumberOfElements > 1 ? lbl.items : lbl.item}</span>
+	 	<span>#{CollectionItemsBean.numberOfItems} #{CollectionItemsBean.numberOfItems > 1 ? lbl.items : lbl.item}</span>
 	 	<span class="imj_sep">|</span>
 	 	<span>#{lbl.by} #{CollectionItemsBean.authorsShort}</span>
-	 	<span class="imj_sep">|</span>
+	 	<span class="imj_sep">|</span> 
 	 	<a href="#actions">
 			<span class="moreCollection"  onclick="$('.collectionAbout').slideDown(300);$('.lessCollection').show(); $(this).hide();">
 				<span>#{lbl.more}</span><span class="fa fa-angle-right"/>

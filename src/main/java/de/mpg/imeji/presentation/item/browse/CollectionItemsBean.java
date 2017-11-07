@@ -277,5 +277,13 @@ public class CollectionItemsBean extends ItemsBean {
     return collection != null
         ? getSessionUser().getSubscriptionCollections().contains(getCollectionId()) : false;
   }
+
+  public int getNumberOfItems() {
+    return getSearchResult().getNumberOfItems();
+  }
+
+  public int getNumberOfSubCollections() {
+    return getSearchResult().getNumberOfSubcollections();
+  }
 }
 

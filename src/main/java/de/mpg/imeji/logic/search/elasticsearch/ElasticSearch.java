@@ -23,6 +23,8 @@ import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticQueryFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.AggregationsParser;
+import de.mpg.imeji.logic.search.facet.model.Facet;
+import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -200,7 +202,24 @@ public class ElasticSearch implements Search {
     for (final SearchHit hit : resp.getHits()) {
       ids.add(hit.getId());
     }
-    return new SearchResult(ids, resp.getHits().getTotalHits(), AggregationsParser.parse(resp));
+    List<FacetResult> facets = AggregationsParser.parse(resp);
+    return new SearchResult(ids, getTotalNumberOfRecords(resp, facets),
+        getNumberOfItems(resp, facets), getNumberOfSubcollcetions(resp, facets), facets);
+  }
+
+  private long getTotalNumberOfRecords(SearchResponse resp, List<FacetResult> facets) {
+    return facets.stream().filter(f -> f.getName().equals("all")).findAny()
+        .map(f -> f.getValues().get(0).getCount()).orElse(resp.getHits().getTotalHits());
+  }
+
+  private long getNumberOfItems(SearchResponse resp, List<FacetResult> facets) {
+    return facets.stream().filter(f -> f.getName().equals(Facet.ITEMS)).findAny()
+        .map(f -> f.getValues().get(0).getCount()).orElse(resp.getHits().getTotalHits());
+  }
+
+  private long getNumberOfSubcollcetions(SearchResponse resp, List<FacetResult> facets) {
+    return facets.stream().filter(f -> f.getName().equals(Facet.SUBCOLLECTIONS)).findAny()
+        .map(f -> f.getValues().get(0).getCount()).orElse((long) 0);
   }
 
   /**

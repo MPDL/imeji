@@ -1,6 +1,5 @@
 package de.mpg.imeji.logic.search.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.hp.hpl.jena.Jena;
@@ -17,8 +16,10 @@ import de.mpg.imeji.logic.search.util.SortHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class SearchResult {
-  private int numberOfRecords = 0;
-  private List<String> results = new ArrayList<String>();
+  private final int numberOfRecords;
+  private final int numberOfItems;
+  private final int numberOfSubcollections;
+  private final List<String> results;
   private String query = null;
   private SortCriterion sort;
   private List<FacetResult> facets;
@@ -33,6 +34,8 @@ public class SearchResult {
    */
   public SearchResult(List<String> unsortedResults, SortCriterion sort) {
     numberOfRecords = unsortedResults.size();
+    numberOfItems = numberOfRecords;
+    numberOfSubcollections = 0;
     if (sort != null) {
       this.sort = sort;
       results = SortHelper.sort(unsortedResults, this.sort.getSortOrder());
@@ -45,20 +48,14 @@ public class SearchResult {
    * Default constructor
    */
   public SearchResult(List<String> ids) {
-    numberOfRecords = ids.size();
-    results = ids;
+    this(ids, null);
   }
 
-  /**
-   * Constructor when the number of records is known
-   */
-  public SearchResult(List<String> ids, long numberOfRecords) {
+  public SearchResult(List<String> ids, long numberOfRecords, long numberOfItems,
+      long numberOfSubcollections, List<FacetResult> facetResults) {
     this.numberOfRecords = (int) numberOfRecords;
-    results = ids;
-  }
-
-  public SearchResult(List<String> ids, long numberOfRecords, List<FacetResult> facetResults) {
-    this.numberOfRecords = (int) numberOfRecords;
+    this.numberOfItems = (int) numberOfItems;
+    this.numberOfSubcollections = (int) numberOfSubcollections;
     this.results = ids;
     this.facets = facetResults;
   }
@@ -67,16 +64,8 @@ public class SearchResult {
     return numberOfRecords;
   }
 
-  public void setNumberOfRecords(int numberOfRecords) {
-    this.numberOfRecords = numberOfRecords;
-  }
-
   public List<String> getResults() {
     return results;
-  }
-
-  public void setResults(List<String> results) {
-    this.results = results;
   }
 
   public String getQuery() {
@@ -107,5 +96,13 @@ public class SearchResult {
    */
   public void setFacets(List<FacetResult> facets) {
     this.facets = facets;
+  }
+
+  public int getNumberOfItems() {
+    return numberOfItems;
+  }
+
+  public int getNumberOfSubcollections() {
+    return numberOfSubcollections;
   }
 }

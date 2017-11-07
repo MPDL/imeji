@@ -156,6 +156,8 @@ public class MoveFacade {
    */
   private List<Item> filterAlreadyExists(List<Item> items, CollectionImeji collection)
       throws ImejiException {
+    List<ContentVO> l = retrieveContentBatchLazy(items);
+    System.out.println(l.size());
     final List<ContentVO> contents = retrieveContentBatchLazy(items).stream()
         .filter(content -> !itemService.checksumExistsInCollection(collection.getId(),
             content.getChecksum()))
