@@ -215,7 +215,9 @@
 												<ui:repeat id="v" value="#{cell.inputs}" var="input"
 													varStatus="inputStatus">
 													<div class="tableBtn">
-														<md:input id="in" metadataInputComponent="#{input}" compact="true"/>
+														<md:input id="in" metadataInputComponent="#{input}" compact="true" rendered="#{cell.edit}"/>
+														<md:output id="out" metadata="#{input.metadata}" rendered="#{!cell.edit}"/>
+															
 														<h:commandLink type="submit" id="del" styleClass="fa fa-times"
 															action="#{cell.removeValue(inputStatus.index)}" value=""
 															title="#{lbl.remove}">
@@ -225,12 +227,11 @@
 														</h:commandLink>
 													</div>
 												</ui:repeat>
-												<h:commandLink type="submit" id="add" styleClass="fa fa-plus tableBtn"
-													action="#{cell.addValue}" value=""
-													title="#{lbl.add}" >
-													<f:ajax
-														execute=":i:#{itemStatus.index}:m:#{status.index}:c"
-														render=":i:#{itemStatus.index}:m:#{status.index}:c" />
+												<h:commandLink type="submit" id="add" styleClass="fa fa-plus tableBtn" action="#{cell.addValue}" value="" title="#{lbl.add}" >
+													<f:ajax execute=":i:#{itemStatus.index}:m:#{status.index}:c" render=":i:#{itemStatus.index}:m:#{status.index}:c" />
+												</h:commandLink>
+												<h:commandLink rendered="#{!cell.edit and not empty cell.inputs}" type="submit" id="ed" styleClass="fa fa-pencil tableBtn" action="#{cell.setEdit(true)}" value="" title="#{lbl.edit}">
+													<f:ajax execute=":i:#{itemStatus.index}:m:#{status.index}:c" render=":i:#{itemStatus.index}:m:#{status.index}:c" />
 												</h:commandLink>
 											</td>
 										</ui:fragment>

@@ -24,20 +24,22 @@
 	 </ui:define>
 	 
 	 <ui:define name="subHeadline">
-	 	<span>#{CollectionItemsBean.numberOfItems} #{CollectionItemsBean.numberOfItems > 1 ? lbl.items : lbl.item}</span>
-	 	<span class="imj_sep">|</span>
-	 	<span>#{lbl.by} #{CollectionItemsBean.authorsShort}</span>
-	 	<span class="imj_sep">|</span> 
-	 	<a href="#actions">
-			<span class="moreCollection"  onclick="$('.collectionAbout').slideDown(300);$('.lessCollection').show(); $(this).hide();">
-				<span>#{lbl.more}</span><span class="fa fa-angle-right"/>
-			</span>
-		</a>
-		<a href="#">
-			<span class="lessCollection" style="display:none;" onclick="$('.collectionAbout').slideUp(300);$('.moreCollection').show(); $(this).hide();">
-				<span>#{lbl.less}</span><span class="fa fa-angle-down"/>
-			</span>
-		</a>
+	 	<ui:fragment rendered="#{paginatorListSessionBean.simpleQuery == ''  and paginatorListSessionBean.facetQuery.isEmpty()}">
+		 	<span>#{CollectionItemsBean.numberOfItems} #{CollectionItemsBean.numberOfItems > 1 ? lbl.items : lbl.item}</span>
+		 	<span class="imj_sep">|</span>
+		 	<span>#{lbl.by} #{CollectionItemsBean.authorsShort}</span>
+		 	<span class="imj_sep">|</span> 
+		 	<a href="#actions">
+				<span class="moreCollection"  onclick="$('.collectionAbout').slideDown(300);$('.lessCollection').show(); $(this).hide();">
+					<span>#{lbl.more}</span><span class="fa fa-angle-right"/>
+				</span>
+			</a>
+			<a href="#">
+				<span class="lessCollection" style="display:none;" onclick="$('.collectionAbout').slideUp(300);$('.moreCollection').show(); $(this).hide();">
+					<span>#{lbl.less}</span><span class="fa fa-angle-down"/>
+				</span>
+			</a>
+		</ui:fragment>
 	 </ui:define>
 	 <ui:define name="collectionAbout">
 		<div class="collectionAbout">
@@ -67,12 +69,7 @@
 	 </ui:define>
 	 
 	 <ui:define name="actions">
-		<span id="actionsReponsive" class="responsiveMenu">
-
-			<a style="float:right; text-align: right;" href="#"  class="responsiveMenuCloseBtn responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="actionsReponsive" >
-				<span class="fa fa-times"/> <span>#{lbl.close}</span>
-			</a>
-			
+		
 		 	<ui:fragment rendered="#{Auth.update}">
 		 		<h:form id="showUploadForm">
 					<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_overlayMenu imj_openUploadDialog" onclick="openDialog('uploadDialog');">
@@ -94,6 +91,13 @@
 					</a>
 				</ui:fragment>
 			</ui:fragment>
+			
+		<span id="actionsReponsive" class="responsiveMenu">
+
+			<a style="float:right; text-align: right;" href="#"  class="responsiveMenuCloseBtn responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="actionsReponsive" >
+				<span class="fa fa-times"/> <span>#{lbl.close}</span>
+			</a>
+			
 			<ui:fragment rendered="#{Auth.admin}">
 				<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/share?q=#{CollectionItemsBean.query}&amp;fq=#{CollectionItemsBean.facetQueryString}" class="imj_menuButton imj_overlayMenu">
 					<span class="fa fa-users"/> <span>#{lbl.share}</span>

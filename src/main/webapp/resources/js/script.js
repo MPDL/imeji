@@ -510,7 +510,9 @@ function startLoader(){
 
 function stopLoader(){
 	$(".loaderWrapper").hide();
+	$(".loaderWrapper").removeClass("show");
 	$(".loader").hide();
+	$(".loader").removeClass("show");
 }
 // END - loader methods
 

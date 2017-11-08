@@ -24,8 +24,6 @@ public class MetadataInputComponent implements Serializable {
       this.metadata.setPerson(ImejiFactory.newPerson());
     }
     this.statement = statement;
-
-
   }
 
   /**

@@ -21,6 +21,7 @@ public class CellComponent implements Serializable {
   private static final long serialVersionUID = 4617072974872823679L;
   private List<MetadataInputComponent> inputs = new ArrayList<>();
   private final Statement statement;
+  private boolean edit = false;
 
   public CellComponent(Statement statement, List<Metadata> metadata) {
     this.statement = statement.clone();
@@ -51,6 +52,7 @@ public class CellComponent implements Serializable {
    */
   public void addValue() {
     inputs.add(new MetadataInputComponent(ImejiFactory.newMetadata(statement).build(), statement));
+    edit = true;
   }
 
   /**
@@ -59,6 +61,7 @@ public class CellComponent implements Serializable {
   public void removeValue(int position) {
     inputs.remove(position);
   }
+
 
   /**
    * Change the Statement of this input
@@ -104,6 +107,12 @@ public class CellComponent implements Serializable {
     return statement;
   }
 
+  public boolean isEdit() {
+    return edit;
+  }
 
+  public void setEdit(boolean edit) {
+    this.edit = edit;
+  }
 
 }

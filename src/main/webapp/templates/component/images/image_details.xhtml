@@ -13,7 +13,7 @@
 	</f:metadata>
 
 	<!-- MediaDisplayContainer - START -->
-	<h:panelGroup layout="block" style="max-heigth:#{itemBean.webResolutionMaxLength}px;" styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
+	<h:panelGroup layout="block"  styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
 			<h:form id="rotationForm">
 				<h:inputHidden id="inputTextRotation" value="#{itemBean.rotation}" />
@@ -23,7 +23,7 @@
 			</h:form>
 			<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
 				<center>
-					<div id="seaDragonsButtons">
+					<div id="seaDragonsButtons" style="position: initial;">
 						<link rel="stylesheet" type="text/css" href="#{Navigation.applicationUrl}resources/css/font-awesome/css/font-awesome.min.css"/>
 						<a id="fullscreenButton">
 							<span class="fa fa-search-plus hideFullScreen"/>
