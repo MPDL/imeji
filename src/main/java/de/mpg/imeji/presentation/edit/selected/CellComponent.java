@@ -60,6 +60,9 @@ public class CellComponent implements Serializable {
    */
   public void removeValue(int position) {
     inputs.remove(position);
+    if (inputs.isEmpty()) {
+      edit = false;
+    }
   }
 
 
@@ -113,6 +116,13 @@ public class CellComponent implements Serializable {
 
   public void setEdit(boolean edit) {
     this.edit = edit;
+  }
+
+  public void showEdit() {
+    edit = true;
+    if (inputs.isEmpty()) {
+      addValue();
+    }
   }
 
 }
