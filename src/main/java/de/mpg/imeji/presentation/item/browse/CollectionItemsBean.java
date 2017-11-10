@@ -97,9 +97,6 @@ public class CollectionItemsBean extends ItemsBean {
       int limit) {
     final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
     return facade.search(searchQuery, collection, getSessionUser(), sortCriterion, limit, offset);
-    // final ItemService controller = new ItemService();
-    // return controller.searchWithFacets(uri, searchQuery, sortCriterion, getSessionUser(), limit,
-    // offset);
   }
 
   @Override

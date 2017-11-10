@@ -62,6 +62,7 @@ public class ElasticIndexer implements SearchIndexer {
   public void index(Object obj) {
     try {
       indexJSON(getId(obj), toJson(obj, dataType, index), getParent(obj));
+      commit();
     } catch (final Exception e) {
       LOGGER.error("Error indexing object ", e);
     }
@@ -71,7 +72,6 @@ public class ElasticIndexer implements SearchIndexer {
   @Override
   public void indexBatch(List<?> l) {
     updateIndexBatch(l);
-    // commit();
   }
 
   @Override

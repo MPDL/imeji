@@ -20,6 +20,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.Item;
@@ -28,6 +29,8 @@ import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.license.LicenseEditor;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -46,6 +49,7 @@ public class MoveItemsBean extends SuperBean {
   private LicenseEditor licenseEditor;
   private String destinationId;
   private final ItemService itemService = new ItemService();
+  private final HierarchyService hierarchyService = new HierarchyService();
 
 
   /**
@@ -67,6 +71,39 @@ public class MoveItemsBean extends SuperBean {
     tree = new MoveTree(collectionsForMove);
   }
 
+  /**
+   * Move the
+   * 
+   * @param collectionId
+   * @param id
+   * @throws IOException
+   */
+  public void moveTo(String id, String targetId) throws IOException {
+    if (StringHelper.isNullOrEmptyTrim(id)) {
+      moveSelectedTo(targetId);
+    } else {
+      switch (ObjectHelper.getObjectType(URI.create(id))) {
+        case ITEM:
+          moveItem(id, targetId);
+          break;
+        case COLLECTION:
+          moveCollection(id, targetId);
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  /**
+   * Move to the the destinationId
+   * 
+   * @param id
+   * @throws IOException
+   */
+  public void moveTo(String id) throws IOException {
+    moveTo(id, destinationId);
+  }
 
   /**
    * Move the selected items to the collection
@@ -74,44 +111,10 @@ public class MoveItemsBean extends SuperBean {
    * @param collectionId
    * @throws IOException
    */
-  public void moveSelectedTo(String collectionId) throws IOException {
-    moveTo(collectionId, sessionBean.getSelected());
+  private void moveSelectedTo(String collectionId) throws IOException {
+    moveItems(collectionId, sessionBean.getSelected());
     sessionBean.getSelected().clear();
     redirect(getCurrentPage().getCompleteUrl());
-  }
-
-  /**
-   * Move a single Item to the collection
-   * 
-   * @param collectionId
-   * @param id
-   * @throws IOException
-   */
-  public void moveItemTo(String collectionId, String id) throws IOException {
-    moveTo(collectionId, Arrays.asList(id));
-    redirect(getNavigation().getCollectionUrl() + ObjectHelper.getId(URI.create(collectionId))
-        + "/item/" + ObjectHelper.getId(URI.create(id)));
-  }
-
-  /**
-   * Move the selected items to the collection "destination"
-   * 
-   * @param collectionid
-   * @throws IOException
-   */
-  public void moveSelectedTo() throws IOException {
-    moveSelectedTo(destinationId);
-  }
-
-  /**
-   * Move a single Item to the collection "destination"
-   * 
-   * @param collectionid
-   * @param id
-   * @throws IOException
-   */
-  public void moveItemTo(String id) throws IOException {
-    moveItemTo(destinationId, id);
   }
 
   /**
@@ -120,7 +123,7 @@ public class MoveItemsBean extends SuperBean {
    * @param collectionId
    * @param ids
    */
-  public void moveTo(String collectionId, List<String> ids) {
+  private void moveItems(String collectionId, List<String> ids) {
     try {
       CollectionImeji col = collectionsForMove.stream()
           .filter(c -> c.getId().toString().equals(collectionId)).findAny().get();
@@ -145,6 +148,63 @@ public class MoveItemsBean extends SuperBean {
       BeanHelper.error("Error moving items " + e.getMessage());
       LOGGER.error("Error moving items ", e);
     }
+  }
+
+  /**
+   * Move a single Item to the collection
+   * 
+   * @param targetId
+   * @param id
+   * @throws IOException
+   */
+  public void moveItem(String id, String targetId) throws IOException {
+    moveItems(targetId, Arrays.asList(id));
+    redirect(getNavigation().getCollectionUrl() + ObjectHelper.getId(URI.create(targetId))
+        + "/item/" + ObjectHelper.getId(URI.create(id)));
+  }
+
+  /**
+   * Move the collection as child of the target collection
+   * 
+   * @param collectionId
+   * @param targetCollectionId
+   */
+  private void moveCollection(String collectionId, String targetCollectionId) {
+    CollectionImeji target = collectionsForMove.stream()
+        .filter(c -> c.getId().toString().equals(targetCollectionId)).findAny().get();
+    CollectionImeji collection = collectionsForMove.stream()
+        .filter(c -> c.getId().toString().equals(collectionId)).findAny().get();
+    try {
+      new CollectionService().moveCollection(collection, target, getSessionUser(),
+          getLicenseEditor().getLicense());
+      BeanHelper.info("Collection moved.");
+    } catch (ImejiException e) {
+      BeanHelper.error("Error moving collection: " + e.getMessage());
+      LOGGER.error("Error moving collection", e);
+    }
+  }
+
+  /**
+   * True if the node is a child of collection id
+   * 
+   * @param node
+   * @param collectionId
+   * @return
+   */
+  public boolean isChildOf(MoveTreeNode node, String collectionId) {
+    return node.hasParent()
+        && hierarchyService.isChildOf(node.getCollection().getId().toString(), collectionId);
+  }
+
+  /**
+   * True if the object being moved is a collection
+   * 
+   * @param objectId
+   * @return
+   */
+  public boolean isCollection(String objectId) {
+    return objectId != null
+        && ObjectHelper.getObjectType(URI.create(objectId)) == ObjectType.COLLECTION;
   }
 
   public void setDestinationId(String colId) {

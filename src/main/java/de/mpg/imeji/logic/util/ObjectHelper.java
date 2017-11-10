@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.j2j.annotations.j2jModel;
@@ -29,7 +28,7 @@ public class ObjectHelper {
   public static String baseUri;
 
   public enum ObjectType {
-    COLLECTION, ITEM, ALBUM, PROFILE, SYSTEM;
+    COLLECTION, ITEM, SYSTEM;
   }
 
   /**
@@ -110,9 +109,6 @@ public class ObjectHelper {
       if (path.contains("/" + type.name().toLowerCase())) {
         return type;
       }
-    }
-    if (StringUtils.containsIgnoreCase(path, ObjectType.PROFILE.name())) {
-      return ObjectType.PROFILE;
     }
     return null;
   }

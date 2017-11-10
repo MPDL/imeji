@@ -39,6 +39,7 @@ import de.mpg.imeji.logic.model.factory.ItemFactory;
 import de.mpg.imeji.logic.model.util.LicenseUtil;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -501,7 +502,13 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public CollectionImeji searchAndSetContainerItems(CollectionImeji c, User user, int limit,
       int offset) {
-    final List<String> newUris = search(c.getId(), null, null, user, limit, 0).getResults();
+    SearchQuery q = null;
+    try {
+      q = SearchQueryParser.parsedecoded("*");
+    } catch (UnprocessableError e) {
+      LOGGER.error("Error parsing q=*", e);
+    }
+    final List<String> newUris = search(c.getId(), q, null, user, limit, 0).getResults();
     c.getImages().clear();
     for (final String s : newUris) {
       c.getImages().add(URI.create(s));

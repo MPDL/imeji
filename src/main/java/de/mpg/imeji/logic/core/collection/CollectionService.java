@@ -13,6 +13,7 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.facade.MoveFacade;
+import de.mpg.imeji.logic.core.facade.WorkflowFacade;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.events.Message;
 import de.mpg.imeji.logic.events.Message.MessageType;
@@ -185,26 +186,22 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
    */
   public void release(CollectionImeji collection, User user, License defaultLicense)
       throws ImejiException {
-    final ItemService itemController = new ItemService();
-    isLoggedInUser(user);
-
-    if (collection == null) {
-      throw new NotFoundException("collection object does not exists");
-    }
-
-    prepareRelease(collection, user);
-    final List<String> itemUris =
-        itemController.search(collection.getId(), null, null, user, -1, 0).getResults();
-
-    if (hasImageLocked(itemUris, user)) {
-      throw new UnprocessableError("Collection has locked items: can not be released");
-    } else if (itemUris.isEmpty()) {
-      throw new UnprocessableError("An empty collection can not be released!");
-    } else {
-      final List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
-      itemController.release(items, user, defaultLicense);
-      update(collection, user);
-    }
+    new WorkflowFacade().release(collection, user, defaultLicense);
+    /*
+     * final ItemService itemController = new ItemService(); isLoggedInUser(user);
+     * 
+     * if (collection == null) { throw new NotFoundException("collection object does not exists"); }
+     * 
+     * prepareRelease(collection, user); final List<String> itemUris =
+     * itemController.search(collection.getId(), null, null, user, -1, 0).getResults();
+     * 
+     * if (hasImageLocked(itemUris, user)) { throw new
+     * UnprocessableError("Collection has locked items: can not be released"); } else if
+     * (itemUris.isEmpty()) { throw new
+     * UnprocessableError("An empty collection can not be released!"); } else { final List<Item>
+     * items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
+     * itemController.release(items, user, defaultLicense); update(collection, user); }
+     */
   }
 
   /**

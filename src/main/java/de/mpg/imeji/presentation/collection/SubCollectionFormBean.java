@@ -1,5 +1,6 @@
 package de.mpg.imeji.presentation.collection;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.faces.bean.ManagedBean;
@@ -32,13 +33,15 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
    * Create a subcollection with the name set in the bean into the parent collection
    * 
    * @param parent
+   * @throws IOException
    */
-  public void create(CollectionImeji parent) {
+  public void create(CollectionImeji parent) throws IOException {
     try {
       collectionService.create(ImejiFactory.newCollection().setTitle(name)
           .setPerson(getSessionUser().getPerson()).setCollection(parent.getId().toString()).build(),
           getSessionUser());
       BeanHelper.info("Subcollection created");
+      reload();
     } catch (ImejiException e) {
       BeanHelper.info("Error creating Subcollection: " + e.getMessage());
       LOGGER.error("Error creating Subcollection", e);

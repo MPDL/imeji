@@ -136,7 +136,8 @@ public class UserGroupBean extends SuperBean implements Serializable {
    *
    * @throws IOException
    */
-  private void reload() throws IOException {
+  @Override
+  public void reload() throws IOException {
     redirect(getNavigation().getApplicationUrl() + "usergroup?groupId=" + userGroup.getId());
   }
 

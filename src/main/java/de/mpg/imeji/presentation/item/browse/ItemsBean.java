@@ -410,7 +410,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   public void selectAll() {
     for (final ThumbnailBean bean : getCurrentPartList()) {
       if (!(sessionBean.getSelected().contains(bean.getUri().toString()))
-          && !bean.getStatus().equals(Status.WITHDRAWN.toString())) {
+          && !bean.getStatus().equals(Status.WITHDRAWN.toString()) && !bean.isCollection()) {
         sessionBean.getSelected().add(bean.getUri().toString());
         bean.setSelected(true);
       }

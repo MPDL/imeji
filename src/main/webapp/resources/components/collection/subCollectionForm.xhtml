@@ -22,7 +22,7 @@
 					</button>
 			 		<h:commandButton id="btnCreateSubcollection"  action="#{SubCollectionFormBean.create(cc.attrs.parentCollection)}"  value="#{lbl.add_subcollection}" 
 			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null}"/>
-			 		<h:commandButton id="btnEditSubcollection"  action="#{SubCollectionFormBean.edit(collection)}" value="#{lbl.edit_subcollection}" 
+			 		<h:commandButton id="btnEditSubcollection"  action="#{SubCollectionFormBean.edit(cc.attrs.collection)}" value="#{lbl.edit_subcollection}" 
 			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection != null}"/>
 				</div>
 			</h:form>

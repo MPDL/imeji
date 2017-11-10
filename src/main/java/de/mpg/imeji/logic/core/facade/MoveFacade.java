@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.core.facade;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +11,7 @@ import com.google.common.collect.ImmutableMap;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.batch.messageAggregations.NotifyUsersOnFileUploadAggregation;
 import de.mpg.imeji.logic.core.collection.CollectionService;
@@ -18,6 +20,7 @@ import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.events.Message;
 import de.mpg.imeji.logic.events.Message.MessageType;
 import de.mpg.imeji.logic.events.MessageService;
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
@@ -39,8 +42,8 @@ import de.mpg.imeji.logic.workflow.WorkflowValidator;
  * @author saquet
  *
  */
-public class MoveFacade {
-
+public class MoveFacade implements Serializable {
+  private static final long serialVersionUID = 6158359006910656203L;
   private final ElasticIndexer collectionIndexer =
       new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticTypes.folders, ElasticService.ANALYSER);
   private final ElasticIndexer itemsIndexer =
@@ -80,8 +83,8 @@ public class MoveFacade {
     }
     // Move the items
     for (Item item : items) {
-      ImejiSPARQL.execUpdate(
-          JenaCustomQueries.updateItemCollection(item.getCollection().toString(), colUri));
+      ImejiSPARQL.execUpdate(JenaCustomQueries.updateCollection(item.getId().toString(),
+          item.getCollection().toString(), colUri));
       itemsIndexer.updatePartial(item.getId().toString(),
           new ElasticForlderPartObject(colUri.toString()));
     }
@@ -104,16 +107,17 @@ public class MoveFacade {
   public void moveCollection(CollectionImeji collection, CollectionImeji parent, User user,
       License license) throws ImejiException {
     checkIfUserCanMoveObjectsToCollection(Arrays.asList(collection), collection, user);
+    checkIfCollectionCanBeMovedToNewParent(collection, parent);
     if (parent.getStatus().equals(Status.RELEASED)) {
       // release the collection
       collectionService.release(collection, user, license);
     }
     // Move collection
     ImejiSPARQL.execUpdate(JenaCustomQueries.updateCollectionParent(collection.getId().toString(),
+        collection.getCollection() != null ? collection.getCollection().toString() : null,
         parent.getId().toString()));
     collectionIndexer.updatePartial(collection.getId().toString(),
         new ElasticForlderPartObject(parent.getId().toString()));
-    collectionIndexer.commit();
     messageService.add(createMessageMoveCollection(collection, parent));
   }
 
@@ -147,6 +151,20 @@ public class MoveFacade {
   }
 
   /**
+   * Throw an Error if the new Parent is a child of the moved collection
+   * 
+   * @param c
+   * @param newParent
+   * @throws UnprocessableError
+   */
+  private void checkIfCollectionCanBeMovedToNewParent(CollectionImeji c, CollectionImeji newParent)
+      throws UnprocessableError {
+    if (new HierarchyService().isChildOf(newParent.getId().toString(), c.getId().toString())) {
+      throw new UnprocessableError(newParent.getTitle() + " is a child of " + c.getTitle());
+    }
+  }
+
+  /**
    * Filter out items with a file which already exists in the target collection<br/>
    * 
    * @param items
@@ -157,7 +175,6 @@ public class MoveFacade {
   private List<Item> filterAlreadyExists(List<Item> items, CollectionImeji collection)
       throws ImejiException {
     List<ContentVO> l = retrieveContentBatchLazy(items);
-    System.out.println(l.size());
     final List<ContentVO> contents = retrieveContentBatchLazy(items).stream()
         .filter(content -> !itemService.checksumExistsInCollection(collection.getId(),
             content.getChecksum()))

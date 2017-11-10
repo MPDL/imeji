@@ -70,6 +70,15 @@ public class SuperBean implements Serializable {
   }
 
   /**
+   * Reload current Page
+   * 
+   * @throws IOException
+   */
+  protected void reload() throws IOException {
+    redirect(getCurrentPage().getCompleteUrl());
+  }
+
+  /**
    * @return the navigation
    */
   public Navigation getNavigation() {

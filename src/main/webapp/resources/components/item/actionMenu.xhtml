@@ -22,9 +22,9 @@
 		</a>
 		<ui:fragment rendered="#{Auth.delete and WorkflowBean.delete(cc.attrs.itemBean.item)}">
 			<h:form>
-				<h:commandLink id="moveItems" styleClass="imj_menuButton imj_overlayMenu" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemBean.item.collection.toString())}" onclick="openDialog('moveItemsDialog');">
+				<h:commandLink id="moveItems" styleClass="imj_menuButton imj_overlayMenu" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemBean.item.collection.toString())}" onclick="openDialog('moveDialog');">
 					<span class="fa fa-hand-o-right"/> <span class="imj_headerEntry">#{lbl.move}</span>
-					<f:ajax render=":actionItem:moveItemsComponent:moveItemsForm"/>
+					<f:ajax render=":actionItem:move:form"/>
 				</h:commandLink>
 			</h:form>
 		</ui:fragment>
@@ -34,7 +34,7 @@
 		<h:outputLink value="#" onclick="openDialog('withdrawItem');" styleClass="imj_menuButton imj_overlayMenu"  rendered="#{Auth.delete and WorkflowBean.withdraw(itemBean.item)}">
 			<span class="fa fa-ban"/> <span class="imj_headerEntry">#{lbl.withdraw}</span>
 		</h:outputLink>
-		<item:move id="moveItemsComponent" itemId="#{cc.attrs.itemBean.item.id.toString()}" colId="#{cc.attrs.itemBean.item.collection.toString()}" parentId=":actionItem:moveItemsComponent" hasLicense="#{not empty cc.attrs.itemBean.image.licenses}"/>
+		<dialog:move id="move" objectId="#{cc.attrs.itemBean.item.id.toString()}" colId="#{cc.attrs.itemBean.item.collection.toString()}" parentId=":actionItem:move" hasLicense="#{not empty cc.attrs.itemBean.image.licenses}"/>
 		<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteItem" />
 		<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawItem"/>	
 	</composite:implementation>

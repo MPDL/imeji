@@ -36,9 +36,9 @@
 				</a>
 				<ui:fragment rendered="#{cc.attrs.itemsBean.type == 'COLLECTION_ITEMS' and WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
 					<h:form>
-						<h:commandLink id="moveItems" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemsBean.collection.id.toString())}" onclick="openDialog('moveItemsDialog');"  class="imj_menuButton imj_overlayMenu">
+						<h:commandLink id="moveItems" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemsBean.collection.id.toString())}" onclick="openDialog('moveDialog');"  class="imj_menuButton imj_overlayMenu">
 							<span class="fa fa-hand-o-right"/> <span>#{lbl.move}</span>
-							<f:ajax render=":actionSelectedItems:moveItemsComponent:moveItemsForm"/>
+							<f:ajax render=":actionSelectedItems:move:form"/>
 						</h:commandLink>
 					</h:form>
 				</ui:fragment>
@@ -56,6 +56,6 @@
 		</ui:fragment>
 		<dialog:confirmationReasonedDialog submitAction="withdrawSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_withdraw_selected_item}?" submitLabel="#{lbl.withdraw_selected}" dialogId="withdrawSelectedItems"/>
 		<dialog:confirmationDialog submitAction="deleteSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_delete_selected_item}?" submitLabel="#{lbl.delete_selectedImages}" dialogId="deleteSelectedItems" />
-		<item:move id="moveItemsComponent" colId="#{cc.attrs.itemsBean.collection.id.toString()}" parentId=":actionSelectedItems:moveItemsComponent" />
+		<dialog:move id="move"  colId="#{cc.attrs.itemsBean.collection.id.toString()}" parentId=":actionSelectedItems:move" />
 	</composite:implementation>
 </html>

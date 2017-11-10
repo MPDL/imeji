@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
+
 /**
  * Methods related to {@link Date}
  *
@@ -100,6 +102,16 @@ public class DateHelper {
    */
   public static String printDateWithTime(Calendar c) {
     return formatDateAndTime.get().format(c.getTime());
+  }
+
+  /**
+   * Print a Calendar as formatted to jena
+   * 
+   * @param c
+   * @return
+   */
+  public static String printJenaDate(Calendar c) {
+    return new XSDDateTime(c).toString();
   }
 
   /**

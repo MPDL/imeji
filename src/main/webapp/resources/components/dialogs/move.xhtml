@@ -1,0 +1,53 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:item="http://java.sun.com/jsf/composite/components/item"
+	xmlns:imeji="http://java.sun.com/jsf/composite/components"
+	xmlns:license="http://java.sun.com/jsf/composite/components/license">
+	
+	<composite:interface>
+		<composite:attribute name="colId" required="true" type="java.lang.Object"/>
+		<composite:attribute name="parentId" required="true" type="java.lang.Object"/>
+		<composite:attribute name="objectId" required="false" type="java.lang.Object"/>
+		<composite:attribute name="hasLicense" default="false" required="false" type="java.lang.Boolean"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		<div id="moveDialog" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText" style="display:none;">
+			<h:form id="form">
+				<ui:fragment rendered="#{MoveItemsBean.destinationId == null}">
+					<div style="margin-bottom: 2em;">
+						<span class="fa fa-globe fa-size-3" style="visibility: hidden">&#160;</span>
+						<span>#{lbl.move_to_collection}</span>
+						<a href="#" style="float:right" onclick="closeDialog('moveDialog');" class="imj_cancelButton">
+							#{lbl.cancel}
+						</a>
+					</div>
+					<div>
+						<span class="fa fa-globe fa-size-3" style="visibility: hidden">&#160;</span>
+						<h:inputText value="#{MoveItemsBean.query}" html5:placeholder="#{lbl.filter}">
+							<f:ajax render="#{cc.attrs.parentId}:moveItemsForm:list" event="keyup" listener="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.colId)}"/>
+						</h:inputText>
+					</div>
+					<div id="tree">
+						<imeji:moveTree tree="#{MoveItemsBean.tree}" colId="#{cc.attrs.colId}" objectId="#{cc.attrs.objectId}" hasLicense="#{cc.attrs.hasLicense}"/>
+					</div>
+				</ui:fragment>
+				<ui:fragment rendered="#{MoveItemsBean.destinationId != null}">
+					<span class="fa fa-exclamation-triangle"/>
+					#{lbl.move_collection_released}
+					<br/><br/>
+					<license:licenseEditor licenseEditor="#{MoveItemsBean.licenseEditor}" containerId="#{cc.attrs.parentId}:moveItemsForm"/>
+					<br/>
+					<a href="" onclick="closeDialog('moveItemsDialog');" class="imj_cancelButton">
+						#{lbl.cancel}
+					</a>
+					<h:commandButton class="imj_submitButton" value="#{lbl.move}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>	
+				</ui:fragment>
+			</h:form>
+		</div>
+	</composite:implementation>
+</html>

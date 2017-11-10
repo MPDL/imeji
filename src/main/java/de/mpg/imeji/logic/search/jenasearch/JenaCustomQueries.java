@@ -13,6 +13,8 @@ import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
+import de.mpg.imeji.util.DateHelper;
 
 /**
  * SPARQL queries for imeji
@@ -271,12 +273,38 @@ public class JenaCustomQueries {
    * @param newUri
    * @return
    */
-  public static final String updateCollectionParent(String oldUri, String newUri) {
-    return "WITH <http://imeji.org/collection> "
-        + "DELETE {?s <http://imeji.org/terms/collection>  <" + oldUri + ">} "
-        + "INSERT {?s <http://imeji.org/terms/collection>  <" + newUri + ">} "
-        + "USING <http://imeji.org/collection> "
-        + " WHERE {?s <http://imeji.org/terms/collection>  <" + oldUri + ">}";
+  public static final String updateCollectionParent(String id, String oldUri, String newUri) {
+    String q = "WITH <http://imeji.org/collection> ";
+    if (oldUri != null) {
+      q += "DELETE {<" + id + "> <http://imeji.org/terms/collection>  <" + oldUri + ">} ";
+    }
+    q += "INSERT {<" + id + "> <http://imeji.org/terms/collection>  <" + newUri + ">} "
+        + "USING <http://imeji.org/collection> WHERE {<" + id
+        + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://imeji.org/terms/collection>}";
+    return q;
+  }
+
+  /**
+   * Update Query to update a collection
+   * 
+   * @param id
+   * @return
+   */
+  public static final String updateReleaseObject(String id) {
+    String model =
+        ObjectHelper.getObjectType(URI.create(id)) == ObjectType.ITEM ? "item" : "collection";
+    String q = "WITH <http://imeji.org/" + model + "> ";
+    q += " DELETE{<" + id
+        + "> <http://imeji.org/terms/status> <http://imeji.org/terms/status#PENDING>} ";
+    q += "INSERT{<" + id
+        + "> <http://imeji.org/terms/status> <http://imeji.org/terms/status#RELEASED> . <" + id
+        + "> <http://purl.org/dc/terms/issued> \""
+        + DateHelper.printJenaDate(DateHelper.getCurrentDate())
+        + "\"^^<http://www.w3.org/2001/XMLSchema#dateTime>} ";
+    q += "USING <http://imeji.org/" + model + "> WHERE {<" + id
+        + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://imeji.org/terms/" + model
+        + ">}";
+    return q;
   }
 
   public static final String selectAllSubcollections() {
@@ -290,11 +318,12 @@ public class JenaCustomQueries {
    * @param newUri
    * @return
    */
-  public static final String updateItemCollection(String oldUri, String newUri) {
-    return "WITH <http://imeji.org/item> " + "DELETE {?s <http://imeji.org/terms/collection>  <"
-        + oldUri + ">} " + "INSERT {?s <http://imeji.org/terms/collection>  <" + newUri + ">} "
-        + "USING <http://imeji.org/item> " + " WHERE {?s <http://imeji.org/terms/collection>  <"
-        + oldUri + ">}";
+  public static final String updateCollection(String id, String oldUri, String newUri) {
+    return "WITH <http://imeji.org/item> " + "DELETE {<" + id
+        + "> <http://imeji.org/terms/collection>  <" + oldUri + ">} " + "INSERT {<" + id
+        + "> <http://imeji.org/terms/collection>  <" + newUri + ">} "
+        + "USING <http://imeji.org/item> " + " WHERE {<" + id
+        + "> <http://imeji.org/terms/collection>  <" + oldUri + ">}";
   }
 
   /**
