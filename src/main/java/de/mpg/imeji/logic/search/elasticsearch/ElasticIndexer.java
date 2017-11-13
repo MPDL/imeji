@@ -285,7 +285,11 @@ public class ElasticIndexer implements SearchIndexer {
     if (obj instanceof ContentVO) {
       return ((ContentVO) obj).getId().toString();
     }
-    return null;
+    try {
+      return (String) obj.getClass().getMethod("getId").invoke(obj);
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   /**
@@ -314,5 +318,28 @@ public class ElasticIndexer implements SearchIndexer {
         LOGGER.error("Error index partial update ", e);
       }
     }
+  }
+
+
+  /**
+   * Bulk Partial update
+   * 
+   * @param l
+   */
+  public void partialUpdateIndexBatch(List<?> l) {
+    if (l.isEmpty()) {
+      return;
+    }
+    try {
+      final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
+      for (final Object obj : l) {
+        bulkRequest.add(ElasticService.getClient().prepareUpdate(index, dataType, getId(obj))
+            .setDoc(toJson(obj, dataType, index)));
+      }
+      bulkRequest.get();
+    } catch (final Exception e) {
+      LOGGER.error("error indexing object ", e);
+    }
+    commit();
   }
 }

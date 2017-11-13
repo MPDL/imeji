@@ -32,6 +32,8 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.collection.tree.Tree;
+import de.mpg.imeji.presentation.collection.tree.Node;
 import de.mpg.imeji.presentation.license.LicenseEditor;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -42,7 +44,7 @@ public class MoveItemsBean extends SuperBean {
   private static final long serialVersionUID = 2230148128355260199L;
   private static final Logger LOGGER = Logger.getLogger(MoveItemsBean.class);
   private List<CollectionImeji> collectionsForMove = new ArrayList<>();
-  private MoveTree tree;
+  private Tree tree;
   @ManagedProperty(value = "#{SessionBean}")
   private SessionBean sessionBean;
   private String query = "";
@@ -68,7 +70,7 @@ public class MoveItemsBean extends SuperBean {
     collectionsForMove =
         new CollectionService().searchAndRetrieve(factory.build(), null, getSessionUser(), -1, 0)
             .stream().collect(Collectors.toList());
-    tree = new MoveTree(collectionsForMove);
+    tree = new Tree(collectionsForMove);
   }
 
   /**
@@ -191,7 +193,7 @@ public class MoveItemsBean extends SuperBean {
    * @param collectionId
    * @return
    */
-  public boolean isChildOf(MoveTreeNode node, String collectionId) {
+  public boolean isChildOf(Node node, String collectionId) {
     return node.hasParent()
         && hierarchyService.isChildOf(node.getCollection().getId().toString(), collectionId);
   }
@@ -260,7 +262,7 @@ public class MoveItemsBean extends SuperBean {
     this.licenseEditor = licenseEditor;
   }
 
-  public MoveTree getTree() {
+  public Tree getTree() {
     return tree;
   }
 }

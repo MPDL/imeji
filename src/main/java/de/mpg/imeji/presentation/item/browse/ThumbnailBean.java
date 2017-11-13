@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.item;
+package de.mpg.imeji.presentation.item.browse;
 
 import java.io.Serializable;
 import java.net.URI;

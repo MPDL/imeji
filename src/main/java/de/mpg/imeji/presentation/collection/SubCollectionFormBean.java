@@ -43,7 +43,27 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
       BeanHelper.info("Subcollection created");
       reload();
     } catch (ImejiException e) {
-      BeanHelper.info("Error creating Subcollection: " + e.getMessage());
+      BeanHelper.error("Error creating Subcollection: " + e.getMessage());
+      LOGGER.error("Error creating Subcollection", e);
+    }
+  }
+
+  /**
+   * Create a Subcollection and then redirect to the upload link
+   * 
+   * @param parent
+   * @throws IOException
+   */
+  public void createAndUpload(CollectionImeji parent) throws IOException {
+    try {
+      CollectionImeji subcollection = collectionService.create(
+          ImejiFactory.newCollection().setTitle(name).setPerson(getSessionUser().getPerson())
+              .setCollection(parent.getId().toString()).build(),
+          getSessionUser());
+      BeanHelper.info("Subcollection created");
+      redirect(getNavigation().getCollectionUrl() + subcollection.getIdString() + "?showUpload=1");
+    } catch (ImejiException e) {
+      BeanHelper.error("Error creating Subcollection: " + e.getMessage());
       LOGGER.error("Error creating Subcollection", e);
     }
   }

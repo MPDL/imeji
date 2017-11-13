@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.facade.MoveFacade;
@@ -223,22 +222,18 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
    * @throws ImejiException
    */
   public void withdraw(CollectionImeji coll, User user) throws ImejiException {
-    final ItemService itemController = new ItemService();
-    isLoggedInUser(user);
-
-    if (coll == null) {
-      throw new NotFoundException("Collection does not exists");
-    }
-    prepareWithdraw(coll, null);
-    final List<String> itemUris =
-        itemController.search(coll.getId(), null, null, user, -1, 0).getResults();
-    if (hasImageLocked(itemUris, user)) {
-      throw new UnprocessableError("Collection has locked images: can not be withdrawn");
-    } else {
-      final List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
-      itemController.withdraw(items, coll.getDiscardComment(), user);
-      update(coll, user);
-    }
+    new WorkflowFacade().withdraw(coll, coll.getDiscardComment(), user);
+    /*
+     * final ItemService itemController = new ItemService(); isLoggedInUser(user);
+     * 
+     * if (coll == null) { throw new NotFoundException("Collection does not exists"); }
+     * prepareWithdraw(coll, null); final List<String> itemUris =
+     * itemController.search(coll.getId(), null, null, user, -1, 0).getResults(); if
+     * (hasImageLocked(itemUris, user)) { throw new
+     * UnprocessableError("Collection has locked images: can not be withdrawn"); } else { final
+     * List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
+     * itemController.withdraw(items, coll.getDiscardComment(), user); update(coll, user); }
+     */
   }
 
   /**

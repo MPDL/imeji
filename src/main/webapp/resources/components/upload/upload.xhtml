@@ -59,11 +59,13 @@
 					},
 					UploadProgress: function(up, file) {
 						addUploadStatusMessage(uploadedFiles,totalFiles,file.name,file.percent);
+						$( ".progressBar" ).css("width", up.total.percent + "%")
 					},
 					UploadComplete: function(up, files) {
 						document.getElementById('#{cc.attrs.updateButtonId}').click();
 						addUploadStatusMessageDone(uploadedFiles);
 						uploader.init();
+						closeUploader();
 					},
 					Error: function(up, err) {
 				    	addUploadStatusMessage(uploadedFiles,totalFiles);
@@ -76,11 +78,9 @@
 				}
 			});
 			uploader.init();
-			closeSuccessMessage();
 			function addUploadStatusMessage(uploaded, total, filename, percent){
-				$(".uploadPanelContent").html('<pre>#{lbl.uploading} ' + uploaded + ' / ' + total + ' #{lbl.files}.</pre>');
 				if(filename != null){
-					$(".uploadPanelContent").html('<pre>#{lbl.uploading} ' + uploaded + ' / ' + total + ' #{lbl.files}. \n\n' +filename + '(' + percent + '%)</pre>');
+					$(".uploadPanelContent").html('<pre>' + filename + '</pre>');
 				}
 			}
 			function addUploadStatusMessageDone(uploaded){
@@ -88,13 +88,22 @@
 				if(uploaded != '0'){
 					document.getElementById('Header:imj_pageMessageArea').innerHTML += '<div id="uploadStatus" class="imj_message imj_messageSuccess" style="display=block;"><span class="fa fa-check" style="margin-right: 10px;"/>' + uploaded + ' #{lbl.files} #{lbl.uploaded}.<span class="imj_messageAreaCloseBtn"  onclick="this.parentElement.style.display=\'none\'; setTimeout(function() {$(this).fadeOut(1000); }, 2000);">x</span><span id="uploadStatusContent"></span></div>';
 				}
-
 			}
 			function addUploadErrorMessage(filename, error){
 				document.getElementById('Header:imj_pageMessageArea').innerHTML += '<div  class="imj_message imj_messageError"><span class="fa fa-exclamation" style="margin-right: 10px;"/><span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display=\'none\';">x</span>'+ filename + ' #{lbl.not_uploaded}: ' + error +'</div>';
 			}
-			
-			
+			function stopUploader(){
+				uploader.stop();
+				document.getElementById('#{cc.attrs.updateButtonId}').click();
+				addUploadStatusMessageDone(uploadedFiles);
+				uploader.init();
+				closeUploader();
+			}
+			function closeUploader(){
+				window.history.pushState("","", window.location.href.replace('showUpload=1', ''));
+				closeDialog('uploadDialog');
+				console.log('close');
+			}
 		</script>
 		
 	</composite:implementation>

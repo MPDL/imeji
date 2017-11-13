@@ -5,6 +5,7 @@
 	xmlns:composite="http://java.sun.com/jsf/composite"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:item="http://java.sun.com/jsf/composite/components/item"
+	xmlns:collection="http://java.sun.com/jsf/composite/components/collection"
 	xmlns:imeji="http://java.sun.com/jsf/composite/components"
 	xmlns:license="http://java.sun.com/jsf/composite/components/license">
 	
@@ -33,7 +34,7 @@
 						</h:inputText>
 					</div>
 					<div id="tree">
-						<imeji:moveTree tree="#{MoveItemsBean.tree}" colId="#{cc.attrs.colId}" objectId="#{cc.attrs.objectId}" hasLicense="#{cc.attrs.hasLicense}"/>
+						<collection:tree tree="#{MoveItemsBean.tree}" colId="#{cc.attrs.colId}" objectId="#{cc.attrs.objectId}" hasLicense="#{cc.attrs.hasLicense}"/>
 					</div>
 				</ui:fragment>
 				<ui:fragment rendered="#{MoveItemsBean.destinationId != null}">

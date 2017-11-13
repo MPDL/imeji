@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.upload;
+package de.mpg.imeji.presentation.item.upload;
 
 import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS.AND;
 import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS.OR;
@@ -15,13 +15,14 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
-import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.Grant.GrantType;
+import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.collection.tree.Tree;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 @ManagedBean(name = "UploadBean")
@@ -31,6 +32,7 @@ public class UploadBean extends SuperBean {
   private static final Logger LOGGER = Logger.getLogger(UploadBean.class);
   private List<CollectionImeji> collections = new ArrayList<>();
   private String query = "";
+  private Tree tree;
 
   public UploadBean() {
 
@@ -62,8 +64,9 @@ public class UploadBean extends SuperBean {
       factory.addElement(new SearchPair(SearchFields.role, GrantType.EDIT.name().toLowerCase()),
           AND);
     }
-    setCollections(
-        new CollectionService().searchAndRetrieve(factory.build(), null, getSessionUser(), -1, 0));
+    collections =
+        new CollectionService().searchAndRetrieve(factory.build(), null, getSessionUser(), -1, 0);
+    tree = new Tree(collections);
   }
 
   /**
@@ -92,6 +95,20 @@ public class UploadBean extends SuperBean {
    */
   public void setQuery(String query) {
     this.query = query;
+  }
+
+  /**
+   * @return the tree
+   */
+  public Tree getTree() {
+    return tree;
+  }
+
+  /**
+   * @param tree the tree to set
+   */
+  public void setTree(Tree tree) {
+    this.tree = tree;
   }
 
 }

@@ -1,12 +1,14 @@
 package de.mpg.imeji.logic.search.jenasearch;
 
 import java.net.URI;
+import java.util.Calendar;
 
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.License;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
@@ -14,6 +16,7 @@ import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.util.DateHelper;
 
 /**
@@ -285,12 +288,12 @@ public class JenaCustomQueries {
   }
 
   /**
-   * Update Query to update a collection
+   * Update Query to release a collection or an item
    * 
    * @param id
    * @return
    */
-  public static final String updateReleaseObject(String id) {
+  public static final String updateReleaseObject(String id, Calendar date) {
     String model =
         ObjectHelper.getObjectType(URI.create(id)) == ObjectType.ITEM ? "item" : "collection";
     String q = "WITH <http://imeji.org/" + model + "> ";
@@ -298,13 +301,63 @@ public class JenaCustomQueries {
         + "> <http://imeji.org/terms/status> <http://imeji.org/terms/status#PENDING>} ";
     q += "INSERT{<" + id
         + "> <http://imeji.org/terms/status> <http://imeji.org/terms/status#RELEASED> . <" + id
-        + "> <http://purl.org/dc/terms/issued> \""
-        + DateHelper.printJenaDate(DateHelper.getCurrentDate())
+        + "> <http://purl.org/dc/terms/issued> \"" + DateHelper.printJenaDate(date)
         + "\"^^<http://www.w3.org/2001/XMLSchema#dateTime>} ";
     q += "USING <http://imeji.org/" + model + "> WHERE {<" + id
         + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://imeji.org/terms/" + model
         + ">}";
     return q;
+  }
+
+
+  /**
+   * Update Query to withdraw a collection or an item
+   * 
+   * @param id
+   * @return
+   */
+  public static final String updateWitdrawObject(String id, Calendar date, String comment) {
+    String model =
+        ObjectHelper.getObjectType(URI.create(id)) == ObjectType.ITEM ? "item" : "collection";
+    String q = "WITH <http://imeji.org/" + model + "> ";
+    q += " DELETE{<" + id
+        + "> <http://imeji.org/terms/status> <http://imeji.org/terms/status#RELEASED>} ";
+    q += "INSERT{<" + id
+        + "> <http://imeji.org/terms/status> <http://imeji.org/terms/status#WITHDRAWN> . <" + id
+        + "> <http://purl.org/dc/terms/issued> \"" + DateHelper.printJenaDate(date)
+        + "\"^^<http://www.w3.org/2001/XMLSchema#dateTime> . <" + id
+        + "> <http://imeji.org/terms/discardComment> \"" + comment
+        + "\"^^<http://www.w3.org/2001/XMLSchema#string> } ";
+    q += "USING <http://imeji.org/" + model + "> WHERE {<" + id
+        + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://imeji.org/terms/" + model
+        + ">}";
+    return q;
+  }
+
+
+  /**
+   * Add a license to an item
+   * 
+   * @param itemId
+   * @param l
+   * @return
+   */
+  public static final String updateAddLicensetoItem(String itemId, License l) {
+    final String licenseId = itemId + "/license@pos0";
+    return "WITH <http://imeji.org/item> " + "INSERT {<" + itemId
+        + "> <http://imeji.org/terms/license> <" + licenseId + "> . <" + licenseId
+        + ">  <http://imeji.org/terms/name> \"" + l.getName()
+        + "\"^^<http://www.w3.org/2001/XMLSchema#string> "
+        + (StringHelper.isNullOrEmptyTrim(l.getLabel()) ? ""
+            : " . <" + licenseId + ">  <http://imeji.org/terms/label> \"" + l.getLabel()
+                + "\"^^<http://www.w3.org/2001/XMLSchema#string> ")
+        + (StringHelper.isNullOrEmptyTrim(l.getUrl()) ? ""
+            : " . <" + licenseId + ">  <http://imeji.org/terms/url> \"" + l.getUrl()
+                + "\"^^<http://www.w3.org/2001/XMLSchema#string> ")
+        + " . <" + licenseId + ">  <http://imeji.org/terms/start>" + System.currentTimeMillis()
+        + " . <" + licenseId + ">  <http://imeji.org/terms/start> -1} "
+        + "USING <http://imeji.org/item> " + "WHERE{ <" + itemId
+        + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://imeji.org/terms/item>}";
   }
 
   public static final String selectAllSubcollections() {

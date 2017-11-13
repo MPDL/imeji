@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:imeji="http://java.sun.com/jsf/composite/components"
+	xmlns:item="http://java.sun.com/jsf/composite/components/item"
+	xmlns:collection="http://java.sun.com/jsf/composite/components/collection"
+	xmlns:license="http://java.sun.com/jsf/composite/components/license">
+	<cc:interface >
+		<cc:attribute name="tree"/>
+		<cc:attribute name="colId"/>
+		<cc:attribute name="objectId"/>
+		<cc:attribute name="hasLicense"/>
+		<cc:attribute name="upload" default="false" type="java.lang.Boolean"/>
+	</cc:interface>
+	<cc:implementation>
+		<ui:repeat var="node" value="#{cc.attrs.tree.nodes}">
+			<ui:fragment rendered="#{!cc.attrs.upload}">
+				<ui:param name="disabled" value="#{cc.attrs.colId == node.collection.id.toString() || (MoveItemsBean.isCollection(cc.attrs.objectId) and MoveItemsBean.isChildOf(node, cc.attrs.colId))}"/>
+			</ui:fragment>
+			<div class="collectionTreeNode" style="margin-left: #{node.depth *2}em;font-size: 0.8em; padding: 1px;">
+				<span class="fa #{node.collection.status == 'RELEASED' ? 'fa-globe' : 'fa-lock'}" style="#{node.hasParent() ? 'display: none;' : ''}"/>
+				<span class="fa fa-globe fa-folder-open-o" style="#{node.hasParent() ? '' : 'display:none'}"/>
+				<ui:fragment rendered="#{!cc.attrs.upload}">
+					<ui:fragment rendered="#{node.collection.status == 'RELEASED' and !cc.attrs.hasLicense}">
+						<h:commandLink value="#{node.collection.title}"  disabled="#{disabled}" action="#{MoveItemsBean.setDestinationId(node.collection.id.toString())}">
+							<f:ajax render="@form"/>
+						</h:commandLink>
+					</ui:fragment>
+					<ui:fragment rendered="#{node.collection.status == 'PENDING' or cc.attrs.hasLicense}">
+						<h:commandLink disabled="#{disabled}" value="#{node.collection.title}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId, node.collection.id.toString())}"  onclick="startLoader();closeDialog('moveDialog');"/>	
+					</ui:fragment>
+				</ui:fragment>
+				<ui:fragment rendered="#{cc.attrs.upload}">
+					<a href="#{Navigation.collectionUrl}#{node.collection.idString}?showUpload=1" title="#{lbl.upload_here}">#{node.collection.title}</a>
+					<a href="#" title="#{lbl.upload_in_subcollection}" onclick="openDialog('addSubCollection#{node.collection.idString}');">
+						<span class="fa fa-plus"/>
+					</a>
+					<collection:subCollectionForm dialogId="addSubCollection#{node.collection.idString}" parentCollection="#{node.collection}" upload="true"/>
+				</ui:fragment>
+			</div>
+		</ui:repeat>
+	</cc:implementation>
+</html>

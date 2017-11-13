@@ -20,7 +20,7 @@
 					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":uploadDialog:uploadForm" render=":uploadDialog:uploadForm:uploader:licenseVariables"/>
 				</ui:fragment>
 				<div class="uploadDialogHeadArea imj_submitPanel">
-					<a id="closeUploadDialog" onclick="closeDialog('uploadDialog');" class="imj_cancelButton">
+					<a id="closeUploadDialog" onclick="closeUploader();" class="imj_cancelButton">
 						#{lbl.cancel}
 					</a>
 					<button id="selectFiles" class="imj_submitButton" style="position: initial !important">
@@ -38,8 +38,11 @@
 		 		<upload:upload id="uploader" browseButtonId="selectFiles" license="#{cc.attrs.bean.licenseEditor.license}" collectionId="#{cc.attrs.colId}" updateButtonId="uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>		
 	 		</h:form>
  		</div>
- 		<div class="uploadPanel" >
- 			<div class="uploadPanelIcon fa fa-rocket fa-size-4" style="float: left; margin-right: -10%; margin-left: 10%; width: 0;"/>
+ 		<div class="uploadPanel">
+ 			<div class="progressBarWrapper">
+ 				<div class="progressBar"/>
+ 				<a href="#" class="fa fa-times-circle-o cancel" onclick="stopUploader();"></a>
+ 			</div>
  			<div class="uploadPanelContent">Uploading</div>
  		</div>
 	</composite:implementation>

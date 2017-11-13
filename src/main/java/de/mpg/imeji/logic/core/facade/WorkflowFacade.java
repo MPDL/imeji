@@ -1,7 +1,10 @@
 package de.mpg.imeji.logic.core.facade;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +19,9 @@ import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.util.LicenseUtil;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
@@ -24,7 +29,11 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.authorization.Authorization;
+import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
+import de.mpg.imeji.util.DateHelper;
 
 /**
  * Facade to Release or Withdraw collections
@@ -38,9 +47,11 @@ public class WorkflowFacade implements Serializable {
   private final WorkflowValidator workflowValidator = new WorkflowValidator();
   private final ElasticIndexer collectionIndexer =
       new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticTypes.folders, ElasticService.ANALYSER);
+  private final ElasticIndexer itemIndexer =
+      new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticTypes.items, ElasticService.ANALYSER);
 
   public void release(CollectionImeji c, User user, License defaultLicense) throws ImejiException {
-    preValidateCollection(c, user, defaultLicense);
+    preValidateRelease(c, user, defaultLicense);
     final List<String> itemIds = getItemIds(c, user);
     preValidateItems(itemIds, user);
     // Create a list with the collectionId, all the subcollectionids and all itemIds
@@ -48,20 +59,62 @@ public class WorkflowFacade implements Serializable {
         new ArrayList<>(new HierarchyService().findAllSubcollections(c.getId().toString()));
     ids.add(c.getId().toString());
     ids.addAll(itemIds);
-    String sparql = ids.stream().map(id -> JenaCustomQueries.updateReleaseObject(id))
+    Calendar now = DateHelper.getCurrentDate();
+    String sparql = ids.stream().map(id -> JenaCustomQueries.updateReleaseObject(id, now))
         .collect(Collectors.joining("; "));
-    System.out.println(sparql);
+    addLicense(c, ids, user, defaultLicense);
     ImejiSPARQL.execUpdate(sparql);
-    /*
-     * ImejiSPARQL.execUpdate(JenaCustomQueries.updateCollectionParent(collection.getId().toString()
-     * , collection.getCollection() != null ? collection.getCollection().toString() : null,
-     * parent.getId().toString())); collectionIndexer.updatePartial(collection.getId().toString(),
-     * new ElasticForlderPartObject(parent.getId().toString()));
-     */
+    collectionIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.COLLECTION).stream()
+        .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
+    itemIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.ITEM).stream()
+        .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
   }
 
-  private void releaseItem(String itemId) {
+  public void withdraw(CollectionImeji c, String comment, User user) throws ImejiException {
+    prevalidateWithdraw(c, comment, user);
+    final List<String> itemIds = getItemIds(c, user);
+    preValidateItems(itemIds, user);
+    // Create a list with the collectionId, all the subcollectionids and all itemIds
+    List<String> ids =
+        new ArrayList<>(new HierarchyService().findAllSubcollections(c.getId().toString()));
+    ids.add(c.getId().toString());
+    ids.addAll(itemIds);
+    Calendar now = DateHelper.getCurrentDate();
+    String sparql = ids.stream().map(id -> JenaCustomQueries.updateWitdrawObject(id, now, comment))
+        .collect(Collectors.joining("; "));
+    ImejiSPARQL.execUpdate(sparql);
+    collectionIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.COLLECTION).stream()
+        .map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment))
+        .collect(Collectors.toList()));
+    itemIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.ITEM).stream()
+        .map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment))
+        .collect(Collectors.toList()));
+  }
 
+  /**
+   * Add License to all items which have'nt one
+   * 
+   * @param c
+   * @param ids
+   * @param user
+   * @param license
+   * @throws ImejiException
+   */
+  private void addLicense(CollectionImeji c, List<String> ids, User user, License license)
+      throws ImejiException {
+    List<Item> items = (List<Item>) new ItemService().retrieveBatchLazy(
+        filterIdsByType(ids, ObjectType.ITEM).stream().collect(Collectors.toList()), -1, 0, user);
+    List<LicensePart> licenseParts =
+        items.stream().filter(item -> LicenseUtil.getActiveLicense(item) == null)
+            .map(item -> new LicensePart(item.getId().toString(), license))
+            .collect(Collectors.toList());
+    if (!licenseParts.isEmpty()) {
+      String sparql =
+          licenseParts.stream().map(p -> JenaCustomQueries.updateAddLicensetoItem(p.id, license))
+              .collect(Collectors.joining("; "));
+      ImejiSPARQL.execUpdate(sparql);
+      itemIndexer.partialUpdateIndexBatch(licenseParts);
+    }
   }
 
   /**
@@ -73,7 +126,7 @@ public class WorkflowFacade implements Serializable {
    * @param defaultLicense
    * @throws ImejiException
    */
-  private void preValidateCollection(CollectionImeji collection, User user, License defaultLicense)
+  private void preValidateRelease(CollectionImeji collection, User user, License defaultLicense)
       throws ImejiException {
     if (user == null) {
       throw new AuthenticationError(AuthenticationError.USER_MUST_BE_LOGGED_IN);
@@ -84,7 +137,35 @@ public class WorkflowFacade implements Serializable {
     if (collection == null) {
       throw new NotFoundException("collection object does not exists");
     }
+    if (defaultLicense == null) {
+      throw new UnprocessableError("A default license is needed to release a collection");
+    }
     workflowValidator.isReleaseAllowed(collection);
+  }
+
+  /**
+   * Perform prevalidation on the collection to check if the user can proceed to the withdraw
+   * operation
+   * 
+   * @param collection
+   * @param user
+   * @throws ImejiException
+   */
+  private void prevalidateWithdraw(CollectionImeji collection, String comment, User user)
+      throws ImejiException {
+    if (user == null) {
+      throw new AuthenticationError(AuthenticationError.USER_MUST_BE_LOGGED_IN);
+    }
+    if (!authorization.administrate(user, collection)) {
+      throw new NotAllowedError(NotAllowedError.NOT_ALLOWED);
+    }
+    if (collection == null) {
+      throw new NotFoundException("collection object does not exists");
+    }
+    if (StringHelper.isNullOrEmptyTrim(comment)) {
+      throw new UnprocessableError("Missing discard comment");
+    }
+    workflowValidator.isWithdrawAllowed(collection);
   }
 
   /**
@@ -119,6 +200,18 @@ public class WorkflowFacade implements Serializable {
 
 
   /**
+   * Return the ids of the obejcts filtered by type
+   * 
+   * @param ids
+   * @param type
+   * @return
+   */
+  private List<String> filterIdsByType(List<String> ids, ObjectType type) {
+    return ids.stream().filter(id -> ObjectHelper.getObjectType(URI.create(id)) == type)
+        .collect(Collectors.toList());
+  }
+
+  /**
    * True if at least one {@link Item} is locked by another {@link User}
    *
    * @param uris
@@ -132,6 +225,70 @@ public class WorkflowFacade implements Serializable {
       }
     }
     return false;
+  }
+
+  /**
+   * Part object to update status
+   * 
+   * @author saquet
+   *
+   */
+  public class StatusPart implements Serializable {
+    private static final long serialVersionUID = 7167344369483590830L;
+    private final Date modified;
+    private final String status;
+    private final String id;
+    private final String comment;
+
+    public StatusPart(String id, Status status, Calendar modified, String comment) {
+      this.modified = modified.getTime();
+      this.status = status.name();
+      this.id = id;
+      this.comment = comment;
+    }
+
+    public Date getModified() {
+      return modified;
+    }
+
+    public String getStatus() {
+      return status;
+    }
+
+    public String getId() {
+      return id;
+    }
+
+    public String getComment() {
+      return comment;
+    }
+  }
+
+  /**
+   * Part Object to update item license
+   * 
+   * @author saquet
+   *
+   */
+  public class LicensePart implements Serializable {
+    private static final long serialVersionUID = -8457457810566054732L;
+    private final String id;
+    private final String license;
+
+    public LicensePart(String id, License license) {
+      this.id = id;
+      this.license =
+          !StringHelper.isNullOrEmptyTrim(license.getName()) ? license.getName() : license.getUrl();
+    }
+
+    public String getLicense() {
+      return license;
+    }
+
+    public String getId() {
+      return id;
+    }
+
   }
 
 }

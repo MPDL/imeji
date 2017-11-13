@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.upload;
+package de.mpg.imeji.presentation.item.upload;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
