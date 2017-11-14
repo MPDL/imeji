@@ -29,7 +29,7 @@ public class TikaContentExtractor implements ContentExtractorInterface {
   // Avoid too long technical metadata, to reduce performance issues
   private static final int METADATA_MAX_LENGHT = 250;
   // Limit the sire of the body parsed, too avoid heap space out of memory
-  private static final int BODY_MAX_LENGHT = 1000000;
+  private static final int BODY_MAX_LENGHT = 300000;
 
   @Override
   public String extractFulltext(File file) {

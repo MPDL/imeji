@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory;
 
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.util.DateFormatter;
 
@@ -222,9 +224,12 @@ public class ElasticQueryFactory {
       } else if (isItemSearch) {
         BoolQueryBuilder bq = QueryBuilders.boolQuery();
         for (String collectionUri : user.getGrants().stream().map(s -> new Grant(s))
-            .map(g -> g.getGrantFor()).collect(Collectors.toList())) {
+            .map(g -> g.getGrantFor())
+            .filter(id -> ObjectHelper.getObjectType(URI.create(id)) == ObjectType.COLLECTION)
+            .collect(Collectors.toList())) {
           bq.should(buildContainerFilter(collectionUri, false, ElasticTypes.folders));
         }
+        bq.should(buildGrantQuery(user, null));
         return bq;
       } else {
         return buildGrantQuery(user, null);
