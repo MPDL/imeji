@@ -214,7 +214,6 @@
 	
 	<ui:define name="additonalFooterScripts">
 		
-	
 		<script>
 			jQuery(document).ready(function() {
 				if(#{CollectionItemsBean.showUpload}){
@@ -224,6 +223,6 @@
 			var qrHtml = document.getElementById('qr'); 
 			qrHtml.innerHTML = create_qrcode('{key:"#{SessionBean.user.apiKey}",col:"#{CollectionItemsBean.collection.id}"}');
 		</script>
-		
+	
 	</ui:define>
 </ui:composition>

@@ -88,6 +88,7 @@ public class InternalStorage implements Storage {
       StorageUtils.writeInOut(fis, out, close);
     } catch (final Exception e) {
       if (MAX_RETRY > counter) {
+        LOGGER.info("Retrying read file: " + counter);
         try {
           TimeUnit.SECONDS.sleep(WAIT_BEFORE_RETRY_SEC);
         } catch (InterruptedException e1) {
