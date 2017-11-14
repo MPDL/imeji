@@ -17,9 +17,10 @@
 		</h:panelGroup>
 		<ui:fragment rendered="#{Auth.admin(ShareBean.shareTo)}">
 			<div class="imj_shareForm">
+				<share:shareWithGroupDialog bean="#{ShareBean}"/>
+				<share:shareWithUsersDialog bean="#{ShareBean}"/>
 				<h:form id="shareListForm" styleClass="shareListForm">
-					<share:shareWithGroupDialog bean="#{ShareBean}"/>
-					<share:shareWithUsersDialog bean="#{ShareBean}"/>
+					
 					
 					<!-- user table which shows all user with existing rights -->
 					<ui:fragment rendered="#{ShareBean.shareList.items.size() > 0}">

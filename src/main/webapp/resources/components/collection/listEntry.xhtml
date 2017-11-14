@@ -11,60 +11,43 @@
 	
 	<composite:implementation>
 		<li class="imj_bibliographicListItem">
-		 <div class="imj_previewArea">
-				<div class="imj_previewImage imj_imageStack">			
-					<h:outputLink value="#{Navigation.collectionUrl}#{cc.attrs.item.id}?q=">
+			<a href="#{Navigation.collectionUrl}#{cc.attrs.item.id}?q=">
+		 		<div class="imj_previewArea">
+					<div class="imj_previewImage imj_imageStack">		
 						<h:graphicImage value="#{cc.attrs.item.logoUrl}" alt="preview picture" rendered="#{cc.attrs.item.logoUrl != null and cc.attrs.item.status!='WITHDRAWN'}"/>
 						<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/discarded.png" alt="preview picture" rendered="#{cc.attrs.item.status =='WITHDRAWN'}"/>
 						<ui:fragment rendered="#{cc.attrs.item.status!='WITHDRAWN'}">
 							<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/empty.png" alt="preview picture"  rendered="#{cc.attrs.item.logoUrl == null}" title="#{lbl.ContainerEmpty}"/>
 						</ui:fragment>
-					</h:outputLink>
-					<h:outputText value="#{cc.attrs.item.size} #{lbl.images}" class="imj_itemCount"/>
-
+						<span class="imj_itemCount">#{cc.attrs.item.size} #{lbl.images}</span>
+					</div>
 				</div>
-			</div>
+			</a>
 			<div class="imj_statusArea">
 				<imjc:iconStatus id="status" imejiResource="#{cc.attrs.item}"/>
 			</div>
-
-			<div class="imj_itemContent">
-				
-				<!-- description area - includes default values - START -->
-				<div class="imj_itemHeadline">
-					<h3>
-						<h:outputLink value="#{Navigation.collectionUrl}#{cc.attrs.item.id}?q=" title="#{cc.attrs.item.title}">
+			<a href="#{Navigation.collectionUrl}#{cc.attrs.item.id}?q=" title="#{cc.attrs.item.title}">
+				<div class="imj_itemContent">
+					<div class="imj_itemHeadline">
+						<h3>
+							#{BreadcrumbBean.init(cc.attrs.item.collection)}
+	                    	<ui:repeat var="entry" value="#{BreadcrumbBean.entries}">
+	                    		<span class="parent">#{entry.label}</span><span class="del">></span>
+	                    	</ui:repeat>
 							<h:outputText value="#{cc.attrs.item.title}"/>
-						</h:outputLink>
-					</h3>
-				</div>
-				
-				<div class="imj_metadataContent">
-					<h:outputText value="#{lbl.by}: #{cc.attrs.item.authors}" styleClass="imj_itemAuthorPanel"/>
+						</h3>
+					</div>
 					
-					<h:panelGroup layout="block" class="imj_metadataSet" rendered="#{not empty cc.attrs.item.description or not empty cc.attrs.item.descriptionFull}">
-						
-						<p class="imj_descriptionArea" title="#{cc.attrs.item.description}">
-							<h:outputText value="#{cc.attrs.item.description.trim()}"/>
-							<ui:fragment rendered="#{cc.attrs.item.descriptionFull.trim().length() &gt; cc.attrs.item.description.trim().length()}">
-								<button class="imj_expand fa fa-plus imj_containerDescExpand" onclick="event.preventDefault();$(this).parent().hide();$(this).parent().next().show();">
-									<h:outputText value="&#160;"/>
-								</button>
-							</ui:fragment>
-						</p>
-						
-						<ui:fragment rendered="#{cc.attrs.item.description.trim().length() &lt; cc.attrs.item.descriptionFull.trim().length()}">
-							<p class="imj_descriptionArea imj_additionalInfoArea">
-								<h:outputText value="#{cc.attrs.item.descriptionFull.trim()}"/>
-								
-								<button class="imj_collapse fa fa-minus" onclick="event.preventDefault();$(this).parent().hide();$(this).parent().prev().show();" >
-									<h:outputText value="&#160;"/>
-								</button>
+					<div class="imj_metadataContent">
+						<h:outputText value="#{lbl.by}: #{cc.attrs.item.authors}" styleClass="imj_itemAuthorPanel"/>
+						<h:panelGroup layout="block" class="imj_metadataSet" rendered="#{not empty cc.attrs.item.description or not empty cc.attrs.item.descriptionFull}">
+							<p class="imj_descriptionArea" title="#{cc.attrs.item.description}">
+								<h:outputText value="#{cc.attrs.item.description.trim()}"/>
 							</p>
-						</ui:fragment>
-					</h:panelGroup>
-			   </div>
-			</div>		
+						</h:panelGroup>
+				   </div>
+				</div>	  
+			</a>	
 		</li>
 	</composite:implementation>
 

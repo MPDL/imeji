@@ -9,6 +9,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
@@ -35,6 +36,9 @@ public class InternalStorage implements Storage {
   private static final Logger LOGGER = Logger.getLogger(InternalStorage.class);
   private static final String name = "internal";
   protected InternalStorageManager manager;
+  private static final int MAX_RETRY = 5;
+  private static final int WAIT_BEFORE_RETRY_SEC = 2;
+  public static final String PATH_TO_NOT_FOUND_IMAGE = "images/file-icon.jpg";
 
   /**
    * Default Constructor
@@ -66,13 +70,39 @@ public class InternalStorage implements Storage {
    */
   @Override
   public void read(String url, OutputStream out, boolean close) {
+    retryRead(url, out, close, 0);
+  }
+
+  /**
+   * Read the File and retry if error
+   * 
+   * @param url
+   * @param out
+   * @param close
+   * @param counter
+   */
+  private void retryRead(String url, OutputStream out, boolean close, int counter) {
     final String path = manager.transformUrlToPath(url);
     try {
       final FileInputStream fis = new FileInputStream(path);
       StorageUtils.writeInOut(fis, out, close);
     } catch (final Exception e) {
-      LOGGER.error("Erro reading file in internal storage: " + e.getMessage());
-      // throw new RuntimeException("Error reading file " + path + " in internal storage: ", e);
+      if (MAX_RETRY > counter) {
+        try {
+          TimeUnit.SECONDS.sleep(WAIT_BEFORE_RETRY_SEC);
+        } catch (InterruptedException e1) {
+          LOGGER.error("Error waiting to retry reading file " + e.getMessage());
+        }
+        retryRead(url, out, close, counter + 1);
+      } else {
+        LOGGER.error("Maximum retry to read file reached, reading default image");
+        try {
+          StorageUtils.writeInOut(InternalStorage.class.getClassLoader()
+              .getResource(PATH_TO_NOT_FOUND_IMAGE).openStream(), out, close);
+        } catch (IOException e1) {
+          LOGGER.error("Error reading default image", e1);
+        }
+      }
     }
   }
 

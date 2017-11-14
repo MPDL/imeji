@@ -51,11 +51,13 @@
 						</div>
 					</ui:repeat>
 				</div>
+				
 				<div id="imj_tableButtons" class="editSelectedHeader">
-					<a href="#{EditItemsSelectedBean.backUrl}" class="imj_cancelButton" onclick="startLoader();">#{lbl.cancel}</a>
-					<h:commandLink type="submit" styleClass="imj_submitButton" action="#{EditItemsSelectedBean.save}" value="#{lbl.save}" onclick="startLoader();">
-					
-					</h:commandLink>
+					<md:select id="selectStatement" component="#{EditItemsSelectedBean.newStatement}" menu="#{EditItemsSelectedBean.filteredStatementMenu}"
+										render=":selectMetadataWrapper" bean="#{EditItemsSelectedBean}"
+										submitAction="addColumn" containerId=":selectStatement"
+										resetAction="resetNewStatement" compact="false"
+										title="#{lbl.add_column}" onsuccess="goToRight();"/>
 					<span id="editSelectedInfos">
 						#{EditItemsSelectedBean.rows.size()} #{lbl.items}. 
 						<ui:fragment rendered="#{EditItemsSelectedBean.notAllowedItemNames.size() > 0}"> 
@@ -80,13 +82,6 @@
 							
 						</h:panelGroup>
 					</span>
-					<div style="float:right">
-						<md:select id="selectStatement" component="#{EditItemsSelectedBean.newStatement}" menu="#{EditItemsSelectedBean.filteredStatementMenu}"
-										render=":selectMetadataWrapper" bean="#{EditItemsSelectedBean}"
-										submitAction="addColumn" containerId=":selectStatement"
-										resetAction="resetNewStatement" compact="false"
-										title="#{lbl.add_column}" onsuccess="goToRight();"/>
-					</div>
 				</div>
 				<ui:fragment rendered="#{not (EditItemsSelectedBean.displayedColumns.size()==EditItemsSelectedBean.headers.size())}">
 					<div id="imj_pageMessageArea">
@@ -252,6 +247,10 @@
 							</ui:repeat>
 						</tbody>
 					</table>
+				</div>
+				<div id="saveSelected" class="editSelectedFooter">
+					<a href="#{EditItemsSelectedBean.backUrl}" class="imj_cancelButton" onclick="startLoader();">#{lbl.cancel}</a>
+					<h:commandLink type="submit" styleClass="imj_submitButton" action="#{EditItemsSelectedBean.save}" value="#{lbl.save}" onclick="startLoader();"/>
 				</div>
 			</h:form>
 		</div>

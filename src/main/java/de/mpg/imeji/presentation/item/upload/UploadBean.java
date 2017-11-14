@@ -19,6 +19,8 @@ import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchPair;
+import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.presentation.beans.SuperBean;
@@ -64,8 +66,8 @@ public class UploadBean extends SuperBean {
       factory.addElement(new SearchPair(SearchFields.role, GrantType.EDIT.name().toLowerCase()),
           AND);
     }
-    collections =
-        new CollectionService().searchAndRetrieve(factory.build(), null, getSessionUser(), -1, 0);
+    collections = new CollectionService().searchAndRetrieve(factory.build(),
+        new SortCriterion(SearchFields.modified, SortOrder.DESCENDING), getSessionUser(), -1, 0);
     tree = new Tree(collections);
   }
 

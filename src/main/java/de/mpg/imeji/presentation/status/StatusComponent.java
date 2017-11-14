@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UINamingContainer;
@@ -271,6 +272,9 @@ public class StatusComponent extends UINamingContainer {
     this.sharedWithUser = sharedWithUser;
   }
 
-
+  public String getSharedWithToString() {
+    return users.stream().collect(Collectors.joining("\n"))
+        + groups.stream().map(g -> g + " [group]").collect(Collectors.joining("[\n", "\n", ""));
+  }
 
 }

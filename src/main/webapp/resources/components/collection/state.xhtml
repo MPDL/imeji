@@ -1,0 +1,23 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+	
+	<composite:interface componentType="StatusComponent">
+		<composite:attribute name="imejiResource"/>
+		<composite:attribute name="displayStatusOnly" default="false" type="java.lang.Boolean"/>
+	</composite:interface>
+	
+	<composite:implementation>
+		<ui:fragment rendered="#{SessionBean.user != null}">
+			<ui:fragment rendered="#{cc.attrs.imejiResource.status == 'RELEASED'}">
+				<span class="fa fa-globe" title="#{lbl.published}"/>
+			</ui:fragment>
+			<ui:fragment rendered="#{cc.attrs.imejiResource.status != 'RELEASED'}">
+				#{cc.init(cc.attrs.imejiResource, SessionBean.user, InternationalizationBean.locale, Navigation.applicationUrl)}
+				<span class="fa #{(!empty cc.users or !empty cc.groups)? 'fa-users' : 'fa-user'}" title="#{(!empty cc.users or !empty cc.groups)?   cc.sharedWithToString : lbl.private_collection}"/>
+			</ui:fragment>
+		</ui:fragment>
+	</composite:implementation>
+</html>

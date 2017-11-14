@@ -20,6 +20,7 @@
 				</h:outputLink>
 			</div>
 			<div id="simpleSearchWrapper" class="imj_simpleSearch responsiveMenu">
+				<ui:fragment rendered="#{!Configuration.privateModus || Auth.loggedIn}">
 				<a href="#" class="responsiveMenuCloseBtn responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="simpleSearchWrapper" >
 					<span class="fa fa-times"/> <span>#{lbl.close}</span>
 				</a>
@@ -58,7 +59,7 @@
 			   			<span class="fa fa-sliders fa-size-2"></span>
 			   		</a>
 		   		</div>
-		   		
+		   		</ui:fragment>
 			</div>
 		</div>
 		<span id="navTop"/>
@@ -72,11 +73,9 @@
             </ui:repeat>
         </h:panelGroup>
 		
-		<ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
 			<div class="imj_navigation2">
 				<!-- place main menu here -->
 				<menu:mainMenu id="navigation" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>
 			</div>
-		</ui:fragment>
 	</f:subview>
 </ui:composition>

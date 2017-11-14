@@ -25,7 +25,6 @@
 	 		<ui:include src="./include/LoginFormular.xhtml" />
 	 	</ui:fragment>
 	 	<ui:fragment rendered="#{Auth.loggedIn}">
-		 	
 			<collection:tree tree="#{UploadBean.tree}" upload="true"/>
 	 	</ui:fragment>
 	 </ui:define>

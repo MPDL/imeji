@@ -27,13 +27,15 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchPair;
+import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.collection.tree.Tree;
 import de.mpg.imeji.presentation.collection.tree.Node;
+import de.mpg.imeji.presentation.collection.tree.Tree;
 import de.mpg.imeji.presentation.license.LicenseEditor;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -67,9 +69,10 @@ public class MoveItemsBean extends SuperBean {
       factory.addElement(new SearchPair(SearchFields.role, GrantType.EDIT.name().toLowerCase()),
           AND);
     }
-    collectionsForMove =
-        new CollectionService().searchAndRetrieve(factory.build(), null, getSessionUser(), -1, 0)
-            .stream().collect(Collectors.toList());
+    collectionsForMove = new CollectionService()
+        .searchAndRetrieve(factory.build(),
+            new SortCriterion(SearchFields.modified, SortOrder.DESCENDING), getSessionUser(), -1, 0)
+        .stream().collect(Collectors.toList());
     tree = new Tree(collectionsForMove);
   }
 

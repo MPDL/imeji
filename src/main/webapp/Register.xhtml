@@ -21,14 +21,13 @@
 			<ui:fragment rendered="#{PasswordChangeBean.token==null}">
 				<h2 class="imj_headline">#{lbl.registration}</h2>
 
-				<ul class="imj_registerSteps">
-					<li class="imj_active">1. #{lbl.register}</li>
-					<li>2. #{lbl.register_activate}</li>
-				</ul>
+				<ol class="imj_registerSteps">
+					<li class="imj_active">#{lbl.register}</li>
+					<li>#{lbl.register_activate}</li>
+				</ol>
 
 				<div class="imj_registerText">
-						<h:outputText value="#{Configuration.registrationSnippet}"
-							escape="false" />
+						<h:outputText value="#{Configuration.registrationSnippet}" escape="false" />
 					</div>
 
 				<div class="loginArea">

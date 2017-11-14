@@ -20,18 +20,11 @@
 		<div id="moveDialog" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText" style="display:none;">
 			<h:form id="form">
 				<ui:fragment rendered="#{MoveItemsBean.destinationId == null}">
-					<div style="margin-bottom: 2em;">
-						<span class="fa fa-globe fa-size-3" style="visibility: hidden">&#160;</span>
+					<div style="margin-bottom: 1em;">
 						<span>#{lbl.move_to_collection}</span>
 						<a href="#" style="float:right" onclick="closeDialog('moveDialog');" class="imj_cancelButton">
 							#{lbl.cancel}
 						</a>
-					</div>
-					<div>
-						<span class="fa fa-globe fa-size-3" style="visibility: hidden">&#160;</span>
-						<h:inputText value="#{MoveItemsBean.query}" html5:placeholder="#{lbl.filter}">
-							<f:ajax render="#{cc.attrs.parentId}:moveItemsForm:list" event="keyup" listener="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.colId)}"/>
-						</h:inputText>
 					</div>
 					<div id="tree">
 						<collection:tree tree="#{MoveItemsBean.tree}" colId="#{cc.attrs.colId}" objectId="#{cc.attrs.objectId}" hasLicense="#{cc.attrs.hasLicense}"/>

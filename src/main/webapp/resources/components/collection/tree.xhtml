@@ -20,9 +20,13 @@
 			<ui:fragment rendered="#{!cc.attrs.upload}">
 				<ui:param name="disabled" value="#{cc.attrs.colId == node.collection.id.toString() || (MoveItemsBean.isCollection(cc.attrs.objectId) and MoveItemsBean.isChildOf(node, cc.attrs.colId))}"/>
 			</ui:fragment>
-			<div class="collectionTreeNode" style="margin-left: #{node.depth *2}em;font-size: 0.8em; padding: 1px;">
-				<span class="fa #{node.collection.status == 'RELEASED' ? 'fa-globe' : 'fa-lock'}" style="#{node.hasParent() ? 'display: none;' : ''}"/>
-				<span class="fa fa-globe fa-folder-open-o" style="#{node.hasParent() ? '' : 'display:none'}"/>
+			<div class="collectionTreeNode" style="margin-left: #{node.depth *2.5}em; #{node.hasParent() ? 'margin-top: -2px' : 'margin-top: 2px'}">
+				<ui:fragment rendered="#{node.hasParent()}">
+					<span class="fa fa-globe fa-folder-open-o" title="#{lbl.subcollection}"/>
+				</ui:fragment>
+				<ui:fragment rendered="#{!node.hasParent()}">
+					<collection:state id="state" imejiResource="#{node.collection}"/>
+				</ui:fragment>
 				<ui:fragment rendered="#{!cc.attrs.upload}">
 					<ui:fragment rendered="#{node.collection.status == 'RELEASED' and !cc.attrs.hasLicense}">
 						<h:commandLink value="#{node.collection.title}"  disabled="#{disabled}" action="#{MoveItemsBean.setDestinationId(node.collection.id.toString())}">

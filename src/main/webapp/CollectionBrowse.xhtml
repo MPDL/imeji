@@ -180,7 +180,7 @@
 				</div>
 			</ui:fragment>
 		</span>
-		<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{CollectionItemsBean.collection}&amp;q=#{CollectionItemsBean.query}" target="_blank" class="imj_menuButton imj_overlayMenu #{Auth.loggedIn ? '' : 'ghostButton'}">
+		<a href="#{Navigation.applicationUrl}exportServlet?format=zip&amp;col=#{CollectionItemsBean.collection.idString}&amp;q=#{CollectionItemsBean.query}" target="_blank" class="imj_menuButton imj_overlayMenu #{Auth.loggedIn ? '' : 'ghostButton'}">
 			<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download_files}</span>
 		</a>
 		<a href="#" class="fa fa-ellipsis-h responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="actionsReponsive" />

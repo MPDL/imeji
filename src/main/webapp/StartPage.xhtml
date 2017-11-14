@@ -9,12 +9,6 @@
 	<ui:param name="title" value="#{lbl.home}"/>
 	<ui:param name="currentMainMenu" value="welcome"/>
 	
-	<ui:define name="actionsMenu">
-		<div class="actionStartPage">
-			<menu:defaultActionMenu/>
-		</div>
-	</ui:define>
-	
 	
 	<ui:define name="init">
 		<f:metadata>
@@ -25,22 +19,34 @@
 	#{InternationalizationBean.locale}
 	<ui:define name="mainContent">
 			<!-- Main Content -->							
-			<div id="imj_welcomeInfoWrapper" style="padding-top: 3%; width: 100%;">			
+			<div id="imj_welcomeInfoWrapper">			
 				<!-- HTML Snippet defined in the configuration -->
 				<ui:fragment rendered="#{Configuration.getStartPageHTML(InternationalizationBean.locale) != ''}">
 					<h:outputText value="#{Configuration.getStartPageHTML(InternationalizationBean.locale)}" escape="false"/>
 				</ui:fragment>
 				<!-- Default Startpage content (if configuration is emtpy) -->
 				<ui:fragment rendered="#{Configuration.getStartPageHTML(InternationalizationBean.locale) == ''}">
+					<div id="pageTitle" class="imj_siteContentHeadline">
+	                    <h1>
+	                   	 	A lightweight research data repository
+	                    </h1>
+			        </div>
 					<div class="imj_tabContent">
-						<h3 class="">A lightweight research data repository</h3>
-						<p>imeji a free and open source web application to manage and publish any research data.</p>
+						<p>imeji a free and open source web application to <strong>manage</strong>, to <strong>share</strong> and to <strong>publish</strong> research data.</p>
 						<p>imeji is actively developed by the <a href="http://mpdl.mpg.de" target="_blank">Max Planck Digital Library</a> <span class="fa fa-external-link"/></p>
-						<p><a href="http://mpdl.github.io/imeji/" target="_blank">View code source</a> <span class="fa fa-external-link"/></p>
-						<p>Start using imeji:</p>
-						<p><a href="#{Navigation.homeUrl}/upload" class=""><span class="fa fa-upload"></span> Upload data</a></p>
-						<p><a href="#{Navigation.homeUrl}/createcollection" class=""><span class="fa fa-plus"></span> Create a collection</a></p>
-						<p><a href="#{Navigation.homeUrl}/collections" class=""><span class="fa fa-search"></span> Explore existing collections</a></p>
+						<br/>
+						<p>
+							<a href="#{Navigation.homeUrl}/upload" class="imj_submitButton" style=" float:left;">
+								<ui:fragment rendered="#{!Auth.loggedIn}">
+									Try imeji
+								</ui:fragment>
+								<ui:fragment rendered="#{Auth.loggedIn}">
+									<span class="fa fa-upload"/> Upload data
+								</ui:fragment>
+							</a>
+							<a href="http://imeji.mpdl.mpg.de" target="_blank" class="imj_submitButton ghostButton" style="white-space: nowrap; float:left;">Learn about imeji</a>
+						</p>
+						<br/>
 					</div>
 				</ui:fragment>	
 			</div>
