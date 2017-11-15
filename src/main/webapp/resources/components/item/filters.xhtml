@@ -59,12 +59,12 @@
 									</ui:repeat>
 								</ul>
 							</div>
-							<h:commandLink value="" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
+							<h:commandLink value="" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(cc.attrs.facetBean.selectedSortCriterion)}"   onclick="startLoader();">
 								<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 								<span class="imj_radio fa #{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING' ? 'fa-dot-circle-o' : 'fa-circle-o' }" ></span>
 							</h:commandLink>
 							<span style="margin-right: 1em !important;">#{lbl.ascending}</span>
-							<h:commandLink value="" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
+							<h:commandLink value="" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(cc.attrs.facetBean.selectedSortCriterion)}"   onclick="startLoader();">
 								<f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 								<span class="imj_radio  fa #{cc.attrs.facetBean.selectedSortOrder == 'DESCENDING' ? 'fa-dot-circle-o' : 'fa-circle-o' }" ></span>
 							</h:commandLink>
