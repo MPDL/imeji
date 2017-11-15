@@ -37,11 +37,12 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
    */
   public void create(CollectionImeji parent) throws IOException {
     try {
-      collectionService.create(ImejiFactory.newCollection().setTitle(name)
-          .setPerson(getSessionUser().getPerson()).setCollection(parent.getId().toString()).build(),
+      CollectionImeji subcollection = collectionService.create(
+          ImejiFactory.newCollection().setTitle(name).setPerson(getSessionUser().getPerson())
+              .setCollection(parent.getId().toString()).build(),
           getSessionUser());
       BeanHelper.info("Subcollection created");
-      reload();
+      redirect(getNavigation().getCollectionUrl() + subcollection.getIdString());
     } catch (ImejiException e) {
       BeanHelper.error("Error creating Subcollection: " + e.getMessage());
       LOGGER.error("Error creating Subcollection", e);
