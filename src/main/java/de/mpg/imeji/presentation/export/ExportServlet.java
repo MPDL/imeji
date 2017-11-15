@@ -26,6 +26,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.export.ExportAbstract;
 import de.mpg.imeji.logic.export.FileExport;
+import de.mpg.imeji.logic.export.FolderExport;
 import de.mpg.imeji.logic.export.SitemapExport;
 import de.mpg.imeji.logic.export.ZIPExport;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -100,6 +101,9 @@ public class ExportServlet extends HttpServlet {
           break;
         case "sitemap":
           export = new SitemapExport(req.getParameter("q"), req.getParameter("priority"), user);
+          break;
+        case "folder":
+          export = new FolderExport(req.getParameter("col"), user);
           break;
       }
     } else {
