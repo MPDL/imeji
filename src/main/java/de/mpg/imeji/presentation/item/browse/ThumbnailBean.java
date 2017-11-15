@@ -3,11 +3,13 @@ package de.mpg.imeji.presentation.item.browse;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.event.ValueChangeEvent;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Metadata;
 import de.mpg.imeji.logic.model.Properties.Status;
@@ -42,6 +44,7 @@ public class ThumbnailBean implements Serializable {
   private List<Metadata> metadata;
   private String status;
   private final boolean isCollection;
+  private String path;
 
   /**
    * Bean for Thumbnail list elements. Each element of a list with thumbnail is an instance of a
@@ -66,6 +69,10 @@ public class ThumbnailBean implements Serializable {
     this.selected = session.getSelected().contains(uri.toString());
     this.status = item.getStatus().toString();
     this.isCollection = uri.toString().contains("/collection/");
+    if (isCollection) {
+      path = new HierarchyService().findAllParentsWithNames(uri.toString()).stream()
+          .map(w -> w.getName()).collect(Collectors.joining(" > ")) + " > " + this.filename;
+    }
   }
 
   /**
@@ -278,5 +285,9 @@ public class ThumbnailBean implements Serializable {
 
   public boolean isCollection() {
     return isCollection;
+  }
+
+  public String getPath() {
+    return path;
   }
 }

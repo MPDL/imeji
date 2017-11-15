@@ -624,6 +624,17 @@ public class JenaCustomQueries {
   }
 
   /**
+   * Select the name of a collection
+   * 
+   * @param uri
+   * @return
+   */
+  public static final String selectCollectionName(String uri) {
+    return "SELECT (str(?name) as ?s) WHERE{<" + uri.toString()
+        + "> <http://purl.org/dc/elements/1.1/title> ?name} LIMIT 1";
+  }
+
+  /**
    * Helpers
    */
   public static final String countTriplesAll() {

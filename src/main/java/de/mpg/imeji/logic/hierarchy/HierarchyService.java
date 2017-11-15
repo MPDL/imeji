@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.hierarchy.Hierarchy.Node;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
+import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 
 /**
  * Service to manage the hierarchy between imeji objects
@@ -101,6 +104,18 @@ public class HierarchyService implements Serializable {
   }
 
   /**
+   * Same as findAllParents(String uri) , but wraps the results with the collection names
+   * 
+   * @param uri
+   * @return
+   */
+  public List<CollectionUriNameWrapper> findAllParentsWithNames(String uri) {
+    return findAllParents(uri).stream().map(id -> new CollectionUriNameWrapper(id))
+        .collect(Collectors.toList());
+  }
+
+
+  /**
    * Return the Parent uri of the passed uri
    * 
    * @param uri
@@ -157,5 +172,36 @@ public class HierarchyService implements Serializable {
           ? ((CollectionImeji) o).getCollection().toString() : null;
     }
     return null;
+  }
+
+
+  /**
+   * Return the name and the uri of a collection in one wrapper
+   * 
+   * @author saquet
+   *
+   */
+  public class CollectionUriNameWrapper {
+    private final String uri;
+    private final String name;
+
+    public CollectionUriNameWrapper(String uri) {
+      this.uri = uri;
+      this.name = getCollectionName(uri);
+    }
+
+    private String getCollectionName(String uri) {
+      List<String> l =
+          ImejiSPARQL.exec(JenaCustomQueries.selectCollectionName(uri), Imeji.collectionModel);
+      return l.isEmpty() ? "" : l.get(0);
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public String getUri() {
+      return uri;
+    }
   }
 }

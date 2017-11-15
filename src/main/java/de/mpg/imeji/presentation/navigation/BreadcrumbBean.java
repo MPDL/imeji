@@ -1,6 +1,7 @@
 package de.mpg.imeji.presentation.navigation;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,9 +11,10 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 
 /**
@@ -28,7 +30,6 @@ public class BreadcrumbBean extends SuperBean {
   private static final Logger LOGGER = Logger.getLogger(BreadcrumbBean.class);
   private List<Entry> entries = new ArrayList<>();
   private HierarchyService hierarchyService = new HierarchyService();
-  private CollectionService collectionService = new CollectionService();
 
   /**
    * Initialize the Breadcrumb for an object (Item or Collection)
@@ -37,23 +38,33 @@ public class BreadcrumbBean extends SuperBean {
    */
   public void init(Object o) {
     HierarchyService.reloadHierarchy();
-    List<String> parents = hierarchyService.findAllParents(o);
     try {
-      entries = collectionService.retrieve(parents, getSessionUser()).stream()
-          .map(c -> new Entry(c.getTitle(), getLinkToCollection(c))).collect(Collectors.toList());
+      entries = hierarchyService.findAllParentsWithNames(getObjectCollectionUri(o)).stream()
+          .map(w -> new Entry(w.getName(), getLinkToCollection(w.getUri())))
+          .collect(Collectors.toList());
     } catch (Exception e) {
       LOGGER.error("Error retrieving parent collections", e);
     }
   }
 
+  private String getObjectCollectionUri(Object o) {
+    if (o instanceof Item) {
+      return ((Item) o).getCollection().toString();
+    }
+    if (o instanceof CollectionImeji) {
+      return ((CollectionImeji) o).getId().toString();
+    }
+    return null;
+  }
+
   /**
    * Return the link to the collection
    * 
-   * @param c
+   * @param collectionUri
    * @return
    */
-  private String getLinkToCollection(CollectionImeji c) {
-    return getNavigation().getCollectionUrl() + c.getIdString();
+  private String getLinkToCollection(String collectionUri) {
+    return getNavigation().getCollectionUrl() + ObjectHelper.getId(URI.create(collectionUri));
   }
 
 
@@ -87,7 +98,6 @@ public class BreadcrumbBean extends SuperBean {
       return label;
     }
   }
-
 
   /**
    * @return the entries

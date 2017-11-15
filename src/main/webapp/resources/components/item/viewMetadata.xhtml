@@ -64,6 +64,9 @@
 						<span class="imj_invisible">: </span>
 					</div>
 					<div class="imj_metadataValue">
+						<ui:repeat var="entry" value="#{BreadcrumbBean.entries}">
+                    		<a href="#{entry.link}" title="#{entry.label}">#{entry.label}</a><span class="del"> > </span>
+                    	</ui:repeat>
 						<a href="#{Navigation.collectionUrl}#{cc.attrs.itemBean.collection.idString}">
 							#{cc.attrs.itemBean.collection.title}
 						</a>
