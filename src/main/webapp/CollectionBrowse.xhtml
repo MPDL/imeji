@@ -129,7 +129,7 @@
 						 <span class="fa fa-trash"/> <span>#{lbl.delete}</span>
 					</h:outputLink>
 					<h:form>
-						<h:commandLink id="moveCollection" action="#{MoveItemsBean.searchCollectionsForMove(CollectionItemsBean.collection.id.toString())}" onclick="openDialog('moveDialog');"  class="imj_menuButton imj_overlayMenu">
+						<h:commandLink id="moveCollection" rendered="#{CollectionItemsBean.collection.isSubCollection()}" action="#{MoveItemsBean.searchCollectionsForMove(CollectionItemsBean.collection.id.toString())}" onclick="openDialog('moveDialog');"  class="imj_menuButton imj_overlayMenu">
 							<span class="fa fa-hand-o-right"/> <span>#{lbl.move}</span>
 							<f:ajax render=":move:form"/>
 						</h:commandLink>
@@ -141,7 +141,7 @@
 					</h:outputLink>
 				</ui:fragment>
 			</ui:fragment>
-			<ui:fragment rendered="#{Auth.delete}">
+			<ui:fragment rendered="#{Auth.delete and not CollectionItemsBean.collection.isSubCollection()}">
 				<h:outputLink value="#" rendered="#{not CollectionItemsBean.isSubscribed()}" onclick="openDialog('subscribe');" class="imj_menuButton imj_overlayMenu">
 						<span class="fa fa-envelope"/> <span>#{lbl.subscribe}</span>
 				</h:outputLink>

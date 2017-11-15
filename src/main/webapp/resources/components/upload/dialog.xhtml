@@ -39,11 +39,15 @@
 	 		</h:form>
  		</div>
  		<div class="uploadPanel">
+ 			<div class="upload_infos">
+ 				<div title="Total size of files to upload"><a class="fa fa-files-o"/><span id="totalSize"> Calculating...</span></div>
+ 				<div title="Time until upload completed"><a class="fa fa-clock-o"/><span id="expectedDuration" > Calculating...</span></div>
+ 			</div>
  			<div class="progressBarWrapper">
  				<div class="progressBar"/>
- 				<a href="#" class="fa fa-times-circle-o cancel" onclick="stopUploader();"></a>
+ 				<a href="#" class="fa fa-times-circle-o cancel" onclick="stopUploader();" title="Stop upload"></a>
  			</div>
- 			<div class="uploadPanelContent">Uploading</div>
+ 			<div class="uploadPanelContent">Starting...</div>
  		</div>
 	</composite:implementation>
 </html>

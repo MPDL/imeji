@@ -13,6 +13,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.User;
@@ -102,7 +103,7 @@ public class ElasticSearch implements Search {
     final QueryBuilder f = ElasticQueryFactory.buildBasisQuery(query, folderUri, user, type);
     SearchRequestBuilder request = ElasticService.getClient()
         .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setTypes(getTypes()).setSize(size)
-        .setFrom(from).addSort(ElasticSortFactory.build(sortCri));
+        .setFrom(from).addSort("_type", SortOrder.ASC).addSort(ElasticSortFactory.build(sortCri));
     if (f != null) {
       request.setQuery(f).setPostFilter(q);
     } else {
@@ -138,10 +139,11 @@ public class ElasticSearch implements Search {
   private SearchResult searchWithScroll(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, int from, int size, boolean addFacets) {
     final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
-    SearchRequestBuilder request = ElasticService.getClient()
-        .prepareSearch(ElasticService.DATA_ALIAS).setScroll(new TimeValue(60000)).setNoFields()
-        .setQuery(QueryBuilders.matchAllQuery()).setPostFilter(f).setTypes(getTypes())
-        .setSize(SEARCH_MAX_SIZE).setFrom(from).addSort(ElasticSortFactory.build(sortCri));
+    SearchRequestBuilder request =
+        ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
+            .setScroll(new TimeValue(60000)).setNoFields().setQuery(QueryBuilders.matchAllQuery())
+            .setPostFilter(f).setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).setFrom(from)
+            .addSort("_type", SortOrder.ASC).addSort(ElasticSortFactory.build(sortCri));
     if (addFacets) {
       request = addAggregations(request);
     }

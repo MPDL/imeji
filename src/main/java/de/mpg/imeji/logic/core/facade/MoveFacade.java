@@ -162,6 +162,9 @@ public class MoveFacade implements Serializable {
     if (new HierarchyService().isChildOf(newParent.getId().toString(), c.getId().toString())) {
       throw new UnprocessableError(newParent.getTitle() + " is a child of " + c.getTitle());
     }
+    if (!c.isSubCollection()) {
+      new UnprocessableError("Only subcollections can be moved");
+    }
   }
 
   /**

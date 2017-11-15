@@ -41,22 +41,28 @@
 					PostInit: function() {
 						totalFiles = 0
 						uploadedFiles = 0;			
-					},				
+					},
+					 FileFiltered: function(up, file) {
+						closeDialog('uploadDialog');
+						$(".uploadPanel").show();
+					},
 					FilesAdded: function(up, files) {
 						totalFiles =  files.length;
-						closeDialog('uploadDialog');
 						lockPage();
-						$(".uploadPanel").show();
 						addUploadStatusMessage(0,totalFiles);
 						var licenseName = document.getElementById('uploadDialog:uploadForm:uploader:name').value;
 						var licenseLabel = document.getElementById('uploadDialog:uploadForm:uploader:label').value;
 						var licenseUrl = document.getElementById('uploadDialog:uploadForm:uploader:url').value;
 						uploader.settings.multipart_params = { licenseName: licenseName, licenseLabel: licenseLabel, licenseUrl: licenseUrl};
-						uploader.start();							
+						uploader.start();
+						document.getElementById('totalSize').innerHTML = " " + formatBytes(up.total.size);
 					},
 					UploadProgress: function(up, file) {
 						addUploadStatusMessage(uploadedFiles,totalFiles,file.name,file.percent);
-						$( ".progressBar" ).css("width", up.total.percent + "%")
+						$( ".progressBar" ).css("width", up.total.percent + "%");
+						var seconds = ((up.total.size - up.total.loaded) / up.total.bytesPerSec + (up.total.queued * 0.5));
+						var hms = new Date(seconds * 1000).toISOString().substr(11, 8); 
+						document.getElementById('expectedDuration').innerHTML = " " + hms;
 					},
 					UploadComplete: function(up, files) {
 						document.getElementById('#{cc.attrs.updateButtonId}').click();
