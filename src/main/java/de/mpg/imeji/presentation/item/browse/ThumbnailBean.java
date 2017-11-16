@@ -70,8 +70,11 @@ public class ThumbnailBean implements Serializable {
     this.status = item.getStatus().toString();
     this.isCollection = uri.toString().contains("/collection/");
     if (isCollection) {
-      path = new HierarchyService().findAllParentsWithNames(uri.toString()).stream()
-          .map(w -> w.getName()).collect(Collectors.joining(" > ")) + " > " + this.filename;
+      path = new HierarchyService().findAllParentsWithNames(uri.toString(), false).stream()
+          .map(w -> w.getName()).collect(Collectors.joining(" > "));
+    } else {
+      path = new HierarchyService().findAllParentsWithNames(collectionUri.toString(), true).stream()
+          .map(w -> w.getName()).collect(Collectors.joining(" > "));
     }
   }
 

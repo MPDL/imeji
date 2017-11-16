@@ -12,62 +12,29 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<div id="shareWithUsersDialog" class="imj_noDisplay imj_modalDialogBox imj_shareDialogBox">
-			<h:form>
-				<ui:fragment rendered="#{empty cc.attrs.bean.input.unknownEmails}">
-					<h2 class="imj_sectionHeadline">
-						<h:outputText value="#{lbl.share_with}"/>
-					</h2>	
-					<div class="imj_shareEmailInput">		
-						<div class="imj_metadataSet">
-							<h:outputLabel for="emailInput" styleClass="imj_metadataLabel" value="#{lbl.share_email}"/>
-							<div class="imj_metadataValue">
-								<h:outputText styleClass="fa fa-exclamation-triangle" value=" #{lbl.invalid_email}: #{cc.attrs.bean.input.invalidEntriesAsString}" rendered="#{not empty cc.attrs.bean.input.invalidEntries}"/>
-								<h:inputTextarea id="emailInput" styleClass="imj_mdInput" value="#{cc.attrs.bean.input.input}" html5:placeholder="e.g. email@example.com; ..."/>	
-							</div>
-							
-						</div>
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel"></div>
-							<h:panelGroup layout="block" id="shareOptions" styleClass="imj_metadataValue">
-								<h:selectOneRadio  id="selectedGrants" styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{cc.attrs.bean.input.menu.role}" layout="lineDirection">
-									<f:selectItems value="#{rolesMenu}"/>
-								</h:selectOneRadio >
-							</h:panelGroup>
-						</div>
-						<div class="imj_metadataSet">
-							<div class="imj_metadataLabel"></div>
-							<div class="imj_metadataValue imj_submitPanel">
-								<h:selectBooleanCheckbox value="#{cc.attrs.bean.sendEmail}" id="selSendEmail"/>
-								<h:outputLabel for="selSendEmail" value="#{lbl.user_send_mail}"/>
-								<h:commandButton value="#{lbl.cancel}" action="#{cc.attrs.bean.reloadPage}" styleClass="imj_cancelButton"/>
-								<h:commandButton value="#{lbl.share}" action="#{cc.attrs.bean.share}" styleClass="imj_submitButton">
-									<f:ajax render="@form" execute="@form"/>
-								</h:commandButton>
-							</div>
-						</div>
-					</div>
-				</ui:fragment>
-				<h:panelGroup  styleClass="imj_pageMessageArea" id="unknownEmails" rendered="#{!empty cc.attrs.bean.input.unknownEmails}">
+			<ui:fragment rendered="#{not empty ShareBean.input.unknownEmails}">
+				<script>openDialog('shareWithUsersDialog');</script>
+			</ui:fragment>
+			<div id="shareWithUsersDialog" class="imj_modalDialogBox imj_shareDialogBox">
+				<div  id="unknownEmails">
 					<div class="imj_messageTitleInfo">#{lbl.share_confirm_invitation_title}</div>
-					<div class="imj_messageTitleInfo">#{cc.attrs.bean.labelConfirmInvitation}</div>
+					<div class="imj_messageTitleInfo">#{ShareBean.labelConfirmInvitation}</div>
+					<br/>
 					<ul class="imj_messageList">
-						
-						<ui:repeat var="email" value="#{cc.attrs.bean.input.unknownEmails}" varStatus="status">
+						<ui:repeat var="email" value="#{ShareBean.input.unknownEmails}" varStatus="status">
 							<li>
 								<h:outputText value="#{email} "/>
-								<h:commandLink action="#{cc.attrs.bean.input.removeUnknownEmail(status.index)}" style="padding:0 1em;" styleClass="imj_rightsAction fa fa-trash" >
+								<h:commandLink action="#{ShareBean.input.removeUnknownEmail(status.index)}" style="padding:0 1em;" styleClass="imj_rightsAction fa fa-trash" >
 									<f:ajax render="@form"/>
 								</h:commandLink>
 							</li>
 						</ui:repeat>
 					</ul>
 					<div class="imj_submitPanel">
-						<h:commandButton value="#{lbl.cancel}" action="#{cc.attrs.bean.reloadPage}" styleClass="imj_cancelButton"/>
-						<h:commandButton action="#{cc.attrs.bean.invite}" styleClass="imj_submitButton" value="#{lbl.invite}"/>
+						<h:commandButton value="#{lbl.cancel}" action="#{ShareBean.reloadPage}" styleClass="imj_cancelButton"/>
+						<h:commandButton action="#{ShareBean.invite}" styleClass="imj_submitButton" value="#{lbl.invite}"/>
 					</div>
-				</h:panelGroup>
-			</h:form>
-		</div>
+				</div>
+			</div>
 	</composite:implementation>
 </html>

@@ -20,16 +20,16 @@
 					<h:outputText value="#{item.filename}"/>
 				</div>
 			</div>
-			<ui:fragment rendered="#{item.isCollection()}">
-				<div class="imj_metadataSet">
-					<div class="imj_metadataLabel" title="#{lbl.path}">
-						<h:outputText value="#{lbl.path}"/>
-					</div>
-					<div class="imj_metadataValue" title="#{item.path}">
-						<h:outputText value="#{item.path}"/>
-					</div>
+
+			<div class="imj_metadataSet">
+				<div class="imj_metadataLabel" title="#{lbl.path}">
+					<h:outputText value="#{lbl.path}"/>
 				</div>
-			</ui:fragment>
+				<div class="imj_metadataValue" title="#{item.path}">
+					<h:outputText value="#{item.path}"/>
+				</div>
+			</div>
+
 			<ui:repeat id="metadata" var="md" value="#{cc.attrs.item.metadata}" rows="0" varStatus="indexMetadata">
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel" title="#{cc.attrs.title}">

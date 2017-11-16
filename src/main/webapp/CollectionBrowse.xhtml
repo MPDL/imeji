@@ -104,7 +104,7 @@
 				</a>
 				<ui:fragment rendered="#{WorkflowBean.release(CollectionItemsBean.collection)}">
 					<h:form>
-						<h:commandLink action="#{CollectionItemsBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');" styleClass="imj_menuButton imj_openUploadDialog">
+						<h:commandLink action="#{CollectionItemsBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');" styleClass="imj_menuButton imj_overlayMenu">
 							<f:ajax render=":releaseCollection:confirmationDialogForm"/>
 							<span class="fa fa-globe"/> <span>#{lbl.release}</span>
 						</h:commandLink>

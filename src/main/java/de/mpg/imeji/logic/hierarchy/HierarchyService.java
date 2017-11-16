@@ -109,9 +109,13 @@ public class HierarchyService implements Serializable {
    * @param uri
    * @return
    */
-  public List<CollectionUriNameWrapper> findAllParentsWithNames(String uri) {
-    return findAllParents(uri).stream().map(id -> new CollectionUriNameWrapper(id))
-        .collect(Collectors.toList());
+  public List<CollectionUriNameWrapper> findAllParentsWithNames(String uri, boolean includeSelft) {
+    List<CollectionUriNameWrapper> l = findAllParents(uri).stream()
+        .map(id -> new CollectionUriNameWrapper(id)).collect(Collectors.toList());
+    if (includeSelft) {
+      l.add(new CollectionUriNameWrapper(uri));
+    }
+    return l;
   }
 
 

@@ -31,7 +31,7 @@
                         &#160;
                     </f:facet>
 
-                    <h:selectBooleanCheckbox disabled="#{o.status == 'WITHDRAWN'}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{o.selected}" valueChangeListener="#{o.selectedChanged}">
+                    <h:selectBooleanCheckbox style="#{o.isCollection() ? 'visibility: hidden' : ''}" disabled="#{o.status == 'WITHDRAWN'}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{o.selected}" valueChangeListener="#{o.selectedChanged}">
                         <f:ajax event="change" execute="@this" render=":actions"/>
                     </h:selectBooleanCheckbox>
                 </h:column>
@@ -66,10 +66,12 @@
 					</ui:fragment>
 					<ui:fragment rendered="#{o.isCollection()}">
 						<a href="#{Navigation.collectionUrl}#{o.id}">
-						#{empty cc.attrs.listBean.query ?  o.filename :  o.path}
+							#{o.filename}
 						</a>
 					</ui:fragment>
-
+					<ui:fragment rendered="#{ not empty cc.attrs.listBean.query}">
+						<div class="path">#{o.path}</div>
+					</ui:fragment>
                 </h:column>
 
                 <h:column headerClass="imj_colFiletype">

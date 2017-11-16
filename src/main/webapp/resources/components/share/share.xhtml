@@ -15,12 +15,88 @@
 			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}"/>
 			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}"/>
 		</h:panelGroup>
-		<ui:fragment rendered="#{Auth.admin(ShareBean.shareTo)}">
+		<ui:fragment rendered="#{Auth.admin(ShareBean.shareTo)}">		
 			<div class="imj_shareForm">
 				<share:shareWithGroupDialog bean="#{ShareBean}"/>
-				<share:shareWithUsersDialog bean="#{ShareBean}"/>
-				<h:form id="shareListForm" styleClass="shareListForm">
+				<h:form>
+					<div class="share_input">
+						<h:outputLabel for="emailInput"  value="#{lbl.share_email}"/>
+						<ui:fragment rendered="#{!empty ShareBean.userGroupsBean.userGroups}">
+							<span> #{lbl.or_small} </span>
+							<a href="#" class=""  onclick="openDialog('shareWithGroupDialog');" id="userGroupShare">
+								 #{lbl.share_with_group}
+							</a>
+						</ui:fragment>
+						<h:outputText styleClass="fa fa-exclamation-triangle" value=" #{lbl.invalid_email}: #{ShareBean.input.invalidEntriesAsString}" rendered="#{not empty ShareBean.input.invalidEntries}"/>
+						<h:inputTextarea id="emailInput" styleClass="imj_mdInput" value="#{ShareBean.input.input}" html5:placeholder="e.g. email@example.com; ..."/>	
+						<div id="shareOptions">
+							<div>
+								<h:commandButton value="#{lbl.share} " action="#{ShareBean.share}" styleClass="imj_submitButton">
+									<f:ajax render="@form" execute="@form"/>
+								</h:commandButton>
+							</div>
+							<div>
+								<h:selectOneRadio  id="selectedGrants" styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{ShareBean.input.menu.role}" layout="lineDirection">
+									<f:selectItems value="#{rolesMenu}"/>
+								</h:selectOneRadio>
+							</div>
+							<div id="selSendEmail">
+								<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmail"/>
+								<h:outputLabel for="selSendEmail" value="#{lbl.user_send_mail}"/>
+							</div>
+						</div>		
+					</div>
+				
+				
+					<ui:fragment rendered="#{empty ShareBean.input.unknownEmails}">
+						
 					
+					
+					
+					<ui:remove>
+					
+						<div class="imj_shareEmailInput">		
+							<div class="imj_metadataSet">
+								<div class="imj_metadataLabel">
+								<h:outputLabel for="emailInput"  value="#{lbl.share_email}"/>
+									<ui:fragment rendered="#{!empty ShareBean.userGroupsBean.userGroups}">
+										<br/>
+										<span> #{lbl.or_small} </span>
+										<a href="#" class=""  onclick="openDialog('shareWithGroupDialog');" id="userGroupShare">
+											 #{lbl.share_with_group}
+										</a>
+									</ui:fragment>
+								</div>
+								<div class="imj_metadataValue">
+									<h:outputText styleClass="fa fa-exclamation-triangle" value=" #{lbl.invalid_email}: #{ShareBean.input.invalidEntriesAsString}" rendered="#{not empty ShareBean.input.invalidEntries}"/>
+									<h:inputTextarea id="emailInput" styleClass="imj_mdInput" value="#{ShareBean.input.input}" html5:placeholder="e.g. email@example.com; ..."/>	
+								</div>
+							</div>
+							<div class="imj_metadataSet">
+								<div class="imj_metadataLabel"></div>
+								<div id="shareOptions" class="imj_metadataValue">
+									<div>
+										<h:commandButton value="#{lbl.share} " action="#{ShareBean.share}" styleClass="imj_submitButton">
+											<f:ajax render="@form" execute="@form"/>
+										</h:commandButton>
+									</div>
+									<div>
+										<h:selectOneRadio  id="selectedGrants" styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{ShareBean.input.menu.role}" layout="lineDirection">
+											<f:selectItems value="#{rolesMenu}"/>
+										</h:selectOneRadio>
+									</div>
+									<div id="selSendEmail">
+										<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmail"/>
+										<h:outputLabel for="selSendEmail" value="#{lbl.user_send_mail}"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						</ui:remove>
+					</ui:fragment>
+					<share:shareWithUsersDialog bean="#{ShareBean}"/>
+				</h:form>
+				<h:form id="shareListForm" styleClass="shareListForm">
 					
 					<!-- user table which shows all user with existing rights -->
 					<ui:fragment rendered="#{ShareBean.shareList.items.size() > 0}">

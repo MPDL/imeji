@@ -19,28 +19,9 @@
 	<f:metadata>
 		<f:viewParam name="email" value="#{ShareBean.userEmail}"/>
 	</f:metadata>
-	
-	<ui:define name="actionsMenu">
-	 	<span id="userShareButton">
-			<a  href="#" class="imj_menuButton ghostButton imj_overlayMenu" onclick="openDialog('shareWithUsersDialog');" id="userShare">
-				<span class="fa fa-user"></span> #{lbl.share_new}
-			</a>	
-		</span>
-		<ui:fragment rendered="#{!empty ShareBean.userGroupsBean.userGroups}">
-			<a href="#" class="imj_menuButton ghostButton imj_overlayMenu"  onclick="openDialog('shareWithGroupDialog');" id="userGroupShare">
-				<span class="fa fa-users"></span> #{lbl.share_with_group}
-			</a>
-		</ui:fragment>
-	 </ui:define>
-	
+
 	<ui:define name="mainContent">
 		<!-- ID must not be changed. The share page would not work anymore -->
 		<share:share id="share" />
 	</ui:define>
-	
-	 
-	 
-	 <ui:define name="modalDialogs_from_site">
-	  
-	 </ui:define>
 </ui:composition>

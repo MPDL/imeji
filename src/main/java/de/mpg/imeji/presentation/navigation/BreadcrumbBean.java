@@ -39,7 +39,7 @@ public class BreadcrumbBean extends SuperBean {
   public void init(Object o) {
     HierarchyService.reloadHierarchy();
     try {
-      entries = hierarchyService.findAllParentsWithNames(getObjectCollectionUri(o)).stream()
+      entries = hierarchyService.findAllParentsWithNames(getObjectCollectionUri(o), false).stream()
           .map(w -> new Entry(w.getName(), getLinkToCollection(w.getUri())))
           .collect(Collectors.toList());
     } catch (Exception e) {
