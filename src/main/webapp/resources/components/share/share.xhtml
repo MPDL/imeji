@@ -28,22 +28,16 @@
 							</a>
 						</ui:fragment>
 						<h:outputText styleClass="fa fa-exclamation-triangle" value=" #{lbl.invalid_email}: #{ShareBean.input.invalidEntriesAsString}" rendered="#{not empty ShareBean.input.invalidEntries}"/>
-						<h:inputTextarea id="emailInput" styleClass="imj_mdInput" value="#{ShareBean.input.input}" html5:placeholder="e.g. email@example.com; ..."/>	
-						<div id="shareOptions">
-							<div>
-								<h:commandButton value="#{lbl.share} " action="#{ShareBean.share}" styleClass="imj_submitButton">
+						<h:inputTextarea id="emailInput" styleClass="imj_mdInput" value="#{ShareBean.input.input}" html5:autofocus="true" html5:placeholder="e.g. email@example.com; ..."/>	
+						<h:selectOneRadio  id="selectedGrants" styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{ShareBean.input.menu.role}" layout="lineDirection">
+							<f:selectItems value="#{rolesMenu}"/>
+						</h:selectOneRadio>
+						<div id="shareBtn">
+							<h:commandButton value="#{lbl.share} " action="#{ShareBean.share}" styleClass="imj_submitButton">
 									<f:ajax render="@form" execute="@form"/>
-								</h:commandButton>
-							</div>
-							<div>
-								<h:selectOneRadio  id="selectedGrants" styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{ShareBean.input.menu.role}" layout="lineDirection">
-									<f:selectItems value="#{rolesMenu}"/>
-								</h:selectOneRadio>
-							</div>
-							<div id="selSendEmail">
-								<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmail"/>
-								<h:outputLabel for="selSendEmail" value="#{lbl.user_send_mail}"/>
-							</div>
+							</h:commandButton>
+							<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmail"/>
+							<h:outputLabel for="selSendEmail" value="#{lbl.user_send_mail}"/>
 						</div>		
 					</div>
 				
