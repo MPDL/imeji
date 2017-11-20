@@ -43,6 +43,7 @@
 							<td colspan="#{cc.attrs.rolesMenu.size()}">
 								<h:selectOneRadio id="role" value="#{sh.role}" styleClass="imj_rightsTable" enabledClass="imj_noDisplay" disabledClass="imj_noDisplay" layout="lineDirection"  disabled="#{cc.attrs.readOnly or sh.creator}">
 									<f:selectItems value="#{cc.attrs.rolesMenu}"/>
+									<f:ajax render="@none" listener="#{sh.update}"/>
 								</h:selectOneRadio>
 							</td>
 							<ui:fragment rendered="#{!cc.attrs.readOnly and !sh.creator}">

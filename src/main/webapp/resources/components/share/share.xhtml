@@ -40,54 +40,6 @@
 							<h:outputLabel for="selSendEmail" value="#{lbl.user_send_mail}"/>
 						</div>		
 					</div>
-				
-				
-					<ui:fragment rendered="#{empty ShareBean.input.unknownEmails}">
-						
-					
-					
-					
-					<ui:remove>
-					
-						<div class="imj_shareEmailInput">		
-							<div class="imj_metadataSet">
-								<div class="imj_metadataLabel">
-								<h:outputLabel for="emailInput"  value="#{lbl.share_email}"/>
-									<ui:fragment rendered="#{!empty ShareBean.userGroupsBean.userGroups}">
-										<br/>
-										<span> #{lbl.or_small} </span>
-										<a href="#" class=""  onclick="openDialog('shareWithGroupDialog');" id="userGroupShare">
-											 #{lbl.share_with_group}
-										</a>
-									</ui:fragment>
-								</div>
-								<div class="imj_metadataValue">
-									<h:outputText styleClass="fa fa-exclamation-triangle" value=" #{lbl.invalid_email}: #{ShareBean.input.invalidEntriesAsString}" rendered="#{not empty ShareBean.input.invalidEntries}"/>
-									<h:inputTextarea id="emailInput" styleClass="imj_mdInput" value="#{ShareBean.input.input}" html5:placeholder="e.g. email@example.com; ..."/>	
-								</div>
-							</div>
-							<div class="imj_metadataSet">
-								<div class="imj_metadataLabel"></div>
-								<div id="shareOptions" class="imj_metadataValue">
-									<div>
-										<h:commandButton value="#{lbl.share} " action="#{ShareBean.share}" styleClass="imj_submitButton">
-											<f:ajax render="@form" execute="@form"/>
-										</h:commandButton>
-									</div>
-									<div>
-										<h:selectOneRadio  id="selectedGrants" styleClass="imj_rightsTableForNewUser" selectedClass="imj_optionLabel" value="#{ShareBean.input.menu.role}" layout="lineDirection">
-											<f:selectItems value="#{rolesMenu}"/>
-										</h:selectOneRadio>
-									</div>
-									<div id="selSendEmail">
-										<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmail"/>
-										<h:outputLabel for="selSendEmail" value="#{lbl.user_send_mail}"/>
-									</div>
-								</div>
-							</div>
-						</div>
-						</ui:remove>
-					</ui:fragment>
 					<share:shareWithUsersDialog bean="#{ShareBean}"/>
 				</h:form>
 				<h:form id="shareListForm" styleClass="shareListForm">
@@ -101,15 +53,7 @@
 					<ui:fragment rendered="#{ShareBean.shareList.invitations.size() > 0}">
 						<share:grantList id="invitationList" rolesMenu="#{rolesMenu}" list="#{ShareBean.shareList.invitations}" title="#{lbl.pending_invitations}"/>
 					</ui:fragment>
-					
-					<ui:fragment rendered="#{ShareBean.shareList.invitations.size() > 0 or ShareBean.shareList.items.size() > 0}">		
-						<div class="imj_submitPanel imj_shareRightsOverview">
-							<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmailUpdate"/>
-							<h:outputLabel for="selSendEmailUpdate" value="#{lbl.user_send_mail}"/>
-							<h:commandButton value="#{lbl.reset_changes}" action="#{ShareBean.reloadPage}" styleClass="imj_cancelButton"/>
-							<h:commandButton value="#{lbl.update} #{lbl.list}" action="#{ShareBean.update}" styleClass="imj_submitButton" style="margin-right:0 !important;"/>
-						</div>				
-					</ui:fragment>
+
 				</h:form>							
 			</div>
 		</ui:fragment>
