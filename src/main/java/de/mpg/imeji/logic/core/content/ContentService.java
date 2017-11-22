@@ -19,9 +19,9 @@ import de.mpg.imeji.logic.batch.messageAggregations.NotifyUsersOnFileUploadAggre
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.content.extraction.ContentExtractionResult;
 import de.mpg.imeji.logic.core.content.extraction.ContentExtractorFactory;
-import de.mpg.imeji.logic.events.Message;
 import de.mpg.imeji.logic.events.MessageService;
-import de.mpg.imeji.logic.events.Message.MessageType;
+import de.mpg.imeji.logic.events.messages.ItemMessage;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
@@ -38,7 +38,6 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.storage.StorageController;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**
@@ -95,8 +94,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     ContentVO contentVO = uploadFile(new ContentVO(), item.getId().toString(), file, user);
     contentVO = controller.create(contentVO, Imeji.adminUser);
     analyzeFile(contentVO);
-    messageService.add(new Message(MessageType.UPLOAD_FILE,
-        ObjectHelper.getId(item.getCollection()), createMessageContent(item)));
+    messageService.add(new ItemMessage(MessageType.UPLOAD_FILE, item));
     return contentVO;
   }
 
@@ -117,10 +115,8 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
         .collect(Collectors.toList());
     controller.createBatch(contents, user);
     contents.stream().forEach(c -> analyzeFile(c));
-    itemWithFileList.stream()
-        .forEach(item -> messageService.add(
-            new Message(MessageType.UPLOAD_FILE, ObjectHelper.getId(item.getItem().getCollection()),
-                createMessageContent(item.getItem()))));;
+    itemWithFileList.stream().forEach(
+        item -> messageService.add(new ItemMessage(MessageType.UPLOAD_FILE, item.getItem())));
     return contents;
   }
 
@@ -138,8 +134,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
   public ContentVO create(Item item, String externalFileUrl, User user) throws ImejiException {
     ContentVO contentVO = ImejiFactory.newContent().setItemId(item.getId().toString())
         .setOriginal(externalFileUrl).build();
-    messageService.add(new Message(MessageType.UPLOAD_FILE,
-        ObjectHelper.getId(item.getCollection()), createMessageContent(item)));
+    messageService.add(new ItemMessage(MessageType.UPLOAD_FILE, item));
     return controller.create(contentVO, user);
   }
 
@@ -225,8 +220,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     contentVO = uploadFile(contentVO, item.getId().toString(), file, user);
     contentVO = controller.update(contentVO, Imeji.adminUser);
     analyzeFile(contentVO);
-    messageService.add(new Message(MessageType.CHANGE_FILE,
-        ObjectHelper.getId(item.getCollection()), createMessageContent(item)));
+    messageService.add(new ItemMessage(MessageType.CHANGE_FILE, item));
     return contentVO;
   }
 
@@ -243,8 +237,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     ContentVO contentVO = ImejiFactory.newContent().setId(item.getId().toString())
         .setOriginal(externalFileUrl).build();
     contentVO = controller.update(contentVO, user);
-    messageService.add(new Message(MessageType.CHANGE_FILE,
-        ObjectHelper.getId(item.getCollection()), createMessageContent(item)));
+    messageService.add(new ItemMessage(MessageType.CHANGE_FILE, item));
     return contentVO;
   }
 

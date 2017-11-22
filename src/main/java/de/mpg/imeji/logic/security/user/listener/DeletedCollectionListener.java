@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.security.user.messaging;
+package de.mpg.imeji.logic.security.user.listener;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.events.Message.MessageType;
-import de.mpg.imeji.logic.events.subscription.Subscriber;
+import de.mpg.imeji.logic.events.listener.Listener;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.User;
@@ -23,17 +23,17 @@ import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
- * {@link Subscriber} to unsubscribe users of deleted collection
+ * {@link Listener} to unsubscribe users of deleted collection
  * 
  * @author saquet
  *
  */
-public class DeletedCollectionSubscriber extends Subscriber {
+public class DeletedCollectionListener extends Listener {
   private final UserService userService = new UserService();
-  private static final Logger LOGGER = Logger.getLogger(DeletedCollectionSubscriber.class);
+  private static final Logger LOGGER = Logger.getLogger(DeletedCollectionListener.class);
 
 
-  public DeletedCollectionSubscriber() {
+  public DeletedCollectionListener() {
     super(MessageType.DELETE_COLLECTION);
   }
 

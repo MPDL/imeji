@@ -85,7 +85,9 @@ public class ElasticIndexer implements SearchIndexer {
         bulkRequest.add(
             getIndexRequest(getId(obj), toJson(obj, dataType, index), getParent(obj), dataType));
       }
-      bulkRequest.get();
+      if (bulkRequest.numberOfActions() > 0) {
+        bulkRequest.get();
+      }
     } catch (final Exception e) {
       LOGGER.error("error indexing object ", e);
     }
@@ -132,7 +134,9 @@ public class ElasticIndexer implements SearchIndexer {
         bulkRequest.add(getDeleteRequest(id, getParent(obj)));
       }
     }
-    bulkRequest.get();
+    if (bulkRequest.numberOfActions() > 0) {
+      bulkRequest.get();
+    }
     if (!(l.get(0) instanceof ContentVO)) {
       commit();
     }

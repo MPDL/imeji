@@ -71,6 +71,30 @@ public class JenaCustomQueries {
         + "\"^^<http://www.w3.org/2001/XMLSchema#string> }";
   }
 
+  /**
+   * Select all subscription by its objectId
+   * 
+   * @param objectId
+   * @return
+   */
+  public static final String selectSubscriptionByObjectId(String objectId) {
+    return X_PATH_FUNCTIONS_DECLARATION
+        + "  SELECT DISTINCT ?s WHERE {?s <http://imeji.org/terms/objectId> \"" + objectId
+        + "\"^^<http://www.w3.org/2001/XMLSchema#string> }";
+  }
+
+  /**
+   * Select all subscriptions for the user with this id
+   * 
+   * @param email
+   * @return
+   */
+  public static final String selectSubscriptionByUserId(String userId) {
+    return X_PATH_FUNCTIONS_DECLARATION
+        + "  SELECT DISTINCT ?s WHERE {?s <http://imeji.org/terms/userId> \"" + userId
+        + "\"^^<http://www.w3.org/2001/XMLSchema#string> }";
+  }
+
 
   /**
    * Select a User by its Email

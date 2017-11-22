@@ -9,7 +9,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.db.keyValue.stores.HTreeMapStore;
-import de.mpg.imeji.logic.events.subscription.SubscriptionService;
+import de.mpg.imeji.logic.events.listener.ListenerService;
+import de.mpg.imeji.logic.events.messages.Message;
 
 /**
  * SErvice to manage {@link Message}
@@ -21,7 +22,7 @@ public class MessageService {
   private static final KeyValueStoreService QUEUE =
       new KeyValueStoreService(new HTreeMapStore("messageQueue"));
   private static Logger LOGGER = Logger.getLogger(MessageService.class);
-  private final SubscriptionService subscriptionService = new SubscriptionService();
+  private final ListenerService subscriptionService = new ListenerService();
 
 
   /**

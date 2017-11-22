@@ -8,14 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableMap;
-
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.events.Message;
 import de.mpg.imeji.logic.events.MessageService;
-import de.mpg.imeji.logic.events.Message.MessageType;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
+import de.mpg.imeji.logic.events.messages.StatementMessage;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.Statement;
@@ -29,11 +27,11 @@ import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 
 /**
  * Service for {@link Statement}
@@ -170,8 +168,8 @@ public class StatementService extends SearchServiceAbstract<Statement> {
       after = controller.create(after, user);
       controller.delete(before, user);
       changeDefaultStatement(before, after);
-      messageService.add(new Message(MessageType.STATEMENT_CHANGED, before.getIndex(),
-          ImmutableMap.of("newIndex", after.getIndex())));
+      messageService
+          .add(new StatementMessage(MessageType.STATEMENT_CHANGED, after, before.getIndex()));
       return after;
     }
   }

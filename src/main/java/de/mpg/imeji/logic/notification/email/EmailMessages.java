@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.security.sharing.email;
+package de.mpg.imeji.logic.notification.email;
 
 import java.util.Date;
 import java.util.Locale;

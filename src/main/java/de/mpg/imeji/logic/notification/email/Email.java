@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.security.sharing.email;
+package de.mpg.imeji.logic.notification.email;
 
 /**
  * An Email...

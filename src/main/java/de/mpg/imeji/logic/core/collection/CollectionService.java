@@ -14,9 +14,9 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.facade.MoveFacade;
 import de.mpg.imeji.logic.core.facade.WorkflowFacade;
 import de.mpg.imeji.logic.core.item.ItemService;
-import de.mpg.imeji.logic.events.Message;
-import de.mpg.imeji.logic.events.Message.MessageType;
 import de.mpg.imeji.logic.events.MessageService;
+import de.mpg.imeji.logic.events.messages.CollectionMessage;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
@@ -36,7 +36,6 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
-import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
  * CRUD controller for {@link CollectionImeji}, plus search mehtods related to
@@ -168,8 +167,7 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
       }
       itemService.delete(items, user);
       controller.delete(collection, user);
-      messageService.add(
-          new Message(MessageType.DELETE_COLLECTION, ObjectHelper.getId(collection.getId()), null));
+      messageService.add(new CollectionMessage(MessageType.DELETE_COLLECTION, collection));
     }
   }
 

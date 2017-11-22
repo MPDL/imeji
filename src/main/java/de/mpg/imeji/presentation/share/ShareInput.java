@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.security.sharing.email.EmailService;
+import de.mpg.imeji.logic.notification.email.EmailService;
 import de.mpg.imeji.logic.security.sharing.invitation.Invitation;
 import de.mpg.imeji.logic.security.sharing.invitation.InvitationService;
 import de.mpg.imeji.logic.security.user.UserService;

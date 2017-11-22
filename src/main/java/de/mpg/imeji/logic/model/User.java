@@ -51,15 +51,13 @@ public class User implements Serializable {
 
   // User properties for registration
   @j2jLiteral(ImejiNamespaces.LAST_MODIFICATION_DATE)
-  private Calendar modified;;
+  private Calendar modified;
 
   @j2jResource(ImejiNamespaces.USER_STATUS)
   private URI userStatus = URI.create(UserStatus.ACTIVE.getUriString());
 
-
   @j2jLiteral("http://imeji.org/terms/registrationToken")
   private String registrationToken;
-
 
   @j2jList("http://imeji.org/terms/observedCollections")
   private Collection<String> observedCollections = new ArrayList<String>();

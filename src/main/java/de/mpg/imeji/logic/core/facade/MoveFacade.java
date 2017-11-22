@@ -4,22 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableMap;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
-import de.mpg.imeji.logic.batch.messageAggregations.NotifyUsersOnFileUploadAggregation;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.item.ItemService;
-import de.mpg.imeji.logic.events.Message;
-import de.mpg.imeji.logic.events.Message.MessageType;
 import de.mpg.imeji.logic.events.MessageService;
+import de.mpg.imeji.logic.events.messages.CollectionMessage;
+import de.mpg.imeji.logic.events.messages.ItemMessage;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
@@ -90,8 +87,8 @@ public class MoveFacade implements Serializable {
     }
     itemsIndexer.commit();
     // Notify to event queue
-    items.stream().forEach(item -> messageService.add(
-        new Message(MessageType.MOVE_ITEM, collection.getIdString(), createMessageMoveItem(item))));
+    items.stream()
+        .forEach(item -> messageService.add(new ItemMessage(MessageType.MOVE_ITEM, item)));
     return items;
   }
 
@@ -118,7 +115,8 @@ public class MoveFacade implements Serializable {
         parent.getId().toString()));
     collectionIndexer.updatePartial(collection.getId().toString(),
         new ElasticForlderPartObject(parent.getId().toString()));
-    messageService.add(createMessageMoveCollection(collection, parent));
+    collection.setCollection(parent.getId());
+    messageService.add(new CollectionMessage(MessageType.MOVE_COLLECTION, collection));
   }
 
 
@@ -201,30 +199,6 @@ public class MoveFacade implements Serializable {
         items.stream().map(item -> contentService.findContentId(item.getId().toString()))
             .collect(Collectors.toList());
     return contentService.retrieveBatchLazy(contentIds);
-  }
-
-  /**
-   * Create the Message content for moved items
-   * 
-   * @param item
-   * @return
-   */
-  private Map<String, String> createMessageMoveItem(Item item) {
-    return ImmutableMap.of(NotifyUsersOnFileUploadAggregation.COUNT, "1",
-        NotifyUsersOnFileUploadAggregation.FILENAME,
-        item.getFilename() != null ? item.getFilename() : "",
-        NotifyUsersOnFileUploadAggregation.ITEM_ID, item.getIdString());
-  }
-
-  /**
-   * Create the message for collection moved
-   * 
-   * @param collection
-   * @return
-   */
-  private Message createMessageMoveCollection(CollectionImeji collection, CollectionImeji parent) {
-    Map<String, String> content = ImmutableMap.of("parent", parent.getId().toString());
-    return new Message(MessageType.MOVE_COLLECTION, collection.getIdString(), content);
   }
 
   /**

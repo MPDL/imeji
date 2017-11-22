@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.security.user.messaging;
+package de.mpg.imeji.logic.security.user.listener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,14 +9,16 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.events.Message.MessageType;
-import de.mpg.imeji.logic.events.subscription.Subscriber;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
+import de.mpg.imeji.logic.events.listener.Listener;
+import de.mpg.imeji.logic.events.messages.ShareMessage;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 
 /**
  * Subscriber when a collection is unshared
@@ -24,11 +26,11 @@ import de.mpg.imeji.logic.util.ObjectHelper;
  * @author saquet
  *
  */
-public class UnshareCollectionSubscriber extends Subscriber {
+public class UnshareCollectionListener extends Listener {
   private final UserService userService = new UserService();
-  private static final Logger LOGGER = Logger.getLogger(UnshareCollectionSubscriber.class);
+  private static final Logger LOGGER = Logger.getLogger(UnshareCollectionListener.class);
 
-  public UnshareCollectionSubscriber() {
+  public UnshareCollectionListener() {
     super(MessageType.UNSHARE);
   }
 
@@ -69,11 +71,13 @@ public class UnshareCollectionSubscriber extends Subscriber {
    * @throws ImejiException
    */
   private List<User> readUsersFromMessage() throws ImejiException {
-    if (getMessage().getContent().containsKey("email")) {
-      return Arrays.asList(
-          new UserService().retrieve(getMessage().getContent().get("email"), Imeji.adminUser));
-    } else if (getMessage().getContent().containsKey("group")) {
-      return retrieveUsersOfGroup(getMessage().getContent().get("group"));
+    if (getMessage() instanceof ShareMessage) {
+      ShareMessage m = (ShareMessage) getMessage();
+      if (!StringHelper.isNullOrEmptyTrim(m.getEmail())) {
+        return Arrays.asList(new UserService().retrieve(m.getEmail(), Imeji.adminUser));
+      } else if (!StringHelper.isNullOrEmptyTrim(m.getGroupId())) {
+        return retrieveUsersOfGroup(m.getGroupId());
+      }
     }
     return new ArrayList<>();
   }

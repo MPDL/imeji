@@ -162,7 +162,12 @@
 		<pattern value="/pwdreset"/>
 		<view-id>/jsf/PasswordReset.xhtml</view-id>
 	</url-mapping>
+	<url-mapping id="subscriptions">
+		<pattern value="/subscriptions" />
+		<view-id>/jsf/Subscription.xhtml</view-id>
+	</url-mapping>
 	<!-- Other pages -->
+	
 	<url-mapping id="termsOfUse">
 		<pattern value="/terms_of_use"></pattern>
 		<view-id>/jsf/TermsOfUse.xhtml</view-id>

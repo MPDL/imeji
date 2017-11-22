@@ -4,8 +4,8 @@ import java.util.Locale;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.notification.email.EmailMessages;
 import de.mpg.imeji.logic.security.sharing.ShareService.ShareRoles;
-import de.mpg.imeji.logic.security.sharing.email.EmailMessages;
 
 /**
  * Email Message when sharing an object

@@ -6,9 +6,9 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Metadata;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.Properties.Status;
 
 /**
  * Create objects ready to be displayed in JSF
@@ -24,6 +24,10 @@ public class ImejiFactory {
    */
   private ImejiFactory() {
     // avoid creation
+  }
+
+  public static SubscriptionFactory newSubscription() {
+    return new SubscriptionFactory();
   }
 
   /**

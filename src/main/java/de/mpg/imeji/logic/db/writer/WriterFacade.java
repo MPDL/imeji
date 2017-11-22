@@ -14,6 +14,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties;
+import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -215,6 +216,8 @@ public class WriterFacade {
       return ((User) o).getId();
     } else if (o instanceof UserGroup) {
       return ((UserGroup) o).getId();
+    } else if (o instanceof Subscription) {
+      return URI.create(((Subscription) o).getUserId());
     }
     return null;
   }

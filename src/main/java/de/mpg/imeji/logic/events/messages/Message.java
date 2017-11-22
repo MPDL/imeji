@@ -1,9 +1,10 @@
-package de.mpg.imeji.logic.events;
+package de.mpg.imeji.logic.events.messages;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.net.URI;
 
 import de.mpg.imeji.logic.util.IdentifierUtil;
+import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
  * An imeji Message
@@ -11,7 +12,7 @@ import de.mpg.imeji.logic.util.IdentifierUtil;
  * @author saquet
  *
  */
-public class Message implements Serializable {
+public abstract class Message implements Serializable {
   private static final long serialVersionUID = 7333376188527222587L;
 
   public enum MessageType {
@@ -21,20 +22,17 @@ public class Message implements Serializable {
   private final MessageType type;
   private final long time;
   private final String objectId;
-  private final Map<String, String> content;
   private final String id = IdentifierUtil.newRandomId();
 
   /**
-   * Create a new Message
+   * Create a Message for a collection
    * 
-   * @param type a {@link MessageType}
-   * @param objecdId The Id of the object
-   * @param content The specific content to this message
+   * @param type
+   * @param collectionUri
    */
-  public Message(MessageType type, String objecdId, Map<String, String> content) {
+  public Message(MessageType type, URI objectUri) {
     this.type = type;
-    this.objectId = objecdId;
-    this.content = content;
+    this.objectId = ObjectHelper.getId(objectUri);
     this.time = System.currentTimeMillis();
   }
 
@@ -62,13 +60,4 @@ public class Message implements Serializable {
   public String getObjectId() {
     return objectId;
   }
-
-  /**
-   * @return the content
-   */
-  public Map<String, String> getContent() {
-    return content;
-  }
-
-
 }

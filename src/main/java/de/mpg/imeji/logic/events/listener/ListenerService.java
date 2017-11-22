@@ -1,4 +1,4 @@
-package de.mpg.imeji.logic.events.subscription;
+package de.mpg.imeji.logic.events.listener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.events.Message;
-import de.mpg.imeji.logic.events.Message.MessageType;
+import de.mpg.imeji.logic.events.messages.Message;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
 
 /**
  * Service managing message subscription
@@ -19,16 +19,16 @@ import de.mpg.imeji.logic.events.Message.MessageType;
  * @author saquet
  *
  */
-public class SubscriptionService {
-  private static Map<MessageType, List<Subscriber>> subscriptions = new HashMap<>();
-  private static Logger LOGGER = Logger.getLogger(SubscriptionService.class);
+public class ListenerService {
+  private static Map<MessageType, List<Listener>> subscriptions = new HashMap<>();
+  private static Logger LOGGER = Logger.getLogger(ListenerService.class);
 
   /**
-   * Initialize the {@link SubscriptionService} by registering all existing {@link Subscriber}
+   * Initialize the {@link ListenerService} by registering all existing {@link Listener}
    */
   public void init() {
     LOGGER.info("Initializing message subscribers...");
-    for (Subscriber s : findAllSubscribers()) {
+    for (Listener s : findAllListeners()) {
       register(s);
       LOGGER.info("Registered: " + s.getClass().getName());
     }
@@ -38,12 +38,12 @@ public class SubscriptionService {
   /**
    * Subscribe to a particular topic
    * 
-   * @param subscriber
+   * @param listener
    */
-  public void register(Subscriber subscriber) {
-    List<Subscriber> l = subscriptions.getOrDefault(subscriber.getMessageType(), new ArrayList<>());
-    l.add(subscriber);
-    for (MessageType m : subscriber.getMessageType()) {
+  public void register(Listener listener) {
+    List<Listener> l = subscriptions.getOrDefault(listener.getMessageType(), new ArrayList<>());
+    l.add(listener);
+    for (MessageType m : listener.getMessageType()) {
       subscriptions.put(m, l);
     }
   }
@@ -59,16 +59,15 @@ public class SubscriptionService {
   }
 
   /**
-   * Find all Classes extending {@link Subscriber} and return an instance of it
+   * Find all Classes extending {@link Listener} and return an instance of it
    * 
    * @return
    */
-  private List<Subscriber> findAllSubscribers() {
+  private List<Listener> findAllListeners() {
     Reflections reflections = new Reflections("de.mpg.imeji");
-    Set<Class<? extends Subscriber>> subscriberClasses =
-        reflections.getSubTypesOf(Subscriber.class);
-    List<Subscriber> l = new ArrayList<>();
-    for (Class<? extends Subscriber> c : subscriberClasses) {
+    Set<Class<? extends Listener>> subscriberClasses = reflections.getSubTypesOf(Listener.class);
+    List<Listener> l = new ArrayList<>();
+    for (Class<? extends Listener> c : subscriberClasses) {
       try {
         l.add(c.newInstance());
       } catch (InstantiationException | IllegalAccessException e) {
@@ -77,5 +76,4 @@ public class SubscriptionService {
     }
     return l;
   }
-
 }

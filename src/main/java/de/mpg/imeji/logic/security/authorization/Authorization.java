@@ -20,6 +20,7 @@ import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
 
@@ -70,6 +71,9 @@ public class Authorization implements Serializable {
     }
     if (obj instanceof CollectionImeji) {
       return hasCreateCollectionGrant(user);
+    }
+    if (obj instanceof Subscription) {
+      return update(user, obj);
     }
     return isSysAdmin(user);
   }
@@ -263,6 +267,9 @@ public class Authorization implements Serializable {
       }
       if (obj instanceof Statement) {
         return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
+      }
+      if (obj instanceof Subscription) {
+        return ((Subscription) obj).getUserId();
       }
       LOGGER.fatal("Invalid Object type: " + obj.getClass());
       return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;

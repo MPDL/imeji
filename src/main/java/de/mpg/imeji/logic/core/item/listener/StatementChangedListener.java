@@ -1,12 +1,13 @@
-package de.mpg.imeji.logic.core.item.messaging;
+package de.mpg.imeji.logic.core.item.listener;
 
 import java.util.List;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.item.ItemService;
-import de.mpg.imeji.logic.events.Message.MessageType;
-import de.mpg.imeji.logic.events.subscription.Subscriber;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
+import de.mpg.imeji.logic.events.listener.Listener;
+import de.mpg.imeji.logic.events.messages.StatementMessage;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
@@ -22,16 +23,24 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
  * @author saquet
  *
  */
-public class StatementChangedSubscriber extends Subscriber {
+public class StatementChangedListener extends Listener {
 
-  public StatementChangedSubscriber() {
+  public StatementChangedListener() {
     super(MessageType.STATEMENT_CHANGED);
   }
 
   @Override
+  public StatementMessage getMessage() {
+    if (super.getMessage() instanceof StatementMessage) {
+      return (StatementMessage) super.getMessage();
+    }
+    return null;
+  }
+
+  @Override
   public Integer call() throws Exception {
-    String oldIndex = getMessage().getObjectId();
-    String newIndex = getMessage().getContent().get("newIndex");
+    String oldIndex = getMessage().getPreviousIndex();
+    String newIndex = getMessage().getIndex();
     updateItemIndex(oldIndex, newIndex, Imeji.adminUser);
     return null;
   }

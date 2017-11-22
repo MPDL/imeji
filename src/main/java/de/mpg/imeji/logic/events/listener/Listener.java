@@ -1,22 +1,22 @@
-package de.mpg.imeji.logic.events.subscription;
+package de.mpg.imeji.logic.events.listener;
 
 import java.util.concurrent.Callable;
 
-import de.mpg.imeji.logic.events.Message;
-import de.mpg.imeji.logic.events.Message.MessageType;
+import de.mpg.imeji.logic.events.messages.Message;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
 
 /**
- * A Subscriber to a particular MessageType is called as soon as one message with the same
- * MessageType is added to the queue
+ * Listen for a particular MessageType is called as soon as one message with the same MessageType is
+ * added to the queue
  * 
  * @author saquet
  *
  */
-public abstract class Subscriber implements Callable<Integer> {
+public abstract class Listener implements Callable<Integer> {
   private final MessageType[] messageType;
   private Message message;
 
-  public Subscriber(MessageType... messageType) {
+  public Listener(MessageType... messageType) {
     this.messageType = messageType;
   }
 
@@ -34,5 +34,4 @@ public abstract class Subscriber implements Callable<Integer> {
   public MessageType[] getMessageType() {
     return messageType;
   }
-
 }

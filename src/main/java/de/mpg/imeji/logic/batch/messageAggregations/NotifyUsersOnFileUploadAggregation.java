@@ -15,13 +15,14 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
-import de.mpg.imeji.logic.events.Message;
 import de.mpg.imeji.logic.events.MessageService;
-import de.mpg.imeji.logic.events.Message.MessageType;
 import de.mpg.imeji.logic.events.aggregation.Aggregation;
+import de.mpg.imeji.logic.events.messages.ItemMessage;
+import de.mpg.imeji.logic.events.messages.Message;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.security.sharing.email.EmailService;
+import de.mpg.imeji.logic.notification.email.EmailService;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 
@@ -60,8 +61,8 @@ public class NotifyUsersOnFileUploadAggregation implements Aggregation {
    * @param uploadedFiles
    * @param modifiedFiles
    */
-  private void sendEmailToUser(User user, Map<String, List<Message>> uploadedFiles,
-      Map<String, List<Message>> modifiedFiles) {
+  private void sendEmailToUser(User user, Map<String, List<ItemMessage>> uploadedFiles,
+      Map<String, List<ItemMessage>> modifiedFiles) {
     String text = "";
     if (!uploadedFiles.isEmpty() || !modifiedFiles.isEmpty()) {
       String subject =
@@ -84,7 +85,7 @@ public class NotifyUsersOnFileUploadAggregation implements Aggregation {
   }
 
   private String buildTextWithListOfFiles(String collectionId,
-      Map<String, List<Message>> uploadedFiles, Map<String, List<Message>> modifiedFiles) {
+      Map<String, List<ItemMessage>> uploadedFiles, Map<String, List<ItemMessage>> modifiedFiles) {
     String text = "";
     CollectionImeji c = retrieveCollection(collectionId);
     if (c != null) {
@@ -104,7 +105,7 @@ public class NotifyUsersOnFileUploadAggregation implements Aggregation {
    * @param messages
    * @return
    */
-  private Map<String, List<Message>> aggregateMessagesByCollection(List<Message> messages) {
+  private Map<String, List<ItemMessage>> aggregateMessagesByCollection(List<ItemMessage> messages) {
     return messages.stream().collect(Collectors.groupingBy(Message::getObjectId));
   }
 
@@ -116,7 +117,7 @@ public class NotifyUsersOnFileUploadAggregation implements Aggregation {
    * @param to
    * @return
    */
-  private List<Message> retrieveAllMessagesForUser(User user, long from, long to,
+  private List<ItemMessage> retrieveAllMessagesForUser(User user, long from, long to,
       MessageType... type) {
     List<Message> messages = new ArrayList<>();
     for (String collectionId : user.getSubscriptionCollections()) {
@@ -124,7 +125,7 @@ public class NotifyUsersOnFileUploadAggregation implements Aggregation {
       messages.addAll(messageService.readForObject(collectionId, from, to).stream()
           .filter(m -> Arrays.asList(type).contains(m.getType())).collect(Collectors.toList()));
     }
-    return messages;
+    return messages.stream().map(m -> (ItemMessage) m).collect(Collectors.toList());
   }
 
   /**
@@ -156,9 +157,9 @@ public class NotifyUsersOnFileUploadAggregation implements Aggregation {
         + Imeji.PROPERTIES.getApplicationURL() + "collection/" + c.getIdString() + ")";
   }
 
-  private String getItemText(CollectionImeji c, Message m) {
-    return "* " + m.getContent().get(FILENAME) + " (" + Imeji.PROPERTIES.getApplicationURL()
-        + "item/" + m.getContent().get(ITEM_ID) + ")";
+  private String getItemText(CollectionImeji c, ItemMessage m) {
+    return "* " + m.getFilename() + " (" + Imeji.PROPERTIES.getApplicationURL() + "item/"
+        + m.getItemId() + ")";
   }
 
   /**

@@ -1,0 +1,76 @@
+<ui:composition template="templates/template_site.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	xmlns:imjc="http://java.sun.com/jsf/composite/components">
+
+	<ui:param name="headline" value="#{lbl.subscriptions}" />
+	<ui:param name="title" value="#{headline}" />
+	<ui:param name="currentMainMenu" value="collections" />
+	
+	<ui:define name="mainContent">
+		<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
+				#{SubscriptionBean.init()}
+				<h:form id="subscriptions">
+					<div class="imj_admindataSet">
+						<div class="imj_admindataLabel">
+							#{empty SubscriptionBean.groups ? lbl.no_subscriptions_found : lbl.collection}
+							<span class="imj_noDisplay">: </span>
+						</div>
+						<div class="imj_admindataValue">
+							<h:commandLink action="#{SubscriptionBean.toggleShowAll}" rendered="#{SubscriptionBean.user != null}">
+								<f:ajax execute="@this" render="@form"/>
+								<span class="fa #{SubscriptionBean.showAllCollections ? 'fa-filter' : 'fa-eye'}"/>
+								#{SubscriptionBean.showAllCollections ? lbl.show_only_active_subscription : lbl.show_all_collections_for_subscription}
+							</h:commandLink>
+						</div>
+					</div>
+				
+				
+					<ui:fragment rendered="#{empty SubscriptionBean.groups}">
+					
+					</ui:fragment>
+					<ui:repeat var="group" value="#{SubscriptionBean.groups}" varStatus="row">
+							<div class="imj_itemContent imj_itemHeadline">
+								<div class="imj_admindataSet">
+									<div class="imj_admindataLabel" style="padding: 10px 0 10px 0;">
+										#{group.name}
+										<span class="imj_noDisplay">: </span>
+									</div>
+									<div class="imj_admindataValue">
+										<ui:fragment rendered="#{SubscriptionBean.user == null}">
+											<ui:repeat var="subscription" value="#{group.subscriptions}" varStatus="row">
+												<div class="imj_admindataLabel">
+													#{group.getUserCompleteName(subscription)}
+												</div>
+												<div class="imj_admindataValue">
+													<h:commandLink title="#{lbl.unsubscribe}" action="#{SubscriptionBean.unSubscribe(subscription)}">
+														<f:ajax render="@form"/>
+														<span class="fa fa-times"/>
+													</h:commandLink>
+												</div>
+											</ui:repeat>
+										</ui:fragment>
+										<ui:fragment rendered="#{SubscriptionBean.user != null}">
+											<h:commandLink action="#{SubscriptionBean.subscribe(SubscriptionBean.user,group.collection)}" rendered="#{!group.isSubscribed(SubscriptionBean.user)}">
+												<f:ajax render="@form"/>
+												<span class="fa fa-check"/>
+												#{lbl.subscribe}
+											</h:commandLink>
+											<h:commandLink action="#{SubscriptionBean.unSubscribe(group.getSubscriptionForUser(SubscriptionBean.user))}" rendered="#{group.isSubscribed(SubscriptionBean.user)}">
+												<f:ajax render="@form"/>
+												<span class="fa fa-times"/>
+												#{lbl.unsubscribe}
+											</h:commandLink>
+										</ui:fragment>
+									</div>
+								</div>
+							</div>
+					</ui:repeat>
+				</h:form>
+			</div>
+	</ui:define>
+</ui:composition>
