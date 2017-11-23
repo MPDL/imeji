@@ -28,9 +28,9 @@
 						<h:outputText value="#{lbl.cancel}"/>
 					</button>
 					
-					<button onclick="closeDialog('#{cc.attrs.dialogId}');openDialog('#{cc.attrs.submitId1}');" class="imj_submitButton">
-						<h:outputText value="#{cc.attrs.submitLabel1}"/>
-					</button>
+					<a href="#" onclick="closeDialog('#{cc.attrs.dialogId}');openDialog('#{cc.attrs.submitId1}');" class="imj_submitButton">
+						#{cc.attrs.submitLabel1}
+					</a>
 					
 					<button onclick="closeDialog('#{cc.attrs.dialogId}');openDialog('#{cc.attrs.submitId2}');" class="imj_submitButton" >
 						<h:outputText value="#{cc.attrs.submitLabel2}"/>

@@ -3,6 +3,7 @@ package de.mpg.imeji.presentation.subscription;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
@@ -41,14 +42,26 @@ public class SubscriptionBean extends SuperBean {
   private User user;
   private boolean showAllCollections = false;
 
+  /**
+   * Init according to url parameters
+   */
   public void init() {
     try {
       initUser();
-      initGroups();
+      initGroups(retrieveCollections());
     } catch (ImejiException e) {
       LOGGER.error("Error initializing SubscriptionBean", e);
       BeanHelper.error("Error initializing page: " + e.getMessage());
     }
+  }
+
+  /**
+   * Init for one collection
+   * 
+   * @param collection
+   */
+  public void init(CollectionImeji collection) {
+    initGroup(collection);
   }
 
   /**
@@ -57,9 +70,20 @@ public class SubscriptionBean extends SuperBean {
    * 
    * @throws ImejiException
    */
-  private void initGroups() throws ImejiException {
-    groups = retrieveCollections().stream().map(c -> new SubscriptionGroup(c, getSessionUser()))
+  private void initGroups(List<CollectionImeji> collections) throws ImejiException {
+    groups = collections.stream().map(c -> new SubscriptionGroup(c, getSessionUser()))
         .peek(g -> g.init()).filter(g -> filterSubscriptionGroup(g)).collect(Collectors.toList());
+  }
+
+  /**
+   * Initialize the Bean for only one collection
+   * 
+   * @param collection
+   */
+  private void initGroup(CollectionImeji collection) {
+    SubscriptionGroup g = new SubscriptionGroup(collection, getSessionUser());
+    g.init();
+    groups.add(g);
   }
 
   /**
@@ -113,7 +137,7 @@ public class SubscriptionBean extends SuperBean {
     try {
       new SubscriptionService().subscribe(ImejiFactory.newSubscription().setObjectId(collection)
           .setType(Type.UPLOAD).setUserId(user).build(), getSessionUser());
-      initGroups();
+      initGroups(retrieveCollections());
     } catch (ImejiException e) {
       LOGGER.error("Error subscribing to collection", e);
       BeanHelper.error("Error subscribing to the collection");
@@ -129,14 +153,55 @@ public class SubscriptionBean extends SuperBean {
    */
   public void unSubscribe(User user, CollectionImeji collection) {
     try {
-      new SubscriptionService().unSubscribe(ImejiFactory.newSubscription().setObjectId(collection)
-          .setType(Type.UPLOAD).setUserId(user).build(), user);
-      initGroups();
-    } catch (ImejiException e) {
+      Subscription s = groups.stream()
+          .filter(g -> g.getCollection().getIdString().equals(collection.getIdString()))
+          .map(g -> g.getSubscriptionForUser(user)).findAny().get();
+      new SubscriptionService().unSubscribe(s, user);
+      initGroups(retrieveCollections());
+    } catch (Exception e) {
       LOGGER.error("Error subscribing to collection", e);
       BeanHelper.error("Error un-subscribing from collection");
     }
   }
+
+  /**
+   * Subscribe the user of the current session to the collection
+   * 
+   * @param collection
+   */
+  public void unSubscribe(CollectionImeji collection) {
+    unSubscribe(getSessionUser(), collection);
+  }
+
+  /**
+   * Unsubscribe the user of the current session
+   * 
+   * @param collection
+   */
+  public void subscribe(CollectionImeji collection) {
+    subscribe(getSessionUser(), collection);
+  }
+
+  /**
+   * Subscribe the user of the current session to the current collection (i.e., there is only one
+   * SubscriptionGroup)
+   * 
+   * @param collection
+   */
+  public void unSubscribe() {
+    unSubscribe(getSessionUser(), groups.get(0).getCollection());
+  }
+
+  /**
+   * Unsubscribe the user of the current session from the current collection (i.e. there is only one
+   * SubscriptionGoup)
+   * 
+   * @param collection
+   */
+  public void subscribe() {
+    subscribe(getSessionUser(), groups.get(0).getCollection());
+  }
+
 
   /**
    * Unsubscribe (i.e. remove subscription)
@@ -146,11 +211,24 @@ public class SubscriptionBean extends SuperBean {
   public void unSubscribe(Subscription subscription) {
     try {
       new SubscriptionService().unSubscribe(subscription, getSessionUser());
-      initGroups();
+      initGroups(retrieveCollections());
     } catch (ImejiException e) {
       LOGGER.error("Error subscribing to collection", e);
       BeanHelper.error("Error un-subscribing from collection");
     }
+  }
+
+  /**
+   * True if the user subscribed to the current collection
+   * 
+   * @param user
+   * @param collection
+   * @return
+   */
+  public boolean isSubscribed(User user, CollectionImeji collection) {
+    Optional<SubscriptionGroup> group = groups.stream()
+        .filter(g -> g.getCollection().getIdString().equals(collection.getIdString())).findAny();
+    return group.isPresent() && group.get().isSubscribed(user);
   }
 
   /**
@@ -182,6 +260,6 @@ public class SubscriptionBean extends SuperBean {
 
   public void toggleShowAll() throws ImejiException {
     showAllCollections = showAllCollections ? false : true;
-    initGroups();
+    initGroups(retrieveCollections());
   }
 }

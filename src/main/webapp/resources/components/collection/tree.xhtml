@@ -16,7 +16,7 @@
 		<cc:attribute name="upload" default="false" type="java.lang.Boolean"/>
 	</cc:interface>
 	<cc:implementation>
-		<ui:repeat var="node" value="#{cc.attrs.tree.nodes}">
+		<ui:repeat id="node" var="node" value="#{cc.attrs.tree.nodes}" varStatus="status">
 			<ui:fragment rendered="#{!cc.attrs.upload}">
 				<ui:param name="disabled" value="#{cc.attrs.colId == node.collection.id.toString() || (MoveItemsBean.isCollection(cc.attrs.objectId) and MoveItemsBean.isChildOf(node, cc.attrs.colId))}"/>
 			</ui:fragment>
@@ -39,10 +39,10 @@
 				</ui:fragment>
 				<ui:fragment rendered="#{cc.attrs.upload}">
 					<a href="#{Navigation.collectionUrl}#{node.collection.idString}?showUpload=1" title="#{lbl.upload_here}">#{node.collection.title}</a>
-					<a href="#" title="#{lbl.upload_in_subcollection}" onclick="openDialog('addSubCollection#{node.collection.idString}');">
+					<a href="#" title="#{lbl.upload_in_subcollection}" onclick="openDialog('addSubCollection#{node.collection.idString}'); document.getElementById('tree:node:#{status.index}:createSub:subColForm:name').focus()">
 						<span class="fa fa-plus"/>
 					</a>
-					<collection:subCollectionForm dialogId="addSubCollection#{node.collection.idString}" parentCollection="#{node.collection}" upload="true"/>
+					<collection:subCollectionForm id="createSub" dialogId="addSubCollection#{node.collection.idString}" parentCollection="#{node.collection}" upload="true"/>
 				</ui:fragment>
 			</div>
 		</ui:repeat>

@@ -29,9 +29,9 @@
 						</h:inputText>
 					</div>
 					<h:panelGroup layout="block" styleClass="imj_submitPanel" id="buttonDiscard">
-						<button type="reset" onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
-							<h:outputText value="#{lbl.cancel}"/>
-						</button>
+						<a href="#" type="reset" onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
+							#{lbl.cancel}
+						</a>
 				 		<h:commandButton id="btnDiscardContainer" type="submit"
 				 						action="#{cc.attrs.bean.createDOI}"  
 				 						value="#{cc.attrs.submitLabel}" 

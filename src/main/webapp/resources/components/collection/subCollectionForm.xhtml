@@ -16,24 +16,27 @@
 		#{SubCollectionFormBean.setName(cc.attrs.collection.title)}
 		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox" style="display:none;">
 			<h:form id="subColForm">
-				<h:inputText html5:placeholder="#{lbl.name}" class="imj_mdInput" value="#{SubCollectionFormBean.name}">
+				<h:inputText id="name" html5:placeholder="#{lbl.name}" html5:autofocus="true" class="imj_mdInput" value="#{SubCollectionFormBean.name}">
 					 <f:ajax/>
 				</h:inputText>
 				<div class="imj_submitPanel" id="buttonDiscard">
-					<button onclick="closeDialog('#{cc.attrs.dialogId}'); return false;" class="imj_cancelButton">
+					<a  href="#" onclick="closeDialog('#{cc.attrs.dialogId}'); return false;" class="imj_cancelButton">
 						#{lbl.cancel}
-					</button>
+					</a>
 			 		<h:commandButton id="btnCreateSubcollection"  action="#{SubCollectionFormBean.create(cc.attrs.parentCollection)}"  value="#{lbl.add_subcollection}" 
-			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and !cc.attrs.upload}">
+			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and !cc.attrs.upload}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 					<f:ajax render="@none" execute="@form"/>
 			 		</h:commandButton>
 			 		<h:commandButton id="btnCreateAndUpload"  action="#{SubCollectionFormBean.createAndUpload(cc.attrs.parentCollection)}"  value="#{lbl.add_subcollection}" 
-			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.upload}">
+			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.upload}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 						<f:ajax render="@none" execute="@form"/>
 			 		</h:commandButton>
 			 		<h:commandButton id="btnEditSubcollection"  action="#{SubCollectionFormBean.edit(cc.attrs.collection)}" value="#{lbl.edit_subcollection}" 
-			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection != null}"/>
+			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection != null}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 					<f:ajax render="@none" execute="@form"/>
+			 		</h:commandButton>
 				</div>
 			</h:form>
 		</div>
-
 	</composite:implementation>
 </html>

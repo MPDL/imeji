@@ -77,7 +77,7 @@
 						<span class="fa fa-upload"/> <span>#{lbl.upload}</span>
 					</h:commandLink>
 				</h:form>
-				<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('addSubCollection');">
+				<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('addSubCollection'); document.getElementById('createSub:subColForm:name').focus()">
 					<span class="fa fa-plus"/> <span>#{lbl.subcollection}</span> 
 				</a>
 				<ui:fragment rendered="#{CollectionItemsBean.collection.isSubCollection()}">
@@ -142,10 +142,11 @@
 				</ui:fragment>
 			</ui:fragment>
 			<ui:fragment rendered="#{Auth.delete and not CollectionItemsBean.collection.isSubCollection()}">
-				<h:outputLink value="#" rendered="#{not CollectionItemsBean.isSubscribed()}" onclick="openDialog('subscribe');" class="imj_menuButton imj_overlayMenu">
+				#{SubscriptionBean.init(CollectionItemsBean.collection)}
+				<h:outputLink value="#" rendered="#{not SubscriptionBean.isSubscribed(SessionBean.user, CollectionItemsBean.collection)}" onclick="openDialog('subscribe');" class="imj_menuButton imj_overlayMenu">
 						<span class="fa fa-envelope"/> <span>#{lbl.subscribe}</span>
 				</h:outputLink>
-				<h:outputLink value="#" rendered="#{CollectionItemsBean.isSubscribed()}" onclick="openDialog('unsubscribe');" class="imj_menuButton imj_overlayMenu">
+				<h:outputLink value="#" rendered="#{SubscriptionBean.isSubscribed(SessionBean.user, CollectionItemsBean.collection)}" onclick="openDialog('unsubscribe');" class="imj_menuButton imj_overlayMenu">
 					<span class="fa fa-times"/> <span>#{lbl.unsubscribe}</span>
 				</h:outputLink>
 			</ui:fragment>
@@ -192,13 +193,13 @@
 	 	<h:panelGroup id="dialogs">
 		 	<upload:dialog colId="#{CollectionItemsBean.collection.id.toString()}" id="uploadDialog" bean="#{CollectionItemsBean}"/>
 		 	<dialog:confirmationDialog submitAction="deleteAll" bean="#{CollectionItemsBean}" confirmationText="#{msg.confirmation_delete_items}?" submitLabel="#{lbl.delete}" dialogId="deleteItems" />
-		 	<col:subCollectionForm dialogId="addSubCollection" parentCollection="#{CollectionItemsBean.collection}"/>
-		 	<col:subCollectionForm dialogId="editSubCollection" collection="#{CollectionItemsBean.collection}"/>
+		 	<col:subCollectionForm id="createSub" dialogId="addSubCollection" parentCollection="#{CollectionItemsBean.collection}"/>
+		 	<col:subCollectionForm id="editSub" dialogId="editSubCollection" collection="#{CollectionItemsBean.collection}"/>
 		 	<dialog:confirmationDialog submitAction="release" id="releaseCollection" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_release_collection}" confirmationText2="#{CollectionItemsBean.actionMenu.releaseMessage} " confirmationTextLicense="#{CollectionItemsBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}" submitLabel="#{lbl.release}" dialogId="releaseCollection"/>
 		 	<dialog:confirmationDialog submitAction="delete" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_delete_collection}?" submitLabel="#{lbl.delete}" dialogId="deleteCollection" />
 		 	<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_withdraw_collection}" submitLabel="#{lbl.withdraw}" dialogId="withdrawCollection"/>
-		 	<dialog:confirmationDialog submitAction="subscribe" bean="#{CollectionItemsBean}" confirmationText="#{msg.confirmation_subscribe}" submitLabel="#{lbl.subscribe}" dialogId="subscribe" />
-			<dialog:confirmationDialog submitAction="unsubscribe" bean="#{CollectionItemsBean}" confirmationText="#{msg.confirmation_unsubscribe}" submitLabel="#{lbl.unsubscribe}" dialogId="unsubscribe" />
+		 	<dialog:confirmationDialog submitAction="subscribe" bean="#{SubscriptionBean}"  confirmationText="#{msg.confirmation_subscribe}" submitLabel="#{lbl.subscribe}" dialogId="subscribe" />
+			<dialog:confirmationDialog submitAction="unSubscribe" bean="#{SubscriptionBean}" confirmationText="#{msg.confirmation_unsubscribe}" submitLabel="#{lbl.unsubscribe}" dialogId="unsubscribe" />
 		 	<dialog:dialogOptionDialog bean="#{CollectionItemsBean.actionMenu}" col="#{CollectionItemsBean.collection}" submitId1="doiInput" submitId2="getDOIDialog" confirmationText="#{empty CollectionItemsBean.collection.doi ? '' : msg.collection_has_doi_warning}" submitLabel1="#{lbl.createDOI_manually}" submitLabel2="#{lbl.createDOI_from_service}" dialogId="createDOI"/>
 			<dialog:confirmationDialog submitAction="createDOI" col="#{CollectionItemsBean.collection}" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_create_DOI}" submitLabel="#{lbl.createDOI}" dialogId="getDOIDialog"/>
 		 	<dialog:move id="move" objectId="#{CollectionItemsBean.collection.id.toString()}" colId="#{CollectionItemsBean.collection.id.toString()}" parentId=":move" />
