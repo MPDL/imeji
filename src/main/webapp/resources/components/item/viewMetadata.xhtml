@@ -29,7 +29,6 @@
 				<h:panelGroup layout="block" styleClass="imj_metadataSet" style="color:red;" rendered="#{cc.attrs.itemBean.image.status == 'WITHDRAWN'}">
 					<div class="imj_metadataLabel">
 						#{lbl.withdraw_comment}
-						<span class="imj_invisible">: </span>
 					</div>
 					<div class="imj_metadataValue">
 						#{cc.attrs.itemBean.image.discardComment}
@@ -38,7 +37,6 @@
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel">
 						#{lbl.filename}
-						<span class="imj_invisible">: </span>
 					</div>
 					<div class="imj_metadataValue">
 						#{cc.attrs.itemBean.image.filename}
@@ -47,7 +45,6 @@
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel">
 						#{lbl.license}
-						<span class="imj_invisible">: </span>
 					</div>
 					<div class="imj_metadataValue">
 						<ui:repeat var="license" value="#{LicenseViewer.getLicensesSortedByDate(cc.attrs.itemBean.image.licenses)}">
@@ -61,7 +58,6 @@
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel">
 						#{lbl.collection}
-						<span class="imj_invisible">: </span>
 					</div>
 					<div class="imj_metadataValue">
 						<ui:repeat var="entry" value="#{BreadcrumbBean.entries}">
@@ -76,7 +72,6 @@
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel">
 						#{lbl.file_size}
-						<span class="imj_invisible">: </span>
 					</div>
 					<div class="imj_metadataValue">
 						#{cc.attrs.itemBean.image.fileSizeHumanReadable}
@@ -86,7 +81,6 @@
 				<h:panelGroup layout="block" styleClass="imj_metadataSet" rendered="#{cc.attrs.itemBean.content.width &gt; 0 and cc.attrs.itemBean.content.height &gt; 0}">
 					<div class="imj_metadataLabel">
 						#{lbl.width} x #{lbl.height}
-						<span class="imj_invisible">: </span>
 					</div>
 					<div class="imj_metadataValue">
 						#{cc.attrs.itemBean.content.width} x #{cc.attrs.itemBean.content.height}
@@ -110,7 +104,6 @@
 					<div class="imj_metadataSet">
 						<div class="imj_metadataLabel">
 							#{metadata.index}
-							<span class="imj_invisible">: </span>
 						</div>
 						<div class="imj_metadataValue">
 							<md:output metadata="#{metadata}"/>
@@ -136,7 +129,6 @@
 					<div class="imj_metadataSet">
 						<div class="imj_metadataLabel">
 							#{lbl.checksum} (MD5)
-							<span class="imj_invisible">: </span>
 						</div>
 						<div class="imj_metadataValue">
 							#{cc.attrs.itemBean.content.checksum}
@@ -147,7 +139,6 @@
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel">
 						#{lbl.imageUploader}
-						<span class="imj_invisible">: </span>
 					</div>
 					<div class="imj_metadataValue">
 						#{cc.attrs.itemBean.imageUploader}
@@ -156,7 +147,6 @@
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel">
 						#{lbl.imageUploadDate}
-						<span class="imj_invisible">: </span>
 					</div>
 					<div class="imj_metadataValue">
 						#{cc.attrs.itemBean.image.created.time.toString()}
@@ -166,29 +156,20 @@
 					<div class="imj_metadataSet">
 						<div class="imj_metadataLabel">
 							#{lbl.files_big}
-							<span class="imj_invisible">: </span>
 						</div>
 						<div class="imj_metadataValue">
 							<ul class="imj_optionList">
 								<li>
-									<h:outputLink value="#{cc.attrs.itemBean.thumbnail}" target="_blank">
-										<h:outputText value="#{lbl.imageSizesThumb}"/>
-									</h:outputLink>
+									<a href="#{cc.attrs.itemBean.thumbnail}" target="_blank">#{lbl.imageSizesThumb}</a>
 								</li>
 								<li>
-									<h:outputLink value="#{cc.attrs.itemBean.preview}" target="_blank">
-										<h:outputText value="#{lbl.imageSizesWeb}"/>
-									</h:outputLink>
+									<a href="#{cc.attrs.itemBean.preview}" target="_blank">#{lbl.imageSizesWeb}</a>
 								</li>
 								<li>
-									<h:outputLink value="#{cc.attrs.itemBean.fullResolution}" target="_blank">
-										<h:outputText value="#{lbl.imageSizesFull}"/>
-									</h:outputLink>
+									<a href="#{cc.attrs.itemBean.fullResolution}" target="_blank">#{lbl.imageSizesFull}</a>
 								</li>
 								<li>
-									<h:outputLink value="#{cc.attrs.itemBean.originalFile}" target="_blank">
-										<h:outputText value="#{lbl.imageSizesOrg}"/>
-									</h:outputLink>
+									<a href="#{cc.attrs.itemBean.originalFile}" target="_blank">#{lbl.imageSizesOrg}</a>
 								</li>
 							</ul>
 						</div>
@@ -198,24 +179,13 @@
 					<div class="imj_metadataSet">
 						<div class="imj_metadataLabel">
 							#{lbl.embed}
-							<span class="imj_invisible">: </span>
 						</div>
 						<div class="imj_metadataValue">
 							<textarea class="imj_infodataValueEntryEmbed" onclick="this.select();">&lt;a href='#{cc.attrs.itemBean.pageUrl}' title='#{cc.attrs.itemBean.image.filename}'&gt; &lt;img src='#{cc.attrs.itemBean.preview}' alt='#{cc.attrs.itemBean.image.filename}' title='#{cc.attrs.itemBean.image.filename}'&gt;&lt;/a&gt;</textarea>
 						</div>
 					</div>
-					<div class="imj_metadataSet">
-						<div class="imj_metadataLabel">
-							#{lbl.qrcode}
-							<span class="imj_invisible">: </span>
-						</div>
-						<div class="imj_metadataValue">
-							<span class="imj_infodataValue" id="qr"> </span>
-						</div>
-					</div>
 				</ui:fragment>
 			</div>
-			
 			<div class="imj_sectionTitle">
 	   			<span>#{lbl.technical_metadata}</span>
 	   			<h:form>
@@ -233,13 +203,8 @@
 				<ui:fragment rendered="#{cc.attrs.itemBean.item.status != 'WITHDRAWN'}">
 					<div class="imj_metadataSet">
 						<ui:repeat id="techMd" var="techMd" value="#{cc.attrs.itemBean.content.technicalMetadata}">
-							<div class="imj_metadataLabel">
-								<h:outputText value="#{techMd.name}" styleClass="imj_techdataEntry"/>
-								<span class="imj_invisible">: </span>
-							</div>
-							<div class="imj_metadataValue">
-								<h:outputText value="#{techMd.value}" styleClass="imj_techdataEntry"/>
-							</div>
+							<div class="imj_metadataLabel">#{techMd.name}</div>
+							<div class="imj_metadataValue">#{techMd.value}</div>
 						</ui:repeat>
 					</div>
 				</ui:fragment>

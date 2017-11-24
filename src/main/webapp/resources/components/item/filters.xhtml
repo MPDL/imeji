@@ -16,21 +16,19 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<h:panelGroup layout="block" id="selectionInfoPanel" styleClass="imj_selectionInfoPanel">
-
+		<div class="imj_selectionInfoPanel">
 			<ui:fragment rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL' and cc.attrs.facetBean.collection.status != 'WITHDRAWN'}">
 				<div class="imj_overlayMenu">
 					<div class="imj_menuHeader">
-					  <h:form>
-						<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectAll}"  id="lnkSelectAllOnPage" title="#{lbl.select_all_on_page}"  styleClass="selectAll" rendered="#{!cc.attrs.facetBean.allSelected}" style="margin-right: 1em;">
-							<h:outputText value="#{lbl.select_all_on_page}"/>
-							<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
-						</h:commandLink>
-						<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectNone}" id="lnkSelectNone" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{not empty SessionBean.selected}">
-							<h:outputText value="#{lbl.select_none}"/>
-							<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
-						</h:commandLink>
-						
+					  	<h:form id="f">
+							<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectAll}"  id="all" title="#{lbl.select_all_on_page}"  styleClass="selectAll" rendered="#{!cc.attrs.facetBean.allSelected}" style="margin-right: 1em;">
+								#{lbl.select_all_on_page}
+								<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
+							</h:commandLink>
+							<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectNone}" id="none" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{not empty SessionBean.selected}">
+								#{lbl.select_none}
+								<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
+							</h:commandLink>
                       	</h:form>
 					</div>
 				</div>
@@ -42,7 +40,7 @@
                     <a href="#" class="fa fa-cog"></a>
 				</div>
 		        <div class="listActionMenuContent" >
-		        	<h:form>
+		        	<h:form id="sort">
 		        		<div class="listActionMenuContentSection">
 		        			<div class="imj_menuHeader">
 								#{lbl.sort_by}
@@ -94,7 +92,6 @@
 			                	    <f:ajax execute="@this" render=":ajaxWrapper :Header:imj_pageMessageArea"/>
 			                	    <span class="fa fa-list-alt" />
 			                	</h:commandLink>
-			                	
 			                	<span>#{lbl.list}</span>
 		                	</h:form>
 	                	</span>
@@ -102,6 +99,6 @@
 				</div>
 			 </div>
 		
-		</h:panelGroup>
+		</div>
 	</composite:implementation>
 </html>

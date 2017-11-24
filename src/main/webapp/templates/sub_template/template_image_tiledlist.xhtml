@@ -21,35 +21,29 @@
     <!-- Main Content - Image tiled list - START -->
     <ui:define name="mainContent">
     	<ui:insert name="collectionAbout"/>
-    	
         <h:panelGroup layout="block" id="ajaxWrapper">
             <!-- Selection Info Panel -->
-			<div id="itemsArea" class="itemsArea">
-			  	
-	        	<item:filters id="selPanel" 
+			<div class="itemsArea">
+	        	<item:filters id="sel" 
             			facetBean="#{paginatorListSessionBean}"  
             			numberOfItems="#{paginatorListSessionBean.numberOfItems}"
             			numberOfSubCollections="#{paginatorListSessionBean.numberOfSubCollections}" 
             			showSortMenu="true"
             			showStatusFilterMenu="#{currentMainMenu == 'items' or (currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING')}"
             			showUserFilterMenu="#{not currentMainMenu=='items' or paginatorListSessionBean.collection==null}"/>
-					
-           		
            		<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords == 0}">
            			<div  class="uploadDragAndDropTitle">
-           				<span class=" fa fa-meh-o fa-size-2"/> <br/><span> #{msg.no_images_found}!</span>
+           				<span class=" fa fa-meh-o fa-size-2"/><br/><span> #{msg.no_images_found}!</span>
            			</div>
            		</ui:fragment>
-				
 				<div id="facetsArea" class="imj_itemsAreaFacets" style="#{SessionBean.selectedBrowseListView == 'LIST' ? 'margin-top: 17px;' :''}">
 	           		<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" selector="#{FacetSelectorBean}"/>
 	           	</div>
 	        	<div  class="imj_itemsAreaContent">
-	        		<item:thumbnailList  id="browseContent" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
-					<item:detailList id="browseContentDL" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
+	        		<item:thumbnailList  id="th" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
+					<item:detailList id="ta" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 				</div>
 				<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfRecords != 0}"/>
-				
 			</div>
 			<!-- Page Browser GotoBox -->
         </h:panelGroup>

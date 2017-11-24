@@ -16,27 +16,25 @@
 		<ui:param name="isDefault" value="#{!(isURL || isGeolocation || isPerson)}"/>		
 
 		<ui:fragment rendered="#{isURL}">
-			<a target="_blank" href="#{cc.attrs.metadata.url}" >#{empty cc.attrs.metadata.title ? cc.attrs.metadata.url : cc.attrs.metadata.title}</a>
+			<a target="_blank" href="#{cc.attrs.metadata.url}">#{empty cc.attrs.metadata.title ? cc.attrs.metadata.url : cc.attrs.metadata.title}</a>
 		</ui:fragment>
 		
 		<ui:fragment rendered="#{isGeolocation}">
-			<span>#{cc.attrs.metadata.name} </span>
+			<span>#{cc.attrs.metadata.name}</span>
 			<ui:fragment rendered="#{cc.attrs.metadata.longitude != 'NaN' and cc.attrs.metadata.latitude != 'NaN'}">
 				<span>#{cc.attrs.metadata.longitude}/#{cc.attrs.metadata.latitude}</span>
 				<ui:fragment rendered="#{!cc.attrs.compact}">
-					<a href="http://maps.google.com/maps?q=#{cc.attrs.metadata.latitude},#{cc.attrs.metadata.longitude}" target="_blank">
-						<span class="imj_metadataValueEntryViewMap">"View in Google maps"</span>
-					</a>
+					<a title="View in Google maps" href="http://maps.google.com/maps?q=#{cc.attrs.metadata.latitude},#{cc.attrs.metadata.longitude}" target="_blank"> <span class="fa fa-map-marker"></span></a>
 				</ui:fragment>
 			</ui:fragment>
 		</ui:fragment>
 		
 		<ui:fragment rendered="#{isPerson}">
-			<span class="imj_metadataValueEntry">#{cc.attrs.metadata.person.completeName} (#{cc.attrs.metadata.person.organizationString})</span>
+			#{cc.attrs.metadata.person.completeName} (#{cc.attrs.metadata.person.organizationString})
 		</ui:fragment>
 		
 		<ui:fragment rendered="#{isNumber}">
-			<span class="imj_metadataValueEntry">#{cc.attrs.metadata.number}</span>
+			#{cc.attrs.metadata.number}
 		</ui:fragment>
 		
 		<ui:fragment rendered="#{isDefault}">

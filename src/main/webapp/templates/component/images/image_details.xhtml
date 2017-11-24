@@ -7,15 +7,11 @@
 	xmlns:lic="http://java.sun.com/jsf/composite/components/license"
 	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
 	xmlns:item="http://java.sun.com/jsf/composite/components/item">
-	
-	<f:metadata>
-		<f:event listener="#{ItemBean.preRenderView}" type="preRenderView" />
-	</f:metadata>
 
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block"  styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
-			<h:form id="rotationForm">
+			<h:form id="rot">
 				<h:inputHidden id="inputTextRotation" value="#{itemBean.rotation}" />
 				<h:commandButton id="buttonUpdateRotation" value="update rotation hidden"  action="#{itemBean.updateRotation}" styleClass="imj_noDisplay">
 					<f:ajax render="@none" execute="@form"/>
@@ -34,60 +30,39 @@
 						<a id="homeButton" class="fa fa-home imj_mediaEditPanelItem showFullScreen" />
 						<a id="rotateLeftButton" class="fa fa-rotate-left imj_mediaEditPanelItem hideFullScreen" />
 						<a id="rotateRightButton" class="fa fa-rotate-right imj_mediaEditPanelItem hideFullScreen" />
-						
 					</div>
 					<div id="seadragon-viewer-full" style="height:#{itemBean.viewerHeight}px;/*height:#{itemBean.webResolutionMaxLength}px;*/" >			
 						<a id="lnkPicFullResolutionAlt" href="#{itemBean.originalFile}" target="_blank">
-							<h:graphicImage style="display: block !important;" id="picWebResolutionAlt" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
+							<img style="display: block !important;" id="picWebResolutionAlt" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" src="#{itemBean.preview}" />
 						</a>
 					</div>	
 				</center>
 			</ui:fragment>
 			<ui:fragment rendered="#{!itemBean.viewInOpenseadragon}">
-			<center>
-				<h:outputLink id="lnkDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" rendered="#{itemBean.viewInDataViewer}" target="_blank">
-					<span class="fa fa-expand fa-size-2" />
-				</h:outputLink>
-	
-				<h:outputLink id="lnkOriginalData" value="#{itemBean.originalFile}" target="_blank" rendered="#{!itemBean.viewInDataViewer and !itemBean.viewInOpenseadragon}" >
-					<span class="fa fa-expand fa-size-2" />
-				</h:outputLink>
-			</center>
-			
-			<h:outputLink id="lnkPicInternalDataViewer" value="#{Navigation.applicationUrl}dataviewer?id=#{itemBean.image.idString}" target="_blank" rendered="#{itemBean.viewInDataViewer}">
-				<h:graphicImage title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" />
-			</h:outputLink>
-			<h:outputLink id="lnkPicFullResolution" value="#{itemBean.originalFile}" target="_blank" rendered="#{!itemBean.viewInOpenseadragon and !itemBean.viewInDataViewer}">
-				 <h:graphicImage id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{itemBean.preview}" /> 
-			</h:outputLink>
-			 
+				<center>
+					<a href="#{itemBean.originalFile}" target="_blank">
+						<span class="fa fa-expand fa-size-2" />
+					</a>
+				</center>
+				<a href="#{itemBean.originalFile}" target="_blank">
+					 <img id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" src="#{itemBean.preview}" /> 
+				</a>
 			</ui:fragment>
 		</ui:fragment>
-		
 		<ui:fragment rendered="#{itemBean.videoFile}">
-			<video id="imejiVideoPlayer" poster="#{itemBean.preview}" src="#{itemBean.originalFile}" controls="controls" 
-			 preload="auto" height="264"></video>
+			<video id="imejiVideoPlayer" poster="#{itemBean.preview}" src="#{itemBean.originalFile}" controls="controls" preload="auto" height="264"></video>
 		</ui:fragment>
 		<ui:fragment rendered="#{itemBean.audioFile}">
-			<audio id="imejiAudioPlayer"  src="#{itemBean.originalFile}" controls="controls" preload="auto" >
-				<h:outputText value="#{lbl.playing} #{itemBean.image.filename} " />
-			</audio>
+			<audio id="imejiAudioPlayer"  src="#{itemBean.originalFile}" controls="controls" preload="auto" >#{lbl.playing} #{itemBean.image.filename}</audio>
 		</ui:fragment>
-		<ui:fragment rendered="#{itemBean.image.status == 'WITHDRAWN'}">
-			<div class="imj_mediaWithdrawn">
-				<h:outputText value="#{lbl.withdraw_image_content}"/>
-			</div>
-		</ui:fragment>
-		
 		<ui:fragment rendered='#{itemBean.swcFile}'>
     		<imjc:swcViewer itemBean="#{itemBean}" swcID="swc3d" loadJSLibraries="true"/>
 	    </ui:fragment>
-		
 	</h:panelGroup>
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status == 'WITHDRAWN'}">
-		<h:outputLink id="lnkPicFullResolution_Withdrawn" value="#">
-			<h:graphicImage id="picWebResolution_Withdrawn" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" value="#{Navigation.applicationUrl}resources/icon/discarded.png"/>
-		</h:outputLink>
+		<a id="lnkPicFullResolution_Withdrawn" href="#">
+			<img id="picWebResolution_Withdrawn" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" src="#{Navigation.applicationUrl}resources/icon/discarded.png"/>
+		</a>
 	</h:panelGroup>
 	<span id="itemMetadata"/>
 	<!-- MetaDataList - START -->
@@ -97,113 +72,7 @@
 			<!-- Edit Metadata -->
 			<item:editMetadata id="editor" formBean="#{itemBean.editor}" itemBean="#{itemBean}" rendered="#{itemBean.edit and !itemBean.locked}"/>
 			<!-- View metadata -->
-			<item:viewMetadata id="viewer" itemBean="#{itemBean}"  rendered="#{!itemBean.edit}"/>
+			<item:viewMetadata id="viewer" itemBean="#{itemBean}" rendered="#{!itemBean.edit}"/>
 		</h:panelGroup>
 	</div>
-	<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
-		<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.min.js"></script>				
-		<script type="text/javascript">
-			var imgFull = {
-				type: 'image',
-				url: '#{itemBean.fullResolution}',
-			};
-
-			var viewerFull = OpenSeadragon({
-        		id: "seadragon-viewer-full",
-        		tileSources: imgFull,
-        		toolbar:  "seaDragonsButtons",
-        		showRotationControl: true,
-        		fullPageButton: "fullscreenButton",
-        		homeButton: "homeButton",
-        		zoomInButton: "zoominButton",
-        		zoomOutButton: "zoomoutButton",
-        		rotateRightButton: "rotateRightButton",
-        		rotateLeftButton: "rotateLeftButton",
-        		showFullPageControl: true,
-        		visibilityRatio: 1.0,
-        		constrainDuringPan: true,
-        		gestureSettingsTouch: {
-           		 	pinchRotate: false,
-           		    clickToZoom: false,
-           		 	scrollToZoom: false,
-           			flickEnabled: false,
-           			dblClickToZoom: false
-        		},
-        		gestureSettingsMouse:{
-        			scrollToZoom: false,
-        			clickToZoom: false,
-        			flickEnabled: false,
-        			dblClickToZoom: false,
-        			pinchRotate: false
-        		},
-        		gestureSettingsPen:{
-        			scrollToZoom: false,
-        			clickToZoom: false,
-        			flickEnabled: false,
-        			dblClickToZoom: false,
-        			pinchRotate: false
-        		},
-        		gestureSettingsUnknown:{
-        			scrollToZoom: false,
-        			clickToZoom: false,
-        			flickEnabled: false,
-        			dblClickToZoom: false,
-        			pinchRotate: false
-        		}
-    		
-			});
-			
-			viewerFull.addHandler("full-screen",function(data){
-   				if(data.fullScreen) {
-   					viewerFull.gestureSettingsMouse.scrollToZoom = true;
-   					viewerFull.gestureSettingsTouch.scrollToZoom = true;
-   				}
-   				else{
-   					viewerFull.gestureSettingsMouse.scrollToZoom = false;
-   					viewerFull.gestureSettingsTouch.scrollToZoom = false;
-   				}
-   				viewerFull.viewport.goHome(true);
-				
-   			});
-   			
-   			//viewerFull.setMouseNavEnabled(false);
-			
-			viewerFull.addHandler('rotate',function(){
-				 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
-				 document.getElementById("rotationForm:buttonUpdateRotation").click();
-       		});
-   			
-   			viewerFull.addHandler('open',function(){
-   				document.getElementById("picWebResolutionAlt").style.display='none';
-   			});
-   			
-   			viewerFull.addHandler('close',function(){
-   				console.log('close');
-   			});
-  			
-   			viewerFull.addHandler("open-failed",function(){
-   				useAlternatePicture();
-   			});
-  			
-   			//Needed for Firefox
-   			var myDraw=false;
-   			viewerFull.addHandler("my-draw-failed",function(){
-   				if(!myDraw){
-   					useAlternatePicture();
-   				}
-   			});
-  			
-   			
-   			viewerFull.addHandler("my-draw",function(){
-   				myDraw=true;
-   			});
-   			
-			
-   			function useAlternatePicture(){
-   				document.getElementById("picWebResolutionAlt").style.display='';
-   				viewerFull.setVisible(false);
-   				document.getElementById("buttons").style.display='none';
-   			}
-		</script>
-	</ui:fragment>
 </ui:composition>

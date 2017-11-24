@@ -136,7 +136,7 @@ class ItemController extends ImejiControllerAbstract<Item> {
       createMissingStatement(l);
       validateMetadata(l, Method.UPDATE);
       WRITER.update(J2JHelper.cast2ObjectList(l), user, true);
-    }
+    } ;
     return l;
   }
 

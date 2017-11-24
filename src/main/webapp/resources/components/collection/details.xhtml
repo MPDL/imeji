@@ -25,22 +25,21 @@
 		<ui:repeat var="info" value="#{cc.attrs.bean.collection.additionalInformations}">
 			<div class="imj_infodataSet">
 				<span class="imj_infodataLabel">
-					<h:outputText value="#{info.label}"/>
-					<span class="imj_invisible">: </span>
+					#{info.label}
 				</span>
 				<span class="imj_infodataValue">
 					<ui:fragment rendered="#{info.url != null and info.url != '' and info.text != null and info.text != ''}">
-						<h:outputLink value="#{info.url}" target="_blank">
+						<a href="#{info.url}" target="_blank">
 							<pre>#{info.text}</pre>
-						</h:outputLink>
+						</a>
 					</ui:fragment>
 					<ui:fragment rendered="#{info.url == null || info.url == ''}">
 						<pre>#{info.text}</pre>
 					</ui:fragment>
 					<ui:fragment rendered="#{info.text == null || info.text == ''}">
-						<h:outputLink value="#{info.url}" target="_blank">
+						<a href="#{info.url}" target="_blank">
 							#{info.url}
-						</h:outputLink>
+						</a>
 					</ui:fragment>
 				</span>
 			</div>
@@ -57,8 +56,7 @@
 		<!--  Citation -->
 		<div class="imj_infodataSet">
 			<span class="imj_infodataLabel">
-				<h:outputText value="#{lbl.cite}"/>
-				<span class="imj_invisible">: </span>
+				#{lbl.cite}
 			</span>
 			<span class="imj_infodataValue">
 				<h:outputText value="#{cc.attrs.bean.citation}" escape="false"/>
@@ -68,19 +66,17 @@
 		<!--  Number of items -->
 		<div class="imj_infodataSet">
 			<span class="imj_infodataLabel">
-				<h:outputText value="#{lbl.colNumItems}"/>
-				<span class="imj_invisible">: </span>
+				#{lbl.colNumItems}
 			</span>
 			<span class="imj_infodataValue">
-				<h:outputText value="#{cc.attrs.bean.size}"/>
+				#{cc.attrs.bean.size}
 			</span>
 		</div>
 		
 		<!-- DOI -->
 		<h:panelGroup styleClass="imj_infodataSet" rendered="#{cc.attrs.bean.collection.doi != ''}">
 			<span class="imj_infodataLabel">
-				<h:outputText value="#{lbl.doi}"/>
-				<span class="imj_invisible">: </span>
+				#{lbl.doi}
 			</span>
 			<span class="imj_infodataValue">
 				<a href="http://dx.doi.org/#{cc.attrs.bean.collection.doi}" target="_blank">https://dx.doi.org/#{cc.attrs.bean.collection.doi}</a>
@@ -90,68 +86,61 @@
 		<!--  Dates -->
 		<div class="imj_infodataSet">
 			<span class="imj_infodataLabel">
-				<h:outputText value="#{lbl.date_creation}"/>
-				<span class="imj_invisible">: </span>
+				#{lbl.date_creation}
 			</span>
 			<span class="imj_infodataValue">
-				<h:outputText value="#{cc.attrs.bean.collection.created.time}"/>
+				#{cc.attrs.bean.collection.created.time}
 			</span>
 		</div>
 		<div class="imj_infodataSet">
 			<span class="imj_infodataLabel">
-				<h:outputText value="#{lbl.date_last_modification}"/>
-				<span class="imj_invisible">: </span>
+				#{lbl.date_last_modification}
 			</span>
 			<span class="imj_infodataValue">
-				<h:outputText value="#{cc.attrs.bean.collection.modified.time}"/>
+				#{cc.attrs.bean.collection.modified.time}
 			</span>
 		</div>
 		<ui:fragment rendered="#{not empty cc.attrs.bean.collection.versionDate}">
 			<div class="imj_infodataSet">
 				<span class="imj_infodataLabel">
-					<h:outputText value="#{lbl.date_released}"/>
-					<span class="imj_invisible">: </span>
+					#{lbl.date_released}
 				</span>
 				<span class="imj_infodataValue">
-					<h:outputText value="#{cc.attrs.bean.collection.versionDate.time}"/>
+					#{cc.attrs.bean.collection.versionDate.time}
 				</span>
 			</div>
 		</ui:fragment>
 		<h:panelGroup styleClass="imj_infodataSet" rendered="#{cc.attrs.item.status == 'RELEASED'}">
 			<span class="imj_infodataLabel">
-				<h:outputText value="#{lbl.date_released}"/>
-				<span class="imj_invisible">: </span>
+				#{lbl.date_released}
 			</span>
 			<span class="imj_infodataValue">
-				<h:outputText value="#{cc.attrs.bean.collection.versionDate.time}"/>
+				#{cc.attrs.bean.collection.versionDate.time}
 			</span>
 		</h:panelGroup>
 		<h:panelGroup styleClass="imj_infodataSet" rendered="#{cc.attrs.item.status == 'WITHDRAWN'}">
 			<span class="imj_infodataLabel">
-				<h:outputText value="#{lbl.date_withdraw}"/>
-				<span class="imj_invisible">: </span>
+				#{lbl.date_withdraw}
 			</span>
 			<span class="imj_infodataValue">
-				<h:outputText value="#{cc.attrs.bean.collection.versionDate.time}"/>
+				#{cc.attrs.bean.collection.versionDate.time}
 			</span>
 		</h:panelGroup>
 						
 		<!--  Permalink -->
 		<div class="imj_infodataSet">
 			<span class="imj_infodataLabel">
-				<h:outputText value="#{lbl.permalink}"/>
-				<span class="imj_invisible">: </span>
+				#{lbl.permalink}
 			</span>
 			<span class="imj_infodataValue">
-				<h:outputText value="#{cc.attrs.bean.pageUrl}"/>
+				#{cc.attrs.bean.pageUrl}
 			</span>
 		</div>
 
 		<!--  QR-Tag -->
 		<h:panelGroup styleClass="imj_infodataSet">
 			<span class="imj_infodataLabel">
-				<h:outputText value="#{lbl.qrcode}"/>
-				<span class="imj_invisible">: </span>
+				#{lbl.qrcode}
 			</span>
 			<span class="imj_infodataValue">
 				<span class="qr" id="qr"></span>
@@ -161,19 +150,5 @@
 				</ui:fragment>
 			</span>
 		</h:panelGroup>
-			
-		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/qrcode.js"></script>
-		<script type="text/javascript">
-			var draw_qrcode = function(text, typeNumber, errorCorrectLevel) {
-				document.write(create_qrcode(text, typeNumber, errorCorrectLevel) );
-			};
-			var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
-				var qr = qrcode(typeNumber || 20, errorCorrectLevel || 'M');
-				qr.addData(text);
-				qr.make();
-				// return qr.createTableTag();
-				return qr.createImgTag();
-			};
-		</script>	 
 	</composite:implementation>
 </html>

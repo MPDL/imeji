@@ -12,7 +12,6 @@
 	<ui:param name="backwardClass" value="#{itemBean.browse.previous == null ? 'previousItem imj_deactivated' : 'previousItem'}"/>
 	<ui:param name="forwardClass" value="#{itemBean.browse.next == null ? 'nextItem imj_deactivated' : 'nextItem'}"/>
 	
-	
 	<ui:define name="authorization">
 		#{Auth.init(itemBean.item)}
 	</ui:define>
@@ -23,56 +22,123 @@
 	
 	<!-- Main Content - Image Detail View -->
 	<ui:define name="mainContent">
-
 		<ui:fragment rendered="#{itemBean.image != null}">
-			<!-- AJAX Wrapper - START -->
 			<h:panelGroup layout="block" id="imj_ajaxWrapper" styleClass="imj_mediaEntryDetailPage">
 				<ui:fragment rendered="#{Auth.read}">
-				
-					<!-- pagination top -->
-					<h:panelGroup layout="block" id="paginatorTop" styleClass="imj_paginator">
-						<h:panelGroup styleClass="imj_simplePageBrowser">
+					<div class="imj_paginator">
+						<span class="imj_simplePageBrowser">
 							<h:outputLink  value="#{itemBean.browse.previous}#pageTitle" styleClass="#{backwardClass}" disabled="#{itemBean.browse.previous == null}">
-								<h:outputText value="#{lbl.paginator_previous}"/>
+								#{lbl.paginator_previous}
 							</h:outputLink>
-							
 							<h:outputLink style="text-align: left" value="#{itemBean.browse.next}#pageTitle" styleClass="#{forwardClass}" disabled="#{itemBean.browse.next == null}">
-								<h:outputText value="#{lbl.paginator_next}"/>
+								#{lbl.paginator_next}
 							</h:outputLink>
-						</h:panelGroup>
-					</h:panelGroup>
+						</span>
+					</div>
 					<ui:include src="../component/images/image_details.xhtml"/>
 				</ui:fragment>
 			</h:panelGroup>
-			
 		</ui:fragment>
 		
 		 <ui:fragment rendered="#{itemBean.image == null}">
 			<h:outputLink value="#{HistorySession.previousPage.url}" rendered="#{HistorySession.previousPage != null}">
-				<h:outputText value="#{lbl.back_to_previous}" />
+				#{lbl.back_to_previous}
 			</h:outputLink>		
 		</ui:fragment>
 	</ui:define>
+	
 	<ui:define name="additonalFooterScripts">
-		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/qrcode.js"/>
+	<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
+		<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.min.js"></script>				
 		<script type="text/javascript">
-			jQuery(document).ready(function() {
-				var qrHtml = document.getElementById('qr');
-				if (qrHtml != null) {
-					qrHtml.innerHTML = create_qrcode('#{itemBean.pageUrl}');
-				}
+			var imgFull = {
+				type: 'image',
+				url: '#{itemBean.fullResolution}',
+			};
+			var viewerFull = OpenSeadragon({
+        		id: "seadragon-viewer-full",
+        		tileSources: imgFull,
+        		toolbar:  "seaDragonsButtons",
+        		showRotationControl: true,
+        		fullPageButton: "fullscreenButton",
+        		homeButton: "homeButton",
+        		zoomInButton: "zoominButton",
+        		zoomOutButton: "zoomoutButton",
+        		rotateRightButton: "rotateRightButton",
+        		rotateLeftButton: "rotateLeftButton",
+        		showFullPageControl: true,
+        		visibilityRatio: 1.0,
+        		constrainDuringPan: true,
+        		gestureSettingsTouch: {
+           		 	pinchRotate: false,
+           		    clickToZoom: false,
+           		 	scrollToZoom: false,
+           			flickEnabled: false,
+           			dblClickToZoom: false
+        		},
+        		gestureSettingsMouse:{
+        			scrollToZoom: false,
+        			clickToZoom: false,
+        			flickEnabled: false,
+        			dblClickToZoom: false,
+        			pinchRotate: false
+        		},
+        		gestureSettingsPen:{
+        			scrollToZoom: false,
+        			clickToZoom: false,
+        			flickEnabled: false,
+        			dblClickToZoom: false,
+        			pinchRotate: false
+        		},
+        		gestureSettingsUnknown:{
+        			scrollToZoom: false,
+        			clickToZoom: false,
+        			flickEnabled: false,
+        			dblClickToZoom: false,
+        			pinchRotate: false
+        		}
+    		
 			});
-			
-			var draw_qrcode = function(text, typeNumber, errorCorrectLevel) {
-				document.write(create_qrcode(text, typeNumber, errorCorrectLevel) );
-			};
-			var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
-				var qr = qrcode(typeNumber || 10, errorCorrectLevel || 'L');
-				qr.addData(text);
-				qr.make();
-				// return qr.createTableTag();
-				return qr.createImgTag();
-			};
+			viewerFull.addHandler("full-screen",function(data){
+   				if(data.fullScreen) {
+   					viewerFull.gestureSettingsMouse.scrollToZoom = true;
+   					viewerFull.gestureSettingsTouch.scrollToZoom = true;
+   				}
+   				else{
+   					viewerFull.gestureSettingsMouse.scrollToZoom = false;
+   					viewerFull.gestureSettingsTouch.scrollToZoom = false;
+   				}
+   				viewerFull.viewport.goHome(true);
+   			});
+			viewerFull.addHandler('rotate',function(){
+				 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
+				 document.getElementById("rotationForm:buttonUpdateRotation").click();
+       		});
+   			viewerFull.addHandler('open',function(){
+   				document.getElementById("picWebResolutionAlt").style.display='none';
+   			});
+   			viewerFull.addHandler('close',function(){
+   				console.log('close');
+   			});
+   			viewerFull.addHandler("open-failed",function(){
+   				useAlternatePicture();
+   			});
+   			//Needed for Firefox
+   			var myDraw=false;
+   			viewerFull.addHandler("my-draw-failed",function(){
+   				if(!myDraw){
+   					useAlternatePicture();
+   				}
+   			});
+   			viewerFull.addHandler("my-draw",function(){
+   				myDraw=true;
+   			});
+   			function useAlternatePicture(){
+   				document.getElementById("picWebResolutionAlt").style.display='';
+   				viewerFull.setVisible(false);
+   				document.getElementById("buttons").style.display='none';
+   			}
 		</script>
+	</ui:fragment>	 
 	</ui:define>
 </ui:composition>

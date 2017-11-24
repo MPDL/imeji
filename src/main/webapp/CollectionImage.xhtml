@@ -5,6 +5,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
 
+
 	<ui:param name="itemBean" value="#{CollectionItemBean}" />
 	<ui:param name="currentMainMenu" value="collection" />
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemBean.collectionId}?q=#{CollectionItemBean.browse.query}&amp;fq=#{CollectionItemBean.browse.facetQuery}" />
@@ -13,4 +14,9 @@
 	<ui:param name="backlinkTitle1" value="#{CollectionItemBean.collection.title}"/>
 	<ui:param name="backLink2" value="#{not empty CollectionItemBean.browse.query or not empty CollectionItemBean.browse.facetQuery ? browseToAllItemsUrl  : ''}"/>
 	<ui:param name="backlinkTitle2" value="#{not empty CollectionItemBean.browse.query or not empty CollectionItemBean.browse.facetQuery ? lbl.search_results : ''}"/>
+
+	<f:metadata>
+		<f:event listener="#{CollectionItemBean.preRenderView}"  type="preRenderView" />
+	</f:metadata>
+	
 </ui:composition>

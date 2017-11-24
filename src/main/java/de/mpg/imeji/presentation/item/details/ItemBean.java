@@ -3,7 +3,6 @@ package de.mpg.imeji.presentation.item.details;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +11,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -60,10 +58,10 @@ import de.mpg.imeji.presentation.session.SessionObjectsController;
 @ViewScoped
 public class ItemBean extends SuperBean {
   private static final long serialVersionUID = -4957755233785015759L;
-  private static final Logger LOGGER = Logger.getLogger(ItemBean.class);
-  private Item item;
-  private ContentVO content;
-  private String id;
+  static final Logger LOGGER = Logger.getLogger(ItemBean.class);
+  Item item;
+  ContentVO content;
+  String id;
   private boolean selected;
   private CollectionImeji collection;
   protected String prettyLink;
@@ -76,10 +74,10 @@ public class ItemBean extends SuperBean {
   private List<String> selectedItems;
   private int rotation;
   private int lastRotation = 0;
-  private String thumbnail;
-  private String preview;
-  private String fullResolution;
-  private String originalFile;
+  String thumbnail;
+  String preview;
+  String fullResolution;
+  String originalFile;
   private boolean edit = false;
   private ExecutorService rotationService;
   private EditItemComponent editor;
@@ -95,9 +93,9 @@ public class ItemBean extends SuperBean {
 
   public void preRenderView() throws IOException {
     id = UrlHelper.getParameterValue("id");
-    URI uri = ObjectHelper.getURI(Item.class, id);
     try {
-      new ItemService().retrieve(uri, getSessionUser());
+      loadItem();
+      init();
     } catch (ImejiException e) {
       FacesContext.getCurrentInstance().getExternalContext().responseSendError(404,
           "404_NOT_FOUND");
@@ -110,28 +108,47 @@ public class ItemBean extends SuperBean {
    * @return
    * @throws IOException @
    */
-  @PostConstruct
   public void init() {
-    this.id = UrlHelper.getParameterValue("id");
     rotationService = Executors.newSingleThreadExecutor();
     try {
-      loadImage();
       if (item != null) {
         loadCollection(getSessionUser());
         initBrowsing();
-        initImageUploader();
+        findItemUploader();
         selected = getSelectedItems().contains(item.getId().toString());
       }
-    } catch (final NotFoundException e) {
-      LOGGER.error("Error loading item", e);
     } catch (final Exception e) {
       LOGGER.error("Error initialitzing item page", e);
       BeanHelper.error("Error initializing page" + e.getMessage());
     }
   }
 
-  public void cancelEditor() throws Exception {
-    redirect(getCurrentPage().getCompleteUrl() + "#navTop");
+  /**
+   * Load the item according to the idntifier defined in the URL
+   *
+   * @throws ImejiException
+   *
+   * @param itemBean TODO @
+   */
+  public void loadItem() throws ImejiException {
+    item = new ItemService().retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
+    if (item == null) {
+      throw new NotFoundException("LoadImage: empty");
+    }
+    try {
+      ContentService service = new ContentService();
+      content = service.retrieveLazy(service.findContentId(item.getId().toString()));
+      preview = content.getPreview();
+      thumbnail = content.getThumbnail();
+      fullResolution = content.getFull();
+      originalFile = content.getOriginal();
+    } catch (final Exception e) {
+      ItemBean.LOGGER.error("No content found for " + item.getIdString(), e);
+    }
+  }
+
+  public void cancelEditor() {
+    this.edit = false;
   }
 
   public void showEditor() throws ImejiException {
@@ -151,7 +168,7 @@ public class ItemBean extends SuperBean {
   /**
    * Find the user name of the user who upload the file
    */
-  private void initImageUploader() {
+  private void findItemUploader() {
     imageUploader = new UserService().getCompleteName(item.getCreatedBy(), getLocale());
   }
 
@@ -164,30 +181,6 @@ public class ItemBean extends SuperBean {
    */
   public void initViewTechnicalMetadata() throws ImejiException {
     content = new ContentService().retrieve(content.getId().toString());
-  }
-
-  /**
-   * Load the item according to the idntifier defined in the URL
-   *
-   * @throws ImejiException
-   *
-   * @
-   */
-  public void loadImage() throws ImejiException {
-    item = new ItemService().retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
-    if (item == null) {
-      throw new NotFoundException("LoadImage: empty");
-    }
-    try {
-      ContentService service = new ContentService();
-      content = service.retrieveLazy(service.findContentId(item.getId().toString()));
-      this.preview = content.getPreview();
-      this.thumbnail = content.getThumbnail();
-      this.fullResolution = content.getFull();
-      this.originalFile = content.getOriginal();
-    } catch (final Exception e) {
-      LOGGER.error("No content found for " + item.getIdString(), e);
-    }
   }
 
   /**
@@ -276,7 +269,7 @@ public class ItemBean extends SuperBean {
     try {
       editor.save();
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_editor_image", getLocale()));
-      redirect(getCurrentPage().getCompleteUrl() + "#navTop");
+      cancelEditor();
     } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error saving item metadata", e);
@@ -409,17 +402,6 @@ public class ItemBean extends SuperBean {
   public boolean isImageFile() {
     return StorageUtils.getMimeType(FilenameUtils.getExtension(item.getFilename()))
         .contains("image");
-  }
-
-
-  /**
-   * True if the data can be viewed in the data viewer (defined in the configuration)
-   *
-   * @return
-   */
-  public boolean isViewInDataViewer() {
-    return Imeji.CONFIG
-        .isDataViewerSupportedFormats(FilenameUtils.getExtension(item.getFilename()));
   }
 
 

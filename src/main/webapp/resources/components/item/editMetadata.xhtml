@@ -14,8 +14,7 @@
 	<h:form id="editItem">
 		<div class="imj_metadataSet">
 			<div class="imj_metadataLabel">
-				<span>#{lbl.filename}</span>
-				<span class="imj_invisible">: </span>
+				#{lbl.filename}
 			</div>
 			<div class="imj_metadataValue">
 				<h:inputText value="#{cc.attrs.formBean.filename}"  styleClass="imj_mdInput"/>
@@ -24,7 +23,6 @@
 		<div class="imj_metadataSet">
 			<div class="imj_metadataLabel">
 				#{lbl.license}
-				<span class="imj_invisible">: </span>
 			</div>
 			<div class="imj_metadataValue">
 				<h:panelGroup id="licenseEditor">
@@ -38,24 +36,23 @@
 					<div class="imj_metadataLabel">
 					</div>
 					<div class="imj_metadataValue">
-					<md:select id="select" bean="#{entry}" submitAction="initInput"
-						component="#{entry.select}"
-						menu="#{cc.attrs.formBean.statementMenu}"
-						render=":editor:editItem:list:#{position.index}:value" 
-						containerId=":editor:editItem:list:#{position.index}:select"
-						resetAction="resetInput"
-						title=" #{lbl.add_metadata} "/>
+						<md:select id="select" bean="#{entry}" submitAction="initInput"
+							component="#{entry.select}"
+							menu="#{cc.attrs.formBean.statementMenu}"
+							render=":editor:editItem:list:#{position.index}:value" 
+							containerId=":editor:editItem:list:#{position.index}:select"
+							resetAction="resetInput"
+							title=" #{lbl.add_metadata} "/>
 					</div>
 				</div>
 			</ui:fragment>
 			<div class="imj_metadataSet">
 				<div class="imj_metadataLabel">
 					<ui:fragment rendered="#{not empty entry.input}">
-						<h:outputText value="#{entry.input.statement.index}" />
+						#{entry.input.statement.index}
 					</ui:fragment>
-					<span class="imj_invisible">: </span>
 				</div>
-				<h:panelGroup id="value" layout="block" class="imj_metadataValue">
+				<div  class="imj_metadataValue">
 					<md:input metadataInputComponent="#{entry.input}" />
 					<h:commandLink type="submit" rendered="#{not empty entry.input}"
 						styleClass="fa fa-minus-square-o"
@@ -63,14 +60,16 @@
 						value="" title="#{lbl.remove_metadata}">
 						<f:ajax execute="@form" render="@form" />
 					</h:commandLink>
-				</h:panelGroup>
+				</div>
 			</div>
 		</ui:repeat>
 		<div class="imj_submitPanel">
-			<h:commandLink styleClass="imj_cancelButton" action="#{cc.attrs.itemBean.cancelEditor}" onclick="startLoader(); window.location.hash = '#actions';">
+			<h:commandLink styleClass="imj_cancelButton" action="#{cc.attrs.itemBean.cancelEditor}" onclick="startLoader(); window.location.hash = '#';">
 				<h:outputText value="#{lbl.cancel}"/>
+				<f:ajax execute="@form" render=":metadata :Header:imj_pageMessageArea"/>
 			</h:commandLink>
-			<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.save}" value="#{lbl.save}" onclick="startLoader();window.location.hash = '#actions';">
+			<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.save}" value="#{lbl.save}" onclick="startLoader();window.location.hash = '#';">
+				<f:ajax execute="@form" render=":metadata :Header:imj_pageMessageArea"/>
 			</h:commandLink>
 		</div>
 	</h:form>

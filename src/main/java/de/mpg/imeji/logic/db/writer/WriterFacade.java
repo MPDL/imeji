@@ -4,6 +4,10 @@ import java.net.URI;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -38,6 +42,7 @@ public class WriterFacade {
   private final Writer writer;
   private final SearchIndexer indexer;
   private final WorkflowValidator workflowManager = new WorkflowValidator();
+  private final ExecutorService executor = Executors.newCachedThreadPool();
 
   /**
    * Constructor for one model
@@ -85,8 +90,17 @@ public class WriterFacade {
     }
     checkSecurity(objects, user, true);
     validate(objects, Validator.Method.CREATE);
-    writer.create(objects, user);
-    indexer.indexBatch(objects);
+    // writer.create(objects, user);
+    // indexer.indexBatch(objects);
+    try {
+      Future<Integer> createTask = executor.submit(new CreateTask(objects, user));
+      Future<Integer> indexTask = executor.submit(new IndexTask(objects));
+      createTask.get();
+      indexTask.get();
+    } catch (Exception e) {
+      new ImejiException("Error updating objects", e);
+    }
+
   }
 
   /*
@@ -101,8 +115,16 @@ public class WriterFacade {
     checkWorkflowForDelete(objects);
     checkSecurity(objects, user, false);
     validate(objects, Validator.Method.DELETE);
-    writer.delete(objects, user);
-    indexer.deleteBatch(objects);
+    // writer.delete(objects, user);
+    // indexer.deleteBatch(objects);
+    try {
+      Future<Integer> deleteTask = executor.submit(new DeleteTask(objects, user));
+      Future<Integer> deleteIndexTask = executor.submit(new DeleteIndexTask(objects));
+      deleteTask.get();
+      deleteIndexTask.get();
+    } catch (Exception e) {
+      new ImejiException("Error updating objects", e);
+    }
   }
 
   /*
@@ -120,8 +142,17 @@ public class WriterFacade {
       checkSecurity(objects, user, false);
     }
     validate(objects, Validator.Method.UPDATE);
-    writer.update(objects, user);
-    indexer.updateIndexBatch(objects);
+    // writer.update(objects, user);
+    // indexer.updateIndexBatch(objects);
+    try {
+      Future<Integer> updateTask = executor.submit(new UpdateTask(objects, user));
+      Future<Integer> indexTask = executor.submit(new IndexTask(objects));
+      updateTask.get();
+      indexTask.get();
+    } catch (Exception e) {
+      new ImejiException("Error updating objects", e);
+    }
+
   }
 
   /**
@@ -138,8 +169,17 @@ public class WriterFacade {
     throwAuthorizationException(user != null,
         SecurityUtil.authorization().administrate(user, Imeji.PROPERTIES.getBaseURI()),
         "Only admin ca use update wihout validation");
-    writer.update(objects, user);
-    indexer.updateIndexBatch(objects);
+    // writer.update(objects, user);
+    // indexer.updateIndexBatch(objects);
+    try {
+      Future<Integer> updateTask = executor.submit(new UpdateTask(objects, user));
+      Future<Integer> indexTask = executor.submit(new IndexTask(objects));
+      updateTask.get();
+      indexTask.get();
+    } catch (Exception e) {
+      new ImejiException("Error updating objects", e);
+    }
+
   }
 
   /*
@@ -251,5 +291,111 @@ public class WriterFacade {
    */
   public static List<Object> toList(Object o) {
     return Arrays.asList(o);
+  }
+
+  /**
+   * Task to update objects
+   * 
+   * @author saquet
+   *
+   */
+  private class CreateTask implements Callable<Integer> {
+    private final List<Object> objects;
+    private final User user;
+
+    public CreateTask(List<Object> objects, User user) {
+      this.objects = objects;
+      this.user = user;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+      writer.create(objects, user);
+      return 1;
+    }
+  }
+
+  /**
+   * Task to update objects
+   * 
+   * @author saquet
+   *
+   */
+  private class UpdateTask implements Callable<Integer> {
+    private final List<Object> objects;
+    private final User user;
+
+    public UpdateTask(List<Object> objects, User user) {
+      this.objects = objects;
+      this.user = user;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+      writer.update(objects, user);
+      return 1;
+    }
+  }
+
+  /**
+   * Task to delete objects
+   * 
+   * @author saquet
+   *
+   */
+  private class DeleteTask implements Callable<Integer> {
+    private final List<Object> objects;
+    private final User user;
+
+    public DeleteTask(List<Object> objects, User user) {
+      this.objects = objects;
+      this.user = user;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+      writer.delete(objects, user);
+      return 1;
+    }
+  }
+
+  /**
+   * Task to index objects
+   * 
+   * @author saquet
+   *
+   */
+  private class IndexTask implements Callable<Integer> {
+    private final List<Object> objects;
+
+    public IndexTask(List<Object> objects) {
+      this.objects = objects;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+      indexer.indexBatch(objects);
+      return 1;
+    }
+  }
+
+  /**
+   * Task to index objects
+   * 
+   * @author saquet
+   *
+   */
+  private class DeleteIndexTask implements Callable<Integer> {
+    private final List<Object> objects;
+
+    public DeleteIndexTask(List<Object> objects) {
+      this.objects = objects;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+      indexer.deleteBatch(objects);
+      return 1;
+    }
   }
 }

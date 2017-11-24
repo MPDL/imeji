@@ -8,14 +8,13 @@
 		<!-- import meta menu here -->
 		<div class="imj_topHeader">
 			<ui:include src="../menu/metamenu_default.xhtml"/>
-			
 			<div class="imj_logoContainer">
 				<h:outputLink id="lnkStartPage" title="#{lbl.goto_startpage}" value="#{Navigation.homeUrl}">
 					<!-- default imeji logo set in the css -->
 					<h:panelGroup styleClass="imj_logo" rendered="#{Configuration.logoUrl == null or Configuration.logoUrl == ''}" />
-					<!-- custom Logo not recommended -->
-		               <h:panelGroup  styleClass="imj_logo_alt" rendered="#{Configuration.logoUrl !=null and Configuration.logoUrl != ''}" >
-						<h:graphicImage value="#{Configuration.logoUrl}" alt="{Configuration.instanceName} Logo" />
+						<!-- custom Logo not recommended -->
+	               <h:panelGroup  styleClass="imj_logo_alt" rendered="#{Configuration.logoUrl !=null and Configuration.logoUrl != ''}" >
+						<img src="#{Configuration.logoUrl}" alt="{Configuration.instanceName} Logo" />
 				    </h:panelGroup>
 				</h:outputLink>
 			</div>
@@ -27,7 +26,6 @@
 				<form id="simpleSearch" onsubmit="return submitSimpleSearch();">
 					<div id="simpleSearchInput">
 						<input type="text" id="simpleSearchInputText" placeholder="#{lbl.search_for}" value="#{QuickSearchBean.searchString}" autocomplete="off" />
-						
 						<div class="imj_menuSimpleSearch" >
 							<span class="imj_menuText"> #{lbl.search_for} ...</span>
 							<ul class="imj_bodyContextSearch" >
@@ -72,10 +70,8 @@
             	</div>
             </ui:repeat>
         </h:panelGroup>
-		
-			<div class="imj_navigation2">
-				<!-- place main menu here -->
-				<menu:mainMenu id="navigation" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>
-			</div>
+		<div class="imj_navigation2">
+			<menu:mainMenu id="navigation" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>
+		</div>
 	</f:subview>
 </ui:composition>

@@ -14,32 +14,30 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<ui:fragment rendered="#{Auth.loggedIn}">
-			<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox" style="display:none;">
-				<h:form id="discardForm">
-					<div class="imj_confirmationText">
-						<p>
-							<h:outputText value="#{cc.attrs.confirmationText}"/>
-						</p>
-					</div>
-					<div class="imj_confirmationReasonTextarea">
-						<h:outputLabel value="#{lbl.withdraw_comment}" for="discardComment"/>
-						<h:inputTextarea id="discardComment" value="#{cc.attrs.bean.discardComment}" valueChangeListener="#{cc.attrs.bean.discardCommentListener}" styleClass="imj_dialogReasonText">
-							<f:ajax execute="@this"  render="buttonDiscard" event="keyup"/>
-						</h:inputTextarea>
-					</div>
-					<h:panelGroup layout="block" styleClass="imj_submitPanel" id="buttonDiscard">
-						<a href="#" onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
-							#{lbl.cancel}
-						</a>
-				 		<h:commandButton id="btnDiscardContainer" 
-				 						action="#{cc.attrs.bean[cc.attrs.submitAction]}"  
-				 						value="#{cc.attrs.submitLabel}" 
-				 						styleClass="#{cc.attrs.bean.discardComment == ''  ? 'imj_disabledButton' : 'imj_submitButton'}" 
-				 						onclick="if(#{cc.attrs.bean.discardComment != ''}){closeDialog('#{cc.attrs.dialogId}');startLoader(); return true;}else{return false;}"/>
-					</h:panelGroup>
-				</h:form>
-			</div>
-		</ui:fragment>
+		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox">
+			<h:form id="f">
+				<div class="imj_confirmationText">
+					<p>
+						<h:outputText value="#{cc.attrs.confirmationText}"/>
+					</p>
+				</div>
+				<div class="imj_confirmationReasonTextarea">
+					<h:outputLabel value="#{lbl.withdraw_comment}" for="discardComment"/>
+					<h:inputTextarea id="discardComment" value="#{cc.attrs.bean.discardComment}" valueChangeListener="#{cc.attrs.bean.discardCommentListener}" styleClass="imj_dialogReasonText">
+						<f:ajax execute="@this" render="buttonDiscard" event="keyup"/>
+					</h:inputTextarea>
+				</div>
+				<h:panelGroup layout="block" styleClass="imj_submitPanel" id="buttonDiscard">
+					<a href="#" onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
+						#{lbl.cancel}
+					</a>
+			 		<h:commandButton id="btnDiscardContainer" 
+			 						action="#{cc.attrs.bean[cc.attrs.submitAction]}"  
+			 						value="#{cc.attrs.submitLabel}" 
+			 						styleClass="#{cc.attrs.bean.discardComment == ''  ? 'imj_disabledButton' : 'imj_submitButton'}" 
+			 						onclick="if(#{cc.attrs.bean.discardComment != ''}){closeDialog('#{cc.attrs.dialogId}');startLoader(); return true;}else{return false;}"/>
+				</h:panelGroup>
+			</h:form>
+		</div>
 	</composite:implementation>
 </html>

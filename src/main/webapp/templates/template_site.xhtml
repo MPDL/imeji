@@ -14,9 +14,7 @@
         </h:head>
         <h:body lang="#{InternationalizationBean.locale}"> 
        		#{Auth.init()}
-            <!-- optional header scripts, which must load before -->
-            <ui:insert name="additonalHeaderScripts"/>          
-            <!-- global page wrapper -->
+            <ui:insert name="additonalHeaderScripts"/>         
             <h:panelGroup id="imeji_maintenance" layout="block" styleClass="imj_message imj_messageError" style="width:100%; padding:0.5em" rendered="#{Configuration.maintenanceMessage != ''}">
             	<h:outputText value="#{Configuration.maintenanceMessage}" escape="false"/>
             </h:panelGroup>
@@ -24,25 +22,21 @@
             	<div class="imj_allContentWrapper">
             	 	<ui:insert name="authorization"/>
 	                <ui:insert name="init"/>
-	           		
 	                <ui:include src="component/header/header_default.xhtml"/>
 	                <div id="content" class="imj_siteContent">
-	                	
 		                <h:panelGroup layout="block" id="actions" class="imj_actionMenuArea">
 		               		<ui:insert name="actionsMenu"/>
 		                </h:panelGroup>
 			           	<ui:fragment rendered="#{not empty headline.trim() or not empty imejiResource}">
-			           		
 			                <div id="pageTitle" class="imj_siteContentHeadline">
 			                  	<ui:fragment rendered="#{not empty imejiResource}">
 				                 	<span class="imj_siteContentStatus">
 						                <imjc:iconStatus id="status" imejiResource="#{imejiResource}"/>
 						            </span>
 					            </ui:fragment>
-					            
 								<ui:fragment rendered="#{not empty headline}">
+									#{BreadcrumbBean.init(imejiResource)}
 				                    <h1>
-				                   	 	#{BreadcrumbBean.init(imejiResource)}
 				                    	<ui:repeat var="entry" value="#{BreadcrumbBean.entries}">
 				                    		<a href="#{entry.link}" title="#{entry.label}">#{entry.label}</a><span class="del">></span>
 				                    	</ui:repeat>
@@ -53,7 +47,6 @@
 					                      	</ui:fragment>
 				                      	</ui:fragment>
 				                      	<span>#{headline.toString().trim()}</span>
-				                      
 				                    </h1>
 				                    <div class="subHeadline">
 				                    	<ui:insert name="subHeadline"/>
@@ -61,17 +54,13 @@
 			                    </ui:fragment>
 			                </div>
 		                </ui:fragment>
-	                	
-		                <!-- content wrapper -->
 		                <div class="imj_mainContentWrapper">
 		                	<ui:insert name="searchQuery"/>
 		                    <ui:insert name="mainContent"/>
 		                </div>
-		                
 		               	<div class="loaderWrapper"/>
 		               	<div class="loader"/>
 		             </div>
-                	
                 </div>
                 <div class="imj_siteFooter">
                 	 <ui:include src="component/footer/footer_default.xhtml"/>

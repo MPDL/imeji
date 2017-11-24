@@ -81,7 +81,6 @@ public class ThreadedTransaction implements Callable<Integer> {
    */
   public static void run(ThreadedTransaction t, ExecutorService executor) throws ImejiException {
     final Future<Integer> f = executor.submit(t);
-
     // wait for the transaction to be finished
     try {
       f.get();

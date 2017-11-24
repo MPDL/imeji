@@ -13,7 +13,7 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<div id="uploadDialog" class="imj_modalDialogBox uploadDialog" style="display:none;" >
+		<div id="uploadDialog" class="imj_modalDialogBox uploadDialog">
 			<h:form id="uploadForm">
 				<ui:fragment rendered="#{cc.attrs.bean.collection.status == 'RELEASED'}">
 					#{lbl.move_collection_released}<br/><br/>

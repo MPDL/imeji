@@ -14,7 +14,7 @@
 	
 	<composite:implementation>
 		#{SubCollectionFormBean.setName(cc.attrs.collection.title)}
-		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox" style="display:none;">
+		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox">
 			<h:form id="subColForm">
 				<h:inputText id="name" html5:placeholder="#{lbl.name}" html5:autofocus="true" class="imj_mdInput" value="#{SubCollectionFormBean.name}">
 					 <f:ajax/>

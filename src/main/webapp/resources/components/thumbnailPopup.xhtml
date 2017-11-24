@@ -13,31 +13,17 @@
 	<composite:implementation>
 		<div class="imj_imageInfoLayer">
 			<div class="imj_metadataSet">
-				<div class="imj_metadataLabel" title="#{item.isCollection() ? lbl.name : lbl.filename}">
-					<h:outputText value="#{item.isCollection() ? lbl.name : lbl.filename}"/>
-				</div>
-				<div class="imj_metadataValue" title="#{item.filename}">
-					<h:outputText value="#{item.filename}"/>
-				</div>
+				<div class="imj_metadataLabel" title="#{item.isCollection() ? lbl.name : lbl.filename}">#{item.isCollection() ? lbl.name : lbl.filename}</div>
+				<div class="imj_metadataValue" title="#{item.filename}">#{item.filename}</div>
 			</div>
-
 			<div class="imj_metadataSet">
-				<div class="imj_metadataLabel" title="#{lbl.path}">
-					<h:outputText value="#{lbl.path}"/>
-				</div>
-				<div class="imj_metadataValue" title="#{item.path}">
-					<h:outputText value="#{item.path}"/>
-				</div>
+				<div class="imj_metadataLabel" title="#{lbl.path}">#{lbl.path}</div>
+				<div class="imj_metadataValue" title="#{item.path}">#{item.path}</div>
 			</div>
-
 			<ui:repeat id="metadata" var="md" value="#{cc.attrs.item.metadata}" rows="0" varStatus="indexMetadata">
 				<div class="imj_metadataSet">
-					<div class="imj_metadataLabel" title="#{cc.attrs.title}">
-						<h:outputText value="#{md.index}"/>
-					</div>
-					<div class="imj_metadataValue">
-						<md:output metadata="#{md}"/>
-					</div>
+					<div class="imj_metadataLabel" title="#{cc.attrs.title}">#{md.index}</div>
+					<div class="imj_metadataValue"><md:output metadata="#{md}" compact="true"/></div>
 				</div>
 			</ui:repeat>
 		</div>

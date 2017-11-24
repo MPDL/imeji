@@ -30,7 +30,7 @@
 		 	<span>#{lbl.by} #{CollectionItemsBean.authorsShort}</span>
 		 	<span class="imj_sep">|</span> 
 		 	<a href="#actions">
-				<span class="moreCollection"  onclick="$('.collectionAbout').slideDown(300);$('.lessCollection').show(); $(this).hide();">
+				<span class="moreCollection"  onclick="$('.collectionAbout').slideDown(300);$('.lessCollection').show(); $(this).hide(); draw_qr();">
 					<span>#{lbl.more}</span><span class="fa fa-angle-right"/>
 				</span>
 			</a>
@@ -41,6 +41,7 @@
 			</a>
 		</ui:fragment>
 	 </ui:define>
+	 
 	 <ui:define name="collectionAbout">
 		<div class="collectionAbout">
 			<div class="imj_sectionTitle">
@@ -65,39 +66,35 @@
 			</div>
 			<div class="imj_section"/>
 		</div>
-		
 	 </ui:define>
 	 
 	 <ui:define name="actions">
-		
-		 	<ui:fragment rendered="#{Auth.update}">
-		 		<h:form id="showUploadForm">
-					<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_overlayMenu imj_openUploadDialog" onclick="openDialog('uploadDialog');">
-						<f:ajax render=":additonalFooterScripts"/>
-						<span class="fa fa-upload"/> <span>#{lbl.upload}</span>
-					</h:commandLink>
-				</h:form>
-				<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('addSubCollection'); document.getElementById('createSub:subColForm:name').focus()">
-					<span class="fa fa-plus"/> <span>#{lbl.subcollection}</span> 
+	 	<ui:fragment rendered="#{Auth.update}">
+	 		<h:form id="showUploadForm">
+				<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_overlayMenu imj_openUploadDialog" onclick="openDialog('uploadDialog');">
+					<f:ajax render=":additonalFooterScripts"/>
+					<span class="fa fa-upload"/> <span>#{lbl.upload}</span>
+				</h:commandLink>
+			</h:form>
+			<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('addSubCollection'); document.getElementById('createSub:subColForm:name').focus()">
+				<span class="fa fa-plus"/> <span>#{lbl.subcollection}</span> 
+			</a>
+			<ui:fragment rendered="#{CollectionItemsBean.collection.isSubCollection()}">
+				<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('editSubCollection');">
+					<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
 				</a>
-				<ui:fragment rendered="#{CollectionItemsBean.collection.isSubCollection()}">
-					<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('editSubCollection');">
-						<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
-					</a>
-				</ui:fragment>
-				<ui:fragment rendered="#{!CollectionItemsBean.collection.isSubCollection()}">
-					<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/edit" class="imj_menuButton imj_overlayMenu">
-						<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
-					</a>
-				</ui:fragment>
 			</ui:fragment>
+			<ui:fragment rendered="#{!CollectionItemsBean.collection.isSubCollection()}">
+				<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/edit" class="imj_menuButton imj_overlayMenu">
+					<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
+				</a>
+			</ui:fragment>
+		</ui:fragment>
 			
 		<span id="actionsReponsive" class="responsiveMenu">
-
 			<a style="float:right; text-align: right;" href="#"  class="responsiveMenuCloseBtn responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="actionsReponsive" >
 				<span class="fa fa-times"/> <span>#{lbl.close}</span>
 			</a>
-			
 			<ui:fragment rendered="#{Auth.admin}">
 				<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/share?q=#{CollectionItemsBean.query}&amp;fq=#{CollectionItemsBean.facetQueryString}" class="imj_menuButton imj_overlayMenu">
 					<span class="fa fa-users"/> <span>#{lbl.share}</span>
@@ -121,7 +118,6 @@
 						<span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
 					</h:outputLink>
 				</ui:fragment>
-				
 			</ui:fragment>
 			<ui:fragment rendered="#{Auth.delete}">
 				<ui:fragment rendered="#{WorkflowBean.delete(CollectionItemsBean.collection)}">
@@ -186,22 +182,22 @@
 		</a>
 		<a href="#" class="fa fa-ellipsis-h responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="actionsReponsive" />
 		<a href="#" class="fa fa-filter responsiveMenuBtn imj_menuButton imj_overlayMenu" style="float:right" data-menu="facetsArea" />
-
 	 </ui:define>
 	 
 	 <ui:define name="modalDialogs_from_site">
 	 	<h:panelGroup id="dialogs">
 		 	<upload:dialog colId="#{CollectionItemsBean.collection.id.toString()}" id="uploadDialog" bean="#{CollectionItemsBean}"/>
 		 	<dialog:confirmationDialog submitAction="deleteAll" bean="#{CollectionItemsBean}" confirmationText="#{msg.confirmation_delete_items}?" submitLabel="#{lbl.delete}" dialogId="deleteItems" />
-		 	<col:subCollectionForm id="createSub" dialogId="addSubCollection" parentCollection="#{CollectionItemsBean.collection}"/>
-		 	<col:subCollectionForm id="editSub" dialogId="editSubCollection" collection="#{CollectionItemsBean.collection}"/>
-		 	<dialog:confirmationDialog submitAction="release" id="releaseCollection" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_release_collection}" confirmationText2="#{CollectionItemsBean.actionMenu.releaseMessage} " confirmationTextLicense="#{CollectionItemsBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}" submitLabel="#{lbl.release}" dialogId="releaseCollection"/>
-		 	<dialog:confirmationDialog submitAction="delete" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_delete_collection}?" submitLabel="#{lbl.delete}" dialogId="deleteCollection" />
-		 	<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_withdraw_collection}" submitLabel="#{lbl.withdraw}" dialogId="withdrawCollection"/>
-		 	<dialog:confirmationDialog submitAction="subscribe" bean="#{SubscriptionBean}"  confirmationText="#{msg.confirmation_subscribe}" submitLabel="#{lbl.subscribe}" dialogId="subscribe" />
-			<dialog:confirmationDialog submitAction="unSubscribe" bean="#{SubscriptionBean}" confirmationText="#{msg.confirmation_unsubscribe}" submitLabel="#{lbl.unsubscribe}" dialogId="unsubscribe" />
-		 	<dialog:dialogOptionDialog bean="#{CollectionItemsBean.actionMenu}" col="#{CollectionItemsBean.collection}" submitId1="doiInput" submitId2="getDOIDialog" confirmationText="#{empty CollectionItemsBean.collection.doi ? '' : msg.collection_has_doi_warning}" submitLabel1="#{lbl.createDOI_manually}" submitLabel2="#{lbl.createDOI_from_service}" dialogId="createDOI"/>
-			<dialog:confirmationDialog submitAction="createDOI" col="#{CollectionItemsBean.collection}" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_create_DOI}" submitLabel="#{lbl.createDOI}" dialogId="getDOIDialog"/>
+		 	<col:subCollectionForm id="cr" dialogId="addSubCollection" parentCollection="#{CollectionItemsBean.collection}"/>
+		 	<col:subCollectionForm id="ed" dialogId="editSubCollection" collection="#{CollectionItemsBean.collection}"/>
+		 	<dialog:confirmationDialog id="rel" submitAction="release" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_release_collection}" confirmationText2="#{CollectionItemsBean.actionMenu.releaseMessage} " confirmationTextLicense="#{CollectionItemsBean.actionMenu.countOfItemsWithoutLicense &gt; 0 ? LicenseViewer.getLicense(Configuration.defaultLicense) : ''}" submitLabel="#{lbl.release}" dialogId="releaseCollection"/>
+		 	<dialog:confirmationDialog id="del" submitAction="delete" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_delete_collection}?" submitLabel="#{lbl.delete}" dialogId="deleteCollection" />
+		 	<dialog:confirmationReasonedDialog id="dis" submitAction="withdraw" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_withdraw_collection}" submitLabel="#{lbl.withdraw}" dialogId="withdrawCollection"/>
+		 	<dialog:confirmationDialog id="sub" submitAction="subscribe" bean="#{SubscriptionBean}"  confirmationText="#{msg.confirmation_subscribe}" submitLabel="#{lbl.subscribe}" dialogId="subscribe" />
+			<dialog:confirmationDialog id="usub" submitAction="unSubscribe" bean="#{SubscriptionBean}" confirmationText="#{msg.confirmation_unsubscribe}" submitLabel="#{lbl.unsubscribe}" dialogId="unsubscribe" />
+		 	<dialog:dialogOptionDialog id="cdoi" dialogId="createDOI" bean="#{CollectionItemsBean.actionMenu}" col="#{CollectionItemsBean.collection}" submitId1="doiInput" submitId2="getDOIDialog" confirmationText="#{empty CollectionItemsBean.collection.doi ? '' : msg.collection_has_doi_warning}" submitLabel1="#{lbl.createDOI_manually}" submitLabel2="#{lbl.createDOI_from_service}" />
+			<dialog:confirmationDialog id="gdoi" dialogId="getDOIDialog" submitAction="createDOI" col="#{CollectionItemsBean.collection}" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_create_DOI}" submitLabel="#{lbl.createDOI}" />
+		 	<dialog:doiInputDialog id="idoi" col="#{CollectionItemsBean.collection}" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{empty CollectionItemsBean.collection.doi ? '' : msg.collection_has_doi_warning}" submitLabel="#{lbl.save}" dialogId="doiInput"/>
 		 	<dialog:move id="move" objectId="#{CollectionItemsBean.collection.id.toString()}" colId="#{CollectionItemsBean.collection.id.toString()}" parentId=":move" />
 	 	</h:panelGroup>
 	 </ui:define>
@@ -214,16 +210,24 @@
 	</ui:define>
 	
 	<ui:define name="additonalFooterScripts">
-		
-		<script>
-			jQuery(document).ready(function() {
-				if(#{CollectionItemsBean.showUpload}){
-					openDialog('uploadDialog');
-				}
+		<script type="text/javascript" src="#{Navigation.applicationUrl}resources/js/qrcode.js"/>		
+		<script type="text/javascript">
+			jQuery(document).ready(function(){
+				if(#{CollectionItemsBean.showUpload}){openDialog('uploadDialog');}
 			});	
-			var qrHtml = document.getElementById('qr'); 
-			qrHtml.innerHTML = create_qrcode('{key:"#{SessionBean.user.apiKey}",col:"#{CollectionItemsBean.collection.id}"}');
-		</script>
-	
+			var draw_qrcode = function(text, typeNumber, errorCorrectLevel){
+				document.write(create_qrcode(text, typeNumber, errorCorrectLevel));
+			};
+			var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
+				var qr = qrcode(typeNumber || 20, errorCorrectLevel || 'M');
+				qr.addData(text);
+				qr.make();
+				return qr.createImgTag();
+			};
+			function draw_qr(){
+				var qrHtml = document.getElementById('qr');
+				qrHtml.innerHTML = create_qrcode('{key:"#{SessionBean.user.apiKey}",col:"#{CollectionItemsBean.collection.id}"}');
+			}
+		</script>	 
 	</ui:define>
 </ui:composition>

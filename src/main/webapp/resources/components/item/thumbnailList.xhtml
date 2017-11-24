@@ -8,29 +8,13 @@
 		<composite:attribute name="picList"/>
 	</composite:interface>
 	<composite:implementation>
-		<style>
-			.folderIcon{
-				width: 96%;
-			}
-			.folderIcon:before{
-				content: "";
-				display: block;
-				padding-top: 100%; 	/* initial ratio of 1:1*/
-			}
-		</style>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfRecords != 0}">
-			<div class="imj_listBody" id="listDiv" style=" text-align: justify;  text-align-last: justify;">
+			<div class="imj_listBody" style="text-align: justify; text-align-last: justify;">
 				<ul id="imj_listBody"> 
-					<!-- Images -->	
-					<ui:repeat id="pictureList" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
-						
+					<ui:repeat id="i" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
 						<li class="imj_tileItem">
-							<ui:param name="uri" value="#{item.uri}"/>
-							
-							<h:form id="itemSelectForm">
-							
-								<div id="imgFrame" class="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea" >
-									<!-- Image with link to the details view -->
+							<h:form id="f">
+								<div class="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea" >
 									<ui:fragment rendered="#{!item.isCollection()}">
 										<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;fq=#{cc.attrs.picList.facetQueryString}&amp;pos=#{cc.attrs.picList.offset + index.index}#actions">
 											<img src="#{item.link}" alt="#{item.caption}"/>
@@ -42,34 +26,24 @@
 										</a>
 									</ui:fragment>
 									<span class="imj_optionSet">
-										<h:selectBooleanCheckbox rendered="#{item.status != 'WITHDRAWN' and !item.isCollection()}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
-											<f:ajax event="change" execute="@this" render=":ajaxWrapper :actions"/>
+										<h:selectBooleanCheckbox rendered="#{item.status != 'WITHDRAWN' and !item.isCollection()}" styleClass="imj_optionCheckbox" id="sel" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
+											<f:ajax event="change" execute="@this" render=":actions :sel:f"/>
 										</h:selectBooleanCheckbox>
-										<h:outputLabel for="pictureCheckbox" value="#{item.caption}" title="#{item.caption}" styleClass="imj_optionLabel"/>
+										<h:outputLabel for="sel" value="#{item.caption}" title="#{item.caption}" styleClass="imj_optionLabel"/>
 									</span>
-								</div>
-								
-								<!-- Browse / Search Result / All Pictures of one Person Pages / resource -->
-								
+								</div>								
 							</h:form>
-							
 							<div class="imj_tooltip">
 								<imj:thumbnailPopup item="#{item}"/>
 							</div>
 						</li>
-						
 					</ui:repeat>
-					<!-- End images -->
-					<ui:repeat id="emptyPictureList" var="nothing" value="#{cc.attrs.picList.emptyList}">
-						<li class="imj_tileItem"/>
-					</ui:repeat>
-					
-					<!-- 
-						Show/hide metadata popup Needs to be defined in ajax area to rebind the DOM objects
-					-->
 				</ul>
 			</div>
 		</h:panelGroup>
-		<div id="log"></div>
+		<style>
+			.folderIcon{width: 96%;}
+			.folderIcon:before{content: "";display: block;padding-top: 100%;}
+		</style>
 	</composite:implementation>
 </div>
