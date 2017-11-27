@@ -4,22 +4,20 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
-	<f:subview id="Header">
-		<!-- import meta menu here -->
-		<div class="imj_topHeader">
-			<ui:include src="../menu/metamenu_default.xhtml"/>
-			<div class="imj_logoContainer">
-				<h:outputLink id="lnkStartPage" title="#{lbl.goto_startpage}" value="#{Navigation.homeUrl}">
-					<!-- default imeji logo set in the css -->
-					<h:panelGroup styleClass="imj_logo" rendered="#{Configuration.logoUrl == null or Configuration.logoUrl == ''}" />
-						<!-- custom Logo not recommended -->
-	               <h:panelGroup  styleClass="imj_logo_alt" rendered="#{Configuration.logoUrl !=null and Configuration.logoUrl != ''}" >
-						<img src="#{Configuration.logoUrl}" alt="{Configuration.instanceName} Logo" />
-				    </h:panelGroup>
-				</h:outputLink>
-			</div>
-			<div id="simpleSearchWrapper" class="imj_simpleSearch responsiveMenu">
-				<ui:fragment rendered="#{!Configuration.privateModus || Auth.loggedIn}">
+
+	<!-- import meta menu here -->
+	<div class="imj_topHeader">
+		<ui:include src="../menu/metamenu_default.xhtml"/>
+		<div class="imj_logoContainer">
+			<a title="#{lbl.goto_startpage}" href="#{Navigation.homeUrl}">
+				<h:panelGroup styleClass="imj_logo" rendered="#{Configuration.logoUrl == null or Configuration.logoUrl == ''}" />
+               	<h:panelGroup  styleClass="imj_logo_alt" rendered="#{Configuration.logoUrl !=null and Configuration.logoUrl != ''}" >
+					<img src="#{Configuration.logoUrl}" alt="{Configuration.instanceName} Logo" />
+			    </h:panelGroup>
+			</a>
+		</div>
+		<div id="simpleSearchWrapper" class="imj_simpleSearch responsiveMenu">
+			<ui:fragment rendered="#{!Configuration.privateModus || Auth.loggedIn}">
 				<a href="#" class="responsiveMenuCloseBtn responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="simpleSearchWrapper" >
 					<span class="fa fa-times"/> <span>#{lbl.close}</span>
 				</a>
@@ -57,21 +55,20 @@
 			   			<span class="fa fa-sliders fa-size-2"></span>
 			   		</a>
 		   		</div>
-		   		</ui:fragment>
-			</div>
+	   		</ui:fragment>
 		</div>
-		<span id="navTop"/>
-		<h:panelGroup layout="block" id="imj_pageMessageArea" class="imj_pageMessageArea">
-            <ui:repeat var="message" value="#{MessagesBean.messages}" varStatus="status">
-            	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
-            		<span class="imj_messageAreaCloseBtn" onclick="$(this).parent().slideUp(500);">x</span>
-            		<span class="fa #{message.severity == 'ERROR 2' ? 'fa-exclamation' : 'fa-check'} fa-size-1" style="margin-right: 10px;"> </span>
-            		<h:outputText value="#{MessagesBean.getDetails(message)}" escape="false"/>
-            	</div>
-            </ui:repeat>
-        </h:panelGroup>
-		<div class="imj_navigation2">
-			<menu:mainMenu id="navigation" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" menuClass="imj_mainMenuStandard" userHasAdminRights="#{Auth.sysAdmin}"/>
-		</div>
-	</f:subview>
+	</div>
+	<span id="navTop"/>
+	<h:panelGroup layout="block" id="imj_pageMessageArea" class="imj_pageMessageArea">
+           <ui:repeat var="message" value="#{MessagesBean.messages}" varStatus="status">
+           	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
+           		<span class="imj_messageAreaCloseBtn" onclick="$(this).parent().slideUp(500);">x</span>
+           		<span class="fa #{message.severity == 'ERROR 2' ? 'fa-exclamation' : 'fa-check'} fa-size-1" style="margin-right: 10px;"> </span>
+           		<h:outputText value="#{MessagesBean.getDetails(message)}" escape="false"/>
+           	</div>
+           </ui:repeat>
+       </h:panelGroup>
+	<div class="imj_navigation">
+		<menu:mainMenu id="navigation" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" userHasAdminRights="#{Auth.sysAdmin}"/>
+	</div>
 </ui:composition>

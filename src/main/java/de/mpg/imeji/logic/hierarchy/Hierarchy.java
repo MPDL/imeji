@@ -58,6 +58,7 @@ public class Hierarchy {
    * Load the complete Hierarchy
    */
   public void init() {
+    long a = System.currentTimeMillis();
     final List<String> l =
         ImejiSPARQL.exec(JenaCustomQueries.selectAllSubcollections(), Imeji.collectionModel);
     final List<Node> nodeList = l.stream().map(s -> new Node(s.split("\\|")[0], s.split("\\|")[1]))

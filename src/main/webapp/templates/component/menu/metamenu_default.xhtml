@@ -9,60 +9,48 @@
 	<div class="" style="float:right; margin-left: 1.5em; font-size: 1.5em;">
 		<a href="#" class="fa fa-bars responsiveMenuBtn" data-menu="headerMenu"/>
 	</div>
-	
 	<div style="float:right; font-size: 1.5em;">
-			<a href="#" class="fa fa-search responsiveMenuBtn" data-menu="simpleSearchWrapper" />
+		<a href="#" class="fa fa-search responsiveMenuBtn" data-menu="simpleSearchWrapper" />
 	</div>
 	
 	<div class="imj_metaMenuStandardSingleLine" id="headerMenu">
-		
 		<a href="#" class="responsiveMenuCloseBtn responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="headerMenu" >
 			<span class="fa fa-times"/> <span>#{lbl.close}</span>
 		</a>
-		
 		<div class="imj_metaMenuItemsAlign">
-			
-			<!-- Username if logged in -->
+			<!-- Login/Logout -->
 			<ui:fragment rendered="#{Auth.loggedIn}">
-				<h:outputLink id="txtAccountUserName" title="#{lbl.goto_user_profile}" styleClass="imj_metaMenuItem" value="#{Navigation.applicationUrl}user?email=#{Auth.sessionUser.email}">
-					<h:outputText value="#{Auth.sessionUser.person.completeName}"/>
-				</h:outputLink>
-				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>
+				<a id="txtAccountUserName" title="#{lbl.goto_user_profile}" class="imj_metaMenuItem" href="#{Navigation.applicationUrl}user?email=#{Auth.sessionUser.email}">
+					#{Auth.sessionUser.person.completeName}
+				</a>
+				<a id="lnkLogout" title="#{lbl.logout}" href="#{Navigation.applicationUrl}logout" class="imj_metaMenuItem">
+					#{lbl.logout}
+				</a>
 			</ui:fragment>
-			
-			<!-- LogIn, LogOut -->
-				<ui:param name="redirectUrl" value="#{LoginBean.redirect==null? SuperBean.currentPage.urlEncoded:LoginBean.encodedRedirect}"/>
-				<h:panelGroup rendered="#{!Auth.loggedIn}" styleClass="imj_metaMenuItem imj_loginFormHidden">
-					<a href="#{Navigation.loginUrl}?redirect=#{redirectUrl}" id="lnkshowLogin" class="imj_metaMenuItem">#{lbl.login}</a>
-				</h:panelGroup>
-				<h:outputLink id="lnkLogout" title="#{lbl.logout}" value="#{Navigation.applicationUrl}logout" styleClass="imj_metaMenuItem" rendered="#{Auth.loggedIn}">
-					<h:outputText value="#{lbl.logout}"/>
-				</h:outputLink>
+			<ui:fragment rendered="#{!Auth.loggedIn}">
+				<ui:param name="redirectUrl" value="#{LoginBean.redirect==null ? SuperBean.currentPage.urlEncoded : LoginBean.encodedRedirect}"/>
+				<a href="#{Navigation.loginUrl}?redirect=#{redirectUrl}" id="lnkshowLogin" class="imj_metaMenuItem">#{lbl.login}</a>
+			</ui:fragment>
 						
 			<!-- Register -->
 			<ui:fragment rendered="#{!Auth.loggedIn and Configuration.registrationEnabled}">
-				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>
-				<h:outputLink value="#{Navigation.applicationUrl}register" title="#{lbl.register}" styleClass="imj_metaMenuItem">
-					<h:outputText value="#{lbl.register}"/>
-				</h:outputLink>
+				<a href="#{Navigation.applicationUrl}register" title="#{lbl.register}" class="imj_metaMenuItem">#{lbl.register}</a>
 			</ui:fragment>
 			
 			<!-- CSS Switcher -->
 			<ui:fragment rendered="#{Configuration.alternativeCss != null and Configuration.alternativeCss != ''}">
-				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>	
-				<h:form>
-                    <h:commandLink value="&#160;" action="#{SessionBean.toggleCss()}" styleClass="imj_metaMenuItem fa fa-desktop" title="Style"/>
+				<h:form id="cssForm">
+                    <h:commandLink id="go" value="&#160;" action="#{SessionBean.toggleCss()}" styleClass="imj_metaMenuItem fa fa-desktop" title="Style"/>
 				</h:form>
 			</ui:fragment>
 					
 			<!-- Language -->
 			<ui:fragment rendered="#{InternationalizationBean.internationalizedLanguages.size() > 1}">
-				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>
 				<h:form id="langForm">
-					<h:selectOneMenu value="#{InternationalizationBean.currentLanguage}" onchange="document.getElementById('Header:langForm:submitLang').click();" valueChangeListener="#{InternationalizationBean.currentlanguageListener}" styleClass="imj_metaMenuItemSelect">
+					<h:selectOneMenu id="sel" value="#{InternationalizationBean.currentLanguage}" onchange="document.getElementById('langForm:submitLang').click();" valueChangeListener="#{InternationalizationBean.currentlanguageListener}" styleClass="imj_metaMenuItemSelect">
 						<f:selectItems value="#{InternationalizationBean.internationalizedLanguages}"/>
 					</h:selectOneMenu>
-					<h:commandButton id="submitLang" action="#{InternationalizationBean.changeLanguage}" value="Change language" styleClass="imj_noDisplay">
+					<h:commandButton  id="go" action="#{InternationalizationBean.changeLanguage}" value="Change language" styleClass="imj_noDisplay">
 						<f:ajax execute="@form" render="@none"/>
 					</h:commandButton>
 				</h:form>
@@ -70,13 +58,8 @@
 			
 			<!-- Help -->
 			<ui:fragment rendered="#{Navigation.helpUrl != ''}">
-				<h:outputText styleClass="imj_metaMenuSeparator" value="&#160;"/>
-				<h:outputLink id="lnkHelp" styleClass="imj_metaMenuItem" title="#{lbl.goto_help}" value="#{Navigation.helpUrl}" target="_blank">
-					<h:outputText value="#{lbl.help}"/>
-				</h:outputLink>
+				<a id="lnkHelp" class="imj_metaMenuItem" title="#{lbl.goto_help}" href="#{Navigation.helpUrl}" target="_blank">#{lbl.help}</a>
 			</ui:fragment>
 		</div>
-		
 	</div>
-	<!-- meta Menu ends here -->
 </ui:composition>

@@ -129,6 +129,10 @@ public class Person implements Cloneable, Serializable {
     return familyName + ", " + givenName;
   }
 
+  public String getCompleteNameWithOrga() {
+    return getCompleteName() + (organizations.isEmpty() ? "" : "(" + getOrganizationString() + ")");
+  }
+
   public String getFirstnameLastname() {
     return givenName + " " + familyName;
   }

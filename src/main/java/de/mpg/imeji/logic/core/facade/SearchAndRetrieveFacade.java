@@ -7,7 +7,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+
+import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
@@ -37,6 +42,7 @@ public class SearchAndRetrieveFacade implements Serializable {
       new ElasticSearch(SearchObjectTypes.ITEM, SearchObjectTypes.COLLECTION);
   private final ItemService itemService = new ItemService();
   private final CollectionService collectionService = new CollectionService();
+  private final static Logger LOGGER = Logger.getLogger(SearchAndRetrieveFacade.class);
 
 
   /**
@@ -91,13 +97,17 @@ public class SearchAndRetrieveFacade implements Serializable {
     final Map<Boolean, List<String>> resultMap =
         uris.stream().collect(Collectors.partitioningBy(s -> isCollectionUri(s)));
     // Retrieve objects of both list
-    final List<CollectionImeji> subCollections =
-        collectionService.retrieve(resultMap.get(true), user);
-    final List<Item> items = itemService.retrieve(resultMap.get(false), user);
+    final Future<List<CollectionImeji>> subCollections =
+        collectionService.retrieveAsync(resultMap.get(true), user);
+    final Future<List<Item>> items = itemService.retrieveAsync(resultMap.get(false), user);
     // Merge the list
-    return mergeAndOrderAsItem(uris, subCollections, items);
+    try {
+      return mergeAndOrderAsItem(uris, subCollections.get(), items.get());
+    } catch (InterruptedException | ExecutionException e) {
+      LOGGER.error("Error getting items and collections", e);
+    }
+    return new ArrayList<>();
   }
-
 
   /**
    * Merge the subcollection with the items and order them according to the order of uris
@@ -159,5 +169,42 @@ public class SearchAndRetrieveFacade implements Serializable {
   private boolean isCollectionUri(String s) {
     return s.contains("/collection/");
   }
+
+  /**
+   * Jobs to Retrieve collections asynchroou
+   * 
+   * @author saquet
+   *
+   */
+  private class RetrieveCollectionsJob implements Callable<List<CollectionImeji>> {
+    private final List<String> ids;
+    private final User user;
+
+    public RetrieveCollectionsJob(List<String> ids, User user) {
+      this.ids = ids;
+      this.user = user;
+    }
+
+    @Override
+    public List<CollectionImeji> call() throws Exception {
+      return collectionService.retrieve(ids, user);
+    }
+  }
+
+  private class RetrieveItemsJob implements Callable<List<Item>> {
+    private final List<String> ids;
+    private final User user;
+
+    public RetrieveItemsJob(List<String> ids, User user) {
+      this.ids = ids;
+      this.user = user;
+    }
+
+    @Override
+    public List<Item> call() throws Exception {
+      return itemService.retrieve(ids, user);
+    }
+  }
+
 
 }

@@ -18,7 +18,6 @@
 		<ui:fragment rendered="#{isURL}">
 			<a target="_blank" href="#{cc.attrs.metadata.url}">#{empty cc.attrs.metadata.title ? cc.attrs.metadata.url : cc.attrs.metadata.title}</a>
 		</ui:fragment>
-		
 		<ui:fragment rendered="#{isGeolocation}">
 			<span>#{cc.attrs.metadata.name}</span>
 			<ui:fragment rendered="#{cc.attrs.metadata.longitude != 'NaN' and cc.attrs.metadata.latitude != 'NaN'}">
@@ -28,18 +27,14 @@
 				</ui:fragment>
 			</ui:fragment>
 		</ui:fragment>
-		
 		<ui:fragment rendered="#{isPerson}">
 			#{cc.attrs.metadata.person.completeName} (#{cc.attrs.metadata.person.organizationString})
 		</ui:fragment>
-		
 		<ui:fragment rendered="#{isNumber}">
 			#{cc.attrs.metadata.number}
 		</ui:fragment>
-		
 		<ui:fragment rendered="#{isDefault}">
 			#{cc.attrs.metadata.text}#{cc.attrs.metadata.date}
 		</ui:fragment>
-	
 	</composite:implementation>
 </html>

@@ -9,12 +9,12 @@
 	</composite:interface>
 	<composite:implementation>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfRecords != 0}">
-			<div class="imj_listBody" style="text-align: justify; text-align-last: justify;">
+			<div class="imj_listBody" style="text-align: justify;">
 				<ul id="imj_listBody"> 
-					<ui:repeat id="i" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
-						<li class="imj_tileItem">
-							<h:form id="f">
-								<div class="#{item.selected ? 'imj_selected'  : ''} imj_tileThumbnailArea" >
+					<h:form id="f">
+						<ui:repeat id="i" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
+							<li>
+								<div class="#{item.selected ? 'imj_selected'  : ''} thumb" >
 									<ui:fragment rendered="#{!item.isCollection()}">
 										<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;fq=#{cc.attrs.picList.facetQueryString}&amp;pos=#{cc.attrs.picList.offset + index.index}#actions">
 											<img src="#{item.link}" alt="#{item.caption}"/>
@@ -26,24 +26,29 @@
 										</a>
 									</ui:fragment>
 									<span class="imj_optionSet">
-										<h:selectBooleanCheckbox rendered="#{item.status != 'WITHDRAWN' and !item.isCollection()}" styleClass="imj_optionCheckbox" id="sel" value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
-											<f:ajax event="change" execute="@this" render=":actions :sel:f"/>
+										<h:selectBooleanCheckbox id="sel" rendered="#{item.status != 'WITHDRAWN' and !item.isCollection()}" styleClass="imj_optionCheckbox"  value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
+											<f:ajax event="change" execute="@this" render=":actions"/>
 										</h:selectBooleanCheckbox>
-										<h:outputLabel for="sel" value="#{item.caption}" title="#{item.caption}" styleClass="imj_optionLabel"/>
+										<label for="sel" class="imj_optionLabel">
+											#{item.caption}
+										</label>
 									</span>
-								</div>								
-							</h:form>
-							<div class="imj_tooltip">
-								<imj:thumbnailPopup item="#{item}"/>
-							</div>
-						</li>
-					</ui:repeat>
+								</div>	
+								<div class="imj_tooltip">
+									<div class="label">#{item.isCollection() ? lbl.name : lbl.filename}</div>
+									<div class="value">#{item.filename}</div>
+									<div class="label">#{lbl.path}</div>
+									<div class="value">#{item.path}</div>
+									<ui:repeat id="md" var="md" value="#{item.metadata}">
+										<div class="label">#{md.name}</div>
+										<div class="value">#{md.value}</div>
+									</ui:repeat>
+								</div>
+							</li>
+						</ui:repeat>
+					</h:form>
 				</ul>
 			</div>
 		</h:panelGroup>
-		<style>
-			.folderIcon{width: 96%;}
-			.folderIcon:before{content: "";display: block;padding-top: 100%;}
-		</style>
 	</composite:implementation>
 </div>

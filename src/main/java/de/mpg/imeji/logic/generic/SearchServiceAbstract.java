@@ -1,6 +1,10 @@
 package de.mpg.imeji.logic.generic;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.User;
@@ -20,6 +24,7 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
  */
 public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
   protected final Search search;
+  private final ExecutorService executor = Executors.newCachedThreadPool();
 
   public SearchServiceAbstract(SearchObjectTypes type) {
     super();
@@ -66,6 +71,17 @@ public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
   }
 
   /**
+   * Retrieve the items as Future
+   * 
+   * @param ids
+   * @param user
+   * @return
+   */
+  public Future<List<T>> retrieveAsync(List<String> ids, User user) {
+    return executor.submit(new RetrieveJob(ids, user));
+  }
+
+  /**
    * Retrieve all elements of type T. This method should be abble to work without search, in order
    * to be used by the reindex process
    *
@@ -73,5 +89,26 @@ public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
    * @throws ImejiException
    */
   public abstract List<T> retrieveAll() throws ImejiException;
+
+  /**
+   * Job to retrieve the objects and return a Future
+   * 
+   * @author saquet
+   *
+   */
+  private class RetrieveJob implements Callable<List<T>> {
+    private final List<String> ids;
+    private final User user;
+
+    public RetrieveJob(List<String> ids, User user) {
+      this.ids = ids;
+      this.user = user;
+    }
+
+    @Override
+    public List<T> call() throws Exception {
+      return retrieve(ids, user);
+    }
+  }
 
 }

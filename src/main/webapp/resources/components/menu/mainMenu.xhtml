@@ -5,40 +5,28 @@
 	
 	<composite:interface>
 		<composite:attribute name="navBean" type="java.lang.Object" required="true" shortDescription="@type: Object, used for several URL paths"/>
-		<composite:attribute name="menuClass" type="java.lang.String" default="imj_contentMenu" required="true" shortDescription="@type: String, used for the component and will be extended with 'Item' for every menu entry, @default: imj_contentMenu"/>
 		<composite:attribute name="curMainMenu" type="java.lang.String" default="" required="true" shortDescription="@type String, required for menu highlight and to en-/disable upload and or ingest if user has rights"/>
 		<composite:attribute name="userHasAdminRights" type="java.lang.Boolean" default="false" required="false" shortDescription="@type: Boolean, @dependencies: curMainMenu, required for ingest"/>
 	</composite:interface>
 	
 	<composite:implementation>
-		<ul id="mainMenuSkipLinkAnchor" class="#{cc.attrs.menuClass.trim()}">
-			<!-- main Menu starts here -->
-			<li class="#{cc.attrs.menuClass.trim()}Item#{ (cc.attrs.curMainMenu == 'welcome') ? ' imj_active' : ''}">
-				<h:outputLink id="lnkHome" title="#{lbl.home}" value="#{cc.attrs.navBean.applicationUrl}">
-					<span>#{lbl.home}</span>
-				</h:outputLink>
+		<ul>
+			<li class="#{(cc.attrs.curMainMenu == 'welcome') ? 'imj_active' : ''}">
+				<a id="lnkHome" title="#{lbl.home}" href="#{cc.attrs.navBean.applicationUrl}">#{lbl.home}</a>
 			</li>
-			<ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
-				<li class="#{cc.attrs.menuClass.trim()}Item#{ (cc.attrs.curMainMenu == 'collection') ? ' imj_active' : ''}">
-					<h:outputLink id="lnkCollections" title="#{lbl.goto_collections}" value="#{cc.attrs.navBean.collectionsUrl}?q=">
-						<h:outputText value="#{lbl.header_collections}"/>
-					</h:outputLink>
-				</li>
-				<li class="#{cc.attrs.menuClass.trim()}Item#{ (cc.attrs.curMainMenu == 'items') ? ' imj_active' : ''}">
-					<h:outputLink id="lnkItems" title="#{lbl.goto_items}" value="#{cc.attrs.navBean.browseUrl}?q=">
-						<h:outputText value="#{lbl.items}"/>
-					</h:outputLink>
-				</li>
-			</ui:fragment>
-			<ui:fragment rendered="#{cc.attrs.userHasAdminRights}">
-				<li class="#{cc.attrs.menuClass.trim()}Item#{ (cc.attrs.curMainMenu == 'admin') ? ' imj_active' : ''}">
-					<h:outputLink id="lnkAdmin" title="#{lbl.goto_admin}" value="#{cc.attrs.navBean.adminUrl}">
-						<h:outputText value="ADMIN"/>
-					</h:outputLink>
-				</li>
-			</ui:fragment>
-			
-			<!-- main Menu ends here -->
+		<ui:fragment rendered="#{!Configuration.privateModus or SessionBean.user != null}">
+			<li class="#{ (cc.attrs.curMainMenu == 'collection') ? 'imj_active' : ''}">
+				<a id="lnkCollections" title="#{lbl.goto_collections}" href="#{cc.attrs.navBean.collectionsUrl}?q=">#{lbl.header_collections}</a>
+			</li>
+			<li class="#{(cc.attrs.curMainMenu == 'items') ? 'imj_active' : ''}">
+				<a id="lnkItems" title="#{lbl.goto_items}" href="#{cc.attrs.navBean.browseUrl}?q=">#{lbl.items}</a>
+			</li>
+		</ui:fragment>
+		<ui:fragment rendered="#{cc.attrs.userHasAdminRights}">
+			<li class="#{(cc.attrs.curMainMenu == 'admin') ? 'imj_active' : ''}">
+				<a id="lnkAdmin" title="#{lbl.goto_admin}" href="#{cc.attrs.navBean.adminUrl}">ADMIN</a>
+			</li>
+		</ui:fragment>
 		</ul>
 	</composite:implementation>
 </html>

@@ -15,6 +15,7 @@ import de.mpg.imeji.logic.model.Metadata;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StorageUtils;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
@@ -41,7 +42,8 @@ public class ThumbnailBean implements Serializable {
   private String shortFileType;
   private String fileSize;
   private String modified;
-  private List<Metadata> metadata;
+  // private List<Metadata> metadata;
+  private List<SimpleMetadata> metadata;
   private String status;
   private final boolean isCollection;
   private String path;
@@ -64,7 +66,8 @@ public class ThumbnailBean implements Serializable {
     this.fileSize = item.getFileSizeHumanReadable();
     this.modified = DateHelper.printDate(item.getModified());
     this.shortFileType = StorageUtils.getExtension(fileType);
-    this.metadata = item.getMetadata();
+    this.metadata =
+        item.getMetadata().stream().map(md -> new SimpleMetadata(md)).collect(Collectors.toList());
     this.caption = findCaption();
     this.selected = session.getSelected().contains(uri.toString());
     this.status = item.getStatus().toString();
@@ -75,6 +78,31 @@ public class ThumbnailBean implements Serializable {
     } else {
       path = new HierarchyService().findAllParentsWithNames(collectionUri.toString(), true).stream()
           .map(w -> w.getName()).collect(Collectors.joining(" > "));
+    }
+  }
+
+  public class SimpleMetadata implements Serializable {
+    private static final long serialVersionUID = 7239101694619957850L;
+    private final String name;
+    private final String value;
+
+    public SimpleMetadata(Metadata metadata) {
+      this.name = metadata.getIndex();
+      this.value = metadata.getText() + metadata.getName()
+          + (!Double.isNaN(metadata.getNumber()) ? metadata.getNumber() : "") + metadata.getDate()
+          + (metadata.getPerson() != null ? metadata.getPerson().getCompleteNameWithOrga() : "")
+          + (StringHelper.isNullOrEmptyTrim(metadata.getUrl()) ? metadata.getTitle()
+              : metadata.getUrl())
+          + (!Double.isNaN(metadata.getLongitude())
+              ? " (" + metadata.getLongitude() + "/" + metadata.getLatitude() + ")" : "");
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public String getValue() {
+      return value;
     }
   }
 
@@ -264,18 +292,8 @@ public class ThumbnailBean implements Serializable {
     this.shortFileType = shortFileType;
   }
 
-  /**
-   * @return the metadata
-   */
-  public List<Metadata> getMetadata() {
+  public List<SimpleMetadata> getMetadata() {
     return metadata;
-  }
-
-  /**
-   * @param metadata the metadata to set
-   */
-  public void setMetadata(List<Metadata> metadata) {
-    this.metadata = metadata;
   }
 
   public int getThumbnailWidth() {

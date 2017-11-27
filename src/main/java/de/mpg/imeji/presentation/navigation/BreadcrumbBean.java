@@ -37,7 +37,6 @@ public class BreadcrumbBean extends SuperBean {
    * @param o
    */
   public void init(Object o) {
-    HierarchyService.reloadHierarchy();
     try {
       entries = hierarchyService.findAllParentsWithNames(getObjectCollectionUri(o), false).stream()
           .map(w -> new Entry(w.getName(), getLinkToCollection(w.getUri())))

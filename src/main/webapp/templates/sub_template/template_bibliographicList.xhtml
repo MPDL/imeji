@@ -16,7 +16,6 @@
 	<!-- Main Content - bibliographic grid list - START -->
 	<ui:define name="mainContent">
 		<h:panelGroup layout="block" id ="ajaxWrapper">
-		
 			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords == 0}">
 				<div class="imj_bibliographicList" style="font-size:130%">
 					<span class="fa fa-exclamation-triangle"/>
@@ -25,17 +24,15 @@
 			</ui:fragment>
 			
 			<!-- List -->
-			<h:form>
-				<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
-					<div id="imj_listBody">
-						<col:list mediaList="#{paginatorListSessionBean}"/>
-					</div>
-				</ui:fragment>
-			</h:form>
+			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
+				<div id="imj_listBody">
+					<col:list mediaList="#{paginatorListSessionBean}"/>
+				</div>
+			</ui:fragment>
 			
 			<!-- Page Browser GotoBox -->
 			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
-				<imjc:rangePageBrowserGotobox paginatorBean="#{paginatorListSessionBean}"/>
+				<imjc:rangePageBrowserGotobox id="browse" paginatorBean="#{paginatorListSessionBean}"/>
 			</ui:fragment>
 		</h:panelGroup>
 	</ui:define>

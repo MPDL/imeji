@@ -46,14 +46,11 @@
 		<div class="collectionAbout">
 			<div class="imj_sectionTitle">
 		 		<span>#{lbl.informations}</span>
-		 		<a href="#">
-					<span class="lessCollection" style="display:none;" onclick="$('.collectionAbout').slideUp(300);$('.moreCollection').show();$('.lessCollection').hide();">
-						<span class="fa fa-angle-down"/>
-					</span>
+		 		<a href="#" class="lessCollection" style="display:none;" onclick="$('.collectionAbout').slideUp(300);$('.moreCollection').show();$('.lessCollection').hide();">
+					<span class="fa fa-angle-down"/>
 				</a>
 			</div>
-			<div class="imj_section"/>
-			<br/>
+			<div class="imj_section"/><br/>
 			<ui:fragment rendered="#{CollectionItemsBean.collection.status == 'WITHDRAWN'}">
 				<div class="imj_infodataSet imj_mediaWithdrawn">
 					#{lbl.withdrawn}<br/>

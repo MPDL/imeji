@@ -56,17 +56,17 @@
 						<h:commandButton type="submit" styleClass="imj_submitButton"
 							action="#{EditItemsBatchBean.append}"
 							value="#{lbl.add_metadata_append}" onclick="startLoader();">
-							<f:ajax execute="@form" render=":Header:imj_pageMessageArea @form " />
+							<f:ajax execute="@form" render="imj_pageMessageArea @form " />
 						</h:commandButton>
 						<h:commandButton type="submit" styleClass="imj_submitButton"
 							action="#{EditItemsBatchBean.fill}"
 							value="#{lbl.add_metadata_absent}" onclick="startLoader();">
-							<f:ajax execute="@form" render=":Header:imj_pageMessageArea @form" />
+							<f:ajax execute="@form" render=":imj_pageMessageArea @form" />
 						</h:commandButton>
 						<h:commandButton type="submit" styleClass="imj_submitButton"
 							action="#{EditItemsBatchBean.overwrite}"
 							value="#{lbl.add_metadata_overwrite}" onclick="startLoader();">
-							<f:ajax execute="@form" render=":Header:imj_pageMessageArea @form" />
+							<f:ajax execute="@form" render=":imj_pageMessageArea @form" />
 						</h:commandButton>
 					</div>
 				</div>
