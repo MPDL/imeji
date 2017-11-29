@@ -72,15 +72,28 @@ public class ThumbnailBean implements Serializable {
     this.selected = session.getSelected().contains(uri.toString());
     this.status = item.getStatus().toString();
     this.isCollection = uri.toString().contains("/collection/");
+  }
+
+  /**
+   * Init Path of the ThumbnailBean.
+   * 
+   * @param service
+   */
+  public void initPath(HierarchyService service) {
     if (isCollection) {
-      path = new HierarchyService().findAllParentsWithNames(uri.toString(), false).stream()
-          .map(w -> w.getName()).collect(Collectors.joining(" > "));
+      path = service.findAllParentsWithNames(uri.toString(), false).stream().map(w -> w.getName())
+          .collect(Collectors.joining(" > "));
     } else {
-      path = new HierarchyService().findAllParentsWithNames(collectionUri.toString(), true).stream()
+      path = service.findAllParentsWithNames(collectionUri.toString(), true).stream()
           .map(w -> w.getName()).collect(Collectors.joining(" > "));
     }
   }
 
+  /**
+   * 
+   * @author saquet
+   *
+   */
   public class SimpleMetadata implements Serializable {
     private static final long serialVersionUID = 7239101694619957850L;
     private final String name;

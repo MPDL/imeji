@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -23,17 +22,18 @@ import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
- * {@link Listener} to unsubscribe users of deleted collection
+ * {@link Listener} related to all events leading to unshare operations (for example: a collection
+ * is deleted, all grants related to this colelction should be removed)
  * 
  * @author saquet
  *
  */
-public class DeletedCollectionListener extends Listener {
+public class UnshareListener extends Listener {
   private final UserService userService = new UserService();
-  private static final Logger LOGGER = Logger.getLogger(DeletedCollectionListener.class);
+  private static final Logger LOGGER = Logger.getLogger(UnshareListener.class);
 
 
-  public DeletedCollectionListener() {
+  public UnshareListener() {
     super(MessageType.DELETE_COLLECTION);
   }
 
@@ -42,7 +42,6 @@ public class DeletedCollectionListener extends Listener {
     try {
       List<User> allUsers = userService.retrieveAll();
       Map<String, User> modifiedUsers = new HashMap<>();
-      modifiedUsers = unsubscribe(allUsers, getMessage().getObjectId(), modifiedUsers);
       modifiedUsers = unshare(allUsers, getMessage().getObjectId(), modifiedUsers);
       userService.updateBatch(new ArrayList<>(modifiedUsers.values()), Imeji.adminUser);
       unshareUserGroup(getMessage().getObjectId());
@@ -94,7 +93,6 @@ public class DeletedCollectionListener extends Listener {
    */
   private Map<String, User> unshare(List<User> allUsers, String collectionId,
       Map<String, User> modifiedUsers) {
-    allUsers = merge(modifiedUsers, allUsers);
     for (User user : allUsers) {
       List<String> newGrants = user.getGrants().stream().map(s -> new Grant(s))
           .filter(g -> !ObjectHelper.getId(URI.create(g.getGrantFor())).equals(collectionId))
@@ -106,51 +104,4 @@ public class DeletedCollectionListener extends Listener {
     }
     return modifiedUsers;
   }
-
-  /**
-   * Unsubscribe all user to the deleted collection
-   * 
-   * @param allUsers
-   * @param collectionId
-   */
-  private Map<String, User> unsubscribe(List<User> allUsers, String collectionId,
-      Map<String, User> modifiedUsers) {
-    allUsers = merge(modifiedUsers, allUsers);
-    for (User user : allUsers) {
-      List<String> newSubscriptions = user.getSubscriptionCollections().stream()
-          .filter(c -> !ObjectHelper.getId(URI.create(c)).equals(collectionId))
-          .collect(Collectors.toList());
-      if (newSubscriptions.size() < user.getSubscriptionCollections().size()) {
-        user.setSubscriptionCollections(newSubscriptions);
-        modifiedUsers.put(user.getEmail(), user);
-      }
-    }
-    return modifiedUsers;
-  }
-
-
-  /**
-   * Merge the modified users into allUsers to update the list of all users with the modification
-   * 
-   * @param modifiedUsers
-   * @param allUsers
-   * @return
-   */
-  private List<User> merge(Map<String, User> modifiedUsers, List<User> allUsers) {
-    Map<String, User> allUsersMap = toUserMap(allUsers);
-    allUsersMap.putAll(modifiedUsers);
-    return new ArrayList<>(allUsersMap.values());
-  }
-
-
-  /**
-   * Map a user list by email
-   * 
-   * @param users
-   * @return
-   */
-  private Map<String, User> toUserMap(List<User> users) {
-    return users.stream().collect(Collectors.toMap(User::getEmail, Function.identity()));
-  }
-
 }

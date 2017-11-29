@@ -16,7 +16,7 @@ public class Subscription implements Serializable {
   private static final long serialVersionUID = 3472025966712569075L;
 
   public enum Type {
-    DONWLOAD, UPLOAD;
+    DONWLOAD, DEFAULT, UPLOAD;
   }
 
   private URI id = IdentifierUtil.newURI(Subscription.class, "universal");

@@ -9,6 +9,12 @@ package de.mpg.imeji.logic.events.aggregation;
  */
 public interface Aggregation {
 
+  public enum Period {
+    NIGHTLY;
+  }
+
+  public Period getPeriod();
+
   /**
    * The aggregation is call
    */

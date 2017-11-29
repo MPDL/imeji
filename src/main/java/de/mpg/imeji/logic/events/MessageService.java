@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.events;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.db.keyValue.stores.HTreeMapStore;
 import de.mpg.imeji.logic.events.listener.ListenerService;
 import de.mpg.imeji.logic.events.messages.Message;
+import de.mpg.imeji.logic.events.messages.Message.MessageType;
 
 /**
  * SErvice to manage {@link Message}
@@ -69,7 +71,7 @@ public class MessageService {
   }
 
   /**
-   * Read and delete all messages for a specific object between 2 times
+   * Read all messages for a specific object between 2 times
    * 
    * @param objectId
    * @return
@@ -82,6 +84,20 @@ public class MessageService {
       LOGGER.error("Error reading message queue for object " + objectId, e);
     }
     return new ArrayList<>();
+  }
+
+  /**
+   * Retrieve all messages with the specified types between to time
+   * 
+   * @param from
+   * @param to
+   * @param types
+   * @return
+   */
+  public List<Message> retrieveByType(long from, long to, MessageType... types) {
+    return readAll().stream().filter(
+        m -> Arrays.asList(types).contains(m.getType()) && m.getTime() > from && m.getTime() < to)
+        .collect(Collectors.toList());
   }
 
   /**

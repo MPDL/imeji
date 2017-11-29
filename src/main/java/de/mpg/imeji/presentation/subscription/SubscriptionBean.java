@@ -136,7 +136,7 @@ public class SubscriptionBean extends SuperBean {
   public void subscribe(User user, CollectionImeji collection) {
     try {
       new SubscriptionService().subscribe(ImejiFactory.newSubscription().setObjectId(collection)
-          .setType(Type.UPLOAD).setUserId(user).build(), getSessionUser());
+          .setType(Type.DEFAULT).setUserId(user).build(), getSessionUser());
       initGroups(retrieveCollections());
     } catch (ImejiException e) {
       LOGGER.error("Error subscribing to collection", e);

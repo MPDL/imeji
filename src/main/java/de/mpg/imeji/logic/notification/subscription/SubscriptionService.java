@@ -1,8 +1,8 @@
 package de.mpg.imeji.logic.notification.subscription;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -76,8 +76,29 @@ public class SubscriptionService implements Serializable {
 
   }
 
-  public List<Subscription> getSubscribtions(Subscription.Type type) {
-    List<Subscription> l = new ArrayList<>();
-    return l;
+  /**
+   * Return all subscription for one type
+   * 
+   * @param type
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public List<Subscription> retrieveByType(Subscription.Type type, User user)
+      throws ImejiException {
+    return retrieveAll(user).stream().filter(s -> s.getType() == type)
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Retrieve all subscriptions
+   * 
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public List<Subscription> retrieveAll(User user) throws ImejiException {
+    return controller.retrieveBatch(
+        ImejiSPARQL.exec(JenaCustomQueries.selectSubscriptionAll(), Imeji.userModel), user);
   }
 }

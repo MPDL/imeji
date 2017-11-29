@@ -2,7 +2,9 @@ package de.mpg.imeji.logic.hierarchy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,6 +14,7 @@ import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.util.StringHelper;
 
 /**
  * Service to manage the hierarchy between imeji objects
@@ -23,6 +26,7 @@ public class HierarchyService implements Serializable {
   private static final long serialVersionUID = -3479895793901732353L;
 
   private static Hierarchy hierarchy = new Hierarchy();
+  private Map<String, String> collectionsNameMap = new HashMap<>();
 
   public HierarchyService() {
     if (hierarchy == null) {
@@ -191,10 +195,31 @@ public class HierarchyService implements Serializable {
 
     public CollectionUriNameWrapper(String uri) {
       this.uri = uri;
-      this.name = getCollectionName(uri);
+      this.name = initCollectionName(uri);
     }
 
-    private String getCollectionName(String uri) {
+    /**
+     * Check if the collection is in the collectionMap, else search the name and add it to the map
+     * 
+     * @param uri
+     * @return
+     */
+    private String initCollectionName(String uri) {
+      String name = collectionsNameMap.get(uri);
+      if (StringHelper.isNullOrEmptyTrim(name)) {
+        name = findCollectionName(uri);
+        collectionsNameMap.put(uri, name);
+      }
+      return name;
+    }
+
+    /**
+     * Search in the db the name of the collection
+     * 
+     * @param uri
+     * @return
+     */
+    private String findCollectionName(String uri) {
       List<String> l =
           ImejiSPARQL.exec(JenaCustomQueries.selectCollectionName(uri), Imeji.collectionModel);
       return l.isEmpty() ? "" : l.get(0);

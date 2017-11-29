@@ -5,6 +5,7 @@ import java.net.URI;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
  * Factory to build {@link Subscription}
@@ -26,7 +27,7 @@ public class SubscriptionFactory {
   }
 
   public SubscriptionFactory setObjectId(CollectionImeji collection) {
-    subscription.setObjectId(collection.getId().toString());
+    subscription.setObjectId(ObjectHelper.getId(collection.getId()));
     return this;
   }
 

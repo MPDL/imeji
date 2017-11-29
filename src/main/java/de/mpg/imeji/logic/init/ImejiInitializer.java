@@ -31,6 +31,7 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.core.statement.StatementService;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.events.listener.ListenerService;
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
@@ -122,6 +123,7 @@ public class ImejiInitializer {
     initadminUser();
     initDefaultStatements();
     new ListenerService().init();
+    HierarchyService.reloadHierarchy();
   }
 
 

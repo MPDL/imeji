@@ -24,6 +24,7 @@
 		<script>
 			var totalFiles = 0;
 			var uploadedFiles = 0;
+			console.log("calling plupload");
 			var uploader = new plupload.Uploader({
 				runtimes : 'html5,flash,silverlight,html4',
 				browse_button : '#{cc.attrs.browseButtonId}',
@@ -31,11 +32,11 @@
 				max_file_size : '#{Configuration.uploadMaxFileSize}kb',
 				multi_selection : true,
 				dragdrop: true,
-				drop_element: '#{cc.attrs.dropElementId}',
+				drop_element: $('.uploadDropArea').toArray(),// '#{cc.attrs.dropElementId}',
 				multipart_params: {
-					licenseName: document.getElementById('uploadDialog:uploadForm:uploader:name').value,
-					licenseLabel:  document.getElementById('uploadDialog:uploadForm:uploader:label').value,
-					licenseUrl:  document.getElementById('uploadDialog:uploadForm:uploader:url').value,
+					licenseName: document.getElementById('uploader:name').value,
+					licenseLabel:  document.getElementById('uploader:label').value,
+					licenseUrl:  document.getElementById('uploader:url').value,
 					},
 				init: {	
 					PostInit: function() {
@@ -50,12 +51,18 @@
 						totalFiles =  files.length;
 						lockPage();
 						addUploadStatusMessage(0,totalFiles);
-						var licenseName = document.getElementById('uploadDialog:uploadForm:uploader:name').value;
-						var licenseLabel = document.getElementById('uploadDialog:uploadForm:uploader:label').value;
-						var licenseUrl = document.getElementById('uploadDialog:uploadForm:uploader:url').value;
+						var licenseName = document.getElementById('uploader:name').value;
+						var licenseLabel = document.getElementById('uploader:label').value;
+						var licenseUrl = document.getElementById('uploader:url').value;
 						uploader.settings.multipart_params = { licenseName: licenseName, licenseLabel: licenseLabel, licenseUrl: licenseUrl};
 						uploader.start();
 						document.getElementById('totalSize').innerHTML = " " + formatBytes(up.total.size);
+					},
+					BeforeUpload : function(up, file) {
+						var source = file.getSource();
+						if(source.relativePath){
+							up.settings.url ='#{Navigation.applicationUrl}uploadServlet?col=#{cc.attrs.collectionId}&amp;apiKey=#{SessionBean.user.apiKey}' + "&amp;path=" + source.relativePath;
+						}
 					},
 					UploadProgress: function(up, file) {
 						addUploadStatusMessage(uploadedFiles,totalFiles,file.name,file.percent);
@@ -67,7 +74,6 @@
 					UploadComplete: function(up, files) {
 						document.getElementById('#{cc.attrs.updateButtonId}').click();
 						addUploadStatusMessageDone(uploadedFiles);
-						uploader.init();
 						closeUploader();
 					},
 					Error: function(up, err) {
@@ -99,13 +105,12 @@
 				uploader.stop();
 				document.getElementById('#{cc.attrs.updateButtonId}').click();
 				addUploadStatusMessageDone(uploadedFiles);
-				uploader.init();
 				closeUploader();
 			}
 			function closeUploader(){
+				uploader.destroy();
 				window.history.pushState("","", window.location.href.replace('showUpload=1', ''));
 				closeDialog('uploadDialog');
-				console.log('close');
 			}
 		</script>
 		

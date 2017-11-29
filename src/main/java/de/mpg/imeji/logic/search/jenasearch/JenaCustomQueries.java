@@ -95,6 +95,11 @@ public class JenaCustomQueries {
         + "\"^^<http://www.w3.org/2001/XMLSchema#string> }";
   }
 
+  public static final String selectSubscriptionAll() {
+    return X_PATH_FUNCTIONS_DECLARATION
+        + "  SELECT DISTINCT ?s WHERE {?s a <http://imeji.org/terms/subscription>}";
+  }
+
 
   /**
    * Select a User by its Email

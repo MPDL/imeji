@@ -21,6 +21,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties.Status;
@@ -143,9 +144,9 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       totalNumberOfRecords = searchResult.getNumberOfRecords();
       // load the item
       final Collection<Item> items = loadImages(searchResult.getResults());
-      // Return the item as thumbnailBean
+      HierarchyService hierarchyService = new HierarchyService();
       return items.stream().map(item -> new ThumbnailBean(item, getSessionBean(), getNavigation()))
-          .collect(Collectors.toList());
+          .peek(t -> t.initPath(hierarchyService)).collect(Collectors.toList());
     } catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error retrieving items", e);

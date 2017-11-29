@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableMap;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.batch.messageAggregations.NotifyUsersOnFileUploadAggregation;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.content.extraction.ContentExtractionResult;
 import de.mpg.imeji.logic.core.content.extraction.ContentExtractorFactory;
@@ -28,6 +27,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.UploadResult;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.notification.subscription.SubscriptionsAggregation;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
@@ -454,10 +454,10 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    */
   private Map<String, String> createMessageContent(Item item) {
-    return ImmutableMap.of(NotifyUsersOnFileUploadAggregation.COUNT, "1",
-        NotifyUsersOnFileUploadAggregation.FILENAME,
+    return ImmutableMap.of(SubscriptionsAggregation.COUNT, "1",
+        SubscriptionsAggregation.FILENAME,
         item.getFilename() != null ? item.getFilename() : "",
-        NotifyUsersOnFileUploadAggregation.ITEM_ID, item.getIdString());
+        SubscriptionsAggregation.ITEM_ID, item.getIdString());
   }
 
 }

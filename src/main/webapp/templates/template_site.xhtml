@@ -12,18 +12,18 @@
         <h:head>
             <ui:include src="component/header/html_head_default.xhtml"/>
         </h:head>
-        <h:body lang="#{InternationalizationBean.locale}"> 
+        <h:body lang="#{InternationalizationBean.locale}" class="uploadDropArea"> 
        		#{Auth.init()}
             <ui:insert name="additonalHeaderScripts"/>         
             <h:panelGroup id="imeji_maintenance" layout="block" styleClass="imj_message imj_messageError" style="width:100%; padding:0.5em" rendered="#{Configuration.maintenanceMessage != ''}">
             	<h:outputText value="#{Configuration.maintenanceMessage}" escape="false"/>
             </h:panelGroup>
-            <div class="#{siteWrapperClass}">
+            <div class="#{siteWrapperClass}" >
             	<div class="imj_allContentWrapper">
             	 	<ui:insert name="authorization"/>
 	                <ui:insert name="init"/>
 	                <ui:include src="component/header/header_default.xhtml"/>
-	                <div id="content" class="imj_siteContent">
+	                <div id="content" class="imj_siteContent" >
 		                <h:panelGroup layout="block" id="actions" class="imj_actionMenuArea">
 		               		<ui:insert name="actionsMenu"/>
 		                </h:panelGroup>
@@ -68,10 +68,11 @@
             </div>
             <div class="imj_modalDialogBackground">&#160;</div>
             <ui:insert name="modalDialogs_from_template"/>
-            <ui:insert name="modalDialogs_from_site"/>            
+            <ui:insert name="modalDialogs_from_site"/>           
             <ui:include src="component/footer/footer_imports.xhtml"/>
             <h:panelGroup layout="block" id="additonalFooterScripts" class="imj_noDisplay">
-                <ui:insert name="additonalFooterScripts"/> 
+                <ui:insert name="additonalFooterScripts"/>
+                <ui:insert name="uploader"/>
             </h:panelGroup>
         </h:body>
     </html>

@@ -17,26 +17,28 @@
 			<h:form id="uploadForm">
 				<ui:fragment rendered="#{cc.attrs.bean.collection.status == 'RELEASED'}">
 					#{lbl.move_collection_released}<br/><br/>
-					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":uploadDialog:uploadForm" render=":uploadDialog:uploadForm:uploader:licenseVariables"/>
+					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":uploadDialog:uploadForm" render=":uploader:licenseVariables"/>
 				</ui:fragment>
-				<div class="uploadDialogHeadArea imj_submitPanel">
-					<a href="#" id="closeUploadDialog" onclick="closeUploader();" class="imj_cancelButton">
-						#{lbl.cancel}
-					</a>
-					<button id="selectFiles" class="imj_submitButton" style="position: initial !important">
-						#{lbl.select_files}
-					</button>
-				</div>
-				<div id="uploadDialogDropArea" class="imj_dragOver uploadDialogDropArea"  ondragover="this.style.opacity = .5 " ondragleave="this.style.opacity = 1">
-					<div id="uploadTitle" class="uploadDragAndDropTitle">
-						<span class="fa fa-upload"/> #{lbl.upload_drag_files_here}...
-					</div>
-			 	</div>
 	           <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.update}" style="display:none" onclick="closeDialog('uploadDialog');startLoader();">
-	           		<f:ajax execute="@this" render="@form :ajaxWrapper"/>
+	           		<f:ajax execute="@this" render=":ajaxWrapper :additonalFooterScripts"/>
 	           </h:commandButton>
+	           <ui:remove>
 		 		<upload:upload id="uploader" browseButtonId="selectFiles" license="#{cc.attrs.bean.licenseEditor.license}" collectionId="#{cc.attrs.colId}" updateButtonId="uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>		
+	 			</ui:remove>
 	 		</h:form>
+	 		<div class="uploadDialogHeadArea imj_submitPanel">
+				<a href="#" id="closeUploadDialog" onclick="closeUploader();" class="imj_cancelButton">
+					#{lbl.cancel}
+				</a>
+				<button id="selectFiles" class="imj_submitButton" style="position: initial !important">
+					#{lbl.select_files}
+				</button>
+			</div>
+			<div id="uploadDialogDropArea" class="imj_dragOver uploadDialogDropArea uploadDropArea"  ondragover="this.style.opacity = .5 " ondragleave="this.style.opacity = 1">
+				<div id="uploadTitle" class="uploadDragAndDropTitle">
+					<span class="fa fa-upload"/> #{lbl.upload_drag_files_here}...
+				</div>
+		 	</div>
  		</div>
  		<div class="uploadPanel">
  			<div class="upload_infos">

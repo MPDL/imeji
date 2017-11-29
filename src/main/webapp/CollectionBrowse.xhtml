@@ -69,11 +69,11 @@
 	 	<ui:fragment rendered="#{Auth.update}">
 	 		<h:form id="showUploadForm">
 				<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_overlayMenu imj_openUploadDialog" onclick="openDialog('uploadDialog');">
-					<f:ajax render=":additonalFooterScripts"/>
+					<f:ajax render="@none"/>
 					<span class="fa fa-upload"/> <span>#{lbl.upload}</span>
 				</h:commandLink>
 			</h:form>
-			<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('addSubCollection'); document.getElementById('createSub:subColForm:name').focus()">
+			<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('addSubCollection'); document.getElementById('cr:subColForm:name').focus()">
 				<span class="fa fa-plus"/> <span>#{lbl.subcollection}</span> 
 			</a>
 			<ui:fragment rendered="#{CollectionItemsBean.collection.isSubCollection()}">
@@ -227,4 +227,7 @@
 			}
 		</script>	 
 	</ui:define>
+	<ui:define name="uploader">
+ 		<upload:upload id="uploader" browseButtonId="selectFiles" license="#{CollectionItemsBean.licenseEditor.license}" collectionId="#{CollectionItemsBean.collection.id.toString()}" updateButtonId="uploadDialog:uploadForm:updateItems" dropElementId="uploadDialog"/>		
+ 	</ui:define>
 </ui:composition>
