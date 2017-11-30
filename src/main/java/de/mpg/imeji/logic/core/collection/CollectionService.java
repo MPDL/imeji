@@ -71,7 +71,9 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
    */
   public CollectionImeji create(CollectionImeji c, User user) throws ImejiException {
     isLoggedInUser(user);
-    return controller.create(c, user);
+    c = controller.create(c, user);
+    messageService.add(new CollectionMessage(MessageType.CREATE_COLLECTION, c));
+    return c;
   }
 
   /**

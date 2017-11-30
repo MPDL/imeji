@@ -7,6 +7,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 
+import de.mpg.imeji.logic.events.MessageService;
+
 /**
  * Service managing {@link Aggregation}
  * 
@@ -22,7 +24,7 @@ public class AggregationService {
   public void runAllAggregations() {
     long start = System.currentTimeMillis();
     findAllAggregations().stream().forEach(a -> a.aggregate());
-    // new MessageService().deleteOldMessages(start);
+    new MessageService().deleteOldMessages(start);
   }
 
 

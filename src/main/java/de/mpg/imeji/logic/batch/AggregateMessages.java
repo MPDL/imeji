@@ -19,5 +19,4 @@ public class AggregateMessages implements Callable<Integer> {
     new AggregationService().runAllAggregations();
     return 1;
   }
-
 }

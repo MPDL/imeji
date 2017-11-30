@@ -14,9 +14,9 @@ import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.events.MessageService;
-import de.mpg.imeji.logic.events.messages.CollectionMessage;
-import de.mpg.imeji.logic.events.messages.ItemMessage;
 import de.mpg.imeji.logic.events.messages.Message.MessageType;
+import de.mpg.imeji.logic.events.messages.MoveCollectionMessage;
+import de.mpg.imeji.logic.events.messages.MoveItemMessage;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
@@ -31,6 +31,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.authorization.Authorization;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
 
 /**
@@ -87,8 +88,8 @@ public class MoveFacade implements Serializable {
     }
     itemsIndexer.commit();
     // Notify to event queue
-    items.stream()
-        .forEach(item -> messageService.add(new ItemMessage(MessageType.MOVE_ITEM, item)));
+    items.stream().forEach(item -> messageService.add(new MoveItemMessage(MessageType.MOVE_ITEM,
+        item, ObjectHelper.getId(collection.getId()), ObjectHelper.getId(item.getCollection()))));
     return items;
   }
 
@@ -115,8 +116,8 @@ public class MoveFacade implements Serializable {
         parent.getId().toString()));
     collectionIndexer.updatePartial(collection.getId().toString(),
         new ElasticForlderPartObject(parent.getId().toString()));
-    collection.setCollection(parent.getId());
-    messageService.add(new CollectionMessage(MessageType.MOVE_COLLECTION, collection));
+    messageService.add(new MoveCollectionMessage(MessageType.MOVE_COLLECTION, collection,
+        ObjectHelper.getId(parent.getId()), ObjectHelper.getId(collection.getCollection())));
   }
 
 
