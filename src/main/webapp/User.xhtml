@@ -15,7 +15,9 @@
 	<ui:param name="backlinkTitle2" value="#{lbl.users}"/>
 
 	<ui:define name="actionsMenu">
-
+		<a href="#{Navigation.applicationUrl}subscriptions?email=#{UserBean.user.email}">
+			<span class="fa fa-envelope"/> #{lbl.manage_subscriptions} 
+		</a>
 	</ui:define>
 	<ui:define name="mainContent">
 		<!-- If User has no right to view the page -->

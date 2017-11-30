@@ -14,6 +14,7 @@ import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.notification.subscription.SubscriptionService;
+import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.security.user.UserService;
 
 /**
@@ -28,10 +29,18 @@ public class SubscriptionGroup implements Serializable {
   private Map<String, User> subscribedUserMap = new HashMap<>();
   private final CollectionImeji collection;
   private final User user;
+  private final boolean active;
 
   public SubscriptionGroup(CollectionImeji collection, User user) {
     this.collection = collection;
     this.user = user;
+    active = SecurityUtil.authorization().read(user, collection);
+  }
+
+  public SubscriptionGroup(CollectionImeji collection, User user, User sessionUser) {
+    this.collection = collection;
+    this.user = user;
+    active = SecurityUtil.authorization().read(user, collection);
   }
 
   /**
@@ -127,6 +136,10 @@ public class SubscriptionGroup implements Serializable {
 
   public CollectionImeji getCollection() {
     return collection;
+  }
+
+  public boolean isActive() {
+    return active;
   }
 
 }

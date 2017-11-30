@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Subscription;
@@ -42,12 +44,22 @@ public class SubscriptionBean extends SuperBean {
   private User user;
   private boolean showAllCollections = false;
 
+  @PostConstruct
+  public void construct() {
+    try {
+      initUser();
+    } catch (ImejiException e) {
+      BeanHelper.error(
+          "You are not allowed to view the subscriptions for this user, or the user doesn't exists");
+      LOGGER.error("Error retrieving user", e);
+    }
+  }
+
   /**
    * Init according to url parameters
    */
   public void init() {
     try {
-      initUser();
       initGroups(retrieveCollections());
     } catch (ImejiException e) {
       LOGGER.error("Error initializing SubscriptionBean", e);
@@ -71,8 +83,8 @@ public class SubscriptionBean extends SuperBean {
    * @throws ImejiException
    */
   private void initGroups(List<CollectionImeji> collections) throws ImejiException {
-    groups = collections.stream().map(c -> new SubscriptionGroup(c, getSessionUser()))
-        .peek(g -> g.init()).filter(g -> filterSubscriptionGroup(g)).collect(Collectors.toList());
+    groups = collections.stream().map(c -> new SubscriptionGroup(c, user)).peek(g -> g.init())
+        .filter(g -> filterSubscriptionGroup(g)).collect(Collectors.toList());
   }
 
   /**
@@ -121,13 +133,29 @@ public class SubscriptionBean extends SuperBean {
   private List<CollectionImeji> retrieveCollections() throws ImejiException {
     final String colId = UrlHelper.getParameterValue("c");
     if (StringHelper.isNullOrEmptyTrim(colId)) {
-      return collectionService.searchAndRetrieve(null, null, user != null ? user : getSessionUser(),
-          -1, 0);
+      if (showAllCollections) {
+        return collectionService.searchAndRetrieve(null, null,
+            user != null ? user : getSessionUser(), -1, 0);
+      } else {
+        return collectionService.retrieve(retrieveUserSubscriptions().stream()
+            .map(s -> ObjectHelper.getURI(CollectionImeji.class, s.getObjectId()).toString())
+            .collect(Collectors.toList()), Imeji.adminUser);
+      }
     } else {
       return Arrays
           .asList(collectionService.retrieve(ObjectHelper.getURI(CollectionImeji.class, colId),
               user != null ? user : getSessionUser()));
     }
+  }
+
+  /**
+   * Return all the subscription the user subscribed to
+   * 
+   * @return
+   * @throws ImejiException
+   */
+  private List<Subscription> retrieveUserSubscriptions() throws ImejiException {
+    return new SubscriptionService().retrieveByUserId(user.getId().toString(), user);
   }
 
   /**
@@ -257,6 +285,9 @@ public class SubscriptionBean extends SuperBean {
     return showAllCollections;
   }
 
+  public String getUserUrl() {
+    return getNavigation().getUserUrl() + "?email=" + user.getEmail();
+  }
 
   public void toggleShowAll() throws ImejiException {
     showAllCollections = showAllCollections ? false : true;

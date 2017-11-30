@@ -10,6 +10,8 @@
 	<ui:param name="headline" value="#{lbl.subscriptions}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="currentMainMenu" value="collections" />
+	<ui:param name="backLink1" value="#{empty UserBean.user ? Navigation.usersUrl : SubscriptionBean.userUrl}"/>
+	<ui:param name="backlinkTitle1" value="#{empty UserBean.user ? lbl.users : SubscriptionBean.user.person.completeName}"/>
 	
 	<ui:define name="mainContent">
 		<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
@@ -28,11 +30,7 @@
 							</h:commandLink>
 						</div>
 					</div>
-				
-				
-					<ui:fragment rendered="#{empty SubscriptionBean.groups}">
-					
-					</ui:fragment>
+
 					<ui:repeat var="group" value="#{SubscriptionBean.groups}" varStatus="row">
 							<div class="imj_itemContent imj_itemHeadline">
 								<div class="imj_admindataSet">
@@ -57,13 +55,18 @@
 										<ui:fragment rendered="#{SubscriptionBean.user != null}">
 											<h:commandLink action="#{SubscriptionBean.subscribe(SubscriptionBean.user,group.collection)}" rendered="#{!group.isSubscribed(SubscriptionBean.user)}">
 												<f:ajax render="@form"/>
-												<span class="fa fa-check"/>
+												<span class="fa fa-toggle-off"/>
 												#{lbl.subscribe}
 											</h:commandLink>
-											<h:commandLink action="#{SubscriptionBean.unSubscribe(group.getSubscriptionForUser(SubscriptionBean.user))}" rendered="#{group.isSubscribed(SubscriptionBean.user)}">
+											<h:commandLink action="#{SubscriptionBean.unSubscribe(group.getSubscriptionForUser(SubscriptionBean.user))}" rendered="#{group.isSubscribed(SubscriptionBean.user) and group.active}">
+												<f:ajax render="@form"/>
+												<span class="fa fa-toggle-on"/>
+												#{lbl.unsubscribe}
+											</h:commandLink>
+											<h:commandLink action="#{SubscriptionBean.unSubscribe(group.getSubscriptionForUser(SubscriptionBean.user))}" rendered="#{group.isSubscribed(SubscriptionBean.user) and not group.active}">
 												<f:ajax render="@form"/>
 												<span class="fa fa-times"/>
-												#{lbl.unsubscribe}
+												#{lbl.remove} (#{lbl.subscription_inactive})
 											</h:commandLink>
 										</ui:fragment>
 									</div>
