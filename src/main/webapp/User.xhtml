@@ -16,7 +16,10 @@
 
 	<ui:define name="actionsMenu">
 		<a href="#{Navigation.applicationUrl}subscriptions?email=#{UserBean.user.email}">
-			<span class="fa fa-envelope"/> #{lbl.manage_subscriptions} 
+			<span class="fa fa-envelope"/>#{lbl.manage_subscriptions} 
+		</a>
+		<a href="#{Navigation.applicationUrl}pwdreset?back=#{Navigation.userUrl}?email=#{UserBean.user.email}">
+			<span class="fa fa-key"/>#{lbl.password_change}
 		</a>
 	</ui:define>
 	<ui:define name="mainContent">
@@ -177,58 +180,11 @@
 									</ui:fragment>
 								</h:panelGroup>
 								<!-- END user infos -->
-								<br />
-								<br />
-								<!-- User Edit - Password -->
-								<div class="imj_metadataSet">
-									<div class="imj_metadataSetEdit">
-										<div class="imj_metadataLabel">
-											<h:outputLabel for="inputPassword"
-												value="#{lbl.password_new}" />
-											<span class="imj_invisible">: </span>
-										</div>
-										<div class="imj_metadataValue">
-											<div class="imj_metadataValueEntry">
-												<h:inputSecret id="inputPassword"
-													value="#{UserBean.newPassword}"
-													styleClass="imj_admindataEdit" />
-											</div>
-										</div>
-									</div>
-									<div class="imj_metadataSet">
-										<div class="imj_metadataLabel">
-											<h:outputLabel for="inputRespeated"
-												value="#{lbl.password_repeat}" />
-											<span class="imj_invisible">: </span>
-										</div>
-										<div class="imj_metadataValue">
-											<div class="imj_metadataValueEntry">
-												<h:inputSecret id="inputRespeated"
-													value="#{UserBean.repeatedPassword}"
-													styleClass="imj_admindataEdit" />
-											</div>
-										</div>
-									</div>
-									<div class="imj_metadataSet">
-										<div class="imj_metadataLabel">
-											<span class="imj_invisible">: </span>
-										</div>
-										<div class="imj_metadataValue">
-											<h:commandButton action="#{UserBean.changePassword}"
-												value="#{lbl.password_change}" styleClass="imj_submitButton"
-												type="submit">
-												<f:ajax execute="@form" render="@none" />
-											</h:commandButton>
-										</div>
-									</div>
-								</div>
 							</h:form>
 
 							<h3 class="imj_headline">
 								<h:outputText value="#{lbl.subscriptions}" styleClass="imj_metadataValueEntry" />
-							</h3>
-
-							
+							</h3>						
 							<div class="imj_metadataSetEdit imj_metadataSet imj_connectedUserGroups">
 								<h:outputText class="imj_metadataLabel" value="#{UserBean.user.person.completeName} #{lbl.subscribed_to_collections}"/>
 								<div class="imj_metadataValue">

@@ -18,6 +18,7 @@ import de.mpg.imeji.logic.search.util.SortHelper;
 public class SearchResult {
   private final int numberOfRecords;
   private final int numberOfItems;
+  private final int numberOfItemsOfCollection;
   private final int numberOfSubcollections;
   private final List<String> results;
   private String query = null;
@@ -35,6 +36,7 @@ public class SearchResult {
   public SearchResult(List<String> unsortedResults, SortCriterion sort) {
     numberOfRecords = unsortedResults.size();
     numberOfItems = numberOfRecords;
+    numberOfItemsOfCollection = numberOfItems;
     numberOfSubcollections = 0;
     if (sort != null) {
       this.sort = sort;
@@ -52,9 +54,10 @@ public class SearchResult {
   }
 
   public SearchResult(List<String> ids, long numberOfRecords, long numberOfItems,
-      long numberOfSubcollections, List<FacetResult> facetResults) {
+      long numberOfItemsOfCollection, long numberOfSubcollections, List<FacetResult> facetResults) {
     this.numberOfRecords = (int) numberOfRecords;
     this.numberOfItems = (int) numberOfItems;
+    this.numberOfItemsOfCollection = (int) numberOfItemsOfCollection;
     this.numberOfSubcollections = (int) numberOfSubcollections;
     this.results = ids;
     this.facets = facetResults;
@@ -104,5 +107,9 @@ public class SearchResult {
 
   public int getNumberOfSubcollections() {
     return numberOfSubcollections;
+  }
+
+  public int getNumberOfItemsOfCollection() {
+    return numberOfItemsOfCollection;
   }
 }

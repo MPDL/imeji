@@ -22,9 +22,10 @@
 			rendered="#{paginatorListSessionBean.simpleQuery != '' or !paginatorListSessionBean.facetQuery.isEmpty()}"
 			label="#{lbl.search_for} #{lbl.items}" />
 	</ui:define>
-	<ui:define name="actions">
-		<menu:defaultActionMenu id="actionItems"/>
+	<ui:define name="actionsMenu">
+		<a href="#{Navigation.applicationUrl}upload">
+			<span class="fa fa-upload"/>#{lbl.upload}
+		</a>
 		<a href="#" class="fa fa-filter responsiveMenuBtn imj_menuButton imj_overlayMenu" style="float:right" data-menu="facetsArea" />
 	</ui:define>
-
 </ui:composition>

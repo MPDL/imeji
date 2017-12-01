@@ -14,15 +14,16 @@
 		<composite:attribute name="parentId" required="true" type="java.lang.Object"/>
 		<composite:attribute name="objectId" required="false" type="java.lang.Object"/>
 		<composite:attribute name="hasLicense" default="false" required="false" type="java.lang.Boolean"/>
+		<composite:attribute name="dialogId" required="true" type="java.lang.String"/>
 	</composite:interface>
 	
 	<composite:implementation>
-		<div id="moveDialog" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText">
+		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText">
 			<h:form id="form">
 				<ui:fragment rendered="#{MoveItemsBean.destinationId == null}">
 					<div style="margin-bottom: 1em;">
 						<span>#{lbl.move_to_collection}</span>
-						<a href="#" style="float:right" onclick="closeDialog('moveDialog');" class="imj_cancelButton">
+						<a style="float:right" onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
 							#{lbl.cancel}
 						</a>
 					</div>

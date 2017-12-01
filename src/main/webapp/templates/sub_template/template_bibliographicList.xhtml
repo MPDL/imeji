@@ -6,13 +6,7 @@
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
 	xmlns:col="http://java.sun.com/jsf/composite/components/collection"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
-	
-	<ui:define name="modalDialogs_from_template">
-		<!-- Confirmation Page: globalDeleteDialog -->
-		<dialog:confirmationDialog bean="#{paginatorListSessionBean}" submitAction="deleteAll" confirmationText="#{deleteSelectedItemsConfirmationText}" submitLabel="#{lbl.delete_all}" dialogId="#{currentMainMenu}List-selected-deleteDialog"/>
-	</ui:define>
-	
-	
+
 	<!-- Main Content - bibliographic grid list - START -->
 	<ui:define name="mainContent">
 		<h:panelGroup layout="block" id ="ajaxWrapper">
@@ -22,7 +16,11 @@
 					<h:outputText value=" #{msg.no_collection_found}"/>
 				</div>
 			</ui:fragment>
-			
+			<!-- Selection Info Panel -->
+			<col:filters fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
+								 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfRecords}" 
+								 filterBeanHasQuery="#{filterBeanHasQuery}"
+								 objectLabel="#{lbl.collections}"/>
 			<!-- List -->
 			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
 				<div id="imj_listBody">

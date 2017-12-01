@@ -11,31 +11,29 @@
 	
 	<composite:implementation>
 		<h:form>
-			<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" styleClass="imj_menuButton imj_overlayMenu" onclick=" window.location.href = '#itemMetadata'; startLoader();">
-				 <span class="fa fa-pencil"/>
-				  <span class="imj_headerEntry">#{lbl.edit}</span>
+			<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" onclick="window.location.href = '#itemMetadata';startLoader()">
+				 <span class="fa fa-pencil"/>#{lbl.edit}
 				 <f:ajax render=":metadata"/>
 			</h:commandLink>
 		</h:form>
-		<a href="#{Navigation.applicationUrl}exportServlet?format=file&amp;id=#{cc.attrs.itemBean.item.id}" class="imj_menuButton imj_overlayMenu #{Auth.loggedIn ? '' : 'ghostButton'}" target="_blank">
-			<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download}</span>
+		<a href="#{Navigation.applicationUrl}exportServlet?format=file&amp;id=#{cc.attrs.itemBean.item.id}" target="_blank">
+			<span class="fa fa-download"/>#{lbl.download}
 		</a>
 		<ui:fragment rendered="#{Auth.delete and WorkflowBean.delete(cc.attrs.itemBean.item)}">
 			<h:form>
-				<h:commandLink id="moveItems" styleClass="imj_menuButton imj_overlayMenu" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemBean.item.collection.toString())}" onclick="openDialog('moveDialog');">
-					<span class="fa fa-hand-o-right"/> <span class="imj_headerEntry">#{lbl.move}</span>
-					<f:ajax render=":actionItem:move:form"/>
+				<h:commandLink id="moveItems"  action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemBean.item.collection.toString())}" onclick="openDialog('moveItem');">
+					<span class="fa fa-hand-o-right"/>#{lbl.move}
+					<f:ajax render=":itemDialogs:move:form"/>
 				</h:commandLink>
 			</h:form>
+			<a onclick="openDialog('deleteItem')">
+				<span class="fa fa-trash"/>#{lbl.delete}
+			</a>
 		</ui:fragment>
-		<h:outputLink value="#" onclick="openDialog('deleteItem');" styleClass="imj_menuButton imj_overlayMenu"  rendered="#{Auth.delete and WorkflowBean.delete(itemBean.item)}">
-					<span class="fa fa-trash"/> <span class="imj_headerEntry">#{lbl.delete}</span>
-		</h:outputLink>
-		<h:outputLink value="#" onclick="openDialog('withdrawItem');" styleClass="imj_menuButton imj_overlayMenu"  rendered="#{Auth.delete and WorkflowBean.withdraw(itemBean.item)}">
-			<span class="fa fa-ban"/> <span class="imj_headerEntry">#{lbl.withdraw}</span>
-		</h:outputLink>
-		<dialog:move id="move" objectId="#{cc.attrs.itemBean.item.id.toString()}" colId="#{cc.attrs.itemBean.item.collection.toString()}" parentId=":actionItem:move" hasLicense="#{not empty cc.attrs.itemBean.image.licenses}"/>
-		<dialog:confirmationDialog submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteItem" />
-		<dialog:confirmationReasonedDialog submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawItem"/>	
+		<ui:fragment rendered="#{Auth.delete and WorkflowBean.withdraw(itemBean.item)}">
+			<a onclick="openDialog('withdrawItem')">
+				<span class="fa fa-ban"/>#{lbl.withdraw}
+			</a>
+		</ui:fragment>
 	</composite:implementation>
 </html>

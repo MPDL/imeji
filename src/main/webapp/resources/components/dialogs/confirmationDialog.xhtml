@@ -34,7 +34,7 @@
 					</div>
 				</ui:fragment>
 				<div class="imj_submitPanel">
-					<a href="#" onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
+					<a onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
 						#{lbl.cancel}
 					</a>
 					<ui:fragment rendered="#{not empty cc.attrs.identifierName and not empty cc.attrs.identifierValue}">

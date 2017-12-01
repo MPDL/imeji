@@ -24,9 +24,6 @@
 	                <ui:insert name="init"/>
 	                <ui:include src="component/header/header_default.xhtml"/>
 	                <div id="content" class="imj_siteContent" >
-		                <h:panelGroup layout="block" id="actions" class="imj_actionMenuArea">
-		               		<ui:insert name="actionsMenu"/>
-		                </h:panelGroup>
 			           	<ui:fragment rendered="#{not empty headline.trim() or not empty imejiResource}">
 			                <div id="pageTitle" class="imj_siteContentHeadline">
 			                  	<ui:fragment rendered="#{not empty imejiResource}">
@@ -54,6 +51,9 @@
 			                    </ui:fragment>
 			                </div>
 		                </ui:fragment>
+		                 <h:panelGroup layout="block" id="actions" class="imj_actionMenuArea">
+		               		<ui:insert name="actionsMenu"/>
+		                </h:panelGroup>
 		                <div class="imj_mainContentWrapper">
 		                	<ui:insert name="searchQuery"/>
 		                    <ui:insert name="mainContent"/>
@@ -68,7 +68,7 @@
             </div>
             <div class="imj_modalDialogBackground">&#160;</div>
             <ui:insert name="modalDialogs_from_template"/>
-            <ui:insert name="modalDialogs_from_site"/>           
+            <ui:insert name="modalDialogs_from_site"/>
             <ui:include src="component/footer/footer_imports.xhtml"/>
             <h:panelGroup layout="block" id="additonalFooterScripts" class="imj_noDisplay">
                 <ui:insert name="additonalFooterScripts"/>

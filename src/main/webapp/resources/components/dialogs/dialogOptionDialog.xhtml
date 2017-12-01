@@ -17,7 +17,7 @@
 		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox">
 			<div class="imj_confirmationText">#{cc.attrs.confirmationText}</div>
 			<div class="imj_submitPanel">
-				<a href="#" onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
+				<a onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
 					#{lbl.cancel}
 				</a>
 				<a href="#" onclick="closeDialog('#{cc.attrs.dialogId}');openDialog('#{cc.attrs.submitId1}');" class="imj_submitButton">

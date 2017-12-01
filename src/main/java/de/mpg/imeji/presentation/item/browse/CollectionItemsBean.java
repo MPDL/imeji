@@ -282,5 +282,9 @@ public class CollectionItemsBean extends ItemsBean {
   public int getNumberOfSubCollections() {
     return getSearchResult().getNumberOfSubcollections();
   }
+
+  public int getNumberOfItemsOfCollection() {
+    return getSearchResult().getNumberOfItemsOfCollection();
+  }
 }
 

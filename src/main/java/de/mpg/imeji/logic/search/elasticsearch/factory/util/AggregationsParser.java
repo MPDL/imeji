@@ -86,6 +86,9 @@ public class AggregationsParser {
         }
         facetResults.add(parseInternalFacet(resp, Facet.ITEMS));
         facetResults.add(parseInternalFacet(resp, Facet.SUBCOLLECTIONS));
+        if (resp.getAggregations().get(Facet.COLLECTION_ITEMS) != null) {
+          facetResults.add(parseInternalFacet(resp, Facet.COLLECTION_ITEMS));
+        }
       }
     }
     return facetResults;
@@ -104,6 +107,7 @@ public class AggregationsParser {
         ((Filters) resp.getAggregations().get(facetName)).getBucketByKey(facetName).getDocCount()));
     return f;
   }
+
 
 
   private static String getFacetName(String index) {

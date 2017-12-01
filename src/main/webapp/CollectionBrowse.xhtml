@@ -8,7 +8,8 @@
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:col="http://java.sun.com/jsf/composite/components/collection"
-	xmlns:upload="http://java.sun.com/jsf/composite/components/upload">
+	xmlns:upload="http://java.sun.com/jsf/composite/components/upload"
+	xmlns:item="http://java.sun.com/jsf/composite/components/item">
 
 	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}" />
 	<ui:param name="title" value="#{not empty CollectionItemsBean.query or not empty CollectionItemsBean.facetQueryString ? lbl.search_results : CollectionItemsBean.collection.title}" />
@@ -25,11 +26,9 @@
 	 
 	 <ui:define name="subHeadline">
 	 	<ui:fragment rendered="#{paginatorListSessionBean.simpleQuery == ''  and paginatorListSessionBean.facetQuery.isEmpty()}">
-		 	<span>#{CollectionItemsBean.numberOfItems} #{CollectionItemsBean.numberOfItems > 1 ? lbl.items : lbl.item}</span>
-		 	<span class="imj_sep">|</span>
 		 	<span>#{lbl.by} #{CollectionItemsBean.authorsShort}</span>
 		 	<span class="imj_sep">|</span> 
-		 	<a href="#actions">
+		 	<a href="#content">
 				<span class="moreCollection"  onclick="$('.collectionAbout').slideDown(300);$('.lessCollection').show(); $(this).hide(); draw_qr();">
 					<span>#{lbl.more}</span><span class="fa fa-angle-right"/>
 				</span>
@@ -65,120 +64,119 @@
 		</div>
 	 </ui:define>
 	 
-	 <ui:define name="actions">
-	 	<ui:fragment rendered="#{Auth.update}">
-	 		<h:form id="showUploadForm">
-				<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_menuButton imj_overlayMenu imj_openUploadDialog" onclick="openDialog('uploadDialog');">
-					<f:ajax render="@none"/>
-					<span class="fa fa-upload"/> <span>#{lbl.upload}</span>
-				</h:commandLink>
-			</h:form>
-			<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('addSubCollection'); document.getElementById('cr:subColForm:name').focus()">
-				<span class="fa fa-plus"/> <span>#{lbl.subcollection}</span> 
-			</a>
-			<ui:fragment rendered="#{CollectionItemsBean.collection.isSubCollection()}">
-				<a class="imj_menuButton imj_overlayMenu" onclick="openDialog('editSubCollection');">
-					<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
-				</a>
-			</ui:fragment>
-			<ui:fragment rendered="#{!CollectionItemsBean.collection.isSubCollection()}">
-				<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/edit" class="imj_menuButton imj_overlayMenu">
-					<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
-				</a>
-			</ui:fragment>
-		</ui:fragment>
-			
-		<span id="actionsReponsive" class="responsiveMenu">
-			<a style="float:right; text-align: right;" href="#"  class="responsiveMenuCloseBtn responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="actionsReponsive" >
-				<span class="fa fa-times"/> <span>#{lbl.close}</span>
-			</a>
-			<ui:fragment rendered="#{Auth.admin}">
-				<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/share?q=#{CollectionItemsBean.query}&amp;fq=#{CollectionItemsBean.facetQueryString}" class="imj_menuButton imj_overlayMenu">
-					<span class="fa fa-users"/> <span>#{lbl.share}</span>
-				</a>
-				<ui:fragment rendered="#{WorkflowBean.release(CollectionItemsBean.collection)}">
-					<h:form>
-						<h:commandLink action="#{CollectionItemsBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');" styleClass="imj_menuButton imj_overlayMenu">
-							<f:ajax render=":releaseCollection:confirmationDialogForm"/>
-							<span class="fa fa-globe"/> <span>#{lbl.release}</span>
-						</h:commandLink>
-					</h:form>
-				</ui:fragment>
-				<ui:fragment rendered ="#{Auth.admin and WorkflowBean.createDOI(CollectionItemsBean.collection)}">
-					<h:outputLink value="#" onclick="openDialog('doiInput');" title="#{lbl.change_doi}" rendered="#{Auth.sysAdmin and not empty CollectionItemsBean.collection.doi}" class="imj_menuButton imj_overlayMenu">
-						 <span class="fa fa-link"/> <span>#{lbl.change_doi}</span>
-					</h:outputLink>
-					<h:outputLink id="lnkCreateDOI" value="#" onclick="openDialog(#{Auth.sysAdmin ? '\'createDOI\'' : '\'getDOIDialog\''});" title="#{lbl.createDOI}" rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and empty CollectionItemsBean.collection.doi}" class="imj_menuButton imj_overlayMenu">
-						 <span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
-					</h:outputLink>
-					<h:outputLink id="lnkInputDOI" value="#" onclick="openDialog('doiInput');" title="#{lbl.createDOI}" rendered="#{Auth.sysAdmin and empty Configuration.doiServiceUrl and empty CollectionItemsBean.collection.doi}" class="imj_menuButton imj_overlayMenu">
-						<span class="fa fa-link"/> <span>#{lbl.createDOI}</span>
-					</h:outputLink>
-				</ui:fragment>
-			</ui:fragment>
-			<ui:fragment rendered="#{Auth.delete}">
-				<ui:fragment rendered="#{WorkflowBean.delete(CollectionItemsBean.collection)}">
-					<h:outputLink value="#" onclick="openDialog('deleteCollection');" class="imj_menuButton imj_overlayMenu">
-						 <span class="fa fa-trash"/> <span>#{lbl.delete}</span>
-					</h:outputLink>
-					<h:form>
-						<h:commandLink id="moveCollection" rendered="#{CollectionItemsBean.collection.isSubCollection()}" action="#{MoveItemsBean.searchCollectionsForMove(CollectionItemsBean.collection.id.toString())}" onclick="openDialog('moveDialog');"  class="imj_menuButton imj_overlayMenu">
-							<span class="fa fa-hand-o-right"/> <span>#{lbl.move}</span>
-							<f:ajax render=":move:form"/>
-						</h:commandLink>
-					</h:form>
-				</ui:fragment>
-				<ui:fragment rendered="#{WorkflowBean.withdraw(CollectionItemsBean.collection)}">
-					<h:outputLink value="#" onclick="openDialog('withdrawCollection');" class="imj_menuButton imj_overlayMenu">
-						 <span class="fa fa-ban"/> <span>#{lbl.withdraw}</span>
-					</h:outputLink>
-				</ui:fragment>
-			</ui:fragment>
-			<ui:fragment rendered="#{Auth.delete and not CollectionItemsBean.collection.isSubCollection()}">
-				#{SubscriptionBean.init(CollectionItemsBean.collection)}
-				<h:outputLink value="#" rendered="#{not SubscriptionBean.isSubscribed(SessionBean.user, CollectionItemsBean.collection)}" onclick="openDialog('subscribe');" class="imj_menuButton imj_overlayMenu">
-						<span class="fa fa-envelope"/> <span>#{lbl.subscribe}</span>
-				</h:outputLink>
-				<h:outputLink value="#" rendered="#{SubscriptionBean.isSubscribed(SessionBean.user, CollectionItemsBean.collection)}" onclick="openDialog('unsubscribe');" class="imj_menuButton imj_overlayMenu">
-					<span class="fa fa-times"/> <span>#{lbl.unsubscribe}</span>
-				</h:outputLink>
-			</ui:fragment>
-			<ui:fragment rendered="#{Auth.update}">
-				<div class="imj_overlayMenu imj_contentSubMenuItem imj_menuButton" id="menuCollection">
-					<div class="imj_menuHeader">
-		                  <span class="fa fa-files-o"/>
-		                  <span class="imj_headerEntry"> #{lbl.items}</span>
-		                  <span class="fa fa-angle-down"/>
-					</div>
-					<div class="imj_menuBody">
-						<ul class="imj_overlayMenuList">
-							<li>
-								<a href="#{Navigation.applicationUrl}editbatch?col=#{CollectionItemsBean.id}" >
-									<span class="fa fa-pencil"/> <span>#{lbl.edit_all}</span>
+	 <ui:define name="actionsMenu">
+	 	<h:form id="colForm">
+			<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_openUploadDialog" onclick="openDialog('uploadDialog');">
+				<f:ajax render="@none"/>
+				<span class="fa fa-upload"/>#{lbl.upload}
+			</h:commandLink>
+			<ui:fragment rendered="#{Auth.loggedIn}">
+				<div class="dropdown">
+					<a><span class="fa fa fa-folder-o"/>#{lbl.collection}<span class="fa fa-angle-down"/></a>
+					<div class="content">
+						<ui:fragment rendered="#{Auth.update}">
+							<ui:fragment rendered="#{CollectionItemsBean.collection.isSubCollection()}">
+								<a onclick="openDialog('editSubCollection');">
+									<span class="fa fa-pencil"/>#{lbl.edit_name}
 								</a>
-							</li>
-							<li>
-								<a href="#{Navigation.applicationUrl}edit/license?collection=#{CollectionItemsBean.id}" >
-									<span class="fa fa-copyright"/> <span>#{lbl.edit_all_licenses}</span>
-								</a>
-							</li>
-							<ui:fragment rendered="#{WorkflowBean.delete(CollectionItemsBean.collection)}">
-								<li>
-									<a href="#" onclick="openDialog('deleteItems');"  >
-										 <span class="fa fa-trash"/> <span>#{lbl.delete_all}</span>
-									</a>
-								</li>
 							</ui:fragment>
-						</ul>
+							<ui:fragment rendered="#{!CollectionItemsBean.collection.isSubCollection()}">
+								<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/edit">
+									<span class="fa fa-pencil"/>#{lbl.collection_edit_metadata}
+								</a>
+							</ui:fragment>
+						</ui:fragment>
+						<ui:fragment rendered="#{Auth.admin}">
+							<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/share?q=#{CollectionItemsBean.query}&amp;fq=#{CollectionItemsBean.facetQueryString}">
+								<span class="fa fa-users"/>#{lbl.share}
+							</a>
+							<h:commandLink rendered="#{CollectionItemsBean.numberOfItems > 0}" action="#{CollectionItemsBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');">
+								<f:ajax render=":releaseCollection:confirmationDialogForm"/>
+								<span class="fa fa-globe"/>#{lbl.release}
+							</h:commandLink>
+							<ui:fragment rendered="#{WorkflowBean.createDOI(CollectionItemsBean.collection)}">
+								<ui:fragment  rendered="#{Auth.sysAdmin and not empty CollectionItemsBean.collection.doi}">
+									<a onclick="openDialog('doiInput')">
+										<span class="fa fa-link"/>#{lbl.change_doi}
+									</a>
+								</ui:fragment>
+								<ui:fragment rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and empty CollectionItemsBean.collection.doi}">
+									<a id="lnkCreateDOI" onclick="openDialog(#{Auth.sysAdmin ? '\'createDOI\'' : '\'getDOIDialog\''})">
+										<span class="fa fa-link"/>{lbl.createDOI}
+									</a>
+								</ui:fragment>
+								<ui:fragment rendered="#{Auth.sysAdmin and empty Configuration.doiServiceUrl and empty CollectionItemsBean.collection.doi}">
+									<a id="lnkInputDOI" onclick="openDialog('doiInput')">
+										<span class="fa fa-link"/>#{lbl.createDOI}
+									</a>
+								</ui:fragment>
+							</ui:fragment>
+						</ui:fragment>
+						<ui:fragment rendered="#{Auth.loggedIn and not CollectionItemsBean.collection.isSubCollection()}">
+							#{SubscriptionBean.init(CollectionItemsBean.collection)}
+							<ui:fragment rendered="#{not SubscriptionBean.isSubscribed(SessionBean.user, CollectionItemsBean.collection)}">
+								<a onclick="openDialog('subscribe');">
+									<span class="fa fa-envelope"/>#{lbl.subscribe}
+								</a>
+							</ui:fragment>
+							<ui:fragment rendered="#{SubscriptionBean.isSubscribed(SessionBean.user, CollectionItemsBean.collection)}">
+								<a onclick="openDialog('unsubscribe');">
+									<span class="fa fa-times"/>#{lbl.unsubscribe}
+								</a>
+							</ui:fragment>
+						</ui:fragment>
+						<ui:fragment rendered="#{Auth.delete}">
+							<ui:fragment rendered="#{WorkflowBean.delete(CollectionItemsBean.collection)}">
+								<a onclick="openDialog('deleteCollection');">
+									 <span class="fa fa-trash"/>#{lbl.delete}
+								</a>
+								<h:commandLink id="moveCollection" rendered="#{CollectionItemsBean.collection.isSubCollection()}" action="#{MoveItemsBean.searchCollectionsForMove(CollectionItemsBean.collection.id.toString())}" onclick="openDialog('moveCol');">
+									<span class="fa fa-hand-o-right"/>#{lbl.move}
+									<f:ajax render=":move:form"/>
+								</h:commandLink>
+							</ui:fragment>
+							<ui:fragment rendered="#{WorkflowBean.withdraw(CollectionItemsBean.collection)}">
+								<a onclick="openDialog('withdrawCollection');">
+									 <span class="fa fa-ban"/>#{lbl.withdraw}
+								</a>
+							</ui:fragment>
+						</ui:fragment>
 					</div>
 				</div>
 			</ui:fragment>
-		</span>
-		<a href="#{Navigation.applicationUrl}exportServlet?format=folder&amp;col=#{CollectionItemsBean.collection.idString}&amp;q=#{CollectionItemsBean.query}" target="_blank" class="imj_menuButton imj_overlayMenu #{Auth.loggedIn ? '' : 'ghostButton'}">
-			<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download_files}</span>
-		</a>
-		<a href="#" class="fa fa-ellipsis-h responsiveMenuBtn imj_menuButton imj_overlayMenu" data-menu="actionsReponsive" />
-		<a href="#" class="fa fa-filter responsiveMenuBtn imj_menuButton imj_overlayMenu" style="float:right" data-menu="facetsArea" />
+			<ui:fragment rendered="#{Auth.update}">
+				<ui:fragment rendered="#{empty SessionBean.selected}">
+					<a  onclick="openDialog('addSubCollection'); document.getElementById('cr:subColForm:name').focus()">
+						<span class="fa fa-plus"/>#{lbl.subcollection}
+					</a>
+					<ui:fragment rendered="#{CollectionItemsBean.numberOfItemsOfCollection > 0}">
+						<div class="dropdown">
+							<a><span class="fa fa-files-o"/>#{CollectionItemsBean.numberOfItemsOfCollection} #{CollectionItemsBean.numberOfItemsOfCollection  > 1 ? lbl.items : lbl.item}<span class="fa fa-angle-down"/></a>
+							<div class="content">
+								<a href="#{Navigation.applicationUrl}editbatch?col=#{CollectionItemsBean.id}" >
+									<span class="fa fa-pencil"/>#{lbl.edit_all}
+								</a>
+								<a href="#{Navigation.applicationUrl}edit/license?collection=#{CollectionItemsBean.id}" >
+									<span class="fa fa-copyright"/>#{lbl.edit_all_licenses}
+								</a>
+								<ui:fragment rendered="#{WorkflowBean.delete(CollectionItemsBean.collection)}">
+									<a onclick="openDialog('deleteItems');"  >
+										<span class="fa fa-trash"/>#{lbl.delete_all}
+									</a>
+								</ui:fragment>
+							</div>
+						</div>
+					</ui:fragment>
+				</ui:fragment>
+			</ui:fragment>
+		</h:form>
+		<item:selectedActionMenu id="selMenu" context="#{currentMainMenu}" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}"/>		
+		<ui:fragment rendered="#{empty SessionBean.selected}">
+			<a href="#{Navigation.applicationUrl}exportServlet?format=folder&amp;col=#{CollectionItemsBean.collection.idString}&amp;q=#{CollectionItemsBean.query}" target="_blank">
+				<span class="fa fa-download"/>#{lbl.download_files}
+			</a>
+		</ui:fragment>
+		<a class="fa fa-filter responsiveMenuBtn" style="float:right" data-menu="facetsArea" />
 	 </ui:define>
 	 
 	 <ui:define name="modalDialogs_from_site">
@@ -195,7 +193,8 @@
 		 	<dialog:dialogOptionDialog id="cdoi" dialogId="createDOI" bean="#{CollectionItemsBean.actionMenu}" col="#{CollectionItemsBean.collection}" submitId1="doiInput" submitId2="getDOIDialog" confirmationText="#{empty CollectionItemsBean.collection.doi ? '' : msg.collection_has_doi_warning}" submitLabel1="#{lbl.createDOI_manually}" submitLabel2="#{lbl.createDOI_from_service}" />
 			<dialog:confirmationDialog id="gdoi" dialogId="getDOIDialog" submitAction="createDOI" col="#{CollectionItemsBean.collection}" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_create_DOI}" submitLabel="#{lbl.createDOI}" />
 		 	<dialog:doiInputDialog id="idoi" col="#{CollectionItemsBean.collection}" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{empty CollectionItemsBean.collection.doi ? '' : msg.collection_has_doi_warning}" submitLabel="#{lbl.save}" dialogId="doiInput"/>
-		 	<dialog:move id="move" objectId="#{CollectionItemsBean.collection.id.toString()}" colId="#{CollectionItemsBean.collection.id.toString()}" parentId=":move" />
+		 	<dialog:move id="move" dialogId="moveCol" objectId="#{CollectionItemsBean.collection.id.toString()}" colId="#{CollectionItemsBean.collection.id.toString()}" parentId=":move" />
+	 		<dialog:selected id="selDialogs" context="#{currentMainMenu}" itemsBean="#{paginatorListSessionBean}"/>
 	 	</h:panelGroup>
 	 </ui:define>
 

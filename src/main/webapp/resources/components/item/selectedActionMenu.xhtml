@@ -12,50 +12,48 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<ui:fragment rendered="#{cc.attrs.itemsBean.totalNumberOfRecords > 0}">
-			<span class="selectedItemsTitle imj_overlayMenu imj_menuRight">
-				<span>#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}</span>
-				<h:form>
+		<h:form id="sf">
+			<div class="dropdown">
+				<a><span class="fa fa-files-o"/>#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}<span class="fa fa-angle-down"/></a>
+				<div class="content">
+					<ui:fragment rendered="#{Auth.update or (cc.attrs.context == 'items' and Auth.updateAtLeastOneCollection)}">
+						<a href="#{Navigation.applicationUrl}editselected?back=#{HistorySession.currentPage.urlEncoded}">
+							<span class="fa fa-pencil"/>#{lbl.edit}
+						</a>
+					</ui:fragment>
+					<ui:fragment rendered="#{Auth.update}">
+						<a href="#{Navigation.applicationUrl}edit/license" id="selEditLicense">
+							<span class="fa fa-copyright"/>#{lbl.edit_all_licenses}
+						</a>
+					</ui:fragment>
+					<ui:fragment rendered="#{cc.attrs.itemsBean.type == 'COLLECTION_ITEMS' and WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
+						<h:commandLink id="moveItems" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemsBean.collection.id.toString())}" onclick="openDialog('moveSelected')">
+							<span class="fa fa-hand-o-right"/>#{lbl.move}
+							<f:ajax render=":selDialogs:moveSel:form"/>
+						</h:commandLink>
+					</ui:fragment>	
+					<a href="#{Navigation.applicationUrl}exportServlet?format=zip" target="_blank">
+						<span class="fa fa-download"/>#{lbl.download_files}
+					</a>
+					<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
+						<a onclick="openDialog('deleteSelectedItems')">
+							<span class="fa fa-trash"/>#{lbl.delete}
+						</a>
+					</ui:fragment>
+					<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(cc.attrs.itemsBean.collection)}">
+						<a onclick="openDialog('withdrawSelectedItems')">
+							<span class="fa fa-ban"/>#{lbl.items_withdraw}
+						</a>
+					</ui:fragment>
 					<h:commandLink onclick="startLoader();" action="#{cc.attrs.itemsBean.selectNone}" id="lnkSelectNone" >
-						<span class="fa fa-times"/>
+						<span class="fa fa-times"/>#{lbl.select_none}
 						<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
 					</h:commandLink>
-				</h:form>
-			</span>
-			<a href="#{Navigation.applicationUrl}exportServlet?format=zip" target="_blank" class="imj_menuButton imj_overlayMenu">
-				<span class="fa fa-download"/> <span class="imj_headerEntry">#{lbl.download_files} #{lbl.files}</span>
-			</a>
-			<ui:fragment rendered="#{Auth.update or (cc.attrs.context == 'items' and Auth.updateAtLeastOneCollection)}">
-				<a href="#{Navigation.applicationUrl}editselected?back=#{HistorySession.currentPage.urlEncoded}"  class="imj_menuButton imj_overlayMenu">
-					<span class="fa fa-pencil"/> <span>#{lbl.edit}</span>
-				</a>
-			</ui:fragment>
-			<ui:fragment rendered="#{Auth.update}">
-				<a href="#{Navigation.applicationUrl}edit/license" id="lnkSelectEditLicense" class="imj_menuButton imj_overlayMenu">
-					<span class="fa fa-copyright"/> <span>#{lbl.edit_all_licenses}</span>
-				</a>
-				<ui:fragment rendered="#{cc.attrs.itemsBean.type == 'COLLECTION_ITEMS' and WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
-					<h:form>
-						<h:commandLink id="moveItems" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemsBean.collection.id.toString())}" onclick="openDialog('moveDialog');"  class="imj_menuButton imj_overlayMenu">
-							<span class="fa fa-hand-o-right"/> <span>#{lbl.move}</span>
-							<f:ajax render=":actionSelectedItems:move:form"/>
-						</h:commandLink>
-					</h:form>
-				</ui:fragment>
-				<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
-					<a href="#"  onclick="openDialog('deleteSelectedItems');" class="imj_menuButton imj_overlayMenu">
-						<span class="fa fa-trash"/> <span>#{lbl.delete}</span>
-					</a>
-				</ui:fragment>
-				<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(cc.attrs.itemsBean.collection)}">
-					<a href="#" onclick="openDialog('withdrawSelectedItems');" class="imj_menuButton imj_overlayMenu">
-						<span class="fa fa-ban"/> <span>#{lbl.items_withdraw}</span>
-					</a>
-				</ui:fragment>
-			</ui:fragment>
-		</ui:fragment>
+				</div>
+			</div>
+		</h:form>
 		<dialog:confirmationReasonedDialog submitAction="withdrawSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_withdraw_selected_item}?" submitLabel="#{lbl.withdraw_selected}" dialogId="withdrawSelectedItems"/>
 		<dialog:confirmationDialog submitAction="deleteSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_delete_selected_item}?" submitLabel="#{lbl.delete_selectedImages}" dialogId="deleteSelectedItems" />
-		<dialog:move id="move"  colId="#{cc.attrs.itemsBean.collection.id.toString()}" parentId=":actionSelectedItems:move" />
+		<dialog:move id="moveSel"  colId="#{cc.attrs.itemsBean.collection.id.toString()}" parentId=":actionSelectedItems:move" />
 	</composite:implementation>
 </html>

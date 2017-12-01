@@ -8,16 +8,7 @@
                 xmlns:item="http://java.sun.com/jsf/composite/components/item"
                 xmlns:facet="http://java.sun.com/jsf/composite/components/facet"
                 xmlns:collection="http://java.sun.com/jsf/composite/components/collection">
-	
-	<ui:define name="actionsMenu">
-   		<ui:fragment rendered="#{not empty SessionBean.selected}">
-   			<item:selectedActionMenu id="actionSelectedItems" context="#{currentMainMenu}" itemsBean="#{paginatorListSessionBean}"/>
-   		</ui:fragment>
-   		<ui:fragment rendered="#{empty SessionBean.selected}">
-   			<ui:insert name="actions"/>
-   		</ui:fragment>
-   	</ui:define>
-	
+
     <!-- Main Content - Image tiled list - START -->
     <ui:define name="mainContent">
     	<ui:insert name="collectionAbout"/>

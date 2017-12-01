@@ -15,17 +15,14 @@
 	<ui:param name="currentMainMenu" value="collection" />
 	
 	<ui:define name="actionsMenu">
-		<menu:defaultActionMenu/>
+		<a href="#{Navigation.applicationUrl}upload">
+			<span class="fa fa-upload"/>#{lbl.upload}
+		</a>
 		<ui:fragment rendered="#{Auth.createCollection}">
-			<a href="#{Navigation.createCollectionUrl}" class="imj_menuButton imj_overlayMenu">
-				<span class="fa fa-plus"/> <span class="imj_headerEntry"> #{lbl.new_collection}</span>
+			<a href="#{Navigation.createCollectionUrl}">
+				<span class="fa fa-plus"/>#{lbl.new_collection}
 			</a>
 		</ui:fragment>
-		<!-- Selection Info Panel -->
-			<col:filters fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
-									 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfRecords}" 
-									 filterBeanHasQuery="#{filterBeanHasQuery}"
-									 objectLabel="#{lbl.collections}"/>
 	</ui:define>
 
 	<ui:define name="searchQuery">

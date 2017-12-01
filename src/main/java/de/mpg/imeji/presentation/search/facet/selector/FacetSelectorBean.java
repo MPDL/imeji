@@ -55,8 +55,8 @@ public class FacetSelectorBean extends SuperBean {
   public String init(SearchResult result) {
     if (result != null) {
       entries = result.getFacets().stream()
-          .filter(
-              f -> !f.getName().equals(Facet.ITEMS) && !f.getName().equals(Facet.SUBCOLLECTIONS))
+          .filter(f -> !f.getName().equals(Facet.ITEMS) && !f.getName().equals(Facet.SUBCOLLECTIONS)
+              && !f.getName().equals(Facet.COLLECTION_ITEMS))
           .map(r -> new FacetSelectorEntry(r, facetQuery, result.getNumberOfRecords()))
           .sorted(
               (f1, f2) -> Integer.compare(f1.getFacet().getPosition(), f2.getFacet().getPosition()))

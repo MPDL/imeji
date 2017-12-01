@@ -14,6 +14,7 @@ import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.notification.email.EmailService;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.user.pwdreset.PasswordResetController;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -104,7 +105,8 @@ public class PasswordChangeBean extends SuperBean {
     }
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("password_changed", getLocale()));
     resetFinished = true;
-    redirect(getNavigation().getHomeUrl());
+    redirect(
+        StringHelper.isNullOrEmptyTrim(getBackUrl()) ? getNavigation().getHomeUrl() : getBackUrl());
   }
 
 

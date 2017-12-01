@@ -13,6 +13,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -110,15 +111,22 @@ public class ElasticSearch implements Search {
       request.setQuery(q);
     }
     if (addFacets) {
-      request = addAggregations(request);
+      request = addAggregations(request, folderUri);
     }
 
     final SearchResponse resp = request.execute().actionGet();
     return toSearchResult(resp, query);
   }
 
-  private SearchRequestBuilder addAggregations(SearchRequestBuilder request) {
+  private SearchRequestBuilder addAggregations(SearchRequestBuilder request, String folderUri) {
     final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build();
+    if (folderUri != null) {
+      aggregations
+          .add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS).filter(Facet.COLLECTION_ITEMS,
+              QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ITEMS)
+                  .must(QueryBuilders.termQuery("folder", folderUri)).must(
+                      QueryBuilders.typeQuery(ElasticService.ElasticTypes.items.name()))));
+    }
     for (AbstractAggregationBuilder agg : aggregations) {
       request.addAggregation(agg);
     }
@@ -145,7 +153,7 @@ public class ElasticSearch implements Search {
             .setPostFilter(f).setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).setFrom(from)
             .addSort("_type", SortOrder.ASC).addSort(ElasticSortFactory.build(sortCri));
     if (addFacets) {
-      request = addAggregations(request);
+      request = addAggregations(request, folderUri);
     }
     SearchResponse resp = request.execute().actionGet();
     SearchResult result = toSearchResult(resp, query);
@@ -205,7 +213,8 @@ public class ElasticSearch implements Search {
     }
     List<FacetResult> facets = AggregationsParser.parse(resp);
     return new SearchResult(ids, getTotalNumberOfRecords(resp, facets),
-        getNumberOfItems(resp, facets), getNumberOfSubcollcetions(resp, facets), facets);
+        getNumberOfItems(resp, facets), getNumberOfItemsOfCollection(resp, facets),
+        getNumberOfSubcollections(resp, facets), facets);
   }
 
   private long getTotalNumberOfRecords(SearchResponse resp, List<FacetResult> facets) {
@@ -218,7 +227,13 @@ public class ElasticSearch implements Search {
         .map(f -> f.getValues().get(0).getCount()).orElse(resp.getHits().getTotalHits());
   }
 
-  private long getNumberOfSubcollcetions(SearchResponse resp, List<FacetResult> facets) {
+  private long getNumberOfItemsOfCollection(SearchResponse resp, List<FacetResult> facets) {
+    return facets.stream().filter(f -> f.getName().equals(Facet.COLLECTION_ITEMS)).findAny()
+        .map(f -> f.getValues().get(0).getCount()).orElse(resp.getHits().getTotalHits());
+  }
+
+
+  private long getNumberOfSubcollections(SearchResponse resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals(Facet.SUBCOLLECTIONS)).findAny()
         .map(f -> f.getValues().get(0).getCount()).orElse((long) 0);
   }
