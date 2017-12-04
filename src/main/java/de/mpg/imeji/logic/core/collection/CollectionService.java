@@ -71,6 +71,14 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
    */
   public CollectionImeji create(CollectionImeji c, User user) throws ImejiException {
     isLoggedInUser(user);
+    if (c.getCollection() != null) {
+      CollectionImeji p = retrieveLazy(c.getCollection(), user);
+      if (p.getStatus() == Status.RELEASED) {
+        prepareRelease(c, user);
+      } else if (p.getStatus() == Status.WITHDRAWN) {
+        prepareWithdraw(c, p.getDiscardComment());
+      }
+    }
     c = controller.create(c, user);
     messageService.add(new CollectionMessage(MessageType.CREATE_COLLECTION, c));
     return c;

@@ -3,32 +3,17 @@ package de.mpg.imeji.presentation.collection;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
-import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
-import de.mpg.imeji.logic.model.SearchFields;
-import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
-import de.mpg.imeji.logic.search.model.SearchOperators;
-import de.mpg.imeji.logic.search.model.SearchPair;
-import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
  * Abstract bean for all collection beans
@@ -39,29 +24,13 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 public abstract class CollectionBean extends SuperBean {
   private static final long serialVersionUID = -3071769388574710503L;
-  private static final Logger LOGGER = Logger.getLogger(CollectionBean.class);
   private CollectionImeji collection;
   private String id;
-  private String profileId;
   private boolean selected;
-
   private boolean sendEmailNotification = false;
-  private boolean collectionCreateMode = true;
-  private boolean profileSelectMode = false;
-  private CollectionActionMenu actionMenu;
   private int authorPosition;
   private int organizationPosition;
-  private int size;
-  private List<Item> items;
-  private List<Item> discardedItems;
-  private int sizeDiscarded;
 
-  /**
-   * New default {@link CollectionBean}
-   */
-  public CollectionBean() {
-    collection = new CollectionImeji();
-  }
 
   protected String getErrorMessageNoAuthor() {
     return "error_collection_need_one_author";
@@ -123,28 +92,10 @@ public abstract class CollectionBean extends SuperBean {
 
   protected abstract List<URI> getSelectedCollections();
 
-  /**
-   * getter
-   *
-   * @return
-   */
-  public String getProfileId() {
-    return profileId;
-  }
-
-  /**
-   * setter
-   *
-   * @param profileId
-   */
-  public void setProfileId(String profileId) {
-    this.profileId = profileId;
-  }
 
   public String getPageUrl() {
     return getNavigation().getCollectionUrl() + id;
   }
-
 
   public boolean isSendEmailNotification() {
     return sendEmailNotification;
@@ -159,101 +110,6 @@ public abstract class CollectionBean extends SuperBean {
       } else {
         getSessionUser().removeObservedCollection(id);
       }
-    }
-  }
-
-
-  public boolean isCollectionCreateMode() {
-    return collectionCreateMode;
-  }
-
-  public void setCollectionCreateMode(boolean collectionCreateMode) {
-    this.collectionCreateMode = collectionCreateMode;
-  }
-
-  public boolean isProfileSelectMode() {
-    return profileSelectMode;
-  }
-
-  public void setProfileSelectMode(boolean profileSelectMode) {
-    this.profileSelectMode = profileSelectMode;
-  }
-
-  /**
-   * @return the actionMenu
-   */
-  public CollectionActionMenu getActionMenu() {
-    return actionMenu;
-  }
-
-  /**
-   * @param actionMenu the actionMenu to set
-   */
-  public void setActionMenu(CollectionActionMenu actionMenu) {
-    this.actionMenu = actionMenu;
-  }
-
-  /**
-   * Find the first {@link Item} of the current {@link Container} (fast method)
-   *
-   * @param user
-   * @param size
-   */
-  protected void findItems(User user, int size) {
-    final ItemService ic = new ItemService();
-    ic.searchAndSetContainerItems(collection, user, size, 0);
-  }
-
-  /**
-   * Count the size the {@link Container}
-   *
-   * @param hasgrant
-   * @return
-   */
-  protected void countItems() {
-    final ItemService ic = new ItemService();
-    size = ic.search(collection.getId(), null, null, Imeji.adminUser, 0, 0).getNumberOfRecords();
-  }
-
-  /**
-   * Load the {@link Item} of the {@link Container}
-   *
-   * @throws ImejiException
-   */
-  protected void loadItems(User user, int size) {
-    setItems(new ArrayList<Item>());
-    if (collection != null) {
-      final List<String> uris = new ArrayList<String>();
-      for (final URI uri : collection.getImages()) {
-        uris.add(uri.toString());
-      }
-      final ItemService ic = new ItemService();
-      try {
-        setItems((List<Item>) ic.retrieveBatchLazy(uris, size, 0, user));
-      } catch (final ImejiException e) {
-        LOGGER.error("Error loading items of container");
-        BeanHelper.error("Error reading items of " + collection.getTitle());
-      }
-    }
-  }
-
-
-  /**
-   * Load the {@link Item} of the {@link Container}
-   */
-  public void countDiscardedItems(User user) {
-    if (collection != null) {
-      final ItemService ic = new ItemService();
-      final SearchQuery q = new SearchQuery();
-      try {
-        q.addPair(new SearchPair(SearchFields.status, SearchOperators.EQUALS,
-            Status.WITHDRAWN.getUriString(), false));
-      } catch (final UnprocessableError e) {
-        LOGGER.error("Error creating query to search for discarded items of a container", e);
-      }
-      setSizeDiscarded(ic.search(collection.getId(), q, null, user, -1, 0).getNumberOfRecords());
-    } else {
-      setSizeDiscarded(0);
     }
   }
 
@@ -417,73 +273,6 @@ public abstract class CollectionBean extends SuperBean {
    */
   public void setOrganizationPosition(int organizationPosition) {
     this.organizationPosition = organizationPosition;
-  }
-
-  /**
-   * @return the items
-   */
-  public List<Item> getItems() {
-    return items;
-  }
-
-  /**
-   * @return the discarded items
-   */
-  public List<Item> getDiscardedItems() {
-    return discardedItems;
-  }
-
-  /**
-   * @param items the items to set
-   */
-  public void setItems(List<Item> items) {
-    this.items = items;
-  }
-
-  /**
-   * @param discarded items setter
-   */
-  public void setDiscardedItems(List<Item> items) {
-    this.discardedItems = items;
-  }
-
-  /**
-   * @return the size
-   */
-  public int getSize() {
-    return size;
-  }
-
-  /**
-   * @param size the size to set
-   */
-  public void setSize(int size) {
-    this.size = size;
-  }
-
-  /**
-   * @param size the size to set
-   */
-  public void setSizeDiscarded(int size) {
-    this.sizeDiscarded = size;
-  }
-
-  public int getSizeDiscarded() {
-    return sizeDiscarded;
-  }
-
-  /**
-   * True if the current {@link User} is the creator of the {@link Container}
-   *
-   * @return
-   */
-  public boolean isOwner() {
-    final SessionBean sessionBean = (SessionBean) BeanHelper.getSessionBean(SessionBean.class);
-    if (collection != null && collection.getCreatedBy() != null && sessionBean.getUser() != null) {
-      return collection.getCreatedBy()
-          .equals(ObjectHelper.getURI(User.class, sessionBean.getUser().getEmail()));
-    }
-    return false;
   }
 
   /**

@@ -1,5 +1,6 @@
 package de.mpg.imeji.presentation.item.browse;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,8 +28,11 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.search.Search;
+import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
@@ -170,6 +174,15 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   }
 
   /**
+   * Trigger the update method after a search commit, to ma
+   */
+  public void refresh() {
+    ((ElasticIndexer) SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC)
+        .getIndexer()).commit();
+    update();
+  }
+
+  /**
    * load all items (defined by their uri)
    *
    * @param uris
@@ -269,22 +282,24 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * Delete selected {@link Item}
    *
    * @return @
+   * @throws IOException
    */
-  public String deleteSelected() {
+  public void deleteSelected() throws IOException {
     delete(sessionBean.getSelected());
     selectNone();
-    return "pretty:";
+    reload();
   }
 
   /**
    * Delete all {@link Item} currently browsed
    *
    * @return @
+   * @throws IOException
    */
-  public String deleteAll() {
+  public void deleteAll() throws IOException {
     delete(search(searchQuery, null, 0, -1).getResults());
     selectNone();
-    return "pretty:";
+    reload();
   }
 
   /**
@@ -292,11 +307,12 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    *
    * @return @
    * @throws ImejiException
+   * @throws IOException
    */
-  public String withdrawAll() throws ImejiException {
+  public void withdrawAll() throws ImejiException, IOException {
     withdraw(search(searchQuery, null, 0, -1).getResults());
     selectNone();
-    return "pretty:";
+    reload();
   }
 
   /**
@@ -304,11 +320,12 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    *
    * @return @
    * @throws ImejiException
+   * @throws IOException
    */
-  public String withdrawSelected() throws ImejiException {
+  public void withdrawSelected() throws ImejiException, IOException {
     withdraw(sessionBean.getSelected());
     selectNone();
-    return "pretty:";
+    reload();
   }
 
   /**

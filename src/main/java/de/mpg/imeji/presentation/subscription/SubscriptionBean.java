@@ -1,5 +1,6 @@
 package de.mpg.imeji.presentation.subscription;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -160,13 +161,15 @@ public class SubscriptionBean extends SuperBean {
 
   /**
    * Subscribe to the collection
+   * 
+   * @throws IOException
    */
   public void subscribe(User user, CollectionImeji collection) {
     try {
       new SubscriptionService().subscribe(ImejiFactory.newSubscription().setObjectId(collection)
           .setType(Type.DEFAULT).setUserId(user).build(), getSessionUser());
-      initGroups(retrieveCollections());
-    } catch (ImejiException e) {
+      reload();
+    } catch (Exception e) {
       LOGGER.error("Error subscribing to collection", e);
       BeanHelper.error("Error subscribing to the collection");
     }
@@ -185,7 +188,7 @@ public class SubscriptionBean extends SuperBean {
           .filter(g -> g.getCollection().getIdString().equals(collection.getIdString()))
           .map(g -> g.getSubscriptionForUser(user)).findAny().get();
       new SubscriptionService().unSubscribe(s, user);
-      initGroups(retrieveCollections());
+      reload();
     } catch (Exception e) {
       LOGGER.error("Error subscribing to collection", e);
       BeanHelper.error("Error un-subscribing from collection");

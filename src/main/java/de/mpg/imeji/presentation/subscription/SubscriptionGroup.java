@@ -60,7 +60,7 @@ public class SubscriptionGroup implements Serializable {
   private Map<String, User> retrieveUsers(List<Subscription> l) {
     List<String> userIds = l.stream().map(s -> s.getUserId()).collect(Collectors.toList());
     return new UserService().retrieveBatchLazy(userIds, -1).stream()
-        .collect(Collectors.toMap(u -> u.getId().toString(), Function.identity()));
+        .collect(Collectors.toMap(u -> u.getId().toString(), Function.identity(), (u1, u2) -> u1));
   }
 
   /**

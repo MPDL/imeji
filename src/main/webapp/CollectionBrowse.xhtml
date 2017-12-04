@@ -90,7 +90,7 @@
 							<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/share?q=#{CollectionItemsBean.query}&amp;fq=#{CollectionItemsBean.facetQueryString}">
 								<span class="fa fa-users"/>#{lbl.share}
 							</a>
-							<h:commandLink rendered="#{CollectionItemsBean.numberOfItems > 0}" action="#{CollectionItemsBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');">
+							<h:commandLink rendered="#{CollectionItemsBean.numberOfItems > 0 and WorkflowBean.release(CollectionItemsBean.collection)}" action="#{CollectionItemsBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');">
 								<f:ajax render=":releaseCollection:confirmationDialogForm"/>
 								<span class="fa fa-globe"/>#{lbl.release}
 							</h:commandLink>
@@ -135,11 +135,11 @@
 									<f:ajax render=":move:form"/>
 								</h:commandLink>
 							</ui:fragment>
-							<ui:fragment rendered="#{WorkflowBean.withdraw(CollectionItemsBean.collection)}">
-								<a onclick="openDialog('withdrawCollection');">
-									 <span class="fa fa-ban"/>#{lbl.withdraw}
-								</a>
-							</ui:fragment>
+						</ui:fragment>
+						<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(CollectionItemsBean.collection)}">
+							<a onclick="openDialog('withdrawCollection');">
+								 <span class="fa fa-ban"/>#{lbl.withdraw}
+							</a>
 						</ui:fragment>
 					</div>
 				</div>

@@ -38,7 +38,6 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 public class CreateCollectionBean extends CollectionBean {
   private static final Logger LOGGER = Logger.getLogger(CreateCollectionBean.class);
   private static final long serialVersionUID = 1257698224590957642L;
-  private boolean createProfile = false;
   @ManagedProperty(value = "#{ContainerEditorSession}")
   private ContainerEditorSession containerEditorSession;
   private boolean showUpload = false;
@@ -48,8 +47,8 @@ public class CreateCollectionBean extends CollectionBean {
    */
   @PostConstruct
   public void init() {
+    System.out.println("POST CONSTRUCT");
     showUpload = UrlHelper.getParameterBoolean("showUpload");
-    setCollectionCreateMode(true);
     setCollection(
         ImejiFactory.newCollection().setPerson(getSessionUser().getPerson().clone()).build());
     containerEditorSession.setUploadedLogoPath(null);
@@ -132,14 +131,6 @@ public class CreateCollectionBean extends CollectionBean {
 
   protected String getNavigationString() {
     return "pretty:createCollection";
-  }
-
-  public boolean isCreateProfile() {
-    return createProfile;
-  }
-
-  public void setCreateProfile(boolean createProfile) {
-    this.createProfile = createProfile;
   }
 
   public ContainerEditorSession getContainerEditorEditorSession() {

@@ -19,7 +19,7 @@
 					#{lbl.move_collection_released}<br/><br/>
 					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":uploadDialog:uploadForm" render=":uploader:licenseVariables"/>
 				</ui:fragment>
-	           <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.update}" style="display:none" onclick="closeDialog('uploadDialog');startLoader();">
+	           <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.refresh}" style="display:none" onclick="closeDialog('uploadDialog');startLoader();">
 	           		<f:ajax execute="@this" render=":ajaxWrapper :additonalFooterScripts"/>
 	           </h:commandButton>
 	           <ui:remove>

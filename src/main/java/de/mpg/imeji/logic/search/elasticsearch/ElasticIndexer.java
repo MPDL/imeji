@@ -215,7 +215,6 @@ public class ElasticIndexer implements SearchIndexer {
    */
   public void commit() {
     // Check if refresh is needed: cost is very high
-    System.out.println("refresh");
     ElasticService.getClient().admin().indices().prepareRefresh(index).execute().actionGet();
   }
 

@@ -40,7 +40,9 @@
 					<ui:fragment rendered="#{not empty cc.attrs.identifierName and not empty cc.attrs.identifierValue}">
 						<input type="hidden" name="#{cc.attrs.identifierName}" value="#{cc.attrs.identifierValue}"/>
 					</ui:fragment>
-			 		<h:commandButton action="#{cc.attrs.bean[cc.attrs.submitAction]}" value="#{cc.attrs.submitLabel}" styleClass="imj_submitButton" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();"/>
+			 		<h:commandButton action="#{cc.attrs.bean[cc.attrs.submitAction]}" value="#{cc.attrs.submitLabel}" styleClass="imj_submitButton" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 			<f:ajax execute="@form" rendered="@none"/>
+			 		</h:commandButton>
 				</div>
 			</h:form>
 		</div>
