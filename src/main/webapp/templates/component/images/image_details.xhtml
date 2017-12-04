@@ -21,9 +21,9 @@
 				<center>
 					<div id="seaDragonsButtons" style="position: initial;">
 						<link rel="stylesheet" type="text/css" href="#{Navigation.applicationUrl}resources/css/font-awesome/css/font-awesome.min.css"/>
-						<a id="fullscreenButton">
-							<span class="fa fa-search-plus hideFullScreen"/>
-							<span class="fa fa-times showFullScreen"/>
+						<a id="fullscreenButton" >
+							<span class="fa fa-search-plus hideFullScreen" onclick="openViewer();"/>
+							<span class="fa fa-times showFullScreen"  onclick="closeViewer(); "/>
 						</a>
 						<a id="zoominButton" class="fa fa-search-plus imj_mediaEditPanelItem showFullScreen" />
 						<a id="zoomoutButton" class="fa fa-search-minus imj_mediaEditPanelItem showFullScreen"/>
@@ -32,9 +32,7 @@
 						<a id="rotateRightButton" class="fa fa-rotate-right imj_mediaEditPanelItem hideFullScreen" />
 					</div>
 					<div id="seadragon-viewer-full" style="height:#{itemBean.viewerHeight}px;/*height:#{itemBean.webResolutionMaxLength}px;*/" >			
-						<a id="lnkPicFullResolutionAlt" href="#{itemBean.originalFile}" target="_blank">
-							<img style="display: block !important;" id="picWebResolutionAlt" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" src="#{itemBean.preview}" />
-						</a>
+						<img style="display: block !important;" id="picWebResolutionAlt" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" src="#{itemBean.preview}" />
 					</div>	
 				</center>
 			</ui:fragment>

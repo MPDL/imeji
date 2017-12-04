@@ -91,7 +91,7 @@ public class ElasticIndexer implements SearchIndexer {
     } catch (final Exception e) {
       LOGGER.error("error indexing object ", e);
     }
-    if (!(l.get(0) instanceof ContentVO)) {
+    if (!(l.get(0) instanceof ContentVO) && !(l.get(0) instanceof Item)) {
       commit();
     }
     updateIndexBatchPostProcessing(l);
@@ -215,6 +215,7 @@ public class ElasticIndexer implements SearchIndexer {
    */
   public void commit() {
     // Check if refresh is needed: cost is very high
+    System.out.println("refresh");
     ElasticService.getClient().admin().indices().prepareRefresh(index).execute().actionGet();
   }
 

@@ -145,6 +145,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       // load the item
       final Collection<Item> items = loadImages(searchResult.getResults());
       HierarchyService hierarchyService = new HierarchyService();
+      items.stream().map(item -> new ThumbnailBean(item, getSessionBean(), getNavigation()))
+          .peek(t -> t.initPath(hierarchyService)).collect(Collectors.toList());
       return items.stream().map(item -> new ThumbnailBean(item, getSessionBean(), getNavigation()))
           .peek(t -> t.initPath(hierarchyService)).collect(Collectors.toList());
     } catch (final ImejiException e) {

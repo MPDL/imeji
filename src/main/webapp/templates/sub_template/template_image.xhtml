@@ -51,94 +51,67 @@
 	</ui:define>	
 	<ui:define name="additonalFooterScripts">
 		<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
-			<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.min.js"></script>				
+			<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.min.js"></script>	
 			<script type="text/javascript">
 				var imgFull = {
 					type: 'image',
 					url: '#{itemBean.fullResolution}',
 				};
-				var viewerFull = OpenSeadragon({
-	        		id: "seadragon-viewer-full",
-	        		tileSources: imgFull,
-	        		toolbar:  "seaDragonsButtons",
-	        		showRotationControl: true,
-	        		fullPageButton: "fullscreenButton",
-	        		homeButton: "homeButton",
-	        		zoomInButton: "zoominButton",
-	        		zoomOutButton: "zoomoutButton",
-	        		rotateRightButton: "rotateRightButton",
-	        		rotateLeftButton: "rotateLeftButton",
-	        		showFullPageControl: true,
-	        		visibilityRatio: 1.0,
-	        		constrainDuringPan: true,
-	        		gestureSettingsTouch: {
-	           		 	pinchRotate: false,
-	           		    clickToZoom: false,
-	           		 	scrollToZoom: false,
-	           			flickEnabled: false,
-	           			dblClickToZoom: false
-	        		},
-	        		gestureSettingsMouse:{
-	        			scrollToZoom: false,
-	        			clickToZoom: false,
-	        			flickEnabled: false,
-	        			dblClickToZoom: false,
-	        			pinchRotate: false
-	        		},
-	        		gestureSettingsPen:{
-	        			scrollToZoom: false,
-	        			clickToZoom: false,
-	        			flickEnabled: false,
-	        			dblClickToZoom: false,
-	        			pinchRotate: false
-	        		},
-	        		gestureSettingsUnknown:{
-	        			scrollToZoom: false,
-	        			clickToZoom: false,
-	        			flickEnabled: false,
-	        			dblClickToZoom: false,
-	        			pinchRotate: false
-	        		}
-				});
-				viewerFull.addHandler("full-screen",function(data){
-	   				if(data.fullScreen) {
-	   					viewerFull.gestureSettingsMouse.scrollToZoom = true;
-	   					viewerFull.gestureSettingsTouch.scrollToZoom = true;
-	   				}
-	   				else{
-	   					viewerFull.gestureSettingsMouse.scrollToZoom = false;
-	   					viewerFull.gestureSettingsTouch.scrollToZoom = false;
-	   				}
-	   				viewerFull.viewport.goHome(true);
-	   			});
-				viewerFull.addHandler('rotate',function(){
-					 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
-					 document.getElementById("rotationForm:buttonUpdateRotation").click();
-	       		});
-	   			viewerFull.addHandler('open',function(){
-	   				document.getElementById("picWebResolutionAlt").style.display='none';
-	   			});
-	   			viewerFull.addHandler('close',function(){
-	   				console.log('close');
-	   			});
-	   			viewerFull.addHandler("open-failed",function(){
-	   				useAlternatePicture();
-	   			});
-	   			//Needed for Firefox
-	   			var myDraw=false;
-	   			viewerFull.addHandler("my-draw-failed",function(){
-	   				if(!myDraw){
-	   					useAlternatePicture();
-	   				}
-	   			});
-	   			viewerFull.addHandler("my-draw",function(){
-	   				myDraw=true;
-	   			});
-	   			function useAlternatePicture(){
-	   				document.getElementById("picWebResolutionAlt").style.display='';
-	   				viewerFull.setVisible(false);
-	   				document.getElementById("buttons").style.display='none';
-	   			}
+				var viewerFull;
+				function closeViewer(){
+					document.getElementById("picWebResolutionAlt").style.display='block';
+				};
+				function openViewer(){
+					document.getElementById("picWebResolutionAlt").style.display='none';
+					viewerFull = OpenSeadragon({
+			        		id: "seadragon-viewer-full",
+			        		tileSources: imgFull,
+			        		toolbar:  "seaDragonsButtons",
+			        		showRotationControl: true,
+			        		fullPageButton: "fullscreenButton",
+			        		homeButton: "homeButton",
+			        		zoomInButton: "zoominButton",
+			        		zoomOutButton: "zoomoutButton",
+			        		rotateRightButton: "rotateRightButton",
+			        		rotateLeftButton: "rotateLeftButton",
+			        		showFullPageControl: true,
+			        		visibilityRatio: 1.0,
+			        		constrainDuringPan: true,
+			        		gestureSettingsTouch: {
+			           		 	pinchRotate: false,
+			           		    clickToZoom: false,
+			           		 	scrollToZoom: false,
+			           			flickEnabled: false,
+			           			dblClickToZoom: false
+			        		},
+			        		gestureSettingsMouse:{
+			        			scrollToZoom: false,
+			        			clickToZoom: false,
+			        			flickEnabled: false,
+			        			dblClickToZoom: false,
+			        			pinchRotate: false
+			        		}
+						});
+						viewerFull.setFullScreen(true);
+						viewerFull.addHandler("full-screen",function(data){
+			   				if(data.fullScreen) {
+			   					viewerFull.gestureSettingsMouse.scrollToZoom = true;
+			   					viewerFull.gestureSettingsTouch.scrollToZoom = true;
+			   				}
+			   				else{
+			   					viewerFull.gestureSettingsMouse.scrollToZoom = false;
+			   					viewerFull.gestureSettingsTouch.scrollToZoom = false;
+			   				}
+			   				viewerFull.viewport.goHome(true);
+			   			});
+						viewerFull.addHandler('rotate',function(){
+							 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
+							 document.getElementById("rotationForm:buttonUpdateRotation").click();
+			       		});
+			   			viewerFull.addHandler("open-failed",function(){
+			   				useAlternatePicture();
+			   			});
+				}
 			</script>
 		</ui:fragment>	 
 	</ui:define>

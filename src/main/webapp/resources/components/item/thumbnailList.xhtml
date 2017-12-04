@@ -17,12 +17,12 @@
 								<div class="#{item.selected ? 'imj_selected'  : ''} thumb" >
 									<ui:fragment rendered="#{!item.isCollection()}">
 										<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;fq=#{cc.attrs.picList.facetQueryString}&amp;pos=#{cc.attrs.picList.offset + index.index}#pageTitle">
-											<img src="#{item.link}" alt="#{item.caption}"/>
+											<img data-src="#{item.link}" alt="#{item.caption}"/>											
 										</a>
 									</ui:fragment>
 									<ui:fragment rendered="#{item.isCollection()}">
 										<a href="#{Navigation.collectionUrl}#{item.id}">
-											<img src="../resources/icon/folder.png" alt="#{item.caption}"/>
+											<img  src="../resources/icon/folder.png" alt="#{item.caption}"/>
 										</a>
 									</ui:fragment>
 									<span class="imj_optionSet">
@@ -50,5 +50,11 @@
 				</ul>
 			</div>
 		</h:panelGroup>
+		<script>if(typeof $ != 'undefined'){$(window).lazyLoadXT()}</script>
+		<style>
+			.lazy-hidden {
+			    background: transparent url('/imeji/resources/icon/loading.gif') no-repeat 50% 50%;
+			}
+		</style>
 	</composite:implementation>
 </div>
