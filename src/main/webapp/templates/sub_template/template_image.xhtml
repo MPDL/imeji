@@ -43,7 +43,7 @@
 			</h:panelGroup>
 		</ui:fragment>
 		
-		 <ui:fragment rendered="#{itemBean.image == null and HistorySession.previousPage != null}">
+		<ui:fragment rendered="#{itemBean.image == null and HistorySession.previousPage != null}">
 			<a href="#{HistorySession.previousPage.url}">
 				#{lbl.back_to_previous}
 			</a>		
@@ -53,15 +53,14 @@
 		<ui:fragment rendered="#{itemBean.viewInOpenseadragon}">
 			<script src="#{Navigation.applicationUrl}/resources/openseadragon/openseadragon.min.js"></script>	
 			<script type="text/javascript">
-				var imgFull = {
-					type: 'image',
-					url: '#{itemBean.fullResolution}',
-				};
 				var viewerFull;
 				function closeViewer(){
-					document.getElementById("picWebResolutionAlt").style.display='block';
 				};
 				function openViewer(){
+					var imgFull = {
+						type: 'image',
+						url: '#{itemBean.fullResolution}',
+					};
 					document.getElementById("picWebResolutionAlt").style.display='none';
 					viewerFull = OpenSeadragon({
 			        		id: "seadragon-viewer-full",
