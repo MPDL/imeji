@@ -13,18 +13,22 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.SearchFields;
-import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchGroup;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 
 @ManagedBean(name = "UserFilterMenuBean")
 @ViewScoped
 public class UserFilterMenuBean extends SuperFilterMenuBean {
   private static final long serialVersionUID = -3783528849872530224L;
   private static final Logger LOGGER = Logger.getLogger(UserFilterMenuBean.class);
+
+  public UserFilterMenuBean() throws UnprocessableError {
+    super();
+  }
+
 
   @PostConstruct
   public void init() {
@@ -44,11 +48,11 @@ public class UserFilterMenuBean extends SuperFilterMenuBean {
    */
   private List<SelectItem> initMenu() throws UnprocessableError {
     final List<SelectItem> menu = new ArrayList<SelectItem>();
-    menu.add(new SelectItem(SearchQueryParser.transform2URL(getCreatedByMeQuery()),
+    menu.add(new SelectItem(getCreatedByMeQuery(),
         Imeji.RESOURCE_BUNDLE.getLabel("created_by_me", getLocale())));
-    menu.add(new SelectItem(SearchQueryParser.transform2URL(getSharedWithMeQuery()),
+    menu.add(new SelectItem(getSharedWithMeQuery(),
         Imeji.RESOURCE_BUNDLE.getLabel("shared_with_me", getLocale())));
-    menu.add(new SelectItem(SearchQueryParser.transform2URL(getCreatedByMeOrSharedWithMeQuery()),
+    menu.add(new SelectItem(getCreatedByMeOrSharedWithMeQuery(),
         Imeji.RESOURCE_BUNDLE.getLabel("created_or_shared_with_me", getLocale())));
     return menu;
   }
@@ -57,8 +61,9 @@ public class UserFilterMenuBean extends SuperFilterMenuBean {
    * Create Query for Filter Created by me
    *
    * @return
+   * @throws UnprocessableError
    */
-  private SearchQuery getCreatedByMeQuery() {
+  private SearchQuery getCreatedByMeQuery() throws UnprocessableError {
     return SearchQuery.toSearchQuery(new SearchPair(SearchFields.creator, SearchOperators.EQUALS,
         getSessionUser().getEmail(), false));
   }

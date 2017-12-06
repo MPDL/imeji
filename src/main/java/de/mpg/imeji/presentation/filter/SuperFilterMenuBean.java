@@ -1,6 +1,7 @@
 package de.mpg.imeji.presentation.filter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
@@ -8,10 +9,8 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchQueryParser;
-import de.mpg.imeji.logic.search.model.SearchElement;
-import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
+import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.navigation.history.HistoryPage;
@@ -27,65 +26,66 @@ public class SuperFilterMenuBean extends SuperBean {
   private static final long serialVersionUID = 5211495478085868441L;
   private static final Logger LOGGER = Logger.getLogger(SuperFilterMenuBean.class);
   private List<SelectItem> menu;
-  private SelectItem selected;
+  private final SearchQuery filterQuery;
+  private final String filterQueryString;
+  private SearchQuery filterQueryWithoutCurrentFilter;
+  private String selectedQuery;
+
+  public SuperFilterMenuBean() throws UnprocessableError {
+    this.filterQueryString =
+        UrlHelper.getParameterValue("filter") == null ? "" : UrlHelper.getParameterValue("filter");
+    this.filterQuery = SearchQueryParser.parseStringQuery(filterQueryString);
+  }
 
   public void init(List<SelectItem> menu) {
-    this.menu = menu;
     try {
-      this.selected =
-          findSelected(SearchQueryParser.parseStringQuery(UrlHelper.getParameterValue("q")));
-    } catch (final UnprocessableError e) {
+      this.filterQueryWithoutCurrentFilter = filterQueryWithoutCurrentFilters(filterQuery, menu);
+      this.menu = menu.stream()
+          .map(i -> new SelectItem(getFilterLink((SearchQuery) i.getValue()), i.getLabel()))
+          .collect(Collectors.toList());
+    } catch (final Exception e) {
       BeanHelper.error("Error parsing query in the URL");
       LOGGER.error("Error parsing query in the URL", e);
     }
   }
 
-  /**
-   * Find the selected Filter from the url. If the Filter is not found, return null
-   *
-   * @param query
-   * @return
-   * @throws UnprocessableError
-   */
-  private SelectItem findSelected(SearchQuery query) throws UnprocessableError {
-    for (final SearchElement element : query.getElements()) {
-      for (final SelectItem selectItem : menu) {
-        final SearchQuery filterQuery =
-            SearchQueryParser.parseStringQuery(selectItem.getValue().toString());
-        if (filterQuery.isSame(element)) {
-          return selectItem;
-        }
+  protected String getFilterLink(SearchQuery q) {
+    String qs = SearchQueryParser.transform2URL(q);
+    try {
+      if (filterQueryString.contains(qs)) {
+        selectedQuery = initRemoveFilterLink();
+        return selectedQuery;
+      } else {
+        return initAddFilterLink(q);
       }
+    } catch (Exception e) {
+      LOGGER.error("Error building filter query", e);
+      return "";
     }
-    return null;
+  }
+
+  private String initRemoveFilterLink() throws UnprocessableError {
+    return buildPageUrl(SearchQueryParser.transform2URL(filterQueryWithoutCurrentFilter));
+  }
+
+  private String initAddFilterLink(SearchQuery q) throws UnprocessableError {
+    if (filterQueryWithoutCurrentFilter.isEmpty()) {
+      return buildPageUrl(SearchQueryParser.transform2URL(q));
+    } else {
+      return buildPageUrl(SearchQueryParser.transform2URL(filterQueryWithoutCurrentFilter) + " AND "
+          + SearchQueryParser.transform2URL(q));
+    }
   }
 
   /**
-   * Get the URL for this filter
-   *
-   * @param filter
+   * Build the page url with the passed filter query
+   * 
+   * @param filterQuery
    * @return
-   * @throws UnprocessableError
    */
-  public String getFilterUrl(String filter) throws UnprocessableError {
-    final SearchQuery filterQuery = SearchQueryParser.parseStringQuery(filter);
-    SearchQuery currentQuery = getCurrentQueryWihoutFilter();
-    currentQuery = mergeQueries(currentQuery, filterQuery);
+  private String buildPageUrl(String filterQuery) {
     final HistoryPage page = getCurrentPage().copy();
-    page.setParamValue("q", SearchQueryParser.transform2URL(currentQuery));
-    return page.getCompleteUrl();
-  }
-
-  /**
-   * Return the url to remove the current filter
-   *
-   * @return
-   * @throws UnprocessableError
-   */
-  public String getRemoveFilterUrl() throws UnprocessableError {
-    final String query = SearchQueryParser.transform2URL(getCurrentQueryWihoutFilter());
-    final HistoryPage page = getCurrentPage().copy();
-    page.setParamValue("q", query);
+    page.setParamValue("filter", filterQuery);
     return page.getCompleteUrl();
   }
 
@@ -95,33 +95,13 @@ public class SuperFilterMenuBean extends SuperBean {
    * @return
    * @throws UnprocessableError
    */
-  private SearchQuery getCurrentQueryWihoutFilter() throws UnprocessableError {
-    SearchQuery currentQuery = SearchQueryParser.parseStringQuery(UrlHelper.getParameterValue("q"));
+  private SearchQuery filterQueryWithoutCurrentFilters(SearchQuery filterQuery,
+      List<SelectItem> menu) throws UnprocessableError {
+    SearchQuery currentQuery = filterQuery.copy();
     for (final SelectItem item : menu) {
-      currentQuery = soustractToQuery(currentQuery,
-          SearchQueryParser.parseStringQuery((String) item.getValue()));
+      currentQuery = soustractToQuery(currentQuery, (SearchQuery) item.getValue());
     }
     return currentQuery;
-  }
-
-  /**
-   * Merge q1 to q2 as "q1 AND q2"
-   *
-   * @param q1
-   * @param q2
-   * @return
-   * @throws UnprocessableError
-   */
-  private SearchQuery mergeQueries(SearchQuery q1, SearchQuery q2) throws UnprocessableError {
-    if (q1.isEmpty()) {
-      return q2;
-    } else if (q2.isEmpty()) {
-      return q1;
-    } else {
-      q1.addLogicalRelation(LOGICAL_RELATIONS.AND);
-      q1.getElements().addAll(q2.getElements());
-      return q1;
-    }
   }
 
   /**
@@ -145,7 +125,6 @@ public class SuperFilterMenuBean extends SuperBean {
       }
     }
     return trimLogicalOperation(q1);
-
   }
 
   /**
@@ -173,16 +152,7 @@ public class SuperFilterMenuBean extends SuperBean {
     return menu;
   }
 
-  public void setMenu(List<SelectItem> menu) {
-    this.menu = menu;
+  public String getSelectedQuery() {
+    return selectedQuery;
   }
-
-  public SelectItem getSelected() {
-    return selected;
-  }
-
-  public void setSelected(SelectItem selected) {
-    this.selected = selected;
-  }
-
 }

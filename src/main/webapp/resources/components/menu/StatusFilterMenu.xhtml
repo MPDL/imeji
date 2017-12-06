@@ -9,28 +9,14 @@
 	
 	<composite:implementation>
 		<h:panelGroup layout="block" styleClass="listActionMenuContentSection" rendered="#{Auth.loggedIn}">
-			<div class="imj_menuHeader">
-				#{lbl.state}:
-			</div>
+			<div class="imj_menuHeader">#{lbl.state}</div>
 			<div class="imj_menuBody">
 				<ul>
-					<ui:fragment rendered="#{StatusFilterMenuBean.selected != null}">
-						<li>
-							<span class="fa fa-check" style="margin:0; padding:0"/>
-							<a href="#{StatusFilterMenuBean.removeFilterUrl}">
-								#{StatusFilterMenuBean.selected.label}
-							</a>
-						</li>
-					</ui:fragment>
 					<ui:repeat var="entry" value="#{StatusFilterMenuBean.menu}" varStatus="fpos">
-						<ui:fragment rendered="#{StatusFilterMenuBean.selected.value != entry.value}">
-							<li>
-								<span class="fa fa-check" style="margin:0; padding:0; visibility:hidden"/>
-								<a href="#{StatusFilterMenuBean.getFilterUrl(entry.value)}">
-									#{entry.label}
-								</a>			
-							</li>
-						</ui:fragment>
+						<li>
+							<span class="fa fa-check" style="#{StatusFilterMenuBean.selectedQuery == entry.value ? '' : 'visibility:hidden'}"/>
+							<a href="#{entry.value}">#{entry.label}</a>			
+						</li>
 					</ui:repeat>
 				</ul>
 			</div>

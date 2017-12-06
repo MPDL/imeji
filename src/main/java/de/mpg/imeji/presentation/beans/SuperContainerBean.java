@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.SearchFields;
-import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -193,23 +193,17 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
    */
   public int search(int offset, int limit) throws Exception {
     SearchQuery searchQuery = new SearchQuery();
+    SearchFactory factory = new SearchFactory();
     int myOffset = offset;
-    if (!"".equals(getQuery())) {
-      searchQuery = SearchQueryParser.parseStringQuery(getQuery());
-    }
-    if (getSearchQuery() == null) {
-      setCurrentPageNumber(1);
-      setGoToPage("1");
-      myOffset = 0;
-    }
-
+    factory.initQuery(getQuery());
+    factory.initFilter(UrlHelper.getParameterValue("filter"));
+    searchQuery = factory.build();
     final SortCriterion sortCriterion =
         new SortCriterion(SearchFields.valueOfIndex(getSelectedSortCriterion()),
             SortOrder.valueOf(getSelectedSortOrder()));
     searchResult = search(searchQuery, sortCriterion, myOffset, limit);
     setSearchQuery(searchQuery);
     searchResult.setQuery(getQuery());
-    // setQuery(getQuery());
     searchResult.setSort(sortCriterion);
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
     return myOffset;

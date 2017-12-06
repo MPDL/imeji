@@ -13,7 +13,7 @@
 		<h:form>
 			<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" onclick="window.location.href = '#itemMetadata';startLoader()">
 				 <span class="fa fa-pencil"/>#{lbl.edit}
-				 <f:ajax render=":metadata"/>
+				 <f:ajax render=":metadata :loader"/>
 			</h:commandLink>
 		</h:form>
 		<a href="#{Navigation.applicationUrl}exportServlet?format=file&amp;id=#{cc.attrs.itemBean.item.id}" target="_blank">

@@ -9,26 +9,14 @@
 	
 	<composite:implementation>
 		<h:panelGroup layout="block" styleClass="listActionMenuContentSection" rendered="#{Auth.loggedIn}">
-			<div class="imj_menuHeader">
-				#{lbl.filter_by}:
-			</div>
+			<div class="imj_menuHeader">#{lbl.filter_by}</div>
 			<div class="imj_menuBody">
 				<ul>
-					<ui:fragment rendered="#{UserFilterMenuBean.selected != null}">
+					<ui:repeat var="entry" value="#{UserFilterMenuBean.menu}">
 						<li>
-							<span class="fa fa-check"  style="margin:0; padding:0"/>
-							<a href="#{UserFilterMenuBean.removeFilterUrl}">
-								#{UserFilterMenuBean.selected.label}
-							</a>						
+							<span class="fa fa-check" style="#{UserFilterMenuBean.selectedQuery == entry.value ? '' : 'visibility:hidden'}"/>
+							<a href="#{entry.value}">#{entry.label}</a>						
 						</li>
-					</ui:fragment>
-					<ui:repeat var="entry" value="#{UserFilterMenuBean.menu}" varStatus="fpos">
-						<ui:fragment rendered="#{UserFilterMenuBean.selected.value != entry.value}">
-							<li>
-								<span class="fa fa-check" style="margin:0; padding:0;visibility:hidden"/>
-								<a href="#{UserFilterMenuBean.getFilterUrl(entry.value)}">#{entry.label}</a>						
-							</li>
-						</ui:fragment>
 					</ui:repeat>
 				</ul>
 			</div>

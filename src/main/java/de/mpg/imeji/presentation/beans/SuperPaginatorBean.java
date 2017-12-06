@@ -160,8 +160,6 @@ public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
     }
   }
 
-
-
   /**
    * Returns the current list with the specified elements
    *

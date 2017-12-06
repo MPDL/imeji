@@ -18,7 +18,9 @@ public class SearchQuery extends SearchElement {
   /**
    * The elements of the {@link SearchQuery}
    */
-  private List<SearchElement> elements = null;
+  private List<SearchElement> elements = new ArrayList<>();
+
+  private List<SearchElement> filterElements = new ArrayList<>();
 
   /**
    * Construct an empty {@link SearchQuery}
@@ -37,6 +39,17 @@ public class SearchQuery extends SearchElement {
   }
 
   /**
+   * Initialize the factory with an exiecting query
+   * 
+   * @param elements
+   * @param filterElements
+   */
+  public SearchQuery(List<SearchElement> elements, List<SearchElement> filterElements) {
+    this.elements = new ArrayList<SearchElement>(elements);
+    this.filterElements = new ArrayList<SearchElement>(filterElements);
+  }
+
+  /**
    * Clone a {@link SearchQuery}
    */
   public SearchQuery copy() {
@@ -45,11 +58,17 @@ public class SearchQuery extends SearchElement {
     return q;
   }
 
+  @Override
+  public boolean isEmpty() {
+    return super.isEmpty() && filterElements.isEmpty();
+  }
+
   /**
    * Clear the {@link SearchElement} of the {@link SearchQuery}
    */
   public void clear() {
     elements.clear();
+    filterElements.clear();
   }
 
   public void setElements(List<SearchElement> elements) {
@@ -98,5 +117,19 @@ public class SearchQuery extends SearchElement {
     }
 
     return query;
+  }
+
+  /**
+   * @return the filterElements
+   */
+  public List<SearchElement> getFilterElements() {
+    return filterElements;
+  }
+
+  /**
+   * @param filterElements the filterElements to set
+   */
+  public void setFilterElements(List<SearchElement> filterElements) {
+    this.filterElements = filterElements;
   }
 }

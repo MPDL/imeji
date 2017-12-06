@@ -100,18 +100,6 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
     return PAGINATOR_TYPE.COLLECTION_ITEMS.name();
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see de.mpg.imeji.presentation.beans.SuperContainerBean#search(de.mpg.imeji.logic.search.vo.
-   * SearchQuery , de.mpg.imeji.logic.search.vo.SortCriterion)
-   *
-   * @param searchQuery
-   *
-   * @param sortCriterion
-   *
-   * @return
-   */
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
       int limit) {
@@ -122,6 +110,4 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
   public String getTypeLabel() {
     return Imeji.RESOURCE_BUNDLE.getLabel("type_" + getType().toLowerCase(), getLocale());
   }
-
-
 }

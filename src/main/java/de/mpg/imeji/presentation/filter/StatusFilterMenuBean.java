@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.SearchFields;
-import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -25,6 +24,10 @@ import de.mpg.imeji.logic.util.UrlHelper;
 public class StatusFilterMenuBean extends SuperFilterMenuBean {
   private static final long serialVersionUID = -820658514106886929L;
   private static final Logger LOGGER = Logger.getLogger(StatusFilterMenuBean.class);
+
+  public StatusFilterMenuBean() throws UnprocessableError {
+    super();
+  }
 
   @PostConstruct
   public void init() {
@@ -39,17 +42,17 @@ public class StatusFilterMenuBean extends SuperFilterMenuBean {
     final List<SelectItem> menu = new ArrayList<SelectItem>();
     if (!isCollectionFilter) {
       menu.add(new SelectItem(
-          SearchQueryParser.transform2URL(SearchQuery.toSearchQuery(
-              new SearchPair(SearchFields.status, SearchOperators.EQUALS, "private", false))),
+          SearchQuery.toSearchQuery(
+              new SearchPair(SearchFields.status, SearchOperators.EQUALS, "private", false)),
           Imeji.RESOURCE_BUNDLE.getLabel("only_private", getLocale())));
     }
     menu.add(new SelectItem(
-        SearchQueryParser.transform2URL(SearchQuery.toSearchQuery(
-            new SearchPair(SearchFields.status, SearchOperators.EQUALS, "public", false))),
+        SearchQuery.toSearchQuery(
+            new SearchPair(SearchFields.status, SearchOperators.EQUALS, "public", false)),
         Imeji.RESOURCE_BUNDLE.getLabel("only_public", getLocale())));
     menu.add(new SelectItem(
-        SearchQueryParser.transform2URL(SearchQuery.toSearchQuery(
-            new SearchPair(SearchFields.status, SearchOperators.EQUALS, "discarded", false))),
+        SearchQuery.toSearchQuery(
+            new SearchPair(SearchFields.status, SearchOperators.EQUALS, "discarded", false)),
         Imeji.RESOURCE_BUNDLE.getLabel("only_withdrawn", getLocale())));
     return menu;
   }

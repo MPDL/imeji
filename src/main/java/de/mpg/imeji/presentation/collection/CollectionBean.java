@@ -6,7 +6,6 @@ import java.net.URI;
 import java.util.List;
 
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.model.Organization;
@@ -26,7 +25,6 @@ public abstract class CollectionBean extends SuperBean {
   private static final long serialVersionUID = -3071769388574710503L;
   private CollectionImeji collection;
   private String id;
-  private boolean selected;
   private boolean sendEmailNotification = false;
   private int authorPosition;
   private int organizationPosition;
@@ -64,32 +62,6 @@ public abstract class CollectionBean extends SuperBean {
     this.id = id;
   }
 
-  /**
-   * @return the selected
-   */
-  public boolean getSelected() {
-    if (getSelectedCollections().contains(collection.getId())) {
-      selected = true;
-    } else {
-      selected = false;
-    }
-    return selected;
-  }
-
-  /**
-   * @param selected the selected to set
-   */
-  public void setSelected(boolean selected) {
-    if (selected) {
-      if (!(getSelectedCollections().contains(collection.getId()))) {
-        getSelectedCollections().add(collection.getId());
-      }
-    } else {
-      getSelectedCollections().remove(collection.getId());
-    }
-    this.selected = selected;
-  }
-
   protected abstract List<URI> getSelectedCollections();
 
 
@@ -111,54 +83,6 @@ public abstract class CollectionBean extends SuperBean {
         getSessionUser().removeObservedCollection(id);
       }
     }
-  }
-
-  /**
-   * Get Person String
-   *
-   * @return
-   */
-  public String getPersonString() {
-    String personString = "";
-    for (final Person p : collection.getPersons()) {
-      if (!"".equalsIgnoreCase(personString)) {
-        personString += ", ";
-      }
-      personString += p.getFamilyName() + " " + p.getGivenName() + " ";
-    }
-    return personString;
-  }
-
-  /**
-   * @return
-   */
-  public String getAuthorsWithOrg() {
-    String personString = "";
-    for (final Person p : collection.getPersons()) {
-      if (!"".equalsIgnoreCase(personString)) {
-        personString += ", ";
-      }
-      personString += p.getCompleteName();
-      if (!p.getOrganizationString().equals("")) {
-        personString += " (" + p.getOrganizationString() + ")";
-      }
-    }
-    return personString;
-  }
-
-  public String getCitation() {
-    final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
-    return getPersonString() + ". " + collection.getTitle() + ". Publisher" + ". <a href=\"" + url
-        + "\">" + url + "</a>";
-  }
-
-  /**
-   * The Url to view the DOI
-   *
-   * @return
-   */
-  public String getDoiUrl() {
-    return collection.getDoi().isEmpty() ? "" : DoiService.DOI_URL_RESOLVER + collection.getDoi();
   }
 
   /**

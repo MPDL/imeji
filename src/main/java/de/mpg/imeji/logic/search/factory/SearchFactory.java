@@ -11,13 +11,13 @@ import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
 import de.mpg.imeji.logic.search.model.SearchElement;
+import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
 import de.mpg.imeji.logic.search.model.SearchGroup;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
-import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 
 /**
  * Factory for {@link Search}
@@ -42,6 +42,29 @@ public class SearchFactory {
     this.query = new SearchQuery(query != null ? query.getElements() : new ArrayList<>());
   }
 
+  public SearchFactory initQuery(SearchQuery query) {
+    this.query = new SearchQuery(query != null ? query.getElements() : new ArrayList<>());
+    return this;
+  }
+
+  public SearchFactory initQuery(String query) throws UnprocessableError {
+    this.query = new SearchQuery(query != null
+        ? SearchQueryParser.parseStringQuery(query).getElements() : new ArrayList<>());
+    return this;
+  }
+
+  public SearchFactory initFilter(SearchQuery query) {
+    query.setFilterElements(cleanElements(query.getElements()));
+    return this;
+  }
+
+  public SearchFactory initFilter(String filter) throws UnprocessableError {
+    if (filter != null) {
+      query.setFilterElements(SearchQueryParser.parseStringQuery(filter).getElements());
+    }
+    return this;
+  }
+
   /**
    * Build a {@link SearchQuery} of the Factory
    * 
@@ -58,7 +81,7 @@ public class SearchFactory {
    * @return
    */
   private SearchQuery cleanQuery(SearchQuery query) {
-    return new SearchQuery(cleanElements(query.getElements()));
+    return new SearchQuery(cleanElements(query.getElements()), query.getFilterElements());
   }
 
   /**
@@ -128,6 +151,18 @@ public class SearchFactory {
     for (SearchElement element : elements) {
       addElement(element, LOGICAL_RELATIONS.AND);
     }
+    return this;
+  }
+
+  /**
+   * Add the element with a end relation
+   * 
+   * @param element
+   * @return
+   * @throws UnprocessableError
+   */
+  public SearchFactory and(SearchElement element) throws UnprocessableError {
+    addElement(element, LOGICAL_RELATIONS.AND);
     return this;
   }
 

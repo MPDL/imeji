@@ -69,6 +69,7 @@ public class ElasticQueryFactory {
         buildContainerFilter(folderUri, query == null || query.isEmpty(), types);
     final QueryBuilder securityQuery = buildSecurityQuery(user, folderUri, types);
     final QueryBuilder statusQuery = buildStatusQuery(query, user);
+    final QueryBuilder filterQuery = buildSearchQuery(query.getFilterElements(), user);
     if (!isMatchAll(searchQuery)) {
       q.must(searchQuery);
     }
@@ -77,6 +78,13 @@ public class ElasticQueryFactory {
     }
     if (!isMatchAll(securityQuery)) {
       q.must(securityQuery);
+    }
+    if (!isMatchAll(filterQuery)) {
+      q.must(filterQuery);
+      if (query.getElements().isEmpty()
+          && Arrays.equals(types, new ElasticTypes[] {ElasticTypes.folders})) {
+        q.mustNot(QueryBuilders.existsQuery(ElasticFields.FOLDER.field()));
+      }
     }
     if (types.length == 1 && types[0] != ElasticTypes.users && !isMatchAll(statusQuery)) {
       q.must(statusQuery);
@@ -174,6 +182,9 @@ public class ElasticQueryFactory {
    * @return
    */
   private static QueryBuilder buildSearchQuery(List<SearchElement> elements, User user) {
+    if (elements.isEmpty()) {
+      return QueryBuilders.matchAllQuery();
+    }
     boolean OR = isORSearchGroup(elements);
     final BoolQueryBuilder q = QueryBuilders.boolQuery();
     for (final SearchElement el : elements) {

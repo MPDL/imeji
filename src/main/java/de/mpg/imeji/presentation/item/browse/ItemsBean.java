@@ -1,9 +1,7 @@
 package de.mpg.imeji.presentation.item.browse;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -66,9 +64,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private SearchResult searchResult;
   public static final String ITEM_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
   public static final String ITEM_SORT_COOKIE = "ITEM_SORT_COOKIE";
-  public static final String ELEMENTS_PER_LINE_COOKIE = "ELEMENTS_PER_LINE_COOKIE";
   private static final int DEFAULT_ELEMENTS_PER_PAGE = 24;
-  private static final int DEFAULT_ELEMENTS_PER_LINE = 6;
   // From session
   @ManagedProperty(value = "#{SessionBean}")
   private SessionBean sessionBean;
@@ -102,7 +98,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     browseContext = getNavigationString();
     isSimpleSearch = SearchQueryParser.isSimpleSearch(searchQuery);
     update();
-    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("error_page_not_exists", getLocale()));
   }
 
   @Override
@@ -131,7 +126,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     setElementsPerPage(
         Integer.parseInt(CookieUtils.readNonNull(SuperPaginatorBean.numberOfItemsPerPageCookieName,
             Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
-
     setElementsPerPageSelectItems(Stream.of("12,24,48,96".split(",")).map(s -> new SelectItem(s))
         .collect(Collectors.toList()));
   }
@@ -226,16 +220,11 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     try {
       final String q = UrlHelper.getParameterValue("q");
       final String fq = UrlHelper.getParameterValue("fq");
-      if (q != null || fq != null) {
-        query = q != null ? URLEncoder.encode(q, "UTF-8") : "";
-        facetQueryString = fq != null ? URLEncoder.encode(fq, "UTF-8") : "";
-        facetQuery = SearchQueryParser.parseStringQuery(fq);
-        final SearchQuery sq = new SearchFactory()
-            .and(Arrays.asList(new SearchGroup(SearchQueryParser.parseStringQuery(q).getElements()),
-                new SearchGroup(facetQuery.getElements())))
-            .build();
-        setSearchQuery(sq);
-      }
+      SearchFactory factory = new SearchFactory();
+      factory.initQuery(q)
+          .and(new SearchGroup(SearchQueryParser.parseStringQuery(fq).getElements()));
+      factory.initFilter(UrlHelper.getParameterValue("filter"));
+      setSearchQuery(factory.build());
     } catch (final Exception e) {
       BeanHelper.error("Error parsing query: " + e.getMessage());
       LOGGER.error("Error parsing query", e);
