@@ -221,14 +221,7 @@ public class SearchFactory {
    * @return
    */
   public SearchGroup buildAsGroup() {
-    if (query.getElements().size() == 1
-        && query.getElements().get(0).getType().equals(SEARCH_ELEMENTS.GROUP)) {
-      return (SearchGroup) query.getElements().get(0);
-    } else {
-      SearchGroup group = new SearchGroup();
-      group.setGroup(query.getElements());
-      return group;
-    }
+    return new SearchGroup(query.getElements());
   }
 
 

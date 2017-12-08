@@ -71,9 +71,7 @@
 						document.getElementById('expectedDuration').innerHTML = " " + hms;
 					},
 					UploadComplete: function(up, files) {
-						document.getElementById('#{cc.attrs.updateButtonId}').click();
-						addUploadStatusMessageDone(uploadedFiles);
-						closeUploader();
+						stopUploader();
 					},
 					Error: function(up, err) {
 				    	addUploadStatusMessage(uploadedFiles,totalFiles);
@@ -104,10 +102,10 @@
 				uploader.stop();
 				document.getElementById('#{cc.attrs.updateButtonId}').click();
 				addUploadStatusMessageDone(uploadedFiles);
+				uploader.destroy();
 				closeUploader();
 			}
 			function closeUploader(){
-				uploader.destroy();
 				window.history.pushState("","", window.location.href.replace('showUpload=1', ''));
 				closeDialog('uploadDialog');
 			}

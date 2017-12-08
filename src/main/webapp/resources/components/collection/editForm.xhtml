@@ -80,8 +80,8 @@
 				</ui:repeat>
 				<div class="imj_sectionHeadline">
 					<span class="imj_inlineButtonGroup">
-						<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.additionalInformations.size())}">
-							<f:ajax execute="@form" render="@form" />
+						<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add} #{lbl.colUtil}" action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.additionalInformations.size())}">
+							<f:ajax execute="editContainer:mediaContainerForm:additionalInfos" render="editContainer:mediaContainerForm:additionalInfos" />
 						</h:commandLink>
 					</span>
 				</div>
@@ -92,7 +92,7 @@
 					<ui:fragment rendered="#{cc.attrs.formularBean.collection.logoUrl!=null}">
 						#{lbl.removeLogo}
 						<h:commandLink styleClass="fa fa-times" title="#{lbl.removeLogo}" action="#{cc.attrs.formularBean.removeContainerLogo}">
-							<f:ajax execute="@form" render="@form" />
+							<f:ajax execute="@form" render="@form :additonalFooterScripts" />
 						</h:commandLink><br/>
 						<img alt="Logo" src="#{cc.attrs.formularBean.collection.logoUrl}" height="50em" class="imj_community_logo" /> 
 					</ui:fragment>
@@ -100,7 +100,7 @@
 						<div id="filelist">Your browser doesn't have Flash, Silverlight or HTML5 support.</div>
 						<div class="imj_messageError" id="console"></div>
 						<div id="container">
-							<a id="pickfiles" href="javascript:;">[#{lbl.uploadLogo}]</a>
+							<a id="pickfiles" href="#">[#{lbl.uploadLogo}]</a>
 						</div>
 					</div>
 				</div>

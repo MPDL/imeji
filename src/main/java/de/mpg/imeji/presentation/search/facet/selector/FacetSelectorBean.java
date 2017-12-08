@@ -104,16 +104,6 @@ public class FacetSelectorBean extends SuperBean {
   }
 
   private String createRemoveQuery(FacetSelectorEntryValue entryValue) {
-    // SearchFactory f = factory.clone();
-    // if (entryValue != null) {
-    // if (entryValue.getType().equals(StatementType.DATE.name()) && false) {
-    // for (SearchElement el : factory.getElementsWithIndex(entryValue.getIndex())) {
-    // f.remove(el);
-    // }
-    // } else {
-    // f.remove(entryValue.getEntryQuery());
-    // }
-    // }
     return getCurrentPage().copy()
         .setParamValue("fq",
             SearchQueryParser
