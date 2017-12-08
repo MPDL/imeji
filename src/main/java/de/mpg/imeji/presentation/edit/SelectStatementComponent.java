@@ -2,19 +2,15 @@ package de.mpg.imeji.presentation.edit;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
-import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.StatementType;
 import de.mpg.imeji.logic.model.util.StatementUtil;
-import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.statement.StatementForm;
 
 /**
@@ -53,26 +49,10 @@ public class SelectStatementComponent implements Serializable {
 
   public List<String> searchForIndex(List<SelectItem> statementMenu) {
     index = index == null ? "" : index;
-    if (true || !StringHelper.isNullOrEmptyTrim(index)) {
-      return statementMenu.stream().map(i -> i.getValue().toString())
-          .filter(s -> StatementUtil.formatIndex(s)
-              .startsWith(StatementUtil.formatIndex(index.toLowerCase())))
-          .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase()))
-          .collect(Collectors.toList());
-    } else {
-      Set<String> defaultSet =
-          new HashSet<>(Arrays.asList(Imeji.CONFIG.getStatements().split(",")));
-      List<String> indexes = statementMenu.stream().map(i -> i.getValue().toString())
-          .filter(s -> defaultSet.contains(s))
-          .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(5)
-          .collect(Collectors.toList());
-      if (indexes.isEmpty()) {
-        indexes = statementMenu.stream().map(i -> i.getValue().toString())
-            .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase())).limit(3)
-            .collect(Collectors.toList());
-      }
-      return indexes;
-    }
+    return statementMenu.stream().map(i -> i.getValue().toString()).filter(
+        s -> StatementUtil.formatIndex(s).contains(StatementUtil.formatIndex(index.toLowerCase())))
+        .sorted((s1, s2) -> s1.toLowerCase().compareTo(s2.toLowerCase()))
+        .collect(Collectors.toList());
   }
 
   /**

@@ -55,7 +55,7 @@
 			<span class="imj_infodataValue">#{cc.attrs.bean.collection.modified.time}</span>
 			<ui:fragment rendered="#{cc.attrs.bean.collection.status == 'RELEASED'}">
 				<span class="imj_infodataLabel">#{lbl.date_released}</span>
-				<span class="imj_infodataValue">s#{cc.attrs.bean.collection.versionDate.time}</span>
+				<span class="imj_infodataValue">#{cc.attrs.bean.collection.versionDate.time}</span>
 			</ui:fragment>
 			<ui:fragment  rendered="#{cc.attrs.bean.collection.status == 'WITHDRAWN'}">
 				<span class="imj_infodataLabel">#{lbl.date_withdraw}</span>
