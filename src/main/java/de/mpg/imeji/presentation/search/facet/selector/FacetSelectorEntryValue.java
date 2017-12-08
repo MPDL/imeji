@@ -118,9 +118,12 @@ public class FacetSelectorEntryValue implements Serializable {
     if (facet.getIndex().equals(SearchFields.collection.getIndex())) {
       return resultValue.getLabel().split(" ", 2)[0];
     }
-    if (facet.getIndex().equals(SearchFields.license.getIndex())
-        && "Any".equalsIgnoreCase(resultValue.getLabel())) {
-      return "*";
+    if (facet.getIndex().equals(SearchFields.license.getIndex())) {
+      if ("Any".equalsIgnoreCase(resultValue.getLabel())) {
+        return "*";
+      } else {
+        return resultValue.getLabel();
+      }
     }
     return label;
   }

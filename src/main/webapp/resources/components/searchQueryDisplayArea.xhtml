@@ -35,12 +35,20 @@
 					</a>
 				</span>
 			</ui:fragment>
+			 <ui:repeat var="entry" value="#{SearchBreadcrumb.entries}" varStatus="varStatus">
+				<span class="imj_searchQueryText">
+					<span> #{entry.index} #{entry.operator} #{entry.value}</span>
+					<a style="font-size: 0.9em;"  href="#{HistorySession.currentPage.url}?q=#{cc.attrs.searchBean.query}&amp;fq=#{entry.removeQuery}"  onclick="startLoader();"><span class="fa fa-times"></span></a>
+				</span>	
+			</ui:repeat>
+			<ui:remove>
 			<ui:repeat var="entry" value="#{FacetSelectorBean.selectedValues}" varStatus="varStatus">
 				<span class="imj_searchQueryText">
 					<span>#{entry.index} = #{entry.label}</span>
 					<a style="font-size: 0.9em;"  href="#{entry.removeQuery}"  onclick="startLoader();"><span class="fa fa-times"></span></a>
 				</span>	
 			</ui:repeat>
+			</ui:remove>
 		</div>
 	</composite:implementation>
 </html>
