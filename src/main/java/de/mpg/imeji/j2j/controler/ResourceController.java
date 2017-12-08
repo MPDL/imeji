@@ -76,7 +76,7 @@ public class ResourceController {
   public Object read(Object o) throws NotFoundException {
     if (!java2rdf.exists(o)) {
       throw new NotFoundException(
-          "Resource " + J2JHelper.getId(o).getPath().replace("imeji/", "") + " not found!");
+          o + "Resource " + J2JHelper.getId(o).getPath().replace("imeji/", "") + " not found!");
     }
     o = rdf2Java.loadResource(o);
     return o;

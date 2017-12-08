@@ -88,7 +88,7 @@ public class SearchQueryParser {
   }
 
   public static SearchQuery parsedecoded(final String query) throws UnprocessableError {
-    return new SearchFactory().addElement(parseGroup(query), LOGICAL_RELATIONS.AND).build();
+    return new SearchQuery(parseGroup(query).getElements());
   }
 
   private static SearchGroup parseGroup(String group) throws UnprocessableError {

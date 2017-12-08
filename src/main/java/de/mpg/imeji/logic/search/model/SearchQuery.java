@@ -58,6 +58,19 @@ public class SearchQuery extends SearchElement {
     return q;
   }
 
+  /**
+   * True if the Search element is found in the search query.
+   * <li>Note: Only first level elements are found, i.e. a searchPair will not be found if included
+   * into a searchgroup
+   * 
+   * @param query
+   * @param element
+   * @return
+   */
+  boolean contains(SearchElement element) {
+    return elements.stream().anyMatch(e -> element.isSame(e));
+  }
+
   @Override
   public boolean isEmpty() {
     return super.isEmpty() && filterElements.isEmpty();

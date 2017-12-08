@@ -23,6 +23,7 @@ import com.hp.hpl.jena.tdb.TDB;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 /**
@@ -75,7 +76,7 @@ public class SPARQLEndpointServlet extends HttpServlet {
 
   private QueryExecution initQueryExecution(Query sparql, String model) {
     final String modelName = getModelName(model);
-    if (modelName != null) {
+    if (!StringHelper.isNullOrEmptyTrim(modelName)) {
       return QueryExecutionFactory.create(sparql, Imeji.dataset.getNamedModel(modelName));
     }
     return QueryExecutionFactory.create(sparql, Imeji.dataset);

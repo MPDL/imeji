@@ -263,27 +263,16 @@ public class JenaCustomQueries {
    *
    * @return
    */
-  public static final String selectGrantWithoutObjects() {
-    return X_PATH_FUNCTIONS_DECLARATION
-        + "  SELECT DISTINCT ?s WHERE {?s <http://imeji.org/terms/grantFor> ?for"
-        + " . not exists{?for ?p ?o} .filter (?for!= <http://imeji.org/> &&  ?for != <"
-        + Imeji.PROPERTIES.getBaseURI() + ">)}";
+  public static final String removeGrantWithoutObject() {
+    return X_PATH_FUNCTIONS_DECLARATION + "WITH <http://imeji.org/user> "
+        + "DELETE {?s <http://imeji.org/terms/grant> ?grant}"
+        + "USING <http://imeji.org/user> USING <http://imeji.org/collection>"
+        + "WHERE{?s <http://imeji.org/terms/grant> ?grant . "
+        + "FILTER(REGEX(str(?grant), \"/collection/\", \"i\")) . "
+        + "LET(?uri:=uri(replace(replace(replace(?grant, \"ADMIN,\",\"\"), \"READ,\",\"\"), \"EDIT,\",\"\"))) . "
+        + "NOT EXISTS{?uri a <http://imeji.org/terms/collection>}}";
   }
 
-  /**
-   * Remove Grant which don't have a grantfor
-   *
-   * @return
-   */
-  public static final String removeGrantWithoutObject() {
-    return "WITH <http://imeji.org/user> " + "DELETE {?s ?prop ?sub}"
-        + "USING <http://imeji.org/user> " + "USING <http://imeji.org/item> "
-        + "USING <http://imeji.org/collection> " + "USING <http://imeji.org/album> "
-        + "USING <http://imeji.org/metadataProfile> "
-        + " WHERE {?s <http://imeji.org/terms/grantFor> ?for"
-        + " . not exists{?for ?p ?o} .filter (?for!= <http://imeji.org/> &&  ?for != <"
-        + Imeji.PROPERTIES.getBaseURI() + ">) . ?s ?prop ?sub}";
-  }
 
   /**
    * Delete all grants granting for the given uri

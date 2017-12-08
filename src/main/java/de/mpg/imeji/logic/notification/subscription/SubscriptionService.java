@@ -86,8 +86,7 @@ public class SubscriptionService implements Serializable {
    */
   public List<Subscription> retrieveByType(Subscription.Type type, User user)
       throws ImejiException {
-    return retrieveAll(user).stream().filter(s -> s.getType() == type)
-        .collect(Collectors.toList());
+    return retrieveAll(user).stream().filter(s -> s.getType() == type).collect(Collectors.toList());
   }
 
   /**

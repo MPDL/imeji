@@ -22,6 +22,7 @@ import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties;
+import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.SearchIndexer;
@@ -250,6 +251,9 @@ public class ElasticIndexer implements SearchIndexer {
     }
     if (obj instanceof ContentVO) {
       return new ElasticContent((ContentVO) obj);
+    }
+    if (obj instanceof Subscription) {
+      return null;
     }
     return obj;
   }

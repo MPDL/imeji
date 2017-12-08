@@ -2,7 +2,6 @@ package de.mpg.imeji.presentation.search.facet.selector;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +10,6 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.SearchMetadataFields;
@@ -22,9 +20,9 @@ import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.presentation.navigation.history.HistoryPage;
 import de.mpg.imeji.util.DateHelper;
 
 /**
@@ -56,7 +54,6 @@ public class FacetSelectorEntry implements Serializable {
     if (count > 0) {
       this.from = values.get(0).getMin();
       this.to = values.get(0).getMax();
-
     }
   }
 
@@ -84,7 +81,6 @@ public class FacetSelectorEntry implements Serializable {
     }
   }
 
-
   private void cleanFileTypeFacet(Facet facet) {
     if (facet.getIndex().equals(SearchFields.filetype.getIndex())) {
       values = values.stream().filter(v -> v.getCount() > 0)
@@ -93,31 +89,25 @@ public class FacetSelectorEntry implements Serializable {
     }
   }
 
-  public void search(String url, String q) throws IOException {
+  public void search(HistoryPage page, String q) throws IOException {
     String fq = buildFromToQuery();
     if (fq != null) {
       FacesContext.getCurrentInstance().getExternalContext()
-          .redirect(url + "?q=" + q + "&fq=" + fq);
+          .redirect(page.setParamValue("fq", fq).getCompleteUrl());
     }
   }
 
   private String buildFromToQuery() {
     if (isValidInput()) {
-      try {
-        SearchMetadata sm = new SearchMetadata(getIndex(), getSearchMetadataFieldsForFacet(),
-            getIntervalSearchValue());
-        return SearchQueryParser
-            .transform2UTF8URL(new SearchFactory(facetsQuery).and(Arrays.asList(sm)).build());
-      } catch (UnprocessableError e) {
-        LOGGER.error("Error searching for interval", e);
-        return "";
-      }
+      FacetSelectorEntryValue selectorValue = values.get(0);
+      FacetResultValue resultValue = new FacetResultValue(facet.getName(), 0);
+      resultValue.setMax(to);
+      resultValue.setMin(from);
+      FacetSelectorEntryValue selectorValueNew = new FacetSelectorEntryValue(resultValue, facet,
+          new SearchFactory(facetsQuery).remove(selectorValue.getEntryQuery()).build());
+      return SearchQueryParser.transform2UTF8URL(selectorValueNew.getEntryQuery());
     }
     return null;
-  }
-
-  private String getIndex() {
-    return facet.getIndex().replace("md.", "").split("\\.")[0];
   }
 
   /**

@@ -1,4 +1,4 @@
-package de.mpg.imeji.presentation.filter;
+package de.mpg.imeji.presentation.search.filter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,6 @@
 package de.mpg.imeji.presentation.search.facet.selector;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +14,6 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -33,25 +31,25 @@ public class FacetSelectorBean extends SuperBean {
   private static final long serialVersionUID = 4953953758406265116L;
   private static final Logger LOGGER = Logger.getLogger(FacetSelectorBean.class);
   private List<FacetSelectorEntry> entries = new ArrayList<>();
-  private List<String> selectedValueQueries = new ArrayList<>();
   private SearchQuery facetQuery = new SearchQuery();
+  private SearchFactory factory;
 
   @PostConstruct
   private void init() {
     try {
       facetQuery = SearchQueryParser.parseStringQuery(UrlHelper.getParameterValue("fq"));
+      factory = new SearchFactory(facetQuery);
     } catch (Exception e) {
       LOGGER.error("Error parsing facet query " + UrlHelper.getParameterValue("fq"), e);
     }
   }
 
-  private void parseSelectedValueQueries() {
-    selectedValueQueries = facetQuery.getElements().stream()
-        .filter(e -> e.getType() != SEARCH_ELEMENTS.LOGICAL_RELATIONS)
-        .map(e -> SearchQueryParser.transform2UTF8URL(new SearchQuery(Arrays.asList(e))))
-        .collect(Collectors.toList());
-  }
-
+  /**
+   * Init the facet selector with a SearchResult
+   * 
+   * @param result
+   * @return
+   */
   public String init(SearchResult result) {
     if (result != null) {
       entries = result.getFacets().stream()
@@ -61,12 +59,16 @@ public class FacetSelectorBean extends SuperBean {
           .sorted(
               (f1, f2) -> Integer.compare(f1.getFacet().getPosition(), f2.getFacet().getPosition()))
           .collect(Collectors.toList());
-      parseSelectedValueQueries();
       setAddQuery();
       setRemoveQuery();
       setSelectedEntries();
     }
     return "";
+  }
+
+  public List<FacetSelectorEntryValue> getSelectedValues() {
+    return entries.stream().flatMap(e -> e.getValues().stream()).filter(v -> v.isSelected())
+        .collect(Collectors.toList());
   }
 
   /**
@@ -85,8 +87,11 @@ public class FacetSelectorBean extends SuperBean {
    */
   private String createAddQuery(FacetSelectorEntryValue entryValue) {
     try {
-      return SearchQueryParser.transform2UTF8URL(
-          new SearchFactory(facetQuery).and(entryValue.getEntryQuery().getElements()).build());
+      return getCurrentPage().copy()
+          .setParamValue("fq",
+              SearchQueryParser
+                  .transform2URL(factory.clone().and(entryValue.getEntryQuery()).build()))
+          .getCompleteUrl();
     } catch (UnprocessableError e) {
       LOGGER.error("Error building add query for facet " + entryValue.getLabel(), e);
       return "";
@@ -99,9 +104,21 @@ public class FacetSelectorBean extends SuperBean {
   }
 
   private String createRemoveQuery(FacetSelectorEntryValue entryValue) {
-    return selectedValueQueries.stream().sorted()
-        .filter(v -> !v.equals(SearchQueryParser.transform2UTF8URL(entryValue.getEntryQuery())))
-        .collect(Collectors.joining(" AND "));
+    // SearchFactory f = factory.clone();
+    // if (entryValue != null) {
+    // if (entryValue.getType().equals(StatementType.DATE.name()) && false) {
+    // for (SearchElement el : factory.getElementsWithIndex(entryValue.getIndex())) {
+    // f.remove(el);
+    // }
+    // } else {
+    // f.remove(entryValue.getEntryQuery());
+    // }
+    // }
+    return getCurrentPage().copy()
+        .setParamValue("fq",
+            SearchQueryParser
+                .transform2URL(factory.clone().remove(entryValue.getEntryQuery()).build()))
+        .getCompleteUrl();
   }
 
   /**
@@ -112,10 +129,8 @@ public class FacetSelectorBean extends SuperBean {
         .forEach(v -> v.setSelected(isSelected(v)));
   }
 
-
   private boolean isSelected(FacetSelectorEntryValue entryValue) {
-    return selectedValueQueries.stream()
-        .anyMatch(s -> s.equals(SearchQueryParser.transform2UTF8URL(entryValue.getEntryQuery())));
+    return factory.contains(entryValue.getEntryQuery());
   }
 
   /**

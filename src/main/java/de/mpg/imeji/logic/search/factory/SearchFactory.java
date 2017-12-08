@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.search.factory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.Search;
@@ -42,6 +43,10 @@ public class SearchFactory {
     this.query = new SearchQuery(query != null ? query.getElements() : new ArrayList<>());
   }
 
+  public SearchFactory clone() {
+    return new SearchFactory(query);
+  }
+
   public SearchFactory initQuery(SearchQuery query) {
     this.query = new SearchQuery(query != null ? query.getElements() : new ArrayList<>());
     return this;
@@ -71,7 +76,7 @@ public class SearchFactory {
    * @return
    */
   public SearchQuery build() {
-    return cleanQuery(query);
+    return query;
   }
 
   /**
@@ -98,9 +103,93 @@ public class SearchFactory {
       } else {
         cleaned.add(cleanElement(element));
       }
-
     }
     return cleaned;
+  }
+
+  /**
+   * Remove an element from the query.
+   * <li>Note: only the first level elements can be removed. (for example, a pair of a group can't
+   * be removed)
+   * 
+   * @param element
+   */
+  public SearchFactory remove(SearchElement element) {
+    List<SearchElement> elements = new ArrayList<>();
+    for (int i = 0; i < query.getElements().size(); i++) {
+      if (!query.getElements().get(i).isSame(element)) {
+        elements.add(query.getElements().get(i));
+      } else if (i > 0) {
+        elements.remove(elements.size() - 1);// remove Logical relation
+      }
+    }
+    if (elements.size() > 0 && elements.get(0).getType() == SEARCH_ELEMENTS.LOGICAL_RELATIONS) {
+      elements.remove(0);
+    }
+    query.setElements(elements);
+    return this;
+  }
+
+  /**
+   * Remove the query from the search factory
+   * 
+   * @param q
+   */
+  public SearchFactory remove(SearchQuery q) {
+    remove(toElement(q));
+    return this;
+  }
+
+  /**
+   * True if the query contains this element
+   * <li>Note: only the first level can be found. (for example, a pair of a group won't be found)
+   * 
+   * @param element
+   * @return
+   */
+  public boolean contains(SearchElement element) {
+    return query.getElements().stream().anyMatch(e -> e.isSame(element));
+  }
+
+  /**
+   * True if the query contains this query
+   * <li>Note: only the first level can be found. (for example, a pair of a group won't be found)
+   * 
+   * @param element
+   * @return
+   */
+  public boolean contains(SearchQuery q) {
+    return contains(toElement(q));
+  }
+
+  /**
+   * Return the Metadata Elements having this index
+   * 
+   * @param index
+   * @return
+   */
+  public List<SearchMetadata> getElementsWithIndex(String index) {
+    String mdIndex = index.replace("md.", "").split("\\.")[0];
+    return query.getElements().stream()
+        .filter(e -> e instanceof SearchMetadata && ((SearchMetadata) e).getIndex().equals(mdIndex))
+        .map(e -> (SearchMetadata) e).collect(Collectors.toList());
+  }
+
+  /**
+   * Return a searchquery as a searchpair or a searchgroup
+   * 
+   * @param q
+   * @return
+   */
+  private SearchElement toElement(SearchQuery q) {
+    if (q != null && q.getElements() != null && !q.getElements().isEmpty()) {
+      if (q.getElements().size() > 1) {
+        return new SearchFactory(q).buildAsGroup();
+      } else {
+        return q.getElements().get(0);
+      }
+    }
+    return q;
   }
 
   /**
@@ -117,8 +206,11 @@ public class SearchFactory {
   }
 
   public static void main(String[] args) throws UnprocessableError {
+    String q1 =
+        "(creator%3Dadmin%40imeji.org+OR+collaborator%3Dadmin%40imeji.org AND (md.album.text%3D1+Album+au+hasard) AND () OR (creator%3Dadmin%40imeji.org+OR+collaborator%3Dadmin%40imeji.org AND (md.album.text%3D1+Album+au+hasard AND ())))";
+    String q2 = "(creator%3Dadmin%40imeji.org+OR+collaborator%3Dadmin%40imeji.org)";
     String q = "((md.title.text%3DMes+premières+photos)+AND+md.album.text%3D1+Album+au+hasard)";
-    SearchQuery sq = SearchQueryParser.parseStringQuery(q);
+    SearchQuery sq = SearchQueryParser.parseStringQuery(q1);
     sq = new SearchFactory(sq).build();
     System.out.println(SearchQueryParser.transform2URL(sq));
   }
@@ -163,6 +255,18 @@ public class SearchFactory {
    */
   public SearchFactory and(SearchElement element) throws UnprocessableError {
     addElement(element, LOGICAL_RELATIONS.AND);
+    return this;
+  }
+
+  /**
+   * Add a search query to the current search query
+   * 
+   * @param q
+   * @return
+   * @throws UnprocessableError
+   */
+  public SearchFactory and(SearchQuery q) throws UnprocessableError {
+    addElement(toElement(q), LOGICAL_RELATIONS.AND);
     return this;
   }
 
@@ -235,7 +339,7 @@ public class SearchFactory {
    */
   public SearchFactory addElement(SearchElement element, LOGICAL_RELATIONS rel)
       throws UnprocessableError {
-    if (!element.isEmpty()) {
+    if (element != null && !element.isEmpty()) {
       query.addLogicalRelation(rel);
       if (element instanceof SearchPair) {
         query.addPair((SearchPair) element);

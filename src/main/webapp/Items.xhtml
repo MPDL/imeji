@@ -19,7 +19,6 @@
 	<ui:define name="searchQuery">
 		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}"
 			navBean="#{Navigation}"
-			rendered="#{paginatorListSessionBean.simpleQuery != '' or !paginatorListSessionBean.facetQuery.isEmpty()}"
 			label="#{lbl.search_for} #{lbl.items}" />
 	</ui:define>
 	<ui:define name="actionsMenu">

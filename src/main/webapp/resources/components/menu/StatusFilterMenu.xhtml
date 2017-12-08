@@ -14,7 +14,7 @@
 				<ul>
 					<ui:repeat var="entry" value="#{StatusFilterMenuBean.menu}" varStatus="fpos">
 						<li>
-							<span class="fa fa-check" style="#{StatusFilterMenuBean.selectedQuery == entry.value ? '' : 'visibility:hidden'}"/>
+							<span class="fa fa-check" style="#{StatusFilterMenuBean.selectedQueryLabel == entry.label ? '' : 'visibility:hidden'}"/>
 							<a href="#{entry.value}">#{entry.label}</a>			
 						</li>
 					</ui:repeat>

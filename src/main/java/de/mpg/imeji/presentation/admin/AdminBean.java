@@ -170,7 +170,7 @@ public class AdminBean extends SuperBean {
    */
   private void invokeCleanMethods() throws ImejiException {
     cleanGrants();
-    cleanContent();
+    // cleanContent();
   }
 
   private void cleanContent() {
@@ -185,40 +185,12 @@ public class AdminBean extends SuperBean {
    * @
    */
   private void cleanGrants() {
-    if (clean) {
-      ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutObject());
-      ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutUser());
-      ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantEmtpy());
-    }
-    LOGGER.info("Searching for problematic grants...");
-    final Search search = SearchFactory.create();
-    List<String> uris = search
-        .searchString(JenaCustomQueries.selectGrantWithoutUser(), null, null, 0, -1).getResults();
-    cleanDatabaseReport += "Grants without users: " + uris.size() + " found  <br/>";
-    uris = search.searchString(JenaCustomQueries.selectGrantWithoutObjects(), null, null, 0, -1)
-        .getResults();
-    cleanDatabaseReport += "Grants on non existing objects: " + uris.size() + " found <br/>";
-    uris =
-        search.searchString(JenaCustomQueries.selectGrantEmtpy(), null, null, 0, -1).getResults();
-    cleanDatabaseReport += "Empty Grants: " + uris.size() + " found  <br/>";
-    LOGGER.info("...done");
+    LOGGER.info("Cleaning grants...");
+    System.out.println(JenaCustomQueries.removeGrantWithoutObject());
+    ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutObject());
+    LOGGER.info("...done!");
   }
 
-  /**
-   * Remove Exception a {@link List} of {@link Resource}
-   *
-   * @param uris
-   * @param modelName
-   * @throws ImejiException
-   * @throws IllegalAccessException
-   * @throws InstantiationException @
-   */
-  private synchronized void removeResources(List<String> uris, String modelName, Object obj)
-      throws ImejiException {
-    if (clean) {
-      removeObjects(loadResourcesAsObjects(uris, modelName, obj), modelName);
-    }
-  }
 
   /**
    * Load the {@link Resource} as {@link Object}

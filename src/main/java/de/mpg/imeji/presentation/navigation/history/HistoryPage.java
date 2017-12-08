@@ -55,7 +55,6 @@ public class HistoryPage implements Serializable {
     return new HistoryPage(new String(url), new HashMap<>(params), new String(title), imejiPage);
   }
 
-
   /**
    * Compares 2 {@link HistoryPage}
    *
@@ -92,9 +91,10 @@ public class HistoryPage implements Serializable {
    * @param param
    * @param value
    */
-  public void setParamValue(String param, String value) {
+  public HistoryPage setParamValue(String param, String value) {
     final String[] valueArray = {value};
     params.put(param, valueArray);
+    return this;
   }
 
   public int getPos() {

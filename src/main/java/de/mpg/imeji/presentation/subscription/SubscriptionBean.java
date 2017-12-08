@@ -84,8 +84,9 @@ public class SubscriptionBean extends SuperBean {
    * @throws ImejiException
    */
   private void initGroups(List<CollectionImeji> collections) throws ImejiException {
-    groups = collections.stream().map(c -> new SubscriptionGroup(c, user)).peek(g -> g.init())
-        .filter(g -> filterSubscriptionGroup(g)).collect(Collectors.toList());
+    groups = collections.stream()
+        .map(c -> new SubscriptionGroup(c, user == null ? getSessionUser() : user))
+        .peek(g -> g.init()).filter(g -> filterSubscriptionGroup(g)).collect(Collectors.toList());
   }
 
   /**
@@ -133,19 +134,22 @@ public class SubscriptionBean extends SuperBean {
    */
   private List<CollectionImeji> retrieveCollections() throws ImejiException {
     final String colId = UrlHelper.getParameterValue("c");
-    if (StringHelper.isNullOrEmptyTrim(colId)) {
+    if (user != null) {
       if (showAllCollections) {
-        return collectionService.searchAndRetrieve(null, null,
-            user != null ? user : getSessionUser(), -1, 0);
+        return collectionService.searchAndRetrieve(null, null, user, -1, 0);
       } else {
         return collectionService.retrieve(retrieveUserSubscriptions().stream()
             .map(s -> ObjectHelper.getURI(CollectionImeji.class, s.getObjectId()).toString())
             .collect(Collectors.toList()), Imeji.adminUser);
       }
-    } else {
+    } else if (!StringHelper.isNullOrEmptyTrim(colId)) {
       return Arrays
           .asList(collectionService.retrieve(ObjectHelper.getURI(CollectionImeji.class, colId),
               user != null ? user : getSessionUser()));
+    } else {
+      return collectionService.retrieve(retrieveAllSubscriptions().stream()
+          .map(s -> ObjectHelper.getURI(CollectionImeji.class, s.getObjectId()).toString())
+          .collect(Collectors.toList()), Imeji.adminUser);
     }
   }
 
@@ -157,6 +161,10 @@ public class SubscriptionBean extends SuperBean {
    */
   private List<Subscription> retrieveUserSubscriptions() throws ImejiException {
     return new SubscriptionService().retrieveByUserId(user.getId().toString(), user);
+  }
+
+  private List<Subscription> retrieveAllSubscriptions() throws ImejiException {
+    return new SubscriptionService().retrieveAll(getSessionUser());
   }
 
   /**

@@ -29,17 +29,20 @@ public class SubscriptionGroup implements Serializable {
   private Map<String, User> subscribedUserMap = new HashMap<>();
   private final CollectionImeji collection;
   private final User user;
+  private final User sessionUser;
   private final boolean active;
 
   public SubscriptionGroup(CollectionImeji collection, User user) {
     this.collection = collection;
     this.user = user;
+    this.sessionUser = null;
     active = SecurityUtil.authorization().read(user, collection);
   }
 
   public SubscriptionGroup(CollectionImeji collection, User user, User sessionUser) {
     this.collection = collection;
     this.user = user;
+    this.sessionUser = sessionUser;
     active = SecurityUtil.authorization().read(user, collection);
   }
 
@@ -104,7 +107,8 @@ public class SubscriptionGroup implements Serializable {
    */
   public List<Subscription> retrieveSubscriptions() {
     try {
-      return new SubscriptionService().retrieveByObjectId(getObjectId(), user);
+      return new SubscriptionService().retrieveByObjectId(getObjectId(),
+          user == null ? sessionUser : user);
     } catch (ImejiException e) {
       e.printStackTrace();
       return new ArrayList<>();

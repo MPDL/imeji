@@ -163,7 +163,6 @@ public class ElasticAggregationFactory {
     FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
         QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
     fb.subAggregation(AggregationBuilders.stats(facet.getIndex()).field(getMetadataField(facet)));
-
     return fb;
   }
 

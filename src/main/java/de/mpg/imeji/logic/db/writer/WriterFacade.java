@@ -169,8 +169,6 @@ public class WriterFacade {
     throwAuthorizationException(user != null,
         SecurityUtil.authorization().administrate(user, Imeji.PROPERTIES.getBaseURI()),
         "Only admin ca use update wihout validation");
-    // writer.update(objects, user);
-    // indexer.updateIndexBatch(objects);
     try {
       Future<Integer> updateTask = executor.submit(new UpdateTask(objects, user));
       Future<Integer> indexTask = executor.submit(new IndexTask(objects));

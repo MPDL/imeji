@@ -3,6 +3,7 @@ package de.mpg.imeji.presentation.search.facet.selector;
 import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS.AND;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -29,31 +30,54 @@ import de.mpg.imeji.util.DateFormatter;
 public class FacetSelectorEntryValue implements Serializable {
   private static final long serialVersionUID = -5562614379983226471L;
   private static final Logger LOGGER = Logger.getLogger(FacetSelectorEntryValue.class);
-  private final String label;
-  private final String index;
-  private final long count;
-  private final String type;
+  private String label;
+  private String index;
+  private long count;
+  private String type;
   private String addQuery;
   private String removeQuery;
   private SearchQuery entryQuery;
   private boolean selected = false;
-  private final String max;
-  private final String min;
+  private String max;
+  private String min;
 
 
   public FacetSelectorEntryValue(FacetResultValue resultValue, Facet facet,
       SearchQuery facetsQuery) {
-    this.label = readLabel(resultValue, facet);
-    this.count = resultValue.getCount();
     this.index = facet.getIndex();
     this.type = facet.getType();
+    this.count = resultValue.getCount();
+    if (facet.getType().equals(StatementType.DATE.name())
+        || facet.getType().equals(StatementType.NUMBER.name())) {
+      initRangeEntry(resultValue, facet, facetsQuery);
+    } else {
+      initEntry(resultValue, facet, facetsQuery);
+    }
+  }
+
+  private void initEntry(FacetResultValue resultValue, Facet facet, SearchQuery facetsQuery) {
+    this.label = readLabel(resultValue, facet);
+    this.entryQuery = buildEntryQuery(facet, toQueryValue(resultValue, facet, facetsQuery));
+  }
+
+  private void initRangeEntry(FacetResultValue resultValue, Facet facet, SearchQuery facetsQuery) {
+    this.label = readQueryValue(facet, facetsQuery);
     this.min = facet.getType().equals(StatementType.DATE.name())
         ? DateFormatter.format(resultValue.getMin()) : resultValue.getMin();
     this.max = facet.getType().equals(StatementType.DATE.name())
         ? DateFormatter.format(resultValue.getMax()) : resultValue.getMax();
-    this.entryQuery = buildEntryQuery(facet, readQueryValue(resultValue, facet));
+    if (label == null) {
+      this.label = "from " + min + " to " + max;
+    }
+    this.entryQuery = buildMetadataQuery(facet, label);
   }
 
+  /**
+   * 
+   * @param resultValue
+   * @param facet
+   * @return
+   */
   private String readLabel(FacetResultValue resultValue, Facet facet) {
     if (facet.getIndex().equals(SearchFields.collection.getIndex())) {
       return resultValue.getLabel().split(" ", 2)[1];
@@ -65,7 +89,32 @@ public class FacetSelectorEntryValue implements Serializable {
     return resultValue.getLabel();
   }
 
-  private String readQueryValue(FacetResultValue resultValue, Facet facet) {
+  /**
+   * Read the value of the facet according to the query (and not from the facet result value)
+   * 
+   * @param resultValue
+   * @param facet
+   * @param facetsQuery
+   * @return
+   */
+  private String readQueryValue(Facet facet, SearchQuery facetsQuery) {
+    String index = facet.getIndex().replace("md.", "").split("\\.")[0];
+    List<SearchMetadata> mds = new SearchFactory(facetsQuery).getElementsWithIndex(index);
+    if (mds.size() > 0) {
+      return mds.get(0).getValue();
+    }
+    return null;
+  }
+
+  /**
+   * TRansforma the value from the facetResultvalue to a searchquery value
+   * 
+   * @param resultValue
+   * @param facet
+   * @param facetsQuery
+   * @return
+   */
+  private String toQueryValue(FacetResultValue resultValue, Facet facet, SearchQuery facetsQuery) {
     if (facet.getIndex().equals(SearchFields.collection.getIndex())) {
       return resultValue.getLabel().split(" ", 2)[0];
     }
@@ -73,7 +122,7 @@ public class FacetSelectorEntryValue implements Serializable {
         && "Any".equalsIgnoreCase(resultValue.getLabel())) {
       return "*";
     }
-    return resultValue.getLabel();
+    return label;
   }
 
   private SearchQuery buildEntryQuery(Facet facet, String value) {
@@ -82,7 +131,6 @@ public class FacetSelectorEntryValue implements Serializable {
       value = "\"" + value + "\"";
     }
     return isMetadataFacet ? buildMetadataQuery(facet, value) : buildSystemQuery(facet, value);
-
   }
 
   /**
@@ -98,7 +146,7 @@ public class FacetSelectorEntryValue implements Serializable {
         case TEXT:
           return buildMetadataTextQuery(facet, value);
         case NUMBER:
-          return new SearchQuery();
+          return buildMetadataNumberQuery(facet, value);
         case DATE:
           return buildMetadataDateQuery(facet, value);
         case PERSON:
@@ -121,16 +169,18 @@ public class FacetSelectorEntryValue implements Serializable {
   }
 
   private SearchQuery buildMetadataDateQuery(Facet facet, String value) throws UnprocessableError {
-    String dateValue = value.replace("Before", "").replace("After", "").trim();
-    SearchOperators operator = SearchOperators.EQUALS;
-    if (value.contains("Before")) {
-      operator = SearchOperators.LESSER;
-    } else if (value.contains("After")) {
-      operator = SearchOperators.GREATER;
-    }
-    SearchMetadata smd = new SearchMetadata(facet.getIndex().replace("md.", ""),
-        SearchMetadataFields.date, operator, dateValue, false);
-    return new SearchFactory().addElement(smd, AND).build();
+    String mdIndex = facet.getIndex().replace("md.", "").split("\\.")[0];
+    SearchMetadata smd = new SearchMetadata(mdIndex, SearchMetadataFields.date,
+        SearchOperators.EQUALS, value, false);
+    return new SearchFactory().and(smd).build();
+  }
+
+  private SearchQuery buildMetadataNumberQuery(Facet facet, String value)
+      throws UnprocessableError {
+    String mdIndex = facet.getIndex().replace("md.", "").split("\\.")[0];
+    SearchMetadata smd = new SearchMetadata(mdIndex, SearchMetadataFields.number,
+        SearchOperators.EQUALS, value, false);
+    return new SearchFactory().and(smd).build();
   }
 
   /**

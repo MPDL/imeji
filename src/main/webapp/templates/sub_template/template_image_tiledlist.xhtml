@@ -10,8 +10,12 @@
                 xmlns:collection="http://java.sun.com/jsf/composite/components/collection">
 
     <!-- Main Content - Image tiled list - START -->
+    <ui:define name="init">
+    	#{FacetSelectorBean.init(paginatorListSessionBean.searchResult)}
+    </ui:define>
     <ui:define name="mainContent">
     	<ui:insert name="collectionAbout"/>
+    	
         <h:panelGroup layout="block" id="ajaxWrapper">
             <!-- Selection Info Panel -->
 			<div class="itemsArea">

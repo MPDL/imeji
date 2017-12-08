@@ -2,6 +2,7 @@ package de.mpg.imeji.logic.search.elasticsearch.factory;
 
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,7 +70,8 @@ public class ElasticQueryFactory {
         buildContainerFilter(folderUri, query == null || query.isEmpty(), types);
     final QueryBuilder securityQuery = buildSecurityQuery(user, folderUri, types);
     final QueryBuilder statusQuery = buildStatusQuery(query, user);
-    final QueryBuilder filterQuery = buildSearchQuery(query.getFilterElements(), user);
+    final QueryBuilder filterQuery =
+        buildSearchQuery(query != null ? query.getFilterElements() : new ArrayList<>(), user);
     if (!isMatchAll(searchQuery)) {
       q.must(searchQuery);
     }
