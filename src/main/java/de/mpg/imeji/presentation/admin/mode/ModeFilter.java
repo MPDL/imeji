@@ -93,7 +93,8 @@ public class ModeFilter implements Filter {
     final String path = PrettyContext.getCurrentInstance(request).getRequestURL().toURL();
     return Navigation.HELP.hasSamePath(path) || Navigation.HOME.hasSamePath(path)
         || Navigation.REGISTRATION.hasSamePath(path) || Navigation.IMPRINT.hasSamePath(path)
-        || Navigation.TERMS_OF_USE.hasSamePath(path) || Navigation.LOGIN.hasSamePath(path);
+        || Navigation.TERMS_OF_USE.hasSamePath(path) || Navigation.LOGIN.hasSamePath(path)
+        || Navigation.PASSWORD_RESET.hasSamePath(path);
   }
 
   /**
