@@ -65,6 +65,9 @@ public class LoginBean extends SuperBean {
       if (UrlHelper.getParameterValue("redirect") != null) {
         this.redirect = URLDecoder.decode(UrlHelper.getParameterValue("redirect"), "UTF-8");
       }
+      if (getSessionUser() != null) {
+        redirect(redirect != null ? redirect : getNavigation().getHomeUrl());
+      }
     } catch (final Exception e) {
       LOGGER.error("Error initializing LoginBean", e);
     }

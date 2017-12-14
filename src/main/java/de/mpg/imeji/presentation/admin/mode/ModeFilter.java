@@ -48,9 +48,6 @@ public class ModeFilter implements Filter {
       if (isPrivate((HttpServletRequest) request)) {
         redirectToLogin(request, resp);
         return;
-      } else if (isRedirected((HttpServletRequest) request)) {
-        // redirect(request, resp);
-        return;
       }
     }
     chain.doFilter(request, resp);
