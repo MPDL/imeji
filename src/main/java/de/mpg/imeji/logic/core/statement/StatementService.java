@@ -162,16 +162,20 @@ public class StatementService extends SearchServiceAbstract<Statement> {
    * @throws ImejiException
    */
   public Statement update(Statement before, Statement after, User user) throws ImejiException {
-    if (before.getUri().equals(after.getUri())) {
-      return controller.update(after, user);
-    } else {
-      after = controller.create(after, user);
-      controller.delete(before, user);
+    try {
+      if (before.getUri().equals(after.getUri())) {
+        return controller.update(after, user);
+      } else {
+        after = controller.create(after, user);
+        controller.delete(before, user);
+        return after;
+      }
+    } finally {
       changeDefaultStatement(before, after);
       messageService
           .add(new StatementMessage(MessageType.STATEMENT_CHANGED, after, before.getIndex()));
-      return after;
     }
+
   }
 
   /**

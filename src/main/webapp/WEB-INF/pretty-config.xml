@@ -74,6 +74,10 @@
 		<pattern value="/statement/#{ statementId }/edit" />
 		<view-id>/jsf/StatementEdit.xhtml</view-id>
 	</url-mapping>
+	<url-mapping id="editStatement">
+		<pattern value="/statement/edit" />
+		<view-id>/jsf/StatementEdit.xhtml</view-id>
+	</url-mapping>
 	<url-mapping id="statements">
 		<pattern value="/statements" />
 		<view-id>/jsf/Statements.xhtml</view-id>
