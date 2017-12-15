@@ -14,10 +14,10 @@
 					<h:form id="f">
 						<ui:repeat id="i" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">
 							<li>
-								<div class="#{item.selected ? 'imj_selected'  : ''} thumb" >
+								<div class="#{item.selected ? 'imj_selected '  : ''}thumb" >
 									<ui:fragment rendered="#{!item.isCollection()}">
 										<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;fq=#{cc.attrs.picList.facetQueryString}&amp;pos=#{cc.attrs.picList.offset + index.index}#pageTitle">
-											<img data-src="#{item.link}" alt="#{item.caption}"/>											
+											<img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="#{item.link}" alt="#{item.caption}"/>
 										</a>
 									</ui:fragment>
 									<ui:fragment rendered="#{item.isCollection()}">
@@ -25,11 +25,11 @@
 											<img  data-src="../resources/icon/folder.png" alt="#{item.caption}"/>
 										</a>
 									</ui:fragment>
-									<span class="imj_optionSet">
+									<span>
 										<h:selectBooleanCheckbox id="sel" rendered="#{item.status != 'WITHDRAWN' and !item.isCollection()}" styleClass="imj_optionCheckbox"  value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
 											<f:ajax event="change" execute="@this" render=":actions"/>
 										</h:selectBooleanCheckbox>
-										<label for="sel" class="imj_optionLabel">
+										<label for="sel" class="#{item.isCollection() ? 'folder' : ''}">
 											#{item.caption}
 										</label>
 									</span>
