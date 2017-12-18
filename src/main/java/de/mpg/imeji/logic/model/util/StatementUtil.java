@@ -67,7 +67,8 @@ public class StatementUtil {
    * @return
    */
   public static String formatIndex(String index) {
-    return index != null ? new String(index.trim().replace(" ", "_").toLowerCase()) : "";
+    return index != null
+        ? new String(index.trim().replace(" ", "_").replaceAll("[^\\w]", "").toLowerCase()) : "";
   }
 
   /**

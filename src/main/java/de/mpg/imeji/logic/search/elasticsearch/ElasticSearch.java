@@ -115,6 +115,7 @@ public class ElasticSearch implements Search {
     }
 
     final SearchResponse resp = request.execute().actionGet();
+
     return toSearchResult(resp, query);
   }
 
