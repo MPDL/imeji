@@ -399,13 +399,6 @@ public class InternalStorageManager implements Serializable {
         final String calculatedExtension = guessExtension(file);
         File fullResolution = generatorManager.generateFullResolution(file, calculatedExtension);
         write(fullResolution, transformUrlToPath(item.getFullUrl()));
-        // if (fullResolution != null) {
-        // write(fullResolution, transformUrlToPath(item.getFullUrl()));
-        // } else {
-        // fullResolution = file;
-        // copy(file, transformUrlToPath(item.getFullUrl()));
-        // }
-
         // Generate and write Web resolution
         write(generatorManager.generateWebResolution(fullResolution, calculatedExtension),
             transformUrlToPath(item.getWebUrl()));

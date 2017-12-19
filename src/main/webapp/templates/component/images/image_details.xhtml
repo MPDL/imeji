@@ -11,9 +11,9 @@
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block"  styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
 		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
-			<h:form id="rot">
-				<h:inputHidden id="inputTextRotation" value="#{itemBean.rotation}" />
-				<h:commandButton id="buttonUpdateRotation" value="update rotation hidden"  action="#{itemBean.updateRotation}" styleClass="imj_noDisplay">
+			<h:form id="rf">
+				<h:inputHidden id="rotation" value="#{itemBean.rotation}" />
+				<h:commandButton id="rotate" value="update rotation hidden"  action="#{itemBean.updateRotation}" styleClass="imj_noDisplay">
 					<f:ajax render="@none" execute="@form"/>
 				</h:commandButton>
 			</h:form>
@@ -21,18 +21,18 @@
 				<center>
 					<div id="seaDragonsButtons" style="position: initial;">
 						<link rel="stylesheet" type="text/css" href="#{Navigation.applicationUrl}resources/css/font-awesome/css/font-awesome.min.css"/>
-						<a id="fullscreenButton" >
-							<span class="fa fa-search-plus hideFullScreen" onclick="openViewer();"/>
-							<span class="fa fa-times showFullScreen"  onclick="closeViewer(); "/>
+						<a id="fullscreenButton">
+							<span class="fa fa-search-plus hideFullScreen"/>
+							<span class="fa fa-times showFullScreen"/>
 						</a>
 						<a id="zoominButton" class="fa fa-search-plus imj_mediaEditPanelItem showFullScreen" />
 						<a id="zoomoutButton" class="fa fa-search-minus imj_mediaEditPanelItem showFullScreen"/>
-						<a id="homeButton" class="fa fa-home imj_mediaEditPanelItem showFullScreen" />
-						<a id="rotateLeftButton" class="fa fa-rotate-left imj_mediaEditPanelItem hideFullScreen" />
-						<a id="rotateRightButton" class="fa fa-rotate-right imj_mediaEditPanelItem hideFullScreen" />
+						<a id="homeButton" class="fa fa-home imj_mediaEditPanelItem showFullScreen"/>
+						<a id="rotateLeftButton" class="fa fa-rotate-left imj_mediaEditPanelItem hideFullScreen"/>
+						<a id="rotateRightButton" class="fa fa-rotate-right imj_mediaEditPanelItem hideFullScreen"/>
 					</div>
 					<div id="seadragon-viewer-full" style="height:#{itemBean.viewerHeight}px;/*height:#{itemBean.webResolutionMaxLength}px;*/" >			
-						<img style="display: block !important;" id="picWebResolutionAlt" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" src="#{itemBean.preview}" />
+						<img id="picWebResolutionAlt" title="#{itemBean.image.filename}" data-src="#{itemBean.preview}" />
 					</div>	
 				</center>
 			</ui:fragment>

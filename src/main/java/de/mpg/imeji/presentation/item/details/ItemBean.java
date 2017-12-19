@@ -59,9 +59,9 @@ import de.mpg.imeji.presentation.session.SessionObjectsController;
 public class ItemBean extends SuperBean {
   private static final long serialVersionUID = -4957755233785015759L;
   static final Logger LOGGER = Logger.getLogger(ItemBean.class);
-  Item item;
-  ContentVO content;
-  String id;
+  private Item item;
+  private ContentVO content;
+  private String id;
   private boolean selected;
   private CollectionImeji collection;
   protected String prettyLink;
@@ -92,6 +92,9 @@ public class ItemBean extends SuperBean {
   }
 
   public void preRenderView() throws IOException {
+    if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
+      return; // Skip ajax requests.
+    }
     id = UrlHelper.getParameterValue("id");
     try {
       loadItem();
@@ -550,6 +553,22 @@ public class ItemBean extends SuperBean {
     }
   }
 
+  /**
+   * Rotate the files to the degrees
+   * 
+   * @param degrees
+   * @throws IOException
+   * @throws Exception
+   */
+  public void rotate(int degrees) throws IOException, Exception {
+    new StorageController().rotate(getContent().getFull(), degrees);
+    long width = getContent().getWidth();
+    getContent().setWidth(getContent().getHeight());
+    getContent().setHeight(width);
+    showTechnicalMetadata();
+    setContent(new ContentService().update(getContent()));
+  }
+
   private class RotationJob implements Callable<Integer> {
     int degrees;
 
@@ -559,13 +578,7 @@ public class ItemBean extends SuperBean {
 
     @Override
     public Integer call() throws Exception {
-      StorageController storageController = new StorageController();
-      storageController.rotate(getContent().getFull(), degrees);
-
-      long width = getContent().getWidth();
-      getContent().setWidth(getContent().getHeight());
-      getContent().setHeight(width);
-      setContent(new ContentService().update(getContent()));
+      rotate(degrees);
       return 1;
     }
   }

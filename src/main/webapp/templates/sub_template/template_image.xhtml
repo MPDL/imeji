@@ -56,12 +56,14 @@
 				var viewerFull;
 				function closeViewer(){
 				};
-				function openViewer(){
+				$( document ).ready(function() {
+					 initViewer();
+				});
+				function initViewer(){
 					var imgFull = {
 						type: 'image',
 						url: '#{itemBean.fullResolution}',
 					};
-					document.getElementById("picWebResolutionAlt").style.display='none';
 					viewerFull = OpenSeadragon({
 			        		id: "seadragon-viewer-full",
 			        		tileSources: imgFull,
@@ -91,7 +93,7 @@
 			        			pinchRotate: false
 			        		}
 						});
-						viewerFull.setFullScreen(true);
+						
 						viewerFull.addHandler("full-screen",function(data){
 			   				if(data.fullScreen) {
 			   					viewerFull.gestureSettingsMouse.scrollToZoom = true;
@@ -104,13 +106,12 @@
 			   				viewerFull.viewport.goHome(true);
 			   			});
 						viewerFull.addHandler('rotate',function(){
-							 document.getElementById("rotationForm:inputTextRotation").value= viewerFull.viewport.getRotation();
-							 document.getElementById("rotationForm:buttonUpdateRotation").click();
+							 document.getElementById("rf:rotation").value= viewerFull.viewport.getRotation();
+							 document.getElementById("rf:rotate").click();
 			       		});
 			   			viewerFull.addHandler("open-failed",function(){
-			   				useAlternatePicture();
 			   			});
-				}
+				};
 			</script>
 		</ui:fragment>	 
 	</ui:define>

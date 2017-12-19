@@ -454,10 +454,9 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @return
    */
   private Map<String, String> createMessageContent(Item item) {
-    return ImmutableMap.of(SubscriptionsAggregation.COUNT, "1",
-        SubscriptionsAggregation.FILENAME,
-        item.getFilename() != null ? item.getFilename() : "",
-        SubscriptionsAggregation.ITEM_ID, item.getIdString());
+    return ImmutableMap.of(SubscriptionsAggregation.COUNT, "1", SubscriptionsAggregation.FILENAME,
+        item.getFilename() != null ? item.getFilename() : "", SubscriptionsAggregation.ITEM_ID,
+        item.getIdString());
   }
 
 }

@@ -1,14 +1,18 @@
 package de.mpg.imeji.logic.storage.impl;
 
+import static de.mpg.imeji.logic.util.StorageUtils.guessExtension;
+
 import java.awt.Dimension;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -165,23 +169,29 @@ public class InternalStorage implements Storage {
 
   @Override
   public void rotate(String fullUrl, int degrees) throws IOException, Exception {
-    String thumbnailUrl = getThumbnailUrl(fullUrl);
-    String webUrl = getWebResolutionUrl(fullUrl);
-    File thumbnail = read(thumbnailUrl);
-    File web = read(webUrl);
-    File full = read(fullUrl);
-
+    final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
+    final File original = read(getOriginalResolutionUrl(fullUrl));
+    final String calculatedExtension = guessExtension(original);
+    File full = generatorManager.generateFullResolution(original, calculatedExtension);
+    Properties p = getProperties(fullUrl);
+    int orientiation = Integer.parseInt(p.getProperty("orientation", "0"));
+    orientiation = addAngle(orientiation, degrees);
     if (ImageMagickUtils.jpegtranEnabled) {
-      ImageMagickUtils.rotateJPEG(thumbnail, degrees);
-      ImageMagickUtils.rotateJPEG(web, degrees);
+      ImageMagickUtils.rotateJPEG(read(getThumbnailUrl(fullUrl)), degrees);
+      ImageMagickUtils.rotateJPEG(read(getWebResolutionUrl(fullUrl)), degrees);
       ImageMagickUtils.rotateJPEG(full, degrees);
     } else {
-      ImageUtils.rotate(full, degrees);
-      web = ImageUtils.resizeJPEG(full, FileResolution.WEB);
-      thumbnail = ImageUtils.resizeJPEG(full, FileResolution.THUMBNAIL);
-      update(webUrl, web);
-      update(thumbnailUrl, thumbnail);
+      ImageUtils.rotate(full, orientiation);
+      update(fullUrl, full);
+      update(getWebResolutionUrl(fullUrl), ImageUtils.resizeJPEG(full, FileResolution.WEB));
+      update(getThumbnailUrl(fullUrl), ImageUtils.resizeJPEG(full, FileResolution.THUMBNAIL));
     }
+    p.put("orientation", Integer.toString(orientiation));
+    saveProperties(fullUrl, p);
+  }
+
+  private int addAngle(int angle1, int angle2) {
+    return (angle1 + angle2) % 360;
   }
 
   /**
@@ -252,12 +262,43 @@ public class InternalStorage implements Storage {
     return manager.getStorageId(url);
   }
 
-  private String getThumbnailUrl(String originalUrl) {
-    return originalUrl.replace("/full/", "/thumbnail/");
+  private String getThumbnailUrl(String fullUrl) {
+    return fullUrl.replace("/full/", "/thumbnail/");
   }
 
-  private String getWebResolutionUrl(String originalUrl) {
-    return originalUrl.replace("/full/", "/web/");
+  private String getWebResolutionUrl(String fullUrl) {
+    return fullUrl.replace("/full/", "/web/");
+  }
+
+  private String getOriginalResolutionUrl(String fullUrl) {
+    return fullUrl.replace("/full/", "/original/");
+  }
+
+
+  /**
+   * Get the properties of the file
+   * 
+   * @param fullUrl
+   * @return
+   * @throws IOException
+   */
+  private Properties getProperties(String fullUrl) throws IOException {
+    Properties p = new Properties();
+    p.load(new FileInputStream(getPropertiesFile(fullUrl)));
+    return p;
+  }
+
+  private void saveProperties(String fullUrl, Properties p) throws IOException {
+    p.store(new FileOutputStream(getPropertiesFile(fullUrl)), "");
+  }
+
+  private File getPropertiesFile(String fullUrl) throws IOException {
+    String path = manager.getDirectory(fullUrl).getParent() + "\\file.properties";
+    File f = new File(path);
+    if (!f.exists()) {
+      f.createNewFile();
+    }
+    return f;
   }
 
   @Override
