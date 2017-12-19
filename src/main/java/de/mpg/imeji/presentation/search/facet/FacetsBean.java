@@ -1,5 +1,6 @@
 package de.mpg.imeji.presentation.search.facet;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,8 +59,8 @@ public class FacetsBean extends SuperBean {
       Facet f = facetService.retrieveByIndexFromCache(index);
       facetService.delete(f, getSessionUser());
       BeanHelper.info("Facet " + f.getName() + " successfully deleted");
-      facets = facetService.retrieveAll();
-    } catch (ImejiException e) {
+      reload();
+    } catch (ImejiException | IOException e) {
       BeanHelper.error("Error deleting facet: " + e.getMessage());
       LOGGER.error("Error deleting facet: ", e);
     }
