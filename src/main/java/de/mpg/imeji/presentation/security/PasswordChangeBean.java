@@ -32,7 +32,7 @@ public class PasswordChangeBean extends SuperBean {
   private boolean resetFinished;
   private final PasswordResetController passwordresetService = new PasswordResetController();
   private String from;
-
+  private User user;
   @ManagedProperty(value = "#{SessionBean}")
   private SessionBean sessionBean;
 
@@ -42,6 +42,7 @@ public class PasswordChangeBean extends SuperBean {
     repeatedPassword = null;
     resetFinished = false;
     from = UrlHelper.getParameterValue("from");
+    user = retrieveUser();
   }
 
   /**
@@ -88,9 +89,8 @@ public class PasswordChangeBean extends SuperBean {
       reloadPage();
       return;
     }
-    User user;
-    if (getSessionUser() != null) {
-      user = passwordresetService.resetPassword(getSessionUser(), newPassword);
+    if (user != null) {
+      user = passwordresetService.resetPassword(user, newPassword);
     } else {
       if (!passwordresetService.isValidToken(token)) {
         BeanHelper
@@ -107,6 +107,24 @@ public class PasswordChangeBean extends SuperBean {
     resetFinished = true;
     redirect(
         StringHelper.isNullOrEmptyTrim(getBackUrl()) ? getNavigation().getHomeUrl() : getBackUrl());
+  }
+
+  /**
+   * Retrieve the user for which the user will be changed
+   * 
+   * @return
+   * @throws ImejiException
+   */
+  private User retrieveUser() {
+    if (!StringHelper.isNullOrEmptyTrim(UrlHelper.getParameterValue("email"))) {
+      try {
+        return new UserService().retrieve(UrlHelper.getParameterValue("email"), getSessionUser());
+      } catch (ImejiException e) {
+        return null;
+      }
+    } else {
+      return getSessionUser();
+    }
   }
 
 

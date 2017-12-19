@@ -18,7 +18,7 @@
 		<a href="#{Navigation.applicationUrl}subscriptions?email=#{UserBean.user.email}">
 			<span class="fa fa-envelope"/>#{lbl.manage_subscriptions} 
 		</a>
-		<a href="#{Navigation.applicationUrl}pwdreset?back=#{Navigation.userUrl}?email=#{UserBean.user.email}">
+		<a href="#{Navigation.applicationUrl}pwdreset?back=#{Navigation.userUrl}?email=#{UserBean.user.email}&amp;email=#{UserBean.user.email}">
 			<span class="fa fa-key"/>#{lbl.password_change}
 		</a>
 	</ui:define>
