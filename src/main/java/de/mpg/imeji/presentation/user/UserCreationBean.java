@@ -184,6 +184,7 @@ public class UserCreationBean extends SuperBean {
 
   private void reloadUserPage() {
     try {
+      System.out.println(getNavigation().getUserUrl() + "?email=" + user.getEmail());
       redirect(getNavigation().getUserUrl() + "?email=" + user.getEmail());
     } catch (final IOException e) {
       Logger.getLogger(UserBean.class).info("Some reloadPage exception", e);

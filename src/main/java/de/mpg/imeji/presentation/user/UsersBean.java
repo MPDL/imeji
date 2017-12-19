@@ -14,11 +14,10 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.model.User.UserStatus;
+import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.notification.email.EmailMessages;
 import de.mpg.imeji.logic.notification.email.EmailService;
-import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.security.authorization.util.PasswordGenerator;
 import de.mpg.imeji.logic.security.registration.RegistrationService;
 import de.mpg.imeji.logic.security.sharing.invitation.Invitation;
@@ -160,11 +159,11 @@ public class UsersBean extends SuperBean {
     final UserService controller = new UserService();
     try {
       controller.delete(controller.retrieve(email, getSessionUser()));
+      reload();
     } catch (final Exception e) {
       BeanHelper.error("Error Deleting user");
       LOGGER.error("Error Deleting user", e);
     }
-    doSearch();
     return "";
   }
 
@@ -179,8 +178,8 @@ public class UsersBean extends SuperBean {
       final User user = service.retrieve(email, getSessionUser());
       user.setUserStatus(UserStatus.REMOVED);
       service.update(user, getSessionUser());
-      doSearch();
-    } catch (ImejiException e) {
+      reload();
+    } catch (Exception e) {
       LOGGER.error("Error removing user", e);
     }
   }
@@ -196,8 +195,8 @@ public class UsersBean extends SuperBean {
       User user = controller.retrieve(email, getSessionUser());
       user.setUserStatus(UserStatus.ACTIVE);
       controller.update(user, getSessionUser());
-      doSearch();
-    } catch (ImejiException e) {
+      reload();
+    } catch (Exception e) {
       LOGGER.error("Error reactivating user", e);
     }
   }
@@ -211,11 +210,11 @@ public class UsersBean extends SuperBean {
     final RegistrationService registrationBC = new RegistrationService();
     try {
       registrationBC.delete(registrationBC.retrieveByEmail(email));
+      reload();
     } catch (final Exception e) {
       BeanHelper.error("Error Deleting registration");
       LOGGER.error("Error Deleting registration", e);
     }
-    doSearch();
   }
 
   /**
@@ -287,10 +286,6 @@ public class UsersBean extends SuperBean {
       BeanHelper.error(e.getMessage());
     }
     return "";
-  }
-
-  public void filter() {
-    SearchQuery q = new SearchQuery();
   }
 
   /**

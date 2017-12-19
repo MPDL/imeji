@@ -9,7 +9,6 @@ import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
@@ -36,7 +35,6 @@ import de.mpg.imeji.logic.security.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.security.LoginBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.share.ShareListItem;
 import de.mpg.imeji.presentation.share.ShareUtil;
@@ -53,8 +51,6 @@ public class UserBean extends SuperBean {
   private List<ShareListItem> roles = new ArrayList<ShareListItem>();
   private boolean edit = false;
   private QuotaUICompoment quota;
-  @ManagedProperty(value = "#{LoginBean}")
-  private LoginBean loginBean;
 
   public UserBean() {
     // mandatory for JSF initialization
@@ -105,8 +101,6 @@ public class UserBean extends SuperBean {
           || user.getPerson().getOrganizations().isEmpty()) {
         user.getPerson().getOrganizations().add(new Organization());
       }
-    } else if (id != null && getSessionUser() == null) {
-      loginBean.setLogin(id);
     }
   }
 
@@ -349,13 +343,6 @@ public class UserBean extends SuperBean {
     this.quota = quota;
   }
 
-  public LoginBean getLoginBean() {
-    return loginBean;
-  }
-
-  public void setLoginBean(LoginBean loginBean) {
-    this.loginBean = loginBean;
-  }
 
   public List<CollectionImeji> getSubscribedCollections() {
     try {
