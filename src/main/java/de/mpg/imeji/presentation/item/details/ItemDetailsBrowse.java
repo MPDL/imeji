@@ -78,7 +78,6 @@ public class ItemDetailsBrowse implements Serializable {
     } catch (Exception e) {
       LOGGER.error("Error initializing browse item", e);
     }
-
   }
 
   /**

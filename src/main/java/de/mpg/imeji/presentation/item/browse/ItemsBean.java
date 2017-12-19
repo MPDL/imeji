@@ -90,7 +90,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     cleanSelectItems();
   }
 
-
   /**
    * Initialization which are specific for this bean. Can be overriden by other beans
    */
@@ -535,6 +534,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   public int getNumberOfSubCollections() {
     return 0;
+  }
+
+  public int getFistItemPosition() {
+    return searchResult.getNumberOfRecords() - searchResult.getNumberOfItemsOfCollection();
   }
 
 }
