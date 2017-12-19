@@ -46,6 +46,7 @@
 	</ui:define>
 
 	<ui:define name="mainContent">
+		<f:event type="preRenderView" listener="#{facesContext.externalContext.response.setHeader('X-XSS-Protection', '0')}" />
 		<!-- Are You Admin? -->
 		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
 			rendered="#{!Auth.sysAdmin}">
@@ -232,9 +233,7 @@
 
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
-									<h2>
-										<h:outputText value="#{lbl.config_appearance}" />
-									</h2>
+									<h2>#{lbl.config_appearance}</h2>
 								</div>
 
 								<div class="imj_content">
@@ -251,8 +250,7 @@
 											<div class="imj_admindataValueEntry">
 												<h:selectOneRadio value="#{Configuration.defaultBrowseView}">
 													<f:selectItem itemLabel="#{lbl.list}" itemValue="LIST" />
-													<f:selectItem itemLabel="#{lbl.thumbnails}"
-														itemValue="THUMBNAIL" />
+													<f:selectItem itemLabel="#{lbl.thumbnails}" itemValue="THUMBNAIL" />
 												</h:selectOneRadio>
 											</div>
 										</div>
@@ -263,8 +261,7 @@
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:selectOneMenu value="#{Configuration.facetDisplayed}"
-												styleClass="imj_metadataValue">
+											<h:selectOneMenu value="#{Configuration.facetDisplayed}" styleClass="imj_metadataValue">
 												<f:selectItem itemValue="1" />
 												<f:selectItem itemValue="2" />
 												<f:selectItem itemValue="3" />
@@ -285,8 +282,7 @@
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.snippet}"
-												styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
+											<h:inputTextarea value="#{Configuration.snippet}" styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
 										</div>
 										<a href="javascript: void(0);"
 											data-target=".imj_admindataSet .imj_admindataValue textarea"
