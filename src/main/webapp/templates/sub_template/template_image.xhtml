@@ -64,6 +64,7 @@
 						type: 'image',
 						url: '#{itemBean.fullResolution}',
 					};
+					
 					viewerFull = OpenSeadragon({
 			        		id: "seadragon-viewer-full",
 			        		tileSources: imgFull,
@@ -109,8 +110,18 @@
 							 document.getElementById("rf:rotation").value= viewerFull.viewport.getRotation();
 							 document.getElementById("rf:rotate").click();
 			       		});
-			   			viewerFull.addHandler("open-failed",function(){
-			   			});
+						viewerFull.addHandler('tile-load-failed',function(){
+							document.getElementById("picWebResolutionAlt").style.display='none';
+							document.getElementById("picLoader").style.display='none';
+			       		});
+						viewerFull.addHandler('add-item-failed',function(){
+							document.getElementById("picWebResolutionAlt").style.display='none';
+							document.getElementById("picLoader").style.display='none';
+			       		});
+						viewerFull.addHandler('tile-loaded',function(){
+							document.getElementById("picWebResolutionAlt").style.display='none';
+							document.getElementById("picLoader").style.display='none';
+			       		});
 				};
 			</script>
 		</ui:fragment>	 

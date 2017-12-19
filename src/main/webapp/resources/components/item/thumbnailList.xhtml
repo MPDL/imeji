@@ -9,7 +9,7 @@
 	</composite:interface>
 	<composite:implementation>
 		<h:panelGroup layout="block" styleClass="imj_tiledMediaList" rendered="#{cc.attrs.picList.totalNumberOfRecords != 0}">
-			<div class="imj_listBody" style="text-align: justify;">
+			<div class="imj_listBody">
 				<ul id="imj_listBody"> 
 					<h:form id="f">
 						<ui:repeat id="i" var="item" value="#{cc.attrs.picList.currentPartList}" offset="0" varStatus="index">

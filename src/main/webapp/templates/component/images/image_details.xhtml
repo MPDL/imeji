@@ -32,7 +32,9 @@
 						<a id="rotateRightButton" class="fa fa-rotate-right imj_mediaEditPanelItem hideFullScreen"/>
 					</div>
 					<div id="seadragon-viewer-full" style="height:#{itemBean.viewerHeight}px;/*height:#{itemBean.webResolutionMaxLength}px;*/" >			
-						<img id="picWebResolutionAlt" title="#{itemBean.image.filename}" data-src="#{itemBean.preview}" />
+						<img id="picWebResolutionAlt">
+							<span id="picLoader" style="margin-top: 2em;" class="fa fa-spinner fa-size-3 fa-pulse fa-3x fa-fw" />
+						</img>
 					</div>	
 				</center>
 			</ui:fragment>
