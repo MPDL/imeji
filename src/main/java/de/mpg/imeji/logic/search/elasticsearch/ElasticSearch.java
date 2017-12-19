@@ -114,6 +114,8 @@ public class ElasticSearch implements Search {
       request = addAggregations(request, folderUri);
     }
 
+    System.out.println(request);
+
     final SearchResponse resp = request.execute().actionGet();
 
     return toSearchResult(resp, query);

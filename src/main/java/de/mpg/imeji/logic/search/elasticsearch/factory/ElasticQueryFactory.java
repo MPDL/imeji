@@ -150,7 +150,8 @@ public class ElasticQueryFactory {
       // Not Logged in: can only view release objects
       return fieldQuery(ElasticFields.STATUS, Status.RELEASED.name(), SearchOperators.EQUALS,
           false);
-    } else if (query != null && hasStatusQuery(query.getElements())) {
+    } else if (query != null
+        && (hasStatusQuery(query.getElements()) || hasStatusQuery(query.getFilterElements()))) {
       // Don't filter, since it is done later via the searchquery
       return QueryBuilders.matchAllQuery();
     } else {

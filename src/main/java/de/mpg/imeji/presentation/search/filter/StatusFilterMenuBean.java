@@ -49,7 +49,7 @@ public class StatusFilterMenuBean extends SuperFilterMenuBean {
     menu.add(new SelectItem(
         SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.status, SearchOperators.EQUALS, "public", false)),
-        Imeji.RESOURCE_BUNDLE.getLabel("only_public", getLocale())));
+        Imeji.RESOURCE_BUNDLE.getLabel("published", getLocale())));
     menu.add(new SelectItem(
         SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.status, SearchOperators.EQUALS, "discarded", false)),
