@@ -57,6 +57,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private int totalNumberOfRecords;
   private String query;
   private String facetQueryString;
+  private String filterQueryString;
   private boolean isSimpleSearch;
   private SearchQuery searchQuery = new SearchQuery();
   private SearchQuery facetQuery = new SearchQuery();
@@ -217,12 +218,12 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   private void parseSearchQuery() {
     try {
-      final String q = UrlHelper.getParameterValue("q");
-      final String fq = UrlHelper.getParameterValue("fq");
-      SearchFactory factory = new SearchFactory();
-      factory.initQuery(q)
-          .and(new SearchGroup(SearchQueryParser.parseStringQuery(fq).getElements()));
-      factory.initFilter(UrlHelper.getParameterValue("filter"));
+      query = UrlHelper.getParameterValue("q");
+      facetQueryString = UrlHelper.getParameterValue("fq");
+      filterQueryString = UrlHelper.getParameterValue("filter");
+      SearchFactory factory = new SearchFactory().initQuery(query)
+          .and(new SearchGroup(SearchQueryParser.parseStringQuery(facetQueryString).getElements()))
+          .initFilter(filterQueryString);
       setSearchQuery(factory.build());
     } catch (final Exception e) {
       BeanHelper.error("Error parsing query: " + e.getMessage());
@@ -538,6 +539,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   public int getFistItemPosition() {
     return searchResult.getNumberOfRecords() - searchResult.getNumberOfItemsOfCollection();
+  }
+
+  public String getFilterQueryString() {
+    return filterQueryString;
   }
 
 }

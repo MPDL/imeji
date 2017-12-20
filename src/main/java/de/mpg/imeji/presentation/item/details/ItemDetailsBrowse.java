@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -41,6 +40,7 @@ public class ItemDetailsBrowse implements Serializable {
   private static final Logger LOGGER = Logger.getLogger(ItemDetailsBrowse.class);
   private String query;
   private String facetQuery;
+  private String filterQuery;
   private final String containerUri;
   private final int currentPosition;
   private final SortCriterion sortCriterion;
@@ -64,6 +64,8 @@ public class ItemDetailsBrowse implements Serializable {
           .encode(UrlHelper.hasParameter("q") ? UrlHelper.getParameterValue("q") : "", "UTF-8");
       this.facetQuery = URLEncoder
           .encode(UrlHelper.hasParameter("fq") ? UrlHelper.getParameterValue("fq") : "", "UTF-8");
+      this.filterQuery = URLEncoder.encode(
+          UrlHelper.hasParameter("filter") ? UrlHelper.getParameterValue("filter") : "", "UTF-8");
     } catch (UnsupportedEncodingException e) {
       LOGGER.error("Error encoding facetQuery and/or query", e);
     }
@@ -106,9 +108,9 @@ public class ItemDetailsBrowse implements Serializable {
    */
   private SearchQuery getSearchQuery() throws UnprocessableError {
     return new SearchFactory()
-        .and(Arrays.asList(new SearchGroup(SearchQueryParser.parseStringQuery(query).getElements()),
-            new SearchGroup(SearchQueryParser.parseStringQuery(facetQuery).getElements())))
-        .build();
+        .and(new SearchGroup(SearchQueryParser.parseStringQuery(query).getElements()))
+        .and(new SearchGroup(SearchQueryParser.parseStringQuery(facetQuery).getElements()))
+        .initFilter(filterQuery).build();
   }
 
   /**
@@ -159,11 +161,11 @@ public class ItemDetailsBrowse implements Serializable {
     final String previousItem = previousItem(items);
     if (nextItem != null) {
       next = baseUrl + ObjectHelper.getId(URI.create(nextItem)) + "?q=" + query + "&fq="
-          + facetQuery + "&pos=" + (this.currentPosition + 1);
+          + facetQuery + "&filter=" + filterQuery + "&pos=" + (this.currentPosition + 1);
     }
     if (previousItem != null) {
       previous = baseUrl + ObjectHelper.getId(URI.create(previousItem)) + "?q=" + query + "&fq="
-          + facetQuery + "&pos=" + (this.currentPosition - 1);
+          + facetQuery + "&filter=" + filterQuery + "&pos=" + (this.currentPosition - 1);
     }
   }
 
