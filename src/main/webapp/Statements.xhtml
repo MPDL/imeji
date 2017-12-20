@@ -51,18 +51,18 @@
 
 					</div>
 				</div>
-				<ui:repeat var="statement" value="#{StatementsBean.statements}" varStatus="row">
-					<div class="imj_itemContent imj_itemHeadline">
-						<div class="imj_admindataSet">
-							<div class="imj_admindataLabel" style="padding: 10px 0 10px 0;">
-								#{statement.index}
-								<span class="imj_noDisplay">: </span>
-							</div>
-							<div class="imj_admindataValue">
-								<a href="#{Navigation.homeUrl}/statement/edit?statementId=#{statement.indexUrlEncoded}" class="imj_overlayMenu imj_menuButton">
-									<span class="fa fa-pencil"/> #{lbl.edit}
-								</a>
-								<h:form>
+				<h:form id="f">
+					<ui:repeat id="s" var="statement" value="#{StatementsBean.statements}" varStatus="row">
+						<div class="imj_itemContent imj_itemHeadline">
+							<div class="imj_admindataSet">
+								<div class="imj_admindataLabel" style="padding: 10px 0 10px 0;">
+									#{statement.index}
+									<span class="imj_noDisplay">: </span>
+								</div>
+								<div class="imj_admindataValue">
+									<a href="#{Navigation.homeUrl}/statement/edit?statementId=#{statement.indexUrlEncoded}" class="imj_overlayMenu imj_menuButton">
+										<span class="fa fa-pencil"/> #{lbl.edit}
+									</a>
 									<h:commandLink action="#{StatementsBean.addToDefaultStatements(statement.uri.toString())}" rendered="#{!StatementsBean.isDefaultStatement(statement.uri.toString())}" styleClass="imj_overlayMenu imj_menuButton">
 										<f:ajax render=":defaultStatements @form"/>
 										<span class="fa fa-star-o"/> #{lbl.statement_default}
@@ -79,7 +79,7 @@
 											<span class="fa fa-lock"/> <span>#{lbl.locked}</span>
 										</div>
 									</ui:fragment>
-									<dialog:confirmationDialog submitAction="delete"
+									<dialog:confirmationDialog id="del" submitAction="delete"
 										bean="#{StatementsBean}"
 										confirmationText="#{lbl.confirmation_delete_statement}"
 										submitLabel="#{lbl.delete}"
@@ -88,11 +88,12 @@
 									<a href="#{Navigation.applicationUrl}browse?q=index=#{statement.indexUrlEncoded}" target="_blank"  class="imj_overlayMenu imj_menuButton"> 
 										<span class="fa fa-search "/> #{lbl.view_items_with_statement}
 									</a>
-								</h:form>
+									
+								</div>
 							</div>
 						</div>
-					</div>
-				</ui:repeat>
+					</ui:repeat>
+				</h:form>
 			</div>
 		</ui:fragment>
 	</ui:define>

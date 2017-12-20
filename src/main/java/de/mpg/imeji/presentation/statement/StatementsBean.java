@@ -62,10 +62,11 @@ public class StatementsBean extends SuperBean {
    * @throws ImejiException
    * @throws IOException
    */
-  public void delete() throws ImejiException, IOException {
+  public void delete() {
     try {
       final String uri = FacesContext.getCurrentInstance().getExternalContext()
           .getRequestParameterMap().get("uri");
+      System.out.println("DELETE " + uri);
       Statement s = service.retrieve(uri, getSessionUser());
       service.delete(s, getSessionUser());
       removeFromDefaultStatements(s.getUri().toString());
@@ -74,7 +75,6 @@ public class StatementsBean extends SuperBean {
       LOGGER.error("Error deleting statement", e);
       BeanHelper.error("Error deleting statement: " + e.getMessage());
     }
-
   }
 
   /**

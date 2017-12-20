@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.RequestScoped;
 
 import org.apache.log4j.Logger;
 
@@ -22,7 +22,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  * @version $Revision$ $LastChangedDate$
  */
 @ManagedBean(name = "StartPageBean")
-@ViewScoped
+@RequestScoped
 public class StartPageBean extends SuperBean implements Serializable {
   private static final Logger LOGGER = Logger.getLogger(StartPageBean.class);
   private static final long serialVersionUID = 5267521759370584976L;

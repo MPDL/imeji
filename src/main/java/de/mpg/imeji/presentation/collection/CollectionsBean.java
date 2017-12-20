@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.RequestScoped;
 
 import com.hp.hpl.jena.sparql.pfunction.library.container;
 
@@ -27,7 +27,7 @@ import de.mpg.imeji.presentation.beans.SuperContainerBean;
  * @version $Revision$ $LastChangedDate$
  */
 @ManagedBean(name = "CollectionsBean")
-@ViewScoped
+@RequestScoped
 public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
   private static final long serialVersionUID = -3417058608949508441L;
   /**

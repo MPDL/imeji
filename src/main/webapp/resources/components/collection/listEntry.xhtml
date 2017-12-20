@@ -34,15 +34,15 @@
 	                    	<ui:repeat var="entry" value="#{BreadcrumbBean.entries}">
 	                    		<span class="parent">#{entry.label}</span><span class="del">></span>
 	                    	</ui:repeat>
-							<h:outputText value="#{cc.attrs.item.title}"/>
+							#{cc.attrs.item.title}
 						</h3>
 					</div>
 					
 					<div class="imj_metadataContent">
-						<h:outputText value="#{lbl.by}: #{cc.attrs.item.authors}" styleClass="imj_itemAuthorPanel"/>
+						<span class="imj_itemAuthorPanel">#{lbl.by}: #{cc.attrs.item.authors}</span>
 						<h:panelGroup layout="block" class="imj_metadataSet" rendered="#{not empty cc.attrs.item.description or not empty cc.attrs.item.descriptionFull}">
 							<p class="imj_descriptionArea" title="#{cc.attrs.item.description}">
-								<h:outputText value="#{cc.attrs.item.description.trim()}"/>
+								#{cc.attrs.item.description.trim()}
 							</p>
 						</h:panelGroup>
 				   </div>
@@ -50,5 +50,4 @@
 			</a>	
 		</li>
 	</composite:implementation>
-
 </html>

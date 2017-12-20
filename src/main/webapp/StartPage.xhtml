@@ -9,7 +9,6 @@
 	<ui:param name="title" value="#{lbl.home}"/>
 	<ui:param name="currentMainMenu" value="welcome"/>
 	
-	
 	<ui:define name="init">
 		<f:metadata>
 			<f:viewAction action="#{StartPageBean.onload()}" />
@@ -18,6 +17,7 @@
 	
 	#{InternationalizationBean.locale}
 	<ui:define name="mainContent">
+		<f:view transient="true">
 			<!-- Main Content -->							
 			<div id="imj_welcomeInfoWrapper">			
 				<!-- HTML Snippet defined in the configuration -->
@@ -50,6 +50,7 @@
 					</div>
 				</ui:fragment>	
 			</div>
+		</f:view>
 	</ui:define>	
 </ui:composition>
 					
