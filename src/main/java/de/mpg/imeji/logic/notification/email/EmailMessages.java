@@ -22,21 +22,6 @@ import de.mpg.imeji.logic.util.UrlHelper;
  */
 public class EmailMessages {
 
-
-  /**
-   * Email content when a new Account is sent
-   *
-   * @param password
-   * @param email
-   * @param username
-   * @return
-   */
-  public static String getNewAccountMessage(String password, String email, String username,
-      Locale locale) {
-    return getEmailOnAccountAction_Body(password, email, username, "email_new_user", locale);
-  }
-
-
   public static String getSuccessCollectionDeleteMessage(String collectionName, Locale locale) {
     return getBundle("success_collection_delete", locale).replace("XXX_collectionName_XXX",
         collectionName);
@@ -75,40 +60,6 @@ public class EmailMessages {
   public static String getSharedCollectionMessage(String sender, String dest, String collectionName,
       String collectionLink, Locale locale) {
     String message = getBundle("email_shared_collection", locale);
-    message = message.replace("XXX_USER_NAME_XXX,", dest).replace("XXX_NAME_XXX", collectionName)
-        .replace("XXX_LINK_XXX", collectionLink).replace("XXX_SENDER_NAME_XXX", sender);
-    return message;
-  }
-
-  /**
-   * Email content when an item has been shared with the addressee by the sender
-   *
-   * @param sender
-   * @param dest
-   * @param itemName
-   * @param itemLink
-   * @return
-   */
-  public static String getSharedItemMessage(String sender, String dest, String itemName,
-      String itemLink, Locale locale) {
-    String message = getBundle("email_shared_item", locale);
-    message = message.replace("XXX_USER_NAME_XXX,", dest).replace("XXX_NAME_XXX", itemName)
-        .replace("XXX_LINK_XXX", itemLink).replace("XXX_SENDER_NAME_XXX", sender);
-    return message;
-  }
-
-  /**
-   * Email content when an album has been shared with the addressee by the sender
-   *
-   * @param sender
-   * @param dest
-   * @param collectionName
-   * @param collectionLink
-   * @return
-   */
-  public static String getSharedAlbumMessage(String sender, String dest, String collectionName,
-      String collectionLink, Locale locale) {
-    String message = getBundle("email_shared_album", locale);
     message = message.replace("XXX_USER_NAME_XXX,", dest).replace("XXX_NAME_XXX", collectionName)
         .replace("XXX_LINK_XXX", collectionLink).replace("XXX_SENDER_NAME_XXX", sender);
     return message;
@@ -172,6 +123,29 @@ public class EmailMessages {
   public static String getEmailOnRegistrationRequest_Subject(Locale locale) {
     return getBundle("email_registration_request_subject", locale)
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
+  }
+
+  /**
+   * 
+   * @param locale
+   * @return
+   */
+  public static String getEmailToCreatedUser_Subject(Locale locale) {
+    return getBundle("email_new_user_subject", locale).replaceAll("XXX_INSTANCE_NAME_XXX",
+        Imeji.CONFIG.getInstanceName());
+  }
+
+  /**
+   * 
+   * @param locale
+   * @return
+   */
+  public static String getEmailToCreatedUser_Body(Locale locale, String userName,
+      String linkToSetPassword) {
+    return getBundle("email_new_user", locale)
+        .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
+        .replaceAll("XXX_USER_NAME_XXX,", userName)
+        .replaceAll("XXX_SET_PASSWORD_LINK_XXX", linkToSetPassword);
   }
 
 

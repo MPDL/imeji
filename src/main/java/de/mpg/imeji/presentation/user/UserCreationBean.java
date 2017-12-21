@@ -1,7 +1,6 @@
 package de.mpg.imeji.presentation.user;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -26,7 +25,6 @@ import de.mpg.imeji.logic.security.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.util.DateHelper;
 
 /**
  * Java Bean for the Create new user page
@@ -67,9 +65,10 @@ public class UserCreationBean extends SuperBean {
    */
   public String create() {
     try {
-      final String token = createNewUser();
+      final User user = createNewUser();
       if (sendEmail) {
-        sendNewAccountEmail(token);
+        String token = new PasswordResetController().generateResetToken(user);
+        sendNewAccountEmail(user, token);
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_user_create", getLocale()));
       reloadUserPage();
@@ -88,14 +87,13 @@ public class UserCreationBean extends SuperBean {
    *
    * @throws Exception
    */
-  private String createNewUser() throws ImejiException {
+  private User createNewUser() throws ImejiException {
     final UserService uc = new UserService();
     final PasswordGenerator generator = new PasswordGenerator();
     final String password = generator.generatePassword();
     user.setEncryptedPassword(StringHelper.md5(password));
     user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
-    uc.create(user, allowedToCreateCollection ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED);
-    return (new PasswordResetController()).generateResetToken(user);
+    return uc.create(user, allowedToCreateCollection ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED);
   }
 
   /**
@@ -103,19 +101,13 @@ public class UserCreationBean extends SuperBean {
    *
    * @param password
    */
-  public void sendNewAccountEmail(String token) {
+  public void sendNewAccountEmail(User user, String token) {
     final EmailService emailClient = new EmailService();
-    String url = getNavigation().getRegistrationUrl() + "?token=" + token;
-    Calendar expirationDate = DateHelper.getCurrentDate();
-    expirationDate.add(Calendar.DAY_OF_MONTH,
-        Integer.valueOf(Imeji.CONFIG.getRegistrationTokenExpiry()));
+    String url = getNavigation().getPasswordReserUrl() + "?token=" + token;
     try {
-      // send to requester
       emailClient.sendMail(getUser().getEmail(), Imeji.CONFIG.getEmailServerSender(),
-          EmailMessages.getEmailOnRegistrationRequest_Subject(getLocale()),
-          EmailMessages.getEmailOnRegistrationRequest_Body(getUser(), url,
-              Imeji.CONFIG.getContactEmail(), DateHelper.printDate(expirationDate), getLocale(),
-              getNavigation().getRegistrationUrl()));
+          EmailMessages.getEmailToCreatedUser_Subject(getLocale()), EmailMessages
+              .getEmailToCreatedUser_Body(getLocale(), user.getPerson().getCompleteName(), url));
     } catch (final Exception e) {
       LOGGER.error("Error sending email", e);
       BeanHelper.error("Error: Email not sent");
@@ -184,7 +176,6 @@ public class UserCreationBean extends SuperBean {
 
   private void reloadUserPage() {
     try {
-      System.out.println(getNavigation().getUserUrl() + "?email=" + user.getEmail());
       redirect(getNavigation().getUserUrl() + "?email=" + user.getEmail());
     } catch (final IOException e) {
       Logger.getLogger(UserBean.class).info("Some reloadPage exception", e);

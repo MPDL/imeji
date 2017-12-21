@@ -91,7 +91,7 @@ public class RegistrationBean extends SuperBean {
       try {
         registrationService.retrieveByToken(token);
         return true;
-      } catch (ImejiException e) {
+      } catch (Exception e) {
         // invalid token
       }
     }
