@@ -39,7 +39,6 @@ public class EditCollectionBean extends CollectionBean {
 
   @PostConstruct
   public void init() {
-    System.out.println("POST CONSTRUCT EDIT");
     setId(UrlHelper.getParameterValue("collectionId"));
     if (getId() != null) {
       try {

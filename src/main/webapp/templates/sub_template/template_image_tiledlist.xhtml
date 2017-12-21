@@ -30,13 +30,15 @@
            				<span class=" fa fa-meh-o fa-size-2"/><br/><span> #{msg.no_images_found}!</span>
            			</div>
            		</ui:fragment>
+           	
 				<div id="facetsArea" class="imj_itemsAreaFacets" style="#{SessionBean.selectedBrowseListView == 'LIST' ? 'margin-top: 17px;' :''}">
 	           		<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" selector="#{FacetSelectorBean}"/>
 	           	</div>
-	        	<div  class="imj_itemsAreaContent">
-	        		<item:thumbnailList  id="th" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
+	        	<div class="imj_itemsAreaContent">
+	        		<item:thumbnailList id="th" picList="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}"/>
 					<item:detailList id="ta" listBean="#{paginatorListSessionBean}" rendered="#{SessionBean.selectedBrowseListView == 'LIST'}"/>
 				</div>
+		
 				<imjc:rangePageBrowserGotobox id="browse" paginatorBean="#{paginatorListSessionBean}" addJSFunctions="yes" showSwitchListView="true" rendered="#{paginatorListSessionBean.totalNumberOfRecords != 0}"/>
 			</div>
 			<!-- Page Browser GotoBox -->

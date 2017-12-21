@@ -47,7 +47,6 @@ public class CreateCollectionBean extends CollectionBean {
    */
   @PostConstruct
   public void init() {
-    System.out.println("POST CONSTRUCT");
     showUpload = UrlHelper.getParameterBoolean("showUpload");
     setCollection(
         ImejiFactory.newCollection().setPerson(getSessionUser().getPerson().clone()).build());

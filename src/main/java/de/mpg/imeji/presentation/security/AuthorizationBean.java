@@ -9,8 +9,10 @@ import javax.faces.bean.ViewScoped;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.security.authorization.Authorization;
+import de.mpg.imeji.logic.workflow.WorkflowValidator;
 import de.mpg.imeji.presentation.beans.SuperBean;
 
 /**
@@ -29,6 +31,7 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 public class AuthorizationBean extends SuperBean implements Serializable {
   private static final long serialVersionUID = 4905896901833448372L;
   private final Authorization authorization = new Authorization();
+  private final WorkflowValidator workflowValidator = new WorkflowValidator();
   private boolean read = false;
   private boolean update = false;
   private boolean delete = false;
@@ -103,7 +106,7 @@ public class AuthorizationBean extends SuperBean implements Serializable {
    * @return
    */
   public boolean update(User user, Object obj) {
-    return authorization.update(user, obj);
+    return authorization.update(user, obj) && workflowUpdate(obj);
   }
 
   /**
@@ -114,7 +117,7 @@ public class AuthorizationBean extends SuperBean implements Serializable {
    * @return
    */
   public boolean delete(User user, Object obj) {
-    return authorization.delete(user, obj);
+    return authorization.delete(user, obj) && workflowDelete(obj);
   }
 
   /**
@@ -147,7 +150,7 @@ public class AuthorizationBean extends SuperBean implements Serializable {
    * @return
    */
   public boolean create(Object obj) {
-    return authorization.create(getSessionUser(), obj);
+    return authorization.create(getSessionUser(), obj) && workflowCreate(obj);
   }
 
   /**
@@ -158,7 +161,7 @@ public class AuthorizationBean extends SuperBean implements Serializable {
    * @return
    */
   public boolean update(Object obj) {
-    return authorization.update(getSessionUser(), obj);
+    return update(getSessionUser(), obj);
   }
 
   /**
@@ -169,7 +172,7 @@ public class AuthorizationBean extends SuperBean implements Serializable {
    * @return
    */
   public boolean delete(Object obj) {
-    return authorization.delete(getSessionUser(), obj);
+    return delete(getSessionUser(), obj);
   }
 
   /**
@@ -183,6 +186,59 @@ public class AuthorizationBean extends SuperBean implements Serializable {
     return authorization.administrate(getSessionUser(), obj);
   }
 
+  /**
+   * True if the object can be updated according to its status
+   * 
+   * @param obj
+   * @return
+   */
+  public boolean workflowUpdate(Object obj) {
+    if (obj instanceof Properties) {
+      try {
+        workflowValidator.isUpdateAllowed((Properties) obj);
+        return true;
+      } catch (Exception e) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * True if the object can be delete according to its status
+   * 
+   * @param obj
+   * @return
+   */
+  public boolean workflowDelete(Object obj) {
+    if (obj instanceof Properties) {
+      try {
+        workflowValidator.isDeleteAllowed((de.mpg.imeji.logic.model.Properties) obj);
+        return true;
+      } catch (Exception e) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * True if the object can be created according to its status
+   * 
+   * @param obj
+   * @return
+   */
+  public boolean workflowCreate(Object obj) {
+    if (obj instanceof Properties) {
+      try {
+        workflowValidator.isCreateAllowed((de.mpg.imeji.logic.model.Properties) obj);
+        return true;
+      } catch (Exception e) {
+        return false;
+      }
+    }
+    return true;
+  }
 
 
   /**

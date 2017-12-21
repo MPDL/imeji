@@ -88,6 +88,7 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return;
     }
+    checkWorkflow(objects, "create");
     checkSecurity(objects, user, true);
     validate(objects, Validator.Method.CREATE);
     // writer.create(objects, user);
@@ -112,7 +113,7 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return;
     }
-    checkWorkflowForDelete(objects);
+    checkWorkflow(objects, "delete");
     checkSecurity(objects, user, false);
     validate(objects, Validator.Method.DELETE);
     // writer.delete(objects, user);
@@ -138,6 +139,7 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return;
     }
+    checkWorkflow(objects, "update");
     if (doCheckSecurity) {
       checkSecurity(objects, user, false);
     }
@@ -189,6 +191,7 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return;
     }
+    checkWorkflow(objects, "update");
     checkSecurity(objects, user, false);
     validate(objects, Validator.Method.UPDATE);
     writer.updateLazy(objects, user);
@@ -207,10 +210,20 @@ public class WriterFacade {
     }
   }
 
-  private void checkWorkflowForDelete(List<Object> objects) throws WorkflowException {
+  private void checkWorkflow(List<Object> objects, String operation) throws WorkflowException {
     for (final Object o : objects) {
       if (o instanceof Properties) {
-        workflowManager.isDeleteAllowed((Properties) o);
+        switch (operation) {
+          case "create":
+            workflowManager.isCreateAllowed((Properties) o);
+            break;
+          case "delete":
+            workflowManager.isDeleteAllowed((Properties) o);
+            break;
+          case "update":
+            workflowManager.isUpdateAllowed((Properties) o);
+            break;
+        }
       }
     }
   }

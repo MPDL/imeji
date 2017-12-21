@@ -50,6 +50,19 @@ public class WorkflowValidator implements Serializable {
   }
 
   /**
+   * Object can edited if:
+   * <li>object is not discarded
+   * 
+   * @param p
+   * @throws WorkflowException
+   */
+  public void isUpdateAllowed(Properties p) throws WorkflowException {
+    if (p.getStatus() == Status.WITHDRAWN) {
+      throw new WorkflowException("Can not update discarded object");
+    }
+  }
+
+  /**
    * DOI can be created if: <br/>
    * *imeji is not in private mode *Status is released
    *
