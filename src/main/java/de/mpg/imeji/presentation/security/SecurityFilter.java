@@ -11,14 +11,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -58,8 +56,6 @@ import de.mpg.imeji.presentation.util.ServletUtil;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-@WebFilter(urlPatterns = "/*", dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD},
-    asyncSupported = true)
 public class SecurityFilter implements Filter {
   private FilterConfig filterConfig = null;
   private final Pattern jsfPattern = Pattern.compile(".*\\/jsf\\/.*\\.xhtml");
@@ -86,6 +82,7 @@ public class SecurityFilter implements Filter {
   @Override
   public void doFilter(ServletRequest serv, ServletResponse resp, FilterChain chain)
       throws IOException, ServletException {
+
     try {
       final HttpServletRequest request = (HttpServletRequest) serv;
       if (ServletUtil.isGetRequest(serv)) {
