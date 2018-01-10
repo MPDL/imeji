@@ -8,6 +8,9 @@ import java.net.URL;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
+
+import org.apache.commons.io.IOUtils;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
@@ -34,6 +37,11 @@ public class StaticContentBean {
     } catch (final Exception e) {
       return " ";
     }
+  }
+
+  public String getBaseCss() throws IOException {
+    return IOUtils.toString(FacesContext.getCurrentInstance().getExternalContext()
+        .getResourceAsStream("resources/css/theme_default/top.css"));
   }
 
   /**
