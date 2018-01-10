@@ -11,7 +11,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
-import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -19,7 +18,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.NotAllowedException;
@@ -45,8 +43,6 @@ import de.mpg.imeji.presentation.util.ServletUtil;
  * @version $Revision$ $LastChangedDate$
  */
 
-@WebFilter(urlPatterns = "/*", dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD},
-    asyncSupported = true)
 public class HistoryFilter implements Filter {
   private FilterConfig filterConfig = null;
   private static final Logger LOGGER = Logger.getLogger(HistoryFilter.class);

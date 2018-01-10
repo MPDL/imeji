@@ -21,7 +21,7 @@ import org.apache.http.HttpRequest;
  * @version $Revision$ $LastChangedDate$
  */
 @WebFilter(urlPatterns = "/*", dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD},
-    asyncSupported = true)
+    asyncSupported = true, filterName = "EncoderFilter")
 public class EncoderFilter implements Filter {
   private FilterConfig filterConfig = null;
 

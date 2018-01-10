@@ -6,14 +6,12 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Map;
 
-import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,7 +29,6 @@ import de.mpg.imeji.presentation.util.ServletUtil;
  * @author bastiens
  *
  */
-@WebFilter(urlPatterns = "/*", dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD})
 public class ModeFilter implements Filter {
   private static final Navigation navigation = new Navigation();
   private static final String REDIRECT_AFTER_LOGIN_PARAM = "redirect";

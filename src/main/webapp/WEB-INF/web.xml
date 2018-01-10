@@ -18,6 +18,41 @@
         <param-name>com.ocpsoft.pretty.BASE_PACKAGES</param-name>
         <param-value>de.mpg.imeji</param-value>
     </context-param>
+    
+    <filter>
+        <filter-name>Security Filter</filter-name>
+        <filter-class>de.mpg.imeji.presentation.security.SecurityFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter>
+        <filter-name>History Filter</filter-name>
+        <filter-class>de.mpg.imeji.presentation.navigation.history.HistoryFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+     <filter>
+        <filter-name>Mode Filter</filter-name>
+        <filter-class>de.mpg.imeji.presentation.admin.mode.ModeFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+   
+    <filter-mapping>
+	    <filter-name>Mode Filter</filter-name>
+	     <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>Security Filter</filter-name>
+	    <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+	    <filter-name>History Filter</filter-name>
+	     <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
     <!-- JSF Parameters --> 
     <context-param>
         <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
