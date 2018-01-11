@@ -1,19 +1,11 @@
 package de.mpg.imeji.presentation.lang;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-
-import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.config.util.ProxyHelper;
 
 /**
  * Utility class for Iso638_1 languages vocabulary
@@ -45,49 +37,6 @@ public class Iso639_1Helper {
     list.add(new SelectItem("de", "German"));
     list.add(new SelectItem("jp", "Japanese"));
     list.add(new SelectItem("es", "Spanish"));
-  }
-
-  /**
-   * Get the Iso638_1 languages vocabulary from CoNe with the options format
-   *
-   * @return
-   */
-  private String getVocabularyString() {
-    try {
-      final HttpClient client = new HttpClient();
-      final String coneVocabularyPath = PropertyReader.getProperty("cone.isos639_1.all");
-      if (isNullOrEmpty(coneVocabularyPath)) {
-        LOGGER.info(
-            "CONE Service Property for Language Vocabularies has not been set-up. Will use default vocabulary for languages."
-                + "NOTE: This is not an error: for more information on setting cone, check http://imeji.org/?s=cone.isos639_1.all ");
-        return null;
-
-      }
-      final GetMethod getMethod = new GetMethod(coneVocabularyPath + "?format=options");
-      ProxyHelper.executeMethod(client, getMethod);
-      return IOUtils.toString(getMethod.getResponseBodyAsStream());
-    } catch (final Exception e) {
-      LOGGER.error("Couldn't read ISO639_1 vocabulary, will use default one! Error: " + e);
-      return null;
-    }
-  }
-
-  /**
-   * Parse the Result as defined in Cone
-   *
-   * @param v
-   */
-  private void parseVocabularyString(String v) {
-    try {
-      for (final String l : v.split("\n")) {
-        final String[] s = l.split("\\|");
-        list.add(new SelectItem(s[0], s[1]));
-      }
-    } catch (final Exception e) {
-      list = new ArrayList<SelectItem>();
-      list.add(new SelectItem("en", "en - English"));
-      list.add(new SelectItem("de", "de - German"));
-    }
   }
 
   /**

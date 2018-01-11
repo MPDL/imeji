@@ -16,8 +16,6 @@ public class ElasticService {
   private static Node NODE;
   private static Client client;
   static String CLUSTER_NAME = "name of my cluster";
-  static boolean CLUSTER_LOCAL = true;
-  static boolean CLUSTER_DATA = true;
   static String CLUSTER_DIR = "null";
   public static ElasticAnalysers ANALYSER;
   static final String SETTINGS_DEFAULT = "elasticsearch/Settings_default.json";

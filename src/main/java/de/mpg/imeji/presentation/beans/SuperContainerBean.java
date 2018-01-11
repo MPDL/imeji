@@ -35,6 +35,7 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
   private static final String CONTAINER_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
   private static final String CONTAINER_SORT_COOKIE = "CONTAINER_SORT_COOKIE";
   private static final int DEFAULT_ELEMENTS_PER_PAGE = 10;
+  private static final String ELEMENTS_PER_PAGE_MENU = "5,10,20,50,100";
 
   /**
    * Constructor
@@ -97,13 +98,8 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
     setElementsPerPage(Integer
         .parseInt(CookieUtils.readNonNull(SuperPaginatorBean.numberOfContainersPerPageCookieName,
             Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
-    try {
-      final String options = Imeji.PROPERTIES.getProperty("imeji.container.list.size.options");
-      for (final String option : options.split(",")) {
-        getElementsPerPageSelectItems().add(new SelectItem(option));
-      }
-    } catch (final Exception e) {
-      LOGGER.error("Error reading property imeji.image.list.size.options", e);
+    for (final String option : ELEMENTS_PER_PAGE_MENU.split(",")) {
+      getElementsPerPageSelectItems().add(new SelectItem(option));
     }
   }
 

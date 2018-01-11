@@ -38,20 +38,6 @@ public class ElasticInitializer {
 
   public static void start(String clusterName) throws IOException, URISyntaxException {
     ElasticService.CLUSTER_NAME = clusterName;
-    ElasticService.CLUSTER_DATA =
-        Boolean.parseBoolean(PropertyReader.getProperty("elastic.cluster.data"));
-    ElasticService.CLUSTER_LOCAL =
-        Boolean.parseBoolean(PropertyReader.getProperty("elastic.cluster.local"));
-    ElasticService.CLUSTER_DIR = PropertyReader.getProperty("elastic.cluster.home");
-    ElasticService.ANALYSER =
-        ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
-    /*
-     * LOGGER.info("Connecting Node to " + ElasticService.CLUSTER_NAME + " (local=" +
-     * ElasticService.CLUSTER_LOCAL + ", data=" + ElasticService.CLUSTER_DATA + ")");
-     * ElasticService.setNODE(NodeBuilder.nodeBuilder().data(ElasticService.CLUSTER_DATA)
-     * .local(ElasticService.CLUSTER_LOCAL).clusterName(ElasticService.CLUSTER_NAME)
-     * .settings(Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)).node());
-     */
     TransportClient tc = TransportClient.builder()
         .settings(Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)
             .put("cluster.name", ElasticService.CLUSTER_NAME))
