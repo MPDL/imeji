@@ -1,6 +1,8 @@
 package de.mpg.imeji.presentation.item.browse;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -525,9 +527,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     return null;
   }
 
-  public String getFacetQueryString() {
-    return facetQueryString;
-  }
 
   public int getNumberOfItems() {
     return getTotalNumberOfRecords();
@@ -545,4 +544,19 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     return filterQueryString;
   }
 
+  public String getFacetQueryString() {
+    return facetQueryString;
+  }
+
+  public String getFilterQueryStringEncoded() throws UnsupportedEncodingException {
+    return filterQueryString != null ? URLEncoder.encode(filterQueryString, "UTF-8") : "";
+  }
+
+  public String getFacetQueryStringEncoded() throws UnsupportedEncodingException {
+    return facetQueryString != null ? URLEncoder.encode(facetQueryString, "UTF-8") : "";
+  }
+
+  public String getQueryEncoded() throws UnsupportedEncodingException {
+    return query != null ? URLEncoder.encode(query, "UTF-8") : "";
+  }
 }

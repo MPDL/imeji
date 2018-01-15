@@ -16,7 +16,7 @@
 							<li>
 								<div class="#{item.selected ? 'imj_selected '  : ''}thumb" >
 									<ui:fragment rendered="#{!item.isCollection()}">
-										<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.query}&amp;fq=#{cc.attrs.picList.facetQueryString}&amp;filter=#{cc.attrs.picList.filterQueryString}&amp;pos=#{cc.attrs.picList.offset + index.index - cc.attrs.picList.fistItemPosition}#pageTitle">
+										<a href="#{cc.attrs.picList.imageBaseUrl}item/#{item.id}?q=#{cc.attrs.picList.queryEncoded}&amp;fq=#{cc.attrs.picList.facetQueryStringEncoded}&amp;filter=#{cc.attrs.picList.filterQueryStringEncoded}&amp;pos=#{cc.attrs.picList.offset + index.index - cc.attrs.picList.fistItemPosition}#pageTitle">
 											<img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="#{item.link}" alt="#{item.caption}"/>
 										</a>
 									</ui:fragment>
