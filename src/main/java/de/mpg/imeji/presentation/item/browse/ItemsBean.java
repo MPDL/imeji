@@ -500,7 +500,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   public boolean isAllSelected() {
     for (final ThumbnailBean bean : getCurrentPartList()) {
-      if (!bean.isSelected()) {
+      if (!bean.isCollection() && !bean.isSelected()) {
         return false;
       }
     }
