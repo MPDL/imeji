@@ -635,10 +635,10 @@ public class JenaCustomQueries {
    * @return
    */
   public static final String selectUserCompleteName(URI uri) {
-    return "SELECT (str(?f + ', ' + ?g) as ?s) WHERE{ <" + uri.toString()
-        + "> <http://xmlns.com/foaf/0.1/person>  ?p  .  "
+    return "SELECT ?s WHERE{ <" + uri.toString() + "> <http://xmlns.com/foaf/0.1/person>  ?p  .  "
         + "?p  <http://purl.org/escidoc/metadata/terms/0.1/family-name> ?f . "
-        + "?p  <http://purl.org/escidoc/metadata/terms/0.1/given-name>  ?g}";
+        + " OPTIONAL{?p  <http://purl.org/escidoc/metadata/terms/0.1/given-name>  ?g} . "
+        + "LET(?s := IF(bound(?g) , str(?f) + ', ' + str(?g), str(?f) ) )}";
   }
 
   /**

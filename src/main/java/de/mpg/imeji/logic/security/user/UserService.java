@@ -286,6 +286,7 @@ public class UserService {
    */
   public String getCompleteName(URI uri, Locale locale) {
     final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+    System.out.println(JenaCustomQueries.selectUserCompleteName(uri));
     final List<String> users = search
         .searchString(JenaCustomQueries.selectUserCompleteName(uri), null, Imeji.adminUser, 0, 1)
         .getResults();
