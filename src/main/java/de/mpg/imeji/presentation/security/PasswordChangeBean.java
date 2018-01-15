@@ -226,5 +226,7 @@ public class PasswordChangeBean extends SuperBean {
     return from;
   }
 
-
+  public User getUser() {
+    return user;
+  }
 }
