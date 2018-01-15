@@ -18,6 +18,7 @@ import de.mpg.imeji.logic.events.MessageService;
 import de.mpg.imeji.logic.events.messages.CollectionMessage;
 import de.mpg.imeji.logic.events.messages.Message.MessageType;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
@@ -151,13 +152,27 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
 
 
   /**
+   * Delete a collection and its subcollection
+   * 
+   * @param collection
+   * @param user
+   * @throws ImejiException
+   */
+  public void delete(CollectionImeji collection, User user) throws ImejiException {
+    for (String uri : new HierarchyService().findAllSubcollections(collection.getId().toString())) {
+      deleteSingleCollection(retrieve(uri, user), user);
+    }
+    deleteSingleCollection(collection, user);
+  }
+
+  /**
    * Delete a {@link CollectionImeji} and all its {@link Item}
    *
    * @param collection
    * @param user
    * @throws ImejiException
    */
-  public void delete(CollectionImeji collection, User user) throws ImejiException {
+  private void deleteSingleCollection(CollectionImeji collection, User user) throws ImejiException {
     final ItemService itemService = new ItemService();
     final List<String> itemUris =
         itemService.search(collection.getId(), null, null, user, -1, 0).getResults();
@@ -194,21 +209,6 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
   public void release(CollectionImeji collection, User user, License defaultLicense)
       throws ImejiException {
     new WorkflowFacade().release(collection, user, defaultLicense);
-    /*
-     * final ItemService itemController = new ItemService(); isLoggedInUser(user);
-     * 
-     * if (collection == null) { throw new NotFoundException("collection object does not exists"); }
-     * 
-     * prepareRelease(collection, user); final List<String> itemUris =
-     * itemController.search(collection.getId(), null, null, user, -1, 0).getResults();
-     * 
-     * if (hasImageLocked(itemUris, user)) { throw new
-     * UnprocessableError("Collection has locked items: can not be released"); } else if
-     * (itemUris.isEmpty()) { throw new
-     * UnprocessableError("An empty collection can not be released!"); } else { final List<Item>
-     * items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
-     * itemController.release(items, user, defaultLicense); update(collection, user); }
-     */
   }
 
   /**
@@ -231,17 +231,6 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
    */
   public void withdraw(CollectionImeji coll, User user) throws ImejiException {
     new WorkflowFacade().withdraw(coll, coll.getDiscardComment(), user);
-    /*
-     * final ItemService itemController = new ItemService(); isLoggedInUser(user);
-     * 
-     * if (coll == null) { throw new NotFoundException("Collection does not exists"); }
-     * prepareWithdraw(coll, null); final List<String> itemUris =
-     * itemController.search(coll.getId(), null, null, user, -1, 0).getResults(); if
-     * (hasImageLocked(itemUris, user)) { throw new
-     * UnprocessableError("Collection has locked images: can not be withdrawn"); } else { final
-     * List<Item> items = (List<Item>) itemController.retrieveBatch(itemUris, -1, 0, user);
-     * itemController.withdraw(items, coll.getDiscardComment(), user); update(coll, user); }
-     */
   }
 
   /**
