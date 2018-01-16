@@ -1,6 +1,7 @@
 package de.mpg.imeji.presentation.admin;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.apache.log4j.Logger;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.logic.batch.AggregateMessages;
 import de.mpg.imeji.logic.batch.CleanContentVOsJob;
@@ -25,21 +27,28 @@ import de.mpg.imeji.logic.batch.ResizeWebAndThumbnailJob;
 import de.mpg.imeji.logic.batch.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
+import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
+import de.mpg.imeji.logic.events.listener.ListenerService;
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.notification.subscription.SubscriptionService;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 
 /**
@@ -169,8 +178,38 @@ public class AdminBean extends SuperBean {
    * @
    */
   private void invokeCleanMethods() throws ImejiException {
+    new ListenerService().init();
     cleanGrants();
+    cleanSubscriptions();
+    HierarchyService.reloadHierarchy();
     // cleanContent();
+  }
+
+  private void cleanSubscriptions() throws ImejiException {
+    SubscriptionService service = new SubscriptionService();
+    List<Subscription> subscriptions = new SubscriptionService().retrieveAll(Imeji.adminUser);
+    for (Subscription s : subscriptions) {
+      String collectionUri = ObjectHelper.getURI(CollectionImeji.class, s.getObjectId()).toString();
+      CollectionImeji c = null;
+      try {
+        c = new CollectionService().retrieve(collectionUri, Imeji.adminUser);
+      } catch (NotFoundException e) {
+        LOGGER.error("Collection " + collectionUri + " not found, removing subscription");
+        service.unSubscribe(s, Imeji.adminUser);
+      }
+      User user = null;
+      try {
+        user = new UserService().retrieve(URI.create(s.getUserId()), Imeji.adminUser);
+      } catch (NotFoundException e) {
+        LOGGER.error("User " + s.getUserId() + " not found, removing subscription");
+        service.unSubscribe(s, Imeji.adminUser);
+      }
+      if (c != null && user != null && !SecurityUtil.authorization().read(user, c)) {
+        LOGGER.error("User " + s.getUserId() + " is not allowed to subscribe to collection "
+            + collectionUri + ", removing subscription");
+        service.unSubscribe(s, Imeji.adminUser);
+      }
+    }
   }
 
   private void cleanContent() {

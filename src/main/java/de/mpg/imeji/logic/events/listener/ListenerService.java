@@ -28,6 +28,7 @@ public class ListenerService {
    */
   public void init() {
     LOGGER.info("Initializing message subscribers...");
+    subscriptions = new HashMap<>();
     for (Listener s : findAllListeners()) {
       register(s);
       LOGGER.info("Registered: " + s.getClass().getName());
@@ -41,9 +42,9 @@ public class ListenerService {
    * @param listener
    */
   public void register(Listener listener) {
-    List<Listener> l = subscriptions.getOrDefault(listener.getMessageType(), new ArrayList<>());
-    l.add(listener);
     for (MessageType m : listener.getMessageType()) {
+      List<Listener> l = subscriptions.getOrDefault(m, new ArrayList<>());
+      l.add(listener);
       subscriptions.put(m, l);
     }
   }

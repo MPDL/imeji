@@ -25,5 +25,4 @@ public class RemoveSubscriptionListener extends Listener {
     }
     return 1;
   }
-
 }
