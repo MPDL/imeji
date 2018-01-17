@@ -103,7 +103,7 @@
 									</ui:fragment>
 									<ui:fragment rendered="#{Configuration.doiServiceUrl != null and Configuration.doiServiceUrl != '' and empty CollectionItemsBean.collection.doi}">
 										<a id="lnkCreateDOI" onclick="openDialog(#{Auth.sysAdmin ? '\'createDOI\'' : '\'getDOIDialog\''})">
-											<span class="fa fa-link"/>{lbl.createDOI}
+											<span class="fa fa-link"/>#{lbl.createDOI}
 										</a>
 									</ui:fragment>
 									<ui:fragment rendered="#{Auth.sysAdmin and empty Configuration.doiServiceUrl and empty CollectionItemsBean.collection.doi}">
