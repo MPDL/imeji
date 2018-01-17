@@ -10,9 +10,12 @@
 		<composite:attribute name="position" type="Integer" required="true" shortDescription="@type: The position of the person if included in a list"/>
 		<composite:attribute name="userSource" type="String" required="false" default="#{Configuration.autoSuggestForUsers}"/>
 		<composite:attribute name="orgsSource" type="String" required="false" default="#{Configuration.autosuggestForOrganizations}"/>
+		<composite:attribute name="containerId" type="java.lang.String"/>
 	</composite:interface>
 	
 	<composite:implementation>
+		<ui:param name="containerId" value="#{empty cc.attrs.containerId ? '@form' : cc.attrs.containerId}"/>
+		
 		<ui:fragment rendered="#{not empty cc.attrs.userSource}">
 			<script>
 				var userSource;
@@ -92,7 +95,7 @@
 		<h:inputText id="inputPersonURI" styleClass="input_hidden_person_uri imj_noDisplay" value="#{PersonBean.personURI}" valueChangeListener="#{PersonBean.personListener}"/>
 	
 		<h:commandButton id="changePersonButton" styleClass="button_change_person imj_noDisplay" action="#{PersonBean.changePerson(cc.attrs.bean, cc.attrs.position)}">
-			<f:ajax render="@form" execute="@form"/>
+			<f:ajax render="#{containerId}" execute="#{containerId}"/>
 		</h:commandButton>
 		
 		<div class="imj_metadataSet">
@@ -135,7 +138,7 @@
 				<h:inputText id="inputOrgaURI1" styleClass="input_hidden_orga_uri imj_noDisplay" value="#{PersonBean.orgaURI}" valueChangeListener="#{PersonBean.orgaListener}" rendered="#{cc.attrs.orgsSource == ''}"/>
 	
 				<h:commandButton id="changeOrgaButton" styleClass="button_change_button imj_noDisplay" action="#{PersonBean.changeOrga(cc.attrs.bean, cc.attrs.position,  index.index)}">
-					<f:ajax render="@form" execute="@form"/>
+					<f:ajax render="#{containerId}" execute="#{containerId}"/>
 				</h:commandButton>
 			
 				<div class="imj_metadataSet">
@@ -150,10 +153,10 @@
 						</div>
 						 <span class="imj_inlineButtonGroup">
 							<h:commandLink styleClass="fa fa-plus-square-o"  title="#{lbl.add_organization}" action="#{PersonBean.addOrganization(index.index + 1)}">
-								<f:ajax execute="@form" render="@form"/>
-							</h:commandLink> 
+								<f:ajax execute="#{containerId}" render="#{containerId}"/>
+							</h:commandLink>
 							<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_organization}" action="#{PersonBean.removeOrganization(index.index)}">
-								<f:ajax execute="@form" render="@form"/>
+								<f:ajax execute="#{containerId}" render="#{containerId}"/>
 							</h:commandLink>
 						</span>
 					</div>
