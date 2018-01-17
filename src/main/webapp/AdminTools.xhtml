@@ -140,21 +140,6 @@
 								</h2>
 							</div>
 							<div class="imj_content">
-								<h:outputText value="#{lbl.admin_advanced_clean_description}" />
-								<h:form>
-									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
-										<h:commandLink action="#{AdminBean.status}"
-											value="#{lbl.admin_advanced_state}"
-											title="#{lbl.admin_advanced_state}"
-											styleClass="imj_submitButton">
-										</h:commandLink>
-									</h:panelGroup>
-								</h:form>
-								<h:outputText value="#{AdminBean.cleanDatabaseReport}"
-									escape="false" />
-							</div>
-							<div class="imj_content">
-								<h:outputText value="#{lbl.admin_advanced_clean_warning}" />
 								<h:form>
 									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
 										<h:commandLink action="#{AdminBean.clean}"

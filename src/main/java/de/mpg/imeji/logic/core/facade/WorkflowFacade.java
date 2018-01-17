@@ -50,6 +50,14 @@ public class WorkflowFacade implements Serializable {
   private final ElasticIndexer itemIndexer =
       new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticTypes.items, ElasticService.ANALYSER);
 
+  /**
+   * Release a collection and its item
+   * 
+   * @param c
+   * @param user
+   * @param defaultLicense
+   * @throws ImejiException
+   */
   public void release(CollectionImeji c, User user, License defaultLicense) throws ImejiException {
     preValidateRelease(c, user, defaultLicense);
     final List<String> itemIds = getItemIds(c, user);
@@ -70,6 +78,14 @@ public class WorkflowFacade implements Serializable {
         .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
   }
 
+  /**
+   * Withdraw the collection and its items
+   * 
+   * @param c
+   * @param comment
+   * @param user
+   * @throws ImejiException
+   */
   public void withdraw(CollectionImeji c, String comment, User user) throws ImejiException {
     prevalidateWithdraw(c, comment, user);
     final List<String> itemIds = getItemIds(c, user);
@@ -102,7 +118,7 @@ public class WorkflowFacade implements Serializable {
    */
   private void addLicense(CollectionImeji c, List<String> ids, User user, License license)
       throws ImejiException {
-    List<Item> items = (List<Item>) new ItemService().retrieveBatchLazy(
+    List<Item> items = (List<Item>) new ItemService().retrieveBatch(
         filterIdsByType(ids, ObjectType.ITEM).stream().collect(Collectors.toList()), -1, 0, user);
     List<LicensePart> licenseParts =
         items.stream().filter(item -> LicenseUtil.getActiveLicense(item) == null)

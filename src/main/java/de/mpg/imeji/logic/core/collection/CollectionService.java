@@ -36,7 +36,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
-import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
+import de.mpg.imeji.logic.workflow.WorkflowValidator;
 
 /**
  * CRUD controller for {@link CollectionImeji}, plus search mehtods related to
@@ -178,22 +178,12 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
         itemService.search(collection.getId(), null, null, user, -1, 0).getResults();
     if (hasImageLocked(itemUris, user)) {
       throw new UnprocessableError("Collection can not be deleted: It contains locked items");
-    } else {
-      if (collection.getStatus() != Status.PENDING
-          && !SecurityUtil.authorization().isSysAdmin(user)) {
-        throw new UnprocessableError("collection_is_not_pending");
-      }
-      // Delete items
-      final List<Item> items = (List<Item>) itemService.retrieveBatch(itemUris, -1, 0, user);
-      for (final Item it : items) {
-        if (it.getStatus().equals(Status.RELEASED)) {
-          throw new UnprocessableError("collection_has_released_items");
-        }
-      }
-      itemService.delete(items, user);
-      controller.delete(collection, user);
-      messageService.add(new CollectionMessage(MessageType.DELETE_COLLECTION, collection));
     }
+    new WorkflowValidator().isDeleteAllowed(collection);
+    final List<Item> items = (List<Item>) itemService.retrieveBatchLazy(itemUris, -1, 0, user);
+    itemService.delete(items, user);
+    controller.delete(collection, user);
+    messageService.add(new CollectionMessage(MessageType.DELETE_COLLECTION, collection));
   }
 
 

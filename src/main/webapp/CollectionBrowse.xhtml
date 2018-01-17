@@ -92,7 +92,7 @@
 									<span class="fa fa-users"/>#{lbl.share}
 								</a>
 								<h:commandLink rendered="#{CollectionItemsBean.numberOfItems > 0 and WorkflowBean.release(CollectionItemsBean.collection)}" action="#{CollectionItemsBean.actionMenu.searchItemsWihoutLicense}" onclick="openDialog('releaseCollection');">
-									<f:ajax render=":releaseCollection:confirmationDialogForm"/>
+									<f:ajax render=":rel:f"/>
 									<span class="fa fa-globe"/>#{lbl.release}
 								</h:commandLink>
 								<ui:fragment rendered="#{WorkflowBean.createDOI(CollectionItemsBean.collection)}">

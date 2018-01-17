@@ -3,7 +3,6 @@ package de.mpg.imeji.presentation.admin;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -13,11 +12,8 @@ import javax.faces.bean.ViewScoped;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.logic.batch.AggregateMessages;
 import de.mpg.imeji.logic.batch.CleanContentVOsJob;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
@@ -28,8 +24,6 @@ import de.mpg.imeji.logic.batch.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.core.collection.CollectionService;
-import de.mpg.imeji.logic.db.reader.ReaderFacade;
-import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.events.listener.ListenerService;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -230,42 +224,6 @@ public class AdminBean extends SuperBean {
     LOGGER.info("...done!");
   }
 
-
-  /**
-   * Load the {@link Resource} as {@link Object}
-   *
-   * @param uris
-   * @param modelName
-   * @param obj
-   * @return
-   */
-  private List<Object> loadResourcesAsObjects(List<String> uris, String modelName, Object obj) {
-    final ReaderFacade reader = new ReaderFacade(modelName);
-    final List<Object> l = new ArrayList<Object>();
-    for (final String uri : uris) {
-      try {
-        LOGGER.info("Resource to be removed: " + uri);
-        l.add(reader.read(uri, getSessionUser(), obj.getClass().newInstance()));
-      } catch (final Exception e) {
-        LOGGER.error("ERROR LOADING RESOURCE " + uri + " !!!!!", e);
-      }
-    }
-    return l;
-  }
-
-  /**
-   * Remove an {@link Object}, it must have a {@link j2jId}
-   *
-   * @param l
-   * @param modelName @
-   * @throws ImejiException
-   */
-  private void removeObjects(List<Object> l, String modelName) throws ImejiException {
-    if (clean) {
-      final WriterFacade writer = new WriterFacade(modelName);
-      writer.delete(l, getSessionUser());
-    }
-  }
 
   /**
    * return count of all {@link CollectionImeji}
