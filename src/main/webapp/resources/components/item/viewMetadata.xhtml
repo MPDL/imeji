@@ -159,16 +159,16 @@
 						<div class="imj_metadataValue">
 							<ul class="imj_optionList">
 								<li>
-									<a href="#{cc.attrs.itemBean.thumbnail}" target="_blank">#{lbl.imageSizesThumb}</a>
+									<a href="#{cc.attrs.itemBean.thumbnail}?filename=thumbnail_#{cc.attrs.itemBean.image.filename}" target="_blank">#{lbl.imageSizesThumb}</a>
 								</li>
 								<li>
-									<a href="#{cc.attrs.itemBean.preview}" target="_blank">#{lbl.imageSizesWeb}</a>
+									<a href="#{cc.attrs.itemBean.preview}?filename=preview_#{cc.attrs.itemBean.image.filename}" target="_blank">#{lbl.imageSizesWeb}</a>
 								</li>
 								<li>
-									<a href="#{cc.attrs.itemBean.fullResolution}" target="_blank">#{lbl.imageSizesFull}</a>
+									<a href="#{cc.attrs.itemBean.fullResolution}?filename=full_#{cc.attrs.itemBean.image.filename}" target="_blank">#{lbl.imageSizesFull}</a>
 								</li>
 								<li>
-									<a href="#{cc.attrs.itemBean.originalFile}" target="_blank">#{lbl.imageSizesOrg}</a>
+									<a href="#{cc.attrs.itemBean.originalFile}?filename=#{cc.attrs.itemBean.image.filename}" target="_blank">#{lbl.imageSizesOrg}</a>
 								</li>
 							</ul>
 						</div>

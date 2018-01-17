@@ -70,6 +70,7 @@ public class FileServlet extends HttpServlet {
       throws ServletException, IOException {
     String url = req.getParameter("id");
     final String contentId = req.getParameter("content");
+    final String filename = req.getParameter("filename");
     final String range = req.getHeader("range");
     final String itemUri = req.getParameter("itemId") == null ? req.getParameter("item")
         : ObjectHelper.getURI(Item.class, req.getParameter("itemId")).toString();
@@ -90,6 +91,9 @@ public class FileServlet extends HttpServlet {
       resp.setContentType(StorageUtils.getMimeType(StringHelper.getFileExtension(url)));
       resp.setHeader("Accept-Ranges", isFirefox(req) ? "none" : "bytes");
       resp.setContentLengthLong(contentLength);
+      if (!StringHelper.isNullOrEmptyTrim(filename)) {
+        resp.setHeader("content-disposition", "attachment; filename=\"" + filename + "\"");
+      }
       if ("NO_THUMBNAIL_URL".equals(url)) {
         externalStorage.read(RESOURCE_EMTPY_ICON_URL, resp.getOutputStream(), true);
       } else if (range != null && !isFirefox(req)) {
