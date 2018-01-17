@@ -108,6 +108,28 @@ public class WorkflowFacade implements Serializable {
   }
 
   /**
+   * Withdraw a list of items
+   * 
+   * @param items
+   * @param comment
+   * @param user
+   * @throws ImejiException
+   */
+  public void withdrawItems(List<Item> items, String comment, User user) throws ImejiException {
+    List<String> itemIds =
+        items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
+    preValidateItems(itemIds, user);
+    Calendar now = DateHelper.getCurrentDate();
+    String sparql =
+        itemIds.stream().map(id -> JenaCustomQueries.updateWitdrawObject(id, now, comment))
+            .collect(Collectors.joining("; "));
+    ImejiSPARQL.execUpdate(sparql);
+    itemIndexer.partialUpdateIndexBatch(
+        itemIds.stream().map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment))
+            .collect(Collectors.toList()));
+  }
+
+  /**
    * Add License to all items which have'nt one
    * 
    * @param c

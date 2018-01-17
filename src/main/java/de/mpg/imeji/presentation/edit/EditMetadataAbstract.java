@@ -121,18 +121,6 @@ public abstract class EditMetadataAbstract extends SuperBean {
    */
   public abstract List<Statement> getAllStatements();
 
-  /**
-   * Return all statements which are not already existing
-   *
-   * @return
-   */
-  // private List<Statement> getStatements() {
-  // System.out.println("All: " + getAllStatements().stream()
-  // .map(SelectStatementWithInputComponent::getIndex).collect(Collectors.joining(",")));
-  // return getAllStatements().stream().map(s -> s.asStatement()).collect(Collectors.toList());
-  // }
-
-
   public List<SelectItem> getStatementMenu() {
     return statementMenu;
   }

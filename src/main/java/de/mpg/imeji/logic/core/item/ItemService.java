@@ -27,6 +27,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.facade.MoveFacade;
+import de.mpg.imeji.logic.core.facade.WorkflowFacade;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
@@ -575,12 +576,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public void withdraw(List<Item> l, String comment, User user) throws ImejiException {
-    final Collection<Item> items = filterItemsByStatus(l, Status.RELEASED);
-    for (final Item item : items) {
-      prepareWithdraw(item, comment);
-    }
-    updateBatch(items, user);
-    for (final Item item : items) {
+    new WorkflowFacade().withdrawItems(l, comment, user);
+    for (final Item item : l) {
       removeFileFromStorage(item);
     }
   }
