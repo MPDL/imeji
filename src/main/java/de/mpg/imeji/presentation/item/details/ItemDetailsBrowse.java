@@ -91,11 +91,13 @@ public class ItemDetailsBrowse implements Serializable {
    */
   private List<String> searchPreviousAndNextItem(User user) {
     final ItemService controller = new ItemService();
-    try {
-      return controller.search(containerUri != null ? URI.create(containerUri) : null,
-          getSearchQuery(), sortCriterion, user, SIZE, getOffset()).getResults();
-    } catch (final UnprocessableError e) {
-      LOGGER.error("Error retrieving items", e);
+    if (query != null && currentPosition > -1) {
+      try {
+        return controller.search(containerUri != null ? URI.create(containerUri) : null,
+            getSearchQuery(), sortCriterion, user, SIZE, getOffset()).getResults();
+      } catch (final UnprocessableError e) {
+        LOGGER.error("Error retrieving items", e);
+      }
     }
     return new ArrayList<>();
   }
