@@ -147,12 +147,17 @@ public class ElasticSearch implements Search {
    */
   private SearchResult searchWithScroll(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, int from, int size, boolean addFacets) {
-    final QueryBuilder f = ElasticQueryFactory.build(query, folderUri, user, type);
-    SearchRequestBuilder request =
-        ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
-            .setScroll(new TimeValue(60000)).setNoFields().setQuery(QueryBuilders.matchAllQuery())
-            .setPostFilter(f).setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).setFrom(from)
-            .addSort("_type", SortOrder.ASC).addSort(ElasticSortFactory.build(sortCri));
+    final QueryBuilder q = ElasticQueryFactory.build(query, folderUri, user, type);
+    final QueryBuilder f = ElasticQueryFactory.buildBasisQuery(query, folderUri, user, type);
+    SearchRequestBuilder request = ElasticService.getClient()
+        .prepareSearch(ElasticService.DATA_ALIAS).setScroll(new TimeValue(60000)).setNoFields()
+        .setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).setFrom(from).addSort("_type", SortOrder.ASC)
+        .addSort(ElasticSortFactory.build(sortCri));
+    if (f != null) {
+      request.setQuery(f).setPostFilter(q);
+    } else {
+      request.setQuery(q);
+    }
     if (addFacets) {
       request = addAggregations(request, folderUri);
     }
