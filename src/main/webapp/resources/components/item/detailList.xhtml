@@ -60,7 +60,7 @@
                     	<h:outputText value="&#160;" styleClass="#{cc.attrs.listBean.selectedSortOrder == 'ASCENDING' ? 'fa fa-sort-asc fa-push-right' : 'fa fa-sort-desc fa-push-left'}" rendered="#{cc.attrs.listBean.selectedSortCriterion == 'filename'}"/>
                     </f:facet>
                      <ui:fragment rendered="#{!o.isCollection()}">
-	                    <a id="lnkPicDetailBrowse" href="#{cc.attrs.listBean.imageBaseUrl}item/#{o.id}?q=#{cc.attrs.listBean.queryEncoded}&amp;fq=#{cc.attrs.listBean.facetQueryStringEncoded}&amp;filter=#{cc.attrs.listBean.filterQueryStringEncoded}&amp;pos=#{cc.attrs.listBean.offset + table.rowIndex}#pageTitle" title="#{o.filename}">
+	                    <a id="lnkPicDetailBrowse" href="#{cc.attrs.listBean.imageBaseUrl}item/#{o.id}?q=#{cc.attrs.listBean.queryEncoded}&amp;fq=#{cc.attrs.listBean.facetQueryStringEncoded}&amp;filter=#{cc.attrs.listBean.filterQueryStringEncoded}&amp;pos=#{cc.attrs.listBean.offset + table.rowIndex  - cc.attrs.listBean.fistItemPosition}#pageTitle" title="#{o.filename}">
 	                        #{o.filename}
 	                    </a>
 					</ui:fragment>
