@@ -9,32 +9,30 @@
 
 	<!-- Main Content - bibliographic grid list - START -->
 	<ui:define name="mainContent">
-		<f:view transient="true">
-			<h:panelGroup layout="block" id ="ajaxWrapper">
-				<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords == 0}">
-					<div class="imj_bibliographicList" style="font-size:130%">
-						<span class="fa fa-exclamation-triangle"/>
-						<h:outputText value=" #{msg.no_collection_found}"/>
-					</div>
-				</ui:fragment>
-				<!-- Selection Info Panel -->
-				<col:filters fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
-									 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfRecords}" 
-									 filterBeanHasQuery="#{filterBeanHasQuery}"
-									 objectLabel="#{lbl.collections}"/>
-				<!-- List -->
-				<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
-					<div id="imj_listBody">
-						<col:list mediaList="#{paginatorListSessionBean}"/>
-					</div>
-				</ui:fragment>
-				
-				<!-- Page Browser GotoBox -->
-				<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
-					<imjc:rangePageBrowserGotobox id="browse" paginatorBean="#{paginatorListSessionBean}"/>
-				</ui:fragment>
-			</h:panelGroup>
-		</f:view>
+		<h:panelGroup layout="block" id ="ajaxWrapper">
+			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords == 0}">
+				<div class="imj_bibliographicList" style="font-size:130%">
+					<span class="fa fa-exclamation-triangle"/>
+					<h:outputText value=" #{msg.no_collection_found}"/>
+				</div>
+			</ui:fragment>
+			<!-- Selection Info Panel -->
+			<col:filters fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
+								 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfRecords}" 
+								 filterBeanHasQuery="#{filterBeanHasQuery}"
+								 objectLabel="#{lbl.collections}"/>
+			<!-- List -->
+			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
+				<div id="imj_listBody">
+					<col:list mediaList="#{paginatorListSessionBean}"/>
+				</div>
+			</ui:fragment>
+			
+			<!-- Page Browser GotoBox -->
+			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
+				<imjc:rangePageBrowserGotobox id="browse" paginatorBean="#{paginatorListSessionBean}"/>
+			</ui:fragment>
+		</h:panelGroup>
 	</ui:define>
 	<!-- Main Content - END -->
 </ui:composition>
