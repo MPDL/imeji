@@ -673,5 +673,4 @@ public class JenaCustomQueries {
   public static final String selectUnusedContent() {
     return "SELECT ?s WHERE {?s a <http://imeji.org/terms/content> . not exists{ ?item <http://imeji.org/terms/contentId> ?contentId . FILTER(REGEX(str(?s), ?contentId, 'i'))}}";
   }
-
 }

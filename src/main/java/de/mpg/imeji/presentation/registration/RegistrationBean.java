@@ -73,12 +73,14 @@ public class RegistrationBean extends SuperBean {
     try {
       User user = registrationService.activate(registrationService.retrieveByToken(token));
       loginBean.getSessionBean().setUser(user);
+      sendRegistrationNotification(user);
       redirect(getNavigation().getHomeUrl() + "/pwdreset?from=registration");
     } catch (Exception e) {
       LOGGER.error("Error activating user", e);
       BeanHelper.error("Error during user activation");
     }
   }
+
 
   /**
    * True if a valid token is set in the url
@@ -132,7 +134,7 @@ public class RegistrationBean extends SuperBean {
       Calendar expirationDate = DateHelper.getCurrentDate();
       expirationDate.add(Calendar.DAY_OF_MONTH,
           Integer.valueOf(Imeji.CONFIG.getRegistrationTokenExpiry()));
-      sendRegistrationNotification(passwordUrl, DateHelper.printDateWithTime(expirationDate));
+      sendRegistrationEmail(passwordUrl, DateHelper.printDateWithTime(expirationDate));
       if (FacesContext.getCurrentInstance().getMessageList().size() > 1) {
         BeanHelper.cleanMessages();
         BeanHelper.info(
@@ -161,7 +163,7 @@ public class RegistrationBean extends SuperBean {
   /**
    * Send registration email
    */
-  private void sendRegistrationNotification(String url, String exprirationDate) {
+  private void sendRegistrationEmail(String url, String exprirationDate) {
     final EmailService emailClient = new EmailService();
     try {
       // send to requester
@@ -170,6 +172,22 @@ public class RegistrationBean extends SuperBean {
           EmailMessages.getEmailOnRegistrationRequest_Body(getUser(), url,
               Imeji.CONFIG.getContactEmail(), exprirationDate, getLocale(),
               getNavigation().getRegistrationUrl()));
+    } catch (final Exception e) {
+      LOGGER.error("Error sending email", e);
+      BeanHelper.error("Error: Email not sent");
+    }
+  }
+
+  /**
+   * Send registration email
+   */
+  private void sendRegistrationNotification(User user) {
+    final EmailService emailClient = new EmailService();
+    try {
+      // send to requester
+      emailClient.sendMail(Imeji.CONFIG.getContactEmail(), Imeji.CONFIG.getEmailServerSender(),
+          EmailMessages.getEmailOnAccountActivation_Subject(user, getLocale()),
+          EmailMessages.getEmailOnAccountActivation_Body(user, getLocale()));
     } catch (final Exception e) {
       LOGGER.error("Error sending email", e);
       BeanHelper.error("Error: Email not sent");

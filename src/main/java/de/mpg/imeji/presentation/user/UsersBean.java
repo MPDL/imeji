@@ -11,7 +11,6 @@ import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
-import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.User.UserStatus;
@@ -27,7 +26,6 @@ import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.notification.NotificationUtils;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -215,38 +213,6 @@ public class UsersBean extends SuperBean {
       BeanHelper.error("Error Deleting registration");
       LOGGER.error("Error Deleting registration", e);
     }
-  }
-
-  /**
-   * Activatee a {@link User}
-   *
-   * @return
-   * @throws ImejiException
-   */
-  public String register() throws ImejiException {
-    final RegistrationService registrationBC = new RegistrationService();
-    final String email = FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("email");
-    User toActivateUser = null;
-    try {
-      // Activate first
-      toActivateUser = registrationBC.activate(registrationBC.retrieveByEmail(email));
-    } catch (final Exception e) {
-      BeanHelper.error("Error during activation of the user ");
-      LOGGER.error("Error during activation of the user", e);
-    }
-
-    BeanHelper.cleanMessages();
-    BeanHelper.info("Sending activation email and new password.");
-    NotificationUtils.sendActivationNotification(toActivateUser, getLocale(),
-        !new InvitationService().retrieveInvitationOfUser(email).isEmpty());
-    if (FacesContext.getCurrentInstance().getMessageList().size() > 1) {
-      BeanHelper.cleanMessages();
-      BeanHelper.info(
-          "User account has been activated, but email notification about activation and/or new password could not be performed! Check the eMail Server settings!");
-    }
-    doSearch();
-    return "";
   }
 
   /**

@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.item.ItemService;
@@ -13,6 +14,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.usergroup.UserGroupService;
@@ -31,6 +33,8 @@ public class ElasticReIndexJob implements Callable<Integer> {
   public Integer call() {
     try {
       LOGGER.info("Reindex started!");
+      ElasticService.ANALYSER =
+          ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
       // Check if the alias is used by only 1 index. If not, reset completely the indexes
       ElasticInitializer.getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
       final String index = ElasticInitializer.createIndex();

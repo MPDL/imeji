@@ -38,6 +38,8 @@ public class ElasticInitializer {
 
   public static void start(String clusterName) throws IOException, URISyntaxException {
     ElasticService.CLUSTER_NAME = clusterName;
+    ElasticService.ANALYSER =
+        ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
     TransportClient tc = TransportClient.builder()
         .settings(Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)
             .put("cluster.name", ElasticService.CLUSTER_NAME))
