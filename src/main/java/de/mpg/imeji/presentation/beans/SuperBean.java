@@ -2,7 +2,9 @@ package de.mpg.imeji.presentation.beans;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 
@@ -76,6 +78,20 @@ public class SuperBean implements Serializable {
    */
   protected void reload() throws IOException {
     redirect(getCurrentPage().getCompleteUrl());
+  }
+
+  /**
+   * 
+   * @param str
+   * @return
+   * @throws UnsupportedEncodingException
+   */
+  public String UTF8(String str) {
+    try {
+      return URLEncoder.encode(str, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      return str;
+    }
   }
 
   /**

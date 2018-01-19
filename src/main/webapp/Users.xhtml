@@ -59,7 +59,7 @@
 							<ui:fragment rendered="#{UsersBean.group == null}">
 								<!-- AdminDataList - User Email -->
 								<div class="imj_admindataValue">
-									<h:outputLink value="#{Navigation.applicationUrl}user?email=#{user.email}" styleClass="imj_overlayMenu imj_menuButton">
+									<h:outputLink value="#{Navigation.applicationUrl}user?email=&quot;#{UsersBean.UTF8(user.email)}&quot;" styleClass="imj_overlayMenu imj_menuButton">
 										<span class="fa fa-newspaper-o"/> #{lbl.view_detail}
 									</h:outputLink>
 									<!-- AdminDataList - Activate User -->

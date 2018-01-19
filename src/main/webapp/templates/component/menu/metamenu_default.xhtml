@@ -20,7 +20,7 @@
 		<div class="imj_metaMenuItemsAlign">
 			<!-- Login/Logout -->
 			<ui:fragment rendered="#{Auth.loggedIn}">
-				<a id="txtAccountUserName" title="#{lbl.goto_user_profile}" class="imj_metaMenuItem" href="#{Navigation.applicationUrl}user?email=#{Auth.sessionUser.email}">
+				<a id="txtAccountUserName" title="#{lbl.goto_user_profile}" class="imj_metaMenuItem" href="#{Navigation.applicationUrl}user?email=#{SuperBean.UTF8(Auth.sessionUser.email)}">
 					#{Auth.sessionUser.person.completeName}
 				</a>
 				<a id="lnkLogout" title="#{lbl.logout}" href="#{Navigation.applicationUrl}logout" class="imj_metaMenuItem">

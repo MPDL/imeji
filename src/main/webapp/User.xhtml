@@ -5,7 +5,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
-	xmlns:imjc="http://java.sun.com/jsf/composite/components">
+	xmlns:imjc="http://java.sun.com/jsf/composite/components"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	<ui:param name="headline" value="#{UserBean.user.person.completeName}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="currentMainMenu" value="admin" />
@@ -15,10 +16,10 @@
 	<ui:param name="backlinkTitle2" value="#{lbl.users}"/>
 
 	<ui:define name="actionsMenu">
-		<a href="#{Navigation.applicationUrl}subscriptions?email=#{UserBean.user.email}">
+		<a href="#{Navigation.applicationUrl}subscriptions?email=&quot;#{UserBean.UTF8(UserBean.user.email)}&quot;">
 			<span class="fa fa-envelope"/>#{lbl.manage_subscriptions} 
 		</a>
-		<a href="#{Navigation.applicationUrl}pwdreset?back=#{Navigation.userUrl}?email=#{UserBean.user.email}&amp;email=#{UserBean.user.email}">
+		<a href="#{Navigation.applicationUrl}pwdreset?back=#{UserBean.UTF8(UserBean.currentPage.completeUrl)}&amp;email=&quot;#{UserBean.UTF8(UserBean.user.email)}&quot;">
 			<span class="fa fa-key"/>#{lbl.password_change}
 		</a>
 	</ui:define>
@@ -52,10 +53,8 @@
 												rendered="#{!UserBean.edit}">
 												<h:outputText value="#{UserBean.user.email}" />
 											</h:panelGroup>
-											<h:panelGroup class="imj_metadataSetEdit"
-												rendered="#{UserBean.edit}">
-												<h:inputText class="imj_admindataEdit"
-													value="#{UserBean.user.email}" />
+											<h:panelGroup class="imj_metadataSetEdit" rendered="#{UserBean.edit}">
+												<h:inputText class="imj_admindataEdit" html5:type="email" value="#{UserBean.user.email}" />
 											</h:panelGroup>
 										</div>
 									</div>
@@ -182,29 +181,6 @@
 								<!-- END user infos -->
 							</h:form>
 
-							<h3 class="imj_headline">
-								<h:outputText value="#{lbl.subscriptions}" styleClass="imj_metadataValueEntry" />
-							</h3>						
-							<div class="imj_metadataSetEdit imj_metadataSet imj_connectedUserGroups">
-								<h:outputText class="imj_metadataLabel" value="#{UserBean.user.person.completeName} #{lbl.subscribed_to_collections}"/>
-								<div class="imj_metadataValue">
-									<ui:repeat var="col" value="#{UserBean.subscribedCollections}">
-										<div>
-											<h4 class="imj_metadataValueEntry">
-												<h:outputText value="#{col.title}" />
-												<h:outputLink value="#" onclick="openDialog('unsubscribe#{col.id}');">
-													<span class="fa fa-times"></span>
-												</h:outputLink>
-												<dialog:confirmationDialog submitAction="unsubscribe"
-													bean="#{UserBean}" identifierName="colId" identifierValue="#{col.id}"
-													confirmationText="#{msg.confirmation_unsubscribe_from}#{col.title}?"
-													submitLabel="#{lbl.unsubscribe}" dialogId="unsubscribe#{col.id}" />
-											</h4>
-										</div>
-									</ui:repeat>
-								</div>
-							</div>
-							
 
 							<h3 class="imj_headline">
 								<h:outputText value="#{lbl.grant_for}" styleClass="imj_metadataValueEntry" />

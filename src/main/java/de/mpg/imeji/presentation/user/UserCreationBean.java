@@ -93,6 +93,7 @@ public class UserCreationBean extends SuperBean {
     final String password = generator.generatePassword();
     user.setEncryptedPassword(StringHelper.md5(password));
     user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
+    user.setEmail(user.getEmail().trim());
     return uc.create(user, allowedToCreateCollection ? USER_TYPE.DEFAULT : USER_TYPE.RESTRICTED);
   }
 

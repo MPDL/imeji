@@ -4,7 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:imeji="http://java.sun.com/jsf/composite/components"
-	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	<ui:param name="headline" value="#{lbl.admin_user_new}" />
 	<ui:param name="title" value="#{lbl.admin_user_new}" />
 	<ui:param name="currentMainMenu" value="admin" />
@@ -44,7 +45,7 @@
 										</div>
 										<div class="imj_metadataValue">
 											<div class="imj_metadataValueEntry">
-												<h:inputText id="inputEmailText" styleClass="imj_admindataEdit" value="#{UserCreationBean.user.email}" />
+												<h:inputText id="inputEmailText" html5:type="email" styleClass="imj_admindataEdit" value="#{UserCreationBean.user.email}" />
 											</div>
 										</div>
 									</div>

@@ -297,7 +297,7 @@ public class SubscriptionBean extends SuperBean {
   }
 
   public String getUserUrl() {
-    return getNavigation().getUserUrl() + "?email=" + user.getEmail();
+    return getNavigation().getUserUrl() + "?email=\"" + UTF8(user.getEmail()) + "\"";
   }
 
   public void toggleShowAll() throws ImejiException {

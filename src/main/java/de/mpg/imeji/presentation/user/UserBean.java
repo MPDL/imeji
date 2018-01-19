@@ -10,7 +10,6 @@ import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -19,8 +18,6 @@ import org.jose4j.lang.JoseException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.core.collection.CollectionService;
-import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
@@ -32,7 +29,6 @@ import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.security.sharing.ShareService;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.user.util.QuotaUtil;
-import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -45,20 +41,10 @@ public class UserBean extends SuperBean {
   private static final long serialVersionUID = 8339673964329354673L;
   private static final Logger LOGGER = Logger.getLogger(UserBean.class);
   private User user;
-  private String newPassword = null;
-  private String repeatedPassword = null;
   private String id;
   private List<ShareListItem> roles = new ArrayList<ShareListItem>();
   private boolean edit = false;
   private QuotaUICompoment quota;
-
-  public UserBean() {
-    // mandatory for JSF initialization
-  }
-
-  public UserBean(String email) {
-    init(email);
-  }
 
   @PostConstruct
   public void init() {
@@ -73,8 +59,6 @@ public class UserBean extends SuperBean {
   private void init(String id) {
     try {
       this.id = id;
-      newPassword = null;
-      repeatedPassword = null;
       retrieveUser();
       if (user != null) {
         this.roles = ShareUtil.getAllRoles(user, getSessionUser(), getLocale());
@@ -101,27 +85,6 @@ public class UserBean extends SuperBean {
           || user.getPerson().getOrganizations().isEmpty()) {
         user.getPerson().getOrganizations().add(new Organization());
       }
-    }
-  }
-
-  /**
-   * Change the password of the user
-   *
-   * @throws Exception
-   */
-  public void changePassword() throws ImejiException {
-    if (user != null && newPassword != null && !"".equals(newPassword)) {
-      if (newPassword.equals(repeatedPassword)) {
-        user.setEncryptedPassword(StringHelper.md5(newPassword));
-        updateUser();
-        BeanHelper
-            .info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
-        return;
-      } else {
-        BeanHelper
-            .error(Imeji.RESOURCE_BUNDLE.getMessage("error_user_repeat_password", getLocale()));
-      }
-      reloadPage();
     }
   }
 
@@ -275,22 +238,6 @@ public class UserBean extends SuperBean {
     this.user = user;
   }
 
-  public String getNewPassword() {
-    return newPassword;
-  }
-
-  public void setNewPassword(String newPassword) {
-    this.newPassword = newPassword;
-  }
-
-  public String getRepeatedPassword() {
-    return repeatedPassword;
-  }
-
-  public void setRepeatedPassword(String repeatedPassword) {
-    this.repeatedPassword = repeatedPassword;
-  }
-
   /**
    * @return the roles
    */
@@ -343,32 +290,9 @@ public class UserBean extends SuperBean {
     this.quota = quota;
   }
 
-
-  public List<CollectionImeji> getSubscribedCollections() {
-    try {
-      return new CollectionService()
-          .retrieve(new ArrayList<String>(user.getSubscriptionCollections()), user);
-    } catch (ImejiException e) {
-      LOGGER.error("Error reading subscribed collection of user " + user.getEmail(), e);
-      return new ArrayList<>();
-    }
+  public String getPasswordResetUrl() {
+    return UTF8(getCurrentPage().getCompleteUrl());
   }
 
-  public void unsubscribe() {
-    final String colId = FacesContext.getCurrentInstance().getExternalContext()
-        .getRequestParameterMap().get("colId");
-    user.unsubscribeFromCollection(colId);
-    try {
-      new UserService().update(user, getSessionUser());
-      String title = new CollectionService().retrieve(colId, Imeji.adminUser).getTitle();
-      BeanHelper.info(
-          Imeji.RESOURCE_BUNDLE.getMessage("successfully_unsubscribed_from", getLocale()) + title);
-    } catch (ImejiException e) {
-      LOGGER.error("Error Unsubscribe user " + user.getEmail() + " from collection " + colId);
-      BeanHelper.error(e.getMessage());
-
-    }
-    reloadPage();
-  }
 
 }
