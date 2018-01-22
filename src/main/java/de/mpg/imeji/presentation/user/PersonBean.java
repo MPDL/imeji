@@ -106,7 +106,7 @@ public class PersonBean extends SuperBean implements Serializable {
         URI.create(uri);
         // if not errors, then the person is intern to imeji
         final UserService uc = new UserService();
-        return uc.retrievePersonById(personURI);
+        return uc.retrievePersonById(personURI).clone();
       } catch (final Exception e) {
         // is a cone person
         return parseConePersonJSON(uri);
@@ -162,7 +162,7 @@ public class PersonBean extends SuperBean implements Serializable {
     if (uri != null) {
       try {
         final UserService uc = new UserService();
-        return uc.retrieveOrganizationById(uri);
+        return uc.retrieveOrganizationById(uri).clone();
       } catch (final Exception e) {
         BeanHelper.error(e.getMessage());
       }
