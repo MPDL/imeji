@@ -107,8 +107,9 @@ public class UserCreationBean extends SuperBean {
     String url = getNavigation().getPasswordReserUrl() + "?token=" + token;
     try {
       emailClient.sendMail(getUser().getEmail(), Imeji.CONFIG.getEmailServerSender(),
-          EmailMessages.getEmailToCreatedUser_Subject(getLocale()), EmailMessages
-              .getEmailToCreatedUser_Body(getLocale(), user.getPerson().getCompleteName(), url));
+          EmailMessages.getEmailToCreatedUser_Subject(getLocale()),
+          EmailMessages.getEmailToCreatedUser_Body(getLocale(),
+              user.getPerson().getFirstnameLastname(), url));
     } catch (final Exception e) {
       LOGGER.error("Error sending email", e);
       BeanHelper.error("Error: Email not sent");

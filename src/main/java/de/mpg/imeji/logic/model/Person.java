@@ -134,6 +134,6 @@ public class Person implements Cloneable, Serializable {
   }
 
   public String getFirstnameLastname() {
-    return givenName + " " + familyName;
+    return (givenName + " " + familyName).trim();
   }
 }
