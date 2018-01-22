@@ -131,7 +131,7 @@ public class ItemBean extends SuperBean {
    *
    * @throws ImejiException
    *
-   * @param itemBean TODO @
+   * @param itemBean
    */
   public void loadItem() throws ImejiException {
     item = new ItemService().retrieve(ObjectHelper.getURI(Item.class, id), getSessionUser());
@@ -450,7 +450,7 @@ public class ItemBean extends SuperBean {
    * Function checks if the file ends with swc
    */
   public boolean isSwcFile() {
-    return content.getOriginal().endsWith(".swc");
+    return content != null && content.getOriginal().endsWith(".swc");
   }
 
   /**
