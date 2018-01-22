@@ -37,6 +37,4 @@ public enum SearchFields {
     return Stream.of(SearchFields.values()).filter(f -> f.getIndex().equals(index.toLowerCase()))
         .findFirst().orElse(all);
   }
-
 }
-
