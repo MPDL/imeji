@@ -12,7 +12,7 @@
 	<composite:implementation>
 		<ui:fragment rendered="#{cc.attrs.license != null}">
 			<ui:fragment rendered="#{not empty cc.attrs.license.url}">
-				<a href="#{cc.attrs.license.url}" target="_blanck" style="vertical-align:middle">
+				<a href="#{cc.attrs.license.url}" target="_blanck">
 					<ui:fragment rendered="#{cc.attrs.showLogo}">
 						<ui:fragment rendered="#{cc.attrs.license.name == 'CC_BY'}">
 							<img src="#{Navigation.applicationUrl}resources/icon/license/by.svg"/>
@@ -36,7 +36,7 @@
 				#{cc.attrs.license.label}
 			</ui:fragment>
 			<ui:fragment rendered="#{empty cc.attrs.license.label}">
-				#{cc.attrs.license.url}
+				<a href="#{cc.attrs.license.url}" target="_blanck">#{cc.attrs.license.url}</a>
 			</ui:fragment>
 			<ui:fragment rendered="#{!LicenseViewer.isActive(cc.attrs.license)}">
 				<i>
