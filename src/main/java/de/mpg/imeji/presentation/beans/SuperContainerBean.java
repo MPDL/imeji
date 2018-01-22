@@ -28,6 +28,7 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
   private static final long serialVersionUID = -7823020782502007646L;
   private static final Logger LOGGER = Logger.getLogger(SuperContainerBean.class);
   protected String query = "";
+  protected String filter = "";
   protected String selectedMenu;
   protected SearchQuery searchQuery = new SearchQuery();
   protected SearchResult searchResult;
@@ -58,6 +59,9 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
     }
     if (UrlHelper.hasParameter("q")) {
       query = UrlHelper.getParameterValue("q");
+    }
+    if (UrlHelper.hasParameter("filter")) {
+      filter = UrlHelper.getParameterValue("filter");
     }
     if (selectedMenu == null) {
       selectedMenu = "SORTING";
@@ -192,7 +196,7 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
     SearchFactory factory = new SearchFactory();
     int myOffset = offset;
     factory.initQuery(getQuery());
-    factory.initFilter(UrlHelper.getParameterValue("filter"));
+    factory.initFilter(filter);
     searchQuery = factory.build();
     final SortCriterion sortCriterion =
         new SortCriterion(SearchFields.valueOfIndex(getSelectedSortCriterion()),
