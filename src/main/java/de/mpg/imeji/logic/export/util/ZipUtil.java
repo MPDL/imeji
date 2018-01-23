@@ -35,7 +35,7 @@ public class ZipUtil {
       throws IOException, ImejiException {
     try {
       if (position > 0) {
-        filename = FilenameUtils.getBaseName(filename).replace("_" + (position - 1), "") + "_"
+        filename = FilenameUtils.removeExtension(filename).replace("_" + (position - 1), "") + "_"
             + position + "." + FilenameUtils.getExtension(filename);
       }
       zip.putNextEntry(new ZipEntry(filename));
