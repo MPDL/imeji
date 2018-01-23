@@ -14,7 +14,7 @@
 	<composite:implementation>
 		<h:form id="sf">
 			<div class="dropdown">
-				<a><span class="fa fa-files-o"/>#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() > 1 ? lbl.items : lbl.item}<span class="fa fa-angle-down"/></a>
+				<a><span class="fa fa-files-o"/>#{SessionBean.selected.size()} #{lbl.selected} #{SessionBean.selected.size() != 1 ? lbl.items : lbl.item}<span class="fa fa-angle-down"/></a>
 				<div class="content">
 					<ui:fragment rendered="#{Auth.update or (cc.attrs.context == 'items' and Auth.updateAtLeastOneCollection)}">
 						<a href="#{Navigation.applicationUrl}editselected?back=#{HistorySession.currentPage.urlEncoded}">

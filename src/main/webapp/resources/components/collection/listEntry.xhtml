@@ -19,7 +19,7 @@
 						<ui:fragment rendered="#{cc.attrs.item.status!='WITHDRAWN'}">
 							<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/empty.png" alt="preview picture"  rendered="#{cc.attrs.item.logoUrl == null}" title="#{lbl.ContainerEmpty}"/>
 						</ui:fragment>
-						<span class="imj_itemCount">#{cc.attrs.item.size} #{lbl.images}</span>
+						<span class="imj_itemCount">#{cc.attrs.item.size} #{cc.attrs.item.size != 1 ? lbl.items : lbl.item}</span>
 					</div>
 				</div>
 			</a>

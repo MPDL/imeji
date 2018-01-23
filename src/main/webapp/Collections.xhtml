@@ -9,7 +9,7 @@
 	xmlns:col="http://java.sun.com/jsf/composite/components/collection">
 	
 	<ui:param name="paginatorListSessionBean" value="#{CollectionsBean}" />
-	<ui:param name="headline" value="#{CollectionsBean.totalNumberOfRecords} #{CollectionsBean.totalNumberOfRecords > 1 ? lbl.collections : lbl.collection}" />
+	<ui:param name="headline" value="#{CollectionsBean.totalNumberOfRecords} #{CollectionsBean.totalNumberOfRecords != 1 ? lbl.collections : lbl.collection}" />
 	<ui:param name="title" value="#{lbl.collections}"/>
 	<ui:param name="displayQuery" value="#{paginatorListSessionBean.simpleQuery != ''}" />
 	<ui:param name="currentMainMenu" value="collection" />

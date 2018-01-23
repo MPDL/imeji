@@ -99,11 +99,7 @@
 									<!-- Disk space quota -->
 									<div class="imj_metadataSet">
 										<div class="imj_metadataLabel">
-											<h:outputText value="#{lbl.quota}"
-												rendered="#{!UserBean.edit or Auth.sysAdmin}" />
-											<h:outputText value="#{lbl.quota_input}"
-												rendered="#{UserBean.edit and Auth.sysAdmin}" />
-											<span class="imj_invisible">: </span>
+											#{lbl.quota}
 										</div>
 										<div class="imj_metadataValue">
 											<h:panelGroup class="imj_metadataValueEntry"
@@ -118,6 +114,7 @@
 												<h:selectOneMenu value="#{UserBean.quota.quota}">
 													<f:selectItems value="#{UserBean.quota.quotaMenu}" />
 												</h:selectOneMenu>
+												(gigabytes)
 											</h:panelGroup>
 										</div>
 									</div>
