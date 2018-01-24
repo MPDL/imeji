@@ -29,6 +29,18 @@
 				</ui:fragment>
 				
 				<!--  ui:fragment rendered="#{(!empty cc.users or !empty cc.groups) and !displayStatusOnly}">-->
+				<ui:fragment rendered="#{empty cc.users and empty cc.groups and cc.sharedWithUser and !displayStatusOnly}">
+					<div class="imj_overlayMenu imj_menuRight">
+						<div class="imj_menuHeader">
+		                    <span class="fa fa-user fa-size-2">&#160;</span>
+						</div>
+						<div class="imj_menuBody">
+							<ul class="imj_overlayMenuList">
+								<li>#{lbl.not_shared}</li>
+							</ul>
+						</div>
+					</div>
+				</ui:fragment>
 				<ui:fragment rendered="#{(!empty cc.users or !empty cc.groups) and cc.sharedWithUser and !displayStatusOnly}">
 					<div class="imj_overlayMenu imj_menuRight">
 						<div class="imj_menuHeader">
