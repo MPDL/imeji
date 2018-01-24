@@ -104,23 +104,28 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
   @Override
   public void initSortMenu() {
-    setSelectedSortCriterion(SearchFields
-        .valueOf(CookieUtils.readNonNull(ITEM_SORT_COOKIE, SearchFields.modified.name())).name());
-    setSelectedSortOrder(SortOrder
-        .valueOf(CookieUtils.readNonNull(ITEM_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name()))
-        .name());
-    setSortMenu(new ArrayList<SelectItem>());
-    if (getSelectedSortCriterion() == null) {
-      setSelectedSortCriterion(SearchFields.modified.name());
+    try {
+      setSelectedSortCriterion(SearchFields
+          .valueOf(CookieUtils.readNonNull(ITEM_SORT_COOKIE, SearchFields.modified.name())).name());
+      setSelectedSortOrder(SortOrder
+          .valueOf(CookieUtils.readNonNull(ITEM_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name()))
+          .name());
+      setSortMenu(new ArrayList<SelectItem>());
+      if (getSelectedSortCriterion() == null) {
+        setSelectedSortCriterion(SearchFields.modified.name());
+      }
+      getSortMenu().add(new SelectItem(SearchFields.modified,
+          Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", getLocale())));
+      getSortMenu().add(new SelectItem(SearchFields.filename,
+          Imeji.RESOURCE_BUNDLE.getLabel("filename", getLocale())));
+      getSortMenu().add(new SelectItem(SearchFields.filesize,
+          Imeji.RESOURCE_BUNDLE.getLabel("file_size", getLocale())));
+      getSortMenu().add(new SelectItem(SearchFields.filetype,
+          Imeji.RESOURCE_BUNDLE.getLabel("file_type", getLocale())));
+    } catch (Exception e) {
+      LOGGER.error("Error initializing sort menu", e);
     }
-    getSortMenu().add(new SelectItem(SearchFields.modified,
-        Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", getLocale())));
-    getSortMenu().add(new SelectItem(SearchFields.filename,
-        Imeji.RESOURCE_BUNDLE.getLabel("filename", getLocale())));
-    getSortMenu().add(new SelectItem(SearchFields.filesize,
-        Imeji.RESOURCE_BUNDLE.getLabel("file_size", getLocale())));
-    getSortMenu().add(new SelectItem(SearchFields.filetype,
-        Imeji.RESOURCE_BUNDLE.getLabel("file_type", getLocale())));
+
   }
 
   @Override
