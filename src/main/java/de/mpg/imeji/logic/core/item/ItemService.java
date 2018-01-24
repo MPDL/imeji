@@ -9,8 +9,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -706,10 +708,15 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   private void validateChecksum(String checksum, URI collectionURI, File file, Boolean isUpdate)
       throws UnprocessableError, ImejiException {
-    if (checksumExistsInCollection(collectionURI, checksum)) {
-      throw new UnprocessableError((!isUpdate)
-          ? "Same file already exists in the collection (with same checksum). Please choose another file."
-          : "Same file already exists in the collection or you are trying to upload same file for the item (with same checksum). Please choose another file.");
+    SearchResult r = searchItemsWithChecksuminCollection(collectionURI, checksum);
+    if (r.getNumberOfRecords() > 0) {
+      String id = ObjectHelper.getId(URI.create(r.getResults().get(0)));
+      Set<String> messages = new LinkedHashSet<>();
+      messages.add((!isUpdate)
+          ? "Same file already exists in the collection (same checksum). Please choose another file."
+          : "Same file already exists in the collection or you are trying to upload same file for the item (same checksum). Please choose another file.");
+      messages.add("ItemId: " + id);
+      throw new UnprocessableError(messages);
     }
   }
 
@@ -729,18 +736,30 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public boolean checksumExistsInCollection(URI collectionId, String checksum) {
     try {
-      final SearchQuery q = new SearchFactory().and(Arrays.asList(
-          new SearchPair(SearchFields.checksum, SearchOperators.EQUALS, checksum, false),
-          new SearchPair(SearchFields.col, SearchOperators.EQUALS, collectionId.toString(), false)))
-          .build();
-      return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1)
-          .getNumberOfRecords() > 0;
+      return searchItemsWithChecksuminCollection(collectionId, checksum).getNumberOfRecords() > 0;
     } catch (UnprocessableError e) {
       LOGGER.error("Error checking checksum of collection " + collectionId, e);
     }
     return true;
   }
 
+
+  /**
+   * Return the Items with the this checksum in a collection
+   * 
+   * @param collectionId
+   * @param checksum
+   * @return
+   * @throws UnprocessableError
+   */
+  public SearchResult searchItemsWithChecksuminCollection(URI collectionId, String checksum)
+      throws UnprocessableError {
+    final SearchQuery q = new SearchFactory().and(Arrays.asList(
+        new SearchPair(SearchFields.checksum, SearchOperators.EQUALS, checksum, false),
+        new SearchPair(SearchFields.col, SearchOperators.EQUALS, collectionId.toString(), false)))
+        .build();
+    return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1);
+  }
 
   /**
    * Read a file from its url
