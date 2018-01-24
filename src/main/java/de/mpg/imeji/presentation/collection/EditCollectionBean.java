@@ -44,7 +44,6 @@ public class EditCollectionBean extends CollectionBean {
       try {
         setCollection(new CollectionService()
             .retrieve(ObjectHelper.getURI(CollectionImeji.class, getId()), getSessionUser()));
-        setSendEmailNotification(getSessionUser().getObservedCollections().contains(getId()));
         final LinkedList<Person> persons = new LinkedList<Person>();
         if (getCollection().getPersons().size() == 0) {
           getCollection().getPersons().add(new Person());

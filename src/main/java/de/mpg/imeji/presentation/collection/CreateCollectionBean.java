@@ -96,7 +96,6 @@ public class CreateCollectionBean extends CollectionBean {
         collectionController.updateLogo(getCollection(),
             new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
       }
-      setSendEmailNotification(isSendEmailNotification());
       new UserService().update(getSessionUser(), getSessionUser());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_create", getLocale()));
       return true;

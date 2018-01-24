@@ -59,12 +59,6 @@ public class User implements Serializable {
   @j2jLiteral("http://imeji.org/terms/registrationToken")
   private String registrationToken;
 
-  @j2jList("http://imeji.org/terms/observedCollections")
-  private Collection<String> observedCollections = new ArrayList<String>();
-
-  @j2jList("http://imeji.org/terms/subscriptionCollections")
-  private Collection<String> subscriptionCollections = new ArrayList<String>();
-
 
   public String getEmail() {
     return email;
@@ -126,58 +120,6 @@ public class User implements Serializable {
     this.person = person;
   }
 
-
-  /**
-   * @return
-   */
-  public Collection<String> getObservedCollections() {
-    return observedCollections;
-  }
-
-  /**
-   * @return
-   */
-  public String addObservedCollection(String id) {
-    if (!this.observedCollections.contains(id)) {
-      this.observedCollections.add(id);
-    }
-    return id;
-  }
-
-  /**
-   * @return
-   */
-  public void removeObservedCollection(String id) {
-    this.observedCollections.remove(id);
-  }
-
-
-
-  /**
-   * @param observedCollections
-   */
-  public void setObservedCollections(Collection<String> observedCollections) {
-    this.observedCollections = observedCollections;
-  }
-
-
-
-  public Collection<String> getSubscriptionCollections() {
-    return subscriptionCollections;
-  }
-
-  public void setSubscriptionCollections(Collection<String> subscriptionCollections) {
-    this.subscriptionCollections = subscriptionCollections;
-  }
-
-  public void subscribeToCollection(String id) {
-    subscriptionCollections.add(id);
-  }
-
-  public void unsubscribeFromCollection(String id) {
-    subscriptionCollections.remove(id);
-  }
-
   /**
    *
    * @return
@@ -185,7 +127,6 @@ public class User implements Serializable {
   public long getQuota() {
     return quota;
   }
-
 
   /**
    *

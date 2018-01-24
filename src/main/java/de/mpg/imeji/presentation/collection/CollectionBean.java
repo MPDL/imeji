@@ -1,7 +1,5 @@
 package de.mpg.imeji.presentation.collection;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 import java.net.URI;
 import java.util.List;
 
@@ -25,7 +23,6 @@ public abstract class CollectionBean extends SuperBean {
   private static final long serialVersionUID = -3071769388574710503L;
   private CollectionImeji collection;
   private String id;
-  private boolean sendEmailNotification = false;
   private int authorPosition;
   private int organizationPosition;
 
@@ -69,24 +66,9 @@ public abstract class CollectionBean extends SuperBean {
     return getNavigation().getCollectionUrl() + id;
   }
 
-  public boolean isSendEmailNotification() {
-    return sendEmailNotification;
-  }
-
-  public void setSendEmailNotification(boolean sendEmailNotification) {
-    this.sendEmailNotification = sendEmailNotification;
-    // check if id already set
-    if (!isNullOrEmpty(id)) {
-      if (sendEmailNotification) {
-        getSessionUser().addObservedCollection(id);
-      } else {
-        getSessionUser().removeObservedCollection(id);
-      }
-    }
-  }
 
   /**
-   * Add an addtionial Info at the passed position
+   * Add an additionial Info at the passed position
    *
    * @param pos
    */

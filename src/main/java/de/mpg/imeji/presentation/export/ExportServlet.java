@@ -2,7 +2,6 @@ package de.mpg.imeji.presentation.export;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
@@ -34,7 +33,6 @@ import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.presentation.notification.NotificationUtils;
 import de.mpg.imeji.presentation.session.SessionBean;
 
 @WebServlet(urlPatterns = "/exportServlet", asyncSupported = true)
@@ -57,15 +55,6 @@ public class ExportServlet extends HttpServlet {
       resp.setStatus(HttpServletResponse.SC_OK);
       export.export(resp.getOutputStream());
       resp.getOutputStream().flush();
-
-      String format = req.getParameter("format");
-      if (format.equals("file")) {
-        NotificationUtils.notifyByItemDownload(session.getUser(),
-            new ItemService().retrieve(req.getParameter("id"), session.getUser()), Locale.ENGLISH);
-      } else {
-        NotificationUtils.notifyByExport(export, session, req.getParameter("q"),
-            req.getParameter("col"));
-      }
     } catch (final HttpResponseException he) {
       LOGGER.error("Error export", he);
       resp.sendError(he.getStatusCode(), he.getMessage());
