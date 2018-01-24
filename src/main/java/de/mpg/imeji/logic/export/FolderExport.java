@@ -17,7 +17,7 @@ import de.mpg.imeji.logic.core.facade.SearchAndRetrieveFacade;
 import de.mpg.imeji.logic.export.util.ExportUtil;
 import de.mpg.imeji.logic.export.util.ZipUtil;
 import de.mpg.imeji.logic.model.CollectionImeji;
-import de.mpg.imeji.logic.model.CollectionObject;
+import de.mpg.imeji.logic.model.CollectionElement;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
@@ -44,7 +44,7 @@ public class FolderExport extends ExportAbstract {
     ZipUtil.closeZip(zip);
   }
 
-  private void builZip(ZipOutputStream zip, List<CollectionObject> objects, String parentPath)
+  private void builZip(ZipOutputStream zip, List<CollectionElement> objects, String parentPath)
       throws ImejiException {
     final List<String> collectionUris =
         objects.stream().filter(o -> o.getType() == ObjectType.COLLECTION).map(o -> o.getUri())
@@ -106,7 +106,7 @@ public class FolderExport extends ExportAbstract {
    * @return
    * @throws ImejiException
    */
-  private List<CollectionObject> retrieveObjects(CollectionImeji collection) throws ImejiException {
+  private List<CollectionElement> retrieveObjects(CollectionImeji collection) throws ImejiException {
     final SearchResult result = facade.search(null, collection, super.user, null, -1, 0);
     return facade.retrieveItemsAndCollections(result.getResults(), user);
 

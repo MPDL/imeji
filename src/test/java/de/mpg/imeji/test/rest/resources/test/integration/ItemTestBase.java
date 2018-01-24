@@ -23,7 +23,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
-import de.mpg.imeji.rest.transfer.TransferObjectFactory;
+import de.mpg.imeji.rest.transfer.TransferVOtoTO;
 import de.mpg.imeji.util.ImejiTestResources;
 import de.mpg.imeji.util.JenaUtil;
 
@@ -47,7 +47,7 @@ public class ItemTestBase extends ImejiTestBase {
     item = ic.create(item, coll, JenaUtil.testUser);
     itemId = item.getIdString();
     itemTO = new DefaultItemTO();
-    TransferObjectFactory.transferDefaultItem(item, itemTO);
+    TransferVOtoTO.transferDefaultItem(item, itemTO);
   }
 
 

@@ -7,8 +7,11 @@ import de.mpg.imeji.logic.model.Metadata;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 
 /**
  * Create objects ready to be displayed in JSF
@@ -38,6 +41,7 @@ public class ImejiFactory {
   public static ItemFactory newItem() {
     return new ItemFactory();
   }
+
 
   /**
    * Return the Factory to create user
@@ -122,6 +126,36 @@ public class ImejiFactory {
     return org;
   }
 
+
+  /**
+   * Create a {@link SortCriterion}. If the sortBy is not valid, return null;
+   * 
+   * @param sortBy
+   * @param order
+   * @return
+   */
+  public static SortCriterion newSortCriterion(String sortBy, String order) {
+    try {
+      return new SortCriterion(SearchFields.valueOf(sortBy), newSortOrder(order));
+    } catch (Exception e) {
+      return null;
+    }
+
+  }
+
+  /**
+   * Create a Sortorder: allowed values: ascending or descending. Default value = ascending
+   * 
+   * @param order
+   * @return
+   */
+  public static SortOrder newSortOrder(String order) {
+    try {
+      return SortOrder.valueOf(order);
+    } catch (Exception e) {
+      return SortOrder.ASCENDING;
+    }
+  }
 
 
   /**

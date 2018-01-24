@@ -9,7 +9,7 @@ import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
  * @author saquet
  *
  */
-public interface CollectionObject {
+public interface CollectionElement {
 
   /**
    * Name of the object

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.model.CollectionElement;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.model.Item;
@@ -23,9 +24,9 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.rest.helper.CommonUtils;
 import de.mpg.imeji.rest.helper.UserNameCache;
+import de.mpg.imeji.rest.to.CollectionElementTO;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.ContainerAdditionalInformationTO;
-import de.mpg.imeji.rest.to.ContainerTO;
 import de.mpg.imeji.rest.to.IdentifierTO;
 import de.mpg.imeji.rest.to.MetadataTO;
 import de.mpg.imeji.rest.to.OrganizationTO;
@@ -37,9 +38,9 @@ import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultOrganizationTO;
 import de.mpg.imeji.rest.to.defaultItemTO.predefinedEasyMetadataTO.DefaultConePersonTO;
 
-public class TransferObjectFactory {
+public class TransferVOtoTO {
   private static UserNameCache userNameCache = new UserNameCache();
-  private static final Logger LOGGER = LoggerFactory.getLogger(TransferObjectFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TransferVOtoTO.class);
 
 
   /**
@@ -49,16 +50,9 @@ public class TransferObjectFactory {
    * @param to
    */
   public static void transferCollection(CollectionImeji vo, CollectionTO to) {
-    transferContainer(vo, to);
-  }
-
-  /**
-   * Transfer a container to a containerTO
-   *
-   * @param vo
-   * @param to
-   */
-  private static void transferContainer(CollectionImeji vo, ContainerTO to) {
+    if (!StringHelper.isNullOrEmptyTrim(vo.getCollection())) {
+      to.setCollectionId(ObjectHelper.getId(vo.getCollection()));
+    }
     transferProperties(vo, to);
     to.setTitle(vo.getTitle());
     to.setDescription(vo.getDescription());
@@ -68,6 +62,20 @@ public class TransferObjectFactory {
       transferPerson(p, pto);
       to.getContributors().add(pto);
     }
+  }
+
+  /**
+   * Transfer a CollectionElement to a CollectionElementTO
+   * 
+   * @param element
+   * @return
+   */
+  public static CollectionElementTO toCollectionelementTO(CollectionElement element) {
+    CollectionElementTO to = new CollectionElementTO();
+    to.setId(ObjectHelper.getId(URI.create(element.getUri())));
+    to.setName(element.getName());
+    to.setType(element.getType().name());
+    return to;
   }
 
   /**
@@ -201,6 +209,20 @@ public class TransferObjectFactory {
     to.setMetadata(transferMetadata(vo.getMetadata()));
     to.setFileUrl(URI.create(Imeji.PROPERTIES.getApplicationURL() + "file?itemId="
         + vo.getIdString() + "&resolution=original"));
+  }
+
+  public static DefaultItemTO toItemTO(Item vo) {
+    DefaultItemTO to = new DefaultItemTO();
+    transferProperties(vo, to);
+    to.setCollectionId(CommonUtils.extractIDFromURI(vo.getCollection()));
+    to.setFilename(vo.getFilename());
+    to.setFileSize(vo.getFileSize());
+    to.setMimetype(vo.getFiletype());
+    to.setLicenses(transferLicense(vo.getLicenses()));
+    to.setMetadata(transferMetadata(vo.getMetadata()));
+    to.setFileUrl(URI.create(Imeji.PROPERTIES.getApplicationURL() + "file?itemId="
+        + vo.getIdString() + "&resolution=original"));
+    return to;
   }
 
   /**

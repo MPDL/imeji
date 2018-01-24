@@ -16,7 +16,7 @@ import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.rest.to.SearchResultTO;
 import de.mpg.imeji.rest.to.UserTO;
-import de.mpg.imeji.rest.transfer.TransferObjectFactory;
+import de.mpg.imeji.rest.transfer.TransferVOtoTO;
 
 /**
  * API Service for {@link UserTO}
@@ -101,7 +101,7 @@ public class UserAPIService implements APIService<UserTO> {
       userVO.setApiKey(generateNewKey(userVO));
       new UserService().update(userVO, userVO);
     }
-    return TransferObjectFactory.transferUser(userVO);
+    return TransferVOtoTO.transferUser(userVO);
   }
 
 

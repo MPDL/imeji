@@ -1,8 +1,8 @@
 package de.mpg.imeji.rest.api;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static de.mpg.imeji.rest.transfer.ReverseTransferObjectFactory.TRANSFER_MODE.CREATE;
-import static de.mpg.imeji.rest.transfer.ReverseTransferObjectFactory.TRANSFER_MODE.UPDATE;
+import static de.mpg.imeji.rest.transfer.TransferTOtoVO.TRANSFER_MODE.CREATE;
+import static de.mpg.imeji.rest.transfer.TransferTOtoVO.TRANSFER_MODE.UPDATE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +26,8 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.rest.to.SearchResultTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
-import de.mpg.imeji.rest.transfer.ReverseTransferObjectFactory;
-import de.mpg.imeji.rest.transfer.TransferObjectFactory;
+import de.mpg.imeji.rest.transfer.TransferTOtoVO;
+import de.mpg.imeji.rest.transfer.TransferVOtoTO;
 
 /**
  * API Service for {@link DefaultItemTO}
@@ -47,13 +47,13 @@ public class ItemAPIService implements APIService<DefaultItemTO> {
       final CollectionImeji collection = getCollection(to.getCollectionId(), u);
       // transfer TO into item
       Item item = new Item();
-      ReverseTransferObjectFactory.transferDefaultItem(to, item, u, CREATE);
+      TransferTOtoVO.transferDefaultItem(to, item, u, CREATE);
       item = controller.create(item, collection, ((DefaultItemWithFileTO) to).getFile(), filename,
           u, ((DefaultItemWithFileTO) to).getFetchUrl(),
           ((DefaultItemWithFileTO) to).getReferenceUrl());
       // transfer item into ItemTO
       final DefaultItemTO createdTO = new DefaultItemTO();
-      TransferObjectFactory.transferDefaultItem(item, createdTO);
+      TransferVOtoTO.transferDefaultItem(item, createdTO);
       return createdTO;
     } else {
       throw new BadRequestException(
@@ -65,7 +65,7 @@ public class ItemAPIService implements APIService<DefaultItemTO> {
   public DefaultItemTO read(String id, User u) throws ImejiException {
     final DefaultItemTO defaultTO = new DefaultItemTO();
     final Item item = controller.retrieve(ObjectHelper.getURI(Item.class, id), u);
-    TransferObjectFactory.transferDefaultItem(item, defaultTO);
+    TransferVOtoTO.transferDefaultItem(item, defaultTO);
     return defaultTO;
   }
 
@@ -75,7 +75,7 @@ public class ItemAPIService implements APIService<DefaultItemTO> {
     // Get the collection
     final CollectionImeji collection = getCollection(ObjectHelper.getId(item.getCollection()), u);
     // Transfer the item
-    ReverseTransferObjectFactory.transferDefaultItem(to, item, u, UPDATE);
+    TransferTOtoVO.transferDefaultItem(to, item, u, UPDATE);
     if (to instanceof DefaultItemWithFileTO) {
       final DefaultItemWithFileTO tof = (DefaultItemWithFileTO) to;
       final String url = getExternalFileUrl(tof);
@@ -91,7 +91,7 @@ public class ItemAPIService implements APIService<DefaultItemTO> {
       item = controller.update(item, u);
     }
     final DefaultItemTO createdTO = new DefaultItemTO();
-    TransferObjectFactory.transferDefaultItem(item, createdTO);
+    TransferVOtoTO.transferDefaultItem(item, createdTO);
     return createdTO;
   }
 
@@ -126,7 +126,7 @@ public class ItemAPIService implements APIService<DefaultItemTO> {
         .search(SearchQueryParser.parseStringQuery(q), null, u, null, offset, size);
     for (final Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
       final DefaultItemTO to = new DefaultItemTO();
-      TransferObjectFactory.transferDefaultItem(vo, to);
+      TransferVOtoTO.transferDefaultItem(vo, to);
       tos.add(to);
     }
     return new SearchResultTO.Builder<DefaultItemTO>().numberOfRecords(result.getResults().size())

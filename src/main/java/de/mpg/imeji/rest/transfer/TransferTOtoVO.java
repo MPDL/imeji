@@ -2,6 +2,7 @@ package de.mpg.imeji.rest.transfer;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +32,9 @@ import de.mpg.imeji.rest.to.OrganizationTO;
 import de.mpg.imeji.rest.to.PersonTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 
-public class ReverseTransferObjectFactory {
+public class TransferTOtoVO implements Serializable {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ReverseTransferObjectFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TransferTOtoVO.class);
 
   public enum TRANSFER_MODE {
     CREATE, UPDATE
@@ -50,6 +51,9 @@ public class ReverseTransferObjectFactory {
   public static void transferCollection(CollectionTO to, CollectionImeji vo, TRANSFER_MODE mode,
       User u) {
     vo.setTitle(to.getTitle());
+    if (!StringHelper.isNullOrEmptyTrim(to.getCollectionId())) {
+      vo.setCollection(ObjectHelper.getURI(CollectionImeji.class, to.getCollectionId()));
+    }
     vo.setDescription(to.getDescription());
     vo.setAdditionalInformations(transferAdditionalInfos(to.getAdditionalInfos()));
     // set contributors
@@ -70,8 +74,6 @@ public class ReverseTransferObjectFactory {
     }
     return infos;
   }
-
-
 
   /**
    * Transfer a {@link DefaultItemTO} to an {@link Item}

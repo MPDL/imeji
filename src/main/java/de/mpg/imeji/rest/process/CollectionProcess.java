@@ -10,6 +10,7 @@ import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.JSONResponse;
@@ -49,6 +50,33 @@ public class CollectionProcess {
       u = BasicAuthentication.auth(req);
       resp = RestProcessUtils.buildResponse(OK.getStatusCode(),
           ccrud.readItems(id, u, q, offset, size));
+    } catch (final Exception e) {
+      resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
+    }
+    return resp;
+  }
+
+  /**
+   * get the collection elements
+   * 
+   * @param req
+   * @param id
+   * @param q
+   * @param offset
+   * @param size
+   * @param sortBy
+   * @param order
+   * @return
+   */
+  public static JSONResponse getCollectionElements(HttpServletRequest req, String id, String q,
+      int offset, int size, String sortBy, String order) {
+    JSONResponse resp = null;
+    User u = null;
+    final CollectionAPIService ccrud = new CollectionAPIService();
+    try {
+      u = BasicAuthentication.auth(req);
+      resp = RestProcessUtils.buildResponse(OK.getStatusCode(),
+          ccrud.readElements(id, u, q, offset, size, ImejiFactory.newSortCriterion(sortBy, order)));
     } catch (final Exception e) {
       resp = RestProcessUtils.localExceptionHandler(e, e.getLocalizedMessage());
     }

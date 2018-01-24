@@ -23,7 +23,7 @@ import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 @j2jResource("http://imeji.org/terms/collection")
 @j2jModel("collection")
 @j2jId(getMethod = "getId", setMethod = "setId")
-public class CollectionImeji extends Properties implements Serializable, CollectionObject {
+public class CollectionImeji extends Properties implements Serializable, CollectionElement {
   private static final long serialVersionUID = -4689209760815149573L;
   @j2jResource("http://imeji.org/terms/collection")
   private URI collection;

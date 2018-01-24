@@ -17,8 +17,8 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.model.CollectionElement;
 import de.mpg.imeji.logic.model.CollectionImeji;
-import de.mpg.imeji.logic.model.CollectionObject;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
@@ -69,7 +69,7 @@ public class SearchAndRetrieveFacade implements Serializable {
    * @return
    * @throws ImejiException
    */
-  public List<CollectionObject> retrieveItemsAndCollections(List<String> uris, User user)
+  public List<CollectionElement> retrieveItemsAndCollections(List<String> uris, User user)
       throws ImejiException {
     // Split into 2 lists: one list of collection, one of items
     final Map<Boolean, List<String>> resultMap =
@@ -117,13 +117,13 @@ public class SearchAndRetrieveFacade implements Serializable {
    * @param items
    * @return
    */
-  private List<CollectionObject> mergeAndOrder(List<String> uris,
+  private List<CollectionElement> mergeAndOrder(List<String> uris,
       List<CollectionImeji> subCollections, List<Item> items) {
-    List<CollectionObject> l = new ArrayList<>(items);
+    List<CollectionElement> l = new ArrayList<>(items);
     l.addAll(subCollections);
-    Collections.sort(l, new Comparator<CollectionObject>() {
+    Collections.sort(l, new Comparator<CollectionElement>() {
       @Override
-      public int compare(CollectionObject o1, CollectionObject o2) {
+      public int compare(CollectionElement o1, CollectionElement o2) {
         return Integer.compare(uris.indexOf(o1.getUri()), uris.indexOf(o2.getUri()));
       }
     });

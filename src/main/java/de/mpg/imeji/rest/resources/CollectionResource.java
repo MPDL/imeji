@@ -2,6 +2,7 @@ package de.mpg.imeji.rest.resources;
 
 import static de.mpg.imeji.rest.process.CollectionProcess.createCollection;
 import static de.mpg.imeji.rest.process.CollectionProcess.deleteCollection;
+import static de.mpg.imeji.rest.process.CollectionProcess.getCollectionElements;
 import static de.mpg.imeji.rest.process.CollectionProcess.readAllCollections;
 import static de.mpg.imeji.rest.process.CollectionProcess.readCollection;
 import static de.mpg.imeji.rest.process.CollectionProcess.readCollectionItems;
@@ -45,6 +46,17 @@ public class CollectionResource implements ImejiResource {
       @QueryParam("q") String q, @DefaultValue("0") @QueryParam("offset") int offset,
       @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
     final JSONResponse resp = readCollectionItems(req, id, q, offset, size);
+    return buildJSONResponse(resp);
+  }
+
+  @GET
+  @Path("/{id}/elements")
+  @ApiOperation(value = "Search and retrieve items and subcollection of the collection")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response readContentsWithQuery(@Context HttpServletRequest req, @PathParam("id") String id,
+      @QueryParam("q") String q, @DefaultValue("0") @QueryParam("offset") int offset,
+      @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
+    final JSONResponse resp = getCollectionElements(req, id, q, offset, size, null, null);
     return buildJSONResponse(resp);
   }
 
@@ -116,8 +128,7 @@ public class CollectionResource implements ImejiResource {
   @Override
   @DELETE
   @Path("/{id}")
-  @ApiOperation(value = "Delete collection by id",
-      notes = "Deletes also the profile and items of this collection")
+  @ApiOperation(value = "Delete collection by id", notes = "Deletes also items of this collection")
   @Produces(MediaType.APPLICATION_JSON)
   public Response delete(@Context HttpServletRequest req, @PathParam("id") String id) {
     final JSONResponse resp = deleteCollection(req, id);

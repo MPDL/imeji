@@ -5,6 +5,7 @@ import java.net.URI;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
+import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
  * Factory for {@link CollectionImeji}
@@ -19,14 +20,22 @@ public class CollectionFactory {
     // constructor
   }
 
+
+
   public CollectionImeji build() {
     return collection;
   }
 
-  public CollectionFactory setId(String id) {
-    collection.setId(URI.create(id));
+  public CollectionFactory setUri(String uri) {
+    collection.setId(URI.create(uri));
     return this;
   }
+
+  public CollectionFactory setId(String id) {
+    collection.setId(ObjectHelper.getURI(CollectionImeji.class, id));
+    return this;
+  }
+
 
   public CollectionFactory setPerson(Person p) {
     collection.getPersons().add(p);
@@ -51,5 +60,4 @@ public class CollectionFactory {
     collection.setCollection(URI.create(collectionUri));
     return this;
   }
-
 }

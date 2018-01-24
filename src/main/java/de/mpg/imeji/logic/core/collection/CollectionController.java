@@ -41,7 +41,7 @@ class CollectionController extends ImejiControllerAbstract<CollectionImeji> {
   @Override
   public List<CollectionImeji> retrieveBatch(List<String> ids, User user) throws ImejiException {
     final List<CollectionImeji> l = ids.stream()
-        .map(id -> ImejiFactory.newCollection().setId(id).build()).collect(Collectors.toList());
+        .map(id -> ImejiFactory.newCollection().setUri(id).build()).collect(Collectors.toList());
     READER.read(toObjectList(l), user);
     return l;
   }
@@ -50,7 +50,7 @@ class CollectionController extends ImejiControllerAbstract<CollectionImeji> {
   public List<CollectionImeji> retrieveBatchLazy(List<String> ids, User user)
       throws ImejiException {
     final List<CollectionImeji> l = ids.stream()
-        .map(id -> ImejiFactory.newCollection().setId(id).build()).collect(Collectors.toList());
+        .map(id -> ImejiFactory.newCollection().setUri(id).build()).collect(Collectors.toList());
     READER.readLazy(toObjectList(l), user);
     return l;
   }

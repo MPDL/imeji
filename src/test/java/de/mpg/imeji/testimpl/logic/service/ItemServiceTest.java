@@ -159,7 +159,7 @@ public class ItemServiceTest extends SuperServiceTest {
           ImejiFactory.newCollection().setPerson("m", "p", "d").build(), userEditGrant, false,
           Status.PENDING, UnprocessableError.class);
       CollectionImeji collectionWrongId =
-          ImejiFactory.newCollection().setPerson("m", "p", "d").setId("wrongId").build();
+          ImejiFactory.newCollection().setPerson("m", "p", "d").setUri("wrongId").build();
       userEditGrant.getGrants()
           .add(new Grant(GrantType.EDIT, collectionWrongId.getId().toString()).toGrantString());
       create_Test("Wrong id Collection", ImejiFactory.newItem(collectionPrivate), collectionWrongId,
