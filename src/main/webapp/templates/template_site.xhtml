@@ -10,11 +10,11 @@
 
     <html xmlns="http://www.w3.org/1999/xhtml">
         <h:head>
-       		<h:outputScript library="javax.faces" name="jsf.js" target="body" />
-       		<h:outputScript library="js" name="default.js"  target="body"/>
-            <ui:include src="component/header/html_head_default.xhtml"/>
+         	<ui:include src="component/header/html_head_default.xhtml"/>
+       		<h:outputScript library="javax.faces" name="jsf.js"/>
+       		<h:outputScript library="js" name="default.js" target="body"/>
         </h:head>
-        <h:body lang="#{InternationalizationBean.locale}" class="uploadDropArea"> 
+        <h:body lang="#{InternationalizationBean.locale}" class="uploadDropArea">
        		#{Auth.init()}
             <ui:insert name="additonalHeaderScripts"/>         
             <h:panelGroup id="imeji_maintenance" layout="block" styleClass="imj_message imj_messageError" style="width:100%; padding:0.5em" rendered="#{Configuration.maintenanceMessage != ''}">
