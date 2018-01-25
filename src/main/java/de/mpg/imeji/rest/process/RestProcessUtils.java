@@ -33,6 +33,7 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.rest.to.HTTPError;
 import de.mpg.imeji.rest.to.JSONException;
 import de.mpg.imeji.rest.to.JSONResponse;
@@ -140,6 +141,10 @@ public class RestProcessUtils {
       } else {
         errorTitleLocal = Status.INTERNAL_SERVER_ERROR.getReasonPhrase();
       }
+    }
+    if (!StringHelper.isNullOrEmptyTrim(e) && e.contains("id_error:")) {
+      error.setId(e.split("id_error:")[1]);
+      e = e.split("id_error:")[0];
     }
 
     error.setExceptionReport(e);

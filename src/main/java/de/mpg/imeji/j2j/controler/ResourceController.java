@@ -75,11 +75,42 @@ public class ResourceController {
    */
   public Object read(Object o) throws NotFoundException {
     if (!java2rdf.exists(o)) {
-      throw new NotFoundException(
-          o + "Resource " + J2JHelper.getId(o).getPath().replace("imeji/", "") + " not found!");
+
+      throw new NotFoundException(getObjectType(J2JHelper.getId(o)) + " "
+          + getObjectId(J2JHelper.getId(o)) + " not found!");
     }
     o = rdf2Java.loadResource(o);
     return o;
+  }
+
+  /**
+   * Find the Id of the object into tje uri
+   * 
+   * @param uri
+   * @return
+   */
+  private String getObjectId(URI uri) {
+    try {
+      String path = uri.getPath();
+      return path.substring(path.lastIndexOf('/') + 1);
+    } catch (Exception e) {
+      return uri != null ? uri.toString() : "";
+    }
+  }
+
+  /**
+   * Find the object type according to the uri
+   * 
+   * @param uri
+   * @return
+   */
+  private String getObjectType(URI uri) {
+    try {
+      String path = uri.getPath().replace("/" + getObjectId(uri), "");
+      return path.substring(path.lastIndexOf('/') + 1);
+    } catch (Exception e) {
+      return "Object";
+    }
   }
 
   /**

@@ -9,10 +9,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -711,12 +709,11 @@ public class ItemService extends SearchServiceAbstract<Item> {
     SearchResult r = searchItemsWithChecksuminCollection(collectionURI, checksum);
     if (r.getNumberOfRecords() > 0) {
       String id = ObjectHelper.getId(URI.create(r.getResults().get(0)));
-      Set<String> messages = new LinkedHashSet<>();
-      messages.add((!isUpdate)
-          ? "Same file already exists in the collection (same checksum). Please choose another file."
-          : "Same file already exists in the collection or you are trying to upload same file for the item (same checksum). Please choose another file.");
-      messages.add("ItemId: " + id);
-      throw new UnprocessableError(messages);
+      throw new UnprocessableError((!isUpdate)
+          ? "Same file already exists in the collection (same checksum). Please choose another file. id_error:"
+              + id
+          : "Same file already exists in the collection or you are trying to upload same file for the item (same checksum). Please choose another file. id_error:"
+              + id);
     }
   }
 

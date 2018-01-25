@@ -1,12 +1,18 @@
 package de.mpg.imeji.rest.to;
 
-public class HTTPError {
+import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL)
+public class HTTPError implements Serializable {
+  private static final long serialVersionUID = -763007655028104486L;
   public String code;
   public String title;
   public String message;
   public String exceptionReport;
-
+  public String id;
 
   public String getExceptionReport() {
     return exceptionReport;
@@ -40,5 +46,18 @@ public class HTTPError {
     this.message = message;
   }
 
+  /**
+   * @return the id
+   */
+  public String getId() {
+    return id;
+  }
+
+  /**
+   * @param id the id to set
+   */
+  public void setId(String id) {
+    this.id = id;
+  }
 
 }
