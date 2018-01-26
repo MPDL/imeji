@@ -253,8 +253,12 @@ function goToSearch(index) {
 	if(url.indexOf("?") >= 0){
 		appendChar="&";
 	}
-	window.open(url + appendChar+'q=' + encodeURIComponent($('#simpleSearchInputText').val()),
+	window.open(url + appendChar+'q=' + encodeSearchValue($('#simpleSearchInputText').val()),
 	"_self");
+};
+
+function encodeSearchValue(value){
+	return encodeURIComponent(value.replace('(', '\\(').replace(')', '\\)'));
 };
 
 /**

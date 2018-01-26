@@ -2,6 +2,7 @@ package de.mpg.imeji.logic.search;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -42,6 +43,8 @@ public class SearchQueryParser {
   private static final String TECHNICAL_REGEX =
       SearchFields.technical.name() + "\\[(.+)\\]([=<>@]{1,2})(.+)";
   private static Pattern TECHNICAL_PATTERN = Pattern.compile(TECHNICAL_REGEX);
+  private static char[] SPECIAL_CHARACTERS = {'(', ')', '=', '>', '<'};
+  private static char ESCAPE_CHARACTER = '\\';
 
 
   /**
@@ -97,16 +100,17 @@ public class SearchQueryParser {
     int c = 0;
     String part = "";
     int brackets = 0;
+    int index = 0;
     boolean inBracket = false;
     boolean not = false;
     LOGICAL_RELATIONS relation = LOGICAL_RELATIONS.AND;
     try {
       while ((c = reader.read()) != -1) {
         part += (char) c;
-        if (c == '(') {
+        if (c == '(' && !isEscaped(index, group)) {
           brackets++;
           inBracket = true;
-        } else if (c == ')') {
+        } else if (c == ')' && !isEscaped(index, group)) {
           brackets--;
         }
         if ("NOT".equals(part.trim())) {
@@ -126,21 +130,23 @@ public class SearchQueryParser {
           not = false;
         } else if (!inBracket && endsWithStopWord(part)) {
           part = part.trim();
-          factory.addElement(parsePair(removeStopWord(part), not), relation);
+          factory.addElement(parsePair(removeRelation(part), not), relation);
           relation = readRelation(part);
           part = "";
           not = false;
         }
+        index++;
       }
       if (!StringHelper.isNullOrEmptyTrim(part)) {
         part = part.trim();
-        factory.addElement(parsePair(removeStopWord(part), not), relation);
+        factory.addElement(parsePair(removeRelation(part), not), relation);
       }
     } catch (Exception e) {
       throw new UnprocessableError(e);
     }
     return factory.buildAsGroup();
   }
+
 
   /**
    * Parse a string as a pair: index=value
@@ -158,8 +164,9 @@ public class SearchQueryParser {
       return parseSearchPair(s, not);
     } else {
       return new SearchFactory()
-          .or(Arrays.asList(new SearchPair(SearchFields.all, SearchOperators.EQUALS, s, not),
-              new SearchPair(SearchFields.fulltext, SearchOperators.EQUALS, s, not)))
+          .or(Arrays.asList(
+              new SearchPair(SearchFields.all, SearchOperators.EQUALS, unescape(s), not),
+              new SearchPair(SearchFields.fulltext, SearchOperators.EQUALS, unescape(s), not)))
           .buildAsGroup();
     }
   }
@@ -175,7 +182,7 @@ public class SearchQueryParser {
     if (parser.find(s)) {
       String index = parser.getGroup(1);
       SearchOperators operator = stringOperator2SearchOperator(parser.getGroup(2));
-      String value = parser.getGroup(3);
+      String value = unescape(parser.getGroup(3));
       return new SearchPair(SearchFields.valueOfIndex(index), operator, value, not);
     }
     return new SearchPair();
@@ -192,7 +199,7 @@ public class SearchQueryParser {
     if (parser.find(s)) {
       String index = parser.getGroup(1);
       SearchOperators operator = stringOperator2SearchOperator(parser.getGroup(2));
-      String value = parser.getGroup(3);
+      String value = unescape(parser.getGroup(3));
       String[] indexes = index.split("\\.");
       return new SearchMetadata(indexes[0],
           indexes.length > 1 ? SearchMetadataFields.valueOfIndex(indexes[1]) : null, operator,
@@ -212,7 +219,7 @@ public class SearchQueryParser {
     if (parser.find(s)) {
       String index = parser.getGroup(1);
       SearchOperators operator = stringOperator2SearchOperator(parser.getGroup(2));
-      String value = parser.getGroup(3);
+      String value = unescape(parser.getGroup(3));
       return new SearchTechnicalMetadata(operator, value, index, not);
     }
     return new SearchPair();
@@ -234,8 +241,8 @@ public class SearchQueryParser {
    * @param s
    * @return
    */
-  private static String removeStopWord(String s) {
-    return s.replace("AND", "").replace("OR", "").replace(")", "").trim();
+  private static String removeRelation(String s) {
+    return s.replace("AND", "").replace("OR", "").trim();
   }
 
   /**
@@ -245,7 +252,8 @@ public class SearchQueryParser {
    * @return
    */
   private static boolean endsWithStopWord(String s) {
-    return s.endsWith("AND") || s.endsWith("OR") || s.endsWith(")");
+    return s.endsWith("AND") || s.endsWith("OR")
+        || (s.endsWith(")") && !isEscaped(s.lastIndexOf("("), s));
   }
 
   /**
@@ -395,7 +403,7 @@ public class SearchQueryParser {
    * @return
    */
   private static String searchValue2URL(SearchPair pair) {
-    return pair.getValue();
+    return escape(pair.getValue());
   }
 
   /**
@@ -429,9 +437,65 @@ public class SearchQueryParser {
    */
   public static String searchQuery2PrettyQuery(SearchQuery sq) {
     try {
-      return URLDecoder.decode(transform2URL(sq), "UTF-8");
+      return unescape(URLDecoder.decode(transform2URL(sq), "UTF-8"));
     } catch (UnsupportedEncodingException e) {
       return transform2URL(sq);
     }
   }
+
+  /**
+   * True if the character at the passed index is a special character and is escaped
+   * 
+   * @param s
+   */
+  private static boolean isEscaped(int index, String s) {
+    return isSpecialCharacter(s.charAt(index)) && index > 0
+        && s.charAt(index - 1) == ESCAPE_CHARACTER;
+  }
+
+  /**
+   * True if the character is defined in SPECIAL_CHARACTERS
+   * 
+   * @param c
+   * @return
+   */
+  private static boolean isSpecialCharacter(final char c) {
+    return Arrays.binarySearch(SPECIAL_CHARACTERS, c) >= 0;
+  }
+
+  /**
+   * Escape all SPECIAL_CHARACTERS from String
+   * 
+   * @param s
+   * @return
+   */
+  private static String escape(String s) {
+    StringWriter writer = new StringWriter(s.length());
+    s.chars().forEachOrdered(c -> writer.append(escape((char) c)));
+    return writer.toString();
+  }
+
+  /**
+   * Unescape all SPECIAL_CHARACTERS from String
+   * 
+   * @param s
+   * @return
+   */
+  private static String unescape(String s) {
+    return s.replace(Character.toString(ESCAPE_CHARACTER), "");
+  }
+
+  /**
+   * Escape character if is special
+   * 
+   * @param c
+   * @return
+   */
+  private static CharSequence escape(char c) {
+    if (isSpecialCharacter(c)) {
+      return Character.toString(ESCAPE_CHARACTER) + Character.toString(c);
+    }
+    return new String(new char[] {c});
+  }
+
 }

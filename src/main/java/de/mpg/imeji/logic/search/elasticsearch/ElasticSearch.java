@@ -110,7 +110,6 @@ public class ElasticSearch implements Search {
     } else {
       request.setQuery(q);
     }
-
     if (addFacets) {
       request = addAggregations(request, folderUri);
     }
