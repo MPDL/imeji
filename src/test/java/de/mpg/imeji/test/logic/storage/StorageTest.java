@@ -134,7 +134,7 @@ public class StorageTest {
     // UPLOAD
     File file = ImejiTestResources.getTestPng();
     try {
-      UploadResult res = sc.upload(filename, file, "1");
+      UploadResult res = sc.upload(filename, file);
       Assert.assertFalse(res.getOrginal() + " url is same as path",
           res.getOrginal().equals(manager.transformUrlToPath(res.getOrginal())));
       ByteArrayOutputStream baos = new ByteArrayOutputStream();

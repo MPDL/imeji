@@ -819,8 +819,7 @@ public class ItemServiceTest extends SuperServiceTest {
 
       // Check, that moving back is not possible because item is released now, seperaly
       ItemService service = new ItemService();
-      service.moveItems(Arrays.asList(itemToMove.getId().toString()), col1, userAdmin,
-          getDefaultLicense());
+      service.moveItems(Arrays.asList(itemToMove), col1, userAdmin, getDefaultLicense());
       // Item should still be in old collection
       Item ret = service.retrieve(itemToMove.getId().toString(), userAdmin);
       Assert.assertEquals("Should be in old collection", ret.getCollection().toString(),
@@ -836,7 +835,7 @@ public class ItemServiceTest extends SuperServiceTest {
   private void move_Test(String msg, Item item, CollectionImeji col, User user, Class exception) {
     ItemService service = new ItemService();
     try {
-      service.moveItems(Arrays.asList(item.getId().toString()), col, user, getDefaultLicense());
+      service.moveItems(Arrays.asList(item), col, user, getDefaultLicense());
       if (exception != null) {
         Assert.fail(msg + ": No exception was thrown");
       }

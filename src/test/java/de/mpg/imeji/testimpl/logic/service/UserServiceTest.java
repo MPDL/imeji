@@ -318,26 +318,6 @@ public class UserServiceTest extends SuperServiceTest {
   }
 
   @Test
-  public void searchUsersToBeNotified() {
-    CollectionImeji collection =
-        ImejiFactory.newCollection().setTitle("Title").setPerson(defaultUser.getPerson()).build();
-    try {
-      (new CollectionService()).create(collection, defaultUser);
-      defaultUser.addObservedCollection(collection.getIdString());
-      (new UserService()).update(defaultUser, adminUser);
-
-      User ret = (new UserService()).retrieve(defaultUser.getId(), adminUser);
-
-      List<User> users = (new UserService()).searchUsersToBeNotified(adminUser, collection);
-      Assert.assertEquals("There is exactly one user to notify", 1, users.size());
-      Assert.assertEquals("ID should be id of default user", defaultUser.getId().toString(),
-          users.get(0).getId().toString());
-    } catch (ImejiException e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Test
   public void testUserDiskSpaceQuota() throws ImejiException {
     // create user
     User user = new User();

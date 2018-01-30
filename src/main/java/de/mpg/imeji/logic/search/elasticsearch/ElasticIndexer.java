@@ -92,7 +92,7 @@ public class ElasticIndexer implements SearchIndexer {
     } catch (final Exception e) {
       LOGGER.error("error indexing object ", e);
     }
-    if (!(l.get(0) instanceof ContentVO) && !(l.get(0) instanceof Item)) {
+    if (!(l.get(0) instanceof ContentVO)) {
       commit();
     }
     updateIndexBatchPostProcessing(l);

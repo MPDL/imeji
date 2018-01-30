@@ -140,7 +140,7 @@ public class CollectionAPIService implements APIService<CollectionTO> {
     final CollectionService controller = new CollectionService();
     final CollectionImeji vo =
         controller.retrieve(ObjectHelper.getURI(CollectionImeji.class, id), u);
-    controller.release(vo, u, null);
+    controller.releaseWithDefaultLicense(vo, u);
     // Now Read the collection and return it back
     return getCollectionTO(id, u);
 

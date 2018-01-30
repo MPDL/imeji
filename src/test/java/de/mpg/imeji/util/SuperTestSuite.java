@@ -13,8 +13,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 public class SuperTestSuite {
   @BeforeClass
   public static void startSuite() throws IOException, URISyntaxException {
-    // ElasticInitializer.start("Integration test - " + System.currentTimeMillis());
-    ElasticInitializer.start(PropertyReader.getProperty("elastic.cluster.name"));
+    ElasticInitializer.startLocal(PropertyReader.getProperty("elastic.cluster.name"));
   }
 
   @AfterClass

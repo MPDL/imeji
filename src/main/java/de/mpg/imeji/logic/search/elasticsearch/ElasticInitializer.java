@@ -9,11 +9,13 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.node.Node;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
@@ -37,16 +39,29 @@ public class ElasticInitializer {
   }
 
   public static void start(String clusterName) throws IOException, URISyntaxException {
-    ElasticService.CLUSTER_NAME = clusterName;
-    ElasticService.ANALYSER =
-        ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
     TransportClient tc = TransportClient.builder()
         .settings(Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)
             .put("cluster.name", ElasticService.CLUSTER_NAME))
         .build();
     tc.addTransportAddress(
         new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
-    ElasticService.setClient(tc);
+    start(clusterName, tc);
+  }
+
+  @SuppressWarnings("resource")
+  public static void startLocal(String clusterName) throws IOException, URISyntaxException {
+    Settings settings = Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)
+        .put("cluster.name", ElasticService.CLUSTER_NAME).build();
+    ElasticService.setNODE(new Node(settings).start());
+    start(clusterName, ElasticService.getNODE().client());
+  }
+
+  private static void start(String clusterName, Client client)
+      throws IOException, URISyntaxException {
+    ElasticService.CLUSTER_NAME = clusterName;
+    ElasticService.ANALYSER =
+        ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
+    ElasticService.setClient(client);
     initializeIndex();
     LOGGER.info("Add elasticsearch mappings...");
     for (final ElasticTypes type : ElasticTypes.values()) {
