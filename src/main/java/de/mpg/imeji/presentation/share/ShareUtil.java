@@ -46,8 +46,10 @@ public class ShareUtil {
         if (grant.getGrantFor().contains("/collection/")) {
           final CollectionImeji col =
               collectionController.retrieveLazy(URI.create(grant.getGrantFor()), sessionUser);
-          roles.add(new ShareListItem(user, col.getId().toString(), col.getTitle(), sessionUser,
-              locale, false));
+          if (!col.isSubCollection()) {
+            roles.add(new ShareListItem(user, col.getId().toString(), col.getTitle(), sessionUser,
+                locale, false));
+          }
         }
       } catch (final Exception e) {
         LOGGER.error("Error reading grants of user ", e);

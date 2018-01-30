@@ -10,8 +10,8 @@ import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.generic.ImejiControllerAbstract;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Grant;
-import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.Grant.GrantType;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.user.UserService;
 
@@ -32,7 +32,8 @@ class CollectionController extends ImejiControllerAbstract<CollectionImeji> {
       prepareCreate(c, user);
     }
     WRITER.create(toObjectList(l), user);
-    for (final CollectionImeji c : l) {
+    for (final CollectionImeji c : l.stream().filter(c -> !c.isSubCollection())
+        .collect(Collectors.toList())) {
       updateCreatorGrants(user, c.getId().toString());
     }
     return l;
