@@ -191,6 +191,7 @@ public class WorkflowFacade implements Serializable {
    */
   private void prevalidateWithdraw(CollectionImeji collection, String comment, User user)
       throws ImejiException {
+    workflowValidator.isWithdrawAllowed(collection);
     if (user == null) {
       throw new AuthenticationError(AuthenticationError.USER_MUST_BE_LOGGED_IN);
     }
@@ -203,7 +204,6 @@ public class WorkflowFacade implements Serializable {
     if (StringHelper.isNullOrEmptyTrim(comment)) {
       throw new UnprocessableError("Missing discard comment");
     }
-    workflowValidator.isWithdrawAllowed(collection);
   }
 
   /**

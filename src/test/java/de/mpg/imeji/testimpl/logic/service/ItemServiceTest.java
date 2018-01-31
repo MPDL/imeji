@@ -126,9 +126,12 @@ public class ItemServiceTest extends SuperServiceTest {
         collectionWithdrawn, userAdmin);
 
     collectionService.releaseWithDefaultLicense(collectionReleased, userAdmin);
+    collectionReleased = collectionService.retrieve(collectionReleased.getId(), userAdmin);
     collectionService.releaseWithDefaultLicense(collectionWithdrawn, userAdmin);
+    collectionWithdrawn = collectionService.retrieve(collectionWithdrawn.getId(), userAdmin);
     collectionWithdrawn.setDiscardComment("Default discard comment");
     collectionService.withdraw(collectionWithdrawn, userAdmin);
+    collectionWithdrawn = collectionService.retrieve(collectionWithdrawn.getId(), userAdmin);
   }
 
   /**
@@ -139,7 +142,7 @@ public class ItemServiceTest extends SuperServiceTest {
     try {
       CollectionImeji collectionPrivate2 = ImejiFactory.newCollection().setTitle("Collection 2")
           .setPerson("Max", "planck", "mpdl").build();
-      (new CollectionService()).create(collectionPrivate2, userAdmin);
+      new CollectionService().create(collectionPrivate2, userAdmin);
 
       create_Test("Private collection, Edit user", ImejiFactory.newItem(collectionPrivate),
           collectionPrivate, userEditGrant, true, Status.PENDING, null);
@@ -540,8 +543,8 @@ public class ItemServiceTest extends SuperServiceTest {
     URI oldId = itemPrivate.getId();
     try {
       itemPrivate.setId(new URI("fakeId"));
-      update_Test("private collection, edit grant user, nonexisting id", itemPrivate, userEditGrant,
-          NotFoundException.class);
+      update_Test("Item updated with wrong ID should throw NotFoundException ", itemPrivate,
+          userEditGrant, NotFoundException.class);
     } catch (URISyntaxException e) {
       Assert.fail(e.getMessage());
     }
@@ -552,9 +555,6 @@ public class ItemServiceTest extends SuperServiceTest {
     ItemService service = new ItemService();
     try {
       service.updateBatch(Arrays.asList(item), user);
-      if (exception != null) {
-        Assert.fail(msg + ", no exception has been thrown");
-      }
       Item result = service.retrieve(item.getId(), userAdmin);
       // Test Filename and Discard comment as an example for a field of Item and a field of
       // Properties
@@ -742,7 +742,7 @@ public class ItemServiceTest extends SuperServiceTest {
       service.createWithFile(withdrawReleased, ImejiTestResources.getTest2Jpg(), "Test2.jpg",
           collectionPrivate, userAdmin);
       service.releaseWithDefaultLicense(Arrays.asList(withdrawReleased), userAdmin);
-
+      withdrawReleased = service.retrieve(withdrawReleased.getId(), userAdmin);
       withdraw_Test("released item, edit user", withdrawReleased, userEditGrant, null);
 
       withdrawReleased = ImejiFactory.newItem(collectionPrivate);
@@ -767,6 +767,7 @@ public class ItemServiceTest extends SuperServiceTest {
 
       }
       service.withdraw(Arrays.asList(i), "default comment", user);
+      i = service.retrieve(i.getId(), user);
       if (exception != null) {
         Assert.fail(msg + ", no exception has been thrown");
       }
@@ -815,21 +816,19 @@ public class ItemServiceTest extends SuperServiceTest {
       move_Test("only edit grant on col 2", itemToMove, col2, user, NotAllowedError.class);
       user.getGrants().add(new Grant(GrantType.EDIT, col1.getId().toString()).toGrantString());
       move_Test("normal", itemToMove, col2, user, null);
-      (new CollectionService()).release(col2, userAdmin, getDefaultLicense());
+      new CollectionService().release(col2, userAdmin, getDefaultLicense());
 
       // Check, that moving back is not possible because item is released now, seperaly
       ItemService service = new ItemService();
+      itemToMove = service.retrieve(itemToMove.getUri(), user);
       service.moveItems(Arrays.asList(itemToMove), col1, userAdmin, getDefaultLicense());
       // Item should still be in old collection
       Item ret = service.retrieve(itemToMove.getId().toString(), userAdmin);
       Assert.assertEquals("Should be in old collection", ret.getCollection().toString(),
           col2.getId().toString());
-
     } catch (ImejiException | InterruptedException e) {
       Assert.fail(e.getMessage());
     }
-
-
   }
 
   private void move_Test(String msg, Item item, CollectionImeji col, User user, Class exception) {

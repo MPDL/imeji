@@ -300,12 +300,10 @@ public class CollectionServiceTest extends SuperServiceTest {
       delete_Test("private Collection, collection admin user", collectionToDelete, defaultUser,
           null);
       delete_Test("released Collection, collection admin use", collectionReleased, defaultUser,
-          UnprocessableError.class);
-
+          WorkflowException.class);
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
     }
-
   }
 
   private void delete_Test(String msg, CollectionImeji col, User user, Class exception) {
@@ -458,29 +456,24 @@ public class CollectionServiceTest extends SuperServiceTest {
     try {
       service.create(collectionToWithdraw, defaultUser);
       Item itemToWithdraw = ImejiFactory.newItem(collectionToWithdraw);
-      (new ItemService()).create(itemToWithdraw, collectionToWithdraw, defaultUser);
-
+      new ItemService().create(itemToWithdraw, collectionToWithdraw, defaultUser);
       withdraw_Test("collection pending", collectionToWithdraw, defaultUser,
           WorkflowException.class);
       service.release(collectionToWithdraw, defaultUser, getDefaultLicense());
-      Lock lock = new Lock(itemToWithdraw.getId().toString(), null);
-      Locks.lock(lock);
-      withdraw_Test("locked item", collectionToWithdraw, defaultUser, UnprocessableError.class);
-      Locks.unLock(lock);
       collectionToWithdraw = service.retrieve(collectionToWithdraw.getId(), sysadmin);
-
       userEditGrant.getGrants()
           .add(new Grant(GrantType.EDIT, collectionToWithdraw.getId().toString()).toGrantString());
-      (new UserService()).update(userEditGrant, sysadmin);
+      new UserService().update(userEditGrant, sysadmin);
       // withdraw_Test("user edit grant", collectionToWithdraw, userEditGrant,
       // NotAllowedError.class);
 
       collectionToWithdraw.setDiscardComment(null);
       withdraw_Test("No discard comment", collectionToWithdraw, defaultUser,
-          WorkflowException.class);
+          UnprocessableError.class);
       collectionToWithdraw.setDiscardComment("discard test");
       withdraw_Test("released collection, collection admin user", collectionToWithdraw, defaultUser,
           null);
+      collectionToWithdraw = service.retrieve(collectionToWithdraw.getId(), defaultUser);
       withdraw_Test("collection already withdrawn", collectionToWithdraw, defaultUser,
           WorkflowException.class);
 

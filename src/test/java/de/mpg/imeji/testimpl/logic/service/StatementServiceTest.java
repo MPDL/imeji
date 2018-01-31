@@ -76,7 +76,7 @@ public class StatementServiceTest extends SuperServiceTest {
     }
 
     try {
-      (new StatementService()).create(statement, sysadmin);
+      new StatementService().create(statement, sysadmin);
       Assert.fail("Statement was created twice");
     } catch (ImejiException e) {
       // ok

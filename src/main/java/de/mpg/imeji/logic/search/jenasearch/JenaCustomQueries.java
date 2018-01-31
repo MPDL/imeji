@@ -448,6 +448,17 @@ public class JenaCustomQueries {
     return "SELECT ?s WHERE { ?s a <http://imeji.org/terms/statement>}";
   }
 
+  /**
+   * Select a statement a by its index
+   * 
+   * @param index
+   * @return
+   */
+  public static final String selectStatementByIndex(String index) {
+    return "SELECT ?s WHERE {?s <http://imeji.org/terms/index> \"" + index
+        + "\"^^<http://www.w3.org/2001/XMLSchema#string>}";
+  }
+
 
   /**
    * Select all {@link Facet} available imeji

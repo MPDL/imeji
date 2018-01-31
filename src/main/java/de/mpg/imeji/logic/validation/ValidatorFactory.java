@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.validation;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Metadata;
+import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.facet.model.Facet;
@@ -11,6 +12,7 @@ import de.mpg.imeji.logic.validation.impl.FacetValidator;
 import de.mpg.imeji.logic.validation.impl.ItemValidator;
 import de.mpg.imeji.logic.validation.impl.MetadataValidator;
 import de.mpg.imeji.logic.validation.impl.PseudoValidator;
+import de.mpg.imeji.logic.validation.impl.StatementValidator;
 import de.mpg.imeji.logic.validation.impl.UserGroupValidator;
 import de.mpg.imeji.logic.validation.impl.UserValidator;
 import de.mpg.imeji.logic.validation.impl.Validator;
@@ -53,6 +55,8 @@ public class ValidatorFactory {
       validator = new UserGroupValidator();
     } else if (obj instanceof Facet) {
       validator = new FacetValidator();
+    } else if (obj instanceof Statement) {
+      validator = new StatementValidator();
     }
     return validator;
   }

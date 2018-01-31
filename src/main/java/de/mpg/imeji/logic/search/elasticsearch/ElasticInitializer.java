@@ -39,10 +39,8 @@ public class ElasticInitializer {
   }
 
   public static void start(String clusterName) throws IOException, URISyntaxException {
-    TransportClient tc = TransportClient.builder()
-        .settings(Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)
-            .put("cluster.name", ElasticService.CLUSTER_NAME))
-        .build();
+    TransportClient tc = TransportClient.builder().settings(Settings.builder()
+        .put("path.home", ElasticService.CLUSTER_DIR).put("cluster.name", clusterName)).build();
     tc.addTransportAddress(
         new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
     start(clusterName, tc);
@@ -51,7 +49,7 @@ public class ElasticInitializer {
   @SuppressWarnings("resource")
   public static void startLocal(String clusterName) throws IOException, URISyntaxException {
     Settings settings = Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)
-        .put("cluster.name", ElasticService.CLUSTER_NAME).build();
+        .put("cluster.name", clusterName).build();
     ElasticService.setNODE(new Node(settings).start());
     start(clusterName, ElasticService.getNODE().client());
   }
