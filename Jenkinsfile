@@ -9,7 +9,6 @@ node {
 
 	stage ('Build'){	
 		// Build with maven
-		tool name: 'Maven35', type: 'maven'
 		sh("${mvnHome}/bin/mvn clean install")	  
 	}
 	
