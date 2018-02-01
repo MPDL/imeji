@@ -9,12 +9,12 @@ node {
 
 	stage ('Build'){	
 		// Build with maven
-		sh("${mvnHome}/bin/mvn clean install")	  
+		//sh("${mvnHome}/bin/mvn clean install")	  
 	}
 	
    	stage ('Deploy'){
 	   	echo "We are currently working on branch: ${env.BRANCH_NAME}"
-	   
+	   	echo "Current directory is ${pwd()}"
 	    switch (env.BRANCH_NAME){
 	    	case 'dev':
 	    		echo "Deploy to dev";
