@@ -1,8 +1,6 @@
 node {
-
- 	tools {
-        maven 'Maven35' 
-    }
+	def JAVA_HOME = tool name: 'Java 8', type: 'jdk'
+	def  mvnHome = tool name: 'Maven35', type: 'maven'
 
   	stage ('Checkout'){
 	   // Checkout code from repository
@@ -11,7 +9,8 @@ node {
 
 	stage ('Build'){	
 		// Build with maven
-		sh 'mvn clean install'		  
+		tool name: 'Maven35', type: 'maven'
+		sh("${mvnHome}/bin/mvn clean install")	  
 	}
 	
    	stage ('Deploy'){
