@@ -1,4 +1,9 @@
 node {
+
+ 	tools {
+        maven 'Maven35' 
+    }
+
   	stage ('Checkout'){
 	   // Checkout code from repository
 	   checkout scm
@@ -6,9 +11,7 @@ node {
 
 	stage ('Build'){	
 		// Build with maven
-		withMaven(jdk: 'Java 8', maven: 'M339') {
-		   sh 'mvn -Dmaven.test.failure.ignore=true clean install'		   
-		}
+		sh 'mvn clean install'		  
 	}
 	
    	stage ('Deploy'){
