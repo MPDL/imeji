@@ -20,7 +20,7 @@ node {
 		   		sshagent(['26045cb2-b6f5-4f07-8261-70a2f2e22860']) {
 		   		   sh 'echo SSH_AUTH_SOCK=$SSH_AUTH_SOCK'
        			   sh 'ls -al $SSH_AUTH_SOCK || true'
-				   sh "scp -vvv -o StrictHostKeyChecking=no target/imeji.war saquet@dev-imeji.mpdl.mpg.de:/var/lib/tomcat8/webapps"
+				   sh "scp -vvv -o StrictHostKeyChecking=no target/imeji.war tomcat8@dev-imeji.mpdl.mpg.de:/var/lib/tomcat8/webapps"
 				}
 	    		break;
 	    	case 'qa':
