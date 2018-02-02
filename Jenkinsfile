@@ -9,7 +9,7 @@ node {
 
 	stage ('Build'){	
 		// Build with maven
-		sh("${mvnHome}/bin/mvn -DskipTests clean install")	  
+		sh("${mvnHome}/bin/mvn clean install")	  
 	}
 	
    	stage ('Deploy'){
@@ -18,9 +18,7 @@ node {
 	    	case 'dev':
 	    		echo "Deploy to dev";
 		   		sshagent(['26045cb2-b6f5-4f07-8261-70a2f2e22860']) {
-		   		   sh 'echo SSH_AUTH_SOCK=$SSH_AUTH_SOCK'
-       			   sh 'ls -al $SSH_AUTH_SOCK || true'
-				   sh "scp -vvv -o StrictHostKeyChecking=no target/imeji.war tomcat8@dev-imeji.mpdl.mpg.de:/var/lib/tomcat8/webapps"
+				   sh "scp target/imeji.war tomcat8@dev-imeji.mpdl.mpg.de:/var/lib/tomcat8/webapps"
 				}
 	    		break;
 	    	case 'qa':
