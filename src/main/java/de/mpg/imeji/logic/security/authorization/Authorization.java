@@ -128,8 +128,7 @@ public class Authorization implements Serializable {
    * @throws NotAllowedError
    */
   public boolean administrate(User user, Object obj) {
-    return !isSubcollection(obj)
-        && (isSysAdmin(user) || hasAdminGrant(getAllGrants(user), getId(obj)));
+    return isSysAdmin(user) || hasAdminGrant(getAllGrants(user), getId(obj));
   }
 
   /**

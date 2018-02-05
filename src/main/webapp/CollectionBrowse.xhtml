@@ -87,7 +87,7 @@
 									</a>
 								</ui:fragment>
 							</ui:fragment>
-							<ui:fragment rendered="#{Auth.admin}">
+							<ui:fragment rendered="#{Auth.admin and !CollectionItemsBean.collection.subCollection}">
 								<a href="#{Navigation.collectionUrl}#{CollectionItemsBean.id}/share?q=#{CollectionItemsBean.query}&amp;fq=#{CollectionItemsBean.facetQueryString}">
 									<span class="fa fa-users"/>#{lbl.share}
 								</a>

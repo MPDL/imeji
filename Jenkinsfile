@@ -23,6 +23,9 @@ node {
 	    		break;
 	    	case 'qa':
 	    		echo "deploy to qa";
+	    		sshagent(['26045cb2-b6f5-4f07-8261-70a2f2e22860']) {
+				   sh "scp target/imeji.war tomcat8@qa-imeji.mpdl.mpg.de:/var/lib/tomcat8/webapps"
+				}
 	    		break;
 	    	default:
 	    		echo "no deployment";
