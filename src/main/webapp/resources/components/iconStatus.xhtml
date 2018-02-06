@@ -37,6 +37,13 @@
 						<div class="imj_menuBody">
 							<ul class="imj_overlayMenuList">
 								<li>#{lbl.not_shared}</li>
+								<ui:fragment rendered="#{cc.showManage}">
+									<li class="imj_listDottedSeparator">
+										<a href="#{cc.linkToSharePage}" class="imj_inactiveLink">
+											#{lbl.manage}
+										</a>
+									</li>
+								</ui:fragment>
 							</ul>
 						</div>
 					</div>
