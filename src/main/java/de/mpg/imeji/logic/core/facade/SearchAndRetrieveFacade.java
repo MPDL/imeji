@@ -156,7 +156,7 @@ public class SearchAndRetrieveFacade implements Serializable {
   }
 
   private Item toItem(CollectionImeji c) {
-    return ImejiFactory.newItem().setId(c.getId().toString())
+    return ImejiFactory.newItem().setUri(c.getId().toString())
         .setCollection(ObjectHelper.getId(c.getCollection())).setFilename(c.getTitle()).build();
   }
 

@@ -26,8 +26,8 @@ public class ItemFactory {
     return item;
   }
 
-  public ItemFactory setId(String id) {
-    item.setId(URI.create(id));
+  public ItemFactory setUri(String uriString) {
+    item.setId(URI.create(uriString));
     return this;
   }
 
@@ -42,8 +42,8 @@ public class ItemFactory {
     return this;
   }
 
-  public ItemFactory setCollection(String collectionId) {
-    item.setCollection(URI.create(collectionId));
+  public ItemFactory setCollection(String collectionUri) {
+    item.setCollection(URI.create(collectionUri));
     return this;
   }
 

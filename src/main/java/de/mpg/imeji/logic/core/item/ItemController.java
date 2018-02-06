@@ -226,7 +226,7 @@ class ItemController extends ImejiControllerAbstract<Item> {
    * @return
    */
   private List<Item> initializeEmptyItems(List<String> ids) {
-    return ids.stream().map(id -> ImejiFactory.newItem().setId(id).build())
+    return ids.stream().map(id -> ImejiFactory.newItem().setUri(id).build())
         .collect(Collectors.toList());
   }
 
