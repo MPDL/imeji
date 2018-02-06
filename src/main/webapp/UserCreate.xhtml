@@ -51,9 +51,7 @@
 									</div>
 
 									<!-- The user of the person -->
-									<imeji:person id="userPerson"
-										person="#{UserCreationBean.user.person}"
-										bean="#{UserCreationBean}" position="0" />
+									<imeji:person id="userPerson" person="#{UserCreationBean.user.person}" bean="#{UserCreationBean}" position="0" />
 
 									<!-- Disk space quota -->
 									<div class="imj_metadataSet">
@@ -89,9 +87,7 @@
 									<h:panelGroup layout="block" styleClass="imj_admindataSet">
 										<div class="imj_admindataValueCheckBox">
 											<div class="imj_admindataValueEntry">
-												<h:selectBooleanCheckbox
-													value="#{UserCreationBean.sendEmail}"
-													styleClass="imj_admindataCheckbox" />
+												<h:selectBooleanCheckbox value="#{UserCreationBean.sendEmail}" styleClass="imj_admindataCheckbox" />
 											</div>
 										</div>
 										<div class="imj_admindataLabel">
@@ -105,14 +101,8 @@
 										</div>
 										<div class="imj_metadataValue">
 											<div class="imj_metadataValueEntry">
-												<a href="#{HistorySession.previousPage.completeUrl}"
-													class="imj_cancelButton">
-													#{lbl.cancel}
-												</a>
-												<h:commandButton action="#{UserCreationBean.create}"
-												 value="#{lbl.save}"
-												styleClass="imj_submitButton" />
-												* #{lbl.required}
+												<a href="#{HistorySession.previousPage.completeUrl}" class="imj_cancelButton">#{lbl.cancel}</a>
+												<h:commandButton action="#{UserCreationBean.create}"  value="#{lbl.save}" styleClass="imj_submitButton" /> * #{lbl.required}
 											</div>
 										</div>
 									</div>

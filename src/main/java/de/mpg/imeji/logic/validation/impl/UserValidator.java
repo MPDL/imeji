@@ -72,7 +72,8 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
    * @return
    */
   public static boolean isValidEmail(String email) {
-    final String regexEmailMatch = "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)";
+    // final String regexEmailMatch = "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)";
+    final String regexEmailMatch = "([^@\\s]+)*@([^.@]+\\.)+([^.@]+)";
     return email.matches(regexEmailMatch);
   }
 
