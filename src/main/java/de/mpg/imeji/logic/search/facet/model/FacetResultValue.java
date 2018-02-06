@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.facet.model;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 /**
  * The value of one {@link FacetResult}
@@ -10,6 +11,7 @@ import java.io.Serializable;
  */
 public class FacetResultValue implements Serializable {
   private static final long serialVersionUID = -1248482448497426184L;
+  private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#.##");;
   private final String label;
   private final long count;
   private String max;
@@ -55,5 +57,6 @@ public class FacetResultValue implements Serializable {
   public void setMax(String max) {
     this.max = max;
   }
+
 
 }

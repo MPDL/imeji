@@ -55,7 +55,7 @@ public class AggregationsParser {
             } else if (terms instanceof InternalStats) {
               FacetResultValue result =
                   new FacetResultValue(terms.getName(), ((InternalStats) terms).getCount());
-              result.setMax(((InternalStats) terms).getMaxAsString());
+              result.setMax((((InternalStats) terms).getMaxAsString()));
               result.setMin(((InternalStats) terms).getMinAsString());
               facetResult.getValues().add(result);
             } else {
