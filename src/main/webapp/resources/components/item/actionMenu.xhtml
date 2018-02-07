@@ -30,7 +30,7 @@
 				<span class="fa fa-trash"/>#{lbl.delete}
 			</a>
 		</ui:fragment>
-		<ui:fragment rendered="#{Auth.delete and WorkflowBean.withdraw(itemBean.item)}">
+		<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(itemBean.item)}">
 			<a onclick="openDialog('withdrawItem')">
 				<span class="fa fa-ban"/>#{lbl.withdraw}
 			</a>
