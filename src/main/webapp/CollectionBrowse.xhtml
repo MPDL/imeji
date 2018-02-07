@@ -14,6 +14,7 @@
 	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}" />
 	<ui:param name="title" value="#{not empty CollectionItemsBean.query or not empty CollectionItemsBean.facetQueryString ? lbl.search_results : CollectionItemsBean.collection.title}" />
 	<ui:param name="headline" value="#{title}" />
+	<ui:param name="searchLabel" value="#{CollectionItemsBean.collection.title}" />
 	<ui:param name="currentMainMenu" value="collection" />
 	<ui:param name="browseToAllItemsUrl" value="#{Navigation.collectionUrl}#{CollectionItemsBean.id}?q=" />
 	<ui:param name="imejiResource" value="#{CollectionItemsBean.collection}" />

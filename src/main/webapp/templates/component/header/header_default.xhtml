@@ -24,12 +24,12 @@
 				<form id="simpleSearch" onsubmit="return submitSimpleSearch();">
 					<div id="simpleSearchInput">
 						<input type="text" id="simpleSearchInputText" placeholder="#{lbl.search_for}" value="#{QuickSearchBean.searchString}" autocomplete="off" />
-						<div class="imj_menuSimpleSearch" >
+						<div class="imj_menuSimpleSearch">
 							<span class="imj_menuText"> #{lbl.search_for} ...</span>
 							<ul class="imj_bodyContextSearch" >
 								<ui:fragment rendered="#{HistorySession.currentPage.imejiPage == 'COLLECTION'}" >
-									<li id="simpleSearchForThisCollection" data-url="" data-placeholder="#{lbl.search_for_items} #{lbl.of} #{title}">
-										<a href="#" title="#{lbl.search_for} #{lbl.items} #{lbl.of} #{title}">#{lbl.search_for_items} #{lbl.of} #{title}</a>
+									<li id="simpleSearchForThisCollection" data-url="" data-placeholder="#{lbl.search_for_items} #{lbl.of} #{searchLabel}">
+										<a href="#" title="#{lbl.search_for} #{lbl.items} #{lbl.of} #{searchLabel}">#{lbl.search_for_items} #{lbl.of} #{searchLabel}</a>
 									</li>
 								</ui:fragment>
 								<li id="simpleSearchForItems" class="defaultSearchType hovered"  data-url="#{Navigation.browseUrl}" data-placeholder="#{lbl.search_for} #{lbl.search_for_items}">  
