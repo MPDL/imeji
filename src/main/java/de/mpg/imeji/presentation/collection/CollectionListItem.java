@@ -10,13 +10,13 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -77,8 +77,10 @@ public class CollectionListItem implements Serializable {
       // creationDate = collection.getCreated().getTime().toString();
       lastModificationDate = collection.getModified().getTime().toString();
       // initializations
-      initLogo(collection, user);
-      initSize(collection, user);
+      SearchResult result = searchFirstCollectionItem(collection, user);
+      size = result.getNumberOfItems();
+      initLogo(collection, result);
+      // initSize(collection, user);
       if (user != null) {
         isOwner = collection.getCreatedBy().equals(user.getId());
       }
@@ -95,23 +97,25 @@ public class CollectionListItem implements Serializable {
    * @throws ImejiException
    * @throws Exception
    */
-  private void initLogo(CollectionImeji collection, User user) throws ImejiException, Exception {
+  private void initLogo(CollectionImeji collection, SearchResult result)
+      throws ImejiException, Exception {
     if (collection.getLogoUrl() != null) {
       this.logoUrl = collection.getLogoUrl().toString();
-    } else {
-      final ItemService itemService = new ItemService();
-      final CollectionImeji col = itemService.searchAndSetContainerItems(collection, user, 1, 0);
-      if (col.getImages().iterator().hasNext()) {
-        final URI uri = col.getImages().iterator().next();
-        if (uri != null) {
-          final Navigation navigation =
-              (Navigation) BeanHelper.getApplicationBean(Navigation.class);
-          String contentId = new ContentService().findContentId(uri.toString());
-          this.logoUrl =
-              navigation.getFileUrl() + "?content=" + contentId + "&amp;resolution=thumbnail";
-        }
-      }
+    } else if (result.getNumberOfItems() > 0) {
+      logoUrl = buildContentUrl(result.getResults().get(0));
     }
+  }
+
+  /**
+   * Build the content Url for this item
+   * 
+   * @param itemUri
+   * @return
+   */
+  private String buildContentUrl(String itemUri) {
+    final Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+    final String itemId = ObjectHelper.getId(URI.create(itemUri));
+    return navigation.getFileUrl() + "?item=" + itemId + "&resolution=thumbnail";
   }
 
   /**
@@ -124,6 +128,12 @@ public class CollectionListItem implements Serializable {
     final ItemService ic = new ItemService();
     size = ic.search(collection.getId(), SearchQueryParser.parsedecoded("*"), null, Imeji.adminUser,
         0, 0).getNumberOfRecords();
+  }
+
+  private SearchResult searchFirstCollectionItem(CollectionImeji collection, User user)
+      throws UnprocessableError {
+    return new ItemService().search(collection.getId(), SearchQueryParser.parsedecoded("*"), null,
+        Imeji.adminUser, 1, 0);
   }
 
   /**

@@ -13,12 +13,25 @@
 		<li class="imj_bibliographicListItem">
 			<a href="#{Navigation.collectionUrl}#{cc.attrs.item.id}?q=">
 		 		<div class="imj_previewArea">
-					<div class="imj_previewImage imj_imageStack">		
+					<div class="imj_previewImage imj_imageStack">
+						<ui:fragment rendered="#{cc.attrs.item.status !='WITHDRAWN'}">
+							<ui:fragment rendered="#{cc.attrs.item.logoUrl != null}">
+								<img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="#{cc.attrs.item.logoUrl}"/>
+							</ui:fragment>
+							<ui:fragment rendered="#{cc.attrs.item.logoUrl == null}">
+								<img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="#{Navigation.applicationUrl}resources/icon/empty.png"/>
+							</ui:fragment>
+						</ui:fragment>
+						<ui:fragment rendered="#{cc.attrs.item.status =='WITHDRAWN'}">
+							<img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="#{Navigation.applicationUrl}resources/icon/discarded.png"/>
+						</ui:fragment>
+						<ui:remove>
 						<h:graphicImage value="#{cc.attrs.item.logoUrl}" alt="preview picture" rendered="#{cc.attrs.item.logoUrl != null and cc.attrs.item.status!='WITHDRAWN'}"/>
 						<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/discarded.png" alt="preview picture" rendered="#{cc.attrs.item.status =='WITHDRAWN'}"/>
 						<ui:fragment rendered="#{cc.attrs.item.status!='WITHDRAWN'}">
 							<h:graphicImage value="#{Navigation.applicationUrl}resources/icon/empty.png" alt="preview picture"  rendered="#{cc.attrs.item.logoUrl == null}" title="#{lbl.ContainerEmpty}"/>
 						</ui:fragment>
+						</ui:remove>
 						<span class="imj_itemCount">#{cc.attrs.item.size} #{cc.attrs.item.size != 1 ? lbl.items : lbl.item}</span>
 					</div>
 				</div>
