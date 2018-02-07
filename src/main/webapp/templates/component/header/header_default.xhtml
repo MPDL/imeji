@@ -27,7 +27,7 @@
 						<div class="imj_menuSimpleSearch">
 							<span class="imj_menuText"> #{lbl.search_for} ...</span>
 							<ul class="imj_bodyContextSearch" >
-								<ui:fragment rendered="#{HistorySession.currentPage.imejiPage == 'COLLECTION'}" >
+								<ui:fragment rendered="#{HistorySession.currentPage.imejiPage == 'COLLECTION' and not empty searchLabel}" >
 									<li id="simpleSearchForThisCollection" data-url="" data-placeholder="#{lbl.search_for_items} #{lbl.of} #{searchLabel}">
 										<a href="#" title="#{lbl.search_for} #{lbl.items} #{lbl.of} #{searchLabel}">#{lbl.search_for_items} #{lbl.of} #{searchLabel}</a>
 									</li>

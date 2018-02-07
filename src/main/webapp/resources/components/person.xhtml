@@ -121,17 +121,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="imj_metadataSet">
-			<div class="imj_metadataLabel">
-				<h:outputText value="#{lbl.identifier}"/>
-				<span class="imj_noDisplay">: </span>
-			</div>
-			<div class="imj_metadataValue">
-				<div class="imj_metadataValueEntry">
-					<h:inputText id="inputIdentifier" styleClass="imj_admindataEdit" value="#{cc.attrs.person.identifier}"/>
-				</div>
-			</div>
-		</div>
 		<ui:repeat var="org" value="#{cc.attrs.person.organizations}" varStatus="index">
 			<div>
 				<h:inputText id="inputOrgaURI" styleClass="input_hidden_orga_uri imj_noDisplay" value="#{PersonBean.orgaURI}" valueChangeListener="#{PersonBean.orgaListener}" onfocus="setOrgaSource('#{cc.attrs.orgsSource}');" rendered="#{cc.attrs.orgsSource != ''}"/>
@@ -143,8 +132,8 @@
 			
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel">
-						<h:outputText value="#{lbl.organization}"/><h:outputText value="*" rendered="#{index.index == 0}"/>
-						<span class="imj_noDisplay">: </span>
+						<h:outputText value="#{lbl.organization}"/>
+						<h:outputText value="*" rendered="#{index.index == 0}"/>
 					</div>
 					<div class="imj_metadataValue">
 						<div class="imj_metadataValueEntry">
