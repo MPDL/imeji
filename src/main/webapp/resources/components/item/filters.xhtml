@@ -86,13 +86,13 @@
 						        <h:commandLink id="switchListView"  title="thumbnail list" value="" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'THUMBNAIL'}">
 			                    	<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 			                    	<span class="fa fa-th"/>
+			                    	 <span style="margin-right: 1em !important;">#{lbl.thumbnails}</span>
 			                    </h:commandLink>
-			                    <span style="margin-right: 1em !important;">#{lbl.thumbnails}</span>
 			                    <h:commandLink title="detail list" value="" action="#{SessionBean.toggleBrowseView}" disabled="#{SessionBean.selectedBrowseListView == 'LIST'}">
 			                	    <f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 			                	    <span class="fa fa-list-alt" />
+			                	    <span>#{lbl.list}</span>
 			                	</h:commandLink>
-			                	<span>#{lbl.list}</span>
 		                	</h:form>
 	                	</span>
 			 		</div>
