@@ -10,12 +10,15 @@ import javax.faces.component.FacesComponent;
 import javax.faces.component.UINamingContainer;
 
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
+import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -81,16 +84,28 @@ public class StatusComponent extends UINamingContainer {
   private void initialize(Properties properties) {
     reset();
     if (properties != null) {
+      CollectionImeji parentCollection = getLastParent(properties);
       status = properties.getStatus();
-      sharedWithUser = SecurityUtil.authorization().isShared(sessionUser, properties);
+      sharedWithUser = SecurityUtil.authorization().isShared(sessionUser, parentCollection);
       if (isSharedWithUser()) {
-        users = getUserSharedWith(properties);
-        groups = getGroupSharedWith(properties);
-        showManage = SecurityUtil.authorization().administrate(sessionUser, properties);
+        users = getUserSharedWith(parentCollection);
+        groups = getGroupSharedWith(parentCollection);
+        showManage = SecurityUtil.authorization().administrate(sessionUser, parentCollection);
       }
-      linkToSharePage = initLinkToSharePage(properties.getId());
+      linkToSharePage = initLinkToSharePage(parentCollection.getId());
       show = true;
     }
+  }
+
+  /**
+   * Get the last parent of the Item/collection, which is relevant for the share status
+   * 
+   * @param p
+   * @return
+   */
+  private CollectionImeji getLastParent(Properties p) {
+    String uri = new HierarchyService().getLastParent(p);
+    return uri != null ? ImejiFactory.newCollection().setUri(uri).build() : (CollectionImeji) p;
   }
 
   /**

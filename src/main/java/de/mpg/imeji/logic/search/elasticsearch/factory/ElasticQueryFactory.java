@@ -231,11 +231,10 @@ public class ElasticQueryFactory {
   private static QueryBuilder buildSecurityQuery(User user, String folderUri,
       ElasticTypes... types) {
     if (user != null) {
-      boolean isItemSearch = Arrays.asList(types).contains(ElasticTypes.items);
       if (SecurityUtil.authorization().isSysAdmin(user)) {
         // Admin: can view everything
         return QueryBuilders.matchAllQuery();
-      } else if (isItemSearch) {
+      } else {
         BoolQueryBuilder bq = QueryBuilders.boolQuery();
         for (String collectionUri : user.getGrants().stream().map(s -> new Grant(s))
             .map(g -> g.getGrantFor())
@@ -245,8 +244,6 @@ public class ElasticQueryFactory {
         }
         bq.should(buildGrantQuery(user, null));
         return bq;
-      } else {
-        return buildGrantQuery(user, null);
       }
     }
     return QueryBuilders.matchAllQuery();

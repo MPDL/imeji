@@ -30,7 +30,7 @@ public final class ElasticFolder extends ElasticProperties {
     this.name = c.getTitle();
     this.description = c.getDescription();
     this.pid = c.getDoi() != null ? Arrays.asList(c.getDoi()) : new ArrayList<String>();
-    this.folder = c.getCollection() != null ? c.getCollection().toString() : null;;
+    this.folder = c.getCollection() != null ? c.getCollection().toString() : null;
     this.creators =
         c.getPersons().stream().map(p -> p.getCompleteName()).collect(Collectors.joining(";"));
     for (final Person p : c.getPersons()) {

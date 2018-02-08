@@ -17,7 +17,7 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.elasticsearch.script.misc.CollectionFields;
 
 /**
- * Script running before an item is indexed
+ * Script running after an item is indexed
  * 
  * @author saquet
  *
