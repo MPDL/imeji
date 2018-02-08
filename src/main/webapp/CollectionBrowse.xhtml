@@ -72,7 +72,7 @@
 					<f:ajax render="@none"/>
 					<span class="fa fa-upload"/>#{lbl.upload}
 				</h:commandLink>
-				<ui:fragment rendered="#{Auth.loggedIn}">
+				<ui:fragment rendered="#{Auth.loggedIn and (!CollectionItemsBean.collection.isSubCollection() or Auth.update)}">
 					<div class="dropdown">
 						<a><span class="fa fa fa-folder-o"/>#{lbl.collection}<span class="fa fa-angle-down"/></a>
 						<div class="content">
@@ -147,10 +147,10 @@
 					</div>
 				</ui:fragment>
 				<ui:fragment rendered="#{Auth.update}">
+					<a  onclick="openDialog('addSubCollection'); document.getElementById('cr:subColForm:name').focus()">
+						<span class="fa fa-plus"/>#{lbl.subcollection}
+					</a>
 					<ui:fragment rendered="#{empty SessionBean.selected}">
-						<a  onclick="openDialog('addSubCollection'); document.getElementById('cr:subColForm:name').focus()">
-							<span class="fa fa-plus"/>#{lbl.subcollection}
-						</a>
 						<ui:fragment rendered="#{CollectionItemsBean.numberOfItemsOfCollection > 0}">
 							<div class="dropdown">
 								<a><span class="fa fa-files-o"/>#{CollectionItemsBean.numberOfItemsOfCollection} #{CollectionItemsBean.numberOfItemsOfCollection  != 1 ? lbl.items : lbl.item}<span class="fa fa-angle-down"/></a>
