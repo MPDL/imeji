@@ -30,6 +30,7 @@ import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.notification.email.EmailService;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 
 /**
  * {@link Aggregation} for all files which have been uploaded or modified over one day
@@ -120,16 +121,28 @@ public class SubscriptionsAggregation implements Aggregation {
     String text = "";
     CollectionImeji c = retrieveCollection(collectionId, user);
     if (c != null) {
-      text += getCollectionText(c);
-      text += messages.get(collectionId).stream()
-          .filter(m -> m.getType() == MessageType.UPLOAD_FILE
-              || m.getType() == MessageType.MOVE_COLLECTION || m.getType() == MessageType.MOVE_ITEM)
-          .map(m -> getItemText(c, m)).collect(Collectors.joining("\n", "\n", "\n\n"));
-      /*
-       * text += messages.get(collectionId).stream() .filter(m -> m.getType() ==
-       * MessageType.CHANGE_FILE).map(m -> getItemText(c, m)) .collect(Collectors.joining("\n",
-       * "\nModifiedFiles:\n", ""));
-       */
+      String newFilesText = messages.get(collectionId).stream()
+          .filter(
+              m -> m.getType() == MessageType.UPLOAD_FILE || m.getType() == MessageType.MOVE_ITEM)
+          .map(m -> getItemText(c, m)).collect(Collectors.joining("\n"));
+      String newCollectionText = messages.get(collectionId).stream()
+          .filter(m -> m.getType() == MessageType.MOVE_COLLECTION).map(m -> getItemText(c, m))
+          .collect(Collectors.joining("\n"));
+      String changedFilesText =
+          messages.get(collectionId).stream().filter(m -> m.getType() == MessageType.CHANGE_FILE)
+              .map(m -> getItemText(c, m)).collect(Collectors.joining("\n"));
+
+      if (!StringHelper.isNullOrEmptyTrim(newFilesText)
+          || !StringHelper.isNullOrEmptyTrim(newCollectionText)
+          || !StringHelper.isNullOrEmptyTrim(changedFilesText)) {
+        text += "\n- " + getCollectionText(c) + " -" + "\n\n";
+        text += !StringHelper.isNullOrEmptyTrim(newFilesText)
+            ? " --- New files ---\n" + newFilesText + "\n\n" : "";
+        text += !StringHelper.isNullOrEmptyTrim(newCollectionText)
+            ? " --- New collections ---\n" + newCollectionText + "\n\n" : "";
+        text += !StringHelper.isNullOrEmptyTrim(changedFilesText)
+            ? " --- Changed files ---\n" + changedFilesText + "\n\n" : "";
+      }
     }
     return text;
   }
@@ -261,8 +274,7 @@ public class SubscriptionsAggregation implements Aggregation {
    * @return
    */
   private String getCollectionText(CollectionImeji c) {
-    return Imeji.RESOURCE_BUNDLE.getLabel("collection", Locale.ENGLISH) + " " + c.getTitle() + " ("
-        + Imeji.PROPERTIES.getApplicationURL() + "collection/" + c.getIdString() + ")";
+    return Imeji.RESOURCE_BUNDLE.getLabel("collection", Locale.ENGLISH) + " " + c.getTitle();
   }
 
   /**
@@ -273,14 +285,15 @@ public class SubscriptionsAggregation implements Aggregation {
    * @return
    */
   private String getItemText(CollectionImeji c, Message m) {
-    if (m.getType() == MessageType.MOVE_COLLECTION) {
-      CollectionMessage cm = (CollectionMessage) m;
-      return "* [New Subcollection]   " + getPath(cm) + cm.getName() + " ("
-          + Imeji.PROPERTIES.getApplicationURL() + "collection/" + cm.getObjectId() + ")";
-    } else {
-      ItemMessage im = (ItemMessage) m;
-      return "* [New File]                     " + getPath(im) + im.getFilename() + " ("
-          + Imeji.PROPERTIES.getApplicationURL() + "item/" + im.getItemId() + ")";
+    switch (m.getType()) {
+      case MOVE_COLLECTION:
+        CollectionMessage cm = (CollectionMessage) m;
+        return getPath(cm) + cm.getName() + " (" + Imeji.PROPERTIES.getApplicationURL()
+            + "collection/" + cm.getObjectId() + ")";
+      default:
+        ItemMessage im = (ItemMessage) m;
+        return getPath(im) + im.getFilename() + " (" + Imeji.PROPERTIES.getApplicationURL()
+            + "item/" + im.getItemId() + ")";
     }
   }
 
@@ -293,6 +306,8 @@ public class SubscriptionsAggregation implements Aggregation {
   private String getPath(Message m) {
     switch (m.getType()) {
       case UPLOAD_FILE:
+        return getPath(m.getObjectId());
+      case CHANGE_FILE:
         return getPath(m.getObjectId());
       case MOVE_ITEM:
         return getPath(((MoveItemMessage) m).getObjectId());
@@ -316,7 +331,7 @@ public class SubscriptionsAggregation implements Aggregation {
     if (parents.isEmpty()) {
       return "";
     }
-    return parents.stream().map(p -> p.getName()).collect(Collectors.joining("/", "/", "/"));
+    return parents.stream().map(p -> p.getName()).collect(Collectors.joining("/", "", "/"));
   }
 
   /**
