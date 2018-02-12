@@ -111,14 +111,18 @@ public class InternalStorageManager implements Serializable {
     final String guessedExtension = guessExtension(file);
     final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
     removeFile(url);
-    if (url.contains(FileResolution.ORIGINAL.name().toLowerCase())) {
-      url = replaceExtension(url, origExtension);
-      copy(file, transformUrlToPath(url));
-    } else if (url.contains(FileResolution.WEB.name().toLowerCase())) {
-      write(generatorManager.generateWebResolution(file, guessedExtension),
-          transformUrlToPath(url));
-    } else if (url.contains(FileResolution.THUMBNAIL.name().toLowerCase())) {
-      write(generatorManager.generateThumbnail(file, guessedExtension), transformUrlToPath(url));
+    try {
+      if (url.contains(FileResolution.ORIGINAL.name().toLowerCase())) {
+        url = replaceExtension(url, origExtension);
+        copy(file, transformUrlToPath(url));
+      } else if (url.contains(FileResolution.WEB.name().toLowerCase())) {
+        move(generatorManager.generateWebResolution(file, guessedExtension),
+            transformUrlToPath(url));
+      } else if (url.contains(FileResolution.THUMBNAIL.name().toLowerCase())) {
+        move(generatorManager.generateThumbnail(file, guessedExtension), transformUrlToPath(url));
+      }
+    } finally {
+      FileUtils.deleteQuietly(file);
     }
   }
 
@@ -393,22 +397,24 @@ public class InternalStorageManager implements Serializable {
 
     @Override
     public Integer call() {
+      File fullResolution = null;
       try {
         final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
         // write web resolution file in storage
         final String calculatedExtension = guessExtension(file);
-        File fullResolution = generatorManager.generateFullResolution(file, calculatedExtension);
+        fullResolution = generatorManager.generateFullResolution(file, calculatedExtension);
         write(fullResolution, transformUrlToPath(item.getFullUrl()));
         // Generate and write Web resolution
-        write(generatorManager.generateWebResolution(fullResolution, calculatedExtension),
+        move(generatorManager.generateWebResolution(fullResolution, calculatedExtension),
             transformUrlToPath(item.getWebUrl()));
         // Generate and write Thumbnail resolution
-        write(generatorManager.generateThumbnail(fullResolution, calculatedExtension),
+        move(generatorManager.generateThumbnail(fullResolution, calculatedExtension),
             transformUrlToPath(item.getThumbnailUrl()));
       } catch (final Exception e) {
         LOGGER.error("Error transforming and writing file in internal storage ", e);
       } finally {
         FileUtils.deleteQuietly(file);
+        FileUtils.deleteQuietly(fullResolution);
       }
       return 1;
     }
@@ -450,6 +456,25 @@ public class InternalStorageManager implements Serializable {
       file.getParentFile().mkdirs();
       file.createNewFile();
       FileUtils.copyFile(srcFile, file);
+      return file.getAbsolutePath();
+    } else {
+      throw new RuntimeException("File " + path + " already exists in internal storage!");
+    }
+  }
+
+  /**
+   * Move the SrcFile to the path
+   * 
+   * @param srcFile
+   * @param path
+   * @return
+   * @throws IOException
+   */
+  private String move(File srcFile, String path) throws IOException {
+    final File file = new File(path);
+    if (!file.exists()) {
+      file.getParentFile().mkdirs();
+      FileUtils.moveFile(srcFile, file);
       return file.getAbsolutePath();
     } else {
       throw new RuntimeException("File " + path + " already exists in internal storage!");
