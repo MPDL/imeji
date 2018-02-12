@@ -214,6 +214,17 @@ public class JenaCustomQueries {
         + "\"^^<http://www.w3.org/2001/XMLSchema#string> . ?content <http://imeji.org/terms/itemId> ?id} limit 1";
   }
 
+  /**
+   * Select the collection which have this logo
+   * 
+   * @param logoUrl
+   * @return
+   */
+  public static final String selectCollectionByLogoUrl(String logoUrl) {
+    return X_PATH_FUNCTIONS_DECLARATION + XSD_DECLARATION
+        + "SELECT DISTINCT ?s WHERE {?s <http://imeji.org/terms/logoUrl> <" + logoUrl
+        + ">} limit 1";
+  }
 
   /**
    * Select all {@link Grant} which are not valid anymore. For instance, when a {@link User}, or an

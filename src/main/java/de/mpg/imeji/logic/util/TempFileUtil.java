@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
 public class TempFileUtil {
 
   public static final String IMEJI_TEMP_FILE_PREFIX = "imeji";
-  private static final File TEMP_DIR = initTempDirectory();
+  public static final File TEMP_DIR = initTempDirectory();
 
   /**
    * Private Constructor

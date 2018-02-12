@@ -18,10 +18,6 @@ public final class PdfUtils {
     // private constructor
   }
 
-  public static void main(String[] args) throws IOException {
-    pdfToImage(new File("C:\\Users\\saquet\\Pictures\\pdf\\A Grammar of Togo Kan.pdf"));
-  }
-
   /**
    * Read a pdf File, et the first page, and return it as an image
    *

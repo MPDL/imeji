@@ -10,6 +10,8 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.logic.util.TempFileUtil;
+
 /**
  * f Remove all the remaining temps file created by imeji
  **/
@@ -21,8 +23,7 @@ public class CleanTempFilesJob implements Callable<Integer> {
   public Integer call() throws Exception {
     final IOFileFilter filter = new WildcardFileFilter(IMEJI_TEMP_FILE_REGEX);
     LOGGER.info("Deleting all imeji temp file from: " + FileUtils.getTempDirectory() + " ...");
-    final Iterator<File> iterator =
-        FileUtils.iterateFiles(FileUtils.getTempDirectory(), filter, null);
+    final Iterator<File> iterator = FileUtils.iterateFiles(TempFileUtil.TEMP_DIR, filter, null);
     int success = 0;
     int count = 0;
     while (iterator.hasNext()) {
