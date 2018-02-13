@@ -221,8 +221,9 @@ public class AdminBean extends SuperBean {
    */
   private void cleanGrants() {
     LOGGER.info("Cleaning grants...");
-    System.out.println(JenaCustomQueries.removeGrantWithoutObject());
-    ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutObject());
+    System.out.println(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
+    ImejiSPARQL
+        .execUpdate(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
     LOGGER.info("...done!");
   }
 

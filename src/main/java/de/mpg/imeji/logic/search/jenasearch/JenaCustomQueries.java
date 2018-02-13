@@ -274,9 +274,10 @@ public class JenaCustomQueries {
    *
    * @return
    */
-  public static final String removeGrantWithoutObject() {
+  public static final String removeGrantWithoutObject(String baseUri) {
     return X_PATH_FUNCTIONS_DECLARATION
-        + " PREFIX fn: <http://www.w3.org/2005/xpath-functions#>  WITH <http://imeji.org/user> DELETE {?s <http://imeji.org/terms/grant> ?grant} USING <http://imeji.org/user> USING <http://imeji.org/collection> WHERE {?s <http://imeji.org/terms/grant> ?grant . let(?uri := uri(replace(replace(replace(?grant, 'READ,', ''), 'EDIT,', ''), 'ADMIN,', ''))) . not exists{?uri ?p ?o} . FILTER( ?uri NOT IN (<http://imeji.org/>) )}";
+        + " PREFIX fn: <http://www.w3.org/2005/xpath-functions#>  WITH <http://imeji.org/user> DELETE {?s <http://imeji.org/terms/grant> ?grant} USING <http://imeji.org/user> USING <http://imeji.org/collection> WHERE {?s <http://imeji.org/terms/grant> ?grant . let(?uri := uri(replace(replace(replace(?grant, 'READ,', ''), 'EDIT,', ''), 'ADMIN,', ''))) . not exists{?uri ?p ?o} . FILTER( ?uri NOT IN (<"
+        + baseUri + ">) )}";
   }
 
 
