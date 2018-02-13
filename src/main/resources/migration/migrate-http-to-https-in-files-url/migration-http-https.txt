@@ -12,7 +12,7 @@ USING <http://imeji.org/content>
 WHERE{
   ?s <http://imeji.org/terms/thumbnail> ?o.
   FILTER(fn:starts-with(str(?o), "http://")).
-  LET(?newurl := str(REPLACE(str(?o), "http://", "https://", "i"))) 
+  LET(?newurl := STRDT(str(REPLACE(str(?o), "http://", "https://", "i")),<http://www.w3.org/2001/XMLSchema#string>)) 
 };
 
 WITH <http://imeji.org/content>
@@ -22,7 +22,7 @@ USING <http://imeji.org/content>
 WHERE{
   ?s <http://imeji.org/terms/preview> ?o.
   FILTER(fn:starts-with(str(?o), "http://")).
-  LET(?newurl := str(REPLACE(str(?o), "http://", "https://", "i"))) 
+  LET(?newurl := STRDT(str(REPLACE(str(?o), "http://", "https://", "i")),<http://www.w3.org/2001/XMLSchema#string>)) 
 };
 
 WITH <http://imeji.org/content>
@@ -32,7 +32,7 @@ USING <http://imeji.org/content>
 WHERE{
   ?s <http://imeji.org/terms/full> ?o.
   FILTER(fn:starts-with(str(?o), "http://")).
-  LET(?newurl := str(REPLACE(str(?o), "http://", "https://", "i"))) 
+   LET(?newurl := STRDT(str(REPLACE(str(?o), "http://", "https://", "i")),<http://www.w3.org/2001/XMLSchema#string>)) 
 };
 
 WITH <http://imeji.org/content>
@@ -42,5 +42,5 @@ USING <http://imeji.org/content>
 WHERE{
   ?s <http://imeji.org/terms/original> ?o.
   FILTER(fn:starts-with(str(?o), "http://")).
-  LET(?newurl := str(REPLACE(str(?o), "http://", "https://", "i"))) 
+   LET(?newurl := STRDT(str(REPLACE(str(?o), "http://", "https://", "i")),<http://www.w3.org/2001/XMLSchema#string>)) 
 };

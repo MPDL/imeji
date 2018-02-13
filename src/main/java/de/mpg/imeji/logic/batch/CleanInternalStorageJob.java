@@ -1,6 +1,8 @@
 package de.mpg.imeji.logic.batch;
 
 import java.io.File;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -48,6 +50,17 @@ public class CleanInternalStorageJob implements Callable<Integer> {
         LOGGER.info(deleted ? "DONE!" : "ERROR!");
       }
     }
+    LOGGER.info("Internal storage files cleaned.");
+    LOGGER.info("Removing empty directories from internal storage");;
+    Files.walk(new File(path).toPath(), FileVisitOption.values())
+        .filter(p -> p.toFile().isDirectory()).map(p -> p.toFile())
+        .filter(f -> FileUtils.sizeOfDirectory(f) == 0).forEach(f -> {
+          try {
+            Files.deleteIfExists(f.toPath());
+          } catch (Exception e) {
+            LOGGER.info("Error deleting directory " + f.getAbsolutePath());
+          }
+        });
     LOGGER.info("Internal storage cleaned.");
     return null;
   }
