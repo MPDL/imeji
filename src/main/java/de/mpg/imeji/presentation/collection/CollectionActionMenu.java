@@ -2,9 +2,11 @@ package de.mpg.imeji.presentation.collection;
 
 import static de.mpg.imeji.presentation.notification.CommonMessages.getSuccessCollectionDeleteMessage;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
 import org.apache.log4j.Logger;
@@ -22,7 +24,9 @@ import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
+import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -115,8 +119,9 @@ public class CollectionActionMenu implements Serializable {
    * Delete the {@link CollectionImeji}
    *
    * @return
+   * @throws IOException
    */
-  public String delete() {
+  public void delete() throws IOException {
     final CollectionService cc = new CollectionService();
     try {
       cc.delete(collection, user);
@@ -125,7 +130,7 @@ public class CollectionActionMenu implements Serializable {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getLocalizedMessage(), locale));
       LOGGER.error("Error delete collection", e);
     }
-    return "pretty:collections";
+    redirectToParent(collection);
   }
 
   /**
@@ -134,7 +139,7 @@ public class CollectionActionMenu implements Serializable {
    * @return
    * @throws Exception
    */
-  public String withdraw() throws Exception {
+  public void withdraw() throws Exception {
     final CollectionService cc = new CollectionService();
     try {
       cc.withdraw(collection, user);
@@ -144,7 +149,21 @@ public class CollectionActionMenu implements Serializable {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error discarding collection:", e);
     }
-    return "pretty:";
+    redirectToParent(collection);
+  }
+
+  /**
+   * Redirect to the parent collection. If no parent collection, go back to the collections page
+   * 
+   * @param collection
+   * @throws IOException
+   */
+  private void redirectToParent(CollectionImeji collection) throws IOException {
+    final Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
+    final String redirectUrl = collection.isSubCollection()
+        ? navigation.getCollectionUrl() + ObjectHelper.getId(collection.getCollection())
+        : navigation.getCollectionsUrl();
+    FacesContext.getCurrentInstance().getExternalContext().redirect(redirectUrl);
   }
 
   public String getDiscardComment() {

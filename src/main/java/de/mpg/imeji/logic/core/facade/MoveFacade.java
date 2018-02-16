@@ -119,6 +119,7 @@ public class MoveFacade implements Serializable {
         new ElasticForlderPartObject(parent.getId().toString()));
     messageService.add(new MoveCollectionMessage(MessageType.MOVE_COLLECTION, collection,
         ObjectHelper.getId(parent.getId()), ObjectHelper.getId(collection.getCollection())));
+    HierarchyService.reloadHierarchy();
   }
 
 

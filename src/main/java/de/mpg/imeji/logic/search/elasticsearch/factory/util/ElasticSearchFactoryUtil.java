@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.search.elasticsearch.factory.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.lucene.queryparser.classic.QueryParserBase;
 import org.elasticsearch.action.search.SearchResponse;
@@ -10,10 +11,14 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 
+import de.mpg.imeji.logic.model.Grant;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 
 /**
  * Utility Class for ElasticSearch
@@ -67,6 +72,32 @@ public class ElasticSearchFactoryUtil {
   public static List<String> getGroupsOfUser(String userId) {
     return searchStringAndRetrieveFieldValue("users:\"" + userId + "\"",
         ElasticFields.ID.field().toLowerCase(), null, 0, -1);
+  }
+
+  /**
+   * Get all Grant of the users, included the grant of its groups
+   * 
+   * @param user
+   * @return
+   */
+  public static List<Grant> getAllGrants(User user) {
+    List<Grant> grants =
+        user.getGrants().stream().map(s -> new Grant(s)).collect(Collectors.toList());
+    grants.addAll(getGroupGrants(user));
+    return grants;
+  }
+
+  /**
+   * Get the all the grants of the groups of the users
+   * 
+   * @param user
+   * @return
+   */
+  public static List<Grant> getGroupGrants(User user) {
+    UserGroupService ugs = new UserGroupService();
+    List<UserGroup> groups = ugs.retrieveBatch(getGroupsOfUser(user.getId().toString()), user);
+    return groups.stream().flatMap(group -> group.getGrants().stream()).map(s -> new Grant(s))
+        .collect(Collectors.toList());
   }
 
   /**

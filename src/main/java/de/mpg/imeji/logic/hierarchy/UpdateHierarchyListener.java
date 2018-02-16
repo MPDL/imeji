@@ -12,8 +12,7 @@ import de.mpg.imeji.logic.events.messages.Message.MessageType;
 public class UpdateHierarchyListener extends Listener {
 
   public UpdateHierarchyListener() {
-    super(MessageType.MOVE_COLLECTION, MessageType.CREATE_COLLECTION,
-        MessageType.DELETE_COLLECTION);
+    super(MessageType.DELETE_COLLECTION);
   }
 
   @Override

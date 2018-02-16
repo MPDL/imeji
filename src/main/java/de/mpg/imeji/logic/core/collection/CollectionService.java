@@ -82,6 +82,7 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
     }
     c = controller.create(c, user);
     messageService.add(new CollectionMessage(MessageType.CREATE_COLLECTION, c));
+    HierarchyService.reloadHierarchy();
     return c;
   }
 
@@ -159,10 +160,15 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
    * @throws ImejiException
    */
   public void delete(CollectionImeji collection, User user) throws ImejiException {
-    for (String uri : new HierarchyService().findAllSubcollections(collection.getId().toString())) {
-      deleteSingleCollection(retrieve(uri, user), user);
+    List<CollectionImeji> collectionToDelete = controller.retrieveBatchLazy(
+        new HierarchyService().findAllSubcollections(collection.getId().toString()), user);
+    collectionToDelete.add(collection);
+    for (CollectionImeji c : collectionToDelete) {
+      deleteSingleCollection(c, user);
     }
-    deleteSingleCollection(collection, user);
+    for (CollectionImeji c : collectionToDelete) {
+      messageService.add(new CollectionMessage(MessageType.DELETE_COLLECTION, c));
+    }
   }
 
   /**
@@ -183,17 +189,14 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
     final List<Item> items = (List<Item>) itemService.retrieveBatchLazy(itemUris, -1, 0, user);
     itemService.delete(items, user);
     controller.delete(collection, user);
-    messageService.add(new CollectionMessage(MessageType.DELETE_COLLECTION, collection));
   }
-
-
 
   /**
    * Release a {@link CollectionImeji} and all its {@link Item}
    *
    * @param collection
    * @param user
-   * @param defaultLicense TODO
+   * @param defaultLicense
    * @throws ImejiException
    */
   public void release(CollectionImeji collection, User user, License defaultLicense)
