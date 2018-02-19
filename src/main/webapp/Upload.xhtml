@@ -26,7 +26,9 @@
 	 		<ui:include src="./include/LoginFormular.xhtml" />
 	 	</ui:fragment>
 	 	<ui:fragment rendered="#{Auth.loggedIn}">
-			<collection:tree id="tree" tree="#{UploadBean.tree}" upload="true"/>
+	 		<h:form id="uploadTree">
+				<collection:tree id="tree" tree="#{UploadBean.tree}" upload="true"/>
+			</h:form>
 	 	</ui:fragment>
 	 </ui:define>
 	 
@@ -36,6 +38,9 @@
 				<span class="fa fa-plus"/>#{lbl.new_collection}
 			</a >
 		</ui:fragment>
+		
 	 </ui:define>
-	 
+  	 <ui:define name="modalDialogs_from_site">
+  	 	<collection:subCollectionForm id="createSub" dialogId="addSubCollectionTree" postAction="upload"/>
+  	 </ui:define>
 </ui:composition>

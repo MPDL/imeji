@@ -28,6 +28,13 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
   private static final Logger LOGGER = Logger.getLogger(SubCollectionFormBean.class);
   private final CollectionService collectionService = new CollectionService();
   private String name;
+  private CollectionImeji parent;
+
+  public void init(CollectionImeji collection) {
+    this.parent = collection;
+    this.name = collection.getName();
+    System.out.println("hello: " + name);
+  }
 
   /**
    * Create a subcollection with the name set in the bean into the parent collection
@@ -35,7 +42,7 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
    * @param parent
    * @throws IOException
    */
-  public void create(CollectionImeji parent) throws IOException {
+  public void create() throws IOException {
     try {
       CollectionImeji subcollection = collectionService.create(
           ImejiFactory.newCollection().setTitle(name).setPerson(getSessionUser().getPerson())
@@ -55,7 +62,7 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
    * @param parent
    * @throws IOException
    */
-  public void createAndUpload(CollectionImeji parent) throws IOException {
+  public void createAndUpload() throws IOException {
     try {
       CollectionImeji subcollection = collectionService.create(
           ImejiFactory.newCollection().setTitle(name).setPerson(getSessionUser().getPerson())

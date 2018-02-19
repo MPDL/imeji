@@ -16,35 +16,35 @@
 		<cc:attribute name="upload" default="false" type="java.lang.Boolean"/>
 	</cc:interface>
 	<cc:implementation>
-		<ui:repeat id="node" var="node" value="#{cc.attrs.tree.nodes}" varStatus="status">
-			<ui:fragment rendered="#{!cc.attrs.upload}">
-				<ui:param name="disabled" value="#{cc.attrs.colId == node.collection.id.toString() || (MoveItemsBean.isCollection(cc.attrs.objectId) and MoveItemsBean.isChildOf(node, cc.attrs.colId))}"/>
-			</ui:fragment>
-			<div class="collectionTreeNode" style="margin-left: #{node.depth *2.5}em; #{node.hasParent() ? 'margin-top: -2px' : 'margin-top: 2px'}">
-				<ui:fragment rendered="#{node.hasParent()}">
-					<span class="fa fa-globe fa-folder-open-o" title="#{lbl.subcollection}"/>
-				</ui:fragment>
-				<ui:fragment rendered="#{!node.hasParent()}">
-					<collection:state id="state" imejiResource="#{node.collection}"/>
-				</ui:fragment>
+			<ui:repeat id="node" var="node" value="#{cc.attrs.tree.nodes}" varStatus="status">
 				<ui:fragment rendered="#{!cc.attrs.upload}">
-					<ui:fragment rendered="#{node.collection.status == 'RELEASED' and !cc.attrs.hasLicense}">
-						<h:commandLink value="#{node.collection.title}"  disabled="#{disabled}" action="#{MoveItemsBean.setDestinationId(node.collection.id.toString())}">
-							<f:ajax render="@form"/>
-						</h:commandLink>
-					</ui:fragment>
-					<ui:fragment rendered="#{node.collection.status == 'PENDING' or cc.attrs.hasLicense}">
-						<h:commandLink disabled="#{disabled}" value="#{node.collection.title}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId, node.collection.id.toString())}"  onclick="startLoader();closeDialog('moveDialog');"/>	
-					</ui:fragment>
+					<ui:param name="disabled" value="#{cc.attrs.colId == node.collection.id.toString() || (MoveItemsBean.isCollection(cc.attrs.objectId) and MoveItemsBean.isChildOf(node, cc.attrs.colId))}"/>
 				</ui:fragment>
-				<ui:fragment rendered="#{cc.attrs.upload}">
-					<a href="#{Navigation.collectionUrl}#{node.collection.idString}?showUpload=1" title="#{lbl.upload_here}">#{node.collection.title}</a>
-					<a href="#" title="#{lbl.upload_in_subcollection}" onclick="openDialog('addSubCollection#{node.collection.idString}'); document.getElementById('tree:node:#{status.index}:createSub:subColForm:name').focus()">
-						<span class="fa fa-plus"/>
-					</a>
-					<collection:subCollectionForm id="createSub" dialogId="addSubCollection#{node.collection.idString}" parentCollection="#{node.collection}" upload="true"/>
-				</ui:fragment>
-			</div>
-		</ui:repeat>
+				<div class="collectionTreeNode" style="margin-left: #{node.depth *2.5}em; #{node.hasParent() ? 'margin-top: -2px' : 'margin-top: 2px'}">
+					<ui:fragment rendered="#{node.hasParent()}">
+						<span class="fa fa-globe fa-folder-open-o" title="#{lbl.subcollection}"/>
+					</ui:fragment>
+					<ui:fragment rendered="#{!node.hasParent()}">
+						<collection:state id="state" imejiResource="#{node.collection}"/>
+					</ui:fragment>
+					<ui:fragment rendered="#{!cc.attrs.upload}">
+						<ui:fragment rendered="#{node.collection.status == 'RELEASED' and !cc.attrs.hasLicense}">
+							<h:commandLink value="#{node.collection.title}"  disabled="#{disabled}" action="#{MoveItemsBean.setDestinationId(node.collection.id.toString())}">
+								<f:ajax render="@form"/>
+							</h:commandLink>
+						</ui:fragment>
+						<ui:fragment rendered="#{node.collection.status == 'PENDING' or cc.attrs.hasLicense}">
+							<h:commandLink disabled="#{disabled}" value="#{node.collection.title}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId, node.collection.id.toString())}"  onclick="startLoader();closeDialog('moveDialog');"/>	
+						</ui:fragment>
+					</ui:fragment>
+					<ui:fragment rendered="#{cc.attrs.upload}">
+						<a href="#{Navigation.collectionUrl}#{node.collection.idString}?showUpload=1" title="#{lbl.upload_here}">#{node.collection.title}</a>
+						<h:commandLink id="initSubForm" action="#{SubCollectionFormBean.init(node.collection)}" value="" rendered="#{cc.attrs.upload}">
+				 			<f:ajax render="@none"/>
+				 			<span class="fa fa-plus" onclick="closeDialog('moveSelected');closeDialog('moveDialog');openDialog('addSubCollectionTree'); document.getElementById('move:createSub:subColForm:name').focus();"/>
+				 		</h:commandLink>
+				 	</ui:fragment>
+				</div>
+			</ui:repeat>
 	</cc:implementation>
 </html>
