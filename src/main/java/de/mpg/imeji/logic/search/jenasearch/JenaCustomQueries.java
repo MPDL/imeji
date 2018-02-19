@@ -427,8 +427,18 @@ public class JenaCustomQueries {
    *
    * @return
    */
-  public static final String selectStatus(String id) {
-    return "SELECT ?s WHERE { <" + id + "> <" + ImejiNamespaces.STATUS + "> ?s}";
+  public static final String selectStatus(String uri) {
+    return "SELECT ?s WHERE { <" + uri + "> <" + ImejiNamespaces.STATUS + "> ?s}";
+  }
+
+  /**
+   * Select Created by of object
+   * 
+   * @param uri
+   * @return
+   */
+  public static final String selectCreatedBy(String uri) {
+    return "SELECT ?s WHERE { <" + uri + "> <" + ImejiNamespaces.CREATOR + "> ?s}";
   }
 
   /**

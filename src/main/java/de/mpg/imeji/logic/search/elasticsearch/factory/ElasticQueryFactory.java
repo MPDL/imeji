@@ -23,7 +23,6 @@ import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.util.StatementUtil;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
@@ -49,7 +48,7 @@ import de.mpg.imeji.util.DateFormatter;
  *
  */
 public class ElasticQueryFactory {
-  private static final Logger LOGGER = Logger.getLogger(ElasticQueryFactory.class);
+  private final Logger LOGGER = Logger.getLogger(ElasticQueryFactory.class);
   private final boolean searchForCollection;
   private final boolean searchForUsers;
   private final boolean emptyQuery;
@@ -60,7 +59,7 @@ public class ElasticQueryFactory {
   public ElasticQueryFactory(SearchQuery query, ElasticTypes... types) {
     searchForCollection = types.length == 1 && types[0] == ElasticTypes.folders;
     searchForUsers = types.length == 1 && types[0] == ElasticTypes.users;
-    emptyQuery = query == null || query.isEmpty();
+    emptyQuery = query == null || query.isEmpty() || query.getElements().isEmpty();
     this.query = query;
   }
 
@@ -108,7 +107,6 @@ public class ElasticQueryFactory {
     if (!searchForUsers && !isMatchAll(statusQuery)) {
       q.must(statusQuery);
     }
-
     return q;
   }
 
@@ -230,7 +228,7 @@ public class ElasticQueryFactory {
     return q;
   }
 
-  private static boolean isORSearchGroup(List<SearchElement> elements) {
+  private boolean isORSearchGroup(List<SearchElement> elements) {
     for (final SearchElement el : elements) {
       if (el instanceof SearchLogicalRelation) {
         return ((SearchLogicalRelation) el).getLogicalRelation() == LOGICAL_RELATIONS.OR ? true
@@ -350,7 +348,6 @@ public class ElasticQueryFactory {
             ElasticSearchFactoryUtil.getUserId(pair.getValue()), pair.getOperator(), pair.isNot());
       case collaborator:
         return collaboratorQuery(pair.getValue());
-      // return roleQueryWithoutCreator(ElasticFields.READ, pair.getValue(), pair.isNot());
       case read:
         return fieldQuery(ElasticFields.READ, pair.getValue(), SearchOperators.EQUALS,
             pair.isNot());
@@ -415,7 +412,7 @@ public class ElasticQueryFactory {
    * @param md
    * @return
    */
-  private static QueryBuilder metadataFilter(SearchMetadata md) {
+  private QueryBuilder metadataFilter(SearchMetadata md) {
     if (md.getMetadataField() == null) {
       return metadataQuery(
           fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()),
@@ -474,8 +471,8 @@ public class ElasticQueryFactory {
    * @param operator
    * @return
    */
-  private static QueryBuilder fieldQuery(ElasticFields field, String value,
-      SearchOperators operator, boolean not) {
+  private QueryBuilder fieldQuery(ElasticFields field, String value, SearchOperators operator,
+      boolean not) {
     return fieldQuery(field.field(), value, operator, not);
   }
 
@@ -487,7 +484,7 @@ public class ElasticQueryFactory {
    * @param operator
    * @return
    */
-  private static QueryBuilder fieldQuery(String fieldName, String value, SearchOperators operator,
+  private QueryBuilder fieldQuery(String fieldName, String value, SearchOperators operator,
       boolean not) {
     QueryBuilder q = null;
 
@@ -521,7 +518,7 @@ public class ElasticQueryFactory {
    * @param not
    * @return
    */
-  private static QueryBuilder timeQuery(String field, String dateString, SearchOperators operator,
+  private QueryBuilder timeQuery(String field, String dateString, SearchOperators operator,
       boolean not) {
     QueryBuilder q = null;
     if (operator == null) {
@@ -559,7 +556,16 @@ public class ElasticQueryFactory {
 
 
 
-  private static QueryBuilder numberQuery(String field, String number, SearchOperators operator,
+  /**
+   * Search for a number field
+   * 
+   * @param field
+   * @param number
+   * @param operator
+   * @param not
+   * @return
+   */
+  private QueryBuilder numberQuery(String field, String number, SearchOperators operator,
       boolean not) {
     QueryBuilder q = null;
     if (operator == null) {
@@ -599,7 +605,7 @@ public class ElasticQueryFactory {
    * @param fromToQueryString
    * @return
    */
-  private static String parseFromValue(String fromToQueryString) {
+  private String parseFromValue(String fromToQueryString) {
     int fromIndex = fromToQueryString.indexOf("from");
     int toIndex = fromToQueryString.indexOf("to");
     toIndex = toIndex != -1 ? toIndex : fromToQueryString.length();
@@ -614,7 +620,7 @@ public class ElasticQueryFactory {
    * @param fromToQueryString
    * @return
    */
-  private static String parseToValue(String fromToQueryString) {
+  private String parseToValue(String fromToQueryString) {
     int toIndex = fromToQueryString.indexOf("to");
     return toIndex != -1 ? fromToQueryString.substring(toIndex + "to".length()) : null;
   }
@@ -628,7 +634,7 @@ public class ElasticQueryFactory {
    * @param statement
    * @return
    */
-  private static QueryBuilder metadataQuery(QueryBuilder valueQuery, String statement) {
+  private QueryBuilder metadataQuery(QueryBuilder valueQuery, String statement) {
     return QueryBuilders.nestedQuery(ElasticFields.METADATA.field(),
         QueryBuilders.boolQuery().must(valueQuery).must(
             fieldQuery(ElasticFields.METADATA_INDEX, statement, SearchOperators.EQUALS, false)));
@@ -643,7 +649,7 @@ public class ElasticQueryFactory {
    * @param not
    * @return
    */
-  private static QueryBuilder technicalMetadataQuery(SearchTechnicalMetadata tmd) {
+  private QueryBuilder technicalMetadataQuery(SearchTechnicalMetadata tmd) {
     return contentQuery(QueryBuilders.nestedQuery(ElasticFields.TECHNICAL.field(),
         QueryBuilders.boolQuery()
             .must(fieldQuery(ElasticFields.TECHNICAL_NAME, tmd.getLabel(), SearchOperators.EQUALS,
@@ -659,7 +665,7 @@ public class ElasticQueryFactory {
    * @param value
    * @return
    */
-  private static QueryBuilder matchFieldQuery(String fieldName, String value) {
+  private QueryBuilder matchFieldQuery(String fieldName, String value) {
     if (ElasticFields.ALL.field().equalsIgnoreCase(fieldName)) {
       return QueryBuilders
           .queryStringQuery(value + " " + ElasticFields.NAME.field() + ".suggest:" + value);
@@ -674,7 +680,7 @@ public class ElasticQueryFactory {
    * @param value
    * @return
    */
-  private static QueryBuilder greaterThanQuery(String fieldName, String value) {
+  private QueryBuilder greaterThanQuery(String fieldName, String value) {
     if (NumberUtils.isNumber(value)) {
       return QueryBuilders.rangeQuery(fieldName).gte(Double.parseDouble(value));
     }
@@ -688,7 +694,7 @@ public class ElasticQueryFactory {
    * @param value
    * @return
    */
-  private static QueryBuilder lessThanQuery(String fieldName, String value) {
+  private QueryBuilder lessThanQuery(String fieldName, String value) {
     if (NumberUtils.isNumber(value)) {
       return QueryBuilders.rangeQuery(fieldName).lte(Double.parseDouble(value));
     }
@@ -696,7 +702,7 @@ public class ElasticQueryFactory {
   }
 
 
-  private static QueryBuilder geoQuery(String value) {
+  private QueryBuilder geoQuery(String value) {
     final String[] values = value.split(",");
     String distance = "1cm";
     final double lat = Double.parseDouble(values[0]);
@@ -716,7 +722,7 @@ public class ElasticQueryFactory {
    * @param not
    * @return
    */
-  private static QueryBuilder negate(QueryBuilder f, boolean not) {
+  private QueryBuilder negate(QueryBuilder f, boolean not) {
     return not ? QueryBuilders.boolQuery().mustNot(f) : f;
   }
 
@@ -726,7 +732,7 @@ public class ElasticQueryFactory {
    * @param f
    * @return
    */
-  private static QueryBuilder negate(QueryBuilder f) {
+  private QueryBuilder negate(QueryBuilder f) {
     return negate(f, true);
   }
 
@@ -735,90 +741,24 @@ public class ElasticQueryFactory {
    *
    * @return
    */
-  private static QueryBuilder matchNothing() {
+  private QueryBuilder matchNothing() {
     return QueryBuilders.boolQuery().mustNot(QueryBuilders.matchAllQuery());
   }
 
   /**
-   * True if the uri is an uri folder
-   *
-   * @param uri
-   * @return
-   */
-  private static boolean isFolderUri(String uri) {
-    return uri.contains("/collection/") ? true : false;
-  }
-
-  /**
-   * Create the query for role="email". Role can be uploader, collaborator. Objects where the user
-   * is creator are not excluded
-   *
+   * Search for items/collections of collaobrator, i.e. users with who the collections have been
+   * shared
+   * 
    * @param email
-   * @param not
    * @return
    */
-  private static QueryBuilder roleQuery(ElasticFields role, String email, boolean not) {
-    final String userId = ElasticSearchFactoryUtil.getUserId(email);
-    final QueryBuilder q1 = QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
-        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
-        .lookupType(ElasticTypes.users.name()).lookupPath(role.field());
-    final QueryBuilder q2 = QueryBuilders.termsLookupQuery(ElasticFields.FOLDER.field())
-        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
-        .lookupType(ElasticTypes.users.name()).lookupPath(role.field());
-    final BoolQueryBuilder q = QueryBuilders.boolQuery().should(q1).should(q2);
-    final List<String> groups = ElasticSearchFactoryUtil.getGroupsOfUser(userId);
-    for (final String group : groups) {
-      q.should(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
-          .lookupIndex(ElasticService.DATA_ALIAS).lookupId(group)
-          .lookupType(ElasticTypes.usergroups.name()).lookupPath(role.field()));
-      q.should(QueryBuilders.termsLookupQuery(ElasticFields.FOLDER.field())
-          .lookupIndex(ElasticService.DATA_ALIAS).lookupId(group)
-          .lookupType(ElasticTypes.usergroups.name()).lookupPath(role.field()));
-    }
-    return q;
-  }
-
-
-
-  /**
-   * Create the query for role="email". Role can be uploader, collaborator. Objects where the user
-   * is creator will be excluded
-   *
-   * @param email
-   * @param not
-   * @return
-   */
-  private static QueryBuilder roleQueryWithoutCreator(ElasticFields role, String email,
-      boolean not) {
-    final String userId = ElasticSearchFactoryUtil.getUserId(email);
-    final BoolQueryBuilder q1 = QueryBuilders.boolQuery();
-    q1.must(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
-        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
-        .lookupType(ElasticTypes.users.name()).lookupPath(role.field()));
-    q1.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchFactoryUtil.getUserId(email),
-        SearchOperators.EQUALS, not));
-    final BoolQueryBuilder q2 = QueryBuilders.boolQuery();
-    q2.must(QueryBuilders.termsLookupQuery(ElasticFields.FOLDER.field())
-        .lookupIndex(ElasticService.DATA_ALIAS).lookupId(userId)
-        .lookupType(ElasticTypes.users.name()).lookupPath(role.field()));
-    q2.mustNot(fieldQuery(ElasticFields.CREATOR, ElasticSearchFactoryUtil.getUserId(email),
-        SearchOperators.EQUALS, not));
-    final BoolQueryBuilder q = QueryBuilders.boolQuery().should(q1).should(q2);
-    final List<String> groups = ElasticSearchFactoryUtil.getGroupsOfUser(userId);
-    for (final String group : groups) {
-      q.should(QueryBuilders.termsLookupQuery(ElasticFields.ID.field())
-          .lookupIndex(ElasticService.DATA_ALIAS).lookupId(group)
-          .lookupType(ElasticTypes.usergroups.name()).lookupPath(role.field()));
-    }
-    return q;
-  }
-
-  private static QueryBuilder collaboratorQuery(String email) {
+  private QueryBuilder collaboratorQuery(String email) {
     try {
       User user = new UserService().retrieve(email, Imeji.adminUser);
       QueryBuilder creatorQuery =
           fieldQuery(ElasticFields.CREATOR, user.getId().toString(), SearchOperators.EQUALS, false);
-      QueryBuilder roleQuery = new SecurityQueryFactory().user(user).role(GrantType.READ).build();
+      QueryBuilder roleQuery = new SecurityQueryFactory().user(user)
+          .searchForCollection(searchForCollection).role(GrantType.READ).build();
       return QueryBuilders.boolQuery().must(roleQuery).mustNot(creatorQuery);
     } catch (Exception e) {
       LOGGER.error("Erro building collaborator query", e);
@@ -832,7 +772,7 @@ public class ElasticQueryFactory {
    * @param pair
    * @return
    */
-  private static QueryBuilder allQuery(SearchPair pair) {
+  private QueryBuilder allQuery(SearchPair pair) {
     final BoolQueryBuilder f = QueryBuilders.boolQuery()
         .should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.EQUALS, false));
     if (NumberUtils.isNumber(pair.getValue())) {
@@ -848,7 +788,7 @@ public class ElasticQueryFactory {
    * @param q
    * @return
    */
-  private static QueryBuilder contentQuery(QueryBuilder q) {
+  private QueryBuilder contentQuery(QueryBuilder q) {
     return QueryBuilders.hasChildQuery(ElasticTypes.content.name(), q);
   }
 
@@ -858,7 +798,7 @@ public class ElasticQueryFactory {
    * @param pair
    * @return
    */
-  private static QueryBuilder licenseQuery(SearchPair pair) {
+  private QueryBuilder licenseQuery(SearchPair pair) {
     final BoolQueryBuilder licenseQuery = QueryBuilders.boolQuery();
     for (final String licenseName : pair.getValue().split(" OR ")) {
       if ("*".equals(licenseName)) {
@@ -873,7 +813,7 @@ public class ElasticQueryFactory {
     return licenseQuery;
   }
 
-  private static QueryBuilder parentCollectionQuery(QueryBuilder qb) {
+  private QueryBuilder parentCollectionQuery(QueryBuilder qb) {
     return QueryBuilders.hasParentQuery(ElasticTypes.folders.name(), qb);
   }
 
@@ -883,7 +823,7 @@ public class ElasticQueryFactory {
    * @param pair
    * @return
    */
-  private static QueryBuilder fileTypeQuery(SearchPair pair) {
+  private QueryBuilder fileTypeQuery(SearchPair pair) {
     final BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
     for (final String ext : SearchUtils
         .parseFileTypesAsExtensionList(pair.getValue().replace("\"", ""))) {
@@ -901,7 +841,7 @@ public class ElasticQueryFactory {
    * @param pair
    * @return
    */
-  private static String formatStatusSearchValue(SearchPair pair) {
+  private String formatStatusSearchValue(SearchPair pair) {
     String status = pair.getValue();
     if (status.contains("#")) {
       status = status.split("#")[1];

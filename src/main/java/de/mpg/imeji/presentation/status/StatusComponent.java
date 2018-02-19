@@ -19,6 +19,8 @@ import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
+import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -105,7 +107,20 @@ public class StatusComponent extends UINamingContainer {
    */
   private CollectionImeji getLastParent(Properties p) {
     String uri = new HierarchyService().getLastParent(p);
-    return uri != null ? ImejiFactory.newCollection().setUri(uri).build() : (CollectionImeji) p;
+    return uri != null
+        ? ImejiFactory.newCollection().setUri(uri).setCreatedBy(findOwner(uri)).build()
+        : (CollectionImeji) p;
+  }
+
+  /**
+   * Find Owner of the collection
+   * 
+   * @param collectionUri
+   * @return
+   */
+  private URI findOwner(String collectionUri) {
+    return URI
+        .create(ImejiSPARQL.exec(JenaCustomQueries.selectCreatedBy(collectionUri), null).get(0));
   }
 
   /**
@@ -145,8 +160,6 @@ public class StatusComponent extends UINamingContainer {
     }
     return l;
   }
-
-
 
   /**
    * Find all groups the object is shared with
