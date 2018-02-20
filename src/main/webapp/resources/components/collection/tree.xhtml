@@ -29,20 +29,27 @@
 					</ui:fragment>
 					<ui:fragment rendered="#{!cc.attrs.upload}">
 						<ui:fragment rendered="#{node.collection.status == 'RELEASED' and !cc.attrs.hasLicense}">
-							<h:commandLink value="#{node.collection.title}"  disabled="#{disabled}" action="#{MoveItemsBean.setDestinationId(node.collection.id.toString())}">
+							<h:commandLink value="#{node.collection.title}"  disabled="#{disabled}" action="#{MoveItemsBean.setTarget(node.collection)}">
 								<f:ajax render="@form"/>
 							</h:commandLink>
 						</ui:fragment>
 						<ui:fragment rendered="#{node.collection.status == 'PENDING' or cc.attrs.hasLicense}">
-							<h:commandLink disabled="#{disabled}" value="#{node.collection.title}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId, node.collection.id.toString())}"  onclick="startLoader();closeDialog('moveDialog');"/>	
+							<h:commandLink disabled="#{disabled}" value="#{node.collection.title}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId, node.collection)}"  onclick="startLoader();closeDialog('moveDialog');"/>	
 						</ui:fragment>
 					</ui:fragment>
 					<ui:fragment rendered="#{cc.attrs.upload}">
 						<a href="#{Navigation.collectionUrl}#{node.collection.idString}?showUpload=1" title="#{lbl.upload_here}">#{node.collection.title}</a>
-						<h:commandLink id="initSubForm" action="#{SubCollectionFormBean.init(node.collection)}" value="" rendered="#{cc.attrs.upload}">
+						<h:commandLink id="uploadToNew" action="#{SubCollectionFormBean.init(node.collection)}" value="">
 				 			<f:ajax render="@none"/>
 				 			<span class="fa fa-plus" onclick="closeDialog('moveSelected');closeDialog('moveDialog');openDialog('addSubCollectionTree'); document.getElementById('move:createSub:subColForm:name').focus();"/>
 				 		</h:commandLink>
+				 	</ui:fragment>
+				 	<ui:fragment rendered="#{!cc.attrs.upload}">
+				 		<h:commandLink value="" disabled="#{disabled and MoveItemsBean.isCollection(cc.attrs.objectId)}" action="#{MoveItemsBean.initMoveToNewSubcollection(node.collection)}"
+				 			onClick="document.getElementById('move:createSub:subColForm:name').focus();">
+							<f:ajax render="@form"/>
+							<span class="fa fa-plus"/>
+						</h:commandLink>
 				 	</ui:fragment>
 				</div>
 			</ui:repeat>

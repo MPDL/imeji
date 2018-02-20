@@ -33,7 +33,6 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
   public void init(CollectionImeji collection) {
     this.parent = collection;
     this.name = collection.getName();
-    System.out.println("hello: " + name);
   }
 
   /**
