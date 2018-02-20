@@ -83,7 +83,7 @@ public class ElasticQueryFactory {
   public QueryBuilder build() {
     final BoolQueryBuilder q = QueryBuilders.boolQuery();
     final QueryBuilder searchQuery = buildSearchQuery(query, user);
-    final QueryBuilder containerQuery = buildContainerFilter(folderUri);
+    final QueryBuilder containerQuery = buildContainerFilter(folderUri, !emptyQuery);
     final QueryBuilder securityQuery =
         new SecurityQueryFactory().user(user).searchForCollection(searchForCollection).build();
     final QueryBuilder statusQuery = buildStatusQuery(query, user);
@@ -113,7 +113,7 @@ public class ElasticQueryFactory {
   public QueryBuilder buildBaseQuery() {
     if (query == null || query.isEmpty()) {
       final BoolQueryBuilder q = QueryBuilders.boolQuery();
-      final QueryBuilder containerQuery = buildContainerFilter(folderUri);
+      final QueryBuilder containerQuery = buildContainerFilter(folderUri, true);
       final QueryBuilder securityQuery =
           new SecurityQueryFactory().user(user).searchForCollection(searchForCollection).build();
       final QueryBuilder statusQuery = buildStatusQuery(query, user);
@@ -126,6 +126,7 @@ public class ElasticQueryFactory {
       if (!searchForUsers && !isMatchAll(statusQuery)) {
         q.must(statusQuery);
       }
+
       return q;
     }
     return null;
@@ -245,13 +246,13 @@ public class ElasticQueryFactory {
    * @param containerUri
    * @return
    */
-  private QueryBuilder buildContainerFilter(String containerUri) {
+  private QueryBuilder buildContainerFilter(String containerUri, boolean addChildren) {
     if (containerUri == null) {
       return QueryBuilders.matchAllQuery();
     }
     BoolQueryBuilder bq = QueryBuilders.boolQuery();
     bq.should(fieldQuery(ElasticFields.FOLDER, containerUri, SearchOperators.EQUALS, false));
-    if (!emptyQuery) {
+    if (addChildren) {
       for (String uri : new HierarchyService().findAllSubcollections(containerUri)) {
         bq.should(fieldQuery(ElasticFields.FOLDER, uri, SearchOperators.EQUALS, false));
       }

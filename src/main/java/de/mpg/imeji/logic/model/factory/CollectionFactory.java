@@ -36,7 +36,7 @@ public class CollectionFactory {
 
 
   public CollectionFactory setPerson(Person p) {
-    collection.getPersons().add(p);
+    collection.getPersons().add(p.clone());
     return this;
   }
 

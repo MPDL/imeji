@@ -103,6 +103,12 @@ public class CollectionItemsBean extends ItemsBean {
     return facade.retrieveItemsAndCollectionsAsItems(uris, getSessionUser());
   }
 
+  @Override
+  public List<String> searchAllItems() {
+    return new ItemService()
+        .search(collection.getId(), getSearchQuery(), null, getSessionUser(), -1, 0).getResults();
+  }
+
 
   @Override
   public String getNavigationString() {

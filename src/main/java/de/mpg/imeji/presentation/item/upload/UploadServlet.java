@@ -21,6 +21,7 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
@@ -50,8 +51,8 @@ import de.mpg.imeji.presentation.session.SessionBean;
 public class UploadServlet extends HttpServlet {
   private static final long serialVersionUID = -4879871986174193049L;
   private static final Logger LOGGER = Logger.getLogger(UploadServlet.class);
-  private static final ItemService itemService = new ItemService();
-  private static final CollectionService collectionController = new CollectionService();
+  private static final ItemService ITEM_SERVICE = new ItemService();
+  private static final CollectionService COLLECTION_SERVICE = new CollectionService();
 
   /**
    * The result of an upload
@@ -114,11 +115,11 @@ public class UploadServlet extends HttpServlet {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
       if (!StringHelper.isNullOrEmptyTrim(uploadId)) {
-        itemService.uploadToStaging(uploadId, upload.getFile(), upload.getFilename(), col, user);
+        ITEM_SERVICE.uploadToStaging(uploadId, upload.getFile(), upload.getFilename(), col, user);
       } else {
         Item item = ImejiFactory.newItem(col);
         item.setLicenses(Arrays.asList(license));
-        itemService.createWithFile(item, upload.getFile(), upload.getFilename(), col, user);
+        ITEM_SERVICE.createWithFile(item, upload.getFile(), upload.getFilename(), col, user);
       }
       writeResponse(resp, "");
     } catch (final AuthenticationError e) {
@@ -189,13 +190,21 @@ public class UploadServlet extends HttpServlet {
   private CollectionImeji retrieveCollection(HttpServletRequest req, User user) {
     if (req.getParameter("col") != null) {
       try {
-        return collectionController.retrieve(URI.create(req.getParameter("col")), user);
+        CollectionImeji collection =
+            COLLECTION_SERVICE.retrieve(URI.create(req.getParameter("col")), user);
+        if (req.getParameter("path") != null) {
+          return COLLECTION_SERVICE.getSubCollectionForPath(collection,
+              FilenameUtils.getPath(req.getParameter("path")), user);
+        } else {
+          return collection;
+        }
       } catch (final ImejiException e) {
         LOGGER.error("Error retrieving collection " + req.getParameter("col"), e);
       }
     }
     return null;
   }
+
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
