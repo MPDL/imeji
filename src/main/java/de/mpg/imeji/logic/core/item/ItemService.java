@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -36,7 +37,6 @@ import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
-import de.mpg.imeji.logic.model.util.LicenseUtil;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -521,15 +521,18 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param defaultLicens
    * @throws ImejiException
    */
-  public void release(List<Item> l, User user, License defaultLicense) throws ImejiException {
-    final Collection<Item> items = filterItemsByStatus(l, Status.PENDING);
-    for (final Item item : items) {
-      prepareRelease(item, user);
-      if (defaultLicense != null && LicenseUtil.getActiveLicense(item) == null) {
-        item.setLicenses(Arrays.asList(defaultLicense.clone()));
-      }
-    }
-    updateBatch(items, user);
+  public List<Item> release(List<Item> l, User user, License defaultLicense) throws ImejiException {
+    // final Collection<Item> items = filterItemsByStatus(l, Status.PENDING);
+    // for (final Item item : items) {
+    // prepareRelease(item, user);
+    // if (defaultLicense != null && LicenseUtil.getActiveLicense(item) == null) {
+    // item.setLicenses(Arrays.asList(defaultLicense.clone()));
+    // }
+    // }
+    // updateBatch(items, user);
+    new WorkflowFacade().releaseItems(l, user, defaultLicense);
+    return (List<Item>) retrieveBatch(
+        l.stream().map(item -> item.getId().toString()).collect(Collectors.toList()), -1, 0, user);
   }
 
   /**

@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.core.facade;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +26,6 @@ import de.mpg.imeji.logic.model.License;
 import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -78,16 +78,15 @@ public class MoveFacade implements Serializable {
     items = filterAlreadyExists(items, collection);
     // Release items if necessary
     if (collection.getStatus().equals(Status.RELEASED)) {
-      itemService.release(items, user, license);
+      items = itemService.release(items, user, license);
     }
     // Move the items
     for (Item item : items) {
       ImejiSPARQL.execUpdate(JenaCustomQueries.updateCollection(item.getId().toString(),
           item.getCollection().toString(), colUri));
-      itemsIndexer.updatePartial(item.getId().toString(), ImejiFactory.newItem()
-          .setUri(item.getId().toString()).setCollection(colUri.toString()).build());
+      item.setCollection(URI.create(colUri));
     }
-    itemsIndexer.commit();
+    itemsIndexer.updateIndexBatch(items);
     // Notify to event queue
     items.stream().forEach(item -> messageService.add(new MoveItemMessage(MessageType.MOVE_ITEM,
         item, ObjectHelper.getId(collection.getId()), ObjectHelper.getId(item.getCollection()))));

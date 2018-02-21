@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
+import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.events.MessageService;
 import de.mpg.imeji.logic.events.aggregation.Aggregation;
 import de.mpg.imeji.logic.events.messages.CollectionMessage;
@@ -24,6 +25,7 @@ import de.mpg.imeji.logic.events.messages.MoveItemMessage;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.hierarchy.HierarchyService.CollectionUriNameWrapper;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.Subscription.Type;
 import de.mpg.imeji.logic.model.User;
@@ -162,7 +164,8 @@ public class SubscriptionsAggregation implements Aggregation {
   private Map<String, List<Message>> getMessagesForUser(User user) {
     return messagesByCollection.entrySet().stream()
         .filter(e -> hasSubscribedfor(user, e.getKey()) && isActiveForUser(user, e.getKey()))
-        .map(e -> filterMessages(e)).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        .map(e -> filterMessages(e, user))
+        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
   }
 
   /**
@@ -172,9 +175,11 @@ public class SubscriptionsAggregation implements Aggregation {
    * @param entry
    * @return
    */
-  private Entry<String, List<Message>> filterMessages(Entry<String, List<Message>> entry) {
-    return new AbstractMap.SimpleEntry<String, List<Message>>(entry.getKey(), entry.getValue()
-        .stream().filter(m -> !isMovedInsameCollection(m)).collect(Collectors.toList()));
+  private Entry<String, List<Message>> filterMessages(Entry<String, List<Message>> entry,
+      User user) {
+    return new AbstractMap.SimpleEntry<String, List<Message>>(entry.getKey(),
+        entry.getValue().stream().filter(m -> !isMovedInsameCollection(m) && exists(m, user))
+            .collect(Collectors.toList()));
   }
 
   /**
@@ -231,6 +236,25 @@ public class SubscriptionsAggregation implements Aggregation {
           .equals(hierarchyService.getLastParent(getCollectionUri(m.getObjectId())));
     }
     return false;
+  }
+
+  /**
+   * True if the object is a message
+   * 
+   * @param message
+   * @param user
+   * @return
+   */
+  private boolean exists(Message message, User user) {
+    try {
+      if (message instanceof ItemMessage) {
+        new ItemService().retrieveLazy(
+            ObjectHelper.getURI(Item.class, ((ItemMessage) message).getItemId()), user);
+      }
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
   }
 
   /**

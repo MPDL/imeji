@@ -70,11 +70,33 @@ public class WorkflowFacade implements Serializable {
     Calendar now = DateHelper.getCurrentDate();
     String sparql = ids.stream().map(id -> JenaCustomQueries.updateReleaseObject(id, now))
         .collect(Collectors.joining("; "));
-    addLicense(c, ids, user, defaultLicense);
+    addLicense(ids, user, defaultLicense);
     ImejiSPARQL.execUpdate(sparql);
     collectionIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.COLLECTION).stream()
         .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
     itemIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.ITEM).stream()
+        .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
+  }
+
+  /**
+   * Release items
+   * 
+   * @param items
+   * @param user
+   * @param defaultLicense
+   * @throws ImejiException
+   */
+  public void releaseItems(List<Item> items, User user, License defaultLicense)
+      throws ImejiException {
+    final List<String> ids =
+        items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
+    preValidateItems(ids, user);
+    Calendar now = DateHelper.getCurrentDate();
+    String sparql = ids.stream().map(id -> JenaCustomQueries.updateReleaseObject(id, now))
+        .collect(Collectors.joining("; "));
+    addLicense(ids, user, defaultLicense);
+    ImejiSPARQL.execUpdate(sparql);
+    itemIndexer.partialUpdateIndexBatch(ids.stream()
         .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
   }
 
@@ -138,8 +160,7 @@ public class WorkflowFacade implements Serializable {
    * @param license
    * @throws ImejiException
    */
-  private void addLicense(CollectionImeji c, List<String> ids, User user, License license)
-      throws ImejiException {
+  private void addLicense(List<String> ids, User user, License license) throws ImejiException {
     List<Item> items = (List<Item>) new ItemService().retrieveBatch(
         filterIdsByType(ids, ObjectType.ITEM).stream().collect(Collectors.toList()), -1, 0, user);
     List<LicensePart> licenseParts =

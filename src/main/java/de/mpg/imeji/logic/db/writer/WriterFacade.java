@@ -94,6 +94,7 @@ public class WriterFacade {
     // writer.create(objects, user);
     // indexer.indexBatch(objects);
     try {
+
       Future<Integer> createTask = executor.submit(new CreateTask(objects, user));
       Future<Integer> indexTask = executor.submit(new IndexTask(objects));
       createTask.get();
