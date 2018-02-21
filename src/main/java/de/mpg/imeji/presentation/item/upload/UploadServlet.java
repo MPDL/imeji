@@ -9,6 +9,9 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,6 +29,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -36,7 +40,6 @@ import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.util.StorageUtils;
-import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.presentation.session.SessionBean;
 
@@ -107,28 +110,26 @@ public class UploadServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    final UploadItem upload = doUpload(req);
+    // final UploadItem upload = doUpload(req);
+    final Future<UploadItem> uploadFuture = Imeji.getEXECUTOR().submit(new UploadInTempTask(req));
     final SessionBean session = getSession(req);
-    final String uploadId = req.getParameter("uploadId");
-    final License license = getLicense(upload);
     try {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
-      if (!StringHelper.isNullOrEmptyTrim(uploadId)) {
-        ITEM_SERVICE.uploadToStaging(uploadId, upload.getFile(), upload.getFilename(), col, user);
-      } else {
-        Item item = ImejiFactory.newItem(col);
-        item.setLicenses(Arrays.asList(license));
-        ITEM_SERVICE.createWithFile(item, upload.getFile(), upload.getFilename(), col, user);
-      }
+      final UploadItem upload = uploadFuture.get();
+      Item item = ImejiFactory.newItem(col);
+      item.setLicenses(Arrays.asList(getLicense(upload)));
+      ITEM_SERVICE.createWithFile(item, upload.getFile(), upload.getFilename(), col, user);
       writeResponse(resp, "");
     } catch (final AuthenticationError e) {
       writeResponse(resp, e.getMessage());
       resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-    } catch (final ImejiException e) {
+    } catch (final ImejiException | ExecutionException e) {
       LOGGER.error("Error uploading File", e);
       writeResponse(resp, e.getMessage());
       resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    } catch (InterruptedException e) {
+      LOGGER.error("Upload interrupted");
     }
   }
 
@@ -185,6 +186,19 @@ public class UploadServlet extends HttpServlet {
       LOGGER.error("Error file upload", e);
     }
     return new UploadItem();
+  }
+
+  private class UploadInTempTask implements Callable<UploadItem> {
+    private final HttpServletRequest req;
+
+    public UploadInTempTask(HttpServletRequest req) {
+      this.req = req;
+    }
+
+    @Override
+    public UploadItem call() {
+      return doUpload(req);
+    }
   }
 
   private CollectionImeji retrieveCollection(HttpServletRequest req, User user) {

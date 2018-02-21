@@ -23,7 +23,7 @@
 					<a href="#" onclick="closeDialog('#{cc.attrs.dialogId}'); return false;" class="imj_cancelButton">
 						#{lbl.cancel}
 					</a>
-			 		<h:commandButton id="btnCreateSubcollection"  action="#{SubCollectionFormBean.create()}"  value="#{lbl.add_subcollection}" 
+			 		<h:commandButton id="btnCreateSubcollection"  action="#{SubCollectionFormBean.create(cc.attrs.parentCollection)}"  value="#{lbl.add_subcollection}" 
 			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.postAction == null}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
 			 			<f:ajax render="@none" execute="@form"/>
 			 		</h:commandButton>

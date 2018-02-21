@@ -41,7 +41,7 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
    * @param parent
    * @throws IOException
    */
-  public void create() throws IOException {
+  public void create(CollectionImeji parent) throws IOException {
     try {
       CollectionImeji subcollection = collectionService.create(
           ImejiFactory.newCollection().setTitle(name).setPerson(getSessionUser().getPerson())

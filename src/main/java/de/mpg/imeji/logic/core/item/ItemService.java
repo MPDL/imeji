@@ -36,7 +36,6 @@ import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
-import de.mpg.imeji.logic.model.factory.ItemFactory;
 import de.mpg.imeji.logic.model.util.LicenseUtil;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -139,29 +138,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
     validateChecksum(c.getId(), f, false);
     validateFileFormat(f);
     QuotaUtil.checkQuota(user, f, c);
-  }
-
-  /**
-   * Upload a File to the staging area. Will not be created as Item.
-   * 
-   * @param uploadId
-   * @param f
-   * @param filename
-   * @param c
-   * @param user
-   * @throws ImejiException
-   */
-  public void uploadToStaging(String uploadId, File f, String filename, CollectionImeji c,
-      User user) throws ImejiException {
-    StagingService service = new StagingService();
-    validateFileFormat(f);
-    long quota = service.getUsedQuota(uploadId, user);
-    QuotaUtil.checkQuota(quota, user, f, c);
-    String checksum = StorageUtils.calculateChecksum(f);
-    service.validateChecksum(uploadId, checksum);
-    validateChecksum(checksum, c.getId(), f, false);
-    service.add(uploadId, new ItemFactory().setCollection(c.getId().toString())
-        .setFilename(filename).setFile(f).build(), f, quota);
   }
 
 
