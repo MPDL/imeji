@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Metadata;
@@ -41,6 +42,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   private static final long serialVersionUID = -288843834798781232L;
   private static final Logger LOGGER = Logger.getLogger(EditItemsBatchBean.class);
   private String collectionId;
+  private CollectionImeji collection;
   private String query;
   private String backUrl;
   private SelectStatementComponent statementSelector;
@@ -51,8 +53,18 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   @PostConstruct
   public void init() {
     collectionId = UrlHelper.getParameterValue("col");
+    initCollection();
     this.setBackUrl(getNavigation().getCollectionUrl() + collectionId);
     reset();
+  }
+
+  private void initCollection() {
+    try {
+      collection = new CollectionService()
+          .retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, collectionId), getSessionUser());
+    } catch (ImejiException e) {
+      LOGGER.error("error retrieving collection", e);
+    }
   }
 
   public void initInput() {
@@ -207,5 +219,19 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
    */
   public void setInput(MetadataInputComponent input) {
     this.input = input;
+  }
+
+  /**
+   * @return the collection
+   */
+  public CollectionImeji getCollection() {
+    return collection;
+  }
+
+  /**
+   * @param collection the collection to set
+   */
+  public void setCollection(CollectionImeji collection) {
+    this.collection = collection;
   }
 }

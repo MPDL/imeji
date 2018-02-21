@@ -8,6 +8,8 @@
 
 	<ui:param name="headline" value="#{lbl.edit_all}" />
 	<ui:param name="title" value="#{headline}" />
+	<ui:param name="backLink1" value="#{EditItemsBatchBean.backUrl}"/>
+	<ui:param name="backlinkTitle1" value="#{EditItemsBatchBean.collection.title}"/>
 	
 	<ui:define name="additonalFooterScripts">
 		<script type="text/javascript">
@@ -22,12 +24,6 @@
 		<div class="loaderWrapper show" />
 		<div class="loader show" />
 		<h:form id="editBatchForm">
-			<a href="#{EditItemsBatchBean.backUrl}">
-				<span  class="fa fa-arrow-circle-o-left"></span>
-				 #{lbl.back_to_pictures}
-			</a>
-			<br />
-			<br />
 			<md:select id="select"
 				component="#{EditItemsBatchBean.statementSelector}"
 				menu="#{EditItemsBatchBean.statementMenu}" render="@form"
@@ -38,9 +34,9 @@
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel">
 						<h1>
-							#{EditItemsBatchBean.input.statement.index} <small> (<h:commandLink
-									action="#{EditItemsBatchBean.reset}"
-									value="#{lbl.select_another_metadata}">
+							#{EditItemsBatchBean.input.statement.index} 
+							<small> 
+								(<h:commandLink action="#{EditItemsBatchBean.reset}" value="#{lbl.select_another_metadata}">
 									<f:ajax execute="@form" render="@form" />
 								</h:commandLink>)
 							</small>
@@ -53,6 +49,9 @@
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel" />
 					<div class="imj_metadataValue">
+						<h:commandButton styleClass="imj_cancelButton" action="#{EditItemsBatchBean.reset}" value="#{lbl.cancel}">
+								<f:ajax execute="@form" render="@form" />
+						</h:commandButton>
 						<h:commandButton type="submit" styleClass="imj_submitButton"
 							action="#{EditItemsBatchBean.append}"
 							value="#{lbl.add_metadata_append}" onclick="startLoader();">
