@@ -15,13 +15,14 @@
 		<composite:attribute name="identifierName" required="false" type="java.lang.String"/>
 		<composite:attribute name="identifierValue" required="false"/>
 		<composite:attribute name="confirmationTextLicense"/>
+		<composite:attribute name="rawHtml" default="false" type="java.lang.Boolean"/>
 	</composite:interface>
 	
 	<composite:implementation>
 		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox">
 			<h:form id="f">
 				<div class="imj_confirmationText">
-					#{cc.attrs.confirmationText}
+					<h:outputText value="#{cc.attrs.confirmationText}" escape="#{!cc.attrs.rawHtml}"/>
 				</div>
 				<ui:fragment rendered="#{not empty cc.attrs.confirmationText2}">
 					<br/>
