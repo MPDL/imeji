@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -173,21 +174,33 @@ public class InternalStorage implements Storage {
     final File original = read(getOriginalResolutionUrl(fullUrl));
     final String calculatedExtension = guessExtension(original);
     File full = generatorManager.generateFullResolution(original, calculatedExtension);
-    Properties p = getProperties(fullUrl);
-    int orientiation = Integer.parseInt(p.getProperty("orientation", "0"));
-    orientiation = addAngle(orientiation, degrees);
-    if (ImageMagickUtils.jpegtranEnabled) {
-      ImageMagickUtils.rotateJPEG(read(getThumbnailUrl(fullUrl)), degrees);
-      ImageMagickUtils.rotateJPEG(read(getWebResolutionUrl(fullUrl)), degrees);
-      ImageMagickUtils.rotateJPEG(full, degrees);
-    } else {
-      ImageUtils.rotate(full, orientiation);
-      update(fullUrl, full);
-      update(getWebResolutionUrl(fullUrl), ImageUtils.resizeJPEG(full, FileResolution.WEB));
-      update(getThumbnailUrl(fullUrl), ImageUtils.resizeJPEG(full, FileResolution.THUMBNAIL));
+    try {
+      Properties p = getProperties(fullUrl);
+      int orientiation = Integer.parseInt(p.getProperty("orientation", "0"));
+      orientiation = addAngle(orientiation, degrees);
+      if (ImageMagickUtils.jpegtranEnabled) {
+        ImageMagickUtils.rotateJPEG(read(getThumbnailUrl(fullUrl)), degrees);
+        ImageMagickUtils.rotateJPEG(read(getWebResolutionUrl(fullUrl)), degrees);
+        ImageMagickUtils.rotateJPEG(full, degrees);
+      } else {
+        ImageUtils.rotate(full, orientiation);
+        File web = ImageUtils.resizeJPEG(full, FileResolution.WEB);
+        File thumbnail = ImageUtils.resizeJPEG(full, FileResolution.THUMBNAIL);
+        try {
+          update(fullUrl, full);
+          update(getWebResolutionUrl(fullUrl), web);
+          update(getThumbnailUrl(fullUrl), thumbnail);
+        } finally {
+          FileUtils.deleteQuietly(web);
+          FileUtils.deleteQuietly(thumbnail);
+        }
+      }
+      p.put("orientation", Integer.toString(orientiation));
+      saveProperties(fullUrl, p);
+    } finally {
+      FileUtils.deleteQuietly(full);
     }
-    p.put("orientation", Integer.toString(orientiation));
-    saveProperties(fullUrl, p);
+
   }
 
   private int addAngle(int angle1, int angle2) {
@@ -316,8 +329,14 @@ public class InternalStorage implements Storage {
     ImageGeneratorManager manager = new ImageGeneratorManager();
     File thumbnail = manager.generateThumbnail(full, guessedExtension);
     File web = manager.generateWebResolution(full, guessedExtension);
-    update(webUrl, web);
-    update(thumbnailUrl, thumbnail);
+    try {
+      update(webUrl, web);
+      update(thumbnailUrl, thumbnail);
+    } finally {
+      FileUtils.deleteQuietly(web);
+      FileUtils.deleteQuietly(thumbnail);
+    }
+
   }
 
   @Override

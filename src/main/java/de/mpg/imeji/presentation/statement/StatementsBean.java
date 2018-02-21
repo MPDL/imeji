@@ -88,11 +88,12 @@ public class StatementsBean extends SuperBean {
    * 
    * @param index
    */
-  public void addToDefaultStatements(String uri) {
+  public String addToDefaultStatements(String uri) {
     if (!isDefaultStatement(uri)) {
       defaultStatements.add(uri);
       saveDefaultStatements();
     }
+    return ":";
   }
 
   /**
@@ -105,6 +106,15 @@ public class StatementsBean extends SuperBean {
       defaultStatements.remove(uri);
       saveDefaultStatements();
     }
+  }
+
+  public void toggleDefaultStatements(String uri) {
+    if (isDefaultStatement(uri)) {
+      defaultStatements.remove(uri);
+    } else {
+      defaultStatements.add(uri);
+    }
+    saveDefaultStatements();
   }
 
   /**

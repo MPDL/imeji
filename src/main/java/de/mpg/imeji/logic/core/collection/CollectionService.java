@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -24,6 +27,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
@@ -36,6 +40,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
 
 /**
@@ -82,6 +87,7 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
     }
     c = controller.create(c, user);
     messageService.add(new CollectionMessage(MessageType.CREATE_COLLECTION, c));
+    HierarchyService.reloadHierarchy();
     return c;
   }
 
@@ -96,6 +102,80 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
    */
   public CollectionImeji retrieve(URI uri, User user) throws ImejiException {
     return controller.retrieve(uri.toString(), user);
+  }
+
+  /**
+   * Retrieve the subcollection of the collection for this path. If the path doesn't exists, create
+   * the subcollection
+   * 
+   * @param parent
+   * @param path
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public CollectionImeji getSubCollectionForPath(CollectionImeji parent, String path, User user)
+      throws ImejiException {
+    if (StringHelper.isNullOrEmptyTrim(path)) {
+      return parent;
+    }
+    List<String> names = getPathAsList(path);
+    Optional<CollectionImeji> child = retrieveSubcollectionWithName(parent, names.get(0), user);
+    if (child.isPresent()) {
+      parent = child.get();
+    } else {
+      parent = createSubcollection(parent, names.get(0), user);
+    }
+    return names.size() > 1
+        ? getSubCollectionForPath(parent,
+            names.subList(1, names.size()).stream().collect(Collectors.joining("/")), user)
+        : parent;
+  }
+
+  /**
+   * True return a path "/name/of/collection" as a list of String
+   * 
+   * @param path
+   * @return
+   */
+  private List<String> getPathAsList(String path) {
+    if (path.startsWith("/")) {
+      path = path.substring(1);
+    }
+    return Arrays.asList(path.split("/"));
+  }
+
+  /**
+   * Create a subcollection of the parent collection with the following name
+   * 
+   * @param parent
+   * @param name
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  private CollectionImeji createSubcollection(CollectionImeji parent, String name, User user)
+      throws ImejiException {
+    return create(ImejiFactory.newCollection().setPerson(user.getPerson()).setTitle(name)
+        .setCollection(parent.getId().toString()).build(), user);
+  }
+
+  /**
+   * True if the collection has already a subcollection with this name
+   * 
+   * @param parent
+   * @param name
+   * @param user
+   * @return
+   */
+  private Optional<CollectionImeji> retrieveSubcollectionWithName(CollectionImeji parent,
+      String name, User user) {
+    try {
+      return retrieve(new HierarchyService().findAllSubcollections(parent.getId().toString()), user)
+          .stream().filter(c -> c.getTitle().equals(name)).findAny();
+    } catch (ImejiException e) {
+      return Optional.empty();
+    }
   }
 
   /**
@@ -159,10 +239,15 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
    * @throws ImejiException
    */
   public void delete(CollectionImeji collection, User user) throws ImejiException {
-    for (String uri : new HierarchyService().findAllSubcollections(collection.getId().toString())) {
-      deleteSingleCollection(retrieve(uri, user), user);
+    List<CollectionImeji> collectionToDelete = controller.retrieveBatchLazy(
+        new HierarchyService().findAllSubcollections(collection.getId().toString()), user);
+    collectionToDelete.add(collection);
+    for (CollectionImeji c : collectionToDelete) {
+      deleteSingleCollection(c, user);
     }
-    deleteSingleCollection(collection, user);
+    for (CollectionImeji c : collectionToDelete) {
+      messageService.add(new CollectionMessage(MessageType.DELETE_COLLECTION, c));
+    }
   }
 
   /**
@@ -183,17 +268,14 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
     final List<Item> items = (List<Item>) itemService.retrieveBatchLazy(itemUris, -1, 0, user);
     itemService.delete(items, user);
     controller.delete(collection, user);
-    messageService.add(new CollectionMessage(MessageType.DELETE_COLLECTION, collection));
   }
-
-
 
   /**
    * Release a {@link CollectionImeji} and all its {@link Item}
    *
    * @param collection
    * @param user
-   * @param defaultLicense TODO
+   * @param defaultLicense
    * @throws ImejiException
    */
   public void release(CollectionImeji collection, User user, License defaultLicense)

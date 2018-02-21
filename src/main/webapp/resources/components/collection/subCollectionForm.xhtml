@@ -9,7 +9,7 @@
 		<composite:attribute name="parentCollection"/>
 		<composite:attribute name="collection"/>
 		<composite:attribute name="dialogId" required="true" type="java.lang.String"/>
-		<composite:attribute name="upload" default="false" type="java.lang.Boolean"/>
+		<composite:attribute name="postAction" type="java.lang.String"/>
 	</composite:interface>
 	
 	<composite:implementation>
@@ -20,20 +20,24 @@
 					 <f:ajax/>
 				</h:inputText>
 				<div class="imj_submitPanel" id="buttonDiscard">
-					<a  href="#" onclick="closeDialog('#{cc.attrs.dialogId}'); return false;" class="imj_cancelButton">
+					<a href="#" onclick="closeDialog('#{cc.attrs.dialogId}'); return false;" class="imj_cancelButton">
 						#{lbl.cancel}
 					</a>
 			 		<h:commandButton id="btnCreateSubcollection"  action="#{SubCollectionFormBean.create(cc.attrs.parentCollection)}"  value="#{lbl.add_subcollection}" 
-			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and !cc.attrs.upload}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
-			 					<f:ajax render="@none" execute="@form"/>
+			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.postAction == null}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 			<f:ajax render="@none" execute="@form"/>
 			 		</h:commandButton>
-			 		<h:commandButton id="btnCreateAndUpload"  action="#{SubCollectionFormBean.createAndUpload(cc.attrs.parentCollection)}"  value="#{lbl.add_subcollection}" 
-			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.upload}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
-			 						<f:ajax render="@none" execute="@form"/>
+			 		<h:commandButton id="btnCreateAndUpload"  action="#{SubCollectionFormBean.createAndUpload()}"  value="#{lbl.add_subcollection}" 
+			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.postAction == 'upload'}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 			<f:ajax render="@none" execute="@form"/>
+			 		</h:commandButton>
+			 		<h:commandButton id="btnCreateAndMove"  action="#{SubCollectionFormBean.createAndMove(MoveItemsBean)}"  value="#{lbl.add_subcollection} #{lbl.and_small} #{lbl.move}" 
+			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.postAction == 'move'}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 			<f:ajax render="@none" execute="@form"/>
 			 		</h:commandButton>
 			 		<h:commandButton id="btnEditSubcollection"  action="#{SubCollectionFormBean.edit(cc.attrs.collection)}" value="#{lbl.edit_subcollection}" 
 			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection != null}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
-			 					<f:ajax render="@none" execute="@form"/>
+			 			<f:ajax render="@none" execute="@form"/>
 			 		</h:commandButton>
 				</div>
 			</h:form>

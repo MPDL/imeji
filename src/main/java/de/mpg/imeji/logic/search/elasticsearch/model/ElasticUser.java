@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.mpg.imeji.logic.model.Grant;
-import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.Grant.GrantType;
+import de.mpg.imeji.logic.model.User;
 
 /**
  * Indexed user

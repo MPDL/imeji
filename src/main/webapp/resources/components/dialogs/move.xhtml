@@ -15,12 +15,13 @@
 		<composite:attribute name="objectId" required="false" type="java.lang.Object"/>
 		<composite:attribute name="hasLicense" default="false" required="false" type="java.lang.Boolean"/>
 		<composite:attribute name="dialogId" required="true" type="java.lang.String"/>
+		<composite:attribute name="createSubCollection" default="false" type="java.lang.Boolean"/>
 	</composite:interface>
 	
 	<composite:implementation>
 		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText">
 			<h:form id="form">
-				<ui:fragment rendered="#{MoveItemsBean.destinationId == null}">
+				<ui:fragment rendered="#{MoveItemsBean.target == null}">
 					<div style="margin-bottom: 1em;">
 						<span>#{lbl.move_to_collection}</span>
 						<a style="float:right" onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
@@ -31,16 +32,22 @@
 						<collection:tree tree="#{MoveItemsBean.tree}" colId="#{cc.attrs.colId}" objectId="#{cc.attrs.objectId}" hasLicense="#{cc.attrs.hasLicense}"/>
 					</div>
 				</ui:fragment>
-				<ui:fragment rendered="#{MoveItemsBean.destinationId != null}">
-					<span class="fa fa-exclamation-triangle"/>
-					#{lbl.move_collection_released}
+				<ui:fragment rendered="#{MoveItemsBean.target != null}">
+					<h:inputText id="name" rendered="#{MoveItemsBean.toNewSubCollection}" html5:placeholder="#{lbl.name}" html5:autofocus="true" class="imj_mdInput" value="#{MoveItemsBean.newSubcollectionName}">
+						 <f:ajax/>
+					</h:inputText>
 					<br/><br/>
-					<license:licenseEditor licenseEditor="#{MoveItemsBean.licenseEditor}" containerId="#{cc.attrs.parentId}:moveItemsForm"/>
-					<br/>
+					<ui:fragment rendered="#{MoveItemsBean.target.status == 'RELEASED' and !cc.attrs.hasLicense}">
+						<span class="fa fa-exclamation-triangle"/>
+						#{lbl.move_collection_released}
+						<br/><br/>
+						<license:licenseEditor licenseEditor="#{MoveItemsBean.licenseEditor}" containerId="move:form"/>
+						<br/>
+					</ui:fragment>
 					<a href="" onclick="closeDialog('moveItemsDialog');" class="imj_cancelButton">
 						#{lbl.cancel}
 					</a>
-					<h:commandButton class="imj_submitButton" value="#{lbl.move}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>	
+					<h:commandButton class="imj_submitButton" value="#{lbl.move}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>
 				</ui:fragment>
 			</h:form>
 		</div>

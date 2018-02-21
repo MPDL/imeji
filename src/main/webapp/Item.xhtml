@@ -12,6 +12,7 @@
 	<ui:param name="backlinkTitle1" value="#{lbl.items}"/>
 	<ui:param name="backLink2" value="#{not empty ItemBean.browse.query or not empty ItemBean.browse.facetQuery ? browseToAllItemsUrl  : ''}"/>
 	<ui:param name="backlinkTitle2" value="#{not empty ItemBean.browse.query or not empty ItemBean.browse.facetQuery ? lbl.search_results : ''}"/>
+	<ui:param name="hideCollectionPath" value="true"/>
 	
 	<f:metadata>
 		<f:event listener="#{ItemBean.preRenderView}"  type="preRenderView" />

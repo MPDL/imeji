@@ -287,13 +287,22 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   }
 
   /**
+   * Search for all items of the current page (no subcollection are retrieved)
+   * 
+   * @return
+   */
+  public List<String> searchAllItems() {
+    return new ItemService().search(searchQuery, null, getSessionUser(), -1, 0).getResults();
+  }
+
+  /**
    * Delete all {@link Item} currently browsed
    *
    * @return @
    * @throws IOException
    */
   public void deleteAll() throws IOException {
-    delete(search(searchQuery, null, 0, -1).getResults());
+    delete(searchAllItems());
     selectNone();
     reload();
   }
@@ -306,7 +315,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws IOException
    */
   public void withdrawAll() throws ImejiException, IOException {
-    withdraw(search(searchQuery, null, 0, -1).getResults());
+    withdraw(searchAllItems());
     selectNone();
     reload();
   }

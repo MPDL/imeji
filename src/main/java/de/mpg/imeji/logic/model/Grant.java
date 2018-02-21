@@ -25,6 +25,35 @@ public class Grant implements Serializable {
    */
   public enum GrantType {
     READ, EDIT, ADMIN;
+
+    /**
+     * True if the role is the same or bigger than the granttype
+     * 
+     * @param role
+     * @return
+     */
+    public boolean isSameOrBigger(GrantType role) {
+      switch (this) {
+        case READ:
+          return true;
+        case EDIT:
+          return role == EDIT || role == ADMIN;
+        case ADMIN:
+          return role == ADMIN;
+        default:
+          return false;
+      }
+    }
+
+    /**
+     * True if the role is the same or bigger than the granttype
+     * 
+     * @param role
+     * @return
+     */
+    public boolean isSameOrBigger(String role) {
+      return isSameOrBigger(valueOf(role));
+    }
   }
 
   @j2jResource("http://imeji.org/terms/grantType")

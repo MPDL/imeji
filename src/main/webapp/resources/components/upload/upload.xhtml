@@ -64,9 +64,9 @@
 						}
 					},
 					UploadProgress: function(up, file) {
-						addUploadStatusMessage(uploadedFiles,totalFiles,file.name,file.percent);
+						addUploadStatusMessage(uploadedFiles,totalFiles,file.name,file.percent);						
 						$( ".progressBar" ).css("width", up.total.percent + "%");
-						var seconds = ((up.total.size - up.total.loaded) / up.total.bytesPerSec + (up.total.queued * 0.1));
+						var seconds = ((up.total.size - up.total.loaded) / up.total.bytesPerSec + (up.total.queued * 0.8));
 						var hms = new Date(seconds * 1000).toISOString().substr(11, 8); 
 						document.getElementById('expectedDuration').innerHTML = " " + hms;
 					},
@@ -109,6 +109,11 @@
 				window.history.pushState("","", window.location.href.replace('showUpload=1', ''));
 				closeDialog('uploadDialog');
 			}
+			$('.uploadDropArea').on("drop", function(event) {
+				closeDialog('uploadDialog');
+				lockPage();
+				$(".uploadPanel").show();
+			});
 		</script>
 		
 	</composite:implementation>

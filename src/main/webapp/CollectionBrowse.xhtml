@@ -31,7 +31,7 @@
 		 	<span class="imj_sep">|</span> 
 		 	<a href="#content">
 				<span class="moreCollection"  onclick="$('.collectionAbout').slideDown(300);$('.lessCollection').show(); $(this).hide(); draw_qr();">
-					<span>#{lbl.more}</span><span class="fa fa-angle-right"/>
+					<span>#{lbl.more_information}</span><span class="fa fa-angle-right"/>
 				</span>
 			</a>
 			<a href="#">
@@ -72,7 +72,7 @@
 					<f:ajax render="@none"/>
 					<span class="fa fa-upload"/>#{lbl.upload}
 				</h:commandLink>
-				<ui:fragment rendered="#{Auth.loggedIn}">
+				<ui:fragment rendered="#{Auth.loggedIn and (!CollectionItemsBean.collection.isSubCollection() or Auth.update)}">
 					<div class="dropdown">
 						<a><span class="fa fa fa-folder-o"/>#{lbl.collection}<span class="fa fa-angle-down"/></a>
 						<div class="content">

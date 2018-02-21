@@ -16,6 +16,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.batch.AggregateMessages;
 import de.mpg.imeji.logic.batch.CleanContentVOsJob;
+import de.mpg.imeji.logic.batch.CleanInternalStorageJob;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
 import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
@@ -172,6 +173,7 @@ public class AdminBean extends SuperBean {
    * @
    */
   private void invokeCleanMethods() throws ImejiException {
+    Imeji.getEXECUTOR().submit(new CleanInternalStorageJob());
     new ListenerService().init();
     cleanGrants();
     cleanSubscriptions();
@@ -219,8 +221,9 @@ public class AdminBean extends SuperBean {
    */
   private void cleanGrants() {
     LOGGER.info("Cleaning grants...");
-    System.out.println(JenaCustomQueries.removeGrantWithoutObject());
-    ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutObject());
+    System.out.println(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
+    ImejiSPARQL
+        .execUpdate(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
     LOGGER.info("...done!");
   }
 

@@ -36,9 +36,11 @@
 								<ui:fragment rendered="#{not empty headline}">
 									#{BreadcrumbBean.init(imejiResource)}
 				                    <h1>
-				                    	<ui:repeat var="entry" value="#{BreadcrumbBean.entries}">
-				                    		<a href="#{entry.link}" title="#{entry.label}">#{entry.label}</a><span class="del">></span>
-				                    	</ui:repeat>
+				                    	<ui:fragment rendered="#{!hideCollectionPath}">
+					                    	<ui:repeat var="entry" value="#{BreadcrumbBean.entries}">
+					                    		<a href="#{entry.link}" title="#{entry.label}">#{entry.label}</a><span class="del">></span>
+					                    	</ui:repeat>
+				                    	</ui:fragment>
 				                    	<ui:fragment rendered="#{not empty backLink1   and not empty backlinkTitle1}">
 				                     	 	<a href="#{backLink1}" title="#{backlinkTitle1}">#{backlinkTitle1}</a><span> > </span>
 				                     	 	<ui:fragment rendered="#{not empty backLink2 and not empty backlinkTitle2}">

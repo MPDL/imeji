@@ -27,8 +27,7 @@
 						</div>
 					</div>
 				</ui:fragment>
-				
-				<!--  ui:fragment rendered="#{(!empty cc.users or !empty cc.groups) and !displayStatusOnly}">-->
+
 				<ui:fragment rendered="#{empty cc.users and empty cc.groups and cc.sharedWithUser and !displayStatusOnly}">
 					<div class="imj_overlayMenu imj_menuRight">
 						<div class="imj_menuHeader">

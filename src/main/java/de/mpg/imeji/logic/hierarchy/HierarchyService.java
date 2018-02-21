@@ -64,6 +64,18 @@ public class HierarchyService implements Serializable {
   }
 
   /**
+   * Return a list with this collectionUri and all uris of its subcollections
+   * 
+   * @param collectionUri
+   * @return
+   */
+  public List<String> addAllSubcollections(String collectionUri) {
+    List<String> l = findAllSubcollections(collectionUri);
+    l.add(collectionUri);
+    return l;
+  }
+
+  /**
    * True if the collectionId is a child of the parentId
    * 
    * @param collectionId

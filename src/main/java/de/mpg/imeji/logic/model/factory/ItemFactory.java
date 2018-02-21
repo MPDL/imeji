@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.util.StorageUtils;
 
 /**
@@ -24,6 +25,11 @@ public class ItemFactory {
 
   public Item build() {
     return item;
+  }
+
+  public ItemFactory setId(URI uri) {
+    item.setId(uri);
+    return this;
   }
 
   public ItemFactory setUri(String uriString) {
@@ -49,6 +55,11 @@ public class ItemFactory {
 
   public ItemFactory setLicenses(List<License> list) {
     item.setLicenses(list);
+    return this;
+  }
+
+  public ItemFactory setStatus(Status status) {
+    item.setStatus(status);
     return this;
   }
 }

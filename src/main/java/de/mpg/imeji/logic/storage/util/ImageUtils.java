@@ -366,6 +366,7 @@ public final class ImageUtils {
     final File file = TempFileUtil.createTempFile("ImageUtils_toFile", null);
     final FileOutputStream fos = new FileOutputStream(file);
     ImageIO.write(image, ImageUtils.getImageFormat(mimeType), fos);
+    fos.close();
     return file;
   }
 

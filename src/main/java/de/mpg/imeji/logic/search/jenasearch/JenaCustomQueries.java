@@ -214,6 +214,17 @@ public class JenaCustomQueries {
         + "\"^^<http://www.w3.org/2001/XMLSchema#string> . ?content <http://imeji.org/terms/itemId> ?id} limit 1";
   }
 
+  /**
+   * Select the collection which have this logo
+   * 
+   * @param logoUrl
+   * @return
+   */
+  public static final String selectCollectionByLogoUrl(String logoUrl) {
+    return X_PATH_FUNCTIONS_DECLARATION + XSD_DECLARATION
+        + "SELECT DISTINCT ?s WHERE {?s <http://imeji.org/terms/logoUrl> <" + logoUrl
+        + ">} limit 1";
+  }
 
   /**
    * Select all {@link Grant} which are not valid anymore. For instance, when a {@link User}, or an
@@ -263,9 +274,10 @@ public class JenaCustomQueries {
    *
    * @return
    */
-  public static final String removeGrantWithoutObject() {
+  public static final String removeGrantWithoutObject(String baseUri) {
     return X_PATH_FUNCTIONS_DECLARATION
-        + " PREFIX fn: <http://www.w3.org/2005/xpath-functions#>  WITH <http://imeji.org/user> DELETE {?s <http://imeji.org/terms/grant> ?grant} USING <http://imeji.org/user> USING <http://imeji.org/collection> WHERE {?s <http://imeji.org/terms/grant> ?grant . let(?uri := uri(replace(replace(replace(?grant, 'READ,', ''), 'EDIT,', ''), 'ADMIN,', ''))) . not exists{?uri ?p ?o} . FILTER( ?uri NOT IN (<http://imeji.org/>) )}";
+        + " PREFIX fn: <http://www.w3.org/2005/xpath-functions#>  WITH <http://imeji.org/user> DELETE {?s <http://imeji.org/terms/grant> ?grant} USING <http://imeji.org/user> USING <http://imeji.org/collection> WHERE {?s <http://imeji.org/terms/grant> ?grant . let(?uri := uri(replace(replace(replace(?grant, 'READ,', ''), 'EDIT,', ''), 'ADMIN,', ''))) . not exists{?uri ?p ?o} . FILTER( ?uri NOT IN (<"
+        + baseUri + ">) )}";
   }
 
 
@@ -415,8 +427,18 @@ public class JenaCustomQueries {
    *
    * @return
    */
-  public static final String selectStatus(String id) {
-    return "SELECT ?s WHERE { <" + id + "> <" + ImejiNamespaces.STATUS + "> ?s}";
+  public static final String selectStatus(String uri) {
+    return "SELECT ?s WHERE { <" + uri + "> <" + ImejiNamespaces.STATUS + "> ?s}";
+  }
+
+  /**
+   * Select Created by of object
+   * 
+   * @param uri
+   * @return
+   */
+  public static final String selectCreatedBy(String uri) {
+    return "SELECT ?s WHERE { <" + uri + "> <" + ImejiNamespaces.CREATOR + "> ?s}";
   }
 
   /**

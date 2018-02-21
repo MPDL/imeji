@@ -20,8 +20,6 @@ public class CollectionFactory {
     // constructor
   }
 
-
-
   public CollectionImeji build() {
     return collection;
   }
@@ -38,7 +36,7 @@ public class CollectionFactory {
 
 
   public CollectionFactory setPerson(Person p) {
-    collection.getPersons().add(p);
+    collection.getPersons().add(p.clone());
     return this;
   }
 
@@ -58,6 +56,11 @@ public class CollectionFactory {
 
   public CollectionFactory setCollection(String collectionUri) {
     collection.setCollection(URI.create(collectionUri));
+    return this;
+  }
+
+  public CollectionFactory setCreatedBy(URI uri) {
+    collection.setCreatedBy(uri);
     return this;
   }
 }

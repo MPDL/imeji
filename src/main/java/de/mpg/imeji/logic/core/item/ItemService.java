@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -36,8 +37,6 @@ import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
-import de.mpg.imeji.logic.model.factory.ItemFactory;
-import de.mpg.imeji.logic.model.util.LicenseUtil;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -139,29 +138,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
     validateChecksum(c.getId(), f, false);
     validateFileFormat(f);
     QuotaUtil.checkQuota(user, f, c);
-  }
-
-  /**
-   * Upload a File to the staging area. Will not be created as Item.
-   * 
-   * @param uploadId
-   * @param f
-   * @param filename
-   * @param c
-   * @param user
-   * @throws ImejiException
-   */
-  public void uploadToStaging(String uploadId, File f, String filename, CollectionImeji c,
-      User user) throws ImejiException {
-    StagingService service = new StagingService();
-    validateFileFormat(f);
-    long quota = service.getUsedQuota(uploadId, user);
-    QuotaUtil.checkQuota(quota, user, f, c);
-    String checksum = StorageUtils.calculateChecksum(f);
-    service.validateChecksum(uploadId, checksum);
-    validateChecksum(checksum, c.getId(), f, false);
-    service.add(uploadId, new ItemFactory().setCollection(c.getId().toString())
-        .setFilename(filename).setFile(f).build(), f, quota);
   }
 
 
@@ -545,15 +521,18 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param defaultLicens
    * @throws ImejiException
    */
-  public void release(List<Item> l, User user, License defaultLicense) throws ImejiException {
-    final Collection<Item> items = filterItemsByStatus(l, Status.PENDING);
-    for (final Item item : items) {
-      prepareRelease(item, user);
-      if (defaultLicense != null && LicenseUtil.getActiveLicense(item) == null) {
-        item.setLicenses(Arrays.asList(defaultLicense.clone()));
-      }
-    }
-    updateBatch(items, user);
+  public List<Item> release(List<Item> l, User user, License defaultLicense) throws ImejiException {
+    // final Collection<Item> items = filterItemsByStatus(l, Status.PENDING);
+    // for (final Item item : items) {
+    // prepareRelease(item, user);
+    // if (defaultLicense != null && LicenseUtil.getActiveLicense(item) == null) {
+    // item.setLicenses(Arrays.asList(defaultLicense.clone()));
+    // }
+    // }
+    // updateBatch(items, user);
+    new WorkflowFacade().releaseItems(l, user, defaultLicense);
+    return (List<Item>) retrieveBatch(
+        l.stream().map(item -> item.getId().toString()).collect(Collectors.toList()), -1, 0, user);
   }
 
   /**
