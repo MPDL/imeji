@@ -169,8 +169,7 @@ public class ExternalStorage implements Storage {
 
 
   @Override
-  public void recalculateWebAndThumbnail(String fullUrl, String webUrl, String thumbnailUrl)
-      throws IOException, Exception {
+  public void generateWebAndThumbnail(String original) throws IOException, Exception {
     // TODO Auto-generated method stub
 
   }

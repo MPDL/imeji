@@ -208,9 +208,8 @@ public final class StorageController implements Serializable {
    * @throws IOException
    * @throws Exception
    */
-  public void recalculateWebAndThumbnail(String fullUrl, String webUrl, String thumbnailUrl)
-      throws IOException, Exception {
-    storage.recalculateWebAndThumbnail(fullUrl, webUrl, thumbnailUrl);
+  public void recalculateWebAndThumbnail(String orginalUrl) throws IOException, Exception {
+    storage.generateWebAndThumbnail(orginalUrl);
   }
 
   /**

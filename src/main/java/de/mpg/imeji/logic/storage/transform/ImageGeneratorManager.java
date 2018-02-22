@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -18,6 +19,7 @@ import de.mpg.imeji.logic.storage.transform.generator.SimpleAudioImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.SimpleImageGenerator;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.logic.util.StorageUtils;
+import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**
  * Implements all process to generate the images
@@ -78,19 +80,10 @@ public final class ImageGeneratorManager {
    * @param file
    * @param extension
    * @return
+   * @throws ImejiException
    */
-  public File generateFullResolution(File file, String extension) {
-    for (ImageGenerator generator : fullGenerators) {
-      try {
-        File jpeg = generator.generateJPG(file, extension);
-        if (jpeg != null && jpeg.length() > 0) {
-          return jpeg;
-        }
-      } catch (ImejiException e) {
-        LOGGER.warn("Error generating image (generator: " + generator.getClass().getName(), e);
-      }
-    }
-    return file;
+  public File generateFullResolution(File file, String extension) throws ImejiException {
+    return toJpeg(file, extension);
   }
 
   /**
@@ -142,7 +135,14 @@ public final class ImageGeneratorManager {
    */
   private File toJpeg(File file, String extension) throws ImejiException {
     if (StorageUtils.compareExtension(extension, "jpg")) {
-      return file;
+      File copy;
+      try {
+        copy = TempFileUtil.createTempFile(file.getName(), "jpg");
+        FileUtils.copyFile(file, copy);
+        return copy;
+      } catch (IOException e) {
+        throw new ImejiException("Unsupported file format (requested was " + extension + ")");
+      }
     }
     for (final ImageGenerator imageGenerator : generators) {
       try {

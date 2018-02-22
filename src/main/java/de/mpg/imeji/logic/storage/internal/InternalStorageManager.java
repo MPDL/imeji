@@ -27,9 +27,7 @@ import de.mpg.imeji.logic.storage.Storage.FileResolution;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.storage.administrator.impl.InternalStorageAdministrator;
 import de.mpg.imeji.logic.storage.transform.ImageGeneratorManager;
-import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.logic.util.IdentifierUtil;
-import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**
@@ -177,6 +175,7 @@ public class InternalStorageManager implements Serializable {
         .replace(StringHelper.fileSeparator + "web" + StringHelper.fileSeparator, "")
         .replace(StringHelper.fileSeparator + "thumbnail" + StringHelper.fileSeparator, "")
         .replace(StringHelper.fileSeparator + "original" + StringHelper.fileSeparator, "")
+        .replace(StringHelper.fileSeparator + "full" + StringHelper.fileSeparator, "")
         .replace(StringHelper.fileSeparator, StringHelper.urlSeparator);
   }
 
@@ -244,10 +243,10 @@ public class InternalStorageManager implements Serializable {
     item.setFileType(getMimeType(file));
     fileName = isNullOrEmpty(getExtension(fileName)) || "tmp".equals(getExtension(fileName))
         ? fileName + "." + guessExtension(file) : fileName;
-    item.setOriginalUrl(generateUrl(id, fileName, FileResolution.ORIGINAL));
-    item.setThumbnailUrl(generateUrl(id, fileName, FileResolution.THUMBNAIL));
-    item.setWebUrl(generateUrl(id, fileName, FileResolution.WEB));
-    item.setFullUrl(generateUrl(id, fileName, FileResolution.FULL));
+    item.setOriginalUrl(generateUrlWithEncodedFilename(id, fileName, FileResolution.ORIGINAL));
+    item.setThumbnailUrl(generateUrlWithEncodedFilename(id, fileName, FileResolution.THUMBNAIL));
+    item.setWebUrl(generateUrlWithEncodedFilename(id, fileName, FileResolution.WEB));
+    item.setFullUrl(generateUrlWithEncodedFilename(id, fileName, FileResolution.FULL));
     return item;
   }
 
@@ -282,7 +281,7 @@ public class InternalStorageManager implements Serializable {
 
   /**
    * Create the URL of the file from its filename, its id, and its resolution. Important: the
-   * filename is decoded, to avoid problems by reading this url
+   * filename is encoded, to avoid problems by reading this url
    *
    * @param id
    * @param filename
@@ -290,37 +289,21 @@ public class InternalStorageManager implements Serializable {
    * @return
    * @throws UnsupportedEncodingException
    */
-  public String generateUrl(String id, String filename, FileResolution resolution) {
+  public String generateUrlWithEncodedFilename(String id, String filename,
+      FileResolution resolution) {
     filename = StringHelper.normalizeFilename(filename);
-    final String extension = getExtension(filename);
+    return generateUrl(id, filename, resolution);
+  }
+
+  public String generateUrl(String id, String filename, FileResolution resolution) {
     // Wen always convert thumbnail and preview to jpg, so we can change the extension
-    if (resolution != FileResolution.ORIGINAL
-        && (resolution != FileResolution.FULL || isTransformableImage(extension))) {
+    if (resolution != FileResolution.ORIGINAL) {
       filename = removeExtension(filename) + ".jpg";
     }
     return storageUrl + id + StringHelper.urlSeparator + resolution.name().toLowerCase()
         + StringHelper.urlSeparator + filename;
   }
 
-
-  // Tries to predict if we are able to convert the image to jpg. Should be removed later in favor
-  // of something that checks after the conversion
-  private boolean isTransformableImage(String extension) {
-    if (!StorageUtils.getMimeType(extension).contains("image")) {
-      return false;
-    }
-    if (extension.equals("gif")) {
-      return false;
-    }
-    if (extension.equals("svg")) {
-      return false;
-    }
-    if (!ImageMagickUtils.imageMagickEnabled
-        && (extension.equals("tif") || extension.equals("tiff"))) {
-      return false;
-    }
-    return true;
-  }
 
   /**
    * Write a new file for the 3 resolution of one file
@@ -332,11 +315,11 @@ public class InternalStorageManager implements Serializable {
   private InternalStorageItem writeItemFiles(InternalStorageItem item, File file)
       throws IOException {
     // write original file in storage
-    final String extension = getExtension(StringHelper.normalizeFilename(item.getFileName()));
-    copy(file, transformUrlToPath(item.getOriginalUrl()));
+    File original = new File(transformUrlToPath(item.getOriginalUrl()));
+    move(file, original.getAbsolutePath());
     // Create thumbnail,prieview and full
     Imeji.getINTERNAL_STORAGE_EXECUTOR()
-        .submit(new GenerateThumbnailPreviewAndFullTask(item, file));
+        .submit(new GenerateThumbnailPreviewAndFullTask(item, original));
     return item;
   }
 
@@ -348,36 +331,6 @@ public class InternalStorageManager implements Serializable {
    */
   public File getDirectory(String url) {
     return new File(transformUrlToPath(url)).getParentFile().getParentFile();
-  }
-
-
-  /**
-   * Initialize an InterstorageItem for this directory
-   * 
-   * @param dir
-   * @return
-   */
-  public InternalStorageItem initInternalStorageItem(File dir) {
-    InternalStorageItem item = new InternalStorageItem();
-    for (File f : FileUtils.listFiles(dir, null, true)) {
-      if (f.isFile()) {
-        switch (getResolution(f.getAbsolutePath())) {
-          case ORIGINAL:
-            item.setOriginalUrl(transformPathToUrl(f.getAbsolutePath()));
-            break;
-          case FULL:
-            item.setFullUrl(transformPathToUrl(f.getAbsolutePath()));
-            break;
-          case THUMBNAIL:
-            item.setThumbnailUrl(transformPathToUrl(f.getAbsolutePath()));
-            break;
-          case WEB:
-            item.setWebUrl(transformPathToUrl(f.getAbsolutePath()));
-            break;
-        }
-      }
-    }
-    return item;
   }
 
   /**
@@ -397,26 +350,58 @@ public class InternalStorageManager implements Serializable {
 
     @Override
     public Integer call() {
-      File fullResolution = null;
-      try {
-        final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
-        // write web resolution file in storage
-        final String calculatedExtension = guessExtension(file);
-        fullResolution = generatorManager.generateFullResolution(file, calculatedExtension);
-        write(fullResolution, transformUrlToPath(item.getFullUrl()));
-        // Generate and write Web resolution
-        move(generatorManager.generateWebResolution(fullResolution, calculatedExtension),
+      generateThumbnailPreviewAndFull(item, file);
+      return 1;
+    }
+  }
+
+  /**
+   * Generate all images for this file and this item
+   * 
+   * @param item
+   * @param file
+   */
+  public void generateThumbnailPreviewAndFull(InternalStorageItem item, File file) {
+    File fullResolution = null;
+    try {
+      final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
+      // write web resolution file in storage
+      final String calculatedExtension = guessExtension(file);
+      fullResolution = generatorManager.generateFullResolution(file, calculatedExtension);
+      fullResolution = new File(move(fullResolution, transformUrlToPath(item.getFullUrl())));
+      // Generate and write Web resolution
+      move(generatorManager.generateWebResolution(fullResolution, "jpg"),
+          transformUrlToPath(item.getWebUrl()));
+      // Generate and write Thumbnail resolution
+      move(generatorManager.generateThumbnail(fullResolution, "jpg"),
+          transformUrlToPath(item.getThumbnailUrl()));
+    } catch (final Exception e) {
+      LOGGER.error("Error transforming and writing file in internal storage ", e);
+    }
+  }
+
+  /**
+   * Generate the Thumbnails and the preview resolution
+   * 
+   * @param item
+   * @param file
+   */
+  public void recalculateThumbnailAndPreview(InternalStorageItem item) {
+    try {
+      final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
+      File fullResolution = new File(transformUrlToPath(item.getFullUrl()));
+      // Generate and write Web resolution
+      if (fullResolution.exists()) {
+        removeFile(item.getWebUrl());
+        move(generatorManager.generateWebResolution(fullResolution, "jpg"),
             transformUrlToPath(item.getWebUrl()));
         // Generate and write Thumbnail resolution
-        move(generatorManager.generateThumbnail(fullResolution, calculatedExtension),
+        removeFile(item.getThumbnailUrl());
+        move(generatorManager.generateThumbnail(fullResolution, "jpg"),
             transformUrlToPath(item.getThumbnailUrl()));
-      } catch (final Exception e) {
-        LOGGER.error("Error transforming and writing file in internal storage ", e);
-      } finally {
-        FileUtils.deleteQuietly(file);
-        FileUtils.deleteQuietly(fullResolution);
       }
-      return 1;
+    } catch (final Exception e) {
+      LOGGER.error("Error transforming and writing file in internal storage ", e);
     }
   }
 
@@ -443,26 +428,6 @@ public class InternalStorageManager implements Serializable {
   }
 
   /**
-   * Write the bytes in the filesystem
-   *
-   * @param bytes
-   * @param path
-   * @return
-   * @throws IOException
-   */
-  private String write(File srcFile, String path) throws IOException {
-    final File file = new File(path);
-    if (!file.exists()) {
-      file.getParentFile().mkdirs();
-      file.createNewFile();
-      FileUtils.copyFile(srcFile, file);
-      return file.getAbsolutePath();
-    } else {
-      throw new RuntimeException("File " + path + " already exists in internal storage!");
-    }
-  }
-
-  /**
    * Move the SrcFile to the path
    * 
    * @param srcFile
@@ -470,7 +435,7 @@ public class InternalStorageManager implements Serializable {
    * @return
    * @throws IOException
    */
-  private String move(File srcFile, String path) throws IOException {
+  public String move(File srcFile, String path) throws IOException {
     final File file = new File(path);
     if (!file.exists()) {
       file.getParentFile().mkdirs();
@@ -489,20 +454,5 @@ public class InternalStorageManager implements Serializable {
    */
   private boolean exists(String id) {
     return new File(id).exists();
-  }
-
-  /**
-   * Return the resolution for this path
-   * 
-   * @param path
-   * @return
-   */
-  private FileResolution getResolution(String path) {
-    for (FileResolution resolution : FileResolution.values()) {
-      if (path.contains(resolution.name().toLowerCase())) {
-        return resolution;
-      }
-    }
-    return FileResolution.ORIGINAL;
   }
 }

@@ -10,10 +10,7 @@ import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.storage.StorageController;
 
 public class ResizeWebAndThumbnailJob implements Callable<Integer> {
-
-
   private static final Logger LOGGER = Logger.getLogger(ResizeWebAndThumbnailJob.class);
-
 
   @Override
   public Integer call() throws Exception {
@@ -25,8 +22,11 @@ public class ResizeWebAndThumbnailJob implements Callable<Integer> {
     for (ContentVO content : result) {
       StorageController controller = new StorageController();
       LOGGER.info("Generating jpeg for file " + count + "/" + result.size());
-      controller.recalculateWebAndThumbnail(content.getFull(), content.getPreview(),
-          content.getThumbnail());
+      try {
+        controller.recalculateWebAndThumbnail(content.getOriginal());
+      } catch (Exception e) {
+        LOGGER.error("Error generating images of " + content.getOriginal(), e);
+      }
       count++;
     }
     LOGGER.info("JPEG for all files generated in " + (System.currentTimeMillis() - start) + " ms!");

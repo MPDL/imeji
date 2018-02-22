@@ -463,6 +463,10 @@ public class ItemBean extends SuperBean {
         .contains("audio");
   }
 
+  public String getFilenameAsJpeg() {
+    return FilenameUtils.removeExtension(item.getFilename()) + ".jpg";
+  }
+
   /**
    * @return the dateCreated
    */

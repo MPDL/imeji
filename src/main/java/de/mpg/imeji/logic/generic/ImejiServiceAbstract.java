@@ -133,7 +133,7 @@ public abstract class ImejiServiceAbstract {
       throws ImejiException, IOException, URISyntaxException {
     final InternalStorageManager ism = new InternalStorageManager();
     if (f != null) {
-      final String url = ism.generateUrl(col.getIdString(), f.getName(), FileResolution.THUMBNAIL);
+      final String url = ism.generateUrlWithEncodedFilename(col.getIdString(), f.getName(), FileResolution.THUMBNAIL);
       File jpeg =
           new ImageGeneratorManager().generateWebResolution(f, StorageUtils.guessExtension(f));
       if (jpeg == null) {

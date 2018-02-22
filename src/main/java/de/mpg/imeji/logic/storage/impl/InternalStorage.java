@@ -28,6 +28,7 @@ import de.mpg.imeji.logic.storage.transform.ImageGeneratorManager;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.logic.storage.util.ImageUtils;
 import de.mpg.imeji.logic.util.StorageUtils;
+import de.mpg.imeji.logic.util.StringHelper;
 
 /**
  * imeji internal {@link Storage}
@@ -207,19 +208,6 @@ public class InternalStorage implements Storage {
     return (angle1 + angle2) % 360;
   }
 
-  /**
-   * Initialize an {@link UploadResult} for a directory
-   * 
-   * @param dir
-   * @return
-   */
-  private UploadResult initUploadResult(File dir) {
-    InternalStorageItem item = manager.initInternalStorageItem(dir);
-    String id = manager.getStorageId(item.getFullUrl());
-    return new UploadResult(id, item.getOriginalUrl(), item.getWebUrl(), item.getThumbnailUrl(),
-        item.getFullUrl());
-  }
-
   /*
    * (non-Javadoc)
    *
@@ -275,18 +263,34 @@ public class InternalStorage implements Storage {
     return manager.getStorageId(url);
   }
 
-  private String getThumbnailUrl(String fullUrl) {
-    return fullUrl.replace("/full/", "/thumbnail/");
+  public String getThumbnailUrl(String fullUrl) {
+    return getUrlForResolution(fullUrl, FileResolution.THUMBNAIL);
   }
 
-  private String getWebResolutionUrl(String fullUrl) {
-    return fullUrl.replace("/full/", "/web/");
+  public String getWebResolutionUrl(String fullUrl) {
+    return getUrlForResolution(fullUrl, FileResolution.WEB);
   }
 
-  private String getOriginalResolutionUrl(String fullUrl) {
-    return fullUrl.replace("/full/", "/original/");
+  public String getOriginalResolutionUrl(String fullUrl) {
+    return getUrlForResolution(fullUrl, FileResolution.ORIGINAL);
   }
 
+  public String getFullResolutionUrl(String originalUrl) {
+    return getUrlForResolution(originalUrl, FileResolution.FULL);
+  }
+
+  /**
+   * Take as input the url of a file in one of its resolution and transform it to the url for the
+   * asked resolution
+   * 
+   * @param url
+   * @param resolution
+   * @return
+   */
+  private String getUrlForResolution(String url, FileResolution resolution) {
+    String filename = manager.getFileName(url, StringHelper.urlSeparator);
+    return manager.generateUrl(manager.getStorageId(url), filename, resolution);
+  }
 
   /**
    * Get the properties of the file
@@ -322,21 +326,13 @@ public class InternalStorage implements Storage {
 
 
   @Override
-  public void recalculateWebAndThumbnail(String fullUrl, String webUrl, String thumbnailUrl)
-      throws IOException, Exception {
-    File full = read(fullUrl);
-    String guessedExtension = StorageUtils.guessExtension(full);
-    ImageGeneratorManager manager = new ImageGeneratorManager();
-    File thumbnail = manager.generateThumbnail(full, guessedExtension);
-    File web = manager.generateWebResolution(full, guessedExtension);
-    try {
-      update(webUrl, web);
-      update(thumbnailUrl, thumbnail);
-    } finally {
-      FileUtils.deleteQuietly(web);
-      FileUtils.deleteQuietly(thumbnail);
-    }
-
+  public void generateWebAndThumbnail(String originalUrl) throws IOException, Exception {
+    final InternalStorageItem item = new InternalStorageItem();
+    item.setOriginalUrl(originalUrl);
+    item.setFullUrl(getFullResolutionUrl(originalUrl));
+    item.setWebUrl(getWebResolutionUrl(originalUrl));
+    item.setThumbnailUrl(getThumbnailUrl(originalUrl));
+    manager.recalculateThumbnailAndPreview(item);
   }
 
   @Override
@@ -344,7 +340,4 @@ public class InternalStorage implements Storage {
     final File f = new File(manager.transformUrlToPath(url));
     return f.length();
   }
-
-
-
 }

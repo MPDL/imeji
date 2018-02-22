@@ -161,8 +161,8 @@ public interface Storage extends Serializable {
    * @throws IOException
    * 
    */
-  public void recalculateWebAndThumbnail(String fullUrl, String webUrl, String thumbnailUrl)
-      throws IOException, Exception;
+  public void generateWebAndThumbnail(String orginalUrl) throws IOException, Exception;
+
 
   /**
    * Return the length of the file

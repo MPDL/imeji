@@ -1,12 +1,16 @@
 package de.mpg.imeji.logic.storage.transform.generator;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**
  * {@link ImageGenerator} that uses a fixed jpg-file for each extension
@@ -27,14 +31,15 @@ public class NiceRawFileImageGenerator implements ImageGenerator {
       URL urlResource = RawFileImageGenerator.class.getClassLoader()
           .getResource(PATH_TO_ICONS + extension + ".jpg");
       if (urlResource != null) {
-        File res = new File(RawFileImageGenerator.class.getClassLoader()
-            .getResource(PATH_TO_ICONS + extension + ".jpg").toURI());
-        if (res.exists()) {
+        File res = TempFileUtil.createTempFile("NiceRawFile",
+            FilenameUtils.getExtension(new File(urlResource.toURI()).getName()));
+        FileUtils.copyFile(new File(urlResource.toURI()), res);
+        if (res.exists() && res.length() > 0) {
           return res;
         }
       }
       return null;
-    } catch (URISyntaxException e) {
+    } catch (URISyntaxException | IOException e) {
       LOGGER.error("Error creating icon for " + extension, e);
       return null;
     }
