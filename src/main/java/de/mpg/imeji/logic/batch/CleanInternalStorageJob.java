@@ -47,8 +47,8 @@ public class CleanInternalStorageJob implements Callable<Integer> {
 
   @Override
   public Integer call() throws Exception {
-    repairImages();
     removeUnusedFiles();
+    repairImages();
     removeEmptyDirectories();
     LOGGER.info("Internal storage cleaned.");
     return null;
