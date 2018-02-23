@@ -12,6 +12,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.security.user.util.QuotaUtil;
+import de.mpg.imeji.logic.statistic.StatisticsService;
 
 /**
  * Super class to implements quota methods, which can be reused by JSF Bean displaying quota menu
@@ -26,6 +27,7 @@ public class QuotaUICompoment implements Serializable {
   private String quota = Imeji.CONFIG.getDefaultQuota();
   private List<SelectItem> quotaMenu;
   private final String humanReadableQuota;
+  private String storageUsedByUser;
 
   /**
    * default Constructor
@@ -41,6 +43,8 @@ public class QuotaUICompoment implements Serializable {
         quotaMenu.add(new SelectItem(limit.trim(), Imeji.RESOURCE_BUNDLE.getLabel(limit, locale)));
       }
     }
+    final long userStorage = new StatisticsService().getUsedStorageForUser(user);
+    this.storageUsedByUser = QuotaUtil.getQuotaHumanReadable(userStorage, Locale.ENGLISH);
   }
 
   /**
@@ -74,5 +78,14 @@ public class QuotaUICompoment implements Serializable {
 
   public String getHumanReadableQuota() {
     return humanReadableQuota;
+  }
+
+
+
+  /**
+   * @return the storageUsedByUser
+   */
+  public String getStorageUsedByUser() {
+    return storageUsedByUser;
   }
 }

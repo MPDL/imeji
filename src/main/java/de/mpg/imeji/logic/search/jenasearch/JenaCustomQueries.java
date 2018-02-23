@@ -634,7 +634,7 @@ public class JenaCustomQueries {
   }
 
   /**
-   * Search for all {@link Item}s created by the {@link User}, and sum all fileSize
+   * Search for all {@link Item} created by the {@link User}, and sum all fileSize
    *
    * @param user
    * @return

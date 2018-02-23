@@ -81,7 +81,7 @@
 										<div class="imj_metadataLabel">#{lbl.quota}</div>
 										<div class="imj_metadataValue">
 											<h:panelGroup class="imj_metadataValueEntry" rendered="#{!UserBean.edit}">
-												<h:outputText value="#{UserBean.quota.humanReadableQuota}  " />(<a href="mailto:edmond@mpdl.mpg.de?subject=[#{Configuration.instanceName}] Request more quota">#{lbl.for_more_contact_support}</a>)
+												<h:outputText value="#{UserBean.quota.storageUsedByUser} / #{UserBean.quota.humanReadableQuota}  " />(<a href="mailto:edmond@mpdl.mpg.de?subject=[#{Configuration.instanceName}] Request more quota">#{lbl.for_more_contact_support}</a>)
 											</h:panelGroup>
 											<h:panelGroup class="imj_metadataSetEdit"
 												rendered="#{UserBean.edit and Auth.sysAdmin}">

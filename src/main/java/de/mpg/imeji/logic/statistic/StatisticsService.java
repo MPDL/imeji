@@ -2,6 +2,7 @@ package de.mpg.imeji.logic.statistic;
 
 import java.util.List;
 
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -37,6 +38,24 @@ public class StatisticsService {
     final List<String> result =
         s.searchString(JenaCustomQueries.selectInstituteFileSize(instituteName), null, null, 0, -1)
             .getResults();
+    if (result.size() == 1 && result.get(0) != null) {
+      final String size = result.get(0).replace("^^http://www.w3.org/2001/XMLSchema#integer", "");
+      return Long.parseLong(size);
+    }
+    return 0;
+  }
+
+  /**
+   * Return the total file size used by the user
+   * 
+   * @param user
+   * @return
+   */
+  public long getUsedStorageForUser(User user) {
+    final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
+    final List<String> result =
+        s.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null, null, 0,
+            -1).getResults();
     if (result.size() == 1 && result.get(0) != null) {
       final String size = result.get(0).replace("^^http://www.w3.org/2001/XMLSchema#integer", "");
       return Long.parseLong(size);
