@@ -50,6 +50,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
     repairImages();
     removeUnusedFiles();
     removeEmptyDirectories();
+    LOGGER.info("Internal storage cleaned.");
     return null;
   }
 
@@ -62,6 +63,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
   private void removeUnusedFiles() throws ImejiException {
     LOGGER.info("Cleaning internal storage.");
     String path = internalStorageManager.getStoragePath();
+    int count = 0;
     for (Iterator<File> iterator = FileUtils.iterateFiles(new File(path), null, true); iterator
         .hasNext();) {
       final File file = (File) iterator.next();
@@ -70,9 +72,12 @@ public class CleanInternalStorageJob implements Callable<Integer> {
         LOGGER.info("Deleting unused file: " + file.getAbsolutePath());
         boolean deleted = FileUtils.deleteQuietly(file);
         LOGGER.info(deleted ? "DONE!" : "ERROR!");
+        if (deleted) {
+          count++;
+        }
       }
     }
-    LOGGER.info("Internal storage files cleaned.");
+    LOGGER.info(count + " files deleted from storage");
   }
 
   /**
@@ -87,12 +92,15 @@ public class CleanInternalStorageJob implements Callable<Integer> {
         .filter(p -> p.toFile().isDirectory()).map(p -> p.toFile())
         .filter(f -> FileUtils.sizeOfDirectory(f) == 0).forEach(f -> {
           try {
+            if (f.exists()) {
+              FileUtils.deleteQuietly(f);
+            }
             Files.deleteIfExists(f.toPath());
           } catch (Exception e) {
             LOGGER.info("Error deleting directory " + f.getAbsolutePath());
           }
         });
-    LOGGER.info("Internal storage cleaned.");
+    LOGGER.info("Directories cleaned");
   }
 
   /**
@@ -182,7 +190,6 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @return
    */
   private boolean hasOriginalFile(ContentVO content) {
-    System.out.println(storage.read(content.getOriginal()));
     return storage.read(content.getOriginal()).exists();
   }
 
