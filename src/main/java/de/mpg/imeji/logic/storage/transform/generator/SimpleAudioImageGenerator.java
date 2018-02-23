@@ -1,11 +1,14 @@
 package de.mpg.imeji.logic.storage.transform.generator;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.util.StorageUtils;
+import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**
  * Generate a simple icon for an audio file
@@ -27,9 +30,11 @@ public class SimpleAudioImageGenerator implements ImageGenerator {
   public File generateJPG(File file, String extension) {
     if (StorageUtils.getMimeType(extension).contains("audio")) {
       try {
-        return new File(SimpleAudioImageGenerator.class.getClassLoader()
-            .getResource(PATH_TO_AUDIO_ICON).toURI());
-      } catch (final URISyntaxException e) {
+        File copy = TempFileUtil.createTempFile("audio", extension);
+        FileUtils.copyFile(new File(SimpleAudioImageGenerator.class.getClassLoader()
+            .getResource(PATH_TO_AUDIO_ICON).toURI()), copy);
+        return copy;
+      } catch (final URISyntaxException | IOException e) {
         LOGGER.error("Error creating thunmbnail", e);
       }
     }

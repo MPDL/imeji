@@ -59,16 +59,16 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * Remove all files which are not used by any content
    * 
    * @throws ImejiException
+   * @throws IOException
    */
-  private void removeUnusedFiles() throws ImejiException {
+  private void removeUnusedFiles() throws ImejiException, IOException {
     LOGGER.info("Cleaning internal storage.");
     String path = internalStorageManager.getStoragePath();
     int count = 0;
     for (Iterator<File> iterator = FileUtils.iterateFiles(new File(path), null, true); iterator
         .hasNext();) {
       final File file = (File) iterator.next();
-      final String url = internalStorageManager.transformPathToUrl(file.getAbsolutePath());
-      if (!isUsedByAnItem(url) && !isLogo(url)) {
+      if (!isUsed(file)) {
         LOGGER.info("Deleting unused file: " + file.getAbsolutePath());
         boolean deleted = FileUtils.deleteQuietly(file);
         LOGGER.info(deleted ? "DONE!" : "ERROR!");
@@ -78,6 +78,11 @@ public class CleanInternalStorageJob implements Callable<Integer> {
       }
     }
     LOGGER.info(count + " files deleted from storage");
+  }
+
+  private boolean isUsed(File file) throws ImejiException, IOException {
+    final String url = internalStorageManager.transformPathToUrl(file.getAbsolutePath());
+    return isUsedByAnItem(url) || isLogo(url) || isFileProperties(file);
   }
 
   /**
@@ -136,13 +141,33 @@ public class CleanInternalStorageJob implements Callable<Integer> {
     }
   }
 
+
+  /**
+   * True if the file is a "file.properties" and is not in an empty directory (i.e. the actual file
+   * has been deleted)
+   * 
+   * @param file
+   * @return
+   * @throws IOException
+   */
+  private boolean isFileProperties(File file) throws IOException {
+    if (!file.getName().equals("file.properties")) {
+      return false;
+    }
+    File parent = file.getParentFile();
+    return Files.walk(parent.toPath(), FileVisitOption.values())
+        .filter(p -> p.toFile().isDirectory() && p.compareTo(parent.toPath()) != 0)
+        .map(p -> p.toFile()).filter(f -> FileUtils.sizeOfDirectory(f) > 0).findAny().isPresent();
+  }
+
   /**
    * Repair images: check if the content have all resolution correctly stored, if not repair it by
    * uploading the original file new and updating the content
    * 
    * @throws ImejiException
+   * @throws IOException
    */
-  private void repairImages() throws ImejiException {
+  private void repairImages() throws ImejiException, IOException {
     LOGGER.info("Repairing images");
     int count = 0;
     long start = System.currentTimeMillis();
