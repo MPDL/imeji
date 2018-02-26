@@ -158,7 +158,7 @@ public class ItemProcess {
   /**
    * Upload the File to imeji, and return a valid {@link DefaultItemWithFileTO}
    *
-   * @param file
+   * @param in
    * @param to
    * @param origName
    * @return
@@ -166,17 +166,24 @@ public class ItemProcess {
    * @throws UnprocessableError
    * @throws BadRequestException
    */
-  private static DefaultItemWithFileTO uploadAndValidateFile(InputStream file,
+  private static DefaultItemWithFileTO uploadAndValidateFile(InputStream in,
       DefaultItemWithFileTO to, String origName)
       throws IOException, UnprocessableError, BadRequestException {
-    if (file != null) {
+    if (in != null) {
       final String calculatedFilename =
           StringHelper.isNullOrEmptyTrim(to.getFilename()) ? origName : to.getFilename();
       String calculatedExtension = FilenameUtils.getExtension(calculatedFilename);
       calculatedExtension = !isNullOrEmpty(calculatedExtension) ? "." + calculatedExtension : null;
       // Note: createTempFile suffix must be provided in order not to rename the file to .tmp
-      final File tmp = TempFileUtil.createTempFile("imejiAPI", calculatedExtension);
-      IOUtils.copy(file, new FileOutputStream(tmp));
+      final File tmp = TempFileUtil.createTempFile("API", calculatedExtension);
+      FileOutputStream fos = new FileOutputStream(tmp);
+      try {
+        IOUtils.copyLarge(in, fos);
+      } finally {
+        fos.close();
+        in.close();
+      }
+
       final StorageController c = new StorageController();
       // convenience call to stop the processing here asap. Item controller checks it anyway
       final String guessNotAllowedFormatUploaded = c.guessNotAllowedFormat(tmp);

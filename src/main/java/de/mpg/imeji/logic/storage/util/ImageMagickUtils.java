@@ -182,32 +182,17 @@ public class ImageMagickUtils {
     // tmp = tmpWithOrginalExtension;
     // }
     // In case the file is made of many frames, (for instance videos), generate only the frames from
-    // 0 to 48 to avoid high memory consumption
-    String path = tmp.getAbsolutePath() + "[0-48]";
+    // 0 to 24 to avoid high memory consumption
+    String path = tmp.getAbsolutePath() + "[0-24]";
     final ConvertCmd cmd = getConvert();
     // create the operation, add images and operators/options
     IMOperation op = new IMOperation();
     if (!isImage(extensionIn) && !isVideo(extensionIn)) {
       return null;
     }
-    if (isVideo(extensionIn)) {
-      op.flatten();
-      op.strip();
-      op.quality(70.0);
-    }
-    if (isImage(extensionIn)) {
-      // do convert -sampling-factor 4:2:0 -strip -quality 80 -interlace JPEG -colorspace RGB
-      // -gaussian-blur 0.05
-      op.strip();
-      op.flatten();
-      op.quality(70.0);
-      // Next operation are disabled due to performance issues
-      // op.samplingFactor(4.0, 2.0);
-      // op.colorspace("RGB");
-      // op.colorspace(findColorSpace(tmp));
-      // op.interlace("JPEG");
-      // op.gaussianBlur(0.005);
-    }
+    op.flatten();
+    op.strip();
+    op.quality(70.0);
     op.addImage(path);
     final File jpeg = TempFileUtil.createTempFile("uploadMagick", extensionOut);
     try {

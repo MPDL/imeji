@@ -137,6 +137,9 @@ public class TransferTOtoVO implements Serializable {
       throws ImejiException {
     final List<Metadata> voMDs = vo.getMetadata();
     voMDs.clear();
+    if (to.getMetadata() == null) {
+      return;
+    }
     for (final MetadataTO mdTO : to.getMetadata()) {
       final Metadata mdVO = new MetadataFactory().setStatementId(mdTO.getIndex())
           .setText(mdTO.getText()).setNumber(mdTO.getNumber()).setUrl(mdTO.getUrl())

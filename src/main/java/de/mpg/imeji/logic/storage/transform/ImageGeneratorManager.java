@@ -137,7 +137,7 @@ public final class ImageGeneratorManager {
     if (StorageUtils.compareExtension(extension, "jpg")) {
       File copy;
       try {
-        copy = TempFileUtil.createTempFile(file.getName(), "jpg");
+        copy = TempFileUtil.createTempFile("ImageGeneratorCopyJpeg" + file.getName(), "jpg");
         FileUtils.copyFile(file, copy);
         return copy;
       } catch (IOException e) {
