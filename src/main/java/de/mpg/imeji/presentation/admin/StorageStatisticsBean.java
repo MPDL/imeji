@@ -7,12 +7,15 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 
+import org.apache.commons.io.FileUtils;
+
 import de.mpg.imeji.logic.statistic.StatisticsService;
 
 @ManagedBean
 public class StorageStatisticsBean {
 
   private final List<Institute> institutes = new ArrayList<>();
+  private final String allFileSize;
 
   public StorageStatisticsBean() {
     final StatisticsService controller = new StatisticsService();
@@ -20,6 +23,7 @@ public class StorageStatisticsBean {
       institutes
           .add(new Institute(institute, controller.getUsedStorageSizeForInstitute(institute)));
     }
+    allFileSize = FileUtils.byteCountToDisplaySize(controller.getAllFileSize());
   }
 
   public ArrayList<Institute> getInstitutes() {
@@ -35,6 +39,10 @@ public class StorageStatisticsBean {
     });
     return (ArrayList<Institute>) institutes;
 
+  }
+
+  public String getAllFileSize() {
+    return allFileSize;
   }
 
 }

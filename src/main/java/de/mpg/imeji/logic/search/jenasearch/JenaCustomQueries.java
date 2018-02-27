@@ -630,7 +630,11 @@ public class JenaCustomQueries {
     return "SELECT (SUM(?size) AS ?s) WHERE {?c <" + ImejiNamespaces.CREATOR
         + "> ?user . ?user <http://xmlns.com/foaf/0.1/email> ?email .filter(regex(?email, '"
         + instituteName
-        + "', 'i')) . ?c a <http://imeji.org/terms/collection> . ?item <http://imeji.org/terms/collection> ?c . ?item <http://imeji.org/terms/fileSize> ?size}";
+        + "', 'i')) . ?c a <http://imeji.org/terms/collection> . ?item <http://imeji.org/terms/collection> ?c . ?item <http://imeji.org/terms/fileSize> ?size  . not exists {?item <http://imeji.org/terms/status>  <http://imeji.org/terms/status#WITHDRAWN>}}";
+  }
+
+  public static final String selectFileSizeForAll() {
+    return "SELECT (SUM(?size) AS ?s) WHERE {?item <http://imeji.org/terms/fileSize> ?size  . not exists {?item <http://imeji.org/terms/status>  <http://imeji.org/terms/status#WITHDRAWN>}}";
   }
 
   /**
@@ -641,7 +645,7 @@ public class JenaCustomQueries {
    */
   public static final String selectUserFileSize(String user) {
     return "SELECT (str(SUM(?size)) AS ?s) WHERE {?item <" + ImejiNamespaces.CREATOR + "> <" + user
-        + "> . ?item <http://imeji.org/terms/fileSize> ?size}";
+        + "> . ?item <http://imeji.org/terms/fileSize> ?size . not exists {?item <http://imeji.org/terms/status>  <http://imeji.org/terms/status#WITHDRAWN>}}";
   }
 
   /**

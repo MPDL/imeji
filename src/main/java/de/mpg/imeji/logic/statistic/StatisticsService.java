@@ -7,6 +7,7 @@ import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;
+import de.mpg.imeji.logic.security.user.util.QuotaUtil;
 
 /**
  * Controller for all actions which are related to statistics
@@ -45,6 +46,17 @@ public class StatisticsService {
     return 0;
   }
 
+  public long getAllFileSize() {
+    final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
+    final List<String> result =
+        s.searchString(JenaCustomQueries.selectFileSizeForAll(), null, null, 0, -1).getResults();
+    if (result.size() == 1 && result.get(0) != null) {
+      final String size = result.get(0).replace("^^http://www.w3.org/2001/XMLSchema#integer", "");
+      return Long.parseLong(size);
+    }
+    return 0;
+  }
+
   /**
    * Return the total file size used by the user
    * 
@@ -52,14 +64,6 @@ public class StatisticsService {
    * @return
    */
   public long getUsedStorageForUser(User user) {
-    final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
-    final List<String> result =
-        s.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null, null, 0,
-            -1).getResults();
-    if (result.size() == 1 && result.get(0) != null) {
-      final String size = result.get(0).replace("^^http://www.w3.org/2001/XMLSchema#integer", "");
-      return Long.parseLong(size);
-    }
-    return 0;
+    return QuotaUtil.getUsedQuota(user);
   }
 }
