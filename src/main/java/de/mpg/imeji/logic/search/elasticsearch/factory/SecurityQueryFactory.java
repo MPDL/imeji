@@ -67,6 +67,8 @@ public class SecurityQueryFactory {
     BoolQueryBuilder q = toQuery(collectionUris);
     if (role == null) {
       q.should(getStatusQuery());
+    } else if (role != null && collectionUris.isEmpty()) {
+      return QueryBuilders.boolQuery().mustNot(QueryBuilders.matchAllQuery());
     }
     return q;
   }
