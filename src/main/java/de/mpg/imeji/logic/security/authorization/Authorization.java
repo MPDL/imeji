@@ -70,8 +70,9 @@ public class Authorization implements Serializable {
       return update(user, ((Item) obj).getCollection());
     }
     if (obj instanceof CollectionImeji) {
-      return hasCreateCollectionGrant(user) || (((CollectionImeji) obj).isSubCollection()
-          && update(user, ((CollectionImeji) obj).getCollection()));
+      return (hasCreateCollectionGrant(user) && !((CollectionImeji) obj).isSubCollection())
+          || (((CollectionImeji) obj).isSubCollection()
+              && update(user, ((CollectionImeji) obj).getCollection()));
     }
     if (obj instanceof Subscription) {
       return update(user, obj);

@@ -17,7 +17,7 @@
 				</div>
 			</ui:fragment>
 			<!-- Selection Info Panel -->
-			<col:filters fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
+			<col:filters id="filter" fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
 								 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfRecords}" 
 								 filterBeanHasQuery="#{filterBeanHasQuery}"
 								 objectLabel="#{lbl.collections}"/>
