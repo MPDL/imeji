@@ -116,7 +116,8 @@ public final class ImageGeneratorManager {
   private File generateJpeg(File file, String extension, FileResolution resolution) {
     // Make a jpg out of the file
     try {
-      return ImageMagickUtils.resizeJpg(toJpeg(file, extension), "jpg", resolution);
+      File jpg = StorageUtils.compareExtension(extension, "jpg") ? file : toJpeg(file, extension);
+      return ImageMagickUtils.resizeJpg(jpg, "jpg", resolution);
     } catch (final Exception e) {
       LOGGER.error("Error generating JPEG from File: ", e);
     }

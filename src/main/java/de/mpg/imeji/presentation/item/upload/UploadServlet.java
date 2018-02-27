@@ -24,6 +24,7 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
@@ -112,11 +113,12 @@ public class UploadServlet extends HttpServlet {
       throws ServletException, IOException {
     // final UploadItem upload = doUpload(req);
     final Future<UploadItem> uploadFuture = Imeji.getEXECUTOR().submit(new UploadInTempTask(req));
+    UploadItem upload = null;
     final SessionBean session = getSession(req);
     try {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
-      final UploadItem upload = uploadFuture.get();
+      upload = uploadFuture.get();
       Item item = ImejiFactory.newItem(col);
       item.setLicenses(Arrays.asList(getLicense(upload)));
       ITEM_SERVICE.createWithFile(item, upload.getFile(), upload.getFilename(), col, user);
@@ -130,6 +132,10 @@ public class UploadServlet extends HttpServlet {
       resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     } catch (InterruptedException e) {
       LOGGER.error("Upload interrupted");
+    } finally {
+      if (upload != null && upload.getFile().exists()) {
+        FileUtils.deleteQuietly(upload.getFile());
+      }
     }
   }
 

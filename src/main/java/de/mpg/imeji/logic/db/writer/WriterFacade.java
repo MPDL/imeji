@@ -244,8 +244,6 @@ public class WriterFacade {
     for (final Object o : list) {
       message += " not allowed to " + (create ? "create " : "edit ") + extractID(o);
       if (create) {
-        System.out
-            .println("create " + extractID(o) + " " + SecurityUtil.authorization().create(user, o));
         throwAuthorizationException(user != null, SecurityUtil.authorization().create(user, o),
             message);
       } else {

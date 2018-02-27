@@ -22,7 +22,7 @@ public class CleanTempFilesJob implements Callable<Integer> {
   @Override
   public Integer call() throws Exception {
     final IOFileFilter filter = new WildcardFileFilter(IMEJI_TEMP_FILE_REGEX);
-    LOGGER.info("Deleting all imeji temp file from: " + FileUtils.getTempDirectory() + " ...");
+    LOGGER.info("Deleting all imeji temp file from: " + TempFileUtil.TEMP_DIR + " ...");
     final Iterator<File> iterator = FileUtils.iterateFiles(TempFileUtil.TEMP_DIR, filter, null);
     int success = 0;
     int count = 0;

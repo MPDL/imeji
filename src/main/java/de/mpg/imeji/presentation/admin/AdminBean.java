@@ -17,6 +17,7 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.batch.AggregateMessages;
 import de.mpg.imeji.logic.batch.CleanContentVOsJob;
 import de.mpg.imeji.logic.batch.CleanInternalStorageJob;
+import de.mpg.imeji.logic.batch.CleanTempFilesJob;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
 import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
@@ -58,7 +59,6 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 public class AdminBean extends SuperBean {
   private static final long serialVersionUID = 777808298937503532L;
   private static final Logger LOGGER = Logger.getLogger(AdminBean.class);
-  private boolean clean = false;
   private String numberOfFilesInStorage;
   private String sizeOfFilesinStorage;
   private String freeSpaceInStorage;
@@ -102,17 +102,6 @@ public class AdminBean extends SuperBean {
   }
 
   /**
-   * Clean the {@link Storage}
-   *
-   * @return
-   */
-  public String cleanStorage() {
-    final StorageController controller = new StorageController();
-    controller.getAdministrator().clean();
-    return "pretty:";
-  }
-
-  /**
    * Return the location of the internal storage
    *
    * @return
@@ -124,18 +113,6 @@ public class AdminBean extends SuperBean {
   }
 
   /**
-   * Make the same as clean, but doesn't remove the resources
-   *
-   * @throws ImejiException
-   *
-   * @
-   */
-  public void status() throws ImejiException {
-    clean = false;
-    invokeCleanMethods();
-  }
-
-  /**
    * Here are called all methods related to data cleaning
    *
    * @throws ImejiException
@@ -143,7 +120,6 @@ public class AdminBean extends SuperBean {
    * @
    */
   public void clean() throws ImejiException {
-    clean = true;
     invokeCleanMethods();
   }
 
@@ -174,6 +150,7 @@ public class AdminBean extends SuperBean {
    */
   private void invokeCleanMethods() throws ImejiException {
     Imeji.getEXECUTOR().submit(new CleanInternalStorageJob());
+    Imeji.getEXECUTOR().submit(new CleanTempFilesJob());
     new ListenerService().init();
     cleanGrants();
     cleanSubscriptions();
@@ -209,9 +186,7 @@ public class AdminBean extends SuperBean {
   }
 
   private void cleanContent() {
-    if (clean) {
-      Imeji.getEXECUTOR().submit(new CleanContentVOsJob());
-    }
+    Imeji.getEXECUTOR().submit(new CleanContentVOsJob());
   }
 
   /**
