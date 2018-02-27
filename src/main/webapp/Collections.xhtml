@@ -15,7 +15,7 @@
 	<ui:param name="currentMainMenu" value="collection" />
 	
 	<ui:define name="actionsMenu">
-		<a href="#{Navigation.applicationUrl}upload">
+		<a id="lnkUpload" href="#{Navigation.applicationUrl}upload">
 			<span class="fa fa-upload"/>#{lbl.upload}
 		</a>
 		<ui:fragment rendered="#{Auth.createCollection}">

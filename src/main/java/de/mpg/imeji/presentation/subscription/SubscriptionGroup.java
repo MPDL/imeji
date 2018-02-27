@@ -73,7 +73,9 @@ public class SubscriptionGroup implements Serializable {
    * @return
    */
   public String getUserCompleteName(Subscription s) {
-    return subscribedUserMap.get(s.getUserId()).getPerson().getCompleteName();
+    User user = subscribedUserMap.get(s.getUserId());
+    return user != null ? user.getPerson().getCompleteName()
+        : "unknown user with id " + s.getUserId();
   }
 
   /**

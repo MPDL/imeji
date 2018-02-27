@@ -53,14 +53,7 @@ public class RegistrationBean extends SuperBean {
     this.user.setPerson(ImejiFactory.newPerson());
     this.user.setEmail(UrlHelper.getParameterValue("login"));
     this.isInvited = checkInvitations();
-    if (getSessionUser() != null) {
-      try {
-        redirect(getNavigation().getHomeUrl());
-      } catch (final IOException e) {
-        BeanHelper.error(e.getLocalizedMessage());
-        LOGGER.error("Error redirect", e);
-      }
-    } else if (hasValidToken()) {
+    if (hasValidToken()) {
       activateUser();
     }
   }
