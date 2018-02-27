@@ -371,6 +371,12 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     return retrieveBatch(ids);
   }
 
+  public List<ContentVO> retrieveAllLazy() throws ImejiException {
+    final List<String> ids =
+        ImejiSPARQL.exec(JenaCustomQueries.selectContentAll(), Imeji.contentModel);
+    return retrieveBatchLazy(ids);
+  }
+
 
   /**
    * Inner class to extract the content of a file to a contentVO asynchronously

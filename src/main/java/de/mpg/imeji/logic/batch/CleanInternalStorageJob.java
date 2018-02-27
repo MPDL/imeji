@@ -171,7 +171,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
     LOGGER.info("Repairing images");
     int count = 0;
     long start = System.currentTimeMillis();
-    for (ContentVO content : new ContentService().retrieveAll()) {
+    for (ContentVO content : new ContentService().retrieveAllLazy()) {
       if (hasOriginalFile(content)) {
         try {
           if (!hasAllResolution(content)) {
@@ -191,7 +191,6 @@ public class CleanInternalStorageJob implements Callable<Integer> {
     }
   }
 
-
   /**
    * Upload the original new and update the content with the new resolutions
    * 
@@ -199,12 +198,14 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void repair(ContentVO content) throws ImejiException {
+    content = new ContentService().retrieve(content.getId().toString());
     UploadResult res = new StorageController().upload(FilenameUtils.getName(content.getOriginal()),
         storage.read(content.getOriginal()));
     content.setThumbnail(res.getThumb());
     content.setPreview(res.getWeb());
     content.setFull(res.getFull());
     content.setOriginal(res.getOrginal());
+
     new ContentService().update(content);
   }
 
