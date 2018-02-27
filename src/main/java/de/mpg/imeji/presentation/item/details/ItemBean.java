@@ -690,7 +690,7 @@ public class ItemBean extends SuperBean {
 
   // Show in osd iff it was possible to convert original to jpg
   public boolean isViewInOpenseadragon() {
-    return content != null && "jpg".equals(FilenameUtils.getExtension(content.getFull()));
+    return content != null && StorageUtils.isImage(content.getOriginal());
   }
 
   /**

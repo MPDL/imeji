@@ -39,11 +39,6 @@
 				</center>
 			</ui:fragment>
 			<ui:fragment rendered="#{!itemBean.viewInOpenseadragon}">
-				<center>
-					<a href="#{itemBean.originalFile}" target="_blank">
-						<span class="fa fa-expand fa-size-2" />
-					</a>
-				</center>
 				<a href="#{itemBean.originalFile}?filename=#{itemBean.image.filename}" target="_blank">
 					 <img id="picWebResolution" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" src="#{itemBean.preview}" /> 
 				</a>

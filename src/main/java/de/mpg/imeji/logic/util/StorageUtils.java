@@ -246,6 +246,16 @@ public class StorageUtils {
   }
 
   /**
+   * true if the file is an image
+   * 
+   * @param file
+   * @return
+   */
+  public static boolean isImage(String filename) {
+    return getMimeType(FilenameUtils.getExtension(filename)).contains("image");
+  }
+
+  /**
    * Return the Mime Type of a file according to its format (i.e. file extension). <br/>
    * The File extension can be found via {@link FilenameUtils}
    *
