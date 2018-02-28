@@ -10,10 +10,12 @@
 	xmlns:license="http://java.sun.com/jsf/composite/components/license">
 	<cc:interface >
 		<cc:attribute name="tree"/>
+		<cc:attribute name="containerId"/>
 		<cc:attribute name="colId"/>
 		<cc:attribute name="objectId"/>
 		<cc:attribute name="hasLicense"/>
 		<cc:attribute name="upload" default="false" type="java.lang.Boolean"/>
+		<cc:attribute name="subCollectionFormInput"/>
 	</cc:interface>
 	<cc:implementation>
 			<ui:repeat id="node" var="node" value="#{cc.attrs.tree.nodes}" varStatus="status">
@@ -41,13 +43,12 @@
 						<a href="#{Navigation.collectionUrl}#{node.collection.idString}?showUpload=1" title="#{lbl.upload_here}">#{node.collection.title}</a>
 						<h:commandLink id="uploadToNew" action="#{SubCollectionFormBean.init(node.collection)}" value="">
 				 			<f:ajax render="@none"/>
-				 			<span class="fa fa-plus" onclick="closeDialog('moveSelected');closeDialog('moveDialog');openDialog('addSubCollectionTree'); document.getElementById('move:createSub:subColForm:name').focus();"/>
+				 			<span class="fa fa-plus" onclick="openDialog('addSubCollectionTree'); document.getElementById('createSub:subColForm:name').focus();"/>
 				 		</h:commandLink>
 				 	</ui:fragment>
 				 	<ui:fragment rendered="#{!cc.attrs.upload}">
-				 		<h:commandLink value="" disabled="#{disabled and MoveItemsBean.isCollection(cc.attrs.objectId)}" action="#{MoveItemsBean.initMoveToNewSubcollection(node.collection)}"
-				 			onClick="document.getElementById('move:createSub:subColForm:name').focus();">
-							<f:ajax render="@form"/>
+				 		<h:commandLink value="" disabled="#{disabled and MoveItemsBean.isCollection(cc.attrs.objectId)}" action="#{MoveItemsBean.initMoveToNewSubcollection(node.collection)}">
+							<f:ajax render="@form" onevent="function(data){if(data.status === 'success'){document.getElementById('#{cc.attrs.subCollectionFormInput}').focus(); }}"/>
 							<span class="fa fa-plus"/>
 						</h:commandLink>
 				 	</ui:fragment>

@@ -43,7 +43,7 @@ import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.edit.single.EditItemComponent;
+import de.mpg.imeji.presentation.item.edit.single.EditItemComponent;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionObjectsController;
 

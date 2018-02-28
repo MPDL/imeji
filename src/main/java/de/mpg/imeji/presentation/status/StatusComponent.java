@@ -28,7 +28,7 @@ import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.presentation.collection.CollectionListItem;
+import de.mpg.imeji.presentation.collection.list.CollectionListItem;
 import de.mpg.imeji.presentation.navigation.Navigation;
 
 /**

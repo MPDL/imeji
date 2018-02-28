@@ -25,8 +25,8 @@ import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.collection.CollectionBean;
-import de.mpg.imeji.presentation.registration.RegistrationBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
+import de.mpg.imeji.presentation.user.registration.RegistrationBean;
 
 /**
  * The JSF Composite for a {@link Person}

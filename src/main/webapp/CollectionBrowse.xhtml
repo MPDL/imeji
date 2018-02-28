@@ -196,7 +196,7 @@
 		 	<dialog:dialogOptionDialog id="cdoi" dialogId="createDOI" bean="#{CollectionItemsBean.actionMenu}" col="#{CollectionItemsBean.collection}" submitId1="doiInput" submitId2="getDOIDialog" confirmationText="#{empty CollectionItemsBean.collection.doi ? '' : msg.collection_has_doi_warning}" submitLabel1="#{lbl.createDOI_manually}" submitLabel2="#{lbl.createDOI_from_service}" />
 			<dialog:confirmationDialog id="gdoi" dialogId="getDOIDialog" rawHtml="true" submitAction="createDOI" col="#{CollectionItemsBean.collection}" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{msg.confirmation_create_DOI}" submitLabel="#{lbl.createDOI}" />
 		 	<dialog:doiInputDialog id="idoi" col="#{CollectionItemsBean.collection}" bean="#{CollectionItemsBean.actionMenu}" confirmationText="#{empty CollectionItemsBean.collection.doi ? '' : msg.collection_has_doi_warning}" submitLabel="#{lbl.save}" dialogId="doiInput"/>
-		 	<dialog:move id="move" dialogId="moveCol" objectId="#{CollectionItemsBean.collection.id.toString()}" colId="#{CollectionItemsBean.collection.id.toString()}" parentId=":move" />
+		 	<dialog:move id="move" dialogId="moveCol" subCollectionFormInput="move:form:name" objectId="#{CollectionItemsBean.collection.id.toString()}" colId="#{CollectionItemsBean.collection.id.toString()}" parentId=":move" />
 	 		<dialog:selected id="selDialogs" context="#{currentMainMenu}" itemsBean="#{paginatorListSessionBean}"/>
 	 	</h:panelGroup>
 	 </ui:define>

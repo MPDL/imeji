@@ -146,7 +146,7 @@
 										onclick="openDialog('register#{row.index}');">
 										<span class="fa fa-check"/> #{lbl.register_activate}
 									</h:outputLink>
-										<dialog:confirmationDialog submitAction="register"
+										<dialog:confirmationDialog submitAction="confirmRegistration"
 										bean="#{UsersBean}"
 										confirmationText="#{msg.confirmation_register_user}  (#{user.person.completeName}, #{user.email})"
 										submitLabel="#{lbl.register_activate}"

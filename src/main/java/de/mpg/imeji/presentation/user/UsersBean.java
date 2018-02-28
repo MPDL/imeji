@@ -205,9 +205,22 @@ public class UsersBean extends SuperBean {
   public void revokeRegistration() {
     final String email = FacesContext.getCurrentInstance().getExternalContext()
         .getRequestParameterMap().get("email");
-    final RegistrationService registrationBC = new RegistrationService();
+    final RegistrationService service = new RegistrationService();
     try {
-      registrationBC.delete(registrationBC.retrieveByEmail(email));
+      service.delete(service.retrieveByEmail(email));
+      reload();
+    } catch (final Exception e) {
+      BeanHelper.error("Error Deleting registration");
+      LOGGER.error("Error Deleting registration", e);
+    }
+  }
+
+  public void confirmRegistration() {
+    final String email = FacesContext.getCurrentInstance().getExternalContext()
+        .getRequestParameterMap().get("email");
+    final RegistrationService service = new RegistrationService();
+    try {
+      service.activate(service.retrieveByEmail(email));
       reload();
     } catch (final Exception e) {
       BeanHelper.error("Error Deleting registration");

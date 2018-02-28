@@ -31,9 +31,9 @@ import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.user.util.QuotaUtil;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.collection.share.ShareListItem;
+import de.mpg.imeji.presentation.collection.share.ShareUtil;
 import de.mpg.imeji.presentation.session.BeanHelper;
-import de.mpg.imeji.presentation.share.ShareListItem;
-import de.mpg.imeji.presentation.share.ShareUtil;
 
 @ManagedBean(name = "UserBean")
 @ViewScoped

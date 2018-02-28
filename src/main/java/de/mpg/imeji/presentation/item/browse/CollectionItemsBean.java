@@ -25,7 +25,7 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.collection.CollectionActionMenu;
-import de.mpg.imeji.presentation.license.LicenseEditor;
+import de.mpg.imeji.presentation.item.license.LicenseEditor;
 
 /**
  * {@link ItemsBean} to browse {@link Item} of a {@link CollectionImeji}

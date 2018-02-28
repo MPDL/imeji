@@ -12,6 +12,7 @@
 	<composite:interface>
 		<composite:attribute name="colId" required="true" type="java.lang.Object"/>
 		<composite:attribute name="parentId" required="true" type="java.lang.Object"/>
+		<composite:attribute name="subCollectionFormInput"/>
 		<composite:attribute name="objectId" required="false" type="java.lang.Object"/>
 		<composite:attribute name="hasLicense" default="false" required="false" type="java.lang.Boolean"/>
 		<composite:attribute name="dialogId" required="true" type="java.lang.String"/>
@@ -29,7 +30,7 @@
 						</a>
 					</div>
 					<div id="tree">
-						<collection:tree tree="#{MoveItemsBean.tree}" colId="#{cc.attrs.colId}" objectId="#{cc.attrs.objectId}" hasLicense="#{cc.attrs.hasLicense}"/>
+						<collection:tree tree="#{MoveItemsBean.tree}" colId="#{cc.attrs.colId}" objectId="#{cc.attrs.objectId}" hasLicense="#{cc.attrs.hasLicense}" subCollectionFormInput="#{cc.attrs.subCollectionFormInput}"/>
 					</div>
 				</ui:fragment>
 				<ui:fragment rendered="#{MoveItemsBean.target != null}">

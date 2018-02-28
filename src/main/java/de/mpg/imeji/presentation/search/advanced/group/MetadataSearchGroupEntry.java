@@ -21,7 +21,7 @@ import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.util.StringHelper;
-import de.mpg.imeji.presentation.edit.MetadataInputComponent;
+import de.mpg.imeji.presentation.item.edit.MetadataInputComponent;
 
 /**
  * An Entry of the {@link MetadataSearchGroup}
