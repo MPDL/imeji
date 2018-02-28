@@ -75,7 +75,6 @@ public class ResourceController {
    */
   public Object read(Object o) throws NotFoundException {
     if (!java2rdf.exists(o)) {
-
       throw new NotFoundException(getObjectType(J2JHelper.getId(o)) + " "
           + getObjectId(J2JHelper.getId(o)) + " not found!");
     }

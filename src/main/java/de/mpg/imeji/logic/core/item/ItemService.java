@@ -700,7 +700,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
     final StorageController sc = new StorageController();
     final String guessedNotAllowedFormat = sc.guessNotAllowedFormat(file);
     if (StorageUtils.BAD_FORMAT.equals(guessedNotAllowedFormat)) {
-      throw new UnprocessableError("upload_format_not_allowed " + file.getName());
+      throw new UnprocessableError("File format not allowed (."
+          + FilenameUtils.getExtension(file.getName()) + "). Please contact the administrator");
     }
   }
 

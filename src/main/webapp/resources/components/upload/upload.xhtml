@@ -102,7 +102,7 @@
 				uploader.stop();
 				document.getElementById('#{cc.attrs.updateButtonId}').click();
 				addUploadStatusMessageDone(uploadedFiles);
-				uploader.destroy();
+				uploader.slice();
 				closeUploader();
 			}
 			function closeUploader(){
