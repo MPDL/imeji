@@ -616,7 +616,7 @@ public class JenaCustomQueries {
    * @return
    */
   public static final String selectAllInstitutes() {
-    return "SELECT DISTINCT ?s WHERE {?user <http://xmlns.com/foaf/0.1/email> ?email . let(?s := str(replace(?email, '(.)+@', '', 'i')))}";
+    return "SELECT DISTINCT ?s WHERE {?user <http://xmlns.com/foaf/0.1/email> ?email . let(?s := replace(str(replace(?email, '(.)+@', '', 'i')),' ',''))}";
   }
 
   /**
@@ -628,7 +628,7 @@ public class JenaCustomQueries {
    */
   public static final String selectInstituteFileSize(String instituteName) {
     return "SELECT (SUM(?size) AS ?s) WHERE {?c <" + ImejiNamespaces.CREATOR
-        + "> ?user . ?user <http://xmlns.com/foaf/0.1/email> ?email .filter(regex(?email, '"
+        + "> ?user . ?user <http://xmlns.com/foaf/0.1/email> ?email .filter(regex(?email, '@"
         + instituteName
         + "', 'i')) . ?c a <http://imeji.org/terms/collection> . ?item <http://imeji.org/terms/collection> ?c . ?item <http://imeji.org/terms/fileSize> ?size  . not exists {?item <http://imeji.org/terms/status>  <http://imeji.org/terms/status#WITHDRAWN>}}";
   }

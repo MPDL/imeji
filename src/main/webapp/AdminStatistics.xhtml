@@ -10,175 +10,119 @@
 	
 	<ui:define name="mainContent">
 		<!-- Are You Admin? -->
-		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
-			rendered="#{!Auth.sysAdmin}">
-			<h:outputText value="#{lbl.view_page_disallowed}"
-				styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
-			<h:outputText value="#{lbl.view_page_disallowed2}"
-				styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea" rendered="#{!Auth.sysAdmin}">
+			<h:outputText value="#{lbl.view_page_disallowed}" styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
+			<h:outputText value="#{lbl.view_page_disallowed2}" styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
 		</h:panelGroup>
 
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-			<!-- Only for Admins -->
-
 			<!-- Admin - TiledList -->
 			<div class="imj_administrationTiledList imj_maxWidth">
-
 				<div class="imj_listBody">
-
-					<h:panelGroup layout="block"
-						styleClass="imj_adminPanel imj_storageInformation"
-						rendered="#{Auth.sysAdmin}">
-
+					<div class="imj_adminPanel imj_storageInformation">
 						<!-- Admin - Database Info-->
 						<div class="imj_headline">
-							<h2>
-								<h:outputText value="#{lbl.database_infos}" />
-							</h2>
+							<h2>#{lbl.database_infos}</h2>
 						</div>
-
 						<div class="imj_content">
-
-							<!-- Admin - Items Info -->
-							<h:panelGroup layout="block" styleClass="imj_admindataSet">
-								<div class="imj_admindataLabel" title="#{lbl.admin_info_sys2}">
-									<h:outputText value="#{lbl.admin_info_sys2}" />
-									<span class="imj_invisible">: </span>
-								</div>
+							<div class="imj_admindataSet">
+								<div class="imj_admindataLabel" title="#{lbl.admin_info_sys2}">#{lbl.admin_info_sys2}</div>
 								<div class="imj_admindataValue">
-									<div class="imj_admindataValueEntry">
-										<h:outputText value="#{AdminBean.allImagesSize}" />
-									</div>
+									<div class="imj_admindataValueEntry">#{storageStatisticsBean.allImagesSize}</div>
 								</div>
-							</h:panelGroup>
-
-							<!-- Admin - Users Info -->
-							<h:panelGroup layout="block" styleClass="imj_admindataSet">
-								<div class="imj_admindataLabel" title="#{lbl.admin_info_users}">
-									<h:outputText value="#{lbl.admin_info_users}" />
-									<span class="imj_invisible">: </span>
-								</div>
+							</div>
+							<div class="imj_admindataSet">
+								<div class="imj_admindataLabel" title="#{lbl.admin_info_users}">#{lbl.admin_info_users}</div>
 								<div class="imj_admindataValue">
-									<div class="imj_admindataValueEntry">
-										<h:outputText value="#{AdminBean.allUsersSize}" />
-									</div>
+									<div class="imj_admindataValueEntry">#{storageStatisticsBean.allUsersSize}</div>
 								</div>
-							</h:panelGroup>
-
-							<!-- Admin - Collections Info -->
-							<h:panelGroup layout="block" styleClass="imj_admindataSet">
-								<div class="imj_admindataLabel" title="#{lbl.admin_info_col}">
-									<h:outputText value="#{lbl.admin_info_col}" />
-									<span class="imj_invisible">: </span>
-								</div>
+							</div>
+							<div class="imj_admindataSet">
+								<div class="imj_admindataLabel" title="#{lbl.admin_info_col}">#{lbl.admin_info_col}</div>
 								<div class="imj_admindataValue">
-									<div class="imj_admindataValueEntry">
-										<h:outputText value="#{AdminBean.allCollectionsSize}" />
-									</div>
+									<div class="imj_admindataValueEntry">#{storageStatisticsBean.allCollectionsSize}</div>
 								</div>
-							</h:panelGroup>
+							</div>
 						</div>
 						<!-- END CONTENT -->
-					</h:panelGroup>
+					</div>
 
-					<h:panelGroup layout="block"
-						styleClass="imj_adminPanel imj_storageInformation"
-						rendered="#{Auth.sysAdmin}">
+					<div class="imj_adminPanel imj_storageInformation">
+						<div class="imj_headline">
+							<h2>#{lbl.storage_space_per_institute}</h2>
+						</div>
+						<div class="imj_content">
+							<div class="imj_admindataSet">
+								<div class="imj_admindataLabel" title="#{lbl.institute}">#{lbl.all}</div>
+								<div class="imj_admindataValue">
+									<div class="imj_admindataValueEntry">#{storageStatisticsBean.allFileSize}</div>
+								</div>
+							</div>
+							<!-- Table -->
+							<ui:repeat var="institute"
+								value="#{storageStatisticsBean.institutes}">
+								<div class="imj_admindataSet">
+									<div class="imj_admindataLabel" title="#{lbl.institute}">#{institute.name}</div>
+									<div class="imj_admindataValue">
+										<div class="imj_admindataValueEntry">#{institute.storageString}</div>
+									</div>
+								</div>
+							</ui:repeat>
+						</div>
+					</div>
 
+					<div class="imj_adminPanel imj_storageInformation">
 						<!-- Admin - Storage Info-->
 						<div class="imj_headline">
-							<h2>
-								<h:outputText value="#{lbl.storage_infos}" />
+							<h2>#{lbl.storage_infos}
 								<h:form>
-									<h:commandButton value="#{lbl.update}"
-										action="#{AdminBean.analyseStorageUsage}"
-										styleClass="imj_submitButton"
-										rendered="#{AdminBean.storageAnalyseStatus}">
+									<h:commandButton value="#{lbl.update}" action="#{storageStatisticsBean.analyseStorageUsage}" styleClass="imj_submitButton" rendered="#{storageStatisticsBean.storageAnalyseStatus}">
 										<f:ajax render="@form" execute="@this" />
 									</h:commandButton>
 									<h:outputLink value="">
-										<h:outputText value="#{lbl.admin_refresh_browser}"
-											rendered="#{!AdminBean.storageAnalyseStatus}" />
+										<h:outputText value="#{lbl.admin_refresh_browser}" rendered="#{!storageStatisticsBean.storageAnalyseStatus}" />
 									</h:outputLink>
 								</h:form>
 							</h2>
 						</div>
 
 						<div class="imj_content">
+							<!-- Admin - Last update of the statistics -->
+							<div class="imj_admindataSet">
+								<div class="imj_admindataLabel" title="#{lbl.last_update}">#{lbl.last_update}</div>
+								<div class="imj_admindataValue">
+									<div class="imj_admindataValueEntry">#{storageStatisticsBean.lastUpdateStorageStatistics}</div>
+								</div>
+							</div>
 
-							<h:panelGroup layout="block" rendered="#{Auth.sysAdmin}">
+							<!-- Admin - Number of Files Info -->
+							<div class="imj_admindataSet">
+								<div class="imj_admindataLabel" title="#{lbl.storage_number_of_files}">#{lbl.storage_number_of_files}</div>
+								<div class="imj_admindataValue">
+									<div class="imj_admindataValueEntry">#{storageStatisticsBean.numberOfFilesInStorage}</div>
+								</div>
+							</div>
 
-								<!-- Admin - Last update of the statistics -->
-								<h:panelGroup layout="block" styleClass="imj_admindataSet">
-									<div class="imj_admindataLabel" title="#{lbl.last_update}">
-										<h:outputText value="#{lbl.last_update}" />
-										<span class="imj_invisible">: </span>
-									</div>
-									<div class="imj_admindataValue">
-										<div class="imj_admindataValueEntry">
-											<h:outputText
-												value="#{AdminBean.lastUpdateStorageStatistics}" />
-										</div>
-									</div>
-								</h:panelGroup>
+							<!-- Admin - Size of Files Info -->
+							<div class="imj_admindataSet">
+								<div class="imj_admindataLabel" title="#{lbl.storage_size_of_files}">#{lbl.storage_size_of_files}</div>
+								<div class="imj_admindataValue">
+									<div class="imj_admindataValueEntry">#{storageStatisticsBean.sizeOfFilesinStorage}</div>
+								</div>
+							</div>
 
-								<!-- Admin - Number of Files Info -->
-								<h:panelGroup layout="block" styleClass="imj_admindataSet">
-									<div class="imj_admindataLabel"
-										title="#{lbl.storage_number_of_files}">
-										<h:outputText value="#{lbl.storage_number_of_files}" />
-										<span class="imj_invisible">: </span>
-									</div>
-									<div class="imj_admindataValue">
-										<div class="imj_admindataValueEntry">
-											<h:outputText value="#{AdminBean.numberOfFilesInStorage}" />
-										</div>
-									</div>
-								</h:panelGroup>
-
-								<!-- Admin - Size of Files Info -->
-								<h:panelGroup layout="block" styleClass="imj_admindataSet">
-									<div class="imj_admindataLabel"
-										title="#{lbl.storage_size_of_files}">
-										<h:outputText value="#{lbl.storage_size_of_files}" />
-										<span class="imj_invisible">: </span>
-									</div>
-									<div class="imj_admindataValue">
-										<div class="imj_admindataValueEntry">
-											<h:outputText value="#{AdminBean.sizeOfFilesinStorage}" />
-										</div>
-									</div>
-								</h:panelGroup>
-
-								<!-- Admin - Free Space Info -->
-								<h:panelGroup layout="block" styleClass="imj_admindataSet">
-									<div class="imj_admindataLabel"
-										title="#{lbl.storage_free_space}">
-										<h:outputText value="#{lbl.storage_free_space}" />
-										<span class="imj_invisible">: </span>
-									</div>
-									<div class="imj_admindataValue">
-										<div class="imj_admindataValueEntry">
-											<h:outputText value="#{AdminBean.freeSpaceInStorage}" />
-										</div>
-									</div>
-								</h:panelGroup>
-
-							</h:panelGroup>
-
-						</div>
-						<!-- END CONTENT -->
-
-					</h:panelGroup>
-
-				</div>
-				<!-- END LIST BODY -->
-
+							<!-- Admin - Free Space Info -->
+							<div class="imj_admindataSet">
+								<div class="imj_admindataLabel" title="#{lbl.storage_free_space}">#{lbl.storage_free_space}</div>
+								<div class="imj_admindataValue">
+									<div class="imj_admindataValueEntry">#{storageStatisticsBean.freeSpaceInStorage}</div>
+								</div>
+							</div>
+						</div><!-- END CONTENT -->
+					</div>
+				</div><!-- END LIST BODY -->
 			</div>
 			<!-- END ADMIN LIST -->
-
 		</ui:fragment>
-
 	</ui:define>
-
 </ui:composition>
