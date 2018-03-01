@@ -61,7 +61,7 @@ public class WorkflowFacade implements Serializable {
   public void release(CollectionImeji c, User user, License defaultLicense) throws ImejiException {
     preValidateRelease(c, user, defaultLicense);
     final List<String> itemIds = getItemIds(c, user);
-    preValidateItems(itemIds, user);
+    preValidateCollectionItems(itemIds, user);
     // Create a list with the collectionId, all the subcollectionids and all itemIds
     List<String> ids =
         new ArrayList<>(new HierarchyService().findAllSubcollections(c.getId().toString()));
@@ -90,7 +90,7 @@ public class WorkflowFacade implements Serializable {
       throws ImejiException {
     final List<String> ids =
         items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
-    preValidateItems(ids, user);
+    preValidateReleaseItems(items, user, defaultLicense);
     Calendar now = DateHelper.getCurrentDate();
     String sparql = ids.stream().map(id -> JenaCustomQueries.updateReleaseObject(id, now))
         .collect(Collectors.joining("; "));
@@ -111,7 +111,7 @@ public class WorkflowFacade implements Serializable {
   public void withdraw(CollectionImeji c, String comment, User user) throws ImejiException {
     prevalidateWithdraw(c, comment, user);
     final List<String> itemIds = getItemIds(c, user);
-    preValidateItems(itemIds, user);
+    preValidateCollectionItems(itemIds, user);
     // Create a list with the collectionId, all the subcollectionids and all itemIds
     List<String> ids =
         new ArrayList<>(new HierarchyService().findAllSubcollections(c.getId().toString()));
@@ -140,7 +140,7 @@ public class WorkflowFacade implements Serializable {
   public void withdrawItems(List<Item> items, String comment, User user) throws ImejiException {
     List<String> itemIds =
         items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
-    preValidateItems(itemIds, user);
+    preValidateCollectionItems(itemIds, user);
     Calendar now = DateHelper.getCurrentDate();
     String sparql =
         itemIds.stream().map(id -> JenaCustomQueries.updateWitdrawObject(id, now, comment))
@@ -175,6 +175,7 @@ public class WorkflowFacade implements Serializable {
       itemIndexer.partialUpdateIndexBatch(licenseParts);
     }
   }
+
 
   /**
    * Perform prevalidation on the collection to check if the user can proceed to the workflow
@@ -227,6 +228,32 @@ public class WorkflowFacade implements Serializable {
     }
   }
 
+
+
+  /**
+   * Check if the items can be released
+   * 
+   * @param items
+   * @param user
+   * @param defaultLicense
+   * @throws ImejiException
+   */
+  private void preValidateReleaseItems(List<Item> items, User user, License defaultLicense)
+      throws ImejiException {
+    for (Item item : items) {
+      workflowValidator.isReleaseAllowed(item);
+      if (user == null) {
+        throw new AuthenticationError(AuthenticationError.USER_MUST_BE_LOGGED_IN);
+      }
+      if (!authorization.administrate(user, item)) {
+        throw new NotAllowedError(NotAllowedError.NOT_ALLOWED);
+      }
+    }
+    if (defaultLicense == null) {
+      throw new UnprocessableError("A default license is needed to release a collection");
+    }
+  }
+
   /**
    * Perform prevalidation on the collection items to check if the user can proceed to the workflow
    * operation
@@ -235,7 +262,7 @@ public class WorkflowFacade implements Serializable {
    * @param user
    * @throws ImejiException
    */
-  private void preValidateItems(List<String> itemIds, User user) throws ImejiException {
+  private void preValidateCollectionItems(List<String> itemIds, User user) throws ImejiException {
     if (hasImageLocked(itemIds, user)) {
       throw new UnprocessableError("Collection has locked items: can not be released");
     }

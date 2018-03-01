@@ -11,14 +11,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -33,7 +31,6 @@ import de.mpg.imeji.logic.generic.SearchServiceAbstract;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
-import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
@@ -418,9 +415,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public void delete(List<Item> items, User user) throws ImejiException {
     itemController.deleteBatch(items, user);
-    for (final Item item : items) {
-      removeFileFromStorage(item);
-    }
+    Imeji.getEXECUTOR().submit(new RemoveFileTask(items));
   }
 
   /**
@@ -556,9 +551,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public void withdraw(List<Item> l, String comment, User user) throws ImejiException {
     new WorkflowFacade().withdrawItems(l, comment, user);
-    for (final Item item : l) {
-      removeFileFromStorage(item);
-    }
+    Imeji.getEXECUTOR().submit(new RemoveFileTask(l));
   }
 
   /**
@@ -594,23 +587,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
     LOGGER.info("Items reindexed!");
   }
 
-
-  /**
-   * Return a new filtered List of only item with the requested {@link Status}
-   *
-   * @param items
-   * @param status
-   * @return
-   */
-  private Collection<Item> filterItemsByStatus(List<Item> items, Status status) {
-    return new ArrayList<>(Collections2.filter(items, new Predicate<Item>() {
-      @Override
-      public boolean apply(Item item) {
-        return item.getStatus() == status;
-      }
-    }));
-  }
-
   /**
    * Remove a file from the current {@link Storage}
    *
@@ -625,6 +601,27 @@ public class ItemService extends SearchServiceAbstract<Item> {
     }
   }
 
+  /**
+   * Remove files from storage
+   * 
+   * @author saquet
+   *
+   */
+  private class RemoveFileTask implements Callable<Integer> {
+    private final List<Item> items;
+
+    public RemoveFileTask(List<Item> items) {
+      this.items = items;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+      for (final Item item : items) {
+        removeFileFromStorage(item);
+      }
+      return null;
+    }
+  }
 
   /**
    * Return the external Url of the File

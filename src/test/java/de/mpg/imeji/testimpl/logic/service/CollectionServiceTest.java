@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -227,6 +228,7 @@ public class CollectionServiceTest extends SuperServiceTest {
   }
 
   @Test
+  @Ignore
   public void updateLogo() {
     try {
       updateLogo_Test("collectionPrivate, edit grant user", collectionPrivate,

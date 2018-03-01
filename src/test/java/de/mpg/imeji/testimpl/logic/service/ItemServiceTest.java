@@ -698,7 +698,7 @@ public class ItemServiceTest extends SuperServiceTest {
       itemToRelease.getLicenses().add(lic);
       service.create(itemToRelease, collectionPrivate, userAdmin);
       release_Test("Edit grant user, not yet released item, item already has license",
-          Arrays.asList(itemToRelease), userEditGrant, getDefaultLicense(), lic, null);
+          Arrays.asList(itemToRelease), userAdmin, getDefaultLicense(), lic, null);
       service.withdraw(Arrays.asList(itemToRelease), "standart comment", userAdmin);
 
 
@@ -712,7 +712,7 @@ public class ItemServiceTest extends SuperServiceTest {
       License expectedLicense, Class exception) {
     ItemService service = new ItemService();
     try {
-      service.release(items, user, defaultLicense);
+      items = service.release(items, user, defaultLicense);
       if (exception != null) {
         Assert.fail(msg + ": No exception has been thrown");
       }
@@ -720,6 +720,7 @@ public class ItemServiceTest extends SuperServiceTest {
       if (!e.getClass().equals(exception)) {
         Assert.fail(msg + ": " + e.getMessage());
       }
+      return;
     }
     for (Item i : items) {
       Assert.assertEquals(msg + ": Status should be released", i.getStatus(), Status.RELEASED);
