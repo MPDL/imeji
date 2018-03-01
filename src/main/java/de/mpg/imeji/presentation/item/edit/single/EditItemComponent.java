@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.License;
 import de.mpg.imeji.logic.model.Metadata;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
@@ -63,7 +64,10 @@ public class EditItemComponent extends EditMetadataAbstract {
     item.setFilename(filename);
     item.setMetadata(entries.stream().map(EditItemEntry::getInput).filter(in -> in != null)
         .map(MetadataInputComponent::getMetadata).collect(toList()));
-    item.getLicenses().add(licenseEditor.getLicense());
+    List<License> licenses = new ArrayList<>(item.getLicenses());
+    licenses.add(licenseEditor.getLicense());
+    item.setLicenses(licenses);
+    // item.getLicenses().add(licenseEditor.getLicense());
     return Arrays.asList(item);
   }
 

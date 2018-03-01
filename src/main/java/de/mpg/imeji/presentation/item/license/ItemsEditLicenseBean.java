@@ -139,7 +139,7 @@ public class ItemsEditLicenseBean extends SuperBean {
    */
   private Item addLicense(Item item) {
     if (item.getStatus().equals(Status.PENDING)) {
-      item.setLicenses(Arrays.asList(licenseEditor.getLicense()));
+      item.setLicenses(new ArrayList<>(Arrays.asList(licenseEditor.getLicense())));
     } else {
       if (item.getLicenses() == null) {
         item.setLicenses(new ArrayList<>());
