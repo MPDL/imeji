@@ -94,10 +94,9 @@ public class WriterFacade {
     // writer.create(objects, user);
     // indexer.indexBatch(objects);
     try {
-
       Future<Integer> createTask = executor.submit(new CreateTask(objects, user));
-      Future<Integer> indexTask = executor.submit(new IndexTask(objects));
       createTask.get();
+      Future<Integer> indexTask = executor.submit(new IndexTask(objects));
       indexTask.get();
     } catch (Exception e) {
       new ImejiException("Error updating objects", e);
@@ -117,13 +116,11 @@ public class WriterFacade {
     checkWorkflow(objects, "delete");
     checkSecurity(objects, user, false);
     validate(objects, Validator.Method.DELETE);
-    // writer.delete(objects, user);
-    // indexer.deleteBatch(objects);
     try {
-      Future<Integer> deleteTask = executor.submit(new DeleteTask(objects, user));
       Future<Integer> deleteIndexTask = executor.submit(new DeleteIndexTask(objects));
-      deleteTask.get();
       deleteIndexTask.get();
+      Future<Integer> deleteTask = executor.submit(new DeleteTask(objects, user));
+      deleteTask.get();
     } catch (Exception e) {
       new ImejiException("Error updating objects", e);
     }
@@ -145,8 +142,6 @@ public class WriterFacade {
       checkSecurity(objects, user, false);
     }
     validate(objects, Validator.Method.UPDATE);
-    // writer.update(objects, user);
-    // indexer.updateIndexBatch(objects);
     try {
       Future<Integer> updateTask = executor.submit(new UpdateTask(objects, user));
       Future<Integer> indexTask = executor.submit(new IndexTask(objects));
@@ -183,21 +178,21 @@ public class WriterFacade {
 
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see de.mpg.imeji.logic.writer.Writer#updateLazy(java.util.List, de.mpg.imeji.logic.vo.User)
-   */
-  public void updateLazy(List<Object> objects, User user) throws ImejiException {
-    if (objects.isEmpty()) {
-      return;
-    }
-    checkWorkflow(objects, "update");
-    checkSecurity(objects, user, false);
-    validate(objects, Validator.Method.UPDATE);
-    writer.updateLazy(objects, user);
-    indexer.indexBatch(objects);
-  }
+  // /*
+  // * (non-Javadoc)
+  // *
+  // * @see de.mpg.imeji.logic.writer.Writer#updateLazy(java.util.List, de.mpg.imeji.logic.vo.User)
+  // */
+  // public void updateLazy(List<Object> objects, User user) throws ImejiException {
+  // if (objects.isEmpty()) {
+  // return;
+  // }
+  // checkWorkflow(objects, "update");
+  // checkSecurity(objects, user, false);
+  // validate(objects, Validator.Method.UPDATE);
+  // writer.updateLazy(objects, user);
+  // indexer.indexBatch(objects);
+  // }
 
   @SuppressWarnings("unchecked")
   private void validate(List<Object> list, Validator.Method method) throws UnprocessableError {

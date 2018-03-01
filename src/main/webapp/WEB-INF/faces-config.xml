@@ -22,6 +22,6 @@
 	</lifecycle>
 	<converter>
 		<converter-id>URIConverter</converter-id>
-		<converter-class>de.mpg.imeji.presentation.edit.converter.URIConverter</converter-class>
+		<converter-class>de.mpg.imeji.presentation.item.edit.converter.URIConverter</converter-class>
 	</converter>
 </faces-config>
