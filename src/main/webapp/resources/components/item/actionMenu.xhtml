@@ -10,7 +10,7 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<h:form>
+		<h:form id="f">
 			<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" onclick="window.location.href = '#itemMetadata';startLoader()">
 				 <span class="fa fa-pencil"/>#{lbl.edit}
 				 <f:ajax render=":metadata :loader"/>
@@ -31,7 +31,7 @@
 			</a>
 		</ui:fragment>
 		<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(itemBean.item)}">
-			<a onclick="openDialog('withdrawItem')">
+			<a onclick="openDialog('withdrawItem'); document.getElementById('itemDialogs:dis:f:discardComment').focus();">
 				<span class="fa fa-ban"/>#{lbl.withdraw}
 			</a>
 		</ui:fragment>

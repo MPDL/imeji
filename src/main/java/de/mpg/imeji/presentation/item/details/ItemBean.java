@@ -33,6 +33,7 @@ import de.mpg.imeji.logic.core.statement.StatementService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
@@ -138,15 +139,17 @@ public class ItemBean extends SuperBean {
     if (item == null) {
       throw new NotFoundException("LoadImage: empty");
     }
-    try {
-      ContentService service = new ContentService();
-      content = service.retrieveLazy(service.findContentId(item.getId().toString()));
-      preview = content.getPreview();
-      thumbnail = content.getThumbnail();
-      fullResolution = content.getFull();
-      originalFile = content.getOriginal();
-    } catch (final Exception e) {
-      ItemBean.LOGGER.error("No content found for " + item.getIdString(), e);
+    if (item.getStatus() != Status.WITHDRAWN) {
+      try {
+        ContentService service = new ContentService();
+        content = service.retrieveLazy(service.findContentId(item.getId().toString()));
+        preview = content.getPreview();
+        thumbnail = content.getThumbnail();
+        fullResolution = content.getFull();
+        originalFile = content.getOriginal();
+      } catch (final Exception e) {
+        ItemBean.LOGGER.error("No content found for " + item.getIdString(), e);
+      }
     }
   }
 

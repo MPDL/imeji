@@ -3,7 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	<ui:param name="headline" value="#{lbl.admin_userGroup_new}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="currentMainMenu" value="admin" />
@@ -33,8 +34,7 @@
 							</div>
 							<div class="imj_metadataValue">
 								<div class="imj_metadataValue">
-									<h:inputText styleClass="imj_admindataEdit"
-										value="#{UserGroup.userGroup.name}" />
+									<h:inputText styleClass="imj_admindataEdit" value="#{UserGroup.userGroup.name}" html5:autofocus="true" />
 								</div>
 							</div>
 						</div>

@@ -4,7 +4,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
-	xmlns:md="http://java.sun.com/jsf/composite/components/metadata">
+	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
 	<ui:param name="title" value="#{lbl.search_advanced}" />
 
@@ -23,11 +24,9 @@
 					</div>
 					<div class="imj_searchDetails">
 						<div class="imj_searchInput">
-							<h:inputText
-								value="#{AdvancedSearchBean.formular.textSearchGroup.query}" />
+							<h:inputText value="#{AdvancedSearchBean.formular.textSearchGroup.query}" html5:autofocus="true"/>
 						</div>
-						<h:selectBooleanCheckbox style="margin-left: 50px;"
-							value="#{AdvancedSearchBean.formular.textSearchGroup.includeFulltext}">
+						<h:selectBooleanCheckbox style="margin-left: 50px;" value="#{AdvancedSearchBean.formular.textSearchGroup.includeFulltext}">
 							<f:ajax render=":imj_searchQueryMessageArea" />
 						</h:selectBooleanCheckbox>
 						<h:outputLabel value="#{lbl.include_fulltext}" />
@@ -58,8 +57,7 @@
 						<div class="imj_searchDetails">
 							<div class="imj_searchStatement">
 								<h:selectOneMenu id="selStatement" value="#{entry.statementIndex}">
-									<f:selectItems value="#{AdvancedSearchBean.formular.metadataSearchGroup.statementList}" 
-										var="s" itemLabel="#{s.index}" itemValue="#{s.index}" />
+									<f:selectItems value="#{AdvancedSearchBean.formular.metadataSearchGroup.statementList}"  var="s" itemLabel="#{s.index}" itemValue="#{s.index}"/>
 										<f:ajax event="change" listener="#{entry.changeStatement}" render=":advancedSearchForm:metadata:#{index.index}:entry"/>
 								</h:selectOneMenu>
 							</div>

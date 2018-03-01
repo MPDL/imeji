@@ -78,7 +78,7 @@
 						<div class="content">
 							<ui:fragment rendered="#{Auth.update}">
 								<ui:fragment rendered="#{CollectionItemsBean.collection.isSubCollection()}">
-									<a onclick="openDialog('editSubCollection');">
+									<a onclick="openDialog('editSubCollection');document.getElementById('ed:subColForm:name').focus();">
 										<span class="fa fa-pencil"/>#{lbl.edit_name}
 									</a>
 								</ui:fragment>
@@ -139,7 +139,7 @@
 								</ui:fragment>
 							</ui:fragment>
 							<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(CollectionItemsBean.collection)}">
-								<a onclick="openDialog('withdrawCollection');">
+								<a onclick="openDialog('withdrawCollection'); document.getElementById('dis:f:discardComment').focus();" >
 									 <span class="fa fa-ban"/>#{lbl.withdraw}
 								</a>
 							</ui:fragment>

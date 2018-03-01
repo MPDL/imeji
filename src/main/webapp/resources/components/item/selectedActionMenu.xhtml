@@ -41,7 +41,7 @@
 						</a>
 					</ui:fragment>
 					<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(cc.attrs.itemsBean.collection)}">
-						<a onclick="openDialog('withdrawSelectedItems')">
+						<a onclick="openDialog('withdrawSelectedItems'); document.getElementById('selDialogs:witdrawSel:f:discardComment').focus();">
 							<span class="fa fa-ban"/>#{lbl.items_withdraw}
 						</a>
 					</ui:fragment>
