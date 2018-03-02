@@ -138,6 +138,7 @@ public class WorkflowFacade implements Serializable {
    * @throws ImejiException
    */
   public void withdrawItems(List<Item> items, String comment, User user) throws ImejiException {
+    prevalidateWithdrawItems(items, comment, user);
     List<String> itemIds =
         items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
     preValidateCollectionItems(itemIds, user);
@@ -225,6 +226,30 @@ public class WorkflowFacade implements Serializable {
     }
     if (StringHelper.isNullOrEmptyTrim(comment)) {
       throw new UnprocessableError("Missing discard comment");
+    }
+  }
+
+  /**
+   * Prevalidate the witdthraw pf an item
+   * 
+   * @param items
+   * @param comment
+   * @param user
+   * @throws ImejiException
+   */
+  private void prevalidateWithdrawItems(List<Item> items, String comment, User user)
+      throws ImejiException {
+    for (Item item : items) {
+      workflowValidator.isWithdrawAllowed(item);
+      if (user == null) {
+        throw new AuthenticationError(AuthenticationError.USER_MUST_BE_LOGGED_IN);
+      }
+      if (!authorization.administrate(user, item)) {
+        throw new NotAllowedError(NotAllowedError.NOT_ALLOWED);
+      }
+      if (StringHelper.isNullOrEmptyTrim(comment)) {
+        throw new UnprocessableError("Missing discard comment");
+      }
     }
   }
 
