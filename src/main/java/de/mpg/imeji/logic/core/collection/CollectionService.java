@@ -332,10 +332,8 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
   }
 
   @Override
-  public List<CollectionImeji> retrieveAll() throws ImejiException {
-    final List<String> uris =
-        ImejiSPARQL.exec(JenaCustomQueries.selectCollectionAll(), Imeji.collectionModel);
-    return retrieve(uris, Imeji.adminUser);
+  public List<String> searchAll() {
+    return ImejiSPARQL.exec(JenaCustomQueries.selectCollectionAll(), Imeji.collectionModel);
   }
 
   /**

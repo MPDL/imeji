@@ -42,8 +42,8 @@ public class InternalStorage implements Storage {
   private static final Logger LOGGER = Logger.getLogger(InternalStorage.class);
   private static final String name = "internal";
   protected InternalStorageManager manager;
-  private static final int MAX_RETRY = 5;
-  private static final int WAIT_BEFORE_RETRY_SEC = 2;
+  private static final int MAX_RETRY = 1;
+  private static final int WAIT_BEFORE_RETRY_SEC = 1;
   public static final String PATH_TO_NOT_FOUND_IMAGE = "images/file-icon.jpg";
 
   /**

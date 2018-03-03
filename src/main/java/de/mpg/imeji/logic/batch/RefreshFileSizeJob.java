@@ -2,15 +2,15 @@ package de.mpg.imeji.logic.batch;
 
 import java.awt.Dimension;
 import java.io.File;
-import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.generic.SearchServiceAbstract;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -37,36 +37,40 @@ public class RefreshFileSizeJob implements Callable<Integer> {
     final ItemService itemController = new ItemService();
     final ContentService contentService = new ContentService();
     final InternalStorageManager storageManager = new InternalStorageManager();
-    final Collection<Item> items = itemController.retrieveAll(Imeji.adminUser);
-    LOGGER.info("...done (found  " + items.size() + ")");
+    final SearchServiceAbstract<Item>.RetrieveIterator iterator = itemController.iterateAll(500);
+    LOGGER.info("...done (found  " + iterator.getSize() + ")");
     LOGGER.info("Reading the original file size of each item and update size");
     int count = 1;
     File f;
     String path;
-    for (final Item item : items) {
-      try {
-        LOGGER.info(count + "/" + items.size());
-        final String contentId = contentService.findContentId(item.getId().toString());
-        path =
-            storageManager.transformUrlToPath(contentService.retrieveLazy(contentId).getOriginal());
-        f = new File(path);
-        final Dimension d = ImageUtils.getImageDimension(f);
-        if (d != null && d.width > 0 && d.height > 0) {
-          ImejiSPARQL
-              .execUpdate(JenaCustomQueries.insertFileSizeAndDimension(item.getId().toString(),
-                  Long.toString(f.length()), Long.toString(d.width), Long.toString(d.height)));
-        } else {
-          ImejiSPARQL.execUpdate(
-              JenaCustomQueries.insertFileSize(item.getId().toString(), Long.toString(f.length())));
-        }
+    while (iterator.hasNext()) {
+      List<Item> items = (List<Item>) iterator.next();
+      for (final Item item : items) {
+        try {
+          LOGGER.info(count + "/" + items.size());
+          final String contentId = contentService.findContentId(item.getId().toString());
+          path = storageManager
+              .transformUrlToPath(contentService.retrieveLazy(contentId).getOriginal());
+          f = new File(path);
+          final Dimension d = ImageUtils.getImageDimension(f);
+          if (d != null && d.width > 0 && d.height > 0) {
+            ImejiSPARQL
+                .execUpdate(JenaCustomQueries.insertFileSizeAndDimension(item.getId().toString(),
+                    Long.toString(f.length()), Long.toString(d.width), Long.toString(d.height)));
+          } else {
+            ImejiSPARQL.execUpdate(JenaCustomQueries.insertFileSize(item.getId().toString(),
+                Long.toString(f.length())));
+          }
 
-      } catch (final Exception e) {
-        LOGGER.error("Error updating file size and dimension of item " + item.getIdString() + " : "
-            + e.getMessage());
-      } finally {
-        count++;
+        } catch (final Exception e) {
+          LOGGER.error("Error updating file size and dimension of item " + item.getIdString()
+              + " : " + e.getMessage());
+        } finally {
+          count++;
+        }
       }
     }
+
     LOGGER.info("File sizes successfully refreshed!");
     return 1;
   }

@@ -91,7 +91,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @throws IOException
    */
   private void removeEmptyDirectories() throws IOException {
-    LOGGER.info("Removing empty directories from internal storage");
+    LOGGER.info("Removing empty directories from internal storage...");
     String path = internalStorageManager.getStoragePath();
     Files.walk(new File(path).toPath(), FileVisitOption.values())
         .filter(p -> p.toFile().isDirectory()).map(p -> p.toFile())
@@ -102,10 +102,10 @@ public class CleanInternalStorageJob implements Callable<Integer> {
             }
             Files.deleteIfExists(f.toPath());
           } catch (Exception e) {
-            LOGGER.info("Error deleting directory " + f.getAbsolutePath());
+            // Directory not deleted...
           }
         });
-    LOGGER.info("Directories cleaned");
+    LOGGER.info("Directories cleaned!");
   }
 
   /**
@@ -171,20 +171,26 @@ public class CleanInternalStorageJob implements Callable<Integer> {
     LOGGER.info("Repairing images");
     int count = 0;
     long start = System.currentTimeMillis();
-    for (ContentVO content : new ContentService().retrieveAllLazy()) {
-      if (hasOriginalFile(content)) {
-        try {
-          if (!hasAllResolution(content)) {
-            repair(content);
-            count++;
+    ContentService service = new ContentService();
+    ContentService.RetrieveIterator iterator = service.iterateAll(20);
+    while (iterator.hasNext()) {
+      List<ContentVO> list = (List<ContentVO>) iterator.next();
+      for (ContentVO content : list) {
+        if (hasOriginalFile(content)) {
+          try {
+            if (!hasAllResolution(content)) {
+              repair(content);
+              count++;
+            }
+          } catch (Exception e) {
+            LOGGER.error("Error repairing image", e);
           }
-        } catch (Exception e) {
-          LOGGER.error("Error repairing image", e);
+        } else {
+          LOGGER.fatal("File for content " + content.getId() + " not found!!! ");
         }
-      } else {
-        LOGGER.fatal("File for content " + content.getId() + " not found!!! ");
       }
     }
+
     LOGGER.info(count + " images repaired in " + (System.currentTimeMillis() - start) + " ms!");
     if (count > 0) {
       removeUnusedFiles();
@@ -198,14 +204,12 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void repair(ContentVO content) throws ImejiException {
-    content = new ContentService().retrieve(content.getId().toString());
     UploadResult res = new StorageController().upload(FilenameUtils.getName(content.getOriginal()),
         storage.read(content.getOriginal()));
     content.setThumbnail(res.getThumb());
     content.setPreview(res.getWeb());
     content.setFull(res.getFull());
     content.setOriginal(res.getOrginal());
-
     new ContentService().update(content);
   }
 

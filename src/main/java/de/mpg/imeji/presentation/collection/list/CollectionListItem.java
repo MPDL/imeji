@@ -14,12 +14,12 @@ import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.search.SearchQueryParser;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.presentation.navigation.Navigation;
-import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.CommonUtils;
 
 /**
@@ -44,6 +44,7 @@ public class CollectionListItem implements Serializable {
   private boolean isOwner = false;
   private CollectionImeji collection;
   private String logoUrl;
+  private final String fileUrl;
   /**
    * Maximum number of character displayed in the list for the description
    */
@@ -55,7 +56,8 @@ public class CollectionListItem implements Serializable {
    * @param collection
    * @param user
    */
-  public CollectionListItem(CollectionImeji collection, User user) {
+  public CollectionListItem(CollectionImeji collection, User user, String fileUrl) {
+    this.fileUrl = fileUrl;
     try {
       this.collection = collection;
       title = collection.getTitle();
@@ -77,10 +79,9 @@ public class CollectionListItem implements Serializable {
       // creationDate = collection.getCreated().getTime().toString();
       lastModificationDate = collection.getModified().getTime().toString();
       // initializations
-      SearchResult result = searchFirstCollectionItem(collection, user);
+      final SearchResult result = searchFirstCollectionItem(collection, user);
       size = result.getNumberOfItems();
       initLogo(collection, result);
-      // initSize(collection, user);
       if (user != null) {
         isOwner = collection.getCreatedBy().equals(user.getId());
       }
@@ -113,26 +114,14 @@ public class CollectionListItem implements Serializable {
    * @return
    */
   private String buildContentUrl(String itemUri) {
-    final Navigation navigation = (Navigation) BeanHelper.getApplicationBean(Navigation.class);
     final String itemId = ObjectHelper.getId(URI.create(itemUri));
-    return navigation.getFileUrl() + "?item=" + itemId + "&resolution=thumbnail";
-  }
-
-  /**
-   * Count the size of the collection
-   *
-   * @param user
-   * @throws UnprocessableError
-   */
-  private void initSize(CollectionImeji collection, User user) throws UnprocessableError {
-    final ItemService ic = new ItemService();
-    size = ic.search(collection.getId(), SearchQueryParser.parsedecoded("*"), null, Imeji.adminUser,
-        0, 0).getNumberOfRecords();
+    return fileUrl + "?item=" + itemId + "&resolution=thumbnail";
   }
 
   private SearchResult searchFirstCollectionItem(CollectionImeji collection, User user)
       throws UnprocessableError {
-    return new ItemService().search(collection.getId(), SearchQueryParser.parsedecoded("*"), null,
+    return new ItemService().search(collection.getId(),
+        new SearchFactory().and(new SearchPair(SearchFields.filename, "*")).build(), null,
         Imeji.adminUser, 1, 0);
   }
 

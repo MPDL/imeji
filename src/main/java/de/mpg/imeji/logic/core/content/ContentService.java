@@ -353,28 +353,22 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     LOGGER.info("Indexing Content...");
     final ElasticIndexer indexer =
         new ElasticIndexer(index, ElasticTypes.content, ElasticService.ANALYSER);
-    final List<ContentVO> contents = retrieveAll();
-    LOGGER.info("+++ " + contents.size() + " content to index +++");
-    indexer.indexBatch(contents);
+    final SearchServiceAbstract<ContentVO>.RetrieveIterator iterator = iterateAll(20);
+    LOGGER.info("+++ " + iterator.getSize() + " content to index +++");
+    int count = 0;
+    while (iterator.hasNext()) {
+      List<ContentVO> list = (List<ContentVO>) iterator.next();
+      indexer.indexBatch(list);
+      count = count + list.size();
+      LOGGER.info(count + "/" + iterator.getSize());
+    }
     LOGGER.info("Content reindexed!");
   }
 
-  /**
-   * Retrieve all {@link Item} (all status, all users) in imeji
-   *
-   * @return
-   * @throws ImejiException
-   */
-  public List<ContentVO> retrieveAll() throws ImejiException {
-    final List<String> ids =
-        ImejiSPARQL.exec(JenaCustomQueries.selectContentAll(), Imeji.contentModel);
-    return retrieveBatch(ids);
-  }
+  @Override
+  public List<String> searchAll() {
+    return ImejiSPARQL.exec(JenaCustomQueries.selectContentAll(), Imeji.contentModel);
 
-  public List<ContentVO> retrieveAllLazy() throws ImejiException {
-    final List<String> ids =
-        ImejiSPARQL.exec(JenaCustomQueries.selectContentAll(), Imeji.contentModel);
-    return retrieveBatchLazy(ids);
   }
 
 
@@ -423,33 +417,27 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @throws ImejiException
    */
   public void extractFulltextAndTechnicalMetadataForAllFiles() throws ImejiException {
-    final List<ContentVO> allContents = retrieveAll();
+    final SearchServiceAbstract<ContentVO>.RetrieveIterator iterator = iterateAll(20);
     int count = 1;
-    int countPart = 1;
-    List<ContentVO> contents = new ArrayList<>();
+
     final ContentService contentController = new ContentService();
-    for (final ContentVO contentVO : allContents) {
-      final boolean extracted = contentController.extractContent(contentVO);
-      count++;
-      if (extracted) {
-        countPart++;
-        contents.add(contentVO);
-        LOGGER.info(count + "/" + allContents.size() + " extracted (" + contentVO.getId() + ")");
-      } else {
-        LOGGER
-            .info(count + "/" + allContents.size() + " NOT extracted (" + contentVO.getId() + ")");
+    while (iterator.hasNext()) {
+      List<ContentVO> list = (List<ContentVO>) iterator.next();
+      List<ContentVO> extractedContents = new ArrayList<>();
+      for (final ContentVO contentVO : list) {
+        final boolean extracted = contentController.extractContent(contentVO);
+        count++;
+        if (extracted) {
+          extractedContents.add(contentVO);
+          LOGGER.info(count + "/" + iterator.getSize() + " extracted (" + contentVO.getId() + ")");
+        } else {
+          LOGGER.info(
+              count + "/" + iterator.getSize() + " NOT extracted (" + contentVO.getId() + ")");
+        }
       }
-      if (countPart > 100) {
-        // Update after 100 extraction to avoid to high memory consumption
-        LOGGER.info("Updating " + contents.size() + " content with extracted infos...");
-        contentController.updateBatch(contents);
-        contents = new ArrayList<>();
-        countPart = 1;
-        LOGGER.info("... done!");
-      }
+      LOGGER.info("Updating " + extractedContents.size() + " content with extracted infos...");
+      contentController.updateBatch(extractedContents);
     }
-    LOGGER.info("Updating " + contents.size() + " content with extracted infos...");
-    contentController.updateBatch(contents);
     LOGGER.info("... done!");
   }
 

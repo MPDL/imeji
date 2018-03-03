@@ -315,19 +315,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
     return itemController.retrieveBatchLazy(uris, user);
   }
 
-
-  /**
-   * Retrieve all {@link Item} (all status, all users) in imeji
-   *
-   * @return
-   * @throws ImejiException
-   */
-  public Collection<Item> retrieveAll(User user) throws ImejiException {
-    final List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
-    LOGGER.info(uris.size() + " items found, retrieving...");
-    return retrieveBatch(uris, -1, 0, user);
-  }
-
   /**
    * Update an {@link Item} in the database
    *
@@ -581,9 +568,16 @@ public class ItemService extends SearchServiceAbstract<Item> {
     final ElasticIndexer indexer =
         new ElasticIndexer(index, ElasticTypes.items, ElasticService.ANALYSER);
     LOGGER.info("Retrieving Items...");
-    final List<Item> items = (List<Item>) retrieveAll(Imeji.adminUser);
-    LOGGER.info("+++ " + items.size() + " items to index +++");
-    indexer.indexBatch(items);
+    final SearchServiceAbstract<Item>.RetrieveIterator iterator = iterateAll(500);
+    LOGGER.info("+++ " + iterator.getSize() + " items to index +++");
+    int count = 0;
+    while (iterator.hasNext()) {
+      List<Item> list = (List<Item>) iterator.next();
+      indexer.indexBatch(list);
+      count = count + list.size();
+      LOGGER.info(count + "/" + iterator.getSize());
+    }
+
     LOGGER.info("Items reindexed!");
   }
 
@@ -766,10 +760,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
   }
 
   @Override
-  public List<Item> retrieveAll() throws ImejiException {
-    final List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
-    LOGGER.info(uris.size() + " items found, retrieving...");
-    return (List<Item>) retrieveBatch(uris, -1, 0, Imeji.adminUser);
+  public List<String> searchAll() {
+    return ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
   }
 
   /**

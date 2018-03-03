@@ -119,6 +119,11 @@ public class FacetService extends SearchServiceAbstract<Facet> {
     return retrieveAllFromCache();
   }
 
+  @Override
+  public List<String> searchAll() {
+    return ImejiSPARQL.exec(JenaCustomQueries.selectFacetAll(), Imeji.facetModel);
+  }
+
   private void resetCache(List<Facet> facets) {
     cachedFacets = facets;
     cachedFacetsMapByIndex = cachedFacets.stream()

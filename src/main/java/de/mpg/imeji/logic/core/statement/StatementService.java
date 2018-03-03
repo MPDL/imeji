@@ -259,12 +259,9 @@ public class StatementService extends SearchServiceAbstract<Statement> {
   }
 
   @Override
-  public List<Statement> retrieveAll() throws ImejiException {
-    final List<String> uris =
-        ImejiSPARQL.exec(JenaCustomQueries.selectStatementAll(), Imeji.statementModel);
-    return retrieveBatch(uris, Imeji.adminUser);
+  public List<String> searchAll() {
+    return ImejiSPARQL.exec(JenaCustomQueries.selectStatementAll(), Imeji.statementModel);
   }
-
 
   public List<Statement> retrieveNotUsedStatements() throws ImejiException {
     return retrieveAll().stream().filter(s -> {

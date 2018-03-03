@@ -1,5 +1,7 @@
 package de.mpg.imeji.logic.generic;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -7,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -88,7 +91,85 @@ public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
    * @return
    * @throws ImejiException
    */
-  public abstract List<T> retrieveAll() throws ImejiException;
+  public List<T> retrieveAll() throws ImejiException {
+    return retrieve(searchAll(), Imeji.adminUser);
+  };
+
+  /**
+   * Search for all elements of type T and return the list of uri
+   * 
+   * @return
+   */
+  public abstract List<String> searchAll();
+
+  /**
+   * Iterate over all elements of Type T. Should be prefer to retreiveAll to avoid to create huge
+   * list of objects
+   * 
+   * @param stepSize
+   * @return
+   */
+  public RetrieveIterator iterateAll(int stepSize) {
+    return new RetrieveIterator(searchAll(), Imeji.adminUser, stepSize);
+  }
+
+  /**
+   * Interate over a list
+   * 
+   * @author saquet
+   *
+   */
+  public class RetrieveIterator implements Iterator<List<T>> {
+    private final Iterator<String> uriIterator;
+    private final User user;
+    private final int stepSize;
+    private final int size;
+
+    public RetrieveIterator(List<String> uris, User user, int stepSize) {
+      this.uriIterator = uris.iterator();
+      this.user = user;
+      this.stepSize = stepSize;
+      this.size = uris.size();
+    }
+
+    public int getSize() {
+      return size;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return uriIterator.hasNext();
+    }
+
+    @Override
+    public List<T> next() {
+      try {
+        return retrieve(next(stepSize), user);
+      } catch (ImejiException e) {
+        return new ArrayList<>();
+      }
+    }
+
+    /**
+     * Get next nth uris
+     * 
+     * @param stepSize
+     * @return
+     */
+    private List<String> next(int stepSize) {
+      List<String> uris = new ArrayList<>(stepSize);
+      while (uriIterator.hasNext() && uris.size() < stepSize) {
+        final String uri = (String) uriIterator.next();
+        uris.add(uri);
+      }
+      return uris;
+    }
+  }
+
+  public static void main(String[] args) {
+    List<String> uris = new ArrayList<>(120);
+    System.out.println(uris.size());
+  }
 
   /**
    * Job to retrieve the objects and return a Future

@@ -1,14 +1,12 @@
 package de.mpg.imeji.presentation.security;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
-import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.security.authorization.Authorization;
@@ -299,9 +297,8 @@ public class AuthorizationBean extends SuperBean implements Serializable {
    * @throws ImejiException
    */
   public boolean isUpdateAtLeastOneCollection() throws ImejiException {
-    List<CollectionImeji> collections = new CollectionService().retrieveAll();
-    for (CollectionImeji c : collections) {
-      if (authorization.update(getSessionUser(), c)) {
+    for (String uri : new CollectionService().searchAll()) {
+      if (authorization.update(getSessionUser(), uri)) {
         return true;
       }
     }

@@ -59,8 +59,17 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
     Collection<CollectionImeji> collections = new ArrayList<CollectionImeji>();
     search(offset, limit);
     setTotalNumberOfRecords(searchResult.getNumberOfRecords());
+    long a = System.currentTimeMillis();
     collections = controller.retrieve(searchResult.getResults(), getSessionUser());
-    return collections.stream().map(c -> new CollectionListItem(c, getSessionUser()))
+    long b = System.currentTimeMillis();
+    collections.stream().parallel()
+        .map(c -> new CollectionListItem(c, getSessionUser(), getNavigation().getFileUrl()))
+        .collect(Collectors.toList());
+    long d = System.currentTimeMillis();
+    System.out.println("RETRIEVE " + (b - a));
+    System.out.println("TO LIST ITEM " + (d - b));
+    return collections.stream()
+        .map(c -> new CollectionListItem(c, getSessionUser(), getNavigation().getFileUrl()))
         .collect(Collectors.toList());
   }
 

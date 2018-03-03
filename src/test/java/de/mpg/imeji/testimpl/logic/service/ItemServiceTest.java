@@ -503,7 +503,7 @@ public class ItemServiceTest extends SuperServiceTest {
   private void retrieveAll_Test(String msg, User user, String[] uris, Class exception) {
     ItemService itemService = new ItemService();
     try {
-      Collection<Item> itemList = itemService.retrieveAll(user);
+      Collection<Item> itemList = itemService.retrieveAll();
       if (exception != null) {
         Assert.fail(msg + ", no exception has been thrown");
       }
