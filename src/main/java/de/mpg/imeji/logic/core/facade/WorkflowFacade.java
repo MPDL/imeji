@@ -20,14 +20,16 @@ import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.util.LicenseUtil;
-import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
@@ -305,8 +307,9 @@ public class WorkflowFacade implements Serializable {
    * @throws UnprocessableError
    */
   private List<String> getItemIds(CollectionImeji c, User user) throws UnprocessableError {
-    return new ItemService()
-        .search(c.getId(), SearchQueryParser.parsedecoded("*"), null, user, -1, 0).getResults();
+    return new ItemService().search(c.getId(),
+        new SearchFactory().and(new SearchPair(SearchFields.filename, "*")).build(), null, user, -1,
+        0).getResults();
   }
 
 

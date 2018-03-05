@@ -36,7 +36,6 @@ import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
-import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -450,29 +449,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
       SortCriterion sortCri, User user, int size, int offset) {
     return search.searchWithFacets(searchQuery, sortCri, user,
         containerUri != null ? containerUri.toString() : null, offset, size);
-  }
-
-  /**
-   * load items of a container. Perform a search to load all items: is faster than to read the
-   * complete container
-   *
-   * @param c
-   * @param user
-   */
-  public CollectionImeji searchAndSetContainerItems(CollectionImeji c, User user, int limit,
-      int offset) {
-    SearchQuery q = null;
-    try {
-      q = SearchQueryParser.parsedecoded("*");
-    } catch (UnprocessableError e) {
-      LOGGER.error("Error parsing q=*", e);
-    }
-    final List<String> newUris = search(c.getId(), q, null, user, limit, 0).getResults();
-    c.getImages().clear();
-    for (final String s : newUris) {
-      c.getImages().add(URI.create(s));
-    }
-    return c;
   }
 
   /**

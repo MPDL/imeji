@@ -214,6 +214,11 @@ public class JenaCustomQueries {
         + "\"^^<http://www.w3.org/2001/XMLSchema#string> . ?content <http://imeji.org/terms/itemId> ?id} limit 1";
   }
 
+  public static final String selectContentByStorageId(String storageId) {
+    return "SELECT ?s WHERE {?s <http://imeji.org/terms/original> ?o . filter(regex(?o,'"
+        + storageId + "'))} limit 1";
+  }
+
   /**
    * Select the collection which have this logo
    * 
@@ -224,6 +229,17 @@ public class JenaCustomQueries {
     return X_PATH_FUNCTIONS_DECLARATION + XSD_DECLARATION
         + "SELECT DISTINCT ?s WHERE {?s <http://imeji.org/terms/logoUrl> <" + logoUrl
         + ">} limit 1";
+  }
+
+  /**
+   * Select the collection which have this logo
+   * 
+   * @param logoUrl
+   * @return
+   */
+  public static final String selectCollectionByLogoStorageId(String logoStorageId) {
+    return "SELECT ?s WHERE {?s <http://imeji.org/terms/logoUrl> ?o . filter(regex(str(?o),'"
+        + logoStorageId + "'))} limit 1";
   }
 
   /**

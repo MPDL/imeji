@@ -242,7 +242,7 @@ public class SearchQueryParser {
    * @return
    */
   private static String removeRelation(String s) {
-    return s.replace("AND", "").replace("OR", "").trim();
+    return s.replace(" AND", "").replace(" OR", "").trim();
   }
 
   /**
@@ -252,7 +252,7 @@ public class SearchQueryParser {
    * @return
    */
   private static boolean endsWithStopWord(String s) {
-    return s.endsWith("AND") || s.endsWith("OR")
+    return s.endsWith(" AND ") || s.endsWith(" OR ")
         || (s.endsWith(")") && !isEscaped(s.lastIndexOf("("), s));
   }
 

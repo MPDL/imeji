@@ -257,8 +257,12 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
   }
 
   public void delete(String contentId) throws ImejiException {
-    final StorageController storageController = new StorageController();
     final ContentVO contentVO = retrieveLazy(contentId);
+    delete(contentVO);
+  }
+
+  public void delete(ContentVO contentVO) throws ImejiException {
+    final StorageController storageController = new StorageController();
     try {
       storageController.delete(contentVO.getOriginal());
       storageController.delete(contentVO.getPreview());
@@ -353,7 +357,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
     LOGGER.info("Indexing Content...");
     final ElasticIndexer indexer =
         new ElasticIndexer(index, ElasticTypes.content, ElasticService.ANALYSER);
-    final SearchServiceAbstract<ContentVO>.RetrieveIterator iterator = iterateAll(20);
+    final SearchServiceAbstract<ContentVO>.RetrieveIterator iterator = iterateAll(50);
     LOGGER.info("+++ " + iterator.getSize() + " content to index +++");
     int count = 0;
     while (iterator.hasNext()) {

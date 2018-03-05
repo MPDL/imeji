@@ -113,6 +113,19 @@ public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
     return new RetrieveIterator(searchAll(), Imeji.adminUser, stepSize);
   }
 
+
+  /**
+   * Iterate over a search result
+   * 
+   * @param result
+   * @param user
+   * @param stepSize
+   * @return
+   */
+  public RetrieveIterator iterate(SearchResult result, User user, int stepSize) {
+    return new RetrieveIterator(result.getResults(), Imeji.adminUser, stepSize);
+  }
+
   /**
    * Interate over a list
    * 

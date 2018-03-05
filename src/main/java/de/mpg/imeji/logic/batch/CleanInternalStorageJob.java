@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -13,13 +14,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.content.ContentService;
-import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.ContentVO;
-import de.mpg.imeji.logic.model.Item;
-import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.UploadResult;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -38,22 +34,22 @@ import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
  *
  */
 public class CleanInternalStorageJob implements Callable<Integer> {
-  private final ItemService itemService = new ItemService();
   private final InternalStorageManager internalStorageManager = new InternalStorageManager();
   private final InternalStorage storage = new InternalStorage();
   private final Search search =
       SearchFactory.create(SearchObjectTypes.ALL, SEARCH_IMPLEMENTATIONS.JENA);
   private final static Logger LOGGER = Logger.getLogger(CleanInternalStorageJob.class);
+  private final HashSet<String> storageIdSet = initSetOfStorageId();
 
   @Override
   public Integer call() throws Exception {
+    LOGGER.info("Cleaning internal storage.");
     removeUnusedFiles();
     repairImages();
     removeEmptyDirectories();
     LOGGER.info("Internal storage cleaned.");
     return null;
   }
-
 
   /**
    * Remove all files which are not used by any content
@@ -62,7 +58,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @throws IOException
    */
   private void removeUnusedFiles() throws ImejiException, IOException {
-    LOGGER.info("Cleaning internal storage.");
+    LOGGER.info("Remove unused files...");
     String path = internalStorageManager.getStoragePath();
     int count = 0;
     for (Iterator<File> iterator = FileUtils.iterateFiles(new File(path), null, true); iterator
@@ -80,6 +76,35 @@ public class CleanInternalStorageJob implements Callable<Integer> {
     LOGGER.info(count + " files deleted from storage");
   }
 
+  /**
+   * Initialize a hashset with all storageIds
+   * 
+   * @return
+   */
+  private HashSet<String> initSetOfStorageId() {
+    LOGGER.info("Initializing Set of storage Ids...");
+    ContentService service = new ContentService();
+    ContentService.RetrieveIterator iterator = service.iterateAll(20);
+    HashSet<String> set = new HashSet<>(iterator.getSize());
+    while (iterator.hasNext()) {
+      List<ContentVO> list = (List<ContentVO>) iterator.next();
+      for (ContentVO content : list) {
+        set.add(internalStorageManager.getStorageId(content.getOriginal()));
+      }
+    }
+    LOGGER.info(
+        "Initializing Set of storage Ids done! (number of content found: " + set.size() + ")");
+    return set;
+  }
+
+  /**
+   * True if the File is used by a {@link ContentVO}
+   * 
+   * @param file
+   * @return
+   * @throws ImejiException
+   * @throws IOException
+   */
   private boolean isUsed(File file) throws ImejiException, IOException {
     final String url = internalStorageManager.transformPathToUrl(file.getAbsolutePath());
     return isUsedByAnItem(url) || isLogo(url) || isFileProperties(file);
@@ -116,12 +141,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private boolean isUsedByAnItem(String url) throws ImejiException {
-    try {
-      Item item = itemService.retrieveLazyForFile(url, Imeji.adminUser);
-      return item != null && item.getStatus() != Status.WITHDRAWN;
-    } catch (NotFoundException e) {
-      return false;
-    }
+    return storageIdSet.contains(internalStorageManager.getStorageId(url));
   }
 
   /**
@@ -131,16 +151,14 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @return
    */
   private boolean isLogo(String url) {
-    final List<String> r =
-        search.searchString(JenaCustomQueries.selectCollectionByLogoUrl(url), null, null, 0, -1)
-            .getResults();
+    final List<String> r = search.searchString(JenaCustomQueries.selectCollectionByLogoStorageId(
+        new InternalStorageManager().getStorageId(url)), null, null, 0, -1).getResults();
     if (!r.isEmpty() && r.get(0) != null) {
       return true;
     } else {
       return false;
     }
   }
-
 
   /**
    * True if the file is a "file.properties" and is not in an empty directory (i.e. the actual file
@@ -186,7 +204,8 @@ public class CleanInternalStorageJob implements Callable<Integer> {
             LOGGER.error("Error repairing image", e);
           }
         } else {
-          LOGGER.fatal("File for content " + content.getId() + " not found!!! ");
+          LOGGER.fatal("File for content " + content.getId() + " not found.. deleting content...");
+          service.delete(content);
         }
       }
     }
