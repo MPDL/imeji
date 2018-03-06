@@ -421,7 +421,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @throws ImejiException
    */
   public void extractFulltextAndTechnicalMetadataForAllFiles() throws ImejiException {
-    final SearchServiceAbstract<ContentVO>.RetrieveIterator iterator = iterateAll(20);
+    final SearchServiceAbstract<ContentVO>.RetrieveIterator iterator = iterateAll(10);
     int count = 1;
 
     final ContentService contentController = new ContentService();

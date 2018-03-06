@@ -24,7 +24,7 @@ public class StatementValidator extends ObjectValidator implements Validator<Sta
   public void validate(Statement statement, Method method) throws UnprocessableError {
     exception = new UnprocessableError();
 
-    if (indexAlreadyUsed(statement)) {
+    if (method != Method.UPDATE && indexAlreadyUsed(statement)) {
       exception = new UnprocessableError("Statement name already used", exception);
     }
 

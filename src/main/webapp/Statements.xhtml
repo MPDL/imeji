@@ -64,7 +64,7 @@
 										<span class="fa fa-pencil"/> #{lbl.edit}
 									</a>
 									<h:commandLink action="#{StatementsBean.toggleDefaultStatements(statement.uri.toString())}" styleClass="imj_overlayMenu imj_menuButton">
-										<f:ajax render=":defaultStatements @this"/>
+										<f:ajax execute="@this" render=":defaultStatements @this"/>
 										<span class="fa #{StatementsBean.isDefaultStatement(statement.uri.toString()) ? 'fa-star' : 'fa-star-o'}"/> #{lbl.statement_default}
 									</h:commandLink>
 									<h:outputLink value="#"  rendered="#{!StatementsBean.notUsed.contains(statement.index)}" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteStatement#{row.index}');">

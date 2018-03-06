@@ -84,7 +84,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
   private HashSet<String> initSetOfStorageId() {
     LOGGER.info("Initializing Set of storage Ids...");
     ContentService service = new ContentService();
-    ContentService.RetrieveIterator iterator = service.iterateAll(20);
+    ContentService.RetrieveIterator iterator = service.iterateAll(10);
     HashSet<String> set = new HashSet<>(iterator.getSize());
     while (iterator.hasNext()) {
       List<ContentVO> list = (List<ContentVO>) iterator.next();
@@ -190,7 +190,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
     int count = 0;
     long start = System.currentTimeMillis();
     ContentService service = new ContentService();
-    ContentService.RetrieveIterator iterator = service.iterateAll(20);
+    ContentService.RetrieveIterator iterator = service.iterateAll(5);
     while (iterator.hasNext()) {
       List<ContentVO> list = (List<ContentVO>) iterator.next();
       for (ContentVO content : list) {
