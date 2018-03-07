@@ -39,7 +39,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
   private final Search search =
       SearchFactory.create(SearchObjectTypes.ALL, SEARCH_IMPLEMENTATIONS.JENA);
   private final static Logger LOGGER = Logger.getLogger(CleanInternalStorageJob.class);
-  private final HashSet<String> storageIdSet = initSetOfStorageId();
+  private HashSet<String> storageIdSet;
 
   @Override
   public Integer call() throws Exception {
@@ -57,7 +57,8 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @throws ImejiException
    * @throws IOException
    */
-  private void removeUnusedFiles() throws ImejiException, IOException {
+  private synchronized void removeUnusedFiles() throws ImejiException, IOException {
+    storageIdSet = initSetOfStorageId();
     LOGGER.info("Remove unused files...");
     String path = internalStorageManager.getStoragePath();
     int count = 0;
@@ -84,7 +85,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
   private HashSet<String> initSetOfStorageId() {
     LOGGER.info("Initializing Set of storage Ids...");
     ContentService service = new ContentService();
-    ContentService.RetrieveIterator iterator = service.iterateAll(10);
+    ContentService.RetrieveIterator iterator = service.iterateAll(20);
     HashSet<String> set = new HashSet<>(iterator.getSize());
     while (iterator.hasNext()) {
       List<ContentVO> list = (List<ContentVO>) iterator.next();
@@ -223,8 +224,10 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @throws ImejiException
    */
   private void repair(ContentVO content) throws ImejiException {
+    LOGGER.info("Repairing content " + content.getId());
     UploadResult res = new StorageController().upload(FilenameUtils.getName(content.getOriginal()),
         storage.read(content.getOriginal()));
+    LOGGER.info("File " + res.getOrginal() + " created. Updating content:");
     content.setThumbnail(res.getThumb());
     content.setPreview(res.getWeb());
     content.setFull(res.getFull());
