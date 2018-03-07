@@ -38,9 +38,9 @@
 						#{lbl.statement_default}
 						<span class="imj_noDisplay">: </span>
 					</div>
-					<div class="imj_admindataValue">
-						<h:inputText id="defaultStatements" value="#{StatementsBean.defaultStatementsString}" styleClass="imj_admindataEdit" readonly="true"/>
-					</div>
+					<h:panelGroup id="defaultStatements" class="imj_admindataValue">
+						<h:inputText value="#{StatementsBean.defaultStatementsString}" styleClass="imj_admindataEdit" readonly="true"/>
+					</h:panelGroup>
 				</div>
 				<div class="imj_admindataSet">
 					<div class="imj_admindataLabel">
