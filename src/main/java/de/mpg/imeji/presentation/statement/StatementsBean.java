@@ -38,6 +38,7 @@ public class StatementsBean extends SuperBean {
   private LinkedHashMap<String, Statement> statements = new LinkedHashMap<>();
   private Set<String> notUsed = new HashSet<>();
   private List<String> defaultStatements = new ArrayList<>();
+  private String statementToDeleteUri;
 
   @PostConstruct
   public void init() {
@@ -69,6 +70,7 @@ public class StatementsBean extends SuperBean {
       Statement s = service.retrieve(uri, getSessionUser());
       service.delete(s, getSessionUser());
       removeFromDefaultStatements(s.getUri().toString());
+      BeanHelper.info("Statement successfully deleted");
       redirect(getNavigation().getApplicationUrl() + "statements");
     } catch (Exception e) {
       LOGGER.error("Error deleting statement", e);
@@ -157,6 +159,14 @@ public class StatementsBean extends SuperBean {
    */
   public void setNotUsed(Set<String> notUsed) {
     this.notUsed = notUsed;
+  }
+
+  public String getStatementToDeleteUri() {
+    return statementToDeleteUri;
+  }
+
+  public void setStatementToDeleteUri(String statementToDeleteUri) {
+    this.statementToDeleteUri = statementToDeleteUri;
   }
 
 }

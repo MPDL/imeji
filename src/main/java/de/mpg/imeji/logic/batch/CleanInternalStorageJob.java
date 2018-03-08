@@ -24,8 +24,8 @@ import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.impl.InternalStorage;
-import de.mpg.imeji.logic.storage.internal.InternalStorageItem;
 import de.mpg.imeji.logic.storage.internal.InternalStorageManager;
+import de.mpg.imeji.logic.util.StorageUtils;
 
 /**
  * Clea all unused files in the internal storage
@@ -246,31 +246,15 @@ public class CleanInternalStorageJob implements Callable<Integer> {
   }
 
   /**
-   * True if the {@link ContentVO} has all 3 resolution correctly stored
+   * True if the {@link ContentVO} has all 3 resolution correctly stored. The full resolution should
+   * be a jpg
    * 
    * @param item
    * @return
    */
   private boolean hasAllResolution(ContentVO content) {
-    final InternalStorageItem item = initInternalStorageItemFromContent(content);
-    return storage.read(item.getFullUrl()).exists() && storage.read(item.getWebUrl()).exists()
-        && storage.read(item.getThumbnailUrl()).exists();
-
-  }
-
-  /**
-   * Create a {@link InternalStorageItem} from a content
-   * 
-   * @param content
-   * @return
-   */
-  private InternalStorageItem initInternalStorageItemFromContent(ContentVO content) {
-    final String originalUrl = content.getOriginal();
-    final InternalStorageItem item = new InternalStorageItem();
-    item.setOriginalUrl(originalUrl);
-    item.setFullUrl(storage.getFullResolutionUrl(originalUrl));
-    item.setWebUrl(storage.getWebResolutionUrl(originalUrl));
-    item.setThumbnailUrl(storage.getThumbnailUrl(originalUrl));
-    return item;
+    return storage.read(content.getFull()).exists() && storage.read(content.getPreview()).exists()
+        && storage.read(content.getThumbnail()).exists()
+        && StorageUtils.compareExtension("jpg", FilenameUtils.getExtension(content.getFull()));
   }
 }

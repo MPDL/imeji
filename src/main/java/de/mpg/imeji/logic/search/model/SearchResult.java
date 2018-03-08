@@ -20,7 +20,7 @@ public class SearchResult {
   private final int numberOfItems;
   private final int numberOfItemsOfCollection;
   private final int numberOfSubcollections;
-  private final List<String> results;
+  private List<String> results;
   private String query = null;
   private SortCriterion sort;
   private List<FacetResult> facets;
@@ -69,6 +69,10 @@ public class SearchResult {
 
   public List<String> getResults() {
     return results;
+  }
+
+  public void setResults(List<String> results) {
+    this.results = results;
   }
 
   public String getQuery() {

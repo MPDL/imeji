@@ -149,13 +149,14 @@ public class ElasticSearch implements Search {
    */
   private SearchResult searchWithScroll(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, int from, int size, boolean addFacets) {
+    // final int scrollSize = size < SEARCH_MAX_SIZE ? size : SEARCH_MAX_SIZE;
     final ElasticQueryFactory factory =
         new ElasticQueryFactory(query, type).folderUri(folderUri).user(user);
     final QueryBuilder q = factory.build();
     final QueryBuilder f = factory.buildBaseQuery();
     SearchRequestBuilder request = ElasticService.getClient()
         .prepareSearch(ElasticService.DATA_ALIAS).setScroll(new TimeValue(60000)).setNoFields()
-        .setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).setFrom(from).addSort("_type", SortOrder.ASC)
+        .setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).addSort("_type", SortOrder.ASC)
         .addSort(ElasticSortFactory.build(sortCri));
     if (f != null) {
       request.setQuery(f).setPostFilter(q);
@@ -165,20 +166,25 @@ public class ElasticSearch implements Search {
     if (addFacets) {
       request = addAggregations(request, folderUri);
     }
-
     SearchResponse resp = request.execute().actionGet();
     SearchResult result = toSearchResult(resp, query);
-    while (true) {
+    result.setResults(scrollHitIds(resp, from, size));
+    return result;
+  }
+
+  private List<String> scrollHitIds(SearchResponse resp, int from, int size) {
+    List<String> hitIds = new ArrayList<>(getHitIds(resp));
+    while (hitIds.size() < from + size) {
       resp = ElasticService.getClient().prepareSearchScroll(resp.getScrollId())
           .setScroll(new TimeValue(60000)).execute().actionGet();
       if (resp.getHits().getHits().length == 0) {
         break;
       }
-      result = addSearchResult(result, resp);
+      hitIds.addAll(getHitIds(resp));
     }
-    ElasticService.getClient().prepareClearScroll().addScrollId(resp.getScrollId()).execute()
-        .actionGet();
-    return result;
+    return hitIds.size() > from
+        ? hitIds.subList(from, from + size < hitIds.size() ? from + size : hitIds.size())
+        : new ArrayList<>();
   }
 
   @Override
@@ -264,5 +270,11 @@ public class ElasticSearch implements Search {
     return result;
   }
 
-
+  private List<String> getHitIds(SearchResponse resp) {
+    final List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
+    for (final SearchHit hit : resp.getHits()) {
+      ids.add(hit.getId());
+    }
+    return ids;
+  }
 }

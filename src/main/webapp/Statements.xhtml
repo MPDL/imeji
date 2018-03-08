@@ -38,9 +38,9 @@
 						#{lbl.statement_default}
 						<span class="imj_noDisplay">: </span>
 					</div>
-					<h:panelGroup id="defaultStatements" class="imj_admindataValue">
-						<h:inputText value="#{StatementsBean.defaultStatementsString}" styleClass="imj_admindataEdit" readonly="true"/>
-					</h:panelGroup>
+					<div class="imj_admindataValue">
+						<h:inputText id="defaultStatements" value="#{StatementsBean.defaultStatementsString}" styleClass="imj_admindataEdit" readonly="true"/>
+					</div>
 				</div>
 				<div class="imj_admindataSet">
 					<div class="imj_admindataLabel">
@@ -67,20 +67,15 @@
 										<f:ajax execute="@this" render=":defaultStatements @this"/>
 										<span class="fa #{StatementsBean.isDefaultStatement(statement.uri.toString()) ? 'fa-star' : 'fa-star-o'}"/> #{lbl.statement_default}
 									</h:commandLink>
-									<h:outputLink value="#"  rendered="#{!StatementsBean.notUsed.contains(statement.index)}" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteStatement#{row.index}');">
+									<h:commandLink action="#{StatementsBean.setStatementToDeleteUri(statement.uri)}" rendered="#{!StatementsBean.notUsed.contains(statement.index)}"  title="#{lbl.user_admin_delete}" styleClass="imj_overlayMenu imj_menuButton" onclick="openDialog('deleteStatement');">
+										<f:ajax execute="@this" render=":del:f"/>
 										<span class="fa fa-trash"/> #{lbl.delete}
-									</h:outputLink>
+									</h:commandLink>
 									<ui:fragment rendered="#{StatementsBean.notUsed.contains(statement.index)}">
 										<div class="imj_overlayMenu imj_menuButton" title="#{lbl.statement_used}">
 											<span class="fa fa-lock"/> <span>#{lbl.locked}</span>
 										</div>
 									</ui:fragment>
-									<dialog:confirmationDialog id="del" submitAction="delete"
-										bean="#{StatementsBean}"
-										confirmationText="#{lbl.confirmation_delete_statement}"
-										submitLabel="#{lbl.delete}"
-										dialogId="deleteStatement#{row.index}" identifierName="uri"
-										identifierValue="#{statement.uri.toString()}" />
 									<a href="#{Navigation.applicationUrl}browse?q=index=#{statement.indexUrlEncoded}" target="_blank"  class="imj_overlayMenu imj_menuButton"> 
 										<span class="fa fa-search "/> #{lbl.view_items_with_statement}
 									</a>
@@ -91,5 +86,11 @@
 				</h:form>
 			</div>
 		</ui:fragment>
+	</ui:define>
+	<ui:define name="modalDialogs_from_site">
+		<h:panelGroup id="dialogs">
+			<dialog:confirmationDialog id="del" submitAction="delete" bean="#{StatementsBean}" confirmationText="#{lbl.confirmation_delete_statement}"
+				submitLabel="#{lbl.delete}" dialogId="deleteStatement#{row.index}" identifierName="uri" identifierValue="#{StatementsBean.statementToDeleteUri}" />
+		</h:panelGroup>
 	</ui:define>
 </ui:composition>

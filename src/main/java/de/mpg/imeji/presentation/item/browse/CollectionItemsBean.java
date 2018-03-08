@@ -86,7 +86,7 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   private int getCollectionSize() {
-    return new ItemService().search(collection.getId(), null, null, Imeji.adminUser, 1, -1)
+    return new ItemService().search(collection.getId(), null, null, Imeji.adminUser, 0, 0)
         .getNumberOfRecords();
   }
 
