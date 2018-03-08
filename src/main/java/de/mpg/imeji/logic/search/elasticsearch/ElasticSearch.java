@@ -79,6 +79,7 @@ public class ElasticSearch implements Search {
   private SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
       int from, int size, boolean addFacets) {
     size = size == -1 ? size = SEARCH_MAX_SIZE : size;
+    from = from < 0 ? 0 : from;
     if (size < SEARCH_MAX_SIZE && from + size < ELASTIC_FROM_SIZE_LIMIT) {
       return searchSinglePage(query, sortCri, user, folderUri, from, size, addFacets);
     } else {

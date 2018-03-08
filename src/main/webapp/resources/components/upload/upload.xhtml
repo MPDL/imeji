@@ -96,7 +96,14 @@
 				}
 			}
 			function addUploadErrorMessage(filename, error){
-				document.getElementById('imj_pageMessageArea').innerHTML += '<div  class="imj_message imj_messageError"><span class="fa fa-exclamation" style="margin-right: 10px;"/><span class="imj_messageAreaCloseBtn" onclick="this.parentElement.style.display=\'none\';">x</span>'+ filename + ' #{lbl.not_uploaded}: ' + error +'</div>';
+				var errors = document.getElementById('uploadError');
+				if(errors == null){
+					document.getElementById('imj_pageMessageArea').innerHTML += '<div id="uploadError" class="imj_message imj_messageError"><span class="fa fa-exclamation" style="margin-right: 10px;"/><span class="imj_messageAreaCloseBtn" onclick="document.getElementById(\'uploadError\').remove();">x</span>'+ filename + ' #{lbl.not_uploaded}: ' + error +'</div>';
+				}
+				else{
+					errors.innerHTML +='<br/><span class="fa fa-exclamation" style="margin-right: 10px;"/>' + filename + ' #{lbl.not_uploaded}: ' + error ;
+
+				}
 			}
 			function stopUploader(){
 				uploader.stop();
