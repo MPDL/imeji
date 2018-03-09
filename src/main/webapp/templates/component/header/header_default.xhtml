@@ -60,14 +60,15 @@
 	</div>
 	<span id="navTop"/>
 	<h:panelGroup layout="block" id="imj_pageMessageArea" class="imj_pageMessageArea">
-           <ui:repeat var="message" value="#{MessagesBean.messages}" varStatus="status">
-           	 <div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
+    	<ui:repeat var="message" value="#{MessagesBean.messages}" varStatus="status">
+        	<div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
            		<span class="imj_messageAreaCloseBtn" onclick="$(this).parent().slideUp(500);">x</span>
            		<span class="fa #{message.severity == 'ERROR 2' ? 'fa-exclamation' : 'fa-check'} fa-size-1" style="margin-right: 10px;"> </span>
            		<h:outputText value="#{MessagesBean.getDetails(message)}" escape="false"/>
            	</div>
-           </ui:repeat>
-       </h:panelGroup>
+    	</ui:repeat>
+    	<script>setTimeout(function() { $('.imj_messageSuccess').slideUp(200); }, 3000);</script>
+    </h:panelGroup>
 	<div class="imj_navigation">
 		<menu:mainMenu id="navigation" navBean="#{Navigation}" curMainMenu="#{currentMainMenu}" userHasAdminRights="#{Auth.sysAdmin}"/>
 	</div>

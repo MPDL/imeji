@@ -90,6 +90,7 @@ public class LoginBean extends SuperBean {
   }
 
   public void doLogin() {
+    BeanHelper.cleanMessages();
     final String instanceName = Imeji.CONFIG.getInstanceName();
     if (StringHelper.isNullOrEmptyTrim(getLogin())) {
       return;
@@ -98,14 +99,17 @@ public class LoginBean extends SuperBean {
     try {
       final User user = auth.doLogin();
       sessionBean.setUser(user);
-      BeanHelper.cleanMessages();
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_in", getLocale()));
+      redirectAfterLogin();
     } catch (final InactiveAuthenticationError e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in_inactive", getLocale()));
     } catch (final AuthenticationError e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in", getLocale())
           .replace("XXX_INSTANCE_NAME_XXX", instanceName));
     }
+  }
+
+  private void redirectAfterLogin() {
     if (isNullOrEmptyTrim(redirect)) {
       // HistoryPage current = getHistory().getCurrentPage();
       if (!requestUrl.equals(getNavigation().getRegistrationUrl())
@@ -115,7 +119,6 @@ public class LoginBean extends SuperBean {
         redirect = getNavigation().getHomeUrl();
       }
     }
-
     try {
       redirect(redirect);
     } catch (IOException e) {

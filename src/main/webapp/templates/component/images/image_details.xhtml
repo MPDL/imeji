@@ -59,12 +59,13 @@
 			<img id="picWebResolution_Withdrawn" title="#{itemBean.image.filename}" alt="#{itemBean.image.filename}" src="#{Navigation.applicationUrl}resources/icon/discarded.png"/>
 		</a>
 	</h:panelGroup>
-	<span id="itemMetadata"/>
+	
 	<!-- MetaDataList - START -->
 	<div class="imj_metadataList">
 		<!-- MetaDataList - LIST BODY START -->
 		<h:panelGroup id="metadata" layout="block" styleClass="imj_listBody">
 			<!-- Edit Metadata -->
+			<span id="itemMetadata"/>
 			<item:editMetadata id="editor" formBean="#{itemBean.editor}" itemBean="#{itemBean}" rendered="#{itemBean.edit and !itemBean.locked}"/>
 			<!-- View metadata -->
 			<item:viewMetadata id="viewer" itemBean="#{itemBean}" rendered="#{!itemBean.edit}"/>

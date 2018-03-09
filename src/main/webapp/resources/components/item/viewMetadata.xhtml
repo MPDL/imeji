@@ -188,8 +188,8 @@
 			<div class="imj_sectionTitle">
 	   			<span>#{lbl.technical_metadata}</span>
 	   			<h:form>
-					<h:commandLink class="showSection" html5:data-section="itemTechMd"  action="#{cc.attrs.itemBean.showTechnicalMetadata}" onclick="window.location.hash = '#techmetadata';">
-						<f:ajax render=":viewer:itemTechMd"/>
+					<h:commandLink class="showSection" html5:data-section="itemTechMd"  action="#{cc.attrs.itemBean.showTechnicalMetadata}" >
+						<f:ajax render=":viewer:itemTechMd" onevent="function(data){if(data.status === 'success'){$('html, body').animate({ scrollTop: $('#techMd').offset().top }, 200);}}"/>
 						<span class="fa fa-angle-right" />
 					</h:commandLink>
 				</h:form>
@@ -197,7 +197,7 @@
 					<span class="fa fa-angle-down" /> 
 				</a>
 	   		</div>  
-			<div class="imj_section"/><br/>
+			<div class="imj_section" id="techMd"/><br/>
 			<h:panelGroup layout="block" id="itemTechMd" class="itemTechMd">
 				<ui:fragment rendered="#{cc.attrs.itemBean.item.status != 'WITHDRAWN'}">
 					<div class="imj_metadataSet">

@@ -11,7 +11,7 @@
 	
 	<composite:implementation>
 		<h:form id="f">
-			<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" onclick="window.location.href = '#itemMetadata';startLoader()">
+			<h:commandLink rendered="#{Auth.update}" action="#{cc.attrs.itemBean.showEditor}" onclick="startLoader();window.location.href = '#itemMetadata'">
 				 <span class="fa fa-pencil"/>#{lbl.edit}
 				 <f:ajax render=":metadata :loader"/>
 			</h:commandLink>

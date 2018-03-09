@@ -186,6 +186,7 @@ public class UserBean extends SuperBean {
       user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
       try {
         controller.update(user, getSessionUser());
+        BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_save", getLocale()));
         reloadPage();
       } catch (final UnprocessableError e) {
         BeanHelper.error(e, getLocale());
