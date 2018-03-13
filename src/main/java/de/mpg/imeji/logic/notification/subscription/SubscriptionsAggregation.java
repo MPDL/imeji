@@ -62,7 +62,9 @@ public class SubscriptionsAggregation implements Aggregation {
         Map<String, List<Message>> messages = getMessagesForUser(user);
         if (isNotEmpty(messages)) {
           String emailBody = createEmailBody(user, messages);
-          sendEmail(user, emailBody);
+          if (!StringHelper.isNullOrEmptyTrim(emailBody)) {
+            sendEmail(user, emailBody);
+          }
         }
       }
     } catch (Exception e) {
@@ -104,6 +106,9 @@ public class SubscriptionsAggregation implements Aggregation {
   private String createEmailBody(User user, Map<String, List<Message>> messages) {
     String collectionSummaries = messages.keySet().stream()
         .map(id -> getCollectionSummary(id, messages, user)).collect(Collectors.joining());
+    if (StringHelper.isNullOrEmptyTrim(collectionSummaries)) {
+      return "";
+    }
     String body = Imeji.RESOURCE_BUNDLE.getMessage("email_subscribtion_body", Locale.ENGLISH)
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
         .replaceAll("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname())
