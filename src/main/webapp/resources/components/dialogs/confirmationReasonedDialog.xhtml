@@ -2,7 +2,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:composite="http://java.sun.com/jsf/composite">
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	
 	<composite:interface>
 		<composite:attribute name="bean" required="true"/>
@@ -23,7 +24,7 @@
 				</div>
 				<div class="imj_confirmationReasonTextarea">
 					<h:outputLabel value="#{lbl.withdraw_comment}" for="discardComment"/>
-					<h:inputTextarea id="discardComment" value="#{cc.attrs.bean.discardComment}" valueChangeListener="#{cc.attrs.bean.discardCommentListener}" styleClass="imj_dialogReasonText">
+					<h:inputTextarea html5:data-loader="false"  id="discardComment" value="#{cc.attrs.bean.discardComment}" valueChangeListener="#{cc.attrs.bean.discardCommentListener}" styleClass="imj_dialogReasonText">
 						<f:ajax execute="@this" render="buttonDiscard" event="keyup"/>
 					</h:inputTextarea>
 				</div>

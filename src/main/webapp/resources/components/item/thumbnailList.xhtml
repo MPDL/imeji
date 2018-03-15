@@ -3,7 +3,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:composite="http://java.sun.com/jsf/composite"
-	xmlns:imj="http://java.sun.com/jsf/composite/components">
+	xmlns:imj="http://java.sun.com/jsf/composite/components"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	<composite:interface>
 		<composite:attribute name="picList"/>
 	</composite:interface>
@@ -26,7 +27,7 @@
 										</a>
 									</ui:fragment>
 									<span>
-										<h:selectBooleanCheckbox id="sel" rendered="#{item.status != 'WITHDRAWN' and !item.isCollection()}" styleClass="imj_optionCheckbox"  value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
+										<h:selectBooleanCheckbox html5:data-loader="false" id="sel" rendered="#{item.status != 'WITHDRAWN' and !item.isCollection()}" styleClass="imj_optionCheckbox"  value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
 											<f:ajax event="change" execute="@this" render=":actions"/>
 										</h:selectBooleanCheckbox>
 										<label for="sel" class="#{item.isCollection() ? 'folder' : ''}">

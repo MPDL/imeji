@@ -102,7 +102,9 @@
 										<div class="imj_metadataValue">
 											<div class="imj_metadataValueEntry">
 												<a href="#{HistorySession.previousPage.completeUrl}" class="imj_cancelButton">#{lbl.cancel}</a>
-												<h:commandButton action="#{UserCreationBean.create}"  value="#{lbl.save}" styleClass="imj_submitButton"><f:ajax execute="@form" render="@all"/></h:commandButton> * #{lbl.required}
+												<h:commandButton action="#{UserCreationBean.create}"  value="#{lbl.save}" styleClass="imj_submitButton">
+													<f:ajax execute="@form" render="@all"/>
+												</h:commandButton> * #{lbl.required}
 											</div>
 										</div>
 									</div>

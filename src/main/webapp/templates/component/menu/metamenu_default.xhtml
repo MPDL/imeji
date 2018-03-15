@@ -40,7 +40,8 @@
 			<!-- CSS Switcher -->
 			<ui:fragment rendered="#{Configuration.alternativeCss != null and Configuration.alternativeCss != ''}">
 				<h:form id="cssForm">
-                    <h:commandLink id="go" value="&#160;" action="#{SessionBean.toggleCss()}" styleClass="imj_metaMenuItem fa fa-desktop" title="Style"/>
+                    <h:commandLink id="go" value="&#160;" action="#{SessionBean.toggleCss()}" styleClass="imj_metaMenuItem fa fa-desktop" title="Style">
+                    </h:commandLink>
 				</h:form>
 			</ui:fragment>
 					

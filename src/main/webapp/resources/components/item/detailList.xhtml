@@ -3,7 +3,8 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:composite="http://java.sun.com/jsf/composite"
-      xmlns:imjc="http://java.sun.com/jsf/composite/components">
+      xmlns:imjc="http://java.sun.com/jsf/composite/components"
+      xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
     <composite:interface>
         <composite:attribute name="listBean" required="true" shortDescription="The bean for all items"/>
@@ -25,13 +26,13 @@
 				
                 <h:column>
                     <f:facet name="header">
-                        <h:selectBooleanCheckbox disabled="#{cc.attrs.listBean.collection.status == 'WITHDRAWN'}" value="#{cc.attrs.listBean.allSelected}" valueChangeListener="#{cc.attrs.listBean.changeAllSelected}">
+                        <h:selectBooleanCheckbox  disabled="#{cc.attrs.listBean.collection.status == 'WITHDRAWN'}" value="#{cc.attrs.listBean.allSelected}" valueChangeListener="#{cc.attrs.listBean.changeAllSelected}">
                         	<f:ajax event="change" execute="@this" render="@form :actions"/>
                         </h:selectBooleanCheckbox>
                         &#160;
                     </f:facet>
 
-                    <h:selectBooleanCheckbox style="#{o.isCollection() ? 'visibility: hidden' : ''}" disabled="#{o.status == 'WITHDRAWN'}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{o.selected}" valueChangeListener="#{o.selectedChanged}">
+                    <h:selectBooleanCheckbox html5:data-loader="false" style="#{o.isCollection() ? 'visibility: hidden' : ''}" disabled="#{o.status == 'WITHDRAWN'}" styleClass="imj_optionCheckbox" id="pictureCheckbox" value="#{o.selected}" valueChangeListener="#{o.selectedChanged}">
                         <f:ajax event="change" execute="@this" render=":actions"/>
                     </h:selectBooleanCheckbox>
                 </h:column>
