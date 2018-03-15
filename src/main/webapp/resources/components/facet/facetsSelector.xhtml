@@ -73,7 +73,7 @@
 					</ui:repeat>
 					<ui:fragment rendered="#{entry.values.size() >  Configuration.facetDisplayed}">
 						<div class="imj_facetValue">
-							<h:commandLink  value="#{entry.showMore ? lbl.less : lbl.more}" action="#{entry.toggleShowMore}" onclick="this.innerHTML =''; this.className='fa fa-spinner fa-spin fa-3x fa-fw'">
+							<h:commandLink html5:data-loader="false" value="#{entry.showMore ? lbl.less : lbl.more}" action="#{entry.toggleShowMore}" onclick="this.innerHTML =''; this.className='fa fa-spinner fa-spin fa-3x fa-fw'">
 								<f:ajax render="@form"/>
 								<span class="#{entry.showMore ? 'fa fa-caret-up'  : 'fa fa-caret-down'}"></span>
 							</h:commandLink>
