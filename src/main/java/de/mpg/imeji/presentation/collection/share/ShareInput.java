@@ -59,6 +59,9 @@ public class ShareInput implements Serializable {
       shareWithValidEmails();
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_share", locale));
       return this.unknownEmails.isEmpty();
+    } else {
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getLabel("invalid_email", locale) + ": "
+          + invalidEntries.stream().collect(Collectors.joining(", ")));
     }
     return false;
   }

@@ -2,7 +2,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:composite="http://java.sun.com/jsf/composite">
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	
 	<composite:interface>
 		<composite:attribute name="licenseEditor"/>
@@ -15,7 +16,7 @@
 			<ui:fragment rendered="#{!cc.attrs.licenseEditor.showInput}">
 			<div class="imj_metadataSet">
 				<h:outputLabel value="#{lbl.select}" styleClass="imj_metadataLabel"/>
-				<h:selectOneMenu value="#{cc.attrs.licenseEditor.licenseName}" styleClass="imj_metadataValue">
+				<h:selectOneMenu value="#{cc.attrs.licenseEditor.licenseName}" styleClass="imj_metadataValue" html5:data-loader="false">
 					<f:selectItems value="#{cc.attrs.licenseEditor.licenseMenu}"/>
 					<f:ajax listener="#{cc.attrs.licenseEditor.licenseMenuListener}" render="#{cc.attrs.render}"/>
 				</h:selectOneMenu>

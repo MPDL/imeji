@@ -47,7 +47,7 @@
 			<!-- Language -->
 			<ui:fragment rendered="#{InternationalizationBean.internationalizedLanguages.size() > 1}">
 				<h:form id="langForm">
-					<h:selectOneMenu id="sel" value="#{InternationalizationBean.currentLanguage}" onchange="document.getElementById('langForm:submitLang').click();" valueChangeListener="#{InternationalizationBean.currentlanguageListener}" styleClass="imj_metaMenuItemSelect">
+					<h:selectOneMenu id="sel" value="#{InternationalizationBean.currentLanguage}" onchange="document.getElementById('langForm:go').click();" valueChangeListener="#{InternationalizationBean.currentlanguageListener}" styleClass="imj_metaMenuItemSelect">
 						<f:selectItems value="#{InternationalizationBean.internationalizedLanguages}"/>
 					</h:selectOneMenu>
 					<h:commandButton  id="go" action="#{InternationalizationBean.changeLanguage}" value="Change language" styleClass="imj_noDisplay">

@@ -24,9 +24,9 @@
 							class="imj_cancelButton">
 							#{lbl.cancel}
 						</a>
-						<h:commandButton id="btnSaveStatement" action="#{StatementEditBean.save()}"
-						 value="#{lbl.save}"
-						styleClass="imj_submitButton" />
+						<h:commandButton id="btnSaveStatement" action="#{StatementEditBean.save()}"  value="#{lbl.save}" styleClass="imj_submitButton">
+							<f:ajax execute="@form" render="@all"/>
+						</h:commandButton>
 						<a href="#{Navigation.applicationUrl}browse?q=index=#{StatementEditBean.statement.indexUrlEncoded}" target="_blank"  class="imj_overlayMenu imj_menuButton"> 
 					<span class="fa fa-search "/> #{lbl.view_items_with_statement}
 				</a>

@@ -27,9 +27,8 @@
 		</div>
 		<div id="selectStatementDialog" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText" style="display:none;">
 			<div style="margin-bottom: 1em;">
-				<h:inputText id="filterMd"  value="#{cc.attrs.component.index}" html5:placeholder="#{lbl.filter_list}" autocomplete="off">
-					<f:ajax event="keyup" render="#{cc.attrs.containerId}:statementList #{cc.attrs.containerId}:buttons"
-						listener="#{cc.attrs.component.listener}" />
+				<h:inputText id="filterMd" html5:data-loader="false" value="#{cc.attrs.component.index}" html5:placeholder="#{lbl.filter_list}" autocomplete="off">
+					<f:ajax event="keyup" render="#{cc.attrs.containerId}:statementList #{cc.attrs.containerId}:buttons" listener="#{cc.attrs.component.listener}" />
 				</h:inputText>
 				<a style="float:right" onclick="closeDialog('selectStatementDialog');" class="imj_cancelButton">
 					#{lbl.cancel}
@@ -46,7 +45,7 @@
 				
 				<ui:repeat var="index" value="#{statementList}" varStatus="statusVar">
 					<p>
-						<h:commandLink value="#{index}" action="#{cc.attrs.bean[cc.attrs.submitAction]}" onclick="closeDialog('selectStatementDialog');startLoader();">
+						<h:commandLink value="#{index}" action="#{cc.attrs.bean[cc.attrs.submitAction]}" onclick="closeDialog('selectStatementDialog');">
 							<f:setPropertyActionListener target="#{cc.attrs.component.index}" value="#{index}" />
 							<f:ajax execute="@form" render="@form"  onevent="function(data){if(data.status === 'success'){ #{cc.attrs.onsuccess} }}"/>
 						</h:commandLink>

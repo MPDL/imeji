@@ -114,7 +114,7 @@
 						<h:outputText value="#{lbl.select_file_type}" />
 						<h:selectManyCheckbox
 							value="#{AdvancedSearchBean.formular.fileTypeSearchGroup.selected}"
-							valueChangeListener="#{AdvancedSearchBean.formular.fileTypeSearchGroup.listener}">
+							valueChangeListener="#{AdvancedSearchBean.formular.fileTypeSearchGroup.listener}"  html5:data-loader="false">
 							<f:selectItems
 								value="#{AdvancedSearchBean.formular.fileTypeSearchGroup.menu}" />
 							<f:ajax execute="@this" render=":imj_searchQueryMessageArea" />
@@ -131,7 +131,7 @@
 					<div class="imj_searchDetails">
 						<h:selectOneRadio class="select_has_license"
 							value="#{AdvancedSearchBean.formular.licenseSearchGroup.hasLicense}"
-							onchange="if(this.value == 'select'){$('.menu_select_license').show();}else{$('.menu_select_license').hide();}">
+							onchange="if(this.value == 'select'){$('.menu_select_license').show();}else{$('.menu_select_license').hide();}"  html5:data-loader="false">
 							<f:selectItem itemValue="all" itemLabel="#{lbl.all}" />
 							<f:selectItem itemValue="true" itemLabel="#{lbl.any_license}" />
 							<f:selectItem itemValue="false" itemLabel="#{lbl.no_license}" />

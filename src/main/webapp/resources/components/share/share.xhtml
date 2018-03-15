@@ -34,7 +34,7 @@
 						</h:selectOneRadio>
 						<div id="shareBtn">
 							<h:commandButton value="#{lbl.share} " action="#{ShareBean.share}" styleClass="imj_submitButton">
-									<f:ajax render="@form" execute="@form"/>
+									<f:ajax render="@form :imj_pageMessageArea" execute="@form"/>
 							</h:commandButton>
 							<h:selectBooleanCheckbox value="#{ShareBean.sendEmail}" id="selSendEmail"/>
 							<h:outputLabel for="selSendEmail" value="#{lbl.user_send_mail}"/>

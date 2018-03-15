@@ -22,10 +22,9 @@
 							class="imj_cancelButton">
 							#{lbl.cancel}
 						</a>
-						<h:commandButton id="btnCreateStatement" action="#{StatementCreateBean.save()}"
-						 value="#{lbl.save}"
-						styleClass="imj_submitButton" />
-						
+						<h:commandButton id="btnCreateStatement" action="#{StatementCreateBean.save()}"  value="#{lbl.save}" styleClass="imj_submitButton">
+							<f:ajax execute="@form" render="@all"/>
+						</h:commandButton>
 					</div>
 				</div>
 			</div>			

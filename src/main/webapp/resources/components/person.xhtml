@@ -2,7 +2,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:composite="http://java.sun.com/jsf/composite">
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 	
 	<composite:interface>
 		<composite:attribute name="person" type="java.lang.Object" required="true" shortDescription="@type: A Person"/>
@@ -141,10 +142,10 @@
 							<h:inputText id="inputOrgaName1" styleClass="imj_admindataEdit autocomplete_org" value="#{org.name}" rendered="#{cc.attrs.orgsSource == ''}"/>
 						</div>
 						 <span class="imj_inlineButtonGroup">
-							<h:commandLink styleClass="fa fa-plus-square-o"  title="#{lbl.add_organization}" action="#{PersonBean.addOrganization(index.index + 1)}">
+							<h:commandLink styleClass="fa fa-plus-square-o"  title="#{lbl.add_organization}" action="#{PersonBean.addOrganization(index.index + 1)}" html5:data-loader="false">
 								<f:ajax execute="#{containerId}" render="#{containerId}"/>
 							</h:commandLink>
-							<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_organization}" action="#{PersonBean.removeOrganization(index.index)}">
+							<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_organization}" action="#{PersonBean.removeOrganization(index.index)}" html5:data-loader="false">
 								<f:ajax execute="#{containerId}" render="#{containerId}"/>
 							</h:commandLink>
 						</span>

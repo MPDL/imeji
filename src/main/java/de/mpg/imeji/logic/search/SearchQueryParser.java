@@ -80,6 +80,7 @@ public class SearchQueryParser {
   public static void main(String[] args) throws UnprocessableError {
     String q =
         "rien du tout OR (title=this is an example AND ((description=\"Super Description\" OR created=2000)) OR (md.description=\"Other Description\" OR (md.created.number>=2000 AND md.created.number<50)))";
+    q = "(filetype=Image)+AND+license=no_license";
     SearchQuery sq;
     sq = parsedecoded(q);
     System.out.println(q);
@@ -252,7 +253,8 @@ public class SearchQueryParser {
    * @return
    */
   private static boolean endsWithStopWord(String s) {
-    return s.endsWith(" AND ") || s.endsWith(" OR ")
+    return (!s.trim().equals("AND") && s.endsWith(" AND "))
+        || (!s.trim().equals("OR") && s.endsWith(" OR "))
         || (s.endsWith(")") && !isEscaped(s.lastIndexOf("("), s));
   }
 

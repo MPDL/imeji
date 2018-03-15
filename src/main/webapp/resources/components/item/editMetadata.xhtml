@@ -64,11 +64,11 @@
 			</div>
 		</ui:repeat>
 		<div class="imj_submitPanel">
-			<h:commandLink styleClass="imj_cancelButton" action="#{cc.attrs.itemBean.cancelEditor}" onclick="startLoader(); window.location.hash = '#pageTitle';">
+			<h:commandLink styleClass="imj_cancelButton" action="#{cc.attrs.itemBean.cancelEditor}" onclick="window.location.hash = '#pageTitle';">
 				<h:outputText value="#{lbl.cancel}"/>
 				<f:ajax execute="@form" render=":metadata :imj_pageMessageArea"/>
 			</h:commandLink>
-			<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.save}" value="#{lbl.save}" onclick="startLoader();window.location.hash = '#pageTitle';">
+			<h:commandLink type="submit" styleClass="imj_submitButton" action="#{itemBean.save}" value="#{lbl.save}" onclick="window.location.hash = '#pageTitle';">
 				<f:ajax execute="@form" render=":metadata :imj_pageMessageArea"/>
 			</h:commandLink>
 		</div>

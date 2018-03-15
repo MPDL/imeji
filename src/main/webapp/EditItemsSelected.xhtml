@@ -20,9 +20,6 @@
 				var leftPos = $('.last').offset().left;
 				$(".edit_selected_table_wrapper").animate({scrollLeft: leftPos}, 800);
 			}
-			function edit(id){
-				
-			}
 		</script>
 	</ui:define>
 	
@@ -67,14 +64,14 @@
 						<h:panelGroup rendered="#{EditItemsSelectedBean.totalNumberOfPages > 1}">
 							 #{lbl.view_page}:  
 							<ui:repeat var="number" value="#{EditItemsSelectedBean.pageList}">
-								<h:commandLink onclick="startLoader();" disabled="#{EditItemsSelectedBean.pageNumber == number}" action="#{EditItemsSelectedBean.gotToPage(number)}">
+								<h:commandLink disabled="#{EditItemsSelectedBean.pageNumber == number}" action="#{EditItemsSelectedBean.gotToPage(number)}">
 									<f:ajax execute="@form" render="@form"/>
 									<span> #{number} </span>
 								</h:commandLink>
 							</ui:repeat> 
 							<ui:fragment rendered="#{EditItemsSelectedBean.totalNumberOfPages - EditItemsSelectedBean.pageNumber > EditItemsSelectedBean.paginationLength / 2 }">
 									...
-									<h:commandLink onclick="startLoader();" action="#{EditItemsSelectedBean.gotToPage(EditItemsSelectedBean.totalNumberOfPages)}">
+									<h:commandLink action="#{EditItemsSelectedBean.gotToPage(EditItemsSelectedBean.totalNumberOfPages)}">
 										<f:ajax execute="@form" render="@form"/>
 										<span> #{EditItemsSelectedBean.totalNumberOfPages} </span>
 									</h:commandLink>
@@ -105,8 +102,7 @@
 										rendered="#{not EditItemsSelectedBean.displayedColumns.contains(head.statement.index)}">
 										<th class="columnHidden">
 											<h:commandLink class="fa fa-expand" title="#{lbl.show} #{head.statement.index}"
-												action="#{EditItemsSelectedBean.displayedColumns.add(head.statement.index)}"
-												onclick="startLoader();" >
+												action="#{EditItemsSelectedBean.displayedColumns.add(head.statement.index)}">
 												<f:ajax render="@form :additonalFooterScripts"/>
 											</h:commandLink>
 										</th>
@@ -125,13 +121,12 @@
 															<h:commandLink id="changeColumn"
 																styleClass="edit_selected_table_icon"
 																action="#{EditItemsSelectedBean.changeColumnName(head)}"
-																value="#{lbl.change}" title="#{lbl.change}"
-																onclick="startLoader();">
+																value="#{lbl.change}" title="#{lbl.change}">
 																<f:ajax execute="@form" render="@form :additonalFooterScripts" />
 															</h:commandLink>
 															<h:commandLink styleClass="edit_selected_table_icon"
 																action="#{head.setEdit(false)}" value="#{lbl.cancel}"
-																title="#{lbl.change_column_name}">
+																title="#{lbl.change_column_name}" html5:data-loader="false">
 																<f:ajax execute="@this"
 																	render=":list:#{status.index}:h" />
 															</h:commandLink>
@@ -149,37 +144,34 @@
 														<h:commandLink
 															styleClass="fa fa-pencil-square-o edit_selected_table_icon"
 															action="#{head.initInput}" value=""
-															title="#{lbl.edit_all}">
+															title="#{lbl.edit_all}" html5:data-loader="false">
 															<f:ajax execute="@this"
 																render=":list:#{status.index}:h" />
 														</h:commandLink>
 														<h:commandLink
 															styleClass="fa fa-times edit_selected_table_icon"
 															action="#{EditItemsSelectedBean.clearColumn(status.index)}"
-															value="" title="#{lbl.clear_all_values}"
-															onclick="startLoader();">
+															value="" title="#{lbl.clear_all_values}">
 															<f:ajax execute="@form" render="@form :additonalFooterScripts" />
 														</h:commandLink>
 														<h:commandLink
 															styleClass="fa fa-trash edit_selected_table_icon"
 															action="#{EditItemsSelectedBean.removeColumn(head.statement.index)}"
 															rendered="#{not EditItemsSelectedBean.isDefaultStatement(head.statement.index)}"
-															value="" title="#{lbl.remove_column}"
-															onclick="startLoader();">
+															value="" title="#{lbl.remove_column}">
 															<f:ajax execute="@form" render="@form :additonalFooterScripts" />
 														</h:commandLink>
 														<h:commandLink
 															styleClass="fa fa-cog edit_selected_table_icon"
 															action="#{head.setEdit(true)}" value=""
-															title="#{lbl.change_column_name}">
+															title="#{lbl.change_column_name}" html5:data-loader="false">
 															<f:ajax execute="@this"
 																render=":list:#{status.index}:h" />
 														</h:commandLink>
 														<h:commandLink
 															styleClass="fa fa-compress edit_selected_table_icon"
 															action="#{EditItemsSelectedBean.displayedColumns.remove(head.statement.index)}"
-															value="" title="#{lbl.hide_column}"
-															onclick="startLoader();">
+															value="" title="#{lbl.hide_column}">
 															<f:ajax execute="@form" render="@form :additonalFooterScripts" />
 														</h:commandLink>
 													</ui:fragment>
@@ -189,13 +181,12 @@
 													rendered="#{!empty head.input}">
 													<h:commandLink
 														action="#{EditItemsSelectedBean.addMetadataToColumn(status.index)}"
-														value="#{lbl.add_to_all}" title="#{lbl.add_to_all}"
-														onclick="startLoader();">
+														value="#{lbl.add_to_all}" title="#{lbl.add_to_all}">
 														<f:ajax execute="@form" render="@form :additonalFooterScripts" />
 													</h:commandLink>
 													<h:commandLink style="margin-left:1em;"
 														action="#{head.setInput(null)}" value="#{lbl.cancel}"
-														title="#{lbl.cancel}">
+														title="#{lbl.cancel}" html5:data-loader="false">
 														<f:ajax execute="@this" render=":list:#{status.index}:h" />
 													</h:commandLink>
 												</h:panelGroup>
@@ -223,7 +214,7 @@
 															 <md:output id="o" metadata="#{input.metadata}" compact="true" rendered="#{!cell.edit}"/>
 														</div>
 													</ui:repeat>
-													<h:commandLink  type="submit" id="ed" style="display:none" action="#{cell.showEdit}" value="" title="#{lbl.edit}">
+													<h:commandLink  type="submit" id="ed" style="display:none" action="#{cell.showEdit}" value="" title="#{lbl.edit}" html5:data-loader="false">
 														<f:ajax execute=":i:#{itemStatus.index}:m:#{status.index}:c" render=":i:#{itemStatus.index}:m:#{status.index}:c" onevent="function(data){if(data.status === 'success'){ #{cc.attrs.onsuccess} }}" />
 													</h:commandLink>
 												</ui:fragment>
@@ -231,12 +222,12 @@
 													<ui:repeat id="v" value="#{cell.inputs}" var="input" varStatus="inputStatus">
 														<div class="tableIn">
 															<md:input id="in" metadataInputComponent="#{input}" compact="true" rendered="#{cell.edit}"/>
-															<h:commandLink type="submit" id="del" styleClass="fa fa-times" action="#{cell.removeValue(inputStatus.index)}" value="" title="#{lbl.remove}">
+															<h:commandLink type="submit" id="del" styleClass="fa fa-times" action="#{cell.removeValue(inputStatus.index)}" value="" title="#{lbl.remove}" html5:data-loader="false">
 																<f:ajax execute=":i:#{itemStatus.index}:m:#{status.index}:c" render=":i:#{itemStatus.index}:m:#{status.index}:c" />
 															</h:commandLink>
 														</div>
 													</ui:repeat>
-													<h:commandLink type="submit" id="add" styleClass="fa fa-plus tableBtn" action="#{cell.addValue}" value="" title="#{lbl.add}" >
+													<h:commandLink type="submit" id="add" styleClass="fa fa-plus tableBtn" action="#{cell.addValue}" value="" title="#{lbl.add}" html5:data-loader="false" >
 														<f:ajax execute=":i:#{itemStatus.index}:m:#{status.index}:c" render=":i:#{itemStatus.index}:m:#{status.index}:c" />
 													</h:commandLink>
 												</ui:fragment>
@@ -250,7 +241,9 @@
 				</div>
 				<div id="saveSelected" class="editSelectedFooter">
 					<a href="#{EditItemsSelectedBean.backUrl}" class="imj_cancelButton" onclick="startLoader();">#{lbl.cancel}</a>
-					<h:commandLink type="submit" styleClass="imj_submitButton" action="#{EditItemsSelectedBean.save}" value="#{lbl.save}" onclick="startLoader();"/>
+					<h:commandLink type="submit" styleClass="imj_submitButton" action="#{EditItemsSelectedBean.save}" value="#{lbl.save}">
+						<f:ajax execute="@form" render="@all"/>
+					</h:commandLink>
 				</div>
 			</h:form>
 		</div>

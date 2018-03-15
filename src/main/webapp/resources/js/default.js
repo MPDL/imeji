@@ -376,11 +376,14 @@ jsf.ajax.addOnEvent(function(data) {
     var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
     switch (ajaxstatus) {
         case "begin":
+        	if(data.source.dataset.loader != 'false'){
+        		startLoader();
+        	}
             break;
         case "complete":
-        	stopLoader();
         	break;
         case "success":
+        	stopLoader();
             break;
     }
 });

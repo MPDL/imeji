@@ -492,9 +492,9 @@ public class JenaCustomQueries {
    * @param index
    * @return
    */
-  public static final String selectStatementByIndex(String index) {
-    return "SELECT ?s WHERE {?s <http://imeji.org/terms/index> \"" + index
-        + "\"^^<http://www.w3.org/2001/XMLSchema#string>}";
+  public static final String selectStatementTypeByIndex(String index) {
+    return "SELECT (str(?type) as ?s) WHERE {?statement <http://imeji.org/terms/index> \"" + index
+        + "\"^^<http://www.w3.org/2001/XMLSchema#string> . ?statement <http://purl.org/dc/terms/type> ?type}";
   }
 
 

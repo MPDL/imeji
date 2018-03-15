@@ -518,7 +518,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       }
     }
     return getNumberOfSubCollections() < getElementsPerPage() * getCurrentPageNumber()
-        && searchResult.getNumberOfItemsOfCollection() > 0;
+        && searchResult != null && searchResult.getNumberOfItemsOfCollection() > 0;
   }
 
   public void setAllSelected(boolean b) {

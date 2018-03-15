@@ -48,7 +48,7 @@
 										<h:inputText name="to"  styleClass="imj_facetInput" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
 									</div>
 									<div class="imj_facetGoLinkContainer">
-										<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go}" action="#{entry.search(HistorySession.currentPage, cc.attrs.itemsBean.query)}" onclick="startLoader();">
+										<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go}" action="#{entry.search(HistorySession.currentPage, cc.attrs.itemsBean.query)}" >
 											<f:ajax execute="@form" render="@none"/>
 										</h:commandLink>
 									</div>
@@ -63,7 +63,7 @@
 										<h:inputText name="to" styleClass="imj_facetInput datepicker" value="#{entry.to}" html5:placeholder="#{lbl.to}" />
 									</div>
 									<div class="imj_facetGoLinkContainer">
-										<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go}" action="#{entry.search(HistorySession.currentPage, cc.attrs.itemsBean.query)}" onclick="startLoader();">
+										<h:commandLink styleClass="imj_facetValue" value="#{lbl.paginator_go}" action="#{entry.search(HistorySession.currentPage, cc.attrs.itemsBean.query)}">
 											<f:ajax execute="@form" render="@none"/>
 										</h:commandLink> 
 									</div>

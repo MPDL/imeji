@@ -36,7 +36,9 @@
 							</h:commandLink>
 						</ui:fragment>
 						<ui:fragment rendered="#{node.collection.status == 'PENDING' or cc.attrs.hasLicense}">
-							<h:commandLink disabled="#{disabled}" value="#{node.collection.title}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId, node.collection)}"  onclick="startLoader();closeDialog('moveDialog');"/>	
+							<h:commandLink disabled="#{disabled}" value="#{node.collection.title}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId, node.collection)}"  onclick="closeDialog('moveCol');closeDialog('moveItem');closeDialog('moveSelected');">
+								<f:ajax render="@all"/>
+							</h:commandLink>
 						</ui:fragment>
 					</ui:fragment>
 					<ui:fragment rendered="#{cc.attrs.upload}">

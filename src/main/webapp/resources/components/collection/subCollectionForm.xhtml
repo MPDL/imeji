@@ -24,19 +24,19 @@
 						#{lbl.cancel}
 					</a>
 			 		<h:commandButton id="btnCreateSubcollection"  action="#{SubCollectionFormBean.create(cc.attrs.parentCollection)}"  value="#{lbl.add_subcollection}" 
-			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.postAction == null}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.postAction == null}" onclick="closeDialog('#{cc.attrs.dialogId}')">
 			 			<f:ajax render="@none" execute="@form"/>
 			 		</h:commandButton>
 			 		<h:commandButton id="btnCreateAndUpload"  action="#{SubCollectionFormBean.createAndUpload()}"  value="#{lbl.add_subcollection}" 
-			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.postAction == 'upload'}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.postAction == 'upload'}" onclick="closeDialog('#{cc.attrs.dialogId}');">
 			 			<f:ajax render="@none" execute="@form"/>
 			 		</h:commandButton>
 			 		<h:commandButton id="btnCreateAndMove"  action="#{SubCollectionFormBean.createAndMove(MoveItemsBean)}"  value="#{lbl.add_subcollection} #{lbl.and_small} #{lbl.move}" 
-			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.postAction == 'move'}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection == null and cc.attrs.postAction == 'move'}" onclick="closeDialog('#{cc.attrs.dialogId}')">
 			 			<f:ajax render="@none" execute="@form"/>
 			 		</h:commandButton>
 			 		<h:commandButton id="btnEditSubcollection"  action="#{SubCollectionFormBean.edit(cc.attrs.collection)}" value="#{lbl.edit_subcollection}" 
-			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection != null}" onclick="closeDialog('#{cc.attrs.dialogId}');startLoader();">
+			 						styleClass="imj_submitButton" rendered="#{cc.attrs.collection != null}" onclick="closeDialog('#{cc.attrs.dialogId}')">
 			 			<f:ajax render="@none" execute="@form"/>
 			 		</h:commandButton>
 				</div>

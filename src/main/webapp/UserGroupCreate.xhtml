@@ -52,7 +52,7 @@
 									</a>
 									<h:commandButton action="#{UserGroup.create()}"
 									 value="#{lbl.save}"
-									styleClass="imj_submitButton" />
+									styleClass="imj_submitButton"><f:ajax execute="@form" render="@all"/></h:commandButton>
 									
 								</div>
 							</div>

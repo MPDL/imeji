@@ -24,7 +24,7 @@ public class StatementValidator extends ObjectValidator implements Validator<Sta
   public void validate(Statement statement, Method method) throws UnprocessableError {
     exception = new UnprocessableError();
 
-    if (method != Method.UPDATE && indexAlreadyUsed(statement)) {
+    if (indexAlreadyUsed(statement)) {
       exception = new UnprocessableError("Statement name already used", exception);
     }
 
@@ -43,8 +43,11 @@ public class StatementValidator extends ObjectValidator implements Validator<Sta
     final Search search =
         SearchFactory.create(SearchObjectTypes.STATEMENT, SEARCH_IMPLEMENTATIONS.JENA);
     final SearchResult result = search.searchString(
-        JenaCustomQueries.selectStatementByIndex(statement.getIndex()), null, null, 0, -1);
-    return result.getNumberOfRecords() > 0;
+        JenaCustomQueries.selectStatementTypeByIndex(statement.getIndex()), null, null, 0, -1);
+    if (result.getNumberOfRecords() > 0) {
+      return !result.getResults().get(0).equals(statement.getType().name());
+    }
+    return false;
   }
 
 }

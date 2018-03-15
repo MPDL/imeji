@@ -45,7 +45,7 @@
 							<span class="fa fa-ban"/>#{lbl.items_withdraw}
 						</a>
 					</ui:fragment>
-					<h:commandLink onclick="startLoader();" action="#{cc.attrs.itemsBean.selectNone}" id="lnkSelectNone" >
+					<h:commandLink action="#{cc.attrs.itemsBean.selectNone}" id="lnkSelectNone" >
 						<span class="fa fa-times"/>#{lbl.select_none}
 						<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
 					</h:commandLink>

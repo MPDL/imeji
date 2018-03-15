@@ -26,19 +26,19 @@
 									<ui:repeat var="sortItem" value="#{cc.attrs.filterBean.sortMenu}" varStatus="spos">
 										<li class="imj_overlayMenuListItem">
 											<span style="margin:0; padding:0; #{cc.attrs.filterBean.selectedSortCriterion != sortItem.value ?  'visibility: hidden' : ''} " class="fa fa-check" />
-											<h:commandLink action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}" onclick="startLoader();">
+											<h:commandLink action="#{cc.attrs.filterBean.changeSelectedSortCriterion(sortItem.value)}" value="#{sortItem.label}"  >
 												<f:ajax execute="@this" render="@form :ajaxWrapper :imj_pageMessageArea"/>
 											</h:commandLink>
 										</li>
 									</ui:repeat>
 								</ul>
 							</div>
-							<h:commandLink value="" action="#{cc.attrs.filterBean.changeSelectedSortCriterion(cc.attrs.filterBean.selectedSortCriterion)}"   onclick="startLoader();">
+							<h:commandLink value="" action="#{cc.attrs.filterBean.changeSelectedSortCriterion(cc.attrs.filterBean.selectedSortCriterion)}">
 								<f:ajax execute="@this" render="@form  :ajaxWrapper :imj_pageMessageArea"/>
 								<span class="imj_radio fa #{cc.attrs.filterBean.selectedSortOrder == 'ASCENDING' ? 'fa-dot-circle-o' : 'fa-circle-o' }" ></span>
 							</h:commandLink>
 							<span>#{lbl.ascending}</span>
-							<h:commandLink value="" action="#{cc.attrs.filterBean.changeSelectedSortCriterion(cc.attrs.filterBean.selectedSortCriterion)}"   onclick="startLoader();">
+							<h:commandLink value="" action="#{cc.attrs.filterBean.changeSelectedSortCriterion(cc.attrs.filterBean.selectedSortCriterion)}">
 								<f:ajax execute="@this" render="@form :ajaxWrapper :imj_pageMessageArea"/>
 								<span class="imj_radio  fa #{cc.attrs.filterBean.selectedSortOrder == 'DESCENDING' ? 'fa-dot-circle-o' : 'fa-circle-o' }" ></span>
 							</h:commandLink>

@@ -21,11 +21,11 @@
 				<div class="imj_overlayMenu">
 					<div class="imj_menuHeader">
 					  	<h:form id="f">
-							<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectAll}"  id="all" title="#{lbl.select_all_on_page}"  styleClass="selectAll" rendered="#{!cc.attrs.facetBean.allSelected}" style="margin-right: 1em;">
+							<h:commandLink action="#{cc.attrs.facetBean.selectAll}"  id="all" title="#{lbl.select_all_on_page}"  styleClass="selectAll" rendered="#{!cc.attrs.facetBean.allSelected}" style="margin-right: 1em;">
 								#{lbl.select_all_on_page}
 								<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
 							</h:commandLink>
-							<h:commandLink onclick="startLoader();" action="#{cc.attrs.facetBean.selectNone}" id="none" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{not empty SessionBean.selected}">
+							<h:commandLink  action="#{cc.attrs.facetBean.selectNone}" id="none" title="#{lbl.select_none}"  styleClass="selectNone" rendered="#{not empty SessionBean.selected}">
 								#{lbl.select_none}
 								<f:ajax execute="@this" render=":ajaxWrapper :actions"/>
 							</h:commandLink>
@@ -50,19 +50,19 @@
 									<ui:repeat var="sortItem" value="#{cc.attrs.facetBean.sortMenu}" varStatus="spos">
 										<li class="imj_overlayMenuListItem">
 											<span style="margin:0; padding:0; #{cc.attrs.facetBean.selectedSortCriterion != sortItem.value ?  'visibility: hidden' : ''} " class="fa fa-check" />
-											<h:commandLink value="#{sortItem.label}" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}"   onclick="startLoader();">
+											<h:commandLink value="#{sortItem.label}" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(sortItem.value)}">
 												<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 											</h:commandLink>
 										</li>
 									</ui:repeat>
 								</ul>
 							</div>
-							<h:commandLink value="" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(cc.attrs.facetBean.selectedSortCriterion)}"   onclick="startLoader();">
+							<h:commandLink value="" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(cc.attrs.facetBean.selectedSortCriterion)}">
 								<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 								<span class="imj_radio fa #{cc.attrs.facetBean.selectedSortOrder == 'ASCENDING' ? 'fa-dot-circle-o' : 'fa-circle-o' }" ></span>
 							</h:commandLink>
 							<span style="margin-right: 1em !important;">#{lbl.ascending}</span>
-							<h:commandLink value="" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(cc.attrs.facetBean.selectedSortCriterion)}"   onclick="startLoader();">
+							<h:commandLink value="" action="#{cc.attrs.facetBean.changeSelectedSortCriterion(cc.attrs.facetBean.selectedSortCriterion)}">
 								<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
 								<span class="imj_radio  fa #{cc.attrs.facetBean.selectedSortOrder == 'DESCENDING' ? 'fa-dot-circle-o' : 'fa-circle-o' }" ></span>
 							</h:commandLink>

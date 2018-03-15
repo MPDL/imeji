@@ -34,7 +34,7 @@
 					</div>
 				</ui:fragment>
 				<ui:fragment rendered="#{MoveItemsBean.target != null}">
-					<h:inputText id="name" rendered="#{MoveItemsBean.toNewSubCollection}" html5:placeholder="#{lbl.name}" html5:autofocus="true" class="imj_mdInput" value="#{MoveItemsBean.newSubcollectionName}">
+					<h:inputText id="name" rendered="#{MoveItemsBean.toNewSubCollection}" html5:placeholder="#{lbl.name}" class="imj_mdInput" value="#{MoveItemsBean.newSubcollectionName}">
 						 <f:ajax/>
 					</h:inputText>
 					<br/><br/>
@@ -45,10 +45,12 @@
 						<license:licenseEditor licenseEditor="#{MoveItemsBean.licenseEditor}" containerId="move:form"/>
 						<br/>
 					</ui:fragment>
-					<a href="" onclick="closeDialog('moveItemsDialog');" class="imj_cancelButton">
+					<a href="" onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
 						#{lbl.cancel}
 					</a>
-					<h:commandButton class="imj_submitButton" value="#{lbl.move}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId)}"  onclick="startLoader();closeDialog('moveItemsDialog');"/>
+					<h:commandButton class="imj_submitButton" value="#{lbl.move}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId)}"  onclick="closeDialog('#{cc.attrs.dialogId}');">
+						<f:ajax render="@all"/>
+					</h:commandButton>
 				</ui:fragment>
 			</h:form>
 		</div>

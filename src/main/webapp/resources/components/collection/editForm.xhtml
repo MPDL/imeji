@@ -19,7 +19,7 @@
 		 	height: auto !important;
 		 }
 	</style>
-	<h:form id="form" onkeydown="if (event.keyCode == 13) { document.getElementById('editContainer:form:save').click(); return false; }">
+	<h:form id="form" onkeydown="if (event.keyCode == 13 &amp;&amp; document.activeElement.id == 'editContainer:form:inputTitleText') {document.getElementById('editContainer:form:save').click();}">
 		<div class="imj_descriptionArea">
 			<div class="imj_metadataSet">
 				<label class="imj_metadataLabel">#{lbl.title} *</label>
@@ -35,10 +35,10 @@
 						<div class="imj_sectionHeadline">
 							<h4>
 								<span class="imj_inlineButtonGroup"> 
-									<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAuthor(indexA.index)}">
+									<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAuthor(indexA.index)}" html5:data-loader="false">
 										<f:ajax execute=":editContainer:form:authors" render=":editContainer:form:authors" />
 									</h:commandLink>
-									<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_author}" action="#{cc.attrs.formularBean.removeAuthor(indexA.index)}">
+									<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_author}" action="#{cc.attrs.formularBean.removeAuthor(indexA.index)}" html5:data-loader="false">
 										<f:ajax execute=":editContainer:form:authors" render=":editContainer:form:authors" />
 									</h:commandLink>
 								</span>
@@ -57,10 +57,10 @@
 					<div class="imj_sectionHeadline">
 						<!-- Add/Remove Author buttons -->
 						<span class="imj_inlineButtonGroup"> 
-							<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAdditionalInfo(indexA.index)}">
+							<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAdditionalInfo(indexA.index)}" html5:data-loader="false">
 								<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos" />
 							</h:commandLink>
-							<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_author}" action="#{cc.attrs.formularBean.removeAdditionalInfo(indexA.index)}">
+							<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_author}" action="#{cc.attrs.formularBean.removeAdditionalInfo(indexA.index)}" html5:data-loader="false">
 								<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos" />
 							</h:commandLink>
 						</span>
@@ -80,7 +80,7 @@
 				</ui:repeat>
 				<div class="imj_sectionHeadline">
 					<span class="imj_inlineButtonGroup">
-						<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add} #{lbl.colUtil}" action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.additionalInformations.size())}">
+						<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add} #{lbl.colUtil}" action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.additionalInformations.size())}" html5:data-loader="false">
 							<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos" />
 						</h:commandLink>
 					</span>
@@ -109,7 +109,7 @@
 				<label class="imj_metadataLabel"></label>
 				<div class="imj_metadataValue">
 					<a href="#{HistorySession.previousPage.completeUrlWithHistory}" class="imj_cancelButton">#{lbl.cancel}</a>
-					<h:commandButton id="save" action="#{cc.attrs.formularBean.save}" value="#{lbl.save}" type="submit" styleClass="imj_submitButton" onclick="startLoader();window.location.hash = '#';">
+					<h:commandButton id="save" action="#{cc.attrs.formularBean.save}" value="#{lbl.save}"  styleClass="imj_submitButton">
 						<f:ajax render=":imj_pageMessageArea" execute="@form"/>
 					</h:commandButton>
 					* #{lbl.required}

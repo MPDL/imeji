@@ -25,7 +25,7 @@
 				
                 <h:column>
                     <f:facet name="header">
-                        <h:selectBooleanCheckbox disabled="#{cc.attrs.listBean.collection.status == 'WITHDRAWN'}" onclick="startLoader();"  value="#{cc.attrs.listBean.allSelected}" valueChangeListener="#{cc.attrs.listBean.changeAllSelected}">
+                        <h:selectBooleanCheckbox disabled="#{cc.attrs.listBean.collection.status == 'WITHDRAWN'}" value="#{cc.attrs.listBean.allSelected}" valueChangeListener="#{cc.attrs.listBean.changeAllSelected}">
                         	<f:ajax event="change" execute="@this" render="@form :actions"/>
                         </h:selectBooleanCheckbox>
                         &#160;
@@ -53,7 +53,7 @@
 
                 <h:column>
                     <f:facet name="header">
-                    	<h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('filename')}" value="#{lbl.filename}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'filename') ? 'imj_active' : ''}" onclick="startLoader();">
+                    	<h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('filename')}" value="#{lbl.filename}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'filename') ? 'imj_active' : ''}">
                     		<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
                     	</h:commandLink>
                     	 &#160;
@@ -76,7 +76,7 @@
 
                 <h:column headerClass="imj_colFiletype">
                     <f:facet name="header">
-                    	<h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('filetype')}" value="#{lbl.file_type}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'filetype') ? 'imj_active' : ''}" onclick="startLoader();">
+                    	<h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('filetype')}" value="#{lbl.file_type}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'filetype') ? 'imj_active' : ''}">
                     		<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
                     	</h:commandLink>
                     	 &#160;
@@ -87,7 +87,7 @@
 
                 <h:column headerClass="imj_colFiletype">
                     <f:facet name="header">
-                    	 <h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('filesize')}" value="#{lbl.file_size}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'filesize') ? 'imj_active' : ''}" onclick="startLoader();">
+                    	 <h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('filesize')}" value="#{lbl.file_size}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'filesize') ? 'imj_active' : ''}">
                     	 	<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
                     	 </h:commandLink>
                     	 &#160;
@@ -98,7 +98,7 @@
 
                 <h:column headerClass="imj_colDate">
                     <f:facet name="header" > 
-                    	<h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('modified')}" value="#{lbl.sort_date_mod}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'modified') ? 'imj_active' : ''}" onclick="startLoader();">
+                    	<h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('modified')}" value="#{lbl.sort_date_mod}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'modified') ? 'imj_active' : ''}">
                     		<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
                     	</h:commandLink>
                     	 &#160;

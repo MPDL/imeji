@@ -27,7 +27,7 @@
 				onclick="closeDialog('createStatementDialog'); return false;"
 				class="imj_cancelButton">#{lbl.cancel}</button>
 			<h:commandButton id="btnCreateStatement"
-				onclick="closeDialog('createStatementDialog');startLoader();"
+				onclick="closeDialog('createStatementDialog');"
 				action="#{cc.attrs.bean[cc.attrs.submitAction]}"
 				value="#{lbl.save}" class="imj_submitButton">
 				<f:ajax execute="@form" render="@form"/>

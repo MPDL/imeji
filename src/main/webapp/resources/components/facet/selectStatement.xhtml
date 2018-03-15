@@ -32,7 +32,7 @@
 					<ui:fragment rendered="#{cc.attrs.bean.isUsed(index.searchIndex)}">
 						<span class="fa fa-lock"/>  <span> #{lbl.facet_used}: </span>
 					</ui:fragment>
-					<h:commandLink value="#{index.index}" action="#{cc.attrs.bean.initFacet(index)}" onclick="closeDialog('selectStatementDialog');startLoader();" disabled="#{cc.attrs.bean.isUsed(index.searchIndex)}">
+					<h:commandLink value="#{index.index}" action="#{cc.attrs.bean.initFacet(index)}" onclick="closeDialog('selectStatementDialog');" disabled="#{cc.attrs.bean.isUsed(index.searchIndex)}">
 						<f:ajax execute="@form" render="@form" />
 					</h:commandLink>
 				</p>
