@@ -26,7 +26,7 @@
 						<div class="imj_searchInput">
 							<h:inputText value="#{AdvancedSearchBean.formular.textSearchGroup.query}" html5:autofocus="true"/>
 						</div>
-						<h:selectBooleanCheckbox style="margin-left: 50px;" value="#{AdvancedSearchBean.formular.textSearchGroup.includeFulltext}">
+						<h:selectBooleanCheckbox html5:data-loader="false" style="margin-left: 50px;" value="#{AdvancedSearchBean.formular.textSearchGroup.includeFulltext}">
 							<f:ajax render=":imj_searchQueryMessageArea" />
 						</h:selectBooleanCheckbox>
 						<h:outputLabel value="#{lbl.include_fulltext}" />
@@ -48,7 +48,7 @@
 						</ui:fragment>
 						<ui:fragment rendered="#{index.index > 0}">
 							<div class="imj_logicalDetailConnector">
-								<h:selectOneMenu id="selLogicalRelation" value="#{entry.logicalRelation}" styleClass="tiny_marginLExcl small_area0">
+								<h:selectOneMenu id="selLogicalRelation" value="#{entry.logicalRelation}" styleClass="tiny_marginLExcl small_area0" html5:data-loader="false">
 									<f:selectItems value="#{AdvancedSearchBean.operatorsMenu}"/>
 									<f:ajax execute="@form" render="@form :imj_searchQueryMessageArea" />
 								</h:selectOneMenu>
@@ -167,7 +167,7 @@
 							varStatus="pos">
 							<ui:fragment rendered="#{pos.index &gt; 0}">
 								<div class="imj_searchDetails">
-									<h:selectOneMenu id="selLogicalRelationTechnical"
+									<h:selectOneMenu id="selLogicalRelationTechnical" html5:data-loader="false"
 										value="#{tmd.relation}">
 										<f:selectItems value="#{AdvancedSearchBean.operatorsMenu}" />
 										<f:ajax execute="@form"
