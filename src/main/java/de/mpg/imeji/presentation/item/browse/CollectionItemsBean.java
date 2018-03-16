@@ -26,6 +26,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.collection.CollectionActionMenu;
 import de.mpg.imeji.presentation.item.license.LicenseEditor;
+import de.mpg.imeji.presentation.util.CommonUtils;
 
 /**
  * {@link ItemsBean} to browse {@link Item} of a {@link CollectionImeji}
@@ -47,6 +48,8 @@ public class CollectionItemsBean extends ItemsBean {
   private int size;
   private boolean showUpload = false;
   private LicenseEditor licenseEditor;
+  private String descriptionShort;
+  private static final int DESCRIPTION_MAX_SIZE = 330;
 
   /**
    * Initialize the bean
@@ -75,6 +78,10 @@ public class CollectionItemsBean extends ItemsBean {
       if (collection.getPersons().size() > 1) {
         authorsShort += " & " + (collection.getPersons().size() - 1) + " "
             + Imeji.RESOURCE_BUNDLE.getLabel("more_authors", getLocale());
+      }
+      descriptionShort = CommonUtils.removeTags(collection.getDescription());
+      if (descriptionShort != null && descriptionShort.length() > DESCRIPTION_MAX_SIZE) {
+        descriptionShort = descriptionShort.substring(0, DESCRIPTION_MAX_SIZE);
       }
       size = StringHelper.isNullOrEmptyTrim(getQuery()) ? getTotalNumberOfRecords()
           : getCollectionSize();
@@ -272,6 +279,10 @@ public class CollectionItemsBean extends ItemsBean {
 
   public int getNumberOfItemsOfCollection() {
     return getSearchResult().getNumberOfItemsOfCollection();
+  }
+
+  public String getDescriptionShort() {
+    return descriptionShort;
   }
 }
 

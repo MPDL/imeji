@@ -9,7 +9,8 @@
 	xmlns:menu="http://java.sun.com/jsf/composite/components/menu"
 	xmlns:col="http://java.sun.com/jsf/composite/components/collection"
 	xmlns:upload="http://java.sun.com/jsf/composite/components/upload"
-	xmlns:item="http://java.sun.com/jsf/composite/components/item">
+	xmlns:item="http://java.sun.com/jsf/composite/components/item"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
 	<ui:param name="paginatorListSessionBean" value="#{CollectionItemsBean}" />
 	<ui:param name="title" value="#{not empty CollectionItemsBean.query or not empty CollectionItemsBean.facetQueryString ? lbl.search_results : CollectionItemsBean.collection.title}" />
@@ -20,6 +21,9 @@
 	<ui:param name="imejiResource" value="#{CollectionItemsBean.collection}" />
 	<ui:param name="backLink1" value="#{not empty CollectionItemsBean.query or not empty CollectionItemsBean.facetQueryString ? browseToAllItemsUrl : ''}"/>
 	<ui:param name="backlinkTitle1" value="#{CollectionItemsBean.collection.title}"/>
+	<ui:param name="metaTitle" value="#{CollectionItemsBean.collection.title}"/>
+	<ui:param name="metaDescription" value="#{CollectionItemsBean.descriptionShort}"/>
+	<ui:param name="metaAuthor" value="#{CollectionItemsBean.authors}"/>
 
 	 <ui:define name="authorization">
 		 #{Auth.init(CollectionItemsBean.collection)}
@@ -68,7 +72,7 @@
 	 <ui:define name="actionsMenu">
 	 	<ui:fragment rendered="#{CollectionItemsBean.collection.status != 'WITHDRAWN'}">
 		 	<h:form id="colForm">
-				<h:commandLink id="upload" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_openUploadDialog" onclick="openDialog('uploadDialog');">
+				<h:commandLink id="upload" html5:data-loader="false" rendered="#{Auth.update}" action="#{CollectionItemsBean.setShowUpload(false)}" value="" styleClass="imj_openUploadDialog" onclick="openDialog('uploadDialog');">
 					<f:ajax render="@none"/>
 					<span class="fa fa-upload"/>#{lbl.upload}
 				</h:commandLink>

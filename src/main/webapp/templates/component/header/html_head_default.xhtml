@@ -9,8 +9,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>#{Configuration.instanceName} - #{title}</title>
     <link rel="shortcut icon" type="image/png" href="#{Configuration.faviconUrl}"/>
-    <ui:fragment rendered="#{Configuration.metaDescription != ''}">
+    <ui:fragment rendered="#{empty metaTitle}">
+        <meta name="Title" content="#{Configuration.instanceName} - #{title}"/>
+    </ui:fragment>
+    <ui:fragment rendered="#{not empty metaTitle}">
+        <meta name="Title" content="#{metaTitle}"/>
+    </ui:fragment>
+    <ui:fragment rendered="#{Configuration.metaDescription != '' and empty metaDescription}">
         <meta name="description" content="#{Configuration.metaDescription}"/>
+    </ui:fragment>
+    <ui:fragment rendered="#{not empty metaDescription}">
+        <meta name="description" content="#{metaDescription}"/>
+    </ui:fragment>
+    <ui:fragment rendered="#{Configuration.metaAuthor != '' and  empty metaAuthor}">
+        <meta name="author" content="#{Configuration.metaAuthor}"/>
+    </ui:fragment>
+    <ui:fragment rendered="#{not empty metaAuthor}">
+        <meta name="author" content="#{metaAuthor}"/>
     </ui:fragment>
    #{SessionBean.checkCss(Configuration.defaultCss, Configuration.alternativeCss)}
     <h:outputStylesheet name="css/theme_default/imeji.css" id="themeDefault" rendered="#{SessionBean.selectedCss == 'NONE'}"/>

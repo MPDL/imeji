@@ -14,8 +14,8 @@ import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration.HtmlSnippet;
-import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.config.ImejiFileTypes;
+import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.navigation.Navigation;
@@ -263,6 +263,14 @@ public class ConfigurationBean extends SuperBean {
    */
   public String getMetaDescription() {
     return Imeji.CONFIG.getMetaDescription();
+  }
+
+  public String getMetaAuthor() {
+    return Imeji.CONFIG.getMetaAuthor();
+  }
+
+  public void setMetaAuthor(String s) {
+    Imeji.CONFIG.setMetaAuthor(s);
   }
 
   /**

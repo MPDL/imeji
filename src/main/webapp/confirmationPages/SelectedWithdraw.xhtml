@@ -12,7 +12,7 @@
 					<h:outputText value="#{lbl.images_withdraw_comment}" styleClass="imj_messageError"/>
 					<h:outputText value="#{paginatorListSessionBean.initComment}"/>
 				</div>
-				<h:inputTextarea id="discardCommentS" value="#{paginatorListSessionBean.discardComment}" valueChangeListener="#{paginatorListSessionBean.discardCommentListener}" rows="2" styleClass="imj_dialogReasonText">
+				<h:inputTextarea id="discardComment" value="#{paginatorListSessionBean.discardComment}" valueChangeListener="#{paginatorListSessionBean.discardCommentListener}" rows="2" styleClass="imj_dialogReasonText">
 					<f:ajax execute="@this" render="buttonDiscardSW" event="keyup"/>
 				</h:inputTextarea>
 				<div class="imj_submitPanel">

@@ -301,12 +301,22 @@
 											data-target=".imj_admindataSet .imj_admindataValue textarea"
 											class="imj_clearInput fa fa-times"> </a>
 									</div>
-									<!-- Admin - Snippet Insert -->
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
+									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="Default CSS URL" />
+											<h:outputText value="HTML Meta Author" />
 											<span class="imj_noDisplay">: </span>
 										</div>
+										<div class="imj_admindataValue">
+											<h:inputTextarea value="#{Configuration.metaAuthor}"
+												styleClass="imj_admindataEdit imj_additionalCodeSnippet" />
+										</div>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> </a>
+									</div>
+									<!-- Admin - Snippet Insert -->
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">Default CSS URL</div>
 										<div class="imj_admindataValue">
 											<h:inputText value="#{Configuration.defaultCss}"
 												styleClass="imj_admindataEdit" />
@@ -314,27 +324,18 @@
 										<a href="javascript: void(0);"
 											data-target=".imj_admindataSet .imj_admindataValue input"
 											class="imj_clearInput fa fa-times"> </a>
-									</h:panelGroup>
-									<h:panelGroup layout="block" styleClass="imj_admindataSet"
-										rendered="#{Configuration.defaultCss != null and Configuration.defaultCss != ''}">
-										<div class="imj_admindataLabel">
-											<h:outputText value="Alternative CSS URL" />
-											<span class="imj_noDisplay">: </span>
-										</div>
+									</div>
+									<h:panelGroup layout="block" styleClass="imj_admindataSet" rendered="#{Configuration.defaultCss != null and Configuration.defaultCss != ''}">
+										<div class="imj_admindataLabel">Alternative CSS URL</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.alternativeCss}"
-												styleClass="imj_admindataEdit" />
+											<h:inputText value="#{Configuration.alternativeCss}" styleClass="imj_admindataEdit" />
 										</div>
 										<a href="javascript: void(0);"
 											data-target=".imj_admindataSet .imj_admindataValue input"
 											class="imj_clearInput fa fa-times"> </a>
 									</h:panelGroup>
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText
-												value="#{lbl.startPageFooterLogos} (#{lbl.html})" />
-											<span class="imj_noDisplay">: </span>
-										</div>
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">#{lbl.startPageFooterLogos} (#{lbl.html})</div>
 										<div class="imj_admindataValue">
 											<h:inputTextarea
 												value="#{Configuration.startPageFooterLogos}"
@@ -343,65 +344,39 @@
 										<a href="javascript: void(0);"
 											data-target=".imj_admindataSet .imj_admindataValue textarea"
 											class="imj_clearInput fa fa-times"> </a>
-									</h:panelGroup>
+									</div>
 
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.faviconUrl}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">#{lbl.faviconUrl}</div>
 										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.faviconUrl}"
-												styleClass="imj_admindataEdit" />
+											<h:inputText value="#{Configuration.faviconUrl}" styleClass="imj_admindataEdit" />
+										</div>
+										<a href="javascript: void(0);" data-target=".imj_admindataSet .imj_admindataValue input" class="imj_clearInput fa fa-times"> </a>
+									</div>
+
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">#{lbl.logoUrl}</div>
+										<div class="imj_admindataValue">
+											<h:inputText value="#{Configuration.logoUrl}" styleClass="imj_admindataEdit" />
 										</div>
 										<a href="javascript: void(0);"
 											data-target=".imj_admindataSet .imj_admindataValue input"
 											class="imj_clearInput fa fa-times"> </a>
-									</h:panelGroup>
-
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.logoUrl}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.logoUrl}"
-												styleClass="imj_admindataEdit" />
-										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue input"
-											class="imj_clearInput fa fa-times"> </a>
-									</h:panelGroup>
+									</div>
 									
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.thumbnail_width}"/>
-											<span class="imj_noDisplay">: </span>
-										</div>
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">#{lbl.thumbnail_width}</div>
 										<div class="imj_admindataValue">
 											<h:inputText value="#{Configuration.thumbnailWidth}" styleClass="imj_admindataEdit"/>
 										</div>
-									</h:panelGroup>
+									</div>
 									
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.web_resolution_width}"/>
-											<span class="imj_noDisplay">: </span>
-										</div>
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">#{lbl.web_resolution_width}</div>
 										<div class="imj_admindataValue">
 											<h:inputText value="#{Configuration.webResolutionWidth}" styleClass="imj_admindataEdit"/>
 										</div>
-									</h:panelGroup>
-									
-									<h:panelGroup layout="block" styleClass="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.number_of_lines_in_thumbnail_list}"/>
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.numberOfLinesInThumbnailList}" styleClass="imj_admindataEdit"/>
-										</div>
-									</h:panelGroup>
+									</div>
 									
 								</div>
 							</div>
