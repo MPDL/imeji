@@ -99,10 +99,12 @@
 			   				if(data.fullScreen) {
 			   					viewerFull.gestureSettingsMouse.scrollToZoom = true;
 			   					viewerFull.gestureSettingsTouch.scrollToZoom = true;
+			   					document.getElementById("seadragon-viewer-full").style.background= '#000';
 			   				}
 			   				else{
 			   					viewerFull.gestureSettingsMouse.scrollToZoom = false;
 			   					viewerFull.gestureSettingsTouch.scrollToZoom = false;
+			   					document.getElementById("seadragon-viewer-full").style.background= '';
 			   				}
 			   				viewerFull.viewport.goHome(true);
 			   			});
