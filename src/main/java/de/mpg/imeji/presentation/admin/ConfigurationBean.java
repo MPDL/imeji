@@ -546,6 +546,29 @@ public class ConfigurationBean extends SuperBean {
   public String getTermsOfUseUrl() {
     return Imeji.CONFIG.getTermsOfUseUrl() != null ? Imeji.CONFIG.getTermsOfUseUrl() : "";
   }
+  
+  
+  
+  
+  public void setPrivacyPolicy(String s) {
+	    Imeji.CONFIG.setPrivacyPolicy(s);
+	    }
+
+  public String getPrivacyPolicy() {
+    return Imeji.CONFIG.getPrivacyPolicy() != null ? Imeji.CONFIG.getPrivacyPolicy() : "";
+  }
+
+  public void setPrivacyPolicyUrl(String s) {
+    Imeji.CONFIG.setPrivacyPolicyUrl(s);
+  }
+
+  public String getPrivacyPolicyUrl() {
+    return Imeji.CONFIG.getPrivacyPolicyUrl() != null ? Imeji.CONFIG.getPrivacyPolicyUrl() : "";
+  }
+  
+  
+  
+  
 
   public String getDefaultLicense() {
     return Imeji.CONFIG.getDefaultLicense();

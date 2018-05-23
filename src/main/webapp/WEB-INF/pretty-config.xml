@@ -176,6 +176,10 @@
 		<pattern value="/terms_of_use"></pattern>
 		<view-id>/jsf/TermsOfUse.xhtml</view-id>
 	</url-mapping>
+	<url-mapping id="privacyPolicy">
+		<pattern value="/privacy_policy"></pattern>
+		<view-id>/jsf/PrivacyPolicy.xhtml</view-id>
+	</url-mapping>
 	<url-mapping id="help">
 		<pattern value="/help"></pattern>
 		<view-id>/jsf/Help.xhtml</view-id>

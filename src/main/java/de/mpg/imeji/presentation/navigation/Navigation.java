@@ -49,6 +49,7 @@ public class Navigation implements Serializable {
   public static final Page LOGIN = new Page("Login", "login");
   public static final Page IMPRINT = new Page("IMPRINT", "imprint");
   public static final Page TERMS_OF_USE = new Page("Terms of use", "terms_of_use");
+  public static final Page PRIVACY_POLICY = new Page("Privacy Policy", "privacy_policy");
 
 
 
@@ -167,6 +168,10 @@ public class Navigation implements Serializable {
 
   public String getTermsOfUseUrl() {
     return applicationUrl + TERMS_OF_USE.path;
+  }
+  
+  public String getPrivacyPolicyUrl() {
+	return applicationUrl + PRIVACY_POLICY.path;
   }
 
   public String getLoginUrl() {
