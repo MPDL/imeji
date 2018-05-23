@@ -9,13 +9,13 @@
 	<ui:param name="headline" value="#{lbl.register}" />
 	<ui:param name="title" value="#{headline}" />
 	<ui:param name="hideRegister" value="true" />
-	
+
 	<f:metadata>
 		<f:viewParam name="token" value="#{PasswordChangeBean.token}" />
 	</f:metadata>
 
 	<ui:define name="mainContent">
-		<h:panelGroup  layout="block" id="registerArea"
+		<h:panelGroup layout="block" id="registerArea"
 			rendered="#{RegistrationBean.registrationEnabled}">
 
 			<ui:fragment rendered="#{PasswordChangeBean.token==null}">
@@ -27,8 +27,9 @@
 				</ol>
 
 				<div class="imj_registerText">
-						<h:outputText value="#{Configuration.registrationSnippet}" escape="false" />
-					</div>
+					<h:outputText value="#{Configuration.registrationSnippet}"
+						escape="false" />
+				</div>
 
 				<div class="loginArea">
 					<h:form id="userForm">
@@ -41,7 +42,7 @@
 								<div class="imj_metadataValueEntry">
 									<h:inputText type="text" name="email" html5:type="email"
 										value="#{RegistrationBean.user.email}"
-										styleClass="imj_admindataEdit" html5:autofocus="true"/>
+										styleClass="imj_admindataEdit" html5:autofocus="true" />
 								</div>
 							</div>
 						</div>
@@ -53,20 +54,43 @@
 						<div class="imj_metadataSet">
 							<div class="imj_metadataLabel" style="font-size: 0.9em;">
 								<ui:fragment
-									rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
+									rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != '' or Configuration.privacyPolicyUrl != '' or Configuration.privacyPolicy != ''}">
 									<h:selectBooleanCheckbox id="accept_terms"
 										value="#{RegistrationBean.termsAccepted}" />
-					 		    	#{lbl.agree_to}
-						 		     <h:outputLink title="#{lbl.terms_of_use}" target="_blank"
-										value="#{Configuration.termsOfUseUrl}"
-										rendered="#{Configuration.termsOfUseUrl != ''}">
-										<h:outputText value="#{lbl.terms_of_use}" />
-									</h:outputLink>
-									<h:outputLink title="#{lbl.terms_of_use}" target="_blank"
-										value="#{Navigation.termsOfUseUrl}"
-										rendered="#{Configuration.termsOfUseUrl == ''}">
-										<h:outputText value="#{lbl.terms_of_use}" />
-									</h:outputLink>
+									#{lbl.agree_to}
+									
+									<ui:fragment
+										rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
+										<h:outputLink title="#{lbl.terms_of_use}" target="_blank"
+											value="#{Configuration.termsOfUseUrl}"
+											rendered="#{Configuration.termsOfUseUrl != ''}">
+											<h:outputText value="#{lbl.terms_of_use}" />
+										</h:outputLink>
+										<h:outputLink title="#{lbl.terms_of_use}" target="_blank"
+											value="#{Navigation.termsOfUseUrl}"
+											rendered="#{Configuration.termsOfUseUrl == ''}">
+											<h:outputText value="#{lbl.terms_of_use}" />
+										</h:outputLink>
+									</ui:fragment>
+
+									<h:outputText value=", "
+										rendered="#{Configuration.termsOfUseUrl != '' or Configuration.termsOfUse != ''}" />
+
+									<ui:fragment
+										rendered="#{Configuration.privacyPolicy != '' or Configuration.privacyPolicyUrl != ''}">
+										<h:outputLink title="#{lbl.privacy_policy}" target="_blank"
+											value="#{Configuration.privacyPolicyUrl}"
+											rendered="#{Configuration.privacyPolicyUrl != ''}">
+											<h:outputText value="#{lbl.privacy_policy}" />
+										</h:outputLink>
+										<h:outputLink title="#{lbl.privacy_policy}" target="_blank"
+											value="#{Navigation.privacyPolicyUrl}"
+											rendered="#{Configuration.privacyPolicyUrl == ''}">
+											<h:outputText value="#{lbl.privacy_policy}" />
+										</h:outputLink>
+									</ui:fragment>
+						 		     
+						 		     
 									#{lbl.required_marker}
 								</ui:fragment>
 								<span class="imj_noDisplay">: </span>
