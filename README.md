@@ -18,5 +18,8 @@
 <p>Try the <a href="http://demo.imeji.org/" title="Go to the demo page" target="_blank">demo version</a></p>
 
 
+<h2>History</h2>  
+<p><i>imeji</i> software originated in March 2012 from the <a title="MPDL" href="http://mpdl.mpg.de/" target="_blank">Max Planck Digital Library</a>, the <a title="IKB" href="http://www.kunstgeschichte.hu-berlin.de/" target="_blank">Institute of Art and Visual History</a> of the Humboldt-Universität zu Berlin and the <a title="Konrad Zuse Internet Archive" href="http://zuse.zib.de" target="_blank">Konrad Zuse Internet Archive</a> of Freie Universität Berlin</p>
+
 
 
