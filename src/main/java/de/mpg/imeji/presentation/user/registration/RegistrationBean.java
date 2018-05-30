@@ -100,10 +100,13 @@ public class RegistrationBean extends SuperBean {
    * @throws IOException
    */
   public void register() throws IOException {
-    if (!termsAccepted) {
+    /*
+     * Removed due to DSGVO
+	  if (!termsAccepted) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_accept_terms_of_use", getLocale()));
       return;
     }
+    */
     String passwordUrl = null;
     boolean registration_success = false;
     try {

@@ -52,6 +52,9 @@
 
 
 						<div class="imj_metadataSet">
+						<ui:remove>
+						<!-- Removed due to DSGVO -->
+						<!-- 
 							<div class="imj_metadataLabel" style="font-size: 0.9em;">
 								<ui:fragment
 									rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != '' or Configuration.privacyPolicyUrl != '' or Configuration.privacyPolicy != ''}">
@@ -95,6 +98,8 @@
 								</ui:fragment>
 								<span class="imj_noDisplay">: </span>
 							</div>
+							-->
+							</ui:remove>
 							<div class="imj_metadataValue">
 								<h:commandButton action="#{RegistrationBean.register}"
 									type="submit" value="#{lbl.register_now}"
