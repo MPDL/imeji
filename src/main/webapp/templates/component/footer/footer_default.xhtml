@@ -45,10 +45,10 @@
  		    </ui:fragment>
  		    <ui:fragment rendered="#{Configuration.privacyPolicy != '' or Configuration.privacyPolicyUrl != ''}">
 	 		    <h:outputText value=" - " rendered="#{Configuration.impressumText != '' or Configuration.impressumUrl != ''}"/>
-	 		     <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Configuration.privacyPolicyUrl}" rendered="#{Configuration.privacyPolicyUrl != ''}">
+	 		     <h:outputLink title="#{lbl.privacy_policy}" target="_blank" value="#{Configuration.privacyPolicyUrl}" rendered="#{Configuration.privacyPolicyUrl != ''}">
 	 		    	<h:outputText value="#{lbl.privacy_policy}" />
 	 		    </h:outputLink>
-	 		    <h:outputLink title="#{lbl.terms_of_use}" target="_blank" value="#{Navigation.privacyPolicyUrl}" rendered="#{Configuration.privacyPolicyUrl == ''}">
+	 		    <h:outputLink title="#{lbl.privacy_policy}" target="_blank" value="#{Navigation.privacyPolicyUrl}" rendered="#{Configuration.privacyPolicyUrl == ''}">
 	 		    	<h:outputText value="#{lbl.privacy_policy}" />
 	 		    </h:outputLink>
  		    </ui:fragment>
