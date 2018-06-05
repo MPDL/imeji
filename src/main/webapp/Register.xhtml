@@ -52,6 +52,49 @@
 
 
 						<div class="imj_metadataSet">
+						
+							<div class="imj_metadataLabel" style="font-size: 0.9em;">
+								<ui:fragment
+									rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != '' or Configuration.privacyPolicyUrl != '' or Configuration.privacyPolicy != ''}">
+									
+									#{lbl.agree_to}
+									
+									<ui:fragment
+										rendered="#{Configuration.termsOfUse != '' or Configuration.termsOfUseUrl != ''}">
+										<h:outputLink target="_blank"
+											value="#{Configuration.termsOfUseUrl}"
+											rendered="#{Configuration.termsOfUseUrl != ''}">
+											<h:outputText value="#{lbl.terms_of_use}" />
+										</h:outputLink>
+										<h:outputLink target="_blank"
+											value="#{Navigation.termsOfUseUrl}"
+											rendered="#{Configuration.termsOfUseUrl == ''}">
+											<h:outputText value="#{lbl.terms_of_use}" />
+										</h:outputLink>
+									</ui:fragment>
+
+									<h:outputText value=" #{lbl.and_small} "
+										rendered="#{(Configuration.termsOfUseUrl != '' or Configuration.termsOfUse != '') and (Configuration.privacyPolicyUrl != '' or Configuration.privacyPolicy != '')}" />
+
+									<ui:fragment
+										rendered="#{Configuration.privacyPolicy != '' or Configuration.privacyPolicyUrl != ''}">
+										<h:outputLink target="_blank"
+											value="#{Configuration.privacyPolicyUrl}"
+											rendered="#{Configuration.privacyPolicyUrl != ''}">
+											<h:outputText value="#{lbl.privacy_policy}" />
+										</h:outputLink>
+										<h:outputLink target="_blank"
+											value="#{Navigation.privacyPolicyUrl}"
+											rendered="#{Configuration.privacyPolicyUrl == ''}">
+											<h:outputText value="#{lbl.privacy_policy}" />
+										</h:outputLink>
+									</ui:fragment>
+								</ui:fragment>
+								<span class="imj_noDisplay">: </span>
+							</div>
+						
+						
+						
 						<ui:remove>
 						<!-- Removed due to DSGVO -->
 						<!-- 
