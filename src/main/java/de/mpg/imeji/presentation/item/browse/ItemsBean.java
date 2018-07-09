@@ -21,6 +21,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -144,15 +145,33 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   @Override
   public List<ThumbnailBean> retrieveList(int offset, int size) {
     try {
-      // Search the items of the page
+      // (a) Search the items of the page
+      //  involves access to ElasticSearch, get Item ids (UID) from ElasticSearch that can bee seen by logged-on user 
+      //  searchResult: contains a list of retrieved UIDs of Items
       searchResult = search(getSearchQuery(), getSortCriterion(), offset, size);
       totalNumberOfRecords = searchResult.getNumberOfRecords();
-      // load the item
+      
+      // (b) Load the items
+      // loadImages means load Items
+      // involves acces to Jena, empty Item objects are created, stocked with their UIDs and then filled with content in Jena
+      // result: Collection of retrieved Item objects
       final Collection<Item> items = loadImages(searchResult.getResults());
+      
+      // (c) create thumbnails for items and return these
+      // use Java Streams for this
+      // create a stream: Stream<Item> itemStream = items.stream();
+      // perform operations on the stream: 
+      // map: map elements on one stream to other elements, i.e. create new object for each object in the stream (specify how in () )
+      // peek: perform action on the objects of the stream
+      // collect: collect elements from a stream, terminal operation of a stream
       HierarchyService hierarchyService = new HierarchyService();
-      return items.stream().parallel()
+      
+      List<ThumbnailBean> thumbnailBeans = items.stream().parallel()
           .map(item -> new ThumbnailBean(item, getSessionBean(), getNavigation()))
           .peek(t -> t.initPath(hierarchyService)).collect(Collectors.toList());
+      
+      return thumbnailBeans;
+      
     } catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error retrieving items", e);
@@ -339,17 +358,21 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws ImejiException @
    */
   private void withdraw(List<String> uris) throws ImejiException {
-    final Collection<Item> items = new ItemService().retrieveBatch(uris, -1, 0, getSessionUser());
+    
+	final Collection<Item> items = new ItemService().retrieveBatch(uris, -1, 0, getSessionUser());
     final int count = items.size();
-    if ("".equals(discardComment.trim())) {
-      BeanHelper.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_image_withdraw_discardComment", getLocale()));
-    } else {
-      final ItemService c = new ItemService();
-      c.withdraw((List<Item>) items, discardComment, getSessionUser());
-      discardComment = null;
-      unselect(uris);
-      BeanHelper.info(count + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_withdraw", getLocale()));
+    
+    try {
+	  final ItemService c = new ItemService();
+	  c.withdraw((List<Item>) items, discardComment, getSessionUser());
+	  discardComment = null;
+	  unselect(uris);
+	  BeanHelper.info(count + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_withdraw", getLocale()));
+    } 
+    catch (final ImejiException e) {
+	  BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_withdraw_selected_items", getLocale()));
+	  BeanHelper.error(e.getMessage());
+	  LOGGER.error("Error discarding items:", e);
     }
   }
 
@@ -471,6 +494,19 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     discardComment = event.getNewValue().toString();
   }
 
+  /**
+   * Check if the discard comment is empty or contains only spaces
+   * @return
+   */
+  public boolean discardCommentEmpty() {
+	  if(this.discardComment == null || "".equals(this.discardComment)  || "".equals(this.discardComment.trim())) {
+		  return true;
+	  }
+	  else {
+		  return false;
+	  }
+  }
+  
   public void setSearchQuery(SearchQuery searchQuery) {
     this.searchQuery = searchQuery;
   }

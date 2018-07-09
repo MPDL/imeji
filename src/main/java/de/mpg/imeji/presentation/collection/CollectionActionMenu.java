@@ -144,7 +144,8 @@ public class CollectionActionMenu implements Serializable {
     try {
       cc.withdraw(collection, user);
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_withdraw", locale));
-    } catch (final Exception e) {
+    } 
+    catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_withdraw", locale));
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error discarding collection:", e);
@@ -174,6 +175,7 @@ public class CollectionActionMenu implements Serializable {
     collection.setDiscardComment(comment);
   }
 
+  
   /**
    * Listener for the discard comment
    *
@@ -184,4 +186,21 @@ public class CollectionActionMenu implements Serializable {
       setDiscardComment(event.getNewValue().toString().trim());
     }
   }
+  
+  /**
+   * Check if the discard comment is empty or contains only spaces
+   * @return
+   */
+  public boolean discardCommentEmpty() {
+	  
+	  String discardComment = collection.getDiscardComment();
+	  if(discardComment == null || "".equals(discardComment)  || "".equals(discardComment.trim())) {
+		  return true;
+	  }
+	  else {
+		  return false;
+	  }
+  }
+  
+  
 }

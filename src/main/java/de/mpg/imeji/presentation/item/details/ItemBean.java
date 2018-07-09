@@ -306,18 +306,39 @@ public class ItemBean extends SuperBean {
 
   /**
    * Discard the Item
-   *
-   * @throws ImejiException
-   * @throws IOException
    */
-  public void withdraw() throws ImejiException, IOException {
-    new ItemService().withdraw(Arrays.asList(item), getDiscardComment(), getSessionUser());
-    new SessionObjectsController().unselectItem(item.getId().toString());
-    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
-        + " " + Imeji.RESOURCE_BUNDLE.getMessage("success_item_withdraw", getLocale()));
-    redirectToBrowsePage();
+  public void withdraw(){
+    
+	  try {
+		   new ItemService().withdraw(Arrays.asList(item), getDiscardComment(), getSessionUser());		    
+		   new SessionObjectsController().unselectItem(item.getId().toString());
+		   BeanHelper.info(Imeji.RESOURCE_BUNDLE.getLabel("image", getLocale()) + " " + item.getFilename()
+		        + " " + Imeji.RESOURCE_BUNDLE.getMessage("success_item_withdraw", getLocale()));
+		   this.discardComment = null;
+	    } 
+	    catch (final ImejiException e) {
+	      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_withdraw_image", getLocale()));
+	      BeanHelper.error(e.getMessage());
+	      LOGGER.error("Error discarding item:", e);
+	    }	    
+	   redirectToBrowsePage();	
   }
+  
 
+  /**
+   * Check if the discard comment is empty or contains only spaces
+   * @return
+   */
+  public boolean discardCommentEmpty() {
+	  if(this.discardComment == null || "".equals(this.discardComment)  || "".equals(this.discardComment.trim())) {
+		  return true;
+	  }
+	  else {
+		  return false;
+	  }
+  }
+  
+  
   /**
    * Listener for the discard comment
    *
@@ -329,8 +350,6 @@ public class ItemBean extends SuperBean {
 
   /**
    * Redirect to the browse page
-   *
-   * @throws IOException
    */
   public void redirectToBrowsePage() {
     try {

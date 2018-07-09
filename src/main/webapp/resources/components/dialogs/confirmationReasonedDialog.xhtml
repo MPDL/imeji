@@ -33,10 +33,11 @@
 						#{lbl.cancel}
 					</a>
 			 		<h:commandButton id="btnDiscardContainer" 
-			 						action="#{cc.attrs.bean[cc.attrs.submitAction]}"  
+			 						action="#{cc.attrs.bean[cc.attrs.submitAction]}"
 			 						value="#{cc.attrs.submitLabel}" 
-			 						styleClass="#{cc.attrs.bean.discardComment == ''  ? 'imj_disabledButton' : 'imj_submitButton'}" 
-			 						onclick="if(#{cc.attrs.bean.discardComment != ''}){closeDialog('#{cc.attrs.dialogId}');startLoader(); return true;}else{return false;}"/>
+			 						styleClass="#{cc.attrs.bean.discardCommentEmpty()  ? 'imj_disabledButton' : 'imj_submitButton'}"
+			 						disabled="#{cc.attrs.bean.discardCommentEmpty()}"
+			 						onclick="closeDialog('#{cc.attrs.dialogId}');startLoader()"/>
 				</h:panelGroup>
 			</h:form>
 		</div>
