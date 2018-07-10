@@ -46,7 +46,7 @@ public abstract class ImejiControllerAbstract<T> {
   }
 
   /**
-   * Retrieve a single object wihout any list of content defined as lazy
+   * Retrieve a single object without any list of content defined as lazy
    *
    * @param id
    * @param user

@@ -13,7 +13,7 @@ import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 
 /**
- * Facade for using {@link Reader}. Check {@link Authorization} to readen objects
+ * Facade for using {@link Reader}. Check {@link Authorization} to read objects
  *
  * @author saquet (initial creation)
  * @author $Author$ (last modification)

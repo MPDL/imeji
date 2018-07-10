@@ -20,18 +20,26 @@ import de.mpg.imeji.logic.events.messages.Message.MessageType;
  *
  */
 public class ListenerService {
+  
+	
+  /**
+   * For an incoming type of Message register a set of Listeners	
+   */
   private static Map<MessageType, List<Listener>> subscriptions = new HashMap<>();
+  
   private static Logger LOGGER = Logger.getLogger(ListenerService.class);
 
   /**
    * Initialize the {@link ListenerService} by registering all existing {@link Listener}
    */
   public void init() {
+	  
     LOGGER.info("Initializing message subscribers...");
+    // set up the subscription list
     subscriptions = new HashMap<>();
-    for (Listener s : findAllListeners()) {
-      register(s);
-      LOGGER.info("Registered: " + s.getClass().getName());
+    for (Listener imejiListener : findAllListeners()) {
+      register(imejiListener);
+      LOGGER.info("Registered: " + imejiListener.getClass().getName());
     }
     LOGGER.info("Initializing message subscribers done!");
   }

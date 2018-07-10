@@ -13,6 +13,10 @@ import de.mpg.imeji.logic.events.messages.Message.MessageType;
  *
  */
 public abstract class Listener implements Callable<Integer> {
+  
+  /**
+   * Set of message types {@link MessageType} the listener wants to receive a notification for
+   */
   private final MessageType[] messageType;
   private Message message;
 

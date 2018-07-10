@@ -20,6 +20,11 @@ public class SearchResult {
   private final int numberOfItems;
   private final int numberOfItemsOfCollection;
   private final int numberOfSubcollections;
+  
+  /**
+   * Search result contains list of Strings 
+   * String contains UID of (to be) found objects 
+   */
   private List<String> results;
   private String query = null;
   private SortCriterion sort;

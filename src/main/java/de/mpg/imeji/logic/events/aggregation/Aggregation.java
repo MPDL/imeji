@@ -1,8 +1,8 @@
 package de.mpg.imeji.logic.events.aggregation;
 
 /**
- * An Aggregation process messages from the message queue. Aggregation are called via the
- * Aggregation service
+ * An Aggregation processes messages from the message queue. 
+ * Aggregation are called via the Aggregation service
  * 
  * @author saquet
  *
