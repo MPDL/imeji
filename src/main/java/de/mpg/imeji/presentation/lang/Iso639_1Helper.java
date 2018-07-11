@@ -35,7 +35,7 @@ public class Iso639_1Helper {
     list = new ArrayList<SelectItem>();
     list.add(new SelectItem("en", "English"));
     list.add(new SelectItem("de", "German"));
-    list.add(new SelectItem("jp", "Japanese"));
+    list.add(new SelectItem("ja", "Japanese"));
     list.add(new SelectItem("es", "Spanish"));
   }
 
