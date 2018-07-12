@@ -278,12 +278,12 @@ public class ShareBean extends SuperBean implements Serializable {
    * @param subject
    */
   private void sendEmailForShare(ShareListItem item, String subject) {
-    for (final User user : item.getUsers()) {
+    for (final User subscribingUser : item.getUsers()) {
       final ShareEmailMessage emailMessage =
-          new ShareEmailMessage(user.getPerson().getCompleteName(), title, getLinkToSharedObject(),
+          new ShareEmailMessage(subscribingUser.getPerson().getFirstnameLastname(), title, getLinkToSharedObject(),
               getShareToUri(), item.getRole(), getSessionUser(), getLocale());
       
-      sendEmail(user.getEmail(), EmailMessages.replaceInstanceNameVariable(subject, instanceName),
+      sendEmail(subscribingUser.getEmail(), EmailMessages.replaceInstanceNameVariable(subject, instanceName),
           emailMessage.getBody());
     }
   }
