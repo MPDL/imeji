@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.notification.email.EmailMessages;
 import de.mpg.imeji.logic.notification.email.EmailService;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.user.pwdreset.PasswordResetController;
@@ -52,11 +53,13 @@ public class PasswordChangeBean extends SuperBean {
    * @throws IOException
    */
   public void sendResetEmail() throws ImejiException, IOException {
-    if (!EmailService.isValidEmail(resetEmail)) {
+    
+	if (!EmailService.isValidEmail(resetEmail)) {
       BeanHelper.error(
           resetEmail + " " + Imeji.RESOURCE_BUNDLE.getLabel("reset_invalid_email", getLocale()));
       redirect(getNavigation().getLoginUrl());
-    } else {
+    } 
+	else {
       User user;
       try {
         user = new UserService().retrieve(resetEmail, Imeji.adminUser);
@@ -69,10 +72,11 @@ public class PasswordChangeBean extends SuperBean {
       String url = getNavigation().getApplicationUrl() + "pwdreset?token="
           + passwordresetService.generateResetToken(user);
       Calendar expirationDate = DateHelper.getCurrentDate();
-      expirationDate.add(Calendar.DAY_OF_MONTH,
-          Integer.valueOf(Imeji.CONFIG.getRegistrationTokenExpiry()));
-      new EmailService().sendMail(resetEmail, null, getResetRequestEmailSubject(),
-          getResetRequestEmailBody(url, user, DateHelper.printDate(expirationDate)));
+      expirationDate.add(Calendar.DAY_OF_MONTH, Integer.valueOf(Imeji.CONFIG.getRegistrationTokenExpiry()));
+      
+      new EmailService().sendMail(resetEmail, null, EmailMessages.getResetRequestEmailSubject(getLocale()),
+    		  EmailMessages.getResetRequestEmailBody(url, user, DateHelper.printDate(expirationDate), getLocale()));
+      
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("email_password_reset_sent", getLocale()));
       redirect(getNavigation().getHomeUrl());
     }
@@ -91,7 +95,8 @@ public class PasswordChangeBean extends SuperBean {
     }
     if (user != null) {
       user = passwordresetService.resetPassword(user, newPassword);
-    } else {
+    } 
+    else {
       if (!passwordresetService.isValidToken(token)) {
         BeanHelper
             .error(Imeji.RESOURCE_BUNDLE.getMessage("error_password_link_invalid", getLocale()));
@@ -100,8 +105,8 @@ public class PasswordChangeBean extends SuperBean {
       }
       user = passwordresetService.resetPassword(token, newPassword);
       sessionBean.setUser(user);
-      new EmailService().sendMail(user.getEmail(), null, getResetConfirmEmailSubject(),
-          getResetConfirmEmailBody(user));
+      new EmailService().sendMail(user.getEmail(), null, EmailMessages.getResetConfirmEmailSubject(getLocale()),
+    		  EmailMessages.getResetConfirmEmailBody(user, getLocale()));
     }
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("password_changed", getLocale()));
     resetFinished = true;
@@ -195,31 +200,6 @@ public class PasswordChangeBean extends SuperBean {
 
   private void reloadPage() throws IOException {
     redirect(getNavigation().getHomeUrl() + "/pwdreset?token=" + token);
-  }
-
-  private String getResetRequestEmailSubject() {
-    return Imeji.RESOURCE_BUNDLE.getMessage("email_password_reset_subject", getLocale())
-        .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
-  }
-
-  private String getResetRequestEmailBody(String url, User user, String expirationDate) {
-    return Imeji.RESOURCE_BUNDLE.getMessage("email_password_reset_body", getLocale())
-        .replace("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname())
-        .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
-        .replaceAll("XXX_CONTACT_EMAIL_XXX", Imeji.CONFIG.getContactEmail())
-        .replaceAll("XXX_PWD_RESET_LINK_XXX", url)
-        .replaceAll("XXX_EXPIRATION_DATE_XXX", expirationDate);
-  }
-
-  private String getResetConfirmEmailSubject() {
-    return Imeji.RESOURCE_BUNDLE.getMessage("email_new_password_subject", getLocale())
-        .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
-  }
-
-  private String getResetConfirmEmailBody(User user) {
-    return Imeji.RESOURCE_BUNDLE.getMessage("email_new_password", getLocale())
-        .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
-        .replace("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname());
   }
 
   public String getFrom() {

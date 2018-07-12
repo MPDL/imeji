@@ -29,6 +29,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.Subscription.Type;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.notification.email.EmailMessages;
 import de.mpg.imeji.logic.notification.email.EmailService;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -100,7 +101,7 @@ public class SubscriptionsAggregation implements Aggregation {
    * Create the Email body
    * 
    * @param user
-   * @param messages
+   * @param messages  internal system messages that denote system events 
    * @return
    */
   private String createEmailBody(User user, Map<String, List<Message>> messages) {
@@ -108,12 +109,8 @@ public class SubscriptionsAggregation implements Aggregation {
         .map(id -> getCollectionSummary(id, messages, user)).collect(Collectors.joining());
     if (StringHelper.isNullOrEmptyTrim(collectionSummaries)) {
       return "";
-    }
-    String body = Imeji.RESOURCE_BUNDLE.getMessage("email_subscribtion_body", Locale.ENGLISH)
-        .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
-        .replaceAll("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname())
-        .replace("XXX_TEXT_XXX", collectionSummaries);
-    return body;
+    }    
+    return EmailMessages.getSubscriptionEmailBody(user, collectionSummaries, Locale.ENGLISH);
   }
 
   /**
@@ -291,8 +288,7 @@ public class SubscriptionsAggregation implements Aggregation {
    * @throws ImejiException
    */
   private void sendEmail(User user, String body) throws ImejiException {
-    String subject = Imeji.RESOURCE_BUNDLE.getMessage("email_subscribtion_subject", Locale.ENGLISH)
-        .replace("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
+    String subject = EmailMessages.getSubscriptionEmailSubject(Locale.ENGLISH);
     new EmailService().sendMail(user.getEmail(), null, subject, body);
   }
 

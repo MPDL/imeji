@@ -263,7 +263,7 @@ public class ShareBean extends SuperBean implements Serializable {
   private void sendEmail(String email, String subject, String body) {
     try {
       new EmailService().sendMail(email, null,
-          subject.replaceAll("XXX_INSTANCE_NAME_XXX", instanceName), body);
+          EmailMessages.replaceInstanceNameVariable(subject, instanceName), body);
     } catch (final Exception e) {
       LOGGER.error("Error sending email", e);
       BeanHelper.error("Error: Email not sent");
@@ -282,7 +282,8 @@ public class ShareBean extends SuperBean implements Serializable {
       final ShareEmailMessage emailMessage =
           new ShareEmailMessage(user.getPerson().getCompleteName(), title, getLinkToSharedObject(),
               getShareToUri(), item.getRole(), getSessionUser(), getLocale());
-      sendEmail(user.getEmail(), subject.replaceAll("XXX_INSTANCE_NAME_XXX", instanceName),
+      
+      sendEmail(user.getEmail(), EmailMessages.replaceInstanceNameVariable(subject, instanceName),
           emailMessage.getBody());
     }
   }
@@ -296,7 +297,7 @@ public class ShareBean extends SuperBean implements Serializable {
    * @param grants
    */
   private void sendEmailUnshare(ShareListItem item, String subject) {
-    subject = subject.replaceAll("XXX_INSTANCE_NAME_XXX", instanceName);
+    subject = EmailMessages.replaceInstanceNameVariable(subject, instanceName);
     for (final User user : item.getUsers()) {
       final String body =
           EmailMessages.getUnshareMessage(getSessionUser().getPerson().getFirstnameLastname(),
@@ -305,9 +306,13 @@ public class ShareBean extends SuperBean implements Serializable {
     }
   }
 
+  
   public String getLabelConfirmInvitation() {
-    return Imeji.RESOURCE_BUNDLE.getLabel("share_confirm_invitation", getLocale())
-        .replace("XXX_INSTANCE_NAME_XXX", getInstanceName());
+    
+	 String labelConfirmInvitation = Imeji.RESOURCE_BUNDLE.getLabel("share_confirm_invitation", getLocale());
+	 labelConfirmInvitation = EmailMessages.replaceInstanceNameVariable(labelConfirmInvitation, getInstanceName());
+	 return labelConfirmInvitation;
+
   }
 
   /**

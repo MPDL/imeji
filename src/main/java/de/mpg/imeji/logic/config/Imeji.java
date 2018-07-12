@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import com.hp.hpl.jena.query.Dataset;
 
 import de.mpg.imeji.logic.concurrency.LocksSurveyor;
+import de.mpg.imeji.logic.config.emailcontent.ImejiEmailContentConfiguration;
 import de.mpg.imeji.logic.model.User;
 
 /**
@@ -31,12 +32,17 @@ public class Imeji {
   public static ImejiConfiguration CONFIG;
   public static final ImejiProperties PROPERTIES = new ImejiProperties();
   public static final ImejiStartupConfig STARTUP = new ImejiStartupConfig();
+  public static ImejiEmailContentConfiguration EMAIL_CONFIG;
+  
   /**
    * The path for this servlet as defined in the web.xml
    */
   public static final String FILE_SERVLET_PATH = "file";
 
+  
   public static final ImejiResourceBundle RESOURCE_BUNDLE = new ImejiResourceBundle();
+  
+  
   /**
    * Thread to check if locked objects can be unlocked
    */

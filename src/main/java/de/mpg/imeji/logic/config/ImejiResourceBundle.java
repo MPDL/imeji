@@ -35,24 +35,51 @@ public class ImejiResourceBundle {
     }
   }
 
-  /**
-   * Returns the message according to the current user locale.
+ 
+  /** 
    *
-   * @param placeholder A string containing the name of a message.
-   * @return The label.
+   * Returns the message according to the current user locale.
+   * 
+   * @param placeholder  identifier: a string denoting the name of a message.
+   * @param locale       system language of user
+   * @return the message
    */
   public String getMessage(String placeholder, Locale locale) {
-    try {
-      try {
-        return ResourceBundle.getBundle(getSelectedMessagesBundle(locale)).getString(placeholder);
-      } catch (final MissingResourceException e) {
-        return ResourceBundle.getBundle(getDefaultMessagesBundle()).getString(placeholder);
-      }
-    } catch (final Exception e) {
-      return placeholder;
+    
+	try {
+	      try {
+	        return ResourceBundle.getBundle(getSelectedMessagesBundle(locale)).getString(placeholder);
+	      } 
+	      catch (final MissingResourceException e) {
+	        return ResourceBundle.getBundle(getDefaultMessagesBundle()).getString(placeholder);
+	      }
+    } 
+	catch (final Exception e) {
+    	return placeholder;
     }
   }
 
+  /**
+   * Get a ResourceBundle for messages in the requested language (given by locale)
+   * @param locale
+   * @return  ResourceBundle
+   */
+  public ResourceBundle getMessageResourceBundle(Locale locale) {
+	  
+	  try {
+		  ResourceBundle localeMessageResourceBundle = ResourceBundle.getBundle(getSelectedMessagesBundle(locale));
+		  return localeMessageResourceBundle;
+	  }
+	  catch(MissingResourceException e) {
+		  return ResourceBundle.getBundle(getDefaultMessagesBundle());
+	  } 
+  }
+  
+  public void clearResourceBundleCache() {
+	  ResourceBundle.clearCache();
+  }
+  
+  
   /**
    * Get the bundle for the labels
    *

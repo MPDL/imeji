@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -14,6 +15,7 @@ import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration.HtmlSnippet;
+import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentXML;
 import de.mpg.imeji.logic.config.ImejiFileTypes;
 import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
@@ -642,4 +644,36 @@ public class ConfigurationBean extends SuperBean {
     Imeji.CONFIG.setFacetDisplayed(str);
   }
 
+  
+  //------------------------------------------------------------------------------
+  //           SECTION edit/delete/change of message texts
+  //-----------------------------------------------------------------------------
+  
+  
+  public void saveCommunication() {
+	  Imeji.EMAIL_CONFIG.saveChanges();
+  }
+  
+  public List<List<EmailContentXML>> getAllMessages(){
+	  return Imeji.EMAIL_CONFIG.getAllEmailMessagesInAllLanguages();
+  }
+  
+  public List<EmailContentXML> getEmailRegistrationRequestBody(){
+	  return Imeji.EMAIL_CONFIG.getAllEmailMessagesInAllLanguagesAsList();
+  }
+  
+  public String getGUILabelForEMailMessageIdentifier(String identifier) {
+	  return Imeji.EMAIL_CONFIG.getGUILabelForEMailMessageIdentifier(identifier, getLocale());
+  }
+  
+  /**
+   * Get a label from resource bundle given an identifier
+   * @param identifier
+   * @param locale
+   * @return
+   */
+  public String getGUILabel(String identifier) { 	
+  	return Imeji.RESOURCE_BUNDLE.getLabel(identifier, getLocale());
+  }
+  
 }

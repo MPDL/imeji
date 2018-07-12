@@ -63,11 +63,12 @@
 
 				<!-- Admin - TiledList -->
 				<div class="imj_administrationTiledList imj_maxWidth">
-
 					<h:panelGroup layout="block" styleClass="imj_listBody"
 						rendered="#{Auth.sysAdmin}">
 						<h:form id="configForm">
 							<div class="imj_adminPanel">
+								
+								<!-- section General  -->
 								<div class="imj_config_headline">
 									<h2>
 										<h:outputText value="#{lbl.config_general}" />
@@ -222,9 +223,7 @@
 												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true" />
 											</h:selectOneRadio>
 										</div>
-									</div>
-
-									
+									</div>								
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
 											<h:outputText value="#{lbl.maintenance_message}" />
@@ -257,7 +256,7 @@
 								</div>
 							</div>
 
-
+							<!--  section Appearance -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>#{lbl.config_appearance}</h2>
@@ -390,7 +389,6 @@
 											data-target=".imj_admindataSet .imj_admindataValue input"
 											class="imj_clearInput fa fa-times"> </a>
 									</div>
-									
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">#{lbl.thumbnail_width}</div>
 										<div class="imj_admindataValue">
@@ -406,9 +404,7 @@
 									</div>
 									
 								</div>
-							</div>
-
-
+							</div>							
 							<!-- EMAIL SERVER -->
 							<div class="imj_adminPanel">
 
@@ -516,7 +512,6 @@
 										<h:outputText value="#{lbl.registration}" />
 									</h2>
 								</div>
-
 								<div class="imj_content">
 									<h:commandButton action="#{Configuration.saveConfig}"
 										title="#{lbl.configuration_save_all}"
@@ -576,15 +571,13 @@
 									</div>
 								</div>
 							</div>
-
-
+                            <!--  Suche  -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
 										<h:outputText value="#{lbl.search}" />
 									</h2>
 								</div>
-
 								<div class="imj_content">
 									<h:commandButton action="#{Configuration.saveConfig}"
 										title="#{lbl.configuration_save_all}"
@@ -654,7 +647,7 @@
 									</h:panelGroup>
 								</div>
 							</div>
-
+                             <!--  Upload -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
@@ -697,15 +690,15 @@
 										</div>
 									</h:panelGroup>
 								</div>
-
 							</div>
-
+                             <!-- Start page -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
 										<h:outputText value="#{lbl.start_page}" />
 									</h2>
 								</div>
+								<!--  snippets in different languages -->
 								<div class="imj_content">
 									<h:commandButton action="#{Configuration.saveConfig}"
 										title="#{lbl.configuration_save_all}"
@@ -732,7 +725,6 @@
 									</ui:repeat>
 								</div>
 							</div>
-
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
@@ -779,7 +771,6 @@
 									</h:panelGroup>
 								</div>
 							</div>
-
 							<!--DOI-->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
@@ -832,11 +823,8 @@
 												styleClass="imj_admindataEdit"/>
 										</div>
 									</div>
-
 								</div>
-
 							</div>
-
 							<!-- QUOTA -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
@@ -881,8 +869,7 @@
 									</div>
 								</div>
 							</div>
-
-
+							<!--  section autosuggest  -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
@@ -957,6 +944,72 @@
 											</div>
 										</div>
 									</div>
+								</div>
+							</div>
+							
+							<!--  section Email Messages  -->
+							<div class="imj_adminPanel">
+								<div class="imj_config_headline">
+									<h2>#{lbl.config_messages}</h2>
+								</div>
+								<div class="imj_content">
+									<!--  save button -->
+									<h:commandButton action="#{Configuration.saveCommunication}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />										
+									<!-- show different messages -->
+									<ui:repeat value="#{Configuration.getAllMessages()}" var="messages">
+										<ui:repeat value="#{messages}" var="content">
+											<!--  row 1: name of message, language -->
+											<h:panelGroup layout="block" styleClass="imj_admindataSet">
+												<!--  left -->
+												<div class="imj_admindataLabel">
+													<h:outputText value="#{Configuration.getGUILabelForEMailMessageIdentifier(content.identifier)}" />: <h:outputText
+														value="#{Configuration.getGUILabel(content.language)}" />										
+												</div>
+												<!--  right: empty-->
+												<div class="imj_admindataValue">												
+												</div>
+											</h:panelGroup>
+											<!--  row 2: "email subject", subject -->
+											<h:panelGroup layout="block" styleClass="imj_admindataSet" rendered="#{content.subject !=null}">
+												<!--  left -->
+												<div class="imj_admindataLabel">
+													<h:outputText value = "#{lbl.subject}" />											
+												</div>
+												<!--  right -->
+												<div class="imj_admindataValue">
+													<h:inputText value="#{content.subject}"
+														styleClass="imj_admindataEdit" 
+														valueChangeListener="#{content.listener}" />
+												</div>
+												<a href="javascript: void(0);"
+													data-target=".imj_admindataSet .imj_admindataValue input"
+													class="imj_clearInput fa fa-times"> </a>
+											</h:panelGroup>
+											<!--  row 3: "email body", body -->
+											<h:panelGroup layout="block" styleClass="imj_admindataSet" rendered="#{content.body !=null}">
+												<!--  left -->
+												<div class="imj_admindataLabel">
+													<h:outputText value = "#{lbl.message}" />											
+												</div>
+												<!--  right -->
+												<div class="imj_admindataValue">
+													<h:inputTextarea value="#{content.body}" 
+														styleClass="imj_admindataEdit imj_additionalCodeSnippet"
+														valueChangeListener="#{content.listener}"/>
+												</div>
+												<a href="javascript: void(0);"
+													data-target=".imj_admindataSet .imj_admindataValue textarea"
+													class="imj_clearInput fa fa-times"> </a>
+											</h:panelGroup>
+										</ui:repeat>
+										<br />
+										<hr />
+										<br />
+								 	</ui:repeat>	
+
 								</div>
 							</div>
 							<!-- END CONTENT -->

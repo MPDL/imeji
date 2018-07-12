@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -38,7 +39,16 @@ public class ImejiConfiguration {
    * @version $Revision$ $LastChangedDate$
    */
   private enum CONFIGURATION {
-    SNIPPET, CSS_DEFAULT, CSS_ALT, MAX_FILE_SIZE, FILE_TYPES, STARTPAGE_HTML, DATA_VIEWER_FORMATS, DATA_VIEWER_URL, AUTOSUGGEST_USERS, AUTOSUGGEST_ORGAS, STARTPAGE_FOOTER_LOGOS, META_DESCRIPTION, META_AUTHOR, INSTANCE_NAME, CONTACT_EMAIL, EMAIL_SERVER, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD, EMAIL_SERVER_ENABLE_AUTHENTICATION, EMAIL_SERVER_SENDER, EMAIL_SERVER_PORT, UPLOAD_WHITE_LIST, UPLOAD_BLACK_LIST, LANGUAGES, IMPRESSUM_URL, IMPRESSUM_TEXT, FAVICON_URL, LOGO, REGISTRATION_TOKEN_EXPIRY, REGISTRATION_ENABLED, DEFAULT_QUOTA, RSA_PUBLIC_KEY, RSA_PRIVATE_KEY, BROWSE_DEFAULT_VIEW, DOI_SERVICE_URL, DOI_USER, DOI_PASSWORD, QUOTA_LIMITS, PRIVATE_MODUS, REGISTRATION_WHITE_LIST, REGISTRATION_SNIPPET, HELP_URL, MAINTENANCE_MESSAGE, TERMS_OF_USE, TERMS_OF_USE_URL, DEFAULT_LICENSE, TECHNICAL_METADATA, THUMBNAIL_WIDTH, WEB_RESOLUTION_WIDTH, STATEMENTS, NUMBER_OF_LINES_IN_THUMBNAIL_LIST, GOOGLE_MAPS_API, CONE_AUTHORS, DOI_PUBLISHER, FACET_DISPLAYED, PRIVACY_POLICY, PRIVACY_POLICY_URL;
+    SNIPPET, CSS_DEFAULT, CSS_ALT, MAX_FILE_SIZE, FILE_TYPES, STARTPAGE_HTML, DATA_VIEWER_FORMATS, 
+    DATA_VIEWER_URL, AUTOSUGGEST_USERS, AUTOSUGGEST_ORGAS, STARTPAGE_FOOTER_LOGOS, META_DESCRIPTION, 
+    META_AUTHOR, INSTANCE_NAME, CONTACT_EMAIL, EMAIL_SERVER, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD, 
+    EMAIL_SERVER_ENABLE_AUTHENTICATION, EMAIL_SERVER_SENDER, EMAIL_SERVER_PORT, UPLOAD_WHITE_LIST, 
+    UPLOAD_BLACK_LIST, LANGUAGES, IMPRESSUM_URL, IMPRESSUM_TEXT, FAVICON_URL, LOGO, REGISTRATION_TOKEN_EXPIRY, 
+    REGISTRATION_ENABLED, DEFAULT_QUOTA, RSA_PUBLIC_KEY, RSA_PRIVATE_KEY, BROWSE_DEFAULT_VIEW, DOI_SERVICE_URL, 
+    DOI_USER, DOI_PASSWORD, QUOTA_LIMITS, PRIVATE_MODUS, REGISTRATION_WHITE_LIST, REGISTRATION_SNIPPET, 
+    HELP_URL, MAINTENANCE_MESSAGE, TERMS_OF_USE, TERMS_OF_USE_URL, DEFAULT_LICENSE, TECHNICAL_METADATA, 
+    THUMBNAIL_WIDTH, WEB_RESOLUTION_WIDTH, STATEMENTS, NUMBER_OF_LINES_IN_THUMBNAIL_LIST, GOOGLE_MAPS_API, 
+    CONE_AUTHORS, DOI_PUBLISHER, FACET_DISPLAYED, PRIVACY_POLICY, PRIVACY_POLICY_URL;
   }
 
   private static Properties config;
@@ -46,6 +56,8 @@ public class ImejiConfiguration {
   private static ImejiFileTypes fileTypes;
   private static String lang = "en";
   private static final Logger LOGGER = Logger.getLogger(ImejiConfiguration.class);
+  
+  // Default configuration values that are set when there are no values in config.xml
   // A list of predefined file types, which is set when imeji is initialized
   private static final String DEFAULT_SEARCH_FILE_TYPE_LIST =
       "[Image@en,Bilder@de=jpg,jpeg,tiff,tiff,jp2,pbm,gif,png,psd][Video@en,Video@de=wmv,swf,rm,mp4,mpg,m4v,avi,mov.asf,flv,srt,vob][Audio@en,Ton@de=aif,iff,m3u,m4a,mid,mpa,mp3,ra,wav,wma][Document@en,Dokument@de=doc,docx,odt,pages,rtf,tex,rtf,bib,csv,ppt,pps,pptx,key,xls,xlr,xlsx,gsheet,nb,numbers,ods,indd,pdf,dtx]";
@@ -68,6 +80,9 @@ public class ImejiConfiguration {
       "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=";
   public static final String DEFAULT_CONE_AUTHORS =
       "http://pubman.mpdl.mpg.de/cone/persons/query?format=json&n=10&m=full&q=";
+  
+  
+  
   private String dataViewerUrl;
 
   public enum BROWSE_VIEW {
@@ -90,7 +105,8 @@ public class ImejiConfiguration {
   }
 
   /**
-   * Get the Configuration File from the filesystem. If not existing, create a new one with default
+   * Get the Configuration File from the filesystem. 
+   * If not existing, create a new one with default
    * values
    *
    * @throws IOException
@@ -649,6 +665,29 @@ public class ImejiConfiguration {
     return "";
   }
 
+  
+  /**
+   * Get imeji instance languages as list of Strings
+   * @return
+   */
+  public LinkedList<String> getLanguagesAsList() {
+	  
+	  LinkedList<String> systemLanguages = new LinkedList<String>();
+	  String allSystemLanguages = getLanguages();
+		if(!allSystemLanguages.isEmpty()) {
+			String[] languages = allSystemLanguages.split(",");
+			for(int i= 0; i < languages.length; i++) {
+				systemLanguages.add(languages[i]);
+			}
+		}
+	  return systemLanguages;
+  }
+  
+  
+  /**
+   * Get imeji instance languages ','-separated in a String
+   * @return
+   */
   public String getLanguages() {
     return getPropertyAsNonNullString(CONFIGURATION.LANGUAGES.name());
   }
@@ -963,5 +1002,6 @@ public class ImejiConfiguration {
   public void setFacetDisplayed(String str) {
     setProperty(CONFIGURATION.FACET_DISPLAYED.name(), str);
   }
-
+  
+ 
 }

@@ -27,6 +27,7 @@ import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.logic.batch.executors.NightlyExecutor;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
+import de.mpg.imeji.logic.config.emailcontent.ImejiEmailContentConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.core.statement.StatementService;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
@@ -118,6 +119,7 @@ public class ImejiInitializer {
     ImejiInitializer.initModel(Imeji.facetModel);
     LOGGER.info("... models done!");
     Imeji.CONFIG = new ImejiConfiguration();
+    Imeji.EMAIL_CONFIG = new  ImejiEmailContentConfiguration(Imeji.CONFIG);
     KeyValueStoreService.startAllStores();
     initRsaKeys();
     initadminUser();

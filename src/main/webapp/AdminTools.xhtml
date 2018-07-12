@@ -153,6 +153,23 @@
 									</h:panelGroup>
 								</h:form>
 							</div>
+							<div class="imj_headline">
+								<h2>
+									<h:outputText value="Set email content editable / reset edited content" />
+								</h2>
+							</div>
+							<div class="imj_content">
+								<h:form>
+									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
+										<h:commandButton action="#{AdminBean.makeEmailTextsEditable}"
+											value="email content"
+											title="email content"
+											styleClass="imj_submitButton">
+											<f:ajax />
+										</h:commandButton>
+									</h:panelGroup>
+								</h:form>
+							</div>
 						</h:panelGroup>
 
 					</div>

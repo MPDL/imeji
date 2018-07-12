@@ -11,11 +11,11 @@ import org.apache.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.notification.email.EmailMessages;
 import de.mpg.imeji.logic.notification.email.EmailService;
 import de.mpg.imeji.logic.security.sharing.invitation.Invitation;
 import de.mpg.imeji.logic.security.sharing.invitation.InvitationService;
 import de.mpg.imeji.logic.security.user.UserService;
-import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
 /**
@@ -75,8 +75,8 @@ public class ShareInput implements Serializable {
     for (final String invitee : unknownEmails) {
       try {
         invitationBC.invite(new Invitation(invitee, objectUri, menu.getRole()));
-        emailService.sendMail(invitee, null, getInvitationEmailSubject(),
-            getInvitationEmailBody(invitee));
+        emailService.sendMail(invitee, null, EmailMessages.getInvitationEmailSubject(this.user, this.locale, this.instanceName),
+            EmailMessages.getInvitationEmailBody(invitee, this.locale, this.user, this.instanceName));
       } catch (final ImejiException e) {
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_send_invitation", locale));
         LOGGER.error("Error sending invitation:", e);
@@ -85,24 +85,7 @@ public class ShareInput implements Serializable {
     BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_share", locale));
   }
 
-  /**
-   * @return the invitation message
-   */
-  private String getInvitationEmailBody(String email) {
-    final Navigation nav = new Navigation();
-    return Imeji.RESOURCE_BUNDLE.getMessage("email_invitation_body", locale)
-        .replace("XXX_SENDER_NAME_XXX", user.getPerson().getCompleteName())
-        .replace("XXX_INSTANCE_NAME_XXX", instanceName)
-        .replace("XXX_REGISTRATION_LINK_XXX", nav.getRegistrationUrl() + "?login=" + email)
-        .replace("XXX_SENDER_EMAIL", user.getEmail());
-
-  }
-
-  private String getInvitationEmailSubject() {
-    return Imeji.RESOURCE_BUNDLE.getMessage("email_invitation_subject", locale)
-        .replace("XXX_SENDER_NAME_XXX", user.getPerson().getCompleteName())
-        .replace("XXX_INSTANCE_NAME_XXX", instanceName);
-  }
+  
 
 
   /**

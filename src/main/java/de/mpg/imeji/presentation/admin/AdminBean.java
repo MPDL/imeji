@@ -21,6 +21,7 @@ import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
 import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
 import de.mpg.imeji.logic.batch.ResizeWebAndThumbnailJob;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.config.emailcontent.ImejiExternalEmailContent;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.events.listener.ListenerService;
@@ -84,7 +85,7 @@ public class AdminBean extends SuperBean {
   }
 
   /**
-   * Here are called all methods related to data cleaning
+   * Here are called all methods related to data cleaning  
    *
    * @throws ImejiException
    *
@@ -168,4 +169,11 @@ public class AdminBean extends SuperBean {
   public void aggregateMessages() {
     Imeji.getEXECUTOR().submit(new AggregateMessages());
   }
+  
+  
+  public void makeEmailTextsEditable(){
+	  ImejiExternalEmailContent.copyEmailContentToExternalXMLFiles();
+  }
+	  
+
 }
