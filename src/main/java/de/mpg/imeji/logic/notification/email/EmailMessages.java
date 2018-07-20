@@ -44,7 +44,7 @@ public class EmailMessages {
 	 * @param locale      the user's language
 	 * @return
 	 */
-   private static String getMessageText( String identifier, TextType textType, Locale locale) {
+   private static String getContent( String identifier, TextType textType, Locale locale) {
   
  	  switch(textType) {
  	  		case SUBJECT:  return Imeji.EMAIL_CONFIG.getMessageSubject(identifier, locale);
@@ -136,7 +136,7 @@ public class EmailMessages {
       String identifier, TextType textType, Locale locale) {
     
 	final String userPage = Imeji.PROPERTIES.getApplicationURL() + "user?email=" + email;
-	String emailMessage = getMessageText( identifier, textType, locale);
+	String emailMessage = getContent( identifier, textType, locale);
    
     if ("email_new_user".equals(identifier)) {
       emailMessage =
@@ -158,9 +158,9 @@ public class EmailMessages {
   public static String getEmailOnAccountAction_Subject(boolean newAccount, Locale locale) {
     String emailsubject = "";
     if (newAccount) {
-      emailsubject = getMessageText("email_new_user", TextType.SUBJECT, locale);
+      emailsubject = getContent("email_new_user", TextType.SUBJECT, locale);
     } else {
-      emailsubject = getMessageText("email_new_password", TextType.SUBJECT, locale);
+      emailsubject = getContent("email_new_password", TextType.SUBJECT, locale);
     }
     return emailsubject.replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
   }
@@ -179,7 +179,7 @@ public class EmailMessages {
    */
   public static String getSharedCollectionMessage(String sender, String dest, String collectionName,
       String collectionLink, Locale locale) {
-    String message = getMessageText("email_shared_collection", TextType.MESSAGE, locale);
+    String message = getContent("email_shared_collection", TextType.MESSAGE, locale);
     message = message.replace("XXX_USER_NAME_XXX,", dest).replace("XXX_NAME_XXX", collectionName)
         .replace("XXX_LINK_XXX", collectionLink).replace("XXX_SENDER_NAME_XXX", sender);
     return message;
@@ -199,7 +199,7 @@ public class EmailMessages {
    * @return
    */
   public static String getEmailToCreatedUser_Subject(Locale locale) {
-    return getMessageText("email_new_user", TextType.SUBJECT, locale).replaceAll("XXX_INSTANCE_NAME_XXX",
+    return getContent("email_new_user", TextType.SUBJECT, locale).replaceAll("XXX_INSTANCE_NAME_XXX",
         Imeji.CONFIG.getInstanceName());
   }
 
@@ -210,7 +210,7 @@ public class EmailMessages {
    */
   public static String getEmailToCreatedUser_Body(Locale locale, String userName,
       String linkToSetPassword) {
-    return getMessageText("email_new_user", TextType.MESSAGE, locale)
+    return getContent("email_new_user", TextType.MESSAGE, locale)
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
         .replaceAll("XXX_USER_NAME_XXX,", userName)
         .replaceAll("XXX_SET_PASSWORD_LINK_XXX", linkToSetPassword);
@@ -230,7 +230,7 @@ public class EmailMessages {
    */
   public static String getEmailOnRegistrationRequest_Body(User to, String url, String contactEmail,
       String expirationDate, Locale locale, String navigationUrl) {
-    return getMessageText("email_registration_request", TextType.MESSAGE, locale)
+    return getContent("email_registration_request", TextType.MESSAGE, locale)
         .replace("XXX_USER_NAME_XXX", to.getPerson().getFirstnameLastname())
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
         .replaceAll("XXX_CONTACT_EMAIL_XXX", contactEmail).replace("XXX_ACTIVATION_LINK_XXX", url)
@@ -244,7 +244,7 @@ public class EmailMessages {
    * @return
    */
   public static String getEmailOnRegistrationRequest_Subject(Locale locale) {
-    return getMessageText("email_registration_request", TextType.SUBJECT, locale)
+    return getContent("email_registration_request", TextType.SUBJECT, locale)
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
   }
   
@@ -258,12 +258,12 @@ public class EmailMessages {
    * @return
    */
   public static String getEmailOnAccountActivation_Subject(User u, Locale locale) {
-    return getMessageText("email_account_activation", TextType.SUBJECT, locale).replace("XXX_USER_NAME_XXX",
+    return getContent("email_account_activation", TextType.SUBJECT, locale).replace("XXX_USER_NAME_XXX",
         u.getPerson().getFirstnameLastname());
   }
 
   public static String getEmailOnAccountActivation_Body(User u, Locale locale) {
-    return getMessageText("email_account_activation", TextType.MESSAGE, locale)
+    return getContent("email_account_activation", TextType.MESSAGE, locale)
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
         .replace("XXX_USER_NAME_XXX", u.getPerson().getFirstnameLastname())
         .replace("XXX_USER_EMAIL_XXX", u.getEmail())
@@ -288,7 +288,7 @@ public class EmailMessages {
    */
   public static String getEmailOnItemDownload_Body(User to, User actor, Item item,
       CollectionImeji c, Locale locale) {
-    return getMessageText("email_item_downloaded", TextType.MESSAGE, locale)
+    return getContent("email_item_downloaded", TextType.MESSAGE, locale)
         .replace("XXX_USER_NAME_XXX", to.getPerson().getFirstnameLastname())
         .replace("XXX_ITEM_ID_XXX", ObjectHelper.getId(item.getId()))
         .replace("XXX_ITEM_LINK_XXX",
@@ -310,7 +310,7 @@ public class EmailMessages {
    * @return
    */
   public static String getEmailOnItemDownload_Subject(Item item, Locale locale) {
-    return getMessageText("email_item_downloaded", TextType.SUBJECT, locale).replace("XXX_ITEM_ID_XXX",
+    return getContent("email_item_downloaded", TextType.SUBJECT, locale).replace("XXX_ITEM_ID_XXX",
         item.getIdString());
   }
 
@@ -330,7 +330,7 @@ public class EmailMessages {
    */
   public static String getEmailOnZipDownload_Body(User to, User actor, String itemsDownloaded,
       String url, Locale locale) {
-    return getMessageText("email_zip_images_downloaded", TextType.MESSAGE, locale)
+    return getContent("email_zip_images_downloaded", TextType.MESSAGE, locale)
         .replace("XXX_USER_NAME_XXX", to.getPerson().getFirstnameLastname())
         .replace("XXX_ACTOR_NAME_XXX",
             (actor != null ? actor.getPerson().getCompleteName() : "non_logged_in_user"))
@@ -350,7 +350,7 @@ public class EmailMessages {
    * @return
    */
   public static String getEmailOnZipDownload_Subject(Locale locale) {
-    return getMessageText("email_zip_images_downloaded", TextType.SUBJECT, locale);
+    return getContent("email_zip_images_downloaded", TextType.SUBJECT, locale);
   }
 
   // -----------------  ShareBean: items have been unshared ----------------------------------
@@ -366,7 +366,7 @@ public class EmailMessages {
    */
   public static String getUnshareMessage(String sender, String dest, String title,
       String collectionLink, Locale locale) {
-    String message = getMessageText("email_unshared_object", TextType.MESSAGE, locale);
+    String message = getContent("email_unshared_object", TextType.MESSAGE, locale);
     message = message.replace("XXX_USER_NAME_XXX,", dest).replace("XXX_NAME_XXX", title)
         .replace("XXX_LINK_XXX", collectionLink).replace("XXX_SENDER_NAME_XXX", sender);
     return message;
@@ -376,12 +376,12 @@ public class EmailMessages {
   // ---------- PasswordChangeBean: Answer to password reset request -----------------------------------------------
  
   public static String getResetRequestEmailSubject(Locale locale) {
-	    return getMessageText("email_password_reset", TextType.SUBJECT, locale)
+	    return getContent("email_password_reset", TextType.SUBJECT, locale)
 	        .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
   }
 
  public static String getResetRequestEmailBody(String url, User user, String expirationDate, Locale locale) {
-	    return getMessageText("email_password_reset", TextType.MESSAGE, locale)
+	    return getContent("email_password_reset", TextType.MESSAGE, locale)
 	        .replace("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname())
 	        .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
 	        .replaceAll("XXX_CONTACT_EMAIL_XXX", Imeji.CONFIG.getContactEmail())
@@ -392,12 +392,12 @@ public class EmailMessages {
  // ---------- PasswordChangeBean: Send new password to user after password reset ----------------
  
  public static String getResetConfirmEmailSubject(Locale locale) {
-	    return getMessageText("email_new_password", TextType.SUBJECT, locale)
+	    return getContent("email_new_password", TextType.SUBJECT, locale)
 	        .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
  }
 
  public static String getResetConfirmEmailBody(User user, Locale locale) {
-	    return getMessageText("email_new_password",TextType.MESSAGE ,locale)
+	    return getContent("email_new_password",TextType.MESSAGE ,locale)
 	        .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
 	        .replace("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname());
  }
@@ -406,13 +406,13 @@ public class EmailMessages {
  //----------- SubscriptionAggregation: Send list of changes (in subscribed collections) to user --------------------
  
  public static String getSubscriptionEmailSubject(Locale locale) { 
-	 return getMessageText("email_subscribtion", TextType.SUBJECT, locale)
+	 return getContent("email_subscribtion", TextType.SUBJECT, locale)
 		        .replace("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName());
  }
  
  public static String getSubscriptionEmailBody(User user, String collectionSummaries, Locale locale) {
 	 
-    String body = getMessageText("email_subscribtion", TextType.MESSAGE, locale)
+    String body = getContent("email_subscribtion", TextType.MESSAGE, locale)
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
         .replaceAll("XXX_USER_NAME_XXX", user.getPerson().getFirstnameLastname())
         .replace("XXX_TEXT_XXX", collectionSummaries);
@@ -427,7 +427,7 @@ public class EmailMessages {
   */
  public static String getInvitationEmailBody(String email, Locale locale, User user, String instanceName) {
    final Navigation nav = new Navigation();
-   return getMessageText("email_invitation", TextType.MESSAGE, locale)
+   return getContent("email_invitation", TextType.MESSAGE, locale)
        .replace("XXX_SENDER_NAME_XXX", user.getPerson().getCompleteName())
        .replace("XXX_INSTANCE_NAME_XXX", instanceName)
        .replace("XXX_REGISTRATION_LINK_XXX", nav.getRegistrationUrl() + "?login=" + email)
@@ -436,7 +436,7 @@ public class EmailMessages {
  }
 
  public static String getInvitationEmailSubject(User user, Locale locale, String instanceName) {
-   return getMessageText("email_invitation", TextType.SUBJECT, locale)
+   return getContent("email_invitation", TextType.SUBJECT, locale)
        .replace("XXX_SENDER_NAME_XXX", user.getPerson().getCompleteName())
        .replace("XXX_INSTANCE_NAME_XXX", instanceName);
  }
