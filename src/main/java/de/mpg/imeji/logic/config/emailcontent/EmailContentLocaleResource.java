@@ -27,29 +27,33 @@ public class EmailContentLocaleResource {
 	
 	private static final Logger LOGGER = Logger.getLogger(EmailContentLocaleResource.class);
 	
-	/**
-	 * Contains a list of identifiers and texts that are read from file
-	 */
-	private EmailContentListXML emailContent;            			// internal representation of file content
 	
 	/**
-	 * the language of the texts
+	 * Associated file that stores email content
 	 */
-	private Locale locale;                    						// language version of the file		
-
+	private final File emailContentLanguageFile;
+	
 	/**
-	 * Name of imeji property that hold the file path where xml files are stored
+	 * Language of email content and language of the associated file
+	 */
+	private Locale locale; 
+	
+	/**
+	 * Name of an imeji property that holds the file path to the associated file
 	 */
 	private static final String imejiFilePathProperty = "imeji.tdb.path";
 	
-	private final File emailContentLanguageFile;
-	
+	/**
+	 * Internal representation of content of the associated file
+	 * Data structure contains a list of identifiers and mapped email content
+	 */
+	private EmailContentListXML emailContent;  
+		
 		
 	/**
-	 * Create a resource class to get access to either
-	 *   - an external xml file in the file system that contains user configures texts for e-mails (subject and message) in the given language
-	 *   or
-	 *   - internal (part of -.war distribution) files that contain standard texts for e-mails in the given language
+	 * Create a resource class to access a XML file in the file system 
+	 * that contains user configures content for e-mails (subject and message) in the given language
+	 * 
 	 * @param locale   language 
 	 */
 	public EmailContentLocaleResource(Locale locale){
@@ -58,8 +62,9 @@ public class EmailContentLocaleResource {
 		this.emailContentLanguageFile = new File(getResourceFilePath() + "emailMessages" + "_" + locale.getLanguage() + ".xml");
 	}
 	
+	
 	/**
-	 * Get path in file system where files with email texts are stored
+	 * Read the path in file system where the associated XML file is stored
 	 * @return file path or empty string of file path could not be retrieved from imeji properties
 	 */
 	public String getResourceFilePath() {
@@ -71,8 +76,7 @@ public class EmailContentLocaleResource {
 		catch(Exception e) {
 			LOGGER.info("Could not read file path where files with configured texts for emails lie. "
 					+ "Standard e-mail texts from distribution will be used instead.");
-		}
-		
+		}		
 		return filePath;
 	}
 	
@@ -93,13 +97,12 @@ public class EmailContentLocaleResource {
 		return this.emailContentLanguageFile;
 	}
 	
+	public boolean resourceXMLFileExists() {
+		return this.emailContentLanguageFile.exists();
+	}
 	
 	public boolean resourceContentWasEditedInGUI() {		
 		return this.emailContent.messagesWereEditedInGUI();
-	}
-	
-	public void setEditedContentWasSavedToFile() {
-		
 	}
 	
 	// ---------------------------------------------------------
@@ -107,7 +110,9 @@ public class EmailContentLocaleResource {
 	// ---------------------------------------------------------
 		
 	/**
-	 * Read customized email content (email subject and email message) from file system
+	 * Read customized email content (email subject and email message) from an 
+	 * associated file in the file system.
+	 * Cache this information in a map-like data structure 
 	 */
 	public void readEMailMessagesFromFile() throws JAXBException, IOException{
 		 
@@ -121,7 +126,8 @@ public class EmailContentLocaleResource {
 	}
 	
 	/**
-	 * Write email content to file if it has been edited in GUI
+	 * Write email content to associated file 
+	 * only if the content has been changed/edited in GUI before
 	 */
 	public void writeToResourceAfterEditedInGUI() throws JAXBException, IOException{
 		
@@ -132,7 +138,7 @@ public class EmailContentLocaleResource {
 	}
 
 	/**
-	 * Write email content to file
+	 * Write email content to associated file
 	 */
 	public synchronized void writeToResource() throws JAXBException, IOException{
 			

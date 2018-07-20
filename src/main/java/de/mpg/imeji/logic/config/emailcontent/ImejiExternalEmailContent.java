@@ -102,60 +102,23 @@ public class ImejiExternalEmailContent {
 			"email_subscribtion"				
 	};
 	
-	
+		
+	/**
+	 * Function should only be called from GUI Admin > Tools > Edit email content button
+	 * Function takes the current system languages and copies all email content
+	 * from internal files (.properties) to xml files in the file system
+	 */
 	public static void copyEmailContentToExternalXMLFiles() {
 		
 		if(Imeji.RESOURCE_BUNDLE != null && Imeji.CONFIG != null) {
 
 			LinkedList<String> systemLanguages =  Imeji.CONFIG.getLanguagesAsList();
-			for(String language: systemLanguages) {
-				
-				// (1) read messages_[en,de,es,ja].properties file via Imeji.RESOURCE_BUNDLE
-				Locale languageLocale = new Locale(language); 
-				ResourceBundle languageBundle = Imeji.RESOURCE_BUNDLE.getMessageResourceBundle(languageLocale);
-				
-				// (2) organize content for XML representation
-				ArrayList<EmailContentXML> xmlContentList = new ArrayList<EmailContentXML>();
-				for(int j = 0; j < emailContentIdentifiersBody.length; j++) {
-					String messageBody = null;
-					String messageSubject = null;
-					try {
-						messageBody = languageBundle.getString(emailContentIdentifiersBody[j]);
-						messageSubject = languageBundle.getString(emailContentIdentifiersSubject[j]);
-					}
-					catch(MissingResourceException missingResource){
-						// identifier is missing in a language
-					}
-					
-					String xmlMessageIdentifier = emailContentIdentifiersXML[j];
-					
-					// only create xml element if there is at least some content (body or head)
-					if(messageBody != null || messageSubject != null) {
-						EmailContentXML xmlMessage = new EmailContentXML(xmlMessageIdentifier, messageSubject, messageBody);
-						xmlContentList.add(xmlMessage);
-					}	
-				}
-				
-				// (3) write to XML file
-				EmailContentListXML emailContentInOneLangaugeXML = new EmailContentListXML();
-				emailContentInOneLangaugeXML.setEMailMessages(xmlContentList);
-				
-				EmailContentLocaleResource xmlWriter = new EmailContentLocaleResource(languageLocale);
-				xmlWriter.setEmailContent(emailContentInOneLangaugeXML);
-				try {
-					xmlWriter.writeToResource();
-				}
-				catch(JAXBException exception) {
-					LOGGER.info("Could not write email content from project to xml file " + xmlWriter.getResourceFilePath()  
-							+ ".  Standard e-mail content from distribution will be used instead.");
-				} catch (IOException e) {
-					LOGGER.info("Could not write to " + xmlWriter.getResourceFilePath()  
-					+ ".  Standard e-mail content from distribution will be used instead.");
-				}
+			for(String languageCode: systemLanguages) {
+				copyEmailContentToExternalXMLFile(languageCode);			
 			}
 			
-			// (4) notify ImejiEmailContentConfiguration that file content has changed
-			//     and needs to be re-loaded
+			//  notify ImejiEmailContentConfiguration that file content has changed
+			//  and needs to be re-loaded
 			if(Imeji.EMAIL_CONFIG != null) {
 				Imeji.EMAIL_CONFIG.init(Imeji.CONFIG);
 			}
@@ -167,6 +130,91 @@ public class ImejiExternalEmailContent {
 			LOGGER.info("Could not get system languages from ImejiConfiguration instance. "
 					+ "Cannot access files with configured texts for emails. Standard e-mail texts from distribution will be used instead.");
 		}			
-	}	
+	}
 	
+	
+	/**
+	 * Call this function to add a new language to the external email content files.
+	 * 
+	 * In case no XML file with email content in this language exists yet (and can be read from file system)
+	 * a new XML file is created by copying email content from internal messages_[en,de,es,ja].properties file 
+	 * 
+	 * @param languageCode
+	 */
+	public static void addNewLanguage(String languageCode) {
+		
+		// Look in file system if for the given language an XML file for email content exists
+		EmailContentLocaleResource languageResource = new EmailContentLocaleResource(new Locale(languageCode));
+		if(!languageResource.resourceXMLFileExists()) {
+			// Copy email content from .properties file
+			copyEmailContentToExternalXMLFile(languageCode);
+		}
+	}
+	
+	
+	/**
+	 * Reads email content (subject and message) in the given language from 
+	 * an internal messages_[en,es,de,ja].properties file
+	 * Converts read email content to XML structure
+	 * Writes XML structured email content to an XML file in the file system
+	 * 
+	 * @param languageCode should be 'en','es','de','ja'
+	 */
+	private static void copyEmailContentToExternalXMLFile(String languageCode) {
+		
+		ResourceBundle languageBundle = null;
+		
+		// (1) read messages_[en,de,es,ja].properties file via Imeji.RESOURCE_BUNDLE
+		Locale languageLocale = new Locale(languageCode); 
+		try {
+			languageBundle = Imeji.RESOURCE_BUNDLE.getMessageResourceBundle(languageLocale);
+		}
+		catch(MissingResourceException missingResourceException) {
+			LOGGER.info("Couldn't find a ResourceBundle for language code " + languageCode 
+					 + ". No texts, labels, messages for language " + languageCode + " are available for Imeji");
+		}
+		
+		if(languageBundle != null) {
+			
+			// (2) organize content for XML representation
+			ArrayList<EmailContentXML> xmlContentList = new ArrayList<EmailContentXML>();
+			for(int j = 0; j < emailContentIdentifiersBody.length; j++) {
+				String messageBody = null;
+				String messageSubject = null;
+				try {
+					messageBody = languageBundle.getString(emailContentIdentifiersBody[j]);
+					messageSubject = languageBundle.getString(emailContentIdentifiersSubject[j]);
+				}
+				catch(MissingResourceException missingResource){
+					// identifier is missing in a language
+				}
+				
+				String xmlMessageIdentifier = emailContentIdentifiersXML[j];
+				
+				// only create xml element if there is at least some content (body or head)
+				if(messageBody != null || messageSubject != null) {
+					EmailContentXML xmlMessage = new EmailContentXML(xmlMessageIdentifier, messageSubject, messageBody);
+					xmlContentList.add(xmlMessage);
+				}	
+			}
+			
+			// (3) write to XML file
+			EmailContentListXML emailContentInOneLangaugeXML = new EmailContentListXML();
+			emailContentInOneLangaugeXML.setEMailMessages(xmlContentList);
+			
+			EmailContentLocaleResource xmlWriter = new EmailContentLocaleResource(languageLocale);
+			xmlWriter.setEmailContent(emailContentInOneLangaugeXML);
+			try {
+				xmlWriter.writeToResource();
+			}
+			catch(JAXBException exception) {
+				LOGGER.info("Could not write email content from project to xml file " + xmlWriter.getResourceFilePath()  
+						+ ".  Standard e-mail content from distribution will be used instead.");
+			} catch (IOException e) {
+				LOGGER.info("Could not write to " + xmlWriter.getResourceFilePath()  
+				+ ".  Standard e-mail content from distribution will be used instead.");
+			}			
+		}		
+	}
+		
 }

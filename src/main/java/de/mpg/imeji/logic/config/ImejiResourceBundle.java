@@ -64,15 +64,11 @@ public class ImejiResourceBundle {
    * @param locale
    * @return  ResourceBundle
    */
-  public ResourceBundle getMessageResourceBundle(Locale locale) {
+  public ResourceBundle getMessageResourceBundle(Locale locale) throws MissingResourceException{
 	  
-	  try {
-		  ResourceBundle localeMessageResourceBundle = ResourceBundle.getBundle(getSelectedMessagesBundle(locale));
-		  return localeMessageResourceBundle;
-	  }
-	  catch(MissingResourceException e) {
-		  return ResourceBundle.getBundle(getDefaultMessagesBundle());
-	  } 
+	  ResourceBundle localeMessageResourceBundle = ResourceBundle.getBundle(getSelectedMessagesBundle(locale));
+	  return localeMessageResourceBundle;
+
   }
   
   public void clearResourceBundleCache() {

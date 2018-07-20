@@ -37,10 +37,13 @@ public class ConfigurationBean extends SuperBean {
   private static final long serialVersionUID = -5694991319458172548L;
 
   /**
-   * Save the configuration in the config file
+   * Save the configuration
    */
   public void saveConfig() {
-    Imeji.CONFIG.saveConfig();
+      // save standard configuration to configuration file
+	  Imeji.CONFIG.saveConfig();
+	  // save email content to email messages files
+	  Imeji.EMAIL_CONFIG.saveChangesAndUpdate(Imeji.CONFIG);
   }
 
   /**
@@ -549,9 +552,6 @@ public class ConfigurationBean extends SuperBean {
     return Imeji.CONFIG.getTermsOfUseUrl() != null ? Imeji.CONFIG.getTermsOfUseUrl() : "";
   }
   
-  
-  
-  
   public void setPrivacyPolicy(String s) {
 	    Imeji.CONFIG.setPrivacyPolicy(s);
 	    }
@@ -568,10 +568,6 @@ public class ConfigurationBean extends SuperBean {
     return Imeji.CONFIG.getPrivacyPolicyUrl() != null ? Imeji.CONFIG.getPrivacyPolicyUrl() : "";
   }
   
-  
-  
-  
-
   public String getDefaultLicense() {
     return Imeji.CONFIG.getDefaultLicense();
   }
@@ -649,10 +645,6 @@ public class ConfigurationBean extends SuperBean {
   //           SECTION edit/delete/change of message texts
   //-----------------------------------------------------------------------------
   
-  
-  public void saveCommunication() {
-	  Imeji.EMAIL_CONFIG.saveChanges();
-  }
   
   public List<List<EmailContentXML>> getAllMessages(){
 	  return Imeji.EMAIL_CONFIG.getAllEmailMessagesInAllLanguages();

@@ -12,6 +12,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentListXML;
 import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentXML;
+import de.mpg.imeji.presentation.lang.InternationalizationBean;
 
 import javax.xml.bind.JAXBException;
 
@@ -44,16 +45,16 @@ public class ImejiEmailContentConfiguration {
 	 * list of resource classes that provide access to files
 	 * files store texts together with with labels/identifiers for the texts
 	 */
-	private LinkedList<EmailContentLocaleResource> messageResources;
+	private LinkedList<EmailContentLocaleResource> contentResources;
 	
 	/**
-	 * Local cache for email texts
+	 * Local cache for email content
 	 * Texts are read from file to cache on start up of server
 	 * Changes of texts in cache are immediately stored (back) to file
-	 * HashMap provides quick access to an email text in a certain language given the identifier of the text and
-	 * the language
+	 * HashMap provides quick access to an email content (in a certain language) given the language and
+	 * an identifier (String) of the content
 	 */
-	private HashMap<String, List<EmailContentXML>> messagesCache;
+	private HashMap<String, List<EmailContentXML>> contentCache;
 	
 	
 	
@@ -70,28 +71,83 @@ public class ImejiEmailContentConfiguration {
 	}
 	
 	
+	//------------------------------------------------------------------------------------------
+	//           SECTION Initialize, reset and reload email content to cache
+	//-----------------------------------------------------------------------------------------
+
+	
+	/**
+	 * Initializes the local cache of email content by
+	 *  - reading email content from XML files in file system
+	 *  - organizing read content into a hash map for fast access
+	 *   	
+	 * @param imejiConfiguration
+	 */
 	public void init(ImejiConfiguration imejiConfiguration) {
 		
 		// (1) initiate list for file/resource access classes 
-		this.messageResources = new LinkedList<EmailContentLocaleResource>();
+		this.contentResources = new LinkedList<EmailContentLocaleResource>();
 		
         // (2) read content from xml files to local resource classes
 		readMessagesInAllLanguagesFromFile(imejiConfiguration);
 
 		// (3) re-organize content from local resource classes into a hash map (for fast access) 
-		constructHashMap();
-
-		
+		constructHashMap();		
 	}
 	
 	
+    /**
+     * Call this function after admin role changed the system languages 
+     * to update email content in local cache file system
+	 * 
+     * @param imejiConfiguration current/latest system configuration, contains system languages
+     */
+	private void reloadCacheAfterSystemLanguagesChanged(ImejiConfiguration imejiConfiguration) {
+				
+		// prepare
+		List<String> systemLanguageCodes = imejiConfiguration.getLanguagesAsList();
+		LinkedList<String> newLanguagesCodes = getNewLanguagesForCache(systemLanguageCodes);
+		// if a new language has been added to system languages:
+		for(String newLanguageCode : newLanguagesCodes) {
+			ImejiExternalEmailContent.addNewLanguage(newLanguageCode);
+		}
+		// re-init
+		this.init(imejiConfiguration);
+	}
 	
+	
+	/**
+	 * Compares the list of system languages to the languages that are stored in cache
+	 * 
+	 * @param systemLanguageCodes
+	 * @return list of languages that are set as system languages but not in cache yet
+	 */
+	private LinkedList<String> getNewLanguagesForCache(List<String> systemLanguageCodes) {
+		
+		LinkedList<String> addTheseLanguagesToCache = new LinkedList<String>();
+		
+		for(String systemLanguageCode : systemLanguageCodes) {			
+			// check: does the language exist in cache? if not, add to list of new languages
+			boolean languageAlreadyInCache = false;
+			for(EmailContentLocaleResource mailContentResource : this.contentResources) {
+				if(systemLanguageCode.equalsIgnoreCase(mailContentResource.getLocale().getLanguage())) {
+					languageAlreadyInCache = true;
+				}
+			}
+			if(!languageAlreadyInCache) {
+				addTheseLanguagesToCache.add(systemLanguageCode);
+			}
+		}		
+		return addTheseLanguagesToCache;
+	}
+	
+			
 	//------------------------------------------------------------------------------
-	//           SECTION public interface for getting email message texts 
+	//           SECTION public interface for getting email content 
 	//-----------------------------------------------------------------------------
 	
 	/**
-	 * Get message body from local cache
+	 * Get email message body from local cache
 	 * @param identifier
 	 * @param locale
 	 * @return
@@ -99,21 +155,21 @@ public class ImejiEmailContentConfiguration {
 
 	public String getMessageBody(String identifier, Locale locale) {
 		
-		if(messagesCache.containsKey(identifier)) {	
-			List<EmailContentXML> messageInDifferentLanguages = messagesCache.get(identifier);
+		if(contentCache.containsKey(identifier)) {	
+			List<EmailContentXML> messageInDifferentLanguages = contentCache.get(identifier);
 			for(EmailContentXML message : messageInDifferentLanguages) {
 				if(message.getLanguage().equals(locale.getLanguage())) {
 					return message.getBody();
 				}
 			}
 		}
-	    // try to read the message text from the internal message_[en,de,es,jp].properties files
+	    // try to read the content (message) from the internal message_[en,de,es,jp].properties files
 	   return getMessageFromResourceBundleBody(identifier, locale);
 
 	}
-	
+
 	/**
-	 * Get message subject from local cache
+	 * Get email message subject from local cache
 	 * @param identifier
 	 * @param locale
 	 * @return
@@ -122,8 +178,8 @@ public class ImejiEmailContentConfiguration {
 		
 		
 		// (a) look for the message text in the message cache
-		if(messagesCache.containsKey(identifier)) {	
-			List<EmailContentXML> messageInDifferentLanguages = messagesCache.get(identifier);
+		if(contentCache.containsKey(identifier)) {	
+			List<EmailContentXML> messageInDifferentLanguages = contentCache.get(identifier);
 			for(EmailContentXML message : messageInDifferentLanguages) {
 				if(message.getLanguage().equals(locale.getLanguage())) {
 					return message.getSubject();
@@ -133,7 +189,7 @@ public class ImejiEmailContentConfiguration {
 			// Error 1:  text in requested language was not in cache			
 		}
 		// Error 2: identifier was not in cache
-		// try to read the message text from the internal message_[en,de,es,jp].properties files
+		// -> try to read the message text from the internal message_[en,de,es,jp].properties files
 		return getMessageFromResourceBundleSubject(identifier, locale);
 
 	}
@@ -182,8 +238,6 @@ public class ImejiEmailContentConfiguration {
 		String resourceBundleIdentifier = identifier + MESSAGE_RESOURCE_BUNDLE_SUBJECT_POSTFIX;
 		String messageSubject = Imeji.RESOURCE_BUNDLE.getMessage(resourceBundleIdentifier, locale);
 		return messageSubject;
-
-
 	}
 
    // --------------------------------------------------------------------------------------------------
@@ -194,9 +248,9 @@ public class ImejiEmailContentConfiguration {
 	public List<List<EmailContentXML>> getAllEmailMessagesInAllLanguages(){
 				
 		List<List<EmailContentXML>> emailsInAllLanguages = new ArrayList<List<EmailContentXML>>();
-		 Set<String> allIdentifiers = this.messagesCache.keySet();
+		 Set<String> allIdentifiers = this.contentCache.keySet();
 	    	for(String identifier: allIdentifiers) {
-	    		List<EmailContentXML> list = this.messagesCache.get(identifier);
+	    		List<EmailContentXML> list = this.contentCache.get(identifier);
 	    		emailsInAllLanguages.add(list);
 	    	}		
          return emailsInAllLanguages;
@@ -209,9 +263,9 @@ public class ImejiEmailContentConfiguration {
     	// Flatten the hash map and build a simple list that contains all entries of the hash map
     	// list will be used to present data (as LocaleText objects) in GUI 
     	List<EmailContentXML> allMessages = new ArrayList<EmailContentXML>();
-    	Set<String> allIdentifiers = this.messagesCache.keySet();
+    	Set<String> allIdentifiers = this.contentCache.keySet();
     	for(String identifier: allIdentifiers) {
-    		List<EmailContentXML> list = this.messagesCache.get(identifier);
+    		List<EmailContentXML> list = this.contentCache.get(identifier);
     		for(EmailContentXML localeMessage : list) {
     			allMessages.add(localeMessage);
     		}		
@@ -219,30 +273,6 @@ public class ImejiEmailContentConfiguration {
     	return allMessages;
     }
 	
-	
-    /**
-     * Call when changes via Admin > Configuration > Messages 
-     * are finished and you want to save the changes to file
-     */
-    public void saveChanges() {
-    	
-    	if(this.messageResources != null) {
-    		for(EmailContentLocaleResource messageResource : this.messageResources) {
-    			try {
-    				messageResource.writeToResourceAfterEditedInGUI();
-    			}
-    			catch(IOException ioe) {
-    				LOGGER.info("Could not write to " + messageResource.getResourceXMLFile().getAbsolutePath());
-    				LOGGER.info(ioe.getMessage());
-    			}	
-    			catch(JAXBException jaxbException) {
-    				LOGGER.info("Problem with JAX binding in " + messageResource.getResourceXMLFile().getAbsolutePath() + 
-	            			". Changes in email texts will not be saved to file.");
-	            	LOGGER.info(jaxbException.toString());
-    			}   			
-    		}
-    	}   	
-    }
     
     /**
      * Get the GUI label for an email message identifier in order to show in GUI
@@ -261,7 +291,7 @@ public class ImejiEmailContentConfiguration {
     
 	
     // --------------------------------------------------------------------------
-	//            SECTION read message texts from files into local cache
+	//            SECTION read email content from files into local cache
 	// --------------------------------------------------------------------------
 	
 	/**
@@ -273,9 +303,9 @@ public class ImejiEmailContentConfiguration {
 	    	
     	// re-organize the information in order to get this data structure: 
 		// identifier -> (Text, Language), (Text, Language), (Text, Language)
-		this.messagesCache = new HashMap<String, List<EmailContentXML>>();
+		this.contentCache = new HashMap<String, List<EmailContentXML>>();
 						
-		for(EmailContentLocaleResource messageResource : this.messageResources){
+		for(EmailContentLocaleResource messageResource : this.contentResources){
 			// get the Properties of each file
 			// get the key set of the properties
 			// use the key set to build a hashmap that stores 
@@ -291,16 +321,16 @@ public class ImejiEmailContentConfiguration {
 					localeMessage.setMessagesList(messagesXML);
 					
 					// (a) identifier already exists
-					if(messagesCache.containsKey(identifier)) {
-						List<EmailContentXML> list = messagesCache.get(identifier);
+					if(contentCache.containsKey(identifier)) {
+						List<EmailContentXML> list = contentCache.get(identifier);
 						list.add(localeMessage);
-						messagesCache.put(identifier, list);
+						contentCache.put(identifier, list);
 					}
 					// (b) identifier doesn't exist yet
 					else {
 						List<EmailContentXML> list = new LinkedList<EmailContentXML>();
 						list.add(localeMessage);
-						messagesCache.put(identifier, list);
+						contentCache.put(identifier, list);
 					}					
 				}
 			}
@@ -312,16 +342,20 @@ public class ImejiEmailContentConfiguration {
 		
 		if(imejiConfiguration != null) {
 			LinkedList<String> systemLanguages =  imejiConfiguration.getLanguagesAsList();
+			// if there are no system languages specified, get the default language to use
+			if(systemLanguages.size() == 0) {
+				systemLanguages.add(Locale.ENGLISH.getLanguage());
+			}
 			for(String language: systemLanguages) {
 				Locale locale = new Locale(language);
 	            EmailContentLocaleResource emailMessageResource = new EmailContentLocaleResource(locale);
 	            try {
 	            	emailMessageResource.readEMailMessagesFromFile();
-	            	this.messageResources.add(emailMessageResource);
+	            	this.contentResources.add(emailMessageResource);
 	            }
 	            catch(IOException ioe) {
 	    			LOGGER.info("Could not read " + emailMessageResource.getResourceXMLFile().getAbsolutePath() + 
-	            			". Feature configure email content will be disabled in language " + emailMessageResource.getLocale().getDisplayLanguage() + ". Standard content for e-mails (subject and message) from distribution will be used instead.");
+	            			". Feature configure email content will not be available in language " + emailMessageResource.getLocale().getDisplayLanguage());
 	    		}
 	            catch(JAXBException jaxbException) {
 	            	LOGGER.info("Problem with JAX binding in " + emailMessageResource.getResourceXMLFile().getAbsolutePath() + 
@@ -329,13 +363,81 @@ public class ImejiEmailContentConfiguration {
 	            	LOGGER.info(jaxbException.toString());
 	            }            
 			}
-
 		}
 		else {
 			LOGGER.info("Could not get system languages from ImejiConfiguration instance. "
 					+ "Cannot access files with configured texts for emails. Standard e-mail texts from distribution will be used instead.");
-		}	
-		
+		}			
 	}
+	
+	
+	// --------------------------------------------------------------------------
+	//            SECTION save cache to file
+	// --------------------------------------------------------------------------
+	
+	/**
+     * Save current state of cache to file.
+     */
+    public void save() {
+    	
+    	if(this.contentResources != null) {
+    		for(EmailContentLocaleResource messageResource : this.contentResources) {
+    			try {
+    				messageResource.writeToResource();;
+    			}
+    			catch(IOException ioe) {
+    				LOGGER.info("Could not write to " + messageResource.getResourceXMLFile().getAbsolutePath());
+    				LOGGER.info(ioe.getMessage());
+    			}	
+    			catch(JAXBException jaxbException) {
+    				LOGGER.info("Problem with JAX binding in " + messageResource.getResourceXMLFile().getAbsolutePath() + 
+	            			". Changes in email texts will not be saved to file.");
+	            	LOGGER.info(jaxbException.toString());
+    			}   			
+    		}
+    	}   	   	
+    }
+    	
+    
+    
+    /**
+     * Function checks 
+     * - if email content was edited and should be saved to file
+     * - if system languages have changed and cache needs updating
+     */
+    public void saveChangesAndUpdate(ImejiConfiguration imejiConfiguration) {    	
+    	// save content if it has been edited in GUI
+    	this.saveChanges();
+    	// in case we have knowledge of XML files, we have email content cached and now system languages have changed 
+    	if(this.contentResources.size() > 0 && !this.contentCache.isEmpty()) {
+    		this.reloadCacheAfterSystemLanguagesChanged(imejiConfiguration);
+    	}   	    	
+    }
+    
+    
+    /**
+     * Save changes to file.
+     * Call after editing email content in Admin > Configuration > Messages view is done.
+     */
+    private void saveChanges() {
+    	
+    	if(this.contentResources != null) {
+    		for(EmailContentLocaleResource messageResource : this.contentResources) {
+    			try {
+    				messageResource.writeToResourceAfterEditedInGUI();
+    			}
+    			catch(IOException ioe) {
+    				LOGGER.info("Could not write to " + messageResource.getResourceXMLFile().getAbsolutePath());
+    				LOGGER.info(ioe.getMessage());
+    			}	
+    			catch(JAXBException jaxbException) {
+    				LOGGER.info("Problem with JAX binding in " + messageResource.getResourceXMLFile().getAbsolutePath() + 
+	            			". Changes in email texts will not be saved to file.");
+	            	LOGGER.info(jaxbException.toString());
+    			}   			
+    		}
+    	}   	
+    }
+    
 
 }
