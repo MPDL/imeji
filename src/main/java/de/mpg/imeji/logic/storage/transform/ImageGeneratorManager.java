@@ -10,9 +10,10 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
+import de.mpg.imeji.logic.storage.transform.generator.CompressedFilesImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.ImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.MagickImageGenerator;
-import de.mpg.imeji.logic.storage.transform.generator.NiceRawFileImageGenerator;
+import de.mpg.imeji.logic.storage.transform.generator.TextFileIconGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.PdfImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.RawFileImageGenerator;
 import de.mpg.imeji.logic.storage.transform.generator.SimpleAudioImageGenerator;
@@ -29,9 +30,16 @@ import de.mpg.imeji.logic.util.TempFileUtil;
  * @version $Revision$ $LastChangedDate$
  */
 public final class ImageGeneratorManager {
+  
+  /**
+   * List of classes that are able to create a preview image of a given file.
+   * Order of the list matters: For creating a preview image the list is processed 
+   * top-down and the first class that "fits" the file type creates the image file.  
+   */
   private final List<ImageGenerator> generators;
-  // Only generators that will convert file to jpg with equivalent content
+
   private final List<ImageGenerator> fullGenerators;
+  
   private static final Logger LOGGER = Logger.getLogger(ImageGeneratorManager.class);
 
   /**
@@ -39,12 +47,13 @@ public final class ImageGeneratorManager {
    */
   public ImageGeneratorManager() {
     generators = new ArrayList<ImageGenerator>();
-    generators.add(new PdfImageGenerator());
-    generators.add(new SimpleAudioImageGenerator());
-    generators.add(new MagickImageGenerator());
-    generators.add(new SimpleImageGenerator());
-    generators.add(new NiceRawFileImageGenerator());
-    generators.add(new RawFileImageGenerator());
+    generators.add(new PdfImageGenerator());		   		// creates a preview for pdf files
+    generators.add(new SimpleAudioImageGenerator());   		// creates a preview for audio files (file with mime type "audio")
+    generators.add(new MagickImageGenerator());		   		// creates a preview for image and video files using ImageMagick project software library (see http://www.imagemagick.org/script/index.php)
+    generators.add(new SimpleImageGenerator());	       		// creates a preview for image files (file with mime type "image")
+    generators.add(new TextFileIconGenerator());   		// creates a preview for all files types for which a fixed icon exists (icon files are stored in src/main/resources/images/icons)
+    generators.add(new CompressedFilesImageGenerator());	// creates a preview for compressed file types  
+    generators.add(new RawFileImageGenerator());	   		// creates a default preview image for file types that haven't been handled above	
 
     fullGenerators = new ArrayList<ImageGenerator>();
     fullGenerators.add(new MagickImageGenerator());
@@ -83,7 +92,7 @@ public final class ImageGeneratorManager {
    * @throws ImejiException
    */
   public File generateFullResolution(File file, String extension) throws ImejiException {
-    return toJpeg(file, extension);
+    return createJpgPreview(file, extension);
   }
 
   /**
@@ -102,52 +111,64 @@ public final class ImageGeneratorManager {
     // return gifFile;
     // }
     // }
-    return generateJpeg(file, extension, resolution);
+    return createScaledJPGPreview(file, extension, resolution);
   }
 
   /**
-   * Generate an jpeg image in the wished size.
+   * Generate image/icon/preview in jpeg format for a file with a given resolution.
    *
-   * @param bytes
-   * @param extension
-   * @param resolution
+   * @param file		File for which an preview/icon/thumbnail shall be created
+   * @param extension	file extension
+   * @param resolution	resolution of the preview/icon/thumbnail
    * @return
    */
-  private File generateJpeg(File file, String extension, FileResolution resolution) {
-    // Make a jpg out of the file
+  private File createScaledJPGPreview(File file, String extension, FileResolution resolution) {
+
     try {
-      File jpg = StorageUtils.compareExtension(extension, "jpg") ? file : toJpeg(file, extension);
-      return ImageMagickUtils.resizeJpg(jpg, "jpg", resolution);
-    } catch (final Exception e) {
-      LOGGER.error("Error generating JPEG from File: ", e);
+      File jpgPreview = file;
+      boolean fileIsJPEG = StorageUtils.compareExtension(extension, "jpg");
+      if(!fileIsJPEG) {
+    	  jpgPreview = this.createJpgPreview(file, extension);
+      }
+      File resizedJpgPreview = ImageMagickUtils.resizeJpg(jpgPreview, "jpg", resolution);
+      return resizedJpgPreview;      
+    } 
+    catch (final Exception e) {
+      LOGGER.error("Error generating JPEG preview for file: ", e);
     }
     return null;
 
   }
 
   /**
-   * Uses the {@link ImageGenerator} to transform the bytes into a jpg
+   * Uses a list of {@link ImageGenerator}s to create a preview (in jpg format) 
+   * for a given file
    *
-   * @param bytes
-   * @param extension
-   * @return
+   * @param file the file for which a preview is created
+   * @param extension  the file extension
+   * @return File: a preview image in jpg format
    * @throws ImejiException
    * @throws IOException
    */
-  private File toJpeg(File file, String extension) throws ImejiException {
-    if (StorageUtils.compareExtension(extension, "jpg")) {
-      File copy;
-      try {
-        copy = TempFileUtil.createTempFile("ImageGeneratorCopyJpeg" + file.getName(), "jpg");
-        FileUtils.copyFile(file, copy);
-        return copy;
-      } catch (IOException e) {
-        throw new ImejiException("Unsupported file format (requested was " + extension + ")");
-      }
+  private File createJpgPreview(File file, String extension) throws ImejiException {
+    
+	 // (a) case file has jpg format
+	 if (StorageUtils.compareExtension(extension, "jpg")) {
+	  File copy;
+	  try {
+	    copy = TempFileUtil.createTempFile("ImageGeneratorCopyJpeg" + file.getName(), "jpg");
+	    FileUtils.copyFile(file, copy);
+	    return copy;
+	  } 
+	  catch (IOException e) {
+	    throw new ImejiException("Unsupported file format (requested was " + extension + ")");
+	  }
     }
-    for (final ImageGenerator imageGenerator : generators) {
+    
+	// (b) case file doesn't have jpg format
+	for (final ImageGenerator imageGenerator : generators) {
       try {
-        final File jpeg = imageGenerator.generateJPG(file, extension);
+        final File jpeg = imageGenerator.generateFilePreview(file, extension);
         if (jpeg != null && jpeg.length() > 0) {
           return jpeg;
         }

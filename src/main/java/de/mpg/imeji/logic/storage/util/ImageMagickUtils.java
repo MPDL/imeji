@@ -21,7 +21,7 @@ import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**
- * Mehtods to help wotk with images
+ * Methods to help work with images
  *
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
@@ -41,14 +41,14 @@ public class ImageMagickUtils {
    */
   public static boolean verifyImageMagickInstallation() {
     try {
-      final String imPath = getImageMagickInstallationPath();
-      final ConvertCmd cmd = new ConvertCmd(false);
-      ProcessStarter.setGlobalSearchPath(imPath);
-      cmd.setSearchPath(imPath);
-      final IMOperation op = new IMOperation();
+      final String imageMagickPath = getImageMagickInstallationPath();
+      final ConvertCmd convertCommand = new ConvertCmd(false);
+      ProcessStarter.setGlobalSearchPath(imageMagickPath);
+      convertCommand.setSearchPath(imageMagickPath);
+      final IMOperation imageMagickOperationFromCommandline = new IMOperation();
       // get ImageMagick version
-      op.version();
-      cmd.run(op);
+      imageMagickOperationFromCommandline.version();
+      convertCommand.run(imageMagickOperationFromCommandline);
     } catch (final Exception e) {
       LOGGER.error("imagemagick not installed", e);
       return false;

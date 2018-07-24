@@ -15,7 +15,7 @@ import de.mpg.imeji.logic.util.StorageUtils;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class PdfImageGenerator implements ImageGenerator {
+public class PdfImageGenerator extends ImageGenerator {
   private static final Logger LOGGER = Logger.getLogger(PdfImageGenerator.class);
 
   /*
@@ -24,14 +24,20 @@ public class PdfImageGenerator implements ImageGenerator {
    * @see de.mpg.imeji.logic.storage.transform.ImageGenerator#generateJPG(byte[], java.lang.String)
    */
   @Override
-  public File generateJPG(File file, String extension) {
-    if (StorageUtils.getMimeType(extension).equals("application/pdf")) {
-      try {
-        return PdfUtils.pdfToImage(file);
-      } catch (final IOException e) {
-        LOGGER.error("Error reading pdf file", e);
-      }
-    }
-    return null;
+  public File generatePreview(File file, String extension) {
+   
+	  try {
+	    return PdfUtils.pdfToImage(file);
+	  } 
+	  catch (final IOException e){
+	    LOGGER.error("Error reading pdf file", e);
+	  }
+      return null;
   }
+
+	@Override
+	protected boolean generatorSupportsMimeType(String fileExtension) {
+		boolean isPdfFormat = StorageUtils.getMimeType(fileExtension).equals("application/pdf");
+		return isPdfFormat;
+	}
 }

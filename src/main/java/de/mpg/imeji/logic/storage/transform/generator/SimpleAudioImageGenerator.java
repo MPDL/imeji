@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
+import de.mpg.imeji.logic.storage.transform.generator.icons.ImejiFileIcon;
 import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.TempFileUtil;
 
@@ -17,9 +18,8 @@ import de.mpg.imeji.logic.util.TempFileUtil;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class SimpleAudioImageGenerator implements ImageGenerator {
+public class SimpleAudioImageGenerator extends ImageGenerator {
   private static final Logger LOGGER = Logger.getLogger(SimpleAudioImageGenerator.class);
-  private static final String PATH_TO_AUDIO_ICON = "images/audio_file_icon.jpg";
 
   /*
    * (non-Javadoc)
@@ -27,17 +27,25 @@ public class SimpleAudioImageGenerator implements ImageGenerator {
    * @see de.mpg.imeji.logic.storage.transform.ImageGenerator#generateJPG(byte[], java.lang.String)
    */
   @Override
-  public File generateJPG(File file, String extension) {
-    if (StorageUtils.getMimeType(extension).contains("audio")) {
-      try {
-        File copy = TempFileUtil.createTempFile("audio", extension);
-        FileUtils.copyFile(new File(SimpleAudioImageGenerator.class.getClassLoader()
-            .getResource(PATH_TO_AUDIO_ICON).toURI()), copy);
-        return copy;
-      } catch (final URISyntaxException | IOException e) {
-        LOGGER.error("Error creating thunmbnail", e);
-      }
-    }
+  public File generatePreview(File file, String extension) {
+   
+	ImejiFileIcon audioIcon = new ImejiFileIcon("audio_file_icon");
+	try {
+	    File copy = TempFileUtil.createTempFile("audio", extension);
+	    FileUtils.copyFile(new File(SimpleAudioImageGenerator.class.getClassLoader()
+	        .getResource(audioIcon.getIconPath()).toURI()), copy);
+	    return copy;
+	}
+	catch (final URISyntaxException | IOException e) {
+		LOGGER.error("Error creating thunmbnail", e);
+	}
+
     return null;
+  }
+
+  @Override
+  protected boolean generatorSupportsMimeType(String fileExtension) {
+	boolean isAudio = StorageUtils.getMimeType(fileExtension).contains("audio");
+	return isAudio;
   }
 }

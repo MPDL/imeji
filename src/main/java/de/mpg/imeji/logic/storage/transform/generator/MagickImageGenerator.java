@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
+import de.mpg.imeji.logic.util.StorageUtils;
 
 /**
  * {@link ImageGenerator} implemented with imagemagick
@@ -14,8 +15,8 @@ import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class MagickImageGenerator implements ImageGenerator {
-  private boolean enabled = false;
+public class MagickImageGenerator extends ImageGenerator {
+  private boolean imageMagickEnabled = false;
   private static final Logger LOGGER = Logger.getLogger(MagickImageGenerator.class);
 
   /**
@@ -23,7 +24,7 @@ public class MagickImageGenerator implements ImageGenerator {
    */
   public MagickImageGenerator() {
     try {
-      enabled = Boolean.parseBoolean(PropertyReader.getProperty("imeji.imagemagick.enable"));
+      imageMagickEnabled = Boolean.parseBoolean(PropertyReader.getProperty("imeji.imagemagick.enable"));
     } catch (final Exception e) {
       throw new RuntimeException("Error reading property imeji.imagemagick.enable", e);
     }
@@ -35,8 +36,8 @@ public class MagickImageGenerator implements ImageGenerator {
    * @see de.mpg.imeji.logic.storage.transform.ImageGenerator#generateJPG(byte[], java.lang.String)
    */
   @Override
-  public File generateJPG(File file, String extension) {
-    if (enabled) {
+  public File generatePreview(File file, String extension) {
+    if (imageMagickEnabled) {
       try {
         return ImageMagickUtils.convertToJPEG(file, extension);
       } catch (final Exception e) {
@@ -46,4 +47,13 @@ public class MagickImageGenerator implements ImageGenerator {
     }
     return null;
   }
+
+	@Override
+	protected boolean generatorSupportsMimeType(String fileExtension) {
+		
+		boolean isImageOrVideoMimeType = StorageUtils.getMimeType(fileExtension).contains("image") ||
+				StorageUtils.getMimeType(fileExtension).contains("video");
+		return isImageOrVideoMimeType;
+
+	}
 }

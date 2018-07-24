@@ -12,7 +12,7 @@ import de.mpg.imeji.logic.util.StorageUtils;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class SimpleImageGenerator implements ImageGenerator {
+public class SimpleImageGenerator extends ImageGenerator {
   /*
    * (non-Javadoc)
    *
@@ -20,10 +20,14 @@ public class SimpleImageGenerator implements ImageGenerator {
    * int, int)
    */
   @Override
-  public File generateJPG(File file, String extension) {
-    if (StorageUtils.getMimeType(extension).contains("image")) {
-      return ImageUtils.toJpeg(file, StorageUtils.getMimeType(extension));
-    }
-    return null;
+  public File generatePreview(File file, String extension) {
+
+    return ImageUtils.toJpeg(file, StorageUtils.getMimeType(extension));
+  }
+
+  @Override
+  protected boolean generatorSupportsMimeType(String fileExtension) {
+	boolean isImage = StorageUtils.getMimeType(fileExtension).contains("image");
+	return isImage;
   }
 }
