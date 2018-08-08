@@ -35,10 +35,11 @@
 					<a href="#{Navigation.applicationUrl}exportServlet?format=zip" target="_blank">
 						<span class="fa fa-download"/>#{lbl.download_files}
 					</a>
-					<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
-						<a onclick="openDialog('deleteSelectedItems')">
+					<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection) or (cc.attrs.context == 'items' and cc.attrs.itemsBean.isOneSelectedItemDeletabel())}">
+						<h:commandLink>
 							<span class="fa fa-trash"/>#{lbl.delete}
-						</a>
+							<f:ajax render=":delSel:f" onevent="function(data) { if (data.status === 'success') {openDialog('deleteSelectedItems')} }"/>
+						</h:commandLink>
 					</ui:fragment>
 					<ui:fragment rendered="#{Auth.admin and WorkflowBean.withdraw(cc.attrs.itemsBean.collection)}">
 						<a onclick="openDialog('withdrawSelectedItems'); document.getElementById('selDialogs:witdrawSel:f:discardComment').focus();">
