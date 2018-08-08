@@ -19,6 +19,7 @@
 	<ui:define name="searchQuery">
 		<imjc:searchQueryDisplayArea searchBean="#{paginatorListSessionBean}" navBean="#{Navigation}" label="#{lbl.search_for} #{lbl.items}" />
 	</ui:define>
+	
 	<ui:define name="actionsMenu">
 		<a href="#{Navigation.applicationUrl}upload">
 			<span class="fa fa-upload"/>#{lbl.upload}
@@ -26,4 +27,15 @@
 		<item:selectedActionMenu id="selMenu" context="#{currentMainMenu}" itemsBean="#{paginatorListSessionBean}" rendered="#{not empty SessionBean.selected}"/>		
 		<a href="#" class="fa fa-filter responsiveMenuBtn imj_menuButton imj_overlayMenu" style="float:right" data-menu="facetsArea" />
 	</ui:define>
+	
+	<ui:define name="modalDialogs_from_site">
+	 	<h:panelGroup id="dialogs">
+			<dialog:confirmationDialog id="delSel" submitAction="deleteSelectedDeletableItems" bean="#{paginatorListSessionBean}" 
+				confirmationText= "#{paginatorListSessionBean.getDeleteItemsNotAllowedNotice()}" 
+				confirmationText2="#{paginatorListSessionBean.getDeleteItemsConfirmationText()}" 
+				submitLabel="#{lbl.delete_selectedImages}" dialogId="deleteSelectedItems" 
+			/>
+	 	</h:panelGroup>
+	</ui:define>
+	
 </ui:composition>

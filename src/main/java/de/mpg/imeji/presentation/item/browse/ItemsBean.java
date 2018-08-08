@@ -615,7 +615,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * 
    * @return true if at least one selected item is deletable.
    */
-  public boolean isOneSelectedItemDeletabel() {
+  public boolean isOneSelectedItemDeletable() {
 	  int numberofDeletableItems = this.getNumberOfDeletableSelectedItems();
 	  
 	  return numberofDeletableItems >= 1;
@@ -651,16 +651,16 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     	  LOGGER.error(errorMessage, e);
     	  BeanHelper.error(errorMessage);
     	  return new ArrayList<Item>();
-      }	 	  
+      }
   }
   
   /**
    * Delete all selected {@link Item}s that can be deleted.
    */
-  public void deleteSelectedDeletableItems(){
-	  Collection<Item> deletabelItems = this.findSelectedDeletableItems();
-	  List<String> deletabelItemsUris = deletabelItems.stream().map(item -> item.getUri()).collect(Collectors.toList());
-	  delete(deletabelItemsUris);
+  public void deleteSelectedDeletableItems() {
+	  Collection<Item> deletableItems = this.findSelectedDeletableItems();
+	  List<String> deletableItemsUris = deletableItems.stream().map(item -> item.getUri()).collect(Collectors.toList());
+	  delete(deletableItemsUris);
 	  
 	  try {
 		  reload();
@@ -668,7 +668,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 		  String errorMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_reload_page", getLocale());
 		  LOGGER.error(errorMessage, e);
 		  BeanHelper.error(errorMessage);
-	  }
+	  }	  
   }
   
   public String getDeleteItemsNotAllowedNotice() {

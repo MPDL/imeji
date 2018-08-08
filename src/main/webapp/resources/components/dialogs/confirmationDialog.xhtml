@@ -21,11 +21,15 @@
 	<composite:implementation>
 		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox">
 			<h:form id="f">
-				<div class="imj_confirmationText">
-					<h:outputText value="#{cc.attrs.confirmationText}" escape="#{!cc.attrs.rawHtml}"/>
-				</div>
-				<ui:fragment rendered="#{not empty cc.attrs.confirmationText2}">
+				<ui:fragment rendered="#{not empty cc.attrs.confirmationText}">
+					<div class="imj_confirmationText">
+						<h:outputText value="#{cc.attrs.confirmationText}" escape="#{!cc.attrs.rawHtml}"/>
+					</div>
+				</ui:fragment>
+				<ui:fragment rendered="#{(not empty cc.attrs.confirmationText) and (not empty cc.attrs.confirmationText2)}">
 					<br/>
+				</ui:fragment>
+				<ui:fragment rendered="#{not empty cc.attrs.confirmationText2}">
 					<div class="imj_confirmationText">
 						#{cc.attrs.confirmationText2}
 						<ui:fragment rendered="#{not empty cc.attrs.confirmationTextLicense}">
