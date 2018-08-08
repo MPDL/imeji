@@ -38,6 +38,7 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
+import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperPaginatorBean;
@@ -608,4 +609,89 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   public String getQueryEncoded() throws UnsupportedEncodingException {
     return query != null ? URLEncoder.encode(query, "UTF-8") : "";
   }
+  
+  /**
+   * Checks whether at least one of the selected items is deletable.
+   * 
+   * @return true if at least one selected item is deletable.
+   */
+  public boolean isOneSelectedItemDeletabel() {
+	  int numberofDeletableItems = this.getNumberOfDeletableSelectedItems();
+	  
+	  return numberofDeletableItems >= 1;
+  }
+  
+  private int getNumberOfSelectedItems() {
+	  return sessionBean.getSelected().size();
+  }
+  
+  private int getNumberOfDeletableSelectedItems() {
+	  return this.findSelectedDeletableItems().size();
+  }
+  
+  private int getNumberOfNonDeletableSelectedItems() {
+	  return sessionBean.getSelected().size() - this.findSelectedDeletableItems().size();
+  }
+  
+  private Collection<Item> findSelectedDeletableItems() {
+	  List<String> selectedItemsUris = sessionBean.getSelected();
+	  Authorization authorization = new Authorization();	  
+	  final ItemService controller = new ItemService();
+	  
+	  try {
+    	  Collection<Item> selectedItems = controller.retrieveBatch(selectedItemsUris, -1, 0, getSessionUser());
+    	  Collection<Item> deletableItems = selectedItems.stream()
+    			  //Items are deletable if the user has the permission to delete them and if the items have the status pending.
+    			  .filter(item -> authorization.delete(getSessionUser(), item))
+    			  .filter(item -> (item.getStatus() == Status.PENDING))
+    			  .collect(Collectors.toList());
+    	  return deletableItems;
+      } catch (final ImejiException e) {
+    	  String errorMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_retrieve_selected_items", getLocale());
+    	  LOGGER.error(errorMessage, e);
+    	  BeanHelper.error(errorMessage);
+    	  return new ArrayList<Item>();
+      }	 	  
+  }
+  
+  /**
+   * Delete all selected {@link Item}s that can be deleted.
+   */
+  public void deleteSelectedDeletableItems(){
+	  Collection<Item> deletabelItems = this.findSelectedDeletableItems();
+	  List<String> deletabelItemsUris = deletabelItems.stream().map(item -> item.getUri()).collect(Collectors.toList());
+	  delete(deletabelItemsUris);
+	  
+	  try {
+		  reload();
+	  } catch (IOException e) {
+		  String errorMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_reload_page", getLocale());
+		  LOGGER.error(errorMessage, e);
+		  BeanHelper.error(errorMessage);
+	  }
+  }
+  
+  public String getDeleteItemsNotAllowedNotice() {
+	  int numberOfNonDeletableSelectedItems = this.getNumberOfNonDeletableSelectedItems();
+	  
+	  if(numberOfNonDeletableSelectedItems >=1) {
+		  return Imeji.RESOURCE_BUNDLE.getMessage("not_allowed_to_delete_items_notice", getLocale())
+				  .replaceAll("XXX_NUMBER_OF_NON_DELETABLE_XXX", Integer.toString(numberOfNonDeletableSelectedItems))
+				  .replaceAll("XXX_NUMBER_OF_SELECTED_XXX", Integer.toString(this.getNumberOfSelectedItems()));	
+	  }else {
+		  return "";
+	  }
+  }
+  
+  public String getDeleteItemsConfirmationText() {
+	  int numberOfDeletableSelectedItems = this.getNumberOfDeletableSelectedItems();
+	  
+	  if (numberOfDeletableSelectedItems > 1) {
+		  return Imeji.RESOURCE_BUNDLE.getMessage("confirmation_delete_number_of_items", getLocale())
+					 .replaceAll("XXX_NUMBER_OF_DELETABLE_XXX", Integer.toString(numberOfDeletableSelectedItems));
+	  } else {
+		  return Imeji.RESOURCE_BUNDLE.getMessage("confirmation_delete_one_item", getLocale());	 
+	  }
+  }  
+  
 }
