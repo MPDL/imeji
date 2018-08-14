@@ -35,7 +35,7 @@
 					<a href="#{Navigation.applicationUrl}exportServlet?format=zip" target="_blank">
 						<span class="fa fa-download"/>#{lbl.download_files}
 					</a>
-					<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection) or (cc.attrs.context == 'items' and cc.attrs.itemsBean.isOneSelectedItemDeletable())}">
+					<ui:fragment rendered="#{WorkflowBean.delete(cc.attrs.itemsBean.collection) or (cc.attrs.context == 'items')}">
 						<h:commandLink>
 							<span class="fa fa-trash"/>#{lbl.delete}
 							<f:ajax render=":delSel:f" onevent="function(data) { if (data.status === 'success') {openDialog('deleteSelectedItems')} }"/>

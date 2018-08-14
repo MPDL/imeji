@@ -673,12 +673,15 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   
   public String getDeleteItemsNotAllowedNotice() {
 	  int numberOfNonDeletableSelectedItems = this.getNumberOfNonDeletableSelectedItems();
+	  int numberOfSelectedItems = this.getNumberOfSelectedItems();
 	  
-	  if(numberOfNonDeletableSelectedItems >=1) {
+	  if(numberOfNonDeletableSelectedItems >= 1 && numberOfSelectedItems > 1) {
 		  return Imeji.RESOURCE_BUNDLE.getMessage("not_allowed_to_delete_items_notice", getLocale())
 				  .replaceAll("XXX_NUMBER_OF_NON_DELETABLE_XXX", Integer.toString(numberOfNonDeletableSelectedItems))
-				  .replaceAll("XXX_NUMBER_OF_SELECTED_XXX", Integer.toString(this.getNumberOfSelectedItems()));	
-	  }else {
+				  .replaceAll("XXX_NUMBER_OF_SELECTED_XXX", Integer.toString(numberOfSelectedItems));	
+	  } else if(numberOfNonDeletableSelectedItems == 1 && numberOfSelectedItems == 1){
+		  return Imeji.RESOURCE_BUNDLE.getMessage("not_allowed_to_delete_item_notice", getLocale());
+	  } else {
 		  return "";
 	  }
   }
@@ -689,9 +692,19 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 	  if (numberOfDeletableSelectedItems > 1) {
 		  return Imeji.RESOURCE_BUNDLE.getMessage("confirmation_delete_number_of_items", getLocale())
 					 .replaceAll("XXX_NUMBER_OF_DELETABLE_XXX", Integer.toString(numberOfDeletableSelectedItems));
-	  } else {
+	  } else if(numberOfDeletableSelectedItems == 1){
 		  return Imeji.RESOURCE_BUNDLE.getMessage("confirmation_delete_one_item", getLocale());	 
+	  } else {
+		  return "";
 	  }
-  }  
+  }
+  
+  public String getDeleteItemsSubmitLabel() {
+	  if(this.isOneSelectedItemDeletable()) {
+		  return Imeji.RESOURCE_BUNDLE.getLabel("delete_selectedImages", getLocale());
+	  } else {
+		  return "";
+	  }
+  }
   
 }

@@ -33,7 +33,7 @@
 			<dialog:confirmationDialog id="delSel" submitAction="deleteSelectedDeletableItems" bean="#{paginatorListSessionBean}" 
 				confirmationText= "#{paginatorListSessionBean.getDeleteItemsNotAllowedNotice()}" 
 				confirmationText2="#{paginatorListSessionBean.getDeleteItemsConfirmationText()}" 
-				submitLabel="#{lbl.delete_selectedImages}" dialogId="deleteSelectedItems" 
+				submitLabel="#{paginatorListSessionBean.getDeleteItemsSubmitLabel()}" dialogId="deleteSelectedItems" 
 			/>
 	 	</h:panelGroup>
 	</ui:define>
