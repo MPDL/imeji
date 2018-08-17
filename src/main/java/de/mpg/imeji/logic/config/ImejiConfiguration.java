@@ -80,10 +80,11 @@ public class ImejiConfiguration {
       "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=";
   public static final String DEFAULT_CONE_AUTHORS =
       "http://pubman.mpdl.mpg.de/cone/persons/query?format=json&n=10&m=full&q=";
-  
-  
-  
+   
   private String dataViewerUrl;
+  
+  private ProtectedPassword emailServerPassword;
+  private ProtectedPassword doiPassword;
 
   public enum BROWSE_VIEW {
     LIST, THUMBNAIL;
@@ -151,7 +152,15 @@ public class ImejiConfiguration {
     dataViewerUrl = (String) config.get(CONFIGURATION.DATA_VIEWER_URL.name());
     fileTypes = new ImejiFileTypes((String) config.get(CONFIGURATION.FILE_TYPES.name()));
     initPropertiesWithDefaultValue();
+    initProtectedPasswords();
   }
+  
+  
+  private void initProtectedPasswords() {
+	  this.emailServerPassword = new EmailServerPassword((String) config.get(CONFIGURATION.EMAIL_SERVER_PASSWORD.name()));
+	  this.doiPassword = new DoiPassword((String) config.get(CONFIGURATION.DOI_PASSWORD.name()));
+  }
+  
 
   private void initPropertiesWithDefaultValue() {
     initPropertyWithDefaultValue(CONFIGURATION.FILE_TYPES, fileTypes.toString());
@@ -354,43 +363,7 @@ public class ImejiConfiguration {
     setProperty(CONFIGURATION.STARTPAGE_FOOTER_LOGOS.name(), html);
   }
 
-  /**
-   * Utility class to parse the html snippets
-   *
-   * @author saquet
-   *
-   */
-  public class HtmlSnippet {
-    private String html;
-    private String lang;
-
-    public HtmlSnippet(String lang, String html) {
-      this.lang = lang;
-      this.html = html;
-    }
-
-    public void listener(ValueChangeEvent event) {
-      html = (String) event.getNewValue();
-      setProperty(CONFIGURATION.STARTPAGE_HTML.name() + "_" + lang, html);
-    }
-
-    public String getLang() {
-      return lang;
-    }
-
-    public void setLang(String lang) {
-      this.lang = lang;
-    }
-
-    public String getHtml() {
-      return html;
-    }
-
-    public void setHtml(String html) {
-      this.html = html;
-    }
-  }
-
+  
   /**
    * Read all the html snippets in the config and retunr it as a {@link List} {@link HtmlSnippet}
    *
@@ -613,6 +586,15 @@ public class ImejiConfiguration {
     return (String) config.get(CONFIGURATION.EMAIL_SERVER_PASSWORD.name());
   }
 
+  
+  public void setProtectedEmailServerPassword(ProtectedPassword emailServerPassword) {
+	    setProperty(CONFIGURATION.EMAIL_SERVER_PASSWORD.name(), this.emailServerPassword.getPassword());
+  }
+
+  public ProtectedPassword getProtectedEmailServerPassword() {
+	    return this.emailServerPassword;
+  }
+   
   public void setEmailServerEnableAuthentication(boolean b) {
     setProperty(CONFIGURATION.EMAIL_SERVER_ENABLE_AUTHENTICATION.name(), Boolean.toString(b));
   }
@@ -722,7 +704,16 @@ public class ImejiConfiguration {
   public void setDoiPassword(String s) {
     setProperty(CONFIGURATION.DOI_PASSWORD.name(), s);
   }
+  
+  public void setProtectedDoiPassword(ProtectedPassword emailServerPassword) {
+	    setProperty(CONFIGURATION.DOI_PASSWORD.name(), this.doiPassword.getPassword());
+  }
 
+  public ProtectedPassword getProtectedDoiPassword() {
+	    return this.doiPassword;
+  }
+  
+  
   public String getDoiServiceUrl() {
     return (String) config.get(CONFIGURATION.DOI_SERVICE_URL.name());
   }
@@ -925,8 +916,6 @@ public class ImejiConfiguration {
     return (String) config.get(CONFIGURATION.PRIVACY_POLICY_URL.name());
   }
   
-  
-
   public String getDefaultLicense() {
     return (String) config.get(CONFIGURATION.DEFAULT_LICENSE.name());
   }
@@ -1002,6 +991,128 @@ public class ImejiConfiguration {
   public void setFacetDisplayed(String str) {
     setProperty(CONFIGURATION.FACET_DISPLAYED.name(), str);
   }
+
   
- 
+  //------------------------------------------------------------------------
+  // Utility classes
+  //------------------------------------------------------------------------
+  
+  
+  /**
+   * Utility class to parse the html snippets
+   *
+   * @author saquet
+   *
+   */
+  public class HtmlSnippet {
+    private String html;
+    private String lang;
+
+    public HtmlSnippet(String lang, String html) {
+      this.lang = lang;
+      this.html = html;
+    }
+
+    public void listener(ValueChangeEvent event) {
+      html = (String) event.getNewValue();
+      setProperty(CONFIGURATION.STARTPAGE_HTML.name() + "_" + lang, html);
+    }
+
+    public String getLang() {
+      return lang;
+    }
+
+    public void setLang(String lang) {
+      this.lang = lang;
+    }
+
+    public String getHtml() {
+      return html;
+    }
+
+    public void setHtml(String html) {
+      this.html = html;
+    }
+  }
+
+  
+  /**
+   * Utility class for a GUI password field
+   * that 
+   *  - does not show a password unless a password is entered by the user
+   *  - the password field is only active and the user can only set a password 
+   *     if an "set password" check box in GUI is checked
+   */
+  
+   public abstract class ProtectedPassword {
+	   
+	   /**
+	    * password
+	    */
+	   protected String password;
+	  
+	   /**
+	    * check box state: checked (active) or not
+	    */
+	   private boolean active;
+	   
+	   public ProtectedPassword(String password) {
+		   this.password = password;
+		   this.active = false;
+	   }
+	   
+	   public abstract void setInternalPassword();
+	   
+	   
+	   // in GUI: password field is always empty
+	   public String getPassword() {
+		   return "";
+	   }
+	   
+	   public void setPassword(String password) {
+		   if(this.active) {
+				 this.password =  password; 
+				 this.setInternalPassword();			 
+			   }
+	   }
+	   	   
+	   public void setPasswordActive(boolean active) {
+		   this.active = active;
+	   }
+	   
+	   public boolean getPasswordActive() {
+		   return false;
+	   }
+	   
+	   public void activeChangedListener(ValueChangeEvent event) {
+		   boolean changedActive = (boolean) event.getNewValue();
+		   this.active = changedActive;
+	   }
+	   
+   }
+   
+   public class EmailServerPassword extends ProtectedPassword{
+
+		public EmailServerPassword(String password) {
+			super(password);
+		}
+	
+		@Override
+		public void setInternalPassword() {
+			setEmailServerPassword(this.password);			
+		}
+	   
+   }
+   
+   public class DoiPassword extends ProtectedPassword{
+
+		public DoiPassword(String password) {
+			super(password);
+		}
+
+		@Override
+		public void setInternalPassword() {
+			setDoiPassword(this.password);			
+		}		   
+   }
 }

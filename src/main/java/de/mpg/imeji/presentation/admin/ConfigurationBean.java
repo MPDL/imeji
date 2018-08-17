@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration.HtmlSnippet;
+import de.mpg.imeji.logic.config.ImejiConfiguration.ProtectedPassword;
 import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentXML;
 import de.mpg.imeji.logic.config.ImejiFileTypes;
 import de.mpg.imeji.logic.model.ImejiLicenses;
@@ -330,12 +331,12 @@ public class ConfigurationBean extends SuperBean {
     return Imeji.CONFIG.getEmailServerUser();
   }
 
-  public void setEmailServerPassword(String s) {
-    Imeji.CONFIG.setEmailServerPassword(s);
+  public void setEmailServerPassword(ProtectedPassword emailServerPassword) {
+    Imeji.CONFIG.setProtectedEmailServerPassword(emailServerPassword);
   }
 
-  public String getEmailServerPassword() {
-    return Imeji.CONFIG.getEmailServerPassword();
+  public ProtectedPassword getEmailServerPassword() {
+    return Imeji.CONFIG.getProtectedEmailServerPassword();
   }
 
   public void setEmailServerEnableAuthentication(boolean b) {
@@ -410,12 +411,12 @@ public class ConfigurationBean extends SuperBean {
     Imeji.CONFIG.setDoiUser(s);
   }
 
-  public String getDoiPassword() {
-    return Imeji.CONFIG.getDoiPassword();
+  public ProtectedPassword getDoiPassword() {
+    return Imeji.CONFIG.getProtectedDoiPassword();
   }
 
-  public void setDoiPassword(String s) {
-    Imeji.CONFIG.setDoiPassword(s);
+  public void setDoiPassword(ProtectedPassword protectedDoiPassword) {
+    Imeji.CONFIG.setProtectedDoiPassword(protectedDoiPassword);
   }
 
   public String getDoiServiceUrl() {

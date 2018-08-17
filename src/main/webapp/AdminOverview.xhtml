@@ -24,8 +24,7 @@
 		</h:panelGroup>
 
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-			<!-- Only for Admins -->
-
+		
 			<!-- Admin - TiledList -->
 			<div class="imj_administrationTiledList">
 
@@ -110,7 +109,13 @@
 						<div class="imj_content">
 							<ul>
 								<li>
-									<a href="#{Navigation.applicationUri}/admin/config" title="#{lbl.edit}">#{lbl.edit}</a>
+									<a href="#{Navigation.applicationUri}/admin/config" title="#{lbl.configuration_main}">#{lbl.configuration_main}</a>
+								</li>
+								<li>
+									<a href="#{Navigation.applicationUri}/admin/config/mailserver" title="#{lbl.configuration_email_server}">#{lbl.configuration_email_server}</a>
+								</li>
+								<li>
+									<a href="#{Navigation.applicationUri}/admin/config/doiservice" title="#{lbl.configuration_doi_service}">#{lbl.configuration_doi_service}</a>
 								</li>
 							</ul>
 						</div>

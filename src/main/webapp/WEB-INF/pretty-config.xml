@@ -112,6 +112,14 @@
 		<pattern value="/admin/config"></pattern>
 		<view-id>/jsf/AdminConfig.xhtml</view-id>
 	</url-mapping>
+	<url-mapping id="configEmailServer">
+		<pattern value="/admin/config/mailserver"></pattern>
+		<view-id>/jsf/AdminConfigEMailServer.xhtml</view-id>
+	</url-mapping>
+	<url-mapping id="configDoiService">
+		<pattern value="/admin/config/doiservice"></pattern>
+		<view-id>/jsf/AdminConfigDoiService.xhtml</view-id>
+	</url-mapping>
 	<url-mapping id="adminTools">
 		<pattern value="/admin/tools"></pattern>
 		<view-id>/jsf/AdminTools.xhtml</view-id>

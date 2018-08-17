@@ -1,0 +1,215 @@
+
+<ui:composition template="templates/template_site.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+
+	<ui:param name="headline" value="#{lbl.configuration}" />
+	<ui:param name="currentMainMenu" value="admin" />
+	<ui:param name="title" value="#{lbl.configuration}"/>
+	<ui:param name="backLink1" value="#{Navigation.adminUrl}"/>
+	<ui:param name="backlinkTitle1" value="Admin"/>
+	
+	<ui:define name="additonalFooterScripts">
+		<!--  java script for clearing of input fields -->
+		<script type="text/javascript">
+			$('.imj_clearInput').click(function(evt){
+				var datatarget, parent, target;
+				if ($(this).data('target')) {
+					datatarget = $(this).data('target');
+					parent = datatarget.split(" ")[0];
+					target = datatarget.replace((parent + " "), "");
+					
+					if (parent) {
+						if (target) {
+							$(this).parents(parent).find(target).val('');
+						} else {
+							$(this).parents(parent).val('');
+						}
+					}
+				}
+			});
+			
+			/* workaround: in imeji.css there is a definition cursor: pointer for .imj_config_headline h2
+			   set cursor to default for this page
+			*/
+			$('.imj_administrationTiledList .imj_adminPanel .imj_config_headline h2').css({"cursor":"default"});
+			
+			/**
+			Init
+			*/				
+			passwordField = document.getElementById("emailServerConfigForm:passwordField");
+			passwordField.disabled = true; 
+						
+			/**
+			  Enable or disable password field with set-password checkbox
+			  @param passwordCheckbox the set-password checkbox
+			*/
+			function changeStatusOfPasswordField(passwordCheckbox){
+				
+				// get password field as DOM element
+				passwordField = document.getElementById("emailServerConfigForm:passwordField");
+								
+				if(passwordCheckbox.checked){
+					passwordField.disabled = false;
+				}
+				else{
+					passwordField.disabled = true; 
+					passwordField.value ="";
+				}
+			}
+			
+			
+			
+		</script>
+	</ui:define>
+
+	<ui:define name="mainContent">
+		<f:event type="preRenderView" listener="#{facesContext.externalContext.response.setHeader('X-XSS-Protection', '0')}" />
+		<!-- Are You Admin? -->
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
+			rendered="#{!Auth.sysAdmin}">
+			<h:outputText value="#{lbl.view_page_disallowed}"
+				styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
+			<h:outputText value="#{lbl.view_page_disallowed2}"
+				styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
+		</h:panelGroup>
+
+		<ui:fragment rendered="#{Auth.sysAdmin}">
+			<div class="imj_setupConfig">
+				<div class="imj_administrationTiledList imj_maxWidth">
+					<h:panelGroup layout="block" styleClass="imj_listBody"
+						rendered="#{Auth.sysAdmin}">
+						
+						<h:form id="emailServerConfigForm">												
+							<!-- section EMAIL SERVER DATA -->
+							<div class="imj_adminPanel">
+								<div class="imj_config_headline">
+									<h2>
+										<h:outputText value="#{lbl.email_server}" />
+									</h2>
+								</div>
+								<div class="imj_content">
+									<!--  save button  -->
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
+									<!--  server address -->
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.server_address}" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputText value="#{Configuration.emailServer}"
+												styleClass="imj_admindataEdit" />
+										</div>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
+									</div>
+									<!--  server port -->
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.email_server_port}" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputText value="#{Configuration.emailServerPort}"
+												styleClass="imj_admindataEdit" />
+										</div>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
+									</div>
+									<!--  server address of sender -->
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.email_server_sender}" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputText value="#{Configuration.emailServerSender}"
+												styleClass="imj_admindataEdit" />
+										</div>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
+									</div>
+									<!--  server enable authentication -->
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.server_enable_authentication}" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:selectOneRadio
+												value="#{Configuration.emailServerEnableAuthentication}">
+												<f:selectItem itemLabel="#{lbl.no}" itemValue="false" />
+												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true" />
+											</h:selectOneRadio>
+										</div>
+									</div>
+									<!--  server username -->
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.user}" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputText value="#{Configuration.emailServerUser}"
+												styleClass="imj_admindataEdit" />
+										</div>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
+									</div>
+									<!--  server user password -->
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.password}" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputSecret value="#{Configuration.emailServerPassword.password}"
+												id="passwordField"
+												styleClass="imj_admindataEdit"
+												style="width: 70%; float:left" 
+												autocomplete="off"
+												redisplay="true" 
+												html5:placeholder="#{lbl.password_set}"/>
+											<div style="float: left; margin: 0.5% 1% 0.5% 1%">
+												<h:selectBooleanCheckbox value="#{Configuration.emailServerPassword.passwordActive}"
+												    id="setPasswordCheckbox"
+													name="setPasswordCheckbox" 
+													onclick="changeStatusOfPasswordField(this)" 
+													valueChangeListener="#{Configuration.emailServerPassword.activeChangedListener}"
+													immediate="true"/>
+												#{lbl.password_set}
+											</div>
+										</div>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> </a>
+									</div>
+								</div>
+							</div>
+						</h:form>
+					</h:panelGroup>
+					<!-- END LIST BODY -->
+
+				</div>
+				<!-- END ADMIN LIST -->
+
+			</div>
+			<!-- END USER CONFIG -->
+
+		</ui:fragment>
+
+	</ui:define>
+
+</ui:composition>

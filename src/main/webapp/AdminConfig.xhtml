@@ -58,17 +58,22 @@
 
 		<!-- Only for Admins -->
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-
+			
+			<!-- USER CONFIG  -->
 			<div class="imj_setupConfig">
 
-				<!-- Admin - TiledList -->
+				<!--ADMIN LIST-->
 				<div class="imj_administrationTiledList imj_maxWidth">
+					
+					<!-- LIST BODY -->
 					<h:panelGroup layout="block" styleClass="imj_listBody"
 						rendered="#{Auth.sysAdmin}">
+						
+						<!--  start form -->
 						<h:form id="configForm">
+							
+							<!-- section General  -->
 							<div class="imj_adminPanel">
-								
-								<!-- section General  -->
 								<div class="imj_config_headline">
 									<h2>
 										<h:outputText value="#{lbl.config_general}" />
@@ -255,7 +260,7 @@
 										styleClass="imj_submitButton" />
 								</div>
 							</div>
-
+							
 							<!--  section Appearance -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
@@ -394,118 +399,17 @@
 										<div class="imj_admindataValue">
 											<h:inputText value="#{Configuration.thumbnailWidth}" styleClass="imj_admindataEdit"/>
 										</div>
-									</div>
-									
+									</div>									
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">#{lbl.web_resolution_width}</div>
 										<div class="imj_admindataValue">
 											<h:inputText value="#{Configuration.webResolutionWidth}" styleClass="imj_admindataEdit"/>
 										</div>
-									</div>
-									
+									</div>									
 								</div>
 							</div>							
-							<!-- EMAIL SERVER -->
-							<div class="imj_adminPanel">
-
-								<div class="imj_config_headline">
-									<h2>
-										<h:outputText value="#{lbl.email_server}" />
-									</h2>
-								</div>
-
-								<div class="imj_content">
-									<!-- Admin - Snippet Insert -->
-									<h:commandButton action="#{Configuration.saveConfig}"
-										title="#{lbl.configuration_save_all}"
-										value="#{lbl.configuration_save_all}"
-										styleClass="imj_submitButton" />
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.server_address}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.emailServer}"
-												styleClass="imj_admindataEdit" />
-										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue input"
-											class="imj_clearInput fa fa-times"> </a>
-									</div>
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.email_server_port}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.emailServerPort}"
-												styleClass="imj_admindataEdit" />
-										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue input"
-											class="imj_clearInput fa fa-times"> </a>
-									</div>
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.email_server_sender}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.emailServerSender}"
-												styleClass="imj_admindataEdit" />
-										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue input"
-											class="imj_clearInput fa fa-times"> </a>
-									</div>
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.server_enable_authentication}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:selectOneRadio
-												value="#{Configuration.emailServerEnableAuthentication}">
-												<f:selectItem itemLabel="#{lbl.no}" itemValue="false" />
-												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true" />
-											</h:selectOneRadio>
-										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue input"
-											class="imj_clearInput fa fa-times"> </a>
-									</div>
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.user}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.emailServerUser}"
-												styleClass="imj_admindataEdit" />
-										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue input"
-											class="imj_clearInput fa fa-times"> </a>
-									</div>
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.password}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputSecret value="#{Configuration.emailServerPassword}"
-												styleClass="imj_admindataEdit" autocomplete="off"
-												redisplay="true" />
-										</div>
-										<a href="javascript: void(0);"
-											data-target=".imj_admindataSet .imj_admindataValue input"
-											class="imj_clearInput fa fa-times"> </a>
-									</div>
-								</div>
-							</div>
-
-							<!-- Registration -->
+							
+							<!-- section Registration -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
@@ -571,7 +475,8 @@
 									</div>
 								</div>
 							</div>
-                            <!--  Suche  -->
+                           
+                            <!--  section Search  -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
@@ -647,7 +552,8 @@
 									</h:panelGroup>
 								</div>
 							</div>
-                             <!--  Upload -->
+                             
+                             <!-- section Upload -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
@@ -691,7 +597,8 @@
 									</h:panelGroup>
 								</div>
 							</div>
-                             <!-- Start page -->
+                            
+                             <!-- section Start page -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
@@ -725,6 +632,8 @@
 									</ui:repeat>
 								</div>
 							</div>
+							
+							<!-- section Data viewer -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
@@ -771,68 +680,14 @@
 									</h:panelGroup>
 								</div>
 							</div>
-							<!--DOI-->
-							<div class="imj_adminPanel">
-								<div class="imj_config_headline">
-									<h2>
-										<h:outputText value="#{lbl.doiService}" />
-									</h2>
-								</div>
-								<div class="imj_content">
-									<h:commandButton action="#{Configuration.saveConfig}"
-										title="#{lbl.configuration_save_all}"
-										value="#{lbl.configuration_save_all}"
-										styleClass="imj_submitButton" />
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.doiService}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.doiServiceUrl}"
-												styleClass="imj_admindataEdit" />
-										</div>
-									</div>
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.doiUser}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.doiUser}"
-												styleClass="imj_admindataEdit" />
-										</div>
-									</div>
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.doiPassword}" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputSecret value="#{Configuration.doiPassword}"
-												styleClass="imj_admindataEdit" redisplay="true" />
-										</div>
-									</div>
-									<div class="imj_admindataSet">
-										<div class="imj_admindataLabel">
-											<h:outputText value="Publisher" />
-											<span class="imj_noDisplay">: </span>
-										</div>
-										<div class="imj_admindataValue">
-											<h:inputText value="#{Configuration.doiPublisher}"
-												styleClass="imj_admindataEdit"/>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- QUOTA -->
+							
+							<!-- section QUOTA -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>
 										#{lbl.quota}
 									</h2>
 								</div>
-
 								<div class="imj_content">
 									<h3 class="imj_sectionHeadline">
 										<h:commandButton action="#{Configuration.saveConfig}"
@@ -840,7 +695,6 @@
 											value="#{lbl.configuration_save_all}"
 											styleClass="imj_submitButton" />
 									</h3>
-
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
 											<h:outputText value="#{lbl.define_quotaLimits}" />
@@ -869,6 +723,7 @@
 									</div>
 								</div>
 							</div>
+							
 							<!--  section autosuggest  -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
@@ -947,7 +802,7 @@
 								</div>
 							</div>
 							
-							<!--  section Email Messages  -->
+							<!--  section Email messages  -->
 							<div class="imj_adminPanel">
 								<div class="imj_config_headline">
 									<h2>#{lbl.config_messages}</h2>
@@ -1012,8 +867,7 @@
 
 								</div>
 							</div>
-							<!-- END CONTENT -->
-
+							
 							<!-- AdminDataList - imj_submitPanel - cancel link + submit command buttons -->
 							<h:panelGroup layout="block" styleClass="imj_submitPanel">
 								<h:outputLink value="#{Navigation.adminUrl}">
@@ -1022,6 +876,8 @@
 								</h:outputLink>
 							</h:panelGroup>
 						</h:form>
+						<!--  end form -->
+					
 					</h:panelGroup>
 					<!-- END LIST BODY -->
 
