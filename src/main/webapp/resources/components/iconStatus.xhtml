@@ -15,6 +15,9 @@
 
 		<ui:fragment rendered="#{SessionBean.user != null}">
 			<div class="imj_statusHeaderArea">
+				
+				<!-- (1) icon showing the status of the collection 
+					  PENDING (no icon) RELEASED (globe icon) WITHDRAWN (fa-minus-circle)-->
 				<ui:fragment rendered="#{cc.status != 'PENDING'}">
 					<div class="imj_overlayMenu imj_menuRight">
 						<div class="imj_menuHeader">
@@ -27,8 +30,15 @@
 						</div>
 					</div>
 				</ui:fragment>
-
-				<ui:fragment rendered="#{empty cc.users and empty cc.groups and cc.sharedWithUser and !displayStatusOnly}">
+				
+				<!--  (2) icon showing whether the collection is private or shared with other users 
+				          on mouse over a menu is shown that details
+				            - owner of the collection
+				            - user(s) this collection was shared with
+				            - if applicable: link to manage the access to the collection (share page)
+				 -->
+				<!--  (a) private (user) icon and overlay menu -->
+				<ui:fragment rendered="#{ cc.privateIconShown and !displayStatusOnly}">
 					<div class="imj_overlayMenu imj_menuRight">
 						<div class="imj_menuHeader">
 		                    <span class="fa fa-user fa-size-2">&#160;</span>
@@ -36,7 +46,7 @@
 						<div class="imj_menuBody">
 							<ul class="imj_overlayMenuList">
 								<li>#{lbl.not_shared}</li>
-								<ui:fragment rendered="#{cc.showManage}">
+								<ui:fragment rendered="#{cc.allowedToManage}">
 									<li class="imj_listDottedSeparator">
 										<a href="#{cc.linkToSharePage}" class="imj_inactiveLink">
 											#{lbl.manage}
@@ -47,7 +57,9 @@
 						</div>
 					</div>
 				</ui:fragment>
-				<ui:fragment rendered="#{(!empty cc.users or !empty cc.groups) and cc.sharedWithUser and !displayStatusOnly}">
+				
+				<!-- (b) shared (users) icon and overlay menu -->
+				<ui:fragment rendered="#{ cc.sharedIconShown and !displayStatusOnly}">
 					<div class="imj_overlayMenu imj_menuRight">
 						<div class="imj_menuHeader">
 		                    <span class="fa fa-users fa-size-2">&#160;</span>
@@ -68,7 +80,7 @@
 								<ui:fragment rendered="#{cc.hasMoreCollaborator}">
 									<li>...</li>
 								</ui:fragment>
-								<ui:fragment rendered="#{cc.showManage}">
+								<ui:fragment rendered="#{cc.allowedToManage}">
 									<li class="imj_listDottedSeparator">
 										<a href="#{cc.linkToSharePage}" class="imj_inactiveLink">
 											#{lbl.manage}

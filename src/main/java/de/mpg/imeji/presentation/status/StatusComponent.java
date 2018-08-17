@@ -42,7 +42,7 @@ public class StatusComponent extends UINamingContainer {
   private Status status;
   private String owner;
   private boolean show = false;
-  private boolean showManage = false;
+  private boolean allowedToManage = false;
   private List<String> users = new ArrayList<>();
   private List<String> groups = new ArrayList<>();
   private String linkToSharePage;
@@ -53,6 +53,7 @@ public class StatusComponent extends UINamingContainer {
   private Locale locale;
   private String applicationUrl;
   private boolean sharedWithUser = false;
+  
 
   public StatusComponent() {
     // do nothing
@@ -68,7 +69,7 @@ public class StatusComponent extends UINamingContainer {
     this.locale = locale;
     this.applicationUrl = applicationUrl;
     this.show = false;
-    this.showManage = false;
+    this.allowedToManage = false;
     this.users = new ArrayList<>();
     this.groups = new ArrayList<>();
     this.collaboratorListSize = 0;
@@ -76,7 +77,7 @@ public class StatusComponent extends UINamingContainer {
     if (o instanceof Properties) {
       initialize((Properties) o);
     } else if (o instanceof CollectionListItem) {
-      initialize(((CollectionListItem) o).getCollection());
+    	initialize(((CollectionListItem) o).getCollection());
     }
   }
 
@@ -88,12 +89,16 @@ public class StatusComponent extends UINamingContainer {
     if (properties != null) {
       CollectionImeji parentCollection = getLastParent(properties);
       status = properties.getStatus();
+      // find out if this item is shared with this user
       sharedWithUser = SecurityUtil.authorization().isShared(sessionUser, parentCollection);
       if (isSharedWithUser()) {
         users = getUserSharedWith(parentCollection);
         groups = getGroupSharedWith(parentCollection);
-        showManage = SecurityUtil.authorization().administrate(sessionUser, parentCollection);
       }
+      // show a link to manage the access to this item (share page) if
+      // - the user is the owner of the collection
+      // - the user is system administrator
+      allowedToManage = SecurityUtil.authorization().administrate(sessionUser, parentCollection);
       linkToSharePage = initLinkToSharePage(parentCollection.getId());
       show = true;
     }
@@ -130,7 +135,7 @@ public class StatusComponent extends UINamingContainer {
     status = null;
     owner = null;
     show = false;
-    showManage = false;
+    allowedToManage = false;
     users = new ArrayList<>();
     groups = new ArrayList<>();
     linkToSharePage = null;
@@ -280,8 +285,8 @@ public class StatusComponent extends UINamingContainer {
     return linkToSharePage;
   }
 
-  public boolean isShowManage() {
-    return showManage;
+  public boolean isAllowedToManage() {
+    return allowedToManage;
   }
 
   public boolean isShow() {
@@ -300,6 +305,27 @@ public class StatusComponent extends UINamingContainer {
     this.sharedWithUser = sharedWithUser;
   }
 
+  /**
+   * Returns whether or not to show a shared icon for a collection
+   * @return
+   */
+  public boolean isSharedIconShown() {
+	  boolean showSharedIcon = ( !this.users.isEmpty() || !this.groups.isEmpty() ) && (this.sharedWithUser || this.allowedToManage );
+	  return showSharedIcon;
+  }
+  
+  /**
+   * Returns whether or not to show a private icon for a collection
+   * @return
+   */
+  public boolean isPrivateIconShown() {
+	  boolean showPrivateIcon = this.users.isEmpty() && this.groups.isEmpty() && (this.sharedWithUser || this.allowedToManage );
+	  return showPrivateIcon;
+	 
+  }
+  
+  
+  
   public String getSharedWithToString() {
     return users.stream().collect(Collectors.joining("\n"))
         + groups.stream().map(g -> g + " [group]").collect(Collectors.joining("[\n", "\n", ""));
