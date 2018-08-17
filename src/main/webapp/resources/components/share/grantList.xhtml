@@ -35,9 +35,9 @@
 					<ui:repeat id="list" var="sh" value="#{cc.attrs.list}" rows="0" varStatus="pos">
 						<tr>
 							<td class="imj_rightsTableUser">
-								<h:outputText value="#{sh.user.person.completeName}" rendered="#{sh.user != null}"/>
+								<h:outputText value="#{sh.user.person.completeName} (#{lbl.user})" rendered="#{sh.user != null}"/>
 								<h:outputText value="#{sh.invitation.inviteeEmail}" rendered="#{sh.invitation != null}"/>
-								<h:outputText value="#{sh.group.name}" rendered="#{sh.group != null}"/>
+								<h:outputText value="#{sh.group.name} (#{lbl.group})" rendered="#{sh.group != null}"/>
 								<h:outputText value=" (#{lbl.role_owner})" rendered="#{sh.creator}"/>
 							</td>
 							<td colspan="#{cc.attrs.rolesMenu.size()}">

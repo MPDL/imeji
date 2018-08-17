@@ -21,11 +21,15 @@
 	<composite:implementation>
 		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox">
 			<h:form id="f">
-				<div class="imj_confirmationText">
-					<h:outputText value="#{cc.attrs.confirmationText}" escape="#{!cc.attrs.rawHtml}"/>
-				</div>
-				<ui:fragment rendered="#{not empty cc.attrs.confirmationText2}">
+				<ui:fragment rendered="#{not empty cc.attrs.confirmationText}">
+					<div class="imj_confirmationText">
+						<h:outputText value="#{cc.attrs.confirmationText}" escape="#{!cc.attrs.rawHtml}"/>
+					</div>
+				</ui:fragment>
+				<ui:fragment rendered="#{(not empty cc.attrs.confirmationText) and (not empty cc.attrs.confirmationText2)}">
 					<br/>
+				</ui:fragment>
+				<ui:fragment rendered="#{not empty cc.attrs.confirmationText2}">
 					<div class="imj_confirmationText">
 						#{cc.attrs.confirmationText2}
 						<ui:fragment rendered="#{not empty cc.attrs.confirmationTextLicense}">
@@ -41,7 +45,7 @@
 					<ui:fragment rendered="#{not empty cc.attrs.identifierName and not empty cc.attrs.identifierValue}">
 						<input type="hidden" name="#{cc.attrs.identifierName}" value="#{cc.attrs.identifierValue}"/>
 					</ui:fragment>
-			 		<h:commandButton action="#{cc.attrs.bean[cc.attrs.submitAction]}" value="#{cc.attrs.submitLabel}" styleClass="imj_submitButton" onclick="closeDialog('#{cc.attrs.dialogId}');">
+			 		<h:commandButton rendered="#{not empty cc.attrs.submitLabel}" action="#{cc.attrs.bean[cc.attrs.submitAction]}" value="#{cc.attrs.submitLabel}" styleClass="imj_submitButton" onclick="closeDialog('#{cc.attrs.dialogId}');">
 			 			<f:ajax execute="@form" rendered="@none"/>
 			 		</h:commandButton>
 				</div>
