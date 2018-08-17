@@ -120,9 +120,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
           Imeji.RESOURCE_BUNDLE.getLabel("filename", getLocale())));
       getSortMenu().add(new SelectItem(SearchFields.filesize,
           Imeji.RESOURCE_BUNDLE.getLabel("file_size", getLocale())));
-      getSortMenu().add(new SelectItem(SearchFields.filetype,
-          Imeji.RESOURCE_BUNDLE.getLabel("file_type", getLocale())));
-    } catch (Exception e) {
+      getSortMenu().add(new SelectItem(SearchFields.fileextension,
+          Imeji.RESOURCE_BUNDLE.getLabel("file_extension", getLocale())));
+    } 
+    catch (Exception e) {
       LOGGER.error("Error initializing sort menu", e);
     }
 
