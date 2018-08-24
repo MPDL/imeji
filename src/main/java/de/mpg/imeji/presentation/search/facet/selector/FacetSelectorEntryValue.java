@@ -3,7 +3,9 @@ package de.mpg.imeji.presentation.search.facet.selector;
 import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS.AND;
 
 import java.io.Serializable;
+import java.text.Collator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
@@ -12,6 +14,7 @@ import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.SearchMetadataFields;
 import de.mpg.imeji.logic.model.StatementType;
+import de.mpg.imeji.logic.search.elasticsearch.script.misc.CollectionFields;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -27,7 +30,7 @@ import de.mpg.imeji.util.DateFormatter;
  * @author saquet
  *
  */
-public class FacetSelectorEntryValue implements Serializable {
+public class FacetSelectorEntryValue implements Serializable, Comparable<FacetSelectorEntryValue> {
   private static final long serialVersionUID = -5562614379983226471L;
   private static final Logger LOGGER = Logger.getLogger(FacetSelectorEntryValue.class);
   private String label;
@@ -40,18 +43,22 @@ public class FacetSelectorEntryValue implements Serializable {
   private boolean selected = false;
   private String max;
   private String min;
+  private Locale locale;
 
 
-  public FacetSelectorEntryValue(FacetResultValue resultValue, Facet facet,
-      SearchQuery facetsQuery) {
-    this.index = facet.getIndex();
-    this.type = facet.getType();
-    this.count = resultValue.getCount();
+  public FacetSelectorEntryValue(FacetResultValue facetResultValue, Facet facet,
+      SearchQuery facetsQuery, Locale locale) {
+    
+	this.index = facet.getIndex();
+    this.type = facet.getType();    
+    this.count = facetResultValue.getCount();
+    this.locale = locale;
+    
     if (facet.getType().equals(StatementType.DATE.name())
         || facet.getType().equals(StatementType.NUMBER.name())) {
-      initRangeEntry(resultValue, facet, facetsQuery);
+      initRangeEntry(facetResultValue, facet, facetsQuery);
     } else {
-      initEntry(resultValue, facet, facetsQuery);
+      initEntry(facetResultValue, facet, facetsQuery);
     }
   }
 
@@ -79,8 +86,8 @@ public class FacetSelectorEntryValue implements Serializable {
    * @return
    */
   private String readLabel(FacetResultValue resultValue, Facet facet) {
-    if (facet.getIndex().equals(SearchFields.collection.getIndex())) {
-      return resultValue.getLabel().split(" ", 2)[1];
+    if (facet.getIndex().equals(SearchFields.collection.getIndex())) {       
+    	return CollectionFields.getTitle(resultValue.getLabel());
     }
     if (facet.getIndex().equals(SearchFields.license.getIndex())
         && resultValue.getLabel().equals(ImejiLicenses.NO_LICENSE)) {
@@ -89,6 +96,7 @@ public class FacetSelectorEntryValue implements Serializable {
     return resultValue.getLabel();
   }
 
+    
   /**
    * Read the value of the facet according to the query (and not from the facet result value)
    * 
@@ -116,7 +124,7 @@ public class FacetSelectorEntryValue implements Serializable {
    */
   private String toQueryValue(FacetResultValue resultValue, Facet facet, SearchQuery facetsQuery) {
     if (facet.getIndex().equals(SearchFields.collection.getIndex())) {
-      return resultValue.getLabel().split(" ", 2)[0];
+      return CollectionFields.getID(resultValue.getLabel());
     }
     if (facet.getIndex().equals(SearchFields.license.getIndex())) {
       if ("Any".equalsIgnoreCase(resultValue.getLabel())) {
@@ -286,5 +294,45 @@ public class FacetSelectorEntryValue implements Serializable {
   public String getMin() {
     return min;
   }
+  
+  /**
+   * Compare FacetSelectorEntryValues for construction a sort order
+   * First level: sort by document count, descending
+   * Second level: sort by label, alphabetically
+   */
+  @Override
+  public int compareTo(FacetSelectorEntryValue otherFacetSelectorEntryValue) {
+ 	
+  	// first level: sort by count, descending
+  	if(this.count < otherFacetSelectorEntryValue.count) return 1;
+  	else if(this.count > otherFacetSelectorEntryValue.count) return -1;
+  	else{
+  		// second level: sort by label, alphabetically
+  		return sortAlphabetically(this.label, otherFacetSelectorEntryValue.label);
+  	} 	
+  }
+  
+  
+  private int sortAlphabetically(String myLabel, String otherLabel) {
+	  
+	  if(this.locale.getLanguage().compareTo(Locale.GERMAN.getLanguage()) == 0) {
+		  return sortAlphabeticallyGerman(myLabel, otherLabel);
+	  }
+	  else {
+		  return sortAlphabeticallyDefault(myLabel, otherLabel);
+	  }	  
+  }
+   
+  private int sortAlphabeticallyGerman(String myLabel, String otherLabel) {
+	  
+	  Collator collator = Collator.getInstance(Locale.GERMAN);
+	  collator.setStrength(Collator.SECONDARY);// a == A, a < Ä
+	  return collator.compare(myLabel, otherLabel);
+  }
 
+  private int sortAlphabeticallyDefault(String myLabel, String otherLabel) {
+	  
+	  Collator collator = Collator.getInstance(this.locale);
+	  return collator.compare(myLabel, otherLabel);
+  }
 }

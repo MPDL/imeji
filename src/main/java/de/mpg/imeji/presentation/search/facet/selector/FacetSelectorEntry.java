@@ -2,7 +2,9 @@ package de.mpg.imeji.presentation.search.facet.selector;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
@@ -26,6 +28,7 @@ import de.mpg.imeji.util.DateHelper;
 
 /**
  * Entry of the {@link FacetSelectorBean}
+ * GUI representation of a {@link Facet}, containing {@link FacetResults} that were retrieved from ElasticSearch
  * 
  * @author saquet
  *
@@ -40,16 +43,33 @@ public class FacetSelectorEntry implements Serializable {
   private String to;
   private boolean showMore = false;
   private final long count;
+  private Locale locale;
+ 
 
-  public FacetSelectorEntry(FacetResult facetResult, SearchQuery facetsQuery, int countAll) {
+  /**
+   * Constructor
+   * @param facetResult retrieved from ElasticSearch
+   * @param facetsQuery 
+   * @param countAll
+   */
+  public FacetSelectorEntry(FacetResult facetResult, SearchQuery facetsQuery, int countAll, Locale locale) {
+    
+    this.locale = locale;
+	this.facetsQuery = facetsQuery;
+    
     FacetService facetService = new FacetService();
-    this.facetsQuery = facetsQuery;
     this.facet = facetService.retrieveByIndexFromCache(facetResult.getIndex());
+    
     this.values = facetResult.getValues().stream()
-        .map(v -> new FacetSelectorEntryValue(v, facet, facetsQuery)).collect(Collectors.toList());
-    addAnyLicense(facetResult, facet, facetsQuery, countAll);
+         .map(facetResultValue -> new FacetSelectorEntryValue(facetResultValue, facet, facetsQuery, locale)).collect(Collectors.toList());
+    
+    
+    addAnyLicenseToLicenceFacette(facetResult, facet, facetsQuery, countAll);
     cleanFileTypeFacet(facet);
+    sortValues();
+    
     this.count = values.stream().collect(Collectors.summingLong(v -> v.getCount()));
+    
     if (count > 0) {
       this.from = values.get(0).getMin();
       this.to = values.get(0).getMax();
@@ -57,37 +77,50 @@ public class FacetSelectorEntry implements Serializable {
   }
 
   /**
-   * Using the facetsresults,calculate the facet for any licenses
+   * Sorts the list of {@link FacetSelectorEntryValue} 
+   * first level: sort by document count
+   * second level: sort by label, alphabetically
+   */
+  public void sortValues() {
+	Collections.sort(this.values);
+  }
+  
+  /**
+   * Using the facetsresults, calculate the facet for any licenses
    * 
    * @param facetResult
    * @param facet
    * @param facetsQuery
    * @param countAll
    */
-  private void addAnyLicense(FacetResult facetResult, Facet facet, SearchQuery facetsQuery,
+  private void addAnyLicenseToLicenceFacette(FacetResult facetResult, Facet facet, SearchQuery facetsQuery,
       int countAll) {
-    if (facet.getIndex().equals(SearchFields.license.getIndex())) {
-      long countNone = facetResult.getValues().stream()
-          .filter(r -> r.getLabel().equals(ImejiLicenses.NO_LICENSE)).map(r -> r.getCount())
-          .findFirst().orElse((long) countAll);
-      long countAny = countAll - countNone;
-      if (countAny > 0) {
-        FacetResultValue v = new FacetResultValue("Any", countAll - countNone);
-        values.add(new FacetSelectorEntryValue(v, facet, facetsQuery));
-        values = values.stream().sorted((v1, v2) -> Long.compare(v2.getCount(), v1.getCount()))
-            .collect(Collectors.toList());
-      }
-    }
+    
+	  if (facet.getIndex().equals(SearchFields.license.getIndex())) {
+	      long countNone = facetResult.getValues().stream()
+	          .filter(r -> r.getLabel().equals(ImejiLicenses.NO_LICENSE)).map(r -> r.getCount())
+	          .findFirst().orElse((long) countAll);
+	      long countAny = countAll - countNone;
+	      if (countAny > 0) {
+	        FacetResultValue v = new FacetResultValue("Any", countAll - countNone);
+	        values.add(new FacetSelectorEntryValue(v, facet, facetsQuery, this.locale));
+	        values = values.stream().sorted((v1, v2) -> Long.compare(v2.getCount(), v1.getCount()))
+	            .collect(Collectors.toList());
+	      }
+	  }
   }
 
+  
   private void cleanFileTypeFacet(Facet facet) {
-    if (facet.getIndex().equals(SearchFields.filetype.getIndex())) {
-      values = values.stream().filter(v -> v.getCount() > 0)
-          .sorted((v1, v2) -> Long.compare(v2.getCount(), v1.getCount()))
-          .collect(Collectors.toList());
+    
+	  if (facet.getIndex().equals(SearchFields.filetype.getIndex())) {
+	      values = values.stream().filter(v -> v.getCount() > 0)
+	          .sorted((v1, v2) -> Long.compare(v2.getCount(), v1.getCount()))
+	          .collect(Collectors.toList());
     }
   }
 
+  
   public void search(HistoryPage page, String q) throws IOException {
     String fq = buildFromToQuery();
     if (fq != null) {
@@ -104,7 +137,7 @@ public class FacetSelectorEntry implements Serializable {
         resultValue.setMax(to);
         resultValue.setMin(from);
         FacetSelectorEntryValue selectorValueNew = new FacetSelectorEntryValue(resultValue, facet,
-            new SearchFactory(facetsQuery).clone().remove(selectorValue.getEntryQuery()).build());
+            new SearchFactory(facetsQuery).clone().remove(selectorValue.getEntryQuery()).build(), this.locale);
         return SearchQueryParser.transform2URL(new SearchFactory(facetsQuery)
             .remove(selectorValue.getEntryQuery()).and(selectorValueNew.getEntryQuery()).build());
       } catch (UnprocessableError e) {
