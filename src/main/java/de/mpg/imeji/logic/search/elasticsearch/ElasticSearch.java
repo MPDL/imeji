@@ -25,11 +25,13 @@ import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticQueryFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.AggregationsParser;
+import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+
 
 /**
  * {@link Search} implementation for ElasticSearch
@@ -64,42 +66,72 @@ public class ElasticSearch implements Search {
     return indexer;
   }
 
+  
+  
   @Override
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
       int from, int size) {
-    return search(query, sortCri, user, folderUri, from, size, false);
+	  
+	  List<SortCriterion> sortCriteria = new ArrayList<SortCriterion>(1);
+	  sortCriteria.add(sortCri);
+	  
+	  return searchElasticSearch(query, sortCriteria , user, folderUri, from, size, false);
+  }
+  
+  
+  @Override
+  public SearchResult searchWithMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user,
+  		String folderUri, int from, int size) {
+        return searchElasticSearch(query, sortCriteria , user, folderUri, from, size, false);
+  }
+  
+  
+  
+  @Override
+  public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
+	      int from, int size) {	  
+	  return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, true);
   }
 
+  
   @Override
   public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, int from, int size) {
-    return search(query, sortCri, user, folderUri, from, size, true);
+    
+	  List<SortCriterion> sortCriteria = new ArrayList<SortCriterion>(1);
+	  sortCriteria.add(sortCri);
+	  
+	  return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, true);
   }
 
-  private SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+  
+  private SearchResult searchElasticSearch(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
       int from, int size, boolean addFacets) {
-    size = size == -1 ? size = SEARCH_MAX_SIZE : size;
+    
+	size = size == -1 ? size = SEARCH_MAX_SIZE : size;
     from = from < 0 ? 0 : from;
+    
     if (size < SEARCH_MAX_SIZE && from + size < ELASTIC_FROM_SIZE_LIMIT) {
-      return searchSinglePage(query, sortCri, user, folderUri, from, size, addFacets);
+      return searchSinglePage(query, sortCriteria, user, folderUri, from, size, addFacets);
     } else {
-      return searchWithScroll(query, sortCri, user, folderUri, from, size, addFacets);
+      return searchWithScroll(query, sortCriteria, user, folderUri, from, size, addFacets);
     }
   }
 
+  
   /**
    * A Search returning a single document. Faster, but limited to not too big search result list
    * (max is SEARCH_MAX_SIZE)
    *
    * @param query
-   * @param sortCri
+   * @param sortCriteria
    * @param user
    * @param folderUri
    * @param from
    * @param size
    * @return
    */
-  private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
+  private SearchResult searchSinglePage(SearchQuery query, List<SortCriterion> sortCriteria, User user,
       String folderUri, int from, int size, boolean addFacets) {
     final ElasticQueryFactory factory =
         new ElasticQueryFactory(query, type).folderUri(folderUri).user(user);
@@ -107,21 +139,30 @@ public class ElasticSearch implements Search {
     final QueryBuilder f = factory.buildBaseQuery();
     SearchRequestBuilder request = ElasticService.getClient()
         .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setTypes(getTypes()).setSize(size)
-        .setFrom(from).addSort("_type", SortOrder.ASC).addSort(ElasticSortFactory.build(sortCri));
+        .setFrom(from).addSort("_type", SortOrder.ASC);
+    request = ElasticSearchFactoryUtil.addSorting(request, sortCriteria);
+    //.addSort(ElasticSortFactory.build(sortCri));
     if (f != null) {
       request.setQuery(f).setPostFilter(q);
     } else {
       request.setQuery(q);
     }
     if (addFacets) {
-      request = addAggregations(request, folderUri);
+    	request = addAggregations(request, folderUri);
     }
 
     final SearchResponse resp = request.execute().actionGet();
-
-    return toSearchResult(resp, query);
+    SearchResult elasticSearchResult = toSearchResult(resp, query);
+    return elasticSearchResult;
   }
 
+  /**
+   * Add ElasticSearch Aggregations to a SearchRequestBuilder
+   * @param request
+   * @param folderUri
+   * @return
+   */
+  
   private SearchRequestBuilder addAggregations(SearchRequestBuilder request, String folderUri) {
     final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build();
     if (folderUri != null) {
@@ -137,8 +178,9 @@ public class ElasticSearch implements Search {
     return request;
   }
 
+  
   /**
-   * A Search via the scroll api. Allow to search for many documents
+   * Search via the scroll api. Allows to search for many/all documents
    *
    * @param query
    * @param sortCri
@@ -148,7 +190,7 @@ public class ElasticSearch implements Search {
    * @param size
    * @return
    */
-  private SearchResult searchWithScroll(SearchQuery query, SortCriterion sortCri, User user,
+  private SearchResult searchWithScroll(SearchQuery query, List<SortCriterion> sortCriteria, User user,
       String folderUri, int from, int size, boolean addFacets) {
     // final int scrollSize = size < SEARCH_MAX_SIZE ? size : SEARCH_MAX_SIZE;
     final ElasticQueryFactory factory =
@@ -157,8 +199,8 @@ public class ElasticSearch implements Search {
     final QueryBuilder f = factory.buildBaseQuery();
     SearchRequestBuilder request = ElasticService.getClient()
         .prepareSearch(ElasticService.DATA_ALIAS).setScroll(new TimeValue(60000)).setNoFields()
-        .setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).addSort("_type", SortOrder.ASC)
-        .addSort(ElasticSortFactory.build(sortCri));
+        .setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).addSort("_type", SortOrder.ASC);
+    request = ElasticSearchFactoryUtil.addSorting(request, sortCriteria);
     if (f != null) {
       request.setQuery(f).setPostFilter(q);
     } else {
@@ -188,10 +230,14 @@ public class ElasticSearch implements Search {
         : new ArrayList<>();
   }
 
+  
+  
+  
   @Override
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user,
       List<String> uris) {
-    // Not needed for Elasticsearch. This method is used for sparql search
+    // Not needed for Elasticsearch. 
+	// This method is used for sparql search
     return null;
   }
 
@@ -219,7 +265,7 @@ public class ElasticSearch implements Search {
   }
 
   /**
-   * Transform a {@link SearchResponse} to a {@link SearchResult}
+   * Transform an ElasticSearch {@link SearchResponse} to an Imeji {@link SearchResult}
    *
    * @param resp
    * @return
@@ -257,7 +303,7 @@ public class ElasticSearch implements Search {
   }
 
   /**
-   * Add the resp to an existing searchresult
+   * Add the resp to an existing search result
    *
    * @param resp
    * @return
@@ -278,4 +324,7 @@ public class ElasticSearch implements Search {
     }
     return ids;
   }
+
+
+
 }

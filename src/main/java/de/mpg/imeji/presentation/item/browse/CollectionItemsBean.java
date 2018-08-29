@@ -98,14 +98,14 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   @Override
-  public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
+  public SearchResult search(SearchQuery searchQuery, List<SortCriterion> sortCriteria, int offset,
       int limit) {
     final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
-    return facade.search(searchQuery, collection, getSessionUser(), sortCriterion, limit, offset);
+    return facade.searchWithFacetsAndMultiLevelSorting(searchQuery, collection, getSessionUser(), sortCriteria, limit, offset);
   }
 
   @Override
-  public Collection<Item> loadImages(List<String> uris) throws ImejiException {
+  public Collection<Item> loadItems(List<String> uris) throws ImejiException {
     final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
     return facade.retrieveItemsAndCollectionsAsItems(uris, getSessionUser());
   }
