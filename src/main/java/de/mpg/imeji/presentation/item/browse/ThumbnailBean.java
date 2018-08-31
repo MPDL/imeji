@@ -38,8 +38,8 @@ public class ThumbnailBean implements Serializable {
   private String id;
   private boolean selected = false;
   private URI collectionUri;
-  private String fileType;
-  private String shortFileType;
+  private String fileMimeType;
+  private String fileextension;
   private String fileSize;
   private String modified;
   // private List<Metadata> metadata;
@@ -62,10 +62,10 @@ public class ThumbnailBean implements Serializable {
     this.id = ObjectHelper.getId(getUri());
     this.link = initThumbnailLink(item, navigation);
     this.filename = item.getFilename();
-    this.fileType = item.getFiletype();
+    this.fileMimeType = item.getFiletype();
     this.fileSize = item.getFileSizeHumanReadable();
     this.modified = DateHelper.printDate(item.getModified());
-    this.shortFileType = StorageUtils.getExtension(fileType);
+    this.fileextension = StorageUtils.getExtensionFromFileName(this.filename);
     this.metadata =
         item.getMetadata().stream().map(md -> new SimpleMetadata(md)).collect(Collectors.toList());
     this.caption = findCaption();
@@ -273,12 +273,12 @@ public class ThumbnailBean implements Serializable {
     this.collectionUri = colUri;
   }
 
-  public String getFileType() {
-    return fileType;
+  public String getFileMimeType() {
+    return fileMimeType;
   }
 
-  public void setFileType(String fileType) {
-    this.fileType = fileType;
+  public void setFileMimeType(String fileMimeType) {
+    this.fileMimeType = fileMimeType;
   }
 
   public String getFileSize() {
@@ -297,12 +297,12 @@ public class ThumbnailBean implements Serializable {
     this.modified = modified;
   }
 
-  public String getShortFileType() {
-    return shortFileType;
+  public String getFileExtension() {
+    return fileextension;
   }
 
-  public void setShortFileType(String shortFileType) {
-    this.shortFileType = shortFileType;
+  public void setFileExtension(String fileExtension) {
+    this.fileextension = fileExtension;
   }
 
   public List<SimpleMetadata> getMetadata() {
@@ -324,4 +324,57 @@ public class ThumbnailBean implements Serializable {
   public String getPath() {
     return path;
   }
+  
+  /**
+   * Show a file icon that illustrates file mime type or file extension
+   * @return String: Name of an imported icon font (@see font awesome) 
+   */
+  public String getIconFont() {
+	  
+	  // check file mime type
+	  if(this.fileMimeType != null) {
+
+		  if(this.fileMimeType.startsWith("image")) {
+			  return new String("fa fa-camera");
+		  }
+		  else if(this.fileMimeType.startsWith("text")) {
+			  return new String("fa fa-file-text-o");
+		  }
+		  else if(fileMimeType.startsWith("audio")) {
+			  return new String("fa fa-music");
+		  }
+		  else if(this.fileMimeType.startsWith("video")) {
+			  return new String("fa fa-film");
+		  }
+		  else if(this.fileMimeType.endsWith("pdf")) {
+			  return new String("fa fa-file-pdf-o");
+		  }
+		  else if(fileMimeType.endsWith("octet-stream")) {
+			  return new String("fa fa-simplybuilt");
+		  }
+	  }
+	  	  
+	  // check file extension
+	  if(this.fileextension != null) {
+		  if(this.fileextension.startsWith("doc")) {
+			  return new String("fa fa-file-word-o");
+		  }
+		  else if(this.fileextension.startsWith("ppt")) {
+			  return new String("fa fa-file-powerpoint-o");
+		  }
+		  else if(this.fileextension.startsWith("xls")) {
+			  return new String("fa fa-table");
+		  }		  
+	  }
+	  
+	  // is collection
+	  if(isCollection()) {
+		  return new String("fa fa-folder-open-o");
+	  }
+
+	  // default:
+	  return new String("fa fa-file");
+
+  }
+  
 }

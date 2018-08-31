@@ -40,6 +40,25 @@ public interface Search {
    */
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
       int offset, int size);
+  
+  
+  /**
+   * Search for Imeji objects
+   * Employ multilevel sorting on results
+   * (i.e. sort all results with a first sort criterion, then sort all objects 
+   *  that fall into the same category with a second sort criterion)
+   * 
+   * @param query
+   * @param sortCriteria
+   * @param user
+   * @param folderUri
+   * @param offset
+   * @param size
+   * @return
+   */
+  public SearchResult searchWithMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
+	      int offset, int size);
+  
 
   /**
    * Search and set {@link Facet} to the {@link SearchResult}
@@ -55,6 +74,27 @@ public interface Search {
   public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, int offset, int size);
 
+  
+  
+  /**
+   * Search Imeji objects 
+   * 	- with {@link Facet}s and 
+   * 	- multi-level sorting
+   *
+   * @param query
+   * @param sortCriteria
+   * @param user
+   * @param folderUri
+   * @param from
+   * @param size
+   * @return
+   */
+  public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
+	      int from, int size) ;
+  
+  
+  
+  
   /**
    * Get the {@link SearchIndexer} for this {@link Search} implementation
    *

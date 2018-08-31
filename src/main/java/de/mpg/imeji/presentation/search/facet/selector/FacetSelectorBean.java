@@ -28,6 +28,7 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 @ManagedBean(name = "FacetSelectorBean")
 @ViewScoped
 public class FacetSelectorBean extends SuperBean {
+  
   private static final long serialVersionUID = 4953953758406265116L;
   private static final Logger LOGGER = Logger.getLogger(FacetSelectorBean.class);
   private List<FacetSelectorEntry> entries = new ArrayList<>();
@@ -52,13 +53,13 @@ public class FacetSelectorBean extends SuperBean {
    */
   public String init(SearchResult result) {
     if (result != null) {
-      entries = result.getFacets().stream()
+      this.entries = result.getFacets().stream()
           .filter(f -> !f.getName().equals(Facet.ITEMS) && !f.getName().equals(Facet.SUBCOLLECTIONS)
               && !f.getName().equals(Facet.COLLECTION_ITEMS))
-          .map(r -> new FacetSelectorEntry(r, facetQuery, result.getNumberOfRecords()))
+          .map(r -> new FacetSelectorEntry(r, facetQuery, result.getNumberOfRecords(), this.getLocale()))
           .sorted(
               (f1, f2) -> Integer.compare(f1.getFacet().getPosition(), f2.getFacet().getPosition()))
-          .collect(Collectors.toList());
+          .collect(Collectors.toList());      
       setAddQuery();
       setRemoveQuery();
       setSelectedEntries();
@@ -71,6 +72,8 @@ public class FacetSelectorBean extends SuperBean {
         .collect(Collectors.toList());
   }
 
+  
+   
   /**
    * Set the addQuery to all values of all entries
    */

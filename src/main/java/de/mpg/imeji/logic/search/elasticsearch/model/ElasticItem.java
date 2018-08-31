@@ -8,6 +8,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
 import de.mpg.imeji.logic.model.Metadata;
 import de.mpg.imeji.logic.model.util.LicenseUtil;
+import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**
@@ -23,6 +24,7 @@ public final class ElasticItem extends ElasticProperties {
   private final String name;
   private final String license;
   private final String filetype;
+  private final String fileextension; 
   private final long size;
   private final List<ElasticMetadata> metadata = new ArrayList<>();
 
@@ -39,6 +41,7 @@ public final class ElasticItem extends ElasticProperties {
     this.license = getLicenseName(item);
     this.size = item.getFileSize();
     this.filetype = item.getFiletype();
+    this.fileextension = StorageUtils.getExtensionFromFileName(this.name);
     if (item.getMetadata() != null) {
       for (final Metadata md : item.getMetadata()) {
         metadata.add(new ElasticMetadata(md));
@@ -63,6 +66,13 @@ public final class ElasticItem extends ElasticProperties {
     return filetype;
   }
 
+  /**
+   * 
+   * @return the file extension
+   */
+  public String getFileextension() {
+	  return this.fileextension;
+  }
   /**
    * @return the metadata
    */

@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -43,7 +44,7 @@ public class ItemDetailsBrowse implements Serializable {
   private String filterQuery;
   private final String containerUri;
   private final int currentPosition;
-  private final SortCriterion sortCriterion;
+  private final List<SortCriterion> sortCriteria;
   private static final int SIZE = 3;
   private Item currentItem = null;
   private String next = null;
@@ -71,7 +72,7 @@ public class ItemDetailsBrowse implements Serializable {
     }
     this.containerUri = containerUri;
     this.currentItem = item;
-    this.sortCriterion = initSortCriterion();
+    this.sortCriteria = initSortCriteria();
     this.currentPosition =
         UrlHelper.hasParameter("pos") ? Integer.parseInt(UrlHelper.getParameterValue("pos")) : -1;
     final List<String> items = searchPreviousAndNextItem(user);
@@ -93,8 +94,8 @@ public class ItemDetailsBrowse implements Serializable {
     final ItemService controller = new ItemService();
     if (query != null && currentPosition > -1) {
       try {
-        return controller.search(containerUri != null ? URI.create(containerUri) : null,
-            getSearchQuery(), sortCriterion, user, SIZE, getOffset()).getResults();
+        return controller.searchWithMultiLevelSorting(containerUri != null ? URI.create(containerUri) : null,
+            getSearchQuery(), sortCriteria, user, SIZE, getOffset()).getResults();
       } catch (final UnprocessableError e) {
         LOGGER.error("Error retrieving items", e);
       }
@@ -116,17 +117,30 @@ public class ItemDetailsBrowse implements Serializable {
   }
 
   /**
-   * Initialize the Sort Criterion
+   * Initialize sort criteria for items
+   * align this with ItemsBean.getSortCriteriaForItems()
    *
    * @return
    */
-  private SortCriterion initSortCriterion() {
-    final String sortFieldName =
+  private List<SortCriterion> initSortCriteria() {
+    
+	List<SortCriterion> itemsSortCriteria = new LinkedList<SortCriterion>();
+	
+	// read first-level sort criterion from cookies:
+	final String sortFieldName =
         CookieUtils.readNonNull(ItemsBean.ITEM_SORT_COOKIE, SearchFields.modified.name());
     final String orderFieldName =
         CookieUtils.readNonNull(ItemsBean.ITEM_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name());
-    return new SortCriterion(SearchFields.valueOfIndex(sortFieldName),
-        SortOrder.valueOf(orderFieldName));
+    SortCriterion userSetSortCriterion = new SortCriterion(SearchFields.valueOfIndex(sortFieldName),
+            SortOrder.valueOf(orderFieldName));
+    // get second-level sort criterion:
+    SortCriterion sortByFilenameAscending =  ItemsBean.getSortByFilenameAscendingSortCriterion();
+    
+    itemsSortCriteria.add(userSetSortCriterion);
+    itemsSortCriteria.add(sortByFilenameAscending);
+    
+    return itemsSortCriteria;
+   
   }
 
   /**

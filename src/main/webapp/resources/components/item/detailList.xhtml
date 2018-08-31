@@ -17,7 +17,7 @@
 
         <h:form>
         	<div id="imj_listBody">
-        
+        	<!--  table presenting list view of items  -->
             <h:dataTable value="#{cc.attrs.listBean.currentPartList}" var="o"
                          styleClass="order-table imj_detailList"
                          headerClass="order-table-header"
@@ -36,22 +36,12 @@
                         <f:ajax event="change" execute="@this" render=":actions"/>
                     </h:selectBooleanCheckbox>
                 </h:column>
-
+				<!--  column 1: icon for file, on the left of the list -->
                 <h:column>
                     <f:facet name="header">&#160;</f:facet>
-                    <h:panelGroup styleClass="fa fa-camera fa-size-2" rendered="#{o.fileType.startsWith('image')}">&#160;</h:panelGroup>
-                    <h:panelGroup styleClass="fa fa-file-text-o fa-size-2" rendered="#{o.fileType.startsWith('text')}">&#160;</h:panelGroup>
-                    <h:panelGroup styleClass="fa fa-file-pdf-o fa-size-2" rendered="#{o.fileType.endsWith('pdf')}">&#160;</h:panelGroup>
-                    <h:panelGroup styleClass="fa fa-file-word-o fa-size-2" rendered="#{o.shortFileType.startsWith('doc')}">&#160;</h:panelGroup>
-                    <h:panelGroup styleClass="fa fa-file-powerpoint-o fa-size-2" rendered="#{o.shortFileType.startsWith('ppt')}">&#160;</h:panelGroup>
-                    <h:panelGroup styleClass="fa fa-table fa-size-2" rendered="#{o.shortFileType.startsWith('xls')}">&#160;</h:panelGroup>
-                    <h:panelGroup styleClass="fa fa-simplybuilt fa-size-2" rendered="#{o.fileType.endsWith('octet-stream')}">&#160;</h:panelGroup>
-                    <h:panelGroup styleClass="fa fa-music fa-size-2" rendered="#{o.fileType.startsWith('audio')}">&#160;</h:panelGroup>
-                    <h:panelGroup styleClass="fa fa-film fa-size-2" rendered="#{o.fileType.startsWith('video')}">&#160;</h:panelGroup>
-					<h:panelGroup styleClass="fa fa-folder-open-o fa-size-2" rendered="#{o.isCollection()}">&#160;</h:panelGroup>
-                    <h:panelGroup styleClass="fa fa-file fa-size-2" rendered="#{!(o.isCollection() || o.fileType.startsWith('image') || o.fileType.startsWith('text') || o.fileType.endsWith('pdf') || o.shortFileType.startsWith('doc') || o.shortFileType.startsWith('ppt') || o.shortFileType.startsWith('xls') || o.fileType.endsWith('octet-stream') || o.fileType.startsWith('video') || o.fileType.startsWith('audio'))}">&#160;</h:panelGroup>
+                    <h:panelGroup styleClass="#{o.getIconFont()} fa-size-2">&#160;</h:panelGroup>
                 </h:column>
-
+				<!--  column 2: file name -->
                 <h:column>
                     <f:facet name="header">
                     	<h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('filename')}" value="#{lbl.filename}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'filename') ? 'imj_active' : ''}">
@@ -74,18 +64,18 @@
 						<div class="path">#{o.path}</div>
 					</ui:fragment>
                 </h:column>
-
+				<!--  column 3: file type (file extension) -->
                 <h:column headerClass="imj_colFiletype">
                     <f:facet name="header">
-                    	<h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('filetype')}" value="#{lbl.file_type}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'filetype') ? 'imj_active' : ''}">
+                    	<h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('fileextension')}" value="#{lbl.file_type}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'filetype') ? 'imj_active' : ''}">
                     		<f:ajax execute="@this" render=":ajaxWrapper :imj_pageMessageArea"/>
                     	</h:commandLink>
                     	 &#160;
                     	<h:outputText value="&#160;" styleClass="#{cc.attrs.listBean.selectedSortOrder == 'ASCENDING' ? 'fa fa-sort-asc fa-push-right' : 'fa fa-sort-desc fa-push-left'}" rendered="#{cc.attrs.listBean.selectedSortCriterion == 'filetype'}"/>
                     </f:facet>
-                    <span title="#{o.fileType}">#{o.shortFileType}</span>
+                    <span title="#{o.fileMimeType}">#{o.fileExtension}</span>
                 </h:column>
-
+				<!--  column 4: file size  -->
                 <h:column headerClass="imj_colFiletype">
                     <f:facet name="header">
                     	 <h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('filesize')}" value="#{lbl.file_size}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'filesize') ? 'imj_active' : ''}">
@@ -96,7 +86,7 @@
 					</f:facet>
                     <span title="#{o.fileSize}">#{o.fileSize}</span>
                 </h:column>
-
+				<!--  column 5: date of last modification -->
                 <h:column headerClass="imj_colDate">
                     <f:facet name="header" > 
                     	<h:commandLink action="#{cc.attrs.listBean.changeSelectedSortCriterion('modified')}" value="#{lbl.sort_date_mod}" styleClass="#{(cc.attrs.listBean.selectedSortCriterion == 'modified') ? 'imj_active' : ''}">

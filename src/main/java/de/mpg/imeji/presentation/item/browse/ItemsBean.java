@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,7 +49,7 @@ import de.mpg.imeji.presentation.util.CookieUtils;
 
 /**
  * The bean for all list of images
- *
+ * 
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
@@ -121,7 +122,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
           Imeji.RESOURCE_BUNDLE.getLabel("filename", getLocale())));
       getSortMenu().add(new SelectItem(SearchFields.filesize,
           Imeji.RESOURCE_BUNDLE.getLabel("file_size", getLocale())));
-      getSortMenu().add(new SelectItem(SearchFields.filetype,
+      getSortMenu().add(new SelectItem(SearchFields.fileextension,
           Imeji.RESOURCE_BUNDLE.getLabel("file_type", getLocale())));
     } 
     catch (Exception e) {
@@ -146,25 +147,20 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   @Override
   public List<ThumbnailBean> retrieveList(int offset, int size) {
     try {
-      // (a) Search the items of the page
-      //  involves access to ElasticSearch, get Item ids (UID) from ElasticSearch that can bee seen by logged-on user 
-      //  searchResult: contains a list of retrieved UIDs of Items
-      searchResult = search(getSearchQuery(), getSortCriterion(), offset, size);
+      
+      // (a) Search items in ElasticSearch
+      //  Access ElasticSearch, read UIDs of all Items that can bee seen by logged-on user
+      //  SearchResult: contains a list of Item UIDs
+      searchResult = search(getSearchQuery(), getSortCriteriaForItems(), offset, size);
       totalNumberOfRecords = searchResult.getNumberOfRecords();
       
-      // (b) Load the items
-      // loadImages means load Items
-      // involves acces to Jena, empty Item objects are created, stocked with their UIDs and then filled with content in Jena
-      // result: Collection of retrieved Item objects
-      final Collection<Item> items = loadImages(searchResult.getResults());
+      // (b) Build Item objects and read Item content from Jena
+      // Access Jena, create empty Item objects, stock them with their UIDs, 
+      // fill objects with content stored in Jena
+      // result: Collection of Item objects
+      final Collection<Item> items = loadItems(searchResult.getResults());
       
-      // (c) create thumbnails for items and return these
-      // use Java Streams for this
-      // create a stream: Stream<Item> itemStream = items.stream();
-      // perform operations on the stream: 
-      // map: map elements on one stream to other elements, i.e. create new object for each object in the stream (specify how in () )
-      // peek: perform action on the objects of the stream
-      // collect: collect elements from a stream, terminal operation of a stream
+      // (c) create "Thumbnails" for Items and return them
       HierarchyService hierarchyService = new HierarchyService();
       
       List<ThumbnailBean> thumbnailBeans = items.stream().parallel()
@@ -187,9 +183,9 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @param sortCriterion
    * @return
    */
-  public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
+  public SearchResult search(SearchQuery searchQuery, List<SortCriterion> sortCriteria, int offset,
       int size) {
-    return new ItemService().searchWithFacets(null, searchQuery, sortCriterion, getSessionUser(),
+    return new ItemService().searchWithFacetsAndMultiLevelSorting(null, searchQuery, sortCriteria, getSessionUser(),
         size, offset);
   }
 
@@ -209,7 +205,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @return
    * @throws ImejiException
    */
-  public Collection<Item> loadImages(List<String> uris) throws ImejiException {
+  public Collection<Item> loadItems(List<String> uris) throws ImejiException {
     final ItemService controller = new ItemService();
     return controller.retrieveBatch(uris, -1, 0, getSessionUser());
   }
@@ -271,9 +267,33 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
     this.facetQuery = facetQuery;
   }
 
-  public SortCriterion getSortCriterion() {
+  /**
+   * Get sort criteria for Items page
+   * Two-level sorting:
+   *   (First level) Sort all items by chosen sort criterion (date modified, filename, file size, file type)
+   *   (Second level) sort all items that fall into the same category by filename (alphabetically, ascending)
+   * @return
+   */
+  private List<SortCriterion> getSortCriteriaForItems(){
+	  
+	  List<SortCriterion> itemsSortCriteria = new LinkedList<SortCriterion>();
+	  itemsSortCriteria.add(getUserSetSortCriterion());
+	  itemsSortCriteria.add(getSortByFilenameAscendingSortCriterion());
+	  return itemsSortCriteria;
+  }
+  
+  /**
+   * Get the sort criterion for ElasticSearch 
+   * @return
+   */
+  private SortCriterion getUserSetSortCriterion() {
     return new SortCriterion(SearchFields.valueOfIndex(getSelectedSortCriterion()),
         SortOrder.valueOf(getSelectedSortOrder()));
+  }
+  
+  public static SortCriterion getSortByFilenameAscendingSortCriterion() {
+	  SortCriterion sortByFilenameAscending = new SortCriterion(SearchFields.filename, SortOrder.ASCENDING);
+	  return sortByFilenameAscending;
   }
 
   /**

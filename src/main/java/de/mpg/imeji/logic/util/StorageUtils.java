@@ -175,6 +175,50 @@ public class StorageUtils {
   }
 
   /**
+   * Use method for getting file extensions by
+   * (1) reading the extension from name
+   * (2) if no extension can be read from name: use file mime type detection to 
+   *     infer an extension
+   *     
+   * @param filename
+   * @return extension
+   */
+  public static String getExtension(File file) {
+	  
+
+	  String filename = file.getName();
+	  String extension = FilenameUtils.getExtension(filename);
+
+	  // filename does not contain an extension -> try to infer one
+	  if(extension.isEmpty()) {
+		  extension =  guessExtension(file);
+	  }
+	
+	  return extension;	  
+  } 
+  
+  
+  
+  /**
+   * Get file extension from filename
+   * In case the filename has no extension, return String with a blank 
+   * @param filename
+   * @return extension
+   */
+   public static String getExtensionFromFileName(String filename) {
+	   
+	   String extension = "";
+	   if(filename != null) {
+		   extension = FilenameUtils.getExtension(filename);
+		   if(extension == null || extension.isEmpty()) {
+			   extension =  new String (" ");
+		   }
+	   }
+	   return extension;
+   }
+  
+  
+  /**
    * Return the extension as String
    *
    * @param mimeType

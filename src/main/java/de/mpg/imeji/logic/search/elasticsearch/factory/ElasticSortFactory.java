@@ -1,5 +1,8 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -27,8 +30,32 @@ public class ElasticSortFactory {
   private static final SortBuilder defaultSort =
       SortBuilders.fieldSort(ElasticFields.CREATED.field()).order(SortOrder.ASC);
 
+  
   /**
-   * Build a {@link SortBuilder} from a {@link SortCriterion}
+   * Build a list of ElasticSearch {@link SortBuilder} from a list of Imeji {@link SortCriterion}
+   * 
+   * Goal: Multilevel sorting of results.
+   * Add the list of {@link SortBuilder} to an ElasticSerach {@link SearchRequestBuilder}
+   * Sorting of results is then done descending the passed list, i.e.
+   *   Results are first be sorted by the first {@link SortCriterion}
+   *   Elements that fall into the same category are then sorted by the second {@link SortCriterion}
+   *   and so on
+   *   
+   * @param sortCriteria list of {@link SortCriterion}
+   * @return list of {@link SortBuilder}
+   */
+  public static List<SortBuilder> build(List<SortCriterion> sortCriteria){
+	  
+	  ArrayList<SortBuilder> sortBuilderList = new ArrayList<SortBuilder>(sortCriteria.size());
+	  for(SortCriterion sortCriterion: sortCriteria) {
+		  sortBuilderList.add(build(sortCriterion));
+	  }
+	  return sortBuilderList;
+  }
+  
+  
+  /**
+   * Build an ElasticSearch {@link SortBuilder} from an Imeji {@link SortCriterion}
    *
    * @param sort
    * @return
@@ -49,6 +76,8 @@ public class ElasticSortFactory {
         return makeBuilder(ElasticFields.FILETYPE.field(), sort);
       case filesize:
         return makeBuilder(ElasticFields.SIZE.field(), sort);
+      case fileextension:
+    	return makeBuilder(ElasticFields.FILEEXTENSION.field(), sort);
       case creatorid:
         return makeBuilder(ElasticFields.CREATORS.field() + SORT_INDEX, sort);
       case status:
@@ -59,9 +88,9 @@ public class ElasticSortFactory {
   }
 
   /**
-   * Construct a Sortbuilder
+   * Construct an ElasticSearch {@link SortBuilder} 
    *
-   * @param field
+   * @param field name of the search field
    * @param sortCriterion
    * @return
    */

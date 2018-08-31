@@ -6,10 +6,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.lucene.queryparser.classic.QueryParserBase;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.ExistsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortBuilder;
 
 import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.User;
@@ -48,6 +54,89 @@ public class ElasticSearchFactoryUtil {
     return "";
   }
 
+  
+  /**
+   * Function searches ElasticSearch database
+   * Retrieves all documents (of a given type) that have no or an empty field  
+   * 
+   * @param dataType  type of documents that will be searched
+   * @param nameOfMissingField  name of the field
+   * @return list of UIDs of documents that miss the field 
+   */
+  public static List<String> getDocumentsThatMissAField(String dataType, String nameOfMissingField){
+	  
+	  List<String> resultUIDs = new ArrayList<String>();
+	  
+	  int numberOfBatchResultsInScrolling = 1000;
+	  int timeoutValueInScrolling = 60000;
+	  
+	  Client elasticSearchClient = ElasticService.getClient();
+
+	  
+	  // (1) construction of Query to ElasticSearch
+
+	  SearchRequestBuilder elasticSearchRequestBuilder = elasticSearchClient.prepareSearch(ElasticService.DATA_ALIAS);
+	  
+	  // set the scan&scroll search type parameters: size and timeout
+	  elasticSearchRequestBuilder = elasticSearchRequestBuilder.setSize(numberOfBatchResultsInScrolling);
+	  elasticSearchRequestBuilder.setScroll(new TimeValue(timeoutValueInScrolling));
+	  
+	  // set the document type	  
+	  elasticSearchRequestBuilder = elasticSearchRequestBuilder.setTypes(dataType);
+	  
+	  // set the query
+	  final ExistsQueryBuilder eqb = new ExistsQueryBuilder(nameOfMissingField);
+	  BoolQueryBuilder bqb = new BoolQueryBuilder(); 
+	  bqb = bqb.mustNot(eqb);
+	  elasticSearchRequestBuilder =  elasticSearchRequestBuilder.setQuery(bqb);
+	  
+	  // (2) Send query to ElasticSearch:
+	  SearchResponse scrollResponse = elasticSearchRequestBuilder.get();
+	  
+	  //Scroll until no hits are returned
+	  do {
+	      for (SearchHit hit : scrollResponse.getHits().getHits()) {
+	    	// get UIDs from retrieved documents
+	    	resultUIDs.add(hit.getId());
+	      }
+
+	     scrollResponse = elasticSearchClient.prepareSearchScroll(scrollResponse.getScrollId()).setScroll(new TimeValue(timeoutValueInScrolling)).execute().actionGet();
+	  } 
+	  while(scrollResponse.getHits().getHits().length != 0); // Zero hits mark the end of the scroll and the while loop.
+    
+      return resultUIDs;
+	    	  
+  }
+  
+
+  
+  /**
+   * Add single or  multilevel sorting to an ElasticSearch {@link SearchRequestBuilder}
+   * 
+   * Add a list of Imeji {@link SortCriterion}.
+   * These are used to sort results as follows:
+   * 
+   *  Results are first sorted by the first sort criterion in the list
+   *  Elements that fall into the same category are then sorted by the second criterion of the list
+   *  and so on
+   *  
+   * @param searchRequestBuilder
+   * @param sortCriteria
+   * @return SearchRequestBuilder with single or multilevel sorting
+   */
+  public static SearchRequestBuilder addSorting(SearchRequestBuilder searchRequestBuilder, List<SortCriterion> sortCriteria) {
+	  
+	  List<SortBuilder> sortBuilders = ElasticSortFactory.build(sortCriteria);
+	  	  
+	  for(SortBuilder sortBuilder : sortBuilders) {
+		  searchRequestBuilder.addSort(sortBuilder);
+	  }
+	  
+	  return searchRequestBuilder;	  
+  }
+  
+  
+  
   /**
    * Retrieve the Id of the user according to its email
    *
@@ -64,7 +153,7 @@ public class ElasticSearchFactoryUtil {
   }
 
   /**
-   * Retrieve all usergroup of one user
+   * Retrieve all user groups of one user
    *
    * @param userId
    * @return
@@ -75,7 +164,7 @@ public class ElasticSearchFactoryUtil {
   }
 
   /**
-   * Get all Grant of the users, included the grant of its groups
+   * Get all Grants of the users, including the grants of its groups
    * 
    * @param user
    * @return

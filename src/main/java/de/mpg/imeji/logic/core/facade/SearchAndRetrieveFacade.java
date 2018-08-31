@@ -60,6 +60,25 @@ public class SearchAndRetrieveFacade implements Serializable {
       SortCriterion sortCri, int size, int offset) {
     return search.searchWithFacets(q, sortCri, user, collection.getId().toString(), offset, size);
   }
+  
+  
+  /**
+   * Search for all objects within the collection. Items and Sub-Collections are mixed
+   * 
+   * @param q
+   * @param collection
+   * @param user
+   * @param sortCriteria 
+   * @param size
+   * @param offset
+   * @return
+   */
+  public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery q, CollectionImeji collection, User user,
+     List<SortCriterion> sortCriteria, int size, int offset) {
+    return search.searchWithFacetsAndMultiLevelSorting(q, sortCriteria, user, collection.getId().toString(), offset, size);
+  }
+  
+  
 
   /**
    * Retrieve all objects of the uris list, which can be a mixed of items and collections

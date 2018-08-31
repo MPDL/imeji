@@ -86,11 +86,25 @@ public class JenaSearch implements Search {
   public SearchResult search(SearchQuery sq, SortCriterion sortCri, User user, List<String> uris) {
     return new SearchResult(advanced(uris, sq, sortCri, user), sortCri);
   }
+  
+  @Override
+  public SearchResult searchWithMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCri, User user,
+  		String folderUri, int offset, int size) {
+  	  // currently there is no implementation for search in Jena with multiple sort criteria
+	  return null;
+  }
 
   @Override
   public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user,
       String folderUri, int from, int size) {
     return search(query, sortCri, user, folderUri, from, size);
+  }
+  
+  @Override
+  public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
+  		int from, int size) {
+	// currently there is no implementation for search in Jena with multiple sort criteria
+  	return null;
   }
 
   /**
@@ -282,6 +296,10 @@ public class JenaSearch implements Search {
         return J2JHelper.getResourceNamespace(new Item());
     }
   }
+
+
+
+
 
 
 }

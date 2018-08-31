@@ -286,6 +286,23 @@ public class ItemService extends SearchServiceAbstract<Item> {
   }
 
   /**
+   * Retrieve the items
+   *
+   * @param uris
+   * @param limit
+   * @param offset
+   * @return
+   * @throws ImejiException
+   */
+  public List<Item> retrieveBatch(List<String> uris, User user)
+      throws ImejiException {
+    return itemController.retrieveBatch(uris, user);
+  }
+  
+  
+  
+  
+  /**
    * Retrieve the items lazy (without the metadata)
    *
    * @param uris
@@ -299,6 +316,22 @@ public class ItemService extends SearchServiceAbstract<Item> {
     return itemController.retrieveBatch(uris, user);
   }
 
+  /**
+   * Same functionality as 
+   * 	Collection<Item> retrieveBatchLazy(List<String> uris, int limit, int offset, User user)
+   * Different parameters
+   * 
+   * @param uris
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public List<Item> retrieveBatchLazy(List<String> uris, User user) throws ImejiException{
+	  return itemController.retrieveBatchLazy(uris, user);
+  }
+  
+  
+  
   /**
    * Retrieve the items fully (with all metadata)
    *
@@ -434,6 +467,26 @@ public class ItemService extends SearchServiceAbstract<Item> {
         containerUri != null ? containerUri.toString() : null, offset, size);
   }
 
+  
+  /**
+   * Search Imeji {@link Item}s
+   * Employ multilevel sorting on results
+   *
+   * @param containerUri - if the search is done within a {@link Container}
+   * @param searchQuery - the {@link SearchQuery}
+   * @param sortCriteria - the sort criteria for multilevel sorting {@link SortCriterion}
+   * @param user
+   * @param size
+   * @param offset
+   * @return
+   */
+  public SearchResult searchWithMultiLevelSorting(URI containerUri, SearchQuery searchQuery, List<SortCriterion> sortCriteria,
+      User user, int size, int offset) {
+    return search.searchWithMultiLevelSorting(searchQuery, sortCriteria, user,
+        containerUri != null ? containerUri.toString() : null, offset, size);
+  }
+  
+  
   /**
    * Search and add {@link Facet} to the {@link SearchResult}
    * 
@@ -445,10 +498,12 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param offset
    * @return
    */
-  public SearchResult searchWithFacets(URI containerUri, SearchQuery searchQuery,
-      SortCriterion sortCri, User user, int size, int offset) {
-    return search.searchWithFacets(searchQuery, sortCri, user,
-        containerUri != null ? containerUri.toString() : null, offset, size);
+  public SearchResult searchWithFacetsAndMultiLevelSorting(URI containerUri, SearchQuery searchQuery,
+      List<SortCriterion> sortCriteria, User user, int size, int offset) {
+    
+	  SearchResult facetSearchResult = search.searchWithFacetsAndMultiLevelSorting(searchQuery, sortCriteria, user,
+		        containerUri != null ? containerUri.toString() : null, offset, size);
+	  return facetSearchResult;
   }
 
   /**
@@ -541,9 +596,9 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public void reindex(String index) throws ImejiException {
     LOGGER.info("Indexing Items...");
-    final ElasticIndexer indexer =
-        new ElasticIndexer(index, ElasticTypes.items, ElasticService.ANALYSER);
+    final ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.items, ElasticService.ANALYSER);
     LOGGER.info("Retrieving Items...");
+    // (1) read item UIDs from Jena database (2) use item UIDs to read item content from Jena
     final SearchServiceAbstract<Item>.RetrieveIterator iterator = iterateAll(500);
     LOGGER.info("+++ " + iterator.getSize() + " items to index +++");
     int count = 0;
