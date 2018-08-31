@@ -13,10 +13,18 @@
 			<h:form id="licenseEditorForm">
 				<lic:licenseEditor licenseEditor="#{ItemsEditLicenseBean.licenseEditor}" containerId="licenseEditorForm"/>
 				<ui:fragment rendered="#{!ItemsEditLicenseBean.releasedCollection}">
-					<h:selectBooleanCheckbox value="#{ItemsEditLicenseBean.updateOnlyNonLicensed}" html5:data-loader="false">
-						<f:ajax render="@none"/>
-					</h:selectBooleanCheckbox>
-					#{lbl.add_licenses_to_non_licensed}
+					<div class="imj_metadataSet">
+						<div class="imj_metadataLabel">
+							<h:outputLabel value="#{lbl.scope}" />
+						</div>						
+						<div class="imj_metadataValue">
+							<h:selectOneRadio value="#{ItemsEditLicenseBean.overwriteLicenses}">
+								<f:selectItem itemLabel="#{lbl.add_licenses_to_non_licensed}" itemValue="#{false}" />
+								<f:selectItem itemLabel="#{lbl.overwrite_licenses}" itemValue="#{true}" />
+								<f:ajax render="@none"/>
+							</h:selectOneRadio>
+						</div>						
+					</div>					
 				</ui:fragment>
 				<ui:fragment rendered="#{ItemsEditLicenseBean.releasedCollection}">
 					<span class="fa fa-exclamation-triangle" />

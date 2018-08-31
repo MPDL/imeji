@@ -38,7 +38,7 @@ public class ItemsEditLicenseBean extends SuperBean {
   private static final Logger LOGGER = Logger.getLogger(ItemsEditLicenseBean.class);
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItems;
-  private boolean updateOnlyNonLicensed = true;
+  private boolean overwriteLicenses = false;
   private LicenseEditor licenseEditor;
   private String collectionId;
   private boolean releasedCollection = false;
@@ -125,8 +125,8 @@ public class ItemsEditLicenseBean extends SuperBean {
   private List<Item> addLicense(List<Item> items) {
     final List<Item> itemsWithNewLicense = new ArrayList<>();
     for (final Item item : items) {
-    	if (!this.updateOnlyNonLicensed || !hasLicense(item) || !item.getStatus().equals(Status.PENDING)) {
-    		itemsWithNewLicense.add(addLicense(item));
+        if (overwriteLicenses || !hasLicense(item) || !item.getStatus().equals(Status.PENDING)) {
+            itemsWithNewLicense.add(addLicense(item));
       }
     }
     return itemsWithNewLicense;
@@ -194,12 +194,18 @@ public class ItemsEditLicenseBean extends SuperBean {
     redirect(getPreviousPage().getCompleteUrlWithHistory());
   }
   
-  public boolean isUpdateOnlyNonLicensed() {
-	return this.updateOnlyNonLicensed;
+  /**
+   * @return the overwriteLicenses
+   */
+  public boolean isOverwriteLicenses() {
+    return overwriteLicenses;
   }
 	
-  public void setUpdateOnlyNonLicensed(boolean updateOnlyNonLicensed) {
-	this.updateOnlyNonLicensed = updateOnlyNonLicensed;
+  /**
+   * @param overwriteLicenses the overwriteLicenses to set
+   */
+  public void setOverwriteLicenses(boolean overwriteLicenses) {
+    this.overwriteLicenses = overwriteLicenses;
   }
   
   /**
