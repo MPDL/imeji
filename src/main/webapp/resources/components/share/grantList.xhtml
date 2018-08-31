@@ -38,7 +38,6 @@
 								<h:outputText value="#{sh.user.person.completeName} (#{lbl.user})" rendered="#{sh.user != null}"/>
 								<h:outputText value="#{sh.invitation.inviteeEmail}" rendered="#{sh.invitation != null}"/>
 								<h:outputText value="#{sh.group.name} (#{lbl.group})" rendered="#{sh.group != null}"/>
-								<h:outputText value=" (#{lbl.role_owner})" rendered="#{sh.creator}"/>
 							</td>
 							<td colspan="#{cc.attrs.rolesMenu.size()}">
 								<h:selectOneRadio id="role" value="#{sh.role}" styleClass="imj_rightsTable" enabledClass="imj_noDisplay" disabledClass="imj_noDisplay" layout="lineDirection"  disabled="#{cc.attrs.readOnly or sh.creator}">
@@ -58,6 +57,6 @@
 				</tbody>
 			</table>
 		</div>
-
 	</composite:implementation>
+	
 </html>

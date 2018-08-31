@@ -67,15 +67,15 @@
 						<div class="imj_menuBody">
 							<ul class="imj_overlayMenuList">
 								<ui:fragment rendered="#{cc.owner != null}">
-									<span style="font-style:italic">#{lbl.role_owner}:</span>
+									<span>#{lbl.role_owner}:</span>
 									<li>#{cc.owner}</li>
 								</ui:fragment>
-								<span style="font-style:italic">#{lbl.shared_with}:</span>
+								<span>#{lbl.shared_with}:</span>
 								<ui:repeat var="sharedWith" value="#{cc.users}">
 									<li>#{sharedWith}</li>
 								</ui:repeat>
 								<ui:repeat var="sharedWith" value="#{cc.groups}">
-									<li>#{sharedWith} <span style="font-style:italic;">(#{lbl.group})</span></li>
+									<li>#{sharedWith} (#{lbl.group})</li>
 								</ui:repeat>
 								<ui:fragment rendered="#{cc.hasMoreCollaborator}">
 									<li>...</li>
