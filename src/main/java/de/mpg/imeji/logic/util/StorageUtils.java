@@ -41,8 +41,10 @@ public class StorageUtils {
    */
   public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
   public static final String BAD_FORMAT = "bad-extension/other";
+  public static final String TYPE_TEXT_PLAIN = MimeTypes.PLAIN_TEXT;
   private static Tika tika = new Tika();
   public static final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+
 
   /**
    * Transform an {@link InputStream} to a {@link Byte} array
@@ -50,8 +52,8 @@ public class StorageUtils {
    * @param stream
    * @return
    */
-  public static byte[] toBytes(InputStream stream) {
-    try {
+  public static byte[] toBytes(InputStream stream) {	  
+	  try {
       return IOUtils.toByteArray(stream);
     } catch (final IOException e) {
       LOGGER.error("Error writing stream to byte array", e);
