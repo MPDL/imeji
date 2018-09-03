@@ -30,7 +30,7 @@ public final class ShareList implements Serializable {
   private static final long serialVersionUID = -3986021952970961215L;
   private final List<ShareListItem> items = new ArrayList<ShareListItem>();
   private final List<ShareListItem> invitations = new ArrayList<ShareListItem>();
-
+  private final List<ShareListItem> ownerItems = new ArrayList<ShareListItem>();
 
   /**
    * Create a list of all entities with grant for one resource
@@ -50,7 +50,7 @@ public final class ShareList implements Serializable {
   }
 
   /**
-   * Retrieve the user groups having grant for the this resource
+   * Retrieve the user groups having a grant for the this resource
    *
    * @param ownerUri
    * @param sharedObjectUri
@@ -71,7 +71,7 @@ public final class ShareList implements Serializable {
   }
 
   /**
-   * Retrieve all Users having grants for this resource
+   * Retrieve all Users having a grant for this resource
    *
    * @param ownerUri
    * @param sharedObjectUri
@@ -86,10 +86,14 @@ public final class ShareList implements Serializable {
         SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.read, SearchOperators.EQUALS, sharedObjectUri, false)),
         null, Imeji.adminUser, 0, -1);
-    for (final User u : allUser) {
-      // Do not display the creator of this collection here
-      items.add(new ShareListItem(u, sharedObjectUri, null, currentUser, locale,
-          u.getId().toString().equals(ownerUri.toString())));
+    for (final User user : allUser) {
+      boolean isOwner = user.getId().toString().equals(ownerUri.toString());
+      ShareListItem userItem = new ShareListItem(user, sharedObjectUri, null, currentUser, locale, isOwner);
+      if(isOwner) {
+    	  ownerItems.add(userItem);
+      }else {
+    	  items.add(userItem);
+      }
     }
   }
 
@@ -110,10 +114,6 @@ public final class ShareList implements Serializable {
     }
   }
 
-  public boolean isSizeEmpty() {
-    return items.isEmpty() && invitations.isEmpty();
-  }
-
   public List<ShareListItem> getItems() {
     return items;
   }
@@ -122,4 +122,8 @@ public final class ShareList implements Serializable {
     return invitations;
   }
 
+  public List<ShareListItem> getOwnerItems() {
+	return ownerItems;
+  } 
+  
 }

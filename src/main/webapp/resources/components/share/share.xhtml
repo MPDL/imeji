@@ -44,7 +44,12 @@
 				</h:form>
 				<h:form id="shareListForm" styleClass="shareListForm">
 					
-					<!-- user table which shows all user with existing rights -->
+					<!-- Table which shows the owner with existing rights -->
+					<ui:fragment rendered="#{ShareBean.shareList.ownerItems.size() > 0}">
+						<share:grantList id="ownerList" rolesMenu="#{rolesMenu}" list="#{ShareBean.shareList.ownerItems}" title="#{lbl.role_owner}:"/>
+					</ui:fragment>
+					
+					<!-- Table which shows all users and user groups with existing rights -->
 					<ui:fragment rendered="#{ShareBean.shareList.items.size() > 0}">
 						<share:grantList id="shareList" rolesMenu="#{rolesMenu}" list="#{ShareBean.shareList.items}" title="#{lbl.shared_with}:"/>
 					</ui:fragment>
