@@ -43,12 +43,17 @@ public class ElasticSearch implements Search {
 
   private ElasticTypes[] type = null;
   private ElasticIndexer indexer = null;
-  private static final int SEARCH_MAX_SIZE = 500;
-  private static final int ELASTIC_FROM_SIZE_LIMIT = 10000;
-
+  private static final int SEARCH_INTERVALL_MAX_SIZE = 500;
+  private static final int SEARCH_SCROLL_INTERVALL = SEARCH_INTERVALL_MAX_SIZE;
+  private static final int SEARCH_TO_INDEX_LIMIT = 10000;
+  public static final int  SIZE_GET_ALL_RESULTS= -1000;  // use this constant to state that you want to retrieve all existing search results 
+  														 // of a query without a size limit
+  public static final int SEARCH_FROM_START = 0;
+  private static final int SCROLL_TIMEOUT_MSEC = 60000; 
 
   /**
-   * Construct an Elastic Search Query for on data type. If type is null, search for all types
+   * Construct an Elastic Search Query for one or more data types. 
+   * If type is null, search for all existing types
    *
    * @param type
    * @throws ImejiException
@@ -73,8 +78,7 @@ public class ElasticSearch implements Search {
       int from, int size) {
 	  
 	  List<SortCriterion> sortCriteria = new ArrayList<SortCriterion>(1);
-	  sortCriteria.add(sortCri);
-	  
+	  sortCriteria.add(sortCri);	  
 	  return searchElasticSearch(query, sortCriteria , user, folderUri, from, size, false);
   }
   
@@ -99,8 +103,7 @@ public class ElasticSearch implements Search {
       String folderUri, int from, int size) {
     
 	  List<SortCriterion> sortCriteria = new ArrayList<SortCriterion>(1);
-	  sortCriteria.add(sortCri);
-	  
+	  sortCriteria.add(sortCri);	  
 	  return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, true);
   }
 
@@ -108,10 +111,14 @@ public class ElasticSearch implements Search {
   private SearchResult searchElasticSearch(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
       int from, int size, boolean addFacets) {
     
-	size = size == -1 ? size = SEARCH_MAX_SIZE : size;
-    from = from < 0 ? 0 : from;
-    
-    if (size < SEARCH_MAX_SIZE && from + size < ELASTIC_FROM_SIZE_LIMIT) {
+	// magic number "-1" for size is spread all over the code
+    // semantic meaning: I don't know how much results I want, give me all?
+	if(size < 0) { size = SEARCH_INTERVALL_MAX_SIZE; }
+	from = from < 0 ? 0 : from;
+       
+    if (size != SIZE_GET_ALL_RESULTS && 
+    		size < SEARCH_INTERVALL_MAX_SIZE && 
+    		from + size < SEARCH_TO_INDEX_LIMIT) {
       return searchSinglePage(query, sortCriteria, user, folderUri, from, size, addFacets);
     } else {
       return searchWithScroll(query, sortCriteria, user, folderUri, from, size, addFacets);
@@ -141,7 +148,6 @@ public class ElasticSearch implements Search {
         .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setTypes(getTypes()).setSize(size)
         .setFrom(from).addSort("_type", SortOrder.ASC);
     request = ElasticSearchFactoryUtil.addSorting(request, sortCriteria);
-    //.addSort(ElasticSortFactory.build(sortCri));
     if (f != null) {
       request.setQuery(f).setPostFilter(q);
     } else {
@@ -152,7 +158,7 @@ public class ElasticSearch implements Search {
     }
 
     final SearchResponse resp = request.execute().actionGet();
-    SearchResult elasticSearchResult = toSearchResult(resp, query);
+    SearchResult elasticSearchResult = getSearchResultFromElasticSearchResponse(resp, query);
     return elasticSearchResult;
   }
 
@@ -180,26 +186,29 @@ public class ElasticSearch implements Search {
 
   
   /**
-   * Search via the scroll api. Allows to search for many/all documents
+   * Search via ElasticSearch Scroll Search. 
+   * This allows to search for a greater number of documents or all documents
+   * that exist within ElasticSeach database for a given query
    *
-   * @param query
-   * @param sortCri
-   * @param user
+   * @param query 			ElasticSearch search query
+   * @param sortCriteria	Criteria by which the results are be sorted
+   * @param user			User
    * @param folderUri
-   * @param from
-   * @param size
-   * @return
+   * @param from			Search from this result number (within all results for the given query)
+   * @param size            Retrieve this amount of hits/documents
+   * @return	
    */
   private SearchResult searchWithScroll(SearchQuery query, List<SortCriterion> sortCriteria, User user,
       String folderUri, int from, int size, boolean addFacets) {
-    // final int scrollSize = size < SEARCH_MAX_SIZE ? size : SEARCH_MAX_SIZE;
+
     final ElasticQueryFactory factory =
         new ElasticQueryFactory(query, type).folderUri(folderUri).user(user);
     final QueryBuilder q = factory.build();
     final QueryBuilder f = factory.buildBaseQuery();
+    // scroll api conducts search from beginning, "search from index" must be handled additionally
     SearchRequestBuilder request = ElasticService.getClient()
-        .prepareSearch(ElasticService.DATA_ALIAS).setScroll(new TimeValue(60000)).setNoFields()
-        .setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).addSort("_type", SortOrder.ASC);
+        .prepareSearch(ElasticService.DATA_ALIAS).setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC)).setNoFields()
+        .setTypes(getTypes()).setSize(SEARCH_SCROLL_INTERVALL).addSort("_type", SortOrder.ASC);
     request = ElasticSearchFactoryUtil.addSorting(request, sortCriteria);
     if (f != null) {
       request.setQuery(f).setPostFilter(q);
@@ -210,27 +219,98 @@ public class ElasticSearch implements Search {
       request = addAggregations(request, folderUri);
     }
     SearchResponse resp = request.execute().actionGet();
-    SearchResult result = toSearchResult(resp, query);
-    result.setResults(scrollHitIds(resp, from, size));
+    // initialize SearchResult (with first interval of retrieved results)
+    SearchResult result = getSearchResultFromElasticSearchResponse(resp, query);
+
+    List<String> retrievedIDs = new ArrayList<String>();
+    // scroll all results starting at a given index
+    if(size == SIZE_GET_ALL_RESULTS) {    	
+    	retrievedIDs = scrollAllResults(resp, from); 
+    }
+    // scroll to a size limit starting at a given index
+    else {
+    	retrievedIDs = scrollWithSizeUpperBound(resp, from, size);
+    }
+   
+    result.setResults(retrievedIDs);
     return result;
   }
-
-  private List<String> scrollHitIds(SearchResponse resp, int from, int size) {
-    List<String> hitIds = new ArrayList<>(getHitIds(resp));
-    while (hitIds.size() < from + size) {
-      resp = ElasticService.getClient().prepareSearchScroll(resp.getScrollId())
-          .setScroll(new TimeValue(60000)).execute().actionGet();
-      if (resp.getHits().getHits().length == 0) {
+  
+  /**
+   *  Use scroll search for retrieving documents/results
+   *  from index "from" to index "from + amountOfResults"
+   * @param searchResponse
+   * @param from
+   * @param amountOfResults
+   * @return
+   */
+  private List<String> scrollWithSizeUpperBound(SearchResponse searchResponse, int from, int amountOfResults) {
+    
+	// get results of first query
+	List<String> hitIds = new ArrayList<>(getIDsFromScrollSearchResponse(searchResponse));
+    
+	// search until results with index range [0, from+ amountOfResults] are retrieved
+	while (hitIds.size() < from + amountOfResults) {
+      searchResponse = ElasticService.getClient().prepareSearchScroll(searchResponse.getScrollId())
+          .setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC)).execute().actionGet();
+      if (searchResponse.getHits().getHits().length == 0) {
         break;
       }
-      hitIds.addAll(getHitIds(resp));
+      hitIds.addAll(getIDsFromScrollSearchResponse(searchResponse));
     }
-    return hitIds.size() > from
-        ? hitIds.subList(from, from + size < hitIds.size() ? from + size : hitIds.size())
-        : new ArrayList<>();
+    
+	if(hitIds.size() > from) {
+		// cut indices at beginning [0,from] and end [from + amountOfResults, end]
+		if(from + amountOfResults < hitIds.size()) {
+			return hitIds.subList(from, from + amountOfResults);
+		}
+		else {
+			return hitIds.subList(from, hitIds.size());
+		}
+	}
+	else {
+		return new ArrayList<>();
+	}
+
+  }
+
+  /**
+   * Use ElasticSearch scroll search to scroll all results starting at a given index
+   * @param searchResponse  ElasticSearch SearchResponse object
+   * @param from	        start index (relative to all results that exist in ElasticSeach for the given query)
+   * @return				list with UIDs of retrieved objects 
+   */
+  private List<String> scrollAllResults(SearchResponse searchResponse, int from){
+	  
+	  List<String> retrievedIDs = new ArrayList<>(getIDsFromScrollSearchResponse(searchResponse));
+	  do {		  
+		  searchResponse = ElasticService.getClient().prepareSearchScroll(searchResponse.getScrollId())
+		          .setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC)).execute().actionGet();
+		  List<String> retrievedIDsOfScroll = getIDsFromScrollSearchResponse(searchResponse);
+		  retrievedIDs.addAll(retrievedIDsOfScroll);
+		  
+	  }while(searchResponse.getHits().getHits().length > 0);
+	  	
+	  
+	  // cut indices at beginning [0,from] 
+	  if(retrievedIDs.size() > from) {
+				return retrievedIDs.subList(from, retrievedIDs.size());
+	  }
+	  else {
+			return new ArrayList<>();
+	  }
+
   }
 
   
+  private ArrayList<String> getIDsFromScrollSearchResponse(SearchResponse searchResponse) {
+	    
+	  final ArrayList<String> ids = new ArrayList<>(SEARCH_SCROLL_INTERVALL);
+	  for (final SearchHit hit : searchResponse.getHits()) {
+	      ids.add(hit.getId());
+	  }
+	  return ids;
+  }
   
   
   @Override
@@ -248,7 +328,7 @@ public class ElasticSearch implements Search {
     final SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setNoFields().setTypes(getTypes()).setQuery(q).setSize(size).setFrom(from)
         .addSort(ElasticSortFactory.build(sort)).execute().actionGet();
-    return toSearchResult(resp, null);
+    return getSearchResultFromElasticSearchResponse(resp, null);
   }
 
 
@@ -265,22 +345,27 @@ public class ElasticSearch implements Search {
   }
 
   /**
-   * Transform an ElasticSearch {@link SearchResponse} to an Imeji {@link SearchResult}
+   * Transform an ElasticSearch {@link SearchResponse} to an Imeji {@link SearchResult} object
    *
-   * @param resp
-   * @return
+   * @param searchResponse
+   * @return SearchResult
    */
-  private SearchResult toSearchResult(SearchResponse resp, SearchQuery query) {
-    final List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
-    for (final SearchHit hit : resp.getHits()) {
+  private SearchResult getSearchResultFromElasticSearchResponse(SearchResponse searchResponse, SearchQuery query) {
+    
+	final int totalNumberOfHitsForSearchQuery =  Math.toIntExact(searchResponse.getHits().getTotalHits());
+	final List<String> ids = new ArrayList<String>(totalNumberOfHitsForSearchQuery);
+    for (final SearchHit hit : searchResponse.getHits()) {
       ids.add(hit.getId());
     }
-    List<FacetResult> facets = AggregationsParser.parse(resp);
-    return new SearchResult(ids, getTotalNumberOfRecords(resp, facets),
-        getNumberOfItems(resp, facets), getNumberOfItemsOfCollection(resp, facets),
-        getNumberOfSubcollections(resp, facets), facets);
+    
+    List<FacetResult> facets = AggregationsParser.parse(searchResponse);    
+    SearchResult searchResult = new SearchResult(ids, getTotalNumberOfRecords(searchResponse, facets),
+            getNumberOfItems(searchResponse, facets), getNumberOfItemsOfCollection(searchResponse, facets),
+            getNumberOfSubcollections(searchResponse, facets), facets);
+    return searchResult;
   }
 
+  
   private long getTotalNumberOfRecords(SearchResponse resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals("all")).findAny()
         .map(f -> f.getValues().get(0).getCount()).orElse(resp.getHits().getTotalHits());
@@ -317,13 +402,7 @@ public class ElasticSearch implements Search {
     return result;
   }
 
-  private List<String> getHitIds(SearchResponse resp) {
-    final List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
-    for (final SearchHit hit : resp.getHits()) {
-      ids.add(hit.getId());
-    }
-    return ids;
-  }
+  
 
 
 
