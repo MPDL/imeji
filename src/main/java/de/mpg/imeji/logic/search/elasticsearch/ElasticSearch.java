@@ -46,9 +46,6 @@ public class ElasticSearch implements Search {
   private static final int SEARCH_INTERVALL_MAX_SIZE = 500;
   private static final int SEARCH_SCROLL_INTERVALL = SEARCH_INTERVALL_MAX_SIZE;
   private static final int SEARCH_TO_INDEX_LIMIT = 10000;
-  public static final int  SIZE_GET_ALL_RESULTS= -1000;  // use this constant to state that you want to retrieve all existing search results 
-  														 // of a query without a size limit
-  public static final int SEARCH_FROM_START = 0;
   private static final int SCROLL_TIMEOUT_MSEC = 60000; 
 
   /**
@@ -111,12 +108,11 @@ public class ElasticSearch implements Search {
   private SearchResult searchElasticSearch(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
       int from, int size, boolean addFacets) {
     
-	// magic number "-1" for size is spread all over the code
-    // semantic meaning: I don't know how much results I want, give me all?
-	if(size < 0) { size = SEARCH_INTERVALL_MAX_SIZE; }
+	// magic number "-1" for size is spread all over the code:
+	if(size != GET_ALL_RESULTS && size < 0) { size = SEARCH_INTERVALL_MAX_SIZE; }
 	from = from < 0 ? 0 : from;
        
-    if (size != SIZE_GET_ALL_RESULTS && 
+    if (size != GET_ALL_RESULTS && 
     		size < SEARCH_INTERVALL_MAX_SIZE && 
     		from + size < SEARCH_TO_INDEX_LIMIT) {
       return searchSinglePage(query, sortCriteria, user, folderUri, from, size, addFacets);
@@ -224,7 +220,7 @@ public class ElasticSearch implements Search {
 
     List<String> retrievedIDs = new ArrayList<String>();
     // scroll all results starting at a given index
-    if(size == SIZE_GET_ALL_RESULTS) {    	
+    if(size == GET_ALL_RESULTS) {    	
     	retrievedIDs = scrollAllResults(resp, from); 
     }
     // scroll to a size limit starting at a given index

@@ -21,7 +21,7 @@ import de.mpg.imeji.logic.model.CollectionElement;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
@@ -108,7 +108,7 @@ public class FolderExport extends ExportAbstract {
    * @throws ImejiException
    */
   private List<CollectionElement> retrieveObjects(CollectionImeji collection) throws ImejiException {
-      final SearchResult itemUIDs = facade.search(null, collection, super.user, null, ElasticSearch.SIZE_GET_ALL_RESULTS, ElasticSearch.SEARCH_FROM_START);
+      final SearchResult itemUIDs = facade.search(null, collection, super.user, null, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX);
 	  return facade.retrieveItemsAndCollections(itemUIDs.getResults(), user);
   }
 
