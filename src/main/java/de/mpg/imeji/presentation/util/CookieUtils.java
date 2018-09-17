@@ -27,22 +27,25 @@ public class CookieUtils {
    *
    * @param name
    * @param defaultValue
-   * @return
+   * @return the cookies value
    */
   public static String readNonNull(String name, String defaultValue) {
-    Cookie c = readCookie(name);
+    // read Cookie from current http request
+	Cookie c = readCookie(name);
     if (c == null) {
       c = new Cookie(name, defaultValue);
     }
+    // set cookie in http response
     updateCookie(c);
     return c.getValue();
   }
 
   /**
-   * Read a cookie. If the cookie doesn't exist, then return null
+   * Read a cookie from the current http request. 
+   * If the cookie doesn't exist, return null
    *
-   * @param name
-   * @return
+   * @param name name of the cookie to read
+   * @return retrieved Cookie
    */
   public static Cookie readCookie(String name) {
     return (Cookie) FacesContext.getCurrentInstance().getExternalContext().getRequestCookieMap()
@@ -54,8 +57,9 @@ public class CookieUtils {
    *
    * @param c
    */
-  public static void updateCookie(Cookie c) {
+  private static void updateCookie(Cookie c) {
     if (c != null) {
+      // set max age of cookie
       setCookieProperties(c);
       ((HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse())
           .addCookie(c);

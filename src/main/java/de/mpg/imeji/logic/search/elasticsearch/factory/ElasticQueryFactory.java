@@ -14,6 +14,7 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 
 import com.hp.hpl.jena.util.iterator.Filter;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -81,7 +82,7 @@ public class ElasticQueryFactory {
    * @return
    */
   public QueryBuilder build() {
-    final BoolQueryBuilder q = QueryBuilders.boolQuery();
+    final BoolQueryBuilder booleanQuery = QueryBuilders.boolQuery();
     final QueryBuilder searchQuery = buildSearchQuery(query, user);
     final QueryBuilder containerQuery = buildContainerFilter(folderUri, !emptyQuery);
     final QueryBuilder securityQuery =
@@ -90,44 +91,44 @@ public class ElasticQueryFactory {
     final QueryBuilder filterQuery =
         buildSearchQuery(query != null ? query.getFilterElements() : new ArrayList<>(), user);
     if (!isMatchAll(searchQuery)) {
-      q.must(searchQuery);
+      booleanQuery.must(searchQuery);
     }
     if (!isMatchAll(containerQuery)) {
-      q.must(containerQuery);
+      booleanQuery.must(containerQuery);
     }
     if (!isMatchAll(securityQuery)) {
-      q.must(securityQuery);
+      booleanQuery.must(securityQuery);
     }
     if (!isMatchAll(filterQuery)) {
-      q.must(filterQuery);
+      booleanQuery.must(filterQuery);
     }
     if (emptyQuery && searchForCollection) {
-      q.mustNot(QueryBuilders.existsQuery(ElasticFields.FOLDER.field()));
+      booleanQuery.mustNot(QueryBuilders.existsQuery(ElasticFields.FOLDER.field()));
     }
     if (!searchForUsers && !isMatchAll(statusQuery)) {
-      q.must(statusQuery);
+      booleanQuery.must(statusQuery);
     }
-    return q;
+    return booleanQuery;
   }
 
   public QueryBuilder buildBaseQuery() {
     if (query == null || query.isEmpty()) {
-      final BoolQueryBuilder q = QueryBuilders.boolQuery();
+      final BoolQueryBuilder booleanQuery = QueryBuilders.boolQuery();
       final QueryBuilder containerQuery = buildContainerFilter(folderUri, true);
       final QueryBuilder securityQuery =
           new SecurityQueryFactory().user(user).searchForCollection(searchForCollection).build();
       final QueryBuilder statusQuery = buildStatusQuery(query, user);
       if (!isMatchAll(containerQuery)) {
-        q.must(containerQuery);
+        booleanQuery.must(containerQuery);
       }
       if (!isMatchAll(securityQuery)) {
-        q.must(securityQuery);
+        booleanQuery.must(securityQuery);
       }
       if (!searchForUsers && !isMatchAll(statusQuery)) {
-        q.must(statusQuery);
+        booleanQuery.must(statusQuery);
       }
 
-      return q;
+      return booleanQuery;
     }
     return null;
   }
@@ -202,7 +203,8 @@ public class ElasticQueryFactory {
    * @return
    */
   private QueryBuilder buildSearchQuery(List<SearchElement> elements, User user) {
-    if (elements.isEmpty()) {
+    
+	  if (elements.isEmpty()) {
       return QueryBuilders.matchAllQuery();
     }
     boolean OR = isORSearchGroup(elements);
@@ -241,7 +243,7 @@ public class ElasticQueryFactory {
 
 
   /**
-   * Filter in only elements withon the container
+   * Filter in only elements within the container
    * 
    * @param containerUri
    * @return
@@ -761,9 +763,10 @@ public class ElasticQueryFactory {
       QueryBuilder roleQuery = new SecurityQueryFactory().user(user)
           .searchForCollection(searchForCollection).role(GrantType.READ).build();
       return QueryBuilders.boolQuery().must(roleQuery).mustNot(creatorQuery);
-    } catch (Exception e) {
-      LOGGER.error("Erro building collaborator query", e);
-      return matchNothing();
+    } 
+    catch(Exception e) {
+    	LOGGER.error("Error building collaborator query", e);
+    	return matchNothing();
     }
   }
 
