@@ -22,6 +22,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Metadata;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.util.StatementUtil;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -46,7 +47,7 @@ public abstract class EditMetadataAbstract extends SuperBean {
     final StatementService statementService = new StatementService();
     try {
       statementMap = StatementUtil.statementListToMap(
-          statementService.searchAndRetrieve(null, null, getSessionUser(), -1, 0));
+          statementService.searchAndRetrieve(null, null, getSessionUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX));
       statementMenu =
           statementMap.keySet().stream().map(s -> new SelectItem(s)).collect(Collectors.toList());
     } catch (final ImejiException e) {

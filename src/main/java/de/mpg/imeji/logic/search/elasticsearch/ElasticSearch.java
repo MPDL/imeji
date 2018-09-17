@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.log4j.Logger;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -26,11 +28,13 @@ import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticQueryFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.AggregationsParser;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.security.user.UserService;
 
 
 /**
@@ -44,10 +48,10 @@ public class ElasticSearch implements Search {
   private ElasticTypes[] type = null;
   private ElasticIndexer indexer = null;
   private static final int SEARCH_INTERVALL_MAX_SIZE = 500;
-  private static final int SEARCH_SCROLL_INTERVALL = SEARCH_INTERVALL_MAX_SIZE;
+  public static final int SEARCH_SCROLL_INTERVALL = SEARCH_INTERVALL_MAX_SIZE;
   private static final int SEARCH_TO_INDEX_LIMIT = 10000;
-  private static final int SCROLL_TIMEOUT_MSEC = 60000; 
-
+  public static final int SCROLL_TIMEOUT_MSEC = 60000; 
+  
   /**
    * Construct an Elastic Search Query for one or more data types. 
    * If type is null, search for all existing types
@@ -83,7 +87,7 @@ public class ElasticSearch implements Search {
   @Override
   public SearchResult searchWithMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user,
   		String folderUri, int from, int size) {
-        return searchElasticSearch(query, sortCriteria , user, folderUri, from, size, false);
+	  return searchElasticSearch(query, sortCriteria , user, folderUri, from, size, false);
   }
   
   
@@ -107,57 +111,43 @@ public class ElasticSearch implements Search {
   
   private SearchResult searchElasticSearch(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
       int from, int size, boolean addFacets) {
-    
-	// magic number "-1" for size is spread all over the code:
+
+	// magic number "-1" for unlimited size is spread all over the code:
 	if(size != GET_ALL_RESULTS && size < 0) { size = SEARCH_INTERVALL_MAX_SIZE; }
 	from = from < 0 ? 0 : from;
-       
-    if (size != GET_ALL_RESULTS && 
-    		size < SEARCH_INTERVALL_MAX_SIZE && 
-    		from + size < SEARCH_TO_INDEX_LIMIT) {
-      return searchSinglePage(query, sortCriteria, user, folderUri, from, size, addFacets);
-    } else {
-      return searchWithScroll(query, sortCriteria, user, folderUri, from, size, addFacets);
-    }
-  }
-
-  
-  /**
-   * A Search returning a single document. Faster, but limited to not too big search result list
-   * (max is SEARCH_MAX_SIZE)
-   *
-   * @param query
-   * @param sortCriteria
-   * @param user
-   * @param folderUri
-   * @param from
-   * @param size
-   * @return
-   */
-  private SearchResult searchSinglePage(SearchQuery query, List<SortCriterion> sortCriteria, User user,
-      String folderUri, int from, int size, boolean addFacets) {
+    
+	//construct request
     final ElasticQueryFactory factory =
-        new ElasticQueryFactory(query, type).folderUri(folderUri).user(user);
+            new ElasticQueryFactory(query, type).folderUri(folderUri).user(user);
     final QueryBuilder q = factory.build();
     final QueryBuilder f = factory.buildBaseQuery();
     SearchRequestBuilder request = ElasticService.getClient()
-        .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setTypes(getTypes()).setSize(size)
-        .setFrom(from).addSort("_type", SortOrder.ASC);
+        .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setTypes(getTypes()).addSort("_type", SortOrder.ASC);
     request = ElasticSearchFactoryUtil.addSorting(request, sortCriteria);
     if (f != null) {
       request.setQuery(f).setPostFilter(q);
-    } else {
+    } 
+    else {
       request.setQuery(q);
     }
     if (addFacets) {
     	request = addAggregations(request, folderUri);
     }
-
-    final SearchResponse resp = request.execute().actionGet();
-    SearchResult elasticSearchResult = getSearchResultFromElasticSearchResponse(resp, query);
-    return elasticSearchResult;
+	
+    // single page or scroll search
+    if (size != GET_ALL_RESULTS && 
+    		size < SEARCH_INTERVALL_MAX_SIZE && 
+    		from + size < SEARCH_TO_INDEX_LIMIT) { 
+      request = request.setSize(size).setFrom(from);
+      return searchSinglePage(request, query);
+    } 
+    else { 
+      request = request.setSize(SEARCH_SCROLL_INTERVALL).setFrom(from);
+      return searchWithScroll(request, query, from, size);
+    }
   }
 
+  
   /**
    * Add ElasticSearch Aggregations to a SearchRequestBuilder
    * @param request
@@ -181,51 +171,60 @@ public class ElasticSearch implements Search {
   }
 
   
+  
+  
+  /**
+   * A Search returning a single document. Faster, but limited to not too big search result list
+   * (max is SEARCH_MAX_SIZE)
+   *
+   * @param query
+   * @param sortCriteria
+   * @param user
+   * @param folderUri
+   * @param from
+   * @param size
+   * @return
+   */
+  private SearchResult searchSinglePage(SearchRequestBuilder request, SearchQuery query) {
+	  
+	// send request to ElasticSearch
+    final SearchResponse resp = request.execute().actionGet();
+    SearchResult elasticSearchResult = getSearchResultFromElasticSearchResponse(resp, query);
+    return elasticSearchResult;
+  }
+
+ 
+  
   /**
    * Search via ElasticSearch Scroll Search. 
    * This allows to search for a greater number of documents or all documents
    * that exist within ElasticSeach database for a given query
    *
-   * @param query 			ElasticSearch search query
-   * @param sortCriteria	Criteria by which the results are be sorted
-   * @param user			User
+   * @param query 									ElasticSearch search query
+   * @param sortCriteria							Criteria by which the results are be sorted
+   * @param user									User
    * @param folderUri
-   * @param from			Search from this result number (within all results for the given query)
-   * @param size            Retrieve this amount of hits/documents
+   * @param from								    Search from this result number (within all results for the given query)
+   * @param amountOfDocumentsToRetrieve             Retrieve this amount of hits/documents
    * @return	
    */
-  private SearchResult searchWithScroll(SearchQuery query, List<SortCriterion> sortCriteria, User user,
-      String folderUri, int from, int size, boolean addFacets) {
-
-    final ElasticQueryFactory factory =
-        new ElasticQueryFactory(query, type).folderUri(folderUri).user(user);
-    final QueryBuilder q = factory.build();
-    final QueryBuilder f = factory.buildBaseQuery();
-    // scroll api conducts search from beginning, "search from index" must be handled additionally
-    SearchRequestBuilder request = ElasticService.getClient()
-        .prepareSearch(ElasticService.DATA_ALIAS).setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC)).setNoFields()
-        .setTypes(getTypes()).setSize(SEARCH_SCROLL_INTERVALL).addSort("_type", SortOrder.ASC);
-    request = ElasticSearchFactoryUtil.addSorting(request, sortCriteria);
-    if (f != null) {
-      request.setQuery(f).setPostFilter(q);
-    } else {
-      request.setQuery(q);
-    }
-    if (addFacets) {
-      request = addAggregations(request, folderUri);
-    }
+  private SearchResult searchWithScroll(SearchRequestBuilder request, SearchQuery query, 
+		  int from, int amountOfDocumentsToRetrieve) {  
+	// add scroll search  
+	request = request.setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC));
+   
     SearchResponse resp = request.execute().actionGet();
     // initialize SearchResult (with first interval of retrieved results)
     SearchResult result = getSearchResultFromElasticSearchResponse(resp, query);
 
     List<String> retrievedIDs = new ArrayList<String>();
     // scroll all results starting at a given index
-    if(size == GET_ALL_RESULTS) {    	
+    if(amountOfDocumentsToRetrieve == GET_ALL_RESULTS) {    	
     	retrievedIDs = scrollAllResults(resp, from); 
     }
     // scroll to a size limit starting at a given index
     else {
-    	retrievedIDs = scrollWithSizeUpperBound(resp, from, size);
+    	retrievedIDs = scrollWithSizeUpperBound(resp, from, amountOfDocumentsToRetrieve);
     }
    
     result.setResults(retrievedIDs);
@@ -241,7 +240,7 @@ public class ElasticSearch implements Search {
    * @return
    */
   private List<String> scrollWithSizeUpperBound(SearchResponse searchResponse, int from, int amountOfResults) {
-    
+	  
 	// get results of first query
 	List<String> hitIds = new ArrayList<>(getIDsFromScrollSearchResponse(searchResponse));
     
@@ -256,7 +255,7 @@ public class ElasticSearch implements Search {
     }
     
 	if(hitIds.size() > from) {
-		// cut indices at beginning [0,from] and end [from + amountOfResults, end]
+		// cut indices at beginning [0, from] and end [from + amountOfResults, end]
 		if(from + amountOfResults < hitIds.size()) {
 			return hitIds.subList(from, from + amountOfResults);
 		}
@@ -277,17 +276,15 @@ public class ElasticSearch implements Search {
    * @return				list with UIDs of retrieved objects 
    */
   private List<String> scrollAllResults(SearchResponse searchResponse, int from){
-	  
+	  	  
 	  List<String> retrievedIDs = new ArrayList<>(getIDsFromScrollSearchResponse(searchResponse));
 	  do {		  
 		  searchResponse = ElasticService.getClient().prepareSearchScroll(searchResponse.getScrollId())
 		          .setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC)).execute().actionGet();
 		  List<String> retrievedIDsOfScroll = getIDsFromScrollSearchResponse(searchResponse);
-		  retrievedIDs.addAll(retrievedIDsOfScroll);
-		  
+		  retrievedIDs.addAll(retrievedIDsOfScroll);		  
 	  }while(searchResponse.getHits().getHits().length > 0);
-	  	
-	  
+	  		  
 	  // cut indices at beginning [0,from] 
 	  if(retrievedIDs.size() > from) {
 				return retrievedIDs.subList(from, retrievedIDs.size());
@@ -295,7 +292,6 @@ public class ElasticSearch implements Search {
 	  else {
 			return new ArrayList<>();
 	  }
-
   }
 
   
@@ -308,7 +304,6 @@ public class ElasticSearch implements Search {
 	  return ids;
   }
   
-  
   @Override
   public SearchResult search(SearchQuery query, SortCriterion sortCri, User user,
       List<String> uris) {
@@ -320,14 +315,105 @@ public class ElasticSearch implements Search {
   @Override
   public SearchResult searchString(String query, SortCriterion sort, User user, int from,
       int size) {
-    final QueryBuilder q = QueryBuilders.queryStringQuery(query);
+    final QueryBuilder q = QueryBuilders.queryStringQuery(query);   
+    SearchRequestBuilder request = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
+            .setNoFields().setTypes(getTypes()).setQuery(q).addSort(ElasticSortFactory.build(sort));
+    
+    // single page or scroll search
+    if (size != GET_ALL_RESULTS && 
+    		size < SEARCH_INTERVALL_MAX_SIZE && 
+    		from + size < SEARCH_TO_INDEX_LIMIT) { 
+      request = request.setSize(size).setFrom(from);
+      return searchSinglePage(request, null);
+    } 
+    else {
+      request = request.setSize(SEARCH_SCROLL_INTERVALL).setFrom(from);
+      return searchWithScroll(request, null, from, size);
+    }
+    
+    /*
     final SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
         .setNoFields().setTypes(getTypes()).setQuery(q).setSize(size).setFrom(from)
         .addSort(ElasticSortFactory.build(sort)).execute().actionGet();
     return getSearchResultFromElasticSearchResponse(resp, null);
+    */
   }
+  
+  
+  
+  /**
+   * Search with a String Query (see ElasticSearch Query String Query) and retrieve 
+   * the value of a specific field.
+   * A String Query is a query that takes a search expression (in String format) and
+   * uses a query parser to parse its content.
+   *
+   * @param query  search expression, "query_string"
+   * @param field  return the value of this field if a document matches the query
+   * @param sort   sort criterion
+   * @param from   start index (in search results list)
+   * @param size   amount of results
+   * @return
+   */
+  public static List<String> searchStringAndRetrieveFieldValue(String query, String field,
+      SortCriterion sort, int from, int size) {
+    	  
+	  List<String> fieldValues = new ArrayList<>();
+	  final QueryBuilder q = QueryBuilders.queryStringQuery(query);
 
-
+      // single page search
+	  if (size != GET_ALL_RESULTS && 
+	    		size < SEARCH_INTERVALL_MAX_SIZE && 
+	    		from + size < SEARCH_TO_INDEX_LIMIT) {
+		  SearchResponse singlePageSearchResponse = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
+		            .addField(field).setQuery(q).addSort(ElasticSortFactory.build(sort)).setSize(size)
+		            .setFrom(from).execute().actionGet();
+		 fieldValues = getFieldValuesOfSearchResponse(singlePageSearchResponse.getHits(), field);		  
+	  } 
+      // scroll search
+	  else {
+		  SearchResponse scrollSearchResponse = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
+				  .setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC)).addField(field).setQuery(q).addSort(ElasticSortFactory.build(sort))
+				  .setSize(SEARCH_INTERVALL_MAX_SIZE).setFrom(from).execute().actionGet();
+		  // scroll until no more hits are returned. Zero hits marks the end of the scroll and the while loop
+		  do {
+			  List<String> fieldValuesOfScrollSearch = getFieldValuesOfSearchResponse(scrollSearchResponse.getHits(), field); 
+			  fieldValues.addAll(fieldValuesOfScrollSearch);		  
+			  scrollSearchResponse = ElasticService.getClient().prepareSearchScroll(scrollSearchResponse.getScrollId())
+					  .setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC)).execute().actionGet();
+		  } 
+		  while(scrollSearchResponse.getHits().getHits().length != 0); 
+		  
+		  if(fieldValues.size() > from) {
+				// cut indices at beginning [0,from] and end [from + size, end]
+				if(size != GET_ALL_RESULTS && from + size < fieldValues.size()) {
+					return fieldValues.subList(from, from + size);
+				}
+				else {
+					return fieldValues.subList(from, fieldValues.size());
+				}
+			}
+			else {
+				return new ArrayList<>();
+			}
+	  }   
+    return fieldValues;
+  }
+  
+  
+  private static List<String> getFieldValuesOfSearchResponse(SearchHits searchHits, String field) {
+	  
+	  List<String> fieldValues = new ArrayList<>();
+	  for (final SearchHit hit : searchHits) {
+	      if (field.equals(ElasticFields.ID.field())) {
+	        fieldValues.add(hit.getId());
+	      } else {
+	        fieldValues.add(hit.field(field).getValue());
+	      }
+	    }
+	  return fieldValues;
+  }
+  
+    
   /**
    * Get the datatype to search for
    *
@@ -382,24 +468,5 @@ public class ElasticSearch implements Search {
     return facets.stream().filter(f -> f.getName().equals(Facet.SUBCOLLECTIONS)).findAny()
         .map(f -> f.getValues().get(0).getCount()).orElse((long) 0);
   }
-
-  /**
-   * Add the resp to an existing search result
-   *
-   * @param resp
-   * @return
-   */
-  private SearchResult addSearchResult(SearchResult result, SearchResponse resp) {
-    final List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
-    for (final SearchHit hit : resp.getHits()) {
-      ids.add(hit.getId());
-    }
-    result.getResults().addAll(ids);
-    return result;
-  }
-
-  
-
-
 
 }

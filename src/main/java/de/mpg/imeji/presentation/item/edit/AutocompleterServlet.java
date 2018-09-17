@@ -32,6 +32,7 @@ import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
@@ -55,6 +56,9 @@ public class AutocompleterServlet extends HttpServlet {
       "https://maps.googleapis.com/maps/api/geocode/json.*address=", Pattern.CASE_INSENSITIVE);
   private final HttpClient client = new HttpClient(new MultiThreadedHttpConnectionManager());
 
+  private static final int SUGGEST_RESULTS_SIZE = 5;
+  
+  
   /**
    * @see HttpServlet#HttpServlet()
    */
@@ -114,12 +118,12 @@ public class AutocompleterServlet extends HttpServlet {
    * @return
    */
   private String autoCompleteForInternalUsers(String suggest) {
-    final UserService uc = new UserService();
+    final UserService userService = new UserService();
     String responseString = "";
     try {
-      Collection<User> users = uc.searchAndRetrieveLazy(new SearchFactory()
+      Collection<User> users = userService.searchAndRetrieveLazy(new SearchFactory()
           .addElement(new SearchPair(SearchFields.family, suggest + "*"), LOGICAL_RELATIONS.AND)
-          .build(), null, Imeji.adminUser, 0, 5);
+          .build(), null, Imeji.adminUser, Search.SEARCH_FROM_START_INDEX, SUGGEST_RESULTS_SIZE);
       final Collection<Person> persons =
           users.stream().map(u -> u.getPerson()).collect(Collectors.toList());
       for (final Person p : persons) {

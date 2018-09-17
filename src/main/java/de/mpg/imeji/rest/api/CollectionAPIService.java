@@ -18,6 +18,7 @@ import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -40,7 +41,8 @@ import de.mpg.imeji.rest.transfer.TransferVOtoTO;
  *
  */
 public class CollectionAPIService implements APIService<CollectionTO> {
-  private CollectionTO getCollectionTO(String id, User u) throws ImejiException {
+  
+	private CollectionTO getCollectionTO(String id, User u) throws ImejiException {
     final CollectionTO to = new CollectionTO();
     TransferVOtoTO.transferCollection(getCollectionVO(id, u), to);
     return to;
@@ -70,11 +72,12 @@ public class CollectionAPIService implements APIService<CollectionTO> {
   public SearchResultTO<DefaultItemTO> readItems(String id, User u, String q, int offset, int size)
       throws ImejiException {
     final List<DefaultItemTO> tos = new ArrayList<>();
-    final ItemService controller = new ItemService();
+    final ItemService itemService = new ItemService();
     final SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC).search(
         SearchQueryParser.parseStringQuery(q), null, u,
         ObjectHelper.getURI(CollectionImeji.class, id).toString(), offset, size);
-    for (final Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
+    
+    for (final Item vo : itemService.retrieveBatch(result.getResults(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, u)) {
       final DefaultItemTO to = new DefaultItemTO();
       TransferVOtoTO.transferDefaultItem(vo, to);
       tos.add(to);

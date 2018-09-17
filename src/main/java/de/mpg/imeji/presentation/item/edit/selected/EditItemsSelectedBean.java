@@ -26,6 +26,7 @@ import de.mpg.imeji.logic.model.Metadata;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.StatementType;
 import de.mpg.imeji.logic.model.util.StatementUtil;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.item.edit.EditMetadataAbstract;
@@ -262,7 +263,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
    * @throws ImejiException
    */
   private List<Item> retrieveItems() throws ImejiException {
-    return (List<Item>) itemService.retrieveBatch(selectedItemsIds, -1, 0, getSessionUser());
+    return (List<Item>) itemService.retrieveBatch(selectedItemsIds, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, getSessionUser());
   }
 
   /**

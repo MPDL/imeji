@@ -43,7 +43,7 @@ public class StatementValidator extends ObjectValidator implements Validator<Sta
     final Search search =
         SearchFactory.create(SearchObjectTypes.STATEMENT, SEARCH_IMPLEMENTATIONS.JENA);
     final SearchResult result = search.searchString(
-        JenaCustomQueries.selectStatementTypeByIndex(statement.getIndex()), null, null, 0, -1);
+        JenaCustomQueries.selectStatementTypeByIndex(statement.getIndex()), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
     if (result.getNumberOfRecords() > 0) {
       return !result.getResults().get(0).equals(statement.getType().name());
     }

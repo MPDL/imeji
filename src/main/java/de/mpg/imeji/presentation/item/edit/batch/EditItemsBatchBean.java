@@ -21,6 +21,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Metadata;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -151,7 +152,7 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
   }
 
   /**
-   * Retrive the current items
+   * Retrieve the current items
    * 
    * @return
    * @throws ImejiException
@@ -162,9 +163,9 @@ public class EditItemsBatchBean extends EditMetadataAbstract {
     if (collectionId != null) {
       items =
           itemService.searchAndRetrieve(ObjectHelper.getURI(CollectionImeji.class, collectionId), q,
-              null, getSessionUser(), 0, -1);
+              null, getSessionUser(), Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
     } else {
-      items = itemService.searchAndRetrieve(q, null, getSessionUser(), -1, 0);
+      items = itemService.searchAndRetrieve(q, null, getSessionUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX);
     }
   }
 

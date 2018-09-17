@@ -241,7 +241,7 @@ public class UserService {
     final Search search = SearchFactory.create();
     final List<String> results =
         search.searchString(JenaCustomQueries.selectUserFileSize(col.getCreatedBy().toString()),
-            null, null, 0, -1).getResults();
+            null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     long currentDiskUsage = 0L;
     try {
       currentDiskUsage = Long.parseLong(results.get(0).toString());
@@ -268,10 +268,12 @@ public class UserService {
    */
   public Collection<User> searchUserByName(String name) {
     try {
-      return retrieveBatchLazy(search.search(SearchQueryParser.parseStringQuery(name),
-          new SortCriterion(SearchFields.completename, SortOrder.ASCENDING), Imeji.adminUser, null,
-          0, -1).getResults(), -1);
-    } catch (final UnprocessableError e) {
+    	SearchResult searchResult = search.search(SearchQueryParser.parseStringQuery(name),
+    	          new SortCriterion(SearchFields.completename, SortOrder.ASCENDING), Imeji.adminUser, null,
+    	          Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
+    	return retrieveBatchLazy(searchResult.getResults(), Search.GET_ALL_RESULTS);
+    } 
+    catch (final UnprocessableError e) {
       LOGGER.error("Error search users", e);
     }
     return new ArrayList<>();
@@ -407,7 +409,7 @@ public class UserService {
   private Collection<Organization> searchOrganizationByNameInUsers(String name) {
     final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
     return loadOrganizations(
-        search.searchString(JenaCustomQueries.selectOrganizationByName(name), null, null, 0, -1)
+        search.searchString(JenaCustomQueries.selectOrganizationByName(name), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
             .getResults(),
         Imeji.userModel);
   }
@@ -463,7 +465,7 @@ public class UserService {
     boolean exist = false;
     final Search search = SearchFactory.create();
     final List<String> uris =
-        search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, 0, -1).getResults();
+        search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     if (uris != null && uris.size() > 0) {
       exist = true;
     }
@@ -479,7 +481,7 @@ public class UserService {
   public List<User> retrieveAllAdmins() {
     final Search search = SearchFactory.create();
     final List<String> uris =
-        search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, 0, -1).getResults();
+        search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     final List<User> admins = new ArrayList<User>();
     for (final String uri : uris) {
       try {
@@ -502,8 +504,8 @@ public class UserService {
     final Search search = SearchFactory.create();
     final List<String> uris =
         search.searchString(JenaCustomQueries.selectUsersToBeNotifiedByFileDownload(user, c), null,
-            null, 0, -1).getResults();
-    return retrieveBatchLazy(uris, -1);
+            null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
+    return retrieveBatchLazy(uris, Search.GET_ALL_RESULTS);
   }
 
   public void reindex(String index) throws ImejiException {

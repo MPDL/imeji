@@ -24,7 +24,7 @@ public class StatisticsService {
    */
   public List<String> getAllInstitute() {
     final Search s = new JenaSearch(SearchObjectTypes.USER, null);
-    return s.searchString(JenaCustomQueries.selectAllInstitutes(), null, null, 0, -1).getResults();
+    return s.searchString(JenaCustomQueries.selectAllInstitutes(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
   }
 
   /**
@@ -37,7 +37,7 @@ public class StatisticsService {
   public long getUsedStorageSizeForInstitute(String instituteName) {
     final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
     final List<String> result =
-        s.searchString(JenaCustomQueries.selectInstituteFileSize(instituteName), null, null, 0, -1)
+        s.searchString(JenaCustomQueries.selectInstituteFileSize(instituteName), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
             .getResults();
     if (result.size() == 1 && result.get(0) != null) {
       final String size = result.get(0).replace("^^http://www.w3.org/2001/XMLSchema#integer", "");
@@ -49,7 +49,7 @@ public class StatisticsService {
   public long getAllFileSize() {
     final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
     final List<String> result =
-        s.searchString(JenaCustomQueries.selectFileSizeForAll(), null, null, 0, -1).getResults();
+        s.searchString(JenaCustomQueries.selectFileSizeForAll(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     if (result.size() == 1 && result.get(0) != null) {
       final String size = result.get(0).replace("^^http://www.w3.org/2001/XMLSchema#integer", "");
       return Long.parseLong(size);

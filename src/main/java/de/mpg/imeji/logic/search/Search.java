@@ -19,7 +19,7 @@ public interface Search {
   
 	/**
 	 * Use this constant to state that you want to retrieve all existing search results 
-	 * of a query without any size limit
+	 * of a query without any size limits
 	 */
 	public static final int GET_ALL_RESULTS= -1000;  // 
 	
@@ -93,7 +93,7 @@ public interface Search {
   /**
    * Search Imeji objects 
    * 	- with {@link Facet}s and 
-   * 	- multi-level sorting
+   * 	- apply multi-level sorting to results
    *
    * @param query
    * @param sortCriteria

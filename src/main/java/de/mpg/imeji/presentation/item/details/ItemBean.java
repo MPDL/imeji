@@ -38,6 +38,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.storage.StorageController;
@@ -380,7 +381,7 @@ public class ItemBean extends SuperBean {
   public List<SelectItem> getStatementMenu() throws ImejiException {
     final List<SelectItem> statementMenu = new ArrayList<SelectItem>();
     for (final Statement s : new StatementService().searchAndRetrieve(null, null, getSessionUser(),
-        -1, 0)) {
+        Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX)) {
       statementMenu.add(new SelectItem(s.getIndex(), s.getIndex()));
     }
     return statementMenu;

@@ -153,7 +153,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    */
   private boolean isLogo(String url) {
     final List<String> r = search.searchString(JenaCustomQueries.selectCollectionByLogoStorageId(
-        new InternalStorageManager().getStorageId(url)), null, null, 0, -1).getResults();
+        new InternalStorageManager().getStorageId(url)), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     if (!r.isEmpty() && r.get(0) != null) {
       return true;
     } else {

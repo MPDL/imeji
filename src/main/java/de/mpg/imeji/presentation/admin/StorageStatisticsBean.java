@@ -78,7 +78,7 @@ public class StorageStatisticsBean {
   public int getAllCollectionsSize() {
     final Search search =
         SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.JENA);
-    return search.searchString(JenaCustomQueries.selectCollectionAll(), null, null, 0, -1)
+    return search.searchString(JenaCustomQueries.selectCollectionAll(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
         .getNumberOfRecords();
   }
 
@@ -102,7 +102,7 @@ public class StorageStatisticsBean {
    */
   public int getAllImagesSize() {
     final Search search = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
-    return search.searchString(JenaCustomQueries.selectItemAll(), null, null, 0, -1)
+    return search.searchString(JenaCustomQueries.selectItemAll(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
         .getNumberOfRecords();
   }
 
