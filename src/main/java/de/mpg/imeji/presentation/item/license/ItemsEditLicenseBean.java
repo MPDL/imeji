@@ -19,6 +19,7 @@ import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -166,8 +167,8 @@ public class ItemsEditLicenseBean extends SuperBean {
    * @throws ImejiException
    */
   private List<Item> retrieveSelectedItems() throws ImejiException {
-    final ItemService controller = new ItemService();
-    return (List<Item>) controller.retrieveBatch(selectedItems, -1, 0, getSessionUser());
+    final ItemService itemService = new ItemService();
+    return (List<Item>) itemService.retrieveBatch(selectedItems, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, getSessionUser());
   }
 
   /**
@@ -178,11 +179,11 @@ public class ItemsEditLicenseBean extends SuperBean {
    * @throws ImejiException
    */
   private List<Item> retrieveAllCollectionsItem(String collectionId) throws ImejiException {
-    final ItemService controller = new ItemService();
+    final ItemService itemService = new ItemService();
     final List<String> uris =
-        controller.search(ObjectHelper.getURI(CollectionImeji.class, collectionId), null, null,
-            getSessionUser(), -1, 0).getResults();
-    return (List<Item>) controller.retrieveBatch(uris, -1, 0, getSessionUser());
+        itemService.search(ObjectHelper.getURI(CollectionImeji.class, collectionId), null, null,
+            getSessionUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX).getResults();
+    return (List<Item>) itemService.retrieveBatch(uris, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, getSessionUser());
   }
 
   /**

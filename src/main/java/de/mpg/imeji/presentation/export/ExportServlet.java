@@ -30,6 +30,7 @@ import de.mpg.imeji.logic.export.SitemapExport;
 import de.mpg.imeji.logic.export.ZIPExport;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -119,7 +120,7 @@ public class ExportServlet extends HttpServlet {
           .search(
               !StringHelper.isNullOrEmptyTrim(collectionId)
                   ? ObjectHelper.getURI(CollectionImeji.class, collectionId) : null,
-              SearchQueryParser.parseStringQuery(query), null, session.getUser(), -1, 0)
+              SearchQueryParser.parseStringQuery(query), null, session.getUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX)
           .getResults();
     } else {
       return session.getSelected();

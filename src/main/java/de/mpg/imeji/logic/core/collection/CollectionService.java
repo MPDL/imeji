@@ -260,12 +260,12 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
   private void deleteSingleCollection(CollectionImeji collection, User user) throws ImejiException {
     final ItemService itemService = new ItemService();
     final List<String> itemUris =
-        itemService.search(collection.getId(), null, null, user, -1, 0).getResults();
+        itemService.search(collection.getId(), null, null, user, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX).getResults();
     if (hasImageLocked(itemUris, user)) {
       throw new UnprocessableError("Collection can not be deleted: It contains locked items");
     }
     new WorkflowValidator().isDeleteAllowed(collection);
-    final List<Item> items = (List<Item>) itemService.retrieveBatchLazy(itemUris, -1, 0, user);
+    final List<Item> items = (List<Item>) itemService.retrieveBatchLazy(itemUris, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, user);
     itemService.delete(items, user);
     controller.delete(collection, user);
   }

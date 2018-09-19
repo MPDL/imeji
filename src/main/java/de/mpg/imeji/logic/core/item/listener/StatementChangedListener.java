@@ -12,6 +12,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.util.StatementUtil;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 import de.mpg.imeji.logic.search.model.SearchPair;
@@ -59,7 +60,7 @@ public class StatementChangedListener extends Listener {
         .addElement(new SearchPair(SearchFields.index, StatementUtil.formatIndex(oldIndex)),
             LOGICAL_RELATIONS.AND)
         .build();
-    List<Item> items = itemService.searchAndRetrieve(q, null, user, -1, 0);
+    List<Item> items = itemService.searchAndRetrieve(q, null, user, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX);
     items.stream().flatMap(item -> item.getMetadata().stream())
         .filter(md -> StatementUtil.indexEquals(oldIndex, md.getIndex()))
         .forEach(md -> md.setIndex(newIndex));

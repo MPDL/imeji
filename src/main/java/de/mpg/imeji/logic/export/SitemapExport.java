@@ -13,6 +13,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.model.SearchResult;
 
@@ -63,8 +64,7 @@ public class SitemapExport extends ExportAbstract {
    * @throws UnprocessableError
    */
   private SearchResult search(String query) throws UnprocessableError {
-    return new CollectionService().search(SearchQueryParser.parseStringQuery(query), null, user, -1,
-        0);
+    return new CollectionService().search(SearchQueryParser.parseStringQuery(query), null, user, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX);
   }
 
   private void writeURLs(StringWriter writer, SearchResult sr) {

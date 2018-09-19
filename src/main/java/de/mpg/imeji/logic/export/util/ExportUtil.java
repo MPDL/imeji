@@ -15,6 +15,7 @@ import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.search.Search;
 
 /**
  * Utility class for export
@@ -32,7 +33,7 @@ public class ExportUtil {
    * @throws ImejiException
    */
   public static Map<String, Item> retrieveItems(List<String> ids, User user) throws ImejiException {
-    final List<Item> items = (List<Item>) new ItemService().retrieveBatchLazy(ids, -1, 0, user);
+    final List<Item> items = (List<Item>) new ItemService().retrieveBatchLazy(ids, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, user);
     Map<String, Item> map = new HashMap<>(items.size());
     for (Item item : items) {
       map.put(item.getId().toString(), item);

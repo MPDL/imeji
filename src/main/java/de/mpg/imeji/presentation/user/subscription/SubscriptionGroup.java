@@ -14,6 +14,7 @@ import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.notification.subscription.SubscriptionService;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.security.user.UserService;
 
@@ -62,7 +63,7 @@ public class SubscriptionGroup implements Serializable {
    */
   private Map<String, User> retrieveUsers(List<Subscription> l) {
     List<String> userIds = l.stream().map(s -> s.getUserId()).collect(Collectors.toList());
-    return new UserService().retrieveBatchLazy(userIds, -1).stream()
+    return new UserService().retrieveBatchLazy(userIds, Search.GET_ALL_RESULTS).stream()
         .collect(Collectors.toMap(u -> u.getId().toString(), Function.identity(), (u1, u2) -> u1));
   }
 

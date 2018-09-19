@@ -17,6 +17,7 @@ import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
@@ -36,6 +37,7 @@ import de.mpg.imeji.rest.transfer.TransferVOtoTO;
  *
  */
 public class ItemAPIService implements APIService<DefaultItemTO> {
+  
   private final ItemService controller = new ItemService();
 
   @Override
@@ -124,7 +126,7 @@ public class ItemAPIService implements APIService<DefaultItemTO> {
     final List<DefaultItemTO> tos = new ArrayList<>();
     final SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC)
         .search(SearchQueryParser.parseStringQuery(q), null, u, null, offset, size);
-    for (final Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
+    for (final Item vo : controller.retrieveBatch(result.getResults(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, u)) {
       final DefaultItemTO to = new DefaultItemTO();
       TransferVOtoTO.transferDefaultItem(vo, to);
       tos.add(to);

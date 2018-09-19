@@ -127,10 +127,10 @@ public class QuotaUtil {
    * @return
    */
   public static long getUsedQuota(User user) {
-    final Search search = SearchFactory.create();
+    final Search search = SearchFactory.create();  // default: Jena
     final List<String> results =
         search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null,
-            null, 0, -1).getResults();
+            null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     return Long.parseLong(results.get(0).toString());
   }
 

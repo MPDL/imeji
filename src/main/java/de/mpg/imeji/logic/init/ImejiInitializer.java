@@ -41,6 +41,7 @@ import de.mpg.imeji.logic.model.StatementType;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.model.util.StatementUtil;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.security.authentication.ImejiRsaKeys;
@@ -235,7 +236,7 @@ public class ImejiInitializer {
 
     StatementService service = new StatementService();
     try {
-      if (service.search(null, null, Imeji.adminUser, 0, -1).getNumberOfRecords() == 0) {
+      if (service.search(null, null, Imeji.adminUser, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getNumberOfRecords() == 0) {
         service.createBatch(l, Imeji.adminUser);
         Imeji.CONFIG.setStatements(StatementUtil.toStatementNamesString(l.subList(0, 1)));
         Imeji.CONFIG.saveConfig();

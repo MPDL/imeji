@@ -51,7 +51,7 @@ public final class ImageGeneratorManager {
     generators.add(new SimpleAudioImageGenerator());   		// creates a preview for audio files (file with mime type "audio")
     generators.add(new MagickImageGenerator());		   		// creates a preview for image and video files using ImageMagick project software library (see http://www.imagemagick.org/script/index.php)
     generators.add(new SimpleImageGenerator());	       		// creates a preview for image files (file with mime type "image")
-    generators.add(new TextFileIconGenerator());   		// creates a preview for all files types for which a fixed icon exists (icon files are stored in src/main/resources/images/icons)
+    generators.add(new TextFileIconGenerator());   			// creates a preview for all files types for which a fixed icon exists (icon files are stored in src/main/resources/images/icons)
     generators.add(new CompressedFilesImageGenerator());	// creates a preview for compressed file types  
     generators.add(new RawFileImageGenerator());	   		// creates a default preview image for file types that haven't been handled above	
 

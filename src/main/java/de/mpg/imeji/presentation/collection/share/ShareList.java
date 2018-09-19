@@ -12,6 +12,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -60,11 +61,11 @@ public final class ShareList implements Serializable {
    */
   private void retrieveGroups(URI ownerUri, String sharedObjectUri, User currentUser,
       Locale locale) {
-    final UserGroupService ugc = new UserGroupService();
-    final Collection<UserGroup> groups = ugc.searchAndRetrieve(
+    final UserGroupService userGroupService = new UserGroupService();
+    final Collection<UserGroup> groups = userGroupService.searchAndRetrieve(
         SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.read, SearchOperators.EQUALS, sharedObjectUri, false)),
-        null, Imeji.adminUser, 0, -1);;
+        null, Imeji.adminUser, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
     for (final UserGroup group : groups) {
       items.add(new ShareListItem(group, sharedObjectUri, null, currentUser, locale));
     }
@@ -81,11 +82,11 @@ public final class ShareList implements Serializable {
    */
   private void retrieveUsers(URI ownerUri, String sharedObjectUri, User currentUser,
       Locale locale) {
-    final UserService uc = new UserService();
-    final Collection<User> allUser = uc.searchAndRetrieve(
+    final UserService userService = new UserService();
+    final Collection<User> allUser = userService.searchAndRetrieve(
         SearchQuery.toSearchQuery(
             new SearchPair(SearchFields.read, SearchOperators.EQUALS, sharedObjectUri, false)),
-        null, Imeji.adminUser, 0, -1);
+        null, Imeji.adminUser, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
     for (final User user : allUser) {
       boolean isOwner = user.getId().toString().equals(ownerUri.toString());
       ShareListItem userItem = new ShareListItem(user, sharedObjectUri, null, currentUser, locale, isOwner);

@@ -49,7 +49,7 @@ import de.mpg.imeji.presentation.util.CookieUtils;
 
 /**
  * The bean for all list of images
- * 
+ *
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
@@ -206,8 +206,8 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @throws ImejiException
    */
   public Collection<Item> loadItems(List<String> uris) throws ImejiException {
-    final ItemService controller = new ItemService();
-    return controller.retrieveBatch(uris, -1, 0, getSessionUser());
+    final ItemService itemService = new ItemService();
+    return itemService.retrieveBatch(uris, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, getSessionUser());
   }
 
   /**
@@ -331,7 +331,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    * @return
    */
   public List<String> searchAllItems() {
-    return new ItemService().search(searchQuery, null, getSessionUser(), -1, 0).getResults();
+    return new ItemService().search(searchQuery, null, getSessionUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX).getResults();
   }
 
   /**
@@ -380,7 +380,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   private void withdraw(List<String> uris) throws ImejiException {
     
-	final Collection<Item> items = new ItemService().retrieveBatch(uris, -1, 0, getSessionUser());
+	final Collection<Item> items = new ItemService().retrieveBatch(uris, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, getSessionUser());
     final int count = items.size();
     
     try {
@@ -405,7 +405,7 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private void delete(List<String> uris) {
     try {
       final ItemService controller = new ItemService();
-      final Collection<Item> items = controller.retrieveBatch(uris, -1, 0, getSessionUser());
+      final Collection<Item> items = controller.retrieveBatch(uris, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, getSessionUser());
       final ItemService ic = new ItemService();
       ic.delete((List<Item>) items, getSessionUser());
       BeanHelper
@@ -657,12 +657,13 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   private Collection<Item> findSelectedDeletableItems() {
 	  List<String> selectedItemsUris = sessionBean.getSelected();
 	  Authorization authorization = new Authorization();	  
-	  final ItemService controller = new ItemService();
+	  final ItemService itemService = new ItemService();
 	  
 	  try {
-    	  Collection<Item> selectedItems = controller.retrieveBatch(selectedItemsUris, -1, 0, getSessionUser());
+    	  Collection<Item> selectedItems = itemService.retrieveBatch(selectedItemsUris, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, getSessionUser());
     	  Collection<Item> deletableItems = selectedItems.stream()
-    			  //Items are deletable if the user has the permission to delete them and if the items have the status pending.
+    			  // Items can be deleted if the user has the permission to delete them 
+    			  // and if the items have the status pending.
     			  .filter(item -> authorization.delete(getSessionUser(), item))
     			  .filter(item -> (item.getStatus() == Status.PENDING))
     			  .collect(Collectors.toList());

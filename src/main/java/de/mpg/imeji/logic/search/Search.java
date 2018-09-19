@@ -16,7 +16,21 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
  * @version $Revision$ $LastChangedDate$
  */
 public interface Search {
-  /**
+  
+	/**
+	 * Use this constant to state that you want to retrieve all existing search results 
+	 * of a query without any size limits
+	 */
+	public static final int GET_ALL_RESULTS= -1000;  // 
+	
+	/**
+	 * Use this constant to state that you want to retrieve data starting at
+	 * result index 0
+	 */
+	public static final int SEARCH_FROM_START_INDEX = 0;
+	
+	
+   /**
    * Types of search (What objects types are retuned)
    *
    * @author saquet (initial creation)
@@ -79,7 +93,7 @@ public interface Search {
   /**
    * Search Imeji objects 
    * 	- with {@link Facet}s and 
-   * 	- multi-level sorting
+   * 	- apply multi-level sorting to results
    *
    * @param query
    * @param sortCriteria

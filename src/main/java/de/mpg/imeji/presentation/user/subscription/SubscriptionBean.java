@@ -26,6 +26,7 @@ import de.mpg.imeji.logic.model.Subscription.Type;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.notification.subscription.SubscriptionService;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -142,7 +143,7 @@ public class SubscriptionBean extends SuperBean {
     final String colId = UrlHelper.getParameterValue("c");
     if (user != null) {
       if (showAllCollections) {
-        return collectionService.searchAndRetrieve(null, null, user, -1, 0);
+        return collectionService.searchAndRetrieve(null, null, user, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX);
       } else {
         return collectionService.retrieve(retrieveUserSubscriptions().stream()
             .map(s -> ObjectHelper.getURI(CollectionImeji.class, s.getObjectId()).toString())

@@ -14,6 +14,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.statement.StatementService;
 import de.mpg.imeji.logic.model.Statement;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.presentation.util.CommonUtils;
 
 /**
@@ -42,7 +43,7 @@ public class SuggestBean {
     suggests = new HashMap<URI, Suggest>();
     try {
       for (final Statement s : new StatementService().searchAndRetrieve(null, null, Imeji.adminUser,
-          -1, 0)) {
+          Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX)) {
         suggests.put(s.getUri(), new Suggest(s));
       }
     } catch (final ImejiException e) {

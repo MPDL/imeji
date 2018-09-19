@@ -23,6 +23,7 @@ import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.util.LicenseUtil;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
@@ -165,7 +166,7 @@ public class WorkflowFacade implements Serializable {
    */
   private void addLicense(List<String> ids, User user, License license) throws ImejiException {
     List<Item> items = (List<Item>) new ItemService().retrieveBatch(
-        filterIdsByType(ids, ObjectType.ITEM).stream().collect(Collectors.toList()), -1, 0, user);
+        filterIdsByType(ids, ObjectType.ITEM).stream().collect(Collectors.toList()), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, user);
     List<LicensePart> licenseParts =
         items.stream().filter(item -> LicenseUtil.getActiveLicense(item) == null)
             .map(item -> new LicensePart(item.getId().toString(), license))
@@ -308,8 +309,8 @@ public class WorkflowFacade implements Serializable {
    */
   private List<String> getItemIds(CollectionImeji c, User user) throws UnprocessableError {
     return new ItemService().search(c.getId(),
-        new SearchFactory().and(new SearchPair(SearchFields.filename, "*")).build(), null, user, -1,
-        0).getResults();
+        new SearchFactory().and(new SearchPair(SearchFields.filename, "*")).build(), null, user, Search.GET_ALL_RESULTS,
+        Search.SEARCH_FROM_START_INDEX).getResults();
   }
 
 

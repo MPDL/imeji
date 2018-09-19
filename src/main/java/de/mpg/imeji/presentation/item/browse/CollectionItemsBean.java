@@ -18,6 +18,7 @@ import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -113,7 +114,7 @@ public class CollectionItemsBean extends ItemsBean {
   @Override
   public List<String> searchAllItems() {
     return new ItemService()
-        .search(collection.getId(), getSearchQuery(), null, getSessionUser(), -1, 0).getResults();
+        .search(collection.getId(), getSearchQuery(), null, getSessionUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX).getResults();
   }
 
 

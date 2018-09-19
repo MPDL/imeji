@@ -87,7 +87,7 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
   private boolean existsUserWitheMail(String email, String userUri, boolean newUser) {
     final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
     final SearchResult result =
-        search.searchString(JenaCustomQueries.selectUserByEmail(email), null, null, 0, -1);
+        search.searchString(JenaCustomQueries.selectUserByEmail(email), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
     if (result.getNumberOfRecords() == 0) {
       return false;
     } else {

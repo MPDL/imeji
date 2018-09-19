@@ -26,6 +26,7 @@ import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -61,7 +62,7 @@ public class MoveItemsBean extends SuperBean {
   private boolean toNewSubCollection = false;
 
   /**
-   * Load all the collection for which the user has at least edit role
+   * Load all collections for which the user has at least edit role
    * 
    * @throws ImejiException
    */
@@ -75,7 +76,7 @@ public class MoveItemsBean extends SuperBean {
     }
     collectionsForMove = new CollectionService()
         .searchAndRetrieve(factory.build(),
-            new SortCriterion(SearchFields.modified, SortOrder.DESCENDING), getSessionUser(), -1, 0)
+            new SortCriterion(SearchFields.modified, SortOrder.DESCENDING), getSessionUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX)
         .stream().collect(Collectors.toList());
     tree = new Tree(collectionsForMove);
   }
@@ -181,7 +182,7 @@ public class MoveItemsBean extends SuperBean {
    */
   private void moveItems(CollectionImeji col, List<String> ids) {
     try {
-      List<Item> items = (List<Item>) itemService.retrieveBatchLazy(ids, 0, -1, getSessionUser());
+      List<Item> items = (List<Item>) itemService.retrieveBatchLazy(ids, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, getSessionUser());
       List<Item> moved =
           itemService.moveItems(items, col, getSessionUser(), licenseEditor.getLicense());
       if (moved.size() > 0) {

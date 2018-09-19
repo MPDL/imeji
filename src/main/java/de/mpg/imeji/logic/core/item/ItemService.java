@@ -277,7 +277,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
   public Item retrieveLazyForFile(String fileUrl, User user) throws ImejiException {
     final Search s = SearchFactory.create(SearchObjectTypes.ALL, SEARCH_IMPLEMENTATIONS.JENA);
     final List<String> r =
-        s.searchString(JenaCustomQueries.selectItemOfFile(fileUrl), null, null, 0, -1).getResults();
+        s.searchString(JenaCustomQueries.selectItemOfFile(fileUrl), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     if (!r.isEmpty() && r.get(0) != null) {
       return retrieveLazy(URI.create(r.get(0)), user);
     } else {
@@ -519,7 +519,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     List<Item> itemList = new ArrayList<Item>();
     try {
       final List<String> results = search(containerUri, q, sort, user, size, offset).getResults();
-      itemList = (List<Item>) retrieveBatch(results, -1, 0, user);
+      itemList = (List<Item>) retrieveBatch(results, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, user);
     } catch (final Exception e) {
       throw new UnprocessableError("Cannot retrieve items:", e);
     }
@@ -545,7 +545,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     // updateBatch(items, user);
     new WorkflowFacade().releaseItems(l, user, defaultLicense);
     return (List<Item>) retrieveBatch(
-        l.stream().map(item -> item.getId().toString()).collect(Collectors.toList()), -1, 0, user);
+        l.stream().map(item -> item.getId().toString()).collect(Collectors.toList()), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, user);
   }
 
   /**
@@ -808,10 +808,10 @@ public class ItemService extends SearchServiceAbstract<Item> {
     final User targetCollectionUser = col == null || user.getId().equals(col.getCreatedBy()) ? user
         : new UserService().retrieve(col.getCreatedBy(), Imeji.adminUser);
 
-    final Search search = SearchFactory.create();
+    final Search search = SearchFactory.create(); // default is JENA
     final List<String> results =
         search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null,
-            null, 0, -1).getResults();
+            null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     long currentDiskUsage = 0L;
     try {
       currentDiskUsage = Long.parseLong(results.get(0).toString());

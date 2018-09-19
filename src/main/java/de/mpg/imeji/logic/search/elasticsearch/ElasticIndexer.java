@@ -44,6 +44,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  *
  */
 public class ElasticIndexer implements SearchIndexer {
+  
   private static final Logger LOGGER = Logger.getLogger(ElasticIndexer.class);
   private static final ObjectMapper mapper = new ObjectMapper();
   private final String index;
@@ -51,6 +52,17 @@ public class ElasticIndexer implements SearchIndexer {
   private final ElasticAnalysers analyser;
   private String mappingFile = "elasticsearch/Elastic_TYPE_Mapping.json";
 
+  
+  /**
+   * Create an instance for writing data to the ElasticSearch server
+   * 
+   * @param indexName	the name for the index under which data shall be stored
+   *         index is an ElasticSearch concept, a name or number under which data can be stored collectively
+   * @param dataType	the type under which data shall be stored
+   *         type is an ElasticSearch concept, a "category" under which data of an index can be stored
+   * @param analyser	
+   */
+  
   public ElasticIndexer(String indexName, ElasticTypes dataType, ElasticAnalysers analyser) {
     this.index = indexName;
     this.dataType = dataType.name();
@@ -59,6 +71,14 @@ public class ElasticIndexer implements SearchIndexer {
   }
 
 
+  /**
+   * Add object to the index of this ElasticIndexer instance
+   * index is an ElasticSearch concept, 
+   *   a name or number under which data can be stored
+   *   For each index in ElasticSearch an original version plus a configurable number of replicas is created 
+   * 
+   * @param obj the object that will be added to the index 
+   */
   @Override
   public void index(Object obj) {
     try {
@@ -275,13 +295,15 @@ public class ElasticIndexer implements SearchIndexer {
   }
 
   /**
-   * Get the Id of an Object
-   *
+   * Get the Id of an Object that is of type Properties, User, 
+   * UserGroup, ContentVO or other with function getId
+   * 
    * @param obj
    * @return
    */
   private String getId(Object obj) {
-    if (obj instanceof Properties) {
+   
+	if (obj instanceof Properties) {
       return ((Properties) obj).getId().toString();
     }
     if (obj instanceof User) {

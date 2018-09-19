@@ -212,7 +212,7 @@ public class UserGroupService {
   private Collection<UserGroup> searchBySPARQLQuery(String q, User user) {
     final Collection<UserGroup> userGroups = new ArrayList<UserGroup>();
     final Search search = SearchFactory.create();
-    for (final String uri : search.searchString(q, null, null, 0, -1).getResults()) {
+    for (final String uri : search.searchString(q, null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults()) {
       try {
         userGroups.add(controller.read(URI.create(uri), user));
       } catch (final ImejiException e) {
