@@ -1,7 +1,6 @@
 package de.mpg.imeji.presentation.item.details;
 
 import java.awt.Dimension;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -22,7 +21,6 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Logger; 
 import org.apache.logging.log4j.LogManager;
-import org.apache.tika.mime.MimeTypes;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
@@ -471,44 +469,6 @@ public class ItemBean extends SuperBean {
     return StorageUtils.getMimeType(FilenameUtils.getExtension(item.getFilename()))
         .contains("application/pdf");
   }
-
-  /**
-   * Function checks if the file has a swc format
-   * This is a special format for a 3D neuron model
-   */
-  public boolean isSwcFile() {
-    
-	  // check the format:
-	  //  -file extension is .swc
-	  //  -file mime type is plain/text
-	  return content != null && item != null && 
-    		item.getFilename().endsWith(".swc") &&
-    		item.getFiletype().compareTo(StorageUtils.TYPE_TEXT_PLAIN) == 0;
-  }
-  
-  /**
-   * Get content from .swc format file
-   * (special format for drawing neurons in 3D)
-   * @return
-   * @throws ImejiException
-   */
-  public String getSWCStringContent(){
-		
-	   String swcFileContentAsString = new String("");
-        try {
-        	StorageController storageController = new StorageController();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();	
-			String webUrlOfFile = content.getOriginal();	
-	        storageController.read(webUrlOfFile, baos, true);
-	        swcFileContentAsString = baos.toString(); 			
-        }
-        catch(Exception e) {
-        	LOGGER.error("Error reading content of swc file", e);
-        }
-
-		return swcFileContentAsString;
-	}
-  
 
   /**
    * True if the current file is an audio

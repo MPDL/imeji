@@ -42,7 +42,6 @@ public class StorageUtils {
    */
   public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
   public static final String BAD_FORMAT = "bad-extension/other";
-  public static final String TYPE_TEXT_PLAIN = MimeTypes.PLAIN_TEXT;
   private static Tika tika = new Tika();
   public static final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
 

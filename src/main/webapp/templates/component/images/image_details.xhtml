@@ -10,7 +10,7 @@
 
 	<!-- MediaDisplayContainer - START -->
 	<h:panelGroup layout="block"  styleClass="imj_mediaDisplayContainer"  rendered="#{itemBean.image.status != 'WITHDRAWN'}" id="topPanel">
-		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile and !itemBean.swcFile}">
+		<ui:fragment rendered="#{!itemBean.videoFile and !itemBean.audioFile}">
 			<h:form id="rf">
 				<h:inputHidden id="rotation" value="#{itemBean.rotation}" />
 				<h:commandButton id="rotate" value="update rotation hidden"  action="#{itemBean.updateRotation}" styleClass="imj_noDisplay">
@@ -50,9 +50,6 @@
 		<ui:fragment rendered="#{itemBean.audioFile}">
 			<audio id="imejiAudioPlayer"  src="#{itemBean.originalFile}" controls="controls" preload="auto" >#{lbl.playing} #{itemBean.image.filename}</audio>
 		</ui:fragment>
-		<ui:fragment rendered='#{itemBean.swcFile}'>
-    		<imjc:swcViewer itemBean="#{itemBean}" swcID="swc3d" loadJSLibraries="true"/>
-	    </ui:fragment>
 	</h:panelGroup>
 	<h:panelGroup layout="block" styleClass="imj_mediaDisplayContainer" rendered="#{itemBean.image.status == 'WITHDRAWN'}">
 		<a id="lnkPicFullResolution_Withdrawn" href="#">
