@@ -9,7 +9,8 @@ import java.util.stream.Stream;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -26,7 +27,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class CreateFacetBean extends SuperBean {
   private static final long serialVersionUID = 4885254101366390248L;
-  private static final Logger LOGGER = Logger.getLogger(CreateFacetBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(CreateFacetBean.class);
   private String name;
   private String index;
   private String type;

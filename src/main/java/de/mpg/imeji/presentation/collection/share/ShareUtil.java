@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
@@ -22,7 +23,7 @@ import de.mpg.imeji.logic.model.UserGroup;
  */
 public class ShareUtil {
 
-  private static final Logger LOGGER = Logger.getLogger(ShareUtil.class);
+  private static final Logger LOGGER = LogManager.getLogger(ShareUtil.class);
 
   private ShareUtil() {
     // private constructor

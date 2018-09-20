@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  status: which level of internal Log4j events should be logged to the console -->
+<Configuration status="warn">
+  <!--  Where to write the log events -->
+  <Appenders>
+    
+    <!-- ================================= -->
+	<!-- Store messages in a local file -->
+	<!-- ================================= -->
+    
+    <!--  fileName : if the file or directory does not exist it will be created -->
+    <RollingFile name="RollingFile" fileName="${sys:catalina.base}/logs/logIm.log"
+                 filePattern="${sys:catalina.base}/logs/logIm-%d{yyyy-MM-dd}.log.gz">
+      <!--  format of output in file -->
+      <PatternLayout>
+      <!-- time, priority, thread-that-generated-the-output, message, new-line  -->
+        <Pattern>%d [%t] %-5p %c - %m%n</Pattern>
+      </PatternLayout>
+      <!--  Triggering policy: when should a roll over be performed -->
+      <Policies>
+        <!--  roll over when current date no longer matches log's start date -->
+        <TimeBasedTriggeringPolicy />
+      </Policies>
+      <!-- Rollover policy: How should the rollover be performed 
+           filePattern in RollingFile: name and location of archive file --> 
+      <DefaultRolloverStrategy>
+        <!--  custom delete action since log4j2.5 -->
+        <!--  basePath: required. From where to start scanning for files to delete 
+              maxDepth: maximum number of levels of subfolders to visit-->
+        <Delete basePath="${sys:catalina.base}/logs" maxDepth="2">
+          <!--  configure conditions that select files to delete relative to base directory 
+                glob: Matches relative path-->
+          <IfFileName glob="logIm-*gz"/>
+          <IfLastModified age="7d"/>
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+    
+    <!-- ============================== -->
+	<!-- Write messages to the console -->
+	<!-- ============================== -->
+	<Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d [%t] %-5p %c - %m%n"/>
+    </Console>
+
+  </Appenders>
+  <!-- Logger  -->
+  <Loggers>
+      <!-- ================ -->
+	  <!-- Limit categories -->
+	  <!-- ================ -->
+	  <!-- Limit the org.apache category to INFO as its DEBUG is verbose -->
+     <Logger name="org.apache" level="info"/>
+     <Logger name="com.hp.hpl.jena" level="warn"/>
+     <Logger name="c.h.h.j.t.b" level="warn"/>
+    <!--  most general logger -->
+    <Root level="info">
+      <AppenderRef ref="RollingFile"/>
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+</Configuration>

@@ -8,7 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
@@ -34,7 +35,7 @@ class UserController extends ImejiControllerAbstract<User> {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel);
 
-  private static final Logger LOGGER = Logger.getLogger(UserController.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserController.class);
   private static final Comparator<User> USER_COMPARATOR_BY_NAME = new Comparator<User>() {
     @Override
     public int compare(User c1, User c2) {

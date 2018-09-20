@@ -12,20 +12,18 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentListXML;
 import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentXML;
-import de.mpg.imeji.presentation.lang.InternationalizationBean;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.log4j.Logger;
-
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
- * Configure texts of e-mails (email subject and email message) that can be sent to 
- * system users and system administrators
+ * Configure content of e-mails (email subject and email message) that can be sent to 
+ * users and system administrators
  * 
- * Administrators change texts (subject and message) of emails via GUI  
+ * Administrators change texts (subject and message) of e-mails via GUI  
  *       Admin > Configuration > Email messages
  *       
  * @author breddin
@@ -34,7 +32,7 @@ import org.apache.log4j.Logger;
 
 public class ImejiEmailContentConfiguration {
 	
-	private static final Logger LOGGER = Logger.getLogger(ImejiEmailContentConfiguration.class);
+	private static final Logger LOGGER = LogManager.getLogger(ImejiEmailContentConfiguration.class);
 	
 	// naming conventions
 	private static String MESSAGE_GUI_LABEL_ID_PREFIX = "config_messages_";
@@ -79,7 +77,7 @@ public class ImejiEmailContentConfiguration {
 	/**
 	 * Initializes the local cache of email content by
 	 *  - reading email content from XML files in file system
-	 *  - organizing read content into a hash map for fast access
+	 *  - storing read content in a hash map for fast access
 	 *   	
 	 * @param imejiConfiguration
 	 */

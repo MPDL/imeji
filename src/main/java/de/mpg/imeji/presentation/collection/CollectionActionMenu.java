@@ -9,7 +9,8 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -37,7 +38,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  */
 public class CollectionActionMenu implements Serializable {
   private static final long serialVersionUID = 2439408335958108151L;
-  private static final Logger LOGGER = Logger.getLogger(CollectionActionMenu.class);
+  private static final Logger LOGGER = LogManager.getLogger(CollectionActionMenu.class);
   private final CollectionImeji collection;
   private final User user;
   private final Locale locale;

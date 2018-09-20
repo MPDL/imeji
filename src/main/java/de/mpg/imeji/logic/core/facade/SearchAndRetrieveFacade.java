@@ -12,7 +12,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
@@ -42,7 +43,7 @@ public class SearchAndRetrieveFacade implements Serializable {
       new ElasticSearch(SearchObjectTypes.ITEM, SearchObjectTypes.COLLECTION);
   private final ItemService itemService = new ItemService();
   private final CollectionService collectionService = new CollectionService();
-  private final static Logger LOGGER = Logger.getLogger(SearchAndRetrieveFacade.class);
+  private final static Logger LOGGER = LogManager.getLogger(SearchAndRetrieveFacade.class);
 
 
   /**

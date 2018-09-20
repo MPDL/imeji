@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.core.item.ItemService;
@@ -38,7 +39,7 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  */
 public class ItemDetailsBrowse implements Serializable {
   private static final long serialVersionUID = -1627171360319925422L;
-  private static final Logger LOGGER = Logger.getLogger(ItemDetailsBrowse.class);
+  private static final Logger LOGGER = LogManager.getLogger(ItemDetailsBrowse.class);
   private String query;
   private String facetQuery;
   private String filterQuery;

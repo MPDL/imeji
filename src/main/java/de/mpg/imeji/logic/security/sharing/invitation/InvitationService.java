@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -24,7 +25,7 @@ import de.mpg.imeji.logic.security.user.UserService;
  *
  */
 public class InvitationService {
-  private static final Logger LOGGER = Logger.getLogger(InvitationService.class);
+  private static final Logger LOGGER = LogManager.getLogger(InvitationService.class);
   private final UserService userController = new UserService();
   private final ShareService shareBC = new ShareService();
   private static final KeyValueStoreService KEY_VALUE_STORE_BC =

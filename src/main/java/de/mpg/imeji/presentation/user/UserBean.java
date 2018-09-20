@@ -12,7 +12,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -39,7 +40,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class UserBean extends SuperBean {
   private static final long serialVersionUID = 8339673964329354673L;
-  private static final Logger LOGGER = Logger.getLogger(UserBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserBean.class);
   private User user;
   private String id;
   private List<ShareListItem> roles = new ArrayList<ShareListItem>();

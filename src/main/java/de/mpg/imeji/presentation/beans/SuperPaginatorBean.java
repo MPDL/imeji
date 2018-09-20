@@ -8,7 +8,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
@@ -33,7 +34,7 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  */
 public abstract class SuperPaginatorBean<ListElementType> extends SuperBean {
   private static final long serialVersionUID = -3493783822585689753L;
-  protected static Logger LOGGER = Logger.getLogger(SuperPaginatorBean.class);
+  protected static Logger LOGGER = LogManager.getLogger(SuperPaginatorBean.class);
   public static final String numberOfItemsPerPageCookieName = "IMEJI_ITEMS_PER_PAGE";
   public static final String numberOfContainersPerPageCookieName = "IMEJI_CONTAINERS_PER_PAGE";
   /**

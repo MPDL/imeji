@@ -3,7 +3,8 @@ package de.mpg.imeji.logic.util;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.google.common.net.InetAddresses;
 
@@ -14,7 +15,7 @@ import com.google.common.net.InetAddresses;
  *
  */
 public class IPUtils {
-  private static final Logger LOGGER = Logger.getLogger(IPUtils.class);
+  private static final Logger LOGGER = LogManager.getLogger(IPUtils.class);
 
   /**
    * Private Constructor

@@ -7,7 +7,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
@@ -24,7 +25,7 @@ import de.mpg.imeji.logic.search.model.SearchResult;
  */
 public class SitemapExport extends ExportAbstract {
   private final double priority;
-  private static final Logger LOGGER = Logger.getLogger(SitemapExport.class);
+  private static final Logger LOGGER = LogManager.getLogger(SitemapExport.class);
   private final String query;
 
   public SitemapExport(String query, String priority, User user) {

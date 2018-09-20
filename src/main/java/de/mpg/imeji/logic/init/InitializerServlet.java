@@ -12,7 +12,8 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.apache.log4j.lf5.util.StreamUtils;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -31,7 +32,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 @WebServlet(value = "/initialize", loadOnStartup = 0)
 public class InitializerServlet extends HttpServlet {
   private static final long serialVersionUID = -3826737851602585061L;
-  private static final Logger LOGGER = Logger.getLogger(InitializerServlet.class);
+  private static final Logger LOGGER = LogManager.getLogger(InitializerServlet.class);
 
   @Override
   public void init() throws ServletException {

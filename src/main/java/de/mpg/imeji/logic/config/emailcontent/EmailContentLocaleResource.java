@@ -11,7 +11,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentListXML;
 import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentXML;
@@ -25,7 +26,7 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
 
 public class EmailContentLocaleResource {
 	
-	private static final Logger LOGGER = Logger.getLogger(EmailContentLocaleResource.class);
+	private static final Logger LOGGER = LogManager.getLogger(EmailContentLocaleResource.class);
 	
 	
 	/**

@@ -1,23 +1,13 @@
 package de.mpg.imeji.logic.storage.transform.generator;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-
-import javax.imageio.ImageIO;
-import javax.imageio.stream.FileImageInputStream;
-
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-
-import de.mpg.imeji.logic.storage.util.ImageUtils;
-import de.mpg.imeji.logic.util.StorageUtils;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import de.mpg.imeji.logic.util.StringHelper;
 
 /**
@@ -28,7 +18,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class RawFileImageGenerator extends AbstractWritableImageGenerator {
-  private static final Logger LOGGER = Logger.getLogger(RawFileImageGenerator.class);
+  private static final Logger LOGGER = LogManager.getLogger(RawFileImageGenerator.class);
 
 
   

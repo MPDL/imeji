@@ -3,7 +3,8 @@ package de.mpg.imeji.logic.concurrency;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Thread checking periodically if some {@link Lock} needs to be unlocked
@@ -13,7 +14,7 @@ import org.apache.log4j.Logger;
  * @version $Revision$ $LastChangedDate$
  */
 public class LocksSurveyor extends Thread {
-  private static final Logger LOGGER = Logger.getLogger(LocksSurveyor.class);
+  private static final Logger LOGGER = LogManager.getLogger(LocksSurveyor.class);
   private boolean signal = false;
   private boolean running = false;
 

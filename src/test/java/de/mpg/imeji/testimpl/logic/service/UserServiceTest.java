@@ -9,7 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,7 +36,7 @@ import de.mpg.imeji.util.ImejiTestResources;
 import de.mpg.imeji.util.JenaUtil;
 
 public class UserServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(UserServiceTest.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserServiceTest.class);
 
   private static User adminUser;
   private static User defaultUser;

@@ -8,7 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -34,7 +35,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 @WebServlet("/sparql")
 public class SPARQLEndpointServlet extends HttpServlet {
-  private static final Logger LOGGER = Logger.getLogger(SPARQLEndpointServlet.class);
+  private static final Logger LOGGER = LogManager.getLogger(SPARQLEndpointServlet.class);
   private static final long serialVersionUID = 2718460776590689258L;
 
   @Override

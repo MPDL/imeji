@@ -18,7 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.client.HttpResponseException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -39,7 +40,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @WebServlet(urlPatterns = "/exportServlet", asyncSupported = true)
 public class ExportServlet extends HttpServlet {
   private static final long serialVersionUID = -777947169051357999L;
-  private static final Logger LOGGER = Logger.getLogger(ExportServlet.class);
+  private static final Logger LOGGER = LogManager.getLogger(ExportServlet.class);
 
   /**
    * {@inheritDoc}

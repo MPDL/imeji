@@ -7,7 +7,8 @@ import java.text.Collator;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.model.ImejiLicenses;
@@ -32,7 +33,7 @@ import de.mpg.imeji.util.DateFormatter;
  */
 public class FacetSelectorEntryValue implements Serializable, Comparable<FacetSelectorEntryValue> {
   private static final long serialVersionUID = -5562614379983226471L;
-  private static final Logger LOGGER = Logger.getLogger(FacetSelectorEntryValue.class);
+  private static final Logger LOGGER = LogManager.getLogger(FacetSelectorEntryValue.class);
   private String label;
   private String index;
   private long count;

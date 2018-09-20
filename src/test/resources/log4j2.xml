@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  status: which level of internal Log4j events should be logged to the console -->
+<Configuration status="warn">
+  <!--  Where to write the log events -->
+  <Appenders>
+    
+    
+    
+    <!-- ============================== -->
+	<!-- Write messages to the console -->
+	<!-- ============================== -->
+	<Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d [%t] %-5p %c - %m%n"/>
+    </Console>
+
+  </Appenders>
+  <!-- Logger  -->
+  <Loggers>
+      <!-- ================ -->
+	  <!-- Limit categories -->
+	  <!-- ================ -->
+	  <!-- Limit the org.apache category to INFO as its DEBUG is verbose -->
+     <Logger name="org.apache" level="info"/>
+     <Logger name="com.hp.hpl.jena" level="warn"/>
+     <Logger name="c.h.h.j.t.b" level="warn"/>
+    <!--  most general logger -->
+    <Root level="info">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+</Configuration>

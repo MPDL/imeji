@@ -13,7 +13,8 @@ import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 /**
  * With this listener, it can be avoided that Faces Messages are lost when doing an redirect instead
@@ -28,7 +29,7 @@ public class FacesMessagesPhaseListener implements PhaseListener {
    *
    */
   private static final long serialVersionUID = -598831434225897621L;
-  private static final Logger LOGGER = Logger.getLogger(FacesMessagesPhaseListener.class);
+  private static final Logger LOGGER = LogManager.getLogger(FacesMessagesPhaseListener.class);
   private static final String sessionToken = "REDIRECT_MESSAGES_SUPPORT";
 
   // private Map<String, Collection<FacesMessage>> messageCache = Collections.synchronizedMap(new

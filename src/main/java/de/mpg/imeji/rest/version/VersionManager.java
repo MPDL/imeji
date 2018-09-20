@@ -3,7 +3,8 @@ package de.mpg.imeji.rest.version;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.rest.ImejiRestService;
@@ -21,7 +22,7 @@ public class VersionManager {
   private final Pattern p = Pattern.compile(".*/rest/v([0-9]+)/.*");
   private String path;
   private boolean hasVersion = false;
-  private static final Logger LOGGER = Logger.getLogger(VersionManager.class);
+  private static final Logger LOGGER = LogManager.getLogger(VersionManager.class);
 
   /**
    * Default constructor

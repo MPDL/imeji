@@ -3,7 +3,7 @@ package de.mpg.imeji.logic.notification.email;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -118,7 +118,7 @@ public class EmailMessages {
       return getEmailOnAccountAction_Body(password, email, username, "email_new_password", TextType.MESSAGE, locale)
           .replace("XXX_INSTANCE_NAME_XXX", instanceName);
     } catch (final Exception e) {
-      Logger.getLogger(EmailMessages.class).info("Will return empty message, due to some error", e);
+      LogManager.getLogger(EmailMessages.class).info("Will return empty message, due to some error", e);
       return msg;
     }
   }

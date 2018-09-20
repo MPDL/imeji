@@ -2,7 +2,8 @@ package de.mpg.imeji.rest;
 
 import javax.ws.rs.ApplicationPath;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -11,7 +12,7 @@ import io.swagger.jaxrs.config.BeanConfig;
 
 @ApplicationPath("/rest/*")
 public class ImejiRestService extends ResourceConfig {
-  Logger LOGGER = Logger.getLogger(ImejiRestService.class);
+  Logger LOGGER = LogManager.getLogger(ImejiRestService.class);
 
   public static final int CURRENT_VERSION = 2;
 

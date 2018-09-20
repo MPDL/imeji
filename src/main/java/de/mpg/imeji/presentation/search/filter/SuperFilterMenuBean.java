@@ -5,7 +5,8 @@ import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -23,7 +24,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  */
 public class SuperFilterMenuBean extends SuperBean {
   private static final long serialVersionUID = 5211495478085868441L;
-  private static final Logger LOGGER = Logger.getLogger(SuperFilterMenuBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(SuperFilterMenuBean.class);
   private List<SelectItem> menu;
   private final SearchQuery filterQuery;
   private final String filterQueryString;

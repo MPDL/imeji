@@ -6,12 +6,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.util.StorageUtils;
-import de.mpg.imeji.logic.util.StringHelper;
 
 /**
  * Generates an icon/preview image for compressed/archive files types i.e. zip, tar, gz, 7z, ..
@@ -24,7 +23,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class CompressedFilesImageGenerator extends AbstractWritableImageGenerator{
 
-	private static final Logger LOGGER = Logger.getLogger(CompressedFilesImageGenerator.class);
+	private static final Logger LOGGER = LogManager.getLogger(CompressedFilesImageGenerator.class);
 	
 	/**
 	 * Collection of mime types of archives and compressed files/archives that are supported by this {@link ImageGenerator}

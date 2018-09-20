@@ -5,7 +5,8 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -23,7 +24,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class InternalStorageAdministrator implements StorageAdministrator {
   private static final long serialVersionUID = -2854550843193929384L;
-  private static final Logger LOGGER = Logger.getLogger(InternalStorageAdministrator.class);
+  private static final Logger LOGGER = LogManager.getLogger(InternalStorageAdministrator.class);
   /**
    * The directory in file system of the {@link InternalStorage}
    */

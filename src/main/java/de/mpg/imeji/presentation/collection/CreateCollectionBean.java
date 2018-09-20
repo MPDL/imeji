@@ -11,7 +11,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -36,7 +37,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ManagedBean(name = "CreateCollectionBean")
 @ViewScoped
 public class CreateCollectionBean extends CollectionBean {
-  private static final Logger LOGGER = Logger.getLogger(CreateCollectionBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(CreateCollectionBean.class);
   private static final long serialVersionUID = 1257698224590957642L;
   @ManagedProperty(value = "#{ContainerEditorSession}")
   private ContainerEditorSession containerEditorSession;

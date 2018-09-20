@@ -10,7 +10,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,7 +53,7 @@ import de.mpg.imeji.util.ImejiTestResources;
  *
  */
 public class ItemServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(ItemServiceTest.class);
+  private static final Logger LOGGER = LogManager.getLogger(ItemServiceTest.class);
 
   private static CollectionImeji collectionPrivate;
   private static CollectionImeji collectionReleased;

@@ -21,7 +21,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger; 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 
@@ -55,7 +56,7 @@ public class ImejiConfiguration {
   private static File configFile;
   private static ImejiFileTypes fileTypes;
   private static String lang = "en";
-  private static final Logger LOGGER = Logger.getLogger(ImejiConfiguration.class);
+  private static final Logger LOGGER = LogManager.getLogger(ImejiConfiguration.class);
   
   // Default configuration values that are set when there are no values in config.xml
   // A list of predefined file types, which is set when imeji is initialized

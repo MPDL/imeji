@@ -19,7 +19,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.client.HttpResponseException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
@@ -44,7 +45,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @WebServlet("/dataviewer")
 public class DataViewerServlet extends HttpServlet {
   private static final long serialVersionUID = -4602021617386831403L;
-  private static final Logger LOGGER = Logger.getLogger(DataViewerServlet.class);
+  private static final Logger LOGGER = LogManager.getLogger(DataViewerServlet.class);
 
   @Override
   public void init() throws ServletException {

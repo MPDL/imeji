@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -33,7 +34,7 @@ import de.mpg.imeji.presentation.search.advanced.group.TextSearchGroup;
  */
 public class SearchForm implements Serializable {
   private static final long serialVersionUID = 9203984025130411565L;
-  private static final Logger LOGGER = Logger.getLogger(SearchForm.class);
+  private static final Logger LOGGER = LogManager.getLogger(SearchForm.class);
   private MetadataSearchGroup metadataSearchGroup;
   private LicenseSearchGroup licenseSearchGroup;
   private FileTypeSearchGroup fileTypeSearchGroup;

@@ -9,7 +9,8 @@ import java.util.Locale;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -30,7 +31,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  */
 public class ShareListItem implements Serializable {
   private static final long serialVersionUID = -1637916656299359982L;
-  private static final Logger LOGGER = Logger.getLogger(ShareListItem.class);
+  private static final Logger LOGGER = LogManager.getLogger(ShareListItem.class);
   private final User currentUser;
   private Invitation invitation;
   private User user;

@@ -26,7 +26,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -54,7 +55,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @WebServlet(urlPatterns = "/uploadServlet", asyncSupported = true, loadOnStartup = 5)
 public class UploadServlet extends HttpServlet {
   private static final long serialVersionUID = -4879871986174193049L;
-  private static final Logger LOGGER = Logger.getLogger(UploadServlet.class);
+  private static final Logger LOGGER = LogManager.getLogger(UploadServlet.class);
   private static final ItemService ITEM_SERVICE = new ItemService();
   private static final CollectionService COLLECTION_SERVICE = new CollectionService();
 

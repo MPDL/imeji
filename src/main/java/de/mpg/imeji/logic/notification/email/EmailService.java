@@ -20,7 +20,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -33,7 +34,7 @@ import de.mpg.imeji.logic.config.Imeji;
  * @version $Revision$ $LastChangedDate$
  */
 public class EmailService {
-  private static final Logger LOGGER = Logger.getLogger(EmailService.class);
+  private static final Logger LOGGER = LogManager.getLogger(EmailService.class);
 
   /**
    * Is true if the Email is valid

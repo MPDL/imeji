@@ -8,7 +8,8 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
@@ -51,7 +52,7 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 @ViewScoped
 public class AdminBean extends SuperBean {
   private static final long serialVersionUID = 777808298937503532L;
-  private static final Logger LOGGER = Logger.getLogger(AdminBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(AdminBean.class);
 
   /**
    * Refresh the file size of all items

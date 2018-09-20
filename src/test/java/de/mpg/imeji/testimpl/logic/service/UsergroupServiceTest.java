@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,7 +22,7 @@ import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
 
 public class UsergroupServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(UsergroupServiceTest.class);
+  private static final Logger LOGGER = LogManager.getLogger(UsergroupServiceTest.class);
 
   private static User defaultUser1;
   private static User defaultUser2;

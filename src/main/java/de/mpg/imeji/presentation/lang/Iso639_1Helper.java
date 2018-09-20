@@ -5,7 +5,8 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Utility class for Iso638_1 languages vocabulary
@@ -15,7 +16,7 @@ import org.apache.log4j.Logger;
  * @version $Revision$ $LastChangedDate$
  */
 public class Iso639_1Helper {
-  private static final Logger LOGGER = Logger.getLogger(Iso639_1Helper.class);
+  private static final Logger LOGGER = LogManager.getLogger(Iso639_1Helper.class);
   private List<SelectItem> list = null;
 
   /**

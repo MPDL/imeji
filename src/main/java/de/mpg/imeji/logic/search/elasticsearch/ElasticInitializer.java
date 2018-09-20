@@ -7,7 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -28,7 +29,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
  *
  */
 public class ElasticInitializer {
-  private static final Logger LOGGER = Logger.getLogger(ElasticInitializer.class);
+  private static final Logger LOGGER = LogManager.getLogger(ElasticInitializer.class);
 
   private ElasticInitializer() {
     // avoid constructor

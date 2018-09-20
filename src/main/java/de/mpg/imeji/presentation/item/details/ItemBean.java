@@ -20,7 +20,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.apache.tika.mime.MimeTypes;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -62,7 +63,7 @@ import de.mpg.imeji.presentation.session.SessionObjectsController;
 @ViewScoped
 public class ItemBean extends SuperBean {
   private static final long serialVersionUID = -4957755233785015759L;
-  static final Logger LOGGER = Logger.getLogger(ItemBean.class);
+  static final Logger LOGGER = LogManager.getLogger(ItemBean.class);
   private Item item;
   private ContentVO content;
   private String id;

@@ -3,7 +3,8 @@ package de.mpg.imeji.logic.batch;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
@@ -11,7 +12,7 @@ import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.storage.StorageController;
 
 public class ResizeWebAndThumbnailJob implements Callable<Integer> {
-  private static final Logger LOGGER = Logger.getLogger(ResizeWebAndThumbnailJob.class);
+  private static final Logger LOGGER = LogManager.getLogger(ResizeWebAndThumbnailJob.class);
 
   @Override
   public Integer call() throws Exception {

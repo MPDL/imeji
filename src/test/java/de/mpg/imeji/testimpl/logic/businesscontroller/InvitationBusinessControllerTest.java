@@ -2,7 +2,8 @@ package de.mpg.imeji.testimpl.logic.businesscontroller;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,7 +31,7 @@ import de.mpg.imeji.test.logic.service.SuperServiceTest;
  */
 public class InvitationBusinessControllerTest extends SuperServiceTest {
   private InvitationService invitationBC = new InvitationService();
-  private static final Logger LOGGER = Logger.getLogger(InvitationBusinessControllerTest.class);
+  private static final Logger LOGGER = LogManager.getLogger(InvitationBusinessControllerTest.class);
   private static final String UNKNOWN_EMAIL = "unknown@imeji.org";
 
   @BeforeClass

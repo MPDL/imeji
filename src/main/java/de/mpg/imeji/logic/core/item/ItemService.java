@@ -16,7 +16,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -66,7 +67,7 @@ import de.mpg.imeji.logic.util.TempFileUtil;
  * @version $Revision$ $LastChangedDate$
  */
 public class ItemService extends SearchServiceAbstract<Item> {
-  private static final Logger LOGGER = Logger.getLogger(ItemService.class);
+  private static final Logger LOGGER = LogManager.getLogger(ItemService.class);
   public static final String NO_THUMBNAIL_URL = "NO_THUMBNAIL_URL";
   private final Search search =
       SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC);

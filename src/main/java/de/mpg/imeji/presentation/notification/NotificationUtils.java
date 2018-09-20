@@ -2,7 +2,8 @@ package de.mpg.imeji.presentation.notification;
 
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
@@ -14,7 +15,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  * Created by vlad on 13.03.15.
  */
 public class NotificationUtils {
-  private static final Logger LOGGER = Logger.getLogger(NotificationUtils.class);
+  private static final Logger LOGGER = LogManager.getLogger(NotificationUtils.class);
   private static final EmailService emailClient = new EmailService();
 
   private NotificationUtils() {

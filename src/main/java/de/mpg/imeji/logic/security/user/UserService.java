@@ -10,7 +10,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -57,7 +58,7 @@ import de.mpg.imeji.util.DateHelper;
  */
 public class UserService {
   private final UserController controller = new UserController();
-  private static final Logger LOGGER = Logger.getLogger(UserService.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserService.class);
   private final Search search =
       SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.ELASTIC);
 

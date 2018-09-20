@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -49,7 +50,7 @@ import de.mpg.imeji.util.DateFormatter;
  *
  */
 public class ElasticQueryFactory {
-  private final Logger LOGGER = Logger.getLogger(ElasticQueryFactory.class);
+  private final Logger LOGGER = LogManager.getLogger(ElasticQueryFactory.class);
   private final boolean searchForCollection;
   private final boolean searchForUsers;
   private final boolean emptyQuery;

@@ -9,7 +9,8 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -32,7 +33,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class UploadBean extends SuperBean {
   private static final long serialVersionUID = 4632180647351059603L;
-  private static final Logger LOGGER = Logger.getLogger(UploadBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(UploadBean.class);
   private List<CollectionImeji> collections = new ArrayList<>();
   private String query = "";
   private Tree tree;

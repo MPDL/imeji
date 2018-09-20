@@ -5,7 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
@@ -30,7 +31,7 @@ import de.mpg.imeji.logic.security.usergroup.UserGroupService;
  * @version $Revision$ $LastChangedDate$
  */
 public class ShareService {
-  private static final Logger LOGGER = Logger.getLogger(ShareService.class);
+  private static final Logger LOGGER = LogManager.getLogger(ShareService.class);
   private final MessageService messageService = new MessageService();
 
   /**

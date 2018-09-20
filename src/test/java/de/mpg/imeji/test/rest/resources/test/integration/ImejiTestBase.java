@@ -9,7 +9,8 @@ import java.net.URISyntaxException;
 
 import javax.ws.rs.core.Application;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.spi.TestContainerException;
@@ -51,7 +52,7 @@ public class ImejiTestBase extends JerseyTest {
   protected static String itemId;
   protected static CollectionTO collectionTO;
   protected static DefaultItemTO itemTO;
-  private static final Logger LOGGER = Logger.getLogger(ImejiTestBase.class);
+  private static final Logger LOGGER = LogManager.getLogger(ImejiTestBase.class);
 
   private static ImejiRestService app = null;
 

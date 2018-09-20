@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.model.ImejiLicenses;
@@ -28,7 +29,7 @@ import de.mpg.imeji.logic.search.model.SearchPair;
  */
 public class LicenseSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
   private static final long serialVersionUID = -2822491289836043116L;
-  private static final Logger LOGGER = Logger.getLogger(LicenseSearchGroup.class);
+  private static final Logger LOGGER = LogManager.getLogger(LicenseSearchGroup.class);
   private List<String> selected = new ArrayList<>();
   private List<SelectItem> menu;
   private String hasLicense = "all";

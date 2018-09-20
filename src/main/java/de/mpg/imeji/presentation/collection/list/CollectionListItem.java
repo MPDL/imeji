@@ -5,7 +5,8 @@ import java.net.URI;
 
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -29,7 +30,7 @@ import de.mpg.imeji.presentation.util.CommonUtils;
  */
 public class CollectionListItem implements Serializable {
   private static final long serialVersionUID = -782035871566935720L;
-  private static final Logger LOGGER = Logger.getLogger(CollectionListItem.class);
+  private static final Logger LOGGER = LogManager.getLogger(CollectionListItem.class);
   private String title = "";
   private String description = "";
   private String descriptionFull = "";

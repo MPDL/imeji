@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
@@ -27,7 +28,7 @@ import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 
 public class FolderExport extends ExportAbstract {
-  private static final Logger LOGGER = Logger.getLogger(FolderExport.class);
+  private static final Logger LOGGER = LogManager.getLogger(FolderExport.class);
   private final CollectionImeji collection;
   private final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
 

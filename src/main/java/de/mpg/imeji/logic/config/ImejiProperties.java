@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -27,7 +28,7 @@ public class ImejiProperties {
   private static String baseURI;
   private static String applicationURL;
 
-  private static final Logger LOGGER = Logger.getLogger(ImejiProperties.class);
+  private static final Logger LOGGER = LogManager.getLogger(ImejiProperties.class);
 
   /**
    * Construct and load the properties from the server

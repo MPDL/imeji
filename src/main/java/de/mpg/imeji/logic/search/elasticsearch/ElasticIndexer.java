@@ -5,7 +5,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
@@ -45,7 +46,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class ElasticIndexer implements SearchIndexer {
   
-  private static final Logger LOGGER = Logger.getLogger(ElasticIndexer.class);
+  private static final Logger LOGGER = LogManager.getLogger(ElasticIndexer.class);
   private static final ObjectMapper mapper = new ObjectMapper();
   private final String index;
   private final String dataType;

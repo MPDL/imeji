@@ -12,7 +12,8 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -36,7 +37,7 @@ public final class StorageController implements Serializable {
   private final Storage storage;
   private final String formatWhiteList;
   private final String formatBlackList;
-  private static final Logger LOGGER = Logger.getLogger(StorageController.class);
+  private static final Logger LOGGER = LogManager.getLogger(StorageController.class);
 
   /**
    * Create new {@link StorageController} for the {@link Storage} defined in imeji.properties

@@ -87,7 +87,7 @@
 	<repositories>
 		<!-- <repository> <id>central</id> <url>http://central</url> <releases> 
 			<enabled>true</enabled> </releases> <snapshots> <enabled>true</enabled> </snapshots> 
-			</repository> -->
+			</repository> -->		
 		<repository>
 			<id>prime-repo</id>
 			<name>Prime Technology Maven Repository</name>
@@ -332,11 +332,21 @@
 			<artifactId>prettyfaces-jsf2</artifactId>
 			<version>3.3.3</version>
 		</dependency>
+	     <dependency>
+	        <groupId>org.apache.logging.log4j</groupId>
+	        <artifactId>log4j-1.2-api</artifactId>
+	        <version>2.11.1</version>
+	     </dependency>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
+   			 <groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-api</artifactId>
+    		<version>2.11.1</version>
+  		</dependency>
+  		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-core</artifactId>
+    		<version>2.11.1</version>
+  		</dependency>
 		<!-- USED during compile, e.g. javax.mail -->
 		<dependency>
 			<groupId>javax</groupId>

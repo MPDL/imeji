@@ -9,7 +9,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -39,7 +40,7 @@ import de.mpg.imeji.util.DateHelper;
 @ViewScoped
 public class RegistrationBean extends SuperBean {
   private static final long serialVersionUID = -993770106648303808L;
-  private static final Logger LOGGER = Logger.getLogger(RegistrationBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(RegistrationBean.class);
   private User user = new User();
   private boolean isInvited = false;
   private boolean termsAccepted = StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getTermsOfUse())

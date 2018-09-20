@@ -5,7 +5,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.batch.NightlyJob;
 
@@ -17,7 +18,7 @@ import de.mpg.imeji.logic.batch.NightlyJob;
  */
 public class NightlyExecutor {
 
-  private static final Logger LOGGER = Logger.getLogger(NightlyExecutor.class);
+  private static final Logger LOGGER = LogManager.getLogger(NightlyExecutor.class);
   /**
    * The Hour the executor will be executate at
    */

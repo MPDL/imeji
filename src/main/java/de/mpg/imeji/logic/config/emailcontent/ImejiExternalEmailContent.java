@@ -10,7 +10,8 @@ import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentListXML;
@@ -34,7 +35,7 @@ import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentXML;
 public class ImejiExternalEmailContent {
 
 	
-	private static final Logger LOGGER = Logger.getLogger(ImejiExternalEmailContent.class);
+	private static final Logger LOGGER = LogManager.getLogger(ImejiExternalEmailContent.class);
 	
 	
 	/* messages_[en,de,es,ja].properties contains body/subject for 12 different mails

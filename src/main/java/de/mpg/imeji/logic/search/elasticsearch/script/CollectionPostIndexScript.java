@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchResponse;
@@ -28,7 +29,7 @@ import de.mpg.imeji.logic.search.elasticsearch.script.misc.CollectionFields;
  *
  */
 public class CollectionPostIndexScript {
-  private static final Logger LOGGER = Logger.getLogger(CollectionPostIndexScript.class);
+  private static final Logger LOGGER = LogManager.getLogger(CollectionPostIndexScript.class);
 
   /**
    * Run the script

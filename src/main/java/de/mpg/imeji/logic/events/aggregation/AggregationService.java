@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.reflections.Reflections;
 
 import de.mpg.imeji.logic.events.MessageService;
@@ -16,7 +17,7 @@ import de.mpg.imeji.logic.events.MessageService;
  *
  */
 public class AggregationService {
-  private static Logger LOGGER = Logger.getLogger(AggregationService.class);
+  private static Logger LOGGER = LogManager.getLogger(AggregationService.class);
 
   /**
    * Run all aggregations defined in imeji and then remove all messages

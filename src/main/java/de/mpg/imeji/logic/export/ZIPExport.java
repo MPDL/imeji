@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.export.util.ExportUtil;
@@ -24,7 +25,7 @@ import de.mpg.imeji.logic.model.User;
  * @version $Revision$ $LastChangedDate$
  */
 public class ZIPExport extends ExportAbstract {
-  private static final Logger LOGGER = Logger.getLogger(ZIPExport.class);
+  private static final Logger LOGGER = LogManager.getLogger(ZIPExport.class);
   private final List<String> itemIds;
 
   public ZIPExport(List<String> itemIds, User user) {

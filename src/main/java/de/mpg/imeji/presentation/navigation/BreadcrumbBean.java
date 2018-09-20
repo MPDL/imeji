@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -27,7 +28,7 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 @ViewScoped
 public class BreadcrumbBean extends SuperBean {
   private static final long serialVersionUID = -5061850823347395653L;
-  private static final Logger LOGGER = Logger.getLogger(BreadcrumbBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(BreadcrumbBean.class);
   private List<Entry> entries = new ArrayList<>();
   private HierarchyService hierarchyService = new HierarchyService();
 

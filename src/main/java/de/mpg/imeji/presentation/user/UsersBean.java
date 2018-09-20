@@ -9,7 +9,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
@@ -44,7 +45,7 @@ public class UsersBean extends SuperBean {
   private List<Invitation> invitations;
   private UserGroup group;
   private String query;
-  private static final Logger LOGGER = Logger.getLogger(UserBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserBean.class);
 
   /**
    * Initialize the bean

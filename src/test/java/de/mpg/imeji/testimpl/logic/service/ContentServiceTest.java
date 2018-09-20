@@ -5,7 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,7 +36,7 @@ import de.mpg.imeji.util.ImejiTestResources;
  *
  */
 public class ContentServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(ContentServiceTest.class);
+  private static final Logger LOGGER = LogManager.getLogger(ContentServiceTest.class);
 
   private static Item item;
   private static CollectionImeji collection;

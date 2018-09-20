@@ -17,7 +17,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -37,7 +38,7 @@ import de.mpg.imeji.logic.model.Person;
  *
  */
 public class DOIUtil {
-  private static final Logger LOGGER = Logger.getLogger(DOIUtil.class);
+  private static final Logger LOGGER = LogManager.getLogger(DOIUtil.class);
   private static final Client client = ClientBuilder.newClient();
 
   private DOIUtil() {

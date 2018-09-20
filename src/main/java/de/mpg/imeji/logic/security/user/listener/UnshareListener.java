@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -30,7 +31,7 @@ import de.mpg.imeji.logic.util.ObjectHelper;
  */
 public class UnshareListener extends Listener {
   private final UserService userService = new UserService();
-  private static final Logger LOGGER = Logger.getLogger(UnshareListener.class);
+  private static final Logger LOGGER = LogManager.getLogger(UnshareListener.class);
 
 
   public UnshareListener() {

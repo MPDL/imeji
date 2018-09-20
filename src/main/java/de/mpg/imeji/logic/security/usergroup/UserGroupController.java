@@ -4,7 +4,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -21,7 +22,7 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
  *
  */
 class UserGroupController {
-  private static final Logger LOGGER = Logger.getLogger(UserGroupController.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserGroupController.class);
   private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
   private static final WriterFacade WRITER =
       new WriterFacade(Imeji.userModel, SearchObjectTypes.USERGROUPS);

@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -26,7 +27,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  */
 public class ShareInput implements Serializable {
   private static final long serialVersionUID = 3979846119253696328L;
-  private static final Logger LOGGER = Logger.getLogger(ShareInput.class);
+  private static final Logger LOGGER = LogManager.getLogger(ShareInput.class);
   private String input = "";
   private ShareListItem menu;
   private List<String> validEmails = new ArrayList<>();

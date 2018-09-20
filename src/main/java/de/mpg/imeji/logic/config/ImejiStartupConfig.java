@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
 
@@ -22,7 +23,7 @@ public class ImejiStartupConfig {
     REINDEX;
   }
 
-  private static final Logger LOGGER = Logger.getLogger(ImejiStartupConfig.class);
+  private static final Logger LOGGER = LogManager.getLogger(ImejiStartupConfig.class);
   private static Properties config;
   private static File configFile;
 

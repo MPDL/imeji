@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.SearchFields;
@@ -26,7 +27,7 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  */
 public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
   private static final long serialVersionUID = -7823020782502007646L;
-  private static final Logger LOGGER = Logger.getLogger(SuperContainerBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(SuperContainerBean.class);
   protected String query = "";
   protected String filter = "";
   protected String selectedMenu;

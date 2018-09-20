@@ -7,7 +7,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.hp.hpl.jena.Jena;
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -33,7 +34,7 @@ import de.mpg.imeji.util.LocalizedString;
 public class Java2Jena {
   private final Model model;
   private final LiteralHelper literalHelper;
-  private static final Logger LOGGER = Logger.getLogger(Java2Jena.class);
+  private static final Logger LOGGER = LogManager.getLogger(Java2Jena.class);
   private boolean lazy = false;
 
   /**

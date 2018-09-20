@@ -9,7 +9,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -42,7 +43,7 @@ public class AdvancedSearchBean extends SuperBean {
    * red
    */
   private boolean errorQuery = false;
-  private static final Logger LOGGER = Logger.getLogger(AdvancedSearchBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(AdvancedSearchBean.class);
 
   @PostConstruct
   public void newSearch() {

@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
@@ -39,7 +40,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class JenaUtil {
-  private static final Logger LOGGER = Logger.getLogger(JenaUtil.class);
+  private static final Logger LOGGER = LogManager.getLogger(JenaUtil.class);
   public static User testUser;
   public static User testUser2;
   public static User adminTestUser;

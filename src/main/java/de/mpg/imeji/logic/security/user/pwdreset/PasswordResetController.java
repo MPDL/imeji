@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -17,7 +18,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.util.DateHelper;
 
 public class PasswordResetController {
-  private static final Logger LOGGER = Logger.getLogger(PasswordResetController.class);
+  private static final Logger LOGGER = LogManager.getLogger(PasswordResetController.class);
   private static final KeyValueStoreService tokenStore =
       new KeyValueStoreService(new HTreeMapStore("passwordResetStore"));
 

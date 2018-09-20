@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
@@ -27,7 +28,7 @@ import de.mpg.imeji.logic.search.model.SearchPair;
  */
 public class FileTypeSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
   private static final long serialVersionUID = 1439809243185106214L;
-  private static final Logger LOGGER = Logger.getLogger(FileTypeSearchGroup.class);
+  private static final Logger LOGGER = LogManager.getLogger(FileTypeSearchGroup.class);
   private List<String> selected = new ArrayList<>();
   private List<SelectItem> menu;
 

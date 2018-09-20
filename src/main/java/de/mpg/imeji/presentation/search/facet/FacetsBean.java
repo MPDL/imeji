@@ -10,7 +10,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.search.facet.FacetService;
@@ -22,7 +23,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class FacetsBean extends SuperBean {
   private static final long serialVersionUID = -2474393161093378625L;
-  private static final Logger LOGGER = Logger.getLogger(FacetsBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(FacetsBean.class);
   private List<Facet> facets = new ArrayList<>();
   private FacetService facetService = new FacetService();
 

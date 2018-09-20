@@ -6,7 +6,8 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
@@ -25,7 +26,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class TechnicalMetadataSearchGroup extends AbstractAdvancedSearchFormGroup
     implements Serializable {
-  private static final Logger LOGGER = Logger.getLogger(TechnicalMetadataSearchGroup.class);
+  private static final Logger LOGGER = LogManager.getLogger(TechnicalMetadataSearchGroup.class);
   private static final long serialVersionUID = -8685239131773216610L;
   private List<SelectItem> menu;
   private List<TechnicalMetadataElement> list = new ArrayList<>();

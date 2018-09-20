@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.content.ContentService;
@@ -24,7 +25,7 @@ import de.mpg.imeji.logic.util.StorageUtils;
  *
  */
 public class FileExport extends ExportAbstract {
-  private static final Logger LOGGER = Logger.getLogger(FileExport.class);
+  private static final Logger LOGGER = LogManager.getLogger(FileExport.class);
   private String fileUrl;
   private String collectionId;
 

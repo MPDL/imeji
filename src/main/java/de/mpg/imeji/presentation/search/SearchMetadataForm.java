@@ -9,7 +9,7 @@
 //
 // import javax.faces.model.SelectItem;
 //
-// import org.apache.log4j.Logger;
+// import org.apache.logging.log4j.Logger; 
 //
 // import de.mpg.imeji.exceptions.UnprocessableError;
 // import de.mpg.imeji.logic.config.Imeji;
@@ -33,7 +33,7 @@
 // public class SearchMetadataForm implements Serializable {
 //
 // private static final long serialVersionUID = 5066545429677597018L;
-// private static final Logger LOGGER = Logger.getLogger(SearchMetadataForm.class);
+// private static final Logger LOGGER = LogManager.getLogger(SearchMetadataForm.class);
 // private String searchValue;
 // private String familyName;
 // private String givenName;

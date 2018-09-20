@@ -4,7 +4,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Resource Bundle for imeji
@@ -15,7 +16,7 @@ import org.apache.log4j.Logger;
 public class ImejiResourceBundle {
   public static final String LABEL_BUNDLE = "labels";
   public static final String MESSAGES_BUNDLE = "messages";
-  private static final Logger LOGGER = Logger.getLogger(ImejiResourceBundle.class);
+  private static final Logger LOGGER = LogManager.getLogger(ImejiResourceBundle.class);
 
   /**
    * Returns the label according to the current user locale.

@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.reflections.Reflections;
 
 import de.mpg.imeji.logic.config.Imeji;
@@ -27,7 +28,7 @@ public class ListenerService {
    */
   private static Map<MessageType, List<Listener>> subscriptions = new HashMap<>();
   
-  private static Logger LOGGER = Logger.getLogger(ListenerService.class);
+  private static Logger LOGGER = LogManager.getLogger(ListenerService.class);
 
   /**
    * Initialize the {@link ListenerService} by registering all existing {@link Listener}

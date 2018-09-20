@@ -3,7 +3,8 @@ package de.mpg.imeji.presentation.search.advanced.group;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.model.SearchFields;
@@ -18,7 +19,7 @@ import de.mpg.imeji.logic.search.model.SearchPair;
  *
  */
 public class TextSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
-  private static final Logger LOGGER = Logger.getLogger(TextSearchGroup.class);
+  private static final Logger LOGGER = LogManager.getLogger(TextSearchGroup.class);
   private static final long serialVersionUID = -6588304080472017223L;
   private String query;
   private boolean includeFulltext = true;

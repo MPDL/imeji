@@ -8,7 +8,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -30,7 +31,7 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 public class FacetSelectorBean extends SuperBean {
   
   private static final long serialVersionUID = 4953953758406265116L;
-  private static final Logger LOGGER = Logger.getLogger(FacetSelectorBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(FacetSelectorBean.class);
   private List<FacetSelectorEntry> entries = new ArrayList<>();
   private SearchQuery facetQuery = new SearchQuery();
   private SearchFactory factory;

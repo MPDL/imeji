@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
@@ -28,7 +29,7 @@ import de.mpg.imeji.logic.util.TempFileUtil;
  * @version $Revision$ $LastChangedDate$
  */
 public class ImageMagickUtils {
-  private static final Logger LOGGER = Logger.getLogger(ImageMagickUtils.class);
+  private static final Logger LOGGER = LogManager.getLogger(ImageMagickUtils.class);
   public static final boolean imageMagickEnabled = verifyImageMagickInstallation();
   public static final boolean jpegtranEnabled = false;
 

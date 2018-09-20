@@ -7,7 +7,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -24,7 +25,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ManagedBean(name = "StartPageBean")
 @RequestScoped
 public class StartPageBean extends SuperBean implements Serializable {
-  private static final Logger LOGGER = Logger.getLogger(StartPageBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(StartPageBean.class);
   private static final long serialVersionUID = 5267521759370584976L;
 
   @PostConstruct

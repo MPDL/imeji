@@ -7,7 +7,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -26,7 +27,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class SearchBreadcrumbBean extends SuperBean {
   private static final long serialVersionUID = -5353804541950059766L;
-  private static final Logger LOGGER = Logger.getLogger(SearchBreadcrumbBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(SearchBreadcrumbBean.class);
   private SearchQuery facetQuery = new SearchQuery();
   private FacetService facetService = new FacetService();
   private List<SearchBreadcrumbEntry> entries = new ArrayList<>();

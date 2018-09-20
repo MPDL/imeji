@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -34,7 +35,7 @@ public class UserGroupService {
   private final UserGroupController controller = new UserGroupController();
   private final Search search =
       SearchFactory.create(SearchObjectTypes.USERGROUPS, SEARCH_IMPLEMENTATIONS.ELASTIC);
-  private static final Logger LOGGER = Logger.getLogger(UserGroupService.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserGroupService.class);
 
   /**
    * Create a {@link UserGroup}

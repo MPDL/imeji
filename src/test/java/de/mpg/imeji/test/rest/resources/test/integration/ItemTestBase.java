@@ -10,7 +10,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -32,7 +33,7 @@ import de.mpg.imeji.util.JenaUtil;
  */
 public class ItemTestBase extends ImejiTestBase {
 
-  private static final Logger LOGGER = Logger.getLogger(ItemTestBase.class);
+  private static final Logger LOGGER = LogManager.getLogger(ItemTestBase.class);
 
   public static Item item;
   private static final String TARGET_PATH_PREFIX = "/rest/items";

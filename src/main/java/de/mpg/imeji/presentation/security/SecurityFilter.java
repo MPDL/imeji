@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.ocpsoft.pretty.PrettyContext;
 
@@ -59,7 +60,7 @@ import de.mpg.imeji.presentation.util.ServletUtil;
 public class SecurityFilter implements Filter {
   private FilterConfig filterConfig = null;
   private final Pattern jsfPattern = Pattern.compile(".*\\/jsf\\/.*\\.xhtml");
-  private static final Logger LOGGER = Logger.getLogger(SecurityFilter.class);
+  private static final Logger LOGGER = LogManager.getLogger(SecurityFilter.class);
   private static final Navigation NAVIGATION = new Navigation();
   private static final JenaSearch JENA_SEARCH = new JenaSearch(null, null);
 

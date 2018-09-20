@@ -3,7 +3,7 @@ package de.mpg.imeji.logic.search.jenasearch;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.transaction.SPARQLUpdateTransaction;
@@ -38,7 +38,7 @@ public class ImejiSPARQL {
     try {
       transaction.throwException();
     } catch (final ImejiException e) {
-      Logger.getLogger(ImejiSPARQL.class).error("There has been some SPARQL issue", e);
+      LogManager.getLogger(ImejiSPARQL.class).error("There has been some SPARQL issue", e);
     }
     return results;
   }
@@ -58,7 +58,7 @@ public class ImejiSPARQL {
     try {
       transaction.throwException();
     } catch (final ImejiException e) {
-      Logger.getLogger(ImejiSPARQL.class).error("There has been execCount issue", e);
+      LogManager.getLogger(ImejiSPARQL.class).error("There has been execCount issue", e);
     }
     if (results.size() > 0) {
       return Integer.parseInt(results.get(0));

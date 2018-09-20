@@ -8,7 +8,8 @@ import javax.faces.application.FacesMessage.Severity;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
@@ -20,7 +21,7 @@ import de.mpg.imeji.logic.config.Imeji;
  *
  */
 public class BeanHelper {
-  private static final Logger LOGGER = Logger.getLogger(BeanHelper.class);
+  private static final Logger LOGGER = LogManager.getLogger(BeanHelper.class);
 
   /**
    * Private Constructor

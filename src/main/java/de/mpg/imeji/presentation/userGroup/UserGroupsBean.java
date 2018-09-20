@@ -10,7 +10,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
@@ -35,7 +36,7 @@ public class UserGroupsBean extends SuperBean {
   @ManagedProperty(value = "#{SessionBean.user}")
   private User sessionUser;
   private String query;
-  private static final Logger LOGGER = Logger.getLogger(UserGroupsBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserGroupsBean.class);
   private String backContainerUrl;
 
   @PostConstruct

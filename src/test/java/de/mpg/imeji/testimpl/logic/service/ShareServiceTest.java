@@ -1,6 +1,7 @@
 package de.mpg.imeji.testimpl.logic.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,7 +22,7 @@ import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
 
 public class ShareServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(ShareServiceTest.class);
+  private static final Logger LOGGER = LogManager.getLogger(ShareServiceTest.class);
 
   private static User defaultUser1;
   private static User defaultUser2;

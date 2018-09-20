@@ -7,7 +7,8 @@ import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.storage.transform.generator.icons.ImejiFileIcon;
@@ -36,7 +37,7 @@ public class TextFileIconGenerator extends ImageGenerator {
 		"application/vnd.openxmlformats-officedocument.presentationml.presentation",
   };
   
-  private static final Logger LOGGER = Logger.getLogger(RawFileImageGenerator.class);
+  private static final Logger LOGGER = LogManager.getLogger(RawFileImageGenerator.class);
   
   /**
    * Icons for files of type "text" are stored in a separate subfolder

@@ -13,7 +13,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.servlet.http.Cookie;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.hp.hpl.jena.sparql.pfunction.library.container;
 
@@ -49,7 +50,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
   private static final long serialVersionUID = -6501626930686020874L;
   private UserGroup userGroup = new UserGroup();
   private Collection<User> users;
-  private static final Logger LOGGER = Logger.getLogger(UserGroupsBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserGroupsBean.class);
   private List<ShareListItem> roles = new ArrayList<ShareListItem>();
   private boolean edit = false;
 

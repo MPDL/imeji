@@ -12,7 +12,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.ocpsoft.pretty.PrettyContext;
 
@@ -44,7 +45,7 @@ public class LoginBean extends SuperBean {
   @ManagedProperty(value = "#{SessionBean}")
   private SessionBean sessionBean;
   private String redirect = null;
-  private static final Logger LOGGER = Logger.getLogger(LoginBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(LoginBean.class);
   private String requestUrl;
 
   /**

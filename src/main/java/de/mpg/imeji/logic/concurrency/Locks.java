@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 public class Locks {
   // Lock on User Event
@@ -15,7 +16,7 @@ public class Locks {
   // Life time for a lock. After that limit, the lock is destroyed.
   private static final long LOCK_MAX_TIME = 900000;// 900s = 15min
   // private static final long LOCK_MAX_TIME = 60000;// 60s = 1min
-  private static final Logger LOGGER = Logger.getLogger(Locks.class);
+  private static final Logger LOGGER = LogManager.getLogger(Locks.class);
   private static boolean writeLock = false;
   private static boolean counterLock = false;
 

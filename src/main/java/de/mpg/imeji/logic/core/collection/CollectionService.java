@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -52,7 +53,7 @@ import de.mpg.imeji.logic.workflow.WorkflowValidator;
  * @version $Revision$ $LastChangedDate$
  */
 public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
-  private static final Logger LOGGER = Logger.getLogger(CollectionService.class);
+  private static final Logger LOGGER = LogManager.getLogger(CollectionService.class);
   private final Search search =
       SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.ELASTIC);
   private final CollectionController controller = new CollectionController();

@@ -6,7 +6,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.storage.StorageController;
@@ -19,7 +20,7 @@ import de.mpg.imeji.logic.storage.StorageController;
  */
 public class ZipUtil {
 
-  private static final Logger LOGGER = Logger.getLogger(ZipUtil.class);
+  private static final Logger LOGGER = LogManager.getLogger(ZipUtil.class);
 
   /**
    * Add a File to the ZipOutputStream

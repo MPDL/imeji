@@ -1,6 +1,7 @@
 package de.mpg.imeji.j2j.transaction;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
@@ -19,7 +20,7 @@ public abstract class Transaction {
   private final String modelURI;
   private boolean isException;
   private ImejiException exception;
-  private static final Logger LOGGER = Logger.getLogger(Transaction.class);
+  private static final Logger LOGGER = LogManager.getLogger(Transaction.class);
 
   /**
    * Construct a {@link Transaction} for one model defined by its uri

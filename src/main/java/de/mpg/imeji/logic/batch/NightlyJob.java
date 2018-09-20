@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.batch;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.batch.executors.NightlyExecutor;
 import de.mpg.imeji.logic.config.Imeji;
@@ -13,7 +14,7 @@ import de.mpg.imeji.logic.config.Imeji;
  *
  */
 public class NightlyJob implements Runnable {
-  private static final Logger LOGGER = Logger.getLogger(NightlyJob.class);
+  private static final Logger LOGGER = LogManager.getLogger(NightlyJob.class);
 
   @Override
   public void run() {

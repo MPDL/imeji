@@ -10,7 +10,7 @@
 //
 // import javax.faces.model.SelectItem;
 //
-// import org.apache.log4j.Logger;
+// import org.apache.logging.log4j.Logger; 
 //
 // import de.mpg.imeji.exceptions.ImejiException;
 // import de.mpg.imeji.exceptions.UnprocessableError;
@@ -35,7 +35,7 @@
 // */
 // public class SearchGroupForm implements Serializable {
 // private static final long serialVersionUID = -498245563765543283L;
-// private static final Logger LOGGER = Logger.getLogger(SearchGroupForm.class);
+// private static final Logger LOGGER = LogManager.getLogger(SearchGroupForm.class);
 // private List<SearchMetadataForm> elements;
 // private String collectionId;
 // private List<SelectItem> collectionsMenu;

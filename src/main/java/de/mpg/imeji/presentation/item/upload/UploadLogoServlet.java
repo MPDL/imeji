@@ -14,7 +14,8 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.TypeNotAllowedException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -31,7 +32,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @WebServlet("/uploadlogo/*")
 public class UploadLogoServlet extends HttpServlet {
   private static final long serialVersionUID = 8271914066699208201L;
-  private static final Logger LOGGER = Logger.getLogger(UploadLogoServlet.class);
+  private static final Logger LOGGER = LogManager.getLogger(UploadLogoServlet.class);
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)

@@ -11,7 +11,8 @@ import java.util.Calendar;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.storage.Storage;
@@ -24,7 +25,7 @@ import de.mpg.imeji.logic.storage.StorageController;
  *
  */
 public class StorageUsageAnalyseJob implements Callable<Integer> {
-  private static final Logger LOGGER = Logger.getLogger(StorageUsageAnalyseJob.class);
+  private static final Logger LOGGER = LogManager.getLogger(StorageUsageAnalyseJob.class);
 
   public enum StorageUsage {
     NUMBER_OF_FILES, STORAGE_USED, FREE_SPACE, LAST_UPDATE_DATE;

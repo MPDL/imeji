@@ -8,7 +8,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -34,7 +35,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ManagedBean(name = "StatementEditBean")
 public class StatementEditBean extends StatementCreateBean {
   private static final long serialVersionUID = 5191523522987113715L;
-  private static final Logger LOGGER = Logger.getLogger(StatementEditBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(StatementEditBean.class);
   private StatementService service = new StatementService();
   private boolean used = false;
   private Statement statement;

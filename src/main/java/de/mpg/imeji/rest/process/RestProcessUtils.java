@@ -15,7 +15,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -42,7 +43,7 @@ import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 
 public class RestProcessUtils {
 
-  private static final Logger LOGGER = Logger.getLogger(RestProcessUtils.class);
+  private static final Logger LOGGER = LogManager.getLogger(RestProcessUtils.class);
 
   /**
    * Parse a json file and construct a new Object of type T

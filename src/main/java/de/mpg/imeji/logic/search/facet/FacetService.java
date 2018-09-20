@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -36,7 +37,7 @@ public class FacetService extends SearchServiceAbstract<Facet> {
   private static List<Facet> cachedFacets = null;
   private static Map<String, Facet> cachedFacetsMapByIndex = new HashMap<>();
   private static Map<String, Facet> cachedFacetsMapByName = new HashMap<>();
-  private static final Logger LOGGER = Logger.getLogger(FacetService.class);
+  private static final Logger LOGGER = LogManager.getLogger(FacetService.class);
 
   public FacetService() {
     super(SearchObjectTypes.ALL);

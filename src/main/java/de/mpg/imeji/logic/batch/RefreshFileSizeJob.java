@@ -5,7 +5,8 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.content.ContentService;
@@ -25,7 +26,7 @@ import de.mpg.imeji.logic.storage.util.ImageUtils;
  *
  */
 public class RefreshFileSizeJob implements Callable<Integer> {
-  private static final Logger LOGGER = Logger.getLogger(RefreshFileSizeJob.class);
+  private static final Logger LOGGER = LogManager.getLogger(RefreshFileSizeJob.class);
 
   @Override
   public Integer call() throws ImejiException {

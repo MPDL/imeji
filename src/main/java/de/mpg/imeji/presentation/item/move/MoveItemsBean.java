@@ -14,7 +14,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -46,7 +47,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @ViewScoped
 public class MoveItemsBean extends SuperBean {
   private static final long serialVersionUID = 2230148128355260199L;
-  private static final Logger LOGGER = Logger.getLogger(MoveItemsBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(MoveItemsBean.class);
   private List<CollectionImeji> collectionsForMove = new ArrayList<>();
   private Tree tree;
   @ManagedProperty(value = "#{SessionBean}")

@@ -2,7 +2,8 @@ package de.mpg.imeji.logic.security.authentication.impl;
 
 import java.net.URI;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -27,7 +28,7 @@ import de.mpg.imeji.logic.security.user.UserService;
  *
  */
 public class APIKeyAuthentication implements Authentication {
-  private static final Logger LOGGER = Logger.getLogger(APIKeyAuthentication.class);
+  private static final Logger LOGGER = LogManager.getLogger(APIKeyAuthentication.class);
   private final String key;
 
   public APIKeyAuthentication(String key) {

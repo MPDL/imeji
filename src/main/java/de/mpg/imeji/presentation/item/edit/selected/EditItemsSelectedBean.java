@@ -15,7 +15,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -43,7 +44,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class EditItemsSelectedBean extends EditMetadataAbstract {
   private static final long serialVersionUID = -5474571536513587078L;
-  private static final Logger LOGGER = Logger.getLogger(EditItemsSelectedBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(EditItemsSelectedBean.class);
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItemsIds = new ArrayList<>();
   private List<HeaderComponent> headers = new ArrayList<>();

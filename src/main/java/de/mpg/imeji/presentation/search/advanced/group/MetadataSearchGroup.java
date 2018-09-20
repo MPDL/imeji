@@ -7,7 +7,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -25,7 +26,7 @@ import de.mpg.imeji.logic.search.model.SearchElement;
  */
 public class MetadataSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
   private static final long serialVersionUID = -3036463292453331294L;
-  private static final Logger LOGGER = Logger.getLogger(MetadataSearchGroup.class);
+  private static final Logger LOGGER = LogManager.getLogger(MetadataSearchGroup.class);
   private Map<String, Statement> statementMap;
   private List<Statement> statementList;
   private final List<MetadataSearchGroupEntry> entries;

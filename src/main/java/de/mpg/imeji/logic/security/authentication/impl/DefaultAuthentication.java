@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.security.authentication.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -19,7 +20,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public final class DefaultAuthentication implements Authentication {
-  private static final Logger LOGGER = Logger.getLogger(DefaultAuthentication.class);
+  private static final Logger LOGGER = LogManager.getLogger(DefaultAuthentication.class);
   private final String login;
   private final String pwd;
 

@@ -10,7 +10,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -41,7 +42,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class EditItemsBatchBean extends EditMetadataAbstract {
   private static final long serialVersionUID = -288843834798781232L;
-  private static final Logger LOGGER = Logger.getLogger(EditItemsBatchBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(EditItemsBatchBean.class);
   private String collectionId;
   private CollectionImeji collection;
   private String query;

@@ -7,7 +7,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -39,7 +40,7 @@ public class UserCreationBean extends SuperBean {
   private static final long serialVersionUID = 7704653755005606808L;
   private User user;
   private boolean sendEmail = false;
-  private static final Logger LOGGER = Logger.getLogger(UserCreationBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserCreationBean.class);
   private boolean allowedToCreateCollection = true;
   private QuotaUICompoment quota;
 
@@ -180,7 +181,7 @@ public class UserCreationBean extends SuperBean {
     try {
       redirect(getNavigation().getUserUrl() + "?email=\"" + UTF8(user.getEmail()) + "\"");
     } catch (final IOException e) {
-      Logger.getLogger(UserBean.class).info("Some reloadPage exception", e);
+      LogManager.getLogger(UserBean.class).info("Some reloadPage exception", e);
     }
   }
 

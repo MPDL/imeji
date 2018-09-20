@@ -10,7 +10,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -36,7 +37,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class ItemsEditLicenseBean extends SuperBean {
   private static final long serialVersionUID = 6463190740530976180L;
-  private static final Logger LOGGER = Logger.getLogger(ItemsEditLicenseBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(ItemsEditLicenseBean.class);
   @ManagedProperty(value = "#{SessionBean.selected}")
   private List<String> selectedItems;
   private boolean overwriteLicenses = false;

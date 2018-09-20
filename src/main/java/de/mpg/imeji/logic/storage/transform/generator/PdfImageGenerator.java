@@ -3,7 +3,8 @@ package de.mpg.imeji.logic.storage.transform.generator;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.storage.util.PdfUtils;
 import de.mpg.imeji.logic.util.StorageUtils;
@@ -16,7 +17,7 @@ import de.mpg.imeji.logic.util.StorageUtils;
  * @version $Revision$ $LastChangedDate$
  */
 public class PdfImageGenerator extends ImageGenerator {
-  private static final Logger LOGGER = Logger.getLogger(PdfImageGenerator.class);
+  private static final Logger LOGGER = LogManager.getLogger(PdfImageGenerator.class);
 
   /*
    * (non-Javadoc)

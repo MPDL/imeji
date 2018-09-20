@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -39,7 +40,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @WebServlet(urlPatterns = {"/file", "/file/*"}, asyncSupported = true)
 public class FileServlet extends HttpServlet {
   private static final long serialVersionUID = 5502546330318540997L;
-  private static final Logger LOGGER = Logger.getLogger(FileServlet.class);
+  private static final Logger LOGGER = LogManager.getLogger(FileServlet.class);
   private final StorageController storageController = new StorageController();
   private final ContentService contentController = new ContentService();
   private final ExternalStorage externalStorage = new ExternalStorage();

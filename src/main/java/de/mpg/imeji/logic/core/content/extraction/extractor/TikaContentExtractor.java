@@ -10,7 +10,8 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -25,7 +26,7 @@ import de.mpg.imeji.logic.model.TechnicalMetadata;
  *
  */
 public class TikaContentExtractor implements ContentExtractorInterface {
-  private static final Logger LOGGER = Logger.getLogger(TikaContentExtractor.class);
+  private static final Logger LOGGER = LogManager.getLogger(TikaContentExtractor.class);
   // Avoid too long technical metadata, to reduce performance issues
   private static final int METADATA_MAX_LENGHT = 250;
   // Limit the sire of the body parsed, too avoid heap space out of memory

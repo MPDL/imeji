@@ -3,7 +3,8 @@ package de.mpg.imeji.logic.batch;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -16,7 +17,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
  *
  */
 public class CleanContentVOsJob implements Callable<Integer> {
-  private static final Logger LOGGER = Logger.getLogger(CleanContentVOsJob.class);
+  private static final Logger LOGGER = LogManager.getLogger(CleanContentVOsJob.class);
 
   @Override
   public Integer call() throws Exception {

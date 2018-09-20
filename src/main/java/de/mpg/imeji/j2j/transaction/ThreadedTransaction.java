@@ -5,7 +5,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.hp.hpl.jena.Jena;
 import com.hp.hpl.jena.query.Dataset;
@@ -26,7 +27,7 @@ public class ThreadedTransaction implements Callable<Integer> {
   private static ExecutorService EXECUTOR = Executors.newCachedThreadPool();
   private final Transaction transaction;
   private final String tdbPath;
-  protected static Logger LOGGER = Logger.getLogger(ThreadedTransaction.class);
+  protected static Logger LOGGER = LogManager.getLogger(ThreadedTransaction.class);
 
   /**
    * Construct a new {@link ThreadedTransaction} for one {@link Transaction}

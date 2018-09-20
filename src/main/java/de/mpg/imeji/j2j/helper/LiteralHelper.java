@@ -2,7 +2,8 @@ package de.mpg.imeji.j2j.helper;
 
 import java.util.Calendar;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.hp.hpl.jena.datatypes.BaseDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
@@ -18,7 +19,7 @@ import com.hp.hpl.jena.rdf.model.Model;
  */
 public class LiteralHelper {
   private final Model model;
-  private static final Logger LOGGER = Logger.getLogger(LiteralHelper.class);
+  private static final Logger LOGGER = LogManager.getLogger(LiteralHelper.class);
 
   /**
    * Cosntructor for one model

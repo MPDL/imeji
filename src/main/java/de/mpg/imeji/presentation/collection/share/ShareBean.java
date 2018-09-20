@@ -8,7 +8,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.ocpsoft.pretty.PrettyContext;
 
@@ -35,7 +36,7 @@ import de.mpg.imeji.presentation.userGroup.UserGroupsBean;
 @ViewScoped
 public class ShareBean extends SuperBean implements Serializable {
   private static final long serialVersionUID = 8106762709528360926L;
-  private static final Logger LOGGER = Logger.getLogger(ShareBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(ShareBean.class);
   private String id;
   private URI uri;
   // The object (collection, album or item) which is going to be shared

@@ -3,7 +3,8 @@ package de.mpg.imeji.logic.search.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 /**
  * A search query composed of {@link SearchElement}
@@ -14,7 +15,7 @@ import org.apache.log4j.Logger;
  */
 public class SearchQuery extends SearchElement {
   private static final long serialVersionUID = 409836256942379675L;
-  private static final Logger LOGGER = Logger.getLogger(SearchQuery.class);
+  private static final Logger LOGGER = LogManager.getLogger(SearchQuery.class);
   /**
    * The elements of the {@link SearchQuery}
    */

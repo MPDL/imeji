@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.model.ImejiLicenses;
@@ -35,7 +36,7 @@ import de.mpg.imeji.util.DateHelper;
  */
 public class FacetSelectorEntry implements Serializable {
   private static final long serialVersionUID = -982329261816788783L;
-  private static final Logger LOGGER = Logger.getLogger(FacetSelectorEntry.class);
+  private static final Logger LOGGER = LogManager.getLogger(FacetSelectorEntry.class);
   private final Facet facet;
   private List<FacetSelectorEntryValue> values;
   private final SearchQuery facetsQuery;

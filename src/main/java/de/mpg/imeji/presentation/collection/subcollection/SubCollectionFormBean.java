@@ -6,7 +6,8 @@ import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
@@ -25,7 +26,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class SubCollectionFormBean extends SuperBean implements Serializable {
   private static final long serialVersionUID = 3542202393184509349L;
-  private static final Logger LOGGER = Logger.getLogger(SubCollectionFormBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(SubCollectionFormBean.class);
   private final CollectionService collectionService = new CollectionService();
   private String name;
   private CollectionImeji parent;

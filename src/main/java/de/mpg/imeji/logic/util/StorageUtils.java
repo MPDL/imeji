@@ -18,7 +18,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
@@ -35,7 +36,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
  * @version $Revision$ $LastChangedDate$
  */
 public class StorageUtils {
-  private static final Logger LOGGER = Logger.getLogger(StorageUtils.class);
+  private static final Logger LOGGER = LogManager.getLogger(StorageUtils.class);
   /**
    * The generic mime-type, when no mime-type is known
    */

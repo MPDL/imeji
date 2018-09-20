@@ -12,7 +12,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.batch.StorageUsageAnalyseJob;
 import de.mpg.imeji.logic.config.Imeji;
@@ -30,7 +31,7 @@ import de.mpg.imeji.logic.statistic.StatisticsService;
 @ManagedBean
 @ViewScoped
 public class StorageStatisticsBean {
-  private static final Logger LOGGER = Logger.getLogger(StorageStatisticsBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(StorageStatisticsBean.class);
   private List<Institute> institutes = new ArrayList<>();
   private String allFileSize;
   private String numberOfFilesInStorage;

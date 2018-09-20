@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.storage.Storage.FileResolution;
@@ -40,7 +41,7 @@ public final class ImageGeneratorManager {
 
   private final List<ImageGenerator> fullGenerators;
   
-  private static final Logger LOGGER = Logger.getLogger(ImageGeneratorManager.class);
+  private static final Logger LOGGER = LogManager.getLogger(ImageGeneratorManager.class);
 
   /**
    * Default constructor of {@link ImageGeneratorManager}

@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
@@ -24,7 +25,7 @@ import de.mpg.imeji.logic.security.usergroup.UserGroupService;
  *
  */
 public class CleanUserGroupsJob implements Callable<Integer> {
-  private static final Logger LOGGER = Logger.getLogger(CleanUserGroupsJob.class);
+  private static final Logger LOGGER = LogManager.getLogger(CleanUserGroupsJob.class);
 
   @Override
   public Integer call() {

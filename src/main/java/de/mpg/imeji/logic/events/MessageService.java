@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
@@ -23,7 +24,7 @@ import de.mpg.imeji.logic.events.messages.Message.MessageType;
 public class MessageService {
   private static final KeyValueStoreService QUEUE =
       new KeyValueStoreService(new HTreeMapStore("messageQueue"));
-  private static Logger LOGGER = Logger.getLogger(MessageService.class);
+  private static Logger LOGGER = LogManager.getLogger(MessageService.class);
   private final ListenerService subscriptionService = new ListenerService();
 
 

@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.jena.atlas.lib.AlarmClock;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.jose4j.lang.JoseException;
 
 import com.hp.hpl.jena.Jena;
@@ -58,7 +59,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  *
  */
 public class ImejiInitializer {
-  private static final Logger LOGGER = Logger.getLogger(ImejiInitializer.class);
+  private static final Logger LOGGER = LogManager.getLogger(ImejiInitializer.class);
   /**
    * Executes jobs over night
    */

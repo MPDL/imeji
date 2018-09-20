@@ -11,7 +11,8 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.content.ContentService;
@@ -38,7 +39,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
   private final InternalStorage storage = new InternalStorage();
   private final Search search =
       SearchFactory.create(SearchObjectTypes.ALL, SEARCH_IMPLEMENTATIONS.JENA);
-  private final static Logger LOGGER = Logger.getLogger(CleanInternalStorageJob.class);
+  private final static Logger LOGGER = LogManager.getLogger(CleanInternalStorageJob.class);
   private HashSet<String> storageIdSet;
 
   @Override

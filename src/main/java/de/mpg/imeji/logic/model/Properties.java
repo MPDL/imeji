@@ -8,7 +8,8 @@ import java.util.Calendar;
 
 import javax.xml.bind.annotation.XmlEnum;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
@@ -39,7 +40,7 @@ public class Properties implements Serializable {
   private URI status = URI.create(Status.PENDING.getUriString());
   @j2jLiteral(ImejiNamespaces.DISCARD_COMMENT)
   private String discardComment;
-  private static final Logger LOGGER = Logger.getLogger(Properties.class);
+  private static final Logger LOGGER = LogManager.getLogger(Properties.class);
 
   @XmlEnum(String.class)
   public enum Status {

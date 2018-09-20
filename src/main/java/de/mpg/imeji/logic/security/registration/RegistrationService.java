@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -30,7 +31,7 @@ import de.mpg.imeji.util.DateHelper;
  *
  */
 public class RegistrationService {
-  private static final Logger LOGGER = Logger.getLogger(RegistrationService.class);
+  private static final Logger LOGGER = LogManager.getLogger(RegistrationService.class);
   private static final KeyValueStoreService KEY_VALUE_STORE_BC =
       new KeyValueStoreService(new HTreeMapStore("registrationStore"));
 

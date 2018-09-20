@@ -5,7 +5,8 @@ import java.io.IOException;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -23,7 +24,7 @@ import de.mpg.imeji.logic.util.UrlHelper;
 public class CollectionItemBean extends ItemBean {
   private static final long serialVersionUID = -6273094031705225499L;
   private final String collectionId;
-  private static final Logger LOGGER = Logger.getLogger(CollectionItemBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(CollectionItemBean.class);
 
   public CollectionItemBean() {
     super();

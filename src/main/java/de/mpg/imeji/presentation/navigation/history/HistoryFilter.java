@@ -23,7 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.ocpsoft.pretty.PrettyContext;
 
@@ -45,7 +46,7 @@ import de.mpg.imeji.presentation.util.ServletUtil;
 
 public class HistoryFilter implements Filter {
   private FilterConfig filterConfig = null;
-  private static final Logger LOGGER = Logger.getLogger(HistoryFilter.class);
+  private static final Logger LOGGER = LogManager.getLogger(HistoryFilter.class);
   private static final Navigation navigation = new Navigation();
 
   @Override

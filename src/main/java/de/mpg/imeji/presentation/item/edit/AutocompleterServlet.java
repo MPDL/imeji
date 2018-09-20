@@ -20,7 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -47,7 +48,7 @@ import de.mpg.imeji.logic.util.StorageUtils;
     urlPatterns = {"/autocompleter"}, asyncSupported = true)
 public class AutocompleterServlet extends HttpServlet {
   private static final long serialVersionUID = -5503792080963195242L;
-  private static final Logger LOGGER = Logger.getLogger(AutocompleterServlet.class);
+  private static final Logger LOGGER = LogManager.getLogger(AutocompleterServlet.class);
   private final Pattern conePattern =
       Pattern.compile("http.*/cone/.*?format=json.*", Pattern.CASE_INSENSITIVE);
   private final Pattern coneAuthorPattern =

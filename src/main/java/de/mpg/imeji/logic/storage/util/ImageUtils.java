@@ -21,7 +21,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
@@ -37,7 +38,7 @@ import de.mpg.imeji.logic.util.TempFileUtil;
  * @version $Revision$ $LastChangedDate$
  */
 public final class ImageUtils {
-  private static final Logger LOGGER = Logger.getLogger(ImageUtils.class);
+  private static final Logger LOGGER = LogManager.getLogger(ImageUtils.class);
   /**
    * If true, the rescale will keep the better quality of the images
    */

@@ -15,7 +15,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -44,7 +45,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class SubscriptionBean extends SuperBean {
   private static final long serialVersionUID = 8885253104306297753L;
-  private static final Logger LOGGER = Logger.getLogger(SubscriptionBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(SubscriptionBean.class);
   private List<SubscriptionGroup> groups = new ArrayList<>();
   private final CollectionService collectionService = new CollectionService();
   private User user;

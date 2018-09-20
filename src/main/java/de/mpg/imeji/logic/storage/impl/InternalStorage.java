@@ -16,7 +16,8 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.UploadResult;
@@ -39,7 +40,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class InternalStorage implements Storage {
   private static final long serialVersionUID = 7865121663793602621L;
-  private static final Logger LOGGER = Logger.getLogger(InternalStorage.class);
+  private static final Logger LOGGER = LogManager.getLogger(InternalStorage.class);
   private static final String name = "internal";
   protected InternalStorageManager manager;
   private static final int MAX_RETRY = 1;

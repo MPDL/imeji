@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.storage.transform.generator.icons.ImejiFileIcon;
 import de.mpg.imeji.logic.util.StorageUtils;
@@ -19,7 +20,7 @@ import de.mpg.imeji.logic.util.TempFileUtil;
  * @version $Revision$ $LastChangedDate$
  */
 public class SimpleAudioImageGenerator extends ImageGenerator {
-  private static final Logger LOGGER = Logger.getLogger(SimpleAudioImageGenerator.class);
+  private static final Logger LOGGER = LogManager.getLogger(SimpleAudioImageGenerator.class);
 
   /*
    * (non-Javadoc)

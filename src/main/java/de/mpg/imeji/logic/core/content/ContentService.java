@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -48,7 +49,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class ContentService extends SearchServiceAbstract<ContentVO> implements Serializable {
   private static final long serialVersionUID = 6246549397756271848L;
-  private static final Logger LOGGER = Logger.getLogger(ContentService.class);
+  private static final Logger LOGGER = LogManager.getLogger(ContentService.class);
   private final ContentController controller = new ContentController();
   private final MessageService messageService = new MessageService();
 

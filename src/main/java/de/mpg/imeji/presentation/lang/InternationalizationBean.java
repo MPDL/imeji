@@ -12,7 +12,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.presentation.navigation.history.HistorySession;
@@ -30,7 +31,7 @@ import de.mpg.imeji.presentation.util.CookieUtils;
 @SessionScoped
 public class InternationalizationBean implements Serializable {
   private static final long serialVersionUID = -6750472078884009668L;
-  private static final Logger LOGGER = Logger.getLogger(InternationalizationBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(InternationalizationBean.class);
   private static final String lANGUAGE_COOKIE = "IMEJI_LANG";
   private static String[] SUPPORTED_LANGUAGES;
   private List<SelectItem> languages;

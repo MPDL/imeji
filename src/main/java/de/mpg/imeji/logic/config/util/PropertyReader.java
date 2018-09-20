@@ -9,7 +9,8 @@ import java.net.URL;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Utility class to read property files in Tomcat and JBoss application
@@ -23,7 +24,7 @@ public class PropertyReader {
   private static final String DEFAULT_PROPERTY_FILE = "imeji.properties";
   private static URL solution;
   private static String version = null;
-  private static final Logger LOGGER = Logger.getLogger(PropertyReader.class);
+  private static final Logger LOGGER = LogManager.getLogger(PropertyReader.class);
 
   /**
    * private constructor
@@ -57,7 +58,7 @@ public class PropertyReader {
     }
     // Get the property
     value = properties.getProperty(key);
-    // Logger.getLogger(PropertyReader.class).info("framework URL: "+value);
+    // LogManager.getLogger(PropertyReader.class).info("framework URL: "+value);
     return value;
   }
 
@@ -83,11 +84,11 @@ public class PropertyReader {
     try {
       solution = PropertyReader.class.getClassLoader().getResource("solution.properties");
     } catch (final Exception e) {
-      Logger.getLogger(PropertyReader.class)
+      LogManager.getLogger(PropertyReader.class)
           .warn("WARNING: solution.properties not found: " + e.getMessage());
     }
     if (solution != null) {
-      Logger.getLogger(PropertyReader.class).info("Solution URI is " + solution.toString());
+      LogManager.getLogger(PropertyReader.class).info("Solution URI is " + solution.toString());
       final InputStream in = getInputStream("solution.properties");
       solProperties.load(in);
       final String appname = solProperties.getProperty("appname");
@@ -96,7 +97,7 @@ public class PropertyReader {
     } else {
       // Use Default location of properties file
       propertiesFile = DEFAULT_PROPERTY_FILE;
-      Logger.getLogger(PropertyReader.class)
+      LogManager.getLogger(PropertyReader.class)
           .debug("solution.properties file not found. Trying default.");
     }
     final InputStream instream = getInputStream(propertiesFile);

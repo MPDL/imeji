@@ -7,7 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.config.Imeji;
@@ -33,7 +34,7 @@ import de.mpg.imeji.logic.model.UserGroup;
  */
 public class Authorization implements Serializable {
   private static final long serialVersionUID = -4745899890554497793L;
-  private static final Logger LOGGER = Logger.getLogger(Authorization.class);
+  private static final Logger LOGGER = LogManager.getLogger(Authorization.class);
   private HierarchyService hierarchyService = new HierarchyService();
 
   /**

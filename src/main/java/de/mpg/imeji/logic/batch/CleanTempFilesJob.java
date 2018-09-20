@@ -8,7 +8,8 @@ import java.util.concurrent.Callable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.util.TempFileUtil;
 
@@ -16,7 +17,7 @@ import de.mpg.imeji.logic.util.TempFileUtil;
  * f Remove all the remaining temps file created by imeji
  **/
 public class CleanTempFilesJob implements Callable<Integer> {
-  private static final Logger LOGGER = Logger.getLogger(CleanTempFilesJob.class);
+  private static final Logger LOGGER = LogManager.getLogger(CleanTempFilesJob.class);
   private static final String IMEJI_TEMP_FILE_REGEX = "imeji*";
 
   @Override

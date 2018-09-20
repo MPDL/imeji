@@ -6,7 +6,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
@@ -19,7 +20,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 public class EditFacetBean extends CreateFacetBean {
   private static final long serialVersionUID = 740835048734163748L;
-  private static final Logger LOGGER = Logger.getLogger(EditFacetBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(EditFacetBean.class);
   private Facet facet;
 
   @PostConstruct

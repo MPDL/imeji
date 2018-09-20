@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
@@ -28,7 +29,7 @@ import de.mpg.imeji.logic.security.user.UserService;
  */
 public class QuotaUtil {
   private static final int BYTES_PER_GB = 1073741824;
-  private static final Logger LOGGER = Logger.getLogger(QuotaUtil.class);
+  private static final Logger LOGGER = LogManager.getLogger(QuotaUtil.class);
 
   private QuotaUtil() {
     // private constructor

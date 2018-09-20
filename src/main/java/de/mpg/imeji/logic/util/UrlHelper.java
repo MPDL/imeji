@@ -11,7 +11,8 @@ import java.net.URLEncoder;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.validator.routines.UrlValidator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Some Method to read URLs
@@ -22,7 +23,7 @@ import org.apache.log4j.Logger;
  */
 public class UrlHelper {
 
-  private static final Logger LOGGER = Logger.getLogger(UrlHelper.class);
+  private static final Logger LOGGER = LogManager.getLogger(UrlHelper.class);
 
   /**
    * Private Constructor

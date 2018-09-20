@@ -2,7 +2,8 @@ package de.mpg.imeji.testimpl.logic.service;
 
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,7 +25,7 @@ import de.mpg.imeji.test.logic.service.SuperServiceTest;
 import de.mpg.imeji.util.ImejiTestResources;
 
 public class StatementServiceTest extends SuperServiceTest {
-  private static final Logger LOGGER = Logger.getLogger(SuperServiceTest.class);
+  private static final Logger LOGGER = LogManager.getLogger(SuperServiceTest.class);
 
   private static User defaultUser;
   private static User sysadmin;

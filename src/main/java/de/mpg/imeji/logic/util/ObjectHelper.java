@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
@@ -24,7 +25,7 @@ import de.mpg.imeji.j2j.annotations.j2jResource;
  */
 public class ObjectHelper {
 
-  private static final Logger LOGGER = Logger.getLogger(ObjectHelper.class);
+  private static final Logger LOGGER = LogManager.getLogger(ObjectHelper.class);
   public static String baseUri;
 
   public enum ObjectType {

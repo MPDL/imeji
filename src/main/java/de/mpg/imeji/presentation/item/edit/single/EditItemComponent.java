@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.Item;
@@ -32,7 +33,7 @@ import de.mpg.imeji.presentation.item.license.LicenseEditor;
  */
 public class EditItemComponent extends EditMetadataAbstract {
   private static final long serialVersionUID = 4116466458089234630L;
-  private static final Logger LOGGER = Logger.getLogger(EditItemComponent.class);
+  private static final Logger LOGGER = LogManager.getLogger(EditItemComponent.class);
   private List<EditItemEntry> entries = new ArrayList<>();
   private Item item;
   private String filename;
@@ -59,9 +60,14 @@ public class EditItemComponent extends EditMetadataAbstract {
     addMetadata();
   }
 
+ 
+  /**
+   * @return a list with only one item, the one that was edited
+   */
   @Override
   public List<Item> toItemList() {
     item.setFilename(filename);
+    // append the metadata entries from GUI to the item object
     item.setMetadata(entries.stream().map(EditItemEntry::getInput).filter(in -> in != null)
         .map(MetadataInputComponent::getMetadata).collect(toList()));
     List<License> licenses = new ArrayList<>(item.getLicenses());
@@ -90,12 +96,33 @@ public class EditItemComponent extends EditMetadataAbstract {
   /**
    * Remove a metadata
    *
-   * @param index
+   * @param index of the metadata in the list
    */
   public void removeMetadata(int index) {
     entries.remove(index);
   }
 
+  /**
+   * Enables sorting meta data elements via drag&drop in GUI
+   * 
+   * @param sourceIndex index in list of the source element that got dragged
+   * @param targetIndex index in list of the element on which the source element got dropped
+   *                    source element gets added behind the element on which it was dropped 
+   */
+  public void changeSortOderOfMetadata(int sourceIndex, int targetIndex) {
+	  
+	  // we add +1 to the target index 
+	  // goal: insert the dragged element behind the element it was dropped on 
+	  targetIndex = targetIndex +1;
+	  
+	  if(targetIndex > 0 && targetIndex <= entries.size() &&
+			  sourceIndex >= 0  && sourceIndex < entries.size()) {
+		  EditItemEntry draggedEntry = entries.remove(sourceIndex);
+		  entries.add(targetIndex, draggedEntry);		  
+	  }
+  }
+  
+  
   /**
    * @return the rows
    */

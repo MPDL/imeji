@@ -3,7 +3,8 @@ package de.mpg.imeji.testimpl.logic.businesscontroller;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ import de.mpg.imeji.test.logic.service.SuperServiceTest;
 public class RegistrationBusinessControllerTest extends SuperServiceTest {
 
   private RegistrationService registrationBC = new RegistrationService();
-  private static final Logger LOGGER = Logger.getLogger(RegistrationBusinessControllerTest.class);
+  private static final Logger LOGGER = LogManager.getLogger(RegistrationBusinessControllerTest.class);
   private Grant defaultImejiGrant =
       new Grant(GrantType.EDIT, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
 

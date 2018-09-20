@@ -7,7 +7,8 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Utility Class for specific method for the Max Planck Institute
@@ -16,7 +17,7 @@ import org.apache.log4j.Logger;
  *
  */
 public class MaxPlanckInstitutUtils {
-  private static final Logger LOGGER = Logger.getLogger(MaxPlanckInstitutUtils.class);
+  private static final Logger LOGGER = LogManager.getLogger(MaxPlanckInstitutUtils.class);
 
   /**
    * URL of the file with IP range information for all MPIs

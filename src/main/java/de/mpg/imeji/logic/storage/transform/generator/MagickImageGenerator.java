@@ -2,7 +2,8 @@ package de.mpg.imeji.logic.storage.transform.generator;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
@@ -17,7 +18,7 @@ import de.mpg.imeji.logic.util.StorageUtils;
  */
 public class MagickImageGenerator extends ImageGenerator {
   private boolean imageMagickEnabled = false;
-  private static final Logger LOGGER = Logger.getLogger(MagickImageGenerator.class);
+  private static final Logger LOGGER = LogManager.getLogger(MagickImageGenerator.class);
 
   /**
    * Default constructor

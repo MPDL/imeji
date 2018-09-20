@@ -18,7 +18,8 @@ import java.net.URI;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.util.PropertyReader;
@@ -53,7 +54,7 @@ public class InternalStorageManager implements Serializable {
    * The {@link InternalStorageAdministrator}
    */
   private InternalStorageAdministrator administrator;
-  private static final Logger LOGGER = Logger.getLogger(InternalStorageManager.class);
+  private static final Logger LOGGER = LogManager.getLogger(InternalStorageManager.class);
 
   /**
    * Constructor for a specific path and url

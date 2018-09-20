@@ -8,7 +8,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
@@ -23,7 +24,7 @@ import de.mpg.imeji.logic.search.model.SearchQuery;
 @ViewScoped
 public class UserFilterMenuBean extends SuperFilterMenuBean {
   private static final long serialVersionUID = -3783528849872530224L;
-  private static final Logger LOGGER = Logger.getLogger(UserFilterMenuBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(UserFilterMenuBean.class);
 
   public UserFilterMenuBean() throws UnprocessableError {
     super();

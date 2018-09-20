@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -42,7 +43,7 @@ import de.mpg.imeji.logic.util.StringHelper;
  *
  */
 public class SubscriptionsAggregation implements Aggregation {
-  private static final Logger LOGGER = Logger.getLogger(SubscriptionsAggregation.class);
+  private static final Logger LOGGER = LogManager.getLogger(SubscriptionsAggregation.class);
   public final static String COUNT = "count";
   public final static String ITEM_ID = "itemId";
   public final static String FILENAME = "filename";

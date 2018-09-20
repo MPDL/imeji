@@ -5,7 +5,8 @@ import java.io.IOException;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.statement.StatementService;
@@ -17,7 +18,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 public class StatementCreateBean extends SuperBean {
   private static final long serialVersionUID = 3080933791853851564L;
   private StatementForm statementForm = new StatementForm();
-  private static final Logger LOGGER = Logger.getLogger(StatementCreateBean.class);
+  private static final Logger LOGGER = LogManager.getLogger(StatementCreateBean.class);
 
   /**
    * Create a new statement
