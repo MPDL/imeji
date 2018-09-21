@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.httpclient.HttpClient;
@@ -45,6 +46,8 @@ public class StorageUtils {
   private static Tika tika = new Tika();
   public static final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
 
+  private static final int MAX_LENGTH_FILE_EXTENSION = 20;
+  private static final String EXPECTED_FILE_EXTENSION_REGEX = "[a-zA-Z\\d]{1," + MAX_LENGTH_FILE_EXTENSION +"}?"; 
 
   /**
    * Transform an {@link InputStream} to a {@link Byte} array
@@ -192,7 +195,7 @@ public class StorageUtils {
 	  String extension = FilenameUtils.getExtension(filename);
 
 	  // filename does not contain an extension -> try to infer one
-	  if(extension.isEmpty()) {
+	  if(extension.isEmpty() || !Pattern.matches(EXPECTED_FILE_EXTENSION_REGEX, extension)) {
 		  extension =  guessExtension(file);
 	  }
 	
@@ -212,8 +215,8 @@ public class StorageUtils {
 	   String extension = "";
 	   if(filename != null) {
 		   extension = FilenameUtils.getExtension(filename);
-		   if(extension == null || extension.isEmpty()) {
-			   extension =  new String (" ");
+		   if(extension == null || extension.isEmpty() || !Pattern.matches(EXPECTED_FILE_EXTENSION_REGEX, extension)) {
+			   extension =  new String(" ");
 		   }
 	   }
 	   return extension;
