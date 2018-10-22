@@ -10,14 +10,16 @@
 	</composite:interface>
 	
 	<composite:implementation>
-		<ui:fragment rendered="#{SessionBean.user != null}">
-			<ui:fragment rendered="#{cc.attrs.imejiResource.status == 'RELEASED'}">
-				<span class="fa fa-globe" title="#{lbl.published}"/>
+		<span style="text-align:center">
+			<ui:fragment rendered="#{SessionBean.user != null}">
+				<ui:fragment rendered="#{cc.attrs.imejiResource.status == 'RELEASED'}">
+					<span class="fa fa-globe" style="display:inline-block; vertical-align:middle;" title="#{lbl.published}"/>
+				</ui:fragment>
+				<ui:fragment rendered="#{cc.attrs.imejiResource.status != 'RELEASED'}">
+					#{cc.init(cc.attrs.imejiResource, SessionBean.user, InternationalizationBean.locale, Navigation.applicationUrl)}
+					<span class="fa #{(!empty cc.users or !empty cc.groups)? 'fa-users' : 'fa-user'}" title="#{(!empty cc.users or !empty cc.groups)?   cc.sharedWithToString : lbl.private_collection}"/>
+				</ui:fragment>
 			</ui:fragment>
-			<ui:fragment rendered="#{cc.attrs.imejiResource.status != 'RELEASED'}">
-				#{cc.init(cc.attrs.imejiResource, SessionBean.user, InternationalizationBean.locale, Navigation.applicationUrl)}
-				<span class="fa #{(!empty cc.users or !empty cc.groups)? 'fa-users' : 'fa-user'}" title="#{(!empty cc.users or !empty cc.groups)?   cc.sharedWithToString : lbl.private_collection}"/>
-			</ui:fragment>
-		</ui:fragment>
+		</span>
 	</composite:implementation>
 </html>
