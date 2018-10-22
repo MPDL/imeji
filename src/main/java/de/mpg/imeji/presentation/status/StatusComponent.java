@@ -81,6 +81,7 @@ public class StatusComponent extends UINamingContainer {
     }
   }
 
+  
   /**
    * Initialize the AbstractBean
    */
@@ -91,14 +92,14 @@ public class StatusComponent extends UINamingContainer {
       status = properties.getStatus();
       // find out if this item is shared with this user
       sharedWithUser = SecurityUtil.authorization().isShared(sessionUser, parentCollection);
-      if (isSharedWithUser()) {
+      if (isSharedWithUser() || SecurityUtil.authorization().isSysAdmin(sessionUser)) {
         users = getUserSharedWith(parentCollection);
         groups = getGroupSharedWith(parentCollection);
+        // show a link to manage the access to this item (share page) if
+        // - the user is the owner of the collection
+        // - the user is system administrator
+        allowedToManage = SecurityUtil.authorization().administrate(sessionUser, parentCollection);
       }
-      // show a link to manage the access to this item (share page) if
-      // - the user is the owner of the collection
-      // - the user is system administrator
-      allowedToManage = SecurityUtil.authorization().administrate(sessionUser, parentCollection);
       linkToSharePage = initLinkToSharePage(parentCollection.getId());
       show = true;
     }
