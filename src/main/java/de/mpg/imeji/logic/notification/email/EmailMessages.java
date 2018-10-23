@@ -180,7 +180,7 @@ public class EmailMessages {
   public static String getSharedCollectionMessage(String sender, String dest, String collectionName,
       String collectionLink, Locale locale) {
     String message = getContent("email_shared_collection", TextType.MESSAGE, locale);
-    message = message.replace("XXX_USER_NAME_XXX,", dest).replace("XXX_NAME_XXX", collectionName)
+    message = message.replace("XXX_USER_NAME_XXX", dest).replace("XXX_NAME_XXX", collectionName)
         .replace("XXX_LINK_XXX", collectionLink).replace("XXX_SENDER_NAME_XXX", sender);
     return message;
   }
@@ -212,7 +212,7 @@ public class EmailMessages {
       String linkToSetPassword) {
     return getContent("email_new_user", TextType.MESSAGE, locale)
         .replaceAll("XXX_INSTANCE_NAME_XXX", Imeji.CONFIG.getInstanceName())
-        .replaceAll("XXX_USER_NAME_XXX,", userName)
+        .replaceAll("XXX_USER_NAME_XXX", userName)
         .replaceAll("XXX_SET_PASSWORD_LINK_XXX", linkToSetPassword);
   }
 
@@ -367,7 +367,7 @@ public class EmailMessages {
   public static String getUnshareMessage(String sender, String dest, String title,
       String collectionLink, Locale locale) {
     String message = getContent("email_unshared_object", TextType.MESSAGE, locale);
-    message = message.replace("XXX_USER_NAME_XXX,", dest).replace("XXX_NAME_XXX", title)
+    message = message.replace("XXX_USER_NAME_XXX", dest).replace("XXX_NAME_XXX", title)
         .replace("XXX_LINK_XXX", collectionLink).replace("XXX_SENDER_NAME_XXX", sender);
     return message;
   }
