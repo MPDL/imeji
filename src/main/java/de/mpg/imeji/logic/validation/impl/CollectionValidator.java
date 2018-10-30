@@ -2,6 +2,7 @@ package de.mpg.imeji.logic.validation.impl;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +24,6 @@ import de.mpg.imeji.logic.util.StringHelper;
 public class CollectionValidator extends ObjectValidator implements Validator<CollectionImeji> {
 
   private UnprocessableError exception = new UnprocessableError();
-  private static final Pattern DOI_VALIDATION_PATTERN = Pattern.compile("10\\.\\d+\\/\\S+");
 
   @Override
   public void validate(CollectionImeji collection, Method m) throws UnprocessableError {
@@ -114,16 +114,64 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
   }
 
   /**
-   * Valid a DOI according to predefined pattern. If not valid, add a message to the exception
+   * Validate a DOI number
+   * 
+   * If DOI is not valid create an exception
    *
    * @param doi
    */
   private void validateDOI(String doi) {
-    if (!isNullOrEmpty(doi) && !DOI_VALIDATION_PATTERN.matcher(doi).find()) {
-      exception = new UnprocessableError("error_doi_creation_error_doi_format", exception);
+	  	
+	if (!validateDOIComplyWithHandbook(doi)) {
+      this.exception = new UnprocessableError("error_doi_creation_error_doi_format", exception);
     }
 
   }
+  
+  /**
+   * Validate a DOI number
+   * Validation is based on the DOI Handbook, Chapter 2: Numbering 
+   * @see https://www.doi.org/doi_handbook/2_Numbering.html
+   * 
+   * @param doi
+   * @return number is valid or not
+   */
+  private boolean validateDOIComplyWithHandbook(String doi) {
+	 
+	// Check:
+	// (0) Are all characters UTF-8 coded?
+	// (1) Do we have a prefix and a suffix, separated by '/'
+	//     Separation character is the first encounter of '/' 	  
+	// (2) Does the prefix start with '10.x'
+	// (3) If the prefix contains further '.'s do we have some other character preceding and following it 	  
+	if(isNullOrEmpty(doi)) {
+		 return false;} 
+ 
+	// general: '10.' then at least one character of any kind then '/' then at least one character of any kind
+	String  matchDOIGeneral = "10\\..+\\/.+";		
+	// prefix: a dot is followed by at least one other character that is not a dot. The first and last character are not a dot.   
+	String matchDOIPrefixPointWithFollower = "([^\\.]+[\\.])*[^\\.]+";
+	
+	try 
+	{
+		byte[] myBytes = doi.getBytes("UTF-8");
+	} 
+	catch (UnsupportedEncodingException e)
+	{
+		return false;
+	}
+	
+	if(! Pattern.matches(matchDOIGeneral, doi)) {
+		return false;}
+	String[] prefixPostfix = doi.split("/");
+	String prefix = prefixPostfix[0];
+	if(! Pattern.matches(matchDOIPrefixPointWithFollower, prefix)) {
+		return false;}
+	
+    return true;	  
+  }
+  
+  
 
   private void setException(UnprocessableError e) {
     this.exception = e;

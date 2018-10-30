@@ -26,7 +26,7 @@ import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.util.UrlHelper;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -74,7 +74,7 @@ public class CollectionActionMenu implements Serializable {
   }
 
   /**
-   * Search the number of items wihout any license
+   * Search the number of items without any license
    */
   public void searchItemsWihoutLicense() {
     final ItemService controller = new ItemService();
@@ -95,27 +95,87 @@ public class CollectionActionMenu implements Serializable {
     return "";
   }
 
-  public String createDOI() {
-    try {
-      final String doi = UrlHelper.getParameterValue("doi");
-      final DoiService doiService = new DoiService();
-      if (doi != null) {
-        doiService.addDoiToCollection(doi, collection, user);
-      } else {
-        doiService.addDoiToCollection(collection, user);
-      }
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_doi_creation", locale));
-    } catch (final UnprocessableError e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
-      LOGGER.error("Error during doi creation", e);
-    } catch (final ImejiException e) {
-      BeanHelper.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " + e.getMessage());
-      LOGGER.error("Error during doi creation", e);
-    }
+  /**
+   * Add a DOI to a collection
+   * Method is called from JSF
+   * 
+   * @param newDOI
+   * @return next URL to navigate to
+   */
+  public String createDOI(String newDOI) {
+    
+	if (newDOI != null) {
+		addProvidedDOI(newDOI);
+	}
+	else {
+		addMPDLDoi();
+	}	
     return "pretty:";
   }
 
+  /**
+   * Add a provided DOI to a collection
+   * 
+   * @param newDOI
+   */
+  private void addProvidedDOI(String newDOI) {
+	  	  
+	  if (StringHelper.isNullOrEmptyTrim(newDOI)) {
+		  BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation_error_doi_emtpy", locale));
+	      LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation_error_doi_emtpy", locale));
+	      return;
+	  }
+	  final DoiService doiService = new DoiService();
+	  // copy current collection's DOI in order to restore it in case of exceptions
+	  String currentDOI = this.collection.getDoi();
+	  try {  
+		  collection.setDoi(newDOI);
+		  doiService.addProvidedDoiToCollection(collection, user);
+		  BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_doi_creation", locale));
+	  }
+	  catch (final ImejiException imejiException) {
+		  // restore
+		  collection.setDoi(currentDOI);
+		  
+		  if(imejiException instanceof UnprocessableError) {
+			  BeanHelper.error(
+			          Imeji.RESOURCE_BUNDLE.getMessage(imejiException.getMessage(), locale));
+			  LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(imejiException.getMessage(), locale));
+		  }
+		  else {
+		      BeanHelper.error(
+			          Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale));
+			  LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " +  imejiException.getMessage());
+		  }
+		  
+	  }
+
+  }
+  
+  /**
+   * Add a DOI from MPDL DOI Service to a collection
+   */
+  private void addMPDLDoi() {
+	  
+	  try {     	    
+		  final DoiService doiService = new DoiService();
+	      doiService.addMPDLDoiToCollection(collection, user);
+	      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_doi_creation", locale));
+	    }
+	    catch (final UnprocessableError e) {	      
+	      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
+	      LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
+	    }
+	    catch (final ImejiException e) {
+	      BeanHelper.error(
+	          Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale));
+	      LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " +  e.getMessage());
+	    }	  
+  }
+  
+  
+  
+  
   /**
    * Delete the {@link CollectionImeji}
    *

@@ -162,6 +162,31 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
 
+  /**
+   * Get the DOI of the collection
+   * Called from JSF
+   * 
+   * @return
+   */
+  public String getCollectionDoi() {
+	  if(this.collection != null) {
+		  return this.collection.getDoi();
+	  }
+	  return "";
+  }
+  
+  /**
+   * Set the DOI of the collection
+   * Called from JSF
+   * 
+   * @param doi
+   */
+  public void setCollectionDoi(String doi) {
+	  if(this.actionMenu != null) {
+		  this.actionMenu.createDOI(doi);
+	  }	  
+  }
+  
   @Override
   public String getType() {
     return PAGINATOR_TYPE.COLLECTION_ITEMS.name();
