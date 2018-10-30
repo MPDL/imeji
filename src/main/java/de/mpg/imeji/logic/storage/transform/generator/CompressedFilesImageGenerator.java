@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.storage.transform.generator;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.File;
+import java.awt.Font;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -31,7 +32,6 @@ public class CompressedFilesImageGenerator extends AbstractWritableImageGenerato
 	private static final String[] archivedMimeTypes = {"application/x-tar", "application/x-shar"};
     private static final String[] compressedMimeTypes = {"application/x-compress", "application/gzip", "application/x-lzip", "application/x-xz",
     													"application/x-lzma", "application/x-snappy-framed", "application/x-lzop", "application/x-bzip2"};
-    								// 
 	
 	private static final String[] archivedCompressedMimeTypes = {"application/zip", "application/x-gtar", 
 								"application/x-ustar", "application/x-7z-compressed" , 
@@ -42,12 +42,10 @@ public class CompressedFilesImageGenerator extends AbstractWritableImageGenerato
 	/**
 	 * Constructor
 	 */
-	public CompressedFilesImageGenerator() {
-		super("compressed_file_icon", new Point(630, 700), 100, Color.WHITE, 6);
+	public CompressedFilesImageGenerator() {		
+		super("compressed_file_icon", new Point(430, 570), new Font("Arial", Font.PLAIN, 130), Color.WHITE, 3);
 	}
-	
-	
-	
+		
 	@Override
 	protected boolean generatorSupportsMimeType(String fileExtension) {
 		String fileMimeType = StorageUtils.getMimeType(fileExtension);

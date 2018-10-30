@@ -19,6 +19,7 @@ import de.mpg.imeji.logic.batch.CleanInternalStorageJob;
 import de.mpg.imeji.logic.batch.CleanTempFilesJob;
 import de.mpg.imeji.logic.batch.ElasticReIndexJob;
 import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
+import de.mpg.imeji.logic.batch.ReGenerateFullWebThumbnailJob;
 import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
 import de.mpg.imeji.logic.batch.ResizeWebAndThumbnailJob;
 import de.mpg.imeji.logic.config.Imeji;
@@ -167,6 +168,12 @@ public class AdminBean extends SuperBean {
     Imeji.getEXECUTOR().submit(job);
   }
 
+  public void reGenerateFullWebThumbnailImages() {
+	ReGenerateFullWebThumbnailJob job = new ReGenerateFullWebThumbnailJob();
+	Imeji.getEXECUTOR().submit(job);
+  }
+  
+  
   public void aggregateMessages() {
     Imeji.getEXECUTOR().submit(new AggregateMessages());
   }

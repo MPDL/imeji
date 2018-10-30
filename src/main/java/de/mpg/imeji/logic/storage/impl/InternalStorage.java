@@ -336,9 +336,30 @@ public class InternalStorage implements Storage {
     manager.recalculateThumbnailAndPreview(item);
   }
 
+  
+  @Override
+  public void reGenerateFullWebThumbnailImages(String urlOfBaseFile) throws IOException, Exception {
+  	
+	 final InternalStorageItem item = new InternalStorageItem();
+	 item.setOriginalUrl(urlOfBaseFile);
+	 item.setFullUrl(getFullResolutionUrl(urlOfBaseFile));
+	 item.setWebUrl(getWebResolutionUrl(urlOfBaseFile));
+	 item.setThumbnailUrl(getThumbnailUrl(urlOfBaseFile));
+	 // get file
+	 File baseFile = this.read(urlOfBaseFile);
+	 // delete existing full, web, thumbnail previews
+
+	 // create new full, web, thumbnail previews
+	 manager.regenerateThumbnailPreviewAndFull(item, baseFile);
+  	
+  }
+  
+  
   @Override
   public double getContentLenght(String url) {
     final File f = new File(manager.transformUrlToPath(url));
     return f.length();
   }
+
+
 }

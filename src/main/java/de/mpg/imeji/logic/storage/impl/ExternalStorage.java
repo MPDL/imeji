@@ -173,6 +173,11 @@ public class ExternalStorage implements Storage {
     // TODO Auto-generated method stub
 
   }
+  
+  @Override
+  public void reGenerateFullWebThumbnailImages(String urlOfBaseFile) throws IOException, Exception {
+  	// TODO Auto-generated method stub  	
+  }
 
   @Override
   public Dimension getImageDimension(String url) throws IOException {
@@ -190,4 +195,6 @@ public class ExternalStorage implements Storage {
       throws ImejiException {
     read(url, out, close);
   }
+
+
 }

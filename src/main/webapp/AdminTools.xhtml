@@ -104,9 +104,17 @@
 										<h:commandLink styleClass="imj_submitButton" action="#{AdminBean.recalculateWebAndThumbnail}" value="#{lbl.recalculate}"/>
 									</h:panelGroup>	
 								</h:form>
+								<h:outputText value="#{lbl.admin_regenerate_full_web_thumbnail}"/>							
+								<h:form>
+									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
+										<h:commandLink styleClass="imj_submitButton" action="#{AdminBean.reGenerateFullWebThumbnailImages}" value="#{lbl.regenerate}"/>
+									</h:panelGroup>	
+								</h:form>
+								
 							</div>
-
-							<!-- Admin - reindex -->
+							
+						
+						<!-- Admin - reindex -->
 							<div class="imj_headline">
 								<h2>
 									<h:outputText value="#{lbl.search}" />

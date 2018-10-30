@@ -212,6 +212,10 @@ public final class StorageController implements Serializable {
   public void recalculateWebAndThumbnail(String orginalUrl) throws IOException, Exception {
     storage.generateWebAndThumbnail(orginalUrl);
   }
+  
+  public void reGenerateFullWebThumbnailImages(String urlOfBaseFile) throws IOException, Exception {
+	 this.storage.reGenerateFullWebThumbnailImages(urlOfBaseFile);
+  }
 
   /**
    * True if the file format related to the passed extension can be download

@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.storage.transform.generator;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,8 @@ public class RawFileImageGenerator extends AbstractWritableImageGenerator {
 
   
   public RawFileImageGenerator() {
-	  super("file-icon", new Point(630, 700), 150, Color.WHITE, 3);
+	 	  
+	  super("file-icon", new Point(630, 700), new Font("Serif", Font.BOLD, 150), Color.WHITE, 3);
   }
   
   /*

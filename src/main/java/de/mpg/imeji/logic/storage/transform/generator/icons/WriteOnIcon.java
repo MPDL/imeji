@@ -26,10 +26,10 @@ public class WriteOnIcon extends ImejiFileIcon{
 	  private Color textColor;
 	  private int maxTextLength;
 	
-	public WriteOnIcon(String iconName, Point position, int fontSize, Color textColor, int maxTextLength ) {
+	public WriteOnIcon(String iconName, Point position, Font font, Color textColor, int maxTextLength ) {
 		super(iconName);
 		this.textPosition = position;
-		this.font = new Font("Serif", Font.BOLD, fontSize);
+		this.font = font; // new Font("Serif", Font.BOLD, fontSize);
 		this.textColor = textColor;
 		this.maxTextLength = maxTextLength; 
 	}

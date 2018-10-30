@@ -362,7 +362,7 @@ public class InternalStorageManager implements Serializable {
    * @param item
    * @param file
    */
-  public void generateThumbnailPreviewAndFull(InternalStorageItem item, File file) {
+  private void generateThumbnailPreviewAndFull(InternalStorageItem item, File file) {
     File fullResolution = null;
     try {
       final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
@@ -382,6 +382,34 @@ public class InternalStorageManager implements Serializable {
   }
 
   /**
+   * Delete existing full web thumbnail images/previews of a file
+   * and create new ones
+   * Needed after changes in GUI or changes in file icons
+   * 
+   * @param item  InternalStorageItem of the file
+   * @param file  file for which new full web thumbnail images/previews will be generated
+   */
+  public void regenerateThumbnailPreviewAndFull(InternalStorageItem item, File file) {
+	  	  
+	  try {
+		// (1) delete existing full web thumbnail previews
+		removeFile(item.getFullUrl());
+		removeFile(item.getWebUrl());
+		removeFile(item.getThumbnailUrl());
+		
+		// (2) create new full web thumbnail previews
+		generateThumbnailPreviewAndFull(item, file);
+		 
+	  } catch (final Exception e) {
+	      LOGGER.error("Error while regenerating full web thumbnail previews for item " + item.getId() + " ", e);
+	  }
+	  
+  }
+  
+  
+  
+  
+  /**
    * Generate the Thumbnails and the preview resolution
    * 
    * @param item
@@ -390,13 +418,13 @@ public class InternalStorageManager implements Serializable {
   public void recalculateThumbnailAndPreview(InternalStorageItem item) {
     try {
       final ImageGeneratorManager generatorManager = new ImageGeneratorManager();
-      File fullResolution = new File(transformUrlToPath(item.getFullUrl()));
-      // Generate and write Web resolution
+      File fullResolution = new File(transformUrlToPath(item.getFullUrl()));     
       if (fullResolution.exists()) {
+    	// Generate and write web resolution from full resolution
         removeFile(item.getWebUrl());
         move(generatorManager.generateWebResolution(fullResolution, "jpg"),
             transformUrlToPath(item.getWebUrl()));
-        // Generate and write Thumbnail resolution
+        // Generate and write thumbnail resolution from full resolution
         removeFile(item.getThumbnailUrl());
         move(generatorManager.generateThumbnail(fullResolution, "jpg"),
             transformUrlToPath(item.getThumbnailUrl()));

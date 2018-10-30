@@ -165,6 +165,14 @@ public interface Storage extends Serializable {
 
 
   /**
+   * Recreates for a stored file its full, web and thumbnail images 
+   * 
+   * @param urlOfBaseFile url of the file for which full, web and thumbnail images are created
+   */
+  public void reGenerateFullWebThumbnailImages(String urlOfBaseFile) throws IOException, Exception;
+  
+  
+  /**
    * Return the length of the file
    * 
    * @param url

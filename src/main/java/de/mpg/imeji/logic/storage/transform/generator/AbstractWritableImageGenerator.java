@@ -36,9 +36,9 @@ public abstract class AbstractWritableImageGenerator extends ImageGenerator{
 	  
 	  
 	public AbstractWritableImageGenerator(String backgroundIconName, Point textPosition,
-			int textFontSize, Color textColor, int maxTextLength) {
+			Font font, Color textColor, int maxTextLength) {
 	    
-		this.writeOnThisIcon = new WriteOnIcon(backgroundIconName, textPosition, textFontSize, textColor, maxTextLength);
+		this.writeOnThisIcon = new WriteOnIcon(backgroundIconName, textPosition, font, textColor, maxTextLength);
 	}
 	  
 	
