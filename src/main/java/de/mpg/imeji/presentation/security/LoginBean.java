@@ -12,7 +12,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import com.ocpsoft.pretty.PrettyContext;
@@ -39,124 +39,122 @@ import de.mpg.imeji.presentation.session.SessionBean;
 @ManagedBean(name = "LoginBean")
 @ViewScoped
 public class LoginBean extends SuperBean {
-  private static final long serialVersionUID = 3597358452256592426L;
-  private String login;
-  private String passwd;
-  @ManagedProperty(value = "#{SessionBean}")
-  private SessionBean sessionBean;
-  private String redirect = null;
-  private static final Logger LOGGER = LogManager.getLogger(LoginBean.class);
-  private String requestUrl;
+	private static final long serialVersionUID = 3597358452256592426L;
+	private String login;
+	private String passwd;
+	@ManagedProperty(value = "#{SessionBean}")
+	private SessionBean sessionBean;
+	private String redirect = null;
+	private static final Logger LOGGER = LogManager.getLogger(LoginBean.class);
+	private String requestUrl;
 
-  /**
-   * Constructor
-   */
-  public LoginBean() {
+	/**
+	 * Constructor
+	 */
+	public LoginBean() {
 
-  }
+	}
 
-  @PostConstruct
-  public void init() {
-    initRequestUrl();
-    try {
-      final String login = UrlHelper.getParameterValue("login");
-      if (!isNullOrEmptyTrim(login)) {
-        setLogin(login);
-      }
-      if (UrlHelper.getParameterValue("redirect") != null) {
-        this.redirect = URLDecoder.decode(UrlHelper.getParameterValue("redirect"), "UTF-8");
-      }
-      if (getSessionUser() != null) {
-        redirect(redirect != null ? redirect : getNavigation().getHomeUrl());
-      }
-    } catch (final Exception e) {
-      LOGGER.error("Error initializing LoginBean", e);
-    }
-  }
+	@PostConstruct
+	public void init() {
+		initRequestUrl();
+		try {
+			final String login = UrlHelper.getParameterValue("login");
+			if (!isNullOrEmptyTrim(login)) {
+				setLogin(login);
+			}
+			if (UrlHelper.getParameterValue("redirect") != null) {
+				this.redirect = URLDecoder.decode(UrlHelper.getParameterValue("redirect"), "UTF-8");
+			}
+			if (getSessionUser() != null) {
+				redirect(redirect != null ? redirect : getNavigation().getHomeUrl());
+			}
+		} catch (final Exception e) {
+			LOGGER.error("Error initializing LoginBean", e);
+		}
+	}
 
-  public void setLogin(String login) {
-    this.login = login.trim();
-  }
+	public void setLogin(String login) {
+		this.login = login.trim();
+	}
 
-  public String getLogin() {
-    return login;
-  }
+	public String getLogin() {
+		return login;
+	}
 
-  public void setPasswd(String passwd) {
-    this.passwd = passwd.trim();
-  }
+	public void setPasswd(String passwd) {
+		this.passwd = passwd.trim();
+	}
 
-  public String getPasswd() {
-    return passwd;
-  }
+	public String getPasswd() {
+		return passwd;
+	}
 
-  public void doLogin() {
-    BeanHelper.cleanMessages();
-    final String instanceName = Imeji.CONFIG.getInstanceName();
-    if (StringHelper.isNullOrEmptyTrim(getLogin())) {
-      return;
-    }
-    final Authentication auth = AuthenticationFactory.factory(getLogin(), getPasswd());
-    try {
-      final User user = auth.doLogin();
-      sessionBean.setUser(user);
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_in", getLocale()));
-      redirectAfterLogin();
-    } catch (final InactiveAuthenticationError e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in_inactive", getLocale()));
-    } catch (final AuthenticationError e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in", getLocale())
-          .replace("XXX_INSTANCE_NAME_XXX", instanceName));
-    }
-  }
+	public void doLogin() {
+		BeanHelper.cleanMessages();
+		final String instanceName = Imeji.CONFIG.getInstanceName();
+		if (StringHelper.isNullOrEmptyTrim(getLogin())) {
+			return;
+		}
+		final Authentication auth = AuthenticationFactory.factory(getLogin(), getPasswd());
+		try {
+			final User user = auth.doLogin();
+			sessionBean.setUser(user);
+			BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_log_in", getLocale()));
+			redirectAfterLogin();
+		} catch (final InactiveAuthenticationError e) {
+			BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in_inactive", getLocale()));
+		} catch (final AuthenticationError e) {
+			BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_log_in", getLocale())
+					.replace("XXX_INSTANCE_NAME_XXX", instanceName));
+		}
+	}
 
-  private void redirectAfterLogin() {
-    if (isNullOrEmptyTrim(redirect)) {
-      // HistoryPage current = getHistory().getCurrentPage();
-      if (!requestUrl.equals(getNavigation().getRegistrationUrl())
-          && !requestUrl.equals(getNavigation().getLoginUrl())) {
-        redirect = requestUrl;
-      } else {
-        redirect = getNavigation().getHomeUrl();
-      }
-    }
-    try {
-      redirect(redirect);
-    } catch (IOException e) {
-      LOGGER.error("Error redirect after login", e);
-    }
-  }
+	private void redirectAfterLogin() {
+		if (isNullOrEmptyTrim(redirect)) {
+			// HistoryPage current = getHistory().getCurrentPage();
+			if (!requestUrl.equals(getNavigation().getRegistrationUrl())
+					&& !requestUrl.equals(getNavigation().getLoginUrl())) {
+				redirect = requestUrl;
+			} else {
+				redirect = getNavigation().getHomeUrl();
+			}
+		}
+		try {
+			redirect(redirect);
+		} catch (IOException e) {
+			LOGGER.error("Error redirect after login", e);
+		}
+	}
 
-  private void initRequestUrl() {
-    this.requestUrl = getNavigation().getApplicationUri()
-        + PrettyContext.getCurrentInstance().getRequestURL().toURL()
-        + PrettyContext.getCurrentInstance().getRequestQueryString().toQueryString();
-  }
+	private void initRequestUrl() {
+		this.requestUrl = getNavigation().getApplicationUri()
+				+ PrettyContext.getCurrentInstance().getRequestURL().toURL()
+				+ PrettyContext.getCurrentInstance().getRequestQueryString().toQueryString();
+	}
 
-  public SessionBean getSessionBean() {
-    return sessionBean;
-  }
+	public SessionBean getSessionBean() {
+		return sessionBean;
+	}
 
-  public void setSessionBean(SessionBean sessionBean) {
-    this.sessionBean = sessionBean;
-  }
+	public void setSessionBean(SessionBean sessionBean) {
+		this.sessionBean = sessionBean;
+	}
 
-  public String getRedirect() {
-    return redirect;
-  }
+	public String getRedirect() {
+		return redirect;
+	}
 
-  public void setRedirect(String redirect) {
-    this.redirect = redirect;
-  }
+	public void setRedirect(String redirect) {
+		this.redirect = redirect;
+	}
 
-  public String getEncodedRedirect() throws UnsupportedEncodingException {
-    String redirect = UrlHelper.getParameterValue("redirect");
-    if (redirect == null) {
-      return "";
-    }
-    return URLEncoder.encode(UrlHelper.getParameterValue("redirect"), "UTF-8");
-  }
-
-
+	public String getEncodedRedirect() throws UnsupportedEncodingException {
+		String redirect = UrlHelper.getParameterValue("redirect");
+		if (redirect == null) {
+			return "";
+		}
+		return URLEncoder.encode(UrlHelper.getParameterValue("redirect"), "UTF-8");
+	}
 
 }

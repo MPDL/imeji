@@ -1,6 +1,6 @@
 package de.mpg.imeji.logic.security.authentication.impl;
 
-import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
@@ -20,68 +20,67 @@ import de.mpg.imeji.logic.util.StringHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public final class DefaultAuthentication implements Authentication {
-  private static final Logger LOGGER = LogManager.getLogger(DefaultAuthentication.class);
-  private final String login;
-  private final String pwd;
+	private static final Logger LOGGER = LogManager.getLogger(DefaultAuthentication.class);
+	private final String login;
+	private final String pwd;
 
-  /**
-   * Constructor
-   */
-  public DefaultAuthentication(String login, String pwd) {
-    this.login = login;
-    this.pwd = pwd;
-  }
+	/**
+	 * Constructor
+	 */
+	public DefaultAuthentication(String login, String pwd) {
+		this.login = login;
+		this.pwd = pwd;
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see de.mpg.imeji.logic.auth.Authentification#doLogin()
-   */
-  @Override
-  public User doLogin() throws AuthenticationError {
-    if (StringHelper.isNullOrEmptyTrim(getUserLogin())
-        && StringHelper.isNullOrEmptyTrim(getUserPassword())) {
-      return null;
-    }
-    User user;
-    try {
-      user = new UserService().retrieve(getUserLogin(), Imeji.adminUser);
-    } catch (final ImejiException e) {
-      throw new AuthenticationError(
-          "User could not be authenticated with provided credentials! " + getUserLogin());
-    }
-    if (!user.isActive()) {
-      throw new InactiveAuthenticationError(
-          "Not active user: please activate your account with the limk sent after your registration");
-    }
-    try {
-      if (user.getEncryptedPassword().equals(StringHelper.md5(getUserPassword()))) {
-        return user;
-      }
-    } catch (final Exception e) {
-      LOGGER.error("Error checking user password", e);
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.mpg.imeji.logic.auth.Authentification#doLogin()
+	 */
+	@Override
+	public User doLogin() throws AuthenticationError {
+		if (StringHelper.isNullOrEmptyTrim(getUserLogin()) && StringHelper.isNullOrEmptyTrim(getUserPassword())) {
+			return null;
+		}
+		User user;
+		try {
+			user = new UserService().retrieve(getUserLogin(), Imeji.adminUser);
+		} catch (final ImejiException e) {
+			throw new AuthenticationError(
+					"User could not be authenticated with provided credentials! " + getUserLogin());
+		}
+		if (!user.isActive()) {
+			throw new InactiveAuthenticationError(
+					"Not active user: please activate your account with the limk sent after your registration");
+		}
+		try {
+			if (user.getEncryptedPassword().equals(StringHelper.md5(getUserPassword()))) {
+				return user;
+			}
+		} catch (final Exception e) {
+			LOGGER.error("Error checking user password", e);
+		}
 
-    throw new AuthenticationError("User could not be authenticated with provided credentials!");
-  }
+		throw new AuthenticationError("User could not be authenticated with provided credentials!");
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see de.mpg.imeji.logic.auth.Authentification#getUserLogin()
-   */
-  @Override
-  public String getUserLogin() {
-    return this.login;
-  }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.mpg.imeji.logic.auth.Authentification#getUserLogin()
+	 */
+	@Override
+	public String getUserLogin() {
+		return this.login;
+	}
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see de.mpg.imeji.logic.auth.Authentification#getUserPassword()
-   */
-  @Override
-  public String getUserPassword() {
-    return this.pwd;
-  }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.mpg.imeji.logic.auth.Authentification#getUserPassword()
+	 */
+	@Override
+	public String getUserPassword() {
+		return this.pwd;
+	}
 }

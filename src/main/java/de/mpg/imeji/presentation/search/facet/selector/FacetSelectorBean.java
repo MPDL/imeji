@@ -29,112 +29,105 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 @ManagedBean(name = "FacetSelectorBean")
 @ViewScoped
 public class FacetSelectorBean extends SuperBean {
-  
-  private static final long serialVersionUID = 4953953758406265116L;
-  private static final Logger LOGGER = LogManager.getLogger(FacetSelectorBean.class);
-  private List<FacetSelectorEntry> entries = new ArrayList<>();
-  private SearchQuery facetQuery = new SearchQuery();
-  private SearchFactory factory;
 
-  @PostConstruct
-  private void init() {
-    try {
-      facetQuery = SearchQueryParser.parseStringQuery(UrlHelper.getParameterValue("fq"));
-      factory = new SearchFactory(facetQuery);
-    } catch (Exception e) {
-      LOGGER.error("Error parsing facet query " + UrlHelper.getParameterValue("fq"), e);
-    }
-  }
+	private static final long serialVersionUID = 4953953758406265116L;
+	private static final Logger LOGGER = LogManager.getLogger(FacetSelectorBean.class);
+	private List<FacetSelectorEntry> entries = new ArrayList<>();
+	private SearchQuery facetQuery = new SearchQuery();
+	private SearchFactory factory;
 
-  /**
-   * Init the facet selector with a SearchResult
-   * 
-   * @param result
-   * @return
-   */
-  public String init(SearchResult result) {
-    if (result != null) {
-      this.entries = result.getFacets().stream()
-          .filter(f -> !f.getName().equals(Facet.ITEMS) && !f.getName().equals(Facet.SUBCOLLECTIONS)
-              && !f.getName().equals(Facet.COLLECTION_ITEMS))
-          .map(r -> new FacetSelectorEntry(r, facetQuery, result.getNumberOfRecords(), this.getLocale()))
-          .sorted(
-              (f1, f2) -> Integer.compare(f1.getFacet().getPosition(), f2.getFacet().getPosition()))
-          .collect(Collectors.toList());      
-      setAddQuery();
-      setRemoveQuery();
-      setSelectedEntries();
-    }
-    return "";
-  }
+	@PostConstruct
+	private void init() {
+		try {
+			facetQuery = SearchQueryParser.parseStringQuery(UrlHelper.getParameterValue("fq"));
+			factory = new SearchFactory(facetQuery);
+		} catch (Exception e) {
+			LOGGER.error("Error parsing facet query " + UrlHelper.getParameterValue("fq"), e);
+		}
+	}
 
-  public List<FacetSelectorEntryValue> getSelectedValues() {
-    return entries.stream().flatMap(e -> e.getValues().stream()).filter(v -> v.isSelected())
-        .collect(Collectors.toList());
-  }
+	/**
+	 * Init the facet selector with a SearchResult
+	 * 
+	 * @param result
+	 * @return
+	 */
+	public String init(SearchResult result) {
+		if (result != null) {
+			this.entries = result.getFacets().stream()
+					.filter(f -> !f.getName().equals(Facet.ITEMS) && !f.getName().equals(Facet.SUBCOLLECTIONS)
+							&& !f.getName().equals(Facet.COLLECTION_ITEMS))
+					.map(r -> new FacetSelectorEntry(r, facetQuery, result.getNumberOfRecords(), this.getLocale()))
+					.sorted((f1, f2) -> Integer.compare(f1.getFacet().getPosition(), f2.getFacet().getPosition()))
+					.collect(Collectors.toList());
+			setAddQuery();
+			setRemoveQuery();
+			setSelectedEntries();
+		}
+		return "";
+	}
 
-  
-   
-  /**
-   * Set the addQuery to all values of all entries
-   */
-  private void setAddQuery() {
-    entries.stream().flatMap(e -> e.getValues().stream())
-        .forEach(v -> v.setAddQuery(createAddQuery(v)));
-  }
+	public List<FacetSelectorEntryValue> getSelectedValues() {
+		return entries.stream().flatMap(e -> e.getValues().stream()).filter(v -> v.isSelected())
+				.collect(Collectors.toList());
+	}
 
-  /**
-   * Create the add query for a FacetSelectorEntryValue according to the current FacetQuery
-   * 
-   * @param entryValue
-   * @return
-   */
-  private String createAddQuery(FacetSelectorEntryValue entryValue) {
-    try {
-      return getCurrentPage().copy()
-          .setParamValue("fq",
-              SearchQueryParser
-                  .transform2URL(factory.clone().and(entryValue.getEntryQuery()).build()))
-          .getCompleteUrl();
-    } catch (UnprocessableError e) {
-      LOGGER.error("Error building add query for facet " + entryValue.getLabel(), e);
-      return "";
-    }
-  }
+	/**
+	 * Set the addQuery to all values of all entries
+	 */
+	private void setAddQuery() {
+		entries.stream().flatMap(e -> e.getValues().stream()).forEach(v -> v.setAddQuery(createAddQuery(v)));
+	}
 
-  private void setRemoveQuery() {
-    entries.stream().flatMap(e -> e.getValues().stream())
-        .forEach(v -> v.setRemoveQuery(createRemoveQuery(v)));
-  }
+	/**
+	 * Create the add query for a FacetSelectorEntryValue according to the current
+	 * FacetQuery
+	 * 
+	 * @param entryValue
+	 * @return
+	 */
+	private String createAddQuery(FacetSelectorEntryValue entryValue) {
+		try {
+			return getCurrentPage().copy()
+					.setParamValue("fq",
+							SearchQueryParser.transform2URL(factory.clone().and(entryValue.getEntryQuery()).build()))
+					.getCompleteUrl();
+		} catch (UnprocessableError e) {
+			LOGGER.error("Error building add query for facet " + entryValue.getLabel(), e);
+			return "";
+		}
+	}
 
-  private String createRemoveQuery(FacetSelectorEntryValue entryValue) {
-    return getCurrentPage().copy()
-        .setParamValue("fq",
-            SearchQueryParser
-                .transform2URL(factory.clone().remove(entryValue.getEntryQuery()).build()))
-        .getCompleteUrl();
-  }
+	private void setRemoveQuery() {
+		entries.stream().flatMap(e -> e.getValues().stream()).forEach(v -> v.setRemoveQuery(createRemoveQuery(v)));
+	}
 
-  /**
-   * Set if a FacetSelectorEntryValue is selected or not
-   */
-  private void setSelectedEntries() {
-    entries.stream().flatMap(e -> e.getValues().stream())
-        .forEach(v -> v.setSelected(isSelected(v)));
-  }
+	private String createRemoveQuery(FacetSelectorEntryValue entryValue) {
+		return getCurrentPage().copy()
+				.setParamValue("fq",
+						SearchQueryParser.transform2URL(factory.clone().remove(entryValue.getEntryQuery()).build()))
+				.getCompleteUrl();
+	}
 
-  private boolean isSelected(FacetSelectorEntryValue entryValue) {
-    return factory.contains(entryValue.getEntryQuery());
-  }
+	/**
+	 * Set if a FacetSelectorEntryValue is selected or not
+	 */
+	private void setSelectedEntries() {
+		entries.stream().flatMap(e -> e.getValues().stream()).forEach(v -> v.setSelected(isSelected(v)));
+	}
 
-  /**
-   * @return the entries
-   */
-  public List<FacetSelectorEntry> getEntries() {
-    return entries;
-  }
+	private boolean isSelected(FacetSelectorEntryValue entryValue) {
+		return factory.contains(entryValue.getEntryQuery());
+	}
 
-  public void setEntries(List<FacetSelectorEntry> entries) {
-    this.entries = entries;
-  }
+	/**
+	 * @return the entries
+	 */
+	public List<FacetSelectorEntry> getEntries() {
+		return entries;
+	}
+
+	public void setEntries(List<FacetSelectorEntry> entries) {
+		this.entries = entries;
+	}
 }

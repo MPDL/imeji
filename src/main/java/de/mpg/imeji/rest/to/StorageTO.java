@@ -15,27 +15,26 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StorageTO implements Serializable {
 
-  private static final long serialVersionUID = -8291542243783127323L;
+	private static final long serialVersionUID = -8291542243783127323L;
 
-  private String uploadWhiteList;
+	private String uploadWhiteList;
 
-  private String uploadBlackList;
+	private String uploadBlackList;
 
-  public String getUploadWhiteList() {
-    return uploadWhiteList;
-  }
+	public String getUploadWhiteList() {
+		return uploadWhiteList;
+	}
 
-  public void setUploadWhiteList(String uploadWhiteList) {
-    this.uploadWhiteList = uploadWhiteList;
-  }
+	public void setUploadWhiteList(String uploadWhiteList) {
+		this.uploadWhiteList = uploadWhiteList;
+	}
 
-  public String getUploadBlackList() {
-    return uploadBlackList;
-  }
+	public String getUploadBlackList() {
+		return uploadBlackList;
+	}
 
-  public void setUploadBlackList(String uploadBlackList) {
-    this.uploadBlackList = uploadBlackList;
-  }
-
+	public void setUploadBlackList(String uploadBlackList) {
+		this.uploadBlackList = uploadBlackList;
+	}
 
 }

@@ -17,6 +17,7 @@
 // public void init(ServletConfig servletConfig) {
 // super.init(servletConfig);
 // ConfigFactory.config().setBasePath(
-// servletConfig.getServletContext().getContextPath() + ConfigFactory.config().getBasePath());
+// servletConfig.getServletContext().getContextPath() +
+// ConfigFactory.config().getBasePath());
 // }
 // }

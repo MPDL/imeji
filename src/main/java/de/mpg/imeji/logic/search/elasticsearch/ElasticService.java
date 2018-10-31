@@ -5,7 +5,6 @@ import org.elasticsearch.node.Node;
 
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 
-
 /**
  * elasticsearch service for spot
  *
@@ -13,69 +12,69 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
  *
  */
 public class ElasticService {
-  private static Node NODE;
-  private static Client client;
-  static String CLUSTER_NAME = "name of my cluster";
-  static String CLUSTER_DIR = "null";
-  public static ElasticAnalysers ANALYSER;
-  static final String SETTINGS_DEFAULT = "elasticsearch/Settings_default.json";
-  static final String SETTINGS_DUCET = "elasticsearch/Settings_ducet.json";
+	private static Node NODE;
+	private static Client client;
+	static String CLUSTER_NAME = "name of my cluster";
+	static String CLUSTER_DIR = "null";
+	public static ElasticAnalysers ANALYSER;
+	static final String SETTINGS_DEFAULT = "elasticsearch/Settings_default.json";
+	static final String SETTINGS_DUCET = "elasticsearch/Settings_ducet.json";
 
-  /**
-   * The Index where all data are indexed
-   */
-  public static String DATA_ALIAS = "data";
+	/**
+	 * The Index where all data are indexed
+	 */
+	public static String DATA_ALIAS = "data";
 
-  /**
-   * The Types in Elasticsearch
-   *
-   * @author bastiens
-   *
-   */
-  public enum ElasticTypes {
-    content, items, folders, users, usergroups;
+	/**
+	 * The Types in Elasticsearch
+	 *
+	 * @author bastiens
+	 *
+	 */
+	public enum ElasticTypes {
+		content, items, folders, users, usergroups;
 
-    /**
-     * Map a {@link SearchObjectTypes} to an ElasticTypes
-     * 
-     * @param type
-     * @return
-     */
-    public static ElasticTypes toElasticTypes(SearchObjectTypes type) {
-      switch (type) {
-        case ITEM:
-          return ElasticTypes.items;
-        case COLLECTION:
-          return ElasticTypes.folders;
-        case USER:
-          return ElasticTypes.users;
-        case USERGROUPS:
-          return ElasticTypes.usergroups;
-        case CONTENT:
-          return ElasticTypes.content;
-        default:
-          return ElasticTypes.items;
-      }
-    }
-  }
+		/**
+		 * Map a {@link SearchObjectTypes} to an ElasticTypes
+		 * 
+		 * @param type
+		 * @return
+		 */
+		public static ElasticTypes toElasticTypes(SearchObjectTypes type) {
+			switch (type) {
+				case ITEM :
+					return ElasticTypes.items;
+				case COLLECTION :
+					return ElasticTypes.folders;
+				case USER :
+					return ElasticTypes.users;
+				case USERGROUPS :
+					return ElasticTypes.usergroups;
+				case CONTENT :
+					return ElasticTypes.content;
+				default :
+					return ElasticTypes.items;
+			}
+		}
+	}
 
-  public enum ElasticAnalysers {
-    standard, ducet_sort, simple, keyword;
-  }
+	public enum ElasticAnalysers {
+		standard, ducet_sort, simple, keyword;
+	}
 
-  public static Client getClient() {
-    return client;
-  }
+	public static Client getClient() {
+		return client;
+	}
 
-  public static void setClient(Client client) {
-    ElasticService.client = client;
-  }
+	public static void setClient(Client client) {
+		ElasticService.client = client;
+	}
 
-  static Node getNODE() {
-    return NODE;
-  }
+	static Node getNODE() {
+		return NODE;
+	}
 
-  static void setNODE(Node nODE) {
-    NODE = nODE;
-  }
+	static void setNODE(Node nODE) {
+		NODE = nODE;
+	}
 }

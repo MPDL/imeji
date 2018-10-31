@@ -15,8 +15,6 @@ import de.mpg.imeji.rest.process.RestProcessUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-
-
 /**
  * API Method to login
  *
@@ -28,125 +26,123 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "authentication")
 public class AuthenticationResource {
 
-  @POST
-  @Path("/login")
-  @ApiOperation(value = "Login to API",
-      notes = "You can either login with: " + "<br/>"
-          + "- Basic Authentication, ex: Authorization: Basic &ltbase64 encoded email:password&gt; <br/>"
-          + "- API Key, ex: Authorization Bearer api_key")
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response login(@HeaderParam("Authorization") String authHeader) {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.login(authHeader));
-  }
+	@POST
+	@Path("/login")
+	@ApiOperation(value = "Login to API", notes = "You can either login with: " + "<br/>"
+			+ "- Basic Authentication, ex: Authorization: Basic &ltbase64 encoded email:password&gt; <br/>"
+			+ "- API Key, ex: Authorization Bearer api_key")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response login(@HeaderParam("Authorization") String authHeader) {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.login(authHeader));
+	}
 
-  @POST
-  @Path("/logout")
-  @ApiOperation(value = "Logout from the API",
-      notes = "The APIKey of the current User (according to authorization header) will be invalidated. User will need to login with Basic Authentication to get a new Key")
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response logout(@HeaderParam("authorization") String authHeader) {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.logout(authHeader));
-  }
+	@POST
+	@Path("/logout")
+	@ApiOperation(value = "Logout from the API", notes = "The APIKey of the current User (according to authorization header) will be invalidated. User will need to login with Basic Authentication to get a new Key")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response logout(@HeaderParam("authorization") String authHeader) {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.logout(authHeader));
+	}
 
-  @GET
-  // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
-  @Path("/login")
-  @ApiOperation(value = "hidden1", hidden = true)
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response badMethodGetlogin() {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.invalidResource());
-  }
+	@GET
+	// @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
+	@Path("/login")
+	@ApiOperation(value = "hidden1", hidden = true)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response badMethodGetlogin() {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.invalidResource());
+	}
 
-  @GET
-  // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
-  @Path("/logout")
-  @ApiOperation(value = "hidden2", hidden = true)
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response badMethodGetlogout() {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.invalidResource());
-  }
+	@GET
+	// @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
+	@Path("/logout")
+	@ApiOperation(value = "hidden2", hidden = true)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response badMethodGetlogout() {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.invalidResource());
+	}
 
-  @PUT
-  // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
-  @Path("/login")
-  @ApiOperation(value = "hidden3", hidden = true)
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response badMethodPutlogin() {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
-  }
+	@PUT
+	// @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
+	@Path("/login")
+	@ApiOperation(value = "hidden3", hidden = true)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response badMethodPutlogin() {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
+	}
 
-  @PUT
-  // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
-  @Path("/logout")
-  @ApiOperation(value = "hidden4", hidden = true)
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response badMethodPutlogout() {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
-  }
+	@PUT
+	// @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
+	@Path("/logout")
+	@ApiOperation(value = "hidden4", hidden = true)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response badMethodPutlogout() {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
+	}
 
-  @DELETE
-  // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
-  @Path("/login")
-  @ApiOperation(value = "hidden5", hidden = true)
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response badMethodDeletelogin() {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
-  }
+	@DELETE
+	// @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
+	@Path("/login")
+	@ApiOperation(value = "hidden5", hidden = true)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response badMethodDeletelogin() {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
+	}
 
-  @DELETE
-  // @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
-  @Path("/logout")
-  @ApiOperation(value = "hidden6", hidden = true)
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response badMethodDeletelogout() {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
-  }
+	@DELETE
+	// @Path("/{text: (/!((items|collections|albums|profiles|storage)/?)).*}")
+	@Path("/logout")
+	@ApiOperation(value = "hidden6", hidden = true)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response badMethodDeletelogout() {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
+	}
 
-  /*
-   * NOTE
-   *
-   * DO NOT DELETE FOLLOWING METHODS HERE They match the URI Path for all other methods which are
-   * not supported. Thus we get proper error message and no entity returned (instead of previously
-   * returned jsf page in the response which is stated in the web.xml) If method is not already
-   * matched by any of the other resources, these error methods will be given
-   *
-   * FOR some reason, for /login and /logout there have to be special methods (below matcher does
-   * not catch them).
-   *
-   */
+	/*
+	 * NOTE
+	 *
+	 * DO NOT DELETE FOLLOWING METHODS HERE They match the URI Path for all other
+	 * methods which are not supported. Thus we get proper error message and no
+	 * entity returned (instead of previously returned jsf page in the response
+	 * which is stated in the web.xml) If method is not already matched by any of
+	 * the other resources, these error methods will be given
+	 *
+	 * FOR some reason, for /login and /logout there have to be special methods
+	 * (below matcher does not catch them).
+	 *
+	 */
 
-  @POST
+	@POST
 
-  @Path("/{text: (/?.*)}")
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "hidden7", hidden = true)
-  public Response badMethodPost() {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
-  }
+	@Path("/{text: (/?.*)}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "hidden7", hidden = true)
+	public Response badMethodPost() {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
+	}
 
-  @PUT
-  @Path("/{text: (/?.*)}")
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "hidden8", hidden = true)
-  public Response badMethodPut() {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
-  }
+	@PUT
+	@Path("/{text: (/?.*)}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "hidden8", hidden = true)
+	public Response badMethodPut() {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
+	}
 
-  @GET
-  @Path("/{text: (/?.*)}")
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "hidden9", hidden = true)
-  public Response badMethodGet() {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.invalidResource());
-  }
+	@GET
+	@Path("/{text: (/?.*)}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "hidden9", hidden = true)
+	public Response badMethodGet() {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.invalidResource());
+	}
 
-  @DELETE
-  @Path("/{text: (/?.*)}")
-  @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "hidden10", hidden = true)
-  public Response badMethodDelete() {
-    return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
-  }
-
+	@DELETE
+	@Path("/{text: (/?.*)}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "hidden10", hidden = true)
+	public Response badMethodDelete() {
+		return RestProcessUtils.buildJSONResponse(AdminProcess.invalidMethod());
+	}
 
 }

@@ -6,7 +6,7 @@ import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -25,84 +25,84 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ManagedBean(name = "SubCollectionFormBean")
 @ViewScoped
 public class SubCollectionFormBean extends SuperBean implements Serializable {
-  private static final long serialVersionUID = 3542202393184509349L;
-  private static final Logger LOGGER = LogManager.getLogger(SubCollectionFormBean.class);
-  private final CollectionService collectionService = new CollectionService();
-  private String name;
-  private CollectionImeji parent;
+	private static final long serialVersionUID = 3542202393184509349L;
+	private static final Logger LOGGER = LogManager.getLogger(SubCollectionFormBean.class);
+	private final CollectionService collectionService = new CollectionService();
+	private String name;
+	private CollectionImeji parent;
 
-  public void init(CollectionImeji collection) {
-    this.parent = collection;
-    this.name = collection.getName();
-  }
+	public void init(CollectionImeji collection) {
+		this.parent = collection;
+		this.name = collection.getName();
+	}
 
-  /**
-   * Create a subcollection with the name set in the bean into the parent collection
-   * 
-   * @param parent
-   * @throws IOException
-   */
-  public void create(CollectionImeji parent) throws IOException {
-    try {
-      CollectionImeji subcollection = collectionService.create(
-          ImejiFactory.newCollection().setTitle(name).setPerson(getSessionUser().getPerson())
-              .setCollection(parent.getId().toString()).build(),
-          getSessionUser());
-      BeanHelper.info("Subcollection created");
-      redirect(getNavigation().getCollectionUrl() + subcollection.getIdString());
-    } catch (ImejiException e) {
-      BeanHelper.error("Error creating Subcollection: " + e.getMessage());
-      LOGGER.error("Error creating Subcollection", e);
-    }
-  }
+	/**
+	 * Create a subcollection with the name set in the bean into the parent
+	 * collection
+	 * 
+	 * @param parent
+	 * @throws IOException
+	 */
+	public void create(CollectionImeji parent) throws IOException {
+		try {
+			CollectionImeji subcollection = collectionService.create(ImejiFactory.newCollection().setTitle(name)
+					.setPerson(getSessionUser().getPerson()).setCollection(parent.getId().toString()).build(),
+					getSessionUser());
+			BeanHelper.info("Subcollection created");
+			redirect(getNavigation().getCollectionUrl() + subcollection.getIdString());
+		} catch (ImejiException e) {
+			BeanHelper.error("Error creating Subcollection: " + e.getMessage());
+			LOGGER.error("Error creating Subcollection", e);
+		}
+	}
 
-  /**
-   * Create a Subcollection and then redirect to the upload link
-   * 
-   * @param parent
-   * @throws IOException
-   */
-  public void createAndUpload() throws IOException {
-    try {
-      CollectionImeji subcollection = collectionService.create(
-          ImejiFactory.newCollection().setTitle(name).setPerson(getSessionUser().getPerson())
-              .setCollection(parent.getId().toString()).build(),
-          getSessionUser());
-      BeanHelper.info("Subcollection created");
-      redirect(getNavigation().getCollectionUrl() + subcollection.getIdString() + "?showUpload=1");
-    } catch (ImejiException e) {
-      BeanHelper.error("Error creating Subcollection: " + e.getMessage());
-      LOGGER.error("Error creating Subcollection", e);
-    }
-  }
+	/**
+	 * Create a Subcollection and then redirect to the upload link
+	 * 
+	 * @param parent
+	 * @throws IOException
+	 */
+	public void createAndUpload() throws IOException {
+		try {
+			CollectionImeji subcollection = collectionService.create(ImejiFactory.newCollection().setTitle(name)
+					.setPerson(getSessionUser().getPerson()).setCollection(parent.getId().toString()).build(),
+					getSessionUser());
+			BeanHelper.info("Subcollection created");
+			redirect(getNavigation().getCollectionUrl() + subcollection.getIdString() + "?showUpload=1");
+		} catch (ImejiException e) {
+			BeanHelper.error("Error creating Subcollection: " + e.getMessage());
+			LOGGER.error("Error creating Subcollection", e);
+		}
+	}
 
-  /**
-   * Change the name of the subcollection
-   * 
-   * @param subCollection
-   */
-  public void edit(CollectionImeji subCollection) {
-    try {
-      subCollection.setTitle(name);
-      collectionService.update(subCollection, getSessionUser());
-      BeanHelper.info("Subcollection name changed");
-    } catch (ImejiException e) {
-      BeanHelper.info("Error editing Subcollection: " + e.getMessage());
-      LOGGER.error("Error editing Subcollection", e);
-    }
-  }
+	/**
+	 * Change the name of the subcollection
+	 * 
+	 * @param subCollection
+	 */
+	public void edit(CollectionImeji subCollection) {
+		try {
+			subCollection.setTitle(name);
+			collectionService.update(subCollection, getSessionUser());
+			BeanHelper.info("Subcollection name changed");
+		} catch (ImejiException e) {
+			BeanHelper.info("Error editing Subcollection: " + e.getMessage());
+			LOGGER.error("Error editing Subcollection", e);
+		}
+	}
 
-  /**
-   * @return the name
-   */
-  public String getName() {
-    return name;
-  }
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
 
-  /**
-   * @param name the name to set
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 }

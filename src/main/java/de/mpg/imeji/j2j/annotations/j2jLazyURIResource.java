@@ -5,5 +5,5 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface j2jLazyURIResource {
-  public String value();
+	public String value();
 }

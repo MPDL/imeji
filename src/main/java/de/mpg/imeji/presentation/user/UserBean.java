@@ -12,7 +12,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.jose4j.lang.JoseException;
 
@@ -39,262 +39,260 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ManagedBean(name = "UserBean")
 @ViewScoped
 public class UserBean extends SuperBean {
-  private static final long serialVersionUID = 8339673964329354673L;
-  private static final Logger LOGGER = LogManager.getLogger(UserBean.class);
-  private User user;
-  private String id;
-  private List<ShareListItem> roles = new ArrayList<ShareListItem>();
-  private boolean edit = false;
-  private QuotaUICompoment quota;
+	private static final long serialVersionUID = 8339673964329354673L;
+	private static final Logger LOGGER = LogManager.getLogger(UserBean.class);
+	private User user;
+	private String id;
+	private List<ShareListItem> roles = new ArrayList<ShareListItem>();
+	private boolean edit = false;
+	private QuotaUICompoment quota;
 
-  @PostConstruct
-  public void init() {
-    init(UrlHelper.getParameterValue("email"));
-  }
+	@PostConstruct
+	public void init() {
+		init(UrlHelper.getParameterValue("email"));
+	}
 
-  /**
-   * Initialize the bean
-   *
-   * @param id
-   */
-  private void init(String id) {
-    try {
-      this.id = id;
-      retrieveUser();
-      if (user != null) {
-        this.roles = ShareUtil.getAllRoles(user, getSessionUser(), getLocale());
-        this.setEdit(false);
-        this.setQuota(new QuotaUICompoment(user, getLocale()));
-      }
-    } catch (final Exception e) {
-      LOGGER.error("Error initializing page", e);
-      BeanHelper.error("Error initializing page");
-    }
-  }
+	/**
+	 * Initialize the bean
+	 *
+	 * @param id
+	 */
+	private void init(String id) {
+		try {
+			this.id = id;
+			retrieveUser();
+			if (user != null) {
+				this.roles = ShareUtil.getAllRoles(user, getSessionUser(), getLocale());
+				this.setEdit(false);
+				this.setQuota(new QuotaUICompoment(user, getLocale()));
+			}
+		} catch (final Exception e) {
+			LOGGER.error("Error initializing page", e);
+			BeanHelper.error("Error initializing page");
+		}
+	}
 
-  /**
-   * Retrieve the current user
-   *
-   * @throws ImejiException
-   *
-   * @throws Exception
-   */
-  public void retrieveUser() throws ImejiException {
-    if (id != null && getSessionUser() != null) {
-      user = new UserService().retrieve(id, getSessionUser());
-      if (user.getPerson().getOrganizations() == null
-          || user.getPerson().getOrganizations().isEmpty()) {
-        user.getPerson().getOrganizations().add(new Organization());
-      }
-    }
-  }
+	/**
+	 * Retrieve the current user
+	 *
+	 * @throws ImejiException
+	 *
+	 * @throws Exception
+	 */
+	public void retrieveUser() throws ImejiException {
+		if (id != null && getSessionUser() != null) {
+			user = new UserService().retrieve(id, getSessionUser());
+			if (user.getPerson().getOrganizations() == null || user.getPerson().getOrganizations().isEmpty()) {
+				user.getPerson().getOrganizations().add(new Organization());
+			}
+		}
+	}
 
-  public void toggleEdit() {
-    this.edit = edit ? false : true;
-  }
+	public void toggleEdit() {
+		this.edit = edit ? false : true;
+	}
 
-  /**
-   * Generate a new API Key, and update the user
-   *
-   * @throws ImejiException
-   * @throws NoSuchAlgorithmException
-   * @throws UnsupportedEncodingException
-   * @throws JoseException
-   */
-  public void generateNewApiKey() throws ImejiException {
-    if (user != null) {
-      try {
-        user.setApiKey(APIKeyAuthentication.generateKey(user.getId(), Integer.MAX_VALUE));
-      } catch (final JoseException e) {
-        LOGGER.error("Error generating API Key", e);
-        throw new ImejiException("Error generating API Key", e);
-      }
-      new UserService().update(user, getSessionUser());
-    }
-  }
+	/**
+	 * Generate a new API Key, and update the user
+	 *
+	 * @throws ImejiException
+	 * @throws NoSuchAlgorithmException
+	 * @throws UnsupportedEncodingException
+	 * @throws JoseException
+	 */
+	public void generateNewApiKey() throws ImejiException {
+		if (user != null) {
+			try {
+				user.setApiKey(APIKeyAuthentication.generateKey(user.getId(), Integer.MAX_VALUE));
+			} catch (final JoseException e) {
+				LOGGER.error("Error generating API Key", e);
+				throw new ImejiException("Error generating API Key", e);
+			}
+			new UserService().update(user, getSessionUser());
+		}
+	}
 
-  /**
-   * Add a new empty organization
-   *
-   * @param index
-   */
-  public void addOrganization(int index) {
-    ((List<Organization>) this.user.getPerson().getOrganizations()).add(index,
-        ImejiFactory.newOrganization());
-  }
+	/**
+	 * Add a new empty organization
+	 *
+	 * @param index
+	 */
+	public void addOrganization(int index) {
+		((List<Organization>) this.user.getPerson().getOrganizations()).add(index, ImejiFactory.newOrganization());
+	}
 
-  /**
-   * Remove an nth organization
-   *
-   * @param index
-   */
-  public void removeOrganization(int index) {
-    final List<Organization> orgas = (List<Organization>) this.user.getPerson().getOrganizations();
-    if (!orgas.isEmpty()) {
-      orgas.remove(index);
-    }
-  }
+	/**
+	 * Remove an nth organization
+	 *
+	 * @param index
+	 */
+	public void removeOrganization(int index) {
+		final List<Organization> orgas = (List<Organization>) this.user.getPerson().getOrganizations();
+		if (!orgas.isEmpty()) {
+			orgas.remove(index);
+		}
+	}
 
-  /**
-   * Toggle the Admin Role of the {@link User}
-   *
-   * @throws Exception
-   */
-  public void toggleAdmin() throws ImejiException {
-    final ShareService shareController = new ShareService();
-    if (SecurityUtil.authorization().isSysAdmin(user)) {
-      shareController.unshareSysAdmin(getSessionUser(), user);
-    } else {
-      shareController.shareSysAdmin(getSessionUser(), user);
-    }
-    reloadPage();
-  }
+	/**
+	 * Toggle the Admin Role of the {@link User}
+	 *
+	 * @throws Exception
+	 */
+	public void toggleAdmin() throws ImejiException {
+		final ShareService shareController = new ShareService();
+		if (SecurityUtil.authorization().isSysAdmin(user)) {
+			shareController.unshareSysAdmin(getSessionUser(), user);
+		} else {
+			shareController.shareSysAdmin(getSessionUser(), user);
+		}
+		reloadPage();
+	}
 
-  public boolean isSysAdmin() {
-    return SecurityUtil.authorization().isSysAdmin(user);
-  }
+	public boolean isSysAdmin() {
+		return SecurityUtil.authorization().isSysAdmin(user);
+	}
 
-  public boolean isUniqueAdmin() {
-    return ImejiSPARQL.exec(JenaCustomQueries.selectUserSysAdmin(), Imeji.userModel).size() == 1;
-  }
+	public boolean isUniqueAdmin() {
+		return ImejiSPARQL.exec(JenaCustomQueries.selectUserSysAdmin(), Imeji.userModel).size() == 1;
+	}
 
-  /**
-   * Toggle the create collction role of the {@link User}
-   *
-   * @throws Exception
-   */
-  public void toggleCreateCollection() throws ImejiException {
-    final ShareService shareController = new ShareService();
-    if (!SecurityUtil.authorization().isSysAdmin(user)) {
-      // admin can not be forbidden to create collections
-      if (SecurityUtil.authorization().hasCreateCollectionGrant(user)) {
-        shareController.unshareCreateCollection(getSessionUser(), user);
-      } else {
-        shareController.shareCreateCollection(getSessionUser(), user);
-      }
-    }
-  }
+	/**
+	 * Toggle the create collction role of the {@link User}
+	 *
+	 * @throws Exception
+	 */
+	public void toggleCreateCollection() throws ImejiException {
+		final ShareService shareController = new ShareService();
+		if (!SecurityUtil.authorization().isSysAdmin(user)) {
+			// admin can not be forbidden to create collections
+			if (SecurityUtil.authorization().hasCreateCollectionGrant(user)) {
+				shareController.unshareCreateCollection(getSessionUser(), user);
+			} else {
+				shareController.shareCreateCollection(getSessionUser(), user);
+			}
+		}
+	}
 
-  /**
-   * Update the user in jena
-   *
-   * @throws ImejiException
-   * @throws IOException
-   */
-  public void updateUser() throws ImejiException {
-    if (user != null) {
-      final UserService controller = new UserService();
-      user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
-      try {
-        controller.update(user, getSessionUser());
-        BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_save", getLocale()));
-        reloadPage();
-      } catch (final UnprocessableError e) {
-        BeanHelper.error(e, getLocale());
-        LOGGER.error("Error updating user", e);
-      }
-    }
-  }
+	/**
+	 * Update the user in jena
+	 *
+	 * @throws ImejiException
+	 * @throws IOException
+	 */
+	public void updateUser() throws ImejiException {
+		if (user != null) {
+			final UserService controller = new UserService();
+			user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
+			try {
+				controller.update(user, getSessionUser());
+				BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_save", getLocale()));
+				reloadPage();
+			} catch (final UnprocessableError e) {
+				BeanHelper.error(e, getLocale());
+				LOGGER.error("Error updating user", e);
+			}
+		}
+	}
 
-  /**
-   * Return the quota of the current user in a user friendly way
-   *
-   * @param locale
-   * @return
-   */
-  public String getQuotaHumanReadable(Locale locale) {
-    if (user.getQuota() == Long.MAX_VALUE) {
-      return Imeji.RESOURCE_BUNDLE.getLabel("unlimited", getLocale());
-    } else {
-      return FileUtils.byteCountToDisplaySize(user.getQuota());
-    }
-  }
+	/**
+	 * Return the quota of the current user in a user friendly way
+	 *
+	 * @param locale
+	 * @return
+	 */
+	public String getQuotaHumanReadable(Locale locale) {
+		if (user.getQuota() == Long.MAX_VALUE) {
+			return Imeji.RESOURCE_BUNDLE.getLabel("unlimited", getLocale());
+		} else {
+			return FileUtils.byteCountToDisplaySize(user.getQuota());
+		}
+	}
 
-  /**
-   * Reload the page with the current user
-   *
-   * @throws IOException
-   */
-  private void reloadPage() {
-    try {
-      redirect(getUserPageUrl());
-    } catch (final IOException e) {
-      LOGGER.error("Error reloading user page", e);
-    }
-  }
+	/**
+	 * Reload the page with the current user
+	 *
+	 * @throws IOException
+	 */
+	private void reloadPage() {
+		try {
+			redirect(getUserPageUrl());
+		} catch (final IOException e) {
+			LOGGER.error("Error reloading user page", e);
+		}
+	}
 
-  /**
-   * return the URL of the current user
-   *
-   * @return
-   */
-  public String getUserPageUrl() {
-    return getNavigation().getUserUrl() + "?email=\"" + UTF8(user.getEmail()) + "\"";
-  }
+	/**
+	 * return the URL of the current user
+	 *
+	 * @return
+	 */
+	public String getUserPageUrl() {
+		return getNavigation().getUserUrl() + "?email=\"" + UTF8(user.getEmail()) + "\"";
+	}
 
-  public User getUser() {
-    return user;
-  }
+	public User getUser() {
+		return user;
+	}
 
-  public void setUser(User user) {
-    this.user = user;
-  }
+	public void setUser(User user) {
+		this.user = user;
+	}
 
-  /**
-   * @return the roles
-   */
-  public List<ShareListItem> getRoles() {
-    return roles;
-  }
+	/**
+	 * @return the roles
+	 */
+	public List<ShareListItem> getRoles() {
+		return roles;
+	}
 
-  public List<ShareListItem> getGroupRoles(UserGroup userGroup) throws ImejiException {
-    if (userGroup != null) {
-      return ShareUtil.getAllRoles(userGroup, getSessionUser(), getLocale());
-    } else {
-      return null;
-    }
-  }
+	public List<ShareListItem> getGroupRoles(UserGroup userGroup) throws ImejiException {
+		if (userGroup != null) {
+			return ShareUtil.getAllRoles(userGroup, getSessionUser(), getLocale());
+		} else {
+			return null;
+		}
+	}
 
+	/**
+	 * @param roles
+	 *            the roles to set
+	 */
+	public void setRoles(List<ShareListItem> roles) {
+		this.roles = roles;
+	}
 
+	/**
+	 * @return the edit
+	 */
+	public boolean isEdit() {
+		return edit;
+	}
 
-  /**
-   * @param roles the roles to set
-   */
-  public void setRoles(List<ShareListItem> roles) {
-    this.roles = roles;
-  }
+	/**
+	 * @param edit
+	 *            the edit to set
+	 */
+	public void setEdit(boolean edit) {
+		this.edit = edit;
+	}
 
-  /**
-   * @return the edit
-   */
-  public boolean isEdit() {
-    return edit;
-  }
+	/**
+	 * @return the quota
+	 */
+	public QuotaUICompoment getQuota() {
+		return quota;
+	}
 
-  /**
-   * @param edit the edit to set
-   */
-  public void setEdit(boolean edit) {
-    this.edit = edit;
-  }
+	/**
+	 * @param quota
+	 *            the quota to set
+	 */
+	public void setQuota(QuotaUICompoment quota) {
+		this.quota = quota;
+	}
 
-  /**
-   * @return the quota
-   */
-  public QuotaUICompoment getQuota() {
-    return quota;
-  }
-
-  /**
-   * @param quota the quota to set
-   */
-  public void setQuota(QuotaUICompoment quota) {
-    this.quota = quota;
-  }
-
-  public String getPasswordResetUrl() {
-    return UTF8(getCurrentPage().getCompleteUrl());
-  }
-
+	public String getPasswordResetUrl() {
+		return UTF8(getCurrentPage().getCompleteUrl());
+	}
 
 }

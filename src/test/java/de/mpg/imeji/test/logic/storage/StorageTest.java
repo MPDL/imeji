@@ -63,105 +63,103 @@ import de.mpg.imeji.util.ImejiTestResources;
 @Ignore
 public class StorageTest {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(StorageTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StorageTest.class);
 
-  private static final String FILENAME = "test";
-  private static final String INTERNATIONAL_CHARACHTERS =
-      "japanese:ãƒ†ã‚¹ãƒˆ  chinese:å¯¦é©— yiddish:×¤Ö¼×¨×�Ö¸×‘×¢ arab:Ø§Ø®ØªØ¨Ø§Ø± bengali: à¦ªà¦°à§€à¦•à§�à¦·à¦¾";
-  private static final String LONG_NAME =
-      "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
-          + "0123456789012345678901234567890adasd dsdfdj ghdjghfdgh gfhg df gfhdfghdgf hisfgshdfghsdi gfhsdigf sdi gfidsf gsidfhsidf gsdih "
-          + "hsgfhidsgfhdsg fh dsfshdgfhidsgfihsdgfiwuzfgisdh fg shdfg sdihfg sdihgfisdgfhsdgf ihsdg fhsdgfizsdgf zidsgfizsd fi fhsdhfgsdhfg"
-          + "hgf dhfgdshfgdshfghsdg fhsdf ghsdg fsdhf gsdjgf sdjgfsd fgdszfg sdfzgsdzgf sdfg dgfhisgfigifg i";
-  /**
-   * Not working: * /
-   */
-  private static final String SPECIAL_CHARACHTERS = "!\"Â§$%&()=? '#_-.,";
+	private static final String FILENAME = "test";
+	private static final String INTERNATIONAL_CHARACHTERS = "japanese:ãƒ†ã‚¹ãƒˆ  chinese:å¯¦é©— yiddish:×¤Ö¼×¨×�Ö¸×‘×¢ arab:Ø§Ø®ØªØ¨Ø§Ø± bengali: à¦ªà¦°à§€à¦•à§�à¦·à¦¾";
+	private static final String LONG_NAME = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+			+ "0123456789012345678901234567890adasd dsdfdj ghdjghfdgh gfhg df gfhdfghdgf hisfgshdfghsdi gfhsdigf sdi gfidsf gsidfhsidf gsdih "
+			+ "hsgfhidsgfhdsg fh dsfshdgfhidsgfihsdgfiwuzfgisdh fg shdfg sdihfg sdihgfisdgfhsdgf ihsdg fhsdgfizsdgf zidsgfizsd fi fhsdhfgsdhfg"
+			+ "hgf dhfgdshfgdshfghsdg fhsdf ghsdg fsdhf gsdjgf sdjgfsd fgdszfg sdfzgsdzgf sdfg dgfhisgfigifg i";
+	/**
+	 * Not working: * /
+	 */
+	private static final String SPECIAL_CHARACHTERS = "!\"Â§$%&()=? '#_-.,";
 
-  @Before
-  public void cleanFiles() {
-    try {
-      Imeji.CONFIG = new ImejiConfiguration();
-      File f = new File(PropertyReader.getProperty("imeji.storage.path"));
-      if (f.exists())
-        FileUtils.cleanDirectory(f);
-    } catch (Exception e) {
-      LOGGER.error("CleanFiles error", e);
-    }
-  }
+	@Before
+	public void cleanFiles() {
+		try {
+			Imeji.CONFIG = new ImejiConfiguration();
+			File f = new File(PropertyReader.getProperty("imeji.storage.path"));
+			if (f.exists())
+				FileUtils.cleanDirectory(f);
+		} catch (Exception e) {
+			LOGGER.error("CleanFiles error", e);
+		}
+	}
 
-  /**
-   * Test for {@link InternalStorage}
-   * 
-   * @throws FileNotFoundException
-   */
-  @Test
-  public void internalStorageBasic() {
-    uploadReadDelete(FILENAME + ".png");
-  }
+	/**
+	 * Test for {@link InternalStorage}
+	 * 
+	 * @throws FileNotFoundException
+	 */
+	@Test
+	public void internalStorageBasic() {
+		uploadReadDelete(FILENAME + ".png");
+	}
 
-  @Test
-  public void internalStorageSpecialFileName() {
-    uploadReadDelete(SPECIAL_CHARACHTERS + ".png");
-  }
+	@Test
+	public void internalStorageSpecialFileName() {
+		uploadReadDelete(SPECIAL_CHARACHTERS + ".png");
+	}
 
-  @Test
-  public void internalStorageInternationalFileName() {
-    uploadReadDelete(INTERNATIONAL_CHARACHTERS + ".png");
-  }
+	@Test
+	public void internalStorageInternationalFileName() {
+		uploadReadDelete(INTERNATIONAL_CHARACHTERS + ".png");
+	}
 
-  @Test
-  public void internalStorageLongFileName() {
-    uploadReadDelete(LONG_NAME + ".png");
-  }
+	@Test
+	public void internalStorageLongFileName() {
+		uploadReadDelete(LONG_NAME + ".png");
+	}
 
-  @Test
-  public void testMimeTypeDetection() {
-    File file = ImejiTestResources.getTest2WrongExt();
-    String mimeType = StorageUtils.getMimeType(file);
-    assertThat(mimeType, equalTo("image/jpeg"));
-  }
+	@Test
+	public void testMimeTypeDetection() {
+		File file = ImejiTestResources.getTest2WrongExt();
+		String mimeType = StorageUtils.getMimeType(file);
+		assertThat(mimeType, equalTo("image/jpeg"));
+	}
 
-  /**
-   * Do upload - read - delete methods in a row
-   * 
-   * @param filename
-   * @throws ImejiException
-   */
-  private synchronized void uploadReadDelete(String filename) {
-    StorageController sc = new StorageController("internal");
-    InternalStorageManager manager = new InternalStorageManager();
-    // UPLOAD
-    File file = ImejiTestResources.getTestPng();
-    try {
-      UploadResult res = sc.upload(filename, file);
-      Assert.assertFalse(res.getOrginal() + " url is same as path",
-          res.getOrginal().equals(manager.transformUrlToPath(res.getOrginal())));
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      // READ THE URL
-      sc.read(res.getOrginal(), baos, true);
-      baos.toByteArray();
-      byte[] stored = baos.toByteArray();
-      try {
-        // Test if the uploaded file is the (i.e has the same hashcode) the
-        // one which has been stored
-        Assert.assertTrue("Uploaded file has been modified",
-            Arrays.hashCode(FileUtils.readFileToByteArray(file)) == Arrays.hashCode(stored));
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-      // DELETE THE FILE
-      long before = manager.getAdministrator().getNumberOfFiles();
-      sc.delete(res.getId());
-      long after = manager.getAdministrator().getNumberOfFiles();
-      // Test that the file has been correctly deleted (i.e, the number of
-      // files in the storage is null)
-      Assert.assertEquals(before - 1, after);
-      // Assert.assertTrue(Arrays.equals(original, stored));
-      // Assert.assertTrue(Arrays.hashCode(original) ==
-      // Arrays.hashCode(stored));
-    } catch (ImejiException e) {
-      LOGGER.info("There has been some upload error in the storage test.");
-    }
-  }
+	/**
+	 * Do upload - read - delete methods in a row
+	 * 
+	 * @param filename
+	 * @throws ImejiException
+	 */
+	private synchronized void uploadReadDelete(String filename) {
+		StorageController sc = new StorageController("internal");
+		InternalStorageManager manager = new InternalStorageManager();
+		// UPLOAD
+		File file = ImejiTestResources.getTestPng();
+		try {
+			UploadResult res = sc.upload(filename, file);
+			Assert.assertFalse(res.getOrginal() + " url is same as path",
+					res.getOrginal().equals(manager.transformUrlToPath(res.getOrginal())));
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			// READ THE URL
+			sc.read(res.getOrginal(), baos, true);
+			baos.toByteArray();
+			byte[] stored = baos.toByteArray();
+			try {
+				// Test if the uploaded file is the (i.e has the same hashcode) the
+				// one which has been stored
+				Assert.assertTrue("Uploaded file has been modified",
+						Arrays.hashCode(FileUtils.readFileToByteArray(file)) == Arrays.hashCode(stored));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			// DELETE THE FILE
+			long before = manager.getAdministrator().getNumberOfFiles();
+			sc.delete(res.getId());
+			long after = manager.getAdministrator().getNumberOfFiles();
+			// Test that the file has been correctly deleted (i.e, the number of
+			// files in the storage is null)
+			Assert.assertEquals(before - 1, after);
+			// Assert.assertTrue(Arrays.equals(original, stored));
+			// Assert.assertTrue(Arrays.hashCode(original) ==
+			// Arrays.hashCode(stored));
+		} catch (ImejiException e) {
+			LOGGER.info("There has been some upload error in the storage test.");
+		}
+	}
 }

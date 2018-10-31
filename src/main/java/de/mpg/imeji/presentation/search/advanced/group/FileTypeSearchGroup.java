@@ -27,100 +27,100 @@ import de.mpg.imeji.logic.search.model.SearchPair;
  *
  */
 public class FileTypeSearchGroup extends AbstractAdvancedSearchFormGroup implements Serializable {
-  private static final long serialVersionUID = 1439809243185106214L;
-  private static final Logger LOGGER = LogManager.getLogger(FileTypeSearchGroup.class);
-  private List<String> selected = new ArrayList<>();
-  private List<SelectItem> menu;
+	private static final long serialVersionUID = 1439809243185106214L;
+	private static final Logger LOGGER = LogManager.getLogger(FileTypeSearchGroup.class);
+	private List<String> selected = new ArrayList<>();
+	private List<SelectItem> menu;
 
-  public FileTypeSearchGroup(Locale locale) {
-    initMenu(locale);
-  }
+	public FileTypeSearchGroup(Locale locale) {
+		initMenu(locale);
+	}
 
-  public FileTypeSearchGroup(String value, Locale locale) {
-    this(locale);
-    initSelected(value, locale);
-  }
+	public FileTypeSearchGroup(String value, Locale locale) {
+		this(locale);
+		initSelected(value, locale);
+	}
 
+	@Override
+	public SearchElement toSearchElement() {
+		try {
+			return new SearchFactory().or(
+					selected.stream().map(s -> new SearchPair(SearchFields.filetype, s)).collect(Collectors.toList()))
+					.buildAsGroup();
+		} catch (UnprocessableError e) {
+			LOGGER.error("Error building file type query", e);
+			return new SearchPair();
+		}
+	}
 
-  @Override
-  public SearchElement toSearchElement() {
-    try {
-      return new SearchFactory().or(selected.stream()
-          .map(s -> new SearchPair(SearchFields.filetype, s)).collect(Collectors.toList()))
-          .buildAsGroup();
-    } catch (UnprocessableError e) {
-      LOGGER.error("Error building file type query", e);
-      return new SearchPair();
-    }
-  }
+	@Override
+	public void validate() {
 
-  @Override
-  public void validate() {
+	}
 
-  }
+	private void initMenu(Locale locale) {
+		menu = new ArrayList<>();
+		for (final Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
+			menu.add(new SelectItem(type.getName(locale.getLanguage())));
+		}
+	}
 
-  private void initMenu(Locale locale) {
-    menu = new ArrayList<>();
-    for (final Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
-      menu.add(new SelectItem(type.getName(locale.getLanguage())));
-    }
-  }
+	/**
+	 * Init the selected file types according the query
+	 */
+	private void initSelected(String value, Locale locale) {
+		selected = new ArrayList<String>();
+		for (final String t : value.split(" OR ")) {
+			final Type type = Imeji.CONFIG.getFileTypes().getType(t);
+			if (type != null) {
+				selected.add(type.getName(locale.getLanguage()));
+			}
+			selected.add(t);
+		}
+	}
 
-  /**
-   * Init the selected file types according the query
-   */
-  private void initSelected(String value, Locale locale) {
-    selected = new ArrayList<String>();
-    for (final String t : value.split(" OR ")) {
-      final Type type = Imeji.CONFIG.getFileTypes().getType(t);
-      if (type != null) {
-        selected.add(type.getName(locale.getLanguage()));
-      }
-      selected.add(t);
-    }
-  }
+	@SuppressWarnings("unchecked")
+	public void listener(ValueChangeEvent event) {
+		selected = (List<String>) event.getNewValue();
+	}
 
+	/**
+	 * True if the search is empty
+	 *
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return selected == null || selected.isEmpty();
+	}
 
-  @SuppressWarnings("unchecked")
-  public void listener(ValueChangeEvent event) {
-    selected = (List<String>) event.getNewValue();
-  }
+	/**
+	 * @return the selected
+	 */
+	public List<String> getSelected() {
+		return selected;
+	}
 
-  /**
-   * True if the search is empty
-   *
-   * @return
-   */
-  public boolean isEmpty() {
-    return selected == null || selected.isEmpty();
-  }
+	/**
+	 * @param selected
+	 *            the selected to set
+	 */
+	public void setSelected(List<String> selected) {
+		this.selected = selected;
+	}
 
-  /**
-   * @return the selected
-   */
-  public List<String> getSelected() {
-    return selected;
-  }
+	/**
+	 * @return the menu
+	 */
+	public List<SelectItem> getMenu() {
+		return menu;
+	}
 
-  /**
-   * @param selected the selected to set
-   */
-  public void setSelected(List<String> selected) {
-    this.selected = selected;
-  }
-
-  /**
-   * @return the menu
-   */
-  public List<SelectItem> getMenu() {
-    return menu;
-  }
-
-  /**
-   * @param menu the menu to set
-   */
-  public void setMenu(List<SelectItem> menu) {
-    this.menu = menu;
-  }
+	/**
+	 * @param menu
+	 *            the menu to set
+	 */
+	public void setMenu(List<SelectItem> menu) {
+		this.menu = menu;
+	}
 
 }

@@ -29,86 +29,84 @@ import de.mpg.imeji.presentation.beans.SuperContainerBean;
 @ManagedBean(name = "CollectionsBean")
 @ViewScoped
 public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
-  private static final long serialVersionUID = -3417058608949508441L;
-  /**
-   * The comment required to discard a {@link container}
-   */
-  private String discardComment = "";
+	private static final long serialVersionUID = -3417058608949508441L;
+	/**
+	 * The comment required to discard a {@link container}
+	 */
+	private String discardComment = "";
 
-  /**
-   * Bean for the collections page
-   */
-  public CollectionsBean() {
-    super();
-  }
+	/**
+	 * Bean for the collections page
+	 */
+	public CollectionsBean() {
+		super();
+	}
 
-  @PostConstruct
-  @Override
-  public void init() {
-    super.init();
-  }
+	@PostConstruct
+	@Override
+	public void init() {
+		super.init();
+	}
 
-  @Override
-  public String getNavigationString() {
-    return "pretty:collections";
-  }
+	@Override
+	public String getNavigationString() {
+		return "pretty:collections";
+	}
 
-  @Override
-  public List<CollectionListItem> retrieveList(int offset, int limit) throws Exception {
-    final CollectionService controller = new CollectionService();
-    Collection<CollectionImeji> collections = new ArrayList<CollectionImeji>();
-    search(offset, limit);
-    setTotalNumberOfRecords(searchResult.getNumberOfRecords());
-    collections = controller.retrieve(searchResult.getResults(), getSessionUser());
-    return collections.stream().parallel()
-        .map(c -> new CollectionListItem(c, getSessionUser(), getNavigation().getFileUrl()))
-        .collect(Collectors.toList());
-  }
+	@Override
+	public List<CollectionListItem> retrieveList(int offset, int limit) throws Exception {
+		final CollectionService controller = new CollectionService();
+		Collection<CollectionImeji> collections = new ArrayList<CollectionImeji>();
+		search(offset, limit);
+		setTotalNumberOfRecords(searchResult.getNumberOfRecords());
+		collections = controller.retrieve(searchResult.getResults(), getSessionUser());
+		return collections.stream().parallel()
+				.map(c -> new CollectionListItem(c, getSessionUser(), getNavigation().getFileUrl()))
+				.collect(Collectors.toList());
+	}
 
+	@Override
+	public String selectAll() {
+		// Not implemented
+		return "";
+	}
 
-  @Override
-  public String selectAll() {
-    // Not implemented
-    return "";
-  }
+	@Override
+	public String selectNone() {
+		// Not implemented
+		return "";
+	}
 
-  @Override
-  public String selectNone() {
-    // Not implemented
-    return "";
-  }
+	/**
+	 * getter
+	 *
+	 * @return
+	 */
+	public String getDiscardComment() {
+		return discardComment;
+	}
 
-  /**
-   * getter
-   *
-   * @return
-   */
-  public String getDiscardComment() {
-    return discardComment;
-  }
+	/**
+	 * setter
+	 *
+	 * @param discardComment
+	 */
+	public void setDiscardComment(String discardComment) {
+		this.discardComment = discardComment;
+	}
 
-  /**
-   * setter
-   *
-   * @param discardComment
-   */
-  public void setDiscardComment(String discardComment) {
-    this.discardComment = discardComment;
-  }
+	@Override
+	public String getType() {
+		return PAGINATOR_TYPE.COLLECTION_ITEMS.name();
+	}
 
-  @Override
-  public String getType() {
-    return PAGINATOR_TYPE.COLLECTION_ITEMS.name();
-  }
+	@Override
+	public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset, int limit) {
+		final CollectionService controller = new CollectionService();
+		return controller.search(searchQuery, sortCriterion, getSessionUser(), limit, offset);
+	}
 
-  @Override
-  public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset,
-      int limit) {
-    final CollectionService controller = new CollectionService();
-    return controller.search(searchQuery, sortCriterion, getSessionUser(), limit, offset);
-  }
-
-  public String getTypeLabel() {
-    return Imeji.RESOURCE_BUNDLE.getLabel("type_" + getType().toLowerCase(), getLocale());
-  }
+	public String getTypeLabel() {
+		return Imeji.RESOURCE_BUNDLE.getLabel("type_" + getType().toLowerCase(), getLocale());
+	}
 }

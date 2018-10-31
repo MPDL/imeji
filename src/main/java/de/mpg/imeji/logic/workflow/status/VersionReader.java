@@ -4,26 +4,27 @@ import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Properties.Status;
 
 /**
- * Interface to read the current {@link Status} of an Object extending {@link Properties}
+ * Interface to read the current {@link Status} of an Object extending
+ * {@link Properties}
  *
  * @author bastiens
  *
  */
 public interface VersionReader {
 
-  /**
-   * Read the Current {@link Status}
-   *
-   * @param p
-   * @return
-   */
-  public Status getStatus(Properties p);
+	/**
+	 * Read the Current {@link Status}
+	 *
+	 * @param p
+	 * @return
+	 */
+	public Status getStatus(Properties p);
 
-  /**
-   *
-   * @param p
-   * @return
-   */
-  public int getVersion(Properties p);
+	/**
+	 *
+	 * @param p
+	 * @return
+	 */
+	public int getVersion(Properties p);
 
 }

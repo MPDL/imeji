@@ -21,83 +21,81 @@ import de.mpg.imeji.logic.util.StringHelper;
  *
  */
 public class HTreeMapStore implements KeyValueStore {
-  public static final String STORE_FILENAME_PREFIX = "imeji_HTreeMap_";
-  protected static DB STORE;
-  protected HTreeMap<Object, Object> map;
-  protected String name;
+	public static final String STORE_FILENAME_PREFIX = "imeji_HTreeMap_";
+	protected static DB STORE;
+	protected HTreeMap<Object, Object> map;
+	protected String name;
 
-  /**
-   * Basic HTreeMapStore without expiration date
-   *
-   * @param storeName
-   */
-  public HTreeMapStore(String name) {
-    this.name = name;
-  }
+	/**
+	 * Basic HTreeMapStore without expiration date
+	 *
+	 * @param storeName
+	 */
+	public HTreeMapStore(String name) {
+		this.name = name;
+	}
 
-  @Override
-  public String getName() {
-    return name;
-  }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-  @Override
-  public byte[] get(String key) {
-    return (byte[]) map.get(key);
-  }
+	@Override
+	public byte[] get(String key) {
+		return (byte[]) map.get(key);
+	}
 
-  @Override
-  public void put(String key, byte[] value) {
-    map.put(key, value);
-    STORE.commit();
-  }
+	@Override
+	public void put(String key, byte[] value) {
+		map.put(key, value);
+		STORE.commit();
+	}
 
-  @Override
-  public void delete(String key) {
-    map.remove(key);
-    STORE.commit();
-  }
+	@Override
+	public void delete(String key) {
+		map.remove(key);
+		STORE.commit();
+	}
 
-  @Override
-  public List<byte[]> getList(String keyPattern) {
-    final List<byte[]> list = new ArrayList<>();
-    for (final Object key : map.keySet()) {
-      if (((String) key).matches(keyPattern)) {
-        list.add((byte[]) map.get(key));
-      }
-    }
-    return list;
-  }
+	@Override
+	public List<byte[]> getList(String keyPattern) {
+		final List<byte[]> list = new ArrayList<>();
+		for (final Object key : map.keySet()) {
+			if (((String) key).matches(keyPattern)) {
+				list.add((byte[]) map.get(key));
+			}
+		}
+		return list;
+	}
 
-  @Override
-  public void start() {
-    final File f =
-        new File(StringHelper.normalizePath(Imeji.tdbPath) + STORE_FILENAME_PREFIX + name);
-    STORE = DBMaker.newFileDB(f).make();
-    map = STORE.createHashMap(name).keySerializer(Serializer.STRING).makeOrGet();
+	@Override
+	public void start() {
+		final File f = new File(StringHelper.normalizePath(Imeji.tdbPath) + STORE_FILENAME_PREFIX + name);
+		STORE = DBMaker.newFileDB(f).make();
+		map = STORE.createHashMap(name).keySerializer(Serializer.STRING).makeOrGet();
 
-  }
+	}
 
-  @Override
-  public synchronized void stop() {
-    if (!STORE.isClosed()) {
-      STORE.commit();
-      STORE.close();
-    }
-  }
+	@Override
+	public synchronized void stop() {
+		if (!STORE.isClosed()) {
+			STORE.commit();
+			STORE.close();
+		}
+	}
 
-  @Override
-  public boolean isStarted() {
-    return STORE != null && map != null && !STORE.isClosed();
-  }
+	@Override
+	public boolean isStarted() {
+		return STORE != null && map != null && !STORE.isClosed();
+	}
 
-  @Override
-  public void reset() {
-    if (isStarted()) {
-      map.clear();
-      stop();
-      FileUtils.deleteQuietly(
-          new File(StringHelper.normalizePath(Imeji.tdbPath) + STORE_FILENAME_PREFIX + name));
-      start();
-    }
-  }
+	@Override
+	public void reset() {
+		if (isStarted()) {
+			map.clear();
+			stop();
+			FileUtils.deleteQuietly(new File(StringHelper.normalizePath(Imeji.tdbPath) + STORE_FILENAME_PREFIX + name));
+			start();
+		}
+	}
 }

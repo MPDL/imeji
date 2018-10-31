@@ -11,25 +11,24 @@ import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
  */
 public interface CollectionElement {
 
-  /**
-   * Name of the object
-   * 
-   * @return
-   */
-  public String getName();
+	/**
+	 * Name of the object
+	 * 
+	 * @return
+	 */
+	public String getName();
 
-  /**
-   * The id of the object
-   * 
-   * @return
-   */
-  public String getUri();
+	/**
+	 * The id of the object
+	 * 
+	 * @return
+	 */
+	public String getUri();
 
-  /**
-   * The type of the object
-   * 
-   * @return
-   */
-  public ObjectType getType();
+	/**
+	 * The type of the object
+	 * 
+	 * @return
+	 */
+	public ObjectType getType();
 }
-

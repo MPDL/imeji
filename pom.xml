@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>imeji</artifactId>
 	<groupId>org.imeji</groupId>
@@ -87,7 +89,7 @@
 	<repositories>
 		<!-- <repository> <id>central</id> <url>http://central</url> <releases> 
 			<enabled>true</enabled> </releases> <snapshots> <enabled>true</enabled> </snapshots> 
-			</repository> -->		
+			</repository> -->
 		<repository>
 			<id>prime-repo</id>
 			<name>Prime Technology Maven Repository</name>
@@ -246,6 +248,27 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>net.revelc.code.formatter</groupId>
+				<artifactId>formatter-maven-plugin</artifactId>
+				<version>2.7.0</version>
+				<configuration>
+					<compilerSource>1.8</compilerSource>
+					<compilerCompliance>1.8</compilerCompliance>
+					<compilerTargetPlatform>1.8</compilerTargetPlatform>
+					<lineEnding>LF</lineEnding>
+					<encoding>UTF-8</encoding>
+					<configFile>${project.parent.basedir}/java-google-style-custom.xml</configFile>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<!--This plugin's configuration is used to store Eclipse m2e settings 
 				only. It has no influence on the Maven build itself. -->
 			<plugin>
@@ -275,6 +298,22 @@
 									<versionRange>[1.1,)</versionRange>
 									<goals>
 										<goal>generate</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore />
+								</action>
+							</pluginExecution>
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>net.revelc.code.formatter</groupId>
+									<artifactId>formatter-maven-plugin</artifactId>
+									<versionRange>[0.4,)</versionRange>
+									<goals>
+										<goals>
+											<goal>format</goal>
+											<goal>default</goal>
+										</goals>
 									</goals>
 								</pluginExecutionFilter>
 								<action>
@@ -332,21 +371,21 @@
 			<artifactId>prettyfaces-jsf2</artifactId>
 			<version>3.3.3</version>
 		</dependency>
-	     <dependency>
-	        <groupId>org.apache.logging.log4j</groupId>
-	        <artifactId>log4j-1.2-api</artifactId>
-	        <version>2.11.1</version>
-	     </dependency>
 		<dependency>
-   			 <groupId>org.apache.logging.log4j</groupId>
-    		<artifactId>log4j-api</artifactId>
-    		<version>2.11.1</version>
-  		</dependency>
-  		<dependency>
-    		<groupId>org.apache.logging.log4j</groupId>
-    		<artifactId>log4j-core</artifactId>
-    		<version>2.11.1</version>
-  		</dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-1.2-api</artifactId>
+			<version>2.11.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.11.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.11.1</version>
+		</dependency>
 		<!-- USED during compile, e.g. javax.mail -->
 		<dependency>
 			<groupId>javax</groupId>
@@ -501,11 +540,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!--  <dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch-analysis-icu</artifactId>
-			<version>2.7.0</version>
-		</dependency>-->
+		<!-- <dependency> <groupId>org.elasticsearch</groupId> <artifactId>elasticsearch-analysis-icu</artifactId> 
+			<version>2.7.0</version> </dependency> -->
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
@@ -539,9 +575,13 @@
 								<phase>install</phase>
 								<configuration>
 									<tasks>
-										<delete quiet="true" file="${tomcat.webapps}/${project.warName}.war" />
-										<delete quiet="true" dir="${tomcat.webapps}/${project.warName}" />
-										<copy overwrite="true" file="${project.build.directory}/${project.warName}.war" tofile="${tomcat.webapps}/${project.warName}.war" />
+										<delete quiet="true"
+											file="${tomcat.webapps}/${project.warName}.war" />
+										<delete quiet="true"
+											dir="${tomcat.webapps}/${project.warName}" />
+										<copy overwrite="true"
+											file="${project.build.directory}/${project.warName}.war"
+											tofile="${tomcat.webapps}/${project.warName}.war" />
 									</tasks>
 								</configuration>
 								<goals>

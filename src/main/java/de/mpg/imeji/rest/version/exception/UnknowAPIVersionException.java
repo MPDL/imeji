@@ -9,13 +9,11 @@ import de.mpg.imeji.exceptions.ImejiException;
  *
  */
 public class UnknowAPIVersionException extends ImejiException {
-  private static final long serialVersionUID = 2759977782360745354L;
+	private static final long serialVersionUID = 2759977782360745354L;
 
-  public UnknowAPIVersionException(String message) {
-    super(message);
-    minimizeStacktrace();
-  }
-
-
+	public UnknowAPIVersionException(String message) {
+		super(message);
+		minimizeStacktrace();
+	}
 
 }

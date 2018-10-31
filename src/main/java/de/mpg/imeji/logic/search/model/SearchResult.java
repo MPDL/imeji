@@ -16,109 +16,110 @@ import de.mpg.imeji.logic.search.util.SortHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class SearchResult {
-  private final int numberOfRecords;
-  private final int numberOfItems;
-  private final int numberOfItemsOfCollection;
-  private final int numberOfSubcollections;
-  
-  /**
-   * Search result contains list of Strings 
-   * String contains UID of (to be) found objects 
-   */
-  private List<String> results;
-  private String query = null;
-  private SortCriterion sort;
-  private List<FacetResult> facets;
+	private final int numberOfRecords;
+	private final int numberOfItems;
+	private final int numberOfItemsOfCollection;
+	private final int numberOfSubcollections;
 
-  /**
-   * Create a new {@link SearchResult} from a {@link List} of String, and sort it if a
-   * {@link SortCriterion} has been defined <br/>
-   * Sorting not made on {@link Jena} level, for performance purpose
-   *
-   * @param unsortedResults
-   * @param sort
-   */
-  public SearchResult(List<String> unsortedResults, SortCriterion sort) {
-    numberOfRecords = unsortedResults.size();
-    numberOfItems = numberOfRecords;
-    numberOfItemsOfCollection = numberOfItems;
-    numberOfSubcollections = 0;
-    if (sort != null) {
-      this.sort = sort;
-      results = SortHelper.sort(unsortedResults, this.sort.getSortOrder());
-    } else {
-      results = unsortedResults;
-    }
-  }
+	/**
+	 * Search result contains list of Strings String contains UID of (to be) found
+	 * objects
+	 */
+	private List<String> results;
+	private String query = null;
+	private SortCriterion sort;
+	private List<FacetResult> facets;
 
-  /**
-   * Default constructor
-   */
-  public SearchResult(List<String> ids) {
-    this(ids, null);
-  }
+	/**
+	 * Create a new {@link SearchResult} from a {@link List} of String, and sort it
+	 * if a {@link SortCriterion} has been defined <br/>
+	 * Sorting not made on {@link Jena} level, for performance purpose
+	 *
+	 * @param unsortedResults
+	 * @param sort
+	 */
+	public SearchResult(List<String> unsortedResults, SortCriterion sort) {
+		numberOfRecords = unsortedResults.size();
+		numberOfItems = numberOfRecords;
+		numberOfItemsOfCollection = numberOfItems;
+		numberOfSubcollections = 0;
+		if (sort != null) {
+			this.sort = sort;
+			results = SortHelper.sort(unsortedResults, this.sort.getSortOrder());
+		} else {
+			results = unsortedResults;
+		}
+	}
 
-  public SearchResult(List<String> ids, long numberOfRecords, long numberOfItems,
-      long numberOfItemsOfCollection, long numberOfSubcollections, List<FacetResult> facetResults) {
-    this.numberOfRecords = (int) numberOfRecords;
-    this.numberOfItems = (int) numberOfItems;
-    this.numberOfItemsOfCollection = (int) numberOfItemsOfCollection;
-    this.numberOfSubcollections = (int) numberOfSubcollections;
-    this.results = ids;
-    this.facets = facetResults;
-  }
+	/**
+	 * Default constructor
+	 */
+	public SearchResult(List<String> ids) {
+		this(ids, null);
+	}
 
-  public int getNumberOfRecords() {
-    return numberOfRecords;
-  }
+	public SearchResult(List<String> ids, long numberOfRecords, long numberOfItems, long numberOfItemsOfCollection,
+			long numberOfSubcollections, List<FacetResult> facetResults) {
+		this.numberOfRecords = (int) numberOfRecords;
+		this.numberOfItems = (int) numberOfItems;
+		this.numberOfItemsOfCollection = (int) numberOfItemsOfCollection;
+		this.numberOfSubcollections = (int) numberOfSubcollections;
+		this.results = ids;
+		this.facets = facetResults;
+	}
 
-  public List<String> getResults() {
-    return results;
-  }
+	public int getNumberOfRecords() {
+		return numberOfRecords;
+	}
 
-  public void setResults(List<String> results) {
-    this.results = results;
-  }
+	public List<String> getResults() {
+		return results;
+	}
 
-  public String getQuery() {
-    return query;
-  }
+	public void setResults(List<String> results) {
+		this.results = results;
+	}
 
-  public void setQuery(String query) {
-    this.query = query;
-  }
+	public String getQuery() {
+		return query;
+	}
 
-  public SortCriterion getSort() {
-    return sort;
-  }
+	public void setQuery(String query) {
+		this.query = query;
+	}
 
-  public void setSort(SortCriterion sort) {
-    this.sort = sort;
-  }
+	public SortCriterion getSort() {
+		return sort;
+	}
 
-  /**
-   * @return the facets
-   */
-  public List<FacetResult> getFacets() {
-    return facets;
-  }
+	public void setSort(SortCriterion sort) {
+		this.sort = sort;
+	}
 
-  /**
-   * @param facets the facets to set
-   */
-  public void setFacets(List<FacetResult> facets) {
-    this.facets = facets;
-  }
+	/**
+	 * @return the facets
+	 */
+	public List<FacetResult> getFacets() {
+		return facets;
+	}
 
-  public int getNumberOfItems() {
-    return numberOfItems;
-  }
+	/**
+	 * @param facets
+	 *            the facets to set
+	 */
+	public void setFacets(List<FacetResult> facets) {
+		this.facets = facets;
+	}
 
-  public int getNumberOfSubcollections() {
-    return numberOfSubcollections;
-  }
+	public int getNumberOfItems() {
+		return numberOfItems;
+	}
 
-  public int getNumberOfItemsOfCollection() {
-    return numberOfItemsOfCollection;
-  }
+	public int getNumberOfSubcollections() {
+		return numberOfSubcollections;
+	}
+
+	public int getNumberOfItemsOfCollection() {
+		return numberOfItemsOfCollection;
+	}
 }

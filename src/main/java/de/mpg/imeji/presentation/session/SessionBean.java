@@ -36,311 +36,311 @@ import de.mpg.imeji.presentation.util.ServletUtil;
 @ManagedBean(name = "SessionBean")
 @SessionScoped
 public class SessionBean implements Serializable {
-  private static final long serialVersionUID = 3367867290955569762L;
-  private static final String STYLE_COOKIE = "IMEJI_STYLE";
-  private static final String BROWSE_VIEW_COOKIE = "IMEJI_BROWSE_VIEW";
+	private static final long serialVersionUID = 3367867290955569762L;
+	private static final String STYLE_COOKIE = "IMEJI_STYLE";
+	private static final String BROWSE_VIEW_COOKIE = "IMEJI_BROWSE_VIEW";
 
-  private enum Style {
-    NONE, DEFAULT, ALTERNATIVE;
-  }
+	private enum Style {
+		NONE, DEFAULT, ALTERNATIVE;
+	}
 
-  private User user = null;
-  private List<String> selected = new ArrayList<String>();
-  private String selectedImagesContext = null;
-  private Style selectedCss = Style.NONE;
-  private String applicationUrl;
-  private String selectedBrowseListView;
-  private int divWidth;
+	private User user = null;
+	private List<String> selected = new ArrayList<String>();
+	private String selectedImagesContext = null;
+	private Style selectedCss = Style.NONE;
+	private String applicationUrl;
+	private String selectedBrowseListView;
+	private int divWidth;
 
+	/*
+	 * Specific variables for the Max Planck Institute
+	 */
+	public String institute;
+	public String instituteId;
 
-  /*
-   * Specific variables for the Max Planck Institute
-   */
-  public String institute;
-  public String instituteId;
+	/**
+	 * The session Bean for imeji
+	 */
+	public SessionBean() {
+		initCssWithCookie();
+		initApplicationUrl();
+		initBrowseViewWithCookieOrConfig();
+		institute = findInstitute();
+		instituteId = findInstituteId();
+	}
 
-  /**
-   * The session Bean for imeji
-   */
-  public SessionBean() {
-    initCssWithCookie();
-    initApplicationUrl();
-    initBrowseViewWithCookieOrConfig();
-    institute = findInstitute();
-    instituteId = findInstituteId();
-  }
+	/**
+	 * Init the default browse view. If a cookie is set, use it, otherwise use
+	 * config value
+	 */
+	private void initBrowseViewWithCookieOrConfig() {
+		this.selectedBrowseListView = CookieUtils.readNonNull(BROWSE_VIEW_COOKIE, Imeji.CONFIG.getDefaultBrowseView());
+	}
 
+	/**
+	 * Initialize the CSS value with the Cookie value
+	 */
+	private void initCssWithCookie() {
+		selectedCss = Style.valueOf(CookieUtils.readNonNull(STYLE_COOKIE, Style.NONE.name()));
+	}
 
-  /**
-   * Init the default browse view. If a cookie is set, use it, otherwise use config value
-   */
-  private void initBrowseViewWithCookieOrConfig() {
-    this.selectedBrowseListView =
-        CookieUtils.readNonNull(BROWSE_VIEW_COOKIE, Imeji.CONFIG.getDefaultBrowseView());
-  }
+	/**
+	 * Return the version of the software
+	 *
+	 * @return
+	 */
+	public String getVersion() {
+		return PropertyReader.getVersion();
+	}
 
-  /**
-   * Initialize the CSS value with the Cookie value
-   */
-  private void initCssWithCookie() {
-    selectedCss = Style.valueOf(CookieUtils.readNonNull(STYLE_COOKIE, Style.NONE.name()));
-  }
+	/**
+	 * Return the name of the current application (defined in the property)
+	 *
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	public String getInstanceName() {
+		try {
+			return Imeji.CONFIG.getInstanceName();
+		} catch (final Exception e) {
+			return "imeji";
+		}
+	}
 
-  /**
-   * Return the version of the software
-   *
-   * @return
-   */
-  public String getVersion() {
-    return PropertyReader.getVersion();
-  }
+	/**
+	 * Read application URL from the imeji properties
+	 */
+	private void initApplicationUrl() {
+		try {
+			applicationUrl = StringHelper.normalizeURI(PropertyReader.getProperty("imeji.instance.url"));
+		} catch (final Exception e) {
+			applicationUrl = "http://localhost:8080/imeji";
+		}
+	}
 
-  /**
-   * Return the name of the current application (defined in the property)
-   *
-   * @return
-   * @throws URISyntaxException
-   * @throws IOException
-   */
-  public String getInstanceName() {
-    try {
-      return Imeji.CONFIG.getInstanceName();
-    } catch (final Exception e) {
-      return "imeji";
-    }
-  }
+	public String getApplicationUrl() {
+		return applicationUrl;
+	}
 
-  /**
-   * Read application URL from the imeji properties
-   */
-  private void initApplicationUrl() {
-    try {
-      applicationUrl = StringHelper.normalizeURI(PropertyReader.getProperty("imeji.instance.url"));
-    } catch (final Exception e) {
-      applicationUrl = "http://localhost:8080/imeji";
-    }
-  }
+	/**
+	 * Get the context of the images (item, collection, album)
+	 *
+	 * @return
+	 */
+	public String getSelectedImagesContext() {
+		return selectedImagesContext;
+	}
 
-  public String getApplicationUrl() {
-    return applicationUrl;
-  }
+	/**
+	 * setter
+	 *
+	 * @param selectedImagesContext
+	 */
+	public void setSelectedImagesContext(String selectedImagesContext) {
+		this.selectedImagesContext = selectedImagesContext;
+	}
 
-  /**
-   * Get the context of the images (item, collection, album)
-   *
-   * @return
-   */
-  public String getSelectedImagesContext() {
-    return selectedImagesContext;
-  }
+	public void reloadUser() throws Exception {
+		if (user != null) {
+			user = new UserService().retrieve(user.getId(), Imeji.adminUser);
+		}
+	}
 
-  /**
-   * setter
-   *
-   * @param selectedImagesContext
-   */
-  public void setSelectedImagesContext(String selectedImagesContext) {
-    this.selectedImagesContext = selectedImagesContext;
-  }
+	/**
+	 * @return the user
+	 */
+	public User getUser() {
+		return user;
+	}
 
-  public void reloadUser() throws Exception {
-    if (user != null) {
-      user = new UserService().retrieve(user.getId(), Imeji.adminUser);
-    }
-  }
+	/**
+	 * @param user
+	 *            the user to set
+	 */
+	public void setUser(User user) {
+		this.user = user;
+	}
 
-  /**
-   * @return the user
-   */
-  public User getUser() {
-    return user;
-  }
+	/**
+	 * getter
+	 *
+	 * @return
+	 */
+	public List<String> getSelected() {
+		return selected;
+	}
 
-  /**
-   * @param user the user to set
-   */
-  public void setUser(User user) {
-    this.user = user;
-  }
+	/**
+	 * setter
+	 *
+	 * @param selected
+	 */
+	public void setSelected(List<String> selected) {
+		this.selected = selected;
+	}
 
-  /**
-   * getter
-   *
-   * @return
-   */
-  public List<String> getSelected() {
-    return selected;
-  }
+	/**
+	 * Return the number of item selected
+	 *
+	 * @return
+	 */
+	public int getSelectedSize() {
+		return selected.size();
+	}
 
-  /**
-   * setter
-   *
-   * @param selected
-   */
-  public void setSelected(List<String> selected) {
-    this.selected = selected;
-  }
+	/**
+	 * Check if the selected CSS is correct according to the configuration value. If
+	 * errors are found, then change the selected CSS
+	 *
+	 * @param defaultCss
+	 *            - the value of the default css in the config
+	 * @param alternativeCss
+	 *            - the value of the alternative css in the config
+	 */
+	public void checkCss(String defaultCss, String alternativeCss) {
+		if (selectedCss == Style.ALTERNATIVE && (alternativeCss == null || "".equals(alternativeCss))) {
+			// alternative css doesn't exist, therefore set to default
+			selectedCss = Style.DEFAULT;
+		}
+		if (selectedCss == Style.DEFAULT && (defaultCss == null || "".equals(defaultCss))) {
+			// default css doesn't exist, therefore set to none
+			selectedCss = Style.NONE;
+		}
+		if (selectedCss == Style.NONE && defaultCss != null && !"".equals(defaultCss)) {
+			// default css exists, therefore set to default
+			selectedCss = Style.DEFAULT;
+		}
+	}
 
-  /**
-   * Return the number of item selected
-   *
-   * @return
-   */
-  public int getSelectedSize() {
-    return selected.size();
-  }
+	/**
+	 * Get the the selected {@link Style}
+	 *
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	public String getSelectedCss() {
+		return selectedCss.name();
+	}
 
-  /**
-   * Check if the selected CSS is correct according to the configuration value. If errors are found,
-   * then change the selected CSS
-   *
-   * @param defaultCss - the value of the default css in the config
-   * @param alternativeCss - the value of the alternative css in the config
-   */
-  public void checkCss(String defaultCss, String alternativeCss) {
-    if (selectedCss == Style.ALTERNATIVE && (alternativeCss == null || "".equals(alternativeCss))) {
-      // alternative css doesn't exist, therefore set to default
-      selectedCss = Style.DEFAULT;
-    }
-    if (selectedCss == Style.DEFAULT && (defaultCss == null || "".equals(defaultCss))) {
-      // default css doesn't exist, therefore set to none
-      selectedCss = Style.NONE;
-    }
-    if (selectedCss == Style.NONE && defaultCss != null && !"".equals(defaultCss)) {
-      // default css exists, therefore set to default
-      selectedCss = Style.DEFAULT;
-    }
-  }
+	/**
+	 * Toggle the selected css
+	 *
+	 * @return
+	 */
+	public void toggleCss() {
+		selectedCss = selectedCss == Style.DEFAULT ? Style.ALTERNATIVE : Style.DEFAULT;
+		CookieUtils.updateCookieValue(STYLE_COOKIE, selectedCss.name());
+	}
 
-  /**
-   * Get the the selected {@link Style}
-   *
-   * @return
-   * @throws URISyntaxException
-   * @throws IOException
-   */
-  public String getSelectedCss() {
-    return selectedCss.name();
-  }
+	/**
+	 * Return the Institute of the current {@link User} according to his IP.
+	 * IMPORTANT: works only for Max Planck Institutes IPs.
+	 *
+	 * @return
+	 */
+	public String getInstituteNameByIP() {
+		if (StringUtils.isEmpty(institute)) {
+			return "unknown";
+		}
+		return institute;
+	}
 
-  /**
-   * Toggle the selected css
-   *
-   * @return
-   */
-  public void toggleCss() {
-    selectedCss = selectedCss == Style.DEFAULT ? Style.ALTERNATIVE : Style.DEFAULT;
-    CookieUtils.updateCookieValue(STYLE_COOKIE, selectedCss.name());
-  }
+	/**
+	 * Return the Institute of the current {@link User} according to his IP.
+	 * IMPORTANT: works only for Max Planck Institutes IPs.
+	 *
+	 * @return
+	 */
+	public String getInstituteIdByIP() {
+		if (StringUtils.isEmpty(institute)) {
+			return "unknown";
+		}
+		return instituteId;
+	}
 
-  /**
-   * Return the Institute of the current {@link User} according to his IP. IMPORTANT: works only for
-   * Max Planck Institutes IPs.
-   *
-   * @return
-   */
-  public String getInstituteNameByIP() {
-    if (StringUtils.isEmpty(institute)) {
-      return "unknown";
-    }
-    return institute;
-  }
+	/**
+	 * Return the suffix of the email of the user
+	 *
+	 * @return
+	 */
+	public String getInstituteByUser() {
+		if (user != null) {
+			return user.getEmail().split("@")[1];
+		}
+		return "";
+	}
 
-  /**
-   * Return the Institute of the current {@link User} according to his IP. IMPORTANT: works only for
-   * Max Planck Institutes IPs.
-   *
-   * @return
-   */
-  public String getInstituteIdByIP() {
-    if (StringUtils.isEmpty(institute)) {
-      return "unknown";
-    }
-    return instituteId;
-  }
+	/**
+	 * Find the Name of the Institute of the current user
+	 */
+	public String findInstitute() {
+		if (institute != null) {
+			return institute;
+		}
+		return MaxPlanckInstitutUtils.getInstituteNameForIP(readUserIp());
+	}
 
-  /**
-   * Return the suffix of the email of the user
-   *
-   * @return
-   */
-  public String getInstituteByUser() {
-    if (user != null) {
-      return user.getEmail().split("@")[1];
-    }
-    return "";
-  }
+	/**
+	 * Find the Name of the Institute of the current user
+	 */
+	public String findInstituteId() {
+		if (instituteId != null) {
+			return instituteId;
+		}
+		return MaxPlanckInstitutUtils.getInstituteIdForIP(readUserIp());
+	}
 
-  /**
-   * Find the Name of the Institute of the current user
-   */
-  public String findInstitute() {
-    if (institute != null) {
-      return institute;
-    }
-    return MaxPlanckInstitutUtils.getInstituteNameForIP(readUserIp());
-  }
+	/**
+	 * Read the IP of the current User
+	 *
+	 * @return
+	 */
+	private String readUserIp() {
+		final HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+				.getRequest();
+		String ipAddress = request.getHeader("X-FORWARDED-FOR");
+		if (ipAddress == null) {
+			ipAddress = request.getRemoteAddr();
+		}
+		if (ipAddress != null && ipAddress.split(",").length > 1) {
+			ipAddress = ipAddress.split(",")[0];
+		}
+		return ipAddress;
+	}
 
-  /**
-   * Find the Name of the Institute of the current user
-   */
-  public String findInstituteId() {
-    if (instituteId != null) {
-      return instituteId;
-    }
-    return MaxPlanckInstitutUtils.getInstituteIdForIP(readUserIp());
-  }
+	public String getSelectedBrowseListView() {
+		return selectedBrowseListView;
+	}
 
-  /**
-   * Read the IP of the current User
-   *
-   * @return
-   */
-  private String readUserIp() {
-    final HttpServletRequest request =
-        (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-    String ipAddress = request.getHeader("X-FORWARDED-FOR");
-    if (ipAddress == null) {
-      ipAddress = request.getRemoteAddr();
-    }
-    if (ipAddress != null && ipAddress.split(",").length > 1) {
-      ipAddress = ipAddress.split(",")[0];
-    }
-    return ipAddress;
-  }
+	public void setSelectedBrowseListView(String selectedBrowseListView) {
+		this.selectedBrowseListView = selectedBrowseListView;
+	}
 
-  public String getSelectedBrowseListView() {
-    return selectedBrowseListView;
-  }
+	public void toggleBrowseView() {
+		selectedBrowseListView = selectedBrowseListView.equals(ImejiConfiguration.BROWSE_VIEW.LIST.name())
+				? BROWSE_VIEW.THUMBNAIL.name()
+				: BROWSE_VIEW.LIST.name();
+		CookieUtils.updateCookieValue(BROWSE_VIEW_COOKIE, selectedBrowseListView);
+	}
 
-  public void setSelectedBrowseListView(String selectedBrowseListView) {
-    this.selectedBrowseListView = selectedBrowseListView;
-  }
+	/**
+	 * Return the {@link SessionBean} form the {@link HttpSession}
+	 *
+	 * @param req
+	 * @return
+	 */
+	public static SessionBean getSessionBean(HttpServletRequest req) {
+		return (SessionBean) ServletUtil.getSession(req, SessionBean.class.getSimpleName());
+	}
 
-  public void toggleBrowseView() {
-    selectedBrowseListView =
-        selectedBrowseListView.equals(ImejiConfiguration.BROWSE_VIEW.LIST.name())
-            ? BROWSE_VIEW.THUMBNAIL.name() : BROWSE_VIEW.LIST.name();
-    CookieUtils.updateCookieValue(BROWSE_VIEW_COOKIE, selectedBrowseListView);
-  }
+	public int getDivWidth() {
+		return divWidth;
+	}
 
-  /**
-   * Return the {@link SessionBean} form the {@link HttpSession}
-   *
-   * @param req
-   * @return
-   */
-  public static SessionBean getSessionBean(HttpServletRequest req) {
-    return (SessionBean) ServletUtil.getSession(req, SessionBean.class.getSimpleName());
-  }
-
-  public int getDivWidth() {
-    return divWidth;
-  }
-
-  public void setDivWidth(int divWidth) {
-    this.divWidth = divWidth;
-  }
-
+	public void setDivWidth(int divWidth) {
+		this.divWidth = divWidth;
+	}
 
 }

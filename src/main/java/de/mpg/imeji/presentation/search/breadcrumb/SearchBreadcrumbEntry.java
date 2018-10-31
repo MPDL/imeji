@@ -11,54 +11,54 @@ import de.mpg.imeji.logic.search.facet.model.Facet;
  *
  */
 public class SearchBreadcrumbEntry implements Serializable {
-  private static final long serialVersionUID = 2936538556616876085L;
-  private final String index;
-  private final String label;
-  private final String operator;
-  private final String value;
-  private final String removeQuery;
+	private static final long serialVersionUID = 2936538556616876085L;
+	private final String index;
+	private final String label;
+	private final String operator;
+	private final String value;
+	private final String removeQuery;
 
-  public SearchBreadcrumbEntry(Facet facet, String operator, String value, String removeQuery) {
-    this.index = facet.getIndex();
-    this.value = value;
-    this.label = facet.getName();
-    this.operator = operator;
-    this.removeQuery = removeQuery;
-  }
+	public SearchBreadcrumbEntry(Facet facet, String operator, String value, String removeQuery) {
+		this.index = facet.getIndex();
+		this.value = value;
+		this.label = facet.getName();
+		this.operator = operator;
+		this.removeQuery = removeQuery;
+	}
 
-  /**
-   * @return the index
-   */
-  public String getIndex() {
-    return index;
-  }
+	/**
+	 * @return the index
+	 */
+	public String getIndex() {
+		return index;
+	}
 
-  /**
-   * @return the value
-   */
-  public String getValue() {
-    return value;
-  }
+	/**
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
+	}
 
-  /**
-   * @return the removeQuery
-   */
-  public String getRemoveQuery() {
-    return removeQuery;
-  }
+	/**
+	 * @return the removeQuery
+	 */
+	public String getRemoveQuery() {
+		return removeQuery;
+	}
 
-  /**
-   * @return the label
-   */
-  public String getLabel() {
-    return label;
-  }
+	/**
+	 * @return the label
+	 */
+	public String getLabel() {
+		return label;
+	}
 
-  /**
-   * @return the operator
-   */
-  public String getOperator() {
-    return operator;
-  }
+	/**
+	 * @return the operator
+	 */
+	public String getOperator() {
+		return operator;
+	}
 
 }

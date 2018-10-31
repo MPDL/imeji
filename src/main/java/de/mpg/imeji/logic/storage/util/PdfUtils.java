@@ -14,30 +14,30 @@ import de.mpg.imeji.logic.util.StorageUtils;
 
 public final class PdfUtils {
 
-  private PdfUtils() {
-    // private constructor
-  }
+	private PdfUtils() {
+		// private constructor
+	}
 
-  /**
-   * Read a pdf File, et the first page, and return it as an image
-   *
-   * @param file
-   * @return
-   * @throws FileNotFoundException
-   * @throws IOException
-   */
-  public static File pdfToImage(File file) throws IOException {
-    final PDDocument document = PDDocument.load(file, MemoryUsageSetting.setupTempFileOnly());
-    try {
-      if (document.getNumberOfPages() > 0) {
-        final PDFRenderer pdfRenderer = new PDFRenderer(document);
-        final BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
-        return ImageUtils.toFile(bim, StorageUtils.getMimeType("jpg"));
-      }
-      return null;
-    } finally {
-      document.close();
-    }
-  }
+	/**
+	 * Read a pdf File, et the first page, and return it as an image
+	 *
+	 * @param file
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public static File pdfToImage(File file) throws IOException {
+		final PDDocument document = PDDocument.load(file, MemoryUsageSetting.setupTempFileOnly());
+		try {
+			if (document.getNumberOfPages() > 0) {
+				final PDFRenderer pdfRenderer = new PDFRenderer(document);
+				final BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
+				return ImageUtils.toFile(bim, StorageUtils.getMimeType("jpg"));
+			}
+			return null;
+		} finally {
+			document.close();
+		}
+	}
 
 }

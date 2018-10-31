@@ -23,180 +23,189 @@ import de.mpg.imeji.logic.ImejiNamespaces;
 @j2jModel("content")
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class ContentVO implements Serializable {
-  private static final long serialVersionUID = -7906584876989077898L;
-  private URI id;
-  @j2jLiteral("http://imeji.org/terms/itemId")
-  private String itemId;
-  @j2jLazyLiteral("http://imeji.org/terms/fulltext")
-  private String fulltext;
-  @j2jLazyList(ImejiNamespaces.TECHNICAL_METADATA)
-  private List<TechnicalMetadata> technicalMetadata = new ArrayList<>();
-  @j2jLiteral("http://imeji.org/terms/thumbnail")
-  private String thumbnail;
-  @j2jLiteral("http://imeji.org/terms/preview")
-  private String preview;
-  @j2jLiteral("http://imeji.org/terms/full")
-  private String full;
-  @j2jLiteral("http://imeji.org/terms/original")
-  private String original;
-  @j2jLiteral("http://imeji.org/terms/checksum")
-  private String checksum;
-  @j2jLiteral("http://www.w3.org/2003/12/exif/ns#width")
-  private long width;
-  @j2jLiteral("http://www.w3.org/2003/12/exif/ns#height")
-  private long height;
+	private static final long serialVersionUID = -7906584876989077898L;
+	private URI id;
+	@j2jLiteral("http://imeji.org/terms/itemId")
+	private String itemId;
+	@j2jLazyLiteral("http://imeji.org/terms/fulltext")
+	private String fulltext;
+	@j2jLazyList(ImejiNamespaces.TECHNICAL_METADATA)
+	private List<TechnicalMetadata> technicalMetadata = new ArrayList<>();
+	@j2jLiteral("http://imeji.org/terms/thumbnail")
+	private String thumbnail;
+	@j2jLiteral("http://imeji.org/terms/preview")
+	private String preview;
+	@j2jLiteral("http://imeji.org/terms/full")
+	private String full;
+	@j2jLiteral("http://imeji.org/terms/original")
+	private String original;
+	@j2jLiteral("http://imeji.org/terms/checksum")
+	private String checksum;
+	@j2jLiteral("http://www.w3.org/2003/12/exif/ns#width")
+	private long width;
+	@j2jLiteral("http://www.w3.org/2003/12/exif/ns#height")
+	private long height;
 
-  public ContentVO() {
+	public ContentVO() {
 
-  }
+	}
 
-  /**
-   * @return the id
-   */
-  public URI getId() {
-    return id;
-  }
+	/**
+	 * @return the id
+	 */
+	public URI getId() {
+		return id;
+	}
 
-  /**
-   * @param id the id to set
-   */
-  public void setId(URI id) {
-    this.id = id;
-  }
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(URI id) {
+		this.id = id;
+	}
 
-  /**
-   * @return the fulltext
-   */
-  public String getFulltext() {
-    return fulltext;
-  }
+	/**
+	 * @return the fulltext
+	 */
+	public String getFulltext() {
+		return fulltext;
+	}
 
-  /**
-   * @param fulltext the fulltext to set
-   */
-  public void setFulltext(String fulltext) {
-    this.fulltext = fulltext;
-  }
+	/**
+	 * @param fulltext
+	 *            the fulltext to set
+	 */
+	public void setFulltext(String fulltext) {
+		this.fulltext = fulltext;
+	}
 
-  /**
-   * @return the technicalMetadata
-   */
-  public List<TechnicalMetadata> getTechnicalMetadata() {
-    return technicalMetadata;
-  }
+	/**
+	 * @return the technicalMetadata
+	 */
+	public List<TechnicalMetadata> getTechnicalMetadata() {
+		return technicalMetadata;
+	}
 
-  /**
-   * @param technicalMetadata the technicalMetadata to set
-   */
-  public void setTechnicalMetadata(List<TechnicalMetadata> technicalMetadata) {
-    this.technicalMetadata = technicalMetadata;
-  }
+	/**
+	 * @param technicalMetadata
+	 *            the technicalMetadata to set
+	 */
+	public void setTechnicalMetadata(List<TechnicalMetadata> technicalMetadata) {
+		this.technicalMetadata = technicalMetadata;
+	}
 
-  /**
-   * @return the thumbnail
-   */
-  public String getThumbnail() {
-    return thumbnail;
-  }
+	/**
+	 * @return the thumbnail
+	 */
+	public String getThumbnail() {
+		return thumbnail;
+	}
 
-  /**
-   * @param thumbnail the thumbnail to set
-   */
-  public void setThumbnail(String thumbnail) {
-    this.thumbnail = thumbnail;
-  }
+	/**
+	 * @param thumbnail
+	 *            the thumbnail to set
+	 */
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
 
-  /**
-   * @return the preview
-   */
-  public String getPreview() {
-    return preview;
-  }
+	/**
+	 * @return the preview
+	 */
+	public String getPreview() {
+		return preview;
+	}
 
-  /**
-   * @param preview the preview to set
-   */
-  public void setPreview(String preview) {
-    this.preview = preview;
-  }
+	/**
+	 * @param preview
+	 *            the preview to set
+	 */
+	public void setPreview(String preview) {
+		this.preview = preview;
+	}
 
-  /**
-   * @return the original
-   */
-  public String getOriginal() {
-    return original;
-  }
+	/**
+	 * @return the original
+	 */
+	public String getOriginal() {
+		return original;
+	}
 
-  /**
-   * @param original the original to set
-   */
-  public void setOriginal(String original) {
-    this.original = original;
-  }
+	/**
+	 * @param original
+	 *            the original to set
+	 */
+	public void setOriginal(String original) {
+		this.original = original;
+	}
 
-  /**
-   * @return the checksum
-   */
-  public String getChecksum() {
-    return checksum;
-  }
+	/**
+	 * @return the checksum
+	 */
+	public String getChecksum() {
+		return checksum;
+	}
 
-  /**
-   * @param checksum the checksum to set
-   */
-  public void setChecksum(String checksum) {
-    this.checksum = checksum;
-  }
+	/**
+	 * @param checksum
+	 *            the checksum to set
+	 */
+	public void setChecksum(String checksum) {
+		this.checksum = checksum;
+	}
 
+	/**
+	 * @return the width
+	 */
+	public long getWidth() {
+		return width;
+	}
 
-  /**
-   * @return the width
-   */
-  public long getWidth() {
-    return width;
-  }
+	/**
+	 * @param width
+	 *            the width to set
+	 */
+	public void setWidth(long width) {
+		this.width = width;
+	}
 
-  /**
-   * @param width the width to set
-   */
-  public void setWidth(long width) {
-    this.width = width;
-  }
+	/**
+	 * @return the height
+	 */
+	public long getHeight() {
+		return height;
+	}
 
-  /**
-   * @return the height
-   */
-  public long getHeight() {
-    return height;
-  }
+	/**
+	 * @param height
+	 *            the height to set
+	 */
+	public void setHeight(long height) {
+		this.height = height;
+	}
 
-  /**
-   * @param height the height to set
-   */
-  public void setHeight(long height) {
-    this.height = height;
-  }
+	/**
+	 * @return the itemId
+	 */
+	public String getItemId() {
+		return itemId;
+	}
 
-  /**
-   * @return the itemId
-   */
-  public String getItemId() {
-    return itemId;
-  }
+	/**
+	 * @param itemId
+	 *            the itemId to set
+	 */
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
+	}
 
-  /**
-   * @param itemId the itemId to set
-   */
-  public void setItemId(String itemId) {
-    this.itemId = itemId;
-  }
+	public String getFull() {
+		return full;
+	}
 
-  public String getFull() {
-    return full;
-  }
-
-  public void setFull(String full) {
-    this.full = full;
-  }
+	public void setFull(String full) {
+		this.full = full;
+	}
 
 }

@@ -15,30 +15,30 @@ import de.mpg.imeji.logic.util.ObjectHelper;
  */
 public class SubscriptionFactory {
 
-  private final Subscription subscription = new Subscription();
+	private final Subscription subscription = new Subscription();
 
-  public Subscription build() {
-    return subscription;
-  }
+	public Subscription build() {
+		return subscription;
+	}
 
-  public SubscriptionFactory setId(URI uri) {
-    subscription.setId(uri);
-    return this;
-  }
+	public SubscriptionFactory setId(URI uri) {
+		subscription.setId(uri);
+		return this;
+	}
 
-  public SubscriptionFactory setObjectId(CollectionImeji collection) {
-    subscription.setObjectId(ObjectHelper.getId(collection.getId()));
-    return this;
-  }
+	public SubscriptionFactory setObjectId(CollectionImeji collection) {
+		subscription.setObjectId(ObjectHelper.getId(collection.getId()));
+		return this;
+	}
 
-  public SubscriptionFactory setType(Subscription.Type type) {
-    subscription.setType(type);
-    return this;
-  }
+	public SubscriptionFactory setType(Subscription.Type type) {
+		subscription.setType(type);
+		return this;
+	}
 
-  public SubscriptionFactory setUserId(User user) {
-    subscription.setUserId(user.getId().toString());
-    return this;
-  }
+	public SubscriptionFactory setUserId(User user) {
+		subscription.setUserId(user.getId().toString());
+		return this;
+	}
 
 }

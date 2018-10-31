@@ -13,58 +13,57 @@ import de.mpg.imeji.rest.to.defaultItemTO.DefaultOrganizationTO;
 
 @XmlRootElement
 @XmlType(propOrder = {
-    // "position",
-    "id", "name",})
+		// "position",
+		"id", "name",})
 @JsonInclude(Include.NON_NULL)
 public class OrganizationTO implements Serializable {
 
+	private static final long serialVersionUID = 1207566371079322550L;
 
-  private static final long serialVersionUID = 1207566371079322550L;
+	@JsonIgnore
+	private int position = 0;
 
-  @JsonIgnore
-  private int position = 0;
+	private String id;
 
-  private String id;
+	private String name;
 
-  private String name;
+	/**
+	 * Default constructor
+	 */
+	public OrganizationTO() {
 
-  /**
-   * Default constructor
-   */
-  public OrganizationTO() {
+	}
 
-  }
+	/**
+	 * Constructor with a {@link DefaultOrganizationTO}
+	 *
+	 * @param dTO
+	 */
+	public OrganizationTO(DefaultOrganizationTO dTO) {
+		this.name = dTO.getName();
+	}
 
-  /**
-   * Constructor with a {@link DefaultOrganizationTO}
-   *
-   * @param dTO
-   */
-  public OrganizationTO(DefaultOrganizationTO dTO) {
-    this.name = dTO.getName();
-  }
+	public int getPosition() {
+		return position;
+	}
 
-  public int getPosition() {
-    return position;
-  }
+	public void setPosition(int position) {
+		this.position = position;
+	}
 
-  public void setPosition(int position) {
-    this.position = position;
-  }
+	public String getId() {
+		return id;
+	}
 
-  public String getId() {
-    return id;
-  }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-  public void setId(String id) {
-    this.id = id;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
 }

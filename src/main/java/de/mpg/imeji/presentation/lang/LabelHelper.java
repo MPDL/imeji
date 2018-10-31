@@ -5,17 +5,17 @@ import java.util.Iterator;
 import de.mpg.imeji.util.LocalizedString;
 
 public class LabelHelper {
-  public static String getDefaultLabel(Iterator<LocalizedString> labels) {
-    String l = "";
-    if (labels.hasNext()) {
-      l = labels.next().toString();
-    }
-    while (labels.hasNext()) {
-      final LocalizedString ls = labels.next();
-      if (ls.getLang().equals("eng")) {
-        l = ls.toString();
-      }
-    }
-    return l;
-  }
+	public static String getDefaultLabel(Iterator<LocalizedString> labels) {
+		String l = "";
+		if (labels.hasNext()) {
+			l = labels.next().toString();
+		}
+		while (labels.hasNext()) {
+			final LocalizedString ls = labels.next();
+			if (ls.getLang().equals("eng")) {
+				l = ls.toString();
+			}
+		}
+		return l;
+	}
 }

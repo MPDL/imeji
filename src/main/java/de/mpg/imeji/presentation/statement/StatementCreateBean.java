@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.logging.log4j.Logger; 
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -16,36 +16,37 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ManagedBean(name = "StatementCreateBean")
 @ViewScoped
 public class StatementCreateBean extends SuperBean {
-  private static final long serialVersionUID = 3080933791853851564L;
-  private StatementForm statementForm = new StatementForm();
-  private static final Logger LOGGER = LogManager.getLogger(StatementCreateBean.class);
+	private static final long serialVersionUID = 3080933791853851564L;
+	private StatementForm statementForm = new StatementForm();
+	private static final Logger LOGGER = LogManager.getLogger(StatementCreateBean.class);
 
-  /**
-   * Create a new statement
-   */
-  public void save() {
-    final StatementService service = new StatementService();
-    try {
-      service.create(statementForm.asStatement(), getSessionUser());
-      redirect(getNavigation().getApplicationUrl() + "statements");
-    } catch (final ImejiException | IOException e) {
-      BeanHelper.error("Error creating statement: " + e.getMessage());
-      LOGGER.error("Error creating statement", e);
-    }
-  }
+	/**
+	 * Create a new statement
+	 */
+	public void save() {
+		final StatementService service = new StatementService();
+		try {
+			service.create(statementForm.asStatement(), getSessionUser());
+			redirect(getNavigation().getApplicationUrl() + "statements");
+		} catch (final ImejiException | IOException e) {
+			BeanHelper.error("Error creating statement: " + e.getMessage());
+			LOGGER.error("Error creating statement", e);
+		}
+	}
 
-  /**
-   * @return the statementForm
-   */
-  public StatementForm getStatementForm() {
-    return statementForm;
-  }
+	/**
+	 * @return the statementForm
+	 */
+	public StatementForm getStatementForm() {
+		return statementForm;
+	}
 
-  /**
-   * @param statementForm the statementForm to set
-   */
-  public void setStatementForm(StatementForm statementForm) {
-    this.statementForm = statementForm;
-  }
+	/**
+	 * @param statementForm
+	 *            the statementForm to set
+	 */
+	public void setStatementForm(StatementForm statementForm) {
+		this.statementForm = statementForm;
+	}
 
 }

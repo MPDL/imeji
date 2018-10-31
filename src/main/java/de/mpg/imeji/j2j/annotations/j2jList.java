@@ -15,5 +15,5 @@ import com.hp.hpl.jena.Jena;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface j2jList {
-  String value();
+	String value();
 }
