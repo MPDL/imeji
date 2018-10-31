@@ -185,7 +185,6 @@ public final class StorageController implements Serializable {
 	 *
 	 * @param degree
 	 * @throws ImejiException
-	 * 			@throws
 	 * @throws Exception
 	 * @throws IOException
 	 */
