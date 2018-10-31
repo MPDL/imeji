@@ -114,7 +114,17 @@ public class EmailService {
       String senderAddress, String[] recipientsAddresses, String[] recipientsCCAddresses,
       String[] recipientsBCCAddresses, String[] replytoAddresses, String subject, String text)
       throws ImejiException {
-    LOGGER.debug("EmailHandlingBean sendMail...");
+    
+	  
+	LOGGER.debug("EmailHandlingBean sendMail...");
+    
+	String logInfo = "mail subject: " + subject;
+	logInfo = logInfo + " send to: ";
+    for(String recipient : recipientsAddresses) {
+    	logInfo = logInfo + recipient + " ";
+    }
+    logInfo = logInfo + "send at " + new Date(System.currentTimeMillis()).toString();
+    
     String status = "not sent";
     String to = "";
     try {
@@ -183,11 +193,12 @@ public class EmailService {
       multipart.addBodyPart(messageBodyPart);
       // Put all message parts in the message
       message.setContent(multipart);
-      LOGGER.debug("Transport will send now....  ");
+      LOGGER.debug("Transport will send now ");
       // Send the message
       Transport.send(message);
       status = "sent";
-      LOGGER.debug("Email sent!");
+      LOGGER.info(logInfo);
+      LOGGER.info("Email sent!");
     } catch (final MessagingException e) {
       LOGGER.error("Error in sendMail(...)", e);
       throw new ImejiException("Error sending Email", e);
