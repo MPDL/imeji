@@ -112,18 +112,27 @@ public class WorkflowFacade implements Serializable {
    * @throws ImejiException
    */
   public void withdraw(CollectionImeji c, String comment, User user) throws ImejiException {
-    prevalidateWithdraw(c, comment, user);
+    
+	prevalidateWithdraw(c, comment, user);
     final List<String> itemIds = getItemIds(c, user);
-    preValidateCollectionItems(itemIds, user);
-    // Create a list with the collectionId, all the subcollectionids and all itemIds
+    if(itemIds != null && itemIds.size() > 0) {
+    	preValidateCollectionItems(itemIds, user);
+    }   
+    
+    // Create a list with the collectionId, all the subcollectionIds and all itemIds
     List<String> ids =
         new ArrayList<>(new HierarchyService().findAllSubcollections(c.getId().toString()));
     ids.add(c.getId().toString());
     ids.addAll(itemIds);
+    
     Calendar now = DateHelper.getCurrentDate();
+    
+    // Update Jena
     String sparql = ids.stream().map(id -> JenaCustomQueries.updateWitdrawObject(id, now, comment))
         .collect(Collectors.joining("; "));
     ImejiSPARQL.execUpdate(sparql);
+    
+    // Update ElasticSearch
     collectionIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.COLLECTION).stream()
         .map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment))
         .collect(Collectors.toList()));
