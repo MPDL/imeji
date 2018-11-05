@@ -1,12 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>imeji</artifactId>
 	<groupId>org.imeji</groupId>
 	<name>imeji</name>
 	<packaging>war</packaging>
-	<version>4.4-SNAPSHOT</version>
+	<version>4.3.1</version>
 	<url>http://imeji.org</url>
 	<description>The imeji open source software offers a dedicated metadata management by supporting a non- restrictive metadata schema definition, as simple as liked or as complex as needed.</description>
 	<licenses>
@@ -24,7 +22,7 @@
 		<url>https://github.com/mpdl/imeji</url>
 		<connection>scm:git:https://github.com/MPDL/imeji.git</connection>
 		<developerConnection>scm:git:https://github.com/MPDL/imeji.git</developerConnection>
-		<tag>develop</tag>
+		<tag>imeji-4.3.1</tag>
 	</scm>
 	<issueManagement>
 		<system>Github</system>
@@ -578,13 +576,9 @@
 								<phase>install</phase>
 								<configuration>
 									<tasks>
-										<delete quiet="true"
-											file="${tomcat.webapps}/${project.warName}.war" />
-										<delete quiet="true"
-											dir="${tomcat.webapps}/${project.warName}" />
-										<copy overwrite="true"
-											file="${project.build.directory}/${project.warName}.war"
-											tofile="${tomcat.webapps}/${project.warName}.war" />
+										<delete quiet="true" file="${tomcat.webapps}/${project.warName}.war" />
+										<delete quiet="true" dir="${tomcat.webapps}/${project.warName}" />
+										<copy overwrite="true" file="${project.build.directory}/${project.warName}.war" tofile="${tomcat.webapps}/${project.warName}.war" />
 									</tasks>
 								</configuration>
 								<goals>
