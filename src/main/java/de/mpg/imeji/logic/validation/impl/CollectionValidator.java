@@ -121,7 +121,7 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
 	 */
 	private void validateDOI(String doi) {
 
-		if (!validateDOIComplyWithHandbook(doi)) {
+		if (!isNullOrEmpty(doi) && !validateDOIComplyWithHandbook(doi)) {
 			this.exception = new UnprocessableError("error_doi_creation_error_doi_format", exception);
 		}
 
