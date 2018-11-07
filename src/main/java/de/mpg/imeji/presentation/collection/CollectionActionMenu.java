@@ -91,7 +91,17 @@ public class CollectionActionMenu implements Serializable {
 	}
 
 	/**
-	 * Add a DOI to a collection Method is called from JSF
+	 * Create a new DOI. Method is called from JSF.
+	 * 
+	 * @return next URL to navigate to
+	 */
+
+	public String createDOI() {
+		return createDOI(null);
+	}
+
+	/**
+	 * Add a DOI to a collection. Method is called from JSF.
 	 * 
 	 * @param newDOI
 	 * @return next URL to navigate to
