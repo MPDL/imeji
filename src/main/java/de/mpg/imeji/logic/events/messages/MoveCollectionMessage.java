@@ -10,21 +10,21 @@ import de.mpg.imeji.logic.util.ObjectHelper;
  *
  */
 public class MoveCollectionMessage extends CollectionMessage {
-  private static final long serialVersionUID = 4567055677966050909L;
-  private final String previousParent;
+	private static final long serialVersionUID = 4567055677966050909L;
+	private final String previousParent;
 
-  public MoveCollectionMessage(MessageType type, CollectionImeji collection, String newParent,
-      String previousParent) {
-    super(type, setNewParent(collection, newParent));
-    this.previousParent = previousParent;
-  }
+	public MoveCollectionMessage(MessageType type, CollectionImeji collection, String newParent,
+			String previousParent) {
+		super(type, setNewParent(collection, newParent));
+		this.previousParent = previousParent;
+	}
 
-  private static CollectionImeji setNewParent(CollectionImeji collection, String newParent) {
-    collection.setCollection(ObjectHelper.getURI(CollectionImeji.class, newParent));
-    return collection;
-  }
+	private static CollectionImeji setNewParent(CollectionImeji collection, String newParent) {
+		collection.setCollection(ObjectHelper.getURI(CollectionImeji.class, newParent));
+		return collection;
+	}
 
-  public String getPreviousParent() {
-    return previousParent;
-  }
+	public String getPreviousParent() {
+		return previousParent;
+	}
 }

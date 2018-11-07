@@ -14,25 +14,25 @@ import de.mpg.imeji.logic.config.Imeji;
  *
  */
 public class NightlyJob implements Runnable {
-  private static final Logger LOGGER = LogManager.getLogger(NightlyJob.class);
+	private static final Logger LOGGER = LogManager.getLogger(NightlyJob.class);
 
-  @Override
-  public void run() {
-    LOGGER.info("Running Nightly Jobs");
-    Imeji.getEXECUTOR().submit(new CleanTempFilesJob());
-    try {
-      Imeji.getEXECUTOR().submit(new StorageUsageAnalyseJob());
-    } catch (final Exception e) {
-      LOGGER.error("Error: " + e.getMessage());
-    }
-    Imeji.getEXECUTOR().submit(new CleanInactiveUsersJob());
-    Imeji.getEXECUTOR().submit(new ReadMaxPlanckIPMappingJob());
-    Imeji.getEXECUTOR().submit(new CleanGrantsJob());
-    Imeji.getEXECUTOR().submit(new CleanUserGroupsJob());
-    Imeji.getEXECUTOR().submit(new CleanContentVOsJob());
-    Imeji.getEXECUTOR().submit(new CleanPasswordResetsJob());
-    Imeji.getEXECUTOR().submit(new AggregateMessages());
+	@Override
+	public void run() {
+		LOGGER.info("Running Nightly Jobs");
+		Imeji.getEXECUTOR().submit(new CleanTempFilesJob());
+		try {
+			Imeji.getEXECUTOR().submit(new StorageUsageAnalyseJob());
+		} catch (final Exception e) {
+			LOGGER.error("Error: " + e.getMessage());
+		}
+		Imeji.getEXECUTOR().submit(new CleanInactiveUsersJob());
+		Imeji.getEXECUTOR().submit(new ReadMaxPlanckIPMappingJob());
+		Imeji.getEXECUTOR().submit(new CleanGrantsJob());
+		Imeji.getEXECUTOR().submit(new CleanUserGroupsJob());
+		Imeji.getEXECUTOR().submit(new CleanContentVOsJob());
+		Imeji.getEXECUTOR().submit(new CleanPasswordResetsJob());
+		Imeji.getEXECUTOR().submit(new AggregateMessages());
 
-  }
+	}
 
 }

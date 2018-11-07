@@ -20,174 +20,171 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public abstract class CollectionBean extends SuperBean {
-  private static final long serialVersionUID = -3071769388574710503L;
-  private CollectionImeji collection;
-  private String id;
-  private int authorPosition;
-  private int organizationPosition;
+	private static final long serialVersionUID = -3071769388574710503L;
+	private CollectionImeji collection;
+	private String id;
+	private int authorPosition;
+	private int organizationPosition;
 
+	protected String getErrorMessageNoAuthor() {
+		return "error_collection_need_one_author";
+	}
 
-  protected String getErrorMessageNoAuthor() {
-    return "error_collection_need_one_author";
-  }
+	/**
+	 * @return the collection
+	 */
+	public CollectionImeji getCollection() {
+		return collection;
+	}
 
-  /**
-   * @return the collection
-   */
-  public CollectionImeji getCollection() {
-    return collection;
-  }
+	/**
+	 * @param collection
+	 *            the collection to set
+	 */
+	public void setCollection(CollectionImeji collection) {
+		this.collection = collection;
+	}
 
-  /**
-   * @param collection the collection to set
-   */
-  public void setCollection(CollectionImeji collection) {
-    this.collection = collection;
-  }
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
 
-  /**
-   * @return the id
-   */
-  public String getId() {
-    return id;
-  }
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
 
-  /**
-   * @param id the id to set
-   */
-  public void setId(String id) {
-    this.id = id;
-  }
+	protected abstract List<URI> getSelectedCollections();
 
-  protected abstract List<URI> getSelectedCollections();
+	public String getPageUrl() {
+		return getNavigation().getCollectionUrl() + id;
+	}
 
+	/**
+	 * Add an additionial Info at the passed position
+	 *
+	 * @param pos
+	 */
+	public void addAdditionalInfo(int pos) {
+		collection.getAdditionalInformations().add(pos, new ContainerAdditionalInfo("", "", ""));
+	}
 
-  public String getPageUrl() {
-    return getNavigation().getCollectionUrl() + id;
-  }
+	/**
+	 * Remove the nth additional Info
+	 *
+	 * @param pos
+	 */
+	public void removeAdditionalInfo(int pos) {
+		collection.getAdditionalInformations().remove(pos);
+	}
 
+	/**
+	 * Add a new author to the {@link CollectionImeji}
+	 *
+	 * @param authorPosition
+	 * @return
+	 */
+	public String addAuthor(int authorPosition) {
+		final List<Person> c = (List<Person>) collection.getPersons();
+		final Person p = ImejiFactory.newPerson();
+		p.setPos(authorPosition + 1);
+		c.add(authorPosition + 1, p);
+		return "";
+	}
 
-  /**
-   * Add an additionial Info at the passed position
-   *
-   * @param pos
-   */
-  public void addAdditionalInfo(int pos) {
-    collection.getAdditionalInformations().add(pos, new ContainerAdditionalInfo("", "", ""));
-  }
+	/**
+	 * Remove an author of the {@link CollectionImeji}
+	 *
+	 * @return
+	 */
+	public String removeAuthor(int authorPosition) {
+		final List<Person> c = (List<Person>) collection.getPersons();
+		if (c.size() > 1) {
+			c.remove(authorPosition);
+		} else {
+			BeanHelper.error(getErrorMessageNoAuthor());
+		}
+		return "";
+	}
 
-  /**
-   * Remove the nth additional Info
-   *
-   * @param pos
-   */
-  public void removeAdditionalInfo(int pos) {
-    collection.getAdditionalInformations().remove(pos);
-  }
+	/**
+	 * Add an organization to an author of the {@link CollectionImeji}
+	 *
+	 * @param authorPosition
+	 * @param organizationPosition
+	 * @return
+	 */
+	public String addOrganization(int authorPosition, int organizationPosition) {
+		final List<Person> persons = (List<Person>) collection.getPersons();
+		final List<Organization> orgs = (List<Organization>) persons.get(authorPosition).getOrganizations();
+		final Organization o = ImejiFactory.newOrganization();
+		o.setPos(organizationPosition + 1);
+		orgs.add(organizationPosition + 1, o);
+		return "";
+	}
 
-  /**
-   * Add a new author to the {@link CollectionImeji}
-   *
-   * @param authorPosition
-   * @return
-   */
-  public String addAuthor(int authorPosition) {
-    final List<Person> c = (List<Person>) collection.getPersons();
-    final Person p = ImejiFactory.newPerson();
-    p.setPos(authorPosition + 1);
-    c.add(authorPosition + 1, p);
-    return "";
-  }
+	/**
+	 * Remove an organization to an author of the {@link CollectionImeji}
+	 *
+	 * @return
+	 */
+	public String removeOrganization(int authorPosition, int organizationPosition) {
+		final List<Person> persons = (List<Person>) collection.getPersons();
+		final List<Organization> orgs = (List<Organization>) persons.get(authorPosition).getOrganizations();
+		if (orgs.size() > 1) {
+			orgs.remove(organizationPosition);
+		} else {
+			BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_author_need_one_organization", getLocale()));
+		}
+		return "";
+	}
 
-  /**
-   * Remove an author of the {@link CollectionImeji}
-   *
-   * @return
-   */
-  public String removeAuthor(int authorPosition) {
-    final List<Person> c = (List<Person>) collection.getPersons();
-    if (c.size() > 1) {
-      c.remove(authorPosition);
-    } else {
-      BeanHelper.error(getErrorMessageNoAuthor());
-    }
-    return "";
-  }
+	/**
+	 * getter
+	 *
+	 * @return
+	 */
+	public int getAuthorPosition() {
+		return authorPosition;
+	}
 
-  /**
-   * Add an organization to an author of the {@link CollectionImeji}
-   *
-   * @param authorPosition
-   * @param organizationPosition
-   * @return
-   */
-  public String addOrganization(int authorPosition, int organizationPosition) {
-    final List<Person> persons = (List<Person>) collection.getPersons();
-    final List<Organization> orgs =
-        (List<Organization>) persons.get(authorPosition).getOrganizations();
-    final Organization o = ImejiFactory.newOrganization();
-    o.setPos(organizationPosition + 1);
-    orgs.add(organizationPosition + 1, o);
-    return "";
-  }
+	/**
+	 * setter
+	 *
+	 * @param pos
+	 */
+	public void setAuthorPosition(int pos) {
+		this.authorPosition = pos;
+	}
 
-  /**
-   * Remove an organization to an author of the {@link CollectionImeji}
-   *
-   * @return
-   */
-  public String removeOrganization(int authorPosition, int organizationPosition) {
-    final List<Person> persons = (List<Person>) collection.getPersons();
-    final List<Organization> orgs =
-        (List<Organization>) persons.get(authorPosition).getOrganizations();
-    if (orgs.size() > 1) {
-      orgs.remove(organizationPosition);
-    } else {
-      BeanHelper.error(
-          Imeji.RESOURCE_BUNDLE.getMessage("error_author_need_one_organization", getLocale()));
-    }
-    return "";
-  }
+	/**
+	 * @return the collectionPosition
+	 */
+	public int getOrganizationPosition() {
+		return organizationPosition;
+	}
 
-  /**
-   * getter
-   *
-   * @return
-   */
-  public int getAuthorPosition() {
-    return authorPosition;
-  }
+	/**
+	 * @param collectionPosition
+	 *            the collectionPosition to set
+	 */
+	public void setOrganizationPosition(int organizationPosition) {
+		this.organizationPosition = organizationPosition;
+	}
 
-  /**
-   * setter
-   *
-   * @param pos
-   */
-  public void setAuthorPosition(int pos) {
-    this.authorPosition = pos;
-  }
-
-  /**
-   * @return the collectionPosition
-   */
-  public int getOrganizationPosition() {
-    return organizationPosition;
-  }
-
-  /**
-   * @param collectionPosition the collectionPosition to set
-   */
-  public void setOrganizationPosition(int organizationPosition) {
-    this.organizationPosition = organizationPosition;
-  }
-
-  /**
-   * Remove an author of the {@link CollectionImeji}
-   *
-   * @return
-   */
-  public String removeContainerLogo() {
-    collection.setLogoUrl(null);
-    return "";
-  }
+	/**
+	 * Remove an author of the {@link CollectionImeji}
+	 *
+	 * @return
+	 */
+	public String removeContainerLogo() {
+		collection.setLogoUrl(null);
+		return "";
+	}
 }

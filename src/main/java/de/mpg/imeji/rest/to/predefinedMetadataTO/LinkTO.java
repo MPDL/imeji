@@ -9,26 +9,24 @@ import de.mpg.imeji.rest.to.predefinedMetadataTO.annotations.MetadataTOType;
 @MetadataTOType("http://imeji.org/terms/metadata#link")
 @XmlType(propOrder = {"link", "url"})
 public class LinkTO extends MetadataTO {
-  private static final long serialVersionUID = -7245573760046279074L;
-  private String link;
-  private String url;
+	private static final long serialVersionUID = -7245573760046279074L;
+	private String link;
+	private String url;
 
-  public String getLink() {
-    return link;
-  }
+	public String getLink() {
+		return link;
+	}
 
-  public void setLink(String link) {
-    this.link = link;
-  }
+	public void setLink(String link) {
+		this.link = link;
+	}
 
-  public String getUrl() {
-    return url;
-  }
+	public String getUrl() {
+		return url;
+	}
 
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
-
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 }

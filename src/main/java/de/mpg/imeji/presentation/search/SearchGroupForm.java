@@ -10,7 +10,7 @@
 //
 // import javax.faces.model.SelectItem;
 //
-// import org.apache.logging.log4j.Logger; 
+// import org.apache.logging.log4j.Logger;
 //
 // import de.mpg.imeji.exceptions.ImejiException;
 // import de.mpg.imeji.exceptions.UnprocessableError;
@@ -18,7 +18,8 @@
 // import de.mpg.imeji.logic.config.Imeji;
 // import de.mpg.imeji.logic.search.model.SearchGroup;
 // import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
-// import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
+// import
+// de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 // import de.mpg.imeji.logic.search.model.SearchOperators;
 // import de.mpg.imeji.logic.search.model.SearchPair;
 // import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -35,7 +36,8 @@
 // */
 // public class SearchGroupForm implements Serializable {
 // private static final long serialVersionUID = -498245563765543283L;
-// private static final Logger LOGGER = LogManager.getLogger(SearchGroupForm.class);
+// private static final Logger LOGGER =
+// LogManager.getLogger(SearchGroupForm.class);
 // private List<SearchMetadataForm> elements;
 // private String collectionId;
 // private List<SelectItem> collectionsMenu;
@@ -66,7 +68,8 @@
 // * @param collectionId
 // * @throws ImejiException
 // */
-// public SearchGroupForm(SearchGroup searchGroup, User user, List<Statement> statements)
+// public SearchGroupForm(SearchGroup searchGroup, User user, List<Statement>
+// statements)
 // throws ImejiException {
 // this(statements);
 // }
@@ -132,21 +135,25 @@
 // }
 //
 // /**
-// * Load all the {@link CollectionImeji} using a {@link MetadataProfile} and return it as menu for
+// * Load all the {@link CollectionImeji} using a {@link MetadataProfile} and
+// return it as menu for
 // * the searchgroup
 // *
 // * @param p
 // * @return
 // * @throws ImejiException
 // */
-// private List<SelectItem> getCollectionsMenu(Locale locale, User user) throws ImejiException {
+// private List<SelectItem> getCollectionsMenu(Locale locale, User user) throws
+// ImejiException {
 // final CollectionService collectionService = new CollectionService();
 // final SearchQuery q = new SearchQuery();
 // final List<SelectItem> l = new ArrayList<SelectItem>();
 // l.add(new SelectItem(null,
 // Imeji.RESOURCE_BUNDLE.getLabel("adv_search_collection_restrict", locale)));
-// for (final String uri : collectionService.search(q, null, user, -1, 0).getResults()) {
-// final CollectionImeji c = collectionService.retrieveLazy(URI.create(uri), user);
+// for (final String uri : collectionService.search(q, null, user, -1,
+// 0).getResults()) {
+// final CollectionImeji c = collectionService.retrieveLazy(URI.create(uri),
+// user);
 // l.add(new SelectItem(c.getId().toString(), c.getTitle()));
 // }
 // return l;

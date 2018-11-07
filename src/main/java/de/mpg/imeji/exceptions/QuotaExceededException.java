@@ -5,11 +5,11 @@ package de.mpg.imeji.exceptions;
  */
 public class QuotaExceededException extends ImejiException {
 
-  private static final long serialVersionUID = 145948204335897106L;
+	private static final long serialVersionUID = 145948204335897106L;
 
-  public QuotaExceededException(String message) {
-    super(message);
-    minimizeStacktrace();
-  }
+	public QuotaExceededException(String message) {
+		super(message);
+		minimizeStacktrace();
+	}
 
 }

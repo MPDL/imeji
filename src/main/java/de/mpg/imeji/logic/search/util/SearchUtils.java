@@ -15,20 +15,20 @@ import de.mpg.imeji.logic.search.Search;
  */
 public class SearchUtils {
 
-  /**
-   * Parse the query for File types and return a {@link List} of extension
-   *
-   * @param fileTypes
-   * @return
-   */
-  public static List<String> parseFileTypesAsExtensionList(String fileTypes) {
-    final List<String> extensions = new ArrayList<>();
-    for (final String typeName : fileTypes.split(" OR ")) {
-      final Type type = Imeji.CONFIG.getFileTypes().getType(typeName);
-      for (final String ext : type.getExtensionArray()) {
-        extensions.add(ext);
-      }
-    }
-    return extensions;
-  }
+	/**
+	 * Parse the query for File types and return a {@link List} of extension
+	 *
+	 * @param fileTypes
+	 * @return
+	 */
+	public static List<String> parseFileTypesAsExtensionList(String fileTypes) {
+		final List<String> extensions = new ArrayList<>();
+		for (final String typeName : fileTypes.split(" OR ")) {
+			final Type type = Imeji.CONFIG.getFileTypes().getType(typeName);
+			for (final String ext : type.getExtensionArray()) {
+				extensions.add(ext);
+			}
+		}
+		return extensions;
+	}
 }

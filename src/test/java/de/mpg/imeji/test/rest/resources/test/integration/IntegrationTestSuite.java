@@ -9,11 +9,9 @@ import de.mpg.imeji.testimpl.rest.resources.StorageIntegration;
 import de.mpg.imeji.testimpl.rest.resources.VersionManagerTest;
 import de.mpg.imeji.util.SuperTestSuite;
 
-
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ItemIntegration.class, CollectionIntegration.class, StorageIntegration.class,
-    VersionManagerTest.class})
-
+		VersionManagerTest.class})
 
 public class IntegrationTestSuite extends SuperTestSuite {
 

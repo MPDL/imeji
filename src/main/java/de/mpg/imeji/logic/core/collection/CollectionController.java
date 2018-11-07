@@ -22,65 +22,61 @@ import de.mpg.imeji.logic.security.user.UserService;
  *
  */
 class CollectionController extends ImejiControllerAbstract<CollectionImeji> {
-  private static final ReaderFacade READER = new ReaderFacade(Imeji.collectionModel);
-  private static final WriterFacade WRITER = new WriterFacade(Imeji.collectionModel);
+	private static final ReaderFacade READER = new ReaderFacade(Imeji.collectionModel);
+	private static final WriterFacade WRITER = new WriterFacade(Imeji.collectionModel);
 
-  @Override
-  public List<CollectionImeji> createBatch(List<CollectionImeji> l, User user)
-      throws ImejiException {
-    for (final CollectionImeji c : l) {
-      prepareCreate(c, user);
-    }
-    WRITER.create(toObjectList(l), user);
-    for (final CollectionImeji c : l.stream().filter(c -> !c.isSubCollection())
-        .collect(Collectors.toList())) {
-      updateCreatorGrants(user, c.getId().toString());
-    }
-    return l;
-  }
+	@Override
+	public List<CollectionImeji> createBatch(List<CollectionImeji> l, User user) throws ImejiException {
+		for (final CollectionImeji c : l) {
+			prepareCreate(c, user);
+		}
+		WRITER.create(toObjectList(l), user);
+		for (final CollectionImeji c : l.stream().filter(c -> !c.isSubCollection()).collect(Collectors.toList())) {
+			updateCreatorGrants(user, c.getId().toString());
+		}
+		return l;
+	}
 
-  @Override
-  public List<CollectionImeji> retrieveBatch(List<String> ids, User user) throws ImejiException {
-    final List<CollectionImeji> l = ids.stream()
-        .map(id -> ImejiFactory.newCollection().setUri(id).build()).collect(Collectors.toList());
-    READER.read(toObjectList(l), user);
-    return l;
-  }
+	@Override
+	public List<CollectionImeji> retrieveBatch(List<String> ids, User user) throws ImejiException {
+		final List<CollectionImeji> l = ids.stream().map(id -> ImejiFactory.newCollection().setUri(id).build())
+				.collect(Collectors.toList());
+		READER.read(toObjectList(l), user);
+		return l;
+	}
 
-  @Override
-  public List<CollectionImeji> retrieveBatchLazy(List<String> ids, User user)
-      throws ImejiException {
-    final List<CollectionImeji> l = ids.stream()
-        .map(id -> ImejiFactory.newCollection().setUri(id).build()).collect(Collectors.toList());
-    READER.readLazy(toObjectList(l), user);
-    return l;
-  }
+	@Override
+	public List<CollectionImeji> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
+		final List<CollectionImeji> l = ids.stream().map(id -> ImejiFactory.newCollection().setUri(id).build())
+				.collect(Collectors.toList());
+		READER.readLazy(toObjectList(l), user);
+		return l;
+	}
 
-  @Override
-  public List<CollectionImeji> updateBatch(List<CollectionImeji> l, User user)
-      throws ImejiException {
-    for (final CollectionImeji c : l) {
-      prepareUpdate(c, user);
-    }
-    WRITER.update(toObjectList(l), user, true);
-    return l;
-  }
+	@Override
+	public List<CollectionImeji> updateBatch(List<CollectionImeji> l, User user) throws ImejiException {
+		for (final CollectionImeji c : l) {
+			prepareUpdate(c, user);
+		}
+		WRITER.update(toObjectList(l), user, true);
+		return l;
+	}
 
-  @Override
-  public void deleteBatch(List<CollectionImeji> l, User user) throws ImejiException {
-    WRITER.delete(toObjectList(l), user);
-  }
+	@Override
+	public void deleteBatch(List<CollectionImeji> l, User user) throws ImejiException {
+		WRITER.delete(toObjectList(l), user);
+	}
 
-  /**
-   * Update the grants of the user who created the objects
-   *
-   * @param user
-   * @param uri
-   * @throws ImejiException
-   */
-  private void updateCreatorGrants(User user, String uri) throws ImejiException {
-    user.getGrants().add(new Grant(GrantType.ADMIN, uri).toGrantString());
-    new UserService().update(user, Imeji.adminUser);
-  }
+	/**
+	 * Update the grants of the user who created the objects
+	 *
+	 * @param user
+	 * @param uri
+	 * @throws ImejiException
+	 */
+	private void updateCreatorGrants(User user, String uri) throws ImejiException {
+		user.getGrants().add(new Grant(GrantType.ADMIN, uri).toGrantString());
+		new UserService().update(user, Imeji.adminUser);
+	}
 
 }

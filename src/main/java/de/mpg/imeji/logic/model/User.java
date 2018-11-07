@@ -29,186 +29,185 @@ import de.mpg.imeji.logic.util.IdentifierUtil;
 @j2jModel("user")
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class User implements Serializable {
-  private static final long serialVersionUID = -8961821901552709120L;
-  @j2jLiteral("http://xmlns.com/foaf/0.1/email")
-  private String email;
-  @j2jLiteral("http://xmlns.com/foaf/0.1/password")
-  private String encryptedPassword;
-  @j2jLiteral("http://xmlns.com/foaf/0.1/person")
-  private Person person = new Person();
-  @j2jList("http://imeji.org/terms/grant")
-  private List<String> grants = new ArrayList<String>();
-  @j2jLiteral("http://imeji.org/terms/quota")
-  private long quota = -1;
-  @j2jLiteral("http://imeji.org/terms/apiKey")
-  private String apiKey;
-  private URI id = IdentifierUtil.newURI(User.class);
-  private List<UserGroup> groups = new ArrayList<>();
+	private static final long serialVersionUID = -8961821901552709120L;
+	@j2jLiteral("http://xmlns.com/foaf/0.1/email")
+	private String email;
+	@j2jLiteral("http://xmlns.com/foaf/0.1/password")
+	private String encryptedPassword;
+	@j2jLiteral("http://xmlns.com/foaf/0.1/person")
+	private Person person = new Person();
+	@j2jList("http://imeji.org/terms/grant")
+	private List<String> grants = new ArrayList<String>();
+	@j2jLiteral("http://imeji.org/terms/quota")
+	private long quota = -1;
+	@j2jLiteral("http://imeji.org/terms/apiKey")
+	private String apiKey;
+	private URI id = IdentifierUtil.newURI(User.class);
+	private List<UserGroup> groups = new ArrayList<>();
 
-  // User properties for registration
-  @j2jLiteral(ImejiNamespaces.DATE_CREATED)
-  private Calendar created;
+	// User properties for registration
+	@j2jLiteral(ImejiNamespaces.DATE_CREATED)
+	private Calendar created;
 
-  // User properties for registration
-  @j2jLiteral(ImejiNamespaces.LAST_MODIFICATION_DATE)
-  private Calendar modified;
+	// User properties for registration
+	@j2jLiteral(ImejiNamespaces.LAST_MODIFICATION_DATE)
+	private Calendar modified;
 
-  @j2jResource(ImejiNamespaces.USER_STATUS)
-  private URI userStatus = URI.create(UserStatus.ACTIVE.getUriString());
+	@j2jResource(ImejiNamespaces.USER_STATUS)
+	private URI userStatus = URI.create(UserStatus.ACTIVE.getUriString());
 
-  @j2jLiteral("http://imeji.org/terms/registrationToken")
-  private String registrationToken;
+	@j2jLiteral("http://imeji.org/terms/registrationToken")
+	private String registrationToken;
 
+	public String getEmail() {
+		return email;
+	}
 
-  public String getEmail() {
-    return email;
-  }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
+	public void setEncryptedPassword(String encryptedPassword) {
+		this.encryptedPassword = encryptedPassword;
+	}
 
-  public void setEncryptedPassword(String encryptedPassword) {
-    this.encryptedPassword = encryptedPassword;
-  }
+	public String getEncryptedPassword() {
+		return encryptedPassword;
+	}
 
-  public String getEncryptedPassword() {
-    return encryptedPassword;
-  }
+	public void setGrants(Collection<String> grants) {
+		this.grants = (List<String>) grants;
+	}
 
-  public void setGrants(Collection<String> grants) {
-    this.grants = (List<String>) grants;
-  }
+	public Collection<String> getGrants() {
+		return grants;
+	}
 
-  public Collection<String> getGrants() {
-    return grants;
-  }
+	public void setId(URI id) {
+		this.id = id;
+	}
 
-  public void setId(URI id) {
-    this.id = id;
-  }
+	public URI getId() {
+		return id;
+	}
 
-  public URI getId() {
-    return id;
-  }
+	/**
+	 * @return the groups
+	 */
+	public List<UserGroup> getGroups() {
+		return groups;
+	}
 
-  /**
-   * @return the groups
-   */
-  public List<UserGroup> getGroups() {
-    return groups;
-  }
+	/**
+	 * @param groups
+	 *            the groups to set
+	 */
+	public void setGroups(List<UserGroup> groups) {
+		this.groups = groups;
+	}
 
-  /**
-   * @param groups the groups to set
-   */
-  public void setGroups(List<UserGroup> groups) {
-    this.groups = groups;
-  }
+	/**
+	 * @return the person
+	 */
+	public Person getPerson() {
+		return person;
+	}
 
-  /**
-   * @return the person
-   */
-  public Person getPerson() {
-    return person;
-  }
+	/**
+	 * @param person
+	 *            the person to set
+	 */
+	public void setPerson(Person person) {
+		this.person = person;
+	}
 
-  /**
-   * @param person the person to set
-   */
-  public void setPerson(Person person) {
-    this.person = person;
-  }
+	/**
+	 *
+	 * @return
+	 */
+	public long getQuota() {
+		return quota;
+	}
 
-  /**
-   *
-   * @return
-   */
-  public long getQuota() {
-    return quota;
-  }
+	/**
+	 *
+	 * @param quota
+	 */
+	public void setQuota(long quota) {
+		this.quota = quota;
+	}
 
-  /**
-   *
-   * @param quota
-   */
-  public void setQuota(long quota) {
-    this.quota = quota;
-  }
+	@XmlEnum(String.class)
+	public enum UserStatus {
+		ACTIVE(new String(ImejiNamespaces.USER_STATUS + "#ACTIVE")), INACTIVE(
+				new String(ImejiNamespaces.USER_STATUS + "#INACTIVE")), INVITED(
+						ImejiNamespaces.USER_STATUS + "#INVITED"), REMOVED(
+								new String(ImejiNamespaces.USER_STATUS + "#REMOVED"));
 
-  @XmlEnum(String.class)
-  public enum UserStatus {
-    ACTIVE(new String(ImejiNamespaces.USER_STATUS + "#ACTIVE")), INACTIVE(
-        new String(ImejiNamespaces.USER_STATUS + "#INACTIVE")), INVITED(
-            ImejiNamespaces.USER_STATUS + "#INVITED"), REMOVED(
-                new String(ImejiNamespaces.USER_STATUS + "#REMOVED"));
+		private final String uri;
 
-    private final String uri;
+		private UserStatus(String uri) {
+			this.uri = uri;
+		}
 
-    private UserStatus(String uri) {
-      this.uri = uri;
-    }
+		public String getUriString() {
+			return uri;
+		}
 
-    public String getUriString() {
-      return uri;
-    }
+		public URI getURI() {
+			return URI.create(uri);
+		}
+	}
 
-    public URI getURI() {
-      return URI.create(uri);
-    }
-  }
+	@XmlElement(name = "created", namespace = "http://purl.org/dc/terms/")
+	public Calendar getCreated() {
+		return created;
+	}
 
-  @XmlElement(name = "created", namespace = "http://purl.org/dc/terms/")
-  public Calendar getCreated() {
-    return created;
-  }
+	public void setCreated(Calendar created) {
+		this.created = created;
+	}
 
-  public void setCreated(Calendar created) {
-    this.created = created;
-  }
+	public void setUserStatus(UserStatus status) {
+		this.userStatus = URI.create(status.getUriString());
+	}
 
-  public void setUserStatus(UserStatus status) {
-    this.userStatus = URI.create(status.getUriString());
-  }
+	@XmlElement(name = "userStatus", namespace = "http://imeji.org/terms/")
+	public UserStatus getUserStatus() {
+		return UserStatus.valueOf(userStatus.getFragment());
+	}
 
-  @XmlElement(name = "userStatus", namespace = "http://imeji.org/terms/")
-  public UserStatus getUserStatus() {
-    return UserStatus.valueOf(userStatus.getFragment());
-  }
+	@XmlElement(name = "registrationToken", namespace = "http://imeji.org/terms/")
+	public String getRegistrationToken() {
+		return registrationToken;
+	}
 
+	public void setRegistrationToken(String token) {
+		this.registrationToken = token;
+	}
 
-  @XmlElement(name = "registrationToken", namespace = "http://imeji.org/terms/")
-  public String getRegistrationToken() {
-    return registrationToken;
-  }
+	public boolean isActive() {
+		return userStatus.equals(UserStatus.ACTIVE.getURI());
+	}
 
-  public void setRegistrationToken(String token) {
-    this.registrationToken = token;
-  }
+	public boolean isRemoved() {
+		return userStatus.equals(UserStatus.REMOVED.getURI());
+	}
 
-  public boolean isActive() {
-    return userStatus.equals(UserStatus.ACTIVE.getURI());
-  }
+	public Calendar getModified() {
+		return modified;
+	}
 
-  public boolean isRemoved() {
-    return userStatus.equals(UserStatus.REMOVED.getURI());
-  }
+	public void setModified(Calendar modified) {
+		this.modified = modified;
+	}
 
-  public Calendar getModified() {
-    return modified;
-  }
+	public String getApiKey() {
+		return apiKey;
+	}
 
-  public void setModified(Calendar modified) {
-    this.modified = modified;
-  }
-
-  public String getApiKey() {
-    return apiKey;
-  }
-
-  public void setApiKey(String apiKey) {
-    this.apiKey = apiKey;
-  }
-
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
+	}
 
 }

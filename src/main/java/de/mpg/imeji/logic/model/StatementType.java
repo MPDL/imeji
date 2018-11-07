@@ -7,5 +7,5 @@ package de.mpg.imeji.logic.model;
  *
  */
 public enum StatementType {
-  TEXT, NUMBER, GEOLOCATION, DATE, PERSON, URL;
+	TEXT, NUMBER, GEOLOCATION, DATE, PERSON, URL;
 }

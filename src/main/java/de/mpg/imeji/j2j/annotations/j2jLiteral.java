@@ -14,5 +14,5 @@ import com.hp.hpl.jena.rdf.model.Literal;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface j2jLiteral {
-  public String value();
+	public String value();
 }

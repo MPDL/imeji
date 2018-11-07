@@ -9,7 +9,7 @@
 //
 // import javax.faces.model.SelectItem;
 //
-// import org.apache.logging.log4j.Logger; 
+// import org.apache.logging.log4j.Logger;
 //
 // import de.mpg.imeji.exceptions.UnprocessableError;
 // import de.mpg.imeji.logic.config.Imeji;
@@ -17,7 +17,8 @@
 // import de.mpg.imeji.logic.search.model.SearchGroup;
 // import de.mpg.imeji.logic.search.model.SearchIndex.SearchFields;
 // import de.mpg.imeji.logic.search.model.SearchLogicalRelation;
-// import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
+// import
+// de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
 // import de.mpg.imeji.logic.search.model.SearchMetadata;
 // import de.mpg.imeji.logic.search.model.SearchOperators;
 // import de.mpg.imeji.logic.search.model.SearchPair;
@@ -33,7 +34,8 @@
 // public class SearchMetadataForm implements Serializable {
 //
 // private static final long serialVersionUID = 5066545429677597018L;
-// private static final Logger LOGGER = LogManager.getLogger(SearchMetadataForm.class);
+// private static final Logger LOGGER =
+// LogManager.getLogger(SearchMetadataForm.class);
 // private String searchValue;
 // private String familyName;
 // private String givenName;
@@ -227,7 +229,8 @@
 // */
 // public void initStatement(String namespace) {
 // if (statement == null) {
-// throw new RuntimeException("Statement with namespace \"" + namespace + "\" not found ");
+// throw new RuntimeException("Statement with namespace \"" + namespace + "\"
+// not found ");
 // }
 // initPredefinedValues();
 // }
@@ -236,7 +239,8 @@
 // * Initialize the predefined values if there are some defined in the profile
 // */
 // public void initPredefinedValues() {
-// if (statement.getLiteralConstraints() != null && statement.getLiteralConstraints().size() > 0) {
+// if (statement.getLiteralConstraints() != null &&
+// statement.getLiteralConstraints().size() > 0) {
 // predefinedValues = new ArrayList<SelectItem>();
 // predefinedValues.add(new SelectItem(null, "Select"));
 // for (final String s : statement.getLiteralConstraints()) {
@@ -267,7 +271,8 @@
 // if (!isEmtpyValue(searchValue + latitude + longitude)) {
 // group.setNot(not);
 // if (!isEmtpyValue(searchValue)) {
-// group.addPair(new SearchMetadata(SearchFields.location, operator, searchValue,
+// group.addPair(new SearchMetadata(SearchFields.location, operator,
+// searchValue,
 // statement.getIndex(), false));
 // }
 // if (!isEmtpyValue(latitude) && !isEmtpyValue(longitude)) {
@@ -298,14 +303,16 @@
 // if (!group.isEmpty()) {
 // group.addLogicalRelation(LOGICAL_RELATIONS.AND);
 // }
-// group.addPair(new SearchMetadata(SearchFields.person_family, operator, familyName,
+// group.addPair(new SearchMetadata(SearchFields.person_family, operator,
+// familyName,
 // statement.getIndex(), false));
 // }
 // if (!isEmtpyValue(givenName)) {
 // if (!group.isEmpty()) {
 // group.addLogicalRelation(LOGICAL_RELATIONS.AND);
 // }
-// group.addPair(new SearchMetadata(SearchFields.person_given, operator, givenName,
+// group.addPair(new SearchMetadata(SearchFields.person_given, operator,
+// givenName,
 // statement.getIndex(), false));
 // }
 // if (!isEmtpyValue(uri)) {
@@ -319,7 +326,8 @@
 // if (!group.isEmpty()) {
 // group.addLogicalRelation(LOGICAL_RELATIONS.AND);
 // }
-// group.addPair(new SearchMetadata(SearchFields.person_org_name, operator, orgName,
+// group.addPair(new SearchMetadata(SearchFields.person_org_name, operator,
+// orgName,
 // statement.getIndex(), false));
 // }
 // }
@@ -341,7 +349,8 @@
 // group.addLogicalRelation(LOGICAL_RELATIONS.AND);
 // }
 // group.addPair(
-// new SearchMetadata(SearchFields.url, operator, uri, statement.getIndex(), not));
+// new SearchMetadata(SearchFields.url, operator, uri, statement.getIndex(),
+// not));
 // }
 // }
 // break;

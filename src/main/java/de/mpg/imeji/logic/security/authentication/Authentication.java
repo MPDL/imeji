@@ -12,28 +12,27 @@ import de.mpg.imeji.logic.model.User;
  */
 public interface Authentication {
 
+	/**
+	 * Log in a user with a login (email or user name) and password
+	 *
+	 * @param login
+	 * @param pwd
+	 * @return
+	 * @throws AuthenticationError
+	 */
+	public User doLogin() throws AuthenticationError;
 
-  /**
-   * Log in a user with a login (email or user name) and password
-   *
-   * @param login
-   * @param pwd
-   * @return
-   * @throws AuthenticationError
-   */
-  public User doLogin() throws AuthenticationError;
+	/**
+	 * Get the user Login
+	 *
+	 * @return
+	 */
+	public String getUserLogin();
 
-  /**
-   * Get the user Login
-   *
-   * @return
-   */
-  public String getUserLogin();
-
-  /**
-   * Get the user password
-   *
-   * @return
-   */
-  public String getUserPassword();
+	/**
+	 * Get the user password
+	 *
+	 * @return
+	 */
+	public String getUserPassword();
 }

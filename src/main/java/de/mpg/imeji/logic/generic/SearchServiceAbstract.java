@@ -26,183 +26,182 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
  *
  */
 public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
-  protected final Search search;
-  private final ExecutorService executor = Executors.newCachedThreadPool();
+	protected final Search search;
+	private final ExecutorService executor = Executors.newCachedThreadPool();
 
-  public SearchServiceAbstract(SearchObjectTypes type) {
-    super();
-    search = SearchFactory.create(type, SEARCH_IMPLEMENTATIONS.ELASTIC);
-  }
+	public SearchServiceAbstract(SearchObjectTypes type) {
+		super();
+		search = SearchFactory.create(type, SEARCH_IMPLEMENTATIONS.ELASTIC);
+	}
 
-  /**
-   * Search for Elements
-   *
-   * @param searchQuery
-   * @param sortCri
-   * @param user
-   * @param size
-   * @param offset
-   * @return
-   */
-  public abstract SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, User user,
-      int size, int offset);
+	/**
+	 * Search for Elements
+	 *
+	 * @param searchQuery
+	 * @param sortCri
+	 * @param user
+	 * @param size
+	 * @param offset
+	 * @return
+	 */
+	public abstract SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, User user, int size,
+			int offset);
 
-  /**
-   * Retrieve the search results
-   *
-   * @param result
-   * @return
-   * @throws ImejiException
-   */
-  public abstract List<T> retrieve(List<String> ids, User user) throws ImejiException;
+	/**
+	 * Retrieve the search results
+	 *
+	 * @param result
+	 * @return
+	 * @throws ImejiException
+	 */
+	public abstract List<T> retrieve(List<String> ids, User user) throws ImejiException;
 
-  /**
-   * Search and retrieve the search Result
-   *
-   * @param searchQuery
-   * @param sortCri
-   * @param user
-   * @param size
-   * @param offset
-   * @return
-   * @throws ImejiException
-   */
-  public List<T> searchAndRetrieve(SearchQuery searchQuery, SortCriterion sortCri, User user,
-      int size, int offset) throws ImejiException {
-    final SearchResult result = search(searchQuery, sortCri, user, size, offset);
-    return retrieve(result.getResults(), user);
-  }
+	/**
+	 * Search and retrieve the search Result
+	 *
+	 * @param searchQuery
+	 * @param sortCri
+	 * @param user
+	 * @param size
+	 * @param offset
+	 * @return
+	 * @throws ImejiException
+	 */
+	public List<T> searchAndRetrieve(SearchQuery searchQuery, SortCriterion sortCri, User user, int size, int offset)
+			throws ImejiException {
+		final SearchResult result = search(searchQuery, sortCri, user, size, offset);
+		return retrieve(result.getResults(), user);
+	}
 
-  /**
-   * Retrieve the items as Future
-   * 
-   * @param ids
-   * @param user
-   * @return
-   */
-  public Future<List<T>> retrieveAsync(List<String> ids, User user) {
-    return executor.submit(new RetrieveJob(ids, user));
-  }
+	/**
+	 * Retrieve the items as Future
+	 * 
+	 * @param ids
+	 * @param user
+	 * @return
+	 */
+	public Future<List<T>> retrieveAsync(List<String> ids, User user) {
+		return executor.submit(new RetrieveJob(ids, user));
+	}
 
-  /**
-   * Retrieve all elements of type T. This method should be abble to work without search, in order
-   * to be used by the reindex process
-   *
-   * @return
-   * @throws ImejiException
-   */
-  public List<T> retrieveAll() throws ImejiException {
-    return retrieve(searchAll(), Imeji.adminUser);
-  };
+	/**
+	 * Retrieve all elements of type T. This method should be abble to work without
+	 * search, in order to be used by the reindex process
+	 *
+	 * @return
+	 * @throws ImejiException
+	 */
+	public List<T> retrieveAll() throws ImejiException {
+		return retrieve(searchAll(), Imeji.adminUser);
+	};
 
-  /**
-   * Search for all elements of type T and return the list of uri
-   * 
-   * @return
-   */
-  public abstract List<String> searchAll();
+	/**
+	 * Search for all elements of type T and return the list of uri
+	 * 
+	 * @return
+	 */
+	public abstract List<String> searchAll();
 
-  /**
-   * Iterate over all elements of Type T. Should be prefer to retreiveAll to avoid to create huge
-   * list of objects
-   * 
-   * @param stepSize
-   * @return
-   */
-  public RetrieveIterator iterateAll(int stepSize) {
-    return new RetrieveIterator(searchAll(), Imeji.adminUser, stepSize);
-  }
+	/**
+	 * Iterate over all elements of Type T. Should be prefer to retreiveAll to avoid
+	 * to create huge list of objects
+	 * 
+	 * @param stepSize
+	 * @return
+	 */
+	public RetrieveIterator iterateAll(int stepSize) {
+		return new RetrieveIterator(searchAll(), Imeji.adminUser, stepSize);
+	}
 
+	/**
+	 * Iterate over a search result
+	 * 
+	 * @param result
+	 * @param user
+	 * @param stepSize
+	 * @return
+	 */
+	public RetrieveIterator iterate(SearchResult result, User user, int stepSize) {
+		return new RetrieveIterator(result.getResults(), Imeji.adminUser, stepSize);
+	}
 
-  /**
-   * Iterate over a search result
-   * 
-   * @param result
-   * @param user
-   * @param stepSize
-   * @return
-   */
-  public RetrieveIterator iterate(SearchResult result, User user, int stepSize) {
-    return new RetrieveIterator(result.getResults(), Imeji.adminUser, stepSize);
-  }
+	/**
+	 * Interate over a list
+	 * 
+	 * @author saquet
+	 *
+	 */
+	public class RetrieveIterator implements Iterator<List<T>> {
+		private final Iterator<String> uriIterator;
+		private final User user;
+		private final int stepSize;
+		private final int size;
 
-  /**
-   * Interate over a list
-   * 
-   * @author saquet
-   *
-   */
-  public class RetrieveIterator implements Iterator<List<T>> {
-    private final Iterator<String> uriIterator;
-    private final User user;
-    private final int stepSize;
-    private final int size;
+		public RetrieveIterator(List<String> uris, User user, int stepSize) {
+			this.uriIterator = uris.iterator();
+			this.user = user;
+			this.stepSize = stepSize;
+			this.size = uris.size();
+		}
 
-    public RetrieveIterator(List<String> uris, User user, int stepSize) {
-      this.uriIterator = uris.iterator();
-      this.user = user;
-      this.stepSize = stepSize;
-      this.size = uris.size();
-    }
+		public int getSize() {
+			return size;
+		}
 
-    public int getSize() {
-      return size;
-    }
+		@Override
+		public boolean hasNext() {
+			return uriIterator.hasNext();
+		}
 
-    @Override
-    public boolean hasNext() {
-      return uriIterator.hasNext();
-    }
+		@Override
+		public List<T> next() {
+			try {
+				return retrieve(next(stepSize), user);
+			} catch (ImejiException e) {
+				return new ArrayList<>();
+			}
+		}
 
-    @Override
-    public List<T> next() {
-      try {
-        return retrieve(next(stepSize), user);
-      } catch (ImejiException e) {
-        return new ArrayList<>();
-      }
-    }
+		/**
+		 * Get next nth uris
+		 * 
+		 * @param stepSize
+		 * @return
+		 */
+		private List<String> next(int stepSize) {
+			List<String> uris = new ArrayList<>(stepSize);
+			while (uriIterator.hasNext() && uris.size() < stepSize) {
+				final String uri = (String) uriIterator.next();
+				uris.add(uri);
+			}
+			return uris;
+		}
+	}
 
-    /**
-     * Get next nth uris
-     * 
-     * @param stepSize
-     * @return
-     */
-    private List<String> next(int stepSize) {
-      List<String> uris = new ArrayList<>(stepSize);
-      while (uriIterator.hasNext() && uris.size() < stepSize) {
-        final String uri = (String) uriIterator.next();
-        uris.add(uri);
-      }
-      return uris;
-    }
-  }
+	public static void main(String[] args) {
+		List<String> uris = new ArrayList<>(120);
+		System.out.println(uris.size());
+	}
 
-  public static void main(String[] args) {
-    List<String> uris = new ArrayList<>(120);
-    System.out.println(uris.size());
-  }
+	/**
+	 * Job to retrieve the objects and return a Future
+	 * 
+	 * @author saquet
+	 *
+	 */
+	private class RetrieveJob implements Callable<List<T>> {
+		private final List<String> ids;
+		private final User user;
 
-  /**
-   * Job to retrieve the objects and return a Future
-   * 
-   * @author saquet
-   *
-   */
-  private class RetrieveJob implements Callable<List<T>> {
-    private final List<String> ids;
-    private final User user;
+		public RetrieveJob(List<String> ids, User user) {
+			this.ids = ids;
+			this.user = user;
+		}
 
-    public RetrieveJob(List<String> ids, User user) {
-      this.ids = ids;
-      this.user = user;
-    }
-
-    @Override
-    public List<T> call() throws Exception {
-      return retrieve(ids, user);
-    }
-  }
+		@Override
+		public List<T> call() throws Exception {
+			return retrieve(ids, user);
+		}
+	}
 
 }

@@ -15,77 +15,77 @@ import de.mpg.imeji.logic.security.user.util.QuotaUtil;
 import de.mpg.imeji.logic.statistic.StatisticsService;
 
 /**
- * Super class to implements quota methods, which can be reused by JSF Bean displaying quota menu
- * <br/>
+ * Super class to implements quota methods, which can be reused by JSF Bean
+ * displaying quota menu <br/>
  *
  * @author bastiens
  *
  */
 
 public class QuotaUICompoment implements Serializable {
-  private static final long serialVersionUID = -8215734534906829819L;
-  private String quota = Imeji.CONFIG.getDefaultQuota();
-  private List<SelectItem> quotaMenu;
-  private final String humanReadableQuota;
-  private String storageUsedByUser;
+	private static final long serialVersionUID = -8215734534906829819L;
+	private String quota = Imeji.CONFIG.getDefaultQuota();
+	private List<SelectItem> quotaMenu;
+	private final String humanReadableQuota;
+	private String storageUsedByUser;
 
-  /**
-   * default Constructor
-   */
-  public QuotaUICompoment(User user, Locale locale) {
-    this.quotaMenu = new ArrayList<>();
-    this.humanReadableQuota = QuotaUtil.getQuotaHumanReadable(user.getQuota(), Locale.ENGLISH);
-    this.quota = user.getQuota() > 0 ? humanReadableQuota.replace("GB", "").trim() : quota;
-    for (final String limit : Imeji.CONFIG.getQuotaLimitsAsList()) {
-      if (NumberUtils.isNumber(limit)) {
-        quotaMenu.add(new SelectItem(limit.trim()));
-      } else {
-        quotaMenu.add(new SelectItem(limit.trim(), Imeji.RESOURCE_BUNDLE.getLabel(limit, locale)));
-      }
-    }
-    final long userStorage = new StatisticsService().getUsedStorageForUser(user);
-    this.storageUsedByUser = QuotaUtil.getQuotaHumanReadable(userStorage, Locale.ENGLISH);
-  }
+	/**
+	 * default Constructor
+	 */
+	public QuotaUICompoment(User user, Locale locale) {
+		this.quotaMenu = new ArrayList<>();
+		this.humanReadableQuota = QuotaUtil.getQuotaHumanReadable(user.getQuota(), Locale.ENGLISH);
+		this.quota = user.getQuota() > 0 ? humanReadableQuota.replace("GB", "").trim() : quota;
+		for (final String limit : Imeji.CONFIG.getQuotaLimitsAsList()) {
+			if (NumberUtils.isNumber(limit)) {
+				quotaMenu.add(new SelectItem(limit.trim()));
+			} else {
+				quotaMenu.add(new SelectItem(limit.trim(), Imeji.RESOURCE_BUNDLE.getLabel(limit, locale)));
+			}
+		}
+		final long userStorage = new StatisticsService().getUsedStorageForUser(user);
+		this.storageUsedByUser = QuotaUtil.getQuotaHumanReadable(userStorage, Locale.ENGLISH);
+	}
 
-  /**
-   *
-   * @return the quota
-   */
-  public String getQuota() {
-    return quota;
-  }
+	/**
+	 *
+	 * @return the quota
+	 */
+	public String getQuota() {
+		return quota;
+	}
 
-  /**
-   * @param quota the quota to set
-   */
-  public void setQuota(String quota) {
-    this.quota = quota;
-  }
+	/**
+	 * @param quota
+	 *            the quota to set
+	 */
+	public void setQuota(String quota) {
+		this.quota = quota;
+	}
 
-  /**
-   * @return the quotaMenu
-   */
-  public List<SelectItem> getQuotaMenu() {
-    return quotaMenu;
-  }
+	/**
+	 * @return the quotaMenu
+	 */
+	public List<SelectItem> getQuotaMenu() {
+		return quotaMenu;
+	}
 
-  /**
-   * @param quotaMenu the quotaMenu to set
-   */
-  public void setQuotaMenu(List<SelectItem> quotaMenu) {
-    this.quotaMenu = quotaMenu;
-  }
+	/**
+	 * @param quotaMenu
+	 *            the quotaMenu to set
+	 */
+	public void setQuotaMenu(List<SelectItem> quotaMenu) {
+		this.quotaMenu = quotaMenu;
+	}
 
-  public String getHumanReadableQuota() {
-    return humanReadableQuota;
-  }
+	public String getHumanReadableQuota() {
+		return humanReadableQuota;
+	}
 
-
-
-  /**
-   * @return the storageUsedByUser
-   */
-  public String getStorageUsedByUser() {
-    return storageUsedByUser;
-  }
+	/**
+	 * @return the storageUsedByUser
+	 */
+	public String getStorageUsedByUser() {
+		return storageUsedByUser;
+	}
 }

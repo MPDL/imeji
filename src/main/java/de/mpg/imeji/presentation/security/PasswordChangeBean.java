@@ -25,188 +25,183 @@ import de.mpg.imeji.util.DateHelper;
 @ManagedBean(name = "PasswordChangeBean")
 @ViewScoped
 public class PasswordChangeBean extends SuperBean {
-  private static final long serialVersionUID = 2461713268070189067L;
-  private String newPassword;
-  private String repeatedPassword;
-  private String resetEmail;
-  private String token;
-  private boolean resetFinished;
-  private final PasswordResetController passwordresetService = new PasswordResetController();
-  private String from;
-  private User user;
-  @ManagedProperty(value = "#{SessionBean}")
-  private SessionBean sessionBean;
+	private static final long serialVersionUID = 2461713268070189067L;
+	private String newPassword;
+	private String repeatedPassword;
+	private String resetEmail;
+	private String token;
+	private boolean resetFinished;
+	private final PasswordResetController passwordresetService = new PasswordResetController();
+	private String from;
+	private User user;
+	@ManagedProperty(value = "#{SessionBean}")
+	private SessionBean sessionBean;
 
-  @PostConstruct
-  public void init() {
-    newPassword = null;
-    repeatedPassword = null;
-    resetFinished = false;
-    from = UrlHelper.getParameterValue("from");
-    user = retrieveUser();
-  }
+	@PostConstruct
+	public void init() {
+		newPassword = null;
+		repeatedPassword = null;
+		resetFinished = false;
+		from = UrlHelper.getParameterValue("from");
+		user = retrieveUser();
+	}
 
-  /**
-   * Send Email to reset password
-   * 
-   * @throws ImejiException
-   * @throws IOException
-   */
-  public void sendResetEmail() throws ImejiException, IOException {
-    
-	if (!EmailService.isValidEmail(resetEmail)) {
-      BeanHelper.error(
-          resetEmail + " " + Imeji.RESOURCE_BUNDLE.getLabel("reset_invalid_email", getLocale()));
-      redirect(getNavigation().getLoginUrl());
-    } 
-	else {
-      User user;
-      try {
-        user = new UserService().retrieve(resetEmail, Imeji.adminUser);
-      } catch (ImejiException e) {
-        BeanHelper.error(resetEmail + ": "
-            + Imeji.RESOURCE_BUNDLE.getMessage("error_user_not_found", getLocale()));
-        redirect(getNavigation().getLoginUrl());
-        return;
-      }
-      String url = getNavigation().getApplicationUrl() + "pwdreset?token="
-          + passwordresetService.generateResetToken(user);
-      Calendar expirationDate = DateHelper.getCurrentDate();
-      expirationDate.add(Calendar.DAY_OF_MONTH, Integer.valueOf(Imeji.CONFIG.getRegistrationTokenExpiry()));
-      
-      new EmailService().sendMail(resetEmail, null, EmailMessages.getResetRequestEmailSubject(getLocale()),
-    		  EmailMessages.getResetRequestEmailBody(url, user, DateHelper.printDate(expirationDate), getLocale()));
-      
-      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("email_password_reset_sent", getLocale()));
-      redirect(getNavigation().getHomeUrl());
-    }
-  }
+	/**
+	 * Send Email to reset password
+	 * 
+	 * @throws ImejiException
+	 * @throws IOException
+	 */
+	public void sendResetEmail() throws ImejiException, IOException {
 
-  /**
-   * Reset the password
-   * 
-   * @throws IOException
-   * @throws ImejiException
-   */
-  public void resetPassword() throws IOException, ImejiException {
-    if (!isValidPassword()) {
-      reloadPage();
-      return;
-    }
-    if (user != null) {
-      user = passwordresetService.resetPassword(user, newPassword);
-    } 
-    else {
-      if (!passwordresetService.isValidToken(token)) {
-        BeanHelper
-            .error(Imeji.RESOURCE_BUNDLE.getMessage("error_password_link_invalid", getLocale()));
-        redirect(getNavigation().getLoginUrl());
-        return;
-      }
-      user = passwordresetService.resetPassword(token, newPassword);
-      sessionBean.setUser(user);
-      new EmailService().sendMail(user.getEmail(), null, EmailMessages.getResetConfirmEmailSubject(getLocale()),
-    		  EmailMessages.getResetConfirmEmailBody(user, getLocale()));
-    }
-    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("password_changed", getLocale()));
-    resetFinished = true;
-    redirect(
-        StringHelper.isNullOrEmptyTrim(getBackUrl()) ? getNavigation().getHomeUrl() : getBackUrl());
-  }
+		if (!EmailService.isValidEmail(resetEmail)) {
+			BeanHelper.error(resetEmail + " " + Imeji.RESOURCE_BUNDLE.getLabel("reset_invalid_email", getLocale()));
+			redirect(getNavigation().getLoginUrl());
+		} else {
+			User user;
+			try {
+				user = new UserService().retrieve(resetEmail, Imeji.adminUser);
+			} catch (ImejiException e) {
+				BeanHelper.error(
+						resetEmail + ": " + Imeji.RESOURCE_BUNDLE.getMessage("error_user_not_found", getLocale()));
+				redirect(getNavigation().getLoginUrl());
+				return;
+			}
+			String url = getNavigation().getApplicationUrl() + "pwdreset?token="
+					+ passwordresetService.generateResetToken(user);
+			Calendar expirationDate = DateHelper.getCurrentDate();
+			expirationDate.add(Calendar.DAY_OF_MONTH, Integer.valueOf(Imeji.CONFIG.getRegistrationTokenExpiry()));
 
-  /**
-   * Retrieve the user for which the user will be changed
-   * 
-   * @return
-   * @throws ImejiException
-   */
-  private User retrieveUser() {
-    if (!StringHelper.isNullOrEmptyTrim(UrlHelper.getParameterValue("email"))) {
-      try {
-        return new UserService().retrieve(UrlHelper.getParameterValue("email"), getSessionUser());
-      } catch (ImejiException e) {
-        return null;
-      }
-    } else {
-      return getSessionUser();
-    }
-  }
+			new EmailService().sendMail(resetEmail, null, EmailMessages.getResetRequestEmailSubject(getLocale()),
+					EmailMessages.getResetRequestEmailBody(url, user, DateHelper.printDate(expirationDate),
+							getLocale()));
 
+			BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("email_password_reset_sent", getLocale()));
+			redirect(getNavigation().getHomeUrl());
+		}
+	}
 
-  /**
-   * Stop the password reset if the password is not valid
-   * 
-   * @throws IOException
-   */
-  private boolean isValidPassword() throws IOException {
-    if (newPassword == null || newPassword.equals("")) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_empty_password", getLocale()));
-      return false;
-    }
-    if (!newPassword.equals(repeatedPassword)) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_user_repeat_password", getLocale()));
-      return false;
-    }
-    return true;
-  }
+	/**
+	 * Reset the password
+	 * 
+	 * @throws IOException
+	 * @throws ImejiException
+	 */
+	public void resetPassword() throws IOException, ImejiException {
+		if (!isValidPassword()) {
+			reloadPage();
+			return;
+		}
+		if (user != null) {
+			user = passwordresetService.resetPassword(user, newPassword);
+		} else {
+			if (!passwordresetService.isValidToken(token)) {
+				BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_password_link_invalid", getLocale()));
+				redirect(getNavigation().getLoginUrl());
+				return;
+			}
+			user = passwordresetService.resetPassword(token, newPassword);
+			sessionBean.setUser(user);
+			new EmailService().sendMail(user.getEmail(), null, EmailMessages.getResetConfirmEmailSubject(getLocale()),
+					EmailMessages.getResetConfirmEmailBody(user, getLocale()));
+		}
+		BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("password_changed", getLocale()));
+		resetFinished = true;
+		redirect(StringHelper.isNullOrEmptyTrim(getBackUrl()) ? getNavigation().getHomeUrl() : getBackUrl());
+	}
 
-  public String getNewPassword() {
-    return newPassword;
-  }
+	/**
+	 * Retrieve the user for which the user will be changed
+	 * 
+	 * @return
+	 * @throws ImejiException
+	 */
+	private User retrieveUser() {
+		if (!StringHelper.isNullOrEmptyTrim(UrlHelper.getParameterValue("email"))) {
+			try {
+				return new UserService().retrieve(UrlHelper.getParameterValue("email"), getSessionUser());
+			} catch (ImejiException e) {
+				return null;
+			}
+		} else {
+			return getSessionUser();
+		}
+	}
 
-  public void setNewPassword(String newPassword) {
-    this.newPassword = newPassword;
-  }
+	/**
+	 * Stop the password reset if the password is not valid
+	 * 
+	 * @throws IOException
+	 */
+	private boolean isValidPassword() throws IOException {
+		if (newPassword == null || newPassword.equals("")) {
+			BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_empty_password", getLocale()));
+			return false;
+		}
+		if (!newPassword.equals(repeatedPassword)) {
+			BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_user_repeat_password", getLocale()));
+			return false;
+		}
+		return true;
+	}
 
-  public String getRepeatedPassword() {
-    return repeatedPassword;
-  }
+	public String getNewPassword() {
+		return newPassword;
+	}
 
-  public void setRepeatedPassword(String repeatedPassword) {
-    this.repeatedPassword = repeatedPassword;
-  }
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
+	}
 
-  public String getToken() {
-    return token;
-  }
+	public String getRepeatedPassword() {
+		return repeatedPassword;
+	}
 
-  public void setToken(String token) {
-    this.token = token;
-  }
+	public void setRepeatedPassword(String repeatedPassword) {
+		this.repeatedPassword = repeatedPassword;
+	}
 
-  public String getResetEmail() {
-    return resetEmail;
-  }
+	public String getToken() {
+		return token;
+	}
 
-  public void setResetEmail(String resetEmail) {
-    this.resetEmail = resetEmail;
-  }
+	public void setToken(String token) {
+		this.token = token;
+	}
 
-  public boolean isResetFinished() {
-    return resetFinished;
-  }
+	public String getResetEmail() {
+		return resetEmail;
+	}
 
-  public void setResetFinished(boolean resetFinished) {
-    this.resetFinished = resetFinished;
-  }
+	public void setResetEmail(String resetEmail) {
+		this.resetEmail = resetEmail;
+	}
 
-  public SessionBean getSessionBean() {
-    return sessionBean;
-  }
+	public boolean isResetFinished() {
+		return resetFinished;
+	}
 
-  public void setSessionBean(SessionBean sessionBean) {
-    this.sessionBean = sessionBean;
-  }
+	public void setResetFinished(boolean resetFinished) {
+		this.resetFinished = resetFinished;
+	}
 
-  private void reloadPage() throws IOException {
-    redirect(getNavigation().getHomeUrl() + "/pwdreset?token=" + token);
-  }
+	public SessionBean getSessionBean() {
+		return sessionBean;
+	}
 
-  public String getFrom() {
-    return from;
-  }
+	public void setSessionBean(SessionBean sessionBean) {
+		this.sessionBean = sessionBean;
+	}
 
-  public User getUser() {
-    return user;
-  }
+	private void reloadPage() throws IOException {
+		redirect(getNavigation().getHomeUrl() + "/pwdreset?token=" + token);
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public User getUser() {
+		return user;
+	}
 }

@@ -6,17 +6,17 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.events.aggregation.AggregationService;
 
 /**
- * For each collection that has changed, send email to subscribed user with changes. (Only one email
- * per user)
+ * For each collection that has changed, send email to subscribed user with
+ * changes. (Only one email per user)
  * 
  * @author jandura
  *
  */
 public class AggregateMessages implements Callable<Integer> {
 
-  @Override
-  public Integer call() throws ImejiException {
-    new AggregationService().runAllAggregations();
-    return 1;
-  }
+	@Override
+	public Integer call() throws ImejiException {
+		new AggregationService().runAllAggregations();
+		return 1;
+	}
 }

@@ -24,78 +24,75 @@ import de.mpg.imeji.util.JenaUtil;
  */
 public class DefaultAuthenticationTest {
 
-  @BeforeClass
-  public static void setup() {
-    JenaUtil.initJena();
-  }
+	@BeforeClass
+	public static void setup() {
+		JenaUtil.initJena();
+	}
 
-  @AfterClass
-  public static void tearDown() throws Exception {
-    JenaUtil.closeJena();
-  }
+	@AfterClass
+	public static void tearDown() throws Exception {
+		JenaUtil.closeJena();
+	}
 
-  @Test
-  public void testLoginWrongPassword() {
-    Authentication simpAuth =
-        new DefaultAuthentication(JenaUtil.TEST_USER_EMAIL, JenaUtil.TEST_USER_PWD + "a");
-    User user = null;
-    try {
-      user = simpAuth.doLogin();
-    } catch (AuthenticationError e) {
-      user = null;
+	@Test
+	public void testLoginWrongPassword() {
+		Authentication simpAuth = new DefaultAuthentication(JenaUtil.TEST_USER_EMAIL, JenaUtil.TEST_USER_PWD + "a");
+		User user = null;
+		try {
+			user = simpAuth.doLogin();
+		} catch (AuthenticationError e) {
+			user = null;
 
-    }
-    Assert.assertNull(user);
-  }
+		}
+		Assert.assertNull(user);
+	}
 
-  @Test
-  public void testUserNotExist() {
-    Authentication simpAuth =
-        new DefaultAuthentication("abdc" + JenaUtil.TEST_USER_EMAIL, JenaUtil.TEST_USER_PWD);
-    User user = null;
-    try {
-      user = simpAuth.doLogin();
-    } catch (AuthenticationError e) {
+	@Test
+	public void testUserNotExist() {
+		Authentication simpAuth = new DefaultAuthentication("abdc" + JenaUtil.TEST_USER_EMAIL, JenaUtil.TEST_USER_PWD);
+		User user = null;
+		try {
+			user = simpAuth.doLogin();
+		} catch (AuthenticationError e) {
 
-      user = null;
-    }
-    Assert.assertNull(user);
-  }
+			user = null;
+		}
+		Assert.assertNull(user);
+	}
 
-  @Test
-  public void testDoLogin() {
-    // test if login if working for test user
-    Authentication simpAuth =
-        new DefaultAuthentication(JenaUtil.TEST_USER_EMAIL, JenaUtil.TEST_USER_PWD);
-    User user = null;
-    try {
-      user = simpAuth.doLogin();
-    } catch (AuthenticationError e) {
-      user = null;
-    }
-    Assert.assertNotNull(user);
-  }
+	@Test
+	public void testDoLogin() {
+		// test if login if working for test user
+		Authentication simpAuth = new DefaultAuthentication(JenaUtil.TEST_USER_EMAIL, JenaUtil.TEST_USER_PWD);
+		User user = null;
+		try {
+			user = simpAuth.doLogin();
+		} catch (AuthenticationError e) {
+			user = null;
+		}
+		Assert.assertNotNull(user);
+	}
 
-  @Test
-  public void testInactiveUser() throws Exception {
-    UserService controller = new UserService();
-    PasswordGenerator generator = new PasswordGenerator();
-    String password = generator.generatePassword();
-    User user = new User();
-    user.setEmail("inactive_user@unit-test-imeji.org");
-    user.setEncryptedPassword(StringHelper.md5(password));
-    user.setPerson(ImejiFactory.newPerson("fam", "giv", "org"));
-    user = controller.create(user, UserService.USER_TYPE.INACTIVE);
-    Authentication simpAuth = new DefaultAuthentication(user.getEmail(), password);
-    try {
-      user = simpAuth.doLogin();
-      Assert.fail("Not active user should not log in");
-    } catch (InactiveAuthenticationError e) {
-      // OK
-    } catch (AuthenticationError e) {
-      Assert.fail("Wrong Exception type, should be " + InactiveAuthenticationError.class);
-    } catch (Exception e) {
-      Assert.fail("Error log in user: " + e.getMessage());
-    }
-  }
+	@Test
+	public void testInactiveUser() throws Exception {
+		UserService controller = new UserService();
+		PasswordGenerator generator = new PasswordGenerator();
+		String password = generator.generatePassword();
+		User user = new User();
+		user.setEmail("inactive_user@unit-test-imeji.org");
+		user.setEncryptedPassword(StringHelper.md5(password));
+		user.setPerson(ImejiFactory.newPerson("fam", "giv", "org"));
+		user = controller.create(user, UserService.USER_TYPE.INACTIVE);
+		Authentication simpAuth = new DefaultAuthentication(user.getEmail(), password);
+		try {
+			user = simpAuth.doLogin();
+			Assert.fail("Not active user should not log in");
+		} catch (InactiveAuthenticationError e) {
+			// OK
+		} catch (AuthenticationError e) {
+			Assert.fail("Wrong Exception type, should be " + InactiveAuthenticationError.class);
+		} catch (Exception e) {
+			Assert.fail("Error log in user: " + e.getMessage());
+		}
+	}
 }

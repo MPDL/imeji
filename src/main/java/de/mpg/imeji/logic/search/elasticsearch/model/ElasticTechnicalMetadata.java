@@ -9,25 +9,25 @@ import de.mpg.imeji.logic.model.TechnicalMetadata;
  *
  */
 public class ElasticTechnicalMetadata {
-  private final String name;
-  private final String value;
+	private final String name;
+	private final String value;
 
-  /**
-   * Constructor for a technical metadata
-   *
-   * @param tmd
-   */
-  public ElasticTechnicalMetadata(TechnicalMetadata tmd) {
-    this.name = tmd.getName();
-    this.value = tmd.getValue();
-  }
+	/**
+	 * Constructor for a technical metadata
+	 *
+	 * @param tmd
+	 */
+	public ElasticTechnicalMetadata(TechnicalMetadata tmd) {
+		this.name = tmd.getName();
+		this.value = tmd.getValue();
+	}
 
-  public String getName() {
-    return name;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public String getValue() {
-    return value;
-  }
+	public String getValue() {
+		return value;
+	}
 
 }

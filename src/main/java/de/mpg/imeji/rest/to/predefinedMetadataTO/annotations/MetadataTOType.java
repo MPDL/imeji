@@ -14,5 +14,5 @@ import com.hp.hpl.jena.vocabulary.RDF;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MetadataTOType {
-  public String value();
+	public String value();
 }

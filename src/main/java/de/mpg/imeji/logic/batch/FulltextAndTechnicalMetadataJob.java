@@ -14,14 +14,14 @@ import de.mpg.imeji.logic.core.content.ContentService;
  *
  */
 public class FulltextAndTechnicalMetadataJob implements Callable<Integer> {
-  private static final Logger LOGGER = LogManager.getLogger(FulltextAndTechnicalMetadataJob.class);
+	private static final Logger LOGGER = LogManager.getLogger(FulltextAndTechnicalMetadataJob.class);
 
-  @Override
-  public Integer call() throws Exception {
-    LOGGER.info("Extracting fulltext and technical metadata for all files...");
-    new ContentService().extractFulltextAndTechnicalMetadataForAllFiles();
-    LOGGER.info("... Extracting fulltext and technical metadata for all files done!");
-    return 1;
-  }
+	@Override
+	public Integer call() throws Exception {
+		LOGGER.info("Extracting fulltext and technical metadata for all files...");
+		new ContentService().extractFulltextAndTechnicalMetadataForAllFiles();
+		LOGGER.info("... Extracting fulltext and technical metadata for all files done!");
+		return 1;
+	}
 
 }

@@ -9,22 +9,22 @@ import java.nio.file.Paths;
  */
 public class ResourceHelper {
 
-  /**
-   * Private Constructor
-   */
-  private ResourceHelper() {
-    // avoid constructor
-  }
+	/**
+	 * Private Constructor
+	 */
+	private ResourceHelper() {
+		// avoid constructor
+	}
 
-  /**
-   * Read a file defined by its path, and return the content as String
-   *
-   * @param path
-   * @return
-   * @throws IOException
-   */
-  public static String getStringFromPath(String path) throws IOException {
-    return new String(Files.readAllBytes(Paths.get(path)), "UTF-8");
-  }
+	/**
+	 * Read a file defined by its path, and return the content as String
+	 *
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	public static String getStringFromPath(String path) throws IOException {
+		return new String(Files.readAllBytes(Paths.get(path)), "UTF-8");
+	}
 
 }

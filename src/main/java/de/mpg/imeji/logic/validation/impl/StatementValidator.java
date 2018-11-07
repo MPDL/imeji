@@ -18,36 +18,36 @@ import de.mpg.imeji.logic.search.model.SearchResult;
  *
  */
 public class StatementValidator extends ObjectValidator implements Validator<Statement> {
-  private UnprocessableError exception = new UnprocessableError(new HashSet<String>());
+	private UnprocessableError exception = new UnprocessableError(new HashSet<String>());
 
-  @Override
-  public void validate(Statement statement, Method method) throws UnprocessableError {
-    exception = new UnprocessableError();
+	@Override
+	public void validate(Statement statement, Method method) throws UnprocessableError {
+		exception = new UnprocessableError();
 
-    if (indexAlreadyUsed(statement)) {
-      exception = new UnprocessableError("Statement name already used", exception);
-    }
+		if (indexAlreadyUsed(statement)) {
+			exception = new UnprocessableError("Statement name already used", exception);
+		}
 
-    if (exception.hasMessages()) {
-      throw exception;
-    }
-  }
+		if (exception.hasMessages()) {
+			throw exception;
+		}
+	}
 
-  /**
-   * True if the index is already used by another statement
-   * 
-   * @param statement
-   * @return
-   */
-  private boolean indexAlreadyUsed(Statement statement) {
-    final Search search =
-        SearchFactory.create(SearchObjectTypes.STATEMENT, SEARCH_IMPLEMENTATIONS.JENA);
-    final SearchResult result = search.searchString(
-        JenaCustomQueries.selectStatementTypeByIndex(statement.getIndex()), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
-    if (result.getNumberOfRecords() > 0) {
-      return !result.getResults().get(0).equals(statement.getType().name());
-    }
-    return false;
-  }
+	/**
+	 * True if the index is already used by another statement
+	 * 
+	 * @param statement
+	 * @return
+	 */
+	private boolean indexAlreadyUsed(Statement statement) {
+		final Search search = SearchFactory.create(SearchObjectTypes.STATEMENT, SEARCH_IMPLEMENTATIONS.JENA);
+		final SearchResult result = search.searchString(
+				JenaCustomQueries.selectStatementTypeByIndex(statement.getIndex()), null, null,
+				Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
+		if (result.getNumberOfRecords() > 0) {
+			return !result.getResults().get(0).equals(statement.getType().name());
+		}
+		return false;
+	}
 
 }

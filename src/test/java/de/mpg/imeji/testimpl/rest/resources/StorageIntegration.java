@@ -21,19 +21,18 @@ import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
  * Created by vlad on 13.01.15.
  */
 public class StorageIntegration extends ImejiTestBase {
-  private static final Logger LOGGER = LoggerFactory.getLogger(StorageIntegration.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StorageIntegration.class);
 
-  private final String PATH_PREFIX = "/rest/storage";
+	private final String PATH_PREFIX = "/rest/storage";
 
-  @Test
-  public void test_1_uploadFormats() throws IOException {
+	@Test
+	public void test_1_uploadFormats() throws IOException {
 
-    Response response = target(PATH_PREFIX).request(MediaType.APPLICATION_JSON_TYPE).get();
-    assertEquals(response.getStatus(), OK.getStatusCode());
-    assertThat(response.readEntity(String.class),
-        anyOf(containsString("uploadWhiteList"), containsString("uploadBlackList")));
+		Response response = target(PATH_PREFIX).request(MediaType.APPLICATION_JSON_TYPE).get();
+		assertEquals(response.getStatus(), OK.getStatusCode());
+		assertThat(response.readEntity(String.class),
+				anyOf(containsString("uploadWhiteList"), containsString("uploadBlackList")));
 
-  }
-
+	}
 
 }
