@@ -197,8 +197,8 @@ public class EmailService {
       // Send the message
       Transport.send(message);
       status = "sent";
-      LOGGER.info(logInfo);
-      LOGGER.info("Email sent!");
+      LOGGER.debug(logInfo);
+      LOGGER.debug("Email sent!");
     } catch (final MessagingException e) {
       LOGGER.error("Error in sendMail(...)", e);
       throw new ImejiException("Error sending Email", e);

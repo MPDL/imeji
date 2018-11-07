@@ -53,7 +53,9 @@
      <Logger name="org.apache" level="info"/>
      <Logger name="com.hp.hpl.jena" level="warn"/>
      <Logger name="c.h.h.j.t.b" level="warn"/>
-    <!--  most general logger -->
+    <!-- most general logger -->
+    <!-- in order to choose the log level you need, see https://logging.apache.org/log4j/2.0/manual/customloglevels.html -->
+    <!-- everything below the chosen category will be logged -->
     <Root level="info">
       <AppenderRef ref="RollingFile"/>
       <AppenderRef ref="STDOUT"/>
