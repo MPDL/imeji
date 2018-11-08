@@ -34,6 +34,7 @@ public class ShareInput implements Serializable {
 	private List<String> invalidEntries = new ArrayList<>();
 	private List<String> unknownEmails = new ArrayList<>();
 	private final String objectUri;
+	private final String objectOwnerEmail;
 	private final Locale locale;
 	private final User user;
 	private final String instanceName;
@@ -43,8 +44,9 @@ public class ShareInput implements Serializable {
 	 *
 	 * @param objectUri
 	 */
-	public ShareInput(String objectUri, User user, Locale locale, String instanceName) {
+	public ShareInput(String objectUri, String objectOwnerEmail, User user, Locale locale, String instanceName) {
 		this.objectUri = objectUri;
+		this.objectOwnerEmail = objectOwnerEmail;
 		this.user = user;
 		this.locale = locale;
 		this.instanceName = instanceName;
@@ -127,7 +129,7 @@ public class ShareInput implements Serializable {
 		unknownEmails.clear();
 		invalidEntries.clear();
 		for (final String value : input.split("\\s*[|,;\\n]\\s*")) {
-			if (EmailService.isValidEmail(value) && !value.equalsIgnoreCase(user.getEmail())) {
+			if (EmailService.isValidEmail(value) && !value.equalsIgnoreCase(this.objectOwnerEmail)) {
 				final boolean exists = retrieveUser(value) != null;
 				if (exists) {
 					validEmails.add(value);

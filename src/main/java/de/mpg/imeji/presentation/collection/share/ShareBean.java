@@ -24,6 +24,7 @@ import de.mpg.imeji.logic.notification.email.EmailMessages;
 import de.mpg.imeji.logic.notification.email.EmailService;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.security.sharing.invitation.InvitationService;
+import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -41,8 +42,10 @@ public class ShareBean extends SuperBean implements Serializable {
 	private URI uri;
 	// The object (collection, album or item) which is going to be shared
 	private Object shareTo;
-	// the user whom the shared object belongs
+	// the user to whom the shared object belongs
 	private URI owner;
+	// the email of the owner/user to whom the object belongs
+	private String ownersEmail;
 	private String title;
 	private String collectionUrl;
 	private boolean isAdmin;
@@ -90,6 +93,7 @@ public class ShareBean extends SuperBean implements Serializable {
 				this.shareTo = collection;
 				this.title = collection.getTitle();
 				this.owner = collection.getCreatedBy();
+				this.ownersEmail = new UserService().retrieve(this.owner, Imeji.adminUser).getEmail();
 				this.collectionUrl = getNavigation().getCollectionUrl() + collection.getIdString() + "?q=";
 				this.sharedObject = collection;
 				this.searchResultUrl = !StringHelper.isNullOrEmptyTrim(q) || !StringHelper.isNullOrEmptyTrim(fq)
@@ -109,7 +113,7 @@ public class ShareBean extends SuperBean implements Serializable {
 	 * @throws ImejiException
 	 */
 	public void init() throws ImejiException {
-		input = new ShareInput(uri.toString(), getSessionUser(), getLocale(), instanceName);
+		input = new ShareInput(uri.toString(), ownersEmail, getSessionUser(), getLocale(), instanceName);
 		shareList = new ShareList(owner, uri.toString(), getSessionUser(), getLocale());
 		isAdmin = SecurityUtil.authorization().administrate(getSessionUser(), shareTo);
 		pageUrl = PrettyContext.getCurrentInstance().getRequestURL().toString()
