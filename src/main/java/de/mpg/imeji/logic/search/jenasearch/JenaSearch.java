@@ -4,8 +4,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.vocabulary.RDF;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.vocabulary.RDF;
 
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.config.Imeji;

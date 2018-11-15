@@ -2,7 +2,7 @@ package de.mpg.imeji.logic.search.model;
 
 import java.util.List;
 
-import com.hp.hpl.jena.Jena;
+import org.apache.jena.Jena;
 
 import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.jenasearch.JenaSearch;

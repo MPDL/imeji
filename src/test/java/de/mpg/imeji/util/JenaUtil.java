@@ -10,12 +10,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import com.hp.hpl.jena.tdb.TDB;
-import com.hp.hpl.jena.tdb.TDBFactory;
-import com.hp.hpl.jena.tdb.base.block.FileMode;
-import com.hp.hpl.jena.tdb.base.file.Location;
-import com.hp.hpl.jena.tdb.sys.SystemTDB;
-import com.hp.hpl.jena.tdb.sys.TDBMaker;
+import org.apache.jena.tdb.TDB;
+import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.tdb.base.block.FileMode;
+import org.apache.jena.tdb.base.file.Location;
+import org.apache.jena.tdb.sys.SystemTDB;
+import org.apache.jena.tdb.sys.TDBMaker;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -81,7 +81,7 @@ public class JenaUtil {
 		LOGGER.info("Closing Jena:");
 		TDB.sync(Imeji.dataset);
 		LOGGER.info("Jena Sync done! ");
-		TDBFactory.reset();
+		// TDBFactory.reset();
 		LOGGER.info("Reset internal state, releasing all datasets done! ");
 		Imeji.dataset.close();
 		LOGGER.info("Dataset closed!");

@@ -4,8 +4,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hp.hpl.jena.Jena;
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.Jena;
+import org.apache.jena.rdf.model.Model;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.helper.J2JHelper;

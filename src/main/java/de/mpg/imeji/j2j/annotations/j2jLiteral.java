@@ -3,7 +3,7 @@ package de.mpg.imeji.j2j.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import com.hp.hpl.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Literal;
 
 /**
  * j2j {@link Literal}

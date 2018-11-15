@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.ReadWrite;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.ReadWrite;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.controler.ResourceController;

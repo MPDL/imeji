@@ -11,16 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ReadWrite;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
-import com.hp.hpl.jena.tdb.TDB;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ReadWrite;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.query.Syntax;
+import org.apache.jena.sparql.resultset.ResultsFormat;
+import org.apache.jena.tdb.TDB;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
@@ -104,9 +104,9 @@ public class SPARQLEndpointServlet extends HttpServlet {
 			return ResultsFormat.FMT_RS_TSV;
 		} else if ("ttl".equals(format)) {
 			return ResultsFormat.FMT_RDF_TTL;
-		} else if ("bio".equals(format)) {
-			return ResultsFormat.FMT_RS_BIO;
-		}
+		} /*
+			 * else if ("bio".equals(format)) { return ResultsFormat.FMT_RS_BIO; }
+			 */
 		return ResultsFormat.FMT_RDF_XML;
 	}
 }

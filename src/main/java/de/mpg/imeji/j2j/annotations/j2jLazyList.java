@@ -5,8 +5,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 import com.googlecode.mp4parser.util.LazyList;
-import com.hp.hpl.jena.Jena;
-import com.hp.hpl.jena.rdf.model.Resource;
+import org.apache.jena.Jena;
+import org.apache.jena.rdf.model.Resource;
 
 /**
  * For persistence of {@link List} in {@link Jena}. <br/>

@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import com.hp.hpl.jena.query.Dataset;
+import org.apache.jena.query.Dataset;
 
 import de.mpg.imeji.logic.concurrency.LocksSurveyor;
 import de.mpg.imeji.logic.config.emailcontent.ImejiEmailContentConfiguration;

@@ -8,9 +8,9 @@ import java.util.concurrent.Future;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import com.hp.hpl.jena.Jena;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.tdb.TDBFactory;
+import org.apache.jena.Jena;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.tdb.TDBFactory;
 
 import de.mpg.imeji.exceptions.ImejiException;
 

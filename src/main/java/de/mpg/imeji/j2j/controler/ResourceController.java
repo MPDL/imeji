@@ -2,7 +2,7 @@ package de.mpg.imeji.j2j.controler;
 
 import java.net.URI;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.NotFoundException;

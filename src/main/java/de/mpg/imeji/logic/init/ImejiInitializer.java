@@ -13,14 +13,14 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.jose4j.lang.JoseException;
 
-import com.hp.hpl.jena.Jena;
-import com.hp.hpl.jena.query.ReadWrite;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.tdb.TDB;
-import com.hp.hpl.jena.tdb.TDBFactory;
-import com.hp.hpl.jena.tdb.base.file.Location;
-import com.hp.hpl.jena.tdb.sys.TDBMaker;
+import org.apache.jena.Jena;
+import org.apache.jena.query.ReadWrite;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.tdb.TDB;
+import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.tdb.base.file.Location;
+import org.apache.jena.tdb.sys.TDBMaker;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -138,7 +138,7 @@ public class ImejiInitializer {
 		try {
 			// Careful: This is a read locks. A write lock would lead to
 			// corrupted graph
-			Imeji.dataset.begin(ReadWrite.READ);
+			Imeji.dataset.begin(ReadWrite.WRITE);
 			if (Imeji.dataset.containsNamedModel(name)) {
 				Imeji.dataset.getNamedModel(name);
 			} else {

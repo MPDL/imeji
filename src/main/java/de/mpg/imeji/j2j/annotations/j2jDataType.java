@@ -3,7 +3,7 @@ package de.mpg.imeji.j2j.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import com.hp.hpl.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDF;
 
 /**
  * The {@link RDF}.type of an object.

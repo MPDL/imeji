@@ -16,7 +16,7 @@ import javax.servlet.http.Cookie;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import com.hp.hpl.jena.sparql.pfunction.library.container;
+import org.apache.jena.sparql.pfunction.library.container;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;

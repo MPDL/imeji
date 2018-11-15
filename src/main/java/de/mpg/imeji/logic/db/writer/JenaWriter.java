@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.hp.hpl.jena.Jena;
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.Jena;
+import org.apache.jena.rdf.model.Model;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.transaction.CRUDTransaction;
