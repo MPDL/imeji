@@ -360,7 +360,7 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>apache-jena-libs</artifactId>
 			<type>pom</type>
-			<version>3.8.0</version>
+			<version>3.9.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
