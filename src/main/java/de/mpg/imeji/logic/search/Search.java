@@ -55,6 +55,9 @@ public interface Search {
 	public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri, int offset,
 			int size);
 
+	public SearchResult search(String indexName, SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+			int offset, int size);
+
 	/**
 	 * Search for Imeji objects Employ multilevel sorting on results (i.e. sort all
 	 * results with a first sort criterion, then sort all objects that fall into the
@@ -71,6 +74,9 @@ public interface Search {
 	public SearchResult searchWithMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user,
 			String folderUri, int offset, int size);
 
+	public SearchResult searchWithMultiLevelSorting(String indexName, SearchQuery query,
+			List<SortCriterion> sortCriteria, User user, String folderUri, int offset, int size);
+
 	/**
 	 * Search and set {@link Facet} to the {@link SearchResult}
 	 * 
@@ -84,6 +90,9 @@ public interface Search {
 	 */
 	public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
 			int offset, int size);
+
+	public SearchResult searchWithFacets(String indexName, SearchQuery query, SortCriterion sortCri, User user,
+			String folderUri, int offset, int size);
 
 	/**
 	 * Search Imeji objects - with {@link Facet}s and - apply multi-level sorting to
@@ -99,6 +108,9 @@ public interface Search {
 	 */
 	public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria,
 			User user, String folderUri, int from, int size);
+
+	public SearchResult searchWithFacetsAndMultiLevelSorting(String indexName, SearchQuery query,
+			List<SortCriterion> sortCriteria, User user, String folderUri, int from, int size);
 
 	/**
 	 * Get the {@link SearchIndexer} for this {@link Search} implementation
@@ -129,4 +141,6 @@ public interface Search {
 	 * @return
 	 */
 	public SearchResult searchString(String query, SortCriterion sort, User user, int from, int size);
+
+	public SearchResult searchString(String indexName, String query, SortCriterion sort, User user, int from, int size);
 }

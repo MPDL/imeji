@@ -32,7 +32,7 @@ import de.mpg.imeji.logic.notification.subscription.SubscriptionsAggregation;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -350,7 +350,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
 	 */
 	public void reindex(String index) throws ImejiException {
 		LOGGER.info("Indexing Content...");
-		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.content, ElasticService.ANALYSER);
+		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticIndices.content);
 		final SearchServiceAbstract<ContentVO>.RetrieveIterator iterator = iterateAll(50);
 		LOGGER.info("+++ " + iterator.getSize() + " content to index +++");
 		int count = 0;

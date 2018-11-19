@@ -28,7 +28,7 @@ import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.authorization.Authorization;
@@ -44,10 +44,9 @@ import de.mpg.imeji.logic.workflow.WorkflowValidator;
  */
 public class MoveFacade implements Serializable {
 	private static final long serialVersionUID = 6158359006910656203L;
-	private final ElasticIndexer collectionIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticTypes.folders,
-			ElasticService.ANALYSER);
-	private final ElasticIndexer itemsIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticTypes.items,
-			ElasticService.ANALYSER);
+	private final ElasticIndexer collectionIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS,
+			ElasticIndices.folders);
+	private final ElasticIndexer itemsIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticIndices.items);
 	private final CollectionService collectionService = new CollectionService();
 	private final MessageService messageService = new MessageService();
 	private final ItemService itemService = new ItemService();

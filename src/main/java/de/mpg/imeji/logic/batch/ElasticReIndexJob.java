@@ -16,7 +16,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.usergroup.UserGroupService;
 
@@ -34,18 +34,19 @@ public class ElasticReIndexJob implements Callable<Integer> {
 	public Integer call() {
 		try {
 			LOGGER.info("Reindex started!");
-			ElasticService.ANALYSER = ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
+			// ElasticService.ANALYSER =
+			// ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
 			// Check if the alias is used by only 1 index. If not, reset completely the
 			// indexes
-			ElasticInitializer.getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
-			final String index = ElasticInitializer.createIndex();
-			addAllMappings(index);
-			reindexUsers(index);
-			reindexUserGroups(index);
-			reindexItems(index);
-			reindexContents(index);
-			reindexFolders(index);
-			ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
+			// ElasticInitializer.getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
+			// final String index = ElasticInitializer.createIndex();
+			// addAllMappings(index);
+			reindexUsers(ElasticIndices.users.name());
+			reindexUserGroups(ElasticIndices.usergroups.name());
+			reindexItems(ElasticIndices.items.name());
+			reindexContents(ElasticIndices.content.name());
+			reindexFolders(ElasticIndices.folders.name());
+			// ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
 			LOGGER.info("Reindex done!");
 		} catch (final Exception e) {
 			LOGGER.error("Error by reindex", e);
@@ -59,11 +60,11 @@ public class ElasticReIndexJob implements Callable<Integer> {
 	 *
 	 * @param index
 	 */
-	private void addAllMappings(String index) {
-		for (final ElasticTypes type : ElasticTypes.values()) {
-			new ElasticIndexer(index, type, ElasticService.ANALYSER).addMapping();
-		}
-	}
+	/*
+	 * private void addAllMappings(String index) { for (final ElasticIndices type :
+	 * ElasticIndices.values()) { new ElasticIndexer(index, type,
+	 * ElasticService.ANALYSER).addMapping(); } }
+	 */
 
 	/**
 	 * Reindex all the {@link CollectionImeji} stored in the database

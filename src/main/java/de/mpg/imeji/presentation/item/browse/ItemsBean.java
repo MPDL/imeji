@@ -191,8 +191,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 	 * Trigger the update method after a search commit, to ma
 	 */
 	public void refresh() {
-		((ElasticIndexer) SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer())
-				.commit();
+		/*
+		 * ((ElasticIndexer) SearchFactory.create(SearchObjectTypes.ITEM,
+		 * SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer()) .commit();
+		 */
 		update();
 	}
 

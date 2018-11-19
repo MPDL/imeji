@@ -31,7 +31,7 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -497,7 +497,7 @@ public class UserService {
 
 	public void reindex(String index) throws ImejiException {
 		LOGGER.info("Indexing users...");
-		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER);
+		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticIndices.users);
 		final List<User> users = retrieveAll();
 		LOGGER.info("+++ " + users.size() + " users to index +++");
 		indexer.indexBatch(users);

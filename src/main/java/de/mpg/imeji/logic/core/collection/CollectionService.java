@@ -33,7 +33,7 @@ import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -338,7 +338,7 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
 	 */
 	public void reindex(String index) throws ImejiException {
 		LOGGER.info("Indexing collections...");
-		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.folders, ElasticService.ANALYSER);
+		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticIndices.folders);
 		final List<CollectionImeji> collections = retrieveAll();
 		indexer.indexBatch(collections);
 		LOGGER.info("collections reindexed!");

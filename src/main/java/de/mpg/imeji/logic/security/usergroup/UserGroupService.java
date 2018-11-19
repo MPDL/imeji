@@ -16,7 +16,7 @@ import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -246,11 +246,11 @@ public class UserGroupService {
 	 */
 	public void reindex(String index) throws ImejiException {
 		LOGGER.info("Indexing users...");
-		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.usergroups, ElasticService.ANALYSER);
+		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticIndices.usergroups);
 		final List<UserGroup> groups = (List<UserGroup>) retrieveAll();
 		LOGGER.info("+++ " + groups.size() + " user groups to index +++");
 		indexer.indexBatch(groups);
-		indexer.commit();
+		// indexer.commit();
 		LOGGER.info("...user groups reindexed!");
 	}
 }

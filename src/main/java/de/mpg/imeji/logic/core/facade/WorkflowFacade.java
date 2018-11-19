@@ -26,7 +26,7 @@ import de.mpg.imeji.logic.model.util.LicenseUtil;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
@@ -48,10 +48,9 @@ public class WorkflowFacade implements Serializable {
 	private static final long serialVersionUID = 3966446108673573909L;
 	private final Authorization authorization = new Authorization();
 	private final WorkflowValidator workflowValidator = new WorkflowValidator();
-	private final ElasticIndexer collectionIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticTypes.folders,
-			ElasticService.ANALYSER);
-	private final ElasticIndexer itemIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticTypes.items,
-			ElasticService.ANALYSER);
+	private final ElasticIndexer collectionIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS,
+			ElasticIndices.folders);
+	private final ElasticIndexer itemIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticIndices.items);
 
 	/**
 	 * Release a collection and its item
@@ -74,9 +73,10 @@ public class WorkflowFacade implements Serializable {
 				.collect(Collectors.joining("; "));
 		addLicense(ids, user, defaultLicense);
 		ImejiSPARQL.execUpdate(sparql);
-		collectionIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.COLLECTION).stream()
-				.map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
-		itemIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.ITEM).stream()
+		collectionIndexer.partialUpdateIndexBatch(ElasticIndices.folders.name(),
+				filterIdsByType(ids, ObjectType.COLLECTION).stream()
+						.map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
+		itemIndexer.partialUpdateIndexBatch(ElasticIndices.items.name(), filterIdsByType(ids, ObjectType.ITEM).stream()
 				.map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
 	}
 
@@ -96,7 +96,7 @@ public class WorkflowFacade implements Serializable {
 				.collect(Collectors.joining("; "));
 		addLicense(ids, user, defaultLicense);
 		ImejiSPARQL.execUpdate(sparql);
-		itemIndexer.partialUpdateIndexBatch(
+		itemIndexer.partialUpdateIndexBatch(ElasticIndices.items.name(),
 				ids.stream().map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
 	}
 
@@ -129,9 +129,10 @@ public class WorkflowFacade implements Serializable {
 		ImejiSPARQL.execUpdate(sparql);
 
 		// Update ElasticSearch
-		collectionIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.COLLECTION).stream()
-				.map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment)).collect(Collectors.toList()));
-		itemIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.ITEM).stream()
+		collectionIndexer.partialUpdateIndexBatch(ElasticIndices.folders.name(),
+				filterIdsByType(ids, ObjectType.COLLECTION).stream()
+						.map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment)).collect(Collectors.toList()));
+		itemIndexer.partialUpdateIndexBatch(ElasticIndices.items.name(), filterIdsByType(ids, ObjectType.ITEM).stream()
 				.map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment)).collect(Collectors.toList()));
 	}
 
@@ -151,7 +152,7 @@ public class WorkflowFacade implements Serializable {
 		String sparql = itemIds.stream().map(id -> JenaCustomQueries.updateWitdrawObject(id, now, comment))
 				.collect(Collectors.joining("; "));
 		ImejiSPARQL.execUpdate(sparql);
-		itemIndexer.partialUpdateIndexBatch(itemIds.stream()
+		itemIndexer.partialUpdateIndexBatch(ElasticIndices.items.name(), itemIds.stream()
 				.map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment)).collect(Collectors.toList()));
 	}
 
@@ -174,7 +175,7 @@ public class WorkflowFacade implements Serializable {
 			String sparql = licenseParts.stream().map(p -> JenaCustomQueries.updateAddLicensetoItem(p.id, license))
 					.collect(Collectors.joining("; "));
 			ImejiSPARQL.execUpdate(sparql);
-			itemIndexer.partialUpdateIndexBatch(licenseParts);
+			itemIndexer.partialUpdateIndexBatch(ElasticIndices.items.name(), licenseParts);
 		}
 	}
 

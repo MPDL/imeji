@@ -298,4 +298,39 @@ public class JenaSearch implements Search {
 		}
 	}
 
+	@Override
+	public SearchResult search(String indexName, SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+			int offset, int size) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SearchResult searchWithMultiLevelSorting(String indexName, SearchQuery query,
+			List<SortCriterion> sortCriteria, User user, String folderUri, int offset, int size) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SearchResult searchWithFacets(String indexName, SearchQuery query, SortCriterion sortCri, User user,
+			String folderUri, int offset, int size) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SearchResult searchWithFacetsAndMultiLevelSorting(String indexName, SearchQuery query,
+			List<SortCriterion> sortCriteria, User user, String folderUri, int from, int size) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SearchResult searchString(String indexName, String query, SortCriterion sort, User user, int from,
+			int size) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

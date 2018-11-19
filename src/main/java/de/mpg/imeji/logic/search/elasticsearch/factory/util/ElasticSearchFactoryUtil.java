@@ -1,14 +1,18 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.lucene.queryparser.classic.QueryParserBase;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.ExistsQueryBuilder;
@@ -21,6 +25,7 @@ import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.model.SortCriterion;
@@ -45,11 +50,18 @@ public class ElasticSearchFactoryUtil {
 	 * @return
 	 */
 	public static String readFieldAsString(String id, ElasticFields field, String dataType, String index) {
-		final Map<String, Object> sourceMap = ElasticService.getClient().prepareGet(index, dataType, id)
-				.setFetchSource(true).execute().actionGet().getSource();
-		if (sourceMap != null) {
-			final Object obj = sourceMap.get(field.field());
-			return obj != null ? obj.toString() : "";
+		GetRequest getRequest = new GetRequest();
+		getRequest.index(index).type(dataType).id(id);
+		GetResponse getResponse;
+		try {
+			getResponse = ElasticService.getClient().get(getRequest, RequestOptions.DEFAULT);
+			final Map<String, Object> sourceMap = getResponse.getSource();
+			if (sourceMap != null) {
+				final Object obj = sourceMap.get(field.field());
+				return obj != null ? obj.toString() : "";
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return "";
 	}
@@ -64,45 +76,49 @@ public class ElasticSearchFactoryUtil {
 	 *            name of the field
 	 * @return list of UIDs of documents that miss the field
 	 */
-	public static List<String> getDocumentsThatMissAField(String dataType, String nameOfMissingField) {
-
-		List<String> resultUIDs = new ArrayList<String>();
-		Client elasticSearchClient = ElasticService.getClient();
-
-		// (1) construction of Query to ElasticSearch
-		SearchRequestBuilder elasticSearchRequestBuilder = elasticSearchClient.prepareSearch(ElasticService.DATA_ALIAS);
-
-		// set the scan&scroll search type parameters: size and timeout
-		elasticSearchRequestBuilder = elasticSearchRequestBuilder.setSize(ElasticSearch.SEARCH_SCROLL_INTERVALL);
-		elasticSearchRequestBuilder.setScroll(new TimeValue(ElasticSearch.SCROLL_TIMEOUT_MSEC));
-
-		// set the document type
-		elasticSearchRequestBuilder = elasticSearchRequestBuilder.setTypes(dataType);
-
-		// set the query
-		final ExistsQueryBuilder eqb = new ExistsQueryBuilder(nameOfMissingField);
-		BoolQueryBuilder bqb = new BoolQueryBuilder();
-		bqb = bqb.mustNot(eqb);
-		elasticSearchRequestBuilder = elasticSearchRequestBuilder.setQuery(bqb);
-
-		// (2) Send query to ElasticSearch:
-		SearchResponse scrollResponse = elasticSearchRequestBuilder.get();
-
-		// Scroll until no hits are returned
-		do {
-			for (SearchHit hit : scrollResponse.getHits().getHits()) {
-				// get UIDs from retrieved documents
-				resultUIDs.add(hit.getId());
-			}
-
-			scrollResponse = elasticSearchClient.prepareSearchScroll(scrollResponse.getScrollId())
-					.setScroll(new TimeValue(ElasticSearch.SCROLL_TIMEOUT_MSEC)).execute().actionGet();
-		} while (scrollResponse.getHits().getHits().length != 0); // Zero hits mark the end of the scroll and the while
-																	// loop.
-
-		return resultUIDs;
-
-	}
+	/*
+	 * public static List<String> getDocumentsThatMissAField(String dataType, String
+	 * nameOfMissingField) {
+	 * 
+	 * List<String> resultUIDs = new ArrayList<String>(); Client elasticSearchClient
+	 * = ElasticService.getClient();
+	 * 
+	 * // (1) construction of Query to ElasticSearch SearchRequestBuilder
+	 * elasticSearchRequestBuilder =
+	 * elasticSearchClient.prepareSearch(ElasticService.DATA_ALIAS);
+	 * 
+	 * // set the scan&scroll search type parameters: size and timeout
+	 * elasticSearchRequestBuilder =
+	 * elasticSearchRequestBuilder.setSize(ElasticSearch.SEARCH_SCROLL_INTERVALL);
+	 * elasticSearchRequestBuilder.setScroll(new
+	 * TimeValue(ElasticSearch.SCROLL_TIMEOUT_MSEC));
+	 * 
+	 * // set the document type elasticSearchRequestBuilder =
+	 * elasticSearchRequestBuilder.setTypes(dataType);
+	 * 
+	 * // set the query final ExistsQueryBuilder eqb = new
+	 * ExistsQueryBuilder(nameOfMissingField); BoolQueryBuilder bqb = new
+	 * BoolQueryBuilder(); bqb = bqb.mustNot(eqb); elasticSearchRequestBuilder =
+	 * elasticSearchRequestBuilder.setQuery(bqb);
+	 * 
+	 * // (2) Send query to ElasticSearch: SearchResponse scrollResponse =
+	 * elasticSearchRequestBuilder.get();
+	 * 
+	 * // Scroll until no hits are returned do { for (SearchHit hit :
+	 * scrollResponse.getHits().getHits()) { // get UIDs from retrieved documents
+	 * resultUIDs.add(hit.getId()); }
+	 * 
+	 * scrollResponse =
+	 * elasticSearchClient.prepareSearchScroll(scrollResponse.getScrollId())
+	 * .setScroll(new
+	 * TimeValue(ElasticSearch.SCROLL_TIMEOUT_MSEC)).execute().actionGet(); } while
+	 * (scrollResponse.getHits().getHits().length != 0); // Zero hits mark the end
+	 * of the scroll and the while // loop.
+	 * 
+	 * return resultUIDs;
+	 * 
+	 * }
+	 */
 
 	/**
 	 * Add single or multilevel sorting to an ElasticSearch
@@ -136,8 +152,8 @@ public class ElasticSearchFactoryUtil {
 	 * @return
 	 */
 	public static String getUserId(String email) {
-		final List<String> r = ElasticSearch.searchStringAndRetrieveFieldValue("email:\"" + email.toString() + "\"",
-				ElasticFields.ID.field().toLowerCase(), null, 0, 1);
+		final List<String> r = ElasticSearch.searchStringAndRetrieveFieldValue(ElasticIndices.users.name(),
+				"email:\"" + email.toString() + "\"", ElasticFields.ID.field().toLowerCase(), null, 0, 1);
 		if (r.size() > 0) {
 			return r.get(0);
 		}
@@ -152,8 +168,9 @@ public class ElasticSearchFactoryUtil {
 	 */
 	public static List<String> getGroupsOfUser(String userId) {
 
-		List<String> userGroupsUIds = ElasticSearch.searchStringAndRetrieveFieldValue("users:\"" + userId + "\"",
-				ElasticFields.ID.field().toLowerCase(), null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
+		List<String> userGroupsUIds = ElasticSearch.searchStringAndRetrieveFieldValue(ElasticIndices.usergroups.name(),
+				"users:\"" + userId + "\"", ElasticFields.ID.field().toLowerCase(), null,
+				Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
 		return userGroupsUIds;
 	}
 

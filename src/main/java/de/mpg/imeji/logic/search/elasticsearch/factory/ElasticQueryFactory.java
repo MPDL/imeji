@@ -11,6 +11,7 @@ import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.join.query.JoinQueryBuilders;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -22,7 +23,7 @@ import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.util.StatementUtil;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.model.SearchElement;
@@ -55,9 +56,9 @@ public class ElasticQueryFactory {
 	private final SearchQuery query;
 	private User user = null;
 
-	public ElasticQueryFactory(SearchQuery query, ElasticTypes... types) {
-		searchForCollection = types.length == 1 && types[0] == ElasticTypes.folders;
-		searchForUsers = types.length == 1 && types[0] == ElasticTypes.users;
+	public ElasticQueryFactory(SearchQuery query, ElasticIndices... types) {
+		searchForCollection = types.length == 1 && types[0] == ElasticIndices.folders;
+		searchForUsers = types.length == 1 && types[0] == ElasticIndices.users;
 		emptyQuery = query == null || query.isEmpty() || query.getElements().isEmpty();
 		this.query = query;
 	}
@@ -612,7 +613,7 @@ public class ElasticQueryFactory {
 	 */
 	private QueryBuilder metadataQuery(QueryBuilder valueQuery, String statement) {
 		return QueryBuilders.nestedQuery(ElasticFields.METADATA.field(), QueryBuilders.boolQuery().must(valueQuery)
-				.must(fieldQuery(ElasticFields.METADATA_INDEX, statement, SearchOperators.EQUALS, false)));
+				.must(fieldQuery(ElasticFields.METADATA_INDEX, statement, SearchOperators.EQUALS, false)), null);
 
 	}
 
@@ -627,7 +628,8 @@ public class ElasticQueryFactory {
 	private QueryBuilder technicalMetadataQuery(SearchTechnicalMetadata tmd) {
 		return contentQuery(QueryBuilders.nestedQuery(ElasticFields.TECHNICAL.field(), QueryBuilders.boolQuery()
 				.must(fieldQuery(ElasticFields.TECHNICAL_NAME, tmd.getLabel(), SearchOperators.EQUALS, false))
-				.must(fieldQuery(ElasticFields.TECHNICAL_VALUE, tmd.getValue(), tmd.getOperator(), tmd.isNot()))));
+				.must(fieldQuery(ElasticFields.TECHNICAL_VALUE, tmd.getValue(), tmd.getOperator(), tmd.isNot())),
+				null));
 	}
 
 	/**
@@ -757,7 +759,7 @@ public class ElasticQueryFactory {
 	 * @return
 	 */
 	private QueryBuilder contentQuery(QueryBuilder q) {
-		return QueryBuilders.hasChildQuery(ElasticTypes.content.name(), q);
+		return JoinQueryBuilders.hasChildQuery(ElasticIndices.content.name(), q, null);
 	}
 
 	/**
@@ -781,7 +783,7 @@ public class ElasticQueryFactory {
 	}
 
 	private QueryBuilder parentCollectionQuery(QueryBuilder qb) {
-		return QueryBuilders.hasParentQuery(ElasticTypes.folders.name(), qb);
+		return JoinQueryBuilders.hasParentQuery(ElasticIndices.folders.name(), qb, emptyQuery);
 	}
 
 	/**

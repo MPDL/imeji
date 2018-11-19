@@ -10,9 +10,10 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.filters.FiltersAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
-import org.elasticsearch.search.aggregations.bucket.nested.NestedBuilder;
+import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiFileTypes;
@@ -37,9 +38,9 @@ public class ElasticAggregationFactory {
 	public static List<AbstractAggregationBuilder> build() {
 		List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
 		List<Facet> facets = new FacetService().retrieveAllFromCache();
-		FiltersAggregationBuilder systemAggregations = AggregationBuilders.filters("system").filter("all",
+		FiltersAggregationBuilder systemAggregations = AggregationBuilders.filters("all",
 				QueryBuilders.matchAllQuery());
-		NestedBuilder metadataAggregations = AggregationBuilders.nested("metadata").path("metadata");
+		NestedAggregationBuilder metadataAggregations = AggregationBuilders.nested("metadata", "metadata");
 		for (Facet facet : facets) {
 			String metadataField = getMetadataField(facet);
 			if (metadataField != null) {
@@ -60,10 +61,10 @@ public class ElasticAggregationFactory {
 		}
 		aggregations.add(metadataAggregations);
 		aggregations.add(systemAggregations);
-		aggregations.add(AggregationBuilders.filters(Facet.ITEMS).filter(Facet.ITEMS,
-				QueryBuilders.typeQuery(ElasticService.ElasticTypes.items.name())));
-		aggregations.add(AggregationBuilders.filters(Facet.SUBCOLLECTIONS).filter(Facet.SUBCOLLECTIONS,
-				QueryBuilders.typeQuery(ElasticService.ElasticTypes.folders.name())));
+		aggregations.add(AggregationBuilders.filters(Facet.ITEMS,
+				QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name())));
+		aggregations.add(AggregationBuilders.filters(Facet.SUBCOLLECTIONS,
+				QueryBuilders.typeQuery(ElasticService.ElasticIndices.folders.name())));
 		return aggregations;
 	}
 
@@ -76,8 +77,9 @@ public class ElasticAggregationFactory {
 	private static AbstractAggregationBuilder getLicenseAggregation(Facet facet) {
 		List<String> licenses = Stream.of(ImejiLicenses.values()).map(l -> l.name()).collect(Collectors.toList());
 		licenses.add(ImejiLicenses.NO_LICENSE);
+		IncludeExclude inex = new IncludeExclude(licenses.toArray(new String[0]), null);
 		return AggregationBuilders.terms(SearchFields.license.name()).field(ElasticFields.LICENSE.field())
-				.include(licenses.toArray(new String[0]));
+				.includeExclude(inex);
 	}
 
 	/**
@@ -87,14 +89,14 @@ public class ElasticAggregationFactory {
 	 * @return
 	 */
 	private static AbstractAggregationBuilder getFiletypeAggregation(Facet facet) {
-		FiltersAggregationBuilder filetypeAggregation = AggregationBuilders.filters(SearchFields.filetype.name());
+		FiltersAggregationBuilder filetypeAggregation = null;
 		for (ImejiFileTypes.Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
 			BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
 			for (String ext : type.getExtensionArray()) {
 				filetypeQuery
 						.should(QueryBuilders.queryStringQuery(ElasticFields.NAME.field() + ".suggest:" + "*." + ext));
 			}
-			filetypeAggregation.filter(type.getName(null), filetypeQuery);
+			filetypeAggregation = AggregationBuilders.filters(type.getName(null), filetypeQuery);
 		}
 		return filetypeAggregation;
 	}
@@ -153,8 +155,8 @@ public class ElasticAggregationFactory {
 	 * @return
 	 */
 	private static FilterAggregationBuilder getMetadataNumberAggregation(Facet facet, String metadataField) {
-		FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex())
-				.filter(QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
+		FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex(),
+				QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
 		fb.subAggregation(AggregationBuilders.stats(facet.getIndex()).field(getMetadataField(facet)));
 		return fb;
 	}
@@ -167,10 +169,10 @@ public class ElasticAggregationFactory {
 	 * @return
 	 */
 	private static FilterAggregationBuilder getMetadataDateAggregation(Facet facet, String metadataField) {
-		FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex())
-				.filter(QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
+		FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex(),
+				QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
 		fb.subAggregation(AggregationBuilders.dateHistogram(facet.getIndex()).field(getMetadataField(facet))
-				.interval(DateHistogramInterval.YEAR).format("yyyy"));
+				.dateHistogramInterval(DateHistogramInterval.YEAR).format("yyyy"));
 
 		return fb;
 	}
@@ -183,8 +185,8 @@ public class ElasticAggregationFactory {
 	 * @return
 	 */
 	private static FilterAggregationBuilder getMetadataTextAggregation(Facet facet) {
-		FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex())
-				.filter(QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
+		FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex(),
+				QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
 		fb.subAggregation(
 				AggregationBuilders.terms(facet.getName()).field(getMetadataField(facet)).size(BUCKETS_MAX_SIZE));
 		return fb;

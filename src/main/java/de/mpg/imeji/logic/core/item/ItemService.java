@@ -39,7 +39,7 @@ import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
@@ -594,7 +594,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
 	 */
 	public void reindex(String index) throws ImejiException {
 		LOGGER.info("Indexing Items...");
-		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticTypes.items, ElasticService.ANALYSER);
+		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticIndices.items);
 		LOGGER.info("Retrieving Items...");
 		// (1) read item UIDs from Jena database (2) use item UIDs to read item content
 		// from Jena

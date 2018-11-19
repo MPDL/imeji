@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.index.get.GetField;
 
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
@@ -35,7 +35,8 @@ public class CollectionFields {
 				ObjectHelper.getId(URI.create(c.getId().toString())));
 	}
 
-	public CollectionFields(GetField authorsField, GetField organizationsField, GetField id, GetField title) {
+	public CollectionFields(DocumentField authorsField, DocumentField organizationsField, DocumentField id,
+			DocumentField title) {
 		this.authors = authorsField != null
 				? authorsField.getValues().stream().map(Object::toString).collect(Collectors.toList())
 				: new ArrayList<>();
