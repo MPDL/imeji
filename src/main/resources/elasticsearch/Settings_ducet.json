@@ -2,13 +2,6 @@
 	"index": {
 		"analysis": {
 			"analyzer": {
-				"ducet_sort": {
-				    "type" : "custom",
-					"tokenizer": "keyword",
-					"filter": [
-						"icu_collation"
-					]
-				},
 				"ngram_analyzer": {
 					"tokenizer": "ngram_tokenizer"
 				},
@@ -16,6 +9,15 @@
 					"tokenizer": "edgegram_tokenizer",
 					"filter": [
 						"lowercase"
+					]
+				}
+			},
+			"normalizer": {
+				"sort": {
+					"filter": [
+						"lowercase",
+						"trim",
+						"asciifolding"
 					]
 				}
 			},
@@ -29,7 +31,12 @@
 					"type": "edge_ngram",
 					"min_gram": 2,
 					"max_gram": 100,
-					"token_chars": ["letter", "digit", "punctuation", "symbol"]
+					"token_chars": [
+						"letter",
+						"digit",
+						"punctuation",
+						"symbol"
+					]
 				}
 			}
 		}
