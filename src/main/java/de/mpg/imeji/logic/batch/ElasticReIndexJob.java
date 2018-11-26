@@ -41,10 +41,14 @@ public class ElasticReIndexJob implements Callable<Integer> {
 			// ElasticInitializer.getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
 			// final String index = ElasticInitializer.createIndex();
 			// addAllMappings(index);
+			for (final ElasticIndices index : ElasticIndices.values()) {
+				ElasticInitializer.initializeIndex(index);
+				new ElasticIndexer(index.name()).addMapping();
+			}
 			reindexUsers(ElasticIndices.users.name());
 			reindexUserGroups(ElasticIndices.usergroups.name());
 			reindexItems(ElasticIndices.items.name());
-			reindexContents(ElasticIndices.content.name());
+			// reindexContents(ElasticIndices.content.name());
 			reindexFolders(ElasticIndices.folders.name());
 			// ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
 			LOGGER.info("Reindex done!");

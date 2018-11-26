@@ -350,7 +350,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
 	 */
 	public void reindex(String index) throws ImejiException {
 		LOGGER.info("Indexing Content...");
-		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticIndices.content);
+		final ElasticIndexer indexer = new ElasticIndexer(index);
 		final SearchServiceAbstract<ContentVO>.RetrieveIterator iterator = iterateAll(50);
 		LOGGER.info("+++ " + iterator.getSize() + " content to index +++");
 		int count = 0;

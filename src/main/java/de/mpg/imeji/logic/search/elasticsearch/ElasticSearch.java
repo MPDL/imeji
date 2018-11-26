@@ -69,7 +69,7 @@ public class ElasticSearch implements Search {
 	public ElasticSearch(SearchObjectTypes... types) {
 		this.type = Stream.of(types).map(t -> ElasticIndices.toElasticIndex(t)).collect(Collectors.toList())
 				.toArray(new ElasticIndices[types.length]);
-		this.indexer = new ElasticIndexer(ElasticService.DATA_ALIAS, this.type[0]);
+		this.indexer = new ElasticIndexer(this.type[0].name());
 	}
 
 	@Override

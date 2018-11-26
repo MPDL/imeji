@@ -135,7 +135,8 @@ public class UserService {
 	public User retrieve(String email, User user) throws ImejiException {
 		final SearchQuery query = new SearchQuery();
 		query.addPair(new SearchPair(SearchFields.email, SearchOperators.EQUALS, email, false));
-		final SearchResult result = search.search(query, null, Imeji.adminUser, null, 0, 1);
+		final SearchResult result = search.search(ElasticIndices.users.name(), query, null, Imeji.adminUser, null, 0,
+				1);
 		if (result.getNumberOfRecords() == 1) {
 			return controller.retrieve(URI.create(result.getResults().get(0)), user);
 		}
@@ -497,7 +498,7 @@ public class UserService {
 
 	public void reindex(String index) throws ImejiException {
 		LOGGER.info("Indexing users...");
-		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticIndices.users);
+		final ElasticIndexer indexer = new ElasticIndexer(ElasticIndices.users.name());
 		final List<User> users = retrieveAll();
 		LOGGER.info("+++ " + users.size() + " users to index +++");
 		indexer.indexBatch(users);

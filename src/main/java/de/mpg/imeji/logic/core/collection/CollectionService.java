@@ -338,7 +338,7 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
 	 */
 	public void reindex(String index) throws ImejiException {
 		LOGGER.info("Indexing collections...");
-		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticIndices.folders);
+		final ElasticIndexer indexer = new ElasticIndexer(index);
 		final List<CollectionImeji> collections = retrieveAll();
 		indexer.indexBatch(collections);
 		LOGGER.info("collections reindexed!");

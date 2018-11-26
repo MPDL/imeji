@@ -44,9 +44,8 @@ import de.mpg.imeji.logic.workflow.WorkflowValidator;
  */
 public class MoveFacade implements Serializable {
 	private static final long serialVersionUID = 6158359006910656203L;
-	private final ElasticIndexer collectionIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS,
-			ElasticIndices.folders);
-	private final ElasticIndexer itemsIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticIndices.items);
+	private final ElasticIndexer collectionIndexer = new ElasticIndexer(ElasticIndices.folders.name());
+	private final ElasticIndexer itemsIndexer = new ElasticIndexer(ElasticIndices.items.name());
 	private final CollectionService collectionService = new CollectionService();
 	private final MessageService messageService = new MessageService();
 	private final ItemService itemService = new ItemService();

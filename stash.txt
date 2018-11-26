@@ -1131,7 +1131,7 @@ index 899550446..201998dbb 100644
 +    return search(indices[0], query, sortCri, user, folderUri, from, size, true);
    }
  
--  private SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+-  private SearchResult Fsearch(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
 +  private SearchResult search(String index, SearchQuery query, SortCriterion sortCri, User user, String folderUri,
        int from, int size, boolean addFacets) {
      size = size == -1 ? size = SEARCH_MAX_SIZE : size;

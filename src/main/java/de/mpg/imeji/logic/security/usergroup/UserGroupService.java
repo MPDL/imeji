@@ -246,7 +246,7 @@ public class UserGroupService {
 	 */
 	public void reindex(String index) throws ImejiException {
 		LOGGER.info("Indexing users...");
-		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticIndices.usergroups);
+		final ElasticIndexer indexer = new ElasticIndexer(index);
 		final List<UserGroup> groups = (List<UserGroup>) retrieveAll();
 		LOGGER.info("+++ " + groups.size() + " user groups to index +++");
 		indexer.indexBatch(groups);

@@ -594,7 +594,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
 	 */
 	public void reindex(String index) throws ImejiException {
 		LOGGER.info("Indexing Items...");
-		final ElasticIndexer indexer = new ElasticIndexer(index, ElasticIndices.items);
+		final ElasticIndexer indexer = new ElasticIndexer(ElasticIndices.items.name());
 		LOGGER.info("Retrieving Items...");
 		// (1) read item UIDs from Jena database (2) use item UIDs to read item content
 		// from Jena

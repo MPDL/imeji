@@ -48,9 +48,8 @@ public class WorkflowFacade implements Serializable {
 	private static final long serialVersionUID = 3966446108673573909L;
 	private final Authorization authorization = new Authorization();
 	private final WorkflowValidator workflowValidator = new WorkflowValidator();
-	private final ElasticIndexer collectionIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS,
-			ElasticIndices.folders);
-	private final ElasticIndexer itemIndexer = new ElasticIndexer(ElasticService.DATA_ALIAS, ElasticIndices.items);
+	private final ElasticIndexer collectionIndexer = new ElasticIndexer(ElasticIndices.folders.name());
+	private final ElasticIndexer itemIndexer = new ElasticIndexer(ElasticIndices.items.name());
 
 	/**
 	 * Release a collection and its item

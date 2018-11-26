@@ -1,5 +1,5 @@
 {
-	"usergroups": {
+	"_doc": {
 		"dynamic": "strict",
 		"properties": {
 			"all": {

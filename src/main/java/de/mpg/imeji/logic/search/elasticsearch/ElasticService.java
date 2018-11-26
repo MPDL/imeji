@@ -20,7 +20,7 @@ public class ElasticService {
 	static String CLUSTER_DIR = "null";
 	// public static ElasticAnalysers ANALYSER;
 	static final String SETTINGS_DEFAULT = "elasticsearch/Settings_default.json";
-	// static final String SETTINGS_DUCET = "elasticsearch/Settings_ducet.json";
+	static final String SETTINGS_DUCET = "elasticsearch/Settings_ducet.json";
 
 	/**
 	 * The Index where all data are indexed
@@ -34,7 +34,7 @@ public class ElasticService {
 	 *
 	 */
 	public enum ElasticIndices {
-		content, items, folders, users, usergroups;
+		items, folders, users, usergroups;
 
 		/**
 		 * Map a {@link SearchObjectTypes} to an ElasticIndex
@@ -52,8 +52,6 @@ public class ElasticService {
 					return ElasticIndices.users;
 				case USERGROUPS :
 					return ElasticIndices.usergroups;
-				case CONTENT :
-					return ElasticIndices.content;
 				default :
 					return ElasticIndices.items;
 			}

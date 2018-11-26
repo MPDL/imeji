@@ -759,7 +759,7 @@ public class ElasticQueryFactory {
 	 * @return
 	 */
 	private QueryBuilder contentQuery(QueryBuilder q) {
-		return JoinQueryBuilders.hasChildQuery(ElasticIndices.content.name(), q, null);
+		return JoinQueryBuilders.hasChildQuery(ElasticIndices.items.name(), q, null);
 	}
 
 	/**

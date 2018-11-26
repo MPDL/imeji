@@ -1,5 +1,5 @@
 {
-	"users": {
+	"_doc": {
 		"dynamic": "strict",
 		"properties": {
 			"all": {

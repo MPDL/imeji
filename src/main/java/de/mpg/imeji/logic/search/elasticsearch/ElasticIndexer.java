@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -18,6 +19,7 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Client;
@@ -59,7 +61,7 @@ public class ElasticIndexer implements SearchIndexer {
 	private static final Logger LOGGER = LogManager.getLogger(ElasticIndexer.class);
 	private static final ObjectMapper mapper = new ObjectMapper();
 	private final String index;
-	private final String dataType;
+	private final String dataType = "_doc";
 	// private final ElasticAnalysers analyser;
 	private String mappingFile = "elasticsearch/Elastic_TYPE_Mapping.json";
 
@@ -76,11 +78,11 @@ public class ElasticIndexer implements SearchIndexer {
 	 * @param analyser
 	 */
 
-	public ElasticIndexer(String indexName, ElasticIndices dataType) {
+	public ElasticIndexer(String indexName) {
 		this.index = indexName;
-		this.dataType = dataType.name();
+		// this.dataType = dataType.name();
 		// this.analyser = analyser;
-		this.mappingFile = mappingFile.replace("_TYPE_", StringUtils.capitalize(this.dataType));
+		this.mappingFile = mappingFile.replace("_TYPE_", StringUtils.capitalize(this.index));
 	}
 
 	/**
@@ -352,17 +354,21 @@ public class ElasticIndexer implements SearchIndexer {
 	/**
 	 * Add a mapping to the fields (important to have a better search)
 	 */
-	/*
-	 * public void addMapping() { try { final String jsonMapping = new
-	 * String(Files.readAllBytes(
-	 * Paths.get(ElasticIndexer.class.getClassLoader().getResource(mappingFile).
-	 * toURI())), "UTF-8") .replace("XXX_ANALYSER_XXX", analyser.name());
-	 * ElasticService.getClient().admin().indices().preparePutMapping(this.index).
-	 * setType(dataType) .setSource(jsonMapping).execute().actionGet(); } catch
-	 * (final Exception e) {
-	 * LOGGER.error("Error initializing the Elastic Search Mapping " + mappingFile,
-	 * e); } }
-	 */
+	public void addMapping() {
+		try {
+			final String jsonMapping = new String(
+					Files.readAllBytes(
+							Paths.get(ElasticIndexer.class.getClassLoader().getResource(mappingFile).toURI())),
+					"UTF-8");
+			PutMappingRequest request = new PutMappingRequest(this.index);
+			request.type(dataType);
+			request.source(jsonMapping, XContentType.JSON);
+			AcknowledgedResponse putMappingResponse = ElasticService.getClient().indices().putMapping(request,
+					RequestOptions.DEFAULT);
+		} catch (final Exception e) {
+			LOGGER.error("Error initializing the Elastic Search Mapping " + mappingFile, e);
+		}
+	}
 
 	@Override
 	public void updatePartial(String indexName, String id, Object obj) {

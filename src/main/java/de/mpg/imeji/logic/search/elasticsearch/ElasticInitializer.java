@@ -84,9 +84,8 @@ public class ElasticInitializer {
 		// initializeIndex();
 		LOGGER.info("Add elasticsearch mappings...");
 		for (final ElasticIndices index : ElasticIndices.values()) {
-			// new ElasticIndexer(ElasticService.DATA_ALIAS, type,
-			// ElasticService.ANALYSER).addMapping();
 			initializeIndex(index);
+			new ElasticIndexer(index.name()).addMapping();
 		}
 		LOGGER.info("...done!");
 	}
@@ -195,12 +194,11 @@ public class ElasticInitializer {
 
 			LOGGER.info("Creating a new index " + indexName);
 
-			final String settingsName = ElasticService.SETTINGS_DEFAULT;
+			final String settingsName = ElasticService.SETTINGS_DUCET;
 
 			final Path settingsJson = Paths
 					.get(ElasticIndexer.class.getClassLoader().getResource(settingsName).toURI());
-			HttpEntity entity = new InputStreamEntity(Files.newInputStream(settingsJson), 0,
-					ContentType.APPLICATION_JSON);
+			HttpEntity entity = new InputStreamEntity(Files.newInputStream(settingsJson), ContentType.APPLICATION_JSON);
 			Request req = new Request("PUT", "/" + indexName);
 			req.setEntity(entity);
 			Response resp = ElasticService.getClient().getLowLevelClient().performRequest(req);
