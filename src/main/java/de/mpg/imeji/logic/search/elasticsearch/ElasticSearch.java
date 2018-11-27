@@ -50,7 +50,9 @@ import de.mpg.imeji.logic.security.user.UserService;
  */
 public class ElasticSearch implements Search {
 
-	private ElasticIndices[] type = null;
+	private SearchObjectTypes[] types = null;
+	private ElasticIndices[] indices = null;
+	private String[] indicesNames = null;
 	private ElasticIndexer indexer = null;
 	private static final int SEARCH_INTERVALL_MAX_SIZE = 500;
 	public static final int SEARCH_SCROLL_INTERVALL = SEARCH_INTERVALL_MAX_SIZE;
@@ -67,9 +69,10 @@ public class ElasticSearch implements Search {
 	 * @throws ImejiException
 	 */
 	public ElasticSearch(SearchObjectTypes... types) {
-		this.type = Stream.of(types).map(t -> ElasticIndices.toElasticIndex(t)).collect(Collectors.toList())
-				.toArray(new ElasticIndices[types.length]);
-		this.indexer = new ElasticIndexer(this.type[0].name());
+		this.types = types;
+		this.indices = Stream.of(types).map(t -> ElasticIndices.toElasticIndex(t)).toArray(ElasticIndices[]::new);
+		this.indicesNames = Stream.of(indices).map(i -> i.name()).toArray(String[]::new);
+		this.indexer = new ElasticIndexer(indices[0].name());
 	}
 
 	@Override
@@ -78,37 +81,37 @@ public class ElasticSearch implements Search {
 	}
 
 	@Override
-	public SearchResult search(String indexName, SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+	public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri, int from,
+			int size) {
+
+		List<SortCriterion> sortCriteria = new ArrayList<SortCriterion>(1);
+		sortCriteria.add(sortCri);
+		return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, false);
+	}
+
+	@Override
+	public SearchResult searchWithMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user,
+			String folderUri, int from, int size) {
+		return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, false);
+	}
+
+	@Override
+	public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria,
+			User user, String folderUri, int from, int size) {
+		return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, true);
+	}
+
+	@Override
+	public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
 			int from, int size) {
 
 		List<SortCriterion> sortCriteria = new ArrayList<SortCriterion>(1);
 		sortCriteria.add(sortCri);
-		return searchElasticSearch(indexName, query, sortCriteria, user, folderUri, from, size, false);
+		return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, true);
 	}
 
-	@Override
-	public SearchResult searchWithMultiLevelSorting(String indexName, SearchQuery query,
-			List<SortCriterion> sortCriteria, User user, String folderUri, int from, int size) {
-		return searchElasticSearch(indexName, query, sortCriteria, user, folderUri, from, size, false);
-	}
-
-	@Override
-	public SearchResult searchWithFacetsAndMultiLevelSorting(String indexName, SearchQuery query,
-			List<SortCriterion> sortCriteria, User user, String folderUri, int from, int size) {
-		return searchElasticSearch(indexName, query, sortCriteria, user, folderUri, from, size, true);
-	}
-
-	@Override
-	public SearchResult searchWithFacets(String indexName, SearchQuery query, SortCriterion sortCri, User user,
-			String folderUri, int from, int size) {
-
-		List<SortCriterion> sortCriteria = new ArrayList<SortCriterion>(1);
-		sortCriteria.add(sortCri);
-		return searchElasticSearch(indexName, query, sortCriteria, user, folderUri, from, size, true);
-	}
-
-	private SearchResult searchElasticSearch(String indexName, SearchQuery query, List<SortCriterion> sortCriteria,
-			User user, String folderUri, int from, int size, boolean addFacets) {
+	private SearchResult searchElasticSearch(SearchQuery query, List<SortCriterion> sortCriteria, User user,
+			String folderUri, int from, int size, boolean addFacets) {
 
 		// magic number "-1" for unlimited size is spread all over the code:
 		if (size != GET_ALL_RESULTS && size < 0) {
@@ -117,7 +120,8 @@ public class ElasticSearch implements Search {
 		from = from < 0 ? 0 : from;
 
 		// construct request
-		final ElasticQueryFactory factory = new ElasticQueryFactory(query, type).folderUri(folderUri).user(user);
+		final ElasticQueryFactory factory = new ElasticQueryFactory(query, this.indices).folderUri(folderUri)
+				.user(user);
 		final QueryBuilder q = factory.build();
 		final QueryBuilder f = factory.buildBaseQuery();
 		/*
@@ -143,14 +147,14 @@ public class ElasticSearch implements Search {
 			for (SortBuilder sb : ElasticSortFactory.build(sortCriteria)) {
 				searchSourceBuilder.sort(sb);
 			}
-			searchRequest.indices(indexName).source(searchSourceBuilder);
+			searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
 			return searchSinglePage(searchRequest, query);
 		} else {
 			searchSourceBuilder.size(SEARCH_SCROLL_INTERVALL);
 			for (SortBuilder sb : ElasticSortFactory.build(sortCriteria)) {
 				searchSourceBuilder.sort(sb);
 			}
-			searchRequest.indices(indexName).source(searchSourceBuilder).scroll(TimeValue.timeValueSeconds(30));
+			searchRequest.indices(this.indicesNames).source(searchSourceBuilder).scroll(TimeValue.timeValueSeconds(30));
 			return searchWithScroll(searchRequest, query, from, size);
 		}
 	}
@@ -346,15 +350,7 @@ public class ElasticSearch implements Search {
 	}
 
 	@Override
-	public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, List<String> uris) {
-		// Not needed for Elasticsearch.
-		// This method is used for sparql search
-		return null;
-	}
-
-	@Override
-	public SearchResult searchString(String indexName, String query, SortCriterion sort, User user, int from,
-			int size) {
+	public SearchResult searchString(String query, SortCriterion sort, User user, int from, int size) {
 		final QueryBuilder q = QueryBuilders.queryStringQuery(query);
 		SearchRequest searchRequest = new SearchRequest();
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -362,11 +358,11 @@ public class ElasticSearch implements Search {
 		// single page or scroll search
 		if (size != GET_ALL_RESULTS && size < SEARCH_INTERVALL_MAX_SIZE && from + size < SEARCH_TO_INDEX_LIMIT) {
 			searchSourceBuilder.query(q).size(size).from(from).sort(ElasticSortFactory.build(sort));
-			searchRequest.indices(indexName).source(searchSourceBuilder);
+			searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
 			return searchSinglePage(searchRequest, null);
 		} else {
 			searchSourceBuilder.query(q).size(SEARCH_SCROLL_INTERVALL).from(from).sort(ElasticSortFactory.build(sort));
-			searchRequest.indices(indexName).source(searchSourceBuilder);
+			searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
 			return searchWithScroll(searchRequest, null, from, size);
 		}
 
@@ -480,12 +476,12 @@ public class ElasticSearch implements Search {
 	 *
 	 * @return
 	 */
-	private String[] getTypes() {
-		if (type == null || type.length == 0) {
-			return Arrays.stream(ElasticIndices.values()).map(ElasticIndices::name).toArray(String[]::new);
-		}
-		return Stream.of(type).map(ElasticIndices::name).toArray(String[]::new);
-	}
+	/*
+	 * private String[] getTypes() { if (type == null || type.length == 0) { return
+	 * Arrays.stream(ElasticIndices.values()).map(ElasticIndices::name).toArray(
+	 * String[]::new); } return
+	 * Stream.of(type).map(ElasticIndices::name).toArray(String[]::new); }
+	 */
 
 	/**
 	 * Transform an ElasticSearch {@link SearchResponse} to an Imeji
@@ -530,36 +526,9 @@ public class ElasticSearch implements Search {
 	}
 
 	@Override
-	public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri, int offset,
-			int size) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SearchResult searchWithMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user,
-			String folderUri, int offset, int size) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
-			int offset, int size) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria,
-			User user, String folderUri, int from, int size) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SearchResult searchString(String query, SortCriterion sort, User user, int from, int size) {
-		// TODO Auto-generated method stub
+	public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, List<String> uris) {
+		// Not needed for Elasticsearch.
+		// This method is used for sparql search
 		return null;
 	}
 

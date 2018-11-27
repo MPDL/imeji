@@ -60,7 +60,7 @@ public class ElasticIndexer implements SearchIndexer {
 
 	private static final Logger LOGGER = LogManager.getLogger(ElasticIndexer.class);
 	private static final ObjectMapper mapper = new ObjectMapper();
-	private final String index;
+	private final String indexName;
 	private final String dataType = "_doc";
 	// private final ElasticAnalysers analyser;
 	private String mappingFile = "elasticsearch/Elastic_TYPE_Mapping.json";
@@ -79,10 +79,10 @@ public class ElasticIndexer implements SearchIndexer {
 	 */
 
 	public ElasticIndexer(String indexName) {
-		this.index = indexName;
+		this.indexName = indexName;
 		// this.dataType = dataType.name();
 		// this.analyser = analyser;
-		this.mappingFile = mappingFile.replace("_TYPE_", StringUtils.capitalize(this.index));
+		this.mappingFile = mappingFile.replace("_TYPE_", StringUtils.capitalize(this.indexName));
 	}
 
 	/**
@@ -95,9 +95,9 @@ public class ElasticIndexer implements SearchIndexer {
 	 *            the object that will be added to the index
 	 */
 	@Override
-	public void index(String indexName, Object obj) {
+	public void index(Object obj) {
 		try {
-			indexJSON(indexName, getId(obj), toJson(obj, dataType, index), getParent(obj));
+			indexJSON(getId(obj), toJson(obj, dataType, indexName), getParent(obj));
 			// commit();
 		} catch (final Exception e) {
 			LOGGER.error("Error indexing object ", e);
@@ -105,21 +105,21 @@ public class ElasticIndexer implements SearchIndexer {
 	}
 
 	@Override
-	public void indexBatch(String indexName, List<?> l) {
-		updateIndexBatch(indexName, l);
+	public void indexBatch(List<?> l) {
+		updateIndexBatch(l);
 	}
 
 	@Override
-	public void updateIndexBatch(String indexName, List<?> l) {
+	public void updateIndexBatch(List<?> l) {
 		if (l.isEmpty()) {
 			return;
 		}
 		try {
 			final BulkRequest bulkRequest = new BulkRequest();
 			for (final Object obj : l) {
-				LOGGER.info("+++ index request " + index + "  " + getId(obj));
-				bulkRequest.add(
-						getIndexRequest(indexName, getId(obj), toJson(obj, dataType, index), getParent(obj), dataType));
+				LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
+				bulkRequest
+						.add(getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType));
 			}
 			if (bulkRequest.numberOfActions() > 0) {
 				BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
@@ -141,20 +141,20 @@ public class ElasticIndexer implements SearchIndexer {
 		if (l.isEmpty()) {
 			return;
 		}
-		ItemPostIndexScript.run(l, index);
+		ItemPostIndexScript.run(l, indexName);
 		for (Object o : l) {
 			if (o instanceof CollectionImeji) {
-				CollectionPostIndexScript.run((CollectionImeji) o, index);
+				CollectionPostIndexScript.run((CollectionImeji) o, indexName);
 			}
 		}
 	}
 
 	@Override
-	public void delete(String indexName, Object obj) {
+	public void delete(Object obj) {
 		final String id = getId(obj);
 		if (id != null) {
 			DeleteRequest deleteRequest = new DeleteRequest();
-			deleteRequest.index(index).id(id);
+			deleteRequest.index(indexName).id(id);
 			try {
 				DeleteResponse resp = ElasticService.getClient().delete(deleteRequest, RequestOptions.DEFAULT);
 			} catch (IOException e) {
@@ -165,7 +165,7 @@ public class ElasticIndexer implements SearchIndexer {
 	}
 
 	@Override
-	public void deleteBatch(String indexName, List<?> l) {
+	public void deleteBatch(List<?> l) {
 		if (l.isEmpty()) {
 			return;
 		}
@@ -173,7 +173,7 @@ public class ElasticIndexer implements SearchIndexer {
 		for (final Object obj : l) {
 			final String id = getId(obj);
 			if (id != null) {
-				bulkRequest.add(getDeleteRequest(indexName, id, getParent(obj)));
+				bulkRequest.add(getDeleteRequest(id, getParent(obj)));
 			}
 		}
 		if (bulkRequest.numberOfActions() > 0) {
@@ -196,9 +196,9 @@ public class ElasticIndexer implements SearchIndexer {
 	 * @param parent
 	 * @return
 	 */
-	private IndexRequest getIndexRequest(String indexName, String id, String json, String parent, String type) {
+	private IndexRequest getIndexRequest(String id, String json, String parent, String type) {
 		final IndexRequest indexRequest = new IndexRequest();
-		indexRequest.index(index).id(id).source(json, XContentType.JSON);
+		indexRequest.index(indexName).id(id).source(json, XContentType.JSON);
 		if (parent != null) {
 			indexRequest.parent(parent);
 		}
@@ -218,9 +218,9 @@ public class ElasticIndexer implements SearchIndexer {
 	 * @param parent
 	 * @return
 	 */
-	private DeleteRequest getDeleteRequest(String index, String id, String parent) {
+	private DeleteRequest getDeleteRequest(String id, String parent) {
 		final DeleteRequest deleteRequest = new DeleteRequest();
-		deleteRequest.index(index).id(id);
+		deleteRequest.index(indexName).id(id);
 		if (parent != null) {
 			deleteRequest.parent(parent);
 		}
@@ -249,9 +249,9 @@ public class ElasticIndexer implements SearchIndexer {
 	 * @param id
 	 * @param json
 	 */
-	public void indexJSON(String indexName, String id, String json, String parent) {
+	public void indexJSON(String id, String json, String parent) {
 		if (id != null) {
-			IndexRequest req = getIndexRequest(indexName, id, json, parent, dataType);
+			IndexRequest req = getIndexRequest(id, json, parent, dataType);
 			try {
 				IndexResponse resp = ElasticService.getClient().index(req, RequestOptions.DEFAULT);
 			} catch (IOException e) {
@@ -360,7 +360,7 @@ public class ElasticIndexer implements SearchIndexer {
 					Files.readAllBytes(
 							Paths.get(ElasticIndexer.class.getClassLoader().getResource(mappingFile).toURI())),
 					"UTF-8");
-			PutMappingRequest request = new PutMappingRequest(this.index);
+			PutMappingRequest request = new PutMappingRequest(this.indexName);
 			request.type(dataType);
 			request.source(jsonMapping, XContentType.JSON);
 			AcknowledgedResponse putMappingResponse = ElasticService.getClient().indices().putMapping(request,
@@ -371,10 +371,10 @@ public class ElasticIndexer implements SearchIndexer {
 	}
 
 	@Override
-	public void updatePartial(String indexName, String id, Object obj) {
+	public void updatePartial(String id, Object obj) {
 		if (id != null) {
 			UpdateRequest updateRequest = new UpdateRequest();
-			updateRequest.index(index).id(id).doc(obj);
+			updateRequest.index(indexName).id(id).doc(obj);
 			try {
 				UpdateResponse resp = ElasticService.getClient().update(updateRequest, RequestOptions.DEFAULT);
 			} catch (IOException e) {
@@ -388,7 +388,7 @@ public class ElasticIndexer implements SearchIndexer {
 	 * 
 	 * @param l
 	 */
-	public void partialUpdateIndexBatch(String indexName, List<?> l) {
+	public void partialUpdateIndexBatch(List<?> l) {
 		if (l.isEmpty()) {
 			return;
 		}
@@ -397,7 +397,7 @@ public class ElasticIndexer implements SearchIndexer {
 			for (final Object obj : l) {
 
 				UpdateRequest updateRequest = new UpdateRequest();
-				updateRequest.index(index).id(getId(obj)).doc(obj);
+				updateRequest.index(indexName).id(getId(obj)).doc(obj);
 				bulkRequest.add(updateRequest);
 			}
 			BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
@@ -406,39 +406,4 @@ public class ElasticIndexer implements SearchIndexer {
 		}
 	}
 
-	@Override
-	public void index(Object obj) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void indexBatch(List<?> l) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updateIndexBatch(List<?> l) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void delete(Object obj) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteBatch(List<?> l) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updatePartial(String id, Object obj) {
-		// TODO Auto-generated method stub
-
-	}
 }

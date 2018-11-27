@@ -48,40 +48,4 @@ public class JenaIndexer implements SearchIndexer {
 		// sparql queries
 	}
 
-	@Override
-	public void index(String name, Object obj) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void indexBatch(String name, List<?> l) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updateIndexBatch(String name, List<?> l) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void delete(String name, Object obj) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteBatch(String name, List<?> l) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updatePartial(String name, String id, Object obj) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

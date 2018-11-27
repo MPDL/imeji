@@ -34,7 +34,7 @@ public class ElasticService {
 	 *
 	 */
 	public enum ElasticIndices {
-		items, folders, users, usergroups;
+		items, folders, users, usergroups, _all;
 
 		/**
 		 * Map a {@link SearchObjectTypes} to an ElasticIndex
@@ -52,6 +52,10 @@ public class ElasticService {
 					return ElasticIndices.users;
 				case USERGROUPS :
 					return ElasticIndices.usergroups;
+				case CONTENT :
+					return ElasticIndices.items;
+				case ALL :
+					return ElasticIndices._all;
 				default :
 					return ElasticIndices.items;
 			}

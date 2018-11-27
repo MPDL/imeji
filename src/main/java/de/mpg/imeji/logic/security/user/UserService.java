@@ -135,8 +135,7 @@ public class UserService {
 	public User retrieve(String email, User user) throws ImejiException {
 		final SearchQuery query = new SearchQuery();
 		query.addPair(new SearchPair(SearchFields.email, SearchOperators.EQUALS, email, false));
-		final SearchResult result = search.search(ElasticIndices.users.name(), query, null, Imeji.adminUser, null, 0,
-				1);
+		final SearchResult result = search.search(query, null, Imeji.adminUser, null, 0, 1);
 		if (result.getNumberOfRecords() == 1) {
 			return controller.retrieve(URI.create(result.getResults().get(0)), user);
 		}

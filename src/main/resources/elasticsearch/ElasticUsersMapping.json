@@ -8,7 +8,7 @@
 			"id": {
 				"type": "keyword"
 			},
-			"apikey": {
+			"apiKey": {
 				"type": "keyword"
 			},
 			"email": {
@@ -21,88 +21,51 @@
 			"upload": {
 				"type": "keyword"
 			},
-			"person": {
-				"properties": {
-					"familyname": {
-						"type": "text",
-						"copy_to": "all",
-						"fields": {
-							"sort": {
-								"type": "keyword",
-								"normalizer": "sort"
-							}
-						}
-					},
-					"givenname": {
-						"type": "text",
-						"copy_to": "all",
-						"fields": {
-							"sort": {
-								"type": "keyword",
-								"normalizer": "sort"
-							}
-						}
-					},
-					"completename": {
-						"type": "text",
-						"copy_to": "all",
-						"fields": {
-							"sort": {
-								"type": "keyword",
-								"normalizer": "sort"
-							}
-						}
-					},
-					"identifier": {
+			"familyname": {
+				"type": "text",
+				"copy_to": "all",
+				"fields": {
+					"sort": {
 						"type": "keyword",
-						"copy_to": "all"
-					},
-					"organization": {
-						"properties": {
-							"name": {
-								"type": "text",
-								"copy_to": "all",
-								"fields": {
-									"sort": {
-										"type": "keyword",
-										"normalizer": "sort"
-									}
-								}
-							},
-							"description": {
-								"type": "text",
-								"copy_to": "all",
-								"fields": {
-									"sort": {
-										"type": "keyword",
-										"normalizer": "sort"
-									}
-								}
-							},
-							"city": {
-								"type": "text",
-								"copy_to": "all",
-								"fields": {
-									"sort": {
-										"type": "keyword",
-										"normalizer": "sort"
-									}
-								}
-							},
-							"country": {
-								"type": "text",
-								"copy_to": "all",
-								"fields": {
-									"sort": {
-										"type": "keyword",
-										"normalizer": "sort"
-									}
-								}
-							}
-						}
+						"normalizer": "sort"
+					}
+				}
+			},
+			"givenname": {
+				"type": "text",
+				"copy_to": "all",
+				"fields": {
+					"sort": {
+						"type": "keyword",
+						"normalizer": "sort"
+					}
+				}
+			},
+			"completename": {
+				"type": "text",
+				"copy_to": "all",
+				"fields": {
+					"sort": {
+						"type": "keyword",
+						"normalizer": "sort"
+					}
+				}
+			},
+			"identifier": {
+				"type": "keyword",
+				"copy_to": "all"
+			},
+			"organization": {
+				"type": "text",
+				"copy_to": "all",
+				"fields": {
+					"sort": {
+						"type": "keyword",
+						"normalizer": "sort"
 					}
 				}
 			}
 		}
 	}
+
 }
