@@ -48,7 +48,9 @@ public class ElasticSortFactory {
 
 		ArrayList<SortBuilder> sortBuilderList = new ArrayList<SortBuilder>(sortCriteria.size());
 		for (SortCriterion sortCriterion : sortCriteria) {
-			sortBuilderList.add(build(sortCriterion));
+			if (sortCriterion != null) {
+				sortBuilderList.add(build(sortCriterion));
+			}
 		}
 		return sortBuilderList;
 	}
@@ -62,7 +64,8 @@ public class ElasticSortFactory {
 	 */
 	public static SortBuilder build(SortCriterion sort) {
 		if (sort == null) {
-			return defaultSort;
+			// return defaultSort;
+			return null;
 		}
 		final SearchFields index = sort.getField();
 		switch (index) {
@@ -82,6 +85,8 @@ public class ElasticSortFactory {
 				return makeBuilder(ElasticFields.CREATORS.field() + SORT_INDEX, sort);
 			case status :
 				return makeBuilder(ElasticFields.STATUS.field(), sort);
+			case completename :
+				return makeBuilder("completename" + SORT_INDEX, sort);
 			default :
 				return defaultSort;
 		}

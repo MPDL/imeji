@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.search.join.ScoreMode;
 import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
@@ -759,7 +760,7 @@ public class ElasticQueryFactory {
 	 * @return
 	 */
 	private QueryBuilder contentQuery(QueryBuilder q) {
-		return JoinQueryBuilders.hasChildQuery(ElasticIndices.items.name(), q, null);
+		return JoinQueryBuilders.hasChildQuery("content", q, ScoreMode.None);
 	}
 
 	/**

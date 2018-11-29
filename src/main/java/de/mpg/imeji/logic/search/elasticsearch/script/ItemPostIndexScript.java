@@ -15,6 +15,7 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
@@ -41,7 +42,7 @@ public class ItemPostIndexScript {
 				if (fields != null) {
 					final XContentBuilder json = fields.toXContentBuilder();
 					UpdateRequest updateRequest = new UpdateRequest();
-					updateRequest.index(ElasticIndices.items.name()).id(item.getId().toString()).doc(json);
+					updateRequest.index(ElasticIndices.items.name()).type("_doc").id(item.getId().toString()).doc(json);
 					bulkRequest.add(updateRequest);
 				}
 			} catch (Exception e) {
@@ -61,17 +62,23 @@ public class ItemPostIndexScript {
 
 	private static CollectionFields retrieveCollectionFields(Item item, String index) {
 		GetRequest getRequest = new GetRequest();
-		getRequest.index(ElasticIndices.folders.name()).id(item.getCollection().toString()).storedFields(
-				ElasticFields.AUTHOR_COMPLETENAME.field(), ElasticFields.AUTHOR_ORGANIZATION.field(),
-				ElasticFields.ID.field(), ElasticFields.NAME.field());
-
+		String[] includes = new String[]{ElasticFields.AUTHOR_COMPLETENAME.field(),
+				ElasticFields.AUTHOR_ORGANIZATION.field(), ElasticFields.ID.field(), ElasticFields.NAME.field()};
+		FetchSourceContext source_ctx = new FetchSourceContext(true, includes, null);
+		getRequest.index(ElasticIndices.folders.name()).id(item.getCollection().toString())
+				.fetchSourceContext(source_ctx);
 		GetResponse resp;
 		try {
 			resp = ElasticService.getClient().get(getRequest, RequestOptions.DEFAULT);
 			if (resp.isExists()) {
-				return new CollectionFields(resp.getField(ElasticFields.AUTHOR_COMPLETENAME.field()),
-						resp.getField(ElasticFields.AUTHOR_ORGANIZATION.field()),
-						resp.getField(ElasticFields.ID.field()), resp.getField(ElasticFields.NAME.field()));
+				/*
+				 * return new
+				 * CollectionFields(resp.getField(ElasticFields.AUTHOR_COMPLETENAME.field()),
+				 * resp.getField(ElasticFields.AUTHOR_ORGANIZATION.field()),
+				 * resp.getField(ElasticFields.ID.field()),
+				 * resp.getField(ElasticFields.NAME.field()));
+				 */
+				return new CollectionFields(resp.getSourceAsMap());
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

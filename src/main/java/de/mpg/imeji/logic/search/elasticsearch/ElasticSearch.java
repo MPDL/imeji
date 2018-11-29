@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -20,11 +21,13 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregator;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.core.facade.SearchAndRetrieveFacade;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchIndexer;
@@ -58,8 +61,7 @@ public class ElasticSearch implements Search {
 	public static final int SEARCH_SCROLL_INTERVALL = SEARCH_INTERVALL_MAX_SIZE;
 	private static final int SEARCH_TO_INDEX_LIMIT = 10000;
 	public static final int SCROLL_TIMEOUT_MSEC = 60000;
-
-	private static final Logger LOGGER = Logger.getLogger(ElasticSearch.class);
+	private final static org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger(ElasticSearch.class);
 
 	/**
 	 * Construct an Elastic Search Query for one or more data types. If type is
@@ -145,14 +147,18 @@ public class ElasticSearch implements Search {
 		if (size != GET_ALL_RESULTS && size < SEARCH_INTERVALL_MAX_SIZE && from + size < SEARCH_TO_INDEX_LIMIT) {
 			searchSourceBuilder.from(from).size(size);
 			for (SortBuilder sb : ElasticSortFactory.build(sortCriteria)) {
-				searchSourceBuilder.sort(sb);
+				if (sb != null) {
+					searchSourceBuilder.sort(sb);
+				}
 			}
 			searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
 			return searchSinglePage(searchRequest, query);
 		} else {
 			searchSourceBuilder.size(SEARCH_SCROLL_INTERVALL);
 			for (SortBuilder sb : ElasticSortFactory.build(sortCriteria)) {
-				searchSourceBuilder.sort(sb);
+				if (sb != null) {
+					searchSourceBuilder.sort(sb);
+				}
 			}
 			searchRequest.indices(this.indicesNames).source(searchSourceBuilder).scroll(TimeValue.timeValueSeconds(30));
 			return searchWithScroll(searchRequest, query, from, size);
@@ -171,9 +177,10 @@ public class ElasticSearch implements Search {
 		final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build();
 		if (folderUri != null) {
 			aggregations.add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS,
-					QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ITEMS)
-							.must(QueryBuilders.termQuery("folder", folderUri))
-							.must(QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name()))));
+					new FiltersAggregator.KeyedFilter(Facet.COLLECTION_ITEMS,
+							QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ITEMS)
+									.must(QueryBuilders.termQuery("folder", folderUri))
+									.must(QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name())))));
 		}
 		for (AbstractAggregationBuilder agg : aggregations) {
 			request.aggregation(agg);

@@ -11,6 +11,7 @@ import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregator;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
@@ -39,7 +40,7 @@ public class ElasticAggregationFactory {
 		List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
 		List<Facet> facets = new FacetService().retrieveAllFromCache();
 		FiltersAggregationBuilder systemAggregations = AggregationBuilders.filters("all",
-				QueryBuilders.matchAllQuery());
+				new FiltersAggregator.KeyedFilter("all", QueryBuilders.matchAllQuery()));
 		NestedAggregationBuilder metadataAggregations = AggregationBuilders.nested("metadata", "metadata");
 		for (Facet facet : facets) {
 			String metadataField = getMetadataField(facet);
@@ -61,10 +62,10 @@ public class ElasticAggregationFactory {
 		}
 		aggregations.add(metadataAggregations);
 		aggregations.add(systemAggregations);
-		aggregations.add(AggregationBuilders.filters(Facet.ITEMS,
-				QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name())));
-		aggregations.add(AggregationBuilders.filters(Facet.SUBCOLLECTIONS,
-				QueryBuilders.typeQuery(ElasticService.ElasticIndices.folders.name())));
+		aggregations.add(AggregationBuilders.filters(Facet.ITEMS, new FiltersAggregator.KeyedFilter(Facet.ITEMS,
+				QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name()))));
+		aggregations.add(AggregationBuilders.filters(Facet.SUBCOLLECTIONS, new FiltersAggregator.KeyedFilter(
+				Facet.SUBCOLLECTIONS, QueryBuilders.typeQuery(ElasticService.ElasticIndices.folders.name()))));
 		return aggregations;
 	}
 

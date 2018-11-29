@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.common.document.DocumentField;
@@ -45,6 +46,16 @@ public class CollectionFields {
 				: new ArrayList<>();
 		this.titleWithId = this.titleWithIdOfCollection((String) title.getValue(),
 				ObjectHelper.getId(URI.create(id.getValue().toString())));
+	}
+
+	public CollectionFields(Map<String, Object> sourceAsMap) {
+
+		List<Object> authorsMap = (List<Object>) sourceAsMap.get("authors");
+		this.authors = authorsMap.stream().map(Object::toString).collect(Collectors.toList());
+		this.organizations = (List<String>) sourceAsMap.get(ElasticFields.AUTHOR_ORGANIZATION.field());
+		this.titleWithId = this.titleWithIdOfCollection(sourceAsMap.get(ElasticFields.NAME.field()).toString(),
+				sourceAsMap.get(ElasticFields.ID.field()).toString());
+
 	}
 
 	/**
