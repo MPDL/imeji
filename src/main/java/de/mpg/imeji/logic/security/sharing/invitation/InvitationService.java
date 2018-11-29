@@ -25,161 +25,159 @@ import de.mpg.imeji.logic.security.user.UserService;
  *
  */
 public class InvitationService {
-	private static final Logger LOGGER = LogManager.getLogger(InvitationService.class);
-	private final UserService userController = new UserService();
-	private final ShareService shareBC = new ShareService();
-	private static final KeyValueStoreService KEY_VALUE_STORE_BC = new KeyValueStoreService(
-			new HTreeMapStore("invitationStore"));
+  private static final Logger LOGGER = LogManager.getLogger(InvitationService.class);
+  private final UserService userController = new UserService();
+  private final ShareService shareBC = new ShareService();
+  private static final KeyValueStoreService KEY_VALUE_STORE_BC = new KeyValueStoreService(new HTreeMapStore("invitationStore"));
 
-	/**
-	 * Invite a user to collaborate for an object
-	 *
-	 * @param invitation
-	 * @throws ImejiException
-	 */
-	public void invite(Invitation invitation) throws ImejiException {
-		final User invitee = retrieveInvitee(invitation.getInviteeEmail());
-		if (invitee == null) {
-			add(invitation);
-		} else {
-			throw new AlreadyExistsException(invitation.getInviteeEmail() + "exists already");
-		}
-	}
+  /**
+   * Invite a user to collaborate for an object
+   *
+   * @param invitation
+   * @throws ImejiException
+   */
+  public void invite(Invitation invitation) throws ImejiException {
+    final User invitee = retrieveInvitee(invitation.getInviteeEmail());
+    if (invitee == null) {
+      add(invitation);
+    } else {
+      throw new AlreadyExistsException(invitation.getInviteeEmail() + "exists already");
+    }
+  }
 
-	/**
-	 * Check for pending invitations of this User, add grants to this users
-	 * according to the invitation, remove the invitations
-	 *
-	 * @param user
-	 * @return
-	 * @throws ImejiException
-	 */
-	public User consume(User user) throws ImejiException {
-		for (final Invitation invitation : retrieveInvitationOfUser(user.getEmail())) {
-			user = shareBC.shareToUser(Imeji.adminUser, user, invitation.getObjectUri(), invitation.getRole());
-			cancel(invitation.getId());
-		}
-		return user;
-	}
+  /**
+   * Check for pending invitations of this User, add grants to this users according to the
+   * invitation, remove the invitations
+   *
+   * @param user
+   * @return
+   * @throws ImejiException
+   */
+  public User consume(User user) throws ImejiException {
+    for (final Invitation invitation : retrieveInvitationOfUser(user.getEmail())) {
+      user = shareBC.shareToUser(Imeji.adminUser, user, invitation.getObjectUri(), invitation.getRole());
+      cancel(invitation.getId());
+    }
+    return user;
+  }
 
-	/**
-	 * Cancel an Invitation. (if invitation has not been already consumed)
-	 *
-	 * @param invitation
-	 * @throws ImejiException
-	 */
-	public void cancel(String invitationId) throws ImejiException {
-		final Invitation invitation = retrieve(invitationId);
-		remove(invitation);
-	}
+  /**
+   * Cancel an Invitation. (if invitation has not been already consumed)
+   *
+   * @param invitation
+   * @throws ImejiException
+   */
+  public void cancel(String invitationId) throws ImejiException {
+    final Invitation invitation = retrieve(invitationId);
+    remove(invitation);
+  }
 
-	/**
-	 * Retrieve an Invitation
-	 *
-	 * @param id
-	 * @return
-	 * @throws ImejiException
-	 */
-	public Invitation retrieve(String id) throws ImejiException {
-		final Object invitation = KEY_VALUE_STORE_BC.get(id);
-		if (invitation instanceof Invitation) {
-			return (Invitation) invitation;
-		}
-		throw new NotFoundException("No invitation found with id: " + id);
-	}
+  /**
+   * Retrieve an Invitation
+   *
+   * @param id
+   * @return
+   * @throws ImejiException
+   */
+  public Invitation retrieve(String id) throws ImejiException {
+    final Object invitation = KEY_VALUE_STORE_BC.get(id);
+    if (invitation instanceof Invitation) {
+      return (Invitation) invitation;
+    }
+    throw new NotFoundException("No invitation found with id: " + id);
+  }
 
-	/**
-	 * Retrieve all the invitation for this object id
-	 *
-	 * @param objectUri
-	 * @return
-	 * @throws ImejiException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
-	public List<Invitation> retrieveInvitationsOfObject(String objectUri) throws ImejiException {
-		return KEY_VALUE_STORE_BC.getList(".*:" + objectUri, Invitation.class);
-	}
+  /**
+   * Retrieve all the invitation for this object id
+   *
+   * @param objectUri
+   * @return
+   * @throws ImejiException
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
+  public List<Invitation> retrieveInvitationsOfObject(String objectUri) throws ImejiException {
+    return KEY_VALUE_STORE_BC.getList(".*:" + objectUri, Invitation.class);
+  }
 
-	/**
-	 * Return all Invitationd for this user (according to his Email)
-	 *
-	 * @param email
-	 * @return
-	 * @throws ImejiException
-	 */
-	public List<Invitation> retrieveInvitationOfUser(String email) throws ImejiException {
-		return KEY_VALUE_STORE_BC.getList(email + ":.*", Invitation.class);
-	}
+  /**
+   * Return all Invitationd for this user (according to his Email)
+   *
+   * @param email
+   * @return
+   * @throws ImejiException
+   */
+  public List<Invitation> retrieveInvitationOfUser(String email) throws ImejiException {
+    return KEY_VALUE_STORE_BC.getList(email + ":.*", Invitation.class);
+  }
 
-	/**
-	 * Get all pending invitations
-	 *
-	 * @return
-	 * @throws ImejiException
-	 */
-	public List<Invitation> retrieveAll() throws ImejiException {
-		return KEY_VALUE_STORE_BC.getList(".*", Invitation.class);
-	}
+  /**
+   * Get all pending invitations
+   *
+   * @return
+   * @throws ImejiException
+   */
+  public List<Invitation> retrieveAll() throws ImejiException {
+    return KEY_VALUE_STORE_BC.getList(".*", Invitation.class);
+  }
 
-	/**
-	 * Search for invitation
-	 * 
-	 * @param q
-	 * @return
-	 * @throws ImejiException
-	 */
-	public List<Invitation> search(String q) {
-		try {
-			return retrieveAll().stream().filter(inv -> inv.getInviteeEmail().contains(q)).collect(Collectors.toList());
-		} catch (ImejiException e) {
-			LOGGER.error("Error search for invitations", e);
-			return new ArrayList<>();
-		}
-	}
+  /**
+   * Search for invitation
+   * 
+   * @param q
+   * @return
+   * @throws ImejiException
+   */
+  public List<Invitation> search(String q) {
+    try {
+      return retrieveAll().stream().filter(inv -> inv.getInviteeEmail().contains(q)).collect(Collectors.toList());
+    } catch (ImejiException e) {
+      LOGGER.error("Error search for invitations", e);
+      return new ArrayList<>();
+    }
+  }
 
-	/**
-	 * remove all pending invitations
-	 *
-	 * @throws ImejiException
-	 */
-	public void clear() throws ImejiException {
-		for (final Invitation invitation : retrieveAll()) {
-			remove(invitation);
-		}
-	}
+  /**
+   * remove all pending invitations
+   *
+   * @throws ImejiException
+   */
+  public void clear() throws ImejiException {
+    for (final Invitation invitation : retrieveAll()) {
+      remove(invitation);
+    }
+  }
 
-	/**
-	 * Add an Invitation to the store with relations (email->Invitation and
-	 * object->invitation)
-	 *
-	 * @param invitation
-	 * @throws ImejiException
-	 */
-	private void add(Invitation invitation) throws ImejiException {
-		KEY_VALUE_STORE_BC.put(invitation.getId(), invitation);
-	}
+  /**
+   * Add an Invitation to the store with relations (email->Invitation and object->invitation)
+   *
+   * @param invitation
+   * @throws ImejiException
+   */
+  private void add(Invitation invitation) throws ImejiException {
+    KEY_VALUE_STORE_BC.put(invitation.getId(), invitation);
+  }
 
-	/**
-	 * Remove an Invitation and its relation
-	 *
-	 * @param invitation
-	 * @throws ImejiException
-	 */
-	private void remove(Invitation invitation) throws ImejiException {
-		KEY_VALUE_STORE_BC.delete(invitation.getId());
-	}
+  /**
+   * Remove an Invitation and its relation
+   *
+   * @param invitation
+   * @throws ImejiException
+   */
+  private void remove(Invitation invitation) throws ImejiException {
+    KEY_VALUE_STORE_BC.delete(invitation.getId());
+  }
 
-	/**
-	 *
-	 * @param user
-	 * @return
-	 */
-	private User retrieveInvitee(String email) {
-		try {
-			return userController.retrieve(email, Imeji.adminUser);
-		} catch (final ImejiException e) {
-			return null;
-		}
-	}
+  /**
+   *
+   * @param user
+   * @return
+   */
+  private User retrieveInvitee(String email) {
+    try {
+      return userController.retrieve(email, Imeji.adminUser);
+    } catch (final ImejiException e) {
+      return null;
+    }
+  }
 }

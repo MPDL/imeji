@@ -44,274 +44,270 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ManagedBean(name = "SubscriptionBean")
 @ViewScoped
 public class SubscriptionBean extends SuperBean {
-	private static final long serialVersionUID = 8885253104306297753L;
-	private static final Logger LOGGER = LogManager.getLogger(SubscriptionBean.class);
-	private List<SubscriptionGroup> groups = new ArrayList<>();
-	private final CollectionService collectionService = new CollectionService();
-	private User user;
-	private boolean showAllCollections = false;
+  private static final long serialVersionUID = 8885253104306297753L;
+  private static final Logger LOGGER = LogManager.getLogger(SubscriptionBean.class);
+  private List<SubscriptionGroup> groups = new ArrayList<>();
+  private final CollectionService collectionService = new CollectionService();
+  private User user;
+  private boolean showAllCollections = false;
 
-	@PostConstruct
-	public void construct() {
-		try {
-			initUser();
-		} catch (ImejiException e) {
-			BeanHelper.error("You are not allowed to view the subscriptions for this user, or the user doesn't exists");
-			LOGGER.error("Error retrieving user", e);
-		}
-	}
+  @PostConstruct
+  public void construct() {
+    try {
+      initUser();
+    } catch (ImejiException e) {
+      BeanHelper.error("You are not allowed to view the subscriptions for this user, or the user doesn't exists");
+      LOGGER.error("Error retrieving user", e);
+    }
+  }
 
-	/**
-	 * Init according to url parameters
-	 */
-	public void init() {
-		try {
-			initGroups(retrieveCollections());
-		} catch (ImejiException e) {
-			LOGGER.error("Error initializing SubscriptionBean", e);
-			BeanHelper.error("Error initializing page: " + e.getMessage());
-		}
-	}
+  /**
+   * Init according to url parameters
+   */
+  public void init() {
+    try {
+      initGroups(retrieveCollections());
+    } catch (ImejiException e) {
+      LOGGER.error("Error initializing SubscriptionBean", e);
+      BeanHelper.error("Error initializing page: " + e.getMessage());
+    }
+  }
 
-	/**
-	 * Init for one collection
-	 * 
-	 * @param collection
-	 */
-	public void init(CollectionImeji collection) {
-		initGroup(collection);
-	}
+  /**
+   * Init for one collection
+   * 
+   * @param collection
+   */
+  public void init(CollectionImeji collection) {
+    initGroup(collection);
+  }
 
-	/**
-	 * Retrieve the collections and initialize the list of SubscriptionGroup with
-	 * them <br/>
-	 * 
-	 * 
-	 * @throws ImejiException
-	 */
-	private void initGroups(List<CollectionImeji> collections) throws ImejiException {
-		groups = collections.stream().map(c -> new SubscriptionGroup(c, user == null ? getSessionUser() : user))
-				.peek(g -> g.init()).filter(g -> filterSubscriptionGroup(g)).collect(Collectors.toList());
-	}
+  /**
+   * Retrieve the collections and initialize the list of SubscriptionGroup with them <br/>
+   * 
+   * 
+   * @throws ImejiException
+   */
+  private void initGroups(List<CollectionImeji> collections) throws ImejiException {
+    groups = collections.stream().map(c -> new SubscriptionGroup(c, user == null ? getSessionUser() : user)).peek(g -> g.init())
+        .filter(g -> filterSubscriptionGroup(g)).collect(Collectors.toList());
+  }
 
-	/**
-	 * Initialize the Bean for only one collection
-	 * 
-	 * @param collection
-	 */
-	private void initGroup(CollectionImeji collection) {
-		SubscriptionGroup g = new SubscriptionGroup(collection, getSessionUser());
-		g.init();
-		groups.add(g);
-	}
+  /**
+   * Initialize the Bean for only one collection
+   * 
+   * @param collection
+   */
+  private void initGroup(CollectionImeji collection) {
+    SubscriptionGroup g = new SubscriptionGroup(collection, getSessionUser());
+    g.init();
+    groups.add(g);
+  }
 
-	/**
-	 * Check if a SubscriptionGroup should be displayed on the page
-	 * 
-	 * @param group
-	 * @return
-	 */
-	private boolean filterSubscriptionGroup(SubscriptionGroup group) {
-		if (user != null) {
-			return showAllCollections || group.isSubscribed(user);
-		} else {
-			return !group.getSubscribedUsers().isEmpty();
-		}
-	}
+  /**
+   * Check if a SubscriptionGroup should be displayed on the page
+   * 
+   * @param group
+   * @return
+   */
+  private boolean filterSubscriptionGroup(SubscriptionGroup group) {
+    if (user != null) {
+      return showAllCollections || group.isSubscribed(user);
+    } else {
+      return !group.getSubscribedUsers().isEmpty();
+    }
+  }
 
-	/**
-	 * Get the user for the email in the url parameter, or the user of the session
-	 * 
-	 * @throws ImejiException
-	 */
-	private void initUser() throws ImejiException {
-		final String email = UrlHelper.getParameterValue("email");
-		if (!StringHelper.isNullOrEmptyTrim(email)) {
-			user = new UserService().retrieve(email, getSessionUser());
-		}
-	}
+  /**
+   * Get the user for the email in the url parameter, or the user of the session
+   * 
+   * @throws ImejiException
+   */
+  private void initUser() throws ImejiException {
+    final String email = UrlHelper.getParameterValue("email");
+    if (!StringHelper.isNullOrEmptyTrim(email)) {
+      user = new UserService().retrieve(email, getSessionUser());
+    }
+  }
 
-	/**
-	 * Retrieve all the collections which can be read by the current user
-	 * 
-	 * @return
-	 * @throws ImejiException
-	 */
-	private List<CollectionImeji> retrieveCollections() throws ImejiException {
-		final String colId = UrlHelper.getParameterValue("c");
-		if (user != null) {
-			if (showAllCollections) {
-				return collectionService.searchAndRetrieve(null, null, user, Search.GET_ALL_RESULTS,
-						Search.SEARCH_FROM_START_INDEX);
-			} else {
-				return collectionService.retrieve(retrieveUserSubscriptions().stream()
-						.map(s -> ObjectHelper.getURI(CollectionImeji.class, s.getObjectId()).toString())
-						.collect(Collectors.toList()), Imeji.adminUser);
-			}
-		} else if (!StringHelper.isNullOrEmptyTrim(colId)) {
-			return Arrays.asList(collectionService.retrieve(ObjectHelper.getURI(CollectionImeji.class, colId),
-					user != null ? user : getSessionUser()));
-		} else {
-			return collectionService
-					.retrieve(retrieveAllSubscriptions().stream().filter(distinctByKey(Subscription::getObjectId))
-							.map(s -> ObjectHelper.getURI(CollectionImeji.class, s.getObjectId()).toString())
-							.collect(Collectors.toList()), Imeji.adminUser);
-		}
-	}
+  /**
+   * Retrieve all the collections which can be read by the current user
+   * 
+   * @return
+   * @throws ImejiException
+   */
+  private List<CollectionImeji> retrieveCollections() throws ImejiException {
+    final String colId = UrlHelper.getParameterValue("c");
+    if (user != null) {
+      if (showAllCollections) {
+        return collectionService.searchAndRetrieve(null, null, user, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX);
+      } else {
+        return collectionService.retrieve(retrieveUserSubscriptions().stream()
+            .map(s -> ObjectHelper.getURI(CollectionImeji.class, s.getObjectId()).toString()).collect(Collectors.toList()),
+            Imeji.adminUser);
+      }
+    } else if (!StringHelper.isNullOrEmptyTrim(colId)) {
+      return Arrays
+          .asList(collectionService.retrieve(ObjectHelper.getURI(CollectionImeji.class, colId), user != null ? user : getSessionUser()));
+    } else {
+      return collectionService.retrieve(
+          retrieveAllSubscriptions().stream().filter(distinctByKey(Subscription::getObjectId))
+              .map(s -> ObjectHelper.getURI(CollectionImeji.class, s.getObjectId()).toString()).collect(Collectors.toList()),
+          Imeji.adminUser);
+    }
+  }
 
-	private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-		Set<Object> seen = ConcurrentHashMap.newKeySet();
-		return t -> seen.add(keyExtractor.apply(t));
-	}
+  private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+    Set<Object> seen = ConcurrentHashMap.newKeySet();
+    return t -> seen.add(keyExtractor.apply(t));
+  }
 
-	/**
-	 * Return all the subscription the user subscribed to
-	 * 
-	 * @return
-	 * @throws ImejiException
-	 */
-	private List<Subscription> retrieveUserSubscriptions() throws ImejiException {
-		return new SubscriptionService().retrieveByUserId(user.getId().toString(), user);
-	}
+  /**
+   * Return all the subscription the user subscribed to
+   * 
+   * @return
+   * @throws ImejiException
+   */
+  private List<Subscription> retrieveUserSubscriptions() throws ImejiException {
+    return new SubscriptionService().retrieveByUserId(user.getId().toString(), user);
+  }
 
-	private List<Subscription> retrieveAllSubscriptions() throws ImejiException {
-		return new SubscriptionService().retrieveAll(getSessionUser());
-	}
+  private List<Subscription> retrieveAllSubscriptions() throws ImejiException {
+    return new SubscriptionService().retrieveAll(getSessionUser());
+  }
 
-	/**
-	 * Subscribe to the collection
-	 * 
-	 * @throws IOException
-	 */
-	public void subscribe(User user, CollectionImeji collection) {
-		try {
-			new SubscriptionService().subscribe(ImejiFactory.newSubscription().setObjectId(collection)
-					.setType(Type.DEFAULT).setUserId(user).build(), getSessionUser());
-			reload();
-		} catch (Exception e) {
-			LOGGER.error("Error subscribing to collection", e);
-			BeanHelper.error("Error subscribing to the collection");
-		}
-	}
+  /**
+   * Subscribe to the collection
+   * 
+   * @throws IOException
+   */
+  public void subscribe(User user, CollectionImeji collection) {
+    try {
+      new SubscriptionService().subscribe(
+          ImejiFactory.newSubscription().setObjectId(collection).setType(Type.DEFAULT).setUserId(user).build(), getSessionUser());
+      reload();
+    } catch (Exception e) {
+      LOGGER.error("Error subscribing to collection", e);
+      BeanHelper.error("Error subscribing to the collection");
+    }
+  }
 
-	/**
-	 * Unsubscribe
-	 * 
-	 * @param user
-	 * @param type
-	 * @param collection
-	 */
-	public void unSubscribe(User user, CollectionImeji collection) {
-		try {
-			Subscription s = groups.stream()
-					.filter(g -> g.getCollection().getIdString().equals(collection.getIdString()))
-					.map(g -> g.getSubscriptionForUser(user)).findAny().get();
-			new SubscriptionService().unSubscribe(s, user);
-			reload();
-		} catch (Exception e) {
-			LOGGER.error("Error subscribing to collection", e);
-			BeanHelper.error("Error un-subscribing from collection");
-		}
-	}
+  /**
+   * Unsubscribe
+   * 
+   * @param user
+   * @param type
+   * @param collection
+   */
+  public void unSubscribe(User user, CollectionImeji collection) {
+    try {
+      Subscription s = groups.stream().filter(g -> g.getCollection().getIdString().equals(collection.getIdString()))
+          .map(g -> g.getSubscriptionForUser(user)).findAny().get();
+      new SubscriptionService().unSubscribe(s, user);
+      reload();
+    } catch (Exception e) {
+      LOGGER.error("Error subscribing to collection", e);
+      BeanHelper.error("Error un-subscribing from collection");
+    }
+  }
 
-	/**
-	 * Subscribe the user of the current session to the collection
-	 * 
-	 * @param collection
-	 */
-	public void unSubscribe(CollectionImeji collection) {
-		unSubscribe(getSessionUser(), collection);
-	}
+  /**
+   * Subscribe the user of the current session to the collection
+   * 
+   * @param collection
+   */
+  public void unSubscribe(CollectionImeji collection) {
+    unSubscribe(getSessionUser(), collection);
+  }
 
-	/**
-	 * Unsubscribe the user of the current session
-	 * 
-	 * @param collection
-	 */
-	public void subscribe(CollectionImeji collection) {
-		subscribe(getSessionUser(), collection);
-	}
+  /**
+   * Unsubscribe the user of the current session
+   * 
+   * @param collection
+   */
+  public void subscribe(CollectionImeji collection) {
+    subscribe(getSessionUser(), collection);
+  }
 
-	/**
-	 * Subscribe the user of the current session to the current collection (i.e.,
-	 * there is only one SubscriptionGroup)
-	 * 
-	 * @param collection
-	 */
-	public void unSubscribe() {
-		unSubscribe(getSessionUser(), groups.get(0).getCollection());
-	}
+  /**
+   * Subscribe the user of the current session to the current collection (i.e., there is only one
+   * SubscriptionGroup)
+   * 
+   * @param collection
+   */
+  public void unSubscribe() {
+    unSubscribe(getSessionUser(), groups.get(0).getCollection());
+  }
 
-	/**
-	 * Unsubscribe the user of the current session from the current collection (i.e.
-	 * there is only one SubscriptionGoup)
-	 * 
-	 * @param collection
-	 */
-	public void subscribe() {
-		subscribe(getSessionUser(), groups.get(0).getCollection());
-	}
+  /**
+   * Unsubscribe the user of the current session from the current collection (i.e. there is only one
+   * SubscriptionGoup)
+   * 
+   * @param collection
+   */
+  public void subscribe() {
+    subscribe(getSessionUser(), groups.get(0).getCollection());
+  }
 
-	/**
-	 * Unsubscribe (i.e. remove subscription)
-	 * 
-	 * @param subscription
-	 */
-	public void unSubscribe(Subscription subscription) {
-		try {
-			new SubscriptionService().unSubscribe(subscription, getSessionUser());
-			initGroups(retrieveCollections());
-		} catch (ImejiException e) {
-			LOGGER.error("Error subscribing to collection", e);
-			BeanHelper.error("Error un-subscribing from collection");
-		}
-	}
+  /**
+   * Unsubscribe (i.e. remove subscription)
+   * 
+   * @param subscription
+   */
+  public void unSubscribe(Subscription subscription) {
+    try {
+      new SubscriptionService().unSubscribe(subscription, getSessionUser());
+      initGroups(retrieveCollections());
+    } catch (ImejiException e) {
+      LOGGER.error("Error subscribing to collection", e);
+      BeanHelper.error("Error un-subscribing from collection");
+    }
+  }
 
-	/**
-	 * True if the user subscribed to the current collection
-	 * 
-	 * @param user
-	 * @param collection
-	 * @return
-	 */
-	public boolean isSubscribed(User user, CollectionImeji collection) {
-		Optional<SubscriptionGroup> group = groups.stream()
-				.filter(g -> g.getCollection().getIdString().equals(collection.getIdString())).findAny();
-		return group.isPresent() && group.get().isSubscribed(user);
-	}
+  /**
+   * True if the user subscribed to the current collection
+   * 
+   * @param user
+   * @param collection
+   * @return
+   */
+  public boolean isSubscribed(User user, CollectionImeji collection) {
+    Optional<SubscriptionGroup> group =
+        groups.stream().filter(g -> g.getCollection().getIdString().equals(collection.getIdString())).findAny();
+    return group.isPresent() && group.get().isSubscribed(user);
+  }
 
-	/**
-	 * @return the groups
-	 */
-	public List<SubscriptionGroup> getGroups() {
-		return groups;
-	}
+  /**
+   * @return the groups
+   */
+  public List<SubscriptionGroup> getGroups() {
+    return groups;
+  }
 
-	/**
-	 * @param groups
-	 *            the groups to set
-	 */
-	public void setGroups(List<SubscriptionGroup> groups) {
-		this.groups = groups;
-	}
+  /**
+   * @param groups the groups to set
+   */
+  public void setGroups(List<SubscriptionGroup> groups) {
+    this.groups = groups;
+  }
 
-	public User getUser() {
-		return user;
-	}
+  public User getUser() {
+    return user;
+  }
 
-	/**
-	 * @return the showAllCollections
-	 */
-	public boolean isShowAllCollections() {
-		return showAllCollections;
-	}
+  /**
+   * @return the showAllCollections
+   */
+  public boolean isShowAllCollections() {
+    return showAllCollections;
+  }
 
-	public String getUserUrl() {
-		return getNavigation().getUserUrl() + "?email=\"" + UTF8(user.getEmail()) + "\"";
-	}
+  public String getUserUrl() {
+    return getNavigation().getUserUrl() + "?email=\"" + UTF8(user.getEmail()) + "\"";
+  }
 
-	public void toggleShowAll() throws ImejiException {
-		showAllCollections = showAllCollections ? false : true;
-		initGroups(retrieveCollections());
-	}
+  public void toggleShowAll() throws ImejiException {
+    showAllCollections = showAllCollections ? false : true;
+    initGroups(retrieveCollections());
+  }
 }

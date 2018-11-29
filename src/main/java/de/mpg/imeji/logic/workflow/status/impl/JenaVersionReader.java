@@ -17,22 +17,22 @@ import de.mpg.imeji.logic.workflow.status.VersionReader;
  */
 public class JenaVersionReader implements VersionReader {
 
-	@Override
-	public Status getStatus(Properties p) {
-		final List<String> statusString = ImejiSPARQL.exec(JenaCustomQueries.selectStatus(p.getId().toString()), null);
-		if (statusString.size() == 1) {
-			return StatusUtil.parseStatus(statusString.get(0));
-		}
-		return null;
-	}
+  @Override
+  public Status getStatus(Properties p) {
+    final List<String> statusString = ImejiSPARQL.exec(JenaCustomQueries.selectStatus(p.getId().toString()), null);
+    if (statusString.size() == 1) {
+      return StatusUtil.parseStatus(statusString.get(0));
+    }
+    return null;
+  }
 
-	@Override
-	public int getVersion(Properties p) {
-		final List<String> statusString = ImejiSPARQL.exec(JenaCustomQueries.selectVersion(p.getId().toString()), null);
-		if (statusString.size() == 1) {
-			return Integer.parseInt(statusString.get(0));
-		}
-		return 0;
-	}
+  @Override
+  public int getVersion(Properties p) {
+    final List<String> statusString = ImejiSPARQL.exec(JenaCustomQueries.selectVersion(p.getId().toString()), null);
+    if (statusString.size() == 1) {
+      return Integer.parseInt(statusString.get(0));
+    }
+    return 0;
+  }
 
 }

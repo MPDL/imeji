@@ -12,86 +12,81 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @XmlType(propOrder = {"language", "value"})
 @JsonInclude(Include.NON_NULL)
 public class LicenseTO implements Serializable {
-	private static final long serialVersionUID = -6942964122324055238L;
-	private String label;
-	private String name;
-	private String url;
-	private String start;
-	private String end;
+  private static final long serialVersionUID = -6942964122324055238L;
+  private String label;
+  private String name;
+  private String url;
+  private String start;
+  private String end;
 
-	/**
-	 * @return the label
-	 */
-	public String getLabel() {
-		return label;
-	}
+  /**
+   * @return the label
+   */
+  public String getLabel() {
+    return label;
+  }
 
-	/**
-	 * @param label
-	 *            the label to set
-	 */
-	public void setLabel(String label) {
-		this.label = label;
-	}
+  /**
+   * @param label the label to set
+   */
+  public void setLabel(String label) {
+    this.label = label;
+  }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+  /**
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
 
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+  /**
+   * @param name the name to set
+   */
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	/**
-	 * @return the url
-	 */
-	public String getUrl() {
-		return url;
-	}
+  /**
+   * @return the url
+   */
+  public String getUrl() {
+    return url;
+  }
 
-	/**
-	 * @param url
-	 *            the url to set
-	 */
-	public void setUrl(String url) {
-		this.url = url;
-	}
+  /**
+   * @param url the url to set
+   */
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
-	/**
-	 * @return the start
-	 */
-	public String getStart() {
-		return start;
-	}
+  /**
+   * @return the start
+   */
+  public String getStart() {
+    return start;
+  }
 
-	/**
-	 * @param start
-	 *            the start to set
-	 */
-	public void setStart(String start) {
-		this.start = start;
-	}
+  /**
+   * @param start the start to set
+   */
+  public void setStart(String start) {
+    this.start = start;
+  }
 
-	/**
-	 * @return the end
-	 */
-	public String getEnd() {
-		return end;
-	}
+  /**
+   * @return the end
+   */
+  public String getEnd() {
+    return end;
+  }
 
-	/**
-	 * @param end
-	 *            the end to set
-	 */
-	public void setEnd(String end) {
-		this.end = end;
-	}
+  /**
+   * @param end the end to set
+   */
+  public void setEnd(String end) {
+    this.end = end;
+  }
 
 }

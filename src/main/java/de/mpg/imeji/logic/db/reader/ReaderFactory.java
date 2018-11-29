@@ -8,13 +8,13 @@ package de.mpg.imeji.logic.db.reader;
  * @version $Revision$ $LastChangedDate$
  */
 public class ReaderFactory {
-	/**
-	 * Create a Reader according to the uri of the model
-	 *
-	 * @param modelURI
-	 * @return
-	 */
-	public static Reader create(String modelURI) {
-		return new JenaReader(modelURI);
-	}
+  /**
+   * Create a Reader according to the uri of the model
+   *
+   * @param modelURI
+   * @return
+   */
+  public static Reader create(String modelURI) {
+    return new JenaReader(modelURI);
+  }
 }

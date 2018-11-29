@@ -26,247 +26,238 @@ import de.mpg.imeji.presentation.util.CookieUtils;
  * @param <T>
  */
 public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
-	private static final long serialVersionUID = -7823020782502007646L;
-	private static final Logger LOGGER = LogManager.getLogger(SuperContainerBean.class);
-	protected String query = "";
-	protected String filter = "";
-	protected String selectedMenu;
-	protected SearchQuery searchQuery = new SearchQuery();
-	protected SearchResult searchResult;
-	private int totalNumberOfRecords;
-	private static final String CONTAINER_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
-	private static final String CONTAINER_SORT_COOKIE = "CONTAINER_SORT_COOKIE";
-	private static final int DEFAULT_ELEMENTS_PER_PAGE = 10;
-	private static final String ELEMENTS_PER_PAGE_MENU = "5,10,20,50,100";
+  private static final long serialVersionUID = -7823020782502007646L;
+  private static final Logger LOGGER = LogManager.getLogger(SuperContainerBean.class);
+  protected String query = "";
+  protected String filter = "";
+  protected String selectedMenu;
+  protected SearchQuery searchQuery = new SearchQuery();
+  protected SearchResult searchResult;
+  private int totalNumberOfRecords;
+  private static final String CONTAINER_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
+  private static final String CONTAINER_SORT_COOKIE = "CONTAINER_SORT_COOKIE";
+  private static final int DEFAULT_ELEMENTS_PER_PAGE = 10;
+  private static final String ELEMENTS_PER_PAGE_MENU = "5,10,20,50,100";
 
-	/**
-	 * Constructor
-	 */
-	public SuperContainerBean() {
-		super();
-	}
+  /**
+   * Constructor
+   */
+  public SuperContainerBean() {
+    super();
+  }
 
-	/**
-	 * Initialize the page
-	 *
-	 * @return
-	 */
-	@Override
-	public void init() {
-		super.init();
-		setSearchQuery(null);
-		if (UrlHelper.hasParameter("tab") && !UrlHelper.getParameterValue("tab").isEmpty()) {
-			selectedMenu = UrlHelper.getParameterValue("tab");
-		}
-		if (UrlHelper.hasParameter("q")) {
-			query = UrlHelper.getParameterValue("q");
-		}
-		if (UrlHelper.hasParameter("filter")) {
-			filter = UrlHelper.getParameterValue("filter");
-		}
-		if (selectedMenu == null) {
-			selectedMenu = "SORTING";
-		}
-		update();
-	}
+  /**
+   * Initialize the page
+   *
+   * @return
+   */
+  @Override
+  public void init() {
+    super.init();
+    setSearchQuery(null);
+    if (UrlHelper.hasParameter("tab") && !UrlHelper.getParameterValue("tab").isEmpty()) {
+      selectedMenu = UrlHelper.getParameterValue("tab");
+    }
+    if (UrlHelper.hasParameter("q")) {
+      query = UrlHelper.getParameterValue("q");
+    }
+    if (UrlHelper.hasParameter("filter")) {
+      filter = UrlHelper.getParameterValue("filter");
+    }
+    if (selectedMenu == null) {
+      selectedMenu = "SORTING";
+    }
+    update();
+  }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mpg.imeji.presentation.beans.BasePaginatorListSessionBean#
-	 * setCookieElementPerPage()
-	 */
-	@Override
-	public void setCookieElementPerPage() {
-		CookieUtils.updateCookieValue(SuperPaginatorBean.numberOfContainersPerPageCookieName,
-				Integer.toString(getElementsPerPage()));
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see de.mpg.imeji.presentation.beans.BasePaginatorListSessionBean#
+   * setCookieElementPerPage()
+   */
+  @Override
+  public void setCookieElementPerPage() {
+    CookieUtils.updateCookieValue(SuperPaginatorBean.numberOfContainersPerPageCookieName, Integer.toString(getElementsPerPage()));
+  }
 
-	@Override
-	public void initSortMenu() {
-		try {
-			setSelectedSortCriterion(SearchFields
-					.valueOf(CookieUtils.readNonNull(CONTAINER_SORT_COOKIE, SearchFields.modified.name())).name());
-			setSelectedSortOrder(SortOrder
-					.valueOf(CookieUtils.readNonNull(CONTAINER_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name())).name());
-			setSortMenu(new ArrayList<SelectItem>());
-			getSortMenu().add(new SelectItem(SearchFields.title.name(),
-					Imeji.RESOURCE_BUNDLE.getLabel("sort_title", getLocale())));
-			getSortMenu().add(new SelectItem(SearchFields.modified.name(),
-					Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", getLocale())));
-			getSortMenu().add(new SelectItem(SearchFields.creatorid.name(),
-					Imeji.RESOURCE_BUNDLE.getLabel("sort_author", getLocale())));
-		} catch (Exception e) {
-			LOGGER.error("Error initializing sort menu", e);
-		}
+  @Override
+  public void initSortMenu() {
+    try {
+      setSelectedSortCriterion(SearchFields.valueOf(CookieUtils.readNonNull(CONTAINER_SORT_COOKIE, SearchFields.modified.name())).name());
+      setSelectedSortOrder(SortOrder.valueOf(CookieUtils.readNonNull(CONTAINER_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name())).name());
+      setSortMenu(new ArrayList<SelectItem>());
+      getSortMenu().add(new SelectItem(SearchFields.title.name(), Imeji.RESOURCE_BUNDLE.getLabel("sort_title", getLocale())));
+      getSortMenu().add(new SelectItem(SearchFields.modified.name(), Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", getLocale())));
+      getSortMenu().add(new SelectItem(SearchFields.creatorid.name(), Imeji.RESOURCE_BUNDLE.getLabel("sort_author", getLocale())));
+    } catch (Exception e) {
+      LOGGER.error("Error initializing sort menu", e);
+    }
 
-	}
+  }
 
-	@Override
-	public void initElementsPerPageMenu() {
-		setElementsPerPage(Integer.parseInt(CookieUtils.readNonNull(
-				SuperPaginatorBean.numberOfContainersPerPageCookieName, Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
-		for (final String option : ELEMENTS_PER_PAGE_MENU.split(",")) {
-			getElementsPerPageSelectItems().add(new SelectItem(option));
-		}
-	}
+  @Override
+  public void initElementsPerPageMenu() {
+    setElementsPerPage(Integer.parseInt(
+        CookieUtils.readNonNull(SuperPaginatorBean.numberOfContainersPerPageCookieName, Integer.toString(DEFAULT_ELEMENTS_PER_PAGE))));
+    for (final String option : ELEMENTS_PER_PAGE_MENU.split(",")) {
+      getElementsPerPageSelectItems().add(new SelectItem(option));
+    }
+  }
 
-	/**
-	 * setter
-	 *
-	 * @param selectedMenu
-	 */
-	public void setSelectedMenu(String selectedMenu) {
-		this.selectedMenu = selectedMenu;
-	}
+  /**
+   * setter
+   *
+   * @param selectedMenu
+   */
+  public void setSelectedMenu(String selectedMenu) {
+    this.selectedMenu = selectedMenu;
+  }
 
-	/**
-	 * getter: Return the current tab name in the actions div on the xhtml page
-	 *
-	 * @return
-	 */
-	public String getSelectedMenu() {
-		return selectedMenu;
-	}
+  /**
+   * getter: Return the current tab name in the actions div on the xhtml page
+   *
+   * @return
+   */
+  public String getSelectedMenu() {
+    return selectedMenu;
+  }
 
-	/**
-	 * select all {@link Container} on the page
-	 *
-	 * @return
-	 */
-	public String selectAll() {
-		return getNavigationString();
-	}
+  /**
+   * select all {@link Container} on the page
+   *
+   * @return
+   */
+  public String selectAll() {
+    return getNavigationString();
+  }
 
-	/**
-	 * Unselect all {@link Container} on the page
-	 *
-	 * @return
-	 */
-	public String selectNone() {
-		return getNavigationString();
-	}
+  /**
+   * Unselect all {@link Container} on the page
+   *
+   * @return
+   */
+  public String selectNone() {
+    return getNavigationString();
+  }
 
-	/**
-	 * setter
-	 *
-	 * @param query
-	 */
-	public void setQuery(String query) {
-		this.query = query;
-	}
+  /**
+   * setter
+   *
+   * @param query
+   */
+  public void setQuery(String query) {
+    this.query = query;
+  }
 
-	/**
-	 * getter
-	 *
-	 * @return
-	 */
-	public String getQuery() {
-		return query;
-	}
+  /**
+   * getter
+   *
+   * @return
+   */
+  public String getQuery() {
+    return query;
+  }
 
-	@Override
-	public String getType() {
-		return "supercontainer";
-	}
+  @Override
+  public String getType() {
+    return "supercontainer";
+  }
 
-	/**
-	 * @return the searchQuery
-	 */
-	public SearchQuery getSearchQuery() {
-		return searchQuery;
-	}
+  /**
+   * @return the searchQuery
+   */
+  public SearchQuery getSearchQuery() {
+    return searchQuery;
+  }
 
-	/**
-	 * @param searchQuery
-	 *            the searchQuery to set
-	 */
-	public void setSearchQuery(SearchQuery searchQuery) {
-		this.searchQuery = searchQuery;
-	}
+  /**
+   * @param searchQuery the searchQuery to set
+   */
+  public void setSearchQuery(SearchQuery searchQuery) {
+    this.searchQuery = searchQuery;
+  }
 
-	/**
-	 * Search for containers, according to the current queries
-	 *
-	 * @param offset
-	 * @param limit
-	 * @return
-	 * @throws Exception
-	 */
-	public int search(int offset, int limit) throws Exception {
-		SearchQuery searchQuery = new SearchQuery();
-		SearchFactory factory = new SearchFactory();
-		int myOffset = offset;
-		factory.initQuery(getQuery());
-		factory.initFilter(filter);
-		searchQuery = factory.build();
-		final SortCriterion sortCriterion = new SortCriterion(SearchFields.valueOfIndex(getSelectedSortCriterion()),
-				SortOrder.valueOf(getSelectedSortOrder()));
-		searchResult = search(searchQuery, sortCriterion, myOffset, limit);
-		setSearchQuery(searchQuery);
-		searchResult.setQuery(getQuery());
-		searchResult.setSort(sortCriterion);
-		setTotalNumberOfRecords(searchResult.getNumberOfRecords());
-		return myOffset;
-	}
+  /**
+   * Search for containers, according to the current queries
+   *
+   * @param offset
+   * @param limit
+   * @return
+   * @throws Exception
+   */
+  public int search(int offset, int limit) throws Exception {
+    SearchQuery searchQuery = new SearchQuery();
+    SearchFactory factory = new SearchFactory();
+    int myOffset = offset;
+    factory.initQuery(getQuery());
+    factory.initFilter(filter);
+    searchQuery = factory.build();
+    final SortCriterion sortCriterion =
+        new SortCriterion(SearchFields.valueOfIndex(getSelectedSortCriterion()), SortOrder.valueOf(getSelectedSortOrder()));
+    searchResult = search(searchQuery, sortCriterion, myOffset, limit);
+    setSearchQuery(searchQuery);
+    searchResult.setQuery(getQuery());
+    searchResult.setSort(sortCriterion);
+    setTotalNumberOfRecords(searchResult.getNumberOfRecords());
+    return myOffset;
+  }
 
-	/**
-	 * Search for the container
-	 *
-	 * @param searchQuery
-	 * @param sortCriterion
-	 * @return
-	 */
-	public abstract SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset, int limit);
+  /**
+   * Search for the container
+   *
+   * @param searchQuery
+   * @param sortCriterion
+   * @return
+   */
+  public abstract SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset, int limit);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mpg.imeji.presentation.beans.BasePaginatorListSessionBean#
-	 * getTotalNumberOfRecords()
-	 */
-	@Override
-	public int getTotalNumberOfRecords() {
-		return totalNumberOfRecords;
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see de.mpg.imeji.presentation.beans.BasePaginatorListSessionBean#
+   * getTotalNumberOfRecords()
+   */
+  @Override
+  public int getTotalNumberOfRecords() {
+    return totalNumberOfRecords;
+  }
 
-	/**
-	 * @param totalNumberOfRecords
-	 *            the totalNumberOfRecords to set
-	 */
-	public void setTotalNumberOfRecords(int totalNumberOfRecords) {
-		this.totalNumberOfRecords = totalNumberOfRecords;
-	}
+  /**
+   * @param totalNumberOfRecords the totalNumberOfRecords to set
+   */
+  public void setTotalNumberOfRecords(int totalNumberOfRecords) {
+    this.totalNumberOfRecords = totalNumberOfRecords;
+  }
 
-	/**
-	 * needed for searchQueryDisplayArea.xhtml component
-	 *
-	 * @return
-	 */
-	public String getSimpleQuery() {
-		if (query != null) {
-			return query;
-		}
-		return "";
-	}
+  /**
+   * needed for searchQueryDisplayArea.xhtml component
+   *
+   * @return
+   */
+  public String getSimpleQuery() {
+    if (query != null) {
+      return query;
+    }
+    return "";
+  }
 
-	/**
-	 * search is always a simple search (needed for searchQueryDisplayArea.xhtml
-	 * component)
-	 *
-	 * @return
-	 */
-	public boolean isSimpleSearch() {
-		return true;
-	}
+  /**
+   * search is always a simple search (needed for searchQueryDisplayArea.xhtml component)
+   *
+   * @return
+   */
+  public boolean isSimpleSearch() {
+    return true;
+  }
 
-	@Override
-	protected void setCookieSortValue(String value) {
-		CookieUtils.updateCookieValue(CONTAINER_SORT_COOKIE, value);
-	}
+  @Override
+  protected void setCookieSortValue(String value) {
+    CookieUtils.updateCookieValue(CONTAINER_SORT_COOKIE, value);
+  }
 
-	@Override
-	protected void setCookieSortOrder(String order) {
-		CookieUtils.updateCookieValue(CONTAINER_SORT_ORDER_COOKIE, order);
-	}
+  @Override
+  protected void setCookieSortOrder(String order) {
+    CookieUtils.updateCookieValue(CONTAINER_SORT_ORDER_COOKIE, order);
+  }
 }

@@ -19,8 +19,7 @@ import de.mpg.imeji.rest.version.exception.DeprecatedAPIVersionException;
 import de.mpg.imeji.rest.version.exception.UnknowAPIVersionException;
 
 /**
- * Filter which check if the version of the request to the API is the latest
- * one. <br/>
+ * Filter which check if the version of the request to the API is the latest one. <br/>
  * - If yes, redirect to the API without version number (latest) <br/>
  * - If no, send an not supported version exception back
  *
@@ -29,36 +28,33 @@ import de.mpg.imeji.rest.version.exception.UnknowAPIVersionException;
  */
 @WebFilter(urlPatterns = "/rest/*", asyncSupported = true)
 public class APIVersionFilter implements Filter {
-	private VersionManager versionManager;
+  private VersionManager versionManager;
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		versionManager = new VersionManager();
-	}
+  @Override
+  public void init(FilterConfig filterConfig) throws ServletException {
+    versionManager = new VersionManager();
+  }
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		try {
-			versionManager.checkVersion(((HttpServletRequest) request).getRequestURI());
-			if (versionManager.isCurrentVersion() && versionManager.hasVersion()) {
-				// redirect to non latest api (i.e. without version in the url)
-				final String q = ((HttpServletRequest) request).getQueryString();
-				((HttpServletResponse) response)
-						.sendRedirect(versionManager.getPathToLatestVersion() + (isNullOrEmptyTrim(q) ? "" : "?" + q));
-			}
-		} catch (final DeprecatedAPIVersionException e) {
-			((HttpServletResponse) response).sendError(Status.GONE.getStatusCode(), e.getMessage());
-		} catch (final UnknowAPIVersionException e) {
-			((HttpServletResponse) response).sendError(Status.BAD_REQUEST.getStatusCode(), e.getMessage());
-		} finally {
-			chain.doFilter(request, response);
-		}
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    try {
+      versionManager.checkVersion(((HttpServletRequest) request).getRequestURI());
+      if (versionManager.isCurrentVersion() && versionManager.hasVersion()) {
+        // redirect to non latest api (i.e. without version in the url)
+        final String q = ((HttpServletRequest) request).getQueryString();
+        ((HttpServletResponse) response).sendRedirect(versionManager.getPathToLatestVersion() + (isNullOrEmptyTrim(q) ? "" : "?" + q));
+      }
+    } catch (final DeprecatedAPIVersionException e) {
+      ((HttpServletResponse) response).sendError(Status.GONE.getStatusCode(), e.getMessage());
+    } catch (final UnknowAPIVersionException e) {
+      ((HttpServletResponse) response).sendError(Status.BAD_REQUEST.getStatusCode(), e.getMessage());
+    } finally {
+      chain.doFilter(request, response);
+    }
 
-	}
+  }
 
-	@Override
-	public void destroy() {
-	}
+  @Override
+  public void destroy() {}
 
 }

@@ -12,37 +12,35 @@ import de.mpg.imeji.logic.model.TechnicalMetadata;
  *
  */
 public class ContentExtractionResult {
-	private String fulltext;
-	private List<TechnicalMetadata> technicalMetadata = new ArrayList<>();
+  private String fulltext;
+  private List<TechnicalMetadata> technicalMetadata = new ArrayList<>();
 
-	/**
-	 * @return the fulltext
-	 */
-	public String getFulltext() {
-		return fulltext;
-	}
+  /**
+   * @return the fulltext
+   */
+  public String getFulltext() {
+    return fulltext;
+  }
 
-	/**
-	 * @param fulltext
-	 *            the fulltext to set
-	 */
-	public void setFulltext(String fulltext) {
-		this.fulltext = fulltext;
-	}
+  /**
+   * @param fulltext the fulltext to set
+   */
+  public void setFulltext(String fulltext) {
+    this.fulltext = fulltext;
+  }
 
-	/**
-	 * @return the technicalMetadata
-	 */
-	public List<TechnicalMetadata> getTechnicalMetadata() {
-		return technicalMetadata;
-	}
+  /**
+   * @return the technicalMetadata
+   */
+  public List<TechnicalMetadata> getTechnicalMetadata() {
+    return technicalMetadata;
+  }
 
-	/**
-	 * @param technicalMetadata
-	 *            the technicalMetadata to set
-	 */
-	public void setTechnicalMetadata(List<TechnicalMetadata> technicalMetadata) {
-		this.technicalMetadata = technicalMetadata;
-	}
+  /**
+   * @param technicalMetadata the technicalMetadata to set
+   */
+  public void setTechnicalMetadata(List<TechnicalMetadata> technicalMetadata) {
+    this.technicalMetadata = technicalMetadata;
+  }
 
 }

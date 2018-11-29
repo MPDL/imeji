@@ -23,97 +23,97 @@ import de.mpg.imeji.logic.util.StringHelper;
  * @version $Revision$ $LastChangedDate$
  */
 public class InternalStorageAdministrator implements StorageAdministrator {
-	private static final long serialVersionUID = -2854550843193929384L;
-	private static final Logger LOGGER = LogManager.getLogger(InternalStorageAdministrator.class);
-	/**
-	 * The directory in file system of the {@link InternalStorage}
-	 */
-	private final File storageDir;
+  private static final long serialVersionUID = -2854550843193929384L;
+  private static final Logger LOGGER = LogManager.getLogger(InternalStorageAdministrator.class);
+  /**
+   * The directory in file system of the {@link InternalStorage}
+   */
+  private final File storageDir;
 
-	/**
-	 * Constructor
-	 */
-	public InternalStorageAdministrator(String storagePath) {
-		this.storageDir = new File(storagePath);
-	}
+  /**
+   * Constructor
+   */
+  public InternalStorageAdministrator(String storagePath) {
+    this.storageDir = new File(storagePath);
+  }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.mpg.imeji.logic.storage.adminstrator.StorageAdministrator#getNumberOfFiles
-	 * ()
-	 */
-	@Override
-	public long getNumberOfFiles() {
-		return getNumberOfFiles(storageDir.getAbsolutePath());
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * de.mpg.imeji.logic.storage.adminstrator.StorageAdministrator#getNumberOfFiles
+   * ()
+   */
+  @Override
+  public long getNumberOfFiles() {
+    return getNumberOfFiles(storageDir.getAbsolutePath());
+  }
 
-	/**
-	 * Return the number of files of one collection
-	 *
-	 * @param collectionId
-	 * @return
-	 */
-	public long getNumberOfFilesOfCollection(String collectionId) {
-		return getNumberOfFiles(storageDir.getAbsolutePath() + StringHelper.fileSeparator + collectionId);
-	}
+  /**
+   * Return the number of files of one collection
+   *
+   * @param collectionId
+   * @return
+   */
+  public long getNumberOfFilesOfCollection(String collectionId) {
+    return getNumberOfFiles(storageDir.getAbsolutePath() + StringHelper.fileSeparator + collectionId);
+  }
 
-	/**
-	 * Count the number of files for one path
-	 *
-	 * @param directory
-	 * @return
-	 */
-	private long getNumberOfFiles(String directory) {
-		final File f = new File(directory);
-		return FileUtils.listFiles(f, FileFilterUtils.fileFileFilter(), TrueFileFilter.INSTANCE).size();
-	}
+  /**
+   * Count the number of files for one path
+   *
+   * @param directory
+   * @return
+   */
+  private long getNumberOfFiles(String directory) {
+    final File f = new File(directory);
+    return FileUtils.listFiles(f, FileFilterUtils.fileFileFilter(), TrueFileFilter.INSTANCE).size();
+  }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.mpg.imeji.logic.storage.adminstrator.StorageAdministrator#getSizeOfFiles()
-	 */
-	@Override
-	public long getSizeOfFiles() {
-		return FileUtils.sizeOfDirectory(storageDir);
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * de.mpg.imeji.logic.storage.adminstrator.StorageAdministrator#getSizeOfFiles()
+   */
+  @Override
+  public long getSizeOfFiles() {
+    return FileUtils.sizeOfDirectory(storageDir);
+  }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.mpg.imeji.logic.storage.adminstrator.StorageAdministrator#getFreeSpace()
-	 */
-	@Override
-	public long getFreeSpace() {
-		return storageDir.getUsableSpace();
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * de.mpg.imeji.logic.storage.adminstrator.StorageAdministrator#getFreeSpace()
+   */
+  @Override
+  public long getFreeSpace() {
+    return storageDir.getUsableSpace();
+  }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.mpg.imeji.logic.storage.administrator.StorageAdministrator#getAllFiles()
-	 */
-	@Override
-	public int clean() {
-		int deleted = 0;
-		LOGGER.info("Start cleaning...");
-		for (final File f : FileUtils.listFiles(storageDir, null, true)) {
-			if (f.isFile()) {
-				final InternalStorageManager m = new InternalStorageManager();
-				final String url = m.transformPathToUrl(f.getPath());
-				if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFileUrl(url), null).size() == 0) {
-					// file doesn't exist, remove it
-					m.removeFile(url);
-					deleted++;
-				}
-			}
-		}
-		LOGGER.info("...done: " + deleted + " files deleted");
-		return deleted;
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * de.mpg.imeji.logic.storage.administrator.StorageAdministrator#getAllFiles()
+   */
+  @Override
+  public int clean() {
+    int deleted = 0;
+    LOGGER.info("Start cleaning...");
+    for (final File f : FileUtils.listFiles(storageDir, null, true)) {
+      if (f.isFile()) {
+        final InternalStorageManager m = new InternalStorageManager();
+        final String url = m.transformPathToUrl(f.getPath());
+        if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFileUrl(url), null).size() == 0) {
+          // file doesn't exist, remove it
+          m.removeFile(url);
+          deleted++;
+        }
+      }
+    }
+    LOGGER.info("...done: " + deleted + " files deleted");
+    return deleted;
+  }
 }

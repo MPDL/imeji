@@ -23,80 +23,77 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  *
  */
 public class SuperFilterMenuBean extends SuperBean {
-	private static final long serialVersionUID = 5211495478085868441L;
-	private static final Logger LOGGER = LogManager.getLogger(SuperFilterMenuBean.class);
-	private List<SelectItem> menu;
-	private final SearchQuery filterQuery;
-	private final String filterQueryString;
-	private String selectedQueryLabel;
-	private String selectedQuery;
-	private SearchFactory selectedFactory;
+  private static final long serialVersionUID = 5211495478085868441L;
+  private static final Logger LOGGER = LogManager.getLogger(SuperFilterMenuBean.class);
+  private List<SelectItem> menu;
+  private final SearchQuery filterQuery;
+  private final String filterQueryString;
+  private String selectedQueryLabel;
+  private String selectedQuery;
+  private SearchFactory selectedFactory;
 
-	public SuperFilterMenuBean() throws UnprocessableError {
-		this.filterQueryString = UrlHelper.getParameterValue("filter") == null
-				? ""
-				: UrlHelper.getParameterValue("filter");
-		this.filterQuery = SearchQueryParser.parseStringQuery(filterQueryString);
-	}
+  public SuperFilterMenuBean() throws UnprocessableError {
+    this.filterQueryString = UrlHelper.getParameterValue("filter") == null ? "" : UrlHelper.getParameterValue("filter");
+    this.filterQuery = SearchQueryParser.parseStringQuery(filterQueryString);
+  }
 
-	public void init(List<SelectItem> menu) {
-		try {
-			initSelected(menu);
-			this.menu = menu.stream()
-					.map(i -> new SelectItem(getFilterLink((SearchQuery) i.getValue(), i.getLabel()), i.getLabel()))
-					.collect(Collectors.toList());
-		} catch (final Exception e) {
-			BeanHelper.error("Error parsing query in the URL");
-			LOGGER.error("Error parsing query in the URL", e);
-		}
-	}
+  public void init(List<SelectItem> menu) {
+    try {
+      initSelected(menu);
+      this.menu = menu.stream().map(i -> new SelectItem(getFilterLink((SearchQuery) i.getValue(), i.getLabel()), i.getLabel()))
+          .collect(Collectors.toList());
+    } catch (final Exception e) {
+      BeanHelper.error("Error parsing query in the URL");
+      LOGGER.error("Error parsing query in the URL", e);
+    }
+  }
 
-	private void initSelected(List<SelectItem> menu) {
-		SearchFactory factoryCurrentQuery = new SearchFactory(filterQuery);
-		for (SelectItem item : menu) {
-			if (factoryCurrentQuery.contains((SearchQuery) item.getValue())) {
-				selectedFactory = factoryCurrentQuery.remove((SearchQuery) item.getValue());
-				selectedQuery = buildPageUrl(SearchQueryParser.transform2URL(selectedFactory.build()));
-				selectedQueryLabel = item.getLabel();
-			}
-		}
-		if (selectedFactory == null) {
-			selectedFactory = factoryCurrentQuery;
-		}
-	}
+  private void initSelected(List<SelectItem> menu) {
+    SearchFactory factoryCurrentQuery = new SearchFactory(filterQuery);
+    for (SelectItem item : menu) {
+      if (factoryCurrentQuery.contains((SearchQuery) item.getValue())) {
+        selectedFactory = factoryCurrentQuery.remove((SearchQuery) item.getValue());
+        selectedQuery = buildPageUrl(SearchQueryParser.transform2URL(selectedFactory.build()));
+        selectedQueryLabel = item.getLabel();
+      }
+    }
+    if (selectedFactory == null) {
+      selectedFactory = factoryCurrentQuery;
+    }
+  }
 
-	protected String getFilterLink(SearchQuery q, String label) {
-		try {
-			if (label.equals(selectedQueryLabel)) {
-				return selectedQuery;
-			} else {
-				return buildPageUrl(SearchQueryParser.transform2URL(selectedFactory.clone().and(q).build()));
-			}
-		} catch (Exception e) {
-			LOGGER.error("Error building filter query", e);
-			return "";
-		}
-	}
+  protected String getFilterLink(SearchQuery q, String label) {
+    try {
+      if (label.equals(selectedQueryLabel)) {
+        return selectedQuery;
+      } else {
+        return buildPageUrl(SearchQueryParser.transform2URL(selectedFactory.clone().and(q).build()));
+      }
+    } catch (Exception e) {
+      LOGGER.error("Error building filter query", e);
+      return "";
+    }
+  }
 
-	/**
-	 * Build the page url with the passed filter query
-	 * 
-	 * @param filterQuery
-	 * @return
-	 */
-	private String buildPageUrl(String filterQuery) {
-		return getCurrentPage().copy().setParamValue("filter", filterQuery).getCompleteUrl();
-	}
+  /**
+   * Build the page url with the passed filter query
+   * 
+   * @param filterQuery
+   * @return
+   */
+  private String buildPageUrl(String filterQuery) {
+    return getCurrentPage().copy().setParamValue("filter", filterQuery).getCompleteUrl();
+  }
 
-	public List<SelectItem> getMenu() {
-		return menu;
-	}
+  public List<SelectItem> getMenu() {
+    return menu;
+  }
 
-	public String getSelectedQueryLabel() {
-		return selectedQueryLabel;
-	}
+  public String getSelectedQueryLabel() {
+    return selectedQueryLabel;
+  }
 
-	public String getSelectedQuery() {
-		return selectedQuery;
-	}
+  public String getSelectedQuery() {
+    return selectedQuery;
+  }
 }

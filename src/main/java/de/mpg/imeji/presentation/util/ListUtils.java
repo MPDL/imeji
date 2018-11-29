@@ -10,20 +10,19 @@ import java.util.List;
  */
 public class ListUtils {
 
-	private ListUtils() {
-		// private Constructor
-	}
+  private ListUtils() {
+    // private Constructor
+  }
 
-	/**
-	 * Compare 2 arrays ignoring order, i.e. both arrays are compared in their
-	 * natural order
-	 *
-	 * @param l1
-	 * @param l2
-	 */
-	public static boolean equalsIgnoreOrder(List<String> l1, List<String> l2) {
-		l1.sort(null);
-		l2.sort(null);
-		return l1.equals(l2);
-	}
+  /**
+   * Compare 2 arrays ignoring order, i.e. both arrays are compared in their natural order
+   *
+   * @param l1
+   * @param l2
+   */
+  public static boolean equalsIgnoreOrder(List<String> l1, List<String> l2) {
+    l1.sort(null);
+    l2.sort(null);
+    return l1.equals(l2);
+  }
 }

@@ -17,51 +17,50 @@ import de.mpg.imeji.logic.util.ObjectHelper;
  */
 public class StorageUtil {
 
-	public static final StorageController STORAGE_CONTROLLER = new StorageController();
+  public static final StorageController STORAGE_CONTROLLER = new StorageController();
 
-	/**
-	 * True if the user is allowed to view this file
-	 *
-	 * @param fileUrl
-	 * @param user
-	 * @return
-	 */
-	public static boolean isAllowedToViewFile(String fileUrl, User user) {
-		return isAllowedToViewCollectionOfFile(fileUrl, user) || StorageUtil.isAllowedToViewItemOfFile(fileUrl, user);
-	}
+  /**
+   * True if the user is allowed to view this file
+   *
+   * @param fileUrl
+   * @param user
+   * @return
+   */
+  public static boolean isAllowedToViewFile(String fileUrl, User user) {
+    return isAllowedToViewCollectionOfFile(fileUrl, user) || StorageUtil.isAllowedToViewItemOfFile(fileUrl, user);
+  }
 
-	/**
-	 * True if the fileUrl is associated to a {@link Item} which can be read by the
-	 * user
-	 *
-	 * @param fileUrl
-	 * @param user
-	 * @return
-	 */
-	private static boolean isAllowedToViewItemOfFile(String fileUrl, User user) {
-		try {
-			new ItemService().retrieveLazyForFile(fileUrl, user);
-			return true;
-		} catch (final ImejiException e) {
-			return false;
-		}
-	}
+  /**
+   * True if the fileUrl is associated to a {@link Item} which can be read by the user
+   *
+   * @param fileUrl
+   * @param user
+   * @return
+   */
+  private static boolean isAllowedToViewItemOfFile(String fileUrl, User user) {
+    try {
+      new ItemService().retrieveLazyForFile(fileUrl, user);
+      return true;
+    } catch (final ImejiException e) {
+      return false;
+    }
+  }
 
-	/**
-	 * True if the fileurl is associated to {@link CollectionImeji} which can be
-	 * read by the user (usefull for collection logos)
-	 *
-	 * @param fileUrl
-	 * @param user
-	 * @return
-	 */
-	private static boolean isAllowedToViewCollectionOfFile(String fileUrl, User user) {
-		try {
-			final String collectionId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
-			new CollectionService().retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, collectionId), user);
-			return true;
-		} catch (final Exception e) {
-			return false;
-		}
-	}
+  /**
+   * True if the fileurl is associated to {@link CollectionImeji} which can be read by the user
+   * (usefull for collection logos)
+   *
+   * @param fileUrl
+   * @param user
+   * @return
+   */
+  private static boolean isAllowedToViewCollectionOfFile(String fileUrl, User user) {
+    try {
+      final String collectionId = STORAGE_CONTROLLER.getCollectionId(fileUrl);
+      new CollectionService().retrieveLazy(ObjectHelper.getURI(CollectionImeji.class, collectionId), user);
+      return true;
+    } catch (final Exception e) {
+      return false;
+    }
+  }
 }

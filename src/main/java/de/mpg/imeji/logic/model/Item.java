@@ -26,108 +26,108 @@ import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 @j2jModel("item")
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class Item extends Properties implements Serializable, CollectionElement {
-	private static final long serialVersionUID = 3989965275269803885L;
-	@j2jResource("http://imeji.org/terms/collection")
-	private URI collection;
-	@j2jLiteral("http://imeji.org/terms/filename")
-	private String filename;
-	@j2jLiteral("http://imeji.org/terms/filetype")
-	private String filetype;
-	@j2jLiteral("http://imeji.org/terms/fileSize")
-	private long fileSize;
-	@j2jLazyList("http://imeji.org/terms/license")
-	private List<License> licenses = new ArrayList<>();
-	@j2jLazyList("http://imeji.org/terms/metadata")
-	private List<Metadata> metadata = new ArrayList<>();
+  private static final long serialVersionUID = 3989965275269803885L;
+  @j2jResource("http://imeji.org/terms/collection")
+  private URI collection;
+  @j2jLiteral("http://imeji.org/terms/filename")
+  private String filename;
+  @j2jLiteral("http://imeji.org/terms/filetype")
+  private String filetype;
+  @j2jLiteral("http://imeji.org/terms/fileSize")
+  private long fileSize;
+  @j2jLazyList("http://imeji.org/terms/license")
+  private List<License> licenses = new ArrayList<>();
+  @j2jLazyList("http://imeji.org/terms/metadata")
+  private List<Metadata> metadata = new ArrayList<>();
 
-	/**
-	 * Default constructor
-	 */
-	public Item() {
+  /**
+   * Default constructor
+   */
+  public Item() {
 
-	}
+  }
 
-	public Item(Item im) {
-		setId(null);
-		ObjectHelper.copyAllFields(im, this);
-	}
+  public Item(Item im) {
+    setId(null);
+    ObjectHelper.copyAllFields(im, this);
+  }
 
-	public void setCollection(URI collection) {
-		this.collection = collection;
-	}
+  public void setCollection(URI collection) {
+    this.collection = collection;
+  }
 
-	public URI getCollection() {
-		return collection;
-	}
+  public URI getCollection() {
+    return collection;
+  }
 
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
 
-	public String getFilename() {
-		return filename;
-	}
+  public String getFilename() {
+    return filename;
+  }
 
-	public void setFiletype(String filetype) {
-		this.filetype = filetype;
-	}
+  public void setFiletype(String filetype) {
+    this.filetype = filetype;
+  }
 
-	public String getFiletype() {
-		return filetype;
-	}
+  public String getFiletype() {
+    return filetype;
+  }
 
-	/**
-	 *
-	 * @return
-	 */
-	public long getFileSize() {
-		return fileSize;
-	}
+  /**
+   *
+   * @return
+   */
+  public long getFileSize() {
+    return fileSize;
+  }
 
-	/**
-	 *
-	 * @return human readable file size
-	 */
-	public String getFileSizeHumanReadable() {
-		return FileUtils.byteCountToDisplaySize(fileSize);
-	}
+  /**
+   *
+   * @return human readable file size
+   */
+  public String getFileSizeHumanReadable() {
+    return FileUtils.byteCountToDisplaySize(fileSize);
+  }
 
-	/**
-	 *
-	 * @param fileSize
-	 */
-	public void setFileSize(long fileSize) {
-		this.fileSize = fileSize;
-	}
+  /**
+   *
+   * @param fileSize
+   */
+  public void setFileSize(long fileSize) {
+    this.fileSize = fileSize;
+  }
 
-	public List<License> getLicenses() {
-		return licenses;
-	}
+  public List<License> getLicenses() {
+    return licenses;
+  }
 
-	public void setLicenses(List<License> licenses) {
-		this.licenses = licenses;
-	}
+  public void setLicenses(List<License> licenses) {
+    this.licenses = licenses;
+  }
 
-	public List<Metadata> getMetadata() {
-		return metadata;
-	}
+  public List<Metadata> getMetadata() {
+    return metadata;
+  }
 
-	public void setMetadata(List<Metadata> metadata) {
-		this.metadata = metadata;
-	}
+  public void setMetadata(List<Metadata> metadata) {
+    this.metadata = metadata;
+  }
 
-	@Override
-	public String getName() {
-		return filename;
-	}
+  @Override
+  public String getName() {
+    return filename;
+  }
 
-	@Override
-	public String getUri() {
-		return getId().toString();
-	}
+  @Override
+  public String getUri() {
+    return getId().toString();
+  }
 
-	@Override
-	public ObjectType getType() {
-		return ObjectType.ITEM;
-	}
+  @Override
+  public ObjectType getType() {
+    return ObjectType.ITEM;
+  }
 }

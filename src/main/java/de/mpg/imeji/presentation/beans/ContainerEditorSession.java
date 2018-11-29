@@ -14,30 +14,29 @@ import javax.faces.bean.SessionScoped;
 @ManagedBean(name = "ContainerEditorSession")
 @SessionScoped
 public class ContainerEditorSession implements Serializable {
-	private static final long serialVersionUID = -4891856418594298289L;
-	private String uploadedLogoPath;
-	private String errorMessage = "";
+  private static final long serialVersionUID = -4891856418594298289L;
+  private String uploadedLogoPath;
+  private String errorMessage = "";
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+  public String getErrorMessage() {
+    return errorMessage;
+  }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+  public void setErrorMessage(String errorMessage) {
+    this.errorMessage = errorMessage;
+  }
 
-	/**
-	 * @return the uploadedLogoPath
-	 */
-	public String getUploadedLogoPath() {
-		return uploadedLogoPath;
-	}
+  /**
+   * @return the uploadedLogoPath
+   */
+  public String getUploadedLogoPath() {
+    return uploadedLogoPath;
+  }
 
-	/**
-	 * @param uploadedLogoPath
-	 *            the uploadedLogoPath to set
-	 */
-	public void setUploadedLogoPath(String uploadedLogoPath) {
-		this.uploadedLogoPath = uploadedLogoPath;
-	}
+  /**
+   * @param uploadedLogoPath the uploadedLogoPath to set
+   */
+  public void setUploadedLogoPath(String uploadedLogoPath) {
+    this.uploadedLogoPath = uploadedLogoPath;
+  }
 }

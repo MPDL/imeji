@@ -15,26 +15,26 @@ import javax.faces.convert.Converter;
  */
 
 public class URIConverter implements Converter {
-	@Override
-	public Object getAsObject(FacesContext arg0, UIComponent arg1, String arg2) {
-		if (arg2 == null || "".equals(arg2.trim())) {
-			return null;
-		}
-		arg2 = arg2.replaceAll("[^a-zA-Z0-9:/?#\\[\\]@!$&'()\\*\\+,;=\\-\\._~]", "-");
+  @Override
+  public Object getAsObject(FacesContext arg0, UIComponent arg1, String arg2) {
+    if (arg2 == null || "".equals(arg2.trim())) {
+      return null;
+    }
+    arg2 = arg2.replaceAll("[^a-zA-Z0-9:/?#\\[\\]@!$&'()\\*\\+,;=\\-\\._~]", "-");
 
-		URI uri = URI.create(arg2);
+    URI uri = URI.create(arg2);
 
-		if (!uri.isAbsolute()) {
-			uri = URI.create("http://" + arg2);
-		}
-		return uri;
-	}
+    if (!uri.isAbsolute()) {
+      uri = URI.create("http://" + arg2);
+    }
+    return uri;
+  }
 
-	@Override
-	public String getAsString(FacesContext arg0, UIComponent arg1, Object arg2) {
-		if (arg2 == null) {
-			return "";
-		}
-		return arg2.toString().trim();
-	}
+  @Override
+  public String getAsString(FacesContext arg0, UIComponent arg1, Object arg2) {
+    if (arg2 == null) {
+      return "";
+    }
+    return arg2.toString().trim();
+  }
 }

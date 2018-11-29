@@ -9,25 +9,25 @@ import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
  *
  */
 public final class ElasticContainerAdditionalInfo {
-	private final String label;
-	private final String text;
-	private final String url;
+  private final String label;
+  private final String text;
+  private final String url;
 
-	public ElasticContainerAdditionalInfo(ContainerAdditionalInfo info) {
-		this.label = info.getLabel();
-		this.text = info.getText();
-		this.url = info.getUrl();
-	}
+  public ElasticContainerAdditionalInfo(ContainerAdditionalInfo info) {
+    this.label = info.getLabel();
+    this.text = info.getText();
+    this.url = info.getUrl();
+  }
 
-	public String getLabel() {
-		return label;
-	}
+  public String getLabel() {
+    return label;
+  }
 
-	public String getText() {
-		return text;
-	}
+  public String getText() {
+    return text;
+  }
 
-	public String getUrl() {
-		return url;
-	}
+  public String getUrl() {
+    return url;
+  }
 }

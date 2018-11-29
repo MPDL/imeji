@@ -14,29 +14,29 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class UserGroupValidator extends ObjectValidator implements Validator<UserGroup> {
 
-	@Override
-	public void validate(UserGroup userGroup, Method method) throws UnprocessableError {
-		if (StringHelper.isNullOrEmptyTrim(userGroup.getName())) {
-			throw new UnprocessableError("user_group_need_name");
-		}
-		if (groupNameAlreadyExists(userGroup)) {
-			throw new UnprocessableError("group_name_already_exists");
-		}
-	}
+  @Override
+  public void validate(UserGroup userGroup, Method method) throws UnprocessableError {
+    if (StringHelper.isNullOrEmptyTrim(userGroup.getName())) {
+      throw new UnprocessableError("user_group_need_name");
+    }
+    if (groupNameAlreadyExists(userGroup)) {
+      throw new UnprocessableError("group_name_already_exists");
+    }
+  }
 
-	/**
-	 * True if {@link UserGroup} name already used by another {@link UserGroup}
-	 *
-	 * @param group
-	 * @return
-	 */
-	public boolean groupNameAlreadyExists(UserGroup g) {
-		for (final String id : ImejiSPARQL.exec(JenaCustomQueries.selectUserGroupByName(g.getName()), null)) {
-			if (!id.equals(g.getId().toString())) {
-				return true;
-			}
-		}
-		return false;
-	}
+  /**
+   * True if {@link UserGroup} name already used by another {@link UserGroup}
+   *
+   * @param group
+   * @return
+   */
+  public boolean groupNameAlreadyExists(UserGroup g) {
+    for (final String id : ImejiSPARQL.exec(JenaCustomQueries.selectUserGroupByName(g.getName()), null)) {
+      if (!id.equals(g.getId().toString())) {
+        return true;
+      }
+    }
+    return false;
+  }
 
 }

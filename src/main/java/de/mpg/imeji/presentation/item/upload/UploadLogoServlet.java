@@ -31,63 +31,62 @@ import de.mpg.imeji.presentation.session.SessionBean;
  */
 @WebServlet("/uploadlogo/*")
 public class UploadLogoServlet extends HttpServlet {
-	private static final long serialVersionUID = 8271914066699208201L;
-	private static final Logger LOGGER = LogManager.getLogger(UploadLogoServlet.class);
+  private static final long serialVersionUID = 8271914066699208201L;
+  private static final Logger LOGGER = LogManager.getLogger(UploadLogoServlet.class);
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "Only post supported");
-	}
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "Only post supported");
+  }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (!isLoggedIn(req)) {
-			resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Please login");
-		} else {
-			try {
-				final File f = uploadLogo(req, resp);
-				getContainerEditorSession(req)
-						.setUploadedLogoPath(f != null && f.exists() ? f.getAbsolutePath() : null);
-			} catch (FileUploadException | TypeNotAllowedException e) {
-				LOGGER.error("Error uploading logo", e);
-				resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error uploading logo");
-			} catch (UnprocessableError e) {
-				getContainerEditorSession(req).setErrorMessage(e.getMessage());
-			}
-		}
-	}
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    if (!isLoggedIn(req)) {
+      resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Please login");
+    } else {
+      try {
+        final File f = uploadLogo(req, resp);
+        getContainerEditorSession(req).setUploadedLogoPath(f != null && f.exists() ? f.getAbsolutePath() : null);
+      } catch (FileUploadException | TypeNotAllowedException e) {
+        LOGGER.error("Error uploading logo", e);
+        resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error uploading logo");
+      } catch (UnprocessableError e) {
+        getContainerEditorSession(req).setErrorMessage(e.getMessage());
+      }
+    }
+  }
 
-	private File uploadLogo(HttpServletRequest request, HttpServletResponse response)
-			throws FileUploadException, TypeNotAllowedException, IOException, UnprocessableError {
-		File tmp = null;
-		final boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-		if (isMultipart) {
-			final ServletFileUpload upload = new ServletFileUpload();
-			final FileItemIterator iter = upload.getItemIterator(request);
-			while (iter.hasNext()) {
-				final FileItemStream fis = iter.next();
-				tmp = StorageUtils.toFile(fis.openStream());
-				if (StorageUtils.getMimeType(tmp).contains("image")) {
-					return tmp;
-				}
-			}
-			throw new UnprocessableError("This file cannot be used as logo. No image file.");
-		}
-		return null;
-	}
+  private File uploadLogo(HttpServletRequest request, HttpServletResponse response)
+      throws FileUploadException, TypeNotAllowedException, IOException, UnprocessableError {
+    File tmp = null;
+    final boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    if (isMultipart) {
+      final ServletFileUpload upload = new ServletFileUpload();
+      final FileItemIterator iter = upload.getItemIterator(request);
+      while (iter.hasNext()) {
+        final FileItemStream fis = iter.next();
+        tmp = StorageUtils.toFile(fis.openStream());
+        if (StorageUtils.getMimeType(tmp).contains("image")) {
+          return tmp;
+        }
+      }
+      throw new UnprocessableError("This file cannot be used as logo. No image file.");
+    }
+    return null;
+  }
 
-	/**
-	 * Return the {@link SessionBean} form the {@link HttpSession}
-	 *
-	 * @param req
-	 * @return
-	 */
-	private ContainerEditorSession getContainerEditorSession(HttpServletRequest req) {
-		return (ContainerEditorSession) req.getSession(true).getAttribute(ContainerEditorSession.class.getSimpleName());
-	}
+  /**
+   * Return the {@link SessionBean} form the {@link HttpSession}
+   *
+   * @param req
+   * @return
+   */
+  private ContainerEditorSession getContainerEditorSession(HttpServletRequest req) {
+    return (ContainerEditorSession) req.getSession(true).getAttribute(ContainerEditorSession.class.getSimpleName());
+  }
 
-	private boolean isLoggedIn(HttpServletRequest req) {
-		return ((SessionBean) req.getSession(true).getAttribute(SessionBean.class.getSimpleName())).getUser() != null;
-	}
+  private boolean isLoggedIn(HttpServletRequest req) {
+    return ((SessionBean) req.getSession(true).getAttribute(SessionBean.class.getSimpleName())).getUser() != null;
+  }
 
 }

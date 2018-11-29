@@ -22,47 +22,46 @@ import de.mpg.imeji.util.JenaUtil;
 
 public class StatisticsControllerTestClass extends SuperServiceTest {
 
-	@Test
-	public void test() throws ImejiException {
-		StatisticsService controller = new StatisticsService();
-		CollectionImeji col1 = createCollection(JenaUtil.testUser);
-		Item item1 = createItemWithFile(col1, getOriginalfile(), JenaUtil.testUser);
-		long totalFileSize = FileUtils.sizeOf(getOriginalfile());
-		long result = controller.getUsedStorageSizeForInstitute("imeji.org");
-		assertEquals(totalFileSize, result);
-		// add again
-		Item item2 = createItemWithFile(col1, getThumbnailfile(), JenaUtil.testUser);
-		totalFileSize = totalFileSize + FileUtils.sizeOf(getThumbnailfile());;
-		result = controller.getUsedStorageSizeForInstitute("imeji.org");
-		assertEquals(totalFileSize, result);
-		// deleteItem
-		ItemService itemController = new ItemService();
-		itemController.delete(item2.getIdString(), JenaUtil.testUser);
-		totalFileSize = totalFileSize - FileUtils.sizeOf(getThumbnailfile());
-		result = controller.getUsedStorageSizeForInstitute("imeji.org");
-		assertEquals(totalFileSize, result);
-		// Upload in another collection
-		CollectionImeji col2 = createCollection(JenaUtil.testUser);
-		Item item3 = createItemWithFile(col2, getOriginalfile(), JenaUtil.testUser);
-		totalFileSize = totalFileSize + FileUtils.sizeOf(getOriginalfile());;
-		result = controller.getUsedStorageSizeForInstitute("imeji.org");
-		assertEquals(totalFileSize, result);
-		// Upload by another user
-		new ShareService().shareToUser(JenaUtil.testUser, JenaUtil.testUser2, col2.getId().toString(),
-				ShareRoles.ADMIN.name());
-		Item item4 = createItemWithFile(col2, getThumbnailfile(), JenaUtil.testUser2);
-		totalFileSize = totalFileSize + FileUtils.sizeOf(getThumbnailfile());;
-		result = controller.getUsedStorageSizeForInstitute("imeji.org");
-		assertEquals(totalFileSize, result);
-	}
+  @Test
+  public void test() throws ImejiException {
+    StatisticsService controller = new StatisticsService();
+    CollectionImeji col1 = createCollection(JenaUtil.testUser);
+    Item item1 = createItemWithFile(col1, getOriginalfile(), JenaUtil.testUser);
+    long totalFileSize = FileUtils.sizeOf(getOriginalfile());
+    long result = controller.getUsedStorageSizeForInstitute("imeji.org");
+    assertEquals(totalFileSize, result);
+    // add again
+    Item item2 = createItemWithFile(col1, getThumbnailfile(), JenaUtil.testUser);
+    totalFileSize = totalFileSize + FileUtils.sizeOf(getThumbnailfile());;
+    result = controller.getUsedStorageSizeForInstitute("imeji.org");
+    assertEquals(totalFileSize, result);
+    // deleteItem
+    ItemService itemController = new ItemService();
+    itemController.delete(item2.getIdString(), JenaUtil.testUser);
+    totalFileSize = totalFileSize - FileUtils.sizeOf(getThumbnailfile());
+    result = controller.getUsedStorageSizeForInstitute("imeji.org");
+    assertEquals(totalFileSize, result);
+    // Upload in another collection
+    CollectionImeji col2 = createCollection(JenaUtil.testUser);
+    Item item3 = createItemWithFile(col2, getOriginalfile(), JenaUtil.testUser);
+    totalFileSize = totalFileSize + FileUtils.sizeOf(getOriginalfile());;
+    result = controller.getUsedStorageSizeForInstitute("imeji.org");
+    assertEquals(totalFileSize, result);
+    // Upload by another user
+    new ShareService().shareToUser(JenaUtil.testUser, JenaUtil.testUser2, col2.getId().toString(), ShareRoles.ADMIN.name());
+    Item item4 = createItemWithFile(col2, getThumbnailfile(), JenaUtil.testUser2);
+    totalFileSize = totalFileSize + FileUtils.sizeOf(getThumbnailfile());;
+    result = controller.getUsedStorageSizeForInstitute("imeji.org");
+    assertEquals(totalFileSize, result);
+  }
 
-	private CollectionImeji createCollection(User user) throws ImejiException {
-		CollectionService controller = new CollectionService();
-		collectionBasic = ImejiFactory.newCollection().setTitle("test").setPerson("m", "p", "g").build();
-		return controller.create(collectionBasic, user);
-	}
+  private CollectionImeji createCollection(User user) throws ImejiException {
+    CollectionService controller = new CollectionService();
+    collectionBasic = ImejiFactory.newCollection().setTitle("test").setPerson("m", "p", "g").build();
+    return controller.create(collectionBasic, user);
+  }
 
-	private Item createItemWithFile(CollectionImeji col, File file, User user) throws ImejiException {
-		return super.createItemWithFile(file, col, user);
-	}
+  private Item createItemWithFile(CollectionImeji col, File file, User user) throws ImejiException {
+    return super.createItemWithFile(file, col, user);
+  }
 }

@@ -7,9 +7,9 @@ package de.mpg.imeji.exceptions;
  *
  */
 public class InactiveAuthenticationError extends AuthenticationError {
-	private static final long serialVersionUID = 7976153766697083425L;
+  private static final long serialVersionUID = 7976153766697083425L;
 
-	public InactiveAuthenticationError(String message) {
-		super(message);
-	}
+  public InactiveAuthenticationError(String message) {
+    super(message);
+  }
 }

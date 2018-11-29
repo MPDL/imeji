@@ -30,61 +30,60 @@ import de.mpg.imeji.logic.search.elasticsearch.script.misc.CollectionFields;
  *
  */
 public class ItemPostIndexScript {
-	private static final Logger LOGGER = LogManager.getLogger(ItemPostIndexScript.class);
+  private static final Logger LOGGER = LogManager.getLogger(ItemPostIndexScript.class);
 
-	public static void run(List<?> list, String index) {
-		List<Item> items = (List<Item>) list.stream().filter(o -> o instanceof Item).collect(Collectors.toList());
-		final BulkRequest bulkRequest = new BulkRequest();
+  public static void run(List<?> list, String index) {
+    List<Item> items = (List<Item>) list.stream().filter(o -> o instanceof Item).collect(Collectors.toList());
+    final BulkRequest bulkRequest = new BulkRequest();
 
-		for (final Item item : items) {
-			try {
-				CollectionFields fields = retrieveCollectionFields(item, index);
-				if (fields != null) {
-					final XContentBuilder json = fields.toXContentBuilder();
-					UpdateRequest updateRequest = new UpdateRequest();
-					updateRequest.index(ElasticIndices.items.name()).type("_doc").id(item.getId().toString()).doc(json);
-					bulkRequest.add(updateRequest);
-				}
-			} catch (Exception e) {
-				LOGGER.error("Error indexing item with collection fields", e);
-			}
+    for (final Item item : items) {
+      try {
+        CollectionFields fields = retrieveCollectionFields(item, index);
+        if (fields != null) {
+          final XContentBuilder json = fields.toXContentBuilder();
+          UpdateRequest updateRequest = new UpdateRequest();
+          updateRequest.index(ElasticIndices.items.name()).type("_doc").id(item.getId().toString()).doc(json);
+          bulkRequest.add(updateRequest);
+        }
+      } catch (Exception e) {
+        LOGGER.error("Error indexing item with collection fields", e);
+      }
 
-		}
-		if (bulkRequest.numberOfActions() > 0) {
-			BulkResponse resp;
-			try {
-				resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
-			} catch (IOException e) {
-				LOGGER.error("error during bulk", e);
-			}
-		}
-	}
+    }
+    if (bulkRequest.numberOfActions() > 0) {
+      BulkResponse resp;
+      try {
+        resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+      } catch (IOException e) {
+        LOGGER.error("error during bulk", e);
+      }
+    }
+  }
 
-	private static CollectionFields retrieveCollectionFields(Item item, String index) {
-		GetRequest getRequest = new GetRequest();
-		String[] includes = new String[]{ElasticFields.AUTHOR_COMPLETENAME.field(),
-				ElasticFields.AUTHOR_ORGANIZATION.field(), ElasticFields.ID.field(), ElasticFields.NAME.field()};
-		FetchSourceContext source_ctx = new FetchSourceContext(true, includes, null);
-		getRequest.index(ElasticIndices.folders.name()).id(item.getCollection().toString())
-				.fetchSourceContext(source_ctx);
-		GetResponse resp;
-		try {
-			resp = ElasticService.getClient().get(getRequest, RequestOptions.DEFAULT);
-			if (resp.isExists()) {
-				/*
-				 * return new
-				 * CollectionFields(resp.getField(ElasticFields.AUTHOR_COMPLETENAME.field()),
-				 * resp.getField(ElasticFields.AUTHOR_ORGANIZATION.field()),
-				 * resp.getField(ElasticFields.ID.field()),
-				 * resp.getField(ElasticFields.NAME.field()));
-				 */
-				return new CollectionFields(resp.getSourceAsMap());
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
+  private static CollectionFields retrieveCollectionFields(Item item, String index) {
+    GetRequest getRequest = new GetRequest();
+    String[] includes = new String[] {ElasticFields.AUTHOR_COMPLETENAME.field(), ElasticFields.AUTHOR_ORGANIZATION.field(),
+        ElasticFields.ID.field(), ElasticFields.NAME.field()};
+    FetchSourceContext source_ctx = new FetchSourceContext(true, includes, null);
+    getRequest.index(ElasticIndices.folders.name()).id(item.getCollection().toString()).fetchSourceContext(source_ctx);
+    GetResponse resp;
+    try {
+      resp = ElasticService.getClient().get(getRequest, RequestOptions.DEFAULT);
+      if (resp.isExists()) {
+        /*
+         * return new
+         * CollectionFields(resp.getField(ElasticFields.AUTHOR_COMPLETENAME.field()),
+         * resp.getField(ElasticFields.AUTHOR_ORGANIZATION.field()),
+         * resp.getField(ElasticFields.ID.field()),
+         * resp.getField(ElasticFields.NAME.field()));
+         */
+        return new CollectionFields(resp.getSourceAsMap());
+      }
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+  }
 
 }

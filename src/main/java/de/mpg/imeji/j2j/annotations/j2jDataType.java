@@ -14,5 +14,5 @@ import org.apache.jena.vocabulary.RDF;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface j2jDataType {
-	public String value();
+  public String value();
 }

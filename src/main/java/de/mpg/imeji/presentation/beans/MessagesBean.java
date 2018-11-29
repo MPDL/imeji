@@ -10,16 +10,16 @@ import javax.faces.context.FacesContext;
 @ManagedBean(name = "MessagesBean")
 @RequestScoped
 public class MessagesBean {
-	/**
-	 * Return the messages
-	 *
-	 * @return
-	 */
-	public List<FacesMessage> getMessages() {
-		return FacesContext.getCurrentInstance().getMessageList();
-	}
+  /**
+   * Return the messages
+   *
+   * @return
+   */
+  public List<FacesMessage> getMessages() {
+    return FacesContext.getCurrentInstance().getMessageList();
+  }
 
-	public String getDetails(FacesMessage msg) {
-		return msg.getDetail();
-	}
+  public String getDetails(FacesMessage msg) {
+    return msg.getDetail();
+  }
 }
