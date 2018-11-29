@@ -14,15 +14,15 @@ import javax.faces.validator.ValidatorException;
  */
 @FacesValidator("FakeValidator")
 public class FakeValidator implements Validator {
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * javax.faces.validator.Validator#validate(javax.faces.context.FacesContext,
-	 * javax.faces.component.UIComponent, java.lang.Object)
-	 */
-	@Override
-	public void validate(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException {
-		// do nothing...
-	}
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * javax.faces.validator.Validator#validate(javax.faces.context.FacesContext,
+   * javax.faces.component.UIComponent, java.lang.Object)
+   */
+  @Override
+  public void validate(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException {
+    // do nothing...
+  }
 }

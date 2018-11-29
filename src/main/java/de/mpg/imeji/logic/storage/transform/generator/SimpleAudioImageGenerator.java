@@ -20,34 +20,32 @@ import de.mpg.imeji.logic.util.TempFileUtil;
  * @version $Revision$ $LastChangedDate$
  */
 public class SimpleAudioImageGenerator extends ImageGenerator {
-	private static final Logger LOGGER = LogManager.getLogger(SimpleAudioImageGenerator.class);
+  private static final Logger LOGGER = LogManager.getLogger(SimpleAudioImageGenerator.class);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.mpg.imeji.logic.storage.transform.ImageGenerator#generateJPG(byte[],
-	 * java.lang.String)
-	 */
-	@Override
-	public File generatePreview(File file, String extension) {
+  /*
+   * (non-Javadoc)
+   *
+   * @see de.mpg.imeji.logic.storage.transform.ImageGenerator#generateJPG(byte[],
+   * java.lang.String)
+   */
+  @Override
+  public File generatePreview(File file, String extension) {
 
-		ImejiFileIcon audioIcon = new ImejiFileIcon("audio_file_icon");
-		try {
-			File copy = TempFileUtil.createTempFile("audio", extension);
-			FileUtils.copyFile(new File(
-					SimpleAudioImageGenerator.class.getClassLoader().getResource(audioIcon.getIconPath()).toURI()),
-					copy);
-			return copy;
-		} catch (final URISyntaxException | IOException e) {
-			LOGGER.error("Error creating thunmbnail", e);
-		}
+    ImejiFileIcon audioIcon = new ImejiFileIcon("audio_file_icon");
+    try {
+      File copy = TempFileUtil.createTempFile("audio", extension);
+      FileUtils.copyFile(new File(SimpleAudioImageGenerator.class.getClassLoader().getResource(audioIcon.getIconPath()).toURI()), copy);
+      return copy;
+    } catch (final URISyntaxException | IOException e) {
+      LOGGER.error("Error creating thunmbnail", e);
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	@Override
-	protected boolean generatorSupportsMimeType(String fileExtension) {
-		boolean isAudio = StorageUtils.getMimeType(fileExtension).contains("audio");
-		return isAudio;
-	}
+  @Override
+  protected boolean generatorSupportsMimeType(String fileExtension) {
+    boolean isAudio = StorageUtils.getMimeType(fileExtension).contains("audio");
+    return isAudio;
+  }
 }

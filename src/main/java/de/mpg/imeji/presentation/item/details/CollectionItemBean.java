@@ -22,39 +22,39 @@ import de.mpg.imeji.logic.util.UrlHelper;
 @ManagedBean(name = "CollectionItemBean")
 @ViewScoped
 public class CollectionItemBean extends ItemBean {
-	private static final long serialVersionUID = -6273094031705225499L;
-	private final String collectionId;
-	private static final Logger LOGGER = LogManager.getLogger(CollectionItemBean.class);
+  private static final long serialVersionUID = -6273094031705225499L;
+  private final String collectionId;
+  private static final Logger LOGGER = LogManager.getLogger(CollectionItemBean.class);
 
-	public CollectionItemBean() {
-		super();
-		this.collectionId = UrlHelper.getParameterValue("collectionId");
-		this.prettyLink = "pretty:EditImageOfCollection";
-	}
+  public CollectionItemBean() {
+    super();
+    this.collectionId = UrlHelper.getParameterValue("collectionId");
+    this.prettyLink = "pretty:EditImageOfCollection";
+  }
 
-	@Override
-	protected void initBrowsing() {
-		if (getImage() != null) {
-			setBrowse(new ItemDetailsBrowse(getImage(), "collection",
-					ObjectHelper.getURI(CollectionImeji.class, collectionId).toString(), getSessionUser()));
-		}
-	}
+  @Override
+  protected void initBrowsing() {
+    if (getImage() != null) {
+      setBrowse(new ItemDetailsBrowse(getImage(), "collection", ObjectHelper.getURI(CollectionImeji.class, collectionId).toString(),
+          getSessionUser()));
+    }
+  }
 
-	@Override
-	public void redirectToBrowsePage() {
-		try {
-			redirect(getNavigation().getCollectionUrl() + collectionId);
-		} catch (final IOException e) {
-			LOGGER.error("Error redirect to browse page", e);
-		}
-	}
+  @Override
+  public void redirectToBrowsePage() {
+    try {
+      redirect(getNavigation().getCollectionUrl() + collectionId);
+    } catch (final IOException e) {
+      LOGGER.error("Error redirect to browse page", e);
+    }
+  }
 
-	@Override
-	public String getNavigationString() {
-		return "pretty:CollectionItem";
-	}
+  @Override
+  public String getNavigationString() {
+    return "pretty:CollectionItem";
+  }
 
-	public String getCollectionId() {
-		return collectionId;
-	}
+  public String getCollectionId() {
+    return collectionId;
+  }
 }

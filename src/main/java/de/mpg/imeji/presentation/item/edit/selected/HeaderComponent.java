@@ -13,86 +13,82 @@ import de.mpg.imeji.presentation.item.edit.MetadataInputComponent;
  *
  */
 public class HeaderComponent implements Serializable {
-	private static final long serialVersionUID = -2261479826163433985L;
-	private MetadataInputComponent input;
-	private final Statement statement;
-	private boolean edit = false;
-	private boolean invalidName = false;
-	private String inputName;
+  private static final long serialVersionUID = -2261479826163433985L;
+  private MetadataInputComponent input;
+  private final Statement statement;
+  private boolean edit = false;
+  private boolean invalidName = false;
+  private String inputName;
 
-	public HeaderComponent(Statement statement) {
-		this.statement = statement.clone();
-		this.setInputName(new String(statement.getIndex()));
-	}
+  public HeaderComponent(Statement statement) {
+    this.statement = statement.clone();
+    this.setInputName(new String(statement.getIndex()));
+  }
 
-	public void initInput() {
-		input = new MetadataInputComponent(ImejiFactory.newMetadata(statement).build(), statement);
-	}
+  public void initInput() {
+    input = new MetadataInputComponent(ImejiFactory.newMetadata(statement).build(), statement);
+  }
 
-	/**
-	 * @return the inputComponent
-	 */
-	public MetadataInputComponent getInput() {
-		return input;
-	}
+  /**
+   * @return the inputComponent
+   */
+  public MetadataInputComponent getInput() {
+    return input;
+  }
 
-	/**
-	 * @param inputComponent
-	 *            the inputComponent to set
-	 */
-	public void setInput(MetadataInputComponent inputComponent) {
-		this.input = inputComponent;
-	}
+  /**
+   * @param inputComponent the inputComponent to set
+   */
+  public void setInput(MetadataInputComponent inputComponent) {
+    this.input = inputComponent;
+  }
 
-	/**
-	 * @return the statement
-	 */
-	public Statement getStatement() {
-		return statement;
-	}
+  /**
+   * @return the statement
+   */
+  public Statement getStatement() {
+    return statement;
+  }
 
-	/**
-	 * @return the invalidName
-	 */
-	public boolean isInvalidName() {
-		return invalidName;
-	}
+  /**
+   * @return the invalidName
+   */
+  public boolean isInvalidName() {
+    return invalidName;
+  }
 
-	/**
-	 * @param invalidName
-	 *            the invalidName to set
-	 */
-	public void setInvalidName(boolean invalidName) {
-		this.invalidName = invalidName;
-	}
+  /**
+   * @param invalidName the invalidName to set
+   */
+  public void setInvalidName(boolean invalidName) {
+    this.invalidName = invalidName;
+  }
 
-	/**
-	 * @return the edit
-	 */
-	public boolean isEdit() {
-		return edit;
-	}
+  /**
+   * @return the edit
+   */
+  public boolean isEdit() {
+    return edit;
+  }
 
-	/**
-	 * @param edit
-	 *            the edit to set
-	 */
-	public void setEdit(boolean edit) {
-		this.edit = edit;
-	}
+  /**
+   * @param edit the edit to set
+   */
+  public void setEdit(boolean edit) {
+    this.edit = edit;
+  }
 
-	/**
-	 * @return the inputName
-	 */
-	public String getInputName() {
-		return inputName;
-	}
+  /**
+   * @return the inputName
+   */
+  public String getInputName() {
+    return inputName;
+  }
 
-	/**
-	 * @param inputName
-	 *            the inputName to set
-	 */
-	public void setInputName(String inputName) {
-		this.inputName = inputName;
-	}
+  /**
+   * @param inputName the inputName to set
+   */
+  public void setInputName(String inputName) {
+    this.inputName = inputName;
+  }
 }

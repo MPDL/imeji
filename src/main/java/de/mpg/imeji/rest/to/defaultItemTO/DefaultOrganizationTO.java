@@ -15,70 +15,66 @@ import de.mpg.imeji.logic.model.Organization;
  */
 @JsonInclude(Include.NON_NULL)
 public class DefaultOrganizationTO implements Serializable {
-	private static final long serialVersionUID = 6845497959988466861L;
-	private String name;
-	private String description;
-	private String city;
-	private String country;
+  private static final long serialVersionUID = 6845497959988466861L;
+  private String name;
+  private String description;
+  private String city;
+  private String country;
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+  /**
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
 
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+  /**
+   * @param name the name to set
+   */
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
+  /**
+   * @return the description
+   */
+  public String getDescription() {
+    return description;
+  }
 
-	/**
-	 * @param description
-	 *            the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  /**
+   * @param description the description to set
+   */
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	/**
-	 * @return the city
-	 */
-	public String getCity() {
-		return city;
-	}
+  /**
+   * @return the city
+   */
+  public String getCity() {
+    return city;
+  }
 
-	/**
-	 * @param city
-	 *            the city to set
-	 */
-	public void setCity(String city) {
-		this.city = city;
-	}
+  /**
+   * @param city the city to set
+   */
+  public void setCity(String city) {
+    this.city = city;
+  }
 
-	/**
-	 * @return the country
-	 */
-	public String getCountry() {
-		return country;
-	}
+  /**
+   * @return the country
+   */
+  public String getCountry() {
+    return country;
+  }
 
-	/**
-	 * @param country
-	 *            the country to set
-	 */
-	public void setCountry(String country) {
-		this.country = country;
-	}
+  /**
+   * @param country the country to set
+   */
+  public void setCountry(String country) {
+    this.country = country;
+  }
 
 }

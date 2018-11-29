@@ -11,9 +11,8 @@ import de.mpg.imeji.logic.config.Imeji;
  */
 public class CommonMessages {
 
-	public static String getSuccessCollectionDeleteMessage(String collectionName, Locale locale) {
-		return Imeji.RESOURCE_BUNDLE.getMessage("success_collection_delete", locale).replace("XXX_collectionName_XXX",
-				collectionName);
-	}
+  public static String getSuccessCollectionDeleteMessage(String collectionName, Locale locale) {
+    return Imeji.RESOURCE_BUNDLE.getMessage("success_collection_delete", locale).replace("XXX_collectionName_XXX", collectionName);
+  }
 
 }

@@ -19,75 +19,75 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
  *
  */
 public class ImejiStartupConfig {
-	private enum ENTRIES {
-		REINDEX;
-	}
+  private enum ENTRIES {
+    REINDEX;
+  }
 
-	private static final Logger LOGGER = LogManager.getLogger(ImejiStartupConfig.class);
-	private static Properties config;
-	private static File configFile;
+  private static final Logger LOGGER = LogManager.getLogger(ImejiStartupConfig.class);
+  private static Properties config;
+  private static File configFile;
 
-	public ImejiStartupConfig() {
-		try {
-			readConfigurationFile();
-		} catch (IOException | URISyntaxException e) {
-			LOGGER.error("Error reading startup conf file: " + configFile.getAbsolutePath(), e);
-		}
-	}
+  public ImejiStartupConfig() {
+    try {
+      readConfigurationFile();
+    } catch (IOException | URISyntaxException e) {
+      LOGGER.error("Error reading startup conf file: " + configFile.getAbsolutePath(), e);
+    }
+  }
 
-	/**
-	 * Get the Configuration File from the filesystem. If not existing, create a new
-	 * one with default values
-	 *
-	 * @throws IOException
-	 *
-	 * @throws URISyntaxException
-	 */
-	private synchronized void readConfigurationFile() throws IOException, URISyntaxException {
-		config = new Properties();
-		configFile = new File(PropertyReader.getProperty("imeji.tdb.path") + "/startup.properties");
-		if (!configFile.exists()) {
-			configFile.getParentFile().mkdirs();
-			configFile.createNewFile();
-			setDefaultConfig();
-		}
-		final FileInputStream in = new FileInputStream(configFile);
-		config.load(in);
-	}
+  /**
+   * Get the Configuration File from the filesystem. If not existing, create a new one with default
+   * values
+   *
+   * @throws IOException
+   *
+   * @throws URISyntaxException
+   */
+  private synchronized void readConfigurationFile() throws IOException, URISyntaxException {
+    config = new Properties();
+    configFile = new File(PropertyReader.getProperty("imeji.tdb.path") + "/startup.properties");
+    if (!configFile.exists()) {
+      configFile.getParentFile().mkdirs();
+      configFile.createNewFile();
+      setDefaultConfig();
+    }
+    final FileInputStream in = new FileInputStream(configFile);
+    config.load(in);
+  }
 
-	/**
-	 * Write the Default Configuration to the Disk. This should be called when the
-	 * Configuration is initialized for the first time.
-	 */
-	private synchronized void setDefaultConfig() {
-		config = new Properties();
-		config.setProperty(ENTRIES.REINDEX.name(), "false");
-		saveConfig();
-	}
+  /**
+   * Write the Default Configuration to the Disk. This should be called when the Configuration is
+   * initialized for the first time.
+   */
+  private synchronized void setDefaultConfig() {
+    config = new Properties();
+    config.setProperty(ENTRIES.REINDEX.name(), "false");
+    saveConfig();
+  }
 
-	/**
-	 * Save the configuration in the config file
-	 */
-	public void saveConfig() {
-		try {
-			config.store(new FileOutputStream(configFile), "imeji startup configuration File");
-			LOGGER.info("saving imeji startup config");
-		} catch (final Exception e) {
-			LOGGER.error("Error saving startup configuration:", e);
-		}
-	}
+  /**
+   * Save the configuration in the config file
+   */
+  public void saveConfig() {
+    try {
+      config.store(new FileOutputStream(configFile), "imeji startup configuration File");
+      LOGGER.info("saving imeji startup config");
+    } catch (final Exception e) {
+      LOGGER.error("Error saving startup configuration:", e);
+    }
+  }
 
-	/**
-	 * True if a reindex must be done by startup
-	 *
-	 * @return
-	 */
-	public boolean doReIndex() {
-		return Boolean.parseBoolean(config.getProperty(ENTRIES.REINDEX.name()));
-	}
+  /**
+   * True if a reindex must be done by startup
+   *
+   * @return
+   */
+  public boolean doReIndex() {
+    return Boolean.parseBoolean(config.getProperty(ENTRIES.REINDEX.name()));
+  }
 
-	public void setReindex(boolean b) {
-		config.setProperty(ENTRIES.REINDEX.name(), Boolean.toString(b));
-	}
+  public void setReindex(boolean b) {
+    config.setProperty(ENTRIES.REINDEX.name(), Boolean.toString(b));
+  }
 
 }

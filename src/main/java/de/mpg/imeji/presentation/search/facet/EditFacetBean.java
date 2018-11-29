@@ -19,39 +19,39 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ManagedBean(name = "EditFacetBean")
 @ViewScoped
 public class EditFacetBean extends CreateFacetBean {
-	private static final long serialVersionUID = 740835048734163748L;
-	private static final Logger LOGGER = LogManager.getLogger(EditFacetBean.class);
-	private Facet facet;
+  private static final long serialVersionUID = 740835048734163748L;
+  private static final Logger LOGGER = LogManager.getLogger(EditFacetBean.class);
+  private Facet facet;
 
-	@PostConstruct
-	public void init() {
-		String facetId = null;
-		try {
-			facetId = UrlHelper.getParameterValue("facetId");
-			this.facet = new FacetService().read(facetId);
-			setName(facet.getName());
-			setType(facet.getType());
-			setIndex(facet.getIndex());
-		} catch (NotFoundException e) {
-			LOGGER.error("Error initializing FacetBean", e);
-			BeanHelper.error("Unknown facet: " + facetId);
-		} catch (Exception e) {
-			LOGGER.error("Error initializing FacetBean", e);
-		}
-	}
+  @PostConstruct
+  public void init() {
+    String facetId = null;
+    try {
+      facetId = UrlHelper.getParameterValue("facetId");
+      this.facet = new FacetService().read(facetId);
+      setName(facet.getName());
+      setType(facet.getType());
+      setIndex(facet.getIndex());
+    } catch (NotFoundException e) {
+      LOGGER.error("Error initializing FacetBean", e);
+      BeanHelper.error("Unknown facet: " + facetId);
+    } catch (Exception e) {
+      LOGGER.error("Error initializing FacetBean", e);
+    }
+  }
 
-	@Override
-	public void save() {
-		facet.setIndex(getIndex());
-		facet.setName(getName());
-		facet.setType(getType());
-		try {
-			new FacetService().update(facet, getSessionUser());
-			redirect(getNavigation().getApplicationUrl() + "facets");
-		} catch (ImejiException | IOException e) {
-			LOGGER.error("Error updateing Facet ", e);
-			BeanHelper.error("Error saving Facet", e.getMessage());
-		}
-	}
+  @Override
+  public void save() {
+    facet.setIndex(getIndex());
+    facet.setName(getName());
+    facet.setType(getType());
+    try {
+      new FacetService().update(facet, getSessionUser());
+      redirect(getNavigation().getApplicationUrl() + "facets");
+    } catch (ImejiException | IOException e) {
+      LOGGER.error("Error updateing Facet ", e);
+      BeanHelper.error("Error saving Facet", e.getMessage());
+    }
+  }
 
 }

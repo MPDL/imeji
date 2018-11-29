@@ -8,13 +8,12 @@ import de.mpg.imeji.util.SuperTestSuite;
 
 @RunWith(Suite.class)
 
-@Suite.SuiteClasses({
-		CollectionServiceTest.class /*
-									 * ShareServiceTest.class, StatementServiceTest.class,
-									 * UsergroupServiceTest.class, UserServiceTest.class, ContentServiceTest.class
-									 * 
-									 * ItemServiceTest.class
-									 */})
+@Suite.SuiteClasses({CollectionServiceTest.class /*
+                                                  * ShareServiceTest.class, StatementServiceTest.class,
+                                                  * UsergroupServiceTest.class, UserServiceTest.class, ContentServiceTest.class
+                                                  * 
+                                                  * ItemServiceTest.class
+                                                  */})
 
 public class ServiceTestSuite extends SuperTestSuite {
 

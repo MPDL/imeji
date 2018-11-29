@@ -17,36 +17,36 @@ import de.mpg.imeji.logic.ImejiNamespaces;
 @j2jResource(ImejiNamespaces.TECHNICAL_METADATA)
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class TechnicalMetadata implements Serializable {
-	private static final long serialVersionUID = 519330579019278631L;
-	private URI id;
-	@j2jLiteral("http://imeji.org/terms/name")
-	private String name;
-	@j2jLiteral("http://imeji.org/terms/value")
-	private String value;
+  private static final long serialVersionUID = 519330579019278631L;
+  private URI id;
+  @j2jLiteral("http://imeji.org/terms/name")
+  private String name;
+  @j2jLiteral("http://imeji.org/terms/value")
+  private String value;
 
-	public TechnicalMetadata() {
-		// Default Constructor
-	}
+  public TechnicalMetadata() {
+    // Default Constructor
+  }
 
-	public TechnicalMetadata(String name, String value) {
-		this.name = name;
-		this.value = value;
-	}
+  public TechnicalMetadata(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public URI getId() {
-		return id;
-	}
+  public URI getId() {
+    return id;
+  }
 
-	public void setId(URI id) {
-		this.id = id;
-	}
+  public void setId(URI id) {
+    this.id = id;
+  }
 
 }

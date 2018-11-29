@@ -13,7 +13,7 @@ import java.net.URI;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface j2jId {
-	public String setMethod();
+  public String setMethod();
 
-	public String getMethod();
+  public String getMethod();
 }

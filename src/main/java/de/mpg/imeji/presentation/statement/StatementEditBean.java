@@ -34,79 +34,76 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ViewScoped
 @ManagedBean(name = "StatementEditBean")
 public class StatementEditBean extends StatementCreateBean {
-	private static final long serialVersionUID = 5191523522987113715L;
-	private static final Logger LOGGER = LogManager.getLogger(StatementEditBean.class);
-	private StatementService service = new StatementService();
-	private boolean used = false;
-	private Statement statement;
+  private static final long serialVersionUID = 5191523522987113715L;
+  private static final Logger LOGGER = LogManager.getLogger(StatementEditBean.class);
+  private StatementService service = new StatementService();
+  private boolean used = false;
+  private Statement statement;
 
-	public StatementEditBean() {
+  public StatementEditBean() {
 
-	}
+  }
 
-	@PostConstruct
-	public void init() {
-		try {
-			String id = URLDecoder.decode(UrlHelper.getParameterValue("statementId"), "UTF-8");
-			statement = service.retrieve(ObjectHelper.getURI(Statement.class, id).toString(), getSessionUser());
-			getStatementForm().setType(statement.getType().name());
-			getStatementForm().setName(statement.getIndex());
-			getStatementForm().setNamespace(statement.getNamespace());
-			if (statement.getVocabulary() != null) {
-				getStatementForm().setUseGoogleMapsAPI(
-						statement.getVocabulary().toString().equals(Imeji.CONFIG.getGoogleMapsApi()));
-				getStatementForm().setUseMaxPlanckAuthors(
-						statement.getVocabulary().toString().equals(Imeji.CONFIG.getConeAuthors()));
-			}
-			if (statement.getLiteralConstraints() != null) {
-				getStatementForm().getPredefinedValues().addAll(statement.getLiteralConstraints());
-			}
-			used = searchIfUsed(statement);
-		} catch (ImejiException | UnsupportedEncodingException e) {
-			LOGGER.error("Error retrieving statement: ", e);
-		}
-	}
+  @PostConstruct
+  public void init() {
+    try {
+      String id = URLDecoder.decode(UrlHelper.getParameterValue("statementId"), "UTF-8");
+      statement = service.retrieve(ObjectHelper.getURI(Statement.class, id).toString(), getSessionUser());
+      getStatementForm().setType(statement.getType().name());
+      getStatementForm().setName(statement.getIndex());
+      getStatementForm().setNamespace(statement.getNamespace());
+      if (statement.getVocabulary() != null) {
+        getStatementForm().setUseGoogleMapsAPI(statement.getVocabulary().toString().equals(Imeji.CONFIG.getGoogleMapsApi()));
+        getStatementForm().setUseMaxPlanckAuthors(statement.getVocabulary().toString().equals(Imeji.CONFIG.getConeAuthors()));
+      }
+      if (statement.getLiteralConstraints() != null) {
+        getStatementForm().getPredefinedValues().addAll(statement.getLiteralConstraints());
+      }
+      used = searchIfUsed(statement);
+    } catch (ImejiException | UnsupportedEncodingException e) {
+      LOGGER.error("Error retrieving statement: ", e);
+    }
+  }
 
-	/**
-	 * True if the Statement is used by at least one item
-	 * 
-	 * @param s
-	 * @return
-	 * @throws UnprocessableError
-	 */
-	private boolean searchIfUsed(Statement s) throws UnprocessableError {
-		SearchFactory factory = new SearchFactory();
-		factory.addElement(new SearchPair(SearchFields.index, s.getIndexFormatted()), LOGICAL_RELATIONS.AND);
-		return new ItemService().search(factory.build(), null, Imeji.adminUser, 0, 1).getNumberOfRecords() > 0;
-	}
+  /**
+   * True if the Statement is used by at least one item
+   * 
+   * @param s
+   * @return
+   * @throws UnprocessableError
+   */
+  private boolean searchIfUsed(Statement s) throws UnprocessableError {
+    SearchFactory factory = new SearchFactory();
+    factory.addElement(new SearchPair(SearchFields.index, s.getIndexFormatted()), LOGICAL_RELATIONS.AND);
+    return new ItemService().search(factory.build(), null, Imeji.adminUser, 0, 1).getNumberOfRecords() > 0;
+  }
 
-	@Override
-	public void save() {
-		try {
-			service.update(statement, getStatementForm().asStatement(), getSessionUser());
-			redirect(getNavigation().getApplicationUrl() + "statements");
-		} catch (final ImejiException | IOException e) {
-			BeanHelper.error("Error editing statement: " + e.getMessage());
-			LOGGER.error("Error editing statement", e);
-		}
-	}
+  @Override
+  public void save() {
+    try {
+      service.update(statement, getStatementForm().asStatement(), getSessionUser());
+      redirect(getNavigation().getApplicationUrl() + "statements");
+    } catch (final ImejiException | IOException e) {
+      BeanHelper.error("Error editing statement: " + e.getMessage());
+      LOGGER.error("Error editing statement", e);
+    }
+  }
 
-	/**
-	 * @return the used
-	 */
-	public boolean isUsed() {
-		return used;
-	}
+  /**
+   * @return the used
+   */
+  public boolean isUsed() {
+    return used;
+  }
 
-	/**
-	 * @param used
-	 *            the used to set
-	 */
-	public void setUsed(boolean used) {
-		this.used = used;
-	}
+  /**
+   * @param used the used to set
+   */
+  public void setUsed(boolean used) {
+    this.used = used;
+  }
 
-	public Statement getStatement() {
-		return statement;
-	}
+  public Statement getStatement() {
+    return statement;
+  }
 }

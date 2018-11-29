@@ -39,156 +39,151 @@ import de.mpg.imeji.presentation.session.SessionBean;
 
 @WebServlet(urlPatterns = "/exportServlet", asyncSupported = true)
 public class ExportServlet extends HttpServlet {
-	private static final long serialVersionUID = -777947169051357999L;
-	private static final Logger LOGGER = LogManager.getLogger(ExportServlet.class);
+  private static final long serialVersionUID = -777947169051357999L;
+  private static final Logger LOGGER = LogManager.getLogger(ExportServlet.class);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		final SessionBean session = getSessionBean(req, resp);
-		try {
-			final ExportAbstract export = doExport(req, resp, session);
-			resp.setHeader("Connection", "close");
-			resp.setHeader("Content-Type", export.getContentType() + ";charset=UTF-8");
-			resp.setHeader("Content-disposition", "attachment; filename=\"" + export.getName() + "\"");
-			resp.setHeader("Content-length", export.getSize());
-			resp.setStatus(HttpServletResponse.SC_OK);
-			export.export(resp.getOutputStream());
-			resp.getOutputStream().flush();
-		} catch (final HttpResponseException he) {
-			LOGGER.error("Error export", he);
-			resp.sendError(he.getStatusCode(), he.getMessage());
-		} catch (final Exception e) {
-			LOGGER.error("Error export", e);
-			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-		}
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    final SessionBean session = getSessionBean(req, resp);
+    try {
+      final ExportAbstract export = doExport(req, resp, session);
+      resp.setHeader("Connection", "close");
+      resp.setHeader("Content-Type", export.getContentType() + ";charset=UTF-8");
+      resp.setHeader("Content-disposition", "attachment; filename=\"" + export.getName() + "\"");
+      resp.setHeader("Content-length", export.getSize());
+      resp.setStatus(HttpServletResponse.SC_OK);
+      export.export(resp.getOutputStream());
+      resp.getOutputStream().flush();
+    } catch (final HttpResponseException he) {
+      LOGGER.error("Error export", he);
+      resp.sendError(he.getStatusCode(), he.getMessage());
+    } catch (final Exception e) {
+      LOGGER.error("Error export", e);
+      resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+  }
 
-	/**
-	 * Perform the export from the request parameters
-	 * 
-	 * @param req
-	 * @param resp
-	 * @param session
-	 * @return
-	 * @throws ImejiException
-	 * @throws IOException
-	 */
-	private ExportAbstract doExport(HttpServletRequest req, HttpServletResponse resp, SessionBean session)
-			throws ImejiException, IOException {
-		final User user = session.getUser();
-		final String format = req.getParameter("format");
-		ExportAbstract export = null;
-		if (format != null) {
-			switch (format) {
-				case "zip" :
-					export = new ZIPExport(getItemIds(req, session), user);
-					break;
-				case "file" :
-					export = new FileExport(req.getParameter("id"), user);
-					break;
-				case "sitemap" :
-					export = new SitemapExport(req.getParameter("q"), req.getParameter("priority"), user);
-					break;
-				case "folder" :
-					export = new FolderExport(req.getParameter("col"), user);
-					break;
-			}
-		} else {
-			throw new UnprocessableError("Unknown format parameter. Possible values: files,selected, sitemap, item");
-		}
-		return export;
-	}
+  /**
+   * Perform the export from the request parameters
+   * 
+   * @param req
+   * @param resp
+   * @param session
+   * @return
+   * @throws ImejiException
+   * @throws IOException
+   */
+  private ExportAbstract doExport(HttpServletRequest req, HttpServletResponse resp, SessionBean session)
+      throws ImejiException, IOException {
+    final User user = session.getUser();
+    final String format = req.getParameter("format");
+    ExportAbstract export = null;
+    if (format != null) {
+      switch (format) {
+        case "zip":
+          export = new ZIPExport(getItemIds(req, session), user);
+          break;
+        case "file":
+          export = new FileExport(req.getParameter("id"), user);
+          break;
+        case "sitemap":
+          export = new SitemapExport(req.getParameter("q"), req.getParameter("priority"), user);
+          break;
+        case "folder":
+          export = new FolderExport(req.getParameter("col"), user);
+          break;
+      }
+    } else {
+      throw new UnprocessableError("Unknown format parameter. Possible values: files,selected, sitemap, item");
+    }
+    return export;
+  }
 
-	/**
-	 * Return the item ids to be exported. Default, return the selected items in the
-	 * session
-	 * 
-	 * @param req
-	 * @param session
-	 * @return
-	 * @throws UnprocessableError
-	 */
-	private List<String> getItemIds(HttpServletRequest req, SessionBean session) throws UnprocessableError {
-		final String query = req.getParameter("q");
-		final String collectionId = req.getParameter("col");
-		if (query != null || !StringHelper.isNullOrEmptyTrim(collectionId)) {
-			return new ItemService().search(
-					!StringHelper.isNullOrEmptyTrim(collectionId)
-							? ObjectHelper.getURI(CollectionImeji.class, collectionId)
-							: null,
-					SearchQueryParser.parseStringQuery(query), null, session.getUser(), Search.GET_ALL_RESULTS,
-					Search.SEARCH_FROM_START_INDEX).getResults();
-		} else {
-			return session.getSelected();
-		}
-	}
+  /**
+   * Return the item ids to be exported. Default, return the selected items in the session
+   * 
+   * @param req
+   * @param session
+   * @return
+   * @throws UnprocessableError
+   */
+  private List<String> getItemIds(HttpServletRequest req, SessionBean session) throws UnprocessableError {
+    final String query = req.getParameter("q");
+    final String collectionId = req.getParameter("col");
+    if (query != null || !StringHelper.isNullOrEmptyTrim(collectionId)) {
+      return new ItemService()
+          .search(!StringHelper.isNullOrEmptyTrim(collectionId) ? ObjectHelper.getURI(CollectionImeji.class, collectionId) : null,
+              SearchQueryParser.parseStringQuery(query), null, session.getUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX)
+          .getResults();
+    } else {
+      return session.getSelected();
+    }
+  }
 
-	/**
-	 * Return the extension of the exported file according to the mimeType
-	 * 
-	 * @param mimetype
-	 * @return
-	 */
-	private String getExportExtension(String mimetype) {
-		if (mimetype.equalsIgnoreCase("application/zip")) {
-			return ".zip";
-		}
-		return ".zip";
-	}
+  /**
+   * Return the extension of the exported file according to the mimeType
+   * 
+   * @param mimetype
+   * @return
+   */
+  private String getExportExtension(String mimetype) {
+    if (mimetype.equalsIgnoreCase("application/zip")) {
+      return ".zip";
+    }
+    return ".zip";
+  }
 
-	/**
-	 * Get the {@link SessionBean} from the {@link HttpSession}
-	 *
-	 * @param req
-	 * @param resp
-	 * @return
-	 */
-	private SessionBean getSessionBean(HttpServletRequest req, HttpServletResponse resp) {
-		final FacesContext fc = getFacesContext(req, resp);
-		final Object session = fc.getExternalContext().getSessionMap().get("SessionBean");
-		if (session == null) {
-			try {
-				final SessionBean newSession = SessionBean.class.newInstance();
-				fc.getExternalContext().getSessionMap().put("SessionBean", newSession);
-				return newSession;
-			} catch (final Exception e) {
-				throw new RuntimeException("Error creating Session", e);
-			}
-		}
-		return (SessionBean) session;
-	}
+  /**
+   * Get the {@link SessionBean} from the {@link HttpSession}
+   *
+   * @param req
+   * @param resp
+   * @return
+   */
+  private SessionBean getSessionBean(HttpServletRequest req, HttpServletResponse resp) {
+    final FacesContext fc = getFacesContext(req, resp);
+    final Object session = fc.getExternalContext().getSessionMap().get("SessionBean");
+    if (session == null) {
+      try {
+        final SessionBean newSession = SessionBean.class.newInstance();
+        fc.getExternalContext().getSessionMap().put("SessionBean", newSession);
+        return newSession;
+      } catch (final Exception e) {
+        throw new RuntimeException("Error creating Session", e);
+      }
+    }
+    return (SessionBean) session;
+  }
 
-	/**
-	 * Get Faces Context from Filter
-	 *
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	private FacesContext getFacesContext(ServletRequest request, ServletResponse response) {
-		// Try to get it first
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		// if (facesContext != null) return facesContext;
-		final FacesContextFactory contextFactory = (FacesContextFactory) FactoryFinder
-				.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
-		final LifecycleFactory lifecycleFactory = (LifecycleFactory) FactoryFinder
-				.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
-		final Lifecycle lifecycle = lifecycleFactory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
-		facesContext = contextFactory.getFacesContext(getServletContext(), request, response, lifecycle);
-		// Set using our inner class
-		InnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
-		// set a new viewRoot, otherwise context.getViewRoot returns null
-		final UIViewRoot view = facesContext.getApplication().getViewHandler().createView(facesContext, "imeji");
-		facesContext.setViewRoot(view);
-		return facesContext;
-	}
+  /**
+   * Get Faces Context from Filter
+   *
+   * @param request
+   * @param response
+   * @return
+   */
+  private FacesContext getFacesContext(ServletRequest request, ServletResponse response) {
+    // Try to get it first
+    FacesContext facesContext = FacesContext.getCurrentInstance();
+    // if (facesContext != null) return facesContext;
+    final FacesContextFactory contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+    final LifecycleFactory lifecycleFactory = (LifecycleFactory) FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
+    final Lifecycle lifecycle = lifecycleFactory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
+    facesContext = contextFactory.getFacesContext(getServletContext(), request, response, lifecycle);
+    // Set using our inner class
+    InnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
+    // set a new viewRoot, otherwise context.getViewRoot returns null
+    final UIViewRoot view = facesContext.getApplication().getViewHandler().createView(facesContext, "imeji");
+    facesContext.setViewRoot(view);
+    return facesContext;
+  }
 
-	public abstract static class InnerFacesContext extends FacesContext {
-		protected static void setFacesContextAsCurrentInstance(FacesContext facesContext) {
-			FacesContext.setCurrentInstance(facesContext);
-		}
-	}
+  public abstract static class InnerFacesContext extends FacesContext {
+    protected static void setFacesContextAsCurrentInstance(FacesContext facesContext) {
+      FacesContext.setCurrentInstance(facesContext);
+    }
+  }
 }

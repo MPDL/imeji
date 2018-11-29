@@ -22,112 +22,110 @@ import de.mpg.imeji.logic.events.messages.Message.MessageType;
  *
  */
 public class MessageService {
-	private static final KeyValueStoreService QUEUE = new KeyValueStoreService(new HTreeMapStore("messageQueue"));
-	private static Logger LOGGER = LogManager.getLogger(MessageService.class);
-	private final ListenerService subscriptionService = new ListenerService();
+  private static final KeyValueStoreService QUEUE = new KeyValueStoreService(new HTreeMapStore("messageQueue"));
+  private static Logger LOGGER = LogManager.getLogger(MessageService.class);
+  private final ListenerService subscriptionService = new ListenerService();
 
-	/**
-	 * Register a new {@link Message}
-	 * 
-	 * @param message
-	 */
-	public void add(Message message) {
-		try {
-			QUEUE.put(message.getMessageId(), message);
-			subscriptionService.notifySubscribers(message);
-		} catch (ImejiException e) {
-			LOGGER.error("Error adding a new message", e);
-		}
-	}
+  /**
+   * Register a new {@link Message}
+   * 
+   * @param message
+   */
+  public void add(Message message) {
+    try {
+      QUEUE.put(message.getMessageId(), message);
+      subscriptionService.notifySubscribers(message);
+    } catch (ImejiException e) {
+      LOGGER.error("Error adding a new message", e);
+    }
+  }
 
-	/**
-	 * Read and delete all messages for a specific object
-	 * 
-	 * @param objectId
-	 * @return
-	 */
-	public List<Message> readForObject(String objectId) {
-		try {
-			return QUEUE.getList(objectId + ":*", Message.class);
-		} catch (ImejiException e) {
-			LOGGER.error("Error reading message queue for object " + objectId, e);
-		}
-		return new ArrayList<>();
-	}
+  /**
+   * Read and delete all messages for a specific object
+   * 
+   * @param objectId
+   * @return
+   */
+  public List<Message> readForObject(String objectId) {
+    try {
+      return QUEUE.getList(objectId + ":*", Message.class);
+    } catch (ImejiException e) {
+      LOGGER.error("Error reading message queue for object " + objectId, e);
+    }
+    return new ArrayList<>();
+  }
 
-	/**
-	 * Read all messages
-	 * 
-	 * @return
-	 */
-	public List<Message> readAll() {
-		try {
-			return QUEUE.getList(".*", Message.class);
-		} catch (ImejiException e) {
-			LOGGER.error("Error reading message queue ", e);
-		}
-		return new ArrayList<>();
-	}
+  /**
+   * Read all messages
+   * 
+   * @return
+   */
+  public List<Message> readAll() {
+    try {
+      return QUEUE.getList(".*", Message.class);
+    } catch (ImejiException e) {
+      LOGGER.error("Error reading message queue ", e);
+    }
+    return new ArrayList<>();
+  }
 
-	/**
-	 * Read all messages for a specific object between 2 times
-	 * 
-	 * @param objectId
-	 * @return
-	 */
-	public List<Message> readForObject(String objectId, long from, long to) {
-		try {
-			return QUEUE.getList(objectId + ":.*", Message.class).stream()
-					.filter(m -> m.getTime() > from && m.getTime() < to).collect(Collectors.toList());
-		} catch (ImejiException e) {
-			LOGGER.error("Error reading message queue for object " + objectId, e);
-		}
-		return new ArrayList<>();
-	}
+  /**
+   * Read all messages for a specific object between 2 times
+   * 
+   * @param objectId
+   * @return
+   */
+  public List<Message> readForObject(String objectId, long from, long to) {
+    try {
+      return QUEUE.getList(objectId + ":.*", Message.class).stream().filter(m -> m.getTime() > from && m.getTime() < to)
+          .collect(Collectors.toList());
+    } catch (ImejiException e) {
+      LOGGER.error("Error reading message queue for object " + objectId, e);
+    }
+    return new ArrayList<>();
+  }
 
-	/**
-	 * Retrieve all messages with the specified types between to time
-	 * 
-	 * @param from
-	 * @param to
-	 * @param types
-	 * @return
-	 */
-	public List<Message> retrieveByType(long from, long to, MessageType... types) {
-		return readAll().stream()
-				.filter(m -> Arrays.asList(types).contains(m.getType()) && m.getTime() > from && m.getTime() < to)
-				.collect(Collectors.toList());
-	}
+  /**
+   * Retrieve all messages with the specified types between to time
+   * 
+   * @param from
+   * @param to
+   * @param types
+   * @return
+   */
+  public List<Message> retrieveByType(long from, long to, MessageType... types) {
+    return readAll().stream().filter(m -> Arrays.asList(types).contains(m.getType()) && m.getTime() > from && m.getTime() < to)
+        .collect(Collectors.toList());
+  }
 
-	/**
-	 * Delete all messages older than the timestamp
-	 * 
-	 * @param time
-	 */
-	public void deleteOldMessages(long timestamp) {
-		try {
-			List<Message> allMessages = QUEUE.getList(".*", Message.class);
-			for (Message message : allMessages.stream().filter(m -> m.getTime() < timestamp)
-					.collect(Collectors.toList())) {
-				QUEUE.delete(message.getMessageId());
-			}
-		} catch (ImejiException e) {
-			LOGGER.error("Error deleting message before " + timestamp, e);
-		}
-	}
+  /**
+   * Delete all messages older than the timestamp
+   * 
+   * @param time
+   */
+  public void deleteOldMessages(long timestamp) {
+    try {
+      List<Message> allMessages = QUEUE.getList(".*", Message.class);
+      for (Message message : allMessages.stream().filter(m -> m.getTime() < timestamp).collect(Collectors.toList())) {
+        QUEUE.delete(message.getMessageId());
+      }
+    } catch (ImejiException e) {
+      LOGGER.error("Error deleting message before " + timestamp, e);
+    }
+  }
 
-	/**
-	 * Delete all the messages
-	 * 
-	 * @param messages
-	 */
-	public void deleteMessages(List<Message> messages) {
-		for (Message m : messages) {
-			try {
-				QUEUE.delete(m.getMessageId());
-			} catch (ImejiException e) {
-				LOGGER.error("Error deleting message from queue", e);
-			}
-		}
-	}
+  /**
+   * Delete all the messages
+   * 
+   * @param messages
+   */
+  public void deleteMessages(List<Message> messages) {
+    for (Message m : messages) {
+      try {
+        QUEUE.delete(m.getMessageId());
+      } catch (ImejiException e) {
+        LOGGER.error("Error deleting message from queue", e);
+      }
+    }
+  }
 }

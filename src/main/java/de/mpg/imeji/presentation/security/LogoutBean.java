@@ -19,11 +19,11 @@ import de.mpg.imeji.presentation.navigation.Navigation;
 @ViewScoped
 @ManagedBean(name = "LogoutBean")
 public class LogoutBean implements Serializable {
-	private static final long serialVersionUID = -2722355711874392048L;
+  private static final long serialVersionUID = -2722355711874392048L;
 
-	public void logout() throws IOException {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		ec.invalidateSession();
-		ec.redirect(new Navigation().getHomeUrl() + "?logout=1");
-	}
+  public void logout() throws IOException {
+    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+    ec.invalidateSession();
+    ec.redirect(new Navigation().getHomeUrl() + "?logout=1");
+  }
 }

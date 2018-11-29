@@ -14,10 +14,10 @@ import org.apache.jena.rdf.model.Resource;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface j2jResource {
-	/**
-	 * The namespace of the resource
-	 *
-	 * @return
-	 */
-	public String value();
+  /**
+   * The namespace of the resource
+   *
+   * @return
+   */
+  public String value();
 }

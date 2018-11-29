@@ -39,273 +39,261 @@ import de.mpg.imeji.presentation.util.CommonUtils;
 @ManagedBean(name = "CollectionItemsBean")
 @ViewScoped
 public class CollectionItemsBean extends ItemsBean {
-	private static final long serialVersionUID = 2506992231592053506L;
-	private String id = null;
-	private URI uri;
-	private CollectionImeji collection;
-	private CollectionActionMenu actionMenu;
-	private String authors = "";
-	private String authorsShort = "";
-	private int size;
-	private boolean showUpload = false;
-	private LicenseEditor licenseEditor;
-	private String descriptionShort;
-	private static final int DESCRIPTION_MAX_SIZE = 330;
+  private static final long serialVersionUID = 2506992231592053506L;
+  private String id = null;
+  private URI uri;
+  private CollectionImeji collection;
+  private CollectionActionMenu actionMenu;
+  private String authors = "";
+  private String authorsShort = "";
+  private int size;
+  private boolean showUpload = false;
+  private LicenseEditor licenseEditor;
+  private String descriptionShort;
+  private static final int DESCRIPTION_MAX_SIZE = 330;
 
-	/**
-	 * Initialize the bean
-	 *
-	 * @throws ImejiException
-	 */
-	public CollectionItemsBean() {
-		super();
-	}
+  /**
+   * Initialize the bean
+   *
+   * @throws ImejiException
+   */
+  public CollectionItemsBean() {
+    super();
+  }
 
-	@Override
-	public void initSpecific() {
-		try {
-			id = UrlHelper.getParameterValue("collectionId");
-			uri = ObjectHelper.getURI(CollectionImeji.class, id);
-			setShowUpload(UrlHelper.getParameterBoolean("showUpload"));
-			collection = new CollectionService().retrieveLazy(uri, getSessionUser());
-			browseContext = getNavigationString() + id;
-			update();
-			actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
-			collection.getPersons().stream()
-					.forEach(a -> authors += authors.equals("")
-							? a.getCompleteName() + " (" + a.getOrganizationString() + ")"
-							: ", " + a.getCompleteName() + " (" + a.getOrganizationString() + ")");
-			authorsShort = collection.getPersons().iterator().next().getCompleteName();
-			if (collection.getPersons().size() > 1) {
-				authorsShort += " & " + (collection.getPersons().size() - 1) + " "
-						+ Imeji.RESOURCE_BUNDLE.getLabel("more_authors", getLocale());
-			}
-			descriptionShort = CommonUtils.removeTags(collection.getDescription());
-			if (descriptionShort != null && descriptionShort.length() > DESCRIPTION_MAX_SIZE) {
-				descriptionShort = descriptionShort.substring(0, DESCRIPTION_MAX_SIZE);
-			}
-			size = StringHelper.isNullOrEmptyTrim(getQuery()) ? getTotalNumberOfRecords() : getCollectionSize();
-			setLicenseEditor(new LicenseEditor(getLocale(), collection.getStatus().equals(Status.PENDING)));
-		} catch (final Exception e) {
-			LOGGER.error("Error initializing collectionItemsBean", e);
-		}
-	}
+  @Override
+  public void initSpecific() {
+    try {
+      id = UrlHelper.getParameterValue("collectionId");
+      uri = ObjectHelper.getURI(CollectionImeji.class, id);
+      setShowUpload(UrlHelper.getParameterBoolean("showUpload"));
+      collection = new CollectionService().retrieveLazy(uri, getSessionUser());
+      browseContext = getNavigationString() + id;
+      update();
+      actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
+      collection.getPersons().stream()
+          .forEach(a -> authors += authors.equals("") ? a.getCompleteName() + " (" + a.getOrganizationString() + ")"
+              : ", " + a.getCompleteName() + " (" + a.getOrganizationString() + ")");
+      authorsShort = collection.getPersons().iterator().next().getCompleteName();
+      if (collection.getPersons().size() > 1) {
+        authorsShort += " & " + (collection.getPersons().size() - 1) + " " + Imeji.RESOURCE_BUNDLE.getLabel("more_authors", getLocale());
+      }
+      descriptionShort = CommonUtils.removeTags(collection.getDescription());
+      if (descriptionShort != null && descriptionShort.length() > DESCRIPTION_MAX_SIZE) {
+        descriptionShort = descriptionShort.substring(0, DESCRIPTION_MAX_SIZE);
+      }
+      size = StringHelper.isNullOrEmptyTrim(getQuery()) ? getTotalNumberOfRecords() : getCollectionSize();
+      setLicenseEditor(new LicenseEditor(getLocale(), collection.getStatus().equals(Status.PENDING)));
+    } catch (final Exception e) {
+      LOGGER.error("Error initializing collectionItemsBean", e);
+    }
+  }
 
-	private int getCollectionSize() {
-		return new ItemService().search(collection.getId(), null, null, Imeji.adminUser, 0, 0).getNumberOfRecords();
-	}
+  private int getCollectionSize() {
+    return new ItemService().search(collection.getId(), null, null, Imeji.adminUser, 0, 0).getNumberOfRecords();
+  }
 
-	@Override
-	public SearchResult search(SearchQuery searchQuery, List<SortCriterion> sortCriteria, int offset, int limit) {
-		final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
-		return facade.searchWithFacetsAndMultiLevelSorting(searchQuery, collection, getSessionUser(), sortCriteria,
-				limit, offset);
-	}
+  @Override
+  public SearchResult search(SearchQuery searchQuery, List<SortCriterion> sortCriteria, int offset, int limit) {
+    final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
+    return facade.searchWithFacetsAndMultiLevelSorting(searchQuery, collection, getSessionUser(), sortCriteria, limit, offset);
+  }
 
-	@Override
-	public Collection<Item> loadItems(List<String> uris) throws ImejiException {
-		final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
-		return facade.retrieveItemsAndCollectionsAsItems(uris, getSessionUser());
-	}
+  @Override
+  public Collection<Item> loadItems(List<String> uris) throws ImejiException {
+    final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
+    return facade.retrieveItemsAndCollectionsAsItems(uris, getSessionUser());
+  }
 
-	@Override
-	public List<String> searchAllItems() {
-		return new ItemService().search(collection.getId(), getSearchQuery(), null, getSessionUser(),
-				Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX).getResults();
-	}
+  @Override
+  public List<String> searchAllItems() {
+    return new ItemService()
+        .search(collection.getId(), getSearchQuery(), null, getSessionUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX)
+        .getResults();
+  }
 
-	@Override
-	public String getNavigationString() {
-		return "pretty:collectionBrowse";
-	}
+  @Override
+  public String getNavigationString() {
+    return "pretty:collectionBrowse";
+  }
 
-	/**
-	 * return the url of the collection
-	 */
-	@Override
-	public String getImageBaseUrl() {
-		if (collection == null) {
-			return "";
-		}
-		return getNavigation().getApplicationUrl() + "collection/" + this.id + "/";
-	}
+  /**
+   * return the url of the collection
+   */
+  @Override
+  public String getImageBaseUrl() {
+    if (collection == null) {
+      return "";
+    }
+    return getNavigation().getApplicationUrl() + "collection/" + this.id + "/";
+  }
 
-	/**
-	 * return the url of the collection
-	 */
-	@Override
-	public String getBackUrl() {
-		return getNavigation().getBrowseUrl() + "/collection" + "/" + this.id;
-	}
+  /**
+   * return the url of the collection
+   */
+  @Override
+  public String getBackUrl() {
+    return getNavigation().getBrowseUrl() + "/collection" + "/" + this.id;
+  }
 
-	public String getId() {
-		return id;
-	}
+  public String getId() {
+    return id;
+  }
 
-	public void setId(String id) {
-		this.id = id;
-		// @Ye set session value to share with CollectionItemsBean, another way is via
-		// injection
-		FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("CollectionItemsBean.id", id);
-	}
+  public void setId(String id) {
+    this.id = id;
+    // @Ye set session value to share with CollectionItemsBean, another way is via
+    // injection
+    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("CollectionItemsBean.id", id);
+  }
 
-	public void setCollection(CollectionImeji collection) {
-		this.collection = collection;
-	}
+  public void setCollection(CollectionImeji collection) {
+    this.collection = collection;
+  }
 
-	public CollectionImeji getCollection() {
-		return collection;
-	}
+  public CollectionImeji getCollection() {
+    return collection;
+  }
 
-	/**
-	 * Get the DOI of the collection Called from JSF
-	 * 
-	 * @return
-	 */
-	public String getCollectionDoi() {
-		if (this.collection != null) {
-			return this.collection.getDoi();
-		}
-		return "";
-	}
+  /**
+   * Get the DOI of the collection Called from JSF
+   * 
+   * @return
+   */
+  public String getCollectionDoi() {
+    if (this.collection != null) {
+      return this.collection.getDoi();
+    }
+    return "";
+  }
 
-	/**
-	 * Set the DOI of the collection Called from JSF
-	 * 
-	 * @param doi
-	 */
-	public void setCollectionDoi(String doi) {
-		if (this.actionMenu != null) {
-			this.actionMenu.createDOI(doi);
-		}
-	}
+  /**
+   * Set the DOI of the collection Called from JSF
+   * 
+   * @param doi
+   */
+  public void setCollectionDoi(String doi) {
+    if (this.actionMenu != null) {
+      this.actionMenu.createDOI(doi);
+    }
+  }
 
-	@Override
-	public String getType() {
-		return PAGINATOR_TYPE.COLLECTION_ITEMS.name();
-	}
+  @Override
+  public String getType() {
+    return PAGINATOR_TYPE.COLLECTION_ITEMS.name();
+  }
 
-	/**
-	 * @return the actionMenu
-	 */
-	public CollectionActionMenu getActionMenu() {
-		return actionMenu;
-	}
+  /**
+   * @return the actionMenu
+   */
+  public CollectionActionMenu getActionMenu() {
+    return actionMenu;
+  }
 
-	/**
-	 * @param actionMenu
-	 *            the actionMenu to set
-	 */
-	public void setActionMenu(CollectionActionMenu actionMenu) {
-		this.actionMenu = actionMenu;
-	}
+  /**
+   * @param actionMenu the actionMenu to set
+   */
+  public void setActionMenu(CollectionActionMenu actionMenu) {
+    this.actionMenu = actionMenu;
+  }
 
-	@Override
-	public String getCollectionId() {
-		return collection.getId().toString();
-	}
+  @Override
+  public String getCollectionId() {
+    return collection.getId().toString();
+  }
 
-	public String getAuthors() {
-		return authors;
-	}
+  public String getAuthors() {
+    return authors;
+  }
 
-	public String getCitation() {
-		final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
-		return authors
-				+ (collection.getStatus().equals(Status.RELEASED)
-						? " (" + collection.getVersionDate().get(Calendar.YEAR) + ")"
-						: "")
-				+ ". " + collection.getTitle() + ". " + Imeji.CONFIG.getDoiPublisher() + ". <a href=\"" + url + "\">"
-				+ url + "</a>";
-	}
+  public String getCitation() {
+    final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
+    return authors + (collection.getStatus().equals(Status.RELEASED) ? " (" + collection.getVersionDate().get(Calendar.YEAR) + ")" : "")
+        + ". " + collection.getTitle() + ". " + Imeji.CONFIG.getDoiPublisher() + ". <a href=\"" + url + "\">" + url + "</a>";
+  }
 
-	/**
-	 * The Url to view the DOI
-	 *
-	 * @return
-	 */
-	public String getDoiUrl() {
-		return collection.getDoi().isEmpty() ? "" : DoiService.DOI_URL_RESOLVER + collection.getDoi();
-	}
+  /**
+   * The Url to view the DOI
+   *
+   * @return
+   */
+  public String getDoiUrl() {
+    return collection.getDoi().isEmpty() ? "" : DoiService.DOI_URL_RESOLVER + collection.getDoi();
+  }
 
-	public String getPageUrl() {
-		return getNavigation().getCollectionUrl() + id;
-	}
+  public String getPageUrl() {
+    return getNavigation().getCollectionUrl() + id;
+  }
 
-	public int getSize() {
-		return size;
-	}
+  public int getSize() {
+    return size;
+  }
 
-	public String getLogo() {
-		return collection.getLogoUrl() != null
-				? collection.getLogoUrl().toString()
-				: getCurrentPartList().get(0).getLink();
-	}
+  public String getLogo() {
+    return collection.getLogoUrl() != null ? collection.getLogoUrl().toString() : getCurrentPartList().get(0).getLink();
+  }
 
-	/**
-	 * If true, set to false to avoid to show the upload dialog on each ajax request
-	 * 
-	 * @return the showUpload
-	 */
-	public boolean isShowUpload() {
-		if (showUpload) {
-			showUpload = false;
-			return true;
-		}
-		return showUpload;
-	}
+  /**
+   * If true, set to false to avoid to show the upload dialog on each ajax request
+   * 
+   * @return the showUpload
+   */
+  public boolean isShowUpload() {
+    if (showUpload) {
+      showUpload = false;
+      return true;
+    }
+    return showUpload;
+  }
 
-	/**
-	 * @param showUpload
-	 *            the showUpload to set
-	 */
-	public void setShowUpload(boolean showUpload) {
-		this.showUpload = showUpload;
-	}
+  /**
+   * @param showUpload the showUpload to set
+   */
+  public void setShowUpload(boolean showUpload) {
+    this.showUpload = showUpload;
+  }
 
-	/**
-	 * @return the licenseEditor
-	 */
-	public LicenseEditor getLicenseEditor() {
-		return licenseEditor;
-	}
+  /**
+   * @return the licenseEditor
+   */
+  public LicenseEditor getLicenseEditor() {
+    return licenseEditor;
+  }
 
-	/**
-	 * @param licenseEditor
-	 *            the licenseEditor to set
-	 */
-	public void setLicenseEditor(LicenseEditor licenseEditor) {
-		this.licenseEditor = licenseEditor;
-	}
+  /**
+   * @param licenseEditor the licenseEditor to set
+   */
+  public void setLicenseEditor(LicenseEditor licenseEditor) {
+    this.licenseEditor = licenseEditor;
+  }
 
-	/**
-	 * @return the authorsShort
-	 */
-	public String getAuthorsShort() {
-		return authorsShort;
-	}
+  /**
+   * @return the authorsShort
+   */
+  public String getAuthorsShort() {
+    return authorsShort;
+  }
 
-	/**
-	 * @param authorsShort
-	 *            the authorsShort to set
-	 */
-	public void setAuthorsShort(String authorsShort) {
-		this.authorsShort = authorsShort;
-	}
+  /**
+   * @param authorsShort the authorsShort to set
+   */
+  public void setAuthorsShort(String authorsShort) {
+    this.authorsShort = authorsShort;
+  }
 
-	public int getNumberOfItems() {
-		return getSearchResult().getNumberOfItems();
-	}
+  public int getNumberOfItems() {
+    return getSearchResult().getNumberOfItems();
+  }
 
-	public int getNumberOfSubCollections() {
-		return getSearchResult().getNumberOfSubcollections();
-	}
+  public int getNumberOfSubCollections() {
+    return getSearchResult().getNumberOfSubcollections();
+  }
 
-	public int getNumberOfItemsOfCollection() {
-		return getSearchResult().getNumberOfItemsOfCollection();
-	}
+  public int getNumberOfItemsOfCollection() {
+    return getSearchResult().getNumberOfItemsOfCollection();
+  }
 
-	public String getDescriptionShort() {
-		return descriptionShort;
-	}
+  public String getDescriptionShort() {
+    return descriptionShort;
+  }
 }

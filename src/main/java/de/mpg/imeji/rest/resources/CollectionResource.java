@@ -38,101 +38,98 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "collections")
 public class CollectionResource implements ImejiResource {
 
-	@GET
-	@Path("/{id}/items")
-	@ApiOperation(value = "Search and retrieve items of the collection")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response readItemsWithQuery(@Context HttpServletRequest req, @PathParam("id") String id,
-			@QueryParam("q") String q, @DefaultValue("0") @QueryParam("offset") int offset,
-			@DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
-		final JSONResponse resp = readCollectionItems(req, id, q, offset, size);
-		return buildJSONResponse(resp);
-	}
+  @GET
+  @Path("/{id}/items")
+  @ApiOperation(value = "Search and retrieve items of the collection")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response readItemsWithQuery(@Context HttpServletRequest req, @PathParam("id") String id, @QueryParam("q") String q,
+      @DefaultValue("0") @QueryParam("offset") int offset, @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
+    final JSONResponse resp = readCollectionItems(req, id, q, offset, size);
+    return buildJSONResponse(resp);
+  }
 
-	@GET
-	@Path("/{id}/elements")
-	@ApiOperation(value = "Search and retrieve items and subcollection of the collection")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response readContentsWithQuery(@Context HttpServletRequest req, @PathParam("id") String id,
-			@QueryParam("q") String q, @DefaultValue("0") @QueryParam("offset") int offset,
-			@DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
-		final JSONResponse resp = getCollectionElements(req, id, q, offset, size, null, null);
-		return buildJSONResponse(resp);
-	}
+  @GET
+  @Path("/{id}/elements")
+  @ApiOperation(value = "Search and retrieve items and subcollection of the collection")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response readContentsWithQuery(@Context HttpServletRequest req, @PathParam("id") String id, @QueryParam("q") String q,
+      @DefaultValue("0") @QueryParam("offset") int offset, @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
+    final JSONResponse resp = getCollectionElements(req, id, q, offset, size, null, null);
+    return buildJSONResponse(resp);
+  }
 
-	@Override
-	@GET
-	@ApiOperation(value = "Get all collections user has access to.", notes = "With provided query parameter you filter only some collections")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response readAll(@Context HttpServletRequest req, @QueryParam("q") String q,
-			@DefaultValue("0") @QueryParam("offset") int offset,
-			@DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
-		final JSONResponse resp = readAllCollections(req, q, offset, size);
-		return buildJSONResponse(resp);
-	}
+  @Override
+  @GET
+  @ApiOperation(value = "Get all collections user has access to.", notes = "With provided query parameter you filter only some collections")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response readAll(@Context HttpServletRequest req, @QueryParam("q") String q, @DefaultValue("0") @QueryParam("offset") int offset,
+      @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
+    final JSONResponse resp = readAllCollections(req, q, offset, size);
+    return buildJSONResponse(resp);
+  }
 
-	@Override
-	@GET
-	@Path("/{id}")
-	@ApiOperation(value = "Get collection by id")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response read(@Context HttpServletRequest req, @PathParam("id") String id) {
-		final JSONResponse resp = readCollection(req, id);
-		return buildJSONResponse(resp);
-	}
+  @Override
+  @GET
+  @Path("/{id}")
+  @ApiOperation(value = "Get collection by id")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response read(@Context HttpServletRequest req, @PathParam("id") String id) {
+    final JSONResponse resp = readCollection(req, id);
+    return buildJSONResponse(resp);
+  }
 
-	@PUT
-	@Path("/{id}")
-	@ApiOperation(value = "Update collection by id")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(@Context HttpServletRequest req, InputStream json, @PathParam("id") String id)
-			throws Exception {
-		final JSONResponse resp = updateCollection(req, id);
-		return buildJSONResponse(resp);
-	}
+  @PUT
+  @Path("/{id}")
+  @ApiOperation(value = "Update collection by id")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response update(@Context HttpServletRequest req, InputStream json, @PathParam("id") String id) throws Exception {
+    final JSONResponse resp = updateCollection(req, id);
+    return buildJSONResponse(resp);
+  }
 
-	@PUT
-	@Path("/{id}/release")
-	@ApiOperation(value = "Release collection by id")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response release(@Context HttpServletRequest req, @PathParam("id") String id) throws Exception {
-		final JSONResponse resp = releaseCollection(req, id);
-		return buildJSONResponse(resp);
-	}
+  @PUT
+  @Path("/{id}/release")
+  @ApiOperation(value = "Release collection by id")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response release(@Context HttpServletRequest req, @PathParam("id") String id) throws Exception {
+    final JSONResponse resp = releaseCollection(req, id);
+    return buildJSONResponse(resp);
+  }
 
-	@PUT
-	@Path("/{id}/discard")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@ApiOperation(value = "Discard a collection by id, with mandatory discard comment")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response withdraw(@Context HttpServletRequest req, @PathParam("id") String id,
-			@FormParam("discardComment") String discardComment) throws Exception {
-		final JSONResponse resp = withdrawCollection(req, id, discardComment);
-		return buildJSONResponse(resp);
-	}
+  @PUT
+  @Path("/{id}/discard")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @ApiOperation(value = "Discard a collection by id, with mandatory discard comment")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response withdraw(@Context HttpServletRequest req, @PathParam("id") String id, @FormParam("discardComment") String discardComment)
+      throws Exception {
+    final JSONResponse resp = withdrawCollection(req, id, discardComment);
+    return buildJSONResponse(resp);
+  }
 
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Create collection or new version of collection", notes = "The body parameter is the json of a collection. You can get an example by using the get collection method.")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(@Context HttpServletRequest req, InputStream json) {
-		final JSONResponse resp = createCollection(req);
-		return buildJSONResponse(resp);
-	}
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @ApiOperation(value = "Create collection or new version of collection",
+      notes = "The body parameter is the json of a collection. You can get an example by using the get collection method.")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response create(@Context HttpServletRequest req, InputStream json) {
+    final JSONResponse resp = createCollection(req);
+    return buildJSONResponse(resp);
+  }
 
-	@Override
-	@DELETE
-	@Path("/{id}")
-	@ApiOperation(value = "Delete collection by id", notes = "Deletes also items of this collection")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@Context HttpServletRequest req, @PathParam("id") String id) {
-		final JSONResponse resp = deleteCollection(req, id);
-		return buildJSONResponse(resp);
-	}
+  @Override
+  @DELETE
+  @Path("/{id}")
+  @ApiOperation(value = "Delete collection by id", notes = "Deletes also items of this collection")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response delete(@Context HttpServletRequest req, @PathParam("id") String id) {
+    final JSONResponse resp = deleteCollection(req, id);
+    return buildJSONResponse(resp);
+  }
 
-	@Override
-	public Response create(HttpServletRequest req) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+  @Override
+  public Response create(HttpServletRequest req) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

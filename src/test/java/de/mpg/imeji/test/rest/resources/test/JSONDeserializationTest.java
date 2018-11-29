@@ -23,19 +23,18 @@ import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
  */
 public class JSONDeserializationTest {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(JSONDeserializationTest.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JSONDeserializationTest.class);
 
-	@Test
-	public void testBuildDefaultItemTOFromJSON() throws IOException, BadRequestException {
-		String jsonStringIn = getStringFromPath("src/test/resources/rest/item.json");
-		DefaultItemTO item = (DefaultItemTO) RestProcessUtils.buildTOFromJSON(jsonStringIn, DefaultItemTO.class);
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		// mapper.enable(SerializationFeature.INDENT_OUTPUT);
-		String jsonStringOut = mapper.writeValueAsString(item);
-		assertThat("Bad deserialization of DefaultItemTO JSON", jsonToPOJO(jsonStringIn),
-				equalTo(jsonToPOJO(jsonStringOut)));
+  @Test
+  public void testBuildDefaultItemTOFromJSON() throws IOException, BadRequestException {
+    String jsonStringIn = getStringFromPath("src/test/resources/rest/item.json");
+    DefaultItemTO item = (DefaultItemTO) RestProcessUtils.buildTOFromJSON(jsonStringIn, DefaultItemTO.class);
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.setSerializationInclusion(Include.NON_NULL);
+    // mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    String jsonStringOut = mapper.writeValueAsString(item);
+    assertThat("Bad deserialization of DefaultItemTO JSON", jsonToPOJO(jsonStringIn), equalTo(jsonToPOJO(jsonStringOut)));
 
-	}
+  }
 
 }

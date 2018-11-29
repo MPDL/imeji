@@ -11,17 +11,17 @@ import de.mpg.imeji.logic.core.content.extraction.extractor.TikaContentExtractor
  */
 public class ContentExtractorFactory {
 
-	private ContentExtractorFactory() {
-		// avoid construction
-	}
+  private ContentExtractorFactory() {
+    // avoid construction
+  }
 
-	/**
-	 * Return the default content analyser
-	 *
-	 * @return
-	 */
-	public static ContentExtractorInterface build() {
-		return new TikaContentExtractor();
-	}
+  /**
+   * Return the default content analyser
+   *
+   * @return
+   */
+  public static ContentExtractorInterface build() {
+    return new TikaContentExtractor();
+  }
 
 }

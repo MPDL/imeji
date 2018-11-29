@@ -23,49 +23,47 @@ import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
  *
  */
 public class SubscriptionController extends ImejiControllerAbstract<Subscription> implements Serializable {
-	private static final long serialVersionUID = 4481379886807835574L;
-	private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
-	private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel);
+  private static final long serialVersionUID = 4481379886807835574L;
+  private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
+  private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel);
 
-	@Override
-	public List<Subscription> createBatch(List<Subscription> l, User user) throws ImejiException {
-		WRITER.create(J2JHelper.cast2ObjectList(l), user);
-		return l;
-	}
+  @Override
+  public List<Subscription> createBatch(List<Subscription> l, User user) throws ImejiException {
+    WRITER.create(J2JHelper.cast2ObjectList(l), user);
+    return l;
+  }
 
-	@Override
-	public List<Subscription> retrieveBatch(List<String> ids, User user) throws ImejiException {
-		List<Subscription> subscriptions = emtyListFactory(ids);
-		READER.read(J2JHelper.cast2ObjectList(subscriptions), Imeji.adminUser);
-		return subscriptions.stream().filter(s -> SecurityUtil.authorization().read(user, s))
-				.collect(Collectors.toList());
-	}
+  @Override
+  public List<Subscription> retrieveBatch(List<String> ids, User user) throws ImejiException {
+    List<Subscription> subscriptions = emtyListFactory(ids);
+    READER.read(J2JHelper.cast2ObjectList(subscriptions), Imeji.adminUser);
+    return subscriptions.stream().filter(s -> SecurityUtil.authorization().read(user, s)).collect(Collectors.toList());
+  }
 
-	@Override
-	public List<Subscription> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
-		return retrieveBatch(ids, user);
-	}
+  @Override
+  public List<Subscription> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
+    return retrieveBatch(ids, user);
+  }
 
-	@Override
-	public List<Subscription> updateBatch(List<Subscription> l, User user) throws ImejiException {
-		WRITER.update(J2JHelper.cast2ObjectList(l), user, false);
-		return l;
-	}
+  @Override
+  public List<Subscription> updateBatch(List<Subscription> l, User user) throws ImejiException {
+    WRITER.update(J2JHelper.cast2ObjectList(l), user, false);
+    return l;
+  }
 
-	@Override
-	public void deleteBatch(List<Subscription> l, User user) throws ImejiException {
-		WRITER.delete(J2JHelper.cast2ObjectList(l), user);
-	}
+  @Override
+  public void deleteBatch(List<Subscription> l, User user) throws ImejiException {
+    WRITER.delete(J2JHelper.cast2ObjectList(l), user);
+  }
 
-	/**
-	 * Build a list of empty Subscription with ids
-	 * 
-	 * @param ids
-	 * @return
-	 */
-	private List<Subscription> emtyListFactory(List<String> ids) {
-		return ids.stream().map(id -> new SubscriptionFactory().setId(URI.create(id)).build())
-				.collect(Collectors.toList());
-	}
+  /**
+   * Build a list of empty Subscription with ids
+   * 
+   * @param ids
+   * @return
+   */
+  private List<Subscription> emtyListFactory(List<String> ids) {
+    return ids.stream().map(id -> new SubscriptionFactory().setId(URI.create(id)).build()).collect(Collectors.toList());
+  }
 
 }
