@@ -11,6 +11,9 @@ import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -48,13 +51,16 @@ public class CollectionFields {
 				ObjectHelper.getId(URI.create(id.getValue().toString())));
 	}
 
-	public CollectionFields(Map<String, Object> sourceAsMap) {
+	public CollectionFields(byte[] sourceAsBytes) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode sourceNode = mapper.readTree(sourceAsBytes);
 
-		List<Object> authorsMap = (List<Object>) sourceAsMap.get("authors");
-		this.authors = authorsMap.stream().map(Object::toString).collect(Collectors.toList());
-		this.organizations = (List<String>) sourceAsMap.get(ElasticFields.AUTHOR_ORGANIZATION.field());
-		this.titleWithId = this.titleWithIdOfCollection(sourceAsMap.get(ElasticFields.NAME.field()).toString(),
-				sourceAsMap.get(ElasticFields.ID.field()).toString());
+		this.authors = sourceNode.findValues("author").stream().map(a -> a.get("completename").asText())
+				.collect(Collectors.toList());
+		this.organizations = sourceNode.findValues("author").stream().map(a -> a.get("organization").asText())
+				.collect(Collectors.toList());
+		this.titleWithId = this.titleWithIdOfCollection(sourceNode.get(ElasticFields.NAME.field()).asText(),
+				sourceNode.get(ElasticFields.ID.field()).toString());
 
 	}
 

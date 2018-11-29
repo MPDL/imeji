@@ -78,7 +78,7 @@ public class ItemPostIndexScript {
 				 * resp.getField(ElasticFields.ID.field()),
 				 * resp.getField(ElasticFields.NAME.field()));
 				 */
-				return new CollectionFields(resp.getSourceAsMap());
+				return new CollectionFields(resp.getSourceAsBytes());
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
