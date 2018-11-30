@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -94,7 +95,7 @@ public class ElasticIndexer implements SearchIndexer {
   public void index(Object obj) {
     try {
       indexJSON(getId(obj), toJson(obj, dataType, indexName), getParent(obj));
-      // commit();
+      commit();
     } catch (final Exception e) {
       LOGGER.error("Error indexing object ", e);
     }
@@ -124,7 +125,7 @@ public class ElasticIndexer implements SearchIndexer {
       LOGGER.error("error indexing object ", e);
     }
     if (!(l.get(0) instanceof ContentVO)) {
-      // commit();
+      commit();
     }
     updateIndexBatchPostProcessing(l);
   }
@@ -155,7 +156,7 @@ public class ElasticIndexer implements SearchIndexer {
       } catch (IOException e) {
         LOGGER.error("error deleting " + id, e);
       }
-      // commit();
+      commit();
     }
   }
 
@@ -179,7 +180,7 @@ public class ElasticIndexer implements SearchIndexer {
       }
     }
     if (!(l.get(0) instanceof ContentVO)) {
-      // commit();
+      commit();
     }
   }
 
@@ -248,7 +249,7 @@ public class ElasticIndexer implements SearchIndexer {
       try {
         IndexResponse resp = ElasticService.getClient().index(req, RequestOptions.DEFAULT);
       } catch (IOException e) {
-        LOGGER.error("error indexing " + id, e);
+
       }
     }
   }
@@ -257,11 +258,16 @@ public class ElasticIndexer implements SearchIndexer {
    * Make all changes done searchable. Kind of a commit. Might be important if data needs to be
    * immediately available for other tasks
    */
-  /*
-   * public void commit() { // Check if refresh is needed: cost is very high
-   * ElasticService.getClient().admin().indices().prepareRefresh(index).execute().
-   * actionGet(); }
-   */
+
+  public void commit() { // Check if refresh is needed: cost is very high
+    RefreshRequest rr = new RefreshRequest(indexName);
+    try {
+      ElasticService.getClient().indices().refresh(rr, RequestOptions.DEFAULT);
+    } catch (IOException e) {
+      LOGGER.error("error refreshing index ", e);
+    }
+  }
+
 
   /**
    * Remove all indexed data
