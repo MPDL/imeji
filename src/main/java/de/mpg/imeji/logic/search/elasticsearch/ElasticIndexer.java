@@ -19,6 +19,7 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
@@ -111,6 +112,7 @@ public class ElasticIndexer implements SearchIndexer {
     }
     try {
       final BulkRequest bulkRequest = new BulkRequest();
+
       for (final Object obj : l) {
         LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
         bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType));
@@ -147,8 +149,7 @@ public class ElasticIndexer implements SearchIndexer {
   public void delete(Object obj) {
     final String id = getId(obj);
     if (id != null) {
-      DeleteRequest deleteRequest = new DeleteRequest();
-      deleteRequest.index(indexName).id(id);
+      DeleteRequest deleteRequest = getDeleteRequest(id, getParent(obj));
       try {
         DeleteResponse resp = ElasticService.getClient().delete(deleteRequest, RequestOptions.DEFAULT);
       } catch (IOException e) {
@@ -213,9 +214,9 @@ public class ElasticIndexer implements SearchIndexer {
    */
   private DeleteRequest getDeleteRequest(String id, String parent) {
     final DeleteRequest deleteRequest = new DeleteRequest();
-    deleteRequest.index(indexName).id(id);
+    deleteRequest.index(indexName).id(id).type(dataType);
     if (parent != null) {
-      deleteRequest.parent(parent);
+      deleteRequest.routing(parent);
     }
     return deleteRequest;
   }

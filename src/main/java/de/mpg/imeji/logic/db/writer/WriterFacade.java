@@ -96,7 +96,7 @@ public class WriterFacade {
       Future<Integer> indexTask = executor.submit(new IndexTask(objects));
       indexTask.get();
     } catch (Exception e) {
-      new ImejiException("Error updating objects", e);
+      throw new ImejiException("Error updating objects", e);
     }
 
   }
@@ -120,7 +120,7 @@ public class WriterFacade {
       Future<Integer> deleteTask = executor.submit(new DeleteTask(objects, user));
       deleteTask.get();
     } catch (Exception e) {
-      new ImejiException("Error updating objects", e);
+      throw new ImejiException("Error updating objects", e);
     }
   }
 
@@ -145,7 +145,7 @@ public class WriterFacade {
       updateTask.get();
       indexTask.get();
     } catch (Exception e) {
-      new ImejiException("Error updating objects", e);
+      throw new ImejiException("Error updating objects", e);
     }
 
   }
@@ -169,7 +169,7 @@ public class WriterFacade {
       updateTask.get();
       indexTask.get();
     } catch (Exception e) {
-      new ImejiException("Error updating objects", e);
+      throw new ImejiException("Error updating objects", e);
     }
 
   }
