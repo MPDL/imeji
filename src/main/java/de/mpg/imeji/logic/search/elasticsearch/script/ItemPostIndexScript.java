@@ -54,7 +54,7 @@ public class ItemPostIndexScript {
       BulkResponse resp;
       try {
         resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
-      } catch (IOException e) {
+      } catch (Exception e) {
         LOGGER.error("error during bulk", e);
       }
     }
@@ -79,7 +79,7 @@ public class ItemPostIndexScript {
          */
         return new CollectionFields(resp.getSourceAsBytes());
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }

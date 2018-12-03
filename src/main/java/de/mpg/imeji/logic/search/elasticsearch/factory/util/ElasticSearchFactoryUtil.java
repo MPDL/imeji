@@ -59,7 +59,7 @@ public class ElasticSearchFactoryUtil {
         final Object obj = sourceMap.get(field.field());
         return obj != null ? obj.toString() : "";
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
     return "";

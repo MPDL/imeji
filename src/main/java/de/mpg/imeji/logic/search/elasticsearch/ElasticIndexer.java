@@ -157,7 +157,7 @@ public class ElasticIndexer implements SearchIndexer {
       DeleteRequest deleteRequest = getDeleteRequest(id, getParent(obj));
       try {
         DeleteResponse resp = ElasticService.getClient().delete(deleteRequest, RequestOptions.DEFAULT);
-      } catch (IOException e) {
+      } catch (Exception e) {
         LOGGER.error("error deleting " + id, e);
       }
       commit();
@@ -179,7 +179,7 @@ public class ElasticIndexer implements SearchIndexer {
     if (bulkRequest.numberOfActions() > 0) {
       try {
         BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
-      } catch (IOException e) {
+      } catch (Exception e) {
         LOGGER.error("ERROR during bulk delete", e);
       }
     }
@@ -259,8 +259,8 @@ public class ElasticIndexer implements SearchIndexer {
       IndexRequest req = getIndexRequest(id, json, parent, dataType);
       try {
         IndexResponse resp = ElasticService.getClient().index(req, RequestOptions.DEFAULT);
-      } catch (IOException e) {
-
+      } catch (Exception e) {
+        LOGGER.error("error indexing ", e);
       }
     }
   }
@@ -274,7 +274,7 @@ public class ElasticIndexer implements SearchIndexer {
     RefreshRequest rr = new RefreshRequest(indexName);
     try {
       ElasticService.getClient().indices().refresh(rr, RequestOptions.DEFAULT);
-    } catch (IOException e) {
+    } catch (Exception e) {
       LOGGER.error("error refreshing index ", e);
     }
   }
