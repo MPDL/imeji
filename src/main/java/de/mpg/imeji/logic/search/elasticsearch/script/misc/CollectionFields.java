@@ -13,6 +13,7 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.snakeyaml.nodes.Node;
 
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
@@ -50,9 +51,23 @@ public class CollectionFields {
   public CollectionFields(byte[] sourceAsBytes) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     JsonNode sourceNode = mapper.readTree(sourceAsBytes);
+    ArrayList<String> authorNames = new ArrayList<>();
+    ArrayList<String> authorOrganizations = new ArrayList<>();
+    JsonNode authorNode = sourceNode.get("author");
 
-    this.authors = sourceNode.findValues("author").stream().map(a -> a.get("completename").asText()).collect(Collectors.toList());
-    this.organizations = sourceNode.findValues("author").stream().map(a -> a.get("organization").asText()).collect(Collectors.toList());
+    if (authorNode.isArray()) {
+      for (JsonNode node : authorNode) {
+        authorNames.add(node.get("completename").asText());
+        JsonNode orgsNode = node.get("organization");
+        if (orgsNode.isArray()) {
+          for (JsonNode on : orgsNode) {
+            authorOrganizations.add(on.asText());
+          }
+        }
+      }
+    }
+    this.authors = authorNames;
+    this.organizations = authorOrganizations;
     this.titleWithId = this.titleWithIdOfCollection(sourceNode.get(ElasticFields.NAME.field()).asText(),
         sourceNode.get(ElasticFields.ID.field()).toString());
 

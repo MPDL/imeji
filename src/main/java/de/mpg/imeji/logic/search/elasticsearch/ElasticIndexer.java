@@ -30,7 +30,9 @@ import org.elasticsearch.common.xcontent.XContentType;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -46,6 +48,8 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticContent;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFolder;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticItem;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticJoinField;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticJoinableContent;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUser;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
 import de.mpg.imeji.logic.search.elasticsearch.script.CollectionPostIndexScript;
@@ -196,7 +200,8 @@ public class ElasticIndexer implements SearchIndexer {
     final IndexRequest indexRequest = new IndexRequest();
     indexRequest.index(indexName).id(id).source(json, XContentType.JSON);
     if (parent != null) {
-      indexRequest.parent(parent);
+      // indexRequest.parent(parent);
+      indexRequest.routing(parent);
     }
     if (type != null) {
       indexRequest.type(type);
@@ -231,6 +236,12 @@ public class ElasticIndexer implements SearchIndexer {
    */
   public static String toJson(Object obj, String dataType, String index) throws UnprocessableError {
     try {
+      // mapper.configure(DeserializationFeature..UNWRAP_ROOT_VALUE, true);
+      /*
+      if (obj instanceof ContentVO) {
+      mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+      }
+      */
       return mapper.setSerializationInclusion(Include.NON_NULL).writeValueAsString(toESEntity(obj, dataType, index));
     } catch (final JsonProcessingException e) {
       throw new UnprocessableError("Error serializing object to json", e);
@@ -299,7 +310,14 @@ public class ElasticIndexer implements SearchIndexer {
       return new ElasticUserGroup((UserGroup) obj);
     }
     if (obj instanceof ContentVO) {
-      return new ElasticContent((ContentVO) obj);
+      ElasticContent cvo = new ElasticContent((ContentVO) obj);
+      ElasticJoinField ejf = new ElasticJoinField();
+      ejf.setName("content");
+      ejf.setParent(((ContentVO) obj).getItemId().toString());
+      ElasticJoinableContent ejc = new ElasticJoinableContent();
+      ejc.setContent(cvo);
+      ejc.setJoinField(ejf);
+      return ejc;
     }
     if (obj instanceof Subscription) {
       return null;

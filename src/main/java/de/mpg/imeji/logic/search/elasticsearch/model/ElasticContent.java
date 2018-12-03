@@ -3,6 +3,8 @@ package de.mpg.imeji.logic.search.elasticsearch.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.TechnicalMetadata;
 
@@ -12,12 +14,14 @@ import de.mpg.imeji.logic.model.TechnicalMetadata;
  * @author saquet
  *
  */
+@JsonRootName(value = "content")
 public class ElasticContent {
   private final String checksum;
   private final long width;
   private final long height;
   private final List<ElasticTechnicalMetadata> technical = new ArrayList<>();
   private final String fulltext;
+
 
   /**
    * Constructor

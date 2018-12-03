@@ -27,6 +27,7 @@ public final class ElasticItem extends ElasticProperties {
   private final String fileextension;
   private final long size;
   private final List<ElasticMetadata> metadata = new ArrayList<>();
+  private final ElasticJoinField joinField = new ElasticJoinField();
 
   /**
    * Constructor with an {@link Item}
@@ -46,6 +47,7 @@ public final class ElasticItem extends ElasticProperties {
         metadata.add(new ElasticMetadata(md));
       }
     }
+    this.joinField.setName("item");
   }
 
   private String getLicenseName(Item item) {
@@ -97,4 +99,10 @@ public final class ElasticItem extends ElasticProperties {
     return name;
   }
 
+  /**
+   * @return the joinField
+   */
+  public ElasticJoinField getJoinField() {
+    return joinField;
+  }
 }
