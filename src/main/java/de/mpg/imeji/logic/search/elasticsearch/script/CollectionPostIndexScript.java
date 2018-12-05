@@ -103,7 +103,7 @@ public class CollectionPostIndexScript {
       for (final SearchHit hit : resp.getHits()) {
         ids.add(hit.getId());
       }
-    } catch (IOException e1) {
+    } catch (Exception e1) {
       LOGGER.error("error during search", e1);
     }
     while (true) {

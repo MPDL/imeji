@@ -117,7 +117,7 @@ public class ElasticInitializer {
       } else {
         return createIndexWithAlias(index);
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       LOGGER.error("Error getting index status", e);
     }
     return null;
