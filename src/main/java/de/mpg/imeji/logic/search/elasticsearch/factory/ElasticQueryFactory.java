@@ -88,6 +88,7 @@ public class ElasticQueryFactory {
     final QueryBuilder securityQuery = new SecurityQueryFactory().user(user).searchForCollection(searchForCollection).build();
     final QueryBuilder statusQuery = buildStatusQuery(query, user);
     final QueryBuilder filterQuery = buildSearchQuery(query != null ? query.getFilterElements() : new ArrayList<>(), user);
+
     if (!isMatchAll(searchQuery)) {
       booleanQuery.must(searchQuery);
     }
@@ -106,6 +107,9 @@ public class ElasticQueryFactory {
     if (!searchForUsers && !isMatchAll(statusQuery)) {
       booleanQuery.must(statusQuery);
     }
+    /* tbd 
+    booleanQuery.mustNot(QueryBuilders.termQuery("joinField", "content"));
+    */
     return booleanQuery;
   }
 
