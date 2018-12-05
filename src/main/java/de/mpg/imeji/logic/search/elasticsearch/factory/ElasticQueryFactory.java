@@ -107,9 +107,8 @@ public class ElasticQueryFactory {
     if (!searchForUsers && !isMatchAll(statusQuery)) {
       booleanQuery.must(statusQuery);
     }
-    /* tbd 
-    booleanQuery.mustNot(QueryBuilders.termQuery("joinField", "content"));
-    */
+    /* parent-child relations use the join_field !!!  we need to exclude the content docs */
+    booleanQuery.mustNot(QueryBuilders.termQuery(ElasticFields.JOIN_FIELD.field(), "content"));
     return booleanQuery;
   }
 

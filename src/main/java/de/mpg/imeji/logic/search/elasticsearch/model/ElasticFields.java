@@ -12,7 +12,7 @@ public enum ElasticFields {
   IDSTRING,
   NAME,
   DESCRIPTION,
-  FULLTEXT,
+  FULLTEXT("content.fulltext"),
   LICENSE,
   READ,
   UPLOAD,
@@ -34,7 +34,7 @@ public enum ElasticFields {
   FOLDER,
   PROFILE,
   ALBUM,
-  CHECKSUM,
+  CHECKSUM("content.checksum"),
   METADATA,
   METADATA_EXACT("metadata.text.exact"),
   METADATA_TEXT("metadata.text", true),
@@ -60,13 +60,13 @@ public enum ElasticFields {
   INFO_URL("info.url"),
   EMAIL,
   TECHNICAL,
-  TECHNICAL_NAME("technical.name"),
-  TECHNICAL_VALUE("technical.value"),
-  PARENT("_parent"),
+  TECHNICAL_NAME("content.technical.name"),
+  TECHNICAL_VALUE("content.technical.value"),
+  // PARENT("_parent"),
   AUTHORS_OF_COLLECTION("authorsOfCollection"),
   ORGANIZATION_OF_COLLECTION("organizationsOfCollection"),
-  TITLE_WITH_ID_OF_COLLECTION("titleWithIdOfCollection");
-
+  TITLE_WITH_ID_OF_COLLECTION("titleWithIdOfCollection"),
+  JOIN_FIELD("joinField");
   /**
    * The field which must be used to search in elasticsearch
    */
