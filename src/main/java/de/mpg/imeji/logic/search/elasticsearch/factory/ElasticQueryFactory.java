@@ -604,11 +604,11 @@ public class ElasticQueryFactory {
    * @return
    */
   private QueryBuilder matchFieldQuery(String fieldName, String value) {
-    /*
+    
     if (ElasticFields.ALL.field().equalsIgnoreCase(fieldName)) {
-      return QueryBuilders.queryStringQuery(value + " " + ElasticFields.NAME.field() + ".suggest:" + value);
+      return QueryBuilders.queryStringQuery(fieldName + ":" + value + " " + ElasticFields.NAME.field() + ".suggest:" + value);
     }
-    */
+    
     return QueryBuilders.queryStringQuery(fieldName + ":" + value);
   }
 

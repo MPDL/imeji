@@ -158,7 +158,7 @@ public class ElasticSearch implements Search {
         }
       }
       searchRequest.indices(this.indicesNames).source(searchSourceBuilder).scroll(TimeValue.timeValueSeconds(30));
-     
+
       return searchWithScroll(searchRequest, query, from, size);
     }
   }
@@ -200,7 +200,7 @@ public class ElasticSearch implements Search {
   private SearchResult searchSinglePage(SearchRequest request, SearchQuery query) {
 
     // send request to ElasticSearch
-    //LOGGER.info(request.source().toString());
+    LOGGER.info(request.source().toString());
     SearchResponse resp;
     try {
       resp = ElasticService.getClient().search(request, RequestOptions.DEFAULT);
