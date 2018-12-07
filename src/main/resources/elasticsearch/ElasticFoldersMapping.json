@@ -5,6 +5,17 @@
 			"all": {
 				"type": "text"
 			},
+			"joinField": {
+				"type": "join",
+				"eager_global_ordinals": true,
+				"relations": {
+					"folder": "content"
+				}
+			},
+			"folder": {
+				"type": "keyword",
+				"copy_to": "all"
+			},
 			"created": {
 				"type": "long"
 			},
