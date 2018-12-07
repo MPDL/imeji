@@ -63,9 +63,13 @@ public class ElasticAggregationFactory {
     aggregations.add(metadataAggregations);
     aggregations.add(systemAggregations);
     aggregations.add(AggregationBuilders.filters(Facet.ITEMS,
-        new FiltersAggregator.KeyedFilter(Facet.ITEMS, QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name()))));
+        new FiltersAggregator.KeyedFilter(Facet.ITEMS, QueryBuilders.termQuery(ElasticFields.JOIN_FIELD.field(), "item"))));
+    // new FiltersAggregator.KeyedFilter(Facet.ITEMS, QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name()))));
+
     aggregations.add(AggregationBuilders.filters(Facet.SUBCOLLECTIONS,
-        new FiltersAggregator.KeyedFilter(Facet.SUBCOLLECTIONS, QueryBuilders.typeQuery(ElasticService.ElasticIndices.folders.name()))));
+        new FiltersAggregator.KeyedFilter(Facet.SUBCOLLECTIONS, QueryBuilders.termQuery("_index", "folders-1543318035940"))));
+    // new FiltersAggregator.KeyedFilter(Facet.SUBCOLLECTIONS, QueryBuilders.typeQuery(ElasticService.ElasticIndices.folders.name()))));
+
     return aggregations;
   }
 

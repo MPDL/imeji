@@ -85,9 +85,6 @@
 					}
 				}
 			},
-			"folder": {
-				"type": "keyword"
-			},
 			"author": {
 				"properties": {
 					"familyname": {
