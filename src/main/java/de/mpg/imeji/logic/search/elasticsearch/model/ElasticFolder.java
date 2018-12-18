@@ -24,6 +24,8 @@ public final class ElasticFolder extends ElasticProperties {
   private final String filetype = "text/directory";
   private final List<ElasticPerson> author = new ArrayList<>();
   private final List<ElasticContainerAdditionalInfo> info = new ArrayList<>();
+  private final ElasticJoinField joinField = new ElasticJoinField();
+
 
   public ElasticFolder(CollectionImeji c) {
     super(c);
@@ -38,6 +40,7 @@ public final class ElasticFolder extends ElasticProperties {
     for (final ContainerAdditionalInfo i : c.getAdditionalInformations()) {
       info.add(new ElasticContainerAdditionalInfo(i));
     }
+    this.joinField.setName("folder");
   }
 
   public List<ElasticContainerAdditionalInfo> getInfo() {
@@ -78,6 +81,13 @@ public final class ElasticFolder extends ElasticProperties {
    */
   public String getFolder() {
     return folder;
+  }
+
+  /**
+   * @return the joinField
+   */
+  public ElasticJoinField getJoinField() {
+    return joinField;
   }
 
 }

@@ -67,7 +67,7 @@ public class ElasticAggregationFactory {
     // new FiltersAggregator.KeyedFilter(Facet.ITEMS, QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name()))));
 
     aggregations.add(AggregationBuilders.filters(Facet.SUBCOLLECTIONS,
-        new FiltersAggregator.KeyedFilter(Facet.SUBCOLLECTIONS, QueryBuilders.termQuery("_index", "folders-1543318035940"))));
+        new FiltersAggregator.KeyedFilter(Facet.SUBCOLLECTIONS, QueryBuilders.termQuery(ElasticFields.JOIN_FIELD.field(), "folder"))));
     // new FiltersAggregator.KeyedFilter(Facet.SUBCOLLECTIONS, QueryBuilders.typeQuery(ElasticService.ElasticIndices.folders.name()))));
 
     return aggregations;
