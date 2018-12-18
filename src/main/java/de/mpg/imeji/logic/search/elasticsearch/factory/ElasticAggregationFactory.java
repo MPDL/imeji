@@ -40,7 +40,7 @@ public class ElasticAggregationFactory {
     List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
     List<Facet> facets = new FacetService().retrieveAllFromCache();
     FiltersAggregationBuilder systemAggregations =
-        AggregationBuilders.filters("all", new FiltersAggregator.KeyedFilter("all", QueryBuilders.matchAllQuery()));
+        AggregationBuilders.filters("system", new FiltersAggregator.KeyedFilter("all", QueryBuilders.matchAllQuery()));
     NestedAggregationBuilder metadataAggregations = AggregationBuilders.nested("metadata", "metadata");
     for (Facet facet : facets) {
       String metadataField = getMetadataField(facet);
