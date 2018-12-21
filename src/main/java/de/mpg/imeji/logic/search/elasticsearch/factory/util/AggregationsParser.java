@@ -9,6 +9,7 @@ import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation.Buck
 import org.elasticsearch.search.aggregations.bucket.filter.Filter;
 import org.elasticsearch.search.aggregations.bucket.filter.Filters;
 import org.elasticsearch.search.aggregations.bucket.nested.Nested;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.stats.InternalStats;
@@ -71,8 +72,8 @@ public class AggregationsParser {
               for (Filters.Bucket bucket : ((Filters) agg).getBuckets()) {
                 facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
               }
-            } else if (agg instanceof StringTerms) {
-              for (Terms.Bucket bucket : ((StringTerms) agg).getBuckets()) {
+            } else if (agg instanceof ParsedStringTerms) {
+              for (Terms.Bucket bucket : ((ParsedStringTerms) agg).getBuckets()) {
                 facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
               }
 

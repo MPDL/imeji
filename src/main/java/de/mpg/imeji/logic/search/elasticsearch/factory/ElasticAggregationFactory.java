@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -12,6 +13,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregator;
+import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregator.KeyedFilter;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
@@ -94,13 +96,16 @@ public class ElasticAggregationFactory {
    */
   private static AbstractAggregationBuilder getFiletypeAggregation(Facet facet) {
     FiltersAggregationBuilder filetypeAggregation = null;
+    List<KeyedFilter> filterList = new ArrayList<>();
     for (ImejiFileTypes.Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
       BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
       for (String ext : type.getExtensionArray()) {
         filetypeQuery.should(QueryBuilders.queryStringQuery(ElasticFields.NAME.field() + ".suggest:" + "*." + ext));
       }
-      filetypeAggregation = AggregationBuilders.filters(type.getName(null), filetypeQuery);
+      KeyedFilter kf = new KeyedFilter(type.getName(null), filetypeQuery);
+      filterList.add(kf);
     }
+    filetypeAggregation = AggregationBuilders.filters(SearchFields.filetype.name(), filterList.toArray(new KeyedFilter[filterList.size()]));
     return filetypeAggregation;
   }
 
