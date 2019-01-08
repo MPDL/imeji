@@ -13,6 +13,7 @@ import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.stats.InternalStats;
+import org.elasticsearch.search.aggregations.metrics.stats.ParsedStats;
 
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory;
 import de.mpg.imeji.logic.search.facet.FacetService;
@@ -56,6 +57,21 @@ public class AggregationsParser {
               FacetResultValue result = new FacetResultValue(terms.getName(), ((InternalStats) terms).getCount());
               result.setMax((((InternalStats) terms).getMaxAsString()));
               result.setMin(((InternalStats) terms).getMinAsString());
+              facetResult.getValues().add(result);
+            } else if (terms instanceof ParsedStats) {
+              FacetResultValue result = new FacetResultValue(terms.getName(), ((ParsedStats) terms).getCount());
+              double max = ((ParsedStats) terms).getMax();
+              double min = ((ParsedStats) terms).getMin();
+              if (Double.isInfinite(max)) {
+                result.setMax("0");
+              } else {
+                result.setMax((((ParsedStats) terms).getMaxAsString()));
+              }
+              if (Double.isInfinite(min)) {
+                result.setMin("0");
+              } else {
+                result.setMin(((ParsedStats) terms).getMinAsString());
+              }
               facetResult.getValues().add(result);
             } else {
               System.out.println("NOT PARSED  METADATA AGGREGATION: " + terms);
