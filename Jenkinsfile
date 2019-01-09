@@ -4,6 +4,7 @@ node {
 
 
 	echo "We are currently working on branch: ${env.BRANCH_NAME}"
+	echo "JDK installation path is: ${env.JAVA_HOME}"
 
   	stage ('Checkout'){
 	   // Checkout code from repository
