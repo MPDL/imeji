@@ -1,7 +1,5 @@
 node {
-	def JAVA_HOME = tool name: 'OpenJDK 11', type: 'jdk'
-	def  mvnHome = tool name: 'Maven35', type: 'maven'
-
+	env.JAVA_HOME = tool name: 'OpenJDK 11', type: 'jdk'
 
 	echo "We are currently working on branch: ${env.BRANCH_NAME}"
 	echo "JDK installation path is: ${env.JAVA_HOME}"
