@@ -1,5 +1,5 @@
 node {
-	def JAVA_HOME = tool name: 'Java 8', type: 'jdk'
+	def JAVA_HOME = tool name: 'OpenJDK 11', type: 'jdk'
 	def  mvnHome = tool name: 'Maven35', type: 'maven'
 
   	stage ('Checkout'){
@@ -16,15 +16,21 @@ node {
 	   	echo "We are currently working on branch: ${env.BRANCH_NAME}"
 	    switch (env.BRANCH_NAME){
 	    	case 'dev':
-	    		echo "Deploy to dev";
+	    		echo "deploy to dev";
 		   		sshagent(['26045cb2-b6f5-4f07-8261-70a2f2e22860']) {
-				   sh "scp target/imeji.war tomcat8@dev-imeji.mpdl.mpg.de:/var/lib/tomcat8/webapps"
+				   sh "scp target/imeji.war tomcat8@dev-imeji.mpdl.mpg.de:/srv/web/tomcat9/webapps"
 				}
 	    		break;
 	    	case 'qa':
 	    		echo "deploy to qa";
 	    		sshagent(['26045cb2-b6f5-4f07-8261-70a2f2e22860']) {
-				   sh "scp target/imeji.war tomcat8@qa-imeji.mpdl.mpg.de:/var/lib/tomcat8/webapps"
+				   sh "scp target/imeji.war tomcat8@qa-imeji.mpdl.mpg.de:/srv/web/tomcat9/webapps"
+				}
+	    		break;
+	    	case 'openjdk11':
+	    		echo "deploy to dev with tomcat9 / openjdk 11";
+	    		sshagent(['26045cb2-b6f5-4f07-8261-70a2f2e22860']) {
+				   sh "scp target/imeji.war tomcat8@qa-imeji.mpdl.mpg.de:/srv/web/tomcat9/webapps"
 				}
 	    		break;
 	    	default:
