@@ -2,6 +2,9 @@ node {
 	def JAVA_HOME = tool name: 'OpenJDK 11', type: 'jdk'
 	def  mvnHome = tool name: 'Maven35', type: 'maven'
 
+
+	echo "We are currently working on branch: ${env.BRANCH_NAME}"
+
   	stage ('Checkout'){
 	   // Checkout code from repository
 	   checkout scm
@@ -13,7 +16,6 @@ node {
 	}
 	
    	stage ('Deploy'){
-	   	echo "We are currently working on branch: ${env.BRANCH_NAME}"
 	    switch (env.BRANCH_NAME){
 	    	case 'dev':
 	    		echo "deploy to dev";
