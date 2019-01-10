@@ -33,7 +33,7 @@ node {
 	    	case 'openjdk11':
 	    		echo "deploy to dev with tomcat9 / openjdk 11";
 	    		sshagent(['26045cb2-b6f5-4f07-8261-70a2f2e22860']) {
-				   sh "scp target/imeji.war tomcat8@qa-imeji.mpdl.mpg.de:/srv/web/tomcat9/webapps"
+				   sh "scp target/imeji.war tomcat8@dev-imeji.mpdl.mpg.de:/srv/web/tomcat9/webapps"
 				}
 	    		break;
 	    	default:
