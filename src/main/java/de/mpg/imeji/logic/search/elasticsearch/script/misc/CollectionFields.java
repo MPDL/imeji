@@ -68,8 +68,9 @@ public class CollectionFields {
     }
     this.authors = authorNames;
     this.organizations = authorOrganizations;
-    this.titleWithId = this.titleWithIdOfCollection(sourceNode.get(ElasticFields.NAME.field()).asText(),
-        sourceNode.get(ElasticFields.ID.field()).toString());
+    String collectionId = sourceNode.get(ElasticFields.ID.field()).textValue();
+    this.titleWithId =
+        this.titleWithIdOfCollection(sourceNode.get(ElasticFields.NAME.field()).asText(), ObjectHelper.getId(URI.create(collectionId)));
 
   }
 

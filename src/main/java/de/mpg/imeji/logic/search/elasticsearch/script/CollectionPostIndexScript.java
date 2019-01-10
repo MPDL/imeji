@@ -70,7 +70,7 @@ public class CollectionPostIndexScript {
     final XContentBuilder json = new CollectionFields(c).toXContentBuilder();
     for (final String id : ids) {
       final UpdateRequest req = new UpdateRequest();
-      req.index(index).type(ElasticIndices.items.name()).id(id).doc(json);
+      req.index(index).type("_doc").id(id).doc(json);
       bulkRequest.add(req);
     }
     if (bulkRequest.numberOfActions() > 0) {
@@ -94,7 +94,7 @@ public class CollectionPostIndexScript {
     SearchRequest searchRequest = new SearchRequest();
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
     searchSourceBuilder.query(q);
-    searchRequest.indices(ElasticIndices.items.name()).source(searchSourceBuilder).scroll(TimeValue.timeValueMinutes(1));
+    searchRequest.indices(ElasticIndices.folders.name()).source(searchSourceBuilder).scroll(TimeValue.timeValueMinutes(1));
     SearchResponse resp = null;
     List<String> ids = null;
     try {
