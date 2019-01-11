@@ -145,7 +145,7 @@ public class ElasticIndexer implements SearchIndexer {
     ItemPostIndexScript.run(l, indexName);
     for (Object o : l) {
       if (o instanceof CollectionImeji) {
-        CollectionPostIndexScript.run((CollectionImeji) o, indexName);
+        CollectionPostIndexScript.run((CollectionImeji) o, "items");
       }
     }
   }

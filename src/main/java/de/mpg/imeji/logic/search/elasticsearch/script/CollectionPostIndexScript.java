@@ -94,7 +94,7 @@ public class CollectionPostIndexScript {
     SearchRequest searchRequest = new SearchRequest();
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
     searchSourceBuilder.query(q);
-    searchRequest.indices(ElasticIndices.folders.name()).source(searchSourceBuilder).scroll(TimeValue.timeValueMinutes(1));
+    searchRequest.indices(ElasticIndices.items.name()).source(searchSourceBuilder).scroll(TimeValue.timeValueMinutes(1));
     SearchResponse resp = null;
     List<String> ids = null;
     try {
