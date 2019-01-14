@@ -392,7 +392,11 @@ public class ElasticSearch implements Search {
 
     // single page search
     if (size != GET_ALL_RESULTS && size < SEARCH_INTERVALL_MAX_SIZE && from + size < SEARCH_TO_INDEX_LIMIT) {
-      searchSourceBuilder.docValueField(field).query(q).size(size).from(from).sort(ElasticSortFactory.build(sort));
+      searchSourceBuilder.docValueField(field).query(q).size(size).from(from);
+      if(sort!=null)
+      {
+        searchSourceBuilder.sort(ElasticSortFactory.build(sort));
+      }
       searchRequest.indices(indexName).source(searchSourceBuilder);
       SearchResponse singlePageSearchResponse;
       try {
@@ -405,7 +409,11 @@ public class ElasticSearch implements Search {
     }
     // scroll search
     else {
-      searchSourceBuilder.docValueField(field).query(q).size(SEARCH_INTERVALL_MAX_SIZE).from(from).sort(ElasticSortFactory.build(sort));
+      searchSourceBuilder.docValueField(field).query(q).size(SEARCH_INTERVALL_MAX_SIZE).from(from);
+      if(sort!=null)
+      {
+        searchSourceBuilder.sort(ElasticSortFactory.build(sort));
+      }
       searchRequest.indices(indexName).scroll(TimeValue.timeValueSeconds(30)).source(searchSourceBuilder);
       SearchResponse scrollSearchResponse = null;
       try {
@@ -423,6 +431,7 @@ public class ElasticSearch implements Search {
         SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
         scrollRequest.scroll(TimeValue.timeValueSeconds(30));
         try {
+
           scrollSearchResponse = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
           // TODO Auto-generated catch block
