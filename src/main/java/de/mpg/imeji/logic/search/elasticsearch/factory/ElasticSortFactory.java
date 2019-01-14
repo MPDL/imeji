@@ -59,8 +59,8 @@ public class ElasticSortFactory {
    */
   public static SortBuilder build(SortCriterion sort) {
     if (sort == null) {
-      // return defaultSort;
-      return null;
+      return defaultSort;
+      //return null;
     }
     final SearchFields index = sort.getField();
     switch (index) {

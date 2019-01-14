@@ -8,6 +8,9 @@
 			"id": {
 				"type": "keyword"
 			},
+			"created": {
+				"type": "long"
+			},
 			"name": {
 				"type": "text",
 				"fields": {
