@@ -388,10 +388,10 @@ public class ElasticIndexer implements SearchIndexer {
   public void updatePartial(String id, Object obj) {
     if (id != null) {
       UpdateRequest updateRequest = new UpdateRequest();
-      updateRequest.index(indexName).id(id).doc(obj);
       try {
+        updateRequest.index(indexName).type("_doc").id(id).doc(toJson(obj, id, indexName));
         UpdateResponse resp = ElasticService.getClient().update(updateRequest, RequestOptions.DEFAULT);
-      } catch (IOException e) {
+      } catch (IOException | UnprocessableError e) {
         LOGGER.error("error updating " + id, e);
       }
     }
@@ -411,7 +411,7 @@ public class ElasticIndexer implements SearchIndexer {
       for (final Object obj : l) {
 
         UpdateRequest updateRequest = new UpdateRequest();
-        updateRequest.index(indexName).id(getId(obj)).doc(obj);
+        updateRequest.index(indexName).type("_doc").id(getId(obj)).doc(toJson(obj, dataType, indexName), XContentType.JSON);
         bulkRequest.add(updateRequest);
       }
       BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);

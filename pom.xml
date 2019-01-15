@@ -554,14 +554,14 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>6.5.0</version>
+			<version>6.5.4</version>
 			<!-- <exclusions> <exclusion> <groupId>com.fasterxml.jackson.core</groupId> 
 				<artifactId>jackson-core</artifactId> </exclusion> </exclusions> -->
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>elasticsearch-rest-high-level-client</artifactId>
-			<version>6.5.0</version>
+			<version>6.5.4</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.httpcomponents</groupId>

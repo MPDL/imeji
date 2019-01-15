@@ -174,10 +174,14 @@ public class ElasticSearch implements Search {
   private SearchSourceBuilder addAggregations(SearchSourceBuilder request, String folderUri) {
     final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build();
     if (folderUri != null) {
+      /*
       aggregations.add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS,
-          new FiltersAggregator.KeyedFilter(Facet.COLLECTION_ITEMS,
-              QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ITEMS).must(QueryBuilders.termQuery("folder", folderUri))
-                  .must(QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name())))));
+        new FiltersAggregator.KeyedFilter(Facet.COLLECTION_ITEMS,
+            QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ITEMS).must(QueryBuilders.termQuery("folder", folderUri))
+                .must(QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name())))));
+                */
+      aggregations.add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS, new FiltersAggregator.KeyedFilter(Facet.COLLECTION_ITEMS,
+          QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ITEMS).must(QueryBuilders.termQuery("folder", folderUri)))));
     }
     for (AbstractAggregationBuilder agg : aggregations) {
       request.aggregation(agg);
