@@ -389,7 +389,7 @@ public class ElasticIndexer implements SearchIndexer {
     if (id != null) {
       UpdateRequest updateRequest = new UpdateRequest();
       try {
-        updateRequest.index(indexName).type("_doc").id(id).doc(toJson(obj, id, indexName));
+        updateRequest.index(indexName).type("_doc").id(id).doc(toJson(obj, id, indexName), XContentType.JSON);
         UpdateResponse resp = ElasticService.getClient().update(updateRequest, RequestOptions.DEFAULT);
       } catch (IOException | UnprocessableError e) {
         LOGGER.error("error updating " + id, e);
