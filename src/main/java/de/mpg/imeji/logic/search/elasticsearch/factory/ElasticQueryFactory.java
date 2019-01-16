@@ -577,7 +577,7 @@ public class ElasticQueryFactory {
   private QueryBuilder metadataQuery(QueryBuilder valueQuery, String statement) {
     return QueryBuilders.nestedQuery(ElasticFields.METADATA.field(),
         QueryBuilders.boolQuery().must(valueQuery).must(fieldQuery(ElasticFields.METADATA_INDEX, statement, SearchOperators.EQUALS, false)),
-        null);
+        ScoreMode.Avg);
 
   }
 
@@ -593,7 +593,7 @@ public class ElasticQueryFactory {
     return contentQuery(QueryBuilders.nestedQuery(ElasticFields.TECHNICAL.field(),
         QueryBuilders.boolQuery().must(fieldQuery(ElasticFields.TECHNICAL_NAME, tmd.getLabel(), SearchOperators.EQUALS, false))
             .must(fieldQuery(ElasticFields.TECHNICAL_VALUE, tmd.getValue(), tmd.getOperator(), tmd.isNot())),
-        null));
+        ScoreMode.Avg));
   }
 
   /**

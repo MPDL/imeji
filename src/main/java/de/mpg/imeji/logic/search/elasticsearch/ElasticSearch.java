@@ -17,6 +17,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
@@ -237,6 +238,9 @@ public class ElasticSearch implements Search {
     SearchResponse searchResponse;
     try {
       searchResponse = ElasticService.getClient().search(request, RequestOptions.DEFAULT);
+      if (searchResponse.getShardFailures().length > 0) {
+        LOGGER.error("Error during search: " + searchResponse.getShardFailures().toString());
+      }
       SearchResult result = getSearchResultFromElasticSearchResponse(searchResponse, query);
       List<String> retrievedIDs = new ArrayList<String>();
       // scroll all results starting at a given index
@@ -250,8 +254,7 @@ public class ElasticSearch implements Search {
       result.setResults(retrievedIDs);
       return result;
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      LOGGER.error("Error during search: ", e);
     }
     return null;
   }

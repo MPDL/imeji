@@ -188,6 +188,9 @@
 				"type": "keyword",
 				"copy_to": "all"
 			},
+			"comment":{
+				"type": "text"
+			},
 			"size": {
 				"type": "long",
 				"copy_to": "all"

@@ -94,8 +94,9 @@ public class ElasticSortFactory {
    * @param sortCriterion
    * @return
    */
+  // unmappedType in order to prevent shard failures for missing sort fields
   private static SortBuilder makeBuilder(String field, SortCriterion sortCriterion) {
-    return SortBuilders.fieldSort(field).order(getSortOrder(sortCriterion));
+    return SortBuilders.fieldSort(field).unmappedType("long").order(getSortOrder(sortCriterion));
   }
 
   /**

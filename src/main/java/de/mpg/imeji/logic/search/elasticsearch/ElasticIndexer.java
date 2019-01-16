@@ -124,6 +124,10 @@ public class ElasticIndexer implements SearchIndexer {
       }
       if (bulkRequest.numberOfActions() > 0) {
         BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+        if (resp.hasFailures()) {
+          LOGGER.error("Indexing failed!: " + resp.buildFailureMessage());
+        }
+
       }
     } catch (final Exception e) {
       LOGGER.error("error indexing object ", e);
@@ -415,6 +419,12 @@ public class ElasticIndexer implements SearchIndexer {
         bulkRequest.add(updateRequest);
       }
       BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+      if (resp.hasFailures()) {
+        LOGGER.error("Indexing failed!: " + resp.buildFailureMessage());
+      }
+      if (!(l.get(0) instanceof ContentVO)) {
+        commit();
+      }
     } catch (final Exception e) {
       LOGGER.error("error indexing object ", e);
     }

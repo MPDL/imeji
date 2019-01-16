@@ -49,8 +49,8 @@ public class AggregationsParser {
           FacetResult facetResult = new FacetResult(getFacetName(mdAgg.getName()), mdAgg.getName());
           if (mdAgg instanceof Filter) {
             Aggregation terms = ((Filter) mdAgg).getAggregations().asList().get(0);
-            if (terms instanceof StringTerms) {
-              for (Terms.Bucket bucket : ((StringTerms) terms).getBuckets()) {
+            if (terms instanceof ParsedStringTerms) {
+              for (Terms.Bucket bucket : ((ParsedStringTerms) terms).getBuckets()) {
                 facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
               }
             } else if (terms instanceof InternalStats) {

@@ -37,6 +37,9 @@
 			"status": {
 				"type": "keyword"
 			},
+			"comment":{
+				"type": "text"
+			},
 			"filetype": {
 				"type": "keyword",
 				"copy_to": "all"
