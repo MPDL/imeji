@@ -1,0 +1,32 @@
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+
+
+# This is a Jena database fix for problem https://github.com/MPDL/imeji/issues/1092
+# Add a license (CC_BY see below) to all items 
+# that belong to a released collection (or its sub collections) and (due to a bug)
+# have no license. 
+#
+# Insert full collectionId in line 23: ?x <http://imeji.org/terms/collection>+  <http://fullCollectionId>.
+# Insert start date of the license in line 17
+
+WITH <http://imeji.org/item>
+INSERT {?x <http://imeji.org/terms/license> ?y.
+        ?y <http://imeji.org/terms/name>  ?licenseName.
+		?y <http://imeji.org/terms/label> ?licenseLabel.
+        ?y <http://imeji.org/terms/url> ?licenseUrl.
+		?y <http://imeji.org/terms/start> 1547478092126. 
+        ?y <http://imeji.org/terms/end> -1 
+}  
+USING <http://imeji.org/collection>
+USING <http://imeji.org/item>
+WHERE{
+     ?x <http://imeji.org/terms/collection>+  <http://edmond.mpdl.mpg.de/imeji/collection/0bzukQXek580nHq>.
+     ?x  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://imeji.org/terms/item>. 
+     FILTER NOT EXISTS {?x <http://imeji.org/terms/license> ?license}.
+     BIND(CONCAT(STR(?x), "/license@pos0") AS ?licenseLinkStr).
+     BIND(IRI(?licenseLinkStr) AS ?y).
+     LET(?licenseName := STRDT("CC_BY",<http://www.w3.org/2001/XMLSchema#string>)).
+     LET(?licenseLabel := STRDT("Creative Commons: Attribution 4.0 International (CC BY 4.0)",<http://www.w3.org/2001/XMLSchema#string>)).
+     LET(?licenseUrl := STRDT("https://creativecommons.org/licenses/by/4.0/",<http://www.w3.org/2001/XMLSchema#string>)) 
+}
