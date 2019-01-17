@@ -116,8 +116,7 @@ public class ImejiConfiguration {
   private static final String DEFAULT_USER_QUOTA_LIST = "1, 10, 20";
   public static final String QUOTA_UNLIMITED = "unlimited";
   public static final String DEFAULT_DOI_PUBLISHER = "Max Planck Society";
-  public static final String DEFAULT_HELP_URL =
-      "https://raw.githubusercontent.com/imeji-community/imeji-help/master/imeji-help-default.html";
+  public static final String DEFAULT_HELP_URL = "https://raw.githubusercontent.com/MPDL/imeji-docs/master/help/imeji-help-default.html";
   public static final String DEFAULT_TECHNICAL_METADATA = "Make,Model,Exposure Time,Date/Time Digitized,Color Space,Artist,Model";
   public static final String DEFAULT_THUMBNAIL_WIDTH = "103";
   public static final String DEFAULT_PREVIEW_WIDTH = "357";
