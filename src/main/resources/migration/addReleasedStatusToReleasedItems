@@ -1,0 +1,37 @@
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+
+# This is a Jena database fix for problem https://github.com/MPDL/imeji/issues/1092
+# Change status of each item in collection <http://edmond.mpdl.mpg.de/imeji/collection/0bzukQXek580nHq>
+# to released.
+
+WITH <http://imeji.org/item>
+DELETE {?x <http://imeji.org/terms/status> <http://imeji.org/terms/status#PENDING> }
+INSERT {?x <http://imeji.org/terms/status> <http://imeji.org/terms/status#RELEASED>.
+		?x <http://purl.org/dc/terms/issued> ?releaseDate.
+ }  
+USING <http://imeji.org/collection>
+USING <http://imeji.org/item>
+WHERE{
+     ?x <http://imeji.org/terms/collection>+  <http://edmond.mpdl.mpg.de/imeji/collection/0bzukQXek580nHq>.
+     ?x  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://imeji.org/terms/item>. 
+     FILTER EXISTS {?x <http://imeji.org/terms/status> <http://imeji.org/terms/status#PENDING>}.
+     BIND(NOW() as ?releaseDate)
+};
+
+
+# Change status of each sub collection in collection <http://edmond.mpdl.mpg.de/imeji/collection/0bzukQXek580nHq>
+# to released.
+
+WITH <http://imeji.org/collection>
+DELETE {?x <http://imeji.org/terms/status> <http://imeji.org/terms/status#PENDING> }
+INSERT {?x <http://imeji.org/terms/status> <http://imeji.org/terms/status#RELEASED>.
+		?x <http://purl.org/dc/terms/issued> ?releaseDate. }  
+USING <http://imeji.org/collection>
+WHERE{
+     ?x <http://imeji.org/terms/collection>+  <http://edmond.mpdl.mpg.de/imeji/collection/0bzukQXek580nHq>.
+     FILTER EXISTS {?x <http://imeji.org/terms/status> <http://imeji.org/terms/status#PENDING>}.
+     BIND(NOW() as ?releaseDate)
+};
+
+
