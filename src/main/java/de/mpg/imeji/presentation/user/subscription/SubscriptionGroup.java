@@ -25,124 +25,123 @@ import de.mpg.imeji.logic.security.user.UserService;
  *
  */
 public class SubscriptionGroup implements Serializable {
-	private static final long serialVersionUID = -2569072377550287718L;
-	private List<Subscription> subscriptions = new ArrayList<>();
-	private Map<String, User> subscribedUserMap = new HashMap<>();
-	private final CollectionImeji collection;
-	private final User user;
-	private final User sessionUser;
-	private final boolean active;
+  private static final long serialVersionUID = -2569072377550287718L;
+  private List<Subscription> subscriptions = new ArrayList<>();
+  private Map<String, User> subscribedUserMap = new HashMap<>();
+  private final CollectionImeji collection;
+  private final User user;
+  private final User sessionUser;
+  private final boolean active;
 
-	public SubscriptionGroup(CollectionImeji collection, User user) {
-		this.collection = collection;
-		this.user = user;
-		this.sessionUser = null;
-		active = SecurityUtil.authorization().read(user, collection);
-	}
+  public SubscriptionGroup(CollectionImeji collection, User user) {
+    this.collection = collection;
+    this.user = user;
+    this.sessionUser = null;
+    active = SecurityUtil.authorization().read(user, collection);
+  }
 
-	public SubscriptionGroup(CollectionImeji collection, User user, User sessionUser) {
-		this.collection = collection;
-		this.user = user;
-		this.sessionUser = sessionUser;
-		active = SecurityUtil.authorization().read(user, collection);
-	}
+  public SubscriptionGroup(CollectionImeji collection, User user, User sessionUser) {
+    this.collection = collection;
+    this.user = user;
+    this.sessionUser = sessionUser;
+    active = SecurityUtil.authorization().read(user, collection);
+  }
 
-	/**
-	 * Retrieve the subscriptions of this group
-	 */
-	public void init() {
-		subscriptions = retrieveSubscriptions();
-		subscribedUserMap = retrieveUsers(subscriptions);
-	}
+  /**
+   * Retrieve the subscriptions of this group
+   */
+  public void init() {
+    subscriptions = retrieveSubscriptions();
+    subscribedUserMap = retrieveUsers(subscriptions);
+  }
 
-	/**
-	 * Retrieve all users which have subscribed to this collection
-	 * 
-	 * @param l
-	 * @return
-	 */
-	private Map<String, User> retrieveUsers(List<Subscription> l) {
-		List<String> userIds = l.stream().map(s -> s.getUserId()).collect(Collectors.toList());
-		return new UserService().retrieveBatchLazy(userIds, Search.GET_ALL_RESULTS).stream()
-				.collect(Collectors.toMap(u -> u.getId().toString(), Function.identity(), (u1, u2) -> u1));
-	}
+  /**
+   * Retrieve all users which have subscribed to this collection
+   * 
+   * @param l
+   * @return
+   */
+  private Map<String, User> retrieveUsers(List<Subscription> l) {
+    List<String> userIds = l.stream().map(s -> s.getUserId()).collect(Collectors.toList());
+    return new UserService().retrieveBatchLazy(userIds, Search.GET_ALL_RESULTS).stream()
+        .collect(Collectors.toMap(u -> u.getId().toString(), Function.identity(), (u1, u2) -> u1));
+  }
 
-	/**
-	 * Return the completename of a the user of a subscription
-	 * 
-	 * @param s
-	 * @return
-	 */
-	public String getUserCompleteName(Subscription s) {
-		User user = subscribedUserMap.get(s.getUserId());
-		return user != null ? user.getPerson().getCompleteName() : "unknown user with id " + s.getUserId();
-	}
+  /**
+   * Return the completename of a the user of a subscription
+   * 
+   * @param s
+   * @return
+   */
+  public String getUserCompleteName(Subscription s) {
+    User user = subscribedUserMap.get(s.getUserId());
+    return user != null ? user.getPerson().getCompleteName() : "unknown user with id " + s.getUserId();
+  }
 
-	/**
-	 * Return the Subscription of a user
-	 * 
-	 * @param user
-	 * @return
-	 */
-	public Subscription getSubscriptionForUser(User user) {
-		return subscriptions.stream().filter(s -> s.getUserId().equals(user.getId().toString())).findAny().orElse(null);
-	}
+  /**
+   * Return the Subscription of a user
+   * 
+   * @param user
+   * @return
+   */
+  public Subscription getSubscriptionForUser(User user) {
+    return subscriptions.stream().filter(s -> s.getUserId().equals(user.getId().toString())).findAny().orElse(null);
+  }
 
-	public String getName() {
-		return collection.getName();
-	}
+  public String getName() {
+    return collection.getName();
+  }
 
-	/**
-	 * The id of the object of this group
-	 * 
-	 * @return
-	 */
-	public String getObjectId() {
-		return ImejiFactory.newSubscription().setObjectId(collection).build().getObjectId();
-	}
+  /**
+   * The id of the object of this group
+   * 
+   * @return
+   */
+  public String getObjectId() {
+    return ImejiFactory.newSubscription().setObjectId(collection).build().getObjectId();
+  }
 
-	/**
-	 * Retrieve the subscription of this group
-	 * 
-	 * @return
-	 */
-	public List<Subscription> retrieveSubscriptions() {
-		try {
-			return new SubscriptionService().retrieveByObjectId(getObjectId(), user == null ? sessionUser : user);
-		} catch (ImejiException e) {
-			e.printStackTrace();
-			return new ArrayList<>();
-		}
-	}
+  /**
+   * Retrieve the subscription of this group
+   * 
+   * @return
+   */
+  public List<Subscription> retrieveSubscriptions() {
+    try {
+      return new SubscriptionService().retrieveByObjectId(getObjectId(), user == null ? sessionUser : user);
+    } catch (ImejiException e) {
+      e.printStackTrace();
+      return new ArrayList<>();
+    }
+  }
 
-	public boolean isSubscribed(User user) {
-		return subscribedUserMap.containsKey(user.getId().toString());
-	}
+  public boolean isSubscribed(User user) {
+    return subscribedUserMap.containsKey(user.getId().toString());
+  }
 
-	/**
-	 * @return the subscriptions
-	 */
-	public List<Subscription> getSubscriptions() {
-		return subscriptions;
-	}
+  /**
+   * @return the subscriptions
+   */
+  public List<Subscription> getSubscriptions() {
+    return subscriptions;
+  }
 
-	/**
-	 * Retrieve all the users who subscribed to this collection sorted by name
-	 * 
-	 * @return
-	 */
-	public List<User> getSubscribedUsers() {
-		return subscribedUserMap.values().stream()
-				.sorted((u1, u2) -> u1.getPerson().getCompleteName().compareTo(u2.getPerson().getCompleteName()))
-				.collect(Collectors.toList());
-	}
+  /**
+   * Retrieve all the users who subscribed to this collection sorted by name
+   * 
+   * @return
+   */
+  public List<User> getSubscribedUsers() {
+    return subscribedUserMap.values().stream()
+        .sorted((u1, u2) -> u1.getPerson().getCompleteName().compareTo(u2.getPerson().getCompleteName())).collect(Collectors.toList());
+  }
 
-	public CollectionImeji getCollection() {
-		return collection;
-	}
+  public CollectionImeji getCollection() {
+    return collection;
+  }
 
-	public boolean isActive() {
-		return active;
-	}
+  public boolean isActive() {
+    return active;
+  }
 
 }

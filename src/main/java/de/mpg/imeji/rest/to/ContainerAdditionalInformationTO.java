@@ -12,63 +12,59 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ContainerAdditionalInformationTO implements Serializable {
-	private static final long serialVersionUID = 8886559024173872540L;
-	private String label;
-	private String text;
-	private String url;
+  private static final long serialVersionUID = 8886559024173872540L;
+  private String label;
+  private String text;
+  private String url;
 
-	public ContainerAdditionalInformationTO(String label, String text, String url) {
-		this.setLabel(label);
-		this.setText(text);
-		this.setUrl(url);
-	}
+  public ContainerAdditionalInformationTO(String label, String text, String url) {
+    this.setLabel(label);
+    this.setText(text);
+    this.setUrl(url);
+  }
 
-	public ContainerAdditionalInformationTO() {
-	}
+  public ContainerAdditionalInformationTO() {}
 
-	/**
-	 * @return the label
-	 */
-	public String getLabel() {
-		return label;
-	}
+  /**
+   * @return the label
+   */
+  public String getLabel() {
+    return label;
+  }
 
-	/**
-	 * @param label
-	 *            the label to set
-	 */
-	public void setLabel(String label) {
-		this.label = label;
-	}
+  /**
+   * @param label the label to set
+   */
+  public void setLabel(String label) {
+    this.label = label;
+  }
 
-	/**
-	 * @return the text
-	 */
-	public String getText() {
-		return text;
-	}
+  /**
+   * @return the text
+   */
+  public String getText() {
+    return text;
+  }
 
-	/**
-	 * @param text
-	 *            the text to set
-	 */
-	public void setText(String text) {
-		this.text = text;
-	}
+  /**
+   * @param text the text to set
+   */
+  public void setText(String text) {
+    this.text = text;
+  }
 
-	/**
-	 * @return the url
-	 */
-	public String getUrl() {
-		return url;
-	}
+  /**
+   * @return the url
+   */
+  public String getUrl() {
+    return url;
+  }
 
-	/**
-	 * @param url
-	 *            the url to set
-	 */
-	public void setUrl(String url) {
-		this.url = url;
-	}
+  /**
+   * @param url the url to set
+   */
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
 }

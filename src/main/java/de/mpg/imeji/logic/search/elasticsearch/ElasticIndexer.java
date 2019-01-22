@@ -1,18 +1,26 @@
 package de.mpg.imeji.logic.search.elasticsearch;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.client.Client;
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.common.xcontent.XContentType;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,11 +35,11 @@ import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.SearchIndexer;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticContent;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFolder;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticItem;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticJoinField;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticJoinableContent;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUser;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
 import de.mpg.imeji.logic.search.elasticsearch.script.CollectionPostIndexScript;
@@ -46,324 +54,370 @@ import de.mpg.imeji.logic.util.StringHelper;
  */
 public class ElasticIndexer implements SearchIndexer {
 
-	private static final Logger LOGGER = LogManager.getLogger(ElasticIndexer.class);
-	private static final ObjectMapper mapper = new ObjectMapper();
-	private final String index;
-	private final String dataType;
-	private final ElasticAnalysers analyser;
-	private String mappingFile = "elasticsearch/Elastic_TYPE_Mapping.json";
+  private static final Logger LOGGER = LogManager.getLogger(ElasticIndexer.class);
+  private static final ObjectMapper mapper = new ObjectMapper();
+  private final String indexName;
+  private final String dataType = "_doc";
+  // private final ElasticAnalysers analyser;
+  private String mappingFile = "elasticsearch/Elastic_TYPE_Mapping.json";
 
-	/**
-	 * Create an instance for writing data to the ElasticSearch server
-	 * 
-	 * @param indexName
-	 *            the name for the index under which data shall be stored index is
-	 *            an ElasticSearch concept, a name or number under which data can be
-	 *            stored collectively
-	 * @param dataType
-	 *            the type under which data shall be stored type is an ElasticSearch
-	 *            concept, a "category" under which data of an index can be stored
-	 * @param analyser
-	 */
+  /**
+   * Create an instance for writing data to the ElasticSearch server
+   * 
+   * @param indexName the name for the index under which data shall be stored index is an
+   *        ElasticSearch concept, a name or number under which data can be stored collectively
+   * @param dataType the type under which data shall be stored type is an ElasticSearch concept, a
+   *        "category" under which data of an index can be stored
+   * @param analyser
+   */
 
-	public ElasticIndexer(String indexName, ElasticTypes dataType, ElasticAnalysers analyser) {
-		this.index = indexName;
-		this.dataType = dataType.name();
-		this.analyser = analyser;
-		this.mappingFile = mappingFile.replace("_TYPE_", StringUtils.capitalize(this.dataType));
-	}
+  public ElasticIndexer(String indexName) {
+    this.indexName = indexName;
+    // this.dataType = dataType.name();
+    // this.analyser = analyser;
+    this.mappingFile = mappingFile.replace("_TYPE_", StringUtils.capitalize(this.indexName));
+  }
 
-	/**
-	 * Add object to the index of this ElasticIndexer instance index is an
-	 * ElasticSearch concept, a name or number under which data can be stored For
-	 * each index in ElasticSearch an original version plus a configurable number of
-	 * replicas is created
-	 * 
-	 * @param obj
-	 *            the object that will be added to the index
-	 */
-	@Override
-	public void index(Object obj) {
-		try {
-			indexJSON(getId(obj), toJson(obj, dataType, index), getParent(obj));
-			commit();
-		} catch (final Exception e) {
-			LOGGER.error("Error indexing object ", e);
-		}
-	}
+  /**
+   * Add object to the index of this ElasticIndexer instance index is an ElasticSearch concept, a
+   * name or number under which data can be stored For each index in ElasticSearch an original
+   * version plus a configurable number of replicas is created
+   * 
+   * @param obj the object that will be added to the index
+   */
+  @Override
+  public void index(Object obj) {
+    try {
+      indexJSON(getId(obj), toJson(obj, dataType, indexName), getParent(obj));
+      commit();
+    } catch (final Exception e) {
+      LOGGER.error("Error indexing object ", e);
+    }
+  }
 
-	@Override
-	public void indexBatch(List<?> l) {
-		updateIndexBatch(l);
-	}
+  @Override
+  public void indexBatch(List<?> l) {
+    updateIndexBatch(l);
+  }
 
-	@Override
-	public void updateIndexBatch(List<?> l) {
-		if (l.isEmpty()) {
-			return;
-		}
-		try {
-			final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
-			for (final Object obj : l) {
-				bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, index), getParent(obj), dataType));
-			}
-			if (bulkRequest.numberOfActions() > 0) {
-				bulkRequest.get();
-			}
-		} catch (final Exception e) {
-			LOGGER.error("error indexing object ", e);
-		}
-		if (!(l.get(0) instanceof ContentVO)) {
-			commit();
-		}
-		updateIndexBatchPostProcessing(l);
-	}
+  @Override
+  public void updateIndexBatch(List<?> l) {
+    if (l.isEmpty()) {
+      return;
+    }
+    try {
+      final BulkRequest bulkRequest = new BulkRequest();
 
-	/**
-	 * 
-	 * @param l
-	 */
-	private void updateIndexBatchPostProcessing(List<?> l) {
-		if (l.isEmpty()) {
-			return;
-		}
-		ItemPostIndexScript.run(l, index);
-		for (Object o : l) {
-			if (o instanceof CollectionImeji) {
-				CollectionPostIndexScript.run((CollectionImeji) o, index);
-			}
-		}
-	}
+      for (final Object obj : l) {
+        LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
+        bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType));
+      }
+      if (bulkRequest.numberOfActions() > 0) {
+        BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+        if (resp.hasFailures()) {
+          LOGGER.error("Indexing failed!: " + resp.buildFailureMessage());
+        }
 
-	@Override
-	public void delete(Object obj) {
-		final String id = getId(obj);
-		if (id != null) {
-			getDeleteRequest(id, getParent(obj)).execute().actionGet();
-			commit();
-		}
-	}
+      }
+    } catch (final Exception e) {
+      LOGGER.error("error indexing object ", e);
+    }
+    if (!(l.get(0) instanceof ContentVO)) {
+      commit();
+    }
+    updateIndexBatchPostProcessing(l);
+  }
 
-	@Override
-	public void deleteBatch(List<?> l) {
-		if (l.isEmpty()) {
-			return;
-		}
-		final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
-		for (final Object obj : l) {
-			final String id = getId(obj);
-			if (id != null) {
-				bulkRequest.add(getDeleteRequest(id, getParent(obj)));
-			}
-		}
-		if (bulkRequest.numberOfActions() > 0) {
-			bulkRequest.get();
-		}
-		if (!(l.get(0) instanceof ContentVO)) {
-			commit();
-		}
-	}
+  /**
+   * 
+   * @param l
+   */
+  private void updateIndexBatchPostProcessing(List<?> l) {
+    if (l.isEmpty()) {
+      return;
+    }
+    ItemPostIndexScript.run(l, indexName);
+    for (Object o : l) {
+      if (o instanceof CollectionImeji) {
+        CollectionPostIndexScript.run((CollectionImeji) o, "items");
+      }
+    }
+  }
 
-	/**
-	 * Return the index Request
-	 *
-	 * @param id
-	 * @param json
-	 * @param parent
-	 * @return
-	 */
-	private IndexRequestBuilder getIndexRequest(String id, String json, String parent, String type) {
-		final IndexRequestBuilder builder = ElasticService.getClient().prepareIndex(index, dataType).setId(id)
-				.setSource(json);
-		if (parent != null) {
-			builder.setParent(parent);
-		}
-		if (type != null) {
-			builder.setType(type);
-		}
-		return builder;
-	}
+  @Override
+  public void delete(Object obj) {
+    final String id = getId(obj);
+    if (id != null) {
+      DeleteRequest deleteRequest = getDeleteRequest(id, getParent(obj));
+      try {
+        DeleteResponse resp = ElasticService.getClient().delete(deleteRequest, RequestOptions.DEFAULT);
+      } catch (Exception e) {
+        LOGGER.error("error deleting " + id, e);
+      }
+      commit();
+    }
+  }
 
-	/**
-	 * Return the Delete Request
-	 *
-	 * @param id
-	 * @param json
-	 * @param parent
-	 * @return
-	 */
-	private DeleteRequestBuilder getDeleteRequest(String id, String parent) {
-		final DeleteRequestBuilder builder = ElasticService.getClient().prepareDelete(index, dataType, id);
-		if (parent != null) {
-			builder.setParent(parent);
-		}
-		return builder;
-	}
+  @Override
+  public void deleteBatch(List<?> l) {
+    if (l.isEmpty()) {
+      return;
+    }
+    final BulkRequest bulkRequest = new BulkRequest();
+    for (final Object obj : l) {
+      final String id = getId(obj);
+      if (id != null) {
+        bulkRequest.add(getDeleteRequest(id, getParent(obj)));
+      }
+    }
+    if (bulkRequest.numberOfActions() > 0) {
+      try {
+        BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+      } catch (Exception e) {
+        LOGGER.error("ERROR during bulk delete", e);
+      }
+    }
+    if (!(l.get(0) instanceof ContentVO)) {
+      commit();
+    }
+  }
 
-	/**
-	 * Transform an object to a json
-	 *
-	 * @param obj
-	 * @return
-	 * @throws UnprocessableError
-	 */
-	public static String toJson(Object obj, String dataType, String index) throws UnprocessableError {
-		try {
-			return mapper.setSerializationInclusion(Include.NON_NULL)
-					.writeValueAsString(toESEntity(obj, dataType, index));
-		} catch (final JsonProcessingException e) {
-			throw new UnprocessableError("Error serializing object to json", e);
-		}
-	}
+  /**
+   * Return the index Request
+   *
+   * @param id
+   * @param json
+   * @param parent
+   * @return
+   */
+  private IndexRequest getIndexRequest(String id, String json, String parent, String type) {
+    final IndexRequest indexRequest = new IndexRequest();
+    indexRequest.index(indexName).id(id).source(json, XContentType.JSON);
+    if (parent != null) {
+      // indexRequest.parent(parent);
+      indexRequest.routing(parent);
+    }
+    if (type != null) {
+      indexRequest.type(type);
+    }
+    LOGGER.info("+++ the request object: " + indexRequest.index() + "   " + indexRequest.type() + "   " + indexRequest.id());
+    return indexRequest;
+  }
 
-	/**
-	 * Index in Elasticsearch the passed json with the given id
-	 *
-	 * @param id
-	 * @param json
-	 */
-	public void indexJSON(String id, String json, String parent) {
-		if (id != null) {
-			getIndexRequest(id, json, parent, dataType).execute().actionGet();
-		}
-	}
+  /**
+   * Return the Delete Request
+   *
+   * @param id
+   * @param json
+   * @param parent
+   * @return
+   */
+  private DeleteRequest getDeleteRequest(String id, String parent) {
+    final DeleteRequest deleteRequest = new DeleteRequest();
+    deleteRequest.index(indexName).id(id).type(dataType);
+    if (parent != null) {
+      deleteRequest.routing(parent);
+    }
+    return deleteRequest;
+  }
 
-	/**
-	 * Make all changes done searchable. Kind of a commit. Might be important if
-	 * data needs to be immediately available for other tasks
-	 */
-	public void commit() {
-		// Check if refresh is needed: cost is very high
-		ElasticService.getClient().admin().indices().prepareRefresh(index).execute().actionGet();
-	}
+  /**
+   * Transform an object to a json
+   *
+   * @param obj
+   * @return
+   * @throws UnprocessableError
+   */
+  public static String toJson(Object obj, String dataType, String index) throws UnprocessableError {
+    try {
+      // mapper.configure(DeserializationFeature..UNWRAP_ROOT_VALUE, true);
+      /*
+      if (obj instanceof ContentVO) {
+      mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+      }
+      */
+      return mapper.setSerializationInclusion(Include.NON_NULL).writeValueAsString(toESEntity(obj, dataType, index));
+    } catch (final JsonProcessingException e) {
+      throw new UnprocessableError("Error serializing object to json", e);
+    }
+  }
 
-	/**
-	 * Remove all indexed data
-	 */
-	public static void clear(Client client, String index) {
-		final DeleteIndexResponse delete = client.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
-		if (!delete.isAcknowledged()) {
-			// Error
-		}
-	}
+  /**
+   * Index in Elasticsearch the passed json with the given id
+   *
+   * @param id
+   * @param json
+   */
+  public void indexJSON(String id, String json, String parent) {
+    if (id != null) {
+      IndexRequest req = getIndexRequest(id, json, parent, dataType);
+      try {
+        IndexResponse resp = ElasticService.getClient().index(req, RequestOptions.DEFAULT);
+      } catch (Exception e) {
+        LOGGER.error("error indexing ", e);
+      }
+    }
+  }
 
-	/**
-	 * Transform a model Entity into an Elasticsearch Entity
-	 *
-	 * @param obj
-	 * @return
-	 */
-	private static Object toESEntity(Object obj, String dataType, String index) {
-		if (obj instanceof Item) {
-			return new ElasticItem((Item) obj);
-		}
-		if (obj instanceof CollectionImeji) {
-			return new ElasticFolder((CollectionImeji) obj);
-		}
-		if (obj instanceof User) {
-			return new ElasticUser((User) obj);
-		}
-		if (obj instanceof UserGroup) {
-			return new ElasticUserGroup((UserGroup) obj);
-		}
-		if (obj instanceof ContentVO) {
-			return new ElasticContent((ContentVO) obj);
-		}
-		if (obj instanceof Subscription) {
-			return null;
-		}
-		return obj;
-	}
+  /**
+   * Make all changes done searchable. Kind of a commit. Might be important if data needs to be
+   * immediately available for other tasks
+   */
 
-	/**
-	 * Get the Parent of the object
-	 *
-	 * @param obj
-	 * @return
-	 */
-	public static String getParent(Object obj) {
-		if (obj instanceof ContentVO) {
-			return StringHelper.isNullOrEmptyTrim(((ContentVO) obj).getItemId()) ? null : ((ContentVO) obj).getItemId();
-		} else if (obj instanceof Item) {
-			// return ((Item) obj).getCollection().toString();
-		}
-		return null;
-	}
+  public void commit() { // Check if refresh is needed: cost is very high
+    RefreshRequest rr = new RefreshRequest(indexName);
+    try {
+      ElasticService.getClient().indices().refresh(rr, RequestOptions.DEFAULT);
+    } catch (Exception e) {
+      LOGGER.error("error refreshing index ", e);
+    }
+  }
 
-	/**
-	 * Get the Id of an Object that is of type Properties, User, UserGroup,
-	 * ContentVO or other with function getId
-	 * 
-	 * @param obj
-	 * @return
-	 */
-	private String getId(Object obj) {
 
-		if (obj instanceof Properties) {
-			return ((Properties) obj).getId().toString();
-		}
-		if (obj instanceof User) {
-			return ((User) obj).getId().toString();
-		}
-		if (obj instanceof UserGroup) {
-			return ((UserGroup) obj).getId().toString();
-		}
-		if (obj instanceof ContentVO) {
-			return ((ContentVO) obj).getId().toString();
-		}
-		try {
-			return (String) obj.getClass().getMethod("getId").invoke(obj);
-		} catch (Exception e) {
-			return null;
-		}
-	}
+  /**
+   * Remove all indexed data
+   */
+  /*
+   * public static void clear(Client client, String index) { final
+   * DeleteIndexResponse delete = client.admin().indices().delete(new
+   * DeleteIndexRequest(index)).actionGet(); if (!delete.isAcknowledged()) { //
+   * Error } }
+   */
 
-	/**
-	 * Add a mapping to the fields (important to have a better search)
-	 */
-	public void addMapping() {
-		try {
-			final String jsonMapping = new String(Files.readAllBytes(
-					Paths.get(ElasticIndexer.class.getClassLoader().getResource(mappingFile).toURI())), "UTF-8")
-							.replace("XXX_ANALYSER_XXX", analyser.name());
-			ElasticService.getClient().admin().indices().preparePutMapping(this.index).setType(dataType)
-					.setSource(jsonMapping).execute().actionGet();
-		} catch (final Exception e) {
-			LOGGER.error("Error initializing the Elastic Search Mapping " + mappingFile, e);
-		}
-	}
+  /**
+   * Transform a model Entity into an Elasticsearch Entity
+   *
+   * @param obj
+   * @return
+   */
+  private static Object toESEntity(Object obj, String dataType, String index) {
+    if (obj instanceof Item) {
+      return new ElasticItem((Item) obj);
+    }
+    if (obj instanceof CollectionImeji) {
+      return new ElasticFolder((CollectionImeji) obj);
+    }
+    if (obj instanceof User) {
+      return new ElasticUser((User) obj);
+    }
+    if (obj instanceof UserGroup) {
+      return new ElasticUserGroup((UserGroup) obj);
+    }
+    if (obj instanceof ContentVO) {
+      ElasticContent cvo = new ElasticContent((ContentVO) obj);
+      ElasticJoinField ejf = new ElasticJoinField();
+      ejf.setName("content");
+      ejf.setParent(((ContentVO) obj).getItemId().toString());
+      ElasticJoinableContent ejc = new ElasticJoinableContent();
+      ejc.setContent(cvo);
+      ejc.setJoinField(ejf);
+      return ejc;
+    }
+    if (obj instanceof Subscription) {
+      return null;
+    }
+    return obj;
+  }
 
-	@Override
-	public void updatePartial(String id, Object obj) {
-		if (id != null) {
-			try {
-				ElasticService.getClient().prepareUpdate(index, dataType, id).setDoc(toJson(obj, dataType, index))
-						.execute().actionGet();
-			} catch (final UnprocessableError e) {
-				LOGGER.error("Error index partial update ", e);
-			}
-		}
-	}
+  /**
+   * Get the Parent of the object
+   *
+   * @param obj
+   * @return
+   */
+  public static String getParent(Object obj) {
+    if (obj instanceof ContentVO) {
+      return StringHelper.isNullOrEmptyTrim(((ContentVO) obj).getItemId()) ? null : ((ContentVO) obj).getItemId();
+    } else if (obj instanceof Item) {
+      // return ((Item) obj).getCollection().toString();
+    }
+    return null;
+  }
 
-	/**
-	 * Bulk Partial update
-	 * 
-	 * @param l
-	 */
-	public void partialUpdateIndexBatch(List<?> l) {
-		if (l.isEmpty()) {
-			return;
-		}
-		try {
-			final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
-			for (final Object obj : l) {
-				bulkRequest.add(ElasticService.getClient().prepareUpdate(index, dataType, getId(obj))
-						.setDoc(toJson(obj, dataType, index)));
-			}
-			bulkRequest.get();
-		} catch (final Exception e) {
-			LOGGER.error("error indexing object ", e);
-		}
-		commit();
-	}
+  /**
+   * Get the Id of an Object that is of type Properties, User, UserGroup, ContentVO or other with
+   * function getId
+   * 
+   * @param obj
+   * @return
+   */
+  private String getId(Object obj) {
+
+    if (obj instanceof Properties) {
+      return ((Properties) obj).getId().toString();
+    }
+    if (obj instanceof User) {
+      return ((User) obj).getId().toString();
+    }
+    if (obj instanceof UserGroup) {
+      return ((UserGroup) obj).getId().toString();
+    }
+    if (obj instanceof ContentVO) {
+      return ((ContentVO) obj).getId().toString();
+    }
+    try {
+      return (String) obj.getClass().getMethod("getId").invoke(obj);
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  /**
+   * Add a mapping to the fields (important to have a better search)
+   */
+  public void addMapping() {
+    try {
+      final String jsonMapping =
+          new String(Files.readAllBytes(Paths.get(ElasticIndexer.class.getClassLoader().getResource(mappingFile).toURI())), "UTF-8");
+      PutMappingRequest request = new PutMappingRequest(this.indexName);
+      request.type(dataType);
+      request.source(jsonMapping, XContentType.JSON);
+      AcknowledgedResponse putMappingResponse = ElasticService.getClient().indices().putMapping(request, RequestOptions.DEFAULT);
+    } catch (final Exception e) {
+      LOGGER.error("Error initializing the Elastic Search Mapping " + mappingFile, e);
+    }
+  }
+
+  @Override
+  public void updatePartial(String id, Object obj) {
+    if (id != null) {
+      UpdateRequest updateRequest = new UpdateRequest();
+      try {
+        updateRequest.index(indexName).type("_doc").id(id).doc(toJson(obj, id, indexName), XContentType.JSON);
+        UpdateResponse resp = ElasticService.getClient().update(updateRequest, RequestOptions.DEFAULT);
+      } catch (IOException | UnprocessableError e) {
+        LOGGER.error("error updating " + id, e);
+      }
+    }
+  }
+
+  /**
+   * Bulk Partial update
+   * 
+   * @param l
+   */
+  public void partialUpdateIndexBatch(List<?> l) {
+    if (l.isEmpty()) {
+      return;
+    }
+    try {
+      final BulkRequest bulkRequest = new BulkRequest();
+      for (final Object obj : l) {
+
+        UpdateRequest updateRequest = new UpdateRequest();
+        updateRequest.index(indexName).type("_doc").id(getId(obj)).doc(toJson(obj, dataType, indexName), XContentType.JSON);
+        bulkRequest.add(updateRequest);
+      }
+      BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+      if (resp.hasFailures()) {
+        LOGGER.error("Indexing failed!: " + resp.buildFailureMessage());
+      }
+      if (!(l.get(0) instanceof ContentVO)) {
+        commit();
+      }
+    } catch (final Exception e) {
+      LOGGER.error("error indexing object ", e);
+    }
+  }
+
 }

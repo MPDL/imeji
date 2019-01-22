@@ -8,13 +8,13 @@ package de.mpg.imeji.logic.db.writer;
  * @version $Revision$ $LastChangedDate$
  */
 public class WriterFactory {
-	/**
-	 * Create a {@link Writer} for a model
-	 *
-	 * @param modelURI
-	 * @return
-	 */
-	public static Writer create(String modelURI) {
-		return new JenaWriter(modelURI);
-	}
+  /**
+   * Create a {@link Writer} for a model
+   *
+   * @param modelURI
+   * @return
+   */
+  public static Writer create(String modelURI) {
+    return new JenaWriter(modelURI);
+  }
 }

@@ -11,14 +11,14 @@ import de.mpg.imeji.logic.events.messages.Message.MessageType;
  */
 public class UpdateHierarchyListener extends Listener {
 
-	public UpdateHierarchyListener() {
-		super(MessageType.DELETE_COLLECTION);
-	}
+  public UpdateHierarchyListener() {
+    super(MessageType.DELETE_COLLECTION);
+  }
 
-	@Override
-	public Integer call() throws Exception {
-		HierarchyService.reloadHierarchy();
-		return 1;
-	}
+  @Override
+  public Integer call() throws Exception {
+    HierarchyService.reloadHierarchy();
+    return 1;
+  }
 
 }

@@ -21,75 +21,75 @@ import de.mpg.imeji.util.JenaUtil;
  */
 public class SuperServiceTest {
 
-	protected static CollectionImeji collectionBasic = null;
-	protected static Item item = null;
+  protected static CollectionImeji collectionBasic = null;
+  protected static Item item = null;
 
-	@BeforeClass
-	public static void setup() {
-		JenaUtil.initJena();
-	}
+  @BeforeClass
+  public static void setup() {
+    JenaUtil.initJena();
+  }
 
-	@AfterClass
-	public static void tearDown() throws Exception {
-		JenaUtil.closeJena();
-	}
+  @AfterClass
+  public static void tearDown() throws Exception {
+    JenaUtil.closeJena();
+  }
 
-	/**
-	 * Create collection with JenaUtil.testUser
-	 * 
-	 * @return
-	 * @throws ImejiException
-	 */
-	protected static CollectionImeji createCollection() throws ImejiException {
-		CollectionService service = new CollectionService();
-		CollectionFactory factory = ImejiFactory.newCollection();
-		factory.setPerson("Max", "Planck", "MPG");
-		collectionBasic = factory.build();
-		collectionBasic.setTitle("Test");
-		return service.create(collectionBasic, JenaUtil.testUser);
-	}
+  /**
+   * Create collection with JenaUtil.testUser
+   * 
+   * @return
+   * @throws ImejiException
+   */
+  protected static CollectionImeji createCollection() throws ImejiException {
+    CollectionService service = new CollectionService();
+    CollectionFactory factory = ImejiFactory.newCollection();
+    factory.setPerson("Max", "Planck", "MPG");
+    collectionBasic = factory.build();
+    collectionBasic.setTitle("Test");
+    return service.create(collectionBasic, JenaUtil.testUser);
+  }
 
-	/**
-	 * Create Item in current collection with JenaUtil.testUser
-	 * 
-	 * @return
-	 * @throws ImejiException
-	 */
-	protected static Item createItem() throws ImejiException {
-		ItemService service = new ItemService();
-		item = service.create(ImejiFactory.newItem(collectionBasic), collectionBasic, JenaUtil.testUser);
-		return item;
-	}
+  /**
+   * Create Item in current collection with JenaUtil.testUser
+   * 
+   * @return
+   * @throws ImejiException
+   */
+  protected static Item createItem() throws ImejiException {
+    ItemService service = new ItemService();
+    item = service.create(ImejiFactory.newItem(collectionBasic), collectionBasic, JenaUtil.testUser);
+    return item;
+  }
 
-	protected static Item createItemWithFile() throws ImejiException {
-		return createItemWithFile(getOriginalfile());
-	}
+  protected static Item createItemWithFile() throws ImejiException {
+    return createItemWithFile(getOriginalfile());
+  }
 
-	protected static Item createItemWithFile(File file) throws ImejiException {
-		if (collectionBasic == null) {
-			createCollection();
-		}
-		return createItemWithFile(file, collectionBasic, JenaUtil.testUser);
-	}
+  protected static Item createItemWithFile(File file) throws ImejiException {
+    if (collectionBasic == null) {
+      createCollection();
+    }
+    return createItemWithFile(file, collectionBasic, JenaUtil.testUser);
+  }
 
-	protected static Item createItemWithFile(File file, CollectionImeji collection, User user) throws ImejiException {
-		ItemService service = new ItemService();
-		item = ImejiFactory.newItem(collection);
-		item = service.createWithFile(item, file, file.getName(), collection, user);
-		return item;
-	}
+  protected static Item createItemWithFile(File file, CollectionImeji collection, User user) throws ImejiException {
+    ItemService service = new ItemService();
+    item = ImejiFactory.newItem(collection);
+    item = service.createWithFile(item, file, file.getName(), collection, user);
+    return item;
+  }
 
-	/**
-	 * @return the originalfile
-	 */
-	protected static File getOriginalfile() {
-		return ImejiTestResources.getTestJpg();
-	}
+  /**
+   * @return the originalfile
+   */
+  protected static File getOriginalfile() {
+    return ImejiTestResources.getTestJpg();
+  }
 
-	/**
-	 * @return the thumbnailfile
-	 */
-	protected static File getThumbnailfile() {
-		return ImejiTestResources.getTestPng();
-	}
+  /**
+   * @return the thumbnailfile
+   */
+  protected static File getThumbnailfile() {
+    return ImejiTestResources.getTestPng();
+  }
 }

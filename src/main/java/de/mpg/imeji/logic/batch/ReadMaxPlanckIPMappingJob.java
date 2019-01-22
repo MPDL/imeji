@@ -12,11 +12,11 @@ import de.mpg.imeji.logic.util.MaxPlanckInstitutUtils;
  */
 public class ReadMaxPlanckIPMappingJob implements Callable<Integer> {
 
-	@Override
-	public Integer call() throws Exception {
-		MaxPlanckInstitutUtils.initMPINameMap();
-		MaxPlanckInstitutUtils.initIdMap();
-		return 1;
-	}
+  @Override
+  public Integer call() throws Exception {
+    MaxPlanckInstitutUtils.initMPINameMap();
+    MaxPlanckInstitutUtils.initIdMap();
+    return 1;
+  }
 
 }

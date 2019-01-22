@@ -1,144 +1,158 @@
 {
-   "folders":{
-      "properties":{
-         "created":{
-            "type":"long",
-            "include_in_all":false
-         },
-         "creator":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "lasteditor":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "id":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "idstring":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "modified":{
-            "type":"long",
-            "include_in_all":false
-         },
-         "status":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "filetype":{
-            "type":"string",
-            "index":"not_analyzed"
-         },
-         "name":{
-            "type":"string",
-            "fields":{
-               "suggest":{
-                  "type":"string",
-                  "analyzer":"edgegram_analyzer",
-                  "search_analyzer": "standard",
-                  "include_in_all":false
-               },
-               "sort":{
-                  "type":"string",
-                  "analyzer":"XXX_ANALYSER_XXX"
-               }
-            }
-         },
-         "description":{
-            "type":"string",
-            "fields":{
-               "sort":{
-                  "type":"string",
-                  "analyzer":"XXX_ANALYSER_XXX"
-               }
-            }
-         },
-         "pid":{
-            "type":"string"
-         },
-         "info":{
-            "properties":{
-               "label":{
-                  "type":"string"
-               },
-               "text":{
-                  "type":"string"
-               },
-               "url":{
-                  "type":"string"
-               }
-            }
-         },
-         "creators":{
-            "type":"string",
-            "fields":{
-               "sort":{
-                  "type":"string",
-                  "analyzer":"XXX_ANALYSER_XXX"
-               }
-            }
-         },
-         "author":{
-            "properties":{
-               "familyname":{
-                  "type":"string",
-                  "fields":{
-                     "sort":{
-                        "type":"string",
-                        "analyzer":"XXX_ANALYSER_XXX"
-                     }
-                  }
-               },
-               "givenname":{
-                  "type":"string",
-                  "fields":{
-                     "sort":{
-                        "type":"string",
-                        "analyzer":"XXX_ANALYSER_XXX"
-                     }
-                  }
-               },
-               "completename":{
-                  "type":"string",
-                  "fields":{
-                     "sort":{
-                        "type":"string",
-                        "analyzer":"XXX_ANALYSER_XXX"
-                     },
-                     "exact":{
-                        "type":"string",
-                        "index":"not_analyzed"
-                     }
-                  }
-               },
-               "identifier":{
-                  "type":"string",
-                  "index":"not_analyzed"
-               },
-               "organization":{
-                  "type":"string",
-                  "fields":{
-                     "sort":{
-                        "type":"string",
-                        "analyzer":"XXX_ANALYSER_XXX"
-                     },
-                     "exact":{
-                        "type":"string",
-                        "index":"not_analyzed"
-                     }
-                  }
-               }
-            }
-         }
-      }
-   }
+	"_doc": {
+		"dynamic": "strict",
+		"properties": {
+			"all": {
+				"type": "text"
+			},
+			"joinField": {
+				"type": "join",
+				"eager_global_ordinals": true,
+				"relations": {
+					"folder": "content"
+				}
+			},
+			"folder": {
+				"type": "keyword",
+				"copy_to": "all"
+			},
+			"created": {
+				"type": "long"
+			},
+			"creator": {
+				"type": "keyword"
+			},
+			"lasteditor": {
+				"type": "keyword"
+			},
+			"id": {
+				"type": "keyword"
+			},
+			"idstring": {
+				"type": "keyword"
+			},
+			"modified": {
+				"type": "long"
+			},
+			"status": {
+				"type": "keyword"
+			},
+			"comment":{
+				"type": "text"
+			},
+			"filetype": {
+				"type": "keyword",
+				"copy_to": "all"
+			},
+			"name": {
+				"type": "text",
+				"copy_to": "all",
+				"fields": {
+					"suggest": {
+						"type": "text",
+						"analyzer": "edgegram_analyzer",
+						"search_analyzer": "standard"
+					},
+					"sort": {
+						"type": "keyword",
+						"normalizer": "sort"
+					}
+				}
+			},
+			"description": {
+				"type": "text",
+				"copy_to": "all",
+				"fields": {
+					"sort": {
+						"type": "keyword",
+						"normalizer": "sort"
+					}
+				}
+			},
+			"pid": {
+				"type": "text",
+				"copy_to": "all"
+			},
+			"info": {
+				"properties": {
+					"label": {
+						"type": "text",
+						"copy_to": "all"
+					},
+					"text": {
+						"type": "text",
+						"copy_to": "all"
+					},
+					"url": {
+						"type": "text",
+						"copy_to": "all"
+					}
+				}
+			},
+			"creators": {
+				"type": "text",
+				"copy_to": "all",
+				"fields": {
+					"sort": {
+						"type": "keyword",
+						"normalizer": "sort"
+					}
+				}
+			},
+			"author": {
+				"properties": {
+					"familyname": {
+						"type": "text",
+						"copy_to": "all",
+						"fields": {
+							"sort": {
+								"type": "keyword",
+								"normalizer": "sort"
+							}
+						}
+					},
+					"givenname": {
+						"type": "text",
+						"copy_to": "all",
+						"fields": {
+							"sort": {
+								"type": "keyword",
+								"normalizer": "sort"
+							}
+						}
+					},
+					"completename": {
+						"type": "text",
+						"copy_to": "all",
+						"fields": {
+							"sort": {
+								"type": "keyword",
+								"normalizer": "sort"
+							},
+							"exact": {
+								"type": "keyword"
+							}
+						}
+					},
+					"identifier": {
+						"type": "keyword",
+						"copy_to": "all"
+					},
+					"organization": {
+						"type": "text",
+						"copy_to": "all",
+						"fields": {
+							"sort": {
+								"type": "keyword",
+								"normalizer": "sort"
+							},
+							"exact": {
+								"type": "keyword"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

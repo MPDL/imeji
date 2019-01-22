@@ -9,10 +9,10 @@ import de.mpg.imeji.exceptions.ImejiException;
  *
  */
 public class DeprecatedAPIVersionException extends ImejiException {
-	private static final long serialVersionUID = 3282632745855713344L;
+  private static final long serialVersionUID = 3282632745855713344L;
 
-	public DeprecatedAPIVersionException(String message) {
-		super(message);
-		this.minimizeStacktrace();
-	}
+  public DeprecatedAPIVersionException(String message) {
+    super(message);
+    this.minimizeStacktrace();
+  }
 }

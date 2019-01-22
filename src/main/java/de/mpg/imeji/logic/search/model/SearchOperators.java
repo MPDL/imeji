@@ -8,5 +8,9 @@ package de.mpg.imeji.logic.search.model;
  * @version $Revision$ $LastChangedDate$
  */
 public enum SearchOperators {
-	EQUALS, GREATER, LESSER, GREATER_EQUALS, LESSER_EQUALS;
+  EQUALS,
+  GREATER,
+  LESSER,
+  GREATER_EQUALS,
+  LESSER_EQUALS;
 }

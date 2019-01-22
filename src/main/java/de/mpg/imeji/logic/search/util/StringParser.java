@@ -10,19 +10,19 @@ import java.util.regex.Pattern;
  *
  */
 public class StringParser {
-	private Matcher m;
-	private final Pattern p;
+  private Matcher m;
+  private final Pattern p;
 
-	public StringParser(Pattern p) {
-		this.p = p;
-	}
+  public StringParser(Pattern p) {
+    this.p = p;
+  }
 
-	public boolean find(String s) {
-		this.m = p.matcher(s);
-		return m.find();
-	}
+  public boolean find(String s) {
+    this.m = p.matcher(s);
+    return m.find();
+  }
 
-	public String getGroup(int i) {
-		return m.group(i);
-	}
+  public String getGroup(int i) {
+    return m.group(i);
+  }
 }

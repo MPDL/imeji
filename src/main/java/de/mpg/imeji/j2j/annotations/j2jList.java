@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
-import com.hp.hpl.jena.Jena;
+import org.apache.jena.Jena;
 
 /**
  * For persistence of {@link List} in {@link Jena}
@@ -15,5 +15,5 @@ import com.hp.hpl.jena.Jena;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface j2jList {
-	String value();
+  String value();
 }

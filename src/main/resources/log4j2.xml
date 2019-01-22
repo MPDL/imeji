@@ -9,8 +9,8 @@
 	<!-- ================================= -->
     
     <!--  fileName : if the file or directory does not exist it will be created -->
-    <RollingFile name="RollingFile" fileName="${sys:catalina.base}/logs/logIm.log"
-                 filePattern="${sys:catalina.base}/logs/logIm-%d{yyyy-MM-dd}.log.gz">
+    <RollingFile name="RollingFile" fileName="${sys:catalina.base}/logs/imeji.log"
+                 filePattern="${sys:catalina.base}/logs/imeji-%d{yyyy-MM-dd}.log.gz">
       <!--  format of output in file -->
       <PatternLayout>
       <!-- time, priority, thread-that-generated-the-output, message, new-line  -->
@@ -30,8 +30,8 @@
         <Delete basePath="${sys:catalina.base}/logs" maxDepth="2">
           <!--  configure conditions that select files to delete relative to base directory 
                 glob: Matches relative path-->
-          <IfFileName glob="logIm-*gz"/>
-          <IfLastModified age="7d"/>
+          <IfFileName glob="imeji-*gz"/>
+          <IfLastModified age="30d"/>
         </Delete>
       </DefaultRolloverStrategy>
     </RollingFile>

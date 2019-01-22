@@ -24,117 +24,116 @@ import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 @j2jModel("collection")
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class CollectionImeji extends Properties implements Serializable, CollectionElement {
-	private static final long serialVersionUID = -4689209760815149573L;
-	@j2jResource("http://imeji.org/terms/collection")
-	private URI collection;
-	@j2jLiteral("http://purl.org/dc/elements/1.1/title")
-	private String title;
-	@j2jLiteral("http://purl.org/dc/elements/1.1/description")
-	private String description;
-	@j2jList("http://xmlns.com/foaf/0.1/person")
-	protected Collection<Person> persons = new ArrayList<Person>();
-	@j2jList("http://imeji.org/AdditionalInfo")
-	private List<ContainerAdditionalInfo> additionalInformations = new ArrayList<>();
-	@j2jLiteral("http://imeji.org/terms/doi")
-	private String doi;
-	@j2jResource("http://imeji.org/terms/logoUrl")
-	private URI logoUrl;
-	private Collection<URI> images = new ArrayList<URI>();
+  private static final long serialVersionUID = -4689209760815149573L;
+  @j2jResource("http://imeji.org/terms/collection")
+  private URI collection;
+  @j2jLiteral("http://purl.org/dc/elements/1.1/title")
+  private String title;
+  @j2jLiteral("http://purl.org/dc/elements/1.1/description")
+  private String description;
+  @j2jList("http://xmlns.com/foaf/0.1/person")
+  protected Collection<Person> persons = new ArrayList<Person>();
+  @j2jList("http://imeji.org/AdditionalInfo")
+  private List<ContainerAdditionalInfo> additionalInformations = new ArrayList<>();
+  @j2jLiteral("http://imeji.org/terms/doi")
+  private String doi;
+  @j2jResource("http://imeji.org/terms/logoUrl")
+  private URI logoUrl;
+  private Collection<URI> images = new ArrayList<URI>();
 
-	public String getTitle() {
-		return title;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public Collection<Person> getPersons() {
-		return persons;
-	}
+  public Collection<Person> getPersons() {
+    return persons;
+  }
 
-	public void setPersons(Collection<Person> person) {
-		this.persons = person;
-	}
+  public void setPersons(Collection<Person> person) {
+    this.persons = person;
+  }
 
-	public List<ContainerAdditionalInfo> getAdditionalInformations() {
-		return additionalInformations;
-	}
+  public List<ContainerAdditionalInfo> getAdditionalInformations() {
+    return additionalInformations;
+  }
 
-	public void setAdditionalInformations(List<ContainerAdditionalInfo> additionalInformations) {
-		this.additionalInformations = additionalInformations;
-	}
+  public void setAdditionalInformations(List<ContainerAdditionalInfo> additionalInformations) {
+    this.additionalInformations = additionalInformations;
+  }
 
-	public URI getLogoUrl() {
-		return this.logoUrl;
-	}
+  public URI getLogoUrl() {
+    return this.logoUrl;
+  }
 
-	public void setLogoUrl(URI logoUrl) {
-		this.logoUrl = logoUrl;
-	}
+  public void setLogoUrl(URI logoUrl) {
+    this.logoUrl = logoUrl;
+  }
 
-	public void setDoi(String doi) {
-		this.doi = doi;
-	}
+  public void setDoi(String doi) {
+    this.doi = doi;
+  }
 
-	public String getDoi() {
-		return doi;
-	}
+  public String getDoi() {
+    return doi;
+  }
 
-	public void setImages(Collection<URI> images) {
-		this.images = images;
-	}
+  public void setImages(Collection<URI> images) {
+    this.images = images;
+  }
 
-	@Deprecated
-	// TODO remove
-	public Collection<URI> getImages() {
-		return images;
-	}
+  @Deprecated
+  // TODO remove
+  public Collection<URI> getImages() {
+    return images;
+  }
 
-	/**
-	 * @return the collection
-	 */
-	public URI getCollection() {
-		return collection;
-	}
+  /**
+   * @return the collection
+   */
+  public URI getCollection() {
+    return collection;
+  }
 
-	/**
-	 * @param collection
-	 *            the collection to set
-	 */
-	public void setCollection(URI collection) {
-		this.collection = collection;
-	}
+  /**
+   * @param collection the collection to set
+   */
+  public void setCollection(URI collection) {
+    this.collection = collection;
+  }
 
-	/**
-	 * True if this collection is subcollection, i.e. if it has a parent collection
-	 * 
-	 * @return
-	 */
-	public boolean isSubCollection() {
-		return getCollection() != null;
-	}
+  /**
+   * True if this collection is subcollection, i.e. if it has a parent collection
+   * 
+   * @return
+   */
+  public boolean isSubCollection() {
+    return getCollection() != null;
+  }
 
-	@Override
-	public String getName() {
-		return title;
-	}
+  @Override
+  public String getName() {
+    return title;
+  }
 
-	@Override
-	public String getUri() {
-		return getId().toString();
-	}
+  @Override
+  public String getUri() {
+    return getId().toString();
+  }
 
-	@Override
-	public ObjectType getType() {
-		return ObjectType.COLLECTION;
-	}
+  @Override
+  public ObjectType getType() {
+    return ObjectType.COLLECTION;
+  }
 }

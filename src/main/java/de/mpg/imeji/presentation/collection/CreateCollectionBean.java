@@ -37,112 +37,108 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 @ManagedBean(name = "CreateCollectionBean")
 @ViewScoped
 public class CreateCollectionBean extends CollectionBean {
-	private static final Logger LOGGER = LogManager.getLogger(CreateCollectionBean.class);
-	private static final long serialVersionUID = 1257698224590957642L;
-	@ManagedProperty(value = "#{ContainerEditorSession}")
-	private ContainerEditorSession containerEditorSession;
-	private boolean showUpload = false;
+  private static final Logger LOGGER = LogManager.getLogger(CreateCollectionBean.class);
+  private static final long serialVersionUID = 1257698224590957642L;
+  @ManagedProperty(value = "#{ContainerEditorSession}")
+  private ContainerEditorSession containerEditorSession;
+  private boolean showUpload = false;
 
-	/**
-	 * Method called when paged is loaded
-	 */
-	@PostConstruct
-	public void init() {
-		showUpload = UrlHelper.getParameterBoolean("showUpload");
-		setCollection(ImejiFactory.newCollection().setPerson(getSessionUser().getPerson().clone()).build());
-		containerEditorSession.setUploadedLogoPath(null);
-	}
+  /**
+   * Method called when paged is loaded
+   */
+  @PostConstruct
+  public void init() {
+    showUpload = UrlHelper.getParameterBoolean("showUpload");
+    setCollection(ImejiFactory.newCollection().setPerson(getSessionUser().getPerson().clone()).build());
+    containerEditorSession.setUploadedLogoPath(null);
+  }
 
-	/**
-	 * Method for save button. Create the {@link CollectionImeji} according to the
-	 * form
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	public void save() {
-		if (createCollection()) {
-			try {
-				redirect(getNavigation().getCollectionUrl() + getCollection().getIdString()
-						+ (showUpload ? "?showUpload=1" : ""));
-			} catch (final IOException e) {
-				LOGGER.error("Error redirecting after saving collection", e);
-			}
-		}
-	}
+  /**
+   * Method for save button. Create the {@link CollectionImeji} according to the form
+   *
+   * @return
+   * @throws Exception
+   */
+  public void save() {
+    if (createCollection()) {
+      try {
+        redirect(getNavigation().getCollectionUrl() + getCollection().getIdString() + (showUpload ? "?showUpload=1" : ""));
+      } catch (final IOException e) {
+        LOGGER.error("Error redirecting after saving collection", e);
+      }
+    }
+  }
 
-	/**
-	 * Create the collection and its profile
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	public boolean createCollection() {
-		try {
-			final CollectionService collectionController = new CollectionService();
-			int pos = 0;
-			// Set the position of the persons and organizations (used for the sorting
-			// later)
-			for (final Person p : getCollection().getPersons()) {
-				p.setPos(pos);
-				pos++;
-				int pos2 = 0;
-				for (final Organization o : p.getOrganizations()) {
-					o.setPos(pos2);
-					pos2++;
-				}
-			}
-			setCollection(collectionController.create(getCollection(), getSessionUser()));
-			setId(getCollection().getIdString());
-			if (containerEditorSession.getUploadedLogoPath() != null) {
-				collectionController.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()),
-						getSessionUser());
-			}
-			new UserService().update(getSessionUser(), getSessionUser());
-			BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_create", getLocale()));
-			return true;
-		} catch (final UnprocessableError e) {
-			BeanHelper.error(e, getLocale());
-			LOGGER.error("Error create collection", e);
-		} catch (final ImejiException e) {
-			BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getLocalizedMessage(), getLocale()));
-			LOGGER.error("Error create collection", e);
-		} catch (final Exception e) {
-			LOGGER.error("Error create collection", e);
-			BeanHelper.error(
-					Imeji.RESOURCE_BUNDLE.getMessage("error_collection_create", getLocale()) + ": " + e.getMessage());
-		}
-		return false;
-	}
+  /**
+   * Create the collection and its profile
+   *
+   * @return
+   * @throws Exception
+   */
+  public boolean createCollection() {
+    try {
+      final CollectionService collectionController = new CollectionService();
+      int pos = 0;
+      // Set the position of the persons and organizations (used for the sorting
+      // later)
+      for (final Person p : getCollection().getPersons()) {
+        p.setPos(pos);
+        pos++;
+        int pos2 = 0;
+        for (final Organization o : p.getOrganizations()) {
+          o.setPos(pos2);
+          pos2++;
+        }
+      }
+      setCollection(collectionController.create(getCollection(), getSessionUser()));
+      setId(getCollection().getIdString());
+      if (containerEditorSession.getUploadedLogoPath() != null) {
+        collectionController.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
+      }
+      new UserService().update(getSessionUser(), getSessionUser());
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_create", getLocale()));
+      return true;
+    } catch (final UnprocessableError e) {
+      BeanHelper.error(e, getLocale());
+      LOGGER.error("Error create collection", e);
+    } catch (final ImejiException e) {
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getLocalizedMessage(), getLocale()));
+      LOGGER.error("Error create collection", e);
+    } catch (final Exception e) {
+      LOGGER.error("Error create collection", e);
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_create", getLocale()) + ": " + e.getMessage());
+    }
+    return false;
+  }
 
-	public static String extractIDFromURI(URI uri) {
-		return uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
-	}
+  public static String extractIDFromURI(URI uri) {
+    return uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
+  }
 
-	/**
-	 * Return the link for the Cancel button
-	 *
-	 * @return
-	 */
-	public String getCancel() {
-		return getNavigation().getCollectionsUrl() + "?q=";
-	}
+  /**
+   * Return the link for the Cancel button
+   *
+   * @return
+   */
+  public String getCancel() {
+    return getNavigation().getCollectionsUrl() + "?q=";
+  }
 
-	protected String getNavigationString() {
-		return "pretty:createCollection";
-	}
+  protected String getNavigationString() {
+    return "pretty:createCollection";
+  }
 
-	public ContainerEditorSession getContainerEditorEditorSession() {
-		return containerEditorSession;
-	}
+  public ContainerEditorSession getContainerEditorEditorSession() {
+    return containerEditorSession;
+  }
 
-	public void setContainerEditorSession(ContainerEditorSession collectionEditorSession) {
-		this.containerEditorSession = collectionEditorSession;
-	}
+  public void setContainerEditorSession(ContainerEditorSession collectionEditorSession) {
+    this.containerEditorSession = collectionEditorSession;
+  }
 
-	@Override
-	protected List<URI> getSelectedCollections() {
-		return new ArrayList<>();
-	}
+  @Override
+  protected List<URI> getSelectedCollections() {
+    return new ArrayList<>();
+  }
 
 }

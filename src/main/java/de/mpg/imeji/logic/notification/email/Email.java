@@ -7,25 +7,25 @@ package de.mpg.imeji.logic.notification.email;
  *
  */
 public final class Email {
-	private final String body;
-	private final String subject;
+  private final String body;
+  private final String subject;
 
-	public Email(String subject, String body) {
-		this.subject = subject;
-		this.body = body;
-	}
+  public Email(String subject, String body) {
+    this.subject = subject;
+    this.body = body;
+  }
 
-	/**
-	 * @return the body
-	 */
-	public String getBody() {
-		return body;
-	}
+  /**
+   * @return the body
+   */
+  public String getBody() {
+    return body;
+  }
 
-	/**
-	 * @return the subject
-	 */
-	public String getSubject() {
-		return subject;
-	}
+  /**
+   * @return the subject
+   */
+  public String getSubject() {
+    return subject;
+  }
 }

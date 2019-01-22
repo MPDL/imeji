@@ -25,46 +25,46 @@ import de.mpg.imeji.logic.model.User;
  * @version $Revision$ $LastChangedDate$
  */
 public class ZIPExport extends ExportAbstract {
-	private static final Logger LOGGER = LogManager.getLogger(ZIPExport.class);
-	private final List<String> itemIds;
+  private static final Logger LOGGER = LogManager.getLogger(ZIPExport.class);
+  private final List<String> itemIds;
 
-	public ZIPExport(List<String> itemIds, User user) {
-		super(user);
-		this.itemIds = itemIds;
-		this.name = new Date().toString().replace(" ", "_").replace(":", "-").concat(".zip");
-	}
+  public ZIPExport(List<String> itemIds, User user) {
+    super(user);
+    this.itemIds = itemIds;
+    this.name = new Date().toString().replace(" ", "_").replace(":", "-").concat(".zip");
+  }
 
-	@Override
-	public void export(OutputStream out) throws ImejiException {
-		exportAllImages(itemIds, out, user);
-	}
+  @Override
+  public void export(OutputStream out) throws ImejiException {
+    exportAllImages(itemIds, out, user);
+  }
 
-	@Override
-	public String getContentType() {
-		return "application/zip";
-	}
+  @Override
+  public String getContentType() {
+    return "application/zip";
+  }
 
-	/**
-	 * This method exports all images of the current browse page as a zip file
-	 *
-	 * @throws ImejiException
-	 *
-	 * @throws Exception
-	 * @throws URISyntaxException
-	 */
-	private void exportAllImages(List<String> ids, OutputStream out, User user) throws ImejiException {
-		final ZipOutputStream zip = new ZipOutputStream(out);
-		final Map<String, Item> itemMap = ExportUtil.retrieveItems(ids, user);
-		final List<ContentVO> contents = ExportUtil.retrieveContents(itemMap.values());
-		createItemsPerCollection(itemMap.values());
-		// Create the ZIP file
-		for (ContentVO content : contents) {
-			try {
-				ZipUtil.addFile(zip, itemMap.get(content.getItemId()).getFilename(), content.getOriginal(), 0);
-			} catch (Exception e) {
-				LOGGER.error("Error zip export", e);
-			}
-		}
-		ZipUtil.closeZip(zip);
-	}
+  /**
+   * This method exports all images of the current browse page as a zip file
+   *
+   * @throws ImejiException
+   *
+   * @throws Exception
+   * @throws URISyntaxException
+   */
+  private void exportAllImages(List<String> ids, OutputStream out, User user) throws ImejiException {
+    final ZipOutputStream zip = new ZipOutputStream(out);
+    final Map<String, Item> itemMap = ExportUtil.retrieveItems(ids, user);
+    final List<ContentVO> contents = ExportUtil.retrieveContents(itemMap.values());
+    createItemsPerCollection(itemMap.values());
+    // Create the ZIP file
+    for (ContentVO content : contents) {
+      try {
+        ZipUtil.addFile(zip, itemMap.get(content.getItemId()).getFilename(), content.getOriginal(), 0);
+      } catch (Exception e) {
+        LOGGER.error("Error zip export", e);
+      }
+    }
+    ZipUtil.closeZip(zip);
+  }
 }

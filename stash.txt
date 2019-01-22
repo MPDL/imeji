@@ -1,0 +1,2364 @@
+diff --git a/pom.xml b/pom.xml
+index e99047ebd..eb74e11f6 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -336,10 +336,25 @@
+ 			<version>3.3.3</version>
+ 		</dependency>
+ 		<dependency>
+-			<groupId>log4j</groupId>
+-			<artifactId>log4j</artifactId>
+-			<version>1.2.17</version>
+-		</dependency>
++				<groupId>org.apache.logging.log4j</groupId>
++				<artifactId>log4j-core</artifactId>
++				<version>2.8.2</version>
++			</dependency>
++			<dependency>
++				<groupId>org.apache.logging.log4j</groupId>
++				<artifactId>log4j-api</artifactId>
++				<version>2.8.2</version>
++			</dependency>
++			<dependency>
++				<groupId>org.apache.logging.log4j</groupId>
++				<artifactId>log4j-1.2-api</artifactId>
++				<version>2.8.2</version>
++			</dependency>
++			<dependency>
++				<groupId>org.apache.logging.log4j</groupId>
++				<artifactId>log4j-slf4j-impl</artifactId>
++				<version>2.8.2</version>
++			</dependency>
+ 		<!-- USED during compile, e.g. javax.mail -->
+ 		<dependency>
+ 			<groupId>javax</groupId>
+@@ -422,6 +437,14 @@
+ 					<groupId>org.apache.cxf</groupId>
+ 					<artifactId>cxf-rt-rs-client</artifactId>
+ 				</exclusion>
++				<exclusion>
++					<groupId>org.apache.httpcomponents</groupId>
++					<artifactId>httpclient</artifactId>
++				</exclusion>
++				<exclusion>
++					<groupId>org.apache.httpcomponents</groupId>
++					<artifactId>httpcore</artifactId>
++				</exclusion>
+ 			</exclusions>
+ 		</dependency>
+ 		<!-- REST -->
+@@ -493,10 +516,25 @@
+ 			<artifactId>swagger-jersey2-jaxrs</artifactId>
+ 			<version>1.5.3</version>
+ 		</dependency>
++		<dependency>
++			<groupId>org.elasticsearch.client</groupId>
++			<artifactId>elasticsearch-rest-high-level-client</artifactId>
++			<version>6.4.1</version>
++			<exclusions>
++				<exclusion>
++					<groupId>org.apache.httpcomponents</groupId>
++					<artifactId>httpclient</artifactId>
++				</exclusion>
++				<exclusion>
++					<groupId>org.apache.httpcomponents</groupId>
++					<artifactId>httpcore</artifactId>
++				</exclusion>
++			</exclusions>
++		</dependency>
+ 		<dependency>
+ 			<groupId>org.elasticsearch</groupId>
+ 			<artifactId>elasticsearch</artifactId>
+-			<version>2.3.2</version>
++			<version>6.4.1</version>
+ 			<exclusions>
+ 				<exclusion>
+ 					<groupId>com.fasterxml.jackson.core</groupId>
+diff --git a/src/main/java/de/mpg/imeji/logic/batch/CleanInternalStorageJob.java b/src/main/java/de/mpg/imeji/logic/batch/CleanInternalStorageJob.java
+index 0d66a48ba..f60305699 100644
+--- a/src/main/java/de/mpg/imeji/logic/batch/CleanInternalStorageJob.java
++++ b/src/main/java/de/mpg/imeji/logic/batch/CleanInternalStorageJob.java
+@@ -152,7 +152,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
+    * @return
+    */
+   private boolean isLogo(String url) {
+-    final List<String> r = search.searchString(JenaCustomQueries.selectCollectionByLogoStorageId(
++    final List<String> r = search.searchString(null,JenaCustomQueries.selectCollectionByLogoStorageId(
+         new InternalStorageManager().getStorageId(url)), null, null, 0, -1).getResults();
+     if (!r.isEmpty() && r.get(0) != null) {
+       return true;
+diff --git a/src/main/java/de/mpg/imeji/logic/batch/ElasticReIndexJob.java b/src/main/java/de/mpg/imeji/logic/batch/ElasticReIndexJob.java
+index 3c3c5efc4..ee7c1819f 100644
+--- a/src/main/java/de/mpg/imeji/logic/batch/ElasticReIndexJob.java
++++ b/src/main/java/de/mpg/imeji/logic/batch/ElasticReIndexJob.java
+@@ -36,15 +36,16 @@ public class ElasticReIndexJob implements Callable<Integer> {
+       ElasticService.ANALYSER =
+           ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
+       // Check if the alias is used by only 1 index. If not, reset completely the indexes
+-      ElasticInitializer.getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
+-      final String index = ElasticInitializer.createIndex();
+-      addAllMappings(index);
+-      reindexUsers(index);
+-      reindexUserGroups(index);
+-      reindexItems(index);
+-      reindexContents(index);
+-      reindexFolders(index);
+-      ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
++      // ElasticInitializer.getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
++      // final String index = ElasticInitializer.createIndex();
++      // addAllMappings(index);
++      
++      reindexUsers(ElasticTypes.users.name());
++      reindexUserGroups(ElasticTypes.usergroups.name());
++      reindexItems(ElasticTypes.items.name());
++      reindexContents(ElasticTypes.content.name());
++      reindexFolders(ElasticTypes.folders.name());
++      // ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
+       LOGGER.info("Reindex done!");
+     } catch (final Exception e) {
+       LOGGER.error("Error by reindex", e);
+@@ -58,11 +59,13 @@ public class ElasticReIndexJob implements Callable<Integer> {
+    *
+    * @param index
+    */
++  /*
+   private void addAllMappings(String index) {
+     for (final ElasticTypes type : ElasticTypes.values()) {
+       new ElasticIndexer(index, type, ElasticService.ANALYSER).addMapping();
+     }
+   }
++  */
+ 
+   /**
+    * Reindex all the {@link CollectionImeji} stored in the database
+@@ -70,6 +73,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
+    * @throws ImejiException
+    */
+   private void reindexFolders(String index) throws ImejiException {
++	  ElasticInitializer.createIndex(ElasticTypes.valueOf(index));
+     final CollectionService c = new CollectionService();
+     c.reindex(index);
+   }
+@@ -81,6 +85,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
+    *
+    */
+   private void reindexItems(String index) throws ImejiException {
++	  ElasticInitializer.createIndex(ElasticTypes.valueOf(index));
+     final ItemService controller = new ItemService();
+     controller.reindex(index);
+   }
+@@ -92,6 +97,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
+    *
+    */
+   private void reindexContents(String index) throws ImejiException {
++	  ElasticInitializer.createIndex(ElasticTypes.valueOf(index));
+     new ContentService().reindex(index);
+   }
+ 
+@@ -102,6 +108,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
+    * @throws ImejiException
+    */
+   private void reindexUsers(String index) throws ImejiException {
++	  ElasticInitializer.createIndex(ElasticTypes.valueOf(index));
+     new UserService().reindex(index);
+   }
+ 
+@@ -112,6 +119,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
+    * @throws ImejiException
+    */
+   private void reindexUserGroups(String index) throws ImejiException {
++	  ElasticInitializer.createIndex(ElasticTypes.valueOf(index));
+     new UserGroupService().reindex(index);
+   }
+ 
+diff --git a/src/main/java/de/mpg/imeji/logic/core/collection/CollectionService.java b/src/main/java/de/mpg/imeji/logic/core/collection/CollectionService.java
+index e96d4b888..1eb8cef17 100644
+--- a/src/main/java/de/mpg/imeji/logic/core/collection/CollectionService.java
++++ b/src/main/java/de/mpg/imeji/logic/core/collection/CollectionService.java
+@@ -323,7 +323,7 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
+   @Override
+   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, User user, int size,
+       int offset) {
+-    return search.search(searchQuery, sortCri, user, null, offset, size);
++    return search.search(ElasticTypes.folders.name(), searchQuery, sortCri, user, null, offset, size);
+   }
+ 
+   @Override
+@@ -347,7 +347,7 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
+     final ElasticIndexer indexer =
+         new ElasticIndexer(index, ElasticTypes.folders, ElasticService.ANALYSER);
+     final List<CollectionImeji> collections = retrieveAll();
+-    indexer.indexBatch(collections);
++    indexer.indexBatch(ElasticTypes.folders.name(), collections);
+     LOGGER.info("collections reindexed!");
+   }
+ }
+diff --git a/src/main/java/de/mpg/imeji/logic/core/content/ContentService.java b/src/main/java/de/mpg/imeji/logic/core/content/ContentService.java
+index 63ebec6d4..0cbbf0962 100644
+--- a/src/main/java/de/mpg/imeji/logic/core/content/ContentService.java
++++ b/src/main/java/de/mpg/imeji/logic/core/content/ContentService.java
+@@ -362,7 +362,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements
+     int count = 0;
+     while (iterator.hasNext()) {
+       List<ContentVO> list = (List<ContentVO>) iterator.next();
+-      indexer.indexBatch(list);
++      indexer.indexBatch(ElasticTypes.content.name(), list);
+       count = count + list.size();
+       LOGGER.info(count + "/" + iterator.getSize());
+     }
+@@ -407,7 +407,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements
+   @Override
+   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, User user, int size,
+       int offset) {
+-    return search.search(searchQuery, sortCri, user, null, offset, size);
++    return search.search(ElasticTypes.content.name(), searchQuery, sortCri, user, null, offset, size);
+   }
+ 
+   @Override
+diff --git a/src/main/java/de/mpg/imeji/logic/core/facade/MoveFacade.java b/src/main/java/de/mpg/imeji/logic/core/facade/MoveFacade.java
+index 16106c42e..e5191ba31 100644
+--- a/src/main/java/de/mpg/imeji/logic/core/facade/MoveFacade.java
++++ b/src/main/java/de/mpg/imeji/logic/core/facade/MoveFacade.java
+@@ -86,7 +86,7 @@ public class MoveFacade implements Serializable {
+           item.getCollection().toString(), colUri));
+       item.setCollection(URI.create(colUri));
+     }
+-    itemsIndexer.updateIndexBatch(items);
++    itemsIndexer.updateIndexBatch(ElasticTypes.items.name(), items);
+     // Notify to event queue
+     items.stream().forEach(item -> messageService.add(new MoveItemMessage(MessageType.MOVE_ITEM,
+         item, ObjectHelper.getId(collection.getId()), ObjectHelper.getId(item.getCollection()))));
+@@ -114,7 +114,7 @@ public class MoveFacade implements Serializable {
+     ImejiSPARQL.execUpdate(JenaCustomQueries.updateCollectionParent(collection.getId().toString(),
+         collection.getCollection() != null ? collection.getCollection().toString() : null,
+         parent.getId().toString()));
+-    collectionIndexer.updatePartial(collection.getId().toString(),
++    collectionIndexer.updatePartial(ElasticTypes.folders.name(), collection.getId().toString(),
+         new ElasticForlderPartObject(parent.getId().toString()));
+     messageService.add(new MoveCollectionMessage(MessageType.MOVE_COLLECTION, collection,
+         ObjectHelper.getId(parent.getId()), ObjectHelper.getId(collection.getCollection())));
+diff --git a/src/main/java/de/mpg/imeji/logic/core/facade/SearchAndRetrieveFacade.java b/src/main/java/de/mpg/imeji/logic/core/facade/SearchAndRetrieveFacade.java
+index 4c56d1ab4..2c5c21dbd 100644
+--- a/src/main/java/de/mpg/imeji/logic/core/facade/SearchAndRetrieveFacade.java
++++ b/src/main/java/de/mpg/imeji/logic/core/facade/SearchAndRetrieveFacade.java
+@@ -25,6 +25,7 @@ import de.mpg.imeji.logic.model.factory.ImejiFactory;
+ import de.mpg.imeji.logic.search.Search;
+ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+ import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
++import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+ import de.mpg.imeji.logic.search.model.SearchQuery;
+ import de.mpg.imeji.logic.search.model.SearchResult;
+ import de.mpg.imeji.logic.search.model.SortCriterion;
+@@ -58,7 +59,8 @@ public class SearchAndRetrieveFacade implements Serializable {
+    */
+   public SearchResult search(SearchQuery q, CollectionImeji collection, User user,
+       SortCriterion sortCri, int size, int offset) {
+-    return search.searchWithFacets(q, sortCri, user, collection.getId().toString(), offset, size);
++	  String[] indices = new String[]{ElasticTypes.folders.name(), ElasticTypes.users.name()};
++    return search.searchWithFacets(indices, q, sortCri, user, collection.getId().toString(), offset, size);
+   }
+ 
+   /**
+diff --git a/src/main/java/de/mpg/imeji/logic/core/facade/WorkflowFacade.java b/src/main/java/de/mpg/imeji/logic/core/facade/WorkflowFacade.java
+index 6e937474b..b82b2a7e6 100644
+--- a/src/main/java/de/mpg/imeji/logic/core/facade/WorkflowFacade.java
++++ b/src/main/java/de/mpg/imeji/logic/core/facade/WorkflowFacade.java
+@@ -74,9 +74,9 @@ public class WorkflowFacade implements Serializable {
+         .collect(Collectors.joining("; "));
+     addLicense(ids, user, defaultLicense);
+     ImejiSPARQL.execUpdate(sparql);
+-    collectionIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.COLLECTION).stream()
++    collectionIndexer.partialUpdateIndexBatch(ElasticTypes.folders.name(), filterIdsByType(ids, ObjectType.COLLECTION).stream()
+         .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
+-    itemIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.ITEM).stream()
++    itemIndexer.partialUpdateIndexBatch(ElasticTypes.items.name(), filterIdsByType(ids, ObjectType.ITEM).stream()
+         .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
+   }
+ 
+@@ -98,7 +98,7 @@ public class WorkflowFacade implements Serializable {
+         .collect(Collectors.joining("; "));
+     addLicense(ids, user, defaultLicense);
+     ImejiSPARQL.execUpdate(sparql);
+-    itemIndexer.partialUpdateIndexBatch(ids.stream()
++    itemIndexer.partialUpdateIndexBatch(ElasticTypes.items.name(), ids.stream()
+         .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
+   }
+ 
+@@ -123,10 +123,10 @@ public class WorkflowFacade implements Serializable {
+     String sparql = ids.stream().map(id -> JenaCustomQueries.updateWitdrawObject(id, now, comment))
+         .collect(Collectors.joining("; "));
+     ImejiSPARQL.execUpdate(sparql);
+-    collectionIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.COLLECTION).stream()
++    collectionIndexer.partialUpdateIndexBatch(ElasticTypes.folders.name(), filterIdsByType(ids, ObjectType.COLLECTION).stream()
+         .map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment))
+         .collect(Collectors.toList()));
+-    itemIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.ITEM).stream()
++    itemIndexer.partialUpdateIndexBatch(ElasticTypes.items.name(), filterIdsByType(ids, ObjectType.ITEM).stream()
+         .map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment))
+         .collect(Collectors.toList()));
+   }
+@@ -149,7 +149,7 @@ public class WorkflowFacade implements Serializable {
+         itemIds.stream().map(id -> JenaCustomQueries.updateWitdrawObject(id, now, comment))
+             .collect(Collectors.joining("; "));
+     ImejiSPARQL.execUpdate(sparql);
+-    itemIndexer.partialUpdateIndexBatch(
++    itemIndexer.partialUpdateIndexBatch(ElasticTypes.items.name(),
+         itemIds.stream().map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment))
+             .collect(Collectors.toList()));
+   }
+@@ -175,7 +175,7 @@ public class WorkflowFacade implements Serializable {
+           licenseParts.stream().map(p -> JenaCustomQueries.updateAddLicensetoItem(p.id, license))
+               .collect(Collectors.joining("; "));
+       ImejiSPARQL.execUpdate(sparql);
+-      itemIndexer.partialUpdateIndexBatch(licenseParts);
++      itemIndexer.partialUpdateIndexBatch(ElasticTypes.items.name(), licenseParts);
+     }
+   }
+ 
+diff --git a/src/main/java/de/mpg/imeji/logic/core/item/ItemController.java b/src/main/java/de/mpg/imeji/logic/core/item/ItemController.java
+index c2983356c..ea751fcc3 100644
+--- a/src/main/java/de/mpg/imeji/logic/core/item/ItemController.java
++++ b/src/main/java/de/mpg/imeji/logic/core/item/ItemController.java
+@@ -33,6 +33,7 @@ import de.mpg.imeji.logic.model.util.MetadataUtil;
+ import de.mpg.imeji.logic.model.util.StatementUtil;
+ import de.mpg.imeji.logic.search.Search;
+ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
++import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+ import de.mpg.imeji.logic.search.factory.SearchFactory;
+ import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
+ import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
+@@ -95,7 +96,7 @@ class ItemController extends ImejiControllerAbstract<Item> {
+     SearchQuery q = new SearchFactory()
+         .addElement(new SearchPair(SearchFields.id, collectionId), LOGICAL_RELATIONS.AND)
+         .addElement(new SearchPair(SearchFields.status, "*"), LOGICAL_RELATIONS.AND).build();
+-    if (searchForCollection.search(q, null, Imeji.adminUser, null, 0, 1)
++    if (searchForCollection.search(ElasticTypes.folders.name(), q, null, Imeji.adminUser, null, 0, 1)
+         .getNumberOfRecords() == 0) {
+       throw new NotFoundException("Collection " + collectionId + " not found");
+     }
+diff --git a/src/main/java/de/mpg/imeji/logic/core/item/ItemService.java b/src/main/java/de/mpg/imeji/logic/core/item/ItemService.java
+index cc833c178..19610fc14 100644
+--- a/src/main/java/de/mpg/imeji/logic/core/item/ItemService.java
++++ b/src/main/java/de/mpg/imeji/logic/core/item/ItemService.java
+@@ -277,7 +277,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
+   public Item retrieveLazyForFile(String fileUrl, User user) throws ImejiException {
+     final Search s = SearchFactory.create(SearchObjectTypes.ALL, SEARCH_IMPLEMENTATIONS.JENA);
+     final List<String> r =
+-        s.searchString(JenaCustomQueries.selectItemOfFile(fileUrl), null, null, 0, -1).getResults();
++        s.searchString(ElasticTypes.items.name(), JenaCustomQueries.selectItemOfFile(fileUrl), null, null, 0, -1).getResults();
+     if (!r.isEmpty() && r.get(0) != null) {
+       return retrieveLazy(URI.create(r.get(0)), user);
+     } else {
+@@ -430,7 +430,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
+    */
+   public SearchResult search(URI containerUri, SearchQuery searchQuery, SortCriterion sortCri,
+       User user, int size, int offset) {
+-    return search.search(searchQuery, sortCri, user,
++    return search.search(ElasticTypes.items.name(), searchQuery, sortCri, user,
+         containerUri != null ? containerUri.toString() : null, offset, size);
+   }
+ 
+@@ -447,7 +447,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
+    */
+   public SearchResult searchWithFacets(URI containerUri, SearchQuery searchQuery,
+       SortCriterion sortCri, User user, int size, int offset) {
+-    return search.searchWithFacets(searchQuery, sortCri, user,
++	  String[] indices = new String[]{ElasticTypes.items.name()}; 
++    return search.searchWithFacets(indices, searchQuery, sortCri, user,
+         containerUri != null ? containerUri.toString() : null, offset, size);
+   }
+ 
+@@ -549,7 +550,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
+     int count = 0;
+     while (iterator.hasNext()) {
+       List<Item> list = (List<Item>) iterator.next();
+-      indexer.indexBatch(list);
++      indexer.indexBatch(ElasticTypes.items.name(), list);
+       count = count + list.size();
+       LOGGER.info(count + "/" + iterator.getSize());
+     }
+@@ -702,7 +703,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
+         new SearchPair(SearchFields.checksum, SearchOperators.EQUALS, checksum, false),
+         new SearchPair(SearchFields.col, SearchOperators.EQUALS, collectionId.toString(), false)))
+         .build();
+-    return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1);
++    return search.search(ElasticTypes.items.name(), q, null, Imeji.adminUser, collectionId.toString(), 0, 1);
+   }
+ 
+   /**
+@@ -755,7 +756,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
+ 
+     final Search search = SearchFactory.create();
+     final List<String> results =
+-        search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null,
++        search.searchString(ElasticTypes.items.name(), JenaCustomQueries.selectUserFileSize(user.getId().toString()), null,
+             null, 0, -1).getResults();
+     long currentDiskUsage = 0L;
+     try {
+diff --git a/src/main/java/de/mpg/imeji/logic/core/statement/StatementService.java b/src/main/java/de/mpg/imeji/logic/core/statement/StatementService.java
+index c71f60ae2..91e27faa7 100644
+--- a/src/main/java/de/mpg/imeji/logic/core/statement/StatementService.java
++++ b/src/main/java/de/mpg/imeji/logic/core/statement/StatementService.java
+@@ -23,6 +23,7 @@ import de.mpg.imeji.logic.model.factory.StatementFactory;
+ import de.mpg.imeji.logic.model.util.StatementUtil;
+ import de.mpg.imeji.logic.search.Search;
+ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
++import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+ import de.mpg.imeji.logic.search.factory.SearchFactory;
+ import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
+ import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
+@@ -221,7 +222,7 @@ public class StatementService extends SearchServiceAbstract<Statement> {
+         new SearchFactory().addElement(new SearchPair(SearchFields.index, s.getIndexFormatted()),
+             LOGICAL_RELATIONS.AND).build();
+     Search search = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC);
+-    return search.search(q, null, Imeji.adminUser, null, 0, 1).getNumberOfRecords() > 0;
++    return search.search(ElasticTypes.items.name(), q, null, Imeji.adminUser, null, 0, 1).getNumberOfRecords() > 0;
+   }
+ 
+   /**
+diff --git a/src/main/java/de/mpg/imeji/logic/db/writer/WriterFacade.java b/src/main/java/de/mpg/imeji/logic/db/writer/WriterFacade.java
+index c0dd087f0..94192d4db 100644
+--- a/src/main/java/de/mpg/imeji/logic/db/writer/WriterFacade.java
++++ b/src/main/java/de/mpg/imeji/logic/db/writer/WriterFacade.java
+@@ -381,7 +381,7 @@ public class WriterFacade {
+ 
+     @Override
+     public Integer call() throws Exception {
+-      indexer.indexBatch(objects);
++      indexer.indexBatch(null, objects);
+       return 1;
+     }
+   }
+@@ -401,7 +401,7 @@ public class WriterFacade {
+ 
+     @Override
+     public Integer call() throws Exception {
+-      indexer.deleteBatch(objects);
++      indexer.deleteBatch(null, objects);
+       return 1;
+     }
+   }
+diff --git a/src/main/java/de/mpg/imeji/logic/init/InitializerServlet.java b/src/main/java/de/mpg/imeji/logic/init/InitializerServlet.java
+index b00a86bcd..e8a16f9d1 100644
+--- a/src/main/java/de/mpg/imeji/logic/init/InitializerServlet.java
++++ b/src/main/java/de/mpg/imeji/logic/init/InitializerServlet.java
+@@ -13,7 +13,7 @@ import javax.servlet.annotation.WebServlet;
+ import javax.servlet.http.HttpServlet;
+ 
+ import org.apache.log4j.Logger;
+-import org.apache.log4j.lf5.util.StreamUtils;
++// import org.apache.log4j.lf5.util.StreamUtils;
+ 
+ import de.mpg.imeji.exceptions.ImejiException;
+ import de.mpg.imeji.logic.batch.ElasticReIndexJob;
+@@ -83,7 +83,7 @@ public class InitializerServlet extends HttpServlet {
+       LOGGER.info("No " + f.getAbsolutePath() + " found, no migration runs");
+     }
+     if (in != null) {
+-      String migrationRequest = new String(StreamUtils.getBytes(in), "UTF-8");
++      String migrationRequest = new String(in.readAllBytes(), "UTF-8");
+       migrationRequest =
+           migrationRequest.replaceAll("XXX_BASE_URI_XXX", Imeji.PROPERTIES.getBaseURI());
+       migrationRequest = addNewIdToMigration(migrationRequest);
+diff --git a/src/main/java/de/mpg/imeji/logic/search/Search.java b/src/main/java/de/mpg/imeji/logic/search/Search.java
+index 1f2024e38..00927fea2 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/Search.java
++++ b/src/main/java/de/mpg/imeji/logic/search/Search.java
+@@ -38,7 +38,7 @@ public interface Search {
+    * @param size
+    * @return
+    */
+-  public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
++  public SearchResult search(String index, SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+       int offset, int size);
+ 
+   /**
+@@ -52,7 +52,7 @@ public interface Search {
+    * @param size
+    * @return
+    */
+-  public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user,
++  public SearchResult searchWithFacets(String[] indices, SearchQuery query, SortCriterion sortCri, User user,
+       String folderUri, int offset, int size);
+ 
+   /**
+@@ -71,7 +71,7 @@ public interface Search {
+    * @param uris
+    * @return
+    */
+-  public SearchResult search(SearchQuery query, SortCriterion sortCri, User user,
++  public SearchResult search(String index, SearchQuery query, SortCriterion sortCri, User user,
+       List<String> uris);
+ 
+   /**
+@@ -84,5 +84,5 @@ public interface Search {
+    * @param size
+    * @return
+    */
+-  public SearchResult searchString(String query, SortCriterion sort, User user, int from, int size);
++  public SearchResult searchString(String index, String query, SortCriterion sort, User user, int from, int size);
+ }
+diff --git a/src/main/java/de/mpg/imeji/logic/search/SearchIndexer.java b/src/main/java/de/mpg/imeji/logic/search/SearchIndexer.java
+index b5fdb7623..f29265068 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/SearchIndexer.java
++++ b/src/main/java/de/mpg/imeji/logic/search/SearchIndexer.java
+@@ -15,7 +15,7 @@ public interface SearchIndexer {
+    *
+    * @param obj
+    */
+-  public void index(Object obj);
++  public void index(String index, Object obj);
+ 
+   /**
+    * Index a list of Object. This method might be faster for multiple objects, than using the index
+@@ -25,7 +25,7 @@ public interface SearchIndexer {
+    *
+    * @param l
+    */
+-  public void indexBatch(List<?> l);
++  public void indexBatch(String index, List<?> l);
+ 
+   /**
+    * Update a list of Object. This method might be faster for multiple objects, than using the index
+@@ -35,26 +35,26 @@ public interface SearchIndexer {
+    *
+    * @param l
+    */
+-  public void updateIndexBatch(List<?> l);
++  public void updateIndexBatch(String index, List<?> l);
+ 
+   /**
+    * Delete an object from the Index
+    *
+    * @param obj
+    */
+-  public void delete(Object obj);
++  public void delete(String index, Object obj);
+ 
+   /**
+    * Delete many objects from the index
+    *
+    * @param l
+    */
+-  public void deleteBatch(List<?> l);
++  public void deleteBatch(String index, List<?> l);
+ 
+   /**
+    * Do a partial update of the object
+    *
+    * @param obj
+    */
+-  public void updatePartial(String id, Object obj);
++  public void updatePartial(String index, String id, Object obj);
+ }
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticIndexer.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticIndexer.java
+index 7e4127582..0b1cd5a0f 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticIndexer.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticIndexer.java
+@@ -1,5 +1,6 @@
+ package de.mpg.imeji.logic.search.elasticsearch;
+ 
++import java.io.IOException;
+ import java.nio.file.Files;
+ import java.nio.file.Paths;
+ import java.util.List;
+@@ -8,10 +9,20 @@ import org.apache.commons.lang3.StringUtils;
+ import org.apache.log4j.Logger;
+ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+ import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
++import org.elasticsearch.action.bulk.BulkRequest;
+ import org.elasticsearch.action.bulk.BulkRequestBuilder;
++import org.elasticsearch.action.bulk.BulkResponse;
++import org.elasticsearch.action.delete.DeleteRequest;
+ import org.elasticsearch.action.delete.DeleteRequestBuilder;
++import org.elasticsearch.action.delete.DeleteResponse;
++import org.elasticsearch.action.index.IndexRequest;
+ import org.elasticsearch.action.index.IndexRequestBuilder;
++import org.elasticsearch.action.index.IndexResponse;
++import org.elasticsearch.action.update.UpdateRequest;
++import org.elasticsearch.action.update.UpdateResponse;
+ import org.elasticsearch.client.Client;
++import org.elasticsearch.client.RequestOptions;
++import org.elasticsearch.common.xcontent.XContentType;
+ 
+ import com.fasterxml.jackson.annotation.JsonInclude.Include;
+ import com.fasterxml.jackson.core.JsonProcessingException;
+@@ -60,10 +71,10 @@ public class ElasticIndexer implements SearchIndexer {
+ 
+ 
+   @Override
+-  public void index(Object obj) {
++  public void index(String index, Object obj) {
+     try {
+-      indexJSON(getId(obj), toJson(obj, dataType, index), getParent(obj));
+-      commit();
++      indexJSON(index, getId(obj), toJson(obj, dataType, index), getParent(obj));
++      // commit();
+     } catch (final Exception e) {
+       LOGGER.error("Error indexing object ", e);
+     }
+@@ -71,29 +82,30 @@ public class ElasticIndexer implements SearchIndexer {
+ 
+ 
+   @Override
+-  public void indexBatch(List<?> l) {
+-    updateIndexBatch(l);
++  public void indexBatch(String index, List<?> l) {
++    updateIndexBatch(index, l);
+   }
+ 
+   @Override
+-  public void updateIndexBatch(List<?> l) {
++  public void updateIndexBatch(String index, List<?> l) {
+     if (l.isEmpty()) {
+       return;
+     }
+     try {
+-      final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
++      final BulkRequest bulkRequest = new BulkRequest();
+       for (final Object obj : l) {
++    	  LOGGER.info("+++ index request "+ index +"  " + getId(obj));
+         bulkRequest.add(
+-            getIndexRequest(getId(obj), toJson(obj, dataType, index), getParent(obj), dataType));
++            getIndexRequest(index, getId(obj), toJson(obj, dataType, index), getParent(obj), dataType));
+       }
+       if (bulkRequest.numberOfActions() > 0) {
+-        bulkRequest.get();
++       BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+       }
+     } catch (final Exception e) {
+       LOGGER.error("error indexing object ", e);
+     }
+     if (!(l.get(0) instanceof ContentVO)) {
+-      commit();
++      // commit();
+     }
+     updateIndexBatchPostProcessing(l);
+   }
+@@ -115,31 +127,41 @@ public class ElasticIndexer implements SearchIndexer {
+   }
+ 
+   @Override
+-  public void delete(Object obj) {
++  public void delete(String index, Object obj) {
+     final String id = getId(obj);
+     if (id != null) {
+-      getDeleteRequest(id, getParent(obj)).execute().actionGet();
+-      commit();
++    	DeleteRequest deleteRequest = new DeleteRequest();
++    	deleteRequest.index(index).id(id);
++      try {
++		DeleteResponse resp = ElasticService.getClient().delete(deleteRequest, RequestOptions.DEFAULT);
++	} catch (IOException e) {
++		LOGGER.error("error deleting " + id, e);
++	}
++      // commit();
+     }
+   }
+ 
+   @Override
+-  public void deleteBatch(List<?> l) {
++  public void deleteBatch(String index, List<?> l) {
+     if (l.isEmpty()) {
+       return;
+     }
+-    final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
++    final BulkRequest bulkRequest = new BulkRequest();
+     for (final Object obj : l) {
+       final String id = getId(obj);
+       if (id != null) {
+-        bulkRequest.add(getDeleteRequest(id, getParent(obj)));
++        bulkRequest.add(getDeleteRequest(index, id, getParent(obj)));
+       }
+     }
+     if (bulkRequest.numberOfActions() > 0) {
+-      bulkRequest.get();
++      try {
++		BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
++	} catch (IOException e) {
++		LOGGER.error("ERROR during bulk delete", e);
++	}
+     }
+     if (!(l.get(0) instanceof ContentVO)) {
+-      commit();
++      // commit();
+     }
+   }
+ 
+@@ -151,16 +173,17 @@ public class ElasticIndexer implements SearchIndexer {
+    * @param parent
+    * @return
+    */
+-  private IndexRequestBuilder getIndexRequest(String id, String json, String parent, String type) {
+-    final IndexRequestBuilder builder =
+-        ElasticService.getClient().prepareIndex(index, dataType).setId(id).setSource(json);
++  private IndexRequest getIndexRequest(String index, String id, String json, String parent, String type) {
++    final IndexRequest indexRequest = new IndexRequest();
++    indexRequest.index(index).id(id).source(json, XContentType.JSON);
+     if (parent != null) {
+-      builder.setParent(parent);
++      indexRequest.parent(parent);
+     }
+     if (type != null) {
+-      builder.setType(type);
++      indexRequest.type(type);
+     }
+-    return builder;
++    LOGGER.info("+++ the request object: "+ indexRequest.index() + "   " + indexRequest.type() + "   " + indexRequest.id());
++    return indexRequest;
+   }
+ 
+   /**
+@@ -171,13 +194,13 @@ public class ElasticIndexer implements SearchIndexer {
+    * @param parent
+    * @return
+    */
+-  private DeleteRequestBuilder getDeleteRequest(String id, String parent) {
+-    final DeleteRequestBuilder builder =
+-        ElasticService.getClient().prepareDelete(index, dataType, id);
++  private DeleteRequest getDeleteRequest(String index, String id, String parent) {
++    final DeleteRequest deleteRequest = new DeleteRequest();
++    deleteRequest.index(index).id(id);
+     if (parent != null) {
+-      builder.setParent(parent);
++      deleteRequest.parent(parent);
+     }
+-    return builder;
++    return deleteRequest;
+   }
+ 
+   /**
+@@ -204,9 +227,14 @@ public class ElasticIndexer implements SearchIndexer {
+    * @param id
+    * @param json
+    */
+-  public void indexJSON(String id, String json, String parent) {
++  public void indexJSON(String index, String id, String json, String parent) {
+     if (id != null) {
+-      getIndexRequest(id, json, parent, dataType).execute().actionGet();
++      IndexRequest req = getIndexRequest(index, id, json, parent, dataType);
++      try {
++		IndexResponse resp = ElasticService.getClient().index(req, RequestOptions.DEFAULT);
++	} catch (IOException e) {
++		LOGGER.error("error indexing " + id, e);
++	}
+     }
+   }
+ 
+@@ -214,11 +242,12 @@ public class ElasticIndexer implements SearchIndexer {
+    * Make all changes done searchable. Kind of a commit. Might be important if data needs to be
+    * immediately available for other tasks
+    */
++  /* DON'T DO THAT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   public void commit() {
+     // Check if refresh is needed: cost is very high
+     ElasticService.getClient().admin().indices().prepareRefresh(index).execute().actionGet();
+   }
+-
++*/
+   /**
+    * Remove all indexed data
+    */
+@@ -303,6 +332,7 @@ public class ElasticIndexer implements SearchIndexer {
+   /**
+    * Add a mapping to the fields (important to have a better search)
+    */
++  /*
+   public void addMapping() {
+     try {
+       final String jsonMapping = new String(
+@@ -315,16 +345,18 @@ public class ElasticIndexer implements SearchIndexer {
+       LOGGER.error("Error initializing the Elastic Search Mapping " + mappingFile, e);
+     }
+   }
++  */
+ 
+   @Override
+-  public void updatePartial(String id, Object obj) {
++  public void updatePartial(String index, String id, Object obj) {
+     if (id != null) {
+-      try {
+-        ElasticService.getClient().prepareUpdate(index, dataType, id)
+-            .setDoc(toJson(obj, dataType, index)).execute().actionGet();
+-      } catch (final UnprocessableError e) {
+-        LOGGER.error("Error index partial update ", e);
+-      }
++      UpdateRequest updateRequest = new UpdateRequest();
++	  updateRequest.index(index).id(id).doc(obj);
++	  try {
++		UpdateResponse resp = ElasticService.getClient().update(updateRequest, RequestOptions.DEFAULT);
++	} catch (IOException e) {
++		LOGGER.error("error updating " + id, e);
++	}
+     }
+   }
+ 
+@@ -334,20 +366,21 @@ public class ElasticIndexer implements SearchIndexer {
+    * 
+    * @param l
+    */
+-  public void partialUpdateIndexBatch(List<?> l) {
++  public void partialUpdateIndexBatch(String index, List<?> l) {
+     if (l.isEmpty()) {
+       return;
+     }
+     try {
+-      final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
++      final BulkRequest bulkRequest = new BulkRequest();
+       for (final Object obj : l) {
+-        bulkRequest.add(ElasticService.getClient().prepareUpdate(index, dataType, getId(obj))
+-            .setDoc(toJson(obj, dataType, index)));
++    	  UpdateRequest updateRequest = new UpdateRequest();
++    	  updateRequest.index(index).id(getId(obj)).doc(obj);
++        bulkRequest.add(updateRequest);
+       }
+-      bulkRequest.get();
++      BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+     } catch (final Exception e) {
+       LOGGER.error("error indexing object ", e);
+     }
+-    commit();
++    // commit();
+   }
+ }
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticInitializer.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticInitializer.java
+index afeb3bd62..81f33081d 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticInitializer.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticInitializer.java
+@@ -4,18 +4,31 @@ import java.io.IOException;
+ import java.net.InetAddress;
+ import java.net.URISyntaxException;
+ import java.nio.file.Files;
++import java.nio.file.Path;
+ import java.nio.file.Paths;
++import java.util.Collections;
+ import java.util.List;
+ 
++import org.apache.http.HttpEntity;
++import org.apache.http.HttpHost;
++import org.apache.http.HttpStatus;
++import org.apache.http.entity.ContentType;
++import org.apache.http.entity.InputStreamEntity;
++import org.apache.http.util.EntityUtils;
+ import org.apache.log4j.Logger;
+ import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
+ import org.elasticsearch.client.Client;
++import org.elasticsearch.client.Request;
++import org.elasticsearch.client.Response;
++import org.elasticsearch.client.RestClient;
++import org.elasticsearch.client.RestClientBuilder;
++import org.elasticsearch.client.RestHighLevelClient;
+ import org.elasticsearch.client.transport.TransportClient;
+ import org.elasticsearch.cluster.metadata.AliasMetaData;
+ import org.elasticsearch.common.collect.ImmutableOpenMap;
+ import org.elasticsearch.common.settings.Settings;
+-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+ import org.elasticsearch.node.Node;
++import org.elasticsearch.node.NodeValidationException;
+ 
+ import de.mpg.imeji.logic.config.util.PropertyReader;
+ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
+@@ -37,7 +50,7 @@ public class ElasticInitializer {
+   public static void start() throws IOException, URISyntaxException {
+     start(PropertyReader.getProperty("elastic.cluster.name"));
+   }
+-
++/*
+   public static void start(String clusterName) throws IOException, URISyntaxException {
+     TransportClient tc = TransportClient.builder().settings(Settings.builder()
+         .put("path.home", ElasticService.CLUSTER_DIR).put("cluster.name", clusterName)).build();
+@@ -45,25 +58,40 @@ public class ElasticInitializer {
+         new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
+     start(clusterName, tc);
+   }
++  */
++  
++  public static void start(String cluster_name) throws IOException, URISyntaxException {
++	  RestHighLevelClient rhlc = null;
++	  RestClientBuilder local = RestClient.builder(new HttpHost("localhost", 9200, "http"));
++	  rhlc = new RestHighLevelClient(local);
++	  start(cluster_name, rhlc);
++  }
+ 
++  /*
+   @SuppressWarnings("resource")
+   public static void startLocal(String clusterName) throws IOException, URISyntaxException {
+     Settings settings = Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)
+         .put("cluster.name", clusterName).build();
+-    ElasticService.setNODE(new Node(settings).start());
++    try {
++		ElasticService.setNODE(new Node(settings).start());
++	} catch (NodeValidationException e) {
++		// TODO Auto-generated catch block
++		e.printStackTrace();
++	}
+     start(clusterName, ElasticService.getNODE().client());
+   }
++  */
+ 
+-  private static void start(String clusterName, Client client)
++  private static void start(String clusterName, RestHighLevelClient client)
+       throws IOException, URISyntaxException {
+     ElasticService.CLUSTER_NAME = clusterName;
+     ElasticService.ANALYSER =
+         ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
+     ElasticService.setClient(client);
+-    initializeIndex();
+-    LOGGER.info("Add elasticsearch mappings...");
++    LOGGER.info("Add elasticsearch indices...");
+     for (final ElasticTypes type : ElasticTypes.values()) {
+-      new ElasticIndexer(ElasticService.DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
++      // new ElasticIndexer(ElasticService.DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
++        initializeIndex(type);
+     }
+     LOGGER.info("...done!");
+   }
+@@ -71,7 +99,12 @@ public class ElasticInitializer {
+   public static void shutdown() {
+     LOGGER.warn("SHUTTING DOWN ELASTICSEARCH...");
+     if (ElasticService.getNODE() != null) {
+-      ElasticService.getNODE().close();
++      try {
++		ElasticService.getNODE().close();
++	} catch (IOException e) {
++		// TODO Auto-generated catch block
++		e.printStackTrace();
++	}
+     }
+     LOGGER.warn("... DONE!");
+ 
+@@ -83,15 +116,22 @@ public class ElasticInitializer {
+    *
+    * @return
+    */
+-  public synchronized static String initializeIndex() {
++  public synchronized static String initializeIndex(ElasticTypes name) {
+     LOGGER.info("Initializing ElasticSearch index.");
+-    final String indexName = getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
+-    if (indexName != null) {
+-      LOGGER.info("Using existing index: " + indexName);
+-      return indexName;
+-    } else {
+-      return createIndexWithAlias();
+-    }
++    Request req = new Request("HEAD", "/"+name.name());
++    Response resp;
++	try {
++		resp = ElasticService.getClient().getLowLevelClient().performRequest(req);
++		if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
++	    	LOGGER.info("Using existing index: " + name.name());
++	        return name.name();
++	    } else {
++	      return createIndexWithAlias(name);
++	    }
++	} catch (IOException e) {
++		LOGGER.error("Error getting index status", e);
++	}
++	return null;
+   }
+ 
+   /**
+@@ -99,15 +139,17 @@ public class ElasticInitializer {
+    *
+    * @return
+    */
+-  public static String createIndexWithAlias() {
++  public static String createIndexWithAlias(ElasticTypes name) {
+     try {
+-      final String indexName = createIndex();
++      final String indexName = createIndex(name);
+       LOGGER.info("Adding Alias to index " + indexName);
+-      ElasticService.getClient().admin().indices().prepareAliases()
+-          .addAlias(indexName, ElasticService.DATA_ALIAS).execute().actionGet();
+-      return indexName;
++      Request req = new Request("PUT", "/" + indexName + "/_alias/" + name.name());
++      Response resp = ElasticService.getClient().getLowLevelClient().performRequest(req);
++      if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
++	        return indexName;
++	    }
+     } catch (final Exception e) {
+-      LOGGER.info("Index +" + "+ already existing");
++      LOGGER.error("error creating alias", e);
+     }
+     return null;
+   }
+@@ -119,6 +161,7 @@ public class ElasticInitializer {
+    * @param aliasName
+    * @return
+    */
++  /*
+   public synchronized static String getIndexNameFromAliasName(final String aliasName) {
+     try {
+       final ImmutableOpenMap<String, List<AliasMetaData>> map = ElasticService.getClient().admin()
+@@ -136,6 +179,7 @@ public class ElasticInitializer {
+     }
+     return null;
+   }
++  */
+ 
+   /**
+    * Atomically move the alias from the old to the new index
+@@ -143,7 +187,8 @@ public class ElasticInitializer {
+    * @param oldIndex
+    * @param newIndex
+    */
+-  public static void setNewIndexAndRemoveOldIndex(String newIndex) {
++  /*
++  public static void setNewIndexAndRemoveOldIndex(String oldIndex, String newIndex) {
+     final String oldIndex = getIndexNameFromAliasName(ElasticService.DATA_ALIAS);
+ 
+     if (oldIndex != null && !oldIndex.equals(newIndex)) {
+@@ -156,24 +201,27 @@ public class ElasticInitializer {
+           .addAlias(newIndex, ElasticService.DATA_ALIAS).execute().actionGet();
+     }
+   }
++  */
+ 
+   /**
+    * Create a new Index (without alias)
+    *
+    * @return
+    */
+-  public static String createIndex() {
++  public static String createIndex(ElasticTypes name) {
+     try {
+-      final String indexName = ElasticService.DATA_ALIAS + "-" + System.currentTimeMillis();
++      final String indexName = name.name() + "-" + System.currentTimeMillis();
+       LOGGER.info("Creating a new index " + indexName);
+       final String settingsName = ElasticService.ANALYSER == ElasticAnalysers.ducet_sort
+           ? ElasticService.SETTINGS_DUCET : ElasticService.SETTINGS_DEFAULT;
+-      final String settingsJson = new String(
+-          Files.readAllBytes(
+-              Paths.get(ElasticIndexer.class.getClassLoader().getResource(settingsName).toURI())),
+-          "UTF-8");
+-      ElasticService.getClient().admin().indices().prepareCreate(indexName)
+-          .setSettings(settingsJson).execute().actionGet();
++      final Path settingsJson = Paths.get(ElasticIndexer.class.getClassLoader().getResource(settingsName).toURI());
++		HttpEntity entity = new InputStreamEntity(Files.newInputStream(settingsJson), 0, ContentType.APPLICATION_JSON);
++		Request req = new Request("PUT", "/"+indexName);
++		req.setEntity(entity);
++		Response  resp = ElasticService.getClient().getLowLevelClient().performRequest(req);
++		if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
++			LOGGER.info("successfully created " + indexName + " " + EntityUtils.toString(resp.getEntity()));
++		}
+       return indexName;
+     } catch (final Exception e) {
+       LOGGER.error("Error creating index", e);
+@@ -184,23 +232,27 @@ public class ElasticInitializer {
+   /**
+    * DANGER: delete all data from elasticsearch. A new reindex will be necessary
+    */
++  /*
+   public static void reset() {
+     LOGGER.warn("Resetting ElasticSearch!!!");
+     clear();
+-    initializeIndex();
+     for (final ElasticTypes type : ElasticTypes.values()) {
+-      new ElasticIndexer(ElasticService.DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
++      // new ElasticIndexer(ElasticService.DATA_ALIAS, type, ElasticService.ANALYSER).addMapping();
++    	initializeIndex(type);
+     }
+   }
++  */
+ 
+ 
+   /**
+    * Remove everything from ES
+    */
++  /*
+   public static void clear() {
+     LOGGER.warn("Deleting all indexes...");
+     ElasticService.getClient().admin().indices().prepareDelete("_all").execute().actionGet();
+     LOGGER.warn("...done!");
+   }
++  */
+ 
+ }
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticSearch.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticSearch.java
+index 899550446..201998dbb 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticSearch.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticSearch.java
+@@ -1,19 +1,25 @@
+ package de.mpg.imeji.logic.search.elasticsearch;
+ 
++import java.io.IOException;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.List;
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
+ 
++import org.apache.log4j.Logger;
++import org.elasticsearch.action.search.SearchRequest;
+ import org.elasticsearch.action.search.SearchRequestBuilder;
+ import org.elasticsearch.action.search.SearchResponse;
++import org.elasticsearch.action.search.SearchScrollRequest;
++import org.elasticsearch.client.RequestOptions;
+ import org.elasticsearch.common.unit.TimeValue;
+ import org.elasticsearch.index.query.QueryBuilder;
+ import org.elasticsearch.index.query.QueryBuilders;
+ import org.elasticsearch.search.SearchHit;
+ import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+ import org.elasticsearch.search.aggregations.AggregationBuilders;
++import org.elasticsearch.search.builder.SearchSourceBuilder;
+ import org.elasticsearch.search.sort.SortOrder;
+ 
+ import de.mpg.imeji.exceptions.ImejiException;
+@@ -43,6 +49,7 @@ public class ElasticSearch implements Search {
+   private ElasticIndexer indexer = null;
+   private static final int SEARCH_MAX_SIZE = 500;
+   private static final int ELASTIC_FROM_SIZE_LIMIT = 10000;
++  private static final Logger LOGGER = Logger.getLogger(ElasticSearch.class);
+ 
+ 
+   /**
+@@ -65,25 +72,25 @@ public class ElasticSearch implements Search {
+   }
+ 
+   @Override
+-  public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
++  public SearchResult search(String index, SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+       int from, int size) {
+-    return search(query, sortCri, user, folderUri, from, size, false);
++    return search(index, query, sortCri, user, folderUri, from, size, false);
+   }
+ 
+   @Override
+-  public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user,
++  public SearchResult searchWithFacets(String[] indices, SearchQuery query, SortCriterion sortCri, User user,
+       String folderUri, int from, int size) {
+-    return search(query, sortCri, user, folderUri, from, size, true);
++    return search(indices[0], query, sortCri, user, folderUri, from, size, true);
+   }
+ 
+-  private SearchResult Fsearch(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
++  private SearchResult search(String index, SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+       int from, int size, boolean addFacets) {
+     size = size == -1 ? size = SEARCH_MAX_SIZE : size;
+     from = from < 0 ? 0 : from;
+     if (size < SEARCH_MAX_SIZE && from + size < ELASTIC_FROM_SIZE_LIMIT) {
+-      return searchSinglePage(query, sortCri, user, folderUri, from, size, addFacets);
++      return searchSinglePage(index, query, sortCri, user, folderUri, from, size, addFacets);
+     } else {
+-      return searchWithScroll(query, sortCri, user, folderUri, from, size, addFacets);
++      return searchWithScroll(index, query, sortCri, user, folderUri, from, size, addFacets);
+     }
+   }
+ 
+@@ -99,40 +106,51 @@ public class ElasticSearch implements Search {
+    * @param size
+    * @return
+    */
+-  private SearchResult searchSinglePage(SearchQuery query, SortCriterion sortCri, User user,
++  private SearchResult searchSinglePage(String index, SearchQuery query, SortCriterion sortCri, User user,
+       String folderUri, int from, int size, boolean addFacets) {
+     final ElasticQueryFactory factory =
+         new ElasticQueryFactory(query, type).folderUri(folderUri).user(user);
+     final QueryBuilder q = factory.build();
+     final QueryBuilder f = factory.buildBaseQuery();
++    /*
+     SearchRequestBuilder request = ElasticService.getClient()
+         .prepareSearch(ElasticService.DATA_ALIAS).setNoFields().setTypes(getTypes()).setSize(size)
+         .setFrom(from).addSort("_type", SortOrder.ASC).addSort(ElasticSortFactory.build(sortCri));
++    */
++    SearchRequest searchRequest = new SearchRequest();
++    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+     if (f != null) {
+-      request.setQuery(f).setPostFilter(q);
++      searchSourceBuilder.query(f).postFilter(q);
+     } else {
+-      request.setQuery(q);
++      searchSourceBuilder.query(q);
+     }
+     if (addFacets) {
+-      request = addAggregations(request, folderUri);
++      searchSourceBuilder = addAggregations(searchSourceBuilder, folderUri);
+     }
++    searchSourceBuilder.from(from).size(size).sort(ElasticSortFactory.build(sortCri));
++    searchRequest.indices(index).source(searchSourceBuilder);
+ 
+-    final SearchResponse resp = request.execute().actionGet();
+-
+-    return toSearchResult(resp, query);
++    SearchResponse resp;
++	try {
++		resp = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
++	    return toSearchResult(resp, query);
++	} catch (IOException e) {
++		LOGGER.error("error getting search response", e);
++	}
++	return null;
+   }
+ 
+-  private SearchRequestBuilder addAggregations(SearchRequestBuilder request, String folderUri) {
++  private SearchSourceBuilder addAggregations(SearchSourceBuilder request, String folderUri) {
+     final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build();
+     if (folderUri != null) {
+       aggregations
+-          .add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS).filter(Facet.COLLECTION_ITEMS,
++          .add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS,
+               QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ITEMS)
+                   .must(QueryBuilders.termQuery("folder", folderUri)).must(
+                       QueryBuilders.typeQuery(ElasticService.ElasticTypes.items.name()))));
+     }
+     for (AbstractAggregationBuilder agg : aggregations) {
+-      request.addAggregation(agg);
++      request.aggregation(agg);
+     }
+     return request;
+   }
+@@ -148,40 +166,61 @@ public class ElasticSearch implements Search {
+    * @param size
+    * @return
+    */
+-  private SearchResult searchWithScroll(SearchQuery query, SortCriterion sortCri, User user,
++  private SearchResult searchWithScroll(String index, SearchQuery query, SortCriterion sortCri, User user,
+       String folderUri, int from, int size, boolean addFacets) {
+     // final int scrollSize = size < SEARCH_MAX_SIZE ? size : SEARCH_MAX_SIZE;
+     final ElasticQueryFactory factory =
+         new ElasticQueryFactory(query, type).folderUri(folderUri).user(user);
+     final QueryBuilder q = factory.build();
+     final QueryBuilder f = factory.buildBaseQuery();
++    /*
+     SearchRequestBuilder request = ElasticService.getClient()
+         .prepareSearch(ElasticService.DATA_ALIAS).setScroll(new TimeValue(60000)).setNoFields()
+         .setTypes(getTypes()).setSize(SEARCH_MAX_SIZE).addSort("_type", SortOrder.ASC)
+         .addSort(ElasticSortFactory.build(sortCri));
++     */
++    SearchRequest searchRequest = new SearchRequest();
++    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+     if (f != null) {
+-      request.setQuery(f).setPostFilter(q);
++      searchSourceBuilder.query(f).postFilter(q);
+     } else {
+-      request.setQuery(q);
++      searchSourceBuilder.query(q);
+     }
+     if (addFacets) {
+-      request = addAggregations(request, folderUri);
++      searchSourceBuilder = addAggregations(searchSourceBuilder, folderUri);
+     }
+-    SearchResponse resp = request.execute().actionGet();
+-    SearchResult result = toSearchResult(resp, query);
+-    result.setResults(scrollHitIds(resp, from, size));
+-    return result;
++    searchSourceBuilder.size(size).sort(ElasticSortFactory.build(sortCri));
++    searchRequest.indices(index).source(searchSourceBuilder).scroll(TimeValue.timeValueSeconds(30));
++    
++    SearchResponse searchResponse;
++	try {
++		searchResponse = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
++	    SearchResult result = toSearchResult(searchResponse, query);
++	    result.setResults(scrollHitIds(searchResponse, from, size));
++	    return result;
++	} catch (IOException e) {
++		// TODO Auto-generated catch block
++		e.printStackTrace();
++	}
++	return null;
+   }
+ 
+   private List<String> scrollHitIds(SearchResponse resp, int from, int size) {
+     List<String> hitIds = new ArrayList<>(getHitIds(resp));
+     while (hitIds.size() < from + size) {
+-      resp = ElasticService.getClient().prepareSearchScroll(resp.getScrollId())
+-          .setScroll(new TimeValue(60000)).execute().actionGet();
+-      if (resp.getHits().getHits().length == 0) {
+-        break;
+-      }
+-      hitIds.addAll(getHitIds(resp));
++		String scrollId = resp.getScrollId();
++		SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId); 
++		scrollRequest.scroll(TimeValue.timeValueSeconds(30));
++		try {
++			resp = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
++			scrollId = resp.getScrollId();
++		      if (resp.getHits().getHits().length == 0) {
++		        break;
++		      }
++		      hitIds.addAll(getHitIds(resp));
++		} catch (IOException e) {
++			LOGGER.error("error during scroll", e);
++		}
+     }
+     return hitIds.size() > from
+         ? hitIds.subList(from, from + size < hitIds.size() ? from + size : hitIds.size())
+@@ -189,20 +228,28 @@ public class ElasticSearch implements Search {
+   }
+ 
+   @Override
+-  public SearchResult search(SearchQuery query, SortCriterion sortCri, User user,
++  public SearchResult search(String index, SearchQuery query, SortCriterion sortCri, User user,
+       List<String> uris) {
+     // Not needed for Elasticsearch. This method is used for sparql search
+     return null;
+   }
+ 
+   @Override
+-  public SearchResult searchString(String query, SortCriterion sort, User user, int from,
++  public SearchResult searchString(String index, String query, SortCriterion sort, User user, int from,
+       int size) {
+     final QueryBuilder q = QueryBuilders.queryStringQuery(query);
+-    final SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
+-        .setNoFields().setTypes(getTypes()).setQuery(q).setSize(size).setFrom(from)
+-        .addSort(ElasticSortFactory.build(sort)).execute().actionGet();
+-    return toSearchResult(resp, null);
++    SearchRequest searchRequest = new SearchRequest();
++    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
++    searchSourceBuilder.query(q).size(size).from(from).sort(ElasticSortFactory.build(sort));
++    searchRequest.indices(index).source(searchSourceBuilder);
++    SearchResponse resp;
++	try {
++		resp = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
++	    return toSearchResult(resp, null);
++	} catch (IOException e) {
++		LOGGER.error("error during search", e);
++	}
++    return null;
+   }
+ 
+ 
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticService.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticService.java
+index 3e7a8efd7..f13cf02db 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticService.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/ElasticService.java
+@@ -1,6 +1,7 @@
+ package de.mpg.imeji.logic.search.elasticsearch;
+ 
+ import org.elasticsearch.client.Client;
++import org.elasticsearch.client.RestHighLevelClient;
+ import org.elasticsearch.node.Node;
+ 
+ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+@@ -14,7 +15,7 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+  */
+ public class ElasticService {
+   private static Node NODE;
+-  private static Client client;
++  private static RestHighLevelClient client;
+   static String CLUSTER_NAME = "name of my cluster";
+   static String CLUSTER_DIR = "null";
+   public static ElasticAnalysers ANALYSER;
+@@ -63,11 +64,11 @@ public class ElasticService {
+     standard, ducet_sort, simple, keyword;
+   }
+ 
+-  public static Client getClient() {
++  public static RestHighLevelClient getClient() {
+     return client;
+   }
+ 
+-  public static void setClient(Client client) {
++  public static void setClient(RestHighLevelClient client) {
+     ElasticService.client = client;
+   }
+ 
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/ElasticAggregationFactory.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/ElasticAggregationFactory.java
+index bbad85e7c..18dbf7450 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/ElasticAggregationFactory.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/ElasticAggregationFactory.java
+@@ -10,9 +10,10 @@ import org.elasticsearch.index.query.QueryBuilders;
+ import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+ import org.elasticsearch.search.aggregations.AggregationBuilders;
+ import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+-import org.elasticsearch.search.aggregations.bucket.filters.FiltersAggregationBuilder;
++import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregationBuilder;
+ import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+-import org.elasticsearch.search.aggregations.bucket.nested.NestedBuilder;
++import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
++import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
+ 
+ import de.mpg.imeji.logic.config.Imeji;
+ import de.mpg.imeji.logic.config.ImejiFileTypes;
+@@ -38,8 +39,8 @@ public class ElasticAggregationFactory {
+     List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
+     List<Facet> facets = new FacetService().retrieveAllFromCache();
+     FiltersAggregationBuilder systemAggregations =
+-        AggregationBuilders.filters("system").filter("all", QueryBuilders.matchAllQuery());
+-    NestedBuilder metadataAggregations = AggregationBuilders.nested("metadata").path("metadata");
++        AggregationBuilders.filters("all", QueryBuilders.matchAllQuery());
++    NestedAggregationBuilder metadataAggregations = AggregationBuilders.nested("metadata", "metadata");
+     for (Facet facet : facets) {
+       String metadataField = getMetadataField(facet);
+       if (metadataField != null) {
+@@ -61,9 +62,9 @@ public class ElasticAggregationFactory {
+     }
+     aggregations.add(metadataAggregations);
+     aggregations.add(systemAggregations);
+-    aggregations.add(AggregationBuilders.filters(Facet.ITEMS).filter(Facet.ITEMS,
++    aggregations.add(AggregationBuilders.filters(Facet.ITEMS,
+         QueryBuilders.typeQuery(ElasticService.ElasticTypes.items.name())));
+-    aggregations.add(AggregationBuilders.filters(Facet.SUBCOLLECTIONS).filter(Facet.SUBCOLLECTIONS,
++    aggregations.add(AggregationBuilders.filters(Facet.SUBCOLLECTIONS,
+         QueryBuilders.typeQuery(ElasticService.ElasticTypes.folders.name())));
+     return aggregations;
+   }
+@@ -79,8 +80,9 @@ public class ElasticAggregationFactory {
+     List<String> licenses =
+         Stream.of(ImejiLicenses.values()).map(l -> l.name()).collect(Collectors.toList());
+     licenses.add(ImejiLicenses.NO_LICENSE);
++    IncludeExclude inex = new IncludeExclude(licenses.toArray(new String[0]), null);
+     return AggregationBuilders.terms(SearchFields.license.name())
+-        .field(ElasticFields.LICENSE.field()).include(licenses.toArray(new String[0]));
++        .field(ElasticFields.LICENSE.field()).includeExclude(inex);
+   }
+ 
+   /**
+@@ -90,15 +92,15 @@ public class ElasticAggregationFactory {
+    * @return
+    */
+   private static AbstractAggregationBuilder getFiletypeAggregation(Facet facet) {
+-    FiltersAggregationBuilder filetypeAggregation =
+-        AggregationBuilders.filters(SearchFields.filetype.name());
++    FiltersAggregationBuilder filetypeAggregation = null; // =
++   //     AggregationBuilders.filters(SearchFields.filetype.name());
+     for (ImejiFileTypes.Type type : Imeji.CONFIG.getFileTypes().getTypes()) {
+       BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
+       for (String ext : type.getExtensionArray()) {
+         filetypeQuery.should(
+             QueryBuilders.queryStringQuery(ElasticFields.NAME.field() + ".suggest:" + "*." + ext));
+       }
+-      filetypeAggregation.filter(type.getName(null), filetypeQuery);
++      filetypeAggregation = AggregationBuilders.filters(type.getName(null), filetypeQuery);
+     }
+     return filetypeAggregation;
+   }
+@@ -160,7 +162,7 @@ public class ElasticAggregationFactory {
+    */
+   private static FilterAggregationBuilder getMetadataNumberAggregation(Facet facet,
+       String metadataField) {
+-    FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
++    FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex(),
+         QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
+     fb.subAggregation(AggregationBuilders.stats(facet.getIndex()).field(getMetadataField(facet)));
+     return fb;
+@@ -175,10 +177,10 @@ public class ElasticAggregationFactory {
+    */
+   private static FilterAggregationBuilder getMetadataDateAggregation(Facet facet,
+       String metadataField) {
+-    FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
++    FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex(),
+         QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
+     fb.subAggregation(AggregationBuilders.dateHistogram(facet.getIndex())
+-        .field(getMetadataField(facet)).interval(DateHistogramInterval.YEAR).format("yyyy"));
++        .field(getMetadataField(facet)).dateHistogramInterval(DateHistogramInterval.YEAR).format("yyyy"));
+ 
+     return fb;
+   }
+@@ -191,7 +193,7 @@ public class ElasticAggregationFactory {
+    * @return
+    */
+   private static FilterAggregationBuilder getMetadataTextAggregation(Facet facet) {
+-    FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex()).filter(
++    FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex(),
+         QueryBuilders.termQuery("metadata.index", getMetadataStatementIndex(facet.getIndex())));
+     fb.subAggregation(AggregationBuilders.terms(facet.getName()).field(getMetadataField(facet))
+         .size(BUCKETS_MAX_SIZE));
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/ElasticQueryFactory.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/ElasticQueryFactory.java
+index f13e7dd42..b0984fffa 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/ElasticQueryFactory.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/ElasticQueryFactory.java
+@@ -11,7 +11,7 @@ import org.elasticsearch.index.query.MatchAllQueryBuilder;
+ import org.elasticsearch.index.query.QueryBuilder;
+ import org.elasticsearch.index.query.QueryBuilders;
+ import org.elasticsearch.index.query.RangeQueryBuilder;
+-
++import org.elasticsearch.join.query.JoinQueryBuilders;
+ 
+ import de.mpg.imeji.logic.config.Imeji;
+ import de.mpg.imeji.logic.hierarchy.HierarchyService;
+@@ -637,7 +637,7 @@ public class ElasticQueryFactory {
+   private QueryBuilder metadataQuery(QueryBuilder valueQuery, String statement) {
+     return QueryBuilders.nestedQuery(ElasticFields.METADATA.field(),
+         QueryBuilders.boolQuery().must(valueQuery).must(
+-            fieldQuery(ElasticFields.METADATA_INDEX, statement, SearchOperators.EQUALS, false)));
++            fieldQuery(ElasticFields.METADATA_INDEX, statement, SearchOperators.EQUALS, false)), null);
+ 
+   }
+ 
+@@ -655,7 +655,7 @@ public class ElasticQueryFactory {
+             .must(fieldQuery(ElasticFields.TECHNICAL_NAME, tmd.getLabel(), SearchOperators.EQUALS,
+                 false))
+             .must(fieldQuery(ElasticFields.TECHNICAL_VALUE, tmd.getValue(), tmd.getOperator(),
+-                tmd.isNot()))));
++                tmd.isNot())), null));
+   }
+ 
+   /**
+@@ -789,7 +789,7 @@ public class ElasticQueryFactory {
+    * @return
+    */
+   private QueryBuilder contentQuery(QueryBuilder q) {
+-    return QueryBuilders.hasChildQuery(ElasticTypes.content.name(), q);
++    return JoinQueryBuilders.hasChildQuery(ElasticTypes.content.name(), q, null);
+   }
+ 
+   /**
+@@ -814,7 +814,7 @@ public class ElasticQueryFactory {
+   }
+ 
+   private QueryBuilder parentCollectionQuery(QueryBuilder qb) {
+-    return QueryBuilders.hasParentQuery(ElasticTypes.folders.name(), qb);
++    return JoinQueryBuilders.hasParentQuery(ElasticTypes.folders.name(), qb, emptyQuery);
+   }
+ 
+   /**
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/util/AggregationsParser.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/util/AggregationsParser.java
+index 90fa0cce5..82334a4aa 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/util/AggregationsParser.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/util/AggregationsParser.java
+@@ -5,9 +5,9 @@ import java.util.List;
+ 
+ import org.elasticsearch.action.search.SearchResponse;
+ import org.elasticsearch.search.aggregations.Aggregation;
++import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
+ import org.elasticsearch.search.aggregations.bucket.filter.Filter;
+-import org.elasticsearch.search.aggregations.bucket.filters.Filters;
+-import org.elasticsearch.search.aggregations.bucket.filters.Filters.Bucket;
++import org.elasticsearch.search.aggregations.bucket.filter.Filters;
+ import org.elasticsearch.search.aggregations.bucket.nested.Nested;
+ import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/util/ElasticSearchFactoryUtil.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/util/ElasticSearchFactoryUtil.java
+index d7440cdf8..3586478aa 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/util/ElasticSearchFactoryUtil.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/factory/util/ElasticSearchFactoryUtil.java
+@@ -1,20 +1,30 @@
+ package de.mpg.imeji.logic.search.elasticsearch.factory.util;
+ 
++import java.io.IOException;
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.stream.Collectors;
+ 
++import org.apache.log4j.Logger;
+ import org.apache.lucene.queryparser.classic.QueryParserBase;
++import org.elasticsearch.action.get.GetRequest;
++import org.elasticsearch.action.get.GetResponse;
++import org.elasticsearch.action.search.SearchRequest;
+ import org.elasticsearch.action.search.SearchResponse;
++import org.elasticsearch.client.RequestOptions;
++import org.elasticsearch.client.Response;
+ import org.elasticsearch.index.query.QueryBuilder;
+ import org.elasticsearch.index.query.QueryBuilders;
+ import org.elasticsearch.search.SearchHit;
++import org.elasticsearch.search.builder.SearchSourceBuilder;
+ 
+ import de.mpg.imeji.logic.model.Grant;
+ import de.mpg.imeji.logic.model.User;
+ import de.mpg.imeji.logic.model.UserGroup;
+ import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
++import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
++import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticQueryFactory;
+ import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
+ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
+ import de.mpg.imeji.logic.search.model.SortCriterion;
+@@ -28,6 +38,7 @@ import de.mpg.imeji.logic.security.usergroup.UserGroupService;
+  */
+ public class ElasticSearchFactoryUtil {
+ 
++
+   /**
+    * Read the field of an object in Elasticsearch. The value is returned as String
+    *
+@@ -39,12 +50,23 @@ public class ElasticSearchFactoryUtil {
+    */
+   public static String readFieldAsString(String id, ElasticFields field, String dataType,
+       String index) {
++	  GetRequest getRequest = new GetRequest();
++	  getRequest.index(index).type(dataType).id(id);
++	  /*
+     final Map<String, Object> sourceMap = ElasticService.getClient().prepareGet(index, dataType, id)
+         .setFetchSource(true).execute().actionGet().getSource();
+-    if (sourceMap != null) {
+-      final Object obj = sourceMap.get(field.field());
+-      return obj != null ? obj.toString() : "";
+-    }
++        */
++	  GetResponse getResponse;
++	try {
++		getResponse = ElasticService.getClient().get(getRequest, RequestOptions.DEFAULT);
++		final Map<String, Object> sourceMap = getResponse.getSource();
++	    if (sourceMap != null) {
++	      final Object obj = sourceMap.get(field.field());
++	      return obj != null ? obj.toString() : "";
++	    }
++	} catch (IOException e) {
++		e.printStackTrace();
++	}
+     return "";
+   }
+ 
+@@ -55,7 +77,7 @@ public class ElasticSearchFactoryUtil {
+    * @return
+    */
+   public static String getUserId(String email) {
+-    final List<String> r = searchStringAndRetrieveFieldValue("email:\"" + email.toString() + "\"",
++    final List<String> r = searchStringAndRetrieveFieldValue(ElasticTypes.users.name(), "email:\"" + email.toString() + "\"",
+         ElasticFields.ID.field().toLowerCase(), null, 0, 1);
+     if (r.size() > 0) {
+       return r.get(0);
+@@ -70,7 +92,7 @@ public class ElasticSearchFactoryUtil {
+    * @return
+    */
+   public static List<String> getGroupsOfUser(String userId) {
+-    return searchStringAndRetrieveFieldValue("users:\"" + userId + "\"",
++    return searchStringAndRetrieveFieldValue(ElasticTypes.usergroups.name(), "users:\"" + userId + "\"",
+         ElasticFields.ID.field().toLowerCase(), null, 0, -1);
+   }
+ 
+@@ -111,21 +133,34 @@ public class ElasticSearchFactoryUtil {
+    * @param size
+    * @return
+    */
+-  public static List<String> searchStringAndRetrieveFieldValue(String query, String field,
++  public static List<String> searchStringAndRetrieveFieldValue(String index, String query, String field,
+       SortCriterion sort, int from, int size) {
+     final QueryBuilder q = QueryBuilders.queryStringQuery(query);
++    SearchRequest searchRequest = new SearchRequest();
++    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
++    searchSourceBuilder.from(from).size(size).query(q).docValueField(field).sort(ElasticSortFactory.build(sort));
++    searchRequest.indices(index).source(searchSourceBuilder);
++    /*
+     final SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
+         .addField(field).setQuery(q).addSort(ElasticSortFactory.build(sort)).setSize(size)
+         .setFrom(from).execute().actionGet();
+-    final List<String> fieldValues = new ArrayList<>();
+-    for (final SearchHit hit : resp.getHits()) {
+-      if (field.equals(ElasticFields.ID.field())) {
+-        fieldValues.add(hit.getId());
+-      } else {
+-        fieldValues.add(hit.field(field).getValue());
+-      }
+-    }
+-    return fieldValues;
++        */
++    SearchResponse resp;
++	try {
++		resp = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
++		final List<String> fieldValues = new ArrayList<>();
++	    for (final SearchHit hit : resp.getHits()) {
++	      if (field.equals(ElasticFields.ID.field())) {
++	        fieldValues.add(hit.getId());
++	      } else {
++	        fieldValues.add(hit.field(field).getValue());
++	      }
++	    }
++	    return fieldValues;
++	} catch (IOException e) {
++		e.printStackTrace();
++	}
++    return null;
+   }
+ 
+   /**
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/CollectionPostIndexScript.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/CollectionPostIndexScript.java
+index b43bd2cd4..fb710dff5 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/CollectionPostIndexScript.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/CollectionPostIndexScript.java
+@@ -1,19 +1,28 @@
+ package de.mpg.imeji.logic.search.elasticsearch.script;
+ 
++import java.io.IOException;
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.concurrent.ExecutionException;
+ 
+ import org.apache.log4j.Logger;
++import org.elasticsearch.action.bulk.BulkRequest;
+ import org.elasticsearch.action.bulk.BulkRequestBuilder;
+ import org.elasticsearch.action.bulk.BulkResponse;
++import org.elasticsearch.action.search.ClearScrollRequest;
++import org.elasticsearch.action.search.ClearScrollResponse;
++import org.elasticsearch.action.search.SearchRequest;
+ import org.elasticsearch.action.search.SearchResponse;
++import org.elasticsearch.action.search.SearchScrollRequest;
++import org.elasticsearch.action.update.UpdateRequest;
+ import org.elasticsearch.action.update.UpdateRequestBuilder;
++import org.elasticsearch.client.RequestOptions;
+ import org.elasticsearch.common.unit.TimeValue;
+ import org.elasticsearch.common.xcontent.XContentBuilder;
+ import org.elasticsearch.index.query.QueryBuilders;
+ import org.elasticsearch.index.query.TermQueryBuilder;
+ import org.elasticsearch.search.SearchHit;
++import org.elasticsearch.search.builder.SearchSourceBuilder;
+ 
+ import de.mpg.imeji.logic.model.CollectionImeji;
+ import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
+@@ -57,15 +66,15 @@ public class CollectionPostIndexScript {
+     if (ids.isEmpty()) {
+       return;
+     }
+-    final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
++    final BulkRequest bulkRequest = new BulkRequest();
+     final XContentBuilder json = new CollectionFields(c).toXContentBuilder();
+     for (final String id : ids) {
+-      final UpdateRequestBuilder req = ElasticService.getClient()
+-          .prepareUpdate(index, ElasticTypes.items.name(), id).setDoc(json);
++      final UpdateRequest req = new UpdateRequest();
++      	req.index(index).type(ElasticTypes.items.name()).id(id).doc(json);
+       bulkRequest.add(req);
+     }
+     if (bulkRequest.numberOfActions() > 0) {
+-      BulkResponse resp = bulkRequest.get();
++      BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+       if (resp.hasFailures()) {
+         LOGGER.error(resp.buildFailureMessage());
+       }
+@@ -84,25 +93,46 @@ public class CollectionPostIndexScript {
+       throws InterruptedException, ExecutionException {
+     TermQueryBuilder q =
+         QueryBuilders.termQuery(ElasticFields.FOLDER.field(), c.getId().toString());
+-    SearchResponse resp = ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS)
+-        .setNoFields().setQuery(q).setTypes(ElasticTypes.items.name())
+-        .setScroll(new TimeValue(60000)).execute().get();
+-    final List<String> ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
+-    for (final SearchHit hit : resp.getHits()) {
+-      ids.add(hit.getId());
+-    }
++    SearchRequest searchRequest = new SearchRequest();
++    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
++    searchSourceBuilder.query(q);
++    searchRequest.indices(ElasticTypes.items.name()).source(searchSourceBuilder).scroll(TimeValue.timeValueMinutes(1));
++
++    SearchResponse resp = null;
++    List<String> ids = null;
++	try {
++		resp = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
++		ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
++
++	    for (final SearchHit hit : resp.getHits()) {
++	      ids.add(hit.getId());
++	    }
++	} catch (IOException e1) {
++		LOGGER.error("error during search", e1);
++	}
+     while (true) {
+-      resp = ElasticService.getClient().prepareSearchScroll(resp.getScrollId())
+-          .setScroll(new TimeValue(60000)).execute().actionGet();
+-      if (resp.getHits().getHits().length == 0) {
+-        break;
+-      }
+-      for (final SearchHit hit : resp.getHits()) {
+-        ids.add(hit.getId());
+-      }
++    	String scrollId = resp.getScrollId();
++		SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId); 
++		scrollRequest.scroll(TimeValue.timeValueSeconds(60));
++		try {
++			resp = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
++			 if (resp.getHits().getHits().length == 0) {
++			        break;
++			      }
++			      for (final SearchHit hit : resp.getHits()) {
++			        ids.add(hit.getId());
++			      }
++		} catch (IOException e) {
++			LOGGER.error("error durin scroll", e);
++		}
+     }
+-    ElasticService.getClient().prepareClearScroll().addScrollId(resp.getScrollId()).execute()
+-        .actionGet();
++    ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
++    clearScrollRequest.addScrollId(resp.getScrollId());
++    try {
++		ClearScrollResponse response = ElasticService.getClient().clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
++	} catch (IOException e) {
++		LOGGER.error("error during clear scroll", e);	
++		}
+     return ids;
+   }
+ 
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/ItemPostIndexScript.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/ItemPostIndexScript.java
+index e2812d753..a60e402b8 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/ItemPostIndexScript.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/ItemPostIndexScript.java
+@@ -1,13 +1,18 @@
+ package de.mpg.imeji.logic.search.elasticsearch.script;
+ 
++import java.io.IOException;
+ import java.util.List;
+ import java.util.stream.Collectors;
+ 
+ import org.apache.log4j.Logger;
++import org.elasticsearch.action.bulk.BulkRequest;
+ import org.elasticsearch.action.bulk.BulkRequestBuilder;
+ import org.elasticsearch.action.bulk.BulkResponse;
++import org.elasticsearch.action.get.GetRequest;
+ import org.elasticsearch.action.get.GetResponse;
++import org.elasticsearch.action.update.UpdateRequest;
+ import org.elasticsearch.action.update.UpdateRequestBuilder;
++import org.elasticsearch.client.RequestOptions;
+ import org.elasticsearch.common.xcontent.XContentBuilder;
+ 
+ import de.mpg.imeji.logic.model.Item;
+@@ -29,17 +34,17 @@ public class ItemPostIndexScript {
+   public static void run(List<?> list, String index) {
+     List<Item> items =
+         (List<Item>) list.stream().filter(o -> o instanceof Item).collect(Collectors.toList());
+-    final BulkRequestBuilder bulkRequest = ElasticService.getClient().prepareBulk();
++    final BulkRequest bulkRequest = new BulkRequest();
+ 
+     for (final Item item : items) {
+       try {
+         CollectionFields fields = retrieveCollectionFields(item, index);
+         if (fields != null) {
+           final XContentBuilder json = fields.toXContentBuilder();
+-          final UpdateRequestBuilder req = ElasticService.getClient()
+-              .prepareUpdate(index, ElasticTypes.items.name(), item.getId().toString())
+-              .setDoc(json);
+-          bulkRequest.add(req);
++          UpdateRequest updateRequest = new UpdateRequest();
++          updateRequest.index(ElasticTypes.items.name()).id(item.getId().toString()).doc(json);
++          
++          bulkRequest.add(updateRequest);
+         }
+       } catch (Exception e) {
+         LOGGER.error("Error indexing item with collection fields", e);
+@@ -47,25 +52,34 @@ public class ItemPostIndexScript {
+ 
+     }
+     if (bulkRequest.numberOfActions() > 0) {
+-      BulkResponse resp = bulkRequest.get();
+-      if (resp.hasFailures()) {
+-        LOGGER.error(resp.buildFailureMessage());
+-      }
++      BulkResponse resp;
++	try {
++		resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
++	} catch (IOException e) {
++        LOGGER.error("error during bulk", e);
++	}
+     }
+   }
+ 
+   private static CollectionFields retrieveCollectionFields(Item item, String index) {
+-    GetResponse resp = ElasticService.getClient()
+-        .prepareGet(index, ElasticTypes.folders.name(), item.getCollection().toString())
+-        .setFields(ElasticFields.AUTHOR_COMPLETENAME.field(),
++	  GetRequest getRequest = new GetRequest();
++	  getRequest.index(ElasticTypes.folders.name()).id(item.getCollection().toString())
++	  .storedFields(ElasticFields.AUTHOR_COMPLETENAME.field(),
+             ElasticFields.AUTHOR_ORGANIZATION.field(), ElasticFields.ID.field(),
+-            ElasticFields.NAME.field())
+-        .get();
+-    if (resp.isExists()) {
+-      return new CollectionFields(resp.getField(ElasticFields.AUTHOR_COMPLETENAME.field()),
+-          resp.getField(ElasticFields.AUTHOR_ORGANIZATION.field()),
+-          resp.getField(ElasticFields.ID.field()), resp.getField(ElasticFields.NAME.field()));
+-    }
++            ElasticFields.NAME.field());
++    GetResponse resp;
++	try {
++		resp = ElasticService.getClient().get(getRequest, RequestOptions.DEFAULT);
++		if (resp.isExists()) {
++		      return new CollectionFields(resp.getField(ElasticFields.AUTHOR_COMPLETENAME.field()),
++		          resp.getField(ElasticFields.AUTHOR_ORGANIZATION.field()),
++		          resp.getField(ElasticFields.ID.field()), resp.getField(ElasticFields.NAME.field()));
++		    }
++	} catch (IOException e) {
++		// TODO Auto-generated catch block
++		e.printStackTrace();
++	}
++    
+     return null;
+   }
+ 
+diff --git a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/misc/CollectionFields.java b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/misc/CollectionFields.java
+index 5157fcb3b..96c55988e 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/misc/CollectionFields.java
++++ b/src/main/java/de/mpg/imeji/logic/search/elasticsearch/script/misc/CollectionFields.java
+@@ -6,9 +6,9 @@ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.stream.Collectors;
+ 
++import org.elasticsearch.common.document.DocumentField;
+ import org.elasticsearch.common.xcontent.XContentBuilder;
+ import org.elasticsearch.common.xcontent.XContentFactory;
+-import org.elasticsearch.index.get.GetField;
+ 
+ import de.mpg.imeji.logic.model.CollectionImeji;
+ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
+@@ -33,8 +33,8 @@ public class CollectionFields {
+     this.titleWithId = ObjectHelper.getId(URI.create(c.getId().toString())) + " " + c.getTitle();
+   }
+ 
+-  public CollectionFields(GetField authorsField, GetField organizationsField, GetField id,
+-      GetField title) {
++  public CollectionFields(DocumentField authorsField, DocumentField organizationsField, DocumentField id,
++      DocumentField title) {
+     this.authors = authorsField != null
+         ? authorsField.getValues().stream().map(Object::toString).collect(Collectors.toList())
+         : new ArrayList<>();
+diff --git a/src/main/java/de/mpg/imeji/logic/search/jenasearch/JenaIndexer.java b/src/main/java/de/mpg/imeji/logic/search/jenasearch/JenaIndexer.java
+index 0e71b5d77..84a14649c 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/jenasearch/JenaIndexer.java
++++ b/src/main/java/de/mpg/imeji/logic/search/jenasearch/JenaIndexer.java
+@@ -13,32 +13,32 @@ import de.mpg.imeji.logic.search.SearchIndexer;
+ public class JenaIndexer implements SearchIndexer {
+ 
+   @Override
+-  public void index(Object obj) {
++  public void index(String index, Object obj) {
+     // No indexation needed, since search is done directly on jena Database with sparql queries
+   }
+ 
+   @Override
+-  public void indexBatch(List<?> l) {
++  public void indexBatch(String index, List<?> l) {
+     // No indexation needed, since search is done directly on jena Database with sparql queries
+   }
+ 
+   @Override
+-  public void delete(Object obj) {
++  public void delete(String index, Object obj) {
+     // No indexation needed, since search is done directly on jena Database with sparql queries
+   }
+ 
+   @Override
+-  public void deleteBatch(List<?> l) {
++  public void deleteBatch(String index, List<?> l) {
+     // No indexation needed, since search is done directly on jena Database with sparql queries
+   }
+ 
+   @Override
+-  public void updatePartial(String id, Object obj) {
++  public void updatePartial(String index, String id, Object obj) {
+     // No indexation needed, since search is done directly on jena Database with sparql queries
+   }
+ 
+   @Override
+-  public void updateIndexBatch(List<?> l) {
++  public void updateIndexBatch(String index, List<?> l) {
+     // No indexation needed, since search is done directly on jena Database with sparql queries
+   }
+ 
+diff --git a/src/main/java/de/mpg/imeji/logic/search/jenasearch/JenaSearch.java b/src/main/java/de/mpg/imeji/logic/search/jenasearch/JenaSearch.java
+index 1bbe044f0..80d2aa905 100644
+--- a/src/main/java/de/mpg/imeji/logic/search/jenasearch/JenaSearch.java
++++ b/src/main/java/de/mpg/imeji/logic/search/jenasearch/JenaSearch.java
+@@ -40,13 +40,13 @@ public class JenaSearch implements Search {
+   /**
+    * Initialize the search
+    *
+-   * @param type
++   * @param type2
+    * @param containerURI
+    */
+-  public JenaSearch(SearchObjectTypes type, String containerURI) {
++  public JenaSearch(SearchObjectTypes type2, String containerURI) {
+     this.containerURI = containerURI;
+-    if (type != null) {
+-      this.type = type;
++    if (type2 != null) {
++      this.type = type2;
+     }
+   }
+ 
+@@ -65,7 +65,7 @@ public class JenaSearch implements Search {
+    * @return
+    */
+   @Override
+-  public SearchResult search(SearchQuery query, SortCriterion sortCri, User user, String folderUri,
++  public SearchResult search(String index, SearchQuery query, SortCriterion sortCri, User user, String folderUri,
+       int from, int size) {
+     this.containerURI = folderUri;
+     return new SearchResult(advanced(query, sortCri, user), sortCri);
+@@ -83,14 +83,14 @@ public class JenaSearch implements Search {
+    * @return
+    */
+   @Override
+-  public SearchResult search(SearchQuery sq, SortCriterion sortCri, User user, List<String> uris) {
++  public SearchResult search(String index, SearchQuery sq, SortCriterion sortCri, User user, List<String> uris) {
+     return new SearchResult(advanced(uris, sq, sortCri, user), sortCri);
+   }
+ 
+   @Override
+-  public SearchResult searchWithFacets(SearchQuery query, SortCriterion sortCri, User user,
++  public SearchResult searchWithFacets(String[] indices, SearchQuery query, SortCriterion sortCri, User user,
+       String folderUri, int from, int size) {
+-    return search(query, sortCri, user, folderUri, from, size);
++    return search(indices[0], query, sortCri, user, folderUri, from, size);
+   }
+ 
+   /**
+@@ -100,7 +100,7 @@ public class JenaSearch implements Search {
+    * @return
+    */
+   @Override
+-  public SearchResult searchString(String sparqlQuery, SortCriterion sort, User user, int from,
++  public SearchResult searchString(String index, String sparqlQuery, SortCriterion sort, User user, int from,
+       int size) {
+     return new SearchResult(ImejiSPARQL.exec(sparqlQuery, getModelName(type)), null);
+   }
+diff --git a/src/main/java/de/mpg/imeji/logic/security/user/UserService.java b/src/main/java/de/mpg/imeji/logic/security/user/UserService.java
+index 5e43946c9..7239f33db 100644
+--- a/src/main/java/de/mpg/imeji/logic/security/user/UserService.java
++++ b/src/main/java/de/mpg/imeji/logic/security/user/UserService.java
+@@ -136,7 +136,7 @@ public class UserService {
+   public User retrieve(String email, User user) throws ImejiException {
+     final SearchQuery query = new SearchQuery();
+     query.addPair(new SearchPair(SearchFields.email, SearchOperators.EQUALS, email, false));
+-    final SearchResult result = search.search(query, null, Imeji.adminUser, null, 0, 1);
++    final SearchResult result = search.search("", query, null, Imeji.adminUser, null, 0, 1);
+     if (result.getNumberOfRecords() == 1) {
+       return controller.retrieve(URI.create(result.getResults().get(0)), user);
+     }
+@@ -214,7 +214,7 @@ public class UserService {
+    */
+   public boolean isModified(User u) {
+     final SearchResult result = SearchFactory.create()
+-        .searchString(JenaCustomQueries.selectLastModifiedDate(u.getId()), null, u, 0, 1);
++        .searchString("", JenaCustomQueries.selectLastModifiedDate(u.getId()), null, u, 0, 1);
+     return result.getNumberOfRecords() > 0 && (u.getModified() == null
+         || DateHelper.parseDate(result.getResults().get(0)).after(u.getModified()));
+   }
+@@ -240,7 +240,7 @@ public class UserService {
+ 
+     final Search search = SearchFactory.create();
+     final List<String> results =
+-        search.searchString(JenaCustomQueries.selectUserFileSize(col.getCreatedBy().toString()),
++        search.searchString("", JenaCustomQueries.selectUserFileSize(col.getCreatedBy().toString()),
+             null, null, 0, -1).getResults();
+     long currentDiskUsage = 0L;
+     try {
+@@ -268,7 +268,7 @@ public class UserService {
+    */
+   public Collection<User> searchUserByName(String name) {
+     try {
+-      return retrieveBatchLazy(search.search(SearchQueryParser.parseStringQuery(name),
++      return retrieveBatchLazy(search.search("", SearchQueryParser.parseStringQuery(name),
+           new SortCriterion(SearchFields.completename, SortOrder.ASCENDING), Imeji.adminUser, null,
+           0, -1).getResults(), -1);
+     } catch (final UnprocessableError e) {
+@@ -287,7 +287,7 @@ public class UserService {
+   public String getCompleteName(URI uri, Locale locale) {
+     final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+     final List<String> users = search
+-        .searchString(JenaCustomQueries.selectUserCompleteName(uri), null, Imeji.adminUser, 0, 1)
++        .searchString("", JenaCustomQueries.selectUserCompleteName(uri), null, Imeji.adminUser, 0, 1)
+         .getResults();
+     if (users != null && users.size() > 0) {
+       return users.get(0);
+@@ -308,7 +308,7 @@ public class UserService {
+    * @return
+    */
+   public SearchResult search(SearchQuery q, SortCriterion sort, User user, int offset, int size) {
+-    return search.search(q, sort, user, null, offset, size);
++    return search.search("", q, sort, user, null, offset, size);
+   }
+ 
+   /**
+@@ -323,7 +323,7 @@ public class UserService {
+    */
+   public List<User> searchAndRetrieve(SearchQuery q, SortCriterion sort, User user, int offset,
+       int size) {
+-    return (List<User>) retrieveBatch(search.search(q, sort, user, null, offset, size).getResults(),
++    return (List<User>) retrieveBatch(search.search("", q, sort, user, null, offset, size).getResults(),
+         size);
+   }
+ 
+@@ -339,7 +339,7 @@ public class UserService {
+    */
+   public List<User> searchAndRetrieveLazy(SearchQuery q, SortCriterion sort, User user, int offset,
+       int size) {
+-    return retrieveBatchLazy(search.search(q, sort, user, null, offset, size).getResults(), size);
++    return retrieveBatchLazy(search.search("", q, sort, user, null, offset, size).getResults(), size);
+   }
+ 
+   /**
+@@ -407,7 +407,7 @@ public class UserService {
+   private Collection<Organization> searchOrganizationByNameInUsers(String name) {
+     final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+     return loadOrganizations(
+-        search.searchString(JenaCustomQueries.selectOrganizationByName(name), null, null, 0, -1)
++        search.searchString("", JenaCustomQueries.selectOrganizationByName(name), null, null, 0, -1)
+             .getResults(),
+         Imeji.userModel);
+   }
+@@ -463,7 +463,7 @@ public class UserService {
+     boolean exist = false;
+     final Search search = SearchFactory.create();
+     final List<String> uris =
+-        search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, 0, -1).getResults();
++        search.searchString("", JenaCustomQueries.selectUserSysAdmin(), null, null, 0, -1).getResults();
+     if (uris != null && uris.size() > 0) {
+       exist = true;
+     }
+@@ -479,7 +479,7 @@ public class UserService {
+   public List<User> retrieveAllAdmins() {
+     final Search search = SearchFactory.create();
+     final List<String> uris =
+-        search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, 0, -1).getResults();
++        search.searchString("", JenaCustomQueries.selectUserSysAdmin(), null, null, 0, -1).getResults();
+     final List<User> admins = new ArrayList<User>();
+     for (final String uri : uris) {
+       try {
+@@ -501,7 +501,7 @@ public class UserService {
+   public List<User> searchUsersToBeNotified(User user, CollectionImeji c) {
+     final Search search = SearchFactory.create();
+     final List<String> uris =
+-        search.searchString(JenaCustomQueries.selectUsersToBeNotifiedByFileDownload(user, c), null,
++        search.searchString("", JenaCustomQueries.selectUsersToBeNotifiedByFileDownload(user, c), null,
+             null, 0, -1).getResults();
+     return retrieveBatchLazy(uris, -1);
+   }
+@@ -512,7 +512,9 @@ public class UserService {
+         new ElasticIndexer(index, ElasticTypes.users, ElasticService.ANALYSER);
+     final List<User> users = retrieveAll();
+     LOGGER.info("+++ " + users.size() + " users to index +++");
+-    indexer.indexBatch(users);
++    LOGGER.info("+++ " + index + " 4 users +++");
++
++    indexer.indexBatch(index, users);
+     LOGGER.info("...users reindexed!");
+   }
+ }
+diff --git a/src/main/java/de/mpg/imeji/logic/security/user/util/QuotaUtil.java b/src/main/java/de/mpg/imeji/logic/security/user/util/QuotaUtil.java
+index 93bca65bc..13a9fcda6 100644
+--- a/src/main/java/de/mpg/imeji/logic/security/user/util/QuotaUtil.java
++++ b/src/main/java/de/mpg/imeji/logic/security/user/util/QuotaUtil.java
+@@ -129,7 +129,7 @@ public class QuotaUtil {
+   public static long getUsedQuota(User user) {
+     final Search search = SearchFactory.create();
+     final List<String> results =
+-        search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null,
++        search.searchString("", JenaCustomQueries.selectUserFileSize(user.getId().toString()), null,
+             null, 0, -1).getResults();
+     return Long.parseLong(results.get(0).toString());
+   }
+diff --git a/src/main/java/de/mpg/imeji/logic/security/usergroup/UserGroupService.java b/src/main/java/de/mpg/imeji/logic/security/usergroup/UserGroupService.java
+index 1e6c1713d..c7f8ee5f3 100644
+--- a/src/main/java/de/mpg/imeji/logic/security/usergroup/UserGroupService.java
++++ b/src/main/java/de/mpg/imeji/logic/security/usergroup/UserGroupService.java
+@@ -139,7 +139,7 @@ public class UserGroupService {
+    * @throws ImejiException
+    */
+   public SearchResult search(SearchQuery q, SortCriterion sort, User user, int offset, int size) {
+-    return search.search(q, sort, user, null, offset, size);
++    return search.search("", q, sort, user, null, offset, size);
+   }
+ 
+   /**
+@@ -212,7 +212,7 @@ public class UserGroupService {
+   private Collection<UserGroup> searchBySPARQLQuery(String q, User user) {
+     final Collection<UserGroup> userGroups = new ArrayList<UserGroup>();
+     final Search search = SearchFactory.create();
+-    for (final String uri : search.searchString(q, null, null, 0, -1).getResults()) {
++    for (final String uri : search.searchString("", q, null, null, 0, -1).getResults()) {
+       try {
+         userGroups.add(controller.read(URI.create(uri), user));
+       } catch (final ImejiException e) {
+@@ -251,8 +251,8 @@ public class UserGroupService {
+         new ElasticIndexer(index, ElasticTypes.usergroups, ElasticService.ANALYSER);
+     final List<UserGroup> groups = (List<UserGroup>) retrieveAll();
+     LOGGER.info("+++ " + groups.size() + " user groups to index +++");
+-    indexer.indexBatch(groups);
+-    indexer.commit();
++    indexer.indexBatch(index, groups);
++    // indexer.commit();
+     LOGGER.info("...user groups reindexed!");
+   }
+ }
+diff --git a/src/main/java/de/mpg/imeji/logic/statistic/StatisticsService.java b/src/main/java/de/mpg/imeji/logic/statistic/StatisticsService.java
+index 98d4aa72a..8960370b0 100644
+--- a/src/main/java/de/mpg/imeji/logic/statistic/StatisticsService.java
++++ b/src/main/java/de/mpg/imeji/logic/statistic/StatisticsService.java
+@@ -24,7 +24,7 @@ public class StatisticsService {
+    */
+   public List<String> getAllInstitute() {
+     final Search s = new JenaSearch(SearchObjectTypes.USER, null);
+-    return s.searchString(JenaCustomQueries.selectAllInstitutes(), null, null, 0, -1).getResults();
++    return s.searchString("", JenaCustomQueries.selectAllInstitutes(), null, null, 0, -1).getResults();
+   }
+ 
+   /**
+@@ -37,7 +37,7 @@ public class StatisticsService {
+   public long getUsedStorageSizeForInstitute(String instituteName) {
+     final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
+     final List<String> result =
+-        s.searchString(JenaCustomQueries.selectInstituteFileSize(instituteName), null, null, 0, -1)
++        s.searchString("", JenaCustomQueries.selectInstituteFileSize(instituteName), null, null, 0, -1)
+             .getResults();
+     if (result.size() == 1 && result.get(0) != null) {
+       final String size = result.get(0).replace("^^http://www.w3.org/2001/XMLSchema#integer", "");
+@@ -49,7 +49,7 @@ public class StatisticsService {
+   public long getAllFileSize() {
+     final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
+     final List<String> result =
+-        s.searchString(JenaCustomQueries.selectFileSizeForAll(), null, null, 0, -1).getResults();
++        s.searchString("", JenaCustomQueries.selectFileSizeForAll(), null, null, 0, -1).getResults();
+     if (result.size() == 1 && result.get(0) != null) {
+       final String size = result.get(0).replace("^^http://www.w3.org/2001/XMLSchema#integer", "");
+       return Long.parseLong(size);
+diff --git a/src/main/java/de/mpg/imeji/logic/validation/impl/StatementValidator.java b/src/main/java/de/mpg/imeji/logic/validation/impl/StatementValidator.java
+index eaed8d7b9..cfb5c9cca 100644
+--- a/src/main/java/de/mpg/imeji/logic/validation/impl/StatementValidator.java
++++ b/src/main/java/de/mpg/imeji/logic/validation/impl/StatementValidator.java
+@@ -42,7 +42,7 @@ public class StatementValidator extends ObjectValidator implements Validator<Sta
+   private boolean indexAlreadyUsed(Statement statement) {
+     final Search search =
+         SearchFactory.create(SearchObjectTypes.STATEMENT, SEARCH_IMPLEMENTATIONS.JENA);
+-    final SearchResult result = search.searchString(
++    final SearchResult result = search.searchString("",
+         JenaCustomQueries.selectStatementTypeByIndex(statement.getIndex()), null, null, 0, -1);
+     if (result.getNumberOfRecords() > 0) {
+       return !result.getResults().get(0).equals(statement.getType().name());
+diff --git a/src/main/java/de/mpg/imeji/logic/validation/impl/UserValidator.java b/src/main/java/de/mpg/imeji/logic/validation/impl/UserValidator.java
+index 908183361..0cb902651 100644
+--- a/src/main/java/de/mpg/imeji/logic/validation/impl/UserValidator.java
++++ b/src/main/java/de/mpg/imeji/logic/validation/impl/UserValidator.java
+@@ -87,7 +87,7 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
+   private boolean existsUserWitheMail(String email, String userUri, boolean newUser) {
+     final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+     final SearchResult result =
+-        search.searchString(JenaCustomQueries.selectUserByEmail(email), null, null, 0, -1);
++        search.searchString("", JenaCustomQueries.selectUserByEmail(email), null, null, 0, -1);
+     if (result.getNumberOfRecords() == 0) {
+       return false;
+     } else {
+diff --git a/src/main/java/de/mpg/imeji/presentation/admin/StorageStatisticsBean.java b/src/main/java/de/mpg/imeji/presentation/admin/StorageStatisticsBean.java
+index f9a31e311..c1fd05520 100644
+--- a/src/main/java/de/mpg/imeji/presentation/admin/StorageStatisticsBean.java
++++ b/src/main/java/de/mpg/imeji/presentation/admin/StorageStatisticsBean.java
+@@ -78,7 +78,7 @@ public class StorageStatisticsBean {
+   public int getAllCollectionsSize() {
+     final Search search =
+         SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.JENA);
+-    return search.searchString(JenaCustomQueries.selectCollectionAll(), null, null, 0, -1)
++    return search.searchString("", JenaCustomQueries.selectCollectionAll(), null, null, 0, -1)
+         .getNumberOfRecords();
+   }
+ 
+@@ -102,7 +102,7 @@ public class StorageStatisticsBean {
+    */
+   public int getAllImagesSize() {
+     final Search search = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.JENA);
+-    return search.searchString(JenaCustomQueries.selectItemAll(), null, null, 0, -1)
++    return search.searchString("", JenaCustomQueries.selectItemAll(), null, null, 0, -1)
+         .getNumberOfRecords();
+   }
+ 
+diff --git a/src/main/java/de/mpg/imeji/presentation/item/browse/ItemsBean.java b/src/main/java/de/mpg/imeji/presentation/item/browse/ItemsBean.java
+index 8317790a0..337137212 100644
+--- a/src/main/java/de/mpg/imeji/presentation/item/browse/ItemsBean.java
++++ b/src/main/java/de/mpg/imeji/presentation/item/browse/ItemsBean.java
+@@ -177,8 +177,10 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
+    * Trigger the update method after a search commit, to ma
+    */
+   public void refresh() {
++	  /*
+     ((ElasticIndexer) SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC)
+         .getIndexer()).commit();
++        */
+     update();
+   }
+ 
+diff --git a/src/main/java/de/mpg/imeji/presentation/security/SecurityFilter.java b/src/main/java/de/mpg/imeji/presentation/security/SecurityFilter.java
+index 24f7b6a47..fcd2ba78e 100644
+--- a/src/main/java/de/mpg/imeji/presentation/security/SecurityFilter.java
++++ b/src/main/java/de/mpg/imeji/presentation/security/SecurityFilter.java
+@@ -183,7 +183,7 @@ public class SecurityFilter implements Filter {
+    */
+   private URI getCollectionOfItem(URI uri) throws NotFoundException {
+     SearchResult result = JENA_SEARCH
+-        .searchString(JenaCustomQueries.selectCollectionIdOfItem(uri.toString()), null, null, 0, 1);
++        .searchString("", JenaCustomQueries.selectCollectionIdOfItem(uri.toString()), null, null, 0, 1);
+     if (result.getNumberOfRecords() < 1) {
+       throw new NotFoundException(uri + " hasn't a collection");
+     } else {
+diff --git a/src/main/java/de/mpg/imeji/rest/api/CollectionAPIService.java b/src/main/java/de/mpg/imeji/rest/api/CollectionAPIService.java
+index 7160f1828..fb8c37093 100644
+--- a/src/main/java/de/mpg/imeji/rest/api/CollectionAPIService.java
++++ b/src/main/java/de/mpg/imeji/rest/api/CollectionAPIService.java
+@@ -20,6 +20,7 @@ import de.mpg.imeji.logic.model.User;
+ import de.mpg.imeji.logic.model.factory.ImejiFactory;
+ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+ import de.mpg.imeji.logic.search.SearchQueryParser;
++import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+ import de.mpg.imeji.logic.search.factory.SearchFactory;
+ import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
+ import de.mpg.imeji.logic.search.model.SearchResult;
+@@ -71,7 +72,7 @@ public class CollectionAPIService implements APIService<CollectionTO> {
+       throws ImejiException {
+     final List<DefaultItemTO> tos = new ArrayList<>();
+     final ItemService controller = new ItemService();
+-    final SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC).search(
++    final SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC).search(ElasticTypes.items.name(),
+         SearchQueryParser.parseStringQuery(q), null, u,
+         ObjectHelper.getURI(CollectionImeji.class, id).toString(), offset, size);
+     for (final Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
+@@ -179,7 +180,7 @@ public class CollectionAPIService implements APIService<CollectionTO> {
+     final List<CollectionTO> tos = new ArrayList<>();
+     final SearchResult result =
+         SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.ELASTIC)
+-            .search(SearchQueryParser.parseStringQuery(q), null, u, null, offset, size);
++            .search(ElasticTypes.folders.name(), SearchQueryParser.parseStringQuery(q), null, u, null, offset, size);
+     for (final CollectionImeji vo : cc.retrieve(result.getResults(), u)) {
+       final CollectionTO to = new CollectionTO();
+       TransferVOtoTO.transferCollection(vo, to);
+diff --git a/src/main/java/de/mpg/imeji/rest/api/ItemAPIService.java b/src/main/java/de/mpg/imeji/rest/api/ItemAPIService.java
+index 94086ddfe..fdf4d3440 100644
+--- a/src/main/java/de/mpg/imeji/rest/api/ItemAPIService.java
++++ b/src/main/java/de/mpg/imeji/rest/api/ItemAPIService.java
+@@ -18,6 +18,7 @@ import de.mpg.imeji.logic.model.CollectionImeji;
+ import de.mpg.imeji.logic.model.Item;
+ import de.mpg.imeji.logic.model.User;
+ import de.mpg.imeji.logic.search.SearchQueryParser;
++import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticTypes;
+ import de.mpg.imeji.logic.search.factory.SearchFactory;
+ import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
+ import de.mpg.imeji.logic.search.model.SearchResult;
+@@ -123,7 +124,7 @@ public class ItemAPIService implements APIService<DefaultItemTO> {
+ 
+     final List<DefaultItemTO> tos = new ArrayList<>();
+     final SearchResult result = SearchFactory.create(SEARCH_IMPLEMENTATIONS.ELASTIC)
+-        .search(SearchQueryParser.parseStringQuery(q), null, u, null, offset, size);
++        .search(ElasticTypes.items.name(), SearchQueryParser.parseStringQuery(q), null, u, null, offset, size);
+     for (final Item vo : controller.retrieveBatch(result.getResults(), -1, 0, u)) {
+       final DefaultItemTO to = new DefaultItemTO();
+       TransferVOtoTO.transferDefaultItem(vo, to);
+diff --git a/src/test/java/de/mpg/imeji/util/JenaUtil.java b/src/test/java/de/mpg/imeji/util/JenaUtil.java
+index 0eec0ad23..a38380c0a 100644
+--- a/src/test/java/de/mpg/imeji/util/JenaUtil.java
++++ b/src/test/java/de/mpg/imeji/util/JenaUtil.java
+@@ -93,7 +93,7 @@ public class JenaUtil {
+   }
+ 
+   private static void initTestUser() throws Exception {
+-    ElasticInitializer.reset();
++    // ElasticInitializer.reset();
+     new UserService().reindex(ElasticService.DATA_ALIAS);
+     testUser = getMockupUser(TEST_USER_EMAIL, TEST_USER_NAME, TEST_USER_PWD, false);
+     testUser2 = getMockupUser(TEST_USER_EMAIL_2, TEST_USER_NAME, TEST_USER_PWD, false);
+diff --git a/src/test/java/de/mpg/imeji/util/SuperTestSuite.java b/src/test/java/de/mpg/imeji/util/SuperTestSuite.java
+index 33f6ecee4..31c78a5bf 100644
+--- a/src/test/java/de/mpg/imeji/util/SuperTestSuite.java
++++ b/src/test/java/de/mpg/imeji/util/SuperTestSuite.java
+@@ -14,7 +14,7 @@ public class SuperTestSuite {
+ 
+   @BeforeClass
+   public static void startSuite() throws Exception {
+-    startElasticSearch(0);
++    //startElasticSearch(0);
+   }
+ 
+   /**
+@@ -24,6 +24,7 @@ public class SuperTestSuite {
+    * @param count
+    * @throws Exception
+    */
++  /*
+   private static void startElasticSearch(int count) throws Exception {
+     try {
+       ElasticInitializer.startLocal(PropertyReader.getProperty("elastic.cluster.name"));
+@@ -36,7 +37,7 @@ public class SuperTestSuite {
+       }
+     }
+   }
+-
++*/
+   @AfterClass
+   public static void endSuite() {
+     ElasticInitializer.shutdown();

@@ -1,35 +1,38 @@
 {
-	"usergroups": {
+	"_doc": {
+		"dynamic": "strict",
 		"properties": {
+			"all": {
+				"type": "text"
+			},
 			"id": {
-				"type": "string",
-				"index": "not_analyzed",
-				"include_in_all": false
+				"type": "keyword"
+			},
+			"created": {
+				"type": "long"
 			},
 			"name": {
-				"type": "string",
+				"type": "text",
 				"fields": {
 					"suggest": {
-						"type": "string",
+						"type": "text",
 						"analyzer": "edgegram_analyzer",
-						"search_analyzer": "standard",
-						"include_in_all": false
+						"search_analyzer": "standard"
 					},
 					"sort": {
-						"type": "string",
-						"analyzer": "XXX_ANALYSER_XXX"
+						"type": "keyword",
+						"normalizer": "sort"
 					}
 				}
 			},
 			"read": {
-				"type": "string",
-				"index": "not_analyzed",
-				"include_in_all": false
+				"type": "keyword"
 			},
 			"upload": {
-				"type": "string",
-				"index": "not_analyzed",
-				"include_in_all": false
+				"type": "keyword"
+			},
+			"users": {
+				"type": "keyword"
 			}
 		}
 	}

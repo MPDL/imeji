@@ -10,24 +10,24 @@ import de.mpg.imeji.logic.model.Properties.Status;
  */
 public class StatusUtil {
 
-	private StatusUtil() {
-		// private Constructor
-	}
+  private StatusUtil() {
+    // private Constructor
+  }
 
-	/**
-	 * Parse a status String (for isntance http://imeji.org/terms/status#PENDING)
-	 *
-	 * @param s
-	 * @return
-	 */
-	public static Status parseStatus(String s) {
-		if (Status.PENDING.getUriString().equals(s)) {
-			return Status.PENDING;
-		} else if (Status.RELEASED.getUriString().equals(s)) {
-			return Status.RELEASED;
-		} else if (Status.WITHDRAWN.getUriString().equals(s)) {
-			return Status.WITHDRAWN;
-		}
-		return null;
-	}
+  /**
+   * Parse a status String (for isntance http://imeji.org/terms/status#PENDING)
+   *
+   * @param s
+   * @return
+   */
+  public static Status parseStatus(String s) {
+    if (Status.PENDING.getUriString().equals(s)) {
+      return Status.PENDING;
+    } else if (Status.RELEASED.getUriString().equals(s)) {
+      return Status.RELEASED;
+    } else if (Status.WITHDRAWN.getUriString().equals(s)) {
+      return Status.WITHDRAWN;
+    }
+    return null;
+  }
 }
