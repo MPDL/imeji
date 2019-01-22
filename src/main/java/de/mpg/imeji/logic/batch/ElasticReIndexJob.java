@@ -48,7 +48,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
       reindexUsers(ElasticIndices.users.name());
       reindexUserGroups(ElasticIndices.usergroups.name());
       reindexItems(ElasticIndices.items.name());
-      // reindexContents(ElasticIndices.content.name());
+      reindexContents(ElasticIndices.items.name());
       reindexFolders(ElasticIndices.folders.name());
       // ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
       LOGGER.info("Reindex done!");
