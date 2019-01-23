@@ -262,7 +262,7 @@ public class ImejiInitializer {
     LOGGER.info("content extraction executor shutdown? " + Imeji.getCONTENT_EXTRACTION_EXECUTOR().isShutdown());
     LOGGER.info("internal executor shutdown shutdown? " + Imeji.getINTERNAL_STORAGE_EXECUTOR().isShutdown());
     LOGGER.info("nightly executor shutdown shutdown? " + NIGHTLY_EXECUTOR.isShutdown());
-    // ElasticInitializer.shutdown();
+    ElasticInitializer.shutdown();
     KeyValueStoreService.stopAllStores();
     LOGGER.info("Ending LockSurveyor...");
     Imeji.locksSurveyor.terminate();

@@ -58,13 +58,20 @@ public class ElasticInitializer {
     LOGGER.info("...done!");
   }
 
-  /*
-   * public static void shutdown() {
-   * LOGGER.warn("SHUTTING DOWN ELASTICSEARCH..."); if (ElasticService.getNODE()
-   * != null) { ElasticService.getNODE().close(); } LOGGER.warn("... DONE!");
-   * 
-   * }
-   */
+
+  public static void shutdown() {
+    LOGGER.info("SHUTTING DOWN ELASTICSEARCH...");
+    if (ElasticService.getClient() != null) {
+      try {
+        ElasticService.getClient().close();
+      } catch (IOException e) {
+        LOGGER.error("Error shutting down elasticsearch", e);
+      }
+    }
+    LOGGER.info("... DONE!");
+
+  }
+
 
   /**
    * Initialize the index. If index exists, don't create one, if not create one. Index is created
