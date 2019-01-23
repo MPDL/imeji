@@ -234,7 +234,7 @@ public class ElasticSearch implements Search {
     // add scroll search
     // request = request.setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC));
 
-    //LOGGER.info(request.source().toString());
+    LOGGER.debug(request.source().toString());
     SearchResponse searchResponse;
     try {
       searchResponse = ElasticService.getClient().search(request, RequestOptions.DEFAULT);

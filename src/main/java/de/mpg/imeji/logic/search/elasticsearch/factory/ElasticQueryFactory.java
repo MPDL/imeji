@@ -249,9 +249,13 @@ public class ElasticQueryFactory {
     BoolQueryBuilder bq = QueryBuilders.boolQuery();
     bq.should(fieldQuery(ElasticFields.FOLDER, containerUri, SearchOperators.EQUALS, false));
     if (addChildren) {
+      List<String> subCollections = new HierarchyService().findAllSubcollections(containerUri);
+      bq.should(QueryBuilders.termsQuery(ElasticFields.FOLDER.field(), subCollections));
+      /*
       for (String uri : new HierarchyService().findAllSubcollections(containerUri)) {
         bq.should(fieldQuery(ElasticFields.FOLDER, uri, SearchOperators.EQUALS, false));
       }
+      */
     }
     return bq;
   }

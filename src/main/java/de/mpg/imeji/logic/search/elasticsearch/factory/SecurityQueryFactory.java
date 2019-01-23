@@ -89,8 +89,10 @@ public class SecurityQueryFactory {
    */
   private BoolQueryBuilder toQuery(List<String> collectionUris) {
     final BoolQueryBuilder q = QueryBuilders.boolQuery();
-    collectionUris.stream().forEach(
-        uri -> q.should(QueryBuilders.termQuery(searchForCollections ? ElasticFields.ID.field() : ElasticFields.FOLDER.field(), uri)));
+    q.should(QueryBuilders.termsQuery(searchForCollections ? ElasticFields.ID.field() : ElasticFields.FOLDER.field(), collectionUris));
+
+    //collectionUris.stream().forEach(
+    //    uri -> q.should(QueryBuilders.termQuery(searchForCollections ? ElasticFields.ID.field() : ElasticFields.FOLDER.field(), uri)));
     return q;
   }
 
