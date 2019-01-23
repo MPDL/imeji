@@ -1,14 +1,11 @@
 package de.mpg.imeji.logic.search.elasticsearch;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -16,21 +13,14 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
-import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
-import org.elasticsearch.client.Client;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.cluster.metadata.AliasMetaData;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.Node;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticAnalysers;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 
 /**
@@ -46,42 +36,20 @@ public class ElasticInitializer {
     // avoid constructor
   }
 
+
   public static void start() throws IOException, URISyntaxException {
-    start(PropertyReader.getProperty("elastic.cluster.name"));
-  }
-
-  /*
-   * public static void start(String clusterName) throws IOException,
-   * URISyntaxException { TransportClient tc = TransportClient.builder().settings(
-   * Settings.builder().put("path.home",
-   * ElasticService.CLUSTER_DIR).put("cluster.name", clusterName)) .build();
-   * tc.addTransportAddress(new
-   * InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
-   * start(clusterName, tc); }
-   */
-
-  public static void start(String cluster_name) throws IOException, URISyntaxException {
+    String url = PropertyReader.getProperty("elastic.url");
+    LOGGER.info("Starting elasticsearch REST client for url " + url);
     RestHighLevelClient rhlc = null;
-    RestClientBuilder local = RestClient.builder(new HttpHost("localhost", 9200, "http"));
+    RestClientBuilder local = RestClient.builder(HttpHost.create(url));
     rhlc = new RestHighLevelClient(local);
-    start(cluster_name, rhlc);
+    start(rhlc);
   }
 
-  /*
-   * @SuppressWarnings("resource") public static void startLocal(String
-   * clusterName) throws IOException, URISyntaxException { Settings settings =
-   * Settings.builder().put("path.home", ElasticService.CLUSTER_DIR)
-   * .put("cluster.name", clusterName).build(); ElasticService.setNODE(new
-   * Node(settings).start()); start(clusterName,
-   * ElasticService.getNODE().client()); }
-   */
 
-  private static void start(String clusterName, RestHighLevelClient client) throws IOException, URISyntaxException {
-    ElasticService.CLUSTER_NAME = clusterName;
-    // ElasticService.ANALYSER =
-    // ElasticAnalysers.valueOf(PropertyReader.getProperty("elastic.analyser"));
+  private static void start(RestHighLevelClient client) throws IOException, URISyntaxException {
+
     ElasticService.setClient(client);
-    // initializeIndex();
     LOGGER.info("Add elasticsearch mappings...");
     for (final ElasticIndices index : ElasticIndices.values()) {
       initializeIndex(index);
@@ -194,7 +162,7 @@ public class ElasticInitializer {
 
       LOGGER.info("Creating a new index " + indexName);
 
-      final String settingsName = ElasticService.SETTINGS_DUCET;
+      final String settingsName = ElasticService.SETTINGS_DEFAULT;
 
       final Path settingsJson = Paths.get(ElasticIndexer.class.getClassLoader().getResource(settingsName).toURI());
       HttpEntity entity = new InputStreamEntity(Files.newInputStream(settingsJson), ContentType.APPLICATION_JSON);

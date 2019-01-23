@@ -13,14 +13,10 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
  *
  */
 public class ElasticService {
-  // private static Node NODE;
-  // private static Client client;
   private static RestHighLevelClient client;
-  static String CLUSTER_NAME = "name of my cluster";
-  static String CLUSTER_DIR = "null";
-  // public static ElasticAnalysers ANALYSER;
-  static final String SETTINGS_DEFAULT = "elasticsearch/Settings_default.json";
-  static final String SETTINGS_DUCET = "elasticsearch/Settings_ducet.json";
+
+  static final String SETTINGS_DEFAULT = "elasticsearch/Settings.json";
+
 
   /**
    * The Index where all data are indexed
