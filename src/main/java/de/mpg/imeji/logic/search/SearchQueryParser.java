@@ -60,13 +60,17 @@ public class SearchQueryParser {
    * @throws IOException
    */
   public static SearchQuery parseStringQuery(String query) throws UnprocessableError {
+    return parseStringQuery(query, true);
+  }
+
+  public static SearchQuery parseStringQuery(String query, boolean addFulltext) throws UnprocessableError {
     if (query == null) {
       query = "";
     }
     String decodedQuery;
     try {
       decodedQuery = URLDecoder.decode(query, "UTF-8");
-      return parsedecoded(decodedQuery);
+      return parsedecoded(decodedQuery, addFulltext);
     } catch (final IOException e) {
       throw new UnprocessableError("Query could not be parsed: " + query);
     }
@@ -77,20 +81,20 @@ public class SearchQueryParser {
         "rien du tout OR (title=this is an example AND ((description=\"Super Description\" OR created=2000)) OR (md.description=\"Other Description\" OR (md.created.number>=2000 AND md.created.number<50)))";
     q = "(filetype=Image)+AND+license=no_license";
     SearchQuery sq;
-    sq = parsedecoded(q);
+    sq = parsedecoded(q, true);
     System.out.println(q);
     System.out.println(transform2URL(sq));
     q = "md.date.date= to 2000 AND md.number.number= to 50";
-    sq = parsedecoded(q);
+    sq = parsedecoded(q, true);
     System.out.println(q);
     System.out.println(transform2URL(sq));
   }
 
-  public static SearchQuery parsedecoded(final String query) throws UnprocessableError {
-    return new SearchQuery(parseGroup(query).getElements());
+  public static SearchQuery parsedecoded(final String query, boolean addFulltext) throws UnprocessableError {
+    return new SearchQuery(parseGroup(query, addFulltext).getElements());
   }
 
-  private static SearchGroup parseGroup(String group) throws UnprocessableError {
+  private static SearchGroup parseGroup(String group, boolean addFulltext) throws UnprocessableError {
     final StringReader reader = new StringReader(group);
     final SearchFactory factory = new SearchFactory();
     int c = 0;
@@ -118,7 +122,7 @@ public class SearchQueryParser {
           part = part.trim();
           // remove brackets around the group
           part = part.substring(1, part.length() - 1);
-          SearchGroup g = parseGroup(part);
+          SearchGroup g = parseGroup(part, addFulltext);
           g.setNot(not);
           factory.addElement(g, relation);
           part = "";
@@ -126,7 +130,7 @@ public class SearchQueryParser {
           not = false;
         } else if (!inBracket && endsWithStopWord(part)) {
           part = part.trim();
-          factory.addElement(parsePair(removeRelation(part), not), relation);
+          factory.addElement(parsePair(removeRelation(part), not, addFulltext), relation);
           relation = readRelation(part);
           part = "";
           not = false;
@@ -135,7 +139,7 @@ public class SearchQueryParser {
       }
       if (!StringHelper.isNullOrEmptyTrim(part)) {
         part = part.trim();
-        factory.addElement(parsePair(removeRelation(part), not), relation);
+        factory.addElement(parsePair(removeRelation(part), not, addFulltext), relation);
       }
     } catch (Exception e) {
       throw new UnprocessableError(e);
@@ -150,7 +154,7 @@ public class SearchQueryParser {
    * @return
    * @throws UnprocessableError
    */
-  private static SearchElement parsePair(String s, boolean not) throws UnprocessableError {
+  private static SearchElement parsePair(String s, boolean not, boolean addFulltext) throws UnprocessableError {
     if (new StringParser(METADATA_PATTERN).find(s)) {
       return parseMetadata(s, not);
     } else if (new StringParser(TECHNICAL_PATTERN).find(s)) {
@@ -158,8 +162,12 @@ public class SearchQueryParser {
     } else if (new StringParser(PAIR_PATTERN).find(s)) {
       return parseSearchPair(s, not);
     } else {
-      return new SearchFactory().or(Arrays.asList(new SearchPair(SearchFields.all, SearchOperators.EQUALS, unescape(s), not),
-          new SearchPair(SearchFields.fulltext, SearchOperators.EQUALS, unescape(s), not))).buildAsGroup();
+      if (addFulltext) {
+        return new SearchFactory().or(Arrays.asList(new SearchPair(SearchFields.all, SearchOperators.EQUALS, unescape(s), not),
+            new SearchPair(SearchFields.fulltext, SearchOperators.EQUALS, unescape(s), not))).buildAsGroup();
+      } else {
+        return new SearchPair(SearchFields.all, SearchOperators.EQUALS, unescape(s), not);
+      }
     }
   }
 

@@ -1,5 +1,7 @@
 package de.mpg.imeji.logic.security.user;
 
+import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS.AND;
+
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -261,7 +264,7 @@ public class UserService {
   public Collection<User> searchUserByName(String name) {
     try {
       SearchResult searchResult =
-          search.search(SearchQueryParser.parseStringQuery(name), new SortCriterion(SearchFields.completename, SortOrder.ASCENDING),
+          search.search(SearchQueryParser.parseStringQuery(name, false), new SortCriterion(SearchFields.completename, SortOrder.ASCENDING),
               Imeji.adminUser, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
       return retrieveBatchLazy(searchResult.getResults(), Search.GET_ALL_RESULTS);
     } catch (final UnprocessableError e) {
