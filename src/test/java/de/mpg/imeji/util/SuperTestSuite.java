@@ -5,11 +5,10 @@ import java.util.concurrent.TimeUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticInitializer;
-
 public class SuperTestSuite {
   private static final int MAX_START_RETRY = 3;
+
+  //TODO: Embedded Elasticsearch is not supported any more => A new approach to start/stop Elasticsearch for the tests is needed
 
   @BeforeClass
   public static void startSuite() throws Exception {
@@ -25,7 +24,7 @@ public class SuperTestSuite {
    */
   private static void startElasticSearch(int count) throws Exception {
     try {
-      ElasticInitializer.startLocal(PropertyReader.getProperty("elastic.cluster.name"));
+      //      ElasticInitializer.startLocal(PropertyReader.getProperty("elastic.cluster.name"));
     } catch (Exception e) {
       if (count < MAX_START_RETRY) {
         TimeUnit.SECONDS.wait(1);
@@ -38,6 +37,6 @@ public class SuperTestSuite {
 
   @AfterClass
   public static void endSuite() {
-    ElasticInitializer.shutdown();
+    //    ElasticInitializer.shutdown();
   }
 }

@@ -74,8 +74,7 @@
 		</mailingList>
 	</mailingLists>
 	<properties>
-		<!-- Skip test compilation until tests are fixed -->
-		<maven.test.skip>true</maven.test.skip>
+		<maven.test.skip>false</maven.test.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Used by Tomcat to trip version Nr when deploy WAR package, e.g., imeji_1.0_screenshot->imeji -->
 		<project.warName>imeji</project.warName>
@@ -84,6 +83,7 @@
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 		<project.scm.id>git-credentials</project.scm.id>
+		<!-- Skip running the tests until old tests are fixed or new tests are added-->
 		<skipTests>true</skipTests>
 	</properties>
 	<repositories>
