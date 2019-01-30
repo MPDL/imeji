@@ -59,7 +59,7 @@ public enum ElasticFields {
   INFO_TEXT("info.text"),
   INFO_URL("info.url"),
   EMAIL,
-  TECHNICAL,
+  TECHNICAL("content.technical"),
   TECHNICAL_NAME("content.technical.name"),
   TECHNICAL_VALUE("content.technical.value"),
   // PARENT("_parent"),
