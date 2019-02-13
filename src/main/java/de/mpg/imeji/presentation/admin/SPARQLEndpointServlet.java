@@ -46,7 +46,7 @@ public class SPARQLEndpointServlet extends HttpServlet {
     final SessionBean session = (SessionBean) req.getSession(false).getAttribute(SessionBean.class.getSimpleName());
     if (!"".equals(q) && session.getUser() != null && SecurityUtil.authorization().isSysAdmin(session.getUser())) {
       try {
-        Imeji.dataset.begin(ReadWrite.WRITE);
+        Imeji.dataset.begin(ReadWrite.READ);
         final Query sparql = QueryFactory.create(q, Syntax.syntaxARQ);
         final QueryExecution exec = initQueryExecution(sparql, model);
         exec.getContext().set(TDB.symUnionDefaultGraph, true);
