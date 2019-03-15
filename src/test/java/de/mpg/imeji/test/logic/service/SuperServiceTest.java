@@ -13,6 +13,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.CollectionFactory;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.util.ElasticsearchTestUtil;
 import de.mpg.imeji.util.ImejiTestResources;
 import de.mpg.imeji.util.JenaUtil;
 
@@ -26,11 +27,13 @@ public class SuperServiceTest {
 
   @BeforeClass
   public static void setup() {
+    ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
   }
 
   @AfterClass
   public static void tearDown() throws Exception {
+    ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
   }
 

@@ -14,6 +14,7 @@ import de.mpg.imeji.logic.security.authentication.impl.DefaultAuthentication;
 import de.mpg.imeji.logic.security.authorization.util.PasswordGenerator;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.util.ElasticsearchTestUtil;
 import de.mpg.imeji.util.JenaUtil;
 
 /**
@@ -26,11 +27,13 @@ public class DefaultAuthenticationTest {
 
   @BeforeClass
   public static void setup() {
+    ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
   }
 
   @AfterClass
   public static void tearDown() throws Exception {
+    ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
   }
 

@@ -19,6 +19,7 @@ import de.mpg.imeji.logic.security.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.rest.process.AdminProcess;
+import de.mpg.imeji.util.ElasticsearchTestUtil;
 import de.mpg.imeji.util.JenaUtil;
 
 /**
@@ -31,6 +32,7 @@ public class HttpAuthenticationTest {
 
   @BeforeClass
   public static void setup() throws ImejiException, JoseException, NoSuchAlgorithmException, InvalidKeySpecException {
+    ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
     ImejiRsaKeys.init(null, null);
     UserService controller = new UserService();
@@ -41,6 +43,7 @@ public class HttpAuthenticationTest {
 
   @AfterClass
   public static void tearDown() throws Exception {
+    ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
   }
 

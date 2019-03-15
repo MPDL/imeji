@@ -9,8 +9,8 @@ import java.net.URISyntaxException;
 
 import javax.ws.rs.core.Application;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.spi.TestContainerException;
@@ -30,6 +30,7 @@ import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.LicenseTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
+import de.mpg.imeji.util.ElasticsearchTestUtil;
 import de.mpg.imeji.util.ImejiTestResources;
 import de.mpg.imeji.util.JenaUtil;
 
@@ -69,17 +70,20 @@ public class ImejiTestBase extends JerseyTest {
 
   @BeforeClass
   public static void setup() throws IOException, URISyntaxException {
+    ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
   }
 
   @AfterClass
   public static void shutdown() throws IOException, URISyntaxException, InterruptedException {
+    ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
     app = null;
   }
 
   @Rule
   public TestRule watcher = new TestWatcher() {
+    @Override
     protected void starting(Description description) {
       LOGGER.info("Starting test: " + description.getMethodName());
     }
