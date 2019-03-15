@@ -47,7 +47,7 @@ public class ElasticInitializer {
   }
 
 
-  private static void start(RestHighLevelClient client) throws IOException, URISyntaxException {
+  public static void start(RestHighLevelClient client) throws IOException, URISyntaxException {
 
     ElasticService.setClient(client);
     LOGGER.info("Add elasticsearch mappings...");
