@@ -1,6 +1,7 @@
 package de.mpg.imeji.presentation.item.browse;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +18,7 @@ import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -45,6 +47,7 @@ public class CollectionItemsBean extends ItemsBean {
   private CollectionImeji collection;
   private CollectionActionMenu actionMenu;
   private String authors = "";
+  private List<String> authorsList = new ArrayList<>();
   private String authorsShort = "";
   private int size;
   private boolean showUpload = false;
@@ -71,9 +74,19 @@ public class CollectionItemsBean extends ItemsBean {
       browseContext = getNavigationString() + id;
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
-      collection.getPersons().stream()
-          .forEach(a -> authors += authors.equals("") ? a.getCompleteName() + " (" + a.getOrganizationString() + ")"
-              : ", " + a.getCompleteName() + " (" + a.getOrganizationString() + ")");
+      StringBuilder sb = new StringBuilder();
+      for (Person p : collection.getPersons()) {
+
+        String personString = p.getCompleteName() + " (" + p.getOrganizationString() + ")";
+        if (sb.length() != 0) {
+          sb.append(", ");
+        }
+        sb.append(personString);
+        getAuthorsList().add(personString);
+
+      }
+      this.authors = sb.toString();
+
       authorsShort = collection.getPersons().iterator().next().getCompleteName();
       if (collection.getPersons().size() > 1) {
         authorsShort += " & " + (collection.getPersons().size() - 1) + " " + Imeji.RESOURCE_BUNDLE.getLabel("more_authors", getLocale());
@@ -295,5 +308,13 @@ public class CollectionItemsBean extends ItemsBean {
 
   public String getDescriptionShort() {
     return descriptionShort;
+  }
+
+  public List<String> getAuthorsList() {
+    return authorsList;
+  }
+
+  public void setAuthorsList(List<String> authorsList) {
+    this.authorsList = authorsList;
   }
 }

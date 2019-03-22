@@ -40,7 +40,11 @@
 				</span>
 			</ui:repeat>
 			<span class="imj_infodataLabel">#{lbl.authors}</span>
-			<span class="imj_infodataValue">#{cc.attrs.bean.authors}</span>
+			<span class="imj_infodataValue">
+				<ui:repeat value="#{cc.attrs.bean.authorsList}" var="author">
+					#{author}<br/>
+				</ui:repeat>
+			</span>
 			<span class="imj_infodataLabel">#{lbl.cite}</span>
 			<span class="imj_infodataValue"><h:outputText value="#{cc.attrs.bean.citation}" escape="false"/></span>
 			<span class="imj_infodataLabel">#{lbl.colNumItems}</span>
