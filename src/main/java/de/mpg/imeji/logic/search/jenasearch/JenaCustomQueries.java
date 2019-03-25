@@ -36,6 +36,18 @@ public class JenaCustomQueries {
   }
 
   /**
+   * Escapes an text for sparql (escapes \ ' ")
+   * 
+   * @param text
+   * @return
+   */
+  private static String escapeSparql(String text) {
+    text = text.replace("\\", "\\\\").replace("\"", "\\\"").replace("'", "\\'");
+    return text;
+  }
+
+
+  /**
    * Select all {@link Username}
    *
    * @return
@@ -331,7 +343,7 @@ public class JenaCustomQueries {
     q += " DELETE{<" + id + "> <http://imeji.org/terms/status> <http://imeji.org/terms/status#RELEASED>} ";
     q += "INSERT{<" + id + "> <http://imeji.org/terms/status> <http://imeji.org/terms/status#WITHDRAWN> . <" + id
         + "> <http://purl.org/dc/terms/issued> \"" + DateHelper.printJenaDate(date) + "\"^^<http://www.w3.org/2001/XMLSchema#dateTime> . <"
-        + id + "> <http://imeji.org/terms/discardComment> \"" + comment + "\"^^<http://www.w3.org/2001/XMLSchema#string> } ";
+        + id + "> <http://imeji.org/terms/discardComment> \"" + escapeSparql(comment) + "\"^^<http://www.w3.org/2001/XMLSchema#string> } ";
     q += "USING <http://imeji.org/" + model + "> WHERE {<" + id
         + "> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://imeji.org/terms/" + model + ">}";
     return q;
