@@ -27,12 +27,10 @@
 				<span class="imj_infodataLabel">#{info.label}</span>
 				<span class="imj_infodataValue">
 					<ui:fragment rendered="#{info.url != null and info.url != '' and info.text != null and info.text != ''}">
-						<pre>
-							<a href="#{info.url}" target="_blank">#{info.text}</a>
-						</pre>
+						<pre style="white-space: pre-line;"><a href="#{info.url}" target="_blank">#{info.text}</a></pre>
 					</ui:fragment>
 					<ui:fragment rendered="#{info.url == null || info.url == ''}">
-						<pre>#{info.text}</pre>
+						<pre style="white-space: pre-line;">#{info.text}</pre>
 					</ui:fragment>
 					<ui:fragment rendered="#{info.text == null || info.text == ''}">
 						<a href="#{info.url}" target="_blank">#{info.url}</a>
