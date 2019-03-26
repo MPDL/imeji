@@ -37,8 +37,12 @@
 		</datalist>
 		<div class="loaderWrapper show" />
 		<div class="loader show" />
+		
 		<div class="editSelectedWrapper">
+			<!-- modalDialogBackground required again, otherwise background is not disabled when opening dialog -->
+			<div class="imj_modalDialogBackground"/>
 			<h:form id="editForm" prependId="false">
+			
 				<div id="editItemsSelect_MessageArea">
 					<ui:repeat var="message" value="#{MessagesBean.messages}">
 						<div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
