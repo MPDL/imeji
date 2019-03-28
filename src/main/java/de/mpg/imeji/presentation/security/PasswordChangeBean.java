@@ -86,7 +86,7 @@ public class PasswordChangeBean extends SuperBean {
    */
   public void resetPassword() throws IOException, ImejiException {
     if (!isValidPassword()) {
-      reloadPage();
+      reload();
       return;
     }
     if (user != null) {
@@ -102,7 +102,7 @@ public class PasswordChangeBean extends SuperBean {
       new EmailService().sendMail(user.getEmail(), null, EmailMessages.getResetConfirmEmailSubject(getLocale()),
           EmailMessages.getResetConfirmEmailBody(user, getLocale()));
     }
-    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("password_changed", getLocale()));
+    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
     resetFinished = true;
     redirect(StringHelper.isNullOrEmptyTrim(getBackUrl()) ? getNavigation().getHomeUrl() : getBackUrl());
   }
@@ -188,10 +188,6 @@ public class PasswordChangeBean extends SuperBean {
 
   public void setSessionBean(SessionBean sessionBean) {
     this.sessionBean = sessionBean;
-  }
-
-  private void reloadPage() throws IOException {
-    redirect(getNavigation().getHomeUrl() + "/pwdreset?token=" + token);
   }
 
   public String getFrom() {
