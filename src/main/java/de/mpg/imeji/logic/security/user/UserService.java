@@ -1,7 +1,5 @@
 package de.mpg.imeji.logic.security.user;
 
-import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS.AND;
-
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -28,15 +26,14 @@ import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
+import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
@@ -210,7 +207,7 @@ public class UserService {
   /**
    * True if a user has been Modified, i.e the last modification of the user in the database is
    * older than the last modification of the user in the session. (For instance when an object has
-   * been shared with the user)
+   * been shared with the user).
    *
    * @param u
    * @return
@@ -219,6 +216,20 @@ public class UserService {
     final SearchResult result = SearchFactory.create().searchString(JenaCustomQueries.selectLastModifiedDate(u.getId()), null, u, 0, 1);
     return result.getNumberOfRecords() > 0
         && (u.getModified() == null || DateHelper.parseDate(result.getResults().get(0)).after(u.getModified()));
+  }
+
+  /**
+   * Will change the lastModified date field of the user object to time stamp of now. Goal: Trigger
+   * the reload-user-mechanism, that causes the session object of a logged-in user to update itself
+   * with data from the database. See {@link SecurityFilter.isReloadUser}. Useful when a logged-in
+   * user has been added to a user group or a user's user group has gotten/lost access rights while
+   * this user is logged-in her/himself.
+   * 
+   * @param recentlyModifiedUserId The User id
+   */
+  public void setRecentlyModified(URI recentlyModifiedUserId) {
+    final String sparqlQuery = JenaCustomQueries.setUserLastModifiedToNow(recentlyModifiedUserId);
+    ImejiSPARQL.execUpdate(sparqlQuery);
   }
 
   /**

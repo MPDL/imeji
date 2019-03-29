@@ -668,6 +668,22 @@ public class JenaCustomQueries {
     return "SELECT (str(?date) AS ?s) WHERE {<" + id.toString() + "> <" + ImejiNamespaces.LAST_MODIFICATION_DATE + "> ?date}";
   }
 
+  /**
+   * Query sets the LAST_MODIFICATION_DATE of a User to now.
+   * 
+   * @param usersURI
+   * @return
+   */
+  public static final String setUserLastModifiedToNow(URI usersURI) {
+
+    String spaqlQuery = "WITH <http://imeji.org/user> " + "DELETE {<" + usersURI.toString() + "> <" + ImejiNamespaces.LAST_MODIFICATION_DATE
+        + "> ?date} " + "INSERT {<" + usersURI.toString() + "> <" + ImejiNamespaces.LAST_MODIFICATION_DATE + "> ?nowDate} "
+        + "USING <http://imeji.org/user> " + "WHERE {<" + usersURI.toString() + "> <" + ImejiNamespaces.LAST_MODIFICATION_DATE + "> ?date. "
+        + "BIND(NOW() as ?nowDate)}";
+    return spaqlQuery;
+  }
+
+
   public static final String selectUnusedContent() {
     return "SELECT ?s WHERE {?s a <http://imeji.org/terms/content> . not exists{ ?item <http://imeji.org/terms/contentId> ?contentId . FILTER(REGEX(str(?s), ?contentId, 'i'))}}";
   }
