@@ -12,6 +12,6 @@
 	<composite:implementation>
 		<dialog:move id="move" dialogId="moveItem" objectId="#{cc.attrs.itemBean.item.id.toString()}" colId="#{cc.attrs.itemBean.item.collection.toString()}" parentId=":actionItem:move" hasLicense="#{not empty cc.attrs.itemBean.image.licenses}" subCollectionFormInput="itemDialogs:move:form:name"/>
 		<dialog:confirmationDialog id="del" submitAction="delete" bean="#{itemBean}" confirmationText="#{msg.confirmation_delete_item}?" submitLabel="#{lbl.delete}" dialogId="deleteItem" />
-		<dialog:confirmationReasonedDialog id="dis" submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}?" submitLabel="#{lbl.withdraw}" dialogId="withdrawItem"/>	
+		<dialog:confirmationReasonedDialog id="dis" submitAction="withdraw" bean="#{itemBean}" confirmationText="#{msg.confirmation_withdraw_item}" submitLabel="#{lbl.withdraw}" dialogId="withdrawItem"/>	
 	</composite:implementation>
 </html>
