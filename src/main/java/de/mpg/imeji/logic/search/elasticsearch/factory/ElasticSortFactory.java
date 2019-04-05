@@ -66,6 +66,8 @@ public class ElasticSortFactory {
     switch (index) {
       case title:
         return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort);
+      case created:
+        return makeBuilder(ElasticFields.CREATED.field(), sort);
       case modified:
         return makeBuilder(ElasticFields.MODIFIED.field(), sort);
       case filename:

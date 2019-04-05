@@ -84,10 +84,11 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
   @Override
   public void initSortMenu() {
     try {
-      setSelectedSortCriterion(SearchFields.valueOf(CookieUtils.readNonNull(CONTAINER_SORT_COOKIE, SearchFields.modified.name())).name());
+      setSelectedSortCriterion(SearchFields.valueOf(CookieUtils.readNonNull(CONTAINER_SORT_COOKIE, SearchFields.created.name())).name());
       setSelectedSortOrder(SortOrder.valueOf(CookieUtils.readNonNull(CONTAINER_SORT_ORDER_COOKIE, SortOrder.DESCENDING.name())).name());
       setSortMenu(new ArrayList<SelectItem>());
       getSortMenu().add(new SelectItem(SearchFields.title.name(), Imeji.RESOURCE_BUNDLE.getLabel("sort_title", getLocale())));
+      getSortMenu().add(new SelectItem(SearchFields.created.name(), Imeji.RESOURCE_BUNDLE.getLabel("sort_date_created", getLocale())));
       getSortMenu().add(new SelectItem(SearchFields.modified.name(), Imeji.RESOURCE_BUNDLE.getLabel("sort_date_mod", getLocale())));
       getSortMenu().add(new SelectItem(SearchFields.creatorid.name(), Imeji.RESOURCE_BUNDLE.getLabel("sort_author", getLocale())));
     } catch (Exception e) {
