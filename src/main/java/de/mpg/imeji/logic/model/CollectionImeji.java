@@ -39,6 +39,8 @@ public class CollectionImeji extends Properties implements Serializable, Collect
   private String doi;
   @j2jResource("http://imeji.org/terms/logoUrl")
   private URI logoUrl;
+  @j2jList("http://purl.org/dc/terms/type")
+  private List<String> types = new ArrayList<>();
   private Collection<URI> images = new ArrayList<URI>();
 
   public String getTitle() {
@@ -135,5 +137,13 @@ public class CollectionImeji extends Properties implements Serializable, Collect
   @Override
   public ObjectType getType() {
     return ObjectType.COLLECTION;
+  }
+
+  public List<String> getTypes() {
+    return types;
+  }
+
+  public void setTypes(List<String> types) {
+    this.types = types;
   }
 }

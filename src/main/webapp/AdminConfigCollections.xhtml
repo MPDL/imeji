@@ -1,0 +1,141 @@
+
+<ui:composition template="templates/template_site.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:menu="http://java.sun.com/jsf/composite/components/menu">
+
+	<ui:param name="headline" value="#{lbl.configuration}" />
+	<ui:param name="currentMainMenu" value="admin" />
+	<ui:param name="title" value="#{lbl.configuration}"/>
+	<ui:param name="backLink1" value="#{Navigation.adminUrl}"/>
+	<ui:param name="backlinkTitle1" value="Admin"/>
+	
+	<ui:define name="additonalFooterScripts">
+		<!--  java script for clearing of input fields -->
+		<script type="text/javascript">
+			
+
+			
+			$('.imj_clearInput').click(function(evt){
+				var datatarget, parent, target;
+				if ($(this).data('target')) {
+					datatarget = $(this).data('target');
+					parent = datatarget.split(" ")[0];
+					target = datatarget.replace((parent + " "), "");
+					
+					if (parent) {
+						if (target) {
+							$(this).parents(parent).find(target).val('');
+						} else {
+							$(this).parents(parent).val('');
+						}
+					}
+				}
+			});
+			
+			/* workaround: in imeji.css there is a definition "cursor: pointer" for .imj_config_headline h2 elements
+			   for this page: overwrite with "cursor: default" 
+			*/
+			$('.imj_administrationTiledList .imj_adminPanel .imj_config_headline h2').css({"cursor":"default"});
+			
+
+			
+		</script>
+	</ui:define>
+
+	<ui:define name="mainContent">
+		<f:event type="preRenderView" listener="#{facesContext.externalContext.response.setHeader('X-XSS-Protection', '0')}" />
+		<!-- Are You Admin? -->
+		<h:panelGroup layout="block" styleClass="imj_pageMessageArea"
+			rendered="#{!Auth.sysAdmin}">
+			<h:outputText value="#{lbl.view_page_disallowed}"
+				styleClass="imj_messageInfo" rendered="#{!Auth.loggedIn}" />
+			<h:outputText value="#{lbl.view_page_disallowed2}"
+				styleClass="imj_messageInfo" rendered="#{Auth.loggedIn}" />
+		</h:panelGroup>
+
+		<ui:fragment rendered="#{Auth.sysAdmin}">
+			<div class="imj_setupConfig">
+				<div class="imj_administrationTiledList imj_maxWidth">
+					<h:panelGroup layout="block" styleClass="imj_listBody"
+						rendered="#{Auth.sysAdmin}">
+						<h:form id="configFormCollections">												
+							
+							<!-- section collection configuration  -->
+							<div class="imj_adminPanel">
+								<div class="imj_config_headline">
+									<h2>
+										<h:outputText value="#{lbl.collections}" />
+									</h2>
+								</div>
+								<div class="imj_content">
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.collection_types} (#{msg.one_value_per_line})" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputTextarea value="#{Configuration.collectionTypes}"
+												styleClass="imj_admindataEdit" rows="10"/>
+										</div>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> 
+										</a>
+									</div>
+									
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.collection_metadata_preselect} (#{msg.one_value_per_line})" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputTextarea value="#{Configuration.collectionMetadataSuggestionsPreselect}"
+												styleClass="imj_admindataEdit" rows="10"/>
+										</div>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> 
+										</a>
+									</div>
+									
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.collection_metadata_autosuggest} (#{msg.one_value_per_line})" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputTextarea value="#{Configuration.collectionMetadataSuggestions}"
+												styleClass="imj_admindataEdit" rows="10"/>
+										</div>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue input"
+											class="imj_clearInput fa fa-times"> 
+										</a>
+									</div>
+									
+
+								</div>
+							</div>
+						</h:form>
+					</h:panelGroup>
+					<!-- END LIST BODY -->
+
+				</div>
+				<!-- END ADMIN LIST -->
+
+			</div>
+			<!-- END USER CONFIG -->
+
+		</ui:fragment>
+
+	</ui:define>
+
+</ui:composition>

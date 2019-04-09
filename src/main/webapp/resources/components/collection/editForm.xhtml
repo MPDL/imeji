@@ -25,6 +25,8 @@
 				<label class="imj_metadataLabel">#{lbl.title} *</label>
 				<h:inputText id="inputTitleText" styleClass="imj_metadataValue" value="#{cc.attrs.formularContextBean.title}" html5:autofocus="true" />
 			</div>
+			
+			
 			<div class="imj_metadataSet">
 				<label class="imj_metadataLabel">#{lbl.description}</label>
 				<h:inputTextarea id="inputDescription" styleClass="imj_metadataValue" value="#{cc.attrs.formularContextBean.description}" />
@@ -50,38 +52,69 @@
 				</ui:repeat>
 			</h:panelGroup>
 			<h:panelGroup id="additionalInfos">
+			
+
 				<div class="imj_sectionHeadline">
 					<h4>#{lbl.colUtil}</h4>
 				</div>
-				<ui:repeat id="list" var="info" value="#{cc.attrs.formularContextBean.additionalInformations}" varStatus="indexA">
-					<div class="imj_sectionHeadline">
+				
+				<h:panelGroup layout="block" styleClass="imj_metadataSet" rendered="#{not empty cc.attrs.formularBean.collectionTypesSelectItems}">
+				<label class="imj_metadataLabel">#{lbl.collection_types} *</label>
+				<div class="imj_metadataValue">
+					<h:selectManyCheckbox value="#{cc.attrs.formularContextBean.types}">
+						<f:selectItems value="#{cc.attrs.formularBean.collectionTypesSelectItems}"/>
+					</h:selectManyCheckbox>
+				</div>
+			</h:panelGroup>
+				
+				<!-- 
+				<ui:fragment rendered="#{not empty Configuration.collectionMetadataSuggestionsPreselectAsList}">
+				<ui:repeat id="fixedList" var="info" value="#{cc.attrs.formularContextBean.additionalInformations}" varStatus="indexA" >
+					<div class="imj_metadataSet">
+						<label class="imj_metadataLabel">#{info.label}</label>
+					
+						<h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue" value="#{info.text}" html5:placeholder="#{lbl.placeholder_text}" />
+					</div>
+				
+				</ui:repeat>
+				</ui:fragment>
+				-->
+				
+				<ui:repeat id="list" var="info" value="#{cc.attrs.formularContextBean.additionalInformations}" varStatus="indexA" >
+					
+					<h:panelGroup class="imj_sectionHeadline" rendered="#{not Configuration.collectionMetadataSuggestionsPreselectAsList.contains(info.label)}">
 						<!-- Add/Remove Author buttons -->
 						<span class="imj_inlineButtonGroup"> 
 							<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_author}" action="#{cc.attrs.formularBean.addAdditionalInfo(indexA.index)}" html5:data-loader="false">
-								<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos" />
+								<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos"/>
 							</h:commandLink>
 							<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_author}" action="#{cc.attrs.formularBean.removeAdditionalInfo(indexA.index)}" html5:data-loader="false">
-								<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos" />
+								<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos"/>
 							</h:commandLink>
 						</span>
-					</div>
+					</h:panelGroup>
 					<div class="imj_metadataSet">
-						<label class="imj_metadataLabel">#{lbl.label} *</label>
-						<h:inputText id="inputInfoLabel" styleClass="imj_metadataValue" autocomplete="off" value="#{info.label}" html5:placeholder="#{lbl.placeholder_additional_info_label}" />
-					</div>
-					<div class="imj_metadataSet">
-						<label class="imj_metadataLabel">#{lbl.text}</label>
+						<!-- <label class="imj_metadataLabel">#{lbl.label} *</label>-->
+						<h:outputText styleClass="imj_metadataLabel" rendered="#{Configuration.collectionMetadataSuggestionsPreselectAsList.contains(info.label)}" value="#{info.label}"/>
+						
+						<h:panelGroup class="imj_metadataLabel" rendered="#{not Configuration.collectionMetadataSuggestionsPreselectAsList.contains(info.label)}">
+							<h:inputText id="inputInfoLabel" styleClass="#{not empty Configuration.collectionMetadataSuggestionsAsList ? 'imj_comboBox' : ''}"  value="#{info.label}" html5:placeholder="#{lbl.placeholder_additional_info_label}" html5:data-source='#{UtilBean.toJavascriptArray(Configuration.collectionMetadataSuggestionsAsList)}' />
+						</h:panelGroup>
+					
+						<!-- <label class="imj_metadataLabel">#{lbl.text}</label>-->
 						<h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue" value="#{info.text}" html5:placeholder="#{lbl.placeholder_text}" />
 					</div>
+					<!-- 
 					<div class="imj_metadataSet">
 						<label class="imj_metadataLabel">#{lbl.url}</label>
 						<h:inputText id="inputInfoUrl" styleClass="imj_metadataValue" value="#{info.url}" html5:placeholder="#{lbl.placeholder_url}" />
 					</div>
+					-->
 				</ui:repeat>
 				<div class="imj_sectionHeadline">
 					<span class="imj_inlineButtonGroup">
 						<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add} #{lbl.colUtil}" action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.additionalInformations.size())}" html5:data-loader="false">
-							<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos" />
+							<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos"/>
 						</h:commandLink>
 					</span>
 				</div>

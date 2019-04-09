@@ -120,6 +120,10 @@
 		<pattern value="/admin/config/doiservice"></pattern>
 		<view-id>/jsf/AdminConfigDoiService.xhtml</view-id>
 	</url-mapping>
+	<url-mapping id="configCollections">
+		<pattern value="/admin/config/collections"></pattern>
+		<view-id>/jsf/AdminConfigCollections.xhtml</view-id>
+	</url-mapping>
 	<url-mapping id="adminTools">
 		<pattern value="/admin/tools"></pattern>
 		<view-id>/jsf/AdminTools.xhtml</view-id>
