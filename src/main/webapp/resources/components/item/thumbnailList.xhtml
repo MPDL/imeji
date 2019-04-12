@@ -28,7 +28,7 @@
 									</ui:fragment>
 									<span>
 										<h:selectBooleanCheckbox html5:data-loader="false" id="sel" rendered="#{item.status != 'WITHDRAWN' and !item.isCollection()}" styleClass="imj_optionCheckbox"  value="#{item.selected}" valueChangeListener="#{item.selectedChanged}">
-											<f:ajax event="change" execute="@this" render=":actions"/>
+											<f:ajax event="change" execute="@this" render=":actions :sel:f"/>
 										</h:selectBooleanCheckbox>
 										<label for="sel" class="#{item.isCollection() ? 'folder' : ''}">
 											#{item.caption}
