@@ -19,6 +19,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
@@ -50,6 +51,16 @@ public class CreateCollectionBean extends CollectionBean {
   public void init() {
     showUpload = UrlHelper.getParameterBoolean("showUpload");
     setCollection(ImejiFactory.newCollection().setPerson(getSessionUser().getPerson().clone()).build());
+
+    List<String> preselectedMetadataLabels = Imeji.CONFIG.getCollectionMetadataSuggestionsPreselectAsList();
+
+    if (preselectedMetadataLabels != null && !preselectedMetadataLabels.isEmpty()) {
+      for (String s : preselectedMetadataLabels) {
+        getCollection().getAdditionalInformations().add(new ContainerAdditionalInfo(s, "", null));
+      }
+    }
+    //Add one more
+    getCollection().getAdditionalInformations().add(new ContainerAdditionalInfo());
     containerEditorSession.setUploadedLogoPath(null);
   }
 

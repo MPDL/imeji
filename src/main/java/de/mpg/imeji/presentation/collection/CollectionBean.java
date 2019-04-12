@@ -1,7 +1,11 @@
 package de.mpg.imeji.presentation.collection;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -183,5 +187,15 @@ public abstract class CollectionBean extends SuperBean {
   public String removeContainerLogo() {
     collection.setLogoUrl(null);
     return "";
+  }
+
+
+  public List<SelectItem> getCollectionTypesSelectItems() {
+    List<SelectItem> selectItemList = new ArrayList<SelectItem>();
+    for (String entry : Imeji.CONFIG.getCollectionTypesAsList()) {
+      selectItemList.add(new SelectItem(entry, entry));
+    }
+
+    return selectItemList;
   }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.model.Organization;
@@ -35,6 +36,8 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     if (exception.hasMessages()) {
       throw exception;
     }
+
+    cleanUp(collection);
   }
 
   protected void validateContainerMetadata(CollectionImeji c) {
@@ -47,17 +50,29 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     if (isNullOrEmpty(c.getTitle())) {
       setException(new UnprocessableError("error_collection_need_title", getException()));
     }
+    if (Imeji.CONFIG.getCollectionTypes() != null && !Imeji.CONFIG.getCollectionTypes().isBlank()
+        && (c.getTypes() == null || c.getTypes().isEmpty())) {
+      setException(new UnprocessableError("error_collection_need_types", getException()));
+    }
     validateAdditionalInfos(c);
   }
 
   private void validateAdditionalInfos(CollectionImeji c) {
+
     for (final ContainerAdditionalInfo info : c.getAdditionalInformations()) {
-      if (isNullOrEmpty(info.getLabel())) {
+      if (isNullOrEmpty(info.getLabel()) && !isNullOrEmpty(info.getText())) {
         setException(new UnprocessableError("error_additionalinfo_need_label", getException()));
       }
-      if (isNullOrEmpty(info.getText()) && isNullOrEmpty(info.getUrl())) {
-        setException(new UnprocessableError("error_additionalinfo_need_value", getException()));
+
+      if (info.getLabel().equals("Article DOI") && !isNullOrEmpty(info.getText())) {
+        validateDOI(info.getText());
       }
+      /*
+      if (isNullOrEmpty(info.getText()) && isNullOrEmpty(info.getUrl())) {
+        
+        //setException(new UnprocessableError("error_additionalinfo_need_value", getException()));
+      }
+      */
     }
   }
 
@@ -179,5 +194,17 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
 
   private UnprocessableError getException() {
     return exception;
+  }
+
+  private void cleanUp(CollectionImeji c) {
+    List<ContainerAdditionalInfo> toBeRemoved = new ArrayList<>();
+
+    for (final ContainerAdditionalInfo info : c.getAdditionalInformations()) {
+
+      if (isNullOrEmpty(info.getText()) && isNullOrEmpty(info.getUrl())) {
+        toBeRemoved.add(info);
+      }
+    }
+    c.getAdditionalInformations().removeAll(toBeRemoved);
   }
 }

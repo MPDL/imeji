@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -21,6 +23,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.User;
@@ -57,6 +60,22 @@ public class EditCollectionBean extends CollectionBean {
           persons.add(p);
         }
         getCollection().setPersons(persons);
+
+        List<String> preselectedMetadata = Imeji.CONFIG.getCollectionMetadataSuggestionsPreselectAsList();
+        if (preselectedMetadata != null && !preselectedMetadata.isEmpty()) {
+          List<String> labels = getCollection().getAdditionalInformations().stream().map(i -> i.getLabel()).collect(Collectors.toList());
+          int pos = 0;
+          for (String mdLabel : preselectedMetadata) {
+            if (!labels.contains(mdLabel)) {
+              getCollection().getAdditionalInformations().add(pos, new ContainerAdditionalInfo(mdLabel, "", ""));
+            } else {
+              pos++;
+            }
+          }
+        }
+        //Always add empty additional info at the end
+        getCollection().getAdditionalInformations().add(new ContainerAdditionalInfo());
+
       } catch (final ImejiException e) {
         BeanHelper.error("Error initiatilzing page: " + e.getMessage());
         LOGGER.error("Error init edit collection page", e);
