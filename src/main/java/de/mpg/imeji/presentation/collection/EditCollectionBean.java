@@ -61,20 +61,32 @@ public class EditCollectionBean extends CollectionBean {
         }
         getCollection().setPersons(persons);
 
+
+        //Sort additional Info: preselected metadata first        
         List<String> preselectedMetadata = Imeji.CONFIG.getCollectionMetadataSuggestionsPreselectAsList();
         if (preselectedMetadata != null && !preselectedMetadata.isEmpty()) {
-          List<String> labels = getCollection().getAdditionalInformations().stream().map(i -> i.getLabel()).collect(Collectors.toList());
-          int pos = 0;
+
+          List<ContainerAdditionalInfo> additionalList = new ArrayList<ContainerAdditionalInfo>();
+          List<String> currentLabels =
+              getCollection().getAdditionalInformations().stream().map(i -> i.getLabel()).collect(Collectors.toList());
+
           for (String mdLabel : preselectedMetadata) {
-            if (!labels.contains(mdLabel)) {
-              getCollection().getAdditionalInformations().add(pos, new ContainerAdditionalInfo(mdLabel, "", ""));
+            if (currentLabels.contains(mdLabel)) {
+              additionalList.add(getCollection().getAdditionalInformations().remove(currentLabels.indexOf(mdLabel)));
+              currentLabels.remove(mdLabel);
             } else {
-              pos++;
+              additionalList.add(new ContainerAdditionalInfo(mdLabel, "", ""));
+
             }
           }
+          additionalList.addAll(getCollection().getAdditionalInformations());
+          getCollection().setAdditionalInformations(additionalList);
+
         }
+
         //Always add empty additional info at the end
         getCollection().getAdditionalInformations().add(new ContainerAdditionalInfo());
+
 
       } catch (final ImejiException e) {
         BeanHelper.error("Error initiatilzing page: " + e.getMessage());
