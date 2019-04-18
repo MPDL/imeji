@@ -1,15 +1,20 @@
 package de.mpg.imeji.j2j.controler;
 
 import java.net.URI;
+import java.util.Calendar;
 
 import org.apache.jena.rdf.model.Model;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.exceptions.ReloadBeforeSaveException;
+import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.j2j.persistence.Java2Jena;
 import de.mpg.imeji.j2j.persistence.Jena2Java;
+import de.mpg.imeji.logic.model.aspects.CloneURI;
+import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 
 /**
  * Controller for {@link RDFResource} Attention: Non transactional!!!! Don't use directly, use
@@ -114,15 +119,35 @@ public class ResourceController {
   /**
    * Update (remove and create) the complete {@link RDFResource}
    *
-   * @param o
+   * @param imejiDataObject
    * @throws NotFoundException
    */
-  public void update(Object o) throws NotFoundException {
-    if (!java2rdf.exists(o)) {
-      throw new NotFoundException("Error updating resource " + o.toString() + " with id \"" + J2JHelper.getId(o)
+  public void update(Object imejiDataObject) throws NotFoundException, ReloadBeforeSaveException, UnprocessableError {
+
+    // Check if object exists in Jena 
+    if (!java2rdf.exists(imejiDataObject)) {
+      throw new NotFoundException("Error updating resource " + imejiDataObject.toString() + " with id \"" + J2JHelper.getId(imejiDataObject)
           + "\". Resource doesn't exists in model " + model.toString());
     }
-    java2rdf.update(o);
+    // Throw ReloadBeforeSaveException in case that object in Jena has been modified since we last read it.
+    if (imejiDataObject instanceof ResourceLastModified) {
+      if (imejiDataObject instanceof CloneURI) {
+        Object currentObjectInJena = this.read(((CloneURI) imejiDataObject).cloneURI());
+        Calendar lastModifiedInDatabase = ((ResourceLastModified) currentObjectInJena).getModified();
+        Calendar imejiDataObjectLastModified = ((ResourceLastModified) imejiDataObject).getLastTimeStampReadFromDatabase();
+        if (lastModifiedInDatabase != null && imejiDataObjectLastModified != null) {
+          if (lastModifiedInDatabase.getTimeInMillis() > imejiDataObjectLastModified.getTimeInMillis()) {
+            throw new ReloadBeforeSaveException(currentObjectInJena);
+          }
+        } else {
+          throw new UnprocessableError("Could not process update request, no timestamp for data synchronization available");
+        }
+      } else {
+        throw new UnprocessableError("Could not process update request, interface CloneURI not implemented (but needs to be) for class "
+            + imejiDataObject.getClass());
+      }
+    }
+    java2rdf.update(imejiDataObject);
   }
 
   /**

@@ -36,10 +36,11 @@ public class ImejiSPARQL {
     final SearchTransaction transaction = new SearchTransaction(modelName, query, results, false);
     transaction.start(Imeji.dataset);
     try {
-      transaction.throwException();
-    } catch (final ImejiException e) {
+      transaction.rethrowException();
+    } catch (final Exception e) {
       LogManager.getLogger(ImejiSPARQL.class).error("There has been some SPARQL issue", e);
     }
+
     return results;
   }
 
@@ -56,8 +57,8 @@ public class ImejiSPARQL {
     final SearchTransaction transaction = new SearchTransaction(modelName, query, results, true);
     transaction.start(Imeji.dataset);
     try {
-      transaction.throwException();
-    } catch (final ImejiException e) {
+      transaction.rethrowException();
+    } catch (final Exception e) {
       LogManager.getLogger(ImejiSPARQL.class).error("There has been execCount issue", e);
     }
     if (results.size() > 0) {
@@ -74,7 +75,7 @@ public class ImejiSPARQL {
   public static void execUpdate(String query) {
     try {
       ThreadedTransaction.run(new ThreadedTransaction(new SPARQLUpdateTransaction(null, query), Imeji.tdbPath));
-    } catch (final ImejiException e) {
+    } catch (final Exception e) {
       throw new RuntimeException(e);
     }
   }

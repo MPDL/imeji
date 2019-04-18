@@ -11,6 +11,7 @@ import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.aspects.CloneURI;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 
 /**
@@ -23,7 +24,7 @@ import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 @j2jResource("http://imeji.org/terms/collection")
 @j2jModel("collection")
 @j2jId(getMethod = "getId", setMethod = "setId")
-public class CollectionImeji extends Properties implements Serializable, CollectionElement {
+public class CollectionImeji extends Properties implements Serializable, CollectionElement, CloneURI {
   private static final long serialVersionUID = -4689209760815149573L;
   @j2jResource("http://imeji.org/terms/collection")
   private URI collection;
@@ -42,6 +43,14 @@ public class CollectionImeji extends Properties implements Serializable, Collect
   @j2jList("http://purl.org/dc/terms/type")
   private List<String> types = new ArrayList<>();
   private Collection<URI> images = new ArrayList<URI>();
+
+
+  @Override
+  public Object cloneURI() {
+    CollectionImeji newCollection = new CollectionImeji();
+    newCollection.setId(this.getId());
+    return newCollection;
+  }
 
   public String getTitle() {
     return title;
@@ -146,4 +155,6 @@ public class CollectionImeji extends Properties implements Serializable, Collect
   public void setTypes(List<String> types) {
     this.types = types;
   }
+
+
 }

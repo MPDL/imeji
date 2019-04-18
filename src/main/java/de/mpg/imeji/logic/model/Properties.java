@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.ImejiNamespaces;
+import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 
 /**
  * Common properties to all imeji objects
@@ -23,7 +24,7 @@ import de.mpg.imeji.logic.ImejiNamespaces;
  * @version $Revision$ $LastChangedDate$
  */
 @j2jResource("http://imeji.org/terms/properties")
-public class Properties implements Serializable {
+public class Properties implements Serializable, ResourceLastModified {
   private static final long serialVersionUID = 6874979775433576816L;
   private URI id;
   @j2jResource(ImejiNamespaces.CREATOR)
@@ -40,7 +41,11 @@ public class Properties implements Serializable {
   private URI status = URI.create(Status.PENDING.getUriString());
   @j2jLiteral(ImejiNamespaces.DISCARD_COMMENT)
   private String discardComment;
+
   private static final Logger LOGGER = LogManager.getLogger(Properties.class);
+  private Calendar lastTimeStampReadFromDatabase;
+
+
 
   @XmlEnum(String.class)
   public enum Status {
@@ -136,6 +141,18 @@ public class Properties implements Serializable {
     this.versionDate = versionDate;
   }
 
+
+  @Override
+  public void setLastTimeStampReadFromDatabase(Calendar calendar) {
+    this.lastTimeStampReadFromDatabase = calendar;
+
+  }
+
+  @Override
+  public Calendar getLastTimeStampReadFromDatabase() {
+    return this.lastTimeStampReadFromDatabase;
+  }
+
   /**
    * return the id of this object defined in the last number in its {@link URI}.
    *
@@ -165,4 +182,6 @@ public class Properties implements Serializable {
     }
     return ret;
   }
+
+
 }

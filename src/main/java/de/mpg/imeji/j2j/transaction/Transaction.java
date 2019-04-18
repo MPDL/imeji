@@ -1,13 +1,15 @@
 package de.mpg.imeji.j2j.transaction;
 
 import org.apache.logging.log4j.Logger;
+
+import de.mpg.imeji.exceptions.ImejiException;
+
 import org.apache.logging.log4j.LogManager;
 
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Model;
 
-import de.mpg.imeji.exceptions.ImejiException;
 
 /**
  * Transaction for Jena operations
@@ -18,8 +20,8 @@ import de.mpg.imeji.exceptions.ImejiException;
  */
 public abstract class Transaction {
   private final String modelURI;
-  private boolean isException;
-  private ImejiException exception;
+  private boolean exceptionWasThrown;
+  private ImejiException transactionException;
   private static final Logger LOGGER = LogManager.getLogger(Transaction.class);
 
   /**
@@ -41,14 +43,16 @@ public abstract class Transaction {
       dataset.begin(getLockType());
       execute(dataset);
       dataset.commit();
-    } catch (final ImejiException e) {
+    } catch (final ImejiException exception) {
       dataset.abort();
-      isException = true;
-      exception = e;
+      LOGGER.debug("Imeji Exception thrown during Jena access " + exception.getMessage());
+      exceptionWasThrown = true;
+      transactionException = exception;
     } catch (final Exception e) {
       dataset.abort();
-      isException = true;
-      exception = new ImejiException(e.getMessage(), e);
+      LOGGER.debug("Other Exception thrown during Jena access " + e.getMessage());
+      exceptionWasThrown = true;
+      transactionException = new ImejiException(e.getMessage(), e);
     } finally {
       dataset.end();
     }
@@ -84,13 +88,13 @@ public abstract class Transaction {
   }
 
   /**
-   * If the run Method caught an Exception, throw this exception
+   * If the start method caught an Exception, re-throw this exception
    *
    * @throws Exception
    */
-  public void throwException() throws ImejiException {
-    if (isException) {
-      throw exception;
+  public void rethrowException() throws ImejiException {
+    if (exceptionWasThrown) {
+      throw transactionException;
     }
   }
 }

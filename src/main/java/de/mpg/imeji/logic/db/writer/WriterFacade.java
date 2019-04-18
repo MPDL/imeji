@@ -5,9 +5,10 @@ import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -91,12 +92,14 @@ public class WriterFacade {
     // writer.create(objects, user);
     // indexer.indexBatch(objects);
     try {
-      Future<Integer> createTask = executor.submit(new CreateTask(objects, user));
-      createTask.get();
-      Future<Integer> indexTask = executor.submit(new IndexTask(objects));
-      indexTask.get();
-    } catch (Exception e) {
-      throw new ImejiException("Error updating objects", e);
+      executor.submit(new CreateTask(objects, user)).get();
+      executor.submit(new IndexTask(objects)).get();
+    } catch (ExecutionException | InterruptedException | CancellationException execExept) {
+      if (execExept.getCause() instanceof ImejiException) {
+        throw (ImejiException) execExept.getCause();
+      } else {
+        throw new ImejiException(execExept.getMessage());
+      }
     }
 
   }
@@ -115,12 +118,14 @@ public class WriterFacade {
     checkSecurity(objects, user, false);
     validate(objects, Validator.Method.DELETE);
     try {
-      Future<Integer> deleteIndexTask = executor.submit(new DeleteIndexTask(objects));
-      deleteIndexTask.get();
-      Future<Integer> deleteTask = executor.submit(new DeleteTask(objects, user));
-      deleteTask.get();
-    } catch (Exception e) {
-      throw new ImejiException("Error updating objects", e);
+      executor.submit(new DeleteIndexTask(objects)).get();
+      executor.submit(new DeleteTask(objects, user)).get();
+    } catch (ExecutionException | InterruptedException | CancellationException execExept) {
+      if (execExept.getCause() instanceof ImejiException) {
+        throw (ImejiException) execExept.getCause();
+      } else {
+        throw new ImejiException(execExept.getMessage());
+      }
     }
   }
 
@@ -140,14 +145,15 @@ public class WriterFacade {
     }
     validate(objects, Validator.Method.UPDATE);
     try {
-      Future<Integer> updateTask = executor.submit(new UpdateTask(objects, user));
-      Future<Integer> indexTask = executor.submit(new IndexTask(objects));
-      updateTask.get();
-      indexTask.get();
-    } catch (Exception e) {
-      throw new ImejiException("Error updating objects", e);
+      executor.submit(new UpdateTask(objects, user)).get();
+      executor.submit(new IndexTask(objects)).get();
+    } catch (ExecutionException | InterruptedException | CancellationException execExept) {
+      if (execExept.getCause() instanceof ImejiException) {
+        throw (ImejiException) execExept.getCause();
+      } else {
+        throw new ImejiException(execExept.getMessage());
+      }
     }
-
   }
 
   /**
@@ -164,13 +170,16 @@ public class WriterFacade {
     throwAuthorizationException(user != null, SecurityUtil.authorization().administrate(user, Imeji.PROPERTIES.getBaseURI()),
         "Only admin ca use update wihout validation");
     try {
-      Future<Integer> updateTask = executor.submit(new UpdateTask(objects, user));
-      Future<Integer> indexTask = executor.submit(new IndexTask(objects));
-      updateTask.get();
-      indexTask.get();
-    } catch (Exception e) {
-      throw new ImejiException("Error updating objects", e);
+      executor.submit(new UpdateTask(objects, user)).get();
+      executor.submit(new IndexTask(objects)).get();
+    } catch (ExecutionException | InterruptedException | CancellationException execExept) {
+      if (execExept.getCause() instanceof ImejiException) {
+        throw (ImejiException) execExept.getCause();
+      } else {
+        throw new ImejiException(execExept.getMessage());
+      }
     }
+
 
   }
 
@@ -309,7 +318,7 @@ public class WriterFacade {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() throws ImejiException {
       writer.create(objects, user);
       return 1;
     }
@@ -331,7 +340,7 @@ public class WriterFacade {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() throws ImejiException {
       writer.update(objects, user);
       return 1;
     }
@@ -353,7 +362,7 @@ public class WriterFacade {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() throws ImejiException {
       writer.delete(objects, user);
       return 1;
     }
@@ -373,7 +382,7 @@ public class WriterFacade {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() throws ImejiException {
       indexer.indexBatch(objects);
       return 1;
     }
@@ -393,7 +402,7 @@ public class WriterFacade {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() throws ImejiException {
       indexer.deleteBatch(objects);
       return 1;
     }

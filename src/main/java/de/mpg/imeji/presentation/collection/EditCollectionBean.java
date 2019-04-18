@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ReloadBeforeSaveException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
@@ -136,6 +137,12 @@ public class EditCollectionBean extends CollectionBean {
     } catch (final URISyntaxException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_uri_save", getLocale()));
       LOGGER.error("Error saving collection", e);
+      return false;
+    } catch (final ReloadBeforeSaveException reloadBeforeSave) {
+      String reloadBeforeSaveMessage =
+          Imeji.RESOURCE_BUNDLE.getMessage("error_collection_save", getLocale()) + ": " + reloadBeforeSave.getMessage();
+      BeanHelper.error(reloadBeforeSaveMessage);
+      LOGGER.info("Saving collection ReloadBeforeSaveException: " + reloadBeforeSave.getMessage());
       return false;
     } catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_save", getLocale()));
