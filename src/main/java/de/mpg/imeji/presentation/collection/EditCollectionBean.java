@@ -114,15 +114,19 @@ public class EditCollectionBean extends CollectionBean {
     try {
       final CollectionService collectionController = new CollectionService();
       final User user = getSessionUser();
-      collectionController.update(getCollection(), user);
+      // in case a logo file was added or changed, save collection and logo
+      if (containerEditorSession.getUploadedLogoPath() != null) {
+        collectionController.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
+      }
+      // save collection
+      else {
+        collectionController.update(getCollection(), user);
+      }
       new UserService().update(user, user);
       if (containerEditorSession.getErrorMessage() != "") {
         String msg = containerEditorSession.getErrorMessage();
         containerEditorSession.setErrorMessage("");
         throw new UnprocessableError(msg);
-      }
-      if (containerEditorSession.getUploadedLogoPath() != null) {
-        collectionController.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_save", getLocale()));
       return true;
