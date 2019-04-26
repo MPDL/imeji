@@ -15,6 +15,7 @@ import de.mpg.imeji.j2j.transaction.Transaction;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.writer.JenaWriter;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 
 /**
  * imeji READ operations in {@link Jena} <br/>
@@ -107,10 +108,37 @@ public class JenaReader implements Reader {
     return null;
   }
 
+  /**
+   * In case the read data objects have a time stamp for data read/write synchronization, copy this
+   * time stamp to the proper field.
+   * 
+   * @param objects
+   * @return
+   */
+  private void saveTimestampOfLastModificationInDatabase(List<Object> objects) {
+    for (Object object : objects) {
+      if (object instanceof ResourceLastModified) {
+        ResourceLastModified objectLastModified = (ResourceLastModified) object;
+        objectLastModified.setLastTimeStampReadFromDatabase(objectLastModified.getModified());
+      }
+    }
+  }
+
+
+  /**
+   * Accesses Jena.
+   * 
+   * @param objects
+   * @param user
+   * @param lazy
+   * @return
+   * @throws ImejiException
+   */
   private List<Object> read(List<Object> objects, User user, boolean lazy) throws ImejiException {
-    final Transaction t = new CRUDTransaction(objects, CRUDTransactionType.READ, modelURI, lazy);
-    t.start(Imeji.dataset);
-    t.throwException();
+    final Transaction crudTransaction = new CRUDTransaction(objects, CRUDTransactionType.READ, modelURI, lazy);
+    crudTransaction.start(Imeji.dataset);
+    crudTransaction.rethrowException();
+    this.saveTimestampOfLastModificationInDatabase(objects);
     return objects;
   }
 }

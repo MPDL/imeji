@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.faces.event.ValueChangeEvent;
 
@@ -21,6 +22,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.queryparser.flexible.standard.CommonQueryParserConfiguration;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 
@@ -94,7 +96,10 @@ public class ImejiConfiguration {
     DOI_PUBLISHER,
     FACET_DISPLAYED,
     PRIVACY_POLICY,
-    PRIVACY_POLICY_URL;
+    PRIVACY_POLICY_URL,
+    COLLECTION_TYPES,
+    COLLECTION_METADATA_SUGGESTIONS,
+    COLLECTION_METADATA_SELECTIONS_PRESELECT;
   }
 
   private static Properties config;
@@ -1019,6 +1024,45 @@ public class ImejiConfiguration {
     setProperty(CONFIGURATION.FACET_DISPLAYED.name(), str);
   }
 
+
+  public String getCollectionTypes() {
+    return getPropertyAsNonNullString(CONFIGURATION.COLLECTION_TYPES.name());
+  }
+
+  public List<String> getCollectionTypesAsList() {
+    return Arrays.stream(getCollectionTypes().split("\\n")).filter(i -> !i.isBlank()).map(i -> i.trim()).collect(Collectors.toList());
+  }
+
+  public void setCollectionTypes(String str) {
+    setProperty(CONFIGURATION.COLLECTION_TYPES.name(), str);
+  }
+
+  public String getCollectionMetadataSuggestions() {
+    return getPropertyAsNonNullString(CONFIGURATION.COLLECTION_METADATA_SUGGESTIONS.name());
+  }
+
+  public List<String> getCollectionMetadataSuggestionsAsList() {
+    return Arrays.stream(getCollectionMetadataSuggestions().split("\\n")).filter(i -> !i.isBlank()).map(i -> i.trim())
+        .collect(Collectors.toList());
+  }
+
+  public void setCollectionMetadataSuggestions(String str) {
+    setProperty(CONFIGURATION.COLLECTION_METADATA_SUGGESTIONS.name(), str);
+  }
+
+  public String getCollectionMetadataSuggestionsPreselect() {
+    return getPropertyAsNonNullString(CONFIGURATION.COLLECTION_METADATA_SELECTIONS_PRESELECT.name());
+  }
+
+  public List<String> getCollectionMetadataSuggestionsPreselectAsList() {
+    return Arrays.stream(getCollectionMetadataSuggestionsPreselect().split("\\n")).filter(i -> !i.isBlank()).map(i -> i.trim())
+        .collect(Collectors.toList());
+  }
+
+  public void setCollectionMetadataSuggestionsPreselect(String str) {
+    setProperty(CONFIGURATION.COLLECTION_METADATA_SELECTIONS_PRESELECT.name(), str);
+  }
+
   // ------------------------------------------------------------------------
   // Utility classes
   // ------------------------------------------------------------------------
@@ -1136,4 +1180,5 @@ public class ImejiConfiguration {
       setDoiPassword(this.password);
     }
   }
+
 }

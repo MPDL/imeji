@@ -12,6 +12,7 @@ import de.mpg.imeji.j2j.annotations.j2jLazyList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.aspects.CloneURI;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 
@@ -25,7 +26,7 @@ import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 @j2jResource("http://imeji.org/terms/item")
 @j2jModel("item")
 @j2jId(getMethod = "getId", setMethod = "setId")
-public class Item extends Properties implements Serializable, CollectionElement {
+public class Item extends Properties implements Serializable, CollectionElement, CloneURI {
   private static final long serialVersionUID = 3989965275269803885L;
   @j2jResource("http://imeji.org/terms/collection")
   private URI collection;
@@ -50,6 +51,14 @@ public class Item extends Properties implements Serializable, CollectionElement 
   public Item(Item im) {
     setId(null);
     ObjectHelper.copyAllFields(im, this);
+  }
+
+
+  @Override
+  public Item cloneURI() {
+    Item newItem = new Item();
+    newItem.setId(this.getId());
+    return newItem;
   }
 
   public void setCollection(URI collection) {
@@ -130,4 +139,6 @@ public class Item extends Properties implements Serializable, CollectionElement 
   public ObjectType getType() {
     return ObjectType.ITEM;
   }
+
+
 }

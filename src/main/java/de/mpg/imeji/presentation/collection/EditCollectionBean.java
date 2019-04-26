@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -17,10 +19,12 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ReloadBeforeSaveException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.User;
@@ -57,6 +61,34 @@ public class EditCollectionBean extends CollectionBean {
           persons.add(p);
         }
         getCollection().setPersons(persons);
+
+
+        //Sort additional Info: preselected metadata first        
+        List<String> preselectedMetadata = Imeji.CONFIG.getCollectionMetadataSuggestionsPreselectAsList();
+        if (preselectedMetadata != null && !preselectedMetadata.isEmpty()) {
+
+          List<ContainerAdditionalInfo> additionalList = new ArrayList<ContainerAdditionalInfo>();
+          List<String> currentLabels =
+              getCollection().getAdditionalInformations().stream().map(i -> i.getLabel()).collect(Collectors.toList());
+
+          for (String mdLabel : preselectedMetadata) {
+            if (currentLabels.contains(mdLabel)) {
+              additionalList.add(getCollection().getAdditionalInformations().remove(currentLabels.indexOf(mdLabel)));
+              currentLabels.remove(mdLabel);
+            } else {
+              additionalList.add(new ContainerAdditionalInfo(mdLabel, "", ""));
+
+            }
+          }
+          additionalList.addAll(getCollection().getAdditionalInformations());
+          getCollection().setAdditionalInformations(additionalList);
+
+        }
+
+        //Always add empty additional info at the end
+        getCollection().getAdditionalInformations().add(new ContainerAdditionalInfo());
+
+
       } catch (final ImejiException e) {
         BeanHelper.error("Error initiatilzing page: " + e.getMessage());
         LOGGER.error("Error init edit collection page", e);
@@ -82,15 +114,19 @@ public class EditCollectionBean extends CollectionBean {
     try {
       final CollectionService collectionController = new CollectionService();
       final User user = getSessionUser();
-      collectionController.update(getCollection(), user);
+      // in case a logo file was added or changed, save collection and logo
+      if (containerEditorSession.getUploadedLogoPath() != null) {
+        collectionController.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
+      }
+      // save collection
+      else {
+        collectionController.update(getCollection(), user);
+      }
       new UserService().update(user, user);
       if (containerEditorSession.getErrorMessage() != "") {
         String msg = containerEditorSession.getErrorMessage();
         containerEditorSession.setErrorMessage("");
         throw new UnprocessableError(msg);
-      }
-      if (containerEditorSession.getUploadedLogoPath() != null) {
-        collectionController.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_save", getLocale()));
       return true;
@@ -105,6 +141,12 @@ public class EditCollectionBean extends CollectionBean {
     } catch (final URISyntaxException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_uri_save", getLocale()));
       LOGGER.error("Error saving collection", e);
+      return false;
+    } catch (final ReloadBeforeSaveException reloadBeforeSave) {
+      String reloadBeforeSaveMessage =
+          Imeji.RESOURCE_BUNDLE.getMessage("error_collection_save", getLocale()) + ": " + reloadBeforeSave.getMessage();
+      BeanHelper.error(reloadBeforeSaveMessage);
+      LOGGER.info("Saving collection ReloadBeforeSaveException: " + reloadBeforeSave.getMessage());
       return false;
     } catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_save", getLocale()));

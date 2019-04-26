@@ -17,11 +17,20 @@
 	<composite:implementation>
 		<div id="#{cc.attrs.dialogId}" class="imj_modalDialogBox">
 			<h:form id="f">
-				<div class="imj_confirmationText">
-					<p>
-						<h:outputText value="#{cc.attrs.confirmationText}"/>
-					</p>
-				</div>
+				<ui:fragment rendered="#{not empty cc.attrs.confirmationText}">
+					<div class="imj_confirmationText">
+						<p>
+							<h:outputText value="#{cc.attrs.confirmationText}"/>
+						</p>
+					</div>
+				</ui:fragment>
+				<ui:fragment rendered="#{not empty cc.attrs.confirmationText2}">
+					<div class="imj_confirmationText">
+						<p>
+							<h:outputText value="#{cc.attrs.confirmationText2}"/>
+						</p>
+					</div>
+				</ui:fragment>
 				<div class="imj_confirmationReasonTextarea">
 					<h:outputLabel value="#{lbl.withdraw_comment}" for="discardComment"/>
 					<h:inputTextarea html5:data-loader="false"  id="discardComment" value="#{cc.attrs.bean.discardComment}" valueChangeListener="#{cc.attrs.bean.discardCommentListener}" styleClass="imj_dialogReasonText">

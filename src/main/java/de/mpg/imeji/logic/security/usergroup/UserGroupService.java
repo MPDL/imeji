@@ -15,14 +15,13 @@ import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.security.user.UserService;
 
 /**
  * Implements CRUD Methods for a {@link UserGroup}
@@ -44,6 +43,7 @@ public class UserGroupService {
    */
   public void create(UserGroup group, User user) throws ImejiException {
     controller.create(group, user);
+    this.updateUsersOfUserGroupForReload(group);
   }
 
   /**
@@ -113,6 +113,7 @@ public class UserGroupService {
    */
   public UserGroup update(UserGroup group, User user) throws ImejiException {
     controller.update(group, user);
+    this.updateUsersOfUserGroupForReload(group);
     return group;
   }
 
@@ -125,7 +126,24 @@ public class UserGroupService {
    */
   public void delete(UserGroup group, User user) throws ImejiException {
     controller.delete(group, user);
+    this.updateUsersOfUserGroupForReload(group);
   }
+
+  /**
+   * Use this function after updating/creating/deleting user groups. Will set the last modified
+   * field of all group users in database to now, so in case a user is logged in while he is added
+   * or deleted from a user group or one of his user groups is altered, the corresponding session
+   * object will be updated with the reload-user-mechanism. See {@ link SecurityFilter} function
+   * isReloadUser.
+   * 
+   * @param userGroup
+   */
+  private void updateUsersOfUserGroupForReload(UserGroup userGroup) {
+    for (URI user : userGroup.getUsers()) {
+      new UserService().setRecentlyModified(user);
+    }
+  }
+
 
   /**
    * Search for {@link UserGroup}

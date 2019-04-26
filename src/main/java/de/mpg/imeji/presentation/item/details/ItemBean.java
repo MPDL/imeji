@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.exceptions.ReloadBeforeSaveException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.concurrency.Locks;
 import de.mpg.imeji.logic.config.Imeji;
@@ -156,6 +157,11 @@ public class ItemBean extends SuperBean {
 
   public void cancelEditor() {
     this.edit = false;
+    try {
+      loadItem();
+    } catch (ImejiException imejiException) {
+      ItemBean.LOGGER.error("Could not reload " + id, imejiException);
+    }
   }
 
   public void showEditor() throws ImejiException {
@@ -279,6 +285,8 @@ public class ItemBean extends SuperBean {
     } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error saving item metadata", e);
+    } catch (ReloadBeforeSaveException reloadBeforeSave) {
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()) + ": " + reloadBeforeSave.getMessage());
     } catch (ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()) + ": " + e.getMessage());
       LOGGER.error("Error saving item metadata", e);

@@ -1,18 +1,22 @@
 package de.mpg.imeji.j2j.transaction;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.Logger;
+
+import de.mpg.imeji.exceptions.ImejiException;
+
 import org.apache.logging.log4j.LogManager;
 
 import org.apache.jena.Jena;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.tdb.TDBFactory;
 
-import de.mpg.imeji.exceptions.ImejiException;
 
 /**
  * Run a {@link Transaction} in a new {@link Thread}. A new {@link Dataset} is created for this
@@ -25,7 +29,7 @@ import de.mpg.imeji.exceptions.ImejiException;
  */
 public class ThreadedTransaction implements Callable<Integer> {
   private static ExecutorService EXECUTOR = Executors.newCachedThreadPool();
-  private final Transaction transaction;
+  private final Transaction myTransaction;
   private final String tdbPath;
   protected static Logger LOGGER = LogManager.getLogger(ThreadedTransaction.class);
 
@@ -35,7 +39,7 @@ public class ThreadedTransaction implements Callable<Integer> {
    * @param transaction
    */
   public ThreadedTransaction(Transaction transaction, String tdbPath) {
-    this.transaction = transaction;
+    this.myTransaction = transaction;
     this.tdbPath = tdbPath;
   }
 
@@ -48,7 +52,7 @@ public class ThreadedTransaction implements Callable<Integer> {
   public Integer call() throws Exception {
     final Dataset ds = TDBFactory.createDataset(tdbPath);
     try {
-      transaction.start(ds);
+      myTransaction.start(ds);
     } finally {
       ds.close();
     }
@@ -60,8 +64,8 @@ public class ThreadedTransaction implements Callable<Integer> {
    *
    * @throws Exception
    */
-  public void throwException() throws ImejiException {
-    transaction.throwException();
+  public void throwImejiException() throws ImejiException {
+    myTransaction.rethrowException();
   }
 
   /**
@@ -70,25 +74,25 @@ public class ThreadedTransaction implements Callable<Integer> {
    * @param t
    * @throws Exception
    */
-  public static void run(ThreadedTransaction t) throws ImejiException {
+  public static void run(ThreadedTransaction t) throws Exception {
     run(t, EXECUTOR);
   }
 
   /**
    * Run a {@link ThreadedTransaction} with the {@link ExecutorService} of imeji
    *
-   * @param t
+   * @param transactionThread
    * @throws Exception
    */
-  public static void run(ThreadedTransaction t, ExecutorService executor) throws ImejiException {
-    final Future<Integer> f = executor.submit(t);
+  public static void run(ThreadedTransaction transactionThread, ExecutorService executor) throws ImejiException {
+    final Future<Integer> future = executor.submit(transactionThread);
     // wait for the transaction to be finished
     try {
-      f.get();
-    } catch (Exception e) {
-      LOGGER.info("An exception happened in Transaction", e);
+      future.get();
+    } catch (CancellationException | ExecutionException | InterruptedException e) {
+      LOGGER.info("Exception in Jena transaction thread", e);
     }
-    t.throwException();
+    transactionThread.throwImejiException();
   }
 
 }

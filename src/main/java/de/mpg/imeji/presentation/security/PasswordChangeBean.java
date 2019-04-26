@@ -30,7 +30,6 @@ public class PasswordChangeBean extends SuperBean {
   private String repeatedPassword;
   private String resetEmail;
   private String token;
-  private boolean resetFinished;
   private final PasswordResetController passwordresetService = new PasswordResetController();
   private String from;
   private User user;
@@ -41,7 +40,6 @@ public class PasswordChangeBean extends SuperBean {
   public void init() {
     newPassword = null;
     repeatedPassword = null;
-    resetFinished = false;
     from = UrlHelper.getParameterValue("from");
     user = retrieveUser();
   }
@@ -86,32 +84,57 @@ public class PasswordChangeBean extends SuperBean {
    */
   public void resetPassword() throws IOException, ImejiException {
     if (!isValidPassword()) {
-      reloadPage();
+      reload();
       return;
     }
-    if (user != null) {
-      user = passwordresetService.resetPassword(user, newPassword);
+
+    if (token != null) {
+      this.setPasswordWithToken();
     } else {
-      if (!passwordresetService.isValidToken(token)) {
-        BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_password_link_invalid", getLocale()));
-        redirect(getNavigation().getLoginUrl());
-        return;
-      }
-      user = passwordresetService.resetPassword(token, newPassword);
-      sessionBean.setUser(user);
-      new EmailService().sendMail(user.getEmail(), null, EmailMessages.getResetConfirmEmailSubject(getLocale()),
-          EmailMessages.getResetConfirmEmailBody(user, getLocale()));
+      this.setPasswordForUser();
     }
-    BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("password_changed", getLocale()));
-    resetFinished = true;
-    redirect(StringHelper.isNullOrEmptyTrim(getBackUrl()) ? getNavigation().getHomeUrl() : getBackUrl());
+  }
+
+  private void setPasswordForUser() throws ImejiException, IOException {
+    if (user != null) {
+      passwordresetService.resetPassword(user, newPassword);
+
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
+      redirect(StringHelper.isNullOrEmptyTrim(getBackUrl()) ? getNavigation().getHomeUrl() : getBackUrl());
+    } else {
+      //The user to change the password does not exist or the active user is not logged in or has no permission to change the password.
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_password_cannot_be_changed", getLocale()));
+      reload();
+    }
+  }
+
+  private void setPasswordWithToken() throws ImejiException, IOException {
+    if (passwordresetService.isValidToken(token)) {
+      User userWithNewPassword = passwordresetService.resetPassword(token, newPassword);
+
+      new EmailService().sendMail(userWithNewPassword.getEmail(), null, EmailMessages.getResetConfirmEmailSubject(getLocale()),
+          EmailMessages.getResetConfirmEmailBody(userWithNewPassword, getLocale()));
+
+      if (user == null) {
+        sessionBean.setUser(userWithNewPassword);
+      }
+
+      BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
+      redirect(StringHelper.isNullOrEmptyTrim(getBackUrl()) ? getNavigation().getHomeUrl() : getBackUrl());
+    } else {
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_password_link_invalid", getLocale()));
+      reload();
+    }
   }
 
   /**
-   * Retrieve the user for which the user will be changed
+   * Retrieve the user for which the password will be changed.
    * 
-   * @return
-   * @throws ImejiException
+   * Returns the user whose email is set as url parameter. If no email parameter is set the current
+   * session user is returned. Returns null if the user is not logged in or has no permissions to
+   * change the password.
+   * 
+   * @return the user whose password to change
    */
   private User retrieveUser() {
     if (!StringHelper.isNullOrEmptyTrim(UrlHelper.getParameterValue("email"))) {
@@ -127,10 +150,8 @@ public class PasswordChangeBean extends SuperBean {
 
   /**
    * Stop the password reset if the password is not valid
-   * 
-   * @throws IOException
    */
-  private boolean isValidPassword() throws IOException {
+  private boolean isValidPassword() {
     if (newPassword == null || newPassword.equals("")) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_empty_password", getLocale()));
       return false;
@@ -174,24 +195,12 @@ public class PasswordChangeBean extends SuperBean {
     this.resetEmail = resetEmail;
   }
 
-  public boolean isResetFinished() {
-    return resetFinished;
-  }
-
-  public void setResetFinished(boolean resetFinished) {
-    this.resetFinished = resetFinished;
-  }
-
   public SessionBean getSessionBean() {
     return sessionBean;
   }
 
   public void setSessionBean(SessionBean sessionBean) {
     this.sessionBean = sessionBean;
-  }
-
-  private void reloadPage() throws IOException {
-    redirect(getNavigation().getHomeUrl() + "/pwdreset?token=" + token);
   }
 
   public String getFrom() {

@@ -202,11 +202,13 @@
 														<tr>
 															<td width="60px">#{shareHistory.role}</td>
 															<td style="padding: 0px 5px 0px 5px;"><h:outputLink
+																	rendered="#{Auth.sysAdmin}"
 																	value="#{Navigation.collectionUrl}#{shareHistory.shareToUriString}/share?email=#{UserBean.user.email}"
 																	title="#{lbl.change} #{lbl.grant_for} #{shareHistory.title}">
 																	<span class="fa fa-mail-forward"></span>#{lbl.change} 
 													</h:outputLink></td>
 															<td><h:outputLink value="#"
+																	rendered="#{Auth.sysAdmin}"
 																	title="#{lbl.revoke} #{lbl.grant_for} #{shareHistory.title}"
 																	onclick="openDialog('revokeDialog#{row.index}');">
 																	<span class="fa fa-times"></span>#{lbl.revoke} 

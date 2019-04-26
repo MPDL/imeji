@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.BadRequestException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -38,7 +38,6 @@ import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -669,7 +668,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    * @throws UnprocessableError
    */
-  private void validateChecksum(URI collectionURI, File file, Boolean isUpdate) throws UnprocessableError, ImejiException {
+  private void validateChecksum(URI collectionURI, File file, Boolean isUpdate) throws ImejiException {
     validateChecksum(StorageUtils.calculateChecksum(file), collectionURI, file, isUpdate);
   }
 
@@ -684,14 +683,20 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws UnprocessableError
    * @throws ImejiException
    */
-  private void validateChecksum(String checksum, URI collectionURI, File file, Boolean isUpdate) throws UnprocessableError, ImejiException {
+  private void validateChecksum(String checksum, URI collectionURI, File file, Boolean isUpdate) throws ImejiException {
     SearchResult r = searchItemsWithChecksuminCollection(collectionURI, checksum);
     if (r.getNumberOfRecords() > 0) {
-      String id = ObjectHelper.getId(URI.create(r.getResults().get(0)));
-      throw new UnprocessableError((!isUpdate)
-          ? "Same file already exists in the collection (same checksum). Please choose another file. id_error:" + id
-          : "Same file already exists in the collection or you are trying to upload same file for the item (same checksum). Please choose another file. id_error:"
-              + id);
+      Item item = this.retrieveLazy(URI.create(r.getResults().get(0)), Imeji.adminUser);
+      String itemName = item.getName();
+      String itemUrl = Imeji.PROPERTIES.getApplicationURL() + "item/" + item.getIdString();
+
+      String uploadFileAlreadyExistsErrorMessage =
+          "Same file already exists in the collection (same checksum), see: <a href='" + itemUrl + "'>" + itemName + "</a>";
+      String updateFileAlreadyExistsErrorMessage =
+          "Same file already exists in the collection or you are trying to upload same file for the item (same checksum), see: <a href='"
+              + itemUrl + "'>" + itemName + "</a>" + " - Please choose another file.";
+
+      throw new UnprocessableError(isUpdate ? updateFileAlreadyExistsErrorMessage : uploadFileAlreadyExistsErrorMessage);
     }
   }
 

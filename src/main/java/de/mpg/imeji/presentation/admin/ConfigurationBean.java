@@ -15,8 +15,8 @@ import org.codehaus.jettison.json.JSONException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration.HtmlSnippet;
 import de.mpg.imeji.logic.config.ImejiConfiguration.ProtectedPassword;
-import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentXML;
 import de.mpg.imeji.logic.config.ImejiFileTypes;
+import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentXML;
 import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.presentation.beans.SuperBean;
@@ -663,6 +663,39 @@ public class ConfigurationBean extends SuperBean {
    */
   public String getGUILabel(String identifier) {
     return Imeji.RESOURCE_BUNDLE.getLabel(identifier, getLocale());
+  }
+
+
+  public String getCollectionTypes() {
+    return Imeji.CONFIG.getCollectionTypes();
+  }
+
+  public void setCollectionTypes(String str) {
+    Imeji.CONFIG.setCollectionTypes(str);
+  }
+
+  public String getCollectionMetadataSuggestions() {
+    return Imeji.CONFIG.getCollectionMetadataSuggestions();
+  }
+
+  public List<String> getCollectionMetadataSuggestionsAsList() {
+    return Imeji.CONFIG.getCollectionMetadataSuggestionsAsList();
+  }
+
+  public void setCollectionMetadataSuggestions(String str) {
+    Imeji.CONFIG.setCollectionMetadataSuggestions(str);
+  }
+
+  public String getCollectionMetadataSuggestionsPreselect() {
+    return Imeji.CONFIG.getCollectionMetadataSuggestionsPreselect();
+  }
+
+  public List<String> getCollectionMetadataSuggestionsPreselectAsList() {
+    return Imeji.CONFIG.getCollectionMetadataSuggestionsPreselectAsList();
+  }
+
+  public void setCollectionMetadataSuggestionsPreselect(String str) {
+    Imeji.CONFIG.setCollectionMetadataSuggestionsPreselect(str);;
   }
 
 }
