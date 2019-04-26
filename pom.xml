@@ -231,9 +231,6 @@
 					<includes>
 						<include>**/de/mpg/imeji/test/**/*.java</include>
 					</includes>
-					<systemPropertyVariables>
-						<catalina.base>${test.catalina.base}</catalina.base>
-					</systemPropertyVariables>
 				</configuration>
 				<executions>
 					<execution>

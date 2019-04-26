@@ -35,7 +35,7 @@ public class TempFileUtil {
         f.mkdirs();
       }
       return f;
-    } catch (IOException | URISyntaxException e) {
+    } catch (IOException e) {
       return null;
     }
   }

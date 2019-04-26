@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -46,7 +46,7 @@ public class ImejiProperties {
       internalStorageBase = FilenameUtils.getBaseName(FilenameUtils.normalizeNoEndSeparator(getProperty("imeji.storage.path")));
       applicationURL = StringHelper.normalizeURI(getProperty("imeji.instance.url"));
       readBaseUri();
-    } catch (IOException | URISyntaxException e) {
+    } catch (IOException e) {
       LOGGER.error("Error reading imeji.properties", e);
     }
   }

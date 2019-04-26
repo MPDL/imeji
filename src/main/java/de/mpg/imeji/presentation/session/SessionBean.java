@@ -91,7 +91,7 @@ public class SessionBean implements Serializable {
    * @return
    */
   public String getVersion() {
-    return PropertyReader.getVersion();
+    return Imeji.PROPERTIES.getProperty("imeji.application.version");
   }
 
   /**
