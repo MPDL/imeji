@@ -1,5 +1,7 @@
 package de.mpg.imeji.logic.validation.impl;
 
+import java.util.regex.Pattern;
+
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
@@ -21,6 +23,9 @@ public class PersonValidator extends ObjectValidator implements Validator<Person
     }
     if (!hasAtLeastOneOrganisation(p)) {
       e = new UnprocessableError("error_author_need_one_organization", e);
+    }
+    if (!isValidORCID(p)) {
+      e = new UnprocessableError("error_orcid_format", e);
     }
     /*
      * for (final Organization org : p.getOrganizations()) { if
@@ -55,6 +60,18 @@ public class PersonValidator extends ObjectValidator implements Validator<Person
    */
   private boolean isValidOrganization(Organization o) {
     return !StringHelper.isNullOrEmptyTrim(o.getName());
+  }
+
+  /**
+   * True if ORCID is valid
+   *
+   * @param p
+   * @return
+   */
+  private boolean isValidORCID(Person p) {
+    String ORCID_STRING = "(\\d{4}-){3}\\d{3}[\\dX]";
+    final Pattern orcidPattern = Pattern.compile(ORCID_STRING);
+    return orcidPattern.matcher(p.getOrcid()).matches();
   }
 
 }

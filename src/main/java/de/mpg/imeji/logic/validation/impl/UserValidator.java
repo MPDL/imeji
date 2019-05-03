@@ -1,10 +1,12 @@
 package de.mpg.imeji.logic.validation.impl;
 
 import java.util.HashSet;
+import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -48,9 +50,21 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
       exception = new UnprocessableError("error_user_organization_unfilled", exception);
     }
 
+    if (user.getPerson().getOrcid() != null && !user.getPerson().getOrcid().isBlank()) {
+      if (!isValidORCID(user.getPerson())) {
+        exception = new UnprocessableError("error_orcid_format", exception);
+      }
+    }
+
     if (exception.hasMessages()) {
       throw exception;
     }
+  }
+
+  private boolean isValidORCID(Person p) {
+    String ORCID_STRING = "(\\d{4}-){3}\\d{3}[\\dX]";
+    final Pattern orcidPattern = Pattern.compile(ORCID_STRING);
+    return orcidPattern.matcher(p.getOrcid()).matches();
   }
 
   /**

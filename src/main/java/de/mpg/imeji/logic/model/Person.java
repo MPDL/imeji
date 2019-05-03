@@ -31,6 +31,8 @@ public class Person implements Cloneable, Serializable {
   private String identifier;
   @j2jLiteral("http://imeji.org/terms/position")
   private int pos = 0;
+  @j2jLiteral("http://imeji.org/terms/orcid")
+  private String orcid;
   @j2jList("http://purl.org/escidoc/metadata/profiles/0.1/organizationalunit")
   protected Collection<Organization> organizations = new ArrayList<Organization>();
 
@@ -78,6 +80,14 @@ public class Person implements Cloneable, Serializable {
     this.pos = pos;
   }
 
+  public String getOrcid() {
+    return orcid;
+  }
+
+  public void setOrcid(String orcid) {
+    this.orcid = orcid;
+  }
+
   public void setId(URI id) {
     this.id = id;
   }
@@ -122,6 +132,9 @@ public class Person implements Cloneable, Serializable {
       clone.organizations.add(org.clone());
     }
     clone.pos = this.pos;
+    if (orcid != null && !"".equals(orcid)) {
+      clone.orcid = this.orcid;
+    }
     return clone;
   }
 

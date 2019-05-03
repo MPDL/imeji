@@ -54,6 +54,7 @@ public class CollectionItemsBean extends ItemsBean {
   private LicenseEditor licenseEditor;
   private String descriptionShort;
   private static final int DESCRIPTION_MAX_SIZE = 330;
+  private static final String ORCID_URI = "https://orcid.org/";
 
   /**
    * Initialize the bean
@@ -78,6 +79,7 @@ public class CollectionItemsBean extends ItemsBean {
       for (Person p : collection.getPersons()) {
 
         String personString = p.getCompleteName() + " (" + p.getOrganizationString() + ")";
+
         if (sb.length() != 0) {
           sb.append(", ");
         }
@@ -223,6 +225,10 @@ public class CollectionItemsBean extends ItemsBean {
     final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
     return authors + (collection.getStatus().equals(Status.RELEASED) ? " (" + collection.getVersionDate().get(Calendar.YEAR) + ")" : "")
         + ". " + collection.getTitle() + ". " + Imeji.CONFIG.getDoiPublisher() + ". <a href=\"" + url + "\">" + url + "</a>";
+  }
+
+  public static String getOrcidUri() {
+    return ORCID_URI;
   }
 
   /**

@@ -103,6 +103,9 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     validateOrgsName(p.getOrganizations());
     if (!isNullOrEmpty(p.getFamilyName().trim())) {
       if (!p.getOrganizations().isEmpty()) {
+        if (!p.getOrcid().isBlank() && !validateORCIDString(p.getOrcid())) {
+          exception = new UnprocessableError("error_orcid_format", exception);
+        }
         return true;
       } else {
         exception = new UnprocessableError("error_author_need_one_organization", exception);
@@ -186,6 +189,22 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     }
 
     return true;
+  }
+
+  /**
+   * Validate a ORCID number
+   * 
+   * @param orcid
+   * @return number is valid or not
+   */
+  private boolean validateORCIDString(String orcid) {
+    String ORCID_STRING = "(\\d{4}-){3}\\d{3}[\\dX]";
+    final Pattern orcidPattern = Pattern.compile(ORCID_STRING);
+    if (!orcid.isEmpty()) {
+      return orcidPattern.matcher(orcid).matches();
+    } else {
+      return false;
+    }
   }
 
   private void setException(UnprocessableError e) {
