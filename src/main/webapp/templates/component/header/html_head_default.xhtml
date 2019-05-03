@@ -37,4 +37,9 @@
             <link type="text/css" rel="stylesheet" href="#{Configuration.alternativeCss}" id="themeDefault"/>
         </ui:fragment>
     </ui:fragment>
+   <h:outputScript library="javax.faces" name="jsf.js"/>
+   <h:outputScript library="js" name="default.js" target="body"/>
+    <script src="#{Navigation.applicationUrl}resources/jquery/jquery-1.11.1.min.js"/>
+    <script src="#{Navigation.applicationUrl}resources/jquery/ui/1.10.4/jquery-ui.min.js" />
+    <script src="#{Navigation.applicationUrl}resources/js/autocomplete.js" />
 </ui:composition>

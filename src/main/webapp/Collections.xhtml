@@ -31,6 +31,6 @@
 			label="#{lbl.search_for} #{lbl.collections}" />
 	</ui:define>
 	<ui:define name="imageLazyLoading">
- 		<script src="#{Navigation.applicationUrl}resources/js/jquery.lazyloadxt.min.js" />
+	<h:outputScript library="js" name="jquery.lazyloadxt.min.js" target="head"/>
  	</ui:define>
 </ui:composition>
