@@ -4,21 +4,27 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:composite="http://java.sun.com/jsf/composite"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
-	
-	<composite:interface>
-		<composite:attribute name="person" type="java.lang.Object" required="true" shortDescription="@type: A Person"/>
-		<composite:attribute name="bean" type="java.lang.Object" required="true" shortDescription="@type: The parent bean"/>
-		<composite:attribute name="position" type="Integer" required="true" shortDescription="@type: The position of the person if included in a list"/>
-		<composite:attribute name="userSource" type="String" required="false" default="#{Configuration.autoSuggestForUsers}"/>
-		<composite:attribute name="orgsSource" type="String" required="false" default="#{Configuration.autosuggestForOrganizations}"/>
-		<composite:attribute name="containerId" type="java.lang.String"/>
-	</composite:interface>
-	
-	<composite:implementation>
-		<ui:param name="containerId" value="#{empty cc.attrs.containerId ? '@form' : cc.attrs.containerId}"/>
-		
-		<ui:fragment rendered="#{not empty cc.attrs.userSource}">
-			<script>
+
+<composite:interface>
+	<composite:attribute name="person" type="java.lang.Object"
+		required="true" shortDescription="@type: A Person" />
+	<composite:attribute name="bean" type="java.lang.Object"
+		required="true" shortDescription="@type: The parent bean" />
+	<composite:attribute name="position" type="Integer" required="true"
+		shortDescription="@type: The position of the person if included in a list" />
+	<composite:attribute name="userSource" type="String" required="false"
+		default="#{Configuration.autoSuggestForUsers}" />
+	<composite:attribute name="orgsSource" type="String" required="false"
+		default="#{Configuration.autosuggestForOrganizations}" />
+	<composite:attribute name="containerId" type="java.lang.String" />
+</composite:interface>
+
+<composite:implementation>
+	<ui:param name="containerId"
+		value="#{empty cc.attrs.containerId ? '@form' : cc.attrs.containerId}" />
+
+	<ui:fragment rendered="#{not empty cc.attrs.userSource}">
+		<script>
 				var userSource;
 				function setUserSource(src) {
 					userSource = src;
@@ -54,9 +60,9 @@
 					});
 				});
 			</script>
-		</ui:fragment>
-		<ui:fragment rendered="#{not empty cc.attrs.orgsSource}">
-			<script>
+	</ui:fragment>
+	<ui:fragment rendered="#{not empty cc.attrs.orgsSource}">
+		<script>
 				var orgaSource;
 				function setOrgaSource(src) {
 					orgaSource = src;
@@ -90,69 +96,115 @@
 					});
 				});
 			</script>
-		</ui:fragment>
-		
-		<!-- Person -->
-		<h:inputText id="inputPersonURI" styleClass="input_hidden_person_uri imj_noDisplay" value="#{PersonBean.personURI}" valueChangeListener="#{PersonBean.personListener}"/>
-	
-		<h:commandButton id="changePersonButton" styleClass="button_change_person imj_noDisplay" action="#{PersonBean.changePerson(cc.attrs.bean, cc.attrs.position)}">
-			<f:ajax render="#{containerId}" execute="#{containerId}"/>
-		</h:commandButton>
-		
-		<div class="imj_metadataSet">
-			<div class="imj_metadataLabel">
-				<h:outputText value="#{lbl.family_name} *"/>
-				<span class="imj_noDisplay">: </span>
+	</ui:fragment>
+
+	<!-- Person -->
+	<h:inputText id="inputPersonURI"
+		styleClass="input_hidden_person_uri imj_noDisplay"
+		value="#{PersonBean.personURI}"
+		valueChangeListener="#{PersonBean.personListener}" />
+
+	<h:commandButton id="changePersonButton"
+		styleClass="button_change_person imj_noDisplay"
+		action="#{PersonBean.changePerson(cc.attrs.bean, cc.attrs.position)}">
+		<f:ajax render="#{containerId}" execute="#{containerId}" />
+	</h:commandButton>
+
+	<div class="imj_metadataSet">
+		<div class="imj_metadataLabel">
+			<h:outputText value="#{lbl.family_name} *" />
+			<span class="imj_noDisplay">: </span>
+		</div>
+		<div class="imj_metadataValue">
+			<div class="imj_metadataValueEntry">
+				<h:inputText id="inputFamilyNameText"
+					styleClass="imj_admindataEdit autocomplete_person"
+					value="#{cc.attrs.person.familyName}"
+					onfocus="setUserSource('#{cc.attrs.userSource}')"
+					rendered="#{not empty cc.attrs.userSource}" />
+				<h:inputText id="inputFamilyNameText1"
+					styleClass="imj_admindataEdit autocomplete_person"
+					value="#{cc.attrs.person.familyName}"
+					rendered="#{empty cc.attrs.userSource}" />
 			</div>
-			<div class="imj_metadataValue">
-				<div class="imj_metadataValueEntry">
-					<h:inputText id="inputFamilyNameText" styleClass="imj_admindataEdit autocomplete_person" value="#{cc.attrs.person.familyName}" onfocus="setUserSource('#{cc.attrs.userSource}')" rendered="#{not empty cc.attrs.userSource}"/>
-					<h:inputText id="inputFamilyNameText1" styleClass="imj_admindataEdit autocomplete_person" value="#{cc.attrs.person.familyName}" rendered="#{empty cc.attrs.userSource}"/>
+		</div>
+	</div>
+	<div class="imj_metadataSet">
+		<div class="imj_metadataLabel">
+			<h:outputText value="#{lbl.first_name}" />
+			<span class="imj_noDisplay">: </span>
+		</div>
+		<div class="imj_metadataValue">
+			<div class="imj_metadataValueEntry">
+				<h:inputText id="inputGiveNameText" styleClass="imj_admindataEdit"
+					value="#{cc.attrs.person.givenName}" />
+			</div>
+		</div>
+	</div>
+	<ui:repeat var="org" value="#{cc.attrs.person.organizations}"
+		varStatus="index">
+		<div>
+			<h:inputText id="inputOrgaURI"
+				styleClass="input_hidden_orga_uri imj_noDisplay"
+				value="#{PersonBean.orgaURI}"
+				valueChangeListener="#{PersonBean.orgaListener}"
+				onfocus="setOrgaSource('#{cc.attrs.orgsSource}');"
+				rendered="#{cc.attrs.orgsSource != ''}" />
+			<h:inputText id="inputOrgaURI1"
+				styleClass="input_hidden_orga_uri imj_noDisplay"
+				value="#{PersonBean.orgaURI}"
+				valueChangeListener="#{PersonBean.orgaListener}"
+				rendered="#{cc.attrs.orgsSource == ''}" />
+
+			<h:commandButton id="changeOrgaButton"
+				styleClass="button_change_button imj_noDisplay"
+				action="#{PersonBean.changeOrga(cc.attrs.bean, cc.attrs.position,  index.index)}">
+				<f:ajax render="#{containerId}" execute="#{containerId}" />
+			</h:commandButton>
+
+			<div class="imj_metadataSet">
+				<div class="imj_metadataLabel">
+					<h:outputText value="#{lbl.organization}" />
+					<h:outputText value="*" rendered="#{index.index == 0}" />
+				</div>
+				<div class="imj_metadataValue">
+					<div class="imj_metadataValueEntry">
+						<h:inputText id="inputOrgaName"
+							styleClass="imj_admindataEdit autocomplete_org"
+							value="#{org.name}"
+							onfocus="setOrgaSource('#{cc.attrs.orgsSource}');"
+							rendered="#{cc.attrs.orgsSource != ''}" />
+						<h:inputText id="inputOrgaName1"
+							styleClass="imj_admindataEdit autocomplete_org"
+							value="#{org.name}" rendered="#{cc.attrs.orgsSource == ''}" />
+					</div>
+					<span class="imj_inlineButtonGroup"> <h:commandLink
+							styleClass="fa fa-plus-square-o" title="#{lbl.add_organization}"
+							action="#{PersonBean.addOrganization(index.index + 1)}"
+							html5:data-loader="false">
+							<f:ajax execute="#{containerId}" render="#{containerId}" />
+						</h:commandLink> <h:commandLink styleClass="fa fa-minus-square-o"
+							title="#{lbl.remove_organization}"
+							action="#{PersonBean.removeOrganization(index.index)}"
+							html5:data-loader="false">
+							<f:ajax execute="#{containerId}" render="#{containerId}" />
+						</h:commandLink>
+					</span>
 				</div>
 			</div>
 		</div>
-		<div class="imj_metadataSet">
-			<div class="imj_metadataLabel">
-				<h:outputText value="#{lbl.first_name}"/>
-				<span class="imj_noDisplay">: </span>
-			</div>
-			<div class="imj_metadataValue">
-				<div class="imj_metadataValueEntry">
-					<h:inputText id="inputGiveNameText" styleClass="imj_admindataEdit" value="#{cc.attrs.person.givenName}"/>
-				</div>
+	</ui:repeat>
+	<div class="imj_metadataSet">
+		<div class="imj_metadataLabel">
+			<h:outputText value="ORCID" />
+			<span class="imj_noDisplay">: </span>
+		</div>
+		<div class="imj_metadataValue">
+			<div class="imj_metadataValueEntry">
+				<h:inputText id="inputOrcidText" styleClass="imj_admindataEdit"
+					value="#{cc.attrs.person.orcid}" />
 			</div>
 		</div>
-		<ui:repeat var="org" value="#{cc.attrs.person.organizations}" varStatus="index">
-			<div>
-				<h:inputText id="inputOrgaURI" styleClass="input_hidden_orga_uri imj_noDisplay" value="#{PersonBean.orgaURI}" valueChangeListener="#{PersonBean.orgaListener}" onfocus="setOrgaSource('#{cc.attrs.orgsSource}');" rendered="#{cc.attrs.orgsSource != ''}"/>
-				<h:inputText id="inputOrgaURI1" styleClass="input_hidden_orga_uri imj_noDisplay" value="#{PersonBean.orgaURI}" valueChangeListener="#{PersonBean.orgaListener}" rendered="#{cc.attrs.orgsSource == ''}"/>
-	
-				<h:commandButton id="changeOrgaButton" styleClass="button_change_button imj_noDisplay" action="#{PersonBean.changeOrga(cc.attrs.bean, cc.attrs.position,  index.index)}">
-					<f:ajax render="#{containerId}" execute="#{containerId}"/>
-				</h:commandButton>
-			
-				<div class="imj_metadataSet">
-					<div class="imj_metadataLabel">
-						<h:outputText value="#{lbl.organization}"/>
-						<h:outputText value="*" rendered="#{index.index == 0}"/>
-					</div>
-					<div class="imj_metadataValue">
-						<div class="imj_metadataValueEntry">
-							<h:inputText id="inputOrgaName" styleClass="imj_admindataEdit autocomplete_org" value="#{org.name}" onfocus="setOrgaSource('#{cc.attrs.orgsSource}');" rendered="#{cc.attrs.orgsSource != ''}"/>
-							<h:inputText id="inputOrgaName1" styleClass="imj_admindataEdit autocomplete_org" value="#{org.name}" rendered="#{cc.attrs.orgsSource == ''}"/>
-						</div>
-						 <span class="imj_inlineButtonGroup">
-							<h:commandLink styleClass="fa fa-plus-square-o"  title="#{lbl.add_organization}" action="#{PersonBean.addOrganization(index.index + 1)}" html5:data-loader="false">
-								<f:ajax execute="#{containerId}" render="#{containerId}"/>
-							</h:commandLink>
-							<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_organization}" action="#{PersonBean.removeOrganization(index.index)}" html5:data-loader="false">
-								<f:ajax execute="#{containerId}" render="#{containerId}"/>
-							</h:commandLink>
-						</span>
-					</div>
-				</div>
-			</div>
-		</ui:repeat>
-			
-	</composite:implementation>
+	</div>
+</composite:implementation>
 </html>
