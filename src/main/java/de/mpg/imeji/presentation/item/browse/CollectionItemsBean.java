@@ -323,5 +323,5 @@ public class CollectionItemsBean extends ItemsBean {
   public void setAuthorsList(List<String> authorsList) {
     this.authorsList = authorsList;
   }
-  
+
 }
