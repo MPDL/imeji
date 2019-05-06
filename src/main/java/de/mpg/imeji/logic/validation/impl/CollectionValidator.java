@@ -103,7 +103,7 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     validateOrgsName(p.getOrganizations());
     if (!isNullOrEmpty(p.getFamilyName().trim())) {
       if (!p.getOrganizations().isEmpty()) {
-        if (!p.getOrcid().isBlank() && !validateORCIDString(p.getOrcid())) {
+        if (p.getOrcid()!=null && !p.getOrcid().isBlank() && !validateORCIDString(p.getOrcid())) {
           exception = new UnprocessableError("error_orcid_format", exception);
         }
         return true;
