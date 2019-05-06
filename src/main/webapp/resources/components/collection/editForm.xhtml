@@ -62,10 +62,11 @@
 			</h:panelGroup>
 			
 			<h:panelGroup id="additionalInfos">
+				
 				<!-- 
-				<div class="imj_sectionHeadline">
+				<h:panelGroup class="imj_sectionHeadline" rendered="#{empty Configuration.collectionMetadataSuggestionsAsList}">
 					<h4>#{lbl.colUtil}</h4>
-				</div>
+				</h:panelGroup>
 				-->
 			
 				
@@ -101,10 +102,10 @@
 						<h:outputText styleClass="imj_metadataLabel" rendered="#{Configuration.collectionMetadataSuggestionsPreselectAsList.contains(info.label)}" value="#{info.label}"/>
 						
 						
-						<h:panelGroup class="imj_metadataLabel" rendered="#{not Configuration.collectionMetadataSuggestionsPreselectAsList.contains(info.label)}">
+						<h:panelGroup styleClass="imj_metadataLabel" rendered="#{not Configuration.collectionMetadataSuggestionsPreselectAsList.contains(info.label)}">
 							
-							<h:outputText styleClass="imj_metadataLabel" value="#{lbl.collection_metadata_additional}" /><br/>
-							<h:inputText id="inputInfoLabel" styleClass="#{not empty Configuration.collectionMetadataSuggestionsAsList ? 'imj_comboBox' : ''}"  value="#{info.label}" html5:placeholder="#{not empty Configuration.collectionMetadataSuggestionsAsList ? lbl.placeholder_additional_info_label : ''}" html5:data-source='#{UtilBean.toJavascriptArray(Configuration.collectionMetadataSuggestionsAsList)}' />
+							<h:outputText styleClass="imj_metadataLabel" value="#{empty Configuration.collectionMetadataSuggestionsAsList ? lbl.colUtil : lbl.collection_metadata_additional}"/><br/>
+							<h:inputText id="inputInfoLabel" styleClass="#{not empty Configuration.collectionMetadataSuggestionsAsList ? 'imj_comboBox' : 'imj_metadataLabel'}"  value="#{info.label}" html5:placeholder="#{not empty Configuration.collectionMetadataSuggestionsAsList ? lbl.placeholder_additional_info_label : ''}" html5:data-source='#{UtilBean.toJavascriptArray(Configuration.collectionMetadataSuggestionsAsList)}' />
 						</h:panelGroup>
 					
 						<!-- <label class="imj_metadataLabel">#{lbl.text}</label>-->
