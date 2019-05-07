@@ -50,7 +50,7 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     if (isNullOrEmpty(c.getTitle())) {
       setException(new UnprocessableError("error_collection_need_title", getException()));
     }
-    if (Imeji.CONFIG.getCollectionTypes() != null && !Imeji.CONFIG.getCollectionTypes().isBlank()
+    if (!c.isSubCollection() && Imeji.CONFIG.getCollectionTypes() != null && !Imeji.CONFIG.getCollectionTypes().isBlank()
         && (c.getTypes() == null || c.getTypes().isEmpty())) {
       setException(new UnprocessableError("error_collection_need_types", getException()));
     }
@@ -103,7 +103,7 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     validateOrgsName(p.getOrganizations());
     if (!isNullOrEmpty(p.getFamilyName().trim())) {
       if (!p.getOrganizations().isEmpty()) {
-        if (p.getOrcid()!=null && !p.getOrcid().isBlank() && !validateORCIDString(p.getOrcid())) {
+        if (p.getOrcid() != null && !p.getOrcid().isBlank() && !validateORCIDString(p.getOrcid())) {
           exception = new UnprocessableError("error_orcid_format", exception);
         }
         return true;
