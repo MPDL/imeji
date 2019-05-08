@@ -99,7 +99,7 @@ public class CollectionPostIndexScript {
     List<String> ids = null;
     try {
       resp = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
-      ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits()));
+      ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits().value));
       for (final SearchHit hit : resp.getHits()) {
         ids.add(hit.getId());
       }

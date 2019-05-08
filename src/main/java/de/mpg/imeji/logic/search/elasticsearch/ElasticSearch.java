@@ -484,7 +484,7 @@ public class ElasticSearch implements Search {
    */
   private SearchResult getSearchResultFromElasticSearchResponse(SearchResponse searchResponse, SearchQuery query) {
 
-    final int totalNumberOfHitsForSearchQuery = Math.toIntExact(searchResponse.getHits().getTotalHits());
+    final int totalNumberOfHitsForSearchQuery = Math.toIntExact(searchResponse.getHits().getTotalHits().value);
     final List<String> ids = new ArrayList<String>(totalNumberOfHitsForSearchQuery);
     for (final SearchHit hit : searchResponse.getHits()) {
       ids.add(hit.getId());
@@ -499,17 +499,17 @@ public class ElasticSearch implements Search {
 
   private long getTotalNumberOfRecords(SearchResponse resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals("all")).findAny().map(f -> f.getValues().get(0).getCount())
-        .orElse(resp.getHits().getTotalHits());
+        .orElse(resp.getHits().getTotalHits().value);
   }
 
   private long getNumberOfItems(SearchResponse resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals(Facet.ITEMS)).findAny().map(f -> f.getValues().get(0).getCount())
-        .orElse(resp.getHits().getTotalHits());
+        .orElse(resp.getHits().getTotalHits().value);
   }
 
   private long getNumberOfItemsOfCollection(SearchResponse resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals(Facet.COLLECTION_ITEMS)).findAny().map(f -> f.getValues().get(0).getCount())
-        .orElse(resp.getHits().getTotalHits());
+        .orElse(resp.getHits().getTotalHits().value);
   }
 
   private long getNumberOfSubcollections(SearchResponse resp, List<FacetResult> facets) {
