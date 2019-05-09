@@ -9,6 +9,9 @@ import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.elasticsearch.action.search.ClearScrollRequest;
+import org.elasticsearch.action.search.ClearScrollRequestBuilder;
+import org.elasticsearch.action.search.ClearScrollResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -252,6 +255,15 @@ public class ElasticSearch implements Search {
         retrievedIDs = scrollWithSizeUpperBound(searchResponse, from, amountOfDocumentsToRetrieve);
       }
       result.setResults(retrievedIDs);
+
+      //Clear scroll
+      if (searchResponse.getScrollId() != null) {
+        ClearScrollRequest csr = new ClearScrollRequest();
+        csr.addScrollId(searchResponse.getScrollId());
+        ClearScrollResponse clearScrollResp = ElasticService.getClient().clearScroll(csr, RequestOptions.DEFAULT);
+      }
+
+
       return result;
     } catch (IOException e) {
       LOGGER.error("Error during search: ", e);
