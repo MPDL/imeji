@@ -2,25 +2,19 @@ package de.mpg.imeji.logic.search.elasticsearch;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.action.search.ClearScrollRequest;
-import org.elasticsearch.action.search.ClearScrollRequestBuilder;
 import org.elasticsearch.action.search.ClearScrollResponse;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
@@ -28,10 +22,8 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregator;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.core.facade.SearchAndRetrieveFacade;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.SearchIndexer;
@@ -40,14 +32,12 @@ import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticQueryFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.AggregationsParser;
-import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
-import de.mpg.imeji.logic.security.user.UserService;
 
 /**
  * {@link Search} implementation for ElasticSearch
@@ -430,8 +420,7 @@ public class ElasticSearch implements Search {
       try {
         scrollSearchResponse = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
       } catch (IOException e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
+        LOGGER.error("Error while searching", e1);
       }
       // scroll until no more hits are returned. Zero hits marks the end of the scroll
       // and the while loop
@@ -448,6 +437,17 @@ public class ElasticSearch implements Search {
           e.printStackTrace();
         }
       } while (scrollSearchResponse.getHits().getHits().length != 0);
+
+      //Clear scroll
+      if (scrollSearchResponse.getScrollId() != null) {
+        try {
+          ClearScrollRequest csr = new ClearScrollRequest();
+          csr.addScrollId(scrollSearchResponse.getScrollId());
+          ClearScrollResponse clearScrollResp = ElasticService.getClient().clearScroll(csr, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+          LOGGER.error("Error while clearing scroll request", e);
+        }
+      }
 
       if (fieldValues.size() > from) {
         // cut indices at beginning [0,from] and end [from + size, end]
