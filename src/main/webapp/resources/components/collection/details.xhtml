@@ -21,9 +21,23 @@
 		</div>
 	</ui:fragment>
 
-
-
 	<div class="imj_infodataSet">
+		<span class="imj_infodataLabel">#{lbl.authors}</span>
+		<span class="imj_infodataValue">
+			<ui:repeat value="#{cc.attrs.bean.collection.persons}" var="author">
+				<h:outputText value="#{author.completeName}  (#{author.organizationString}) " />
+				<ui:fragment rendered="#{not empty author.orcid}">
+					<a href="https://orcid.org/#{author.orcid}" target="_blank"><img style="vertical-align: text-top; height: 1.1em"
+						src="/imeji/resources/imj_iconset/orcid.png" /></a>
+				</ui:fragment>
+				<br />
+			</ui:repeat>
+		</span>
+		<span class="imj_infodataLabel">#{lbl.cite}</span>
+		<span class="imj_infodataValue">
+			<h:outputText value="#{cc.attrs.bean.citation}" escape="false" />
+		</span>
+	
 		<ui:fragment rendered="#{not empty Configuration.collectionTypes}">
 			<span class="imj_infodataLabel">#{lbl.collection_types}</span>
 			<span class="imj_infodataValue">
@@ -50,26 +64,7 @@
 				</ui:fragment>
 			</span>
 		</ui:repeat>
-		<span class="imj_infodataLabel">#{lbl.authors}</span>
-		<span class="imj_infodataValue">
-			<ui:repeat value="#{cc.attrs.bean.collection.persons}" var="author">
-				<h:outputText value="#{author.completeName}  (#{author.organizationString}) " />
-				<ui:fragment rendered="#{not empty author.orcid}">
-					<a href="https://orcid.org/#{author.orcid}" target="_blank"><img style="vertical-align: text-top; height: 1.1em"
-						src="/imeji/resources/imj_iconset/orcid.png" /></a>
-				</ui:fragment>
-				<br />
-			</ui:repeat>
-			<!-- 
-				<ui:repeat value="#{cc.attrs.bean.authorsList}" var="author">
-					#{author}<br/>
-				</ui:repeat>
-								-->
-		</span>
-		<span class="imj_infodataLabel">#{lbl.cite}</span>
-		<span class="imj_infodataValue">
-			<h:outputText value="#{cc.attrs.bean.citation}" escape="false" />
-		</span>
+		
 		<span class="imj_infodataLabel">#{lbl.colNumItems}</span>
 		<span class="imj_infodataValue">#{cc.attrs.bean.size}</span>
 		<ui:fragment rendered="#{cc.attrs.bean.collection.doi != ''}">
