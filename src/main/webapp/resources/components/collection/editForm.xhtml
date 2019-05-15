@@ -109,7 +109,7 @@
 						</h:panelGroup>
 					
 						<!-- <label class="imj_metadataLabel">#{lbl.text}</label>-->
-						<h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue" value="#{info.text}" html5:placeholder="#{lbl.placeholder_text}" />
+						<h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue" value="#{info.text}" html5:placeholder="#{cc.attrs.formularBean.getPlaceholder(info.label)}" />
 					</div>
 					<!-- 
 					<div class="imj_metadataSet">

@@ -22,7 +22,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.lucene.queryparser.flexible.standard.CommonQueryParserConfiguration;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 
@@ -128,6 +127,10 @@ public class ImejiConfiguration {
   public static final String DEFAULT_NUMBER_OF_LINES_IN_THUMBNAIL_LIST = "1,2,3,4,10,15,40";
   public static final String DEFAULT_GOOGLE_MAPS_API = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=";
   public static final String DEFAULT_CONE_AUTHORS = "http://pubman.mpdl.mpg.de/cone/persons/query?format=json&n=10&m=full&q=";
+
+  // Specific collection metadata (= ContainerAdditionalInfo), which have a validation or placeholder for their input field:
+  public static final String COLLECTION_METADATA_GEO_COORDINATES_LABEL = "Geo-coordinates";
+  public static final String COLLECTION_METADATA_ARTICLE_DOI_LABEL = "Article DOI";
 
   private String dataViewerUrl;
 

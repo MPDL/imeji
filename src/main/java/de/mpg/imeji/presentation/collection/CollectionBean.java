@@ -2,12 +2,12 @@ package de.mpg.imeji.presentation.collection;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.model.Organization;
@@ -84,6 +84,22 @@ public abstract class CollectionBean extends SuperBean {
    */
   public void removeAdditionalInfo(int pos) {
     collection.getAdditionalInformations().remove(pos);
+  }
+
+  /**
+   * Get the appropriate placeholder for an input field by its label. <br/>
+   * Used for additional informations, where only some of the additional information have a
+   * placeholder.
+   * 
+   * @param inputFiledLabel The label of the input field.
+   * @return The placeholder or an empty String if no placeholder exists.
+   */
+  public String getPlaceholder(String inputFiledLabel) {
+    if (ImejiConfiguration.COLLECTION_METADATA_GEO_COORDINATES_LABEL.equals(inputFiledLabel)) {
+      return Imeji.RESOURCE_BUNDLE.getLabel("placeholder_geocoordinates", getLocale());
+    } else {
+      return "";
+    }
   }
 
   /**

@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.model.Organization;
@@ -64,15 +65,14 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
         setException(new UnprocessableError("error_additionalinfo_need_label", getException()));
       }
 
-      if (info.getLabel().equals("Article DOI") && !isNullOrEmpty(info.getText())) {
+      if (info.getLabel().equals(ImejiConfiguration.COLLECTION_METADATA_ARTICLE_DOI_LABEL) && !isNullOrEmpty(info.getText())) {
         validateDOI(info.getText());
       }
-      /*
-      if (isNullOrEmpty(info.getText()) && isNullOrEmpty(info.getUrl())) {
-        
-        //setException(new UnprocessableError("error_additionalinfo_need_value", getException()));
+
+      if (info.getLabel().equals(ImejiConfiguration.COLLECTION_METADATA_GEO_COORDINATES_LABEL) && !isNullOrEmpty(info.getText())
+          && !validateGeoCoordinates(info.getText())) {
+        this.exception = new UnprocessableError("error_geo_coordinates_format", exception);
       }
-      */
     }
   }
 
@@ -203,6 +203,31 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     if (!orcid.isEmpty()) {
       return orcidPattern.matcher(orcid).matches();
     } else {
+      return false;
+    }
+  }
+
+  /**
+   * Validate Geo-coordinates. <br/>
+   * The Geo-coordinates String must be of the form: 'Latitude(double value from -90 to 90),
+   * Longitude(double value from -180 to 180)' e.g. 48.147870, 11.576709
+   * 
+   * @param geoCoordinates The geoCoordinates as String, containing: latitude, longitude
+   * @return geoCoordinates are valid or not
+   */
+  private boolean validateGeoCoordinates(String geoCoordinates) {
+    try {
+      String[] geoCoordinatesArray = geoCoordinates.split(",");
+
+      if (geoCoordinatesArray.length != 2) {
+        return false;
+      }
+
+      double latitude = Double.parseDouble(geoCoordinatesArray[0]);
+      double longitude = Double.parseDouble(geoCoordinatesArray[1]);
+
+      return (latitude >= -90.0 && latitude <= 90.0 && longitude >= -180.0 && longitude <= 180.0);
+    } catch (Exception e) {
       return false;
     }
   }
