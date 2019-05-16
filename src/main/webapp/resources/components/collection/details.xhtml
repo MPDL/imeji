@@ -57,7 +57,12 @@
 					</pre>
 				</ui:fragment>
 				<ui:fragment rendered="#{info.url == null || info.url == ''}">
-					<pre style="white-space: pre-line;">#{info.text}</pre>
+					<ui:fragment rendered="#{info.label == cc.attrs.bean.getArticleDoiLabel()}">
+						<a href="https://dx.doi.org/#{info.text}">#{info.text}</a>
+					</ui:fragment>
+					<ui:fragment rendered="#{info.label != cc.attrs.bean.getArticleDoiLabel()}">
+						<pre style="white-space: pre-line;">#{info.text}</pre>
+					</ui:fragment>
 				</ui:fragment>
 				<ui:fragment rendered="#{info.text == null || info.text == ''}">
 					<a href="#{info.url}" target="_blank">#{info.url}</a>
@@ -70,7 +75,7 @@
 		<ui:fragment rendered="#{cc.attrs.bean.collection.doi != ''}">
 			<span class="imj_infodataLabel">#{lbl.doi}</span>
 			<span class="imj_infodataValue">
-				<a href="http://dx.doi.org/#{cc.attrs.bean.collection.doi}" target="_blank">https://dx.doi.org/#{cc.attrs.bean.collection.doi}</a>
+				<a href="https://dx.doi.org/#{cc.attrs.bean.collection.doi}" target="_blank">https://dx.doi.org/#{cc.attrs.bean.collection.doi}</a>
 			</span>
 		</ui:fragment>
 		<span class="imj_infodataLabel">#{lbl.date_creation}</span>
