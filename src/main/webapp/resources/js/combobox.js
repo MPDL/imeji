@@ -59,7 +59,6 @@
         input.css("width","60%");
         $( "<a>" )
           .attr( "tabIndex", -1 )
-          .attr( "title", "Show All Items" )
           .addClass("imj_submitButton")
           .tooltip()
           .insertAfter( this.input )
