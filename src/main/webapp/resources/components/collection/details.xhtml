@@ -58,7 +58,7 @@
 				</ui:fragment>
 				<ui:fragment rendered="#{info.url == null || info.url == ''}">
 					<ui:fragment rendered="#{info.label == cc.attrs.bean.getArticleDoiLabel()}">
-						<a href="https://dx.doi.org/#{info.text}">#{info.text}</a>
+						<a href="https://dx.doi.org/#{info.text}" target="_blank">#{info.text}</a>
 					</ui:fragment>
 					<ui:fragment rendered="#{info.label != cc.attrs.bean.getArticleDoiLabel()}">
 						<pre style="white-space: pre-line;">#{info.text}</pre>

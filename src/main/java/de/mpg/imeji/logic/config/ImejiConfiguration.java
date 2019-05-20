@@ -128,7 +128,7 @@ public class ImejiConfiguration {
   public static final String DEFAULT_GOOGLE_MAPS_API = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=";
   public static final String DEFAULT_CONE_AUTHORS = "http://pubman.mpdl.mpg.de/cone/persons/query?format=json&n=10&m=full&q=";
 
-  // Specific collection metadata (= ContainerAdditionalInfo), which have a validation or placeholder for their input field:
+  // Specific collection metadata (= ContainerAdditionalInfo), which have a additional handling (validation, placeholder, ...):
   public static final String COLLECTION_METADATA_GEO_COORDINATES_LABEL = "Geo-coordinates";
   public static final String COLLECTION_METADATA_ARTICLE_DOI_LABEL = "Article DOI";
 
