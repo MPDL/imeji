@@ -209,25 +209,41 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
 
   /**
    * Validate Geo-coordinates. <br/>
-   * The Geo-coordinates String must be of the form: 'Latitude(double value from -90 to 90),
+   * This method checks weather the string contains latitude and longitude as decimal numbers,
+   * separated by a comma. <br/>
+   * 
+   * The Geo-coordinates must be of the form: 'Latitude(double value from -90 to 90),
    * Longitude(double value from -180 to 180)' e.g. 48.147870, 11.576709
    * 
    * @param geoCoordinates The geoCoordinates as String, containing: latitude, longitude
    * @return geoCoordinates are valid or not
    */
   private boolean validateGeoCoordinates(String geoCoordinates) {
+    if (isNullOrEmpty(geoCoordinates)) {
+      return false;
+    }
+
+    //only the following characters are allowed: +, -, numbers, commas, points and whitespaces
+    String matchingCharacters = "^[+-[0-9]\\,\\.\\s]*$";
+    if (!Pattern.matches(matchingCharacters, geoCoordinates)) {
+      return false;
+    }
+
+    //only two values separated by one comma are allowed
+    String[] geoCoordinatesArray = geoCoordinates.split(",");
+    if (geoCoordinatesArray.length != 2) {
+      return false;
+    }
+
     try {
-      String[] geoCoordinatesArray = geoCoordinates.split(",");
-
-      if (geoCoordinatesArray.length != 2) {
-        return false;
-      }
-
+      //only decimal numbers for latitude and longitude are allowed
       double latitude = Double.parseDouble(geoCoordinatesArray[0]);
       double longitude = Double.parseDouble(geoCoordinatesArray[1]);
 
+      //latitude and longitude must match the geographic coordinates range
       return (latitude >= -90.0 && latitude <= 90.0 && longitude >= -180.0 && longitude <= 180.0);
     } catch (Exception e) {
+      //Strings could not be parsed to double -> Exception -> return false
       return false;
     }
   }
