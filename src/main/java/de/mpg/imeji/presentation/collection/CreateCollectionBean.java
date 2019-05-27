@@ -101,7 +101,11 @@ public class CreateCollectionBean extends CollectionBean {
           pos2++;
         }
       }
-      setCollection(collectionController.create(getCollection(), getSessionUser()));
+      // add additional information (i.e. created, modified) and write to database
+      collectionController.create(getCollection(), getSessionUser());
+      // read created object from database
+      CollectionImeji createdCollection = collectionController.retrieve(getCollection().getId(), getSessionUser());
+      setCollection(createdCollection);
       setId(getCollection().getIdString());
       if (containerEditorSession.getUploadedLogoPath() != null) {
         collectionController.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
