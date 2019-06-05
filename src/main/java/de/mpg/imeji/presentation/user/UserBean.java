@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ReloadBeforeSaveException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.Organization;
@@ -93,22 +94,29 @@ public class UserBean extends SuperBean {
   }
 
   /**
-   * Generate a new API Key, and update the user
+   * Generate a new API Key, and update the user. Used in User.xhtml
    *
    * @throws ImejiException
    * @throws NoSuchAlgorithmException
    * @throws UnsupportedEncodingException
    * @throws JoseException
    */
-  public void generateNewApiKey() throws ImejiException {
+  public void generateNewApiKey() {
     if (user != null) {
       try {
         user.setApiKey(APIKeyAuthentication.generateKey(user.getId(), Integer.MAX_VALUE));
+        user = new UserService().update(user, getSessionUser());
       } catch (final JoseException e) {
-        LOGGER.error("Error generating API Key", e);
-        throw new ImejiException("Error generating API Key", e);
+        LOGGER.error("Error generating API Key ", e);
+        BeanHelper.error("Error generating API Key");
+      } catch (final ReloadBeforeSaveException r) {
+        LOGGER.error("Error saving API key. User has changed in store. Please reload user and generate key again ", r);
+        BeanHelper.error("Error saving API key. User has changed in store. Please generate key one more time.");
+        reloadPage();
+      } catch (ImejiException ie) {
+        LOGGER.error("Error generating API Key ", ie);
+        BeanHelper.error("Error generating API Key");
       }
-      new UserService().update(user, getSessionUser());
     }
   }
 
@@ -181,15 +189,19 @@ public class UserBean extends SuperBean {
    */
   public void updateUser() throws ImejiException {
     if (user != null) {
-      final UserService controller = new UserService();
+      final UserService userService = new UserService();
       user.setQuota(QuotaUtil.getQuotaInBytes(quota.getQuota()));
       try {
-        controller.update(user, getSessionUser());
+        user = userService.update(user, getSessionUser());
         BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_save", getLocale()));
         reloadPage();
       } catch (final UnprocessableError e) {
         BeanHelper.error(e, getLocale());
         LOGGER.error("Error updating user", e);
+      } catch (final ReloadBeforeSaveException rbse) {
+        BeanHelper.error("Error updating user. User object has been changed in database. Please try again.");
+        LOGGER.error("Error updating user. User object has been changed in database.", rbse);
+        reloadPage();
       }
     }
   }

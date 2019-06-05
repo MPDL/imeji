@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.lang.reflect.Field;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
@@ -21,11 +22,13 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ActionType;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -205,25 +208,67 @@ public class UserService {
   }
 
   /**
-   * True if a user has been Modified, i.e the last modification of the user in the database is
-   * older than the last modification of the user in the session. (For instance when an object has
-   * been shared with the user).
-   *
-   * @param u
-   * @return
+   * Add one or more grants to a User object
+   * 
+   * @param userToAddGrants
+   * @param grantsToAdd
+   * @throws ImejiException
    */
-  public boolean isModified(User u) {
-    final SearchResult result = SearchFactory.create().searchString(JenaCustomQueries.selectLastModifiedDate(u.getId()), null, u, 0, 1);
-    return result.getNumberOfRecords() > 0
-        && (u.getModified() == null || DateHelper.parseDate(result.getResults().get(0)).after(u.getModified()));
+  public User addEditGrantToUser(User issuingUser, User userToAddEditGrant, Grant grantToAddEdit) throws ImejiException {
+
+    User userWithNewGrant = userToAddEditGrant;
+    try {
+      Field grantField = User.class.getDeclaredField("grants");
+      userWithNewGrant =
+          this.controller.changeElement(issuingUser, userToAddEditGrant, grantField, ActionType.ADD_OVERRIDE, grantToAddEdit);
+
+    } catch (NoSuchFieldException | SecurityException e) {
+      e.printStackTrace();
+    }
+    return userWithNewGrant;
   }
 
   /**
-   * Will change the lastModified date field of the user object to time stamp of now. Goal: Trigger
-   * the reload-user-mechanism, that causes the session object of a logged-in user to update itself
-   * with data from the database. See {@link SecurityFilter.isReloadUser}. Useful when a logged-in
-   * user has been added to a user group or a user's user group has gotten/lost access rights while
-   * this user is logged-in her/himself.
+   * Remove one or more grants from a User object
+   * 
+   * @param userToRemoveGrantsFrom
+   * @param grantsToRemove
+   * @throws ImejiException
+   */
+  public User removeGrantsFromUser(User issuingUser, User userToRemoveGrantsFrom, Grant grantToRemove) throws ImejiException {
+
+    User userWithoutGrant = userToRemoveGrantsFrom;
+    try {
+      Field grantField = User.class.getDeclaredField("grants");
+      userWithoutGrant = this.controller.changeElement(issuingUser, userToRemoveGrantsFrom, grantField, ActionType.REMOVE, grantToRemove);
+    } catch (NoSuchFieldException | SecurityException e) {
+      e.printStackTrace();
+    }
+    return userWithoutGrant;
+  }
+
+
+  /**
+   * True if a user object has been modified in database since it was read last. In this case the
+   * last modification date of the user in the database is younger than the last modification of the
+   * user in the session. For instance when an object has been shared with the user.
+   *
+   * @param currentUserSessionObject
+   * @return
+   */
+  public boolean hasBeenModified(User currentUserSessionObject) {
+    final SearchResult result = SearchFactory.create()
+        .searchString(JenaCustomQueries.selectLastModifiedDate(currentUserSessionObject.getId()), null, currentUserSessionObject, 0, 1);
+    return result.getNumberOfRecords() > 0 && (currentUserSessionObject.getModified() == null
+        || DateHelper.parseDate(result.getResults().get(0)).after(currentUserSessionObject.getModified()));
+  }
+
+  /**
+   * Will set the modified date field (time stamp field) of a User object to now. Goal: Trigger the
+   * reload-user-mechanism. This mechanism will update the (session's) User object of a logged-in
+   * user with it's latest version from the database. See also {@link SecurityFilter.isReloadUser}.
+   * Useful when a user who is currently logged-in has been added to a user group or a user's user
+   * group has gotten/lost access rights while this user is logged-in.
    * 
    * @param recentlyModifiedUserId The User id
    */

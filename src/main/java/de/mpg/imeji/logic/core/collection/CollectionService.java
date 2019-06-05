@@ -32,8 +32,6 @@ import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -45,7 +43,7 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
 
 /**
- * CRUD controller for {@link CollectionImeji}, plus search mehtods related to
+ * CRUD controller for {@link CollectionImeji}, plus search methods related to
  * {@link CollectionImeji}
  *
  * @author saquet (initial creation)
@@ -310,6 +308,7 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
     new MoveFacade().moveCollection(collection, parent, user, license);
   }
 
+
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, User user, int size, int offset) {
     return search.search(searchQuery, sortCri, user, null, offset, size);
@@ -338,4 +337,5 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
     indexer.indexBatch(collections);
     LOGGER.info("collections reindexed!");
   }
+
 }

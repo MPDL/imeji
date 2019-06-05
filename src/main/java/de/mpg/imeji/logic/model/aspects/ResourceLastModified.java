@@ -1,10 +1,11 @@
 package de.mpg.imeji.logic.model.aspects;
 
+import java.lang.reflect.Field;
 import java.util.Calendar;
 
 /**
  * Implement this interface for every data object in store that might be subjected to shared
- * read/write access by multiple processes (session users).
+ * read/write access by multiple processes (i.e. session users).
  * 
  * Data synchronization mechanism is as follows: Each object that is read from or written to store
  * has a time stamp that indicates the date of last modification of the object. If a process is to
@@ -37,21 +38,11 @@ public interface ResourceLastModified {
    */
   public Calendar getModified();
 
-
   /**
-   * Setter for a field that holds version information of a data object, by means of the time stamp
-   * of last modification of the data object. Whenever an object is read from database, last date of
-   * modification stored in database is saved here.
-   */
-  public void setLastTimeStampReadFromDatabase(Calendar calendar);
-
-  /**
-   * Getter for a field that holds version information of a data object, by means of the time stamp
-   * of last modification of the data object.
+   * Implementing classes: Return the field that stores the timestamp
    * 
    * @return
    */
-  public Calendar getLastTimeStampReadFromDatabase();
-
+  public Field getTimeStampField();
 
 }

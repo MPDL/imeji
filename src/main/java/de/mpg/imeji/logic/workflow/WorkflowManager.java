@@ -38,7 +38,6 @@ public class WorkflowManager {
       p.setModifiedBy(user.getId());
     }
     p.setCreated(now);
-    p.setModified(now);
     if (p.getStatus() == null) {
       p.setStatus(Status.PENDING);
     }
@@ -52,7 +51,6 @@ public class WorkflowManager {
    */
   public void prepareUpdate(Properties p, User user) {
     p.setModifiedBy(user.getId());
-    p.setModified(DateHelper.getCurrentDate());
   }
 
   /**

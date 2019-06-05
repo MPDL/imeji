@@ -259,7 +259,7 @@ public class SecurityFilter implements Filter {
    */
   private boolean isModifiedUser(User user) {
     try {
-      return new UserService().isModified(user);
+      return new UserService().hasBeenModified(user);
     } catch (final Exception e) {
       return true;
     }

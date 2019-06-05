@@ -567,6 +567,11 @@ public class ItemService extends SearchServiceAbstract<Item> {
     return new MoveFacade().moveItems(items, collection, user, license);
   }
 
+
+  public List<Item> toItemList(List<Object> objects) {
+    return this.itemController.fromObjectList(objects);
+  }
+
   /**
    * Reindex all items
    *

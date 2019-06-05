@@ -31,7 +31,11 @@ public abstract class ImejiControllerAbstract<T> {
    * @return
    */
   public T create(T t, User user) throws ImejiException {
-    return createBatch(Arrays.asList(t), user).get(0);
+    List<T> createdTypes = createBatch(Arrays.asList(t), user);
+    if (!createdTypes.isEmpty()) {
+      return createdTypes.get(0);
+    }
+    return t;
   }
 
   /**
@@ -65,7 +69,11 @@ public abstract class ImejiControllerAbstract<T> {
    * @return
    */
   public T update(T t, User user) throws ImejiException {
-    return updateBatch(Arrays.asList(t), user).get(0);
+    List<T> updatedTypes = updateBatch(Arrays.asList(t), user);
+    if (!updatedTypes.isEmpty()) {
+      return updatedTypes.get(0);
+    }
+    return t;
   }
 
   /**
@@ -124,6 +132,9 @@ public abstract class ImejiControllerAbstract<T> {
    * @return
    */
   public abstract void deleteBatch(List<T> l, User user) throws ImejiException;
+
+
+  public abstract List<T> fromObjectList(List<?> objects);
 
   /**
    * Cast a list of any Type to a list of object

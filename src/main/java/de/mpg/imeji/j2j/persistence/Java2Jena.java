@@ -5,7 +5,9 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -14,28 +16,34 @@ import org.apache.jena.Jena;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
+import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.j2j.helper.LiteralHelper;
 import de.mpg.imeji.util.LocalizedString;
 
 /**
  * Write Java objects annotated with j2jannotations as Jena {@link Resource} of {@link Literal}
- *
+ * 
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
 public class Java2Jena {
+
+
   private final Model model;
   private final LiteralHelper literalHelper;
   private static final Logger LOGGER = LogManager.getLogger(Java2Jena.class);
   private boolean lazy = false;
+
+
 
   /**
    * Construct a {@link Java2Jena} for one {@link Model}
@@ -127,6 +135,19 @@ public class Java2Jena {
       }
     }
   }
+
+  /**
+   * Delete an existing time stamp triple.
+   * Add new time stamp triple.
+   * 
+   * @param subjectURI
+   * @param predicateURI
+   * @param now
+   */
+  public void setTimestamp(String subjectURI, String predicateURI, Calendar now) {
+    this.update(subjectURI, predicateURI, now);
+  }
+
 
   /**
    * Remove only relation not defined in a lazy list

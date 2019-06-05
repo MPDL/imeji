@@ -2,6 +2,7 @@ package de.mpg.imeji.logic.notification.subscription;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,8 +30,8 @@ public class SubscriptionController extends ImejiControllerAbstract<Subscription
 
   @Override
   public List<Subscription> createBatch(List<Subscription> l, User user) throws ImejiException {
-    WRITER.create(J2JHelper.cast2ObjectList(l), user);
-    return l;
+    List<Subscription> createdSubscriptions = this.fromObjectList(WRITER.create(J2JHelper.cast2ObjectList(l), user));
+    return createdSubscriptions;
   }
 
   @Override
@@ -47,13 +48,24 @@ public class SubscriptionController extends ImejiControllerAbstract<Subscription
 
   @Override
   public List<Subscription> updateBatch(List<Subscription> l, User user) throws ImejiException {
-    WRITER.update(J2JHelper.cast2ObjectList(l), user, false);
-    return l;
+    List<Subscription> updatedSubscriptions = this.fromObjectList(WRITER.update(J2JHelper.cast2ObjectList(l), user, false));
+    return updatedSubscriptions;
   }
 
   @Override
   public void deleteBatch(List<Subscription> l, User user) throws ImejiException {
     WRITER.delete(J2JHelper.cast2ObjectList(l), user);
+  }
+
+  @Override
+  public List<Subscription> fromObjectList(List<?> objectList) {
+    List<Subscription> subscriptionList = new ArrayList<Subscription>(0);
+    if (!objectList.isEmpty()) {
+      if (objectList.get(0) instanceof Subscription) {
+        subscriptionList = (List<Subscription>) objectList;
+      }
+    }
+    return subscriptionList;
   }
 
   /**
@@ -65,5 +77,7 @@ public class SubscriptionController extends ImejiControllerAbstract<Subscription
   private List<Subscription> emtyListFactory(List<String> ids) {
     return ids.stream().map(id -> new SubscriptionFactory().setId(URI.create(id)).build()).collect(Collectors.toList());
   }
+
+
 
 }

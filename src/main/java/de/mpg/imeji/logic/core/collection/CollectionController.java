@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.core.collection;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,11 +31,11 @@ class CollectionController extends ImejiControllerAbstract<CollectionImeji> {
     for (final CollectionImeji c : l) {
       prepareCreate(c, user);
     }
-    WRITER.create(toObjectList(l), user);
+    List<CollectionImeji> createdCollections = this.fromObjectList(WRITER.create(toObjectList(l), user));
     for (final CollectionImeji c : l.stream().filter(c -> !c.isSubCollection()).collect(Collectors.toList())) {
       updateCreatorGrants(user, c.getId().toString());
     }
-    return l;
+    return createdCollections;
   }
 
   @Override
@@ -56,14 +57,28 @@ class CollectionController extends ImejiControllerAbstract<CollectionImeji> {
     for (final CollectionImeji c : l) {
       prepareUpdate(c, user);
     }
-    WRITER.update(toObjectList(l), user, true);
-    return l;
+    List<CollectionImeji> updatedCollections = this.fromObjectList(WRITER.update(toObjectList(l), user, true));
+    return updatedCollections;
   }
 
   @Override
   public void deleteBatch(List<CollectionImeji> l, User user) throws ImejiException {
     WRITER.delete(toObjectList(l), user);
   }
+
+
+  @Override
+  public List<CollectionImeji> fromObjectList(List<?> objectList) {
+    List<CollectionImeji> collectionList = new ArrayList<CollectionImeji>(0);
+    if (!objectList.isEmpty()) {
+      if (objectList.get(0) instanceof CollectionImeji) {
+        collectionList = (List<CollectionImeji>) objectList;
+      }
+    }
+    return collectionList;
+  }
+
+
 
   /**
    * Update the grants of the user who created the objects
@@ -73,8 +88,9 @@ class CollectionController extends ImejiControllerAbstract<CollectionImeji> {
    * @throws ImejiException
    */
   private void updateCreatorGrants(User user, String uri) throws ImejiException {
-    user.getGrants().add(new Grant(GrantType.ADMIN, uri).toGrantString());
-    new UserService().update(user, Imeji.adminUser);
+    user = new UserService().addEditGrantToUser(Imeji.adminUser, user, new Grant(GrantType.ADMIN, uri));
   }
+
+
 
 }

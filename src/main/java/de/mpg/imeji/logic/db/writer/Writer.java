@@ -1,9 +1,10 @@
 package de.mpg.imeji.logic.db.writer;
 
-import java.util.List;
 
+import java.util.List;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
 
 /**
  * Write imeji objects in the persistence layer. Important: {@link Writer} doens't check
@@ -21,7 +22,7 @@ public interface Writer {
    * @param user
    * @throws ImejiException
    */
-  public void create(List<Object> objects, User user) throws ImejiException;
+  public List<Object> create(List<Object> objects, User user) throws ImejiException;
 
   /**
    * Delete a list of objects
@@ -39,7 +40,7 @@ public interface Writer {
    * @param user
    * @throws ImejiException
    */
-  public void update(List<Object> objects, User user) throws ImejiException;
+  public List<Object> update(List<Object> objects, User user) throws ImejiException;
 
   /**
    * Lazy Update a list of objects (don't update lazy list)
@@ -48,5 +49,28 @@ public interface Writer {
    * @param user
    * @throws ImejiException
    */
-  public void updateLazy(List<Object> objects, User user) throws ImejiException;
+  public List<Object> updateLazy(List<Object> objects, User user) throws ImejiException;
+
+  /**
+   * Change (add, edit, delete) the value of a field of a data object, i.e. change
+   * status field of an Item or CollectionImeji data object 
+   * 
+   * @param changeMember
+   * @return
+   * @throws ImejiException
+   */
+  public Object changeElement(ChangeMember changeMember) throws ImejiException;
+
+  
+  /**
+   * Change (add, edit, delete) the value of a field of a list of data objects.
+   * See also {@link ChangeMember}.
+   * The given data object "field change requests" will all be processed 
+   * within a single database transaction. 
+   * 
+   * @param changeElements
+   * @return
+   * @throws ImejiException
+   */
+  public List<Object> editElements(List<ChangeMember> changeElements) throws ImejiException;
 }

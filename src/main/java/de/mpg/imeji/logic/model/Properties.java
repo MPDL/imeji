@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.model;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.ImejiNamespaces;
+import de.mpg.imeji.logic.model.aspects.AccessMember;
 import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 
 /**
@@ -24,7 +26,7 @@ import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
  * @version $Revision$ $LastChangedDate$
  */
 @j2jResource("http://imeji.org/terms/properties")
-public class Properties implements Serializable, ResourceLastModified {
+public class Properties implements Serializable, ResourceLastModified, AccessMember {
   private static final long serialVersionUID = 6874979775433576816L;
   private URI id;
   @j2jResource(ImejiNamespaces.CREATOR)
@@ -43,7 +45,6 @@ public class Properties implements Serializable, ResourceLastModified {
   private String discardComment;
 
   private static final Logger LOGGER = LogManager.getLogger(Properties.class);
-  private Calendar lastTimeStampReadFromDatabase;
 
 
 
@@ -70,6 +71,47 @@ public class Properties implements Serializable, ResourceLastModified {
   public Properties() {
 
   }
+
+  @Override
+  public void accessMember(ChangeMember changeMember) {
+
+    // members that can be edited unsynchronized:
+    // (a) versionDate (ADD, EDIT) [in release, withdraw]
+    // (b) status (EDIT) [in release, withdraw]
+    // (c) discard comment (ADD) [in withdraw]
+
+    Field fieldToSet = changeMember.getField();
+
+    try {
+      Field versionDateField = Properties.class.getDeclaredField("versionDate");
+      Field statusField = Properties.class.getDeclaredField("status");
+      Field discardCommentField = Properties.class.getDeclaredField("discardComment");
+
+      // (a) versionDate
+      if (fieldToSet.equals(versionDateField) && changeMember.getValue() instanceof Calendar
+          && changeMember.getAction().equals(ActionType.ADD) && this.versionDate == null) {
+        this.versionDate = (Calendar) changeMember.getValue();
+      } else if (fieldToSet.equals(versionDateField) && changeMember.getValue() instanceof Calendar
+          && changeMember.getAction().equals(ActionType.EDIT)) {
+        this.versionDate = (Calendar) changeMember.getValue();
+      }
+      // (b) status field
+      else if (fieldToSet.equals(statusField) && changeMember.getValue() instanceof Status
+          && changeMember.getAction().equals(ActionType.EDIT)) {
+        this.status = ((Status) changeMember.getValue()).getURI();
+      }
+      // (c) comment field
+      else if (fieldToSet.equals(discardCommentField) && changeMember.getValue() instanceof String
+          && changeMember.getAction().equals(ActionType.ADD) && this.discardComment.isEmpty()) {
+        this.discardComment = (String) changeMember.getValue();
+      } else {
+        LOGGER.debug("Did not edit member in Properties.");
+      }
+    } catch (NoSuchFieldException | SecurityException e) {
+      LOGGER.error("Could not edit member in Properties. Member does not exist in class.", e);
+    }
+  }
+
 
   public void setCreatedBy(URI createdBy) {
     this.createdBy = createdBy;
@@ -119,6 +161,15 @@ public class Properties implements Serializable, ResourceLastModified {
     this.modified = modified;
   }
 
+  public Field getTimeStampField() {
+    try {
+      return Properties.class.getDeclaredField("modified");
+    } catch (NoSuchFieldException | SecurityException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
   public void setId(URI id) {
     this.id = id;
   }
@@ -141,17 +192,6 @@ public class Properties implements Serializable, ResourceLastModified {
     this.versionDate = versionDate;
   }
 
-
-  @Override
-  public void setLastTimeStampReadFromDatabase(Calendar calendar) {
-    this.lastTimeStampReadFromDatabase = calendar;
-
-  }
-
-  @Override
-  public Calendar getLastTimeStampReadFromDatabase() {
-    return this.lastTimeStampReadFromDatabase;
-  }
 
   /**
    * return the id of this object defined in the last number in its {@link URI}.
@@ -182,6 +222,7 @@ public class Properties implements Serializable, ResourceLastModified {
     }
     return ret;
   }
+
 
 
 }

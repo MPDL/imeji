@@ -19,7 +19,7 @@ import org.apache.jena.rdf.model.Model;
  * @version $Revision$ $LastChangedDate$
  */
 public abstract class Transaction {
-  private final String modelURI;
+  private String modelURI;
   private boolean exceptionWasThrown;
   private ImejiException transactionException;
   private static final Logger LOGGER = LogManager.getLogger(Transaction.class);
@@ -30,6 +30,11 @@ public abstract class Transaction {
    * @param modelURI
    */
   public Transaction(String modelURI) {
+    this.modelURI = modelURI;
+  }
+
+
+  protected void setModel(String modelURI) {
     this.modelURI = modelURI;
   }
 

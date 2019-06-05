@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.security.usergroup;
 
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,8 +11,10 @@ import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ActionType;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
@@ -129,6 +132,66 @@ public class UserGroupService {
     this.updateUsersOfUserGroupForReload(group);
   }
 
+
+  public UserGroup addUserToGroup(User issuingUser, UserGroup userGroup, User addThisUser) throws ImejiException {
+
+    UserGroup groupWithNewUser = userGroup;
+    try {
+      Field userListField = UserGroup.class.getDeclaredField("users");
+      groupWithNewUser = this.controller.changeElement(issuingUser, userGroup, userListField, ActionType.ADD, addThisUser.getId());
+      this.updateUserForReload(addThisUser.getId());
+
+    } catch (NoSuchFieldException | SecurityException e) {
+      e.printStackTrace();
+    }
+    return groupWithNewUser;
+  }
+
+
+  public UserGroup removeUserFromGroup(User issuingUser, UserGroup userGroup, User removeThisUser) throws ImejiException {
+
+    UserGroup groupWithoutUser = userGroup;
+    try {
+      Field userListField = UserGroup.class.getDeclaredField("users");
+      groupWithoutUser = this.controller.changeElement(issuingUser, userGroup, userListField, ActionType.ADD, removeThisUser.getId());
+      this.updateUserForReload(removeThisUser.getId());
+
+    } catch (NoSuchFieldException | SecurityException e) {
+      e.printStackTrace();
+    }
+    return groupWithoutUser;
+  }
+
+
+
+  public UserGroup addEditGrantToGroup(User issuingUser, UserGroup userGroup, Grant grant) throws ImejiException {
+
+    UserGroup groupWithNewGrant = userGroup;
+    try {
+      Field grantField = UserGroup.class.getDeclaredField("grants");
+      groupWithNewGrant = this.controller.changeElement(issuingUser, userGroup, grantField, ActionType.ADD_OVERRIDE, grant);
+      this.updateUsersOfUserGroupForReload(groupWithNewGrant);
+
+    } catch (NoSuchFieldException | SecurityException e) {
+      e.printStackTrace();
+    }
+    return groupWithNewGrant;
+  }
+
+
+  public UserGroup removeGrantFromGroup(User issuingUser, UserGroup userGroup, Grant grantToRemove) throws ImejiException {
+
+    UserGroup groupWithoutGrant = userGroup;
+    try {
+      Field grantField = UserGroup.class.getDeclaredField("grants");
+      groupWithoutGrant = this.controller.changeElement(issuingUser, userGroup, grantField, ActionType.REMOVE, grantToRemove);
+      this.updateUsersOfUserGroupForReload(userGroup);
+    } catch (NoSuchFieldException | SecurityException e) {
+      e.printStackTrace();
+    }
+    return groupWithoutGrant;
+  }
+
   /**
    * Use this function after updating/creating/deleting user groups. Will set the last modified
    * field of all group users in database to now, so in case a user is logged in while he is added
@@ -142,6 +205,10 @@ public class UserGroupService {
     for (URI user : userGroup.getUsers()) {
       new UserService().setRecentlyModified(user);
     }
+  }
+
+  private void updateUserForReload(URI usersURI) {
+    new UserService().setRecentlyModified(usersURI);
   }
 
 
@@ -242,13 +309,12 @@ public class UserGroupService {
    * Removes single user from all user groups where he is a member Of
    *
    * @param userToRemove
-   * @param userRemover
+   * @param issuingUser
    * @throws ImejiException
    */
-  public void removeUserFromAllGroups(User userToRemove, User userRemover) throws ImejiException {
-    for (final UserGroup memberIn : searchByUser(userToRemove, userRemover)) {
-      memberIn.getUsers().remove(userToRemove.getId());
-      update(memberIn, userRemover);
+  public void removeUserFromAllGroups(User userToRemove, User issuingUser) throws ImejiException {
+    for (final UserGroup memberIn : searchByUser(userToRemove, issuingUser)) {
+      this.removeUserFromGroup(issuingUser, memberIn, userToRemove);
       // Write to log to inform
       LOGGER.info("User " + userToRemove.getId() + " (" + userToRemove.getEmail() + ") has been removed from group " + memberIn.getName());
     }

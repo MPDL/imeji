@@ -1,11 +1,14 @@
 package de.mpg.imeji.logic.core.facade;
 
 import java.io.Serializable;
-import java.net.URI;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
@@ -14,6 +17,7 @@ import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.events.MessageService;
 import de.mpg.imeji.logic.events.messages.Message.MessageType;
 import de.mpg.imeji.logic.events.messages.MoveCollectionMessage;
@@ -25,30 +29,28 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
 import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Properties.Status;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ActionType;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
-import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
-import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
 
 /**
- * Facade to manage to move operation on {@link Item} and {@link CollectionImeji}
+ * Facade to manage move operations with {@link Item} and {@link CollectionImeji}
  * 
  * @author saquet
  *
  */
 public class MoveFacade implements Serializable {
   private static final long serialVersionUID = 6158359006910656203L;
-  private final ElasticIndexer collectionIndexer = new ElasticIndexer(ElasticIndices.folders.name());
-  private final ElasticIndexer itemsIndexer = new ElasticIndexer(ElasticIndices.items.name());
   private final CollectionService collectionService = new CollectionService();
   private final MessageService messageService = new MessageService();
   private final ItemService itemService = new ItemService();
   private final WorkflowValidator workflowValidator = new WorkflowValidator();
+
+
+  private static final Logger LOGGER = LogManager.getLogger(MoveFacade.class);
 
   /**
    * Move all items to the collection if:
@@ -64,27 +66,38 @@ public class MoveFacade implements Serializable {
    * @param toCollectionId
    * @throws ImejiException
    */
-  public List<Item> moveItems(List<Item> items, CollectionImeji collection, User user, License license) throws ImejiException {
-    String colUri = collection.getId().toString();
+  public List<Item> moveItems(List<Item> items, CollectionImeji newParent, User user, License license) throws ImejiException {
+
     // Keep only private content
     items = items.stream().filter(item -> item.getStatus().equals(Status.PENDING)).collect(Collectors.toList());
     // Check if user can move the items
-    checkIfUserCanMoveObjectsToCollection(new ArrayList<>(items), collection, user);
+    checkIfUserCanMoveObjectsToCollection(new ArrayList<>(items), newParent, user);
     // Filters files already existing in the collection
-    items = filterAlreadyExists(items, collection);
+    items = filterAlreadyExists(items, newParent);
     // Release items if necessary
-    if (collection.getStatus().equals(Status.RELEASED)) {
+    if (newParent.getStatus().equals(Status.RELEASED)) {
       items = itemService.release(items, user, license);
     }
-    // Move the items
-    for (Item item : items) {
-      ImejiSPARQL.execUpdate(JenaCustomQueries.updateCollection(item.getId().toString(), item.getCollection().toString(), colUri));
-      item.setCollection(URI.create(colUri));
+
+    // Move items
+    List<ChangeMember> changeParts = new ArrayList<ChangeMember>(items.size());
+    try {
+      Field parentCollectionField = Item.class.getDeclaredField("collection");
+      for (Item item : items) {
+        ChangeMember changeItemsParentCollection = new ChangeMember(ActionType.EDIT, item, parentCollectionField, newParent.getId());
+        changeParts.add(changeItemsParentCollection);
+      }
+      WriterFacade writerFacade = new WriterFacade();
+      List<Object> updatedItems = writerFacade.editElements(changeParts, user);
+      items = itemService.toItemList(updatedItems);
+
+      // Notify event queue
+      items.stream().forEach(item -> messageService.add(new MoveItemMessage(MessageType.MOVE_ITEM, item,
+          ObjectHelper.getId(newParent.getId()), ObjectHelper.getId(item.getCollection()))));
+
+    } catch (NoSuchFieldException | SecurityException e) {
+      LOGGER.error("Could not move items", e);
     }
-    itemsIndexer.updateIndexBatch(items);
-    // Notify to event queue
-    items.stream().forEach(item -> messageService.add(new MoveItemMessage(MessageType.MOVE_ITEM, item,
-        ObjectHelper.getId(collection.getId()), ObjectHelper.getId(item.getCollection()))));
     return items;
   }
 
@@ -92,25 +105,41 @@ public class MoveFacade implements Serializable {
    * Move collection to another collection
    * 
    * @param collection
-   * @param parent
+   * @param newParent
    * @param user
    * @param license
    * @throws ImejiException
    */
-  public void moveCollection(CollectionImeji collection, CollectionImeji parent, User user, License license) throws ImejiException {
+  public void moveCollection(CollectionImeji collection, CollectionImeji newParent, User user, License license) throws ImejiException {
     checkIfUserCanMoveObjectsToCollection(Arrays.asList(collection), collection, user);
-    checkIfCollectionCanBeMovedToNewParent(collection, parent);
-    if (parent.getStatus().equals(Status.RELEASED)) {
+    checkIfCollectionCanBeMovedToNewParent(collection, newParent);
+    if (newParent.getStatus().equals(Status.RELEASED)) {
       // release the collection
       collectionService.release(collection, user, license);
     }
-    // Move collection
-    ImejiSPARQL.execUpdate(JenaCustomQueries.updateCollectionParent(collection.getId().toString(),
-        collection.getCollection() != null ? collection.getCollection().toString() : null, parent.getId().toString()));
-    collectionIndexer.updatePartial(collection.getId().toString(), new ElasticForlderPartObject(parent.getId().toString()));
-    messageService.add(new MoveCollectionMessage(MessageType.MOVE_COLLECTION, collection, ObjectHelper.getId(parent.getId()),
-        ObjectHelper.getId(collection.getCollection())));
-    HierarchyService.reloadHierarchy();
+
+    // Move collection 
+    List<ChangeMember> changeParts = new ArrayList<ChangeMember>(1);
+    try {
+      Field parentCollectionField = CollectionImeji.class.getDeclaredField("collection");
+      ChangeMember changeParent = new ChangeMember(ActionType.ADD_OVERRIDE, collection, parentCollectionField, newParent.getId());
+      changeParts.add(changeParent);
+
+      WriterFacade writerFacade = new WriterFacade();
+      List<Object> updatedCollections = writerFacade.editElements(changeParts, user);
+      if (updatedCollections != null && updatedCollections.size() == 1) {
+        collection = (CollectionImeji) updatedCollections.get(0);
+        messageService.add(new MoveCollectionMessage(MessageType.MOVE_COLLECTION, collection, ObjectHelper.getId(newParent.getId()),
+            ObjectHelper.getId(collection.getCollection())));
+      } else {
+        LOGGER.error("Unexpected result while moving collection");
+      }
+
+      HierarchyService.reloadHierarchy();
+    } catch (NoSuchFieldException | SecurityException e) {
+      LOGGER.error("Could not move collection", e);
+    }
+
   }
 
   /**
@@ -126,7 +155,7 @@ public class MoveFacade implements Serializable {
    * @throws NotAllowedError
    * @throws WorkflowException
    */
-  private void checkIfUserCanMoveObjectsToCollection(List<Object> objects, CollectionImeji collection, User user)
+  public void checkIfUserCanMoveObjectsToCollection(List<Object> objects, CollectionImeji collection, User user)
       throws NotAllowedError, WorkflowException {
     final Authorization authorization = new Authorization();
     if (!authorization.update(user, collection) || objects.stream().filter(o -> !authorization.delete(user, o)).findAny().isPresent()
@@ -142,15 +171,16 @@ public class MoveFacade implements Serializable {
   /**
    * Throw an Error if the new Parent is a child of the moved collection
    * 
-   * @param c
+   * @param collectionToMove
    * @param newParent
    * @throws UnprocessableError
    */
-  private void checkIfCollectionCanBeMovedToNewParent(CollectionImeji c, CollectionImeji newParent) throws UnprocessableError {
-    if (new HierarchyService().isChildOf(newParent.getId().toString(), c.getId().toString())) {
-      throw new UnprocessableError(newParent.getTitle() + " is a child of " + c.getTitle());
+  private void checkIfCollectionCanBeMovedToNewParent(CollectionImeji collectionToMove, CollectionImeji newParent)
+      throws UnprocessableError {
+    if (new HierarchyService().isChildOf(newParent.getId().toString(), collectionToMove.getId().toString())) {
+      throw new UnprocessableError(newParent.getTitle() + " is a child of " + collectionToMove.getTitle());
     }
-    if (!c.isSubCollection()) {
+    if (!collectionToMove.isSubCollection()) {
       new UnprocessableError("Only subcollections can be moved");
     }
   }
@@ -164,7 +194,7 @@ public class MoveFacade implements Serializable {
    * @throws ImejiException
    */
   private List<Item> filterAlreadyExists(List<Item> items, CollectionImeji collection) throws ImejiException {
-    List<ContentVO> l = retrieveContentBatchLazy(items);
+
     final List<ContentVO> contents = retrieveContentBatchLazy(items).stream()
         .filter(content -> !itemService.checksumExistsInCollection(collection.getId(), content.getChecksum())).collect(Collectors.toList());
     return items.stream().filter(item -> contents.stream().filter(c -> c.getItemId().equals(item.getId().toString())).findAny().isPresent())
@@ -185,21 +215,5 @@ public class MoveFacade implements Serializable {
     return contentService.retrieveBatchLazy(contentIds);
   }
 
-  /**
-   * Java objects used to update the collection of a folder
-   * 
-   * @author saquet
-   *
-   */
-  private class ElasticForlderPartObject {
-    private final String folder;
 
-    public ElasticForlderPartObject(String collectionUri) {
-      this.folder = collectionUri;
-    }
-
-    public String getFolder() {
-      return folder;
-    }
-  }
 }

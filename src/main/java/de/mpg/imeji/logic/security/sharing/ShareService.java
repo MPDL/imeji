@@ -3,7 +3,6 @@ package de.mpg.imeji.logic.security.sharing;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -43,7 +42,7 @@ public class ShareService {
   public enum ShareRoles {
     READ,
     EDIT,
-    ADMIN;
+    ADMIN,
   }
 
   /**
@@ -55,7 +54,7 @@ public class ShareService {
    */
   public void shareSysAdmin(User fromUser, User toUser) throws ImejiException {
     checkSecurity(fromUser, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
-    addGrant(toUser, new Grant(GrantType.ADMIN, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI),
+    addGrantToUser(toUser, new Grant(GrantType.ADMIN, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI),
         AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
   }
 
@@ -79,7 +78,7 @@ public class ShareService {
    */
   public void shareCreateCollection(User fromUser, User toUser) throws ImejiException {
     checkSecurity(fromUser, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
-    addGrant(toUser, new Grant(GrantType.EDIT, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI),
+    addGrantToUser(toUser, new Grant(GrantType.EDIT, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI),
         AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
   }
 
@@ -92,7 +91,7 @@ public class ShareService {
    */
   public void unshareCreateCollection(User fromUser, User toUser) throws ImejiException {
     checkSecurity(fromUser, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
-    addGrant(toUser, new Grant(GrantType.READ, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI),
+    addGrantToUser(toUser, new Grant(GrantType.READ, AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI),
         AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI);
   }
 
@@ -103,16 +102,21 @@ public class ShareService {
    * @param toUser - The user the object is shared to
    * @param sharedObjectUri - The uri of the shared object
    * @param profileUri - (only for collections) the uri of the profile of the collection
-   * @param roles - The roles given to the shared user
+   * @param roles - The roles given to the shared user, null if a grant is revoked
    * @throws ImejiException
    */
   public User shareToUser(User fromUser, User toUser, String sharedObjectUri, String role) throws ImejiException {
     if (toUser != null) {
       fromUser = new UserService().retrieve(fromUser.getEmail(), Imeji.adminUser);
-      final Grant grant = toGrant(role, sharedObjectUri);
-      toUser = addGrantToUser(fromUser, toUser, sharedObjectUri, grant);
+      // unshare
       if (role == null) {
+        toUser = removeGrantFromUser(fromUser, toUser, sharedObjectUri);
         messageService.add(new ShareMessage(MessageType.UNSHARE, sharedObjectUri, toUser));
+      }
+      // share
+      else {
+        final Grant grant = toGrant(role, sharedObjectUri);
+        toUser = addGrantToUser(fromUser, toUser, sharedObjectUri, grant);
       }
     }
     return toUser;
@@ -129,10 +133,16 @@ public class ShareService {
    */
   public void shareToGroup(User fromUser, UserGroup toGroup, String sharedObjectUri, String role) throws ImejiException {
     if (toGroup != null) {
-      final Grant grant = toGrant(role, sharedObjectUri);
-      shareGrantsToGroup(fromUser, toGroup, sharedObjectUri, grant);
+      fromUser = new UserService().retrieve(fromUser.getEmail(), Imeji.adminUser);
+      // unshare
       if (role == null) {
+        this.removeGrantFromGroup(fromUser, toGroup, sharedObjectUri);
         messageService.add(new ShareMessage(MessageType.UNSHARE, sharedObjectUri, toGroup));
+      }
+      // share
+      else {
+        final Grant grant = toGrant(role, sharedObjectUri);
+        shareGrantsToGroup(fromUser, toGroup, sharedObjectUri, grant);
       }
     }
   }
@@ -149,7 +159,16 @@ public class ShareService {
   private User addGrantToUser(User fromUser, User toUser, String sharedObjectUri, Grant grant) throws ImejiException {
     if (toUser != null) {
       checkSecurity(fromUser, sharedObjectUri);
-      toUser = addGrant(toUser, grant, sharedObjectUri);
+      toUser = addGrantToUser(toUser, grant, sharedObjectUri);
+    }
+    return toUser;
+  }
+
+
+  private User removeGrantFromUser(User fromUser, User toUser, String sharedObjectUri) throws ImejiException {
+    if (toUser != null) {
+      checkSecurity(fromUser, sharedObjectUri);
+      toUser = removeGrantFromUser(toUser, sharedObjectUri);
     }
     return toUser;
   }
@@ -157,18 +176,34 @@ public class ShareService {
   /**
    * Share an object (Item, Collection, Album) to a {@link UserGroup}
    *
-   * @param fromUser - The User sharing the object
-   * @param toGroup - The group the object is shared to
+   * @param issuingUser - The User sharing the object
+   * @param addToThisGroup - The group the object is shared to
    * @param sharedObjectUri - The uri of the shared object
    * @param profileUri - (only for collections) the uri of the profile of the collection
    * @param grants - The grants given to the shared user
    * @throws ImejiException
    */
-  private void shareGrantsToGroup(User fromUser, UserGroup toGroup, String sharedObjectUri, Grant grant) throws ImejiException {
-    if (toGroup != null) {
-      checkSecurity(fromUser, sharedObjectUri);
-      addGrant(toGroup, grant, sharedObjectUri);
+  private UserGroup shareGrantsToGroup(User issuingUser, UserGroup addToThisGroup, String sharedObjectUri, Grant grant)
+      throws ImejiException {
+    if (addToThisGroup != null) {
+      checkSecurity(issuingUser, sharedObjectUri);
+      UserGroupService userGroupService = new UserGroupService();
+      UserGroup updatedUserGroup =
+          userGroupService.addEditGrantToGroup(Imeji.adminUser, addToThisGroup, new Grant(grant.asGrantType(), sharedObjectUri));
+      return updatedUserGroup;
     }
+    return addToThisGroup;
+  }
+
+  private UserGroup removeGrantFromGroup(User issuingUser, UserGroup removeFromThisGroup, String unsharedObjectUri) throws ImejiException {
+    if (removeFromThisGroup != null) {
+      checkSecurity(issuingUser, unsharedObjectUri);
+      UserGroupService userGroupService = new UserGroupService();
+      UserGroup updatedUserGroup =
+          userGroupService.removeGrantFromGroup(Imeji.adminUser, removeFromThisGroup, new Grant(null, unsharedObjectUri));
+      return updatedUserGroup;
+    }
+    return removeFromThisGroup;
   }
 
   /**
@@ -248,43 +283,20 @@ public class ShareService {
    * @param g
    * @throws ImejiException
    */
-  private User addGrant(User toUser, Grant grant, String uri) throws ImejiException {
-    toUser.setGrants(addGrant(toUser.getGrants(), grant, uri));
-    return new UserService().update(toUser, Imeji.adminUser);
+  private User addGrantToUser(User toUser, Grant grant, String grantedUri) throws ImejiException {
+    UserService userService = new UserService();
+    User userWithNewGrant = userService.addEditGrantToUser(Imeji.adminUser, toUser, new Grant(grant.asGrantType(), grantedUri));
+    return userWithNewGrant;
   }
 
-  /**
-   * Add to the {@link UserGroup} the {@link List} of {@link Grant} and update the user in the
-   * database
-   *
-   * @param fromUser
-   * @param toGroup
-   * @param grants
-   *
-   * @throws ImejiException
-   */
-  private UserGroup addGrant(UserGroup toGroup, Grant grant, String uri) throws ImejiException {
-    toGroup.setGrants(addGrant(toGroup.getGrants(), grant, uri));
-    return new UserGroupService().update(toGroup, Imeji.adminUser);
+
+  private User removeGrantFromUser(User toUser, String grantedUri) throws ImejiException {
+    UserService userService = new UserService();
+    User userWithoutGrant = userService.removeGrantsFromUser(Imeji.adminUser, toUser, new Grant(null, grantedUri));
+    return userWithoutGrant;
   }
 
-  /**
-   * Add a grant to a list of grant if the grant is not null. All grants with the same grantFor with
-   * be removed
-   *
-   * @param grants
-   * @param grant
-   * @param uri
-   * @return
-   */
-  private List<String> addGrant(Collection<String> grants, Grant grant, String uri) {
-    // Remove the grant for this id
-    final List<String> l = grants.stream().filter(g -> !g.endsWith(uri)).collect(Collectors.toList());
-    if (grant != null) {
-      l.add(grant.toGrantString());
-    }
-    return l;
-  }
+
 
   /**
    * True if the {@link User} is allowed to share the {@link Grant} to another {@link User}

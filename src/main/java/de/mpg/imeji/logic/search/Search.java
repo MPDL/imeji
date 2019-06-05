@@ -2,7 +2,12 @@ package de.mpg.imeji.logic.search;
 
 import java.util.List;
 
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.ContentVO;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
@@ -46,6 +51,26 @@ public interface Search {
 
     private SearchObjectTypes() {
       // TODO Auto-generated constructor stub
+    }
+
+    public static SearchObjectTypes getFromDataType(Class<?> dataObjectClass) {
+      if (dataObjectClass.equals(Item.class)) {
+        return ITEM;
+      } else if (dataObjectClass.equals(CollectionImeji.class)) {
+        return COLLECTION;
+      } else if (dataObjectClass.equals(User.class)) {
+        return USER;
+      } else if (dataObjectClass.equals(UserGroup.class)) {
+        return USERGROUPS;
+      } else if (dataObjectClass.equals(ContentVO.class)) {
+        return CONTENT;
+      } else if (dataObjectClass.equals(Statement.class)) {
+        return STATEMENT;
+      } else {
+        // LOG Error
+        return null;
+      }
+
     }
   }
 

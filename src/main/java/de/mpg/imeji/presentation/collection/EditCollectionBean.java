@@ -112,17 +112,17 @@ public class EditCollectionBean extends CollectionBean {
    */
   public boolean saveEditedCollection() {
     try {
-      final CollectionService collectionController = new CollectionService();
+      final CollectionService collectionService = new CollectionService();
       final User user = getSessionUser();
       // in case a logo file was added or changed, save collection and logo
       if (containerEditorSession.getUploadedLogoPath() != null) {
-        collectionController.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
+        collectionService.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
       }
       // save collection
       else {
-        collectionController.update(getCollection(), user);
+        collectionService.update(getCollection(), user);
       }
-      new UserService().update(user, user);
+      // new UserService().update(user, user);
       if (containerEditorSession.getErrorMessage() != "") {
         String msg = containerEditorSession.getErrorMessage();
         containerEditorSession.setErrorMessage("");

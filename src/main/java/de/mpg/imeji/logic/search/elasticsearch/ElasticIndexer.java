@@ -21,6 +21,7 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.VersionType;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,6 +35,7 @@ import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticContent;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFolder;
@@ -88,7 +90,12 @@ public class ElasticIndexer implements SearchIndexer {
   @Override
   public void index(Object obj) {
     try {
-      indexJSON(getId(obj), toJson(obj, dataType, indexName), getParent(obj));
+      if (obj instanceof ResourceLastModified) {
+        long timestamp = ((ResourceLastModified) obj).getModified().getTimeInMillis();
+        indexJSON(getId(obj), toJson(obj, dataType, indexName), getParent(obj), timestamp);
+      } else {
+        indexJSON(getId(obj), toJson(obj, dataType, indexName), getParent(obj));
+      }
       commit();
     } catch (final Exception e) {
       LOGGER.error("Error indexing object ", e);
@@ -110,7 +117,14 @@ public class ElasticIndexer implements SearchIndexer {
 
       for (final Object obj : l) {
         LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
-        bulkRequest.add(getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType));
+        final IndexRequest indexRequest;
+        if (obj instanceof ResourceLastModified) {
+          long timestamp = ((ResourceLastModified) obj).getModified().getTimeInMillis();
+          indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType, timestamp);
+        } else {
+          indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType);
+        }
+        bulkRequest.add(indexRequest);
       }
       if (bulkRequest.numberOfActions() > 0) {
         BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
@@ -190,6 +204,30 @@ public class ElasticIndexer implements SearchIndexer {
    * @param parent
    * @return
    */
+  private IndexRequest getIndexRequest(String id, String json, String parent, String type, long timestamp) {
+    final IndexRequest indexRequest = new IndexRequest();
+    indexRequest.index(indexName).id(id).source(json, XContentType.JSON);
+    indexRequest.versionType(VersionType.EXTERNAL).version(timestamp);
+    if (parent != null) {
+      // indexRequest.parent(parent);
+      indexRequest.routing(parent);
+    }
+    if (type != null) {
+      indexRequest.type(type);
+    }
+    LOGGER.info("+++ the request object: " + indexRequest.index() + "   " + indexRequest.type() + "   " + indexRequest.id());
+    return indexRequest;
+  }
+
+
+  /**
+   * Return the index Request
+   *
+   * @param id
+   * @param json
+   * @param parent
+   * @return
+   */
   private IndexRequest getIndexRequest(String id, String json, String parent, String type) {
     final IndexRequest indexRequest = new IndexRequest();
     indexRequest.index(indexName).id(id).source(json, XContentType.JSON);
@@ -203,6 +241,7 @@ public class ElasticIndexer implements SearchIndexer {
     LOGGER.info("+++ the request object: " + indexRequest.index() + "   " + indexRequest.type() + "   " + indexRequest.id());
     return indexRequest;
   }
+
 
   /**
    * Return the Delete Request
@@ -248,6 +287,23 @@ public class ElasticIndexer implements SearchIndexer {
    * @param id
    * @param json
    */
+  public void indexJSON(String id, String json, String parent, long timestamp) {
+    if (id != null) {
+      IndexRequest req = getIndexRequest(id, json, parent, dataType, timestamp);
+      try {
+        IndexResponse resp = ElasticService.getClient().index(req, RequestOptions.DEFAULT);
+      } catch (Exception e) {
+        LOGGER.error("error indexing ", e);
+      }
+    }
+  }
+
+  /**
+   * Index in Elasticsearch the passed json with the given id
+   *
+   * @param id
+   * @param json
+   */
   public void indexJSON(String id, String json, String parent) {
     if (id != null) {
       IndexRequest req = getIndexRequest(id, json, parent, dataType);
@@ -258,6 +314,8 @@ public class ElasticIndexer implements SearchIndexer {
       }
     }
   }
+
+
 
   /**
    * Make all changes done searchable. Kind of a commit. Might be important if data needs to be
@@ -384,6 +442,7 @@ public class ElasticIndexer implements SearchIndexer {
       UpdateRequest updateRequest = new UpdateRequest();
       try {
         updateRequest.index(indexName).type("_doc").id(id).doc(toJson(obj, id, indexName), XContentType.JSON);
+
         UpdateResponse resp = ElasticService.getClient().update(updateRequest, RequestOptions.DEFAULT);
       } catch (IOException | UnprocessableError e) {
         LOGGER.error("error updating " + id, e);
@@ -403,7 +462,6 @@ public class ElasticIndexer implements SearchIndexer {
     try {
       final BulkRequest bulkRequest = new BulkRequest();
       for (final Object obj : l) {
-
         UpdateRequest updateRequest = new UpdateRequest();
         updateRequest.index(indexName).type("_doc").id(getId(obj)).doc(toJson(obj, dataType, indexName), XContentType.JSON);
         bulkRequest.add(updateRequest);

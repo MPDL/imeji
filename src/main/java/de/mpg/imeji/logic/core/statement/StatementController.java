@@ -27,8 +27,8 @@ class StatementController extends ImejiControllerAbstract<Statement> {
 
   @Override
   public List<Statement> createBatch(List<Statement> l, User user) throws ImejiException {
-    WRITER.create(toObjectList(filterDuplicate(l)), Imeji.adminUser);
-    return l;
+    List<Statement> createdStatements = this.fromObjectList(WRITER.create(toObjectList(filterDuplicate(l)), Imeji.adminUser));
+    return createdStatements;
   }
 
   @Override
@@ -45,13 +45,24 @@ class StatementController extends ImejiControllerAbstract<Statement> {
 
   @Override
   public List<Statement> updateBatch(List<Statement> l, User user) throws ImejiException {
-    WRITER.update(toObjectList(filterDuplicate(l)), user, true);
-    return l;
+    List<Statement> updatedStatements = this.fromObjectList(WRITER.update(toObjectList(filterDuplicate(l)), user, true));
+    return updatedStatements;
   }
 
   @Override
   public void deleteBatch(List<Statement> l, User user) throws ImejiException {
     WRITER.delete(toObjectList(filterDuplicate(l)), user);
+  }
+
+  @Override
+  public List<Statement> fromObjectList(List<?> objectList) {
+    List<Statement> statementList = new ArrayList<Statement>(0);
+    if (!objectList.isEmpty()) {
+      if (objectList.get(0) instanceof Statement) {
+        statementList = (List<Statement>) objectList;
+      }
+    }
+    return statementList;
   }
 
   /**
@@ -80,5 +91,7 @@ class StatementController extends ImejiControllerAbstract<Statement> {
     }
     return statements;
   }
+
+
 
 }

@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ReloadBeforeSaveException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
@@ -68,9 +69,11 @@ public class PasswordResetController {
   public User resetPassword(String tokenString, String password) throws UnprocessableError {
     try {
       PasswordResetToken token = retrieveToken(tokenString);
-      User user = resetPassword(token.getUser(), password);
+      User userWithNewPassword = resetPassword(token.getUser(), password);
       tokenStore.delete(token.getEncryptedToken());
-      return user;
+      return userWithNewPassword;
+    } catch (ReloadBeforeSaveException reloadBeforeException) {
+      throw new UnprocessableError("User properties have changed in store. Reload user and reset password again.");
     } catch (Exception e) {
       throw new UnprocessableError("The token or the user was not found");
     }
