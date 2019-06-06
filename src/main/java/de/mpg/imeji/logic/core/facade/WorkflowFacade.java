@@ -185,7 +185,6 @@ public class WorkflowFacade implements Serializable {
 
       // items
       for (String itemId : itemIds) {
-
         Item item = new Item();
         item.setId(URI.create(itemId));
         ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.WITHDRAWN);
@@ -194,12 +193,10 @@ public class WorkflowFacade implements Serializable {
         changeParts.add(changeItemStatus);
         changeParts.add(changeItemStatusIssued);
         changeParts.add(changeItemDiscardComment);
-
       }
 
       // collections
       for (String collectionId : collectionIds) {
-
         CollectionImeji collectionToUpdate = new CollectionImeji();
         collectionToUpdate.setId(URI.create(collectionId));
         ChangeMember changeCollectionStatus =
@@ -209,19 +206,15 @@ public class WorkflowFacade implements Serializable {
         changeParts.add(changeCollectionStatus);
         changeParts.add(changeCollectionStatusIssued);
         changeParts.add(changeCollectionDiscardComment);
-
       }
-
 
       // direct access to WriterFacade
       WriterFacade writerFacade = new WriterFacade();
       writerFacade.editElements(changeParts, user);
-
     } catch (NoSuchFieldException | SecurityException e) {
       // log error
       return;
     }
-
   }
 
   /**
@@ -247,16 +240,14 @@ public class WorkflowFacade implements Serializable {
 
       // items
       for (String itemId : itemIds) {
-
         Item item = new Item();
         item.setId(URI.create(itemId));
-        ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.RELEASED);
+        ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.WITHDRAWN);
         ChangeMember changeItemStatusIssued = new ChangeMember(ActionType.EDIT, item, issuedField, withdrawDate);
         ChangeMember changeItemDiscardComment = new ChangeMember(ActionType.ADD, item, discardCommentField, comment);
         changeParts.add(changeItemStatus);
         changeParts.add(changeItemStatusIssued);
         changeParts.add(changeItemDiscardComment);
-
       }
 
       // direct access to WriterFacade
@@ -266,8 +257,6 @@ public class WorkflowFacade implements Serializable {
       // log error
       return;
     }
-
-
   }
 
 
