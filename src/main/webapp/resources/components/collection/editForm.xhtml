@@ -108,14 +108,15 @@
 						</h:panelGroup>
 					
 						<!-- <label class="imj_metadataLabel">#{lbl.text}</label>-->
-						<h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue" value="#{info.text}" html5:placeholder="#{cc.attrs.formularBean.getPlaceholder(info.label)}" />
+						
+							<h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue" value="#{info.text}" html5:placeholder="#{cc.attrs.formularBean.getPlaceholder(info.label)}" />
+							
+
 					</div>
-					<!-- 
-					<div class="imj_metadataSet">
-						<label class="imj_metadataLabel">#{lbl.url}</label>
+					<h:panelGroup layout = "block" styleClass="imj_metadataSet" rendered="#{not empty info.url}">
+						<label class="imj_metadataLabel"></label>
 						<h:inputText id="inputInfoUrl" styleClass="imj_metadataValue" value="#{info.url}" html5:placeholder="#{lbl.placeholder_url}" />
-					</div>
-					-->
+					</h:panelGroup>
 				</ui:repeat>
 				<div class="imj_sectionHeadline">
 					<span class="imj_inlineButtonGroup">
