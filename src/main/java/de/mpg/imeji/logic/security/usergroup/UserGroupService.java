@@ -153,7 +153,7 @@ public class UserGroupService {
     UserGroup groupWithoutUser = userGroup;
     try {
       Field userListField = UserGroup.class.getDeclaredField("users");
-      groupWithoutUser = this.controller.changeElement(issuingUser, userGroup, userListField, ActionType.ADD, removeThisUser.getId());
+      groupWithoutUser = this.controller.changeElement(issuingUser, userGroup, userListField, ActionType.REMOVE, removeThisUser.getId());
       this.updateUserForReload(removeThisUser.getId());
 
     } catch (NoSuchFieldException | SecurityException e) {
