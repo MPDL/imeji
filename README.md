@@ -5,7 +5,7 @@
 <p><strong>The imeji software is an open-source, community driven development.</strong></p>
 <p>The software offers a dedicated metadata management by supporting a non- restrictive metadata schema definition, as simple as liked or as complex as needed.</p>
 <p>All objects within the imeji software have a unique identifier and therefore can be referenced in publications or reused in other contexts (dissemination). Large collections can be organized in different albums to focus special items of interest.</p>
-<p>imeji is developed by the <a href="http://imeji.org/community/" target="_blank" title="imeji community">imeji community</a> under the <a href="https://opensource.org/licenses/cddl1.php" target="_blank">CDDL-License</a>.</p>
+<p>imeji is developed by the imeji community under the <a href="https://opensource.org/licenses/cddl1.php" target="_blank">CDDL-License</a>.</p>
 
 
 <h2>Download and Installation</h2>
