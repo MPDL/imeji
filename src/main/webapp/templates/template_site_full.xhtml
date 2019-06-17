@@ -10,8 +10,6 @@
 
     <html xmlns="http://www.w3.org/1999/xhtml">
         <h:head>
-        	<h:outputScript library="javax.faces" name="jsf.js" target="body" />
-       		<h:outputScript library="js" name="default.js"  target="body"/>
             <ui:include src="component/header/html_head_default.xhtml"/>
         </h:head>
         <h:body lang="#{InternationalizationBean.locale}"> 
@@ -36,7 +34,6 @@
             <div class="imj_modalDialogBackground">&#160;</div>
             <ui:insert name="modalDialogs_from_template"/>
             <ui:insert name="modalDialogs_from_site"/>
-             <ui:include src="component/footer/footer_imports.xhtml"/>
             <h:panelGroup layout="block" id="additonalFooterScripts" class="imj_noDisplay">
                 <ui:insert name="additonalFooterScripts"/> 
             </h:panelGroup>

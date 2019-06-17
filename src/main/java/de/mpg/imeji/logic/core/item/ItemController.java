@@ -60,8 +60,11 @@ class ItemController extends ImejiControllerAbstract<Item> {
 
   @Override
   public Item create(Item item, User user) throws ImejiException {
-    createBatch(Arrays.asList(item), user);
-    return item;
+    List<Item> createdItems = createBatch(Arrays.asList(item), user);
+    if (!createdItems.isEmpty()) {
+      return createdItems.get(0);
+    }
+    return null;
   }
 
   @Override
@@ -78,8 +81,8 @@ class ItemController extends ImejiControllerAbstract<Item> {
     cleanItem(l);
     createMissingStatement(l);
     validateMetadata(l, Method.CREATE);
-    WRITER.create(J2JHelper.cast2ObjectList(l), user);
-    return null;
+    List<Item> createdItems = this.fromObjectList(WRITER.create(J2JHelper.cast2ObjectList(l), user));
+    return createdItems;
   }
 
   /**
@@ -131,7 +134,8 @@ class ItemController extends ImejiControllerAbstract<Item> {
       cleanItem(l);
       createMissingStatement(l);
       validateMetadata(l, Method.UPDATE);
-      WRITER.update(J2JHelper.cast2ObjectList(l), user, true);
+      List<Item> updatedItems = this.fromObjectList(WRITER.update(J2JHelper.cast2ObjectList(l), user, true));
+      return updatedItems;
     } ;
     return l;
   }
@@ -152,6 +156,18 @@ class ItemController extends ImejiControllerAbstract<Item> {
   @Override
   public void deleteBatch(List<Item> l, User user) throws ImejiException {
     WRITER.delete(new ArrayList<Object>(l), user);
+  }
+
+
+  @Override
+  public List<Item> fromObjectList(List<?> objectList) {
+    List<Item> itemList = new ArrayList<Item>(0);
+    if (!objectList.isEmpty()) {
+      if (objectList.get(0) instanceof Item) {
+        itemList = (List<Item>) objectList;
+      }
+    }
+    return itemList;
   }
 
   /**
@@ -284,4 +300,6 @@ class ItemController extends ImejiControllerAbstract<Item> {
     return items.stream().flatMap(item -> item.getMetadata().stream()).map(md -> StatementUtil.toUri(md.getIndex()))
         .collect(Collectors.toList());
   }
+
+
 }

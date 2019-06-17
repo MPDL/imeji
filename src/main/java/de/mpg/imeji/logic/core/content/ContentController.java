@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.core.content;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +28,8 @@ class ContentController extends ImejiControllerAbstract<ContentVO> {
   @Override
   public List<ContentVO> createBatch(List<ContentVO> l, User user) throws ImejiException {
     l.stream().forEach(c -> c.setId(createID(c)));
-    WRITER.create(toObjectList(l), user);
-    return l;
+    List<ContentVO> createdContent = fromObjectList(WRITER.create(toObjectList(l), user));
+    return createdContent;
   }
 
   /**
@@ -70,13 +71,24 @@ class ContentController extends ImejiControllerAbstract<ContentVO> {
   @Override
   public List<ContentVO> updateBatch(List<ContentVO> l, User user) throws ImejiException {
     l.stream().forEach(c -> c.setId(createID(c)));
-    WRITER.update(toObjectList(l), user, true);
-    return l;
+    List<ContentVO> updatedContent = fromObjectList(WRITER.update(toObjectList(l), user, true));
+    return updatedContent;
   }
 
   @Override
   public void deleteBatch(List<ContentVO> l, User user) throws ImejiException {
     WRITER.delete(toObjectList(l), user);
+  }
+
+  @Override
+  public List<ContentVO> fromObjectList(List<?> objectList) {
+    List<ContentVO> contentList = new ArrayList<ContentVO>(0);
+    if (!objectList.isEmpty()) {
+      if (objectList.get(0) instanceof ContentVO) {
+        contentList = (List<ContentVO>) objectList;
+      }
+    }
+    return contentList;
   }
 
   /**
@@ -88,5 +100,7 @@ class ContentController extends ImejiControllerAbstract<ContentVO> {
   private List<ContentVO> initializeEmptyList(List<String> ids) {
     return ids.stream().map(id -> ImejiFactory.newContent().setId(id).build()).collect(Collectors.toList());
   }
+
+
 
 }

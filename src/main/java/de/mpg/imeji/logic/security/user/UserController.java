@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.security.user;
 
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -7,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -16,10 +18,13 @@ import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
+import de.mpg.imeji.logic.generic.AccessElement;
 import de.mpg.imeji.logic.generic.ImejiControllerAbstract;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ActionType;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.usergroup.UserGroupService;
@@ -31,7 +36,7 @@ import de.mpg.imeji.util.DateHelper;
  * @author saquet
  *
  */
-class UserController extends ImejiControllerAbstract<User> {
+class UserController extends ImejiControllerAbstract<User> implements AccessElement<User> {
   private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel);
 
@@ -67,10 +72,9 @@ class UserController extends ImejiControllerAbstract<User> {
   }
 
   @Override
-  public List<User> updateBatch(List<User> l, User user) throws ImejiException {
-    l.stream().forEach(u -> u.setModified(DateHelper.getCurrentDate()));
-    WRITER.update(J2JHelper.cast2ObjectList(l), Imeji.adminUser, true);
-    return l;
+  public List<User> updateBatch(List<User> usersToUpdate, User user) throws ImejiException {
+    List<User> updatedUsers = this.fromObjectList(WRITER.update(J2JHelper.cast2ObjectList(usersToUpdate), Imeji.adminUser, true));
+    return updatedUsers;
   }
 
   @Override
@@ -82,8 +86,10 @@ class UserController extends ImejiControllerAbstract<User> {
   public User create(User user) throws ImejiException {
     final Calendar now = DateHelper.getCurrentDate();
     user.setCreated(now);
-    user.setModified(now);
-    WRITER.create(WriterFacade.toList(user), Imeji.adminUser);
+    List<User> createdUsers = this.fromObjectList(WRITER.create(WriterFacade.toList(user), Imeji.adminUser));
+    if (!createdUsers.isEmpty()) {
+      return createdUsers.get(0);
+    }
     return user;
   }
 
@@ -173,4 +179,27 @@ class UserController extends ImejiControllerAbstract<User> {
     // remove user
     WRITER.delete(WriterFacade.toList(user), Imeji.adminUser);
   }
+
+
+  @Override
+  public List<User> fromObjectList(List<?> objectList) {
+    List<User> userList = new ArrayList<User>(0);
+    if (!objectList.isEmpty()) {
+      if (objectList.get(0) instanceof User) {
+        userList = (List<User>) objectList;
+      }
+    }
+    return userList;
+  }
+
+  @Override
+  public User changeElement(User user, User imejiDataObject, Field elementField, ActionType action, Object element) throws ImejiException {
+
+    ChangeMember changeMember = new ChangeMember(action, imejiDataObject, elementField, element);
+    User updatedUser = (User) WRITER.changeElement(changeMember, user);
+    return updatedUser;
+  }
+
+
+
 }

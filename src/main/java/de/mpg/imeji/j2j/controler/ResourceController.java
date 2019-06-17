@@ -1,5 +1,6 @@
 package de.mpg.imeji.j2j.controler;
 
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.Calendar;
 
@@ -26,8 +27,8 @@ import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
  */
 public class ResourceController {
   private Model model = null;
-  private final Java2Jena java2rdf;
-  private final Jena2Java rdf2Java;
+  protected final Java2Jena java2rdf;
+  protected final Jena2Java rdf2Java;
 
   /**
    * Use for transaction. The model must have been created/retrieved within the transaction
@@ -45,18 +46,42 @@ public class ResourceController {
   }
 
   /**
-   * Create into Jena
+   * getter
+   *
+   * @return
+   */
+  public Model getModel() {
+    return model;
+  }
+
+  /**
+   * setter
+   *
+   * @param model
+   */
+  public void setModel(Model model) {
+    this.model = model;
+  }
+
+
+  /**
+   * Create in Jena
    *
    * @throws AlreadyExistsException
+   * @throws NotFoundException
    * @throws InterruptedException
    */
-  public void create(Object o) throws AlreadyExistsException {
-    if (java2rdf.exists(o)) {
+  public Object create(Object imejiDataObject) throws AlreadyExistsException, NotFoundException {
+    if (java2rdf.exists(imejiDataObject)) {
       throw new AlreadyExistsException(
-          "Error creating resource " + J2JHelper.getId(o).getPath().replace("imeji/", "") + ". Resource already exists! ");
+          "Error creating resource " + J2JHelper.getId(imejiDataObject).getPath().replace("imeji/", "") + ". Resource already exists! ");
     }
-    java2rdf.write(o);
+    setTimestamp(imejiDataObject);
+    java2rdf.write(imejiDataObject);
+    Object dataObjectInStore = this.read(imejiDataObject);
+    return dataObjectInStore;
   }
+
 
   /**
    * Read the uri and write it into the {@link RDFResource}
@@ -86,8 +111,115 @@ public class ResourceController {
     return o;
   }
 
+
   /**
-   * Find the Id of the object into tje uri
+   * Update (remove and create) the complete {@link RDFResource}
+   *
+   * @param imejiDataObject
+   * @throws NotFoundException
+   */
+  public Object update(Object imejiDataObject) throws NotFoundException, ReloadBeforeSaveException, UnprocessableError {
+
+    // Check if object exists in Jena 
+    if (!java2rdf.exists(imejiDataObject)) {
+      throw new NotFoundException("Error updating resource " + imejiDataObject.toString() + " with id \"" + J2JHelper.getId(imejiDataObject)
+          + "\". Resource doesn't exist in model " + model.toString());
+    }
+    // Check if object in database has been changed since it was last read
+    checkModified(imejiDataObject);
+    java2rdf.update(imejiDataObject);
+    updateTimestampInJena(imejiDataObject);
+    Object dataObjectInStore = this.read(imejiDataObject);
+    return dataObjectInStore;
+  }
+
+  /**
+   * Before updating a data object in Jena, check whether the object has been altered in database
+   * since it was last read from there. Throw ReloadBeforeSaveException in case that resource has
+   * been altered.
+   * 
+   * @param imejiDataObject
+   * @throws ReloadBeforeSaveException
+   * @throws UnprocessableError
+   * @throws NotFoundException
+   */
+  private void checkModified(Object imejiDataObject) throws ReloadBeforeSaveException, UnprocessableError, NotFoundException {
+    // Throw ReloadBeforeSaveException in case that object in Jena has been modified since we last read it.
+    if (imejiDataObject instanceof ResourceLastModified) {
+      if (imejiDataObject instanceof CloneURI) {
+        Object currentObjectInJena = this.read(((CloneURI) imejiDataObject).cloneURI());
+        Calendar lastModifiedInDatabase = ((ResourceLastModified) currentObjectInJena).getModified();
+        Calendar imejiDataObjectLastModified = ((ResourceLastModified) imejiDataObject).getModified();
+        if (lastModifiedInDatabase != null && imejiDataObjectLastModified != null) {
+          if (lastModifiedInDatabase.getTimeInMillis() != imejiDataObjectLastModified.getTimeInMillis()) {
+            throw new ReloadBeforeSaveException(currentObjectInJena);
+          }
+        } else {
+          throw new UnprocessableError("Could not process update request, no timestamp for data synchronization available");
+        }
+      } else {
+        throw new UnprocessableError("Could not process update request, interface CloneURI not implemented (but needs to be) for class "
+            + imejiDataObject.getClass());
+      }
+    }
+  }
+
+
+  /**
+   * Delete a {@link RDFResource}
+   *
+   * @param o
+   * @throws NotFoundException
+   */
+  public void delete(Object o) throws NotFoundException {
+    if (!java2rdf.exists(o)) {
+      throw new NotFoundException(
+          "Error deleting resource " + J2JHelper.getId(o).getPath().replace("imeji/", "") + ". Resource doesn't exist! ");
+    }
+    java2rdf.remove(o);
+  }
+
+
+
+  /**
+   * Sets the time stamp in the imeji data object to now.
+   * 
+   * @param imejiDataObject
+   */
+  protected void setTimestamp(Object imejiDataObject) {
+    if (imejiDataObject instanceof ResourceLastModified) {
+      Calendar now = Calendar.getInstance();
+      ((ResourceLastModified) imejiDataObject).setModified(now);
+    }
+  }
+
+
+
+  /**
+   * Will update the time stamp field of the data object in database and set it to now. In order to
+   * get the object with its latest time stamp you need to re-read the object from database.
+   * 
+   * @param imejiDataObject
+   */
+  protected void updateTimestampInJena(Object imejiDataObject) {
+
+    if (imejiDataObject instanceof ResourceLastModified) {
+      String resourceURI = J2JHelper.getId(imejiDataObject).toString();
+      Field timeStampField = ((ResourceLastModified) imejiDataObject).getTimeStampField();
+      if (timeStampField != null) {
+        String predicateURI = J2JHelper.getNamespace(timeStampField);
+        Calendar now = Calendar.getInstance();
+        java2rdf.setTimestamp(resourceURI, predicateURI, now);
+      } else {
+        // Error
+      }
+
+    }
+  }
+
+
+  /**
+   * Get id of object from URI
    * 
    * @param uri
    * @return
@@ -102,7 +234,7 @@ public class ResourceController {
   }
 
   /**
-   * Find the object type according to the uri
+   * Get object type from URI
    * 
    * @param uri
    * @return
@@ -116,69 +248,6 @@ public class ResourceController {
     }
   }
 
-  /**
-   * Update (remove and create) the complete {@link RDFResource}
-   *
-   * @param imejiDataObject
-   * @throws NotFoundException
-   */
-  public void update(Object imejiDataObject) throws NotFoundException, ReloadBeforeSaveException, UnprocessableError {
 
-    // Check if object exists in Jena 
-    if (!java2rdf.exists(imejiDataObject)) {
-      throw new NotFoundException("Error updating resource " + imejiDataObject.toString() + " with id \"" + J2JHelper.getId(imejiDataObject)
-          + "\". Resource doesn't exists in model " + model.toString());
-    }
-    // Throw ReloadBeforeSaveException in case that object in Jena has been modified since we last read it.
-    if (imejiDataObject instanceof ResourceLastModified) {
-      if (imejiDataObject instanceof CloneURI) {
-        Object currentObjectInJena = this.read(((CloneURI) imejiDataObject).cloneURI());
-        Calendar lastModifiedInDatabase = ((ResourceLastModified) currentObjectInJena).getModified();
-        Calendar imejiDataObjectLastModified = ((ResourceLastModified) imejiDataObject).getLastTimeStampReadFromDatabase();
-        if (lastModifiedInDatabase != null && imejiDataObjectLastModified != null) {
-          if (lastModifiedInDatabase.getTimeInMillis() > imejiDataObjectLastModified.getTimeInMillis()) {
-            throw new ReloadBeforeSaveException(currentObjectInJena);
-          }
-        } else {
-          throw new UnprocessableError("Could not process update request, no timestamp for data synchronization available");
-        }
-      } else {
-        throw new UnprocessableError("Could not process update request, interface CloneURI not implemented (but needs to be) for class "
-            + imejiDataObject.getClass());
-      }
-    }
-    java2rdf.update(imejiDataObject);
-  }
 
-  /**
-   * Delete a {@link RDFResource}
-   *
-   * @param o
-   * @throws NotFoundException
-   */
-  public void delete(Object o) throws NotFoundException {
-    if (!java2rdf.exists(o)) {
-      throw new NotFoundException(
-          "Error deleting resource " + J2JHelper.getId(o).getPath().replace("imeji/", "") + ". Resource doesn't exists! ");
-    }
-    java2rdf.remove(o);
-  }
-
-  /**
-   * getter
-   *
-   * @return
-   */
-  public Model getModel() {
-    return model;
-  }
-
-  /**
-   * setter
-   *
-   * @param model
-   */
-  public void setModel(Model model) {
-    this.model = model;
-  }
 }

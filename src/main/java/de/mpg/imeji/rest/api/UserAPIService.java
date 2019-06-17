@@ -95,7 +95,7 @@ public class UserAPIService implements APIService<UserTO> {
     if ((login && (userVO.getApiKey() == null || "".equals(userVO.getApiKey()))) || !login) {
       // If it is login, then update the key only if it is null
       userVO.setApiKey(generateNewKey(userVO));
-      new UserService().update(userVO, userVO);
+      userVO = new UserService().update(userVO, userVO);
     }
     return TransferVOtoTO.transferUser(userVO);
   }

@@ -1,7 +1,6 @@
 package de.mpg.imeji.logic.security.user.listener;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +37,18 @@ public class UnshareListener extends Listener {
   }
 
   @Override
-  public Integer call() throws Exception {
+  public Integer call() {
     try {
+      // (1) Read all existing users from database
       List<User> allUsers = userService.retrieveAll();
-      Map<String, User> modifiedUsers = new HashMap<>();
-      modifiedUsers = unshare(allUsers, getMessage().getObjectId(), modifiedUsers);
-      userService.updateBatch(new ArrayList<>(modifiedUsers.values()), Imeji.adminUser);
+      // (2) Find all users that have a grant to the deleted collection
+      Map<String, User> usersToNotify = new HashMap<>();
+      String uriOfRemovedCollection = getMessage().getObjectId();
+      usersToNotify = unshare(allUsers, uriOfRemovedCollection, usersToNotify);
+      // (3) delete the grants in the user objects in database
+      for (User deleteGrantFromThisUser : usersToNotify.values()) {
+        userService.removeGrantsFromUser(Imeji.adminUser, deleteGrantFromThisUser, new Grant(null, uriOfRemovedCollection));
+      }
       unshareUserGroup(getMessage().getObjectId());
     } catch (Exception e) {
       LOGGER.error("Error unsubscribing users", e);
@@ -58,15 +63,11 @@ public class UnshareListener extends Listener {
    * @throws ImejiException
    */
   private void unshareUserGroup(String collectionId) throws ImejiException {
-    UserGroupService groupService = new UserGroupService();
-    List<UserGroup> groups = (List<UserGroup>) groupService.retrieveAll();
+    UserGroupService userGroupService = new UserGroupService();
+    List<UserGroup> groups = (List<UserGroup>) userGroupService.retrieveAll();
     for (UserGroup group : groups) {
       if (hasGrantFor((List<String>) group.getGrants(), collectionId)) {
-        List<String> newGrants = group.getGrants().stream().map(s -> new Grant(s))
-            .filter(g -> !ObjectHelper.getId(URI.create(g.getGrantFor())).equals(collectionId)).map(g -> g.toGrantString())
-            .collect(Collectors.toList());
-        group.setGrants(newGrants);
-        groupService.update(group, Imeji.adminUser);
+        userGroupService.removeGrantFromGroup(Imeji.adminUser, group, new Grant(null, collectionId));
       }
     }
   }

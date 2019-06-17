@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.security.usergroup;
 
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +12,11 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
+import de.mpg.imeji.logic.generic.AccessElement;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ActionType;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 
 /**
@@ -21,7 +25,8 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
  * @author saquet
  *
  */
-class UserGroupController {
+class UserGroupController implements AccessElement<UserGroup> {
+
   private static final Logger LOGGER = LogManager.getLogger(UserGroupController.class);
   private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel, SearchObjectTypes.USERGROUPS);
@@ -129,6 +134,15 @@ class UserGroupController {
    */
   public void delete(UserGroup group, User user) throws ImejiException {
     WRITER.delete(WriterFacade.toList(group), user);
+  }
+
+  @Override
+  public UserGroup changeElement(User user, UserGroup imejiDataObject, Field elementField, ActionType action, Object element)
+      throws ImejiException {
+
+    ChangeMember changeMember = new ChangeMember(action, imejiDataObject, elementField, element);
+    UserGroup userGroup = (UserGroup) WRITER.changeElement(changeMember, user);
+    return userGroup;
   }
 
 }

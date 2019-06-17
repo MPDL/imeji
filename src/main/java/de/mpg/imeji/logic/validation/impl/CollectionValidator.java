@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
 import de.mpg.imeji.logic.model.Organization;
@@ -50,7 +51,7 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     if (isNullOrEmpty(c.getTitle())) {
       setException(new UnprocessableError("error_collection_need_title", getException()));
     }
-    if (Imeji.CONFIG.getCollectionTypes() != null && !Imeji.CONFIG.getCollectionTypes().isBlank()
+    if (!c.isSubCollection() && Imeji.CONFIG.getCollectionTypes() != null && !Imeji.CONFIG.getCollectionTypes().isBlank()
         && (c.getTypes() == null || c.getTypes().isEmpty())) {
       setException(new UnprocessableError("error_collection_need_types", getException()));
     }
@@ -64,15 +65,14 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
         setException(new UnprocessableError("error_additionalinfo_need_label", getException()));
       }
 
-      if (info.getLabel().equals("Article DOI") && !isNullOrEmpty(info.getText())) {
+      if (info.getLabel().equals(ImejiConfiguration.COLLECTION_METADATA_ARTICLE_DOI_LABEL) && !isNullOrEmpty(info.getText())) {
         validateDOI(info.getText());
       }
-      /*
-      if (isNullOrEmpty(info.getText()) && isNullOrEmpty(info.getUrl())) {
-        
-        //setException(new UnprocessableError("error_additionalinfo_need_value", getException()));
+
+      if (info.getLabel().equals(ImejiConfiguration.COLLECTION_METADATA_GEO_COORDINATES_LABEL) && !isNullOrEmpty(info.getText())
+          && !validateGeoCoordinates(info.getText())) {
+        this.exception = new UnprocessableError("error_geo_coordinates_format", exception);
       }
-      */
     }
   }
 
@@ -103,6 +103,9 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     validateOrgsName(p.getOrganizations());
     if (!isNullOrEmpty(p.getFamilyName().trim())) {
       if (!p.getOrganizations().isEmpty()) {
+        if (p.getOrcid() != null && !p.getOrcid().isBlank() && !validateORCIDString(p.getOrcid())) {
+          exception = new UnprocessableError("error_orcid_format", exception);
+        }
         return true;
       } else {
         exception = new UnprocessableError("error_author_need_one_organization", exception);
@@ -186,6 +189,63 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     }
 
     return true;
+  }
+
+  /**
+   * Validate a ORCID number
+   * 
+   * @param orcid
+   * @return number is valid or not
+   */
+  private boolean validateORCIDString(String orcid) {
+    String ORCID_STRING = "(\\d{4}-){3}\\d{3}[\\dX]";
+    final Pattern orcidPattern = Pattern.compile(ORCID_STRING);
+    if (!orcid.isEmpty()) {
+      return orcidPattern.matcher(orcid).matches();
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Validate Geo-coordinates. <br/>
+   * This method checks weather the string contains latitude and longitude as decimal numbers,
+   * separated by a comma. <br/>
+   * 
+   * The Geo-coordinates must be of the form: 'Latitude(double value from -90 to 90),
+   * Longitude(double value from -180 to 180)' e.g. 48.147870, 11.576709
+   * 
+   * @param geoCoordinates The geoCoordinates as String, containing: latitude, longitude
+   * @return geoCoordinates are valid or not
+   */
+  private boolean validateGeoCoordinates(String geoCoordinates) {
+    if (isNullOrEmpty(geoCoordinates)) {
+      return false;
+    }
+
+    //only the following characters are allowed: +, -, numbers, commas, points and whitespaces
+    String matchingCharacters = "^[+-[0-9]\\,\\.\\s]*$";
+    if (!Pattern.matches(matchingCharacters, geoCoordinates)) {
+      return false;
+    }
+
+    //only two values separated by one comma are allowed
+    String[] geoCoordinatesArray = geoCoordinates.split(",");
+    if (geoCoordinatesArray.length != 2) {
+      return false;
+    }
+
+    try {
+      //only decimal numbers for latitude and longitude are allowed
+      double latitude = Double.parseDouble(geoCoordinatesArray[0]);
+      double longitude = Double.parseDouble(geoCoordinatesArray[1]);
+
+      //latitude and longitude must match the geographic coordinates range
+      return (latitude >= -90.0 && latitude <= 90.0 && longitude >= -180.0 && longitude <= 180.0);
+    } catch (Exception e) {
+      //Strings could not be parsed to double -> Exception -> return false
+      return false;
+    }
   }
 
   private void setException(UnprocessableError e) {

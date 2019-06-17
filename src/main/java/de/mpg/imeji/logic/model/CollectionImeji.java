@@ -1,17 +1,23 @@
 package de.mpg.imeji.logic.model;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.aspects.AccessMember;
 import de.mpg.imeji.logic.model.aspects.CloneURI;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 
 /**
@@ -24,7 +30,7 @@ import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 @j2jResource("http://imeji.org/terms/collection")
 @j2jModel("collection")
 @j2jId(getMethod = "getId", setMethod = "setId")
-public class CollectionImeji extends Properties implements Serializable, CollectionElement, CloneURI {
+public class CollectionImeji extends Properties implements Serializable, CollectionElement, CloneURI, AccessMember {
   private static final long serialVersionUID = -4689209760815149573L;
   @j2jResource("http://imeji.org/terms/collection")
   private URI collection;
@@ -44,12 +50,38 @@ public class CollectionImeji extends Properties implements Serializable, Collect
   private List<String> types = new ArrayList<>();
   private Collection<URI> images = new ArrayList<URI>();
 
+  private static final Logger LOGGER = LogManager.getLogger(CollectionImeji.class);
+
+
 
   @Override
   public Object cloneURI() {
     CollectionImeji newCollection = new CollectionImeji();
     newCollection.setId(this.getId());
     return newCollection;
+  }
+
+
+  @Override
+  public void accessMember(ChangeMember changeMember) {
+
+    // member field that can be set unsynchronized: 
+    //collection's parent, "collection"
+
+    super.accessMember(changeMember);
+
+    try {
+      Field parentOfCollectionField = CollectionImeji.class.getDeclaredField("collection");
+      if (changeMember.getField().equals(parentOfCollectionField) && changeMember.getAction().equals(ActionType.ADD_OVERRIDE)
+          && changeMember.getValue() instanceof URI) {
+        this.collection = (URI) changeMember.getValue();
+        return;
+      }
+      LOGGER.debug("Did not set member in CollectionImeji. Please check and implement your case");
+    } catch (NoSuchFieldException | SecurityException e) {
+      LOGGER.error("Did not set member in CollectionImeji. Member does not exist in class.", e);
+    }
+
   }
 
   public String getTitle() {

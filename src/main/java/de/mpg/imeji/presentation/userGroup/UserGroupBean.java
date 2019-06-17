@@ -104,9 +104,23 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @return
    * @throws IOException
    */
-  public void removeUserFromGroup(URI remove) throws IOException {
-    userGroup.getUsers().remove(remove);
-    save();
+  public void removeUserFromGroup(URI removeUserURI) throws IOException {
+    User removeThisUser = new User();
+    removeThisUser.setId(removeUserURI);
+    UserGroupService userGroupService = new UserGroupService();
+    try {
+      this.userGroup = userGroupService.removeUserFromGroup(getSessionUser(), this.userGroup, removeThisUser);
+      reload();
+    } catch (UnprocessableError ue) {
+      BeanHelper.error(ue, getLocale());
+      LOGGER.error("Error updating user group", ue);
+    } catch (ImejiException e) {
+      BeanHelper.error("Could not update user group : " + e.getMessage());
+      LOGGER.error("Error updating user group", e);
+    } catch (IOException e) {
+      BeanHelper.error("Could not reload page: " + e.getMessage());
+      LOGGER.error("Error during reload", e);
+    }
   }
 
   public boolean isUserInGroup(URI user) {
@@ -263,9 +277,24 @@ public class UserGroupBean extends SuperBean implements Serializable {
     return text;
   }
 
-  public void addUser(User user) throws ImejiException, IOException {
-    userGroup.getUsers().add(user.getId());
-    save();
+  public void addUser(User user) {
+
+    UserGroupService userGroupService = new UserGroupService();
+    try {
+      this.userGroup = userGroupService.addUserToGroup(getSessionUser(), this.userGroup, user);
+      reload();
+    } catch (UnprocessableError ue) {
+      BeanHelper.error(ue, getLocale());
+      LOGGER.error("Error updating user group", ue);
+    } catch (ImejiException e) {
+      BeanHelper.error("Could not update user group : " + e.getMessage());
+      LOGGER.error("Error updating user group", e);
+    } catch (IOException e) {
+      BeanHelper.error("Could not reload page: " + e.getMessage());
+      LOGGER.error("Error during reload", e);
+    }
+
+
   }
 
   public String getHideUsersButtonStyle() {

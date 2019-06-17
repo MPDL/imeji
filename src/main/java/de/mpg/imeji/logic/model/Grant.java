@@ -2,6 +2,9 @@ package de.mpg.imeji.logic.model;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.BiFunction;
 
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -78,7 +81,9 @@ public class Grant implements Serializable {
    * @param gf
    */
   public Grant(GrantType grantType, String grantFor) {
-    this.grantType = grantType.name();
+    if (grantType != null) {
+      this.grantType = grantType.name();
+    }
     this.grantFor = grantFor;
   }
 
@@ -110,13 +115,81 @@ public class Grant implements Serializable {
   }
 
   /**
-   * Return a {@link Grant} serialized as s String
+   * Return a {@link Grant} serialized as a String
    *
    * @return
    */
   public String toGrantString() {
-    return grantType + "," + grantFor;
+    if (grantType != null) {
+      return grantType + "," + grantFor;
+    } else {
+      return " " + "," + grantFor;
+    }
   }
+
+  /**
+   * De-construct GrantString created by function above.
+   * 
+   * @param grantString
+   * @return The grant
+   */
+  public static String extractGrantURIFromGrantString(String grantString) {
+    if (grantString.contains(",")) {
+      int indexOfComma = grantString.indexOf(",");
+      String grantPart = grantString.substring(indexOfComma);
+      if (grantPart.length() > 0) {
+        return grantPart;
+      }
+    }
+    return null;
+  }
+
+
+  public static int getGrantPositionInGrantsList(List<String> grantStringsList, String grantString) {
+
+    for (String storedGrant : grantStringsList) {
+      if (compareGrantStringURIs(storedGrant, grantString)) {
+        int indexOfFoundGrantURI = grantStringsList.indexOf(storedGrant);
+        return indexOfFoundGrantURI;
+      }
+    }
+    return -1;
+  }
+
+
+  public static boolean compareGrantStringURIs(String grantString1, String grantString2) {
+
+    String grantURI1 = extractGrantURIFromGrantString((String) grantString1);
+    String grantURI2 = extractGrantURIFromGrantString((String) grantString2);
+    if (grantURI1 != null && grantURI2 != null) {
+      return grantURI1.equals(grantURI2);
+    }
+
+    return false;
+  }
+
+
+  /**
+   * Get a function that compares two GrantStrings which were created by function above
+   * (toGrantString()).
+   * 
+   * @return true if grants of GrantStrings are the same.
+   */
+  public static BiFunction<Object, Object, Boolean> getGrantStringCompareFunction() {
+
+    return (Object s1, Object s2) -> {
+      if (s1 instanceof String && s2 instanceof String) {
+        String grantString1 = extractGrantURIFromGrantString((String) s1);
+        String grantString2 = extractGrantURIFromGrantString((String) s2);
+        if (grantString1 != null && grantString2 != null) {
+          return grantString1.equals(grantString2);
+        }
+      }
+      return false;
+    };
+  }
+
+
 
   /*
    * (non-Javadoc)

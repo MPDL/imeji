@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import de.mpg.imeji.exceptions.ReloadBeforeSaveException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.User.UserStatus;
@@ -116,6 +117,9 @@ public class UsersBean extends SuperBean {
       controller.update(user, getSessionUser());
       sendEmail(email, newPassword, user.getPerson().getFirstnameLastname());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
+    } catch (ReloadBeforeSaveException r) {
+      BeanHelper.error("Error saving user's new password. User has changed in store. Please reload user and try again.");
+      LOGGER.error("Error saving user's new password. User has changed in store. Please reload user and try again. ", r);
     } catch (final Exception e) {
       BeanHelper.error("Could not update or send new password!");
       LOGGER.error("Could not update or send new password", e);
@@ -172,6 +176,9 @@ public class UsersBean extends SuperBean {
       user.setUserStatus(UserStatus.REMOVED);
       service.update(user, getSessionUser());
       reload();
+    } catch (ReloadBeforeSaveException r) {
+      BeanHelper.error("Error removing user. Please reload and try again.");
+      LOGGER.error("Error removing user. Please reload and try again. ", r);
     } catch (Exception e) {
       LOGGER.error("Error removing user", e);
     }
@@ -188,6 +195,9 @@ public class UsersBean extends SuperBean {
       user.setUserStatus(UserStatus.ACTIVE);
       controller.update(user, getSessionUser());
       reload();
+    } catch (ReloadBeforeSaveException r) {
+      BeanHelper.error("Error reactivating user. User has changed in store. Please reload user and try again.");
+      LOGGER.error("Error reactivating user. User has changed in store. Please reload user and try again. ", r);
     } catch (Exception e) {
       LOGGER.error("Error reactivating user", e);
     }
@@ -228,11 +238,10 @@ public class UsersBean extends SuperBean {
   public String addToGroup() {
     final String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("email");
     try {
-      final UserService uc = new UserService();
-      final User user = uc.retrieve(email, Imeji.adminUser);
-      group.getUsers().add(user.getId());
-      final UserGroupService c = new UserGroupService();
-      c.update(group, getSessionUser());
+      final UserService userService = new UserService();
+      final User userToAdd = userService.retrieve(email, Imeji.adminUser);
+      final UserGroupService userGroupService = new UserGroupService();
+      this.group = userGroupService.addUserToGroup(getSessionUser(), this.group, userToAdd);
       FacesContext.getCurrentInstance().getExternalContext().redirect(getNavigation().getApplicationUrl() + "users?group=" + group.getId());
     } catch (final Exception e) {
       BeanHelper.error(e.getMessage());
@@ -243,11 +252,10 @@ public class UsersBean extends SuperBean {
   public String removeFromGroup() {
     final String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("email");
     try {
-      final UserService uc = new UserService();
-      final User user = uc.retrieve(email, Imeji.adminUser);
-      group.getUsers().remove(user.getId());
-      final UserGroupService c = new UserGroupService();
-      c.update(group, getSessionUser());
+      final UserService userService = new UserService();
+      final User userToRemove = userService.retrieve(email, Imeji.adminUser);
+      final UserGroupService userGroupService = new UserGroupService();
+      this.group = userGroupService.removeUserFromGroup(getSessionUser(), this.group, userToRemove);
       FacesContext.getCurrentInstance().getExternalContext().redirect(getNavigation().getApplicationUrl() + "users?group=" + group.getId());
     } catch (final Exception e) {
       BeanHelper.error(e.getMessage());

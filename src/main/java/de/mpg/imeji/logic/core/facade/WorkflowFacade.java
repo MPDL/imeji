@@ -1,10 +1,10 @@
 package de.mpg.imeji.logic.core.facade;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,25 +15,21 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.concurrency.Locks;
 import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
+import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.util.LicenseUtil;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ActionType;
+import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
 import de.mpg.imeji.logic.search.Search;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
-import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.security.authorization.Authorization;
-import de.mpg.imeji.logic.util.ObjectHelper;
-import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
 import de.mpg.imeji.util.DateHelper;
@@ -45,36 +41,77 @@ import de.mpg.imeji.util.DateHelper;
  *
  */
 public class WorkflowFacade implements Serializable {
+
   private static final long serialVersionUID = 3966446108673573909L;
   private final Authorization authorization = new Authorization();
   private final WorkflowValidator workflowValidator = new WorkflowValidator();
-  private final ElasticIndexer collectionIndexer = new ElasticIndexer(ElasticIndices.folders.name());
-  private final ElasticIndexer itemIndexer = new ElasticIndexer(ElasticIndices.items.name());
+
 
   /**
    * Release a collection and its item
    * 
-   * @param c
+   * @param collection
    * @param user
-   * @param defaultLicense
+   * @param releaseLicense
    * @throws ImejiException
    */
-  public void release(CollectionImeji c, User user, License defaultLicense) throws ImejiException {
-    preValidateRelease(c, user, defaultLicense);
-    final List<String> itemIds = getItemIds(c, user);
+  public void release(CollectionImeji collection, User user, License releaseLicense) throws ImejiException {
+
+    preValidateRelease(collection, user, releaseLicense);
+
+    ItemService itemService = new ItemService();
+    // 1) all items of collection and it's sub collections
+    final List<String> itemIds =
+        itemService.search(collection.getId(), new SearchFactory().and(new SearchPair(SearchFields.filename, "*")).build(), null, user,
+            Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX).getResults();
     preValidateCollectionItems(itemIds, user);
-    // Create a list with the collectionId, all the subcollectionids and all itemIds
-    List<String> ids = new ArrayList<>(new HierarchyService().findAllSubcollections(c.getId().toString()));
-    ids.add(c.getId().toString());
-    ids.addAll(itemIds);
-    Calendar now = DateHelper.getCurrentDate();
-    String sparql = ids.stream().map(id -> JenaCustomQueries.updateReleaseObject(id, now)).collect(Collectors.joining("; "));
-    addLicense(ids, user, defaultLicense);
-    ImejiSPARQL.execUpdate(sparql);
-    collectionIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.COLLECTION).stream()
-        .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
-    itemIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.ITEM).stream()
-        .map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
+
+    // 2) collection ids 
+    // Create a list with the collectionId, all the sub collection ids and all itemIds
+    List<String> collectionIds = new ArrayList<>(new HierarchyService().findAllSubcollections(collection.getId().toString()));
+    collectionIds.add(collection.getId().toString());
+
+    List<ChangeMember> changeParts = new ArrayList<ChangeMember>(itemIds.size() + collectionIds.size());
+    try {
+      Field statusField = Properties.class.getDeclaredField("status");
+      Field issuedField = Properties.class.getDeclaredField("versionDate");
+      Field licensesField = Item.class.getDeclaredField("licenses");
+      Calendar releaseDate = DateHelper.getCurrentDate();
+
+      // items
+      for (String itemId : itemIds) {
+        URI itemURI = URI.create(itemId);
+        Item item = new Item();
+        item.setId(itemURI);
+        // status, status issued
+        ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.RELEASED);
+        ChangeMember changeItemStatusIssued = new ChangeMember(ActionType.ADD, item, issuedField, releaseDate);
+        // only add license to items that don't have a license yet
+        License itemsLicense = releaseLicense.clone();
+        itemsLicense.setStart(releaseDate.getTimeInMillis());
+        ChangeMember addItemsLicense = new ChangeMember(ActionType.ADD, item, licensesField, itemsLicense);
+        changeParts.add(changeItemStatus);
+        changeParts.add(changeItemStatusIssued);
+        changeParts.add(addItemsLicense);
+      }
+      // collection and sub collections
+      for (String collectionId : collectionIds) {
+        CollectionImeji collectionToChange = new CollectionImeji();
+        collectionToChange.setId(URI.create(collectionId));
+        ChangeMember changeCollectionStatus =
+            new ChangeMember(ActionType.EDIT, collectionToChange, statusField, Properties.Status.RELEASED);
+        ChangeMember changeCollectionStatusIssued = new ChangeMember(ActionType.ADD, collectionToChange, issuedField, releaseDate);
+        changeParts.add(changeCollectionStatus);
+        changeParts.add(changeCollectionStatusIssued);
+      }
+
+      // direct access to WriterFacade
+      WriterFacade writerFacade = new WriterFacade();
+      writerFacade.editElements(changeParts, user);
+    } catch (NoSuchFieldException | SecurityException e) {
+      // log error
+      return;
+    }
   }
 
   /**
@@ -86,48 +123,98 @@ public class WorkflowFacade implements Serializable {
    * @throws ImejiException
    */
   public void releaseItems(List<Item> items, User user, License defaultLicense) throws ImejiException {
-    final List<String> ids = items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
+    final List<String> itemIds = items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
     preValidateReleaseItems(items, user, defaultLicense);
-    Calendar now = DateHelper.getCurrentDate();
-    String sparql = ids.stream().map(id -> JenaCustomQueries.updateReleaseObject(id, now)).collect(Collectors.joining("; "));
-    addLicense(ids, user, defaultLicense);
-    ImejiSPARQL.execUpdate(sparql);
-    itemIndexer
-        .partialUpdateIndexBatch(ids.stream().map(id -> new StatusPart(id, Status.RELEASED, now, null)).collect(Collectors.toList()));
+    List<ChangeMember> changeParts = new ArrayList<ChangeMember>(itemIds.size());
+    try {
+      Field statusField = Properties.class.getDeclaredField("status");
+      Field issuedField = Properties.class.getDeclaredField("versionDate");
+      Field licensesField = Item.class.getDeclaredField("licenses");
+      Calendar releaseDate = DateHelper.getCurrentDate();
+
+      for (String itemId : itemIds) {
+        Item item = new Item();
+        item.setId(URI.create(itemId));
+        ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.RELEASED);
+        ChangeMember changeItemStatusIssued = new ChangeMember(ActionType.ADD, item, issuedField, releaseDate);
+        License itemsLicense = defaultLicense.clone();
+        itemsLicense.setStart(releaseDate.getTimeInMillis());
+        ChangeMember addItemsLicense = new ChangeMember(ActionType.ADD, item, licensesField, itemsLicense);
+        changeParts.add(changeItemStatus);
+        changeParts.add(changeItemStatusIssued);
+        changeParts.add(addItemsLicense);
+      }
+
+      // direct access to WriterFacade
+      WriterFacade writerFacade = new WriterFacade();
+      writerFacade.editElements(changeParts, user);
+
+    } catch (NoSuchFieldException | SecurityException e) {
+      // log error
+      return;
+    }
   }
 
   /**
    * Withdraw the collection and its items
    * 
-   * @param c
+   * @param collection
    * @param comment
    * @param user
    * @throws ImejiException
    */
-  public void withdraw(CollectionImeji c, String comment, User user) throws ImejiException {
+  public void withdraw(CollectionImeji collection, String comment, User user) throws ImejiException {
 
-    prevalidateWithdraw(c, comment, user);
-    final List<String> itemIds = getItemIds(c, user);
+    prevalidateWithdraw(collection, comment, user);
+    final List<String> itemIds = getItemIds(collection, user);
     if (itemIds != null && itemIds.size() > 0) {
       preValidateCollectionItems(itemIds, user);
     }
 
     // Create a list with the collectionId, all the subcollectionIds and all itemIds
-    List<String> ids = new ArrayList<>(new HierarchyService().findAllSubcollections(c.getId().toString()));
-    ids.add(c.getId().toString());
-    ids.addAll(itemIds);
+    List<String> collectionIds = new ArrayList<>(new HierarchyService().findAllSubcollections(collection.getId().toString()));
+    collectionIds.add(collection.getId().toString());
 
-    Calendar now = DateHelper.getCurrentDate();
+    // set for items and collections: status, versionDate, discardComment
+    List<ChangeMember> changeParts = new ArrayList<ChangeMember>(itemIds.size() + collectionIds.size());
+    try {
+      Field statusField = Properties.class.getDeclaredField("status");
+      Field issuedField = Properties.class.getDeclaredField("versionDate");
+      Field discardCommentField = Properties.class.getDeclaredField("discardComment");
+      Calendar withdrawDate = DateHelper.getCurrentDate();
 
-    // Update Jena
-    String sparql = ids.stream().map(id -> JenaCustomQueries.updateWitdrawObject(id, now, comment)).collect(Collectors.joining("; "));
-    ImejiSPARQL.execUpdate(sparql);
+      // items
+      for (String itemId : itemIds) {
+        Item item = new Item();
+        item.setId(URI.create(itemId));
+        ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.WITHDRAWN);
+        ChangeMember changeItemStatusIssued = new ChangeMember(ActionType.EDIT, item, issuedField, withdrawDate);
+        ChangeMember changeItemDiscardComment = new ChangeMember(ActionType.ADD, item, discardCommentField, comment);
+        changeParts.add(changeItemStatus);
+        changeParts.add(changeItemStatusIssued);
+        changeParts.add(changeItemDiscardComment);
+      }
 
-    // Update ElasticSearch
-    collectionIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.COLLECTION).stream()
-        .map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment)).collect(Collectors.toList()));
-    itemIndexer.partialUpdateIndexBatch(filterIdsByType(ids, ObjectType.ITEM).stream()
-        .map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment)).collect(Collectors.toList()));
+      // collections
+      for (String collectionId : collectionIds) {
+        CollectionImeji collectionToUpdate = new CollectionImeji();
+        collectionToUpdate.setId(URI.create(collectionId));
+        ChangeMember changeCollectionStatus =
+            new ChangeMember(ActionType.EDIT, collectionToUpdate, statusField, Properties.Status.WITHDRAWN);
+        ChangeMember changeCollectionStatusIssued = new ChangeMember(ActionType.EDIT, collectionToUpdate, issuedField, withdrawDate);
+        ChangeMember changeCollectionDiscardComment = new ChangeMember(ActionType.ADD, collectionToUpdate, discardCommentField, comment);
+        changeParts.add(changeCollectionStatus);
+        changeParts.add(changeCollectionStatusIssued);
+        changeParts.add(changeCollectionDiscardComment);
+      }
+
+      // direct access to WriterFacade
+      WriterFacade writerFacade = new WriterFacade();
+      writerFacade.editElements(changeParts, user);
+    } catch (NoSuchFieldException | SecurityException e) {
+      // log error
+      return;
+    }
   }
 
   /**
@@ -142,35 +229,36 @@ public class WorkflowFacade implements Serializable {
     prevalidateWithdrawItems(items, comment, user);
     List<String> itemIds = items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
     preValidateCollectionItems(itemIds, user);
-    Calendar now = DateHelper.getCurrentDate();
-    String sparql = itemIds.stream().map(id -> JenaCustomQueries.updateWitdrawObject(id, now, comment)).collect(Collectors.joining("; "));
-    ImejiSPARQL.execUpdate(sparql);
-    itemIndexer.partialUpdateIndexBatch(
-        itemIds.stream().map(id -> new StatusPart(id, Status.WITHDRAWN, now, comment)).collect(Collectors.toList()));
-  }
 
-  /**
-   * Add License to all items which have'nt one
-   * 
-   * @param c
-   * @param ids
-   * @param user
-   * @param license
-   * @throws ImejiException
-   */
-  private void addLicense(List<String> ids, User user, License license) throws ImejiException {
-    List<Item> items =
-        (List<Item>) new ItemService().retrieveBatch(filterIdsByType(ids, ObjectType.ITEM).stream().collect(Collectors.toList()),
-            Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX, user);
-    List<LicensePart> licenseParts = items.stream().filter(item -> LicenseUtil.getActiveLicense(item) == null)
-        .map(item -> new LicensePart(item.getId().toString(), license)).collect(Collectors.toList());
-    if (!licenseParts.isEmpty()) {
-      String sparql =
-          licenseParts.stream().map(p -> JenaCustomQueries.updateAddLicensetoItem(p.id, license)).collect(Collectors.joining("; "));
-      ImejiSPARQL.execUpdate(sparql);
-      itemIndexer.partialUpdateIndexBatch(licenseParts);
+    // set for items and collections: status, versionDate, discardComment
+    List<ChangeMember> changeParts = new ArrayList<ChangeMember>(itemIds.size());
+    try {
+      Field statusField = Properties.class.getDeclaredField("status");
+      Field issuedField = Properties.class.getDeclaredField("versionDate");
+      Field discardCommentField = Properties.class.getDeclaredField("discardComment");
+      Calendar withdrawDate = DateHelper.getCurrentDate();
+
+      // items
+      for (String itemId : itemIds) {
+        Item item = new Item();
+        item.setId(URI.create(itemId));
+        ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.WITHDRAWN);
+        ChangeMember changeItemStatusIssued = new ChangeMember(ActionType.EDIT, item, issuedField, withdrawDate);
+        ChangeMember changeItemDiscardComment = new ChangeMember(ActionType.ADD, item, discardCommentField, comment);
+        changeParts.add(changeItemStatus);
+        changeParts.add(changeItemStatusIssued);
+        changeParts.add(changeItemDiscardComment);
+      }
+
+      // direct access to WriterFacade
+      WriterFacade writerFacade = new WriterFacade();
+      writerFacade.editElements(changeParts, user);
+    } catch (NoSuchFieldException | SecurityException e) {
+      // log error
+      return;
     }
   }
+
 
   /**
    * Perform prevalidation on the collection to check if the user can proceed to the workflow
@@ -297,16 +385,6 @@ public class WorkflowFacade implements Serializable {
         Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX).getResults();
   }
 
-  /**
-   * Return the ids of the obejcts filtered by type
-   * 
-   * @param ids
-   * @param type
-   * @return
-   */
-  private List<String> filterIdsByType(List<String> ids, ObjectType type) {
-    return ids.stream().filter(id -> ObjectHelper.getObjectType(URI.create(id)) == type).collect(Collectors.toList());
-  }
 
   /**
    * True if at least one {@link Item} is locked by another {@link User}
@@ -332,19 +410,19 @@ public class WorkflowFacade implements Serializable {
    */
   public class StatusPart implements Serializable {
     private static final long serialVersionUID = 7167344369483590830L;
-    private final Date modified;
+    private Calendar modified;
     private final String status;
     private final String id;
     private final String comment;
 
     public StatusPart(String id, Status status, Calendar modified, String comment) {
-      this.modified = modified.getTime();
+      this.modified = modified;
       this.status = status.name();
       this.id = id;
       this.comment = comment;
     }
 
-    public Date getModified() {
+    public Calendar getModified() {
       return modified;
     }
 
@@ -359,6 +437,7 @@ public class WorkflowFacade implements Serializable {
     public String getComment() {
       return comment;
     }
+
   }
 
   /**

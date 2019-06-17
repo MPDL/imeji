@@ -17,9 +17,9 @@ public class FacetController extends ImejiControllerAbstract<Facet> {
   private static final WriterFacade WRITER = new WriterFacade(Imeji.facetModel);
 
   @Override
-  public List<Facet> createBatch(List<Facet> l, User user) throws ImejiException {
-    WRITER.create(toObjectList(l), user);
-    return l;
+  public List<Facet> createBatch(List<Facet> facetsToCreate, User user) throws ImejiException {
+    List<Facet> createdFacets = this.fromObjectList(WRITER.create(toObjectList(facetsToCreate), user));
+    return createdFacets;
   }
 
   @Override
@@ -37,14 +37,25 @@ public class FacetController extends ImejiControllerAbstract<Facet> {
   }
 
   @Override
-  public List<Facet> updateBatch(List<Facet> l, User user) throws ImejiException {
-    WRITER.update(toObjectList(l), user, true);
-    return l;
+  public List<Facet> updateBatch(List<Facet> facetsToUpdate, User user) throws ImejiException {
+    List<Facet> updatedFacets = this.fromObjectList(WRITER.update(toObjectList(facetsToUpdate), user, true));
+    return updatedFacets;
   }
 
   @Override
   public void deleteBatch(List<Facet> l, User user) throws ImejiException {
     WRITER.delete(toObjectList(l), user);
+  }
+
+  @Override
+  public List<Facet> fromObjectList(List<?> objectList) {
+    List<Facet> facetList = new ArrayList<Facet>(0);
+    if (!objectList.isEmpty()) {
+      if (objectList.get(0) instanceof Facet) {
+        facetList = (List<Facet>) objectList;
+      }
+    }
+    return facetList;
   }
 
   /**
@@ -62,4 +73,6 @@ public class FacetController extends ImejiControllerAbstract<Facet> {
     }
     return facets;
   }
+
+
 }

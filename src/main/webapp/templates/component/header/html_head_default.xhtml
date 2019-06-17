@@ -37,4 +37,12 @@
             <link type="text/css" rel="stylesheet" href="#{Configuration.alternativeCss}" id="themeDefault"/>
         </ui:fragment>
     </ui:fragment>
+   <link rel="stylesheet" type="text/css" href="#{Navigation.applicationUrl}resources/css/font-awesome/css/font-awesome.min.css"/>
+   <!-- Add JS libraries -->
+   <h:outputScript library="javax.faces" name="jsf.js"/>
+   <h:outputScript library="js" name="default.js" target="body"/>
+   <!-- Use h:outputScript-tag instead of script-tag, so that the libraries get loaded in order AND after the css -->
+   <h:outputScript name="jquery/jquery-1.11.1.min.js" target="head"/>
+   <h:outputScript name="jquery/ui/1.10.4/jquery-ui.min.js" target="head"/>
+   <h:outputScript name="js/autocomplete.js" target="head"/>
 </ui:composition>

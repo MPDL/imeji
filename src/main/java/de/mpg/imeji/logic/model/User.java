@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.model;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,13 +11,20 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.ImejiNamespaces;
+import de.mpg.imeji.logic.model.aspects.AccessMember;
+import de.mpg.imeji.logic.model.aspects.CloneURI;
+import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 import de.mpg.imeji.logic.util.IdentifierUtil;
+import de.mpg.imeji.logic.util.URIListHelper;
 
 /**
  * imeji user
@@ -28,7 +36,7 @@ import de.mpg.imeji.logic.util.IdentifierUtil;
 @j2jResource("http://imeji.org/terms/user")
 @j2jModel("user")
 @j2jId(getMethod = "getId", setMethod = "setId")
-public class User implements Serializable {
+public class User implements Serializable, ResourceLastModified, CloneURI, AccessMember {
   private static final long serialVersionUID = -8961821901552709120L;
   @j2jLiteral("http://xmlns.com/foaf/0.1/email")
   private String email;
@@ -58,6 +66,36 @@ public class User implements Serializable {
 
   @j2jLiteral("http://imeji.org/terms/registrationToken")
   private String registrationToken;
+
+
+  private static final Logger LOGGER = LogManager.getLogger(User.class);
+
+  @Override
+  public Object cloneURI() {
+    User newUser = new User();
+    newUser.setId(this.getId());
+    return newUser;
+  }
+
+  @Override
+  public void accessMember(ChangeMember changeMember) {
+
+    // access member:
+    // (a) add/remove/delete grant
+    try {
+      Field grantsField = User.class.getDeclaredField("grants");
+      if (changeMember.getField().equals(grantsField) && changeMember.getValue() instanceof Grant) {
+        String grantString = ((Grant) changeMember.getValue()).toGrantString();
+        int indexOfExistingGrant = Grant.getGrantPositionInGrantsList(this.grants, grantString);
+        URIListHelper.addEditRemoveElementOfURIList(this.grants, changeMember.getAction(), grantString, indexOfExistingGrant);
+      } else {
+        LOGGER.info("Could not set member in User");
+      }
+    } catch (NoSuchFieldException | SecurityException e) {
+      LOGGER.error("Could not set member in User", e);
+    }
+  }
+
 
   public String getEmail() {
     return email;
@@ -200,6 +238,16 @@ public class User implements Serializable {
     this.modified = modified;
   }
 
+  @Override
+  public Field getTimeStampField() {
+    try {
+      return User.class.getDeclaredField("modified");
+    } catch (NoSuchFieldException | SecurityException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
   public String getApiKey() {
     return apiKey;
   }
@@ -207,5 +255,7 @@ public class User implements Serializable {
   public void setApiKey(String apiKey) {
     this.apiKey = apiKey;
   }
+
+
 
 }

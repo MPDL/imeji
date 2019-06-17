@@ -101,12 +101,16 @@ public class CreateCollectionBean extends CollectionBean {
           pos2++;
         }
       }
-      setCollection(collectionController.create(getCollection(), getSessionUser()));
+      // add additional information (i.e. created, modified) and write to database
+      CollectionImeji createdCollection = collectionController.create(getCollection(), getSessionUser());
+      setCollection(createdCollection);
       setId(getCollection().getIdString());
       if (containerEditorSession.getUploadedLogoPath() != null) {
+        // reload session user  - who has new grants now (grants for the created collection)
+        UserService userService = new UserService();
+        this.setSessionUser(userService.retrieve(getSessionUser().getId(), getSessionUser()));
         collectionController.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());
       }
-      new UserService().update(getSessionUser(), getSessionUser());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_create", getLocale()));
       return true;
     } catch (final UnprocessableError e) {

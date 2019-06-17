@@ -19,10 +19,14 @@ import de.mpg.imeji.j2j.controler.ResourceController;
  * @version $Revision$ $LastChangedDate$
  */
 public class CRUDTransaction extends Transaction {
+
   private List<Object> objects = new ArrayList<Object>();
+  private List<Object> results = new ArrayList<Object>();
+
   private final CRUDTransactionType type;
   private boolean lazy = false;
   private ExecutorService executor = Executors.newFixedThreadPool(4);
+
 
   public enum CRUDTransactionType {
     CREATE,
@@ -54,6 +58,11 @@ public class CRUDTransaction extends Transaction {
     }
   }
 
+  public List<Object> getResults() {
+    return this.results;
+  }
+
+
   /**
    * Make the CRUD operation for one {@link Object} thanks to the {@link ResourceController}
    *
@@ -62,19 +71,23 @@ public class CRUDTransaction extends Transaction {
    * @throws ImejiException
    */
   private void invokeResourceController(ResourceController rc, Object o) throws ImejiException {
+    Object result = null;
     switch (type) {
       case CREATE:
-        rc.create(o);
+        result = rc.create(o);
         break;
       case READ:
         rc.read(o);
         break;
       case UPDATE:
-        rc.update(o);
+        result = rc.update(o);
         break;
       case DELETE:
         rc.delete(o);
         break;
+    }
+    if (result != null) {
+      this.results.add(result);
     }
   }
 

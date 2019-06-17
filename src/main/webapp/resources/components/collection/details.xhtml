@@ -1,74 +1,101 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:composite="http://java.sun.com/jsf/composite"
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:composite="http://java.sun.com/jsf/composite"
 	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
-	
-	<composite:interface>
-		<composite:attribute name="bean" required="false"/>
-		<composite:attribute name="applicationUrl" required="false"/>
-		<composite:attribute name="lbl" required="false"/>
-	</composite:interface>
-	
-	<composite:implementation>
-		<ui:fragment rendered="#{not empty cc.attrs.bean.collection.description or not empty cc.attrs.bean.collection.logoUrl}">
-			<div id="description" class="imj_infodataSet" >
-				<ui:fragment rendered="#{not empty cc.attrs.bean.collection.logoUrl}">		
-					<img style="float:left; margin-right:1em; max-height:5em;" class="imj_entryPagePreviewPicture" src="#{cc.attrs.bean.collection.logoUrl.toString()}"/>
-				</ui:fragment>
-				<pre style="white-space: pre-line;">
-					<h:outputText escape="false" value="#{cc.attrs.bean.collection.description}"/>
+
+<composite:interface>
+	<composite:attribute name="bean" required="false" />
+	<composite:attribute name="applicationUrl" required="false" />
+	<composite:attribute name="lbl" required="false" />
+</composite:interface>
+
+<composite:implementation>
+	<ui:fragment rendered="#{not empty cc.attrs.bean.collection.description or not empty cc.attrs.bean.collection.logoUrl}">
+		<div id="description" class="imj_infodataSet">
+			<ui:fragment rendered="#{not empty cc.attrs.bean.collection.logoUrl}">
+				<img style="float: left; margin-right: 1em; max-height: 5em;" class="imj_entryPagePreviewPicture"
+					src="#{cc.attrs.bean.collection.logoUrl.toString()}" />
+			</ui:fragment>
+			<pre style="white-space: pre-line;">
+					<h:outputText escape="false" value="#{cc.attrs.bean.collection.description}" />
 				</pre>
-			</div>
-		</ui:fragment>
-		<div class="imj_infodataSet" >
-			<ui:repeat var="info" value="#{cc.attrs.bean.collection.additionalInformations}">
-				<span class="imj_infodataLabel">#{info.label}</span>
-				<span class="imj_infodataValue">
-					<ui:fragment rendered="#{info.url != null and info.url != '' and info.text != null and info.text != ''}">
-						<pre style="white-space: pre-line;"><a href="#{info.url}" target="_blank">#{info.text}</a></pre>
-					</ui:fragment>
-					<ui:fragment rendered="#{info.url == null || info.url == ''}">
-						<pre style="white-space: pre-line;">#{info.text}</pre>
-					</ui:fragment>
-					<ui:fragment rendered="#{info.text == null || info.text == ''}">
-						<a href="#{info.url}" target="_blank">#{info.url}</a>
-					</ui:fragment>
-				</span>
+		</div>
+	</ui:fragment>
+
+	<div class="imj_infodataSet">
+		<span class="imj_infodataLabel">#{lbl.authors}</span>
+		<span class="imj_infodataValue">
+			<ui:repeat value="#{cc.attrs.bean.collection.persons}" var="author">
+				<h:outputText value="#{author.completeName}  (#{author.organizationString}) " />
+				<ui:fragment rendered="#{not empty author.orcid}">
+					<a href="https://orcid.org/#{author.orcid}" target="_blank"><img style="vertical-align: text-top; height: 1.1em"
+						src="/imeji/resources/imj_iconset/orcid.png" /></a>
+				</ui:fragment>
+				<br />
 			</ui:repeat>
-			<span class="imj_infodataLabel">#{lbl.authors}</span>
+		</span>
+		<span class="imj_infodataLabel">#{lbl.cite}</span>
+		<span class="imj_infodataValue">
+			<h:outputText value="#{cc.attrs.bean.citation}" escape="false" />
+		</span>
+	
+		<ui:fragment rendered="#{not empty Configuration.collectionTypes}">
+			<span class="imj_infodataLabel">#{lbl.collection_types}</span>
 			<span class="imj_infodataValue">
-				<ui:repeat value="#{cc.attrs.bean.authorsList}" var="author">
-					#{author}<br/>
+				<ui:repeat var="typeString" value="#{cc.attrs.bean.collection.types}">
+					<h:outputText value="#{typeString}" />
+					<br/>
 				</ui:repeat>
 			</span>
-			<span class="imj_infodataLabel">#{lbl.cite}</span>
-			<span class="imj_infodataValue"><h:outputText value="#{cc.attrs.bean.citation}" escape="false"/></span>
-			<span class="imj_infodataLabel">#{lbl.colNumItems}</span>
-			<span class="imj_infodataValue">#{cc.attrs.bean.size}</span>
-			<ui:fragment  rendered="#{cc.attrs.bean.collection.doi != ''}">
-				<span class="imj_infodataLabel">#{lbl.doi}</span>
-				<span class="imj_infodataValue"><a href="http://dx.doi.org/#{cc.attrs.bean.collection.doi}" target="_blank">https://dx.doi.org/#{cc.attrs.bean.collection.doi}</a></span>
-			</ui:fragment>
-			<span class="imj_infodataLabel">#{lbl.date_creation}</span>
-			<span class="imj_infodataValue">#{cc.attrs.bean.collection.created.time}</span>
-			<span class="imj_infodataLabel">#{lbl.date_last_modification}</span>
-			<span class="imj_infodataValue">#{cc.attrs.bean.collection.modified.time}</span>
-			<ui:fragment rendered="#{cc.attrs.bean.collection.status == 'RELEASED'}">
-				<span class="imj_infodataLabel">#{lbl.date_released}</span>
-				<span class="imj_infodataValue">#{cc.attrs.bean.collection.versionDate.time}</span>
-			</ui:fragment>
-			<ui:fragment  rendered="#{cc.attrs.bean.collection.status == 'WITHDRAWN'}">
-				<span class="imj_infodataLabel">#{lbl.date_withdraw}</span>
-				<span class="imj_infodataValue">#{cc.attrs.bean.collection.versionDate.time}</span>
-			</ui:fragment>
-			<span class="imj_infodataLabel">#{lbl.permalink}</span>
-			<span class="imj_infodataValue">#{cc.attrs.bean.pageUrl}</span>
-			<span class="imj_infodataLabel">#{lbl.qrcode}</span>
+		</ui:fragment>
+
+		<ui:repeat var="info" value="#{cc.attrs.bean.collection.additionalInformations}">
+			<span class="imj_infodataLabel">#{info.label}</span>
 			<span class="imj_infodataValue">
-				<span class="qr" id="qr"></span>
+				<ui:fragment rendered="#{info.url != null and info.url != '' and info.text != null and info.text != ''}">
+					<pre style="white-space: pre-line;">
+						<a href="#{info.url}" target="_blank">#{info.text}</a>
+					</pre>
+				</ui:fragment>
+				<ui:fragment rendered="#{info.url == null || info.url == ''}">
+					<ui:fragment rendered="#{info.label == cc.attrs.bean.getArticleDoiLabel()}">
+						<a href="https://dx.doi.org/#{info.text}" target="_blank">#{info.text}</a>
+					</ui:fragment>
+					<ui:fragment rendered="#{info.label != cc.attrs.bean.getArticleDoiLabel()}">
+						<pre style="white-space: pre-line;">#{info.text}</pre>
+					</ui:fragment>
+				</ui:fragment>
+				<ui:fragment rendered="#{info.text == null || info.text == ''}">
+					<a href="#{info.url}" target="_blank">#{info.url}</a>
+				</ui:fragment>
 			</span>
-		</div>
-	</composite:implementation>
+		</ui:repeat>
+		
+		<span class="imj_infodataLabel">#{lbl.colNumItems}</span>
+		<span class="imj_infodataValue">#{cc.attrs.bean.size}</span>
+		<ui:fragment rendered="#{cc.attrs.bean.collection.doi != ''}">
+			<span class="imj_infodataLabel">#{lbl.doi}</span>
+			<span class="imj_infodataValue">
+				<a href="https://dx.doi.org/#{cc.attrs.bean.collection.doi}" target="_blank">https://dx.doi.org/#{cc.attrs.bean.collection.doi}</a>
+			</span>
+		</ui:fragment>
+		<span class="imj_infodataLabel">#{lbl.date_creation}</span>
+		<span class="imj_infodataValue">#{cc.attrs.bean.collection.created.time}</span>
+		<span class="imj_infodataLabel">#{lbl.date_last_modification}</span>
+		<span class="imj_infodataValue">#{cc.attrs.bean.collection.modified.time}</span>
+		<ui:fragment rendered="#{cc.attrs.bean.collection.status == 'RELEASED'}">
+			<span class="imj_infodataLabel">#{lbl.date_released}</span>
+			<span class="imj_infodataValue">#{cc.attrs.bean.collection.versionDate.time}</span>
+		</ui:fragment>
+		<ui:fragment rendered="#{cc.attrs.bean.collection.status == 'WITHDRAWN'}">
+			<span class="imj_infodataLabel">#{lbl.date_withdraw}</span>
+			<span class="imj_infodataValue">#{cc.attrs.bean.collection.versionDate.time}</span>
+		</ui:fragment>
+		<span class="imj_infodataLabel">#{lbl.permalink}</span>
+		<span class="imj_infodataValue">#{cc.attrs.bean.pageUrl}</span>
+		<span class="imj_infodataLabel">#{lbl.qrcode}</span>
+		<span class="imj_infodataValue">
+			<span class="qr" id="qr"></span>
+		</span>
+	</div>
+</composite:implementation>
 </html>
