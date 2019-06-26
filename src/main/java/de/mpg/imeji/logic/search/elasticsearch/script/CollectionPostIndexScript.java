@@ -93,6 +93,7 @@ public class CollectionPostIndexScript {
     TermQueryBuilder q = QueryBuilders.termQuery(ElasticFields.FOLDER.field(), c.getId().toString());
     SearchRequest searchRequest = new SearchRequest();
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    searchSourceBuilder.trackTotalHits(true);
     searchSourceBuilder.query(q);
     searchRequest.indices(ElasticIndices.items.name()).source(searchSourceBuilder).scroll(TimeValue.timeValueMinutes(1));
     SearchResponse resp = null;

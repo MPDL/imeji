@@ -125,6 +125,7 @@ public class ElasticSearch implements Search {
      */
     SearchRequest searchRequest = new SearchRequest();
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    searchSourceBuilder.trackTotalHits(true);
     if (f != null) {
       searchSourceBuilder.query(f).postFilter(q);
     } else {
@@ -284,8 +285,7 @@ public class ElasticSearch implements Search {
       try {
         searchResponse = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
       } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        LOGGER.error("Error during search: ", e);
       }
       if (searchResponse.getHits().getHits().length == 0) {
         break;
@@ -329,8 +329,7 @@ public class ElasticSearch implements Search {
       try {
         searchResponse = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
       } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        LOGGER.error("Error during search: ", e);
       }
       List<String> retrievedIDsOfScroll = getIDsFromScrollSearchResponse(searchResponse);
       retrievedIDs.addAll(retrievedIDsOfScroll);
@@ -358,6 +357,7 @@ public class ElasticSearch implements Search {
     final QueryBuilder q = QueryBuilders.queryStringQuery(query);
     SearchRequest searchRequest = new SearchRequest();
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    searchSourceBuilder.trackTotalHits(true);
 
     // single page or scroll search
     if (size != GET_ALL_RESULTS && size < SEARCH_INTERVALL_MAX_SIZE && from + size < SEARCH_TO_INDEX_LIMIT) {
@@ -398,6 +398,7 @@ public class ElasticSearch implements Search {
     final QueryBuilder q = QueryBuilders.queryStringQuery(query);
     SearchRequest searchRequest = new SearchRequest();
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    searchSourceBuilder.trackTotalHits(true);
 
     // single page search
     if (size != GET_ALL_RESULTS && size < SEARCH_INTERVALL_MAX_SIZE && from + size < SEARCH_TO_INDEX_LIMIT) {
@@ -408,8 +409,7 @@ public class ElasticSearch implements Search {
         singlePageSearchResponse = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
         fieldValues = getFieldValuesOfSearchResponse(singlePageSearchResponse.getHits(), field);
       } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        LOGGER.error("Error while searching", e);
       }
     }
     // scroll search
@@ -433,8 +433,7 @@ public class ElasticSearch implements Search {
         try {
           scrollSearchResponse = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          LOGGER.error("Error while searching", e);
         }
       } while (scrollSearchResponse.getHits().getHits().length != 0);
 
