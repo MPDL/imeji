@@ -9,10 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.ClearScrollResponse;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -287,8 +285,7 @@ public class ElasticSearch implements Search {
       try {
         searchResponse = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
       } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        LOGGER.error("Error during search: ", e);
       }
       if (searchResponse.getHits().getHits().length == 0) {
         break;
@@ -332,8 +329,7 @@ public class ElasticSearch implements Search {
       try {
         searchResponse = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
       } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        LOGGER.error("Error during search: ", e);
       }
       List<String> retrievedIDsOfScroll = getIDsFromScrollSearchResponse(searchResponse);
       retrievedIDs.addAll(retrievedIDsOfScroll);
@@ -413,8 +409,7 @@ public class ElasticSearch implements Search {
         singlePageSearchResponse = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
         fieldValues = getFieldValuesOfSearchResponse(singlePageSearchResponse.getHits(), field);
       } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        LOGGER.error("Error while searching", e);
       }
     }
     // scroll search
@@ -438,8 +433,7 @@ public class ElasticSearch implements Search {
         try {
           scrollSearchResponse = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          LOGGER.error("Error while searching", e);
         }
       } while (scrollSearchResponse.getHits().getHits().length != 0);
 
