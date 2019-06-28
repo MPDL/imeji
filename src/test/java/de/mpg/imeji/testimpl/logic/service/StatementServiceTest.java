@@ -2,8 +2,8 @@ package de.mpg.imeji.testimpl.logic.service;
 
 import java.util.Arrays;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,6 +27,10 @@ import de.mpg.imeji.util.ImejiTestResources;
 public class StatementServiceTest extends SuperServiceTest {
   private static final Logger LOGGER = LogManager.getLogger(SuperServiceTest.class);
 
+  private static UserService userService;
+  private static CollectionService collectionService;
+  private static ItemService itemService;
+
   private static User defaultUser;
   private static User sysadmin;
 
@@ -35,13 +39,15 @@ public class StatementServiceTest extends SuperServiceTest {
   @BeforeClass
   public static void specificSetup() {
     try {
+      userService = new UserService();
+      collectionService = new CollectionService();
+      itemService = new ItemService();
       sysadmin = ImejiFactory.newUser().setEmail("admin4@test.org").setPerson("admin4", "admin4", "org").setPassword("password")
           .setQuota(Long.MAX_VALUE).build();
       defaultUser = ImejiFactory.newUser().setEmail("default3@test.org").setPerson("default3", "default3", "org").setPassword("password")
           .setQuota(Long.MAX_VALUE).build();
-      UserService service = new UserService();
-      service.create(sysadmin, USER_TYPE.ADMIN);
-      service.create(defaultUser, USER_TYPE.DEFAULT);
+      userService.create(sysadmin, USER_TYPE.ADMIN);
+      userService.create(defaultUser, USER_TYPE.DEFAULT);
 
       statement = ImejiFactory.newStatement().setIndex("Text").setType(StatementType.TEXT)
           .setLiteralsConstraints(Arrays.asList("const a", "const b")).setNamespace("something").build();
@@ -148,13 +154,14 @@ public class StatementServiceTest extends SuperServiceTest {
     try {
       service.create(toDelete, sysadmin);
       CollectionImeji col = ImejiFactory.newCollection().setPerson("m", "p", "g").setTitle("TestCol").build();
-      (new CollectionService()).create(col, defaultUser);
+      collectionService.create(col, defaultUser);
+      defaultUser = userService.retrieve(defaultUser.getId(), sysadmin);
       Item item = ImejiFactory.newItem(col);
-      (new ItemService()).createWithFile(item, ImejiTestResources.getTest1Jpg(), "test1.jpg", col, defaultUser);
+      itemService.createWithFile(item, ImejiTestResources.getTest1Jpg(), "test1.jpg", col, defaultUser);
       Metadata metadata = ImejiFactory.newMetadata(toDelete).setText("some text").build();
       item.getMetadata().add(metadata);
       Assert.assertFalse("Item should not be used", service.isUsed(toDelete));
-      (new ItemService()).update(item, sysadmin);
+      item = itemService.update(item, sysadmin);
       Assert.assertTrue("Item should be used", service.isUsed(toDelete));
       try {
         service.delete(toDelete, sysadmin);
@@ -164,8 +171,8 @@ public class StatementServiceTest extends SuperServiceTest {
       }
       service.retrieve(toDelete.getUri().toString(), sysadmin);
 
-      item.getMetadata().remove(metadata);
-      (new ItemService()).update(item, sysadmin);
+      item.getMetadata().clear();
+      itemService.update(item, sysadmin);
       service.delete(toDelete, sysadmin);
       try {
         service.retrieve(toDelete.getUri().toString(), sysadmin);

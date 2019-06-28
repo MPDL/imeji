@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -319,6 +319,7 @@ public class UserServiceTest extends SuperServiceTest {
     CollectionService cc = new CollectionService();
     CollectionImeji col = ImejiFactory.newCollection().setTitle("test").setPerson("m", "p", "g").build();
     URI uri = cc.create(col, user).getId();
+    user = c.retrieve(user.getId(), adminUser);
     col = cc.retrieve(uri, user);
 
     item = ImejiFactory.newItem(col);

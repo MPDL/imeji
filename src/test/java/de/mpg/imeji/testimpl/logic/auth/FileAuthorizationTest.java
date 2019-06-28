@@ -78,7 +78,7 @@ public class FileAuthorizationTest extends SuperServiceTest {
     createCollection();
     createItemWithFile();
     ShareService c = new ShareService();
-    c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, collectionBasic.getId().toString(), ShareRoles.READ.name());
+    JenaUtil.testUser2 = c.shareToUser(JenaUtil.testUser, JenaUtil.testUser2, collectionBasic.getId().toString(), ShareRoles.READ.name());
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(getContent(item).getFull(), JenaUtil.testUser2));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(getContent(item).getThumbnail(), JenaUtil.testUser2));
     Assert.assertTrue(StorageUtil.isAllowedToViewFile(getContent(item).getPreview(), JenaUtil.testUser2));

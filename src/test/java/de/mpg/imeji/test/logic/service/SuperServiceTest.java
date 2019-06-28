@@ -13,6 +13,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.CollectionFactory;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.util.ElasticsearchTestUtil;
 import de.mpg.imeji.util.ImejiTestResources;
 import de.mpg.imeji.util.JenaUtil;
@@ -49,7 +50,9 @@ public class SuperServiceTest {
     factory.setPerson("Max", "Planck", "MPG");
     collectionBasic = factory.build();
     collectionBasic.setTitle("Test");
-    return service.create(collectionBasic, JenaUtil.testUser);
+    CollectionImeji createdCollection = service.create(collectionBasic, JenaUtil.testUser);
+    JenaUtil.testUser = (new UserService()).retrieve(JenaUtil.testUser.getId(), JenaUtil.adminTestUser);
+    return createdCollection;
   }
 
   /**

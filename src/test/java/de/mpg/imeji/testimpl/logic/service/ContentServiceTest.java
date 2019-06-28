@@ -5,8 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,22 +40,26 @@ public class ContentServiceTest extends SuperServiceTest {
 
   private static Item item;
   private static CollectionImeji collection;
+  private static User adminUser;
   private static User defaultUser;
   private static ContentVO content;
 
   @BeforeClass
   public static void specificSetup() {
     try {
+      UserService userService = new UserService();
+      adminUser = ImejiFactory.newUser().setEmail("admin3@test.org").setPerson("admin3", "admin3", "org").setPassword("password")
+          .setQuota(Long.MAX_VALUE).build();
       defaultUser = ImejiFactory.newUser().setEmail("default@test.org").setPerson("default", "default", "org").setPassword("password")
           .setQuota(Long.MAX_VALUE).build();
-      (new UserService()).create(defaultUser, USER_TYPE.DEFAULT);
+      userService.create(adminUser, USER_TYPE.ADMIN);
+      userService.create(defaultUser, USER_TYPE.DEFAULT);
       collection = ImejiFactory.newCollection().setTitle("Test Collection").setPerson("m", "p", "mpdl").build();
       new CollectionService().create(collection, defaultUser);
+      defaultUser = new UserService().retrieve(defaultUser.getId(), adminUser);
       item = ImejiFactory.newItem(collection);
       new ItemService().create(item, collection, defaultUser);
       content = new ContentService().create(item, ImejiTestResources.getTest1Jpg(), defaultUser);
-      int a = 5;
-      a++;
     } catch (ImejiException e) {
       LOGGER.error("Exception in setup of ContentServiceTest", e);
     }

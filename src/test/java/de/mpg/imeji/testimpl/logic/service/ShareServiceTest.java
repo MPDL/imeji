@@ -1,7 +1,7 @@
 package de.mpg.imeji.testimpl.logic.service;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -10,9 +10,9 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.Grant;
+import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
-import de.mpg.imeji.logic.model.Grant.GrantType;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.security.sharing.ShareService;
@@ -23,6 +23,8 @@ import de.mpg.imeji.test.logic.service.SuperServiceTest;
 
 public class ShareServiceTest extends SuperServiceTest {
   private static final Logger LOGGER = LogManager.getLogger(ShareServiceTest.class);
+
+  private static UserService userService;
 
   private static User defaultUser1;
   private static User defaultUser2;
@@ -38,16 +40,16 @@ public class ShareServiceTest extends SuperServiceTest {
   @BeforeClass
   public static void specificSetup() {
     try {
-      UserService service = new UserService();
+      userService = new UserService();
       sysadmin = ImejiFactory.newUser().setEmail("admin4@test.org").setPerson("admin4", "admin4", "org").setPassword("password")
           .setQuota(Long.MAX_VALUE).build();
       defaultUser1 = ImejiFactory.newUser().setEmail("default1@test.org").setPerson("default1", "default1", "org").setPassword("password")
           .setQuota(Long.MAX_VALUE).build();
       defaultUser2 = ImejiFactory.newUser().setEmail("default2@test.org").setPerson("default2", "default2", "org").setPassword("password")
           .setQuota(Long.MAX_VALUE).build();
-      service.create(sysadmin, USER_TYPE.ADMIN);
-      service.create(defaultUser1, USER_TYPE.DEFAULT);
-      service.create(defaultUser2, USER_TYPE.DEFAULT);
+      userService.create(sysadmin, USER_TYPE.ADMIN);
+      userService.create(defaultUser1, USER_TYPE.DEFAULT);
+      userService.create(defaultUser2, USER_TYPE.DEFAULT);
 
       group = ImejiFactory.newUserGroup().setName("Test Group").addUsers(defaultUser1).build();
       (new UserGroupService()).create(group, sysadmin);
@@ -115,14 +117,15 @@ public class ShareServiceTest extends SuperServiceTest {
   }
 
   @Test
-  public void shareToUser() {
+  public void shareToUser() throws ImejiException {
     try {
       defaultUser2.getGrants().add(editGrant.toGrantString());
+      userService.update(defaultUser2, defaultUser2);
       shareToUser_Test("User 2 not allowed, read grant", defaultUser2, defaultUser1, readGrant, NotAllowedError.class);
       shareToUser_Test("User 2 not allowed, edit grant", defaultUser2, defaultUser1, editGrant, NotAllowedError.class);
       shareToUser_Test("User 2 not allowed, admin grant", defaultUser2, defaultUser1, adminGrant, NotAllowedError.class);
 
-      new ShareService().shareToUser(Imeji.adminUser, defaultUser2, adminGrant.getGrantFor(), adminGrant.getGrantType());
+      defaultUser2 = new ShareService().shareToUser(Imeji.adminUser, defaultUser2, adminGrant.getGrantFor(), adminGrant.getGrantType());
       shareToUser_Test("User 2  allowed, read grant", defaultUser2, defaultUser1, readGrant, null);
       shareToUser_Test("User 2  allowed, edit grant", defaultUser2, defaultUser1, editGrant, null);
       shareToUser_Test("User 2  allowed, admin grant", defaultUser2, defaultUser1, adminGrant, null);
@@ -131,6 +134,7 @@ public class ShareServiceTest extends SuperServiceTest {
     } finally {
       defaultUser2.getGrants().remove(editGrant.toGrantString());
       defaultUser2.getGrants().remove(adminGrant.toGrantString());
+      userService.update(defaultUser2, defaultUser2);
     }
 
   }
@@ -160,7 +164,7 @@ public class ShareServiceTest extends SuperServiceTest {
   }
 
   @Test
-  public void shareToUserGroup() {
+  public void shareToUserGroup() throws ImejiException {
     ShareService service = new ShareService();
 
     try {
@@ -170,12 +174,14 @@ public class ShareServiceTest extends SuperServiceTest {
       shareToUserGroup_Test("User 2 not allowed, admin grant", defaultUser2, group, adminGrant, NotAllowedError.class);
 
       defaultUser2.getGrants().add(adminGrant.toGrantString());
+      userService.update(defaultUser2, defaultUser2);
       shareToUserGroup_Test("User 2  allowed, read grant", defaultUser2, group, readGrant, null);
       shareToUserGroup_Test("User 2  allowed, edit grant", defaultUser2, group, editGrant, null);
       shareToUserGroup_Test("User 2  allowed, admin grant", defaultUser2, group, adminGrant, null);
     } finally {
       defaultUser2.getGrants().remove(editGrant.toGrantString());
       defaultUser2.getGrants().remove(adminGrant.toGrantString());
+      userService.update(defaultUser2, defaultUser2);
     }
 
   }
