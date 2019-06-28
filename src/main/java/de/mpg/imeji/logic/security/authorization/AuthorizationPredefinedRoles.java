@@ -6,8 +6,8 @@ import java.util.List;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.Grant;
-import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.Grant.GrantType;
+import de.mpg.imeji.logic.model.User;
 
 /**
  * Defines the predefined roles (for instance the creator of collection) with a {@link List} of
@@ -50,6 +50,6 @@ public class AuthorizationPredefinedRoles {
    */
   public static List<String> imejiAdministrator(String uri) {
     return new ArrayList<String>(
-        Arrays.asList(new Grant(GrantType.ADMIN, uri).toGrantString(), new Grant(GrantType.ADMIN, IMEJI_GLOBAL_URI).toGrantString()));
+        Arrays.asList(new Grant(GrantType.ADMIN, IMEJI_GLOBAL_URI).toGrantString(), new Grant(GrantType.ADMIN, uri).toGrantString()));
   }
 }
