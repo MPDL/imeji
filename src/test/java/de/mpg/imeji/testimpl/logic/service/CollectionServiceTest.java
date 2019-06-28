@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -61,6 +61,9 @@ public class CollectionServiceTest extends SuperServiceTest {
 
   private static CollectionImeji collectionPrivate;
   private static CollectionImeji collectionReleased;
+
+  //TODO: Create separate test classes to test the CollectionService CRUD methods and link them here
+  //Like: CollectionServiceCreateTest
 
   @BeforeClass
   public static void specificSetup() {

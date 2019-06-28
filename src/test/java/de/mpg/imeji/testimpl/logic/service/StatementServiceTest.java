@@ -36,6 +36,9 @@ public class StatementServiceTest extends SuperServiceTest {
 
   private static Statement statement;
 
+  //TODO: Create separate test classes to test the StatementService CRUD methods and link them here
+  //Like: StatementServiceUpdateTest 
+
   @BeforeClass
   public static void specificSetup() {
     try {
