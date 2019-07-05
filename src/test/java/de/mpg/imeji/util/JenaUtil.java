@@ -2,20 +2,17 @@ package de.mpg.imeji.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import org.apache.jena.tdb.TDB;
-import org.apache.jena.tdb.TDBFactory;
 import org.apache.jena.tdb.base.block.FileMode;
 import org.apache.jena.tdb.base.file.Location;
 import org.apache.jena.tdb.sys.SystemTDB;
 import org.apache.jena.tdb.sys.TDBMaker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -31,6 +28,7 @@ import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**
  * Utility class to use Jena in the unit test
@@ -58,9 +56,13 @@ public class JenaUtil {
     try {
       // Read tdb location
       TDB_PATH = PropertyReader.getProperty("imeji.tdb.path");
-      // remove old Database
+
+      // Remove old Database- and File-Directories
+      //TODO: Move the deletion of the test-file-directories in an extra method.
       deleteTDBDirectory();
       deleteFilesDirectory();
+      deleteTempDirectory();
+
       // Set Filemode: important to be able to delete TDB directory by
       // closing Jena
       SystemTDB.setFileMode(FileMode.direct);
@@ -78,6 +80,7 @@ public class JenaUtil {
     Imeji.getCONTENT_EXTRACTION_EXECUTOR().shutdown();
     Imeji.getINTERNAL_STORAGE_EXECUTOR().shutdown();
     ImejiInitializer.getNIGHTLY_EXECUTOR().stop();
+
     LOGGER.info("Closing Jena:");
     TDB.sync(Imeji.dataset);
     LOGGER.info("Jena Sync done! ");
@@ -155,10 +158,18 @@ public class JenaUtil {
     }
   }
 
-  private static void deleteFilesDirectory() throws IOException, URISyntaxException {
+  private static void deleteFilesDirectory() throws IOException {
     File f = new File(PropertyReader.getProperty("imeji.storage.path"));
     if (f.exists()) {
       LOGGER.info(f.getAbsolutePath() + " deleted: " + FileUtils.deleteQuietly(f));
     }
   }
+
+  private static void deleteTempDirectory() {
+    File f = TempFileUtil.TEMP_DIR;
+    if (f.exists()) {
+      LOGGER.info(f.getAbsolutePath() + " deleted: " + FileUtils.deleteQuietly(f));
+    }
+  }
+
 }
