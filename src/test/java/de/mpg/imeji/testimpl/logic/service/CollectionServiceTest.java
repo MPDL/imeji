@@ -62,12 +62,14 @@ public class CollectionServiceTest extends SuperServiceTest {
   private static CollectionImeji collectionPrivate;
   private static CollectionImeji collectionReleased;
 
+  private static UserService userService;
+
   //TODO: Create separate test classes to test the CollectionService CRUD methods and link them here
   //Like: CollectionServiceCreateTest
 
   @BeforeClass
   public static void specificSetup() {
-    UserService userService = new UserService();
+    userService = new UserService();
     try {
       sysadmin = ImejiFactory.newUser().setEmail("admin3@test.org").setPerson("admin3", "admin3", "org").setPassword("password")
           .setQuota(Long.MAX_VALUE).build();
@@ -95,9 +97,11 @@ public class CollectionServiceTest extends SuperServiceTest {
 
       collectionService.create(collectionPrivate, defaultUser);
       collectionService.create(collectionReleased, defaultUser);
+      defaultUser = userService.retrieve(defaultUser.getId(), sysadmin);
       Item releasedItem = ImejiFactory.newItem(collectionReleased);
       (new ItemService()).create(releasedItem, collectionReleased, defaultUser);
       collectionService.releaseWithDefaultLicense(collectionReleased, defaultUser);
+      collectionReleased = collectionService.retrieve(collectionReleased.getId(), sysadmin);
 
       userReadGrant.getGrants().add(new Grant(GrantType.READ, collectionPrivate.getId().toString()).toGrantString());
       userEditGrant.getGrants().add(new Grant(GrantType.EDIT, collectionPrivate.getId().toString()).toGrantString());
@@ -120,6 +124,7 @@ public class CollectionServiceTest extends SuperServiceTest {
     try {
       try {
         service.create(col, user);
+        user = userService.retrieve(user.getId(), sysadmin);
       } catch (ImejiException e) {
         if (!e.getClass().equals(exception)) {
           Assert.fail(msg + ": " + e.getMessage());
@@ -273,6 +278,7 @@ public class CollectionServiceTest extends SuperServiceTest {
     CollectionImeji collectionToDelete = ImejiFactory.newCollection().setTitle("Delete").setPerson("p", "p", "o").build();
     try {
       collectionService.create(collectionToDelete, defaultUser);
+      defaultUser = userService.retrieve(defaultUser.getId(), sysadmin);
       Item itemToDelete = ImejiFactory.newItem(collectionToDelete);
       itemService.create(itemToDelete, collectionToDelete, defaultUser);
       delete_Test("private Collection, edit grant user", collectionToDelete, userEditGrant, NotAllowedError.class);
@@ -337,14 +343,15 @@ public class CollectionServiceTest extends SuperServiceTest {
 
   @Test
   public void release() {
-    CollectionService service = new CollectionService();
+    CollectionService collectionService = new CollectionService();
     CollectionImeji collectionToRelease = ImejiFactory.newCollection().setTitle("To Release").setPerson("m", "p", "g").build();
     try {
-      service.create(collectionToRelease, defaultUser);
+      collectionService.create(collectionToRelease, defaultUser);
+      defaultUser = userService.retrieve(defaultUser.getId(), sysadmin);
 
       release_Test("Empty collection", collectionToRelease, null, defaultUser, getDefaultLicense(), getDefaultLicense(),
           UnprocessableError.class);
-      collectionToRelease = service.retrieve(collectionToRelease.getId(), sysadmin);
+      collectionToRelease = collectionService.retrieve(collectionToRelease.getId(), sysadmin);
 
       Item itemToRelease = ImejiFactory.newItem(collectionToRelease);
       itemToRelease.getLicenses().add(getDefaultLicense());
@@ -354,18 +361,18 @@ public class CollectionServiceTest extends SuperServiceTest {
 
       release_Test("Unauthorized user", collectionToRelease, itemToRelease, userEditGrant, getDefaultLicense(), getDefaultLicense(),
           NotAllowedError.class);
-      collectionToRelease = service.retrieve(collectionToRelease.getId(), sysadmin);
+      collectionToRelease = collectionService.retrieve(collectionToRelease.getId(), sysadmin);
 
       Lock lock = new Lock(itemToRelease.getId().toString(), null);
       Locks.lock(lock);
       release_Test("Locked item", collectionToRelease, itemToRelease, defaultUser, getDefaultLicense(), getDefaultLicense(),
           UnprocessableError.class);
       Locks.unLock(lock);
-      collectionToRelease = service.retrieve(collectionToRelease.getId(), sysadmin);
+      collectionToRelease = collectionService.retrieve(collectionToRelease.getId(), sysadmin);
 
       release_Test("pending collection, collection admin", collectionToRelease, itemToRelease, defaultUser, getDefaultLicense(),
           getDefaultLicense(), null);
-      collectionToRelease = service.retrieve(collectionToRelease.getId(), sysadmin);
+      collectionToRelease = collectionService.retrieve(collectionToRelease.getId(), sysadmin);
       itemToRelease = (new ItemService()).retrieve(itemToRelease.getId().toString(), sysadmin);
 
       release_Test("Already released collection", collectionToRelease, itemToRelease, defaultUser, getDefaultLicense(), getDefaultLicense(),
@@ -422,16 +429,17 @@ public class CollectionServiceTest extends SuperServiceTest {
 
   @Test
   public void withdraw() {
-    CollectionService service = new CollectionService();
+    CollectionService collectionService = new CollectionService();
     CollectionImeji collectionToWithdraw = ImejiFactory.newCollection().setTitle("To Withdraw").setPerson("m", "p", "g").build();
     collectionToWithdraw.setDiscardComment("discard test");
     try {
-      service.create(collectionToWithdraw, defaultUser);
+      collectionService.create(collectionToWithdraw, defaultUser);
+      defaultUser = userService.retrieve(defaultUser.getId(), sysadmin);
       Item itemToWithdraw = ImejiFactory.newItem(collectionToWithdraw);
       new ItemService().create(itemToWithdraw, collectionToWithdraw, defaultUser);
       withdraw_Test("collection pending", collectionToWithdraw, defaultUser, WorkflowException.class);
-      service.release(collectionToWithdraw, defaultUser, getDefaultLicense());
-      collectionToWithdraw = service.retrieve(collectionToWithdraw.getId(), sysadmin);
+      collectionService.release(collectionToWithdraw, defaultUser, getDefaultLicense());
+      collectionToWithdraw = collectionService.retrieve(collectionToWithdraw.getId(), sysadmin);
       userEditGrant.getGrants().add(new Grant(GrantType.EDIT, collectionToWithdraw.getId().toString()).toGrantString());
       new UserService().update(userEditGrant, sysadmin);
       // withdraw_Test("user edit grant", collectionToWithdraw, userEditGrant,
@@ -441,7 +449,7 @@ public class CollectionServiceTest extends SuperServiceTest {
       withdraw_Test("No discard comment", collectionToWithdraw, defaultUser, UnprocessableError.class);
       collectionToWithdraw.setDiscardComment("discard test");
       withdraw_Test("released collection, collection admin user", collectionToWithdraw, defaultUser, null);
-      collectionToWithdraw = service.retrieve(collectionToWithdraw.getId(), defaultUser);
+      collectionToWithdraw = collectionService.retrieve(collectionToWithdraw.getId(), defaultUser);
       withdraw_Test("collection already withdrawn", collectionToWithdraw, defaultUser, WorkflowException.class);
 
     } catch (ImejiException e) {

@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -628,6 +628,8 @@ public class ItemServiceTest extends SuperServiceTest {
 
       release_Test("Admin grant user, not yet released item, no licence", Arrays.asList(itemToRelease, itemToRelease2), userAdmin,
           getDefaultLicense(), getDefaultLicense(), null);
+      itemToRelease = service.retrieve(itemToRelease.getId(), userAdmin);
+      itemToRelease2 = service.retrieve(itemToRelease2.getId(), userAdmin);
       service.withdraw(Arrays.asList(itemToRelease), "standart comment", userAdmin);
       service.withdraw(Arrays.asList(itemToRelease2), "standart comment", userAdmin);
 
@@ -638,6 +640,7 @@ public class ItemServiceTest extends SuperServiceTest {
       service.create(itemToRelease, collectionPrivate, userAdmin);
       release_Test("Edit grant user, not yet released item, item already has license", Arrays.asList(itemToRelease), userAdmin,
           getDefaultLicense(), lic, null);
+      itemToRelease = service.retrieve(itemToRelease.getId(), userAdmin);
       service.withdraw(Arrays.asList(itemToRelease), "standart comment", userAdmin);
 
     } catch (ImejiException e) {
@@ -679,11 +682,12 @@ public class ItemServiceTest extends SuperServiceTest {
       service.createWithFile(withdrawReleased, ImejiTestResources.getTest2Jpg(), "Test2.jpg", collectionPrivate, userAdmin);
       service.releaseWithDefaultLicense(Arrays.asList(withdrawReleased), userAdmin);
       withdrawReleased = service.retrieve(withdrawReleased.getId(), userAdmin);
-      withdraw_Test("released item, edit user", withdrawReleased, userEditGrant, null);
+      withdraw_Test("released item, edit user", withdrawReleased, userEditGrant, NotAllowedError.class);
 
       withdrawReleased = ImejiFactory.newItem(collectionPrivate);
       service.createWithFile(withdrawReleased, ImejiTestResources.getTest7Jpg(), "Test7.jpg", collectionPrivate, userAdmin);
       service.releaseWithDefaultLicense(Arrays.asList(withdrawReleased), userAdmin);
+      withdrawReleased = service.retrieve(withdrawReleased.getId(), userAdmin);
       withdraw_Test("released item, admin user", withdrawReleased, userAdmin, null);
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
