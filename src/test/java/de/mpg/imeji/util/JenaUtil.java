@@ -92,7 +92,10 @@ public class JenaUtil {
     TDBMaker.reset();
     TDBMaker.releaseLocation(Location.create(TDB_PATH));
     LOGGER.info("TDB Location released!");
+    //TODO: Move the deletion of the test-file-directories in an extra method.
     deleteTDBDirectory();
+    deleteFilesDirectory();
+    deleteTempDirectory();
   }
 
   private static void initTestUser() throws Exception {
@@ -151,24 +154,51 @@ public class JenaUtil {
     return user;
   }
 
-  private static void deleteTDBDirectory() throws IOException {
-    File f = new File(TDB_PATH);
-    if (f.exists()) {
-      LOGGER.info(f.getAbsolutePath() + " deleted: " + FileUtils.deleteQuietly(f));
+  public static void deleteTDBDirectory() {
+    File jenaDBDirectory = new File(TDB_PATH);
+    String jenaDBDirectoryPath = jenaDBDirectory.getAbsolutePath();
+
+    if (jenaDBDirectory.exists()) {
+      try {
+        FileUtils.deleteDirectory(jenaDBDirectory);
+        LOGGER.info("Jena DB directory " + jenaDBDirectoryPath + " deleted.");
+      } catch (IOException e) {
+        LOGGER.error("Jena DB directory " + jenaDBDirectoryPath + " could not be deleted.", e);
+      }
+    } else {
+      LOGGER.info("Jena DB directory " + jenaDBDirectoryPath + " does not exist.");
     }
   }
 
-  private static void deleteFilesDirectory() throws IOException {
-    File f = new File(PropertyReader.getProperty("imeji.storage.path"));
-    if (f.exists()) {
-      LOGGER.info(f.getAbsolutePath() + " deleted: " + FileUtils.deleteQuietly(f));
+  public static void deleteFilesDirectory() throws IOException {
+    File filesDirectory = new File(PropertyReader.getProperty("imeji.storage.path"));
+    String filesDirectoryPath = filesDirectory.getAbsolutePath();
+
+    if (filesDirectory.exists()) {
+      try {
+        FileUtils.deleteDirectory(filesDirectory);
+        LOGGER.info("Files directory " + filesDirectoryPath + " deleted.");
+      } catch (IOException e) {
+        LOGGER.error("Files directory " + filesDirectoryPath + " could not be deleted.", e);
+      }
+    } else {
+      LOGGER.info("Files directory " + filesDirectoryPath + " does not exist.");
     }
   }
 
-  private static void deleteTempDirectory() {
-    File f = TempFileUtil.TEMP_DIR;
-    if (f.exists()) {
-      LOGGER.info(f.getAbsolutePath() + " deleted: " + FileUtils.deleteQuietly(f));
+  public static void deleteTempDirectory() {
+    File tempDirectory = TempFileUtil.TEMP_DIR;
+    String tempDirectoryPath = tempDirectory.getAbsolutePath();
+
+    if (tempDirectory.exists()) {
+      try {
+        FileUtils.deleteDirectory(tempDirectory);
+        LOGGER.info("Temp directory " + tempDirectoryPath + " deleted.");
+      } catch (IOException e) {
+        LOGGER.error("Temp directory " + tempDirectoryPath + " could not be deleted.", e);
+      }
+    } else {
+      LOGGER.info("Temp directory " + tempDirectoryPath + " does not exist.");
     }
   }
 
