@@ -205,9 +205,20 @@ public class ElasticIndexer implements SearchIndexer {
    * @return
    */
   private IndexRequest getIndexRequest(String id, String json, String parent, String type, long timestamp) {
-    final IndexRequest indexRequest = new IndexRequest();
+    
+	final IndexRequest indexRequest = new IndexRequest();
     indexRequest.index(indexName).id(id).source(json, XContentType.JSON);
-    indexRequest.versionType(VersionType.EXTERNAL).version(timestamp);
+    
+    // Add version information (See ticket #1122)
+    // We can choose here:
+    // - VersionType.EXTERNAL: Any request to index a document 
+    //                         that has THE SAME timestamp as the existing
+    //                         document will be rejected
+    // - VersionType.EXTERNAL_GTE: Means that any request to index a document 
+    //                             that has a timestamp BEFORE the existing document
+    //                             will be rejected
+    
+    indexRequest.versionType(VersionType.EXTERNAL_GTE).version(timestamp);
     if (parent != null) {
       // indexRequest.parent(parent);
       indexRequest.routing(parent);
