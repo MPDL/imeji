@@ -60,8 +60,8 @@ public class JenaUtil {
       // Remove old Database- and File-Directories
       //TODO: Move the deletion of the test-file-directories in an extra method.
       deleteTDBDirectory();
-      deleteFilesDirectory();
       deleteTempDirectory();
+      deleteFilesDirectory();
 
       // Set Filemode: important to be able to delete TDB directory by
       // closing Jena
@@ -94,8 +94,8 @@ public class JenaUtil {
     LOGGER.info("TDB Location released!");
     //TODO: Move the deletion of the test-file-directories in an extra method.
     deleteTDBDirectory();
-    deleteFilesDirectory();
     deleteTempDirectory();
+    deleteFilesDirectory();
   }
 
   private static void initTestUser() throws Exception {
