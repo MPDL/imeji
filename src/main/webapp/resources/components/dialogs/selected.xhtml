@@ -14,6 +14,6 @@
 	<composite:implementation>
 		<dialog:confirmationReasonedDialog id="witdrawSel" submitAction="withdrawSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_withdraw_selected_item}" submitLabel="#{lbl.withdraw_selected}" dialogId="withdrawSelectedItems"/>
 		<dialog:confirmationDialog id="delSel" submitAction="deleteSelected" bean="#{cc.attrs.itemsBean}" confirmationText="#{msg.confirmation_delete_selected_item}?" submitLabel="#{lbl.delete_selectedImages}" dialogId="deleteSelectedItems" />
-		<dialog:move id="moveSel" dialogId="moveSelected" colId="#{cc.attrs.itemsBean.collection.id.toString()}" parentId=":actionSelectedItems:move"  subCollectionFormInput="selDialogs:moveSel:form:name"/>
+		<dialog:move id="moveSel" dialogId="moveSelected" colId="#{cc.attrs.itemsBean.collection.id.toString()}" parentId="selDialogs:moveSel"  subCollectionFormInput="selDialogs:moveSel:form:name"/>
 	</composite:implementation>
 </html>

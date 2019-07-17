@@ -42,7 +42,7 @@
 						<span class="fa fa-exclamation-triangle"/>
 						#{lbl.move_collection_released}
 						<br/><br/>
-						<license:licenseEditor licenseEditor="#{MoveItemsBean.licenseEditor}" containerId="move:form"/>
+						<license:licenseEditor licenseEditor="#{MoveItemsBean.licenseEditor}" containerId="#{cc.attrs.parentId}:form"/>
 						<br/>
 					</ui:fragment>
 					<a href="" onclick="closeDialog('#{cc.attrs.dialogId}');" class="imj_cancelButton">
