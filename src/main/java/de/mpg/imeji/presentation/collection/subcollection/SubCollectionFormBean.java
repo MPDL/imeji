@@ -77,11 +77,12 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
    * 
    * @param subCollection
    */
-  public void edit(CollectionImeji subCollection) {
+  public void edit(CollectionImeji subCollection) throws IOException {
     try {
       subCollection.setTitle(name);
       collectionService.update(subCollection, getSessionUser());
       BeanHelper.info("Subcollection name changed");
+      redirect(getNavigation().getCollectionUrl() + subCollection.getIdString());
     } catch (ImejiException e) {
       BeanHelper.info("Error editing Subcollection: " + e.getMessage());
       LOGGER.error("Error editing Subcollection", e);
