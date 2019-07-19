@@ -20,7 +20,7 @@
 					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":uploadDialog:uploadForm" render=":uploader:licenseVariables"/>
 				</ui:fragment>
 	           <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.refresh}" style="display:none" onclick="closeUploader();">
-	           		<f:ajax execute="@this" render=":ajaxWrapper :additonalFooterScripts :actions"/>
+	           		<f:ajax execute="@this" render=":ajaxWrapper :additonalFooterScripts :actions :collectionAbout"/>
 	           </h:commandButton>
 	 		</h:form>
 	 		<div class="uploadDialogHeadArea imj_submitPanel">

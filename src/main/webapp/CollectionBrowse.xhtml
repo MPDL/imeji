@@ -47,7 +47,7 @@
 	 </ui:define>
 	 
 	 <ui:define name="collectionAbout">
-		<div class="collectionAbout">
+		<h:panelGroup layout="block" class="collectionAbout" id="collectionAbout">
 			<div class="imj_sectionTitle">
 		 		<span>#{lbl.informations}</span>
 		 		<a href="#" class="lessCollection" style="display:none;" onclick="$('.collectionAbout').slideUp(300);$('.moreCollection').show();$('.lessCollection').hide();">
@@ -66,7 +66,7 @@
 		 		<span>#{lbl.items}</span>
 			</div>
 			<div class="imj_section"/>
-		</div>
+		</h:panelGroup>
 	 </ui:define>
 	 
 	 <ui:define name="actionsMenu">

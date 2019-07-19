@@ -105,6 +105,11 @@ public class CollectionItemsBean extends ItemsBean {
     }
   }
 
+  public void refresh() {
+    super.refresh();
+    initSpecific();
+  }
+
   private int getCollectionSize() {
     return new ItemService().search(collection.getId(), null, null, Imeji.adminUser, 0, 0).getNumberOfRecords();
   }
@@ -250,6 +255,7 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   public int getSize() {
+    System.out.println("SIZE: " + size);
     return size;
   }
 
