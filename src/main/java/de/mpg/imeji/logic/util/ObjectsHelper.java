@@ -23,8 +23,9 @@ import de.mpg.imeji.logic.search.facet.model.Facet;
 public class ObjectsHelper {
 
   /**
-   * Given a list of imeji data objects of various types (i.e. items, collections, statements, etc.), create a map that 
-   * groups the data objects by their classes and provides access to the objects via their class. 
+   * Given a list of imeji data objects of various types (i.e. items, collections, statements,
+   * etc.), create a map that groups the data objects by their classes and provides access to the
+   * objects via their class.
    * 
    * Map's key is object class, maps's value is list of all given data objects of that class.
    * 

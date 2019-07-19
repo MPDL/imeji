@@ -178,7 +178,7 @@
 											</h:form>
 											<dialog:confirmationDialog submitAction="toggleAdmin" bean="#{UserBean}"
 														confirmationText="#{UserBean.sysAdmin ? msg.admin_to_user : msg.user_to_admin}"
-														submitLabel="#{lbl.confirm}" dialogId="general" />
+														submitLabel="#{lbl.confirm}" dialogId="general"/>
 										</ui:fragment>
 									</div>
 								</div>
@@ -186,7 +186,7 @@
 												
 							
 
-							<div class="imj_metadataSetEdit">
+							<h:panelGroup layout="block" id="user_grantlist" styleClass="imj_metadataSetEdit">
 								<div class="imj_metadataValue">
 									<ui:repeat var="shareHistory" value="#{UserBean.roles}"
 										rows="0" varStatus="row">
@@ -219,13 +219,13 @@
 														bean="#{shareHistory}"
 														confirmationText="#{msg.confirmation_revoke_grant} &quot;#{shareHistory.title}&quot; ?"
 														submitLabel="#{lbl.revoke}"
-														dialogId="revokeDialog#{row.index}" />
+														dialogId="revokeDialog#{row.index}" reRender=":user_grantlist"/>
 												</div>
 											</div>
 										</ui:fragment>
 									</ui:repeat>
 								</div>
-							</div>
+							</h:panelGroup>
 							<h:form id="userGroups">
 								<!-- usergroups -->
 								<div

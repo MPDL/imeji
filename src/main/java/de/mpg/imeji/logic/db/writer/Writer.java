@@ -52,8 +52,8 @@ public interface Writer {
   public List<Object> updateLazy(List<Object> objects, User user) throws ImejiException;
 
   /**
-   * Change (add, edit, delete) the value of a field of a data object, i.e. change
-   * status field of an Item or CollectionImeji data object 
+   * Change (add, edit, delete) the value of a field of a data object, i.e. change status field of
+   * an Item or CollectionImeji data object
    * 
    * @param changeMember
    * @return
@@ -61,12 +61,11 @@ public interface Writer {
    */
   public Object changeElement(ChangeMember changeMember) throws ImejiException;
 
-  
+
   /**
-   * Change (add, edit, delete) the value of a field of a list of data objects.
-   * See also {@link ChangeMember}.
-   * The given data object "field change requests" will all be processed 
-   * within a single database transaction. 
+   * Change (add, edit, delete) the value of a field of a list of data objects. See also
+   * {@link ChangeMember}. The given data object "field change requests" will all be processed
+   * within a single database transaction.
    * 
    * @param changeElements
    * @return

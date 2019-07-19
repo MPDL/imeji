@@ -11,8 +11,8 @@ import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
 import de.mpg.imeji.logic.model.aspects.CloneURI;
 
 /**
- * Controls access (create, update, delete) to members of resources.
- * Use this to set a certain field of a data object.
+ * Controls access (create, update, delete) to members of resources. Use this to set a certain field
+ * of a data object.
  * 
  * @author breddin
  *
@@ -25,9 +25,10 @@ public class ResourceElementController extends ResourceController {
 
 
   /**
-   * Change the field of a data object. 
+   * Change the field of a data object.
    * 
-   * @param changeMember specifies data object, the action (add, edit, delete), the field and the value to set.
+   * @param changeMember specifies data object, the action (add, edit, delete), the field and the
+   *        value to set.
    * @return data object with changed field (latest version from database)
    * @throws NotFoundException
    * @throws ReloadBeforeSaveException

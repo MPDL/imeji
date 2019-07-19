@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -137,8 +136,7 @@ public class Java2Jena {
   }
 
   /**
-   * Delete an existing time stamp triple.
-   * Add new time stamp triple.
+   * Delete an existing time stamp triple. Add new time stamp triple.
    * 
    * @param subjectURI
    * @param predicateURI

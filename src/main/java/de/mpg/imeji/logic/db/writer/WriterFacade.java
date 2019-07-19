@@ -200,8 +200,8 @@ public class WriterFacade {
 
 
   /**
-   * Use this function to change the value (add/edit/delete) of a specific field of a data object
-   * in database and index without changing any other field of that object.
+   * Use this function to change the value (add/edit/delete) of a specific field of a data object in
+   * database and index without changing any other field of that object.
    * 
    * @param changeMember
    * @param user
@@ -232,9 +232,9 @@ public class WriterFacade {
   }
 
   /**
-   * Use this function to change the value (add/edit/delete) of a specific field of list of data objects
-   * in database and index. All "change value of this field of this data object" requests will be processed within a 
-   * single transaction.
+   * Use this function to change the value (add/edit/delete) of a specific field of list of data
+   * objects in database and index. All "change value of this field of this data object" requests
+   * will be processed within a single transaction.
    * 
    * @param changeElements
    * @param user
