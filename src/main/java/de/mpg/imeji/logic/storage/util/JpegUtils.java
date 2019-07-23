@@ -13,19 +13,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.common.bytesource.ByteSource;
+import org.apache.commons.imaging.common.bytesource.ByteSourceFile;
+import org.apache.commons.imaging.formats.jpeg.JpegImageParser;
+import org.apache.commons.imaging.formats.jpeg.segments.Segment;
+import org.apache.commons.imaging.formats.jpeg.segments.UnknownSegment;
 import org.apache.commons.io.FileUtils;
-import org.apache.sanselan.ImageReadException;
-import org.apache.sanselan.Sanselan;
-import org.apache.sanselan.common.byteSources.ByteSource;
-import org.apache.sanselan.common.byteSources.ByteSourceFile;
-import org.apache.sanselan.formats.jpeg.JpegImageParser;
-import org.apache.sanselan.formats.jpeg.segments.UnknownSegment;
 
 import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.TempFileUtil;
@@ -89,7 +91,7 @@ public class JpegUtils {
         } catch (final IIOException e) {
           colorType = COLOR_TYPE_CMYK;
           checkAdobeMarker(file);
-          profile = Sanselan.getICCProfile(file);
+          profile = Imaging.getICCProfile(file);
           final WritableRaster raster = (WritableRaster) reader.readRaster(0, null);
           if (colorType == COLOR_TYPE_YCCK) {
             convertYcckToCmyk(raster);
@@ -116,13 +118,13 @@ public class JpegUtils {
     final JpegImageParser parser = new JpegImageParser();
     final ByteSource byteSource = new ByteSourceFile(file);
     @SuppressWarnings("rawtypes")
-    final ArrayList segments = parser.readSegments(byteSource, new int[] {0xffee}, true);
+    final List<Segment> segments = parser.readSegments(byteSource, new int[] {0xffee}, true);
     if (segments != null && segments.size() >= 1) {
       final UnknownSegment app14Segment = (UnknownSegment) segments.get(0);
-      final byte[] data = app14Segment.bytes;
+      final byte[] data = app14Segment.getSegmentData();
       if (data.length >= 12 && data[0] == 'A' && data[1] == 'd' && data[2] == 'o' && data[3] == 'b' && data[4] == 'e') {
         hasAdobeMarker = true;
-        final int transform = app14Segment.bytes[11] & 0xff;
+        final int transform = app14Segment.getSegmentData()[11] & 0xff;
         if (transform == 2) {
           colorType = COLOR_TYPE_YCCK;
         }

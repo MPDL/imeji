@@ -444,9 +444,9 @@
 		</dependency>
 		<!-- Used for CMYK images -->
 		<dependency>
-			<groupId>org.apache.sanselan</groupId>
-			<artifactId>sanselan</artifactId>
-			<version>0.97-incubator</version>
+		  <groupId>org.apache.commons</groupId>
+		  <artifactId>commons-imaging</artifactId>
+		  <version>1.0-alpha1</version>
 		</dependency>
 		<!-- JAVA API lib for imagemagick -->
 		<dependency>
