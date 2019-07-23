@@ -128,6 +128,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     if (StringHelper.isNullOrEmptyTrim(filename)) {
       throw new UnprocessableError("Filename must not be empty!");
     }
+    validateFilenameExists(filename, c.getId(), f, false);
     validateChecksum(c.getId(), f, false);
     validateFileFormat(f);
     QuotaUtil.checkQuota(user, f, c);
@@ -714,6 +715,24 @@ public class ItemService extends SearchServiceAbstract<Item> {
     }
   }
 
+
+  private void validateFilenameExists(String filename, URI collectionURI, File file, Boolean isUpdate) throws ImejiException {
+    SearchResult r = searchItemsWithFilenameInCollection(collectionURI, filename);
+    if (r.getNumberOfRecords() > 0) {
+      Item item = this.retrieveLazy(URI.create(r.getResults().get(0)), Imeji.adminUser);
+      String itemName = item.getName();
+      String itemUrl = Imeji.PROPERTIES.getApplicationURL() + "item/" + item.getIdString();
+
+      String uploadFileAlreadyExistsErrorMessage =
+          "A file with the same name already exists in the collection, see: <a href='" + itemUrl + "'>" + itemName + "</a>";
+      String updateFileAlreadyExistsErrorMessage =
+          "A file with the same name already exists in the collection or you are trying to upload same file for the item, see: <a href='"
+              + itemUrl + "'>" + itemName + "</a>" + " - Please choose another file.";
+
+      throw new UnprocessableError(isUpdate ? updateFileAlreadyExistsErrorMessage : uploadFileAlreadyExistsErrorMessage);
+    }
+  }
+
   /**
    * True if the checksum already exists within another {@link Item} in this {@link CollectionImeji}
    *
@@ -730,6 +749,23 @@ public class ItemService extends SearchServiceAbstract<Item> {
   }
 
   /**
+   * True if the filename already exists within another {@link Item} in this {@link CollectionImeji}
+   *
+   * @param filename
+   * @return
+   */
+  public boolean filenameExistsInCollection(URI collectionId, String filename) {
+    try {
+      return searchItemsWithFilenameInCollection(collectionId, filename).getNumberOfRecords() > 0;
+    } catch (UnprocessableError e) {
+      LOGGER.error("Error checking checksum of collection " + collectionId, e);
+    }
+    return true;
+  }
+
+
+
+  /**
    * Return the Items with the this checksum in a collection
    * 
    * @param collectionId
@@ -740,6 +776,22 @@ public class ItemService extends SearchServiceAbstract<Item> {
   public SearchResult searchItemsWithChecksuminCollection(URI collectionId, String checksum) throws UnprocessableError {
     final SearchQuery q =
         new SearchFactory().and(Arrays.asList(new SearchPair(SearchFields.checksum, SearchOperators.EQUALS, checksum, false),
+            new SearchPair(SearchFields.col, SearchOperators.EQUALS, collectionId.toString(), false))).build();
+    return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1);
+  }
+
+
+  /**
+   * Return the Items with the this filename in a collection
+   * 
+   * @param collectionId
+   * @param checksum
+   * @return
+   * @throws UnprocessableError
+   */
+  public SearchResult searchItemsWithFilenameInCollection(URI collectionId, String filename) throws UnprocessableError {
+    final SearchQuery q =
+        new SearchFactory().and(Arrays.asList(new SearchPair(SearchFields.filename, SearchOperators.EQUALS, filename, false),
             new SearchPair(SearchFields.col, SearchOperators.EQUALS, collectionId.toString(), false))).build();
     return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1);
   }

@@ -255,7 +255,6 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   public int getSize() {
-    System.out.println("SIZE: " + size);
     return size;
   }
 
