@@ -9,12 +9,15 @@ import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.SearchFields;
+import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchQuery;
 import de.mpg.imeji.logic.search.model.SearchResult;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.logic.util.UrlHelper;
+import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.util.CookieUtils;
 
 /**
@@ -30,8 +33,10 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
   private static final Logger LOGGER = LogManager.getLogger(SuperContainerBean.class);
   protected String query = "";
   protected String filter = "";
+  protected String facetQueryString;
   protected String selectedMenu;
   protected SearchQuery searchQuery = new SearchQuery();
+  private SearchQuery facetQuery = new SearchQuery();
   protected SearchResult searchResult;
   private int totalNumberOfRecords;
   private static final String CONTAINER_SORT_ORDER_COOKIE = "CONTAINER_SORT_ORDER_COOKIE";
@@ -53,21 +58,35 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
    */
   @Override
   public void init() {
+    LOGGER.info("INIT!");
     super.init();
-    setSearchQuery(null);
-    if (UrlHelper.hasParameter("tab") && !UrlHelper.getParameterValue("tab").isEmpty()) {
-      selectedMenu = UrlHelper.getParameterValue("tab");
-    }
-    if (UrlHelper.hasParameter("q")) {
-      query = UrlHelper.getParameterValue("q");
-    }
-    if (UrlHelper.hasParameter("filter")) {
-      filter = UrlHelper.getParameterValue("filter");
-    }
+
+    parseSearchQuery();
+
     if (selectedMenu == null) {
       selectedMenu = "SORTING";
     }
     update();
+  }
+
+  /**
+   * Parse the search query in the url, as defined by the parameter q
+   *
+   * @return
+   */
+  private void parseSearchQuery() {
+    try {
+      query = UrlHelper.getParameterValue("q");
+      facetQueryString = UrlHelper.getParameterValue("fq");
+      filter = UrlHelper.getParameterValue("filter");
+      SearchFactory factory = new SearchFactory().initQuery(query)
+          .and(new SearchGroup(SearchQueryParser.parseStringQuery(facetQueryString).getElements())).initFilter(filter);
+      setSearchQuery(factory.build());
+      LOGGER.info("Search Query set with facest: " + getSearchQuery());
+    } catch (final Exception e) {
+      BeanHelper.error("Error parsing query: " + e.getMessage());
+      LOGGER.error("Error parsing query", e);
+    }
   }
 
   /*
@@ -188,12 +207,8 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
    * @throws Exception
    */
   public int search(int offset, int limit) throws Exception {
-    SearchQuery searchQuery = new SearchQuery();
-    SearchFactory factory = new SearchFactory();
+
     int myOffset = offset;
-    factory.initQuery(getQuery());
-    factory.initFilter(filter);
-    searchQuery = factory.build();
     final SortCriterion sortCriterion =
         new SortCriterion(SearchFields.valueOfIndex(getSelectedSortCriterion()), SortOrder.valueOf(getSelectedSortOrder()));
     searchResult = search(searchQuery, sortCriterion, myOffset, limit);
@@ -260,5 +275,27 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
   @Override
   protected void setCookieSortOrder(String order) {
     CookieUtils.updateCookieValue(CONTAINER_SORT_ORDER_COOKIE, order);
+  }
+
+  public SearchResult getSearchResult() {
+    return searchResult;
+  }
+
+  public void setSearchResult(SearchResult searchResult) {
+    this.searchResult = searchResult;
+  }
+
+  /**
+   * @return the facetQuery
+   */
+  public SearchQuery getFacetQuery() {
+    return facetQuery;
+  }
+
+  /**
+   * @param facetQuery the facetQuery to set
+   */
+  public void setFacetQuery(SearchQuery facetQuery) {
+    this.facetQuery = facetQuery;
   }
 }

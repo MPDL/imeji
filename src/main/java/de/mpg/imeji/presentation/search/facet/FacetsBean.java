@@ -2,6 +2,7 @@ package de.mpg.imeji.presentation.search.facet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +25,8 @@ import de.mpg.imeji.presentation.session.BeanHelper;
 public class FacetsBean extends SuperBean {
   private static final long serialVersionUID = -2474393161093378625L;
   private static final Logger LOGGER = LogManager.getLogger(FacetsBean.class);
-  private List<Facet> facets = new ArrayList<>();
+  private List<Facet> itemFacets = new ArrayList<>();
+  private List<Facet> collectionFacets = new ArrayList<>();
   private FacetService facetService = new FacetService();
 
   public FacetsBean() {
@@ -34,7 +36,15 @@ public class FacetsBean extends SuperBean {
   @PostConstruct
   public void init() {
     try {
-      facets = facetService.retrieveAll();
+      List<Facet> facets = facetService.retrieveAll();
+
+      for (Facet f : facets) {
+        if (Facet.OBJECTTYPE_ITEM.equals(f.getObjectType())) {
+          itemFacets.add(f);
+        } else if (Facet.OBJECTTYPE_COLLECTION.equals(f.getObjectType())) {
+          collectionFacets.add(f);
+        }
+      }
       setPosition();
     } catch (ImejiException e) {
       BeanHelper.error("Error retrieving facets: " + e.getMessage());
@@ -47,10 +57,16 @@ public class FacetsBean extends SuperBean {
    */
   private void setPosition() {
     int i = 0;
-    for (Facet f : facets) {
+    for (Facet f : itemFacets) {
       f.setPosition(i);
       i++;
     }
+    i = 0;
+    for (Facet f : collectionFacets) {
+      f.setPosition(i);
+      i++;
+    }
+
   }
 
   public void delete() {
@@ -74,9 +90,11 @@ public class FacetsBean extends SuperBean {
    * @throws ImejiException
    */
   public void moveUp(Facet facet) throws ImejiException {
-    Collections.swap(facets, facet.getPosition(), facet.getPosition() - 1);
+
+    List<Facet> facetCollection = Facet.OBJECTTYPE_ITEM.equals(facet.getObjectType()) ? itemFacets : collectionFacets;
+    Collections.swap(facetCollection, facet.getPosition(), facet.getPosition() - 1);
     setPosition();
-    facetService.update(facets, getSessionUser());
+    facetService.update(facetCollection, getSessionUser());
   }
 
   /**
@@ -87,22 +105,27 @@ public class FacetsBean extends SuperBean {
    * @throws ImejiException
    */
   public void moveDown(Facet facet) throws ImejiException {
-    Collections.swap(facets, facet.getPosition(), facet.getPosition() + 1);
+    List<Facet> facetCollection = Facet.OBJECTTYPE_ITEM.equals(facet.getObjectType()) ? itemFacets : collectionFacets;
+    Collections.swap(facetCollection, facet.getPosition(), facet.getPosition() + 1);
     setPosition();
-    facetService.update(facets, getSessionUser());
+    facetService.update(facetCollection, getSessionUser());
   }
 
-  /**
-   * @return the facets
-   */
-  public List<Facet> getFacets() {
-    return facets;
+  public List<Facet> getItemFacets() {
+    return itemFacets;
   }
 
-  /**
-   * @param facets the facets to set
-   */
-  public void setFacets(List<Facet> facets) {
-    this.facets = facets;
+  public void setItemFacets(List<Facet> itemFacets) {
+    this.itemFacets = itemFacets;
   }
+
+  public List<Facet> getCollectionFacets() {
+    return collectionFacets;
+  }
+
+  public void setCollectionFacets(List<Facet> collectionFacets) {
+    this.collectionFacets = collectionFacets;
+  }
+
+
 }

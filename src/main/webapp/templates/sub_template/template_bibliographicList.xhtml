@@ -5,33 +5,46 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
 	xmlns:col="http://java.sun.com/jsf/composite/components/collection"
-	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs">
+	xmlns:dialog="http://java.sun.com/jsf/composite/components/dialogs"
+	xmlns:facet="http://java.sun.com/jsf/composite/components/facet">
 
+
+    <ui:define name="init">
+    	#{FacetSelectorBean.init(paginatorListSessionBean.searchResult)}
+    </ui:define>
 	<!-- Main Content - bibliographic grid list - START -->
 	<ui:define name="mainContent">
 		<h:panelGroup layout="block" id ="ajaxWrapper">
-			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords == 0}">
-				<div class="imj_bibliographicList" style="font-size:130%">
-					<span class="fa fa-exclamation-triangle"/>
-					<h:outputText value=" #{msg.no_collection_found}"/>
-				</div>
-			</ui:fragment>
-			<!-- Selection Info Panel -->
-			<col:filters id="filter" fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
-								 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfRecords}" 
-								 filterBeanHasQuery="#{filterBeanHasQuery}"
-								 objectLabel="#{lbl.collections}"/>
-			<!-- List -->
-			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
-				<div id="imj_listBody">
-					<col:list mediaList="#{paginatorListSessionBean}"/>
-				</div>
-			</ui:fragment>
-			
-			<!-- Page Browser GotoBox -->
-			<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
-				<imjc:rangePageBrowserGotobox id="browse" paginatorBean="#{paginatorListSessionBean}"/>
-			</ui:fragment>
+			<div class="itemsArea">
+	
+				<!-- Selection Info Panel -->
+				<col:filters id="filter" fSession="#{FacetFiltersSession}" filterBean="#{paginatorListSessionBean}" currentMainMenu="#{currentMainMenu}" 
+									 browseToAllUrl="#{browseToAllItemsUrl}" numberOfElements="#{paginatorListSessionBean.totalNumberOfRecords}" 
+									 filterBeanHasQuery="#{filterBeanHasQuery}"
+									 objectLabel="#{lbl.collections}"/>
+				<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords == 0}">
+					<div class="imj_bibliographicList" style="font-size:130%">
+						<span class="fa fa-exclamation-triangle"/>
+						<h:outputText value=" #{msg.no_collection_found}"/>
+					</div>
+				</ui:fragment>
+				<!-- List -->
+				<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
+					
+					<h:panelGroup layout="block" id="facetsArea" styleClass="imj_itemsAreaFacets" style="margin-top: 17px;" rendered="#{not empty FacetSelectorBean.entries}">
+			           	<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" selector="#{FacetSelectorBean}"/>
+			        </h:panelGroup>
+			        
+					<h:panelGroup layout="block" id="imj_listBody" style="#{not empty FacetSelectorBean.entries ? 'width:77%;' : ''}">
+						<col:list mediaList="#{paginatorListSessionBean}"/>
+					</h:panelGroup>
+				</ui:fragment>
+				
+				<!-- Page Browser GotoBox -->
+				<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
+					<imjc:rangePageBrowserGotobox id="browse" paginatorBean="#{paginatorListSessionBean}"/>
+				</ui:fragment>
+			</div>
 		</h:panelGroup>
 	</ui:define>
 	<!-- Main Content - END -->

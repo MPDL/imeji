@@ -20,9 +20,18 @@ public class Facet implements Serializable {
   private String type;
   @j2jLiteral("http://imeji.org/terms/index")
   private String index;
+  /**
+   * Indicates whether the facet is part of an item or an collection
+   */
+  @j2jLiteral("http://imeji.org/terms/objecttype")
+  private String objectType = OBJECTTYPE_ITEM;
   private URI uri = IdentifierUtil.newURI(Facet.class);
   @j2jLiteral("http://imeji.org/terms/position")
   private int position = 0;
+
+
+  public static final String OBJECTTYPE_ITEM = "item";
+  public static final String OBJECTTYPE_COLLECTION = "collection";
 
   /**
    * Reserved Facet Name to count the items of a collection
@@ -106,6 +115,14 @@ public class Facet implements Serializable {
 
   public void setPosition(int position) {
     this.position = position;
+  }
+
+  public String getObjectType() {
+    return objectType;
+  }
+
+  public void setObjectType(String objectType) {
+    this.objectType = objectType;
   }
 
 }

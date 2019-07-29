@@ -107,6 +107,7 @@ public class ElasticSearch implements Search {
   private SearchResult searchElasticSearch(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri, int from,
       int size, boolean addFacets) {
 
+    LOGGER.info("ElasticSearch.search");
     // magic number "-1" for unlimited size is spread all over the code:
     if (size != GET_ALL_RESULTS && size < 0) {
       size = SEARCH_INTERVALL_MAX_SIZE;
@@ -144,6 +145,7 @@ public class ElasticSearch implements Search {
         }
       }
       searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
+      LOGGER.info("Search source: " + searchSourceBuilder.toString());
       return searchSinglePage(searchRequest, query);
     } else {
       searchSourceBuilder.size(SEARCH_SCROLL_INTERVALL);
@@ -153,6 +155,7 @@ public class ElasticSearch implements Search {
         }
       }
       searchRequest.indices(this.indicesNames).source(searchSourceBuilder).scroll(TimeValue.timeValueSeconds(30));
+
 
       return searchWithScroll(searchRequest, query, from, size);
     }
@@ -167,7 +170,7 @@ public class ElasticSearch implements Search {
    */
 
   private SearchSourceBuilder addAggregations(SearchSourceBuilder request, String folderUri) {
-    final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build();
+    final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build(this.types);
     if (folderUri != null) {
       /*
       aggregations.add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS,
@@ -501,7 +504,7 @@ public class ElasticSearch implements Search {
       ids.add(hit.getId());
     }
 
-    List<FacetResult> facets = AggregationsParser.parse(searchResponse);
+    List<FacetResult> facets = AggregationsParser.parse(searchResponse, this.types);
     SearchResult searchResult =
         new SearchResult(ids, getTotalNumberOfRecords(searchResponse, facets), getNumberOfItems(searchResponse, facets),
             getNumberOfItemsOfCollection(searchResponse, facets), getNumberOfSubcollections(searchResponse, facets), facets);

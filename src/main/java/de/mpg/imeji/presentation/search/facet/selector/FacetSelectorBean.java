@@ -53,6 +53,7 @@ public class FacetSelectorBean extends SuperBean {
    * @return
    */
   public String init(SearchResult result) {
+    LOGGER.info("FacestSelector.init " + result.getFacets());
     if (result != null) {
       this.entries = result.getFacets().stream()
           .filter(f -> !f.getName().equals(Facet.ITEMS) && !f.getName().equals(Facet.SUBCOLLECTIONS)

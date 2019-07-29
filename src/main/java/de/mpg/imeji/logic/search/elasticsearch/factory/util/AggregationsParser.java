@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.search.elasticsearch.factory.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation.Bucket;
@@ -15,6 +16,8 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.InternalStats;
 import org.elasticsearch.search.aggregations.metrics.ParsedStats;
 
+import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
@@ -29,6 +32,8 @@ import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
  */
 public class AggregationsParser {
 
+  private final static org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger(AggregationsParser.class);
+
   private AggregationsParser() {
 
   }
@@ -40,7 +45,70 @@ public class AggregationsParser {
    * @param resp
    * @return
    */
-  public static List<FacetResult> parse(SearchResponse resp) {
+  public static List<FacetResult> parse(SearchResponse resp, SearchObjectTypes... types) {
+    /*
+    if (SearchObjectTypes.ITEM.equals(types[0])) {
+      return parseForItemFacets(resp);
+    } else if (SearchObjectTypes.COLLECTION.equals(types[0])) {
+      return parseForCollectionFacets(resp);
+    }
+    
+    
+    return new ArrayList<FacetResult>();
+    */
+    return parseForItemFacets(resp);
+
+  }
+
+  /*
+  public static List<FacetResult> parseForCollectionFacets(SearchResponse resp) {
+    LOGGER.info("Parse for collection facets");
+  
+      
+      List<FacetResult> facetResults = new ArrayList<>();
+      if (resp != null && resp.getAggregations() != null) {
+        Nested metadata = resp.getAggregations().get("info");
+        if (metadata != null) {
+          for (Aggregation mdAgg : metadata.getAggregations()) {
+            FacetResult facetResult = new FacetResult(getFacetName(mdAgg.getName()), mdAgg.getName());
+            if (mdAgg instanceof Filter) {
+              Aggregation terms = ((Filter) mdAgg).getAggregations().asList().get(0);
+              fillResult(terms, facetResult);
+            }
+  
+  
+            facetResults.add(facetResult);
+          }
+          Filters system = resp.getAggregations().get("system");
+          if (system != null) {
+            Bucket systemBucket = system.getBucketByKey("all");
+            for (Aggregation agg : systemBucket.getAggregations()) {
+              FacetResult facetResult = new FacetResult(getFacetName(agg.getName()), agg.getName());
+              if (agg instanceof Filters) {
+                for (Filters.Bucket bucket : ((Filters) agg).getBuckets()) {
+                  facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
+                }
+              } else if (agg instanceof ParsedStringTerms) {
+                for (Terms.Bucket bucket : ((ParsedStringTerms) agg).getBuckets()) {
+                  facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
+                }
+  
+              }
+              facetResults.add(facetResult);
+            }
+          }
+      
+      
+      
+      
+      
+    return facetResults;
+  
+  }
+  */
+
+  public static List<FacetResult> parseForItemFacets(SearchResponse resp) {
+
     List<FacetResult> facetResults = new ArrayList<>();
     if (resp != null && resp.getAggregations() != null) {
       Nested metadata = resp.getAggregations().get("metadata");
@@ -49,34 +117,10 @@ public class AggregationsParser {
           FacetResult facetResult = new FacetResult(getFacetName(mdAgg.getName()), mdAgg.getName());
           if (mdAgg instanceof Filter) {
             Aggregation terms = ((Filter) mdAgg).getAggregations().asList().get(0);
-            if (terms instanceof ParsedStringTerms) {
-              for (Terms.Bucket bucket : ((ParsedStringTerms) terms).getBuckets()) {
-                facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
-              }
-            } else if (terms instanceof InternalStats) {
-              FacetResultValue result = new FacetResultValue(terms.getName(), ((InternalStats) terms).getCount());
-              result.setMax((((InternalStats) terms).getMaxAsString()));
-              result.setMin(((InternalStats) terms).getMinAsString());
-              facetResult.getValues().add(result);
-            } else if (terms instanceof ParsedStats) {
-              FacetResultValue result = new FacetResultValue(terms.getName(), ((ParsedStats) terms).getCount());
-              double max = ((ParsedStats) terms).getMax();
-              double min = ((ParsedStats) terms).getMin();
-              if (Double.isInfinite(max)) {
-                result.setMax("0");
-              } else {
-                result.setMax((((ParsedStats) terms).getMaxAsString()));
-              }
-              if (Double.isInfinite(min)) {
-                result.setMin("0");
-              } else {
-                result.setMin(((ParsedStats) terms).getMinAsString());
-              }
-              facetResult.getValues().add(result);
-            } else {
-              System.out.println("NOT PARSED  METADATA AGGREGATION: " + terms);
-            }
+            fillResult(terms, facetResult);
           }
+
+
           facetResults.add(facetResult);
         }
         Filters system = resp.getAggregations().get("system");
@@ -97,14 +141,52 @@ public class AggregationsParser {
             facetResults.add(facetResult);
           }
         }
-        facetResults.add(parseInternalFacet(resp, Facet.ITEMS));
-        facetResults.add(parseInternalFacet(resp, Facet.SUBCOLLECTIONS));
+
+        if (resp.getAggregations().get(Facet.ITEMS) != null) {
+          facetResults.add(parseInternalFacet(resp, Facet.ITEMS));
+        }
+        if (resp.getAggregations().get(Facet.SUBCOLLECTIONS) != null) {
+          facetResults.add(parseInternalFacet(resp, Facet.SUBCOLLECTIONS));
+        }
         if (resp.getAggregations().get(Facet.COLLECTION_ITEMS) != null) {
           facetResults.add(parseInternalFacet(resp, Facet.COLLECTION_ITEMS));
         }
       }
     }
     return facetResults;
+
+  }
+
+
+  private static void fillResult(Aggregation terms, FacetResult facetResult) {
+    if (terms instanceof ParsedStringTerms) {
+      for (Terms.Bucket bucket : ((ParsedStringTerms) terms).getBuckets()) {
+        facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
+      }
+    } else if (terms instanceof InternalStats) {
+      FacetResultValue result = new FacetResultValue(terms.getName(), ((InternalStats) terms).getCount());
+      result.setMax((((InternalStats) terms).getMaxAsString()));
+      result.setMin(((InternalStats) terms).getMinAsString());
+      facetResult.getValues().add(result);
+    } else if (terms instanceof ParsedStats) {
+      FacetResultValue result = new FacetResultValue(terms.getName(), ((ParsedStats) terms).getCount());
+      double max = ((ParsedStats) terms).getMax();
+      double min = ((ParsedStats) terms).getMin();
+      if (Double.isInfinite(max)) {
+        result.setMax("0");
+      } else {
+        result.setMax((((ParsedStats) terms).getMaxAsString()));
+      }
+      if (Double.isInfinite(min)) {
+        result.setMin("0");
+      } else {
+        result.setMin(((ParsedStats) terms).getMinAsString());
+      }
+      facetResult.getValues().add(result);
+    } else {
+      System.out.println("NOT PARSED  METADATA AGGREGATION: " + terms);
+    }
+
   }
 
   /**

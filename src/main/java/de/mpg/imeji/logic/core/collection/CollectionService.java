@@ -32,6 +32,7 @@ import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
+import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
 import de.mpg.imeji.logic.search.factory.SearchFactory.SEARCH_IMPLEMENTATIONS;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -312,6 +313,24 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, User user, int size, int offset) {
     return search.search(searchQuery, sortCri, user, null, offset, size);
+  }
+
+
+  /**
+   * Search and add {@link Facet} to the {@link SearchResult}
+   * 
+   * @param containerUri
+   * @param searchQuery
+   * @param sortCri
+   * @param user
+   * @param size
+   * @param offset
+   * @return
+   */
+  public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery searchQuery, List<SortCriterion> sortCriteria, User user, int size,
+      int offset) {
+    SearchResult facetSearchResult = search.searchWithFacetsAndMultiLevelSorting(searchQuery, sortCriteria, user, null, offset, size);
+    return facetSearchResult;
   }
 
   @Override

@@ -25,6 +25,7 @@ public final class ElasticFolder extends ElasticProperties {
   private final List<ElasticPerson> author = new ArrayList<>();
   private final List<ElasticContainerAdditionalInfo> info = new ArrayList<>();
   private final ElasticJoinField joinField = new ElasticJoinField();
+  private List<String> types = new ArrayList<>();
 
 
   public ElasticFolder(CollectionImeji c) {
@@ -40,6 +41,7 @@ public final class ElasticFolder extends ElasticProperties {
     for (final ContainerAdditionalInfo i : c.getAdditionalInformations()) {
       info.add(new ElasticContainerAdditionalInfo(i));
     }
+    this.types = List.copyOf(c.getTypes());
     this.joinField.setName("folder");
   }
 
@@ -88,6 +90,14 @@ public final class ElasticFolder extends ElasticProperties {
    */
   public ElasticJoinField getJoinField() {
     return joinField;
+  }
+
+  public List<String> getTypes() {
+    return types;
+  }
+
+  public void setTypes(List<String> types) {
+    this.types = types;
   }
 
 }

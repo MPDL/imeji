@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
@@ -23,10 +25,13 @@ import de.mpg.imeji.logic.config.ImejiFileTypes;
 import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.StatementType;
+import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
+import de.mpg.imeji.logic.search.model.SearchCollectionMetadata;
 
 /**
  * Factory class to buid an {@link AbstractAggregationBuilder}
@@ -37,42 +42,100 @@ import de.mpg.imeji.logic.search.facet.model.Facet;
 public class ElasticAggregationFactory {
 
   private final static int BUCKETS_MAX_SIZE = 100;
+  private final static org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger(ElasticAggregationFactory.class);
 
-  public static List<AbstractAggregationBuilder> build() {
+  public static List<AbstractAggregationBuilder> build(SearchObjectTypes... types) {
+
+    if (SearchObjectTypes.ITEM.equals(types[0])) {
+      return buildForItems();
+    } else if (SearchObjectTypes.COLLECTION.equals(types[0])) {
+      return buildForCollections();
+    }
+
+    return null;
+  }
+
+  private static List<AbstractAggregationBuilder> buildForItems() {
     List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
-    List<Facet> facets = new FacetService().retrieveAllFromCache();
+
     FiltersAggregationBuilder systemAggregations =
         AggregationBuilders.filters("system", new FiltersAggregator.KeyedFilter("all", QueryBuilders.matchAllQuery()));
     NestedAggregationBuilder metadataAggregations = AggregationBuilders.nested("metadata", "metadata");
+
+    List<Facet> facets = new FacetService().retrieveAllFromCache();
     for (Facet facet : facets) {
-      String metadataField = getMetadataField(facet);
-      if (metadataField != null) {
-        metadataAggregations.subAggregation(getMetadataAggregation(facet, metadataField));
-      } else if (SearchFields.filetype.name().equals(facet.getIndex())) {
-        systemAggregations.subAggregation(getFiletypeAggregation(facet));
-      } else if (SearchFields.collection.name().equals(facet.getIndex())) {
-        systemAggregations.subAggregation(getCollectionAggregation(facet));
-      } else if (SearchFields.license.name().equals(facet.getIndex())) {
-        systemAggregations.subAggregation(getLicenseAggregation(facet));
-      } else if (SearchFields.valueOfIndex(facet.getIndex()) == SearchFields.collection_author_organisation) {
-        systemAggregations.subAggregation(getOrganizationsOfCollectionAggregation(facet));
-      } else if (SearchFields.valueOfIndex(facet.getIndex()) == SearchFields.collection_author) {
-        systemAggregations.subAggregation(getAuthorsOfCollectionAggregation(facet));
-      } else {
-        System.out.println("NOT CREATED AGGREGATION FOR FACET " + facet.getIndex());
+      if (Facet.OBJECTTYPE_ITEM.equals(facet.getObjectType())) {
+
+        String metadataField = getMetadataField(facet);
+        if (metadataField != null) {
+          metadataAggregations.subAggregation(getMetadataAggregation(facet, metadataField));
+        } else if (SearchFields.filetype.name().equals(facet.getIndex())) {
+          systemAggregations.subAggregation(getFiletypeAggregation(facet));
+        } else if (SearchFields.collection.name().equals(facet.getIndex())) {
+          systemAggregations.subAggregation(getCollectionAggregation(facet));
+        } else if (SearchFields.license.name().equals(facet.getIndex())) {
+          systemAggregations.subAggregation(getLicenseAggregation(facet));
+        } else if (SearchFields.valueOfIndex(facet.getIndex()) == SearchFields.collection_author_organisation) {
+          systemAggregations.subAggregation(getOrganizationsOfCollectionAggregation(facet));
+        } else if (SearchFields.valueOfIndex(facet.getIndex()) == SearchFields.collection_author) {
+          systemAggregations.subAggregation(getAuthorsOfCollectionAggregation(facet));
+        } else {
+          System.out.println("NOT CREATED AGGREGATION FOR FACET " + facet.getIndex());
+        }
       }
     }
     aggregations.add(metadataAggregations);
     aggregations.add(systemAggregations);
     aggregations.add(AggregationBuilders.filters(Facet.ITEMS,
         new FiltersAggregator.KeyedFilter(Facet.ITEMS, QueryBuilders.termQuery(ElasticFields.JOIN_FIELD.field(), "item"))));
-    // new FiltersAggregator.KeyedFilter(Facet.ITEMS, QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name()))));
+    // new FiltersAggregator.KeyedFilter(Facet.ITEMS,
+    // QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name()))));
 
     aggregations.add(AggregationBuilders.filters(Facet.SUBCOLLECTIONS,
         new FiltersAggregator.KeyedFilter(Facet.SUBCOLLECTIONS, QueryBuilders.termQuery(ElasticFields.JOIN_FIELD.field(), "folder"))));
-    // new FiltersAggregator.KeyedFilter(Facet.SUBCOLLECTIONS, QueryBuilders.typeQuery(ElasticService.ElasticIndices.folders.name()))));
+    // new FiltersAggregator.KeyedFilter(Facet.SUBCOLLECTIONS,
+    // QueryBuilders.typeQuery(ElasticService.ElasticIndices.folders.name()))));
 
     return aggregations;
+  }
+
+  private static List<AbstractAggregationBuilder> buildForCollections() {
+    LOGGER.info("Build aggs for collections");
+
+    List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
+    NestedAggregationBuilder metadataAggregations = AggregationBuilders.nested("metadata", "info");
+
+    FiltersAggregationBuilder systemAggregations =
+        AggregationBuilders.filters("system", new FiltersAggregator.KeyedFilter("all", QueryBuilders.matchAllQuery()));
+
+    aggregations.add(systemAggregations);
+    aggregations.add(metadataAggregations);
+    List<Facet> facets = new FacetService().retrieveAllFromCache();
+    for (Facet facet : facets) {
+      if (Facet.OBJECTTYPE_COLLECTION.equals(facet.getObjectType())) {
+        LOGGER.info("Facet for collection found: " + facet.getIndex());
+        if (SearchFields.author_organization_exact.getIndex().equals(facet.getIndex())) {
+          systemAggregations.subAggregation(
+              AggregationBuilders.terms(facet.getIndex()).size(BUCKETS_MAX_SIZE).field(ElasticFields.AUTHOR_ORGANIZATION_EXACT.field()));
+        } else if (SearchFields.author_completename_exact.getIndex().equals(facet.getIndex())) {
+          systemAggregations.subAggregation(
+              AggregationBuilders.terms(facet.getIndex()).size(BUCKETS_MAX_SIZE).field(ElasticFields.AUTHOR_COMPLETENAME_EXACT.field()));
+        } else if (SearchFields.collection_type.getIndex().equals(facet.getIndex())) {
+          systemAggregations.subAggregation(
+              AggregationBuilders.terms(facet.getIndex()).size(BUCKETS_MAX_SIZE).field(ElasticFields.COLLECTION_TYPE.field()));
+        } else if (facet.getIndex().startsWith("collection.md")) {
+          FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex(),
+              QueryBuilders.termQuery(ElasticFields.INFO_LABEL_EXACT.field(), SearchCollectionMetadata.indexToLabel(facet.getIndex())));
+          fb.subAggregation(AggregationBuilders.terms(facet.getName()).field(ElasticFields.INFO_TEXT_EXACT.field()).size(BUCKETS_MAX_SIZE));
+          metadataAggregations.subAggregation(fb);
+        }
+
+      }
+
+    }
+
+    return aggregations;
+
   }
 
   /**
