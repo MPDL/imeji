@@ -25,7 +25,7 @@
 				<p>#{lbl.select_one_metadata_from_list}:</p>
 			</ui:fragment>
 
-			<ui:repeat var="label" value="#{Configuration.collectionMetadataSuggestionsPreselectAsList}" varStatus="statusVar">
+			<ui:repeat var="label" value="#{Configuration.collectionMetadataSuggestionsComplete}" varStatus="statusVar">
 				<p>
 					<ui:remove>
 						<ui:fragment rendered="#{cc.attrs.bean.isUsed(index.searchIndex)}">

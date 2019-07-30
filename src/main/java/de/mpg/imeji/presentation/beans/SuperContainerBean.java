@@ -58,7 +58,6 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
    */
   @Override
   public void init() {
-    LOGGER.info("INIT!");
     super.init();
 
     parseSearchQuery();
