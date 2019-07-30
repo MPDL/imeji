@@ -100,7 +100,6 @@ public class ElasticAggregationFactory {
   }
 
   private static List<AbstractAggregationBuilder> buildForCollections() {
-    LOGGER.info("Build aggs for collections");
 
     List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
     NestedAggregationBuilder metadataAggregations = AggregationBuilders.nested("metadata", "info");
@@ -113,7 +112,6 @@ public class ElasticAggregationFactory {
     List<Facet> facets = new FacetService().retrieveAllFromCache();
     for (Facet facet : facets) {
       if (Facet.OBJECTTYPE_COLLECTION.equals(facet.getObjectType())) {
-        LOGGER.info("Facet for collection found: " + facet.getIndex());
         if (SearchFields.author_organization_exact.getIndex().equals(facet.getIndex())) {
           systemAggregations.subAggregation(
               AggregationBuilders.terms(facet.getIndex()).size(BUCKETS_MAX_SIZE).field(ElasticFields.AUTHOR_ORGANIZATION_EXACT.field()));

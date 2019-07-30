@@ -107,7 +107,6 @@ public class ElasticSearch implements Search {
   private SearchResult searchElasticSearch(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri, int from,
       int size, boolean addFacets) {
 
-    LOGGER.info("ElasticSearch.search");
     // magic number "-1" for unlimited size is spread all over the code:
     if (size != GET_ALL_RESULTS && size < 0) {
       size = SEARCH_INTERVALL_MAX_SIZE;
@@ -145,7 +144,6 @@ public class ElasticSearch implements Search {
         }
       }
       searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
-      LOGGER.info("Search source: " + searchSourceBuilder.toString());
       return searchSinglePage(searchRequest, query);
     } else {
       searchSourceBuilder.size(SEARCH_SCROLL_INTERVALL);
@@ -155,7 +153,6 @@ public class ElasticSearch implements Search {
         }
       }
       searchRequest.indices(this.indicesNames).source(searchSourceBuilder).scroll(TimeValue.timeValueSeconds(30));
-
 
       return searchWithScroll(searchRequest, query, from, size);
     }

@@ -82,7 +82,6 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
       SearchFactory factory = new SearchFactory().initQuery(query)
           .and(new SearchGroup(SearchQueryParser.parseStringQuery(facetQueryString).getElements())).initFilter(filter);
       setSearchQuery(factory.build());
-      LOGGER.info("Search Query set with facest: " + getSearchQuery());
     } catch (final Exception e) {
       BeanHelper.error("Error parsing query: " + e.getMessage());
       LOGGER.error("Error parsing query", e);

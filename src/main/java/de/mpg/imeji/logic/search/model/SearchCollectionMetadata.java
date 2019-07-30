@@ -78,8 +78,7 @@ public class SearchCollectionMetadata extends SearchPair {
 
   public static String indexToLabel(String index) {
 
-    //collection.md. has 14 characters
-    index = index.substring(14, index.length());
+    index = index.substring("collection.md.".length(), index.length());
     return index.replaceAll("_", " ");
 
 
