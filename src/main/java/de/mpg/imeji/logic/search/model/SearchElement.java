@@ -23,7 +23,7 @@ public abstract class SearchElement implements Serializable {
     GROUP,
     QUERY,
     METADATA,
-    SIMPLE_METADATA,
+    COLLECTION_METADATA,
     TECHNICAL_METADATA;
   }
 

@@ -4,8 +4,10 @@ import static de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELA
 
 import java.io.Serializable;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +21,7 @@ import de.mpg.imeji.logic.search.elasticsearch.script.misc.CollectionFields;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.model.SearchCollectionMetadata;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
 import de.mpg.imeji.logic.search.model.SearchOperators;
 import de.mpg.imeji.logic.search.model.SearchPair;
@@ -100,8 +103,17 @@ public class FacetSelectorEntryValue implements Serializable, Comparable<FacetSe
    * @return
    */
   private String readQueryValue(Facet facet, SearchQuery facetsQuery) {
-    String index = facet.getIndex().replace("md.", "").split("\\.")[0];
-    List<SearchMetadata> mds = new SearchFactory(facetsQuery).getElementsWithIndex(index);
+    List<? extends SearchPair> mds = new ArrayList<SearchPair>();
+
+    if ("collection".equals(facet.getObjectType())) {
+      facetsQuery.getElements().stream()
+          .filter(e -> e instanceof SearchCollectionMetadata && ((SearchCollectionMetadata) e).getIndex().equals(facet.getIndex()))
+          .map(e -> (SearchMetadata) e).collect(Collectors.toList());
+    } else {
+      String index = facet.getIndex().replace("md.", "").split("\\.")[0];
+      mds = new SearchFactory(facetsQuery).getElementsWithIndex(index);
+    }
+
     if (mds.size() > 0) {
       return mds.get(0).getValue();
     }
@@ -131,11 +143,22 @@ public class FacetSelectorEntryValue implements Serializable, Comparable<FacetSe
   }
 
   private SearchQuery buildEntryQuery(Facet facet, String value) {
-    boolean isMetadataFacet = facet.getIndex().startsWith("md.");
     if (!"*".equals(value) && !facet.getIndex().equals(SearchFields.collection.getIndex())) {
       value = "\"" + value + "\"";
     }
-    return isMetadataFacet ? buildMetadataQuery(facet, value) : buildSystemQuery(facet, value);
+
+    if (facet.getIndex().startsWith("md.")) {
+      return buildMetadataQuery(facet, value);
+    } else if (facet.getIndex().startsWith("collection.md.")) {
+      try {
+        return buildCollectionMetadataTextQuery(facet, value);
+      } catch (Exception e) {
+        LOGGER.error("Error building facet metadata query", e);
+      }
+    }
+
+
+    return buildSystemQuery(facet, value);
   }
 
   /**
@@ -166,6 +189,14 @@ public class FacetSelectorEntryValue implements Serializable, Comparable<FacetSe
     }
     return new SearchQuery();
   }
+
+
+
+  private SearchQuery buildCollectionMetadataTextQuery(Facet facet, String value) throws UnprocessableError {
+    SearchCollectionMetadata smd = new SearchCollectionMetadata(facet.getIndex(), value);
+    return new SearchFactory().addElement(smd, AND).build();
+  }
+
 
   private SearchQuery buildMetadataTextQuery(Facet facet, String value) throws UnprocessableError {
     String mdIndex = facet.getIndex().replace("md.", "").split("\\.")[0];

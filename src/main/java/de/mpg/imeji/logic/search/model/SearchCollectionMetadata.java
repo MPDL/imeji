@@ -48,7 +48,7 @@ public class SearchCollectionMetadata extends SearchPair {
 
   @Override
   public SEARCH_ELEMENTS getType() {
-    return SEARCH_ELEMENTS.SIMPLE_METADATA;
+    return SEARCH_ELEMENTS.COLLECTION_METADATA;
   }
 
   @Override
@@ -60,7 +60,7 @@ public class SearchCollectionMetadata extends SearchPair {
 
   @Override
   public boolean isSame(SearchElement element) {
-    if (SEARCH_ELEMENTS.SIMPLE_METADATA == element.getType()) {
+    if (SEARCH_ELEMENTS.COLLECTION_METADATA == element.getType()) {
       SearchCollectionMetadata smd = (SearchCollectionMetadata) element;
       return smd.getLabel().equals(label) && smd.getValue().equals(getValue()) && smd.getOperator().equals(getOperator());
     }
@@ -82,6 +82,10 @@ public class SearchCollectionMetadata extends SearchPair {
     return index.replaceAll("_", " ");
 
 
+  }
+
+  public String getIndex() {
+    return index;
   }
 
 
