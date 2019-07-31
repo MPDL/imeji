@@ -13,7 +13,7 @@ node {
 
 	stage ('Build'){	
 		// Build with maven
-		sh("${mvnHome}/bin/mvn clean install")	  
+		sh("${mvnHome}/bin/mvn clean install -P env-testing")	  
 	}
 	
    	stage ('Deploy'){
