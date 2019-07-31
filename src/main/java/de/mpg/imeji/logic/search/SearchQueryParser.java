@@ -9,11 +9,16 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.SearchMetadataFields;
 import de.mpg.imeji.logic.model.TechnicalMetadata;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.model.SearchCollectionMetadata;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchElement.SEARCH_ELEMENTS;
 import de.mpg.imeji.logic.search.model.SearchGroup;
@@ -37,12 +42,16 @@ import de.mpg.imeji.logic.util.StringHelper;
 public class SearchQueryParser {
   private static String PAIR_REGEX = "([a-zA-Z0-9-_\\.]+)([=<>]{1,2})(.+)";
   private static Pattern PAIR_PATTERN = Pattern.compile(PAIR_REGEX);
-  private static String METADATA_REGEX = SearchFields.md.name() + "\\.([a-zA-Z0-9-:_\\.]+)([=<>]{1,2})(.+)";
+  private static String METADATA_REGEX = "^" + SearchFields.md.name() + "\\.([a-zA-Z0-9-:_\\.]+)([=<>]{1,2})(.+)$";
   private static Pattern METADATA_PATTERN = Pattern.compile(METADATA_REGEX);
+  private static String COLLECTION_METADATA_REGEX = "^(collection\\.md\\.[a-zA-Z0-9-:_\\.]+)([=<>]{1,2})(.+)$";
+  private static Pattern COLLECTION_METADATA_PATTERN = Pattern.compile(COLLECTION_METADATA_REGEX);
   private static final String TECHNICAL_REGEX = SearchFields.technical.name() + "\\[(.+)\\]([=<>@]{1,2})(.+)";
   private static Pattern TECHNICAL_PATTERN = Pattern.compile(TECHNICAL_REGEX);
   private static char[] SPECIAL_CHARACTERS = {'(', ')', '=', '>', '<'};
   private static char ESCAPE_CHARACTER = '\\';
+
+  private static final Logger LOGGER = LogManager.getLogger(SearchQueryParser.class);
 
   /**
    * Private Constructor
@@ -156,7 +165,10 @@ public class SearchQueryParser {
    */
   private static SearchElement parsePair(String s, boolean not, boolean addFulltext) throws UnprocessableError {
     if (new StringParser(METADATA_PATTERN).find(s)) {
+      LOGGER.info("Detected as Metadata " + s);
       return parseMetadata(s, not);
+    } else if (new StringParser(COLLECTION_METADATA_PATTERN).find(s)) {
+      return parseCollectionMetadata(s, not);
     } else if (new StringParser(TECHNICAL_PATTERN).find(s)) {
       return parseTechnical(s, not);
     } else if (new StringParser(PAIR_PATTERN).find(s)) {
@@ -203,6 +215,24 @@ public class SearchQueryParser {
       String[] indexes = index.split("\\.");
       return new SearchMetadata(indexes[0], indexes.length > 1 ? SearchMetadataFields.valueOfIndex(indexes[1]) : null, operator, value,
           not);
+    }
+    return new SearchPair();
+  }
+
+  /**
+   * Parse to a {@link SearchCollectionMetadata} following strings:
+   * collection.metadata.statement=value
+   * 
+   * @param s
+   * @return
+   */
+  private static SearchPair parseCollectionMetadata(String s, boolean not) {
+    StringParser parser = new StringParser(COLLECTION_METADATA_PATTERN);
+    if (parser.find(s)) {
+      String index = parser.getGroup(1);
+      SearchOperators operator = stringOperator2SearchOperator(parser.getGroup(2));
+      String value = unescape(parser.getGroup(3));
+      return new SearchCollectionMetadata(index, operator, value, not);
     }
     return new SearchPair();
   }
@@ -328,6 +358,9 @@ public class SearchQueryParser {
         case METADATA:
           query += searchMetadataToStringQuery((SearchMetadata) se);
           break;
+        case COLLECTION_METADATA:
+          query += searchCollectionMetadataToStringQuery((SearchCollectionMetadata) se);
+          break;
         case TECHNICAL_METADATA:
           query += searchTechnicalMetadataToStringQuery((SearchTechnicalMetadata) se);
         default:
@@ -379,6 +412,18 @@ public class SearchQueryParser {
    */
   private static String searchMetadataToStringQuery(SearchMetadata smd) {
     return (smd.isNot() ? "NOT " : "") + getMetadataIndex(smd) + operator2URL(smd.getOperator()) + searchValue2URL(smd);
+  }
+
+  /**
+   * Transform a {@link SearchCollectionMetadata} to a string query
+   *
+   * @param statement
+   * @param index
+   * @return
+   */
+  private static String searchCollectionMetadataToStringQuery(SearchCollectionMetadata smd) {
+    return (smd.isNot() ? "NOT " : "") + SearchCollectionMetadata.labelToIndex(smd.getLabel()) + operator2URL(smd.getOperator())
+        + searchValue2URL(smd);
   }
 
   /**

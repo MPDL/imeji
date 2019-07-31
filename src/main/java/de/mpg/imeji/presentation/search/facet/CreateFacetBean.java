@@ -20,6 +20,7 @@ import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.StatementType;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
+import de.mpg.imeji.logic.search.model.SearchCollectionMetadata;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -31,6 +32,7 @@ public class CreateFacetBean extends SuperBean {
   private String name;
   private String index;
   private String type;
+  private String objecttype;
   private final FacetService service = new FacetService();
   private List<Statement> statements = new ArrayList<>();
 
@@ -50,6 +52,7 @@ public class CreateFacetBean extends SuperBean {
     facet.setIndex(index);
     facet.setName(name);
     facet.setType(type);
+    facet.setObjectType(objecttype);
 
     try {
       service.create(facet, getSessionUser());
@@ -69,9 +72,10 @@ public class CreateFacetBean extends SuperBean {
    * @param index
    * @param type
    */
-  public void initFacet(String index, String type) {
+  public void initFacet(String index, String type, String objectType) {
     this.type = type;
     this.index = index;
+    this.objecttype = objectType;
   }
 
   /**
@@ -82,7 +86,21 @@ public class CreateFacetBean extends SuperBean {
   public void initFacet(Statement statement) {
     this.type = statement.getType().toString();
     this.index = statement.getSearchIndex();
+    this.objecttype = Facet.OBJECTTYPE_ITEM;
   }
+
+  /**
+   * Init the form facet with the statement
+   * 
+   * @param statement
+   */
+  public void initCollectionFacet(String label) {
+    this.type = StatementType.TEXT.name();
+    this.index = SearchCollectionMetadata.labelToIndex(label);
+    this.objecttype = Facet.OBJECTTYPE_COLLECTION;
+  }
+
+
 
   /**
    * True if the index is already used by a facet
@@ -152,7 +170,23 @@ public class CreateFacetBean extends SuperBean {
     return statements;
   }
 
+  public String getObjecttype() {
+    return objecttype;
+  }
+
+  public void setObjectType(String objecttype) {
+    this.objecttype = objecttype;
+  }
+
   public enum SystemFacets {
+    //Facets for COLLECTIONS
+    ORGANIZATIONS("Organizations", SearchFields.author_organization_exact.getIndex(), StatementType.TEXT.name(),
+        Facet.OBJECTTYPE_COLLECTION),
+    TYPES("Types", SearchFields.collection_type.getIndex(), StatementType.TEXT.name(), Facet.OBJECTTYPE_COLLECTION),
+
+    AUTHORS("Authors", SearchFields.author_completename_exact.getIndex(), StatementType.TEXT.name(), Facet.OBJECTTYPE_COLLECTION),
+
+    //Facets for ITEMS
     COLLECTION("Collection", SearchFields.collection.name(), StatementType.TEXT.name()),
     AUTHORS_OF_COLLECTION("Collection's authors", SearchFields.collection_author.getIndex(), StatementType.TEXT.name()),
     FILETYPE("Filetype", SearchFields.filetype.getIndex(), StatementType.TEXT.name()),
@@ -163,11 +197,19 @@ public class CreateFacetBean extends SuperBean {
     private final String label;
     private final String index;
     private final String type;
+    private String objecttype = Facet.OBJECTTYPE_ITEM;
 
     private SystemFacets(String label, String index, String type) {
       this.label = label;
       this.index = index;
       this.type = type;
+    }
+
+    private SystemFacets(String label, String index, String type, String objecttype) {
+      this.label = label;
+      this.index = index;
+      this.type = type;
+      this.objecttype = objecttype;
     }
 
     /**
@@ -189,6 +231,14 @@ public class CreateFacetBean extends SuperBean {
      */
     public String getType() {
       return type;
+    }
+
+    public String getObjecttype() {
+      return objecttype;
+    }
+
+    public void setObjecttype(String objecttype) {
+      this.objecttype = objecttype;
     }
   }
 }

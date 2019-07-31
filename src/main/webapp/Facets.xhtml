@@ -29,18 +29,15 @@
 
 		<!-- Only for Admins -->
 		<ui:fragment rendered="#{Auth.sysAdmin}">
-			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig">
-				<div class="imj_admindataSet">
-					<div class="imj_admindataLabel">
-						#{lbl.name}
-						<span class="imj_noDisplay">: </span>
-					</div>
-					<div class="imj_admindataValue">
-
-					</div>
-				</div>
-				<h:panelGroup id="facets">
-						<ui:repeat var="facet" value="#{FacetsBean.facets}" varStatus="row">
+			<div class="imj_mainContentWrapper imj_listBody imj_setupConfig imj_adminPanel">
+				
+				
+				<h:panelGroup layout="block" id="facetsCollection">
+					<div class="imj_headline" style="width:100%">
+							<h2>#{lbl.facets} #{lbl.collections}</h2>
+						</div>
+						<h:outputText value="#{lbl.none}" rendered="#{empty FacetsBean.collectionFacets}" />
+						<ui:repeat var="facet" value="#{FacetsBean.collectionFacets}" varStatus="row">
 							<h:form>
 							<div class="imj_itemContent imj_itemHeadline">
 								<div class="imj_admindataSet">
@@ -52,16 +49,16 @@
 										<a href="#{Navigation.homeUrl}/facet/#{facet.idString}/edit" class="imj_overlayMenu imj_menuButton">
 											<span class="fa fa-pencil"/> #{lbl.edit}
 										</a>
-										<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteFacet#{row.index}');">
+										<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteFacet#{facet.uri}');">
 											<span class="fa fa-trash"/>  #{lbl.delete}
 										</h:outputLink>
 										<div class="imj_overlayMenu ">
 											<h:commandLink value=" "  action="#{FacetsBean.moveUp(facet)}" rendered="#{row.index != 0}">
-												<f:ajax render=":facets"/>
+												<f:ajax render=":facets :facetsCollection"/>
 												<span class="fa fa-arrow-up"></span>
 											</h:commandLink> 
 											<h:commandLink value=" "  action="#{FacetsBean.moveDown(facet)}" rendered="#{!row.last}">
-												<f:ajax render=":facets"/>
+												<f:ajax render=":facets :facetsCollection"/>
 												<span class="fa fa-arrow-down"></span>
 											</h:commandLink> 
 										</div>
@@ -74,11 +71,60 @@
 											bean="#{FacetsBean}"
 											confirmationText="#{msg.confirmation_delete_facet} (#{facet.name}) ?"
 											submitLabel="#{lbl.delete}"
-											dialogId="deleteFacet#{row.index}" identifierName="index"
+											dialogId="deleteFacet#{facet.uri}" identifierName="index"
 											identifierValue="#{facet.index}" />
 						</ui:repeat>
 					
 				</h:panelGroup>
+
+				<h:panelGroup layout="block" id="facets" >
+					<div class="imj_headline" style="width:100%">
+						<h2>#{lbl.facets} #{lbl.items}</h2>
+					</div>
+					<h:outputText value="#{lbl.none}" rendered="#{empty FacetsBean.itemFacets}" />
+						<ui:repeat var="facet" value="#{FacetsBean.itemFacets}" varStatus="row">
+							<h:form>
+							<div class="imj_itemContent imj_itemHeadline">
+								<div class="imj_admindataSet">
+									<div class="imj_admindataLabel" style="padding: 10px 0 10px 0;">
+										#{facet.name}
+										<span class="imj_noDisplay">: </span>
+									</div>
+									<div class="imj_admindataValue">
+										<a href="#{Navigation.homeUrl}/facet/#{facet.idString}/edit" class="imj_overlayMenu imj_menuButton">
+											<span class="fa fa-pencil"/> #{lbl.edit}
+										</a>
+										<h:outputLink value="#" styleClass="imj_overlayMenu imj_menuButton" title="#{lbl.user_admin_delete}" onclick="openDialog('deleteFacet#{facet.uri}');">
+											<span class="fa fa-trash"/>  #{lbl.delete}
+										</h:outputLink>
+										<div class="imj_overlayMenu ">
+											<h:commandLink value=" "  action="#{FacetsBean.moveUp(facet)}" rendered="#{row.index != 0}">
+												<f:ajax render=":facets :facetsCollection"/>
+												<span class="fa fa-arrow-up"></span>
+											</h:commandLink> 
+											<h:commandLink value=" "  action="#{FacetsBean.moveDown(facet)}" rendered="#{!row.last}">
+												<f:ajax render=":facets :facetsCollection"/>
+												<span class="fa fa-arrow-down"></span>
+											</h:commandLink> 
+										</div>
+										
+									</div>
+								</div>
+							</div>
+							</h:form>
+							<dialog:confirmationDialog submitAction="delete"
+											bean="#{FacetsBean}"
+											confirmationText="#{msg.confirmation_delete_facet} (#{facet.name}) ?"
+											submitLabel="#{lbl.delete}"
+											dialogId="deleteFacet#{facet.uri}" identifierName="index"
+											identifierValue="#{facet.index}" />
+						</ui:repeat>
+					
+				</h:panelGroup>
+				
+				
+
+				
 			</div>
 		</ui:fragment>
 	</ui:define>

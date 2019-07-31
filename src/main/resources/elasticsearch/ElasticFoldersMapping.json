@@ -44,6 +44,10 @@
 				"type": "keyword",
 				"copy_to": "all"
 			},
+			"types": {
+				"type": "keyword",
+				"copy_to": "all"
+			},
 			"name": {
 				"type": "text",
 				"copy_to": "all",
@@ -74,14 +78,27 @@
 				"copy_to": "all"
 			},
 			"info": {
+				"type" : "nested",
+				"include_in_parent" : "true",
 				"properties": {
 					"label": {
 						"type": "text",
-						"copy_to": "all"
+						"copy_to": "all",
+						"fields": {
+							"exact": {
+								"type": "keyword"
+							}
+						}
 					},
+					
 					"text": {
 						"type": "text",
-						"copy_to": "all"
+						"copy_to": "all",
+						"fields": {
+							"exact": {
+								"type": "keyword"
+							}
+						}
 					},
 					"url": {
 						"type": "text",

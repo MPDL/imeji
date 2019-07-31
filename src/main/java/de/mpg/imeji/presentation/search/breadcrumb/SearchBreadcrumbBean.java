@@ -14,6 +14,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchQueryParser;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
+import de.mpg.imeji.logic.search.model.SearchCollectionMetadata;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchMetadata;
@@ -52,6 +53,12 @@ public class SearchBreadcrumbBean extends SuperBean {
         if (f != null) {
           l.add(new SearchBreadcrumbEntry(f, SearchQueryParser.operator2URL(((SearchMetadata) el).getOperator()),
               ((SearchMetadata) el).getValue(), getRemoveQuery(facetQuery, el)));
+        }
+      } else if (el instanceof SearchCollectionMetadata) {
+        Facet f = facetService.retrieveByIndexFromCache(((SearchCollectionMetadata) el).getIndex());
+        if (f != null) {
+          l.add(new SearchBreadcrumbEntry(f, SearchQueryParser.operator2URL(((SearchCollectionMetadata) el).getOperator()),
+              ((SearchCollectionMetadata) el).getValue(), getRemoveQuery(facetQuery, el)));
         }
       } else if (el instanceof SearchPair) {
         Facet f = facetService.retrieveByIndexFromCache(((SearchPair) el).getField().getIndex());

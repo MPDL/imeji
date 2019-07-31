@@ -32,6 +32,7 @@ public class EditFacetBean extends CreateFacetBean {
       setName(facet.getName());
       setType(facet.getType());
       setIndex(facet.getIndex());
+      setObjectType(facet.getObjectType());
     } catch (NotFoundException e) {
       LOGGER.error("Error initializing FacetBean", e);
       BeanHelper.error("Unknown facet: " + facetId);
@@ -45,6 +46,7 @@ public class EditFacetBean extends CreateFacetBean {
     facet.setIndex(getIndex());
     facet.setName(getName());
     facet.setType(getType());
+    facet.setObjectType(getObjecttype());
     try {
       new FacetService().update(facet, getSessionUser());
       redirect(getNavigation().getApplicationUrl() + "facets");

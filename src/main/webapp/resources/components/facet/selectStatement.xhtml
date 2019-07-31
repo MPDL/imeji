@@ -1,38 +1,71 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:composite="http://java.sun.com/jsf/composite"
-	xmlns:f="http://java.sun.com/jsf/core"
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite" xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:md="http://java.sun.com/jsf/composite/components/metadata"
-	xmlns:statement="http://java.sun.com/jsf/composite/components/statement"
-	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+	xmlns:statement="http://java.sun.com/jsf/composite/components/statement" xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
 <composite:interface>
 	<composite:attribute name="bean" required="true" />
 </composite:interface>
 
 <composite:implementation>
-	<div id="selectStatementDialog" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText" style="display:none;">
+	<div id="selectStatementDialog" class="imj_modalDialogBox imj_moveItemsDialogBox imj_confirmationText" style="display: none;">
 		<div style="margin-bottom: 1em;">
-			<a style="float:right" onclick="closeDialog('selectStatementDialog');" class="imj_cancelButton">
-				#{lbl.cancel}
-			</a>
+			<a style="float: right" onclick="closeDialog('selectStatementDialog');" class="imj_cancelButton"> #{lbl.cancel} </a>
 		</div>
-		
-		<h:panelGroup layout="block" id="statementList">
-			<ui:param name="statementList" value="#{cc.attrs.bean.statements}"/>
-			<ui:fragment rendered="#{not empty statementList}">
-				<p>
-					#{lbl.select_one_metadata_from_list}:
-				</p>
+
+
+
+<!-- TODO!!! -->
+		<h:panelGroup layout="block" id="collectionStatementList">
+			<ui:fragment rendered="#{not empty Configuration.collectionMetadataSuggestionsPreselectAsList}">
+				<div class="imj_headline" style="width: 100%;">
+					<h2>#{lbl.facets} #{lbl.collections}</h2>
+				</div>
+
+				<p>#{lbl.select_one_metadata_from_list}:</p>
 			</ui:fragment>
-			
+
+			<ui:repeat var="label" value="#{Configuration.collectionMetadataSuggestionsComplete}" varStatus="statusVar">
+				<p>
+					<ui:remove>
+						<ui:fragment rendered="#{cc.attrs.bean.isUsed(index.searchIndex)}">
+							<span class="fa fa-lock" />
+							<span> #{lbl.facet_used}: </span>
+						</ui:fragment>
+					</ui:remove>
+
+					<h:commandLink value="#{label}" action="#{cc.attrs.bean.initCollectionFacet(label)}"
+						onclick="closeDialog('selectStatementDialog');">
+						<f:ajax execute="@form" render="@form" />
+					</h:commandLink>
+				</p>
+			</ui:repeat>
+			<ui:fragment rendered="#{empty Configuration.collectionMetadataSuggestionsPreselectAsList}">
+				<p>#{lbl.metadata_not_found}!</p>
+			</ui:fragment>
+		</h:panelGroup>
+
+
+		<h:panelGroup layout="block" id="statementList">
+			<ui:param name="statementList" value="#{cc.attrs.bean.statements}" />
+
+			<ui:fragment rendered="#{not empty statementList}">
+
+				<div class="imj_headline" style="width: 100%;">
+					<h2>#{lbl.facets} #{lbl.items}</h2>
+				</div>
+
+				<p>#{lbl.select_one_metadata_from_list}:</p>
+			</ui:fragment>
+
 			<ui:repeat var="index" value="#{statementList}" varStatus="statusVar">
 				<p>
 					<ui:fragment rendered="#{cc.attrs.bean.isUsed(index.searchIndex)}">
-						<span class="fa fa-lock"/>  <span> #{lbl.facet_used}: </span>
+						<span class="fa fa-lock" />
+						<span> #{lbl.facet_used}: </span>
 					</ui:fragment>
-					<h:commandLink value="#{index.index}" action="#{cc.attrs.bean.initFacet(index)}" onclick="closeDialog('selectStatementDialog');" disabled="#{cc.attrs.bean.isUsed(index.searchIndex)}">
+					<h:commandLink value="#{index.index}" action="#{cc.attrs.bean.initFacet(index)}"
+						onclick="closeDialog('selectStatementDialog');" disabled="#{cc.attrs.bean.isUsed(index.searchIndex)}">
 						<f:ajax execute="@form" render="@form" />
 					</h:commandLink>
 				</p>

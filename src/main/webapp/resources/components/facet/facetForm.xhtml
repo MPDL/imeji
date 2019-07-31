@@ -36,6 +36,14 @@
 				<h:outputText  styleClass="imj_metadataValue"
 					value="#{cc.attrs.form.type}"/>
 			</div>
+			
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel"> #{lbl.facet_objecttype}<span
+					class="imj_noDisplay">: </span>
+				</label>
+				<h:outputText  styleClass="imj_metadataValue"
+					value="#{cc.attrs.form.objecttype}"/>
+			</div>
 		</ui:fragment>
 		
 		<div class="imj_metadataSet">
@@ -48,7 +56,7 @@
 						<ui:fragment rendered="#{cc.attrs.form.isUsed(systemFacet.index)}">
 							<span class="fa fa-lock"/>  <span> #{lbl.facet_used}: </span>
 						</ui:fragment>
-						<h:commandLink value="#{systemFacet.label}" action="#{cc.attrs.form.initFacet(systemFacet.index, systemFacet.type)}" disabled="#{cc.attrs.form.isUsed(systemFacet.index)}">
+						<h:commandLink value="#{systemFacet.label} (#{systemFacet.objecttype})" action="#{cc.attrs.form.initFacet(systemFacet.index, systemFacet.type, systemFacet.objecttype)}" disabled="#{cc.attrs.form.isUsed(systemFacet.index)}">
 							<f:ajax render="@form" execute="@form"/>
 						</h:commandLink>
 						<br/>

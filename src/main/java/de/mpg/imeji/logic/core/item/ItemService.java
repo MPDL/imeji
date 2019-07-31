@@ -106,7 +106,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     if (item == null) {
       item = ImejiFactory.newItem(c);
     }
-    preValidateUpload(filename, c, f, user);
+    preValidateUpload(filename, c, f, user, item, false);
     item.setFilename(filename);
     item.setFileSize(f.length());
     item.setFiletype(StorageUtils.getMimeType(f));
@@ -124,12 +124,12 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param user
    * @throws ImejiException
    */
-  private void preValidateUpload(String filename, CollectionImeji c, File f, User user) throws ImejiException {
+  private void preValidateUpload(String filename, CollectionImeji c, File f, User user, Item item, boolean isUpdate) throws ImejiException {
     if (StringHelper.isNullOrEmptyTrim(filename)) {
       throw new UnprocessableError("Filename must not be empty!");
     }
-    validateFilenameExists(filename, c.getId(), f, false);
-    validateChecksum(c.getId(), f, false);
+    validateFilenameExists(filename, c.getId(), item, isUpdate);
+    validateChecksum(c.getId(), f, isUpdate);
     validateFileFormat(f);
     QuotaUtil.checkQuota(user, f, c);
   }
@@ -355,6 +355,10 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public void updateBatch(Collection<Item> items, User user) throws ImejiException {
+
+    for (Item item : items) {
+      validateFilenameExists(item.getFilename(), item.getCollection(), item, true);
+    }
     itemController.updateBatch((List<Item>) items, user);
   }
 
@@ -368,8 +372,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public Item updateFile(Item item, CollectionImeji col, File f, String filename, User user) throws ImejiException {
-    validateChecksum(item.getCollection(), f, true);
-    preValidateUpload(filename, col, f, user);
+    //validateChecksum(item.getCollection(), f, true);
+    preValidateUpload(filename, col, f, user, item, true);
     if (filename != null) {
       item.setFilename(filename);
     }
@@ -716,9 +720,11 @@ public class ItemService extends SearchServiceAbstract<Item> {
   }
 
 
-  private void validateFilenameExists(String filename, URI collectionURI, File file, Boolean isUpdate) throws ImejiException {
+  private void validateFilenameExists(String filename, URI collectionURI, Item currentItem, Boolean isUpdate) throws ImejiException {
+    LOGGER.info("validateFilename: " + filename);
     SearchResult r = searchItemsWithFilenameInCollection(collectionURI, filename);
-    if (r.getNumberOfRecords() > 0) {
+    LOGGER.info("validateFilename - found items " + r.getNumberOfRecords());
+    if (r.getNumberOfRecords() > 0 && (currentItem.getId() == null || !currentItem.getId().toString().equals(r.getResults().get(0)))) {
       Item item = this.retrieveLazy(URI.create(r.getResults().get(0)), Imeji.adminUser);
       String itemName = item.getName();
       String itemUrl = Imeji.PROPERTIES.getApplicationURL() + "item/" + item.getIdString();
@@ -748,22 +754,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
     return true;
   }
 
-  /**
-   * True if the filename already exists within another {@link Item} in this {@link CollectionImeji}
-   *
-   * @param filename
-   * @return
-   */
-  public boolean filenameExistsInCollection(URI collectionId, String filename) {
-    try {
-      return searchItemsWithFilenameInCollection(collectionId, filename).getNumberOfRecords() > 0;
-    } catch (UnprocessableError e) {
-      LOGGER.error("Error checking checksum of collection " + collectionId, e);
-    }
-    return true;
-  }
-
-
 
   /**
    * Return the Items with the this checksum in a collection
@@ -791,7 +781,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public SearchResult searchItemsWithFilenameInCollection(URI collectionId, String filename) throws UnprocessableError {
     final SearchQuery q =
-        new SearchFactory().and(Arrays.asList(new SearchPair(SearchFields.filename, SearchOperators.EQUALS, filename, false),
+        new SearchFactory().and(Arrays.asList(new SearchPair(SearchFields.filename, SearchOperators.EQUALS, "\"" + filename + "\"", false),
             new SearchPair(SearchFields.col, SearchOperators.EQUALS, collectionId.toString(), false))).build();
     return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1);
   }

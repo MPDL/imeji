@@ -27,6 +27,7 @@ import de.mpg.imeji.logic.model.util.StatementUtil;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
+import de.mpg.imeji.logic.search.model.SearchCollectionMetadata;
 import de.mpg.imeji.logic.search.model.SearchElement;
 import de.mpg.imeji.logic.search.model.SearchGroup;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation;
@@ -107,7 +108,10 @@ public class ElasticQueryFactory {
     if (!searchForUsers && !isMatchAll(statusQuery)) {
       booleanQuery.must(statusQuery);
     }
-    /* parent-child relations use the join_field !!!  we need to exclude the content docs */
+    /*
+     * parent-child relations use the join_field !!! we need to exclude the content
+     * docs
+     */
     booleanQuery.mustNot(QueryBuilders.termQuery(ElasticFields.JOIN_FIELD.field(), "content"));
     return booleanQuery;
   }
@@ -252,10 +256,10 @@ public class ElasticQueryFactory {
       List<String> subCollections = new HierarchyService().findAllSubcollections(containerUri);
       bq.should(QueryBuilders.termsQuery(ElasticFields.FOLDER.field(), subCollections));
       /*
-      for (String uri : new HierarchyService().findAllSubcollections(containerUri)) {
-        bq.should(fieldQuery(ElasticFields.FOLDER, uri, SearchOperators.EQUALS, false));
-      }
-      */
+       * for (String uri : new HierarchyService().findAllSubcollections(containerUri))
+       * { bq.should(fieldQuery(ElasticFields.FOLDER, uri, SearchOperators.EQUALS,
+       * false)); }
+       */
     }
     return bq;
   }
@@ -280,6 +284,8 @@ public class ElasticQueryFactory {
   private QueryBuilder termQuery(SearchPair pair, User user) {
     if (pair instanceof SearchMetadata) {
       return metadataFilter((SearchMetadata) pair);
+    } else if (pair instanceof SearchCollectionMetadata) {
+      return collectionMetadataFilter((SearchCollectionMetadata) pair);
     } else if (pair instanceof SearchTechnicalMetadata) {
       return technicalMetadataQuery((SearchTechnicalMetadata) pair);
     }
@@ -310,6 +316,12 @@ public class ElasticQueryFactory {
         return fieldQuery(ElasticFields.AUTHOR_COMPLETENAME, pair.getValue(), pair.getOperator(), pair.isNot());
       case author_organization:
         return fieldQuery(ElasticFields.AUTHOR_ORGANIZATION, pair.getValue(), pair.getOperator(), pair.isNot());
+      case author_organization_exact:
+        return fieldQuery(ElasticFields.AUTHOR_ORGANIZATION_EXACT, pair.getValue(), pair.getOperator(), pair.isNot());
+      case author_completename_exact:
+        return fieldQuery(ElasticFields.AUTHOR_COMPLETENAME_EXACT, pair.getValue(), pair.getOperator(), pair.isNot());
+      case collection_type:
+        return fieldQuery(ElasticFields.COLLECTION_TYPE, pair.getValue(), pair.getOperator(), pair.isNot());
       case collection_title:
         return parentCollectionQuery(fieldQuery(ElasticFields.NAME, pair.getValue(), pair.getOperator(), pair.isNot()));
       case collection_description:
@@ -377,6 +389,20 @@ public class ElasticQueryFactory {
     }
     return matchNothing();
   }
+
+
+
+  /**
+   * Create a {@link QueryBuilder} for a {@link SearchMetadata}
+   *
+   * @param md
+   * @return
+   */
+  private QueryBuilder collectionMetadataFilter(SearchCollectionMetadata md) {
+    return collectionMetadataQuery(fieldQuery(ElasticFields.INFO_TEXT, md.getValue(), md.getOperator(), md.isNot()), md.getLabel());
+  }
+
+
 
   /**
    * Create a {@link QueryBuilder} for a {@link SearchMetadata}
@@ -581,6 +607,14 @@ public class ElasticQueryFactory {
   private QueryBuilder metadataQuery(QueryBuilder valueQuery, String statement) {
     return QueryBuilders.nestedQuery(ElasticFields.METADATA.field(),
         QueryBuilders.boolQuery().must(valueQuery).must(fieldQuery(ElasticFields.METADATA_INDEX, statement, SearchOperators.EQUALS, false)),
+        ScoreMode.Avg);
+
+  }
+
+
+  private QueryBuilder collectionMetadataQuery(QueryBuilder valueQuery, String statement) {
+    return QueryBuilders.nestedQuery(ElasticFields.INFO.field(),
+        QueryBuilders.boolQuery().must(valueQuery).must(fieldQuery(ElasticFields.INFO_LABEL, statement, SearchOperators.EQUALS, false)),
         ScoreMode.Avg);
 
   }

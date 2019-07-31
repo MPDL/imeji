@@ -144,6 +144,7 @@ public class ElasticSearch implements Search {
         }
       }
       searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
+      //LOGGER.info(searchSourceBuilder.toString());
       return searchSinglePage(searchRequest, query);
     } else {
       searchSourceBuilder.size(SEARCH_SCROLL_INTERVALL);
@@ -167,7 +168,7 @@ public class ElasticSearch implements Search {
    */
 
   private SearchSourceBuilder addAggregations(SearchSourceBuilder request, String folderUri) {
-    final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build();
+    final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build(this.types);
     if (folderUri != null) {
       /*
       aggregations.add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS,
@@ -501,7 +502,7 @@ public class ElasticSearch implements Search {
       ids.add(hit.getId());
     }
 
-    List<FacetResult> facets = AggregationsParser.parse(searchResponse);
+    List<FacetResult> facets = AggregationsParser.parse(searchResponse, this.types);
     SearchResult searchResult =
         new SearchResult(ids, getTotalNumberOfRecords(searchResponse, facets), getNumberOfItems(searchResponse, facets),
             getNumberOfItemsOfCollection(searchResponse, facets), getNumberOfSubcollections(searchResponse, facets), facets);

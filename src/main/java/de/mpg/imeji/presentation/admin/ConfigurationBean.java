@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -696,6 +698,11 @@ public class ConfigurationBean extends SuperBean {
 
   public void setCollectionMetadataSuggestionsPreselect(String str) {
     Imeji.CONFIG.setCollectionMetadataSuggestionsPreselect(str);;
+  }
+
+  public List<String> getCollectionMetadataSuggestionsComplete() {
+    return Stream.concat(getCollectionMetadataSuggestionsPreselectAsList().stream(), getCollectionMetadataSuggestionsAsList().stream())
+        .collect(Collectors.toList());
   }
 
 }
