@@ -355,9 +355,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public void updateBatch(Collection<Item> items, User user) throws ImejiException {
-    
-    for(Item item : items)
-    {
+
+    for (Item item : items) {
       validateFilenameExists(item.getFilename(), item.getCollection(), item, true);
     }
     itemController.updateBatch((List<Item>) items, user);
@@ -397,7 +396,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public Item updateWithExternalFile(Item item, CollectionImeji col, String externalFileUrl, String filename, boolean download, User u)
-      throws ImejiException { 
+      throws ImejiException {
     final String origName = FilenameUtils.getName(externalFileUrl);
     filename = isNullOrEmpty(filename) ? origName : filename + "." + FilenameUtils.getExtension(origName);
     item.setFilename(filename);
@@ -725,7 +724,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     LOGGER.info("validateFilename: " + filename);
     SearchResult r = searchItemsWithFilenameInCollection(collectionURI, filename);
     LOGGER.info("validateFilename - found items " + r.getNumberOfRecords());
-    if (r.getNumberOfRecords() > 0 && (currentItem.getId()==null || !currentItem.getId().toString().equals(r.getResults().get(0)))) {
+    if (r.getNumberOfRecords() > 0 && (currentItem.getId() == null || !currentItem.getId().toString().equals(r.getResults().get(0)))) {
       Item item = this.retrieveLazy(URI.create(r.getResults().get(0)), Imeji.adminUser);
       String itemName = item.getName();
       String itemUrl = Imeji.PROPERTIES.getApplicationURL() + "item/" + item.getIdString();
@@ -755,22 +754,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
     return true;
   }
 
-  /**
-   * True if the filename already exists within another {@link Item} in this {@link CollectionImeji}
-   *
-   * @param filename
-   * @return
-   */
-  public boolean filenameExistsInCollection(URI collectionId, String filename) {
-    try {
-      return searchItemsWithFilenameInCollection(collectionId, filename).getNumberOfRecords() > 0;
-    } catch (UnprocessableError e) {
-      LOGGER.error("Error checking checksum of collection " + collectionId, e);
-    }
-    return true;
-  }
-
-
 
   /**
    * Return the Items with the this checksum in a collection
@@ -798,7 +781,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public SearchResult searchItemsWithFilenameInCollection(URI collectionId, String filename) throws UnprocessableError {
     final SearchQuery q =
-        new SearchFactory().and(Arrays.asList(new SearchPair(SearchFields.filename, SearchOperators.EQUALS, filename, false),
+        new SearchFactory().and(Arrays.asList(new SearchPair(SearchFields.filename, SearchOperators.EQUALS, "\"" + filename + "\"", false),
             new SearchPair(SearchFields.col, SearchOperators.EQUALS, collectionId.toString(), false))).build();
     return search.search(q, null, Imeji.adminUser, collectionId.toString(), 0, 1);
   }

@@ -144,6 +144,7 @@ public class ElasticSearch implements Search {
         }
       }
       searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
+      //LOGGER.info(searchSourceBuilder.toString());
       return searchSinglePage(searchRequest, query);
     } else {
       searchSourceBuilder.size(SEARCH_SCROLL_INTERVALL);
