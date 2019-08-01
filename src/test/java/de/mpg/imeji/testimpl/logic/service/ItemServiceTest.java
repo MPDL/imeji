@@ -497,6 +497,7 @@ public class ItemServiceTest extends SuperServiceTest {
 
     URI oldId = itemPrivate.getId();
     try {
+      itemPrivate.setFilename("testname_2.jpg");
       itemPrivate.setId(new URI("fakeId"));
       update_Test("Item updated with wrong ID should throw NotFoundException ", itemPrivate, userEditGrant, NotFoundException.class);
     } catch (URISyntaxException e) {
