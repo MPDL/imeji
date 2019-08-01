@@ -2,11 +2,12 @@ package de.mpg.imeji.testimpl.logic.businesscontroller;
 
 import java.util.List;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -29,6 +30,7 @@ import de.mpg.imeji.test.logic.service.SuperServiceTest;
  * @author bastiens
  *
  */
+@Ignore
 public class InvitationBusinessControllerTest extends SuperServiceTest {
   private InvitationService invitationBC = new InvitationService();
   private static final Logger LOGGER = LogManager.getLogger(InvitationBusinessControllerTest.class);

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -20,6 +21,7 @@ import de.mpg.imeji.logic.statistic.StatisticsService;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
 import de.mpg.imeji.util.JenaUtil;
 
+@Ignore
 public class StatisticsControllerTestClass extends SuperServiceTest {
 
   @Test

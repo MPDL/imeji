@@ -3,9 +3,10 @@ package de.mpg.imeji.testimpl.logic.businesscontroller;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -13,8 +14,8 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.Grant;
-import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.Grant.GrantType;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
 import de.mpg.imeji.logic.security.registration.Registration;
@@ -141,6 +142,7 @@ public class RegistrationBusinessControllerTest extends SuperServiceTest {
   }
 
   @Test
+  @Ignore
   public void registerAfterInvitation() throws Exception {
     User user = new User();
     user.setEmail("invited-user@example.org");
