@@ -36,7 +36,9 @@
 					<div class="imj_headline" style="width:100%">
 							<h2>#{lbl.facets} #{lbl.collections}</h2>
 						</div>
-						<h:outputText value="#{lbl.none}" rendered="#{empty FacetsBean.collectionFacets}" />
+						<h:panelGroup layout="block" styleClass="imj_admindataLabel" rendered="#{empty FacetsBean.collectionFacets}" >
+							<h:outputText value="#{lbl.none}" />
+						</h:panelGroup>
 						<ui:repeat var="facet" value="#{FacetsBean.collectionFacets}" varStatus="row">
 							<h:form>
 							<div class="imj_itemContent imj_itemHeadline">
@@ -81,7 +83,10 @@
 					<div class="imj_headline" style="width:100%">
 						<h2>#{lbl.facets} #{lbl.items}</h2>
 					</div>
-					<h:outputText value="#{lbl.none}" rendered="#{empty FacetsBean.itemFacets}" />
+					
+					<h:panelGroup layout="block" styleClass="imj_admindataLabel" rendered="#{empty FacetsBean.itemFacets}" >
+						<h:outputText value="#{lbl.none}" />
+					</h:panelGroup>
 						<ui:repeat var="facet" value="#{FacetsBean.itemFacets}" varStatus="row">
 							<h:form>
 							<div class="imj_itemContent imj_itemHeadline">
