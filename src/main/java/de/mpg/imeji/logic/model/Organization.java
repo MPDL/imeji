@@ -26,6 +26,8 @@ public class Organization implements Cloneable, Serializable {
   private String name;
   @j2jLiteral("http://imeji.org/terms/position")
   private int pos = 0;
+  @j2jLiteral("http://imeji.org/terms/department")
+  private String department;
 
   public Organization() {
     id = IdentifierUtil.newURI(Organization.class);
@@ -71,11 +73,20 @@ public class Organization implements Cloneable, Serializable {
     return id;
   }
 
+  public String getDepartment() {
+    return department;
+  }
+
+  public void setDepartment(String department) {
+    this.department = department;
+  }
+
   @Override
   public Organization clone() {
     final Organization clone = new Organization();
     clone.name = this.name;
     clone.pos = this.pos;
+    clone.department = this.department;
     return clone;
   }
 }
