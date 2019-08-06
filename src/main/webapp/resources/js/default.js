@@ -385,6 +385,7 @@ jsf.ajax.addOnEvent(function(data) {
         case "success":
         	stopLoader();
         	addComboBox();
+        	addTaggle();
             break;
     }
 });
@@ -463,12 +464,45 @@ function addComboBox()
 	});
 
 }
+
+
+function addTaggle()
+{
+	//Enable tagging for textareas with class 'imj_js_taggle'
+	$('.imj_js_taggle').each(function (index, textAreaElement) {
+		$(textAreaElement).hide();
+		var $taggleElem = $('<div id="' + textAreaElement.id + '_taggle' +'" class="imj_taggle"></div>');
+		$(textAreaElement).after($taggleElem);
+
+		var taggle = new Taggle($taggleElem.attr('id'), {
+				placeholder: $(textAreaElement).attr('placeholder'),
+				saveOnBlur: true,
+				onTagAdd : function (event, tag) {
+						setTagValuesInInput(textAreaElement, taggle.getTagValues());
+					
+				},
+				onTagRemove : function (event, tag) {
+					setTagValuesInInput(textAreaElement, taggle.getTagValues());
+				
+				}	
+			});
+
+		var currentValues = $(textAreaElement).val().split(',');
+		taggle.add(currentValues);
+
+		});
+
+	function setTagValuesInInput(textAreaElement, tagArray)
+	{
+		$(textAreaElement).val(tagArray.join(', '));
+	}
+}
+
 $(function() {
 	addComboBox();
+	addTaggle();
 	
 });
-
-
 
 
 function formatBytes(a,b){if(0==a)return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]};

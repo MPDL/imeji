@@ -97,6 +97,8 @@ public abstract class CollectionBean extends SuperBean {
   public String getPlaceholder(String inputFiledLabel) {
     if (ImejiConfiguration.COLLECTION_METADATA_GEO_COORDINATES_LABEL.equals(inputFiledLabel)) {
       return Imeji.RESOURCE_BUNDLE.getLabel("placeholder_geocoordinates", getLocale());
+    } else if (ImejiConfiguration.COLLECTION_METADATA_KEYWORDS_LABEL.equals(inputFiledLabel)) {
+      return Imeji.RESOURCE_BUNDLE.getLabel("placeholder_keywords", getLocale());
     } else {
       return "";
     }
