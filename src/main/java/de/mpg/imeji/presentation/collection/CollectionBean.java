@@ -68,13 +68,25 @@ public abstract class CollectionBean extends SuperBean {
     return getNavigation().getCollectionUrl() + id;
   }
 
+
+  public int numberOfAdditionalInformationLabels(String label) {
+    int i = 0;
+    for (ContainerAdditionalInfo cai : collection.getAdditionalInformations()) {
+      if (label.equals(cai.getLabel())) {
+        i++;
+      }
+    }
+    return i;
+  }
+
   /**
    * Add an additionial Info at the passed position
    *
    * @param pos
    */
-  public void addAdditionalInfo(int pos) {
-    collection.getAdditionalInformations().add(pos, new ContainerAdditionalInfo("", "", ""));
+  public void addAdditionalInfo(int pos, String label) {
+
+    collection.getAdditionalInformations().add(pos, new ContainerAdditionalInfo(label, "", ""));
   }
 
   /**

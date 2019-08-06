@@ -471,24 +471,31 @@ function addTaggle()
 	//Enable tagging for textareas with class 'imj_js_taggle'
 	$('.imj_js_taggle').each(function (index, textAreaElement) {
 		$(textAreaElement).hide();
-		var $taggleElem = $('<div id="' + textAreaElement.id + '_taggle' +'" class="imj_taggle"></div>');
-		$(textAreaElement).after($taggleElem);
+		
+		var taggleElemId = textAreaElement.id + '_taggle';
 
-		var taggle = new Taggle($taggleElem.attr('id'), {
-				placeholder: $(textAreaElement).attr('placeholder'),
-				saveOnBlur: true,
-				onTagAdd : function (event, tag) {
+		if(!document.getElementById(taggleElemId) )
+		{
+			
+			var $taggleElem = $('<div id="' + taggleElemId +'" class="imj_taggle"></div>');
+			$(textAreaElement).after($taggleElem);
+	
+			var taggle = new Taggle($taggleElem.attr('id'), {
+					placeholder: $(textAreaElement).attr('placeholder'),
+					saveOnBlur: true,
+					onTagAdd : function (event, tag) {
+							setTagValuesInInput(textAreaElement, taggle.getTagValues());
+						
+					},
+					onTagRemove : function (event, tag) {
 						setTagValuesInInput(textAreaElement, taggle.getTagValues());
 					
-				},
-				onTagRemove : function (event, tag) {
-					setTagValuesInInput(textAreaElement, taggle.getTagValues());
-				
-				}	
-			});
-
-		var currentValues = $(textAreaElement).val().split(',');
-		taggle.add(currentValues);
+					}	
+				});
+	
+			var currentValues = $(textAreaElement).val().split(',');
+			taggle.add(currentValues);
+		}
 
 		});
 

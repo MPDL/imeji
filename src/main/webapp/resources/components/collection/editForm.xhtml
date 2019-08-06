@@ -85,16 +85,9 @@
 				
 				<ui:repeat id="list" var="info" value="#{cc.attrs.formularContextBean.additionalInformations}" varStatus="indexA" >
 
-					<h:panelGroup class="imj_sectionHeadline" rendered="#{not Configuration.collectionMetadataSuggestionsPreselectAsList.contains(info.label)}">
-						<span class="imj_inlineButtonGroup"> 
-							<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_collection_metadata}" action="#{cc.attrs.formularBean.addAdditionalInfo(indexA.index + 1)}" html5:data-loader="false">
-								<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos"/>
-							</h:commandLink>
-							<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_collection_metadata}" action="#{cc.attrs.formularBean.removeAdditionalInfo(indexA.index)}" html5:data-loader="false">
-								<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos"/>
-							</h:commandLink>
-						</span>
-					</h:panelGroup>
+					
+
+					
 					<div class="imj_metadataSet">
 						<!-- <label class="imj_metadataLabel">#{lbl.label} *</label>-->
 
@@ -114,6 +107,17 @@
 							<h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue #{info.label == 'Keywords' ? 'imj_js_taggle' : ''}" value="#{info.text}" html5:placeholder="#{cc.attrs.formularBean.getPlaceholder(info.label)}" html5:data-metadata-type="#{info.label}"/>
 							
 
+
+						<h:panelGroup class="imj_sectionHeadline">
+							<span class="imj_inlineButtonGroup"> 
+								<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_collection_metadata}" action="#{cc.attrs.formularBean.addAdditionalInfo(indexA.index + 1, (Configuration.collectionMetadataSuggestionsPreselectAsList.contains(info.label) ? info.label : '' ) )}" html5:data-loader="false">
+									<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos"/>
+								</h:commandLink>
+								<h:commandLink styleClass="fa fa-minus-square-o" title="#{lbl.remove_collection_metadata}" action="#{cc.attrs.formularBean.removeAdditionalInfo(indexA.index)}" html5:data-loader="false" rendered="#{(not Configuration.collectionMetadataSuggestionsPreselectAsList.contains(info.label)) || cc.attrs.formularBean.numberOfAdditionalInformationLabels(info.label) > 1}">
+									<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos"/>
+								</h:commandLink>
+							</span>
+						</h:panelGroup>
 					</div>
 					<h:panelGroup layout = "block" styleClass="imj_metadataSet" rendered="#{not empty info.url}">
 						<label class="imj_metadataLabel"></label>
@@ -122,7 +126,7 @@
 				</ui:repeat>
 				<div class="imj_sectionHeadline">
 					<span class="imj_inlineButtonGroup">
-						<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_collection_metadata}" action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.additionalInformations.size())}" html5:data-loader="false">
+						<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_collection_metadata}" action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.additionalInformations.size(), '')}" html5:data-loader="false">
 							<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos"/>
 						</h:commandLink>
 					</span>
