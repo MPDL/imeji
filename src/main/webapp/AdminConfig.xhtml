@@ -799,6 +799,20 @@
 											</div>
 										</div>
 									</div>
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="#{lbl.organizations_autosuggest} (#{msg.one_value_per_line})" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:inputTextarea value="#{Configuration.organizationSuggestions}"
+												styleClass="imj_admindataEdit" rows="10"/>
+										</div>
+										<a href="javascript: void(0);"
+											data-target=".imj_admindataSet .imj_admindataValue textarea"
+											class="imj_clearInput fa fa-times"> 
+										</a>
+									</div>
 								</div>
 							</div>
 							

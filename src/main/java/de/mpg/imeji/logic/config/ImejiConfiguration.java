@@ -98,7 +98,8 @@ public class ImejiConfiguration {
     PRIVACY_POLICY_URL,
     COLLECTION_TYPES,
     COLLECTION_METADATA_SUGGESTIONS,
-    COLLECTION_METADATA_SELECTIONS_PRESELECT;
+    COLLECTION_METADATA_SELECTIONS_PRESELECT,
+    ORGANIZATION_NAMES;
   }
 
   private static Properties config;
@@ -1064,6 +1065,18 @@ public class ImejiConfiguration {
 
   public void setCollectionMetadataSuggestionsPreselect(String str) {
     setProperty(CONFIGURATION.COLLECTION_METADATA_SELECTIONS_PRESELECT.name(), str);
+  }
+
+  public String getOrganizationNames() {
+    return getPropertyAsNonNullString(CONFIGURATION.ORGANIZATION_NAMES.name());
+  }
+
+  public List<String> getOrganizationNamesAsList() {
+    return Arrays.stream(getOrganizationNames().split("\\n")).filter(i -> !i.isBlank()).map(i -> i.trim()).collect(Collectors.toList());
+  }
+
+  public void setOrganizationNames(String str) {
+    setProperty(CONFIGURATION.ORGANIZATION_NAMES.name(), str);
   }
 
   // ------------------------------------------------------------------------

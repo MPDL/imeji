@@ -705,4 +705,16 @@ public class ConfigurationBean extends SuperBean {
         .collect(Collectors.toList());
   }
 
+  public String getOrganizationSuggestions() {
+    return Imeji.CONFIG.getOrganizationNames();
+  }
+
+  public List<String> getOrganizationSuggestionsAsList() {
+    return Imeji.CONFIG.getOrganizationNamesAsList();
+  }
+
+  public void setOrganizationSuggestions(String str) {
+    Imeji.CONFIG.setOrganizationNames(str);
+  }
+
 }
