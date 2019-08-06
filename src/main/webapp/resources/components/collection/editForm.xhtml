@@ -109,7 +109,9 @@
 					
 						<!-- <label class="imj_metadataLabel">#{lbl.text}</label>-->
 						
-							<h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue" value="#{info.text}" html5:placeholder="#{cc.attrs.formularBean.getPlaceholder(info.label)}" />
+							
+							
+							<h:inputTextarea id="inputInfoText" styleClass="imj_metadataValue #{info.label == 'Keywords' ? 'imj_js_taggle' : ''}" value="#{info.text}" html5:placeholder="#{cc.attrs.formularBean.getPlaceholder(info.label)}" html5:data-metadata-type="#{info.label}"/>
 							
 
 					</div>

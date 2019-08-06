@@ -131,6 +131,7 @@ public class ImejiConfiguration {
   // Specific collection metadata (= ContainerAdditionalInfo), which have a additional handling (validation, placeholder, ...):
   public static final String COLLECTION_METADATA_GEO_COORDINATES_LABEL = "Geo-coordinates";
   public static final String COLLECTION_METADATA_ARTICLE_DOI_LABEL = "Article DOI";
+  public static final String COLLECTION_METADATA_KEYWORDS_LABEL = "Keywords";
 
   private String dataViewerUrl;
 
