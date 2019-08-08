@@ -236,8 +236,6 @@
 					<includes>
 						<include>**/de/mpg/imeji/test/**/*.java</include>
 					</includes>
-					<!-- If tests fail build the war file nevertheless. Only temporary, until reworked integration tests run stable -->
-					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 				<executions>
 					<execution>
