@@ -100,7 +100,7 @@ public class Person implements Cloneable, Serializable {
     String s = "";
     for (final Organization o : organizations) {
       if (!"".equals(s)) {
-        s += " ,";
+        s += ", ";
       }
       s += o.getName();
     }

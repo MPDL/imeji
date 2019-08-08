@@ -4,11 +4,17 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -19,6 +25,7 @@ import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.search.Search;
@@ -47,9 +54,11 @@ public class CollectionItemsBean extends ItemsBean {
   private URI uri;
   private CollectionImeji collection;
   private CollectionActionMenu actionMenu;
-  private String authors = "";
+  private List<String> authorsWithOrganizationsList = new ArrayList<>();
   private List<String> authorsList = new ArrayList<>();
   private String authorsShort = "";
+  private BidiMap<Integer, String> affiliationNumberMapping = new DualHashBidiMap<>();
+  private Map<URI, List<Integer>> authorAffiliationNumberMapping = new HashMap<>();
   private int size;
   private boolean showUpload = false;
   private LicenseEditor licenseEditor;
@@ -76,24 +85,20 @@ public class CollectionItemsBean extends ItemsBean {
       browseContext = getNavigationString() + id;
       update();
       actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
-      StringBuilder sb = new StringBuilder();
-      for (Person p : collection.getPersons()) {
 
-        String personString = p.getCompleteName() + " (" + p.getOrganizationString() + ")";
-
-        if (sb.length() != 0) {
-          sb.append(", ");
-        }
-        sb.append(personString);
-        getAuthorsList().add(personString);
-
+      for (Person person : collection.getPersons()) {
+        String personWithOrganization = person.getCompleteName() + " (" + person.getOrganizationString() + ")";
+        authorsWithOrganizationsList.add(personWithOrganization);
+        authorsList.add(person.getCompleteName());
       }
-      this.authors = sb.toString();
 
       authorsShort = collection.getPersons().iterator().next().getCompleteName();
       if (collection.getPersons().size() > 1) {
         authorsShort += " & " + (collection.getPersons().size() - 1) + " " + Imeji.RESOURCE_BUNDLE.getLabel("more_authors", getLocale());
       }
+
+      this.mapAuthorsAffiliations();
+
       descriptionShort = CommonUtils.removeTags(collection.getDescription());
       if (descriptionShort != null && descriptionShort.length() > DESCRIPTION_MAX_SIZE) {
         descriptionShort = descriptionShort.substring(0, DESCRIPTION_MAX_SIZE);
@@ -108,6 +113,30 @@ public class CollectionItemsBean extends ItemsBean {
   public void refresh() {
     super.refresh();
     initSpecific();
+  }
+
+  private void mapAuthorsAffiliations() {
+    int affiliationMappingKey = 1;
+    for (Person person : collection.getPersons()) {
+      List<Organization> organizations = new ArrayList<>(person.getOrganizations());
+      List<Integer> authorAffiliationNumbers = new ArrayList<>();
+
+      for (Organization organization : organizations) {
+        String organizationName = organization.getName();
+        String departmentName = organization.getDepartment();
+        String affiliation = StringHelper.isNullOrEmptyTrim(departmentName) ? organizationName : departmentName + ", " + organizationName;
+
+        if (!affiliationNumberMapping.containsValue(affiliation)) {
+          affiliationNumberMapping.put(affiliationMappingKey, affiliation);
+          authorAffiliationNumbers.add(affiliationMappingKey);
+          affiliationMappingKey++;
+        } else {
+          authorAffiliationNumbers.add(affiliationNumberMapping.getKey(affiliation));
+        }
+      }
+
+      authorAffiliationNumberMapping.put(person.getId(), authorAffiliationNumbers);
+    }
   }
 
   private int getCollectionSize() {
@@ -224,13 +253,30 @@ public class CollectionItemsBean extends ItemsBean {
   }
 
   public String getAuthors() {
-    return authors;
+    return this.authorsWithOrganizationsList.stream().collect(Collectors.joining(", "));
   }
 
   public String getCitation() {
+    String firstAuthorAndEtal = this.authorsList.get(0) + " et al.";
+    String authors = this.authorsList.stream().collect(Collectors.joining(", ")) + ".";
+    String authorsOrEtal = this.authorsList.size() > ImejiConfiguration.MAX_CITE_AS_AUTHORS ? firstAuthorAndEtal : authors;
+    String releaseDate = collection.getStatus().equals(Status.RELEASED) ? " (" + collection.getVersionDate().get(Calendar.YEAR) + ")." : "";
     final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
-    return authors + (collection.getStatus().equals(Status.RELEASED) ? " (" + collection.getVersionDate().get(Calendar.YEAR) + ")" : "")
-        + ". " + collection.getTitle() + ". " + Imeji.CONFIG.getDoiPublisher() + ". <a href=\"" + url + "\">" + url + "</a>";
+    String collectionLink = "<a href=\"" + url + "\">" + url + "</a>";
+
+    return authorsOrEtal + releaseDate + " " + collection.getTitle() + ". " + Imeji.CONFIG.getDoiPublisher() + ". " + collectionLink;
+  }
+
+  public List<String> getAffiliations() {
+    List<String> affiliations = new ArrayList<>();
+    for (int i = 1; i <= affiliationNumberMapping.size(); i++) {
+      affiliations.add(i + ". " + affiliationNumberMapping.get(i));
+    }
+    return affiliations;
+  }
+
+  public String getAffiliationNumbers(URI authorId) {
+    return this.authorAffiliationNumberMapping.get(authorId).stream().map(String::valueOf).collect(Collectors.joining(", "));
   }
 
   public static String getOrcidUri() {
@@ -324,14 +370,6 @@ public class CollectionItemsBean extends ItemsBean {
 
   public String getDescriptionShort() {
     return descriptionShort;
-  }
-
-  public List<String> getAuthorsList() {
-    return authorsList;
-  }
-
-  public void setAuthorsList(List<String> authorsList) {
-    this.authorsList = authorsList;
   }
 
 }

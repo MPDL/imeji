@@ -25,7 +25,7 @@
 		<span class="imj_infodataLabel">#{lbl.authors}</span>
 		<span class="imj_infodataValue">
 			<ui:repeat value="#{cc.attrs.bean.collection.persons}" var="author">
-				<h:outputText value="#{author.completeName}  (#{author.organizationString}) " />
+				<h:outputText value="#{author.completeName}  (#{cc.attrs.bean.getAffiliationNumbers(author.id)}) " />
 				<ui:fragment rendered="#{not empty author.orcid}">
 					<a href="https://orcid.org/#{author.orcid}" target="_blank"><img style="vertical-align: text-top; height: 1.1em"
 						src="/imeji/resources/imj_iconset/orcid.png" /></a>
@@ -33,6 +33,15 @@
 				<br />
 			</ui:repeat>
 		</span>
+		
+		<span class="imj_infodataLabel">#{lbl.affiliations}</span>
+		<span class="imj_infodataValue">
+			<ui:repeat value="#{cc.attrs.bean.affiliations}" var="affiliation">
+				<h:outputText value="#{affiliation}" />
+				<br />
+			</ui:repeat>
+		</span>
+		
 		<span class="imj_infodataLabel">#{lbl.cite}</span>
 		<span class="imj_infodataValue">
 			<h:outputText value="#{cc.attrs.bean.citation}" escape="false" />

@@ -134,6 +134,8 @@ public class ImejiConfiguration {
   public static final String COLLECTION_METADATA_ARTICLE_DOI_LABEL = "Article DOI";
   public static final String COLLECTION_METADATA_KEYWORDS_LABEL = "Keywords";
 
+  public static final int MAX_CITE_AS_AUTHORS = 5;
+
   private String dataViewerUrl;
 
   private ProtectedPassword emailServerPassword;
