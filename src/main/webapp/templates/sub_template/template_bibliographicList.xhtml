@@ -31,13 +31,13 @@
 				<!-- List -->
 				<ui:fragment rendered="#{paginatorListSessionBean.totalNumberOfRecords > 0}">
 					
-					<h:panelGroup layout="block" id="facetsArea" styleClass="imj_itemsAreaFacets" style="margin-top: 17px;" rendered="#{not empty FacetSelectorBean.entries}">
+					<h:panelGroup layout="block" id="facetsArea" styleClass="imj_itemsAreaFacets" style="margin-top: 17px;">
 			           	<facet:facetsSelector itemsBean="#{paginatorListSessionBean}" selector="#{FacetSelectorBean}"/>
 			        </h:panelGroup>
-			        
-					<h:panelGroup layout="block" id="imj_listBody" style="#{not empty FacetSelectorBean.entries ? 'width:77%;' : ''}">
-						<col:list mediaList="#{paginatorListSessionBean}"/>
-					</h:panelGroup>
+
+						<h:panelGroup layout="block" id="imj_listBody" styleClass="imj_itemsAreaContent">
+							<col:list mediaList="#{paginatorListSessionBean}"/>
+						</h:panelGroup>
 				</ui:fragment>
 				
 				<!-- Page Browser GotoBox -->
