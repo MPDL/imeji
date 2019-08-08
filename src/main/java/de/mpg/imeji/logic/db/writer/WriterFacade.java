@@ -217,6 +217,8 @@ public class WriterFacade {
     List<Object> imejiDataObjectList = Arrays.asList(changeMember.getImejiDataObject());
     checkWorkflow(imejiDataObjectList, "update");
     checkSecurity(imejiDataObjectList, user, true);
+    Object valueToSet = changeMember.getValue();
+    validate(valueToSet, Validator.Method.UPDATE);
 
     try {
       Object dataObjectFromStore = executor.submit(new ChangeMemberTask(changeMember)).get();
@@ -247,6 +249,11 @@ public class WriterFacade {
         changeElements.stream().map(dataObject -> dataObject.getImejiDataObject()).collect(Collectors.toList());
     checkWorkflow(imejiDataObjectList, "update");
     checkSecurity(imejiDataObjectList, user, true);
+    for (ChangeMember changeMember : changeElements) {
+      Object valueToSet = changeMember.getValue();
+      validate(valueToSet, Validator.Method.UPDATE);
+    }
+
 
     try {
       // write list of changes to Jena and get latest object version:
@@ -307,6 +314,13 @@ public class WriterFacade {
     }
   }
 
+
+  private void validate(Object object, Validator.Method method) throws UnprocessableError {
+
+    final Validator<Object> validator = (Validator<Object>) ValidatorFactory.newValidator(object, method);
+    validator.validate(object, method);
+
+  }
 
   private void checkWorkflow(List<Object> objects, String operation) throws WorkflowException {
     for (final Object o : objects) {
