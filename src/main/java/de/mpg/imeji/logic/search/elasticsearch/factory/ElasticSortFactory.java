@@ -65,25 +65,25 @@ public class ElasticSortFactory {
     final SearchFields index = sort.getField();
     switch (index) {
       case title:
-        return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort);
+        return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort, "keyword");
       case created:
-        return makeBuilder(ElasticFields.CREATED.field(), sort);
+        return makeBuilder(ElasticFields.CREATED.field(), sort, "long");
       case modified:
-        return makeBuilder(ElasticFields.MODIFIED.field(), sort);
+        return makeBuilder(ElasticFields.MODIFIED.field(), sort, "long");
       case filename:
-        return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort);
+        return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort, "keyword");
       case filetype:
-        return makeBuilder(ElasticFields.FILETYPE.field(), sort);
+        return makeBuilder(ElasticFields.FILETYPE.field(), sort, "keyword");
       case filesize:
-        return makeBuilder(ElasticFields.SIZE.field(), sort);
+        return makeBuilder(ElasticFields.SIZE.field(), sort, "long");
       case fileextension:
-        return makeBuilder(ElasticFields.FILEEXTENSION.field() + SORT_INDEX, sort);
+        return makeBuilder(ElasticFields.FILEEXTENSION.field() + SORT_INDEX, sort, "keyword");
       case creatorid:
-        return makeBuilder(ElasticFields.CREATORS.field() + SORT_INDEX, sort);
+        return makeBuilder(ElasticFields.CREATORS.field() + SORT_INDEX, sort, "keyword");
       case status:
-        return makeBuilder(ElasticFields.STATUS.field(), sort);
+        return makeBuilder(ElasticFields.STATUS.field(), sort, "keyword");
       case completename:
-        return makeBuilder("completename" + SORT_INDEX, sort);
+        return makeBuilder("completename" + SORT_INDEX, sort, "keyword");
       default:
         return defaultSort;
     }
@@ -97,8 +97,8 @@ public class ElasticSortFactory {
    * @return
    */
   // unmappedType in order to prevent shard failures for missing sort fields
-  private static SortBuilder makeBuilder(String field, SortCriterion sortCriterion) {
-    return SortBuilders.fieldSort(field).unmappedType("long").order(getSortOrder(sortCriterion));
+  private static SortBuilder makeBuilder(String field, SortCriterion sortCriterion, String unmappedType) {
+    return SortBuilders.fieldSort(field).unmappedType(unmappedType).order(getSortOrder(sortCriterion));
   }
 
   /**
