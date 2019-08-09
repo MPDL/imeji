@@ -170,13 +170,9 @@
 				<div class="imj_metadataValue">
 					<div class="imj_metadataValueEntry">
 						<h:inputText id="inputOrgaName"
-							styleClass="imj_admindataEdit autocomplete_org"
+							styleClass="imj_comboBox"
 							value="#{org.name}"
-							onfocus="setOrgaSource('#{cc.attrs.orgsSource}');"
-							rendered="#{cc.attrs.orgsSource != ''}" />
-						<h:inputText id="inputOrgaName1"
-							styleClass="imj_admindataEdit autocomplete_org"
-							value="#{org.name}" rendered="#{cc.attrs.orgsSource == ''}" />
+							html5:data-source='#{UtilBean.toJavascriptArray(Configuration.organizationSuggestionsAsList)}' />
 					</div>
 					<span class="imj_inlineButtonGroup"> <h:commandLink
 							styleClass="fa fa-plus-square-o" title="#{lbl.add_organization}"
