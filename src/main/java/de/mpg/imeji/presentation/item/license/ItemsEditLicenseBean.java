@@ -86,10 +86,14 @@ public class ItemsEditLicenseBean extends SuperBean {
   public void save() throws ImejiException, IOException {
     List<Item> items = !StringHelper.isNullOrEmptyTrim(collectionId) ? retrieveAllCollectionsItem(collectionId) : retrieveSelectedItems();
     items = addLicense(items);
-    save(items);
-    BeanHelper.addMessage(getLicenseName() + " " + Imeji.RESOURCE_BUNDLE.getLabel("licenses_added_to", getLocale()) + " " + items.size()
-        + " " + Imeji.RESOURCE_BUNDLE.getLabel("items", getLocale()));
-
+    try {
+      save(items);
+      BeanHelper.addMessage(getLicenseName() + " " + Imeji.RESOURCE_BUNDLE.getLabel("licenses_added_to", getLocale()) + " " + items.size()
+          + " " + Imeji.RESOURCE_BUNDLE.getLabel("items", getLocale()));
+    } catch (final ImejiException e) {
+      BeanHelper.error(e.getMessage());
+      LOGGER.error("Error saving items", e);
+    }
     cancel();
   }
 
@@ -107,13 +111,8 @@ public class ItemsEditLicenseBean extends SuperBean {
    * @param items
    * @throws ImejiException
    */
-  private void save(List<Item> items) {
-    try {
-      new ItemService().updateBatch(items, getSessionUser());
-    } catch (final ImejiException e) {
-      BeanHelper.error(e.getMessage());
-      LOGGER.error("Error saving items", e);
-    }
+  private void save(List<Item> items) throws ImejiException {
+    new ItemService().updateBatch(items, getSessionUser());
   }
 
   /**

@@ -49,7 +49,6 @@
 						#{lbl.cancel}
 					</a>
 					<h:commandButton class="imj_submitButton" value="#{lbl.move}" action="#{MoveItemsBean.moveTo(cc.attrs.objectId)}"  onclick="closeDialog('#{cc.attrs.dialogId}');">
-						<f:ajax render="@all"/>
 					</h:commandButton>
 				</ui:fragment>
 			</h:form>

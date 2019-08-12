@@ -31,12 +31,8 @@
 					#{lbl.licenses_added_to_previous}
 				</ui:fragment>
 				<div class="imj_submitPanel">
-					<h:commandLink styleClass="imj_cancelButton" action="#{ItemsEditLicenseBean.cancel}" value="#{lbl.cancel}">
-						<f:ajax/>
-					</h:commandLink>
-					<h:commandLink type="submit" styleClass="imj_submitButton" action="#{ItemsEditLicenseBean.save}" value="#{lbl.save}">
-						<f:ajax/>
-					</h:commandLink>
+					<h:commandLink styleClass="imj_cancelButton" action="#{ItemsEditLicenseBean.cancel}" value="#{lbl.cancel}"/>
+					<h:commandLink type="submit" styleClass="imj_submitButton" action="#{ItemsEditLicenseBean.save}" value="#{lbl.save}"/>
 				</div>
 			</h:form>
 		</div>
