@@ -55,8 +55,7 @@
       _createShowAllButton: function() {
         var input = this.input,
           wasOpen = false;
- 
-        input.css("width","60%");
+        
         $( "<a>" )
           .attr( "tabIndex", -1 )
           .addClass("imj_submitButton")
