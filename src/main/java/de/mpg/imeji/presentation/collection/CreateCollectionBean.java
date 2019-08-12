@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -11,8 +12,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -50,7 +51,13 @@ public class CreateCollectionBean extends CollectionBean {
   @PostConstruct
   public void init() {
     showUpload = UrlHelper.getParameterBoolean("showUpload");
-    setCollection(ImejiFactory.newCollection().setPerson(getSessionUser().getPerson().clone()).build());
+
+    //Preselect author data except for organizations + department
+    Person clonedAuthor = getSessionUser().getPerson().clone();
+    Collection<Organization> emptyOrganizations = new ArrayList<>();
+    emptyOrganizations.add(ImejiFactory.newOrganization());
+    clonedAuthor.setOrganizations(emptyOrganizations);
+    setCollection(ImejiFactory.newCollection().setPerson(clonedAuthor).build());
 
     List<String> preselectedMetadataLabels = Imeji.CONFIG.getCollectionMetadataSuggestionsPreselectAsList();
 
