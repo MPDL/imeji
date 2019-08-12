@@ -70,7 +70,7 @@
 					<facet:selectStatement bean="#{cc.attrs.form}" id="selectStatement"/>
 				</ui:fragment>
 				<ui:fragment rendered="#{not empty cc.attrs.form.index}">
-					<h:commandLink value="#{lbl.reset}" action="#{cc.attrs.form.initFacet('', '')}" styleClass="imj_metadataValue">
+					<h:commandLink value="#{lbl.reset}" action="#{cc.attrs.form.initFacet('', '', '')}" styleClass="imj_metadataValue">
 						<f:ajax render="@form" execute="@form"/>
 					</h:commandLink>
 				</ui:fragment>
