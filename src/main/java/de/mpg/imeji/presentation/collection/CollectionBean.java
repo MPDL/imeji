@@ -125,6 +125,15 @@ public abstract class CollectionBean extends SuperBean {
   public String addAuthor(int authorPosition) {
     final List<Person> c = (List<Person>) collection.getPersons();
     final Person p = ImejiFactory.newPerson();
+
+    //Preselect Organizations/Department with Organizations/Department from the first person (author)
+    List<Organization> organizationsOfFirstPerson = (List<Organization>) c.get(0).getOrganizations();
+    List<Organization> preselectedOrganizations = new ArrayList<>();
+    for (Organization organization : organizationsOfFirstPerson) {
+      preselectedOrganizations.add(organization.clone());
+    }
+    p.setOrganizations(preselectedOrganizations);
+
     p.setPos(authorPosition + 1);
     c.add(authorPosition + 1, p);
     return "";
