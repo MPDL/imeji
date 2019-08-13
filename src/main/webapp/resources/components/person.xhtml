@@ -172,7 +172,8 @@
 						<h:inputText id="inputOrgaName"
 							styleClass="imj_comboBox"
 							value="#{org.name}"
-							html5:data-source='#{UtilBean.toJavascriptArray(Configuration.organizationSuggestionsAsList)}' />
+							html5:data-source='#{UtilBean.toJavascriptArray(Configuration.organizationSuggestionsAsList)}'
+							html5:placeholder="#{lbl.placeholder_organization}" />
 					</div>
 					<span class="imj_inlineButtonGroup"> <h:commandLink
 							styleClass="fa fa-plus-square-o" title="#{lbl.add_organization}"
