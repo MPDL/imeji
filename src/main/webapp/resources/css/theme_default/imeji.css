@@ -1534,6 +1534,7 @@ html body .imj_siteWrapper .imj_mainContentWrapper #imj_ajaxWrapper .imj_authorM
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_userConfig .imj_admindataSet .imj_admindataLabel { font-size: 1.2em; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_userConfig .imj_admindataSet:first-child .imj_admindataLabel { font-size: 1.07em; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_userConfig .imj_adminEditPanel { margin-top: 20px; }
+html body .imj_siteWrapper .imj_mainContentWrapper .imj_userConfig .imj_metadataSet .imj_metadataValue .imj_comboBox { width: 285px; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_descriptionArea h4 { padding-left: 0; font-size: 1.2em; font-weight: 600; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_descriptionArea select { font-family: 'Titillium Web', Arial, Helvetica, Verdana, sans-serif !important; border: 1px solid #6CAE2F; background: transparent; color: #F0F0F0; border-radius: 2px; padding: 5px 10px 5px 10px; max-width: calc(100% - 20px) !important; margin-top: 10px; height: 35px; }
 html body .imj_siteWrapper .imj_mainContentWrapper .imj_descriptionArea select:hover { color: #F0F0F0; }
