@@ -697,7 +697,7 @@ public class ConfigurationBean extends SuperBean {
   }
 
   public void setCollectionMetadataSuggestionsPreselect(String str) {
-    Imeji.CONFIG.setCollectionMetadataSuggestionsPreselect(str);;
+    Imeji.CONFIG.setCollectionMetadataSuggestionsPreselect(str);
   }
 
   public List<String> getCollectionMetadataSuggestionsComplete() {
@@ -715,6 +715,14 @@ public class ConfigurationBean extends SuperBean {
 
   public void setOrganizationSuggestions(String str) {
     Imeji.CONFIG.setOrganizationNames(str);
+  }
+
+  public String getMaxNumberCitationAuthors() {
+    return Imeji.CONFIG.getMaxNumberCitationAuthors();
+  }
+
+  public void setMaxNumberCitationAuthors(String str) {
+    Imeji.CONFIG.setMaxNumberCitationAuthors(str);
   }
 
 }

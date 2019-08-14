@@ -99,7 +99,8 @@ public class ImejiConfiguration {
     COLLECTION_TYPES,
     COLLECTION_METADATA_SUGGESTIONS,
     COLLECTION_METADATA_SELECTIONS_PRESELECT,
-    ORGANIZATION_NAMES;
+    ORGANIZATION_NAMES,
+    MAX_NUMBER_CITATION_AUTHORS;
   }
 
   private static Properties config;
@@ -128,13 +129,12 @@ public class ImejiConfiguration {
   public static final String DEFAULT_NUMBER_OF_LINES_IN_THUMBNAIL_LIST = "1,2,3,4,10,15,40";
   public static final String DEFAULT_GOOGLE_MAPS_API = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=";
   public static final String DEFAULT_CONE_AUTHORS = "http://pubman.mpdl.mpg.de/cone/persons/query?format=json&n=10&m=full&q=";
+  public static final String DEFAULT_MAX_NUMBER_CITATION_AUTHORS = "5";
 
   // Specific collection metadata (= ContainerAdditionalInfo), which have a additional handling (validation, placeholder, ...):
   public static final String COLLECTION_METADATA_GEO_COORDINATES_LABEL = "Geo-coordinates";
   public static final String COLLECTION_METADATA_ARTICLE_DOI_LABEL = "Article DOI";
   public static final String COLLECTION_METADATA_KEYWORDS_LABEL = "Keywords";
-
-  public static final int MAX_CITE_AS_AUTHORS = 5;
 
   private String dataViewerUrl;
 
@@ -226,6 +226,7 @@ public class ImejiConfiguration {
     initPropertyWithDefaultValue(CONFIGURATION.NUMBER_OF_LINES_IN_THUMBNAIL_LIST, DEFAULT_NUMBER_OF_LINES_IN_THUMBNAIL_LIST);
     initPropertyWithDefaultValue(CONFIGURATION.GOOGLE_MAPS_API, DEFAULT_GOOGLE_MAPS_API);
     initPropertyWithDefaultValue(CONFIGURATION.CONE_AUTHORS, DEFAULT_CONE_AUTHORS);
+    initPropertyWithDefaultValue(CONFIGURATION.MAX_NUMBER_CITATION_AUTHORS, DEFAULT_MAX_NUMBER_CITATION_AUTHORS);
   }
 
   /**
@@ -1080,6 +1081,14 @@ public class ImejiConfiguration {
 
   public void setOrganizationNames(String str) {
     setProperty(CONFIGURATION.ORGANIZATION_NAMES.name(), str);
+  }
+
+  public String getMaxNumberCitationAuthors() {
+    return getPropertyAsNonNullString(CONFIGURATION.MAX_NUMBER_CITATION_AUTHORS.name());
+  }
+
+  public void setMaxNumberCitationAuthors(String str) {
+    setProperty(CONFIGURATION.MAX_NUMBER_CITATION_AUTHORS.name(), str);
   }
 
   // ------------------------------------------------------------------------

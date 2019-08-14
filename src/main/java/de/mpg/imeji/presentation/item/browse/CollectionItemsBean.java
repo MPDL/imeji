@@ -259,7 +259,8 @@ public class CollectionItemsBean extends ItemsBean {
   public String getCitation() {
     String firstAuthorAndEtal = this.authorsList.get(0) + " et al.";
     String authors = this.authorsList.stream().collect(Collectors.joining(", ")) + ".";
-    String authorsOrEtal = this.authorsList.size() > ImejiConfiguration.MAX_CITE_AS_AUTHORS ? firstAuthorAndEtal : authors;
+    String authorsOrEtal =
+        this.authorsList.size() > Integer.parseInt(Imeji.CONFIG.getMaxNumberCitationAuthors()) ? firstAuthorAndEtal : authors;
     String releaseDate = collection.getStatus().equals(Status.RELEASED) ? " (" + collection.getVersionDate().get(Calendar.YEAR) + ")." : "";
     final String url = getDoiUrl().isEmpty() ? getPageUrl() : getDoiUrl();
     String collectionLink = "<a href=\"" + url + "\">" + url + "</a>";
