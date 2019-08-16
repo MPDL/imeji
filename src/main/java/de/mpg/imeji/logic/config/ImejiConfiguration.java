@@ -27,6 +27,7 @@ import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.util.PropertyReader;
+import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.util.StringHelper;
 
 public class ImejiConfiguration {
@@ -227,6 +228,7 @@ public class ImejiConfiguration {
     initPropertyWithDefaultValue(CONFIGURATION.GOOGLE_MAPS_API, DEFAULT_GOOGLE_MAPS_API);
     initPropertyWithDefaultValue(CONFIGURATION.CONE_AUTHORS, DEFAULT_CONE_AUTHORS);
     initPropertyWithDefaultValue(CONFIGURATION.MAX_NUMBER_CITATION_AUTHORS, DEFAULT_MAX_NUMBER_CITATION_AUTHORS);
+    initPropertyWithDefaultValue(CONFIGURATION.DEFAULT_LICENSE, ImejiLicenses.CC_BY.name());
   }
 
   /**
