@@ -309,6 +309,33 @@ public class CollectionItemsBean extends ItemsBean {
     return collection.getLogoUrl() != null ? collection.getLogoUrl().toString() : getCurrentPartList().get(0).getLink();
   }
 
+
+  /**
+   * Return whether all items of this collection (and all of its sub collections have a license) -
+   * true is all items have a license - false if at least one item doesn't have a license
+   * 
+   * @return
+   */
+  public boolean allCollectionsItemsHaveALicense() {
+
+    System.out.println("allCollectionsItemsHaveALicense()");
+    List<String> allItemURIs = this.searchAllItems();
+    try {
+      List<Item> allItems = new ItemService().retrieveBatch(allItemURIs, getSessionUser());
+      for (Item item : allItems) {
+        if (item.getLicenses() == null || item.getLicenses().isEmpty()) {
+          return false;
+        }
+      }
+    } catch (ImejiException e) {
+      LOGGER.error("Could not read items of collection and it's subcollections from Jena", e);
+      return false;
+    }
+    return true;
+  }
+
+
+
   /**
    * If true, set to false to avoid to show the upload dialog on each ajax request
    * 

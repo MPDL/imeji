@@ -21,7 +21,7 @@
 		</a>
 		<ui:fragment rendered="#{Auth.delete and WorkflowBean.delete(cc.attrs.itemBean.item)}">
 			<h:form>
-				<h:commandLink id="moveItems"  action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemBean.item.collection.toString())}" onclick="openDialog('moveItem');">
+				<h:commandLink id="moveItems"  action="#{MoveItemsBean.initMove(cc.attrs.itemBean.item.collection.toString(), cc.attrs.itemBean.itemHasLicense())}" onclick="openDialog('moveItem');">
 					<span class="fa fa-hand-o-right"/>#{lbl.move}
 					<f:ajax render=":itemDialogs:move:form"/>
 				</h:commandLink>

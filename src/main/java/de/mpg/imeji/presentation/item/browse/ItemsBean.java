@@ -321,6 +321,30 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
   }
 
   /**
+   * Returns whether the currently selected items have licenses - true if all selected items have
+   * licenses - false if at least one does not have a license
+   * 
+   * @return
+   */
+  public boolean allSelectedHaveALicense() {
+
+    System.out.println("allSelectedHaveALicense()");
+    List<String> selectedItemUris = sessionBean.getSelected();
+    try {
+      List<Item> selectedItems = new ItemService().retrieveBatch(selectedItemUris, getSessionUser());
+      for (Item item : selectedItems) {
+        if (item.getLicenses() == null || item.getLicenses().isEmpty()) {
+          return false;
+        }
+      }
+    } catch (ImejiException e) {
+      LOGGER.error("Error reading selected items from Jena", e);
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Delete all {@link Item} currently browsed
    *
    * @return @

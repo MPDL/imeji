@@ -60,13 +60,16 @@ public class MoveItemsBean extends SuperBean {
   private CollectionImeji target;
 
   private boolean toNewSubCollection = false;
+  private boolean licenseProvided = false;
 
   /**
    * Load all collections for which the user has at least edit role
    * 
    * @throws ImejiException
    */
-  public void searchCollectionsForMove(String collectionSrcId) throws ImejiException {
+  public void initMove(String collectionSrcId, boolean allObjectsToMoveHaveALicense) throws ImejiException {
+
+    this.licenseProvided = allObjectsToMoveHaveALicense;
     licenseEditor = new LicenseEditor(getLocale(), false);
     SearchFactory factory = new SearchFactory();
     factory.addElement(new SearchPair(SearchFields.title, query + "*"), OR);
@@ -344,4 +347,12 @@ public class MoveItemsBean extends SuperBean {
     this.target = target;
   }
 
+
+  public boolean getLicenseProvided() {
+    return this.licenseProvided;
+  }
+
+  public void setLicenseProvided(boolean licenseProvided) {
+    this.licenseProvided = licenseProvided;
+  }
 }

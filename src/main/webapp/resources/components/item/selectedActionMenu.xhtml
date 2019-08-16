@@ -27,7 +27,7 @@
 						</a>
 					</ui:fragment>
 					<ui:fragment rendered="#{cc.attrs.itemsBean.type == 'COLLECTION_ITEMS' and WorkflowBean.delete(cc.attrs.itemsBean.collection)}">
-						<h:commandLink id="moveItems" action="#{MoveItemsBean.searchCollectionsForMove(cc.attrs.itemsBean.collection.id.toString())}" onclick="openDialog('moveSelected')">
+						<h:commandLink id="moveItems" action="#{MoveItemsBean.initMove(cc.attrs.itemsBean.collection.id.toString(), cc.attrs.itemsBean.allSelectedHaveALicense())}" onclick="openDialog('moveSelected')">
 							<span class="fa fa-hand-o-right"/>#{lbl.move}
 							<f:ajax render=":selDialogs:moveSel:form"/>
 						</h:commandLink>

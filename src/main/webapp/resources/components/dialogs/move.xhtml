@@ -14,7 +14,6 @@
 		<composite:attribute name="parentId" required="true" type="java.lang.Object"/>
 		<composite:attribute name="subCollectionFormInput"/>
 		<composite:attribute name="objectId" required="false" type="java.lang.Object"/>
-		<composite:attribute name="hasLicense" default="false" required="false" type="java.lang.Boolean"/>
 		<composite:attribute name="dialogId" required="true" type="java.lang.String"/>
 		<composite:attribute name="createSubCollection" default="false" type="java.lang.Boolean"/>
 	</composite:interface>
@@ -30,7 +29,7 @@
 						</a>
 					</div>
 					<div id="tree">
-						<collection:tree tree="#{MoveItemsBean.tree}" colId="#{cc.attrs.colId}" objectId="#{cc.attrs.objectId}" hasLicense="#{cc.attrs.hasLicense}" subCollectionFormInput="#{cc.attrs.subCollectionFormInput}"/>
+						<collection:tree tree="#{MoveItemsBean.tree}" colId="#{cc.attrs.colId}" objectId="#{cc.attrs.objectId}" hasLicense="#{MoveItemsBean.licenseProvided}" subCollectionFormInput="#{cc.attrs.subCollectionFormInput}"/>
 					</div>
 				</ui:fragment>
 				<ui:fragment rendered="#{MoveItemsBean.target != null}">
@@ -38,7 +37,7 @@
 						 <f:ajax/>
 					</h:inputText>
 					<br/><br/>
-					<ui:fragment rendered="#{MoveItemsBean.target.status == 'RELEASED' and !cc.attrs.hasLicense}">
+					<ui:fragment rendered="#{MoveItemsBean.target.status == 'RELEASED' and !MoveItemsBean.licenseProvided}">
 						<span class="fa fa-exclamation-triangle"/>
 						#{lbl.move_collection_released}
 						<br/><br/>

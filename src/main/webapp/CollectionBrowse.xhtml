@@ -136,7 +136,7 @@
 									<a onclick="openDialog('deleteCollection');">
 										 <span class="fa fa-trash"/>#{lbl.delete}
 									</a>
-									<h:commandLink id="moveCollection" rendered="#{CollectionItemsBean.collection.isSubCollection()}" action="#{MoveItemsBean.searchCollectionsForMove(CollectionItemsBean.collection.id.toString())}" onclick="openDialog('moveCol');">
+									<h:commandLink id="moveCollection" rendered="#{CollectionItemsBean.collection.isSubCollection()}" action="#{MoveItemsBean.initMove(CollectionItemsBean.collection.id.toString(), CollectionItemsBean.allCollectionsItemsHaveALicense())}" onclick="openDialog('moveCol');">
 										<span class="fa fa-hand-o-right"/>#{lbl.move}
 										<f:ajax render=":move:form"/>
 									</h:commandLink>

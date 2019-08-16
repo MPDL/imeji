@@ -60,7 +60,7 @@ import de.mpg.imeji.logic.util.TempFileUtil;
 
 /**
  * Implements CRUD and Search methods for {@link Item}
- *
+ * 
  * @author saquet (initial creation)
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
@@ -235,7 +235,6 @@ public class ItemService extends SearchServiceAbstract<Item> {
     } else {
       throw new BadRequestException("Filename or reference must not be empty!");
     }
-
     return newItem;
   }
 
