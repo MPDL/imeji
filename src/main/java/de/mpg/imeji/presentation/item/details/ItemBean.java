@@ -210,7 +210,6 @@ public class ItemBean extends SuperBean {
 
   public boolean itemHasLicense() {
 
-    System.out.println("Item has license");
     if (this.item != null && (item.getLicenses() != null || !item.getLicenses().isEmpty())) {
       return true;
     }

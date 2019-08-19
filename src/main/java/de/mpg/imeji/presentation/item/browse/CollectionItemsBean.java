@@ -318,17 +318,8 @@ public class CollectionItemsBean extends ItemsBean {
    */
   public boolean allCollectionsItemsHaveALicense() {
 
-    System.out.println("allCollectionsItemsHaveALicense()");
-    List<String> allItemURIs = this.searchAllItems();
-    try {
-      List<Item> allItems = new ItemService().retrieveBatch(allItemURIs, getSessionUser());
-      for (Item item : allItems) {
-        if (item.getLicenses() == null || item.getLicenses().isEmpty()) {
-          return false;
-        }
-      }
-    } catch (ImejiException e) {
-      LOGGER.error("Could not read items of collection and it's subcollections from Jena", e);
+    int numberWithoutLicense = new ItemService().getNumberOfCollectionsItemsWithoutLicense(this.uri);
+    if (numberWithoutLicense > 0) {
       return false;
     }
     return true;

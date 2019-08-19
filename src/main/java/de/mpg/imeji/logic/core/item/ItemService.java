@@ -849,4 +849,11 @@ public class ItemService extends SearchServiceAbstract<Item> {
     }
     return targetCollectionUser.getQuota() - needed;
   }
+
+
+  public int getNumberOfCollectionsItemsWithoutLicense(URI collectionUri) {
+    String directJenaQuery = JenaCustomQueries.getItemsWithoutLicenseInCollectionAndSubCollections(collectionUri);
+    return ImejiSPARQL.execCount(directJenaQuery, null);    
+  }
+
 }

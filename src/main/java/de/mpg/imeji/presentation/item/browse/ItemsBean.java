@@ -328,7 +328,6 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
    */
   public boolean allSelectedHaveALicense() {
 
-    System.out.println("allSelectedHaveALicense()");
     List<String> selectedItemUris = sessionBean.getSelected();
     try {
       List<Item> selectedItems = new ItemService().retrieveBatch(selectedItemUris, getSessionUser());

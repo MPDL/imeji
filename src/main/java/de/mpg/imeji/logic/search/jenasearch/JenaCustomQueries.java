@@ -687,4 +687,19 @@ public class JenaCustomQueries {
   public static final String selectUnusedContent() {
     return "SELECT ?s WHERE {?s a <http://imeji.org/terms/content> . not exists{ ?item <http://imeji.org/terms/contentId> ?contentId . FILTER(REGEX(str(?s), ?contentId, 'i'))}}";
   }
+
+  /**
+   * Given a collection search all items in that collection (and it's sub collections) that don't
+   * have a license.
+   * 
+   * @param collectionsUri
+   * @return
+   */
+  public static final String getItemsWithoutLicenseInCollectionAndSubCollections(URI collectionsUri) {
+
+    String sparqlQuery = "SELECT DISTINCT ?s WHERE {?s <http://imeji.org/terms/collection>+  <" + collectionsUri.toString() + ">."
+        + "?s  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://imeji.org/terms/item>. "
+        + "FILTER NOT EXISTS {?s <http://imeji.org/terms/license> ?license}}";
+    return sparqlQuery;
+  }
 }
