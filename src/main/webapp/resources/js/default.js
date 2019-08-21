@@ -458,7 +458,7 @@ function addComboBox()
 		var dataSource = $(elem).data("source");
 		if(dataSource)
 		{
-			$(elem).combobox({source : dataSource});
+			$(elem).combobox({source : dataSource, showListByFocus : true});
 		}
 			
 	});

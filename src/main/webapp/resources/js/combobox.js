@@ -7,7 +7,8 @@
     $.widget( "custom.combobox", {
       
     	options : {
-    		source : []
+    		source : [],
+    		showListByFocus : false
     	},
     	
     	_create: function() {
@@ -22,7 +23,12 @@
  */
         //this.element.hide();
         this._createAutocomplete();
-        this._createShowAllButton();
+        if(this.options.showListByFocus){
+        	this._createShowAllByFocusAndButton();
+        }else {
+        	this._createShowAllByButton();
+		}
+        
       },
  
       _createAutocomplete: function() {
@@ -52,7 +58,7 @@
       },
       
  
-      _createShowAllButton: function() {
+      _createShowAllByButton: function() {
         var input = this.input,
           wasOpen = false;
         
@@ -78,6 +84,38 @@
       },
  
       
+      
+      _createShowAllByFocusAndButton: function() {
+        var input = this.input,
+          wasOpen = false;
+          
+        $( "<a>" )
+	      .attr( "tabIndex", -1 )
+	      .addClass("imj_submitButton")
+	      .tooltip()
+	      .insertAfter( this.input )
+	      .append( '<span class="fa fa-angle-down">')
+	      .on( "mousedown", function() {
+	    	wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .on( "click", function() {
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+            
+            // Set focus on input
+            input.trigger( "focus" );
+          });
+      
+        input
+          .focus(function() {
+			input.autocomplete( "search", "" );
+			//FIXME: Actions: Set focus on input element (list opens) -> click outside the browser -> click on a position where the list was visible before
+        	// => list is briefly displayed and element on this position is selected
+		  });
+      },
+
  
       _removeIfInvalid: function( event, ui ) {
  
