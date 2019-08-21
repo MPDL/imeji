@@ -169,13 +169,14 @@
 				</div>
 				<div class="imj_metadataValue">
 					<div class="imj_metadataValueEntry">
-						<h:inputText id="inputOrgaName"
+						<h:inputText id="inputOrgaName" title="#{lbl.select_from_list_or_free_text}"
 							styleClass="imj_comboBox"
 							value="#{org.name}"
 							html5:data-source='#{UtilBean.toJavascriptArray(Configuration.organizationSuggestionsAsList)}'
-							html5:placeholder="#{lbl.placeholder_organization}" />
+							html5:placeholder="#{lbl.select_from_list_or_free_text}" />
 					</div>
-					<span class="imj_inlineButtonGroup"> <h:commandLink
+					<span class="imj_inlineButtonGroup">
+						<h:commandLink
 							styleClass="fa fa-plus-square-o" title="#{lbl.add_organization}"
 							action="#{PersonBean.addOrganization(index.index + 1)}"
 							html5:data-loader="false">
@@ -193,7 +194,7 @@
 			<div>
 				<div class="imj_metadataSet">
 					<div class="imj_metadataLabel">
-						<h:outputText value="#{lbl.department}" />
+						<h:outputText value="#{lbl.department_group}" />
 					</div>
 					<div class="imj_metadataValue">
 						<div class="imj_metadataValueEntry">
