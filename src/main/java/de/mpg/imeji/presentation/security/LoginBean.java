@@ -63,7 +63,7 @@ public class LoginBean extends SuperBean {
       if (!isNullOrEmptyTrim(login)) {
         setLogin(login);
       }
-      if (!UrlHelper.getParameterValue("redirect").isEmpty()) {
+      if (!isNullOrEmptyTrim(UrlHelper.getParameterValue("redirect"))) {
         this.redirect = URLDecoder.decode(UrlHelper.getParameterValue("redirect"), "UTF-8");
       }
       if (getSessionUser() != null) {

@@ -853,7 +853,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
 
   public int getNumberOfCollectionsItemsWithoutLicense(URI collectionUri) {
     String directJenaQuery = JenaCustomQueries.getItemsWithoutLicenseInCollectionAndSubCollections(collectionUri);
-    return ImejiSPARQL.execCount(directJenaQuery, null);    
+    return ImejiSPARQL.execCount(directJenaQuery, null);
   }
 
 }
