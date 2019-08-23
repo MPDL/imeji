@@ -169,11 +169,21 @@
 				</div>
 				<div class="imj_metadataValue">
 					<div class="imj_metadataValueEntry">
-						<h:inputText id="inputOrgaName" title="#{lbl.select_from_list_or_free_text}"
+						<h:inputText id="inputOrgaName"
+							styleClass="imj_admindataEdit"
+							value="#{org.name}"
+							rendered="#{cc.attrs.orgsSource == '' and Configuration.organizationSuggestions == ''}" />
+						<h:inputText id="inputOrgaNameWithSuggest"
+							styleClass="imj_admindataEdit autocomplete_org"
+							value="#{org.name}"
+							onfocus="setOrgaSource('#{cc.attrs.orgsSource}');"
+							rendered="#{cc.attrs.orgsSource != '' and Configuration.organizationSuggestions == ''}" />
+						<h:inputText id="comboboxOrgaNameWithSuggest" title="#{lbl.select_from_list_or_free_text}"
 							styleClass="imj_comboBox"
 							value="#{org.name}"
 							html5:data-source='#{UtilBean.toJavascriptArray(Configuration.organizationSuggestionsAsList)}'
-							html5:placeholder="#{lbl.select_from_list_or_free_text}" />
+							html5:placeholder="#{lbl.select_from_list_or_free_text}"
+							rendered="#{Configuration.organizationSuggestions != ''}" />
 					</div>
 					<span class="imj_inlineButtonGroup">
 						<h:commandLink

@@ -785,12 +785,12 @@
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
 											<h:outputText
-												value="#{lbl.enable_autosuggest_for_organizations}" />
+												value="#{lbl.enable_autosuggest_for_organizations} (#{msg.disabled_by_organizations_list})" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
 											<div class="imj_admindataValueEntry">
-												<h:selectOneRadio
+												<h:selectOneRadio disabled="#{not empty Configuration.organizationSuggestions}"
 													value="#{Configuration.autosuggestForOrganizations}">
 													<f:selectItem itemLabel="#{lbl.none}" itemValue="" />
 													<f:selectItem itemLabel="#{lbl.imeji_organizations}"
@@ -801,7 +801,7 @@
 									</div>
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.organizations_autosuggest} (#{msg.one_value_per_line})" />
+											<h:outputText value="#{lbl.enable_autosuggest_by_organizations_list} (#{msg.one_value_per_line})" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
