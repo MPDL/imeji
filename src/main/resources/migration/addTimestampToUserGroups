@@ -1,0 +1,14 @@
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+
+
+# This is a Jena database update for ticket 1122 https://github.com/MPDL/imeji/issues/1122.
+# Add a timestamp to all existing user groups.  
+
+WITH <http://imeji.org/user>
+INSERT {?x <http://purl.org/dc/terms/modified> ?timestamp }  
+WHERE{
+     ?x  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>  <http://imeji.org/terms/userGroup>. 
+     FILTER NOT EXISTS {?x <http://purl.org/dc/terms/modified> ?existtimestamp}.
+     BIND(NOW() as ?timestamp)
+}
