@@ -12,8 +12,14 @@ node {
 	}
 
 	stage ('Build'){	
-		// Build with maven
-		sh("${mvnHome}/bin/mvn clean install -P env-testing")	  
+		try	{
+			// Build with maven
+			sh("${mvnHome}/bin/mvn clean install -P env-testing")	  
+		}
+		finally {
+			// Capture test reports
+			junit '**/target/surefire-reports/*.xml'
+		}
 	}
 	
    	stage ('Deploy'){
