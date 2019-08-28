@@ -483,6 +483,7 @@ function addTaggle()
 			var taggle = new Taggle($taggleElem.attr('id'), {
 					placeholder: $(textAreaElement).attr('placeholder'),
 					saveOnBlur: true,
+					preserveCase: true,
 					onTagAdd : function (event, tag) {
 							setTagValuesInInput(textAreaElement, taggle.getTagValues());
 						
