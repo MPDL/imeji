@@ -239,7 +239,7 @@ public class UserBean extends SuperBean {
    * @return
    */
   public String getUserPageUrl() {
-    return getNavigation().getUserUrl() + "?email=\"" + UTF8(user.getEmail()) + "\"";
+    return getNavigation().getUserUrl() + "?email=" + UTF8("\"" + user.getEmail() + "\"");
   }
 
   public User getUser() {
