@@ -112,10 +112,12 @@ public class ElasticIndexer implements SearchIndexer {
     if (l.isEmpty()) {
       return;
     }
-    try {
-      final BulkRequest bulkRequest = new BulkRequest();
 
-      for (final Object obj : l) {
+    final BulkRequest bulkRequest = new BulkRequest();
+
+    for (final Object obj : l) {
+
+      try {
         LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
         final IndexRequest indexRequest;
         if (obj instanceof ResourceLastModified) {
@@ -125,7 +127,13 @@ public class ElasticIndexer implements SearchIndexer {
           indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType);
         }
         bulkRequest.add(indexRequest);
+      } catch (Exception e) {
+        LOGGER.error("Error adding object to bulk index list", e);
       }
+
+    }
+
+    try {
       if (bulkRequest.numberOfActions() > 0) {
         BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
         if (resp.hasFailures()) {
@@ -134,7 +142,7 @@ public class ElasticIndexer implements SearchIndexer {
 
       }
     } catch (final Exception e) {
-      LOGGER.error("error indexing object ", e);
+      LOGGER.error("Error while bulk indexing", e);
     }
     if (!(l.get(0) instanceof ContentVO)) {
       commit();
