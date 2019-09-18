@@ -366,6 +366,18 @@
 											class="imj_clearInput fa fa-times"> </a>
 									</h:panelGroup>
 									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+											<h:outputText value="Display Cookie Notice" />
+											<span class="imj_noDisplay">: </span>
+										</div>
+										<div class="imj_admindataValue">
+											<h:selectOneRadio value="#{Configuration.displayCookieNotice}">
+												<f:selectItem itemLabel="#{lbl.no}" itemValue="false" />
+												<f:selectItem itemLabel="#{lbl.yes}" itemValue="true" />
+											</h:selectOneRadio>
+									</div>
+									</div>
+									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">#{lbl.startPageFooterLogos} (#{lbl.html})</div>
 										<div class="imj_admindataValue">
 											<h:inputTextarea

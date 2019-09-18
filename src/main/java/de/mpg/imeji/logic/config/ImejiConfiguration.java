@@ -101,7 +101,8 @@ public class ImejiConfiguration {
     COLLECTION_METADATA_SUGGESTIONS,
     COLLECTION_METADATA_SELECTIONS_PRESELECT,
     ORGANIZATION_NAMES,
-    MAX_NUMBER_CITATION_AUTHORS;
+    MAX_NUMBER_CITATION_AUTHORS,
+    DISPLAY_COOKIE_NOTICE;
   }
 
   private static Properties config;
@@ -131,6 +132,7 @@ public class ImejiConfiguration {
   public static final String DEFAULT_GOOGLE_MAPS_API = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=";
   public static final String DEFAULT_CONE_AUTHORS = "http://pubman.mpdl.mpg.de/cone/persons/query?format=json&n=10&m=full&q=";
   public static final String DEFAULT_MAX_NUMBER_CITATION_AUTHORS = "5";
+  public static final String DEFAULT_DISPLAY_COOKIE_NOTICE = "true";
 
   // Specific collection metadata (= ContainerAdditionalInfo), which have a additional handling (validation, placeholder, ...):
   public static final String COLLECTION_METADATA_GEO_COORDINATES_LABEL = "Geo-coordinates";
@@ -229,6 +231,7 @@ public class ImejiConfiguration {
     initPropertyWithDefaultValue(CONFIGURATION.CONE_AUTHORS, DEFAULT_CONE_AUTHORS);
     initPropertyWithDefaultValue(CONFIGURATION.MAX_NUMBER_CITATION_AUTHORS, DEFAULT_MAX_NUMBER_CITATION_AUTHORS);
     initPropertyWithDefaultValue(CONFIGURATION.DEFAULT_LICENSE, ImejiLicenses.CC_BY.name());
+    initPropertyWithDefaultValue(CONFIGURATION.DISPLAY_COOKIE_NOTICE, DEFAULT_DISPLAY_COOKIE_NOTICE);
   }
 
   /**
@@ -1092,6 +1095,15 @@ public class ImejiConfiguration {
   public void setMaxNumberCitationAuthors(String str) {
     setProperty(CONFIGURATION.MAX_NUMBER_CITATION_AUTHORS.name(), str);
   }
+
+  public void setDisplayCookieNotice(boolean b) {
+    setProperty(CONFIGURATION.DISPLAY_COOKIE_NOTICE.name(), Boolean.toString(b));
+  }
+
+  public boolean getDisplayCookieNotice() {
+    return Boolean.parseBoolean((String) config.get(CONFIGURATION.DISPLAY_COOKIE_NOTICE.name()));
+  }
+
 
   // ------------------------------------------------------------------------
   // Utility classes

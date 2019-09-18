@@ -29,6 +29,7 @@
     </ui:fragment>
    #{SessionBean.checkCss(Configuration.defaultCss, Configuration.alternativeCss)}
     <h:outputStylesheet name="css/theme_default/imeji.css" id="themeDefault" rendered="#{SessionBean.selectedCss == 'NONE'}"/>
+   
     <ui:fragment rendered="#{SessionBean.selectedCss != 'NONE'}">
         <ui:fragment rendered="#{SessionBean.selectedCss == 'DEFAULT'}">
             <link type="text/css" rel="stylesheet" href="#{Configuration.defaultCss}" id="themeDefault"/>
@@ -38,6 +39,7 @@
         </ui:fragment>
     </ui:fragment>
    <link rel="stylesheet" type="text/css" href="#{Navigation.applicationUrl}resources/css/font-awesome/css/font-awesome.min.css"/>
+   
    <!-- Add JS libraries -->
    <h:outputScript library="javax.faces" name="jsf.js"/>
    <h:outputScript library="js" name="default.js" target="body"/>
@@ -45,4 +47,8 @@
    <h:outputScript name="jquery/jquery-1.11.1.min.js" target="head"/>
    <h:outputScript name="jquery/ui/1.10.4/jquery-ui.min.js" target="head"/>
    <h:outputScript name="js/autocomplete.js" target="head"/>
+   <h:outputScript name="js/cookieconsent/cookieconsent.min.js" target="head"/>
+   <h:outputStylesheet name="js/cookieconsent/cookieconsent.min.css"/>
+   
+
 </ui:composition>

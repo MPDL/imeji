@@ -64,4 +64,33 @@
 	<h:inputHidden id="instituteIdForIP" value="#{SessionBean.instituteIdByIP}"/>
 	<h:inputHidden id="instituteNameForUser" value="#{SessionBean.instituteByUser}"/>
 	<h:outputText value="#{Configuration.snippet}" escape="false"/>
+	
+	<ui:fragment rendered="#{Configuration.displayCookieNotice}">
+	   <script>
+	   const privacyUrl = '#{not empty Configuration.privacyPolicyUrl ? Configuration.privacyPolicyUrl : Navigation.privacyPolicyUrl}';
+	window.cookieconsent.initialise({
+	  "palette": {
+
+		"popup": {
+	      "background": "#000000bb"
+	    },
+	   
+	    
+	    "button": {
+	    	"background": "#f1d600"
+	    }
+	    
+	  },
+	  "position": "bottom",
+	  "content": {
+		 "message": '#{msg.cookie_notice}',
+		 "link": '#{msg.cookie_notice_link_text}',
+		 "href": privacyUrl,
+		 "dismiss": "OK"
+	    
+	  }
+	});
+	</script>
+	</ui:fragment>
+	
 </ui:composition>

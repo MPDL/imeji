@@ -725,4 +725,12 @@ public class ConfigurationBean extends SuperBean {
     Imeji.CONFIG.setMaxNumberCitationAuthors(str);
   }
 
+  public void setDisplayCookieNotice(boolean b) {
+    Imeji.CONFIG.setDisplayCookieNotice(b);
+  }
+
+  public boolean getDisplayCookieNotice() {
+    return Imeji.CONFIG.getDisplayCookieNotice();
+  }
+
 }
