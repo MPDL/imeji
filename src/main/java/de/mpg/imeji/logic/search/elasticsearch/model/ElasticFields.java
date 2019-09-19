@@ -61,6 +61,7 @@ public enum ElasticFields {
   INFO_TEXT("info.text"),
   INFO_LABEL_EXACT("info.label.exact"),
   INFO_TEXT_EXACT("info.text.exact"),
+  INFO_TEXT_SPLITTED("info.splitted"),
   INFO_URL("info.url"),
   INFO("info"),
   COLLECTION_TYPE("types"),

@@ -21,6 +21,7 @@ import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuil
 import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
 
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.ImejiFileTypes;
 import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.model.SearchFields;
@@ -124,7 +125,13 @@ public class ElasticAggregationFactory {
         } else if (facet.getIndex().startsWith("collection.md")) {
           FilterAggregationBuilder fb = AggregationBuilders.filter(facet.getIndex(),
               QueryBuilders.termQuery(ElasticFields.INFO_LABEL_EXACT.field(), SearchCollectionMetadata.indexToLabel(facet.getIndex())));
-          fb.subAggregation(AggregationBuilders.terms(facet.getName()).field(ElasticFields.INFO_TEXT_EXACT.field()).size(BUCKETS_MAX_SIZE));
+          ElasticFields collectionMdSearchField = ElasticFields.INFO_TEXT_EXACT;
+
+          //For collection metadata with label "Keywords", use the splitted field which stores the comma separated values of the keywords field
+          if (ImejiConfiguration.COLLECTION_METADATA_KEYWORDS_LABEL.equals(SearchCollectionMetadata.indexToLabel(facet.getIndex()))) {
+            collectionMdSearchField = ElasticFields.INFO_TEXT_SPLITTED;
+          }
+          fb.subAggregation(AggregationBuilders.terms(facet.getName()).field(collectionMdSearchField.field()).size(BUCKETS_MAX_SIZE));
           metadataAggregations.subAggregation(fb);
         }
 

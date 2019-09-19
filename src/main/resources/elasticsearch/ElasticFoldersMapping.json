@@ -103,6 +103,11 @@
 					"url": {
 						"type": "text",
 						"copy_to": "all"
+					},
+					"splitted":
+					{
+						"type": "keyword"
+					
 					}
 				}
 			},
