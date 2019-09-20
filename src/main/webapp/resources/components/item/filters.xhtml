@@ -8,8 +8,8 @@
 	  
 	<composite:interface>
 		<composite:attribute name="facetBean" required="false"/>
-		<composite:attribute name="numberOfItems" required="false"/>
-		<composite:attribute name="numberOfCollections" required="false"/>
+		<composite:attribute name="numberOfRecords" required="false"/>
+		<composite:attribute name="numberOfSubCollections" required="false"/>
 		<composite:attribute name="showSortMenu" required="false" default="false"/>
 		<composite:attribute name="showStatusFilterMenu" type="java.lang.Boolean" default="false"/>
 		<composite:attribute name="showUserFilterMenu" type="java.lang.Boolean" default="false"/>
@@ -36,7 +36,10 @@
 			
 			<div class="listActionMenu itemlist">
 	        	<div class="listActionMenuTitle">
-	        		<span>#{cc.attrs.numberOfItems}  #{cc.attrs.numberOfItems != 1 ? lbl.items : lbl.item} </span>
+	        		<ui:param name="elementLabel" value="#{cc.attrs.numberOfSubCollections != 1 ? lbl.elements : lbl.element}" />
+	        		<ui:param name="itemLabel" value="#{cc.attrs.numberOfRecords != 1 ? lbl.items : lbl.item}" />
+	        		<ui:param name="menuTitle" value="#{cc.attrs.numberOfRecords} #{cc.attrs.numberOfSubCollections >= 1 ? elementLabel : itemLabel}" />
+	        		<span>#{menuTitle}</span>
                     <a href="#" class="fa fa-cog"></a>
 				</div>
 		        <div class="listActionMenuContent" >

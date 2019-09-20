@@ -20,7 +20,7 @@
 			<div class="itemsArea">
 	        	<item:filters id="sel" 
             			facetBean="#{paginatorListSessionBean}"  
-            			numberOfItems="#{paginatorListSessionBean.numberOfItems}"
+            			numberOfRecords="#{paginatorListSessionBean.numberOfRecords}"
             			numberOfSubCollections="#{paginatorListSessionBean.numberOfSubCollections}" 
             			showSortMenu="true"
             			showStatusFilterMenu="#{currentMainMenu == 'items' or (currentMainMenu == 'collection' and paginatorListSessionBean.collection.status != 'PENDING')}"
