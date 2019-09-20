@@ -8,8 +8,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.search.SearchQueryParser;
@@ -56,7 +56,7 @@ public class FacetSelectorBean extends SuperBean {
     if (result != null) {
       this.entries = result.getFacets().stream()
           .filter(f -> !f.getName().equals(Facet.ITEMS) && !f.getName().equals(Facet.SUBCOLLECTIONS)
-              && !f.getName().equals(Facet.COLLECTION_ITEMS))
+              && !f.getName().equals(Facet.COLLECTION_ITEMS) && !f.getName().equals(Facet.COLLECTION_ROOT_ITEMS))
           .map(r -> new FacetSelectorEntry(r, facetQuery, result.getNumberOfRecords(), this.getLocale()))
           .sorted((f1, f2) -> Integer.compare(f1.getFacet().getPosition(), f2.getFacet().getPosition())).collect(Collectors.toList());
       setAddQuery();

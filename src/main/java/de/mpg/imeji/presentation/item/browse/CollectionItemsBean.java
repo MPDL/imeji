@@ -387,6 +387,10 @@ public class CollectionItemsBean extends ItemsBean {
     return getSearchResult().getNumberOfItemsOfCollection();
   }
 
+  public int getNumberOfRootItemsOfCollection() {
+    return getSearchResult().getNumberOfRootItemsOfCollection();
+  }
+
   public String getDescriptionShort() {
     return descriptionShort;
   }

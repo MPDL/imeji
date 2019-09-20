@@ -155,9 +155,9 @@
 						<a  onclick="openDialog('addSubCollection'); document.getElementById('cr:subColForm:name').focus()">
 							<span class="fa fa-plus"/>#{lbl.subcollection}
 						</a>
-						<ui:fragment rendered="#{CollectionItemsBean.numberOfItemsOfCollection > 0}">
+						<ui:fragment rendered="#{CollectionItemsBean.numberOfRootItemsOfCollection > 0}">
 							<div class="dropdown">
-								<a><span class="fa fa-files-o"/>#{CollectionItemsBean.numberOfItemsOfCollection} #{CollectionItemsBean.numberOfItemsOfCollection  != 1 ? lbl.items : lbl.item}<span class="fa fa-angle-down"/></a>
+								<a><span class="fa fa-files-o"/>#{CollectionItemsBean.numberOfRootItemsOfCollection} #{CollectionItemsBean.numberOfRootItemsOfCollection  != 1 ? lbl.items : lbl.item}<span class="fa fa-angle-down"/></a>
 								<div class="content">
 									<a href="#{Navigation.applicationUrl}editbatch?col=#{CollectionItemsBean.id}" >
 										<span class="fa fa-pencil"/>#{lbl.edit_all}

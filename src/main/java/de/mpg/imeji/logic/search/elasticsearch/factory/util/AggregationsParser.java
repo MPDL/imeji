@@ -11,13 +11,11 @@ import org.elasticsearch.search.aggregations.bucket.filter.Filter;
 import org.elasticsearch.search.aggregations.bucket.filter.Filters;
 import org.elasticsearch.search.aggregations.bucket.nested.Nested;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.InternalStats;
 import org.elasticsearch.search.aggregations.metrics.ParsedStats;
 
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticSearch;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
@@ -150,6 +148,9 @@ public class AggregationsParser {
         }
         if (resp.getAggregations().get(Facet.COLLECTION_ITEMS) != null) {
           facetResults.add(parseInternalFacet(resp, Facet.COLLECTION_ITEMS));
+        }
+        if (resp.getAggregations().get(Facet.COLLECTION_ROOT_ITEMS) != null) {
+          facetResults.add(parseInternalFacet(resp, Facet.COLLECTION_ROOT_ITEMS));
         }
       }
     }

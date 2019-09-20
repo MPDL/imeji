@@ -178,6 +178,11 @@ public class ElasticSearch implements Search {
                 */
       aggregations.add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS, new FiltersAggregator.KeyedFilter(Facet.COLLECTION_ITEMS,
           QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ITEMS).must(QueryBuilders.termQuery("folder", folderUri)))));
+
+      aggregations.add(AggregationBuilders.filters(Facet.COLLECTION_ROOT_ITEMS,
+          new FiltersAggregator.KeyedFilter(Facet.COLLECTION_ROOT_ITEMS,
+              QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ROOT_ITEMS).must(QueryBuilders.termQuery("folder", folderUri))
+                  .queryName(Facet.COLLECTION_ROOT_ITEMS).must(QueryBuilders.termQuery(ElasticFields.JOIN_FIELD.field(), "item")))));
     }
     for (AbstractAggregationBuilder agg : aggregations) {
       request.aggregation(agg);
@@ -503,9 +508,9 @@ public class ElasticSearch implements Search {
     }
 
     List<FacetResult> facets = AggregationsParser.parse(searchResponse, this.types);
-    SearchResult searchResult =
-        new SearchResult(ids, getTotalNumberOfRecords(searchResponse, facets), getNumberOfItems(searchResponse, facets),
-            getNumberOfItemsOfCollection(searchResponse, facets), getNumberOfSubcollections(searchResponse, facets), facets);
+    SearchResult searchResult = new SearchResult(ids, getTotalNumberOfRecords(searchResponse, facets),
+        getNumberOfItems(searchResponse, facets), getNumberOfItemsOfCollection(searchResponse, facets),
+        getNumberOfRootItemsOfCollection(searchResponse, facets), getNumberOfSubcollections(searchResponse, facets), facets);
     return searchResult;
   }
 
@@ -522,6 +527,11 @@ public class ElasticSearch implements Search {
   private long getNumberOfItemsOfCollection(SearchResponse resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals(Facet.COLLECTION_ITEMS)).findAny().map(f -> f.getValues().get(0).getCount())
         .orElse(resp.getHits().getTotalHits().value);
+  }
+
+  private long getNumberOfRootItemsOfCollection(SearchResponse resp, List<FacetResult> facets) {
+    return facets.stream().filter(f -> f.getName().equals(Facet.COLLECTION_ROOT_ITEMS)).findAny().map(f -> f.getValues().get(0).getCount())
+        .orElse((long) 0);
   }
 
   private long getNumberOfSubcollections(SearchResponse resp, List<FacetResult> facets) {

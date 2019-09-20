@@ -34,17 +34,24 @@ public class Facet implements Serializable {
   public static final String OBJECTTYPE_COLLECTION = "collection";
 
   /**
-   * Reserved Facet Name to count the items of a collection
+   * Reserved Facet Name to count all items of a collection and its subcollections
    */
   public static final String ITEMS = "count_all_items";
   /**
-   * Reserved Facet Name to count the items of a collection
+   * Reserved Facet Name to count all elements (items + subcollection) of a collection (without the
+   * content of the subcollections)
    */
   public static final String COLLECTION_ITEMS = "count_all_collection_items";
   /**
-   * Reserved Facet name to count the subcollections of a collection
+   * Reserved Facet name to count all subcollections of a collection and its subcollections
    */
   public static final String SUBCOLLECTIONS = "count_all_collection_subcollections";
+
+  /**
+   * Reserved Facet Name to count all (root) items of a collection (without the items of the
+   * subcollections)
+   */
+  public static final String COLLECTION_ROOT_ITEMS = "count_all_collection_root_items";
 
   /**
    * @return the name

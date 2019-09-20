@@ -19,6 +19,7 @@ public class SearchResult {
   private final int numberOfRecords;
   private final int numberOfItems;
   private final int numberOfItemsOfCollection;
+  private final int numberOfRootItemsOfCollection;
   private final int numberOfSubcollections;
 
   /**
@@ -38,9 +39,11 @@ public class SearchResult {
    * @param sort
    */
   public SearchResult(List<String> unsortedResults, SortCriterion sort) {
+    //FIXME: in this constructor the attributes are set with wrong dummy values => Refactor this class
     numberOfRecords = unsortedResults.size();
     numberOfItems = numberOfRecords;
     numberOfItemsOfCollection = numberOfItems;
+    numberOfRootItemsOfCollection = 0;
     numberOfSubcollections = 0;
     if (sort != null) {
       this.sort = sort;
@@ -58,10 +61,11 @@ public class SearchResult {
   }
 
   public SearchResult(List<String> ids, long numberOfRecords, long numberOfItems, long numberOfItemsOfCollection,
-      long numberOfSubcollections, List<FacetResult> facetResults) {
+      long numberOfRootItemsOfCollection, long numberOfSubcollections, List<FacetResult> facetResults) {
     this.numberOfRecords = (int) numberOfRecords;
     this.numberOfItems = (int) numberOfItems;
     this.numberOfItemsOfCollection = (int) numberOfItemsOfCollection;
+    this.numberOfRootItemsOfCollection = (int) numberOfRootItemsOfCollection;
     this.numberOfSubcollections = (int) numberOfSubcollections;
     this.results = ids;
     this.facets = facetResults;
@@ -119,5 +123,9 @@ public class SearchResult {
 
   public int getNumberOfItemsOfCollection() {
     return numberOfItemsOfCollection;
+  }
+
+  public int getNumberOfRootItemsOfCollection() {
+    return numberOfRootItemsOfCollection;
   }
 }
