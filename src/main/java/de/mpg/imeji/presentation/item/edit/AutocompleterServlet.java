@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -35,8 +35,8 @@ import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
-import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
+import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.util.StorageUtils;
 
@@ -246,7 +246,7 @@ public class AutocompleterServlet extends HttpServlet {
     for (int i = 0; i < array.size(); ++i) {
       final JSONObject parseObject = (JSONObject) array.get(i);
       final JSONObject sendObject = new JSONObject();
-      if (!identifierSet.contains(parseObject.get("id").toString())) {
+      if (!identifierSet.contains(parseObject.get("id").toString()) && parseObject.get("http_purl_org_dc_elements_1_1_title") != null) {
         sendObject.put("label", parseObject.get("http_purl_org_dc_elements_1_1_title"));
         sendObject.put("value", parseObject.toJSONString());
         sendObject.put("family", parseObject.get("http_xmlns_com_foaf_0_1_family_name"));
