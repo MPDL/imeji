@@ -39,6 +39,8 @@ import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.collection.tree.Node;
 import de.mpg.imeji.presentation.collection.tree.Tree;
+import de.mpg.imeji.presentation.item.browse.CollectionItemsBean;
+import de.mpg.imeji.presentation.item.browse.ItemsBean;
 import de.mpg.imeji.presentation.item.license.LicenseEditor;
 import de.mpg.imeji.presentation.session.BeanHelper;
 import de.mpg.imeji.presentation.session.SessionBean;
@@ -61,6 +63,9 @@ public class MoveItemsBean extends SuperBean {
 
   private boolean toNewSubCollection = false;
   private boolean licenseProvided = false;
+
+  @ManagedProperty(value = "#{CollectionItemsBean}")
+  private CollectionItemsBean collectionItemsBean;
 
   /**
    * Load all collections for which the user has at least edit role
@@ -229,6 +234,11 @@ public class MoveItemsBean extends SuperBean {
     try {
       new CollectionService().moveCollection(collection, target, getSessionUser(), getLicenseEditor().getLicense());
       BeanHelper.info("Collection moved.");
+      //Update ItemsBean in order to display new collection correctly
+      if (collectionItemsBean != null) {
+        collectionItemsBean.refresh();
+      }
+
     } catch (ImejiException e) {
       BeanHelper.error("Error moving collection: " + e.getMessage());
       LOGGER.error("Error moving collection", e);
@@ -355,4 +365,13 @@ public class MoveItemsBean extends SuperBean {
   public void setLicenseProvided(boolean licenseProvided) {
     this.licenseProvided = licenseProvided;
   }
+
+  public CollectionItemsBean getCollectionItemsBean() {
+    return collectionItemsBean;
+  }
+
+  public void setCollectionItemsBean(CollectionItemsBean collectionItemsBean) {
+    this.collectionItemsBean = collectionItemsBean;
+  }
+
 }

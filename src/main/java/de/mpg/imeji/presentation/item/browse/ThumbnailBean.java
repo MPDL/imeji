@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
@@ -31,6 +34,7 @@ import de.mpg.imeji.util.DateHelper;
  */
 public class ThumbnailBean implements Serializable {
   private static final long serialVersionUID = -8084039496592141508L;
+  private static Logger LOGGER = LogManager.getLogger(ThumbnailBean.class);
   private String link = "";
   private String filename = "";
   private String caption = "";
@@ -82,9 +86,11 @@ public class ThumbnailBean implements Serializable {
     if (isCollection) {
       path = service.findAllParentsWithNames(uri.toString(), false).stream().map(w -> w.getName()).collect(Collectors.joining(" > "));
     } else {
+
       path =
           service.findAllParentsWithNames(collectionUri.toString(), true).stream().map(w -> w.getName()).collect(Collectors.joining(" > "));
     }
+
   }
 
   /**
