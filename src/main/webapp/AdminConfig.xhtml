@@ -13,23 +13,27 @@
 	<ui:param name="backlinkTitle1" value="Admin"/>
 	
 	<ui:define name="additonalFooterScripts">
-		<script type="text/javascript">
-			$('.imj_clearInput').click(function(evt){
-				var datatarget, parent, target;
-				if ($(this).data('target')) {
-					datatarget = $(this).data('target');
-					parent = datatarget.split(" ")[0];
-					target = datatarget.replace((parent + " "), "");
-					
-					if (parent) {
-						if (target) {
-							$(this).parents(parent).find(target).val('');
-						} else {
-							$(this).parents(parent).val('');
+		<h:panelGroup id="clearInputScript" layout="block">
+			<script  type="text/javascript">
+				$('.imj_clearInput').click(function(evt){
+					var datatarget, parent, target;
+					if ($(this).data('target')) {
+						datatarget = $(this).data('target');
+						parent = datatarget.split(" ")[0];
+						target = datatarget.replace((parent + " "), "");
+						
+						if (parent) {
+							if (target) {
+								$(this).parents(parent).find(target).val('');
+							} else {
+								$(this).parents(parent).val('');
+							}
 						}
 					}
-				}
-			});
+				});
+			</script>
+		</h:panelGroup>
+		<script type="text/javascript">
 			$('.imj_administrationTiledList .imj_adminPanel .imj_content').css({"display":"none"});
 			
 			$('.imj_administrationTiledList .imj_adminPanel .imj_config_headline').click(function(evt){
@@ -797,34 +801,38 @@
 									<div class="imj_admindataSet">
 										<div class="imj_admindataLabel">
 											<h:outputText
-												value="#{lbl.enable_autosuggest_for_organizations} (#{msg.disabled_by_organizations_list})" />
+												value="#{lbl.enable_autosuggest_for_organizations}" />
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
 											<div class="imj_admindataValueEntry">
-												<h:selectOneRadio disabled="#{not empty Configuration.organizationSuggestions}"
-													value="#{Configuration.autosuggestForOrganizations}">
-													<f:selectItem itemLabel="#{lbl.none}" itemValue="" />
+												<h:selectOneRadio value="#{Configuration.autosuggestForOrganizations}">
+													<f:selectItem itemLabel="#{lbl.none}"
+														itemValue="none" />
 													<f:selectItem itemLabel="#{lbl.imeji_organizations}"
-														itemValue="imeji_orgs" />
+														itemValue="imeji_internal_organizations" />
+													<f:selectItem itemLabel="#{lbl.list_of_organizations}"
+														itemValue="organizations_list" />
+													<f:ajax render="configForm:listOfOrganizationsSet clearInputScript"/>
 												</h:selectOneRadio>
 											</div>
 										</div>
 									</div>
-									<div class="imj_admindataSet">
+									<h:panelGroup class="#{Configuration.autosuggestForOrganizations != 'organizations_list'  ? 'imj_noDisplay' : 'imj_admindataSet'}"
+										id="listOfOrganizationsSet" layout="block">
 										<div class="imj_admindataLabel">
-											<h:outputText value="#{lbl.enable_autosuggest_by_organizations_list} (#{msg.one_value_per_line})" />
+											<h:outputText value="#{lbl.list_of_organizations_for_suggestion} (#{msg.one_value_per_line})"/>
 											<span class="imj_noDisplay">: </span>
 										</div>
 										<div class="imj_admindataValue">
-											<h:inputTextarea value="#{Configuration.organizationSuggestions}"
+											<h:inputTextarea  id="organizationsList" value="#{Configuration.organizationSuggestions}"
 												styleClass="imj_admindataEdit" rows="10"/>
 										</div>
 										<a href="javascript: void(0);"
 											data-target=".imj_admindataSet .imj_admindataValue textarea"
 											class="imj_clearInput fa fa-times"> 
 										</a>
-									</div>
+									</h:panelGroup>
 								</div>
 							</div>
 							

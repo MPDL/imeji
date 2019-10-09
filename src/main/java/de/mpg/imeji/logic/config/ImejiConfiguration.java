@@ -133,6 +133,7 @@ public class ImejiConfiguration {
   public static final String DEFAULT_CONE_AUTHORS = "http://pubman.mpdl.mpg.de/cone/persons/query?format=json&n=10&m=full&q=";
   public static final String DEFAULT_MAX_NUMBER_CITATION_AUTHORS = "5";
   public static final String DEFAULT_DISPLAY_COOKIE_NOTICE = "true";
+  public static final String DEFAULT_AUTOSUGGEST_ORGAS = "none";
 
   // Specific collection metadata (= ContainerAdditionalInfo), which have a additional handling (validation, placeholder, ...):
   public static final String COLLECTION_METADATA_GEO_COORDINATES_LABEL = "Geo-coordinates";
@@ -232,6 +233,7 @@ public class ImejiConfiguration {
     initPropertyWithDefaultValue(CONFIGURATION.MAX_NUMBER_CITATION_AUTHORS, DEFAULT_MAX_NUMBER_CITATION_AUTHORS);
     initPropertyWithDefaultValue(CONFIGURATION.DEFAULT_LICENSE, ImejiLicenses.CC_BY.name());
     initPropertyWithDefaultValue(CONFIGURATION.DISPLAY_COOKIE_NOTICE, DEFAULT_DISPLAY_COOKIE_NOTICE);
+    initPropertyWithDefaultValue(CONFIGURATION.AUTOSUGGEST_ORGAS, DEFAULT_AUTOSUGGEST_ORGAS);
   }
 
   /**

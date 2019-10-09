@@ -61,7 +61,7 @@
 				});
 			</script>
 	</ui:fragment>
-	<ui:fragment rendered="#{not empty cc.attrs.orgsSource}">
+	<ui:fragment rendered="#{cc.attrs.orgsSource == 'imeji_internal_organizations'}">
 		<script>
 				var orgaSource;
 				function setOrgaSource(src) {
@@ -144,23 +144,17 @@
 	<ui:repeat var="org" value="#{cc.attrs.person.organizations}"
 		varStatus="index">
 		<div>
-			<h:inputText id="inputOrgaURI"
-				styleClass="input_hidden_orga_uri imj_noDisplay"
-				value="#{PersonBean.orgaURI}"
-				valueChangeListener="#{PersonBean.orgaListener}"
-				onfocus="setOrgaSource('#{cc.attrs.orgsSource}');"
-				rendered="#{cc.attrs.orgsSource != ''}" />
-			<h:inputText id="inputOrgaURI1"
-				styleClass="input_hidden_orga_uri imj_noDisplay"
-				value="#{PersonBean.orgaURI}"
-				valueChangeListener="#{PersonBean.orgaListener}"
-				rendered="#{cc.attrs.orgsSource == ''}" />
-
-			<h:commandButton id="changeOrgaButton"
-				styleClass="button_change_button imj_noDisplay"
-				action="#{PersonBean.changeOrga(cc.attrs.bean, cc.attrs.position,  index.index)}">
-				<f:ajax render="#{containerId}" execute="#{containerId}" />
-			</h:commandButton>
+			<h:panelGroup rendered="#{cc.attrs.orgsSource == 'imeji_internal_organizations'}">
+				<h:inputText id="inputOrgaURI"
+					styleClass="input_hidden_orga_uri imj_noDisplay"
+					value="#{PersonBean.orgaURI}"
+					valueChangeListener="#{PersonBean.orgaListener}"/>
+				<h:commandButton id="changeOrgaButton"
+					styleClass="button_change_button imj_noDisplay"
+					action="#{PersonBean.changeOrga(cc.attrs.bean, cc.attrs.position,  index.index)}">
+					<f:ajax render="#{containerId}" execute="#{containerId}" />
+				</h:commandButton>
+			</h:panelGroup>
 
 			<div class="imj_metadataSet">
 				<div class="imj_metadataLabel">
@@ -172,18 +166,18 @@
 						<h:inputText id="inputOrgaName"
 							styleClass="imj_admindataEdit"
 							value="#{org.name}"
-							rendered="#{cc.attrs.orgsSource == '' and Configuration.organizationSuggestions == ''}" />
+							rendered="#{cc.attrs.orgsSource == 'none' || cc.attrs.orgsSource == ''}" />
 						<h:inputText id="inputOrgaNameWithSuggest"
 							styleClass="imj_admindataEdit autocomplete_org"
 							value="#{org.name}"
 							onfocus="setOrgaSource('#{cc.attrs.orgsSource}');"
-							rendered="#{cc.attrs.orgsSource != '' and Configuration.organizationSuggestions == ''}" />
+							rendered="#{cc.attrs.orgsSource == 'imeji_internal_organizations'}" />
 						<h:inputText id="comboboxOrgaNameWithSuggest" title="#{lbl.select_from_list_or_free_text}"
 							styleClass="imj_comboBox"
 							value="#{org.name}"
 							html5:data-source='#{UtilBean.toJavascriptArray(Configuration.organizationSuggestionsAsList)}'
 							html5:placeholder="#{lbl.select_from_list_or_free_text}"
-							rendered="#{Configuration.organizationSuggestions != ''}" />
+							rendered="#{cc.attrs.orgsSource == 'organizations_list'}" />
 					</div>
 					<span class="imj_inlineButtonGroup">
 						<h:commandLink

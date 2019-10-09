@@ -76,7 +76,7 @@ public class AutocompleterServlet extends HttpServlet {
     } else if (datasource != null && !datasource.isEmpty()) {
       if ("imeji_persons".equals(datasource)) {
         responseString = autoCompleteForInternalUsers(suggest);
-      } else if ("imeji_orgs".equals(datasource)) {
+      } else if ("imeji_internal_organizations".equals(datasource)) {
         responseString = autoCompleteForInternalOrganisations(suggest);
       } else {
         final GetMethod getMethod = new GetMethod(datasource + URLEncoder.encode(suggest.toString(), "UTF-8"));
