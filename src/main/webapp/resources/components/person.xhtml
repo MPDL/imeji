@@ -61,7 +61,7 @@
 				});
 			</script>
 	</ui:fragment>
-	<ui:fragment rendered="#{cc.attrs.orgsSource == 'imeji_internal_organizations'}">
+	<ui:fragment rendered="#{cc.attrs.orgsSource == 'imeji_orgs'}">
 		<script>
 				var orgaSource;
 				function setOrgaSource(src) {
@@ -144,7 +144,7 @@
 	<ui:repeat var="org" value="#{cc.attrs.person.organizations}"
 		varStatus="index">
 		<div>
-			<h:panelGroup rendered="#{cc.attrs.orgsSource == 'imeji_internal_organizations'}">
+			<h:panelGroup rendered="#{cc.attrs.orgsSource == 'imeji_orgs'}">
 				<h:inputText id="inputOrgaURI"
 					styleClass="input_hidden_orga_uri imj_noDisplay"
 					value="#{PersonBean.orgaURI}"
@@ -163,15 +163,20 @@
 				</div>
 				<div class="imj_metadataValue">
 					<div class="imj_metadataValueEntry">
+						<!-- Organization input field with no autosuggest -->
+						<!-- This is the default input filed, rendered if cc.attrs.orgsSource == 'none'. 
+							Also rendered if cc.attrs.orgsSource has an unexpected/not defined value, which should not occur -->
 						<h:inputText id="inputOrgaName"
 							styleClass="imj_admindataEdit"
 							value="#{org.name}"
-							rendered="#{cc.attrs.orgsSource == 'none' || cc.attrs.orgsSource == ''}" />
+							rendered="#{cc.attrs.orgsSource != 'imeji_orgs' and cc.attrs.orgsSource != 'organizations_list'}" />
+						<!-- Organization input field with autosuggest using the organizations of the users for suggestions -->
 						<h:inputText id="inputOrgaNameWithSuggest"
 							styleClass="imj_admindataEdit autocomplete_org"
 							value="#{org.name}"
 							onfocus="setOrgaSource('#{cc.attrs.orgsSource}');"
-							rendered="#{cc.attrs.orgsSource == 'imeji_internal_organizations'}" />
+							rendered="#{cc.attrs.orgsSource == 'imeji_orgs'}" />
+						<!-- Organization input field with autosuggest using a list of organizations for suggestions -->
 						<h:inputText id="comboboxOrgaNameWithSuggest" title="#{lbl.select_from_list_or_free_text}"
 							styleClass="imj_comboBox"
 							value="#{org.name}"
