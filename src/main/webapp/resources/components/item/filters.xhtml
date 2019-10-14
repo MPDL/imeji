@@ -36,7 +36,7 @@
 			
 			<div class="listActionMenu itemlist">
 	        	<div class="listActionMenuTitle">
-	        		<ui:param name="elementLabel" value="#{cc.attrs.numberOfSubCollections != 1 ? lbl.elements : lbl.element}" />
+	        		<ui:param name="elementLabel" value="#{cc.attrs.numberOfRecords != 1 ? lbl.elements : lbl.element}" />
 	        		<ui:param name="itemLabel" value="#{cc.attrs.numberOfRecords != 1 ? lbl.items : lbl.item}" />
 	        		<ui:param name="menuTitle" value="#{cc.attrs.numberOfRecords} #{cc.attrs.numberOfSubCollections >= 1 ? elementLabel : itemLabel}" />
 	        		<span>#{menuTitle}</span>
