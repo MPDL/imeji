@@ -2,17 +2,27 @@ package de.mpg.imeji.presentation.collection;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
+import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
+import de.mpg.imeji.logic.model.LinkedCollection;
+import de.mpg.imeji.logic.model.LinkedCollection.LinkedCollectionType;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
+import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.search.Search;
+import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.search.model.SortCriterion;
+import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
@@ -29,6 +39,9 @@ public abstract class CollectionBean extends SuperBean {
   private String id;
   private int authorPosition;
   private int organizationPosition;
+
+  private List<CollectionImeji> internalCollectionsToLink;
+  private List<LinkedCollection> linkedCollectionsToEdit;
 
   protected String getErrorMessageNoAuthor() {
     return "error_collection_need_one_author";
@@ -237,4 +250,219 @@ public abstract class CollectionBean extends SuperBean {
 
     return selectItemList;
   }
+
+  // -- Linked collections JSF setter/getter
+
+  /**
+   * Get a list of existing linked collections including a placeholder for new entries
+   * 
+   * @return
+   */
+  public List<LinkedCollection> getLinkedCollectionsToEdit() {
+    return this.linkedCollectionsToEdit;
+  }
+
+
+  public void setLinkedCollectionsToEdit(List<LinkedCollection> linkedCollectionsToEdit) {
+    this.linkedCollectionsToEdit = linkedCollectionsToEdit;
+  }
+
+  /**
+   * Show radio button in GUI to switch between internal nad external collections
+   * 
+   * @param linkedCollection
+   */
+  public boolean showRadioButton(LinkedCollection linkedCollection) {
+
+    // case 1: always show button if collections to link are available
+    if (internalCollecionsToLinkAreAvailable()) {
+      return true;
+    }
+    // case 2: in case that no collections are available to link
+    // but there is a stored linked internal collection (i.e. to a discarded collection) left
+    else if (linkedCollection.isInternalCollectionType()) {
+      return true;
+    }
+    // case 3: don't show button if there are no collections are available to link
+    // and the current collection is an external collection
+    else {
+      return false;
+    }
+  }
+
+  /**
+   * Called to add a new collection via GUI
+   * 
+   * @param position
+   */
+  public void addNewLinkedCollection(int position) {
+
+    LinkedCollection newLinkedCollection = new LinkedCollection();
+    if (!internalCollecionsToLinkAreAvailable()) {
+      newLinkedCollection.setLinkedCollectionType(LinkedCollectionType.EXTERNAL.name());
+    }
+    this.linkedCollectionsToEdit.add(position, newLinkedCollection);
+  }
+
+  /**
+   * Called to remove a linked collection via GUI
+   * 
+   * @param position
+   */
+  public void removeLinkedCollection(int position) {
+
+    if (position >= 0 && position < this.linkedCollectionsToEdit.size()) {
+      this.linkedCollectionsToEdit.remove(position);
+    }
+    this.checkIfLinkedCollectionsAreEmptyAndPutPlaceholder();
+  }
+
+
+
+  /**
+   * Called in bean and sub-bean initiation. Initiate local list of editable linked collections.
+   */
+  public void initLinkedCollections() {
+
+    this.linkedCollectionsToEdit = new ArrayList<LinkedCollection>();
+    for (LinkedCollection linkedCollection : getCollection().getLinkedCollections()) {
+      linkedCollection.prepareJSFFields();
+      this.linkedCollectionsToEdit.add(linkedCollection);
+    }
+
+    // (2) load all imeji collections that the user may access (for autocomplete functionality)
+    this.retrieveInternalCollectionsToLink();
+
+    // (3) put GUI placeholder in case there are no linked collections yet
+    this.checkIfLinkedCollectionsAreEmptyAndPutPlaceholder();
+  }
+
+
+  /**
+   * Called when saving the collection
+   */
+  public void saveLinkedCollections() {
+
+    // (1) clean gui placeholder and newly created empty links
+    this.cleanLinkedCollections();
+    // clean external fields for internal collections and vice versa
+    for (LinkedCollection linkedCollection : this.linkedCollectionsToEdit) {
+      if (linkedCollection.isInternalCollectionType()) {
+        linkedCollection.resetExternalFields();
+      } else {
+        linkedCollection.resetInternalFields();
+      }
+    }
+    getCollection().setLinkedCollections(this.linkedCollectionsToEdit);
+  }
+
+  /**
+   * Checks if the list of editable linked collections is empty. If yes puts a placeholder
+   */
+  private void checkIfLinkedCollectionsAreEmptyAndPutPlaceholder() {
+
+    if (checkIfLinkedCollectionsAreEmpty()) {
+      LinkedCollection placeholder = new LinkedCollection();
+      if (this.internalCollectionsToLink.isEmpty()) {
+        // set placeholder for external collection
+        placeholder.setInternalCollectionType(false);
+      }
+      this.linkedCollectionsToEdit.add(placeholder);
+    }
+  }
+
+
+  /**
+   * 
+   * @return
+   */
+  private boolean checkIfLinkedCollectionsAreEmpty() {
+    return this.linkedCollectionsToEdit.isEmpty();
+  }
+
+  /**
+   * 
+   */
+  private void cleanLinkedCollections() {
+
+    // Remove placeholder and empty entries from list
+    List<LinkedCollection> emptyCollections = new LinkedList<LinkedCollection>();
+
+    for (LinkedCollection editedLinkedColletion : this.linkedCollectionsToEdit) {
+      if (editedLinkedColletion.isEmpty()) {
+        emptyCollections.add(editedLinkedColletion);
+      }
+    }
+    this.linkedCollectionsToEdit.removeAll(emptyCollections);
+  }
+
+
+  /**
+   * Retrieves a list of all imeji collections that can be linked to a given collection
+   */
+  private void retrieveInternalCollectionsToLink() {
+
+    try {
+      final CollectionService collectionService = new CollectionService();
+      this.internalCollectionsToLink =
+          collectionService.searchAndRetrieve(new SearchQuery(), new SortCriterion(SearchFields.collection_title, SortOrder.DESCENDING),
+              null, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX);
+    } catch (ImejiException e) {
+      // not a severe problem	
+    }
+  }
+
+  /**
+   * Returns a list with all collections the user can access (except this collection). Format:
+   * String that contains a javascript array specification. Use this list for showing a list of
+   * collections that can be linked to this collection.
+   * 
+   * @return
+   */
+  public String getAvailableCollectionsToLinkForAutocomplete() {
+    return createRepresentationForAutocomplete();
+  }
+
+
+  /**
+   * Returns whether there are currently internal collections to link
+   * 
+   * @return
+   */
+  public boolean internalCollecionsToLinkAreAvailable() {
+    return !this.internalCollectionsToLink.isEmpty();
+  }
+
+
+  /**
+   * Uri and name of the available collections-to-link will be passed to jQuery autocomplete
+   * function in GUI. For this: Create a String that contains a semicolon-separated list of label1;
+   * value1; label2; value2 etc entries
+   * 
+   * If there are no collections to link return an empty String
+   * 
+   * @return
+   */
+  private String createRepresentationForAutocomplete() {
+
+    if (this.internalCollectionsToLink.isEmpty()) {
+      return "[]";
+    }
+
+    String representation = "";
+    int index = 0;
+    for (CollectionImeji collection : this.internalCollectionsToLink) {
+
+      representation += collection.getTitle();
+      representation += ";";
+      representation += collection.getUri();
+
+      if (index < this.internalCollectionsToLink.size() - 1) {
+        representation += ";";
+      }
+      index = index + 1;
+    }
+    return representation;
+  }
+
 }

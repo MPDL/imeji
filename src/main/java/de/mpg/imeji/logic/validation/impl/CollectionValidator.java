@@ -13,9 +13,11 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContainerAdditionalInfo;
+import de.mpg.imeji.logic.model.LinkedCollection;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.validation.Validation;
 
 /**
  * {@link Validator} for {@link CollectionImeji}
@@ -41,21 +43,27 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     cleanUp(collection);
   }
 
-  protected void validateContainerMetadata(CollectionImeji c) {
+  protected void validateContainerMetadata(CollectionImeji collection) {
     if (isDelete()) {
       return;
     }
-    if (StringHelper.hasInvalidTags(c.getDescription())) {
+    if (StringHelper.hasInvalidTags(collection.getDescription())) {
       setException(new UnprocessableError("error_bad_format_description", getException()));
     }
-    if (isNullOrEmpty(c.getTitle())) {
+    if (isNullOrEmpty(collection.getTitle())) {
       setException(new UnprocessableError("error_collection_need_title", getException()));
     }
-    if (!c.isSubCollection() && Imeji.CONFIG.getCollectionTypes() != null && !Imeji.CONFIG.getCollectionTypes().isBlank()
-        && (c.getTypes() == null || c.getTypes().isEmpty())) {
+    if (!validateCollectionsTitle(collection.getTitle())) {
+      setException(new UnprocessableError("error_collection_title_semicolon_not_allowed", getException()));
+    }
+    if (!collection.isSubCollection() && Imeji.CONFIG.getCollectionTypes() != null && !Imeji.CONFIG.getCollectionTypes().isBlank()
+        && (collection.getTypes() == null || collection.getTypes().isEmpty())) {
       setException(new UnprocessableError("error_collection_need_types", getException()));
     }
-    validateAdditionalInfos(c);
+    if (!validateLinkedCollections(collection)) {
+      setException(new UnprocessableError("error_full_web_url_linked_collections", getException()));
+    }
+    validateAdditionalInfos(collection);
   }
 
   private void validateAdditionalInfos(CollectionImeji c) {
@@ -128,6 +136,20 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
         exception = new UnprocessableError("error_organization_need_name", exception);
       }
     }
+  }
+
+  /**
+   * Collection's title must not contain a ';' as this is used as line separator in passing a list
+   * of collection titles and uris from JSF to javascript (autocomplete for linked collections)
+   * 
+   * @param collectionTitle
+   * @return
+   */
+  private boolean validateCollectionsTitle(String collectionTitle) {
+    if (collectionTitle.contains(";")) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -246,6 +268,24 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
       //Strings could not be parsed to double -> Exception -> return false
       return false;
     }
+  }
+
+  /**
+   * Validate linked collections
+   * 
+   * @return
+   */
+  private boolean validateLinkedCollections(CollectionImeji collection) {
+
+    // (1) check if all external linked collections have a correct url	  
+    for (LinkedCollection linkedCollection : collection.getLinkedCollections()) {
+      if (!linkedCollection.isInternalCollectionType()) {
+        if (!Validation.validateURLFormat(linkedCollection.getExternalCollectionUri())) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   private void setException(UnprocessableError e) {

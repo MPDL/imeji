@@ -25,8 +25,10 @@ import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.LinkedCollection;
 import de.mpg.imeji.logic.model.Organization;
 import de.mpg.imeji.logic.model.Person;
+import de.mpg.imeji.logic.model.LinkedCollection.LinkedCollectionType;
 import de.mpg.imeji.logic.model.Properties.Status;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.model.SearchQuery;
@@ -309,6 +311,20 @@ public class CollectionItemsBean extends ItemsBean {
     return collection.getLogoUrl() != null ? collection.getLogoUrl().toString() : getCurrentPartList().get(0).getLink();
   }
 
+  /**
+   * Given the an (internal) linked collection return the page link for this collection
+   * 
+   * @param internalLinkedCollection
+   * @return
+   */
+  public String getPageLinkForInternalCollection(LinkedCollection internalLinkedCollection) {
+    String pageLink = "";
+    if (internalLinkedCollection.getLinkedCollectionType().equals(LinkedCollectionType.INTERNAL.name())) {
+      String colId = ObjectHelper.getId(URI.create(internalLinkedCollection.getInternalCollectionUri()));
+      pageLink = getNavigation().getCollectionUrl() + colId;
+    }
+    return pageLink;
+  }
 
   /**
    * Return whether all items of this collection (and all of its sub collections have a license) -

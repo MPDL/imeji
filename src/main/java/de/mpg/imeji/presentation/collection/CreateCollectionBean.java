@@ -69,6 +69,9 @@ public class CreateCollectionBean extends CollectionBean {
     //Add one more
     getCollection().getAdditionalInformations().add(new ContainerAdditionalInfo());
     containerEditorSession.setUploadedLogoPath(null);
+
+    // init linked collections
+    this.initLinkedCollections();
   }
 
   /**
@@ -109,6 +112,7 @@ public class CreateCollectionBean extends CollectionBean {
         }
       }
       // add additional information (i.e. created, modified) and write to database
+      this.saveLinkedCollections();
       CollectionImeji createdCollection = collectionController.create(getCollection(), getSessionUser());
       setCollection(createdCollection);
       setId(getCollection().getIdString());

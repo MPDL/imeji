@@ -87,7 +87,8 @@ public class EditCollectionBean extends CollectionBean {
 
         //Always add empty additional info at the end
         getCollection().getAdditionalInformations().add(new ContainerAdditionalInfo());
-
+        // init linked collections
+        this.initLinkedCollections();
 
       } catch (final ImejiException e) {
         BeanHelper.error("Error initiatilzing page: " + e.getMessage());
@@ -114,6 +115,7 @@ public class EditCollectionBean extends CollectionBean {
     try {
       final CollectionService collectionService = new CollectionService();
       final User user = getSessionUser();
+      this.saveLinkedCollections();
       // in case a logo file was added or changed, save collection and logo
       if (containerEditorSession.getUploadedLogoPath() != null) {
         collectionService.updateLogo(getCollection(), new File(containerEditorSession.getUploadedLogoPath()), getSessionUser());

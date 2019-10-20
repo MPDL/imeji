@@ -1,0 +1,69 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"	
+	xmlns:linked="http://java.sun.com/jsf/composite/components/collection/linkedCollections"
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+
+
+<composite:interface>
+	<!--  component context id for ajax calls -->
+	<composite:attribute name="compositesParentId" required="true"/>
+	<composite:attribute name="bean" required="true" type="de.mpg.imeji.presentation.collection.CollectionBean"/>		
+</composite:interface>
+
+<composite:implementation>	
+	<!--  show list of linked collections -->
+	<ui:repeat var="linkedCollection" varStatus="myVarStatus"  
+		value="#{cc.attrs.bean.linkedCollectionsToEdit}">
+		<!--  show internal or external collection -->
+		<h:panelGroup styleClass="imj_metadataValue" >
+			<h:selectOneRadio 
+				rendered = "#{cc.attrs.bean.showRadioButton(linkedCollection)}"
+				value = "#{linkedCollection.internalCollectionType}"> 
+	   			<f:selectItem itemValue = "#{true}" itemLabel = "internal collection" /> 
+	   			<f:selectItem itemValue = "#{false}" itemLabel = "external collection" />
+	   			<f:ajax execute= "#{cc.attrs.compositesParentId}:linkedCollections" 
+	   				render="#{cc.attrs.compositesParentId}:linkedCollections"
+	   				onevent = "onAjaxEvent" 
+	   				html5:data-loader="false"/>
+			</h:selectOneRadio> 
+			<!--  internal collection with autocomplete field -->
+			<linked:internalCollectionAutocomplete
+				rendered = "#{linkedCollection.internalCollectionType and cc.attrs.bean.internalCollecionsToLinkAreAvailable()}"
+				linkedCollectionImeji="#{linkedCollection}" 
+				bean ="#{cc.attrs.bean}" />
+			<!--  internal collection without autocomplete (in case there are no collections available to choose from) -->
+			<linked:internalCollection
+				rendered = "#{linkedCollection.internalCollectionType and not cc.attrs.bean.internalCollecionsToLinkAreAvailable()}"
+				linkedCollectionImeji="#{linkedCollection}" />
+			<!--  external collection -->
+			<linked:externalCollection
+				rendered = "#{not linkedCollection.internalCollectionType}"
+				externalLinkedCollection="#{linkedCollection}" />  
+			<!--  add/remove linked collection buttons -->
+			<span class="imj_inlineButtonGroup"> 
+				<h:commandLink styleClass="fa fa-plus-square-o" 
+					title="#{lbl.add_linked_col}" 
+					action="#{cc.attrs.bean.addNewLinkedCollection(myVarStatus.index +1)}" 
+					html5:data-loader="false">
+					<f:ajax execute="#{cc.attrs.compositesParentId}:linkedCollections" 
+						render="#{cc.attrs.compositesParentId}:linkedCollections"
+						onevent = "onAjaxEvent" />
+				</h:commandLink>
+				<h:commandLink styleClass="fa fa-minus-square-o" 
+					title="#{lbl.remove_linked_col}" 
+					action="#{cc.attrs.bean.removeLinkedCollection(myVarStatus.index)}" 
+					html5:data-loader="false" >
+					<f:ajax execute="#{cc.attrs.compositesParentId}:linkedCollections" 
+						render="#{cc.attrs.compositesParentId}:linkedCollections"
+						onevent = "onAjaxEvent" />
+				</h:commandLink>
+			</span>	
+			<h:outputText styleClass="imj_metadataValue" value="&lt;br/&gt;" escape="false" />
+		</h:panelGroup>	
+				
+ 	</ui:repeat>			
+</composite:implementation>
+</html>

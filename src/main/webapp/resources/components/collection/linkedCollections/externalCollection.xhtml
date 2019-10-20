@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"	
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+
+
+<composite:interface>
+	<composite:attribute name="externalLinkedCollection" required="true" type="java.lang.Object"
+	shortDescription="@type: LinkedCollectionImeji"/>
+</composite:interface>
+
+<composite:implementation>		
+    <h:inputText id="collectionExternalTitle" 
+    styleClass = "imj_metadataValue"
+    	value="#{cc.attrs.externalLinkedCollection.externalCollectionName}" 
+    	html5:placeholder="external collection's name" />
+	<h:inputText id="collectionExternalURL" 
+	styleClass = "imj_metadataValue"
+		value="#{cc.attrs.externalLinkedCollection.externalCollectionUri}" 
+		html5:placeholder="external collection's uri" />
+	<!--  description of selected collection -->
+	<h:inputTextarea id="collectionExternalDescription" 
+	styleClass = "imj_metadataValue"
+		value="#{cc.attrs.externalLinkedCollection.description}" 
+		html5:placeholder="additional information for linked collection" />
+</composite:implementation>
+</html>

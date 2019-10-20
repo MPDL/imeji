@@ -5,6 +5,7 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:composite="http://java.sun.com/jsf/composite"
 	xmlns:imjc="http://java.sun.com/jsf/composite/components"
+	xmlns:linked="http://java.sun.com/jsf/composite/components/collection/linkedCollections"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
 <composite:interface>
@@ -132,6 +133,20 @@
 					</span>
 				</div>
 			</h:panelGroup>
+			<!--  linked collections -->
+			<!--  (1) load javascript file for autocomplete functionality and pass available collections to link -->		
+			<h:outputScript name="js/autocompleteUriList.js" target="head"/>
+			<h:panelGroup id="linkedCollections">				
+			<div class="imj_metadataSet">
+				<label class="imj_metadataLabel">#{lbl.similar_datasets}</label>
+				<div class="imj_metadataValue">
+					<linked:linkedCollectionsList
+						compositesParentId="editContainer:form" 
+						bean ="#{cc.attrs.formularBean}"/>
+				</div>
+			</div>
+			</h:panelGroup>
+            <!--  end linked collections -->
 			<div class="imj_metadataSet">
 				<label class="imj_metadataLabel">#{lbl.logo}</label>
 				<div class="imj_metadataValue">

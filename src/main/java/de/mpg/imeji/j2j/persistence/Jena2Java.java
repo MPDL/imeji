@@ -19,6 +19,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
+import de.mpg.imeji.j2j.annotations.j2jReferencedResource;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.j2j.helper.LiteralHelper;
@@ -65,17 +66,64 @@ public class Jena2Java {
    * @return
    */
   private Object loadResourceFields(Object javaObject) {
+
     final Resource subject = model.getResource(J2JHelper.getId(javaObject).toString());
     if (J2JHelper.hasDataType(javaObject) && isTypedResource(subject)) {
       javaObject = createJavaObjectFromDataType(subject);
     }
-    for (final Field f : J2JHelper.getAllObjectFields(javaObject.getClass())) {
-      Object object = J2JHelper.getFieldAsJavaObjectNonNull(f, javaObject);
-      object = loadObject(subject, f, object, 0, null);
-      setField(javaObject, f, object);
+    List<Field> resourceFields = J2JHelper.getAllObjectFields(javaObject.getClass());
+    for (final Field field : resourceFields) {
+      Object object = null;
+      if (J2JHelper.isReferencedResource(field)) {
+        object = loadReferenceObject(javaObject, field);
+      } else {
+        object = J2JHelper.getFieldAsJavaObjectNonNull(field, javaObject);
+        object = loadObject(subject, field, object, 0, null);
+      }
+      setField(javaObject, field, object);
     }
     return javaObject;
   }
+
+  /**
+   * Load the field of a referenced resource
+   * 
+   * @param javaObject
+   * @param field
+   * @return
+   */
+  private Object loadReferenceObject(Object javaObject, Field field) {
+
+    Object referenceObject = null;
+
+    if (javaObject != null) {
+      j2jReferencedResource referencedResourceAnnotation = field.getAnnotation(j2jReferencedResource.class);
+      if (referencedResourceAnnotation != null) {
+        String uriFieldName = referencedResourceAnnotation.referencedResourceUri();
+        String targetClassName = referencedResourceAnnotation.referencedClass();
+        String targetFieldName = referencedResourceAnnotation.referencedField();
+        if (uriFieldName != null) {
+          try {
+            // (1) get URI of resource whose field we want to read
+            Field uriField = javaObject.getClass().getDeclaredField(uriFieldName);
+            uriField.setAccessible(true);
+            String resourceUriString = (String) uriField.get(javaObject);
+            final Resource subject = model.getResource(resourceUriString);
+            // (2) get field that we want to read
+            Class<?> myClass = Class.forName(targetClassName);
+            Field targetField = myClass.getDeclaredField(targetFieldName);
+            targetField.setAccessible(true);
+            referenceObject = loadObject(subject, targetField, null, 0, null);
+          } catch (Exception e) {
+            // NoSuchFieldException, SecurityException
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+    return referenceObject;
+  }
+
 
   /**
    * Load the Object of a Triple. The {@link Field} defines the relation between the subject and the

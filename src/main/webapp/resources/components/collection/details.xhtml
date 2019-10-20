@@ -78,7 +78,32 @@
 				</ui:fragment>
 			</span>
 		</ui:repeat>
-		
+		<!--  linked collections -->
+		<ui:fragment rendered="#{not empty cc.attrs.bean.collection.linkedCollections}">
+			<span class="imj_infodataLabel">#{lbl.similar_datasets}</span>
+			<span class="imj_infodataValue">
+				<ui:repeat var="linkedCollection" value="#{cc.attrs.bean.collection.linkedCollections}" >				
+						<!--  internal collection -->
+						<h:outputLink rendered = "#{linkedCollection.internalCollectionType}" 
+							title="#{cc.attrs.bean.getPageLinkForInternalCollection(linkedCollection)}" 
+							value="#{cc.attrs.bean.getPageLinkForInternalCollection(linkedCollection)}" >
+							#{linkedCollection.internalCollectionName}
+						</h:outputLink>
+						<!--  external collection -->
+						<h:outputLink rendered = "#{not linkedCollection.internalCollectionType}" 
+							title="#{linkedCollection.externalCollectionUri}" 
+							value="#{linkedCollection.externalCollectionUri}" >
+							#{linkedCollection.externalCollectionName} 
+						</h:outputLink>
+						<br />	
+						<ui:fragment rendered="#{not empty linkedCollection.description}">
+							<h:outputText value="#{linkedCollection.description}" />	
+							<br />	
+						</ui:fragment>				
+				</ui:repeat>
+			</span>
+		</ui:fragment>
+		<!--  end linked collections -->
 		<span class="imj_infodataLabel">#{lbl.colNumItems}</span>
 		<span class="imj_infodataValue">#{cc.attrs.bean.size}</span>
 		<ui:fragment rendered="#{cc.attrs.bean.collection.doi != ''}">

@@ -14,6 +14,7 @@ import de.mpg.imeji.j2j.annotations.j2jLazyURIResource;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
+import de.mpg.imeji.j2j.annotations.j2jReferencedResource;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 
 /**
@@ -301,6 +302,16 @@ public class J2JHelper {
   }
 
   /**
+   * True if the {@link Field} is a {@link j2jReferencedResource}
+   * 
+   * @param f
+   * @return
+   */
+  public static boolean isReferencedResource(Field f) {
+    return f != null && f.getAnnotation(j2jReferencedResource.class) != null;
+  }
+
+  /**
    * True if the {@link Field} is a {@link j2jLiteral}
    *
    * @param f
@@ -429,6 +440,7 @@ public class J2JHelper {
    * @return
    */
   public static boolean isAnnotated(Field f) {
-    return isLazyList(f) || isList(f) || isLiteral(f) || isResource(f) || isLazyLitereal(f) || isLazyURIResource(f);
+    return isLazyList(f) || isList(f) || isLiteral(f) || isResource(f) || isLazyLitereal(f) || isLazyURIResource(f)
+        || isReferencedResource(f);
   }
 }

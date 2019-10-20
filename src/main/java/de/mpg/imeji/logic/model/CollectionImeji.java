@@ -17,7 +17,6 @@ import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.model.aspects.AccessMember;
 import de.mpg.imeji.logic.model.aspects.CloneURI;
-import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
 
 /**
@@ -50,6 +49,9 @@ public class CollectionImeji extends Properties implements Serializable, Collect
   private List<String> types = new ArrayList<>();
   private Collection<URI> images = new ArrayList<URI>();
 
+  @j2jList("http://imeji.org/linkedCollection")
+  private List<LinkedCollection> linkedCollections = new ArrayList<LinkedCollection>();
+
   private static final Logger LOGGER = LogManager.getLogger(CollectionImeji.class);
 
 
@@ -67,20 +69,33 @@ public class CollectionImeji extends Properties implements Serializable, Collect
 
     // member field that can be set unsynchronized: 
     //collection's parent, "collection"
+    // linked collections: remove a internal linked collection (after it has been deleted)
 
     super.accessMember(changeMember);
 
     try {
       Field parentOfCollectionField = CollectionImeji.class.getDeclaredField("collection");
+      Field linkedCollectionsField = CollectionImeji.class.getDeclaredField("linkedCollections");
       if (changeMember.getField().equals(parentOfCollectionField) && changeMember.getAction().equals(ActionType.ADD_OVERRIDE)
           && changeMember.getValue() instanceof URI) {
         this.collection = (URI) changeMember.getValue();
-        return;
+
+      } else if (changeMember.getField().equals(linkedCollectionsField) && changeMember.getAction().equals(ActionType.REMOVE)
+          && changeMember.getValue() instanceof URI) {
+        String uriToDelete = (String) changeMember.getValue();
+        for (LinkedCollection linkedCollection : this.linkedCollections) {
+          if (linkedCollection.isInternalCollectionType() && linkedCollection.getInternalCollectionUri().equals(uriToDelete)) {
+            this.linkedCollections.remove(linkedCollection);
+          }
+        }
+
+      } else {
+        LOGGER.debug("Did not set member in CollectionImeji. Please check and implement your case");
       }
-      LOGGER.debug("Did not set member in CollectionImeji. Please check and implement your case");
     } catch (NoSuchFieldException | SecurityException e) {
       LOGGER.error("Did not set member in CollectionImeji. Member does not exist in class.", e);
     }
+
 
   }
 
@@ -188,5 +203,14 @@ public class CollectionImeji extends Properties implements Serializable, Collect
     this.types = types;
   }
 
+  // Section linked collections
+
+  public void setLinkedCollections(List<LinkedCollection> linkedCollections) {
+    this.linkedCollections = linkedCollections;
+  }
+
+  public List<LinkedCollection> getLinkedCollections() {
+    return this.linkedCollections;
+  }
 
 }

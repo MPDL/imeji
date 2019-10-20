@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:composite="http://java.sun.com/jsf/composite"	
+	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
+
+
+<composite:interface>
+	<composite:attribute name="linkedCollectionImeji" required="true" type="java.lang.Object"
+	shortDescription="@type: LinkedCollection"/>
+	<composite:attribute name="bean" required="true" type="java.lang.Object"
+	shortDescription="@type: EditCollectionBean"/>
+	
+</composite:interface>
+
+<composite:implementation>
+	
+	<!--  2 Elements: 
+		- visible input for collection's label, 
+		- invisible input for storing corresponding uri  
+	-->
+	<h:inputText
+	    id="label"
+		styleClass="imj_metadataValue autocomplete_link_collection"
+		value="#{cc.attrs.linkedCollectionImeji.internalCollectionName}"
+		onfocus="setAutocompleteSource('#{cc.attrs.bean.getAvailableCollectionsToLinkForAutocomplete()}')" 
+		html5:placeholder="select a collection by typing it's name"/>
+	<h:inputText 
+		id="value"
+		styleClass="imj_noDisplay"
+		value="#{cc.attrs.linkedCollectionImeji.internalCollectionUri}" />
+	<h:inputTextarea 
+		id="collectionDescription" 
+	    styleClass = "imj_metadataValue"
+		value="#{cc.attrs.linkedCollectionImeji.description}" 
+		html5:placeholder="additional information for linked collection" />
+
+
+</composite:implementation>
+</html>
