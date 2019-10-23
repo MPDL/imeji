@@ -53,6 +53,10 @@
 				</ui:repeat>
 			</h:panelGroup>
 			
+			
+			<!-- spacer -->
+			<div class="imj_metadataSet"/>
+			
 			<h:panelGroup layout="block" styleClass="imj_metadataSet" rendered="#{not empty cc.attrs.formularBean.collectionTypesSelectItems}">
 				<label class="imj_metadataLabel">#{lbl.collection_types} *</label>
 				<div class="imj_metadataValue">
@@ -61,6 +65,10 @@
 					</h:selectManyCheckbox>
 				</div>
 			</h:panelGroup>
+			
+			
+			<!-- spacer -->
+			<div class="imj_metadataSet"/>
 			
 			<h:panelGroup id="additionalInfos">
 				
@@ -125,18 +133,25 @@
 						<h:inputText id="inputInfoUrl" styleClass="imj_metadataValue" value="#{info.url}" html5:placeholder="#{lbl.placeholder_url}" />
 					</h:panelGroup>
 				</ui:repeat>
-				<div class="imj_sectionHeadline">
+				
+				<h:panelGroup layout="block" class="imj_sectionHeadline" rendered="#{cc.attrs.formularContextBean.additionalInformations.size() == Configuration.collectionMetadataSuggestionsPreselectAsList.size() }">
 					<span class="imj_inlineButtonGroup">
 						<h:commandLink styleClass="fa fa-plus-square-o" title="#{lbl.add_collection_metadata}" action="#{cc.attrs.formularBean.addAdditionalInfo(cc.attrs.formularContextBean.additionalInformations.size(), '')}" html5:data-loader="false">
 							<f:ajax execute="editContainer:form:additionalInfos" render="editContainer:form:additionalInfos"/>
 						</h:commandLink>
 					</span>
-				</div>
+				</h:panelGroup>
+				
 			</h:panelGroup>
+			
+			<!-- spacer -->
+			<div class="imj_metadataSet"/>
+			
 			<!--  linked collections -->
 			<!--  (1) load javascript file for autocomplete functionality and pass available collections to link -->		
 			<h:outputScript name="js/autocompleteUriList.js" target="head"/>
 			<h:panelGroup id="linkedCollections">				
+			
 			<div class="imj_metadataSet">
 				<label class="imj_metadataLabel">#{lbl.similar_datasets}</label>
 				<div class="imj_metadataValue">
@@ -147,6 +162,7 @@
 			</div>
 			</h:panelGroup>
             <!--  end linked collections -->
+            
 			<div class="imj_metadataSet">
 				<label class="imj_metadataLabel">#{lbl.logo}</label>
 				<div class="imj_metadataValue">

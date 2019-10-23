@@ -15,15 +15,15 @@
     <h:inputText id="collectionExternalTitle" 
     styleClass = "imj_metadataValue"
     	value="#{cc.attrs.externalLinkedCollection.externalCollectionName}" 
-    	html5:placeholder="external collection's name" />
+    	html5:placeholder="#{lbl.placeholder_linked_external_collection_title}" />
 	<h:inputText id="collectionExternalURL" 
 	styleClass = "imj_metadataValue"
 		value="#{cc.attrs.externalLinkedCollection.externalCollectionUri}" 
-		html5:placeholder="external collection's uri" />
+		html5:placeholder="#{lbl.placeholder_linked_external_collection_url}" />
 	<!--  description of selected collection -->
 	<h:inputTextarea id="collectionExternalDescription" 
 	styleClass = "imj_metadataValue"
 		value="#{cc.attrs.externalLinkedCollection.description}" 
-		html5:placeholder="additional information for linked collection" />
+		html5:placeholder="#{lbl.placeholder_linked_internal_collection_desc}" />
 </composite:implementation>
 </html>

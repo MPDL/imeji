@@ -25,7 +25,7 @@
 		styleClass="imj_metadataValue autocomplete_link_collection"
 		value="#{cc.attrs.linkedCollectionImeji.internalCollectionName}"
 		onfocus="setAutocompleteSource('#{cc.attrs.bean.getAvailableCollectionsToLinkForAutocomplete()}')" 
-		html5:placeholder="select a collection by typing it's name"/>
+		html5:placeholder="#{lbl.placeholder_linked_internal_collection}"/>
 	<h:inputText 
 		id="value"
 		styleClass="imj_noDisplay"
@@ -34,7 +34,7 @@
 		id="collectionDescription" 
 	    styleClass = "imj_metadataValue"
 		value="#{cc.attrs.linkedCollectionImeji.description}" 
-		html5:placeholder="additional information for linked collection" />
+		html5:placeholder="#{lbl.placeholder_linked_internal_collection_desc}" />
 
 
 </composite:implementation>

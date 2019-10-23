@@ -22,8 +22,8 @@
 			<h:selectOneRadio 
 				rendered = "#{cc.attrs.bean.showRadioButton(linkedCollection)}"
 				value = "#{linkedCollection.internalCollectionType}"> 
-	   			<f:selectItem itemValue = "#{true}" itemLabel = "internal collection" /> 
-	   			<f:selectItem itemValue = "#{false}" itemLabel = "external collection" />
+	   			<f:selectItem itemValue = "#{true}" itemLabel = "#{lbl.linked_internal_collection} (#{Configuration.instanceName})" /> 
+	   			<f:selectItem itemValue = "#{false}" itemLabel = "#{lbl.linked_external_collection}" />
 	   			<f:ajax execute= "#{cc.attrs.compositesParentId}:linkedCollections" 
 	   				render="#{cc.attrs.compositesParentId}:linkedCollections"
 	   				onevent = "onAjaxEvent" 
