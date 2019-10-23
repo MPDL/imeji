@@ -2,10 +2,14 @@ package de.mpg.imeji.presentation.collection;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -20,7 +24,10 @@ import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.search.Search;
-import de.mpg.imeji.logic.search.model.SearchQuery;
+import de.mpg.imeji.logic.search.factory.SearchFactory;
+import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
+import de.mpg.imeji.logic.search.model.SearchOperators;
+import de.mpg.imeji.logic.search.model.SearchPair;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.search.model.SortCriterion.SortOrder;
 import de.mpg.imeji.presentation.beans.SuperBean;
@@ -35,6 +42,7 @@ import de.mpg.imeji.presentation.session.BeanHelper;
  */
 public abstract class CollectionBean extends SuperBean {
   private static final long serialVersionUID = -3071769388574710503L;
+  static final Logger LOGGER = LogManager.getLogger(CollectionBean.class);
   private CollectionImeji collection;
   private String id;
   private int authorPosition;
@@ -404,11 +412,19 @@ public abstract class CollectionBean extends SuperBean {
 
     try {
       final CollectionService collectionService = new CollectionService();
+
+      //Search for all public collections which are no subcollections
+      SearchFactory searchFactory = new SearchFactory();
+      searchFactory.addElement(new SearchPair(SearchFields.status, SearchOperators.EQUALS, "public", false), LOGICAL_RELATIONS.AND);
+      searchFactory.addElement(new SearchPair(SearchFields.folder, SearchOperators.EQUALS, "*", true), LOGICAL_RELATIONS.AND);
+
       this.internalCollectionsToLink =
-          collectionService.searchAndRetrieve(new SearchQuery(), new SortCriterion(SearchFields.collection_title, SortOrder.DESCENDING),
-              null, Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX);
+          collectionService.searchAndRetrieve(searchFactory.build(), new SortCriterion(SearchFields.collection_title, SortOrder.DESCENDING),
+              getSessionUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX);
     } catch (ImejiException e) {
-      // not a severe problem	
+      // not a severe problem
+      this.internalCollectionsToLink = Collections.emptyList();
+      LOGGER.error("Error loading internal Collections-To-Link list.", e);
     }
   }
 

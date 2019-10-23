@@ -383,6 +383,8 @@ public class ElasticQueryFactory {
         break;
       case technical:
         break;
+      case folder:
+        return fieldQuery(ElasticFields.FOLDER, pair.getValue(), pair.getOperator(), pair.isNot());
       default:
         break;
     }

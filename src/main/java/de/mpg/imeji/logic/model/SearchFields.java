@@ -57,7 +57,8 @@ public enum SearchFields {
   collection_title("collection.title"),
   collection_description("collection.description"),
   collection_author("collection.author"),
-  collection_author_organisation("collection.author.organization");
+  collection_author_organisation("collection.author.organization"),
+  folder;
 
   private final String searchIndex;
 
