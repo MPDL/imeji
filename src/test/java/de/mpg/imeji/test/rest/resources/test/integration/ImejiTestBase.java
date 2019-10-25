@@ -22,6 +22,7 @@ import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.rest.ImejiRestService;
 import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.api.ItemAPIService;
@@ -30,6 +31,7 @@ import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.LicenseTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
+import de.mpg.imeji.util.ConcurrencyUtil;
 import de.mpg.imeji.util.ElasticsearchTestUtil;
 import de.mpg.imeji.util.ImejiTestResources;
 import de.mpg.imeji.util.JenaUtil;
@@ -76,6 +78,7 @@ public class ImejiTestBase extends JerseyTest {
 
   @AfterClass
   public static void shutdown() throws IOException, URISyntaxException, InterruptedException {
+    ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
     app = null;

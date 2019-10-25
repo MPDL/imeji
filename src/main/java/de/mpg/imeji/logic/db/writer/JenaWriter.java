@@ -3,7 +3,6 @@ package de.mpg.imeji.logic.db.writer;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.jena.Jena;
 import org.apache.jena.rdf.model.Model;
@@ -35,7 +34,7 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
  */
 public class JenaWriter implements Writer {
   private final String modelURI;
-  private static final ExecutorService WRITE_EXECUTOR = Executors.newSingleThreadExecutor();
+  private static final ExecutorService WRITE_EXECUTOR = Imeji.createNewSingleThreadExecutor();
 
   /**
    * Construct one {@link JenaWriter} for one {@link Model}

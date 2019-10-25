@@ -19,6 +19,7 @@ import de.mpg.imeji.logic.security.authentication.factory.AuthenticationFactory;
 import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.rest.process.AdminProcess;
+import de.mpg.imeji.util.ConcurrencyUtil;
 import de.mpg.imeji.util.ElasticsearchTestUtil;
 import de.mpg.imeji.util.JenaUtil;
 
@@ -43,6 +44,7 @@ public class HttpAuthenticationTest {
 
   @AfterClass
   public static void tearDown() throws Exception {
+    ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
   }

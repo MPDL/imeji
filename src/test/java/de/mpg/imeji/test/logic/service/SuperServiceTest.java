@@ -6,6 +6,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -14,6 +15,7 @@ import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.CollectionFactory;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.user.UserService;
+import de.mpg.imeji.util.ConcurrencyUtil;
 import de.mpg.imeji.util.ElasticsearchTestUtil;
 import de.mpg.imeji.util.ImejiTestResources;
 import de.mpg.imeji.util.JenaUtil;
@@ -34,6 +36,7 @@ public class SuperServiceTest {
 
   @AfterClass
   public static void tearDown() throws Exception {
+    ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
   }

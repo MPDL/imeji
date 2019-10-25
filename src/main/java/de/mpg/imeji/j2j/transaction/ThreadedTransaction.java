@@ -4,18 +4,16 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import org.apache.logging.log4j.Logger;
-
-import de.mpg.imeji.exceptions.ImejiException;
-
-import org.apache.logging.log4j.LogManager;
 
 import org.apache.jena.Jena;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.tdb.TDBFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.config.Imeji;
 
 
 /**
@@ -28,7 +26,7 @@ import org.apache.jena.tdb.TDBFactory;
  * @version $Revision$ $LastChangedDate$
  */
 public class ThreadedTransaction implements Callable<Integer> {
-  private static ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+  private static final ExecutorService EXECUTOR = Imeji.createNewCachedThreadPool();
   private final Transaction myTransaction;
   private final String tdbPath;
   protected static Logger LOGGER = LogManager.getLogger(ThreadedTransaction.class);

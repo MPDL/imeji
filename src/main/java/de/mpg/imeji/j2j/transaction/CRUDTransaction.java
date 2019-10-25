@@ -2,8 +2,6 @@ package de.mpg.imeji.j2j.transaction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
@@ -25,7 +23,6 @@ public class CRUDTransaction extends Transaction {
 
   private final CRUDTransactionType type;
   private boolean lazy = false;
-  private ExecutorService executor = Executors.newFixedThreadPool(4);
 
 
   public enum CRUDTransactionType {
