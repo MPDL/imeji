@@ -48,7 +48,7 @@ public abstract class CollectionBean extends SuperBean {
   private int authorPosition;
   private int organizationPosition;
 
-  private List<CollectionImeji> internalCollectionsToLink;
+  private boolean internalCollectionsToLinkAvailable;
   private List<LinkedCollection> linkedCollectionsToEdit;
 
   protected String getErrorMessageNoAuthor() {
@@ -338,7 +338,7 @@ public abstract class CollectionBean extends SuperBean {
       this.linkedCollectionsToEdit.add(linkedCollection);
     }
 
-    // (2) load all imeji collections that the user may access (for autocomplete functionality)
+    // (2) check if internal imeji collections that the user may access exists (for autocomplete functionality)
     this.retrieveInternalCollectionsToLink();
 
     // (3) put GUI placeholder in case there are no linked collections yet
@@ -371,7 +371,7 @@ public abstract class CollectionBean extends SuperBean {
 
     if (checkIfLinkedCollectionsAreEmpty()) {
       LinkedCollection placeholder = new LinkedCollection();
-      if (this.internalCollectionsToLink.isEmpty()) {
+      if (!this.internalCollectionsToLinkAvailable) {
         // set placeholder for external collection
         placeholder.setInternalCollectionType(false);
       }
@@ -406,8 +406,9 @@ public abstract class CollectionBean extends SuperBean {
 
 
   /**
-   * Retrieves a list of all imeji collections that can be linked to a given collection
+   * Check if imeji collections exist that can be linked to a given collection
    */
+
   private void retrieveInternalCollectionsToLink() {
 
     try {
@@ -418,67 +419,27 @@ public abstract class CollectionBean extends SuperBean {
       searchFactory.addElement(new SearchPair(SearchFields.status, SearchOperators.EQUALS, "public", false), LOGICAL_RELATIONS.AND);
       searchFactory.addElement(new SearchPair(SearchFields.folder, SearchOperators.EQUALS, "*", true), LOGICAL_RELATIONS.AND);
 
-      this.internalCollectionsToLink =
+      this.internalCollectionsToLinkAvailable =
           collectionService.searchAndRetrieve(searchFactory.build(), new SortCriterion(SearchFields.collection_title, SortOrder.DESCENDING),
-              getSessionUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX);
+              getSessionUser(), 1, Search.SEARCH_FROM_START_INDEX).size() > 0;
     } catch (ImejiException e) {
       // not a severe problem
-      this.internalCollectionsToLink = Collections.emptyList();
+      this.internalCollectionsToLinkAvailable = false;
       LOGGER.error("Error loading internal Collections-To-Link list.", e);
     }
-  }
 
-  /**
-   * Returns a list with all collections the user can access (except this collection). Format:
-   * String that contains a javascript array specification. Use this list for showing a list of
-   * collections that can be linked to this collection.
-   * 
-   * @return
-   */
-  public String getAvailableCollectionsToLinkForAutocomplete() {
-    return createRepresentationForAutocomplete();
   }
-
 
   /**
    * Returns whether there are currently internal collections to link
    * 
    * @return
    */
+
   public boolean internalCollecionsToLinkAreAvailable() {
-    return !this.internalCollectionsToLink.isEmpty();
+    return this.internalCollectionsToLinkAvailable;
   }
 
 
-  /**
-   * Uri and name of the available collections-to-link will be passed to jQuery autocomplete
-   * function in GUI. For this: Create a String that contains a semicolon-separated list of label1;
-   * value1; label2; value2 etc entries
-   * 
-   * If there are no collections to link return an empty String
-   * 
-   * @return
-   */
-  private String createRepresentationForAutocomplete() {
-
-    if (this.internalCollectionsToLink.isEmpty()) {
-      return "[]";
-    }
-
-    String representation = "";
-    int index = 0;
-    for (CollectionImeji collection : this.internalCollectionsToLink) {
-
-      representation += collection.getTitle();
-      representation += ";";
-      representation += collection.getUri();
-
-      if (index < this.internalCollectionsToLink.size() - 1) {
-        representation += ";";
-      }
-      index = index + 1;
-    }
-    return representation;
-  }
 
 }

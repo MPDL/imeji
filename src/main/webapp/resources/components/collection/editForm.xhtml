@@ -148,7 +148,10 @@
 			<div class="imj_metadataSet"/>
 			
 			<!--  linked collections -->
-			<!--  (1) load javascript file for autocomplete functionality and pass available collections to link -->		
+			<!--  (1) load javascript file for autocomplete functionality and pass available collections to link -->	
+			<script>
+				const baseCollectionUri = '#{UtilBean.baseUri}collection/'
+			</script>	
 			<h:outputScript name="js/autocompleteUriList.js" target="head"/>
 			<h:panelGroup id="linkedCollections">				
 			

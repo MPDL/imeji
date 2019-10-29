@@ -5,6 +5,9 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
 
+import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.config.ImejiProperties;
+
 @ManagedBean(name = "UtilBean")
 @RequestScoped
 public class UtilBean {
@@ -24,6 +27,11 @@ public class UtilBean {
       return sb.toString();
     } else
       return "Null";
+  }
+
+
+  public String getBaseUri() {
+    return Imeji.PROPERTIES.getBaseURI();
   }
 
 }

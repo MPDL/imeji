@@ -10,7 +10,7 @@
  */
 
 // list of labels that user can select from
-var autocompleteSource = [];
+//var autocompleteSource = [];
 
 /**
  * Set a semicolon-separated list of labels and values that the user can select from.
@@ -19,6 +19,7 @@ var autocompleteSource = [];
  * @param src
  * @returns
  */
+/*
 function setAutocompleteSource(src) {			
 	// set only one time
 	if(autocompleteSource.length == 0){
@@ -33,6 +34,7 @@ function setAutocompleteSource(src) {
 		}
 	}
 }
+*/
 
 /**
  * Get the associated hidden gui element for out autocomplete field.
@@ -64,8 +66,32 @@ function getAssociatedHiddenElement(visibleElementsId){
 function setAutocompleteToInputFields(){
 	
 	$(".autocomplete_link_collection").autocomplete({
-		source : autocompleteSource,
-		minLength : 1,
+		//source : autocompleteSource,
+		//source : '/imeji/api/collections?q=',
+		  source : function(request, response) {
+			$.ajax({
+				url : '/imeji/rest/collections',
+				dataType : "json",
+				data : {
+					q : "title=" + request.term + "* AND status=public AND NOT folder=*" 
+				},
+				success: function (data) {
+					if(data && data.results)
+					{
+	                    //var parsedObject = $.parseJSON(data.results);
+	                    response($.map(data.results, function (collection) {
+	                        return {
+	                            label: collection.title,
+	                            value: baseCollectionUri + collection.id
+	                        };
+	
+	                    }))
+					}
+				}
+				
+			});
+		},
+		minLength : 2,
 		delay: 0,
 		select : function(event, uiobject) {
 			// set value of autocomplete input field to selected item (label)
@@ -74,7 +100,12 @@ function setAutocompleteToInputFields(){
 			var associatedHiddenElement = getAssociatedHiddenElement(this.id);
 			associatedHiddenElement.value = uiobject.item.value;
 			return false;
-		}
+		},
+	    focus: function(event, ui) {
+	        //event.preventDefault();
+	        this.value = ui.item.label;
+	        return false;
+	    }
 	});
 }
 
