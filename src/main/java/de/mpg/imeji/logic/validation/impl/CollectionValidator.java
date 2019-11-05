@@ -53,9 +53,6 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
     if (isNullOrEmpty(collection.getTitle())) {
       setException(new UnprocessableError("error_collection_need_title", getException()));
     }
-    if (!validateCollectionsTitle(collection.getTitle())) {
-      setException(new UnprocessableError("error_collection_title_semicolon_not_allowed", getException()));
-    }
     if (!collection.isSubCollection() && Imeji.CONFIG.getCollectionTypes() != null && !Imeji.CONFIG.getCollectionTypes().isBlank()
         && (collection.getTypes() == null || collection.getTypes().isEmpty())) {
       setException(new UnprocessableError("error_collection_need_types", getException()));
@@ -136,20 +133,6 @@ public class CollectionValidator extends ObjectValidator implements Validator<Co
         exception = new UnprocessableError("error_organization_need_name", exception);
       }
     }
-  }
-
-  /**
-   * Collection's title must not contain a ';' as this is used as line separator in passing a list
-   * of collection titles and uris from JSF to javascript (autocomplete for linked collections)
-   * 
-   * @param collectionTitle
-   * @return
-   */
-  private boolean validateCollectionsTitle(String collectionTitle) {
-    if (collectionTitle.contains(";")) {
-      return false;
-    }
-    return true;
   }
 
   /**
