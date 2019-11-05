@@ -102,18 +102,19 @@ public class WriterFacade {
     checkWorkflow(objects, "create");
     checkSecurity(objects, user, true);
     validate(objects, Validator.Method.CREATE);
-    // writer.create(objects, user);
-    // indexer.indexBatch(objects);
     try {
       List<Object> createdObjectsInJena = executor.submit(new CreateTask(objects, user)).get();
       executor.submit(new IndexTask(createdObjectsInJena)).get();
       return createdObjectsInJena;
-    } catch (ExecutionException | InterruptedException | CancellationException execExept) {
+    } catch (ExecutionException | InterruptedException | CancellationException  execExept) {
       if (execExept.getCause() instanceof ImejiException) {
         throw (ImejiException) execExept.getCause();
       } else {
         throw new ImejiException(execExept.getMessage());
       }
+    }
+    catch(Exception e) {
+    	throw new ImejiException(e.getMessage());
     }
   }
 
@@ -139,6 +140,9 @@ public class WriterFacade {
       } else {
         throw new ImejiException(execExept.getMessage());
       }
+    }
+    catch(Exception e) {
+    	throw new ImejiException(e.getMessage());
     }
   }
 
@@ -168,6 +172,9 @@ public class WriterFacade {
         throw new ImejiException(execExept.getMessage());
       }
     }
+    catch(Exception e) {
+    	throw new ImejiException(e.getMessage());
+    }
   }
 
   /**
@@ -194,8 +201,9 @@ public class WriterFacade {
         throw new ImejiException(execExept.getMessage());
       }
     }
-
-
+    catch(Exception e) {
+    	throw new ImejiException(e.getMessage());
+    }
   }
 
 
@@ -231,6 +239,9 @@ public class WriterFacade {
         throw new ImejiException(execExept.getMessage());
       }
     }
+    catch(Exception e) {
+    	throw new ImejiException(e.getMessage());
+    }
   }
 
   /**
@@ -254,7 +265,6 @@ public class WriterFacade {
       validate(valueToSet, Validator.Method.UPDATE);
     }
 
-
     try {
       // write list of changes to Jena and get latest object version:
       List<Object> dataObjectsFromStore = (List<Object>) executor.submit(new EditElementsTask(changeElements)).get();
@@ -274,6 +284,9 @@ public class WriterFacade {
       } else {
         throw new ImejiException(execExept.getMessage());
       }
+    }
+    catch(Exception e) {
+    	throw new ImejiException(e.getMessage());
     }
   }
 
@@ -316,13 +329,13 @@ public class WriterFacade {
 
 
   private void validate(Object object, Validator.Method method) throws UnprocessableError {
-
+	  
     final Validator<Object> validator = (Validator<Object>) ValidatorFactory.newValidator(object, method);
     validator.validate(object, method);
-
   }
 
   private void checkWorkflow(List<Object> objects, String operation) throws WorkflowException {
+	  
     for (final Object o : objects) {
       if (o instanceof Properties) {
         switch (operation) {
@@ -350,6 +363,7 @@ public class WriterFacade {
    * @throws AuthenticationError
    */
   private void checkSecurity(List<Object> list, final User user, boolean create) throws NotAllowedError, AuthenticationError {
+	  
     String message = user != null ? user.getEmail() : "";
     for (final Object o : list) {
       message += " not allowed to " + (create ? "create " : "edit ") + extractID(o);
