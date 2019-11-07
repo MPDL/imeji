@@ -187,18 +187,20 @@ public class JenaUtil {
   }
 
   public static void deleteTempDirectory() {
-    File tempDirectory = TempFileUtil.TEMP_DIR;
-    String tempDirectoryPath = tempDirectory.getAbsolutePath();
+    File tempDirectory = TempFileUtil.getTempDirectory();
+    if (tempDirectory != null) {
+      String tempDirectoryPath = tempDirectory.getAbsolutePath();
 
-    if (tempDirectory.exists()) {
-      try {
-        FileUtils.deleteDirectory(tempDirectory);
-        LOGGER.info("Temp directory " + tempDirectoryPath + " deleted.");
-      } catch (IOException e) {
-        LOGGER.error("Temp directory " + tempDirectoryPath + " could not be deleted.", e);
+      if (tempDirectory.exists()) {
+        try {
+          FileUtils.deleteDirectory(tempDirectory);
+          LOGGER.info("Temp directory " + tempDirectoryPath + " deleted.");
+        } catch (IOException e) {
+          LOGGER.error("Temp directory " + tempDirectoryPath + " could not be deleted.", e);
+        }
+      } else {
+        LOGGER.info("Temp directory " + tempDirectoryPath + " does not exist.");
       }
-    } else {
-      LOGGER.info("Temp directory " + tempDirectoryPath + " does not exist.");
     }
   }
 
