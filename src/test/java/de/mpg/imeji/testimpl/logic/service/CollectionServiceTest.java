@@ -280,7 +280,7 @@ public class CollectionServiceTest extends SuperServiceTest {
       collectionService.create(collectionToDelete, defaultUser);
       defaultUser = userService.retrieve(defaultUser.getId(), sysadmin);
       Item itemToDelete = ImejiFactory.newItem(collectionToDelete);
-      itemService.create(itemToDelete, collectionToDelete, defaultUser);
+      itemService.createWithFile(itemToDelete, ImejiTestResources.getTestJpg(), "Test.jpg", collectionToDelete, defaultUser);
       delete_Test("private Collection, edit grant user", collectionToDelete, userEditGrant, NotAllowedError.class);
       Lock lock = new Lock(itemToDelete.getId().toString(), null);
       Locks.lock(lock);
