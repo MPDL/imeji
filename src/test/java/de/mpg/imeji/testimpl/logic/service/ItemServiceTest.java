@@ -199,9 +199,6 @@ public class ItemServiceTest extends SuperServiceTest {
           if (!created && result != null) {
             Assert.fail(msg + ", Something was retrieved, even though the item should not habe been created");
           }
-          if (result.getStatus().equals(Status.PENDING)) {
-            service.delete(Arrays.asList(item), userAdmin);
-          }
         }
       } catch (ImejiException e) {
         if (!(e instanceof NotFoundException)) {
@@ -266,9 +263,6 @@ public class ItemServiceTest extends SuperServiceTest {
         Item result = service.retrieve(i.getId(), userAdmin);
         if (!created && result != null) {
           Assert.fail(msg + ", Something was retrieved, even though the item should not have been created");
-        }
-        if (result.getStatus().equals(Status.PENDING)) {
-          service.delete(Arrays.asList(i), userAdmin);
         }
       }
     } catch (ImejiException e) {
@@ -383,9 +377,6 @@ public class ItemServiceTest extends SuperServiceTest {
       retriveBatch_Test("User NoGrant, releasedCollection", new String[] {itemReleased.getId().toString()}, userNoGrant, null);
       retriveBatch_Test("User NoGrant, releasedCollection mixed with private Collection",
           new String[] {itemReleased.getId().toString(), itemPrivate2.getId().toString()}, userNoGrant, NotAllowedError.class);
-
-      service.delete(itemPrivate2.getIdString(), userAdmin);
-      (new CollectionService()).delete(collectionPrivate2, userAdmin);
 
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
@@ -629,10 +620,6 @@ public class ItemServiceTest extends SuperServiceTest {
 
       release_Test("Admin grant user, not yet released item, no licence", Arrays.asList(itemToRelease, itemToRelease2), userAdmin,
           getDefaultLicense(), getDefaultLicense(), null);
-      itemToRelease = service.retrieve(itemToRelease.getId(), userAdmin);
-      itemToRelease2 = service.retrieve(itemToRelease2.getId(), userAdmin);
-      service.withdraw(Arrays.asList(itemToRelease), "standart comment", userAdmin);
-      service.withdraw(Arrays.asList(itemToRelease2), "standart comment", userAdmin);
 
       itemToRelease = ImejiFactory.newItem(collectionPrivate);
       License lic = getDefaultLicense();
@@ -641,8 +628,6 @@ public class ItemServiceTest extends SuperServiceTest {
       service.create(itemToRelease, collectionPrivate, userAdmin);
       release_Test("Edit grant user, not yet released item, item already has license", Arrays.asList(itemToRelease), userAdmin,
           getDefaultLicense(), lic, null);
-      itemToRelease = service.retrieve(itemToRelease.getId(), userAdmin);
-      service.withdraw(Arrays.asList(itemToRelease), "standart comment", userAdmin);
 
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
