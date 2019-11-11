@@ -49,6 +49,14 @@ public class UserGroupFactory {
     return this;
   }
 
+  /**
+   * Add multiple grants to the UserGroup.
+   * 
+   * Grants must be of the form "ShareRoles_type,collection_URI".
+   * 
+   * @param grants The grants to add
+   * @return the UserGroupFactory
+   */
   public UserGroupFactory addGrants(String... grants) {
     for (String g : grants) {
       userGroup.getGrants().add(g);
