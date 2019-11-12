@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.item.ItemService;
@@ -26,6 +27,7 @@ import de.mpg.imeji.logic.security.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
+import de.mpg.imeji.util.ConcurrencyUtil;
 import de.mpg.imeji.util.ImejiTestResources;
 
 /**
@@ -60,6 +62,9 @@ public class ContentServiceTest extends SuperServiceTest {
       item = ImejiFactory.newItem(collection);
       new ItemService().create(item, collection, defaultUser);
       content = new ContentService().create(item, ImejiTestResources.getTest1Jpg(), defaultUser);
+
+      //Wait for content being completely created (by waiting for all Threads) -> ContentService().delete() leads to errors otherwise
+      ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
     } catch (ImejiException e) {
       LOGGER.error("Exception in setup of ContentServiceTest", e);
     }
@@ -145,9 +150,12 @@ public class ContentServiceTest extends SuperServiceTest {
       }
       // Restore content
       content = (new ContentService()).create(item, ImejiTestResources.getTest1Jpg(), defaultUser);
-      Thread.sleep(50); // Wait for the content to be processed
+
+      //Wait for content being completely created (by waiting for all Threads) -> ContentService().delete() leads to errors otherwise
+      ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
+
       content = service.retrieve(content.getId().toString());
-    } catch (ImejiException | InterruptedException e) {
+    } catch (ImejiException e) {
       Assert.fail(e.getMessage());
     }
 
