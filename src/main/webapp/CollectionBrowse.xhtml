@@ -221,14 +221,14 @@
 				document.write(create_qrcode(text, typeNumber, errorCorrectLevel));
 			};
 			var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
-				var qr = qrcode(typeNumber || 20, errorCorrectLevel || 'M');
+				var qr = qrcode(typeNumber || 10, errorCorrectLevel || 'M');
 				qr.addData(text);
 				qr.make();
 				return qr.createImgTag();
 			};
 			function draw_qr(){
 				var qrHtml = document.getElementById('qr');
-				qrHtml.innerHTML = create_qrcode('{key:"#{SessionBean.user.apiKey}",col:"#{CollectionItemsBean.collection.id}"}');
+				qrHtml.innerHTML = create_qrcode('#{CollectionItemsBean.pageUrl}');
 			}
 		</script>	 
 	</ui:define>
