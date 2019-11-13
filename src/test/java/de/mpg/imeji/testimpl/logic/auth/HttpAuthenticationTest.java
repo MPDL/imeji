@@ -103,6 +103,7 @@ public class HttpAuthenticationTest {
   public void loginWithWrongAPIKey() throws ImejiException, JoseException {
     User usertest = new UserService().retrieve(JenaUtil.TEST_USER_EMAIL, Imeji.adminUser);
     try {
+      //Throws an AuthenticationError and logs an InvalidJwtSignatureException message
       AuthenticationFactory.factory(generateAPIKEYAuthenticationHeader(usertest.getApiKey() + "abc")).doLogin();
       Assert.fail();
     } catch (AuthenticationError e) {
