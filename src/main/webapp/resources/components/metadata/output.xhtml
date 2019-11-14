@@ -1,6 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
       xmlns:composite="http://java.sun.com/jsf/composite">
 	
 	<composite:interface>
@@ -31,7 +32,9 @@
 			#{cc.attrs.metadata.person.completeName} (#{cc.attrs.metadata.person.organizationString})
 		</ui:fragment>
 		<ui:fragment rendered="#{isNumber}">
-			#{cc.attrs.metadata.number}
+			<h:outputText value="#{cc.attrs.metadata.number}">
+				<f:convertNumber locale="en" groupingUsed="false" minFractionDigits="0" maxFractionDigits="999999999"/>
+			</h:outputText>
 		</ui:fragment>
 		<ui:fragment rendered="#{isDefault}">
 			#{cc.attrs.metadata.text}#{cc.attrs.metadata.date}
